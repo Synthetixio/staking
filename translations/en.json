@@ -16,5 +16,12 @@
 	},
 	"dashboard": {
 		"page-title": "Kwenta | Dashboard"
+	},
+	"sidenav": {
+		"rewards": "Rewards",
+		"staking": "Staking",
+		"synths": "Synths",
+		"escrow": "Escrow",
+		"history": "History"
 	}
 }

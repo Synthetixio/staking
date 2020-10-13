@@ -1,68 +1,46 @@
 import { FC } from 'react';
 import styled from 'styled-components';
 
-import StatsLogo from 'assets/svg/stats-logo.svg';
-import { MAX_PAGE_WIDTH, Z_INDEX } from 'constants/styles';
+import { MobileHiddenView, MobileOnlyView } from 'components/Media';
+import { HEADER_HEIGHT, zIndex } from 'constants/ui';
 
-const Header: FC = () => {
-	return (
-		<>
-			<HeaderContainer>
-				<HeaderContainerInner>
-					<HeaderSectionLeft>
-						<StatsLogoWrap>
-							<StatsLogo />
-						</StatsLogoWrap>
-					</HeaderSectionLeft>
-					<HeaderSectionRight></HeaderSectionRight>
-				</HeaderContainerInner>
-			</HeaderContainer>
-		</>
-	);
-};
+import { GridDivCenteredCol } from 'styles/common';
+import media from 'styles/media';
+
+import UserMenu from './UserMenu';
+import MobileUserMenu from './MobileUserMenu';
+
+const Header: FC = () => (
+	<Container>
+		<MobileHiddenView>
+			<UserMenu />
+		</MobileHiddenView>
+		<MobileOnlyView>
+			<MobileUserMenu />
+		</MobileOnlyView>
+	</Container>
+);
+
+const Container = styled.div`
+	z-index: ${zIndex.HEADER};
+	float: right;
+	${media.lessThan('md')`
+		position: fixed;
+		background-color: ${(props) => props.theme.colors.darkBlue};
+		box-shadow: 0 8px 8px 0 ${(props) => props.theme.colors.darkBlue};
+	`};
+	> div {
+		height: ${HEADER_HEIGHT};
+		line-height: ${HEADER_HEIGHT};
+		padding: 0 20px;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+`;
+
+const LogoNav = styled(GridDivCenteredCol)`
+	grid-gap: 24px;
+`;
 
 export default Header;
-
-// TODO create a common flex container
-const HeaderContainer = styled.div`
-	height: 60px;
-	padding-top: 35px;
-	position: fixed;
-	font-style: normal;
-	font-weight: bold;
-	width: 100%;
-	margin-left: -20px;
-	z-index: ${Z_INDEX.thousand};
-	background-color: ${(props) => props.theme.colors.darkBlue};
-	@media only screen and (max-width: 1266px) {
-		margin-left: 0;
-	}
-`;
-
-const HeaderContainerInner = styled.div`
-	max-width: ${MAX_PAGE_WIDTH}px;
-	margin: 0 auto;
-	display: flex;
-	justify-content: space-between;
-	@media only screen and (max-width: 1266px) {
-		max-width: calc(100% - 40px);
-		margin: 0;
-	}
-`;
-
-const StatsLogoWrap = styled.div`
-	margin-top: -4px;
-`;
-
-const HeaderSectionLeft = styled.div`
-	display: flex;
-	justify-content: space-between;
-`;
-
-const HeaderSectionRight = styled.div`
-	display: flex;
-	justify-content: space-between;
-	font-family: ${(props) => `${props.theme.fonts.condensedBold}, ${props.theme.fonts.regular}`};
-	font-size: 12px;
-	color: ${(props) => props.theme.colors.white};
-`;
