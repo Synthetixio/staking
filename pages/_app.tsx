@@ -1,6 +1,7 @@
 import { FC } from 'react';
 import { AppProps } from 'next/app';
 import { useTranslation } from 'react-i18next';
+import { RecoilRoot } from 'recoil';
 
 import { ThemeProvider as SCThemeProvider } from 'styled-components';
 import { ThemeProvider as MuiThemeProvider } from '@material-ui/core/styles';
@@ -15,7 +16,7 @@ import Layout from 'sections/shared/Layout';
 const App: FC<AppProps> = ({ Component, pageProps }) => {
 	const { t } = useTranslation();
 	return (
-		<>
+		<RecoilRoot>
 			<SCThemeProvider theme={scTheme}>
 				<MuiThemeProvider theme={muiTheme}>
 					<WithStateContainers>
@@ -25,7 +26,7 @@ const App: FC<AppProps> = ({ Component, pageProps }) => {
 					</WithStateContainers>
 				</MuiThemeProvider>
 			</SCThemeProvider>
-		</>
+		</RecoilRoot>
 	);
 };
 

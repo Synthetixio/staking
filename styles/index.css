@@ -1,0 +1,54 @@
+/* ------------- GT America Mono */
+@font-face {
+	font-family: 'GT America Mono';
+	src: local('GT America Mono'), url('../public/fonts/GT-America-Mono-Bold.eot') format('eot'),
+		url('../public/fonts/GT-America-Mono-Bold.otf') format('otf'),
+		url('../public/fonts/GT-America-Mono-Bold.ttf') format('ttf'),
+		url('../public/fonts/GT-America-Mono-Bold.woff') format('woff'),
+		url('../public/fonts/GT-America-Mono-Bold.woff2') format('woff2');
+	font-display: swap;
+	font-style: normal;
+	font-weight: bold;
+}
+
+/* ------------- GT America Expanded */
+@font-face {
+	font-family: 'GT America Expanded Black';
+	src: local('GT America Expanded Black'),
+		url('../public/fonts/GT-America-Expanded-Black.eot') format('eot'),
+		url('../public/fonts/GT-America-Expanded-Black.otf') format('otf'),
+		url('../public/fonts/GT-America-Expanded-Black.ttf') format('ttf'),
+		url('../public/fonts/GT-America-Expanded-Black.woff') format('woff'),
+		url('../public/fonts/GT-America-Expanded-Black.woff2') format('woff2');
+	font-display: swap;
+	font-style: normal;
+	font-weight: normal;
+}
+
+/* ------------- GT America Expanded */
+@font-face {
+	font-family: 'GT America Condensed-Medium';
+	src: local('GT America Condensed-Medium'),
+		url('../public/fonts/GT-America-Condensed-Medium.eot') format('eot'),
+		url('../public/fonts/GT-America-Condensed-Medium.otf') format('otf'),
+		url('../public/fonts/GT-America-Condensed-Medium.ttf') format('ttf'),
+		url('../public/fonts/GT-America-Condensed-Medium.woff') format('woff'),
+		url('../public/fonts/GT-America-Condensed-Medium.woff2') format('woff2');
+	font-display: swap;
+	font-style: normal;
+	font-weight: normal;
+}
+
+/* ------------- GT America Expanded */
+@font-face {
+	font-family: 'GT America Condensed-Bold';
+	src: local('GT America Condensed-Bold'),
+		url('../public/fonts/GT-America-Condensed-Bold.eot') format('eot'),
+		url('../public/fonts/GT-America-Condensed-Bold.otf') format('otf'),
+		url('../public/fonts/GT-America-Condensed-Bold.ttf') format('ttf'),
+		url('../public/fonts/GT-America-Condensed-Bold.woff') format('woff'),
+		url('../public/fonts/GT-America-Condensed-Bold.woff2') format('woff2');
+	font-display: swap;
+	font-style: normal;
+	font-weight: bold;
+}

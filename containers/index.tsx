@@ -1,13 +1,13 @@
-import React, { FC } from 'react';
+import React from 'react';
 
-import Wallet from './Wallet';
+import Connector from './Connector';
 
 type WithStateContainersProps = {
 	children: React.ReactNode;
 };
 
-export const WithStateContainers: FC<WithStateContainersProps> = ({ children }) => (
-	<Wallet.Provider>{children}</Wallet.Provider>
+export const WithStateContainers: React.FC<WithStateContainersProps> = ({ children }) => (
+	<Connector.Provider>{children}</Connector.Provider>
 );
 
 export default WithStateContainers;
