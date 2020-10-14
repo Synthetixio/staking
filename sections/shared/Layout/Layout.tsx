@@ -1,8 +1,8 @@
 import { FC } from 'react';
-import { createGlobalStyle } from 'styled-components';
+import styled, { createGlobalStyle } from 'styled-components';
 
 import Header from './Header';
-import Footer from './Footer';
+import SideNav from './SideNav';
 
 type LayoutProps = {
 	children: React.ReactNode;
@@ -12,16 +12,24 @@ const Layout: FC<LayoutProps> = ({ children }) => {
 	return (
 		<>
 			<GlobalStyle />
+			<SideNav />
 			<Header />
-			<section>{children}</section>
-			<Footer />
+			<SectionWrap>
+				<section>{children}</section>
+			</SectionWrap>
 		</>
 	);
 };
 
+const SectionWrap = styled.div`
+	position: absolute;
+	top: 60px;
+	left: 240px;
+`;
+
 const GlobalStyle = createGlobalStyle`
   body {
-		background-color: ${(props) => props.theme.colors.black1};
+		background-color: ${(props) => props.theme.colors.mediumBlue};
 		color: ${(props) => props.theme.colors.white}
   }
 `;
