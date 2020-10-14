@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 
 import { linkCSS } from 'styles/common';
+import StakingLogo from 'assets/inline-svg/app/staking-logo.svg';
 
 import { MENU_LINKS } from '../constants';
 
@@ -16,7 +17,7 @@ const SideNav: FC = () => {
 	return (
 		<SideNavContainer>
 			<StatsLogoWrap>
-				<div>Logo Goes Here</div>
+				<StakingLogo />
 			</StatsLogoWrap>
 			<MenuLinks>
 				{MENU_LINKS.map(({ i18nLabel, link }) => (
@@ -33,8 +34,10 @@ const SideNav: FC = () => {
 
 const SideNavContainer = styled.div`
 	height: 100%;
-	width: 240px;
+	width: 180px;
 	position: absolute;
+	padding-top: 40px;
+	padding-left: 40px;
 	top: 0;
 	left: 0;
 `;
@@ -46,12 +49,15 @@ const MenuLinks = styled.div`
 `;
 
 const MenuLinkItem = styled.div<{ isActive: boolean }>`
-	padding-bottom: 40px;
-	padding-left: 20px;
+	line-height: 40px;
+	border-right: ${(props) =>
+		props.isActive ? `1px solid ${props.theme.colors.brightBlue}` : 'none'};
 	a {
 		${linkCSS};
 		font-family: ${(props) => props.theme.fonts.condensedBold};
-		text-transform: capitalize;
+		text-transform: uppercase;
+		font-weight: 700;
+		font-size: 14px;
 		color: ${(props) => (props.isActive ? props.theme.colors.white : props.theme.colors.gray)};
 		&:hover {
 			color: ${(props) => props.theme.colors.white};
@@ -60,8 +66,7 @@ const MenuLinkItem = styled.div<{ isActive: boolean }>`
 `;
 
 const StatsLogoWrap = styled.div`
-	margin-top: 20px;
-	margin-bottom: 60px;
+	margin-bottom: 100px;
 `;
 
 export default SideNav;
