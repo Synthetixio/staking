@@ -11,6 +11,9 @@ import theme, { muiTheme } from 'styles/theme';
 
 import 'styles/fonts.css';
 import '../i18n';
+import '@reach/dialog/styles.css';
+import '@reach/tabs/styles.css';
+import '@reach/accordion/styles.css';
 
 import Layout from 'sections/shared/Layout';
 import { MediaContextProvider } from 'styles/media';
