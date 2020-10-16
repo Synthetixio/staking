@@ -29,7 +29,7 @@ const SectionWrap = styled.div`
 
 const GlobalStyle = createGlobalStyle`
   body {
-		background-color: ${(props) => props.theme.colors.mediumBlue};
+		background-color: ${(props) => props.theme.colors.darkBlue};
 		color: ${(props) => props.theme.colors.white}
   }
 `;
