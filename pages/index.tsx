@@ -4,10 +4,12 @@ import { useTranslation } from 'react-i18next';
 
 const Landing = () => {
 	const { t } = useTranslation();
-	const { connectWallet } = Connector.useContainer();
 	return (
 		<>
-			<a onClick={connectWallet}>Connect wallet</a>
+			<Head>
+				<title>{t('homepage.page-title')}</title>
+			</Head>
+			<div>Landing Page</div>
 		</>
 	);
 };

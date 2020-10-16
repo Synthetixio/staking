@@ -1,23 +1,36 @@
 {
 	"meta": {
-		"description": "Kwenta description",
+		"description": "Staking description",
 		"og": {
-			"title": "Kwenta",
-			"description": "Kwenta description",
-			"image-alt": "Kwenta",
-			"site-name": "Kwenta"
+			"title": "Staking",
+			"description": "Staking description",
+			"image-alt": "Staking",
+			"site-name": "Staking"
 		}
 	},
 	"homepage": {
-		"page-title": "Kwenta | Simple crypto trading for everyone"
-	},
-	"exchange": {
-		"page-title": "Kwenta | Exchange"
+		"page-title": "Staking | Earn with SNX"
 	},
 	"dashboard": {
-		"page-title": "Kwenta | Dashboard"
+		"page-title": "Staking | Dashboard"
+	},
+	"staking": {
+		"page-title": "Staking | Staking"
+	},
+	"rewards": {
+		"page-title": "Staking | Rewards"
+	},
+	"escrow": {
+		"page-title": "Staking | Escrow"
+	},
+	"history": {
+		"page-title": "Staking | History"
+	},
+	"synths": {
+		"page-title": "Staking | Synths"
 	},
 	"sidenav": {
+		"dashboard": "Dashboard",
 		"rewards": "Rewards",
 		"staking": "Staking",
 		"synths": "Synths",

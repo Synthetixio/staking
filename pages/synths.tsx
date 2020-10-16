@@ -7,7 +7,7 @@ const SynthsPage = () => {
 	return (
 		<>
 			<Head>
-				<title>{t('Synths.page-title')}</title>
+				<title>{t('synths.page-title')}</title>
 			</Head>
 			<div>Synths</div>
 		</>

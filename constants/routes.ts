@@ -1,5 +1,8 @@
 export const ROUTES = {
 	Root: '/',
+	Dashboard: {
+		Home: '/dashboard',
+	},
 	Staking: {
 		Home: '/staking',
 	},

@@ -17,7 +17,9 @@ const SideNav: FC = () => {
 	return (
 		<SideNavContainer>
 			<StatsLogoWrap>
-				<StakingLogo />
+				<Link href="/">
+					<StakingLogo />
+				</Link>
 			</StatsLogoWrap>
 			<MenuLinks>
 				{MENU_LINKS.map(({ i18nLabel, link }) => (
@@ -67,6 +69,7 @@ const MenuLinkItem = styled.div<{ isActive: boolean }>`
 
 const StatsLogoWrap = styled.div`
 	margin-bottom: 100px;
+	cursor: pointer;
 `;
 
 export default SideNav;

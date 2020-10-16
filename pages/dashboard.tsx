@@ -1,17 +1,17 @@
 import Head from 'next/head';
 import { useTranslation } from 'react-i18next';
 
-const RewardsPage = () => {
+const DashboardPage = () => {
 	const { t } = useTranslation();
 
 	return (
 		<>
 			<Head>
-				<title>{t('rewards.page-title')}</title>
+				<title>{t('dashboard.page-title')}</title>
 			</Head>
-			<div>Rewards</div>
+			<div>Dashboard</div>
 		</>
 	);
 };
 
-export default RewardsPage;
+export default DashboardPage;

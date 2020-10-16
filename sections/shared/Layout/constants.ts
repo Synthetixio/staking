@@ -9,6 +9,10 @@ export type MenuLinks = MenuLink[];
 
 export const MENU_LINKS: MenuLinks = [
 	{
+		i18nLabel: 'sidenav.dashboard',
+		link: ROUTES.Dashboard.Home,
+	},
+	{
 		i18nLabel: 'sidenav.staking',
 		link: ROUTES.Staking.Home,
 	},
