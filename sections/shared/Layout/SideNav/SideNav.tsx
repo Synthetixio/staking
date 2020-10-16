@@ -16,6 +16,8 @@ const SideNav: FC = () => {
 	const { t } = useTranslation();
 	const { asPath } = useRouter();
 
+	const isPositive = true;
+
 	return (
 		<SideNavContainer>
 			<StakingLogoWrap>
@@ -35,23 +37,23 @@ const SideNav: FC = () => {
 			<PriceSection>
 				<PriceItem>
 					<h6>SNX Price</h6>
-					<PriceRow>
+					<FlexDivCentered>
 						<p>$5.91</p>
-						<ChangeRow isPositive={true}>
-							<ChangePositive />
-							<p>5.45%</p>
-						</ChangeRow>
-					</PriceRow>
+						<FlexDivCentered>
+							{isPositive ? <ChangePositive /> : <ChangeNegative />}
+							<ChangePrice isPositive={isPositive}>5.45%</ChangePrice>
+						</FlexDivCentered>
+					</FlexDivCentered>
 				</PriceItem>
 				<PriceItem>
 					<h6>ETH Price</h6>
-					<PriceRow>
+					<FlexDivCentered>
 						<p>$5.91</p>
-						<ChangeRow isPositive={false}>
-							<ChangeNegative />
-							<p>3.45%</p>
-						</ChangeRow>
-					</PriceRow>
+						<FlexDivCentered>
+							{!isPositive ? <ChangePositive /> : <ChangeNegative />}
+							<ChangePrice isPositive={!isPositive}>3.45%</ChangePrice>
+						</FlexDivCentered>
+					</FlexDivCentered>
 				</PriceItem>
 			</PriceSection>
 		</SideNavContainer>
@@ -115,19 +117,19 @@ const PriceItem = styled.div`
 	}
 	p {
 		font-family: ${(props) => props.theme.fonts.mono};
-		text-transform: uppercase;
 		font-weight: 700;
 		font-size: 16px;
 		margin-right: 5px;
 	}
 `;
 
-const PriceRow = styled(FlexDivCentered)``;
-
-const ChangeRow = styled(FlexDivCentered)<{ isPositive: boolean }>`
-	p {
-		margin-left: 5px;
-	}
+const ChangePrice = styled.div<{ isPositive: boolean }>`
+	/* @TODO: Import Inter Font */
+	font-family: ${(props) => props.theme.fonts.mono};
+	font-weight: 700;
+	font-size: 10px;
+	color: ${(props) => (props.isPositive ? props.theme.colors.green : props.theme.colors.red)};
+	margin-left: 5px;
 `;
 
 export default SideNav;
