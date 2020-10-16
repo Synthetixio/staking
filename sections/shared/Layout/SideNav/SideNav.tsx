@@ -5,7 +5,7 @@ import Link from 'next/link';
 
 import { useTranslation } from 'react-i18next';
 
-import { FlexDiv, FlexDivCentered, FlexDivRowCentered, linkCSS } from 'styles/common';
+import { FlexDivCentered, linkCSS } from 'styles/common';
 import StakingLogo from 'assets/inline-svg/app/staking-logo.svg';
 import ChangePositive from 'assets/inline-svg/app/change-positive.svg';
 import ChangeNegative from 'assets/inline-svg/app/change-negative.svg';
