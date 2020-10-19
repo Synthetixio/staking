@@ -1,7 +1,7 @@
 import Head from 'next/head';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import { FlexDivCol, FlexDivColCentered, FlexDivRowCentered } from 'styles/common';
+import { FlexDiv, FlexDivCol, FlexDivColCentered, FlexDivRowCentered } from 'styles/common';
 import SNXStatBackground from 'assets/svg/snx-stat-background.svg';
 
 const DashboardPage = () => {
@@ -41,6 +41,16 @@ const DashboardPage = () => {
 						<StatTitle titleColor={'brightPink'}>{t('dashboard.stat-box.active-debt')}</StatTitle>
 						<StatValue>$13,461.23</StatValue>
 					</StatBox>
+
+					<BarStats>
+						<BarStatBox>
+							<BarHeaderSection>
+								<BarTitle></BarTitle>
+								{/* <BarPercentage></BarPercentage> */}
+							</BarHeaderSection>
+							<BarContent></BarContent>
+						</BarStatBox>
+					</BarStats>
 				</StatsSection>
 			</Content>
 		</>
@@ -75,5 +85,13 @@ const StatValue = styled.p`
 	font-size: 28px;
 	margin: 0;
 `;
+
+const BarStats = styled(FlexDiv)``;
+
+const BarStatBox = styled(FlexDivCol)``;
+
+const BarHeaderSection = styled(FlexDivRowCentered)``;
+const BarTitle = styled.p``;
+const BarContent = styled.div``;
 
 export default DashboardPage;
