@@ -5,18 +5,23 @@ import Link from 'next/link';
 
 import { useTranslation } from 'react-i18next';
 
-import { FlexDivCentered, linkCSS } from 'styles/common';
+import { FlexDivCol, linkCSS } from 'styles/common';
 import StakingLogo from 'assets/inline-svg/app/staking-logo.svg';
-import ChangePositive from 'assets/inline-svg/app/change-positive.svg';
-import ChangeNegative from 'assets/inline-svg/app/change-negative.svg';
 
 import { MENU_LINKS } from '../constants';
+import CurrencyPrice from 'components/Currency/CurrencyPrice';
+import useCurrencyRatesQuery from 'queries/rates/useCurrencyRatesQuery';
+import useHistoricalRatesQuery from 'queries/rates/useHistoricalRatesQuery';
+import { Period } from 'constants/period';
 
 const SideNav: FC = () => {
 	const { t } = useTranslation();
 	const { asPath } = useRouter();
 
-	const isPositive = true;
+	const currencyRatesQuery = useCurrencyRatesQuery(['ETH', 'SNX']);
+	const currencyRates = currencyRatesQuery.data ?? null;
+	const ethHistoricalRate = useHistoricalRatesQuery('ETH', Period.ONE_DAY);
+	const snxHistoricalRate = useHistoricalRatesQuery('SNX', Period.ONE_DAY);
 
 	return (
 		<SideNavContainer>
@@ -37,23 +42,21 @@ const SideNav: FC = () => {
 			<PriceSection>
 				<PriceItem>
 					<h6>SNX Price</h6>
-					<FlexDivCentered>
-						<p>$5.91</p>
-						<FlexDivCentered>
-							{isPositive ? <ChangePositive /> : <ChangeNegative />}
-							<ChangePrice isPositive={isPositive}>5.45%</ChangePrice>
-						</FlexDivCentered>
-					</FlexDivCentered>
+					<StyledCurrencyPrice
+						currencyKey={'SNX'}
+						price={currencyRates?.SNX ?? 0}
+						sign="$"
+						change={snxHistoricalRate?.data?.change}
+					/>
 				</PriceItem>
 				<PriceItem>
 					<h6>ETH Price</h6>
-					<FlexDivCentered>
-						<p>$5.91</p>
-						<FlexDivCentered>
-							{!isPositive ? <ChangePositive /> : <ChangeNegative />}
-							<ChangePrice isPositive={!isPositive}>3.45%</ChangePrice>
-						</FlexDivCentered>
-					</FlexDivCentered>
+					<StyledCurrencyPrice
+						currencyKey={'ETH'}
+						price={currencyRates?.ETH ?? 0}
+						sign="$"
+						change={ethHistoricalRate?.data?.change}
+					/>
 				</PriceItem>
 			</PriceSection>
 		</SideNavContainer>
@@ -105,7 +108,7 @@ const PriceSection = styled.div`
 	padding: 20px 0px;
 `;
 
-const PriceItem = styled.div`
+const PriceItem = styled(FlexDivCol)`
 	margin: 10px 0px;
 
 	h6 {
@@ -123,13 +126,11 @@ const PriceItem = styled.div`
 	}
 `;
 
-const ChangePrice = styled.div<{ isPositive: boolean }>`
-	/* @TODO: Import Inter Font */
-	font-family: ${(props) => props.theme.fonts.mono};
-	font-weight: 700;
-	font-size: 10px;
-	color: ${(props) => (props.isPositive ? props.theme.colors.green : props.theme.colors.red)};
-	margin-left: 5px;
-`;
+const StyledCurrencyPrice = styled(CurrencyPrice)`
+	display: flex;
 
+	.price {
+		margin-right: 8px;
+	}
+`;
 export default SideNav;
