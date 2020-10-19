@@ -12,7 +12,12 @@
 		"page-title": "Staking | Earn with SNX"
 	},
 	"dashboard": {
-		"page-title": "Staking | Dashboard"
+		"page-title": "Staking | Dashboard",
+		"stat-box": {
+			"staked-value": "STAKED VALUE",
+			"earning": "EARNING",
+			"active-debt": "ACTIVE-DEBT"
+		}
 	},
 	"staking": {
 		"page-title": "Staking | Staking"
