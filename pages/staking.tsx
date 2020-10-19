@@ -8,7 +8,7 @@ const StakingPage = () => {
 	return (
 		<>
 			<Head>
-				<title>{t('Staking.page-title')}</title>
+				<title>{t('staking.page-title')}</title>
 			</Head>
 			<div>Staking</div>
 			<DeleteSection />

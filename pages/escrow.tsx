@@ -7,7 +7,7 @@ const EscrowPage = () => {
 	return (
 		<>
 			<Head>
-				<title>{t('Escrow.page-title')}</title>
+				<title>{t('escrow.page-title')}</title>
 			</Head>
 			<div>Escrow</div>
 		</>

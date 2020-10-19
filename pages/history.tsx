@@ -7,7 +7,7 @@ const HistoryPage = () => {
 	return (
 		<>
 			<Head>
-				<title>{t('History.page-title')}</title>
+				<title>{t('history.page-title')}</title>
 			</Head>
 			<div>History</div>
 		</>

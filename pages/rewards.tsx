@@ -7,7 +7,7 @@ const RewardsPage = () => {
 	return (
 		<>
 			<Head>
-				<title>{t('Rewards.page-title')}</title>
+				<title>{t('rewards.page-title')}</title>
 			</Head>
 			<div>Rewards</div>
 		</>
