@@ -14,13 +14,6 @@ const useCurrencyRatesQuery = (currencies: string[], options?: QueryConfig<Rates
 		async () => {
 			const currencyRates: Rates = {};
 
-			// const [synths, rates] = await synthetix.js?.contracts.SynthUtil.ratesForCurrencies();
-
-			// synths.forEach((synth: CurrencyKey, idx: number) => {
-			// 	const synthName = ethers.utils.parseBytes32String(synth) as CurrencyKey;
-			// 	currencyRates[synthName] = Number(ethers.utils.formatEther(rates[idx]));
-			// });
-
 			const mappedCurrencies = currencies.map((e) => ethers.utils.formatBytes32String(e!));
 			const rates = await synthetix.js?.contracts.ExchangeRates.ratesForCurrencies(
 				mappedCurrencies
