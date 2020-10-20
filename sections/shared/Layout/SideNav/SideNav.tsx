@@ -116,21 +116,20 @@ const PriceItem = styled(FlexDivCol)`
 		font-size: 16px;
 		font-weight: 400;
 		color: ${(props) => props.theme.colors.silver};
-		margin: 0;
-	}
-	p {
-		font-family: ${(props) => props.theme.fonts.mono};
-		font-weight: 700;
-		font-size: 16px;
-		margin-right: 5px;
+		margin: 0px 0px 4px 0px;
 	}
 `;
 
 const StyledCurrencyPrice = styled(CurrencyPrice)`
 	display: flex;
-
 	.price {
 		margin-right: 8px;
+		font-family: ${(props) => props.theme.fonts.mono};
+		width: 85px;
+	}
+	.percent {
+		font-family: ${(props) => props.theme.fonts.interBold};
+		font-size: 10px;
 	}
 `;
 export default SideNav;

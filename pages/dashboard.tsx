@@ -24,11 +24,25 @@ const DashboardPage = () => {
 
 	// const activeDebt =
 
-	const returnActionBox = () => (
-		<ActionBox>
+	const ACTIONS = [
+		{
+			icon: '',
+			copy: 'Mint 2,349 sUSD by Staking 6,371.34 SNX',
+			action: 'MINT',
+			link: '/',
+		},
+	];
+
+	const returnActionBox = (
+		{ icon, copy, link, action }: { icon: string; copy: string; link: string; action: string },
+		index: number
+	) => (
+		<ActionBox key={index}>
 			<ActionIcon>{icon}</ActionIcon>
-			<ActionCopy>{icon}</ActionCopy>
-			<ActionButton href={link}>{copy}</ActionButton>
+			<ActionCopy>{copy}</ActionCopy>
+			<ActionButton as="a" href={link}>
+				{action}
+			</ActionButton>
 		</ActionBox>
 	);
 
@@ -108,6 +122,7 @@ const DashboardPage = () => {
 				</BarStats>
 				<Actions>
 					<ActionTitle>{t('dashboard.actions.title')}</ActionTitle>
+					{ACTIONS.map((action, i) => returnActionBox(action, i))}
 				</Actions>
 			</Content>
 		</>
@@ -172,7 +187,11 @@ const ActionTitle = styled.p`
 	text-align: left;
 `;
 
-const ActionBox = styled(FlexDivCentered)``;
+const ActionBox = styled(FlexDivCentered)`
+	background: rgba(9, 9, 47, 0.8);
+	box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.4);
+	border-radius: 4px;
+`;
 
 const ActionIcon = styled.div``;
 
