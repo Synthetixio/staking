@@ -20,7 +20,10 @@
 		},
 		"bar": {
 			"c-ratio": "COLLATERALIZATION RATIO",
-			"period": "PERIOD REMAINING"
+			"period": {
+				"title": "PERIOD REMAINING",
+				"tag": "CLAIMED"
+			}
 		},
 		"actions": {
 			"title": "POSSIBLE ACTIONS"

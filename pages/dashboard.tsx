@@ -10,41 +10,57 @@ import {
 } from 'styles/common';
 import SNXStatBackground from 'assets/svg/snx-stat-background.svg';
 import ProgressBar from 'components/ProgressBar';
+import Mint from 'assets/inline-svg/app/mint.svg';
+import Burn from 'assets/inline-svg/app/burn.svg';
+import Stake from 'assets/inline-svg/app/stake.svg';
+import Trade from 'assets/inline-svg/app/trade.svg';
 
 const DashboardPage = () => {
 	const { t } = useTranslation();
 	const theme = useTheme();
 
-	// const totalValueLocked = 	SNXPercentLocked * SNXTotalSupply * (SNXPrice ?? 0)
-
-	// 	const currentSnxStakingApy = (((sUSDPrice ?? 0) * currentFeePeriod.feesToDistribute +
-	// 	(SNXPrice ?? 0) * currentFeePeriod.rewardsToDistribute) *
-	// 	52) /
-	// SNXValueStaked;
-
-	// const activeDebt =
-
 	const ACTIONS = [
 		{
-			icon: '',
+			icon: () => <Mint />,
 			copy: 'Mint 2,349 sUSD by Staking 6,371.34 SNX',
 			action: 'MINT',
+			link: '/',
+		},
+		{
+			icon: () => <Burn />,
+			copy: 'Burn 501 sUSD, lowering your debt, so that 468 SNX can be transfered',
+			action: 'BURN',
+			link: '/',
+		},
+		{
+			icon: () => <Stake />,
+			copy: 'Earn 13.49% on your sETH',
+			action: 'STAKE IETH',
+			link: '/',
+		},
+		{
+			icon: () => <Trade />,
+			copy: 'Trade sUSD for sDEFI and gain exposure to DeFi Tokens',
+			action: 'TRADE',
 			link: '/',
 		},
 	];
 
 	const returnActionBox = (
-		{ icon, copy, link, action }: { icon: string; copy: string; link: string; action: string },
+		{ icon, copy, link, action }: { icon: any; copy: string; link: string; action: string },
 		index: number
 	) => (
 		<ActionBox key={index}>
-			<ActionIcon>{icon}</ActionIcon>
+			<ActionIcon>{icon()}</ActionIcon>
 			<ActionCopy>{copy}</ActionCopy>
 			<ActionButton as="a" href={link}>
 				{action}
 			</ActionButton>
 		</ActionBox>
 	);
+
+	// @TODO: Remove hardcoded claim value
+	const claimed = true;
 
 	return (
 		<>
@@ -63,10 +79,7 @@ const DashboardPage = () => {
 						<StatTitle titleColor={theme.colors.brightBlue}>
 							{t('dashboard.stat-box.staked-value')}
 						</StatTitle>
-						<StatValue>
-							{/* {SNXPercentLocked * SNXTotalSupply * (SNXPrice ?? 0)} */}
-							$134,234
-						</StatValue>
+						<StatValue>$134,234</StatValue>
 					</StatBox>
 
 					<StatBox
@@ -109,7 +122,10 @@ const DashboardPage = () => {
 					</BarStatBox>
 					<BarStatBox key="PERIOD">
 						<BarHeaderSection>
-							<BarTitle>{t('dashboard.bar.period')}</BarTitle>
+							<BarTitle>
+								{t('dashboard.bar.period.title')} &bull;{' '}
+								{claimed && <Tag>{t('dashboard.bar.period.tag')}</Tag>}
+							</BarTitle>
 							<BarValue>56:35:10</BarValue>
 						</BarHeaderSection>
 						<ProgressBar
@@ -145,14 +161,14 @@ const StatBox = styled(FlexDivColCentered)`
 `;
 
 const StatTitle = styled.p<{ titleColor: string }>`
-	font-family: ${(props) => props.theme.fonts.mono};
+	font-family: ${(props) => props.theme.fonts.condensedMedium};
 	font-size: 14px;
 	color: ${(props) => props.titleColor};
 	margin: 0;
 `;
 
 const StatValue = styled.p`
-	font-family: ${(props) => props.theme.fonts.condensedBold};
+	font-family: ${(props) => props.theme.fonts.expanded};
 	font-size: 28px;
 	margin: 0;
 `;
@@ -167,7 +183,7 @@ const BarStatBox = styled(FlexDivCol)`
 const BarHeaderSection = styled(FlexDivRowCentered)`
 	justify-content: space-between;
 `;
-const BarTitle = styled.p`
+const BarTitle = styled(FlexDivCentered)`
 	font-size: 14px;
 	font-family: ${(props) => props.theme.fonts.condensedMedium};
 	color: ${(props) => props.theme.colors.silver};
@@ -176,6 +192,12 @@ const BarValue = styled.p`
 	font-size: 16px;
 	color: ${(props) => props.theme.colors.white};
 	font-family: ${(props) => props.theme.fonts.mono};
+`;
+
+const Tag = styled.div`
+	color: ${(props) => props.theme.colors.brightGreen};
+	font-size: 14px;
+	margin-left: 4px;
 `;
 
 const Actions = styled(FlexDivCol)``;
@@ -191,36 +213,35 @@ const ActionBox = styled(FlexDivCentered)`
 	background: rgba(9, 9, 47, 0.8);
 	box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.4);
 	border-radius: 4px;
+	margin-bottom: 16px;
+	padding: 20px;
 `;
 
-const ActionIcon = styled.div``;
+const ActionIcon = styled(FlexDivRowCentered)`
+	width: 100px;
+	justify-content: center;
+`;
 
-const ActionCopy = styled.p``;
+const ActionCopy = styled.p`
+	font-family: ${(props) => props.theme.fonts.interSemiBold};
+	font-size: 14px;
+	width: 75%;
+`;
 
-const ActionButton = styled.div`
+const ActionButton = styled(FlexDivRowCentered)`
 	width: 161px;
 	height: 48px;
-
 	background: #0c2344;
-	border: 1px solid #00d1ff;
+	border: ${(props) => `1px solid ${props.theme.colors.brightBlue}`};
 	box-sizing: border-box;
 	box-shadow: 0px 0px 10px rgba(0, 209, 255, 0.9);
 	border-radius: 4px;
-
-	span {
-		font-family: GT America;
-		font-style: normal;
-		font-weight: bold;
-		font-size: 12px;
-		line-height: 24px;
-
-		display: flex;
-		align-items: center;
-		text-align: center;
-		text-transform: uppercase;
-
-		color: #00d1ff;
-	}
+	color: ${(props) => props.theme.colors.brightBlue};
+	font-family: ${(props) => props.theme.fonts.condensedBold};
+	font-size: 12px;
+	text-decoration: none;
+	text-align: center;
+	justify-content: center;
 `;
 
 export default DashboardPage;
