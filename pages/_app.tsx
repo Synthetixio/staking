@@ -17,6 +17,17 @@ import '@reach/accordion/styles.css';
 
 import Layout from 'sections/shared/Layout';
 import { MediaContextProvider } from 'styles/media';
+import { QueryCache, ReactQueryCacheProvider } from 'react-query';
+import { DEFAULT_REQUEST_REFRESH_INTERVAL } from 'constants/defaults';
+import { ReactQueryDevtools } from 'react-query-devtools';
+
+const queryCache = new QueryCache({
+	defaultConfig: {
+		queries: {
+			refetchInterval: DEFAULT_REQUEST_REFRESH_INTERVAL,
+		},
+	},
+});
 
 const App: FC<AppProps> = ({ Component, pageProps }) => {
 	const { t } = useTranslation();
@@ -26,9 +37,12 @@ const App: FC<AppProps> = ({ Component, pageProps }) => {
 				<SCThemeProvider theme={theme}>
 					<MuiThemeProvider theme={muiTheme}>
 						<WithStateContainers>
-							<Layout>
-								<Component {...pageProps} />
-							</Layout>
+							<ReactQueryCacheProvider queryCache={queryCache}>
+								<Layout>
+									<Component {...pageProps} />
+								</Layout>
+								<ReactQueryDevtools />
+							</ReactQueryCacheProvider>
 						</WithStateContainers>
 					</MuiThemeProvider>
 				</SCThemeProvider>
