@@ -9,16 +9,26 @@ import {
 	FlexDivRowCentered,
 } from 'styles/common';
 import SNXStatBackground from 'assets/svg/snx-stat-background.svg';
+import useGetDebtDataQuery from 'queries/debt/useGetDebtDataQuery';
+import useSNXBalanceQuery from 'queries/walletBalances/useSNXBalanceQuery';
 import ProgressBar from 'components/ProgressBar';
 import Mint from 'assets/inline-svg/app/mint.svg';
 import Burn from 'assets/inline-svg/app/burn.svg';
 import Stake from 'assets/inline-svg/app/stake.svg';
 import Trade from 'assets/inline-svg/app/trade.svg';
+import useGetFeePoolDataQuery from 'queries/staking/useGetFeePoolDataQuery';
+import useCurrencyRatesQuery from 'queries/rates/useCurrencyRatesQuery';
+import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
+import useSNXTotalSupply from 'queries/network/useSNXTotalSupply';
+import { formatPercent } from 'utils/formatters/number';
+import { format } from 'date-fns';
 
 const DashboardPage = () => {
 	const { t } = useTranslation();
 	const theme = useTheme();
 
+	const debtDataQuery = useGetDebtDataQuery();
+	const snxBalanceQuery = useSNXBalanceQuery();
 	const ACTIONS = [
 		{
 			icon: () => <Mint />,
@@ -62,6 +72,45 @@ const DashboardPage = () => {
 	// @TODO: Remove hardcoded claim value
 	const claimed = true;
 
+	const currentCRatio = debtDataQuery.data?.currentCRatio;
+	const targetCRatio = debtDataQuery.data?.targetCRatio;
+	const activeDebt = debtDataQuery.data?.debtBalance;
+	const stakedValue = snxBalanceQuery.data?.balance
+		? snxBalanceQuery.data.balance * Math.min(1, currentCRatio / targetCRatio)
+		: 0;
+
+	const currencyRates = useCurrencyRatesQuery(['SNX']);
+	const exchangeRates = useExchangeRatesQuery();
+
+	const currentFeePeriod = useGetFeePoolDataQuery('0');
+	const previousFeePeriod = useGetFeePoolDataQuery('1');
+
+	const ONE_WEEK_EPOCH = 604800;
+	const nextFeePeriodStarts = currentFeePeriod.data?.startTime + ONE_WEEK_EPOCH;
+	const hoursLeftInPeriod = (nextFeePeriodStarts - new Date().getTime() / 1000) / 60 / 60;
+
+	// const currentFeePeriod = useGetFeePoolDataQuery(1);
+
+	const totalSNXSupplyQuery = useSNXTotalSupply();
+
+	// @TODO: Find how to get these values
+	// const percentLocked = snxLocked / snxTotal;
+	// const percentLocked = 0.1;
+
+	// const SNXValueStaked = totalSNXSupplyQuery?.data * percentLocked;
+
+	// const stakingApy =
+	// 	(((exchangeRates?.data['sUSD'] ?? 0) * currentFeePeriod?.data?.feesToDistribute +
+	// 		(currencyRates?.data.SNX ?? 0) * currentFeePeriod?.data?.rewardsToDistribute) *
+	// 		52) /
+	// 	SNXValueStaked;
+
+	// console.log(nextFeePeriod.data);
+
+	// console.log(format(new Date(nextFeePeriod.data.?startTime), 'MMMM dd'));
+
+	// console.log(new Date())
+	// console.log(new Date(newFeePeriod.data?.startTime.sub(currentFeePeriod.data?.startTime)));
 	return (
 		<>
 			<Head>
@@ -79,7 +128,7 @@ const DashboardPage = () => {
 						<StatTitle titleColor={theme.colors.brightBlue}>
 							{t('dashboard.stat-box.staked-value')}
 						</StatTitle>
-						<StatValue>$134,234</StatValue>
+						<StatValue>{stakedValue}</StatValue>
 					</StatBox>
 
 					<StatBox
@@ -91,7 +140,7 @@ const DashboardPage = () => {
 						<StatTitle titleColor={theme.colors.brightGreen}>
 							{t('dashboard.stat-box.earning')}
 						</StatTitle>
-						<StatValue>6.14%</StatValue>
+						{/* <StatValue>{formatPercent(stakingApy / 100)}</StatValue> */}
 					</StatBox>
 
 					<StatBox
@@ -103,7 +152,7 @@ const DashboardPage = () => {
 						<StatTitle titleColor={theme.colors.brightPink}>
 							{t('dashboard.stat-box.active-debt')}
 						</StatTitle>
-						<StatValue>$13,461.23</StatValue>
+						<StatValue>{activeDebt}</StatValue>
 					</StatBox>
 				</StatsSection>
 
@@ -111,10 +160,10 @@ const DashboardPage = () => {
 					<BarStatBox key="CRATIO">
 						<BarHeaderSection>
 							<BarTitle>{t('dashboard.bar.c-ratio')}</BarTitle>
-							<BarValue>622%</BarValue>
+							<BarValue>{currentCRatio / 100}%</BarValue>
 						</BarHeaderSection>
 						<ProgressBar
-							percentage={0.5}
+							percentage={currentCRatio / targetCRatio}
 							borderColor={theme.colors.brightPink}
 							fillColor={theme.colors.brightBlue}
 							glowColor={`0px 0px 15px rgba(77, 244, 184, 0.25);`}
@@ -126,7 +175,7 @@ const DashboardPage = () => {
 								{t('dashboard.bar.period.title')} &bull;{' '}
 								{claimed && <Tag>{t('dashboard.bar.period.tag')}</Tag>}
 							</BarTitle>
-							<BarValue>56:35:10</BarValue>
+							<BarValue>{hoursLeftInPeriod}</BarValue>
 						</BarHeaderSection>
 						<ProgressBar
 							percentage={0.8}

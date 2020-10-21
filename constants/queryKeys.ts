@@ -3,6 +3,17 @@ import { CurrencyKey } from './currency';
 import { Period } from './period';
 
 export const QUERY_KEYS = {
+	Debt: {
+		WalletDebtData: (walletAddress: string, networkId: NetworkId) => [
+			'debt',
+			'walletDebtData',
+			walletAddress,
+			networkId,
+		],
+	},
+	Staking: {
+		FeePoolData: (period: string) => ['staking', 'feePoolData', period],
+	},
 	Rates: {
 		HistoricalVolume: (currencyKey: CurrencyKey, period: Period) => [
 			'rates',
@@ -23,6 +34,7 @@ export const QUERY_KEYS = {
 	},
 	Network: {
 		EthGasStation: ['network', 'ethGasStation'],
+		SNXTotalSupply: ['network', 'snxTotalSupply'],
 	},
 	WalletBalances: {
 		Synths: (walletAddress: string, networkId: NetworkId) => [
@@ -34,6 +46,12 @@ export const QUERY_KEYS = {
 		ETH: (walletAddress: string, networkId: NetworkId) => [
 			'walletBalances',
 			'ETH',
+			walletAddress,
+			networkId,
+		],
+		SNX: (walletAddress: string, networkId: NetworkId) => [
+			'walletBalances',
+			'SNX',
 			walletAddress,
 			networkId,
 		],

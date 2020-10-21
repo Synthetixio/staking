@@ -1,0 +1,39 @@
+import { useQuery, QueryConfig } from 'react-query';
+
+import synthetix from 'lib/synthetix';
+
+import QUERY_KEYS from 'constants/queryKeys';
+
+export type FeePoolData = {
+	startTime: number;
+	feesToDistribute: number;
+	feesClaimed: number;
+	rewardsToDistribute: number;
+	rewardsClaimed: number;
+};
+
+const useGetFeePoolDataQuery = (period: string, options?: QueryConfig<FeePoolData>) => {
+	return useQuery<FeePoolData>(
+		QUERY_KEYS.Staking.FeePoolData(period),
+		async () => {
+			const {
+				contracts: { FeePool },
+				utils: { formatEther },
+			} = synthetix.js as any;
+			const feePeriod = await FeePool.recentFeePeriods(period);
+			return {
+				startTime: Number(feePeriod.startTime) || 0,
+				feesToDistribute: Number(formatEther(feePeriod.feesToDistribute)) || 0,
+				feesClaimed: Number(formatEther(feePeriod.feesClaimed)) || 0,
+				rewardsToDistribute: Number(formatEther(feePeriod.rewardsToDistribute)) || 0,
+				rewardsClaimed: Number(formatEther(feePeriod.rewardsClaimed)) || 0,
+			};
+		},
+		{
+			enabled: synthetix.js && period,
+			...options,
+		}
+	);
+};
+
+export default useGetFeePoolDataQuery;
