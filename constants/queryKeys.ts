@@ -11,6 +11,9 @@ export const QUERY_KEYS = {
 			networkId,
 		],
 	},
+	Staking: {
+		FeePoolData: (period: string) => ['staking', 'feePoolData', period],
+	},
 	Rates: {
 		HistoricalVolume: (currencyKey: CurrencyKey, period: Period) => [
 			'rates',
@@ -31,6 +34,7 @@ export const QUERY_KEYS = {
 	},
 	Network: {
 		EthGasStation: ['network', 'ethGasStation'],
+		SNXTotalSupply: ['network', 'snxTotalSupply'],
 	},
 	WalletBalances: {
 		Synths: (walletAddress: string, networkId: NetworkId) => [

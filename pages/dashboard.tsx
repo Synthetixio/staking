@@ -16,6 +16,12 @@ import Mint from 'assets/inline-svg/app/mint.svg';
 import Burn from 'assets/inline-svg/app/burn.svg';
 import Stake from 'assets/inline-svg/app/stake.svg';
 import Trade from 'assets/inline-svg/app/trade.svg';
+import useGetFeePoolDataQuery from 'queries/staking/useGetFeePoolDataQuery';
+import useCurrencyRatesQuery from 'queries/rates/useCurrencyRatesQuery';
+import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
+import useSNXTotalSupply from 'queries/network/useSNXTotalSupply';
+import { formatPercent } from 'utils/formatters/number';
+import { format } from 'date-fns';
 
 const DashboardPage = () => {
 	const { t } = useTranslation();
@@ -73,6 +79,38 @@ const DashboardPage = () => {
 		? snxBalanceQuery.data.balance * Math.min(1, currentCRatio / targetCRatio)
 		: 0;
 
+	const currencyRates = useCurrencyRatesQuery(['SNX']);
+	const exchangeRates = useExchangeRatesQuery();
+
+	const currentFeePeriod = useGetFeePoolDataQuery('0');
+	const previousFeePeriod = useGetFeePoolDataQuery('1');
+
+	const ONE_WEEK_EPOCH = 604800;
+	const nextFeePeriodStarts = currentFeePeriod.data?.startTime + ONE_WEEK_EPOCH;
+	const hoursLeftInPeriod = (nextFeePeriodStarts - new Date().getTime() / 1000) / 60 / 60;
+
+	// const currentFeePeriod = useGetFeePoolDataQuery(1);
+
+	const totalSNXSupplyQuery = useSNXTotalSupply();
+
+	// @TODO: Find how to get these values
+	// const percentLocked = snxLocked / snxTotal;
+	// const percentLocked = 0.1;
+
+	// const SNXValueStaked = totalSNXSupplyQuery?.data * percentLocked;
+
+	// const stakingApy =
+	// 	(((exchangeRates?.data['sUSD'] ?? 0) * currentFeePeriod?.data?.feesToDistribute +
+	// 		(currencyRates?.data.SNX ?? 0) * currentFeePeriod?.data?.rewardsToDistribute) *
+	// 		52) /
+	// 	SNXValueStaked;
+
+	// console.log(nextFeePeriod.data);
+
+	// console.log(format(new Date(nextFeePeriod.data.?startTime), 'MMMM dd'));
+
+	// console.log(new Date())
+	// console.log(new Date(newFeePeriod.data?.startTime.sub(currentFeePeriod.data?.startTime)));
 	return (
 		<>
 			<Head>
@@ -102,7 +140,7 @@ const DashboardPage = () => {
 						<StatTitle titleColor={theme.colors.brightGreen}>
 							{t('dashboard.stat-box.earning')}
 						</StatTitle>
-						<StatValue>6.14%</StatValue>
+						{/* <StatValue>{formatPercent(stakingApy / 100)}</StatValue> */}
 					</StatBox>
 
 					<StatBox
@@ -137,7 +175,7 @@ const DashboardPage = () => {
 								{t('dashboard.bar.period.title')} &bull;{' '}
 								{claimed && <Tag>{t('dashboard.bar.period.tag')}</Tag>}
 							</BarTitle>
-							<BarValue>56:35:10</BarValue>
+							<BarValue>{hoursLeftInPeriod}</BarValue>
 						</BarHeaderSection>
 						<ProgressBar
 							percentage={0.8}
