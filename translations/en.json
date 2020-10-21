@@ -17,6 +17,16 @@
 			"staked-value": "STAKED VALUE",
 			"earning": "EARNING",
 			"active-debt": "ACTIVE-DEBT"
+		},
+		"bar": {
+			"c-ratio": "COLLATERALIZATION RATIO",
+			"period": {
+				"title": "PERIOD REMAINING",
+				"tag": "CLAIMED"
+			}
+		},
+		"actions": {
+			"title": "POSSIBLE ACTIONS"
 		}
 	},
 	"staking": {
