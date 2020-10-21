@@ -26,7 +26,22 @@
 			}
 		},
 		"actions": {
-			"title": "POSSIBLE ACTIONS"
+			"title": "Possible Actions",
+			"claim": {
+				"title": "Claim {{amount}} SNX",
+				"copy": "Claim your rewards before the period ends.",
+				"action": "Claim"
+			},
+			"stake": {
+				"title": "Stake",
+				"copy": "Mint {{sUSDAmount}} sUSD by Staking {{SNXAmount}} SNX.",
+				"action": "Stake SNX"
+			},
+			"earn": {
+				"title": "Earn {{percent}}",
+				"copy": "Use your sETH for the Liquidity Incentive.",
+				"action": "Earn"
+			}
 		}
 	},
 	"staking": {

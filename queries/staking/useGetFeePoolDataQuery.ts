@@ -1,4 +1,5 @@
 import { useQuery, QueryConfig } from 'react-query';
+import { SynthetixJS } from '@synthetixio/js';
 
 import synthetix from 'lib/synthetix';
 
@@ -19,7 +20,7 @@ const useGetFeePoolDataQuery = (period: string, options?: QueryConfig<FeePoolDat
 			const {
 				contracts: { FeePool },
 				utils: { formatEther },
-			} = synthetix.js as any;
+			} = synthetix.js as SynthetixJS;
 			const feePeriod = await FeePool.recentFeePeriods(period);
 			return {
 				startTime: Number(feePeriod.startTime) || 0,
