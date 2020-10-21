@@ -3,10 +3,19 @@ import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { FlexDiv, FlexDivCol, FlexDivColCentered, FlexDivRowCentered } from 'styles/common';
 import SNXStatBackground from 'assets/svg/snx-stat-background.svg';
+import useGetDebtDataQuery from 'queries/debt/useGetDebtDataQuery';
+import useSNXBalanceQuery from 'queries/walletBalances/useSNXBalanceQuery';
 
 const DashboardPage = () => {
 	const { t } = useTranslation();
+	const debtDataQuery = useGetDebtDataQuery();
+	const snxBalanceQuery = useSNXBalanceQuery();
 
+	const stakedValue = snxBalanceQuery?.data?.balance
+		? snxBalanceQuery.data.balance *
+		  Math.min(1, debtDataQuery.data.currentCRatio / debtDataQuery.data.targetCRatio)
+		: 0;
+	const activeDebt = debtDataQuery.data?.debtBalance;
 	return (
 		<>
 			<Head>
@@ -21,7 +30,7 @@ const DashboardPage = () => {
 						}}
 					>
 						<StatTitle titleColor={'brightBlue'}>{t('dashboard.stat-box.staked-value')}</StatTitle>
-						<StatValue>$104, 128.31</StatValue>
+						<StatValue>{stakedValue}</StatValue>
 					</StatBox>
 
 					<StatBox
@@ -39,7 +48,7 @@ const DashboardPage = () => {
 						}}
 					>
 						<StatTitle titleColor={'brightPink'}>{t('dashboard.stat-box.active-debt')}</StatTitle>
-						<StatValue>$13,461.23</StatValue>
+						<StatValue>{activeDebt}</StatValue>
 					</StatBox>
 
 					<BarStats>
