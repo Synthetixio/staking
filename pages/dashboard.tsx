@@ -66,10 +66,12 @@ const DashboardPage = () => {
 	// @TODO: Remove hardcoded claim value
 	const claimed = true;
 
-	const currentCRatio = debtDataQuery.data.currentCRatio;
-	const targetCRatio = debtDataQuery.data.targetCRatio;
-	const activeDebt = debtDataQuery.data.debtBalance;
-	const stakedValue = activeDebt ? activeDebt * Math.min(1, currentCRatio / targetCRatio) : 0;
+	const currentCRatio = debtDataQuery.data?.currentCRatio;
+	const targetCRatio = debtDataQuery.data?.targetCRatio;
+	const activeDebt = debtDataQuery.data?.debtBalance;
+	const stakedValue = snxBalanceQuery.data?.balance
+		? snxBalanceQuery.data.balance * Math.min(1, currentCRatio / targetCRatio)
+		: 0;
 
 	return (
 		<>
@@ -123,7 +125,7 @@ const DashboardPage = () => {
 							<BarValue>{currentCRatio / 100}%</BarValue>
 						</BarHeaderSection>
 						<ProgressBar
-							percentage={0.5}
+							percentage={currentCRatio / targetCRatio}
 							borderColor={theme.colors.brightPink}
 							fillColor={theme.colors.brightBlue}
 							glowColor={`0px 0px 15px rgba(77, 244, 184, 0.25);`}
