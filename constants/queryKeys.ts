@@ -10,6 +10,12 @@ export const QUERY_KEYS = {
 			walletAddress,
 			networkId,
 		],
+		DebtSnapshot: (walletAddress: string, networkId: NetworkId) => [
+			'debt',
+			'debtSnapshot',
+			walletAddress,
+			networkId,
+		],
 	},
 	Staking: {
 		FeePoolData: (period: string) => ['staking', 'feePoolData', period],

@@ -22,7 +22,8 @@
 			"c-ratio": "COLLATERALIZATION RATIO",
 			"period": {
 				"title": "PERIOD REMAINING",
-				"tag": "CLAIMED"
+				"claimed": "Claimed",
+				"unclaimed": "Unclaimed"
 			}
 		},
 		"actions": {

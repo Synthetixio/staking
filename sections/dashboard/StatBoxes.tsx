@@ -4,20 +4,20 @@ import { useTranslation } from 'react-i18next';
 
 import { FlexDivColCentered, FlexDivRowCentered } from 'styles/common';
 import SNXStatBackground from 'assets/svg/snx-stat-background.svg';
-import { formatCryptoCurrency, formatFiatCurrency } from 'utils/formatters/number';
+import { formatCryptoCurrency, formatFiatCurrency, formatPercent } from 'utils/formatters/number';
 import { DEFAULT_CRYPTO_DECIMALS, DEFAULT_FIAT_DECIMALS } from 'constants/defaults';
 
 interface StatBoxesProps {
+	stakingApy: number;
 	stakedValue: number;
 	activeDebt: any;
 }
 
-const StatBoxes: FC<StatBoxesProps> = ({ stakedValue, activeDebt }) => {
+const StatBoxes: FC<StatBoxesProps> = ({ stakedValue, activeDebt, stakingApy }) => {
 	const { t } = useTranslation();
 	const theme = useTheme();
 	return (
 		<StatsSection>
-			{/* @TODO Refactor to StatBox.tsx */}
 			<StatBox
 				key={'staked-value'}
 				style={{
@@ -41,7 +41,7 @@ const StatBoxes: FC<StatBoxesProps> = ({ stakedValue, activeDebt }) => {
 				<StatTitle titleColor={theme.colors.brightGreen}>
 					{t('dashboard.stat-box.earning')}
 				</StatTitle>
-				{/* <StatValue>{formatPercent(stakingApy / 100)}</StatValue> */}
+				<StatValue>{formatPercent(stakingApy)}</StatValue>
 			</StatBox>
 
 			<StatBox
@@ -62,18 +62,19 @@ const StatBoxes: FC<StatBoxesProps> = ({ stakedValue, activeDebt }) => {
 };
 
 const StatsSection = styled(FlexDivRowCentered)`
-	justify-content: space-around;
-	width: 80%;
+	width: 100%;
+	justify-content: center;
 	margin: 0 auto;
 `;
 
 const StatBox = styled(FlexDivColCentered)`
 	height: 200px;
-	width: 200px;
+	width: 400px;
 	background-image: url('assets/svg/snx-stat-background.svg');
 	background-position: center;
 	background-repeat: no-repeat;
 	justify-content: center;
+	margin: 0px 20px;
 `;
 
 const StatTitle = styled.p<{ titleColor: string }>`

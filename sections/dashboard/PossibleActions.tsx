@@ -7,6 +7,7 @@ import Stake from 'assets/inline-svg/app/stake.svg';
 import Trade from 'assets/inline-svg/app/trade.svg';
 
 import { FlexDiv, FlexDivCentered, FlexDivCol, FlexDivRowCentered } from 'styles/common';
+import Link from 'next/link';
 
 type Action = {
 	icon: () => JSX.Element;
@@ -37,21 +38,21 @@ const PossibleActions: FC<PossibleActionsProps> = ({
 				title: t('dashboard.actions.claim.title', { amount: claimAmount }),
 				copy: t('dashboard.actions.claim.copy'),
 				action: t('dashboard.actions.claim.action'),
-				link: '/',
+				link: '/staking',
 			},
 			{
 				icon: () => <Stake />,
 				title: t('dashboard.actions.stake.title'),
 				copy: t('dashboard.actions.stake.copy', { sUSDAmount, SNXAmount }),
 				action: t('dashboard.actions.stake.action'),
-				link: '/',
+				link: '/staking',
 			},
 			{
 				icon: () => <Trade />,
 				title: t('dashboard.actions.earn.title', { percent: earnPercent }),
 				copy: t('dashboard.actions.earn.copy'),
 				action: t('dashboard.actions.earn.action'),
-				link: '/',
+				link: '/staking',
 			},
 		],
 		[claimAmount, sUSDAmount, SNXAmount, earnPercent]
@@ -66,9 +67,9 @@ const PossibleActions: FC<PossibleActionsProps> = ({
 						<ActionIcon>{icon()}</ActionIcon>
 						<ActionTitle>{title}</ActionTitle>
 						<ActionCopy>{copy}</ActionCopy>
-						<ActionButton as="a" href={link}>
-							{action}
-						</ActionButton>
+						<Link href={link}>
+							<ActionButton>{action}</ActionButton>
+						</Link>
 					</ActionBox>
 				))}
 			</ActionsContainer>
@@ -78,6 +79,7 @@ const PossibleActions: FC<PossibleActionsProps> = ({
 
 const PossibleActionsContainer = styled.div`
 	margin: 20px 0;
+	width: 100%;
 `;
 
 const PossibleActionsTitle = styled.div`
@@ -134,6 +136,7 @@ const ActionButton = styled.div`
 	text-align: center;
 	margin: 20px auto;
 	padding-top: 15px;
+	cursor: pointer;
 `;
 
 export default PossibleActions;
