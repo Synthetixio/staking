@@ -15,8 +15,8 @@ export const ROUTES = {
 	Synths: {
 		Home: '/synths',
 	},
-	Rewards: {
-		Home: '/rewards',
+	Earn: {
+		Home: '/earn',
 	},
 };
 
