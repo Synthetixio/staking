@@ -2,7 +2,7 @@ import { FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-import { Synths, Synth } from 'lib/synthetix';
+import { Synth } from 'lib/synthetix';
 
 import { Rates } from 'queries/rates/useExchangeRatesQuery';
 
@@ -29,7 +29,7 @@ export const CATEGORY_FILTERS = [
 
 type SelectSynthModalProps = {
 	onDismiss: () => void;
-	synths: Synths;
+	synths: Synth[];
 	exchangeRates: Rates | null;
 	onSelect: (currencyKey: CurrencyKey) => void;
 	selectedPriceCurrency: Synth;

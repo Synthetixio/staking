@@ -1,4 +1,5 @@
 import { useQuery, QueryConfig } from 'react-query';
+import { SynthetixJS } from '@synthetixio/js';
 
 import synthetix from 'lib/synthetix';
 
@@ -18,7 +19,7 @@ const useGetDebtDataQuery = (options?: QueryConfig<WalletDebtData>) => {
 			const {
 				contracts: { SystemSettings, Synthetix, SynthetixState },
 				utils,
-			} = synthetix.js as any;
+			} = synthetix.js as SynthetixJS;
 			const IssuanceRatioContract = network?.id === 5 ? SystemSettings : SynthetixState;
 			const result = await Promise.all([
 				IssuanceRatioContract.issuanceRatio(),

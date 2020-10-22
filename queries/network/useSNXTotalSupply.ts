@@ -1,4 +1,6 @@
 import { QueryConfig, useQuery } from 'react-query';
+import { SynthetixJS } from '@synthetixio/js';
+
 import synthetix from 'lib/synthetix';
 
 import QUERY_KEYS from 'constants/queryKeys';
@@ -10,7 +12,7 @@ const useSNXTotalSupply = (options?: QueryConfig<number>) => {
 			const {
 				contracts: { Synthetix },
 				utils,
-			} = synthetix.js as any;
+			} = synthetix.js as SynthetixJS;
 			const totalSupply = Number(utils.formatEther(await Synthetix.totalSupply()));
 			return totalSupply;
 		},

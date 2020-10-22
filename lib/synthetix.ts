@@ -1,4 +1,4 @@
-import initSynthetixJS, { NetworkId, Network } from '@synthetixio/js';
+import initSynthetixJS, { NetworkId, Network, Token, Synth, SynthetixJS } from '@synthetixio/js';
 import { ethers, Signer } from 'ethers';
 
 import keyBy from 'lodash/keyBy';
@@ -10,28 +10,6 @@ export const SUPPORTED_NETWORKS = {
 	[NetworkId.Rinkeby]: Network.Rinkeby,
 };
 
-export type Token = {
-	address: string;
-	asset?: string;
-	decimals: number;
-	feed?: string;
-	index?: Array<{
-		asset: string;
-		category: string;
-		description: string;
-		sign: string;
-		units: number;
-		weight: number;
-	}>;
-	inverted?: {
-		entryPoint: number;
-		lowerLimit: number;
-		upperLimit: number;
-	};
-	name: string;
-	symbol: string;
-};
-
 export type Feed = {
 	asset: string;
 	category: string;
@@ -40,23 +18,6 @@ export type Feed = {
 	feed?: string;
 	sign: string;
 };
-
-export type Synth = {
-	name: string;
-	asset: string;
-	category: string;
-	sign: string;
-	description: string;
-	aggregator?: string;
-	subclass?: string;
-	inverted?: {
-		entryPoint: number;
-		lowerLimit: number;
-		upperLimit: number;
-	};
-};
-
-export type Synths = Synth[];
 
 export type SynthsMap = Record<string, Synth>;
 
@@ -69,7 +30,7 @@ type ContractSettings = {
 };
 
 type Synthetix = {
-	js: ReturnType<typeof initSynthetixJS> | null;
+	js: SynthetixJS | null;
 	setContractSettings: (contractSettings: ContractSettings) => void;
 	synthsMap: SynthsMap | null;
 	tokensMap: TokensMap | null;
@@ -90,4 +51,5 @@ const synthetix: Synthetix = {
 	},
 };
 
+export type { Synth };
 export default synthetix;
