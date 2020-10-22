@@ -64,6 +64,9 @@ const SideNav: FC = () => {
 };
 
 const SideNavContainer = styled.div`
+	z-index: 1;
+	overflow-x: hidden;
+	padding-top: 20px;
 	height: 100%;
 	width: 180px;
 	position: absolute;
