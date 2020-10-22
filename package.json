@@ -32,6 +32,7 @@
 		"next-compose-plugins": "2.2.0",
 		"next-images": "1.4.0",
 		"react": "16.13.1",
+		"react-countdown": "2.3.0",
 		"react-dom": "16.13.1",
 		"react-i18next": "11.7.0",
 		"react-query": "2.23.0",

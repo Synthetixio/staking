@@ -22,7 +22,8 @@
 			"c-ratio": "COLLATERALIZATION RATIO",
 			"period": {
 				"title": "PERIOD REMAINING",
-				"tag": "CLAIMED"
+				"claimed": "Claimed",
+				"unclaimed": "Unclaimed"
 			}
 		},
 		"actions": {
@@ -47,8 +48,8 @@
 	"staking": {
 		"page-title": "Staking | Staking"
 	},
-	"rewards": {
-		"page-title": "Staking | Rewards"
+	"earn": {
+		"page-title": "Staking | Earn"
 	},
 	"escrow": {
 		"page-title": "Staking | Escrow"
@@ -60,8 +61,8 @@
 		"page-title": "Staking | Synths"
 	},
 	"sidenav": {
-		"dashboard": "Dashboard",
-		"rewards": "Rewards",
+		"dashboard": "Home",
+		"earn": "Earn",
 		"staking": "Staking",
 		"synths": "Synths",
 		"escrow": "Escrow",

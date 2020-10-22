@@ -12,19 +12,24 @@ const Layout: FC<LayoutProps> = ({ children }) => {
 	return (
 		<>
 			<GlobalStyle />
-			<SideNav />
-			<Header />
-			<SectionWrap>
-				<section>{children}</section>
-			</SectionWrap>
+			<Page>
+				<SideNav />
+				<Content>
+					<Header />
+					{children}
+				</Content>
+			</Page>
 		</>
 	);
 };
 
-const SectionWrap = styled.div`
-	position: absolute;
-	top: 60px;
-	left: 240px;
+const Page = styled.div`
+	flex: 1;
+`;
+
+const Content = styled.div`
+	margin-left: 220px; /* Same as the width of the sidebar */
+	padding: 0px 20px;
 `;
 
 const GlobalStyle = createGlobalStyle`
