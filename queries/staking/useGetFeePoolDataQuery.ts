@@ -6,6 +6,7 @@ import synthetix from 'lib/synthetix';
 import QUERY_KEYS from 'constants/queryKeys';
 
 export type FeePoolData = {
+	feePeriodDuration: number;
 	startTime: number;
 	feesToDistribute: number;
 	feesClaimed: number;
@@ -22,7 +23,9 @@ const useGetFeePoolDataQuery = (period: string, options?: QueryConfig<FeePoolDat
 				utils: { formatEther },
 			} = synthetix.js as SynthetixJS;
 			const feePeriod = await FeePool.recentFeePeriods(period);
+			const feePeriodDuration = await FeePool.feePeriodDuration();
 			return {
+				feePeriodDuration: Number(feePeriodDuration),
 				startTime: Number(feePeriod.startTime) || 0,
 				feesToDistribute: Number(formatEther(feePeriod.feesToDistribute)) || 0,
 				feesClaimed: Number(formatEther(feePeriod.feesClaimed)) || 0,

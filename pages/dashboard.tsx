@@ -13,15 +13,14 @@ import useGetFeePoolDataQuery from 'queries/staking/useGetFeePoolDataQuery';
 import useCurrencyRatesQuery from 'queries/rates/useCurrencyRatesQuery';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import useSNXTotalSupply from 'queries/network/useSNXTotalSupply';
+import useFeeClaimHistoryQuery from 'queries/staking/useFeeClaimHistoryQuery';
+import { useMemo } from 'react';
 
 const DashboardPage = () => {
 	const { t } = useTranslation();
 
 	const debtDataQuery = useGetDebtDataQuery();
 	const snxBalanceQuery = useSNXBalanceQuery();
-
-	// @TODO: Remove hardcoded claim value
-	const claimed = true;
 
 	const currentCRatio = debtDataQuery.data?.currentCRatio;
 	const targetCRatio = debtDataQuery.data?.targetCRatio;
@@ -36,13 +35,37 @@ const DashboardPage = () => {
 	const currentFeePeriod = useGetFeePoolDataQuery('0');
 	const previousFeePeriod = useGetFeePoolDataQuery('1');
 
-	const ONE_WEEK_EPOCH = 604800;
-	const nextFeePeriodStarts = currentFeePeriod.data?.startTime
-		? currentFeePeriod.data.startTime + ONE_WEEK_EPOCH
+	const nextFeePeriodStarts = new Date(
+		currentFeePeriod.data?.startTime
+			? (currentFeePeriod.data.startTime + currentFeePeriod.data.feePeriodDuration) * 1000
+			: 0
+	);
+
+	const currentFeePeriodStarts = new Date(
+		currentFeePeriod.data?.startTime ? currentFeePeriod.data.startTime * 1000 : 0
+	);
+
+	const currentFeePeriodProgress = currentFeePeriod.data?.startTime
+		? (Date.now() / 1000 - currentFeePeriod.data.startTime) /
+		  currentFeePeriod.data.feePeriodDuration
 		: 0;
-	const hoursLeftInPeriod = (nextFeePeriodStarts - new Date().getTime() / 1000) / 60 / 60;
 
 	const totalSNXSupplyQuery = useSNXTotalSupply();
+
+	const history = useFeeClaimHistoryQuery();
+
+	const checkClaimedStatus = useMemo(() => {
+		let claimed = false;
+		history.data?.feesClaimedHistory.map((tx) => {
+			const claimedDate = new Date(tx.timestamp);
+			if (claimedDate > currentFeePeriodStarts && claimedDate < nextFeePeriodStarts) {
+				claimed = true;
+			}
+		});
+		return claimed;
+	}, [history]);
+
+	const claimed = checkClaimedStatus;
 
 	// @TODO: Find how to get these values
 	// const percentLocked = snxLocked / snxTotal;
@@ -56,12 +79,6 @@ const DashboardPage = () => {
 	// 		52) /
 	// 	SNXValueStaked;
 
-	// console.log(nextFeePeriod.data);
-
-	// console.log(format(new Date(nextFeePeriod.data.?startTime), 'MMMM dd'));
-
-	// console.log(new Date())
-	// console.log(new Date(newFeePeriod.data?.startTime.sub(currentFeePeriod.data?.startTime)));
 	return (
 		<>
 			<Head>
@@ -73,7 +90,8 @@ const DashboardPage = () => {
 					currentCRatio={currentCRatio}
 					targetCRatio={targetCRatio}
 					claimed={claimed}
-					hoursLeftInPeriod={hoursLeftInPeriod}
+					nextFeePeriodStarts={nextFeePeriodStarts}
+					currentFeePeriodProgress={currentFeePeriodProgress}
 				/>
 				<PossibleActions claimAmount={20} sUSDAmount={2000} SNXAmount={400} earnPercent={0.15} />
 			</Content>

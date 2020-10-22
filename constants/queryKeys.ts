@@ -13,6 +13,11 @@ export const QUERY_KEYS = {
 	},
 	Staking: {
 		FeePoolData: (period: string) => ['staking', 'feePoolData', period],
+		FeeClaimHistory: (walletAddress: string, networkId: NetworkId) => [
+			'staking, feelClaimHistory',
+			walletAddress,
+			networkId,
+		],
 	},
 	Rates: {
 		HistoricalVolume: (currencyKey: CurrencyKey, period: Period) => [
