@@ -4,16 +4,17 @@ import { useTranslation } from 'react-i18next';
 
 import { FlexDivColCentered, FlexDivRowCentered } from 'styles/common';
 import SNXStatBackground from 'assets/svg/snx-stat-background.svg';
-import { formatCryptoCurrency, formatFiatCurrency, formatPercent } from 'utils/formatters/number';
+import { formatFiatCurrency, formatPercent } from 'utils/formatters/number';
 import { DEFAULT_CRYPTO_DECIMALS, DEFAULT_FIAT_DECIMALS } from 'constants/defaults';
 
-interface StatBoxesProps {
-	stakingApy: number;
+interface TripleStatBoxProps {
+	stakingApy?: number;
+	cRatio?: number;
 	stakedValue: number;
 	activeDebt: any;
 }
 
-const StatBoxes: FC<StatBoxesProps> = ({ stakedValue, activeDebt, stakingApy }) => {
+const TripleStatBox: FC<TripleStatBoxProps> = ({ stakedValue, activeDebt, stakingApy, cRatio }) => {
 	const { t } = useTranslation();
 	const theme = useTheme();
 	return (
@@ -25,24 +26,38 @@ const StatBoxes: FC<StatBoxesProps> = ({ stakedValue, activeDebt, stakingApy }) 
 				}}
 			>
 				<StatTitle titleColor={theme.colors.brightBlue}>
-					{t('dashboard.stat-box.staked-value')}
+					{t('common.stat-box.staked-value')}
 				</StatTitle>
 				<StatValue>
 					{formatFiatCurrency(stakedValue, { sign: '$', maxDecimals: DEFAULT_CRYPTO_DECIMALS })}
 				</StatValue>
 			</StatBox>
 
-			<StatBox
-				key={'earning'}
-				style={{
-					backgroundImage: `url(${SNXStatBackground})`,
-				}}
-			>
-				<StatTitle titleColor={theme.colors.brightGreen}>
-					{t('dashboard.stat-box.earning')}
-				</StatTitle>
-				<NeonValue>{formatPercent(stakingApy)}</NeonValue>
-			</StatBox>
+			{stakingApy ? (
+				<StatBox
+					key={'earning'}
+					style={{
+						backgroundImage: `url(${SNXStatBackground})`,
+					}}
+				>
+					<StatTitle titleColor={theme.colors.brightGreen}>
+						{t('common.stat-box.earning')}
+					</StatTitle>
+					<NeonValue>{formatPercent(stakingApy)}</NeonValue>
+				</StatBox>
+			) : cRatio ? (
+				<StatBox
+					key={'cRatio'}
+					style={{
+						backgroundImage: `url(${SNXStatBackground})`,
+					}}
+				>
+					<StatTitle titleColor={theme.colors.brightGreen}>
+						{t('common.stat-box.c-ratio')}
+					</StatTitle>
+					<NeonValue>{Math.round(100 / cRatio)}%</NeonValue>
+				</StatBox>
+			) : null}
 
 			<StatBox
 				key={'active-debt'}
@@ -51,7 +66,7 @@ const StatBoxes: FC<StatBoxesProps> = ({ stakedValue, activeDebt, stakingApy }) 
 				}}
 			>
 				<StatTitle titleColor={theme.colors.brightPink}>
-					{t('dashboard.stat-box.active-debt')}
+					{t('common.stat-box.active-debt')}
 				</StatTitle>
 				<StatValue>
 					{formatFiatCurrency(activeDebt, { sign: '$', maxDecimals: DEFAULT_FIAT_DECIMALS })}
@@ -88,6 +103,9 @@ const NeonValue = styled.p`
 	font-family: ${(props) => props.theme.fonts.expanded};
 	font-size: 42px;
 	margin: 0;
+	/* text-shadow: rgba(0, 209, 255, 0.35) 0px 0px 4px, rgba(0, 209, 255, 0.35) 0px 0px 4px,
+		rgba(0, 209, 255, 0.35) 0px 0px 4px, rgba(0, 209, 255, 0.35) 0px 0px 4px,
+		rgba(0, 209, 255, 0.35) 0px 0px 4px, rgba(0, 209, 255, 0.35) 0px 0px 4px; */
 	text-shadow: rgba(65, 199, 157, 1) 0px 0px 4px, rgba(65, 199, 157, 1) 0px 0px 4px,
 		rgba(65, 199, 157, 1) 0px 0px 4px, rgba(65, 199, 157, 1) 0px 0px 4px,
 		rgba(65, 199, 157, 1) 0px 0px 4px, rgba(65, 199, 157, 1) 0px 0px 4px;
@@ -100,4 +118,4 @@ const StatValue = styled.p`
 	margin: 0;
 `;
 
-export default StatBoxes;
+export default TripleStatBox;

@@ -1,7 +1,6 @@
 import { FC } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
 import Stats from '../Stats';
-
 import Header from './Header';
 import SideNav from './SideNav';
 
