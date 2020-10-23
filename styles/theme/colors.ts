@@ -1,7 +1,6 @@
 export default {
 	// black
 	black: '#000000',
-	black1: '#06061B',
 	// gray
 	gray: 'rgba(255, 255, 255, 0.46)',
 	// white

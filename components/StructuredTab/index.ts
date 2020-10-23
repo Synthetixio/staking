@@ -1,1 +1,1 @@
-export * from './StructuredTab';
+export { default } from './StructuredTab';

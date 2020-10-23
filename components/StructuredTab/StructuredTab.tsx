@@ -11,13 +11,14 @@ interface StructuredTabProps {
 	tabData: TabInfo[];
 	boxHeight: number;
 	boxWidth: number;
+	boxPadding: number;
 }
 
-const StructuredTab: FC<StructuredTabProps> = ({ tabData, boxHeight, boxWidth }) => {
+const StructuredTab: FC<StructuredTabProps> = ({ tabData, boxHeight, boxWidth, boxPadding }) => {
 	const [activeTab, setActiveTab] = useState<string>(tabData[0].title);
 	return (
 		<>
-			<TabList width={boxWidth}>
+			<TabList padding={boxPadding} width={boxWidth}>
 				{tabData.map(({ title }, index) => (
 					<TabButton
 						numberTabs={tabData.length}
@@ -32,6 +33,7 @@ const StructuredTab: FC<StructuredTabProps> = ({ tabData, boxHeight, boxWidth })
 			</TabList>
 			{tabData.map(({ title, tabChildren }, index) => (
 				<TabPanel
+					padding={boxPadding}
 					height={boxHeight}
 					width={boxWidth}
 					key={`${title}-${index}-panel`}

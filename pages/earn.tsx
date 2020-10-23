@@ -1,6 +1,8 @@
 import Head from 'next/head';
 import { useTranslation } from 'react-i18next';
 
+import { LPBox } from 'sections/earn';
+
 const Earn = () => {
 	const { t } = useTranslation();
 
@@ -9,7 +11,7 @@ const Earn = () => {
 			<Head>
 				<title>{t('earn.page-title')}</title>
 			</Head>
-			<div>Earn</div>
+			<LPBox />
 		</>
 	);
 };
