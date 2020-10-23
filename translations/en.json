@@ -13,11 +13,6 @@
 	},
 	"dashboard": {
 		"page-title": "Staking | Dashboard",
-		"stat-box": {
-			"staked-value": "STAKED VALUE",
-			"earning": "EARNING",
-			"active-debt": "ACTIVE-DEBT"
-		},
 		"bar": {
 			"c-ratio": "COLLATERALIZATION RATIO",
 			"period": {
@@ -74,6 +69,14 @@
 			"switch-wallet": "switch wallet",
 			"switch-accounts": "switch accounts",
 			"disconnect-wallet": "disconnect wallet"
+		},
+		"stat-box": {
+			"staked-value": "STAKED VALUE",
+			"earning": "EARNING",
+			"active-debt": "ACTIVE-DEBT",
+			"c-ratio": "C-RATIO",
+			"synth-value": "TOTAL SYNTH VALUE",
+			"tx-count": "TOTAL TRANSACTIONS"
 		}
 	}
 }

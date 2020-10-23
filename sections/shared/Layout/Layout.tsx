@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
-
+import Stats from '../Stats';
 import Header from './Header';
 import SideNav from './SideNav';
 
@@ -16,6 +16,7 @@ const Layout: FC<LayoutProps> = ({ children }) => {
 				<SideNav />
 				<Content>
 					<Header />
+					<Stats />
 					{children}
 				</Content>
 			</Page>
