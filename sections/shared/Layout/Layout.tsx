@@ -30,7 +30,7 @@ const Page = styled.div`
 
 const Content = styled.div`
 	margin-left: 220px; /* Same as the width of the sidebar */
-	padding: 0px 20px;
+	padding: 0px 200px;
 `;
 
 const GlobalStyle = createGlobalStyle`

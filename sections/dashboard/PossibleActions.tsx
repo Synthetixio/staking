@@ -99,12 +99,13 @@ const ActionTitle = styled.p`
 `;
 
 const ActionBox = styled(FlexDivCol)`
-	background: rgba(9, 9, 47, 0.8);
-	box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.4);
+	background: ${(props) => props.theme.colors.backgroundBlue};
+	box-shadow: 0px 0px 20px ${(props) => props.theme.colors.backgroundBoxShadow};
 	border-radius: 4px;
 	margin-bottom: 16px;
 	padding: 20px;
 	text-align: center;
+	width: 280px;
 `;
 
 const ActionIcon = styled.div`
@@ -118,7 +119,7 @@ const ActionCopy = styled.p`
 	font-size: 12px;
 	width: 75%;
 	color: ${(props) => props.theme.colors.silver};
-	margin: 0 auto;
+	margin: 0 auto 25px auto;
 `;
 
 const ActionButton = styled.div`

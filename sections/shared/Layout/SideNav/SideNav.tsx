@@ -2,10 +2,10 @@ import styled from 'styled-components';
 import { FC } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
-
 import { useTranslation } from 'react-i18next';
 
 import { FlexDivCol, linkCSS } from 'styles/common';
+import ROUTES from 'constants/routes';
 import StakingLogo from 'assets/inline-svg/app/staking-logo.svg';
 
 import { MENU_LINKS } from '../constants';
@@ -32,7 +32,10 @@ const SideNav: FC = () => {
 			</StakingLogoWrap>
 			<MenuLinks>
 				{MENU_LINKS.map(({ i18nLabel, link }) => (
-					<MenuLinkItem key={link} isActive={asPath.includes(link)}>
+					<MenuLinkItem
+						key={link}
+						isActive={asPath === link || (link !== ROUTES.Home && asPath.includes(link))}
+					>
 						<Link href={link}>
 							<a>{t(i18nLabel)}</a>
 						</Link>

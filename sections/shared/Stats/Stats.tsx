@@ -40,7 +40,7 @@ const Stats: React.FC<StatsProps> = ({}) => {
 
 	const returnStats = () => {
 		switch (router.pathname) {
-			case ROUTES.Dashboard.Home:
+			case ROUTES.Home:
 				return (
 					<TripleStatBox
 						activeDebt={activeDebt}

@@ -1,6 +1,6 @@
 import Head from 'next/head';
 import { useTranslation } from 'react-i18next';
-import Stake from 'sections/staking';
+import { MintBurnBox } from 'sections/staking';
 
 const StakingPage = () => {
 	const { t } = useTranslation();
@@ -10,7 +10,7 @@ const StakingPage = () => {
 			<Head>
 				<title>{t('staking.page-title')}</title>
 			</Head>
-			<Stake />
+			<MintBurnBox />
 		</>
 	);
 };

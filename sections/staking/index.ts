@@ -1,1 +1,3 @@
-export { default } from './Stake';
+import MintBurnBox from './MintBurnBox';
+
+export { MintBurnBox };
