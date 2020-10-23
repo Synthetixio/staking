@@ -28,7 +28,7 @@ const StatBoxes: FC<StatBoxesProps> = ({ stakedValue, activeDebt, stakingApy }) 
 					{t('dashboard.stat-box.staked-value')}
 				</StatTitle>
 				<StatValue>
-					{formatCryptoCurrency(stakedValue, { maxDecimals: DEFAULT_CRYPTO_DECIMALS })}
+					{formatFiatCurrency(stakedValue, { sign: '$', maxDecimals: DEFAULT_CRYPTO_DECIMALS })}
 				</StatValue>
 			</StatBox>
 
@@ -41,7 +41,7 @@ const StatBoxes: FC<StatBoxesProps> = ({ stakedValue, activeDebt, stakingApy }) 
 				<StatTitle titleColor={theme.colors.brightGreen}>
 					{t('dashboard.stat-box.earning')}
 				</StatTitle>
-				<StatValue>{formatPercent(stakingApy)}</StatValue>
+				<NeonValue>{formatPercent(stakingApy)}</NeonValue>
 			</StatBox>
 
 			<StatBox
@@ -54,7 +54,7 @@ const StatBoxes: FC<StatBoxesProps> = ({ stakedValue, activeDebt, stakingApy }) 
 					{t('dashboard.stat-box.active-debt')}
 				</StatTitle>
 				<StatValue>
-					{formatFiatCurrency(activeDebt, { maxDecimals: DEFAULT_FIAT_DECIMALS })}
+					{formatFiatCurrency(activeDebt, { sign: '$', maxDecimals: DEFAULT_FIAT_DECIMALS })}
 				</StatValue>
 			</StatBox>
 		</StatsSection>
@@ -84,9 +84,19 @@ const StatTitle = styled.p<{ titleColor: string }>`
 	margin: 0;
 `;
 
+const NeonValue = styled.p`
+	font-family: ${(props) => props.theme.fonts.expanded};
+	font-size: 42px;
+	margin: 0;
+	text-shadow: rgba(65, 199, 157, 1) 0px 0px 4px, rgba(65, 199, 157, 1) 0px 0px 4px,
+		rgba(65, 199, 157, 1) 0px 0px 4px, rgba(65, 199, 157, 1) 0px 0px 4px,
+		rgba(65, 199, 157, 1) 0px 0px 4px, rgba(65, 199, 157, 1) 0px 0px 4px;
+	color: #073124;
+`;
+
 const StatValue = styled.p`
 	font-family: ${(props) => props.theme.fonts.expanded};
-	font-size: 28px;
+	font-size: 34px;
 	margin: 0;
 `;
 

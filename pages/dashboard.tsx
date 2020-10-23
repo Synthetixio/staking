@@ -81,7 +81,11 @@ const DashboardPage = () => {
 				<title>{t('dashboard.page-title')}</title>
 			</Head>
 			<Content>
-				<StatBoxes activeDebt={activeDebt} stakedValue={stakedValue} stakingApy={stakingApy} />
+				<StatBoxes
+					activeDebt={activeDebt}
+					stakedValue={stakedValue * SNXRate}
+					stakingApy={stakingApy}
+				/>
 				<BarStats
 					currentCRatio={currentCRatio}
 					targetCRatio={targetCRatio}
