@@ -83,6 +83,7 @@ export const QUERY_KEYS = {
 			quoteCurrencyKey,
 			baseCurrencyKey,
 		],
+		TotalIssuedSynths: ['synths', 'totalIssuedSynths'],
 	},
 	Trades: {
 		AllTrades: ['trades', 'allTrades'],
