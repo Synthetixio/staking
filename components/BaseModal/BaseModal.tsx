@@ -44,6 +44,7 @@ export const BaseModal: FC<BaseModalProps> = ({
 
 const StyledDialogOverlay = styled(DialogOverlay)`
 	z-index: ${zIndex.DIALOG_OVERLAY};
+	padding: 0px 200px;
 	background: hsla(0, 0%, 0%, 0.8);
 	${media.lessThan('sm')`
 		overflow: hidden;
