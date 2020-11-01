@@ -8,6 +8,11 @@
 			"site-name": "Staking"
 		}
 	},
+	"modals": {
+		"wallet": {
+			"title": "Wallet Options"
+		}
+	},
 	"homepage": {
 		"page-title": "Staking | Earn with SNX"
 	},
