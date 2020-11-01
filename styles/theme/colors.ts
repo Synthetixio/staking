@@ -1,7 +1,6 @@
 export default {
 	// black
 	black: '#000000',
-	black1: '#06061B',
 	// gray
 	gray: 'rgba(255, 255, 255, 0.46)',
 	// white
@@ -11,6 +10,7 @@ export default {
 	tooltipBlue: '#10104E',
 	mediumBlue: '#09092f',
 	linedBlue: '#161b44',
+	backgroundBlue: 'rgba(9, 9, 47, 0.8)',
 	// font
 	lightFont: '#C4C4C4',
 	// muted
@@ -39,6 +39,8 @@ export default {
 	brightPurple: '#4834E4',
 	// gradient
 	tooltipGradient: 'linear-gradient(180deg, #ED1EFF 0%, #00D1FF 100%)',
+	// box shadow
+	backgroundBoxShadow: 'rgba(0, 0, 0, 0.4)',
 
 	vampire: '#08080F',
 	elderberry: '#10101E',

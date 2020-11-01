@@ -41,10 +41,29 @@
 		}
 	},
 	"staking": {
-		"page-title": "Staking | Staking"
+		"page-title": "Staking | Staking",
+		"actions": {
+			"mint": {
+				"title": "MINT"
+			},
+			"burn": {
+				"title": "BURN"
+			}
+		}
 	},
 	"earn": {
-		"page-title": "Staking | Earn"
+		"page-title": "Staking | Earn",
+		"actions": {
+			"stake": {
+				"title": "STAKE"
+			},
+			"unstake": {
+				"title": "UNSTAKE"
+			},
+			"rewards": {
+				"title": "REWARDS"
+			}
+		}
 	},
 	"escrow": {
 		"page-title": "Staking | Escrow"

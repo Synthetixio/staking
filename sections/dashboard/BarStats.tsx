@@ -89,7 +89,8 @@ const BarStatsContainer = styled(FlexDiv)`
 `;
 
 const BarStatBox = styled(FlexDivCol)`
-	width: 400px;
+	width: 480px;
+	margin-bottom: 50px;
 `;
 
 const BarHeaderSection = styled(FlexDivRowCentered)``;
