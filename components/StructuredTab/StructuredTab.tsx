@@ -1,9 +1,9 @@
 import { FC, ReactNode, useState } from 'react';
-import styled from 'styled-components';
 import { TabButton, TabList, TabPanel } from '../Tab';
 
 export type TabInfo = {
 	title: string;
+	icon: ReactNode;
 	tabChildren: ReactNode;
 };
 
@@ -19,7 +19,7 @@ const StructuredTab: FC<StructuredTabProps> = ({ tabData, boxHeight, boxWidth, b
 	return (
 		<>
 			<TabList padding={boxPadding} width={boxWidth}>
-				{tabData.map(({ title }, index) => (
+				{tabData.map(({ title, icon }, index) => (
 					<TabButton
 						numberTabs={tabData.length}
 						key={`${title}-${index}-button`}
@@ -27,6 +27,7 @@ const StructuredTab: FC<StructuredTabProps> = ({ tabData, boxHeight, boxWidth, b
 						active={activeTab === title}
 						onClick={() => setActiveTab(title)}
 					>
+						{icon}
 						{title}
 					</TabButton>
 				))}

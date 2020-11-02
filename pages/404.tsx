@@ -5,9 +5,6 @@ import styled from 'styled-components';
 import media from 'styles/media';
 import { FlexDivRowCentered } from 'styles/common';
 
-import CaretLeftXLIcon from 'assets/inline-svg/app/caret-left-xl.svg';
-import CaretRightXLICon from 'assets/inline-svg/app/caret-right-xl.svg';
-
 const NotFoundPage = () => {
 	const { t } = useTranslation();
 
@@ -17,12 +14,7 @@ const NotFoundPage = () => {
 				<title>{t('not-found.page-title')}</title>
 			</Head>
 			<Container>
-				<CaretLeftXLIcon />
-				<Content>
-					<Title>{t('not-found.title')}</Title>
-					<Subtitle>{t('not-found.subtitle')}</Subtitle>
-				</Content>
-				<CaretRightXLICon />
+				<Title>@TODO Staking</Title>
 			</Container>
 		</>
 	);

@@ -6,6 +6,8 @@ import BurnTab from './components/BurnTab';
 
 import StructuredTab from 'components/StructuredTab';
 import { LoadingState } from 'constants/loading';
+// import Burn from 'assets/svg/app/burn.svg';
+// import Mint from 'assets/svg/app/mint.svg';
 
 interface MintBurnBoxProps {}
 
@@ -21,6 +23,7 @@ const MintBurnBox: FC<MintBurnBoxProps> = ({}) => {
 		() => [
 			{
 				title: t('staking.actions.mint.title'),
+				icon: () => <div />,
 				tabChildren: (
 					<MintTab
 						amountToMint={amountToMint}
@@ -32,6 +35,8 @@ const MintBurnBox: FC<MintBurnBoxProps> = ({}) => {
 			},
 			{
 				title: t('staking.actions.burn.title'),
+				icon: () => <div />,
+
 				tabChildren: (
 					<BurnTab
 						amountToBurn={amountToBurn}

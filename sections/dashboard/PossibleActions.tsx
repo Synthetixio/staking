@@ -3,8 +3,8 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 // leaving the wrong icons for now
-import Stake from 'assets/inline-svg/app/stake.svg';
-import Trade from 'assets/inline-svg/app/trade.svg';
+import Stake from 'assets/svg/app/stake.svg';
+import Trade from 'assets/svg/app/trade.svg';
 
 import { FlexDiv, FlexDivCentered, FlexDivCol, FlexDivRowCentered } from 'styles/common';
 import Link from 'next/link';
