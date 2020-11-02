@@ -1,4 +1,5 @@
 import { FC, ReactNode, useState } from 'react';
+import { FlexDivColCentered } from 'styles/common';
 import { TabButton, TabList, TabPanel } from '../Tab';
 
 export type TabInfo = {
@@ -17,7 +18,7 @@ interface StructuredTabProps {
 const StructuredTab: FC<StructuredTabProps> = ({ tabData, boxHeight, boxWidth, boxPadding }) => {
 	const [activeTab, setActiveTab] = useState<string>(tabData[0].title);
 	return (
-		<>
+		<FlexDivColCentered>
 			<TabList padding={boxPadding} width={boxWidth}>
 				{tabData.map(({ title, icon }, index) => (
 					<TabButton
@@ -44,7 +45,7 @@ const StructuredTab: FC<StructuredTabProps> = ({ tabData, boxHeight, boxWidth, b
 					{tabChildren}
 				</TabPanel>
 			))}
-		</>
+		</FlexDivColCentered>
 	);
 };
 

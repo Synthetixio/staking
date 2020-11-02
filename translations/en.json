@@ -77,6 +77,20 @@
 			"burn": {
 				"title": "BURN"
 			}
+		},
+		"info": {
+			"mint": {
+				"title": "Mint sUSD by Staking SNX",
+				"subtitle": "Mint sUSD by staking your SNX. This gives you a Collateralization Ratio and a debt, allowing you to earn weekly staking rewards. Learn more.",
+				"table": {
+					"not-staked": "Not Staked",
+					"staked": "Staked",
+					"transferable": "Transferable",
+					"locked": "Locked",
+					"c-ratio": "C-Ratio",
+					"debt": "Debt"
+				}
+			}
 		}
 	},
 	"earn": {
