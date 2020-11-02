@@ -3,7 +3,7 @@ import styled, { useTheme } from 'styled-components';
 import { useTranslation } from 'react-i18next';
 
 import { FlexDivColCentered, FlexDivRowCentered } from 'styles/common';
-import SNXStatBackground from 'assets/svg/snx-stat-background.svg';
+import SNXStatBackground from 'assets/svg/app/snx-stat-background.svg';
 import { formatFiatCurrency, formatPercent } from 'utils/formatters/number';
 import { DEFAULT_CRYPTO_DECIMALS, DEFAULT_FIAT_DECIMALS } from 'constants/defaults';
 

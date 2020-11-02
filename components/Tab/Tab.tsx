@@ -93,8 +93,12 @@ const StyledTabButton = styled.button<TabProps>`
 	}
 	height: 60px;
 	width: ${(props) => 100 / props.numberTabs}%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 `;
 
 const StyledTabList = styled.div.attrs({ role: 'tablist' })<{ width: number; padding: number }>`
 	width: ${(props) => props.width + props.padding * 2}px;
+	display: flex;
 `;

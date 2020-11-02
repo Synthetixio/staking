@@ -1,8 +1,9 @@
 import { FC, ReactNode } from 'react';
 import { DialogOverlay, DialogContent } from '@reach/dialog';
 import styled from 'styled-components';
+import { Svg } from 'react-optimized-image';
 
-import CrossIcon from 'assets/inline-svg/app/cross.svg';
+import CrossIcon from 'assets/svg/app/cross.svg';
 
 import Card from 'components/Card';
 import { resetButtonCSS } from 'styles/common';
@@ -32,7 +33,7 @@ export const BaseModal: FC<BaseModalProps> = ({
 					{title}
 					{showCross && (
 						<DismissButton onClick={onDismiss}>
-							<CrossIcon />
+							<Svg src={CrossIcon} />
 						</DismissButton>
 					)}
 				</StyledCardHeader>
@@ -44,6 +45,7 @@ export const BaseModal: FC<BaseModalProps> = ({
 
 const StyledDialogOverlay = styled(DialogOverlay)`
 	z-index: ${zIndex.DIALOG_OVERLAY};
+	padding: 0px 200px;
 	background: hsla(0, 0%, 0%, 0.8);
 	${media.lessThan('sm')`
 		overflow: hidden;

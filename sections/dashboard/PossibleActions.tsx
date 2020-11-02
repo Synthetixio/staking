@@ -1,10 +1,10 @@
 import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-
+import { Svg } from 'react-optimized-image';
 // leaving the wrong icons for now
-import Stake from 'assets/inline-svg/app/stake.svg';
-import Trade from 'assets/inline-svg/app/trade.svg';
+import Stake from 'assets/svg/app/stake.svg';
+import Trade from 'assets/svg/app/trade.svg';
 
 import { FlexDiv, FlexDivCentered, FlexDivCol, FlexDivRowCentered } from 'styles/common';
 import Link from 'next/link';
@@ -34,21 +34,21 @@ const PossibleActions: FC<PossibleActionsProps> = ({
 	const actions: Action[] = useMemo(
 		() => [
 			{
-				icon: () => <Stake />,
+				icon: () => <Svg src={Stake} />,
 				title: t('dashboard.actions.claim.title', { amount: claimAmount }),
 				copy: t('dashboard.actions.claim.copy'),
 				action: t('dashboard.actions.claim.action'),
 				link: '/staking',
 			},
 			{
-				icon: () => <Stake />,
+				icon: () => <Svg src={Stake} />,
 				title: t('dashboard.actions.stake.title'),
 				copy: t('dashboard.actions.stake.copy', { sUSDAmount, SNXAmount }),
 				action: t('dashboard.actions.stake.action'),
 				link: '/staking',
 			},
 			{
-				icon: () => <Trade />,
+				icon: () => <Svg src={Trade} />,
 				title: t('dashboard.actions.earn.title', { percent: earnPercent }),
 				copy: t('dashboard.actions.earn.copy'),
 				action: t('dashboard.actions.earn.action'),

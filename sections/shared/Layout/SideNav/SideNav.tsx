@@ -3,10 +3,11 @@ import { FC } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
+import { Svg } from 'react-optimized-image';
 
 import { FlexDivCol, linkCSS } from 'styles/common';
 import ROUTES from 'constants/routes';
-import StakingLogo from 'assets/inline-svg/app/staking-logo.svg';
+import StakingLogo from 'assets/svg/app/staking-logo.svg';
 
 import { MENU_LINKS } from '../constants';
 import CurrencyPrice from 'components/Currency/CurrencyPrice';
@@ -27,7 +28,7 @@ const SideNav: FC = () => {
 		<SideNavContainer>
 			<StakingLogoWrap>
 				<Link href="/">
-					<StakingLogo />
+					<Svg src={StakingLogo} />
 				</Link>
 			</StakingLogoWrap>
 			<MenuLinks>

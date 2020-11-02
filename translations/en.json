@@ -8,6 +8,34 @@
 			"site-name": "Staking"
 		}
 	},
+	"modals": {
+		"settings": {
+			"title": "settings",
+			"options": {
+				"currency": "currency",
+				"language": "language"
+			}
+		},
+		"wallet": {
+			"title": "wallet options"
+		},
+		"notifications": {
+			"title": "notifications",
+			"open-orders": {
+				"title": "open orders",
+				"no-results": "No open orders"
+			},
+			"recent-notifications": {
+				"title": "recent notifications",
+				"no-results": "No recent transactions"
+			},
+			"all-notifications": {
+				"title": "all notifications",
+				"no-results": "None"
+			},
+			"view-all": "view all"
+		}
+	},
 	"homepage": {
 		"page-title": "Staking | Earn with SNX"
 	},
