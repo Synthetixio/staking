@@ -32,11 +32,8 @@ const MintTab: FC<MintTabProps> = ({
 	const debtDataQuery = useGetDebtDataQuery();
 	const currencyRates = currencyRatesQuery.data ?? null;
 	const debtData = debtDataQuery?.data ?? null;
-
 	const collateral = debtData?.collateral ?? 0;
 	const issuanceRatio = debtData?.targetCRatio ?? 0;
-
-	console.log(issuanceRatio);
 	const snxRates = currencyRates?.SNX ?? 0;
 	const issuableSynths = debtData?.issuableSynths;
 
