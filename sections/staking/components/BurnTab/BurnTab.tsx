@@ -4,8 +4,8 @@ import { LoadingState } from 'constants/loading';
 import { TabContainer } from '../common';
 
 type BurnTabProps = {
-	amountToBurn: number;
-	setAmountToBurn: (amount: number) => void;
+	amountToBurn: string;
+	setAmountToBurn: (amount: string) => void;
 	burnLoadingState: LoadingState | null;
 	setBurnLoadingState: (state: LoadingState | null) => void;
 };

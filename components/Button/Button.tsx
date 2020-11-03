@@ -21,8 +21,8 @@ const Button = styled.button<ButtonProps>`
     color: ${(props) => props.theme.colors.white};
 	text-transform: capitalize;
 
-    &:disabled {
-        background: ${(props) => props.theme.colors.darkBlue};
+  &:disabled {
+		background: ${(props) => props.theme.colors.mutedBrightBlue};
 		cursor: default;
 	}
 
@@ -55,18 +55,18 @@ const Button = styled.button<ButtonProps>`
 	${(props) =>
 		props.variant === 'primary' &&
 		css`
-			color: ${(props) => props.theme.colors.white};
-			background: ${(props) => props.theme.colors.mediumBlue};
+			color: ${(props) => props.theme.colors.darkBlue};
+			background: ${(props) => props.theme.colors.brightBlue};
 			&:hover {
 				&:not(:disabled) {
-					background: ${(props) => props.theme.colors.darkBlue};
+					background: ${(props) => props.theme.colors.mutedBrightBlue};
 				}
 			}
 			${(props) =>
 				// @ts-ignore
 				props.isActive &&
 				css`
-					background: ${(props) => props.theme.colors.darkBlue};
+					background: ${(props) => props.theme.colors.mutedBrightBlue};
 				`};
 		`}
 
