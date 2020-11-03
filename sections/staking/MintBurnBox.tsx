@@ -14,8 +14,8 @@ interface MintBurnBoxProps {}
 
 const MintBurnBox: FC<MintBurnBoxProps> = ({}) => {
 	const { t } = useTranslation();
-	const [amountToMint, setAmountToMint] = useState<number>(0);
-	const [amountToBurn, setAmountToBurn] = useState<number>(0);
+	const [amountToStake, setAmountToStake] = useState<string>('');
+	const [amountToBurn, setAmountToBurn] = useState<string>('');
 
 	const [mintLoadingState, setMintLoadingState] = useState<LoadingState | null>(null);
 	const [burnLoadingState, setBurnLoadingState] = useState<LoadingState | null>(null);
@@ -27,8 +27,8 @@ const MintBurnBox: FC<MintBurnBoxProps> = ({}) => {
 				icon: () => <Svg src={Mint} />,
 				tabChildren: (
 					<MintTab
-						amountToMint={amountToMint}
-						setAmountToMint={setAmountToMint}
+						amountToStake={amountToStake}
+						setAmountToStake={setAmountToStake}
 						mintLoadingState={mintLoadingState}
 						setMintLoadingState={setMintLoadingState}
 					/>
@@ -47,7 +47,7 @@ const MintBurnBox: FC<MintBurnBoxProps> = ({}) => {
 				),
 			},
 		],
-		[amountToMint, mintLoadingState, amountToBurn, burnLoadingState]
+		[amountToStake, mintLoadingState, amountToBurn, burnLoadingState]
 	);
 	return <StructuredTab boxPadding={25} boxHeight={400} boxWidth={450} tabData={tabData} />;
 };

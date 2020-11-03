@@ -12,6 +12,8 @@ export type WalletDebtData = {
 	currentCRatio: number;
 	transferable: number;
 	debtBalance: number;
+	collateral: number;
+	issuableSynths: number;
 };
 
 const useGetDebtDataQuery = (options?: QueryConfig<WalletDebtData>) => {
@@ -26,20 +28,31 @@ const useGetDebtDataQuery = (options?: QueryConfig<WalletDebtData>) => {
 				utils,
 			} = synthetix.js as SynthetixJS;
 			const IssuanceRatioContract = network?.id === 5 ? SystemSettings : SynthetixState;
+			const sUSDBytes = utils.formatBytes32String('sUSD');
 			const result = await Promise.all([
 				IssuanceRatioContract.issuanceRatio(),
 				Synthetix.collateralisationRatio(walletAddress),
 				Synthetix.transferableSynthetix(walletAddress),
-				Synthetix.debtBalanceOf(walletAddress, utils.formatBytes32String('sUSD')),
+				Synthetix.debtBalanceOf(walletAddress, sUSDBytes),
+				Synthetix.collateral(walletAddress),
+				Synthetix.maxIssuableSynths(walletAddress),
 			]);
-			const [targetCRatio, currentCRatio, transferable, debtBalance] = result.map((item) =>
-				Number(utils.formatEther(item))
-			);
+			const [
+				targetCRatio,
+				currentCRatio,
+				transferable,
+				debtBalance,
+				collateral,
+				maxIssuableSynths,
+			] = result.map((item) => Number(utils.formatEther(item)));
+			const issuableSynths = Math.max(0, maxIssuableSynths - debtBalance);
 			return {
 				targetCRatio,
 				currentCRatio,
 				transferable,
 				debtBalance,
+				collateral,
+				issuableSynths,
 			};
 		},
 		{

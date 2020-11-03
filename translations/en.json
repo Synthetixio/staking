@@ -72,7 +72,15 @@
 		"page-title": "Staking | Staking",
 		"actions": {
 			"mint": {
-				"title": "MINT"
+				"title": "MINT",
+				"info": {
+					"staking": "Staking",
+					"minting": "Minting"
+				},
+				"action": {
+					"empty": "Enter an amount",
+					"mint": "Stake {{amountToStake}} {{stakeType}}"
+				}
 			},
 			"burn": {
 				"title": "BURN"
