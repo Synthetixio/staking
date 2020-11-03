@@ -7,6 +7,8 @@ import Select from 'components/Select';
 import { useTranslation } from 'react-i18next';
 import Input from 'components/Input/Input';
 import Button from 'components/Button';
+import useGetDebtDataQuery from 'queries/debt/useGetDebtDataQuery';
+import useCurrencyRatesQuery from 'queries/rates/useCurrencyRatesQuery';
 
 type MintTabProps = {
 	amountToStake: string;
@@ -15,12 +17,29 @@ type MintTabProps = {
 	setMintLoadingState: (state: LoadingState | null) => void;
 };
 
+export function getMintAmount(issuanceRatio: number, stakeAmount: string, SNXPrice: number) {
+	if (!stakeAmount || !issuanceRatio || !SNXPrice) return '0';
+	return Number(stakeAmount) * issuanceRatio * SNXPrice;
+}
+
 const MintTab: FC<MintTabProps> = ({
 	amountToStake,
 	setAmountToStake,
 	mintLoadingState,
 	setMintLoadingState,
 }) => {
+	const currencyRatesQuery = useCurrencyRatesQuery(['SNX']);
+	const debtDataQuery = useGetDebtDataQuery();
+	const currencyRates = currencyRatesQuery.data ?? null;
+	const debtData = debtDataQuery?.data ?? null;
+
+	const collateral = debtData?.collateral ?? 0;
+	const issuanceRatio = debtData?.targetCRatio ?? 0;
+
+	console.log(issuanceRatio);
+	const snxRates = currencyRates?.SNX ?? 0;
+	const issuableSynths = debtData?.issuableSynths;
+
 	const { t } = useTranslation();
 	const stakeTypes = useMemo(
 		() => [
@@ -47,6 +66,8 @@ const MintTab: FC<MintTabProps> = ({
 
 	const handleStakeChange = (value: string) => setAmountToStake(value);
 
+	const handleMaxIssuance = () => setAmountToStake(issuableSynths?.toString() || '');
+
 	return (
 		<StyledTabContainer>
 			<HeaderBox>
@@ -64,19 +85,25 @@ const MintTab: FC<MintTabProps> = ({
 				/>
 			</HeaderBox>
 			<InputBox>
-				<StyledInput placeholder="0" onChange={(e) => handleStakeChange(e.target.value)} />
-				<StyledButton variant="outline">Max</StyledButton>
+				<StyledInput
+					placeholder="0"
+					onChange={(e) => handleStakeChange(e.target.value)}
+					value={amountToStake}
+				/>
+				<StyledButton onClick={handleMaxIssuance} variant="outline">
+					Max
+				</StyledButton>
 			</InputBox>
 			<DataContainer>
 				<DataRow>
 					<RowTitle>{t('staking.actions.mint.info.staking')}</RowTitle>
 					<RowValue>
-						{amountToStake} {stakeType.label}
+						{amountToStake ? amountToStake : '0'} {stakeType.label}
 					</RowValue>
 				</DataRow>
 				<DataRow>
 					<RowTitle>{t('staking.actions.mint.info.minting')}</RowTitle>
-					<RowValue>1,001.19 sUSD</RowValue>
+					<RowValue>{getMintAmount(issuanceRatio, amountToStake, snxRates)} sUSD</RowValue>
 				</DataRow>
 			</DataContainer>
 			{amountToStake !== '' ? (
@@ -145,6 +172,7 @@ const StyledInput = styled(Input)`
 	font-family: ${(props) => props.theme.fonts.condensedMedium};
 	width: 75%;
 	text-align: center;
+	padding-right: 16px;
 `;
 
 const StyledButton = styled(Button)`
@@ -185,4 +213,5 @@ const StyledCTA = styled(Button)`
 	width: 100%;
 	text-transform: uppercase;
 `;
+
 export default MintTab;
