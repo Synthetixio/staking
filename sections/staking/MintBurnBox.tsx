@@ -1,13 +1,14 @@
 import { FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Svg } from 'react-optimized-image';
 
 import MintTab from './components/MintTab';
 import BurnTab from './components/BurnTab';
 
 import StructuredTab from 'components/StructuredTab';
 import { LoadingState } from 'constants/loading';
-// import Burn from 'assets/svg/app/burn.svg';
-// import Mint from 'assets/svg/app/mint.svg';
+import Burn from 'assets/svg/app/burn.svg';
+import Mint from 'assets/svg/app/mint.svg';
 
 interface MintBurnBoxProps {}
 
@@ -23,7 +24,7 @@ const MintBurnBox: FC<MintBurnBoxProps> = ({}) => {
 		() => [
 			{
 				title: t('staking.actions.mint.title'),
-				icon: () => <div />,
+				icon: () => <Svg src={Mint} />,
 				tabChildren: (
 					<MintTab
 						amountToMint={amountToMint}
@@ -35,8 +36,7 @@ const MintBurnBox: FC<MintBurnBoxProps> = ({}) => {
 			},
 			{
 				title: t('staking.actions.burn.title'),
-				icon: () => <div />,
-
+				icon: () => <Svg src={Burn} />,
 				tabChildren: (
 					<BurnTab
 						amountToBurn={amountToBurn}
@@ -49,11 +49,7 @@ const MintBurnBox: FC<MintBurnBoxProps> = ({}) => {
 		],
 		[amountToMint, mintLoadingState, amountToBurn, burnLoadingState]
 	);
-	return (
-		<>
-			<StructuredTab boxPadding={25} boxHeight={400} boxWidth={450} tabData={tabData} />
-		</>
-	);
+	return <StructuredTab boxPadding={25} boxHeight={400} boxWidth={450} tabData={tabData} />;
 };
 
 export default MintBurnBox;
