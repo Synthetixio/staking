@@ -7,17 +7,18 @@ import Select from 'components/Select';
 import { useTranslation } from 'react-i18next';
 import Input from 'components/Input/Input';
 import Button from 'components/Button';
-import useGetDebtDataQuery from 'queries/debt/useGetDebtDataQuery';
-import useCurrencyRatesQuery from 'queries/rates/useCurrencyRatesQuery';
 
 type MintTabProps = {
 	amountToStake: string;
 	setAmountToStake: (amount: string) => void;
 	mintLoadingState: LoadingState | null;
 	setMintLoadingState: (state: LoadingState | null) => void;
+	maxIssuabledSynthAmount: number;
+	issuanceRatio: number;
+	snxPrice: number;
 };
 
-export function getMintAmount(issuanceRatio: number, stakeAmount: string, SNXPrice: number) {
+function getMintAmount(issuanceRatio: number, stakeAmount: string, SNXPrice: number) {
 	if (!stakeAmount || !issuanceRatio || !SNXPrice) return '0';
 	return Number(stakeAmount) * issuanceRatio * SNXPrice;
 }
@@ -27,16 +28,10 @@ const MintTab: FC<MintTabProps> = ({
 	setAmountToStake,
 	mintLoadingState,
 	setMintLoadingState,
+	maxIssuabledSynthAmount,
+	issuanceRatio,
+	snxPrice,
 }) => {
-	const currencyRatesQuery = useCurrencyRatesQuery(['SNX']);
-	const debtDataQuery = useGetDebtDataQuery();
-	const currencyRates = currencyRatesQuery.data ?? null;
-	const debtData = debtDataQuery?.data ?? null;
-	const collateral = debtData?.collateral ?? 0;
-	const issuanceRatio = debtData?.targetCRatio ?? 0;
-	const snxRates = currencyRates?.SNX ?? 0;
-	const issuableSynths = debtData?.issuableSynths;
-
 	const { t } = useTranslation();
 	const stakeTypes = useMemo(
 		() => [
@@ -63,7 +58,7 @@ const MintTab: FC<MintTabProps> = ({
 
 	const handleStakeChange = (value: string) => setAmountToStake(value);
 
-	const handleMaxIssuance = () => setAmountToStake(issuableSynths?.toString() || '');
+	const handleMaxIssuance = () => setAmountToStake(maxIssuabledSynthAmount?.toString() || '');
 
 	return (
 		<StyledTabContainer>
@@ -100,7 +95,7 @@ const MintTab: FC<MintTabProps> = ({
 				</DataRow>
 				<DataRow>
 					<RowTitle>{t('staking.actions.mint.info.minting')}</RowTitle>
-					<RowValue>{getMintAmount(issuanceRatio, amountToStake, snxRates)} sUSD</RowValue>
+					<RowValue>{getMintAmount(issuanceRatio, amountToStake, snxPrice)} sUSD</RowValue>
 				</DataRow>
 			</DataContainer>
 			{amountToStake !== '' ? (

@@ -1,10 +1,11 @@
 import { FC, ReactNode, useState } from 'react';
 import { FlexDivColCentered } from 'styles/common';
 import { TabButton, TabList, TabPanel } from '../Tab';
+import styled from 'styled-components';
 
 export type TabInfo = {
 	title: string;
-	icon: ReactNode;
+	icon: () => ReactNode;
 	tabChildren: ReactNode;
 };
 
@@ -28,8 +29,8 @@ const StructuredTab: FC<StructuredTabProps> = ({ tabData, boxHeight, boxWidth, b
 						active={activeTab === title}
 						onClick={() => setActiveTab(title)}
 					>
-						{icon}
-						{title}
+						{icon()}
+						<TitleContainer>{title}</TitleContainer>
 					</TabButton>
 				))}
 			</TabList>
@@ -48,5 +49,9 @@ const StructuredTab: FC<StructuredTabProps> = ({ tabData, boxHeight, boxWidth, b
 		</FlexDivColCentered>
 	);
 };
+
+const TitleContainer = styled.p`
+	margin-left: 8px;
+`;
 
 export default StructuredTab;

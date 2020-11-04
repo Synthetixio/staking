@@ -10,9 +10,17 @@ import { LoadingState } from 'constants/loading';
 import Burn from 'assets/svg/app/burn.svg';
 import Mint from 'assets/svg/app/mint.svg';
 
-interface MintBurnBoxProps {}
+interface MintBurnBoxProps {
+	issuanceRatio: number;
+	maxIssuabledSynthAmount: number;
+	snxPrice: number;
+}
 
-const MintBurnBox: FC<MintBurnBoxProps> = ({}) => {
+const MintBurnBox: FC<MintBurnBoxProps> = ({
+	issuanceRatio,
+	maxIssuabledSynthAmount,
+	snxPrice,
+}) => {
 	const { t } = useTranslation();
 	const [amountToStake, setAmountToStake] = useState<string>('');
 	const [amountToBurn, setAmountToBurn] = useState<string>('');
@@ -31,6 +39,9 @@ const MintBurnBox: FC<MintBurnBoxProps> = ({}) => {
 						setAmountToStake={setAmountToStake}
 						mintLoadingState={mintLoadingState}
 						setMintLoadingState={setMintLoadingState}
+						issuanceRatio={issuanceRatio}
+						maxIssuabledSynthAmount={maxIssuabledSynthAmount}
+						snxPrice={snxPrice}
 					/>
 				),
 			},

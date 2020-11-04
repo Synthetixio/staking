@@ -1,44 +1,63 @@
-import React from 'react';
-import { useTranslation } from 'react-i18next';
+import React, { useMemo } from 'react';
+import { Trans, useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { FlexDivCol, FlexDivRow } from 'styles/common';
+import { FlexDivCol, FlexDivRow, linkCSS } from 'styles/common';
 
-interface InfoBoxProps {}
+interface InfoBoxProps {
+	unstakedCollateral: number;
+	stakedCollateral: number;
+	currentCRatio: number;
+	transferableCollateral: number;
+	debtBalance: number;
+	lockedCollateral: number;
+}
 
-export const InfoBox: React.FC<InfoBoxProps> = ({}) => {
+export const InfoBox: React.FC<InfoBoxProps> = ({
+	unstakedCollateral,
+	stakedCollateral,
+	transferableCollateral,
+	currentCRatio,
+	debtBalance,
+	lockedCollateral,
+}) => {
 	const { t } = useTranslation();
 
-	const Rows = [
-		{
-			title: t('staking.info.mint.table.not-staked'),
-			value: 3415.0081,
-		},
-		{
-			title: t('staking.info.mint.table.staked'),
-			value: 3415.0081,
-		},
-		{
-			title: t('staking.info.mint.table.transferable'),
-			value: 3415.0081,
-		},
-		{
-			title: t('staking.info.mint.table.locked'),
-			value: 3415.0081,
-		},
-		{
-			title: t('staking.info.mint.table.c-ratio'),
-			value: 3415.0081,
-		},
-		{
-			title: t('staking.info.mint.table.debt'),
-			value: 3415.0081,
-		},
-	];
+	const Rows = useMemo(
+		() => [
+			{
+				title: t('staking.info.mint.table.not-staked'),
+				value: unstakedCollateral,
+			},
+			{
+				title: t('staking.info.mint.table.staked'),
+				value: stakedCollateral,
+			},
+			{
+				title: t('staking.info.mint.table.transferable'),
+				value: transferableCollateral,
+			},
+			{
+				title: t('staking.info.mint.table.locked'),
+				value: lockedCollateral,
+			},
+			{
+				title: t('staking.info.mint.table.c-ratio'),
+				value: 100 / currentCRatio,
+			},
+			{
+				title: t('staking.info.mint.table.debt'),
+				value: debtBalance,
+			},
+		],
+		[unstakedCollateral, stakedCollateral, transferableCollateral, currentCRatio]
+	);
 
 	return (
 		<FlexDivCol>
 			<Title>{t('staking.info.mint.title')}</Title>
-			<Subtitle>{t('staking.info.mint.subtitle')}</Subtitle>
+			<Subtitle>
+				<Trans i18nKey="staking.info.mint.subtitle" components={[<ExternalLink />]} />
+			</Subtitle>
 			<DataContainer>
 				{Rows.map((row, i) => (
 					<DataRow key={i}>
@@ -80,4 +99,8 @@ const RowValue = styled.p`
 	font-size: 16px;
 	color: ${(props) => props.theme.colors.white};
 	text-transform: uppercase;
+`;
+const ExternalLink = styled.span`
+	${linkCSS}
+	color: ${(props) => props.theme.colors.brightBlue}
 `;
