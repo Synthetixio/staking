@@ -1,26 +1,33 @@
 import React, { FC, useMemo, useState } from 'react';
 import { LoadingState } from 'constants/loading';
-import { TabContainer } from '../common';
-import styled from 'styled-components';
-import { FlexDivRow, FlexDivRowCentered } from 'styles/common';
-import Select from 'components/Select';
+import {
+	HeaderBox,
+	StyledSelect,
+	TabContainer,
+	StyledButton,
+	StyledCTA,
+	StyledInput,
+	DataContainer,
+	DataRow,
+	InputBox,
+	RowTitle,
+	RowValue,
+} from '../common';
 import { useTranslation } from 'react-i18next';
-import Input from 'components/Input/Input';
-import Button from 'components/Button';
 
 type MintTabProps = {
-	amountToStake: string;
+	amountToStake: string | null;
 	setAmountToStake: (amount: string) => void;
 	mintLoadingState: LoadingState | null;
 	setMintLoadingState: (state: LoadingState | null) => void;
 	maxIssuabledSynthAmount: number;
-	issuanceRatio: number;
+	targetCRatio: number;
 	snxPrice: number;
 };
 
-function getMintAmount(issuanceRatio: number, stakeAmount: string, SNXPrice: number) {
-	if (!stakeAmount || !issuanceRatio || !SNXPrice) return '0';
-	return Number(stakeAmount) * issuanceRatio * SNXPrice;
+function getMintAmount(targetCRatio: number, stakeAmount: string, SNXPrice: number) {
+	if (!stakeAmount || !targetCRatio || !SNXPrice) return '0';
+	return Number(stakeAmount) * targetCRatio * SNXPrice;
 }
 
 const MintTab: FC<MintTabProps> = ({
@@ -29,7 +36,7 @@ const MintTab: FC<MintTabProps> = ({
 	mintLoadingState,
 	setMintLoadingState,
 	maxIssuabledSynthAmount,
-	issuanceRatio,
+	targetCRatio,
 	snxPrice,
 }) => {
 	const { t } = useTranslation();
@@ -48,7 +55,7 @@ const MintTab: FC<MintTabProps> = ({
 				key: 'BTC',
 			},
 		],
-		[t]
+		[]
 	);
 	const [stakeType, setStakeType] = useState(stakeTypes[0]);
 
@@ -61,9 +68,9 @@ const MintTab: FC<MintTabProps> = ({
 	const handleMaxIssuance = () => setAmountToStake(maxIssuabledSynthAmount?.toString() || '');
 
 	return (
-		<StyledTabContainer>
+		<TabContainer>
 			<HeaderBox>
-				<p>Stake</p>
+				<p>{t('staking.actions.mint.info.header')}</p>
 				<StyledSelect
 					inputId="mint-type-list"
 					formatOptionLabel={(option: any) => option.label}
@@ -80,7 +87,7 @@ const MintTab: FC<MintTabProps> = ({
 				<StyledInput
 					placeholder="0"
 					onChange={(e) => handleStakeChange(e.target.value)}
-					value={amountToStake}
+					value={amountToStake ?? '0'}
 				/>
 				<StyledButton onClick={handleMaxIssuance} variant="outline">
 					Max
@@ -95,10 +102,10 @@ const MintTab: FC<MintTabProps> = ({
 				</DataRow>
 				<DataRow>
 					<RowTitle>{t('staking.actions.mint.info.minting')}</RowTitle>
-					<RowValue>{getMintAmount(issuanceRatio, amountToStake, snxPrice)} sUSD</RowValue>
+					<RowValue>{getMintAmount(targetCRatio, amountToStake ?? '0', snxPrice)} sUSD</RowValue>
 				</DataRow>
 			</DataContainer>
-			{amountToStake !== '' ? (
+			{amountToStake ? (
 				<StyledCTA onClick={handleMint} variant="primary" size="lg" disabled={!!mintLoadingState}>
 					{t('staking.actions.mint.action.mint', {
 						amountToStake: amountToStake,
@@ -110,100 +117,8 @@ const MintTab: FC<MintTabProps> = ({
 					{t('staking.actions.mint.action.empty')}
 				</StyledCTA>
 			)}
-		</StyledTabContainer>
+		</TabContainer>
 	);
 };
-
-const StyledTabContainer = styled(TabContainer)`
-	justify-content: space-evenly;
-`;
-
-const HeaderBox = styled(FlexDivRowCentered)`
-	padding: 16px 0px;
-	p {
-		color: ${(props) => props.theme.colors.white};
-		font-size: 16px;
-		font-family: ${(props) => props.theme.fonts.condensedBold};
-		margin-right: 16px;
-	}
-`;
-
-const StyledSelect = styled(Select)`
-	border: ${(props) => `2px solid ${props.theme.colors.brightBlue}`};
-	width: 100px;
-	justify-content: center;
-	border-radius: 4px;
-	box-sizing: border-box;
-	box-shadow: 0px 0px 10px rgba(0, 209, 255, 0.9);
-
-	.react-select__dropdown-indicator {
-		color: ${(props) => props.theme.colors.brightBlue};
-		&:hover {
-			color: ${(props) => props.theme.colors.brightBlue};
-		}
-	}
-	.react-select__single-value {
-		font-size: 16px;
-		width: 100%;
-	}
-
-	.react-select__option {
-		font-size: 16px;
-		width: 100%;
-	}
-`;
-
-const InputBox = styled(FlexDivRow)`
-	margin: 16px auto;
-	width: 300px;
-`;
-
-const StyledInput = styled(Input)`
-	font-size: 40px;
-	background: transparent;
-	font-family: ${(props) => props.theme.fonts.condensedMedium};
-	width: 75%;
-	text-align: center;
-	padding-right: 16px;
-`;
-
-const StyledButton = styled(Button)`
-	color: ${(props) => props.theme.colors.brightBlue};
-	box-sizing: border-box;
-	box-shadow: 0px 0px 10px rgba(0, 209, 255, 0.9);
-	border: ${(props) => `1px solid ${props.theme.colors.brightBlue}`};
-	font-size: 16px;
-	font-family: ${(props) => props.theme.fonts.condensedBold};
-	width: 25%;
-`;
-
-const DataRow = styled(FlexDivRow)`
-	justify-content: space-between;
-	margin: 16px 32px;
-	border-bottom: ${(props) => `1px solid ${props.theme.colors.linedBlue}`};
-`;
-const RowTitle = styled.p`
-	font-family: ${(props) => props.theme.fonts.condensedMedium};
-	font-size: 14px;
-	color: ${(props) => props.theme.colors.silver};
-	text-transform: uppercase;
-`;
-const RowValue = styled.p`
-	font-family: ${(props) => props.theme.fonts.condensedMedium};
-	font-size: 16px;
-	color: ${(props) => props.theme.colors.white};
-	text-transform: uppercase;
-`;
-const DataContainer = styled.div`
-	width: 100%;
-`;
-const StyledCTA = styled(Button)`
-	font-size: 14px;
-	font-family: ${(props) => props.theme.fonts.condensedMedium};
-	box-shadow: 0px 0px 10px rgba(0, 209, 255, 0.6);
-	border-radius: 4px;
-	width: 100%;
-	text-transform: uppercase;
-`;
 
 export default MintTab;

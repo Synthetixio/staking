@@ -11,19 +11,31 @@ import Burn from 'assets/svg/app/burn.svg';
 import Mint from 'assets/svg/app/mint.svg';
 
 interface MintBurnBoxProps {
-	issuanceRatio: number;
+	targetCRatio: number;
 	maxIssuabledSynthAmount: number;
+	maxBurnAmount: number;
 	snxPrice: number;
+	amountToBurn: string | null;
+	amountToStake: string | null;
+	setAmountToStake: (amount: string) => void;
+	setAmountToBurn: (amount: string) => void;
+	setPanelType: Function;
+	stakedSNX: number;
 }
 
 const MintBurnBox: FC<MintBurnBoxProps> = ({
-	issuanceRatio,
+	targetCRatio,
 	maxIssuabledSynthAmount,
+	maxBurnAmount,
 	snxPrice,
+	amountToBurn,
+	amountToStake,
+	setAmountToBurn,
+	setAmountToStake,
+	setPanelType,
+	stakedSNX,
 }) => {
 	const { t } = useTranslation();
-	const [amountToStake, setAmountToStake] = useState<string>('');
-	const [amountToBurn, setAmountToBurn] = useState<string>('');
 
 	const [mintLoadingState, setMintLoadingState] = useState<LoadingState | null>(null);
 	const [burnLoadingState, setBurnLoadingState] = useState<LoadingState | null>(null);
@@ -39,7 +51,7 @@ const MintBurnBox: FC<MintBurnBoxProps> = ({
 						setAmountToStake={setAmountToStake}
 						mintLoadingState={mintLoadingState}
 						setMintLoadingState={setMintLoadingState}
-						issuanceRatio={issuanceRatio}
+						targetCRatio={targetCRatio}
 						maxIssuabledSynthAmount={maxIssuabledSynthAmount}
 						snxPrice={snxPrice}
 					/>
@@ -54,13 +66,25 @@ const MintBurnBox: FC<MintBurnBoxProps> = ({
 						setAmountToBurn={setAmountToBurn}
 						burnLoadingState={burnLoadingState}
 						setBurnLoadingState={setBurnLoadingState}
+						targetCRatio={targetCRatio}
+						maxBurnAmount={maxBurnAmount}
+						snxPrice={snxPrice}
+						stakedSNX={stakedSNX}
 					/>
 				),
 			},
 		],
 		[amountToStake, mintLoadingState, amountToBurn, burnLoadingState]
 	);
-	return <StructuredTab boxPadding={25} boxHeight={400} boxWidth={450} tabData={tabData} />;
+	return (
+		<StructuredTab
+			boxPadding={25}
+			boxHeight={400}
+			boxWidth={450}
+			tabData={tabData}
+			setPanelType={setPanelType}
+		/>
+	);
 };
 
 export default MintBurnBox;

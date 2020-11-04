@@ -14,9 +14,16 @@ interface StructuredTabProps {
 	boxHeight: number;
 	boxWidth: number;
 	boxPadding: number;
+	setPanelType: Function;
 }
 
-const StructuredTab: FC<StructuredTabProps> = ({ tabData, boxHeight, boxWidth, boxPadding }) => {
+const StructuredTab: FC<StructuredTabProps> = ({
+	tabData,
+	boxHeight,
+	boxWidth,
+	boxPadding,
+	setPanelType,
+}) => {
 	const [activeTab, setActiveTab] = useState<string>(tabData[0].title);
 	return (
 		<FlexDivColCentered>
@@ -27,7 +34,9 @@ const StructuredTab: FC<StructuredTabProps> = ({ tabData, boxHeight, boxWidth, b
 						key={`${title}-${index}-button`}
 						name={title}
 						active={activeTab === title}
-						onClick={() => setActiveTab(title)}
+						onClick={() => {
+							setActiveTab(title), setPanelType(title.toLowerCase());
+						}}
 					>
 						{icon()}
 						<TitleContainer>{title}</TitleContainer>

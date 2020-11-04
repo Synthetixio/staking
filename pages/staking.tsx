@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import Head from 'next/head';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
@@ -10,18 +11,22 @@ import useCurrencyRatesQuery from 'queries/rates/useCurrencyRatesQuery';
 const StakingPage = () => {
 	const { t } = useTranslation();
 
+	const [amountToStake, setAmountToStake] = useState<string | null>(null);
+	const [amountToBurn, setAmountToBurn] = useState<string | null>(null);
+	const [panelType, setPanelType] = useState<'burn' | 'mint'>('mint');
+
 	const currencyRatesQuery = useCurrencyRatesQuery(['SNX']);
 	const debtDataQuery = useGetDebtDataQuery();
 	const currencyRates = currencyRatesQuery.data ?? null;
 	const debtData = debtDataQuery?.data ?? null;
 	const collateral = debtData?.collateral ?? 0;
-	const issuanceRatio = debtData?.targetCRatio ?? 0;
+	const targetCRatio = debtData?.targetCRatio ?? 0;
 	const currentCRatio = debtData?.currentCRatio ?? 0;
 	const snxPrice = currencyRates?.SNX ?? 0;
 	const issuableSynths = debtData?.issuableSynths ?? 0;
 	const transferableSNX = debtData?.transferable ?? 0;
 	const debtBalance = debtData?.debtBalance ?? 0;
-	const stakedSNX = collateral * Math.min(1, currentCRatio / issuanceRatio);
+	const stakedSNX = collateral * Math.min(1, currentCRatio / targetCRatio);
 
 	const lockedSNX = collateral - transferableSNX;
 
@@ -41,13 +46,23 @@ const StakingPage = () => {
 						currentCRatio={currentCRatio}
 						debtBalance={debtBalance}
 						lockedCollateral={lockedSNX}
+						amountToStake={amountToStake}
+						targetCRatio={targetCRatio}
+						panelType={panelType}
 					/>
 				</Column>
 				<Column>
 					<MintBurnBox
+						amountToStake={amountToStake}
+						amountToBurn={amountToBurn}
+						setAmountToBurn={setAmountToBurn}
+						setAmountToStake={setAmountToStake}
 						maxIssuabledSynthAmount={issuableSynths}
+						maxBurnAmount={debtBalance}
 						snxPrice={snxPrice}
-						issuanceRatio={issuanceRatio}
+						targetCRatio={targetCRatio}
+						setPanelType={setPanelType}
+						stakedSNX={stakedSNX}
 					/>
 				</Column>
 			</Row>

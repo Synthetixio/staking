@@ -27,9 +27,8 @@ const Stats: React.FC<StatsProps> = ({}) => {
 	const currentCRatio = debtDataQuery.data?.currentCRatio ?? 0;
 	const targetCRatio = debtDataQuery.data?.targetCRatio ?? 0;
 	const activeDebt = debtDataQuery.data?.debtBalance ?? 0;
-	const stakedValue = snxBalanceQuery.data?.balance
-		? snxBalanceQuery.data.balance * (currentCRatio / targetCRatio)
-		: 0;
+	const collateral = debtDataQuery.data?.collateral ?? 0;
+	const stakedValue = collateral * Math.min(1, currentCRatio / targetCRatio);
 	const sUSDRate = exchangeRates.data?.sUSD ?? 0;
 	const SNXRate = currencyRates.data?.SNX ?? 0;
 	const feesToDistribute = previousFeePeriod?.data?.feesToDistribute ?? 0;
