@@ -1,83 +1,66 @@
-import React from 'react';
-import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
-import { FlexDivCol, FlexDivRow } from 'styles/common';
+import React, { useMemo } from 'react';
+import MintInfo from './components/MintInfo';
+import BurnInfo from './components/BurnInfo';
 
-interface InfoBoxProps {}
+interface InfoBoxProps {
+	unstakedCollateral: number;
+	stakedCollateral: number;
+	currentCRatio: number;
+	transferableCollateral: number;
+	debtBalance: number;
+	lockedCollateral: number;
+	amountToStake: string | null;
+	targetCRatio: number;
+	panelType: 'burn' | 'mint';
+}
 
-export const InfoBox: React.FC<InfoBoxProps> = ({}) => {
-	const { t } = useTranslation();
-
-	const Rows = [
-		{
-			title: t('staking.info.mint.table.not-staked'),
-			value: 3415.0081,
-		},
-		{
-			title: t('staking.info.mint.table.staked'),
-			value: 3415.0081,
-		},
-		{
-			title: t('staking.info.mint.table.transferable'),
-			value: 3415.0081,
-		},
-		{
-			title: t('staking.info.mint.table.locked'),
-			value: 3415.0081,
-		},
-		{
-			title: t('staking.info.mint.table.c-ratio'),
-			value: 3415.0081,
-		},
-		{
-			title: t('staking.info.mint.table.debt'),
-			value: 3415.0081,
-		},
-	];
-
-	return (
-		<FlexDivCol>
-			<Title>{t('staking.info.mint.title')}</Title>
-			<Subtitle>{t('staking.info.mint.subtitle')}</Subtitle>
-			<DataContainer>
-				{Rows.map((row, i) => (
-					<DataRow key={i}>
-						<RowTitle>{row.title}</RowTitle>
-						<RowValue>{row.value}</RowValue>
-					</DataRow>
-				))}
-			</DataContainer>
-		</FlexDivCol>
+export const InfoBox: React.FC<InfoBoxProps> = ({
+	unstakedCollateral,
+	stakedCollateral,
+	transferableCollateral,
+	currentCRatio,
+	debtBalance,
+	lockedCollateral,
+	amountToStake,
+	targetCRatio,
+	panelType,
+}) => {
+	const returnInfoPanel = useMemo(
+		() =>
+			panelType === 'mint' ? (
+				<MintInfo
+					unstakedCollateral={unstakedCollateral}
+					stakedCollateral={stakedCollateral}
+					transferableCollateral={transferableCollateral}
+					currentCRatio={currentCRatio}
+					debtBalance={debtBalance}
+					lockedCollateral={lockedCollateral}
+					amountToStake={amountToStake}
+					targetCRatio={targetCRatio}
+				/>
+			) : (
+				<BurnInfo
+					unstakedCollateral={unstakedCollateral}
+					stakedCollateral={stakedCollateral}
+					transferableCollateral={transferableCollateral}
+					currentCRatio={currentCRatio}
+					debtBalance={debtBalance}
+					lockedCollateral={lockedCollateral}
+					amountToStake={amountToStake}
+					targetCRatio={targetCRatio}
+				/>
+			),
+		[
+			panelType,
+			amountToStake,
+			currentCRatio,
+			debtBalance,
+			lockedCollateral,
+			stakedCollateral,
+			transferableCollateral,
+			unstakedCollateral,
+			targetCRatio,
+		]
 	);
+	return returnInfoPanel;
 };
-
-const Title = styled.p`
-	font-family: ${(props) => props.theme.fonts.condensedBold};
-	color: ${(props) => props.theme.colors.white};
-	font-size: 16px;
-`;
-const Subtitle = styled.p`
-	font-family: ${(props) => props.theme.fonts.regular};
-	color: ${(props) => props.theme.colors.lightFont};
-	font-size: 14px;
-`;
-const DataContainer = styled.div`
-	background: ${(props) => props.theme.colors.mediumBlue};
-`;
-const DataRow = styled(FlexDivRow)`
-	justify-content: space-between;
-	margin: 16px 32px;
-	border-bottom: ${(props) => `1px solid ${props.theme.colors.linedBlue}`};
-`;
-const RowTitle = styled.p`
-	font-family: ${(props) => props.theme.fonts.condensedMedium};
-	font-size: 14px;
-	color: ${(props) => props.theme.colors.silver};
-	text-transform: uppercase;
-`;
-const RowValue = styled.p`
-	font-family: ${(props) => props.theme.fonts.condensedMedium};
-	font-size: 16px;
-	color: ${(props) => props.theme.colors.white};
-	text-transform: uppercase;
-`;

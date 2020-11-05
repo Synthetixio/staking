@@ -11,7 +11,6 @@ import { isWalletConnectedState, truncatedWalletAddressState } from 'store/walle
 import { FlexDivCentered, resetButtonCSS, ConnectionDot } from 'styles/common';
 
 import WalletOptionsModal from 'sections/shared/modals/WalletOptionsModal';
-import NotificationsModal from 'sections/shared/modals/NotificationsModal';
 import SettingsModal from 'sections/shared/modals/SettingsModal';
 
 import MenuIcon from 'assets/svg/app/menu.svg';
@@ -27,7 +26,6 @@ const UserMenu: FC<UserMenuProps> = ({ isTextButton }) => {
 	const { connectWallet } = Connector.useContainer();
 	const [walletOptionsModalOpened, setWalletOptionsModalOpened] = useState<boolean>(false);
 	const [settingsModalOpened, setSettingsModalOpened] = useState<boolean>(false);
-	const [notificationsModalOpened, setNotificationsModalOpened] = useState<boolean>(false);
 	const truncatedWalletAddress = useRecoilValue(truncatedWalletAddressState);
 	return (
 		<>
@@ -65,9 +63,6 @@ const UserMenu: FC<UserMenuProps> = ({ isTextButton }) => {
 				<WalletOptionsModal onDismiss={() => setWalletOptionsModalOpened(false)} />
 			)}
 			{settingsModalOpened && <SettingsModal onDismiss={() => setSettingsModalOpened(false)} />}
-			{notificationsModalOpened && (
-				<NotificationsModal onDismiss={() => setNotificationsModalOpened(false)} />
-			)}
 		</>
 	);
 };

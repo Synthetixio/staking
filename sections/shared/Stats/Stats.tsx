@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import { FlexDivCol } from 'styles/common';
 import TripleStatBox from './TripleStatBox';
 import useGetDebtDataQuery from 'queries/debt/useGetDebtDataQuery';
-import useSNXBalanceQuery from 'queries/walletBalances/useSNXBalanceQuery';
 import useGetFeePoolDataQuery from 'queries/staking/useGetFeePoolDataQuery';
 import useCurrencyRatesQuery from 'queries/rates/useCurrencyRatesQuery';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
@@ -12,13 +11,10 @@ import { useRouter } from 'next/router';
 import ROUTES from 'constants/routes';
 import SingleStatBox from './SingleStatBox';
 
-interface StatsProps {}
-
-const Stats: React.FC<StatsProps> = ({}) => {
+const Stats: React.FC = () => {
 	const router = useRouter();
 
 	const debtDataQuery = useGetDebtDataQuery();
-	const snxBalanceQuery = useSNXBalanceQuery();
 	const totalIssuedSynthsExclEth = useTotalIssuedSynthsExcludingEtherQuery('sUSD');
 	const currencyRates = useCurrencyRatesQuery(['SNX']);
 	const exchangeRates = useExchangeRatesQuery();
@@ -27,9 +23,8 @@ const Stats: React.FC<StatsProps> = ({}) => {
 	const currentCRatio = debtDataQuery.data?.currentCRatio ?? 0;
 	const targetCRatio = debtDataQuery.data?.targetCRatio ?? 0;
 	const activeDebt = debtDataQuery.data?.debtBalance ?? 0;
-	const stakedValue = snxBalanceQuery.data?.balance
-		? snxBalanceQuery.data.balance * (currentCRatio / targetCRatio)
-		: 0;
+	const collateral = debtDataQuery.data?.collateral ?? 0;
+	const stakedValue = collateral * Math.min(1, currentCRatio / targetCRatio);
 	const sUSDRate = exchangeRates.data?.sUSD ?? 0;
 	const SNXRate = currencyRates.data?.SNX ?? 0;
 	const feesToDistribute = previousFeePeriod?.data?.feesToDistribute ?? 0;

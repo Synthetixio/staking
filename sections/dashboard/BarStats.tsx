@@ -39,7 +39,7 @@ const BarStats: FC<BarStatsProps> = ({
 				/>
 			</BarStatBox>
 		),
-		[currentCRatio, targetCRatio]
+		[currentCRatio, targetCRatio, t, theme]
 	);
 
 	return (

@@ -1,4 +1,5 @@
 import React, { FC } from 'react';
+import Img from 'react-optimized-image';
 
 import { CurrencyKey, CURRENCY_KEY_TO_ICON_MAP } from 'constants/currency';
 
@@ -21,7 +22,7 @@ export const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, type = 'synth
 
 	const Icon = type === 'synth' && SynthIcon ? SynthIcon : AssetIcon;
 
-	return <img src={Icon} width="24" height="24" alt={`${currencyKey} icon`} {...rest} />;
+	return <Img src={Icon} width="24" height="24" alt={`${currencyKey} icon`} {...rest} />;
 };
 
 export default CurrencyIcon;

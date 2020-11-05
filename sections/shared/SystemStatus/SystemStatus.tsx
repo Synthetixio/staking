@@ -15,6 +15,7 @@ import {
 import { EXTERNAL_LINKS } from 'constants/links';
 import { HEADER_HEIGHT } from 'constants/ui';
 
+import { Svg } from 'react-optimized-image';
 import SystemDownIcon from 'assets/svg/app/system-down.svg';
 import DiscordIcon from 'assets/svg/social/discord.svg';
 import TwitterIcon from 'assets/svg/social/twitter.svg';
@@ -31,17 +32,17 @@ const SOCIAL_LINKS = [
 	{
 		id: 'discord',
 		href: EXTERNAL_LINKS.Social.Discord,
-		icon: <DiscordIcon />,
+		icon: <Svg src={DiscordIcon} />,
 	},
 	{
 		id: 'twitter',
 		href: EXTERNAL_LINKS.Social.Twitter,
-		icon: <TwitterIcon />,
+		icon: <Svg src={TwitterIcon} />,
 	},
 	{
 		id: 'github',
 		href: EXTERNAL_LINKS.Social.GitHub,
-		icon: <GithubIcon />,
+		icon: <Svg src={GithubIcon} />,
 	},
 ];
 

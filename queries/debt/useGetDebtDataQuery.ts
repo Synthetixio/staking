@@ -6,15 +6,7 @@ import synthetix from 'lib/synthetix';
 import QUERY_KEYS from 'constants/queryKeys';
 import { useRecoilValue } from 'recoil';
 import { isWalletConnectedState, networkState, walletAddressState } from 'store/wallet';
-
-export type WalletDebtData = {
-	targetCRatio: number;
-	currentCRatio: number;
-	transferable: number;
-	debtBalance: number;
-	collateral: number;
-	issuableSynths: number;
-};
+import { WalletDebtData } from './types';
 
 const useGetDebtDataQuery = (options?: QueryConfig<WalletDebtData>) => {
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);

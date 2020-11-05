@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import { MobileHiddenView, MobileOnlyView } from 'components/Media';
 import { HEADER_HEIGHT, zIndex } from 'constants/ui';
 
-import { GridDivCenteredCol } from 'styles/common';
 import media from 'styles/media';
 
 import UserMenu from './UserMenu';
@@ -37,10 +36,6 @@ const Container = styled.div`
 		justify-content: space-between;
 		align-items: center;
 	}
-`;
-
-const LogoNav = styled(GridDivCenteredCol)`
-	grid-gap: 24px;
 `;
 
 export default Header;

@@ -9,6 +9,7 @@ import {
 	FlexDivColCentered,
 } from 'styles/common';
 
+import { Svg } from 'react-optimized-image';
 import { CurrencyKey } from 'constants/currency';
 
 import BaseModal from 'components/BaseModal';
@@ -20,7 +21,7 @@ import OneInchImage from 'assets/svg/providers/1inch.svg';
 
 import { formatCurrency } from 'utils/formatters/number';
 import { Synth } from 'lib/synthetix';
-import { MessageButton } from 'sections/exchange/FooterCard/common';
+// import { MessageButton } from 'sections/exchange/FooterCard/common';
 
 type TxConfirmationModalProps = {
 	onDismiss: () => void;
@@ -61,7 +62,7 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 					<Currency.Icon currencyKey={quoteCurrencyKey} width="40px" height="40px" />
 				</CurrencyItem>
 				<ArrowsIconContainer>
-					<ArrowsIcon />
+					<Svg src={ArrowsIcon} />
 				</ArrowsIconContainer>
 				<CurrencyItem>
 					<CurrencyItemTitle>{t('exchange.common.into')}</CurrencyItemTitle>
@@ -110,18 +111,13 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 			{txProvider === '1inch' && (
 				<TxProvider>
 					<span>{t('common.powered-by')}</span>
-					<img
-						src={OneInchImage}
-						width="40"
-						height="40"
-						alt={t('common.dex-aggregators.1inch.title')}
-					/>
+					<Svg src={OneInchImage} width="40" height="40" />
 				</TxProvider>
 			)}
 			{txError && (
 				<Actions>
 					<Message>{t('common.transaction.error')}</Message>
-					<MessageButton onClick={attemptRetry}>{t('common.transaction.reattempt')}</MessageButton>
+					{/* <MessageButton onClick={attemptRetry}>{t('common.transaction.reattempt')}</MessageButton> */}
 				</Actions>
 			)}
 		</StyledBaseModal>

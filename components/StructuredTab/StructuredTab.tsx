@@ -1,10 +1,12 @@
 import { FC, ReactNode, useState } from 'react';
 import { FlexDivColCentered } from 'styles/common';
 import { TabButton, TabList, TabPanel } from '../Tab';
+import styled from 'styled-components';
+import { StakingPanelType } from 'pages/staking';
 
 export type TabInfo = {
 	title: string;
-	icon: ReactNode;
+	icon?: () => ReactNode;
 	tabChildren: ReactNode;
 };
 
@@ -13,9 +15,16 @@ interface StructuredTabProps {
 	boxHeight: number;
 	boxWidth: number;
 	boxPadding: number;
+	setPanelType: (type: StakingPanelType) => void;
 }
 
-const StructuredTab: FC<StructuredTabProps> = ({ tabData, boxHeight, boxWidth, boxPadding }) => {
+const StructuredTab: FC<StructuredTabProps> = ({
+	tabData,
+	boxHeight,
+	boxWidth,
+	boxPadding,
+	setPanelType,
+}) => {
 	const [activeTab, setActiveTab] = useState<string>(tabData[0].title);
 	return (
 		<FlexDivColCentered>
@@ -26,10 +35,13 @@ const StructuredTab: FC<StructuredTabProps> = ({ tabData, boxHeight, boxWidth, b
 						key={`${title}-${index}-button`}
 						name={title}
 						active={activeTab === title}
-						onClick={() => setActiveTab(title)}
+						onClick={() => {
+							setActiveTab(title);
+							setPanelType(title === 'BURN' ? StakingPanelType.BURN : StakingPanelType.MINT);
+						}}
 					>
-						{icon}
-						{title}
+						{icon && icon()}
+						<TitleContainer>{title}</TitleContainer>
 					</TabButton>
 				))}
 			</TabList>
@@ -48,5 +60,9 @@ const StructuredTab: FC<StructuredTabProps> = ({ tabData, boxHeight, boxWidth, b
 		</FlexDivColCentered>
 	);
 };
+
+const TitleContainer = styled.p`
+	margin-left: 8px;
+`;
 
 export default StructuredTab;

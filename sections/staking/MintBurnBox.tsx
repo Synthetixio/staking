@@ -9,13 +9,34 @@ import StructuredTab from 'components/StructuredTab';
 import { LoadingState } from 'constants/loading';
 import Burn from 'assets/svg/app/burn.svg';
 import Mint from 'assets/svg/app/mint.svg';
+import { StakingPanelType } from 'pages/staking';
 
-interface MintBurnBoxProps {}
+interface MintBurnBoxProps {
+	targetCRatio: number;
+	maxIssuabledSynthAmount: number;
+	maxBurnAmount: number;
+	snxPrice: number;
+	amountToBurn: string;
+	amountToStake: string;
+	setAmountToStake: (amount: string) => void;
+	setAmountToBurn: (amount: string) => void;
+	setPanelType: (type: StakingPanelType) => void;
+	stakedSNX: number;
+}
 
-const MintBurnBox: FC<MintBurnBoxProps> = ({}) => {
+const MintBurnBox: FC<MintBurnBoxProps> = ({
+	targetCRatio,
+	maxIssuabledSynthAmount,
+	maxBurnAmount,
+	snxPrice,
+	amountToBurn,
+	amountToStake,
+	setAmountToBurn,
+	setAmountToStake,
+	setPanelType,
+	stakedSNX,
+}) => {
 	const { t } = useTranslation();
-	const [amountToStake, setAmountToStake] = useState<string>('');
-	const [amountToBurn, setAmountToBurn] = useState<string>('');
 
 	const [mintLoadingState, setMintLoadingState] = useState<LoadingState | null>(null);
 	const [burnLoadingState, setBurnLoadingState] = useState<LoadingState | null>(null);
@@ -31,6 +52,9 @@ const MintBurnBox: FC<MintBurnBoxProps> = ({}) => {
 						setAmountToStake={setAmountToStake}
 						mintLoadingState={mintLoadingState}
 						setMintLoadingState={setMintLoadingState}
+						targetCRatio={targetCRatio}
+						maxIssuabledSynthAmount={maxIssuabledSynthAmount}
+						snxPrice={snxPrice}
 					/>
 				),
 			},
@@ -43,13 +67,38 @@ const MintBurnBox: FC<MintBurnBoxProps> = ({}) => {
 						setAmountToBurn={setAmountToBurn}
 						burnLoadingState={burnLoadingState}
 						setBurnLoadingState={setBurnLoadingState}
+						targetCRatio={targetCRatio}
+						maxBurnAmount={maxBurnAmount}
+						snxPrice={snxPrice}
+						stakedSNX={stakedSNX}
 					/>
 				),
 			},
 		],
-		[amountToStake, mintLoadingState, amountToBurn, burnLoadingState]
+		[
+			amountToStake,
+			mintLoadingState,
+			amountToBurn,
+			burnLoadingState,
+			maxBurnAmount,
+			maxIssuabledSynthAmount,
+			setAmountToBurn,
+			setAmountToStake,
+			snxPrice,
+			stakedSNX,
+			t,
+			targetCRatio,
+		]
 	);
-	return <StructuredTab boxPadding={25} boxHeight={400} boxWidth={450} tabData={tabData} />;
+	return (
+		<StructuredTab
+			boxPadding={25}
+			boxHeight={400}
+			boxWidth={450}
+			tabData={tabData}
+			setPanelType={setPanelType}
+		/>
+	);
 };
 
 export default MintBurnBox;
