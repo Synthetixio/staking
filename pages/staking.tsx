@@ -8,12 +8,17 @@ import { InfoBox } from 'sections/staking/InfoBox';
 import useGetDebtDataQuery from 'queries/debt/useGetDebtDataQuery';
 import useCurrencyRatesQuery from 'queries/rates/useCurrencyRatesQuery';
 
+export enum StakingPanelType {
+	BURN = 'burn',
+	MINT = 'mint',
+}
+
 const StakingPage = () => {
 	const { t } = useTranslation();
 
-	const [amountToStake, setAmountToStake] = useState<string | null>(null);
-	const [amountToBurn, setAmountToBurn] = useState<string | null>(null);
-	const [panelType, setPanelType] = useState<'burn' | 'mint'>('mint');
+	const [amountToStake, setAmountToStake] = useState<string>('0');
+	const [amountToBurn, setAmountToBurn] = useState<string>('0');
+	const [panelType, setPanelType] = useState<StakingPanelType>(StakingPanelType.MINT);
 
 	const currencyRatesQuery = useCurrencyRatesQuery(['SNX']);
 	const debtDataQuery = useGetDebtDataQuery();

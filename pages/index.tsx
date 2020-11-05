@@ -43,7 +43,7 @@ const DashboardPage = () => {
 			}
 		});
 		return claimed;
-	}, [history]);
+	}, [history, currentFeePeriodStarts, nextFeePeriodStarts]);
 
 	const claimed = checkClaimedStatus;
 

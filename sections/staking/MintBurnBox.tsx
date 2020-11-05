@@ -9,17 +9,18 @@ import StructuredTab from 'components/StructuredTab';
 import { LoadingState } from 'constants/loading';
 import Burn from 'assets/svg/app/burn.svg';
 import Mint from 'assets/svg/app/mint.svg';
+import { StakingPanelType } from 'pages/staking';
 
 interface MintBurnBoxProps {
 	targetCRatio: number;
 	maxIssuabledSynthAmount: number;
 	maxBurnAmount: number;
 	snxPrice: number;
-	amountToBurn: string | null;
-	amountToStake: string | null;
+	amountToBurn: string;
+	amountToStake: string;
 	setAmountToStake: (amount: string) => void;
 	setAmountToBurn: (amount: string) => void;
-	setPanelType: Function;
+	setPanelType: (type: StakingPanelType) => void;
 	stakedSNX: number;
 }
 
@@ -74,7 +75,20 @@ const MintBurnBox: FC<MintBurnBoxProps> = ({
 				),
 			},
 		],
-		[amountToStake, mintLoadingState, amountToBurn, burnLoadingState]
+		[
+			amountToStake,
+			mintLoadingState,
+			amountToBurn,
+			burnLoadingState,
+			maxBurnAmount,
+			maxIssuabledSynthAmount,
+			setAmountToBurn,
+			setAmountToStake,
+			snxPrice,
+			stakedSNX,
+			t,
+			targetCRatio,
+		]
 	);
 	return (
 		<StructuredTab

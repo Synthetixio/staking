@@ -37,13 +37,13 @@ const Container = styled(FlexDivRowCentered)`
 	`}
 `;
 
-const Content = styled.div`
-	color: ${(props) => props.theme.colors.white};
-	font-family: ${(props) => props.theme.fonts.mono};
-	padding: 0 48px;
-	text-align: center;
-	margin-top: -10px;
-`;
+// const Content = styled.div`
+// 	color: ${(props) => props.theme.colors.white};
+// 	font-family: ${(props) => props.theme.fonts.mono};
+// 	padding: 0 48px;
+// 	text-align: center;
+// 	margin-top: -10px;
+// `;
 
 const Title = styled.h1`
 	font-size: 120px;
@@ -55,14 +55,14 @@ const Title = styled.h1`
 	`}
 `;
 
-const Subtitle = styled.h2`
-	margin: 0;
-	font-size: 20px;
-	line-height: normal;
-	font-weight: normal;
-	${media.lessThan('sm')`
-		font-size: 14px;
-	`}
-`;
+// const Subtitle = styled.h2`
+// 	margin: 0;
+// 	font-size: 20px;
+// 	line-height: normal;
+// 	font-weight: normal;
+// 	${media.lessThan('sm')`
+// 		font-size: 14px;
+// 	`}
+// `;
 
 export default NotFoundPage;

@@ -82,6 +82,7 @@ const BurnInfo: React.FC<BurnInfoProps> = ({
 			changeInDebt,
 			debtBalance,
 			changeInCollateral,
+			t,
 		]
 	);
 	return (

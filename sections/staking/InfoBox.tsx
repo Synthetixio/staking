@@ -50,7 +50,17 @@ export const InfoBox: React.FC<InfoBoxProps> = ({
 					targetCRatio={targetCRatio}
 				/>
 			),
-		[panelType]
+		[
+			panelType,
+			amountToStake,
+			currentCRatio,
+			debtBalance,
+			lockedCollateral,
+			stakedCollateral,
+			transferableCollateral,
+			unstakedCollateral,
+			targetCRatio,
+		]
 	);
 	return returnInfoPanel;
 };

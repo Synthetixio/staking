@@ -6,7 +6,7 @@ import { Svg } from 'react-optimized-image';
 import Stake from 'assets/svg/app/stake.svg';
 import Trade from 'assets/svg/app/trade.svg';
 
-import { FlexDiv, FlexDivCentered, FlexDivCol, FlexDivRowCentered } from 'styles/common';
+import { FlexDiv, FlexDivCol } from 'styles/common';
 import Link from 'next/link';
 
 type Action = {
@@ -55,7 +55,7 @@ const PossibleActions: FC<PossibleActionsProps> = ({
 				link: '/staking',
 			},
 		],
-		[claimAmount, sUSDAmount, SNXAmount, earnPercent]
+		[claimAmount, sUSDAmount, SNXAmount, earnPercent, t]
 	);
 
 	return (

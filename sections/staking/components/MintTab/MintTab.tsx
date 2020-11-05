@@ -1,4 +1,4 @@
-import React, { FC, useMemo, useState } from 'react';
+import React, { FC, useState } from 'react';
 import { LoadingState } from 'constants/loading';
 import {
 	HeaderBox,
@@ -14,9 +14,10 @@ import {
 	RowValue,
 } from '../common';
 import { useTranslation } from 'react-i18next';
+import { CRYPTO_CURRENCY_MAP } from 'constants/currency';
 
 type MintTabProps = {
-	amountToStake: string | null;
+	amountToStake: string;
 	setAmountToStake: (amount: string) => void;
 	mintLoadingState: LoadingState | null;
 	setMintLoadingState: (state: LoadingState | null) => void;
@@ -40,23 +41,20 @@ const MintTab: FC<MintTabProps> = ({
 	snxPrice,
 }) => {
 	const { t } = useTranslation();
-	const stakeTypes = useMemo(
-		() => [
-			{
-				label: 'SNX',
-				key: 'SNX',
-			},
-			{
-				label: 'ETH',
-				key: 'ETH',
-			},
-			{
-				label: 'BTC',
-				key: 'BTC',
-			},
-		],
-		[]
-	);
+	const stakeTypes = [
+		{
+			label: CRYPTO_CURRENCY_MAP.SNX,
+			key: CRYPTO_CURRENCY_MAP.SNX,
+		},
+		{
+			label: CRYPTO_CURRENCY_MAP.ETH,
+			key: CRYPTO_CURRENCY_MAP.ETH,
+		},
+		{
+			label: CRYPTO_CURRENCY_MAP.BTC,
+			key: CRYPTO_CURRENCY_MAP.BTC,
+		},
+	];
 	const [stakeType, setStakeType] = useState(stakeTypes[0]);
 
 	const handleMint = () => {
@@ -73,7 +71,7 @@ const MintTab: FC<MintTabProps> = ({
 				<p>{t('staking.actions.mint.info.header')}</p>
 				<StyledSelect
 					inputId="mint-type-list"
-					formatOptionLabel={(option: any) => option.label}
+					formatOptionLabel={(option: { value: string; label: string }) => option.label}
 					options={stakeTypes}
 					value={stakeType}
 					onChange={(option: any) => {
@@ -87,7 +85,7 @@ const MintTab: FC<MintTabProps> = ({
 				<StyledInput
 					placeholder="0"
 					onChange={(e) => handleStakeChange(e.target.value)}
-					value={amountToStake ?? '0'}
+					value={amountToStake}
 				/>
 				<StyledButton onClick={handleMaxIssuance} variant="outline">
 					Max
@@ -97,15 +95,15 @@ const MintTab: FC<MintTabProps> = ({
 				<DataRow>
 					<RowTitle>{t('staking.actions.mint.info.staking')}</RowTitle>
 					<RowValue>
-						{amountToStake ? amountToStake : '0'} {stakeType.label}
+						{amountToStake} {stakeType.label}
 					</RowValue>
 				</DataRow>
 				<DataRow>
 					<RowTitle>{t('staking.actions.mint.info.minting')}</RowTitle>
-					<RowValue>{getMintAmount(targetCRatio, amountToStake ?? '0', snxPrice)} sUSD</RowValue>
+					<RowValue>{getMintAmount(targetCRatio, amountToStake, snxPrice)} sUSD</RowValue>
 				</DataRow>
 			</DataContainer>
-			{amountToStake ? (
+			{amountToStake !== '0' && amountToStake !== '' ? (
 				<StyledCTA onClick={handleMint} variant="primary" size="lg" disabled={!!mintLoadingState}>
 					{t('staking.actions.mint.action.mint', {
 						amountToStake: amountToStake,

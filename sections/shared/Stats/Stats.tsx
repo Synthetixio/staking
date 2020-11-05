@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import { FlexDivCol } from 'styles/common';
 import TripleStatBox from './TripleStatBox';
 import useGetDebtDataQuery from 'queries/debt/useGetDebtDataQuery';
-import useSNXBalanceQuery from 'queries/walletBalances/useSNXBalanceQuery';
 import useGetFeePoolDataQuery from 'queries/staking/useGetFeePoolDataQuery';
 import useCurrencyRatesQuery from 'queries/rates/useCurrencyRatesQuery';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
@@ -12,13 +11,10 @@ import { useRouter } from 'next/router';
 import ROUTES from 'constants/routes';
 import SingleStatBox from './SingleStatBox';
 
-interface StatsProps {}
-
-const Stats: React.FC<StatsProps> = ({}) => {
+const Stats: React.FC = () => {
 	const router = useRouter();
 
 	const debtDataQuery = useGetDebtDataQuery();
-	const snxBalanceQuery = useSNXBalanceQuery();
 	const totalIssuedSynthsExclEth = useTotalIssuedSynthsExcludingEtherQuery('sUSD');
 	const currencyRates = useCurrencyRatesQuery(['SNX']);
 	const exchangeRates = useExchangeRatesQuery();

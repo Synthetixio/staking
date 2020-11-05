@@ -1,6 +1,5 @@
 import { FC } from 'react';
 import { AppProps } from 'next/app';
-import { useTranslation } from 'react-i18next';
 import { RecoilRoot } from 'recoil';
 
 import { ThemeProvider as SCThemeProvider } from 'styled-components';
@@ -30,7 +29,6 @@ const queryCache = new QueryCache({
 });
 
 const App: FC<AppProps> = ({ Component, pageProps }) => {
-	const { t } = useTranslation();
 	return (
 		<MediaContextProvider>
 			<RecoilRoot>

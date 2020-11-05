@@ -38,7 +38,7 @@ const SideNav: FC = () => {
 						isActive={asPath === link || (link !== ROUTES.Home && asPath.includes(link))}
 					>
 						<Link href={link}>
-							<a>{t(i18nLabel)}</a>
+							<p>{t(i18nLabel)}</p>
 						</Link>
 					</MenuLinkItem>
 				))}

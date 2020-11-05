@@ -12,8 +12,6 @@ import NotificationAlertIcon from 'assets/svg/app/notification-alert.svg';
 import MenuIcon from 'assets/svg/app/menu.svg';
 import CrossIcon from 'assets/svg/app/cross.svg';
 
-import NotificationsModal from 'sections/shared/modals/NotificationsModal';
-
 import MobileSettingsModal from './MobileSettingsModal';
 
 const MobileUserMenu: FC = () => {
@@ -57,9 +55,6 @@ const MobileUserMenu: FC = () => {
 					</MenuButton>
 				</Menu>
 			</Container>
-			{notificationsModalOpened && (
-				<NotificationsModal onDismiss={() => setNotificationsModalOpened(false)} />
-			)}
 			{settingsModalOpened && (
 				<MobileSettingsModal onDismiss={() => setSettingsModalOpened(false)} />
 			)}

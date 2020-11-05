@@ -82,6 +82,7 @@ const MintInfo: React.FC<MintInfoProps> = ({
 			changeInDebt,
 			debtBalance,
 			changeInCollateral,
+			t,
 		]
 	);
 	return (

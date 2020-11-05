@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { LoadingState } from 'constants/loading';
 import {
@@ -14,9 +14,10 @@ import {
 	RowTitle,
 	RowValue,
 } from '../common';
+import { CRYPTO_CURRENCY_MAP } from 'constants/currency';
 
 type BurnTabProps = {
-	amountToBurn: string | null;
+	amountToBurn: string;
 	setAmountToBurn: (amount: string) => void;
 	burnLoadingState: LoadingState | null;
 	setBurnLoadingState: (state: LoadingState | null) => void;
@@ -37,23 +38,20 @@ const BurnTab: React.FC<BurnTabProps> = ({
 	stakedSNX,
 }) => {
 	const { t } = useTranslation();
-	const stakeTypes = useMemo(
-		() => [
-			{
-				label: 'SNX',
-				key: 'SNX',
-			},
-			{
-				label: 'ETH',
-				key: 'ETH',
-			},
-			{
-				label: 'BTC',
-				key: 'BTC',
-			},
-		],
-		[]
-	);
+	const stakeTypes = [
+		{
+			label: CRYPTO_CURRENCY_MAP.SNX,
+			key: CRYPTO_CURRENCY_MAP.SNX,
+		},
+		{
+			label: CRYPTO_CURRENCY_MAP.ETH,
+			key: CRYPTO_CURRENCY_MAP.ETH,
+		},
+		{
+			label: CRYPTO_CURRENCY_MAP.BTC,
+			key: CRYPTO_CURRENCY_MAP.BTC,
+		},
+	];
 	const [stakeType, setStakeType] = useState(stakeTypes[0]);
 
 	const handleMint = () => {
@@ -67,10 +65,9 @@ const BurnTab: React.FC<BurnTabProps> = ({
 		<TabContainer>
 			<HeaderBox>
 				<p>{t('staking.actions.burn.info.header')}</p>
-
 				<StyledSelect
 					inputId="mint-type-list"
-					formatOptionLabel={(option: any) => option.label}
+					formatOptionLabel={(option: { value: string; label: string }) => option.label}
 					options={stakeTypes}
 					value={stakeType}
 					onChange={(option: any) => {
@@ -84,7 +81,7 @@ const BurnTab: React.FC<BurnTabProps> = ({
 				<StyledInput
 					placeholder="0"
 					onChange={(e) => handleStakeChange(e.target.value)}
-					value={amountToBurn ?? '0'}
+					value={amountToBurn}
 				/>
 				<StyledButton onClick={handleMaxIssuance} variant="outline">
 					Max
@@ -93,7 +90,7 @@ const BurnTab: React.FC<BurnTabProps> = ({
 			<DataContainer>
 				<DataRow>
 					<RowTitle>{t('staking.actions.burn.info.burning')}</RowTitle>
-					<RowValue>{amountToBurn ? amountToBurn : '0'} sUSD</RowValue>
+					<RowValue>{amountToBurn} sUSD</RowValue>
 				</DataRow>
 				<DataRow>
 					<RowTitle>{t('staking.actions.burn.info.unstaking')}</RowTitle>
@@ -102,7 +99,7 @@ const BurnTab: React.FC<BurnTabProps> = ({
 					</RowValue>
 				</DataRow>
 			</DataContainer>
-			{amountToBurn !== '' ? (
+			{amountToBurn !== '0' && amountToBurn !== '' ? (
 				<StyledCTA onClick={handleMint} variant="primary" size="lg" disabled={!!burnLoadingState}>
 					{t('staking.actions.burn.action.burn', {
 						amountToBurn: amountToBurn,
