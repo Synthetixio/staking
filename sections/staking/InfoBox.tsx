@@ -14,7 +14,7 @@ interface InfoBoxProps {
 	panelType: 'burn' | 'mint';
 }
 
-export const InfoBox: React.FC<InfoBoxProps> = ({
+const InfoBox: React.FC<InfoBoxProps> = ({
 	unstakedCollateral,
 	stakedCollateral,
 	transferableCollateral,
@@ -64,3 +64,5 @@ export const InfoBox: React.FC<InfoBoxProps> = ({
 	);
 	return returnInfoPanel;
 };
+
+export default InfoBox;

@@ -17,7 +17,6 @@ import MobileSettingsModal from './MobileSettingsModal';
 const MobileUserMenu: FC = () => {
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const [settingsModalOpened, setSettingsModalOpened] = useState<boolean>(false);
-	const [notificationsModalOpened, setNotificationsModalOpened] = useState<boolean>(false);
 	const [hasOrdersNotification, setHasOrdersNotification] = useRecoilState(
 		hasOrdersNotificationState
 	);
@@ -29,13 +28,12 @@ const MobileUserMenu: FC = () => {
 					{isWalletConnected && (
 						<MenuButton
 							onClick={() => {
-								setNotificationsModalOpened(!notificationsModalOpened);
 								setSettingsModalOpened(false);
 								if (hasOrdersNotification) {
 									setHasOrdersNotification(false);
 								}
 							}}
-							isActive={notificationsModalOpened}
+							isActive={hasOrdersNotification}
 						>
 							{hasOrdersNotification ? (
 								<Svg src={NotificationAlertIcon} />
@@ -47,7 +45,6 @@ const MobileUserMenu: FC = () => {
 					<MenuButton
 						onClick={() => {
 							setSettingsModalOpened(!settingsModalOpened);
-							setNotificationsModalOpened(false);
 						}}
 						isActive={settingsModalOpened}
 					>

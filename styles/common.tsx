@@ -192,3 +192,11 @@ export const FullScreenContainer = styled(FlexDiv)`
 	height: 100vh;
 	position: relative;
 `;
+
+export const Row = styled(FlexDivRow)`
+	margin: 20px 0px;
+`;
+
+export const Column = styled(FlexDivCol)`
+	width: 50%;
+`;

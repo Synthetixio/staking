@@ -41,6 +41,8 @@ export default {
 	tooltipGradient: 'linear-gradient(180deg, #ED1EFF 0%, #00D1FF 100%)',
 	// box shadow
 	backgroundBoxShadow: 'rgba(0, 0, 0, 0.4)',
+	// border
+	borderSilver: '#4F5973',
 
 	vampire: '#08080F',
 	elderberry: '#10101E',

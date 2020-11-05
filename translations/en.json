@@ -44,9 +44,7 @@
 		"bar": {
 			"c-ratio": "COLLATERALIZATION RATIO",
 			"period": {
-				"title": "PERIOD REMAINING",
-				"claimed": "Claimed",
-				"unclaimed": "Unclaimed"
+				"title": "PERIOD REMAINING"
 			}
 		},
 		"actions": {
@@ -113,7 +111,21 @@
 	},
 	"earn": {
 		"page-title": "Staking | Earn",
+		"incentives": {
+			"title": "Additional ways to EARN",
+			"subtitle": "Mint sUSD by staking your SNX. This gives you a Collateralization Ratio and a debt, allowing you to earn weekly staking rewards. <0>Learn more.</0>",
+			"est-apr": "Est APR",
+			"options": {
+				"curve": "Curve Finance sUSD LP  Token Rewards",
+				"ieth": "iETH Rewards"
+			}
+		},
 		"actions": {
+			"claim": {
+				"title": "CLAIM",
+				"exchange-rewards": "Synth exchange rewards",
+				"staking-rewards": "SNX staking rewards"
+			},
 			"stake": {
 				"title": "STAKE"
 			},
@@ -156,6 +168,10 @@
 			"c-ratio": "C-RATIO",
 			"synth-value": "TOTAL SYNTH VALUE",
 			"tx-count": "TOTAL TRANSACTIONS"
+		},
+		"status": {
+			"claimed": "Claimed",
+			"unclaimed": "Unclaimed"
 		}
 	}
 }

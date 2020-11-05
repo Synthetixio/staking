@@ -109,7 +109,7 @@ export const DataContainer = styled.div`
 	width: 100%;
 	background: ${(props) => props.theme.colors.mediumBlue};
 `;
-export const ExternalLink = styled.span`
+export const StyledLink = styled.span`
 	${linkCSS}
 	color: ${(props) => props.theme.colors.brightBlue};
 `;

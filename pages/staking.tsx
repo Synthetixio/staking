@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
 import Head from 'next/head';
-import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import { MintBurnBox } from 'sections/staking';
-import { FlexDivCol, FlexDivRow } from 'styles/common';
-import { InfoBox } from 'sections/staking/InfoBox';
+import { MintBurnBox, InfoBox } from 'sections/staking';
+import { Column, Row } from 'styles/common';
 import useGetDebtDataQuery from 'queries/debt/useGetDebtDataQuery';
 import useCurrencyRatesQuery from 'queries/rates/useCurrencyRatesQuery';
 
@@ -74,13 +72,5 @@ const StakingPage = () => {
 		</>
 	);
 };
-
-const Row = styled(FlexDivRow)`
-	margin: 20px 0px;
-`;
-
-const Column = styled(FlexDivCol)`
-	width: 50%;
-`;
 
 export default StakingPage;
