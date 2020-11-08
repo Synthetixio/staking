@@ -91,12 +91,13 @@ const MenuLinkItem = styled.div<{ isActive: boolean }>`
 	line-height: 40px;
 	border-right: ${(props) =>
 		props.isActive ? `1px solid ${props.theme.colors.brightBlue}` : 'none'};
-	a {
+	p {
 		${linkCSS};
 		font-family: ${(props) => props.theme.fonts.condensedBold};
 		text-transform: uppercase;
 		font-weight: 700;
 		font-size: 14px;
+		cursor: pointer;
 		color: ${(props) => (props.isActive ? props.theme.colors.white : props.theme.colors.gray)};
 		&:hover {
 			color: ${(props) => props.theme.colors.white};

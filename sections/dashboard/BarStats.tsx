@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { FlexDiv, FlexDivCentered, FlexDivCol, FlexDivRowCentered } from 'styles/common';
 import ProgressBar from 'components/ProgressBar';
 import Countdown from 'react-countdown';
+import ClaimedTag from 'components/ClaimedTag';
 
 interface BarStatsProps {
 	currentCRatio: number;
@@ -48,12 +49,7 @@ const BarStats: FC<BarStatsProps> = ({
 			<BarStatBox key="PERIOD">
 				<BarHeaderSection>
 					<BarTitle>
-						{t('dashboard.bar.period.title')} &bull;{' '}
-						{claimed ? (
-							<Tag>{t('dashboard.bar.period.claimed')}</Tag>
-						) : (
-							<span> {t('dashboard.bar.period.unclaimed')}</span>
-						)}
+						{t('dashboard.bar.period.title')} &bull; <StyledClaimedTag isClaimed={claimed} />
 					</BarTitle>
 					<BarValue>
 						<Countdown date={nextFeePeriodStarts} />
@@ -98,11 +94,6 @@ const BarTitle = styled(FlexDivCentered)`
 	font-size: 14px;
 	font-family: ${(props) => props.theme.fonts.condensedMedium};
 	color: ${(props) => props.theme.colors.silver};
-
-	span {
-		text-transform: uppercase;
-		margin-left: 4px;
-	}
 `;
 const BarValue = styled.p`
 	font-size: 16px;
@@ -110,9 +101,8 @@ const BarValue = styled.p`
 	font-family: ${(props) => props.theme.fonts.mono};
 `;
 
-const Tag = styled.div`
-	color: ${(props) => props.theme.colors.brightGreen};
-	font-size: 14px;
+const StyledClaimedTag = styled(ClaimedTag)`
+	text-transform: uppercase;
 	margin-left: 4px;
 `;
 

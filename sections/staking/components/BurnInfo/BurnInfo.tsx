@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
-import { FlexDivCol, ExternalLink } from 'styles/common';
+import { FlexDivCol } from 'styles/common';
 import {
 	Title,
 	Subtitle,
@@ -9,6 +9,7 @@ import {
 	RowTitle,
 	RowValue,
 	ValueContainer,
+	StyledLink,
 } from '../common';
 import { Svg } from 'react-optimized-image';
 import Arrows from 'assets/svg/app/arrows.svg';
@@ -89,7 +90,7 @@ const BurnInfo: React.FC<BurnInfoProps> = ({
 		<FlexDivCol>
 			<Title>{t('staking.info.mint.title')}</Title>
 			<Subtitle>
-				<Trans i18nKey="staking.info.mint.subtitle" components={[<ExternalLink />]} />
+				<Trans i18nKey="staking.info.mint.subtitle" components={[<StyledLink />]} />
 			</Subtitle>
 			<DataContainer>
 				{Rows.map((row, i) => (

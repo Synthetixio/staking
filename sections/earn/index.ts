@@ -1,3 +1,4 @@
-import LPBox from './LPBox';
+import Incentives from './Incentives';
+import ClaimBox from './ClaimBox';
 
-export { LPBox };
+export { Incentives, ClaimBox };
