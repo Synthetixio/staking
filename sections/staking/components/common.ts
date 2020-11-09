@@ -69,7 +69,7 @@ export const StyledButton = styled(Button)`
 	width: 25%;
 `;
 
-export const DataRow = styled(FlexDivRow)`
+export const DataRow = styled(FlexDivRowCentered)`
 	justify-content: space-between;
 	margin: 16px 32px;
 	border-bottom: ${(props) => `1px solid ${props.theme.colors.linedBlue}`};

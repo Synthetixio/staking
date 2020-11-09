@@ -20,7 +20,6 @@ type BurnTabProps = {
 	amountToBurn: string;
 	setAmountToBurn: (amount: string) => void;
 	burnLoadingState: LoadingState | null;
-	setBurnLoadingState: (state: LoadingState | null) => void;
 	maxBurnAmount: number;
 	targetCRatio: number;
 	snxPrice: number;
@@ -31,7 +30,6 @@ const BurnTab: React.FC<BurnTabProps> = ({
 	amountToBurn,
 	setAmountToBurn,
 	burnLoadingState,
-	setBurnLoadingState,
 	maxBurnAmount,
 	targetCRatio,
 	snxPrice,
@@ -53,10 +51,6 @@ const BurnTab: React.FC<BurnTabProps> = ({
 		},
 	];
 	const [stakeType, setStakeType] = useState(stakeTypes[0]);
-
-	const handleMint = () => {
-		setBurnLoadingState(LoadingState.LOADING);
-	};
 
 	const handleStakeChange = (value: string) => setAmountToBurn(value);
 

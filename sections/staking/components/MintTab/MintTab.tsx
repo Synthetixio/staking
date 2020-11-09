@@ -14,29 +14,24 @@ import {
 	RowValue,
 } from '../common';
 import { useTranslation } from 'react-i18next';
-import { CRYPTO_CURRENCY_MAP } from 'constants/currency';
+import { CRYPTO_CURRENCY_MAP, SYNTHS_MAP } from 'constants/currency';
+import { getMintAmount } from '../helper';
+import { formatCurrency } from 'utils/formatters/number';
 
 type MintTabProps = {
 	amountToStake: string;
 	setAmountToStake: (amount: string) => void;
 	mintLoadingState: LoadingState | null;
-	setMintLoadingState: (state: LoadingState | null) => void;
 	maxCollateral: number;
 	targetCRatio: number;
 	snxPrice: number;
 	handleStake: () => void;
 };
 
-function getMintAmount(targetCRatio: number, stakeAmount: string, SNXPrice: number) {
-	if (!stakeAmount || !targetCRatio || !SNXPrice) return '0';
-	return Number(stakeAmount) * targetCRatio * SNXPrice;
-}
-
 const MintTab: FC<MintTabProps> = ({
 	amountToStake,
 	setAmountToStake,
 	mintLoadingState,
-	setMintLoadingState,
 	maxCollateral,
 	targetCRatio,
 	snxPrice,
@@ -93,19 +88,29 @@ const MintTab: FC<MintTabProps> = ({
 				<DataRow>
 					<RowTitle>{t('staking.actions.mint.info.staking')}</RowTitle>
 					<RowValue>
-						{amountToStake} {stakeType.label}
+						{formatCurrency(stakeType.label, amountToStake, {
+							decimals: 2,
+							currencyKey: stakeType.label,
+						})}
 					</RowValue>
 				</DataRow>
 				<DataRow>
 					<RowTitle>{t('staking.actions.mint.info.minting')}</RowTitle>
-					<RowValue>{getMintAmount(targetCRatio, amountToStake, snxPrice)} sUSD</RowValue>
+					<RowValue>
+						{formatCurrency(SYNTHS_MAP.sUSD, getMintAmount(targetCRatio, amountToStake, snxPrice), {
+							decimals: 2,
+							currencyKey: SYNTHS_MAP.sUSD,
+						})}
+					</RowValue>
 				</DataRow>
 			</DataContainer>
 			{amountToStake !== '0' && amountToStake !== '' ? (
 				<StyledCTA onClick={handleStake} variant="primary" size="lg" disabled={!!mintLoadingState}>
 					{t('staking.actions.mint.action.mint', {
-						amountToStake: amountToStake,
-						stakeType: stakeType.label,
+						amountToStake: formatCurrency(stakeType.label, amountToStake, {
+							decimals: 2,
+							currencyKey: stakeType.label,
+						}),
 					})}
 				</StyledCTA>
 			) : (
