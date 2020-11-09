@@ -30,7 +30,7 @@ export const CurrencyPrice: FC<CurrencyPriceProps> = ({
 			<Price className="price">
 				{formatCurrency(currencyKey, conversionRate != null ? price / conversionRate : price, {
 					sign,
-					minDecimals: 2,
+					decimals: 2,
 				})}
 			</Price>
 			{change != null && <ChangePercent className="percent" value={change} />}

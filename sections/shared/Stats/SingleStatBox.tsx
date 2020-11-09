@@ -27,10 +27,7 @@ const SingleStatBox: FC<SingleStatBoxProps> = ({ synthValue, transactionCount })
 					<StatTitle titleColor={theme.colors.brightGreen}>
 						{t('common.stat-box.synth-value')}
 					</StatTitle>
-					<NeonValue>
-						{' '}
-						{formatFiatCurrency(synthValue, { sign: '$', maxDecimals: DEFAULT_FIAT_DECIMALS })}
-					</NeonValue>
+					<NeonValue>{formatFiatCurrency(synthValue, { sign: '$' })}</NeonValue>
 				</StatBox>
 			) : transactionCount ? (
 				<StatBox

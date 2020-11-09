@@ -1,4 +1,4 @@
-import { DEFAULT_NETWORK_ID } from 'constants/defaults';
+import { DEFAULT_GAS_BUFFER, DEFAULT_NETWORK_ID } from 'constants/defaults';
 import { NetworkId } from '@synthetixio/js';
 
 export async function getDefaultNetworkId(): Promise<NetworkId> {
@@ -17,3 +17,5 @@ export async function getDefaultNetworkId(): Promise<NetworkId> {
 		return DEFAULT_NETWORK_ID;
 	}
 }
+
+export const normalizeGasLimit = (gasLimit: number) => gasLimit + DEFAULT_GAS_BUFFER;

@@ -6,20 +6,7 @@ import QUERY_KEYS from 'constants/queryKeys';
 import { useRecoilValue } from 'recoil';
 import { isWalletConnectedState, networkState, walletAddressState } from 'store/wallet';
 import { flatten } from 'lodash';
-
-export type FeePoolData = {
-	feesClaimedHistory: History[];
-};
-
-type History = {
-	account: string;
-	block: number;
-	hash: string;
-	rewards: number;
-	timestamp: number;
-	type: string;
-	value: number;
-};
+import { FeeClaimedHistory } from './types';
 
 export const TRANSACTION_EVENTS = [
 	'issued',
@@ -33,11 +20,11 @@ export const TRANSACTION_EVENTS = [
 	'removal',
 ];
 
-const useFeeClaimHistoryQuery = (options?: QueryConfig<FeePoolData>) => {
+const useFeeClaimHistoryQuery = (options?: QueryConfig<FeeClaimedHistory>) => {
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const network = useRecoilValue(networkState);
-	return useQuery<FeePoolData>(
+	return useQuery<FeeClaimedHistory>(
 		QUERY_KEYS.Staking.FeeClaimHistory(walletAddress ?? '', network?.id!),
 		async () => {
 			const [feesClaimed] = await Promise.all([

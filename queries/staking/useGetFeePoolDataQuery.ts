@@ -4,15 +4,7 @@ import { SynthetixJS } from '@synthetixio/js';
 import synthetix from 'lib/synthetix';
 
 import QUERY_KEYS from 'constants/queryKeys';
-
-export type FeePoolData = {
-	feePeriodDuration: number;
-	startTime: number;
-	feesToDistribute: number;
-	feesClaimed: number;
-	rewardsToDistribute: number;
-	rewardsClaimed: number;
-};
+import { FeePoolData } from './types';
 
 const useGetFeePoolDataQuery = (period: string, options?: QueryConfig<FeePoolData>) => {
 	return useQuery<FeePoolData>(

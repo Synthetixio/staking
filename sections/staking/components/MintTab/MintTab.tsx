@@ -21,9 +21,10 @@ type MintTabProps = {
 	setAmountToStake: (amount: string) => void;
 	mintLoadingState: LoadingState | null;
 	setMintLoadingState: (state: LoadingState | null) => void;
-	maxIssuabledSynthAmount: number;
+	maxCollateral: number;
 	targetCRatio: number;
 	snxPrice: number;
+	handleStake: () => void;
 };
 
 function getMintAmount(targetCRatio: number, stakeAmount: string, SNXPrice: number) {
@@ -36,9 +37,10 @@ const MintTab: FC<MintTabProps> = ({
 	setAmountToStake,
 	mintLoadingState,
 	setMintLoadingState,
-	maxIssuabledSynthAmount,
+	maxCollateral,
 	targetCRatio,
 	snxPrice,
+	handleStake,
 }) => {
 	const { t } = useTranslation();
 	const stakeTypes = [
@@ -57,13 +59,9 @@ const MintTab: FC<MintTabProps> = ({
 	];
 	const [stakeType, setStakeType] = useState(stakeTypes[0]);
 
-	const handleMint = () => {
-		setMintLoadingState(LoadingState.LOADING);
-	};
-
 	const handleStakeChange = (value: string) => setAmountToStake(value);
 
-	const handleMaxIssuance = () => setAmountToStake(maxIssuabledSynthAmount?.toString() || '');
+	const handleMaxIssuance = () => setAmountToStake(maxCollateral?.toString() || '');
 
 	return (
 		<TabContainer>
@@ -104,7 +102,7 @@ const MintTab: FC<MintTabProps> = ({
 				</DataRow>
 			</DataContainer>
 			{amountToStake !== '0' && amountToStake !== '' ? (
-				<StyledCTA onClick={handleMint} variant="primary" size="lg" disabled={!!mintLoadingState}>
+				<StyledCTA onClick={handleStake} variant="primary" size="lg" disabled={!!mintLoadingState}>
 					{t('staking.actions.mint.action.mint', {
 						amountToStake: amountToStake,
 						stakeType: stakeType.label,

@@ -11,15 +11,13 @@ import { isFiatCurrency } from 'utils/currencies';
 export type NumericValue = BigNumber | string | number;
 
 export type FormatNumberOptions = {
-	minDecimals?: number;
-	maxDecimals?: number;
+	decimals?: number;
 	prefix?: string;
 	suffix?: string;
 };
 
 export type FormatCurrencyOptions = {
-	minDecimals?: number;
-	maxDecimals?: number;
+	decimals?: number;
 	sign?: string;
 	currencyKey?: CurrencyKey;
 };
@@ -33,7 +31,6 @@ export const getDecimalPlaces = (value: NumericValue) =>
 
 export const toBigNumber = (value: NumericValue) => new BigNumber(value);
 
-// TODO: implement max decimals
 export const formatNumber = (value: NumericValue, options?: FormatNumberOptions) => {
 	const prefix = options?.prefix;
 	const suffix = options?.suffix;
@@ -43,7 +40,7 @@ export const formatNumber = (value: NumericValue, options?: FormatNumberOptions)
 		formattedValue.push(prefix);
 	}
 
-	formattedValue.push(toBigNumber(value).toFormat(options?.minDecimals ?? DEFAULT_NUMBER_DECIMALS));
+	formattedValue.push(toBigNumber(value).toFormat(options?.decimals ?? DEFAULT_NUMBER_DECIMALS));
 	if (suffix) {
 		formattedValue.push(` ${suffix}`);
 	}
@@ -55,16 +52,14 @@ export const formatCryptoCurrency = (value: NumericValue, options?: FormatCurren
 	formatNumber(value, {
 		prefix: options?.sign,
 		suffix: options?.currencyKey,
-		minDecimals: options?.minDecimals ?? DEFAULT_CRYPTO_DECIMALS,
-		maxDecimals: options?.maxDecimals,
+		decimals: options?.decimals ?? DEFAULT_CRYPTO_DECIMALS,
 	});
 
 export const formatFiatCurrency = (value: NumericValue, options?: FormatCurrencyOptions) =>
 	formatNumber(value, {
 		prefix: options?.sign,
 		suffix: options?.currencyKey,
-		minDecimals: options?.minDecimals ?? DEFAULT_FIAT_DECIMALS,
-		maxDecimals: options?.maxDecimals,
+		decimals: options?.decimals ?? DEFAULT_FIAT_DECIMALS,
 	});
 
 export const formatCurrency = (

@@ -85,6 +85,7 @@ export const RowValue = styled.p`
 	font-size: 16px;
 	color: ${(props) => props.theme.colors.white};
 	text-transform: uppercase;
+	margin: 0px 8px;
 `;
 export const StyledCTA = styled(Button)`
 	font-size: 14px;

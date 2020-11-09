@@ -13,7 +13,7 @@ import { StakingPanelType } from 'pages/staking';
 
 interface MintBurnBoxProps {
 	targetCRatio: number;
-	maxIssuabledSynthAmount: number;
+	maxCollateral: number;
 	maxBurnAmount: number;
 	snxPrice: number;
 	amountToBurn: string;
@@ -22,11 +22,12 @@ interface MintBurnBoxProps {
 	setAmountToBurn: (amount: string) => void;
 	setPanelType: (type: StakingPanelType) => void;
 	stakedSNX: number;
+	handleStake: () => void;
 }
 
 const MintBurnBox: FC<MintBurnBoxProps> = ({
 	targetCRatio,
-	maxIssuabledSynthAmount,
+	maxCollateral,
 	maxBurnAmount,
 	snxPrice,
 	amountToBurn,
@@ -35,6 +36,7 @@ const MintBurnBox: FC<MintBurnBoxProps> = ({
 	setAmountToStake,
 	setPanelType,
 	stakedSNX,
+	handleStake,
 }) => {
 	const { t } = useTranslation();
 
@@ -53,8 +55,9 @@ const MintBurnBox: FC<MintBurnBoxProps> = ({
 						mintLoadingState={mintLoadingState}
 						setMintLoadingState={setMintLoadingState}
 						targetCRatio={targetCRatio}
-						maxIssuabledSynthAmount={maxIssuabledSynthAmount}
+						maxCollateral={maxCollateral}
 						snxPrice={snxPrice}
+						handleStake={handleStake}
 					/>
 				),
 			},
@@ -81,7 +84,7 @@ const MintBurnBox: FC<MintBurnBoxProps> = ({
 			amountToBurn,
 			burnLoadingState,
 			maxBurnAmount,
-			maxIssuabledSynthAmount,
+			maxCollateral,
 			setAmountToBurn,
 			setAmountToStake,
 			snxPrice,
