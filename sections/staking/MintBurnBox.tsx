@@ -16,6 +16,9 @@ import { SynthetixJS } from '@synthetixio/js';
 import useEthGasStationQuery from 'queries/network/useGasStationQuery';
 import { GWEI_UNIT } from 'constants/network';
 import { getMintAmount } from './components/helper';
+import { SYNTHS_MAP } from 'constants/currency';
+import { walletAddressState } from 'store/wallet';
+import { useRecoilValue } from 'recoil';
 
 interface MintBurnBoxProps {
 	targetCRatio: number;
@@ -47,12 +50,13 @@ const MintBurnBox: FC<MintBurnBoxProps> = ({
 	const [burnLoadingState, setBurnLoadingState] = useState<LoadingState | null>(null);
 	const ethGasStationQuery = useEthGasStationQuery();
 	const gasPrice = ethGasStationQuery?.data?.average ?? 0;
+	const walletAddress = useRecoilValue(walletAddressState);
 
 	const handleStake = async () => {
 		try {
 			const {
 				contracts: { Synthetix },
-				utils,
+				utils: { parseEther },
 			} = synthetix.js as SynthetixJS;
 
 			// Open Modal
@@ -65,24 +69,48 @@ const MintBurnBox: FC<MintBurnBoxProps> = ({
 				});
 			} else {
 				const gasLimit = getGasEstimateForTransaction(
-					[utils.parseEther(amountToStake)],
+					[parseEther(amountToStake)],
 					Synthetix.estimateGas.issueSynths
 				);
 				const mintAmount = getMintAmount(targetCRatio, amountToStake, snxPrice);
-				transaction = await Synthetix.issueSynths(utils.parseEther(mintAmount.toString()), {
+				transaction = await Synthetix.issueSynths(parseEther(mintAmount.toString()), {
 					gasPrice: gasPrice * GWEI_UNIT,
 					gasLimit,
 				});
 			}
-			// if (notify && transaction) {
-			// 	const refetch = () => {
-			// 		fetchDebtStatusRequest();
-			// 		fetchBalancesRequest();
-			// 	};
-			// 	const message = `Minted ${formatCurrency(mintAmount)} sUSD`;
-			// 	setTransactionInfo({ transactionHash: transaction.hash });
-			// 	notifyHandler(notify, transaction.hash, networkId, refetch, message);
-			// }
+		} catch (e) {
+			console.log(e);
+		}
+	};
+
+	const handleBurn = async (burnToTarget: boolean) => {
+		try {
+			const {
+				contracts: { Synthetix, Issuer },
+				utils: { formatBytes32String, parseEther },
+			} = synthetix.js as SynthetixJS;
+
+			if (await Synthetix.isWaitingPeriod(formatBytes32String(SYNTHS_MAP.sUSD)))
+				throw new Error('Waiting period for sUSD is still ongoing');
+			if (!burnToTarget && !(await Issuer.canBurnSynths(walletAddress)))
+				throw new Error('Waiting period to burn is still ongoing');
+			let transaction;
+			if (burnToTarget) {
+				const gasLimit = getGasEstimateForTransaction([], Synthetix.estimateGas.burnSynthsToTarget);
+				transaction = await Synthetix.burnSynthsToTarget({
+					gasPrice: gasPrice * GWEI_UNIT,
+					gasLimit: gasLimit,
+				});
+			} else {
+				const gasLimit = getGasEstimateForTransaction(
+					[parseEther(amountToBurn.toString())],
+					Synthetix.estimateGas.burnSynths
+				);
+				transaction = await Synthetix.burnSynths(amountToBurn, {
+					gasPrice: gasPrice * GWEI_UNIT,
+					gasLimit,
+				});
+			}
 		} catch (e) {
 			console.log(e);
 		}
@@ -117,6 +145,7 @@ const MintBurnBox: FC<MintBurnBoxProps> = ({
 						maxBurnAmount={maxBurnAmount}
 						snxPrice={snxPrice}
 						stakedSNX={stakedSNX}
+						handleBurn={handleBurn}
 					/>
 				),
 			},

@@ -24,6 +24,7 @@ type BurnTabProps = {
 	targetCRatio: number;
 	snxPrice: number;
 	stakedSNX: number;
+	handleBurn: (burnToTarget: boolean) => void;
 };
 
 const BurnTab: React.FC<BurnTabProps> = ({
@@ -34,6 +35,7 @@ const BurnTab: React.FC<BurnTabProps> = ({
 	targetCRatio,
 	snxPrice,
 	stakedSNX,
+	handleBurn,
 }) => {
 	const { t } = useTranslation();
 	const stakeTypes = [
@@ -55,6 +57,7 @@ const BurnTab: React.FC<BurnTabProps> = ({
 	const handleStakeChange = (value: string) => setAmountToBurn(value);
 
 	const handleMaxIssuance = () => setAmountToBurn(maxBurnAmount?.toString() || '');
+
 	return (
 		<TabContainer>
 			<HeaderBox>
@@ -94,7 +97,7 @@ const BurnTab: React.FC<BurnTabProps> = ({
 				</DataRow>
 			</DataContainer>
 			{amountToBurn !== '0' && amountToBurn !== '' ? (
-				<StyledCTA onClick={handleMint} variant="primary" size="lg" disabled={!!burnLoadingState}>
+				<StyledCTA onClick={handleBurn} variant="primary" size="lg" disabled={!!burnLoadingState}>
 					{t('staking.actions.burn.action.burn', {
 						amountToBurn: amountToBurn,
 						stakeType: stakeType.label,
