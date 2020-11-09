@@ -20,30 +20,38 @@ const DashboardPage = () => {
 
 	const currentCRatio = debtDataQuery.data?.currentCRatio ?? 0;
 	const targetCRatio = debtDataQuery.data?.targetCRatio ?? 0;
+
+	// TODO: replace with useMemo
+	// eslint-disable-next-line
 	const nextFeePeriodStarts = new Date(
 		currentFeePeriod.data?.startTime
 			? (currentFeePeriod.data.startTime + currentFeePeriod.data.feePeriodDuration) * 1000
 			: 0
 	);
 
+	// TODO: replace with useMemo
+	// eslint-disable-next-line
 	const currentFeePeriodStarts = new Date(
 		currentFeePeriod.data?.startTime ? currentFeePeriod.data.startTime * 1000 : 0
 	);
+
+	// TODO: replace with useMemo
+	// eslint-disable-next-line
 	const currentFeePeriodProgress = currentFeePeriod.data?.startTime
 		? (Date.now() / 1000 - currentFeePeriod.data.startTime) /
 		  currentFeePeriod.data.feePeriodDuration
 		: 0;
 
-	const checkClaimedStatus = useMemo(() => {
-		let claimed = false;
-		history.data?.feesClaimedHistory.map((tx) => {
-			const claimedDate = new Date(tx.timestamp);
-			if (claimedDate > currentFeePeriodStarts && claimedDate < nextFeePeriodStarts) {
-				claimed = true;
-			}
-		});
-		return claimed;
-	}, [history, currentFeePeriodStarts, nextFeePeriodStarts]);
+	const checkClaimedStatus = useMemo(
+		() =>
+			history.data?.feesClaimedHistory
+				? history.data?.feesClaimedHistory.some((tx) => {
+						const claimedDate = new Date(tx.timestamp);
+						return claimedDate > currentFeePeriodStarts && claimedDate < nextFeePeriodStarts;
+				  })
+				: false,
+		[history, currentFeePeriodStarts, nextFeePeriodStarts]
+	);
 
 	const claimed = checkClaimedStatus;
 

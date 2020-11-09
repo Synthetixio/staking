@@ -8,6 +8,7 @@ export const SUPPORTED_NETWORKS = {
 	[NetworkId.Kovan]: Network.Kovan,
 	[NetworkId.Ropsten]: Network.Ropsten,
 	[NetworkId.Rinkeby]: Network.Rinkeby,
+	[NetworkId.Goerli]: Network.Goerli,
 };
 
 export type Feed = {
