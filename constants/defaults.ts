@@ -1,9 +1,9 @@
-import { Languages } from 'translations/constants';
+import { Language } from 'translations/constants';
 
 import { NetworkId } from '@synthetixio/js';
 
 // app defaults
-export const DEFAULT_LANGUAGE = Languages.EN;
+export const DEFAULT_LANGUAGE = Language.EN;
 
 // TODO: find a better way to init this
 export const DEFAULT_PRICE_CURRENCY = {

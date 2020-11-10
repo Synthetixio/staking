@@ -97,6 +97,8 @@ const BurnTab: React.FC<BurnTabProps> = ({
 				</DataRow>
 			</DataContainer>
 			{amountToBurn !== '0' && amountToBurn !== '' ? (
+				// TODO: fix this tsc err
+				// @ts-ignore
 				<StyledCTA onClick={handleBurn} variant="primary" size="lg" disabled={!!burnLoadingState}>
 					{t('staking.actions.burn.action.burn', {
 						amountToBurn: amountToBurn,
