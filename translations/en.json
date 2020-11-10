@@ -144,7 +144,19 @@
 		"page-title": "Staking | History"
 	},
 	"synths": {
-		"page-title": "Staking | Synths"
+		"page-title": "Staking | Synths",
+		"synths": {
+			"title": "Synth Balances",
+			"table": {
+				"asset": "Asset",
+				"balance": "Balance",
+				"price": "Price",
+				"holdings": "Holdings %"
+			}
+		},
+		"non-synths": {
+			"title": "Non-Synth Balances"
+		}
 	},
 	"sidenav": {
 		"dashboard": "Home",

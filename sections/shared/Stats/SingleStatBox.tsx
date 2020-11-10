@@ -5,7 +5,6 @@ import { useTranslation } from 'react-i18next';
 import { FlexDivColCentered, FlexDivRowCentered } from 'styles/common';
 import SNXStatBackground from 'assets/svg/app/snx-stat-background.svg';
 import { formatFiatCurrency } from 'utils/formatters/number';
-import { DEFAULT_FIAT_DECIMALS } from 'constants/defaults';
 
 interface SingleStatBoxProps {
 	synthValue?: number;
