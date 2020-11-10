@@ -14,11 +14,11 @@ import { getGasEstimateForTransaction } from 'utils/transactions';
 import synthetix from 'lib/synthetix';
 import { SynthetixJS } from '@synthetixio/js';
 import useEthGasStationQuery from 'queries/network/useGasStationQuery';
-import { GWEI_UNIT } from 'constants/network';
 import { getMintAmount } from './components/helper';
 import { SYNTHS_MAP } from 'constants/currency';
 import { walletAddressState } from 'store/wallet';
 import { useRecoilValue } from 'recoil';
+import { normalizedGasPrice } from 'utils/network';
 
 interface MintBurnBoxProps {
 	targetCRatio: number;
@@ -64,7 +64,7 @@ const MintBurnBox: FC<MintBurnBoxProps> = ({
 			if (Number(amountToStake) === maxCollateral) {
 				const gasLimit = getGasEstimateForTransaction([], Synthetix.estimateGas.issueMaxSynths);
 				transaction = await Synthetix.issueMaxSynths({
-					gasPrice: gasPrice * GWEI_UNIT,
+					gasPrice: normalizedGasPrice(gasPrice),
 					gasLimit,
 				});
 			} else {
@@ -74,7 +74,7 @@ const MintBurnBox: FC<MintBurnBoxProps> = ({
 				);
 				const mintAmount = getMintAmount(targetCRatio, amountToStake, snxPrice);
 				transaction = await Synthetix.issueSynths(parseEther(mintAmount.toString()), {
-					gasPrice: gasPrice * GWEI_UNIT,
+					gasPrice: normalizedGasPrice(gasPrice),
 					gasLimit,
 				});
 			}
@@ -98,7 +98,7 @@ const MintBurnBox: FC<MintBurnBoxProps> = ({
 			if (burnToTarget) {
 				const gasLimit = getGasEstimateForTransaction([], Synthetix.estimateGas.burnSynthsToTarget);
 				transaction = await Synthetix.burnSynthsToTarget({
-					gasPrice: gasPrice * GWEI_UNIT,
+					gasPrice: normalizedGasPrice(gasPrice),
 					gasLimit: gasLimit,
 				});
 			} else {
@@ -107,7 +107,7 @@ const MintBurnBox: FC<MintBurnBoxProps> = ({
 					Synthetix.estimateGas.burnSynths
 				);
 				transaction = await Synthetix.burnSynths(amountToBurn, {
-					gasPrice: gasPrice * GWEI_UNIT,
+					gasPrice: normalizedGasPrice(gasPrice),
 					gasLimit,
 				});
 			}

@@ -1,5 +1,6 @@
 import { DEFAULT_GAS_BUFFER, DEFAULT_NETWORK_ID } from 'constants/defaults';
 import { NetworkId } from '@synthetixio/js';
+import { GWEI_UNIT } from 'constants/network';
 
 export async function getDefaultNetworkId(): Promise<NetworkId> {
 	try {
@@ -19,3 +20,5 @@ export async function getDefaultNetworkId(): Promise<NetworkId> {
 }
 
 export const normalizeGasLimit = (gasLimit: number) => gasLimit + DEFAULT_GAS_BUFFER;
+
+export const normalizedGasPrice = (gasPrice: number) => gasPrice * GWEI_UNIT;
