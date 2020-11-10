@@ -5,6 +5,7 @@ import { MintBurnBox, InfoBox } from 'sections/staking';
 import { Column, Row } from 'styles/common';
 import useGetDebtDataQuery from 'queries/debt/useGetDebtDataQuery';
 import useCurrencyRatesQuery from 'queries/rates/useCurrencyRatesQuery';
+import { CRYPTO_CURRENCY_MAP } from 'constants/currency';
 
 export enum StakingPanelType {
 	BURN = 'burn',
@@ -17,8 +18,9 @@ const StakingPage = () => {
 	const [amountToStake, setAmountToStake] = useState<string>('0');
 	const [amountToBurn, setAmountToBurn] = useState<string>('0');
 	const [panelType, setPanelType] = useState<StakingPanelType>(StakingPanelType.MINT);
+	const [customGasPrice, setCustomGasPrice] = useState(null);
 
-	const currencyRatesQuery = useCurrencyRatesQuery(['SNX']);
+	const currencyRatesQuery = useCurrencyRatesQuery([CRYPTO_CURRENCY_MAP.SNX]);
 	const debtDataQuery = useGetDebtDataQuery();
 	const currencyRates = currencyRatesQuery.data ?? null;
 	const debtData = debtDataQuery?.data ?? null;
@@ -34,6 +36,17 @@ const StakingPage = () => {
 	const lockedSNX = collateral - transferableSNX;
 
 	const unstakedSNX = collateral - stakedSNX;
+
+	// @TODO: Implement custom gas pricing
+	// const gasPrice = useMemo(
+	// 	() =>
+	// 		customGasPrice !== ''
+	// 			? Number(customGasPrice)
+	// 			: ethGasStationQuery.data != null
+	// 			? ethGasStationQuery.data[gasSpeed]
+	// 			: null,
+	// 	[customGasPrice, ethGasStationQuery.data, gasSpeed]
+	// );
 
 	return (
 		<>
@@ -52,6 +65,7 @@ const StakingPage = () => {
 						amountToStake={amountToStake}
 						targetCRatio={targetCRatio}
 						panelType={panelType}
+						snxPrice={snxPrice}
 					/>
 				</Column>
 				<Column>
@@ -60,7 +74,7 @@ const StakingPage = () => {
 						amountToBurn={amountToBurn}
 						setAmountToBurn={setAmountToBurn}
 						setAmountToStake={setAmountToStake}
-						maxIssuabledSynthAmount={issuableSynths}
+						maxCollateral={unstakedSNX}
 						maxBurnAmount={debtBalance}
 						snxPrice={snxPrice}
 						targetCRatio={targetCRatio}

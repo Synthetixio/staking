@@ -78,7 +78,7 @@
 				},
 				"action": {
 					"empty": "Enter an amount",
-					"mint": "Stake {{amountToStake}} {{stakeType}}"
+					"mint": "Stake {{amountToStake}}"
 				}
 			},
 			"burn": {

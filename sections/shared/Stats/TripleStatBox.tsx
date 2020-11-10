@@ -5,7 +5,6 @@ import { useTranslation } from 'react-i18next';
 import { FlexDivColCentered, FlexDivRowCentered } from 'styles/common';
 import SNXStatBackground from 'assets/svg/app/snx-stat-background.svg';
 import { formatFiatCurrency, formatPercent } from 'utils/formatters/number';
-import { DEFAULT_CRYPTO_DECIMALS, DEFAULT_FIAT_DECIMALS } from 'constants/defaults';
 
 interface TripleStatBoxProps {
 	stakingApy?: number;
@@ -28,9 +27,7 @@ const TripleStatBox: FC<TripleStatBoxProps> = ({ stakedValue, activeDebt, stakin
 				<StatTitle titleColor={theme.colors.brightBlue}>
 					{t('common.stat-box.staked-value')}
 				</StatTitle>
-				<StatValue>
-					{formatFiatCurrency(stakedValue, { sign: '$', maxDecimals: DEFAULT_CRYPTO_DECIMALS })}
-				</StatValue>
+				<StatValue>{formatFiatCurrency(stakedValue, { sign: '$' })}</StatValue>
 			</StatBox>
 
 			{stakingApy ? (
@@ -43,7 +40,7 @@ const TripleStatBox: FC<TripleStatBoxProps> = ({ stakedValue, activeDebt, stakin
 					<StatTitle titleColor={theme.colors.brightGreen}>
 						{t('common.stat-box.earning')}
 					</StatTitle>
-					<NeonValue>{formatPercent(stakingApy)}</NeonValue>
+					<NeonValue>{formatPercent(stakingApy) ?? 0}</NeonValue>
 				</StatBox>
 			) : cRatio ? (
 				<StatBox
@@ -55,7 +52,7 @@ const TripleStatBox: FC<TripleStatBoxProps> = ({ stakedValue, activeDebt, stakin
 					<StatTitle titleColor={theme.colors.brightGreen}>
 						{t('common.stat-box.c-ratio')}
 					</StatTitle>
-					<NeonValue>{Math.round(100 / cRatio)}%</NeonValue>
+					<NeonValue>{cRatio ? Math.round(100 / cRatio) : 0}%</NeonValue>
 				</StatBox>
 			) : null}
 
@@ -68,9 +65,7 @@ const TripleStatBox: FC<TripleStatBoxProps> = ({ stakedValue, activeDebt, stakin
 				<StatTitle titleColor={theme.colors.brightPink}>
 					{t('common.stat-box.active-debt')}
 				</StatTitle>
-				<StatValue>
-					{formatFiatCurrency(activeDebt, { sign: '$', maxDecimals: DEFAULT_FIAT_DECIMALS })}
-				</StatValue>
+				<StatValue>{formatFiatCurrency(activeDebt, { sign: '$' })}</StatValue>
 			</StatBox>
 		</StatsSection>
 	);

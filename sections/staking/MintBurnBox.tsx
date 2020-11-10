@@ -10,10 +10,19 @@ import { LoadingState } from 'constants/loading';
 import Burn from 'assets/svg/app/burn.svg';
 import Mint from 'assets/svg/app/mint.svg';
 import { StakingPanelType } from 'pages/staking';
+import { getGasEstimateForTransaction } from 'utils/transactions';
+import synthetix from 'lib/synthetix';
+import { SynthetixJS } from '@synthetixio/js';
+import useEthGasStationQuery from 'queries/network/useGasStationQuery';
+import { getMintAmount } from './components/helper';
+import { SYNTHS_MAP } from 'constants/currency';
+import { walletAddressState } from 'store/wallet';
+import { useRecoilValue } from 'recoil';
+import { normalizedGasPrice } from 'utils/network';
 
 interface MintBurnBoxProps {
 	targetCRatio: number;
-	maxIssuabledSynthAmount: number;
+	maxCollateral: number;
 	maxBurnAmount: number;
 	snxPrice: number;
 	amountToBurn: string;
@@ -26,7 +35,7 @@ interface MintBurnBoxProps {
 
 const MintBurnBox: FC<MintBurnBoxProps> = ({
 	targetCRatio,
-	maxIssuabledSynthAmount,
+	maxCollateral,
 	maxBurnAmount,
 	snxPrice,
 	amountToBurn,
@@ -37,9 +46,75 @@ const MintBurnBox: FC<MintBurnBoxProps> = ({
 	stakedSNX,
 }) => {
 	const { t } = useTranslation();
-
 	const [mintLoadingState, setMintLoadingState] = useState<LoadingState | null>(null);
 	const [burnLoadingState, setBurnLoadingState] = useState<LoadingState | null>(null);
+	const ethGasStationQuery = useEthGasStationQuery();
+	const gasPrice = ethGasStationQuery?.data?.average ?? 0;
+	const walletAddress = useRecoilValue(walletAddressState);
+
+	const handleStake = async () => {
+		try {
+			const {
+				contracts: { Synthetix },
+				utils: { parseEther },
+			} = synthetix.js as SynthetixJS;
+
+			// Open Modal
+			let transaction;
+			if (Number(amountToStake) === maxCollateral) {
+				const gasLimit = getGasEstimateForTransaction([], Synthetix.estimateGas.issueMaxSynths);
+				transaction = await Synthetix.issueMaxSynths({
+					gasPrice: normalizedGasPrice(gasPrice),
+					gasLimit,
+				});
+			} else {
+				const gasLimit = getGasEstimateForTransaction(
+					[parseEther(amountToStake)],
+					Synthetix.estimateGas.issueSynths
+				);
+				const mintAmount = getMintAmount(targetCRatio, amountToStake, snxPrice);
+				transaction = await Synthetix.issueSynths(parseEther(mintAmount.toString()), {
+					gasPrice: normalizedGasPrice(gasPrice),
+					gasLimit,
+				});
+			}
+		} catch (e) {
+			console.log(e);
+		}
+	};
+
+	const handleBurn = async (burnToTarget: boolean) => {
+		try {
+			const {
+				contracts: { Synthetix, Issuer },
+				utils: { formatBytes32String, parseEther },
+			} = synthetix.js as SynthetixJS;
+
+			if (await Synthetix.isWaitingPeriod(formatBytes32String(SYNTHS_MAP.sUSD)))
+				throw new Error('Waiting period for sUSD is still ongoing');
+			if (!burnToTarget && !(await Issuer.canBurnSynths(walletAddress)))
+				throw new Error('Waiting period to burn is still ongoing');
+			let transaction;
+			if (burnToTarget) {
+				const gasLimit = getGasEstimateForTransaction([], Synthetix.estimateGas.burnSynthsToTarget);
+				transaction = await Synthetix.burnSynthsToTarget({
+					gasPrice: normalizedGasPrice(gasPrice),
+					gasLimit: gasLimit,
+				});
+			} else {
+				const gasLimit = getGasEstimateForTransaction(
+					[parseEther(amountToBurn.toString())],
+					Synthetix.estimateGas.burnSynths
+				);
+				transaction = await Synthetix.burnSynths(amountToBurn, {
+					gasPrice: normalizedGasPrice(gasPrice),
+					gasLimit,
+				});
+			}
+		} catch (e) {
+			console.log(e);
+		}
+	};
 
 	const tabData = useMemo(
 		() => [
@@ -50,11 +125,11 @@ const MintBurnBox: FC<MintBurnBoxProps> = ({
 					<MintTab
 						amountToStake={amountToStake}
 						setAmountToStake={setAmountToStake}
-						mintLoadingState={mintLoadingState}
-						setMintLoadingState={setMintLoadingState}
 						targetCRatio={targetCRatio}
-						maxIssuabledSynthAmount={maxIssuabledSynthAmount}
+						maxCollateral={maxCollateral}
+						mintLoadingState={mintLoadingState}
 						snxPrice={snxPrice}
+						handleStake={handleStake}
 					/>
 				),
 			},
@@ -66,22 +141,20 @@ const MintBurnBox: FC<MintBurnBoxProps> = ({
 						amountToBurn={amountToBurn}
 						setAmountToBurn={setAmountToBurn}
 						burnLoadingState={burnLoadingState}
-						setBurnLoadingState={setBurnLoadingState}
 						targetCRatio={targetCRatio}
 						maxBurnAmount={maxBurnAmount}
 						snxPrice={snxPrice}
 						stakedSNX={stakedSNX}
+						handleBurn={handleBurn}
 					/>
 				),
 			},
 		],
 		[
 			amountToStake,
-			mintLoadingState,
 			amountToBurn,
-			burnLoadingState,
 			maxBurnAmount,
-			maxIssuabledSynthAmount,
+			maxCollateral,
 			setAmountToBurn,
 			setAmountToStake,
 			snxPrice,

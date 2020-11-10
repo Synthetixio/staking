@@ -20,22 +20,22 @@ type BurnTabProps = {
 	amountToBurn: string;
 	setAmountToBurn: (amount: string) => void;
 	burnLoadingState: LoadingState | null;
-	setBurnLoadingState: (state: LoadingState | null) => void;
 	maxBurnAmount: number;
 	targetCRatio: number;
 	snxPrice: number;
 	stakedSNX: number;
+	handleBurn: (burnToTarget: boolean) => void;
 };
 
 const BurnTab: React.FC<BurnTabProps> = ({
 	amountToBurn,
 	setAmountToBurn,
 	burnLoadingState,
-	setBurnLoadingState,
 	maxBurnAmount,
 	targetCRatio,
 	snxPrice,
 	stakedSNX,
+	handleBurn,
 }) => {
 	const { t } = useTranslation();
 	const stakeTypes = [
@@ -54,13 +54,10 @@ const BurnTab: React.FC<BurnTabProps> = ({
 	];
 	const [stakeType, setStakeType] = useState(stakeTypes[0]);
 
-	const handleMint = () => {
-		setBurnLoadingState(LoadingState.LOADING);
-	};
-
 	const handleStakeChange = (value: string) => setAmountToBurn(value);
 
 	const handleMaxIssuance = () => setAmountToBurn(maxBurnAmount?.toString() || '');
+
 	return (
 		<TabContainer>
 			<HeaderBox>
@@ -100,7 +97,7 @@ const BurnTab: React.FC<BurnTabProps> = ({
 				</DataRow>
 			</DataContainer>
 			{amountToBurn !== '0' && amountToBurn !== '' ? (
-				<StyledCTA onClick={handleMint} variant="primary" size="lg" disabled={!!burnLoadingState}>
+				<StyledCTA onClick={handleBurn} variant="primary" size="lg" disabled={!!burnLoadingState}>
 					{t('staking.actions.burn.action.burn', {
 						amountToBurn: amountToBurn,
 						stakeType: stakeType.label,

@@ -69,7 +69,7 @@ export const StyledButton = styled(Button)`
 	width: 25%;
 `;
 
-export const DataRow = styled(FlexDivRow)`
+export const DataRow = styled(FlexDivRowCentered)`
 	justify-content: space-between;
 	margin: 16px 32px;
 	border-bottom: ${(props) => `1px solid ${props.theme.colors.linedBlue}`};
@@ -85,6 +85,7 @@ export const RowValue = styled.p`
 	font-size: 16px;
 	color: ${(props) => props.theme.colors.white};
 	text-transform: uppercase;
+	margin: 0px 8px;
 `;
 export const StyledCTA = styled(Button)`
 	font-size: 14px;

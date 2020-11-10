@@ -12,6 +12,7 @@ interface InfoBoxProps {
 	amountToStake: string | null;
 	targetCRatio: number;
 	panelType: 'burn' | 'mint';
+	snxPrice: number;
 }
 
 const InfoBox: React.FC<InfoBoxProps> = ({
@@ -24,6 +25,7 @@ const InfoBox: React.FC<InfoBoxProps> = ({
 	amountToStake,
 	targetCRatio,
 	panelType,
+	snxPrice,
 }) => {
 	const returnInfoPanel = useMemo(
 		() =>
@@ -37,6 +39,7 @@ const InfoBox: React.FC<InfoBoxProps> = ({
 					lockedCollateral={lockedCollateral}
 					amountToStake={amountToStake}
 					targetCRatio={targetCRatio}
+					snxPrice={snxPrice}
 				/>
 			) : (
 				<BurnInfo
