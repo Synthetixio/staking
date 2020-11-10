@@ -89,7 +89,6 @@ const MintTab: FC<MintTabProps> = ({
 					<RowTitle>{t('staking.actions.mint.info.staking')}</RowTitle>
 					<RowValue>
 						{formatCurrency(stakeType.label, amountToStake, {
-							decimals: 2,
 							currencyKey: stakeType.label,
 						})}
 					</RowValue>
@@ -98,7 +97,6 @@ const MintTab: FC<MintTabProps> = ({
 					<RowTitle>{t('staking.actions.mint.info.minting')}</RowTitle>
 					<RowValue>
 						{formatCurrency(SYNTHS_MAP.sUSD, getMintAmount(targetCRatio, amountToStake, snxPrice), {
-							decimals: 2,
 							currencyKey: SYNTHS_MAP.sUSD,
 						})}
 					</RowValue>
@@ -108,7 +106,6 @@ const MintTab: FC<MintTabProps> = ({
 				<StyledCTA onClick={handleStake} variant="primary" size="lg" disabled={!!mintLoadingState}>
 					{t('staking.actions.mint.action.mint', {
 						amountToStake: formatCurrency(stakeType.label, amountToStake, {
-							decimals: 2,
 							currencyKey: stakeType.label,
 						}),
 					})}
