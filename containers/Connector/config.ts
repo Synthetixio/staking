@@ -60,7 +60,7 @@ export const initOnboard = (network: Network, subscriptions: Subscriptions) => {
 export const initNotify = (network: Network) =>
 	notify({
 		darkMode: true,
-		dappId: '95a4ea13-9af6-4ea1-89db-a2c333236a77',
+		dappId: process.env.NEXT_PUBLIC_BN_NOTIFY_API_KEY!,
 		networkId: network.id,
 		desktopPosition: 'topRight',
 	});
