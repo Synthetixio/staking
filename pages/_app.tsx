@@ -2,13 +2,12 @@ import { FC } from 'react';
 import { AppProps } from 'next/app';
 import { RecoilRoot } from 'recoil';
 
-import { ThemeProvider as SCThemeProvider } from 'styled-components';
-import { ThemeProvider as MuiThemeProvider } from '@material-ui/core/styles';
+import { ThemeProvider } from 'styled-components';
 
 import WithStateContainers from 'containers';
-import theme, { muiTheme } from 'styles/theme';
+import theme from 'styles/theme';
 
-import 'styles/fonts.css';
+import 'styles/main.css';
 import '../i18n';
 import '@reach/dialog/styles.css';
 import '@reach/tabs/styles.css';
@@ -31,18 +30,16 @@ const App: FC<AppProps> = ({ Component, pageProps }) => {
 	return (
 		<MediaContextProvider>
 			<RecoilRoot>
-				<SCThemeProvider theme={theme}>
-					<MuiThemeProvider theme={muiTheme}>
-						<WithStateContainers>
-							<ReactQueryCacheProvider queryCache={queryCache}>
-								<Layout>
-									<Component {...pageProps} />
-								</Layout>
-								<ReactQueryDevtools />
-							</ReactQueryCacheProvider>
-						</WithStateContainers>
-					</MuiThemeProvider>
-				</SCThemeProvider>
+				<ThemeProvider theme={theme}>
+					<WithStateContainers>
+						<ReactQueryCacheProvider queryCache={queryCache}>
+							<Layout>
+								<Component {...pageProps} />
+							</Layout>
+							<ReactQueryDevtools />
+						</ReactQueryCacheProvider>
+					</WithStateContainers>
+				</ThemeProvider>
 			</RecoilRoot>
 		</MediaContextProvider>
 	);
