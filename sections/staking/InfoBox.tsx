@@ -63,6 +63,7 @@ const InfoBox: React.FC<InfoBoxProps> = ({
 			transferableCollateral,
 			unstakedCollateral,
 			targetCRatio,
+			snxPrice,
 		]
 	);
 	return returnInfoPanel;

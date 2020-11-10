@@ -1,39 +1,42 @@
 import { useState, useEffect } from 'react';
 import { createContainer } from 'unstated-next';
-import { useSetRecoilState, useRecoilState } from 'recoil';
+import { useSetRecoilState, useRecoilState, useRecoilValue } from 'recoil';
 import { NetworkId, Network as NetworkName } from '@synthetixio/js';
 import { ethers } from 'ethers';
 
-import synthetix, { SUPPORTED_NETWORKS } from 'lib/synthetix';
+import synthetix from 'lib/synthetix';
 
 import { getDefaultNetworkId } from 'utils/network';
 
-import { appReadyState } from 'store/app';
+import { appReadyState, languageState } from 'store/app';
 import { walletAddressState, networkState } from 'store/wallet';
 
 import { Wallet as OnboardWallet } from 'bnc-onboard/dist/src/interfaces';
 
-import { useLocalStorage } from 'hooks/useLocalStorage';
+import useLocalStorage from 'hooks/useLocalStorage';
 
 import { initOnboard, initNotify } from './config';
 import { LOCAL_STORAGE_KEYS } from 'constants/storage';
 
 const useConnector = () => {
 	const [network, setNetwork] = useRecoilState(networkState);
+	const language = useRecoilValue(languageState);
 	const [provider, setProvider] = useState<ethers.providers.Provider | null>(null);
 	const [signer, setSigner] = useState<ethers.Signer | null>(null);
 	const [onboard, setOnboard] = useState<ReturnType<typeof initOnboard> | null>(null);
 	const [notify, setNotify] = useState<ReturnType<typeof initNotify> | null>(null);
 	const [isAppReady, setAppReady] = useRecoilState(appReadyState);
 	const setWalletAddress = useSetRecoilState(walletAddressState);
-	const [selectedWallet, setSelectedWallet] = useLocalStorage(
+	const [selectedWallet, setSelectedWallet] = useLocalStorage<string | null>(
 		LOCAL_STORAGE_KEYS.SELECTED_WALLET,
 		''
 	);
 
 	useEffect(() => {
 		const init = async () => {
+			// TODO: need to verify we support the network
 			const networkId = await getDefaultNetworkId();
+
 			// @ts-ignore
 			const provider = new ethers.providers.InfuraProvider(
 				networkId,
@@ -60,7 +63,12 @@ const useConnector = () => {
 			const onboard = initOnboard(network, {
 				address: setWalletAddress,
 				network: (networkId: number) => {
-					if (networkId != null) {
+					const isSupportedNetwork =
+						synthetix.chainIdToNetwork != null && synthetix.chainIdToNetwork[networkId as NetworkId]
+							? true
+							: false;
+
+					if (isSupportedNetwork) {
 						const provider = new ethers.providers.Web3Provider(onboard.getState().wallet.provider);
 						const signer = provider.getSigner();
 
@@ -73,9 +81,11 @@ const useConnector = () => {
 						notify.config({ networkId });
 						setProvider(provider);
 						setSigner(signer);
+
 						setNetwork({
 							id: networkId,
-							name: SUPPORTED_NETWORKS[networkId as NetworkId],
+							// @ts-ignore
+							name: synthetix.chainIdToNetwork[networkId],
 						});
 					}
 				},
@@ -107,7 +117,9 @@ const useConnector = () => {
 					}
 				},
 			});
-			const notify = initNotify(network);
+			const notify = initNotify(network, {
+				clientLocale: language,
+			});
 
 			setOnboard(onboard);
 			setNotify(notify);
@@ -122,7 +134,17 @@ const useConnector = () => {
 		}
 	}, [onboard, selectedWallet]);
 
-	const resetCachedUI = () => {};
+	useEffect(() => {
+		if (notify) {
+			notify.config({
+				clientLocale: language,
+			});
+		}
+	}, [language, notify]);
+
+	const resetCachedUI = () => {
+		// TODO: implement
+	};
 
 	const connectWallet = async () => {
 		try {
@@ -163,7 +185,6 @@ const useConnector = () => {
 	const isHardwareWallet = () => {
 		if (onboard) {
 			const onboardState = onboard.getState();
-			console.log(onboardState);
 			if (onboardState.address != null) {
 				return onboardState.wallet.type === 'hardware';
 			}

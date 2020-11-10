@@ -1,5 +1,5 @@
 import onboard from 'bnc-onboard';
-import notify from 'bnc-notify';
+import notify, { InitOptions } from 'bnc-notify';
 
 import { Subscriptions } from 'bnc-onboard/dist/src/interfaces';
 import { getInfuraRpcURL } from 'utils/infura';
@@ -57,10 +57,12 @@ export const initOnboard = (network: Network, subscriptions: Subscriptions) => {
 	});
 };
 
-export const initNotify = (network: Network) =>
+export const initNotify = (network: Network, options: InitOptions) =>
 	notify({
 		darkMode: true,
 		dappId: process.env.NEXT_PUBLIC_BN_NOTIFY_API_KEY!,
 		networkId: network.id,
 		desktopPosition: 'topRight',
+		notifyMessages,
+		...options,
 	});

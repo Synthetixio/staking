@@ -2,14 +2,7 @@ import initSynthetixJS, { NetworkId, Network, Token, Synth, SynthetixJS } from '
 import { ethers, Signer } from 'ethers';
 
 import keyBy from 'lodash/keyBy';
-
-export const SUPPORTED_NETWORKS = {
-	[NetworkId.Mainnet]: Network.Mainnet,
-	[NetworkId.Kovan]: Network.Kovan,
-	[NetworkId.Ropsten]: Network.Ropsten,
-	[NetworkId.Rinkeby]: Network.Rinkeby,
-	[NetworkId.Goerli]: Network.Goerli,
-};
+import invert from 'lodash/invert';
 
 export type Feed = {
 	asset: string;
@@ -36,6 +29,7 @@ type Synthetix = {
 	synthsMap: SynthsMap | null;
 	tokensMap: TokensMap | null;
 	synthSummaryUtil: ethers.Contract | null;
+	chainIdToNetwork: Record<NetworkId, Network> | null;
 };
 
 const synthetix: Synthetix = {
@@ -43,12 +37,20 @@ const synthetix: Synthetix = {
 	synthSummaryUtil: null,
 	synthsMap: null,
 	tokensMap: null,
+	chainIdToNetwork: null,
 
 	setContractSettings({ networkId, provider, signer }: ContractSettings) {
-		this.js = initSynthetixJS({ networkId, provider, signer });
+		this.js = initSynthetixJS({
+			networkId,
+			provider,
+			signer,
+		});
 
 		this.synthsMap = keyBy(this.js.synths, 'name');
 		this.tokensMap = keyBy(this.js.tokens, 'symbol');
+
+		// @ts-ignore
+		this.chainIdToNetwork = invert(this.js.networkToChainId);
 	},
 };
 
