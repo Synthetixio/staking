@@ -6,6 +6,7 @@
 		"build": "next build",
 		"start": "next start",
 		"tsc": "tsc --noEmit",
+		"export": "next export",
 		"format": "prettier --write \"**/*.{ts,tsx}\"",
 		"lint": "eslint . --ext ts,.tsx && tsc",
 		"lint:fix": "eslint . --ext ts,.tsx --fix"
