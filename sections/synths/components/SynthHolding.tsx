@@ -9,7 +9,7 @@ interface SynthHoldingProps {
 	totalUSDBalance: number;
 }
 
-export const SynthHolding: React.FC<SynthHoldingProps> = ({ usdBalance, totalUSDBalance }) => {
+const SynthHolding: React.FC<SynthHoldingProps> = ({ usdBalance, totalUSDBalance }) => {
 	const percent = usdBalance / totalUSDBalance;
 	return (
 		<FlexDivCol>
@@ -29,3 +29,5 @@ const StyledProgressBar = styled(ProgressBar)`
 	.filled-bar {
 	}
 `;
+
+export default SynthHolding;

@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { CellProps } from 'react-table';
 import styled from 'styled-components';
 
@@ -15,23 +15,19 @@ import useSynthsBalancesQuery, {
 } from 'queries/walletBalances/useSynthsBalancesQuery';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import { formatCurrency, formatNumber } from 'utils/formatters/number';
-import { SynthPriceCol } from './components/SynthPriceCol';
-import { SynthHolding } from './components/SynthHolding';
+import SynthPriceCol from './components/SynthPriceCol';
+import SynthHolding from './components/SynthHolding';
 
 interface AssetContainerProps {
-	title: string;
-	isLoaded: boolean;
-	isLoading: boolean;
+	title: React.ReactNode;
 }
 
-export const AssetContainer: React.FC<AssetContainerProps> = ({ title, isLoading, isLoaded }) => {
+export const AssetContainer: React.FC<AssetContainerProps> = ({ title }) => {
 	const { t } = useTranslation();
 
 	const synthsBalancesQuery = useSynthsBalancesQuery();
 
 	const assets = synthsBalancesQuery?.data?.balances ?? [];
-
-	const columnsDeps = useMemo(() => []);
 
 	const synthBalances =
 		synthsBalancesQuery.isSuccess && synthsBalancesQuery.data != null
@@ -110,11 +106,10 @@ export const AssetContainer: React.FC<AssetContainerProps> = ({ title, isLoading
 						sortable: true,
 					},
 				]}
-				columnsDeps={columnsDeps}
 				data={assets}
-				isLoading={isLoading && !isLoaded}
+				isLoading={synthsBalancesQuery.isLoading}
 				noResultsMessage={
-					isLoaded && assets.length === 0 ? (
+					synthsBalancesQuery.isSuccess && assets.length === 0 ? (
 						<TableNoResults>
 							<Svg src={NoNotificationIcon} />
 							{t('synths.synths.table.no-results')}
