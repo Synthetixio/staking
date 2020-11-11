@@ -15,7 +15,6 @@ import useSynthsBalancesQuery, {
 } from 'queries/walletBalances/useSynthsBalancesQuery';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import { formatCurrency, formatNumber } from 'utils/formatters/number';
-import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import { SynthPriceCol } from './components/SynthPriceCol';
 import { SynthHolding } from './components/SynthHolding';
 
@@ -29,11 +28,10 @@ export const AssetContainer: React.FC<AssetContainerProps> = ({ title, isLoading
 	const { t } = useTranslation();
 
 	const synthsBalancesQuery = useSynthsBalancesQuery();
-	const exchangeRatesQuery = useExchangeRatesQuery();
 
 	const assets = synthsBalancesQuery?.data?.balances ?? [];
 
-	const columnsDeps = useMemo(() => [assets], [assets]);
+	const columnsDeps = useMemo(() => []);
 
 	const synthBalances =
 		synthsBalancesQuery.isSuccess && synthsBalancesQuery.data != null

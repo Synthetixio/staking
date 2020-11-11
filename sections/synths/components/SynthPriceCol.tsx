@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 import useHistoricalRatesQuery from 'queries/rates/useHistoricalRatesQuery';
-import { useTranslation } from 'react-i18next';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import { FlexDivCol } from 'styles/common';
 import CurrencyPrice from 'components/Currency/CurrencyPrice';
@@ -11,8 +10,7 @@ interface SynthPriceColProps {
 	currencyKey: string;
 }
 
-export const SynthPriceCol: React.FC<SynthPriceColProps> = ({ currencyKey }) => {
-	const { t } = useTranslation();
+const SynthPriceCol: React.FC<SynthPriceColProps> = ({ currencyKey }) => {
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const exchangeRates = exchangeRatesQuery.data ?? null;
 	const price = exchangeRates && exchangeRates[currencyKey];
@@ -46,3 +44,5 @@ const StyledCurrencyPrice = styled(CurrencyPrice)`
 		font-size: 10px;
 	}
 `;
+
+export default SynthPriceCol;

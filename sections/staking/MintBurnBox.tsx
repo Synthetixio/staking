@@ -46,8 +46,8 @@ const MintBurnBox: FC<MintBurnBoxProps> = ({
 	stakedSNX,
 }) => {
 	const { t } = useTranslation();
-	const [mintLoadingState, setMintLoadingState] = useState<LoadingState | null>(null);
-	const [burnLoadingState, setBurnLoadingState] = useState<LoadingState | null>(null);
+	const [mintLoadingState] = useState<LoadingState | null>(null);
+	const [burnLoadingState] = useState<LoadingState | null>(null);
 	const ethGasStationQuery = useEthGasStationQuery();
 	const gasPrice = ethGasStationQuery?.data?.average ?? 0;
 	const walletAddress = useRecoilValue(walletAddressState);
@@ -161,6 +161,10 @@ const MintBurnBox: FC<MintBurnBoxProps> = ({
 			stakedSNX,
 			t,
 			targetCRatio,
+			burnLoadingState,
+			handleBurn,
+			handleStake,
+			mintLoadingState,
 		]
 	);
 	return (

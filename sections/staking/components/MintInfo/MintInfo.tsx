@@ -96,7 +96,6 @@ const MintInfo: React.FC<MintInfoProps> = ({
 			changeInDebt,
 			debtBalance,
 			changeInCollateral,
-			CRYPTO_CURRENCY_MAP,
 			snxPrice,
 			t,
 		]

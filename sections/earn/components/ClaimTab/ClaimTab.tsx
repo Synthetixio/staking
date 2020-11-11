@@ -6,9 +6,7 @@ import ClaimedTag from 'components/ClaimedTag';
 import { TabContainer } from '../common';
 import { FlexDivRowCentered } from 'styles/common';
 
-interface ClaimTabProps {}
-
-const ClaimTab: React.FC<ClaimTabProps> = ({}) => {
+const ClaimTab: React.FC = () => {
 	const { t } = useTranslation();
 	const claimed = true;
 	return (

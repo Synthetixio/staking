@@ -8,9 +8,7 @@ import { Subtitle, Title, StyledLink } from './components/common';
 // @TODO: Import proper svgs
 import curvesUSD from 'assets/svg/incentives/curvesUSD.svg';
 
-interface IncentivesProps {}
-
-const Incentives: React.FC<IncentivesProps> = ({}) => {
+const Incentives: React.FC = () => {
 	const { t } = useTranslation();
 
 	const incentives = [

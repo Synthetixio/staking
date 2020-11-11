@@ -1,5 +1,5 @@
 import React from 'react';
-import styled, { useTheme } from 'styled-components';
+import styled from 'styled-components';
 import ProgressBar from 'components/ProgressBar';
 import { FlexDivCol } from 'styles/common';
 import { formatPercent } from 'utils/formatters/number';
@@ -11,7 +11,6 @@ interface SynthHoldingProps {
 
 export const SynthHolding: React.FC<SynthHoldingProps> = ({ usdBalance, totalUSDBalance }) => {
 	const percent = usdBalance / totalUSDBalance;
-	const theme = useTheme();
 	return (
 		<FlexDivCol>
 			<StyledProgressBar percentage={percent} borderColor={'transparent'} fillColor={'#00D1FF'} />
