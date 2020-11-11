@@ -1,10 +1,12 @@
-import { FC } from 'react';
+import React from 'react';
 import styled, { useTheme } from 'styled-components';
 import { useTranslation } from 'react-i18next';
 
 import { FlexDivColCentered, FlexDivRowCentered } from 'styles/common';
 import SNXStatBackground from 'assets/svg/app/snx-stat-background.svg';
 import { formatFiatCurrency, formatPercent } from 'utils/formatters/number';
+import ROUTES from 'constants/routes';
+import { useRouter } from 'next/router';
 
 interface TripleStatBoxProps {
 	stakingApy?: number;
@@ -13,62 +15,96 @@ interface TripleStatBoxProps {
 	activeDebt: any;
 }
 
-const TripleStatBox: FC<TripleStatBoxProps> = ({ stakedValue, activeDebt, stakingApy, cRatio }) => {
+const TripleStatBox: React.FC<TripleStatBoxProps> = ({
+	stakedValue,
+	activeDebt,
+	stakingApy,
+	cRatio,
+}) => {
 	const { t } = useTranslation();
 	const theme = useTheme();
-	return (
-		<StatsSection>
-			<StatBox
-				key={'staked-value'}
-				style={{
-					backgroundImage: `url(${SNXStatBackground})`,
-				}}
-			>
-				<StatTitle titleColor={theme.colors.brightBlue}>
-					{t('common.stat-box.staked-value')}
-				</StatTitle>
-				<StatValue>{formatFiatCurrency(stakedValue, { sign: '$' })}</StatValue>
-			</StatBox>
 
-			{stakingApy ? (
-				<StatBox
-					key={'earning'}
-					style={{
-						backgroundImage: `url(${SNXStatBackground})`,
-					}}
-				>
-					<StatTitle titleColor={theme.colors.brightGreen}>
-						{t('common.stat-box.earning')}
-					</StatTitle>
-					<NeonValue>{formatPercent(stakingApy) ?? 0}</NeonValue>
-				</StatBox>
-			) : cRatio ? (
-				<StatBox
-					key={'cRatio'}
-					style={{
-						backgroundImage: `url(${SNXStatBackground})`,
-					}}
-				>
-					<StatTitle titleColor={theme.colors.brightGreen}>
-						{t('common.stat-box.c-ratio')}
-					</StatTitle>
-					<NeonValue>{cRatio ? Math.round(100 / cRatio) : 0}%</NeonValue>
-				</StatBox>
-			) : null}
+	const { route } = useRouter();
 
-			<StatBox
-				key={'active-debt'}
-				style={{
-					backgroundImage: `url(${SNXStatBackground})`,
-				}}
-			>
-				<StatTitle titleColor={theme.colors.brightPink}>
-					{t('common.stat-box.active-debt')}
-				</StatTitle>
-				<StatValue>{formatFiatCurrency(activeDebt, { sign: '$' })}</StatValue>
-			</StatBox>
-		</StatsSection>
+	const returnStakedValue = () => (
+		<StatBox
+			key={'staked-value'}
+			style={{
+				backgroundImage: `url(${SNXStatBackground})`,
+			}}
+		>
+			<StatTitle titleColor={theme.colors.brightBlue}>
+				{t('common.stat-box.staked-value')}
+			</StatTitle>
+			<StatValue>{formatFiatCurrency(stakedValue ? stakedValue : 0, { sign: '$' })}</StatValue>
+		</StatBox>
 	);
+
+	const returnApy = () => (
+		<StatBox
+			key={'earning'}
+			style={{
+				backgroundImage: `url(${SNXStatBackground})`,
+			}}
+		>
+			<StatTitle titleColor={theme.colors.brightGreen}>{t('common.stat-box.earning')}</StatTitle>
+			<NeonValue>{formatPercent(stakingApy ? stakingApy : 0)}</NeonValue>
+		</StatBox>
+	);
+
+	const returnCRatio = () => (
+		<StatBox
+			key={'cRatio'}
+			style={{
+				backgroundImage: `url(${SNXStatBackground})`,
+			}}
+		>
+			<StatTitle titleColor={theme.colors.brightGreen}>{t('common.stat-box.c-ratio')}</StatTitle>
+			<NeonValue>{cRatio ? Math.round(100 / cRatio) : 0}%</NeonValue>
+		</StatBox>
+	);
+
+	const returnActiveDebt = () => (
+		<StatBox
+			key={'active-debt'}
+			style={{
+				backgroundImage: `url(${SNXStatBackground})`,
+			}}
+		>
+			<StatTitle titleColor={theme.colors.brightPink}>{t('common.stat-box.active-debt')}</StatTitle>
+			<StatValue>{formatFiatCurrency(activeDebt ? activeDebt : 0, { sign: '$' })}</StatValue>
+		</StatBox>
+	);
+
+	const returnStats = () => {
+		switch (route) {
+			case ROUTES.Home:
+				return (
+					<>
+						{returnStakedValue()}
+						{returnApy()}
+						{returnActiveDebt()}
+					</>
+				);
+			case ROUTES.Staking.Home:
+				return (
+					<>
+						{returnStakedValue()}
+						{returnCRatio()}
+						{returnActiveDebt()}
+					</>
+				);
+			case ROUTES.Earn.Home:
+				return (
+					<>
+						{returnStakedValue()}
+						{returnApy()}
+						{returnActiveDebt()}
+					</>
+				);
+		}
+	};
+	return <StatsSection>{returnStats()}</StatsSection>;
 };
 
 const StatsSection = styled(FlexDivRowCentered)`
