@@ -24,17 +24,18 @@ const BarStats: FC<BarStatsProps> = ({
 	const { t } = useTranslation();
 	const theme = useTheme();
 
+	const percentage =
+		currentCRatio ?? `${Math.round(100 / currentCRatio)}/${Math.round(100 / targetCRatio)}`;
+
 	const returnCRatio = useMemo(
 		() => (
 			<BarStatBox key="CRATIO">
 				<BarHeaderSection>
 					<BarTitle>{t('dashboard.bar.c-ratio')}</BarTitle>
-					<BarValue>
-						{Math.round(100 / currentCRatio)}/{Math.round(100 / targetCRatio)}%
-					</BarValue>
+					<BarValue>{percentage}%</BarValue>
 				</BarHeaderSection>
 				<ShadowCRatioBar
-					percentage={Math.round(100 / currentCRatio) / Math.round(100 / targetCRatio)}
+					percentage={percentage}
 					borderColor={theme.colors.brightPink}
 					fillColor={theme.colors.brightBlue}
 				/>
@@ -104,6 +105,7 @@ const BarValue = styled.p`
 const StyledClaimedTag = styled(ClaimedTag)`
 	text-transform: uppercase;
 	margin-left: 4px;
+	font-size: 14px;
 `;
 
 export default BarStats;
