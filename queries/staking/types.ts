@@ -1,22 +1,19 @@
-export type FeePoolData = {
-	feePeriodDuration: number;
-	startTime: number;
-	feesToDistribute: number;
-	feesClaimed: number;
-	rewardsToDistribute: number;
-	rewardsClaimed: number;
-};
+export type HistoricalUserTransactionEvent =
+	| 'issued'
+	| 'burned'
+	| 'feesClaimed'
+	| 'exchanged'
+	| 'cleared'
+	| 'bought'
+	| 'deposit'
+	| 'withdrawl'
+	| 'removal';
 
-export type FeeClaimedHistory = {
-	feesClaimedHistory: History[];
-};
-
-export type History = {
+export type HistoricalStakingTransaction = {
 	account: string;
 	block: number;
 	hash: string;
-	rewards: number;
-	timestamp: number;
-	type: string;
 	value: number;
+	timestamp: number;
+	type: HistoricalUserTransactionEvent;
 };
