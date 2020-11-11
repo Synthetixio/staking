@@ -1,3 +1,33 @@
+* {
+	box-sizing: border-box;
+}
+
+body {
+	font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	text-rendering: optimizeSpeed;
+	margin: 0;
+	min-height: 100vh;
+	position: relative;
+	scroll-behavior: smooth;
+}
+
+ul {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+input[type='number'] {
+	-moz-appearance: textfield;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+	-webkit-appearance: none;
+}
+
 /* ------------- GT America Mono */
 @font-face {
 	font-family: 'GT America Mono';
