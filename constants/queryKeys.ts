@@ -20,7 +20,20 @@ export const QUERY_KEYS = {
 	Staking: {
 		FeePoolData: (period: string) => ['staking', 'feePoolData', period],
 		FeeClaimHistory: (walletAddress: string, networkId: NetworkId) => [
-			'staking, feelClaimHistory',
+			'staking',
+			'feelClaimHistory',
+			walletAddress,
+			networkId,
+		],
+		Issued: (walletAddress: string, networkId: NetworkId) => [
+			'staking',
+			'issued',
+			walletAddress,
+			networkId,
+		],
+		Burned: (walletAddress: string, networkId: NetworkId) => [
+			'staking',
+			'burned',
 			walletAddress,
 			networkId,
 		],
@@ -91,6 +104,26 @@ export const QUERY_KEYS = {
 	},
 	SystemStatus: {
 		IsUpgrading: ['systemStatus', 'isUpgrading'],
+	},
+	Depot: {
+		UserActions: (walletAddress: string, networkId: NetworkId) => [
+			'depot',
+			'userActions',
+			walletAddress,
+			networkId,
+		],
+		ClearDeposits: (walletAddress: string, networkId: NetworkId) => [
+			'depot',
+			'clearDeposits',
+			walletAddress,
+			networkId,
+		],
+		Exchanges: (walletAddress: string, networkId: NetworkId) => [
+			'depot',
+			'exchanges',
+			walletAddress,
+			networkId,
+		],
 	},
 };
 

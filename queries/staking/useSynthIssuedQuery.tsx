@@ -8,19 +8,19 @@ import QUERY_KEYS from 'constants/queryKeys';
 import { isWalletConnectedState, networkState, walletAddressState } from 'store/wallet';
 import { HistoricalStakingTransaction } from './types';
 
-const useFeeClaimHistoryQuery = (options?: QueryConfig<HistoricalStakingTransaction[]>) => {
+const useSynthIssuedQuery = (options?: QueryConfig<HistoricalStakingTransaction[]>) => {
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const network = useRecoilValue(networkState);
 
 	return useQuery<HistoricalStakingTransaction[]>(
-		QUERY_KEYS.Staking.FeeClaimHistory(walletAddress ?? '', network?.id!),
+		QUERY_KEYS.Staking.Issued(walletAddress ?? '', network?.id!),
 		async () => {
-			const feesClaimed = (await snxData.snx.feesClaimed({
+			const transactions = (await snxData.snx.issued({
 				account: walletAddress,
 			})) as HistoricalStakingTransaction[];
 
-			return feesClaimed;
+			return transactions;
 		},
 		{
 			enabled: snxData && isWalletConnected,
@@ -29,4 +29,4 @@ const useFeeClaimHistoryQuery = (options?: QueryConfig<HistoricalStakingTransact
 	);
 };
 
-export default useFeeClaimHistoryQuery;
+export default useSynthIssuedQuery;

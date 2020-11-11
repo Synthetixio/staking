@@ -16,6 +16,7 @@ const DashboardPage = () => {
 	const debtDataQuery = useGetDebtDataQuery();
 
 	const history = useFeeClaimHistoryQuery();
+
 	const currentFeePeriod = useGetFeePoolDataQuery('0');
 
 	const currentCRatio = debtDataQuery.data?.currentCRatio ?? 0;
@@ -44,8 +45,8 @@ const DashboardPage = () => {
 
 	const checkClaimedStatus = useMemo(
 		() =>
-			history.data?.feesClaimedHistory
-				? history.data?.feesClaimedHistory.some((tx) => {
+			history.data
+				? history.data?.some((tx) => {
 						const claimedDate = new Date(tx.timestamp);
 						return claimedDate > currentFeePeriodStarts && claimedDate < nextFeePeriodStarts;
 				  })

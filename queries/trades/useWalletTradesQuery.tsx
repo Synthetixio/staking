@@ -27,3 +27,5 @@ export const useWalletTradesQuery = (
 		}
 	);
 };
+
+export default useWalletTradesQuery;
