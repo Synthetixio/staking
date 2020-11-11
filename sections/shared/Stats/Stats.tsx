@@ -10,6 +10,7 @@ import useTotalIssuedSynthsExcludingEtherQuery from 'queries/synths/useTotalIssu
 import { useRouter } from 'next/router';
 import ROUTES from 'constants/routes';
 import SingleStatBox from './SingleStatBox';
+import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
 
 const Stats: React.FC = () => {
 	const router = useRouter();
@@ -19,6 +20,7 @@ const Stats: React.FC = () => {
 	const currencyRates = useCurrencyRatesQuery(['SNX']);
 	const exchangeRates = useExchangeRatesQuery();
 	const previousFeePeriod = useGetFeePoolDataQuery('1');
+	const synthsBalancesQuery = useSynthsBalancesQuery();
 
 	const currentCRatio = debtDataQuery.data?.currentCRatio ?? 0;
 	const targetCRatio = debtDataQuery.data?.targetCRatio ?? 0;
@@ -32,6 +34,10 @@ const Stats: React.FC = () => {
 	const totalsUSDDebt = totalIssuedSynthsExclEth?.data ?? 0;
 	const weeklyRewards = sUSDRate * feesToDistribute + SNXRate * rewardsToDistribute;
 	const stakingApy = (weeklyRewards * (activeDebt / totalsUSDDebt) * 52) / (stakedValue * SNXRate);
+	const synthBalances =
+		synthsBalancesQuery.isSuccess && synthsBalancesQuery.data != null
+			? synthsBalancesQuery.data
+			: null;
 
 	const returnStats = () => {
 		switch (router.pathname) {
@@ -64,7 +70,7 @@ const Stats: React.FC = () => {
 			case ROUTES.History.Home:
 				return <SingleStatBox transactionCount={123} />;
 			case ROUTES.Synths.Home:
-				return <SingleStatBox synthValue={234124} />;
+				return <SingleStatBox synthValue={synthBalances?.totalUSDBalance} />;
 			default:
 				return null;
 		}

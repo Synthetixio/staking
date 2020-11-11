@@ -18,7 +18,6 @@ const StakingPage = () => {
 	const [amountToStake, setAmountToStake] = useState<string>('0');
 	const [amountToBurn, setAmountToBurn] = useState<string>('0');
 	const [panelType, setPanelType] = useState<StakingPanelType>(StakingPanelType.MINT);
-	const [customGasPrice, setCustomGasPrice] = useState(null);
 
 	const currencyRatesQuery = useCurrencyRatesQuery([CRYPTO_CURRENCY_MAP.SNX]);
 	const debtDataQuery = useGetDebtDataQuery();
@@ -28,7 +27,6 @@ const StakingPage = () => {
 	const targetCRatio = debtData?.targetCRatio ?? 0;
 	const currentCRatio = debtData?.currentCRatio ?? 0;
 	const snxPrice = currencyRates?.SNX ?? 0;
-	const issuableSynths = debtData?.issuableSynths ?? 0;
 	const transferableSNX = debtData?.transferable ?? 0;
 	const debtBalance = debtData?.debtBalance ?? 0;
 	const stakedSNX = collateral * Math.min(1, currentCRatio / targetCRatio);

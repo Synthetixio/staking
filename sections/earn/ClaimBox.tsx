@@ -6,9 +6,7 @@ import Claim from 'assets/svg/app/claim.svg';
 import { useTranslation } from 'react-i18next';
 import ClaimTab from './components/ClaimTab';
 
-interface ClaimBoxProps {}
-
-const ClaimBox: React.FC<ClaimBoxProps> = ({}) => {
+const ClaimBox: React.FC = () => {
 	const { t } = useTranslation();
 	const tabData = useMemo(
 		() => [
