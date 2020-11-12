@@ -52,6 +52,8 @@ const MintBurnBox: FC<MintBurnBoxProps> = ({
 	const gasPrice = ethGasStationQuery?.data?.average ?? 0;
 	const walletAddress = useRecoilValue(walletAddressState);
 
+	// TODO: useMemo
+	// eslint-disable-next-line
 	const handleStake = async () => {
 		try {
 			const {
@@ -78,11 +80,16 @@ const MintBurnBox: FC<MintBurnBoxProps> = ({
 					gasLimit,
 				});
 			}
+			if (transaction) {
+				//TODO: BN NOTIFY
+			}
 		} catch (e) {
 			console.log(e);
 		}
 	};
 
+	// TODO: useMemo
+	// eslint-disable-next-line
 	const handleBurn = async (burnToTarget: boolean) => {
 		try {
 			const {
@@ -110,6 +117,9 @@ const MintBurnBox: FC<MintBurnBoxProps> = ({
 					gasPrice: normalizedGasPrice(gasPrice),
 					gasLimit,
 				});
+			}
+			if (transaction) {
+				//TODO: BN NOTIFY
 			}
 		} catch (e) {
 			console.log(e);

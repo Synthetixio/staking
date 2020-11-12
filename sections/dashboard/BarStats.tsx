@@ -5,6 +5,7 @@ import { FlexDiv, FlexDivCentered, FlexDivCol, FlexDivRowCentered } from 'styles
 import ProgressBar from 'components/ProgressBar';
 import Countdown from 'react-countdown';
 import ClaimedTag from 'components/ClaimedTag';
+import { formatPercent } from 'utils/formatters/number';
 
 interface BarStatsProps {
 	currentCRatio: number;
@@ -24,24 +25,27 @@ const BarStats: FC<BarStatsProps> = ({
 	const { t } = useTranslation();
 	const theme = useTheme();
 
-	const percentage =
-		currentCRatio ?? `${Math.round(100 / currentCRatio)}/${Math.round(100 / targetCRatio)}`;
+	const barPercentage = currentCRatio
+		? Math.round(100 / currentCRatio) / Math.round(100 / targetCRatio)
+		: 0;
 
 	const returnCRatio = useMemo(
 		() => (
 			<BarStatBox key="CRATIO">
 				<BarHeaderSection>
 					<BarTitle>{t('dashboard.bar.c-ratio')}</BarTitle>
-					<BarValue>{percentage}%</BarValue>
+					<BarValue>{`${formatPercent(currentCRatio ? 1 / currentCRatio : 0)}/${formatPercent(
+						targetCRatio ? 1 / targetCRatio : 0
+					)}`}</BarValue>
 				</BarHeaderSection>
 				<ShadowCRatioBar
-					percentage={percentage}
+					percentage={barPercentage}
 					borderColor={theme.colors.brightPink}
 					fillColor={theme.colors.brightBlue}
 				/>
 			</BarStatBox>
 		),
-		[currentCRatio, targetCRatio, t, theme]
+		[currentCRatio, targetCRatio, t, theme, barPercentage]
 	);
 
 	return (

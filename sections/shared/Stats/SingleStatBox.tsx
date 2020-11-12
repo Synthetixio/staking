@@ -11,6 +11,7 @@ interface SingleStatBoxProps {
 	transactionCount?: number;
 }
 
+// TODO: Delete this file after history page is modified
 const SingleStatBox: FC<SingleStatBoxProps> = ({ synthValue, transactionCount }) => {
 	const { t } = useTranslation();
 	const theme = useTheme();

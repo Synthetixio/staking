@@ -179,7 +179,9 @@
 			"active-debt": "ACTIVE-DEBT",
 			"c-ratio": "C-RATIO",
 			"synth-value": "TOTAL SYNTH VALUE",
-			"tx-count": "TOTAL TRANSACTIONS"
+			"tx-count": "TOTAL TRANSACTIONS",
+			"upcoming-rewards": "EST. UPCOMING REWARDS",
+			"lifetime-rewards": "LIFETIME REWARDS"
 		},
 		"status": {
 			"claimed": "Claimed",
