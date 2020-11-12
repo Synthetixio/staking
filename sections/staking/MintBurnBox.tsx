@@ -15,10 +15,11 @@ import synthetix from 'lib/synthetix';
 import { SynthetixJS } from '@synthetixio/js';
 import useEthGasStationQuery from 'queries/network/useGasStationQuery';
 import { getMintAmount } from './components/helper';
-import { SYNTHS_MAP } from 'constants/currency';
+import { CRYPTO_CURRENCY_MAP, SYNTHS_MAP } from 'constants/currency';
 import { walletAddressState } from 'store/wallet';
 import { useRecoilValue } from 'recoil';
 import { normalizedGasPrice } from 'utils/network';
+import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 
 interface MintBurnBoxProps {
 	targetCRatio: number;
@@ -48,20 +49,26 @@ const MintBurnBox: FC<MintBurnBoxProps> = ({
 	const { t } = useTranslation();
 	const [mintLoadingState] = useState<LoadingState | null>(null);
 	const [burnLoadingState] = useState<LoadingState | null>(null);
+	const [stakingTxModalOpen, setStakingTxModalOpen] = useState<boolean>(true);
+	const [burningTxModalOpen, setBurningTxModalOpen] = useState<boolean>(false);
 	const ethGasStationQuery = useEthGasStationQuery();
 	const gasPrice = ethGasStationQuery?.data?.average ?? 0;
 	const walletAddress = useRecoilValue(walletAddressState);
+	const [stakingTxError, setStakingTxError] = useState<boolean>(false);
+	const [burningTxError, setBurningTxError] = useState<boolean>(false);
+	const [stakingCurrencyKey] = useState<string>(CRYPTO_CURRENCY_MAP.SNX);
+	const [synthCurrencyKey] = useState<string>(SYNTHS_MAP.sUSD);
 
 	// TODO: useMemo
 	// eslint-disable-next-line
 	const handleStake = async () => {
 		try {
+			setStakingTxError(false);
+			setStakingTxModalOpen(true);
 			const {
 				contracts: { Synthetix },
 				utils: { parseEther },
 			} = synthetix.js as SynthetixJS;
-
-			// Open Modal
 			let transaction;
 			if (Number(amountToStake) === maxCollateral) {
 				const gasLimit = getGasEstimateForTransaction([], Synthetix.estimateGas.issueMaxSynths);
@@ -74,6 +81,7 @@ const MintBurnBox: FC<MintBurnBoxProps> = ({
 					[parseEther(amountToStake)],
 					Synthetix.estimateGas.issueSynths
 				);
+				console.log(gasLimit);
 				const mintAmount = getMintAmount(targetCRatio, amountToStake, snxPrice);
 				transaction = await Synthetix.issueSynths(parseEther(mintAmount.toString()), {
 					gasPrice: normalizedGasPrice(gasPrice),
@@ -84,14 +92,18 @@ const MintBurnBox: FC<MintBurnBoxProps> = ({
 				//TODO: BN NOTIFY
 			}
 		} catch (e) {
-			console.log(e);
+			setStakingTxError(true);
 		}
 	};
 
 	// TODO: useMemo
 	// eslint-disable-next-line
-	const handleBurn = async (burnToTarget: boolean) => {
+	const handleBurn = async () => {
 		try {
+			setBurningTxError(false);
+			setBurningTxModalOpen(true);
+			//TODO: Change this
+			const burnToTarget = false;
 			const {
 				contracts: { Synthetix, Issuer },
 				utils: { formatBytes32String, parseEther },
@@ -120,9 +132,10 @@ const MintBurnBox: FC<MintBurnBoxProps> = ({
 			}
 			if (transaction) {
 				//TODO: BN NOTIFY
+				setBurningTxModalOpen(false);
 			}
 		} catch (e) {
-			console.log(e);
+			setBurningTxError(true);
 		}
 	};
 
@@ -178,13 +191,37 @@ const MintBurnBox: FC<MintBurnBoxProps> = ({
 		]
 	);
 	return (
-		<StructuredTab
-			boxPadding={25}
-			boxHeight={400}
-			boxWidth={450}
-			tabData={tabData}
-			setPanelType={setPanelType}
-		/>
+		<>
+			<StructuredTab
+				boxPadding={0}
+				boxHeight={400}
+				boxWidth={500}
+				tabData={tabData}
+				setPanelType={setPanelType}
+			/>
+			{stakingTxModalOpen && (
+				<TxConfirmationModal
+					onDismiss={() => setStakingTxModalOpen(false)}
+					txError={stakingTxError}
+					attemptRetry={handleStake}
+					baseCurrencyAmount={amountToStake}
+					quoteCurrencyAmount={getMintAmount(targetCRatio, amountToStake, snxPrice).toString()}
+					baseCurrencyKey={stakingCurrencyKey!}
+					quoteCurrencyKey={synthCurrencyKey!}
+				/>
+			)}
+			{burningTxModalOpen && (
+				<TxConfirmationModal
+					onDismiss={() => setBurningTxModalOpen(false)}
+					txError={burningTxError}
+					attemptRetry={handleBurn}
+					baseCurrencyAmount={amountToStake}
+					quoteCurrencyAmount={getMintAmount(targetCRatio, amountToStake, snxPrice).toString()}
+					baseCurrencyKey={stakingCurrencyKey!}
+					quoteCurrencyKey={synthCurrencyKey!}
+				/>
+			)}
+		</>
 	);
 };
 
