@@ -66,7 +66,7 @@ const StyledDialogContent = styled(DialogContent)`
 `;
 
 const StyledCard = styled(Card)`
-	height: 100%;e};
+	height: 100%;
 `;
 
 const StyledCardHeader = styled(Card.Header)`
