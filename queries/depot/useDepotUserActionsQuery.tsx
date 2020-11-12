@@ -36,7 +36,7 @@ const useDepotUserActionsQuery = (options?: QueryConfig<DepotHistoricalTransacti
 			return transactions;
 		},
 		{
-			enabled: snxData && isWalletConnected,
+			enabled: isWalletConnected,
 			...options,
 		}
 	);

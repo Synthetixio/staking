@@ -1,4 +1,10 @@
-export type HistoricalUserTransactionEvent = 'issued' | 'burned' | 'feesClaimed';
+export enum StakingTransactionType {
+	Issued = 'issued',
+	Burned = 'burned',
+	FeesClaimed = 'feesClaimed',
+}
+
+console.log(StakingTransactionType);
 
 export type HistoricalStakingTransaction = {
 	account: string;
@@ -6,5 +12,6 @@ export type HistoricalStakingTransaction = {
 	hash: string;
 	value: number;
 	timestamp: number;
-	type: HistoricalUserTransactionEvent;
+	type: StakingTransactionType;
+	rewards?: number;
 };
