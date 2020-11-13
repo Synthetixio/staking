@@ -16,6 +16,18 @@
 				"language": "language"
 			}
 		},
+		"confirm-transaction": {
+			"title": "Confirm Transaction",
+			"staking": {
+				"from": "Staking",
+				"to": "Minting"
+			},
+			"burning": {
+				"from": "Unstaking",
+				"to": "Burning"
+			},
+			"helper": "Follow the Metamask prompts to authorize the transaction"
+		},
 		"wallet": {
 			"title": "wallet options"
 		},
