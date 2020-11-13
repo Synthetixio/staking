@@ -200,3 +200,9 @@ export const Row = styled(FlexDivRow)`
 export const Column = styled(FlexDivCol)`
 	width: 50%;
 `;
+
+export const StatsSection = styled(FlexDivRowCentered)`
+	width: 100%;
+	justify-content: center;
+	margin: 0 auto;
+`;

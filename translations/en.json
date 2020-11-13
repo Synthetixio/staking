@@ -198,6 +198,10 @@
 		"status": {
 			"claimed": "Claimed",
 			"unclaimed": "Unclaimed"
+		},
+		"pagination": {
+			"page": "Page",
+			"page-of-total-pages": "{{page}} of {{totalPages}}"
 		}
 	}
 }

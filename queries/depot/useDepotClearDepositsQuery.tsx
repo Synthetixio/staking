@@ -33,7 +33,7 @@ const useDepotClearDepositsQuery = (options?: QueryConfig<ClearDepositsTransacti
 			return transactions;
 		},
 		{
-			enabled: snxData && isWalletConnected,
+			enabled: isWalletConnected,
 			...options,
 		}
 	);

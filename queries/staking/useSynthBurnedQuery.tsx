@@ -23,7 +23,7 @@ const useSynthBurnedQuery = (options?: QueryConfig<HistoricalStakingTransaction[
 			return transactions;
 		},
 		{
-			enabled: snxData && isWalletConnected,
+			enabled: isWalletConnected,
 			...options,
 		}
 	);
