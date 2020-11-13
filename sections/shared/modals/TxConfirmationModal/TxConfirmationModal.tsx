@@ -17,20 +17,20 @@ type TxConfirmationModalProps = {
 	onDismiss: () => void;
 	txError: boolean;
 	attemptRetry: () => void;
-	fromCurrencyKey: CurrencyKey;
-	fromCurrencyAmount: string;
-	toCurrencyKey: CurrencyKey;
-	toCurrencyAmount: string;
+	quoteCurrencyKey: CurrencyKey;
+	quoteCurrencyAmount: string;
+	baseCurrencyKey: CurrencyKey;
+	baseCurrencyAmount: string;
 };
 
 export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 	onDismiss,
 	txError,
 	attemptRetry,
-	fromCurrencyKey,
-	toCurrencyKey,
-	fromCurrencyAmount,
-	toCurrencyAmount,
+	quoteCurrencyKey,
+	baseCurrencyKey,
+	quoteCurrencyAmount,
+	baseCurrencyAmount,
 }) => {
 	const { t } = useTranslation();
 
@@ -47,8 +47,8 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 				<CurrencyItem>
 					<CurrencyItemTitle>{t('modals.confirm-transaction.staking.from')}</CurrencyItemTitle>
 					<CurrencyItemText>
-						{formatCurrency(fromCurrencyKey, fromCurrencyAmount, {
-							currencyKey: fromCurrencyKey,
+						{formatCurrency(quoteCurrencyKey, quoteCurrencyAmount, {
+							currencyKey: quoteCurrencyKey,
 							decimals: 4,
 						})}
 					</CurrencyItemText>
@@ -56,8 +56,8 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 				<CurrencyItem>
 					<CurrencyItemTitle>{t('modals.confirm-transaction.staking.to')}</CurrencyItemTitle>
 					<CurrencyItemText>
-						{formatCurrency(toCurrencyKey, toCurrencyAmount, {
-							currencyKey: toCurrencyKey,
+						{formatCurrency(baseCurrencyKey, baseCurrencyAmount, {
+							currencyKey: baseCurrencyKey,
 							decimals: 4,
 						})}
 					</CurrencyItemText>

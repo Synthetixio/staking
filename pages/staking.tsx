@@ -5,7 +5,7 @@ import styled from 'styled-components';
 
 import { MintBurnBox, InfoBox } from 'sections/staking';
 import StatBox from 'components/StatBox';
-import { Column, FlexDivRowCentered, Row } from 'styles/common';
+import { Column, Row, StatsSection } from 'styles/common';
 import useGetDebtDataQuery from 'queries/debt/useGetDebtDataQuery';
 import useCurrencyRatesQuery from 'queries/rates/useCurrencyRatesQuery';
 import { CRYPTO_CURRENCY_MAP } from 'constants/currency';
@@ -60,15 +60,16 @@ const StakingPage = () => {
 				<title>{t('staking.page-title')}</title>
 			</Head>
 			<StatsSection>
-				<StyledStakedValue
+				<StakedValue
 					title={t('common.stat-box.staked-value')}
 					value={formatFiatCurrency(stakedValue ? stakedValue : 0, { sign: '$' })}
 				/>
-				<StyledCRatio
+				<CRatio
 					title={t('common.stat-box.c-ratio')}
 					value={formatPercent(currentCRatio ? 1 / currentCRatio : 0)}
+					size="lg"
 				/>
-				<StyledActiveDebt
+				<ActiveDebt
 					title={t('common.stat-box.active-debt')}
 					value={formatFiatCurrency(activeDebt ? activeDebt : 0, { sign: '$' })}
 				/>
@@ -107,26 +108,18 @@ const StakingPage = () => {
 	);
 };
 
-const StatsSection = styled(FlexDivRowCentered)`
-	width: 100%;
-	justify-content: center;
-	margin: 0 auto;
-`;
-
-const StyledStakedValue = styled(StatBox)`
+const StakedValue = styled(StatBox)`
 	.title {
 		color: ${(props) => props.theme.colors.brightBlue};
 	}
 `;
-const StyledCRatio = styled(StatBox)`
-	transform: scale(1.1);
+const CRatio = styled(StatBox)`
 	.value {
-		text-shadow: #00d1ff 0px 0px 4px, #00d1ff 0px 0px 4px, #00d1ff 0px 0px 4px, #ed1eff 0px 0px 4px,
-			#ed1eff 0px 0px 4px, #ed1eff 0px 0px 4px;
-		color: #06061b;
+		text-shadow: ${(props) => props.theme.colors.brightBlueTextShadow};
+		color: ${(props) => props.theme.colors.darkBlue};
 	}
 `;
-const StyledActiveDebt = styled(StatBox)`
+const ActiveDebt = styled(StatBox)`
 	.title {
 		color: ${(props) => props.theme.colors.brightPink};
 	}

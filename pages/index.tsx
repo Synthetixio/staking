@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import { useTranslation } from 'react-i18next';
 
-import { FlexDivCol, FlexDivRowCentered } from 'styles/common';
+import { FlexDivCol, StatsSection } from 'styles/common';
 import { PossibleActions, BarStats } from 'sections/dashboard';
 
 import useGetDebtDataQuery from 'queries/debt/useGetDebtDataQuery';
@@ -89,15 +89,16 @@ const DashboardPage = () => {
 				<title>{t('dashboard.page-title')}</title>
 			</Head>
 			<StatsSection>
-				<StyledStakedValue
+				<StakedValue
 					title={t('common.stat-box.staked-value')}
 					value={formatFiatCurrency(stakedValue ? stakedValue : 0, { sign: '$' })}
 				/>
-				<StyledAPY
+				<APY
 					title={t('common.stat-box.earning')}
 					value={formatPercent(stakingApy ? stakingApy : 0)}
+					size="lg"
 				/>
-				<StyledActiveDebt
+				<ActiveDebt
 					title={t('common.stat-box.active-debt')}
 					value={formatFiatCurrency(activeDebt ? activeDebt : 0, { sign: '$' })}
 				/>
@@ -119,30 +120,23 @@ const Content = styled(FlexDivCol)`
 	max-width: 1200px;
 `;
 
-const StatsSection = styled(FlexDivRowCentered)`
-	width: 100%;
-	justify-content: center;
-	margin: 0 auto;
-`;
-
-const StyledStakedValue = styled(StatBox)`
+const StakedValue = styled(StatBox)`
 	.title {
 		color: ${(props) => props.theme.colors.brightBlue};
 	}
 `;
-const StyledAPY = styled(StatBox)`
-	transform: scale(1.1);
+
+const APY = styled(StatBox)`
 	.title {
 		color: ${(props) => props.theme.colors.brightGreen};
 	}
 	.value {
-		text-shadow: rgba(65, 199, 157, 1) 0px 0px 4px, rgba(65, 199, 157, 1) 0px 0px 4px,
-			rgba(65, 199, 157, 1) 0px 0px 4px, rgba(65, 199, 157, 1) 0px 0px 4px,
-			rgba(65, 199, 157, 1) 0px 0px 4px, rgba(65, 199, 157, 1) 0px 0px 4px;
+		text-shadow: ${(props) => props.theme.colors.brightGreenTextShadow};
 		color: #073124;
 	}
 `;
-const StyledActiveDebt = styled(StatBox)`
+
+const ActiveDebt = styled(StatBox)`
 	.title {
 		color: ${(props) => props.theme.colors.brightPink};
 	}
