@@ -17,7 +17,7 @@ const useIsSystemOnMaintenance = (options?: QueryConfig<boolean>) => {
 		async () => {
 			const [isSystemUpgrading, isExchangePaused] = (await Promise.all([
 				synthetix.js?.contracts.SystemStatus.isSystemUpgrading(),
-				synthetix.js?.contracts.DappMaintenance.isPausedMintr(),
+				synthetix.js?.contracts.DappMaintenance.isPausedStaking(),
 			])) as [boolean, boolean];
 
 			return isSystemUpgrading || (isExchangePaused && IS_PROD);
