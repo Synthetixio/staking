@@ -3,6 +3,9 @@ import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import { SynthetixJS } from '@synthetixio/js';
 import { Svg } from 'react-optimized-image';
+import { ethers } from 'ethers';
+
+import Notify from 'containers/Notify';
 
 import synthetix from 'lib/synthetix';
 
@@ -53,6 +56,7 @@ const MintBurnBox: FC<MintBurnBoxProps> = ({
 	stakedSNX,
 }) => {
 	const { t } = useTranslation();
+	const { monitorHash } = Notify.useContainer();
 	const [mintLoadingState] = useState<LoadingState | null>(null);
 	const [burnLoadingState] = useState<LoadingState | null>(null);
 	const [txModalOpen, setTxModalOpen] = useState<{
@@ -78,11 +82,14 @@ const MintBurnBox: FC<MintBurnBoxProps> = ({
 		try {
 			setStakingTxError(false);
 			setTxModalOpen({ isOpen: true, type: 'stake' });
+
 			const {
 				contracts: { Synthetix },
 				utils: { parseEther },
 			} = synthetix.js as SynthetixJS;
-			let transaction;
+
+			let transaction: ethers.ContractTransaction;
+
 			if (Number(amountToStake) === maxCollateral) {
 				const gasLimit = getGasEstimateForTransaction([], Synthetix.estimateGas.issueMaxSynths);
 				transaction = await Synthetix.issueMaxSynths({
@@ -102,7 +109,8 @@ const MintBurnBox: FC<MintBurnBoxProps> = ({
 				});
 			}
 			if (transaction) {
-				//TODO: BN NOTIFY
+				monitorHash({ txHash: transaction.hash });
+
 				setTxModalOpen({ isOpen: false, type: null });
 			}
 		} catch (e) {
@@ -127,7 +135,9 @@ const MintBurnBox: FC<MintBurnBoxProps> = ({
 				throw new Error('Waiting period for sUSD is still ongoing');
 			if (!burnToTarget && !(await Issuer.canBurnSynths(walletAddress)))
 				throw new Error('Waiting period to burn is still ongoing');
-			let transaction;
+
+			let transaction: ethers.ContractTransaction;
+
 			if (burnToTarget) {
 				const gasLimit = getGasEstimateForTransaction([], Synthetix.estimateGas.burnSynthsToTarget);
 				transaction = await Synthetix.burnSynthsToTarget({
@@ -145,7 +155,7 @@ const MintBurnBox: FC<MintBurnBoxProps> = ({
 				});
 			}
 			if (transaction) {
-				//TODO: BN NOTIFY
+				monitorHash({ txHash: transaction.hash });
 				setTxModalOpen({ isOpen: false, type: null });
 			}
 		} catch (e) {

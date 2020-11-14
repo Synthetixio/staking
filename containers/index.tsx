@@ -2,6 +2,7 @@ import { FC, ReactNode } from 'react';
 
 import Connector from './Connector';
 import Etherscan from './Etherscan';
+import Notify from './Notify';
 
 type WithAppContainersProps = {
 	children: ReactNode;
@@ -9,7 +10,9 @@ type WithAppContainersProps = {
 
 export const WithAppContainers: FC<WithAppContainersProps> = ({ children }) => (
 	<Connector.Provider>
-		<Etherscan.Provider>{children}</Etherscan.Provider>
+		<Etherscan.Provider>
+			<Notify.Provider>{children}</Notify.Provider>
+		</Etherscan.Provider>
 	</Connector.Provider>
 );
 
