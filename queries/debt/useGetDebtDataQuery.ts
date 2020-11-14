@@ -12,6 +12,7 @@ const useGetDebtDataQuery = (options?: QueryConfig<WalletDebtData>) => {
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const network = useRecoilValue(networkState);
+
 	return useQuery<WalletDebtData>(
 		QUERY_KEYS.Debt.WalletDebtData(walletAddress ?? '', network?.id!),
 		async () => {

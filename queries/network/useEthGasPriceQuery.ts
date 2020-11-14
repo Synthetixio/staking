@@ -4,7 +4,7 @@ import { useQuery, QueryConfig } from 'react-query';
 import QUERY_KEYS from 'constants/queryKeys';
 
 const ETH_GAS_STATION_API_URL = 'https://ethgasstation.info/json/ethgasAPI.json';
-const GAS_NOW_API_URL = 'https://www.gasnow.org/api/v3/gas/price?utm_source=kwenta';
+const GAS_NOW_API_URL = 'https://www.gasnow.org/api/v3/gas/price?utm_source=staking';
 
 type EthGasStationResponse = {
 	average: number;
