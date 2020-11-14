@@ -3,6 +3,8 @@ import Head from 'next/head';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
+import AppLayout from 'sections/shared/Layout/AppLayout';
+
 import { MintBurnBox, InfoBox } from 'sections/staking';
 import StatBox from 'components/StatBox';
 import { Column, Row, StatsSection } from 'styles/common';
@@ -59,51 +61,53 @@ const StakingPage = () => {
 			<Head>
 				<title>{t('staking.page-title')}</title>
 			</Head>
-			<StatsSection>
-				<StakedValue
-					title={t('common.stat-box.staked-value')}
-					value={formatFiatCurrency(stakedValue ? stakedValue : 0, { sign: '$' })}
-				/>
-				<CRatio
-					title={t('common.stat-box.c-ratio')}
-					value={formatPercent(currentCRatio ? 1 / currentCRatio : 0)}
-					size="lg"
-				/>
-				<ActiveDebt
-					title={t('common.stat-box.active-debt')}
-					value={formatFiatCurrency(activeDebt ? activeDebt : 0, { sign: '$' })}
-				/>
-			</StatsSection>
-			<Row>
-				<Column>
-					<InfoBox
-						unstakedCollateral={unstakedSNX}
-						stakedCollateral={stakedSNX}
-						transferableCollateral={transferableSNX}
-						currentCRatio={currentCRatio}
-						debtBalance={debtBalance}
-						lockedCollateral={lockedSNX}
-						amountToStake={amountToStake}
-						targetCRatio={targetCRatio}
-						panelType={panelType}
-						snxPrice={snxPrice}
+			<AppLayout>
+				<StatsSection>
+					<StakedValue
+						title={t('common.stat-box.staked-value')}
+						value={formatFiatCurrency(stakedValue ? stakedValue : 0, { sign: '$' })}
 					/>
-				</Column>
-				<Column>
-					<MintBurnBox
-						amountToStake={amountToStake}
-						amountToBurn={amountToBurn}
-						setAmountToBurn={setAmountToBurn}
-						setAmountToStake={setAmountToStake}
-						maxCollateral={unstakedSNX}
-						maxBurnAmount={debtBalance}
-						snxPrice={snxPrice}
-						targetCRatio={targetCRatio}
-						setPanelType={setPanelType}
-						stakedSNX={stakedSNX}
+					<CRatio
+						title={t('common.stat-box.c-ratio')}
+						value={formatPercent(currentCRatio ? 1 / currentCRatio : 0)}
+						size="lg"
 					/>
-				</Column>
-			</Row>
+					<ActiveDebt
+						title={t('common.stat-box.active-debt')}
+						value={formatFiatCurrency(activeDebt ? activeDebt : 0, { sign: '$' })}
+					/>
+				</StatsSection>
+				<Row>
+					<Column>
+						<InfoBox
+							unstakedCollateral={unstakedSNX}
+							stakedCollateral={stakedSNX}
+							transferableCollateral={transferableSNX}
+							currentCRatio={currentCRatio}
+							debtBalance={debtBalance}
+							lockedCollateral={lockedSNX}
+							amountToStake={amountToStake}
+							targetCRatio={targetCRatio}
+							panelType={panelType}
+							snxPrice={snxPrice}
+						/>
+					</Column>
+					<Column>
+						<MintBurnBox
+							amountToStake={amountToStake}
+							amountToBurn={amountToBurn}
+							setAmountToBurn={setAmountToBurn}
+							setAmountToStake={setAmountToStake}
+							maxCollateral={unstakedSNX}
+							maxBurnAmount={debtBalance}
+							snxPrice={snxPrice}
+							targetCRatio={targetCRatio}
+							setPanelType={setPanelType}
+							stakedSNX={stakedSNX}
+						/>
+					</Column>
+				</Row>
+			</AppLayout>
 		</>
 	);
 };

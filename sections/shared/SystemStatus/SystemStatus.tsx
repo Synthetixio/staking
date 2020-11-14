@@ -1,7 +1,8 @@
-import { FC, useEffect, useState } from 'react';
+import { FC } from 'react';
 import Head from 'next/head';
 import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
+import { Svg } from 'react-optimized-image';
 
 import media from 'styles/media';
 import {
@@ -15,14 +16,12 @@ import {
 import { EXTERNAL_LINKS } from 'constants/links';
 import { HEADER_HEIGHT } from 'constants/ui';
 
-import { Svg } from 'react-optimized-image';
 import SystemDownIcon from 'assets/svg/app/system-down.svg';
 import DiscordIcon from 'assets/svg/social/discord.svg';
 import TwitterIcon from 'assets/svg/social/twitter.svg';
 import GithubIcon from 'assets/svg/social/github.svg';
 
-// import Services from 'containers/Services';
-import useIsSystemUpgrading from 'queries/systemStatus/useIsSystemUpgrading';
+import useIsSystemOnMaintenance from 'queries/systemStatus/useIsSystemOnMaintenance';
 
 type SystemStatusProps = {
 	children: React.ReactNode;
@@ -46,45 +45,19 @@ const SOCIAL_LINKS = [
 	},
 ];
 
-// const IS_PROD = !!process.env.NEXT_PUBLIC_IS_PROD;
+export const REFRESH_INTERVAL = 2 * 60 * 1000; // 2 min
 
 const SystemStatus: FC<SystemStatusProps> = ({ children }) => {
 	const { t } = useTranslation();
-	const [appOnMaintenance, setAppOnMaintenance] = useState<boolean>(false);
-	// const { systemSuspended$, systemResumed$ } = Services.useContainer();
 
-	// current onchain state
-	const isSystemUpgradingQuery = useIsSystemUpgrading({ refetchInterval: false });
+	// current onchain state ( no interval for now, should be added when we are close to a release to save requests )
+	const isSystemOnMaintenanceQuery = useIsSystemOnMaintenance({
+		refetchInterval: REFRESH_INTERVAL,
+	});
 
-	// note: using an effect for `isSystemUpgradingQuery` is not mandatory, its only to make it consistent with the events.
-	useEffect(() => {
-		if (isSystemUpgradingQuery.data != null) {
-			setAppOnMaintenance(isSystemUpgradingQuery.data);
-		}
-	}, [isSystemUpgradingQuery.data]);
-
-	/*
-
-	events are disabled for now since they fire too many requests to infura...
-
-	useEffect(() => {
-		if (IS_PROD && systemSuspended$) {
-			const subscription = systemSuspended$.subscribe(() => {
-				setAppOnMaintenance(true);
-			});
-			return () => subscription.unsubscribe();
-		}
-	}, [systemSuspended$]);
-
-	useEffect(() => {
-		if (IS_PROD && systemResumed$) {
-			const subscription = systemResumed$.subscribe(() => {
-				setAppOnMaintenance(false);
-			});
-			return () => subscription.unsubscribe();
-		}
-	}, [systemResumed$]);
-	*/
+	const appOnMaintenance = isSystemOnMaintenanceQuery.isSuccess
+		? isSystemOnMaintenanceQuery.data
+		: false;
 
 	return appOnMaintenance ? (
 		<>
@@ -93,11 +66,9 @@ const SystemStatus: FC<SystemStatusProps> = ({ children }) => {
 			</Head>
 			<FullScreenContainer>
 				<StyledPageContent>
-					<Header>
-						<div>Logo</div>
-					</Header>
+					<Header>logo</Header>
 					<Container>
-						<StyledSystemDownIcon />
+						<StyledSystemDownIcon src={SystemDownIcon} />
 						<Title>{t('system-status.title')}</Title>
 						<Subtitle>{t('system-status.subtitle')}</Subtitle>
 						<Links>
@@ -135,8 +106,7 @@ const Container = styled(FlexDivColCentered)`
 	margin-top: -${HEADER_HEIGHT};
 `;
 
-// @ts-ignore
-const StyledSystemDownIcon = styled(SystemDownIcon)`
+const StyledSystemDownIcon = styled(Svg)`
 	margin-bottom: 51px;
 	${media.lessThan('sm')`
 		svg {

@@ -1,6 +1,8 @@
 import Head from 'next/head';
 import { useTranslation } from 'react-i18next';
 
+import AppLayout from 'sections/shared/Layout/AppLayout';
+
 const EscrowPage = () => {
 	const { t } = useTranslation();
 
@@ -9,7 +11,9 @@ const EscrowPage = () => {
 			<Head>
 				<title>{t('escrow.page-title')}</title>
 			</Head>
-			<div>Escrow</div>
+			<AppLayout>
+				<div>Escrow</div>
+			</AppLayout>
 		</>
 	);
 };

@@ -11,9 +11,9 @@ export const EXTERNAL_LINKS = {
 		Litepaper: 'https://docs.synthetix.io/litepaper/',
 	},
 	Social: {
-		Twitter: 'https://twitter.com/kwenta_io',
+		Twitter: 'https://twitter.com/synthetix_io',
 		Medium: 'https://blog.synthetix.io/',
 		Discord: 'https://discordapp.com/invite/AEdUHzt',
-		GitHub: 'https://github.com/synthetixio/kwenta',
+		GitHub: 'https://github.com/synthetixio/staking',
 	},
 };

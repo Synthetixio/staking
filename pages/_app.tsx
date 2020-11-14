@@ -1,22 +1,26 @@
 import { FC } from 'react';
 import { AppProps } from 'next/app';
+import Head from 'next/head';
 import { RecoilRoot } from 'recoil';
-
+import { useTranslation } from 'react-i18next';
 import { ThemeProvider } from 'styled-components';
 
-import WithStateContainers from 'containers';
+import WithAppContainers from 'containers';
 import theme from 'styles/theme';
-
-import 'styles/main.css';
-import '../i18n';
-import '@reach/dialog/styles.css';
-import '@reach/tabs/styles.css';
 
 import Layout from 'sections/shared/Layout';
 import { MediaContextProvider } from 'styles/media';
 import { QueryCache, ReactQueryCacheProvider } from 'react-query';
 import { DEFAULT_REQUEST_REFRESH_INTERVAL } from 'constants/defaults';
 import { ReactQueryDevtools } from 'react-query-devtools';
+
+import SystemStatus from 'sections/shared/SystemStatus';
+
+import 'styles/main.css';
+import '@reach/dialog/styles.css';
+import '@reach/tabs/styles.css';
+
+import '../i18n';
 
 const queryCache = new QueryCache({
 	defaultConfig: {
@@ -27,21 +31,46 @@ const queryCache = new QueryCache({
 });
 
 const App: FC<AppProps> = ({ Component, pageProps }) => {
+	const { t } = useTranslation();
 	return (
-		<MediaContextProvider>
-			<RecoilRoot>
-				<ThemeProvider theme={theme}>
-					<WithStateContainers>
-						<ReactQueryCacheProvider queryCache={queryCache}>
-							<Layout>
-								<Component {...pageProps} />
-							</Layout>
-							<ReactQueryDevtools />
-						</ReactQueryCacheProvider>
-					</WithStateContainers>
-				</ThemeProvider>
-			</RecoilRoot>
-		</MediaContextProvider>
+		<>
+			<Head>
+				<meta charSet="utf-8" />
+				<meta name="viewport" content="width=device-width, initial-scale=1" />
+				<meta name="description" content={t('meta.description')} />
+				{/* open graph */}
+				<meta property="og:url" content="https://staking.synthetix.io/" />
+				<meta property="og:type" content="website" />
+				<meta property="og:title" content={t('meta.og.title')} />
+				<meta property="og:description" content={t('meta.description')} />
+				{/* <meta property="og:image" content="/images/staking-facebook.jpg" /> */}
+				<meta property="og:image:alt" content={t('meta.og.title')} />
+				<meta property="og:site_name" content={t('meta.og.site-name')} />
+				{/* twitter */}
+				<meta name="twitter:card" content="summary_large_image" />
+				<meta name="twitter:site" content="@synthetix_io" />
+				<meta name="twitter:creator" content="@synthetix_io" />
+				{/* <meta name="twitter:image" content="/images/staking-twitter.jpg" /> */}
+				<meta name="twitter:url" content="https://synthetix.io" />
+				{/* <link rel="icon" href="/images/favicon.svg" /> */}
+			</Head>
+			<ThemeProvider theme={theme}>
+				<RecoilRoot>
+					<WithAppContainers>
+						<MediaContextProvider>
+							<ReactQueryCacheProvider queryCache={queryCache}>
+								<Layout>
+									<SystemStatus>
+										<Component {...pageProps} />
+									</SystemStatus>
+								</Layout>
+								<ReactQueryDevtools />
+							</ReactQueryCacheProvider>
+						</MediaContextProvider>
+					</WithAppContainers>
+				</RecoilRoot>
+			</ThemeProvider>
+		</>
 	);
 };
 

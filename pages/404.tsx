@@ -1,9 +1,13 @@
 import Head from 'next/head';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
+import { Svg } from 'react-optimized-image';
 
 import media from 'styles/media';
 import { FlexDivRowCentered } from 'styles/common';
+
+import CaretLeftXLIcon from 'assets/svg/app/caret-left-xl.svg';
+import CaretRightXLICon from 'assets/svg/app/caret-right-xl.svg';
 
 const NotFoundPage = () => {
 	const { t } = useTranslation();
@@ -14,7 +18,12 @@ const NotFoundPage = () => {
 				<title>{t('not-found.page-title')}</title>
 			</Head>
 			<Container>
-				<Title>@TODO Staking</Title>
+				<Svg src={CaretLeftXLIcon} />
+				<Content>
+					<Title>{t('not-found.title')}</Title>
+					<Subtitle>{t('not-found.subtitle')}</Subtitle>
+				</Content>
+				<Svg src={CaretRightXLICon} />
 			</Container>
 		</>
 	);
@@ -37,13 +46,13 @@ const Container = styled(FlexDivRowCentered)`
 	`}
 `;
 
-// const Content = styled.div`
-// 	color: ${(props) => props.theme.colors.white};
-// 	font-family: ${(props) => props.theme.fonts.mono};
-// 	padding: 0 48px;
-// 	text-align: center;
-// 	margin-top: -10px;
-// `;
+const Content = styled.div`
+	color: ${(props) => props.theme.colors.white};
+	font-family: ${(props) => props.theme.fonts.mono};
+	padding: 0 48px;
+	text-align: center;
+	margin-top: -10px;
+`;
 
 const Title = styled.h1`
 	font-size: 120px;
@@ -55,14 +64,14 @@ const Title = styled.h1`
 	`}
 `;
 
-// const Subtitle = styled.h2`
-// 	margin: 0;
-// 	font-size: 20px;
-// 	line-height: normal;
-// 	font-weight: normal;
-// 	${media.lessThan('sm')`
-// 		font-size: 14px;
-// 	`}
-// `;
+const Subtitle = styled.h2`
+	margin: 0;
+	font-size: 20px;
+	line-height: normal;
+	font-weight: normal;
+	${media.lessThan('sm')`
+		font-size: 14px;
+	`}
+`;
 
 export default NotFoundPage;

@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { Column, StatsSection, Row } from 'styles/common';
 
+import AppLayout from 'sections/shared/Layout/AppLayout';
 import ClaimBox from 'sections/earn/ClaimBox';
 import Incentives from 'sections/earn/Incentives';
 import StatBox from 'components/StatBox';
@@ -45,29 +46,31 @@ const Earn = () => {
 			<Head>
 				<title>{t('earn.page-title')}</title>
 			</Head>
-			<StatsSection>
-				<UpcomingRewards
-					title={t('common.stat-box.upcoming-rewards')}
-					value={formatFiatCurrency(stakedValue ? stakedValue : 0, { sign: '$' })}
-				/>
-				<APY
-					title={t('common.stat-box.earning')}
-					value={formatPercent(stakingApy ? stakingApy : 0)}
-					size="lg"
-				/>
-				<LifetimeRewards
-					title={t('common.stat-box.lifetime-rewards')}
-					value={formatFiatCurrency(activeDebt ? activeDebt : 0, { sign: '$' })}
-				/>
-			</StatsSection>
-			<Row>
-				<Column>
-					<Incentives />
-				</Column>
-				<Column>
-					<ClaimBox />
-				</Column>
-			</Row>
+			<AppLayout>
+				<StatsSection>
+					<UpcomingRewards
+						title={t('common.stat-box.upcoming-rewards')}
+						value={formatFiatCurrency(stakedValue ? stakedValue : 0, { sign: '$' })}
+					/>
+					<APY
+						title={t('common.stat-box.earning')}
+						value={formatPercent(stakingApy ? stakingApy : 0)}
+						size="lg"
+					/>
+					<LifetimeRewards
+						title={t('common.stat-box.lifetime-rewards')}
+						value={formatFiatCurrency(activeDebt ? activeDebt : 0, { sign: '$' })}
+					/>
+				</StatsSection>
+				<Row>
+					<Column>
+						<Incentives />
+					</Column>
+					<Column>
+						<ClaimBox />
+					</Column>
+				</Row>
+			</AppLayout>
 		</>
 	);
 };

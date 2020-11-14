@@ -1,36 +1,28 @@
-import { FC, ReactNode } from 'react';
-import styled, { createGlobalStyle } from 'styled-components';
+import { FC, ReactNode, useEffect } from 'react';
+import { createGlobalStyle } from 'styled-components';
+import { useRecoilValue } from 'recoil';
+import i18n from 'i18n';
 
-import Header from './Header';
-import SideNav from './SideNav';
+import { languageState } from 'store/app';
 
 type LayoutProps = {
 	children: ReactNode;
 };
 
 const Layout: FC<LayoutProps> = ({ children }) => {
+	const language = useRecoilValue(languageState);
+
+	useEffect(() => {
+		i18n.changeLanguage(language);
+	}, [language]);
+
 	return (
 		<>
 			<GlobalStyle />
-			<Page>
-				<SideNav />
-				<Content>
-					<Header />
-					{children}
-				</Content>
-			</Page>
+			{children}
 		</>
 	);
 };
-
-const Page = styled.div`
-	flex: 1;
-`;
-
-const Content = styled.div`
-	margin-left: 220px; /* Same as the width of the sidebar */
-	padding: 0px 200px;
-`;
 
 const GlobalStyle = createGlobalStyle`
   body {

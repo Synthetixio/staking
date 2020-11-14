@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 
 import { FlexDivCol, StatsSection } from 'styles/common';
 import { PossibleActions, BarStats } from 'sections/dashboard';
+import AppLayout from 'sections/shared/Layout/AppLayout';
 
 import useGetDebtDataQuery from 'queries/debt/useGetDebtDataQuery';
 import useFeeClaimHistoryQuery from 'queries/staking/useFeeClaimHistoryQuery';
@@ -84,34 +85,38 @@ const DashboardPage = () => {
 	const claimed = checkClaimedStatus;
 
 	return (
-		<Content>
+		<>
 			<Head>
 				<title>{t('dashboard.page-title')}</title>
 			</Head>
-			<StatsSection>
-				<StakedValue
-					title={t('common.stat-box.staked-value')}
-					value={formatFiatCurrency(stakedValue ? stakedValue : 0, { sign: '$' })}
-				/>
-				<APY
-					title={t('common.stat-box.earning')}
-					value={formatPercent(stakingApy ? stakingApy : 0)}
-					size="lg"
-				/>
-				<ActiveDebt
-					title={t('common.stat-box.active-debt')}
-					value={formatFiatCurrency(activeDebt ? activeDebt : 0, { sign: '$' })}
-				/>
-			</StatsSection>
-			<BarStats
-				currentCRatio={currentCRatio}
-				targetCRatio={targetCRatio}
-				claimed={claimed}
-				nextFeePeriodStarts={nextFeePeriodStarts}
-				currentFeePeriodProgress={currentFeePeriodProgress}
-			/>
-			<PossibleActions claimAmount={20} sUSDAmount={2000} SNXAmount={400} earnPercent={0.15} />
-		</Content>
+			<AppLayout>
+				<Content>
+					<StatsSection>
+						<StakedValue
+							title={t('common.stat-box.staked-value')}
+							value={formatFiatCurrency(stakedValue ? stakedValue : 0, { sign: '$' })}
+						/>
+						<APY
+							title={t('common.stat-box.earning')}
+							value={formatPercent(stakingApy ? stakingApy : 0)}
+							size="lg"
+						/>
+						<ActiveDebt
+							title={t('common.stat-box.active-debt')}
+							value={formatFiatCurrency(activeDebt ? activeDebt : 0, { sign: '$' })}
+						/>
+					</StatsSection>
+					<BarStats
+						currentCRatio={currentCRatio}
+						targetCRatio={targetCRatio}
+						claimed={claimed}
+						nextFeePeriodStarts={nextFeePeriodStarts}
+						currentFeePeriodProgress={currentFeePeriodProgress}
+					/>
+					<PossibleActions claimAmount={20} sUSDAmount={2000} SNXAmount={400} earnPercent={0.15} />
+				</Content>
+			</AppLayout>
+		</>
 	);
 };
 
