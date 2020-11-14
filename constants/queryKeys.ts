@@ -57,7 +57,7 @@ export const QUERY_KEYS = {
 		SynthExchanges: (period: Period) => ['rates', 'synthExchanges', period],
 	},
 	Network: {
-		EthGasStation: ['network', 'ethGasStation'],
+		EthGasPrice: ['network', 'ethGasPrice'],
 		SNXTotalSupply: ['network', 'snxTotalSupply'],
 	},
 	WalletBalances: {
