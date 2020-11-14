@@ -1,25 +1,31 @@
 import { FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useRecoilValue } from 'recoil';
+import { SynthetixJS } from '@synthetixio/js';
 import { Svg } from 'react-optimized-image';
 
-import MintTab from './components/MintTab';
-import BurnTab from './components/BurnTab';
+import synthetix from 'lib/synthetix';
+
+import Burn from 'assets/svg/app/burn.svg';
+import Mint from 'assets/svg/app/mint.svg';
 
 import StructuredTab from 'components/StructuredTab';
 import { LoadingState } from 'constants/loading';
-import Burn from 'assets/svg/app/burn.svg';
-import Mint from 'assets/svg/app/mint.svg';
+
 import { StakingPanelType } from 'pages/staking';
 import { getGasEstimateForTransaction } from 'utils/transactions';
-import synthetix from 'lib/synthetix';
-import { SynthetixJS } from '@synthetixio/js';
+
 import useEthGasPriceQueryQuery from 'queries/network/useEthGasPriceQuery';
-import { getMintAmount } from './components/helper';
+
 import { CRYPTO_CURRENCY_MAP, SYNTHS_MAP } from 'constants/currency';
 import { walletAddressState } from 'store/wallet';
-import { useRecoilValue } from 'recoil';
+
 import { normalizedGasPrice } from 'utils/network';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
+
+import MintTab from './components/MintTab';
+import BurnTab from './components/BurnTab';
+import { getMintAmount } from './components/helper';
 
 interface MintBurnBoxProps {
 	targetCRatio: number;
@@ -49,8 +55,13 @@ const MintBurnBox: FC<MintBurnBoxProps> = ({
 	const { t } = useTranslation();
 	const [mintLoadingState] = useState<LoadingState | null>(null);
 	const [burnLoadingState] = useState<LoadingState | null>(null);
-	const [stakingTxModalOpen, setStakingTxModalOpen] = useState<boolean>(false);
-	const [burningTxModalOpen, setBurningTxModalOpen] = useState<boolean>(false);
+	const [txModalOpen, setTxModalOpen] = useState<{
+		isOpen: boolean;
+		type: 'stake' | 'burn' | null;
+	}>({
+		isOpen: false,
+		type: null,
+	});
 	const ethGasPriceQuery = useEthGasPriceQueryQuery();
 	const gasPrice = ethGasPriceQuery?.data?.average ?? 0;
 	const walletAddress = useRecoilValue(walletAddressState);
@@ -59,12 +70,14 @@ const MintBurnBox: FC<MintBurnBoxProps> = ({
 	const [stakingCurrencyKey] = useState<string>(CRYPTO_CURRENCY_MAP.SNX);
 	const [synthCurrencyKey] = useState<string>(SYNTHS_MAP.sUSD);
 
+	const isStakeModalOpened = useMemo(() => txModalOpen.type === 'stake', [txModalOpen.type]);
+
 	// TODO: useMemo
 	// eslint-disable-next-line
 	const handleStake = async () => {
 		try {
 			setStakingTxError(false);
-			setStakingTxModalOpen(true);
+			setTxModalOpen({ isOpen: true, type: 'stake' });
 			const {
 				contracts: { Synthetix },
 				utils: { parseEther },
@@ -81,7 +94,7 @@ const MintBurnBox: FC<MintBurnBoxProps> = ({
 					[parseEther(amountToStake)],
 					Synthetix.estimateGas.issueSynths
 				);
-				console.log(gasLimit);
+
 				const mintAmount = getMintAmount(targetCRatio, amountToStake, snxPrice);
 				transaction = await Synthetix.issueSynths(parseEther(mintAmount.toString()), {
 					gasPrice: normalizedGasPrice(gasPrice),
@@ -90,6 +103,7 @@ const MintBurnBox: FC<MintBurnBoxProps> = ({
 			}
 			if (transaction) {
 				//TODO: BN NOTIFY
+				setTxModalOpen({ isOpen: false, type: null });
 			}
 		} catch (e) {
 			setStakingTxError(true);
@@ -101,7 +115,7 @@ const MintBurnBox: FC<MintBurnBoxProps> = ({
 	const handleBurn = async () => {
 		try {
 			setBurningTxError(false);
-			setBurningTxModalOpen(true);
+			setTxModalOpen({ isOpen: true, type: 'burn' });
 			//TODO: Change this
 			const burnToTarget = false;
 			const {
@@ -132,7 +146,7 @@ const MintBurnBox: FC<MintBurnBoxProps> = ({
 			}
 			if (transaction) {
 				//TODO: BN NOTIFY
-				setBurningTxModalOpen(false);
+				setTxModalOpen({ isOpen: false, type: null });
 			}
 		} catch (e) {
 			setBurningTxError(true);
@@ -190,6 +204,7 @@ const MintBurnBox: FC<MintBurnBoxProps> = ({
 			mintLoadingState,
 		]
 	);
+
 	return (
 		<>
 			<StructuredTab
@@ -199,22 +214,11 @@ const MintBurnBox: FC<MintBurnBoxProps> = ({
 				tabData={tabData}
 				setPanelType={setPanelType}
 			/>
-			{stakingTxModalOpen && (
+			{txModalOpen.isOpen && (
 				<TxConfirmationModal
-					onDismiss={() => setStakingTxModalOpen(false)}
-					txError={stakingTxError}
-					attemptRetry={handleStake}
-					baseCurrencyAmount={amountToStake}
-					quoteCurrencyAmount={getMintAmount(targetCRatio, amountToStake, snxPrice).toString()}
-					baseCurrencyKey={stakingCurrencyKey!}
-					quoteCurrencyKey={synthCurrencyKey!}
-				/>
-			)}
-			{burningTxModalOpen && (
-				<TxConfirmationModal
-					onDismiss={() => setBurningTxModalOpen(false)}
-					txError={burningTxError}
-					attemptRetry={handleBurn}
+					onDismiss={() => setTxModalOpen({ isOpen: false, type: null })}
+					txError={isStakeModalOpened ? stakingTxError : burningTxError}
+					attemptRetry={isStakeModalOpened ? handleStake : handleBurn}
 					baseCurrencyAmount={amountToStake}
 					quoteCurrencyAmount={getMintAmount(targetCRatio, amountToStake, snxPrice).toString()}
 					baseCurrencyKey={stakingCurrencyKey!}
