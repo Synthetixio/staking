@@ -1,9 +1,12 @@
 import { useQuery, QueryConfig } from 'react-query';
 import { SynthetixJS } from '@synthetixio/js';
+import { useRecoilValue } from 'recoil';
 
 import synthetix from 'lib/synthetix';
 
 import QUERY_KEYS from 'constants/queryKeys';
+
+import { appReadyState } from 'store/app';
 
 export type FeePoolData = {
 	feePeriodDuration: number;
@@ -15,6 +18,8 @@ export type FeePoolData = {
 };
 
 const useGetFeePoolDataQuery = (period: string, options?: QueryConfig<FeePoolData>) => {
+	const isAppReady = useRecoilValue(appReadyState);
+
 	return useQuery<FeePoolData>(
 		QUERY_KEYS.Staking.FeePoolData(period),
 		async () => {
@@ -34,7 +39,7 @@ const useGetFeePoolDataQuery = (period: string, options?: QueryConfig<FeePoolDat
 			};
 		},
 		{
-			enabled: synthetix.js && period,
+			enabled: isAppReady && period,
 			...options,
 		}
 	);

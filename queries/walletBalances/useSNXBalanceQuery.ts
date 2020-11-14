@@ -5,12 +5,14 @@ import { useRecoilValue } from 'recoil';
 import synthetix from 'lib/synthetix';
 
 import QUERY_KEYS from 'constants/queryKeys';
+import { appReadyState } from 'store/app';
 
 import { walletAddressState, isWalletConnectedState, networkState } from 'store/wallet';
 
 export type Balance = { balance: number; balanceBN: BigNumber };
 
 const useSNXBalanceQuery = (options?: QueryConfig<Balance>) => {
+	const isAppReady = useRecoilValue(appReadyState);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const network = useRecoilValue(networkState);
@@ -26,7 +28,7 @@ const useSNXBalanceQuery = (options?: QueryConfig<Balance>) => {
 			};
 		},
 		{
-			enabled: synthetix.js && isWalletConnected,
+			enabled: isAppReady && isWalletConnected,
 			...options,
 		}
 	);

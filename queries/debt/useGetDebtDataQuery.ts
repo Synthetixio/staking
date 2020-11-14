@@ -1,14 +1,18 @@
 import { useQuery, QueryConfig } from 'react-query';
 import { SynthetixJS } from '@synthetixio/js';
+import { useRecoilValue } from 'recoil';
 
 import synthetix from 'lib/synthetix';
 
 import QUERY_KEYS from 'constants/queryKeys';
-import { useRecoilValue } from 'recoil';
+
 import { isWalletConnectedState, networkState, walletAddressState } from 'store/wallet';
+import { appReadyState } from 'store/app';
+
 import { WalletDebtData } from './types';
 
 const useGetDebtDataQuery = (options?: QueryConfig<WalletDebtData>) => {
+	const isAppReady = useRecoilValue(appReadyState);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const network = useRecoilValue(networkState);
@@ -49,7 +53,7 @@ const useGetDebtDataQuery = (options?: QueryConfig<WalletDebtData>) => {
 			};
 		},
 		{
-			enabled: synthetix.js && isWalletConnected,
+			enabled: isAppReady && isWalletConnected,
 			...options,
 		}
 	);
