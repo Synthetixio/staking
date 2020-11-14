@@ -70,18 +70,15 @@ const Transactions: FC<TransactionsProps> = ({ transactions, isLoaded }) => {
 					{
 						Header: 'tx',
 						id: 'link',
-						Cell: (cellProps: CellProps<HistoricalStakingTransaction>) => {
-							console.log(etherscanInstance);
-							return etherscanInstance != null && cellProps.row.original.hash ? (
+						Cell: (cellProps: CellProps<HistoricalStakingTransaction>) =>
+							etherscanInstance != null && cellProps.row.original.hash ? (
 								<StyledExternalLink href={etherscanInstance.txLink(cellProps.row.original.hash)}>
 									View
 								</StyledExternalLink>
 							) : (
 								NO_VALUE
-							);
-						},
+							),
 						sortable: false,
-						width: 200,
 					},
 				]}
 				data={transactions}
