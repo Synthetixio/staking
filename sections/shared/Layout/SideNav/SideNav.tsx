@@ -77,6 +77,7 @@ const MenuLinks = styled.div`
 const MenuLinkItem = styled.div<{ isActive: boolean }>`
 	line-height: 40px;
 	padding-bottom: 10px;
+	position: relative;
 
 	a {
 		${linkCSS};
@@ -99,12 +100,20 @@ const MenuLinkItem = styled.div<{ isActive: boolean }>`
 	}
 
 	&:after {
+		width: 2px;
 		height: 40px;
 		content: '';
 		position: absolute;
-		right: -3px;
-		border-right: ${(props) =>
-			props.isActive ? `2px solid ${props.theme.colors.brightBlue}` : 'none'};
+		top: 0;
+		/* the line needs to outside (so around -3px), however due to overflow issues, it needs to be inside for now */
+		right: 0;
+		background: ${(props) => props.theme.colors.brightBlue};
+		display: none;
+		${(props) =>
+			props.isActive &&
+			css`
+				display: block;
+			`}
 	}
 `;
 
