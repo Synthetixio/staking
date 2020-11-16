@@ -7,7 +7,7 @@ import AppLayout from 'sections/shared/Layout/AppLayout';
 
 import { MintBurnBox, InfoBox } from 'sections/staking';
 import StatBox from 'components/StatBox';
-import { Column, Row, StatsSection } from 'styles/common';
+import { Column, LineSpacer, Row, StatsSection } from 'styles/common';
 import useGetDebtDataQuery from 'queries/debt/useGetDebtDataQuery';
 import useCurrencyRatesQuery from 'queries/rates/useCurrencyRatesQuery';
 import { CRYPTO_CURRENCY_MAP } from 'constants/currency';
@@ -77,6 +77,7 @@ const StakingPage = () => {
 						value={formatFiatCurrency(activeDebt ? activeDebt : 0, { sign: '$' })}
 					/>
 				</StatsSection>
+				<LineSpacer />
 				<Row>
 					<Column>
 						<InfoBox

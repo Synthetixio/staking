@@ -2,7 +2,7 @@ import Head from 'next/head';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { Column, StatsSection, Row } from 'styles/common';
+import { Column, StatsSection, Row, LineSpacer } from 'styles/common';
 
 import AppLayout from 'sections/shared/Layout/AppLayout';
 import ClaimBox from 'sections/earn/ClaimBox';
@@ -62,6 +62,7 @@ const Earn = () => {
 						value={formatFiatCurrency(activeDebt ? activeDebt : 0, { sign: '$' })}
 					/>
 				</StatsSection>
+				<LineSpacer />
 				<Row>
 					<Column>
 						<Incentives />

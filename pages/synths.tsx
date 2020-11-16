@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import AppLayout from 'sections/shared/Layout/AppLayout';
 
-import { StatsSection } from 'styles/common';
+import { StatsSection, LineSpacer } from 'styles/common';
 
 import { AssetContainer } from 'sections/synths/AssetContainer';
 
@@ -23,6 +23,7 @@ const SynthsPage = () => {
 					{/* TODO: implement */}
 					<TotalSynthValue title={t('common.stat-box.synth-value')} value="$9,000.08" size="lg" />
 				</StatsSection>
+				<LineSpacer />
 				<AssetContainer title={t('synths.synths.title')} />
 				<AssetContainer title={t('synths.non-synths.title')} />
 			</AppLayout>

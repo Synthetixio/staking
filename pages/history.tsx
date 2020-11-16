@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import AppLayout from 'sections/shared/Layout/AppLayout';
 
-import { StatsSection } from 'styles/common';
+import { StatsSection, LineSpacer } from 'styles/common';
 
 import TransactionsContainer from 'sections/history/TransactionsContainer';
 import useHistoryTransactions from 'sections/history/hooks/useHistoryTransactions';
@@ -24,6 +24,7 @@ const HistoryPage = () => {
 				<StatsSection>
 					<TxCount title={t('common.stat-box.tx-count')} value={txCount} size="lg" />
 				</StatsSection>
+				<LineSpacer />
 				<TransactionsContainer
 					burned={burned}
 					issued={issued}

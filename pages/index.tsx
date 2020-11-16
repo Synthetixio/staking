@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import { useTranslation } from 'react-i18next';
 
-import { FlexDivCol, StatsSection } from 'styles/common';
+import { FlexDivCol, LineSpacer, StatsSection } from 'styles/common';
 import { PossibleActions, BarStats } from 'sections/dashboard';
 import AppLayout from 'sections/shared/Layout/AppLayout';
 
@@ -106,6 +106,7 @@ const DashboardPage = () => {
 							value={formatFiatCurrency(activeDebt ? activeDebt : 0, { sign: '$' })}
 						/>
 					</StatsSection>
+					<LineSpacer />
 					<BarStats
 						currentCRatio={currentCRatio}
 						targetCRatio={targetCRatio}

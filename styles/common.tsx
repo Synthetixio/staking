@@ -1,4 +1,5 @@
 import styled, { css, keyframes } from 'styled-components';
+import { SIDE_NAV_WIDTH } from 'constants/ui';
 
 export const FlexDiv = styled.div`
 	display: flex;
@@ -205,4 +206,16 @@ export const StatsSection = styled(FlexDivRowCentered)`
 	width: 100%;
 	justify-content: center;
 	margin: 0 auto;
+`;
+
+export const LineSpacer = styled.div`
+	height: 32px;
+	&:after {
+		background: ${(props) => props.theme.colors.linedBlue};
+		height: 1px;
+		width: calc(100% - ${SIDE_NAV_WIDTH});
+		left: ${SIDE_NAV_WIDTH};
+		position: absolute;
+		content: '';
+	}
 `;
