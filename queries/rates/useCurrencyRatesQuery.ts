@@ -8,9 +8,9 @@ import { CurrencyKey } from 'constants/currency';
 
 export type Rates = Record<CurrencyKey, number>;
 
-const useCurrencyRatesQuery = (currencies: string[], options?: QueryConfig<Rates>) => {
+const useCurrencyRatesQuery = (currencies: CurrencyKey[], options?: QueryConfig<Rates>) => {
 	return useQuery<Rates>(
-		QUERY_KEYS.Rates.CurrencyRates,
+		QUERY_KEYS.Rates.CurrencyRates(currencies),
 		async () => {
 			const currencyRates: Rates = {};
 

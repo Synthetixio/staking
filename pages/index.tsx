@@ -24,7 +24,7 @@ const DashboardPage = () => {
 
 	const currentFeePeriod = useGetFeePoolDataQuery('0');
 	const debtDataQuery = useGetDebtDataQuery();
-	const currencyRates = useCurrencyRatesQuery(['SNX']);
+	const currencyRates = useCurrencyRatesQuery(['SNX', 'ETH']);
 	const totalIssuedSynthsExclEth = useTotalIssuedSynthsExcludingEtherQuery('sUSD');
 	const exchangeRates = useExchangeRatesQuery();
 	const previousFeePeriod = useGetFeePoolDataQuery('1');

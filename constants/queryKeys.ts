@@ -53,7 +53,11 @@ export const QUERY_KEYS = {
 		],
 		MarketCap: (currencyKey: CurrencyKey) => ['marketCap', currencyKey],
 		ExchangeRates: ['rates', 'exchangeRates'],
-		CurrencyRates: ['rates', 'currencyRates'],
+		CurrencyRates: (currencyKeys: CurrencyKey[]) => [
+			'rates',
+			'currencyRates',
+			currencyKeys.join(','),
+		],
 		SynthExchanges: (period: Period) => ['rates', 'synthExchanges', period],
 	},
 	Network: {

@@ -29,7 +29,7 @@ const CurrencyChange = styled.span<{ isPositive: boolean }>`
 	color: ${(props) => (props.isPositive ? props.theme.colors.green : props.theme.colors.red)};
 	font-family: ${(props) => props.theme.fonts.mono};
 	svg {
-		margin-right: 5px;
+		margin-right: 2px;
 		width: 12px;
 		height: 12px;
 	}

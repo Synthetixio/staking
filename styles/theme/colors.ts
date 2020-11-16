@@ -64,4 +64,5 @@ export default {
 	},
 	gold: `linear-gradient(180deg, #BE9461 0%, #9C6C3C 100%)`,
 	goldHover: `linear-gradient(180deg, #E4B378 0%, #B98C55 100%)`,
+	darkGradient1: 'linear-gradient(0, #08021E 0%, #120446 146.21%)',
 };

@@ -21,16 +21,16 @@ export const MENU_LINKS: MenuLinks = [
 		link: ROUTES.Earn.Home,
 	},
 	{
-		i18nLabel: 'sidenav.escrow',
-		link: ROUTES.Escrow.Home,
+		i18nLabel: 'sidenav.synths',
+		link: ROUTES.Synths.Home,
 	},
 	{
 		i18nLabel: 'sidenav.history',
 		link: ROUTES.History.Home,
 	},
 	{
-		i18nLabel: 'sidenav.synths',
-		link: ROUTES.Synths.Home,
+		i18nLabel: 'sidenav.escrow',
+		link: ROUTES.Escrow.Home,
 	},
 ];
 

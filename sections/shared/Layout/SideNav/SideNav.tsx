@@ -1,34 +1,33 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { FC } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 import { Svg } from 'react-optimized-image';
 
-import { FlexDivCol, linkCSS } from 'styles/common';
+import { linkCSS } from 'styles/common';
 import ROUTES from 'constants/routes';
 import StakingLogo from 'assets/svg/app/staking-logo.svg';
 
+import { CRYPTO_CURRENCY_MAP, CurrencyKey } from 'constants/currency';
+
 import { MENU_LINKS } from '../constants';
-import CurrencyPrice from 'components/Currency/CurrencyPrice';
-import useCurrencyRatesQuery from 'queries/rates/useCurrencyRatesQuery';
-import useHistoricalRatesQuery from 'queries/rates/useHistoricalRatesQuery';
-import { Period } from 'constants/period';
+
+import PriceItem from './PriceItem';
+
+const PRICE_ITEMS = [CRYPTO_CURRENCY_MAP.SNX, CRYPTO_CURRENCY_MAP.ETH] as CurrencyKey[];
 
 const SideNav: FC = () => {
 	const { t } = useTranslation();
 	const { asPath } = useRouter();
 
-	const currencyRatesQuery = useCurrencyRatesQuery(['ETH', 'SNX']);
-	const currencyRates = currencyRatesQuery.data ?? null;
-	const ethHistoricalRate = useHistoricalRatesQuery('ETH', Period.ONE_DAY);
-	const snxHistoricalRate = useHistoricalRatesQuery('SNX', Period.ONE_DAY);
-
 	return (
 		<SideNavContainer>
 			<StakingLogoWrap>
-				<Link href="/">
-					<Svg src={StakingLogo} />
+				<Link href={ROUTES.Home}>
+					<a>
+						<Svg src={StakingLogo} />
+					</a>
 				</Link>
 			</StakingLogoWrap>
 			<MenuLinks>
@@ -38,106 +37,80 @@ const SideNav: FC = () => {
 						isActive={asPath === link || (link !== ROUTES.Home && asPath.includes(link))}
 					>
 						<Link href={link}>
-							<p>{t(i18nLabel)}</p>
+							<a>{t(i18nLabel)}</a>
 						</Link>
 					</MenuLinkItem>
 				))}
 			</MenuLinks>
 			<PriceSection>
-				<PriceItem>
-					<h6>SNX Price</h6>
-					<StyledCurrencyPrice
-						currencyKey={'SNX'}
-						price={currencyRates?.SNX ?? 0}
-						sign="$"
-						change={snxHistoricalRate?.data?.change}
-					/>
-				</PriceItem>
-				<PriceItem>
-					<h6>ETH Price</h6>
-					<StyledCurrencyPrice
-						currencyKey={'ETH'}
-						price={currencyRates?.ETH ?? 0}
-						sign="$"
-						change={ethHistoricalRate?.data?.change}
-					/>
-				</PriceItem>
+				{PRICE_ITEMS.map((currencyKey) => (
+					<PriceItem key={currencyKey} currencyKey={currencyKey} />
+				))}
 			</PriceSection>
 		</SideNavContainer>
 	);
 };
 
 const SideNavContainer = styled.div`
-	z-index: 1;
-	overflow-x: hidden;
-	padding-top: 20px;
 	height: 100%;
-	width: 180px;
-	position: absolute;
-	padding-top: 40px;
-	padding-left: 40px;
+	width: 160px;
+	position: fixed;
 	top: 0;
 	left: 0;
-	background-color: ${(props) => props.theme.colors.mediumBlue};
+	background: ${(props) => props.theme.colors.darkGradient1};
+	border-right: 1px solid ${(props) => props.theme.colors.linedBlue};
+	display: grid;
+	grid-template-rows: auto 1fr auto;
+	overflow-y: auto;
+`;
+
+const StakingLogoWrap = styled.div`
+	padding: 30px 0 87px 30px;
+	cursor: pointer;
 `;
 
 const MenuLinks = styled.div`
-	display: flex;
-	flex-direction: column;
-	padding-top: 20px;
+	padding-left: 30px;
+	position: relative;
 `;
 
 const MenuLinkItem = styled.div<{ isActive: boolean }>`
 	line-height: 40px;
-	border-right: ${(props) =>
-		props.isActive ? `1px solid ${props.theme.colors.brightBlue}` : 'none'};
-	p {
+	padding-bottom: 10px;
+
+	a {
 		${linkCSS};
 		font-family: ${(props) => props.theme.fonts.condensedBold};
 		text-transform: uppercase;
 		font-weight: 700;
 		font-size: 14px;
 		cursor: pointer;
-		color: ${(props) => (props.isActive ? props.theme.colors.white : props.theme.colors.gray)};
+		opacity: 0.5;
+		color: ${(props) => props.theme.colors.white};
 		&:hover {
+			opacity: unset;
 			color: ${(props) => props.theme.colors.white};
 		}
+		${(props) =>
+			props.isActive &&
+			css`
+				opacity: unset;
+			`}
 	}
-`;
 
-const StakingLogoWrap = styled.div`
-	margin-bottom: 100px;
-	cursor: pointer;
+	&:after {
+		height: 40px;
+		content: '';
+		position: absolute;
+		right: -3px;
+		border-right: ${(props) =>
+			props.isActive ? `2px solid ${props.theme.colors.brightBlue}` : 'none'};
+	}
 `;
 
 const PriceSection = styled.div`
-	position: absolute;
-	bottom: 0;
-	padding: 20px 0px;
+	padding: 30px 0 30px 30px;
+	border-top: 1px solid ${(props) => props.theme.colors.linedBlue};
 `;
 
-const PriceItem = styled(FlexDivCol)`
-	margin: 10px 0px;
-
-	h6 {
-		font-family: ${(props) => props.theme.fonts.condensedMedium};
-		font-size: 16px;
-		font-weight: 400;
-		color: ${(props) => props.theme.colors.silver};
-		margin: 0px 0px 4px 0px;
-	}
-`;
-
-const StyledCurrencyPrice = styled(CurrencyPrice)`
-	display: flex;
-	.price {
-		margin-right: 8px;
-		font-family: ${(props) => props.theme.fonts.mono};
-		width: 85px;
-	}
-	.percent {
-		font-family: ${(props) => props.theme.fonts.interBold};
-		font-size: 10px;
-	}
-`;
 export default SideNav;
