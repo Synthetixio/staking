@@ -58,12 +58,12 @@ const Pagination: FC<PaginationProps> = ({
 };
 
 const PageInfo = styled.span`
-	color: ${(props) => props.theme.colors.silver};
+	color: ${(props) => props.theme.colors.gray10};
 `;
 
 const PaginationContainer = styled(GridDivCenteredCol)`
 	grid-template-columns: auto 1fr auto;
-	background-color: ${(props) => props.theme.colors.elderberry};
+	background-color: ${(props) => props.theme.colors.mediumBlue};
 	padding: 15px 12px;
 	border-bottom-left-radius: 4px;
 	border-bottom-right-radius: 4px;
@@ -80,7 +80,7 @@ const ArrowButton = styled.button`
 	svg {
 		width: 14px;
 		height: 14px;
-		color: ${(props) => props.theme.colors.goldColors.color1};
+		color: ${(props) => props.theme.colors.white};
 	}
 `;
 

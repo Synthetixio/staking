@@ -3,6 +3,9 @@ export default {
 	black: '#000000',
 	// gray
 	gray: 'rgba(255, 255, 255, 0.46)',
+	// TODO: get the right name
+	gray10: '#828295',
+
 	// white
 	white: '#ffffff',
 	// blue

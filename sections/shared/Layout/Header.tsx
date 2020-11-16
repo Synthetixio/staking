@@ -2,7 +2,7 @@ import { FC } from 'react';
 import styled from 'styled-components';
 
 import { MobileHiddenView, MobileOnlyView } from 'components/Media';
-import { HEADER_HEIGHT, zIndex } from 'constants/ui';
+import { HEADER_HEIGHT } from 'constants/ui';
 
 import media from 'styles/media';
 

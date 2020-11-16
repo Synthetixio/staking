@@ -10,11 +10,14 @@ import Table from 'components/Table';
 
 import NoNotificationIcon from 'assets/svg/app/no-notifications.svg';
 
+import { formatShortDate } from 'utils/formatters/date';
+import { formatCurrency } from 'utils/formatters/number';
+
 import { HistoricalStakingTransaction } from 'queries/staking/types';
 
 import { ExternalLink, GridDivCenteredRow } from 'styles/common';
 import { NO_VALUE } from 'constants/placeholder';
-import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import { SYNTHS_MAP } from 'constants/currency';
 
 interface TransactionsProps {
 	transactions: HistoricalStakingTransaction[];
@@ -24,7 +27,6 @@ interface TransactionsProps {
 const Transactions: FC<TransactionsProps> = ({ transactions, isLoaded }) => {
 	const { t } = useTranslation();
 	const { etherscanInstance } = Etherscan.useContainer();
-	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 
 	return (
 		<>
@@ -51,7 +53,13 @@ const Transactions: FC<TransactionsProps> = ({ transactions, isLoaded }) => {
 								HistoricalStakingTransaction,
 								HistoricalStakingTransaction['value']
 							>
-						) => <div>{cellProps.value}</div>,
+						) => (
+							<div>
+								{formatCurrency(SYNTHS_MAP.sUSD, cellProps.value, {
+									currencyKey: SYNTHS_MAP.sUSD,
+								})}
+							</div>
+						),
 						sortable: true,
 						width: 200,
 					},
@@ -63,7 +71,7 @@ const Transactions: FC<TransactionsProps> = ({ transactions, isLoaded }) => {
 								HistoricalStakingTransaction,
 								HistoricalStakingTransaction['timestamp']
 							>
-						) => <div>{cellProps.value}</div>,
+						) => <div>{formatShortDate(cellProps.value)}</div>,
 						sortable: true,
 						width: 200,
 					},
@@ -82,7 +90,7 @@ const Transactions: FC<TransactionsProps> = ({ transactions, isLoaded }) => {
 					},
 				]}
 				data={transactions}
-				columnsDeps={[selectPriceCurrencyRate, etherscanInstance]}
+				columnsDeps={[etherscanInstance]}
 				isLoading={!isLoaded}
 				noResultsMessage={
 					isLoaded && transactions.length === 0 ? (
