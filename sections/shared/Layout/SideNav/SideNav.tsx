@@ -11,6 +11,7 @@ import StakingLogo from 'assets/svg/app/staking-logo.svg';
 
 import { CRYPTO_CURRENCY_MAP, CurrencyKey } from 'constants/currency';
 
+import { SIDE_NAV_WIDTH, zIndex } from 'constants/ui';
 import { MENU_LINKS } from '../constants';
 
 import PriceItem from './PriceItem';
@@ -52,8 +53,9 @@ const SideNav: FC = () => {
 };
 
 const SideNavContainer = styled.div`
+	z-index: ${zIndex.BASE};
 	height: 100%;
-	width: 160px;
+	width: ${SIDE_NAV_WIDTH};
 	position: fixed;
 	top: 0;
 	left: 0;

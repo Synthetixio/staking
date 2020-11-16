@@ -21,7 +21,6 @@ const Header: FC = () => (
 );
 
 const Container = styled.div`
-	z-index: ${zIndex.HEADER};
 	float: right;
 	${media.lessThan('md')`
 		position: fixed;
@@ -31,7 +30,7 @@ const Container = styled.div`
 	> div {
 		height: ${HEADER_HEIGHT};
 		line-height: ${HEADER_HEIGHT};
-		padding: 0 20px;
+		padding: 30px;
 		display: flex;
 		justify-content: space-between;
 		align-items: center;

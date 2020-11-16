@@ -1,3 +1,4 @@
+import { SIDE_NAV_WIDTH } from 'constants/ui';
 import { FC, ReactNode } from 'react';
 import styled from 'styled-components';
 
@@ -9,22 +10,18 @@ type AppLayoutProps = {
 };
 
 const AppLayout: FC<AppLayoutProps> = ({ children }) => (
-	<Page>
+	<>
 		<SideNav />
-		<Content>
-			<Header />
-			{children}
-		</Content>
-	</Page>
+		<Header />
+		<Content>{children}</Content>
+	</>
 );
 
-const Page = styled.div`
-	flex: 1;
-`;
-
 const Content = styled.div`
-	margin-left: 220px; /* Same as the width of the sidebar */
-	padding: 0px 200px;
+	max-width: 1200px;
+	margin: 0 auto;
+	padding-right: 40px;
+	padding-left: calc(${SIDE_NAV_WIDTH} + 40px);
 `;
 
 export default AppLayout;
