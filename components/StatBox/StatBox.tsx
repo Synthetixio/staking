@@ -31,20 +31,22 @@ const Box = styled(FlexDivColCentered)<{ size: Size }>`
 	${(props) =>
 		props.size === 'lg' &&
 		css`
-			transform: scale(1.1);
+			background-size: 176px 114px;
+			.value {
+				font-size: 32px;
+			}
 		`}
 `;
 
 const Title = styled.span`
-	font-family: ${(props) => props.theme.fonts.condensedMedium};
-	font-size: 14px;
-	margin: 0;
+	font-family: ${(props) => props.theme.fonts.interBold};
+	font-size: 12px;
+	padding-bottom: 5px;
 `;
 
 const Value = styled.span`
 	font-family: ${(props) => props.theme.fonts.expanded};
-	font-size: 42px;
-	margin: 0;
+	font-size: 24px;
 `;
 
 export default StatBox;
