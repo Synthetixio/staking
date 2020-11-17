@@ -5,20 +5,26 @@ import styled from 'styled-components';
 import ClaimedTag from 'components/ClaimedTag';
 import { TabContainer } from '../common';
 import { FlexDivRowCentered } from 'styles/common';
+import BigNumber from 'bignumber.js';
 
-const ClaimTab: React.FC = () => {
+type ClaimTabProps = {
+	tradingRewards: BigNumber;
+	stakingRewards: BigNumber;
+};
+
+const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards }) => {
 	const { t } = useTranslation();
 	const claimed = true;
 	return (
 		<TabContainer>
 			<Label>{t('earn.actions.claim.exchange-rewards')}</Label>
 			<ValueBox>
-				<Value isClaimed={false}>18.36 sUSD</Value>
+				<Value isClaimed={false}>{tradingRewards.toNumber()} sUSD</Value>
 				<StyledClaimedTag isClaimed={claimed} />
 			</ValueBox>
 			<Label>{t('earn.actions.claim.staking-rewards')}</Label>
 			<ValueBox>
-				<Value isClaimed={false}>117.65 SNX</Value>
+				<Value isClaimed={false}>{stakingRewards.toNumber()} SNX</Value>
 				<StyledClaimedTag isClaimed={claimed} />
 			</ValueBox>
 		</TabContainer>

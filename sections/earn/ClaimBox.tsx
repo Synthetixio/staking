@@ -5,19 +5,26 @@ import StructuredTab from 'components/StructuredTab';
 import Claim from 'assets/svg/app/claim.svg';
 import { useTranslation } from 'react-i18next';
 import ClaimTab from './components/ClaimTab';
+import BigNumber from 'bignumber.js';
 
-const ClaimBox: React.FC = () => {
+type ClaimBoxProps = {
+	tradingRewards: BigNumber;
+	stakingRewards: BigNumber;
+};
+
+const ClaimBox: React.FC<ClaimBoxProps> = ({ tradingRewards, stakingRewards }) => {
 	const { t } = useTranslation();
 	const tabData = useMemo(
 		() => [
 			{
 				title: t('earn.actions.claim.title'),
 				icon: () => <Svg src={Claim} />,
-				tabChildren: <ClaimTab />,
+				tabChildren: <ClaimTab stakingRewards={stakingRewards} tradingRewards={tradingRewards} />,
 			},
 		],
 		[t]
 	);
+
 	return (
 		<StructuredTab
 			boxPadding={25}
