@@ -17,6 +17,8 @@ import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import useGetFeePoolDataQuery from 'queries/staking/useGetFeePoolDataQuery';
 import useTotalIssuedSynthsExcludingEtherQuery from 'queries/synths/useTotalIssuedSynthsExcludingEtherQuery';
 import { CRYPTO_CURRENCY_MAP, SYNTHS_MAP } from 'constants/currency';
+import useClaimableRewards from 'queries/rewards/useClaimableRewards';
+import BigNumber from 'bignumber.js';
 
 const Earn = () => {
 	const { t } = useTranslation();
@@ -41,6 +43,12 @@ const Earn = () => {
 	const weeklyRewards = sUSDRate * feesToDistribute + SNXRate * rewardsToDistribute;
 	const stakingApy = (weeklyRewards * (activeDebt / totalsUSDDebt) * 52) / (stakedValue * SNXRate);
 
+	const availableRewards = useClaimableRewards();
+	const tradingRewards = availableRewards?.data?.tradingRewards ?? new BigNumber(0);
+	const stakingRewards = availableRewards?.data?.stakingRewards ?? new BigNumber(0);
+
+	const totalRewards = tradingRewards.plus(stakingRewards);
+
 	return (
 		<>
 			<Head>
@@ -50,7 +58,9 @@ const Earn = () => {
 				<StatsSection>
 					<UpcomingRewards
 						title={t('common.stat-box.upcoming-rewards')}
-						value={formatFiatCurrency(stakedValue ? stakedValue : 0, { sign: '$' })}
+						value={formatFiatCurrency(totalRewards, {
+							sign: '$',
+						})}
 					/>
 					<APY
 						title={t('common.stat-box.earning')}
@@ -68,7 +78,7 @@ const Earn = () => {
 						<Incentives />
 					</Column>
 					<Column>
-						<ClaimBox />
+						<ClaimBox tradingRewards={tradingRewards} stakingRewards={stakingRewards} />
 					</Column>
 				</Row>
 			</AppLayout>
