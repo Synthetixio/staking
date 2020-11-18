@@ -1,16 +1,14 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import useClaimedStatus from 'sections/hooks/useClaimedStatus';
 import styled from 'styled-components';
 
-interface ClaimedTagProps {
-	isClaimed: boolean;
-}
-
-const ClaimedTag: React.FC<ClaimedTagProps> = ({ isClaimed, ...rest }) => {
+const ClaimedTag: React.FC = ({ ...rest }) => {
 	const { t } = useTranslation();
+	const claimed = useClaimedStatus();
 	return (
-		<Tag className="tag" isClaimed={isClaimed} {...rest}>
-			{isClaimed ? t('common.status.claimed') : t('common.status.unclaimed')}
+		<Tag className="tag" isClaimed={claimed} {...rest}>
+			{claimed ? t('common.status.claimed') : t('common.status.unclaimed')}
 		</Tag>
 	);
 };

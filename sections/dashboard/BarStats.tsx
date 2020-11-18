@@ -6,11 +6,11 @@ import ProgressBar from 'components/ProgressBar';
 import Countdown from 'react-countdown';
 import ClaimedTag from 'components/ClaimedTag';
 import { formatPercent } from 'utils/formatters/number';
+import useClaimedStatus from 'sections/hooks/useClaimedStatus';
 
 interface BarStatsProps {
 	currentCRatio: number;
 	targetCRatio: number;
-	claimed: boolean;
 	nextFeePeriodStarts: Date;
 	currentFeePeriodProgress: number;
 }
@@ -18,7 +18,6 @@ interface BarStatsProps {
 const BarStats: FC<BarStatsProps> = ({
 	currentCRatio,
 	targetCRatio,
-	claimed,
 	nextFeePeriodStarts,
 	currentFeePeriodProgress,
 }) => {
@@ -54,7 +53,7 @@ const BarStats: FC<BarStatsProps> = ({
 			<BarStatBox key="PERIOD">
 				<BarHeaderSection>
 					<BarTitle>
-						{t('dashboard.bar.period.title')} &bull; <StyledClaimedTag isClaimed={claimed} />
+						{t('dashboard.bar.period.title')} &bull; <StyledClaimedTag />
 					</BarTitle>
 					<BarValue>
 						<Countdown date={nextFeePeriodStarts} />

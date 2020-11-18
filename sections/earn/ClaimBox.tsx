@@ -27,9 +27,9 @@ const ClaimBox: React.FC<ClaimBoxProps> = ({ tradingRewards, stakingRewards }) =
 
 	return (
 		<StructuredTab
-			boxPadding={25}
+			boxPadding={0}
 			boxHeight={400}
-			boxWidth={450}
+			boxWidth={500}
 			tabData={tabData}
 			setPanelType={() => {}}
 		/>

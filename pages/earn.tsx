@@ -17,8 +17,9 @@ import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import useGetFeePoolDataQuery from 'queries/staking/useGetFeePoolDataQuery';
 import useTotalIssuedSynthsExcludingEtherQuery from 'queries/synths/useTotalIssuedSynthsExcludingEtherQuery';
 import { CRYPTO_CURRENCY_MAP, SYNTHS_MAP } from 'constants/currency';
-import useClaimableRewards from 'queries/rewards/useClaimableRewards';
+import useClaimableRewards from 'queries/staking/useClaimableRewardsQuery';
 import BigNumber from 'bignumber.js';
+import useFeeClaimHistoryQuery from 'queries/staking/useFeeClaimHistoryQuery';
 
 const Earn = () => {
 	const { t } = useTranslation();
@@ -49,6 +50,20 @@ const Earn = () => {
 
 	const totalRewards = tradingRewards.plus(stakingRewards);
 
+	const feeClaimHistoryQuery = useFeeClaimHistoryQuery();
+
+	const feeClaimHistory = feeClaimHistoryQuery.data ?? [];
+
+	let totalFees = 0;
+
+	feeClaimHistory.map((e) => {
+		const usdAmount = e.value;
+		const snxAmount = e.rewards ?? 0;
+		const snxUsdValue = snxAmount * SNXRate;
+
+		totalFees = usdAmount + snxUsdValue + totalFees;
+	});
+
 	return (
 		<>
 			<Head>
@@ -69,7 +84,7 @@ const Earn = () => {
 					/>
 					<LifetimeRewards
 						title={t('common.stat-box.lifetime-rewards')}
-						value={formatFiatCurrency(activeDebt ? activeDebt : 0, { sign: '$' })}
+						value={formatFiatCurrency(totalFees ? totalFees : 0, { sign: '$' })}
 					/>
 				</StatsSection>
 				<LineSpacer />
