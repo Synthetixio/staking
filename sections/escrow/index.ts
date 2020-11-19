@@ -1,1 +1,3 @@
-export * from './EscrowTable';
+import EscrowTable from './EscrowTable';
+
+export { EscrowTable };

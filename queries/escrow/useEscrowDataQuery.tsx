@@ -7,7 +7,15 @@ import QUERY_KEYS from 'constants/queryKeys';
 
 import { isWalletConnectedState, networkState, walletAddressState } from 'store/wallet';
 
-export type EscrowData = any;
+export type EscrowData = {
+	canVest: number;
+	schedule: Array<{
+		date: Date;
+		quantity: number;
+	}>;
+	totalEscrowed: number;
+	totalVested: number;
+};
 
 const useEscrowDataQuery = (options?: QueryConfig<EscrowData>) => {
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
@@ -44,8 +52,8 @@ const useEscrowDataQuery = (options?: QueryConfig<EscrowData>) => {
 			return {
 				canVest,
 				schedule,
-				totalEscrowed,
-				totalVested,
+				totalEscrowed: Number(synthetix.js?.utils.formatEther(totalEscrowed)),
+				totalVested: Number(synthetix.js?.utils.formatEther(totalVested)),
 			};
 		},
 		{

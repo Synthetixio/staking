@@ -53,12 +53,6 @@
 	},
 	"dashboard": {
 		"page-title": "Staking | Dashboard",
-		"bar": {
-			"c-ratio": "COLLATERALIZATION RATIO",
-			"period": {
-				"title": "PERIOD REMAINING"
-			}
-		},
 		"actions": {
 			"title": "Possible Actions",
 			"claim": {
@@ -178,7 +172,13 @@
 		"staking": "Staking",
 		"synths": "Synths",
 		"escrow": "Escrow",
-		"history": "History"
+		"history": "History",
+		"bars": {
+			"c-ratio": "C-RATIO",
+			"period": {
+				"title": "PERIOD"
+			}
+		}
 	},
 	"common": {
 		"wallet": {
