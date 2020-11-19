@@ -25,6 +25,12 @@ export const QUERY_KEYS = {
 			walletAddress,
 			networkId,
 		],
+		ClaimableRewards: (walletAddress: string, networkId: NetworkId) => [
+			'staking',
+			'claimableRewards',
+			walletAddress,
+			networkId,
+		],
 		Issued: (walletAddress: string, networkId: NetworkId) => [
 			'staking',
 			'issued',
@@ -59,14 +65,6 @@ export const QUERY_KEYS = {
 			currencyKeys.join(','),
 		],
 		SynthExchanges: (period: Period) => ['rates', 'synthExchanges', period],
-	},
-	Rewards: {
-		ClaimableRewards: (walletAddress: string, networkId: NetworkId) => [
-			'walletBalances',
-			'synths',
-			walletAddress,
-			networkId,
-		],
 	},
 	Network: {
 		EthGasPrice: ['network', 'ethGasPrice'],

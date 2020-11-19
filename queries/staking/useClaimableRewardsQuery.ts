@@ -20,7 +20,7 @@ const useClaimableRewards = (options?: QueryConfig<AvailableFees>) => {
 	const network = useRecoilValue(networkState);
 
 	return useQuery<AvailableFees>(
-		QUERY_KEYS.Rewards.ClaimableRewards(walletAddress ?? '', network?.id!),
+		QUERY_KEYS.Staking.ClaimableRewards(walletAddress ?? '', network?.id!),
 		async () => {
 			const feesAvailable = await synthetix.js?.contracts.FeePool.feesAvailable(walletAddress);
 			const feesAvailableBN = feesAvailable.map((e: BigNumber) =>
