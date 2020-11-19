@@ -9,7 +9,7 @@ import ClaimBox from 'sections/earn/ClaimBox';
 import Incentives from 'sections/earn/Incentives';
 import StatBox from 'components/StatBox';
 
-import { formatFiatCurrency, formatPercent } from 'utils/formatters/number';
+import { formatFiatCurrency, formatPercent, toBigNumber } from 'utils/formatters/number';
 
 import useGetDebtDataQuery from 'queries/debt/useGetDebtDataQuery';
 import useCurrencyRatesQuery from 'queries/rates/useCurrencyRatesQuery';
@@ -45,10 +45,11 @@ const Earn = () => {
 	const stakingApy = (weeklyRewards * (activeDebt / totalsUSDDebt) * 52) / (stakedValue * SNXRate);
 
 	const availableRewards = useClaimableRewards();
-	const tradingRewards = availableRewards?.data?.tradingRewards ?? new BigNumber(0);
-	const stakingRewards = availableRewards?.data?.stakingRewards ?? new BigNumber(0);
 
-	const totalRewards = tradingRewards.plus(stakingRewards);
+	const tradingRewards = availableRewards?.data?.tradingRewards ?? toBigNumber(0);
+	const stakingRewards = availableRewards?.data?.stakingRewards ?? toBigNumber(0);
+
+	const totalRewards = tradingRewards.plus(stakingRewards.multipliedBy(SNXRate));
 
 	const feeClaimHistoryQuery = useFeeClaimHistoryQuery();
 
@@ -93,7 +94,11 @@ const Earn = () => {
 						<Incentives />
 					</Column>
 					<Column>
-						<ClaimBox tradingRewards={tradingRewards} stakingRewards={stakingRewards} />
+						<ClaimBox
+							tradingRewards={tradingRewards}
+							stakingRewards={stakingRewards}
+							totalRewards={totalRewards}
+						/>
 					</Column>
 				</Row>
 			</AppLayout>

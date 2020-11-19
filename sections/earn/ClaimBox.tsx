@@ -10,19 +10,26 @@ import BigNumber from 'bignumber.js';
 type ClaimBoxProps = {
 	tradingRewards: BigNumber;
 	stakingRewards: BigNumber;
+	totalRewards: BigNumber;
 };
 
-const ClaimBox: React.FC<ClaimBoxProps> = ({ tradingRewards, stakingRewards }) => {
+const ClaimBox: React.FC<ClaimBoxProps> = ({ tradingRewards, stakingRewards, totalRewards }) => {
 	const { t } = useTranslation();
 	const tabData = useMemo(
 		() => [
 			{
 				title: t('earn.actions.claim.title'),
 				icon: () => <Svg src={Claim} />,
-				tabChildren: <ClaimTab stakingRewards={stakingRewards} tradingRewards={tradingRewards} />,
+				tabChildren: (
+					<ClaimTab
+						stakingRewards={stakingRewards}
+						tradingRewards={tradingRewards}
+						totalRewards={totalRewards}
+					/>
+				),
 			},
 		],
-		[t]
+		[t, stakingRewards, tradingRewards, totalRewards]
 	);
 
 	return (

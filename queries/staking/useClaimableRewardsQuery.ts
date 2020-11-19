@@ -5,8 +5,9 @@ import QUERY_KEYS from 'constants/queryKeys';
 import { useRecoilValue } from 'recoil';
 import { isWalletConnectedState, networkState, walletAddressState } from 'store/wallet';
 import { appReadyState } from 'store/app';
-import { toBigNumber } from 'utils/formatters/number';
 import BigNumber from 'bignumber.js';
+import { SynthetixJS } from '@synthetixio/js';
+import { toBigNumber } from 'utils/formatters/number';
 
 type AvailableFees = {
 	tradingRewards: BigNumber;
@@ -22,13 +23,14 @@ const useClaimableRewards = (options?: QueryConfig<AvailableFees>) => {
 	return useQuery<AvailableFees>(
 		QUERY_KEYS.Staking.ClaimableRewards(walletAddress ?? '', network?.id!),
 		async () => {
-			const feesAvailable = await synthetix.js?.contracts.FeePool.feesAvailable(walletAddress);
-			const feesAvailableBN = feesAvailable.map((e: BigNumber) =>
-				e.isZero() ? toBigNumber(0) : toBigNumber(e)
-			);
+			const {
+				contracts: { FeePool },
+				utils,
+			} = synthetix.js as SynthetixJS;
+			const feesAvailable = await FeePool.feesAvailable(walletAddress);
 			return {
-				tradingRewards: feesAvailableBN[0],
-				stakingRewards: feesAvailableBN[1],
+				tradingRewards: toBigNumber(utils.formatEther(feesAvailable[0])),
+				stakingRewards: toBigNumber(utils.formatEther(feesAvailable[1])),
 			};
 		},
 		{

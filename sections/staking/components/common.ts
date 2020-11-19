@@ -8,7 +8,7 @@ import Select from 'components/Select';
 export const TabContainer = styled(FlexDivColCentered)`
 	background: ${(props) => props.theme.colors.darkBlue};
 	height: 100%;
-	justify-content: space-evenly;
+	padding: 24px;
 `;
 
 export const HeaderBox = styled(FlexDivRowCentered)`

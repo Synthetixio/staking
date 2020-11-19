@@ -5,6 +5,7 @@ import { FlexDivColCentered, linkCSS } from 'styles/common';
 export const TabContainer = styled(FlexDivColCentered)`
 	height: 100%;
 	justify-content: space-evenly;
+	padding: 24px;
 `;
 export const Title = styled.p`
 	font-family: ${(props) => props.theme.fonts.condensedBold};
