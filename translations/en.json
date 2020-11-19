@@ -136,7 +136,9 @@
 			"claim": {
 				"title": "CLAIM",
 				"exchange-rewards": "Synth exchange rewards",
-				"staking-rewards": "SNX staking rewards"
+				"staking-rewards": "SNX staking rewards",
+				"claim-button": "Claim {{totalValue}}",
+				"claimed-button": "Already claimed"
 			},
 			"stake": {
 				"title": "STAKE"

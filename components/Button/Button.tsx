@@ -57,37 +57,33 @@ const Button = styled.button<ButtonProps>`
 		css`
 			color: ${(props) => props.theme.colors.darkBlue};
 			background: ${(props) => props.theme.colors.brightBlue};
+			box-shadow: 0px 0px 10px rgba(0, 209, 255, 0.6);
 			&:hover {
 				&:not(:disabled) {
 					background: ${(props) => props.theme.colors.mutedBrightBlue};
 				}
 			}
-			${(props) =>
-				// @ts-ignore
-				props.isActive &&
-				css`
-					background: ${(props) => props.theme.colors.mutedBrightBlue};
-				`};
+			&:disabled {
+				background: ${(props) => props.theme.colors.mutedBrightBlue};
+				cursor: default;
+			}
 		`}
 
 		${(props) =>
 			props.variant === 'secondary' &&
 			css`
-				color: ${(props) => props.theme.colors.white};
-				background-color: ${(props) => props.theme.colors.black};
+				color: ${(props) => props.theme.colors.darkBlue};
+				background-color: ${(props) => props.theme.colors.brightGreen};
+				box-shadow: 0px 0px 10px rgba(77, 244, 184, 0.9);
 				&:hover {
 					&:not(:disabled) {
-						color: ${(props) => props.theme.colors.white};
-						background: ${(props) => props.theme.colors.gold};
+						background: ${(props) => props.theme.colors.mutedBrightGreen};
 					}
 				}
-				${(props) =>
-					// @ts-ignore
-					props.isActive &&
-					css`
-						color: ${(props) => props.theme.colors.white};
-						background: ${(props) => props.theme.colors.gold};
-					`};
+				&:disabled {
+					background: ${(props) => props.theme.colors.mutedBrightGreen};
+					cursor: default;
+				}
 			`}	
 
 		${(props) =>
