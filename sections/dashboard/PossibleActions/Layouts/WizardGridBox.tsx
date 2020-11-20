@@ -33,7 +33,7 @@ const ExamplePage = styled.div`
 	font-family: ${(props) => props.theme.fonts.expanded};
 	color: ${(props) => props.theme.colors.white};
 	text-align: center;
-	padding-top: 370px;
+	padding-top: 50px;
 `;
 
 const WizardWrap = styled.div`
@@ -41,6 +41,9 @@ const WizardWrap = styled.div`
 	height: 100%;
 	position: relative;
 	overflow: hidden;
+	div {
+		z-index: 0;
+	}
 `;
 
 interface NavProps {
