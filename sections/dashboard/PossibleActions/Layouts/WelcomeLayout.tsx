@@ -8,19 +8,13 @@ import Stake from 'assets/svg/app/stake.svg';
 import Trade from 'assets/svg/app/trade.svg';
 
 import GridBox, { GridBoxProps } from './GridBox';
+import WizardGridBox from './WizardGridBox';
 
 const WelcomeLayout: FC = () => {
 	const { t } = useTranslation();
 
 	const gridItems: GridBoxProps[] = useMemo(
 		() => [
-			{
-				gridLocations: ['col-1', 'col-3', 'row-1', 'row-3'],
-				icon: () => <Svg src={Stake} />,
-				title: 'TODO: WELCOME',
-				copy: 'TODO implement the welcome wizard here',
-				link: ROUTES.Earn.Home,
-			},
 			{
 				gridLocations: ['col-3', 'col-5', 'row-1', 'row-2'],
 				icon: () => <Svg src={Stake} />,
@@ -47,6 +41,7 @@ const WelcomeLayout: FC = () => {
 	);
 	return (
 		<>
+			<WizardGridBox gridLocations={['col-1', 'col-3', 'row-1', 'row-3']} />
 			{gridItems.map((props, index) => (
 				<GridBox key={`${props.title}-${index}`} {...props} />
 			))}
