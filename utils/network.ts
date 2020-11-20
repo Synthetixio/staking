@@ -19,6 +19,16 @@ export async function getDefaultNetworkId(): Promise<NetworkId> {
 	}
 }
 
+export const getTransactionPrice = (
+	gasPrice: number | null,
+	gasLimit: number | null,
+	ethPrice: number | null
+) => {
+	if (!gasPrice || !gasLimit || !ethPrice) return null;
+
+	return (gasPrice * ethPrice * gasLimit) / GWEI_UNIT;
+};
+
 export const normalizeGasLimit = (gasLimit: number) => gasLimit + DEFAULT_GAS_BUFFER;
 
 export const normalizedGasPrice = (gasPrice: number) => gasPrice * GWEI_UNIT;

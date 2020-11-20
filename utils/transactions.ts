@@ -5,7 +5,6 @@ export const getGasEstimateForTransaction = async (txArgs: any[], method: Functi
 		const gasEstimate = await method(...txArgs);
 		return normalizeGasLimit(Number(gasEstimate));
 	} catch (error) {
-		console.log(error);
-		return null;
+		throw error;
 	}
 };

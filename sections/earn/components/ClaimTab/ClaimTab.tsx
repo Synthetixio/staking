@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import ClaimedTag from 'components/ClaimedTag';
 import { TabContainer } from '../common';
-import { FlexDivRowCentered } from 'styles/common';
+import { ErrorMessage, FlexDivRowCentered } from 'styles/common';
 import useClaimedStatus from 'sections/hooks/useClaimedStatus';
 import BigNumber from 'bignumber.js';
 import { formatCryptoCurrency, formatFiatCurrency } from 'utils/formatters/number';
@@ -12,45 +12,72 @@ import Button from 'components/Button';
 import { SynthetixJS } from '@synthetixio/js';
 import synthetix from 'lib/synthetix';
 import Connector from 'containers/Connector';
-import { useRecoilValue } from 'recoil';
-// import { customGasPriceState, gasSpeedState } from 'store/wallet';
+import { getGasEstimateForTransaction } from 'utils/transactions';
+import Etherscan from 'containers/Etherscan';
+import GasSelector from 'components/GasSelector';
 
 type ClaimTabProps = {
 	tradingRewards: BigNumber;
 	stakingRewards: BigNumber;
 	totalRewards: BigNumber;
+	refetch: Function;
 };
 
-const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, totalRewards }) => {
+const ClaimTab: React.FC<ClaimTabProps> = ({
+	tradingRewards,
+	stakingRewards,
+	totalRewards,
+	refetch,
+}) => {
 	const { t } = useTranslation();
 	const claimed = useClaimedStatus();
+	const { etherscanInstance } = Etherscan.useContainer();
 	const { notify } = Connector.useContainer();
+	const [gasLimitEstimate, setGasLimitEstimate] = useState<number | null>(null);
+	const [error, setError] = useState<string | null>(null);
+
+	useEffect(() => {
+		const getGasLimitEstimate = async () => {
+			if (synthetix && synthetix.js) {
+				try {
+					const estimate = await getGasEstimateForTransaction(
+						[],
+						synthetix.js?.contracts.FeePool.claimFees
+					);
+					setGasLimitEstimate(estimate);
+				} catch (error) {
+					setError(error.message);
+					setGasLimitEstimate(null);
+				}
+			}
+		};
+		getGasLimitEstimate();
+		// eslint-disable-next-line
+	}, [synthetix, error]);
 
 	const handleClaim = async () => {
 		try {
 			const {
 				contracts: { FeePool },
 			} = synthetix.js as SynthetixJS;
+			const tx = await FeePool.claimFees();
+			if (notify) {
+				const { emitter } = notify.hash(tx.hash);
+				const link = etherscanInstance != null ? etherscanInstance.txLink(tx.hash) : undefined;
+				emitter.on('txConfirmed', () => {
+					refetch();
+					return {
+						autoDismiss: 0,
+						link,
+					};
+				});
 
-			const transaction = await FeePool.claimFees({});
-
-			// Implement notify
-
-			// Refetch fee pool query
-
-			// if (notify && transaction) {
-			// 	// Do refetch all relevant queries
-			// 	const refetch = () => {
-			// 		fetchBalancesRequest();
-			// 		fetchDebtStatusRequest();
-			// 		fetchEscrowRequest();
-			// 	};
-			// 	const message = `Claimed rewards`;
-			// 	setTransactionInfo({ transactionHash: transaction.hash });
-			// 	notifyHandler(notify, transaction.hash, networkId, refetch, message);
-
-			// 	handleNext(2);
-			// }
+				emitter.on('all', () => {
+					return {
+						link,
+					};
+				});
+			}
 		} catch (e) {
 			console.log(e);
 		}
@@ -68,7 +95,9 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 				<Value isClaimed={claimed}>{formatCryptoCurrency(stakingRewards)} SNX</Value>
 				<StyledClaimedTag />
 			</ValueBox>
-			<StyledButton variant="secondary" onClick={handleClaim} disabled={claimed}>
+			<GasSelector gasLimitEstimate={gasLimitEstimate} />
+			{error && <ErrorMessage>{error}</ErrorMessage>}
+			<StyledButton variant="secondary" onClick={handleClaim} disabled={error != null || claimed}>
 				{claimed
 					? t('earn.actions.claim.claimed-button')
 					: t('earn.actions.claim.claim-button', {

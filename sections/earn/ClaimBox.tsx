@@ -11,9 +11,15 @@ type ClaimBoxProps = {
 	tradingRewards: BigNumber;
 	stakingRewards: BigNumber;
 	totalRewards: BigNumber;
+	refetch: Function;
 };
 
-const ClaimBox: React.FC<ClaimBoxProps> = ({ tradingRewards, stakingRewards, totalRewards }) => {
+const ClaimBox: React.FC<ClaimBoxProps> = ({
+	tradingRewards,
+	stakingRewards,
+	totalRewards,
+	refetch,
+}) => {
 	const { t } = useTranslation();
 	const tabData = useMemo(
 		() => [
@@ -25,6 +31,7 @@ const ClaimBox: React.FC<ClaimBoxProps> = ({ tradingRewards, stakingRewards, tot
 						stakingRewards={stakingRewards}
 						tradingRewards={tradingRewards}
 						totalRewards={totalRewards}
+						refetch={refetch}
 					/>
 				),
 			},

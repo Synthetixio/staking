@@ -207,7 +207,14 @@
 		},
 		"currency": {
 			"currency-price": "<0>{{currencyKey}}</0> Price"
-		}
+		},
+		"gas-prices": {
+			"average": "Average",
+			"fast": "Fast",
+			"fastest": "Fastest"
+		},
+		"custom": "Custom",
+		"edit": "Edit"
 	},
 	"not-found": {
 		"page-title": "Not Found | Staking",
