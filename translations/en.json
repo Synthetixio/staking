@@ -56,19 +56,33 @@
 		"actions": {
 			"title": "Possible Actions",
 			"claim": {
-				"title": "Claim {{amount}} SNX",
-				"copy": "Claim your rewards before the period ends.",
-				"action": "Claim"
+				"title": "CLAIM {{amount}} SNX",
+				"copy": "Claim your rewards before the period ends"
 			},
-			"stake": {
-				"title": "Stake",
-				"copy": "Mint {{sUSDAmount}} sUSD by Staking {{SNXAmount}} SNX.",
-				"action": "Stake SNX"
+			"mint": {
+				"title": "MINT SUSD",
+				"copy": "Mint {{sUSDAmount}} sUSD by Staking {{SNXAmount}} SNX"
 			},
 			"earn": {
-				"title": "Earn {{percent}}",
-				"copy": "Use your sETH for the Liquidity Incentive.",
-				"action": "Earn"
+				"title": "EARN {{percent}}",
+				"copy": "Use your {{synth}} for the Liquidity Incentive",
+				"alt-copy": "Supply {{synth}} to {{supplier}} liquidity pools"
+			},
+			"learn": {
+				"title": "LEARN",
+				"copy": "Read the Synthetix blog to get up to speed on all things SNX"
+			},
+			"welcome": {
+				"title": "WELCOME TO SYNTHETIX",
+				"copy": "Stake your SNX and earn a return. If you're new around here, click therough these welcome slides to learn how it works"
+			},
+			"stake": {
+				"title": "STAKE",
+				"copy": "Stake your SNX to earn more SNX every 7 days"
+			},
+			"trade": {
+				"title": "TRADE",
+				"copy": "Trade any Synth to any Synth on the Kwenta exchange"
 			}
 		}
 	},
