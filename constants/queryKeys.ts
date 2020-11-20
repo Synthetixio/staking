@@ -59,6 +59,7 @@ export const QUERY_KEYS = {
 		],
 		MarketCap: (currencyKey: CurrencyKey) => ['marketCap', currencyKey],
 		ExchangeRates: ['rates', 'exchangeRates'],
+		SNX24hrPrices: ['rates', 'SNX24hrPrices'],
 		CurrencyRates: (currencyKeys: CurrencyKey[]) => [
 			'rates',
 			'currencyRates',
@@ -134,6 +135,9 @@ export const QUERY_KEYS = {
 			walletAddress,
 			networkId,
 		],
+	},
+	Escrow: {
+		Data: (walletAddress: string, networkId: NetworkId) => ['escrow', walletAddress, networkId],
 	},
 };
 

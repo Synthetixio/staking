@@ -53,12 +53,6 @@
 	},
 	"dashboard": {
 		"page-title": "Staking | Dashboard",
-		"bar": {
-			"c-ratio": "COLLATERALIZATION RATIO",
-			"period": {
-				"title": "PERIOD REMAINING"
-			}
-		},
 		"actions": {
 			"title": "Possible Actions",
 			"claim": {
@@ -178,7 +172,13 @@
 		"staking": "Staking",
 		"synths": "Synths",
 		"escrow": "Escrow",
-		"history": "History"
+		"history": "History",
+		"bars": {
+			"c-ratio": "C-RATIO",
+			"period": {
+				"title": "PERIOD"
+			}
+		}
 	},
 	"common": {
 		"wallet": {
@@ -195,7 +195,10 @@
 			"synth-value": "TOTAL SYNTH VALUE",
 			"tx-count": "TOTAL TRANSACTIONS",
 			"upcoming-rewards": "EST. UPCOMING REWARDS",
-			"lifetime-rewards": "LIFETIME REWARDS"
+			"lifetime-rewards": "LIFETIME REWARDS",
+			"available-snx": "AVAILABLE SNX",
+			"vested-snx": "VESTED SNX",
+			"escrowed-snx": "ESCROWED SNX"
 		},
 		"status": {
 			"claimed": "Claimed",
