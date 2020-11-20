@@ -10,12 +10,13 @@ import ROUTES from 'constants/routes';
 import StakingLogo from 'assets/svg/app/staking-logo.svg';
 
 import useGetDebtDataQuery from 'queries/debt/useGetDebtDataQuery';
-// import useFeeClaimHistoryQuery from 'queries/staking/useFeeClaimHistoryQuery';
+import useHistoricalRatesQuery from 'queries/rates/useHistoricalRatesQuery';
 import useGetFeePoolDataQuery from 'queries/staking/useGetFeePoolDataQuery';
 import useSNX24hrPricesQuery from 'queries/rates/useSNX24hrPricesQuery';
 
-import { CRYPTO_CURRENCY_MAP, CurrencyKey } from 'constants/currency';
+import { CRYPTO_CURRENCY_MAP } from 'constants/currency';
 import { SIDE_NAV_WIDTH, zIndex } from 'constants/ui';
+import { Period } from 'constants/period';
 
 import { MENU_LINKS } from '../constants';
 import PriceItem from './PriceItem';
@@ -23,11 +24,11 @@ import { PeriodBarStats, CRatioBarStats } from './BarStats';
 
 const SideNav: FC = () => {
 	const { t } = useTranslation();
-	// const feeClaimHistoryQuery = useFeeClaimHistoryQuery();
 	const { asPath } = useRouter();
 	const currentFeePeriod = useGetFeePoolDataQuery('0');
 	const debtDataQuery = useGetDebtDataQuery();
 	const SNX24hrPricesQuery = useSNX24hrPricesQuery();
+	const ETH24hrPricesQuery = useHistoricalRatesQuery(CRYPTO_CURRENCY_MAP.ETH, Period.ONE_DAY);
 
 	const currentCRatio = debtDataQuery.data?.currentCRatio ?? 0;
 	const targetCRatio = debtDataQuery.data?.targetCRatio ?? 0;
@@ -39,7 +40,6 @@ const SideNav: FC = () => {
 					? (currentFeePeriod.data.startTime + currentFeePeriod.data.feePeriodDuration) * 1000
 					: 0
 			),
-			// new Date(currentFeePeriod.data?.startTime ? currentFeePeriod.data.startTime * 1000 : 0),
 			currentFeePeriod.data?.startTime
 				? (Date.now() / 1000 - currentFeePeriod.data.startTime) /
 				  currentFeePeriod.data.feePeriodDuration
@@ -54,16 +54,9 @@ const SideNav: FC = () => {
 			.reverse();
 	}, [SNX24hrPricesQuery?.data]);
 
-	// const checkClaimedStatus = useMemo(
-	// 	() =>
-	// 		feeClaimHistoryQuery.data
-	// 			? feeClaimHistoryQuery.data.some((tx) => {
-	// 					const claimedDate = new Date(tx.timestamp);
-	// 					return claimedDate > currentFeePeriodStarts && claimedDate < nextFeePeriodStarts;
-	// 			  })
-	// 			: false,
-	// 	[feeClaimHistoryQuery.data, currentFeePeriodStarts, nextFeePeriodStarts]
-	// );
+	const ethPriceChartData = useMemo(() => {
+		return (ETH24hrPricesQuery?.data?.rates ?? []).map((dataPoint) => ({ value: dataPoint.rate }));
+	}, [ETH24hrPricesQuery?.data?.rates]);
 
 	return (
 		<SideNavContainer>
@@ -96,7 +89,7 @@ const SideNav: FC = () => {
 				<PriceItem
 					key={CRYPTO_CURRENCY_MAP.ETH}
 					currencyKey={CRYPTO_CURRENCY_MAP.ETH}
-					data={snxPriceChartData}
+					data={ethPriceChartData}
 				/>
 				<PeriodBarStats
 					nextFeePeriodStarts={nextFeePeriodStarts}

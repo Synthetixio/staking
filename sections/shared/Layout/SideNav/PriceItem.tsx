@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { FC } from 'react';
 import { Trans } from 'react-i18next';
 
-import { FlexDiv, FlexDivCol, NoTextTransform } from 'styles/common';
+import { FlexDivCentered, FlexDivCol, NoTextTransform } from 'styles/common';
 
 import { CurrencyKey } from 'constants/currency';
 import { NO_VALUE } from 'constants/placeholder';
@@ -48,9 +48,12 @@ const PriceItem: FC<PriceItemProps> = ({ currencyKey, data }) => {
 					<div>{NO_VALUE}</div>
 				)}
 				{data.length > 0 ? (
-					<PercentChange trendLinePositive={trendLinePositive}>
-						{formatPercent(data[data.length - 1].value / data[0].value - 1)}
-					</PercentChange>
+					<FlexDivCentered>
+						{trendLinePositive ? <TriangleUp /> : <TriangleDown />}
+						<PercentChange trendLinePositive={trendLinePositive}>
+							{formatPercent(data[data.length - 1].value / data[0].value - 1)}
+						</PercentChange>
+					</FlexDivCentered>
 				) : (
 					<div>{NO_VALUE}</div>
 				)}
@@ -83,7 +86,7 @@ const StyledCurrencyPrice = styled(CurrencyPrice)`
 	}
 `;
 
-const PriceInfo = styled(FlexDiv)`
+const PriceInfo = styled(FlexDivCentered)`
 	font-family: ${(props) => props.theme.fonts.mono};
 	justify-content: space-between;
 `;
@@ -92,5 +95,25 @@ const PercentChange = styled.div<{ trendLinePositive: boolean }>`
 	font-size: 10px;
 	color: ${(props) =>
 		props.trendLinePositive ? props.theme.colors.brightGreen : props.theme.colors.brightPink};
+`;
+
+const TriangleUp = styled.div`
+	border-left: 4px solid transparent;
+	border-right: 4px solid transparent;
+	border-bottom: ${(props) => `calc(2 * 4px * 0.866) solid ${props.theme.colors.brightGreen}`};
+	border-top: 4px solid transparent;
+	display: inline-block;
+	margin-bottom: 4px;
+	margin-right: 4px;
+`;
+
+const TriangleDown = styled.div`
+	border-left: 4px solid transparent;
+	border-right: 4px solid transparent;
+	border-top: ${(props) => `calc(2 * 4px * 0.866) solid ${props.theme.colors.brightPink}`};
+	border-bottom: 4px solid transparent;
+	display: inline-block;
+	margin-bottom: -5px;
+	margin-right: 4px;
 `;
 export default PriceItem;
