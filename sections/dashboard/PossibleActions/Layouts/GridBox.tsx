@@ -54,7 +54,7 @@ const GridBoxTitle = styled.div`
 	margin-bottom: 20px;
 `;
 
-const GridBoxContainer = styled.div<{
+export const GridBoxContainer = styled.div<{
 	columnStart: string;
 	columnEnd: string;
 	rowStart: string;
