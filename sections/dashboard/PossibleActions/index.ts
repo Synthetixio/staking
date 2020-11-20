@@ -1,1 +1,1 @@
-export * from './PossibleActions';
+export { default } from './PossibleActions';

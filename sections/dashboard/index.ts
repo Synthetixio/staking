@@ -1,3 +1,3 @@
-import PossibleActions from './PossibleActions/PossibleActions';
+import PossibleActions from './PossibleActions';
 
 export { PossibleActions };
