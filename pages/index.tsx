@@ -69,7 +69,7 @@ const DashboardPage = () => {
 						/>
 					</StatsSection>
 					<LineSpacer />
-					<PossibleActions claimAmount={20} sUSDAmount={2000} SNXAmount={400} earnPercent={0.15} />
+					<PossibleActions />
 				</Content>
 			</AppLayout>
 		</>
