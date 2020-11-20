@@ -33,7 +33,7 @@ const ExamplePage = styled.div`
 	font-family: ${(props) => props.theme.fonts.expanded};
 	color: ${(props) => props.theme.colors.white};
 	text-align: center;
-	padding-top: 50px;
+	padding-top: 370px;
 `;
 
 const WizardWrap = styled.div`
