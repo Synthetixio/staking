@@ -47,3 +47,8 @@ export type HistoricalRatesUpdates = {
 export type MarketCap = {
 	marketCap: number;
 };
+
+export type SNXPriceData = {
+	id: string;
+	averagePrice: number;
+};

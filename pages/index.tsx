@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 
 import { FlexDivCol, LineSpacer, StatsSection } from 'styles/common';
-import { PossibleActions, BarStats } from 'sections/dashboard';
+import { PossibleActions } from 'sections/dashboard';
 import AppLayout from 'sections/shared/Layout/AppLayout';
 
 import useGetDebtDataQuery from 'queries/debt/useGetDebtDataQuery';
@@ -19,7 +19,6 @@ import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 const DashboardPage = () => {
 	const { t } = useTranslation();
 
-	const currentFeePeriod = useGetFeePoolDataQuery('0');
 	const debtDataQuery = useGetDebtDataQuery();
 	const currencyRates = useCurrencyRatesQuery(['SNX', 'ETH']);
 	const totalIssuedSynthsExclEth = useTotalIssuedSynthsExcludingEtherQuery('sUSD');
@@ -37,21 +36,6 @@ const DashboardPage = () => {
 	const feesToDistribute = previousFeePeriod?.data?.feesToDistribute ?? 0;
 	const rewardsToDistribute = previousFeePeriod?.data?.rewardsToDistribute ?? 0;
 	const totalsUSDDebt = totalIssuedSynthsExclEth?.data ?? 0;
-
-	// TODO: replace with useMemo
-	// eslint-disable-next-line
-	const nextFeePeriodStarts = new Date(
-		currentFeePeriod.data?.startTime
-			? (currentFeePeriod.data.startTime + currentFeePeriod.data.feePeriodDuration) * 1000
-			: 0
-	);
-
-	// TODO: replace with useMemo
-	// eslint-disable-next-line
-	const currentFeePeriodProgress = currentFeePeriod.data?.startTime
-		? (Date.now() / 1000 - currentFeePeriod.data.startTime) /
-		  currentFeePeriod.data.feePeriodDuration
-		: 0;
 
 	// TODO: replace with selected currency instead of usd hardcode
 	// eslint-disable-next-line
@@ -85,13 +69,7 @@ const DashboardPage = () => {
 						/>
 					</StatsSection>
 					<LineSpacer />
-					<BarStats
-						currentCRatio={currentCRatio}
-						targetCRatio={targetCRatio}
-						nextFeePeriodStarts={nextFeePeriodStarts}
-						currentFeePeriodProgress={currentFeePeriodProgress}
-					/>
-					<PossibleActions claimAmount={20} sUSDAmount={2000} SNXAmount={400} earnPercent={0.15} />
+					<PossibleActions />
 				</Content>
 			</AppLayout>
 		</>

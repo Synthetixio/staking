@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components';
-import { FC } from 'react';
+import { FC, useMemo } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
@@ -9,18 +9,54 @@ import { linkCSS } from 'styles/common';
 import ROUTES from 'constants/routes';
 import StakingLogo from 'assets/svg/app/staking-logo.svg';
 
-import { CRYPTO_CURRENCY_MAP, CurrencyKey } from 'constants/currency';
+import useGetDebtDataQuery from 'queries/debt/useGetDebtDataQuery';
+import useHistoricalRatesQuery from 'queries/rates/useHistoricalRatesQuery';
+import useGetFeePoolDataQuery from 'queries/staking/useGetFeePoolDataQuery';
+import useSNX24hrPricesQuery from 'queries/rates/useSNX24hrPricesQuery';
 
+import { CRYPTO_CURRENCY_MAP } from 'constants/currency';
 import { SIDE_NAV_WIDTH, zIndex } from 'constants/ui';
+import { Period } from 'constants/period';
+
 import { MENU_LINKS } from '../constants';
-
 import PriceItem from './PriceItem';
-
-const PRICE_ITEMS = [CRYPTO_CURRENCY_MAP.SNX, CRYPTO_CURRENCY_MAP.ETH] as CurrencyKey[];
+import { PeriodBarStats, CRatioBarStats } from './BarStats';
 
 const SideNav: FC = () => {
 	const { t } = useTranslation();
 	const { asPath } = useRouter();
+	const currentFeePeriod = useGetFeePoolDataQuery('0');
+	const debtDataQuery = useGetDebtDataQuery();
+	const SNX24hrPricesQuery = useSNX24hrPricesQuery();
+	const ETH24hrPricesQuery = useHistoricalRatesQuery(CRYPTO_CURRENCY_MAP.ETH, Period.ONE_DAY);
+
+	const currentCRatio = debtDataQuery.data?.currentCRatio ?? 0;
+	const targetCRatio = debtDataQuery.data?.targetCRatio ?? 0;
+
+	const [nextFeePeriodStarts, currentFeePeriodProgress] = useMemo(
+		() => [
+			new Date(
+				currentFeePeriod.data?.startTime
+					? (currentFeePeriod.data.startTime + currentFeePeriod.data.feePeriodDuration) * 1000
+					: 0
+			),
+			currentFeePeriod.data?.startTime
+				? (Date.now() / 1000 - currentFeePeriod.data.startTime) /
+				  currentFeePeriod.data.feePeriodDuration
+				: 0,
+		],
+		[currentFeePeriod.data?.startTime, currentFeePeriod.data?.feePeriodDuration]
+	);
+
+	const snxPriceChartData = useMemo(() => {
+		return (SNX24hrPricesQuery?.data ?? [])
+			.map((dataPoint) => ({ value: dataPoint.averagePrice }))
+			.reverse();
+	}, [SNX24hrPricesQuery?.data]);
+
+	const ethPriceChartData = useMemo(() => {
+		return (ETH24hrPricesQuery?.data?.rates ?? []).map((dataPoint) => ({ value: dataPoint.rate }));
+	}, [ETH24hrPricesQuery?.data?.rates]);
 
 	return (
 		<SideNavContainer>
@@ -43,11 +79,23 @@ const SideNav: FC = () => {
 					</MenuLinkItem>
 				))}
 			</MenuLinks>
-			<PriceSection>
-				{PRICE_ITEMS.map((currencyKey) => (
-					<PriceItem key={currencyKey} currencyKey={currencyKey} />
-				))}
-			</PriceSection>
+			<MenuCharts>
+				<CRatioBarStats currentCRatio={currentCRatio} targetCRatio={targetCRatio} />
+				<PriceItem
+					key={CRYPTO_CURRENCY_MAP.SNX}
+					currencyKey={CRYPTO_CURRENCY_MAP.SNX}
+					data={snxPriceChartData}
+				/>
+				<PriceItem
+					key={CRYPTO_CURRENCY_MAP.ETH}
+					currencyKey={CRYPTO_CURRENCY_MAP.ETH}
+					data={ethPriceChartData}
+				/>
+				<PeriodBarStats
+					nextFeePeriodStarts={nextFeePeriodStarts}
+					currentFeePeriodProgress={currentFeePeriodProgress}
+				/>
+			</MenuCharts>
 		</SideNavContainer>
 	);
 };
@@ -119,9 +167,10 @@ const MenuLinkItem = styled.div<{ isActive: boolean }>`
 	}
 `;
 
-const PriceSection = styled.div`
-	padding: 30px 0 30px 30px;
+const MenuCharts = styled.div`
 	border-top: 1px solid ${(props) => props.theme.colors.linedBlue};
+	width: 120px;
+	margin: 0 auto;
 `;
 
 export default SideNav;
