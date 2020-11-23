@@ -214,7 +214,8 @@
 			"fastest": "Fastest"
 		},
 		"custom": "Custom",
-		"edit": "Edit"
+		"edit": "Edit",
+		"gas-header": "Gas Price (GWEI)"
 	},
 	"not-found": {
 		"page-title": "Not Found | Staking",
