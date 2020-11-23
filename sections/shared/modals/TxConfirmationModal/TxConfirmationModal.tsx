@@ -47,8 +47,8 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 				<CurrencyItem>
 					<CurrencyItemTitle>{t('modals.confirm-transaction.staking.from')}</CurrencyItemTitle>
 					<CurrencyItemText>
-						{formatCurrency(quoteCurrencyKey, quoteCurrencyAmount, {
-							currencyKey: quoteCurrencyKey,
+						{formatCurrency(baseCurrencyKey, baseCurrencyAmount, {
+							currencyKey: baseCurrencyKey,
 							decimals: 4,
 						})}
 					</CurrencyItemText>
@@ -56,8 +56,8 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 				<CurrencyItem>
 					<CurrencyItemTitle>{t('modals.confirm-transaction.staking.to')}</CurrencyItemTitle>
 					<CurrencyItemText>
-						{formatCurrency(baseCurrencyKey, baseCurrencyAmount, {
-							currencyKey: baseCurrencyKey,
+						{formatCurrency(quoteCurrencyKey, quoteCurrencyAmount, {
+							currencyKey: quoteCurrencyKey,
 							decimals: 4,
 						})}
 					</CurrencyItemText>

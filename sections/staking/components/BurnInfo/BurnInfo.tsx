@@ -21,7 +21,7 @@ interface BurnInfoProps {
 	transferableCollateral: number;
 	debtBalance: number;
 	lockedCollateral: number;
-	amountToStake: string | null;
+	amountToBurn: string | null;
 	targetCRatio: number;
 }
 
@@ -32,12 +32,12 @@ const BurnInfo: React.FC<BurnInfoProps> = ({
 	currentCRatio,
 	debtBalance,
 	lockedCollateral,
-	amountToStake,
+	amountToBurn,
 	targetCRatio,
 }) => {
 	const { t } = useTranslation();
-	const amountToStakeNum = Number(amountToStake);
-	const changeInCollateral = stakedCollateral + amountToStakeNum;
+	const amountToBurnNum = Number(amountToBurn);
+	const changeInCollateral = stakedCollateral + amountToBurnNum;
 	const changeInDebt = debtBalance + changeInCollateral / (1 / targetCRatio);
 
 	const Rows = useMemo(
@@ -45,7 +45,7 @@ const BurnInfo: React.FC<BurnInfoProps> = ({
 			{
 				title: t('staking.info.mint.table.not-staked'),
 				value: unstakedCollateral,
-				changedValue: unstakedCollateral - amountToStakeNum,
+				changedValue: unstakedCollateral - amountToBurnNum,
 			},
 			{
 				title: t('staking.info.mint.table.staked'),
@@ -55,12 +55,12 @@ const BurnInfo: React.FC<BurnInfoProps> = ({
 			{
 				title: t('staking.info.mint.table.transferable'),
 				value: transferableCollateral,
-				changedValue: transferableCollateral - amountToStakeNum,
+				changedValue: transferableCollateral - amountToBurnNum,
 			},
 			{
 				title: t('staking.info.mint.table.locked'),
 				value: lockedCollateral,
-				changedValue: lockedCollateral + amountToStakeNum,
+				changedValue: lockedCollateral + amountToBurnNum,
 			},
 			{
 				title: t('staking.info.mint.table.c-ratio'),
@@ -78,7 +78,7 @@ const BurnInfo: React.FC<BurnInfoProps> = ({
 			stakedCollateral,
 			transferableCollateral,
 			currentCRatio,
-			amountToStakeNum,
+			amountToBurnNum,
 			lockedCollateral,
 			changeInDebt,
 			debtBalance,
@@ -98,7 +98,7 @@ const BurnInfo: React.FC<BurnInfoProps> = ({
 						<RowTitle>{row.title}</RowTitle>
 						<ValueContainer>
 							<RowValue>{row.value}</RowValue>
-							{unstakedCollateral > 0 && amountToStake && row.changedValue > 0 && (
+							{unstakedCollateral > 0 && amountToBurn && row.changedValue > 0 && (
 								<>
 									<Svg src={Arrows} /> <RowValue>{row.changedValue}</RowValue>
 								</>

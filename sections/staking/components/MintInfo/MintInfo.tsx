@@ -25,7 +25,8 @@ interface MintInfoProps {
 	lockedCollateral: number;
 	amountToStake: string | null;
 	targetCRatio: number;
-	snxPrice: number;
+	SNXRate: number;
+	totalEscrowBalance: number;
 }
 
 const MintInfo: React.FC<MintInfoProps> = ({
@@ -37,15 +38,14 @@ const MintInfo: React.FC<MintInfoProps> = ({
 	lockedCollateral,
 	amountToStake,
 	targetCRatio,
-	snxPrice,
+	SNXRate,
+	totalEscrowBalance,
 }) => {
 	const { t } = useTranslation();
 	const amountToStakeNum = Number(amountToStake);
 	const changeInCollateral = stakedCollateral + amountToStakeNum;
-
-	const newDebt = changeInCollateral * targetCRatio * snxPrice;
-
-	const changeInDebt = debtBalance + newDebt;
+	const additionalDebt = changeInCollateral * targetCRatio * SNXRate;
+	const totalNewDebt = debtBalance + additionalDebt;
 
 	const Rows = useMemo(
 		() => [
@@ -64,7 +64,7 @@ const MintInfo: React.FC<MintInfoProps> = ({
 			{
 				title: t('staking.info.mint.table.transferable'),
 				value: transferableCollateral,
-				changedValue: transferableCollateral - amountToStakeNum,
+				changedValue: transferableCollateral - (amountToStakeNum - totalEscrowBalance),
 				currencyKey: CRYPTO_CURRENCY_MAP.SNX,
 			},
 			{
@@ -75,14 +75,14 @@ const MintInfo: React.FC<MintInfoProps> = ({
 			},
 			{
 				title: t('staking.info.mint.table.c-ratio'),
-				value: currentCRatio ?? 100 / currentCRatio,
-				changedValue: Math.round(((changeInCollateral * snxPrice) / changeInDebt) * 100),
+				value: 100 / currentCRatio,
+				changedValue: ((changeInCollateral * SNXRate) / additionalDebt) * 100,
 				currencyKey: '%',
 			},
 			{
 				title: t('staking.info.mint.table.debt'),
 				value: debtBalance,
-				changedValue: changeInDebt,
+				changedValue: totalNewDebt,
 				currencyKey: SYNTHS_MAP.sUSD,
 			},
 		],
@@ -93,10 +93,12 @@ const MintInfo: React.FC<MintInfoProps> = ({
 			currentCRatio,
 			amountToStakeNum,
 			lockedCollateral,
-			changeInDebt,
+			totalNewDebt,
 			debtBalance,
 			changeInCollateral,
-			snxPrice,
+			SNXRate,
+			additionalDebt,
+			totalEscrowBalance,
 			t,
 		]
 	);
@@ -114,7 +116,7 @@ const MintInfo: React.FC<MintInfoProps> = ({
 							<RowValue>
 								{formatCurrency(currencyKey, value, { currencyKey: currencyKey, decimals: 2 })}
 							</RowValue>
-							{unstakedCollateral > 0 && amountToStake && changedValue >= 0 && (
+							{amountToStakeNum > 0 && changedValue >= 0 && (
 								<>
 									<Svg src={Arrows} />{' '}
 									<RowValue>

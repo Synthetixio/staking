@@ -20,19 +20,19 @@ export const useClaimedStatus = () => {
 		};
 	}, [currentFeePeriod]);
 
-	const checkClaimedStatus = () =>
-		setClaimed(
-			history.data
-				? history.data?.some((tx) => {
-						const claimedDate = new Date(tx.timestamp);
-						return claimedDate > currentFeePeriodStarts && claimedDate < nextFeePeriodStarts;
-				  })
-				: false
-		);
-
 	useEffect(() => {
+		const checkClaimedStatus = () =>
+			setClaimed(
+				history.data
+					? history.data?.some((tx) => {
+							const claimedDate = new Date(tx.timestamp);
+							return claimedDate > currentFeePeriodStarts && claimedDate < nextFeePeriodStarts;
+					  })
+					: false
+			);
 		checkClaimedStatus();
-	}, [checkClaimedStatus]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	return claimed;
 };

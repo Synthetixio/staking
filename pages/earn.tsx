@@ -18,7 +18,6 @@ import useGetFeePoolDataQuery from 'queries/staking/useGetFeePoolDataQuery';
 import useTotalIssuedSynthsExcludingEtherQuery from 'queries/synths/useTotalIssuedSynthsExcludingEtherQuery';
 import { CRYPTO_CURRENCY_MAP, SYNTHS_MAP } from 'constants/currency';
 import useClaimableRewards from 'queries/staking/useClaimableRewardsQuery';
-import BigNumber from 'bignumber.js';
 import useFeeClaimHistoryQuery from 'queries/staking/useFeeClaimHistoryQuery';
 
 const Earn = () => {
@@ -55,15 +54,19 @@ const Earn = () => {
 
 	const feeClaimHistory = feeClaimHistoryQuery.data ?? [];
 
-	let totalFees = 0;
-
-	feeClaimHistory.map((e) => {
+	const claimHistoryValues: number[] = feeClaimHistory.map((e) => {
 		const usdAmount = e.value;
 		const snxAmount = e.rewards ?? 0;
 		const snxUsdValue = snxAmount * SNXRate;
-
-		totalFees = usdAmount + snxUsdValue + totalFees;
+		return usdAmount + snxUsdValue;
 	});
+
+	const totalFees = claimHistoryValues.reduce((a, b) => a + b, 0);
+
+	const refetch = () => {
+		availableRewards.refetch();
+		feeClaimHistoryQuery.refetch();
+	};
 
 	return (
 		<>
@@ -95,6 +98,7 @@ const Earn = () => {
 					</Column>
 					<Column>
 						<ClaimBox
+							refetch={refetch}
 							tradingRewards={tradingRewards}
 							stakingRewards={stakingRewards}
 							totalRewards={totalRewards}

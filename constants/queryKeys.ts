@@ -137,7 +137,12 @@ export const QUERY_KEYS = {
 		],
 	},
 	Escrow: {
-		Data: (walletAddress: string, networkId: NetworkId) => ['escrow', walletAddress, networkId],
+		Data: (walletAddress: string, networkId: NetworkId) => [
+			'escrow',
+			'data',
+			walletAddress,
+			networkId,
+		],
 	},
 };
 

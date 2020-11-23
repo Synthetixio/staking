@@ -219,3 +219,11 @@ export const LineSpacer = styled.div`
 		content: '';
 	}
 `;
+
+export const ErrorMessage = styled.p`
+	font-size: 12px;
+	font-family: ${(props) => props.theme.fonts.interSemiBold};
+	text-align: center;
+	text-transform: capitalize;
+	color: ${(props) => props.theme.colors.brightPink};
+`;
