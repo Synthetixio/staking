@@ -17,6 +17,14 @@ export const QUERY_KEYS = {
 			networkId,
 		],
 	},
+	Escrow: {
+		EscrowBalance: (walletAddress: string, networkId: NetworkId) => [
+			'escrow',
+			'escrowBalance',
+			walletAddress,
+			networkId,
+		],
+	},
 	Staking: {
 		FeePoolData: (period: string) => ['staking', 'feePoolData', period],
 		FeeClaimHistory: (walletAddress: string, networkId: NetworkId) => [

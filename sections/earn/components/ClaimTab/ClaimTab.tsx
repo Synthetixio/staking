@@ -42,11 +42,11 @@ const ClaimTab: React.FC<ClaimTabProps> = ({
 		const getGasLimitEstimate = async () => {
 			if (synthetix && synthetix.js) {
 				try {
-					const estimate = await getGasEstimateForTransaction(
+					const gasEstimate = await getGasEstimateForTransaction(
 						[],
 						synthetix.js?.contracts.FeePool.estimateGas.claimFees
 					);
-					setGasLimitEstimate(estimate);
+					setGasLimitEstimate(normalizeGasLimit(Number(gasEstimate)));
 				} catch (error) {
 					setError(error.message);
 					setGasLimitEstimate(null);
@@ -64,7 +64,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({
 			} = synthetix.js as SynthetixJS;
 			const tx = await FeePool.claimFees({
 				gasPrice: normalizedGasPrice(gasPrice),
-				gasLimit,
+				gasLimitEstimate,
 			});
 			if (notify) {
 				const { emitter } = notify.hash(tx.hash);

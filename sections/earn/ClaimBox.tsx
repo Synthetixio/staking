@@ -36,7 +36,7 @@ const ClaimBox: React.FC<ClaimBoxProps> = ({
 				),
 			},
 		],
-		[t, stakingRewards, tradingRewards, totalRewards]
+		[t, stakingRewards, tradingRewards, totalRewards, refetch]
 	);
 
 	return (

@@ -17,7 +17,7 @@ import { CRYPTO_CURRENCY_MAP, SYNTHS_MAP } from 'constants/currency';
 import { SynthetixJS } from '@synthetixio/js';
 import Notify from 'containers/Notify';
 import { ethers } from 'ethers';
-import { normalizedGasPrice } from 'utils/network';
+import { normalizedGasPrice, normalizeGasLimit } from 'utils/network';
 import { getGasEstimateForTransaction } from 'utils/transactions';
 import { useRecoilValue } from 'recoil';
 import { walletAddressState } from 'store/wallet';
@@ -67,11 +67,11 @@ const BurnTab: React.FC<BurnTabProps> = ({
 					utils: { parseEther },
 				} = synthetix.js as SynthetixJS;
 				try {
-					const estimate = await getGasEstimateForTransaction(
+					const gasEstimate = await getGasEstimateForTransaction(
 						[parseEther(amountToBurn.toString())],
 						Synthetix.estimateGas.burnSynths
 					);
-					setGasLimitEstimate(estimate);
+					setGasLimitEstimate(normalizeGasLimit(Number(gasEstimate)));
 				} catch (error) {
 					setError(error.message);
 					setGasLimitEstimate(null);
@@ -82,11 +82,20 @@ const BurnTab: React.FC<BurnTabProps> = ({
 		// eslint-disable-next-line
 	}, [synthetix, error]);
 
-	const handleStakeChange = (value: string) => setAmountToBurn(value);
+	const handleStakeChange = (value: string) => {
+		if (burnToTarget) {
+			setBurnToTarget(false);
+		}
+		setAmountToBurn(value);
+	};
 
-	const handleMaxBurn = () => setAmountToBurn(maxBurnAmount?.toString() || '');
+	const handleMaxBurn = () => {
+		setBurnToTarget(false);
+		setAmountToBurn(maxBurnAmount?.toString() || '');
+	};
 
 	const handleBurnToTarget = () => {
+		setBurnToTarget(true);
 		const maxIssuableSynths = getMintAmount(targetCRatio, maxCollateral.toString(), SNXRate);
 		setAmountToBurn(Math.max(maxBurnAmount - maxIssuableSynths, 0).toString());
 	};

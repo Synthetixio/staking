@@ -6,7 +6,7 @@ import { Column, Row } from 'styles/common';
 import InfoBox from './components/InfoBox';
 import ActionBox from './components/ActionBox';
 
-const Index: FC = ({}) => {
+const Index: FC = () => {
 	const [amountToStake, setAmountToStake] = useState<string>('0');
 	const [amountToBurn, setAmountToBurn] = useState<string>('0');
 	const [panelType, setPanelType] = useState<StakingPanelType>(StakingPanelType.MINT);

@@ -6,7 +6,6 @@ import ProgressBar from 'components/ProgressBar';
 import Countdown from 'react-countdown';
 import ClaimedTag from 'components/ClaimedTag';
 import { formatPercent } from 'utils/formatters/number';
-import useClaimedStatus from 'sections/hooks/useClaimedStatus';
 
 interface BarStatsProps {
 	currentCRatio: number;

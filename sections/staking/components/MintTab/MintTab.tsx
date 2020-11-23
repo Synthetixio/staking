@@ -19,7 +19,7 @@ import Notify from 'containers/Notify';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import { SynthetixJS } from '@synthetixio/js';
 import { ethers } from 'ethers';
-import { normalizedGasPrice } from 'utils/network';
+import { normalizedGasPrice, normalizeGasLimit } from 'utils/network';
 import { getGasEstimateForTransaction } from 'utils/transactions';
 import synthetix from 'lib/synthetix';
 import GasSelector from 'components/GasSelector';
@@ -54,11 +54,11 @@ const MintTab: FC<MintTabProps> = ({
 		const getGasLimitEstimate = async () => {
 			if (synthetix && synthetix.js) {
 				try {
-					const estimate = await getGasEstimateForTransaction(
+					const gasEstimate = await getGasEstimateForTransaction(
 						[],
 						synthetix.js?.contracts.Synthetix.estimateGas.issueMaxSynths
 					);
-					setGasLimitEstimate(estimate);
+					setGasLimitEstimate(normalizeGasLimit(Number(gasEstimate)));
 				} catch (error) {
 					setError(error.message);
 					setGasLimitEstimate(null);

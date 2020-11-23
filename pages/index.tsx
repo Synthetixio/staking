@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import Head from 'next/head';
 import styled from 'styled-components';
 
@@ -9,7 +9,6 @@ import { PossibleActions, BarStats } from 'sections/dashboard';
 import AppLayout from 'sections/shared/Layout/AppLayout';
 
 import useGetDebtDataQuery from 'queries/debt/useGetDebtDataQuery';
-import useFeeClaimHistoryQuery from 'queries/staking/useFeeClaimHistoryQuery';
 import useGetFeePoolDataQuery from 'queries/staking/useGetFeePoolDataQuery';
 import StatBox from 'components/StatBox';
 import useCurrencyRatesQuery from 'queries/rates/useCurrencyRatesQuery';
@@ -19,8 +18,6 @@ import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 
 const DashboardPage = () => {
 	const { t } = useTranslation();
-
-	const history = useFeeClaimHistoryQuery();
 
 	const currentFeePeriod = useGetFeePoolDataQuery('0');
 	const debtDataQuery = useGetDebtDataQuery();
@@ -51,12 +48,6 @@ const DashboardPage = () => {
 
 	// TODO: replace with useMemo
 	// eslint-disable-next-line
-	const currentFeePeriodStarts = new Date(
-		currentFeePeriod.data?.startTime ? currentFeePeriod.data.startTime * 1000 : 0
-	);
-
-	// TODO: replace with useMemo
-	// eslint-disable-next-line
 	const currentFeePeriodProgress = currentFeePeriod.data?.startTime
 		? (Date.now() / 1000 - currentFeePeriod.data.startTime) /
 		  currentFeePeriod.data.feePeriodDuration
@@ -70,19 +61,6 @@ const DashboardPage = () => {
 	// TODO: replace with useMemo
 	const weeklyRewards = sUSDRate * feesToDistribute + SNXRate * rewardsToDistribute;
 	const stakingApy = (weeklyRewards * (activeDebt / totalsUSDDebt) * 52) / (stakedValue * SNXRate);
-
-	const checkClaimedStatus = useMemo(
-		() =>
-			history.data
-				? history.data?.some((tx) => {
-						const claimedDate = new Date(tx.timestamp);
-						return claimedDate > currentFeePeriodStarts && claimedDate < nextFeePeriodStarts;
-				  })
-				: false,
-		[history, currentFeePeriodStarts, nextFeePeriodStarts]
-	);
-
-	const claimed = checkClaimedStatus;
 
 	return (
 		<>
@@ -110,7 +88,6 @@ const DashboardPage = () => {
 					<BarStats
 						currentCRatio={currentCRatio}
 						targetCRatio={targetCRatio}
-						claimed={claimed}
 						nextFeePeriodStarts={nextFeePeriodStarts}
 						currentFeePeriodProgress={currentFeePeriodProgress}
 					/>

@@ -54,15 +54,14 @@ const Earn = () => {
 
 	const feeClaimHistory = feeClaimHistoryQuery.data ?? [];
 
-	let totalFees = 0;
-
-	feeClaimHistory.map((e) => {
+	const claimHistoryValues: number[] = feeClaimHistory.map((e) => {
 		const usdAmount = e.value;
 		const snxAmount = e.rewards ?? 0;
 		const snxUsdValue = snxAmount * SNXRate;
-
-		totalFees = usdAmount + snxUsdValue + totalFees;
+		return usdAmount + snxUsdValue;
 	});
+
+	const totalFees = claimHistoryValues.reduce((a, b) => a + b);
 
 	const refetch = () => {
 		availableRewards.refetch();

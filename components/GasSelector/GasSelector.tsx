@@ -59,7 +59,8 @@ const GasSelector: React.FC<GasSelectorProps> = ({ gasLimitEstimate, setGasPrice
 				? ethGasStationQuery.data[gasSpeed]
 				: null
 		);
-	}, [gasPrice]);
+		// eslint-disable-next-line
+	}, [gasPrice, customGasPrice]);
 
 	const ethPriceRate = getExchangeRatesForCurrencies(
 		exchangeRates,

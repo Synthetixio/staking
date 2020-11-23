@@ -19,6 +19,7 @@ const InfoBox: React.FC<InfoBoxProps> = ({ amountToBurn, amountToStake, panelTyp
 		stakedCollateral,
 		lockedCollateral,
 		SNXRate,
+		totalEscrowBalance,
 	} = useStakingCalculations();
 
 	const returnInfoPanel = useMemo(
@@ -34,6 +35,7 @@ const InfoBox: React.FC<InfoBoxProps> = ({ amountToBurn, amountToStake, panelTyp
 					amountToStake={amountToStake}
 					targetCRatio={targetCRatio}
 					SNXRate={SNXRate}
+					totalEscrowBalance={totalEscrowBalance}
 				/>
 			) : (
 				<BurnInfo
@@ -59,6 +61,7 @@ const InfoBox: React.FC<InfoBoxProps> = ({ amountToBurn, amountToStake, panelTyp
 			unstakedCollateral,
 			targetCRatio,
 			SNXRate,
+			totalEscrowBalance,
 		]
 	);
 	return returnInfoPanel;
