@@ -25,7 +25,7 @@ interface MintInfoProps {
 	lockedCollateral: number;
 	amountToStake: string | null;
 	targetCRatio: number;
-	snxPrice: number;
+	SNXRate: number;
 }
 
 const MintInfo: React.FC<MintInfoProps> = ({
@@ -37,14 +37,12 @@ const MintInfo: React.FC<MintInfoProps> = ({
 	lockedCollateral,
 	amountToStake,
 	targetCRatio,
-	snxPrice,
+	SNXRate,
 }) => {
 	const { t } = useTranslation();
 	const amountToStakeNum = Number(amountToStake);
 	const changeInCollateral = stakedCollateral + amountToStakeNum;
-
-	const newDebt = changeInCollateral * targetCRatio * snxPrice;
-
+	const newDebt = changeInCollateral * targetCRatio * SNXRate;
 	const changeInDebt = debtBalance + newDebt;
 
 	const Rows = useMemo(
@@ -76,7 +74,7 @@ const MintInfo: React.FC<MintInfoProps> = ({
 			{
 				title: t('staking.info.mint.table.c-ratio'),
 				value: currentCRatio ?? 100 / currentCRatio,
-				changedValue: Math.round(((changeInCollateral * snxPrice) / changeInDebt) * 100),
+				changedValue: Math.round(((changeInCollateral * SNXRate) / changeInDebt) * 100),
 				currencyKey: '%',
 			},
 			{
@@ -96,7 +94,7 @@ const MintInfo: React.FC<MintInfoProps> = ({
 			changeInDebt,
 			debtBalance,
 			changeInCollateral,
-			snxPrice,
+			SNXRate,
 			t,
 		]
 	);

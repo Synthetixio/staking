@@ -1,32 +1,26 @@
 import React, { useMemo } from 'react';
-import MintInfo from './components/MintInfo';
-import BurnInfo from './components/BurnInfo';
+import MintInfo from './MintInfo';
+import BurnInfo from './BurnInfo';
+import useStakingCalculations from '../hooks/useStakingCalculations';
 
 interface InfoBoxProps {
-	unstakedCollateral: number;
-	stakedCollateral: number;
-	currentCRatio: number;
-	transferableCollateral: number;
-	debtBalance: number;
-	lockedCollateral: number;
 	amountToStake: string | null;
-	targetCRatio: number;
+	amountToBurn: string | null;
 	panelType: 'burn' | 'mint';
-	snxPrice: number;
 }
 
-const InfoBox: React.FC<InfoBoxProps> = ({
-	unstakedCollateral,
-	stakedCollateral,
-	transferableCollateral,
-	currentCRatio,
-	debtBalance,
-	lockedCollateral,
-	amountToStake,
-	targetCRatio,
-	panelType,
-	snxPrice,
-}) => {
+const InfoBox: React.FC<InfoBoxProps> = ({ amountToBurn, amountToStake, panelType }) => {
+	const {
+		unstakedCollateral,
+		currentCRatio,
+		debtBalance,
+		targetCRatio,
+		transferableCollateral,
+		stakedCollateral,
+		lockedCollateral,
+		SNXRate,
+	} = useStakingCalculations();
+
 	const returnInfoPanel = useMemo(
 		() =>
 			panelType === 'mint' ? (
@@ -39,7 +33,7 @@ const InfoBox: React.FC<InfoBoxProps> = ({
 					lockedCollateral={lockedCollateral}
 					amountToStake={amountToStake}
 					targetCRatio={targetCRatio}
-					snxPrice={snxPrice}
+					SNXRate={SNXRate}
 				/>
 			) : (
 				<BurnInfo
@@ -49,13 +43,14 @@ const InfoBox: React.FC<InfoBoxProps> = ({
 					currentCRatio={currentCRatio}
 					debtBalance={debtBalance}
 					lockedCollateral={lockedCollateral}
-					amountToStake={amountToStake}
+					amountToBurn={amountToBurn}
 					targetCRatio={targetCRatio}
 				/>
 			),
 		[
 			panelType,
 			amountToStake,
+			amountToBurn,
 			currentCRatio,
 			debtBalance,
 			lockedCollateral,
@@ -63,7 +58,7 @@ const InfoBox: React.FC<InfoBoxProps> = ({
 			transferableCollateral,
 			unstakedCollateral,
 			targetCRatio,
-			snxPrice,
+			SNXRate,
 		]
 	);
 	return returnInfoPanel;
