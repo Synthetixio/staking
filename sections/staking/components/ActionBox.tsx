@@ -29,7 +29,13 @@ const ActionBox: React.FC<ActionBoxProps> = ({
 }) => {
 	const { t } = useTranslation();
 
-	const { debtBalance, targetCRatio, stakedCollateral, SNXRate } = useStakingCalculations();
+	const {
+		debtBalance,
+		targetCRatio,
+		stakedCollateral,
+		SNXRate,
+		collateral,
+	} = useStakingCalculations();
 
 	const tabData = useMemo(
 		() => [
@@ -41,7 +47,7 @@ const ActionBox: React.FC<ActionBoxProps> = ({
 						amountToStake={amountToStake}
 						setAmountToStake={setAmountToStake}
 						targetCRatio={targetCRatio}
-						maxCollateral={stakedCollateral}
+						maxCollateral={collateral}
 						SNXRate={SNXRate}
 					/>
 				),
@@ -55,13 +61,25 @@ const ActionBox: React.FC<ActionBoxProps> = ({
 						setAmountToBurn={setAmountToBurn}
 						targetCRatio={targetCRatio}
 						maxBurnAmount={debtBalance}
-						SNXRate={SNXRate}
+						maxCollateral={collateral}
 						stakedSNX={stakedCollateral}
+						SNXRate={SNXRate}
 					/>
 				),
 			},
 		],
-		[amountToStake, amountToBurn, setAmountToBurn, setAmountToStake, t]
+		[
+			amountToStake,
+			amountToBurn,
+			setAmountToBurn,
+			setAmountToStake,
+			t,
+			collateral,
+			targetCRatio,
+			debtBalance,
+			SNXRate,
+			stakedCollateral,
+		]
 	);
 
 	return (

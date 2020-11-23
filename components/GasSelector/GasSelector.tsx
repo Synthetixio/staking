@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 
 import styled from 'styled-components';
 import { useRecoilState } from 'recoil';
@@ -20,13 +20,14 @@ import { formatCurrency } from 'utils/formatters/number';
 import NumericInput from 'components/Input/NumericInput';
 import Button from 'components/Button';
 import { useTranslation } from 'react-i18next';
-import { FlexDivRowCentered, NumericValue } from 'styles/common';
+import { FlexDivCol, FlexDivRowCentered, NumericValue } from 'styles/common';
 
 interface GasSelectorProps {
 	gasLimitEstimate: number | null;
+	setGasPrice: Function;
 }
 
-const GasSelector: React.FC<GasSelectorProps> = ({ gasLimitEstimate }) => {
+const GasSelector: React.FC<GasSelectorProps> = ({ gasLimitEstimate, setGasPrice, ...rest }) => {
 	const { t } = useTranslation();
 	const [gasSpeed, setGasSpeed] = useRecoilState(gasSpeedState);
 	const [customGasPrice, setCustomGasPrice] = useRecoilState(customGasPriceState);
@@ -50,6 +51,16 @@ const GasSelector: React.FC<GasSelectorProps> = ({ gasLimitEstimate }) => {
 		[customGasPrice, ethGasStationQuery.data, gasSpeed]
 	);
 
+	useEffect(() => {
+		setGasPrice(
+			customGasPrice !== ''
+				? Number(customGasPrice)
+				: ethGasStationQuery.data != null
+				? ethGasStationQuery.data[gasSpeed]
+				: null
+		);
+	}, [gasPrice]);
+
 	const ethPriceRate = getExchangeRatesForCurrencies(
 		exchangeRates,
 		SYNTHS_MAP.sETH,
@@ -70,7 +81,7 @@ const GasSelector: React.FC<GasSelectorProps> = ({ gasLimitEstimate }) => {
 	);
 
 	return (
-		<>
+		<Container {...rest}>
 			<GasPriceHeader>{t('common.gas-header')}</GasPriceHeader>
 
 			<GasPriceContainer>
@@ -126,11 +137,13 @@ const GasSelector: React.FC<GasSelectorProps> = ({ gasLimitEstimate }) => {
 					<StyledGasEditButton role="button">{t('common.edit')}</StyledGasEditButton>
 				</GasPriceTooltip>
 			</GasPriceContainer>
-		</>
+		</Container>
 	);
 };
 
 export default GasSelector;
+
+const Container = styled(FlexDivCol)``;
 
 const GasPriceContainer = styled(FlexDivRowCentered)``;
 

@@ -2,3 +2,12 @@ export function getMintAmount(targetCRatio: number, stakeAmount: string, SNXPric
 	if (!stakeAmount || !targetCRatio || !SNXPrice) return 0;
 	return Number(stakeAmount) * targetCRatio * SNXPrice;
 }
+
+export function getStakingAmount(
+	targetCRatio: number,
+	mintAmount: string,
+	SNXPrice: number
+): number {
+	if (!mintAmount || !targetCRatio || !SNXPrice) return 0;
+	return Number(mintAmount) / targetCRatio / SNXPrice;
+}

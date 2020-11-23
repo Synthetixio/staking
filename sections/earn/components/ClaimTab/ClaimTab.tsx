@@ -15,6 +15,7 @@ import Connector from 'containers/Connector';
 import { getGasEstimateForTransaction } from 'utils/transactions';
 import Etherscan from 'containers/Etherscan';
 import GasSelector from 'components/GasSelector';
+import { normalizedGasPrice, normalizeGasLimit } from 'utils/network';
 
 type ClaimTabProps = {
 	tradingRewards: BigNumber;
@@ -34,6 +35,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({
 	const { etherscanInstance } = Etherscan.useContainer();
 	const { notify } = Connector.useContainer();
 	const [gasLimitEstimate, setGasLimitEstimate] = useState<number | null>(null);
+	const [gasPrice, setGasPrice] = useState<number>(0);
 	const [error, setError] = useState<string | null>(null);
 
 	useEffect(() => {
@@ -42,7 +44,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({
 				try {
 					const estimate = await getGasEstimateForTransaction(
 						[],
-						synthetix.js?.contracts.FeePool.claimFees
+						synthetix.js?.contracts.FeePool.estimateGas.claimFees
 					);
 					setGasLimitEstimate(estimate);
 				} catch (error) {
@@ -60,7 +62,10 @@ const ClaimTab: React.FC<ClaimTabProps> = ({
 			const {
 				contracts: { FeePool },
 			} = synthetix.js as SynthetixJS;
-			const tx = await FeePool.claimFees();
+			const tx = await FeePool.claimFees({
+				gasPrice: normalizedGasPrice(gasPrice),
+				gasLimit,
+			});
 			if (notify) {
 				const { emitter } = notify.hash(tx.hash);
 				const link = etherscanInstance != null ? etherscanInstance.txLink(tx.hash) : undefined;
@@ -95,7 +100,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({
 				<Value isClaimed={claimed}>{formatCryptoCurrency(stakingRewards)} SNX</Value>
 				<StyledClaimedTag />
 			</ValueBox>
-			<GasSelector gasLimitEstimate={gasLimitEstimate} />
+			<GasSelector gasLimitEstimate={gasLimitEstimate} setGasPrice={setGasPrice} />
 			{error && <ErrorMessage>{error}</ErrorMessage>}
 			<StyledButton variant="secondary" onClick={handleClaim} disabled={error != null || claimed}>
 				{claimed

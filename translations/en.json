@@ -90,7 +90,8 @@
 				},
 				"action": {
 					"empty": "Enter an amount",
-					"mint": "Stake {{amountToStake}}"
+					"mint": "Stake {{amountToStake}}",
+					"max": "Max"
 				}
 			},
 			"burn": {
@@ -102,7 +103,9 @@
 				},
 				"action": {
 					"empty": "Enter an amount",
-					"burn": "Burn {{amountToBurn}} sUSD"
+					"burn": "Burn {{amountToBurn}} sUSD",
+					"max": "Max",
+					"to-target": "Burn to target"
 				}
 			}
 		},
@@ -204,6 +207,10 @@
 		"pagination": {
 			"page": "Page",
 			"page-of-total-pages": "{{page}} of {{totalPages}}"
+		},
+		"transaction": {
+			"error": "An unexpected error occurred.",
+			"reattempt": "Try again"
 		},
 		"currency": {
 			"currency-price": "<0>{{currencyKey}}</0> Price"

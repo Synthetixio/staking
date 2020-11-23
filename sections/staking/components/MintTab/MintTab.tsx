@@ -1,7 +1,6 @@
 import React, { FC, useEffect, useState } from 'react';
 import { LoadingState } from 'constants/loading';
 import {
-	HeaderBox,
 	TabContainer,
 	StyledButton,
 	StyledCTA,
@@ -23,6 +22,8 @@ import { ethers } from 'ethers';
 import { normalizedGasPrice } from 'utils/network';
 import { getGasEstimateForTransaction } from 'utils/transactions';
 import synthetix from 'lib/synthetix';
+import GasSelector from 'components/GasSelector';
+import styled from 'styled-components';
 
 type MintTabProps = {
 	amountToStake: string;
@@ -40,13 +41,14 @@ const MintTab: FC<MintTabProps> = ({
 	SNXRate,
 }) => {
 	const { t } = useTranslation();
-	// const { monitorHash } = Notify.useContainer();
+	const { monitorHash } = Notify.useContainer();
 	const [mintLoadingState] = useState<LoadingState | null>(null);
 	const [stakingTxError, setStakingTxError] = useState<boolean>(false);
 	const [error, setError] = useState<string | null>(null);
 	const [gasLimitEstimate, setGasLimitEstimate] = useState<number | null>(null);
 	const [stakingCurrencyKey] = useState<string>(CRYPTO_CURRENCY_MAP.SNX);
 	const [synthCurrencyKey] = useState<string>(SYNTHS_MAP.sUSD);
+	const [gasPrice, setGasPrice] = useState<number>(0);
 
 	useEffect(() => {
 		const getGasLimitEstimate = async () => {
@@ -54,7 +56,7 @@ const MintTab: FC<MintTabProps> = ({
 				try {
 					const estimate = await getGasEstimateForTransaction(
 						[],
-						synthetix.js?.contracts.FeePool.claimFees
+						synthetix.js?.contracts.Synthetix.estimateGas.issueMaxSynths
 					);
 					setGasLimitEstimate(estimate);
 				} catch (error) {
@@ -68,33 +70,15 @@ const MintTab: FC<MintTabProps> = ({
 	}, [synthetix, error]);
 
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
-	const stakeTypes = [
-		{
-			label: CRYPTO_CURRENCY_MAP.SNX,
-			key: CRYPTO_CURRENCY_MAP.SNX,
-		},
-		{
-			label: CRYPTO_CURRENCY_MAP.ETH,
-			key: CRYPTO_CURRENCY_MAP.ETH,
-		},
-		{
-			label: CRYPTO_CURRENCY_MAP.BTC,
-			key: CRYPTO_CURRENCY_MAP.BTC,
-		},
-	];
-	const [stakeType, setStakeType] = useState(stakeTypes[0]);
 
 	const handleStakeChange = (value: string) => setAmountToStake(value);
 
-	const handleMaxIssuance = () => setAmountToStake(maxCollateral?.toString() || '');
+	const handleMaxIssuance = () => setAmountToStake(maxCollateral.toString());
 
-	// TODO: useMemo
-	// eslint-disable-next-line
 	const handleStake = async () => {
 		try {
 			setStakingTxError(false);
 			setTxModalOpen(true);
-
 			const {
 				contracts: { Synthetix },
 				utils: { parseEther },
@@ -113,7 +97,6 @@ const MintTab: FC<MintTabProps> = ({
 					[parseEther(amountToStake)],
 					Synthetix.estimateGas.issueSynths
 				);
-
 				const mintAmount = getMintAmount(targetCRatio, amountToStake, SNXRate);
 				transaction = await Synthetix.issueSynths(parseEther(mintAmount.toString()), {
 					gasPrice: normalizedGasPrice(gasPrice),
@@ -121,8 +104,7 @@ const MintTab: FC<MintTabProps> = ({
 				});
 			}
 			if (transaction) {
-				// monitorHash({ txHash: transaction.hash });
-
+				monitorHash({ txHash: transaction.hash });
 				setTxModalOpen(false);
 			}
 		} catch (e) {
@@ -133,20 +115,6 @@ const MintTab: FC<MintTabProps> = ({
 	return (
 		<>
 			<TabContainer>
-				<HeaderBox>
-					<p>{t('staking.actions.mint.info.header')}</p>
-					{/* <StyledSelect
-					inputId="mint-type-list"
-					formatOptionLabel={(option: { value: string; label: string }) => option.label}
-					options={stakeTypes}
-					value={stakeType}
-					onChange={(option: any) => {
-						if (option) {
-							setStakeType(option);
-						}
-					}}
-				/> */}
-				</HeaderBox>
 				<InputBox>
 					<StyledInput
 						placeholder="0"
@@ -161,8 +129,8 @@ const MintTab: FC<MintTabProps> = ({
 					<DataRow>
 						<RowTitle>{t('staking.actions.mint.info.staking')}</RowTitle>
 						<RowValue>
-							{formatCurrency(stakeType.label, amountToStake, {
-								currencyKey: stakeType.label,
+							{formatCurrency(stakingCurrencyKey, amountToStake, {
+								currencyKey: stakingCurrencyKey,
 							})}
 						</RowValue>
 					</DataRow>
@@ -179,6 +147,7 @@ const MintTab: FC<MintTabProps> = ({
 						</RowValue>
 					</DataRow>
 				</DataContainer>
+				<StyledGasContainer gasLimitEstimate={gasLimitEstimate} setGasPrice={setGasPrice} />
 				{amountToStake !== '0' && amountToStake !== '' ? (
 					<StyledCTA
 						onClick={handleStake}
@@ -187,8 +156,8 @@ const MintTab: FC<MintTabProps> = ({
 						disabled={!!mintLoadingState}
 					>
 						{t('staking.actions.mint.action.mint', {
-							amountToStake: formatCurrency(stakeType.label, amountToStake, {
-								currencyKey: stakeType.label,
+							amountToStake: formatCurrency(stakingCurrencyKey, amountToStake, {
+								currencyKey: stakingCurrencyKey,
 							}),
 						})}
 					</StyledCTA>
@@ -212,5 +181,10 @@ const MintTab: FC<MintTabProps> = ({
 		</>
 	);
 };
+
+const StyledGasContainer = styled(GasSelector)`
+	margin: 16px 0px;
+	flex-direction: row;
+`;
 
 export default MintTab;

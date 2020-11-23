@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { LoadingState } from 'constants/loading';
+import styled from 'styled-components';
 import {
-	HeaderBox,
 	TabContainer,
 	StyledButton,
 	StyledCTA,
@@ -22,12 +22,17 @@ import { getGasEstimateForTransaction } from 'utils/transactions';
 import { useRecoilValue } from 'recoil';
 import { walletAddressState } from 'store/wallet';
 import synthetix from 'lib/synthetix';
+import GasSelector from 'components/GasSelector';
+import { FlexDivRowCentered } from 'styles/common';
+import { getMintAmount, getStakingAmount } from '../helper';
+import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 
 type BurnTabProps = {
 	amountToBurn: string;
 	setAmountToBurn: (amount: string) => void;
 	maxBurnAmount: number;
 	targetCRatio: number;
+	maxCollateral: number;
 	SNXRate: number;
 	stakedSNX: number;
 };
@@ -36,6 +41,7 @@ const BurnTab: React.FC<BurnTabProps> = ({
 	amountToBurn,
 	setAmountToBurn,
 	maxBurnAmount,
+	maxCollateral,
 	targetCRatio,
 	SNXRate,
 	stakedSNX,
@@ -45,40 +51,50 @@ const BurnTab: React.FC<BurnTabProps> = ({
 	const [error, setError] = useState<string | null>(null);
 	const [gasLimitEstimate, setGasLimitEstimate] = useState<number | null>(null);
 	const [burnLoadingState] = useState<LoadingState | null>(null);
-	// const { monitorHash } = Notify.useContainer();
+	const { monitorHash } = Notify.useContainer();
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 	const walletAddress = useRecoilValue(walletAddressState);
+	const [burnToTarget, setBurnToTarget] = useState<boolean>(false);
+	const [stakingCurrencyKey] = useState<string>(CRYPTO_CURRENCY_MAP.SNX);
+	const [synthCurrencyKey] = useState<string>(SYNTHS_MAP.sUSD);
+	const [gasPrice, setGasPrice] = useState<number>(0);
 
-	const stakeTypes = [
-		{
-			label: CRYPTO_CURRENCY_MAP.SNX,
-			key: CRYPTO_CURRENCY_MAP.SNX,
-		},
-		{
-			label: CRYPTO_CURRENCY_MAP.ETH,
-			key: CRYPTO_CURRENCY_MAP.ETH,
-		},
-		{
-			label: CRYPTO_CURRENCY_MAP.BTC,
-			key: CRYPTO_CURRENCY_MAP.BTC,
-		},
-	];
-	const [stakeType, setStakeType] = useState(stakeTypes[0]);
+	useEffect(() => {
+		const getGasLimitEstimate = async () => {
+			if (synthetix && synthetix.js) {
+				const {
+					contracts: { Synthetix },
+					utils: { parseEther },
+				} = synthetix.js as SynthetixJS;
+				try {
+					const estimate = await getGasEstimateForTransaction(
+						[parseEther(amountToBurn.toString())],
+						Synthetix.estimateGas.burnSynths
+					);
+					setGasLimitEstimate(estimate);
+				} catch (error) {
+					setError(error.message);
+					setGasLimitEstimate(null);
+				}
+			}
+		};
+		getGasLimitEstimate();
+		// eslint-disable-next-line
+	}, [synthetix, error]);
 
 	const handleStakeChange = (value: string) => setAmountToBurn(value);
 
-	const handleMaxIssuance = () => setAmountToBurn(maxBurnAmount?.toString() || '');
+	const handleMaxBurn = () => setAmountToBurn(maxBurnAmount?.toString() || '');
 
-	const validateCanBurn = async () => {};
+	const handleBurnToTarget = () => {
+		const maxIssuableSynths = getMintAmount(targetCRatio, maxCollateral.toString(), SNXRate);
+		setAmountToBurn(Math.max(maxBurnAmount - maxIssuableSynths, 0).toString());
+	};
 
-	// TODO: useMemo
-	// eslint-disable-next-line
 	const handleBurn = async () => {
 		try {
 			setBurningTxError(false);
 			setTxModalOpen(true);
-			//TODO: Change this
-			const burnToTarget = false;
 			const {
 				contracts: { Synthetix, Issuer },
 				utils: { formatBytes32String, parseEther },
@@ -108,7 +124,7 @@ const BurnTab: React.FC<BurnTabProps> = ({
 				});
 			}
 			if (transaction) {
-				// monitorHash({ txHash: transaction.hash });
+				monitorHash({ txHash: transaction.hash });
 				setTxModalOpen(false);
 			}
 		} catch (e) {
@@ -117,48 +133,76 @@ const BurnTab: React.FC<BurnTabProps> = ({
 	};
 
 	return (
-		<TabContainer>
-			<HeaderBox>
-				<p>{t('staking.actions.burn.info.header')}</p>
-			</HeaderBox>
-			<InputBox>
-				<StyledInput
-					placeholder="0"
-					onChange={(e) => handleStakeChange(e.target.value)}
-					value={amountToBurn}
+		<>
+			<TabContainer>
+				<InputBox>
+					<StyledInput
+						placeholder="0"
+						onChange={(e) => handleStakeChange(e.target.value)}
+						value={amountToBurn}
+					/>
+				</InputBox>
+				<FlexDivRowCentered>
+					<StyledButton onClick={handleMaxBurn} variant="outline">
+						{t('staking.actions.burn.action.max')}
+					</StyledButton>
+					<StyledButton onClick={handleBurnToTarget} variant="outline">
+						{t('staking.actions.burn.action.to-target')}
+					</StyledButton>
+				</FlexDivRowCentered>
+				<DataContainer>
+					<DataRow>
+						<RowTitle>{t('staking.actions.burn.info.burning')}</RowTitle>
+						<RowValue>
+							{amountToBurn} {synthCurrencyKey}
+						</RowValue>
+					</DataRow>
+					<DataRow>
+						<RowTitle>{t('staking.actions.burn.info.unstaking')}</RowTitle>
+						<RowValue>
+							{maxBurnAmount === Number(amountToBurn)
+								? stakedSNX
+								: getStakingAmount(targetCRatio, amountToBurn.toString(), SNXRate)}
+							{stakingCurrencyKey}
+						</RowValue>
+					</DataRow>
+				</DataContainer>
+				<StyledGasContainer gasLimitEstimate={gasLimitEstimate} setGasPrice={setGasPrice} />
+				{amountToBurn !== '0' && amountToBurn !== '' ? (
+					<StyledCTA onClick={handleBurn} variant="primary" size="lg" disabled={!!burnLoadingState}>
+						{t('staking.actions.burn.action.burn', {
+							amountToBurn: amountToBurn,
+							stakeType: stakingCurrencyKey,
+						})}
+					</StyledCTA>
+				) : (
+					<StyledCTA variant="primary" size="lg" disabled={true}>
+						{t('staking.actions.mint.action.empty')}
+					</StyledCTA>
+				)}
+			</TabContainer>
+			{txModalOpen && (
+				<TxConfirmationModal
+					onDismiss={() => setTxModalOpen(false)}
+					txError={burningTxError}
+					attemptRetry={handleBurn}
+					baseCurrencyAmount={amountToBurn}
+					quoteCurrencyAmount={getStakingAmount(
+						targetCRatio,
+						amountToBurn.toString(),
+						SNXRate
+					).toString()}
+					baseCurrencyKey={stakingCurrencyKey!}
+					quoteCurrencyKey={synthCurrencyKey!}
 				/>
-				<StyledButton onClick={handleMaxIssuance} variant="outline">
-					Max
-				</StyledButton>
-			</InputBox>
-			<DataContainer>
-				<DataRow>
-					<RowTitle>{t('staking.actions.burn.info.burning')}</RowTitle>
-					<RowValue>{amountToBurn} sUSD</RowValue>
-				</DataRow>
-				<DataRow>
-					<RowTitle>{t('staking.actions.burn.info.unstaking')}</RowTitle>
-					<RowValue>
-						{maxBurnAmount === Number(amountToBurn) ? stakedSNX : 0} {stakeType.label}
-					</RowValue>
-				</DataRow>
-			</DataContainer>
-			{amountToBurn !== '0' && amountToBurn !== '' ? (
-				// TODO: fix this tsc err
-				// @ts-ignore
-				<StyledCTA onClick={handleBurn} variant="primary" size="lg" disabled={!!burnLoadingState}>
-					{t('staking.actions.burn.action.burn', {
-						amountToBurn: amountToBurn,
-						stakeType: stakeType.label,
-					})}
-				</StyledCTA>
-			) : (
-				<StyledCTA variant="primary" size="lg" disabled={true}>
-					{t('staking.actions.mint.action.empty')}
-				</StyledCTA>
 			)}
-		</TabContainer>
+		</>
 	);
 };
+
+const StyledGasContainer = styled(GasSelector)`
+	margin: 16px 0px;
+	flex-direction: row;
+`;
 
 export default BurnTab;
