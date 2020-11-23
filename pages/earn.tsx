@@ -61,7 +61,7 @@ const Earn = () => {
 		return usdAmount + snxUsdValue;
 	});
 
-	const totalFees = claimHistoryValues.reduce((a, b) => a + b);
+	const totalFees = claimHistoryValues.reduce((a, b) => a + b, 0);
 
 	const refetch = () => {
 		availableRewards.refetch();

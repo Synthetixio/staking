@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import useGetDebtDataQuery from 'queries/debt/useGetDebtDataQuery';
 import useCurrencyRatesQuery from 'queries/rates/useCurrencyRatesQuery';
 import { CRYPTO_CURRENCY_MAP } from 'constants/currency';
-import useEscrowBalanceQuery from 'queries/escrow/useEscrowBalance';
+import useEscrowDataQuery from 'queries/escrow/useEscrowDataQuery';
 
 type StakingCalculations = {
 	collateral: number;
@@ -20,7 +20,7 @@ type StakingCalculations = {
 const useStakingCalculations = (): StakingCalculations => {
 	const currencyRatesQuery = useCurrencyRatesQuery([CRYPTO_CURRENCY_MAP.SNX]);
 	const debtDataQuery = useGetDebtDataQuery();
-	const escrowBalanceQuery = useEscrowBalanceQuery();
+	const escrowBalanceQuery = useEscrowDataQuery();
 
 	const debtData = debtDataQuery?.data ?? null;
 	const currencyRates = currencyRatesQuery.data ?? null;
@@ -37,7 +37,7 @@ const useStakingCalculations = (): StakingCalculations => {
 		const stakedCollateralValue = stakedCollateral ? stakedCollateral * SNXRate : 0;
 		const lockedCollateral = collateral - transferableCollateral;
 		const unstakedCollateral = collateral - stakedCollateral;
-		const stakingEscrow = escrowBalance?.stakingEscrow ?? 0;
+		const stakingEscrow = escrowBalance?.totalEscrowed ?? 0;
 		const tokenSaleEscrow = escrowBalance?.tokenSaleEscrow ?? 0;
 		const totalEscrowBalance = stakingEscrow + tokenSaleEscrow;
 		return {

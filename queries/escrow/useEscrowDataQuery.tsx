@@ -6,6 +6,7 @@ import synthetix from 'lib/synthetix';
 import QUERY_KEYS from 'constants/queryKeys';
 
 import { isWalletConnectedState, networkState, walletAddressState } from 'store/wallet';
+import { SynthetixJS } from '@synthetixio/js';
 
 export type EscrowData = {
 	canVest: number;
@@ -15,6 +16,7 @@ export type EscrowData = {
 	}>;
 	totalEscrowed: number;
 	totalVested: number;
+	tokenSaleEscrow: number;
 };
 
 const useEscrowDataQuery = (options?: QueryConfig<EscrowData>) => {
@@ -25,10 +27,15 @@ const useEscrowDataQuery = (options?: QueryConfig<EscrowData>) => {
 	return useQuery<EscrowData>(
 		QUERY_KEYS.Escrow.Data(walletAddress ?? '', network?.id!),
 		async () => {
-			const [accountSchedule, totalEscrowed, totalVested] = await Promise.all([
-				synthetix.js?.contracts.RewardEscrow.checkAccountSchedule(walletAddress),
-				synthetix.js?.contracts.RewardEscrow.totalEscrowedAccountBalance(walletAddress),
-				synthetix.js?.contracts.RewardEscrow.totalVestedAccountBalance(walletAddress),
+			const {
+				contracts: { RewardEscrow, SynthetixEscrow },
+				utils: { formatEther },
+			} = synthetix.js as SynthetixJS;
+			const [accountSchedule, totalEscrowed, totalVested, tokenSaleEscrow] = await Promise.all([
+				RewardEscrow.checkAccountSchedule(walletAddress),
+				RewardEscrow.totalEscrowedAccountBalance(walletAddress),
+				RewardEscrow.totalVestedAccountBalance(walletAddress),
+				SynthetixEscrow.balanceOf(walletAddress),
 			]);
 
 			const schedule = [];
@@ -36,7 +43,7 @@ const useEscrowDataQuery = (options?: QueryConfig<EscrowData>) => {
 			const currentUnixTime = new Date().getTime();
 
 			for (let i = 0; i < accountSchedule.length; i += 2) {
-				const quantity = Number(synthetix.js?.utils.formatEther(accountSchedule[i + 1]));
+				const quantity = Number(formatEther(accountSchedule[i + 1]));
 
 				if (!accountSchedule[i].isZero() && quantity) {
 					if (accountSchedule[i] * 1000 < currentUnixTime) {
@@ -48,12 +55,12 @@ const useEscrowDataQuery = (options?: QueryConfig<EscrowData>) => {
 					});
 				}
 			}
-
 			return {
 				canVest,
 				schedule,
-				totalEscrowed: Number(synthetix.js?.utils.formatEther(totalEscrowed)),
-				totalVested: Number(synthetix.js?.utils.formatEther(totalVested)),
+				totalEscrowed: Number(formatEther(totalEscrowed)),
+				totalVested: Number(formatEther(totalVested)),
+				tokenSaleEscrow: Number(formatEther(tokenSaleEscrow)),
 			};
 		},
 		{
