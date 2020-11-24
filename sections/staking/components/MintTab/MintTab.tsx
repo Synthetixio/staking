@@ -45,7 +45,7 @@ const MintTab: FC<MintTabProps> = ({
 }) => {
 	const { t } = useTranslation();
 	const { monitorHash } = Notify.useContainer();
-	const [transactionState, setTransactionState] = useState<Transaction>(Transaction.PRESUBMIT);
+	const [transactionState, setTransactionState] = useState<Transaction>(Transaction.SUCCESS);
 	const [txHash, setTxHash] = useState<string | null>(null);
 	const [stakingTxError, setStakingTxError] = useState<boolean>(false);
 	const [error, setError] = useState<string | null>(null);
@@ -141,7 +141,7 @@ const MintTab: FC<MintTabProps> = ({
 	}
 
 	if (transactionState === Transaction.SUCCESS) {
-		return <ActionCompleted />;
+		return <ActionCompleted isMint={true} setTransactionState={setTransactionState} />;
 	}
 	return (
 		<>

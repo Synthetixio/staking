@@ -171,6 +171,9 @@ const MenuCharts = styled.div`
 	border-top: 1px solid ${(props) => props.theme.colors.linedBlue};
 	width: 120px;
 	margin: 0 auto;
+	@media screen and (max-height: 815px) {
+		display: none;
+	}
 `;
 
 export default SideNav;

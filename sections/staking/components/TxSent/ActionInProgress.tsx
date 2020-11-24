@@ -7,7 +7,7 @@ import Etherscan from 'containers/Etherscan';
 import { FlexDivCentered, FlexDivColCentered, ExternalLink } from 'styles/common';
 import Burn from 'assets/svg/app/burn.svg';
 
-import { SectionHeader } from './common';
+import { SectionHeader, SectionSubtext } from './common';
 
 type ActionInProgressProps = {
 	isMint: boolean;
@@ -55,11 +55,11 @@ const ActionInProgress: FC<ActionInProgressProps> = ({
 					<InfoData>{isMint ? unstake : burn}</InfoData>
 				</InfoContainer>
 			</FlexDivCentered>
-			<Subtext>
+			<SectionSubtext>
 				{isMint
 					? t('staking.actions.mint.in-progress.subtext')
 					: t('staking.actions.burn.in-progress.subtext')}
-			</Subtext>
+			</SectionSubtext>
 			{link ? (
 				<StyledExternalLink href={link}>
 					{isMint
@@ -78,12 +78,12 @@ const Container = styled(FlexDivColCentered)`
 `;
 
 const InfoContainer = styled(FlexDivColCentered)`
-	border-bottom: 1px solid ${(props) => props.theme.colors.gray};
+	border-bottom: 1px solid ${(props) => props.theme.colors.linedBlue};
 	width: 150px;
 	margin: 45px 0;
 	height: 100px;
 	&:first-child {
-		border-right: 1px solid ${(props) => props.theme.colors.gray};
+		border-right: 1px solid ${(props) => props.theme.colors.linedBlue};
 	}
 `;
 
@@ -101,14 +101,8 @@ const InfoData = styled.div`
 	margin-bottom: 25px;
 `;
 
-const Subtext = styled.div`
-	font-family: ${(props) => props.theme.fonts.condensedMedium};
-	color: ${(props) => props.theme.colors.gray};
-	margin-bottom: 25px;
-	font-size: 14px;
-`;
-
 const StyledExternalLink = styled(ExternalLink)`
+	margin-top: 25px;
 	font-family: ${(props) => props.theme.fonts.condensedMedium};
 	color: ${(props) => props.theme.colors.brightBlue};
 	font-size: 14px;

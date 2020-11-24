@@ -14,6 +14,8 @@ export default {
 	mediumBlue: '#09092f',
 	linedBlue: '#161b44',
 	backgroundBlue: 'rgba(9, 9, 47, 0.8)',
+	blueGray: '#222254',
+	lightBlue: '#0C2344',
 	// font
 	lightFont: '#6D697F',
 	// muted
@@ -48,6 +50,7 @@ export default {
 	backgroundBoxShadow: 'rgba(0, 0, 0, 0.4)',
 	// border
 	borderSilver: '#4F5973',
+	borderLight: '#606A8B',
 
 	vampire: '#08080F',
 	elderberry: '#10101E',
