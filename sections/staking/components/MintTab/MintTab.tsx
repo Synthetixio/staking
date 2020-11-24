@@ -152,7 +152,7 @@ const MintTab: FC<MintTabProps> = ({
 						onChange={(e) => handleStakeChange(e.target.value)}
 						value={amountToStake}
 					/>
-					<StyledButton onClick={handleMaxIssuance} variant="outline">
+					<StyledButton blue={true} onClick={handleMaxIssuance} variant="outline">
 						Max
 					</StyledButton>
 				</InputBox>
@@ -169,6 +169,7 @@ const MintTab: FC<MintTabProps> = ({
 				<StyledGasContainer gasLimitEstimate={gasLimitEstimate} setGasPrice={setGasPrice} />
 				{amountToStake !== '0' && amountToStake !== '' ? (
 					<StyledCTA
+						blue={true}
 						onClick={handleStake}
 						variant="primary"
 						size="lg"
@@ -181,7 +182,7 @@ const MintTab: FC<MintTabProps> = ({
 						})}
 					</StyledCTA>
 				) : (
-					<StyledCTA variant="primary" size="lg" disabled={true}>
+					<StyledCTA blue={true} variant="primary" size="lg" disabled={true}>
 						{t('staking.actions.mint.action.empty')}
 					</StyledCTA>
 				)}

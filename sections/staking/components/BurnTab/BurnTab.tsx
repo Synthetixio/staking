@@ -152,10 +152,20 @@ const BurnTab: React.FC<BurnTabProps> = ({
 					/>
 				</InputBox>
 				<FlexDivRowCentered>
-					<StyledButton onClick={handleMaxBurn} variant="outline">
+					<StyledButton
+						blue={false}
+						style={{ width: '50%', marginRight: 5 }}
+						onClick={handleMaxBurn}
+						variant="outline"
+					>
 						{t('staking.actions.burn.action.max')}
 					</StyledButton>
-					<StyledButton onClick={handleBurnToTarget} variant="outline">
+					<StyledButton
+						blue={false}
+						style={{ width: '50%', marginLeft: 5 }}
+						onClick={handleBurnToTarget}
+						variant="outline"
+					>
 						{t('staking.actions.burn.action.to-target')}
 					</StyledButton>
 				</FlexDivRowCentered>
@@ -178,14 +188,20 @@ const BurnTab: React.FC<BurnTabProps> = ({
 				</DataContainer>
 				<StyledGasContainer gasLimitEstimate={gasLimitEstimate} setGasPrice={setGasPrice} />
 				{amountToBurn !== '0' && amountToBurn !== '' ? (
-					<StyledCTA onClick={handleBurn} variant="primary" size="lg" disabled={!!burnLoadingState}>
+					<StyledCTA
+						blue={false}
+						onClick={handleBurn}
+						variant="alt"
+						size="lg"
+						disabled={!!burnLoadingState}
+					>
 						{t('staking.actions.burn.action.burn', {
 							amountToBurn: amountToBurn,
 							stakeType: stakingCurrencyKey,
 						})}
 					</StyledCTA>
 				) : (
-					<StyledCTA variant="primary" size="lg" disabled={true}>
+					<StyledCTA blue={false} variant="alt" size="lg" disabled={true}>
 						{t('staking.actions.mint.action.empty')}
 					</StyledCTA>
 				)}

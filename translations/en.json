@@ -128,7 +128,7 @@
 					"empty": "Enter an amount",
 					"burn": "Burn {{amountToBurn}} sUSD",
 					"max": "Max",
-					"to-target": "Burn to target"
+					"to-target": "600%"
 				},
 				"in-progress": {
 					"title": "Burning in progress",
@@ -141,8 +141,20 @@
 		},
 		"info": {
 			"mint": {
-				"title": "Mint sUSD by Staking SNX",
+				"title": "Mint sUSD by staking SNX",
 				"subtitle": "Mint sUSD by staking your SNX. This gives you a Collateralization Ratio and a debt, allowing you to earn weekly staking rewards. <0>Learn more.</0>",
+				"table": {
+					"not-staked": "Not Staked",
+					"staked": "Staked",
+					"transferable": "Transferable",
+					"locked": "Locked",
+					"c-ratio": "C-Ratio",
+					"debt": "Debt"
+				}
+			},
+			"burn": {
+				"title": "Burn sUSD to unstake SNX",
+				"subtitle": "Burn your sUSD debt to unlock your staked SNX. This will raise your Collateralization Ratio and reduce your debt. <0>Learn more.</0>",
 				"table": {
 					"not-staked": "Not Staked",
 					"staked": "Staked",
