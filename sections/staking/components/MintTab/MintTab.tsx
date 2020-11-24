@@ -141,7 +141,7 @@ const MintTab: FC<MintTabProps> = ({
 	}
 
 	if (transactionState === Transaction.SUCCESS) {
-		return <ActionCompleted />;
+		return <ActionCompleted isMint={true} setTransactionState={setTransactionState} />;
 	}
 	return (
 		<>

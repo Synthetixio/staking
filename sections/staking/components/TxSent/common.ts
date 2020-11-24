@@ -7,3 +7,9 @@ export const SectionHeader = styled.div`
 	text-align: center;
 	margin: 5px 0 20px 0;
 `;
+
+export const SectionSubtext = styled.div`
+	font-family: ${(props) => props.theme.fonts.condensedMedium};
+	color: ${(props) => props.theme.colors.gray};
+	font-size: 14px;
+`;
