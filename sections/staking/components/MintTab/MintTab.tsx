@@ -1,5 +1,19 @@
 import React, { FC, useEffect, useState } from 'react';
-import { LoadingState } from 'constants/loading';
+import styled from 'styled-components';
+import { useTranslation } from 'react-i18next';
+import { SynthetixJS } from '@synthetixio/js';
+import { ethers } from 'ethers';
+
+import { CRYPTO_CURRENCY_MAP, SYNTHS_MAP } from 'constants/currency';
+import { formatCurrency } from 'utils/formatters/number';
+import Notify from 'containers/Notify';
+import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
+import { normalizedGasPrice, normalizeGasLimit } from 'utils/network';
+import { getGasEstimateForTransaction } from 'utils/transactions';
+import synthetix from 'lib/synthetix';
+import GasSelector from 'components/GasSelector';
+import { Transaction } from 'constants/network';
+
 import {
 	TabContainer,
 	StyledButton,
@@ -11,19 +25,8 @@ import {
 	RowTitle,
 	RowValue,
 } from '../common';
-import { useTranslation } from 'react-i18next';
-import { CRYPTO_CURRENCY_MAP, SYNTHS_MAP } from 'constants/currency';
 import { getMintAmount } from '../helper';
-import { formatCurrency } from 'utils/formatters/number';
-import Notify from 'containers/Notify';
-import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
-import { SynthetixJS } from '@synthetixio/js';
-import { ethers } from 'ethers';
-import { normalizedGasPrice, normalizeGasLimit } from 'utils/network';
-import { getGasEstimateForTransaction } from 'utils/transactions';
-import synthetix from 'lib/synthetix';
-import GasSelector from 'components/GasSelector';
-import styled from 'styled-components';
+import { ActionInProgress, ActionCompleted } from '../TxSent';
 
 type MintTabProps = {
 	amountToStake: string;
@@ -42,7 +45,8 @@ const MintTab: FC<MintTabProps> = ({
 }) => {
 	const { t } = useTranslation();
 	const { monitorHash } = Notify.useContainer();
-	const [mintLoadingState] = useState<LoadingState | null>(null);
+	const [transactionState, setTransactionState] = useState<Transaction>(Transaction.PRESUBMIT);
+	const [txHash, setTxHash] = useState<string | null>(null);
 	const [stakingTxError, setStakingTxError] = useState<boolean>(false);
 	const [error, setError] = useState<string | null>(null);
 	const [gasLimitEstimate, setGasLimitEstimate] = useState<number | null>(null);
@@ -104,14 +108,41 @@ const MintTab: FC<MintTabProps> = ({
 				});
 			}
 			if (transaction) {
-				monitorHash({ txHash: transaction.hash });
+				setTxHash(transaction.hash);
+				setTransactionState(Transaction.WAITING);
+				monitorHash({
+					txHash: transaction.hash,
+					onTxConfirmed: () => setTransactionState(Transaction.SUCCESS),
+				});
 				setTxModalOpen(false);
 			}
 		} catch (e) {
+			setTransactionState(Transaction.PRESUBMIT);
 			setStakingTxError(true);
 		}
 	};
 
+	const stakeInfo = formatCurrency(stakingCurrencyKey, amountToStake, {
+		currencyKey: stakingCurrencyKey,
+	});
+
+	const mintInfo = formatCurrency(
+		SYNTHS_MAP.sUSD,
+		getMintAmount(targetCRatio, amountToStake, SNXRate),
+		{
+			currencyKey: SYNTHS_MAP.sUSD,
+		}
+	);
+
+	if (transactionState === Transaction.WAITING) {
+		return (
+			<ActionInProgress isMint={true} stake={stakeInfo} mint={mintInfo} hash={txHash as string} />
+		);
+	}
+
+	if (transactionState === Transaction.SUCCESS) {
+		return <ActionCompleted />;
+	}
 	return (
 		<>
 			<TabContainer>
@@ -128,23 +159,11 @@ const MintTab: FC<MintTabProps> = ({
 				<DataContainer>
 					<DataRow>
 						<RowTitle>{t('staking.actions.mint.info.staking')}</RowTitle>
-						<RowValue>
-							{formatCurrency(stakingCurrencyKey, amountToStake, {
-								currencyKey: stakingCurrencyKey,
-							})}
-						</RowValue>
+						<RowValue>{stakeInfo}</RowValue>
 					</DataRow>
 					<DataRow>
 						<RowTitle>{t('staking.actions.mint.info.minting')}</RowTitle>
-						<RowValue>
-							{formatCurrency(
-								SYNTHS_MAP.sUSD,
-								getMintAmount(targetCRatio, amountToStake, SNXRate),
-								{
-									currencyKey: SYNTHS_MAP.sUSD,
-								}
-							)}
-						</RowValue>
+						<RowValue>{mintInfo}</RowValue>
 					</DataRow>
 				</DataContainer>
 				<StyledGasContainer gasLimitEstimate={gasLimitEstimate} setGasPrice={setGasPrice} />
@@ -153,7 +172,7 @@ const MintTab: FC<MintTabProps> = ({
 						onClick={handleStake}
 						variant="primary"
 						size="lg"
-						disabled={!!mintLoadingState}
+						disabled={transactionState !== Transaction.PRESUBMIT}
 					>
 						{t('staking.actions.mint.action.mint', {
 							amountToStake: formatCurrency(stakingCurrencyKey, amountToStake, {

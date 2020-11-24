@@ -100,6 +100,13 @@
 					"empty": "Enter an amount",
 					"mint": "Stake {{amountToStake}}",
 					"max": "Max"
+				},
+				"in-progress": {
+					"title": "Minting in progress",
+					"staking": "Staking",
+					"minting": "Minting",
+					"subtext": "Waiting for the blockchain to confirm your transaction",
+					"etherscan": "View on Etherscan"
 				}
 			},
 			"burn": {
@@ -114,6 +121,13 @@
 					"burn": "Burn {{amountToBurn}} sUSD",
 					"max": "Max",
 					"to-target": "Burn to target"
+				},
+				"in-progress": {
+					"title": "Burning in progress",
+					"unstaking": "Unstaking",
+					"burning": "Burning",
+					"subtext": "Waiting for the blockchain to confirm your transaction",
+					"etherscan": "View on Etherscan"
 				}
 			}
 		},

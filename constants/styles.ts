@@ -8,6 +8,7 @@ export type NumberStyle =
 	| 'currency2';
 
 export const MAX_PAGE_WIDTH = 1226;
+export const BOX_COLUMN_WIDTH = 450;
 
 export const Z_INDEX = {
 	one: 1,
