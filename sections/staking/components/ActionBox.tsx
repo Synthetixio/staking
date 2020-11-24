@@ -11,6 +11,7 @@ import MintTab from './MintTab';
 import Burn from 'assets/svg/app/burn.svg';
 import Mint from 'assets/svg/app/mint.svg';
 import { StakingPanelType } from 'pages/staking';
+import { BOX_COLUMN_WIDTH } from 'constants/styles';
 
 interface ActionBoxProps {
 	amountToStake: string;
@@ -84,9 +85,9 @@ const ActionBox: React.FC<ActionBoxProps> = ({
 
 	return (
 		<StructuredTab
-			boxPadding={0}
+			boxPadding={20}
 			boxHeight={400}
-			boxWidth={500}
+			boxWidth={BOX_COLUMN_WIDTH}
 			tabData={tabData}
 			setPanelType={setPanelType}
 		/>

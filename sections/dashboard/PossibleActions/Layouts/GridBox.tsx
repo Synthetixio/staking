@@ -65,6 +65,7 @@ export const GridBoxContainer = styled.div<{
 	border-radius: 2px;
 	grid-column: ${(props) => `${props.columnStart} / ${props.columnEnd}`};
 	grid-row: ${(props) => `${props.rowStart} / ${props.rowEnd}`};
+	cursor: pointer;
 `;
 
 const GridBoxIcon = styled.div`

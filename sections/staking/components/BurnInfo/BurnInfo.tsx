@@ -1,6 +1,5 @@
 import React, { useMemo } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
-import { FlexDivCol } from 'styles/common';
 import {
 	Title,
 	Subtitle,
@@ -87,7 +86,7 @@ const BurnInfo: React.FC<BurnInfoProps> = ({
 		]
 	);
 	return (
-		<FlexDivCol>
+		<>
 			<Title>{t('staking.info.mint.title')}</Title>
 			<Subtitle>
 				<Trans i18nKey="staking.info.mint.subtitle" components={[<StyledLink />]} />
@@ -107,7 +106,7 @@ const BurnInfo: React.FC<BurnInfoProps> = ({
 					</DataRow>
 				))}
 			</DataContainer>
-		</FlexDivCol>
+		</>
 	);
 };
 
