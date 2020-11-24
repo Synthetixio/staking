@@ -74,7 +74,7 @@ const Button = styled.button<ButtonProps>`
 			css`
 				color: ${(props) => props.theme.colors.darkBlue};
 				background-color: ${(props) => props.theme.colors.brightGreen};
-				box-shadow: 0px 0px 10px rgba(77, 244, 184, 0.9);
+				box-shadow: 0px 0px 10px rgba(77, 244, 184, 0.6);
 				&:hover {
 					&:not(:disabled) {
 						background: ${(props) => props.theme.colors.mutedBrightGreen};
@@ -85,6 +85,24 @@ const Button = styled.button<ButtonProps>`
 					cursor: default;
 				}
 			`}	
+
+		
+		${(props) =>
+			props.variant === 'alt' &&
+			css`
+				color: ${(props) => props.theme.colors.white};
+				background: ${(props) => props.theme.colors.brightOrange};
+				box-shadow: 0px 0px 10px rgba(252, 135, 56, 0.6);
+				&:hover {
+					&:not(:disabled) {
+						background: ${(props) => props.theme.colors.mutedBrightBurntOrange};
+					}
+				}
+				&:disabled {
+					background: ${(props) => props.theme.colors.mutedBrightBurntOrange};
+					cursor: default;
+				}
+			`}		
 
 		${(props) =>
 			props.variant === 'outline' &&
@@ -108,27 +126,6 @@ const Button = styled.button<ButtonProps>`
 					`};
 			`}		
 
-		${(props) =>
-			props.variant === 'alt' &&
-			css`
-				border-radius: 2px;
-				color: ${(props) => props.theme.colors.white};
-				background-color: ${(props) => props.theme.colors.mediumBlue};
-				border: 1px solid ${(props) => props.theme.colors.mediumBlue};
-				&:hover {
-					&:not(:disabled) {
-						color: ${(props) => props.theme.colors.white};
-						background-color: ${(props) => props.theme.colors.mediumBlue};
-					}
-				}
-				${(props) =>
-					// @ts-ignore
-					props.isActive &&
-					css`
-						color: ${(props) => props.theme.colors.white};
-						background-color: ${(props) => props.theme.colors.mediumBlue};
-					`};
-			`}		
 
 	${(props) =>
 		props.variant === 'danger' &&
