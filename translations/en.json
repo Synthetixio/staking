@@ -103,8 +103,8 @@
 				},
 				"in-progress": {
 					"title": "Minting in progress",
-					"staking": "Staking",
-					"minting": "Minting",
+					"staking": "STAKING",
+					"minting": "MINTING",
 					"subtext": "Waiting for the blockchain to confirm your transaction",
 					"etherscan": "View on Etherscan"
 				}
@@ -124,8 +124,8 @@
 				},
 				"in-progress": {
 					"title": "Burning in progress",
-					"unstaking": "Unstaking",
-					"burning": "Burning",
+					"unstaking": "UNSTAKING",
+					"burning": "BURNING",
 					"subtext": "Waiting for the blockchain to confirm your transaction",
 					"etherscan": "View on Etherscan"
 				}
