@@ -47,6 +47,8 @@ const InfoBox: React.FC<InfoBoxProps> = ({ amountToBurn, amountToStake, panelTyp
 					lockedCollateral={lockedCollateral}
 					amountToBurn={amountToBurn}
 					targetCRatio={targetCRatio}
+					totalEscrowBalance={totalEscrowBalance}
+					SNXRate={SNXRate}
 				/>
 			),
 		[

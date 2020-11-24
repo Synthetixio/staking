@@ -98,7 +98,7 @@ const StyledTabButton = styled.button<TabProps>`
 	justify-content: center;
 `;
 
-const StyledTabList = styled.div.attrs({ role: 'tablist' })<{ width: number }>`
+const StyledTabList = styled.div.attrs({ role: 'tablist' })<{ width: number; padding: number }>`
 	width: ${(props) => props.width}px;
 	display: flex;
 `;

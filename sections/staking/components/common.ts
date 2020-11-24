@@ -45,9 +45,10 @@ export const StyledSelect = styled(Select)`
 		width: 100%;
 	}
 `;
-export const InputBox = styled(FlexDivRow)`
+export const InputBox = styled(FlexDivRowCentered)`
 	margin: 16px auto;
 	width: 300px;
+	justify-content: center;
 `;
 
 export const StyledInput = styled(Input)`
@@ -59,11 +60,18 @@ export const StyledInput = styled(Input)`
 	padding-right: 16px;
 `;
 
-export const StyledButton = styled(Button)`
-	color: ${(props) => props.theme.colors.brightBlue};
+export const StyledButton = styled(Button)<{ blue: boolean }>`
+	color: ${(props) =>
+		props.blue ? props.theme.colors.brightBlue : props.theme.colors.brightOrange};
+	box-shadow: ${(props) =>
+		props.blue
+			? `0px 0px 10px rgba(0, 209, 255, 0.9)`
+			: `0px 0px 8.38542px rgba(252, 135, 56, 0.6);`};
+	border: ${(props) =>
+		props.blue
+			? `1px solid ${props.theme.colors.brightBlue}`
+			: `1px solid ${props.theme.colors.brightOrange}`};
 	box-sizing: border-box;
-	box-shadow: 0px 0px 10px rgba(0, 209, 255, 0.9);
-	border: ${(props) => `1px solid ${props.theme.colors.brightBlue}`};
 	font-size: 16px;
 	font-family: ${(props) => props.theme.fonts.condensedBold};
 	width: 25%;
@@ -87,10 +95,13 @@ export const RowValue = styled.p`
 	text-transform: uppercase;
 	margin: 0px 8px;
 `;
-export const StyledCTA = styled(Button)`
+export const StyledCTA = styled(Button)<{ blue: boolean }>`
 	font-size: 14px;
 	font-family: ${(props) => props.theme.fonts.condensedMedium};
-	box-shadow: 0px 0px 10px rgba(0, 209, 255, 0.6);
+	box-shadow: ${(props) =>
+		props.blue
+			? `0px 0px 10px rgba(0, 209, 255, 0.9)`
+			: `0px 0px 8.38542px rgba(252, 135, 56, 0.6);`};
 	border-radius: 4px;
 	width: 100%;
 	text-transform: uppercase;
