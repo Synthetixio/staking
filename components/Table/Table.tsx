@@ -240,15 +240,11 @@ const ReactTable = styled.div<{ palette: TablePalette }>`
 
 // @ts-ignore
 const StyledSortDownIcon = styled(Svg)`
-	width: 5px;
-	height: 5px;
 	color: ${(props) => props.theme.colors.blueberry};
 `;
 
 // @ts-ignore
 const StyledSortUpIcon = styled(Svg)`
-	width: 5px;
-	height: 5px;
 	color: ${(props) => props.theme.colors.blueberry};
 `;
 

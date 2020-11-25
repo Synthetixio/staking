@@ -11,7 +11,6 @@ import { isWalletConnectedState } from 'store/wallet';
 import { WelcomeLayout, LayoutOne } from './Layouts';
 
 const PossibleActions: FC = () => {
-	const { t } = useTranslation();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 
 	return (

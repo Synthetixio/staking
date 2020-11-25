@@ -3,12 +3,13 @@ import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 
 import StatBox from 'components/StatBox';
-import { StatsSection, FlexDivColCentered } from 'styles/common';
+import { StatsSection, LineSpacer } from 'styles/common';
 
-import { EscrowTable } from 'sections/escrow';
 import AppLayout from 'sections/shared/Layout/AppLayout';
 import useEscrowDataQuery from 'queries/escrow/useEscrowDataQuery';
 import { formatCryptoCurrency } from '../utils/formatters/number';
+
+import Main from 'sections/escrow/index';
 
 const SNX_HEADER_DECIMALS = 2;
 
@@ -45,9 +46,8 @@ const EscrowPage = () => {
 						})}
 					/>
 				</StatsSection>
-				<InnerContainer>
-					<EscrowTable data={escrowData?.schedule ?? []} isLoaded={!escrowDataQuery.isLoading} />
-				</InnerContainer>
+				<LineSpacer />
+				<Main />
 			</AppLayout>
 		</>
 	);
@@ -73,10 +73,6 @@ const Escrowed = styled(StatBox)`
 	.title {
 		color: ${(props) => props.theme.colors.brightGreen};
 	}
-`;
-
-const InnerContainer = styled(FlexDivColCentered)`
-	padding: 20px;
 `;
 
 export default EscrowPage;

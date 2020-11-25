@@ -42,6 +42,7 @@ const Title = styled.span`
 	font-family: ${(props) => props.theme.fonts.interBold};
 	font-size: 12px;
 	padding-bottom: 5px;
+	text-transform: uppercase;
 `;
 
 const Value = styled.span`

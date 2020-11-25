@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { Dispatch, SetStateAction, useMemo } from 'react';
 import { Svg } from 'react-optimized-image';
 import { useTranslation } from 'react-i18next';
 
@@ -18,7 +18,7 @@ interface ActionBoxProps {
 	setAmountToStake: (amount: string) => void;
 	amountToBurn: string;
 	setAmountToBurn: (amount: string) => void;
-	setPanelType: (type: StakingPanelType) => void;
+	setPanelType: Dispatch<SetStateAction<any>>;
 }
 
 const ActionBox: React.FC<ActionBoxProps> = ({
@@ -52,6 +52,7 @@ const ActionBox: React.FC<ActionBoxProps> = ({
 						SNXRate={SNXRate}
 					/>
 				),
+				key: StakingPanelType.MINT,
 			},
 			{
 				title: t('staking.actions.burn.title'),
@@ -67,6 +68,7 @@ const ActionBox: React.FC<ActionBoxProps> = ({
 						SNXRate={SNXRate}
 					/>
 				),
+				key: StakingPanelType.BURN,
 			},
 		],
 		[

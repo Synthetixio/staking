@@ -197,7 +197,24 @@
 		}
 	},
 	"escrow": {
-		"page-title": "Staking | Escrow"
+		"page-title": "Staking | Escrow",
+		"info": {
+			"title": "Vest your SNX staking rewards in escrow",
+			"subtitle": "If you have staked your SNX and minted sUSD, you are eligible to receive SNX staking rewards, which will be escrowed here which you can vest in 12 months from the claim date. <0>Learn more.<0>"
+		},
+		"table": {
+			"no-results": "No escrowed SNX",
+			"vesting-date": "Vesting Date",
+			"snx-amount": "SNX"
+		},
+		"actions": {
+			"staking": {
+				"title": "Staking Rewards"
+			},
+			"ico": {
+				"title": "Token Sale"
+			}
+		}
 	},
 	"history": {
 		"page-title": "Staking | History"
@@ -239,17 +256,17 @@
 			"disconnect-wallet": "disconnect wallet"
 		},
 		"stat-box": {
-			"staked-value": "STAKED VALUE",
-			"earning": "EARNING",
-			"active-debt": "ACTIVE-DEBT",
-			"c-ratio": "C-RATIO",
-			"synth-value": "TOTAL SYNTH VALUE",
-			"tx-count": "TOTAL TRANSACTIONS",
-			"upcoming-rewards": "EST. UPCOMING REWARDS",
-			"lifetime-rewards": "LIFETIME REWARDS",
-			"available-snx": "AVAILABLE SNX",
-			"vested-snx": "VESTED SNX",
-			"escrowed-snx": "ESCROWED SNX"
+			"staked-value": "Staked value",
+			"earning": "Earning",
+			"active-debt": "Active-debt",
+			"c-ratio": "c-ratio",
+			"synth-value": "Total synth value",
+			"tx-count": "Total transactions",
+			"upcoming-rewards": "EST. Upcoming rewards",
+			"lifetime-rewards": "Lifetime rewards",
+			"available-snx": "Total available SNX",
+			"vested-snx": "Total SNX vested",
+			"escrowed-snx": "Total SNX escrowed"
 		},
 		"status": {
 			"claimed": "Claimed",
