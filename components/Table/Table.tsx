@@ -1,7 +1,7 @@
 import React, { FC, useMemo, DependencyList } from 'react';
 import styled, { css } from 'styled-components';
 import { useTable, useFlexLayout, useSortBy, Column, Row, usePagination, Cell } from 'react-table';
-import { Svg } from 'react-optimized-image';
+import Img, { Svg } from 'react-optimized-image';
 
 import SortDownIcon from 'assets/svg/app/caret-down.svg';
 import SortUpIcon from 'assets/svg/app/caret-up.svg';
@@ -240,15 +240,11 @@ const ReactTable = styled.div<{ palette: TablePalette }>`
 
 // @ts-ignore
 const StyledSortDownIcon = styled(Svg)`
-	width: 5px;
-	height: 5px;
 	color: ${(props) => props.theme.colors.blueberry};
 `;
 
 // @ts-ignore
 const StyledSortUpIcon = styled(Svg)`
-	width: 5px;
-	height: 5px;
 	color: ${(props) => props.theme.colors.blueberry};
 `;
 

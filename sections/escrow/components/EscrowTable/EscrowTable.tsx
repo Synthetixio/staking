@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import styled from 'styled-components';
 import { Svg } from 'react-optimized-image';
@@ -13,7 +13,7 @@ import { formatCurrency } from 'utils/formatters/number';
 
 import { EscrowData } from 'queries/escrow/useEscrowDataQuery';
 
-import { GridDivCenteredRow } from 'styles/common';
+import { GridDivCenteredRow, linkCSS } from 'styles/common';
 import { CRYPTO_CURRENCY_MAP } from 'constants/currency';
 
 interface EscrowTableProps {
@@ -25,27 +25,31 @@ const EscrowTable: FC<EscrowTableProps> = ({ data, isLoaded }) => {
 	const { t } = useTranslation();
 
 	return (
-		<>
+		<Container>
+			<Title>{t('escrow.info.title')}</Title>
+			<Subtitle>
+				<Trans i18nKey="escrow.info.subtitle" components={[<StyledLink />]} />
+			</Subtitle>
 			<StyledTable
 				palette="primary"
 				columns={[
 					{
-						Header: 'date',
+						Header: <Header>{t('escrow.table.vesting-date')}</Header>,
 						accessor: 'date',
 						Cell: (cellProps: CellProps<EscrowData['schedule'], Date>) => (
-							<div>{formatShortDate(cellProps.value)}</div>
+							<Data>{formatShortDate(cellProps.value)}</Data>
 						),
-						sortable: true,
-						width: 200,
+						width: 250,
+						sortable: false,
 					},
 					{
-						Header: 'quantity',
+						Header: <Header>{t('escrow.table.snx-amount')}</Header>,
 						accessor: 'quantity',
 						Cell: (cellProps: CellProps<EscrowData['schedule'], number>) => (
-							<div>{formatCurrency(CRYPTO_CURRENCY_MAP.SNX, cellProps.value)}</div>
+							<Data>{formatCurrency(CRYPTO_CURRENCY_MAP.SNX, cellProps.value)}</Data>
 						),
-						sortable: true,
-						width: 200,
+						width: 250,
+						sortable: false,
 					},
 				]}
 				data={data}
@@ -55,15 +59,20 @@ const EscrowTable: FC<EscrowTableProps> = ({ data, isLoaded }) => {
 					isLoaded && data.length === 0 ? (
 						<TableNoResults>
 							<Svg src={NoNotificationIcon} />
-							{t('synths.synths.table.no-results')}
+							{t('escrow.table.no-results')}
 						</TableNoResults>
 					) : undefined
 				}
 				showPagination={true}
 			/>
-		</>
+		</Container>
 	);
 };
+
+const Container = styled.div`
+	background: ${(props) => props.theme.colors.mediumBlue};
+	padding: 16px;
+`;
 
 const StyledTable = styled(Table)`
 	margin-top: 16px;
@@ -76,6 +85,31 @@ const TableNoResults = styled(GridDivCenteredRow)`
 	margin-top: -2px;
 	justify-items: center;
 	grid-gap: 10px;
+`;
+
+const Title = styled.p`
+	font-family: ${(props) => props.theme.fonts.expanded};
+	color: ${(props) => props.theme.colors.white};
+	font-size: 12px;
+`;
+const Subtitle = styled.p`
+	font-family: ${(props) => props.theme.fonts.regular};
+	color: ${(props) => props.theme.colors.gray10};
+	font-size: 14px;
+`;
+const StyledLink = styled.span`
+	${linkCSS}
+	color: ${(props) => props.theme.colors.brightBlue};
+`;
+const Header = styled.span`
+	font-family: ${(props) => props.theme.fonts.interBold};
+	font-size: 12px;
+	color: ${(props) => props.theme.colors.gray10};
+`;
+const Data = styled.span`
+	font-family: ${(props) => props.theme.fonts.interBold};
+	font-size: 12px;
+	color: ${(props) => props.theme.colors.white};
 `;
 
 export default EscrowTable;
