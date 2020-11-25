@@ -206,6 +206,14 @@
 			"no-results": "No escrowed SNX",
 			"vesting-date": "Vesting Date",
 			"snx-amount": "SNX"
+		},
+		"actions": {
+			"staking": {
+				"title": "Staking Rewards"
+			},
+			"ico": {
+				"title": "Token Sale"
+			}
 		}
 	},
 	"history": {
