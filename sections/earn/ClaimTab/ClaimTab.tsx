@@ -3,8 +3,7 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import ClaimedTag from 'components/ClaimedTag';
-import { TabContainer } from '../common';
-import { ErrorMessage, FlexDivRowCentered } from 'styles/common';
+import { ErrorMessage, FlexDivRowCentered, FlexDivColCentered } from 'styles/common';
 import useClaimedStatus from 'sections/hooks/useClaimedStatus';
 import BigNumber from 'bignumber.js';
 import { formatCryptoCurrency, formatFiatCurrency } from 'utils/formatters/number';
@@ -135,6 +134,12 @@ const StyledButton = styled(Button)`
 	font-family: ${(props) => props.theme.fonts.condensedMedium};
 	width: 100%;
 	text-transform: uppercase;
+`;
+
+export const TabContainer = styled(FlexDivColCentered)`
+	height: 100%;
+	justify-content: space-evenly;
+	padding: 24px;
 `;
 
 export default ClaimTab;

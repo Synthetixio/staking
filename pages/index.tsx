@@ -44,7 +44,7 @@ const DashboardPage = () => {
 
 	// TODO: replace with useMemo
 	const weeklyRewards = sUSDRate * feesToDistribute + SNXRate * rewardsToDistribute;
-	const stakingApy = (weeklyRewards * (activeDebt / totalsUSDDebt) * 52) / (stakedValue * SNXRate);
+	const stakingApy = (weeklyRewards * (activeDebt / totalsUSDDebt) * 52) / stakedValue;
 
 	return (
 		<>
