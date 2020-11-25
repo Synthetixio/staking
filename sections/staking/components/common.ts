@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { FlexDivColCentered, FlexDivRow, FlexDivRowCentered, linkCSS } from 'styles/common';
+import { FlexDivColCentered, FlexDivRowCentered, linkCSS } from 'styles/common';
 import Button from 'components/Button';
 import Input from 'components/Input/Input';
 import Select from 'components/Select';

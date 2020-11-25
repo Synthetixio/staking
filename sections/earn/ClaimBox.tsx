@@ -34,6 +34,7 @@ const ClaimBox: React.FC<ClaimBoxProps> = ({
 						refetch={refetch}
 					/>
 				),
+				key: '',
 			},
 		],
 		[t, stakingRewards, tradingRewards, totalRewards, refetch]

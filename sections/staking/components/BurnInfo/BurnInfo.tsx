@@ -103,6 +103,7 @@ const BurnInfo: React.FC<BurnInfoProps> = ({
 			SNXRate,
 			additionalDebt,
 			totalEscrowBalance,
+			unlockedStakeAmount,
 			t,
 		]
 	);

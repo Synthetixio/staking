@@ -26,7 +26,7 @@ const ActionBox: React.FC<ActionBoxProps> = ({ canVestAmount, setPanelType, isLo
 				key: EscrowPanelType.ICO,
 			},
 		],
-		[t]
+		[t, canVestAmount]
 	);
 
 	return (

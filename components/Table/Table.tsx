@@ -1,7 +1,7 @@
 import React, { FC, useMemo, DependencyList } from 'react';
 import styled, { css } from 'styled-components';
 import { useTable, useFlexLayout, useSortBy, Column, Row, usePagination, Cell } from 'react-table';
-import Img, { Svg } from 'react-optimized-image';
+import { Svg } from 'react-optimized-image';
 
 import SortDownIcon from 'assets/svg/app/caret-down.svg';
 import SortUpIcon from 'assets/svg/app/caret-up.svg';
