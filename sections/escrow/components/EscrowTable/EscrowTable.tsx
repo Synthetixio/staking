@@ -43,10 +43,12 @@ const EscrowTable: FC<EscrowTableProps> = ({ data, isLoaded }) => {
 						sortable: false,
 					},
 					{
-						Header: <Header>{t('escrow.table.snx-amount')}</Header>,
+						Header: <Header style={{ textAlign: 'right' }}>{t('escrow.table.snx-amount')}</Header>,
 						accessor: 'quantity',
 						Cell: (cellProps: CellProps<EscrowData['schedule'], number>) => (
-							<Data>{formatCurrency(CRYPTO_CURRENCY_MAP.SNX, cellProps.value)}</Data>
+							<Data style={{ textAlign: 'right' }}>
+								{formatCurrency(CRYPTO_CURRENCY_MAP.SNX, cellProps.value)}
+							</Data>
 						),
 						width: 250,
 						sortable: false,
@@ -105,11 +107,13 @@ const Header = styled.span`
 	font-family: ${(props) => props.theme.fonts.interBold};
 	font-size: 12px;
 	color: ${(props) => props.theme.colors.gray10};
+	width: 50%;
 `;
 const Data = styled.span`
 	font-family: ${(props) => props.theme.fonts.interBold};
 	font-size: 12px;
 	color: ${(props) => props.theme.colors.white};
+	width: 50%;
 `;
 
 export default EscrowTable;
