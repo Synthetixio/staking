@@ -169,13 +169,13 @@
 	"earn": {
 		"page-title": "Staking | Earn",
 		"incentives": {
-			"title": "Additional ways to EARN",
-			"subtitle": "Mint sUSD by staking your SNX. This gives you a Collateralization Ratio and a debt, allowing you to earn weekly staking rewards. <0>Learn more.</0>",
 			"est-apr": "Est APR",
 			"options": {
+				"staking": "{{asset}} Staking Rewards",
 				"curve": "Curve Finance sUSD LP  Token Rewards",
 				"ieth": "iETH Rewards"
-			}
+			},
+			"weekly-rewards": "Weekly rewards {{weeklyRewards}} {{asset}}"
 		},
 		"actions": {
 			"claim": {
@@ -184,6 +184,11 @@
 				"staking-rewards": "SNX staking rewards",
 				"claim-button": "Claim {{totalValue}}",
 				"claimed-button": "Already claimed"
+			},
+			"lp": {
+				"title-curve": "CURVE REWARDS",
+				"title-ieth": "iETH REWARDS",
+				"title-ibtc": "iBTC REWARDS"
 			},
 			"stake": {
 				"title": "STAKE"

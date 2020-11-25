@@ -2,11 +2,10 @@ import Head from 'next/head';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { Column, StatsSection, Row, LineSpacer } from 'styles/common';
+import { StatsSection, LineSpacer } from 'styles/common';
 
 import AppLayout from 'sections/shared/Layout/AppLayout';
-import ClaimBox from 'sections/earn/ClaimBox';
-import Incentives from 'sections/earn/Incentives';
+import { Incentives } from 'sections/earn';
 import StatBox from 'components/StatBox';
 
 import { formatFiatCurrency, formatPercent, toBigNumber } from 'utils/formatters/number';
@@ -41,7 +40,7 @@ const Earn = () => {
 
 	const stakedValue = collateral * Math.min(1, currentCRatio / targetCRatio) * SNXRate;
 	const weeklyRewards = sUSDRate * feesToDistribute + SNXRate * rewardsToDistribute;
-	const stakingApy = (weeklyRewards * (activeDebt / totalsUSDDebt) * 52) / (stakedValue * SNXRate);
+	const stakingApy = (weeklyRewards * (activeDebt / totalsUSDDebt) * 52) / stakedValue;
 
 	const availableRewards = useClaimableRewards();
 
@@ -92,19 +91,12 @@ const Earn = () => {
 					/>
 				</StatsSection>
 				<LineSpacer />
-				<Row>
-					<Column>
-						<Incentives />
-					</Column>
-					<Column>
-						<ClaimBox
-							refetch={refetch}
-							tradingRewards={tradingRewards}
-							stakingRewards={stakingRewards}
-							totalRewards={totalRewards}
-						/>
-					</Column>
-				</Row>
+				<Incentives
+					refetch={refetch}
+					tradingRewards={tradingRewards}
+					stakingRewards={stakingRewards}
+					totalRewards={totalRewards}
+				/>
 			</AppLayout>
 		</>
 	);
