@@ -20,7 +20,7 @@ import { formatCurrency } from 'utils/formatters/number';
 import NumericInput from 'components/Input/NumericInput';
 import Button from 'components/Button';
 import { useTranslation } from 'react-i18next';
-import { FlexDivCol, FlexDivRowCentered, NumericValue } from 'styles/common';
+import { FlexDivCol, FlexDivRow, FlexDivRowCentered, NumericValue } from 'styles/common';
 
 interface GasSelectorProps {
 	gasLimitEstimate: number | null;
@@ -84,21 +84,20 @@ const GasSelector: React.FC<GasSelectorProps> = ({ gasLimitEstimate, setGasPrice
 	return (
 		<Container {...rest}>
 			<GasPriceHeader>{t('common.gas-header')}</GasPriceHeader>
-
 			<GasPriceContainer>
 				{transactionFee != null ? (
 					<GasPriceCostTooltip
 						content={
-							<span>
+							<GasPriceText>
 								{formatCurrency(selectedPriceCurrency.name, transactionFee, {
 									sign: selectedPriceCurrency.sign,
 								})}
-							</span>
+							</GasPriceText>
 						}
 						arrow={false}
 					>
 						<GasPriceItem>
-							{gasPriceItem}
+							<GasPriceText>{gasPriceItem}</GasPriceText>
 							<Svg src={InfoIcon} />
 						</GasPriceItem>
 					</GasPriceCostTooltip>
@@ -120,14 +119,14 @@ const GasSelector: React.FC<GasSelectorProps> = ({ gasLimitEstimate, setGasPrice
 							{GAS_SPEEDS.map((speed) => (
 								<StyedGasButton
 									key={speed}
-									variant="alt"
+									variant="outline"
 									onClick={() => {
 										setCustomGasPrice('');
 										setGasSpeed(speed);
 									}}
 									isActive={hasCustomGasPrice ? false : gasSpeed === speed}
 								>
-									<span>{t(`common.gas-prices.${speed}`)}</span>
+									<GasPriceText>{t(`common.gas-prices.${speed}`)}</GasPriceText>
 									<NumericValue>{gasPrices![speed]}</NumericValue>
 								</StyedGasButton>
 							))}
@@ -144,13 +143,24 @@ const GasSelector: React.FC<GasSelectorProps> = ({ gasLimitEstimate, setGasPrice
 
 export default GasSelector;
 
-const Container = styled(FlexDivCol)``;
+const Container = styled(FlexDivRow)`
+	width: 100%;
+	justify-content: space-between;
+`;
 
 const GasPriceContainer = styled(FlexDivRowCentered)``;
 
 const GasPriceHeader = styled.p`
-	font-family: ${(props) => props.theme.fonts.interSemiBold};
+	font-family: ${(props) => props.theme.fonts.interBold};
 	font-size: 12px;
+	color: ${(props) => props.theme.colors.gray10};
+	text-transform: uppercase;
+`;
+
+const GasPriceText = styled.span`
+	font-family: ${(props) => props.theme.fonts.interBold};
+	font-size: 12px;
+	color: ${(props) => props.theme.colors.white};
 `;
 
 const GasPriceTooltip = styled(Tippy)`
@@ -196,6 +206,7 @@ const StyedGasButton = styled(Button)`
 	justify-content: space-between;
 	padding-left: 10px;
 	padding-right: 10px;
+	font-size: 12px;
 `;
 
 const GasPriceItem = styled.span`

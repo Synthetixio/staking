@@ -26,6 +26,9 @@
 				"from": "Unstaking",
 				"to": "Burning"
 			},
+			"vesting": {
+				"title": "Vesting"
+			},
 			"helper": "Follow the Metamask prompts to authorize the transaction"
 		},
 		"wallet": {
@@ -218,6 +221,20 @@
 			},
 			"ico": {
 				"title": "Token Sale"
+			},
+			"vest-button": "Vest {{canVestAmount}}",
+			"disabled": "Vesting unavailable",
+			"in-progress": {
+				"title": "Vesting in progress",
+				"vesting": "Vesting",
+				"subtext": "Waiting for the blockchain to confirm your transaction",
+				"etherscan": "View on Etherscan"
+			},
+			"completed": {
+				"title": "Vesting complete",
+				"vested": "Vested",
+				"verify": "Verify Tx",
+				"dismiss": "Dimiss"
 			}
 		}
 	},

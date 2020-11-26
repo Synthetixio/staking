@@ -27,6 +27,7 @@ import {
 } from '../common';
 import { getMintAmount } from '../helper';
 import { ActionInProgress, ActionCompleted } from '../TxSent';
+import { ModalContent, ModalItem, ModalItemTitle, ModalItemText } from 'styles/common';
 
 type MintTabProps = {
 	amountToStake: string;
@@ -192,10 +193,32 @@ const MintTab: FC<MintTabProps> = ({
 					onDismiss={() => setTxModalOpen(false)}
 					txError={stakingTxError}
 					attemptRetry={handleStake}
-					baseCurrencyAmount={amountToStake}
-					quoteCurrencyAmount={getMintAmount(targetCRatio, amountToStake, SNXRate).toString()}
-					baseCurrencyKey={stakingCurrencyKey!}
-					quoteCurrencyKey={synthCurrencyKey!}
+					content={
+						<ModalContent>
+							<ModalItem>
+								<ModalItemTitle>{t('modals.confirm-transaction.staking.from')}</ModalItemTitle>
+								<ModalItemText>
+									{formatCurrency(stakingCurrencyKey, amountToStake, {
+										currencyKey: stakingCurrencyKey,
+										decimals: 4,
+									})}
+								</ModalItemText>
+							</ModalItem>
+							<ModalItem>
+								<ModalItemTitle>{t('modals.confirm-transaction.staking.to')}</ModalItemTitle>
+								<ModalItemText>
+									{formatCurrency(
+										synthCurrencyKey,
+										getMintAmount(targetCRatio, amountToStake, SNXRate).toString(),
+										{
+											currencyKey: synthCurrencyKey,
+											decimals: 4,
+										}
+									)}
+								</ModalItemText>
+							</ModalItem>
+						</ModalContent>
+					}
 				/>
 			)}
 		</>
