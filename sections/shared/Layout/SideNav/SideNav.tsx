@@ -107,7 +107,7 @@ const SideNavContainer = styled.div`
 	position: fixed;
 	top: 0;
 	left: 0;
-	background: ${(props) => props.theme.colors.darkGradient1};
+	background: ${(props) => props.theme.colors.darkGradient1Flipped};
 	border-right: 1px solid ${(props) => props.theme.colors.linedBlue};
 	display: grid;
 	grid-template-rows: auto 1fr auto;
