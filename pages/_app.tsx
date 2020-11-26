@@ -9,6 +9,7 @@ import WithAppContainers from 'containers';
 import theme from 'styles/theme';
 
 import Layout from 'sections/shared/Layout';
+import AppLayout from 'sections/shared/Layout/AppLayout';
 import { MediaContextProvider } from 'styles/media';
 import { QueryCache, ReactQueryCacheProvider } from 'react-query';
 import { DEFAULT_REQUEST_REFRESH_INTERVAL } from 'constants/defaults';
@@ -61,7 +62,9 @@ const App: FC<AppProps> = ({ Component, pageProps }) => {
 							<ReactQueryCacheProvider queryCache={queryCache}>
 								<Layout>
 									<SystemStatus>
-										<Component {...pageProps} />
+										<AppLayout>
+											<Component {...pageProps} />
+										</AppLayout>
 									</SystemStatus>
 								</Layout>
 								<ReactQueryDevtools />

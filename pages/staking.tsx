@@ -3,8 +3,6 @@ import Head from 'next/head';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-import AppLayout from 'sections/shared/Layout/AppLayout';
-
 import Main from 'sections/staking';
 import StatBox from 'components/StatBox';
 import { LineSpacer, StatsSection } from 'styles/common';
@@ -26,25 +24,23 @@ const StakingPage = () => {
 			<Head>
 				<title>{t('staking.page-title')}</title>
 			</Head>
-			<AppLayout>
-				<StatsSection>
-					<StakedValue
-						title={t('common.stat-box.staked-value')}
-						value={formatFiatCurrency(stakedCollateralValue, { sign: '$' })}
-					/>
-					<CRatio
-						title={t('common.stat-box.c-ratio')}
-						value={formatPercent(currentCRatio ? 1 / currentCRatio : 0)}
-						size="lg"
-					/>
-					<ActiveDebt
-						title={t('common.stat-box.active-debt')}
-						value={formatFiatCurrency(debtBalance, { sign: '$' })}
-					/>
-				</StatsSection>
-				<LineSpacer />
-				<Main />
-			</AppLayout>
+			<StatsSection>
+				<StakedValue
+					title={t('common.stat-box.staked-value')}
+					value={formatFiatCurrency(stakedCollateralValue, { sign: '$' })}
+				/>
+				<CRatio
+					title={t('common.stat-box.c-ratio')}
+					value={formatPercent(currentCRatio ? 1 / currentCRatio : 0)}
+					size="lg"
+				/>
+				<ActiveDebt
+					title={t('common.stat-box.active-debt')}
+					value={formatFiatCurrency(debtBalance, { sign: '$' })}
+				/>
+			</StatsSection>
+			<LineSpacer />
+			<Main />
 		</>
 	);
 };

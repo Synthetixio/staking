@@ -6,7 +6,6 @@ import { useTranslation } from 'react-i18next';
 
 import { FlexDivCol, LineSpacer, StatsSection } from 'styles/common';
 import { PossibleActions } from 'sections/dashboard';
-import AppLayout from 'sections/shared/Layout/AppLayout';
 
 import useGetDebtDataQuery from 'queries/debt/useGetDebtDataQuery';
 import useGetFeePoolDataQuery from 'queries/staking/useGetFeePoolDataQuery';
@@ -51,27 +50,25 @@ const DashboardPage = () => {
 			<Head>
 				<title>{t('dashboard.page-title')}</title>
 			</Head>
-			<AppLayout>
-				<Content>
-					<StatsSection>
-						<StakedValue
-							title={t('common.stat-box.staked-value')}
-							value={formatFiatCurrency(stakedValue ? stakedValue : 0, { sign: '$' })}
-						/>
-						<APY
-							title={t('common.stat-box.earning')}
-							value={formatPercent(stakingApy ? stakingApy : 0)}
-							size="lg"
-						/>
-						<ActiveDebt
-							title={t('common.stat-box.active-debt')}
-							value={formatFiatCurrency(activeDebt ? activeDebt : 0, { sign: '$' })}
-						/>
-					</StatsSection>
-					<LineSpacer />
-					<PossibleActions />
-				</Content>
-			</AppLayout>
+			<Content>
+				<StatsSection>
+					<StakedValue
+						title={t('common.stat-box.staked-value')}
+						value={formatFiatCurrency(stakedValue ? stakedValue : 0, { sign: '$' })}
+					/>
+					<APY
+						title={t('common.stat-box.earning')}
+						value={formatPercent(stakingApy ? stakingApy : 0)}
+						size="lg"
+					/>
+					<ActiveDebt
+						title={t('common.stat-box.active-debt')}
+						value={formatFiatCurrency(activeDebt ? activeDebt : 0, { sign: '$' })}
+					/>
+				</StatsSection>
+				<LineSpacer />
+				<PossibleActions />
+			</Content>
 		</>
 	);
 };

@@ -2,8 +2,6 @@ import Head from 'next/head';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-import AppLayout from 'sections/shared/Layout/AppLayout';
-
 import { StatsSection, LineSpacer } from 'styles/common';
 
 import TransactionsContainer from 'sections/history/TransactionsContainer';
@@ -20,18 +18,16 @@ const HistoryPage = () => {
 			<Head>
 				<title>{t('history.page-title')}</title>
 			</Head>
-			<AppLayout>
-				<StatsSection>
-					<TxCount title={t('common.stat-box.tx-count')} value={txCount} size="lg" />
-				</StatsSection>
-				<LineSpacer />
-				<TransactionsContainer
-					burned={burned}
-					issued={issued}
-					feesClaimed={feesClaimed}
-					isLoaded={isLoaded}
-				/>
-			</AppLayout>
+			<StatsSection>
+				<TxCount title={t('common.stat-box.tx-count')} value={txCount} size="lg" />
+			</StatsSection>
+			<LineSpacer />
+			<TransactionsContainer
+				burned={burned}
+				issued={issued}
+				feesClaimed={feesClaimed}
+				isLoaded={isLoaded}
+			/>
 		</>
 	);
 };

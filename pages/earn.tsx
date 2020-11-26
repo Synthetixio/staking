@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { StatsSection, LineSpacer } from 'styles/common';
 
-import AppLayout from 'sections/shared/Layout/AppLayout';
 import { Incentives } from 'sections/earn';
 import StatBox from 'components/StatBox';
 
@@ -72,32 +71,30 @@ const Earn = () => {
 			<Head>
 				<title>{t('earn.page-title')}</title>
 			</Head>
-			<AppLayout>
-				<StatsSection>
-					<UpcomingRewards
-						title={t('common.stat-box.upcoming-rewards')}
-						value={formatFiatCurrency(totalRewards, {
-							sign: '$',
-						})}
-					/>
-					<APY
-						title={t('common.stat-box.earning')}
-						value={formatPercent(stakingApy ? stakingApy : 0)}
-						size="lg"
-					/>
-					<LifetimeRewards
-						title={t('common.stat-box.lifetime-rewards')}
-						value={formatFiatCurrency(totalFees ? totalFees : 0, { sign: '$' })}
-					/>
-				</StatsSection>
-				<LineSpacer />
-				<Incentives
-					refetch={refetch}
-					tradingRewards={tradingRewards}
-					stakingRewards={stakingRewards}
-					totalRewards={totalRewards}
+			<StatsSection>
+				<UpcomingRewards
+					title={t('common.stat-box.upcoming-rewards')}
+					value={formatFiatCurrency(totalRewards, {
+						sign: '$',
+					})}
 				/>
-			</AppLayout>
+				<APY
+					title={t('common.stat-box.earning')}
+					value={formatPercent(stakingApy ? stakingApy : 0)}
+					size="lg"
+				/>
+				<LifetimeRewards
+					title={t('common.stat-box.lifetime-rewards')}
+					value={formatFiatCurrency(totalFees ? totalFees : 0, { sign: '$' })}
+				/>
+			</StatsSection>
+			<LineSpacer />
+			<Incentives
+				refetch={refetch}
+				tradingRewards={tradingRewards}
+				stakingRewards={stakingRewards}
+				totalRewards={totalRewards}
+			/>
 		</>
 	);
 };
