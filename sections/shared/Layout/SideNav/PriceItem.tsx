@@ -58,7 +58,7 @@ const PriceItem: FC<PriceItemProps> = ({ currencyKey, data }) => {
 					<div>{NO_VALUE}</div>
 				)}
 			</PriceInfo>
-			<LineChart data={data} trendLinePositive={trendLinePositive} />
+			<LineChart data={data} trendLinePositive={trendLinePositive} currencyKey={currencyKey} />
 		</Container>
 	);
 };
