@@ -81,16 +81,8 @@ const SideNav: FC = () => {
 			</MenuLinks>
 			<MenuCharts>
 				<CRatioBarStats currentCRatio={currentCRatio} targetCRatio={targetCRatio} />
-				<PriceItem
-					key={CRYPTO_CURRENCY_MAP.SNX}
-					currencyKey={CRYPTO_CURRENCY_MAP.SNX}
-					data={snxPriceChartData}
-				/>
-				<PriceItem
-					key={CRYPTO_CURRENCY_MAP.ETH}
-					currencyKey={CRYPTO_CURRENCY_MAP.ETH}
-					data={ethPriceChartData}
-				/>
+				<PriceItem currencyKey={CRYPTO_CURRENCY_MAP.SNX} data={snxPriceChartData} />
+				<PriceItem currencyKey={CRYPTO_CURRENCY_MAP.ETH} data={ethPriceChartData} />
 				<PeriodBarStats
 					nextFeePeriodStarts={nextFeePeriodStarts}
 					currentFeePeriodProgress={currentFeePeriodProgress}

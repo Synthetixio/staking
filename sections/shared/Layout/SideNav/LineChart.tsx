@@ -1,3 +1,4 @@
+import { CurrencyKey } from 'constants/currency';
 import { FC, useContext } from 'react';
 import { AreaChart as RechartsAreaChart, Area } from 'recharts';
 import { ThemeContext } from 'styled-components';
@@ -7,13 +8,14 @@ export type LineChartData = Array<{ value: number }>;
 type AreaChartProps = {
 	data: LineChartData;
 	trendLinePositive: boolean;
+	currencyKey: CurrencyKey;
 };
 
-const AreaChart: FC<AreaChartProps> = ({ data, trendLinePositive }) => {
+const AreaChart: FC<AreaChartProps> = ({ data, trendLinePositive, currencyKey }) => {
 	const { colors } = useContext(ThemeContext);
 
 	return (
-		<RechartsAreaChart width={120} height={40} data={data}>
+		<RechartsAreaChart width={120} height={40} data={data} id={`line-price-chart-${currencyKey}`}>
 			<defs>
 				<linearGradient id="colorGreen" x1="0" y1="0" x2="0" y2="1">
 					<stop offset="5%" stopColor={colors.brightGreen} stopOpacity={0.2} />
