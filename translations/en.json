@@ -222,7 +222,18 @@
 		}
 	},
 	"history": {
-		"page-title": "Staking | History"
+		"page-title": "Staking | History",
+		"table": {
+			"type": "type",
+			"amount": "amount",
+			"date": "date",
+			"view-tx": "view tx",
+			"staking-tx-type": {
+				"issued": "Minted",
+				"burned": "Burned",
+				"feesClaimed": "Claimed"
+			}
+		}
 	},
 	"synths": {
 		"page-title": "Staking | Synths",
@@ -295,7 +306,10 @@
 		},
 		"custom": "Custom",
 		"edit": "Edit",
-		"gas-header": "Gas Price (GWEI)"
+		"gas-header": "Gas Price (GWEI)",
+		"explorers": {
+			"etherscan": "etherscan"
+		}
 	},
 	"not-found": {
 		"page-title": "Not Found | Staking",

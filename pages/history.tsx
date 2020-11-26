@@ -5,13 +5,29 @@ import styled from 'styled-components';
 import { StatsSection, LineSpacer } from 'styles/common';
 
 import TransactionsContainer from 'sections/history/TransactionsContainer';
-import useHistoryTransactions from 'sections/history/hooks/useHistoryTransactions';
+
+import useFeeClaimHistoryQuery from 'queries/staking/useFeeClaimHistoryQuery';
+import useSynthBurnedQuery from 'queries/staking/useSynthBurnedQuery';
+import useSynthIssuedQuery from 'queries/staking/useSynthIssuedQuery';
 
 import StatBox from 'components/StatBox';
+import { useMemo } from 'react';
 
 const HistoryPage = () => {
 	const { t } = useTranslation();
-	const { txCount, burned, issued, feesClaimed, isLoaded } = useHistoryTransactions();
+	const issuedQuery = useSynthIssuedQuery();
+	const burnedQuery = useSynthBurnedQuery();
+	const feesClaimedQuery = useFeeClaimHistoryQuery();
+
+	const isLoaded = issuedQuery.isSuccess && burnedQuery.isSuccess && feesClaimedQuery.isSuccess;
+	const issued = issuedQuery.data ?? [];
+	const burned = burnedQuery.data ?? [];
+	const feesClaimed = feesClaimedQuery.data ?? [];
+
+	const txCount = useMemo(
+		() => (isLoaded ? issued.length + burned.length + feesClaimed.length : 0),
+		[isLoaded, issued.length, burned.length, feesClaimed.length]
+	);
 
 	return (
 		<>

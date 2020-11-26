@@ -4,8 +4,6 @@ export enum StakingTransactionType {
 	FeesClaimed = 'feesClaimed',
 }
 
-console.log(StakingTransactionType);
-
 export type HistoricalStakingTransaction = {
 	account: string;
 	block: number;
