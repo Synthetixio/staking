@@ -103,14 +103,26 @@ export const Table: FC<TableProps> = ({
 										<SortIconContainer>
 											{column.isSorted ? (
 												column.isSortedDesc ? (
-													<StyledSortDownIcon src={SortDownIcon} />
+													<StyledSortIcon
+														src={SortDownIcon}
+														viewBox={`0 0 ${SortDownIcon.width} ${SortDownIcon.height}`}
+													/>
 												) : (
-													<StyledSortUpIcon src={SortUpIcon} />
+													<StyledSortIcon
+														src={SortUpIcon}
+														viewBox={`0 0 ${SortUpIcon.width} ${SortUpIcon.height}`}
+													/>
 												)
 											) : (
 												<>
-													<StyledSortUpIcon src={SortUpIcon} />
-													<StyledSortDownIcon src={SortDownIcon} />
+													<StyledSortIcon
+														src={SortUpIcon}
+														viewBox={`0 0 ${SortUpIcon.width} ${SortUpIcon.height}`}
+													/>
+													<StyledSortIcon
+														src={SortDownIcon}
+														viewBox={`0 0 ${SortDownIcon.width} ${SortDownIcon.height}`}
+													/>
 												</>
 											)}
 										</SortIconContainer>
@@ -222,13 +234,13 @@ const ReactTable = styled.div<{ palette: TablePalette }>`
 			}
 			${TableRow} {
 				background-color: ${(props) => props.theme.colors.mediumBlue};
-				margin-bottom: 2px;
+				border-bottom: 1px solid ${(props) => props.theme.colors.linedBlue};
 			}
 			${TableCellHead} {
 				color: ${(props) => props.theme.colors.white};
 				background-color: ${(props) => props.theme.colors.mediumBlue};
 				font-family: ${(props) => props.theme.fonts.condensedBold};
-				color: ${(props) => props.theme.colors.borderSilver};
+				color: ${(props) => props.theme.colors.gray10};
 				text-transform: uppercase;
 				font-size: 12px;
 			}
@@ -238,14 +250,10 @@ const ReactTable = styled.div<{ palette: TablePalette }>`
 		`}
 `;
 
-// @ts-ignore
-const StyledSortDownIcon = styled(Svg)`
-	color: ${(props) => props.theme.colors.blueberry};
-`;
-
-// @ts-ignore
-const StyledSortUpIcon = styled(Svg)`
-	color: ${(props) => props.theme.colors.blueberry};
+const StyledSortIcon = styled(Svg)`
+	width: 5px;
+	height: 5px;
+	color: ${(props) => props.theme.colors.gray10};
 `;
 
 export default Table;

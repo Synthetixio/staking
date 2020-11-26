@@ -64,23 +64,26 @@ const PageInfo = styled.span`
 const PaginationContainer = styled(GridDivCenteredCol)`
 	grid-template-columns: auto 1fr auto;
 	background-color: ${(props) => props.theme.colors.mediumBlue};
-	padding: 15px 12px;
+	padding: 13px 12px;
 	border-bottom-left-radius: 4px;
 	border-bottom-right-radius: 4px;
 	justify-items: center;
+	font-size: 14px;
 `;
 
 const ArrowButton = styled.button`
 	${resetButtonCSS};
 	padding: 4px;
-	&[disabled] {
-		cursor: default;
-		opacity: 0.5;
-	}
 	svg {
 		width: 14px;
 		height: 14px;
 		color: ${(props) => props.theme.colors.white};
+	}
+	&[disabled] {
+		cursor: default;
+		svg {
+			color: ${(props) => props.theme.colors.gray10};
+		}
 	}
 `;
 

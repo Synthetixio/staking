@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import styled from 'styled-components';
@@ -9,15 +9,19 @@ import Etherscan from 'containers/Etherscan';
 import Table from 'components/Table';
 
 import NoNotificationIcon from 'assets/svg/app/no-notifications.svg';
+import ClaimIcon from 'assets/svg/app/claim.svg';
+import BurnIcon from 'assets/svg/app/burn.svg';
+import MintIcon from 'assets/svg/app/mint.svg';
+import ArrowRightIcon from 'assets/svg/app/arrow-right.svg';
 
 import { formatShortDate } from 'utils/formatters/date';
 import { formatCurrency } from 'utils/formatters/number';
 
-import { HistoricalStakingTransaction } from 'queries/staking/types';
+import { HistoricalStakingTransaction, StakingTransactionType } from 'queries/staking/types';
 
-import { ExternalLink, GridDivCenteredRow } from 'styles/common';
+import { ExternalLink, FlexDivCentered, GridDivCenteredRow } from 'styles/common';
 import { NO_VALUE } from 'constants/placeholder';
-import { SYNTHS_MAP } from 'constants/currency';
+import { CRYPTO_CURRENCY_MAP, SYNTHS_MAP } from 'constants/currency';
 
 interface TransactionsProps {
 	transactions: HistoricalStakingTransaction[];
@@ -34,19 +38,60 @@ const Transactions: FC<TransactionsProps> = ({ transactions, isLoaded }) => {
 				palette="primary"
 				columns={[
 					{
-						Header: 'type',
+						Header: <>{t('history.table.type')}</>,
 						accessor: 'type',
 						Cell: (
 							cellProps: CellProps<
 								HistoricalStakingTransaction,
 								HistoricalStakingTransaction['type']
 							>
-						) => <div>{cellProps.value}</div>,
+						) => {
+							let icon: ReactNode = null;
+
+							switch (cellProps.value) {
+								case StakingTransactionType.Burned:
+									icon = (
+										<Svg
+											src={BurnIcon}
+											width="30"
+											viewBox={`0 0 ${BurnIcon.width} ${BurnIcon.height}`}
+										/>
+									);
+									break;
+								case StakingTransactionType.Issued:
+									icon = (
+										<Svg
+											src={MintIcon}
+											width="24"
+											viewBox={`0 0 ${MintIcon.width} ${MintIcon.height}`}
+										/>
+									);
+									break;
+								case StakingTransactionType.FeesClaimed:
+									icon = (
+										<Svg
+											src={ClaimIcon}
+											width="30"
+											viewBox={`0 0 ${ClaimIcon.width} ${ClaimIcon.height}`}
+										/>
+									);
+									break;
+								default:
+									icon = null;
+							}
+
+							return (
+								<TypeContainer>
+									{icon && <TypeIcon>{icon}</TypeIcon>}
+									{t(`history.table.staking-tx-type.${cellProps.value}`)}
+								</TypeContainer>
+							);
+						},
 						sortable: true,
 						width: 200,
 					},
 					{
-						Header: 'amount',
+						Header: <>{t('history.table.amount')}</>,
 						accessor: 'value',
 						Cell: (
 							cellProps: CellProps<
@@ -58,13 +103,22 @@ const Transactions: FC<TransactionsProps> = ({ transactions, isLoaded }) => {
 								{formatCurrency(SYNTHS_MAP.sUSD, cellProps.value, {
 									currencyKey: SYNTHS_MAP.sUSD,
 								})}
+								{cellProps.row.original.type === StakingTransactionType.FeesClaimed &&
+									cellProps.row.original.rewards != null && (
+										<>
+											{' / '}
+											{formatCurrency(CRYPTO_CURRENCY_MAP.SNX, cellProps.row.original.rewards, {
+												currencyKey: CRYPTO_CURRENCY_MAP.SNX,
+											})}
+										</>
+									)}
 							</div>
 						),
 						sortable: true,
 						width: 200,
 					},
 					{
-						Header: 'timestamp',
+						Header: <>{t('history.table.date')}</>,
 						accessor: 'timestamp',
 						Cell: (
 							cellProps: CellProps<
@@ -76,12 +130,12 @@ const Transactions: FC<TransactionsProps> = ({ transactions, isLoaded }) => {
 						width: 200,
 					},
 					{
-						Header: 'tx',
+						Header: <>{t('history.table.view-tx')}</>,
 						id: 'link',
 						Cell: (cellProps: CellProps<HistoricalStakingTransaction>) =>
 							etherscanInstance != null && cellProps.row.original.hash ? (
 								<StyledExternalLink href={etherscanInstance.txLink(cellProps.row.original.hash)}>
-									View
+									{t('common.explorers.etherscan')} <Svg src={ArrowRightIcon} />
 								</StyledExternalLink>
 							) : (
 								NO_VALUE
@@ -108,6 +162,13 @@ const Transactions: FC<TransactionsProps> = ({ transactions, isLoaded }) => {
 
 const StyledTable = styled(Table)`
 	margin-top: 16px;
+
+	.table-row,
+	.table-body-row {
+		& > :last-child {
+			justify-content: flex-end;
+		}
+	}
 `;
 
 const TableNoResults = styled(GridDivCenteredRow)`
@@ -120,7 +181,22 @@ const TableNoResults = styled(GridDivCenteredRow)`
 `;
 
 const StyledExternalLink = styled(ExternalLink)`
-	margin-left: auto;
+	color: ${(props) => props.theme.colors.white};
+	text-transform: capitalize;
+	display: inline-grid;
+	align-items: center;
+	grid-gap: 5px;
+	grid-auto-flow: column;
+`;
+
+const TypeContainer = styled(FlexDivCentered)`
+	text-transform: capitalize;
+`;
+
+const TypeIcon = styled.span`
+	width: 50px;
+	text-align: center;
+	margin-left: -10px;
 `;
 
 export default Transactions;
