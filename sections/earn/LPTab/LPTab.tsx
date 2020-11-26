@@ -9,7 +9,7 @@ import { CRYPTO_CURRENCY_MAP } from 'constants/currency';
 
 interface LPTabProps {
 	title: string;
-	weeklyRewards: number;
+	weeklyRewards: number | null;
 }
 
 const LPTab: FC<LPTabProps> = ({ title, weeklyRewards }) => {
