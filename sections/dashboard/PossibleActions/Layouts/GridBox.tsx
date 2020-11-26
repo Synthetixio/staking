@@ -60,7 +60,7 @@ export const GridBoxContainer = styled.div<{
 	rowStart: string;
 	rowEnd: string;
 }>`
-	background: ${(props) => props.theme.colors.backgroundBlue};
+	background: ${(props) => props.theme.colors.darkGradient1};
 	box-shadow: 0px 0px 20px ${(props) => props.theme.colors.backgroundBoxShadow};
 	border-radius: 2px;
 	grid-column: ${(props) => `${props.columnStart} / ${props.columnEnd}`};
