@@ -227,3 +227,31 @@ export const ErrorMessage = styled.p`
 	text-transform: capitalize;
 	color: ${(props) => props.theme.colors.brightPink};
 `;
+
+export const ModalContent = styled.div`
+	display: grid;
+	grid-gap: 24px;
+	padding: 24px 0px;
+	justify-content: center;
+	grid-auto-flow: column;
+	align-items: flex-end;
+`;
+
+export const ModalItem = styled.div`
+	text-align: center;
+	padding: 16px 0px;
+`;
+
+export const ModalItemTitle = styled.div`
+	padding-bottom: 8px;
+	text-transform: uppercase;
+	color: ${(props) => props.theme.colors.gray10};
+	font-size: 12px;
+	font-family: ${(props) => props.theme.fonts.interBold};
+`;
+
+export const ModalItemText = styled.div`
+	font-size: 12px;
+	color: ${(props) => props.theme.colors.white};
+	font-family: ${(props) => props.theme.fonts.interBold};
+`;

@@ -13,6 +13,7 @@ import {
 	RowTitle,
 	RowValue,
 } from '../common';
+import { ModalContent, ModalItem, ModalItemTitle, ModalItemText } from 'styles/common';
 import { CRYPTO_CURRENCY_MAP, SYNTHS_MAP } from 'constants/currency';
 import { SynthetixJS } from '@synthetixio/js';
 import Notify from 'containers/Notify';
@@ -26,6 +27,7 @@ import GasSelector from 'components/GasSelector';
 import { FlexDivRowCentered } from 'styles/common';
 import { getMintAmount, getStakingAmount } from '../helper';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
+import { formatCurrency } from 'utils/formatters/number';
 
 type BurnTabProps = {
 	amountToBurn: string;
@@ -211,14 +213,36 @@ const BurnTab: React.FC<BurnTabProps> = ({
 					onDismiss={() => setTxModalOpen(false)}
 					txError={burningTxError}
 					attemptRetry={handleBurn}
-					baseCurrencyAmount={amountToBurn}
-					quoteCurrencyAmount={getStakingAmount(
-						targetCRatio,
-						amountToBurn.toString(),
-						SNXRate
-					).toString()}
-					baseCurrencyKey={stakingCurrencyKey!}
-					quoteCurrencyKey={synthCurrencyKey!}
+					content={
+						<ModalContent>
+							<ModalItem>
+								<ModalItemTitle>{t('modals.confirm-transaction.staking.from')}</ModalItemTitle>
+								<ModalItemText>
+									{formatCurrency(stakingCurrencyKey, amountToBurn, {
+										currencyKey: stakingCurrencyKey,
+										decimals: 4,
+									})}
+								</ModalItemText>
+							</ModalItem>
+							<ModalItem>
+								<ModalItemTitle>{t('modals.confirm-transaction.staking.to')}</ModalItemTitle>
+								<ModalItemText>
+									{formatCurrency(
+										synthCurrencyKey,
+										getMintAmount(
+											targetCRatio,
+											getStakingAmount(targetCRatio, amountToBurn.toString(), SNXRate).toString(),
+											SNXRate
+										).toString(),
+										{
+											currencyKey: synthCurrencyKey,
+											decimals: 4,
+										}
+									)}
+								</ModalItemText>
+							</ModalItem>
+						</ModalContent>
+					}
 				/>
 			)}
 		</>
