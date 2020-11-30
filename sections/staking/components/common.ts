@@ -6,9 +6,16 @@ import Input from 'components/Input/Input';
 import Select from 'components/Select';
 
 export const TabContainer = styled(FlexDivColCentered)`
-	background: ${(props) => props.theme.colors.darkBlue};
 	height: 100%;
-	padding: 24px;
+	width: 100%;
+`;
+
+export const InputContainer = styled(FlexDivColCentered)`
+	background: ${(props) => props.theme.colors.darkBlue};
+	position: relative;
+	width: 100%;
+	padding: 16px;
+	margin-bottom: 24px;
 `;
 
 export const HeaderBox = styled(FlexDivRowCentered)`
@@ -45,19 +52,25 @@ export const StyledSelect = styled(Select)`
 		width: 100%;
 	}
 `;
-export const InputBox = styled(FlexDivRowCentered)`
-	margin: 16px auto;
-	width: 300px;
+export const InputBox = styled(FlexDivColCentered)`
+	margin: 24px auto;
 	justify-content: center;
 `;
 
 export const StyledInput = styled(Input)`
-	font-size: 40px;
+	font-size: 24px;
 	background: transparent;
-	font-family: ${(props) => props.theme.fonts.condensedMedium};
-	width: 75%;
+	font-family: ${(props) => props.theme.fonts.expanded};
 	text-align: center;
-	padding-right: 16px;
+	margin-top: 16px;
+	&:disabled {
+		color: ${(props) => props.theme.colors.gray10};
+	}
+`;
+
+export const InputLocked = styled.p`
+	font-size: 24px;
+	font-family: ${(props) => props.theme.fonts.expanded};
 `;
 
 export const StyledButton = styled(Button)<{ blue: boolean }>`
@@ -83,14 +96,14 @@ export const DataRow = styled(FlexDivRowCentered)`
 	border-bottom: ${(props) => `1px solid ${props.theme.colors.linedBlue}`};
 `;
 export const RowTitle = styled.p`
-	font-family: ${(props) => props.theme.fonts.condensedMedium};
-	font-size: 14px;
-	color: ${(props) => props.theme.colors.silver};
+	font-family: ${(props) => props.theme.fonts.interBold};
+	font-size: 12px;
+	color: ${(props) => props.theme.colors.gray10};
 	text-transform: uppercase;
 `;
 export const RowValue = styled.p`
-	font-family: ${(props) => props.theme.fonts.condensedMedium};
-	font-size: 16px;
+	font-family: ${(props) => props.theme.fonts.interBold};
+	font-size: 12px;
 	color: ${(props) => props.theme.colors.white};
 	text-transform: uppercase;
 	margin: 0px 8px;
@@ -105,6 +118,10 @@ export const StyledCTA = styled(Button)<{ blue: boolean }>`
 	border-radius: 4px;
 	width: 100%;
 	text-transform: uppercase;
+
+	&:disabled {
+		box-shadow: none;
+	}
 `;
 
 export const Title = styled.p`
@@ -119,7 +136,6 @@ export const Subtitle = styled.p`
 `;
 export const DataContainer = styled.div`
 	width: 100%;
-	background: ${(props) => props.theme.colors.mediumBlue};
 `;
 export const StyledLink = styled.span`
 	${linkCSS}

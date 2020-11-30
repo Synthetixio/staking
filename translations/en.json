@@ -94,6 +94,16 @@
 		"actions": {
 			"mint": {
 				"title": "MINT",
+				"tiles": {
+					"max": {
+						"title": "Mint max",
+						"subtext": "Mint the maximum amount of sUSD"
+					},
+					"custom": {
+						"title": "Mint custom",
+						"subtext": "Enter a custom amount of sUSD to mint"
+					}
+				},
 				"info": {
 					"header": "Stake",
 					"staking": "Staking",
@@ -101,8 +111,9 @@
 				},
 				"action": {
 					"empty": "Enter an amount",
-					"mint": "Stake {{amountToStake}}",
-					"max": "Max"
+					"mint": "Minting {{amountFromMint}}",
+					"max": "Max",
+					"insufficient": "Insufficient collateral"
 				},
 				"in-progress": {
 					"title": "Minting in progress",

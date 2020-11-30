@@ -11,6 +11,7 @@ export default {
 	// blue
 	darkBlue: '#06061B',
 	tooltipBlue: '#10104E',
+	hoverTooltipBlue: '#16166A',
 	mediumBlue: '#09092f',
 	linedBlue: '#161b44',
 	backgroundBlue: 'rgba(9, 9, 47, 0.8)',

@@ -28,10 +28,9 @@ import { FlexDivRowCentered } from 'styles/common';
 import { getMintAmount, getStakingAmount } from '../helper';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import { formatCurrency } from 'utils/formatters/number';
+import Staking from 'sections/staking/context/StakingContext';
 
 type BurnTabProps = {
-	amountToBurn: string;
-	setAmountToBurn: (amount: string) => void;
 	maxBurnAmount: number;
 	targetCRatio: number;
 	maxCollateral: number;
@@ -40,8 +39,6 @@ type BurnTabProps = {
 };
 
 const BurnTab: React.FC<BurnTabProps> = ({
-	amountToBurn,
-	setAmountToBurn,
 	maxBurnAmount,
 	maxCollateral,
 	targetCRatio,
@@ -54,6 +51,7 @@ const BurnTab: React.FC<BurnTabProps> = ({
 	const [gasLimitEstimate, setGasLimitEstimate] = useState<number | null>(null);
 	const [burnLoadingState] = useState<LoadingState | null>(null);
 	const { monitorHash } = Notify.useContainer();
+	const { amountToBurn, onBurnChange } = Staking.useContainer();
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const [burnToTarget, setBurnToTarget] = useState<boolean>(false);
@@ -84,22 +82,20 @@ const BurnTab: React.FC<BurnTabProps> = ({
 		// eslint-disable-next-line
 	}, [synthetix, error]);
 
-	const handleStakeChange = (value: string) => {
-		if (burnToTarget) {
-			setBurnToTarget(false);
-		}
-		setAmountToBurn(value);
+	const handleBurnChange = (value: string) => {
+		setBurnToTarget(false);
+		onBurnChange(value);
 	};
 
 	const handleMaxBurn = () => {
 		setBurnToTarget(false);
-		setAmountToBurn(maxBurnAmount?.toString() || '');
+		onBurnChange(maxBurnAmount?.toString() || '');
 	};
 
 	const handleBurnToTarget = () => {
 		setBurnToTarget(true);
 		const maxIssuableSynths = getMintAmount(targetCRatio, maxCollateral.toString(), SNXRate);
-		setAmountToBurn(Math.max(maxBurnAmount - maxIssuableSynths, 0).toString());
+		onBurnChange(Math.max(maxBurnAmount - maxIssuableSynths, 0).toString());
 	};
 
 	const handleBurn = async () => {
@@ -149,7 +145,7 @@ const BurnTab: React.FC<BurnTabProps> = ({
 				<InputBox>
 					<StyledInput
 						placeholder="0"
-						onChange={(e) => handleStakeChange(e.target.value)}
+						onChange={(e) => handleBurnChange(e.target.value)}
 						value={amountToBurn}
 					/>
 				</InputBox>

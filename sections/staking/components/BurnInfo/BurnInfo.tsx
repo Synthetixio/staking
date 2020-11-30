@@ -15,6 +15,7 @@ import Arrows from 'assets/svg/app/arrows.svg';
 import { formatCurrency } from 'utils/formatters/number';
 import { CRYPTO_CURRENCY_MAP, SYNTHS_MAP } from 'constants/currency';
 import { getStakingAmount } from '../helper';
+import Staking from 'sections/staking/context/StakingContext';
 
 interface BurnInfoProps {
 	unstakedCollateral: number;
@@ -23,7 +24,6 @@ interface BurnInfoProps {
 	transferableCollateral: number;
 	debtBalance: number;
 	lockedCollateral: number;
-	amountToBurn: string | null;
 	targetCRatio: number;
 	totalEscrowBalance: number;
 	SNXRate: number;
@@ -36,13 +36,12 @@ const BurnInfo: React.FC<BurnInfoProps> = ({
 	currentCRatio,
 	debtBalance,
 	lockedCollateral,
-	amountToBurn,
 	targetCRatio,
 	totalEscrowBalance,
 	SNXRate,
 }) => {
 	const { t } = useTranslation();
-
+	const { amountToBurn } = Staking.useContainer();
 	const amountToBurnNum = Number(amountToBurn);
 	const unlockedStakeAmount = getStakingAmount(targetCRatio, amountToBurnNum.toString(), SNXRate);
 	const changeInCollateral = stakedCollateral - unlockedStakeAmount;
@@ -93,7 +92,6 @@ const BurnInfo: React.FC<BurnInfoProps> = ({
 			stakedCollateral,
 			transferableCollateral,
 			currentCRatio,
-			amountToBurn,
 			lockedCollateral,
 			totalNewDebt,
 			targetCRatio,

@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { SynthetixJS } from '@synthetixio/js';
@@ -13,10 +13,10 @@ import { getGasEstimateForTransaction } from 'utils/transactions';
 import synthetix from 'lib/synthetix';
 import GasSelector from 'components/GasSelector';
 import { Transaction } from 'constants/network';
+import Img, { Svg } from 'react-optimized-image';
 
 import {
 	TabContainer,
-	StyledButton,
 	StyledCTA,
 	StyledInput,
 	DataContainer,
@@ -24,28 +24,27 @@ import {
 	InputBox,
 	RowTitle,
 	RowValue,
+	InputContainer,
+	InputLocked,
 } from '../common';
-import { getMintAmount } from '../helper';
+import { getMintAmount, getStakingAmount } from '../helper';
 import { ActionInProgress, ActionCompleted } from '../TxSent';
 import { ModalContent, ModalItem, ModalItemTitle, ModalItemText } from 'styles/common';
+import Staking, { MintActionType } from 'sections/staking/context/StakingContext';
+import MintTiles from '../MintTiles';
+import NavigationBack from 'assets/svg/app/navigation-back.svg';
+import sUSDIcon from '@synthetixio/assets/synths/sUSD.svg';
 
 type MintTabProps = {
-	amountToStake: string;
-	setAmountToStake: (amount: string) => void;
 	maxCollateral: number;
 	targetCRatio: number;
 	SNXRate: number;
 };
 
-const MintTab: FC<MintTabProps> = ({
-	amountToStake,
-	setAmountToStake,
-	maxCollateral,
-	targetCRatio,
-	SNXRate,
-}) => {
+const MintTab: FC<MintTabProps> = ({ maxCollateral, targetCRatio, SNXRate }) => {
 	const { t } = useTranslation();
 	const { monitorHash } = Notify.useContainer();
+	const { amountToMint, onStakingChange, mintType, onMintTypeChange } = Staking.useContainer();
 	const [transactionState, setTransactionState] = useState<Transaction>(Transaction.PRESUBMIT);
 	const [txHash, setTxHash] = useState<string | null>(null);
 	const [stakingTxError, setStakingTxError] = useState<boolean>(false);
@@ -54,6 +53,7 @@ const MintTab: FC<MintTabProps> = ({
 	const [stakingCurrencyKey] = useState<string>(CRYPTO_CURRENCY_MAP.SNX);
 	const [synthCurrencyKey] = useState<string>(SYNTHS_MAP.sUSD);
 	const [gasPrice, setGasPrice] = useState<number>(0);
+	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 
 	useEffect(() => {
 		const getGasLimitEstimate = async () => {
@@ -74,11 +74,7 @@ const MintTab: FC<MintTabProps> = ({
 		// eslint-disable-next-line
 	}, [synthetix, error]);
 
-	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
-
-	const handleStakeChange = (value: string) => setAmountToStake(value);
-
-	const handleMaxIssuance = () => setAmountToStake(maxCollateral.toString());
+	const handleMaxIssuance = () => onStakingChange(maxCollateral.toString());
 
 	const handleStake = async () => {
 		try {
@@ -91,7 +87,7 @@ const MintTab: FC<MintTabProps> = ({
 
 			let transaction: ethers.ContractTransaction;
 
-			if (Number(amountToStake) === maxCollateral) {
+			if (Number(amountToMint) === maxCollateral) {
 				const gasLimit = getGasEstimateForTransaction([], Synthetix.estimateGas.issueMaxSynths);
 				transaction = await Synthetix.issueMaxSynths({
 					gasPrice: normalizedGasPrice(gasPrice),
@@ -99,11 +95,10 @@ const MintTab: FC<MintTabProps> = ({
 				});
 			} else {
 				const gasLimit = getGasEstimateForTransaction(
-					[parseEther(amountToStake)],
+					[parseEther(amountToMint)],
 					Synthetix.estimateGas.issueSynths
 				);
-				const mintAmount = getMintAmount(targetCRatio, amountToStake, SNXRate);
-				transaction = await Synthetix.issueSynths(parseEther(mintAmount.toString()), {
+				transaction = await Synthetix.issueSynths(parseEther(amountToMint), {
 					gasPrice: normalizedGasPrice(gasPrice),
 					gasLimit,
 				});
@@ -123,52 +118,78 @@ const MintTab: FC<MintTabProps> = ({
 		}
 	};
 
-	const stakeInfo = formatCurrency(stakingCurrencyKey, amountToStake, {
-		currencyKey: stakingCurrencyKey,
-	});
-
-	const mintInfo = formatCurrency(
-		SYNTHS_MAP.sUSD,
-		getMintAmount(targetCRatio, amountToStake, SNXRate),
+	const stakeInfo = formatCurrency(
+		stakingCurrencyKey,
+		getStakingAmount(targetCRatio, amountToMint, SNXRate),
 		{
-			currencyKey: SYNTHS_MAP.sUSD,
+			currencyKey: stakingCurrencyKey,
 		}
 	);
 
+	const mintInfo = (stakingInput: string) =>
+		formatCurrency(synthCurrencyKey, getMintAmount(targetCRatio, stakingInput, SNXRate), {
+			currencyKey: synthCurrencyKey,
+		});
+
 	if (transactionState === Transaction.WAITING) {
 		return (
-			<ActionInProgress isMint={true} stake={stakeInfo} mint={mintInfo} hash={txHash as string} />
+			<ActionInProgress
+				isMint={true}
+				stake={stakeInfo}
+				mint={mintInfo(amountToMint)}
+				hash={txHash as string}
+			/>
 		);
 	}
 
 	if (transactionState === Transaction.SUCCESS) {
 		return <ActionCompleted isMint={true} setTransactionState={setTransactionState} />;
 	}
-	return (
-		<>
-			<TabContainer>
-				<InputBox>
-					<StyledInput
-						placeholder="0"
-						onChange={(e) => handleStakeChange(e.target.value)}
-						value={amountToStake}
-					/>
-					<StyledButton blue={true} onClick={handleMaxIssuance} variant="outline">
-						Max
-					</StyledButton>
-				</InputBox>
-				<DataContainer>
-					<DataRow>
-						<RowTitle>{t('staking.actions.mint.info.staking')}</RowTitle>
-						<RowValue>{stakeInfo}</RowValue>
-					</DataRow>
-					<DataRow>
-						<RowTitle>{t('staking.actions.mint.info.minting')}</RowTitle>
-						<RowValue>{mintInfo}</RowValue>
-					</DataRow>
-				</DataContainer>
-				<StyledGasContainer gasLimitEstimate={gasLimitEstimate} setGasPrice={setGasPrice} />
-				{amountToStake !== '0' && amountToStake !== '' ? (
+
+	const returnInput = (max: boolean) => {
+		return (
+			<>
+				<InputContainer>
+					<IconContainer onClick={() => onMintTypeChange(null)}>
+						<Svg src={NavigationBack} />
+					</IconContainer>
+					<InputBox>
+						<Img width={50} height={50} src={sUSDIcon} />
+						{max ? (
+							<InputLocked>{mintInfo(maxCollateral.toString())}</InputLocked>
+						) : (
+							<StyledInput placeholder="0" onChange={(e) => onStakingChange(e.target.value)} />
+						)}
+					</InputBox>
+					<DataContainer>
+						<DataRow>
+							<RowTitle>{t('staking.actions.mint.info.staking')}</RowTitle>
+							<RowValue>{stakeInfo}</RowValue>
+						</DataRow>
+						<DataRow>
+							<GasSelector gasLimitEstimate={gasLimitEstimate} setGasPrice={setGasPrice} />
+						</DataRow>
+					</DataContainer>
+				</InputContainer>
+				{max ? (
+					maxCollateral > 0 ? (
+						<StyledCTA
+							blue={true}
+							onClick={handleStake}
+							variant="primary"
+							size="lg"
+							disabled={transactionState !== Transaction.PRESUBMIT}
+						>
+							{t('staking.actions.mint.action.mint', {
+								amountFromMint: mintInfo(amountToMint),
+							})}
+						</StyledCTA>
+					) : (
+						<StyledCTA blue={true} variant="primary" size="lg" disabled={true}>
+							{t('staking.actions.mint.action.insufficient')}
+						</StyledCTA>
+					)
+				) : amountToMint.length > 0 ? (
 					<StyledCTA
 						blue={true}
 						onClick={handleStake}
@@ -177,9 +198,7 @@ const MintTab: FC<MintTabProps> = ({
 						disabled={transactionState !== Transaction.PRESUBMIT}
 					>
 						{t('staking.actions.mint.action.mint', {
-							amountToStake: formatCurrency(stakingCurrencyKey, amountToStake, {
-								currencyKey: stakingCurrencyKey,
-							}),
+							amountFromMint: mintInfo(amountToMint),
 						})}
 					</StyledCTA>
 				) : (
@@ -187,7 +206,24 @@ const MintTab: FC<MintTabProps> = ({
 						{t('staking.actions.mint.action.empty')}
 					</StyledCTA>
 				)}
-			</TabContainer>
+			</>
+		);
+	};
+
+	const returnPanel = useMemo(() => {
+		switch (mintType) {
+			case MintActionType.MAX:
+				return returnInput(true);
+			case MintActionType.CUSTOM:
+				return returnInput(false);
+			default:
+				return <MintTiles />;
+		}
+	}, [mintType, amountToMint]);
+
+	return (
+		<TabContainer>
+			{returnPanel}
 			{txModalOpen && (
 				<TxConfirmationModal
 					onDismiss={() => setTxModalOpen(false)}
@@ -197,37 +233,25 @@ const MintTab: FC<MintTabProps> = ({
 						<ModalContent>
 							<ModalItem>
 								<ModalItemTitle>{t('modals.confirm-transaction.staking.from')}</ModalItemTitle>
-								<ModalItemText>
-									{formatCurrency(stakingCurrencyKey, amountToStake, {
-										currencyKey: stakingCurrencyKey,
-										decimals: 4,
-									})}
-								</ModalItemText>
+								<ModalItemText>{stakeInfo}</ModalItemText>
 							</ModalItem>
 							<ModalItem>
 								<ModalItemTitle>{t('modals.confirm-transaction.staking.to')}</ModalItemTitle>
-								<ModalItemText>
-									{formatCurrency(
-										synthCurrencyKey,
-										getMintAmount(targetCRatio, amountToStake, SNXRate).toString(),
-										{
-											currencyKey: synthCurrencyKey,
-											decimals: 4,
-										}
-									)}
-								</ModalItemText>
+								<ModalItemText>{mintInfo(amountToMint)}</ModalItemText>
 							</ModalItem>
 						</ModalContent>
 					}
 				/>
 			)}
-		</>
+		</TabContainer>
 	);
 };
 
-const StyledGasContainer = styled(GasSelector)`
-	margin: 16px 0px;
-	flex-direction: row;
+const IconContainer = styled.div`
+	position: absolute;
+	top: 20px;
+	left: 20px;
+	cursor: pointer;
 `;
 
 export default MintTab;
