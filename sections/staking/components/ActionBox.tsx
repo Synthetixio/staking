@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { Svg } from 'react-optimized-image';
 import { useTranslation } from 'react-i18next';
 
@@ -10,25 +10,12 @@ import BurnTab from './BurnTab';
 import MintTab from './MintTab';
 import Burn from 'assets/svg/app/burn.svg';
 import Mint from 'assets/svg/app/mint.svg';
-import { StakingPanelType } from 'pages/staking';
 import { BOX_COLUMN_WIDTH } from 'constants/styles';
+import Staking, { StakingPanelType } from '../context/StakingContext';
 
-interface ActionBoxProps {
-	amountToStake: string;
-	setAmountToStake: (amount: string) => void;
-	amountToBurn: string;
-	setAmountToBurn: (amount: string) => void;
-	setPanelType: Dispatch<SetStateAction<any>>;
-}
-
-const ActionBox: React.FC<ActionBoxProps> = ({
-	amountToBurn,
-	setAmountToBurn,
-	amountToStake,
-	setAmountToStake,
-	setPanelType,
-}) => {
+const ActionBox: React.FC = () => {
 	const { t } = useTranslation();
+	const { onPanelChange } = Staking.useContainer();
 
 	const {
 		debtBalance,
@@ -45,8 +32,6 @@ const ActionBox: React.FC<ActionBoxProps> = ({
 				icon: () => <Svg src={Mint} />,
 				tabChildren: (
 					<MintTab
-						amountToStake={amountToStake}
-						setAmountToStake={setAmountToStake}
 						targetCRatio={targetCRatio}
 						maxCollateral={unstakedCollateral}
 						SNXRate={SNXRate}
@@ -59,8 +44,6 @@ const ActionBox: React.FC<ActionBoxProps> = ({
 				icon: () => <Svg src={Burn} />,
 				tabChildren: (
 					<BurnTab
-						amountToBurn={amountToBurn}
-						setAmountToBurn={setAmountToBurn}
 						targetCRatio={targetCRatio}
 						maxBurnAmount={debtBalance}
 						maxCollateral={unstakedCollateral}
@@ -71,18 +54,7 @@ const ActionBox: React.FC<ActionBoxProps> = ({
 				key: StakingPanelType.BURN,
 			},
 		],
-		[
-			amountToStake,
-			amountToBurn,
-			setAmountToBurn,
-			setAmountToStake,
-			t,
-			targetCRatio,
-			debtBalance,
-			SNXRate,
-			unstakedCollateral,
-			stakedCollateral,
-		]
+		[t, targetCRatio, debtBalance, SNXRate, unstakedCollateral, stakedCollateral]
 	);
 
 	return (
@@ -91,7 +63,7 @@ const ActionBox: React.FC<ActionBoxProps> = ({
 			boxHeight={450}
 			boxWidth={BOX_COLUMN_WIDTH}
 			tabData={tabData}
-			setPanelType={setPanelType}
+			setPanelType={onPanelChange}
 		/>
 	);
 };

@@ -14,6 +14,7 @@ import { Svg } from 'react-optimized-image';
 import Arrows from 'assets/svg/app/arrows.svg';
 import { formatCurrency } from 'utils/formatters/number';
 import { CRYPTO_CURRENCY_MAP, SYNTHS_MAP } from 'constants/currency';
+import Staking from 'sections/staking/context/StakingContext';
 
 interface MintInfoProps {
 	unstakedCollateral: number;
@@ -22,7 +23,6 @@ interface MintInfoProps {
 	transferableCollateral: number;
 	debtBalance: number;
 	lockedCollateral: number;
-	amountToStake: string | null;
 	targetCRatio: number;
 	SNXRate: number;
 	totalEscrowBalance: number;
@@ -35,12 +35,12 @@ const MintInfo: React.FC<MintInfoProps> = ({
 	currentCRatio,
 	debtBalance,
 	lockedCollateral,
-	amountToStake,
 	targetCRatio,
 	SNXRate,
 	totalEscrowBalance,
 }) => {
 	const { t } = useTranslation();
+	const { amountToStake } = Staking.useContainer();
 	const amountToStakeNum = Number(amountToStake);
 	const changeInCollateral = stakedCollateral + amountToStakeNum;
 	const additionalDebt = changeInCollateral * targetCRatio * SNXRate;

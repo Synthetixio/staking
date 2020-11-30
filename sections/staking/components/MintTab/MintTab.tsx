@@ -28,24 +28,18 @@ import {
 import { getMintAmount } from '../helper';
 import { ActionInProgress, ActionCompleted } from '../TxSent';
 import { ModalContent, ModalItem, ModalItemTitle, ModalItemText } from 'styles/common';
+import Staking from 'sections/staking/context/StakingContext';
 
 type MintTabProps = {
-	amountToStake: string;
-	setAmountToStake: (amount: string) => void;
 	maxCollateral: number;
 	targetCRatio: number;
 	SNXRate: number;
 };
 
-const MintTab: FC<MintTabProps> = ({
-	amountToStake,
-	setAmountToStake,
-	maxCollateral,
-	targetCRatio,
-	SNXRate,
-}) => {
+const MintTab: FC<MintTabProps> = ({ maxCollateral, targetCRatio, SNXRate }) => {
 	const { t } = useTranslation();
 	const { monitorHash } = Notify.useContainer();
+	const { amountToStake, onStakingChange } = Staking.useContainer();
 	const [transactionState, setTransactionState] = useState<Transaction>(Transaction.PRESUBMIT);
 	const [txHash, setTxHash] = useState<string | null>(null);
 	const [stakingTxError, setStakingTxError] = useState<boolean>(false);
@@ -54,6 +48,7 @@ const MintTab: FC<MintTabProps> = ({
 	const [stakingCurrencyKey] = useState<string>(CRYPTO_CURRENCY_MAP.SNX);
 	const [synthCurrencyKey] = useState<string>(SYNTHS_MAP.sUSD);
 	const [gasPrice, setGasPrice] = useState<number>(0);
+	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 
 	useEffect(() => {
 		const getGasLimitEstimate = async () => {
@@ -74,11 +69,7 @@ const MintTab: FC<MintTabProps> = ({
 		// eslint-disable-next-line
 	}, [synthetix, error]);
 
-	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
-
-	const handleStakeChange = (value: string) => setAmountToStake(value);
-
-	const handleMaxIssuance = () => setAmountToStake(maxCollateral.toString());
+	const handleMaxIssuance = () => onStakingChange(maxCollateral.toString());
 
 	const handleStake = async () => {
 		try {
@@ -149,9 +140,9 @@ const MintTab: FC<MintTabProps> = ({
 			<TabContainer>
 				<InputBox>
 					<StyledInput
-						placeholder="0"
-						onChange={(e) => handleStakeChange(e.target.value)}
+						onChange={(e) => onStakingChange(e.target.value)}
 						value={amountToStake}
+						disabled={maxCollateral === 0}
 					/>
 					<StyledButton blue={true} onClick={handleMaxIssuance} variant="outline">
 						Max

@@ -9,16 +9,9 @@ import { LineSpacer, StatsSection } from 'styles/common';
 import { formatFiatCurrency, formatPercent } from 'utils/formatters/number';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 
-export enum StakingPanelType {
-	BURN = 'burn',
-	MINT = 'mint',
-}
-
 const StakingPage = () => {
 	const { t } = useTranslation();
-
 	const { stakedCollateralValue, currentCRatio, debtBalance } = useStakingCalculations();
-
 	return (
 		<>
 			<Head>

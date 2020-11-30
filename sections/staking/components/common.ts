@@ -58,6 +58,9 @@ export const StyledInput = styled(Input)`
 	width: 75%;
 	text-align: center;
 	padding-right: 16px;
+	&:disabled {
+		color: ${(props) => props.theme.colors.gray10};
+	}
 `;
 
 export const StyledButton = styled(Button)<{ blue: boolean }>`
