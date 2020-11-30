@@ -3,7 +3,6 @@ import React, { useEffect, useMemo } from 'react';
 import styled from 'styled-components';
 import { useRecoilState } from 'recoil';
 import Tippy from '@tippyjs/react';
-import { Svg } from 'react-optimized-image';
 
 import { customGasPriceState, gasSpeedState } from 'store/wallet';
 import { ESTIMATE_VALUE } from 'constants/placeholder';
@@ -15,12 +14,11 @@ import { getExchangeRatesForCurrencies } from 'utils/currencies';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 
 import { SYNTHS_MAP } from 'constants/currency';
-import InfoIcon from 'assets/svg/app/info.svg';
 import { formatCurrency } from 'utils/formatters/number';
 import NumericInput from 'components/Input/NumericInput';
 import Button from 'components/Button';
 import { useTranslation } from 'react-i18next';
-import { FlexDivCol, FlexDivRow, FlexDivRowCentered, NumericValue } from 'styles/common';
+import { FlexDivRow, FlexDivRowCentered, NumericValue } from 'styles/common';
 
 interface GasSelectorProps {
 	gasLimitEstimate: number | null;
@@ -85,25 +83,17 @@ const GasSelector: React.FC<GasSelectorProps> = ({ gasLimitEstimate, setGasPrice
 		<Container {...rest}>
 			<GasPriceHeader>{t('common.gas-header')}</GasPriceHeader>
 			<GasPriceContainer>
-				{transactionFee != null ? (
-					<GasPriceCostTooltip
-						content={
-							<GasPriceText>
-								{formatCurrency(selectedPriceCurrency.name, transactionFee, {
-									sign: selectedPriceCurrency.sign,
-								})}
-							</GasPriceText>
-						}
-						arrow={false}
-					>
-						<GasPriceItem>
-							<GasPriceText>{gasPriceItem}</GasPriceText>
-							<Svg src={InfoIcon} />
-						</GasPriceItem>
-					</GasPriceCostTooltip>
-				) : (
-					gasPriceItem
-				)}
+				<GasPriceItem>
+					<GasPriceText>
+						{gasPriceItem}{' '}
+						{`(${
+							transactionFee != null &&
+							formatCurrency(selectedPriceCurrency.name, transactionFee, {
+								sign: selectedPriceCurrency.sign,
+							})
+						})`}
+					</GasPriceText>
+				</GasPriceItem>
 				<GasPriceTooltip
 					trigger="click"
 					arrow={false}
@@ -173,15 +163,6 @@ const GasPriceTooltip = styled(Tippy)`
 	}
 `;
 
-const GasPriceCostTooltip = styled(GasPriceTooltip)`
-	width: auto;
-	font-size: 12px;
-	.tippy-content {
-		padding: 5px;
-		font-family: ${(props) => props.theme.fonts.mono};
-	}
-`;
-
 const GasSelectContainer = styled.div`
 	padding: 16px 0 8px 0;
 `;
@@ -219,8 +200,9 @@ const GasPriceItem = styled.span`
 `;
 
 const StyledGasEditButton = styled.span`
-	font-family: ${(props) => props.theme.fonts.condensedBold};
+	font-family: ${(props) => props.theme.fonts.interBold};
 	padding-left: 5px;
+	font-size: 12px;
 	cursor: pointer;
 	color: ${(props) => props.theme.colors.brightBlue};
 	text-transform: uppercase;
