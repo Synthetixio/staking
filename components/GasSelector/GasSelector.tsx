@@ -86,12 +86,10 @@ const GasSelector: React.FC<GasSelectorProps> = ({ gasLimitEstimate, setGasPrice
 				<GasPriceItem>
 					<GasPriceText>
 						{gasPriceItem}{' '}
-						{`(${
-							transactionFee != null &&
-							formatCurrency(selectedPriceCurrency.name, transactionFee, {
+						{transactionFee != null &&
+							`(${formatCurrency(selectedPriceCurrency.name, transactionFee, {
 								sign: selectedPriceCurrency.sign,
-							})
-						})`}
+							})})`}
 					</GasPriceText>
 				</GasPriceItem>
 				<GasPriceTooltip

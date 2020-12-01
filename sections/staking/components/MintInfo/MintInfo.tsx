@@ -51,14 +51,14 @@ const MintInfo: React.FC<MintInfoProps> = ({
 		() => [
 			{
 				title: t('staking.info.mint.table.not-staked'),
-				value: unstakedCollateral,
-				changedValue: unstakedCollateral - stakingAmount,
+				value: amountToMint ? unstakedCollateral : 0,
+				changedValue: amountToMint ? unstakedCollateral - stakingAmount : 0,
 				currencyKey: CRYPTO_CURRENCY_MAP.SNX,
 			},
 			{
 				title: t('staking.info.mint.table.staked'),
-				value: stakedCollateral,
-				changedValue: changeInCollateral,
+				value: amountToMint ? stakedCollateral : 0,
+				changedValue: amountToMint ? changeInCollateral : 0,
 				currencyKey: CRYPTO_CURRENCY_MAP.SNX,
 			},
 			{
@@ -75,7 +75,7 @@ const MintInfo: React.FC<MintInfoProps> = ({
 			},
 			{
 				title: t('staking.info.mint.table.c-ratio'),
-				value: 100 / currentCRatio,
+				value: currentCRatio ? 100 / currentCRatio : 0,
 				changedValue: ((changeInCollateral * SNXRate) / additionalDebt) * 100,
 				currencyKey: '%',
 			},
