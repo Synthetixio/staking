@@ -150,7 +150,7 @@ const Transactions: FC<TransactionsProps> = ({ transactions, isLoaded }) => {
 					isLoaded && transactions.length === 0 ? (
 						<TableNoResults>
 							<Svg src={NoNotificationIcon} />
-							{t('synths.synths.table.no-results')}
+							{t('history.table.no-results')}
 						</TableNoResults>
 					) : undefined
 				}
