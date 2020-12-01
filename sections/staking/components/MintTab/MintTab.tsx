@@ -203,7 +203,7 @@ const MintTab: FC<MintTabProps> = ({ maxCollateral, targetCRatio, SNXRate }) => 
 	};
 
 	const returnButtonStates = (balance: string, input: string, mintMax: boolean) => {
-		if (balance < input) {
+		if (Number(balance) < Number(getStakingAmount(targetCRatio, input, SNXRate))) {
 			return (
 				<StyledCTA blue={true} variant="primary" size="lg" disabled={true}>
 					{t('staking.actions.mint.action.insufficient')}
@@ -247,7 +247,7 @@ const MintTab: FC<MintTabProps> = ({ maxCollateral, targetCRatio, SNXRate }) => 
 		return <ActionCompleted isMint={true} setTransactionState={setTransactionState} />;
 	}
 
-	const returnPanel = useMemo(() => {
+	const returnPanel = () => {
 		switch (mintType) {
 			case MintActionType.MAX:
 				return returnInput(true);
@@ -256,9 +256,9 @@ const MintTab: FC<MintTabProps> = ({ maxCollateral, targetCRatio, SNXRate }) => 
 			default:
 				return <MintTiles />;
 		}
-	}, [mintType, amountToMint]);
+	};
 
-	return <TabContainer>{returnPanel}</TabContainer>;
+	return <TabContainer>{returnPanel()}</TabContainer>;
 };
 
 const IconContainer = styled.div`
