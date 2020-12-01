@@ -260,7 +260,8 @@
 				"issued": "Minted",
 				"burned": "Burned",
 				"feesClaimed": "Claimed"
-			}
+			},
+			"no-results": "no results"
 		}
 	},
 	"synths": {
