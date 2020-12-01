@@ -133,6 +133,20 @@
 			},
 			"burn": {
 				"title": "BURN",
+				"tiles": {
+					"max": {
+						"title": "Burn max",
+						"subtext": "Burn all available sUSD in your wallet (up to your total debt) to unstake your SNX"
+					},
+					"target": {
+						"title": "Burn to {{targetCRatio}}%",
+						"subtext": "Burn sUSD required to reach target C-Ratio"
+					},
+					"custom": {
+						"title": "Burn custom",
+						"subtext": "Enter a custom amount of sUSD to burn"
+					}
+				},
 				"info": {
 					"header": "Unstake",
 					"burning": "Burning",

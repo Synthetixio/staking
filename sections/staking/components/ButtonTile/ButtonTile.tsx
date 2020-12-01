@@ -22,7 +22,11 @@ const ButtonTile: React.FC<ButtonTileProps> = ({ title, icon, subtext, onAction,
 const Container = styled(FlexDivColCentered)`
 	text-align: center;
 	justify-content: center;
+	width: 100%;
 	background: ${(props) => props.theme.colors.tooltipBlue};
+	padding: 16px;
+	flex: 1;
+	margin: 8px 0px;
 	cursor: pointer;
 	&:hover {
 		background: ${(props) => props.theme.colors.hoverTooltipBlue};
@@ -33,6 +37,7 @@ const Container = styled(FlexDivColCentered)`
 const Title = styled.p`
 	font-family: ${(props) => props.theme.fonts.expanded};
 	font-size: 12px;
+	text-transform: uppercase;
 `;
 
 const Subtext = styled.p`

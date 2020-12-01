@@ -24,7 +24,7 @@ const useStaking = () => {
 	const [mintType, setMintType] = useState<MintActionType | null>(null);
 	const [burnType, setBurnType] = useState<BurnActionType | null>(null);
 
-	const onStakingChange = (value: string) => setAmountToMint(value);
+	const onMintChange = (value: string) => setAmountToMint(value);
 	const onBurnChange = (value: string) => setAmountToBurn(value);
 	const onPanelChange = (value: StakingPanelType) => setPanelType(value);
 	const onMintTypeChange = (value: MintActionType | null) => setMintType(value);
@@ -32,7 +32,7 @@ const useStaking = () => {
 
 	return {
 		amountToMint,
-		onStakingChange,
+		onMintChange,
 		amountToBurn,
 		onBurnChange,
 		panelType,
