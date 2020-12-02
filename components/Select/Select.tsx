@@ -1,47 +1,58 @@
-import React, { FC, useContext, useMemo } from 'react';
+import React, { useContext, useMemo } from 'react';
 import ReactSelect, { Props, StylesConfig } from 'react-select';
 import { ThemeContext } from 'styled-components';
 
-const IndicatorSeparator: FC = () => null;
+import { IndicatorSeparator, DropdownIndicator, MultiValueRemove } from './components';
 
 function Select<T>(props: Props<T>) {
 	const { colors, fonts } = useContext(ThemeContext);
 
 	const computedStyles = useMemo(() => {
 		const styles: StylesConfig = {
-			container: (provided, state) => ({
-				...provided,
+			container: (style, state) => ({
+				...style,
 				opacity: state.isDisabled ? 0.4 : 1,
 				backgroundColor: colors.mediumBlue,
 			}),
-			singleValue: (provided) => ({
-				...provided,
+			singleValue: (style) => ({
+				...style,
 				color: colors.white,
 				boxShadow: `0px 0px 20px ${colors.backgroundBoxShadow}`,
 				fontSize: '12px',
 				border: 'none',
 			}),
-			multiValueLabel: (provided) => ({
-				...provided,
+			multiValue: (style) => ({
+				...style,
+				background: 'none',
+				alignItems: 'flex-end',
+			}),
+			multiValueLabel: (style) => ({
+				...style,
 				background: colors.mediumBlue,
 				borderRadius: 0,
 				color: colors.white,
 				fontSize: '12px',
 				padding: 0,
+				paddingLeft: 0,
 			}),
-			multiValueRemove: (provided) => ({
-				...provided,
+			multiValueRemove: (style) => ({
+				...style,
 				background: colors.mediumBlue,
 				borderRadius: 0,
-				color: colors.white,
+				color: colors.gray10,
 				'&:hover': {
 					background: colors.mediumBlue,
-					color: colors.red,
+					color: colors.white,
 				},
 				padding: 0,
 			}),
-			control: (provided) => ({
-				...provided,
+			noOptionsMessage: (style) => ({
+				...style,
+				fontSize: '12px',
+				color: colors.white,
+			}),
+			control: (style) => ({
+				...style,
 				fontFamily: fonts.condensedBold,
 				color: colors.white,
 				cursor: 'pointer',
@@ -55,21 +66,21 @@ function Select<T>(props: Props<T>) {
 				fontSize: '12px',
 				backgroundColor: colors.mediumBlue,
 			}),
-			menu: (provided) => ({
-				...provided,
+			menu: (style) => ({
+				...style,
 				backgroundColor: colors.mediumBlue,
 				border: 'none',
 				boxShadow: `0px 0px 20px ${colors.backgroundBoxShadow}`,
 				padding: 0,
 			}),
-			menuList: (provided) => ({
-				...provided,
+			menuList: (style) => ({
+				...style,
 				borderRadius: 0,
 				padding: 0,
 				textAlign: 'left',
 			}),
-			option: (provided) => ({
-				...provided,
+			option: (style) => ({
+				...style,
 				fontFamily: fonts.condensedBold,
 				color: colors.gray10,
 				cursor: 'pointer',
@@ -81,15 +92,15 @@ function Select<T>(props: Props<T>) {
 					color: colors.white,
 				},
 			}),
-			placeholder: (provided) => ({
-				...provided,
+			placeholder: (style) => ({
+				...style,
 				fontSize: '12px',
 				color: colors.white,
 				textTransform: 'capitalize',
 			}),
-			dropdownIndicator: (provided, state) => ({
-				...provided,
-				color: colors.white,
+			dropdownIndicator: (style, state) => ({
+				...style,
+				color: state.selectProps.menuIsOpen ? colors.white : colors.gray10,
 				transition: 'transform 0.2s ease-in-out',
 				transform: state.selectProps.menuIsOpen && 'rotate(180deg)',
 				'&:hover': {
@@ -100,12 +111,14 @@ function Select<T>(props: Props<T>) {
 		return styles;
 	}, [colors, fonts]);
 
+	const { components, ...rest } = props;
+
 	return (
 		<ReactSelect
 			styles={computedStyles}
 			classNamePrefix="react-select"
-			components={{ IndicatorSeparator }}
-			{...props}
+			components={{ IndicatorSeparator, DropdownIndicator, MultiValueRemove, ...components }}
+			{...rest}
 		/>
 	);
 }

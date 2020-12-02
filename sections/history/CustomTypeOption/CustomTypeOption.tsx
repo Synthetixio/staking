@@ -6,16 +6,14 @@ import TypeIcon from '../TypeIcon';
 import { TypeFilterOptionType } from '../types';
 const { Option } = components;
 
-const CustomTypeOption = (props: OptionProps<TypeFilterOptionType>) => {
-	return (
-		<Option {...props}>
-			<Container>
-				<TypeIcon size="sm" type={props.data.value} />
-				{props.data.label}
-			</Container>
-		</Option>
-	);
-};
+const CustomTypeOption = (props: OptionProps<TypeFilterOptionType>) => (
+	<Option {...props}>
+		<Container>
+			<TypeIcon size="sm" type={props.data.value} />
+			{props.data.label}
+		</Container>
+	</Option>
+);
 
 const Container = styled(FlexDivCentered)`
 	svg {

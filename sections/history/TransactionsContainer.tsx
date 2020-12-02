@@ -136,6 +136,11 @@ const TransactionsContainer: FC<TransactionsContainerProps> = ({
 		return transactions.length ? orderBy(transactions, 'timestamp', 'desc') : transactions;
 	}, [issued, burned, feesClaimed, isLoaded, typeFilter, dateFilter, amountFilter]);
 
+	const dateFilterSelectedDates = useMemo(
+		() => dateFilter.startDate != null && dateFilter.endDate != null,
+		[dateFilter.startDate, dateFilter.endDate]
+	);
+
 	const dateFilterRange = useMemo(() => {
 		if (dateFilter.startDate != null && dateFilter.endDate != null) {
 			return `${formatShortDate(dateFilter.startDate)} – ${formatShortDate(dateFilter.endDate)}`;
@@ -164,7 +169,7 @@ const TransactionsContainer: FC<TransactionsContainerProps> = ({
 						Option: CustomTypeOption,
 					}}
 				/>
-				<StyledDateSelect
+				<DateSelect
 					id="tx-date-filter"
 					startDate={dateFilter.startDate}
 					endDate={dateFilter.endDate}
@@ -180,6 +185,13 @@ const TransactionsContainer: FC<TransactionsContainerProps> = ({
 					}}
 					value={dateFilterRange}
 					selectsRange={true}
+					onClear={() => {
+						setDateFilter({
+							startDate: new Date(),
+							endDate: null,
+						});
+					}}
+					showClear={dateFilterSelectedDates}
 				/>
 				<Select
 					inputId="order-amount-list"
@@ -206,7 +218,5 @@ const Filters = styled(GridDiv)`
 	grid-template-columns: repeat(3, 1fr);
 	grid-gap: 18px;
 `;
-
-const StyledDateSelect = styled(DateSelect)``;
 
 export default TransactionsContainer;

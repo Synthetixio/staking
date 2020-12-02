@@ -5,11 +5,16 @@ import { Svg } from 'react-optimized-image';
 import { resetButtonCSS } from 'styles/common';
 
 import CaretDownIcon from 'assets/svg/app/caret-down.svg';
+import CloseIcon from 'assets/svg/app/menu-close.svg';
 
-type SelectButtonProps = HTMLProps<HTMLInputElement> & { isOpen: boolean };
+type SelectButtonProps = HTMLProps<HTMLInputElement> & {
+	isOpen: boolean;
+	onClear: () => void;
+	showClear: boolean;
+};
 
 const SelectButton = (
-	{ onClick, value, isOpen }: SelectButtonProps,
+	{ onClick, value, isOpen, onClear, showClear }: SelectButtonProps,
 	ref: React.Ref<HTMLInputElement>
 ) => (
 	<Button
@@ -19,7 +24,24 @@ const SelectButton = (
 		isOpen={isOpen}
 	>
 		{value}
-		<Svg src={CaretDownIcon} />
+		<Icons>
+			{showClear && (
+				<CloseButton>
+					<Svg
+						src={CloseIcon}
+						onClick={(e: any) => {
+							e.stopPropagation();
+							onClear();
+						}}
+						width="12"
+						height="12"
+						viewBox={`0 0 ${CloseIcon.width} ${CloseIcon.height}`}
+						className="close-icon"
+					/>
+				</CloseButton>
+			)}
+			<Svg src={CaretDownIcon} className="dropdown-icon" />
+		</Icons>
 	</Button>
 );
 
@@ -34,17 +56,46 @@ const Button = styled.button<{ isOpen: boolean }>`
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	padding: 0 17px;
+	padding: 0 10px;
 	width: 100%;
 	text-transform: capitalize;
-	svg {
+
+	.dropdown-icon {
+		color: ${(props) => props.theme.colors.gray10};
 		transition: transform 0.2s ease-in-out;
+		&:hover {
+			color: ${(props) => props.theme.colors.white};
+		}
 		${(props) =>
 			props.isOpen &&
 			css`
+				color: ${(props) => props.theme.colors.white};
 				transform: rotate(-180deg);
 			`}
 	}
+
+	.close-icon {
+		color: ${(props) => props.theme.colors.gray10};
+		&:hover {
+			color: ${(props) => props.theme.colors.white};
+		}
+	}
+`;
+
+const Icons = styled.span`
+	display: inline-grid;
+	align-items: center;
+	grid-auto-flow: column;
+	grid-gap: 10px;
+`;
+
+const CloseButton = styled.button`
+	${resetButtonCSS};
+	width: 16px;
+	height: 16px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 `;
 
 export default SelectButton;
