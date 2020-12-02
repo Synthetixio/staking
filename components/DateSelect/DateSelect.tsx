@@ -9,10 +9,11 @@ import SelectButton from './SelectButton';
 
 type DatePickerProps = ReactDatePickerProps & {
 	className?: string;
-	errorMessage?: React.ReactNode;
+	onClear: () => void;
+	showClear: boolean;
 };
 
-export const DatePicker: FC<DatePickerProps> = ({ className, errorMessage, ...rest }) => {
+export const DatePicker: FC<DatePickerProps> = ({ className, onClear, showClear, ...rest }) => {
 	const [isOpen, setIsOpen] = useState<boolean>(false);
 
 	return (
@@ -20,7 +21,11 @@ export const DatePicker: FC<DatePickerProps> = ({ className, errorMessage, ...re
 			<ReactDatePicker
 				autoComplete="off"
 				// https://github.com/Hacker0x01/react-datepicker/issues/2165
-				customInput={React.createElement(React.forwardRef(SelectButton), { isOpen })}
+				customInput={React.createElement(React.forwardRef(SelectButton), {
+					isOpen,
+					onClear,
+					showClear,
+				})}
 				showPopperArrow={false}
 				onCalendarClose={() => setIsOpen(false)}
 				onCalendarOpen={() => setIsOpen(true)}
@@ -33,6 +38,10 @@ export const DatePicker: FC<DatePickerProps> = ({ className, errorMessage, ...re
 const DatePickerContainer = styled.div`
 	.react-datepicker-popper {
 		width: max-content;
+	}
+
+	.react-datepicker-wrapper {
+		width: 100%;
 	}
 
 	.react-datepicker {

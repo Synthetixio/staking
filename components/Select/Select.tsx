@@ -1,90 +1,124 @@
-import React, { FC, useContext, useMemo } from 'react';
+import React, { useContext, useMemo } from 'react';
 import ReactSelect, { Props, StylesConfig } from 'react-select';
 import { ThemeContext } from 'styled-components';
 
-const IndicatorSeparator: FC = () => null;
+import { IndicatorSeparator, DropdownIndicator, MultiValueRemove } from './components';
 
 function Select<T>(props: Props<T>) {
 	const { colors, fonts } = useContext(ThemeContext);
 
 	const computedStyles = useMemo(() => {
 		const styles: StylesConfig = {
-			container: (provided, state) => ({
-				...provided,
+			container: (style, state) => ({
+				...style,
 				opacity: state.isDisabled ? 0.4 : 1,
-				backgroundColor: colors.elderberry,
+				backgroundColor: colors.mediumBlue,
 			}),
-			singleValue: (provided) => ({
-				...provided,
+			singleValue: (style) => ({
+				...style,
 				color: colors.white,
-				boxShadow: 'none',
+				boxShadow: `0px 0px 20px ${colors.backgroundBoxShadow}`,
 				fontSize: '12px',
 				border: 'none',
 			}),
-			control: (provided) => ({
-				...provided,
+			multiValue: (style) => ({
+				...style,
+				background: 'none',
+				alignItems: 'flex-end',
+			}),
+			multiValueLabel: (style) => ({
+				...style,
+				background: colors.mediumBlue,
+				borderRadius: 0,
+				color: colors.white,
+				fontSize: '12px',
+				padding: 0,
+				paddingLeft: 0,
+			}),
+			multiValueRemove: (style) => ({
+				...style,
+				background: colors.mediumBlue,
+				borderRadius: 0,
+				color: colors.gray10,
+				'&:hover': {
+					background: colors.mediumBlue,
+					color: colors.white,
+				},
+				padding: 0,
+			}),
+			noOptionsMessage: (style) => ({
+				...style,
+				fontSize: '12px',
+				color: colors.white,
+			}),
+			control: (style) => ({
+				...style,
 				fontFamily: fonts.condensedBold,
 				color: colors.white,
 				cursor: 'pointer',
-				boxShadow: 'none',
-				border: `1px solid ${colors.mediumBlue}`,
+				boxShadow: `0px 0px 20px ${colors.backgroundBoxShadow}`,
+				border: 'none',
 				borderRadius: '4px',
 				outline: 'none',
-				height: '24px',
 				'&:hover': {
-					border: `1px solid ${colors.mediumBlue}`,
+					border: 'none',
 				},
 				fontSize: '12px',
-				backgroundColor: colors.elderberry,
+				backgroundColor: colors.mediumBlue,
 			}),
-			menu: (provided) => ({
-				...provided,
-				backgroundColor: colors.elderberry,
-				border: `1px solid ${colors.mediumBlue}`,
-				boxShadow: 'none',
+			menu: (style) => ({
+				...style,
+				backgroundColor: colors.mediumBlue,
+				border: 'none',
+				boxShadow: `0px 0px 20px ${colors.backgroundBoxShadow}`,
 				padding: 0,
 			}),
-			menuList: (provided) => ({
-				...provided,
+			menuList: (style) => ({
+				...style,
 				borderRadius: 0,
 				padding: 0,
 				textAlign: 'left',
 			}),
-			option: (provided) => ({
-				...provided,
+			option: (style) => ({
+				...style,
 				fontFamily: fonts.condensedBold,
-				color: colors.white,
+				color: colors.gray10,
 				cursor: 'pointer',
+				padding: '12px 10px',
 				fontSize: '12px',
-				backgroundColor: colors.elderberry,
+				backgroundColor: colors.mediumBlue,
 				'&:hover': {
-					backgroundColor: colors.mediumBlue,
+					backgroundColor: colors.tooltipBlue,
+					color: colors.white,
 				},
 			}),
-			placeholder: (provided) => ({
-				...provided,
+			placeholder: (style) => ({
+				...style,
 				fontSize: '12px',
 				color: colors.white,
+				textTransform: 'capitalize',
 			}),
-			dropdownIndicator: (provided, state) => ({
-				...provided,
-				color: colors.goldColors.color1,
+			dropdownIndicator: (style, state) => ({
+				...style,
+				color: state.selectProps.menuIsOpen ? colors.white : colors.gray10,
 				transition: 'transform 0.2s ease-in-out',
 				transform: state.selectProps.menuIsOpen && 'rotate(180deg)',
 				'&:hover': {
-					color: colors.goldColors.color3,
+					color: colors.white,
 				},
 			}),
 		};
 		return styles;
 	}, [colors, fonts]);
 
+	const { components, ...rest } = props;
+
 	return (
 		<ReactSelect
 			styles={computedStyles}
 			classNamePrefix="react-select"
-			components={{ IndicatorSeparator }}
-			{...props}
+			components={{ IndicatorSeparator, DropdownIndicator, MultiValueRemove, ...components }}
+			{...rest}
 		/>
 	);
 }
