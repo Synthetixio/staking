@@ -27,7 +27,6 @@ export const DatePicker: FC<DatePickerProps> = ({ className, onClear, showClear,
 					showClear,
 				})}
 				showPopperArrow={false}
-				onSelect={() => console.log('selected')}
 				onCalendarClose={() => setIsOpen(false)}
 				onCalendarOpen={() => setIsOpen(true)}
 				{...rest}
