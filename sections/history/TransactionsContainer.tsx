@@ -1,13 +1,26 @@
 import { FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
 import orderBy from 'lodash/orderBy';
+import { ValueType, components } from 'react-select';
+import keyBy from 'lodash/keyBy';
+
+import { Svg } from 'react-optimized-image';
+
+import ClaimIcon from 'assets/svg/app/claim.svg';
+import BurnIcon from 'assets/svg/app/burn.svg';
+import MintIcon from 'assets/svg/app/mint.svg';
 
 import { HistoricalStakingTransaction, StakingTransactionType } from 'queries/staking/types';
 
-import Transactions from './Transactions';
-import styled from 'styled-components';
 import DateSelect from 'components/DateSelect';
+import Select from 'components/Select';
 import { formatShortDate } from 'utils/formatters/date';
+import { formatNumber } from 'utils/formatters/number';
+
+import { CapitalizedText, GridDiv } from 'styles/common';
+
+import Transactions from './Transactions';
 
 type TransactionsContainerProps = {
 	issued: HistoricalStakingTransaction[];
@@ -15,6 +28,43 @@ type TransactionsContainerProps = {
 	feesClaimed: HistoricalStakingTransaction[];
 	isLoaded: boolean;
 };
+
+enum AmountFilterType {
+	LESS_THAN_1K,
+	BETWEEN_1K_AND_10K,
+	BETWEEN_10K_AND_100K,
+	GREATER_THAN_100K,
+}
+
+type AmountFilterOptionType = {
+	label: string;
+	value: AmountFilterType | null;
+};
+
+type TypeFilterOptionType = {
+	label: string;
+	value: StakingTransactionType | null;
+};
+
+const { Option } = components;
+
+const CustomOption = (props: any) => {
+	return (
+		<Option {...props}>
+			<div style={{ display: 'flex', alignItems: 'center' }}>
+				<Svg
+					src={MintIcon}
+					width="16"
+					height="16"
+					viewBox={`0 0 ${MintIcon.width} ${MintIcon.height}`}
+					style={{ marginRight: '7px' }}
+				/>
+				{props.data.label}
+			</div>
+		</Option>
+	);
+};
+
 const TransactionsContainer: FC<TransactionsContainerProps> = ({
 	issued,
 	burned,
@@ -23,7 +73,7 @@ const TransactionsContainer: FC<TransactionsContainerProps> = ({
 }) => {
 	const { t } = useTranslation();
 
-	const [typeFilter, setTypeFilter] = useState<StakingTransactionType | null>(null);
+	const [typeFilter, setTypeFilter] = useState<ValueType<TypeFilterOptionType>>();
 	const [dateFilter, setDateFilter] = useState<{
 		startDate: Date | null;
 		endDate: Date | null;
@@ -31,27 +81,73 @@ const TransactionsContainer: FC<TransactionsContainerProps> = ({
 		startDate: new Date(),
 		endDate: null,
 	});
-	const [amountFilter, setAmountFilter] = useState<{ minValue: number; maxValue?: number } | null>(
-		null
+	const [amountFilter, setAmountFilter] = useState<ValueType<AmountFilterOptionType>>();
+
+	const typeFilterList = useMemo(
+		() => [
+			{ label: t('history.table.staking-tx-type.issued'), value: StakingTransactionType.Issued },
+			{ label: t('history.table.staking-tx-type.burned'), value: StakingTransactionType.Burned },
+			{
+				label: t('history.table.staking-tx-type.feesClaimed'),
+				value: StakingTransactionType.FeesClaimed,
+			},
+		],
+		[t]
+	);
+
+	const amountFilterList = useMemo(
+		() => [
+			{ label: t('history.table.filters.amount.no-selection'), value: null },
+			{
+				label: t('history.table.filters.amount.less-than-num', {
+					num: formatNumber(1000, { decimals: 0 }),
+				}),
+				value: AmountFilterType.LESS_THAN_1K,
+			},
+			{
+				label: t('history.table.filters.amount.between-num1-and-num2', {
+					num1: formatNumber(1000, { decimals: 0 }),
+					num2: formatNumber(10000, { decimals: 0 }),
+				}),
+				value: AmountFilterType.BETWEEN_1K_AND_10K,
+			},
+			{
+				label: t('history.table.filters.amount.between-num1-and-num2', {
+					num1: formatNumber(10000, { decimals: 0 }),
+					num2: formatNumber(100000, { decimals: 0 }),
+				}),
+				value: AmountFilterType.BETWEEN_10K_AND_100K,
+			},
+			{
+				label: t('history.table.filters.amount.greater-than-num', {
+					num: formatNumber(100000, { decimals: 0 }),
+				}),
+				value: AmountFilterType.GREATER_THAN_100K,
+			},
+		],
+		[t]
 	);
 
 	const filteredTransactions = useMemo(() => {
 		let transactions: HistoricalStakingTransaction[] = [];
 
 		if (isLoaded) {
-			switch (typeFilter) {
-				case StakingTransactionType.Issued:
-					transactions = issued;
-					break;
-				case StakingTransactionType.Burned:
-					transactions = burned;
-					break;
-				case StakingTransactionType.FeesClaimed:
-					transactions = feesClaimed;
-					break;
-				default:
-					transactions = [...issued, ...burned, ...feesClaimed];
+			if (Array.isArray(typeFilter) && typeFilter.length) {
+				const filters = Object.keys(keyBy(typeFilter, 'value')) as StakingTransactionType[];
+
+				if (filters.includes(StakingTransactionType.Issued)) {
+					transactions.push(...issued);
+				}
+				if (filters.includes(StakingTransactionType.Burned)) {
+					transactions.push(...burned);
+				}
+				if (filters.includes(StakingTransactionType.FeesClaimed)) {
+					transactions.push(...feesClaimed);
+				}
+			} else {
+				transactions = [...issued, ...burned, ...feesClaimed];
 			}
+
 			if (dateFilter.startDate != null && dateFilter.endDate != null) {
 				const startDate = dateFilter.startDate.getTime();
 				const endDate = dateFilter.endDate.getTime();
@@ -60,12 +156,22 @@ const TransactionsContainer: FC<TransactionsContainerProps> = ({
 					(transaction) => transaction.timestamp >= startDate && transaction.timestamp <= endDate
 				);
 			}
+
 			if (amountFilter != null) {
-				transactions = transactions.filter(
-					(transaction) =>
-						transaction.value >= amountFilter.minValue &&
-						(amountFilter.maxValue != null ? transaction.timestamp <= amountFilter.maxValue : true)
-				);
+				transactions = transactions.filter((transaction) => {
+					switch ((amountFilter as AmountFilterOptionType).value) {
+						case AmountFilterType.LESS_THAN_1K:
+							return transaction.value <= 1000;
+						case AmountFilterType.BETWEEN_1K_AND_10K:
+							return 1000 < transaction.value && transaction.value <= 10000;
+						case AmountFilterType.BETWEEN_10K_AND_100K:
+							return 10000 < transaction.value && transaction.value <= 100000;
+						case AmountFilterType.GREATER_THAN_100K:
+							return transaction.value >= 100000;
+						default:
+							return true;
+					}
+				});
 			}
 		}
 		return transactions.length ? orderBy(transactions, 'timestamp', 'desc') : transactions;
@@ -75,12 +181,30 @@ const TransactionsContainer: FC<TransactionsContainerProps> = ({
 		if (dateFilter.startDate != null && dateFilter.endDate != null) {
 			return `${formatShortDate(dateFilter.startDate)} – ${formatShortDate(dateFilter.endDate)}`;
 		}
-		return 'All dates';
-	}, [dateFilter.startDate, dateFilter.endDate]);
+		return t('history.table.filters.date.no-selection');
+	}, [dateFilter.startDate, dateFilter.endDate, t]);
 
 	return (
 		<>
 			<Filters>
+				<Select
+					inputId="type-filter-list"
+					formatOptionLabel={(option: TypeFilterOptionType) => (
+						<CapitalizedText>{option.label}</CapitalizedText>
+					)}
+					options={typeFilterList}
+					value={typeFilter}
+					onChange={(option: ValueType<TypeFilterOptionType>) => {
+						setTypeFilter(option);
+					}}
+					isMulti={true}
+					isSearchable={false}
+					placeholder={t('history.table.filters.type.no-selection')}
+					components={{
+						Option: CustomOption,
+					}}
+					menuIsOpen={true}
+				/>
 				<StyledDateSelect
 					id="tx-date-filter"
 					startDate={dateFilter.startDate}
@@ -98,18 +222,32 @@ const TransactionsContainer: FC<TransactionsContainerProps> = ({
 					value={dateFilterRange}
 					selectsRange={true}
 				/>
+				<Select
+					inputId="order-amount-list"
+					formatOptionLabel={(option: AmountFilterOptionType) => (
+						<CapitalizedText>{option.label}</CapitalizedText>
+					)}
+					options={amountFilterList}
+					value={amountFilter}
+					onChange={(option: ValueType<AmountFilterOptionType>) => {
+						if (option) {
+							setAmountFilter(option);
+						}
+					}}
+					isSearchable={false}
+					placeholder={t('history.table.filters.amount.no-selection')}
+				/>
 			</Filters>
 			<Transactions transactions={filteredTransactions} isLoaded={isLoaded} />
 		</>
 	);
 };
 
-const Filters = styled.div``;
-
-const StyledDateSelect = styled(DateSelect)`
-	.react-datepicker__input-container {
-		width: 250px;
-	}
+const Filters = styled(GridDiv)`
+	grid-template-columns: repeat(3, 1fr);
+	grid-gap: 18px;
 `;
+
+const StyledDateSelect = styled(DateSelect)``;
 
 export default TransactionsContainer;

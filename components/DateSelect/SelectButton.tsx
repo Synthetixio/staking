@@ -36,6 +36,7 @@ const Button = styled.button<{ isOpen: boolean }>`
 	justify-content: space-between;
 	padding: 0 17px;
 	width: 100%;
+	text-transform: capitalize;
 	svg {
 		transition: transform 0.2s ease-in-out;
 		${(props) =>

@@ -35,6 +35,10 @@ const DatePickerContainer = styled.div`
 		width: max-content;
 	}
 
+	.react-datepicker-wrapper {
+		width: 100%;
+	}
+
 	.react-datepicker {
 		font-family: ${(props) => props.theme.fonts.regular};
 		font-size: 0.8rem;

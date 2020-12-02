@@ -275,7 +275,21 @@
 				"burned": "Burned",
 				"feesClaimed": "Claimed"
 			},
-			"no-results": "no results"
+			"no-results": "no results",
+			"filters": {
+				"type": {
+					"no-selection": "all types"
+				},
+				"date": {
+					"no-selection": "all dates"
+				},
+				"amount": {
+					"no-selection": "all sizes",
+					"less-than-num": "< {{num}}",
+					"between-num1-and-num2": "{{num1}} < x < {{num2}}",
+					"greater-than-num": "{{num}}+"
+				}
+			}
 		}
 	},
 	"synths": {
