@@ -1,23 +1,6 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { LoadingState } from 'constants/loading';
-import styled from 'styled-components';
-import Img, { Svg } from 'react-optimized-image';
-import sUSDIcon from '@synthetixio/assets/synths/sUSD.svg';
+import React, { useEffect, useState } from 'react';
 
-import {
-	TabContainer,
-	StyledCTA,
-	StyledInput,
-	DataContainer,
-	DataRow,
-	InputBox,
-	RowTitle,
-	RowValue,
-	InputContainer,
-	InputLocked,
-} from '../common';
-import { ModalContent, ModalItem, ModalItemTitle, ModalItemText } from 'styles/common';
+import { TabContainer } from '../common';
 import { CRYPTO_CURRENCY_MAP, SYNTHS_MAP } from 'constants/currency';
 import { SynthetixJS } from '@synthetixio/js';
 import Notify from 'containers/Notify';
@@ -27,40 +10,26 @@ import { getGasEstimateForTransaction } from 'utils/transactions';
 import { useRecoilValue } from 'recoil';
 import { walletAddressState } from 'store/wallet';
 import synthetix from 'lib/synthetix';
-import GasSelector from 'components/GasSelector';
 import { getMintAmount, getStakingAmount } from '../helper';
-import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import { formatCurrency } from 'utils/formatters/number';
 import Staking, { BurnActionType } from 'sections/staking/context/StakingContext';
 import BurnTiles from '../BurnTiles';
-import NavigationBack from 'assets/svg/app/navigation-back.svg';
+import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
+import Input from '../Input';
+import { Transaction } from 'constants/network';
 
-type BurnTabProps = {
-	maxBurnAmount: number;
-	targetCRatio: number;
-	maxCollateral: number;
-	SNXRate: number;
-	stakedSNX: number;
-};
-
-const BurnTab: React.FC<BurnTabProps> = ({
-	maxBurnAmount,
-	maxCollateral,
-	targetCRatio,
-	SNXRate,
-	stakedSNX,
-}) => {
-	const { t } = useTranslation();
+const BurnTab: React.FC = () => {
 	const { monitorHash } = Notify.useContainer();
 	const { amountToBurn, onBurnChange, burnType, onBurnTypeChange } = Staking.useContainer();
+	const { targetCRatio, debtBalance, SNXRate } = useStakingCalculations();
 	const walletAddress = useRecoilValue(walletAddressState);
 
+	const [transactionState, setTransactionState] = useState<Transaction>(Transaction.PRESUBMIT);
+	const [txHash, setTxHash] = useState<string | null>(null);
 	const [burningTxError, setBurningTxError] = useState<boolean>(false);
 	const [error, setError] = useState<string | null>(null);
 	const [gasLimitEstimate, setGasLimitEstimate] = useState<number | null>(null);
-	const [burnLoadingState] = useState<LoadingState | null>(null);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
-	const [burnToTarget, setBurnToTarget] = useState<boolean>(false);
 	const [stakingCurrencyKey] = useState<string>(CRYPTO_CURRENCY_MAP.SNX);
 	const [synthCurrencyKey] = useState<string>(SYNTHS_MAP.sUSD);
 	const [gasPrice, setGasPrice] = useState<number>(0);
@@ -85,26 +54,20 @@ const BurnTab: React.FC<BurnTabProps> = ({
 			}
 		};
 		getGasLimitEstimate();
-		// eslint-disable-next-line
 	}, [synthetix, error]);
 
-	const handleBurnChange = (value: string) => {
-		setBurnToTarget(false);
-		onBurnChange(value);
-	};
+	// const handleMaxBurn = () => {
+	// 	setBurnToTarget(false);
+	// 	onBurnChange(maxBurnAmount?.toString() || '');
+	// };
 
-	const handleMaxBurn = () => {
-		setBurnToTarget(false);
-		onBurnChange(maxBurnAmount?.toString() || '');
-	};
+	// const handleBurnToTarget = () => {
+	// 	setBurnToTarget(true);
+	// 	const maxIssuableSynths = getMintAmount(targetCRatio, maxCollateral.toString(), SNXRate);
+	// 	onBurnChange(Math.max(maxBurnAmount - maxIssuableSynths, 0).toString());
+	// };
 
-	const handleBurnToTarget = () => {
-		setBurnToTarget(true);
-		const maxIssuableSynths = getMintAmount(targetCRatio, maxCollateral.toString(), SNXRate);
-		onBurnChange(Math.max(maxBurnAmount - maxIssuableSynths, 0).toString());
-	};
-
-	const handleBurn = async () => {
+	const handleBurn = async (burnToTarget: boolean) => {
 		try {
 			setBurningTxError(false);
 			setTxModalOpen(true);
@@ -163,102 +126,58 @@ const BurnTab: React.FC<BurnTabProps> = ({
 			currencyKey: synthCurrencyKey,
 		});
 
-	const formattedDebt = formatCurrency(synthCurrencyKey, amountToBurn, {
-		currencyKey: synthCurrencyKey,
-	});
-
-	const formattedStake = formatCurrency(stakingCurrencyKey, maxCollateral.toString(), {
-		currencyKey: stakingCurrencyKey,
-	});
-
-	const returnInput = (inputTypes: { max?: boolean; custom?: boolean; target?: boolean }) => {
-		const { max, custom, target } = inputTypes;
-		return (
-			<>
-				<InputContainer>
-					<IconContainer onClick={() => onBurnTypeChange(null)}>
-						<Svg src={NavigationBack} />
-					</IconContainer>
-					<InputBox>
-						<Img width={50} height={50} src={sUSDIcon} />
-						{max || target ? (
-							<InputLocked>{mintInfo(maxBurnAmount.toString())}</InputLocked>
-						) : (
-							<StyledInput placeholder="0" onChange={(e) => onBurnChange(e.target.value)} />
-						)}
-					</InputBox>
-					<DataContainer>
-						<DataRow>
-							<RowTitle>{t('staking.actions.burn.info.unstaking')}</RowTitle>
-							<RowValue>{max ? stakeInfo(amountToBurn) : 0}</RowValue>
-						</DataRow>
-						<DataRow>
-							<GasSelector gasLimitEstimate={gasLimitEstimate} setGasPrice={setGasPrice} />
-						</DataRow>
-					</DataContainer>
-					{amountToBurn !== '0' && amountToBurn !== '' ? (
-						<StyledCTA
-							blue={false}
-							onClick={handleBurn}
-							variant="alt"
-							size="lg"
-							disabled={!!burnLoadingState}
-						>
-							{t('staking.actions.burn.action.burn', {
-								amountToBurn: amountToBurn,
-								stakeType: stakingCurrencyKey,
-							})}
-						</StyledCTA>
-					) : (
-						<StyledCTA blue={false} variant="alt" size="lg" disabled={true}>
-							{t('staking.actions.mint.action.empty')}
-						</StyledCTA>
-					)}
-				</InputContainer>
-				{txModalOpen && (
-					<TxConfirmationModal
-						onDismiss={() => setTxModalOpen(false)}
-						txError={burningTxError}
-						attemptRetry={handleBurn}
-						content={
-							<ModalContent>
-								<ModalItem>
-									<ModalItemTitle>{t('modals.confirm-transaction.staking.from')}</ModalItemTitle>
-									<ModalItemText>{formattedDebt}</ModalItemText>
-								</ModalItem>
-								<ModalItem>
-									<ModalItemTitle>{t('modals.confirm-transaction.staking.to')}</ModalItemTitle>
-									<ModalItemText>{stakeInfo(amountToBurn)}</ModalItemText>
-								</ModalItem>
-							</ModalContent>
-						}
-					/>
-				)}
-			</>
-		);
-	};
-
-	const returnPanel = useMemo(() => {
+	const returnPanel = () => {
+		let onSubmit;
+		let debtValue;
+		let stakeValue;
+		let isLocked;
 		switch (burnType) {
 			case BurnActionType.MAX:
-				return returnInput({ max: true });
-			case BurnActionType.CUSTOM:
-				return returnInput({ custom: true });
+				onSubmit = () => {
+					onBurnChange(debtBalance.toString());
+					handleBurn(false);
+				};
+				debtValue = debtBalance.toString();
+				stakeValue = stakeInfo(debtBalance.toString());
+				isLocked = true;
+				break;
 			case BurnActionType.TARGET:
-				return returnInput({ target: true });
+				onSubmit = () => handleBurn(true);
+				debtValue = '0';
+				stakeValue = '0';
+				isLocked = true;
+				break;
+			case BurnActionType.CUSTOM:
+				onSubmit = () => handleBurn(false);
+				debtValue = amountToBurn;
+				stakeValue = stakeInfo(amountToBurn);
+				isLocked = false;
+				break;
 			default:
 				return <BurnTiles targetCRatio={targetCRatio} />;
 		}
-	}, [burnType, amountToBurn, targetCRatio]);
+		return (
+			<Input
+				onSubmit={onSubmit}
+				debtValue={debtValue}
+				stakeValue={stakeValue}
+				isLocked={isLocked}
+				isMint={false}
+				onBack={onBurnTypeChange}
+				txError={burningTxError}
+				txModalOpen={txModalOpen}
+				setTxModalOpen={setTxModalOpen}
+				gasLimitEstimate={gasLimitEstimate}
+				setGasPrice={setGasPrice}
+				onInputChange={onBurnChange}
+				txHash={txHash}
+				transactionState={transactionState}
+				setTransactionState={setTransactionState}
+			/>
+		);
+	};
 
-	return <TabContainer>{returnPanel}</TabContainer>;
+	return <TabContainer>{returnPanel()}</TabContainer>;
 };
-
-const IconContainer = styled.div`
-	position: absolute;
-	top: 20px;
-	left: 20px;
-	cursor: pointer;
-`;
 
 export default BurnTab;

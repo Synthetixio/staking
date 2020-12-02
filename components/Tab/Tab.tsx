@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import { resetButtonCSS } from 'styles/common';
 
@@ -9,6 +9,7 @@ type TabProps = {
 	onClick?: () => void;
 	children: ReactNode;
 	numberTabs: number;
+	blue: boolean;
 };
 
 export const TabButton = (props: TabProps) => (
@@ -84,12 +85,21 @@ const StyledTabButton = styled.button<TabProps>`
 	background: ${(props) =>
 		props.active ? props.theme.colors.backgroundBlue : props.theme.colors.darkBlue};
 	color: ${(props) => (props.active ? props.theme.colors.white : props.theme.colors.gray)};
-	border-top: ${(props) => (props.active ? `2px solid ${props.theme.colors.brightBlue}` : 'none')};
+
+	${(props) =>
+		props.blue
+			? css`
+					border-top: ${props.active ? `2px solid ${props.theme.colors.brightBlue}` : 'none'};
+			  `
+			: css`
+					border-top: ${props.active ? `2px solid ${props.theme.colors.brightOrange}` : 'none'};
+			  `}
+
 	&:hover {
 		color: ${(props) => (props.active ? props.theme.colors.white : props.theme.colors.brightPink)};
 		background: ${(props) => props.theme.colors.backgroundBlue};
-		border-top: 2px solid
-			${(props) => (props.active ? props.theme.colors.brightBlue : props.theme.colors.brightPink)};
+
+		border-top: 2px solid ${(props) => (props.active ? 'none' : props.theme.colors.brightPink)};
 	}
 	height: 60px;
 	width: ${(props) => 100 / props.numberTabs}%;

@@ -51,7 +51,7 @@ const MintInfo: React.FC<MintInfoProps> = ({
 		() => [
 			{
 				title: t('staking.info.mint.table.not-staked'),
-				value: amountToMint ? unstakedCollateral : 0,
+				value: unstakedCollateral,
 				changedValue: amountToMint ? unstakedCollateral - stakingAmount : 0,
 				currencyKey: CRYPTO_CURRENCY_MAP.SNX,
 			},

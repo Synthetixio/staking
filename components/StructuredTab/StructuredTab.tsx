@@ -8,6 +8,7 @@ export type TabInfo = {
 	icon?: () => ReactNode;
 	tabChildren: ReactNode;
 	key: string;
+	blue: boolean;
 };
 
 interface StructuredTabProps {
@@ -29,8 +30,9 @@ const StructuredTab: FC<StructuredTabProps> = ({
 	return (
 		<FlexDivColCentered>
 			<TabList padding={boxPadding} width={boxWidth}>
-				{tabData.map(({ title, icon, key }, index) => (
+				{tabData.map(({ title, icon, key, blue }, index) => (
 					<TabButton
+						blue={blue}
 						numberTabs={tabData.length}
 						key={`${title}-${index}-button`}
 						name={title}

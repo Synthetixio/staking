@@ -73,23 +73,6 @@ export const InputLocked = styled.p`
 	font-family: ${(props) => props.theme.fonts.expanded};
 `;
 
-export const StyledButton = styled(Button)<{ blue: boolean }>`
-	color: ${(props) =>
-		props.blue ? props.theme.colors.brightBlue : props.theme.colors.brightOrange};
-	box-shadow: ${(props) =>
-		props.blue
-			? `0px 0px 10px rgba(0, 209, 255, 0.9)`
-			: `0px 0px 8.38542px rgba(252, 135, 56, 0.6);`};
-	border: ${(props) =>
-		props.blue
-			? `1px solid ${props.theme.colors.brightBlue}`
-			: `1px solid ${props.theme.colors.brightOrange}`};
-	box-sizing: border-box;
-	font-size: 16px;
-	font-family: ${(props) => props.theme.fonts.condensedBold};
-	width: 25%;
-`;
-
 export const DataRow = styled(FlexDivRowCentered)`
 	justify-content: space-between;
 	margin: 16px 32px;
@@ -108,13 +91,10 @@ export const RowValue = styled.p`
 	text-transform: uppercase;
 	margin: 0px 8px;
 `;
-export const StyledCTA = styled(Button)<{ blue: boolean }>`
+export const StyledCTA = styled(Button)`
 	font-size: 14px;
 	font-family: ${(props) => props.theme.fonts.condensedMedium};
-	box-shadow: ${(props) =>
-		props.blue
-			? `0px 0px 10px rgba(0, 209, 255, 0.9)`
-			: `0px 0px 8.38542px rgba(252, 135, 56, 0.6);`};
+	box-shadow: 0px 0px 10px rgba(0, 209, 255, 0.9);
 	border-radius: 4px;
 	width: 100%;
 	text-transform: uppercase;
