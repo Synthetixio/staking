@@ -1,4 +1,4 @@
-import React, { FC, ReactNode } from 'react';
+import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import styled from 'styled-components';
@@ -9,9 +9,6 @@ import Etherscan from 'containers/Etherscan';
 import Table from 'components/Table';
 
 import NoNotificationIcon from 'assets/svg/app/no-notifications.svg';
-import ClaimIcon from 'assets/svg/app/claim.svg';
-import BurnIcon from 'assets/svg/app/burn.svg';
-import MintIcon from 'assets/svg/app/mint.svg';
 import ArrowRightIcon from 'assets/svg/app/arrow-right.svg';
 
 import { formatShortDate } from 'utils/formatters/date';
@@ -22,6 +19,7 @@ import { HistoricalStakingTransaction, StakingTransactionType } from 'queries/st
 import { ExternalLink, FlexDivCentered, GridDivCenteredRow } from 'styles/common';
 import { NO_VALUE } from 'constants/placeholder';
 import { CRYPTO_CURRENCY_MAP, SYNTHS_MAP } from 'constants/currency';
+import TypeIcon from '../TypeIcon';
 
 interface TransactionsProps {
 	transactions: HistoricalStakingTransaction[];
@@ -45,48 +43,12 @@ const Transactions: FC<TransactionsProps> = ({ transactions, isLoaded }) => {
 								HistoricalStakingTransaction,
 								HistoricalStakingTransaction['type']
 							>
-						) => {
-							let icon: ReactNode = null;
-
-							switch (cellProps.value) {
-								case StakingTransactionType.Burned:
-									icon = (
-										<Svg
-											src={BurnIcon}
-											width="30"
-											viewBox={`0 0 ${BurnIcon.width} ${BurnIcon.height}`}
-										/>
-									);
-									break;
-								case StakingTransactionType.Issued:
-									icon = (
-										<Svg
-											src={MintIcon}
-											width="24"
-											viewBox={`0 0 ${MintIcon.width} ${MintIcon.height}`}
-										/>
-									);
-									break;
-								case StakingTransactionType.FeesClaimed:
-									icon = (
-										<Svg
-											src={ClaimIcon}
-											width="30"
-											viewBox={`0 0 ${ClaimIcon.width} ${ClaimIcon.height}`}
-										/>
-									);
-									break;
-								default:
-									icon = null;
-							}
-
-							return (
-								<TypeContainer>
-									{icon && <TypeIcon>{icon}</TypeIcon>}
-									{t(`history.table.staking-tx-type.${cellProps.value}`)}
-								</TypeContainer>
-							);
-						},
+						) => (
+							<TypeContainer>
+								<TypeIconContainer>{<TypeIcon type={cellProps.value} />}</TypeIconContainer>
+								{t(`history.table.staking-tx-type.${cellProps.value}`)}
+							</TypeContainer>
+						),
 						sortable: true,
 						width: 200,
 					},
@@ -193,7 +155,7 @@ const TypeContainer = styled(FlexDivCentered)`
 	text-transform: capitalize;
 `;
 
-const TypeIcon = styled.span`
+const TypeIconContainer = styled.span`
 	width: 50px;
 	text-align: center;
 	margin-left: -10px;

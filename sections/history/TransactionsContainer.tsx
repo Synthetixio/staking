@@ -2,14 +2,8 @@ import { FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import orderBy from 'lodash/orderBy';
-import { ValueType, components } from 'react-select';
+import { ValueType } from 'react-select';
 import keyBy from 'lodash/keyBy';
-
-import { Svg } from 'react-optimized-image';
-
-import ClaimIcon from 'assets/svg/app/claim.svg';
-import BurnIcon from 'assets/svg/app/burn.svg';
-import MintIcon from 'assets/svg/app/mint.svg';
 
 import { HistoricalStakingTransaction, StakingTransactionType } from 'queries/staking/types';
 
@@ -21,49 +15,14 @@ import { formatNumber } from 'utils/formatters/number';
 import { CapitalizedText, GridDiv } from 'styles/common';
 
 import Transactions from './Transactions';
+import {
+	TypeFilterOptionType,
+	TransactionsContainerProps,
+	AmountFilterOptionType,
+	AmountFilterType,
+} from './types';
 
-type TransactionsContainerProps = {
-	issued: HistoricalStakingTransaction[];
-	burned: HistoricalStakingTransaction[];
-	feesClaimed: HistoricalStakingTransaction[];
-	isLoaded: boolean;
-};
-
-enum AmountFilterType {
-	LESS_THAN_1K,
-	BETWEEN_1K_AND_10K,
-	BETWEEN_10K_AND_100K,
-	GREATER_THAN_100K,
-}
-
-type AmountFilterOptionType = {
-	label: string;
-	value: AmountFilterType | null;
-};
-
-type TypeFilterOptionType = {
-	label: string;
-	value: StakingTransactionType | null;
-};
-
-const { Option } = components;
-
-const CustomOption = (props: any) => {
-	return (
-		<Option {...props}>
-			<div style={{ display: 'flex', alignItems: 'center' }}>
-				<Svg
-					src={MintIcon}
-					width="16"
-					height="16"
-					viewBox={`0 0 ${MintIcon.width} ${MintIcon.height}`}
-					style={{ marginRight: '7px' }}
-				/>
-				{props.data.label}
-			</div>
-		</Option>
-	);
-};
+import CustomTypeOption from './CustomTypeOption';
 
 const TransactionsContainer: FC<TransactionsContainerProps> = ({
 	issued,
@@ -199,11 +158,11 @@ const TransactionsContainer: FC<TransactionsContainerProps> = ({
 					}}
 					isMulti={true}
 					isSearchable={false}
+					isClearable={false}
 					placeholder={t('history.table.filters.type.no-selection')}
 					components={{
-						Option: CustomOption,
+						Option: CustomTypeOption,
 					}}
-					menuIsOpen={true}
 				/>
 				<StyledDateSelect
 					id="tx-date-filter"
