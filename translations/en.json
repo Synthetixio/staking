@@ -105,9 +105,7 @@
 					}
 				},
 				"info": {
-					"header": "Stake",
-					"staking": "Staking",
-					"minting": "Minting"
+					"staking": "Staking"
 				},
 				"action": {
 					"empty": "Enter an amount",
@@ -148,8 +146,6 @@
 					}
 				},
 				"info": {
-					"header": "Unstake",
-					"burning": "Burning",
 					"unstaking": "Unstaking"
 				},
 				"action": {

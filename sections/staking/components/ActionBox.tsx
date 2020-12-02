@@ -17,44 +17,24 @@ const ActionBox: React.FC = () => {
 	const { t } = useTranslation();
 	const { onPanelChange } = Staking.useContainer();
 
-	const {
-		debtBalance,
-		targetCRatio,
-		stakedCollateral,
-		SNXRate,
-		unstakedCollateral,
-	} = useStakingCalculations();
-
 	const tabData = useMemo(
 		() => [
 			{
 				title: t('staking.actions.mint.title'),
 				icon: () => <Svg src={Mint} />,
-				tabChildren: (
-					<MintTab
-						targetCRatio={targetCRatio}
-						maxCollateral={unstakedCollateral}
-						SNXRate={SNXRate}
-					/>
-				),
+				tabChildren: <MintTab />,
+				blue: true,
 				key: StakingPanelType.MINT,
 			},
 			{
 				title: t('staking.actions.burn.title'),
 				icon: () => <Svg src={Burn} />,
-				tabChildren: (
-					<BurnTab
-						targetCRatio={targetCRatio}
-						maxBurnAmount={debtBalance}
-						maxCollateral={unstakedCollateral}
-						stakedSNX={stakedCollateral}
-						SNXRate={SNXRate}
-					/>
-				),
+				tabChildren: <BurnTab />,
+				blue: false,
 				key: StakingPanelType.BURN,
 			},
 		],
-		[t, targetCRatio, debtBalance, SNXRate, unstakedCollateral, stakedCollateral]
+		[t]
 	);
 
 	return (

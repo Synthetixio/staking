@@ -19,11 +19,13 @@ const ActionBox: React.FC<ActionBoxProps> = ({ canVestAmount, setPanelType, isLo
 				title: t('escrow.actions.staking.title'),
 				tabChildren: <StakingRewardsTab canVestAmount={canVestAmount} />,
 				key: EscrowPanelType.STAKING,
+				blue: true,
 			},
 			{
 				title: t('escrow.actions.ico.title'),
 				tabChildren: <></>,
 				key: EscrowPanelType.ICO,
+				blue: false,
 			},
 		],
 		[t, canVestAmount]
