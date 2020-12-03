@@ -19,7 +19,7 @@ export enum BurnActionType {
 
 const useStaking = () => {
 	const [amountToMint, setAmountToMint] = useState<string>('');
-	const [amountToBurn, setAmountToBurn] = useState<string>('0');
+	const [amountToBurn, setAmountToBurn] = useState<string>('');
 	const [panelType, setPanelType] = useState<StakingPanelType>(StakingPanelType.MINT);
 	const [mintType, setMintType] = useState<MintActionType | null>(null);
 	const [burnType, setBurnType] = useState<BurnActionType | null>(null);

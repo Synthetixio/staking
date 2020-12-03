@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import Staking, { BurnActionType } from 'sections/staking/context/StakingContext';
 import Burn from 'assets/svg/app/burn.svg';
@@ -6,15 +6,22 @@ import { Svg } from 'react-optimized-image';
 import ButtonTile from '../ButtonTile';
 import { FlexDivCol, FlexDivRow } from 'styles/common';
 import styled from 'styled-components';
+import BigNumber from 'bignumber.js';
+import { formatPercent } from 'utils/formatters/number';
 
 type BurnTilesProps = {
-	targetCRatio: number;
+	percentageTargetCRatio: BigNumber;
 };
 
-const BurnTiles: React.FC<BurnTilesProps> = ({ targetCRatio }) => {
+const BurnTiles: React.FC<BurnTilesProps> = ({ percentageTargetCRatio }) => {
 	const { t } = useTranslation();
-	const { onBurnTypeChange } = Staking.useContainer();
+	const { onBurnTypeChange, burnType, onBurnChange } = Staking.useContainer();
 	const BurnIcon = () => <Svg src={Burn} />;
+
+	useEffect(() => {
+		onBurnChange('');
+	}, [burnType]);
+
 	return (
 		<Container>
 			<ButtonTile
@@ -26,7 +33,9 @@ const BurnTiles: React.FC<BurnTilesProps> = ({ targetCRatio }) => {
 			<FlexDivRow>
 				<MarginedButtonTile
 					left={true}
-					title={t('staking.actions.burn.tiles.target.title', { targetCRatio: 100 / targetCRatio })}
+					title={t('staking.actions.burn.tiles.target.title', {
+						targetCRatio: formatPercent(percentageTargetCRatio),
+					})}
 					subtext={t('staking.actions.burn.tiles.target.subtext')}
 					icon={BurnIcon}
 					onAction={() => onBurnTypeChange(BurnActionType.MAX)}

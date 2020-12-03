@@ -2,8 +2,6 @@ import React, { useMemo } from 'react';
 import { Svg } from 'react-optimized-image';
 import { useTranslation } from 'react-i18next';
 
-import useStakingCalculations from '../hooks/useStakingCalculations';
-
 import StructuredTab from 'components/StructuredTab';
 
 import BurnTab from './BurnTab';

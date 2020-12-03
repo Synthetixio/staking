@@ -3,19 +3,23 @@ import useGetDebtDataQuery from 'queries/debt/useGetDebtDataQuery';
 import useCurrencyRatesQuery from 'queries/rates/useCurrencyRatesQuery';
 import { CRYPTO_CURRENCY_MAP } from 'constants/currency';
 import useEscrowDataQuery from 'queries/escrow/useEscrowDataQuery';
+import { BigNumber } from 'bignumber.js';
+import { toBigNumber } from 'utils/formatters/number';
 
 type StakingCalculations = {
-	collateral: number;
-	targetCRatio: number;
-	currentCRatio: number;
-	transferableCollateral: number;
-	debtBalance: number;
-	stakedCollateral: number;
-	stakedCollateralValue: number;
-	lockedCollateral: number;
-	unstakedCollateral: number;
-	SNXRate: number;
-	totalEscrowBalance: number;
+	collateral: BigNumber;
+	targetCRatio: BigNumber;
+	percentageTargetCRatio: BigNumber;
+	currentCRatio: BigNumber;
+	transferableCollateral: BigNumber;
+	debtBalance: BigNumber;
+	stakedCollateral: BigNumber;
+	stakedCollateralValue: BigNumber;
+	lockedCollateral: BigNumber;
+	unstakedCollateral: BigNumber;
+	SNXRate: BigNumber;
+	totalEscrowBalance: BigNumber;
+	percentageCurrentCRatio: BigNumber;
 };
 const useStakingCalculations = (): StakingCalculations => {
 	const currencyRatesQuery = useCurrencyRatesQuery([CRYPTO_CURRENCY_MAP.SNX]);
@@ -27,23 +31,35 @@ const useStakingCalculations = (): StakingCalculations => {
 	const escrowBalance = escrowBalanceQuery.data ?? null;
 
 	const results = useMemo(() => {
-		const SNXRate = currencyRates?.SNX ?? 0;
-		const collateral = debtData?.collateral ?? 0;
-		const targetCRatio = debtData?.targetCRatio ?? 0;
-		const currentCRatio = debtData?.currentCRatio ?? 0;
-		const transferableCollateral = debtData?.transferable ?? 0;
-		const debtBalance = debtData?.debtBalance ?? 0;
-		const stakedCollateral = collateral * Math.min(1, currentCRatio / targetCRatio);
-		const stakedCollateralValue = stakedCollateral ? stakedCollateral * SNXRate : 0;
-		const lockedCollateral = collateral - transferableCollateral;
-		const unstakedCollateral = collateral - stakedCollateral;
-		const stakingEscrow = escrowBalance?.totalEscrowed ?? 0;
-		const tokenSaleEscrow = escrowBalance?.tokenSaleEscrow ?? 0;
-		const totalEscrowBalance = stakingEscrow + tokenSaleEscrow;
+		const SNXRate = toBigNumber(currencyRates?.SNX ?? 0);
+		const collateral = toBigNumber(debtData?.collateral ?? 0);
+		const targetCRatio = toBigNumber(debtData?.targetCRatio ?? 0);
+		const currentCRatio = toBigNumber(debtData?.currentCRatio ?? 0);
+		const transferableCollateral = toBigNumber(debtData?.transferable ?? 0);
+		const debtBalance = toBigNumber(debtData?.debtBalance ?? 0);
+		const stakingEscrow = toBigNumber(escrowBalance?.totalEscrowed ?? 0);
+		const tokenSaleEscrow = toBigNumber(escrowBalance?.tokenSaleEscrow ?? 0);
+
+		const stakedCollateral = collateral.multipliedBy(
+			Math.min(1, currentCRatio.dividedBy(targetCRatio).toNumber())
+		);
+		const stakedCollateralValue = stakedCollateral.multipliedBy(SNXRate);
+		const lockedCollateral = collateral.minus(transferableCollateral);
+		const unstakedCollateral = collateral.minus(stakedCollateral);
+		const totalEscrowBalance = stakingEscrow.plus(tokenSaleEscrow);
+		const percentageCurrentCRatio = currentCRatio.isZero()
+			? toBigNumber(0)
+			: toBigNumber(1).div(currentCRatio);
+		const percentageTargetCRatio = targetCRatio.isZero()
+			? toBigNumber(0)
+			: toBigNumber(1).div(targetCRatio);
+
 		return {
 			collateral,
 			targetCRatio,
+			percentageTargetCRatio,
 			currentCRatio,
+			percentageCurrentCRatio,
 			transferableCollateral,
 			debtBalance,
 			stakedCollateral,
