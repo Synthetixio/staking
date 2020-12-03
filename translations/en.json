@@ -271,7 +271,6 @@
 				"burned": "Burned",
 				"feesClaimed": "Claimed"
 			},
-			"no-results": "no results",
 			"filters": {
 				"type": {
 					"no-selection": "all types"
@@ -285,7 +284,11 @@
 					"between-num1-and-num2": "{{num1}} < x < {{num2}}",
 					"greater-than-num": "{{num}}+"
 				}
-			}
+			},
+			"view-all-transactions": "view all transactions",
+			"no-results": "No transactions found, please try again.",
+			"no-transactions": "You do not have any transactions.",
+			"connect-wallet-to-view": "Connect wallet to view transactions."
 		}
 	},
 	"synths": {

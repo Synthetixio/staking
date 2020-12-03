@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import { FC, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import styled from 'styled-components';
@@ -8,7 +8,6 @@ import Etherscan from 'containers/Etherscan';
 
 import Table from 'components/Table';
 
-import NoNotificationIcon from 'assets/svg/app/no-notifications.svg';
 import ArrowRightIcon from 'assets/svg/app/arrow-right.svg';
 
 import { formatShortDate } from 'utils/formatters/date';
@@ -16,17 +15,19 @@ import { formatCurrency } from 'utils/formatters/number';
 
 import { HistoricalStakingTransaction, StakingTransactionType } from 'queries/staking/types';
 
-import { ExternalLink, FlexDivCentered, GridDivCenteredRow } from 'styles/common';
+import { ExternalLink, FlexDivCentered } from 'styles/common';
 import { NO_VALUE } from 'constants/placeholder';
 import { CRYPTO_CURRENCY_MAP, SYNTHS_MAP } from 'constants/currency';
+
 import TypeIcon from '../TypeIcon';
 
 interface TransactionsProps {
 	transactions: HistoricalStakingTransaction[];
 	isLoaded: boolean;
+	noResultsMessage?: ReactNode;
 }
 
-const Transactions: FC<TransactionsProps> = ({ transactions, isLoaded }) => {
+const Transactions: FC<TransactionsProps> = ({ transactions, isLoaded, noResultsMessage }) => {
 	const { t } = useTranslation();
 	const { etherscanInstance } = Etherscan.useContainer();
 
@@ -108,14 +109,7 @@ const Transactions: FC<TransactionsProps> = ({ transactions, isLoaded }) => {
 				data={transactions}
 				columnsDeps={[etherscanInstance]}
 				isLoading={!isLoaded}
-				noResultsMessage={
-					isLoaded && transactions.length === 0 ? (
-						<TableNoResults>
-							<Svg src={NoNotificationIcon} />
-							{t('history.table.no-results')}
-						</TableNoResults>
-					) : undefined
-				}
+				noResultsMessage={noResultsMessage}
 				showPagination={true}
 			/>
 		</>
@@ -131,15 +125,6 @@ const StyledTable = styled(Table)`
 			justify-content: flex-end;
 		}
 	}
-`;
-
-const TableNoResults = styled(GridDivCenteredRow)`
-	padding: 50px 0;
-	justify-content: center;
-	background-color: ${(props) => props.theme.colors.mediumBlue};
-	margin-top: -2px;
-	justify-items: center;
-	grid-gap: 10px;
 `;
 
 const StyledExternalLink = styled(ExternalLink)`
