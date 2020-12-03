@@ -11,8 +11,8 @@ import StakingLogo from 'assets/svg/app/staking-logo.svg';
 
 import useGetDebtDataQuery from 'queries/debt/useGetDebtDataQuery';
 import useHistoricalRatesQuery from 'queries/rates/useHistoricalRatesQuery';
-import useGetFeePoolDataQuery from 'queries/staking/useGetFeePoolDataQuery';
 import useSNX24hrPricesQuery from 'queries/rates/useSNX24hrPricesQuery';
+import useFeePeriodTimeAndProgress from 'hooks/useFeePeriodTimeAndProgress';
 
 import { CRYPTO_CURRENCY_MAP } from 'constants/currency';
 import { SIDE_NAV_WIDTH, zIndex } from 'constants/ui';
@@ -25,7 +25,6 @@ import { PeriodBarStats, CRatioBarStats } from './BarStats';
 const SideNav: FC = () => {
 	const { t } = useTranslation();
 	const { asPath } = useRouter();
-	const currentFeePeriod = useGetFeePoolDataQuery('0');
 	const debtDataQuery = useGetDebtDataQuery();
 	const SNX24hrPricesQuery = useSNX24hrPricesQuery();
 	const ETH24hrPricesQuery = useHistoricalRatesQuery(CRYPTO_CURRENCY_MAP.ETH, Period.ONE_DAY);
@@ -33,20 +32,7 @@ const SideNav: FC = () => {
 	const currentCRatio = debtDataQuery.data?.currentCRatio ?? 0;
 	const targetCRatio = debtDataQuery.data?.targetCRatio ?? 0;
 
-	const [nextFeePeriodStarts, currentFeePeriodProgress] = useMemo(
-		() => [
-			new Date(
-				currentFeePeriod.data?.startTime
-					? (currentFeePeriod.data.startTime + currentFeePeriod.data.feePeriodDuration) * 1000
-					: 0
-			),
-			currentFeePeriod.data?.startTime
-				? (Date.now() / 1000 - currentFeePeriod.data.startTime) /
-				  currentFeePeriod.data.feePeriodDuration
-				: 0,
-		],
-		[currentFeePeriod.data?.startTime, currentFeePeriod.data?.feePeriodDuration]
-	);
+	const { nextFeePeriodStarts, currentFeePeriodProgress } = useFeePeriodTimeAndProgress();
 
 	const snxPriceChartData = useMemo(() => {
 		return (SNX24hrPricesQuery?.data ?? [])

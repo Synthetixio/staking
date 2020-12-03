@@ -188,9 +188,40 @@
 		"incentives": {
 			"est-apr": "Est APR",
 			"options": {
-				"staking": "{{asset}} Staking Rewards",
-				"curve": "Curve Finance sUSD LP  Token Rewards",
-				"ieth": "iETH Rewards"
+				"select-a-pool": {
+					"title": "SELECT A POOL:"
+				},
+				"staked-balance": {
+					"title": "STAKED BALANCE",
+					"subtitle": "Staked Balance"
+				},
+				"tvl": {
+					"title": "TVL",
+					"subtitle": "TVL"
+				},
+				"rewards": {
+					"title": "REWARDS",
+					"subtitle": "Claimable"
+				},
+				"time-left": {
+					"title": "TIME LEFT"
+				},
+				"snx": {
+					"title": "Synthetix",
+					"subtitle": "Staking Rewards"
+				},
+				"curve": {
+					"title": "Curve.fi",
+					"subtitle": "sUSD LP Rewards"
+				},
+				"ieth": {
+					"title": "Synthetix",
+					"subtitle": "iETH Rewards"
+				},
+				"ibtc": {
+					"title": "Synthetix",
+					"subtitle": "iBTC Rewards"
+				}
 			},
 			"weekly-rewards": "Weekly rewards {{weeklyRewards}} {{asset}}"
 		},

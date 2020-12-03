@@ -10,6 +10,7 @@ import { PossibleActions } from 'sections/dashboard';
 import useGetDebtDataQuery from 'queries/debt/useGetDebtDataQuery';
 import useGetFeePoolDataQuery from 'queries/staking/useGetFeePoolDataQuery';
 import StatBox from 'components/StatBox';
+import { CRYPTO_CURRENCY_MAP } from 'constants/currency';
 import useCurrencyRatesQuery from 'queries/rates/useCurrencyRatesQuery';
 import { formatFiatCurrency, formatPercent } from 'utils/formatters/number';
 import useTotalIssuedSynthsExcludingEtherQuery from 'queries/synths/useTotalIssuedSynthsExcludingEtherQuery';
@@ -19,8 +20,10 @@ const DashboardPage = () => {
 	const { t } = useTranslation();
 
 	const debtDataQuery = useGetDebtDataQuery();
-	const currencyRates = useCurrencyRatesQuery(['SNX', 'ETH']);
-	const totalIssuedSynthsExclEth = useTotalIssuedSynthsExcludingEtherQuery('sUSD');
+	const currencyRates = useCurrencyRatesQuery([CRYPTO_CURRENCY_MAP.SNX, CRYPTO_CURRENCY_MAP.ETH]);
+	const totalIssuedSynthsExclEth = useTotalIssuedSynthsExcludingEtherQuery(
+		CRYPTO_CURRENCY_MAP.sUSD
+	);
 	const exchangeRates = useExchangeRatesQuery();
 	const previousFeePeriod = useGetFeePoolDataQuery('1');
 
@@ -43,7 +46,7 @@ const DashboardPage = () => {
 
 	// TODO: replace with useMemo
 	const weeklyRewards = sUSDRate * feesToDistribute + SNXRate * rewardsToDistribute;
-	const stakingApy = (weeklyRewards * (activeDebt / totalsUSDDebt) * 52) / stakedValue;
+	const stakingAPR = (weeklyRewards * (activeDebt / totalsUSDDebt) * 52) / stakedValue;
 
 	return (
 		<>
@@ -58,7 +61,7 @@ const DashboardPage = () => {
 					/>
 					<APY
 						title={t('common.stat-box.earning')}
-						value={formatPercent(stakingApy ? stakingApy : 0)}
+						value={formatPercent(stakingAPR ? stakingAPR : 0)}
 						size="lg"
 					/>
 					<ActiveDebt
