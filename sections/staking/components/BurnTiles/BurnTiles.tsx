@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import Staking, { BurnActionType } from 'sections/staking/context/StakingContext';
 import Burn from 'assets/svg/app/burn.svg';
@@ -15,8 +15,13 @@ type BurnTilesProps = {
 
 const BurnTiles: React.FC<BurnTilesProps> = ({ percentageTargetCRatio }) => {
 	const { t } = useTranslation();
-	const { onBurnTypeChange } = Staking.useContainer();
+	const { onBurnTypeChange, burnType, onBurnChange } = Staking.useContainer();
 	const BurnIcon = () => <Svg src={Burn} />;
+
+	useEffect(() => {
+		onBurnChange('');
+	}, [burnType]);
+
 	return (
 		<Container>
 			<ButtonTile

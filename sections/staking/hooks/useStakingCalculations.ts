@@ -50,9 +50,9 @@ const useStakingCalculations = (): StakingCalculations => {
 		const percentageCurrentCRatio = currentCRatio.isZero()
 			? toBigNumber(0)
 			: toBigNumber(1).div(currentCRatio);
-		const percentageTargetCRatio = currentCRatio.isZero()
+		const percentageTargetCRatio = targetCRatio.isZero()
 			? toBigNumber(0)
-			: toBigNumber(1).div(currentCRatio);
+			: toBigNumber(1).div(targetCRatio);
 
 		return {
 			collateral,

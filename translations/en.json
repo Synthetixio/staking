@@ -137,7 +137,7 @@
 						"subtext": "Burn all available sUSD in your wallet (up to your total debt) to unstake your SNX"
 					},
 					"target": {
-						"title": "Burn to {{targetCRatio}}%",
+						"title": "Burn to {{targetCRatio}}",
 						"subtext": "Burn sUSD required to reach target C-Ratio"
 					},
 					"custom": {

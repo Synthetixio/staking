@@ -14,6 +14,7 @@ import MintTiles from '../MintTiles';
 import StakingInput from '../StakingInput';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 import { getMintAmount } from '../helper';
+import { toBigNumber } from 'utils/formatters/number';
 
 const MintTab: React.FC = () => {
 	const { monitorHash } = Notify.useContainer();
@@ -95,16 +96,15 @@ const MintTab: React.FC = () => {
 		let isLocked;
 		switch (mintType) {
 			case MintActionType.MAX:
+				const mintAmount = getMintAmount(targetCRatio, unstakedCollateral, SNXRate);
+				onMintChange(mintAmount.toString());
 				onSubmit = () => handleStake(true);
-				inputValue = getMintAmount(targetCRatio, unstakedCollateral.toString(), SNXRate).toString();
-				// debtValue = mintInfo(unstakedCollateral.toString());
-				// stakeValue = unstakedCollateral.toString();
+				inputValue = mintAmount;
 				isLocked = true;
 				break;
 			case MintActionType.CUSTOM:
 				onSubmit = () => handleStake(false);
-				inputValue = amountToMint;
-				// stakeValue = stakeInfo(amountToMint);
+				inputValue = toBigNumber(amountToMint);
 				isLocked = false;
 				break;
 			default:

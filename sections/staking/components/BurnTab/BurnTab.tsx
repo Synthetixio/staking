@@ -16,6 +16,7 @@ import useStakingCalculations from 'sections/staking/hooks/useStakingCalculation
 import StakingInput from '../StakingInput';
 import { Transaction } from 'constants/network';
 import { getMintAmount } from '../helper';
+import { toBigNumber } from 'utils/formatters/number';
 
 const BurnTab: React.FC = () => {
 	const { monitorHash } = Notify.useContainer();
@@ -92,7 +93,12 @@ const BurnTab: React.FC = () => {
 				});
 			}
 			if (transaction) {
-				monitorHash({ txHash: transaction.hash });
+				setTxHash(transaction.hash);
+				setTransactionState(Transaction.WAITING);
+				monitorHash({
+					txHash: transaction.hash,
+					onTxConfirmed: () => setTransactionState(Transaction.SUCCESS),
+				});
 				setTxModalOpen(false);
 			}
 		} catch (e) {
@@ -106,11 +112,12 @@ const BurnTab: React.FC = () => {
 		let isLocked;
 		switch (burnType) {
 			case BurnActionType.MAX:
+				const burnAmount = debtBalance;
+				onBurnChange(burnAmount.toString());
 				onSubmit = () => {
-					onBurnChange(debtBalance.toString());
 					handleBurn(false);
 				};
-				inputValue = debtBalance.toString();
+				inputValue = burnAmount;
 				isLocked = true;
 				break;
 			case BurnActionType.TARGET:
@@ -119,13 +126,15 @@ const BurnTab: React.FC = () => {
 					unstakedCollateral.toString(),
 					SNXRate
 				);
+				const calculatedTargetBurn = Math.max(debtBalance.minus(maxIssuableSynths).toNumber(), 0);
+				onBurnChange(calculatedTargetBurn.toString());
 				onSubmit = () => handleBurn(true);
-				inputValue = Math.max(debtBalance.minus(maxIssuableSynths).toNumber(), 0).toString();
+				inputValue = toBigNumber(calculatedTargetBurn);
 				isLocked = true;
 				break;
 			case BurnActionType.CUSTOM:
 				onSubmit = () => handleBurn(false);
-				inputValue = amountToBurn;
+				inputValue = toBigNumber(amountToBurn);
 				isLocked = false;
 				break;
 			default:

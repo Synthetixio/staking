@@ -28,10 +28,11 @@ import { getStakingAmount } from '../helper';
 import { CRYPTO_CURRENCY_MAP, SYNTHS_MAP } from 'constants/currency';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
+import BigNumber from 'bignumber.js';
 
 type StakingInputProps = {
 	onSubmit: any;
-	inputValue: string;
+	inputValue: BigNumber;
 	isLocked: boolean;
 	isMint: boolean;
 	onBack: Function;
@@ -75,7 +76,7 @@ const StakingInput: React.FC<StakingInputProps> = ({
 	 * Given the amount to mint, returns the equivalent collateral needed for stake.
 	 * @param mintInput Amount to mint
 	 */
-	const stakeInfo = (mintInput: string) =>
+	const stakeInfo = (mintInput: BigNumber) =>
 		formatCurrency(stakingCurrencyKey, getStakingAmount(targetCRatio, mintInput, SNXRate), {
 			currencyKey: stakingCurrencyKey,
 		});
@@ -86,8 +87,9 @@ const StakingInput: React.FC<StakingInputProps> = ({
 
 	const returnButtonStates = () => {
 		const insufficientBalance = isMint
-			? getStakingAmount(targetCRatio, inputValue, SNXRate) > unstakedCollateral
+			? getStakingAmount(targetCRatio, inputValue, SNXRate).isGreaterThan(unstakedCollateral)
 			: toBigNumber(inputValue).isGreaterThan(debtBalance) || Number(inputValue) > totalUSDBalance;
+		// @TODO: Add gasLimitEstimate error instead of checking the values (bc of rounding error);
 		if (insufficientBalance) {
 			return (
 				<StyledCTA variant="primary" size="lg" disabled={true}>
@@ -96,7 +98,7 @@ const StakingInput: React.FC<StakingInputProps> = ({
 						: t('staking.actions.burn.action.insufficient')}
 				</StyledCTA>
 			);
-		} else if (inputValue.length === 0) {
+		} else if (inputValue.toString().length === 0) {
 			return (
 				<StyledCTA variant="primary" size="lg" disabled={true}>
 					{isMint ? t('staking.actions.mint.action.empty') : t('staking.actions.burn.action.empty')}
@@ -121,7 +123,7 @@ const StakingInput: React.FC<StakingInputProps> = ({
 			<ActionInProgress
 				isMint={isMint}
 				stake={stakeInfo(inputValue)}
-				mint={inputValue}
+				mint={inputValue.toString()}
 				hash={txHash as string}
 			/>
 		);
