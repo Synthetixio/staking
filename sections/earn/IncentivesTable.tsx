@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { Svg } from 'react-optimized-image';
 import Countdown from 'react-countdown';
 
@@ -71,12 +71,15 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab, 
 			),
 			accessor: 'apr',
 			Cell: (cellProps: CellProps<EarnItem>) => (
-				<ClickableFlexDivCol onClick={() => setActiveTab(cellProps.row.original.incentivesIndex)}>
+				<ClickableFlexDivCol
+					isActive={cellProps.row.original.incentivesIndex === activeTab}
+					onClick={() => setActiveTab(cellProps.row.original.incentivesIndex)}
+				>
 					<Title>{formatPercent(cellProps.row.original.apr)}</Title>
 					<Subtitle>{t('earn.incentives.est-apr')}</Subtitle>
 				</ClickableFlexDivCol>
 			),
-			width: 75,
+			width: 100,
 			sortable: false,
 		},
 	];
@@ -136,7 +139,7 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab, 
 					</Subtitle>
 				</FlexDivColCentered>
 			),
-			width: 150,
+			width: 100,
 			sortable: true,
 		},
 	];
@@ -165,15 +168,19 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab, 
 
 const Container = styled.div<{ activeTab: number | null }>`
 	background: ${(props) => props.theme.colors.mediumBlue};
-	padding: 16px;
 	width: ${(props) => (props.activeTab == null ? '100%' : '40%')};
 `;
 
 const StyledTable = styled(Table)`
 	margin-top: 16px;
 	.table-body-row {
-		height: 60px;
+		height: 80px;
 		align-items: center;
+	}
+	.table-body-cell {
+		:last-child {
+			padding-right: 0px;
+		}
 	}
 `;
 
@@ -205,10 +212,20 @@ const Header = styled.span`
 
 const ClickableFlexDivCentered = styled(FlexDivCentered)`
 	cursor: pointer;
+	height: 80px;
+	width: 100%;
 `;
 
-const ClickableFlexDivCol = styled(FlexDivCol)`
+const ClickableFlexDivCol = styled(FlexDivCol)<{ isActive: boolean }>`
 	cursor: pointer;
+	height: 80px;
+	width: 100%;
+	justify-content: center;
+	${(props) =>
+		props.isActive &&
+		css`
+			border-right: 1px solid ${props.theme.colors.brightBlue};
+		`}
 `;
 
 const GoBackDiv = styled.div`
