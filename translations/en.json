@@ -109,7 +109,7 @@
 				},
 				"action": {
 					"empty": "Enter an amount",
-					"mint": "Minting {{amountFromMint}}",
+					"mint": "Mint sUSD",
 					"max": "Max",
 					"insufficient": "Insufficient collateral"
 				},
@@ -150,9 +150,10 @@
 				},
 				"action": {
 					"empty": "Enter an amount",
-					"burn": "Burn {{amountToBurn}} sUSD",
+					"burn": "Burn sUSD",
 					"max": "Max",
-					"to-target": "600%"
+					"to-target": "600%",
+					"insufficient": "Insufficient debt"
 				},
 				"in-progress": {
 					"title": "Burning in progress",
@@ -166,27 +167,19 @@
 		"info": {
 			"mint": {
 				"title": "Mint sUSD by staking SNX",
-				"subtitle": "Mint sUSD by staking your SNX. This gives you a Collateralization Ratio and a debt, allowing you to earn weekly staking rewards. <0>Learn more.</0>",
-				"table": {
-					"not-staked": "Not Staked",
-					"staked": "Staked",
-					"transferable": "Transferable",
-					"locked": "Locked",
-					"c-ratio": "C-Ratio",
-					"debt": "Debt"
-				}
+				"subtitle": "Mint sUSD by staking your SNX. This gives you a Collateralization Ratio and a debt, allowing you to earn weekly staking rewards. <0>Learn more.</0>"
 			},
 			"burn": {
 				"title": "Burn sUSD to unstake SNX",
-				"subtitle": "Burn your sUSD debt to unlock your staked SNX. This will raise your Collateralization Ratio and reduce your debt. <0>Learn more.</0>",
-				"table": {
-					"not-staked": "Not Staked",
-					"staked": "Staked",
-					"transferable": "Transferable",
-					"locked": "Locked",
-					"c-ratio": "C-Ratio",
-					"debt": "Debt"
-				}
+				"subtitle": "Burn your sUSD debt to unlock your staked SNX. This will raise your Collateralization Ratio and reduce your debt. <0>Learn more.</0>"
+			},
+			"table": {
+				"not-staked": "Not Staked",
+				"staked": "Staked",
+				"transferable": "Transferable",
+				"locked": "Locked",
+				"c-ratio": "C-Ratio",
+				"debt": "Debt"
 			}
 		}
 	},

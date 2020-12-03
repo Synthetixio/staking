@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import Img, { Svg } from 'react-optimized-image';
 import { useTranslation } from 'react-i18next';
@@ -23,11 +23,15 @@ import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import { ModalContent, ModalItem, ModalItemTitle, ModalItemText } from 'styles/common';
 import { InputContainer, InputLocked } from '../common';
 import { Transaction } from 'constants/network';
+import { formatCurrency, toBigNumber } from 'utils/formatters/number';
+import { getStakingAmount } from '../helper';
+import { CRYPTO_CURRENCY_MAP, SYNTHS_MAP } from 'constants/currency';
+import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
+import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
 
-type InputProps = {
+type StakingInputProps = {
 	onSubmit: any;
-	debtValue: string;
-	stakeValue: string;
+	inputValue: string;
 	isLocked: boolean;
 	isMint: boolean;
 	onBack: Function;
@@ -42,10 +46,9 @@ type InputProps = {
 	setTransactionState: (tx: Transaction) => void;
 };
 
-const Input: React.FC<InputProps> = ({
+const StakingInput: React.FC<StakingInputProps> = ({
 	onSubmit,
-	debtValue,
-	stakeValue,
+	inputValue,
 	isLocked,
 	isMint,
 	onBack,
@@ -59,21 +62,44 @@ const Input: React.FC<InputProps> = ({
 	transactionState,
 	setTransactionState,
 }) => {
+	const { targetCRatio, SNXRate, debtBalance, unstakedCollateral } = useStakingCalculations();
+	const synthsBalancesQuery = useSynthsBalancesQuery();
+	const totalUSDBalance = synthsBalancesQuery?.data?.totalUSDBalance ?? 0;
+
+	const [stakingCurrencyKey] = useState<string>(CRYPTO_CURRENCY_MAP.SNX);
+	const [synthCurrencyKey] = useState<string>(SYNTHS_MAP.SNX);
+
 	const { t } = useTranslation();
 
+	/**
+	 * Given the amount to mint, returns the equivalent collateral needed for stake.
+	 * @param mintInput Amount to mint
+	 */
+	const stakeInfo = (mintInput: string) =>
+		formatCurrency(stakingCurrencyKey, getStakingAmount(targetCRatio, mintInput, SNXRate), {
+			currencyKey: stakingCurrencyKey,
+		});
+
+	const formattedInput = formatCurrency(synthCurrencyKey, inputValue, {
+		currencyKey: synthCurrencyKey,
+	});
+
 	const returnButtonStates = () => {
-		// @TODO: Add check for when minting more than they have in collateral
-		// Add check for burning more sUSD than they have in debt and synth balance
-		if (false) {
+		const insufficientBalance = isMint
+			? getStakingAmount(targetCRatio, inputValue, SNXRate) > unstakedCollateral
+			: toBigNumber(inputValue).isGreaterThan(debtBalance) || Number(inputValue) > totalUSDBalance;
+		if (insufficientBalance) {
 			return (
 				<StyledCTA variant="primary" size="lg" disabled={true}>
-					{t('staking.actions.mint.action.insufficient')}
+					{isMint
+						? t('staking.actions.mint.action.insufficient')
+						: t('staking.actions.burn.action.insufficient')}
 				</StyledCTA>
 			);
-		} else if (debtValue.length === 0) {
+		} else if (inputValue.length === 0) {
 			return (
 				<StyledCTA variant="primary" size="lg" disabled={true}>
-					{t('staking.actions.mint.action.empty')}
+					{isMint ? t('staking.actions.mint.action.empty') : t('staking.actions.burn.action.empty')}
 				</StyledCTA>
 			);
 		} else {
@@ -94,8 +120,8 @@ const Input: React.FC<InputProps> = ({
 		return (
 			<ActionInProgress
 				isMint={isMint}
-				stake={stakeValue}
-				mint={debtValue}
+				stake={stakeInfo(inputValue)}
+				mint={inputValue}
 				hash={txHash as string}
 			/>
 		);
@@ -114,7 +140,7 @@ const Input: React.FC<InputProps> = ({
 				<InputBox>
 					<Img width={50} height={50} src={sUSDIcon} />
 					{isLocked ? (
-						<InputLocked>{debtValue}</InputLocked>
+						<InputLocked>{formattedInput}</InputLocked>
 					) : (
 						<StyledInput placeholder="0" onChange={(e) => onInputChange(e.target.value)} />
 					)}
@@ -126,7 +152,7 @@ const Input: React.FC<InputProps> = ({
 								? t('staking.actions.mint.info.staking')
 								: t('staking.actions.burn.info.unstaking')}
 						</RowTitle>
-						<RowValue>{stakeValue}</RowValue>
+						<RowValue>{stakeInfo(inputValue)}</RowValue>
 					</DataRow>
 					<DataRow>
 						<GasSelector gasLimitEstimate={gasLimitEstimate} setGasPrice={setGasPrice} />
@@ -143,11 +169,11 @@ const Input: React.FC<InputProps> = ({
 						<ModalContent>
 							<ModalItem>
 								<ModalItemTitle>{t('modals.confirm-transaction.staking.from')}</ModalItemTitle>
-								<ModalItemText>{stakeValue}</ModalItemText>
+								<ModalItemText>{stakeInfo(inputValue)}</ModalItemText>
 							</ModalItem>
 							<ModalItem>
 								<ModalItemTitle>{t('modals.confirm-transaction.staking.to')}</ModalItemTitle>
-								<ModalItemText>{debtValue}</ModalItemText>
+								<ModalItemText>{formattedInput}</ModalItemText>
 							</ModalItem>
 						</ModalContent>
 					}
@@ -164,4 +190,4 @@ const IconContainer = styled.div`
 	cursor: pointer;
 `;
 
-export default Input;
+export default StakingInput;

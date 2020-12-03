@@ -3,32 +3,29 @@ import { SynthetixJS } from '@synthetixio/js';
 import { ethers } from 'ethers';
 import synthetix from 'lib/synthetix';
 
-import { CRYPTO_CURRENCY_MAP, SYNTHS_MAP } from 'constants/currency';
-import { formatCurrency } from 'utils/formatters/number';
 import Notify from 'containers/Notify';
 import { normalizedGasPrice, normalizeGasLimit } from 'utils/network';
 import { getGasEstimateForTransaction } from 'utils/transactions';
 import { Transaction } from 'constants/network';
 
 import { TabContainer } from '../common';
-import { getMintAmount, getStakingAmount } from '../helper';
 import Staking, { MintActionType } from 'sections/staking/context/StakingContext';
 import MintTiles from '../MintTiles';
-import Input from '../Input';
+import StakingInput from '../StakingInput';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
+import { getMintAmount } from '../helper';
 
 const MintTab: React.FC = () => {
 	const { monitorHash } = Notify.useContainer();
-	const { targetCRatio, SNXRate, unstakedCollateral } = useStakingCalculations();
 	const { amountToMint, onMintChange, mintType, onMintTypeChange } = Staking.useContainer();
+	const { targetCRatio, SNXRate, unstakedCollateral } = useStakingCalculations();
 
 	const [transactionState, setTransactionState] = useState<Transaction>(Transaction.PRESUBMIT);
 	const [txHash, setTxHash] = useState<string | null>(null);
 	const [stakingTxError, setStakingTxError] = useState<boolean>(false);
 	const [error, setError] = useState<string | null>(null);
 	const [gasLimitEstimate, setGasLimitEstimate] = useState<number | null>(null);
-	const [stakingCurrencyKey] = useState<string>(CRYPTO_CURRENCY_MAP.SNX);
-	const [synthCurrencyKey] = useState<string>(SYNTHS_MAP.sUSD);
+
 	const [gasPrice, setGasPrice] = useState<number>(0);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 
@@ -92,50 +89,31 @@ const MintTab: React.FC = () => {
 		}
 	};
 
-	/**
-	 * Given the amount to mint, returns the equivalent collateral needed for stake.
-	 * @param mintInput Amount to mint
-	 */
-	const stakeInfo = (mintInput: string) =>
-		formatCurrency(stakingCurrencyKey, getStakingAmount(targetCRatio, mintInput, SNXRate), {
-			currencyKey: stakingCurrencyKey,
-		});
-
-	/**
-	 * Given the amount to stake, returns the equivalent debt produced. (Estimate)
-	 * @param mintInput Amount to mint
-	 */
-	const mintInfo = (stakeInput: string) =>
-		formatCurrency(synthCurrencyKey, getMintAmount(targetCRatio, stakeInput, SNXRate), {
-			currencyKey: synthCurrencyKey,
-		});
-
 	const returnPanel = () => {
 		let onSubmit;
-		let debtValue;
-		let stakeValue;
+		let inputValue;
 		let isLocked;
 		switch (mintType) {
 			case MintActionType.MAX:
 				onSubmit = () => handleStake(true);
-				debtValue = mintInfo(unstakedCollateral.toString());
-				stakeValue = unstakedCollateral.toString();
+				inputValue = getMintAmount(targetCRatio, unstakedCollateral.toString(), SNXRate).toString();
+				// debtValue = mintInfo(unstakedCollateral.toString());
+				// stakeValue = unstakedCollateral.toString();
 				isLocked = true;
 				break;
 			case MintActionType.CUSTOM:
 				onSubmit = () => handleStake(false);
-				debtValue = amountToMint;
-				stakeValue = stakeInfo(amountToMint);
+				inputValue = amountToMint;
+				// stakeValue = stakeInfo(amountToMint);
 				isLocked = false;
 				break;
 			default:
 				return <MintTiles />;
 		}
 		return (
-			<Input
+			<StakingInput
 				onSubmit={onSubmit}
-				debtValue={debtValue}
-				stakeValue={stakeValue}
+				inputValue={inputValue}
 				isLocked={isLocked}
 				isMint={true}
 				onBack={onMintTypeChange}

@@ -1,13 +1,20 @@
-export function getMintAmount(targetCRatio: number, stakeAmount: string, SNXPrice: number): number {
-	if (!stakeAmount || !targetCRatio || !SNXPrice) return 0;
-	return Number(stakeAmount) * targetCRatio * SNXPrice;
+import BigNumber from 'bignumber.js';
+import { NumericValue, toBigNumber } from 'utils/formatters/number';
+
+export function getMintAmount(
+	targetCRatio: BigNumber,
+	stakeAmount: NumericValue,
+	SNXPrice: BigNumber
+): BigNumber {
+	if (!stakeAmount || !targetCRatio || !SNXPrice) return toBigNumber(0);
+	return toBigNumber(stakeAmount).multipliedBy(targetCRatio).multipliedBy(SNXPrice);
 }
 
 export function getStakingAmount(
-	targetCRatio: number,
-	mintAmount: string,
-	SNXPrice: number
-): number {
-	if (!mintAmount || !targetCRatio || !SNXPrice) return 0;
-	return Number(mintAmount) / targetCRatio / SNXPrice;
+	targetCRatio: BigNumber,
+	mintAmount: NumericValue,
+	SNXPrice: BigNumber
+): BigNumber {
+	if (!mintAmount || !targetCRatio || !SNXPrice) return toBigNumber(0);
+	return toBigNumber(mintAmount).dividedBy(targetCRatio).dividedBy(SNXPrice);
 }

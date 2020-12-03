@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import { TabContainer } from '../common';
-import { CRYPTO_CURRENCY_MAP, SYNTHS_MAP } from 'constants/currency';
+import { SYNTHS_MAP } from 'constants/currency';
 import { SynthetixJS } from '@synthetixio/js';
 import Notify from 'containers/Notify';
 import { ethers } from 'ethers';
@@ -10,18 +10,23 @@ import { getGasEstimateForTransaction } from 'utils/transactions';
 import { useRecoilValue } from 'recoil';
 import { walletAddressState } from 'store/wallet';
 import synthetix from 'lib/synthetix';
-import { getMintAmount, getStakingAmount } from '../helper';
-import { formatCurrency } from 'utils/formatters/number';
 import Staking, { BurnActionType } from 'sections/staking/context/StakingContext';
 import BurnTiles from '../BurnTiles';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
-import Input from '../Input';
+import StakingInput from '../StakingInput';
 import { Transaction } from 'constants/network';
+import { getMintAmount } from '../helper';
 
 const BurnTab: React.FC = () => {
 	const { monitorHash } = Notify.useContainer();
 	const { amountToBurn, onBurnChange, burnType, onBurnTypeChange } = Staking.useContainer();
-	const { targetCRatio, debtBalance, SNXRate } = useStakingCalculations();
+	const {
+		percentageTargetCRatio,
+		debtBalance,
+		targetCRatio,
+		SNXRate,
+		unstakedCollateral,
+	} = useStakingCalculations();
 	const walletAddress = useRecoilValue(walletAddressState);
 
 	const [transactionState, setTransactionState] = useState<Transaction>(Transaction.PRESUBMIT);
@@ -30,8 +35,6 @@ const BurnTab: React.FC = () => {
 	const [error, setError] = useState<string | null>(null);
 	const [gasLimitEstimate, setGasLimitEstimate] = useState<number | null>(null);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
-	const [stakingCurrencyKey] = useState<string>(CRYPTO_CURRENCY_MAP.SNX);
-	const [synthCurrencyKey] = useState<string>(SYNTHS_MAP.sUSD);
 	const [gasPrice, setGasPrice] = useState<number>(0);
 
 	useEffect(() => {
@@ -55,17 +58,6 @@ const BurnTab: React.FC = () => {
 		};
 		getGasLimitEstimate();
 	}, [synthetix, error]);
-
-	// const handleMaxBurn = () => {
-	// 	setBurnToTarget(false);
-	// 	onBurnChange(maxBurnAmount?.toString() || '');
-	// };
-
-	// const handleBurnToTarget = () => {
-	// 	setBurnToTarget(true);
-	// 	const maxIssuableSynths = getMintAmount(targetCRatio, maxCollateral.toString(), SNXRate);
-	// 	onBurnChange(Math.max(maxBurnAmount - maxIssuableSynths, 0).toString());
-	// };
 
 	const handleBurn = async (burnToTarget: boolean) => {
 		try {
@@ -108,28 +100,9 @@ const BurnTab: React.FC = () => {
 		}
 	};
 
-	/**
-	 * Given the amount to mint, returns the equivalent collateral needed for stake.
-	 * @param mintInput Amount to mint
-	 */
-	const stakeInfo = (mintInput: string) =>
-		formatCurrency(stakingCurrencyKey, getStakingAmount(targetCRatio, mintInput, SNXRate), {
-			currencyKey: stakingCurrencyKey,
-		});
-
-	/**
-	 * Given the amount to stake, returns the equivalent debt produced. (Estimate)
-	 * @param mintInput Amount to mint
-	 */
-	const mintInfo = (stakeInput: string) =>
-		formatCurrency(synthCurrencyKey, getMintAmount(targetCRatio, stakeInput, SNXRate), {
-			currencyKey: synthCurrencyKey,
-		});
-
 	const returnPanel = () => {
 		let onSubmit;
-		let debtValue;
-		let stakeValue;
+		let inputValue;
 		let isLocked;
 		switch (burnType) {
 			case BurnActionType.MAX:
@@ -137,30 +110,31 @@ const BurnTab: React.FC = () => {
 					onBurnChange(debtBalance.toString());
 					handleBurn(false);
 				};
-				debtValue = debtBalance.toString();
-				stakeValue = stakeInfo(debtBalance.toString());
+				inputValue = debtBalance.toString();
 				isLocked = true;
 				break;
 			case BurnActionType.TARGET:
+				const maxIssuableSynths = getMintAmount(
+					targetCRatio,
+					unstakedCollateral.toString(),
+					SNXRate
+				);
 				onSubmit = () => handleBurn(true);
-				debtValue = '0';
-				stakeValue = '0';
+				inputValue = Math.max(debtBalance.minus(maxIssuableSynths).toNumber(), 0).toString();
 				isLocked = true;
 				break;
 			case BurnActionType.CUSTOM:
 				onSubmit = () => handleBurn(false);
-				debtValue = amountToBurn;
-				stakeValue = stakeInfo(amountToBurn);
+				inputValue = amountToBurn;
 				isLocked = false;
 				break;
 			default:
-				return <BurnTiles targetCRatio={targetCRatio} />;
+				return <BurnTiles percentageTargetCRatio={percentageTargetCRatio} />;
 		}
 		return (
-			<Input
+			<StakingInput
 				onSubmit={onSubmit}
-				debtValue={debtValue}
-				stakeValue={stakeValue}
+				inputValue={inputValue}
 				isLocked={isLocked}
 				isMint={false}
 				onBack={onBurnTypeChange}

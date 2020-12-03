@@ -11,7 +11,7 @@ import useStakingCalculations from 'sections/staking/hooks/useStakingCalculation
 
 const StakingPage = () => {
 	const { t } = useTranslation();
-	const { stakedCollateralValue, currentCRatio, debtBalance } = useStakingCalculations();
+	const { stakedCollateralValue, percentageCurrentCRatio, debtBalance } = useStakingCalculations();
 	return (
 		<>
 			<Head>
@@ -24,7 +24,7 @@ const StakingPage = () => {
 				/>
 				<CRatio
 					title={t('common.stat-box.c-ratio')}
-					value={formatPercent(currentCRatio ? 1 / currentCRatio : 0)}
+					value={formatPercent(percentageCurrentCRatio)}
 					size="lg"
 				/>
 				<ActiveDebt
