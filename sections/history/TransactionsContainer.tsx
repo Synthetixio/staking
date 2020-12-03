@@ -1,18 +1,23 @@
 import { FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import orderBy from 'lodash/orderBy';
 import { ValueType } from 'react-select';
+import { useRecoilValue } from 'recoil';
+import orderBy from 'lodash/orderBy';
 import keyBy from 'lodash/keyBy';
+
+import { isWalletConnectedState } from 'store/wallet';
 
 import { HistoricalStakingTransaction, StakingTransactionType } from 'queries/staking/types';
 
 import DateSelect from 'components/DateSelect';
 import Select from 'components/Select';
+import Button from 'components/Button';
+
 import { formatShortDate } from 'utils/formatters/date';
 import { formatNumber } from 'utils/formatters/number';
 
-import { CapitalizedText, GridDiv } from 'styles/common';
+import { CapitalizedText, GridDiv, GridDivCenteredRow } from 'styles/common';
 
 import Transactions from './Transactions';
 import {
@@ -31,6 +36,7 @@ const TransactionsContainer: FC<TransactionsContainerProps> = ({
 	isLoaded,
 }) => {
 	const { t } = useTranslation();
+	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 
 	const [typeFilter, setTypeFilter] = useState<ValueType<TypeFilterOptionType>>();
 	const [dateFilter, setDateFilter] = useState<{
@@ -148,6 +154,20 @@ const TransactionsContainer: FC<TransactionsContainerProps> = ({
 		return t('history.table.filters.date.no-selection');
 	}, [dateFilter.startDate, dateFilter.endDate, t]);
 
+	const filtersEnabled = useMemo(
+		() => dateFilterSelectedDates || amountFilter != null || typeFilter != null,
+		[dateFilterSelectedDates, amountFilter, typeFilter]
+	);
+
+	const resetFilters = () => {
+		setAmountFilter(null);
+		setTypeFilter(null);
+		setDateFilter({
+			startDate: new Date(),
+			endDate: null,
+		});
+	};
+
 	return (
 		<>
 			<Filters>
@@ -209,7 +229,24 @@ const TransactionsContainer: FC<TransactionsContainerProps> = ({
 					placeholder={t('history.table.filters.amount.no-selection')}
 				/>
 			</Filters>
-			<Transactions transactions={filteredTransactions} isLoaded={isLoaded} />
+			<Transactions
+				transactions={filteredTransactions}
+				isLoaded={isWalletConnected ? isLoaded : true}
+				noResultsMessage={
+					!isWalletConnected ? (
+						<TableNoResults>{t('history.table.connect-wallet-to-view')}</TableNoResults>
+					) : isLoaded && filtersEnabled && filteredTransactions.length === 0 ? (
+						<TableNoResults>
+							<div>{t('history.table.no-results')}</div>
+							<ResetFiltersButton variant="primary" onClick={resetFilters}>
+								{t('history.table.view-all-transactions')}
+							</ResetFiltersButton>
+						</TableNoResults>
+					) : isLoaded && filteredTransactions.length === 0 ? (
+						<TableNoResults>{t('history.table.no-transactions')}</TableNoResults>
+					) : undefined
+				}
+			/>
 		</>
 	);
 };
@@ -217,6 +254,19 @@ const TransactionsContainer: FC<TransactionsContainerProps> = ({
 const Filters = styled(GridDiv)`
 	grid-template-columns: repeat(3, 1fr);
 	grid-gap: 18px;
+`;
+
+const TableNoResults = styled(GridDivCenteredRow)`
+	padding: 50px 0;
+	justify-content: center;
+	background-color: ${(props) => props.theme.colors.mediumBlue};
+	margin-top: -2px;
+	justify-items: center;
+	grid-gap: 10px;
+`;
+
+const ResetFiltersButton = styled(Button)`
+	margin-top: 20px;
 `;
 
 export default TransactionsContainer;
