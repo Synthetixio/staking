@@ -201,14 +201,18 @@
 				},
 				"rewards": {
 					"title": "REWARDS",
-					"subtitle": "Claimable"
+					"claimed": "Claimed",
+					"claimable": "Claimable"
 				},
 				"time-left": {
 					"title": "TIME LEFT"
 				},
 				"snx": {
 					"title": "Synthetix",
-					"subtitle": "Staking Rewards"
+					"subtitle": "Staking Rewards",
+					"description": "Staking SNX tokens offers weekly rewards in both inflationary SNX and sUSD from trading fees. <0>Learn more.<0>",
+					"staking-rewards": "STAKING REWARDS",
+					"trading-rewards": "TRADING REWARDS"
 				},
 				"curve": {
 					"title": "Curve.fi",

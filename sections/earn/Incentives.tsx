@@ -1,5 +1,6 @@
 import { FC, useState } from 'react';
 import BigNumber from 'bignumber.js';
+import styled from 'styled-components';
 import { Svg } from 'react-optimized-image';
 import { useTranslation } from 'react-i18next';
 
@@ -9,13 +10,16 @@ import useCurvePoolQuery_1 from 'queries/liquidityPools/useCurvePoolQuery_1';
 import useCurrencyRatesQuery from 'queries/rates/useCurrencyRatesQuery';
 import useSNXLockedValueQuery from 'queries/staking/useSNXLockedValueQuery';
 import useFeePeriodTimeAndProgress from 'hooks/useFeePeriodTimeAndProgress';
+import useClaimedStatus from 'sections/hooks/useClaimedStatus';
 import { CRYPTO_CURRENCY_MAP, SYNTHS_MAP } from 'constants/currency';
+import { FlexDiv } from 'styles/common';
 
 import curveSVG from 'assets/svg/incentives/pool-curve.svg';
 import iBTCSVG from 'assets/svg/incentives/pool-ibtc.svg';
 import iETHSVG from 'assets/svg/incentives/pool-ieth.svg';
 import snxSVG from 'assets/svg/incentives/pool-snx.svg';
 import IncentivesTable from './IncentivesTable';
+import ClaimTab from './ClaimTab';
 
 type APRFields = {
 	price: number;
@@ -42,6 +46,7 @@ const Incentives: FC<IncentivesProps> = ({
 	const { t } = useTranslation();
 	const [activeTab, setActiveTab] = useState<number | null>(null);
 
+	const claimedSNX = useClaimedStatus();
 	const useiETHPool = useiETHPoolQuery_1();
 	const useiBTCPool = useiBTCPoolQuery_1();
 	const useCurvePool = useCurvePoolQuery_1();
@@ -76,6 +81,7 @@ const Incentives: FC<IncentivesProps> = ({
 			rewards: 0,
 			periodFinish: nextFeePeriodStarts.getTime(),
 			incentivesIndex: 0,
+			claimed: claimedSNX,
 		},
 		{
 			icon: () => <Svg src={curveSVG} />,
@@ -90,6 +96,7 @@ const Incentives: FC<IncentivesProps> = ({
 			rewards: 0,
 			periodFinish: useCurvePool.data?.periodFinish ?? 0,
 			incentivesIndex: 1,
+			claimed: false,
 		},
 		{
 			icon: () => <Svg src={iETHSVG} />,
@@ -104,6 +111,7 @@ const Incentives: FC<IncentivesProps> = ({
 			rewards: 0,
 			periodFinish: useiETHPool.data?.periodFinish ?? 0,
 			incentivesIndex: 2,
+			claimed: false,
 		},
 		{
 			icon: () => <Svg src={iBTCSVG} />,
@@ -118,17 +126,36 @@ const Incentives: FC<IncentivesProps> = ({
 			rewards: 0,
 			periodFinish: useiBTCPool.data?.periodFinish ?? 0,
 			incentivesIndex: 3,
+			claimed: false,
 		},
 	];
-	const isLoaded = useCurvePool.data && useiBTCPool.data && useiETHPool.data ? true : false;
 	return (
-		<IncentivesTable
-			activeTab={activeTab}
-			setActiveTab={setActiveTab}
-			data={incentives}
-			isLoaded={true}
-		/>
+		<FlexDiv>
+			<IncentivesTable
+				activeTab={activeTab}
+				setActiveTab={setActiveTab}
+				data={incentives}
+				isLoaded={useCurvePool.data && useiBTCPool.data && useiETHPool.data ? true : false}
+			/>
+			{activeTab != null ? (
+				<TabContainer>
+					{activeTab === 0 && (
+						<ClaimTab
+							tradingRewards={tradingRewards}
+							stakingRewards={stakingRewards}
+							totalRewards={totalRewards}
+							refetch={refetch}
+						/>
+					)}
+				</TabContainer>
+			) : null}
+		</FlexDiv>
 	);
 };
+
+const TabContainer = styled.div`
+	width: 60%;
+	background-color: ${(props) => props.theme.colors.mediumBlue};
+`;
 
 export default Incentives;
