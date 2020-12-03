@@ -43,6 +43,7 @@ export const QUERY_KEYS = {
 			walletAddress,
 			networkId,
 		],
+		SNXLockedValue: (networkId: NetworkId) => ['staking', 'lockedValue', networkId],
 	},
 	Rates: {
 		HistoricalVolume: (currencyKey: CurrencyKey, period: Period) => [
@@ -140,6 +141,26 @@ export const QUERY_KEYS = {
 		Data: (walletAddress: string, networkId: NetworkId) => [
 			'escrow',
 			'data',
+			walletAddress,
+			networkId,
+		],
+	},
+	LiquidityPools: {
+		iETH: (walletAddress: string, networkId: NetworkId) => [
+			'liquidityPools',
+			'iETH',
+			walletAddress,
+			networkId,
+		],
+		iBTC: (walletAddress: string, networkId: NetworkId) => [
+			'liquidityPools',
+			'iBTC',
+			walletAddress,
+			networkId,
+		],
+		Curve: (walletAddress: string, networkId: NetworkId) => [
+			'liquidityPools',
+			'curve',
 			walletAddress,
 			networkId,
 		],

@@ -39,7 +39,7 @@ const Earn = () => {
 
 	const stakedValue = collateral * Math.min(1, currentCRatio / targetCRatio) * SNXRate;
 	const weeklyRewards = sUSDRate * feesToDistribute + SNXRate * rewardsToDistribute;
-	const stakingApy = (weeklyRewards * (activeDebt / totalsUSDDebt) * 52) / stakedValue;
+	const stakingAPR = (weeklyRewards * (activeDebt / totalsUSDDebt) * 52) / stakedValue;
 
 	const availableRewards = useClaimableRewards();
 
@@ -80,7 +80,7 @@ const Earn = () => {
 				/>
 				<APY
 					title={t('common.stat-box.earning')}
-					value={formatPercent(stakingApy ? stakingApy : 0)}
+					value={formatPercent(stakingAPR ? stakingAPR : 0)}
 					size="lg"
 				/>
 				<LifetimeRewards
@@ -94,6 +94,8 @@ const Earn = () => {
 				tradingRewards={tradingRewards}
 				stakingRewards={stakingRewards}
 				totalRewards={totalRewards}
+				stakingAPR={stakingAPR}
+				stakedValue={stakedValue}
 			/>
 		</>
 	);

@@ -20,6 +20,7 @@ const useClaimableRewards = (options?: QueryConfig<AvailableFees>) => {
 	const walletAddress = useRecoilValue(walletAddressState);
 	const network = useRecoilValue(networkState);
 
+	// NOTE / @TODO I think the fields used could be wrong - come back to this
 	return useQuery<AvailableFees>(
 		QUERY_KEYS.Staking.ClaimableRewards(walletAddress ?? '', network?.id!),
 		async () => {
