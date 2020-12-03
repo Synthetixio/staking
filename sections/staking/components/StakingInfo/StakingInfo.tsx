@@ -125,7 +125,7 @@ const StakingInfo: React.FC<StakingInfoProps> = ({ isMint }) => {
 								})}
 							</RowValue>
 							<>
-								<Svg src={Arrows} />{' '}
+								<Svg src={Arrows} /> {/* @TODO: Remove negative values */}
 								<RowValue>
 									{formatCurrency(currencyKey, !changedValue.isNaN() ? changedValue : 0, {
 										currencyKey: currencyKey,
