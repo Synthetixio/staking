@@ -27,6 +27,7 @@ export type EarnItem = {
 	rewards: number;
 	periodFinish: number;
 	incentivesIndex: number;
+	claimed: boolean;
 };
 
 interface IncentivesTableProps {
@@ -45,6 +46,7 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab, 
 			accessor: 'title',
 			Cell: (cellProps: CellProps<EarnItem>) => (
 				<ClickableFlexDivCentered
+					isActive={cellProps.row.original.incentivesIndex === activeTab}
 					onClick={() => setActiveTab(cellProps.row.original.incentivesIndex)}
 				>
 					<div>{cellProps.row.original.icon()}</div>
@@ -89,10 +91,12 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab, 
 			Header: <Header>{t('earn.incentives.options.tvl.title')}</Header>,
 			accessor: 'tvl',
 			Cell: (cellProps: CellProps<EarnItem, EarnItem['tvl']>) => (
-				<FlexDivColCentered>
+				<ClickableFlexDivColCentered
+					onClick={() => setActiveTab(cellProps.row.original.incentivesIndex)}
+				>
 					<Title>{formatFiatCurrency(cellProps.value ? cellProps.value : 0, { sign: '$' })}</Title>
-					<Subtitle>{t('earn.incentives.options.tvl.subtitle')}</Subtitle>
-				</FlexDivColCentered>
+					<Subtitle />
+				</ClickableFlexDivColCentered>
 			),
 			width: 150,
 			sortable: true,
@@ -101,14 +105,16 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab, 
 			Header: <Header>{t('earn.incentives.options.staked-balance.title')}</Header>,
 			accessor: 'staked.balance',
 			Cell: (cellProps: CellProps<EarnItem, EarnItem['staked']['balance']>) => (
-				<FlexDivColCentered>
+				<ClickableFlexDivColCentered
+					onClick={() => setActiveTab(cellProps.row.original.incentivesIndex)}
+				>
 					<Title>
 						{formatCurrency(CRYPTO_CURRENCY_MAP.SNX, cellProps.value, {
 							currencyKey: CRYPTO_CURRENCY_MAP.SNX,
 						})}
 					</Title>
-					<Subtitle>{t('earn.incentives.options.staked-balance.subtitle')}</Subtitle>
-				</FlexDivColCentered>
+					<Subtitle />
+				</ClickableFlexDivColCentered>
 			),
 			width: 150,
 			sortable: true,
@@ -117,14 +123,20 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab, 
 			Header: <Header>{t('earn.incentives.options.rewards.title')}</Header>,
 			accessor: 'rewards',
 			Cell: (cellProps: CellProps<EarnItem, EarnItem['rewards']>) => (
-				<FlexDivColCentered>
+				<ClickableFlexDivColCentered
+					onClick={() => setActiveTab(cellProps.row.original.incentivesIndex)}
+				>
 					<Title>
 						{formatCurrency(CRYPTO_CURRENCY_MAP.SNX, cellProps.value, {
 							currencyKey: CRYPTO_CURRENCY_MAP.SNX,
 						})}
 					</Title>
-					<Subtitle>{t('earn.incentives.options.rewards.subtitle')}</Subtitle>
-				</FlexDivColCentered>
+					<Subtitle>
+						{cellProps.row.original.claimed
+							? t('earn.incentives.options.rewards.claimed')
+							: t('earn.incentives.options.rewards.claimable')}
+					</Subtitle>
+				</ClickableFlexDivColCentered>
 			),
 			width: 150,
 			sortable: true,
@@ -133,11 +145,13 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab, 
 			Header: <Header>{t('earn.incentives.options.time-left.title')}</Header>,
 			accessor: 'periodFinish',
 			Cell: (cellProps: CellProps<EarnItem, EarnItem['periodFinish']>) => (
-				<FlexDivColCentered>
+				<ClickableFlexDivColCentered
+					onClick={() => setActiveTab(cellProps.row.original.incentivesIndex)}
+				>
 					<Subtitle>
 						<Countdown date={cellProps.value} />
 					</Subtitle>
-				</FlexDivColCentered>
+				</ClickableFlexDivColCentered>
 			),
 			width: 100,
 			sortable: true,
@@ -178,6 +192,9 @@ const StyledTable = styled(Table)`
 		align-items: center;
 	}
 	.table-body-cell {
+		:first-child {
+			padding-left: 0px;
+		}
 		:last-child {
 			padding-right: 0px;
 		}
@@ -194,12 +211,12 @@ const TableNoResults = styled(GridDivCenteredRow)`
 `;
 
 const Title = styled.div`
-	font-family: ${(props) => props.theme.fonts.expanded};
+	font-family: ${(props) => props.theme.fonts.interBold};
 	color: ${(props) => props.theme.colors.white};
 	font-size: 12px;
 `;
 const Subtitle = styled.div`
-	font-family: ${(props) => props.theme.fonts.regular};
+	font-family: ${(props) => props.theme.fonts.interSemiBold};
 	color: ${(props) => props.theme.colors.gray10};
 	font-size: 12px;
 `;
@@ -207,13 +224,26 @@ const Header = styled.span`
 	font-family: ${(props) => props.theme.fonts.interBold};
 	font-size: 12px;
 	color: ${(props) => props.theme.colors.gray10};
-	width: 50%;
+	text-align: center;
 `;
 
-const ClickableFlexDivCentered = styled(FlexDivCentered)`
+const ClickableFlexDivCentered = styled(FlexDivCentered)<{ isActive: boolean }>`
 	cursor: pointer;
 	height: 80px;
 	width: 100%;
+	padding-left: 18px;
+	${(props) =>
+		props.isActive &&
+		css`
+			background-color: ${props.theme.colors.tooltipBlue};
+		`}
+`;
+
+const ClickableFlexDivColCentered = styled(FlexDivColCentered)`
+	cursor: pointer;
+	height: 80px;
+	width: 100%;
+	justify-content: center;
 `;
 
 const ClickableFlexDivCol = styled(FlexDivCol)<{ isActive: boolean }>`
@@ -225,6 +255,7 @@ const ClickableFlexDivCol = styled(FlexDivCol)<{ isActive: boolean }>`
 		props.isActive &&
 		css`
 			border-right: 1px solid ${props.theme.colors.brightBlue};
+			background-color: ${props.theme.colors.tooltipBlue};
 		`}
 `;
 

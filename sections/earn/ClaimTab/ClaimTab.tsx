@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import styled from 'styled-components';
+import { Svg } from 'react-optimized-image';
 
-import ClaimedTag from 'components/ClaimedTag';
-import { ErrorMessage, FlexDivRowCentered, FlexDivColCentered } from 'styles/common';
+import { ErrorMessage, FlexDiv, FlexDivCentered, FlexDivColCentered, linkCSS } from 'styles/common';
 import useClaimedStatus from 'sections/hooks/useClaimedStatus';
 import BigNumber from 'bignumber.js';
-import { formatCryptoCurrency, formatFiatCurrency } from 'utils/formatters/number';
+import { formatCurrency, formatFiatCurrency } from 'utils/formatters/number';
 import Button from 'components/Button';
 import { SynthetixJS } from '@synthetixio/js';
 import synthetix from 'lib/synthetix';
@@ -15,6 +15,8 @@ import { getGasEstimateForTransaction } from 'utils/transactions';
 import Etherscan from 'containers/Etherscan';
 import GasSelector from 'components/GasSelector';
 import { normalizedGasPrice, normalizeGasLimit } from 'utils/network';
+import { CRYPTO_CURRENCY_MAP, SYNTHS_MAP } from 'constants/currency';
+import snxSVG from 'assets/svg/incentives/pool-snx.svg';
 
 type ClaimTabProps = {
 	tradingRewards: BigNumber;
@@ -89,51 +91,110 @@ const ClaimTab: React.FC<ClaimTabProps> = ({
 
 	return (
 		<TabContainer>
-			<Label>{t('earn.actions.claim.exchange-rewards')}</Label>
-			<ValueBox>
-				<Value isClaimed={claimed}>{formatCryptoCurrency(tradingRewards)} sUSD</Value>
-				<StyledClaimedTag />
-			</ValueBox>
-			<Label>{t('earn.actions.claim.staking-rewards')}</Label>
-			<ValueBox>
-				<Value isClaimed={claimed}>{formatCryptoCurrency(stakingRewards)} SNX</Value>
-				<StyledClaimedTag />
-			</ValueBox>
-			<GasSelector gasLimitEstimate={gasLimitEstimate} setGasPrice={setGasPrice} />
-			{error && <ErrorMessage>{error}</ErrorMessage>}
-			<StyledButton variant="secondary" onClick={handleClaim} disabled={error != null || claimed}>
-				{claimed
-					? t('earn.actions.claim.claimed-button')
-					: t('earn.actions.claim.claim-button', {
-							totalValue: formatFiatCurrency(totalRewards, {
-								sign: '$',
-							}),
-					  })}
-			</StyledButton>
+			<Label>
+				<Trans i18nKey="earn.incentives.options.snx.description" components={[<StyledLink />]} />
+			</Label>
+
+			<InnerContainer>
+				<ValueBoxWrapper>
+					<ValueBox>
+						<Svg src={snxSVG} />
+						<Value>
+							{formatCurrency(SYNTHS_MAP.sUSD, tradingRewards, {
+								currencyKey: SYNTHS_MAP.sUSD,
+								decimals: 2,
+							})}
+						</Value>
+						<Subtext>{t('earn.incentives.options.snx.trading-rewards')}</Subtext>
+					</ValueBox>
+					<ValueBox>
+						<Svg src={snxSVG} />
+						<Value>
+							{formatCurrency(CRYPTO_CURRENCY_MAP.SNX, stakingRewards, {
+								currencyKey: CRYPTO_CURRENCY_MAP.SNX,
+							})}
+						</Value>
+						<Subtext>{t('earn.incentives.options.snx.staking-rewards')}</Subtext>
+					</ValueBox>
+				</ValueBoxWrapper>
+				<TotalValueWrapper>
+					<Subtext>{t('earn.incentives.options.snx.total-value')}</Subtext>
+					<Value>$1000</Value>
+				</TotalValueWrapper>
+				{error && <ErrorMessage>{error}</ErrorMessage>}
+				<StyledButton variant="primary" onClick={handleClaim} disabled={error != null || claimed}>
+					{claimed
+						? t('earn.actions.claim.claimed-button')
+						: t('earn.actions.claim.claim-button', {
+								totalValue: formatFiatCurrency(totalRewards, {
+									sign: '$',
+								}),
+						  })}
+				</StyledButton>
+				<GasSelector gasLimitEstimate={gasLimitEstimate} setGasPrice={setGasPrice} />
+			</InnerContainer>
 		</TabContainer>
 	);
 };
 
+const InnerContainer = styled(FlexDivColCentered)`
+	width: 90%;
+	margin: 15px auto;
+	padding: 15px;
+	backgroundcolor: ${(props) => props.theme.colors.mutedBrightBlue};
+	border: 1px solid ${(props) => props.theme.colors.brightPink};
+	border-radius: 4px;
+`;
+
+const ValueBoxWrapper = styled(FlexDivCentered)`
+	justify-content: space-around;
+`;
+
+const StyledLink = styled.span`
+	${linkCSS}
+	color: ${(props) => props.theme.colors.brightBlue};
+`;
+
+const TotalValueWrapper = styled(FlexDiv)`
+	justify-content: space-between;
+	height: 30px;
+	align-items: center;
+	border-bottom: 1px solid ${(props) => props.theme.colors.gray};
+	width: 80%;
+	margin-top: 15px;
+`;
+
 const Label = styled.p`
-	font-family: ${(props) => props.theme.fonts.condensedBold};
-	color: ${(props) => props.theme.colors.white};
-	text-transform: uppercase;
+	width: 90%;
+	margin: 0 auto;
+	font-family: ${(props) => props.theme.fonts.interSemiBold};
+	color: ${(props) => props.theme.colors.gray};
 	font-size: 12px;
 `;
-const Value = styled.p<{ isClaimed: boolean }>`
-	font-family: ${(props) => props.theme.fonts.condensedBold};
-	font-size: 26px;
+
+const Subtext = styled.div`
+	font-family: ${(props) => props.theme.fonts.interSemiBold};
+	color: ${(props) => props.theme.colors.gray};
+	font-size: 12px;
 `;
-const ValueBox = styled(FlexDivRowCentered)``;
-const StyledClaimedTag = styled(ClaimedTag)`
-	font-size: 14px;
-	margin-left: 8px;
+
+const ValueBox = styled(FlexDivColCentered)`
+	width: 150px;
 `;
+
+const Value = styled.div`
+	font-size: 16px;
+	font-family: ${(props) => props.theme.fonts.expanded};
+	color: ${(props) => props.theme.colors.white};
+`;
+
 const StyledButton = styled(Button)`
 	font-size: 14px;
 	font-family: ${(props) => props.theme.fonts.condensedMedium};
-	width: 100%;
+	width: 80%;
 	text-transform: uppercase;
+	height: 40px;
+	backgroundcolor: ${(props) => props.theme.colors.brightBlue};
 `;
 
 export const TabContainer = styled(FlexDivColCentered)`
