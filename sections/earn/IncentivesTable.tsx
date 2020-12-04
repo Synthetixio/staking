@@ -46,6 +46,7 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab, 
 			accessor: 'title',
 			Cell: (cellProps: CellProps<EarnItem>) => (
 				<ClickableFlexDivCentered
+					isActive={cellProps.row.original.incentivesIndex === activeTab}
 					onClick={() => setActiveTab(cellProps.row.original.incentivesIndex)}
 				>
 					<div>{cellProps.row.original.icon()}</div>
@@ -191,6 +192,9 @@ const StyledTable = styled(Table)`
 		align-items: center;
 	}
 	.table-body-cell {
+		:first-child {
+			padding-left: 0px;
+		}
 		:last-child {
 			padding-right: 0px;
 		}
@@ -223,10 +227,16 @@ const Header = styled.span`
 	text-align: center;
 `;
 
-const ClickableFlexDivCentered = styled(FlexDivCentered)`
+const ClickableFlexDivCentered = styled(FlexDivCentered)<{ isActive: boolean }>`
 	cursor: pointer;
 	height: 80px;
 	width: 100%;
+	padding-left: 18px;
+	${(props) =>
+		props.isActive &&
+		css`
+			background-color: ${props.theme.colors.tooltipBlue};
+		`}
 `;
 
 const ClickableFlexDivColCentered = styled(FlexDivColCentered)`
@@ -245,6 +255,7 @@ const ClickableFlexDivCol = styled(FlexDivCol)<{ isActive: boolean }>`
 		props.isActive &&
 		css`
 			border-right: 1px solid ${props.theme.colors.brightBlue};
+			background-color: ${props.theme.colors.tooltipBlue};
 		`}
 `;
 

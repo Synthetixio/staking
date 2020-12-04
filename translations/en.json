@@ -212,7 +212,8 @@
 					"subtitle": "Staking Rewards",
 					"description": "Staking SNX tokens offers weekly rewards in both inflationary SNX and sUSD from trading fees. <0>Learn more.<0>",
 					"staking-rewards": "STAKING REWARDS",
-					"trading-rewards": "TRADING REWARDS"
+					"trading-rewards": "TRADING REWARDS",
+					"total-value": "TOTAL VALUE"
 				},
 				"curve": {
 					"title": "Curve.fi",

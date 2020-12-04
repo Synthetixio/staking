@@ -3,7 +3,7 @@ import { Trans, useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { Svg } from 'react-optimized-image';
 
-import { ErrorMessage, FlexDivCentered, FlexDivColCentered, linkCSS } from 'styles/common';
+import { ErrorMessage, FlexDiv, FlexDivCentered, FlexDivColCentered, linkCSS } from 'styles/common';
 import useClaimedStatus from 'sections/hooks/useClaimedStatus';
 import BigNumber from 'bignumber.js';
 import { formatCurrency, formatFiatCurrency } from 'utils/formatters/number';
@@ -117,6 +117,10 @@ const ClaimTab: React.FC<ClaimTabProps> = ({
 						<Subtext>{t('earn.incentives.options.snx.staking-rewards')}</Subtext>
 					</ValueBox>
 				</ValueBoxWrapper>
+				<TotalValueWrapper>
+					<Subtext>{t('earn.incentives.options.snx.total-value')}</Subtext>
+					<Value>$1000</Value>
+				</TotalValueWrapper>
 				{error && <ErrorMessage>{error}</ErrorMessage>}
 				<StyledButton variant="primary" onClick={handleClaim} disabled={error != null || claimed}>
 					{claimed
@@ -149,6 +153,15 @@ const ValueBoxWrapper = styled(FlexDivCentered)`
 const StyledLink = styled.span`
 	${linkCSS}
 	color: ${(props) => props.theme.colors.brightBlue};
+`;
+
+const TotalValueWrapper = styled(FlexDiv)`
+	justify-content: space-between;
+	height: 30px;
+	align-items: center;
+	border-bottom: 1px solid ${(props) => props.theme.colors.gray};
+	width: 80%;
+	margin-top: 15px;
 `;
 
 const Label = styled.p`
