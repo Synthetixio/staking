@@ -72,16 +72,19 @@ const Button = styled.button<ButtonProps>`
 		${(props) =>
 			props.variant === 'secondary' &&
 			css`
-				color: ${(props) => props.theme.colors.darkBlue};
-				background-color: ${(props) => props.theme.colors.brightGreen};
-				box-shadow: 0px 0px 10px rgba(77, 244, 184, 0.6);
+				color: ${(props) => props.theme.colors.brightBlue};
+				background-color: ${(props) => props.theme.colors.lightBlue};
+				box-shadow: 0px 0px 10px rgba(0, 209, 255, 0.9);
+				border: 1px solid ${(props) => props.theme.colors.brightBlue};
 				&:hover {
 					&:not(:disabled) {
-						background: ${(props) => props.theme.colors.mutedBrightGreen};
+						background: ${(props) => props.theme.colors.brightBlue};
+						color: ${(props) => props.theme.colors.darkBlue};
 					}
 				}
 				&:disabled {
-					background: ${(props) => props.theme.colors.mutedBrightGreen};
+					background: ${(props) => props.theme.colors.brightBlue};
+					color: ${(props) => props.theme.colors.darkBlue};
 					cursor: default;
 				}
 			`}	

@@ -31,6 +31,8 @@ export const getDecimalPlaces = (value: NumericValue) =>
 
 export const toBigNumber = (value: NumericValue) => new BigNumber(value);
 
+export const zeroBN = toBigNumber(0);
+
 export const formatNumber = (value: NumericValue, options?: FormatNumberOptions) => {
 	const prefix = options?.prefix;
 	const suffix = options?.suffix;

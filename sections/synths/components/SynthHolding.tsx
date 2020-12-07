@@ -1,19 +1,26 @@
 import React from 'react';
 import styled from 'styled-components';
+import { BigNumber } from 'bignumber.js';
+
 import ProgressBar from 'components/ProgressBar';
 import { FlexDivCol } from 'styles/common';
 import { formatPercent } from 'utils/formatters/number';
 
 interface SynthHoldingProps {
-	usdBalance: number;
-	totalUSDBalance: number;
+	usdBalance: BigNumber;
+	totalUSDBalance: BigNumber;
 }
 
 const SynthHolding: React.FC<SynthHoldingProps> = ({ usdBalance, totalUSDBalance }) => {
-	const percent = usdBalance / totalUSDBalance;
+	const percent = usdBalance.dividedBy(totalUSDBalance);
+
 	return (
 		<FlexDivCol>
-			<StyledProgressBar percentage={percent} borderColor={'transparent'} fillColor={'#00D1FF'} />
+			<StyledProgressBar
+				percentage={percent.toNumber()}
+				borderColor={'transparent'}
+				fillColor={'#00D1FF'}
+			/>
 			<StyledPercentage>{formatPercent(percent)}</StyledPercentage>
 		</FlexDivCol>
 	);
