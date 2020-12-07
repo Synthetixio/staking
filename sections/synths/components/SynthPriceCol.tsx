@@ -43,6 +43,9 @@ const SynthPriceCol: FC<SynthPriceColProps> = ({ currencyKey }) => {
 };
 
 const StyledCurrencyPrice = styled(CurrencyPrice)`
+	display: flex;
+	flex-direction: column;
+
 	.price {
 		font-family: ${(props) => props.theme.fonts.mono};
 		padding-bottom: 1px;

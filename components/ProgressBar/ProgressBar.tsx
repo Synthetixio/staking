@@ -6,10 +6,11 @@ type ProgressBarProps = {
 	percentage: number;
 	borderColor: string;
 	fillColor: string;
+	className?: string;
 };
 
-const ProgressBar: FC<ProgressBarProps> = ({ percentage, borderColor, fillColor }) => (
-	<ProgressBarWrapper borderColor={borderColor}>
+const ProgressBar: FC<ProgressBarProps> = ({ percentage, borderColor, fillColor, ...rest }) => (
+	<ProgressBarWrapper borderColor={borderColor} {...rest}>
 		<Bar className="filled-bar" percentage={percentage} fillColor={fillColor} />
 		<UnfilledBar percentage={1 - percentage} borderColor={borderColor} />
 	</ProgressBarWrapper>

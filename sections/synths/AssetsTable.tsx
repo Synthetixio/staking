@@ -100,7 +100,7 @@ const AssetsTable: FC<AssetsTableProps> = ({
 		if (showHoldings) {
 			columns.push({
 				Header: <StyledTableHeader>{t('synths.synths.table.holdings')}</StyledTableHeader>,
-				accessor: 'usdBalance',
+				id: 'usdBalance',
 				sortType: 'basic',
 				Cell: (cellProps: CellProps<SynthBalance>) => (
 					<SynthHolding
@@ -109,7 +109,7 @@ const AssetsTable: FC<AssetsTableProps> = ({
 					/>
 				),
 				width: 200,
-				sortable: true,
+				sortable: false,
 			});
 		}
 		if (showConvert) {
@@ -150,7 +150,7 @@ const AssetsTable: FC<AssetsTableProps> = ({
 						</TableNoResults>
 					) : undefined
 				}
-				columnsDeps={[isAppReady]}
+				columnsDeps={[isAppReady, totalValue]}
 				showPagination={true}
 			/>
 		</Container>
