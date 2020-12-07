@@ -1,21 +1,25 @@
 import { useQuery, QueryConfig } from 'react-query';
+import { useRecoilValue } from 'recoil';
 
 import QUERY_KEYS from 'constants/queryKeys';
 
-import { SynthetixJS } from '@synthetixio/js';
 import synthetix from 'lib/synthetix';
+
+import { appReadyState } from 'store/app';
 
 const useTotalIssuedSynthsExcludingEtherQuery = (
 	currencyKey: string,
 	options?: QueryConfig<number>
 ) => {
+	const isAppReady = useRecoilValue(appReadyState);
+
 	return useQuery<number>(
 		QUERY_KEYS.Synths.TotalIssuedSynths,
 		async () => {
 			const {
 				contracts: { Synthetix },
 				utils,
-			} = synthetix.js as SynthetixJS;
+			} = synthetix.js!;
 			const totalIssuedSynthsExclEther = await Synthetix.totalIssuedSynthsExcludeEtherCollateral(
 				utils.formatBytes32String(currencyKey)
 			);
@@ -23,7 +27,7 @@ const useTotalIssuedSynthsExcludingEtherQuery = (
 			return Number(utils.formatEther(totalIssuedSynthsExclEther));
 		},
 		{
-			enabled: synthetix.js,
+			enabled: isAppReady,
 			...options,
 		}
 	);

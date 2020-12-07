@@ -119,7 +119,7 @@ const useCurvePoolQuery_1 = (options?: QueryConfig<CurveData>) => {
 			};
 		},
 		{
-			enabled: synthetix.js && isAppReady && isWalletConnected && provider != null,
+			enabled: isAppReady && isWalletConnected && provider != null,
 			...options,
 		}
 	);

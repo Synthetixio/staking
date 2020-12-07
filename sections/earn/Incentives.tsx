@@ -4,10 +4,9 @@ import styled from 'styled-components';
 import { Svg } from 'react-optimized-image';
 import { useTranslation } from 'react-i18next';
 
-import useiETHPoolQuery_1 from 'queries/liquidityPools/useiETHPoolQuery_1';
-import useiBTCPoolQuery_1 from 'queries/liquidityPools/useiBTCPoolQuery_1';
+import useIETHPoolQuery_1 from 'queries/liquidityPools/useIETHPoolQuery_1';
+import useIBTCPoolQuery_1 from 'queries/liquidityPools/useIBTCPoolQuery_1';
 import useCurvePoolQuery_1 from 'queries/liquidityPools/useCurvePoolQuery_1';
-import useCurrencyRatesQuery from 'queries/rates/useCurrencyRatesQuery';
 import useSNXLockedValueQuery from 'queries/staking/useSNXLockedValueQuery';
 import useFeePeriodTimeAndProgress from 'hooks/useFeePeriodTimeAndProgress';
 import useClaimedStatus from 'sections/hooks/useClaimedStatus';
@@ -20,6 +19,7 @@ import iETHSVG from 'assets/svg/incentives/pool-ieth.svg';
 import snxSVG from 'assets/svg/incentives/pool-snx.svg';
 import IncentivesTable from './IncentivesTable';
 import ClaimTab from './ClaimTab';
+import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 
 type APRFields = {
 	price: number;
@@ -47,13 +47,13 @@ const Incentives: FC<IncentivesProps> = ({
 	const [activeTab, setActiveTab] = useState<number | null>(null);
 
 	const claimedSNX = useClaimedStatus();
-	const useiETHPool = useiETHPoolQuery_1();
-	const useiBTCPool = useiBTCPoolQuery_1();
+	const useiETHPool = useIETHPoolQuery_1();
+	const useiBTCPool = useIBTCPoolQuery_1();
 	const useCurvePool = useCurvePoolQuery_1();
 	const useSNXLockedValue = useSNXLockedValueQuery();
 	const { nextFeePeriodStarts } = useFeePeriodTimeAndProgress();
-	const currencyRates = useCurrencyRatesQuery([CRYPTO_CURRENCY_MAP.SNX]);
-	const SNXRate = currencyRates.data?.SNX ?? 0;
+	const exchangeRatesQuery = useExchangeRatesQuery();
+	const SNXRate = exchangeRatesQuery.data?.SNX ?? 0;
 
 	const iETHTVL = (useiETHPool.data?.balance ?? 0) * (useiETHPool.data?.price ?? 0);
 	const iETHAPR = (((useiETHPool.data?.distribution ?? 0) * SNXRate) / iETHTVL) * 52;

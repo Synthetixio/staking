@@ -4,17 +4,17 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { StatsSection, LineSpacer } from 'styles/common';
 
+import { SYNTHS_MAP } from 'constants/currency';
+
 import { Incentives } from 'sections/earn';
 import StatBox from 'components/StatBox';
 
 import { formatFiatCurrency, formatPercent, toBigNumber } from 'utils/formatters/number';
 
 import useGetDebtDataQuery from 'queries/debt/useGetDebtDataQuery';
-import useCurrencyRatesQuery from 'queries/rates/useCurrencyRatesQuery';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import useGetFeePoolDataQuery from 'queries/staking/useGetFeePoolDataQuery';
 import useTotalIssuedSynthsExcludingEtherQuery from 'queries/synths/useTotalIssuedSynthsExcludingEtherQuery';
-import { CRYPTO_CURRENCY_MAP, SYNTHS_MAP } from 'constants/currency';
 import useClaimableRewards from 'queries/staking/useClaimableRewardsQuery';
 import useFeeClaimHistoryQuery from 'queries/staking/useFeeClaimHistoryQuery';
 
@@ -22,7 +22,7 @@ const Earn = () => {
 	const { t } = useTranslation();
 
 	const debtDataQuery = useGetDebtDataQuery();
-	const currencyRates = useCurrencyRatesQuery([CRYPTO_CURRENCY_MAP.SNX]);
+	const exchangeRatesQuery = useExchangeRatesQuery();
 	const totalIssuedSynthsExclEth = useTotalIssuedSynthsExcludingEtherQuery(SYNTHS_MAP.sUSD);
 	const exchangeRates = useExchangeRatesQuery();
 	const previousFeePeriod = useGetFeePoolDataQuery('1');
@@ -35,7 +35,7 @@ const Earn = () => {
 	const feesToDistribute = previousFeePeriod?.data?.feesToDistribute ?? 0;
 	const rewardsToDistribute = previousFeePeriod?.data?.rewardsToDistribute ?? 0;
 	const totalsUSDDebt = totalIssuedSynthsExclEth?.data ?? 0;
-	const SNXRate = currencyRates.data?.SNX ?? 0;
+	const SNXRate = exchangeRatesQuery.data?.SNX ?? 0;
 
 	const stakedValue = collateral * Math.min(1, currentCRatio / targetCRatio) * SNXRate;
 	const weeklyRewards = sUSDRate * feesToDistribute + SNXRate * rewardsToDistribute;

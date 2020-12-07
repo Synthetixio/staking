@@ -6,7 +6,7 @@ import synthetix from 'lib/synthetix';
 import QUERY_KEYS from 'constants/queryKeys';
 
 import { isWalletConnectedState, networkState, walletAddressState } from 'store/wallet';
-import { SynthetixJS } from '@synthetixio/js';
+import { appReadyState } from 'store/app';
 
 export type EscrowData = {
 	canVest: number;
@@ -23,6 +23,7 @@ const useEscrowDataQuery = (options?: QueryConfig<EscrowData>) => {
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const network = useRecoilValue(networkState);
+	const isAppReady = useRecoilValue(appReadyState);
 
 	return useQuery<EscrowData>(
 		QUERY_KEYS.Escrow.Data(walletAddress ?? '', network?.id!),
@@ -30,7 +31,7 @@ const useEscrowDataQuery = (options?: QueryConfig<EscrowData>) => {
 			const {
 				contracts: { RewardEscrow, SynthetixEscrow },
 				utils: { formatEther },
-			} = synthetix.js as SynthetixJS;
+			} = synthetix.js!;
 			const [accountSchedule, totalEscrowed, totalVested, tokenSaleEscrow] = await Promise.all([
 				RewardEscrow.checkAccountSchedule(walletAddress),
 				RewardEscrow.totalEscrowedAccountBalance(walletAddress),
@@ -64,7 +65,7 @@ const useEscrowDataQuery = (options?: QueryConfig<EscrowData>) => {
 			};
 		},
 		{
-			enabled: synthetix.js && isWalletConnected,
+			enabled: isAppReady && isWalletConnected,
 			...options,
 		}
 	);
