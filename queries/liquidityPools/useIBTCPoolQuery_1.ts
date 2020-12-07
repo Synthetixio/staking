@@ -4,7 +4,7 @@ import { useRecoilValue } from 'recoil';
 
 import synthetix from 'lib/synthetix';
 import Connector from 'containers/Connector';
-import { iEthRewards } from 'contracts';
+import { iBtcRewards } from 'contracts';
 import QUERY_KEYS from 'constants/queryKeys';
 import { appReadyState } from 'store/app';
 import { walletAddressState, isWalletConnectedState, networkState } from 'store/wallet';
@@ -12,7 +12,7 @@ import { SYNTHS_MAP } from 'constants/currency';
 
 import { LiquidityPoolData } from './types';
 
-const useiETHPoolQuery_1 = (options?: QueryConfig<LiquidityPoolData>) => {
+const useIBTCPoolQuery_1 = (options?: QueryConfig<LiquidityPoolData>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
@@ -20,23 +20,23 @@ const useiETHPoolQuery_1 = (options?: QueryConfig<LiquidityPoolData>) => {
 	const { provider } = Connector.useContainer();
 
 	return useQuery<LiquidityPoolData>(
-		QUERY_KEYS.LiquidityPools.iETH(walletAddress ?? '', network?.id!),
+		QUERY_KEYS.LiquidityPools.iBTC(walletAddress ?? '', network?.id!),
 		async () => {
 			const contract = new ethers.Contract(
-				iEthRewards.address,
-				iEthRewards.abi,
+				iBtcRewards.address,
+				iBtcRewards.abi,
 				provider as ethers.providers.Provider
 			);
 			const address = contract.address;
 
 			const getDuration = contract.DURATION || contract.rewardsDuration;
-			const [duration, rate, periodFinish, iEthBalance, iEthPrice] = await Promise.all([
+			const [duration, rate, periodFinish, iBtcBalance, iBtcPrice] = await Promise.all([
 				getDuration(),
 				contract.rewardRate(),
 				contract.periodFinish(),
-				synthetix.js?.contracts.ProxyiETH.balanceOf(address),
+				synthetix.js?.contracts.ProxyiBTC.balanceOf(address),
 				synthetix.js?.contracts.ExchangeRates.rateForCurrency(
-					synthetix.js?.toBytes32(SYNTHS_MAP.iETH)
+					synthetix.js?.toBytes32(SYNTHS_MAP.iBTC)
 				),
 			]);
 			const durationInWeeks = Number(duration) / 3600 / 24 / 7;
@@ -45,7 +45,7 @@ const useiETHPoolQuery_1 = (options?: QueryConfig<LiquidityPoolData>) => {
 				? 0
 				: Math.trunc(Number(duration) * (rate / 1e18)) / durationInWeeks;
 
-			const [balance, price] = [iEthBalance, iEthPrice].map((data) =>
+			const [balance, price] = [iBtcBalance, iBtcPrice].map((data) =>
 				Number(synthetix.js?.utils.formatEther(data))
 			);
 
@@ -58,10 +58,10 @@ const useiETHPoolQuery_1 = (options?: QueryConfig<LiquidityPoolData>) => {
 			};
 		},
 		{
-			enabled: synthetix.js && isAppReady && isWalletConnected && provider != null,
+			enabled: isAppReady && isWalletConnected && provider != null,
 			...options,
 		}
 	);
 };
 
-export default useiETHPoolQuery_1;
+export default useIBTCPoolQuery_1;

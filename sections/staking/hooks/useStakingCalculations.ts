@@ -1,8 +1,7 @@
 import { useMemo } from 'react';
 import useGetDebtDataQuery from 'queries/debt/useGetDebtDataQuery';
-import useCurrencyRatesQuery from 'queries/rates/useCurrencyRatesQuery';
-import { CRYPTO_CURRENCY_MAP } from 'constants/currency';
 import useEscrowDataQuery from 'queries/escrow/useEscrowDataQuery';
+import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import { BigNumber } from 'bignumber.js';
 import { toBigNumber } from 'utils/formatters/number';
 
@@ -22,16 +21,16 @@ type StakingCalculations = {
 	percentageCurrentCRatio: BigNumber;
 };
 const useStakingCalculations = (): StakingCalculations => {
-	const currencyRatesQuery = useCurrencyRatesQuery([CRYPTO_CURRENCY_MAP.SNX]);
+	const exchangeRatesQuery = useExchangeRatesQuery();
 	const debtDataQuery = useGetDebtDataQuery();
 	const escrowBalanceQuery = useEscrowDataQuery();
 
 	const debtData = debtDataQuery?.data ?? null;
-	const currencyRates = currencyRatesQuery.data ?? null;
+	const exchangeRates = exchangeRatesQuery.data ?? null;
 	const escrowBalance = escrowBalanceQuery.data ?? null;
 
 	const results = useMemo(() => {
-		const SNXRate = toBigNumber(currencyRates?.SNX ?? 0);
+		const SNXRate = toBigNumber(exchangeRates?.SNX ?? 0);
 		const collateral = toBigNumber(debtData?.collateral ?? 0);
 		const targetCRatio = toBigNumber(debtData?.targetCRatio ?? 0);
 		const currentCRatio = toBigNumber(debtData?.currentCRatio ?? 0);
@@ -69,7 +68,7 @@ const useStakingCalculations = (): StakingCalculations => {
 			SNXRate,
 			totalEscrowBalance,
 		};
-	}, [debtData, currencyRates, escrowBalance]);
+	}, [debtData, exchangeRates, escrowBalance]);
 
 	return {
 		...results,

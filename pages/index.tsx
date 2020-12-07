@@ -7,20 +7,20 @@ import { useTranslation } from 'react-i18next';
 import { FlexDivCol, LineSpacer, StatsSection } from 'styles/common';
 import { PossibleActions } from 'sections/dashboard';
 
+import StatBox from 'components/StatBox';
+
 import useGetDebtDataQuery from 'queries/debt/useGetDebtDataQuery';
 import useGetFeePoolDataQuery from 'queries/staking/useGetFeePoolDataQuery';
-import StatBox from 'components/StatBox';
-import { CRYPTO_CURRENCY_MAP } from 'constants/currency';
-import useCurrencyRatesQuery from 'queries/rates/useCurrencyRatesQuery';
-import { formatFiatCurrency, formatPercent } from 'utils/formatters/number';
-import useTotalIssuedSynthsExcludingEtherQuery from 'queries/synths/useTotalIssuedSynthsExcludingEtherQuery';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
+import useTotalIssuedSynthsExcludingEtherQuery from 'queries/synths/useTotalIssuedSynthsExcludingEtherQuery';
+
+import { CRYPTO_CURRENCY_MAP } from 'constants/currency';
+import { formatFiatCurrency, formatPercent } from 'utils/formatters/number';
 
 const DashboardPage = () => {
 	const { t } = useTranslation();
 
 	const debtDataQuery = useGetDebtDataQuery();
-	const currencyRates = useCurrencyRatesQuery([CRYPTO_CURRENCY_MAP.SNX, CRYPTO_CURRENCY_MAP.ETH]);
 	const totalIssuedSynthsExclEth = useTotalIssuedSynthsExcludingEtherQuery(
 		CRYPTO_CURRENCY_MAP.sUSD
 	);
@@ -41,7 +41,7 @@ const DashboardPage = () => {
 
 	// TODO: replace with selected currency instead of usd hardcode
 	// eslint-disable-next-line
-	const SNXRate = currencyRates.data?.SNX ?? 0;
+	const SNXRate = exchangeRates.data?.SNX ?? 0;
 	const stakedValue = collateral * Math.min(1, currentCRatio / targetCRatio) * SNXRate;
 
 	// TODO: replace with useMemo
