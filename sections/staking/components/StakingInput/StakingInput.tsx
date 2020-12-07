@@ -88,7 +88,7 @@ const StakingInput: React.FC<StakingInputProps> = ({
 	const returnButtonStates = () => {
 		const insufficientBalance = isMint
 			? getStakingAmount(targetCRatio, inputValue, SNXRate).isGreaterThan(unstakedCollateral)
-			: toBigNumber(inputValue).isGreaterThan(debtBalance) || Number(inputValue) > totalUSDBalance;
+			: toBigNumber(inputValue).isGreaterThan(debtBalance) || inputValue.gt(totalUSDBalance);
 		// @TODO: Add gasLimitEstimate error instead of checking the values (bc of rounding error);
 		if (insufficientBalance) {
 			return (

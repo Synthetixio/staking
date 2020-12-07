@@ -235,6 +235,9 @@ const ReactTable = styled.div<{ palette: TablePalette }>`
 			${TableRow} {
 				background-color: ${(props) => props.theme.colors.mediumBlue};
 				border-bottom: 1px solid ${(props) => props.theme.colors.linedBlue};
+				&:last-child {
+					border-bottom: 0;
+				}
 			}
 			${TableCellHead} {
 				color: ${(props) => props.theme.colors.white};

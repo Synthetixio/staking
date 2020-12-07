@@ -1,21 +1,23 @@
 import { useQuery, QueryConfig } from 'react-query';
-import { ethers, BigNumberish } from 'ethers';
+import { ethers } from 'ethers';
 import { useRecoilValue } from 'recoil';
 import { orderBy } from 'lodash';
+import BigNumber from 'bignumber.js';
 
 import synthetix from 'lib/synthetix';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import { CurrencyKey } from 'constants/currency';
-import { appReadyState } from 'store/app';
 
 import { walletAddressState, isWalletConnectedState, networkState } from 'store/wallet';
+import { appReadyState } from 'store/app';
+
+import { toBigNumber } from 'utils/formatters/number';
 
 export type SynthBalance = {
 	currencyKey: CurrencyKey;
-	balance: number;
-	balanceBN: BigNumberish;
-	usdBalance: number;
+	balance: BigNumber;
+	usdBalance: BigNumber;
 };
 
 export type SynthBalancesMap = Record<CurrencyKey, SynthBalance>;
@@ -25,7 +27,7 @@ type SynthBalancesTuple = [CurrencyKey[], number[], number[]];
 export type Balances = {
 	balancesMap: SynthBalancesMap;
 	balances: SynthBalance[];
-	totalUSDBalance: number;
+	totalUSDBalance: BigNumber;
 };
 
 const useSynthsBalancesQuery = (options?: QueryConfig<Balances>) => {
@@ -46,30 +48,33 @@ const useSynthsBalancesQuery = (options?: QueryConfig<Balances>) => {
 				walletAddress
 			)) as SynthBalancesTuple;
 
-			let totalUSDBalance = 0;
+			let totalUSDBalance = toBigNumber(0);
 
 			currencyKeys.forEach((currencyKey: string, idx: number) => {
-				const balance = Number(ethers.utils.formatEther(synthsBalances[idx]));
+				const balance = toBigNumber(ethers.utils.formatEther(synthsBalances[idx]));
 
 				// discard empty balances
-				if (balance > 0) {
+				if (balance.gt(0)) {
 					const synthName = ethers.utils.parseBytes32String(currencyKey) as CurrencyKey;
-					const usdBalance = Number(ethers.utils.formatEther(synthsUSDBalances[idx]));
+					const usdBalance = toBigNumber(ethers.utils.formatEther(synthsUSDBalances[idx]));
 
 					balancesMap[synthName] = {
 						currencyKey: synthName,
 						balance,
-						balanceBN: synthsBalances[idx],
 						usdBalance,
 					};
 
-					totalUSDBalance += usdBalance;
+					totalUSDBalance = totalUSDBalance.plus(usdBalance);
 				}
 			});
 
 			return {
 				balancesMap,
-				balances: orderBy(Object.values(balancesMap), 'usdBalance', 'desc'),
+				balances: orderBy(
+					Object.values(balancesMap),
+					(balance) => balance.usdBalance.toNumber(),
+					'desc'
+				),
 				totalUSDBalance,
 			};
 		},

@@ -391,6 +391,7 @@
 		},
 		"custom": "Custom",
 		"edit": "Edit",
+		"convert": "Convert",
 		"gas-header": "Gas Price (GWEI)",
 		"explorers": {
 			"etherscan": "etherscan"
