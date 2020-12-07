@@ -10,16 +10,18 @@ const Index: FC = () => {
 	return (
 		<Staking.Provider>
 			<Row>
-				<ActionBox />
-				<InfoBoxWrap>
+				<Cols>
+					<ActionBox />
+				</Cols>
+				<Cols>
 					<InfoBox />
-				</InfoBoxWrap>
+				</Cols>
 			</Row>
 		</Staking.Provider>
 	);
 };
 
-const InfoBoxWrap = styled(FlexDivCol)`
+const Cols = styled(FlexDivCol)`
 	width: ${BOX_COLUMN_WIDTH}px;
 `;
 
