@@ -58,7 +58,7 @@ const BurnTab: React.FC = () => {
 			}
 		};
 		getGasLimitEstimate();
-	}, [synthetix, error]);
+	}, [synthetix, error, amountToBurn]);
 
 	const handleBurn = async (burnToTarget: boolean) => {
 		try {
@@ -83,11 +83,12 @@ const BurnTab: React.FC = () => {
 					gasLimit: gasLimit,
 				});
 			} else {
+				const amountToBurnBN = parseEther(amountToBurn.toString());
 				const gasLimit = getGasEstimateForTransaction(
-					[parseEther(amountToBurn.toString())],
+					[amountToBurnBN],
 					Synthetix.estimateGas.burnSynths
 				);
-				transaction = await Synthetix.burnSynths(amountToBurn, {
+				transaction = await Synthetix.burnSynths(amountToBurnBN, {
 					gasPrice: normalizedGasPrice(gasPrice),
 					gasLimit,
 				});
@@ -148,6 +149,8 @@ const BurnTab: React.FC = () => {
 				isMint={false}
 				onBack={onBurnTypeChange}
 				txError={burningTxError}
+				error={error}
+				setError={setError}
 				txModalOpen={txModalOpen}
 				setTxModalOpen={setTxModalOpen}
 				gasLimitEstimate={gasLimitEstimate}

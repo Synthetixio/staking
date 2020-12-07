@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { SynthetixJS } from '@synthetixio/js';
 import { ethers } from 'ethers';
 import synthetix from 'lib/synthetix';
@@ -26,6 +26,7 @@ const MintTab: React.FC = () => {
 	const [stakingTxError, setStakingTxError] = useState<boolean>(false);
 	const [error, setError] = useState<string | null>(null);
 	const [gasLimitEstimate, setGasLimitEstimate] = useState<number | null>(null);
+	const [mintMax, setMintMax] = useState<boolean>(false);
 
 	const [gasPrice, setGasPrice] = useState<number>(0);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
@@ -34,10 +35,22 @@ const MintTab: React.FC = () => {
 		const getGasLimitEstimate = async () => {
 			if (synthetix && synthetix.js) {
 				try {
-					const gasEstimate = await getGasEstimateForTransaction(
-						[],
-						synthetix.js?.contracts.Synthetix.estimateGas.issueMaxSynths
-					);
+					const {
+						contracts: { Synthetix },
+						utils: { parseEther },
+					} = synthetix.js as SynthetixJS;
+					let gasEstimate;
+					if (amountToMint.length > 0 && !mintMax) {
+						gasEstimate = await getGasEstimateForTransaction(
+							[parseEther(amountToMint)],
+							Synthetix.estimateGas.issueSynths
+						);
+					} else {
+						gasEstimate = await getGasEstimateForTransaction(
+							[],
+							Synthetix.estimateGas.issueMaxSynths
+						);
+					}
 					setGasLimitEstimate(normalizeGasLimit(Number(gasEstimate)));
 				} catch (error) {
 					setError(error.message);
@@ -46,7 +59,7 @@ const MintTab: React.FC = () => {
 			}
 		};
 		getGasLimitEstimate();
-	}, [synthetix, error]);
+	}, [synthetix, error, amountToMint, mintMax]);
 
 	const handleStake = async (mintMax: boolean) => {
 		try {
@@ -66,11 +79,12 @@ const MintTab: React.FC = () => {
 					gasLimit,
 				});
 			} else {
+				const amountToMintBN = parseEther(amountToMint);
 				const gasLimit = getGasEstimateForTransaction(
-					[parseEther(amountToMint)],
+					[amountToMintBN],
 					Synthetix.estimateGas.issueSynths
 				);
-				transaction = await Synthetix.issueSynths(parseEther(amountToMint), {
+				transaction = await Synthetix.issueSynths(amountToMintBN, {
 					gasPrice: normalizedGasPrice(gasPrice),
 					gasLimit,
 				});
@@ -90,22 +104,23 @@ const MintTab: React.FC = () => {
 		}
 	};
 
-	const returnPanel = () => {
+	const returnPanel = useMemo(() => {
 		let onSubmit;
 		let inputValue;
 		let isLocked;
 		switch (mintType) {
 			case MintActionType.MAX:
 				const mintAmount = getMintAmount(targetCRatio, unstakedCollateral, SNXRate);
-				onMintChange(mintAmount.toString());
 				onSubmit = () => handleStake(true);
 				inputValue = mintAmount;
 				isLocked = true;
+				setMintMax(true);
 				break;
 			case MintActionType.CUSTOM:
 				onSubmit = () => handleStake(false);
 				inputValue = toBigNumber(amountToMint);
 				isLocked = false;
+				setMintMax(false);
 				break;
 			default:
 				return <MintTiles />;
@@ -118,6 +133,8 @@ const MintTab: React.FC = () => {
 				isMint={true}
 				onBack={onMintTypeChange}
 				txError={stakingTxError}
+				error={error}
+				setError={setError}
 				txModalOpen={txModalOpen}
 				setTxModalOpen={setTxModalOpen}
 				gasLimitEstimate={gasLimitEstimate}
@@ -128,9 +145,9 @@ const MintTab: React.FC = () => {
 				setTransactionState={setTransactionState}
 			/>
 		);
-	};
+	}, [mintType, error, stakingTxError, gasLimitEstimate, txModalOpen, txHash, transactionState]);
 
-	return <TabContainer>{returnPanel()}</TabContainer>;
+	return <TabContainer>{returnPanel}</TabContainer>;
 };
 
 export default MintTab;
