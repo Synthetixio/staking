@@ -8,7 +8,7 @@ import styled from 'styled-components';
 import BigNumber from 'bignumber.js';
 import { formatPercent } from 'utils/formatters/number';
 import { amountToBurnState, BurnActionType, burnTypeState } from 'store/staking';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 
 type BurnTilesProps = {
 	percentageTargetCRatio: BigNumber;
@@ -16,8 +16,7 @@ type BurnTilesProps = {
 
 const BurnTiles: React.FC<BurnTilesProps> = ({ percentageTargetCRatio }) => {
 	const { t } = useTranslation();
-	const burnType = useRecoilValue(burnTypeState);
-	const onBurnTypeChange = useSetRecoilState(burnTypeState);
+	const [burnType, onBurnTypeChange] = useRecoilState(burnTypeState);
 	const onBurnChange = useSetRecoilState(amountToBurnState);
 
 	const BurnIcon = () => <Svg src={Burn} />;

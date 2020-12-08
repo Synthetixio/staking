@@ -14,16 +14,14 @@ import { TabContainer } from '../common';
 import MintTiles from '../MintTiles';
 import StakingInput from '../StakingInput';
 import { getMintAmount } from '../helper';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { amountToMintState, MintActionType, mintTypeState } from 'store/staking';
 
 const MintTab: React.FC = () => {
 	const { monitorHash } = Notify.useContainer();
 
-	const mintType = useRecoilValue(mintTypeState);
-	const onMintTypeChange = useSetRecoilState(mintTypeState);
-	const amountToMint = useRecoilValue(amountToMintState);
-	const onMintChange = useSetRecoilState(amountToMintState);
+	const [mintType, onMintTypeChange] = useRecoilState(mintTypeState);
+	const [amountToMint, onMintChange] = useRecoilState(amountToMintState);
 
 	const { targetCRatio, SNXRate, unstakedCollateral } = useStakingCalculations();
 

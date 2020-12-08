@@ -5,15 +5,14 @@ import { Svg } from 'react-optimized-image';
 import ButtonTile from '../ButtonTile';
 import { FlexDivCol } from 'styles/common';
 import styled from 'styled-components';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import { amountToMintState, MintActionType, mintTypeState } from 'store/staking';
 
 type MintTilesProps = {};
 
 const MintTiles: React.FC<MintTilesProps> = ({}) => {
 	const { t } = useTranslation();
-	const mintType = useRecoilValue(mintTypeState);
-	const onMintTypeChange = useSetRecoilState(mintTypeState);
+	const [mintType, onMintTypeChange] = useRecoilState(mintTypeState);
 	const onMintChange = useSetRecoilState(amountToMintState);
 
 	const MintIcon = () => <Svg src={Mint} />;

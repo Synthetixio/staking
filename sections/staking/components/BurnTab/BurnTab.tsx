@@ -7,7 +7,7 @@ import Notify from 'containers/Notify';
 import { ethers } from 'ethers';
 import { normalizedGasPrice, normalizeGasLimit } from 'utils/network';
 import { getGasEstimateForTransaction } from 'utils/transactions';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { walletAddressState } from 'store/wallet';
 import synthetix from 'lib/synthetix';
 import BurnTiles from '../BurnTiles';
@@ -16,16 +16,14 @@ import StakingInput from '../StakingInput';
 import { Transaction } from 'constants/network';
 import { getMintAmount } from '../helper';
 import { toBigNumber } from 'utils/formatters/number';
-import { amountToMintState, BurnActionType, burnTypeState } from 'store/staking';
+import { amountToBurnState, BurnActionType, burnTypeState } from 'store/staking';
 import { addSeconds, differenceInSeconds } from 'date-fns';
 import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
 
 const BurnTab: React.FC = () => {
 	const { monitorHash } = Notify.useContainer();
-	const amountToBurn = useRecoilValue(amountToMintState);
-	const onBurnChange = useSetRecoilState(amountToMintState);
-	const burnType = useRecoilValue(burnTypeState);
-	const onBurnTypeChange = useSetRecoilState(burnTypeState);
+	const [amountToBurn, onBurnChange] = useRecoilState(amountToBurnState);
+	const [burnType, onBurnTypeChange] = useRecoilState(burnTypeState);
 	const {
 		percentageTargetCRatio,
 		debtBalance,
