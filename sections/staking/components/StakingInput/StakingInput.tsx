@@ -20,7 +20,13 @@ import {
 import { ActionInProgress, ActionCompleted } from 'sections/staking/components/TxSent';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 
-import { ModalContent, ModalItem, ModalItemTitle, ModalItemText } from 'styles/common';
+import {
+	ModalContent,
+	ModalItem,
+	ModalItemTitle,
+	ModalItemText,
+	ErrorMessage,
+} from 'styles/common';
 import { InputContainer, InputLocked } from '../common';
 import { Transaction } from 'constants/network';
 import { formatCurrency } from 'utils/formatters/number';
@@ -35,9 +41,7 @@ type StakingInputProps = {
 	isLocked: boolean;
 	isMint: boolean;
 	onBack: Function;
-	txError: boolean;
 	error: string | null;
-	setError: Function;
 	txModalOpen: boolean;
 	setTxModalOpen: Function;
 	gasLimitEstimate: number | null;
@@ -54,9 +58,7 @@ const StakingInput: React.FC<StakingInputProps> = ({
 	isLocked,
 	isMint,
 	onBack,
-	txError,
 	error,
-	setError,
 	txModalOpen,
 	setTxModalOpen,
 	gasLimitEstimate,
@@ -77,20 +79,18 @@ const StakingInput: React.FC<StakingInputProps> = ({
 	 * @param mintInput Amount to mint
 	 */
 	const stakeInfo = (mintInput: BigNumber) =>
-		formatCurrency(stakingCurrencyKey, getStakingAmount(targetCRatio, mintInput, SNXRate), {
-			currencyKey: stakingCurrencyKey,
-		});
-
+		formatCurrency(
+			stakingCurrencyKey,
+			getStakingAmount(targetCRatio, mintInput.isNaN() ? 0 : mintInput, SNXRate),
+			{
+				currencyKey: stakingCurrencyKey,
+			}
+		);
 	const formattedInput = formatCurrency(synthCurrencyKey, inputValue, {
 		currencyKey: synthCurrencyKey,
 	});
 
-	useEffect(() => {
-		onInputChange(inputValue);
-	}, []);
-
 	const returnButtonStates = useMemo(() => {
-		console.log(error);
 		if (error) {
 			return (
 				<StyledCTA variant="primary" size="lg" disabled={true}>
@@ -117,7 +117,7 @@ const StakingInput: React.FC<StakingInputProps> = ({
 				</StyledCTA>
 			);
 		}
-	}, [inputValue, error]);
+	}, [inputValue, error, transactionState]);
 
 	if (transactionState === Transaction.WAITING) {
 		return (
@@ -145,13 +145,7 @@ const StakingInput: React.FC<StakingInputProps> = ({
 					{isLocked ? (
 						<InputLocked>{formattedInput}</InputLocked>
 					) : (
-						<StyledInput
-							placeholder="0"
-							onChange={(e) => {
-								setError(null);
-								onInputChange(e.target.value);
-							}}
-						/>
+						<StyledInput placeholder="0" onChange={(e) => onInputChange(e.target.value)} />
 					)}
 				</InputBox>
 				<DataContainer>
@@ -169,10 +163,11 @@ const StakingInput: React.FC<StakingInputProps> = ({
 				</DataContainer>
 			</InputContainer>
 			{returnButtonStates}
+			<ErrorMessage>{error}</ErrorMessage>
 			{txModalOpen && (
 				<TxConfirmationModal
 					onDismiss={() => setTxModalOpen(false)}
-					txError={txError}
+					txError={error}
 					attemptRetry={() => onSubmit()}
 					content={
 						<ModalContent>

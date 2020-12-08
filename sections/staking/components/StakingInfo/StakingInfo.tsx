@@ -14,9 +14,10 @@ import useStakingCalculations from 'sections/staking/hooks/useStakingCalculation
 import { formatCurrency, toBigNumber } from 'utils/formatters/number';
 import { Svg } from 'react-optimized-image';
 import Arrows from 'assets/svg/app/arrows.svg';
-import Staking from 'sections/staking/context/StakingContext';
 import { getStakingAmount } from '../helper';
 import { CRYPTO_CURRENCY_MAP, SYNTHS_MAP } from 'constants/currency';
+import { useRecoilValue } from 'recoil';
+import { amountToBurnState, amountToMintState } from 'store/staking';
 
 type StakingInfoProps = {
 	isMint: boolean;
@@ -35,7 +36,10 @@ const StakingInfo: React.FC<StakingInfoProps> = ({ isMint }) => {
 		SNXRate,
 		totalEscrowBalance,
 	} = useStakingCalculations();
-	const { amountToBurn, amountToMint } = Staking.useContainer();
+
+	const amountToBurn = useRecoilValue(amountToBurnState);
+	const amountToMint = useRecoilValue(amountToMintState);
+
 	const Rows = useMemo(() => {
 		const amountToMintBN = toBigNumber(amountToMint);
 		const amountToBurnBN = toBigNumber(amountToBurn);

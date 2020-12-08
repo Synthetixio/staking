@@ -4,27 +4,34 @@ import { ethers } from 'ethers';
 import synthetix from 'lib/synthetix';
 
 import Notify from 'containers/Notify';
-import { normalizedGasPrice, normalizeGasLimit } from 'utils/network';
-import { getGasEstimateForTransaction } from 'utils/transactions';
 import { Transaction } from 'constants/network';
+import { normalizedGasPrice, normalizeGasLimit } from 'utils/network';
+import { toBigNumber } from 'utils/formatters/number';
+import { getGasEstimateForTransaction } from 'utils/transactions';
 
+import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 import { TabContainer } from '../common';
-import Staking, { MintActionType } from 'sections/staking/context/StakingContext';
 import MintTiles from '../MintTiles';
 import StakingInput from '../StakingInput';
-import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 import { getMintAmount } from '../helper';
-import { toBigNumber } from 'utils/formatters/number';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { amountToMintState, MintActionType, mintTypeState } from 'store/staking';
 
 const MintTab: React.FC = () => {
 	const { monitorHash } = Notify.useContainer();
-	const { amountToMint, onMintChange, mintType, onMintTypeChange } = Staking.useContainer();
+
+	const mintType = useRecoilValue(mintTypeState);
+	const onMintTypeChange = useSetRecoilState(mintTypeState);
+	const amountToMint = useRecoilValue(amountToMintState);
+	const onMintChange = useSetRecoilState(amountToMintState);
+
 	const { targetCRatio, SNXRate, unstakedCollateral } = useStakingCalculations();
 
 	const [transactionState, setTransactionState] = useState<Transaction>(Transaction.PRESUBMIT);
 	const [txHash, setTxHash] = useState<string | null>(null);
-	const [stakingTxError, setStakingTxError] = useState<boolean>(false);
+
 	const [error, setError] = useState<string | null>(null);
+
 	const [gasLimitEstimate, setGasLimitEstimate] = useState<number | null>(null);
 	const [mintMax, setMintMax] = useState<boolean>(false);
 
@@ -35,6 +42,7 @@ const MintTab: React.FC = () => {
 		const getGasLimitEstimate = async () => {
 			if (synthetix && synthetix.js) {
 				try {
+					setError(null);
 					const {
 						contracts: { Synthetix },
 						utils: { parseEther },
@@ -59,11 +67,11 @@ const MintTab: React.FC = () => {
 			}
 		};
 		getGasLimitEstimate();
-	}, [synthetix, error, amountToMint, mintMax]);
+	}, [synthetix, amountToMint, mintMax]);
 
 	const handleStake = async (mintMax: boolean) => {
 		try {
-			setStakingTxError(false);
+			setError(null);
 			setTxModalOpen(true);
 			const {
 				contracts: { Synthetix },
@@ -100,7 +108,7 @@ const MintTab: React.FC = () => {
 			}
 		} catch (e) {
 			setTransactionState(Transaction.PRESUBMIT);
-			setStakingTxError(true);
+			setError(e.message);
 		}
 	};
 
@@ -132,9 +140,7 @@ const MintTab: React.FC = () => {
 				isLocked={isLocked}
 				isMint={true}
 				onBack={onMintTypeChange}
-				txError={stakingTxError}
 				error={error}
-				setError={setError}
 				txModalOpen={txModalOpen}
 				setTxModalOpen={setTxModalOpen}
 				gasLimitEstimate={gasLimitEstimate}
@@ -145,7 +151,7 @@ const MintTab: React.FC = () => {
 				setTransactionState={setTransactionState}
 			/>
 		);
-	}, [mintType, error, stakingTxError, gasLimitEstimate, txModalOpen, txHash, transactionState]);
+	}, [mintType, error, gasLimitEstimate, txModalOpen, txHash, transactionState]);
 
 	return <TabContainer>{returnPanel}</TabContainer>;
 };

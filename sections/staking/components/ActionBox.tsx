@@ -9,11 +9,12 @@ import MintTab from './MintTab';
 import Burn from 'assets/svg/app/burn.svg';
 import Mint from 'assets/svg/app/mint.svg';
 import { BOX_COLUMN_WIDTH } from 'constants/styles';
-import Staking, { StakingPanelType } from '../context/StakingContext';
+import { useSetRecoilState } from 'recoil';
+import { panelTypeState, StakingPanelType } from 'store/staking';
 
 const ActionBox: React.FC = () => {
 	const { t } = useTranslation();
-	const { onPanelChange } = Staking.useContainer();
+	const onPanelTypeChange = useSetRecoilState(panelTypeState);
 
 	const tabData = useMemo(
 		() => [
@@ -41,7 +42,7 @@ const ActionBox: React.FC = () => {
 			boxHeight={450}
 			boxWidth={BOX_COLUMN_WIDTH}
 			tabData={tabData}
-			setPanelType={onPanelChange}
+			setPanelType={onPanelTypeChange}
 		/>
 	);
 };

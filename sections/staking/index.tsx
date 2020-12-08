@@ -4,20 +4,17 @@ import { BOX_COLUMN_WIDTH } from 'constants/styles';
 import { Row, FlexDivCol } from 'styles/common';
 import InfoBox from './components/InfoBox';
 import ActionBox from './components/ActionBox';
-import Staking from './context/StakingContext';
 
 const Index: FC = () => {
 	return (
-		<Staking.Provider>
-			<Row>
-				<Cols>
-					<ActionBox />
-				</Cols>
-				<Cols>
-					<InfoBox />
-				</Cols>
-			</Row>
-		</Staking.Provider>
+		<Row>
+			<Cols>
+				<ActionBox />
+			</Cols>
+			<Cols>
+				<InfoBox />
+			</Cols>
+		</Row>
 	);
 };
 

@@ -1,17 +1,21 @@
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import Staking, { MintActionType } from 'sections/staking/context/StakingContext';
 import Mint from 'assets/svg/app/mint.svg';
 import { Svg } from 'react-optimized-image';
 import ButtonTile from '../ButtonTile';
 import { FlexDivCol } from 'styles/common';
 import styled from 'styled-components';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { amountToMintState, MintActionType, mintTypeState } from 'store/staking';
 
 type MintTilesProps = {};
 
 const MintTiles: React.FC<MintTilesProps> = ({}) => {
 	const { t } = useTranslation();
-	const { mintType, onMintTypeChange, onMintChange } = Staking.useContainer();
+	const mintType = useRecoilValue(mintTypeState);
+	const onMintTypeChange = useSetRecoilState(mintTypeState);
+	const onMintChange = useSetRecoilState(amountToMintState);
+
 	const MintIcon = () => <Svg src={Mint} />;
 
 	useEffect(() => {

@@ -12,7 +12,7 @@ import PendingConfirmation from 'assets/svg/app/pending-confirmation.svg';
 
 type TxConfirmationModalProps = {
 	onDismiss: () => void;
-	txError: boolean;
+	txError: string | null;
 	attemptRetry: () => void;
 	content: React.ReactNode;
 };

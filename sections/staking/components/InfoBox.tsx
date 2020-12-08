@@ -1,9 +1,11 @@
 import React, { useMemo } from 'react';
-import Staking, { StakingPanelType } from '../context/StakingContext';
+import { useRecoilValue } from 'recoil';
+import { panelTypeState, StakingPanelType } from 'store/staking';
 import StakingInfo from './StakingInfo';
 
 const InfoBox: React.FC = () => {
-	const { panelType } = Staking.useContainer();
+	const panelType = useRecoilValue(panelTypeState);
+
 	return useMemo(() => <StakingInfo isMint={panelType === StakingPanelType.MINT} />, [panelType]);
 };
 

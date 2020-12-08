@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import { TabContainer } from '../common';
 import { SYNTHS_MAP } from 'constants/currency';
@@ -7,20 +7,23 @@ import Notify from 'containers/Notify';
 import { ethers } from 'ethers';
 import { normalizedGasPrice, normalizeGasLimit } from 'utils/network';
 import { getGasEstimateForTransaction } from 'utils/transactions';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { walletAddressState } from 'store/wallet';
 import synthetix from 'lib/synthetix';
-import Staking, { BurnActionType } from 'sections/staking/context/StakingContext';
 import BurnTiles from '../BurnTiles';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 import StakingInput from '../StakingInput';
 import { Transaction } from 'constants/network';
 import { getMintAmount } from '../helper';
 import { toBigNumber } from 'utils/formatters/number';
+import { amountToMintState, BurnActionType, burnTypeState } from 'store/staking';
 
 const BurnTab: React.FC = () => {
 	const { monitorHash } = Notify.useContainer();
-	const { amountToBurn, onBurnChange, burnType, onBurnTypeChange } = Staking.useContainer();
+	const amountToBurn = useRecoilValue(amountToMintState);
+	const onBurnChange = useSetRecoilState(amountToMintState);
+	const burnType = useRecoilValue(burnTypeState);
+	const onBurnTypeChange = useSetRecoilState(burnTypeState);
 	const {
 		percentageTargetCRatio,
 		debtBalance,
@@ -41,11 +44,12 @@ const BurnTab: React.FC = () => {
 	useEffect(() => {
 		const getGasLimitEstimate = async () => {
 			if (synthetix && synthetix.js) {
-				const {
-					contracts: { Synthetix },
-					utils: { parseEther },
-				} = synthetix.js as SynthetixJS;
 				try {
+					setError(null);
+					const {
+						contracts: { Synthetix },
+						utils: { parseEther },
+					} = synthetix.js as SynthetixJS;
 					const gasEstimate = await getGasEstimateForTransaction(
 						[parseEther(amountToBurn.toString())],
 						Synthetix.estimateGas.burnSynths
@@ -62,7 +66,7 @@ const BurnTab: React.FC = () => {
 
 	const handleBurn = async (burnToTarget: boolean) => {
 		try {
-			setBurningTxError(false);
+			setError(null);
 			setTxModalOpen(true);
 			const {
 				contracts: { Synthetix, Issuer },
@@ -103,11 +107,11 @@ const BurnTab: React.FC = () => {
 				setTxModalOpen(false);
 			}
 		} catch (e) {
-			setBurningTxError(true);
+			setError(e.message);
 		}
 	};
 
-	const returnPanel = () => {
+	const returnPanel = useMemo(() => {
 		let onSubmit;
 		let inputValue;
 		let isLocked;
@@ -148,9 +152,7 @@ const BurnTab: React.FC = () => {
 				isLocked={isLocked}
 				isMint={false}
 				onBack={onBurnTypeChange}
-				txError={burningTxError}
 				error={error}
-				setError={setError}
 				txModalOpen={txModalOpen}
 				setTxModalOpen={setTxModalOpen}
 				gasLimitEstimate={gasLimitEstimate}
@@ -161,9 +163,9 @@ const BurnTab: React.FC = () => {
 				setTransactionState={setTransactionState}
 			/>
 		);
-	};
+	}, [burnType, error, gasLimitEstimate, txModalOpen, txHash, transactionState]);
 
-	return <TabContainer>{returnPanel()}</TabContainer>;
+	return <TabContainer>{returnPanel}</TabContainer>;
 };
 
 export default BurnTab;

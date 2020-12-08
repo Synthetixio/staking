@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import Staking, { BurnActionType } from 'sections/staking/context/StakingContext';
 import Burn from 'assets/svg/app/burn.svg';
 import { Svg } from 'react-optimized-image';
 import ButtonTile from '../ButtonTile';
@@ -8,6 +7,8 @@ import { FlexDivCol, FlexDivRow } from 'styles/common';
 import styled from 'styled-components';
 import BigNumber from 'bignumber.js';
 import { formatPercent } from 'utils/formatters/number';
+import { amountToBurnState, BurnActionType, burnTypeState } from 'store/staking';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 type BurnTilesProps = {
 	percentageTargetCRatio: BigNumber;
@@ -15,7 +16,10 @@ type BurnTilesProps = {
 
 const BurnTiles: React.FC<BurnTilesProps> = ({ percentageTargetCRatio }) => {
 	const { t } = useTranslation();
-	const { onBurnTypeChange, burnType, onBurnChange } = Staking.useContainer();
+	const burnType = useRecoilValue(burnTypeState);
+	const onBurnTypeChange = useSetRecoilState(burnTypeState);
+	const onBurnChange = useSetRecoilState(amountToBurnState);
+
 	const BurnIcon = () => <Svg src={Burn} />;
 
 	useEffect(() => {
