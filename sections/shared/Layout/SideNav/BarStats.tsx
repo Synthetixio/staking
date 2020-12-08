@@ -67,14 +67,12 @@ export const CRatioBarStats: FC<CRatioBarStatsProps> = ({ currentCRatio, targetC
 const ShadowCRatioBar = styled(ProgressBar)`
 	.filled-bar {
 		box-shadow: 0px 0px 10px rgba(0, 209, 255, 0.6);
-		transform: matrix(-1, 0, 0, 1, 0, 0);
 	}
 `;
 
 const ShadowPeriodBar = styled(ProgressBar)`
 	.filled-bar {
 		box-shadow: 0px 0px 10px rgba(77, 244, 184, 0.25);
-		transform: matrix(-1, 0, 0, 1, 0, 0);
 	}
 `;
 

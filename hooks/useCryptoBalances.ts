@@ -6,6 +6,7 @@ import useSNXBalanceQuery from 'queries/walletBalances/useSNXBalanceQuery';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 
 import { CRYPTO_CURRENCY_MAP } from 'constants/currency';
+import { assetToSynth } from 'utils/currencies';
 
 const { ETH, SNX } = CRYPTO_CURRENCY_MAP;
 
@@ -28,14 +29,16 @@ const useCryptoBalances = () => {
 					{
 						currencyKey: ETH,
 						balance: ETHBalance,
-						usdBalance: ETHBalance.multipliedBy(ETHBalance),
+						usdBalance: ETHBalance.multipliedBy(exchangeRates[ETH]),
+						synth: assetToSynth(ETH),
 					},
 					{
 						currencyKey: SNX,
 						balance: SNXBalance,
-						usdBalance: SNXBalance.multipliedBy(SNXBalance),
+						usdBalance: SNXBalance.multipliedBy(exchangeRates[SNX]),
+						synth: assetToSynth(ETH),
 					},
-				],
+				].filter((cryptoBalance) => cryptoBalance.balance.gt(0)),
 				(balance) => balance.usdBalance.toNumber(),
 				'desc'
 			);
