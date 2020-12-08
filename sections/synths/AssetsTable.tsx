@@ -93,7 +93,7 @@ const AssetsTable: FC<AssetsTableProps> = ({
 			},
 			{
 				Header: <>{t('synths.assets.synths.table.balance')}</>,
-				accessor: 'balance',
+				accessor: 'usdBalance',
 				sortType: 'basic',
 				Cell: (cellProps: CellProps<CryptoBalance, CryptoBalance['balance']>) => (
 					<Currency.Amount
