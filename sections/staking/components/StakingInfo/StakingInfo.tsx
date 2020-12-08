@@ -14,9 +14,10 @@ import useStakingCalculations from 'sections/staking/hooks/useStakingCalculation
 import { formatCurrency, toBigNumber } from 'utils/formatters/number';
 import { Svg } from 'react-optimized-image';
 import Arrows from 'assets/svg/app/arrows.svg';
-import Staking from 'sections/staking/context/StakingContext';
 import { getStakingAmount } from '../helper';
 import { CRYPTO_CURRENCY_MAP, SYNTHS_MAP } from 'constants/currency';
+import { useRecoilValue } from 'recoil';
+import { amountToBurnState, amountToMintState } from 'store/staking';
 
 type StakingInfoProps = {
 	isMint: boolean;
@@ -35,7 +36,10 @@ const StakingInfo: React.FC<StakingInfoProps> = ({ isMint }) => {
 		SNXRate,
 		totalEscrowBalance,
 	} = useStakingCalculations();
-	const { amountToBurn, amountToMint } = Staking.useContainer();
+
+	const amountToBurn = useRecoilValue(amountToBurnState);
+	const amountToMint = useRecoilValue(amountToMintState);
+
 	const Rows = useMemo(() => {
 		const amountToMintBN = toBigNumber(amountToMint);
 		const amountToBurnBN = toBigNumber(amountToBurn);
@@ -58,7 +62,7 @@ const StakingInfo: React.FC<StakingInfoProps> = ({ isMint }) => {
 			? lockedCollateral.plus(stakingAmount)
 			: lockedCollateral.minus(unlockedStakeAmount);
 		const changeCRatio = isMint
-			? changedNotStakedValue.multipliedBy(SNXRate).dividedBy(mintAdditionalDebt).multipliedBy(100)
+			? changedStakedValue.multipliedBy(SNXRate).dividedBy(mintAdditionalDebt).multipliedBy(100)
 			: changedNotStakedValue.multipliedBy(SNXRate).dividedBy(amountToBurnBN).multipliedBy(100);
 		const changedDebt = isMint
 			? debtBalance.plus(mintAdditionalDebt)
@@ -67,42 +71,47 @@ const StakingInfo: React.FC<StakingInfoProps> = ({ isMint }) => {
 		return [
 			{
 				title: t('staking.info.table.not-staked'),
-				value: unstakedCollateral,
-				changedValue: changedNotStakedValue,
+				value: unstakedCollateral.isNaN() ? toBigNumber(0) : unstakedCollateral,
+				changedValue: changedNotStakedValue.isNaN() ? toBigNumber(0) : changedNotStakedValue,
 				currencyKey: CRYPTO_CURRENCY_MAP.SNX,
 			},
 			{
 				title: t('staking.info.table.staked'),
-				value: stakedCollateral,
-				changedValue: changedStakedValue,
+				value: stakedCollateral.isNaN() ? toBigNumber(0) : stakedCollateral,
+				changedValue: changedStakedValue.isNaN() ? toBigNumber(0) : changedStakedValue,
 				currencyKey: CRYPTO_CURRENCY_MAP.SNX,
 			},
 			{
 				title: t('staking.info.table.transferable'),
-				value: transferableCollateral,
-				changedValue: changedTransferable,
+				value: transferableCollateral.isNaN() ? toBigNumber(0) : transferableCollateral,
+				changedValue: changedTransferable.isNaN() ? toBigNumber(0) : changedTransferable,
 				currencyKey: CRYPTO_CURRENCY_MAP.SNX,
 			},
 			{
 				title: t('staking.info.table.locked'),
-				value: lockedCollateral,
-				changedValue: changedLocked,
+				value: lockedCollateral.isNaN() ? toBigNumber(0) : lockedCollateral,
+				changedValue: changedLocked.isNaN() ? toBigNumber(0) : changedLocked,
 				currencyKey: CRYPTO_CURRENCY_MAP.SNX,
 			},
 			{
 				title: t('staking.info.table.c-ratio'),
-				value: toBigNumber(100).dividedBy(currentCRatio),
-				changedValue: changeCRatio,
+				value:
+					currentCRatio.isNaN() || currentCRatio.isZero()
+						? toBigNumber(0)
+						: toBigNumber(100).dividedBy(currentCRatio),
+				changedValue: changeCRatio.isNaN() ? toBigNumber(0) : changeCRatio,
 				currencyKey: '%',
 			},
 			{
 				title: t('staking.info.table.debt'),
-				value: debtBalance,
-				changedValue: changedDebt,
+				value: debtBalance.isNaN() ? toBigNumber(0) : debtBalance,
+				changedValue: changedDebt.isNaN() ? toBigNumber(0) : changedDebt,
 				currencyKey: SYNTHS_MAP.sUSD,
 			},
 		];
 	}, [amountToBurn, amountToMint, t, isMint]);
+
+	const emptyInput = isMint ? amountToMint.length === 0 : amountToBurn.length === 0;
 
 	return (
 		<>
@@ -124,15 +133,17 @@ const StakingInfo: React.FC<StakingInfoProps> = ({ isMint }) => {
 									decimals: 2,
 								})}
 							</RowValue>
-							<>
-								<Svg src={Arrows} /> {/* @TODO: Remove negative values */}
-								<RowValue>
-									{formatCurrency(currencyKey, !changedValue.isNaN() ? changedValue : 0, {
-										currencyKey: currencyKey,
-										decimals: 2,
-									})}
-								</RowValue>
-							</>
+							{!emptyInput && (
+								<>
+									<Svg src={Arrows} />
+									<RowValue>
+										{formatCurrency(currencyKey, !changedValue.isNaN() ? changedValue : 0, {
+											currencyKey: currencyKey,
+											decimals: 2,
+										})}
+									</RowValue>
+								</>
+							)}
 						</ValueContainer>
 					</DataRow>
 				))}

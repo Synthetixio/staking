@@ -19,6 +19,7 @@ type StakingCalculations = {
 	SNXRate: BigNumber;
 	totalEscrowBalance: BigNumber;
 	percentageCurrentCRatio: BigNumber;
+	issuableSynths: BigNumber;
 };
 const useStakingCalculations = (): StakingCalculations => {
 	const exchangeRatesQuery = useExchangeRatesQuery();
@@ -38,6 +39,7 @@ const useStakingCalculations = (): StakingCalculations => {
 		const debtBalance = toBigNumber(debtData?.debtBalance ?? 0);
 		const stakingEscrow = toBigNumber(escrowBalance?.totalEscrowed ?? 0);
 		const tokenSaleEscrow = toBigNumber(escrowBalance?.tokenSaleEscrow ?? 0);
+		const issuableSynths = toBigNumber(debtData?.issuableSynths ?? 0);
 
 		const stakedCollateral = collateral.multipliedBy(
 			Math.min(1, currentCRatio.dividedBy(targetCRatio).toNumber())
@@ -67,6 +69,7 @@ const useStakingCalculations = (): StakingCalculations => {
 			unstakedCollateral,
 			SNXRate,
 			totalEscrowBalance,
+			issuableSynths,
 		};
 	}, [debtData, exchangeRates, escrowBalance]);
 

@@ -4,22 +4,21 @@ import { BOX_COLUMN_WIDTH } from 'constants/styles';
 import { Row, FlexDivCol } from 'styles/common';
 import InfoBox from './components/InfoBox';
 import ActionBox from './components/ActionBox';
-import Staking from './context/StakingContext';
 
 const Index: FC = () => {
 	return (
-		<Staking.Provider>
-			<Row>
+		<Row>
+			<Cols>
 				<ActionBox />
-				<InfoBoxWrap>
-					<InfoBox />
-				</InfoBoxWrap>
-			</Row>
-		</Staking.Provider>
+			</Cols>
+			<Cols>
+				<InfoBox />
+			</Cols>
+		</Row>
 	);
 };
 
-const InfoBoxWrap = styled(FlexDivCol)`
+const Cols = styled(FlexDivCol)`
 	width: ${BOX_COLUMN_WIDTH}px;
 `;
 

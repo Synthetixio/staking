@@ -63,6 +63,7 @@ export const StyledInput = styled(Input)`
 	font-family: ${(props) => props.theme.fonts.expanded};
 	text-align: center;
 	margin-top: 16px;
+
 	&:disabled {
 		color: ${(props) => props.theme.colors.gray10};
 	}
@@ -71,6 +72,7 @@ export const StyledInput = styled(Input)`
 export const InputLocked = styled.p`
 	font-size: 24px;
 	font-family: ${(props) => props.theme.fonts.expanded};
+	margin-top: 16px;
 `;
 
 export const DataRow = styled(FlexDivRowCentered)`

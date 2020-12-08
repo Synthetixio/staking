@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { TabContainer } from '../common';
 import { SYNTHS_MAP } from 'constants/currency';
@@ -7,45 +7,118 @@ import Notify from 'containers/Notify';
 import { ethers } from 'ethers';
 import { normalizedGasPrice, normalizeGasLimit } from 'utils/network';
 import { getGasEstimateForTransaction } from 'utils/transactions';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { walletAddressState } from 'store/wallet';
 import synthetix from 'lib/synthetix';
-import Staking, { BurnActionType } from 'sections/staking/context/StakingContext';
 import BurnTiles from '../BurnTiles';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 import StakingInput from '../StakingInput';
 import { Transaction } from 'constants/network';
 import { getMintAmount } from '../helper';
 import { toBigNumber } from 'utils/formatters/number';
+import { amountToBurnState, BurnActionType, burnTypeState } from 'store/staking';
+import { addSeconds, differenceInSeconds } from 'date-fns';
+import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
 
 const BurnTab: React.FC = () => {
 	const { monitorHash } = Notify.useContainer();
-	const { amountToBurn, onBurnChange, burnType, onBurnTypeChange } = Staking.useContainer();
+	const [amountToBurn, onBurnChange] = useRecoilState(amountToBurnState);
+	const [burnType, onBurnTypeChange] = useRecoilState(burnTypeState);
 	const {
 		percentageTargetCRatio,
 		debtBalance,
 		targetCRatio,
 		SNXRate,
 		unstakedCollateral,
+		issuableSynths,
 	} = useStakingCalculations();
 	const walletAddress = useRecoilValue(walletAddressState);
 
 	const [transactionState, setTransactionState] = useState<Transaction>(Transaction.PRESUBMIT);
 	const [txHash, setTxHash] = useState<string | null>(null);
-	const [burningTxError, setBurningTxError] = useState<boolean>(false);
 	const [error, setError] = useState<string | null>(null);
 	const [gasLimitEstimate, setGasLimitEstimate] = useState<number | null>(null);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 	const [gasPrice, setGasPrice] = useState<number>(0);
+	const [waitingPeriod, setWaitingPeriod] = useState(0);
+	const [issuanceDelay, setIssuanceDelay] = useState(0);
+
+	const synthsBalancesQuery = useSynthsBalancesQuery();
+	const synthBalances =
+		synthsBalancesQuery.isSuccess && synthsBalancesQuery.data != null
+			? synthsBalancesQuery.data
+			: null;
+
+	const sUSDBalance = synthBalances?.balancesMap.sUSD ? synthBalances.balancesMap.sUSD.balance : 0;
+
+	const getMaxSecsLeftInWaitingPeriod = useCallback(async () => {
+		const {
+			contracts: { Exchanger },
+			utils: { formatBytes32String },
+		} = synthetix.js as SynthetixJS;
+
+		try {
+			const maxSecsLeftInWaitingPeriod = await Exchanger.maxSecsLeftInWaitingPeriod(
+				walletAddress,
+				formatBytes32String('sUSD')
+			);
+			setWaitingPeriod(Number(maxSecsLeftInWaitingPeriod));
+		} catch (e) {
+			console.log(e);
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
+	const getIssuanceDelay = useCallback(async () => {
+		const {
+			contracts: { Issuer },
+		} = synthetix.js as SynthetixJS;
+
+		try {
+			const [canBurnSynths, lastIssueEvent, minimumStakeTime] = await Promise.all([
+				Issuer.canBurnSynths(walletAddress),
+				Issuer.lastIssueEvent(walletAddress),
+				Issuer.minimumStakeTime(),
+			]);
+
+			if (Number(lastIssueEvent) && Number(minimumStakeTime)) {
+				const burnUnlockDate = addSeconds(Number(lastIssueEvent) * 1000, Number(minimumStakeTime));
+				const issuanceDelayInSeconds = differenceInSeconds(burnUnlockDate, new Date());
+				setIssuanceDelay(
+					issuanceDelayInSeconds > 0 ? issuanceDelayInSeconds : canBurnSynths ? 0 : 1
+				);
+			}
+		} catch (e) {
+			console.log(e);
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
+	useEffect(() => {
+		getMaxSecsLeftInWaitingPeriod();
+		getIssuanceDelay();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [getMaxSecsLeftInWaitingPeriod, getIssuanceDelay]);
 
 	useEffect(() => {
 		const getGasLimitEstimate = async () => {
 			if (synthetix && synthetix.js) {
-				const {
-					contracts: { Synthetix },
-					utils: { parseEther },
-				} = synthetix.js as SynthetixJS;
 				try {
+					setError(null);
+					const {
+						contracts: { Synthetix },
+						utils: { parseEther },
+					} = synthetix.js as SynthetixJS;
+
+					const maxBurnAmount = debtBalance.isGreaterThan(sUSDBalance)
+						? toBigNumber(sUSDBalance)
+						: debtBalance;
+					if (!parseFloat(amountToBurn)) throw new Error('input.error.invalidAmount');
+					if (waitingPeriod) throw new Error('Waiting period for sUSD is still ongoing');
+					if (issuanceDelay) throw new Error('Waiting period to burn is still ongoing');
+					if (Number(amountToBurn) > sUSDBalance || maxBurnAmount.isZero())
+						throw new Error('input.error.notEnoughToBurn');
+
 					const gasEstimate = await getGasEstimateForTransaction(
 						[parseEther(amountToBurn.toString())],
 						Synthetix.estimateGas.burnSynths
@@ -58,11 +131,11 @@ const BurnTab: React.FC = () => {
 			}
 		};
 		getGasLimitEstimate();
-	}, [synthetix, error]);
+	}, [synthetix, error, amountToBurn]);
 
 	const handleBurn = async (burnToTarget: boolean) => {
 		try {
-			setBurningTxError(false);
+			setError(null);
 			setTxModalOpen(true);
 			const {
 				contracts: { Synthetix, Issuer },
@@ -83,11 +156,12 @@ const BurnTab: React.FC = () => {
 					gasLimit: gasLimit,
 				});
 			} else {
+				const amountToBurnBN = parseEther(amountToBurn.toString());
 				const gasLimit = getGasEstimateForTransaction(
-					[parseEther(amountToBurn.toString())],
+					[amountToBurnBN],
 					Synthetix.estimateGas.burnSynths
 				);
-				transaction = await Synthetix.burnSynths(amountToBurn, {
+				transaction = await Synthetix.burnSynths(amountToBurnBN, {
 					gasPrice: normalizedGasPrice(gasPrice),
 					gasLimit,
 				});
@@ -97,19 +171,24 @@ const BurnTab: React.FC = () => {
 				setTransactionState(Transaction.WAITING);
 				monitorHash({
 					txHash: transaction.hash,
-					onTxConfirmed: () => setTransactionState(Transaction.SUCCESS),
+					onTxConfirmed: () => {
+						onBurnChange('');
+						setTransactionState(Transaction.SUCCESS);
+					},
 				});
 				setTxModalOpen(false);
 			}
 		} catch (e) {
-			setBurningTxError(true);
+			setTransactionState(Transaction.PRESUBMIT);
+			setError(e.message);
 		}
 	};
 
-	const returnPanel = () => {
+	const returnPanel = useMemo(() => {
 		let onSubmit;
 		let inputValue;
 		let isLocked;
+
 		switch (burnType) {
 			case BurnActionType.MAX:
 				const burnAmount = debtBalance;
@@ -128,7 +207,9 @@ const BurnTab: React.FC = () => {
 				);
 				const calculatedTargetBurn = Math.max(debtBalance.minus(maxIssuableSynths).toNumber(), 0);
 				onBurnChange(calculatedTargetBurn.toString());
-				onSubmit = () => handleBurn(true);
+				onSubmit = () => {
+					handleBurn(true);
+				};
 				inputValue = toBigNumber(calculatedTargetBurn);
 				isLocked = true;
 				break;
@@ -138,7 +219,19 @@ const BurnTab: React.FC = () => {
 				isLocked = false;
 				break;
 			default:
-				return <BurnTiles percentageTargetCRatio={percentageTargetCRatio} />;
+				const maxBurnAmount = debtBalance.isGreaterThan(sUSDBalance)
+					? toBigNumber(sUSDBalance)
+					: debtBalance;
+				const burnAmountToFixCRatio = toBigNumber(
+					Math.max(debtBalance.minus(issuableSynths).toNumber(), 0)
+				);
+				return (
+					<BurnTiles
+						percentageTargetCRatio={percentageTargetCRatio}
+						maxBurnAmount={maxBurnAmount}
+						burnAmountToFixCRatio={burnAmountToFixCRatio}
+					/>
+				);
 		}
 		return (
 			<StakingInput
@@ -147,7 +240,7 @@ const BurnTab: React.FC = () => {
 				isLocked={isLocked}
 				isMint={false}
 				onBack={onBurnTypeChange}
-				txError={burningTxError}
+				error={error}
 				txModalOpen={txModalOpen}
 				setTxModalOpen={setTxModalOpen}
 				gasLimitEstimate={gasLimitEstimate}
@@ -158,9 +251,9 @@ const BurnTab: React.FC = () => {
 				setTransactionState={setTransactionState}
 			/>
 		);
-	};
+	}, [burnType, error, gasLimitEstimate, txModalOpen, txHash, transactionState]);
 
-	return <TabContainer>{returnPanel()}</TabContainer>;
+	return <TabContainer>{returnPanel}</TabContainer>;
 };
 
 export default BurnTab;

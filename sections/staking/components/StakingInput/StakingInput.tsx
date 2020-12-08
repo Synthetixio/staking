@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import Img, { Svg } from 'react-optimized-image';
 import { useTranslation } from 'react-i18next';
@@ -20,14 +20,19 @@ import {
 import { ActionInProgress, ActionCompleted } from 'sections/staking/components/TxSent';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 
-import { ModalContent, ModalItem, ModalItemTitle, ModalItemText } from 'styles/common';
+import {
+	ModalContent,
+	ModalItem,
+	ModalItemTitle,
+	ModalItemText,
+	ErrorMessage,
+} from 'styles/common';
 import { InputContainer, InputLocked } from '../common';
 import { Transaction } from 'constants/network';
-import { formatCurrency, toBigNumber } from 'utils/formatters/number';
+import { formatCurrency } from 'utils/formatters/number';
 import { getStakingAmount } from '../helper';
 import { CRYPTO_CURRENCY_MAP, SYNTHS_MAP } from 'constants/currency';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
-import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
 import BigNumber from 'bignumber.js';
 
 type StakingInputProps = {
@@ -36,7 +41,7 @@ type StakingInputProps = {
 	isLocked: boolean;
 	isMint: boolean;
 	onBack: Function;
-	txError: boolean;
+	error: string | null;
 	txModalOpen: boolean;
 	setTxModalOpen: Function;
 	gasLimitEstimate: number | null;
@@ -53,7 +58,7 @@ const StakingInput: React.FC<StakingInputProps> = ({
 	isLocked,
 	isMint,
 	onBack,
-	txError,
+	error,
 	txModalOpen,
 	setTxModalOpen,
 	gasLimitEstimate,
@@ -63,12 +68,9 @@ const StakingInput: React.FC<StakingInputProps> = ({
 	transactionState,
 	setTransactionState,
 }) => {
-	const { targetCRatio, SNXRate, debtBalance, unstakedCollateral } = useStakingCalculations();
-	const synthsBalancesQuery = useSynthsBalancesQuery();
-	const totalUSDBalance = synthsBalancesQuery?.data?.totalUSDBalance ?? 0;
-
+	const { targetCRatio, SNXRate } = useStakingCalculations();
 	const [stakingCurrencyKey] = useState<string>(CRYPTO_CURRENCY_MAP.SNX);
-	const [synthCurrencyKey] = useState<string>(SYNTHS_MAP.SNX);
+	const [synthCurrencyKey] = useState<string>(SYNTHS_MAP.sUSD);
 
 	const { t } = useTranslation();
 
@@ -77,20 +79,19 @@ const StakingInput: React.FC<StakingInputProps> = ({
 	 * @param mintInput Amount to mint
 	 */
 	const stakeInfo = (mintInput: BigNumber) =>
-		formatCurrency(stakingCurrencyKey, getStakingAmount(targetCRatio, mintInput, SNXRate), {
-			currencyKey: stakingCurrencyKey,
-		});
-
+		formatCurrency(
+			stakingCurrencyKey,
+			getStakingAmount(targetCRatio, mintInput.isNaN() ? 0 : mintInput, SNXRate),
+			{
+				currencyKey: stakingCurrencyKey,
+			}
+		);
 	const formattedInput = formatCurrency(synthCurrencyKey, inputValue, {
 		currencyKey: synthCurrencyKey,
 	});
 
-	const returnButtonStates = () => {
-		const insufficientBalance = isMint
-			? getStakingAmount(targetCRatio, inputValue, SNXRate).isGreaterThan(unstakedCollateral)
-			: toBigNumber(inputValue).isGreaterThan(debtBalance) || inputValue.gt(totalUSDBalance);
-		// @TODO: Add gasLimitEstimate error instead of checking the values (bc of rounding error);
-		if (insufficientBalance) {
+	const returnButtonStates = useMemo(() => {
+		if (error) {
 			return (
 				<StyledCTA variant="primary" size="lg" disabled={true}>
 					{isMint
@@ -116,14 +117,14 @@ const StakingInput: React.FC<StakingInputProps> = ({
 				</StyledCTA>
 			);
 		}
-	};
+	}, [inputValue, error, transactionState]);
 
 	if (transactionState === Transaction.WAITING) {
 		return (
 			<ActionInProgress
 				isMint={isMint}
-				stake={stakeInfo(inputValue)}
-				mint={inputValue.toString()}
+				from={stakeInfo(inputValue)}
+				to={formattedInput}
 				hash={txHash as string}
 			/>
 		);
@@ -161,20 +162,29 @@ const StakingInput: React.FC<StakingInputProps> = ({
 					</DataRow>
 				</DataContainer>
 			</InputContainer>
-			{returnButtonStates()}
+			{returnButtonStates}
+			<ErrorMessage>{error}</ErrorMessage>
 			{txModalOpen && (
 				<TxConfirmationModal
 					onDismiss={() => setTxModalOpen(false)}
-					txError={txError}
+					txError={error}
 					attemptRetry={() => onSubmit()}
 					content={
 						<ModalContent>
 							<ModalItem>
-								<ModalItemTitle>{t('modals.confirm-transaction.staking.from')}</ModalItemTitle>
+								<ModalItemTitle>
+									{isMint
+										? t('modals.confirm-transaction.minting.from')
+										: t('modals.confirm-transaction.burning.from')}
+								</ModalItemTitle>
 								<ModalItemText>{stakeInfo(inputValue)}</ModalItemText>
 							</ModalItem>
 							<ModalItem>
-								<ModalItemTitle>{t('modals.confirm-transaction.staking.to')}</ModalItemTitle>
+								<ModalItemTitle>
+									{isMint
+										? t('modals.confirm-transaction.minting.to')
+										: t('modals.confirm-transaction.burning.to')}
+								</ModalItemTitle>
 								<ModalItemText>{formattedInput}</ModalItemText>
 							</ModalItem>
 						</ModalContent>

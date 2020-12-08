@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import Staking, { BurnActionType } from 'sections/staking/context/StakingContext';
 import Burn from 'assets/svg/app/burn.svg';
 import { Svg } from 'react-optimized-image';
 import ButtonTile from '../ButtonTile';
@@ -8,14 +7,24 @@ import { FlexDivCol, FlexDivRow } from 'styles/common';
 import styled from 'styled-components';
 import BigNumber from 'bignumber.js';
 import { formatPercent } from 'utils/formatters/number';
+import { amountToBurnState, BurnActionType, burnTypeState } from 'store/staking';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 
 type BurnTilesProps = {
 	percentageTargetCRatio: BigNumber;
+	maxBurnAmount: BigNumber;
+	burnAmountToFixCRatio: BigNumber;
 };
 
-const BurnTiles: React.FC<BurnTilesProps> = ({ percentageTargetCRatio }) => {
+const BurnTiles: React.FC<BurnTilesProps> = ({
+	percentageTargetCRatio,
+	maxBurnAmount,
+	burnAmountToFixCRatio,
+}) => {
 	const { t } = useTranslation();
-	const { onBurnTypeChange, burnType, onBurnChange } = Staking.useContainer();
+	const [burnType, onBurnTypeChange] = useRecoilState(burnTypeState);
+	const onBurnChange = useSetRecoilState(amountToBurnState);
+
 	const BurnIcon = () => <Svg src={Burn} />;
 
 	useEffect(() => {
@@ -33,6 +42,11 @@ const BurnTiles: React.FC<BurnTilesProps> = ({ percentageTargetCRatio }) => {
 			<FlexDivRow>
 				<MarginedButtonTile
 					left={true}
+					disabled={
+						maxBurnAmount.isZero() ||
+						burnAmountToFixCRatio.isZero() ||
+						burnAmountToFixCRatio.isGreaterThan(maxBurnAmount)
+					}
 					title={t('staking.actions.burn.tiles.target.title', {
 						targetCRatio: formatPercent(percentageTargetCRatio),
 					})}
