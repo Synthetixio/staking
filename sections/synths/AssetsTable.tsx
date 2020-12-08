@@ -121,7 +121,7 @@ const AssetsTable: FC<AssetsTableProps> = ({
 		if (showHoldings) {
 			columns.push({
 				Header: <>{t('synths.assets.synths.table.holdings')}</>,
-				id: 'usdBalance',
+				id: 'holdings',
 				sortType: 'basic',
 				Cell: (cellProps: CellProps<CryptoBalance>) => (
 					<SynthHolding
