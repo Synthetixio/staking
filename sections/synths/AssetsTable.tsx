@@ -1,34 +1,47 @@
 import { FC, ReactNode, useMemo } from 'react';
 import { CellProps } from 'react-table';
 import styled from 'styled-components';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import BigNumber from 'bignumber.js';
 import { useRecoilValue } from 'recoil';
+import { useRouter } from 'next/router';
+
+import Connector from 'containers/Connector';
 
 import synthetix from 'lib/synthetix';
 
-import { Svg } from 'react-optimized-image';
-
 import { appReadyState } from 'store/app';
+import { isWalletConnectedState } from 'store/wallet';
 
-import NoNotificationIcon from 'assets/svg/app/no-notifications.svg';
+import {
+	ExternalLink,
+	TableNoResults,
+	TableNoResultsTitle,
+	TableNoResultsDesc,
+	TableNoResultsButtonContainer,
+	NoTextTransform,
+} from 'styles/common';
+import { CryptoBalance } from 'queries/walletBalances/types';
 
-import { FlexDivCol, FlexDivRowCentered, GridDivCenteredRow, ExternalLink } from 'styles/common';
-import { SynthBalance } from 'queries/walletBalances/useSynthsBalancesQuery';
+import { EXTERNAL_LINKS } from 'constants/links';
+import { SYNTHS_MAP } from 'constants/currency';
+import ROUTES from 'constants/routes';
+
+import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
 import Table from 'components/Table';
 import Currency from 'components/Currency';
-import { formatCurrency, formatNumber, zeroBN } from 'utils/formatters/number';
 import Button from 'components/Button';
+
+import { zeroBN } from 'utils/formatters/number';
+import { assetToSynth, isSynth } from 'utils/currencies';
 
 import SynthPriceCol from './components/SynthPriceCol';
 import SynthHolding from './components/SynthHolding';
-import { EXTERNAL_LINKS } from 'constants/links';
-import { SYNTHS_MAP } from 'constants/currency';
 
 type AssetsTableProps = {
 	title: ReactNode;
-	assets: SynthBalance[];
+	assets: CryptoBalance[];
 	totalValue: BigNumber;
 	isLoading: boolean;
 	isLoaded: boolean;
@@ -46,51 +59,59 @@ const AssetsTable: FC<AssetsTableProps> = ({
 	showConvert,
 }) => {
 	const { t } = useTranslation();
+	const { connectWallet } = Connector.useContainer();
 	const isAppReady = useRecoilValue(appReadyState);
+	const isWalletConnected = useRecoilValue(isWalletConnectedState);
+	const router = useRouter();
+
+	const { selectedPriceCurrency, selectPriceCurrencyRate } = useSelectedPriceCurrency();
 
 	const assetColumns = useMemo(() => {
 		const columns = [
 			{
-				Header: <StyledTableHeader>{t('synths.synths.table.asset')}</StyledTableHeader>,
+				Header: <>{t('synths.assets.synths.table.asset')}</>,
 				accessor: 'currencyKey',
-				Cell: (cellProps: CellProps<SynthBalance, SynthBalance['currencyKey']>) => (
-					<FlexDivRowCentered>
-						<Currency.Icon currencyKey={cellProps.value} />
-						<FlexDivCol>
-							<CurrencyKey primary={true}>{cellProps.value}</CurrencyKey>
-							<CurrencyKey>
-								{synthetix.synthsMap != null
-									? synthetix.synthsMap[cellProps.value]?.description
-									: ''}
-							</CurrencyKey>
-						</FlexDivCol>
-					</FlexDivRowCentered>
-				),
+				Cell: (cellProps: CellProps<CryptoBalance, CryptoBalance['currencyKey']>) => {
+					const synthDesc =
+						synthetix.synthsMap != null ? synthetix.synthsMap[cellProps.value]?.description : '';
+
+					return (
+						<Currency.Name
+							currencyKey={cellProps.value}
+							name={
+								isSynth(cellProps.value)
+									? t('common.currency.synthetic-currency-name', { currencyName: synthDesc })
+									: undefined
+							}
+							showIcon={true}
+						/>
+					);
+				},
+
 				sortable: true,
 				width: 200,
 			},
 			{
-				Header: <StyledTableHeader>{t('synths.synths.table.balance')}</StyledTableHeader>,
+				Header: <>{t('synths.assets.synths.table.balance')}</>,
 				accessor: 'balance',
 				sortType: 'basic',
-				Cell: (cellProps: CellProps<SynthBalance, SynthBalance['balance']>) => (
-					<FlexDivCol>
-						<Balance primary={true}>{formatNumber(cellProps.value)}</Balance>
-						<Balance>
-							{formatCurrency(cellProps.row.original.currencyKey, cellProps.value, {
-								sign: '$',
-							})}
-						</Balance>
-					</FlexDivCol>
+				Cell: (cellProps: CellProps<CryptoBalance, CryptoBalance['balance']>) => (
+					<Currency.Amount
+						currencyKey={cellProps.row.original.currencyKey}
+						amount={cellProps.value}
+						totalValue={cellProps.row.original.usdBalance}
+						sign={selectedPriceCurrency.sign}
+						conversionRate={selectPriceCurrencyRate}
+					/>
 				),
 				width: 200,
 				sortable: true,
 			},
 			{
-				Header: <StyledTableHeader>{t('synths.synths.table.price')}</StyledTableHeader>,
+				Header: <>{t('synths.assets.synths.table.price')}</>,
 				id: 'price',
 				sortType: 'basic',
-				Cell: (cellProps: CellProps<SynthBalance>) => (
+				Cell: (cellProps: CellProps<CryptoBalance>) => (
 					<SynthPriceCol currencyKey={cellProps.row.original.currencyKey} />
 				),
 				width: 200,
@@ -99,10 +120,10 @@ const AssetsTable: FC<AssetsTableProps> = ({
 		];
 		if (showHoldings) {
 			columns.push({
-				Header: <StyledTableHeader>{t('synths.synths.table.holdings')}</StyledTableHeader>,
+				Header: <>{t('synths.assets.synths.table.holdings')}</>,
 				id: 'usdBalance',
 				sortType: 'basic',
-				Cell: (cellProps: CellProps<SynthBalance>) => (
+				Cell: (cellProps: CellProps<CryptoBalance>) => (
 					<SynthHolding
 						usdBalance={cellProps.row.original.usdBalance}
 						totalUSDBalance={totalValue ?? zeroBN}
@@ -117,40 +138,82 @@ const AssetsTable: FC<AssetsTableProps> = ({
 				Header: <></>,
 				accessor: 'holdings',
 				sortType: 'basic',
-				Cell: (cellProps: CellProps<SynthBalance>) => (
-					<ExternalLink
-						href={EXTERNAL_LINKS.Trading.OneInchLink(
-							cellProps.row.original.currencyKey,
-							SYNTHS_MAP.sUSD
-						)}
-					>
-						<ConvertButton variant="secondary">{t('common.convert')}</ConvertButton>
-					</ExternalLink>
-				),
+				Cell: ({
+					row: {
+						original: { currencyKey },
+					},
+				}: CellProps<CryptoBalance>) => {
+					// TODO: this is a very "simple" solution to find a pair to convert
+					let synth = assetToSynth(currencyKey);
+
+					// if the synth is not supported, default to sUSD (for 1inch conversation)
+					if (!isSynth(synth)) {
+						synth = SYNTHS_MAP.sUSD;
+					}
+
+					return (
+						<ExternalLink href={EXTERNAL_LINKS.Trading.OneInchLink(currencyKey, synth)}>
+							<ConvertButton variant="secondary">
+								<Trans
+									i18nKey="common.currency.convert-to-currency"
+									values={{
+										currencyKey: synth,
+									}}
+									components={[<NoTextTransform />]}
+								/>
+							</ConvertButton>
+						</ExternalLink>
+					);
+				},
 				width: 200,
 				sortable: false,
 			});
 		}
 		return columns;
-	}, [showHoldings, showConvert, t, totalValue]);
+	}, [
+		showHoldings,
+		showConvert,
+		t,
+		totalValue,
+		selectPriceCurrencyRate,
+		selectedPriceCurrency.sign,
+	]);
 
 	return (
 		<Container>
-			<Header>{title}</Header>
+			{isWalletConnected && <Header>{title}</Header>}
 			<StyledTable
 				palette="primary"
 				columns={assetColumns}
 				data={assets}
 				isLoading={isLoading}
 				noResultsMessage={
-					isLoaded && assets.length === 0 ? (
+					!isWalletConnected ? (
 						<TableNoResults>
-							<Svg src={NoNotificationIcon} />
-							{t('synths.synths.table.no-results')}
+							<TableNoResultsTitle>{t('common.wallet.no-wallet-connected')}</TableNoResultsTitle>
+							<TableNoResultsButtonContainer>
+								<Button variant="primary" onClick={connectWallet}>
+									{t('common.wallet.connect-wallet')}
+								</Button>
+							</TableNoResultsButtonContainer>
+						</TableNoResults>
+					) : isLoaded && assets.length === 0 ? (
+						<TableNoResults>
+							<TableNoResultsTitle>
+								{t('synths.assets.synths.table.no-synths.title')}
+							</TableNoResultsTitle>
+							<TableNoResultsDesc>
+								{t('synths.assets.synths.table.no-synths.desc')}
+							</TableNoResultsDesc>
+							<TableNoResultsButtonContainer>
+								<Button variant="primary" onClick={() => router.push(ROUTES.Staking.Home)}>
+									{t('synths.assets.synths.table.no-synths.button-label')}
+								</Button>
+							</TableNoResultsButtonContainer>
 						</TableNoResults>
 					) : undefined
 				}
-				columnsDeps={[isAppReady, totalValue]}
+				columnsDeps={[isAppReady, totalValue, selectPriceCurrencyRate]}
 				showPagination={true}
 			/>
 		</Container>
@@ -169,40 +232,9 @@ const StyledTable = styled(Table)`
 
 const Header = styled.div`
 	color: ${(props) => props.theme.colors.white};
-	font-family: ${(props) => props.theme.fonts.condensedBold};
+	font-family: ${(props) => props.theme.fonts.expanded};
 	font-size: 16px;
 	padding-bottom: 20px;
-`;
-
-const StyledTableHeader = styled.div`
-	font-family: ${(props) => props.theme.fonts.condensedBold};
-	color: ${(props) => props.theme.colors.borderSilver};
-	text-transform: uppercase;
-	font-size: 12px;
-`;
-
-const Balance = styled.span<{ primary?: boolean }>`
-	color: ${(props) => (props.primary ? props.theme.colors.white : props.theme.colors.silver)};
-	font-family: ${(props) =>
-		props.primary ? props.theme.fonts.condensedBold : props.theme.fonts.condensedMedium};
-	font-size: 12px;
-	padding-bottom: 1px;
-`;
-
-const CurrencyKey = styled.span<{ primary?: boolean }>`
-	color: ${(props) => (props.primary ? props.theme.colors.white : props.theme.colors.silver)};
-	font-size: 12px;
-	font-family: ${(props) => props.theme.fonts.condensedMedium};
-	padding-left: 8px;
-`;
-
-const TableNoResults = styled(GridDivCenteredRow)`
-	padding: 50px 0;
-	justify-content: center;
-	background-color: ${(props) => props.theme.colors.mediumBlue};
-	margin-top: -2px;
-	justify-items: center;
-	grid-gap: 10px;
 `;
 
 const ConvertButton = styled(Button)`

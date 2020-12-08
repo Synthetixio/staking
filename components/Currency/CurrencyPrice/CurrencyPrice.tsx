@@ -5,16 +5,17 @@ import ChangePercent from 'components/ChangePercent';
 
 import { CurrencyKey } from 'constants/currency';
 
-import { formatCurrency } from 'utils/formatters/number';
+import { formatCurrency, NumericValue, toBigNumber } from 'utils/formatters/number';
 
 import { ContainerRowMixin } from '../common';
+import { DEFAULT_FIAT_DECIMALS } from 'constants/defaults';
 
 type CurrencyPriceProps = {
 	currencyKey: CurrencyKey;
-	price: number;
+	price: NumericValue;
 	sign?: string;
 	change?: number;
-	conversionRate?: number | null;
+	conversionRate?: NumericValue | null;
 };
 
 export const CurrencyPrice: FC<CurrencyPriceProps> = ({
@@ -28,10 +29,14 @@ export const CurrencyPrice: FC<CurrencyPriceProps> = ({
 	return (
 		<Container {...rest}>
 			<Price className="price">
-				{formatCurrency(currencyKey, conversionRate != null ? price / conversionRate : price, {
-					sign,
-					decimals: 2,
-				})}
+				{formatCurrency(
+					currencyKey,
+					conversionRate != null ? toBigNumber(price).dividedBy(conversionRate) : price,
+					{
+						sign,
+						decimals: DEFAULT_FIAT_DECIMALS,
+					}
+				)}
 			</Price>
 			{change != null && <ChangePercent className="percent" value={change} />}
 		</Container>
@@ -40,11 +45,11 @@ export const CurrencyPrice: FC<CurrencyPriceProps> = ({
 
 const Container = styled.span`
 	${ContainerRowMixin};
-	font-family: ${(props) => props.theme.fonts.mono};
 	color: ${(props) => props.theme.colors.white};
-	justify-items: end;
 `;
 
-const Price = styled.span``;
+const Price = styled.span`
+	font-family: ${(props) => props.theme.fonts.mono};
+`;
 
 export default CurrencyPrice;

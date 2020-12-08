@@ -13,20 +13,15 @@ import { walletAddressState, isWalletConnectedState, networkState } from 'store/
 import { appReadyState } from 'store/app';
 
 import { toBigNumber } from 'utils/formatters/number';
+import { CryptoBalance } from './types';
 
-export type SynthBalance = {
-	currencyKey: CurrencyKey;
-	balance: BigNumber;
-	usdBalance: BigNumber;
-};
-
-export type SynthBalancesMap = Record<CurrencyKey, SynthBalance>;
+export type SynthBalancesMap = Record<CurrencyKey, CryptoBalance>;
 
 type SynthBalancesTuple = [CurrencyKey[], number[], number[]];
 
 export type Balances = {
 	balancesMap: SynthBalancesMap;
-	balances: SynthBalance[];
+	balances: CryptoBalance[];
 	totalUSDBalance: BigNumber;
 };
 

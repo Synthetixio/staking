@@ -1,6 +1,7 @@
 import Head from 'next/head';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
+import { useRecoilValue } from 'recoil';
 
 import { StatsSection, LineSpacer } from 'styles/common';
 
@@ -8,9 +9,10 @@ import AssetsTable from 'sections/synths/AssetsTable';
 
 import StatBox from 'components/StatBox';
 
+import { isWalletConnectedState } from 'store/wallet';
+
 import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
 
-import { NO_VALUE } from 'constants/placeholder';
 import { formatCurrency, zeroBN } from 'utils/formatters/number';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
@@ -20,12 +22,13 @@ const SynthsPage = () => {
 	const { t } = useTranslation();
 
 	const synthsBalancesQuery = useSynthsBalancesQuery();
-	const { selectedPriceCurrency } = useSelectedPriceCurrency();
+	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
 	const cryptoBalances = useCryptoBalances();
+	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 
 	const totalSynthValue = synthsBalancesQuery.isSuccess
 		? synthsBalancesQuery.data?.totalUSDBalance ?? zeroBN
-		: null;
+		: zeroBN;
 
 	const synthBalances =
 		synthsBalancesQuery.isSuccess && synthsBalancesQuery.data != null
@@ -42,19 +45,19 @@ const SynthsPage = () => {
 			<StatsSection>
 				<TotalSynthValue
 					title={t('common.stat-box.synth-value')}
-					value={
-						totalSynthValue != null
-							? formatCurrency(selectedPriceCurrency.name, totalSynthValue, {
-									sign: selectedPriceCurrency.sign,
-							  })
-							: NO_VALUE
-					}
+					value={formatCurrency(
+						selectedPriceCurrency.name,
+						getPriceAtCurrentRate(totalSynthValue),
+						{
+							sign: selectedPriceCurrency.sign,
+						}
+					)}
 					size="lg"
 				/>
 			</StatsSection>
 			<LineSpacer />
 			<AssetsTable
-				title={t('synths.synths.title')}
+				title={t('synths.assets.synths.title')}
 				assets={synthAssets}
 				totalValue={totalSynthValue ?? zeroBN}
 				isLoading={synthsBalancesQuery.isLoading}
@@ -62,15 +65,17 @@ const SynthsPage = () => {
 				showHoldings={true}
 				showConvert={false}
 			/>
-			<AssetsTable
-				title={t('synths.non-synths.title')}
-				assets={cryptoBalances.balances}
-				totalValue={zeroBN}
-				isLoading={!cryptoBalances.isLoaded}
-				isLoaded={cryptoBalances.isLoaded}
-				showHoldings={false}
-				showConvert={true}
-			/>
+			{isWalletConnected && cryptoBalances.balances.length > 0 && (
+				<AssetsTable
+					title={t('synths.assets.non-synths.title')}
+					assets={cryptoBalances.balances}
+					totalValue={zeroBN}
+					isLoading={!cryptoBalances.isLoaded}
+					isLoaded={cryptoBalances.isLoaded}
+					showHoldings={false}
+					showConvert={true}
+				/>
+			)}
 		</>
 	);
 };

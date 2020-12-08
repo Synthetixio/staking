@@ -328,17 +328,24 @@
 	},
 	"synths": {
 		"page-title": "Staking | Synths",
-		"synths": {
-			"title": "Synth Balances",
-			"table": {
-				"asset": "Asset",
-				"balance": "Balance",
-				"price": "Price",
-				"holdings": "Holdings %"
+		"assets": {
+			"synths": {
+				"title": "Synth Balances",
+				"table": {
+					"asset": "Asset",
+					"balance": "Balance",
+					"price": "Price",
+					"holdings": "Holdings %",
+					"no-synths": {
+						"title": "You have no Synths",
+						"desc": "Mint sUSD by staking your SNX",
+						"button-label": "Stake SNX"
+					}
+				}
+			},
+			"non-synths": {
+				"title": "Non-Synth Balances"
 			}
-		},
-		"non-synths": {
-			"title": "Non-Synth Balances"
 		}
 	},
 	"sidenav": {
@@ -360,7 +367,8 @@
 			"connect-wallet": "connect wallet",
 			"switch-wallet": "switch wallet",
 			"switch-accounts": "switch accounts",
-			"disconnect-wallet": "disconnect wallet"
+			"disconnect-wallet": "disconnect wallet",
+			"no-wallet-connected": "No wallet connected"
 		},
 		"stat-box": {
 			"staked-value": "Staked value",
@@ -388,7 +396,9 @@
 			"reattempt": "Try again"
 		},
 		"currency": {
-			"currency-price": "<0>{{currencyKey}}</0> Price"
+			"currency-price": "<0>{{currencyKey}}</0> Price",
+			"convert-to-currency": "Convert to <0>{{currencyKey}}</0>",
+			"synthetic-currency-name": "Synthetic {{currencyName}}"
 		},
 		"gas-prices": {
 			"average": "Average",

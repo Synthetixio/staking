@@ -50,11 +50,10 @@ const NameAndSymbol = styled.span`
 const Symbol = styled.span`
 	color: ${(props) => props.theme.colors.white};
 	font-family: ${(props) => props.theme.fonts.condensedBold};
-	font-size: 14px;
 `;
 
 const Name = styled.span`
-	color: ${(props) => props.theme.colors.blueberry};
+	color: ${(props) => props.theme.colors.gray10};
 `;
 
 export default CurrencyName;

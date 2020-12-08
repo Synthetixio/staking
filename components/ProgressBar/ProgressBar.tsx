@@ -12,7 +12,7 @@ type ProgressBarProps = {
 const ProgressBar: FC<ProgressBarProps> = ({ percentage, borderColor, fillColor, ...rest }) => (
 	<ProgressBarWrapper borderColor={borderColor} {...rest}>
 		<Bar className="filled-bar" percentage={percentage} fillColor={fillColor} />
-		<UnfilledBar percentage={1 - percentage} borderColor={borderColor} />
+		<UnfilledBar className="unfilled-bar" percentage={1 - percentage} borderColor={borderColor} />
 	</ProgressBarWrapper>
 );
 
@@ -26,7 +26,7 @@ const Bar = styled.div<{
 }>`
 	height: 100%;
 	width: ${(props) => props.percentage * 100}%;
-	background-color: ${(props) => props.fillColor};
+	background: ${(props) => props.fillColor};
 	border: 1px solid ${(props) => props.fillColor};
 	box-shadow: 0px 0px 15px ${(props) => props.fillColor};
 `;
