@@ -16,7 +16,7 @@ interface StructuredTabProps {
 	boxHeight: number;
 	boxWidth: number;
 	boxPadding: number;
-	setPanelType: Dispatch<SetStateAction<any>>;
+	setPanelType?: Dispatch<SetStateAction<any>>;
 }
 
 const StructuredTab: FC<StructuredTabProps> = ({
@@ -39,7 +39,9 @@ const StructuredTab: FC<StructuredTabProps> = ({
 						active={activeTab === title}
 						onClick={() => {
 							setActiveTab(title);
-							setPanelType(key);
+							if (setPanelType != null) {
+								setPanelType(key);
+							}
 						}}
 					>
 						{icon && icon()}

@@ -1,10 +1,7 @@
 import { useMemo } from 'react';
-import { useRecoilValue } from 'recoil';
 import Head from 'next/head';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-
-import { isWalletConnectedState } from 'store/wallet';
 
 import { StatsSection, LineSpacer } from 'styles/common';
 
@@ -14,13 +11,10 @@ import useFeeClaimHistoryQuery from 'queries/staking/useFeeClaimHistoryQuery';
 import useSynthBurnedQuery from 'queries/staking/useSynthBurnedQuery';
 import useSynthIssuedQuery from 'queries/staking/useSynthIssuedQuery';
 
-import { NO_VALUE } from 'constants/placeholder';
-
 import StatBox from 'components/StatBox';
 
 const HistoryPage = () => {
 	const { t } = useTranslation();
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const issuedQuery = useSynthIssuedQuery();
 	const burnedQuery = useSynthBurnedQuery();
 	const feesClaimedQuery = useFeeClaimHistoryQuery();
@@ -41,11 +35,7 @@ const HistoryPage = () => {
 				<title>{t('history.page-title')}</title>
 			</Head>
 			<StatsSection>
-				<TxCount
-					title={t('common.stat-box.tx-count')}
-					value={isWalletConnected ? txCount : NO_VALUE}
-					size="lg"
-				/>
+				<TxCount title={t('common.stat-box.tx-count')} value={txCount} size="lg" />
 			</StatsSection>
 			<LineSpacer />
 			<TransactionsContainer

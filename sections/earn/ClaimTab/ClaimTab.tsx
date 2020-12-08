@@ -3,11 +3,10 @@ import { Trans, useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { Svg } from 'react-optimized-image';
 
-import { ErrorMessage, FlexDiv, FlexDivCentered, FlexDivColCentered, linkCSS } from 'styles/common';
+import { ErrorMessage, FlexDivCentered, FlexDivColCentered } from 'styles/common';
 import useClaimedStatus from 'sections/hooks/useClaimedStatus';
 import BigNumber from 'bignumber.js';
 import { formatCurrency, formatFiatCurrency } from 'utils/formatters/number';
-import Button from 'components/Button';
 import { SynthetixJS } from '@synthetixio/js';
 import synthetix from 'lib/synthetix';
 import Connector from 'containers/Connector';
@@ -17,6 +16,16 @@ import GasSelector from 'components/GasSelector';
 import { normalizedGasPrice, normalizeGasLimit } from 'utils/network';
 import { CRYPTO_CURRENCY_MAP, SYNTHS_MAP } from 'constants/currency';
 import snxSVG from 'assets/svg/incentives/pool-snx.svg';
+import largeWaveSVG from 'assets/svg/app/large-wave.svg';
+import {
+	TotalValueWrapper,
+	Subtext,
+	Value,
+	StyledButton,
+	Label,
+	StyledLink,
+	TabContainer,
+} from '../common';
 
 type ClaimTabProps = {
 	tradingRewards: BigNumber;
@@ -141,66 +150,17 @@ const InnerContainer = styled(FlexDivColCentered)`
 	width: 90%;
 	margin: 15px auto;
 	padding: 15px;
-	backgroundcolor: ${(props) => props.theme.colors.mutedBrightBlue};
 	border: 1px solid ${(props) => props.theme.colors.brightPink};
 	border-radius: 4px;
+	background-image: url(${largeWaveSVG.src});
 `;
 
 const ValueBoxWrapper = styled(FlexDivCentered)`
 	justify-content: space-around;
 `;
 
-const StyledLink = styled.span`
-	${linkCSS}
-	color: ${(props) => props.theme.colors.brightBlue};
-`;
-
-const TotalValueWrapper = styled(FlexDiv)`
-	justify-content: space-between;
-	height: 30px;
-	align-items: center;
-	border-bottom: 1px solid ${(props) => props.theme.colors.gray};
-	width: 80%;
-	margin-top: 15px;
-`;
-
-const Label = styled.p`
-	width: 90%;
-	margin: 0 auto;
-	font-family: ${(props) => props.theme.fonts.interSemiBold};
-	color: ${(props) => props.theme.colors.gray};
-	font-size: 12px;
-`;
-
-const Subtext = styled.div`
-	font-family: ${(props) => props.theme.fonts.interSemiBold};
-	color: ${(props) => props.theme.colors.gray};
-	font-size: 12px;
-`;
-
 const ValueBox = styled(FlexDivColCentered)`
 	width: 150px;
-`;
-
-const Value = styled.div`
-	font-size: 16px;
-	font-family: ${(props) => props.theme.fonts.expanded};
-	color: ${(props) => props.theme.colors.white};
-`;
-
-const StyledButton = styled(Button)`
-	font-size: 14px;
-	font-family: ${(props) => props.theme.fonts.condensedMedium};
-	width: 80%;
-	text-transform: uppercase;
-	height: 40px;
-	backgroundcolor: ${(props) => props.theme.colors.brightBlue};
-`;
-
-export const TabContainer = styled(FlexDivColCentered)`
-	height: 100%;
-	justify-content: space-evenly;
-	padding: 24px;
 `;
 
 export default ClaimTab;

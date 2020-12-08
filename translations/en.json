@@ -217,20 +217,24 @@
 				},
 				"curve": {
 					"title": "Curve.fi",
+					"description": "Staking Curve LP tokens from the sUSD pool allows you to earn CRV rewards, Curve swap fees, and SNX rewards. <0>Learn more.<0>",
 					"subtitle": "sUSD LP Rewards"
 				},
 				"ieth": {
 					"title": "Synthetix",
+					"description": "Staking iETH tokens allows you to earn SNX rewards. <0>Learn more.<0>",
 					"subtitle": "iETH Rewards"
 				},
 				"ibtc": {
 					"title": "Synthetix",
+					"description": "Staking iBTC tokens allows you to earn SNX rewards. <0>Learn more.<0>",
 					"subtitle": "iBTC Rewards"
 				}
 			},
 			"weekly-rewards": "Weekly rewards {{weeklyRewards}} {{asset}}"
 		},
 		"actions": {
+			"available": "AVAILABLE",
 			"claim": {
 				"title": "CLAIM",
 				"exchange-rewards": "Synth exchange rewards",
@@ -244,10 +248,12 @@
 				"title-ibtc": "iBTC REWARDS"
 			},
 			"stake": {
-				"title": "STAKE"
+				"title": "STAKE",
+				"stake-button": "STAKE {{asset}}"
 			},
 			"unstake": {
-				"title": "UNSTAKE"
+				"title": "UNSTAKE",
+				"stake-button": "UNSTAKE {{asset}}"
 			},
 			"rewards": {
 				"title": "REWARDS"
@@ -322,17 +328,24 @@
 	},
 	"synths": {
 		"page-title": "Staking | Synths",
-		"synths": {
-			"title": "Synth Balances",
-			"table": {
-				"asset": "Asset",
-				"balance": "Balance",
-				"price": "Price",
-				"holdings": "Holdings %"
+		"assets": {
+			"synths": {
+				"title": "Synth Balances",
+				"table": {
+					"asset": "Asset",
+					"balance": "Balance",
+					"price": "Price",
+					"holdings": "Holdings %",
+					"no-synths": {
+						"title": "You have no Synths",
+						"desc": "Mint sUSD by staking your SNX",
+						"button-label": "Stake SNX"
+					}
+				}
+			},
+			"non-synths": {
+				"title": "Non-Synth Balances"
 			}
-		},
-		"non-synths": {
-			"title": "Non-Synth Balances"
 		}
 	},
 	"sidenav": {
@@ -354,7 +367,8 @@
 			"connect-wallet": "connect wallet",
 			"switch-wallet": "switch wallet",
 			"switch-accounts": "switch accounts",
-			"disconnect-wallet": "disconnect wallet"
+			"disconnect-wallet": "disconnect wallet",
+			"no-wallet-connected": "No wallet connected"
 		},
 		"stat-box": {
 			"staked-value": "Staked value",
@@ -382,7 +396,9 @@
 			"reattempt": "Try again"
 		},
 		"currency": {
-			"currency-price": "<0>{{currencyKey}}</0> Price"
+			"currency-price": "<0>{{currencyKey}}</0> Price",
+			"convert-to-currency": "Convert to <0>{{currencyKey}}</0>",
+			"synthetic-currency-name": "Synthetic {{currencyName}}"
 		},
 		"gas-prices": {
 			"average": "Average",
@@ -391,6 +407,7 @@
 		},
 		"custom": "Custom",
 		"edit": "Edit",
+		"convert": "Convert",
 		"gas-header": "Gas Price (GWEI)",
 		"explorers": {
 			"etherscan": "etherscan"

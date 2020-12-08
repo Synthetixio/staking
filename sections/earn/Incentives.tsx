@@ -2,7 +2,7 @@ import { FC, useState } from 'react';
 import BigNumber from 'bignumber.js';
 import styled from 'styled-components';
 import { Svg } from 'react-optimized-image';
-import { useTranslation } from 'react-i18next';
+import { useTranslation, Trans } from 'react-i18next';
 
 import useIETHPoolQuery_1 from 'queries/liquidityPools/useIETHPoolQuery_1';
 import useIBTCPoolQuery_1 from 'queries/liquidityPools/useIBTCPoolQuery_1';
@@ -20,11 +20,13 @@ import snxSVG from 'assets/svg/incentives/pool-snx.svg';
 import IncentivesTable from './IncentivesTable';
 import ClaimTab from './ClaimTab';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
+import LPTab from './LPTab';
+import { StyledLink } from './common';
 
-type APRFields = {
-	price: number;
-	balanceOf: number;
-};
+// type APRFields = {
+// 	price: number;
+// 	balanceOf: number;
+// };
 
 type IncentivesProps = {
 	tradingRewards: BigNumber;
@@ -145,6 +147,45 @@ const Incentives: FC<IncentivesProps> = ({
 							stakingRewards={stakingRewards}
 							totalRewards={totalRewards}
 							refetch={refetch}
+						/>
+					)}
+					{activeTab === 1 && (
+						<LPTab
+							asset={SYNTHS_MAP.sUSD}
+							icon={curveSVG}
+							tokenRewards={0}
+							title={
+								<Trans
+									i18nKey="earn.incentives.options.snx.description"
+									components={[<StyledLink />]}
+								/>
+							}
+						/>
+					)}
+					{activeTab === 2 && (
+						<LPTab
+							asset={SYNTHS_MAP.iETH}
+							icon={iETHSVG}
+							tokenRewards={0}
+							title={
+								<Trans
+									i18nKey="earn.incentives.options.snx.description"
+									components={[<StyledLink />]}
+								/>
+							}
+						/>
+					)}
+					{activeTab === 3 && (
+						<LPTab
+							asset={SYNTHS_MAP.iBTC}
+							icon={iBTCSVG}
+							tokenRewards={0}
+							title={
+								<Trans
+									i18nKey="earn.incentives.options.snx.description"
+									components={[<StyledLink />]}
+								/>
+							}
 						/>
 					)}
 				</TabContainer>

@@ -42,9 +42,11 @@ export default {
 	brightPink: '#ED1EFF',
 	brightBlue: '#00d1ff',
 	brightBlueTextShadow: `#00d1ff 0px 0px 4px, #00d1ff 0px 0px 4px, #00d1ff 0px 0px 4px, #ed1eff 0px 0px 4px, #ed1eff 0px 0px 4px, #ed1eff 0px 0px 4px;`,
+	brightBlue10: '#42DDFF',
 	brightYellow: '#FFD75C',
 	brightOrange: '#FC8738',
 	brightPurple: '#4834E4',
+	rainbowGradient: 'linear-gradient(-88.63deg, #00d1ff -14.83%, #ed1eff 108.22%)',
 	// gradient
 	tooltipGradient: 'linear-gradient(180deg, #ED1EFF 0%, #00D1FF 100%)',
 	// box shadow
@@ -63,14 +65,6 @@ export default {
 	redHover: '#FF568F',
 	green: '#66DD84',
 	yellow: '#FFDF6D',
-	goldColors: {
-		color1: '#BE9461',
-		color2: '#9C6C3C',
-		color3: '#E4B378',
-		color4: '#B98C55',
-	},
-	gold: `linear-gradient(180deg, #BE9461 0%, #9C6C3C 100%)`,
-	goldHover: `linear-gradient(180deg, #E4B378 0%, #B98C55 100%)`,
 	darkGradient1: 'linear-gradient(180deg, #08021E 0%, #120446 146.21%)',
 	darkGradient1Flipped: 'linear-gradient(0, #08021E 0%, #120446 146.21%)',
 };

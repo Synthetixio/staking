@@ -24,14 +24,13 @@ const Earn = () => {
 	const debtDataQuery = useGetDebtDataQuery();
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const totalIssuedSynthsExclEth = useTotalIssuedSynthsExcludingEtherQuery(SYNTHS_MAP.sUSD);
-	const exchangeRates = useExchangeRatesQuery();
 	const previousFeePeriod = useGetFeePoolDataQuery('1');
 
 	const currentCRatio = debtDataQuery.data?.currentCRatio ?? 0;
 	const targetCRatio = debtDataQuery.data?.targetCRatio ?? 0;
 	const activeDebt = debtDataQuery.data?.debtBalance ?? 0;
 	const collateral = debtDataQuery.data?.collateral ?? 0;
-	const sUSDRate = exchangeRates.data?.sUSD ?? 0;
+	const sUSDRate = exchangeRatesQuery.data?.sUSD ?? 0;
 	const feesToDistribute = previousFeePeriod?.data?.feesToDistribute ?? 0;
 	const rewardsToDistribute = previousFeePeriod?.data?.rewardsToDistribute ?? 0;
 	const totalsUSDDebt = totalIssuedSynthsExclEth?.data ?? 0;

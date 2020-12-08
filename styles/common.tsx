@@ -34,7 +34,7 @@ export const linkCSS = css`
 
 export const ExternalLink = styled.a.attrs({
 	target: '_blank',
-	rel: 'noopener',
+	rel: 'noreferrer noopener',
 })`
 	${linkCSS};
 `;
@@ -254,4 +254,31 @@ export const ModalItemText = styled.div`
 	font-size: 12px;
 	color: ${(props) => props.theme.colors.white};
 	font-family: ${(props) => props.theme.fonts.interBold};
+`;
+
+export const TableNoResults = styled.div`
+	padding: 50px 0;
+	text-align: center;
+	background-color: ${(props) => props.theme.colors.mediumBlue};
+`;
+
+export const TableNoResultsTitle = styled.div`
+	font-size: 14px;
+	font-family: ${(props) => props.theme.fonts.expanded};
+	padding-bottom: 4px;
+	color: ${(props) => props.theme.colors.white};
+`;
+
+export const TableNoResultsDesc = styled.div`
+	font-size: 14px;
+	color: ${(props) => props.theme.colors.gray10};
+`;
+
+export const TableNoResultsButtonContainer = styled.div`
+	margin-top: 16px;
+	button {
+		text-transform: uppercase;
+		padding-left: 30px;
+		padding-right: 30px;
+	}
 `;

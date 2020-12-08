@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import styled from 'styled-components';
 
-import { formatCurrency, formatNumber } from 'utils/formatters/number';
+import { formatCurrency, formatNumber, NumericValue, toBigNumber } from 'utils/formatters/number';
 
 import { CurrencyKey } from 'constants/currency';
 
@@ -9,10 +9,10 @@ import { ContainerRowMixin } from '../common';
 
 type CurrencyAmountProps = {
 	currencyKey: CurrencyKey;
-	amount: number;
-	totalValue: number;
+	amount: NumericValue;
+	totalValue: NumericValue;
 	sign?: string;
-	conversionRate?: number | null;
+	conversionRate?: NumericValue | null;
 };
 
 export const CurrencyAmount: FC<CurrencyAmountProps> = ({
@@ -24,26 +24,27 @@ export const CurrencyAmount: FC<CurrencyAmountProps> = ({
 	...rest
 }) => (
 	<Container {...rest}>
+		<Amount className="amount">{formatNumber(amount)}</Amount>
 		<TotalValue className="total-value">
 			{formatCurrency(
 				currencyKey,
-				conversionRate != null ? totalValue / conversionRate : totalValue,
+				conversionRate != null ? toBigNumber(totalValue).dividedBy(conversionRate) : totalValue,
 				{ sign }
 			)}
 		</TotalValue>
-		<Amount className="amount">{formatNumber(amount)}</Amount>
 	</Container>
 );
 
 const Container = styled.span`
 	${ContainerRowMixin};
-	justify-items: end;
-	font-family: ${(props) => props.theme.fonts.mono};
 `;
 
-const Amount = styled.span``;
-const TotalValue = styled.span`
+const Amount = styled.span`
 	color: ${(props) => props.theme.colors.white};
+	font-family: ${(props) => props.theme.fonts.mono};
+`;
+const TotalValue = styled.span`
+	color: ${(props) => props.theme.colors.gray10};
 `;
 
 export default CurrencyAmount;
