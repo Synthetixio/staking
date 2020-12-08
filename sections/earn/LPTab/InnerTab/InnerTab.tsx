@@ -35,7 +35,7 @@ const InnerTab: FC<InnerTabProps> = ({
 	return (
 		<FlexDivColCentered>
 			{/* <Svg src={icon} /> */}
-			<StyledInput placeholder={0} onChange={(e) => setAmount(Number(e.target.value))} />
+			<StyledInput placeholder="0" onChange={(e) => setAmount(Number(e.target.value))} />
 			<TotalValueWrapper>
 				<Subtext>{t('earn.actions.available')}</Subtext>
 				<Value>{formatCryptoCurrency(assetAmount, { currencyKey: asset })}</Value>
@@ -43,7 +43,7 @@ const InnerTab: FC<InnerTabProps> = ({
 			<StyledButton
 				variant="primary"
 				onClick={() => handleStake(isStake ? Staking.STAKE : Staking.UNSTAKE)}
-				disabled={status != null}
+				disabled={true}
 			>
 				{isStake
 					? t('earn.actions.stake.stake-button', { asset })

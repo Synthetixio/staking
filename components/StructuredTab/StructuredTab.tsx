@@ -39,7 +39,9 @@ const StructuredTab: FC<StructuredTabProps> = ({
 						active={activeTab === title}
 						onClick={() => {
 							setActiveTab(title);
-							setPanelType != null ? setPanelType(key) : null;
+							if (setPanelType != null) {
+								setPanelType(key);
+							}
 						}}
 					>
 						{icon && icon()}
