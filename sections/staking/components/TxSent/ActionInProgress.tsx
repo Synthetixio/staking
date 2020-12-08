@@ -6,26 +6,18 @@ import { useTranslation } from 'react-i18next';
 import Etherscan from 'containers/Etherscan';
 import { FlexDivCentered, FlexDivColCentered, ExternalLink } from 'styles/common';
 import Burn from 'assets/svg/app/burn.svg';
+import Mint from 'assets/svg/app/mint.svg';
 
 import { SectionHeader, SectionSubtext } from './common';
 
 type ActionInProgressProps = {
 	isMint: boolean;
-	stake?: string;
-	mint?: string;
-	unstake?: string;
-	burn?: string;
+	from: string;
+	to: string;
 	hash: string;
 };
 
-const ActionInProgress: FC<ActionInProgressProps> = ({
-	isMint,
-	stake,
-	unstake,
-	mint,
-	burn,
-	hash,
-}) => {
+const ActionInProgress: FC<ActionInProgressProps> = ({ isMint, from, to, hash }) => {
 	const { t } = useTranslation();
 	const { etherscanInstance } = Etherscan.useContainer();
 	const link = etherscanInstance != null ? etherscanInstance.txLink(hash) : undefined;
@@ -36,7 +28,7 @@ const ActionInProgress: FC<ActionInProgressProps> = ({
 					? t('staking.actions.mint.in-progress.title')
 					: t('staking.actions.burn.in-progress.title')}
 			</SectionHeader>
-			<Svg src={Burn} />
+			{isMint ? <Svg src={Mint} /> : <Svg src={Burn} />}
 			<FlexDivCentered>
 				<InfoContainer key="one">
 					<InfoTitle>
@@ -44,7 +36,7 @@ const ActionInProgress: FC<ActionInProgressProps> = ({
 							? t('staking.actions.mint.in-progress.staking')
 							: t('staking.actions.burn.in-progress.unstaking')}
 					</InfoTitle>
-					<InfoData>{isMint ? stake : mint}</InfoData>
+					<InfoData>{from}</InfoData>
 				</InfoContainer>
 				<InfoContainer key="two">
 					<InfoTitle>
@@ -52,7 +44,7 @@ const ActionInProgress: FC<ActionInProgressProps> = ({
 							? t('staking.actions.mint.in-progress.minting')
 							: t('staking.actions.burn.in-progress.burning')}
 					</InfoTitle>
-					<InfoData>{isMint ? unstake : burn}</InfoData>
+					<InfoData>{to}</InfoData>
 				</InfoContainer>
 			</FlexDivCentered>
 			<SectionSubtext>

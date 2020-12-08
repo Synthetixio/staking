@@ -70,7 +70,7 @@ const StakingInput: React.FC<StakingInputProps> = ({
 }) => {
 	const { targetCRatio, SNXRate } = useStakingCalculations();
 	const [stakingCurrencyKey] = useState<string>(CRYPTO_CURRENCY_MAP.SNX);
-	const [synthCurrencyKey] = useState<string>(SYNTHS_MAP.SNX);
+	const [synthCurrencyKey] = useState<string>(SYNTHS_MAP.sUSD);
 
 	const { t } = useTranslation();
 
@@ -123,8 +123,8 @@ const StakingInput: React.FC<StakingInputProps> = ({
 		return (
 			<ActionInProgress
 				isMint={isMint}
-				stake={stakeInfo(inputValue)}
-				mint={inputValue.toString()}
+				from={stakeInfo(inputValue)}
+				to={formattedInput}
 				hash={txHash as string}
 			/>
 		);
@@ -172,11 +172,19 @@ const StakingInput: React.FC<StakingInputProps> = ({
 					content={
 						<ModalContent>
 							<ModalItem>
-								<ModalItemTitle>{t('modals.confirm-transaction.staking.from')}</ModalItemTitle>
+								<ModalItemTitle>
+									{isMint
+										? t('modals.confirm-transaction.minting.from')
+										: t('modals.confirm-transaction.burning.from')}
+								</ModalItemTitle>
 								<ModalItemText>{stakeInfo(inputValue)}</ModalItemText>
 							</ModalItem>
 							<ModalItem>
-								<ModalItemTitle>{t('modals.confirm-transaction.staking.to')}</ModalItemTitle>
+								<ModalItemTitle>
+									{isMint
+										? t('modals.confirm-transaction.minting.to')
+										: t('modals.confirm-transaction.burning.to')}
+								</ModalItemTitle>
 								<ModalItemText>{formattedInput}</ModalItemText>
 							</ModalItem>
 						</ModalContent>

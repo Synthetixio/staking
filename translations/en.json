@@ -18,7 +18,7 @@
 		},
 		"confirm-transaction": {
 			"title": "Confirm Transaction",
-			"staking": {
+			"minting": {
 				"from": "Staking",
 				"to": "Minting"
 			},

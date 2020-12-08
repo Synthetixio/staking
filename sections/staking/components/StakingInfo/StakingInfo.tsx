@@ -71,38 +71,41 @@ const StakingInfo: React.FC<StakingInfoProps> = ({ isMint }) => {
 		return [
 			{
 				title: t('staking.info.table.not-staked'),
-				value: unstakedCollateral,
-				changedValue: changedNotStakedValue,
+				value: unstakedCollateral.isNaN() ? toBigNumber(0) : unstakedCollateral,
+				changedValue: changedNotStakedValue.isNaN() ? toBigNumber(0) : changedNotStakedValue,
 				currencyKey: CRYPTO_CURRENCY_MAP.SNX,
 			},
 			{
 				title: t('staking.info.table.staked'),
-				value: stakedCollateral,
-				changedValue: changedStakedValue,
+				value: stakedCollateral.isNaN() ? toBigNumber(0) : stakedCollateral,
+				changedValue: changedStakedValue.isNaN() ? toBigNumber(0) : changedStakedValue,
 				currencyKey: CRYPTO_CURRENCY_MAP.SNX,
 			},
 			{
 				title: t('staking.info.table.transferable'),
-				value: transferableCollateral,
-				changedValue: changedTransferable,
+				value: transferableCollateral.isNaN() ? toBigNumber(0) : transferableCollateral,
+				changedValue: changedTransferable.isNaN() ? toBigNumber(0) : changedTransferable,
 				currencyKey: CRYPTO_CURRENCY_MAP.SNX,
 			},
 			{
 				title: t('staking.info.table.locked'),
-				value: lockedCollateral,
-				changedValue: changedLocked,
+				value: lockedCollateral.isNaN() ? toBigNumber(0) : lockedCollateral,
+				changedValue: changedLocked.isNaN() ? toBigNumber(0) : changedLocked,
 				currencyKey: CRYPTO_CURRENCY_MAP.SNX,
 			},
 			{
 				title: t('staking.info.table.c-ratio'),
-				value: toBigNumber(100).dividedBy(currentCRatio),
-				changedValue: changeCRatio,
+				value:
+					currentCRatio.isNaN() || currentCRatio.isZero()
+						? toBigNumber(0)
+						: toBigNumber(100).dividedBy(currentCRatio),
+				changedValue: changeCRatio.isNaN() ? toBigNumber(0) : changeCRatio,
 				currencyKey: '%',
 			},
 			{
 				title: t('staking.info.table.debt'),
-				value: debtBalance,
-				changedValue: changedDebt,
+				value: debtBalance.isNaN() ? toBigNumber(0) : debtBalance,
+				changedValue: changedDebt.isNaN() ? toBigNumber(0) : debtBalance,
 				currencyKey: SYNTHS_MAP.sUSD,
 			},
 		];
