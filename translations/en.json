@@ -217,20 +217,24 @@
 				},
 				"curve": {
 					"title": "Curve.fi",
+					"description": "Staking Curve LP tokens from the sUSD pool allows you to earn CRV rewards, Curve swap fees, and SNX rewards. <0>Learn more.<0>",
 					"subtitle": "sUSD LP Rewards"
 				},
 				"ieth": {
 					"title": "Synthetix",
+					"description": "Staking iETH tokens allows you to earn SNX rewards. <0>Learn more.<0>",
 					"subtitle": "iETH Rewards"
 				},
 				"ibtc": {
 					"title": "Synthetix",
+					"description": "Staking iBTC tokens allows you to earn SNX rewards. <0>Learn more.<0>",
 					"subtitle": "iBTC Rewards"
 				}
 			},
 			"weekly-rewards": "Weekly rewards {{weeklyRewards}} {{asset}}"
 		},
 		"actions": {
+			"available": "AVAILABLE",
 			"claim": {
 				"title": "CLAIM",
 				"exchange-rewards": "Synth exchange rewards",
@@ -244,10 +248,12 @@
 				"title-ibtc": "iBTC REWARDS"
 			},
 			"stake": {
-				"title": "STAKE"
+				"title": "STAKE",
+				"stake-button": "STAKE {{asset}}"
 			},
 			"unstake": {
-				"title": "UNSTAKE"
+				"title": "UNSTAKE",
+				"stake-button": "UNSTAKE {{asset}}"
 			},
 			"rewards": {
 				"title": "REWARDS"

@@ -190,6 +190,9 @@ const StyledTable = styled(Table)`
 	.table-body-row {
 		height: 80px;
 		align-items: center;
+		:hover {
+			background-color: ${(props) => props.theme.colors.tooltipBlue};
+		}
 	}
 	.table-body-cell {
 		:first-child {
