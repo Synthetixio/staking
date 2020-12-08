@@ -12,9 +12,15 @@ import { useRecoilState, useSetRecoilState } from 'recoil';
 
 type BurnTilesProps = {
 	percentageTargetCRatio: BigNumber;
+	maxBurnAmount: BigNumber;
+	burnAmountToFixCRatio: BigNumber;
 };
 
-const BurnTiles: React.FC<BurnTilesProps> = ({ percentageTargetCRatio }) => {
+const BurnTiles: React.FC<BurnTilesProps> = ({
+	percentageTargetCRatio,
+	maxBurnAmount,
+	burnAmountToFixCRatio,
+}) => {
 	const { t } = useTranslation();
 	const [burnType, onBurnTypeChange] = useRecoilState(burnTypeState);
 	const onBurnChange = useSetRecoilState(amountToBurnState);
@@ -36,6 +42,11 @@ const BurnTiles: React.FC<BurnTilesProps> = ({ percentageTargetCRatio }) => {
 			<FlexDivRow>
 				<MarginedButtonTile
 					left={true}
+					disabled={
+						maxBurnAmount.isZero() ||
+						burnAmountToFixCRatio.isZero() ||
+						burnAmountToFixCRatio.isGreaterThan(maxBurnAmount)
+					}
 					title={t('staking.actions.burn.tiles.target.title', {
 						targetCRatio: formatPercent(percentageTargetCRatio),
 					})}

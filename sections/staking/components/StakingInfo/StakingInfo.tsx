@@ -62,7 +62,7 @@ const StakingInfo: React.FC<StakingInfoProps> = ({ isMint }) => {
 			? lockedCollateral.plus(stakingAmount)
 			: lockedCollateral.minus(unlockedStakeAmount);
 		const changeCRatio = isMint
-			? changedNotStakedValue.multipliedBy(SNXRate).dividedBy(mintAdditionalDebt).multipliedBy(100)
+			? changedStakedValue.multipliedBy(SNXRate).dividedBy(mintAdditionalDebt).multipliedBy(100)
 			: changedNotStakedValue.multipliedBy(SNXRate).dividedBy(amountToBurnBN).multipliedBy(100);
 		const changedDebt = isMint
 			? debtBalance.plus(mintAdditionalDebt)
@@ -105,11 +105,13 @@ const StakingInfo: React.FC<StakingInfoProps> = ({ isMint }) => {
 			{
 				title: t('staking.info.table.debt'),
 				value: debtBalance.isNaN() ? toBigNumber(0) : debtBalance,
-				changedValue: changedDebt.isNaN() ? toBigNumber(0) : debtBalance,
+				changedValue: changedDebt.isNaN() ? toBigNumber(0) : changedDebt,
 				currencyKey: SYNTHS_MAP.sUSD,
 			},
 		];
 	}, [amountToBurn, amountToMint, t, isMint]);
+
+	const emptyInput = isMint ? amountToMint.length === 0 : amountToBurn.length === 0;
 
 	return (
 		<>
@@ -131,15 +133,17 @@ const StakingInfo: React.FC<StakingInfoProps> = ({ isMint }) => {
 									decimals: 2,
 								})}
 							</RowValue>
-							<>
-								<Svg src={Arrows} /> {/* @TODO: Remove negative values */}
-								<RowValue>
-									{formatCurrency(currencyKey, !changedValue.isNaN() ? changedValue : 0, {
-										currencyKey: currencyKey,
-										decimals: 2,
-									})}
-								</RowValue>
-							</>
+							{!emptyInput && (
+								<>
+									<Svg src={Arrows} />
+									<RowValue>
+										{formatCurrency(currencyKey, !changedValue.isNaN() ? changedValue : 0, {
+											currencyKey: currencyKey,
+											decimals: 2,
+										})}
+									</RowValue>
+								</>
+							)}
 						</ValueContainer>
 					</DataRow>
 				))}

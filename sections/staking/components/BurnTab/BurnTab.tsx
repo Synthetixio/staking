@@ -30,6 +30,7 @@ const BurnTab: React.FC = () => {
 		targetCRatio,
 		SNXRate,
 		unstakedCollateral,
+		issuableSynths,
 	} = useStakingCalculations();
 	const walletAddress = useRecoilValue(walletAddressState);
 
@@ -187,6 +188,7 @@ const BurnTab: React.FC = () => {
 		let onSubmit;
 		let inputValue;
 		let isLocked;
+
 		switch (burnType) {
 			case BurnActionType.MAX:
 				const burnAmount = debtBalance;
@@ -217,7 +219,19 @@ const BurnTab: React.FC = () => {
 				isLocked = false;
 				break;
 			default:
-				return <BurnTiles percentageTargetCRatio={percentageTargetCRatio} />;
+				const maxBurnAmount = debtBalance.isGreaterThan(sUSDBalance)
+					? toBigNumber(sUSDBalance)
+					: debtBalance;
+				const burnAmountToFixCRatio = toBigNumber(
+					Math.max(debtBalance.minus(issuableSynths).toNumber(), 0)
+				);
+				return (
+					<BurnTiles
+						percentageTargetCRatio={percentageTargetCRatio}
+						maxBurnAmount={maxBurnAmount}
+						burnAmountToFixCRatio={burnAmountToFixCRatio}
+					/>
+				);
 		}
 		return (
 			<StakingInput

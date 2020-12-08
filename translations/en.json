@@ -122,7 +122,7 @@
 				},
 				"completed": {
 					"title": "Put your {{synth}} to work",
-					"curve": "Curve Finance {{synth}} LP TOken Rewards",
+					"curve": "Curve Finance {{synth}} LP Token Rewards",
 					"est-apr": "Est APR",
 					"subtext": "There are various Liquidity Providing incentives interacting with different DeFi products for you to choose from",
 					"dismiss": "DISMISS",

@@ -1,5 +1,5 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { FlexDivColCentered } from 'styles/common';
 
 type ButtonTileProps = {
@@ -7,42 +7,62 @@ type ButtonTileProps = {
 	icon: Function;
 	subtext: string;
 	onAction: () => void;
+	disabled?: boolean;
 };
 
-const ButtonTile: React.FC<ButtonTileProps> = ({ title, icon, subtext, onAction, ...rest }) => {
+const ButtonTile: React.FC<ButtonTileProps> = ({
+	title,
+	icon,
+	subtext,
+	onAction,
+	disabled = false,
+	...rest
+}) => {
+	console.log(disabled);
 	return (
-		<Container onClick={() => onAction()} {...rest}>
-			<Title className="tile-title">{title}</Title>
+		<Container disabled={disabled} onClick={() => !disabled && onAction()} {...rest}>
+			<Title disabled={disabled} className="tile-title">
+				{title}
+			</Title>
 			{icon()}
-			<Subtext className="tile-subtext">{subtext}</Subtext>
+			<Subtext disabled={disabled} className="tile-subtext">
+				{subtext}
+			</Subtext>
 		</Container>
 	);
 };
 
-const Container = styled(FlexDivColCentered)`
+const Container = styled(FlexDivColCentered)<{ disabled: boolean }>`
 	text-align: center;
 	justify-content: center;
 	width: 100%;
-	background: ${(props) => props.theme.colors.tooltipBlue};
+	background: ${(props) =>
+		props.disabled ? props.theme.colors.darkBlue : props.theme.colors.tooltipBlue};
 	padding: 16px;
 	flex: 1;
 	margin: 8px 0px;
 	cursor: pointer;
-	&:hover {
-		background: ${(props) => props.theme.colors.hoverTooltipBlue};
-		transition: background-color 0.5s;
-	}
+	${(props) =>
+		!props.disabled &&
+		css`
+			&:hover {
+				background: ${(props) => props.theme.colors.hoverTooltipBlue};
+				transition: background-color 0.5s;
+			}
+		`}
 `;
 
-const Title = styled.p`
+const Title = styled.p<{ disabled: boolean }>`
 	font-family: ${(props) => props.theme.fonts.expanded};
 	font-size: 12px;
 	text-transform: uppercase;
+	color: ${(props) => (props.disabled ? props.theme.colors.gray10 : props.theme.colors.white)};
 `;
 
-const Subtext = styled.p`
+const Subtext = styled.p<{ disabled: boolean }>`
 	font-size: 12px;
 	font-family: ${(props) => props.theme.fonts.regular};
+	color: ${(props) => (props.disabled ? props.theme.colors.gray10 : props.theme.colors.white)};
 `;
 
 export default ButtonTile;

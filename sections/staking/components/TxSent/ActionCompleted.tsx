@@ -5,7 +5,8 @@ import { useRouter } from 'next/router';
 import styled from 'styled-components';
 
 import { FlexDivRowCentered, FlexDivCentered, FlexDivColCentered } from 'styles/common';
-import Burn from 'assets/svg/app/burn.svg';
+import Mint from 'assets/svg/app/mint.svg';
+
 import { Transaction } from 'constants/network';
 import ROUTES from 'constants/routes';
 import { SYNTHS_MAP } from 'constants/currency';
@@ -36,7 +37,7 @@ const ActionCompleted: FC<ActionCompletedProps> = ({ setTransactionState, isMint
 				{t('staking.actions.mint.completed.title', { synth: SYNTHS_MAP.sUSD })}
 			</SectionHeader>
 			<MainInfoBox>
-				<Svg src={Burn} />
+				<Svg src={Mint} />
 				<MiddleInfoSection>
 					{t('staking.actions.mint.completed.curve', { synth: SYNTHS_MAP.sUSD })}
 				</MiddleInfoSection>

@@ -122,6 +122,7 @@ const MintTab: React.FC = () => {
 				const mintAmount = getMintAmount(targetCRatio, unstakedCollateral, SNXRate);
 				onSubmit = () => handleStake(true);
 				inputValue = mintAmount;
+				onMintChange(inputValue.toString());
 				isLocked = true;
 				setMintMax(true);
 				break;
