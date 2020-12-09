@@ -51,7 +51,7 @@ const Button = styled.button<{ isOpen: boolean }>`
 	height: 40px;
 	line-height: 40px;
 	color: ${(props) => props.theme.colors.white};
-	background: ${(props) => props.theme.colors.mediumBlue};
+	background: ${(props) => props.theme.colors.navy};
 	font-family: ${(props) => props.theme.fonts.condensedBold};
 	display: flex;
 	align-items: center;
