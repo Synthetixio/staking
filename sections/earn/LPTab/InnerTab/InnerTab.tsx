@@ -61,7 +61,7 @@ const InnerTab: FC<InnerTabProps> = ({
 };
 
 const Container = styled(FlexDivColCentered)`
-	background-color: ${(props) => props.theme.colors.darkBlue};
+	background-color: ${(props) => props.theme.colors.black};
 	height: 100%;
 	width: 100%;
 `;
@@ -99,7 +99,7 @@ const InputField = styled(StyledInput)`
 	text-align: center;
 
 	&:disabled {
-		color: ${(props) => props.theme.colors.gray10};
+		color: ${(props) => props.theme.colors.gray};
 	}
 `;
 
