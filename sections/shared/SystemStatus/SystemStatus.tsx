@@ -1,22 +1,23 @@
 import { FC } from 'react';
 import Head from 'next/head';
 import { useTranslation } from 'react-i18next';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import { Svg } from 'react-optimized-image';
 
 import media from 'styles/media';
 import {
 	FlexDivColCentered,
-	PageContent,
 	FullScreenContainer,
 	ExternalLink,
 	GridDivCenteredCol,
+	resetHeadingMixin,
+	FlexDivCol,
 } from 'styles/common';
 
 import { EXTERNAL_LINKS } from 'constants/links';
-import { HEADER_HEIGHT } from 'constants/ui';
 
-import SystemDownIcon from 'assets/svg/app/system-down.svg';
+import StakingLogo from 'assets/svg/app/staking-logo.svg';
+
 import DiscordIcon from 'assets/svg/social/discord.svg';
 import TwitterIcon from 'assets/svg/social/twitter.svg';
 import GithubIcon from 'assets/svg/social/github.svg';
@@ -65,11 +66,15 @@ const SystemStatus: FC<SystemStatusProps> = ({ children }) => {
 				<title>{t('system-status.page-title')}</title>
 			</Head>
 			<FullScreenContainer>
-				<StyledPageContent>
-					<Header>logo</Header>
+				<Content>
+					<Header>
+						<Svg src={StakingLogo} />
+					</Header>
 					<Container>
-						<StyledSystemDownIcon src={SystemDownIcon} />
-						<Title>{t('system-status.title')}</Title>
+						<Title>
+							{t('system-status.title-line1')}
+							<span>{t('system-status.title-line2')}</span>
+						</Title>
 						<Subtitle>{t('system-status.subtitle')}</Subtitle>
 						<Links>
 							{SOCIAL_LINKS.map(({ id, href, icon }) => (
@@ -79,7 +84,7 @@ const SystemStatus: FC<SystemStatusProps> = ({ children }) => {
 							))}
 						</Links>
 					</Container>
-				</StyledPageContent>
+				</Content>
 			</FullScreenContainer>
 		</>
 	) : (
@@ -88,60 +93,53 @@ const SystemStatus: FC<SystemStatusProps> = ({ children }) => {
 };
 
 const Header = styled.header`
-	height: ${HEADER_HEIGHT};
-	line-height: ${HEADER_HEIGHT};
+	padding-top: 24px;
 `;
 
-const StyledPageContent = styled(PageContent)`
-	display: flex;
-	flex-direction: column;
+const Content = styled(FlexDivCol)`
+	position: relative;
+	margin: 0 auto;
+	padding: 0 24px;
+	width: 100%;
+	flex-grow: 1;
 `;
 
 const Container = styled(FlexDivColCentered)`
 	flex-grow: 1;
 	justify-content: center;
-	display: flex;
-	align-items: center;
 	text-align: center;
-	margin-top: -${HEADER_HEIGHT};
-`;
-
-const StyledSystemDownIcon = styled(Svg)`
-	margin-bottom: 51px;
-	${media.lessThan('sm')`
-		svg {
-			margin-bottom: 46px;
-		}
-	`}
-`;
-
-const titleCSS = css`
-	font-size: 20px;
-	margin: 0;
-	font-weight: normal;
-	line-height: normal;
-
-	font-family: ${(props) => props.theme.fonts.mono};
+	margin-top: -24px;
 `;
 
 const Title = styled.h1`
-	${titleCSS};
-	font-size: 20px;
-	color: ${(props) => props.theme.colors.white};
-	padding-bottom: 15px;
-	line-height: 28px;
+	${resetHeadingMixin};
+	text-align: center;
+	text-transform: uppercase;
+	color: ${(props) => props.theme.colors.black};
+	font-family: ${(props) => props.theme.fonts.mono};
+	-webkit-text-stroke: 1px ${(props) => props.theme.colors.pink};
+	font-size: 72px;
+	line-height: 72px;
+	padding-bottom: 30px;
+	span {
+		display: block;
+	}
+	${media.lessThan('sm')`
+		font-size: 40px;
+		line-height: 40px;
+	`}
 `;
 
 const Subtitle = styled.h2`
-	${titleCSS};
-	font-size: 16px;
-	color: ${(props) => props.theme.colors.gray};
+	${resetHeadingMixin};
+	font-size: 14px;
+	color: ${(props) => props.theme.colors.white};
 `;
 
 const Links = styled(GridDivCenteredCol)`
 	grid-gap: 24px;
 	position: relative;
-	top: 130px;
+	top: 170px;
 	${media.lessThan('sm')`
 		top: 90px;
 	`}

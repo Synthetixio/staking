@@ -136,14 +136,6 @@ export const AbsoluteCenteredDiv = styled.div`
 	${absoluteCenteredCSS};
 `;
 
-export const PageContent = styled.section`
-	position: relative;
-	margin: 0 auto;
-	padding: 0 20px;
-	width: 100%;
-	flex-grow: 1;
-`;
-
 export const ConnectionDot = styled.span`
 	display: inline-block;
 	width: 8px;
@@ -281,4 +273,10 @@ export const TableNoResultsButtonContainer = styled.div`
 		padding-left: 30px;
 		padding-right: 30px;
 	}
+`;
+
+export const resetHeadingMixin = `
+	margin: 0;
+	font-weight: normal;
+	line-height: normal;
 `;
