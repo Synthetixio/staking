@@ -16,7 +16,7 @@ export default {
 	// ui
 	black: '#06061B',
 	navy: '#09092F',
-	mediumBlue: '#09092F',
+	mediumBlue: '#10104E',
 	grayBlue: '#161B44',
 	gray: '#828295',
 
