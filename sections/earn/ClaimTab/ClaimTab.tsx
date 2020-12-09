@@ -150,7 +150,7 @@ const InnerContainer = styled(FlexDivColCentered)`
 	width: 90%;
 	margin: 15px auto;
 	padding: 15px;
-	border: 1px solid ${(props) => props.theme.colors.brightPink};
+	border: 1px solid ${(props) => props.theme.colors.pink};
 	border-radius: 4px;
 	background-image: url(${largeWaveSVG.src});
 `;

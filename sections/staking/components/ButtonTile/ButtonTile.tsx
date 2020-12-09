@@ -37,7 +37,7 @@ const Container = styled(FlexDivColCentered)<{ disabled: boolean }>`
 	justify-content: center;
 	width: 100%;
 	background: ${(props) =>
-		props.disabled ? props.theme.colors.darkBlue : props.theme.colors.tooltipBlue};
+		props.disabled ? props.theme.colors.black : props.theme.colors.mediumBlue};
 	padding: 16px;
 	flex: 1;
 	margin: 8px 0px;
@@ -46,7 +46,7 @@ const Container = styled(FlexDivColCentered)<{ disabled: boolean }>`
 		!props.disabled &&
 		css`
 			&:hover {
-				background: ${(props) => props.theme.colors.hoverTooltipBlue};
+				background: ${(props) => props.theme.colors.mediumBlue};
 				transition: background-color 0.5s;
 			}
 		`}
@@ -56,13 +56,13 @@ const Title = styled.p<{ disabled: boolean }>`
 	font-family: ${(props) => props.theme.fonts.expanded};
 	font-size: 12px;
 	text-transform: uppercase;
-	color: ${(props) => (props.disabled ? props.theme.colors.gray10 : props.theme.colors.white)};
+	color: ${(props) => (props.disabled ? props.theme.colors.gray : props.theme.colors.white)};
 `;
 
 const Subtext = styled.p<{ disabled: boolean }>`
 	font-size: 12px;
 	font-family: ${(props) => props.theme.fonts.regular};
-	color: ${(props) => (props.disabled ? props.theme.colors.gray10 : props.theme.colors.white)};
+	color: ${(props) => (props.disabled ? props.theme.colors.gray : props.theme.colors.white)};
 `;
 
 export default ButtonTile;

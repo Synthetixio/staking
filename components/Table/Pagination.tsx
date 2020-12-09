@@ -58,7 +58,7 @@ const Pagination: FC<PaginationProps> = ({
 };
 
 const PageInfo = styled.span`
-	color: ${(props) => props.theme.colors.gray10};
+	color: ${(props) => props.theme.colors.gray};
 `;
 
 const PaginationContainer = styled(GridDivCenteredCol)`
@@ -82,7 +82,7 @@ const ArrowButton = styled.button`
 	&[disabled] {
 		cursor: default;
 		svg {
-			color: ${(props) => props.theme.colors.gray10};
+			color: ${(props) => props.theme.colors.gray};
 		}
 	}
 `;

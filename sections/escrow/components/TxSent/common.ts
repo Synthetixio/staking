@@ -11,12 +11,12 @@ export const SectionHeader = styled.div`
 
 export const SectionSubtext = styled.div`
 	font-family: ${(props) => props.theme.fonts.regular};
-	color: ${(props) => props.theme.colors.gray10};
+	color: ${(props) => props.theme.colors.gray};
 	font-size: 12px;
 `;
 
 export const InfoContainer = styled(FlexDivColCentered)`
-	border-bottom: 1px solid ${(props) => props.theme.colors.linedBlue};
+	border-bottom: 1px solid ${(props) => props.theme.colors.grayBlue};
 	width: 150px;
 	margin: 25px 0;
 `;
@@ -24,7 +24,7 @@ export const InfoContainer = styled(FlexDivColCentered)`
 export const InfoTitle = styled.div`
 	margin-top: 5px;
 	font-family: ${(props) => props.theme.fonts.interBold};
-	color: ${(props) => props.theme.colors.gray10};
+	color: ${(props) => props.theme.colors.gray};
 	font-size: 12px;
 	margin-bottom: 25px;
 	text-transform: uppercase;

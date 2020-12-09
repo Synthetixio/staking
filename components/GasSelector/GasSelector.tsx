@@ -141,7 +141,7 @@ const GasPriceContainer = styled(FlexDivRowCentered)``;
 const GasPriceHeader = styled.p`
 	font-family: ${(props) => props.theme.fonts.interBold};
 	font-size: 12px;
-	color: ${(props) => props.theme.colors.gray10};
+	color: ${(props) => props.theme.colors.gray};
 	text-transform: uppercase;
 `;
 
@@ -152,7 +152,7 @@ const GasPriceText = styled.span`
 `;
 
 const GasPriceTooltip = styled(Tippy)`
-	background: ${(props) => props.theme.colors.elderberry};
+	background: ${(props) => props.theme.colors.purple};
 	border: 0.5px solid ${(props) => props.theme.colors.navy};
 	border-radius: 4px;
 	width: 120px;
@@ -202,6 +202,6 @@ const StyledGasEditButton = styled.span`
 	padding-left: 5px;
 	font-size: 12px;
 	cursor: pointer;
-	color: ${(props) => props.theme.colors.brightBlue};
+	color: ${(props) => props.theme.colors.blue};
 	text-transform: uppercase;
 `;

@@ -63,7 +63,7 @@ const StyledBaseModal = styled(BaseModal)`
 
 const Subtitle = styled.div`
 	text-align: center;
-	color: ${(props) => props.theme.colors.gray10};
+	color: ${(props) => props.theme.colors.gray};
 	padding-bottom: 48px;
 	font-size: 12px;
 	font-family: ${(props) => props.theme.fonts.regular};

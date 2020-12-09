@@ -12,7 +12,7 @@ export const inputCSS = css`
 	border-radius: 4px;
 	color: ${(props) => props.theme.colors.white};
 	::placeholder {
-		color: ${(props) => props.theme.colors.silver};
+		color: ${(props) => props.theme.colors.gray};
 	}
 	outline: none;
 `;

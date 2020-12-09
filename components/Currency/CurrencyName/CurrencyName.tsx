@@ -53,7 +53,7 @@ const Symbol = styled.span`
 `;
 
 const Name = styled.span`
-	color: ${(props) => props.theme.colors.gray10};
+	color: ${(props) => props.theme.colors.gray};
 `;
 
 export default CurrencyName;

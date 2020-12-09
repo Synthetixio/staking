@@ -126,7 +126,7 @@ const RewardsContainer = styled(FlexDivColCentered)`
 	width: 200px;
 	margin: 15px;
 	padding: 15px;
-	border: 1px solid ${(props) => props.theme.colors.brightPink};
+	border: 1px solid ${(props) => props.theme.colors.pink};
 	border-radius: 4px;
 	background-image: url(${smallWaveSVG.src});
 `;

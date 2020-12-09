@@ -83,23 +83,23 @@ const Content = styled(FlexDivCol)`
 
 const StakedValue = styled(StatBox)`
 	.title {
-		color: ${(props) => props.theme.colors.brightBlue};
+		color: ${(props) => props.theme.colors.blue};
 	}
 `;
 
 const APY = styled(StatBox)`
 	.title {
-		color: ${(props) => props.theme.colors.brightGreen};
+		color: ${(props) => props.theme.colors.green};
 	}
 	.value {
-		text-shadow: ${(props) => props.theme.colors.brightGreenTextShadow};
+		text-shadow: ${(props) => props.theme.colors.greenTextShadow};
 		color: #073124;
 	}
 `;
 
 const ActiveDebt = styled(StatBox)`
 	.title {
-		color: ${(props) => props.theme.colors.brightPink};
+		color: ${(props) => props.theme.colors.pink};
 	}
 `;
 

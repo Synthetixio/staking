@@ -90,7 +90,7 @@ const Dot = styled.div<{ isActive: boolean }>`
 	${(props) =>
 		props.isActive &&
 		css`
-			color: ${props.theme.colors.brightBlue};
+			color: ${props.theme.colors.blue};
 			opacity: 1;
 			text-shadow: 0 0px 8px;
 		`}

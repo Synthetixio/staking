@@ -11,7 +11,7 @@ export const TabContainer = styled(FlexDivColCentered)`
 `;
 
 export const InputContainer = styled(FlexDivColCentered)`
-	background: ${(props) => props.theme.colors.darkBlue};
+	background: ${(props) => props.theme.colors.black};
 	position: relative;
 	width: 100%;
 	padding: 16px;
@@ -29,7 +29,7 @@ export const HeaderBox = styled(FlexDivRowCentered)`
 `;
 
 export const StyledSelect = styled(Select)`
-	border: ${(props) => `2px solid ${props.theme.colors.brightBlue}`};
+	border: ${(props) => `2px solid ${props.theme.colors.blue}`};
 	width: 100px;
 	justify-content: center;
 	border-radius: 4px;
@@ -37,9 +37,9 @@ export const StyledSelect = styled(Select)`
 	box-shadow: 0px 0px 10px rgba(0, 209, 255, 0.9);
 
 	.react-select__dropdown-indicator {
-		color: ${(props) => props.theme.colors.brightBlue};
+		color: ${(props) => props.theme.colors.blue};
 		&:hover {
-			color: ${(props) => props.theme.colors.brightBlue};
+			color: ${(props) => props.theme.colors.blue};
 		}
 	}
 	.react-select__single-value {
@@ -65,7 +65,7 @@ export const StyledInput = styled(Input)`
 	margin-top: 16px;
 
 	&:disabled {
-		color: ${(props) => props.theme.colors.gray10};
+		color: ${(props) => props.theme.colors.gray};
 	}
 `;
 
@@ -78,12 +78,12 @@ export const InputLocked = styled.p`
 export const DataRow = styled(FlexDivRowCentered)`
 	justify-content: space-between;
 	margin: 16px 32px;
-	border-bottom: ${(props) => `1px solid ${props.theme.colors.linedBlue}`};
+	border-bottom: ${(props) => `1px solid ${props.theme.colors.grayBlue}`};
 `;
 export const RowTitle = styled.p`
 	font-family: ${(props) => props.theme.fonts.interBold};
 	font-size: 12px;
-	color: ${(props) => props.theme.colors.gray10};
+	color: ${(props) => props.theme.colors.gray};
 	text-transform: uppercase;
 `;
 export const RowValue = styled.p`
@@ -113,7 +113,7 @@ export const Title = styled.p`
 `;
 export const Subtitle = styled.p`
 	font-family: ${(props) => props.theme.fonts.regular};
-	color: ${(props) => props.theme.colors.lightFont};
+	color: ${(props) => props.theme.colors.gray};
 	font-size: 14px;
 `;
 export const DataContainer = styled.div`
@@ -121,7 +121,7 @@ export const DataContainer = styled.div`
 `;
 export const StyledLink = styled.span`
 	${linkCSS}
-	color: ${(props) => props.theme.colors.brightBlue};
+	color: ${(props) => props.theme.colors.blue};
 `;
 
 export const ValueContainer = styled(FlexDivRowCentered)`

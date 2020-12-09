@@ -50,8 +50,8 @@ const HistoryPage = () => {
 
 const TxCount = styled(StatBox)`
 	.value {
-		text-shadow: ${(props) => props.theme.colors.brightBlueTextShadow};
-		color: ${(props) => props.theme.colors.darkBlue};
+		text-shadow: ${(props) => props.theme.colors.blueTextShadow};
+		color: ${(props) => props.theme.colors.black};
 	}
 `;
 

@@ -40,18 +40,18 @@ const StakingPage = () => {
 
 const StakedValue = styled(StatBox)`
 	.title {
-		color: ${(props) => props.theme.colors.brightBlue};
+		color: ${(props) => props.theme.colors.blue};
 	}
 `;
 const CRatio = styled(StatBox)`
 	.value {
-		text-shadow: ${(props) => props.theme.colors.brightBlueTextShadow};
-		color: ${(props) => props.theme.colors.darkBlue};
+		text-shadow: ${(props) => props.theme.colors.blueTextShadow};
+		color: ${(props) => props.theme.colors.black};
 	}
 `;
 const ActiveDebt = styled(StatBox)`
 	.title {
-		color: ${(props) => props.theme.colors.brightPink};
+		color: ${(props) => props.theme.colors.pink};
 	}
 `;
 

@@ -78,7 +78,7 @@ const GridBoxCopy = styled.p`
 	font-size: 12px;
 	max-width: 75%;
 	text-align: center;
-	color: ${(props) => props.theme.colors.silver};
+	color: ${(props) => props.theme.colors.gray};
 `;
 
 export default GridBox;

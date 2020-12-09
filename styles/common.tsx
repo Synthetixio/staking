@@ -211,7 +211,7 @@ export const StatsSection = styled(FlexDivRowCentered)`
 export const LineSpacer = styled.div`
 	height: 32px;
 	&:after {
-		background: ${(props) => props.theme.colors.linedBlue};
+		background: ${(props) => props.theme.colors.grayBlue};
 		height: 1px;
 		width: calc(100% - ${SIDE_NAV_WIDTH});
 		left: ${SIDE_NAV_WIDTH};
@@ -225,7 +225,7 @@ export const ErrorMessage = styled.p`
 	font-family: ${(props) => props.theme.fonts.interSemiBold};
 	text-align: center;
 	text-transform: capitalize;
-	color: ${(props) => props.theme.colors.brightPink};
+	color: ${(props) => props.theme.colors.pink};
 `;
 
 export const ModalContent = styled.div`
@@ -245,7 +245,7 @@ export const ModalItem = styled.div`
 export const ModalItemTitle = styled.div`
 	padding-bottom: 8px;
 	text-transform: uppercase;
-	color: ${(props) => props.theme.colors.gray10};
+	color: ${(props) => props.theme.colors.gray};
 	font-size: 12px;
 	font-family: ${(props) => props.theme.fonts.interBold};
 `;
@@ -271,7 +271,7 @@ export const TableNoResultsTitle = styled.div`
 
 export const TableNoResultsDesc = styled.div`
 	font-size: 14px;
-	color: ${(props) => props.theme.colors.gray10};
+	color: ${(props) => props.theme.colors.gray};
 `;
 
 export const TableNoResultsButtonContainer = styled.div`

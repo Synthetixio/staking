@@ -70,12 +70,12 @@ const Container = styled(FlexDivColCentered)`
 `;
 
 const InfoContainer = styled(FlexDivColCentered)`
-	border-bottom: 1px solid ${(props) => props.theme.colors.linedBlue};
+	border-bottom: 1px solid ${(props) => props.theme.colors.grayBlue};
 	width: 150px;
 	margin: 45px 0;
 	height: 100px;
 	&:first-child {
-		border-right: 1px solid ${(props) => props.theme.colors.linedBlue};
+		border-right: 1px solid ${(props) => props.theme.colors.grayBlue};
 	}
 `;
 
@@ -96,7 +96,7 @@ const InfoData = styled.div`
 const StyledExternalLink = styled(ExternalLink)`
 	margin-top: 25px;
 	font-family: ${(props) => props.theme.fonts.condensedMedium};
-	color: ${(props) => props.theme.colors.brightBlue};
+	color: ${(props) => props.theme.colors.blue};
 	font-size: 14px;
 `;
 

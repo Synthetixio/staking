@@ -75,16 +75,16 @@ const ButtonWrap = styled(FlexDivRowCentered)`
 `;
 
 const DismissButton = styled(BaseButton)`
-	background-color: ${(props) => props.theme.colors.darkBlue};
+	background-color: ${(props) => props.theme.colors.black};
 	color: ${(props) => props.theme.colors.white};
-	border: 1px solid ${(props) => props.theme.colors.borderLight};
+	border: 1px solid ${(props) => props.theme.colors.gray};
 	text-transform: uppercase;
 `;
 
 const SeeMoreButton = styled(BaseButton)`
-	background-color: ${(props) => props.theme.colors.lightBlue};
-	color: ${(props) => props.theme.colors.brightBlue};
-	border: 1px solid ${(props) => props.theme.colors.brightBlue};
+	background-color: ${(props) => props.theme.colors.blue};
+	color: ${(props) => props.theme.colors.blue};
+	border: 1px solid ${(props) => props.theme.colors.blue};
 `;
 
 export default ActionCompleted;

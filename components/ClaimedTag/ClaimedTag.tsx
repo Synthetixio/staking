@@ -14,8 +14,7 @@ const ClaimedTag: React.FC = ({ ...rest }) => {
 };
 
 const Tag = styled.span<{ isClaimed: boolean }>`
-	color: ${(props) =>
-		props.isClaimed ? props.theme.colors.brightGreen : props.theme.colors.silver};
+	color: ${(props) => (props.isClaimed ? props.theme.colors.green : props.theme.colors.gray)};
 	text-transform: uppercase;
 	font-size: 12px;
 	font-family: ${(props) => props.theme.fonts.condensedMedium};

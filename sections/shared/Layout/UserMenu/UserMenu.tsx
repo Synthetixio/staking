@@ -80,7 +80,7 @@ const WalletButton = styled(Button)`
 	align-items: center;
 	font-family: ${(props) => props.theme.fonts.mono};
 	background-color: ${(props) => props.theme.colors.mediumBlue};
-	border: 1px solid ${(props) => props.theme.colors.darkBlue};
+	border: 1px solid ${(props) => props.theme.colors.black};
 	color: ${(props) => props.theme.colors.white};
 	border-radius: 4px;
 `;

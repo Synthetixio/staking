@@ -135,7 +135,7 @@ const Title = styled.h1`
 const Subtitle = styled.h2`
 	${titleCSS};
 	font-size: 16px;
-	color: ${(props) => props.theme.colors.silver};
+	color: ${(props) => props.theme.colors.gray};
 `;
 
 const Links = styled(GridDivCenteredCol)`
@@ -148,7 +148,7 @@ const Links = styled(GridDivCenteredCol)`
 `;
 
 const StyledExternalLink = styled(ExternalLink)`
-	color: ${(props) => props.theme.colors.silver};
+	color: ${(props) => props.theme.colors.gray};
 	&:hover {
 		color: ${(props) => props.theme.colors.white};
 	}

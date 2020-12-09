@@ -83,23 +83,23 @@ const StyledTabButton = styled.button<TabProps>`
 	font-family: ${(props) => props.theme.fonts.condensedBold};
 	padding: 0;
 	background: ${(props) =>
-		props.active ? props.theme.colors.backgroundBlue : props.theme.colors.darkBlue};
+		props.active ? props.theme.colors.backgroundBlue : props.theme.colors.black};
 	color: ${(props) => (props.active ? props.theme.colors.white : props.theme.colors.gray)};
 
 	${(props) =>
 		props.blue
 			? css`
-					border-top: ${props.active ? `2px solid ${props.theme.colors.brightBlue}` : 'none'};
+					border-top: ${props.active ? `2px solid ${props.theme.colors.blue}` : 'none'};
 			  `
 			: css`
-					border-top: ${props.active ? `2px solid ${props.theme.colors.brightOrange}` : 'none'};
+					border-top: ${props.active ? `2px solid ${props.theme.colors.orange}` : 'none'};
 			  `}
 
 	&:hover {
-		color: ${(props) => (props.active ? props.theme.colors.white : props.theme.colors.brightPink)};
+		color: ${(props) => (props.active ? props.theme.colors.white : props.theme.colors.pink)};
 		background: ${(props) => props.theme.colors.backgroundBlue};
 
-		border-top: 2px solid ${(props) => (props.active ? 'none' : props.theme.colors.brightPink)};
+		border-top: 2px solid ${(props) => (props.active ? 'none' : props.theme.colors.pink)};
 	}
 	height: 60px;
 	width: ${(props) => 100 / props.numberTabs}%;
