@@ -71,6 +71,7 @@ const useIBTCPoolQuery_1 = (options?: QueryConfig<LiquidityPoolData>) => {
 				price,
 				balance,
 				periodFinish: Number(periodFinish) * 1000,
+				duration: Number(duration) * 1000,
 				rewards,
 				staked,
 				allowance,

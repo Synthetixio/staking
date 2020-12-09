@@ -22,6 +22,10 @@
 		},
 		"confirm-transaction": {
 			"title": "Confirm Transaction",
+			"approve": {
+				"approving": "APPROVING",
+				"contract": "{{synth}} CONTRACT"
+			},
 			"minting": {
 				"from": "Staking",
 				"to": "Minting"

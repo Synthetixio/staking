@@ -9,4 +9,5 @@ export type LiquidityPoolData = {
 	rewards: number;
 	staked: number;
 	allowance: number;
+	duration: number;
 };

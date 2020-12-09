@@ -5,11 +5,18 @@ import { Svg } from 'react-optimized-image';
 
 import Button from 'components/Button';
 import { zIndex } from 'constants/ui';
-import { FlexDivColCentered } from 'styles/common';
 import LockSVG from 'assets/svg/app/lock.svg';
+import {
+	FlexDivColCentered,
+	ModalContent,
+	ModalItem,
+	ModalItemTitle,
+	ModalItemText,
+} from 'styles/common';
 
 import { Label, StyledLink, StyledButton } from '../../common';
 import { CurrencyKey } from 'constants/currency';
+import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal/TxConfirmationModal';
 
 type ApproveProps = {
 	synth: CurrencyKey;
@@ -17,34 +24,54 @@ type ApproveProps = {
 
 const Approve: FC<ApproveProps> = ({ synth }) => {
 	const { t } = useTranslation();
-	const [txError, setTxError] = useState<boolean>(false);
+	const [txError, setTxError] = useState<string | null>(null);
+	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 
 	return (
-		<OverlayContainer title="">
-			<InnerContainer>
-				<Svg src={LockSVG} />
-				<Label>
-					<Trans
-						i18nKey="modals.approve.description"
-						values={{
-							synth,
-						}}
-						components={[<StyledLink />]}
-					/>
-					<PaddedButton variant="primary" onClick={() => console.log('set allowance')}>
-						{t('modals.approve.button')}
-					</PaddedButton>
-				</Label>
-			</InnerContainer>
-			{txError && (
-				<Actions>
-					<Message>{t('common.transaction.error')}</Message>
-					<MessageButton onClick={() => console.log('retry')}>
-						{t('common.transaction.reattempt')}
-					</MessageButton>
-				</Actions>
+		<>
+			<OverlayContainer title="">
+				<InnerContainer>
+					<Svg src={LockSVG} />
+					<Label>
+						<Trans
+							i18nKey="modals.approve.description"
+							values={{
+								synth,
+							}}
+							components={[<StyledLink />]}
+						/>
+						<PaddedButton variant="primary" onClick={() => setTxModalOpen(true)}>
+							{t('modals.approve.button')}
+						</PaddedButton>
+					</Label>
+				</InnerContainer>
+				{txError && (
+					<Actions>
+						<Message>{t('common.transaction.error')}</Message>
+						<MessageButton onClick={() => console.log('retry')}>
+							{t('common.transaction.reattempt')}
+						</MessageButton>
+					</Actions>
+				)}
+			</OverlayContainer>
+			{txModalOpen && (
+				<TxConfirmationModal
+					onDismiss={() => setTxModalOpen(false)}
+					txError={txError}
+					attemptRetry={() => console.log('retry')}
+					content={
+						<ModalContent>
+							<ModalItem>
+								<ModalItemTitle>{t('modals.confirm-transaction.approve.approving')}</ModalItemTitle>
+								<ModalItemText>
+									{t('modals.confirm-transaction.approve.contract', { synth })}
+								</ModalItemText>
+							</ModalItem>
+						</ModalContent>
+					}
+				/>
 			)}
-		</OverlayContainer>
+		</>
 	);
 };
 
@@ -53,7 +80,7 @@ const OverlayContainer = styled(FlexDivColCentered)`
 	justify-content: space-around;
 	position: absolute;
 	background-color: rgba(0, 0, 0, 0.8);
-	width: 530px;
+	width: 555px;
 	height: 370px;
 `;
 
