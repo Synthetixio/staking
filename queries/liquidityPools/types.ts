@@ -6,9 +6,7 @@ export type LiquidityPoolData = {
 	price: number;
 	balance: number;
 	periodFinish: number;
-	// staked: {
-	// 	balance: number;
-	// 	asset: CurrencyKey;
-	// };
-	// rewards: number;
+	rewards: number;
+	staked: number;
+	allowance: number;
 };

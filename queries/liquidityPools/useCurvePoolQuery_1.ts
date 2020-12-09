@@ -76,6 +76,9 @@ const useCurvePoolQuery_1 = (options?: QueryConfig<CurveData>) => {
 				gaugeRelativeWeight,
 				curvePrice,
 				swapData,
+				curveRewards,
+				curveStaked,
+				// curveAllowance,
 			] = await Promise.all([
 				getDuration(),
 				contract.rewardRate(),
@@ -87,20 +90,35 @@ const useCurvePoolQuery_1 = (options?: QueryConfig<CurveData>) => {
 				curveGaugeControllerContract.gauge_relative_weight(curveSusdGauge.address),
 				getCurveTokenPrice(),
 				axios.get('https://www.curve.fi/raw-stats/apys.json'),
+				contract.earned(walletAddress),
+				contract.balanceOf(walletAddress),
+				// curveSusdPoolContract.allowance(walletAddress, address),
 			]);
-
+			const curveAllowance = 0;
 			const durationInWeeks = Number(duration) / 3600 / 24 / 7;
 			const isPeriodFinished = new Date().getTime() > Number(periodFinish) * 1000;
 			const distribution = isPeriodFinished
 				? 0
 				: Math.trunc(Number(duration) * (rate / 1e18)) / durationInWeeks;
 
-			const [balance, price, inflationRate, workingSupply, relativeWeight] = [
+			const [
+				balance,
+				price,
+				inflationRate,
+				workingSupply,
+				relativeWeight,
+				rewards,
+				staked,
+				allowance,
+			] = [
 				curveSusdBalance,
 				curveSusdTokenPrice,
 				curveInflationRate,
 				curveWorkingSupply,
 				gaugeRelativeWeight,
+				curveRewards,
+				curveStaked,
+				curveAllowance,
 			].map((data) => Number(synthetix.js?.utils.formatEther(data)));
 
 			const curveRate =
@@ -116,6 +134,9 @@ const useCurvePoolQuery_1 = (options?: QueryConfig<CurveData>) => {
 				balance,
 				swapAPY,
 				rewardsAPY,
+				rewards,
+				staked,
+				allowance,
 			};
 		},
 		{
