@@ -11,7 +11,7 @@ export default {
 	green: '#31D8A4',
 	orange: '#FC8738',
 	yellow: '#FFD75C',
-	red: '#CB366D',
+	red: '#FF1E39',
 
 	// ui
 	black: '#06061B',
