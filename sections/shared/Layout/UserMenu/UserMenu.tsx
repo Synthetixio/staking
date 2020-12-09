@@ -14,50 +14,39 @@ import WalletOptionsModal from 'sections/shared/modals/WalletOptionsModal';
 import SettingsModal from 'sections/shared/modals/SettingsModal';
 
 import MenuIcon from 'assets/svg/app/menu.svg';
-import CaretDownIcon from 'assets/svg/app/caret-down.svg';
 
-type UserMenuProps = {
-	isTextButton?: boolean;
-};
-
-const UserMenu: FC<UserMenuProps> = ({ isTextButton }) => {
+const UserMenu: FC = () => {
 	const { t } = useTranslation();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const { connectWallet } = Connector.useContainer();
 	const [walletOptionsModalOpened, setWalletOptionsModalOpened] = useState<boolean>(false);
 	const [settingsModalOpened, setSettingsModalOpened] = useState<boolean>(false);
 	const truncatedWalletAddress = useRecoilValue(truncatedWalletAddressState);
+
 	return (
 		<>
-			<Container>
-				<FlexDivCentered>
-					<Menu>
-						<MenuButton
-							onClick={() => {
-								setSettingsModalOpened(!settingsModalOpened);
-							}}
-							isActive={settingsModalOpened}
-						>
-							<Svg src={MenuIcon} />
-						</MenuButton>
-					</Menu>
-					{isWalletConnected ? (
-						<WalletButton
-							size="sm"
-							variant="outline"
-							onClick={() => setWalletOptionsModalOpened(true)}
-						>
-							<StyledConnectionDot />
-							{truncatedWalletAddress}
-							<Svg src={CaretDownIcon} />
-						</WalletButton>
-					) : (
-						<Button variant={isTextButton ? 'text' : 'primary'} onClick={connectWallet}>
-							{t('common.wallet.connect-wallet')}
-						</Button>
-					)}
-				</FlexDivCentered>
-			</Container>
+			<FlexDivCentered>
+				<Menu>
+					<MenuButton
+						onClick={() => {
+							setSettingsModalOpened(!settingsModalOpened);
+						}}
+						isActive={settingsModalOpened}
+					>
+						<Svg src={MenuIcon} />
+					</MenuButton>
+				</Menu>
+				{isWalletConnected ? (
+					<WalletButton variant="solid" onClick={() => setWalletOptionsModalOpened(true)}>
+						<StyledConnectionDot />
+						{truncatedWalletAddress}
+					</WalletButton>
+				) : (
+					<Button variant="secondary" onClick={connectWallet}>
+						{t('common.wallet.connect-wallet')}
+					</Button>
+				)}
+			</FlexDivCentered>
 			{walletOptionsModalOpened && (
 				<WalletOptionsModal onDismiss={() => setWalletOptionsModalOpened(false)} />
 			)}
@@ -65,8 +54,6 @@ const UserMenu: FC<UserMenuProps> = ({ isTextButton }) => {
 		</>
 	);
 };
-
-const Container = styled.div``;
 
 const Menu = styled.div`
 	padding-right: 26px;
@@ -78,15 +65,11 @@ const Menu = styled.div`
 const WalletButton = styled(Button)`
 	display: inline-flex;
 	align-items: center;
-	font-family: ${(props) => props.theme.fonts.mono};
-	background-color: ${(props) => props.theme.colors.mediumBlue};
-	border: 1px solid ${(props) => props.theme.colors.black};
-	color: ${(props) => props.theme.colors.white};
-	border-radius: 4px;
 `;
 
 const StyledConnectionDot = styled(ConnectionDot)`
-	margin-right: 6px;
+	margin-right: 12px;
+	box-shadow: 0px 0px 15px rgba(68, 239, 193, 0.6);
 `;
 
 const MenuButton = styled.button<{ isActive: boolean }>`
@@ -97,12 +80,5 @@ const MenuButton = styled.button<{ isActive: boolean }>`
 	}
 	padding: 5px;
 `;
-
-// @ts-ignore
-// const StyledCaretDownIcon = styled(CaretDownIcon)`
-// 	width: 8px;
-// 	color: ${(props) => props.theme.colors.white};
-// 	margin-left: 7px;
-// `;
 
 export default UserMenu;

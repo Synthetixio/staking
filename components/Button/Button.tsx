@@ -1,28 +1,30 @@
 import styled, { css } from 'styled-components';
 import { resetButtonCSS } from 'styles/common';
+import Color from 'color';
 
 type ButtonProps = {
 	size?: 'sm' | 'md' | 'lg' | 'xl';
-	variant: 'primary' | 'secondary' | 'outline' | 'alt' | 'danger' | 'text';
+	variant: 'primary' | 'secondary' | 'solid' | 'text';
 	isActive?: boolean;
 	isRounded?: boolean;
 };
 
 const Button = styled.button<ButtonProps>`
-	font-family: ${(props) => props.theme.fonts.condensedBold};
+	font-family: ${(props) => props.theme.fonts.condensedMedium};
 	height: 32px;
+	line-height: 32px;
 	font-size: 12px;
 	padding: 0 12px;
-	border-radius: ${(props) => (props.isRounded ? '100px' : '4px')};
 	border: none;
+	border-radius: ${(props) => (props.isRounded ? '100px' : '4px')};
 	white-space: nowrap;
 	cursor: pointer;
 	outline: none;
     color: ${(props) => props.theme.colors.white};
 	text-transform: capitalize;
 
-  &:disabled {
-		opacity: 0.2;
+  	&:disabled {
+		background: ${(props) => Color(props.theme.colors.blue).alpha(0.5).rgb().string()};
 		color: ${(props) => props.theme.colors.white};
 		cursor: default;
 	}
@@ -31,12 +33,14 @@ const Button = styled.button<ButtonProps>`
 		props.size === 'sm' &&
 		css`
 			height: 24px;
+			line-height: 24px;
 		`}
 
 	${(props) =>
 		props.size === 'md' &&
 		css`
 			height: 32px;
+			line-height: 32px;
 		`}
 
 	${(props) =>
@@ -44,6 +48,7 @@ const Button = styled.button<ButtonProps>`
 		css`
 			padding: 0 40px;
 			height: 40px;
+			line-height: 40px;
 		`}		
 
 
@@ -51,6 +56,7 @@ const Button = styled.button<ButtonProps>`
 		props.size === 'xl' &&
 		css`
 			height: 48px;
+			line-height: 48px;
 		`}				
 
 	${(props) =>
@@ -72,8 +78,8 @@ const Button = styled.button<ButtonProps>`
 		${(props) =>
 			props.variant === 'secondary' &&
 			css`
-				color: ${(props) => props.theme.colors.black};
-				background-color: ${(props) => props.theme.colors.blue};
+				color: ${(props) => props.theme.colors.blue};
+				background: ${(props) => props.theme.colors.grayBlue};
 				box-shadow: 0px 0px 10px rgba(0, 209, 255, 0.9);
 				border: 1px solid ${(props) => props.theme.colors.blue};
 				&:hover {
@@ -84,32 +90,19 @@ const Button = styled.button<ButtonProps>`
 				}
 			`}	
 
-		
-		${(props) =>
-			props.variant === 'alt' &&
-			css`
-				color: ${(props) => props.theme.colors.white};
-				background: ${(props) => props.theme.colors.orange};
-				box-shadow: 0px 0px 10px rgba(252, 135, 56, 0.6);
-				&:hover {
-					&:not(:disabled) {
-						background: ${(props) => props.theme.colors.orange};
-					}
-				}
-			`}		
 
 		${(props) =>
-			props.variant === 'outline' &&
+			props.variant === 'solid' &&
 			css`
-				border-radius: 2px;
 				color: ${(props) => props.theme.colors.white};
-				background-color: ${(props) => props.theme.colors.black};
-				border: 1px solid ${(props) => props.theme.colors.mediumBlue};
+				background: ${(props) => props.theme.colors.navy};
 				&:hover {
 					&:not(:disabled) {
-						color: ${(props) => props.theme.colors.white};
-						background-color: ${(props) => props.theme.colors.mediumBlue};
+						background: ${(props) => props.theme.colors.mediumBlue};
 					}
+				}
+				&:disabled {
+					background: ${(props) => Color(props.theme.colors.navy).alpha(0.2).rgb().string()};
 				}
 			`}		
 
