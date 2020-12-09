@@ -53,11 +53,11 @@ const StyledBaseModal = styled(BaseModal)`
 	.card-header {
 		font-size: 12px;
 		font-family: ${(props) => props.theme.fonts.interBold};
-		background-color: ${(props) => props.theme.colors.mediumBlue};
+		background-color: ${(props) => props.theme.colors.navy};
 	}
 	.card-body {
 		padding: 24px;
-		background-color: ${(props) => props.theme.colors.mediumBlue};
+		background-color: ${(props) => props.theme.colors.navy};
 	}
 `;
 
