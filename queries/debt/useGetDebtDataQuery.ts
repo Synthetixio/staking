@@ -40,9 +40,8 @@ const useGetDebtDataQuery = (options?: QueryConfig<WalletDebtData>) => {
 				transferable,
 				debtBalance,
 				collateral,
-				maxIssuableSynths,
+				issuableSynths,
 			] = result.map((item) => Number(utils.formatEther(item)));
-			const issuableSynths = Math.max(0, maxIssuableSynths - debtBalance);
 			return {
 				targetCRatio,
 				currentCRatio,

@@ -200,12 +200,7 @@ const BurnTab: React.FC = () => {
 				isLocked = true;
 				break;
 			case BurnActionType.TARGET:
-				const maxIssuableSynths = getMintAmount(
-					targetCRatio,
-					unstakedCollateral.toString(),
-					SNXRate
-				);
-				const calculatedTargetBurn = Math.max(debtBalance.minus(maxIssuableSynths).toNumber(), 0);
+				const calculatedTargetBurn = Math.max(debtBalance.minus(issuableSynths).toNumber(), 0);
 				onBurnChange(calculatedTargetBurn.toString());
 				onSubmit = () => {
 					handleBurn(true);
