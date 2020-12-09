@@ -16,6 +16,10 @@
 				"language": "language"
 			}
 		},
+		"approve": {
+			"description": "You must approve your {{synth}} tokens before proceeding. <0>Learn more.<0>",
+			"button": "APPROVE {{synth}}"
+		},
 		"confirm-transaction": {
 			"title": "Confirm Transaction",
 			"minting": {

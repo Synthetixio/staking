@@ -7,12 +7,14 @@ import StructuredTab from 'components/StructuredTab';
 import { FlexDivCentered, FlexDivColCentered } from 'styles/common';
 import { CurrencyKey } from 'constants/currency';
 import smallWaveSVG from 'assets/svg/app/small-wave.svg';
-import InnerTab from './InnerTab';
-import { TabContainer, Label, StyledButton } from '../common';
 import snxSVG from 'assets/svg/incentives/pool-snx.svg';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import { CRYPTO_CURRENCY_MAP } from 'constants/currency';
 import { formatCurrency, formatFiatCurrency } from 'utils/formatters/number';
+
+import InnerTab from './InnerTab';
+import { TabContainer, Label, StyledButton } from '../common';
+import Approve from './Approve';
 
 export enum Staking {
 	STAKE = 'STAKE',
@@ -30,15 +32,19 @@ interface LPTabProps {
 const LPTab: FC<LPTabProps> = ({ icon, asset, title, tokenRewards, allowance }) => {
 	const { t } = useTranslation();
 	const [stakeAmount, setStakeAmount] = useState<number | null>(null);
+	const [showApproveOverlayModal, setShowApproveOverlayModal] = useState<boolean>(false);
 	const [unstakeAmount, setUnstakeAmount] = useState<number | null>(null);
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const SNXRate = exchangeRatesQuery.data?.SNX ?? 0;
 
 	useEffect(() => {
 		if (allowance === 0) {
-			console.log('need to set an allowance');
+			setShowApproveOverlayModal(true);
 		} else if (allowance == null) {
+			// NOTe maybe do a loading state in this case
 			console.log('this is the allowance null case to ignore');
+		} else if (allowance > 0) {
+			setShowApproveOverlayModal(false);
 		}
 	}, [allowance]);
 
@@ -124,6 +130,7 @@ const LPTab: FC<LPTabProps> = ({ icon, asset, title, tokenRewards, allowance }) 
 					</StyledButton>
 				</RewardsContainer>
 			</FlexDivCentered>
+			{showApproveOverlayModal ? <Approve synth={asset} /> : null}
 		</TabContainer>
 	);
 };
