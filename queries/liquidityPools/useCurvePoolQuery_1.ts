@@ -123,7 +123,7 @@ const useCurvePoolQuery_1 = (options?: QueryConfig<CurveData>) => {
 
 			const curveRate =
 				(((inflationRate * relativeWeight * 31536000) / workingSupply) * 0.4) / curveSusdTokenPrice;
-			const rewardsAPY = curveRate * curvePrice;
+			const rewardsAPY = curveRate * curvePrice * 1e18;
 			const swapAPY = swapData?.data?.apy?.day?.susd ?? 0;
 
 			return {
@@ -136,6 +136,7 @@ const useCurvePoolQuery_1 = (options?: QueryConfig<CurveData>) => {
 				rewardsAPY,
 				rewards,
 				staked,
+				duration: Number(duration) * 1000,
 				allowance,
 			};
 		},

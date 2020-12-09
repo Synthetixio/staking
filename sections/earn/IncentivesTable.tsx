@@ -26,9 +26,11 @@ export type EarnItem = {
 		asset: string; // use Cyrpto type
 	};
 	rewards: number;
+	periodStarted: number;
 	periodFinish: number;
 	incentivesIndex: number;
 	claimed: boolean | string;
+	now: number;
 };
 
 interface IncentivesTableProps {
@@ -137,7 +139,9 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab, 
 						})}
 					</Title>
 					<Subtitle>
-						{cellProps.row.original.claimed !== NOT_APPLICABLE && cellProps.row.original.claimed
+						{cellProps.row.original.claimed === NOT_APPLICABLE
+							? ''
+							: cellProps.row.original.claimed
 							? t('earn.incentives.options.rewards.claimed')
 							: t('earn.incentives.options.rewards.claimable')}
 					</Subtitle>
@@ -153,7 +157,14 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab, 
 				<ClickableFlexDivColCentered
 					onClick={() => setActiveTab(cellProps.row.original.incentivesIndex)}
 				>
-					<StyledProgressBar percentage={0.5} borderColor="transparent" fillColor="transparent" />
+					<StyledProgressBar
+						percentage={
+							(cellProps.row.original.now - cellProps.row.original.periodStarted) /
+							(cellProps.row.original.periodFinish - cellProps.row.original.periodStarted)
+						}
+						borderColor="transparent"
+						fillColor="transparent"
+					/>
 					<Subtitle>
 						<Countdown date={cellProps.value} />
 					</Subtitle>

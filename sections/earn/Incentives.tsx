@@ -23,11 +23,6 @@ import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import LPTab from './LPTab';
 import { StyledLink } from './common';
 
-// type APRFields = {
-// 	price: number;
-// 	balanceOf: number;
-// };
-
 export const NOT_APPLICABLE = 'n/a';
 
 type IncentivesProps = {
@@ -55,7 +50,7 @@ const Incentives: FC<IncentivesProps> = ({
 	const useiBTCPool = useIBTCPoolQuery_1();
 	const useCurvePool = useCurvePoolQuery_1();
 	const useSNXLockedValue = useSNXLockedValueQuery();
-	const { nextFeePeriodStarts } = useFeePeriodTimeAndProgress();
+	const { nextFeePeriodStarts, currentFeePeriodStarted } = useFeePeriodTimeAndProgress();
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const SNXRate = exchangeRatesQuery.data?.SNX ?? 0;
 
@@ -71,6 +66,8 @@ const Incentives: FC<IncentivesProps> = ({
 		(useCurvePool.data?.swapAPY ?? 0) +
 		(useCurvePool.data?.rewardsAPY ?? 0);
 
+	const now = useMemo(() => new Date().getTime(), []);
+
 	const incentives = useMemo(
 		() => [
 			{
@@ -84,9 +81,11 @@ const Incentives: FC<IncentivesProps> = ({
 					asset: CRYPTO_CURRENCY_MAP.SNX,
 				},
 				rewards: stakingRewards.toNumber(),
+				periodStarted: currentFeePeriodStarted.getTime(),
 				periodFinish: nextFeePeriodStarts.getTime(),
 				incentivesIndex: 0,
 				claimed: claimedSNX,
+				now,
 			},
 			{
 				icon: () => <Svg src={curveSVG} />,
@@ -99,9 +98,11 @@ const Incentives: FC<IncentivesProps> = ({
 					asset: SYNTHS_MAP.sUSD,
 				},
 				rewards: useCurvePool.data?.rewards ?? 0,
+				periodStarted: now - (useCurvePool.data?.duration ?? 0),
 				periodFinish: useCurvePool.data?.periodFinish ?? 0,
 				incentivesIndex: 1,
-				claimed: NOT_APPLICABLE,
+				claimed: useCurvePool.data?.rewards ?? 0 > 0 ? false : NOT_APPLICABLE,
+				now,
 			},
 			{
 				icon: () => <Svg src={iETHSVG} />,
@@ -114,9 +115,11 @@ const Incentives: FC<IncentivesProps> = ({
 					asset: SYNTHS_MAP.iETH,
 				},
 				rewards: useiETHPool.data?.rewards ?? 0,
+				periodStarted: now - (useiETHPool.data?.duration ?? 0),
 				periodFinish: useiETHPool.data?.periodFinish ?? 0,
 				incentivesIndex: 2,
-				claimed: NOT_APPLICABLE,
+				claimed: useiETHPool.data?.rewards ?? 0 > 0 ? false : NOT_APPLICABLE,
+				now,
 			},
 			{
 				icon: () => <Svg src={iBTCSVG} />,
@@ -129,9 +132,11 @@ const Incentives: FC<IncentivesProps> = ({
 					asset: SYNTHS_MAP.iBTC,
 				},
 				rewards: useiBTCPool.data?.rewards ?? 0,
+				periodStarted: now - (useiBTCPool.data?.duration ?? 0),
 				periodFinish: useiBTCPool.data?.periodFinish ?? 0,
 				incentivesIndex: 3,
-				claimed: NOT_APPLICABLE,
+				claimed: useiBTCPool.data?.rewards ?? 0 > 0 ? false : NOT_APPLICABLE,
+				now,
 			},
 		],
 		[

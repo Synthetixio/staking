@@ -73,6 +73,7 @@ const useIETHPoolQuery_1 = (options?: QueryConfig<LiquidityPoolData>) => {
 				periodFinish: Number(periodFinish) * 1000,
 				rewards,
 				staked,
+				duration: Number(duration) * 1000,
 				allowance,
 			};
 		},
