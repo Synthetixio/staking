@@ -58,8 +58,10 @@ const ClaimTab: React.FC<ClaimTabProps> = ({
 					);
 					setGasLimitEstimate(normalizeGasLimit(Number(gasEstimate)));
 				} catch (error) {
-					setError(error.message);
-					setGasLimitEstimate(null);
+					if (!error.message.includes('already claimed')) {
+						setError(error.message);
+						setGasLimitEstimate(null);
+					}
 				}
 			}
 		};
@@ -128,18 +130,16 @@ const ClaimTab: React.FC<ClaimTabProps> = ({
 				</ValueBoxWrapper>
 				<TotalValueWrapper>
 					<Subtext>{t('earn.incentives.options.snx.total-value')}</Subtext>
-					<Value>$1000</Value>
+					<Value>
+						{formatFiatCurrency(totalRewards, {
+							sign: '$',
+						})}
+					</Value>
 				</TotalValueWrapper>
 				{error && <ErrorMessage>{error}</ErrorMessage>}
-				<StyledButton variant="primary" onClick={handleClaim} disabled={error != null || claimed}>
-					{claimed
-						? t('earn.actions.claim.claimed-button')
-						: t('earn.actions.claim.claim-button', {
-								totalValue: formatFiatCurrency(totalRewards, {
-									sign: '$',
-								}),
-						  })}
-				</StyledButton>
+				<PaddedButton variant="primary" onClick={handleClaim} disabled={error != null || claimed}>
+					{claimed ? t('earn.actions.claim.claimed-button') : t('earn.actions.claim.claim-button')}
+				</PaddedButton>
 				<GasSelector gasLimitEstimate={gasLimitEstimate} setGasPrice={setGasPrice} />
 			</InnerContainer>
 		</TabContainer>
@@ -153,6 +153,7 @@ const InnerContainer = styled(FlexDivColCentered)`
 	border: 1px solid ${(props) => props.theme.colors.pink};
 	border-radius: 4px;
 	background-image: url(${largeWaveSVG.src});
+	background-size: cover;
 `;
 
 const ValueBoxWrapper = styled(FlexDivCentered)`
@@ -161,6 +162,10 @@ const ValueBoxWrapper = styled(FlexDivCentered)`
 
 const ValueBox = styled(FlexDivColCentered)`
 	width: 150px;
+`;
+
+const PaddedButton = styled(StyledButton)`
+	margin-top: 20px;
 `;
 
 export default ClaimTab;

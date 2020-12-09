@@ -235,12 +235,14 @@
 		},
 		"actions": {
 			"available": "AVAILABLE",
+			"max": "MAX",
 			"claim": {
 				"title": "CLAIM",
 				"exchange-rewards": "Synth exchange rewards",
 				"staking-rewards": "SNX staking rewards",
-				"claim-button": "Claim {{totalValue}}",
-				"claimed-button": "Already claimed"
+				"claim-button": "CLAIM REWARDS",
+				"claim-snx-button": "Claim SNX",
+				"claimed-button": "ALREADY CLAIMED"
 			},
 			"lp": {
 				"title-curve": "CURVE REWARDS",
@@ -253,7 +255,7 @@
 			},
 			"unstake": {
 				"title": "UNSTAKE",
-				"stake-button": "UNSTAKE {{asset}}"
+				"unstake-button": "UNSTAKE {{asset}}"
 			},
 			"rewards": {
 				"title": "REWARDS"
