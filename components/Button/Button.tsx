@@ -63,7 +63,6 @@ const Button = styled.button<ButtonProps>`
 			&:hover {
 				&:not(:disabled) {
 					background: ${(props) => props.theme.colors.blueHover};
-					color: ${(props) => props.theme.colors.blue};
 					box-shadow: 0px 0px 10px rgba(0, 209, 255, 0.9);
 					border: 1px solid ${(props) => props.theme.colors.blue};
 				}

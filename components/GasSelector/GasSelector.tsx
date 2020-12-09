@@ -129,8 +129,6 @@ const GasSelector: React.FC<GasSelectorProps> = ({ gasLimitEstimate, setGasPrice
 	);
 };
 
-export default GasSelector;
-
 const Container = styled(FlexDivRow)`
 	width: 100%;
 	justify-content: space-between;
@@ -152,7 +150,7 @@ const GasPriceText = styled.span`
 `;
 
 const GasPriceTooltip = styled(Tippy)`
-	background: ${(props) => props.theme.colors.purple};
+	background: ${(props) => props.theme.colors.navy};
 	border: 0.5px solid ${(props) => props.theme.colors.navy};
 	border-radius: 4px;
 	width: 120px;
@@ -205,3 +203,5 @@ const StyledGasEditButton = styled.span`
 	color: ${(props) => props.theme.colors.blue};
 	text-transform: uppercase;
 `;
+
+export default GasSelector;

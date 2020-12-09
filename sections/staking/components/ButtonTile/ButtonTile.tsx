@@ -18,7 +18,6 @@ const ButtonTile: React.FC<ButtonTileProps> = ({
 	disabled = false,
 	...rest
 }) => {
-	console.log(disabled);
 	return (
 		<Container disabled={disabled} onClick={() => !disabled && onAction()} {...rest}>
 			<Title disabled={disabled} className="tile-title">
