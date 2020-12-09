@@ -45,7 +45,7 @@ const Container = styled(FlexDivColCentered)<{ disabled: boolean }>`
 		!props.disabled &&
 		css`
 			&:hover {
-				background: ${(props) => props.theme.colors.mediumBlue};
+				background: ${(props) => props.theme.colors.mediumBlueHover};
 				transition: background-color 0.5s;
 			}
 		`}

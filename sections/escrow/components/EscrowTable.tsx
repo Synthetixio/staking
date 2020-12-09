@@ -72,7 +72,7 @@ const EscrowTable: FC<EscrowTableProps> = ({ data, isLoaded }) => {
 };
 
 const Container = styled.div`
-	background: ${(props) => props.theme.colors.mediumBlue};
+	background: ${(props) => props.theme.colors.navy};
 	padding: 16px;
 `;
 

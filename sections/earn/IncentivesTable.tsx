@@ -181,7 +181,7 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab, 
 };
 
 const Container = styled.div<{ activeTab: number | null }>`
-	background: ${(props) => props.theme.colors.mediumBlue};
+	background: ${(props) => props.theme.colors.navy};
 	width: ${(props) => (props.activeTab == null ? '100%' : '40%')};
 `;
 

@@ -196,7 +196,7 @@ const Incentives: FC<IncentivesProps> = ({
 
 const TabContainer = styled.div`
 	width: 60%;
-	background-color: ${(props) => props.theme.colors.mediumBlue};
+	background-color: ${(props) => props.theme.colors.navy};
 `;
 
 export default Incentives;

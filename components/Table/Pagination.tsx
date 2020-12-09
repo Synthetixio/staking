@@ -63,7 +63,7 @@ const PageInfo = styled.span`
 
 const PaginationContainer = styled(GridDivCenteredCol)`
 	grid-template-columns: auto 1fr auto;
-	background-color: ${(props) => props.theme.colors.mediumBlue};
+	background-color: ${(props) => props.theme.colors.navy};
 	padding: 13px 12px;
 	border-bottom-left-radius: 4px;
 	border-bottom-right-radius: 4px;
