@@ -420,7 +420,8 @@
 	},
 	"system-status": {
 		"page-title": "Maintenance | Staking",
-		"title": "Staking is currently down for maintenance",
+		"title-line1": "Down for",
+		"title-line2": "maintenance.",
 		"subtitle": "We apologise for any inconvenience caused, it will be back shortly."
 	}
 }
