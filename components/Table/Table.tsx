@@ -233,22 +233,22 @@ const ReactTable = styled.div<{ palette: TablePalette }>`
 				height: ${CARD_HEIGHT};
 			}
 			${TableRow} {
-				background-color: ${(props) => props.theme.colors.mediumBlue};
+				background-color: ${(props) => props.theme.colors.navy};
 				border-bottom: 1px solid ${(props) => props.theme.colors.grayBlue};
-				&:last-child {
-					border-bottom: 0;
-				}
 			}
 			${TableCellHead} {
 				color: ${(props) => props.theme.colors.white};
-				background-color: ${(props) => props.theme.colors.mediumBlue};
+				background-color: ${(props) => props.theme.colors.navy};
 				font-family: ${(props) => props.theme.fonts.condensedBold};
 				color: ${(props) => props.theme.colors.gray};
 				text-transform: uppercase;
 				font-size: 12px;
 			}
 			${TableBodyRow} {
-				background-color: ${(props) => props.theme.colors.mediumBlue};
+				background-color: ${(props) => props.theme.colors.navy};
+				&:last-child {
+					border-bottom: 0;
+				}
 			}
 		`}
 `;

@@ -168,10 +168,10 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab, 
 				isLoading={!isLoaded}
 				noResultsMessage={
 					isLoaded && data.length === 0 ? (
-						<TableNoResults>
+						<StyledTableNoResults>
 							<Svg src={NoNotificationIcon} />
 							{t('escrow.table.no-results')}
-						</TableNoResults>
+						</StyledTableNoResults>
 					) : undefined
 				}
 				showPagination={true}
@@ -204,10 +204,10 @@ const StyledTable = styled(Table)`
 	}
 `;
 
-const TableNoResults = styled(GridDivCenteredRow)`
+const StyledTableNoResults = styled(GridDivCenteredRow)`
 	padding: 50px 0;
 	justify-content: center;
-	background-color: ${(props) => props.theme.colors.mediumBlue};
+	background-color: ${(props) => props.theme.colors.navy};
 	margin-top: -2px;
 	justify-items: center;
 	grid-gap: 10px;

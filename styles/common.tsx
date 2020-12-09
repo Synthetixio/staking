@@ -259,7 +259,7 @@ export const ModalItemText = styled.div`
 export const TableNoResults = styled.div`
 	padding: 50px 0;
 	text-align: center;
-	background-color: ${(props) => props.theme.colors.mediumBlue};
+	background-color: ${(props) => props.theme.colors.navy};
 `;
 
 export const TableNoResultsTitle = styled.div`
