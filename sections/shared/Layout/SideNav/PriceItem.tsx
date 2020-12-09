@@ -74,7 +74,7 @@ const Container = styled(FlexDivCol)`
 
 const Title = styled.div`
 	font-family: ${(props) => props.theme.fonts.interBold};
-	color: ${(props) => props.theme.colors.silver};
+	color: ${(props) => props.theme.colors.gray};
 	text-transform: uppercase;
 	padding-bottom: 5px;
 `;
@@ -94,13 +94,13 @@ const PriceInfo = styled(FlexDivCentered)`
 const PercentChange = styled.div<{ trendLinePositive: boolean }>`
 	font-size: 10px;
 	color: ${(props) =>
-		props.trendLinePositive ? props.theme.colors.brightGreen : props.theme.colors.brightPink};
+		props.trendLinePositive ? props.theme.colors.green : props.theme.colors.pink};
 `;
 
 const TriangleUp = styled.div`
 	border-left: 4px solid transparent;
 	border-right: 4px solid transparent;
-	border-bottom: ${(props) => `calc(2 * 4px * 0.866) solid ${props.theme.colors.brightGreen}`};
+	border-bottom: ${(props) => `calc(2 * 4px * 0.866) solid ${props.theme.colors.green}`};
 	border-top: 4px solid transparent;
 	display: inline-block;
 	margin-bottom: 4px;
@@ -110,7 +110,7 @@ const TriangleUp = styled.div`
 const TriangleDown = styled.div`
 	border-left: 4px solid transparent;
 	border-right: 4px solid transparent;
-	border-top: ${(props) => `calc(2 * 4px * 0.866) solid ${props.theme.colors.brightPink}`};
+	border-top: ${(props) => `calc(2 * 4px * 0.866) solid ${props.theme.colors.pink}`};
 	border-bottom: 4px solid transparent;
 	display: inline-block;
 	margin-bottom: -5px;

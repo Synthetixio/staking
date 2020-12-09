@@ -51,7 +51,7 @@ const Container = styled(FlexDivColCentered)`
 const StyledExternalLink = styled(ExternalLink)`
 	margin-top: 25px;
 	font-family: ${(props) => props.theme.fonts.regular};
-	color: ${(props) => props.theme.colors.brightBlue};
+	color: ${(props) => props.theme.colors.blue};
 	font-size: 12px;
 `;
 

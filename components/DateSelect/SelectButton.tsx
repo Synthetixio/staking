@@ -61,7 +61,7 @@ const Button = styled.button<{ isOpen: boolean }>`
 	text-transform: capitalize;
 
 	.dropdown-icon {
-		color: ${(props) => props.theme.colors.gray10};
+		color: ${(props) => props.theme.colors.gray};
 		transition: transform 0.2s ease-in-out;
 		&:hover {
 			color: ${(props) => props.theme.colors.white};
@@ -75,7 +75,7 @@ const Button = styled.button<{ isOpen: boolean }>`
 	}
 
 	.close-icon {
-		color: ${(props) => props.theme.colors.gray10};
+		color: ${(props) => props.theme.colors.gray};
 		&:hover {
 			color: ${(props) => props.theme.colors.white};
 		}

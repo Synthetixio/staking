@@ -96,17 +96,17 @@ const Title = styled.p`
 `;
 const Subtitle = styled.p`
 	font-family: ${(props) => props.theme.fonts.regular};
-	color: ${(props) => props.theme.colors.gray10};
+	color: ${(props) => props.theme.colors.gray};
 	font-size: 14px;
 `;
 const StyledLink = styled.span`
 	${linkCSS}
-	color: ${(props) => props.theme.colors.brightBlue};
+	color: ${(props) => props.theme.colors.blue};
 `;
 const Header = styled.span`
 	font-family: ${(props) => props.theme.fonts.interBold};
 	font-size: 12px;
-	color: ${(props) => props.theme.colors.gray10};
+	color: ${(props) => props.theme.colors.gray};
 	width: 50%;
 `;
 const Data = styled.span`

@@ -31,7 +31,7 @@ const Container = styled(FlexDivCol)`
 `;
 
 const StyledPercentage = styled.span`
-	color: ${(props) => props.theme.colors.gray10};
+	color: ${(props) => props.theme.colors.gray};
 `;
 
 const StyledProgressBar = styled(ProgressBar)`

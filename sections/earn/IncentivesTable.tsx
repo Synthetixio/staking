@@ -191,7 +191,7 @@ const StyledTable = styled(Table)`
 		height: 80px;
 		align-items: center;
 		:hover {
-			background-color: ${(props) => props.theme.colors.tooltipBlue};
+			background-color: ${(props) => props.theme.colors.mediumBlue};
 		}
 	}
 	.table-body-cell {
@@ -220,13 +220,13 @@ const Title = styled.div`
 `;
 const Subtitle = styled.div`
 	font-family: ${(props) => props.theme.fonts.interSemiBold};
-	color: ${(props) => props.theme.colors.gray10};
+	color: ${(props) => props.theme.colors.gray};
 	font-size: 12px;
 `;
 const Header = styled.span`
 	font-family: ${(props) => props.theme.fonts.interBold};
 	font-size: 12px;
-	color: ${(props) => props.theme.colors.gray10};
+	color: ${(props) => props.theme.colors.gray};
 	text-align: center;
 `;
 
@@ -238,7 +238,7 @@ const ClickableFlexDivCentered = styled(FlexDivCentered)<{ isActive: boolean }>`
 	${(props) =>
 		props.isActive &&
 		css`
-			background-color: ${props.theme.colors.tooltipBlue};
+			background-color: ${props.theme.colors.mediumBlue};
 		`}
 `;
 
@@ -257,8 +257,8 @@ const ClickableFlexDivCol = styled(FlexDivCol)<{ isActive: boolean }>`
 	${(props) =>
 		props.isActive &&
 		css`
-			border-right: 1px solid ${props.theme.colors.brightBlue};
-			background-color: ${props.theme.colors.tooltipBlue};
+			border-right: 1px solid ${props.theme.colors.blue};
+			background-color: ${props.theme.colors.mediumBlue};
 		`}
 `;
 

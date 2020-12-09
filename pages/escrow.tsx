@@ -52,23 +52,23 @@ const EscrowPage = () => {
 
 const Available = styled(StatBox)`
 	.title {
-		color: ${(props) => props.theme.colors.brightGreen};
+		color: ${(props) => props.theme.colors.green};
 	}
 `;
 
 const Vested = styled(StatBox)`
 	.title {
-		color: ${(props) => props.theme.colors.brightGreen};
+		color: ${(props) => props.theme.colors.green};
 	}
 	.value {
-		text-shadow: ${(props) => props.theme.colors.brightGreenTextShadow};
+		text-shadow: ${(props) => props.theme.colors.greenTextShadow};
 		color: #073124;
 	}
 `;
 
 const Escrowed = styled(StatBox)`
 	.title {
-		color: ${(props) => props.theme.colors.brightGreen};
+		color: ${(props) => props.theme.colors.green};
 	}
 `;
 

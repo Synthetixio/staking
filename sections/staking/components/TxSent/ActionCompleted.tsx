@@ -67,7 +67,7 @@ const Container = styled(FlexDivColCentered)`
 
 const MainInfoBox = styled(FlexDivCentered)`
 	margin-top: 45px;
-	background-color: ${(props) => props.theme.colors.blueGray};
+	background-color: ${(props) => props.theme.colors.grayBlue};
 	font-family: ${(props) => props.theme.fonts.expanded};
 	font-size: 12px;
 	justify-content: space-around;
@@ -85,14 +85,14 @@ const MiddleInfoSection = styled.div`
 `;
 
 const RightInfoSection = styled(FlexDivColCentered)`
-	border: 1px solid ${(props) => props.theme.colors.borderSilver};
+	border: 1px solid ${(props) => props.theme.colors.gray};
 	padding: 10px;
 	font-size: 10px;
 	border-radius: 4px;
 `;
 
 const AprText = styled.div`
-	color: ${(props) => props.theme.colors.lightFont};
+	color: ${(props) => props.theme.colors.gray};
 	margin-bottom: 5px;
 `;
 
@@ -112,15 +112,15 @@ const ButtonWrap = styled(FlexDivRowCentered)`
 `;
 
 const DismissButton = styled(BaseButton)`
-	background-color: ${(props) => props.theme.colors.darkBlue};
+	background-color: ${(props) => props.theme.colors.black};
 	color: ${(props) => props.theme.colors.white};
-	border: 1px solid ${(props) => props.theme.colors.borderLight};
+	border: 1px solid ${(props) => props.theme.colors.gray};
 `;
 
 const SeeMoreButton = styled(BaseButton)`
-	background-color: ${(props) => props.theme.colors.lightBlue};
-	color: ${(props) => props.theme.colors.brightBlue};
-	border: 1px solid ${(props) => props.theme.colors.brightBlue};
+	background-color: ${(props) => props.theme.colors.blue};
+	color: ${(props) => props.theme.colors.blue};
+	border: 1px solid ${(props) => props.theme.colors.blue};
 `;
 
 export default ActionCompleted;

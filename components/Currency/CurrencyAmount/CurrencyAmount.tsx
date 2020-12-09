@@ -44,7 +44,7 @@ const Amount = styled.span`
 	font-family: ${(props) => props.theme.fonts.mono};
 `;
 const TotalValue = styled.span`
-	color: ${(props) => props.theme.colors.gray10};
+	color: ${(props) => props.theme.colors.gray};
 `;
 
 export default CurrencyAmount;

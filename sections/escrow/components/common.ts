@@ -6,7 +6,7 @@ import Input from 'components/Input/Input';
 import Select from 'components/Select';
 
 export const TabContainer = styled(FlexDivColCentered)`
-	background: ${(props) => props.theme.colors.darkBlue};
+	background: ${(props) => props.theme.colors.black};
 	height: 100%;
 	padding: 24px;
 `;
@@ -22,7 +22,7 @@ export const HeaderBox = styled(FlexDivRowCentered)`
 `;
 
 export const StyledSelect = styled(Select)`
-	border: ${(props) => `2px solid ${props.theme.colors.brightBlue}`};
+	border: ${(props) => `2px solid ${props.theme.colors.blue}`};
 	width: 100px;
 	justify-content: center;
 	border-radius: 4px;
@@ -30,9 +30,9 @@ export const StyledSelect = styled(Select)`
 	box-shadow: 0px 0px 10px rgba(0, 209, 255, 0.9);
 
 	.react-select__dropdown-indicator {
-		color: ${(props) => props.theme.colors.brightBlue};
+		color: ${(props) => props.theme.colors.blue};
 		&:hover {
-			color: ${(props) => props.theme.colors.brightBlue};
+			color: ${(props) => props.theme.colors.blue};
 		}
 	}
 	.react-select__single-value {
@@ -61,16 +61,13 @@ export const StyledInput = styled(Input)`
 `;
 
 export const StyledButton = styled(Button)<{ blue: boolean }>`
-	color: ${(props) =>
-		props.blue ? props.theme.colors.brightBlue : props.theme.colors.brightOrange};
+	color: ${(props) => (props.blue ? props.theme.colors.blue : props.theme.colors.orange)};
 	box-shadow: ${(props) =>
 		props.blue
 			? `0px 0px 10px rgba(0, 209, 255, 0.9)`
 			: `0px 0px 8.38542px rgba(252, 135, 56, 0.6);`};
 	border: ${(props) =>
-		props.blue
-			? `1px solid ${props.theme.colors.brightBlue}`
-			: `1px solid ${props.theme.colors.brightOrange}`};
+		props.blue ? `1px solid ${props.theme.colors.blue}` : `1px solid ${props.theme.colors.orange}`};
 	box-sizing: border-box;
 	font-size: 16px;
 	font-family: ${(props) => props.theme.fonts.condensedBold};
@@ -80,12 +77,12 @@ export const StyledButton = styled(Button)<{ blue: boolean }>`
 export const DataRow = styled(FlexDivRowCentered)`
 	justify-content: space-between;
 	margin: 16px 32px;
-	border-bottom: ${(props) => `1px solid ${props.theme.colors.linedBlue}`};
+	border-bottom: ${(props) => `1px solid ${props.theme.colors.grayBlue}`};
 `;
 export const RowTitle = styled.p`
 	font-family: ${(props) => props.theme.fonts.condensedMedium};
 	font-size: 14px;
-	color: ${(props) => props.theme.colors.silver};
+	color: ${(props) => props.theme.colors.gray};
 	text-transform: uppercase;
 `;
 export const RowValue = styled.p`
@@ -114,7 +111,7 @@ export const Title = styled.p`
 `;
 export const Subtitle = styled.p`
 	font-family: ${(props) => props.theme.fonts.regular};
-	color: ${(props) => props.theme.colors.lightFont};
+	color: ${(props) => props.theme.colors.gray};
 	font-size: 14px;
 `;
 export const DataContainer = styled.div`
@@ -123,7 +120,7 @@ export const DataContainer = styled.div`
 `;
 export const StyledLink = styled.span`
 	${linkCSS}
-	color: ${(props) => props.theme.colors.brightBlue};
+	color: ${(props) => props.theme.colors.blue};
 `;
 
 export const ValueContainer = styled(FlexDivRowCentered)`

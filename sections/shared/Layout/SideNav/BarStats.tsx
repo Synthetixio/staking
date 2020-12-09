@@ -28,8 +28,8 @@ export const PeriodBarStats: FC<PeriodBarStatsProps> = ({
 			</BarHeaderSection>
 			<ShadowPeriodBar
 				percentage={currentFeePeriodProgress}
-				borderColor={theme.colors.brightGreen}
-				fillColor={theme.colors.brightGreen}
+				borderColor={theme.colors.green}
+				fillColor={theme.colors.green}
 			/>
 		</BarStatBox>
 	);
@@ -57,8 +57,8 @@ export const CRatioBarStats: FC<CRatioBarStatsProps> = ({ currentCRatio, targetC
 			</BarHeaderSection>
 			<ShadowCRatioBar
 				percentage={barPercentage}
-				borderColor={theme.colors.brightPink}
-				fillColor={theme.colors.brightBlue}
+				borderColor={theme.colors.pink}
+				fillColor={theme.colors.blue}
 			/>
 		</BarStatBox>
 	);
@@ -90,7 +90,7 @@ const BarHeaderSection = styled(FlexDivRowCentered)``;
 const BarTitle = styled(FlexDivCentered)`
 	font-size: 10px;
 	font-family: ${(props) => props.theme.fonts.condensedMedium};
-	color: ${(props) => props.theme.colors.silver};
+	color: ${(props) => props.theme.colors.gray};
 `;
 const BarValue = styled.p`
 	font-size: 10px;

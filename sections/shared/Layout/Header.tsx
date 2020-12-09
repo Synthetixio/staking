@@ -24,8 +24,8 @@ const Container = styled.div`
 	float: right;
 	${media.lessThan('md')`
 		position: fixed;
-		background-color: ${(props) => props.theme.colors.darkBlue};
-		box-shadow: 0 8px 8px 0 ${(props) => props.theme.colors.darkBlue};
+		background-color: ${(props) => props.theme.colors.black};
+		box-shadow: 0 8px 8px 0 ${(props) => props.theme.colors.black};
 	`};
 	> div {
 		height: ${HEADER_HEIGHT};

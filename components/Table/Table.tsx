@@ -234,7 +234,7 @@ const ReactTable = styled.div<{ palette: TablePalette }>`
 			}
 			${TableRow} {
 				background-color: ${(props) => props.theme.colors.mediumBlue};
-				border-bottom: 1px solid ${(props) => props.theme.colors.linedBlue};
+				border-bottom: 1px solid ${(props) => props.theme.colors.grayBlue};
 				&:last-child {
 					border-bottom: 0;
 				}
@@ -243,7 +243,7 @@ const ReactTable = styled.div<{ palette: TablePalette }>`
 				color: ${(props) => props.theme.colors.white};
 				background-color: ${(props) => props.theme.colors.mediumBlue};
 				font-family: ${(props) => props.theme.fonts.condensedBold};
-				color: ${(props) => props.theme.colors.gray10};
+				color: ${(props) => props.theme.colors.gray};
 				text-transform: uppercase;
 				font-size: 12px;
 			}
@@ -256,7 +256,7 @@ const ReactTable = styled.div<{ palette: TablePalette }>`
 const StyledSortIcon = styled(Svg)`
 	width: 5px;
 	height: 5px;
-	color: ${(props) => props.theme.colors.gray10};
+	color: ${(props) => props.theme.colors.gray};
 `;
 
 export default Table;

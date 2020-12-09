@@ -32,7 +32,7 @@ const StakingRewardsTab: React.FC<StakingRewardsTabProps> = ({ canVestAmount }) 
 	const [error, setError] = useState<string | null>(null);
 	const [transactionState, setTransactionState] = useState<Transaction>(Transaction.PRESUBMIT);
 	const [txHash, setTxHash] = useState<string | null>(null);
-	const [vestTxError, setVestTxError] = useState<boolean>(false);
+	const [vestTxError, setVestTxError] = useState<string | null>(null);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 
 	const vestingCurrencyKey = CRYPTO_CURRENCY_MAP['SNX'];
@@ -58,7 +58,7 @@ const StakingRewardsTab: React.FC<StakingRewardsTabProps> = ({ canVestAmount }) 
 
 	const handleVest = async () => {
 		try {
-			setVestTxError(false);
+			setVestTxError(null);
 			setTxModalOpen(true);
 			const {
 				contracts: { RewardEscrow },
@@ -81,7 +81,8 @@ const StakingRewardsTab: React.FC<StakingRewardsTabProps> = ({ canVestAmount }) 
 			}
 		} catch (e) {
 			setTransactionState(Transaction.PRESUBMIT);
-			setVestTxError(true);
+			// TODO: translate this
+			setVestTxError('vest tx error');
 		}
 	};
 

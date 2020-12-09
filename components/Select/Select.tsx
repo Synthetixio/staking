@@ -39,7 +39,7 @@ function Select<T>(props: Props<T>) {
 				...style,
 				background: colors.mediumBlue,
 				borderRadius: 0,
-				color: colors.gray10,
+				color: colors.gray,
 				'&:hover': {
 					background: colors.mediumBlue,
 					color: colors.white,
@@ -82,13 +82,13 @@ function Select<T>(props: Props<T>) {
 			option: (style) => ({
 				...style,
 				fontFamily: fonts.condensedBold,
-				color: colors.gray10,
+				color: colors.gray,
 				cursor: 'pointer',
 				padding: '12px 10px',
 				fontSize: '12px',
 				backgroundColor: colors.mediumBlue,
 				'&:hover': {
-					backgroundColor: colors.tooltipBlue,
+					backgroundColor: colors.mediumBlue,
 					color: colors.white,
 				},
 			}),
@@ -100,7 +100,7 @@ function Select<T>(props: Props<T>) {
 			}),
 			dropdownIndicator: (style, state) => ({
 				...style,
-				color: state.selectProps.menuIsOpen ? colors.white : colors.gray10,
+				color: state.selectProps.menuIsOpen ? colors.white : colors.gray,
 				transition: 'transform 0.2s ease-in-out',
 				transform: state.selectProps.menuIsOpen && 'rotate(180deg)',
 				'&:hover': {

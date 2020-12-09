@@ -33,7 +33,7 @@ export const Label = styled.p`
 
 export const StyledLink = styled.span`
 	${linkCSS}
-	color: ${(props) => props.theme.colors.brightBlue};
+	color: ${(props) => props.theme.colors.blue};
 `;
 
 export const StyledButton = styled(Button)`
@@ -42,7 +42,7 @@ export const StyledButton = styled(Button)`
 	width: 80%;
 	text-transform: uppercase;
 	height: 40px;
-	backgroundcolor: ${(props) => props.theme.colors.brightBlue};
+	backgroundcolor: ${(props) => props.theme.colors.blue};
 `;
 
 export const TabContainer = styled(FlexDivColCentered)`

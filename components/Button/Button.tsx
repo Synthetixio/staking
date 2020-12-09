@@ -22,7 +22,8 @@ const Button = styled.button<ButtonProps>`
 	text-transform: capitalize;
 
   &:disabled {
-		background: ${(props) => props.theme.colors.mutedBrightBlue};
+		opacity: 0.2;
+		color: ${(props) => props.theme.colors.white};
 		cursor: default;
 	}
 
@@ -55,44 +56,32 @@ const Button = styled.button<ButtonProps>`
 	${(props) =>
 		props.variant === 'primary' &&
 		css`
-			color: ${(props) => props.theme.colors.darkBlue};
-			background: ${(props) => props.theme.colors.brightBlue};
+			color: ${(props) => props.theme.colors.black};
+			background: ${(props) => props.theme.colors.blue};
 			box-shadow: 0px 0px 10px rgba(0, 209, 255, 0.6);
 			border: 1px solid transparent;
 			&:hover {
 				&:not(:disabled) {
-					background: ${(props) => props.theme.colors.lightBlue};
-					color: ${(props) => props.theme.colors.brightBlue};
+					background: ${(props) => props.theme.colors.blueHover};
+					color: ${(props) => props.theme.colors.blue};
 					box-shadow: 0px 0px 10px rgba(0, 209, 255, 0.9);
-					border: 1px solid ${(props) => props.theme.colors.brightBlue};
+					border: 1px solid ${(props) => props.theme.colors.blue};
 				}
-			}
-			&:disabled {
-				background: ${(props) => props.theme.colors.lightBlue};
-				color: ${(props) => props.theme.colors.brightBlue};
-				box-shadow: 0px 0px 10px rgba(0, 209, 255, 0.9);
-				border: 1px solid ${(props) => props.theme.colors.brightBlue};
-				cursor: default;
 			}
 		`}
 
 		${(props) =>
 			props.variant === 'secondary' &&
 			css`
-				color: ${(props) => props.theme.colors.brightBlue};
-				background-color: ${(props) => props.theme.colors.lightBlue};
+				color: ${(props) => props.theme.colors.black};
+				background-color: ${(props) => props.theme.colors.blue};
 				box-shadow: 0px 0px 10px rgba(0, 209, 255, 0.9);
-				border: 1px solid ${(props) => props.theme.colors.brightBlue};
+				border: 1px solid ${(props) => props.theme.colors.blue};
 				&:hover {
 					&:not(:disabled) {
-						background: ${(props) => props.theme.colors.brightBlue10};
-						color: ${(props) => props.theme.colors.darkBlue};
+						background: ${(props) => props.theme.colors.blueHover};
+						color: ${(props) => props.theme.colors.black};
 					}
-				}
-				&:disabled {
-					background: ${(props) => props.theme.colors.brightBlue10};
-					color: ${(props) => props.theme.colors.darkBlue};
-					cursor: default;
 				}
 			`}	
 
@@ -101,16 +90,12 @@ const Button = styled.button<ButtonProps>`
 			props.variant === 'alt' &&
 			css`
 				color: ${(props) => props.theme.colors.white};
-				background: ${(props) => props.theme.colors.brightOrange};
+				background: ${(props) => props.theme.colors.orange};
 				box-shadow: 0px 0px 10px rgba(252, 135, 56, 0.6);
 				&:hover {
 					&:not(:disabled) {
-						background: ${(props) => props.theme.colors.mutedBrightBurntOrange};
+						background: ${(props) => props.theme.colors.orange};
 					}
-				}
-				&:disabled {
-					background: ${(props) => props.theme.colors.mutedBrightBurntOrange};
-					cursor: default;
 				}
 			`}		
 
@@ -119,7 +104,7 @@ const Button = styled.button<ButtonProps>`
 			css`
 				border-radius: 2px;
 				color: ${(props) => props.theme.colors.white};
-				background-color: ${(props) => props.theme.colors.elderberry};
+				background-color: ${(props) => props.theme.colors.black};
 				border: 1px solid ${(props) => props.theme.colors.mediumBlue};
 				&:hover {
 					&:not(:disabled) {
@@ -127,33 +112,8 @@ const Button = styled.button<ButtonProps>`
 						background-color: ${(props) => props.theme.colors.mediumBlue};
 					}
 				}
-				${(props) =>
-					// @ts-ignore
-					props.isActive &&
-					css`
-						color: ${(props) => props.theme.colors.white};
-						background-color: ${(props) => props.theme.colors.mediumBlue};
-					`};
 			`}		
 
-
-	${(props) =>
-		props.variant === 'danger' &&
-		css`
-			color: ${(props) => props.theme.colors.white};
-			background-color: ${(props) => props.theme.colors.red};
-			&:hover {
-				&:not(:disabled) {
-					background-color: ${(props) => props.theme.colors.redHover};
-				}
-			}
-			${(props) =>
-				// @ts-ignore
-				props.isActive &&
-				css`
-					background-color: ${(props) => props.theme.colors.redHover};
-				`};
-		`}									
 
 		${(props) =>
 			props.variant === 'text' &&
@@ -162,15 +122,9 @@ const Button = styled.button<ButtonProps>`
 				color: ${(props) => props.theme.colors.white};
 				&:hover {
 					&:not(:disabled) {
-						color: ${(props) => props.theme.colors.silver};
+						color: ${(props) => props.theme.colors.gray};
 					}
 				}
-				${(props) =>
-					// @ts-ignore
-					props.isActive &&
-					css`
-						color: ${(props) => props.theme.colors.white};
-					`};
 			`}	
 `;
 

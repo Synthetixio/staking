@@ -86,7 +86,7 @@ const SideNavContainer = styled.div`
 	top: 0;
 	left: 0;
 	background: ${(props) => props.theme.colors.darkGradient1Flipped};
-	border-right: 1px solid ${(props) => props.theme.colors.linedBlue};
+	border-right: 1px solid ${(props) => props.theme.colors.grayBlue};
 	display: grid;
 	grid-template-rows: auto 1fr auto;
 	overflow-y: auto;
@@ -135,7 +135,7 @@ const MenuLinkItem = styled.div<{ isActive: boolean }>`
 		top: 0;
 		/* the line needs to outside (so around -3px), however due to overflow issues, it needs to be inside for now */
 		right: 0;
-		background: ${(props) => props.theme.colors.brightBlue};
+		background: ${(props) => props.theme.colors.blue};
 		display: none;
 		${(props) =>
 			props.isActive &&
@@ -146,7 +146,7 @@ const MenuLinkItem = styled.div<{ isActive: boolean }>`
 `;
 
 const MenuCharts = styled.div`
-	border-top: 1px solid ${(props) => props.theme.colors.linedBlue};
+	border-top: 1px solid ${(props) => props.theme.colors.grayBlue};
 	width: 120px;
 	margin: 0 auto;
 	@media screen and (max-height: 815px) {
