@@ -52,10 +52,10 @@
 		}
 	},
 	"homepage": {
-		"page-title": "Staking | Earn with SNX"
+		"page-title": "Earn with SNX | Staking"
 	},
 	"dashboard": {
-		"page-title": "Staking | Dashboard",
+		"page-title": "Dashboard | Staking",
 		"actions": {
 			"title": "Possible Actions",
 			"claim": {
@@ -184,7 +184,7 @@
 		}
 	},
 	"earn": {
-		"page-title": "Staking | Earn",
+		"page-title": "Earn | Staking",
 		"incentives": {
 			"est-apr": "Est APR",
 			"options": {
@@ -261,7 +261,7 @@
 		}
 	},
 	"escrow": {
-		"page-title": "Staking | Escrow",
+		"page-title": "Escrow | Staking",
 		"info": {
 			"title": "Vest your SNX staking rewards in escrow",
 			"subtitle": "If you have staked your SNX and minted sUSD, you are eligible to receive SNX staking rewards, which will be escrowed here which you can vest in 12 months from the claim date. <0>Learn more.<0>"
@@ -295,7 +295,7 @@
 		}
 	},
 	"history": {
-		"page-title": "Staking | History",
+		"page-title": "History | Staking",
 		"table": {
 			"type": "type",
 			"amount": "amount",
@@ -327,7 +327,7 @@
 		}
 	},
 	"synths": {
-		"page-title": "Staking | Synths",
+		"page-title": "Synths | Staking",
 		"assets": {
 			"synths": {
 				"title": "Synth Balances",
