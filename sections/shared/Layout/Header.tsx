@@ -1,22 +1,15 @@
 import { FC } from 'react';
 import styled from 'styled-components';
 
-import { MobileHiddenView, MobileOnlyView } from 'components/Media';
 import { HEADER_HEIGHT } from 'constants/ui';
 
 import media from 'styles/media';
 
 import UserMenu from './UserMenu';
-import MobileUserMenu from './MobileUserMenu';
 
 const Header: FC = () => (
 	<Container>
-		<MobileHiddenView>
-			<UserMenu />
-		</MobileHiddenView>
-		<MobileOnlyView>
-			<MobileUserMenu />
-		</MobileOnlyView>
+		<UserMenu />
 	</Container>
 );
 
