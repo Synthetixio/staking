@@ -16,8 +16,16 @@
 				"language": "language"
 			}
 		},
+		"approve": {
+			"description": "You must approve your {{synth}} tokens before proceeding. <0>Learn more.<0>",
+			"button": "APPROVE {{synth}}"
+		},
 		"confirm-transaction": {
 			"title": "Confirm Transaction",
+			"approve": {
+				"approving": "APPROVING",
+				"contract": "{{synth}} CONTRACT"
+			},
 			"minting": {
 				"from": "Staking",
 				"to": "Minting"
@@ -52,10 +60,10 @@
 		}
 	},
 	"homepage": {
-		"page-title": "Staking | Earn with SNX"
+		"page-title": "Earn with SNX | Staking"
 	},
 	"dashboard": {
-		"page-title": "Staking | Dashboard",
+		"page-title": "Dashboard | Staking",
 		"actions": {
 			"title": "Possible Actions",
 			"claim": {
@@ -184,7 +192,7 @@
 		}
 	},
 	"earn": {
-		"page-title": "Staking | Earn",
+		"page-title": "Earn | Staking",
 		"incentives": {
 			"est-apr": "Est APR",
 			"options": {
@@ -235,12 +243,14 @@
 		},
 		"actions": {
 			"available": "AVAILABLE",
+			"max": "MAX",
 			"claim": {
 				"title": "CLAIM",
 				"exchange-rewards": "Synth exchange rewards",
 				"staking-rewards": "SNX staking rewards",
-				"claim-button": "Claim {{totalValue}}",
-				"claimed-button": "Already claimed"
+				"claim-button": "CLAIM REWARDS",
+				"claim-snx-button": "Claim SNX",
+				"claimed-button": "ALREADY CLAIMED"
 			},
 			"lp": {
 				"title-curve": "CURVE REWARDS",
@@ -253,7 +263,7 @@
 			},
 			"unstake": {
 				"title": "UNSTAKE",
-				"stake-button": "UNSTAKE {{asset}}"
+				"unstake-button": "UNSTAKE {{asset}}"
 			},
 			"rewards": {
 				"title": "REWARDS"
@@ -261,7 +271,7 @@
 		}
 	},
 	"escrow": {
-		"page-title": "Staking | Escrow",
+		"page-title": "Escrow | Staking",
 		"info": {
 			"title": "Vest your SNX staking rewards in escrow",
 			"subtitle": "If you have staked your SNX and minted sUSD, you are eligible to receive SNX staking rewards, which will be escrowed here which you can vest in 12 months from the claim date. <0>Learn more.<0>"
@@ -295,7 +305,7 @@
 		}
 	},
 	"history": {
-		"page-title": "Staking | History",
+		"page-title": "History | Staking",
 		"table": {
 			"type": "type",
 			"amount": "amount",
@@ -327,7 +337,7 @@
 		}
 	},
 	"synths": {
-		"page-title": "Staking | Synths",
+		"page-title": "Synths | Staking",
 		"assets": {
 			"synths": {
 				"title": "Synth Balances",
@@ -416,11 +426,12 @@
 	"not-found": {
 		"page-title": "Not Found | Staking",
 		"title": "404",
-		"subtitle": "Page not found."
+		"subtitle": "Page not found"
 	},
 	"system-status": {
 		"page-title": "Maintenance | Staking",
-		"title": "Staking is currently down for maintenance",
+		"title-line1": "Down for",
+		"title-line2": "maintenance.",
 		"subtitle": "We apologise for any inconvenience caused, it will be back shortly."
 	}
 }

@@ -30,7 +30,16 @@ const useIETHPoolQuery_1 = (options?: QueryConfig<LiquidityPoolData>) => {
 			const address = contract.address;
 
 			const getDuration = contract.DURATION || contract.rewardsDuration;
-			const [duration, rate, periodFinish, iEthBalance, iEthPrice] = await Promise.all([
+			const [
+				duration,
+				rate,
+				periodFinish,
+				iEthBalance,
+				iEthPrice,
+				iEthSNXRewards,
+				iEthStaked,
+				iETHAllowance,
+			] = await Promise.all([
 				getDuration(),
 				contract.rewardRate(),
 				contract.periodFinish(),
@@ -38,6 +47,9 @@ const useIETHPoolQuery_1 = (options?: QueryConfig<LiquidityPoolData>) => {
 				synthetix.js?.contracts.ExchangeRates.rateForCurrency(
 					synthetix.js?.toBytes32(SYNTHS_MAP.iETH)
 				),
+				contract.earned(walletAddress),
+				contract.balanceOf(walletAddress),
+				synthetix.js?.contracts.ProxyiETH.allowance(walletAddress, address),
 			]);
 			const durationInWeeks = Number(duration) / 3600 / 24 / 7;
 			const isPeriodFinished = new Date().getTime() > Number(periodFinish) * 1000;
@@ -45,9 +57,13 @@ const useIETHPoolQuery_1 = (options?: QueryConfig<LiquidityPoolData>) => {
 				? 0
 				: Math.trunc(Number(duration) * (rate / 1e18)) / durationInWeeks;
 
-			const [balance, price] = [iEthBalance, iEthPrice].map((data) =>
-				Number(synthetix.js?.utils.formatEther(data))
-			);
+			const [balance, price, rewards, staked, allowance] = [
+				iEthBalance,
+				iEthPrice,
+				iEthSNXRewards,
+				iEthStaked,
+				iETHAllowance,
+			].map((data) => Number(synthetix.js?.utils.formatEther(data)));
 
 			return {
 				distribution,
@@ -55,6 +71,10 @@ const useIETHPoolQuery_1 = (options?: QueryConfig<LiquidityPoolData>) => {
 				price,
 				balance,
 				periodFinish: Number(periodFinish) * 1000,
+				rewards,
+				staked,
+				duration: Number(duration) * 1000,
+				allowance,
 			};
 		},
 		{

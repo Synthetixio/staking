@@ -63,7 +63,7 @@ const StyledMenuModal = styled(MenuModal)`
 `;
 
 const OptionButton = styled(Button).attrs({
-	variant: 'outline',
+	variant: 'solid',
 })`
 	margin-bottom: 16px;
 	&:last-child {

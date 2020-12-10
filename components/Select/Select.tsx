@@ -12,7 +12,7 @@ function Select<T>(props: Props<T>) {
 			container: (style, state) => ({
 				...style,
 				opacity: state.isDisabled ? 0.4 : 1,
-				backgroundColor: colors.mediumBlue,
+				backgroundColor: colors.navy,
 			}),
 			singleValue: (style) => ({
 				...style,
@@ -28,7 +28,7 @@ function Select<T>(props: Props<T>) {
 			}),
 			multiValueLabel: (style) => ({
 				...style,
-				background: colors.mediumBlue,
+				background: colors.navy,
 				borderRadius: 0,
 				color: colors.white,
 				fontSize: '12px',
@@ -37,11 +37,11 @@ function Select<T>(props: Props<T>) {
 			}),
 			multiValueRemove: (style) => ({
 				...style,
-				background: colors.mediumBlue,
+				background: colors.navy,
 				borderRadius: 0,
 				color: colors.gray,
 				'&:hover': {
-					background: colors.mediumBlue,
+					background: colors.navy,
 					color: colors.white,
 				},
 				padding: 0,
@@ -64,11 +64,11 @@ function Select<T>(props: Props<T>) {
 					border: 'none',
 				},
 				fontSize: '12px',
-				backgroundColor: colors.mediumBlue,
+				backgroundColor: colors.navy,
 			}),
 			menu: (style) => ({
 				...style,
-				backgroundColor: colors.mediumBlue,
+				backgroundColor: colors.navy,
 				border: 'none',
 				boxShadow: `0px 0px 20px ${colors.backgroundBoxShadow}`,
 				padding: 0,
@@ -86,7 +86,7 @@ function Select<T>(props: Props<T>) {
 				cursor: 'pointer',
 				padding: '12px 10px',
 				fontSize: '12px',
-				backgroundColor: colors.mediumBlue,
+				backgroundColor: colors.navy,
 				'&:hover': {
 					backgroundColor: colors.mediumBlue,
 					color: colors.white,

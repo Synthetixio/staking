@@ -17,6 +17,8 @@ interface StructuredTabProps {
 	boxWidth: number;
 	boxPadding: number;
 	setPanelType?: Dispatch<SetStateAction<any>>;
+	tabHeight?: number;
+	inverseTabColor?: boolean;
 }
 
 const StructuredTab: FC<StructuredTabProps> = ({
@@ -25,6 +27,8 @@ const StructuredTab: FC<StructuredTabProps> = ({
 	boxWidth,
 	boxPadding,
 	setPanelType,
+	tabHeight,
+	inverseTabColor,
 }) => {
 	const [activeTab, setActiveTab] = useState<string>(tabData[0].title);
 	return (
@@ -32,6 +36,8 @@ const StructuredTab: FC<StructuredTabProps> = ({
 			<TabList padding={boxPadding} width={boxWidth}>
 				{tabData.map(({ title, icon, key, blue }, index) => (
 					<TabButton
+						tabHeight={tabHeight}
+						inverseTabColor={inverseTabColor}
 						blue={blue}
 						numberTabs={tabData.length}
 						key={`${title}-${index}-button`}

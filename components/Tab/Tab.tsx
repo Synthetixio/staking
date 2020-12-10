@@ -10,6 +10,8 @@ type TabProps = {
 	children: ReactNode;
 	numberTabs: number;
 	blue: boolean;
+	tabHeight?: number;
+	inverseTabColor?: boolean;
 };
 
 export const TabButton = (props: TabProps) => (
@@ -83,7 +85,13 @@ const StyledTabButton = styled.button<TabProps>`
 	font-family: ${(props) => props.theme.fonts.condensedBold};
 	padding: 0;
 	background: ${(props) =>
-		props.active ? props.theme.colors.backgroundBlue : props.theme.colors.black};
+		props.active
+			? props.inverseTabColor
+				? props.theme.colors.black
+				: props.theme.colors.backgroundBlue
+			: props.inverseTabColor
+			? props.theme.colors.backgroundBlue
+			: props.theme.colors.black};
 	color: ${(props) => (props.active ? props.theme.colors.white : props.theme.colors.gray)};
 
 	${(props) =>
@@ -97,11 +105,12 @@ const StyledTabButton = styled.button<TabProps>`
 
 	&:hover {
 		color: ${(props) => (props.active ? props.theme.colors.white : props.theme.colors.pink)};
-		background: ${(props) => props.theme.colors.backgroundBlue};
+		background: ${(props) =>
+			props.inverseTabColor ? props.theme.colors.black : props.theme.colors.backgroundBlue};
 
 		border-top: 2px solid ${(props) => (props.active ? 'none' : props.theme.colors.pink)};
 	}
-	height: 60px;
+	height: ${(props) => (props.tabHeight ? `${props.tabHeight}px` : '60px')};
 	width: ${(props) => 100 / props.numberTabs}%;
 	display: flex;
 	align-items: center;

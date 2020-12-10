@@ -30,7 +30,16 @@ const useIBTCPoolQuery_1 = (options?: QueryConfig<LiquidityPoolData>) => {
 			const address = contract.address;
 
 			const getDuration = contract.DURATION || contract.rewardsDuration;
-			const [duration, rate, periodFinish, iBtcBalance, iBtcPrice] = await Promise.all([
+			const [
+				duration,
+				rate,
+				periodFinish,
+				iBtcBalance,
+				iBtcPrice,
+				iBtcSNXRewards,
+				iBtcStaked,
+				iBtcAllowance,
+			] = await Promise.all([
 				getDuration(),
 				contract.rewardRate(),
 				contract.periodFinish(),
@@ -38,6 +47,9 @@ const useIBTCPoolQuery_1 = (options?: QueryConfig<LiquidityPoolData>) => {
 				synthetix.js?.contracts.ExchangeRates.rateForCurrency(
 					synthetix.js?.toBytes32(SYNTHS_MAP.iBTC)
 				),
+				contract.earned(walletAddress),
+				contract.balanceOf(walletAddress),
+				synthetix.js?.contracts.ProxyiBTC.allowance(walletAddress, address),
 			]);
 			const durationInWeeks = Number(duration) / 3600 / 24 / 7;
 			const isPeriodFinished = new Date().getTime() > Number(periodFinish) * 1000;
@@ -45,9 +57,13 @@ const useIBTCPoolQuery_1 = (options?: QueryConfig<LiquidityPoolData>) => {
 				? 0
 				: Math.trunc(Number(duration) * (rate / 1e18)) / durationInWeeks;
 
-			const [balance, price] = [iBtcBalance, iBtcPrice].map((data) =>
-				Number(synthetix.js?.utils.formatEther(data))
-			);
+			const [balance, price, rewards, staked, allowance] = [
+				iBtcBalance,
+				iBtcPrice,
+				iBtcSNXRewards,
+				iBtcStaked,
+				iBtcAllowance,
+			].map((data) => Number(synthetix.js?.utils.formatEther(data)));
 
 			return {
 				distribution,
@@ -55,6 +71,10 @@ const useIBTCPoolQuery_1 = (options?: QueryConfig<LiquidityPoolData>) => {
 				price,
 				balance,
 				periodFinish: Number(periodFinish) * 1000,
+				duration: Number(duration) * 1000,
+				rewards,
+				staked,
+				allowance,
 			};
 		},
 		{

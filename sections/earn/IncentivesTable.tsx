@@ -4,16 +4,17 @@ import { CellProps } from 'react-table';
 import styled, { css } from 'styled-components';
 import { Svg } from 'react-optimized-image';
 import Countdown from 'react-countdown';
+import ProgressBar from 'components/ProgressBar';
 
 import Table from 'components/Table';
 import GoBackIcon from 'assets/svg/app/go-back.svg';
-import NoNotificationIcon from 'assets/svg/app/no-notifications.svg';
 
 import { formatPercent, formatFiatCurrency, formatCurrency } from 'utils/formatters/number';
 
 import { GridDivCenteredRow, FlexDivCentered, FlexDivCol, FlexDivColCentered } from 'styles/common';
 import { CRYPTO_CURRENCY_MAP } from 'constants/currency';
 import BigNumber from 'bignumber.js';
+import { NOT_APPLICABLE } from './Incentives';
 
 export type EarnItem = {
 	title: string;
@@ -22,13 +23,15 @@ export type EarnItem = {
 	icon: () => JSX.Element;
 	tvl: number;
 	staked: {
-		balance: BigNumber;
+		balance: number;
 		asset: string; // use Cyrpto type
 	};
 	rewards: number;
+	periodStarted: number;
 	periodFinish: number;
 	incentivesIndex: number;
-	claimed: boolean;
+	claimed: boolean | string;
+	now: number;
 };
 
 interface IncentivesTableProps {
@@ -110,9 +113,13 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab, 
 					onClick={() => setActiveTab(cellProps.row.original.incentivesIndex)}
 				>
 					<Title>
-						{formatCurrency(CRYPTO_CURRENCY_MAP.SNX, cellProps.value, {
-							currencyKey: CRYPTO_CURRENCY_MAP.SNX,
-						})}
+						{formatCurrency(
+							cellProps.row.original.staked.asset,
+							cellProps.row.original.staked.balance,
+							{
+								currencyKey: cellProps.row.original.staked.asset,
+							}
+						)}
 					</Title>
 					<Subtitle />
 				</ClickableFlexDivColCentered>
@@ -133,7 +140,9 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab, 
 						})}
 					</Title>
 					<Subtitle>
-						{cellProps.row.original.claimed
+						{cellProps.row.original.claimed === NOT_APPLICABLE
+							? ''
+							: cellProps.row.original.claimed
 							? t('earn.incentives.options.rewards.claimed')
 							: t('earn.incentives.options.rewards.claimable')}
 					</Subtitle>
@@ -149,6 +158,14 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab, 
 				<ClickableFlexDivColCentered
 					onClick={() => setActiveTab(cellProps.row.original.incentivesIndex)}
 				>
+					<StyledProgressBar
+						percentage={
+							(cellProps.row.original.now - cellProps.row.original.periodStarted) /
+							(cellProps.row.original.periodFinish - cellProps.row.original.periodStarted)
+						}
+						borderColor="transparent"
+						fillColor="transparent"
+					/>
 					<Subtitle>
 						<Countdown date={cellProps.value} />
 					</Subtitle>
@@ -167,14 +184,7 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab, 
 				data={data}
 				columnsDeps={[activeTab]}
 				isLoading={!isLoaded}
-				noResultsMessage={
-					isLoaded && data.length === 0 ? (
-						<TableNoResults>
-							<Svg src={NoNotificationIcon} />
-							{t('escrow.table.no-results')}
-						</TableNoResults>
-					) : undefined
-				}
+				noResultsMessage={undefined}
 				showPagination={true}
 			/>
 		</Container>
@@ -182,8 +192,25 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab, 
 };
 
 const Container = styled.div<{ activeTab: number | null }>`
-	background: ${(props) => props.theme.colors.mediumBlue};
+	background: ${(props) => props.theme.colors.navy};
 	width: ${(props) => (props.activeTab == null ? '100%' : '40%')};
+`;
+
+const StyledProgressBar = styled(ProgressBar)`
+	width: 80%;
+	margin: 0 auto 4px auto;
+
+	.filled-bar {
+		background: ${(props) => props.theme.colors.rainbowGradient};
+		box-shadow: none;
+		border: 0;
+	}
+	.unfilled-bar {
+		background: ${(props) => props.theme.colors.white};
+		box-shadow: none;
+		border: 0;
+		opacity: 0.2;
+	}
 `;
 
 const StyledTable = styled(Table)`
@@ -205,10 +232,10 @@ const StyledTable = styled(Table)`
 	}
 `;
 
-const TableNoResults = styled(GridDivCenteredRow)`
+const StyledTableNoResults = styled(GridDivCenteredRow)`
 	padding: 50px 0;
 	justify-content: center;
-	background-color: ${(props) => props.theme.colors.mediumBlue};
+	background-color: ${(props) => props.theme.colors.navy};
 	margin-top: -2px;
 	justify-items: center;
 	grid-gap: 10px;

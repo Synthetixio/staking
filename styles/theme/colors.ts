@@ -1,7 +1,6 @@
 export default {
 	// primary
 	blue: '#00D1FF',
-	blueHover: '#42DDFF',
 	purple: '#402FC8',
 	pink: '#ED1EFF',
 	white: '#FFFFFF',
@@ -15,10 +14,13 @@ export default {
 
 	// ui
 	black: '#06061B',
+	blackHover: '#070725',
 	navy: '#09092F',
 	mediumBlue: '#10104E',
+	mediumBlueHover: '#16166A',
 	grayBlue: '#161B44',
 	gray: '#828295',
+	blueHover: '#42DDFF',
 
 	// text shadow
 	greenTextShadow: `rgba(65, 199, 157, 1) 0px 0px 4px, rgba(65, 199, 157, 1) 0px 0px 4px, rgba(65, 199, 157, 1) 0px 0px 4px, rgba(65, 199, 157, 1) 0px 0px 4px, rgba(65, 199, 157, 1) 0px 0px 4px, rgba(65, 199, 157, 1) 0px 0px 4px;`,
@@ -30,7 +32,7 @@ export default {
 	// background
 	backgroundBlue: 'rgba(9, 9, 47, 0.8)',
 
-	// gradient
+	// gradients
 	rainbowGradient: 'linear-gradient(-88.63deg, #00d1ff -14.83%, #ed1eff 108.22%)',
 	darkGradient1: 'linear-gradient(180deg, #08021E 0%, #120446 146.21%)',
 	darkGradient1Flipped: 'linear-gradient(0, #08021E 0%, #120446 146.21%)',

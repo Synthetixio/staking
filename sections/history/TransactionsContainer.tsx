@@ -259,8 +259,7 @@ const Filters = styled(GridDiv)`
 const TableNoResults = styled(GridDivCenteredRow)`
 	padding: 50px 0;
 	justify-content: center;
-	background-color: ${(props) => props.theme.colors.mediumBlue};
-	margin-top: -2px;
+	background-color: ${(props) => props.theme.colors.navy};
 	justify-items: center;
 	grid-gap: 10px;
 `;

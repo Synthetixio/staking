@@ -107,7 +107,7 @@ const GasSelector: React.FC<GasSelectorProps> = ({ gasLimitEstimate, setGasPrice
 							{GAS_SPEEDS.map((speed) => (
 								<StyedGasButton
 									key={speed}
-									variant="outline"
+									variant="solid"
 									onClick={() => {
 										setCustomGasPrice('');
 										setGasSpeed(speed);
