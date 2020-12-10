@@ -22,7 +22,6 @@ import ClaimTab from './ClaimTab';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import LPTab from './LPTab';
 import { StyledLink } from './common';
-import { toBigNumber } from 'utils/formatters/number';
 
 export const NOT_APPLICABLE = 'n/a';
 
