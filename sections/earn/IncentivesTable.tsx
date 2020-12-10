@@ -13,6 +13,7 @@ import { formatPercent, formatFiatCurrency, formatCurrency } from 'utils/formatt
 
 import { GridDivCenteredRow, FlexDivCentered, FlexDivCol, FlexDivColCentered } from 'styles/common';
 import { CRYPTO_CURRENCY_MAP } from 'constants/currency';
+import BigNumber from 'bignumber.js';
 
 export type EarnItem = {
 	title: string;
@@ -21,7 +22,7 @@ export type EarnItem = {
 	icon: () => JSX.Element;
 	tvl: number;
 	staked: {
-		balance: number;
+		balance: BigNumber;
 		asset: string; // use Cyrpto type
 	};
 	rewards: number;

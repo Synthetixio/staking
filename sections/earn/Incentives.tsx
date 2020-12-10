@@ -22,6 +22,7 @@ import ClaimTab from './ClaimTab';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import LPTab from './LPTab';
 import { StyledLink } from './common';
+import { toBigNumber } from 'utils/formatters/number';
 
 // type APRFields = {
 // 	price: number;
@@ -34,7 +35,7 @@ type IncentivesProps = {
 	totalRewards: BigNumber;
 	refetch: Function;
 	stakingAPR: number;
-	stakedValue: number;
+	stakedValue: BigNumber;
 };
 
 const Incentives: FC<IncentivesProps> = ({
@@ -92,7 +93,7 @@ const Incentives: FC<IncentivesProps> = ({
 			apr: curveAPR,
 			tvl: curveTVL,
 			staked: {
-				balance: 0,
+				balance: toBigNumber(0),
 				asset: SYNTHS_MAP.sUSD,
 			},
 			rewards: 0,
@@ -107,7 +108,7 @@ const Incentives: FC<IncentivesProps> = ({
 			apr: iETHAPR,
 			tvl: iETHTVL,
 			staked: {
-				balance: 0,
+				balance: toBigNumber(0),
 				asset: SYNTHS_MAP.iETH,
 			},
 			rewards: 0,
@@ -122,7 +123,7 @@ const Incentives: FC<IncentivesProps> = ({
 			apr: iBTCAPR,
 			tvl: iBTCTVL,
 			staked: {
-				balance: 0,
+				balance: toBigNumber(0),
 				asset: SYNTHS_MAP.iBTC,
 			},
 			rewards: 0,

@@ -9,7 +9,6 @@ import { linkCSS } from 'styles/common';
 import ROUTES from 'constants/routes';
 import StakingLogo from 'assets/svg/app/staking-logo.svg';
 
-import useGetDebtDataQuery from 'queries/debt/useGetDebtDataQuery';
 import useHistoricalRatesQuery from 'queries/rates/useHistoricalRatesQuery';
 import useSNX24hrPricesQuery from 'queries/rates/useSNX24hrPricesQuery';
 import useFeePeriodTimeAndProgress from 'hooks/useFeePeriodTimeAndProgress';
@@ -21,16 +20,15 @@ import { Period } from 'constants/period';
 import { MENU_LINKS } from '../constants';
 import PriceItem from './PriceItem';
 import { PeriodBarStats, CRatioBarStats } from './BarStats';
+import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 
 const SideNav: FC = () => {
 	const { t } = useTranslation();
 	const { asPath } = useRouter();
-	const debtDataQuery = useGetDebtDataQuery();
 	const SNX24hrPricesQuery = useSNX24hrPricesQuery();
 	const ETH24hrPricesQuery = useHistoricalRatesQuery(CRYPTO_CURRENCY_MAP.ETH, Period.ONE_DAY);
 
-	const currentCRatio = debtDataQuery.data?.currentCRatio ?? 0;
-	const targetCRatio = debtDataQuery.data?.targetCRatio ?? 0;
+	const { currentCRatio, targetCRatio } = useStakingCalculations();
 
 	const { nextFeePeriodStarts, currentFeePeriodProgress } = useFeePeriodTimeAndProgress();
 

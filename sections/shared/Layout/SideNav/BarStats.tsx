@@ -4,7 +4,8 @@ import { useTranslation } from 'react-i18next';
 import { FlexDivCentered, FlexDivCol, FlexDivRowCentered } from 'styles/common';
 import ProgressBar from 'components/ProgressBar';
 import Countdown from 'react-countdown';
-import { formatPercent } from 'utils/formatters/number';
+import { formatPercent, toBigNumber } from 'utils/formatters/number';
+import BigNumber from 'bignumber.js';
 
 interface PeriodBarStatsProps {
 	nextFeePeriodStarts: Date;
@@ -36,8 +37,8 @@ export const PeriodBarStats: FC<PeriodBarStatsProps> = ({
 };
 
 interface CRatioBarStatsProps {
-	currentCRatio: number;
-	targetCRatio: number;
+	currentCRatio: BigNumber;
+	targetCRatio: BigNumber;
 }
 
 export const CRatioBarStats: FC<CRatioBarStatsProps> = ({ currentCRatio, targetCRatio }) => {
@@ -45,7 +46,11 @@ export const CRatioBarStats: FC<CRatioBarStatsProps> = ({ currentCRatio, targetC
 	const theme = useTheme();
 
 	const barPercentage = useMemo(
-		() => (currentCRatio ? Math.round(100 / currentCRatio) / Math.round(100 / targetCRatio) : 0),
+		() =>
+			currentCRatio
+				? Math.round(toBigNumber(100).dividedBy(currentCRatio).toNumber()) /
+				  Math.round(toBigNumber(100).dividedBy(targetCRatio).toNumber())
+				: 0,
 		[currentCRatio, targetCRatio]
 	);
 
@@ -53,7 +58,9 @@ export const CRatioBarStats: FC<CRatioBarStatsProps> = ({ currentCRatio, targetC
 		<BarStatBox key="CRATIO">
 			<BarHeaderSection>
 				<BarTitle>{t('sidenav.bars.c-ratio')}</BarTitle>
-				<BarValue>{formatPercent(currentCRatio ? 1 / currentCRatio : 0)}</BarValue>
+				<BarValue>
+					{formatPercent(currentCRatio ? toBigNumber(1).dividedBy(currentCRatio) : 0)}
+				</BarValue>
 			</BarHeaderSection>
 			<ShadowCRatioBar
 				percentage={barPercentage}

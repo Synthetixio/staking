@@ -11,34 +11,34 @@ import StatBox from 'components/StatBox';
 
 import { formatFiatCurrency, formatPercent, toBigNumber } from 'utils/formatters/number';
 
-import useGetDebtDataQuery from 'queries/debt/useGetDebtDataQuery';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import useGetFeePoolDataQuery from 'queries/staking/useGetFeePoolDataQuery';
 import useTotalIssuedSynthsExcludingEtherQuery from 'queries/synths/useTotalIssuedSynthsExcludingEtherQuery';
 import useClaimableRewards from 'queries/staking/useClaimableRewardsQuery';
 import useFeeClaimHistoryQuery from 'queries/staking/useFeeClaimHistoryQuery';
+import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 
 const Earn = () => {
 	const { t } = useTranslation();
 
-	const debtDataQuery = useGetDebtDataQuery();
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const totalIssuedSynthsExclEth = useTotalIssuedSynthsExcludingEtherQuery(SYNTHS_MAP.sUSD);
 	const previousFeePeriod = useGetFeePoolDataQuery('1');
+	const { currentCRatio, targetCRatio, debtBalance, collateral } = useStakingCalculations();
 
-	const currentCRatio = debtDataQuery.data?.currentCRatio ?? 0;
-	const targetCRatio = debtDataQuery.data?.targetCRatio ?? 0;
-	const activeDebt = debtDataQuery.data?.debtBalance ?? 0;
-	const collateral = debtDataQuery.data?.collateral ?? 0;
 	const sUSDRate = exchangeRatesQuery.data?.sUSD ?? 0;
 	const feesToDistribute = previousFeePeriod?.data?.feesToDistribute ?? 0;
 	const rewardsToDistribute = previousFeePeriod?.data?.rewardsToDistribute ?? 0;
 	const totalsUSDDebt = totalIssuedSynthsExclEth?.data ?? 0;
 	const SNXRate = exchangeRatesQuery.data?.SNX ?? 0;
 
-	const stakedValue = collateral * Math.min(1, currentCRatio / targetCRatio) * SNXRate;
+	const stakedValue = collateral
+		.multipliedBy(Math.min(1 / currentCRatio.dividedBy(targetCRatio).toNumber()))
+		.multipliedBy(SNXRate);
 	const weeklyRewards = sUSDRate * feesToDistribute + SNXRate * rewardsToDistribute;
-	const stakingAPR = (weeklyRewards * (activeDebt / totalsUSDDebt) * 52) / stakedValue;
+
+	const stakingAPR =
+		(weeklyRewards * (debtBalance.toNumber() / totalsUSDDebt) * 52) / stakedValue.toNumber();
 
 	const availableRewards = useClaimableRewards();
 
