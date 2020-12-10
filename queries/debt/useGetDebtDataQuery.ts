@@ -1,5 +1,4 @@
 import { useQuery, QueryConfig } from 'react-query';
-import { SynthetixJS } from '@synthetixio/js';
 import { useRecoilValue } from 'recoil';
 import BigNumber from 'bignumber.js';
 
@@ -32,7 +31,7 @@ const useGetDebtDataQuery = (options?: QueryConfig<WalletDebtData>) => {
 			const {
 				contracts: { SystemSettings, Synthetix, SynthetixState },
 				utils,
-			} = synthetix.js as SynthetixJS;
+			} = synthetix.js!;
 			const IssuanceRatioContract = network?.id === 5 ? SystemSettings : SynthetixState;
 			const sUSDBytes = utils.formatBytes32String('sUSD');
 			const result = await Promise.all([

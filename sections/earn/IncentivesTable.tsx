@@ -11,9 +11,8 @@ import GoBackIcon from 'assets/svg/app/go-back.svg';
 
 import { formatPercent, formatFiatCurrency, formatCurrency } from 'utils/formatters/number';
 
-import { GridDivCenteredRow, FlexDivCentered, FlexDivCol, FlexDivColCentered } from 'styles/common';
+import { FlexDivCentered, FlexDivCol, FlexDivColCentered } from 'styles/common';
 import { CRYPTO_CURRENCY_MAP } from 'constants/currency';
-import BigNumber from 'bignumber.js';
 import { NOT_APPLICABLE } from './Incentives';
 
 export type EarnItem = {
@@ -230,15 +229,6 @@ const StyledTable = styled(Table)`
 			padding-right: 0px;
 		}
 	}
-`;
-
-const StyledTableNoResults = styled(GridDivCenteredRow)`
-	padding: 50px 0;
-	justify-content: center;
-	background-color: ${(props) => props.theme.colors.navy};
-	margin-top: -2px;
-	justify-items: center;
-	grid-gap: 10px;
 `;
 
 const Title = styled.div`

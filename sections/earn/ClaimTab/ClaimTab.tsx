@@ -7,7 +7,6 @@ import { ErrorMessage, FlexDivCentered, FlexDivColCentered } from 'styles/common
 import useClaimedStatus from 'sections/hooks/useClaimedStatus';
 import BigNumber from 'bignumber.js';
 import { formatCurrency, formatFiatCurrency } from 'utils/formatters/number';
-import { SynthetixJS } from '@synthetixio/js';
 import synthetix from 'lib/synthetix';
 import Connector from 'containers/Connector';
 import { getGasEstimateForTransaction } from 'utils/transactions';
@@ -73,7 +72,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({
 		try {
 			const {
 				contracts: { FeePool },
-			} = synthetix.js as SynthetixJS;
+			} = synthetix.js!;
 			const tx = await FeePool.claimFees({
 				gasPrice: normalizedGasPrice(gasPrice),
 				gasLimitEstimate,

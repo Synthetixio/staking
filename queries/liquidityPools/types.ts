@@ -1,5 +1,3 @@
-import { CurrencyKey } from 'constants/currency';
-
 export type LiquidityPoolData = {
 	distribution: number;
 	address: string;

@@ -37,7 +37,7 @@ const InnerTab: FC<InnerTabProps> = ({
 				<InputField placeholder="0.00" onChange={(e) => setAmount(Number(e.target.value))} />
 				<MaxButton
 					variant="primary"
-					disabled={assetAmount == 0}
+					disabled={assetAmount === 0}
 					onClick={() => setAmount(assetAmount)}
 				>
 					{t('earn.actions.max')}

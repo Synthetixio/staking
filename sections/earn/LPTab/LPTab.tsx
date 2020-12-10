@@ -1,4 +1,4 @@
-import { FC, useState, useMemo, useEffect } from 'react';
+import { FC, useState, useMemo, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { Svg } from 'react-optimized-image';
@@ -48,25 +48,28 @@ const LPTab: FC<LPTabProps> = ({ icon, asset, title, tokenRewards, allowance }) 
 		}
 	}, [allowance]);
 
-	const handleStake = (type: Staking) => {
-		if (type === Staking.STAKE) {
-			console.log('stake amount:', stakeAmount);
-		} else if (type === Staking.UNSTAKE) {
-			console.log('unstake amount:', unstakeAmount);
-		}
-	};
+	const handleStake = useCallback(
+		(type: Staking) => {
+			if (type === Staking.STAKE) {
+				console.log('stake amount:', stakeAmount);
+			} else if (type === Staking.UNSTAKE) {
+				console.log('unstake amount:', unstakeAmount);
+			}
+		},
+		[stakeAmount, unstakeAmount]
+	);
 
 	const assetAmount = 0;
 
-	const commonInnerTabProps = {
-		icon,
-		asset,
-		handleStake,
-		assetAmount,
-	};
+	const tabData = useMemo(() => {
+		const commonInnerTabProps = {
+			icon,
+			asset,
+			handleStake,
+			assetAmount,
+		};
 
-	const tabData = useMemo(
-		() => [
+		return [
 			{
 				title: t('earn.actions.stake.title'),
 				tabChildren: (
@@ -83,19 +86,8 @@ const LPTab: FC<LPTabProps> = ({ icon, asset, title, tokenRewards, allowance }) 
 				blue: false,
 				key: 'unstake',
 			},
-		],
-		[
-			t,
-			setStakeAmount,
-			stakeAmount,
-			unstakeAmount,
-			setUnstakeAmount,
-			icon,
-			asset,
-			assetAmount,
-			handleStake,
-		]
-	);
+		];
+	}, [t, setStakeAmount, icon, asset, handleStake, assetAmount]);
 
 	return (
 		<TabContainer>

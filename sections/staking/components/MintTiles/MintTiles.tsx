@@ -10,7 +10,7 @@ import { amountToMintState, MintActionType, mintTypeState } from 'store/staking'
 
 type MintTilesProps = {};
 
-const MintTiles: React.FC<MintTilesProps> = ({}) => {
+const MintTiles: React.FC<MintTilesProps> = () => {
 	const { t } = useTranslation();
 	const [mintType, onMintTypeChange] = useRecoilState(mintTypeState);
 	const onMintChange = useSetRecoilState(amountToMintState);
@@ -19,7 +19,7 @@ const MintTiles: React.FC<MintTilesProps> = ({}) => {
 
 	useEffect(() => {
 		onMintChange('');
-	}, [mintType]);
+	}, [mintType, onMintChange]);
 
 	return (
 		<Container>
