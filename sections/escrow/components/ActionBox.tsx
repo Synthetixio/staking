@@ -1,23 +1,20 @@
-import React, { Dispatch, SetStateAction, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import StructuredTab from 'components/StructuredTab';
 import { BOX_COLUMN_WIDTH } from 'constants/styles';
 import { useTranslation } from 'react-i18next';
 import StakingRewardsTab from './StakingRewardsTab';
-import { EscrowPanelType } from 'sections/escrow';
+import { useSetRecoilState } from 'recoil';
+import { EscrowPanelType, panelTypeState } from 'store/escrow';
 
-type ActionBoxProps = {
-	canVestAmount: number;
-	setPanelType: Dispatch<SetStateAction<any>>;
-	isLoaded: boolean;
-};
-
-const ActionBox: React.FC<ActionBoxProps> = ({ canVestAmount, setPanelType, isLoaded }) => {
+const ActionBox: React.FC = () => {
 	const { t } = useTranslation();
+	const setPanelType = useSetRecoilState(panelTypeState);
+
 	const tabData = useMemo(
 		() => [
 			{
 				title: t('escrow.actions.staking.title'),
-				tabChildren: <StakingRewardsTab canVestAmount={canVestAmount} />,
+				tabChildren: <StakingRewardsTab />,
 				key: EscrowPanelType.STAKING,
 				blue: true,
 			},
@@ -28,7 +25,7 @@ const ActionBox: React.FC<ActionBoxProps> = ({ canVestAmount, setPanelType, isLo
 				blue: false,
 			},
 		],
-		[t, canVestAmount]
+		[t]
 	);
 
 	return (
