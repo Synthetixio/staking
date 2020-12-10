@@ -94,7 +94,7 @@ const Earn = () => {
 				stakingRewards={stakingRewards}
 				totalRewards={totalRewards}
 				stakingAPR={stakingAPR}
-				stakedValue={stakedValue}
+				stakedValue={stakedValue.toNumber()}
 			/>
 		</>
 	);
