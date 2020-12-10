@@ -155,6 +155,9 @@ const Incentives: FC<IncentivesProps> = ({
 			useiETHPool.data,
 			useCurvePool.data,
 			useiBTCPool.data,
+			currentFeePeriodStarted,
+			now,
+			t,
 		]
 	);
 	return (

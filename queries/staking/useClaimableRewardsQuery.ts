@@ -6,7 +6,6 @@ import { useRecoilValue } from 'recoil';
 import { isWalletConnectedState, networkState, walletAddressState } from 'store/wallet';
 import { appReadyState } from 'store/app';
 import BigNumber from 'bignumber.js';
-import { SynthetixJS } from '@synthetixio/js';
 import { toBigNumber } from 'utils/formatters/number';
 
 type AvailableFees = {
@@ -27,7 +26,7 @@ const useClaimableRewards = (options?: QueryConfig<AvailableFees>) => {
 			const {
 				contracts: { FeePool },
 				utils,
-			} = synthetix.js as SynthetixJS;
+			} = synthetix.js!;
 			const feesAvailable = await FeePool.feesAvailable(walletAddress);
 			return {
 				tradingRewards: toBigNumber(utils.formatEther(feesAvailable[0])),

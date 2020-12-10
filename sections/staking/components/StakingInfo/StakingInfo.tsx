@@ -114,7 +114,21 @@ const StakingInfo: React.FC<StakingInfoProps> = ({ isMint }) => {
 				currencyKey: SYNTHS_MAP.sUSD,
 			},
 		];
-	}, [amountToBurn, amountToMint, t, isMint]);
+	}, [
+		amountToBurn,
+		amountToMint,
+		t,
+		isMint,
+		SNXRate,
+		currentCRatio,
+		debtBalance,
+		lockedCollateral,
+		stakedCollateral,
+		targetCRatio,
+		totalEscrowBalance,
+		transferableCollateral,
+		unstakedCollateral,
+	]);
 
 	const emptyInput = isMint ? amountToMint.length === 0 : amountToBurn.length === 0;
 

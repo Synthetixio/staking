@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import styled from 'styled-components';
 import Img, { Svg } from 'react-optimized-image';
 import { useTranslation } from 'react-i18next';
@@ -117,7 +117,7 @@ const StakingInput: React.FC<StakingInputProps> = ({
 				</StyledCTA>
 			);
 		}
-	}, [inputValue, error, transactionState]);
+	}, [inputValue, error, transactionState, isMint, onSubmit, t]);
 
 	if (transactionState === Transaction.WAITING) {
 		return (

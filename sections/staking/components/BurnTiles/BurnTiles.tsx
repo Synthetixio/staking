@@ -29,7 +29,7 @@ const BurnTiles: React.FC<BurnTilesProps> = ({
 
 	useEffect(() => {
 		onBurnChange('');
-	}, [burnType]);
+	}, [burnType, onBurnChange]);
 
 	return (
 		<Container>

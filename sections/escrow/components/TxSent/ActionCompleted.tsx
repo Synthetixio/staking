@@ -3,7 +3,12 @@ import { Svg } from 'react-optimized-image';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-import { FlexDivRowCentered, FlexDivCentered, FlexDivColCentered } from 'styles/common';
+import {
+	FlexDivRowCentered,
+	FlexDivCentered,
+	FlexDivColCentered,
+	ExternalLink,
+} from 'styles/common';
 import Success from 'assets/svg/app/circle-tick.svg';
 import { Transaction } from 'constants/network';
 
@@ -41,9 +46,9 @@ const ActionCompleted: FC<ActionCompletedProps> = ({
 			</FlexDivCentered>
 			<ButtonWrap>
 				{link ? (
-					<a href={link} target="_blank">
+					<ExternalLink href={link}>
 						<DismissButton>{t('escrow.actions.completed.verify')}</DismissButton>
-					</a>
+					</ExternalLink>
 				) : null}
 				<SeeMoreButton onClick={() => setTransactionState(Transaction.PRESUBMIT)}>
 					{t('staking.actions.mint.completed.dismiss')}

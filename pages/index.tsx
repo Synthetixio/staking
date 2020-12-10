@@ -9,13 +9,12 @@ import { PossibleActions } from 'sections/dashboard';
 
 import StatBox from 'components/StatBox';
 
-import useGetDebtDataQuery from 'queries/debt/useGetDebtDataQuery';
 import useGetFeePoolDataQuery from 'queries/staking/useGetFeePoolDataQuery';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import useTotalIssuedSynthsExcludingEtherQuery from 'queries/synths/useTotalIssuedSynthsExcludingEtherQuery';
 
 import { CRYPTO_CURRENCY_MAP } from 'constants/currency';
-import { formatFiatCurrency, formatPercent, toBigNumber } from 'utils/formatters/number';
+import { formatFiatCurrency, formatPercent } from 'utils/formatters/number';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 
 const DashboardPage = () => {
