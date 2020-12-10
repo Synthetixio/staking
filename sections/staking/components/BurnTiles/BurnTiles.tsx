@@ -52,7 +52,7 @@ const BurnTiles: React.FC<BurnTilesProps> = ({
 					})}
 					subtext={t('staking.actions.burn.tiles.target.subtext')}
 					icon={BurnIcon}
-					onAction={() => onBurnTypeChange(BurnActionType.MAX)}
+					onAction={() => onBurnTypeChange(BurnActionType.TARGET)}
 				/>
 				<MarginedButtonTile
 					right={true}

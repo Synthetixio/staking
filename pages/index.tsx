@@ -15,25 +15,20 @@ import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import useTotalIssuedSynthsExcludingEtherQuery from 'queries/synths/useTotalIssuedSynthsExcludingEtherQuery';
 
 import { CRYPTO_CURRENCY_MAP } from 'constants/currency';
-import { formatFiatCurrency, formatPercent } from 'utils/formatters/number';
+import { formatFiatCurrency, formatPercent, toBigNumber } from 'utils/formatters/number';
+import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 
 const DashboardPage = () => {
 	const { t } = useTranslation();
 
-	const debtDataQuery = useGetDebtDataQuery();
 	const totalIssuedSynthsExclEth = useTotalIssuedSynthsExcludingEtherQuery(
 		CRYPTO_CURRENCY_MAP.sUSD
 	);
 	const exchangeRates = useExchangeRatesQuery();
 	const previousFeePeriod = useGetFeePoolDataQuery('1');
 
-	const currentCRatio = debtDataQuery.data?.currentCRatio ?? 0;
-	const targetCRatio = debtDataQuery.data?.targetCRatio ?? 0;
+	const { currentCRatio, targetCRatio, debtBalance, collateral } = useStakingCalculations();
 
-	// TODO: replace with useMemo
-	// eslint-disable-next-line
-	const activeDebt = debtDataQuery.data?.debtBalance ?? 0;
-	const collateral = debtDataQuery.data?.collateral ?? 0;
 	const sUSDRate = exchangeRates.data?.sUSD ?? 0;
 	const feesToDistribute = previousFeePeriod?.data?.feesToDistribute ?? 0;
 	const rewardsToDistribute = previousFeePeriod?.data?.rewardsToDistribute ?? 0;
@@ -42,11 +37,14 @@ const DashboardPage = () => {
 	// TODO: replace with selected currency instead of usd hardcode
 	// eslint-disable-next-line
 	const SNXRate = exchangeRates.data?.SNX ?? 0;
-	const stakedValue = collateral * Math.min(1, currentCRatio / targetCRatio) * SNXRate;
+	const stakedValue = collateral
+		.multipliedBy(Math.min(1 / currentCRatio.dividedBy(targetCRatio).toNumber()))
+		.multipliedBy(SNXRate);
 
 	// TODO: replace with useMemo
 	const weeklyRewards = sUSDRate * feesToDistribute + SNXRate * rewardsToDistribute;
-	const stakingAPR = (weeklyRewards * (activeDebt / totalsUSDDebt) * 52) / stakedValue;
+	const stakingAPR =
+		(weeklyRewards * (debtBalance.toNumber() / totalsUSDDebt) * 52) / stakedValue.toNumber();
 
 	return (
 		<>
@@ -66,7 +64,7 @@ const DashboardPage = () => {
 					/>
 					<ActiveDebt
 						title={t('common.stat-box.active-debt')}
-						value={formatFiatCurrency(activeDebt ? activeDebt : 0, { sign: '$' })}
+						value={formatFiatCurrency(debtBalance ? debtBalance : 0, { sign: '$' })}
 					/>
 				</StatsSection>
 				<LineSpacer />

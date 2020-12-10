@@ -1,6 +1,7 @@
 import { useQuery, QueryConfig } from 'react-query';
 import { SynthetixJS } from '@synthetixio/js';
 import { useRecoilValue } from 'recoil';
+import BigNumber from 'bignumber.js';
 
 import synthetix from 'lib/synthetix';
 
@@ -8,8 +9,16 @@ import QUERY_KEYS from 'constants/queryKeys';
 
 import { isWalletConnectedState, networkState, walletAddressState } from 'store/wallet';
 import { appReadyState } from 'store/app';
+import { toBigNumber } from 'utils/formatters/number';
 
-import { WalletDebtData } from './types';
+type WalletDebtData = {
+	targetCRatio: BigNumber;
+	currentCRatio: BigNumber;
+	transferable: BigNumber;
+	debtBalance: BigNumber;
+	collateral: BigNumber;
+	issuableSynths: BigNumber;
+};
 
 const useGetDebtDataQuery = (options?: QueryConfig<WalletDebtData>) => {
 	const isAppReady = useRecoilValue(appReadyState);
@@ -40,9 +49,8 @@ const useGetDebtDataQuery = (options?: QueryConfig<WalletDebtData>) => {
 				transferable,
 				debtBalance,
 				collateral,
-				maxIssuableSynths,
-			] = result.map((item) => Number(utils.formatEther(item)));
-			const issuableSynths = Math.max(0, maxIssuableSynths - debtBalance);
+				issuableSynths,
+			] = result.map((item) => toBigNumber(utils.formatEther(item)));
 			return {
 				targetCRatio,
 				currentCRatio,
