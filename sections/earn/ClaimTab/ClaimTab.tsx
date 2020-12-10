@@ -3,6 +3,7 @@ import { Trans, useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { Svg } from 'react-optimized-image';
 import { ethers } from 'ethers';
+import { SynthetixJS } from '@synthetixio/js';
 
 import {
 	ErrorMessage,
@@ -11,7 +12,6 @@ import {
 	ModalContent,
 	ModalItem,
 	ModalItemTitle,
-	ModalItemText,
 } from 'styles/common';
 import useClaimedStatus from 'sections/hooks/useClaimedStatus';
 import BigNumber from 'bignumber.js';
@@ -24,7 +24,7 @@ import Etherscan from 'containers/Etherscan';
 import GasSelector from 'components/GasSelector';
 import Notify from 'containers/Notify';
 import { normalizedGasPrice, normalizeGasLimit } from 'utils/network';
-import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal/TxConfirmationModal';
+import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import { CRYPTO_CURRENCY_MAP, SYNTHS_MAP } from 'constants/currency';
 import snxSVG from 'assets/svg/incentives/pool-snx.svg';
 import largeWaveSVG from 'assets/svg/app/large-wave.svg';
@@ -42,15 +42,9 @@ type ClaimTabProps = {
 	tradingRewards: BigNumber;
 	stakingRewards: BigNumber;
 	totalRewards: BigNumber;
-	refetch: Function;
 };
 
-const ClaimTab: React.FC<ClaimTabProps> = ({
-	tradingRewards,
-	stakingRewards,
-	totalRewards,
-	refetch,
-}) => {
+const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, totalRewards }) => {
 	const { t } = useTranslation();
 	const claimed = useClaimedStatus();
 	const { monitorHash } = Notify.useContainer();
@@ -59,6 +53,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({
 	const [gasLimitEstimate, setGasLimitEstimate] = useState<number | null>(null);
 	const [gasPrice, setGasPrice] = useState<number>(0);
 	const [error, setError] = useState<string | null>(null);
+	const [lowCRatio, setLowCRatio] = useState(false);
 
 	const [transactionState, setTransactionState] = useState<Transaction>(Transaction.PRESUBMIT);
 	const [txHash, setTxHash] = useState<string | null>(null);
@@ -75,7 +70,9 @@ const ClaimTab: React.FC<ClaimTabProps> = ({
 					let gasEstimate = await getGasEstimateForTransaction([], FeePool.estimateGas.claimFees);
 					setGasLimitEstimate(normalizeGasLimit(Number(gasEstimate)));
 				} catch (error) {
-					if (!error.message.includes('already claimed')) {
+					if (error.message.includes('below penalty threshold')) {
+						setLowCRatio(true);
+					} else if (!error.message.includes('already claimed')) {
 						setError(error.message);
 					}
 					setGasLimitEstimate(null);
@@ -93,9 +90,8 @@ const ClaimTab: React.FC<ClaimTabProps> = ({
 				contracts: { FeePool },
 			} = synthetix.js!;
 
-			let transaction: ethers.ContractTransaction;
-			const gasLimit = getGasEstimateForTransaction([], FeePool.estimateGas.claimFees);
-			transaction = await FeePool.claimFees({
+			const gasLimit = await getGasEstimateForTransaction([], FeePool.estimateGas.claimFees);
+			const transaction: ethers.ContractTransaction = await FeePool.claimFees({
 				gasPrice: normalizedGasPrice(gasPrice),
 				gasLimit,
 			});
@@ -156,7 +152,11 @@ const ClaimTab: React.FC<ClaimTabProps> = ({
 					<PaddedButton variant="primary" onClick={handleClaim} disabled={error != null || claimed}>
 						{claimed
 							? t('earn.actions.claim.claimed-button')
-							: t('earn.actions.claim.claim-button')}
+							: lowCRatio && totalRewards.toNumber() > 0
+							? t('earn.actions.claim.low-ratio')
+							: totalRewards.toNumber() > 0
+							? t('earn.actions.claim.claim-button')
+							: t('earn.actions.claim.nothing-to-claim')}
 					</PaddedButton>
 					<GasSelector gasLimitEstimate={gasLimitEstimate} setGasPrice={setGasPrice} />
 				</InnerContainer>

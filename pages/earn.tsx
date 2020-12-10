@@ -60,10 +60,10 @@ const Earn = () => {
 
 	const totalFees = claimHistoryValues.reduce((a, b) => a + b, 0);
 
-	const refetch = () => {
-		availableRewards.refetch();
-		feeClaimHistoryQuery.refetch();
-	};
+	// const refetch = () => {
+	// 	availableRewards.refetch();
+	// 	feeClaimHistoryQuery.refetch();
+	// };
 
 	return (
 		<>
@@ -89,7 +89,6 @@ const Earn = () => {
 			</StatsSection>
 			<LineSpacer />
 			<Incentives
-				refetch={refetch}
 				tradingRewards={tradingRewards}
 				stakingRewards={stakingRewards}
 				totalRewards={totalRewards}

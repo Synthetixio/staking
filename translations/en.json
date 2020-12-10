@@ -253,7 +253,9 @@
 				"staking-rewards": "SNX staking rewards",
 				"claim-button": "CLAIM REWARDS",
 				"claim-snx-button": "Claim SNX",
-				"claimed-button": "ALREADY CLAIMED"
+				"claimed-button": "ALREADY CLAIMED",
+				"low-ratio": "ADD COLLATERAL TO CLAIM",
+				"nothing-to-claim": "NOTHING TO CLAIM"
 			},
 			"lp": {
 				"title-curve": "CURVE REWARDS",
