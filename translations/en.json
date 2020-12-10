@@ -26,6 +26,9 @@
 				"approving": "APPROVING",
 				"contract": "{{synth}} CONTRACT"
 			},
+			"claiming": {
+				"claiming": "CLAIMING"
+			},
 			"minting": {
 				"from": "Staking",
 				"to": "Minting"
