@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useMemo } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import styled from 'styled-components';
@@ -15,14 +15,36 @@ import { EscrowData } from 'queries/escrow/useEscrowDataQuery';
 
 import { GridDivCenteredRow, linkCSS } from 'styles/common';
 import { CRYPTO_CURRENCY_MAP } from 'constants/currency';
+import { useRecoilValue } from 'recoil';
+import { EscrowPanelType, panelTypeState } from 'store/escrow';
 import useEscrowDataQuery from 'queries/escrow/useEscrowDataQuery';
+import useTokenSaleEscrowQuery from 'queries/escrow/useTokenSaleEscrowQuery';
 
 const EscrowTable: FC = () => {
 	const { t } = useTranslation();
-	const escrowDataQuery = useEscrowDataQuery();
-	const escrowData = escrowDataQuery.data;
+	const panelType = useRecoilValue(panelTypeState);
 
-	const data = escrowData?.schedule ?? [];
+	// @TODO: Refactor into own components
+	const escrowDataQuery = useEscrowDataQuery();
+	const tokenSaleEscrowQuery = useTokenSaleEscrowQuery();
+
+	const escrowData = escrowDataQuery.data;
+	const tokenSaleEscrow = tokenSaleEscrowQuery.data;
+
+	console.log(tokenSaleEscrow);
+
+	const data = useMemo(() => {
+		if (escrowData && tokenSaleEscrow) {
+			if (panelType === EscrowPanelType.STAKING) {
+				return escrowData.schedule;
+			} else {
+				return tokenSaleEscrow?.data;
+			}
+		} else {
+			return [];
+		}
+	}, [panelType]);
+
 	return (
 		<Container>
 			<Title>{t('escrow.info.title')}</Title>
