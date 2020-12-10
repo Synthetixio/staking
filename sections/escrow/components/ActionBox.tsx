@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import StakingRewardsTab from './StakingRewardsTab';
 import { useSetRecoilState } from 'recoil';
 import { EscrowPanelType, panelTypeState } from 'store/escrow';
+import TokenSaleTab from './TokenSaleTab';
 
 const ActionBox: React.FC = () => {
 	const { t } = useTranslation();
@@ -20,7 +21,7 @@ const ActionBox: React.FC = () => {
 			},
 			{
 				title: t('escrow.actions.ico.title'),
-				tabChildren: <></>,
+				tabChildren: <TokenSaleTab />,
 				key: EscrowPanelType.ICO,
 				blue: false,
 			},

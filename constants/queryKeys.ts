@@ -144,6 +144,12 @@ export const QUERY_KEYS = {
 			walletAddress,
 			networkId,
 		],
+		TokenSale: (walletAddress: string, networkId: NetworkId) => [
+			'escrow',
+			'tokenSale',
+			walletAddress,
+			networkId,
+		],
 	},
 	LiquidityPools: {
 		iETH: (walletAddress: string, networkId: NetworkId) => [
