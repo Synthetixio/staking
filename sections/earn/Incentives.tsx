@@ -29,7 +29,6 @@ type IncentivesProps = {
 	tradingRewards: BigNumber;
 	stakingRewards: BigNumber;
 	totalRewards: BigNumber;
-	refetch: Function;
 	stakingAPR: number;
 	stakedValue: number;
 };
@@ -38,7 +37,6 @@ const Incentives: FC<IncentivesProps> = ({
 	tradingRewards,
 	stakingRewards,
 	totalRewards,
-	refetch,
 	stakingAPR,
 	stakedValue,
 }) => {
@@ -175,13 +173,12 @@ const Incentives: FC<IncentivesProps> = ({
 							tradingRewards={tradingRewards}
 							stakingRewards={stakingRewards}
 							totalRewards={totalRewards}
-							refetch={refetch}
 						/>
 					)}
 					{activeTab === 1 && (
 						<LPTab
-							asset={SYNTHS_MAP.sUSD}
-							allowance={useCurvePool.data?.allowance ?? null}
+							synth={SYNTHS_MAP.sUSD}
+							allowance={(1 || useCurvePool.data?.allowance) ?? null}
 							icon={incentives[1].icon}
 							tokenRewards={incentives[1].rewards}
 							title={
@@ -194,7 +191,7 @@ const Incentives: FC<IncentivesProps> = ({
 					)}
 					{activeTab === 2 && (
 						<LPTab
-							asset={SYNTHS_MAP.iETH}
+							synth={SYNTHS_MAP.iETH}
 							allowance={useiETHPool.data?.allowance ?? null}
 							icon={incentives[2].icon}
 							tokenRewards={incentives[2].rewards}
@@ -208,7 +205,7 @@ const Incentives: FC<IncentivesProps> = ({
 					)}
 					{activeTab === 3 && (
 						<LPTab
-							asset={SYNTHS_MAP.iBTC}
+							synth={SYNTHS_MAP.iBTC}
 							allowance={useiBTCPool.data?.allowance ?? null}
 							icon={incentives[3].icon}
 							tokenRewards={incentives[3].rewards}

@@ -1,39 +1,27 @@
 import { FC, useState, useMemo, useEffect, useCallback } from 'react';
-import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import { Svg } from 'react-optimized-image';
 
 import StructuredTab from 'components/StructuredTab';
-import { FlexDivCentered, FlexDivColCentered } from 'styles/common';
+import { FlexDivCentered } from 'styles/common';
 import { CurrencyKey } from 'constants/currency';
-import smallWaveSVG from 'assets/svg/app/small-wave.svg';
-import snxSVG from 'assets/svg/incentives/pool-snx.svg';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
-import { CRYPTO_CURRENCY_MAP } from 'constants/currency';
-import { formatCurrency, formatFiatCurrency } from 'utils/formatters/number';
 
-import InnerTab from './InnerTab';
-import { TabContainer, Label, StyledButton } from '../common';
+import StakeTab from './StakeTab';
+import { TabContainer, Label } from '../common';
 import Approve from './Approve';
-
-export enum Staking {
-	STAKE = 'STAKE',
-	UNSTAKE = 'UNSTAKE',
-}
+import RewardsBox from './RewardsBox';
 
 interface LPTabProps {
-	asset: CurrencyKey;
+	synth: CurrencyKey;
 	title: JSX.Element;
 	tokenRewards: number;
 	icon: () => JSX.Element;
 	allowance: number | null;
 }
 
-const LPTab: FC<LPTabProps> = ({ icon, asset, title, tokenRewards, allowance }) => {
+const LPTab: FC<LPTabProps> = ({ icon, synth, title, tokenRewards, allowance }) => {
 	const { t } = useTranslation();
-	const [stakeAmount, setStakeAmount] = useState<number | null>(null);
 	const [showApproveOverlayModal, setShowApproveOverlayModal] = useState<boolean>(false);
-	const [unstakeAmount, setUnstakeAmount] = useState<number | null>(null);
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const SNXRate = exchangeRatesQuery.data?.SNX ?? 0;
 
@@ -41,53 +29,36 @@ const LPTab: FC<LPTabProps> = ({ icon, asset, title, tokenRewards, allowance }) 
 		if (allowance === 0) {
 			setShowApproveOverlayModal(true);
 		} else if (allowance == null) {
-			// NOTe maybe do a loading state in this case
-			console.log('this is the allowance null case to ignore');
+			// TODO - loading state in this case
 		} else if (allowance > 0) {
 			setShowApproveOverlayModal(false);
 		}
 	}, [allowance]);
 
-	const handleStake = useCallback(
-		(type: Staking) => {
-			if (type === Staking.STAKE) {
-				console.log('stake amount:', stakeAmount);
-			} else if (type === Staking.UNSTAKE) {
-				console.log('unstake amount:', unstakeAmount);
-			}
-		},
-		[stakeAmount, unstakeAmount]
-	);
-
-	const assetAmount = 0;
+	const synthAvailable = 10;
 
 	const tabData = useMemo(() => {
-		const commonInnerTabProps = {
+		const commonStakeTabProps = {
 			icon,
-			asset,
-			handleStake,
-			assetAmount,
+			synth,
+			synthAvailable,
 		};
 
 		return [
 			{
 				title: t('earn.actions.stake.title'),
-				tabChildren: (
-					<InnerTab {...commonInnerTabProps} isStake={true} setAmount={setStakeAmount} />
-				),
+				tabChildren: <StakeTab {...commonStakeTabProps} isStake={true} />,
 				blue: true,
 				key: 'stake',
 			},
 			{
 				title: t('earn.actions.unstake.title'),
-				tabChildren: (
-					<InnerTab {...commonInnerTabProps} isStake={false} setAmount={setUnstakeAmount} />
-				),
+				tabChildren: <StakeTab {...commonStakeTabProps} isStake={false} />,
 				blue: false,
 				key: 'unstake',
 			},
 		];
-	}, [t, setStakeAmount, icon, asset, handleStake, assetAmount]);
+	}, [t, icon, synth, synthAvailable]);
 
 	return (
 		<TabContainer>
@@ -101,63 +72,11 @@ const LPTab: FC<LPTabProps> = ({ icon, asset, title, tokenRewards, allowance }) 
 					boxWidth={270}
 					tabData={tabData}
 				/>
-				<RewardsContainer>
-					<RewardsTitle>{t('earn.actions.rewards.title')}</RewardsTitle>
-					<Svg src={snxSVG} />
-					<RewardsAmountSNX>
-						{formatCurrency(CRYPTO_CURRENCY_MAP.SNX, tokenRewards, {
-							currencyKey: '',
-							decimals: 2,
-						})}
-					</RewardsAmountSNX>
-					<RewardsAmountUSD>
-						≈ {formatFiatCurrency(tokenRewards * SNXRate, { sign: '$' })}
-					</RewardsAmountUSD>
-					<StyledButton
-						variant="primary"
-						onClick={() => console.log('claim')}
-						disabled={tokenRewards === 0}
-					>
-						{t('earn.actions.claim.claim-snx-button')}
-					</StyledButton>
-				</RewardsContainer>
+				<RewardsBox tokenRewards={tokenRewards} SNXRate={SNXRate} />
 			</FlexDivCentered>
-			{showApproveOverlayModal ? <Approve synth={asset} /> : null}
+			{showApproveOverlayModal ? <Approve synth={synth} /> : null}
 		</TabContainer>
 	);
 };
-
-const RewardsContainer = styled(FlexDivColCentered)`
-	height: 280px;
-	width: 180px;
-	margin: 15px;
-	padding: 15px;
-	border: 1px solid ${(props) => props.theme.colors.pink};
-	border-radius: 4px;
-	background-image: url(${smallWaveSVG.src});
-	background-size: cover;
-`;
-
-const RewardsTitle = styled.div`
-	font-family: ${(props) => props.theme.fonts.expanded};
-	font-size: 12px;
-	color: ${(props) => props.theme.colors.white};
-	margin-bottom: 10px;
-`;
-
-const RewardsAmountSNX = styled.div`
-	font-family: ${(props) => props.theme.fonts.expanded};
-	font-size: 24px;
-	color: ${(props) => props.theme.colors.white};
-	margin-top: 10px;
-`;
-
-const RewardsAmountUSD = styled.div`
-	font-family: ${(props) => props.theme.fonts.interSemiBold};
-	font-size: 14px;
-	color: ${(props) => props.theme.colors.gray};
-	margin-top: 5px;
-	margin-bottom: 20px;
-`;
 
 export default LPTab;

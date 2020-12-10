@@ -1,11 +1,17 @@
-import { FC, useState } from 'react';
+import { FC, useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useTranslation, Trans } from 'react-i18next';
 import { Svg } from 'react-optimized-image';
+import { SynthetixJS } from '@synthetixio/js';
+import { ethers } from 'ethers';
 
+import GasSelector from 'components/GasSelector';
+import synthetix from 'lib/synthetix';
 import Button from 'components/Button';
+import Notify from 'containers/Notify';
 import { zIndex } from 'constants/ui';
-import LockSVG from 'assets/svg/app/lock.svg';
+import LockSVG from 'assets/svg/app/locked.svg';
+import { iBtcRewards, iEthRewards, curvepoolRewards } from 'contracts';
 import {
 	FlexDivColCentered,
 	ModalContent,
@@ -13,19 +19,106 @@ import {
 	ModalItemTitle,
 	ModalItemText,
 } from 'styles/common';
+import { getGasEstimateForTransaction } from 'utils/transactions';
+import { Transaction, TokenAllowanceLimit } from 'constants/network';
+import { normalizedGasPrice, normalizeGasLimit } from 'utils/network';
 
 import { Label, StyledLink, StyledButton } from '../../common';
-import { CurrencyKey } from 'constants/currency';
-import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal/TxConfirmationModal';
+import { CurrencyKey, SYNTHS_MAP } from 'constants/currency';
+import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 
 type ApproveProps = {
 	synth: CurrencyKey;
 };
 
+export const getContractAndPoolAddress = (synth: CurrencyKey) => {
+	const { contracts } = synthetix.js as SynthetixJS;
+	if (synth === SYNTHS_MAP.iBTC) {
+		return {
+			contract: contracts.SynthiBTC,
+			poolAddress: iBtcRewards.address,
+		};
+	} else if (synth === SYNTHS_MAP.iETH) {
+		return {
+			contract: contracts.SynthiETH,
+			poolAddress: iEthRewards.address,
+		};
+	} else if (synth === SYNTHS_MAP.sUSD) {
+		return {
+			contract: contracts.SynthsUSD,
+			poolAddress: curvepoolRewards.address,
+		};
+	} else {
+		throw new Error('unrecognizable asset');
+	}
+};
+
 const Approve: FC<ApproveProps> = ({ synth }) => {
 	const { t } = useTranslation();
-	const [txError, setTxError] = useState<string | null>(null);
+	const { monitorHash } = Notify.useContainer();
+	const [error, setError] = useState<string | null>(null);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
+	const [gasLimitEstimate, setGasLimitEstimate] = useState<number | null>(null);
+	const [gasPrice, setGasPrice] = useState<number>(0);
+	const [transactionState, setTransactionState] = useState<Transaction>(Transaction.PRESUBMIT);
+	const [txHash, setTxHash] = useState<string | null>(null);
+
+	useEffect(() => {
+		const getGasLimitEstimate = async () => {
+			if (synthetix && synthetix.js) {
+				try {
+					setError(null);
+					const { contract, poolAddress } = getContractAndPoolAddress(synth);
+					let gasEstimate = await getGasEstimateForTransaction(
+						[poolAddress, synthetix.js.utils.parseEther(TokenAllowanceLimit.toString())],
+						contract.estimateGas.approve
+					);
+					setGasLimitEstimate(normalizeGasLimit(Number(gasEstimate)));
+				} catch (error) {
+					setError(error.message);
+					setGasLimitEstimate(null);
+				}
+			}
+		};
+		getGasLimitEstimate();
+	}, [synthetix]);
+
+	const handleApprove = async () => {
+		if (synthetix && synthetix.js) {
+			try {
+				setError(null);
+				setTxModalOpen(true);
+				const { contract, poolAddress } = getContractAndPoolAddress(synth);
+
+				const allowance = synthetix.js.utils.parseEther(TokenAllowanceLimit.toString());
+				const gasLimit = await getGasEstimateForTransaction(
+					[poolAddress, allowance],
+					contract.estimateGas.approve
+				);
+				const transaction: ethers.ContractTransaction = await contract.approve(
+					poolAddress,
+					allowance,
+					{
+						gasPrice: normalizedGasPrice(gasPrice),
+						gasLimit,
+					}
+				);
+
+				if (transaction) {
+					setTxHash(transaction.hash);
+					setTransactionState(Transaction.WAITING);
+					monitorHash({
+						txHash: transaction.hash,
+						onTxConfirmed: () => setTransactionState(Transaction.SUCCESS),
+					});
+					setTxModalOpen(false);
+				}
+			} catch (e) {
+				setTransactionState(Transaction.PRESUBMIT);
+				setError(e.message);
+			}
+		}
+	};
 
 	return (
 		<>
@@ -40,25 +133,18 @@ const Approve: FC<ApproveProps> = ({ synth }) => {
 							}}
 							components={[<StyledLink />]}
 						/>
-						<PaddedButton variant="primary" onClick={() => setTxModalOpen(true)}>
-							{t('modals.approve.button')}
-						</PaddedButton>
 					</Label>
+					<PaddedButton variant="primary" onClick={handleApprove}>
+						{t('modals.approve.button')}
+					</PaddedButton>
+					<GasSelector gasLimitEstimate={gasLimitEstimate} setGasPrice={setGasPrice} />
 				</InnerContainer>
-				{txError && (
-					<Actions>
-						<Message>{t('common.transaction.error')}</Message>
-						<MessageButton onClick={() => console.log('retry')}>
-							{t('common.transaction.reattempt')}
-						</MessageButton>
-					</Actions>
-				)}
 			</OverlayContainer>
 			{txModalOpen && (
 				<TxConfirmationModal
 					onDismiss={() => setTxModalOpen(false)}
-					txError={txError}
-					attemptRetry={() => console.log('retry')}
+					txError={error}
+					attemptRetry={handleApprove}
 					content={
 						<ModalContent>
 							<ModalItem>
