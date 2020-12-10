@@ -15,15 +15,14 @@ import { EscrowData } from 'queries/escrow/useEscrowDataQuery';
 
 import { GridDivCenteredRow, linkCSS } from 'styles/common';
 import { CryptoCurrency } from 'constants/currency';
+import useEscrowDataQuery from 'queries/escrow/useEscrowDataQuery';
 
-type EscrowTableProps = {
-	data: EscrowData['schedule'];
-	isLoaded: boolean;
-};
-
-const EscrowTable: FC<EscrowTableProps> = ({ data, isLoaded }) => {
+const EscrowTable: FC = () => {
 	const { t } = useTranslation();
+	const escrowDataQuery = useEscrowDataQuery();
+	const escrowData = escrowDataQuery.data;
 
+	const data = escrowData?.schedule ?? [];
 	return (
 		<Container>
 			<Title>{t('escrow.info.title')}</Title>
@@ -56,9 +55,9 @@ const EscrowTable: FC<EscrowTableProps> = ({ data, isLoaded }) => {
 				]}
 				data={data}
 				columnsDeps={[]}
-				isLoading={!isLoaded}
+				isLoading={escrowDataQuery.isLoading}
 				noResultsMessage={
-					isLoaded && data.length === 0 ? (
+					!escrowDataQuery.isLoading && data.length === 0 ? (
 						<TableNoResults>
 							<Svg src={NoNotificationIcon} />
 							{t('escrow.table.no-results')}

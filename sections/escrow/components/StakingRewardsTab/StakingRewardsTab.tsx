@@ -18,13 +18,12 @@ import Notify from 'containers/Notify';
 import { CryptoCurrency } from 'constants/currency';
 import { FlexDivColCentered, ModalItem, ModalItemText, ModalItemTitle } from 'styles/common';
 import { ActionCompleted, ActionInProgress } from '../TxSent';
+import useEscrowDataQuery from 'queries/escrow/useEscrowDataQuery';
 
-type StakingRewardsTabProps = {
-	canVestAmount: number;
-};
-
-const StakingRewardsTab: React.FC<StakingRewardsTabProps> = ({ canVestAmount }) => {
+const StakingRewardsTab: React.FC = () => {
 	const { t } = useTranslation();
+	const escrowDataQuery = useEscrowDataQuery();
+
 	const { monitorHash } = Notify.useContainer();
 	const [gasLimitEstimate, setGasLimitEstimate] = useState<number | null>(null);
 	const [gasPrice, setGasPrice] = useState<number>(0);
@@ -35,6 +34,9 @@ const StakingRewardsTab: React.FC<StakingRewardsTabProps> = ({ canVestAmount }) 
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 
 	const vestingCurrencyKey = CryptoCurrency['SNX'];
+	const escrowData = escrowDataQuery?.data;
+
+	const canVestAmount = escrowData?.canVest ?? 0;
 
 	useEffect(() => {
 		const getGasLimitEstimate = async () => {
