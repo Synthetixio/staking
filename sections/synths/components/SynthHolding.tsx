@@ -16,11 +16,7 @@ const SynthHolding: FC<SynthHoldingProps> = ({ usdBalance, totalUSDBalance }) =>
 
 	return (
 		<Container>
-			<StyledProgressBar
-				percentage={percent.toNumber()}
-				borderColor="transparent"
-				fillColor="transparent"
-			/>
+			<StyledProgressBar percentage={percent.toNumber()} variant="rainbow" />
 			<StyledPercentage>{formatPercent(percent)}</StyledPercentage>
 		</Container>
 	);
@@ -36,18 +32,6 @@ const StyledPercentage = styled.span`
 
 const StyledProgressBar = styled(ProgressBar)`
 	margin-bottom: 4px;
-
-	.filled-bar {
-		background: ${(props) => props.theme.colors.rainbowGradient};
-		box-shadow: none;
-		border: 0;
-	}
-	.unfilled-bar {
-		background: ${(props) => props.theme.colors.white};
-		box-shadow: none;
-		border: 0;
-		opacity: 0.2;
-	}
 `;
 
 export default SynthHolding;

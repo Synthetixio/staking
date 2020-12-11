@@ -17,6 +17,7 @@ import useTotalIssuedSynthsExcludingEtherQuery from 'queries/synths/useTotalIssu
 import useClaimableRewards from 'queries/staking/useClaimableRewardsQuery';
 import useFeeClaimHistoryQuery from 'queries/staking/useFeeClaimHistoryQuery';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
+import { WEEKS_IN_YEAR } from 'constants/date';
 
 const Earn = () => {
 	const { t } = useTranslation();
@@ -38,7 +39,8 @@ const Earn = () => {
 	const weeklyRewards = sUSDRate * feesToDistribute + SNXRate * rewardsToDistribute;
 
 	const stakingAPR =
-		(weeklyRewards * (debtBalance.toNumber() / totalsUSDDebt) * 52) / stakedValue.toNumber();
+		(weeklyRewards * (debtBalance.toNumber() / totalsUSDDebt) * WEEKS_IN_YEAR) /
+		stakedValue.toNumber();
 
 	const availableRewards = useClaimableRewards();
 

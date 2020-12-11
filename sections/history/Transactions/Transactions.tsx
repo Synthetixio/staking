@@ -21,11 +21,11 @@ import { CRYPTO_CURRENCY_MAP, SYNTHS_MAP } from 'constants/currency';
 
 import TypeIcon from '../TypeIcon';
 
-interface TransactionsProps {
+type TransactionsProps = {
 	transactions: HistoricalStakingTransaction[];
 	isLoaded: boolean;
 	noResultsMessage?: ReactNode;
-}
+};
 
 const Transactions: FC<TransactionsProps> = ({ transactions, isLoaded, noResultsMessage }) => {
 	const { t } = useTranslation();

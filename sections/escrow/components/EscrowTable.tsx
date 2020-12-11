@@ -16,10 +16,10 @@ import { EscrowData } from 'queries/escrow/useEscrowDataQuery';
 import { GridDivCenteredRow, linkCSS } from 'styles/common';
 import { CRYPTO_CURRENCY_MAP } from 'constants/currency';
 
-interface EscrowTableProps {
+type EscrowTableProps = {
 	data: EscrowData['schedule'];
 	isLoaded: boolean;
-}
+};
 
 const EscrowTable: FC<EscrowTableProps> = ({ data, isLoaded }) => {
 	const { t } = useTranslation();

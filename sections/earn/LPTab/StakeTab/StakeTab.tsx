@@ -1,4 +1,4 @@
-import { FC, useState, useCallback, useEffect } from 'react';
+import { FC, useState, ReactNode, useEffect } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { ethers } from 'ethers';
@@ -25,12 +25,12 @@ import Notify from 'containers/Notify';
 import { TotalValueWrapper, Subtext, Value, StyledButton } from '../../common';
 import { getContractAndPoolAddress } from '../Approve/Approve';
 
-interface StakeTabProps {
-	icon: () => JSX.Element;
+type StakeTabProps = {
+	icon: ReactNode;
 	isStake: boolean;
 	synth: CurrencyKey;
 	synthAvailable: number;
-}
+};
 
 const StakeTab: FC<StakeTabProps> = ({ icon, synth, isStake, synthAvailable }) => {
 	const { t } = useTranslation();
@@ -62,7 +62,7 @@ const StakeTab: FC<StakeTabProps> = ({ icon, synth, isStake, synthAvailable }) =
 			}
 		};
 		getGasLimitEstimate();
-	}, [synthetix, amount, isStake]);
+	}, [amount, isStake, synth]);
 
 	const handleStake = async () => {
 		if (synthetix && synthetix.js && amount != null && amount > 0) {
@@ -108,7 +108,7 @@ const StakeTab: FC<StakeTabProps> = ({ icon, synth, isStake, synthAvailable }) =
 	return (
 		<>
 			<Container>
-				<div>{icon()}</div>
+				<div>{icon}</div>
 				<InputSection>
 					<EmptyDiv />
 					<InputField placeholder="0.00" onChange={(e) => setAmount(Number(e.target.value))} />

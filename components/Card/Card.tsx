@@ -10,10 +10,10 @@ type CardProps = {
 	className?: string;
 };
 
-interface StaticComponents {
+type StaticComponents = {
 	Header: FC<CardHeaderProps>;
 	Body: FC<CardBodyProps>;
-}
+};
 
 // @ts-ignore
 const Card: FC<CardProps> & StaticComponents = ({ children, isRounded, ...rest }) => (

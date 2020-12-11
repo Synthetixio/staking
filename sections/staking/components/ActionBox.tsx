@@ -20,14 +20,14 @@ const ActionBox: React.FC = () => {
 		() => [
 			{
 				title: t('staking.actions.mint.title'),
-				icon: () => <Svg src={Mint} />,
+				icon: <Svg src={Mint} />,
 				tabChildren: <MintTab />,
 				blue: true,
 				key: StakingPanelType.MINT,
 			},
 			{
 				title: t('staking.actions.burn.title'),
-				icon: () => <Svg src={Burn} />,
+				icon: <Svg src={Burn} />,
 				tabChildren: <BurnTab />,
 				blue: false,
 				key: StakingPanelType.BURN,

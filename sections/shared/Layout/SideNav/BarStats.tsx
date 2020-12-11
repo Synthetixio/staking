@@ -7,10 +7,10 @@ import Countdown from 'react-countdown';
 import { formatPercent, toBigNumber } from 'utils/formatters/number';
 import BigNumber from 'bignumber.js';
 
-interface PeriodBarStatsProps {
+type PeriodBarStatsProps = {
 	nextFeePeriodStarts: Date;
 	currentFeePeriodProgress: number;
-}
+};
 
 export const PeriodBarStats: FC<PeriodBarStatsProps> = ({
 	nextFeePeriodStarts,
@@ -36,10 +36,10 @@ export const PeriodBarStats: FC<PeriodBarStatsProps> = ({
 	);
 };
 
-interface CRatioBarStatsProps {
+type CRatioBarStatsProps = {
 	currentCRatio: BigNumber;
 	targetCRatio: BigNumber;
-}
+};
 
 export const CRatioBarStats: FC<CRatioBarStatsProps> = ({ currentCRatio, targetCRatio }) => {
 	const { t } = useTranslation();

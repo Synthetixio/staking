@@ -81,7 +81,7 @@ const Approve: FC<ApproveProps> = ({ synth }) => {
 			}
 		};
 		getGasLimitEstimate();
-	}, [synthetix]);
+	}, [synth]);
 
 	const handleApprove = async () => {
 		if (synthetix && synthetix.js) {

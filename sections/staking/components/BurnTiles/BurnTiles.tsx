@@ -16,6 +16,8 @@ type BurnTilesProps = {
 	burnAmountToFixCRatio: BigNumber;
 };
 
+const burnIcon = <Svg src={Burn} />;
+
 const BurnTiles: React.FC<BurnTilesProps> = ({
 	percentageTargetCRatio,
 	maxBurnAmount,
@@ -24,8 +26,6 @@ const BurnTiles: React.FC<BurnTilesProps> = ({
 	const { t } = useTranslation();
 	const [burnType, onBurnTypeChange] = useRecoilState(burnTypeState);
 	const onBurnChange = useSetRecoilState(amountToBurnState);
-
-	const BurnIcon = () => <Svg src={Burn} />;
 
 	useEffect(() => {
 		onBurnChange('');
@@ -36,7 +36,7 @@ const BurnTiles: React.FC<BurnTilesProps> = ({
 			<ButtonTile
 				title={t('staking.actions.burn.tiles.max.title')}
 				subtext={t('staking.actions.burn.tiles.max.subtext')}
-				icon={BurnIcon}
+				icon={burnIcon}
 				onAction={() => onBurnTypeChange(BurnActionType.MAX)}
 			/>
 			<FlexDivRow>
@@ -51,14 +51,14 @@ const BurnTiles: React.FC<BurnTilesProps> = ({
 						targetCRatio: formatPercent(percentageTargetCRatio),
 					})}
 					subtext={t('staking.actions.burn.tiles.target.subtext')}
-					icon={BurnIcon}
+					icon={burnIcon}
 					onAction={() => onBurnTypeChange(BurnActionType.TARGET)}
 				/>
 				<MarginedButtonTile
 					right={true}
 					title={t('staking.actions.burn.tiles.custom.title')}
 					subtext={t('staking.actions.burn.tiles.custom.subtext')}
-					icon={BurnIcon}
+					icon={burnIcon}
 					onAction={() => onBurnTypeChange(BurnActionType.CUSTOM)}
 				/>
 			</FlexDivRow>
