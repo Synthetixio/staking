@@ -73,9 +73,7 @@ const useStakingCalculations = (): StakingCalculations => {
 		};
 	}, [debtData, exchangeRates, escrowBalance]);
 
-	return {
-		...results,
-	};
+	return results;
 };
 
 export default useStakingCalculations;

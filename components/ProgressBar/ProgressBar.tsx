@@ -1,71 +1,77 @@
 import { FC } from 'react';
 import styled, { css } from 'styled-components';
+
 import { FlexDivRowCentered } from 'styles/common';
 
-// TODO: add more types
-type ProgressBarType = 'rainbow';
+type ProgressBarType = 'rainbow' | 'blue-pink' | 'green';
 
 type ProgressBarProps = {
 	percentage: number;
-	borderColor?: string;
-	fillColor?: string;
 	className?: string;
-	variant?: ProgressBarType;
+	variant: ProgressBarType;
 };
 
-const ProgressBar: FC<ProgressBarProps> = ({
-	percentage,
-	borderColor = 'transparent',
-	fillColor = 'transparent',
-	variant,
-	...rest
-}) => (
-	<ProgressBarWrapper borderColor={borderColor} variant={variant} {...rest}>
-		<Bar className="filled-bar" percentage={percentage} fillColor={fillColor} />
-		<UnfilledBar className="unfilled-bar" percentage={1 - percentage} borderColor={borderColor} />
+const ProgressBar: FC<ProgressBarProps> = ({ percentage, variant, ...rest }) => (
+	<ProgressBarWrapper variant={variant} {...rest}>
+		<Bar className="filled-bar" percentage={percentage} />
+		<Bar className="unfilled-bar" percentage={1 - percentage} />
 	</ProgressBarWrapper>
 );
 
 const ProgressBarWrapper = styled(FlexDivRowCentered)<{
-	borderColor: string;
 	variant?: ProgressBarType;
 }>`
 	height: 4px;
+	> div {
+		height: 100%;
+	}
 
 	${(props) =>
 		props.variant === 'rainbow' &&
 		css`
 			.filled-bar {
 				background: ${(props) => props.theme.colors.rainbowGradient};
-				box-shadow: none;
-				border: 0;
 			}
 			.unfilled-bar {
 				background: ${(props) => props.theme.colors.white};
-				box-shadow: none;
-				border: 0;
 				opacity: 0.2;
 			}
 		`}
+
+	${(props) =>
+		props.variant === 'blue-pink' &&
+		css`
+			.filled-bar {
+				background: ${(props) => props.theme.colors.blue};
+				border: 1px solid ${(props) => props.theme.colors.blue};
+				box-shadow: 0px 0px 10px rgba(0, 209, 255, 0.6);
+			}
+
+			.unfilled-bar {
+				border: 1px solid ${(props) => props.theme.colors.pink};
+				box-shadow: 0px 0px 15px ${(props) => props.theme.colors.pink};
+			}
+		`}
+
+	${(props) =>
+		props.variant === 'green' &&
+		css`
+			.filled-bar {
+				background: ${(props) => props.theme.colors.green};
+				border: 1px solid ${(props) => props.theme.colors.green};
+				box-shadow: 0px 0px 10px rgba(77, 244, 184, 0.25);
+			}
+
+			.unfilled-bar {
+				border: 1px solid ${(props) => props.theme.colors.green};
+				border-left: none;
+				box-shadow: 0px 0px 15px ${(props) => props.theme.colors.green};
+			}
+		`}		
 `;
 
-const Bar = styled.div<{
-	percentage: number;
-	fillColor: string;
-}>`
-	height: 100%;
+const Bar = styled.div<{ percentage: number }>`
 	width: ${(props) => props.percentage * 100}%;
-	background: ${(props) => props.fillColor};
-	border: 1px solid ${(props) => props.fillColor};
-	box-shadow: 0px 0px 15px ${(props) => props.fillColor};
-`;
-
-const UnfilledBar = styled.div<{ percentage: number; borderColor: string }>`
-	height: 100%;
-	width: ${(props) => props.percentage * 100}%;
-	border: 1px solid ${(props) => props.borderColor};
-	border-left: none;
-	box-shadow: 0px 0px 15px ${(props) => props.borderColor};
 `;
 
 export default ProgressBar;
