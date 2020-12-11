@@ -247,6 +247,18 @@
 		"actions": {
 			"available": "AVAILABLE",
 			"max": "MAX",
+			"tx": {
+				"notice": "Waiting for the blockchain to confirm your transaction.",
+				"link": "<0>View on Etherscan<0>",
+				"verify": "VERIFY TX",
+				"dismiss": "DISMISS"
+			},
+			"approve": {
+				"waiting": "Approval in progress",
+				"success": "Approval complete!",
+				"approving": "APPROVING",
+				"contract": "{{synth}} CONTRACT"
+			},
 			"claim": {
 				"title": "CLAIM",
 				"exchange-rewards": "Synth exchange rewards",
@@ -255,7 +267,10 @@
 				"claim-snx-button": "Claim SNX",
 				"claimed-button": "ALREADY CLAIMED",
 				"low-ratio": "ADD COLLATERAL TO CLAIM",
-				"nothing-to-claim": "NOTHING TO CLAIM"
+				"nothing-to-claim": "NOTHING TO CLAIM",
+				"claiming": "CLAIMING",
+				"amount": "{{amount}} {{asset}}",
+				"success": "Claiming complete!"
 			},
 			"lp": {
 				"title-curve": "CURVE REWARDS",
@@ -271,7 +286,8 @@
 				"unstake-button": "UNSTAKE {{asset}}"
 			},
 			"rewards": {
-				"title": "REWARDS"
+				"title": "REWARDS",
+				"waiting": "Claiming in progress"
 			}
 		}
 	},

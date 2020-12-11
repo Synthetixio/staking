@@ -1,54 +1,119 @@
-import { FC } from 'react';
+import { FC, useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { Svg } from 'react-optimized-image';
 import { useTranslation } from 'react-i18next';
 
+import synthetix from 'lib/synthetix';
 import smallWaveSVG from 'assets/svg/app/small-wave.svg';
 import snxSVG from 'assets/svg/incentives/pool-snx.svg';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-
 import { formatCurrency, formatFiatCurrency, toBigNumber } from 'utils/formatters/number';
-import { CryptoCurrency } from 'constants/currency';
+import { CryptoCurrency, CurrencyKey } from 'constants/currency';
 import { ESTIMATE_VALUE } from 'constants/placeholder';
+import { getGasEstimateForTransaction } from 'utils/transactions';
+import { normalizeGasLimit } from 'utils/network';
+import GasSelector from 'components/GasSelector';
 
-import { FlexDivColCentered } from 'styles/common';
+import {
+	FlexDivColCentered,
+	ModalContent,
+	ModalItem,
+	ModalItemTitle,
+	ModalItemText,
+} from 'styles/common';
+import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 
+import { getContractAndPoolAddress } from '../Approve/Approve';
 import { StyledButton } from '../../common';
 
 type RewardsBoxProps = {
 	tokenRewards: number;
 	SNXRate: number;
+	synth: CurrencyKey;
+	handleClaim: () => void;
+	setClaimGasPrice: (num: number) => void;
+	claimTxModalOpen: boolean;
+	setClaimTxModalOpen: (open: boolean) => void;
+	claimError: string | null;
+	setClaimError: (err: string | null) => void;
 };
 
-const RewardsBox: FC<RewardsBoxProps> = ({ tokenRewards, SNXRate }) => {
+const RewardsBox: FC<RewardsBoxProps> = ({
+	tokenRewards,
+	SNXRate,
+	synth,
+	handleClaim,
+	setClaimGasPrice,
+	claimTxModalOpen,
+	setClaimTxModalOpen,
+	claimError,
+	setClaimError,
+}) => {
 	const { t } = useTranslation();
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
+	const [gasLimitEstimate, setGasLimitEstimate] = useState<number | null>(null);
+
+	useEffect(() => {
+		const getGasLimitEstimate = async () => {
+			if (synthetix && synthetix.js) {
+				try {
+					setClaimError(null);
+					const { contract } = getContractAndPoolAddress(synth);
+					let gasEstimate = await getGasEstimateForTransaction([], contract.estimateGas.getReward);
+					setGasLimitEstimate(normalizeGasLimit(Number(gasEstimate)));
+				} catch (error) {
+					setClaimError(error.message);
+					setGasLimitEstimate(null);
+				}
+			}
+		};
+		getGasLimitEstimate();
+	}, [synth]);
 
 	return (
-		<RewardsContainer>
-			<RewardsTitle>{t('earn.actions.rewards.title')}</RewardsTitle>
-			<Svg src={snxSVG} />
-			<RewardsAmountSNX>
-				{formatCurrency(CryptoCurrency.SNX, tokenRewards, {
-					currencyKey: '',
-					decimals: 2,
-				})}
-			</RewardsAmountSNX>
-			<RewardsAmountUSD>
-				{ESTIMATE_VALUE}{' '}
-				{formatFiatCurrency(getPriceAtCurrentRate(toBigNumber(tokenRewards * SNXRate)), {
-					sign: selectedPriceCurrency.sign,
-				})}
-			</RewardsAmountUSD>
-			<StyledButton
-				variant="primary"
-				onClick={() => console.log('claim')}
-				disabled={tokenRewards === 0}
-			>
-				{t('earn.actions.claim.claim-snx-button')}
-			</StyledButton>
-		</RewardsContainer>
+		<>
+			<RewardsContainer>
+				<RewardsTitle>{t('earn.actions.rewards.title')}</RewardsTitle>
+				<Svg src={snxSVG} />
+				<RewardsAmountSNX>
+					{formatCurrency(CryptoCurrency.SNX, tokenRewards, {
+						currencyKey: '',
+						decimals: 2,
+					})}
+				</RewardsAmountSNX>
+				<RewardsAmountUSD>
+					{ESTIMATE_VALUE}{' '}
+					{formatFiatCurrency(getPriceAtCurrentRate(toBigNumber(tokenRewards * SNXRate)), {
+						sign: selectedPriceCurrency.sign,
+					})}
+				</RewardsAmountUSD>
+				<StyledButton variant="primary" onClick={handleClaim} disabled={tokenRewards === 0}>
+					{t('earn.actions.claim.claim-snx-button')}
+				</StyledButton>
+				<GasSelector gasLimitEstimate={gasLimitEstimate} setGasPrice={setClaimGasPrice} />
+			</RewardsContainer>
+			{claimTxModalOpen && (
+				<TxConfirmationModal
+					onDismiss={() => setClaimTxModalOpen(false)}
+					txError={claimError}
+					attemptRetry={handleClaim}
+					content={
+						<ModalContent>
+							<ModalItem>
+								<ModalItemTitle>{t('modals.confirm-transaction.claiming.claiming')}</ModalItemTitle>
+								<ModalItemText>
+									{t('modals.confirm-transaction.claiming.amount', {
+										amount: tokenRewards,
+										asset: CryptoCurrency.SNX,
+									})}
+								</ModalItemText>
+							</ModalItem>
+						</ModalContent>
+					}
+				/>
+			)}
+		</>
 	);
 };
 

@@ -35,6 +35,7 @@ const useIBTCPoolQuery_1 = (options?: QueryConfig<LiquidityPoolData>) => {
 				rate,
 				periodFinish,
 				iBtcBalance,
+				iBtcUserBalance,
 				iBtcPrice,
 				iBtcSNXRewards,
 				iBtcStaked,
@@ -44,6 +45,7 @@ const useIBTCPoolQuery_1 = (options?: QueryConfig<LiquidityPoolData>) => {
 				contract.rewardRate(),
 				contract.periodFinish(),
 				synthetix.js?.contracts.ProxyiBTC.balanceOf(address),
+				synthetix.js?.contracts.ProxyiBTC.balanceOf(walletAddress),
 				synthetix.js?.contracts.ExchangeRates.rateForCurrency(synthetix.js?.toBytes32(Synths.iBTC)),
 				contract.earned(walletAddress),
 				contract.balanceOf(walletAddress),
@@ -55,8 +57,9 @@ const useIBTCPoolQuery_1 = (options?: QueryConfig<LiquidityPoolData>) => {
 				? 0
 				: Math.trunc(Number(duration) * (rate / 1e18)) / durationInWeeks;
 
-			const [balance, price, rewards, staked, allowance] = [
+			const [balance, userBalance, price, rewards, staked, allowance] = [
 				iBtcBalance,
+				iBtcUserBalance,
 				iBtcPrice,
 				iBtcSNXRewards,
 				iBtcStaked,
@@ -73,6 +76,7 @@ const useIBTCPoolQuery_1 = (options?: QueryConfig<LiquidityPoolData>) => {
 				rewards,
 				staked,
 				allowance,
+				userBalance,
 			};
 		},
 		{

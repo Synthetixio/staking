@@ -35,6 +35,7 @@ const useIETHPoolQuery_1 = (options?: QueryConfig<LiquidityPoolData>) => {
 				rate,
 				periodFinish,
 				iEthBalance,
+				iEthUserBalance,
 				iEthPrice,
 				iEthSNXRewards,
 				iEthStaked,
@@ -44,6 +45,7 @@ const useIETHPoolQuery_1 = (options?: QueryConfig<LiquidityPoolData>) => {
 				contract.rewardRate(),
 				contract.periodFinish(),
 				synthetix.js?.contracts.ProxyiETH.balanceOf(address),
+				synthetix.js?.contracts.ProxyiETH.balanceOf(walletAddress),
 				synthetix.js?.contracts.ExchangeRates.rateForCurrency(synthetix.js?.toBytes32(Synths.iETH)),
 				contract.earned(walletAddress),
 				contract.balanceOf(walletAddress),
@@ -55,8 +57,9 @@ const useIETHPoolQuery_1 = (options?: QueryConfig<LiquidityPoolData>) => {
 				? 0
 				: Math.trunc(Number(duration) * (rate / 1e18)) / durationInWeeks;
 
-			const [balance, price, rewards, staked, allowance] = [
+			const [balance, userBalance, price, rewards, staked, allowance] = [
 				iEthBalance,
+				iEthUserBalance,
 				iEthPrice,
 				iEthSNXRewards,
 				iEthStaked,
@@ -73,6 +76,7 @@ const useIETHPoolQuery_1 = (options?: QueryConfig<LiquidityPoolData>) => {
 				staked,
 				duration: Number(duration) * 1000,
 				allowance,
+				userBalance,
 			};
 		},
 		{

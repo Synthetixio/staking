@@ -6,8 +6,9 @@ import { SynthetixJS } from '@synthetixio/js';
 import { ethers } from 'ethers';
 
 import GasSelector from 'components/GasSelector';
+import PendingConfirmation from 'assets/svg/app/pending-confirmation.svg';
+import Success from 'assets/svg/app/success.svg';
 import synthetix from 'lib/synthetix';
-import Button from 'components/Button';
 import Notify from 'containers/Notify';
 import { zIndex } from 'constants/ui';
 import LockSVG from 'assets/svg/app/locked.svg';
@@ -22,10 +23,23 @@ import {
 import { getGasEstimateForTransaction } from 'utils/transactions';
 import { Transaction, TokenAllowanceLimit } from 'constants/network';
 import { normalizedGasPrice, normalizeGasLimit } from 'utils/network';
-
-import { Label, StyledLink, StyledButton } from '../../common';
 import { CurrencyKey, Synths } from 'constants/currency';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
+import TxState from 'sections/earn/TxState';
+
+import {
+	Label,
+	StyledLink,
+	StyledButton,
+	GreyHeader,
+	WhiteSubheader,
+	Divider,
+	VerifyButton,
+	DismissButton,
+	ButtonSpacer,
+	GreyText,
+	LinkText,
+} from '../../common';
 
 type ApproveProps = {
 	synth: CurrencyKey;
@@ -120,6 +134,71 @@ const Approve: FC<ApproveProps> = ({ synth }) => {
 		}
 	};
 
+	if (transactionState === Transaction.WAITING) {
+		return (
+			<TxState
+				description={
+					<Trans
+						i18nKey="modals.approve.description"
+						values={{
+							synth,
+						}}
+						components={[<StyledLink />]}
+					/>
+				}
+				title={t('earn.actions.approve.waiting')}
+				content={
+					<FlexDivColCentered>
+						<Svg src={PendingConfirmation} />
+						<GreyHeader>{t('earn.actions.approve.approving')}</GreyHeader>
+						<WhiteSubheader>{t('earn.actions.approve.contract', { synth })}</WhiteSubheader>
+						<Divider />
+						<GreyText>{t('earn.actions.tx.notice')}</GreyText>
+						<LinkText>
+							<Trans i18nKey="earn.actions.tx.link" components={[<StyledLink />]} />
+						</LinkText>
+					</FlexDivColCentered>
+				}
+			/>
+		);
+	}
+
+	if (transactionState === Transaction.SUCCESS) {
+		return (
+			<TxState
+				description={
+					<Trans
+						i18nKey="modals.approve.description"
+						values={{
+							synth,
+						}}
+						components={[<StyledLink />]}
+					/>
+				}
+				title={t('earn.actions.approve.success')}
+				content={
+					<FlexDivColCentered>
+						<Svg src={Success} />
+						<GreyHeader>{t('earn.actions.approve.approving')}</GreyHeader>
+						<WhiteSubheader>{t('earn.actions.approve.contract', { synth })}</WhiteSubheader>
+						<Divider />
+						<ButtonSpacer>
+							<VerifyButton variant="secondary" onClick={() => console.log('verify tx')}>
+								{t('earn.actions.tx.verify')}
+							</VerifyButton>
+							<DismissButton
+								variant="secondary"
+								onClick={() => setTransactionState(Transaction.PRESUBMIT)}
+							>
+								{t('earn.actions.tx.dismiss')}
+							</DismissButton>
+						</ButtonSpacer>
+					</FlexDivColCentered>
+				}
+			/>
+		);
+	}
+
 	return (
 		<>
 			<OverlayContainer title="">
@@ -165,36 +244,14 @@ const OverlayContainer = styled(FlexDivColCentered)`
 	z-index: ${zIndex.DIALOG_OVERLAY};
 	justify-content: space-around;
 	position: absolute;
-	background-color: rgba(0, 0, 0, 0.8);
-	width: 555px;
-	height: 370px;
+	width: 575px;
+	height: 390px;
+	background: ${(props) => props.theme.colors.black};
+	opacity: 0.9;
 `;
 
 const InnerContainer = styled(FlexDivColCentered)`
 	width: 300px;
-`;
-
-const Actions = styled(FlexDivColCentered)`
-	margin: 8px 0px;
-`;
-
-const Message = styled.div`
-	color: ${(props) => props.theme.colors.white};
-	font-size: 12px;
-	font-family: ${(props) => props.theme.fonts.regular};
-	flex-grow: 1;
-	text-align: center;
-	margin: 16px 0px;
-`;
-
-const MessageButton = styled(Button).attrs({
-	variant: 'primary',
-	size: 'lg',
-	isRounded: true,
-})`
-	text-transform: uppercase;
-	font-size: 12px;
-	font-family: ${(props) => props.theme.fonts.condensedMedium};
 `;
 
 const PaddedButton = styled(StyledButton)`
