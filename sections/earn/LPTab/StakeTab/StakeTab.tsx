@@ -29,10 +29,10 @@ type StakeTabProps = {
 	icon: ReactNode;
 	isStake: boolean;
 	synth: CurrencyKey;
-	synthAvailable: number;
+	userBalance: number;
 };
 
-const StakeTab: FC<StakeTabProps> = ({ icon, synth, isStake, synthAvailable }) => {
+const StakeTab: FC<StakeTabProps> = ({ icon, synth, isStake, userBalance }) => {
 	const { t } = useTranslation();
 	const [amount, setAmount] = useState<number | null>(null);
 	const { monitorHash } = Notify.useContainer();
@@ -111,23 +111,35 @@ const StakeTab: FC<StakeTabProps> = ({ icon, synth, isStake, synthAvailable }) =
 				<div>{icon}</div>
 				<InputSection>
 					<EmptyDiv />
-					<InputField placeholder="0.00" onChange={(e) => setAmount(Number(e.target.value))} />
+					<InputField
+						value={amount ?? '0.00'}
+						placeholder="0.00"
+						onChange={(e) => setAmount(Number(e.target.value))}
+					/>
 					<MaxButton
 						variant="primary"
-						disabled={synthAvailable === 0}
-						onClick={() => setAmount(synthAvailable)}
+						disabled={userBalance === 0}
+						onClick={() => {
+							setAmount(userBalance);
+						}}
 					>
 						{t('earn.actions.max')}
 					</MaxButton>
 				</InputSection>
 				<TotalValueWrapper>
 					<Subtext>{t('earn.actions.available')}</Subtext>
-					<StyledValue>{formatCryptoCurrency(synthAvailable, { currencyKey: synth })}</StyledValue>
+					<StyledValue>{formatCryptoCurrency(userBalance, { currencyKey: synth })}</StyledValue>
 				</TotalValueWrapper>
 				<PaddedButton
 					variant="primary"
 					onClick={handleStake}
-					disabled={synthetix && synthetix.js && amount != null && amount > 0 ? false : true}
+					disabled={
+						synthetix && synthetix.js && amount != null && amount > 0
+							? (amount ?? 0) > userBalance
+								? true
+								: false
+							: true
+					}
 				>
 					{isStake
 						? t('earn.actions.stake.stake-button', { synth })

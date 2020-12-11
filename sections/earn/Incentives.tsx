@@ -182,6 +182,7 @@ const Incentives: FC<IncentivesProps> = ({
 					)}
 					{activeTab === 1 && (
 						<LPTab
+							userBalance={useCurvePool.data?.userBalance ?? 0}
 							synth={Synths.sUSD}
 							allowance={(1 || useCurvePool.data?.allowance) ?? null}
 							icon={incentives[1].icon}
@@ -196,6 +197,7 @@ const Incentives: FC<IncentivesProps> = ({
 					)}
 					{activeTab === 2 && (
 						<LPTab
+							userBalance={useiETHPool.data?.userBalance ?? 0}
 							synth={Synths.iETH}
 							allowance={useiETHPool.data?.allowance ?? null}
 							icon={incentives[2].icon}
@@ -210,6 +212,7 @@ const Incentives: FC<IncentivesProps> = ({
 					)}
 					{activeTab === 3 && (
 						<LPTab
+							userBalance={useiBTCPool.data?.userBalance ?? 0}
 							synth={Synths.iBTC}
 							allowance={useiBTCPool.data?.allowance ?? null}
 							icon={incentives[3].icon}

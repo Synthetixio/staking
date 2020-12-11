@@ -70,6 +70,7 @@ const useCurvePoolQuery_1 = (options?: QueryConfig<CurveData>) => {
 				rate,
 				periodFinish,
 				curveSusdBalance,
+				curveSusdUserBalance,
 				curveSusdTokenPrice,
 				curveInflationRate,
 				curveWorkingSupply,
@@ -84,6 +85,7 @@ const useCurvePoolQuery_1 = (options?: QueryConfig<CurveData>) => {
 				contract.rewardRate(),
 				contract.periodFinish(),
 				curveSusdPoolTokenContract.balanceOf(address),
+				curveSusdPoolTokenContract.balanceOf(walletAddress),
 				curveSusdPoolContract.get_virtual_price(),
 				curveSusdGaugeContract.inflation_rate(),
 				curveSusdGaugeContract.working_supply(),
@@ -103,6 +105,7 @@ const useCurvePoolQuery_1 = (options?: QueryConfig<CurveData>) => {
 
 			const [
 				balance,
+				userBalance,
 				price,
 				inflationRate,
 				workingSupply,
@@ -112,6 +115,7 @@ const useCurvePoolQuery_1 = (options?: QueryConfig<CurveData>) => {
 				allowance,
 			] = [
 				curveSusdBalance,
+				curveSusdUserBalance,
 				curveSusdTokenPrice,
 				curveInflationRate,
 				curveWorkingSupply,
@@ -138,6 +142,7 @@ const useCurvePoolQuery_1 = (options?: QueryConfig<CurveData>) => {
 				staked,
 				duration: Number(duration) * 1000,
 				allowance,
+				userBalance,
 			};
 		},
 		{

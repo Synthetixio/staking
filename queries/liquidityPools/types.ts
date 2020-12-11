@@ -8,4 +8,5 @@ export type LiquidityPoolData = {
 	staked: number;
 	allowance: number;
 	duration: number;
+	userBalance: number;
 };
