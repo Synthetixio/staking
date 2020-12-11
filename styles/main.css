@@ -28,95 +28,74 @@ input::-webkit-inner-spin-button {
 	-webkit-appearance: none;
 }
 
-/* ------------- GT America Mono */
-@font-face {
-	font-family: 'GT America Mono';
-	src: local('GT America Mono'), url('../public/fonts/GT-America-Mono-Bold.eot') format('eot'),
-		url('../public/fonts/GT-America-Mono-Bold.otf') format('otf'),
-		url('../public/fonts/GT-America-Mono-Bold.ttf') format('ttf'),
-		url('../public/fonts/GT-America-Mono-Bold.woff') format('woff'),
-		url('../public/fonts/GT-America-Mono-Bold.woff2') format('woff2');
-	font-display: swap;
-	font-style: normal;
-	font-weight: bold;
-}
+/* Inter */
 
-/* ------------- GT America Expanded Black */
-@font-face {
-	font-family: 'GT America Expanded Black';
-	src: local('GT America Expanded Black'),
-		url('../public/fonts/GT-America-Expanded-Black.eot') format('eot'),
-		url('../public/fonts/GT-America-Expanded-Black.otf') format('otf'),
-		url('../public/fonts/GT-America-Expanded-Black.ttf') format('ttf'),
-		url('../public/fonts/GT-America-Expanded-Black.woff') format('woff'),
-		url('../public/fonts/GT-America-Expanded-Black.woff2') format('woff2');
-	font-display: swap;
-	font-style: normal;
-	font-weight: normal;
-}
-
-/* ------------- GT America Condensed Medium */
-@font-face {
-	font-family: 'GT America Condensed-Medium';
-	src: local('GT America Condensed-Medium'),
-		url('../public/fonts/GT-America-Condensed-Medium.eot') format('eot'),
-		url('../public/fonts/GT-America-Condensed-Medium.otf') format('otf'),
-		url('../public/fonts/GT-America-Condensed-Medium.ttf') format('ttf'),
-		url('../public/fonts/GT-America-Condensed-Medium.woff') format('woff'),
-		url('../public/fonts/GT-America-Condensed-Medium.woff2') format('woff2');
-	font-display: swap;
-	font-style: normal;
-	font-weight: normal;
-}
-
-/* ------------- GT America Condensed Bold */
-@font-face {
-	font-family: 'GT America Condensed-Bold';
-	src: local('GT America Condensed-Bold'),
-		url('../public/fonts/GT-America-Condensed-Bold.eot') format('eot'),
-		url('../public/fonts/GT-America-Condensed-Bold.otf') format('otf'),
-		url('../public/fonts/GT-America-Condensed-Bold.ttf') format('ttf'),
-		url('../public/fonts/GT-America-Condensed-Bold.woff') format('woff'),
-		url('../public/fonts/GT-America-Condensed-Bold.woff2') format('woff2');
-	font-display: swap;
-	font-style: normal;
-	font-weight: bold;
-}
-
-/* inter-regular - latin */
 @font-face {
 	font-family: 'Inter';
 	font-style: normal;
 	font-weight: 400;
-	src: url('../public/fonts/inter-v2-latin-regular.eot'); /* IE9 Compat Modes */
-	src: local(''),
-		url('../public/fonts/inter-v2-latin-regular.eot?#iefix') format('embedded-opentype'),
-		/* IE6-IE8 */ url('../public/fonts/inter-v2-latin-regular.woff2') format('woff2'),
-		/* Super Modern Browsers */ url('../public/fonts/inter-v2-latin-regular.woff') format('woff'),
-		/* Modern Browsers */ url('../public/fonts/inter-v2-latin-regular.ttf') format('truetype'),
-		/* Safari, Android, iOS */ url('../public/fonts/inter-v2-latin-regular.svg#Inter') format('svg'); /* Legacy iOS */
+	font-display: swap;
+	src: local('Inter'), url('../public/fonts/Inter-Regular.woff2') format('woff2'),
+		url('../public/fonts/Inter-Regular.woff') format('woff');
 }
-/* inter-600 - latin */
+
 @font-face {
 	font-family: 'Inter Semi Bold';
 	font-style: normal;
 	font-weight: 600;
-	src: url('../public/fonts/inter-v2-latin-600.eot'); /* IE9 Compat Modes */
-	src: local(''), url('../public/fonts/inter-v2-latin-600.eot?#iefix') format('embedded-opentype'),
-		/* IE6-IE8 */ url('../public/fonts/inter-v2-latin-600.woff2') format('woff2'),
-		/* Super Modern Browsers */ url('../public/fonts/inter-v2-latin-600.woff') format('woff'),
-		/* Modern Browsers */ url('../public/fonts/inter-v2-latin-600.ttf') format('truetype'),
-		/* Safari, Android, iOS */ url('../public/fonts/inter-v2-latin-600.svg#Inter') format('svg'); /* Legacy iOS */
+	font-display: swap;
+	src: local('Inter Semi Bold'), url('../public/fonts/Inter-SemiBold.woff2') format('woff2'),
+		url('../public/fonts/Inter-SemiBold.woff') format('woff');
 }
-/* inter-800 - latin */
+
 @font-face {
 	font-family: 'Inter Bold';
 	font-style: normal;
-	font-weight: 800;
-	src: url('../public/fonts/inter-v2-latin-800.eot'); /* IE9 Compat Modes */
-	src: local(''), url('../public/fonts/inter-v2-latin-800.eot?#iefix') format('embedded-opentype'),
-		/* IE6-IE8 */ url('../public/fonts/inter-v2-latin-800.woff2') format('woff2'),
-		/* Super Modern Browsers */ url('../public/fonts/inter-v2-latin-800.woff') format('woff'),
-		/* Modern Browsers */ url('../public/fonts/inter-v2-latin-800.ttf') format('truetype'),
-		/* Safari, Android, iOS */ url('../public/fonts/inter-v2-latin-800.svg#Inter') format('svg'); /* Legacy iOS */
+	font-weight: 700;
+	font-display: swap;
+	src: local('Inter Bold'), url('../public/fonts/Inter-Bold.woff2') format('woff2'),
+		url('../public/fonts/Inter-Bold.woff') format('woff');
+}
+
+/* GT America */
+
+@font-face {
+	font-family: 'GT America Mono';
+	font-style: normal;
+	font-display: swap;
+	font-weight: 700;
+	src: local('GT America Mono'), url('../public/fonts/GT-America-Mono-Bold.woff') format('woff'),
+		url('../public/fonts/GT-America-Mono-Bold.woff2') format('woff2');
+}
+
+@font-face {
+	font-family: 'GT America Condensed-Medium';
+	font-style: normal;
+	font-display: swap;
+	font-weight: 500;
+	src: local('GT America Condensed-Medium'),
+		url('../public/fonts/GT-America-Condensed-Medium.woff2') format('woff2'),
+		url('../public/fonts/GT-America-Condensed-Medium.woff') format('woff');
+}
+
+@font-face {
+	font-family: 'GT America Condensed-Bold';
+	font-display: swap;
+	font-style: normal;
+	font-weight: 700;
+	font-stretch: condensed;
+	src: local('GT America Condensed-Bold'),
+		url('../public/fonts/GT-America-Condensed-Bold.woff2') format('woff2'),
+		url('../public/fonts/GT-America-Condensed-Bold.woff') format('woff');
+}
+
+@font-face {
+	font-family: 'GT America Expanded Black';
+	font-style: normal;
+	font-display: swap;
+	font-weight: 900;
+	font-stretch: expanded;
+	src: local('GT America Expanded Black'),
+		url('../public/fonts/GT-America-Expanded-Black.woff2') format('woff2'),
+		url('../public/fonts/GT-America-Expanded-Black.woff') format('woff');
 }
