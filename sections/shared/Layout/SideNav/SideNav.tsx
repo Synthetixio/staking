@@ -13,7 +13,7 @@ import useHistoricalRatesQuery from 'queries/rates/useHistoricalRatesQuery';
 import useSNX24hrPricesQuery from 'queries/rates/useSNX24hrPricesQuery';
 import useFeePeriodTimeAndProgress from 'hooks/useFeePeriodTimeAndProgress';
 
-import { CRYPTO_CURRENCY_MAP } from 'constants/currency';
+import { CryptoCurrency } from 'constants/currency';
 import { SIDE_NAV_WIDTH, zIndex } from 'constants/ui';
 import { Period } from 'constants/period';
 
@@ -26,7 +26,7 @@ const SideNav: FC = () => {
 	const { t } = useTranslation();
 	const { asPath } = useRouter();
 	const SNX24hrPricesQuery = useSNX24hrPricesQuery();
-	const ETH24hrPricesQuery = useHistoricalRatesQuery(CRYPTO_CURRENCY_MAP.ETH, Period.ONE_DAY);
+	const ETH24hrPricesQuery = useHistoricalRatesQuery(CryptoCurrency.ETH, Period.ONE_DAY);
 
 	const { currentCRatio, targetCRatio } = useStakingCalculations();
 
@@ -65,8 +65,8 @@ const SideNav: FC = () => {
 			</MenuLinks>
 			<MenuCharts>
 				<CRatioBarStats currentCRatio={currentCRatio} targetCRatio={targetCRatio} />
-				<PriceItem currencyKey={CRYPTO_CURRENCY_MAP.SNX} data={snxPriceChartData} />
-				<PriceItem currencyKey={CRYPTO_CURRENCY_MAP.ETH} data={ethPriceChartData} />
+				<PriceItem currencyKey={CryptoCurrency.SNX} data={snxPriceChartData} />
+				<PriceItem currencyKey={CryptoCurrency.ETH} data={ethPriceChartData} />
 				<PeriodBarStats
 					nextFeePeriodStarts={nextFeePeriodStarts}
 					currentFeePeriodProgress={currentFeePeriodProgress}

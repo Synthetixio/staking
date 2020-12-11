@@ -8,7 +8,7 @@ import { iEthRewards } from 'contracts';
 import QUERY_KEYS from 'constants/queryKeys';
 import { appReadyState } from 'store/app';
 import { walletAddressState, isWalletConnectedState, networkState } from 'store/wallet';
-import { SYNTHS_MAP } from 'constants/currency';
+import { Synths } from 'constants/currency';
 
 import { LiquidityPoolData } from './types';
 
@@ -44,9 +44,7 @@ const useIETHPoolQuery_1 = (options?: QueryConfig<LiquidityPoolData>) => {
 				contract.rewardRate(),
 				contract.periodFinish(),
 				synthetix.js?.contracts.ProxyiETH.balanceOf(address),
-				synthetix.js?.contracts.ExchangeRates.rateForCurrency(
-					synthetix.js?.toBytes32(SYNTHS_MAP.iETH)
-				),
+				synthetix.js?.contracts.ExchangeRates.rateForCurrency(synthetix.js?.toBytes32(Synths.iETH)),
 				contract.earned(walletAddress),
 				contract.balanceOf(walletAddress),
 				synthetix.js?.contracts.ProxyiETH.allowance(walletAddress, address),

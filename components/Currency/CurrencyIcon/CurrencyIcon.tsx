@@ -89,7 +89,7 @@ import sAUDIcon from '@synthetixio/assets/synths/sAUD.svg';
 import sGBPIcon from '@synthetixio/assets/synths/sGBP.svg';
 import sCHFIcon from '@synthetixio/assets/synths/sCHF.svg';
 
-import { CRYPTO_CURRENCY_MAP, CurrencyKey, SYNTHS_MAP } from 'constants/currency';
+import { CryptoCurrency, CurrencyKey, Synths } from 'constants/currency';
 
 type CurrencyIconProps = {
 	currencyKey: CurrencyKey;
@@ -111,141 +111,141 @@ export const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, type = 'synth
 
 	// most of the "asset" types were disabled since they were not widely used.
 	switch (currencyKey) {
-		case CRYPTO_CURRENCY_MAP.ETH: {
+		case CryptoCurrency.ETH: {
 			return <Img src={ETHIcon} {...props} />;
 		}
-		case CRYPTO_CURRENCY_MAP.SNX: {
+		case CryptoCurrency.SNX: {
 			return <Img src={SNXIcon} {...props} />;
 		}
 
-		case SYNTHS_MAP.sBTC: {
+		case Synths.sBTC: {
 			return <Img src={sBTCIcon} {...props} />;
 		}
-		case SYNTHS_MAP.sETH: {
+		case Synths.sETH: {
 			return type === 'synth' ? (
 				<Img src={sETHIcon} {...props} />
 			) : (
 				<Img src={ETHIcon} {...props} />
 			);
 		}
-		case SYNTHS_MAP.sXRP: {
+		case Synths.sXRP: {
 			return <Img src={sXRPIcon} {...props} />;
 		}
-		case SYNTHS_MAP.sBCH: {
+		case Synths.sBCH: {
 			return <Img src={sBCHIcon} {...props} />;
 		}
-		case SYNTHS_MAP.sLTC: {
+		case Synths.sLTC: {
 			return <Img src={sLTCIcon} {...props} />;
 		}
-		case SYNTHS_MAP.sEOS: {
+		case Synths.sEOS: {
 			return <Img src={sEOSIcon} {...props} />;
 		}
-		case SYNTHS_MAP.sBNB: {
+		case Synths.sBNB: {
 			return <Img src={sBNBIcon} {...props} />;
 		}
-		case SYNTHS_MAP.sXTZ: {
+		case Synths.sXTZ: {
 			return <Img src={sXTZIcon} {...props} />;
 		}
-		case SYNTHS_MAP.sXMR: {
+		case Synths.sXMR: {
 			return <Img src={sXMRIcon} {...props} />;
 		}
-		case SYNTHS_MAP.sADA: {
+		case Synths.sADA: {
 			return <Img src={sADAIcon} {...props} />;
 		}
-		case SYNTHS_MAP.sLINK: {
+		case Synths.sLINK: {
 			return <Img src={sLINKIcon} {...props} />;
 		}
-		case SYNTHS_MAP.sTRX: {
+		case Synths.sTRX: {
 			return <Img src={sTRXIcon} {...props} />;
 		}
-		case SYNTHS_MAP.sDASH: {
+		case Synths.sDASH: {
 			return <Img src={sDASHIcon} {...props} />;
 		}
-		case SYNTHS_MAP.sETC: {
+		case Synths.sETC: {
 			return <Img src={sETCIcon} {...props} />;
 		}
-		case SYNTHS_MAP.iBTC: {
+		case Synths.iBTC: {
 			return <Img src={iBTCIcon} {...props} />;
 		}
-		case SYNTHS_MAP.iETH: {
+		case Synths.iETH: {
 			return <Img src={iETHIcon} {...props} />;
 		}
-		case SYNTHS_MAP.iXRP: {
+		case Synths.iXRP: {
 			return <Img src={iXRPIcon} {...props} />;
 		}
-		case SYNTHS_MAP.iBCH: {
+		case Synths.iBCH: {
 			return <Img src={iBCHIcon} {...props} />;
 		}
-		case SYNTHS_MAP.iLTC: {
+		case Synths.iLTC: {
 			return <Img src={iLTCIcon} {...props} />;
 		}
-		case SYNTHS_MAP.iEOS: {
+		case Synths.iEOS: {
 			return <Img src={iEOSIcon} {...props} />;
 		}
-		case SYNTHS_MAP.iBNB: {
+		case Synths.iBNB: {
 			return <Img src={iBNBIcon} {...props} />;
 		}
-		case SYNTHS_MAP.iXTZ: {
+		case Synths.iXTZ: {
 			return <Img src={iXTZIcon} {...props} />;
 		}
-		case SYNTHS_MAP.iXMR: {
+		case Synths.iXMR: {
 			return <Img src={iXMRIcon} {...props} />;
 		}
-		case SYNTHS_MAP.iADA: {
+		case Synths.iADA: {
 			return <Img src={iADAIcon} {...props} />;
 		}
-		case SYNTHS_MAP.iLINK: {
+		case Synths.iLINK: {
 			return <Img src={iLINKIcon} {...props} />;
 		}
-		case SYNTHS_MAP.iTRX: {
+		case Synths.iTRX: {
 			return <Img src={iTRXIcon} {...props} />;
 		}
-		case SYNTHS_MAP.iDASH: {
+		case Synths.iDASH: {
 			return <Img src={iDASHIcon} {...props} />;
 		}
-		case SYNTHS_MAP.iETC: {
+		case Synths.iETC: {
 			return <Img src={iETCIcon} {...props} />;
 		}
-		case SYNTHS_MAP.sEUR: {
+		case Synths.sEUR: {
 			return <Img src={sEURIcon} {...props} />;
 		}
-		case SYNTHS_MAP.sJPY: {
+		case Synths.sJPY: {
 			return <Img src={sJPYIcon} {...props} />;
 		}
-		case SYNTHS_MAP.sUSD: {
+		case Synths.sUSD: {
 			return <Img src={sUSDIcon} {...props} />;
 		}
-		case SYNTHS_MAP.sAUD: {
+		case Synths.sAUD: {
 			return <Img src={sAUDIcon} {...props} />;
 		}
-		case SYNTHS_MAP.sGBP: {
+		case Synths.sGBP: {
 			return <Img src={sGBPIcon} {...props} />;
 		}
-		case SYNTHS_MAP.sCHF: {
+		case Synths.sCHF: {
 			return <Img src={sCHFIcon} {...props} />;
 		}
-		case SYNTHS_MAP.sXAU: {
+		case Synths.sXAU: {
 			return <Img src={sXAUIcon} {...props} />;
 		}
-		case SYNTHS_MAP.sXAG: {
+		case Synths.sXAG: {
 			return <Img src={sXAGIcon} {...props} />;
 		}
-		case SYNTHS_MAP.sCEX: {
+		case Synths.sCEX: {
 			return <Img src={sCEXIcon} {...props} />;
 		}
-		case SYNTHS_MAP.sDEFI: {
+		case Synths.sDEFI: {
 			return <Img src={sDEFIIcon} {...props} />;
 		}
-		case SYNTHS_MAP.iCEX: {
+		case Synths.iCEX: {
 			return <Img src={iCEXIcon} {...props} />;
 		}
-		case SYNTHS_MAP.iDEFI: {
+		case Synths.iDEFI: {
 			return <Img src={iDEFIIcon} {...props} />;
 		}
-		case SYNTHS_MAP.sFTSE: {
+		case Synths.sFTSE: {
 			return <Img src={sFTSEIcon} {...props} />;
 		}
-		case SYNTHS_MAP.sNIKKEI: {
+		case Synths.sNIKKEI: {
 			return <Img src={sNIKKEIIcon} {...props} />;
 		}
 		default:

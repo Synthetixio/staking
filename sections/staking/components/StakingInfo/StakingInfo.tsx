@@ -15,7 +15,7 @@ import { formatCurrency, toBigNumber } from 'utils/formatters/number';
 import { Svg } from 'react-optimized-image';
 import Arrows from 'assets/svg/app/arrows.svg';
 import { getStakingAmount } from '../helper';
-import { CRYPTO_CURRENCY_MAP, SYNTHS_MAP } from 'constants/currency';
+import { CryptoCurrency, Synths } from 'constants/currency';
 import { useRecoilValue } from 'recoil';
 import { amountToBurnState, amountToMintState } from 'store/staking';
 
@@ -78,25 +78,25 @@ const StakingInfo: React.FC<StakingInfoProps> = ({ isMint }) => {
 				title: t('staking.info.table.not-staked'),
 				value: unstakedCollateral.isNaN() ? toBigNumber(0) : unstakedCollateral,
 				changedValue: changedNotStakedValue.isNaN() ? toBigNumber(0) : changedNotStakedValue,
-				currencyKey: CRYPTO_CURRENCY_MAP.SNX,
+				currencyKey: CryptoCurrency.SNX,
 			},
 			{
 				title: t('staking.info.table.staked'),
 				value: stakedCollateral.isNaN() ? toBigNumber(0) : stakedCollateral,
 				changedValue: changedStakedValue.isNaN() ? toBigNumber(0) : changedStakedValue,
-				currencyKey: CRYPTO_CURRENCY_MAP.SNX,
+				currencyKey: CryptoCurrency.SNX,
 			},
 			{
 				title: t('staking.info.table.transferable'),
 				value: transferableCollateral.isNaN() ? toBigNumber(0) : transferableCollateral,
 				changedValue: changedTransferable.isNaN() ? toBigNumber(0) : changedTransferable,
-				currencyKey: CRYPTO_CURRENCY_MAP.SNX,
+				currencyKey: CryptoCurrency.SNX,
 			},
 			{
 				title: t('staking.info.table.locked'),
 				value: lockedCollateral.isNaN() ? toBigNumber(0) : lockedCollateral,
 				changedValue: changedLocked.isNaN() ? toBigNumber(0) : changedLocked,
-				currencyKey: CRYPTO_CURRENCY_MAP.SNX,
+				currencyKey: CryptoCurrency.SNX,
 			},
 			{
 				title: t('staking.info.table.c-ratio'),
@@ -111,7 +111,7 @@ const StakingInfo: React.FC<StakingInfoProps> = ({ isMint }) => {
 				title: t('staking.info.table.debt'),
 				value: debtBalance.isNaN() ? toBigNumber(0) : debtBalance,
 				changedValue: changedDebt.isNaN() ? toBigNumber(0) : changedDebt,
-				currencyKey: SYNTHS_MAP.sUSD,
+				currencyKey: Synths.sUSD,
 			},
 		];
 	}, [

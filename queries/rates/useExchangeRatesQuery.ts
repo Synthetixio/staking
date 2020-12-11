@@ -5,7 +5,7 @@ import { useRecoilValue } from 'recoil';
 import synthetix from 'lib/synthetix';
 
 import QUERY_KEYS from 'constants/queryKeys';
-import { CRYPTO_CURRENCY_MAP, CurrencyKey } from 'constants/currency';
+import { CryptoCurrency, CurrencyKey } from 'constants/currency';
 import { iStandardSynth, synthToAsset } from 'utils/currencies';
 
 import { appReadyState } from 'store/app';
@@ -16,7 +16,7 @@ type CurrencyRate = BigNumberish;
 type SynthRatesTuple = [string[], CurrencyRate[]];
 
 // Additional commonly used currencies to fetch, besides the one returned by the SynthUtil.synthsRates
-const additionalCurrencies = [CRYPTO_CURRENCY_MAP.SNX].map(ethers.utils.formatBytes32String);
+const additionalCurrencies = [CryptoCurrency.SNX].map(ethers.utils.formatBytes32String);
 
 const useExchangeRatesQuery = (options?: QueryConfig<Rates>) => {
 	const isAppReady = useRecoilValue(appReadyState);

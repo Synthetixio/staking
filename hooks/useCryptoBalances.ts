@@ -5,10 +5,10 @@ import useETHBalanceQuery from 'queries/walletBalances/useETHBalanceQuery';
 import useSNXBalanceQuery from 'queries/walletBalances/useSNXBalanceQuery';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 
-import { CRYPTO_CURRENCY_MAP } from 'constants/currency';
+import { CryptoCurrency } from 'constants/currency';
 import { assetToSynth } from 'utils/currencies';
 
-const { ETH, SNX } = CRYPTO_CURRENCY_MAP;
+const { ETH, SNX } = CryptoCurrency;
 
 const useCryptoBalances = () => {
 	const ETHBalanceQuery = useETHBalanceQuery();

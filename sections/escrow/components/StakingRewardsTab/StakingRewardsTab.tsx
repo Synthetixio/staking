@@ -15,7 +15,7 @@ import { useTranslation } from 'react-i18next';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import { ethers } from 'ethers';
 import Notify from 'containers/Notify';
-import { CRYPTO_CURRENCY_MAP } from 'constants/currency';
+import { CryptoCurrency } from 'constants/currency';
 import { FlexDivColCentered, ModalItem, ModalItemText, ModalItemTitle } from 'styles/common';
 import { ActionCompleted, ActionInProgress } from '../TxSent';
 
@@ -34,7 +34,7 @@ const StakingRewardsTab: React.FC<StakingRewardsTabProps> = ({ canVestAmount }) 
 	const [vestTxError, setVestTxError] = useState<string | null>(null);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 
-	const vestingCurrencyKey = CRYPTO_CURRENCY_MAP['SNX'];
+	const vestingCurrencyKey = CryptoCurrency['SNX'];
 
 	useEffect(() => {
 		const getGasLimitEstimate = async () => {

@@ -17,7 +17,7 @@ import { HistoricalStakingTransaction, StakingTransactionType } from 'queries/st
 
 import { ExternalLink, FlexDivCentered } from 'styles/common';
 import { NO_VALUE } from 'constants/placeholder';
-import { CRYPTO_CURRENCY_MAP, SYNTHS_MAP } from 'constants/currency';
+import { CryptoCurrency, Synths } from 'constants/currency';
 
 import TypeIcon from '../TypeIcon';
 
@@ -63,15 +63,15 @@ const Transactions: FC<TransactionsProps> = ({ transactions, isLoaded, noResults
 							>
 						) => (
 							<div>
-								{formatCurrency(SYNTHS_MAP.sUSD, cellProps.value, {
-									currencyKey: SYNTHS_MAP.sUSD,
+								{formatCurrency(Synths.sUSD, cellProps.value, {
+									currencyKey: Synths.sUSD,
 								})}
 								{cellProps.row.original.type === StakingTransactionType.FeesClaimed &&
 									cellProps.row.original.rewards != null && (
 										<>
 											{' / '}
-											{formatCurrency(CRYPTO_CURRENCY_MAP.SNX, cellProps.row.original.rewards, {
-												currencyKey: CRYPTO_CURRENCY_MAP.SNX,
+											{formatCurrency(CryptoCurrency.SNX, cellProps.row.original.rewards, {
+												currencyKey: CryptoCurrency.SNX,
 											})}
 										</>
 									)}

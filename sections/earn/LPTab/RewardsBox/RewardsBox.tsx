@@ -9,7 +9,7 @@ import snxSVG from 'assets/svg/incentives/pool-snx.svg';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
 import { formatCurrency, formatFiatCurrency, toBigNumber } from 'utils/formatters/number';
-import { CRYPTO_CURRENCY_MAP } from 'constants/currency';
+import { CryptoCurrency } from 'constants/currency';
 import { ESTIMATE_VALUE } from 'constants/placeholder';
 
 import { FlexDivColCentered } from 'styles/common';
@@ -30,7 +30,7 @@ const RewardsBox: FC<RewardsBoxProps> = ({ tokenRewards, SNXRate }) => {
 			<RewardsTitle>{t('earn.actions.rewards.title')}</RewardsTitle>
 			<Svg src={snxSVG} />
 			<RewardsAmountSNX>
-				{formatCurrency(CRYPTO_CURRENCY_MAP.SNX, tokenRewards, {
+				{formatCurrency(CryptoCurrency.SNX, tokenRewards, {
 					currencyKey: '',
 					decimals: 2,
 				})}
