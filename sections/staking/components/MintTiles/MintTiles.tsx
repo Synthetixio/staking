@@ -10,12 +10,12 @@ import { amountToMintState, MintActionType, mintTypeState } from 'store/staking'
 
 type MintTilesProps = {};
 
+const mintIcon = <Svg src={Mint} />;
+
 const MintTiles: React.FC<MintTilesProps> = () => {
 	const { t } = useTranslation();
 	const [mintType, onMintTypeChange] = useRecoilState(mintTypeState);
 	const onMintChange = useSetRecoilState(amountToMintState);
-
-	const MintIcon = () => <Svg src={Mint} />;
 
 	useEffect(() => {
 		onMintChange('');
@@ -26,7 +26,7 @@ const MintTiles: React.FC<MintTilesProps> = () => {
 			<StyledButtonTile
 				title={t('staking.actions.mint.tiles.max.title')}
 				subtext={t('staking.actions.mint.tiles.max.subtext')}
-				icon={MintIcon}
+				icon={mintIcon}
 				onAction={() => {
 					onMintTypeChange(MintActionType.MAX);
 				}}
@@ -34,7 +34,7 @@ const MintTiles: React.FC<MintTilesProps> = () => {
 			<StyledButtonTile
 				title={t('staking.actions.mint.tiles.custom.title')}
 				subtext={t('staking.actions.mint.tiles.custom.subtext')}
-				icon={MintIcon}
+				icon={mintIcon}
 				onAction={() => onMintTypeChange(MintActionType.CUSTOM)}
 			/>
 		</Container>

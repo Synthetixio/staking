@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, ReactNode } from 'react';
 import Link from 'next/link';
 import styled from 'styled-components';
 
@@ -8,7 +8,7 @@ export type GridBoxProps = {
 	gridLocations: [string, string, string, string];
 	title: string;
 	copy: string;
-	icon: () => JSX.Element;
+	icon: ReactNode;
 	link?: string;
 	externalLink?: string;
 };
@@ -23,7 +23,7 @@ export const GridBox: FC<GridBoxProps> = ({
 }) => {
 	const components = (
 		<InnerGridContainer>
-			<GridBoxIcon>{icon()}</GridBoxIcon>
+			<GridBoxIcon>{icon}</GridBoxIcon>
 			<GridBoxTitle>{title}</GridBoxTitle>
 			<GridBoxCopy>{copy}</GridBoxCopy>
 		</InnerGridContainer>

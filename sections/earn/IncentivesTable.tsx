@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import styled, { css } from 'styled-components';
@@ -19,7 +19,7 @@ export type EarnItem = {
 	title: string;
 	subtitle: string;
 	apr: number;
-	icon: () => JSX.Element;
+	icon: ReactNode;
 	tvl: number;
 	staked: {
 		balance: number;
@@ -33,12 +33,12 @@ export type EarnItem = {
 	now: number;
 };
 
-interface IncentivesTableProps {
+type IncentivesTableProps = {
 	data: EarnItem[];
 	isLoaded: boolean;
 	setActiveTab: (tab: number | null) => void;
 	activeTab: number | null;
-}
+};
 
 const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab, setActiveTab }) => {
 	const { t } = useTranslation();
@@ -52,7 +52,7 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab, 
 					isActive={cellProps.row.original.incentivesIndex === activeTab}
 					onClick={() => setActiveTab(cellProps.row.original.incentivesIndex)}
 				>
-					<div>{cellProps.row.original.icon()}</div>
+					<div>{cellProps.row.original.icon}</div>
 					<FlexDivCol>
 						<Title>{cellProps.row.original.title}</Title>
 						<Subtitle>{cellProps.row.original.subtitle}</Subtitle>
@@ -162,8 +162,7 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab, 
 							(cellProps.row.original.now - cellProps.row.original.periodStarted) /
 							(cellProps.row.original.periodFinish - cellProps.row.original.periodStarted)
 						}
-						borderColor="transparent"
-						fillColor="transparent"
+						variant="rainbow"
 					/>
 					<Subtitle>
 						<Countdown date={cellProps.value} />
@@ -198,18 +197,6 @@ const Container = styled.div<{ activeTab: number | null }>`
 const StyledProgressBar = styled(ProgressBar)`
 	width: 80%;
 	margin: 0 auto 4px auto;
-
-	.filled-bar {
-		background: ${(props) => props.theme.colors.rainbowGradient};
-		box-shadow: none;
-		border: 0;
-	}
-	.unfilled-bar {
-		background: ${(props) => props.theme.colors.white};
-		box-shadow: none;
-		border: 0;
-		opacity: 0.2;
-	}
 `;
 
 const StyledTable = styled(Table)`

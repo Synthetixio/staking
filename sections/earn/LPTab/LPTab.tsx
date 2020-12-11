@@ -1,4 +1,4 @@
-import { FC, useState, useMemo, useEffect, useCallback } from 'react';
+import { FC, useState, useMemo, useEffect, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import StructuredTab from 'components/StructuredTab';
@@ -11,13 +11,13 @@ import { TabContainer, Label } from '../common';
 import Approve from './Approve';
 import RewardsBox from './RewardsBox';
 
-interface LPTabProps {
+type LPTabProps = {
 	synth: CurrencyKey;
-	title: JSX.Element;
+	title: ReactNode;
 	tokenRewards: number;
-	icon: () => JSX.Element;
+	icon: ReactNode;
 	allowance: number | null;
-}
+};
 
 const LPTab: FC<LPTabProps> = ({ icon, synth, title, tokenRewards, allowance }) => {
 	const { t } = useTranslation();

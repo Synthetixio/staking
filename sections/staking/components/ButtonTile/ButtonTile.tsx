@@ -1,16 +1,16 @@
-import React from 'react';
+import { ReactNode, FC } from 'react';
 import styled, { css } from 'styled-components';
 import { FlexDivColCentered } from 'styles/common';
 
 type ButtonTileProps = {
 	title: string;
-	icon: Function;
+	icon: ReactNode;
 	subtext: string;
 	onAction: () => void;
 	disabled?: boolean;
 };
 
-const ButtonTile: React.FC<ButtonTileProps> = ({
+const ButtonTile: FC<ButtonTileProps> = ({
 	title,
 	icon,
 	subtext,
@@ -23,7 +23,7 @@ const ButtonTile: React.FC<ButtonTileProps> = ({
 			<Title disabled={disabled} className="tile-title">
 				{title}
 			</Title>
-			{icon()}
+			{icon}
 			<Subtext disabled={disabled} className="tile-subtext">
 				{subtext}
 			</Subtext>

@@ -16,6 +16,7 @@ import useTotalIssuedSynthsExcludingEtherQuery from 'queries/synths/useTotalIssu
 import { SYNTHS_MAP } from 'constants/currency';
 import { formatFiatCurrency, formatPercent } from 'utils/formatters/number';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
+import { WEEKS_IN_YEAR } from 'constants/date';
 
 const DashboardPage = () => {
 	const { t } = useTranslation();
@@ -41,7 +42,8 @@ const DashboardPage = () => {
 	// TODO: replace with useMemo
 	const weeklyRewards = sUSDRate * feesToDistribute + SNXRate * rewardsToDistribute;
 	const stakingAPR =
-		(weeklyRewards * (debtBalance.toNumber() / totalsUSDDebt) * 52) / stakedValue.toNumber();
+		(weeklyRewards * (debtBalance.toNumber() / totalsUSDDebt) * WEEKS_IN_YEAR) /
+		stakedValue.toNumber();
 
 	return (
 		<>

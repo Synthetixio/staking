@@ -20,10 +20,10 @@ import Button from 'components/Button';
 import { useTranslation } from 'react-i18next';
 import { FlexDivRow, FlexDivRowCentered, NumericValue } from 'styles/common';
 
-interface GasSelectorProps {
+type GasSelectorProps = {
 	gasLimitEstimate: number | null;
 	setGasPrice: Function;
-}
+};
 
 const GasSelector: React.FC<GasSelectorProps> = ({ gasLimitEstimate, setGasPrice, ...rest }) => {
 	const { t } = useTranslation();

@@ -4,9 +4,9 @@ import styled, { css } from 'styled-components';
 
 import { GridBoxContainer } from './GridBox';
 
-interface WizardGridBoxProps {
+type WizardGridBoxProps = {
 	gridLocations: [string, string, string, string];
-}
+};
 
 export const WizardGridBox: FC<WizardGridBoxProps> = ({ gridLocations }) => (
 	<GridBoxContainer
@@ -46,11 +46,11 @@ const WizardWrap = styled.div`
 	}
 `;
 
-interface NavProps {
+type NavProps = {
 	totalSteps: number;
 	currentStep: number;
 	goToStep: (num: number) => null;
-}
+};
 
 const Nav: FC<NavProps> = ({ totalSteps, currentStep, goToStep }) => {
 	const dots = [];

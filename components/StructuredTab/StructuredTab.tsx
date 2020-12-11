@@ -5,13 +5,13 @@ import styled from 'styled-components';
 
 export type TabInfo = {
 	title: string;
-	icon?: () => ReactNode;
+	icon?: ReactNode;
 	tabChildren: ReactNode;
 	key: string;
 	blue: boolean;
 };
 
-interface StructuredTabProps {
+type StructuredTabProps = {
 	tabData: TabInfo[];
 	boxHeight: number;
 	boxWidth: number;
@@ -19,7 +19,7 @@ interface StructuredTabProps {
 	setPanelType?: Dispatch<SetStateAction<any>>;
 	tabHeight?: number;
 	inverseTabColor?: boolean;
-}
+};
 
 const StructuredTab: FC<StructuredTabProps> = ({
 	tabData,
@@ -50,7 +50,7 @@ const StructuredTab: FC<StructuredTabProps> = ({
 							}
 						}}
 					>
-						{icon && icon()}
+						{icon != null && icon}
 						<TitleContainer>{title}</TitleContainer>
 					</TabButton>
 				))}

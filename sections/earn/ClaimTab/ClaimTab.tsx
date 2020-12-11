@@ -3,7 +3,6 @@ import { Trans, useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { Svg } from 'react-optimized-image';
 import { ethers } from 'ethers';
-import { SynthetixJS } from '@synthetixio/js';
 
 import {
 	ErrorMessage,
@@ -66,7 +65,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 					setError(null);
 					const {
 						contracts: { FeePool },
-					} = synthetix.js as SynthetixJS;
+					} = synthetix.js!;
 					let gasEstimate = await getGasEstimateForTransaction([], FeePool.estimateGas.claimFees);
 					setGasLimitEstimate(normalizeGasLimit(Number(gasEstimate)));
 				} catch (error) {
@@ -80,7 +79,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 			}
 		};
 		getGasLimitEstimate();
-	}, [synthetix]);
+	}, []);
 
 	const handleClaim = async () => {
 		try {

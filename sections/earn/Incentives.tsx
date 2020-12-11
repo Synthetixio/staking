@@ -1,25 +1,30 @@
 import { FC, useState, useMemo } from 'react';
 import BigNumber from 'bignumber.js';
 import styled from 'styled-components';
-import { Svg } from 'react-optimized-image';
+import Img from 'react-optimized-image';
 import { useTranslation, Trans } from 'react-i18next';
 
 import useIETHPoolQuery_1 from 'queries/liquidityPools/useIETHPoolQuery_1';
 import useIBTCPoolQuery_1 from 'queries/liquidityPools/useIBTCPoolQuery_1';
 import useCurvePoolQuery_1 from 'queries/liquidityPools/useCurvePoolQuery_1';
 import useSNXLockedValueQuery from 'queries/staking/useSNXLockedValueQuery';
+import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
+
 import useFeePeriodTimeAndProgress from 'hooks/useFeePeriodTimeAndProgress';
+
 import useClaimedStatus from 'sections/hooks/useClaimedStatus';
 import { CRYPTO_CURRENCY_MAP, SYNTHS_MAP } from 'constants/currency';
+import { WEEKS_IN_YEAR } from 'constants/date';
+
 import { FlexDiv } from 'styles/common';
 
 import curveSVG from 'assets/svg/incentives/pool-curve.svg';
 import iBTCSVG from 'assets/svg/incentives/pool-ibtc.svg';
 import iETHSVG from 'assets/svg/incentives/pool-ieth.svg';
 import snxSVG from 'assets/svg/incentives/pool-snx.svg';
+
 import IncentivesTable from './IncentivesTable';
 import ClaimTab from './ClaimTab';
-import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import LPTab from './LPTab';
 import { StyledLink } from './common';
 
@@ -53,14 +58,14 @@ const Incentives: FC<IncentivesProps> = ({
 	const SNXRate = exchangeRatesQuery.data?.SNX ?? 0;
 
 	const iETHTVL = (useiETHPool.data?.balance ?? 0) * (useiETHPool.data?.price ?? 0);
-	const iETHAPR = (((useiETHPool.data?.distribution ?? 0) * SNXRate) / iETHTVL) * 52;
+	const iETHAPR = (((useiETHPool.data?.distribution ?? 0) * SNXRate) / iETHTVL) * WEEKS_IN_YEAR;
 
 	const iBTCTVL = (useiBTCPool.data?.balance ?? 0) * (useiBTCPool.data?.price ?? 0);
-	const iBTCAPR = (((useiBTCPool.data?.distribution ?? 0) * SNXRate) / iBTCTVL) * 52;
+	const iBTCAPR = (((useiBTCPool.data?.distribution ?? 0) * SNXRate) / iBTCTVL) * WEEKS_IN_YEAR;
 
 	const curveTVL = (useCurvePool.data?.balance ?? 0) * (useCurvePool.data?.price ?? 0);
 	const curveAPR =
-		(((useCurvePool.data?.distribution ?? 0) * SNXRate) / curveTVL) * 52 +
+		(((useCurvePool.data?.distribution ?? 0) * SNXRate) / curveTVL) * WEEKS_IN_YEAR +
 		(useCurvePool.data?.swapAPY ?? 0) +
 		(useCurvePool.data?.rewardsAPY ?? 0);
 
@@ -69,7 +74,7 @@ const Incentives: FC<IncentivesProps> = ({
 	const incentives = useMemo(
 		() => [
 			{
-				icon: () => <Svg src={snxSVG} />,
+				icon: <Img src={snxSVG} />,
 				title: t('earn.incentives.options.snx.title'),
 				subtitle: t('earn.incentives.options.snx.subtitle'),
 				apr: stakingAPR,
@@ -86,7 +91,7 @@ const Incentives: FC<IncentivesProps> = ({
 				now,
 			},
 			{
-				icon: () => <Svg src={curveSVG} />,
+				icon: <Img src={curveSVG} />,
 				title: t('earn.incentives.options.curve.title'),
 				subtitle: t('earn.incentives.options.curve.subtitle'),
 				apr: curveAPR,
@@ -99,11 +104,11 @@ const Incentives: FC<IncentivesProps> = ({
 				periodStarted: now - (useCurvePool.data?.duration ?? 0),
 				periodFinish: useCurvePool.data?.periodFinish ?? 0,
 				incentivesIndex: 1,
-				claimed: useCurvePool.data?.rewards ?? 0 > 0 ? false : NOT_APPLICABLE,
+				claimed: (useCurvePool.data?.rewards ?? 0) > 0 ? false : NOT_APPLICABLE,
 				now,
 			},
 			{
-				icon: () => <Svg src={iETHSVG} />,
+				icon: <Img src={iETHSVG} />,
 				title: t('earn.incentives.options.ieth.title'),
 				subtitle: t('earn.incentives.options.ieth.subtitle'),
 				apr: iETHAPR,
@@ -116,11 +121,11 @@ const Incentives: FC<IncentivesProps> = ({
 				periodStarted: now - (useiETHPool.data?.duration ?? 0),
 				periodFinish: useiETHPool.data?.periodFinish ?? 0,
 				incentivesIndex: 2,
-				claimed: useiETHPool.data?.rewards ?? 0 > 0 ? false : NOT_APPLICABLE,
+				claimed: (useiETHPool.data?.rewards ?? 0) > 0 ? false : NOT_APPLICABLE,
 				now,
 			},
 			{
-				icon: () => <Svg src={iBTCSVG} />,
+				icon: <Img src={iBTCSVG} />,
 				title: t('earn.incentives.options.ibtc.title'),
 				subtitle: t('earn.incentives.options.ibtc.subtitle'),
 				apr: iBTCAPR,
@@ -133,7 +138,7 @@ const Incentives: FC<IncentivesProps> = ({
 				periodStarted: now - (useiBTCPool.data?.duration ?? 0),
 				periodFinish: useiBTCPool.data?.periodFinish ?? 0,
 				incentivesIndex: 3,
-				claimed: useiBTCPool.data?.rewards ?? 0 > 0 ? false : NOT_APPLICABLE,
+				claimed: (useiBTCPool.data?.rewards ?? 0) > 0 ? false : NOT_APPLICABLE,
 				now,
 			},
 		],
