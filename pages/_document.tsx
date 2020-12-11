@@ -3,13 +3,13 @@ import { ServerStyleSheet } from 'styled-components';
 import { mediaStyles } from 'styles/media';
 
 const PRELOADED_FONTS = [
+	'/fonts/Inter-Regular.woff2',
+	'/fonts/Inter-SemiBold.woff2',
+	'/fonts/Inter-Bold.woff2',
 	'/fonts/GT-America-Mono-Bold.woff2',
 	'/fonts/GT-America-Expanded-Black.woff2',
 	'/fonts/GT-America-Condensed-Medium.woff2',
 	'/fonts/GT-America-Condensed-Bold.woff2',
-	'/fonts/inter-v2-latin-regular.woff2',
-	'/fonts/inter-v2-latin-600.woff2',
-	'/fonts/inter-v2-latin-800.woff2',
 ];
 
 export default class MyDocument extends Document {
