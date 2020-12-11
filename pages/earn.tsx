@@ -1,10 +1,12 @@
 import Head from 'next/head';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { StatsSection, LineSpacer } from 'styles/common';
+import sumBy from 'lodash/sumBy';
 
 import { SYNTHS_MAP } from 'constants/currency';
+import { WEEKS_IN_YEAR } from 'constants/date';
 
 import { Incentives } from 'sections/earn';
 import StatBox from 'components/StatBox';
@@ -16,8 +18,10 @@ import useGetFeePoolDataQuery from 'queries/staking/useGetFeePoolDataQuery';
 import useTotalIssuedSynthsExcludingEtherQuery from 'queries/synths/useTotalIssuedSynthsExcludingEtherQuery';
 import useClaimableRewards from 'queries/staking/useClaimableRewardsQuery';
 import useFeeClaimHistoryQuery from 'queries/staking/useFeeClaimHistoryQuery';
+
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
-import { WEEKS_IN_YEAR } from 'constants/date';
+
+import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
 const Earn = () => {
 	const { t } = useTranslation();
@@ -26,6 +30,7 @@ const Earn = () => {
 	const totalIssuedSynthsExclEth = useTotalIssuedSynthsExcludingEtherQuery(SYNTHS_MAP.sUSD);
 	const previousFeePeriod = useGetFeePoolDataQuery('1');
 	const { currentCRatio, targetCRatio, debtBalance, collateral } = useStakingCalculations();
+	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
 
 	const sUSDRate = exchangeRatesQuery.data?.sUSD ?? 0;
 	const feesToDistribute = previousFeePeriod?.data?.feesToDistribute ?? 0;
@@ -51,21 +56,22 @@ const Earn = () => {
 
 	const feeClaimHistoryQuery = useFeeClaimHistoryQuery();
 
-	const feeClaimHistory = feeClaimHistoryQuery.data ?? [];
+	const feeClaimHistory = useMemo(() => feeClaimHistoryQuery.data ?? [], [
+		feeClaimHistoryQuery.data,
+	]);
 
-	const claimHistoryValues: number[] = feeClaimHistory.map((e) => {
-		const usdAmount = e.value;
-		const snxAmount = e.rewards ?? 0;
-		const snxUsdValue = snxAmount * SNXRate;
-		return usdAmount + snxUsdValue;
-	});
-
-	const totalFees = claimHistoryValues.reduce((a, b) => a + b, 0);
-
-	// const refetch = () => {
-	// 	availableRewards.refetch();
-	// 	feeClaimHistoryQuery.refetch();
-	// };
+	const totalFees = useMemo(
+		() =>
+			toBigNumber(
+				sumBy(feeClaimHistory, (claim) => {
+					const usdAmount = claim.value;
+					const snxAmount = claim.rewards ?? 0;
+					const snxUsdValue = snxAmount * SNXRate;
+					return usdAmount + snxUsdValue;
+				})
+			),
+		[feeClaimHistory, SNXRate]
+	);
 
 	return (
 		<>
@@ -75,8 +81,8 @@ const Earn = () => {
 			<StatsSection>
 				<UpcomingRewards
 					title={t('common.stat-box.upcoming-rewards')}
-					value={formatFiatCurrency(totalRewards, {
-						sign: '$',
+					value={formatFiatCurrency(getPriceAtCurrentRate(totalRewards), {
+						sign: selectedPriceCurrency.sign,
 					})}
 				/>
 				<APY
@@ -86,7 +92,9 @@ const Earn = () => {
 				/>
 				<LifetimeRewards
 					title={t('common.stat-box.lifetime-rewards')}
-					value={formatFiatCurrency(totalFees ? totalFees : 0, { sign: '$' })}
+					value={formatFiatCurrency(getPriceAtCurrentRate(totalFees), {
+						sign: selectedPriceCurrency.sign,
+					})}
 				/>
 			</StatsSection>
 			<LineSpacer />

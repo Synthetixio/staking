@@ -3,6 +3,29 @@ import { Trans, useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { Svg } from 'react-optimized-image';
 import { ethers } from 'ethers';
+import BigNumber from 'bignumber.js';
+
+import synthetix from 'lib/synthetix';
+
+import Etherscan from 'containers/Etherscan';
+import Connector from 'containers/Connector';
+import Notify from 'containers/Notify';
+
+import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import useClaimedStatus from 'sections/hooks/useClaimedStatus';
+import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
+
+import { formatCurrency, formatFiatCurrency } from 'utils/formatters/number';
+import { getGasEstimateForTransaction } from 'utils/transactions';
+import { normalizedGasPrice, normalizeGasLimit } from 'utils/network';
+
+import { Transaction } from 'constants/network';
+import { CRYPTO_CURRENCY_MAP, SYNTHS_MAP } from 'constants/currency';
+
+import GasSelector from 'components/GasSelector';
+
+import snxSVG from 'assets/svg/incentives/pool-snx.svg';
+import largeWaveSVG from 'assets/svg/app/large-wave.svg';
 
 import {
 	ErrorMessage,
@@ -12,21 +35,7 @@ import {
 	ModalItem,
 	ModalItemTitle,
 } from 'styles/common';
-import useClaimedStatus from 'sections/hooks/useClaimedStatus';
-import BigNumber from 'bignumber.js';
-import { formatCurrency, formatFiatCurrency } from 'utils/formatters/number';
-import synthetix from 'lib/synthetix';
-import Connector from 'containers/Connector';
-import { getGasEstimateForTransaction } from 'utils/transactions';
-import { Transaction } from 'constants/network';
-import Etherscan from 'containers/Etherscan';
-import GasSelector from 'components/GasSelector';
-import Notify from 'containers/Notify';
-import { normalizedGasPrice, normalizeGasLimit } from 'utils/network';
-import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
-import { CRYPTO_CURRENCY_MAP, SYNTHS_MAP } from 'constants/currency';
-import snxSVG from 'assets/svg/incentives/pool-snx.svg';
-import largeWaveSVG from 'assets/svg/app/large-wave.svg';
+
 import {
 	TotalValueWrapper,
 	Subtext,
@@ -48,6 +57,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 	const claimed = useClaimedStatus();
 	const { monitorHash } = Notify.useContainer();
 	const { etherscanInstance } = Etherscan.useContainer();
+	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
 	const { notify } = Connector.useContainer();
 	const [gasLimitEstimate, setGasLimitEstimate] = useState<number | null>(null);
 	const [gasPrice, setGasPrice] = useState<number>(0);
@@ -142,8 +152,8 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 					<TotalValueWrapper>
 						<Subtext>{t('earn.incentives.options.snx.total-value')}</Subtext>
 						<Value>
-							{formatFiatCurrency(totalRewards, {
-								sign: '$',
+							{formatFiatCurrency(getPriceAtCurrentRate(totalRewards), {
+								sign: selectedPriceCurrency.sign,
 							})}
 						</Value>
 					</TotalValueWrapper>

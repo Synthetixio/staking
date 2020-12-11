@@ -8,10 +8,13 @@ import StatBox from 'components/StatBox';
 import { LineSpacer, StatsSection } from 'styles/common';
 import { formatFiatCurrency, formatPercent } from 'utils/formatters/number';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
+import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
 const StakingPage = () => {
 	const { t } = useTranslation();
 	const { stakedCollateralValue, percentageCurrentCRatio, debtBalance } = useStakingCalculations();
+	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
+
 	return (
 		<>
 			<Head>
@@ -20,7 +23,9 @@ const StakingPage = () => {
 			<StatsSection>
 				<StakedValue
 					title={t('common.stat-box.staked-value')}
-					value={formatFiatCurrency(stakedCollateralValue, { sign: '$' })}
+					value={formatFiatCurrency(getPriceAtCurrentRate(stakedCollateralValue), {
+						sign: selectedPriceCurrency.sign,
+					})}
 				/>
 				<CRatio
 					title={t('common.stat-box.c-ratio')}
@@ -29,7 +34,9 @@ const StakingPage = () => {
 				/>
 				<ActiveDebt
 					title={t('common.stat-box.active-debt')}
-					value={formatFiatCurrency(debtBalance, { sign: '$' })}
+					value={formatFiatCurrency(getPriceAtCurrentRate(debtBalance), {
+						sign: selectedPriceCurrency.sign,
+					})}
 				/>
 			</StatsSection>
 			<LineSpacer />

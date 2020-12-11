@@ -29,7 +29,8 @@ export const LONG_CRYPTO_CURRENCY_DECIMALS = 8;
 export const getDecimalPlaces = (value: NumericValue) =>
 	(value.toString().split('.')[1] || '').length;
 
-export const toBigNumber = (value: NumericValue) => new BigNumber(value);
+export const toBigNumber = (value: NumericValue) =>
+	BigNumber.isBigNumber(value) ? value : new BigNumber(value);
 
 export const zeroBN = toBigNumber(0);
 
