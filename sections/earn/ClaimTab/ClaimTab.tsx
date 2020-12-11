@@ -20,7 +20,7 @@ import { getGasEstimateForTransaction } from 'utils/transactions';
 import { normalizedGasPrice, normalizeGasLimit } from 'utils/network';
 
 import { Transaction } from 'constants/network';
-import { CRYPTO_CURRENCY_MAP, SYNTHS_MAP } from 'constants/currency';
+import { CryptoCurrency, Synths } from 'constants/currency';
 
 import GasSelector from 'components/GasSelector';
 
@@ -132,8 +132,8 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 						<ValueBox>
 							<Svg src={snxSVG} />
 							<Value>
-								{formatCurrency(SYNTHS_MAP.sUSD, tradingRewards, {
-									currencyKey: SYNTHS_MAP.sUSD,
+								{formatCurrency(Synths.sUSD, tradingRewards, {
+									currencyKey: Synths.sUSD,
 									decimals: 2,
 								})}
 							</Value>
@@ -142,8 +142,8 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 						<ValueBox>
 							<Svg src={snxSVG} />
 							<Value>
-								{formatCurrency(CRYPTO_CURRENCY_MAP.SNX, stakingRewards, {
-									currencyKey: CRYPTO_CURRENCY_MAP.SNX,
+								{formatCurrency(CryptoCurrency.SNX, stakingRewards, {
+									currencyKey: CryptoCurrency.SNX,
 								})}
 							</Value>
 							<Subtext>{t('earn.incentives.options.snx.staking-rewards')}</Subtext>

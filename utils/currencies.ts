@@ -1,8 +1,9 @@
-import { CurrencyKey, SYNTHS_MAP, CRYPTO_CURRENCY_MAP, FIAT_SYNTHS } from 'constants/currency';
+import { CurrencyKey, Synths, CryptoCurrency, FIAT_SYNTHS } from 'constants/currency';
 import { Rates } from 'queries/rates/useExchangeRatesQuery';
 
-export const isSynth = (currencyKey: CurrencyKey) => !!SYNTHS_MAP[currencyKey];
-export const isCryptoCurrency = (currencyKey: CurrencyKey) => !!CRYPTO_CURRENCY_MAP[currencyKey];
+export const isSynth = (currencyKey: CurrencyKey) => currencyKey in Synths;
+export const isCryptoCurrency = (currencyKey: CurrencyKey) => currencyKey in CryptoCurrency;
+// @ts-ignore
 export const isFiatCurrency = (currencyKey: CurrencyKey) => FIAT_SYNTHS.has(currencyKey);
 
 // TODO: replace this with a more robust logic (like checking the asset field)

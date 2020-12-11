@@ -24,7 +24,7 @@ import { Transaction, TokenAllowanceLimit } from 'constants/network';
 import { normalizedGasPrice, normalizeGasLimit } from 'utils/network';
 
 import { Label, StyledLink, StyledButton } from '../../common';
-import { CurrencyKey, SYNTHS_MAP } from 'constants/currency';
+import { CurrencyKey, Synths } from 'constants/currency';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 
 type ApproveProps = {
@@ -33,17 +33,17 @@ type ApproveProps = {
 
 export const getContractAndPoolAddress = (synth: CurrencyKey) => {
 	const { contracts } = synthetix.js as SynthetixJS;
-	if (synth === SYNTHS_MAP.iBTC) {
+	if (synth === Synths.iBTC) {
 		return {
 			contract: contracts.SynthiBTC,
 			poolAddress: iBtcRewards.address,
 		};
-	} else if (synth === SYNTHS_MAP.iETH) {
+	} else if (synth === Synths.iETH) {
 		return {
 			contract: contracts.SynthiETH,
 			poolAddress: iEthRewards.address,
 		};
-	} else if (synth === SYNTHS_MAP.sUSD) {
+	} else if (synth === Synths.sUSD) {
 		return {
 			contract: contracts.SynthsUSD,
 			poolAddress: curvepoolRewards.address,

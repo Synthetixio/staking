@@ -13,7 +13,7 @@ import useGetFeePoolDataQuery from 'queries/staking/useGetFeePoolDataQuery';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import useTotalIssuedSynthsExcludingEtherQuery from 'queries/synths/useTotalIssuedSynthsExcludingEtherQuery';
 
-import { SYNTHS_MAP } from 'constants/currency';
+import { Synths } from 'constants/currency';
 import { formatFiatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 import { WEEKS_IN_YEAR } from 'constants/date';
@@ -22,7 +22,7 @@ import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 const DashboardPage = () => {
 	const { t } = useTranslation();
 
-	const totalIssuedSynthsExclEth = useTotalIssuedSynthsExcludingEtherQuery(SYNTHS_MAP.sUSD);
+	const totalIssuedSynthsExclEth = useTotalIssuedSynthsExcludingEtherQuery(Synths.sUSD);
 	const exchangeRates = useExchangeRatesQuery();
 	const previousFeePeriod = useGetFeePoolDataQuery('1');
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();

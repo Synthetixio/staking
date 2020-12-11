@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { StatsSection, LineSpacer } from 'styles/common';
 import sumBy from 'lodash/sumBy';
 
-import { SYNTHS_MAP } from 'constants/currency';
+import { Synths } from 'constants/currency';
 import { WEEKS_IN_YEAR } from 'constants/date';
 
 import { Incentives } from 'sections/earn';
@@ -27,7 +27,7 @@ const Earn = () => {
 	const { t } = useTranslation();
 
 	const exchangeRatesQuery = useExchangeRatesQuery();
-	const totalIssuedSynthsExclEth = useTotalIssuedSynthsExcludingEtherQuery(SYNTHS_MAP.sUSD);
+	const totalIssuedSynthsExclEth = useTotalIssuedSynthsExcludingEtherQuery(Synths.sUSD);
 	const previousFeePeriod = useGetFeePoolDataQuery('1');
 	const { currentCRatio, targetCRatio, debtBalance, collateral } = useStakingCalculations();
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();

@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { TabContainer } from '../common';
-import { SYNTHS_MAP } from 'constants/currency';
+import { Synths } from 'constants/currency';
 import Notify from 'containers/Notify';
 import { ethers } from 'ethers';
 import { normalizedGasPrice, normalizeGasLimit } from 'utils/network';
@@ -134,7 +134,7 @@ const BurnTab: React.FC = () => {
 					utils: { formatBytes32String, parseEther },
 				} = synthetix.js!;
 
-				if (await Synthetix.isWaitingPeriod(formatBytes32String(SYNTHS_MAP.sUSD)))
+				if (await Synthetix.isWaitingPeriod(formatBytes32String(Synths.sUSD)))
 					throw new Error('Waiting period for sUSD is still ongoing');
 				if (!burnToTarget && !(await Issuer.canBurnSynths(walletAddress)))
 					throw new Error('Waiting period to burn is still ongoing');

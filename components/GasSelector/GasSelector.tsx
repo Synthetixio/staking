@@ -13,7 +13,7 @@ import { getTransactionPrice } from 'utils/network';
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 
-import { SYNTHS_MAP } from 'constants/currency';
+import { Synths } from 'constants/currency';
 import { formatCurrency } from 'utils/formatters/number';
 import NumericInput from 'components/Input/NumericInput';
 import Button from 'components/Button';
@@ -62,7 +62,7 @@ const GasSelector: React.FC<GasSelectorProps> = ({ gasLimitEstimate, setGasPrice
 
 	const ethPriceRate = getExchangeRatesForCurrencies(
 		exchangeRates,
-		SYNTHS_MAP.sETH,
+		Synths.sETH,
 		selectedPriceCurrency.name
 	);
 

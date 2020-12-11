@@ -14,7 +14,7 @@ import { formatCurrency } from 'utils/formatters/number';
 import { EscrowData } from 'queries/escrow/useEscrowDataQuery';
 
 import { GridDivCenteredRow, linkCSS } from 'styles/common';
-import { CRYPTO_CURRENCY_MAP } from 'constants/currency';
+import { CryptoCurrency } from 'constants/currency';
 
 type EscrowTableProps = {
 	data: EscrowData['schedule'];
@@ -47,7 +47,7 @@ const EscrowTable: FC<EscrowTableProps> = ({ data, isLoaded }) => {
 						accessor: 'quantity',
 						Cell: (cellProps: CellProps<EscrowData['schedule'], number>) => (
 							<Data style={{ textAlign: 'right' }}>
-								{formatCurrency(CRYPTO_CURRENCY_MAP.SNX, cellProps.value)}
+								{formatCurrency(CryptoCurrency.SNX, cellProps.value)}
 							</Data>
 						),
 						width: 250,

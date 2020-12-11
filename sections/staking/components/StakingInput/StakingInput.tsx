@@ -31,7 +31,7 @@ import { InputContainer, InputLocked } from '../common';
 import { Transaction } from 'constants/network';
 import { formatCurrency } from 'utils/formatters/number';
 import { getStakingAmount } from '../helper';
-import { CRYPTO_CURRENCY_MAP, SYNTHS_MAP } from 'constants/currency';
+import { CryptoCurrency, Synths } from 'constants/currency';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 import BigNumber from 'bignumber.js';
 
@@ -69,8 +69,8 @@ const StakingInput: React.FC<StakingInputProps> = ({
 	setTransactionState,
 }) => {
 	const { targetCRatio, SNXRate } = useStakingCalculations();
-	const [stakingCurrencyKey] = useState<string>(CRYPTO_CURRENCY_MAP.SNX);
-	const [synthCurrencyKey] = useState<string>(SYNTHS_MAP.sUSD);
+	const [stakingCurrencyKey] = useState<string>(CryptoCurrency.SNX);
+	const [synthCurrencyKey] = useState<string>(Synths.sUSD);
 
 	const { t } = useTranslation();
 

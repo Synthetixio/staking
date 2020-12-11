@@ -2,7 +2,7 @@ import { useQuery, QueryConfig } from 'react-query';
 import snxData from 'synthetix-data';
 
 import QUERY_KEYS from 'constants/queryKeys';
-import { CurrencyKey, SYNTHS_MAP, sUSD_EXCHANGE_RATE } from 'constants/currency';
+import { CurrencyKey, Synths, sUSD_EXCHANGE_RATE } from 'constants/currency';
 import { PERIOD_IN_HOURS, Period } from 'constants/period';
 
 import {
@@ -23,7 +23,7 @@ const useHistoricalRatesQuery = (
 	return useQuery<HistoricalRatesUpdates>(
 		QUERY_KEYS.Rates.HistoricalRates(currencyKey as string, period),
 		async () => {
-			if (currencyKey === SYNTHS_MAP.sUSD) {
+			if (currencyKey === Synths.sUSD) {
 				return {
 					rates: mockHistoricalRates(periodInHours, sUSD_EXCHANGE_RATE),
 					low: sUSD_EXCHANGE_RATE,

@@ -20,7 +20,7 @@ import {
 } from 'utils/formatters/number';
 
 import { FlexDivCentered, FlexDivCol, FlexDivColCentered } from 'styles/common';
-import { CRYPTO_CURRENCY_MAP } from 'constants/currency';
+import { CryptoCurrency } from 'constants/currency';
 import { NOT_APPLICABLE } from './Incentives';
 
 export type EarnItem = {
@@ -150,8 +150,8 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab, 
 					onClick={() => setActiveTab(cellProps.row.original.incentivesIndex)}
 				>
 					<Title>
-						{formatCurrency(CRYPTO_CURRENCY_MAP.SNX, cellProps.value, {
-							currencyKey: CRYPTO_CURRENCY_MAP.SNX,
+						{formatCurrency(CryptoCurrency.SNX, cellProps.value, {
+							currencyKey: CryptoCurrency.SNX,
 						})}
 					</Title>
 					<Subtitle>

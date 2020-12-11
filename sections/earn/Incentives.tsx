@@ -13,7 +13,7 @@ import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import useFeePeriodTimeAndProgress from 'hooks/useFeePeriodTimeAndProgress';
 
 import useClaimedStatus from 'sections/hooks/useClaimedStatus';
-import { CRYPTO_CURRENCY_MAP, SYNTHS_MAP } from 'constants/currency';
+import { CryptoCurrency, Synths } from 'constants/currency';
 import { WEEKS_IN_YEAR } from 'constants/date';
 
 import { FlexDiv } from 'styles/common';
@@ -81,7 +81,7 @@ const Incentives: FC<IncentivesProps> = ({
 				tvl: useSNXLockedValue.data ?? 0,
 				staked: {
 					balance: stakedValue,
-					asset: CRYPTO_CURRENCY_MAP.SNX,
+					asset: CryptoCurrency.SNX,
 				},
 				rewards: stakingRewards.toNumber(),
 				periodStarted: currentFeePeriodStarted.getTime(),
@@ -98,7 +98,7 @@ const Incentives: FC<IncentivesProps> = ({
 				tvl: curveTVL,
 				staked: {
 					balance: useCurvePool.data?.staked ?? 0,
-					asset: SYNTHS_MAP.sUSD,
+					asset: Synths.sUSD,
 				},
 				rewards: useCurvePool.data?.rewards ?? 0,
 				periodStarted: now - (useCurvePool.data?.duration ?? 0),
@@ -115,7 +115,7 @@ const Incentives: FC<IncentivesProps> = ({
 				tvl: iETHTVL,
 				staked: {
 					balance: useiETHPool.data?.staked ?? 0,
-					asset: SYNTHS_MAP.iETH,
+					asset: Synths.iETH,
 				},
 				rewards: useiETHPool.data?.rewards ?? 0,
 				periodStarted: now - (useiETHPool.data?.duration ?? 0),
@@ -132,7 +132,7 @@ const Incentives: FC<IncentivesProps> = ({
 				tvl: iBTCTVL,
 				staked: {
 					balance: useiBTCPool.data?.staked ?? 0,
-					asset: SYNTHS_MAP.iBTC,
+					asset: Synths.iBTC,
 				},
 				rewards: useiBTCPool.data?.rewards ?? 0,
 				periodStarted: now - (useiBTCPool.data?.duration ?? 0),
@@ -182,7 +182,7 @@ const Incentives: FC<IncentivesProps> = ({
 					)}
 					{activeTab === 1 && (
 						<LPTab
-							synth={SYNTHS_MAP.sUSD}
+							synth={Synths.sUSD}
 							allowance={(1 || useCurvePool.data?.allowance) ?? null}
 							icon={incentives[1].icon}
 							tokenRewards={incentives[1].rewards}
@@ -196,7 +196,7 @@ const Incentives: FC<IncentivesProps> = ({
 					)}
 					{activeTab === 2 && (
 						<LPTab
-							synth={SYNTHS_MAP.iETH}
+							synth={Synths.iETH}
 							allowance={useiETHPool.data?.allowance ?? null}
 							icon={incentives[2].icon}
 							tokenRewards={incentives[2].rewards}
@@ -210,7 +210,7 @@ const Incentives: FC<IncentivesProps> = ({
 					)}
 					{activeTab === 3 && (
 						<LPTab
-							synth={SYNTHS_MAP.iBTC}
+							synth={Synths.iBTC}
 							allowance={useiBTCPool.data?.allowance ?? null}
 							icon={incentives[3].icon}
 							tokenRewards={incentives[3].rewards}

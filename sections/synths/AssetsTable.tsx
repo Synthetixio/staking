@@ -24,7 +24,7 @@ import {
 import { CryptoBalance } from 'queries/walletBalances/types';
 
 import { EXTERNAL_LINKS } from 'constants/links';
-import { SYNTHS_MAP } from 'constants/currency';
+import { Synths } from 'constants/currency';
 import ROUTES from 'constants/routes';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
@@ -148,7 +148,7 @@ const AssetsTable: FC<AssetsTableProps> = ({
 
 					// if the synth is not supported, default to sUSD (for 1inch conversation)
 					if (!isSynth(synth)) {
-						synth = SYNTHS_MAP.sUSD;
+						synth = Synths.sUSD;
 					}
 
 					return (

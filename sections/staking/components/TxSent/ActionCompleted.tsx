@@ -9,7 +9,7 @@ import Mint from 'assets/svg/app/mint.svg';
 
 import { Transaction } from 'constants/network';
 import ROUTES from 'constants/routes';
-import { SYNTHS_MAP } from 'constants/currency';
+import { Synths } from 'constants/currency';
 
 import { SectionHeader, SectionSubtext } from './common';
 
@@ -34,12 +34,12 @@ const ActionCompleted: FC<ActionCompletedProps> = ({ setTransactionState, isMint
 	return (
 		<Container>
 			<SectionHeader>
-				{t('staking.actions.mint.completed.title', { synth: SYNTHS_MAP.sUSD })}
+				{t('staking.actions.mint.completed.title', { synth: Synths.sUSD })}
 			</SectionHeader>
 			<MainInfoBox>
 				<Svg src={Mint} />
 				<MiddleInfoSection>
-					{t('staking.actions.mint.completed.curve', { synth: SYNTHS_MAP.sUSD })}
+					{t('staking.actions.mint.completed.curve', { synth: Synths.sUSD })}
 				</MiddleInfoSection>
 				<RightInfoSection>
 					<AprText>{t('staking.actions.mint.completed.est-apr')}</AprText>
