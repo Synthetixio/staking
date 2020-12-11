@@ -6,31 +6,27 @@ import { useTranslation } from 'react-i18next';
 import { Svg } from 'react-optimized-image';
 
 import { linkCSS } from 'styles/common';
-import ROUTES from 'constants/routes';
+
 import StakingLogo from 'assets/svg/app/staking-logo.svg';
 
 import useHistoricalRatesQuery from 'queries/rates/useHistoricalRatesQuery';
 import useSNX24hrPricesQuery from 'queries/rates/useSNX24hrPricesQuery';
-import useFeePeriodTimeAndProgress from 'hooks/useFeePeriodTimeAndProgress';
 
+import ROUTES from 'constants/routes';
 import { CryptoCurrency } from 'constants/currency';
 import { SIDE_NAV_WIDTH, zIndex } from 'constants/ui';
 import { Period } from 'constants/period';
 
 import { MENU_LINKS } from '../constants';
 import PriceItem from './PriceItem';
-import { PeriodBarStats, CRatioBarStats } from './BarStats';
-import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
+import PeriodBarStats from './PeriodBarStats';
+import CRatioBarStats from './CRatioBarStats';
 
 const SideNav: FC = () => {
 	const { t } = useTranslation();
 	const { asPath } = useRouter();
 	const SNX24hrPricesQuery = useSNX24hrPricesQuery();
 	const ETH24hrPricesQuery = useHistoricalRatesQuery(CryptoCurrency.ETH, Period.ONE_DAY);
-
-	const { currentCRatio, targetCRatio } = useStakingCalculations();
-
-	const { nextFeePeriodStarts, currentFeePeriodProgress } = useFeePeriodTimeAndProgress();
 
 	const snxPriceChartData = useMemo(() => {
 		return (SNX24hrPricesQuery?.data ?? [])
@@ -63,14 +59,12 @@ const SideNav: FC = () => {
 					</MenuLinkItem>
 				))}
 			</MenuLinks>
+			<LineSeparator />
 			<MenuCharts>
-				<CRatioBarStats currentCRatio={currentCRatio} targetCRatio={targetCRatio} />
+				<CRatioBarStats />
 				<PriceItem currencyKey={CryptoCurrency.SNX} data={snxPriceChartData} />
 				<PriceItem currencyKey={CryptoCurrency.ETH} data={ethPriceChartData} />
-				<PeriodBarStats
-					nextFeePeriodStarts={nextFeePeriodStarts}
-					currentFeePeriodProgress={currentFeePeriodProgress}
-				/>
+				<PeriodBarStats />
 			</MenuCharts>
 		</SideNavContainer>
 	);
@@ -106,6 +100,7 @@ const MenuLinkItem = styled.div<{ isActive: boolean }>`
 	position: relative;
 
 	a {
+		display: block;
 		${linkCSS};
 		font-family: ${(props) => props.theme.fonts.condensedBold};
 		text-transform: uppercase;
@@ -143,9 +138,13 @@ const MenuLinkItem = styled.div<{ isActive: boolean }>`
 	}
 `;
 
+const LineSeparator = styled.div`
+	height: 1px;
+	background: ${(props) => props.theme.colors.grayBlue};
+	margin-bottom: 25px;
+`;
+
 const MenuCharts = styled.div`
-	border-top: 1px solid ${(props) => props.theme.colors.grayBlue};
-	width: 120px;
 	margin: 0 auto;
 	@media screen and (max-height: 815px) {
 		display: none;
