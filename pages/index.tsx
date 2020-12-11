@@ -13,16 +13,14 @@ import useGetFeePoolDataQuery from 'queries/staking/useGetFeePoolDataQuery';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import useTotalIssuedSynthsExcludingEtherQuery from 'queries/synths/useTotalIssuedSynthsExcludingEtherQuery';
 
-import { CRYPTO_CURRENCY_MAP } from 'constants/currency';
+import { SYNTHS_MAP } from 'constants/currency';
 import { formatFiatCurrency, formatPercent } from 'utils/formatters/number';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 
 const DashboardPage = () => {
 	const { t } = useTranslation();
 
-	const totalIssuedSynthsExclEth = useTotalIssuedSynthsExcludingEtherQuery(
-		CRYPTO_CURRENCY_MAP.sUSD
-	);
+	const totalIssuedSynthsExclEth = useTotalIssuedSynthsExcludingEtherQuery(SYNTHS_MAP.sUSD);
 	const exchangeRates = useExchangeRatesQuery();
 	const previousFeePeriod = useGetFeePoolDataQuery('1');
 
