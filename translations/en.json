@@ -337,7 +337,7 @@
 			},
 			"view-all-transactions": "view all transactions",
 			"no-results": "No transactions found, please try again.",
-			"no-transactions": "You do not have any transactions.",
+			"no-transactions": "No transactions to show.",
 			"connect-wallet-to-view": "Connect wallet to view transactions."
 		}
 	},

@@ -10,6 +10,8 @@ import { isWalletConnectedState } from 'store/wallet';
 
 import { HistoricalStakingTransaction, StakingTransactionType } from 'queries/staking/types';
 
+import Connector from 'containers/Connector';
+
 import DateSelect from 'components/DateSelect';
 import Select from 'components/Select';
 import Button from 'components/Button';
@@ -17,7 +19,13 @@ import Button from 'components/Button';
 import { formatShortDate } from 'utils/formatters/date';
 import { formatNumber } from 'utils/formatters/number';
 
-import { CapitalizedText, GridDiv, GridDivCenteredRow } from 'styles/common';
+import {
+	CapitalizedText,
+	GridDiv,
+	TableNoResults,
+	TableNoResultsTitle,
+	TableNoResultsButtonContainer,
+} from 'styles/common';
 
 import Transactions from './Transactions';
 import {
@@ -37,6 +45,7 @@ const TransactionsContainer: FC<TransactionsContainerProps> = ({
 }) => {
 	const { t } = useTranslation();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
+	const { connectWallet } = Connector.useContainer();
 
 	const [typeFilter, setTypeFilter] = useState<ValueType<TypeFilterOptionType>>();
 	const [dateFilter, setDateFilter] = useState<{
@@ -234,13 +243,22 @@ const TransactionsContainer: FC<TransactionsContainerProps> = ({
 				isLoaded={isWalletConnected ? isLoaded : true}
 				noResultsMessage={
 					!isWalletConnected ? (
-						<TableNoResults>{t('history.table.connect-wallet-to-view')}</TableNoResults>
+						<TableNoResults>
+							<TableNoResultsTitle>{t('common.wallet.no-wallet-connected')}</TableNoResultsTitle>
+							<TableNoResultsButtonContainer>
+								<Button variant="primary" onClick={connectWallet}>
+									{t('common.wallet.connect-wallet')}
+								</Button>
+							</TableNoResultsButtonContainer>
+						</TableNoResults>
 					) : isLoaded && filtersEnabled && filteredTransactions.length === 0 ? (
 						<TableNoResults>
 							<div>{t('history.table.no-results')}</div>
-							<ResetFiltersButton variant="primary" onClick={resetFilters}>
-								{t('history.table.view-all-transactions')}
-							</ResetFiltersButton>
+							<TableNoResultsButtonContainer>
+								<ResetFiltersButton variant="primary" onClick={resetFilters}>
+									{t('history.table.view-all-transactions')}
+								</ResetFiltersButton>
+							</TableNoResultsButtonContainer>
 						</TableNoResults>
 					) : isLoaded && filteredTransactions.length === 0 ? (
 						<TableNoResults>{t('history.table.no-transactions')}</TableNoResults>
@@ -254,14 +272,6 @@ const TransactionsContainer: FC<TransactionsContainerProps> = ({
 const Filters = styled(GridDiv)`
 	grid-template-columns: repeat(3, 1fr);
 	grid-gap: 18px;
-`;
-
-const TableNoResults = styled(GridDivCenteredRow)`
-	padding: 50px 0;
-	justify-content: center;
-	background-color: ${(props) => props.theme.colors.navy};
-	justify-items: center;
-	grid-gap: 10px;
 `;
 
 const ResetFiltersButton = styled(Button)`
