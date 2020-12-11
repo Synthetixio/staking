@@ -53,7 +53,7 @@ const App: FC<AppProps> = ({ Component, pageProps }) => {
 				<meta name="twitter:creator" content="@synthetix_io" />
 				{/* <meta name="twitter:image" content="/images/staking-twitter.jpg" /> */}
 				<meta name="twitter:url" content="https://synthetix.io" />
-				{/* <link rel="icon" href="/images/favicon.svg" /> */}
+				<link rel="icon" href="/images/favicon.ico" />
 			</Head>
 			<ThemeProvider theme={theme}>
 				<RecoilRoot>
