@@ -7,9 +7,17 @@ import Countdown from 'react-countdown';
 import ProgressBar from 'components/ProgressBar';
 
 import Table from 'components/Table';
+
 import GoBackIcon from 'assets/svg/app/go-back.svg';
 
-import { formatPercent, formatFiatCurrency, formatCurrency } from 'utils/formatters/number';
+import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+
+import {
+	formatPercent,
+	formatFiatCurrency,
+	formatCurrency,
+	toBigNumber,
+} from 'utils/formatters/number';
 
 import { FlexDivCentered, FlexDivCol, FlexDivColCentered } from 'styles/common';
 import { CRYPTO_CURRENCY_MAP } from 'constants/currency';
@@ -42,6 +50,7 @@ type IncentivesTableProps = {
 
 const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab, setActiveTab }) => {
 	const { t } = useTranslation();
+	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
 
 	const leftColumns = [
 		{
@@ -97,7 +106,14 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab, 
 				<ClickableFlexDivColCentered
 					onClick={() => setActiveTab(cellProps.row.original.incentivesIndex)}
 				>
-					<Title>{formatFiatCurrency(cellProps.value ? cellProps.value : 0, { sign: '$' })}</Title>
+					<Title>
+						{formatFiatCurrency(
+							getPriceAtCurrentRate(toBigNumber(cellProps.value != null ? cellProps.value : 0)),
+							{
+								sign: selectedPriceCurrency.sign,
+							}
+						)}
+					</Title>
 					<Subtitle />
 				</ClickableFlexDivColCentered>
 			),
@@ -180,7 +196,7 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab, 
 				palette="primary"
 				columns={activeTab != null ? leftColumns : [...leftColumns, ...rightColumns]}
 				data={data}
-				columnsDeps={[activeTab]}
+				columnsDeps={[activeTab, selectedPriceCurrency]}
 				isLoading={!isLoaded}
 				noResultsMessage={undefined}
 				showPagination={true}

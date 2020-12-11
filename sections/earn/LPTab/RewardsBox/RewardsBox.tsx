@@ -5,8 +5,13 @@ import { useTranslation } from 'react-i18next';
 
 import smallWaveSVG from 'assets/svg/app/small-wave.svg';
 import snxSVG from 'assets/svg/incentives/pool-snx.svg';
-import { formatCurrency, formatFiatCurrency } from 'utils/formatters/number';
+
+import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+
+import { formatCurrency, formatFiatCurrency, toBigNumber } from 'utils/formatters/number';
 import { CRYPTO_CURRENCY_MAP } from 'constants/currency';
+import { ESTIMATE_VALUE } from 'constants/placeholder';
+
 import { FlexDivColCentered } from 'styles/common';
 
 import { StyledButton } from '../../common';
@@ -18,6 +23,8 @@ type RewardsBoxProps = {
 
 const RewardsBox: FC<RewardsBoxProps> = ({ tokenRewards, SNXRate }) => {
 	const { t } = useTranslation();
+	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
+
 	return (
 		<RewardsContainer>
 			<RewardsTitle>{t('earn.actions.rewards.title')}</RewardsTitle>
@@ -29,7 +36,10 @@ const RewardsBox: FC<RewardsBoxProps> = ({ tokenRewards, SNXRate }) => {
 				})}
 			</RewardsAmountSNX>
 			<RewardsAmountUSD>
-				≈ {formatFiatCurrency(tokenRewards * SNXRate, { sign: '$' })}
+				{ESTIMATE_VALUE}{' '}
+				{formatFiatCurrency(getPriceAtCurrentRate(toBigNumber(tokenRewards * SNXRate)), {
+					sign: selectedPriceCurrency.sign,
+				})}
 			</RewardsAmountUSD>
 			<StyledButton
 				variant="primary"

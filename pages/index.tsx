@@ -14,9 +14,10 @@ import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import useTotalIssuedSynthsExcludingEtherQuery from 'queries/synths/useTotalIssuedSynthsExcludingEtherQuery';
 
 import { SYNTHS_MAP } from 'constants/currency';
-import { formatFiatCurrency, formatPercent } from 'utils/formatters/number';
+import { formatFiatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 import { WEEKS_IN_YEAR } from 'constants/date';
+import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
 const DashboardPage = () => {
 	const { t } = useTranslation();
@@ -24,6 +25,7 @@ const DashboardPage = () => {
 	const totalIssuedSynthsExclEth = useTotalIssuedSynthsExcludingEtherQuery(SYNTHS_MAP.sUSD);
 	const exchangeRates = useExchangeRatesQuery();
 	const previousFeePeriod = useGetFeePoolDataQuery('1');
+	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
 
 	const { currentCRatio, targetCRatio, debtBalance, collateral } = useStakingCalculations();
 
@@ -54,7 +56,12 @@ const DashboardPage = () => {
 				<StatsSection>
 					<StakedValue
 						title={t('common.stat-box.staked-value')}
-						value={formatFiatCurrency(stakedValue ? stakedValue : 0, { sign: '$' })}
+						value={formatFiatCurrency(
+							getPriceAtCurrentRate(stakedValue.isNaN() ? zeroBN : stakedValue),
+							{
+								sign: selectedPriceCurrency.sign,
+							}
+						)}
 					/>
 					<APY
 						title={t('common.stat-box.earning')}
@@ -63,7 +70,9 @@ const DashboardPage = () => {
 					/>
 					<ActiveDebt
 						title={t('common.stat-box.active-debt')}
-						value={formatFiatCurrency(debtBalance ? debtBalance : 0, { sign: '$' })}
+						value={formatFiatCurrency(getPriceAtCurrentRate(debtBalance), {
+							sign: selectedPriceCurrency.sign,
+						})}
 					/>
 				</StatsSection>
 				<LineSpacer />
