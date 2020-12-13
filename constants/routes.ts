@@ -15,6 +15,9 @@ export const ROUTES = {
 	Earn: {
 		Home: '/earn',
 	},
+	L2: {
+		Home: '/l2',
+	},
 };
 
 export default ROUTES;
