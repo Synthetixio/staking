@@ -3,11 +3,11 @@ import StepWizard, { StepWizardChildProps } from 'react-step-wizard';
 import styled, { css } from 'styled-components';
 import Img, { Svg } from 'react-optimized-image';
 
-import WelcomeSNX from 'assets/svg/app/wizard/welcome.svg';
-import What from 'assets/svg/app/wizard/what.svg';
-import Why from 'assets/svg/app/wizard/why.svg';
-import MintBurn from 'assets/svg/app/wizard/mint-burn.svg';
-import Debt from 'assets/svg/app/wizard/debt.svg';
+import Welcome from 'assets/png/wizard/welcome.png';
+import What from 'assets/png/wizard/what.png';
+import Why from 'assets/png/wizard/why.png';
+import MintBurn from 'assets/png/wizard/mint-burn.png';
+import Debt from 'assets/png/wizard/debt.png';
 
 import { GridBoxContainer } from './GridBox';
 import { useTranslation } from 'react-i18next';
@@ -27,27 +27,27 @@ export const WizardGridBox: FC<WizardGridBoxProps> = ({ gridLocations }) => (
 			{/* @ts-ignore */}
 			<StepWizard nav={<Nav />} isLazyMount>
 				<WizardPage
-					icon={<Svg src={WelcomeSNX} />}
+					icon={<Img src={Welcome} />}
 					title="homepage.welcome.title"
 					subtitle="homepage.welcome.subtitle"
 				/>
 				<WizardPage
-					icon={<Svg src={What} />}
+					icon={<Img src={What} />}
 					title="homepage.what.title"
 					subtitle="homepage.what.subtitle"
 				/>
 				<WizardPage
-					icon={<Svg src={Why} />}
+					icon={<Img src={Why} />}
 					title="homepage.why.title"
 					subtitle="homepage.why.subtitle"
 				/>
 				<WizardPage
-					icon={<Svg src={MintBurn} />}
+					icon={<Img src={MintBurn} />}
 					title="homepage.mint-burn.title"
 					subtitle="homepage.mint-burn.subtitle"
 				/>
 				<WizardPage
-					icon={<Svg src={Debt} />}
+					icon={<Img src={Debt} />}
 					title="homepage.debt.title"
 					subtitle="homepage.debt.subtitle"
 				/>
