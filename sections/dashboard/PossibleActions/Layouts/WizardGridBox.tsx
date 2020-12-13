@@ -11,6 +11,7 @@ import Debt from 'assets/png/wizard/debt.png';
 
 import { GridBoxContainer } from './GridBox';
 import { useTranslation } from 'react-i18next';
+import { FlexDiv, FlexDivCentered } from 'styles/common';
 
 type WizardGridBoxProps = {
 	gridLocations: [string, string, string, string];
@@ -133,21 +134,23 @@ const Page = styled.div`
 	margin: 0px 24px;
 `;
 
-const IconContainer = styled.div`
+const IconContainer = styled(FlexDivCentered)`
 	height: 200px;
-	margin: 16px 0px;
+	justify-content: center;
 `;
 const Title = styled.p`
 	font-family: ${(props) => props.theme.fonts.expanded};
 	font-size: 14px;
 	color: ${(props) => props.theme.colors.white};
 	text-transform: uppercase;
+	padding-top: 16px;
 `;
 
 const Subtitle = styled.p`
 	font-family: ${(props) => props.theme.fonts.regular};
 	font-size: 12px;
 	color: ${(props) => props.theme.colors.white};
+	line-height: 17px;
 `;
 
 export default WizardGridBox;
