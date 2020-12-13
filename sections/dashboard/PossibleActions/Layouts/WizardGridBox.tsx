@@ -1,8 +1,16 @@
 import { FC } from 'react';
-import StepWizard from 'react-step-wizard';
+import StepWizard, { StepWizardChildProps } from 'react-step-wizard';
 import styled, { css } from 'styled-components';
+import Img, { Svg } from 'react-optimized-image';
+
+import WelcomeSNX from 'assets/svg/app/wizard/welcome.svg';
+import What from 'assets/svg/app/wizard/what.svg';
+import Why from 'assets/svg/app/wizard/why.svg';
+import MintBurn from 'assets/svg/app/wizard/mint-burn.svg';
+import Debt from 'assets/svg/app/wizard/debt.svg';
 
 import { GridBoxContainer } from './GridBox';
+import { useTranslation } from 'react-i18next';
 
 type WizardGridBoxProps = {
 	gridLocations: [string, string, string, string];
@@ -17,24 +25,36 @@ export const WizardGridBox: FC<WizardGridBoxProps> = ({ gridLocations }) => (
 	>
 		<WizardWrap>
 			{/* @ts-ignore */}
-			<StepWizard nav={<Nav />}>
-				<ExamplePage>TODO: Welcome page 1</ExamplePage>
-				<ExamplePage>TODO: Welcome page 2</ExamplePage>
-				<ExamplePage>TODO: Welcome page 3</ExamplePage>
-				<ExamplePage>TODO: Welcome page 4</ExamplePage>
-				<ExamplePage>TODO: Welcome page 5</ExamplePage>
+			<StepWizard nav={<Nav />} isLazyMount>
+				<WizardPage
+					icon={<Svg src={WelcomeSNX} />}
+					title="homepage.welcome.title"
+					subtitle="homepage.welcome.subtitle"
+				/>
+				<WizardPage
+					icon={<Svg src={What} />}
+					title="homepage.what.title"
+					subtitle="homepage.what.subtitle"
+				/>
+				<WizardPage
+					icon={<Svg src={Why} />}
+					title="homepage.why.title"
+					subtitle="homepage.why.subtitle"
+				/>
+				<WizardPage
+					icon={<Svg src={MintBurn} />}
+					title="homepage.mint-burn.title"
+					subtitle="homepage.mint-burn.subtitle"
+				/>
+				<WizardPage
+					icon={<Svg src={Debt} />}
+					title="homepage.debt.title"
+					subtitle="homepage.debt.subtitle"
+				/>
 			</StepWizard>
 		</WizardWrap>
 	</GridBoxContainer>
 );
-
-const ExamplePage = styled.div`
-	font-size: 20px;
-	font-family: ${(props) => props.theme.fonts.expanded};
-	color: ${(props) => props.theme.colors.white};
-	text-align: center;
-	padding-top: 50px;
-`;
 
 const WizardWrap = styled.div`
 	width: 100%;
@@ -46,18 +66,12 @@ const WizardWrap = styled.div`
 	}
 `;
 
-type NavProps = {
-	totalSteps: number;
-	currentStep: number;
-	goToStep: (num: number) => null;
-};
-
-const Nav: FC<NavProps> = ({ totalSteps, currentStep, goToStep }) => {
+const Nav: FC<StepWizardChildProps> = (props) => {
 	const dots = [];
-	for (let i = 1; i <= totalSteps; i += 1) {
-		const isActive = currentStep === i;
+	for (let i = 1; i <= props.totalSteps; i += 1) {
+		const isActive = props.currentStep === i;
 		dots.push(
-			<Dot key={`step-${i}`} isActive={isActive} onClick={() => goToStep(i)}>
+			<Dot key={`step-${i}`} isActive={isActive} onClick={() => props.goToStep(i)}>
 				&bull;
 			</Dot>
 		);
@@ -94,6 +108,46 @@ const Dot = styled.div<{ isActive: boolean }>`
 			opacity: 1;
 			text-shadow: 0 0px 8px;
 		`}
+`;
+
+type WizardPageProps = {
+	title: string;
+	subtitle: string;
+	icon: React.ReactNode;
+};
+
+const WizardPage: React.FC<WizardPageProps> = ({ title, subtitle, icon }) => {
+	const { t } = useTranslation();
+	return (
+		<Page>
+			<IconContainer>{icon}</IconContainer>
+			<Title>{t(`${title}`)}</Title>
+			<Subtitle>{t(`${subtitle}`)}</Subtitle>
+		</Page>
+	);
+};
+
+const Page = styled.div`
+	text-align: center;
+	padding-top: 50px;
+	margin: 0px 24px;
+`;
+
+const IconContainer = styled.div`
+	height: 200px;
+	margin: 16px 0px;
+`;
+const Title = styled.p`
+	font-family: ${(props) => props.theme.fonts.expanded};
+	font-size: 14px;
+	color: ${(props) => props.theme.colors.white};
+	text-transform: uppercase;
+`;
+
+const Subtitle = styled.p`
+	font-family: ${(props) => props.theme.fonts.regular};
+	font-size: 12px;
+	color: ${(props) => props.theme.colors.white};
 `;
 
 export default WizardGridBox;
