@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import StepWizard, { StepWizardChildProps } from 'react-step-wizard';
 import styled, { css } from 'styled-components';
-import Img, { Svg } from 'react-optimized-image';
+import Img from 'react-optimized-image';
 
 import Welcome from 'assets/png/wizard/welcome.png';
 import What from 'assets/png/wizard/what.png';
