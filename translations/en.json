@@ -117,6 +117,10 @@
 			"trade": {
 				"title": "TRADE",
 				"copy": "Trade any Synth to any Synth on the Kwenta exchange"
+			},
+			"migrate": {
+				"title": "MIGRATE TO LAYER 2",
+				"copy": "Migrate your SNX from L1 to L2"
 			}
 		}
 	},
@@ -414,6 +418,7 @@
 		"synths": "Synths",
 		"escrow": "Escrow",
 		"history": "History",
+		"l2": "Layer 2",
 		"bars": {
 			"c-ratio": "C-RATIO",
 			"period": {
