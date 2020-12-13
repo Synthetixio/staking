@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { Svg } from 'react-optimized-image';
 
+import { SynthetixJS } from '@synthetixio/js';
 import synthetix from 'lib/synthetix';
 
 import SNXLogo from 'assets/svg/currencies/crypto/SNX.svg';
@@ -18,11 +19,11 @@ import Notify from 'containers/Notify';
 import { CryptoCurrency } from 'constants/currency';
 import { FlexDivColCentered, ModalItem, ModalItemText, ModalItemTitle } from 'styles/common';
 import { ActionCompleted, ActionInProgress } from '../TxSent';
-import useEscrowDataQuery from 'queries/escrow/useEscrowDataQuery';
+import useTokenSaleEscrowQuery from 'queries/escrow/useTokenSaleEscrowQuery';
 
-const StakingRewardsTab: React.FC = () => {
+const TokenSaleTab: React.FC = () => {
 	const { t } = useTranslation();
-	const escrowDataQuery = useEscrowDataQuery();
+	const tokenSaleEscrowQuery = useTokenSaleEscrowQuery();
 
 	const { monitorHash } = Notify.useContainer();
 	const [gasLimitEstimate, setGasLimitEstimate] = useState<number | null>(null);
@@ -33,10 +34,11 @@ const StakingRewardsTab: React.FC = () => {
 	const [vestTxError, setVestTxError] = useState<string | null>(null);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 
-	const vestingCurrencyKey = CryptoCurrency['SNX'];
-	const escrowData = escrowDataQuery?.data;
+	const tokenSaleData = tokenSaleEscrowQuery?.data;
 
-	const canVestAmount = escrowData?.canVest ?? 0;
+	const availableTokensForVesting = tokenSaleData?.availableTokensForVesting ?? 0;
+
+	const vestingCurrencyKey = CryptoCurrency['SNX'];
 
 	useEffect(() => {
 		const getGasLimitEstimate = async () => {
@@ -44,7 +46,7 @@ const StakingRewardsTab: React.FC = () => {
 				try {
 					const gasEstimate = await getGasEstimateForTransaction(
 						[],
-						synthetix.js?.contracts.RewardEscrow.estimateGas.vest
+						synthetix.js?.contracts.SynthetixEscrow.estimateGas.vest
 					);
 					setGasLimitEstimate(normalizeGasLimit(Number(gasEstimate)));
 				} catch (error) {
@@ -62,10 +64,10 @@ const StakingRewardsTab: React.FC = () => {
 			setVestTxError(null);
 			setTxModalOpen(true);
 			const {
-				contracts: { RewardEscrow },
-			} = synthetix.js!;
+				contracts: { SynthetixEscrow },
+			} = synthetix.js as SynthetixJS;
 
-			let transaction: ethers.ContractTransaction = await RewardEscrow.vest({
+			let transaction: ethers.ContractTransaction = await SynthetixEscrow.vest({
 				gasPrice: normalizedGasPrice(gasPrice),
 				gasLimitEstimate,
 			});
@@ -89,7 +91,7 @@ const StakingRewardsTab: React.FC = () => {
 	if (transactionState === Transaction.WAITING) {
 		return (
 			<ActionInProgress
-				vestingAmount={canVestAmount.toString()}
+				vestingAmount={availableTokensForVesting.toString()}
 				currencyKey={vestingCurrencyKey}
 				hash={txHash as string}
 			/>
@@ -101,7 +103,7 @@ const StakingRewardsTab: React.FC = () => {
 			<ActionCompleted
 				currencyKey={vestingCurrencyKey}
 				hash={txHash as string}
-				vestingAmount={canVestAmount.toString()}
+				vestingAmount={availableTokensForVesting.toString()}
 				setTransactionState={setTransactionState}
 			/>
 		);
@@ -113,21 +115,20 @@ const StakingRewardsTab: React.FC = () => {
 				<InfoContainer>
 					<Svg src={SNXLogo} />
 					<Data>
-						{canVestAmount} {vestingCurrencyKey}
+						{availableTokensForVesting} {vestingCurrencyKey}
 					</Data>
 				</InfoContainer>
-
 				<GasSelector gasLimitEstimate={gasLimitEstimate} setGasPrice={setGasPrice} />
-				{canVestAmount > 0 ? (
+				{availableTokensForVesting ? (
 					<StyledCTA
 						blue={true}
 						onClick={handleVest}
 						variant="primary"
 						size="lg"
-						disabled={transactionState !== Transaction.PRESUBMIT}
+						disabled={error !== null || transactionState !== Transaction.PRESUBMIT}
 					>
 						{t('escrow.actions.vest-button', {
-							canVestAmount: formatCurrency(vestingCurrencyKey, canVestAmount, {
+							canVestAmount: formatCurrency(vestingCurrencyKey, availableTokensForVesting, {
 								currencyKey: vestingCurrencyKey,
 							}),
 						})}
@@ -147,7 +148,7 @@ const StakingRewardsTab: React.FC = () => {
 						<ModalItem>
 							<ModalItemTitle>{t('modals.confirm-transaction.vesting.title')}</ModalItemTitle>
 							<ModalItemText>
-								{formatCurrency(vestingCurrencyKey, canVestAmount, {
+								{formatCurrency(vestingCurrencyKey, availableTokensForVesting, {
 									currencyKey: vestingCurrencyKey,
 									decimals: 4,
 								})}
@@ -169,4 +170,4 @@ const Data = styled.p`
 	font-size: 24px;
 `;
 
-export default StakingRewardsTab;
+export default TokenSaleTab;

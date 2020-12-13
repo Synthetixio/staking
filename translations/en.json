@@ -293,9 +293,17 @@
 	},
 	"escrow": {
 		"page-title": "Escrow | Staking",
-		"info": {
-			"title": "Vest your SNX staking rewards in escrow",
-			"subtitle": "If you have staked your SNX and minted sUSD, you are eligible to receive SNX staking rewards, which will be escrowed here which you can vest in 12 months from the claim date. <0>Learn more.<0>"
+		"staking": {
+			"info": {
+				"title": "Vest your SNX staking rewards in escrow",
+				"subtitle": "If you have staked your SNX and minted sUSD, you are eligible to receive SNX staking rewards, which will be escrowed here which you can vest in 12 months from the claim date. <0>Learn more.<0>"
+			}
+		},
+		"token": {
+			"info": {
+				"title": "Vest your escrowed SNX from the token sale.",
+				"subtitle": "If your SNX is still escrowed from the token sale, you can vest it here. <0>Learn more.<0>"
+			}
 		},
 		"table": {
 			"no-results": "No escrowed SNX",
