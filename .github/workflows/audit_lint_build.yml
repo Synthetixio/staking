@@ -3,15 +3,12 @@ name: Staking CI
 on:
   push:
   pull_request:
-    branches:
-      - master
-      - dev
-      - staging
+    branches: [master, dev]
 
 jobs:
   audit:
-    # run only on master/dev/staging branch and pull requests
-    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/staging' || github.event_name == 'pull_request'
+    # run only on master/dev branch and pull requests
+    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'
     runs-on: ubuntu-latest
 
     container:
