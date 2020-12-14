@@ -52,10 +52,10 @@ jobs:
         path: |
           .npm
           node_modules
-        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        key: ${{ runner.os }}-build-${{ hashFiles('**/package-lock.json') }}
         restore-keys: |
-          ${{ runner.os }}-node-
-          ${{ runner.os }}-
+          ${{ runner.os }}-build-
+      continue-on-error: true
 
     - name: Install dependencies
       run: npm install --no-audit
