@@ -19,7 +19,7 @@ const WelcomeLayout: FC = () => {
 				icon: <Svg src={Stake} />,
 				title: t('dashboard.actions.claim.title'),
 				copy: t('dashboard.actions.claim.copy'),
-				link: ROUTES.Earn.Home,
+				link: ROUTES.Earn.Claim,
 			},
 			{
 				gridLocations: ['col-3', 'col-4', 'row-1', 'row-2'],
@@ -37,7 +37,7 @@ const WelcomeLayout: FC = () => {
 			},
 			{
 				gridLocations: ['col-1', 'col-3', 'row-2', 'row-3'],
-				icon: () => <Svg src={Stake} />,
+				icon: <Svg src={Stake} />,
 				title: t('dashboard.actions.migrate.title'),
 				copy: t('dashboard.actions.migrate.copy'),
 				link: ROUTES.L2.Home,
