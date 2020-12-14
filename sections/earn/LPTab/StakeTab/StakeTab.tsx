@@ -86,7 +86,7 @@ const StakeTab: FC<StakeTabProps> = ({ icon, synth, isStake, userBalance }) => {
 					const contract = getContract(synth);
 					let gasEstimate = await getGasEstimateForTransaction(
 						[synthetix.js.utils.parseEther(amount.toString())],
-						isStake ? contract.estimateGas.stake : contract.estimateGas.unstake
+						isStake ? contract.estimateGas.stake : contract.estimateGas.withdraw
 					);
 					setGasLimitEstimate(normalizeGasLimit(Number(gasEstimate)));
 				} catch (error) {
