@@ -9,10 +9,12 @@ import PendingConfirmation from 'assets/svg/app/pending-confirmation.svg';
 import Success from 'assets/svg/app/success.svg';
 import synthetix from 'lib/synthetix';
 import Notify from 'containers/Notify';
+import Etherscan from 'containers/Etherscan';
 import { zIndex } from 'constants/ui';
 import LockedIcon from 'assets/svg/app/locked.svg';
 import { iBtcRewards, iEthRewards, curvepoolRewards } from 'contracts';
 import {
+	ExternalLink,
 	FlexDivColCentered,
 	ModalContent,
 	ModalItem,
@@ -43,6 +45,7 @@ import Color from 'color';
 
 type ApproveProps = {
 	synth: CurrencyKey;
+	setShowApproveOverlayModal: (show: boolean) => void;
 };
 
 export const getContractAndPoolAddress = (synth: CurrencyKey) => {
@@ -67,15 +70,18 @@ export const getContractAndPoolAddress = (synth: CurrencyKey) => {
 	}
 };
 
-const Approve: FC<ApproveProps> = ({ synth }) => {
+const Approve: FC<ApproveProps> = ({ synth, setShowApproveOverlayModal }) => {
 	const { t } = useTranslation();
 	const { monitorHash } = Notify.useContainer();
+	const { etherscanInstance } = Etherscan.useContainer();
 	const [error, setError] = useState<string | null>(null);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 	const [gasLimitEstimate, setGasLimitEstimate] = useState<number | null>(null);
 	const [gasPrice, setGasPrice] = useState<number>(0);
 	const [transactionState, setTransactionState] = useState<Transaction>(Transaction.PRESUBMIT);
 	const [txHash, setTxHash] = useState<string | null>(null);
+	const link =
+		etherscanInstance != null && txHash != null ? etherscanInstance.txLink(txHash) : undefined;
 
 	useEffect(() => {
 		const getGasLimitEstimate = async () => {
@@ -154,9 +160,9 @@ const Approve: FC<ApproveProps> = ({ synth }) => {
 						<WhiteSubheader>{t('earn.actions.approve.contract', { synth })}</WhiteSubheader>
 						<Divider />
 						<GreyText>{t('earn.actions.tx.notice')}</GreyText>
-						<LinkText>
-							<Trans i18nKey="earn.actions.tx.link" components={[<StyledLink />]} />
-						</LinkText>
+						<ExternalLink href={link}>
+							<LinkText>{t('earn.actions.tx.link')}</LinkText>
+						</ExternalLink>
 					</FlexDivColCentered>
 				}
 			/>
@@ -183,12 +189,17 @@ const Approve: FC<ApproveProps> = ({ synth }) => {
 						<WhiteSubheader>{t('earn.actions.approve.contract', { synth })}</WhiteSubheader>
 						<Divider />
 						<ButtonSpacer>
-							<VerifyButton variant="secondary" onClick={() => console.log('verify tx')}>
-								{t('earn.actions.tx.verify')}
-							</VerifyButton>
+							{link ? (
+								<ExternalLink href={link}>
+									<VerifyButton>{t('earn.actions.tx.verify')}</VerifyButton>
+								</ExternalLink>
+							) : null}
 							<DismissButton
 								variant="secondary"
-								onClick={() => setTransactionState(Transaction.PRESUBMIT)}
+								onClick={() => {
+									setTransactionState(Transaction.PRESUBMIT);
+									setShowApproveOverlayModal(false);
+								}}
 							>
 								{t('earn.actions.tx.dismiss')}
 							</DismissButton>

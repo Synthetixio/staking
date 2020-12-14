@@ -273,7 +273,7 @@
 			"max": "MAX",
 			"tx": {
 				"notice": "Waiting for the blockchain to confirm your transaction.",
-				"link": "<0>View on Etherscan<0>",
+				"link": "View on Etherscan",
 				"verify": "VERIFY TX",
 				"dismiss": "DISMISS"
 			},
@@ -303,11 +303,17 @@
 			},
 			"stake": {
 				"title": "STAKE",
-				"stake-button": "STAKE {{asset}}"
+				"stake-button": "STAKE {{asset}}",
+				"staking": "STAKING",
+				"amount": "{{amount}} {{asset}}",
+				"in-progress": "Staking in progress"
 			},
 			"unstake": {
 				"title": "UNSTAKE",
-				"unstake-button": "UNSTAKE {{asset}}"
+				"unstaking": "WITHDRAWING",
+				"unstake-button": "UNSTAKE {{asset}}",
+				"amount": "{{amount}} {{asset}}",
+				"in-progress": "Withdrawal in progress"
 			},
 			"rewards": {
 				"title": "REWARDS",
