@@ -8,7 +8,7 @@ import Why from 'assets/svg/app/wizard/why.svg';
 import MintBurn from 'assets/svg/app/wizard/mint-burn.svg';
 import Debt from 'assets/svg/app/wizard/debt.svg';
 
-import { GridBoxContainer } from './GridBox';
+import { GridBoxContainer } from 'components/GridBox/Gridbox';
 import { useTranslation } from 'react-i18next';
 import { FlexDivCentered } from 'styles/common';
 import Slider from 'react-slick';

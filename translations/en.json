@@ -117,6 +117,10 @@
 			"trade": {
 				"title": "TRADE",
 				"copy": "Trade any Synth to any Synth on the Kwenta exchange"
+			},
+			"migrate": {
+				"title": "MIGRATE TO LAYER 2",
+				"copy": "Migrate your SNX from L1 to L2"
 			}
 		}
 	},
@@ -353,6 +357,23 @@
 			}
 		}
 	},
+	"layer2": {
+		"page-title": "Layer 2 | Staking",
+		"actions": {
+			"burn": {
+				"title": "Burn L1 debt",
+				"subtitle": "Burn your debt to be able to migrate your SNX from L1 to L2"
+			},
+			"deposit": {
+				"title": "Deposit SNX",
+				"subtitle": "Deposit and Transfer SNX from L1 to L2"
+			},
+			"migrate": {
+				"title": "Migrate Escrowed SNX",
+				"subtitle": "Migrate Escrowed schedule from L1 to L2"
+			}
+		}
+	},
 	"history": {
 		"page-title": "History | Synthetix Staking",
 		"table": {
@@ -414,6 +435,7 @@
 		"synths": "Synths",
 		"escrow": "Escrow",
 		"history": "History",
+		"l2": "Layer 2",
 		"bars": {
 			"c-ratio": "C-RATIO",
 			"period": {
