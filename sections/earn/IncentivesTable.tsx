@@ -1,6 +1,6 @@
 import React, { FC, ReactNode, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { CellProps } from 'react-table';
+import { CellProps, Row } from 'react-table';
 import styled from 'styled-components';
 import { Svg } from 'react-optimized-image';
 import Countdown from 'react-countdown';
@@ -34,6 +34,9 @@ import {
 } from 'styles/common';
 import { CryptoCurrency } from 'constants/currency';
 import { NOT_APPLICABLE } from './Incentives';
+import { Tab } from './types';
+import { useRouter } from 'next/router';
+import ROUTES from 'constants/routes';
 
 export type EarnItem = {
 	title: string;
@@ -48,22 +51,23 @@ export type EarnItem = {
 	rewards: number;
 	periodStarted: number;
 	periodFinish: number;
-	incentivesIndex: number;
 	claimed: boolean | string;
 	now: number;
+	tab: Tab;
+	route: string;
 };
 
 type IncentivesTableProps = {
 	data: EarnItem[];
 	isLoaded: boolean;
-	setActiveTab: (tab: number | null) => void;
-	activeTab: number | null;
+	activeTab: Tab | null;
 };
 
-const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab, setActiveTab }) => {
+const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab }) => {
 	const { t } = useTranslation();
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
+	const router = useRouter();
 	const { connectWallet } = Connector.useContainer();
 
 	const columns = useMemo(() => {
@@ -89,7 +93,7 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab, 
 						{activeTab == null ? (
 							<>{t('earn.incentives.est-apy')}</>
 						) : (
-							<StyledIconButton onClick={() => setActiveTab(null)}>
+							<StyledIconButton onClick={() => router.push(ROUTES.Earn.Home)}>
 								<Svg src={GoBackIcon} />
 							</StyledIconButton>
 						)}
@@ -194,7 +198,7 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab, 
 			},
 		];
 		return activeTab != null ? leftColumns : [...leftColumns, ...rightColumns];
-	}, [activeTab, getPriceAtCurrentRate, selectedPriceCurrency.sign, setActiveTab, t]);
+	}, [activeTab, getPriceAtCurrentRate, selectedPriceCurrency.sign, t, router]);
 
 	return (
 		<Container activeTab={activeTab}>
@@ -205,8 +209,8 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab, 
 				columnsDeps={[activeTab, selectedPriceCurrency]}
 				isLoading={isWalletConnected && !isLoaded}
 				showPagination={true}
-				onTableRowClick={(row) => setActiveTab(row.original.incentivesIndex)}
-				isActiveRow={(row) => row.original.incentivesIndex === activeTab}
+				onTableRowClick={(row: Row<EarnItem>) => router.push(row.original.route)}
+				isActiveRow={(row: Row<EarnItem>) => row.original.tab === activeTab}
 				noResultsMessage={
 					!isWalletConnected ? (
 						<TableNoResults>
@@ -224,7 +228,7 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab, 
 	);
 };
 
-const Container = styled.div<{ activeTab: number | null }>`
+const Container = styled.div<{ activeTab: Tab | null }>`
 	background: ${(props) => props.theme.colors.navy};
 	width: ${(props) => (props.activeTab == null ? '100%' : '40%')};
 `;

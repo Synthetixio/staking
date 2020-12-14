@@ -14,6 +14,10 @@ export const ROUTES = {
 	},
 	Earn: {
 		Home: '/earn',
+		Claim: '/earn/claim',
+		Curve_LP: '/earn/curve-LP',
+		iBTC_LP: '/earn/iBTC-LP',
+		iETH_LP: '/earn/iETH-LP',
 	},
 	L2: {
 		Home: '/l2',
