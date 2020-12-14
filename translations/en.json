@@ -1,11 +1,11 @@
 {
 	"meta": {
-		"description": "Staking description",
+		"description": "A dApp for SNX holders to earn rewards through staking.",
 		"og": {
-			"title": "Staking",
-			"description": "Staking description",
-			"image-alt": "Staking",
-			"site-name": "Staking"
+			"title": "Synthetix Staking",
+			"description": "A dApp for SNX holders to earn rewards through staking.",
+			"image-alt": "Synthetix Staking",
+			"site-name": "Synthetix Staking"
 		}
 	},
 	"modals": {
@@ -63,10 +63,10 @@
 		}
 	},
 	"homepage": {
-		"page-title": "Earn with SNX | Staking"
+		"page-title": "Earn with SNX | Synthetix Staking"
 	},
 	"dashboard": {
-		"page-title": "Dashboard | Staking",
+		"page-title": "Home | Synthetix Staking",
 		"actions": {
 			"title": "Possible Actions",
 			"claim": {
@@ -101,7 +101,7 @@
 		}
 	},
 	"staking": {
-		"page-title": "Staking | Staking",
+		"page-title": "Staking | Synthetix Staking",
 		"actions": {
 			"mint": {
 				"title": "MINT",
@@ -195,7 +195,7 @@
 		}
 	},
 	"earn": {
-		"page-title": "Earn | Staking",
+		"page-title": "Earn | Synthetix Staking",
 		"incentives": {
 			"est-apr": "Est APR",
 			"options": {
@@ -292,7 +292,7 @@
 		}
 	},
 	"escrow": {
-		"page-title": "Escrow | Staking",
+		"page-title": "Escrow | Synthetix Staking",
 		"staking": {
 			"info": {
 				"title": "Vest your SNX staking rewards in escrow",
@@ -334,7 +334,7 @@
 		}
 	},
 	"history": {
-		"page-title": "History | Staking",
+		"page-title": "History | Synthetix Staking",
 		"table": {
 			"type": "type",
 			"amount": "amount",
@@ -366,7 +366,7 @@
 		}
 	},
 	"synths": {
-		"page-title": "Synths | Staking",
+		"page-title": "Synths | Synthetix Staking",
 		"assets": {
 			"synths": {
 				"title": "Synth Balances",
@@ -453,12 +453,12 @@
 		}
 	},
 	"not-found": {
-		"page-title": "Not Found | Staking",
+		"page-title": "Not Found | Synthetix Staking",
 		"title": "404",
 		"subtitle": "Page not found"
 	},
 	"system-status": {
-		"page-title": "Maintenance | Staking",
+		"page-title": "Maintenance | Synthetix Staking",
 		"title-line1": "Down for",
 		"title-line2": "maintenance.",
 		"subtitle": "We apologise for any inconvenience caused, it will be back shortly."
