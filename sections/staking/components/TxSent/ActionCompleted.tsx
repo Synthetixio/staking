@@ -42,7 +42,7 @@ const ActionCompleted: FC<ActionCompletedProps> = ({ setTransactionState, isMint
 					{t('staking.actions.mint.completed.curve', { synth: Synths.sUSD })}
 				</MiddleInfoSection>
 				<RightInfoSection>
-					<AprText>{t('staking.actions.mint.completed.est-apr')}</AprText>
+					<AprText>{t('staking.actions.mint.completed.est-apy')}</AprText>
 					<div>14%</div>
 				</RightInfoSection>
 			</MainInfoBox>

@@ -28,6 +28,7 @@ type TableProps = {
 	columnsDeps?: DependencyList;
 	options?: any;
 	onTableRowClick?: (row: Row<any>) => void;
+	isActiveRow?: (row: Row<any>) => boolean;
 	className?: string;
 	isLoading?: boolean;
 	noResultsMessage?: React.ReactNode;
@@ -45,6 +46,7 @@ export const Table: FC<TableProps> = ({
 	isLoading = false,
 	className,
 	showPagination = false,
+	isActiveRow,
 }) => {
 	const memoizedColumns = useMemo(
 		() => columns,
@@ -139,9 +141,14 @@ export const Table: FC<TableProps> = ({
 								{page.map((row: Row) => {
 									prepareRow(row);
 
+									const rowActive = isActiveRow ? isActiveRow(row) : undefined;
+									const classNames = ['table-body-row'];
+									if (rowActive) {
+										classNames.push('active-row');
+									}
 									return (
 										<TableBodyRow
-											className="table-body-row"
+											className={classNames.join(' ')}
 											{...row.getRowProps()}
 											onClick={onTableRowClick ? () => onTableRowClick(row) : undefined}
 										>
@@ -248,6 +255,9 @@ const ReactTable = styled.div<{ palette: TablePalette }>`
 				background-color: ${(props) => props.theme.colors.navy};
 				&:last-child {
 					border-bottom: 0;
+				}
+				&.active-row {
+					background-color: ${props.theme.colors.mediumBlue};
 				}
 			}
 		`}

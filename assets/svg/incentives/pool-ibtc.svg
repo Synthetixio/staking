@@ -3,7 +3,7 @@
 <circle cx="32" cy="32" r="16" fill="#06061B"/>
 <circle cx="32" cy="32" r="16" stroke="#31D8A4" stroke-width="1.5"/>
 </g>
-<mask id="mask0" mask-type="alpha" maskUnits="userSpaceOnUse" x="20" y="20" width="24" height="24">
+<mask id="mask0" maskUnits="userSpaceOnUse" x="20" y="20" width="24" height="24" style="mask-type: alpha">
 <circle cx="32" cy="32" r="12" fill="url(#paint0_linear)"/>
 </mask>
 <g mask="url(#mask0)">

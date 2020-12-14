@@ -1,11 +1,11 @@
 {
 	"meta": {
-		"description": "Staking description",
+		"description": "A dApp for SNX holders to earn rewards through staking.",
 		"og": {
-			"title": "Staking",
-			"description": "Staking description",
-			"image-alt": "Staking",
-			"site-name": "Staking"
+			"title": "Synthetix Staking",
+			"description": "A dApp for SNX holders to earn rewards through staking.",
+			"image-alt": "Synthetix Staking",
+			"site-name": "Synthetix Staking"
 		}
 	},
 	"modals": {
@@ -63,7 +63,7 @@
 		}
 	},
 	"homepage": {
-		"page-title": "Earn with SNX | Staking",
+		"page-title": "Earn with SNX | Synthetix Staking",
 		"welcome": {
 			"title": "Welcome to SNX staking",
 			"subtitle": "The dApp for SNX holders. If you've never staked SNX before, read through this quick introduction first."
@@ -80,13 +80,13 @@
 			"title": "Minting & Burning",
 			"subtitle": "All Synths need to be backed by staked SNX at a Target Collateralisation Ratio, configurable by community governance. SNX stakers need to manage their own ratio to be above this figure, which they can do by burning sUSD to increase their ratio or minting sUSD to reduce it. If they do this, they can collect weekly rewards."
 		},
-		"debt": {
-			"title": "Debt",
+		"risks": {
+			"title": "What are the risks?",
 			"subtitle": "All SNX stakers create a ‘debt’ when they stake. Their debt begins as the amount of sUSD they initially mint, and fluctuates according to gains or losses made by other Synth holders. Any time anyone holds a Synth that appreciates in value, that gain is distributed proportionally between all the staked SNX holders’ debts. A staker must pay off their debt before they can unlock their staked SNX."
 		}
 	},
 	"dashboard": {
-		"page-title": "Dashboard | Staking",
+		"page-title": "Home | Synthetix Staking",
 		"actions": {
 			"title": "Possible Actions",
 			"claim": {
@@ -125,7 +125,7 @@
 		}
 	},
 	"staking": {
-		"page-title": "Staking | Staking",
+		"page-title": "Staking | Synthetix Staking",
 		"actions": {
 			"mint": {
 				"title": "MINT",
@@ -158,7 +158,7 @@
 				"completed": {
 					"title": "Put your {{synth}} to work",
 					"curve": "Curve Finance {{synth}} LP Token Rewards",
-					"est-apr": "Est APR",
+					"est-apy": "Est APY",
 					"subtext": "There are various Liquidity Providing incentives interacting with different DeFi products for you to choose from",
 					"dismiss": "DISMISS",
 					"see-more": "SEE MORE"
@@ -219,9 +219,9 @@
 		}
 	},
 	"earn": {
-		"page-title": "Earn | Staking",
+		"page-title": "Earn | Synthetix Staking",
 		"incentives": {
-			"est-apr": "Est APR",
+			"est-apy": "Est APY",
 			"options": {
 				"select-a-pool": {
 					"title": "SELECT A POOL:"
@@ -316,7 +316,7 @@
 		}
 	},
 	"escrow": {
-		"page-title": "Escrow | Staking",
+		"page-title": "Escrow | Synthetix Staking",
 		"staking": {
 			"info": {
 				"title": "Vest your SNX staking rewards in escrow",
@@ -375,7 +375,7 @@
 		}
 	},
 	"history": {
-		"page-title": "History | Staking",
+		"page-title": "History | Synthetix Staking",
 		"table": {
 			"type": "type",
 			"amount": "amount",
@@ -407,7 +407,7 @@
 		}
 	},
 	"synths": {
-		"page-title": "Synths | Staking",
+		"page-title": "Synths | Synthetix Staking",
 		"assets": {
 			"synths": {
 				"title": "Synth Balances",
@@ -495,12 +495,12 @@
 		}
 	},
 	"not-found": {
-		"page-title": "Not Found | Staking",
+		"page-title": "Not Found | Synthetix Staking",
 		"title": "404",
 		"subtitle": "Page not found"
 	},
 	"system-status": {
-		"page-title": "Maintenance | Staking",
+		"page-title": "Maintenance | Synthetix Staking",
 		"title-line1": "Down for",
 		"title-line2": "maintenance.",
 		"subtitle": "We apologise for any inconvenience caused, it will be back shortly."

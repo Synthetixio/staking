@@ -64,7 +64,7 @@ export const initNotify = (network: Network, options: InitOptions) =>
 		darkMode: true,
 		dappId: process.env.NEXT_PUBLIC_BN_NOTIFY_API_KEY!,
 		networkId: network.id,
-		desktopPosition: 'topRight',
+		desktopPosition: 'bottomRight',
 		notifyMessages,
 		...options,
 	});

@@ -280,3 +280,8 @@ export const resetHeadingMixin = `
 	font-weight: normal;
 	line-height: normal;
 `;
+
+export const IconButton = styled.button`
+	${resetButtonCSS};
+	background: transparent;
+`;
