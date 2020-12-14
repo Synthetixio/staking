@@ -1,8 +1,11 @@
 import { FC, useState, ReactNode, useEffect } from 'react';
 import styled from 'styled-components';
-import { useTranslation } from 'react-i18next';
+import { useTranslation, Trans } from 'react-i18next';
 import { ethers } from 'ethers';
+import { Svg } from 'react-optimized-image';
 
+import PendingConfirmation from 'assets/svg/app/pending-confirmation.svg';
+import Success from 'assets/svg/app/success.svg';
 import GasSelector from 'components/GasSelector';
 import synthetix from 'lib/synthetix';
 import { StyledInput } from 'components/Input/NumericInput';
@@ -10,20 +13,35 @@ import { formatCryptoCurrency } from 'utils/formatters/number';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import { getGasEstimateForTransaction } from 'utils/transactions';
 import { normalizedGasPrice, normalizeGasLimit } from 'utils/network';
+import Etherscan from 'containers/Etherscan';
 
 import {
+	ExternalLink,
 	FlexDivCentered,
 	FlexDivColCentered,
 	ModalContent,
 	ModalItem,
 	ModalItemTitle,
 } from 'styles/common';
-import { CurrencyKey } from 'constants/currency';
+import { CurrencyKey, CryptoCurrency, Synths } from 'constants/currency';
 import { Transaction } from 'constants/network';
 import Notify from 'containers/Notify';
+import TxState from 'sections/earn/TxState';
 
-import { TotalValueWrapper, Subtext, Value, StyledButton } from '../../common';
-import { getContractAndPoolAddress } from '../Approve/Approve';
+import {
+	TotalValueWrapper,
+	Subtext,
+	Value,
+	StyledButton,
+	GreyHeader,
+	WhiteSubheader,
+	Divider,
+	VerifyButton,
+	DismissButton,
+	ButtonSpacer,
+	GreyText,
+	LinkText,
+} from '../../common';
 
 type StakeTabProps = {
 	icon: ReactNode;
@@ -32,10 +50,24 @@ type StakeTabProps = {
 	userBalance: number;
 };
 
+const getContract = (synth: CurrencyKey) => {
+	const { contracts } = synthetix.js!;
+	if (synth === Synths.iBTC) {
+		return contracts.StakingRewardsiBTC;
+	} else if (synth === Synths.iETH) {
+		return contracts.StakingRewardsiETH;
+	} else if (synth === Synths.sUSD) {
+		return contracts.StakingRewardssUSDCurve;
+	} else {
+		throw new Error('unrecognizable asset');
+	}
+};
+
 const StakeTab: FC<StakeTabProps> = ({ icon, synth, isStake, userBalance }) => {
 	const { t } = useTranslation();
 	const [amount, setAmount] = useState<number | null>(null);
 	const { monitorHash } = Notify.useContainer();
+	const { etherscanInstance } = Etherscan.useContainer();
 	const [gasLimitEstimate, setGasLimitEstimate] = useState<number | null>(null);
 	const [gasPrice, setGasPrice] = useState<number>(0);
 	const [error, setError] = useState<string | null>(null);
@@ -43,16 +75,18 @@ const StakeTab: FC<StakeTabProps> = ({ icon, synth, isStake, userBalance }) => {
 	const [transactionState, setTransactionState] = useState<Transaction>(Transaction.PRESUBMIT);
 	const [txHash, setTxHash] = useState<string | null>(null);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
+	const link =
+		etherscanInstance != null && txHash != null ? etherscanInstance.txLink(txHash) : undefined;
 
 	useEffect(() => {
 		const getGasLimitEstimate = async () => {
 			if (synthetix && synthetix.js && amount != null && amount > 0) {
 				try {
 					setError(null);
-					const { contract } = getContractAndPoolAddress(synth);
+					const contract = getContract(synth);
 					let gasEstimate = await getGasEstimateForTransaction(
-						[synthetix.js.utils.formatEther(amount.toString())],
-						isStake ? contract.estimateGas.stake : contract.estimateGas.unstake
+						[synthetix.js.utils.parseEther(amount.toString())],
+						isStake ? contract.estimateGas.stake : contract.estimateGas.withdraw
 					);
 					setGasLimitEstimate(normalizeGasLimit(Number(gasEstimate)));
 				} catch (error) {
@@ -69,7 +103,7 @@ const StakeTab: FC<StakeTabProps> = ({ icon, synth, isStake, userBalance }) => {
 			try {
 				setError(null);
 				setTxModalOpen(true);
-				const { contract } = getContractAndPoolAddress(synth);
+				const contract = getContract(synth);
 
 				const formattedStakeAmount = synthetix.js.utils.parseEther(amount.toString());
 				const gasLimit = await getGasEstimateForTransaction(
@@ -83,7 +117,7 @@ const StakeTab: FC<StakeTabProps> = ({ icon, synth, isStake, userBalance }) => {
 						gasLimit,
 					});
 				} else {
-					transaction = await contract.unstake(formattedStakeAmount, {
+					transaction = await contract.withdraw(formattedStakeAmount, {
 						gasPrice: normalizedGasPrice(gasPrice),
 						gasLimit,
 					});
@@ -104,6 +138,79 @@ const StakeTab: FC<StakeTabProps> = ({ icon, synth, isStake, userBalance }) => {
 			}
 		}
 	};
+
+	if (transactionState === Transaction.WAITING) {
+		return (
+			<TxState
+				isStakingPanel={true}
+				description={null}
+				title={
+					isStake ? t('earn.actions.stake.in-progress') : t('earn.actions.unstake.in-progress')
+				}
+				content={
+					<FlexDivColCentered>
+						<Svg src={PendingConfirmation} />
+						<GreyHeader>
+							{isStake ? t('earn.actions.stake.staking') : t('earn.actions.unstake.unstaking')}
+						</GreyHeader>
+						<WhiteSubheader>
+							{isStake
+								? t('earn.actions.stake.amount', {
+										amount,
+										asset: CryptoCurrency.SNX,
+								  })
+								: t('earn.actions.unstake.amount', {
+										amount,
+										asset: CryptoCurrency.SNX,
+								  })}
+						</WhiteSubheader>
+						<Divider />
+						<GreyText>{t('earn.actions.tx.notice')}</GreyText>
+						<ExternalLink href={link}>
+							<LinkText>{t('earn.actions.tx.link')}</LinkText>
+						</ExternalLink>
+					</FlexDivColCentered>
+				}
+			/>
+		);
+	}
+
+	if (transactionState === Transaction.SUCCESS) {
+		return (
+			<TxState
+				isStakingPanel={true}
+				description={null}
+				title={t('earn.actions.claim.success')}
+				content={
+					<FlexDivColCentered>
+						<Svg src={Success} />
+						<GreyHeader>{t('earn.actions.claim.claiming')}</GreyHeader>
+						<WhiteSubheader>
+							{t('earn.actions.claim.amount', {
+								amount,
+								asset: CryptoCurrency.SNX,
+							})}
+						</WhiteSubheader>
+						<Divider />
+						<ButtonSpacer isStakingPanel={true}>
+							{link ? (
+								<ExternalLink href={link}>
+									<VerifyButton isStakingPanel={true}>{t('earn.actions.tx.verify')}</VerifyButton>
+								</ExternalLink>
+							) : null}
+							<DismissButton
+								isStakingPanel={true}
+								variant="secondary"
+								onClick={() => setTransactionState(Transaction.PRESUBMIT)}
+							>
+								{t('earn.actions.tx.dismiss')}
+							</DismissButton>
+						</ButtonSpacer>
+					</FlexDivColCentered>
+				}
+			/>
+		);
+	}
 
 	return (
 		<>

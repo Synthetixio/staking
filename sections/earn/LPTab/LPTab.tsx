@@ -5,8 +5,9 @@ import { Svg } from 'react-optimized-image';
 
 import synthetix from 'lib/synthetix';
 import StructuredTab from 'components/StructuredTab';
-import { FlexDivCentered, FlexDivColCentered } from 'styles/common';
+import { FlexDivCentered, FlexDivColCentered, ExternalLink } from 'styles/common';
 import { CurrencyKey } from 'constants/currency';
+import Etherscan from 'containers/Etherscan';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import PendingConfirmation from 'assets/svg/app/pending-confirmation.svg';
 import Success from 'assets/svg/app/success.svg';
@@ -58,6 +59,13 @@ const LPTab: FC<LPTabProps> = ({ icon, synth, title, tokenRewards, allowance, us
 	const [claimTxHash, setClaimTxHash] = useState<string | null>(null);
 	const [claimError, setClaimError] = useState<string | null>(null);
 	const [claimTxModalOpen, setClaimTxModalOpen] = useState<boolean>(false);
+
+	const { etherscanInstance } = Etherscan.useContainer();
+	const claimLink =
+		etherscanInstance != null && claimTxHash != null
+			? etherscanInstance.txLink(claimTxHash)
+			: undefined;
+
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const SNXRate = exchangeRatesQuery.data?.SNX ?? 0;
 
@@ -87,10 +95,6 @@ const LPTab: FC<LPTabProps> = ({ icon, synth, title, tokenRewards, allowance, us
 	useEffect(() => {
 		if (allowance === 0) {
 			setShowApproveOverlayModal(true);
-		} else if (allowance == null) {
-			// TODO - loading state in this case
-		} else if (allowance > 0) {
-			setShowApproveOverlayModal(false);
 		}
 	}, [allowance]);
 
@@ -148,9 +152,9 @@ const LPTab: FC<LPTabProps> = ({ icon, synth, title, tokenRewards, allowance, us
 						</WhiteSubheader>
 						<Divider />
 						<GreyText>{t('earn.actions.tx.notice')}</GreyText>
-						<LinkText>
-							<Trans i18nKey="earn.actions.tx.link" components={[<StyledLink />]} />
-						</LinkText>
+						<ExternalLink href={claimLink}>
+							<LinkText>{t('earn.actions.tx.link')}</LinkText>
+						</ExternalLink>
 					</FlexDivColCentered>
 				}
 			/>
@@ -182,9 +186,11 @@ const LPTab: FC<LPTabProps> = ({ icon, synth, title, tokenRewards, allowance, us
 						</WhiteSubheader>
 						<Divider />
 						<ButtonSpacer>
-							<VerifyButton variant="secondary" onClick={() => console.log('verify tx')}>
-								{t('earn.actions.tx.verify')}
-							</VerifyButton>
+							{claimLink ? (
+								<ExternalLink href={claimLink}>
+									<VerifyButton>{t('earn.actions.tx.verify')}</VerifyButton>
+								</ExternalLink>
+							) : null}
 							<DismissButton
 								variant="secondary"
 								onClick={() => setClaimTransactionState(Transaction.PRESUBMIT)}
@@ -222,7 +228,9 @@ const LPTab: FC<LPTabProps> = ({ icon, synth, title, tokenRewards, allowance, us
 					SNXRate={SNXRate}
 				/>
 			</FlexDivCentered>
-			{showApproveOverlayModal ? <Approve synth={synth} /> : null}
+			{showApproveOverlayModal ? (
+				<Approve setShowApproveOverlayModal={setShowApproveOverlayModal} synth={synth} />
+			) : null}
 		</TabContainer>
 	);
 };

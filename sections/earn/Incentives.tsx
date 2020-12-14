@@ -213,7 +213,7 @@ const Incentives: FC<IncentivesProps> = ({
 						<LPTab
 							userBalance={useCurvePool.data?.userBalance ?? 0}
 							synth={Synths.sUSD}
-							allowance={(1 || useCurvePool.data?.allowance) ?? null}
+							allowance={useCurvePool.data?.allowance ?? null}
 							icon={incentives[1].icon}
 							tokenRewards={incentives[1].rewards}
 							title={

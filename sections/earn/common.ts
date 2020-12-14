@@ -66,6 +66,7 @@ export const GreyText = styled.div`
 
 export const LinkText = styled.div`
 	font-size: 12px;
+	color: ${(props) => props.theme.colors.blue};
 `;
 
 export const Divider = styled.div`
@@ -91,17 +92,27 @@ export const TabContainer = styled(FlexDivColCentered)`
 	padding: 24px;
 `;
 
-export const VerifyButton = styled(Button)`
-	width: 125px;
-	box-shadow: none;
-	border: 1px solid ${(props) => props.theme.colors.gray};
+export const VerifyButton = styled.div<{ isStakingPanel?: boolean }>`
+	width: ${(props) => (props.isStakingPanel ? '75px' : '125px')};
+	height: 32px;
+	padding-top: 8px;
+	font-family: ${(props) => props.theme.fonts.condensedMedium};
+	font-size: 12px;
+	border-radius: 4px;
+	cursor: pointer;
+	background-color: ${(props) => props.theme.colors.black};
 	color: ${(props) => props.theme.colors.white};
+	border: 1px solid ${(props) => props.theme.colors.gray};
+	box-shadow: none;
+	text-transform: uppercase;
+	text-align: center;
 `;
-export const DismissButton = styled(Button)`
-	width: 125px;
+
+export const DismissButton = styled(Button)<{ isStakingPanel?: boolean }>`
+	width: ${(props) => (props.isStakingPanel ? '75px' : '125px')};
 	box-shadow: none;
 `;
-export const ButtonSpacer = styled(FlexDiv)`
-	width: 300px;
+export const ButtonSpacer = styled(FlexDiv)<{ isStakingPanel?: boolean }>`
+	width: ${(props) => (props.isStakingPanel ? '180px' : '300px')};
 	justify-content: space-between;
 `;
