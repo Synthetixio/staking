@@ -82,12 +82,12 @@ jobs:
     - name: Build
       run: npm run build
 
-    - name: Compress build
-      run: tar -zcvf build.tar.gz .next
+    # - name: Compress build
+    #   run: tar -zcvf build.tar.gz .next
 
-    - name: Archive build
-      if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'
-      uses: actions/upload-artifact@726a6dcd0199f578459862705eed35cda05af50b # pin@v2
-      with:
-        name: build
-        path: build.tar.gz
+    # - name: Archive build
+    #   if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'
+    #   uses: actions/upload-artifact@726a6dcd0199f578459862705eed35cda05af50b # pin@v2
+    #   with:
+    #     name: build
+    #     path: build.tar.gz
