@@ -2,11 +2,11 @@ import { FC } from 'react';
 import styled from 'styled-components';
 import Img from 'react-optimized-image';
 
-import Welcome from 'assets/png/wizard/welcome.png';
-import What from 'assets/png/wizard/what.png';
-import Why from 'assets/png/wizard/why.png';
+import Welcome from 'assets/svg/app/wizard/welcome.svg';
+import What from 'assets/svg/app/wizard/what.svg';
+import Why from 'assets/svg/app/wizard/why.svg';
 import MintBurn from 'assets/png/wizard/mint-burn.png';
-import Debt from 'assets/png/wizard/debt.png';
+import Debt from 'assets/svg/app/wizard/debt.svg';
 
 import { GridBoxContainer } from './GridBox';
 import { useTranslation } from 'react-i18next';
@@ -28,25 +28,25 @@ export const WizardGridBox: FC<WizardGridBoxProps> = ({ gridLocations }) => {
 			id: 'welcome',
 		},
 		{
-			icon: <Img src={What} height={200} />,
+			icon: <Img src={What} />,
 			title: 'homepage.what.title',
 			subtitle: 'homepage.what.subtitle',
 			id: 'what',
 		},
 		{
-			icon: <Img src={Why} height={200} />,
+			icon: <Img src={Why} />,
 			title: 'homepage.why.title',
 			subtitle: 'homepage.why.subtitle',
 			id: 'why',
 		},
 		{
-			icon: <Img src={MintBurn} height={200} />,
+			icon: <Img src={MintBurn} />,
 			title: 'homepage.mint-burn.title',
 			subtitle: 'homepage.mint-burn.subtitle',
 			id: 'MintBurn',
 		},
 		{
-			icon: <Img src={Debt} height={200} />,
+			icon: <Img src={Debt} />,
 			title: 'homepage.debt.title',
 			subtitle: 'homepage.debt.subtitle',
 			id: 'debt',
