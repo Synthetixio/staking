@@ -1,10 +1,10 @@
-import { FC } from 'react';
+import { FC, useMemo } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 
 import ROUTES from 'constants/routes';
 
-import GridBox from 'components/GridBox/Gridbox';
+import GridBox, { GridBoxProps } from 'components/GridBox/Gridbox';
 import GlowingCircle from 'components/GlowingCircle';
 import { GridDiv } from 'styles/common';
 import media from 'styles/media';
@@ -15,49 +15,56 @@ const Index: FC = () => {
 	const { t } = useTranslation();
 	const { debtBalance } = useStakingCalculations();
 
-	const ACTIONS = {
-		deposit: {
-			title: t('layer2.actions.deposit.title'),
-			copy: t('layer2.actions.deposit.subtitle'),
-			link: ROUTES.L2.Deposit,
-		},
-		migrate: {
-			title: t('layer2.actions.migrate.title'),
-			copy: t('layer2.actions.migrate.subtitle'),
-			link: ROUTES.L2.Migrate,
-		},
-		burn: {
-			title: t('layer2.actions.burn.title'),
-			copy: t('layer2.actions.burn.subtitle'),
-			link: ROUTES.Staking.Home,
-		},
-	};
+	const ACTIONS = useMemo(
+		() => ({
+			deposit: {
+				title: t('layer2.actions.deposit.title'),
+				copy: t('layer2.actions.deposit.subtitle'),
+				link: ROUTES.L2.Deposit,
+			},
+			migrate: {
+				title: t('layer2.actions.migrate.title'),
+				copy: t('layer2.actions.migrate.subtitle'),
+				link: ROUTES.L2.Migrate,
+			},
+			burn: {
+				title: t('layer2.actions.burn.title'),
+				copy: t('layer2.actions.burn.subtitle'),
+				link: ROUTES.Staking.Home,
+			},
+		}),
+		[t]
+	);
 
-	const gridItems = debtBalance.isZero()
-		? [
-				{
-					gridLocations: ['col-1', 'col-2', 'row-1', 'row-3'],
-					...ACTIONS.deposit,
-				},
-				{
-					gridLocations: ['col-2', 'col-3', 'row-1', 'row-3'],
-					...ACTIONS.migrate,
-				},
-		  ]
-		: [
-				{
-					gridLocations: ['col-1', 'col-2', 'row-1', 'row-3'],
-					...ACTIONS.burn,
-				},
-				{
-					gridLocations: ['col-2', 'col-3', 'row-1', 'row-2'],
-					...ACTIONS.deposit,
-				},
-				{
-					gridLocations: ['col-2', 'col-3', 'row-2', 'row-3'],
-					...ACTIONS.migrate,
-				},
-		  ];
+	const gridItems = useMemo(
+		() =>
+			debtBalance.isZero()
+				? [
+						{
+							gridLocations: ['col-1', 'col-2', 'row-1', 'row-3'],
+							...ACTIONS.deposit,
+						},
+						{
+							gridLocations: ['col-2', 'col-3', 'row-1', 'row-3'],
+							...ACTIONS.migrate,
+						},
+				  ]
+				: [
+						{
+							gridLocations: ['col-1', 'col-2', 'row-1', 'row-3'],
+							...ACTIONS.burn,
+						},
+						{
+							gridLocations: ['col-2', 'col-3', 'row-1', 'row-2'],
+							...ACTIONS.deposit,
+						},
+						{
+							gridLocations: ['col-2', 'col-3', 'row-2', 'row-3'],
+							...ACTIONS.migrate,
+						},
+				  ],
+		[ACTIONS, debtBalance]
+	) as GridBoxProps[];
 
 	return (
 		<PossibleActionsContainer fullHeight={gridItems.length === 2}>
