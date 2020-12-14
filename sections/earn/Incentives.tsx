@@ -1,8 +1,10 @@
-import { FC, useState, useMemo } from 'react';
+import { FC, useMemo } from 'react';
 import BigNumber from 'bignumber.js';
 import styled from 'styled-components';
 import Img from 'react-optimized-image';
 import { useTranslation, Trans } from 'react-i18next';
+import { useRecoilValue } from 'recoil';
+import { useRouter } from 'next/router';
 
 import useIETHPoolQuery_1 from 'queries/liquidityPools/useIETHPoolQuery_1';
 import useIBTCPoolQuery_1 from 'queries/liquidityPools/useIBTCPoolQuery_1';
@@ -13,6 +15,8 @@ import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import useFeePeriodTimeAndProgress from 'hooks/useFeePeriodTimeAndProgress';
 
 import useClaimedStatus from 'sections/hooks/useClaimedStatus';
+
+import ROUTES from 'constants/routes';
 import { CryptoCurrency, Synths } from 'constants/currency';
 import { WEEKS_IN_YEAR } from 'constants/date';
 
@@ -28,7 +32,8 @@ import ClaimTab from './ClaimTab';
 import LPTab from './LPTab';
 import { StyledLink } from './common';
 import { isWalletConnectedState } from 'store/wallet';
-import { useRecoilValue } from 'recoil';
+
+import { Tab } from './types';
 
 export const NOT_APPLICABLE = 'n/a';
 
@@ -40,6 +45,8 @@ type IncentivesProps = {
 	stakedValue: number;
 };
 
+const VALID_TABS = Object.values(Tab);
+
 const Incentives: FC<IncentivesProps> = ({
 	tradingRewards,
 	stakingRewards,
@@ -48,7 +55,7 @@ const Incentives: FC<IncentivesProps> = ({
 	stakedValue,
 }) => {
 	const { t } = useTranslation();
-	const [activeTab, setActiveTab] = useState<number | null>(null);
+	const router = useRouter();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 
 	const claimedSNX = useClaimedStatus();
@@ -74,6 +81,17 @@ const Incentives: FC<IncentivesProps> = ({
 
 	const now = useMemo(() => new Date().getTime(), []);
 
+	const activeTab = useMemo(
+		() =>
+			isWalletConnected &&
+			Array.isArray(router.query.pool) &&
+			router.query.pool.length &&
+			VALID_TABS.includes(router.query.pool[0] as Tab)
+				? (router.query.pool[0] as Tab)
+				: null,
+		[router.query.pool, isWalletConnected]
+	);
+
 	const incentives = useMemo(
 		() =>
 			isWalletConnected
@@ -91,9 +109,10 @@ const Incentives: FC<IncentivesProps> = ({
 							rewards: stakingRewards.toNumber(),
 							periodStarted: currentFeePeriodStarted.getTime(),
 							periodFinish: nextFeePeriodStarts.getTime(),
-							incentivesIndex: 0,
 							claimed: claimedSNX,
 							now,
+							tab: Tab.Claim,
+							route: ROUTES.Earn.Claim,
 						},
 						{
 							icon: <Img src={curveSVG} />,
@@ -108,9 +127,10 @@ const Incentives: FC<IncentivesProps> = ({
 							rewards: useCurvePool.data?.rewards ?? 0,
 							periodStarted: now - (useCurvePool.data?.duration ?? 0),
 							periodFinish: useCurvePool.data?.periodFinish ?? 0,
-							incentivesIndex: 1,
 							claimed: (useCurvePool.data?.rewards ?? 0) > 0 ? false : NOT_APPLICABLE,
 							now,
+							route: ROUTES.Earn.Curve_LP,
+							tab: Tab.Curve_LP,
 						},
 						{
 							icon: <Img src={iETHSVG} />,
@@ -125,9 +145,10 @@ const Incentives: FC<IncentivesProps> = ({
 							rewards: useiETHPool.data?.rewards ?? 0,
 							periodStarted: now - (useiETHPool.data?.duration ?? 0),
 							periodFinish: useiETHPool.data?.periodFinish ?? 0,
-							incentivesIndex: 2,
 							claimed: (useiETHPool.data?.rewards ?? 0) > 0 ? false : NOT_APPLICABLE,
 							now,
+							tab: Tab.iETH_LP,
+							route: ROUTES.Earn.iETH_LP,
 						},
 						{
 							icon: <Img src={iBTCSVG} />,
@@ -142,9 +163,10 @@ const Incentives: FC<IncentivesProps> = ({
 							rewards: useiBTCPool.data?.rewards ?? 0,
 							periodStarted: now - (useiBTCPool.data?.duration ?? 0),
 							periodFinish: useiBTCPool.data?.periodFinish ?? 0,
-							incentivesIndex: 3,
 							claimed: (useiBTCPool.data?.rewards ?? 0) > 0 ? false : NOT_APPLICABLE,
 							now,
+							tab: Tab.iBTC_LP,
+							route: ROUTES.Earn.iBTC_LP,
 						},
 				  ]
 				: [],
@@ -175,20 +197,19 @@ const Incentives: FC<IncentivesProps> = ({
 		<FlexDiv>
 			<IncentivesTable
 				activeTab={activeTab}
-				setActiveTab={setActiveTab}
 				data={incentives}
 				isLoaded={useCurvePool.data && useiBTCPool.data && useiETHPool.data ? true : false}
 			/>
 			{activeTab != null ? (
 				<TabContainer>
-					{activeTab === 0 && (
+					{activeTab === Tab.Claim && (
 						<ClaimTab
 							tradingRewards={tradingRewards}
 							stakingRewards={stakingRewards}
 							totalRewards={totalRewards}
 						/>
 					)}
-					{activeTab === 1 && (
+					{activeTab === Tab.Curve_LP && (
 						<LPTab
 							userBalance={useCurvePool.data?.userBalance ?? 0}
 							synth={Synths.sUSD}
@@ -203,7 +224,7 @@ const Incentives: FC<IncentivesProps> = ({
 							}
 						/>
 					)}
-					{activeTab === 2 && (
+					{activeTab === Tab.iETH_LP && (
 						<LPTab
 							userBalance={useiETHPool.data?.userBalance ?? 0}
 							synth={Synths.iETH}
@@ -218,7 +239,7 @@ const Incentives: FC<IncentivesProps> = ({
 							}
 						/>
 					)}
-					{activeTab === 3 && (
+					{activeTab === Tab.iBTC_LP && (
 						<LPTab
 							userBalance={useiBTCPool.data?.userBalance ?? 0}
 							synth={Synths.iBTC}
