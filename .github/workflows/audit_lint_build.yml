@@ -70,6 +70,7 @@ jobs:
         key: ${{ runner.os }}-next.js-${{ hashFiles('**/package-lock.json') }}
         restore-keys: |
           ${{ runner.os }}-next.js-
+      continue-on-error: true
 
     - name: Build
       run: npm run build
