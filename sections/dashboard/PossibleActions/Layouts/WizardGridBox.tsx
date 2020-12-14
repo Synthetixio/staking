@@ -1,11 +1,11 @@
 import { FC } from 'react';
 import styled from 'styled-components';
-import Img from 'react-optimized-image';
+import Img, { Svg } from 'react-optimized-image';
 
 import Welcome from 'assets/svg/app/wizard/welcome.svg';
 import What from 'assets/svg/app/wizard/what.svg';
 import Why from 'assets/svg/app/wizard/why.svg';
-import MintBurn from 'assets/png/wizard/mint-burn.png';
+import MintBurn from 'assets/svg/app/wizard/mint-burn.svg';
 import Debt from 'assets/svg/app/wizard/debt.svg';
 
 import { GridBoxContainer } from './GridBox';
@@ -22,7 +22,7 @@ export const WizardGridBox: FC<WizardGridBoxProps> = ({ gridLocations }) => {
 	const { t } = useTranslation();
 	const STEPS = [
 		{
-			icon: <Img src={Welcome} height={200} />,
+			icon: <Svg src={Welcome} />,
 			title: 'homepage.welcome.title',
 			subtitle: 'homepage.welcome.subtitle',
 			id: 'welcome',
@@ -43,13 +43,13 @@ export const WizardGridBox: FC<WizardGridBoxProps> = ({ gridLocations }) => {
 			icon: <Img src={MintBurn} />,
 			title: 'homepage.mint-burn.title',
 			subtitle: 'homepage.mint-burn.subtitle',
-			id: 'MintBurn',
+			id: 'mintBurn',
 		},
 		{
-			icon: <Img src={Debt} />,
-			title: 'homepage.debt.title',
-			subtitle: 'homepage.debt.subtitle',
-			id: 'debt',
+			icon: <Svg src={Debt} />,
+			title: 'homepage.risks.title',
+			subtitle: 'homepage.risks.subtitle',
+			id: 'risks',
 		},
 	];
 	return (
@@ -75,11 +75,7 @@ export const WizardGridBox: FC<WizardGridBoxProps> = ({ gridLocations }) => {
 		</GridBoxContainer>
 	);
 };
-const StepBox = styled.div`
-	text-align: center;
-	padding-top: 50px;
-	margin: 0px 24px;
-`;
+
 const SliderContainer = styled.div`
 	.slick-dots {
 		li {
@@ -108,6 +104,11 @@ const SliderContainer = styled.div`
 	* {
 		outline: none;
 	}
+`;
+const StepBox = styled.div`
+	text-align: center;
+	padding-top: 50px;
+	margin: 0px 48px;
 `;
 const IconContainer = styled(FlexDivCentered)`
 	height: 200px;
