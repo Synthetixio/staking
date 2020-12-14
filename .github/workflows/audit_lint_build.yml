@@ -78,7 +78,7 @@ jobs:
       run: npm run build
 
     - name: Archive artifacts
-      uses: actions/upload-artifact@27bce4eee761b5bc643f46a8dfb41b430c8d05f6 # pin@v2
+      uses: actions/upload-artifact@726a6dcd0199f578459862705eed35cda05af50b # pin@v2
       with:
         name: build
         path: .next
