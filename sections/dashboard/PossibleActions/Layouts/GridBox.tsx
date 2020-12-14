@@ -66,6 +66,11 @@ export const GridBoxContainer = styled.div<{
 	grid-column: ${(props) => `${props.columnStart} / ${props.columnEnd}`};
 	grid-row: ${(props) => `${props.rowStart} / ${props.rowEnd}`};
 	cursor: pointer;
+
+	&:hover {
+		background: ${(props) => props.theme.colors.darkGradient2};
+		transition: background-color 0.5s ease-in-out;
+	}
 `;
 
 const GridBoxIcon = styled.div`
