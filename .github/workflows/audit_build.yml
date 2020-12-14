@@ -3,15 +3,12 @@ name: Staking CI
 on:
   push:
   pull_request:
-    branches:
-      - master
-      - dev
-      - staging
+    branches: [master, dev]
 
 jobs:
   audit:
-    # run only on master/dev/staging branch and pull requests
-    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/staging' || github.event_name == 'pull_request'
+    # run only on master/dev branch and pull requests
+    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'
     runs-on: ubuntu-latest
 
     container:
@@ -23,9 +20,6 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@ee5a9d1395988d7c82c67c69571871f5994b94df # pin@v2
-      with:
-        token: ${{ secrets.GH_READ_REPO }}
-        submodules: recursive
 
     - name: Audit dependencies
       run: audit-ci --critical --report-type important
@@ -55,16 +49,26 @@ jobs:
         path: |
           .npm
           node_modules
-        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        key: ${{ runner.os }}-build-${{ hashFiles('**/package-lock.json') }}
         restore-keys: |
-          ${{ runner.os }}-node-
-          ${{ runner.os }}-
+          ${{ runner.os }}-build-
+      continue-on-error: true
 
     - name: Install dependencies
       run: npm install --no-audit
 
     - name: Lint
-      run: npm run lint
+      # run only on master/dev branch and pull requests
+      if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'
+      run: npm run lint:sarif
+  
+    - name: Upload lint results
+      # run if lint failed and only on master/dev branch and pull requests
+      if: always() && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request')
+      uses: github/codeql-action/upload-sarif@b1e2c9b8bd0550a90e66c967d9795316f9f21910 # pin@codeql-bundle-20201008
+      with:
+        sarif_file: lint-results.sarif
+      continue-on-error: true
 
     - name: Cache next.js build cache
       uses: actions/cache@3b70782066bd817837b6bd8c518d45b54d91bf76 # pin@v2
@@ -73,12 +77,17 @@ jobs:
         key: ${{ runner.os }}-next.js-${{ hashFiles('**/package-lock.json') }}
         restore-keys: |
           ${{ runner.os }}-next.js-
+      continue-on-error: true
 
     - name: Build
       run: npm run build
 
-    - name: Archive artifacts
-      uses: actions/upload-artifact@27bce4eee761b5bc643f46a8dfb41b430c8d05f6 # pin@v2
-      with:
-        name: build
-        path: .next
+    # - name: Compress build
+    #   run: tar -zcvf build.tar.gz .next
+
+    # - name: Archive build
+    #   if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'
+    #   uses: actions/upload-artifact@726a6dcd0199f578459862705eed35cda05af50b # pin@v2
+    #   with:
+    #     name: build
+    #     path: build.tar.gz
