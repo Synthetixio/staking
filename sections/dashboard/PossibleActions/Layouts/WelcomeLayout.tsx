@@ -7,7 +7,7 @@ import ROUTES from 'constants/routes';
 import Stake from 'assets/svg/app/stake.svg';
 import Trade from 'assets/svg/app/trade.svg';
 
-import GridBox, { GridBoxProps } from './GridBox';
+import GridBox, { GridBoxProps } from 'components/GridBox/Gridbox';
 import WizardGridBox from './WizardGridBox';
 
 const WelcomeLayout: FC = () => {

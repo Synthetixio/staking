@@ -357,6 +357,23 @@
 			}
 		}
 	},
+	"layer2": {
+		"page-title": "Layer 2 | Staking",
+		"actions": {
+			"burn": {
+				"title": "Burn L1 debt",
+				"subtitle": "Burn your debt to be able to migrate your SNX from L1 to L2"
+			},
+			"deposit": {
+				"title": "Deposit SNX",
+				"subtitle": "Deposit and Transfer SNX from L1 to L2"
+			},
+			"migrate": {
+				"title": "Migrate Escrowed SNX",
+				"subtitle": "Migrate Escrowed schedule from L1 to L2"
+			}
+		}
+	},
 	"history": {
 		"page-title": "History | Staking",
 		"table": {

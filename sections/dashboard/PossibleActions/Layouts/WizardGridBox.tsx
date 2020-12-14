@@ -9,7 +9,7 @@ import Why from 'assets/png/wizard/why.png';
 import MintBurn from 'assets/png/wizard/mint-burn.png';
 import Debt from 'assets/png/wizard/debt.png';
 
-import { GridBoxContainer } from './GridBox';
+import { GridBoxContainer } from 'components/GridBox/Gridbox';
 import { useTranslation } from 'react-i18next';
 import { FlexDiv, FlexDivCentered } from 'styles/common';
 

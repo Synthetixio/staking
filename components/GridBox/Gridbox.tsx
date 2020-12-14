@@ -1,4 +1,4 @@
-import { FC, ReactNode } from 'react';
+import { FC, ReactNode, ReactElement } from 'react';
 import Link from 'next/link';
 import styled from 'styled-components';
 
@@ -8,7 +8,7 @@ export type GridBoxProps = {
 	gridLocations: [string, string, string, string];
 	title: string;
 	copy: string;
-	icon: ReactNode;
+	icon: ReactNode | ReactElement;
 	link?: string;
 	externalLink?: string;
 };
@@ -45,6 +45,7 @@ const InnerGridContainer = styled(FlexDivColCentered)`
 	width: 100%;
 	height: 100%;
 	padding: 20px;
+	justify-content: center;
 `;
 
 const GridBoxTitle = styled.div`
@@ -69,8 +70,8 @@ export const GridBoxContainer = styled.div<{
 `;
 
 const GridBoxIcon = styled.div`
-	height: 20px;
-	margin: 20px auto 40px auto;
+	/* height: 20px;
+	margin: 20px auto 40px auto; */
 `;
 
 const GridBoxCopy = styled.p`
