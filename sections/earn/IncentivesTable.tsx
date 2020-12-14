@@ -38,7 +38,7 @@ import { NOT_APPLICABLE } from './Incentives';
 export type EarnItem = {
 	title: string;
 	subtitle: string;
-	apr: number;
+	apy: number;
 	icon: ReactNode;
 	tvl: number;
 	staked: {
@@ -87,7 +87,7 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab, 
 				Header: (
 					<CellContainer>
 						{activeTab == null ? (
-							<>{t('earn.incentives.est-apr')}</>
+							<>{t('earn.incentives.est-apy')}</>
 						) : (
 							<StyledIconButton onClick={() => setActiveTab(null)}>
 								<Svg src={GoBackIcon} />
@@ -95,14 +95,15 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab, 
 						)}
 					</CellContainer>
 				),
-				accessor: 'apr',
+				accessor: 'apy',
 				Cell: (cellProps: CellProps<EarnItem>) => (
 					<CellContainer>
-						<Title isNumeric={true}>{formatPercent(cellProps.row.original.apr)}</Title>
-						<Subtitle>{t('earn.incentives.est-apr')}</Subtitle>
+						<Title isNumeric={true}>{formatPercent(cellProps.row.original.apy)}</Title>
+						<Subtitle>{t('earn.incentives.est-apy')}</Subtitle>
 					</CellContainer>
 				),
 				width: 100,
+				maxWidth: 100,
 				sortable: false,
 			},
 		];

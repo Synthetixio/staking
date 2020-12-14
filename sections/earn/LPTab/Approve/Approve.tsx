@@ -1,8 +1,7 @@
 import { FC, useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useTranslation, Trans } from 'react-i18next';
-import { Svg } from 'react-optimized-image';
-import { SynthetixJS } from '@synthetixio/js';
+import Img, { Svg } from 'react-optimized-image';
 import { ethers } from 'ethers';
 
 import GasSelector from 'components/GasSelector';
@@ -11,7 +10,7 @@ import Success from 'assets/svg/app/success.svg';
 import synthetix from 'lib/synthetix';
 import Notify from 'containers/Notify';
 import { zIndex } from 'constants/ui';
-import LockSVG from 'assets/svg/app/locked.svg';
+import LockedIcon from 'assets/svg/app/locked.svg';
 import { iBtcRewards, iEthRewards, curvepoolRewards } from 'contracts';
 import {
 	FlexDivColCentered,
@@ -40,13 +39,14 @@ import {
 	GreyText,
 	LinkText,
 } from '../../common';
+import Color from 'color';
 
 type ApproveProps = {
 	synth: CurrencyKey;
 };
 
 export const getContractAndPoolAddress = (synth: CurrencyKey) => {
-	const { contracts } = synthetix.js as SynthetixJS;
+	const { contracts } = synthetix.js!;
 	if (synth === Synths.iBTC) {
 		return {
 			contract: contracts.SynthiBTC,
@@ -203,7 +203,7 @@ const Approve: FC<ApproveProps> = ({ synth }) => {
 		<>
 			<OverlayContainer title="">
 				<InnerContainer>
-					<Svg src={LockSVG} />
+					<Img src={LockedIcon} />
 					<Label>
 						<Trans
 							i18nKey="modals.approve.description"
@@ -246,8 +246,7 @@ const OverlayContainer = styled(FlexDivColCentered)`
 	position: absolute;
 	width: 575px;
 	height: 390px;
-	background: ${(props) => props.theme.colors.black};
-	opacity: 0.9;
+	background: ${(props) => Color(props.theme.colors.black).alpha(0.9).rgb().string()};
 `;
 
 const InnerContainer = styled(FlexDivColCentered)`
