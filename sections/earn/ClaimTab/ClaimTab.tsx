@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { Svg } from 'react-optimized-image';
 import { ethers } from 'ethers';
 import BigNumber from 'bignumber.js';
 
@@ -24,7 +23,6 @@ import { CryptoCurrency, Synths } from 'constants/currency';
 
 import GasSelector from 'components/GasSelector';
 
-import snxSVG from 'assets/svg/incentives/pool-snx.svg';
 import largeWaveSVG from 'assets/svg/app/large-wave.svg';
 
 import {
@@ -45,6 +43,7 @@ import {
 	StyledLink,
 	TabContainer,
 } from '../common';
+import Currency from 'components/Currency';
 
 type ClaimTabProps = {
 	tradingRewards: BigNumber;
@@ -130,7 +129,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 				<InnerContainer>
 					<ValueBoxWrapper>
 						<ValueBox>
-							<Svg src={snxSVG} />
+							<Currency.Icon currencyKey={Synths.sUSD} width="48" height="48" />
 							<Value>
 								{formatCurrency(Synths.sUSD, tradingRewards, {
 									currencyKey: Synths.sUSD,
@@ -140,7 +139,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 							<Subtext>{t('earn.incentives.options.snx.trading-rewards')}</Subtext>
 						</ValueBox>
 						<ValueBox>
-							<Svg src={snxSVG} />
+							<Currency.Icon currencyKey={CryptoCurrency.SNX} width="48" height="48" />
 							<Value>
 								{formatCurrency(CryptoCurrency.SNX, stakingRewards, {
 									currencyKey: CryptoCurrency.SNX,

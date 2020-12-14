@@ -27,6 +27,8 @@ import IncentivesTable from './IncentivesTable';
 import ClaimTab from './ClaimTab';
 import LPTab from './LPTab';
 import { StyledLink } from './common';
+import { isWalletConnectedState } from 'store/wallet';
+import { useRecoilValue } from 'recoil';
 
 export const NOT_APPLICABLE = 'n/a';
 
@@ -47,6 +49,7 @@ const Incentives: FC<IncentivesProps> = ({
 }) => {
 	const { t } = useTranslation();
 	const [activeTab, setActiveTab] = useState<number | null>(null);
+	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 
 	const claimedSNX = useClaimedStatus();
 	const useiETHPool = useIETHPoolQuery_1();
@@ -58,13 +61,13 @@ const Incentives: FC<IncentivesProps> = ({
 	const SNXRate = exchangeRatesQuery.data?.SNX ?? 0;
 
 	const iETHTVL = (useiETHPool.data?.balance ?? 0) * (useiETHPool.data?.price ?? 0);
-	const iETHAPR = (((useiETHPool.data?.distribution ?? 0) * SNXRate) / iETHTVL) * WEEKS_IN_YEAR;
+	const iETHAPY = (((useiETHPool.data?.distribution ?? 0) * SNXRate) / iETHTVL) * WEEKS_IN_YEAR;
 
 	const iBTCTVL = (useiBTCPool.data?.balance ?? 0) * (useiBTCPool.data?.price ?? 0);
-	const iBTCAPR = (((useiBTCPool.data?.distribution ?? 0) * SNXRate) / iBTCTVL) * WEEKS_IN_YEAR;
+	const iBTCAPY = (((useiBTCPool.data?.distribution ?? 0) * SNXRate) / iBTCTVL) * WEEKS_IN_YEAR;
 
 	const curveTVL = (useCurvePool.data?.balance ?? 0) * (useCurvePool.data?.price ?? 0);
-	const curveAPR =
+	const curveAPY =
 		(((useCurvePool.data?.distribution ?? 0) * SNXRate) / curveTVL) * WEEKS_IN_YEAR +
 		(useCurvePool.data?.swapAPY ?? 0) +
 		(useCurvePool.data?.rewardsAPY ?? 0);
@@ -72,76 +75,79 @@ const Incentives: FC<IncentivesProps> = ({
 	const now = useMemo(() => new Date().getTime(), []);
 
 	const incentives = useMemo(
-		() => [
-			{
-				icon: <Img src={snxSVG} />,
-				title: t('earn.incentives.options.snx.title'),
-				subtitle: t('earn.incentives.options.snx.subtitle'),
-				apr: stakingAPR,
-				tvl: useSNXLockedValue.data ?? 0,
-				staked: {
-					balance: stakedValue,
-					asset: CryptoCurrency.SNX,
-				},
-				rewards: stakingRewards.toNumber(),
-				periodStarted: currentFeePeriodStarted.getTime(),
-				periodFinish: nextFeePeriodStarts.getTime(),
-				incentivesIndex: 0,
-				claimed: claimedSNX,
-				now,
-			},
-			{
-				icon: <Img src={curveSVG} />,
-				title: t('earn.incentives.options.curve.title'),
-				subtitle: t('earn.incentives.options.curve.subtitle'),
-				apr: curveAPR,
-				tvl: curveTVL,
-				staked: {
-					balance: useCurvePool.data?.staked ?? 0,
-					asset: Synths.sUSD,
-				},
-				rewards: useCurvePool.data?.rewards ?? 0,
-				periodStarted: now - (useCurvePool.data?.duration ?? 0),
-				periodFinish: useCurvePool.data?.periodFinish ?? 0,
-				incentivesIndex: 1,
-				claimed: (useCurvePool.data?.rewards ?? 0) > 0 ? false : NOT_APPLICABLE,
-				now,
-			},
-			{
-				icon: <Img src={iETHSVG} />,
-				title: t('earn.incentives.options.ieth.title'),
-				subtitle: t('earn.incentives.options.ieth.subtitle'),
-				apr: iETHAPR,
-				tvl: iETHTVL,
-				staked: {
-					balance: useiETHPool.data?.staked ?? 0,
-					asset: Synths.iETH,
-				},
-				rewards: useiETHPool.data?.rewards ?? 0,
-				periodStarted: now - (useiETHPool.data?.duration ?? 0),
-				periodFinish: useiETHPool.data?.periodFinish ?? 0,
-				incentivesIndex: 2,
-				claimed: (useiETHPool.data?.rewards ?? 0) > 0 ? false : NOT_APPLICABLE,
-				now,
-			},
-			{
-				icon: <Img src={iBTCSVG} />,
-				title: t('earn.incentives.options.ibtc.title'),
-				subtitle: t('earn.incentives.options.ibtc.subtitle'),
-				apr: iBTCAPR,
-				tvl: iBTCTVL,
-				staked: {
-					balance: useiBTCPool.data?.staked ?? 0,
-					asset: Synths.iBTC,
-				},
-				rewards: useiBTCPool.data?.rewards ?? 0,
-				periodStarted: now - (useiBTCPool.data?.duration ?? 0),
-				periodFinish: useiBTCPool.data?.periodFinish ?? 0,
-				incentivesIndex: 3,
-				claimed: (useiBTCPool.data?.rewards ?? 0) > 0 ? false : NOT_APPLICABLE,
-				now,
-			},
-		],
+		() =>
+			isWalletConnected
+				? [
+						{
+							icon: <Img src={snxSVG} />,
+							title: t('earn.incentives.options.snx.title'),
+							subtitle: t('earn.incentives.options.snx.subtitle'),
+							apy: stakingAPR,
+							tvl: useSNXLockedValue.data ?? 0,
+							staked: {
+								balance: stakedValue,
+								asset: CryptoCurrency.SNX,
+							},
+							rewards: stakingRewards.toNumber(),
+							periodStarted: currentFeePeriodStarted.getTime(),
+							periodFinish: nextFeePeriodStarts.getTime(),
+							incentivesIndex: 0,
+							claimed: claimedSNX,
+							now,
+						},
+						{
+							icon: <Img src={curveSVG} />,
+							title: t('earn.incentives.options.curve.title'),
+							subtitle: t('earn.incentives.options.curve.subtitle'),
+							apy: curveAPY,
+							tvl: curveTVL,
+							staked: {
+								balance: useCurvePool.data?.staked ?? 0,
+								asset: Synths.sUSD,
+							},
+							rewards: useCurvePool.data?.rewards ?? 0,
+							periodStarted: now - (useCurvePool.data?.duration ?? 0),
+							periodFinish: useCurvePool.data?.periodFinish ?? 0,
+							incentivesIndex: 1,
+							claimed: (useCurvePool.data?.rewards ?? 0) > 0 ? false : NOT_APPLICABLE,
+							now,
+						},
+						{
+							icon: <Img src={iETHSVG} />,
+							title: t('earn.incentives.options.ieth.title'),
+							subtitle: t('earn.incentives.options.ieth.subtitle'),
+							apy: iETHAPY,
+							tvl: iETHTVL,
+							staked: {
+								balance: useiETHPool.data?.staked ?? 0,
+								asset: Synths.iETH,
+							},
+							rewards: useiETHPool.data?.rewards ?? 0,
+							periodStarted: now - (useiETHPool.data?.duration ?? 0),
+							periodFinish: useiETHPool.data?.periodFinish ?? 0,
+							incentivesIndex: 2,
+							claimed: (useiETHPool.data?.rewards ?? 0) > 0 ? false : NOT_APPLICABLE,
+							now,
+						},
+						{
+							icon: <Img src={iBTCSVG} />,
+							title: t('earn.incentives.options.ibtc.title'),
+							subtitle: t('earn.incentives.options.ibtc.subtitle'),
+							apy: iBTCAPY,
+							tvl: iBTCTVL,
+							staked: {
+								balance: useiBTCPool.data?.staked ?? 0,
+								asset: Synths.iBTC,
+							},
+							rewards: useiBTCPool.data?.rewards ?? 0,
+							periodStarted: now - (useiBTCPool.data?.duration ?? 0),
+							periodFinish: useiBTCPool.data?.periodFinish ?? 0,
+							incentivesIndex: 3,
+							claimed: (useiBTCPool.data?.rewards ?? 0) > 0 ? false : NOT_APPLICABLE,
+							now,
+						},
+				  ]
+				: [],
 		[
 			stakingAPR,
 			stakedValue,
@@ -149,11 +155,11 @@ const Incentives: FC<IncentivesProps> = ({
 			nextFeePeriodStarts,
 			stakingRewards,
 			claimedSNX,
-			curveAPR,
+			curveAPY,
 			curveTVL,
-			iBTCAPR,
+			iBTCAPY,
 			iBTCTVL,
-			iETHAPR,
+			iETHAPY,
 			iETHTVL,
 			useiETHPool.data,
 			useCurvePool.data,
@@ -161,8 +167,10 @@ const Incentives: FC<IncentivesProps> = ({
 			currentFeePeriodStarted,
 			now,
 			t,
+			isWalletConnected,
 		]
 	);
+
 	return (
 		<FlexDiv>
 			<IncentivesTable

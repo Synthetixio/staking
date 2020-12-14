@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { Svg } from 'react-optimized-image';
 
-import { SynthetixJS } from '@synthetixio/js';
 import synthetix from 'lib/synthetix';
 
 import SNXLogo from 'assets/svg/currencies/crypto/SNX.svg';
@@ -65,7 +64,7 @@ const TokenSaleTab: React.FC = () => {
 			setTxModalOpen(true);
 			const {
 				contracts: { SynthetixEscrow },
-			} = synthetix.js as SynthetixJS;
+			} = synthetix.js!;
 
 			let transaction: ethers.ContractTransaction = await SynthetixEscrow.vest({
 				gasPrice: normalizedGasPrice(gasPrice),
