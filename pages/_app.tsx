@@ -20,6 +20,8 @@ import SystemStatus from 'sections/shared/SystemStatus';
 import 'styles/main.css';
 import '@reach/dialog/styles.css';
 import '@reach/tabs/styles.css';
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
 
 import '../i18n';
 

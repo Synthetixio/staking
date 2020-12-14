@@ -80,8 +80,8 @@
 			"title": "Minting & Burning",
 			"subtitle": "All Synths need to be backed by staked SNX at a Target Collateralisation Ratio, configurable by community governance. SNX stakers need to manage their own ratio to be above this figure, which they can do by burning sUSD to increase their ratio or minting sUSD to reduce it. If they do this, they can collect weekly rewards."
 		},
-		"debt": {
-			"title": "Debt",
+		"risks": {
+			"title": "What are the risks?",
 			"subtitle": "All SNX stakers create a ‘debt’ when they stake. Their debt begins as the amount of sUSD they initially mint, and fluctuates according to gains or losses made by other Synth holders. Any time anyone holds a Synth that appreciates in value, that gain is distributed proportionally between all the staked SNX holders’ debts. A staker must pay off their debt before they can unlock their staked SNX."
 		}
 	},
