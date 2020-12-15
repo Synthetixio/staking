@@ -1,6 +1,6 @@
 import { FC, useState, ReactNode, useEffect } from 'react';
 import styled from 'styled-components';
-import { useTranslation, Trans } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { ethers } from 'ethers';
 import { Svg } from 'react-optimized-image';
 
@@ -14,6 +14,8 @@ import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import { getGasEstimateForTransaction } from 'utils/transactions';
 import { normalizedGasPrice, normalizeGasLimit } from 'utils/network';
 import Etherscan from 'containers/Etherscan';
+import Connector from 'containers/Connector';
+import { curvepoolRewards } from 'contracts';
 
 import {
 	ExternalLink,
@@ -43,31 +45,37 @@ import {
 	LinkText,
 } from '../../common';
 
-type StakeTabProps = {
-	icon: ReactNode;
-	isStake: boolean;
-	synth: CurrencyKey;
-	userBalance: number;
-};
-
-const getContract = (synth: CurrencyKey) => {
+const getContract = (synth: CurrencyKey, provider: ethers.providers.Provider | null) => {
 	const { contracts } = synthetix.js!;
 	if (synth === Synths.iBTC) {
 		return contracts.StakingRewardsiBTC;
 	} else if (synth === Synths.iETH) {
 		return contracts.StakingRewardsiETH;
-	} else if (synth === Synths.sUSD) {
-		return contracts.StakingRewardssUSDCurve;
+	} else if (synth === Synths.sUSD && provider != null) {
+		return new ethers.Contract(
+			curvepoolRewards.address,
+			curvepoolRewards.abi,
+			provider as ethers.providers.Provider
+		);
 	} else {
-		throw new Error('unrecognizable asset');
+		throw new Error('unrecognizable asset or provider not set');
 	}
 };
 
-const StakeTab: FC<StakeTabProps> = ({ icon, synth, isStake, userBalance }) => {
+type StakeTabProps = {
+	icon: ReactNode;
+	isStake: boolean;
+	synth: CurrencyKey;
+	userBalance: number;
+	staked: number;
+};
+
+const StakeTab: FC<StakeTabProps> = ({ icon, synth, isStake, userBalance, staked }) => {
 	const { t } = useTranslation();
 	const [amount, setAmount] = useState<number | null>(null);
 	const { monitorHash } = Notify.useContainer();
 	const { etherscanInstance } = Etherscan.useContainer();
+	const { provider } = Connector.useContainer();
 	const [gasLimitEstimate, setGasLimitEstimate] = useState<number | null>(null);
 	const [gasPrice, setGasPrice] = useState<number>(0);
 	const [error, setError] = useState<string | null>(null);
@@ -83,7 +91,7 @@ const StakeTab: FC<StakeTabProps> = ({ icon, synth, isStake, userBalance }) => {
 			if (synthetix && synthetix.js && amount != null && amount > 0) {
 				try {
 					setError(null);
-					const contract = getContract(synth);
+					const contract = getContract(synth, provider);
 					let gasEstimate = await getGasEstimateForTransaction(
 						[synthetix.js.utils.parseEther(amount.toString())],
 						isStake ? contract.estimateGas.stake : contract.estimateGas.withdraw
@@ -103,12 +111,12 @@ const StakeTab: FC<StakeTabProps> = ({ icon, synth, isStake, userBalance }) => {
 			try {
 				setError(null);
 				setTxModalOpen(true);
-				const contract = getContract(synth);
+				const contract = getContract(synth, provider);
 
 				const formattedStakeAmount = synthetix.js.utils.parseEther(amount.toString());
 				const gasLimit = await getGasEstimateForTransaction(
 					[formattedStakeAmount],
-					isStake ? contract.estimateGas.stake : contract.estimateGas.unstake
+					isStake ? contract.estimateGas.stake : contract.estimateGas.withdraw
 				);
 				let transaction: ethers.ContractTransaction;
 				if (isStake) {
@@ -180,16 +188,23 @@ const StakeTab: FC<StakeTabProps> = ({ icon, synth, isStake, userBalance }) => {
 			<TxState
 				isStakingPanel={true}
 				description={null}
-				title={t('earn.actions.claim.success')}
+				title={isStake ? t('earn.actions.stake.success') : t('earn.actions.unstake.success')}
 				content={
 					<FlexDivColCentered>
 						<Svg src={Success} />
-						<GreyHeader>{t('earn.actions.claim.claiming')}</GreyHeader>
+						<GreyHeader>
+							{isStake ? t('earn.actions.stake.staked') : t('earn.actions.unstake.withdrew')}
+						</GreyHeader>
 						<WhiteSubheader>
-							{t('earn.actions.claim.amount', {
-								amount,
-								asset: CryptoCurrency.SNX,
-							})}
+							{isStake
+								? t('earn.actions.stake.amount', {
+										amount,
+										asset: CryptoCurrency.SNX,
+								  })
+								: t('earn.actions.unstake.amount', {
+										amount,
+										asset: CryptoCurrency.SNX,
+								  })}
 						</WhiteSubheader>
 						<Divider />
 						<ButtonSpacer isStakingPanel={true}>
@@ -225,9 +240,9 @@ const StakeTab: FC<StakeTabProps> = ({ icon, synth, isStake, userBalance }) => {
 					/>
 					<MaxButton
 						variant="primary"
-						disabled={userBalance === 0}
+						disabled={isStake ? userBalance === 0 : staked === 0}
 						onClick={() => {
-							setAmount(userBalance);
+							setAmount(isStake ? userBalance : staked);
 						}}
 					>
 						{t('earn.actions.max')}
@@ -235,14 +250,16 @@ const StakeTab: FC<StakeTabProps> = ({ icon, synth, isStake, userBalance }) => {
 				</InputSection>
 				<TotalValueWrapper>
 					<Subtext>{t('earn.actions.available')}</Subtext>
-					<StyledValue>{formatCryptoCurrency(userBalance, { currencyKey: synth })}</StyledValue>
+					<StyledValue>
+						{formatCryptoCurrency(isStake ? userBalance : staked, { currencyKey: synth })}
+					</StyledValue>
 				</TotalValueWrapper>
 				<PaddedButton
 					variant="primary"
 					onClick={handleStake}
 					disabled={
 						synthetix && synthetix.js && amount != null && amount > 0
-							? (amount ?? 0) > userBalance
+							? (amount ?? 0) > (isStake ? userBalance : staked)
 								? true
 								: false
 							: true

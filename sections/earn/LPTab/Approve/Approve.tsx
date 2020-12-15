@@ -12,7 +12,7 @@ import Notify from 'containers/Notify';
 import Etherscan from 'containers/Etherscan';
 import { zIndex } from 'constants/ui';
 import LockedIcon from 'assets/svg/app/locked.svg';
-import { iBtcRewards, iEthRewards, curvepoolRewards } from 'contracts';
+import { curvepoolRewards } from 'contracts';
 import {
 	ExternalLink,
 	FlexDivColCentered,
@@ -53,12 +53,12 @@ export const getContractAndPoolAddress = (synth: CurrencyKey) => {
 	if (synth === Synths.iBTC) {
 		return {
 			contract: contracts.SynthiBTC,
-			poolAddress: iBtcRewards.address,
+			poolAddress: contracts.StakingRewardsiBTC.address,
 		};
 	} else if (synth === Synths.iETH) {
 		return {
 			contract: contracts.SynthiETH,
-			poolAddress: iEthRewards.address,
+			poolAddress: contracts.StakingRewardsiETH.address,
 		};
 	} else if (synth === Synths.sUSD) {
 		return {
