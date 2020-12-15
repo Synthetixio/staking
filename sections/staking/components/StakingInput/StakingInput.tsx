@@ -29,7 +29,7 @@ import {
 } from 'styles/common';
 import { InputContainer, InputLocked } from '../common';
 import { Transaction } from 'constants/network';
-import { formatCurrency } from 'utils/formatters/number';
+import { formatCurrency, toBigNumber } from 'utils/formatters/number';
 import { getStakingAmount } from '../helper';
 import { CryptoCurrency, Synths } from 'constants/currency';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
@@ -68,7 +68,13 @@ const StakingInput: React.FC<StakingInputProps> = ({
 	transactionState,
 	setTransactionState,
 }) => {
-	const { targetCRatio, SNXRate } = useStakingCalculations();
+	const {
+		targetCRatio,
+		SNXRate,
+		debtBalance,
+		issuableSynths,
+		currentCRatio,
+	} = useStakingCalculations();
 	const [stakingCurrencyKey] = useState<string>(CryptoCurrency.SNX);
 	const [synthCurrencyKey] = useState<string>(Synths.sUSD);
 
@@ -131,8 +137,29 @@ const StakingInput: React.FC<StakingInputProps> = ({
 	}
 
 	if (transactionState === Transaction.SUCCESS) {
-		return <ActionCompleted isMint={isMint} setTransactionState={setTransactionState} />;
+		return (
+			<ActionCompleted
+				isMint={isMint}
+				setTransactionState={setTransactionState}
+				from={stakeInfo(inputValue)}
+				to={formattedInput}
+				hash={txHash as string}
+			/>
+		);
 	}
+
+	const equivalentSNXAmount = useMemo(() => {
+		const calculatedTargetBurn = Math.max(debtBalance.minus(issuableSynths).toNumber(), 0);
+		if (
+			!isMint &&
+			currentCRatio.isGreaterThan(targetCRatio) &&
+			inputValue.isLessThanOrEqualTo(calculatedTargetBurn)
+		) {
+			return stakeInfo(toBigNumber(0));
+		} else {
+			return stakeInfo(inputValue);
+		}
+	}, [inputValue, isMint, debtBalance, issuableSynths, targetCRatio, currentCRatio]);
 
 	return (
 		<>
@@ -155,7 +182,7 @@ const StakingInput: React.FC<StakingInputProps> = ({
 								? t('staking.actions.mint.info.staking')
 								: t('staking.actions.burn.info.unstaking')}
 						</RowTitle>
-						<RowValue>{stakeInfo(inputValue)}</RowValue>
+						<RowValue>{equivalentSNXAmount}</RowValue>
 					</DataRow>
 					<DataRow>
 						<GasSelector gasLimitEstimate={gasLimitEstimate} setGasPrice={setGasPrice} />

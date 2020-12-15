@@ -93,7 +93,7 @@ const BurnTab: React.FC = () => {
 
 	useEffect(() => {
 		const getGasLimitEstimate = async () => {
-			if (synthetix && synthetix.js) {
+			if (synthetix && synthetix.js && amountToBurn.length > 0) {
 				try {
 					setError(null);
 					const {
