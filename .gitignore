@@ -31,3 +31,6 @@ yarn-error.log*
 .env.production.local
 
 lint-results.sarif
+
+tests/e2e/screenshots
+tests/e2e/videos
