@@ -306,14 +306,18 @@
 				"stake-button": "STAKE {{asset}}",
 				"staking": "STAKING",
 				"amount": "{{amount}} {{asset}}",
-				"in-progress": "Staking in progress"
+				"in-progress": "Staking in progress",
+				"success": "Staking complete!",
+				"staked": "STAKED"
 			},
 			"unstake": {
 				"title": "UNSTAKE",
 				"unstaking": "WITHDRAWING",
 				"unstake-button": "UNSTAKE {{asset}}",
 				"amount": "{{amount}} {{asset}}",
-				"in-progress": "Withdrawal in progress"
+				"in-progress": "Withdrawal in progress",
+				"success": "Withdrawal complete!",
+				"withdrew": "WITHDREW"
 			},
 			"rewards": {
 				"title": "REWARDS",

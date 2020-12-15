@@ -216,6 +216,7 @@ const Incentives: FC<IncentivesProps> = ({
 							allowance={useCurvePool.data?.allowance ?? null}
 							icon={incentives[1].icon}
 							tokenRewards={incentives[1].rewards}
+							staked={incentives[1].staked.balance}
 							title={
 								<Trans
 									i18nKey="earn.incentives.options.snx.description"
@@ -231,6 +232,7 @@ const Incentives: FC<IncentivesProps> = ({
 							allowance={useiETHPool.data?.allowance ?? null}
 							icon={incentives[2].icon}
 							tokenRewards={incentives[2].rewards}
+							staked={incentives[2].staked.balance}
 							title={
 								<Trans
 									i18nKey="earn.incentives.options.snx.description"
@@ -246,6 +248,7 @@ const Incentives: FC<IncentivesProps> = ({
 							allowance={useiBTCPool.data?.allowance ?? null}
 							icon={incentives[3].icon}
 							tokenRewards={incentives[3].rewards}
+							staked={incentives[3].staked.balance}
 							title={
 								<Trans
 									i18nKey="earn.incentives.options.snx.description"

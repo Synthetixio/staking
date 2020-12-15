@@ -45,9 +45,18 @@ type LPTabProps = {
 	icon: ReactNode;
 	allowance: number | null;
 	userBalance: number;
+	staked: number;
 };
 
-const LPTab: FC<LPTabProps> = ({ icon, synth, title, tokenRewards, allowance, userBalance }) => {
+const LPTab: FC<LPTabProps> = ({
+	icon,
+	synth,
+	title,
+	tokenRewards,
+	allowance,
+	userBalance,
+	staked,
+}) => {
 	const { t } = useTranslation();
 	const { monitorHash } = Notify.useContainer();
 	const [showApproveOverlayModal, setShowApproveOverlayModal] = useState<boolean>(false);
@@ -74,6 +83,7 @@ const LPTab: FC<LPTabProps> = ({ icon, synth, title, tokenRewards, allowance, us
 			icon,
 			synth,
 			userBalance,
+			staked,
 		};
 
 		return [
@@ -93,10 +103,10 @@ const LPTab: FC<LPTabProps> = ({ icon, synth, title, tokenRewards, allowance, us
 	}, [t, icon, synth, userBalance]);
 
 	useEffect(() => {
-		if (allowance === 0) {
+		if (allowance === 0 && userBalance > 0) {
 			setShowApproveOverlayModal(true);
 		}
-	}, [allowance]);
+	}, [allowance, userBalance]);
 
 	const handleClaim = async () => {
 		if (synthetix && synthetix.js) {
