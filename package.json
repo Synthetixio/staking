@@ -17,7 +17,7 @@
 		"@reach/dialog": "0.11.0",
 		"@reach/tabs": "0.11.2",
 		"@synthetixio/assets": "2.0.5",
-		"@synthetixio/js": "^2.35.0-ovm",
+		"@synthetixio/js": "2.35.0-ovm",
 		"@tippyjs/react": "4.1.0",
 		"bignumber.js": "9.0.0",
 		"bnc-notify": "1.5.0",
@@ -63,7 +63,7 @@
 		"@types/react-datepicker": "3.1.1",
 		"@types/react-responsive": "8.0.2",
 		"@types/react-select": "3.0.19",
-		"@types/react-slick": "^0.23.4",
+		"@types/react-slick": "0.23.4",
 		"@types/react-table": "7.0.22",
 		"@types/styled-components": "5.1.2",
 		"@typescript-eslint/eslint-plugin": "4.6.0",
@@ -92,6 +92,6 @@
 		"webp-loader": "0.6.0"
 	},
 	"resolutions": {
-		"webpack": "^5.0.0-beta.30"
+		"webpack": "5.0.0-beta.30"
 	}
 }

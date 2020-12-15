@@ -1,13 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { ethers } from 'ethers';
 import BigNumber from 'bignumber.js';
+import { Svg } from 'react-optimized-image';
 
+import { ExternalLink } from 'styles/common';
 import synthetix from 'lib/synthetix';
+import PendingConfirmation from 'assets/svg/app/pending-confirmation.svg';
+import Success from 'assets/svg/app/success.svg';
 
 import Etherscan from 'containers/Etherscan';
-import Connector from 'containers/Connector';
 import Notify from 'containers/Notify';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
@@ -20,6 +23,17 @@ import { normalizedGasPrice, normalizeGasLimit } from 'utils/network';
 
 import { Transaction } from 'constants/network';
 import { CryptoCurrency, Synths } from 'constants/currency';
+import TxState from 'sections/earn/TxState';
+
+import {
+	GreyHeader,
+	Divider,
+	VerifyButton,
+	DismissButton,
+	ButtonSpacer,
+	GreyText,
+	LinkText,
+} from '../common';
 
 import GasSelector from 'components/GasSelector';
 
@@ -57,7 +71,6 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 	const { monitorHash } = Notify.useContainer();
 	const { etherscanInstance } = Etherscan.useContainer();
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
-	const { notify } = Connector.useContainer();
 	const [gasLimitEstimate, setGasLimitEstimate] = useState<number | null>(null);
 	const [gasPrice, setGasPrice] = useState<number>(0);
 	const [error, setError] = useState<string | null>(null);
@@ -66,6 +79,8 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 	const [transactionState, setTransactionState] = useState<Transaction>(Transaction.PRESUBMIT);
 	const [txHash, setTxHash] = useState<string | null>(null);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
+	const link =
+		etherscanInstance != null && txHash != null ? etherscanInstance.txLink(txHash) : undefined;
 
 	useEffect(() => {
 		const getGasLimitEstimate = async () => {
@@ -90,34 +105,88 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 		getGasLimitEstimate();
 	}, []);
 
-	const handleClaim = async () => {
-		try {
-			setError(null);
-			setTxModalOpen(true);
-			const {
-				contracts: { FeePool },
-			} = synthetix.js!;
+	const handleClaim = useCallback(() => {
+		async function claim() {
+			try {
+				setError(null);
+				setTxModalOpen(true);
+				const {
+					contracts: { FeePool },
+				} = synthetix.js!;
 
-			const gasLimit = await getGasEstimateForTransaction([], FeePool.estimateGas.claimFees);
-			const transaction: ethers.ContractTransaction = await FeePool.claimFees({
-				gasPrice: normalizedGasPrice(gasPrice),
-				gasLimit,
-			});
-
-			if (transaction) {
-				setTxHash(transaction.hash);
-				setTransactionState(Transaction.WAITING);
-				monitorHash({
-					txHash: transaction.hash,
-					onTxConfirmed: () => setTransactionState(Transaction.SUCCESS),
+				const gasLimit = await getGasEstimateForTransaction([], FeePool.estimateGas.claimFees);
+				const transaction: ethers.ContractTransaction = await FeePool.claimFees({
+					gasPrice: normalizedGasPrice(gasPrice),
+					gasLimit,
 				});
-				setTxModalOpen(false);
+
+				if (transaction) {
+					setTxHash(transaction.hash);
+					setTransactionState(Transaction.WAITING);
+					monitorHash({
+						txHash: transaction.hash,
+						onTxConfirmed: () => setTransactionState(Transaction.SUCCESS),
+					});
+					setTxModalOpen(false);
+				}
+			} catch (e) {
+				setTransactionState(Transaction.PRESUBMIT);
+				setError(e.message);
 			}
-		} catch (e) {
-			setTransactionState(Transaction.PRESUBMIT);
-			setError(e.message);
 		}
-	};
+		claim();
+	}, [synthetix.js]);
+
+	if (transactionState === Transaction.WAITING) {
+		return (
+			<TxState
+				description={null}
+				title={t('earn.actions.claim.in-progress')}
+				content={
+					<FlexDivColCentered>
+						<Svg src={PendingConfirmation} />
+						<GreyHeader>{t('earn.actions.claim.claiming')}</GreyHeader>
+						<Divider />
+						<GreyText>{t('earn.actions.tx.notice')}</GreyText>
+						<ExternalLink href={link}>
+							<LinkText>{t('earn.actions.tx.link')}</LinkText>
+						</ExternalLink>
+					</FlexDivColCentered>
+				}
+			/>
+		);
+	}
+
+	if (transactionState === Transaction.SUCCESS) {
+		return (
+			<TxState
+				description={null}
+				title={t('earn.actions.claim.success')}
+				content={
+					<FlexDivColCentered>
+						<Svg src={Success} />
+						<GreyHeader>{t('earn.actions.claim.claimed')}</GreyHeader>
+						<Divider />
+						<ButtonSpacer>
+							{link ? (
+								<ExternalLink href={link}>
+									<VerifyButton>{t('earn.actions.tx.verify')}</VerifyButton>
+								</ExternalLink>
+							) : null}
+							<DismissButton
+								variant="secondary"
+								onClick={() => {
+									setTransactionState(Transaction.PRESUBMIT);
+								}}
+							>
+								{t('earn.actions.tx.dismiss')}
+							</DismissButton>
+						</ButtonSpacer>
+					</FlexDivColCentered>
+				}
+			/>
+		);
+	}
 
 	return (
 		<>
