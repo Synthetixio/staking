@@ -77,6 +77,9 @@ export const WizardGridBox: FC<WizardGridBoxProps> = ({ gridLocations }) => {
 };
 
 const SliderContainer = styled.div`
+	padding-bottom: 50px;
+	padding-top: 50px;
+
 	.slick-dots {
 		li {
 			margin: 0 2px;
@@ -107,7 +110,6 @@ const SliderContainer = styled.div`
 `;
 const StepBox = styled.div`
 	text-align: center;
-	padding-top: 50px;
 	margin: 0px 48px;
 `;
 const IconContainer = styled(FlexDivCentered)`
