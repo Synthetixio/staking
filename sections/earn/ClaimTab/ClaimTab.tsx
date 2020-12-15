@@ -5,7 +5,7 @@ import { ethers } from 'ethers';
 import BigNumber from 'bignumber.js';
 import { Svg } from 'react-optimized-image';
 
-import { ExternalLink } from 'styles/common';
+import { ExternalLink, FlexDiv } from 'styles/common';
 import synthetix from 'lib/synthetix';
 import PendingConfirmation from 'assets/svg/app/pending-confirmation.svg';
 import Success from 'assets/svg/app/success.svg';
@@ -27,6 +27,7 @@ import TxState from 'sections/earn/TxState';
 
 import {
 	GreyHeader,
+	WhiteSubheader,
 	Divider,
 	VerifyButton,
 	DismissButton,
@@ -145,7 +146,26 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 				content={
 					<FlexDivColCentered>
 						<Svg src={PendingConfirmation} />
-						<GreyHeader>{t('earn.actions.claim.claiming')}</GreyHeader>
+						<FlexDiv>
+							<StyledFlexDivColCentered>
+								<GreyHeader>{t('earn.actions.claim.claiming')}</GreyHeader>
+								<WhiteSubheader>
+									{t('earn.actions.claim.amount', {
+										amount: tradingRewards,
+										asset: Synths.sUSD,
+									})}
+								</WhiteSubheader>
+							</StyledFlexDivColCentered>
+							<StyledFlexDivColCentered>
+								<GreyHeader>{t('earn.actions.claim.claiming')}</GreyHeader>
+								<WhiteSubheader>
+									{t('earn.actions.claim.amount', {
+										amount: stakingRewards,
+										asset: CryptoCurrency.SNX,
+									})}
+								</WhiteSubheader>
+							</StyledFlexDivColCentered>
+						</FlexDiv>
 						<Divider />
 						<GreyText>{t('earn.actions.tx.notice')}</GreyText>
 						<ExternalLink href={link}>
@@ -165,7 +185,26 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 				content={
 					<FlexDivColCentered>
 						<Svg src={Success} />
-						<GreyHeader>{t('earn.actions.claim.claimed')}</GreyHeader>
+						<FlexDiv>
+							<StyledFlexDivColCentered>
+								<GreyHeader>{t('earn.actions.claim.claimed')}</GreyHeader>
+								<WhiteSubheader>
+									{t('earn.actions.claim.amount', {
+										amount: tradingRewards,
+										asset: Synths.sUSD,
+									})}
+								</WhiteSubheader>
+							</StyledFlexDivColCentered>
+							<StyledFlexDivColCentered>
+								<GreyHeader>{t('earn.actions.claim.claimed')}</GreyHeader>
+								<WhiteSubheader>
+									{t('earn.actions.claim.amount', {
+										amount: stakingRewards,
+										asset: CryptoCurrency.SNX,
+									})}
+								</WhiteSubheader>
+							</StyledFlexDivColCentered>
+						</FlexDiv>
 						<Divider />
 						<ButtonSpacer>
 							{link ? (
@@ -276,6 +315,13 @@ const ValueBox = styled(FlexDivColCentered)`
 
 const PaddedButton = styled(StyledButton)`
 	margin-top: 20px;
+`;
+
+const StyledFlexDivColCentered = styled(FlexDivColCentered)`
+	padding: 10px 30px;
+	&:first-child {
+		border-right: 1px solid ${(props) => props.theme.colors.grayBlue};
+	}
 `;
 
 export default ClaimTab;

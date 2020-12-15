@@ -92,6 +92,6 @@
 		"webp-loader": "0.6.0"
 	},
 	"resolutions": {
-		"webpack": "5.0.0-beta.30"
+		"webpack": "^5.0.0-beta.30"
 	}
 }
