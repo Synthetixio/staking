@@ -17,14 +17,14 @@
 			}
 		},
 		"approve": {
-			"description": "You must approve your {{synth}} tokens before proceeding. <0>Learn more.<0>",
-			"button": "APPROVE {{synth}}"
+			"description": "You must approve your {{stakedAsset}} tokens before proceeding. <0>Learn more.<0>",
+			"button": "APPROVE {{stakedAsset}}"
 		},
 		"confirm-transaction": {
 			"title": "Confirm Transaction",
 			"approve": {
 				"approving": "APPROVING",
-				"contract": "{{synth}} CONTRACT"
+				"contract": "{{stakedAsset}} CONTRACT"
 			},
 			"claiming": {
 				"claiming": "CLAIMING"
@@ -289,7 +289,7 @@
 				"waiting": "Approval in progress",
 				"success": "Approval complete!",
 				"approving": "APPROVING",
-				"contract": "{{synth}} CONTRACT"
+				"contract": "{{stakedAsset}} CONTRACT"
 			},
 			"claim": {
 				"title": "CLAIM",
@@ -301,7 +301,9 @@
 				"low-ratio": "ADD COLLATERAL TO CLAIM",
 				"nothing-to-claim": "NOTHING TO CLAIM",
 				"claiming": "CLAIMING",
+				"claimed": "CLAIMED",
 				"amount": "{{amount}} {{asset}}",
+				"in-progress": "Claiming in progress!",
 				"success": "Claiming complete!"
 			},
 			"lp": {
@@ -311,7 +313,7 @@
 			},
 			"stake": {
 				"title": "STAKE",
-				"stake-button": "STAKE {{asset}}",
+				"stake-button": "STAKE {{stakedAsset}}",
 				"staking": "STAKING",
 				"amount": "{{amount}} {{asset}}",
 				"in-progress": "Staking in progress",
@@ -321,7 +323,7 @@
 			"unstake": {
 				"title": "UNSTAKE",
 				"unstaking": "WITHDRAWING",
-				"unstake-button": "UNSTAKE {{asset}}",
+				"unstake-button": "UNSTAKE {{stakedAsset}}",
 				"amount": "{{amount}} {{asset}}",
 				"in-progress": "Withdrawal in progress",
 				"success": "Withdrawal complete!",

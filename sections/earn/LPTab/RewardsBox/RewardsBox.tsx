@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import synthetix from 'lib/synthetix';
 import smallWaveSVG from 'assets/svg/app/small-wave.svg';
 import snxSVG from 'assets/svg/incentives/pool-snx.svg';
+import Connector from 'containers/Connector';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { formatCurrency, formatFiatCurrency, toBigNumber } from 'utils/formatters/number';
@@ -24,13 +25,13 @@ import {
 } from 'styles/common';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 
-import { getContractAndPoolAddress } from '../Approve/Approve';
+import { getContract } from '../StakeTab/StakeTab';
 import { StyledButton } from '../../common';
 
 type RewardsBoxProps = {
 	tokenRewards: number;
 	SNXRate: number;
-	synth: CurrencyKey;
+	stakedAsset: CurrencyKey;
 	handleClaim: () => void;
 	setClaimGasPrice: (num: number) => void;
 	claimTxModalOpen: boolean;
@@ -42,7 +43,7 @@ type RewardsBoxProps = {
 const RewardsBox: FC<RewardsBoxProps> = ({
 	tokenRewards,
 	SNXRate,
-	synth,
+	stakedAsset,
 	handleClaim,
 	setClaimGasPrice,
 	claimTxModalOpen,
@@ -51,6 +52,7 @@ const RewardsBox: FC<RewardsBoxProps> = ({
 	setClaimError,
 }) => {
 	const { t } = useTranslation();
+	const { provider } = Connector.useContainer();
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
 	const [gasLimitEstimate, setGasLimitEstimate] = useState<number | null>(null);
 
@@ -59,7 +61,7 @@ const RewardsBox: FC<RewardsBoxProps> = ({
 			if (synthetix && synthetix.js) {
 				try {
 					setClaimError(null);
-					const { contract } = getContractAndPoolAddress(synth);
+					const contract = getContract(stakedAsset, provider);
 					let gasEstimate = await getGasEstimateForTransaction([], contract.estimateGas.getReward);
 					setGasLimitEstimate(normalizeGasLimit(Number(gasEstimate)));
 				} catch (error) {
@@ -69,7 +71,7 @@ const RewardsBox: FC<RewardsBoxProps> = ({
 			}
 		};
 		getGasLimitEstimate();
-	}, [synth]);
+	}, [stakedAsset, provider]);
 
 	return (
 		<>
@@ -101,9 +103,9 @@ const RewardsBox: FC<RewardsBoxProps> = ({
 					content={
 						<ModalContent>
 							<ModalItem>
-								<ModalItemTitle>{t('modals.confirm-transaction.claiming.claiming')}</ModalItemTitle>
+								<ModalItemTitle>{t('earn.actions.claim.claiming')}</ModalItemTitle>
 								<ModalItemText>
-									{t('modals.confirm-transaction.claiming.amount', {
+									{t('earn.actions.claim.amount', {
 										amount: tokenRewards,
 										asset: CryptoCurrency.SNX,
 									})}
