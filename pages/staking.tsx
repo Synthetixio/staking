@@ -6,14 +6,17 @@ import styled from 'styled-components';
 import Main from 'sections/staking';
 import StatBox from 'components/StatBox';
 import { LineSpacer, StatsSection } from 'styles/common';
-import { formatFiatCurrency, formatPercent } from 'utils/formatters/number';
+import { formatFiatCurrency, formatPercent, toBigNumber } from 'utils/formatters/number';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import { useRecoilValue } from 'recoil';
+import { isWalletConnectedState } from 'store/wallet';
 
 const StakingPage = () => {
 	const { t } = useTranslation();
 	const { stakedCollateralValue, percentageCurrentCRatio, debtBalance } = useStakingCalculations();
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
+	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 
 	return (
 		<>
@@ -23,20 +26,28 @@ const StakingPage = () => {
 			<StatsSection>
 				<StakedValue
 					title={t('common.stat-box.staked-value')}
-					value={formatFiatCurrency(getPriceAtCurrentRate(stakedCollateralValue), {
-						sign: selectedPriceCurrency.sign,
-					})}
+					value={formatFiatCurrency(
+						getPriceAtCurrentRate(
+							stakedCollateralValue.isNaN() ? toBigNumber(0) : stakedCollateralValue
+						),
+						{
+							sign: selectedPriceCurrency.sign,
+						}
+					)}
 				/>
 				<CRatio
 					title={t('common.stat-box.c-ratio')}
-					value={formatPercent(percentageCurrentCRatio)}
+					value={isWalletConnected ? formatPercent(percentageCurrentCRatio) : '-%'}
 					size="lg"
 				/>
 				<ActiveDebt
 					title={t('common.stat-box.active-debt')}
-					value={formatFiatCurrency(getPriceAtCurrentRate(debtBalance), {
-						sign: selectedPriceCurrency.sign,
-					})}
+					value={formatFiatCurrency(
+						getPriceAtCurrentRate(debtBalance.isNaN() ? toBigNumber(0) : debtBalance),
+						{
+							sign: selectedPriceCurrency.sign,
+						}
+					)}
 				/>
 			</StatsSection>
 			<LineSpacer />

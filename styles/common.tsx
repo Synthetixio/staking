@@ -229,6 +229,7 @@ export const ModalContent = styled.div`
 	justify-content: center;
 	grid-auto-flow: column;
 	align-items: flex-end;
+	border-bottom: 1px solid ${(props) => props.theme.colors.grayBlue};
 `;
 
 export const ModalItem = styled.div`
@@ -286,6 +287,11 @@ export const resetHeadingMixin = `
 export const IconButton = styled.button`
 	${resetButtonCSS};
 	background: transparent;
+`;
+
+export const boxShadowBlue = css`
+	box-shadow: 0px 0px 15px ${(props) => props.theme.colors.blue};
+	border: 1px solid ${(props) => props.theme.colors.blue};
 `;
 
 export const Tooltip = styled(Tippy)`

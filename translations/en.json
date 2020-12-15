@@ -164,7 +164,7 @@
 					"etherscan": "View on Etherscan"
 				},
 				"completed": {
-					"title": "Put your {{synth}} to work",
+					"title": "Success! Now put your {{synth}} to work:",
 					"curve": "Curve Finance {{synth}} LP Token Rewards",
 					"est-apy": "Est APY",
 					"subtext": "There are various Liquidity Providing incentives interacting with different DeFi products for you to choose from",
@@ -200,10 +200,17 @@
 				},
 				"in-progress": {
 					"title": "Burning in progress",
-					"unstaking": "UNSTAKING",
-					"burning": "BURNING",
+					"unstaking": "Unstaking",
+					"burning": "Burning",
 					"subtext": "Waiting for the blockchain to confirm your transaction",
 					"etherscan": "View on Etherscan"
+				},
+				"completed": {
+					"title": "Burning complete!",
+					"dismiss": "Dismiss",
+					"verify": "Verify Tx",
+					"unstaking": "Unstaking",
+					"burning": "Burning"
 				}
 			}
 		},

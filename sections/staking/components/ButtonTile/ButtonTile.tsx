@@ -20,10 +20,10 @@ const ButtonTile: FC<ButtonTileProps> = ({
 }) => {
 	return (
 		<Container disabled={disabled} onClick={() => !disabled && onAction()} {...rest}>
+			<IconContainer>{icon}</IconContainer>
 			<Title disabled={disabled} className="tile-title">
 				{title}
 			</Title>
-			{icon}
 			<Subtext disabled={disabled} className="tile-subtext">
 				{subtext}
 			</Subtext>
@@ -51,17 +51,23 @@ const Container = styled(FlexDivColCentered)<{ disabled: boolean }>`
 		`}
 `;
 
+const IconContainer = styled.div`
+	margin: 2px 0px;
+`;
+
 const Title = styled.p<{ disabled: boolean }>`
 	font-family: ${(props) => props.theme.fonts.expanded};
 	font-size: 12px;
 	text-transform: uppercase;
 	color: ${(props) => (props.disabled ? props.theme.colors.gray : props.theme.colors.white)};
+	margin: 4px 0px;
 `;
 
 const Subtext = styled.p<{ disabled: boolean }>`
 	font-size: 12px;
 	font-family: ${(props) => props.theme.fonts.regular};
 	color: ${(props) => (props.disabled ? props.theme.colors.gray : props.theme.colors.white)};
+	margin: 4px 0px;
 `;
 
 export default ButtonTile;
