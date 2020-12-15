@@ -227,6 +227,7 @@ export const ModalContent = styled.div`
 	justify-content: center;
 	grid-auto-flow: column;
 	align-items: flex-end;
+	border-bottom: 1px solid ${(props) => props.theme.colors.grayBlue};
 `;
 
 export const ModalItem = styled.div`
