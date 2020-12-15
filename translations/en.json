@@ -445,8 +445,7 @@
 					"holdings": "Holdings %",
 					"no-synths": {
 						"title": "You have no Synths",
-						"desc": "Mint sUSD by staking your SNX",
-						"button-label": "Stake SNX"
+						"desc": "Mint sUSD by staking your SNX"
 					}
 				}
 			},
@@ -502,7 +501,7 @@
 		},
 		"currency": {
 			"currency-price": "<0>{{currencyKey}}</0> Price",
-			"convert-to-currency": "Convert to <0>{{currencyKey}}</0>",
+			"buy-currency": "Buy <0>{{currencyKey}}</0>",
 			"synthetic-currency-name": "Synthetic {{currencyName}}"
 		},
 		"gas-prices": {
@@ -516,7 +515,8 @@
 		"gas-header": "Gas Price (GWEI)",
 		"explorers": {
 			"etherscan": "etherscan"
-		}
+		},
+		"stake-snx": "Stake SNX"
 	},
 	"not-found": {
 		"page-title": "Not Found | Synthetix Staking",
