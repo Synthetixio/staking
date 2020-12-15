@@ -3,12 +3,12 @@ import { Svg } from 'react-optimized-image';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
-import Link from 'next/link';
 
 import {
 	FlexDivRowCentered,
 	FlexDivCentered,
 	FlexDivColCentered,
+	ExternalLink,
 	boxShadowBlue,
 } from 'styles/common';
 import curveSVG from 'assets/svg/incentives/pool-curve.svg';
@@ -29,6 +29,8 @@ import {
 	IconContainer,
 } from './common';
 import Etherscan from 'containers/Etherscan';
+import { burnTypeState, mintTypeState } from 'store/staking';
+import { useSetRecoilState } from 'recoil';
 
 type ActionCompletedProps = {
 	setTransactionState: (tx: Transaction) => void;
@@ -49,6 +51,8 @@ const ActionCompleted: React.FC<ActionCompletedProps> = ({
 	const { push } = useRouter();
 	const { etherscanInstance } = Etherscan.useContainer();
 	const link = etherscanInstance != null ? etherscanInstance.txLink(hash ?? '') : undefined;
+	const onMintTypeChange = useSetRecoilState(mintTypeState);
+	const onBurnTypeChange = useSetRecoilState(burnTypeState);
 
 	if (!isMint) {
 		return (
@@ -71,13 +75,18 @@ const ActionCompleted: React.FC<ActionCompletedProps> = ({
 				</MiddleSection>
 				<ButtonWrap>
 					{link ? (
-						<Link href={link}>
+						<ExternalLink href={link}>
 							<LeftButton onClick={() => setTransactionState(Transaction.PRESUBMIT)}>
 								{t('staking.actions.burn.completed.verify')}
 							</LeftButton>
-						</Link>
+						</ExternalLink>
 					) : null}
-					<RightButton onClick={() => setTransactionState(Transaction.PRESUBMIT)}>
+					<RightButton
+						onClick={() => {
+							setTransactionState(Transaction.PRESUBMIT);
+							onBurnTypeChange(null);
+						}}
+					>
 						{t('staking.actions.burn.completed.dismiss')}
 					</RightButton>
 				</ButtonWrap>
@@ -104,7 +113,12 @@ const ActionCompleted: React.FC<ActionCompletedProps> = ({
 			</MiddleSection>
 			<SectionSubtext>{t('staking.actions.mint.completed.subtext')}</SectionSubtext>
 			<ButtonWrap>
-				<LeftButton onClick={() => setTransactionState(Transaction.PRESUBMIT)}>
+				<LeftButton
+					onClick={() => {
+						setTransactionState(Transaction.PRESUBMIT);
+						onMintTypeChange(null);
+					}}
+				>
 					{t('staking.actions.mint.completed.dismiss')}
 				</LeftButton>
 				<RightButton onClick={() => push(ROUTES.Earn.Home)}>
