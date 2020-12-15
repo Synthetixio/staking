@@ -1,6 +1,7 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import { Svg } from 'react-optimized-image';
 import { useTranslation } from 'react-i18next';
+import { useRouter } from 'next/router';
 
 import StructuredTab from 'components/StructuredTab';
 
@@ -9,12 +10,20 @@ import MintTab from './MintTab';
 import Burn from 'assets/svg/app/burn.svg';
 import Mint from 'assets/svg/app/mint.svg';
 import { BOX_COLUMN_WIDTH } from 'constants/styles';
-import { useSetRecoilState } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { panelTypeState, StakingPanelType } from 'store/staking';
 
 const ActionBox: React.FC = () => {
 	const { t } = useTranslation();
-	const onPanelTypeChange = useSetRecoilState(panelTypeState);
+	const router = useRouter();
+	const [panelType, setPanelType] = useRecoilState(panelTypeState);
+
+	useEffect(() => {
+		if (router.query.action && router.query.action.length > 0) {
+			setPanelType(router.query.action[0] as StakingPanelType);
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [router.query.action]);
 
 	const tabData = useMemo(
 		() => [
@@ -42,7 +51,8 @@ const ActionBox: React.FC = () => {
 			boxHeight={450}
 			boxWidth={BOX_COLUMN_WIDTH}
 			tabData={tabData}
-			setPanelType={onPanelTypeChange}
+			setPanelType={setPanelType}
+			defaultTab={t(`staking.actions.${panelType}.title`)}
 		/>
 	);
 };

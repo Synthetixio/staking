@@ -19,6 +19,7 @@ type StructuredTabProps = {
 	setPanelType?: Dispatch<SetStateAction<any>>;
 	tabHeight?: number;
 	inverseTabColor?: boolean;
+	defaultTab?: string;
 };
 
 const StructuredTab: FC<StructuredTabProps> = ({
@@ -29,8 +30,9 @@ const StructuredTab: FC<StructuredTabProps> = ({
 	setPanelType,
 	tabHeight,
 	inverseTabColor,
+	defaultTab,
 }) => {
-	const [activeTab, setActiveTab] = useState<string>(tabData[0].title);
+	const [activeTab, setActiveTab] = useState<string>(defaultTab || tabData[0].title);
 	return (
 		<FlexDivColCentered>
 			<TabList padding={boxPadding} width={boxWidth}>
