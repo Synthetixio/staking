@@ -17,7 +17,7 @@ const PeriodBarStats: FC = () => {
 			<BarHeaderSection>
 				<BarTitle>{t('sidenav.bars.period.title')}</BarTitle>
 				<BarValue>
-					<Countdown date={nextFeePeriodStarts} />
+					<Countdown autoStart={true} date={nextFeePeriodStarts.getTime()} />
 				</BarValue>
 			</BarHeaderSection>
 			<ProgressBar percentage={currentFeePeriodProgress} variant="green" />

@@ -69,7 +69,6 @@ const WalletButton = styled(Button)`
 
 const StyledConnectionDot = styled(ConnectionDot)`
 	margin-right: 12px;
-	box-shadow: 0px 0px 15px rgba(68, 239, 193, 0.6);
 `;
 
 const MenuButton = styled.button<{ isActive: boolean }>`

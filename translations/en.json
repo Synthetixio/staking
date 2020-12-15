@@ -17,14 +17,14 @@
 			}
 		},
 		"approve": {
-			"description": "You must approve your {{synth}} tokens before proceeding. <0>Learn more.<0>",
-			"button": "APPROVE {{synth}}"
+			"description": "You must approve your {{stakedAsset}} tokens before proceeding. <0>Learn more.<0>",
+			"button": "APPROVE {{stakedAsset}}"
 		},
 		"confirm-transaction": {
 			"title": "Confirm Transaction",
 			"approve": {
 				"approving": "APPROVING",
-				"contract": "{{synth}} CONTRACT"
+				"contract": "{{stakedAsset}} CONTRACT"
 			},
 			"claiming": {
 				"claiming": "CLAIMING"
@@ -43,7 +43,15 @@
 			"helper": "Follow the Metamask prompts to authorize the transaction"
 		},
 		"wallet": {
-			"title": "wallet options"
+			"title": "connected wallet",
+			"copy-address": {
+				"copy-to-clipboard": "Copy to clipboard",
+				"copied": "Copied!"
+			},
+			"disconnect-wallet": "disconnect",
+			"change-wallet": "change wallet",
+			"change-accounts": "change accounts",
+			"available-on-hardware-wallet": "Available on hardware wallets"
 		},
 		"notifications": {
 			"title": "notifications",
@@ -288,7 +296,7 @@
 				"waiting": "Approval in progress",
 				"success": "Approval complete!",
 				"approving": "APPROVING",
-				"contract": "{{synth}} CONTRACT"
+				"contract": "{{stakedAsset}} CONTRACT"
 			},
 			"claim": {
 				"title": "CLAIM",
@@ -300,7 +308,9 @@
 				"low-ratio": "ADD COLLATERAL TO CLAIM",
 				"nothing-to-claim": "NOTHING TO CLAIM",
 				"claiming": "CLAIMING",
+				"claimed": "CLAIMED",
 				"amount": "{{amount}} {{asset}}",
+				"in-progress": "Claiming in progress!",
 				"success": "Claiming complete!"
 			},
 			"lp": {
@@ -310,7 +320,7 @@
 			},
 			"stake": {
 				"title": "STAKE",
-				"stake-button": "STAKE {{asset}}",
+				"stake-button": "STAKE {{stakedAsset}}",
 				"staking": "STAKING",
 				"amount": "{{amount}} {{asset}}",
 				"in-progress": "Staking in progress",
@@ -320,7 +330,7 @@
 			"unstake": {
 				"title": "UNSTAKE",
 				"unstaking": "WITHDRAWING",
-				"unstake-button": "UNSTAKE {{asset}}",
+				"unstake-button": "UNSTAKE {{stakedAsset}}",
 				"amount": "{{amount}} {{asset}}",
 				"in-progress": "Withdrawal in progress",
 				"success": "Withdrawal complete!",
@@ -463,9 +473,6 @@
 	"common": {
 		"wallet": {
 			"connect-wallet": "connect wallet",
-			"switch-wallet": "switch wallet",
-			"switch-accounts": "switch accounts",
-			"disconnect-wallet": "disconnect wallet",
 			"no-wallet-connected": "No wallet connected"
 		},
 		"stat-box": {

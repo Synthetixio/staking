@@ -15,13 +15,13 @@ const CardHeader: FC<CardHeaderProps> = ({ children, ...rest }) => (
 const Container = styled(FlexDivCentered)`
 	position: relative;
 	color: ${(props) => props.theme.colors.white};
-	border-bottom: 1px solid ${(props) => props.theme.colors.navy};
+	border-bottom: 1px solid ${(props) => props.theme.colors.grayBlue};
 	height: 32px;
 	padding: 0 18px;
 	justify-content: flex-start;
 	text-transform: capitalize;
-	font-family: ${(props) => props.theme.fonts.condensedBold};
-	font-size: 14px;
+	font-family: ${(props) => props.theme.fonts.interBold};
+	font-size: 12px;
 	flex-shrink: 0;
 `;
 

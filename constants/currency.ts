@@ -67,6 +67,7 @@ export enum CryptoCurrency {
 	TRX = 'TRX',
 	DASH = 'DASH',
 	ETC = 'ETC',
+	CurveLPToken = 'CurveLPToken',
 }
 
 export const FIAT_SYNTHS = new Set([
