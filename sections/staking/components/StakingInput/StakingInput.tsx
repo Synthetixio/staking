@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import styled from 'styled-components';
 import Img, { Svg } from 'react-optimized-image';
+import { useRecoilValue } from 'recoil';
 import { useTranslation } from 'react-i18next';
 
 import sUSDIcon from '@synthetixio/assets/synths/sUSD.svg';
@@ -34,6 +35,8 @@ import { getStakingAmount } from '../helper';
 import { CryptoCurrency, Synths } from 'constants/currency';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 import BigNumber from 'bignumber.js';
+import { isWalletConnectedState } from 'store/wallet';
+import Connector from 'containers/Connector';
 
 type StakingInputProps = {
 	onSubmit: any;
@@ -77,6 +80,8 @@ const StakingInput: React.FC<StakingInputProps> = ({
 	} = useStakingCalculations();
 	const [stakingCurrencyKey] = useState<string>(CryptoCurrency.SNX);
 	const [synthCurrencyKey] = useState<string>(Synths.sUSD);
+	const { connectWallet } = Connector.useContainer();
+	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 
 	const { t } = useTranslation();
 
@@ -92,12 +97,22 @@ const StakingInput: React.FC<StakingInputProps> = ({
 				currencyKey: stakingCurrencyKey,
 			}
 		);
-	const formattedInput = formatCurrency(synthCurrencyKey, inputValue, {
-		currencyKey: synthCurrencyKey,
-	});
+	const formattedInput = formatCurrency(
+		synthCurrencyKey,
+		inputValue.isNaN() ? toBigNumber(0) : inputValue,
+		{
+			currencyKey: synthCurrencyKey,
+		}
+	);
 
 	const returnButtonStates = useMemo(() => {
-		if (error) {
+		if (!isWalletConnected) {
+			return (
+				<StyledCTA variant="primary" size="lg" onClick={connectWallet}>
+					{t('common.wallet.connect-wallet')}
+				</StyledCTA>
+			);
+		} else if (error) {
 			return (
 				<StyledCTA variant="primary" size="lg" disabled={true}>
 					{isMint
@@ -172,7 +187,11 @@ const StakingInput: React.FC<StakingInputProps> = ({
 					{isLocked ? (
 						<InputLocked>{formattedInput}</InputLocked>
 					) : (
-						<StyledInput placeholder="0" onChange={(e) => onInputChange(e.target.value)} />
+						<StyledInput
+							placeholder="0"
+							onChange={(e) => onInputChange(e.target.value)}
+							disabled={!isWalletConnected}
+						/>
 					)}
 				</InputBox>
 				<DataContainer>

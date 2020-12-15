@@ -7,7 +7,7 @@ import { ethers } from 'ethers';
 import { normalizedGasPrice, normalizeGasLimit } from 'utils/network';
 import { getGasEstimateForTransaction } from 'utils/transactions';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { walletAddressState } from 'store/wallet';
+import { isWalletConnectedState, walletAddressState } from 'store/wallet';
 import synthetix from 'lib/synthetix';
 import BurnTiles from '../BurnTiles';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
@@ -33,6 +33,8 @@ const BurnTab: React.FC = () => {
 	const [gasPrice, setGasPrice] = useState<number>(0);
 	const [waitingPeriod, setWaitingPeriod] = useState(0);
 	const [issuanceDelay, setIssuanceDelay] = useState(0);
+
+	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 
 	const synthsBalancesQuery = useSynthsBalancesQuery();
 	const synthBalances =
@@ -93,7 +95,7 @@ const BurnTab: React.FC = () => {
 
 	useEffect(() => {
 		const getGasLimitEstimate = async () => {
-			if (synthetix && synthetix.js && amountToBurn.length > 0) {
+			if (synthetix && synthetix.js && amountToBurn.length > 0 && isWalletConnected) {
 				try {
 					setError(null);
 					const {
