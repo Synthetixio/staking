@@ -125,6 +125,19 @@ const StakingInput: React.FC<StakingInputProps> = ({
 		}
 	}, [inputValue, error, transactionState, isMint, onSubmit, t]);
 
+	const equivalentSNXAmount = useMemo(() => {
+		const calculatedTargetBurn = Math.max(debtBalance.minus(issuableSynths).toNumber(), 0);
+		if (
+			!isMint &&
+			currentCRatio.isGreaterThan(targetCRatio) &&
+			inputValue.isLessThanOrEqualTo(calculatedTargetBurn)
+		) {
+			return stakeInfo(toBigNumber(0));
+		} else {
+			return stakeInfo(inputValue);
+		}
+	}, [inputValue, isMint, debtBalance, issuableSynths, targetCRatio, currentCRatio, stakeInfo]);
+
 	if (transactionState === Transaction.WAITING) {
 		return (
 			<ActionInProgress
@@ -147,19 +160,6 @@ const StakingInput: React.FC<StakingInputProps> = ({
 			/>
 		);
 	}
-
-	const equivalentSNXAmount = useMemo(() => {
-		const calculatedTargetBurn = Math.max(debtBalance.minus(issuableSynths).toNumber(), 0);
-		if (
-			!isMint &&
-			currentCRatio.isGreaterThan(targetCRatio) &&
-			inputValue.isLessThanOrEqualTo(calculatedTargetBurn)
-		) {
-			return stakeInfo(toBigNumber(0));
-		} else {
-			return stakeInfo(inputValue);
-		}
-	}, [inputValue, isMint, debtBalance, issuableSynths, targetCRatio, currentCRatio]);
 
 	return (
 		<>
