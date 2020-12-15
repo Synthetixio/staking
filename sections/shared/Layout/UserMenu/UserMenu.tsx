@@ -26,23 +26,28 @@ const UserMenu: FC = () => {
 	return (
 		<>
 			<FlexDivCentered>
-				<Menu>
+				<Menu data-testid="user-menu">
 					<MenuButton
 						onClick={() => {
 							setSettingsModalOpened(!settingsModalOpened);
 						}}
 						isActive={settingsModalOpened}
+						data-testid="settings-btn"
 					>
 						<Svg src={MenuIcon} />
 					</MenuButton>
 				</Menu>
 				{isWalletConnected ? (
-					<WalletButton variant="solid" onClick={() => setWalletOptionsModalOpened(true)}>
+					<WalletButton
+						variant="solid"
+						onClick={() => setWalletOptionsModalOpened(true)}
+						data-testid="wallet-btn"
+					>
 						<StyledConnectionDot />
 						{truncatedWalletAddress}
 					</WalletButton>
 				) : (
-					<Button variant="secondary" onClick={connectWallet}>
+					<Button variant="secondary" onClick={connectWallet} data-testid="connect-wallet">
 						{t('common.wallet.connect-wallet')}
 					</Button>
 				)}
