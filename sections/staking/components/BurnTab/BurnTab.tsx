@@ -42,7 +42,9 @@ const BurnTab: React.FC = () => {
 			? synthsBalancesQuery.data
 			: null;
 
-	const sUSDBalance = synthBalances?.balancesMap.sUSD ? synthBalances.balancesMap.sUSD.balance : 0;
+	const sUSDBalance = synthBalances?.balancesMap.sUSD
+		? synthBalances.balancesMap.sUSD.balance
+		: toBigNumber(0);
 
 	const getMaxSecsLeftInWaitingPeriod = useCallback(async () => {
 		const {
@@ -109,7 +111,7 @@ const BurnTab: React.FC = () => {
 					if (!parseFloat(amountToBurn)) throw new Error('input.error.invalidAmount');
 					if (waitingPeriod) throw new Error('Waiting period for sUSD is still ongoing');
 					if (issuanceDelay) throw new Error('Waiting period to burn is still ongoing');
-					if (Number(amountToBurn) > sUSDBalance || maxBurnAmount.isZero())
+					if (Number(amountToBurn) > sUSDBalance.toNumber() || maxBurnAmount.isZero())
 						throw new Error('input.error.notEnoughToBurn');
 
 					const gasEstimate = await getGasEstimateForTransaction(
@@ -190,7 +192,12 @@ const BurnTab: React.FC = () => {
 
 		switch (burnType) {
 			case BurnActionType.MAX:
-				const burnAmount = debtBalance;
+				let burnAmount;
+				if (sUSDBalance.isLessThan(debtBalance)) {
+					burnAmount = sUSDBalance;
+				} else {
+					burnAmount = debtBalance;
+				}
 				onBurnChange(burnAmount.toString());
 				onSubmit = () => {
 					handleBurn(false);
