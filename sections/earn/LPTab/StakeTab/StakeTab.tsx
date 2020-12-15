@@ -98,7 +98,6 @@ const StakeTab: FC<StakeTabProps> = ({ icon, synth, isStake, userBalance, staked
 					);
 					setGasLimitEstimate(normalizeGasLimit(Number(gasEstimate)));
 				} catch (error) {
-					console.log('est error', error);
 					setError(error.message);
 					setGasLimitEstimate(null);
 				}
@@ -113,7 +112,6 @@ const StakeTab: FC<StakeTabProps> = ({ icon, synth, isStake, userBalance, staked
 				setError(null);
 				setTxModalOpen(true);
 				const contract = getContract(synth, provider);
-				console.log('contract', contract);
 
 				const formattedStakeAmount = synthetix.js.utils.parseEther(amount.toString());
 				const gasLimit = await getGasEstimateForTransaction(
@@ -143,7 +141,6 @@ const StakeTab: FC<StakeTabProps> = ({ icon, synth, isStake, userBalance, staked
 					setTxModalOpen(false);
 				}
 			} catch (e) {
-				console.log('stake error', e);
 				setTransactionState(Transaction.PRESUBMIT);
 				setError(e.message);
 			}
