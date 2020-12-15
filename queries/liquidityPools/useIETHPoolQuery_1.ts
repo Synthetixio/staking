@@ -3,8 +3,6 @@ import { ethers } from 'ethers';
 import { useRecoilValue } from 'recoil';
 
 import synthetix from 'lib/synthetix';
-import Connector from 'containers/Connector';
-import { iEthRewards } from 'contracts';
 import QUERY_KEYS from 'constants/queryKeys';
 import { appReadyState } from 'store/app';
 import { walletAddressState, isWalletConnectedState, networkState } from 'store/wallet';
@@ -17,16 +15,11 @@ const useIETHPoolQuery_1 = (options?: QueryConfig<LiquidityPoolData>) => {
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const network = useRecoilValue(networkState);
-	const { provider } = Connector.useContainer();
 
 	return useQuery<LiquidityPoolData>(
 		QUERY_KEYS.LiquidityPools.iETH(walletAddress ?? '', network?.id!),
 		async () => {
-			const contract = new ethers.Contract(
-				iEthRewards.address,
-				iEthRewards.abi,
-				provider as ethers.providers.Provider
-			);
+			const contract = synthetix.js?.contracts.StakingRewardsiETH as ethers.Contract;
 			const address = contract.address;
 
 			const getDuration = contract.DURATION || contract.rewardsDuration;
@@ -80,7 +73,7 @@ const useIETHPoolQuery_1 = (options?: QueryConfig<LiquidityPoolData>) => {
 			};
 		},
 		{
-			enabled: isAppReady && isWalletConnected && provider != null,
+			enabled: isAppReady && isWalletConnected,
 			...options,
 		}
 	);
