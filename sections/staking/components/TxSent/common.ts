@@ -3,6 +3,7 @@ import { ExternalLink, FlexDivColCentered, FlexDivRowCentered } from 'styles/com
 
 export const Container = styled(FlexDivColCentered)`
 	width: 100%;
+	/* @TODO: Replace with responsive height when mobile */
 	height: 600px;
 	margin: 0 auto;
 	text-align: center;

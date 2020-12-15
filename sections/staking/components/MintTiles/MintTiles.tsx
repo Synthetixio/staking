@@ -48,7 +48,7 @@ const Container = styled(FlexDivCol)`
 const StyledButtonTile = styled(ButtonTile)`
 	padding: 16px;
 	flex: 1;
-	margin: 16px 0px;
+	margin: 8px 0px;
 `;
 
 export default MintTiles;
