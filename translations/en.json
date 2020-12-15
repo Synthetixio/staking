@@ -43,7 +43,15 @@
 			"helper": "Follow the Metamask prompts to authorize the transaction"
 		},
 		"wallet": {
-			"title": "wallet options"
+			"title": "connected wallet",
+			"copy-address": {
+				"copy-to-clipboard": "Copy to clipboard",
+				"copied": "Copied!"
+			},
+			"disconnect-wallet": "disconnect",
+			"change-wallet": "change wallet",
+			"change-accounts": "change accounts",
+			"available-on-hardware-wallet": "Available on hardware wallets"
 		},
 		"notifications": {
 			"title": "notifications",
@@ -456,9 +464,6 @@
 	"common": {
 		"wallet": {
 			"connect-wallet": "connect wallet",
-			"switch-wallet": "switch wallet",
-			"switch-accounts": "switch accounts",
-			"disconnect-wallet": "disconnect wallet",
 			"no-wallet-connected": "No wallet connected"
 		},
 		"stat-box": {

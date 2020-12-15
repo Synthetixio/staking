@@ -4,7 +4,7 @@ import Color from 'color';
 
 type ButtonProps = {
 	size?: 'sm' | 'md' | 'lg' | 'xl';
-	variant: 'primary' | 'secondary' | 'solid' | 'text';
+	variant: 'primary' | 'secondary' | 'solid' | 'outline' | 'text';
 	isActive?: boolean;
 	isRounded?: boolean;
 };
@@ -104,6 +104,24 @@ const Button = styled.button<ButtonProps>`
 				}
 				&:disabled {
 					background: ${(props) => Color(props.theme.colors.navy).alpha(0.2).rgb().string()};
+				}
+			`}		
+
+
+		${(props) =>
+			props.variant === 'outline' &&
+			css`
+				color: ${(props) => props.theme.colors.white};
+				background: ${(props) => props.theme.colors.navy};
+				border: 1px solid ${(props) => props.theme.colors.grayBlue};
+				&:hover {
+					&:not(:disabled) {
+						background: ${(props) => props.theme.colors.mediumBlue};
+					}
+				}
+				&:disabled {
+					background: ${(props) => Color(props.theme.colors.navy).alpha(0.2).rgb().string()};
+					opacity: 0.5;
 				}
 			`}		
 

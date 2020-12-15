@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { createContainer } from 'unstated-next';
 import { useSetRecoilState, useRecoilState, useRecoilValue } from 'recoil';
-import { NetworkId, Network as NetworkName } from '@synthetixio/js';
+import { NetworkId } from '@synthetixio/js';
 import { ethers } from 'ethers';
 
 import synthetix from 'lib/synthetix';
@@ -47,7 +47,6 @@ const useConnector = () => {
 				networkId,
 				provider,
 			});
-
 			// @ts-ignore
 			setNetwork(synthetix.js?.network);
 			setProvider(provider);
@@ -105,7 +104,8 @@ const useConnector = () => {
 						setSigner(provider.getSigner());
 						setNetwork({
 							id: networkId,
-							name: network.name as NetworkName,
+							// @ts-ignore
+							name: synthetix.chainIdToNetwork[networkId],
 						});
 						setSelectedWallet(wallet.name);
 					} else {
@@ -201,6 +201,7 @@ const useConnector = () => {
 		disconnectWallet,
 		switchAccounts,
 		isHardwareWallet,
+		selectedWallet,
 	};
 };
 
