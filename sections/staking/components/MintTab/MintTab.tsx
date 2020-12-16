@@ -103,7 +103,6 @@ const MintTab: React.FC = () => {
 					monitorHash({
 						txHash: transaction.hash,
 						onTxConfirmed: () => {
-							onMintChange('');
 							setTransactionState(Transaction.SUCCESS);
 						},
 					});

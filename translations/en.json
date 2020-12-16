@@ -491,7 +491,8 @@
 		},
 		"wallet": {
 			"connect-wallet": "connect wallet",
-			"no-wallet-connected": "No wallet connected"
+			"no-wallet-connected": "No wallet connected",
+			"balance": "Balance: {{balance}}"
 		},
 		"stat-box": {
 			"staked-value": "Staked value",
