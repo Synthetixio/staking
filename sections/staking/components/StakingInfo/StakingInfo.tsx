@@ -9,6 +9,8 @@ import {
 	RowTitle,
 	RowValue,
 	ValueContainer,
+	InfoContainer,
+	InfoHeader,
 } from '../common';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 import { formatCurrency, toBigNumber } from 'utils/formatters/number';
@@ -151,14 +153,16 @@ const StakingInfo: React.FC<StakingInfoProps> = ({ isMint }) => {
 	const emptyInput = isMint ? amountToMint.length === 0 : amountToBurn.length === 0;
 
 	return (
-		<>
-			<Title>{isMint ? t('staking.info.mint.title') : t('staking.info.burn.title')}</Title>
-			<Subtitle>
-				<Trans
-					i18nKey={isMint ? 'staking.info.mint.subtitle' : 'staking.info.burn.subtitle'}
-					components={[<StyledLink />]}
-				/>
-			</Subtitle>
+		<InfoContainer>
+			<InfoHeader>
+				<Title>{isMint ? t('staking.info.mint.title') : t('staking.info.burn.title')}</Title>
+				<Subtitle>
+					<Trans
+						i18nKey={isMint ? 'staking.info.mint.subtitle' : 'staking.info.burn.subtitle'}
+						components={[<StyledLink />]}
+					/>
+				</Subtitle>
+			</InfoHeader>
 			<DataContainer>
 				{Rows.map(({ title, value, changedValue, currencyKey = '' }, i) => (
 					<DataRow key={i}>
@@ -185,7 +189,7 @@ const StakingInfo: React.FC<StakingInfoProps> = ({ isMint }) => {
 					</DataRow>
 				))}
 			</DataContainer>
-		</>
+		</InfoContainer>
 	);
 };
 export default StakingInfo;

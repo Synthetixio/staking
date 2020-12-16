@@ -1,13 +1,23 @@
 import styled from 'styled-components';
 
-import { FlexDivColCentered, FlexDivRowCentered, linkCSS } from 'styles/common';
+import { FlexDivColCentered, FlexDivRowCentered, linkCSS, FlexDivCol } from 'styles/common';
 import Button from 'components/Button';
 import Input from 'components/Input/Input';
 import Select from 'components/Select';
 
 export const TabContainer = styled(FlexDivColCentered)`
-	height: 100%;
+	height: 400px;
 	width: 100%;
+`;
+
+export const InfoContainer = styled(FlexDivCol)`
+	background: ${(props) => props.theme.colors.navy};
+	padding: 16px 0px;
+`;
+
+export const InfoHeader = styled.div`
+	border-bottom: ${(props) => `1px solid ${props.theme.colors.grayBlue}`};
+	padding-bottom: 16px;
 `;
 
 export const InputContainer = styled(FlexDivColCentered)`
@@ -79,7 +89,7 @@ export const InputLocked = styled.p`
 
 export const DataRow = styled(FlexDivRowCentered)`
 	justify-content: space-between;
-	margin: 16px 32px;
+	margin: 8px 24px;
 	border-bottom: ${(props) => `1px solid ${props.theme.colors.grayBlue}`};
 `;
 export const RowTitle = styled.p`
@@ -93,7 +103,6 @@ export const RowValue = styled.p`
 	font-size: 12px;
 	color: ${(props) => props.theme.colors.white};
 	text-transform: uppercase;
-	margin: 0px 8px;
 `;
 export const StyledCTA = styled(Button)`
 	font-size: 14px;
@@ -112,12 +121,14 @@ export const Title = styled.p`
 	font-family: ${(props) => props.theme.fonts.condensedBold};
 	color: ${(props) => props.theme.colors.white};
 	font-size: 16px;
+	margin: 8px 24px;
 `;
 export const Subtitle = styled.p`
 	font-family: ${(props) => props.theme.fonts.regular};
 	color: ${(props) => props.theme.colors.gray};
 	font-size: 14px;
 	height: 50px;
+	margin: 8px 24px;
 `;
 export const DataContainer = styled.div`
 	width: 100%;

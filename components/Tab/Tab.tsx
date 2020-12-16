@@ -95,21 +95,44 @@ const StyledTabButton = styled.button<TabProps>`
 	color: ${(props) => (props.active ? props.theme.colors.white : props.theme.colors.gray)};
 
 	${(props) =>
-		props.blue
+		props.active
+			? props.blue
+				? css`
+						border-top: ${`2px solid ${props.theme.colors.blue}`};
+						border-right: ${`1px solid ${props.theme.colors.grayBlue}`};
+						border-left: ${`1px solid ${props.theme.colors.backgroundBlue}`};
+						border-bottom: ${`1px solid ${props.theme.colors.backgroundBlue}`};
+				  `
+				: css`
+						border-top: ${`2px solid ${props.theme.colors.orange}`};
+						border-left: ${`1px solid ${props.theme.colors.grayBlue}`};
+						border-right: ${`1px solid ${props.theme.colors.backgroundBlue}`};
+						border-bottom: ${`1px solid ${props.theme.colors.backgroundBlue}`};
+				  `
+			: props.blue
 			? css`
-					border-top: ${props.active ? `2px solid ${props.theme.colors.blue}` : 'none'};
+					border-top: ${`2px solid ${props.theme.colors.black}`};
+					border-bottom: ${`1px solid ${props.theme.colors.grayBlue}`};
 			  `
 			: css`
-					border-top: ${props.active ? `2px solid ${props.theme.colors.orange}` : 'none'};
+					border-top: ${`2px solid ${props.theme.colors.black}`};
+					border-bottom: ${`1px solid ${props.theme.colors.grayBlue}`};
 			  `}
 
 	&:hover {
-		color: ${(props) => (props.active ? props.theme.colors.white : props.theme.colors.pink)};
+		color: ${(props) =>
+			props.active
+				? props.theme.colors.white
+				: props.blue
+				? props.theme.colors.blue
+				: props.theme.colors.orange};
 		background: ${(props) =>
 			props.inverseTabColor ? props.theme.colors.black : props.theme.colors.backgroundBlue};
-
-		border-top: 2px solid ${(props) => (props.active ? 'none' : props.theme.colors.pink)};
+		border-top: 2px solid
+			${(props) =>
+				props.active ? 'none' : props.blue ? props.theme.colors.blue : props.theme.colors.orange};
 	}
+
 	height: ${(props) => (props.tabHeight ? `${props.tabHeight}px` : '60px')};
 	width: ${(props) => 100 / props.numberTabs}%;
 	display: flex;
