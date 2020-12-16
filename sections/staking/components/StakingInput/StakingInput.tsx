@@ -1,8 +1,8 @@
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import Img, { Svg } from 'react-optimized-image';
 import { useRecoilValue } from 'recoil';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 
 import sUSDIcon from '@synthetixio/assets/synths/sUSD.svg';
 import NavigationBack from 'assets/svg/app/navigation-back.svg';
@@ -28,6 +28,7 @@ import {
 	ModalItemText,
 	ErrorMessage,
 	FlexDivRowCentered,
+	NoTextTransform,
 } from 'styles/common';
 import { InputContainer, InputLocked } from '../common';
 import { Transaction } from 'constants/network';
@@ -94,14 +95,18 @@ const StakingInput: React.FC<StakingInputProps> = ({
 	 * Given the amount to mint, returns the equivalent collateral needed for stake.
 	 * @param mintInput Amount to mint
 	 */
-	const stakeInfo = (mintInput: BigNumber) =>
-		formatCurrency(
-			stakingCurrencyKey,
-			getStakingAmount(targetCRatio, mintInput.isNaN() ? 0 : mintInput, SNXRate),
-			{
-				currencyKey: stakingCurrencyKey,
-			}
-		);
+	const stakeInfo = useCallback(
+		(mintInput: BigNumber) =>
+			formatCurrency(
+				stakingCurrencyKey,
+				getStakingAmount(targetCRatio, mintInput.isNaN() ? 0 : mintInput, SNXRate),
+				{
+					currencyKey: stakingCurrencyKey,
+				}
+			),
+		[SNXRate, stakingCurrencyKey, targetCRatio]
+	);
+
 	const formattedInput = formatCurrency(
 		synthCurrencyKey,
 		inputValue.isNaN() ? toBigNumber(0) : inputValue,
@@ -139,11 +144,16 @@ const StakingInput: React.FC<StakingInputProps> = ({
 					size="lg"
 					disabled={transactionState !== Transaction.PRESUBMIT}
 				>
-					{isMint ? t('staking.actions.mint.action.mint') : t('staking.actions.burn.action.burn')}
+					<Trans
+						i18nKey={
+							isMint ? 'staking.actions.mint.action.mint' : 'staking.actions.burn.action.burn'
+						}
+						components={[<NoTextTransform />]}
+					/>
 				</StyledCTA>
 			);
 		}
-	}, [inputValue, error, transactionState, isMint, onSubmit, t]);
+	}, [inputValue, error, transactionState, isMint, onSubmit, t, isWalletConnected, connectWallet]);
 
 	const equivalentSNXAmount = useMemo(() => {
 		const calculatedTargetBurn = Math.max(debtBalance.minus(issuableSynths).toNumber(), 0);
