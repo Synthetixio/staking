@@ -1,4 +1,7 @@
 {
+	"languages": {
+		"en": "English"
+	},
 	"meta": {
 		"description": "A dApp for SNX holders to earn rewards through staking.",
 		"og": {
@@ -50,7 +53,7 @@
 			},
 			"disconnect-wallet": "disconnect",
 			"change-wallet": "change wallet",
-			"change-accounts": "change accounts",
+			"switch-account": "switch account",
 			"available-on-hardware-wallet": "Available on hardware wallets"
 		},
 		"notifications": {
@@ -386,6 +389,12 @@
 	},
 	"layer2": {
 		"page-title": "Layer 2 | Staking",
+		"deposit": {
+			"info": {
+				"title": "Deposit SNX",
+				"subtitle": "Deposit your SNX to complete the process of migrating your SNX from L1 to Layer 2. <0>Learn more.<0>"
+			}
+		},
 		"actions": {
 			"burn": {
 				"title": "Burn L1 debt",
@@ -393,7 +402,14 @@
 			},
 			"deposit": {
 				"title": "Deposit SNX",
-				"subtitle": "Deposit and Transfer SNX from L1 to L2"
+				"subtitle": "Deposit and Transfer SNX from L1 to L2",
+				"action": {
+					"deposit": "Deposit SNX to layer 2",
+					"approve": {
+						"description": "Before depositing your SNX, please approve the Deposit contract.",
+						"button-label": "Approve contract"
+					}
+				}
 			},
 			"migrate": {
 				"title": "Migrate Escrowed SNX",
@@ -445,8 +461,7 @@
 					"holdings": "Holdings %",
 					"no-synths": {
 						"title": "You have no Synths",
-						"desc": "Mint sUSD by staking your SNX",
-						"button-label": "Stake SNX"
+						"desc": "Mint sUSD by staking your SNX"
 					}
 				}
 			},
@@ -471,6 +486,9 @@
 		}
 	},
 	"common": {
+		"approve": {
+			"approve-contract": "Approve contract"
+		},
 		"wallet": {
 			"connect-wallet": "connect wallet",
 			"no-wallet-connected": "No wallet connected",
@@ -503,7 +521,7 @@
 		},
 		"currency": {
 			"currency-price": "<0>{{currencyKey}}</0> Price",
-			"convert-to-currency": "Convert to <0>{{currencyKey}}</0>",
+			"buy-currency": "Buy <0>{{currencyKey}}</0>",
 			"synthetic-currency-name": "Synthetic {{currencyName}}"
 		},
 		"gas-prices": {
@@ -517,7 +535,8 @@
 		"gas-header": "Gas Price (GWEI)",
 		"explorers": {
 			"etherscan": "etherscan"
-		}
+		},
+		"stake-snx": "Stake SNX"
 	},
 	"not-found": {
 		"page-title": "Not Found | Synthetix Staking",

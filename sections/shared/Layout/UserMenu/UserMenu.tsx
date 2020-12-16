@@ -4,16 +4,17 @@ import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import { Svg } from 'react-optimized-image';
 
+import { FlexDivCentered, ConnectionDot, IconButton } from 'styles/common';
+
 import Connector from 'containers/Connector';
 
 import Button from 'components/Button';
 import { isWalletConnectedState, truncatedWalletAddressState } from 'store/wallet';
-import { FlexDivCentered, resetButtonCSS, ConnectionDot } from 'styles/common';
 
 import WalletOptionsModal from 'sections/shared/modals/WalletOptionsModal';
 import SettingsModal from 'sections/shared/modals/SettingsModal';
 
-import MenuIcon from 'assets/svg/app/menu.svg';
+import CogIcon from 'assets/svg/app/cog.svg';
 
 const UserMenu: FC = () => {
 	const { t } = useTranslation();
@@ -26,16 +27,6 @@ const UserMenu: FC = () => {
 	return (
 		<>
 			<FlexDivCentered>
-				<Menu>
-					<MenuButton
-						onClick={() => {
-							setSettingsModalOpened(!settingsModalOpened);
-						}}
-						isActive={settingsModalOpened}
-					>
-						<Svg src={MenuIcon} />
-					</MenuButton>
-				</Menu>
 				{isWalletConnected ? (
 					<WalletButton variant="solid" onClick={() => setWalletOptionsModalOpened(true)}>
 						<StyledConnectionDot />
@@ -46,6 +37,16 @@ const UserMenu: FC = () => {
 						{t('common.wallet.connect-wallet')}
 					</Button>
 				)}
+				<Menu>
+					<MenuButton
+						onClick={() => {
+							setSettingsModalOpened(!settingsModalOpened);
+						}}
+						isActive={settingsModalOpened}
+					>
+						<Svg src={CogIcon} />
+					</MenuButton>
+				</Menu>
 			</FlexDivCentered>
 			{walletOptionsModalOpened && (
 				<WalletOptionsModal onDismiss={() => setWalletOptionsModalOpened(false)} />
@@ -56,7 +57,7 @@ const UserMenu: FC = () => {
 };
 
 const Menu = styled.div`
-	padding-right: 26px;
+	padding-left: 16px;
 	display: grid;
 	grid-gap: 10px;
 	grid-auto-flow: column;
@@ -71,13 +72,15 @@ const StyledConnectionDot = styled(ConnectionDot)`
 	margin-right: 12px;
 `;
 
-const MenuButton = styled.button<{ isActive: boolean }>`
-	${resetButtonCSS};
+const MenuButton = styled(IconButton)<{ isActive: boolean }>`
 	color: ${(props) => (props.isActive ? props.theme.colors.white : props.theme.colors.gray)};
+	padding: 7px;
+	border-radius: 4px;
+	background: ${(props) => props.theme.colors.navy};
 	&:hover {
 		color: ${(props) => props.theme.colors.white};
 	}
-	padding: 5px;
+	height: 32px;
 `;
 
 export default UserMenu;

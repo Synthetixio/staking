@@ -30,4 +30,7 @@ export const CenteredModal = styled(BaseModal)`
 export const MenuModal = styled(CenteredModal)`
 	justify-content: flex-start;
 	padding-top: 90px;
+	.card-body {
+		padding: 36px;
+	}
 `;

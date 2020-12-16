@@ -30,7 +30,7 @@ const Index: FC = () => {
 			burn: {
 				title: t('layer2.actions.burn.title'),
 				copy: t('layer2.actions.burn.subtitle'),
-				link: ROUTES.Staking.Home,
+				link: ROUTES.Staking.Burn,
 			},
 		}),
 		[t]
