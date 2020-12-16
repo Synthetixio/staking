@@ -11,6 +11,7 @@ export type GridBoxProps = {
 	icon: ReactNode | ReactElement;
 	link?: string;
 	externalLink?: string;
+	visible?: boolean;
 };
 
 export const GridBox: FC<GridBoxProps> = ({
@@ -20,6 +21,7 @@ export const GridBox: FC<GridBoxProps> = ({
 	icon,
 	link,
 	externalLink,
+	visible,
 }) => {
 	const components = (
 		<InnerGridContainer>
@@ -28,6 +30,7 @@ export const GridBox: FC<GridBoxProps> = ({
 			<GridBoxCopy>{copy}</GridBoxCopy>
 		</InnerGridContainer>
 	);
+	if (!visible) return <></>;
 	return (
 		<GridBoxContainer
 			columnStart={gridLocations[0]}
@@ -71,6 +74,8 @@ export const GridBoxContainer = styled.div<{
 	&:hover {
 		background: ${(props) => props.theme.colors.darkGradient2};
 		transition: background-color 0.5s ease-in-out;
+		transform: scale(1.03);
+		transition: transform 0.25s ease-in-out;
 	}
 `;
 

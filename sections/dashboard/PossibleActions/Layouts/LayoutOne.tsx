@@ -5,11 +5,11 @@ import { useTranslation } from 'react-i18next';
 import ROUTES from 'constants/routes';
 
 import Stake from 'assets/svg/app/stake.svg';
-import Trade from 'assets/svg/app/trade.svg';
+import Kwenta from 'assets/svg/app/kwenta.svg';
 
 import GridBox, { GridBoxProps } from 'components/GridBox/Gridbox';
 
-const WelcomeLayout: FC = () => {
+const LayoutOne: FC = () => {
 	const { t } = useTranslation();
 
 	const gridItems: GridBoxProps[] = useMemo(
@@ -20,6 +20,7 @@ const WelcomeLayout: FC = () => {
 				title: t('dashboard.actions.claim.title'),
 				copy: t('dashboard.actions.claim.copy'),
 				link: ROUTES.Earn.Claim,
+				visible: true,
 			},
 			{
 				gridLocations: ['col-3', 'col-4', 'row-1', 'row-2'],
@@ -27,13 +28,15 @@ const WelcomeLayout: FC = () => {
 				title: t('dashboard.actions.mint.title'),
 				copy: t('dashboard.actions.mint.copy'),
 				link: ROUTES.Staking.Home,
+				visible: true,
 			},
 			{
 				gridLocations: ['col-4', 'col-5', 'row-1', 'row-2'],
-				icon: <Svg src={Trade} />,
+				icon: <Svg src={Kwenta} />,
 				title: t('dashboard.actions.trade.title'),
 				copy: t('dashboard.actions.trade.copy'),
 				externalLink: 'http://kwenta.io/',
+				visible: true,
 			},
 			{
 				gridLocations: ['col-1', 'col-3', 'row-2', 'row-3'],
@@ -41,6 +44,7 @@ const WelcomeLayout: FC = () => {
 				title: t('dashboard.actions.migrate.title'),
 				copy: t('dashboard.actions.migrate.copy'),
 				link: ROUTES.L2.Home,
+				visible: true,
 			},
 			// {
 			// 	gridLocations: ['col-1', 'col-2', 'row-2', 'row-3'],
@@ -62,6 +66,7 @@ const WelcomeLayout: FC = () => {
 				title: t('dashboard.actions.earn.title', { percent: '6%' }),
 				copy: t('dashboard.actions.earn.alt-copy', { synth: 'sBTC', supplier: 'Curve Finance' }),
 				link: ROUTES.Earn.Home,
+				visible: true,
 			},
 			{
 				gridLocations: ['col-4', 'col-5', 'row-2', 'row-3'],
@@ -69,6 +74,7 @@ const WelcomeLayout: FC = () => {
 				title: t('dashboard.actions.earn.title', { percent: '65%' }),
 				copy: t('dashboard.actions.earn.alt-copy', { synth: 'sETH', supplier: 'Uniswap' }),
 				link: ROUTES.Earn.Home,
+				visible: true,
 			},
 		],
 		[t]
@@ -82,4 +88,4 @@ const WelcomeLayout: FC = () => {
 	);
 };
 
-export default WelcomeLayout;
+export default LayoutOne;
