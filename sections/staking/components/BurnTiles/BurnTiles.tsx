@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import Burn from 'assets/svg/app/burn.svg';
+import BurnCircle from 'assets/svg/app/burn-circle.svg';
 import { Svg } from 'react-optimized-image';
 import ButtonTile from '../ButtonTile';
 import { FlexDivCol, FlexDivRow } from 'styles/common';
@@ -16,7 +16,7 @@ type BurnTilesProps = {
 	burnAmountToFixCRatio: BigNumber;
 };
 
-const burnIcon = <Svg src={Burn} />;
+const burnIcon = <Svg src={BurnCircle} />;
 
 const BurnTiles: React.FC<BurnTilesProps> = ({
 	percentageTargetCRatio,
@@ -72,8 +72,8 @@ const Container = styled(FlexDivCol)`
 `;
 
 const MarginedButtonTile = styled(ButtonTile)<{ right?: boolean; left?: boolean }>`
-	margin-right: ${(props) => props.left && `4px`};
-	margin-left: ${(props) => props.right && `4px`};
+	margin-right: ${(props) => props.left && `8px`};
+	margin-left: ${(props) => props.right && `8px`};
 	width: 50%;
 `;
 

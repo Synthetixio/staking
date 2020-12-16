@@ -1,5 +1,6 @@
 import styled, { css, keyframes } from 'styled-components';
 import { SIDE_NAV_WIDTH } from 'constants/ui';
+import Tippy from '@tippyjs/react';
 
 export const FlexDiv = styled.div`
 	display: flex;
@@ -142,6 +143,7 @@ export const ConnectionDot = styled.span`
 	height: 8px;
 	border-radius: 100%;
 	background-color: ${(props) => props.theme.colors.green};
+	box-shadow: 0px 0px 15px rgba(68, 239, 193, 0.6);
 `;
 
 export const FixedFooterMixin = `
@@ -227,6 +229,7 @@ export const ModalContent = styled.div`
 	justify-content: center;
 	grid-auto-flow: column;
 	align-items: flex-end;
+	border-bottom: 1px solid ${(props) => props.theme.colors.grayBlue};
 `;
 
 export const ModalItem = styled.div`
@@ -284,4 +287,17 @@ export const resetHeadingMixin = `
 export const IconButton = styled.button`
 	${resetButtonCSS};
 	background: transparent;
+`;
+
+export const boxShadowBlue = css`
+	box-shadow: 0px 0px 15px ${(props) => props.theme.colors.blue};
+	border: 1px solid ${(props) => props.theme.colors.blue};
+`;
+
+export const Tooltip = styled(Tippy)`
+	background: ${(props) => props.theme.colors.navy};
+	border-radius: 4px;
+	.tippy-arrow {
+		color: ${(props) => props.theme.colors.mediumBlue};
+	}
 `;

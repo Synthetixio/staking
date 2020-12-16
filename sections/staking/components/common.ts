@@ -16,6 +16,8 @@ export const InputContainer = styled(FlexDivColCentered)`
 	width: 100%;
 	padding: 16px;
 	margin-bottom: 24px;
+	/* @TODO: Replace with responsive height when mobile */
+	height: 600px;
 `;
 
 export const HeaderBox = styled(FlexDivRowCentered)`
@@ -115,6 +117,7 @@ export const Subtitle = styled.p`
 	font-family: ${(props) => props.theme.fonts.regular};
 	color: ${(props) => props.theme.colors.gray};
 	font-size: 14px;
+	height: 50px;
 `;
 export const DataContainer = styled.div`
 	width: 100%;

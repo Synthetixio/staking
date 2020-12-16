@@ -1,4 +1,7 @@
 {
+	"languages": {
+		"en": "English"
+	},
 	"meta": {
 		"description": "A dApp for SNX holders to earn rewards through staking.",
 		"og": {
@@ -17,14 +20,14 @@
 			}
 		},
 		"approve": {
-			"description": "You must approve your {{synth}} tokens before proceeding. <0>Learn more.<0>",
-			"button": "APPROVE {{synth}}"
+			"description": "You must approve your {{stakedAsset}} tokens before proceeding. <0>Learn more.<0>",
+			"button": "APPROVE {{stakedAsset}}"
 		},
 		"confirm-transaction": {
 			"title": "Confirm Transaction",
 			"approve": {
 				"approving": "APPROVING",
-				"contract": "{{synth}} CONTRACT"
+				"contract": "{{stakedAsset}} CONTRACT"
 			},
 			"claiming": {
 				"claiming": "CLAIMING"
@@ -43,7 +46,15 @@
 			"helper": "Follow the Metamask prompts to authorize the transaction"
 		},
 		"wallet": {
-			"title": "wallet options"
+			"title": "connected wallet",
+			"copy-address": {
+				"copy-to-clipboard": "Copy to clipboard",
+				"copied": "Copied!"
+			},
+			"disconnect-wallet": "disconnect",
+			"change-wallet": "change wallet",
+			"switch-account": "switch account",
+			"available-on-hardware-wallet": "Available on hardware wallets"
 		},
 		"notifications": {
 			"title": "notifications",
@@ -156,7 +167,7 @@
 					"etherscan": "View on Etherscan"
 				},
 				"completed": {
-					"title": "Put your {{synth}} to work",
+					"title": "Success! Now put your {{synth}} to work:",
 					"curve": "Curve Finance {{synth}} LP Token Rewards",
 					"est-apy": "Est APY",
 					"subtext": "There are various Liquidity Providing incentives interacting with different DeFi products for you to choose from",
@@ -192,10 +203,17 @@
 				},
 				"in-progress": {
 					"title": "Burning in progress",
-					"unstaking": "UNSTAKING",
-					"burning": "BURNING",
+					"unstaking": "Unstaking",
+					"burning": "Burning",
 					"subtext": "Waiting for the blockchain to confirm your transaction",
 					"etherscan": "View on Etherscan"
+				},
+				"completed": {
+					"title": "Burning complete!",
+					"dismiss": "Dismiss",
+					"verify": "Verify Tx",
+					"unstaking": "Unstaking",
+					"burning": "Burning"
 				}
 			}
 		},
@@ -281,7 +299,7 @@
 				"waiting": "Approval in progress",
 				"success": "Approval complete!",
 				"approving": "APPROVING",
-				"contract": "{{synth}} CONTRACT"
+				"contract": "{{stakedAsset}} CONTRACT"
 			},
 			"claim": {
 				"title": "CLAIM",
@@ -293,7 +311,9 @@
 				"low-ratio": "ADD COLLATERAL TO CLAIM",
 				"nothing-to-claim": "NOTHING TO CLAIM",
 				"claiming": "CLAIMING",
+				"claimed": "CLAIMED",
 				"amount": "{{amount}} {{asset}}",
+				"in-progress": "Claiming in progress!",
 				"success": "Claiming complete!"
 			},
 			"lp": {
@@ -303,7 +323,7 @@
 			},
 			"stake": {
 				"title": "STAKE",
-				"stake-button": "STAKE {{asset}}",
+				"stake-button": "STAKE {{stakedAsset}}",
 				"staking": "STAKING",
 				"amount": "{{amount}} {{asset}}",
 				"in-progress": "Staking in progress",
@@ -313,7 +333,7 @@
 			"unstake": {
 				"title": "UNSTAKE",
 				"unstaking": "WITHDRAWING",
-				"unstake-button": "UNSTAKE {{asset}}",
+				"unstake-button": "UNSTAKE {{stakedAsset}}",
 				"amount": "{{amount}} {{asset}}",
 				"in-progress": "Withdrawal in progress",
 				"success": "Withdrawal complete!",
@@ -428,8 +448,7 @@
 					"holdings": "Holdings %",
 					"no-synths": {
 						"title": "You have no Synths",
-						"desc": "Mint sUSD by staking your SNX",
-						"button-label": "Stake SNX"
+						"desc": "Mint sUSD by staking your SNX"
 					}
 				}
 			},
@@ -456,9 +475,6 @@
 	"common": {
 		"wallet": {
 			"connect-wallet": "connect wallet",
-			"switch-wallet": "switch wallet",
-			"switch-accounts": "switch accounts",
-			"disconnect-wallet": "disconnect wallet",
 			"no-wallet-connected": "No wallet connected"
 		},
 		"stat-box": {
@@ -488,7 +504,7 @@
 		},
 		"currency": {
 			"currency-price": "<0>{{currencyKey}}</0> Price",
-			"convert-to-currency": "Convert to <0>{{currencyKey}}</0>",
+			"buy-currency": "Buy <0>{{currencyKey}}</0>",
 			"synthetic-currency-name": "Synthetic {{currencyName}}"
 		},
 		"gas-prices": {
@@ -502,7 +518,8 @@
 		"gas-header": "Gas Price (GWEI)",
 		"explorers": {
 			"etherscan": "etherscan"
-		}
+		},
+		"stake-snx": "Stake SNX"
 	},
 	"not-found": {
 		"page-title": "Not Found | Synthetix Staking",
