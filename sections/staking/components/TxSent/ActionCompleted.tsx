@@ -29,7 +29,7 @@ import {
 	IconContainer,
 } from './common';
 import Etherscan from 'containers/Etherscan';
-import { burnTypeState, mintTypeState } from 'store/staking';
+import { amountToBurnState, amountToMintState, burnTypeState, mintTypeState } from 'store/staking';
 import { useSetRecoilState } from 'recoil';
 
 type ActionCompletedProps = {
@@ -53,6 +53,8 @@ const ActionCompleted: React.FC<ActionCompletedProps> = ({
 	const link = etherscanInstance != null ? etherscanInstance.txLink(hash ?? '') : undefined;
 	const onMintTypeChange = useSetRecoilState(mintTypeState);
 	const onBurnTypeChange = useSetRecoilState(burnTypeState);
+	const onBurnChange = useSetRecoilState(amountToBurnState);
+	const onMintChange = useSetRecoilState(amountToMintState);
 
 	if (!isMint) {
 		return (
@@ -85,6 +87,7 @@ const ActionCompleted: React.FC<ActionCompletedProps> = ({
 						onClick={() => {
 							setTransactionState(Transaction.PRESUBMIT);
 							onBurnTypeChange(null);
+							onBurnChange('');
 						}}
 					>
 						{t('staking.actions.burn.completed.dismiss')}
@@ -117,6 +120,7 @@ const ActionCompleted: React.FC<ActionCompletedProps> = ({
 					onClick={() => {
 						setTransactionState(Transaction.PRESUBMIT);
 						onMintTypeChange(null);
+						onMintChange('');
 					}}
 				>
 					{t('staking.actions.mint.completed.dismiss')}

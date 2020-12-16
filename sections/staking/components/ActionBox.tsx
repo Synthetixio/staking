@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { Svg } from 'react-optimized-image';
 import { useTranslation } from 'react-i18next';
 
@@ -9,12 +9,22 @@ import MintTab from './MintTab';
 import Burn from 'assets/svg/app/burn.svg';
 import Mint from 'assets/svg/app/mint.svg';
 import { BOX_COLUMN_WIDTH } from 'constants/styles';
-import { useSetRecoilState } from 'recoil';
-import { panelTypeState, StakingPanelType } from 'store/staking';
+import { useRecoilState, useSetRecoilState } from 'recoil';
+import { burnTypeState, panelTypeState, StakingPanelType, mintTypeState } from 'store/staking';
 
 const ActionBox: React.FC = () => {
 	const { t } = useTranslation();
-	const onPanelTypeChange = useSetRecoilState(panelTypeState);
+	const [panelType, onPanelTypeChange] = useRecoilState(panelTypeState);
+	const onMintTypeChange = useSetRecoilState(mintTypeState);
+	const onBurnTypeChange = useSetRecoilState(burnTypeState);
+
+	useEffect(() => {
+		if (panelType === StakingPanelType.MINT) {
+			onBurnTypeChange(null);
+		} else {
+			onMintTypeChange(null);
+		}
+	}, [panelType]);
 
 	const tabData = useMemo(
 		() => [

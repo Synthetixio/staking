@@ -83,14 +83,13 @@ const StakingInput: React.FC<StakingInputProps> = ({
 		issuableSynths,
 		currentCRatio,
 	} = useStakingCalculations();
-	const [stakingCurrencyKey] = useState<string>(CryptoCurrency.SNX);
-	const [synthCurrencyKey] = useState<string>(Synths.sUSD);
 	const { connectWallet } = Connector.useContainer();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const burnType = useRecoilValue(burnTypeState);
-
 	const { t } = useTranslation();
 
+	const [stakingCurrencyKey] = useState<string>(CryptoCurrency.SNX);
+	const [synthCurrencyKey] = useState<string>(Synths.sUSD);
 	/**
 	 * Given the amount to mint, returns the equivalent collateral needed for stake.
 	 * @param mintInput Amount to mint

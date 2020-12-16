@@ -171,7 +171,6 @@ const BurnTab: React.FC = () => {
 					monitorHash({
 						txHash: transaction.hash,
 						onTxConfirmed: () => {
-							onBurnChange('');
 							setTransactionState(Transaction.SUCCESS);
 						},
 					});
