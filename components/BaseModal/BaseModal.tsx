@@ -88,6 +88,9 @@ const DismissButton = styled.button`
 	position: absolute;
 	right: 20px;
 	color: ${(props) => props.theme.colors.white};
+	&:hover {
+		color: ${(props) => props.theme.colors.blue};
+	}
 `;
 
 export default BaseModal;
