@@ -136,17 +136,24 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 			}
 		}
 		claim();
-	}, [synthetix.js]);
+	}, [gasPrice, monitorHash]);
 
 	if (transactionState === Transaction.WAITING) {
 		return (
 			<TxState
-				description={null}
+				description={
+					<Label>
+						<Trans
+							i18nKey="earn.incentives.options.snx.description"
+							components={[<StyledLink />]}
+						/>
+					</Label>
+				}
 				title={t('earn.actions.claim.in-progress')}
 				content={
 					<FlexDivColCentered>
 						<Svg src={PendingConfirmation} />
-						<FlexDiv>
+						<StyledFlexDiv>
 							<StyledFlexDivColCentered>
 								<GreyHeader>{t('earn.actions.claim.claiming')}</GreyHeader>
 								<WhiteSubheader>
@@ -165,7 +172,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 									})}
 								</WhiteSubheader>
 							</StyledFlexDivColCentered>
-						</FlexDiv>
+						</StyledFlexDiv>
 						<Divider />
 						<GreyText>{t('earn.actions.tx.notice')}</GreyText>
 						<ExternalLink href={link}>
@@ -180,12 +187,19 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 	if (transactionState === Transaction.SUCCESS) {
 		return (
 			<TxState
-				description={null}
+				description={
+					<Label>
+						<Trans
+							i18nKey="earn.incentives.options.snx.description"
+							components={[<StyledLink />]}
+						/>
+					</Label>
+				}
 				title={t('earn.actions.claim.success')}
 				content={
 					<FlexDivColCentered>
 						<Svg src={Success} />
-						<FlexDiv>
+						<StyledFlexDiv>
 							<StyledFlexDivColCentered>
 								<GreyHeader>{t('earn.actions.claim.claimed')}</GreyHeader>
 								<WhiteSubheader>
@@ -204,7 +218,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 									})}
 								</WhiteSubheader>
 							</StyledFlexDivColCentered>
-						</FlexDiv>
+						</StyledFlexDiv>
 						<Divider />
 						<ButtonSpacer>
 							{link ? (
@@ -265,7 +279,11 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 						</Value>
 					</TotalValueWrapper>
 					{error && <ErrorMessage>{error}</ErrorMessage>}
-					<PaddedButton variant="primary" onClick={handleClaim} disabled={error != null || claimed}>
+					<PaddedButton
+						variant="primary"
+						onClick={handleClaim}
+						disabled={totalRewards.toNumber() === 0 || claimed}
+					>
 						{claimed
 							? t('earn.actions.claim.claimed-button')
 							: lowCRatio && totalRewards.toNumber() > 0
@@ -298,7 +316,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 const InnerContainer = styled(FlexDivColCentered)`
 	width: 90%;
 	margin: 15px auto;
-	padding: 15px;
+	padding: 20px;
 	border: 1px solid ${(props) => props.theme.colors.pink};
 	border-radius: 4px;
 	background-image: url(${largeWaveSVG.src});
@@ -307,10 +325,11 @@ const InnerContainer = styled(FlexDivColCentered)`
 
 const ValueBoxWrapper = styled(FlexDivCentered)`
 	justify-content: space-around;
+	width: 350px;
 `;
 
 const ValueBox = styled(FlexDivColCentered)`
-	width: 150px;
+	width: 160px;
 `;
 
 const PaddedButton = styled(StyledButton)`
@@ -318,10 +337,14 @@ const PaddedButton = styled(StyledButton)`
 `;
 
 const StyledFlexDivColCentered = styled(FlexDivColCentered)`
-	padding: 10px 30px;
+	padding: 20px 30px;
 	&:first-child {
 		border-right: 1px solid ${(props) => props.theme.colors.grayBlue};
 	}
+`;
+
+const StyledFlexDiv = styled(FlexDiv)`
+	margin-bottom: -20px;
 `;
 
 export default ClaimTab;

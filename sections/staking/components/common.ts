@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { FlexDivColCentered, FlexDivRowCentered, linkCSS, FlexDivCol } from 'styles/common';
+import { FlexDivColCentered, FlexDivRowCentered, FlexDivCol, ExternalLink } from 'styles/common';
 import Button from 'components/Button';
 import Input from 'components/Input/Input';
 import Select from 'components/Select';
@@ -133,8 +133,7 @@ export const Subtitle = styled.p`
 export const DataContainer = styled.div`
 	width: 100%;
 `;
-export const StyledLink = styled.span`
-	${linkCSS}
+export const StyledLink = styled(ExternalLink)`
 	color: ${(props) => props.theme.colors.blue};
 `;
 

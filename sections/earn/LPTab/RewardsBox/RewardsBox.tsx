@@ -71,7 +71,7 @@ const RewardsBox: FC<RewardsBoxProps> = ({
 			}
 		};
 		getGasLimitEstimate();
-	}, [stakedAsset, signer]);
+	}, [stakedAsset, signer, setClaimError]);
 
 	return (
 		<>

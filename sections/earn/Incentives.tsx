@@ -1,24 +1,20 @@
 import { FC, useMemo } from 'react';
 import BigNumber from 'bignumber.js';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import Img from 'react-optimized-image';
-import { useTranslation, Trans } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
 
-import useIETHPoolQuery_1 from 'queries/liquidityPools/useIETHPoolQuery_1';
-import useIBTCPoolQuery_1 from 'queries/liquidityPools/useIBTCPoolQuery_1';
-import useCurvePoolQuery_1 from 'queries/liquidityPools/useCurvePoolQuery_1';
 import useSNXLockedValueQuery from 'queries/staking/useSNXLockedValueQuery';
-import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 
 import useFeePeriodTimeAndProgress from 'hooks/useFeePeriodTimeAndProgress';
 
 import useClaimedStatus from 'sections/hooks/useClaimedStatus';
+import useLPData from 'hooks/useLPData';
 
 import ROUTES from 'constants/routes';
 import { CryptoCurrency, Synths } from 'constants/currency';
-import { WEEKS_IN_YEAR } from 'constants/date';
 
 import { FlexDiv } from 'styles/common';
 
@@ -30,7 +26,6 @@ import snxSVG from 'assets/svg/incentives/pool-snx.svg';
 import IncentivesTable from './IncentivesTable';
 import ClaimTab from './ClaimTab';
 import LPTab from './LPTab';
-import { StyledLink } from './common';
 import { isWalletConnectedState } from 'store/wallet';
 
 import { Tab } from './types';
@@ -59,25 +54,9 @@ const Incentives: FC<IncentivesProps> = ({
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 
 	const claimedSNX = useClaimedStatus();
-	const useiETHPool = useIETHPoolQuery_1();
-	const useiBTCPool = useIBTCPoolQuery_1();
-	const useCurvePool = useCurvePoolQuery_1();
+	const lpData = useLPData();
 	const useSNXLockedValue = useSNXLockedValueQuery();
 	const { nextFeePeriodStarts, currentFeePeriodStarted } = useFeePeriodTimeAndProgress();
-	const exchangeRatesQuery = useExchangeRatesQuery();
-	const SNXRate = exchangeRatesQuery.data?.SNX ?? 0;
-
-	const iETHTVL = (useiETHPool.data?.balance ?? 0) * (useiETHPool.data?.price ?? 0);
-	const iETHAPY = (((useiETHPool.data?.distribution ?? 0) * SNXRate) / iETHTVL) * WEEKS_IN_YEAR;
-
-	const iBTCTVL = (useiBTCPool.data?.balance ?? 0) * (useiBTCPool.data?.price ?? 0);
-	const iBTCAPY = (((useiBTCPool.data?.distribution ?? 0) * SNXRate) / iBTCTVL) * WEEKS_IN_YEAR;
-
-	const curveTVL = (useCurvePool.data?.balance ?? 0) * (useCurvePool.data?.price ?? 0);
-	const curveAPY =
-		(((useCurvePool.data?.distribution ?? 0) * SNXRate) / curveTVL) * WEEKS_IN_YEAR +
-		(useCurvePool.data?.swapAPY ?? 0) +
-		(useCurvePool.data?.rewardsAPY ?? 0);
 
 	const now = useMemo(() => new Date().getTime(), []);
 
@@ -118,16 +97,19 @@ const Incentives: FC<IncentivesProps> = ({
 							icon: <Img src={curveSVG} />,
 							title: t('earn.incentives.options.curve.title'),
 							subtitle: t('earn.incentives.options.curve.subtitle'),
-							apy: curveAPY,
-							tvl: curveTVL,
+							apy: lpData[CryptoCurrency.CurveLPToken].APR,
+							tvl: lpData[CryptoCurrency.CurveLPToken].TVL,
 							staked: {
-								balance: useCurvePool.data?.staked ?? 0,
+								balance: lpData[CryptoCurrency.CurveLPToken].data?.staked ?? 0,
 								asset: CryptoCurrency.CurveLPToken,
 							},
-							rewards: useCurvePool.data?.rewards ?? 0,
-							periodStarted: now - (useCurvePool.data?.duration ?? 0),
-							periodFinish: useCurvePool.data?.periodFinish ?? 0,
-							claimed: (useCurvePool.data?.rewards ?? 0) > 0 ? false : NOT_APPLICABLE,
+							rewards: lpData[CryptoCurrency.CurveLPToken].data?.rewards ?? 0,
+							periodStarted: now - (lpData[CryptoCurrency.CurveLPToken].data?.duration ?? 0),
+							periodFinish: lpData[CryptoCurrency.CurveLPToken].data?.periodFinish ?? 0,
+							claimed:
+								(lpData[CryptoCurrency.CurveLPToken].data?.rewards ?? 0) > 0
+									? false
+									: NOT_APPLICABLE,
 							now,
 							route: ROUTES.Earn.Curve_LP,
 							tab: Tab.Curve_LP,
@@ -136,16 +118,16 @@ const Incentives: FC<IncentivesProps> = ({
 							icon: <Img src={iETHSVG} />,
 							title: t('earn.incentives.options.ieth.title'),
 							subtitle: t('earn.incentives.options.ieth.subtitle'),
-							apy: iETHAPY,
-							tvl: iETHTVL,
+							apy: lpData[Synths.iETH].APR,
+							tvl: lpData[Synths.iETH].TVL,
 							staked: {
-								balance: useiETHPool.data?.staked ?? 0,
+								balance: lpData[Synths.iETH].data?.staked ?? 0,
 								asset: Synths.iETH,
 							},
-							rewards: useiETHPool.data?.rewards ?? 0,
-							periodStarted: now - (useiETHPool.data?.duration ?? 0),
-							periodFinish: useiETHPool.data?.periodFinish ?? 0,
-							claimed: (useiETHPool.data?.rewards ?? 0) > 0 ? false : NOT_APPLICABLE,
+							rewards: lpData[Synths.iETH].data?.rewards ?? 0,
+							periodStarted: now - (lpData[Synths.iETH].data?.duration ?? 0),
+							periodFinish: lpData[Synths.iETH].data?.periodFinish ?? 0,
+							claimed: (lpData[Synths.iETH].data?.rewards ?? 0) > 0 ? false : NOT_APPLICABLE,
 							now,
 							tab: Tab.iETH_LP,
 							route: ROUTES.Earn.iETH_LP,
@@ -154,16 +136,16 @@ const Incentives: FC<IncentivesProps> = ({
 							icon: <Img src={iBTCSVG} />,
 							title: t('earn.incentives.options.ibtc.title'),
 							subtitle: t('earn.incentives.options.ibtc.subtitle'),
-							apy: iBTCAPY,
-							tvl: iBTCTVL,
+							apy: lpData[Synths.iBTC].APR,
+							tvl: lpData[Synths.iBTC].TVL,
 							staked: {
-								balance: useiBTCPool.data?.staked ?? 0,
+								balance: lpData[Synths.iBTC].data?.staked ?? 0,
 								asset: Synths.iBTC,
 							},
-							rewards: useiBTCPool.data?.rewards ?? 0,
-							periodStarted: now - (useiBTCPool.data?.duration ?? 0),
-							periodFinish: useiBTCPool.data?.periodFinish ?? 0,
-							claimed: (useiBTCPool.data?.rewards ?? 0) > 0 ? false : NOT_APPLICABLE,
+							rewards: lpData[Synths.iBTC].data?.rewards ?? 0,
+							periodStarted: now - (lpData[Synths.iBTC].data?.duration ?? 0),
+							periodFinish: lpData[Synths.iBTC].data?.periodFinish ?? 0,
+							claimed: (lpData[Synths.iBTC].data?.rewards ?? 0) > 0 ? false : NOT_APPLICABLE,
 							now,
 							tab: Tab.iBTC_LP,
 							route: ROUTES.Earn.iBTC_LP,
@@ -177,15 +159,7 @@ const Incentives: FC<IncentivesProps> = ({
 			nextFeePeriodStarts,
 			stakingRewards,
 			claimedSNX,
-			curveAPY,
-			curveTVL,
-			iBTCAPY,
-			iBTCTVL,
-			iETHAPY,
-			iETHTVL,
-			useiETHPool.data,
-			useCurvePool.data,
-			useiBTCPool.data,
+			lpData,
 			currentFeePeriodStarted,
 			now,
 			t,
@@ -194,11 +168,17 @@ const Incentives: FC<IncentivesProps> = ({
 	);
 
 	return (
-		<FlexDiv>
+		<StyledFlexDiv isOpen={activeTab != null}>
 			<IncentivesTable
 				activeTab={activeTab}
 				data={incentives}
-				isLoaded={useCurvePool.data && useiBTCPool.data && useiETHPool.data ? true : false}
+				isLoaded={
+					lpData[CryptoCurrency.CurveLPToken].data &&
+					lpData[Synths.iBTC].data &&
+					lpData[Synths.iETH].data
+						? true
+						: false
+				}
 			/>
 			{activeTab != null ? (
 				<TabContainer>
@@ -211,61 +191,52 @@ const Incentives: FC<IncentivesProps> = ({
 					)}
 					{activeTab === Tab.Curve_LP && (
 						<LPTab
-							userBalance={useCurvePool.data?.userBalance ?? 0}
+							userBalance={lpData[CryptoCurrency.CurveLPToken].data?.userBalance ?? 0}
 							stakedAsset={CryptoCurrency.CurveLPToken}
-							allowance={useCurvePool.data?.allowance ?? null}
+							allowance={lpData[CryptoCurrency.CurveLPToken].data?.allowance ?? null}
 							icon={incentives[1].icon}
 							tokenRewards={incentives[1].rewards}
 							staked={incentives[1].staked.balance}
-							title={
-								<Trans
-									i18nKey="earn.incentives.options.snx.description"
-									components={[<StyledLink />]}
-								/>
-							}
 						/>
 					)}
 					{activeTab === Tab.iETH_LP && (
 						<LPTab
-							userBalance={useiETHPool.data?.userBalance ?? 0}
+							userBalance={lpData[Synths.iETH].data?.userBalance ?? 0}
 							stakedAsset={Synths.iETH}
-							allowance={useiETHPool.data?.allowance ?? null}
+							allowance={lpData[Synths.iETH].data?.allowance ?? null}
 							icon={incentives[2].icon}
 							tokenRewards={incentives[2].rewards}
 							staked={incentives[2].staked.balance}
-							title={
-								<Trans
-									i18nKey="earn.incentives.options.snx.description"
-									components={[<StyledLink />]}
-								/>
-							}
 						/>
 					)}
 					{activeTab === Tab.iBTC_LP && (
 						<LPTab
-							userBalance={useiBTCPool.data?.userBalance ?? 0}
+							userBalance={lpData[Synths.iBTC].data?.userBalance ?? 0}
 							stakedAsset={Synths.iBTC}
-							allowance={useiBTCPool.data?.allowance ?? null}
+							allowance={lpData[Synths.iBTC].data?.allowance ?? null}
 							icon={incentives[3].icon}
 							tokenRewards={incentives[3].rewards}
 							staked={incentives[3].staked.balance}
-							title={
-								<Trans
-									i18nKey="earn.incentives.options.snx.description"
-									components={[<StyledLink />]}
-								/>
-							}
 						/>
 					)}
 				</TabContainer>
 			) : null}
-		</FlexDiv>
+		</StyledFlexDiv>
 	);
 };
 
 const TabContainer = styled.div`
 	width: 60%;
 	background-color: ${(props) => props.theme.colors.navy};
+`;
+
+const StyledFlexDiv = styled(FlexDiv)<{ isOpen: boolean }>`
+	background-color: ${(props) => props.theme.colors.navy};
+	${(props) =>
+		props.isOpen &&
+		css`
+			min-height: 390px;
+		`};
 `;
 
 export default Incentives;
