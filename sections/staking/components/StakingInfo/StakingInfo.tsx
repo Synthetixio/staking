@@ -117,7 +117,11 @@ const StakingInfo: React.FC<StakingInfoProps> = ({ isMint }) => {
 					currentCRatio.isNaN() || currentCRatio.isZero()
 						? toBigNumber(0)
 						: toBigNumber(100).dividedBy(currentCRatio),
-				changedValue: changeCRatio.isNaN() ? toBigNumber(0) : changeCRatio,
+				changedValue: changeCRatio.isNaN()
+					? toBigNumber(0)
+					: !changeCRatio.isFinite()
+					? toBigNumber(0)
+					: changeCRatio,
 				currencyKey: '%',
 			},
 			{
