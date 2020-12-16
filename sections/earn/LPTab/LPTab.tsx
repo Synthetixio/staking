@@ -13,7 +13,7 @@ import PendingConfirmation from 'assets/svg/app/pending-confirmation.svg';
 import Success from 'assets/svg/app/success.svg';
 import { Transaction } from 'constants/network';
 import { normalizedGasPrice } from 'utils/network';
-import { CryptoCurrency } from 'constants/currency';
+import { CryptoCurrency, Synths } from 'constants/currency';
 import { getGasEstimateForTransaction } from 'utils/transactions';
 
 import Connector from 'containers/Connector';
@@ -41,7 +41,6 @@ import {
 
 type LPTabProps = {
 	stakedAsset: CurrencyKey;
-	title: ReactNode;
 	tokenRewards: number;
 	icon: ReactNode;
 	allowance: number | null;
@@ -52,7 +51,6 @@ type LPTabProps = {
 const LPTab: FC<LPTabProps> = ({
 	icon,
 	stakedAsset,
-	title,
 	tokenRewards,
 	allowance,
 	userBalance,
@@ -142,11 +140,25 @@ const LPTab: FC<LPTabProps> = ({
 		claim();
 	}, [stakedAsset, signer, claimGasPrice, monitorHash]);
 
+	const translationKey = useMemo(() => {
+		if (stakedAsset === Synths.iETH) {
+			return 'earn.incentives.options.ieth.description';
+		} else if (stakedAsset === Synths.iBTC) {
+			return 'earn.incentives.options.ibtc.description';
+		} else if (stakedAsset === CryptoCurrency.CurveLPToken) {
+			return 'earn.incentives.options.curve.description';
+		} else {
+			throw new Error('unexpected staking asset for translation key');
+		}
+	}, [stakedAsset]);
+
 	if (claimTransactionState === Transaction.WAITING) {
 		return (
 			<TxState
 				description={
-					<Trans i18nKey="earn.incentives.options.snx.description" components={[<StyledLink />]} />
+					<Label>
+						<Trans i18nKey={translationKey} components={[<StyledLink />]} />
+					</Label>
 				}
 				title={t('earn.actions.rewards.waiting')}
 				content={
@@ -174,7 +186,9 @@ const LPTab: FC<LPTabProps> = ({
 		return (
 			<TxState
 				description={
-					<Trans i18nKey="earn.incentives.options.snx.description" components={[<StyledLink />]} />
+					<Label>
+						<Trans i18nKey={translationKey} components={[<StyledLink />]} />
+					</Label>
 				}
 				title={t('earn.actions.claim.success')}
 				content={
@@ -209,7 +223,9 @@ const LPTab: FC<LPTabProps> = ({
 
 	return (
 		<TabContainer>
-			<Label>{title}</Label>
+			<Label>
+				<Trans i18nKey={translationKey} components={[<StyledLink />]} />
+			</Label>
 			<FlexDivCentered>
 				<StructuredTab
 					tabHeight={40}

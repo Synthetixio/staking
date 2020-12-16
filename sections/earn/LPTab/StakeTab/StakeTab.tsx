@@ -159,7 +159,7 @@ const StakeTab: FC<StakeTabProps> = ({ icon, stakedAsset, isStake, userBalance, 
 					isStake ? t('earn.actions.stake.in-progress') : t('earn.actions.unstake.in-progress')
 				}
 				content={
-					<FlexDivColCentered>
+					<StakeTxContainer>
 						<Svg src={PendingConfirmation} />
 						<GreyHeader>
 							{isStake ? t('earn.actions.stake.staking') : t('earn.actions.unstake.unstaking')}
@@ -180,7 +180,7 @@ const StakeTab: FC<StakeTabProps> = ({ icon, stakedAsset, isStake, userBalance, 
 						<ExternalLink href={link}>
 							<LinkText>{t('earn.actions.tx.link')}</LinkText>
 						</ExternalLink>
-					</FlexDivColCentered>
+					</StakeTxContainer>
 				}
 			/>
 		);
@@ -193,7 +193,7 @@ const StakeTab: FC<StakeTabProps> = ({ icon, stakedAsset, isStake, userBalance, 
 				description={null}
 				title={isStake ? t('earn.actions.stake.success') : t('earn.actions.unstake.success')}
 				content={
-					<FlexDivColCentered>
+					<StakeTxContainer>
 						<Svg src={Success} />
 						<GreyHeader>
 							{isStake ? t('earn.actions.stake.staked') : t('earn.actions.unstake.withdrew')}
@@ -224,7 +224,7 @@ const StakeTab: FC<StakeTabProps> = ({ icon, stakedAsset, isStake, userBalance, 
 								{t('earn.actions.tx.dismiss')}
 							</DismissButton>
 						</ButtonSpacer>
-					</FlexDivColCentered>
+					</StakeTxContainer>
 				}
 			/>
 		);
@@ -333,6 +333,10 @@ const InputField = styled(StyledInput)`
 	&:disabled {
 		color: ${(props) => props.theme.colors.gray};
 	}
+`;
+
+const StakeTxContainer = styled(FlexDivColCentered)`
+	margin: -20px;
 `;
 
 export default StakeTab;
