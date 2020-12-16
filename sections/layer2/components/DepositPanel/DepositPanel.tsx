@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { Svg } from 'react-optimized-image';
 
-import { FlexDivColCentered, ModalItem, ModalItemText, ModalItemTitle } from 'styles/common';
+import { FlexDivColCentered } from 'styles/common';
 import SNXLogo from 'assets/svg/currencies/crypto/SNX.svg';
 import { TabContainer } from '../common';
 
@@ -24,6 +24,7 @@ const DepositPanel = () => {
 
 	const [gasLimitEstimate, setGasLimitEstimate] = useState<number | null>(null);
 	const [gasPrice, setGasPrice] = useState<number>(0);
+	console.log(gasPrice, setGasLimitEstimate);
 
 	return (
 		<TabContainer>

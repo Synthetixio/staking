@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { FlexDivColCentered, GridDivCenteredRow, linkCSS } from 'styles/common';
+import { FlexDivColCentered } from 'styles/common';
 
 export const TabContainer = styled(FlexDivColCentered)`
 	background: ${(props) => props.theme.colors.black};
