@@ -27,7 +27,11 @@ const DepositPanel = () => {
 
 	return (
 		<TabContainer>
-			<ApproveModal description={t('layer2.actions.deposit.action.approve.description')} />
+			<ApproveModal
+				description={t('layer2.actions.deposit.action.approve.description')}
+				isApproving={false}
+				onApprove={() => console.log('TODO')}
+			/>
 			<InfoContainer>
 				<Svg src={SNXLogo} />
 				<Data>
