@@ -59,7 +59,7 @@ const LPTab: FC<LPTabProps> = ({
 	staked,
 }) => {
 	const { t } = useTranslation();
-	const { provider } = Connector.useContainer();
+	const { signer } = Connector.useContainer();
 	const { monitorHash } = Notify.useContainer();
 	const [showApproveOverlayModal, setShowApproveOverlayModal] = useState<boolean>(false);
 
@@ -116,7 +116,7 @@ const LPTab: FC<LPTabProps> = ({
 				try {
 					setClaimError(null);
 					setClaimTxModalOpen(true);
-					const contract = getContract(stakedAsset, provider);
+					const contract = getContract(stakedAsset, signer);
 
 					const gasLimit = await getGasEstimateForTransaction([], contract.estimateGas.getReward);
 					const transaction: ethers.ContractTransaction = await contract.getReward({
@@ -140,7 +140,7 @@ const LPTab: FC<LPTabProps> = ({
 			}
 		}
 		claim();
-	}, [stakedAsset, provider, synthetix.js]);
+	}, [stakedAsset, signer, synthetix.js]);
 
 	if (claimTransactionState === Transaction.WAITING) {
 		return (

@@ -45,23 +45,20 @@ import {
 	LinkText,
 } from '../../common';
 
-export const getContract = (
-	stakedAsset: CurrencyKey,
-	provider: ethers.providers.Provider | null
-) => {
+export const getContract = (stakedAsset: CurrencyKey, signer: ethers.Signer | null) => {
 	const { contracts } = synthetix.js!;
 	if (stakedAsset === Synths.iBTC) {
 		return contracts.StakingRewardsiBTC;
 	} else if (stakedAsset === Synths.iETH) {
 		return contracts.StakingRewardsiETH;
-	} else if (stakedAsset === CryptoCurrency.CurveLPToken && provider != null) {
+	} else if (stakedAsset === CryptoCurrency.CurveLPToken && signer != null) {
 		return new ethers.Contract(
 			curvepoolRewards.address,
 			curvepoolRewards.abi,
-			provider as ethers.providers.Provider
+			signer as ethers.Signer
 		);
 	} else {
-		throw new Error('unrecognizable asset or provider not set');
+		throw new Error('unrecognizable asset or signer not set');
 	}
 };
 
@@ -78,7 +75,7 @@ const StakeTab: FC<StakeTabProps> = ({ icon, stakedAsset, isStake, userBalance, 
 	const [amount, setAmount] = useState<number | null>(null);
 	const { monitorHash } = Notify.useContainer();
 	const { etherscanInstance } = Etherscan.useContainer();
-	const { provider } = Connector.useContainer();
+	const { signer } = Connector.useContainer();
 	const [gasLimitEstimate, setGasLimitEstimate] = useState<number | null>(null);
 	const [gasPrice, setGasPrice] = useState<number>(0);
 	const [error, setError] = useState<string | null>(null);
@@ -94,7 +91,7 @@ const StakeTab: FC<StakeTabProps> = ({ icon, stakedAsset, isStake, userBalance, 
 			if (synthetix && synthetix.js && amount != null && amount > 0) {
 				try {
 					setError(null);
-					const contract = getContract(stakedAsset, provider);
+					const contract = getContract(stakedAsset, signer);
 					let gasEstimate = await getGasEstimateForTransaction(
 						[synthetix.js.utils.parseEther(amount.toString())],
 						isStake ? contract.estimateGas.stake : contract.estimateGas.withdraw
@@ -115,7 +112,7 @@ const StakeTab: FC<StakeTabProps> = ({ icon, stakedAsset, isStake, userBalance, 
 				try {
 					setError(null);
 					setTxModalOpen(true);
-					const contract = getContract(stakedAsset, provider);
+					const contract = getContract(stakedAsset, signer);
 
 					const formattedStakeAmount = synthetix.js.utils.parseEther(amount.toString());
 					const gasLimit = await getGasEstimateForTransaction(
@@ -151,7 +148,7 @@ const StakeTab: FC<StakeTabProps> = ({ icon, stakedAsset, isStake, userBalance, 
 			}
 		}
 		stake();
-	}, [synthetix.js, amount, provider, stakedAsset]);
+	}, [synthetix.js, amount, signer, stakedAsset]);
 
 	if (transactionState === Transaction.WAITING) {
 		return (
@@ -171,11 +168,11 @@ const StakeTab: FC<StakeTabProps> = ({ icon, stakedAsset, isStake, userBalance, 
 							{isStake
 								? t('earn.actions.stake.amount', {
 										amount,
-										asset: CryptoCurrency.SNX,
+										asset: stakedAsset,
 								  })
 								: t('earn.actions.unstake.amount', {
 										amount,
-										asset: CryptoCurrency.SNX,
+										asset: stakedAsset,
 								  })}
 						</WhiteSubheader>
 						<Divider />
@@ -205,11 +202,11 @@ const StakeTab: FC<StakeTabProps> = ({ icon, stakedAsset, isStake, userBalance, 
 							{isStake
 								? t('earn.actions.stake.amount', {
 										amount,
-										asset: CryptoCurrency.SNX,
+										asset: stakedAsset,
 								  })
 								: t('earn.actions.unstake.amount', {
 										amount,
-										asset: CryptoCurrency.SNX,
+										asset: stakedAsset,
 								  })}
 						</WhiteSubheader>
 						<Divider />
