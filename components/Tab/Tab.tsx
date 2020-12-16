@@ -52,7 +52,7 @@ export const TabPanel = ({
 	name: string;
 	activeTab: string;
 	children: ReactNode;
-	height: number;
+	height?: number;
 	width: number;
 	padding: number;
 }) =>
@@ -71,11 +71,11 @@ export const TabPanel = ({
 		</TabPanelContainer>
 	) : null;
 
-const TabPanelContainer = styled.div<{ height: number; width: number; padding: number }>`
+const TabPanelContainer = styled.div<{ height?: number; width: number; padding: number }>`
 	outline: none;
 	background: ${(props) => props.theme.colors.backgroundBlue};
 	box-shadow: 0px 0px 20px ${(props) => props.theme.colors.backgroundBoxShadow};
-	height: ${(props) => props.height}px;
+	height: ${(props) => (props.height != null ? `${props.height}px` : 'unset')};
 	width: ${(props) => props.width}px;
 	padding: ${(props) => props.padding}px;
 `;
