@@ -1,14 +1,5 @@
 import { Trans, useTranslation } from 'react-i18next';
-import {
-	Container,
-	Data,
-	Header,
-	StyledLink,
-	StyledTable,
-	Subtitle,
-	TableNoResults,
-	Title,
-} from 'sections/escrow/components/common';
+import { Container, StyledLink, Subtitle, Title } from 'sections/escrow/components/common';
 
 const InfoBox = () => {
 	const { t } = useTranslation();

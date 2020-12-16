@@ -20,6 +20,7 @@ import { getStakingAmount } from '../helper';
 import { CryptoCurrency, Synths } from 'constants/currency';
 import { useRecoilValue } from 'recoil';
 import { amountToBurnState, amountToMintState } from 'store/staking';
+import { EXTERNAL_LINKS } from 'constants/links';
 
 type StakingInfoProps = {
 	isMint: boolean;
@@ -159,7 +160,7 @@ const StakingInfo: React.FC<StakingInfoProps> = ({ isMint }) => {
 				<Subtitle>
 					<Trans
 						i18nKey={isMint ? 'staking.info.mint.subtitle' : 'staking.info.burn.subtitle'}
-						components={[<StyledLink />]}
+						components={[<StyledLink href={EXTERNAL_LINKS.Synthetix.Litepaper} />]}
 					/>
 				</Subtitle>
 			</InfoHeader>

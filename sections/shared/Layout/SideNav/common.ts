@@ -16,6 +16,7 @@ export const BarTitle = styled(FlexDivCentered)`
 	font-size: 10px;
 	font-family: ${(props) => props.theme.fonts.condensedMedium};
 	color: ${(props) => props.theme.colors.gray};
+	text-transform: uppercase;
 `;
 
 export const BarValue = styled.p`
