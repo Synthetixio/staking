@@ -53,7 +53,7 @@
 			},
 			"disconnect-wallet": "disconnect",
 			"change-wallet": "change wallet",
-			"change-accounts": "change accounts",
+			"switch-account": "switch account",
 			"available-on-hardware-wallet": "Available on hardware wallets"
 		},
 		"notifications": {
