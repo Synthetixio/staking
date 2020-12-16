@@ -48,12 +48,13 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 
 const StyledBaseModal = styled(BaseModal)`
 	[data-reach-dialog-content] {
-		width: 270px;
+		width: 300px;
 	}
 	.card-header {
 		font-size: 12px;
 		font-family: ${(props) => props.theme.fonts.interBold};
 		background-color: ${(props) => props.theme.colors.navy};
+		border-bottom: 1px solid ${(props) => props.theme.colors.grayBlue};
 	}
 	.card-body {
 		padding: 24px;
@@ -64,7 +65,7 @@ const StyledBaseModal = styled(BaseModal)`
 const Subtitle = styled.div`
 	text-align: center;
 	color: ${(props) => props.theme.colors.gray};
-	padding-bottom: 48px;
+	padding: 48px 0px;
 	font-size: 12px;
 	font-family: ${(props) => props.theme.fonts.regular};
 `;

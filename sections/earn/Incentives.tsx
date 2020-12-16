@@ -122,7 +122,7 @@ const Incentives: FC<IncentivesProps> = ({
 							tvl: curveTVL,
 							staked: {
 								balance: useCurvePool.data?.staked ?? 0,
-								asset: Synths.sUSD,
+								asset: CryptoCurrency.CurveLPToken,
 							},
 							rewards: useCurvePool.data?.rewards ?? 0,
 							periodStarted: now - (useCurvePool.data?.duration ?? 0),
@@ -212,7 +212,7 @@ const Incentives: FC<IncentivesProps> = ({
 					{activeTab === Tab.Curve_LP && (
 						<LPTab
 							userBalance={useCurvePool.data?.userBalance ?? 0}
-							synth={Synths.sUSD}
+							stakedAsset={CryptoCurrency.CurveLPToken}
 							allowance={useCurvePool.data?.allowance ?? null}
 							icon={incentives[1].icon}
 							tokenRewards={incentives[1].rewards}
@@ -228,7 +228,7 @@ const Incentives: FC<IncentivesProps> = ({
 					{activeTab === Tab.iETH_LP && (
 						<LPTab
 							userBalance={useiETHPool.data?.userBalance ?? 0}
-							synth={Synths.iETH}
+							stakedAsset={Synths.iETH}
 							allowance={useiETHPool.data?.allowance ?? null}
 							icon={incentives[2].icon}
 							tokenRewards={incentives[2].rewards}
@@ -244,7 +244,7 @@ const Incentives: FC<IncentivesProps> = ({
 					{activeTab === Tab.iBTC_LP && (
 						<LPTab
 							userBalance={useiBTCPool.data?.userBalance ?? 0}
-							synth={Synths.iBTC}
+							stakedAsset={Synths.iBTC}
 							allowance={useiBTCPool.data?.allowance ?? null}
 							icon={incentives[3].icon}
 							tokenRewards={incentives[3].rewards}

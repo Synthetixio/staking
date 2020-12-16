@@ -35,17 +35,30 @@ const StakingInfo: React.FC<StakingInfoProps> = ({ isMint }) => {
 		lockedCollateral,
 		SNXRate,
 		totalEscrowBalance,
+		issuableSynths,
 	} = useStakingCalculations();
 
 	const amountToBurn = useRecoilValue(amountToBurnState);
 	const amountToMint = useRecoilValue(amountToMintState);
 
 	const Rows = useMemo(() => {
-		// @TODO: Add logic, burning when below c-ratio only reliefs debt does not unlock snx
+		const calculatedTargetBurn = Math.max(debtBalance.minus(issuableSynths).toNumber(), 0);
 
 		const amountToMintBN = toBigNumber(amountToMint);
 		const amountToBurnBN = toBigNumber(amountToBurn);
-		const unlockedStakeAmount = getStakingAmount(targetCRatio, amountToBurnBN, SNXRate);
+
+		let unlockedStakeAmount;
+
+		if (
+			!isMint &&
+			currentCRatio.isGreaterThan(targetCRatio) &&
+			amountToBurnBN.isLessThanOrEqualTo(calculatedTargetBurn)
+		) {
+			unlockedStakeAmount = toBigNumber(0);
+		} else {
+			unlockedStakeAmount = getStakingAmount(targetCRatio, amountToBurnBN, SNXRate);
+		}
+
 		const stakingAmount = getStakingAmount(targetCRatio, amountToMintBN, SNXRate);
 		const mintAdditionalDebt = stakedCollateral
 			.plus(stakingAmount)
@@ -128,6 +141,7 @@ const StakingInfo: React.FC<StakingInfoProps> = ({ isMint }) => {
 		totalEscrowBalance,
 		transferableCollateral,
 		unstakedCollateral,
+		issuableSynths,
 	]);
 
 	const emptyInput = isMint ? amountToMint.length === 0 : amountToBurn.length === 0;

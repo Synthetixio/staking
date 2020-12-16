@@ -7,7 +7,7 @@ import { ethers } from 'ethers';
 import { normalizedGasPrice, normalizeGasLimit } from 'utils/network';
 import { getGasEstimateForTransaction } from 'utils/transactions';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { walletAddressState } from 'store/wallet';
+import { isWalletConnectedState, walletAddressState } from 'store/wallet';
 import synthetix from 'lib/synthetix';
 import BurnTiles from '../BurnTiles';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
@@ -34,13 +34,17 @@ const BurnTab: React.FC = () => {
 	const [waitingPeriod, setWaitingPeriod] = useState(0);
 	const [issuanceDelay, setIssuanceDelay] = useState(0);
 
+	const isWalletConnected = useRecoilValue(isWalletConnectedState);
+
 	const synthsBalancesQuery = useSynthsBalancesQuery();
 	const synthBalances =
 		synthsBalancesQuery.isSuccess && synthsBalancesQuery.data != null
 			? synthsBalancesQuery.data
 			: null;
 
-	const sUSDBalance = synthBalances?.balancesMap.sUSD ? synthBalances.balancesMap.sUSD.balance : 0;
+	const sUSDBalance = synthBalances?.balancesMap.sUSD
+		? synthBalances.balancesMap.sUSD.balance
+		: toBigNumber(0);
 
 	const getMaxSecsLeftInWaitingPeriod = useCallback(async () => {
 		const {
@@ -93,7 +97,7 @@ const BurnTab: React.FC = () => {
 
 	useEffect(() => {
 		const getGasLimitEstimate = async () => {
-			if (synthetix && synthetix.js) {
+			if (synthetix && synthetix.js && amountToBurn.length > 0 && isWalletConnected) {
 				try {
 					setError(null);
 					const {
@@ -107,7 +111,7 @@ const BurnTab: React.FC = () => {
 					if (!parseFloat(amountToBurn)) throw new Error('input.error.invalidAmount');
 					if (waitingPeriod) throw new Error('Waiting period for sUSD is still ongoing');
 					if (issuanceDelay) throw new Error('Waiting period to burn is still ongoing');
-					if (Number(amountToBurn) > sUSDBalance || maxBurnAmount.isZero())
+					if (Number(amountToBurn) > sUSDBalance.toNumber() || maxBurnAmount.isZero())
 						throw new Error('input.error.notEnoughToBurn');
 
 					const gasEstimate = await getGasEstimateForTransaction(
@@ -188,7 +192,12 @@ const BurnTab: React.FC = () => {
 
 		switch (burnType) {
 			case BurnActionType.MAX:
-				const burnAmount = debtBalance;
+				let burnAmount;
+				if (sUSDBalance.isLessThan(debtBalance)) {
+					burnAmount = sUSDBalance;
+				} else {
+					burnAmount = debtBalance;
+				}
 				onBurnChange(burnAmount.toString());
 				onSubmit = () => {
 					handleBurn(false);

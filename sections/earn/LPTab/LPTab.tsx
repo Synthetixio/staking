@@ -1,4 +1,4 @@
-import { FC, useState, useMemo, useEffect, ReactNode } from 'react';
+import { FC, useState, useMemo, useEffect, ReactNode, useCallback } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import { ethers } from 'ethers';
 import { Svg } from 'react-optimized-image';
@@ -16,13 +16,14 @@ import { normalizedGasPrice } from 'utils/network';
 import { CryptoCurrency } from 'constants/currency';
 import { getGasEstimateForTransaction } from 'utils/transactions';
 
+import Connector from 'containers/Connector';
 import Notify from 'containers/Notify';
 import TxState from 'sections/earn/TxState';
 
 import StakeTab from './StakeTab';
 import Approve from './Approve';
 import RewardsBox from './RewardsBox';
-import { getContractAndPoolAddress } from './Approve/Approve';
+import { getContract } from './StakeTab/StakeTab';
 
 import {
 	StyledLink,
@@ -39,7 +40,7 @@ import {
 } from '../common';
 
 type LPTabProps = {
-	synth: CurrencyKey;
+	stakedAsset: CurrencyKey;
 	title: ReactNode;
 	tokenRewards: number;
 	icon: ReactNode;
@@ -50,7 +51,7 @@ type LPTabProps = {
 
 const LPTab: FC<LPTabProps> = ({
 	icon,
-	synth,
+	stakedAsset,
 	title,
 	tokenRewards,
 	allowance,
@@ -58,6 +59,7 @@ const LPTab: FC<LPTabProps> = ({
 	staked,
 }) => {
 	const { t } = useTranslation();
+	const { signer } = Connector.useContainer();
 	const { monitorHash } = Notify.useContainer();
 	const [showApproveOverlayModal, setShowApproveOverlayModal] = useState<boolean>(false);
 
@@ -81,7 +83,7 @@ const LPTab: FC<LPTabProps> = ({
 	const tabData = useMemo(() => {
 		const commonStakeTabProps = {
 			icon,
-			synth,
+			stakedAsset,
 			userBalance,
 			staked,
 		};
@@ -100,7 +102,7 @@ const LPTab: FC<LPTabProps> = ({
 				key: 'unstake',
 			},
 		];
-	}, [t, icon, synth, userBalance]);
+	}, [t, icon, stakedAsset, userBalance]);
 
 	useEffect(() => {
 		if (allowance === 0 && userBalance > 0) {
@@ -108,46 +110,43 @@ const LPTab: FC<LPTabProps> = ({
 		}
 	}, [allowance, userBalance]);
 
-	const handleClaim = async () => {
-		if (synthetix && synthetix.js) {
-			try {
-				setClaimError(null);
-				setClaimTxModalOpen(true);
-				const { contract } = getContractAndPoolAddress(synth);
+	const handleClaim = useCallback(() => {
+		async function claim() {
+			if (synthetix && synthetix.js) {
+				try {
+					setClaimError(null);
+					setClaimTxModalOpen(true);
+					const contract = getContract(stakedAsset, signer);
 
-				const gasLimit = await getGasEstimateForTransaction([], contract.estimateGas.getReward);
-				const transaction: ethers.ContractTransaction = await contract.getReward({
-					gasPrice: normalizedGasPrice(claimGasPrice),
-					gasLimit,
-				});
-
-				if (transaction) {
-					setClaimTxHash(transaction.hash);
-					setClaimTransactionState(Transaction.WAITING);
-					monitorHash({
-						txHash: transaction.hash,
-						onTxConfirmed: () => setClaimTransactionState(Transaction.SUCCESS),
+					const gasLimit = await getGasEstimateForTransaction([], contract.estimateGas.getReward);
+					const transaction: ethers.ContractTransaction = await contract.getReward({
+						gasPrice: normalizedGasPrice(claimGasPrice),
+						gasLimit,
 					});
-					setClaimTxModalOpen(false);
+
+					if (transaction) {
+						setClaimTxHash(transaction.hash);
+						setClaimTransactionState(Transaction.WAITING);
+						monitorHash({
+							txHash: transaction.hash,
+							onTxConfirmed: () => setClaimTransactionState(Transaction.SUCCESS),
+						});
+						setClaimTxModalOpen(false);
+					}
+				} catch (e) {
+					setClaimTransactionState(Transaction.PRESUBMIT);
+					setClaimError(e.message);
 				}
-			} catch (e) {
-				setClaimTransactionState(Transaction.PRESUBMIT);
-				setClaimError(e.message);
 			}
 		}
-	};
+		claim();
+	}, [stakedAsset, signer, synthetix.js]);
 
 	if (claimTransactionState === Transaction.WAITING) {
 		return (
 			<TxState
 				description={
-					<Trans
-						i18nKey="earn.incentives.options.snx.description"
-						values={{
-							synth,
-						}}
-						components={[<StyledLink />]}
-					/>
+					<Trans i18nKey="earn.incentives.options.snx.description" components={[<StyledLink />]} />
 				}
 				title={t('earn.actions.rewards.waiting')}
 				content={
@@ -175,13 +174,7 @@ const LPTab: FC<LPTabProps> = ({
 		return (
 			<TxState
 				description={
-					<Trans
-						i18nKey="earn.incentives.options.snx.description"
-						values={{
-							synth,
-						}}
-						components={[<StyledLink />]}
-					/>
+					<Trans i18nKey="earn.incentives.options.snx.description" components={[<StyledLink />]} />
 				}
 				title={t('earn.actions.claim.success')}
 				content={
@@ -233,13 +226,16 @@ const LPTab: FC<LPTabProps> = ({
 					handleClaim={handleClaim}
 					claimError={claimError}
 					setClaimError={setClaimError}
-					synth={synth}
+					stakedAsset={stakedAsset}
 					tokenRewards={tokenRewards}
 					SNXRate={SNXRate}
 				/>
 			</FlexDivCentered>
 			{showApproveOverlayModal ? (
-				<Approve setShowApproveOverlayModal={setShowApproveOverlayModal} synth={synth} />
+				<Approve
+					setShowApproveOverlayModal={setShowApproveOverlayModal}
+					stakedAsset={stakedAsset}
+				/>
 			) : null}
 		</TabContainer>
 	);

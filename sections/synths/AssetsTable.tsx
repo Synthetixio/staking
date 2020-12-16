@@ -24,7 +24,7 @@ import {
 import { CryptoBalance } from 'queries/walletBalances/types';
 
 import { EXTERNAL_LINKS } from 'constants/links';
-import { Synths } from 'constants/currency';
+import { CryptoCurrency } from 'constants/currency';
 import ROUTES from 'constants/routes';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
@@ -34,10 +34,11 @@ import Currency from 'components/Currency';
 import Button from 'components/Button';
 
 import { zeroBN } from 'utils/formatters/number';
-import { assetToSynth, isSynth } from 'utils/currencies';
+import { isSynth } from 'utils/currencies';
 
 import SynthPriceCol from './components/SynthPriceCol';
 import SynthHolding from './components/SynthHolding';
+import Link from 'next/link';
 
 type AssetsTableProps = {
 	title: ReactNode;
@@ -143,25 +144,26 @@ const AssetsTable: FC<AssetsTableProps> = ({
 						original: { currencyKey },
 					},
 				}: CellProps<CryptoBalance>) => {
-					// TODO: this is a very "simple" solution to find a pair to convert
-					let synth = assetToSynth(currencyKey);
-
-					// if the synth is not supported, default to sUSD (for 1inch conversation)
-					if (!isSynth(synth)) {
-						synth = Synths.sUSD;
+					if (currencyKey === CryptoCurrency.SNX) {
+						return (
+							<Link href={ROUTES.Staking.Home}>
+								<StyledButton>{t('common.stake-snx')}</StyledButton>
+							</Link>
+						);
 					}
-
 					return (
-						<ExternalLink href={EXTERNAL_LINKS.Trading.OneInchLink(currencyKey, synth)}>
-							<ConvertButton variant="secondary">
+						<ExternalLink
+							href={EXTERNAL_LINKS.Trading.OneInchLink(currencyKey, CryptoCurrency.SNX)}
+						>
+							<StyledButton>
 								<Trans
-									i18nKey="common.currency.convert-to-currency"
+									i18nKey="common.currency.buy-currency"
 									values={{
-										currencyKey: synth,
+										currencyKey: CryptoCurrency.SNX,
 									}}
 									components={[<NoTextTransform />]}
 								/>
-							</ConvertButton>
+							</StyledButton>
 						</ExternalLink>
 					);
 				},
@@ -207,7 +209,7 @@ const AssetsTable: FC<AssetsTableProps> = ({
 							</TableNoResultsDesc>
 							<TableNoResultsButtonContainer>
 								<Button variant="primary" onClick={() => router.push(ROUTES.Staking.Home)}>
-									{t('synths.assets.synths.table.no-synths.button-label')}
+									{t('common.stake-snx')}
 								</Button>
 							</TableNoResultsButtonContainer>
 						</TableNoResults>
@@ -237,10 +239,11 @@ const Header = styled.div`
 	padding-bottom: 20px;
 `;
 
-const ConvertButton = styled(Button)`
+const StyledButton = styled(Button).attrs({
+	variant: 'secondary',
+})`
 	text-transform: uppercase;
-	padding-left: 30px;
-	padding-right: 30px;
+	width: 120px;
 `;
 
 export default AssetsTable;

@@ -71,7 +71,7 @@ const StyledCard = styled(Card)`
 
 const StyledCardHeader = styled(Card.Header)`
 	justify-content: center;
-	height: 45px;
+	height: 48px;
 `;
 
 const StyledCardBody = styled(Card.Body)`
@@ -87,9 +87,9 @@ const DismissButton = styled.button`
 	${resetButtonCSS};
 	position: absolute;
 	right: 20px;
-	color: ${(props) => props.theme.colors.gray};
+	color: ${(props) => props.theme.colors.white};
 	&:hover {
-		color: ${(props) => props.theme.colors.white};
+		color: ${(props) => props.theme.colors.blue};
 	}
 `;
 
