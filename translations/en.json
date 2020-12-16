@@ -1,4 +1,7 @@
 {
+	"languages": {
+		"en": "English"
+	},
 	"meta": {
 		"description": "A dApp for SNX holders to earn rewards through staking.",
 		"og": {

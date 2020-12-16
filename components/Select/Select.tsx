@@ -4,7 +4,11 @@ import { ThemeContext } from 'styled-components';
 
 import { IndicatorSeparator, DropdownIndicator, MultiValueRemove } from './components';
 
-function Select<T>(props: Props<T>) {
+type SelectProps<T> = Props<T> & {
+	variant?: 'solid' | 'outline';
+};
+
+function Select<T>(props: SelectProps<T>) {
 	const { colors, fonts } = useContext(ThemeContext);
 
 	const computedStyles = useMemo(() => {
@@ -51,21 +55,38 @@ function Select<T>(props: Props<T>) {
 				fontSize: '12px',
 				color: colors.white,
 			}),
-			control: (style) => ({
-				...style,
-				fontFamily: fonts.condensedBold,
-				color: colors.white,
-				cursor: 'pointer',
-				boxShadow: `0px 0px 20px ${colors.backgroundBoxShadow}`,
-				border: 'none',
-				borderRadius: '4px',
-				outline: 'none',
-				'&:hover': {
+			control: (style) => {
+				const baseStyles = {
+					...style,
+					fontFamily: fonts.condensedBold,
+					color: colors.white,
+					cursor: 'pointer',
+					borderRadius: '4px',
+					outline: 'none',
+					fontSize: '12px',
+					backgroundColor: colors.navy,
+				};
+				if (props.variant === 'outline') {
+					return {
+						...baseStyles,
+						border: `1px solid ${colors.grayBlue}`,
+						boxShadow: 'none',
+						'&:hover': {
+							backgroundColor: colors.mediumBlue,
+							border: `1px solid ${colors.grayBlue}`,
+							outline: 'none',
+						},
+					};
+				}
+				return {
+					...baseStyles,
 					border: 'none',
-				},
-				fontSize: '12px',
-				backgroundColor: colors.navy,
-			}),
+					boxShadow: `0px 0px 20px ${colors.backgroundBoxShadow}`,
+					'&:hover': {
+						border: 'none',
+					},
+				};
+			},
 			menu: (style) => ({
 				...style,
 				backgroundColor: colors.navy,
@@ -79,19 +100,32 @@ function Select<T>(props: Props<T>) {
 				padding: 0,
 				textAlign: 'left',
 			}),
-			option: (style) => ({
-				...style,
-				fontFamily: fonts.condensedBold,
-				color: colors.gray,
-				cursor: 'pointer',
-				padding: '12px 10px',
-				fontSize: '12px',
-				backgroundColor: colors.navy,
-				'&:hover': {
-					backgroundColor: colors.mediumBlue,
-					color: colors.white,
-				},
-			}),
+			option: (style) => {
+				const baseStyles = {
+					...style,
+					fontFamily: fonts.condensedBold,
+					cursor: 'pointer',
+					padding: '12px 10px',
+					fontSize: '12px',
+					backgroundColor: colors.navy,
+					'&:hover': {
+						backgroundColor: colors.mediumBlue,
+						color: colors.white,
+					},
+				};
+
+				if (props.variant === 'outline') {
+					return {
+						...baseStyles,
+						color: colors.white,
+					};
+				}
+
+				return {
+					...baseStyles,
+					color: colors.gray,
+				};
+			},
 			placeholder: (style) => ({
 				...style,
 				fontSize: '12px',
@@ -103,13 +137,10 @@ function Select<T>(props: Props<T>) {
 				color: state.selectProps.menuIsOpen ? colors.white : colors.gray,
 				transition: 'transform 0.2s ease-in-out',
 				transform: state.selectProps.menuIsOpen && 'rotate(180deg)',
-				'&:hover': {
-					color: colors.white,
-				},
 			}),
 		};
 		return styles;
-	}, [colors, fonts]);
+	}, [colors, fonts, props.variant]);
 
 	const { components, ...rest } = props;
 
