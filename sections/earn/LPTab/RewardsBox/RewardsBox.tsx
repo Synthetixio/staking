@@ -52,7 +52,7 @@ const RewardsBox: FC<RewardsBoxProps> = ({
 	setClaimError,
 }) => {
 	const { t } = useTranslation();
-	const { provider } = Connector.useContainer();
+	const { signer } = Connector.useContainer();
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
 	const [gasLimitEstimate, setGasLimitEstimate] = useState<number | null>(null);
 
@@ -61,7 +61,7 @@ const RewardsBox: FC<RewardsBoxProps> = ({
 			if (synthetix && synthetix.js) {
 				try {
 					setClaimError(null);
-					const contract = getContract(stakedAsset, provider);
+					const contract = getContract(stakedAsset, signer);
 					let gasEstimate = await getGasEstimateForTransaction([], contract.estimateGas.getReward);
 					setGasLimitEstimate(normalizeGasLimit(Number(gasEstimate)));
 				} catch (error) {
@@ -71,7 +71,7 @@ const RewardsBox: FC<RewardsBoxProps> = ({
 			}
 		};
 		getGasLimitEstimate();
-	}, [stakedAsset, provider]);
+	}, [stakedAsset, signer]);
 
 	return (
 		<>
