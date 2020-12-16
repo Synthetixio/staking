@@ -190,19 +190,17 @@ const BurnTab: React.FC = () => {
 		let inputValue;
 		let isLocked;
 
+		const maxBurnAmount = debtBalance.isGreaterThan(sUSDBalance)
+			? toBigNumber(sUSDBalance)
+			: debtBalance;
+
 		switch (burnType) {
 			case BurnActionType.MAX:
-				let burnAmount;
-				if (sUSDBalance.isLessThan(debtBalance)) {
-					burnAmount = sUSDBalance;
-				} else {
-					burnAmount = debtBalance;
-				}
-				onBurnChange(burnAmount.toString());
+				onBurnChange(maxBurnAmount.toString());
 				onSubmit = () => {
 					handleBurn(false);
 				};
-				inputValue = burnAmount;
+				inputValue = maxBurnAmount;
 				isLocked = true;
 				break;
 			case BurnActionType.TARGET:
@@ -220,9 +218,6 @@ const BurnTab: React.FC = () => {
 				isLocked = false;
 				break;
 			default:
-				const maxBurnAmount = debtBalance.isGreaterThan(sUSDBalance)
-					? toBigNumber(sUSDBalance)
-					: debtBalance;
 				const burnAmountToFixCRatio = toBigNumber(
 					Math.max(debtBalance.minus(issuableSynths).toNumber(), 0)
 				);
@@ -250,6 +245,7 @@ const BurnTab: React.FC = () => {
 				txHash={txHash}
 				transactionState={transactionState}
 				setTransactionState={setTransactionState}
+				maxBurnAmount={maxBurnAmount}
 			/>
 		);
 	}, [
