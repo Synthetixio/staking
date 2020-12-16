@@ -1,6 +1,6 @@
 import { FC, useMemo } from 'react';
 import BigNumber from 'bignumber.js';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import Img from 'react-optimized-image';
 import { useTranslation, Trans } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
@@ -169,7 +169,7 @@ const Incentives: FC<IncentivesProps> = ({
 	);
 
 	return (
-		<FlexDiv>
+		<StyledFlexDiv isOpen={activeTab != null}>
 			<IncentivesTable
 				activeTab={activeTab}
 				data={incentives}
@@ -198,12 +198,6 @@ const Incentives: FC<IncentivesProps> = ({
 							icon={incentives[1].icon}
 							tokenRewards={incentives[1].rewards}
 							staked={incentives[1].staked.balance}
-							title={
-								<Trans
-									i18nKey="earn.incentives.options.snx.description"
-									components={[<StyledLink />]}
-								/>
-							}
 						/>
 					)}
 					{activeTab === Tab.iETH_LP && (
@@ -214,12 +208,6 @@ const Incentives: FC<IncentivesProps> = ({
 							icon={incentives[2].icon}
 							tokenRewards={incentives[2].rewards}
 							staked={incentives[2].staked.balance}
-							title={
-								<Trans
-									i18nKey="earn.incentives.options.snx.description"
-									components={[<StyledLink />]}
-								/>
-							}
 						/>
 					)}
 					{activeTab === Tab.iBTC_LP && (
@@ -230,23 +218,26 @@ const Incentives: FC<IncentivesProps> = ({
 							icon={incentives[3].icon}
 							tokenRewards={incentives[3].rewards}
 							staked={incentives[3].staked.balance}
-							title={
-								<Trans
-									i18nKey="earn.incentives.options.snx.description"
-									components={[<StyledLink />]}
-								/>
-							}
 						/>
 					)}
 				</TabContainer>
 			) : null}
-		</FlexDiv>
+		</StyledFlexDiv>
 	);
 };
 
 const TabContainer = styled.div`
 	width: 60%;
 	background-color: ${(props) => props.theme.colors.navy};
+`;
+
+const StyledFlexDiv = styled(FlexDiv)<{ isOpen: boolean }>`
+	background-color: ${(props) => props.theme.colors.navy};
+	${(props) =>
+		props.isOpen &&
+		css`
+			min-height: 390px;
+		`};
 `;
 
 export default Incentives;

@@ -141,7 +141,14 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 	if (transactionState === Transaction.WAITING) {
 		return (
 			<TxState
-				description={null}
+				description={
+					<Label>
+						<Trans
+							i18nKey="earn.incentives.options.snx.description"
+							components={[<StyledLink />]}
+						/>
+					</Label>
+				}
 				title={t('earn.actions.claim.in-progress')}
 				content={
 					<FlexDivColCentered>
@@ -180,7 +187,14 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 	if (transactionState === Transaction.SUCCESS) {
 		return (
 			<TxState
-				description={null}
+				description={
+					<Label>
+						<Trans
+							i18nKey="earn.incentives.options.snx.description"
+							components={[<StyledLink />]}
+						/>
+					</Label>
+				}
 				title={t('earn.actions.claim.success')}
 				content={
 					<FlexDivColCentered>
