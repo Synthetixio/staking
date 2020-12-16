@@ -1,4 +1,4 @@
-import { FC, ReactNode, useEffect, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { useRecoilValue } from 'recoil';
@@ -8,7 +8,10 @@ import { Svg } from 'react-optimized-image';
 
 import { networkState, truncatedWalletAddressState, walletAddressState } from 'store/wallet';
 
-import CheckIcon from 'assets/svg/app/check.svg';
+import CopyIcon from 'assets/svg/app/copy.svg';
+import LinkIcon from 'assets/svg/app/link.svg';
+import ArrowsChangeIcon from 'assets/svg/app/arrows-change.svg';
+import ExitIcon from 'assets/svg/app/exit.svg';
 
 import Connector from 'containers/Connector';
 import Etherscan from 'containers/Etherscan';
@@ -22,24 +25,16 @@ import {
 	ConnectionDot,
 	GridDivCenteredCol,
 	Tooltip,
+	FlexDiv,
 } from 'styles/common';
 
 type WalletOptionsProps = {
 	onDismiss: () => void;
 };
 
-const CheckButton = ({
-	children,
-	...buttonProps
-}: {
-	children: ReactNode;
-	onClick?: () => void;
-	disabled?: boolean;
-}) => (
-	<StyledButton {...buttonProps}>
-		<Svg src={CheckIcon} /> {children}
-	</StyledButton>
-);
+const linkIcon = <Svg src={LinkIcon} />;
+const exitIcon = <Svg src={ExitIcon} />;
+const changeIcon = <Svg src={ArrowsChangeIcon} />;
 
 const WalletOptionsModal: FC<WalletOptionsProps> = ({ onDismiss }) => {
 	const { t } = useTranslation();
@@ -70,7 +65,8 @@ const WalletOptionsModal: FC<WalletOptionsProps> = ({ onDismiss }) => {
 		<StyledMenuModal onDismiss={onDismiss} isOpen={true} title={t('modals.wallet.title')}>
 			<WalletDetails>
 				<SelectedWallet>{selectedWallet}</SelectedWallet>
-				<WalletAddress role="button">
+				<WalletAddress>
+					{truncatedWalletAddress}
 					<StyledTooltip
 						hideOnClick={false}
 						arrow={true}
@@ -81,11 +77,11 @@ const WalletOptionsModal: FC<WalletOptionsProps> = ({ onDismiss }) => {
 								: t('modals.wallet.copy-address.copy-to-clipboard')
 						}
 					>
-						<span>
+						<FlexDiv>
 							<CopyToClipboard text={walletAddress!} onCopy={() => setCopiedAddress(true)}>
-								<span>{truncatedWalletAddress}</span>
+								<Svg src={CopyIcon} />
 							</CopyToClipboard>
-						</span>
+						</FlexDiv>
 					</StyledTooltip>
 				</WalletAddress>
 				<Network>
@@ -95,39 +91,42 @@ const WalletOptionsModal: FC<WalletOptionsProps> = ({ onDismiss }) => {
 			</WalletDetails>
 			<Buttons>
 				<ExternalLink href={etherscanInstance?.addressLink(walletAddress!)}>
-					<CheckButton>{t('common.explorers.etherscan')}</CheckButton>
+					<StyledButton>
+						{linkIcon}
+						{t('common.explorers.etherscan')}
+					</StyledButton>
 				</ExternalLink>
-				<CheckButton
+				<StyledButton
 					onClick={() => {
 						onDismiss();
 						connectWallet();
 					}}
 				>
-					{t('modals.wallet.change-wallet')}
-				</CheckButton>
-				<CheckButton
+					{changeIcon} {t('modals.wallet.change-wallet')}
+				</StyledButton>
+				<StyledButton
 					onClick={() => {
 						onDismiss();
 						disconnectWallet();
 					}}
 				>
-					{t('modals.wallet.disconnect-wallet')}
-				</CheckButton>
+					{exitIcon} {t('modals.wallet.disconnect-wallet')}
+				</StyledButton>
 				<StyledTooltip
 					arrow={true}
 					placement="bottom"
 					content={t('modals.wallet.available-on-hardware-wallet')}
 				>
 					<span>
-						<CheckButton
+						<StyledButton
 							onClick={() => {
 								onDismiss();
 								switchAccounts();
 							}}
 							disabled={!isHardwareWallet()}
 						>
-							{t('modals.wallet.change-accounts')}
-						</CheckButton>
+							{changeIcon} {t('modals.wallet.switch-account')}
+						</StyledButton>
 					</span>
 				</StyledTooltip>
 			</Buttons>
@@ -173,11 +172,16 @@ const SelectedWallet = styled.div`
 	padding-bottom: 18px;
 `;
 
-const WalletAddress = styled.div`
+const WalletAddress = styled(GridDivCenteredCol)`
+	display: grid;
+	justify-content: center;
+	align-items: center;
 	grid-gap: 10px;
 	padding-bottom: 18px;
 	font-family: ${(props) => props.theme.fonts.expanded};
-	cursor: pointer;
+	svg {
+		cursor: pointer;
+	}
 `;
 
 const Network = styled(GridDivCenteredCol)`
