@@ -2,7 +2,7 @@ import { FC, useMemo } from 'react';
 import BigNumber from 'bignumber.js';
 import styled, { css } from 'styled-components';
 import Img from 'react-optimized-image';
-import { useTranslation, Trans } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
 
@@ -26,7 +26,6 @@ import snxSVG from 'assets/svg/incentives/pool-snx.svg';
 import IncentivesTable from './IncentivesTable';
 import ClaimTab from './ClaimTab';
 import LPTab from './LPTab';
-import { StyledLink } from './common';
 import { isWalletConnectedState } from 'store/wallet';
 
 import { Tab } from './types';
