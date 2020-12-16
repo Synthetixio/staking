@@ -369,6 +369,12 @@
 	},
 	"layer2": {
 		"page-title": "Layer 2 | Staking",
+		"deposit": {
+			"info": {
+				"title": "Deposit SNX",
+				"subtitle": "Deposit your SNX to complete the process of migrating your SNX from L1 to Layer 2. <0>Learn more.<0>"
+			}
+		},
 		"actions": {
 			"burn": {
 				"title": "Burn L1 debt",
@@ -376,7 +382,14 @@
 			},
 			"deposit": {
 				"title": "Deposit SNX",
-				"subtitle": "Deposit and Transfer SNX from L1 to L2"
+				"subtitle": "Deposit and Transfer SNX from L1 to L2",
+				"action": {
+					"deposit": "Deposit SNX to layer 2",
+					"approve": {
+						"description": "Before depositing your SNX, please approve the Deposit contract.",
+						"button-label": "Approve contract"
+					}
+				}
 			},
 			"migrate": {
 				"title": "Migrate Escrowed SNX",
@@ -454,6 +467,9 @@
 		}
 	},
 	"common": {
+		"approve": {
+			"approve-contract": "Approve contract"
+		},
 		"wallet": {
 			"connect-wallet": "connect wallet",
 			"switch-wallet": "switch wallet",

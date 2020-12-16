@@ -1,12 +1,13 @@
 import React, { useMemo } from 'react';
-import { useRecoilValue } from 'recoil';
-import { panelTypeState, StakingPanelType } from 'store/staking';
+import { StakingPanelType } from 'store/staking';
 import StakingInfo from './StakingInfo';
 
-const InfoBox: React.FC = () => {
-	const panelType = useRecoilValue(panelTypeState);
+type InfoBoxProps = {
+	currentTab: string;
+};
 
-	return useMemo(() => <StakingInfo isMint={panelType === StakingPanelType.MINT} />, [panelType]);
+const InfoBox: React.FC<InfoBoxProps> = ({ currentTab }) => {
+	return useMemo(() => <StakingInfo isMint={currentTab === StakingPanelType.MINT} />, [currentTab]);
 };
 
 export default InfoBox;
