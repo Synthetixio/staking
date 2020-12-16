@@ -4,14 +4,27 @@ import styled from 'styled-components';
 import { useRecoilValue } from 'recoil';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 
-import { Svg } from 'react-optimized-image';
+import Img, { Svg } from 'react-optimized-image';
 
 import { networkState, truncatedWalletAddressState, walletAddressState } from 'store/wallet';
+
+import MetaMaskIcon from 'assets/wallet-icons/metamask.png';
+import LedgerIcon from 'assets/wallet-icons/ledger.svg';
+import TrezorIcon from 'assets/wallet-icons/trezor.svg';
+import WalletConnectIcon from 'assets/wallet-icons/walletConnect.svg';
+import CoinbaseIcon from 'assets/wallet-icons/coinbase.svg';
+import PortisIcon from 'assets/wallet-icons/portis.svg';
+import TrustIcon from 'assets/wallet-icons/trust.svg';
+import DapperIcon from 'assets/wallet-icons/dapper.png';
+import TorusIcon from 'assets/wallet-icons/torus.svg';
+import StatusIcon from 'assets/wallet-icons/status.svg';
+import AuthereumIcon from 'assets/wallet-icons/authereum.png';
 
 import CopyIcon from 'assets/svg/app/copy.svg';
 import LinkIcon from 'assets/svg/app/link.svg';
 import ArrowsChangeIcon from 'assets/svg/app/arrows-change.svg';
 import ExitIcon from 'assets/svg/app/exit.svg';
+import CheckIcon from 'assets/svg/app/check.svg';
 
 import Connector from 'containers/Connector';
 import Etherscan from 'containers/Etherscan';
@@ -30,6 +43,36 @@ import {
 
 type WalletOptionsProps = {
 	onDismiss: () => void;
+};
+
+const getWalletIcon = (selectedWallet?: string | null) => {
+	switch (selectedWallet) {
+		case 'metamask':
+			return <Img src={MetaMaskIcon} />;
+		case 'trezor':
+			return <Img src={TrezorIcon} />;
+		case 'ledger':
+			return <Img src={LedgerIcon} />;
+		case 'walletconnect':
+			return <Img src={WalletConnectIcon} />;
+		case 'coinbase':
+		case 'walletlink':
+			return <Img src={CoinbaseIcon} />;
+		case 'portis':
+			return <Img src={PortisIcon} />;
+		case 'trust':
+			return <Img src={TrustIcon} />;
+		case 'dapper':
+			return <Img src={DapperIcon} />;
+		case 'torus':
+			return <Img src={TorusIcon} />;
+		case 'status':
+			return <Img src={StatusIcon} />;
+		case 'authereum':
+			return <Img src={AuthereumIcon} />;
+		default:
+			return selectedWallet;
+	}
 };
 
 const linkIcon = <Svg src={LinkIcon} />;
@@ -64,7 +107,7 @@ const WalletOptionsModal: FC<WalletOptionsProps> = ({ onDismiss }) => {
 	return (
 		<StyledMenuModal onDismiss={onDismiss} isOpen={true} title={t('modals.wallet.title')}>
 			<WalletDetails>
-				<SelectedWallet>{selectedWallet}</SelectedWallet>
+				<SelectedWallet>{getWalletIcon(selectedWallet?.toLowerCase())}</SelectedWallet>
 				<WalletAddress>
 					{truncatedWalletAddress}
 					<StyledTooltip
@@ -77,11 +120,20 @@ const WalletOptionsModal: FC<WalletOptionsProps> = ({ onDismiss }) => {
 								: t('modals.wallet.copy-address.copy-to-clipboard')
 						}
 					>
-						<FlexDiv>
+						<CopyClipboardContainer>
 							<CopyToClipboard text={walletAddress!} onCopy={() => setCopiedAddress(true)}>
-								<Svg src={CopyIcon} />
+								{copiedAddress ? (
+									<Svg
+										src={CheckIcon}
+										width="16"
+										height="16"
+										viewBox={`0 0 ${CheckIcon.width} ${CheckIcon.height}`}
+									/>
+								) : (
+									<Svg src={CopyIcon} />
+								)}
 							</CopyToClipboard>
-						</FlexDiv>
+						</CopyClipboardContainer>
 					</StyledTooltip>
 				</WalletAddress>
 				<Network>
@@ -170,6 +222,9 @@ const WalletDetails = styled.div`
 
 const SelectedWallet = styled.div`
 	padding-bottom: 18px;
+	img {
+		width: 44px;
+	}
 `;
 
 const WalletAddress = styled(GridDivCenteredCol)`
@@ -179,9 +234,11 @@ const WalletAddress = styled(GridDivCenteredCol)`
 	grid-gap: 10px;
 	padding-bottom: 18px;
 	font-family: ${(props) => props.theme.fonts.expanded};
-	svg {
-		cursor: pointer;
-	}
+`;
+
+const CopyClipboardContainer = styled(FlexDiv)`
+	cursor: pointer;
+	color: ${(props) => props.theme.colors.gray};
 `;
 
 const Network = styled(GridDivCenteredCol)`
