@@ -126,7 +126,15 @@ const BurnTab: React.FC = () => {
 			}
 		};
 		getGasLimitEstimate();
-	}, [error, amountToBurn, debtBalance, issuanceDelay, sUSDBalance, waitingPeriod]);
+	}, [
+		isWalletConnected,
+		error,
+		amountToBurn,
+		debtBalance,
+		issuanceDelay,
+		sUSDBalance,
+		waitingPeriod,
+	]);
 
 	const handleBurn = useCallback(
 		async (burnToTarget: boolean) => {
@@ -181,7 +189,7 @@ const BurnTab: React.FC = () => {
 				setError(e.message);
 			}
 		},
-		[amountToBurn, gasPrice, monitorHash, onBurnChange, walletAddress]
+		[amountToBurn, gasPrice, monitorHash, walletAddress]
 	);
 
 	const returnPanel = useMemo(() => {

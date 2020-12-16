@@ -104,7 +104,7 @@ const StakeTab: FC<StakeTabProps> = ({ icon, stakedAsset, isStake, userBalance, 
 			}
 		};
 		getGasLimitEstimate();
-	}, [amount, isStake, stakedAsset]);
+	}, [amount, isStake, stakedAsset, signer]);
 
 	const handleStake = useCallback(() => {
 		async function stake() {
@@ -148,7 +148,7 @@ const StakeTab: FC<StakeTabProps> = ({ icon, stakedAsset, isStake, userBalance, 
 			}
 		}
 		stake();
-	}, [synthetix.js, amount, signer, stakedAsset]);
+	}, [gasPrice, isStake, monitorHash, amount, signer, stakedAsset]);
 
 	if (transactionState === Transaction.WAITING) {
 		return (

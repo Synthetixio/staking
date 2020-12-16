@@ -110,8 +110,7 @@
 			},
 			"earn": {
 				"title": "EARN {{percent}}",
-				"copy": "Stake {{synth}} in the {{synth}} liquidity incentive",
-				"alt-copy": "Supply {{synth}} liquidity on {{supplier}}"
+				"copy": "Supply {{asset}} liquidity on {{supplier}}"
 			},
 			"learn": {
 				"title": "LEARN",

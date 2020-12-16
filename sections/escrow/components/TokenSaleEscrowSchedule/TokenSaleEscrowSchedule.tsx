@@ -19,9 +19,7 @@ import {
 	Title,
 } from 'sections/escrow/components/common';
 
-type TokenSaleEscrowScheduleProps = {};
-
-const TokenSaleEscrowSchedule: React.FC<TokenSaleEscrowScheduleProps> = ({}) => {
+const TokenSaleEscrowSchedule: React.FC = () => {
 	const { t } = useTranslation();
 	const tokenSaleEscrowQuery = useTokenSaleEscrowQuery();
 	const tokenSaleEscrow = tokenSaleEscrowQuery.data;

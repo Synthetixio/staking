@@ -102,7 +102,7 @@ const LPTab: FC<LPTabProps> = ({
 				key: 'unstake',
 			},
 		];
-	}, [t, icon, stakedAsset, userBalance]);
+	}, [t, icon, stakedAsset, userBalance, staked]);
 
 	useEffect(() => {
 		if (allowance === 0 && userBalance > 0) {
@@ -140,7 +140,7 @@ const LPTab: FC<LPTabProps> = ({
 			}
 		}
 		claim();
-	}, [stakedAsset, signer, synthetix.js]);
+	}, [stakedAsset, signer, claimGasPrice, monitorHash]);
 
 	if (claimTransactionState === Transaction.WAITING) {
 		return (

@@ -150,7 +150,7 @@ const Approve: FC<ApproveProps> = ({ stakedAsset, setShowApproveOverlayModal }) 
 			}
 		}
 		approve();
-	}, [stakedAsset, provider, synthetix.js]);
+	}, [stakedAsset, provider, gasPrice, monitorHash]);
 
 	if (transactionState === Transaction.WAITING) {
 		return (

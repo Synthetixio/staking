@@ -29,7 +29,7 @@ const ActionBox: FC<ActionBoxProps> = ({ currentTab }) => {
 		} else {
 			onMintTypeChange(null);
 		}
-	}, [currentTab]);
+	}, [currentTab, onBurnTypeChange, onMintTypeChange]);
 
 	const tabData = useMemo(
 		() => [
