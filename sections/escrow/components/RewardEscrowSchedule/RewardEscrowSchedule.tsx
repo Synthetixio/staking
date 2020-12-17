@@ -44,7 +44,7 @@ const RewardEscrowSchedule: React.FC<RewardEscrowScheduleProps> = ({}) => {
 				</Subtitle>
 			</ContainerHeader>
 			<ContainerBody>
-				{data ? (
+				{data || escrowDataQuery.isLoading ? (
 					<StyledTable
 						palette="primary"
 						columns={[

@@ -36,7 +36,7 @@ const StakingRewardsTab: React.FC = () => {
 	const vestingCurrencyKey = CryptoCurrency['SNX'];
 	const escrowData = escrowDataQuery?.data;
 
-	const canVestAmount = escrowData?.canVest ?? 0;
+	const canVestAmount = escrowData?.claimableAmount ?? 0;
 
 	useEffect(() => {
 		const getGasLimitEstimate = async () => {
@@ -113,7 +113,10 @@ const StakingRewardsTab: React.FC = () => {
 				<InfoContainer>
 					<Svg src={SNXLogo} />
 					<Data>
-						{canVestAmount} {vestingCurrencyKey}
+						{formatCurrency(vestingCurrencyKey, canVestAmount, {
+							currencyKey: vestingCurrencyKey,
+							decimals: 2,
+						})}
 					</Data>
 				</InfoContainer>
 
