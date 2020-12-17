@@ -38,11 +38,11 @@ const useLPData = (): LPData => {
 		useCurvePool.data?.distribution &&
 		SNXRate &&
 		curveTVL &&
-		useCurvePool.data?.swapAPY &&
-		useCurvePool.data?.rewardsAPY
+		useCurvePool.data?.swapAPR &&
+		useCurvePool.data?.rewardsAPR
 			? ((useCurvePool.data.distribution * SNXRate) / curveTVL) * WEEKS_IN_YEAR +
-			  useCurvePool.data?.swapAPY +
-			  useCurvePool.data?.rewardsAPY
+			  useCurvePool.data?.swapAPR +
+			  useCurvePool.data?.rewardsAPR
 			: 0;
 
 	return {

@@ -168,7 +168,7 @@
 				"completed": {
 					"title": "Success! Now put your {{synth}} to work:",
 					"curve": "Curve Finance {{synth}} LP Token Rewards",
-					"est-apy": "Est APY",
+					"est-apr": "Est. APR",
 					"subtext": "There are various Liquidity Providing incentives interacting with different DeFi products for you to choose from",
 					"dismiss": "DISMISS",
 					"see-more": "SEE MORE"
@@ -238,7 +238,7 @@
 	"earn": {
 		"page-title": "Earn | Synthetix Staking",
 		"incentives": {
-			"est-apy": "Est. APY",
+			"est-apr": "Est. APR",
 			"options": {
 				"select-a-pool": {
 					"title": "SELECT A POOL:"

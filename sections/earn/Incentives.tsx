@@ -79,7 +79,7 @@ const Incentives: FC<IncentivesProps> = ({
 							icon: <Img src={snxSVG} />,
 							title: t('earn.incentives.options.snx.title'),
 							subtitle: t('earn.incentives.options.snx.subtitle'),
-							apy: stakingAPR,
+							apr: stakingAPR,
 							tvl: useSNXLockedValue.data ?? 0,
 							staked: {
 								balance: stakedValue,
@@ -97,7 +97,7 @@ const Incentives: FC<IncentivesProps> = ({
 							icon: <Img src={curveSVG} />,
 							title: t('earn.incentives.options.curve.title'),
 							subtitle: t('earn.incentives.options.curve.subtitle'),
-							apy: lpData[CryptoCurrency.CurveLPToken].APR,
+							apr: lpData[CryptoCurrency.CurveLPToken].APR,
 							tvl: lpData[CryptoCurrency.CurveLPToken].TVL,
 							staked: {
 								balance: lpData[CryptoCurrency.CurveLPToken].data?.staked ?? 0,
@@ -118,7 +118,7 @@ const Incentives: FC<IncentivesProps> = ({
 							icon: <Img src={iETHSVG} />,
 							title: t('earn.incentives.options.ieth.title'),
 							subtitle: t('earn.incentives.options.ieth.subtitle'),
-							apy: lpData[Synths.iETH].APR,
+							apr: lpData[Synths.iETH].APR,
 							tvl: lpData[Synths.iETH].TVL,
 							staked: {
 								balance: lpData[Synths.iETH].data?.staked ?? 0,
@@ -136,7 +136,7 @@ const Incentives: FC<IncentivesProps> = ({
 							icon: <Img src={iBTCSVG} />,
 							title: t('earn.incentives.options.ibtc.title'),
 							subtitle: t('earn.incentives.options.ibtc.subtitle'),
-							apy: lpData[Synths.iBTC].APR,
+							apr: lpData[Synths.iBTC].APR,
 							tvl: lpData[Synths.iBTC].TVL,
 							staked: {
 								balance: lpData[Synths.iBTC].data?.staked ?? 0,
