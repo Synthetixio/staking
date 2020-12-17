@@ -1,5 +1,23 @@
 import React, { useMemo } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
+import styled from 'styled-components';
+import { Svg } from 'react-optimized-image';
+import { useRecoilValue } from 'recoil';
+
+import ArrowRightIcon from 'assets/svg/app/arrow-right.svg';
+
+import { amountToBurnState, amountToMintState } from 'store/staking';
+
+import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
+
+import { formatCurrency, toBigNumber } from 'utils/formatters/number';
+
+import { CryptoCurrency, Synths } from 'constants/currency';
+
+import { EXTERNAL_LINKS } from 'constants/links';
+
+import { getStakingAmount } from '../helper';
+
 import {
 	Title,
 	Subtitle,
@@ -12,15 +30,6 @@ import {
 	InfoContainer,
 	InfoHeader,
 } from '../common';
-import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
-import { formatCurrency, toBigNumber } from 'utils/formatters/number';
-import { Svg } from 'react-optimized-image';
-import Arrows from 'assets/svg/app/arrows.svg';
-import { getStakingAmount } from '../helper';
-import { CryptoCurrency, Synths } from 'constants/currency';
-import { useRecoilValue } from 'recoil';
-import { amountToBurnState, amountToMintState } from 'store/staking';
-import { EXTERNAL_LINKS } from 'constants/links';
 
 type StakingInfoProps = {
 	isMint: boolean;
@@ -177,7 +186,7 @@ const StakingInfo: React.FC<StakingInfoProps> = ({ isMint }) => {
 							</RowValue>
 							{!emptyInput && (
 								<>
-									<Svg src={Arrows} />
+									<StyledArrowRight src={ArrowRightIcon} />
 									<RowValue>
 										{formatCurrency(currencyKey, !changedValue.isNaN() ? changedValue : 0, {
 											currencyKey: currencyKey,
@@ -193,4 +202,10 @@ const StakingInfo: React.FC<StakingInfoProps> = ({ isMint }) => {
 		</InfoContainer>
 	);
 };
+
+const StyledArrowRight = styled(Svg)`
+	margin: 0 5px;
+	color: ${(props) => props.theme.colors.blue};
+`;
+
 export default StakingInfo;
