@@ -54,7 +54,8 @@
 			"disconnect-wallet": "disconnect",
 			"change-wallet": "change wallet",
 			"switch-account": "switch account",
-			"available-on-hardware-wallet": "Available on hardware wallets"
+			"available-on-hardware-wallet": "Available on hardware wallets",
+			"watch-wallet": "watch wallet"
 		},
 		"notifications": {
 			"title": "notifications",

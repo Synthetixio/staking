@@ -25,6 +25,7 @@ import LinkIcon from 'assets/svg/app/link.svg';
 import ArrowsChangeIcon from 'assets/svg/app/arrows-change.svg';
 import ExitIcon from 'assets/svg/app/exit.svg';
 import CheckIcon from 'assets/svg/app/check.svg';
+import SearchIcon from 'assets/svg/app/search.svg';
 
 import Connector from 'containers/Connector';
 import Etherscan from 'containers/Etherscan';
@@ -78,6 +79,7 @@ const getWalletIcon = (selectedWallet?: string | null) => {
 const linkIcon = <Svg src={LinkIcon} />;
 const exitIcon = <Svg src={ExitIcon} />;
 const changeIcon = <Svg src={ArrowsChangeIcon} />;
+const searchIcon = <Svg src={SearchIcon} />;
 
 const WalletOptionsModal: FC<WalletOptionsProps> = ({ onDismiss }) => {
 	const { t } = useTranslation();
@@ -181,6 +183,14 @@ const WalletOptionsModal: FC<WalletOptionsProps> = ({ onDismiss }) => {
 						</StyledButton>
 					</span>
 				</StyledTooltip>
+				<StyledButton
+					onClick={() => {
+						onDismiss();
+						disconnectWallet();
+					}}
+				>
+					{searchIcon} {t('modals.wallet.watch-wallet')}
+				</StyledButton>
 			</Buttons>
 		</StyledMenuModal>
 	);
