@@ -1,5 +1,4 @@
 import { FC, ReactNode } from 'react';
-import Head from 'next/head';
 import { useTranslation } from 'react-i18next';
 import styled, { createGlobalStyle } from 'styled-components';
 import { Svg } from 'react-optimized-image';
@@ -16,6 +15,8 @@ import {
 	ExternalLink,
 } from 'styles/common';
 
+import media from 'styles/media';
+
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 
 import SocialLinks from '../components/SocialLinks';
@@ -29,15 +30,9 @@ const MobileUnsupported: FC<MobileUnsupportedProps> = ({ children }) => {
 
 	return (
 		<>
-			<DesktopOnlyView>
-				<DesktopGlobalStyle />
-				{children}
-			</DesktopOnlyView>
+			<DesktopOnlyView>{children}</DesktopOnlyView>
 			<MobileOrTabletView>
-				<MobileGlobalStyle />
-				<Head>
-					<title>{t('system-status.page-title')}</title>
-				</Head>
+				<GlobalStyle />
 				<FullScreenContainer>
 					<Content>
 						<Container>
@@ -59,16 +54,11 @@ const MobileUnsupported: FC<MobileUnsupportedProps> = ({ children }) => {
 	);
 };
 
-// global styles must be reapplied when switching between mobile <> desktop
-
-const DesktopGlobalStyle = createGlobalStyle`
+const GlobalStyle = createGlobalStyle`
   body {
-		background: ${(props) => props.theme.colors.black};
-  }
-`;
-const MobileGlobalStyle = createGlobalStyle`
-  body {
-		background: ${(props) => props.theme.colors.darkGradient1};
+	  ${media.lessThan('md')`
+	 	background: ${(props) => props.theme.colors.darkGradient1}; 
+	  `}		
   }
 `;
 
