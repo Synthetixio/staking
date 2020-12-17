@@ -83,7 +83,7 @@ export const StyledButton = styled(Button)`
 	width: 80%;
 	text-transform: uppercase;
 	height: 40px;
-	backgroundcolor: ${(props) => props.theme.colors.blue};
+	background: ${(props) => props.theme.colors.blue};
 `;
 
 export const TabContainer = styled(FlexDivColCentered)`

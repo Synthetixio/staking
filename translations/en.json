@@ -51,11 +51,12 @@
 				"copy-to-clipboard": "Copy to clipboard",
 				"copied": "Copied!"
 			},
+			"etherscan": "View on Etherscan",
 			"disconnect-wallet": "disconnect",
 			"change-wallet": "change wallet",
 			"switch-account": "switch account",
 			"available-on-hardware-wallet": "Available on hardware wallets",
-			"watch-wallet": "watch wallet"
+			"watch-wallet": "watch a wallet"
 		},
 		"notifications": {
 			"title": "notifications",
@@ -492,7 +493,9 @@
 		"wallet": {
 			"connect-wallet": "connect wallet",
 			"no-wallet-connected": "No wallet connected",
-			"balance": "Balance: {{balance}}"
+			"balance": "Balance: {{balance}}",
+			"not-connected": "Not connected",
+			"or": "or"
 		},
 		"stat-box": {
 			"staked-value": "Staked value",
