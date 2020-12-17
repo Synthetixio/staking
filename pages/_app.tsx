@@ -47,15 +47,15 @@ const App: FC<AppProps> = ({ Component, pageProps }) => {
 				<meta property="og:type" content="website" />
 				<meta property="og:title" content={t('meta.og.title')} />
 				<meta property="og:description" content={t('meta.description')} />
-				{/* <meta property="og:image" content="/images/staking-facebook.jpg" /> */}
+				<meta property="og:image" content="/images/staking-facebook.jpg" />
 				<meta property="og:image:alt" content={t('meta.og.title')} />
 				<meta property="og:site_name" content={t('meta.og.site-name')} />
 				{/* twitter */}
 				<meta name="twitter:card" content="summary_large_image" />
 				<meta name="twitter:site" content="@synthetix_io" />
 				<meta name="twitter:creator" content="@synthetix_io" />
-				{/* <meta name="twitter:image" content="/images/staking-twitter.jpg" /> */}
-				<meta name="twitter:url" content="https://synthetix.io" />
+				<meta name="twitter:image" content="/images/staking-twitter.jpg" />
+				<meta name="twitter:url" content="https://staking.synthetix.io" />
 				<link rel="icon" href="/images/favicon.ico" />
 			</Head>
 			<ThemeProvider theme={theme}>

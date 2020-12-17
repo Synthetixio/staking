@@ -11,6 +11,7 @@ export type GridBoxProps = {
 	icon: ReactNode | ReactElement;
 	link?: string;
 	externalLink?: string;
+	visible?: boolean;
 };
 
 export const GridBox: FC<GridBoxProps> = ({
@@ -20,6 +21,7 @@ export const GridBox: FC<GridBoxProps> = ({
 	icon,
 	link,
 	externalLink,
+	visible,
 }) => {
 	const components = (
 		<InnerGridContainer>
@@ -28,6 +30,7 @@ export const GridBox: FC<GridBoxProps> = ({
 			<GridBoxCopy>{copy}</GridBoxCopy>
 		</InnerGridContainer>
 	);
+	if (!visible) return <></>;
 	return (
 		<GridBoxContainer
 			columnStart={gridLocations[0]}
@@ -50,9 +53,10 @@ const InnerGridContainer = styled(FlexDivColCentered)`
 
 const GridBoxTitle = styled.div`
 	font-size: 20px;
-	font-family: ${(props) => props.theme.fonts.expanded};
+	font-family: ${(props) => props.theme.fonts.extended};
 	color: ${(props) => props.theme.colors.white};
 	margin-bottom: 20px;
+	text-align: center;
 `;
 
 export const GridBoxContainer = styled.div<{
@@ -67,10 +71,10 @@ export const GridBoxContainer = styled.div<{
 	grid-column: ${(props) => `${props.columnStart} / ${props.columnEnd}`};
 	grid-row: ${(props) => `${props.rowStart} / ${props.rowEnd}`};
 	cursor: pointer;
-
+	transition: transform 0.25s ease-in-out;
 	&:hover {
 		background: ${(props) => props.theme.colors.darkGradient2};
-		transition: background-color 0.5s ease-in-out;
+		transform: scale(1.03);
 	}
 `;
 

@@ -66,7 +66,7 @@ const MintTab: React.FC = () => {
 			}
 		};
 		getGasLimitEstimate();
-	}, [amountToMint, mintMax]);
+	}, [amountToMint, mintMax, isWalletConnected]);
 
 	const handleStake = useCallback(
 		async (mintMax: boolean) => {
@@ -103,7 +103,6 @@ const MintTab: React.FC = () => {
 					monitorHash({
 						txHash: transaction.hash,
 						onTxConfirmed: () => {
-							onMintChange('');
 							setTransactionState(Transaction.SUCCESS);
 						},
 					});
@@ -114,7 +113,7 @@ const MintTab: React.FC = () => {
 				setError(e.message);
 			}
 		},
-		[amountToMint, gasPrice, monitorHash, onMintChange]
+		[amountToMint, gasPrice, monitorHash]
 	);
 
 	const returnPanel = useMemo(() => {

@@ -1,8 +1,8 @@
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import Img, { Svg } from 'react-optimized-image';
 import { useRecoilValue } from 'recoil';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 
 import sUSDIcon from '@synthetixio/assets/synths/sUSD.svg';
 import NavigationBack from 'assets/svg/app/navigation-back.svg';
@@ -27,16 +27,20 @@ import {
 	ModalItemTitle,
 	ModalItemText,
 	ErrorMessage,
+	FlexDivRowCentered,
+	NoTextTransform,
 } from 'styles/common';
 import { InputContainer, InputLocked } from '../common';
 import { Transaction } from 'constants/network';
-import { formatCurrency, toBigNumber } from 'utils/formatters/number';
+import { formatCurrency, formatNumber, toBigNumber } from 'utils/formatters/number';
 import { getStakingAmount } from '../helper';
 import { CryptoCurrency, Synths } from 'constants/currency';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 import BigNumber from 'bignumber.js';
 import { isWalletConnectedState } from 'store/wallet';
 import Connector from 'containers/Connector';
+import { BurnActionType, burnTypeState } from 'store/staking';
+import Button from 'components/Button';
 
 type StakingInputProps = {
 	onSubmit: any;
@@ -53,6 +57,7 @@ type StakingInputProps = {
 	txHash: string | null;
 	transactionState: Transaction;
 	setTransactionState: (tx: Transaction) => void;
+	maxBurnAmount?: BigNumber;
 };
 
 const StakingInput: React.FC<StakingInputProps> = ({
@@ -70,6 +75,7 @@ const StakingInput: React.FC<StakingInputProps> = ({
 	txHash,
 	transactionState,
 	setTransactionState,
+	maxBurnAmount,
 }) => {
 	const {
 		targetCRatio,
@@ -78,25 +84,29 @@ const StakingInput: React.FC<StakingInputProps> = ({
 		issuableSynths,
 		currentCRatio,
 	} = useStakingCalculations();
-	const [stakingCurrencyKey] = useState<string>(CryptoCurrency.SNX);
-	const [synthCurrencyKey] = useState<string>(Synths.sUSD);
 	const { connectWallet } = Connector.useContainer();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-
+	const burnType = useRecoilValue(burnTypeState);
 	const { t } = useTranslation();
 
+	const [stakingCurrencyKey] = useState<string>(CryptoCurrency.SNX);
+	const [synthCurrencyKey] = useState<string>(Synths.sUSD);
 	/**
 	 * Given the amount to mint, returns the equivalent collateral needed for stake.
 	 * @param mintInput Amount to mint
 	 */
-	const stakeInfo = (mintInput: BigNumber) =>
-		formatCurrency(
-			stakingCurrencyKey,
-			getStakingAmount(targetCRatio, mintInput.isNaN() ? 0 : mintInput, SNXRate),
-			{
-				currencyKey: stakingCurrencyKey,
-			}
-		);
+	const stakeInfo = useCallback(
+		(mintInput: BigNumber) =>
+			formatCurrency(
+				stakingCurrencyKey,
+				getStakingAmount(targetCRatio, mintInput.isNaN() ? 0 : mintInput, SNXRate),
+				{
+					currencyKey: stakingCurrencyKey,
+				}
+			),
+		[SNXRate, stakingCurrencyKey, targetCRatio]
+	);
+
 	const formattedInput = formatCurrency(
 		synthCurrencyKey,
 		inputValue.isNaN() ? toBigNumber(0) : inputValue,
@@ -134,11 +144,16 @@ const StakingInput: React.FC<StakingInputProps> = ({
 					size="lg"
 					disabled={transactionState !== Transaction.PRESUBMIT}
 				>
-					{isMint ? t('staking.actions.mint.action.mint') : t('staking.actions.burn.action.burn')}
+					<Trans
+						i18nKey={
+							isMint ? 'staking.actions.mint.action.mint' : 'staking.actions.burn.action.burn'
+						}
+						components={[<NoTextTransform />]}
+					/>
 				</StyledCTA>
 			);
 		}
-	}, [inputValue, error, transactionState, isMint, onSubmit, t]);
+	}, [inputValue, error, transactionState, isMint, onSubmit, t, isWalletConnected, connectWallet]);
 
 	const equivalentSNXAmount = useMemo(() => {
 		const calculatedTargetBurn = Math.max(debtBalance.minus(issuableSynths).toNumber(), 0);
@@ -179,15 +194,24 @@ const StakingInput: React.FC<StakingInputProps> = ({
 	return (
 		<>
 			<InputContainer>
-				<IconContainer onClick={() => onBack(null)}>
-					<Svg src={NavigationBack} />
-				</IconContainer>
+				<HeaderRow>
+					<IconContainer onClick={() => onBack(null)}>
+						<Svg src={NavigationBack} />
+					</IconContainer>
+					{!isMint && burnType === BurnActionType.CUSTOM && maxBurnAmount && (
+						<BalanceButton variant="text" onClick={() => onInputChange(maxBurnAmount.toString())}>
+							<span>{t('common.wallet.balance')}</span>
+							{formatNumber(maxBurnAmount)}
+						</BalanceButton>
+					)}
+				</HeaderRow>
 				<InputBox>
 					<Img width={50} height={50} src={sUSDIcon} />
 					{isLocked ? (
 						<InputLocked>{formattedInput}</InputLocked>
 					) : (
 						<StyledInput
+							value={inputValue.isNaN() ? '0' : inputValue.toString()}
 							placeholder="0"
 							onChange={(e) => onInputChange(e.target.value)}
 							disabled={!isWalletConnected}
@@ -241,11 +265,26 @@ const StakingInput: React.FC<StakingInputProps> = ({
 	);
 };
 
-const IconContainer = styled.div`
-	position: absolute;
-	top: 20px;
-	left: 20px;
-	cursor: pointer;
+const IconContainer = styled.div``;
+
+const HeaderRow = styled(FlexDivRowCentered)`
+	justify-content: space-between;
+	width: 100%;
+	padding: 8px;
+`;
+
+const BalanceButton = styled(Button)`
+	background-color: ${(props) => props.theme.colors.navy};
+	border-radius: 100px;
+	font-family: ${(props) => props.theme.fonts.condensedMedium};
+	font-size: 12px;
+	text-transform: uppercase;
+
+	padding: 0px 16px;
+
+	span {
+		color: ${(props) => props.theme.colors.gray};
+	}
 `;
 
 export default StakingInput;

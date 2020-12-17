@@ -29,7 +29,7 @@ import {
 	IconContainer,
 } from './common';
 import Etherscan from 'containers/Etherscan';
-import { burnTypeState, mintTypeState } from 'store/staking';
+import { amountToBurnState, amountToMintState, burnTypeState, mintTypeState } from 'store/staking';
 import { useSetRecoilState } from 'recoil';
 
 type ActionCompletedProps = {
@@ -53,6 +53,8 @@ const ActionCompleted: React.FC<ActionCompletedProps> = ({
 	const link = etherscanInstance != null ? etherscanInstance.txLink(hash ?? '') : undefined;
 	const onMintTypeChange = useSetRecoilState(mintTypeState);
 	const onBurnTypeChange = useSetRecoilState(burnTypeState);
+	const onBurnChange = useSetRecoilState(amountToBurnState);
+	const onMintChange = useSetRecoilState(amountToMintState);
 
 	if (!isMint) {
 		return (
@@ -85,6 +87,7 @@ const ActionCompleted: React.FC<ActionCompletedProps> = ({
 						onClick={() => {
 							setTransactionState(Transaction.PRESUBMIT);
 							onBurnTypeChange(null);
+							onBurnChange('');
 						}}
 					>
 						{t('staking.actions.burn.completed.dismiss')}
@@ -105,8 +108,8 @@ const ActionCompleted: React.FC<ActionCompletedProps> = ({
 						{t('staking.actions.mint.completed.curve', { synth: Synths.sUSD })}
 					</MiddleInfoSection>
 					<RightInfoSection>
-						<AprText>{t('staking.actions.mint.completed.est-apy')}</AprText>
-						{/* @TODO: Replace with variable APY */}
+						<AprText>{t('staking.actions.mint.completed.est-apr')}</AprText>
+						{/* @TODO: Replace with variable APR */}
 						<AprValue>14%</AprValue>
 					</RightInfoSection>
 				</MainInfoBox>
@@ -117,6 +120,7 @@ const ActionCompleted: React.FC<ActionCompletedProps> = ({
 					onClick={() => {
 						setTransactionState(Transaction.PRESUBMIT);
 						onMintTypeChange(null);
+						onMintChange('');
 					}}
 				>
 					{t('staking.actions.mint.completed.dismiss')}
@@ -167,7 +171,7 @@ const AprText = styled.div`
 const AprValue = styled.div`
 	color: ${(props) => props.theme.colors.white};
 	margin-bottom: 5px;
-	font-family: ${(props) => props.theme.fonts.expanded};
+	font-family: ${(props) => props.theme.fonts.extended};
 	font-size: 14px;
 `;
 

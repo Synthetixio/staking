@@ -1,5 +1,5 @@
 import React from 'react';
-import { Trans, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import { Svg } from 'react-optimized-image';
 
@@ -13,16 +13,13 @@ import {
 	Container,
 	Data,
 	Header,
-	StyledLink,
 	StyledTable,
 	Subtitle,
 	TableNoResults,
 	Title,
 } from 'sections/escrow/components/common';
 
-type TokenSaleEscrowScheduleProps = {};
-
-const TokenSaleEscrowSchedule: React.FC<TokenSaleEscrowScheduleProps> = ({}) => {
+const TokenSaleEscrowSchedule: React.FC = () => {
 	const { t } = useTranslation();
 	const tokenSaleEscrowQuery = useTokenSaleEscrowQuery();
 	const tokenSaleEscrow = tokenSaleEscrowQuery.data;
@@ -30,9 +27,7 @@ const TokenSaleEscrowSchedule: React.FC<TokenSaleEscrowScheduleProps> = ({}) => 
 	return (
 		<Container>
 			<Title>{t('escrow.token.info.title')}</Title>
-			<Subtitle>
-				<Trans i18nKey="escrow.token.info.subtitle" components={[<StyledLink />]} />
-			</Subtitle>
+			<Subtitle>{t('escrow.token.info.subtitle')}</Subtitle>
 			<StyledTable
 				palette="primary"
 				columns={[

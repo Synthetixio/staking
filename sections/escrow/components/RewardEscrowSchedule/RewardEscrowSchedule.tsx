@@ -27,9 +27,7 @@ import {
 import Button from 'components/Button';
 import { FlexDivCentered, FlexDivColCentered } from 'styles/common';
 
-type RewardEscrowScheduleProps = {};
-
-const RewardEscrowSchedule: React.FC<RewardEscrowScheduleProps> = ({}) => {
+const RewardEscrowSchedule: React.FC = () => {
 	const { t } = useTranslation();
 	const escrowDataQuery = useEscrowDataQuery();
 	const escrowData = escrowDataQuery.data;

@@ -3,14 +3,19 @@ import { Svg } from 'react-optimized-image';
 import { useTranslation } from 'react-i18next';
 
 import ROUTES from 'constants/routes';
+import useLPData from 'hooks/useLPData';
+import { CryptoCurrency, Synths } from 'constants/currency';
+import { formatPercent } from 'utils/formatters/number';
 
 import Stake from 'assets/svg/app/stake.svg';
-import Trade from 'assets/svg/app/trade.svg';
+import Kwenta from 'assets/svg/app/kwenta.svg';
 
 import GridBox, { GridBoxProps } from 'components/GridBox/Gridbox';
 
-const WelcomeLayout: FC = () => {
+const LayoutOne: FC = () => {
 	const { t } = useTranslation();
+
+	const lpData = useLPData();
 
 	const gridItems: GridBoxProps[] = useMemo(
 		() => [
@@ -20,6 +25,7 @@ const WelcomeLayout: FC = () => {
 				title: t('dashboard.actions.claim.title'),
 				copy: t('dashboard.actions.claim.copy'),
 				link: ROUTES.Earn.Claim,
+				visible: true,
 			},
 			{
 				gridLocations: ['col-3', 'col-4', 'row-1', 'row-2'],
@@ -27,51 +33,62 @@ const WelcomeLayout: FC = () => {
 				title: t('dashboard.actions.mint.title'),
 				copy: t('dashboard.actions.mint.copy'),
 				link: ROUTES.Staking.Home,
+				visible: true,
 			},
 			{
 				gridLocations: ['col-4', 'col-5', 'row-1', 'row-2'],
-				icon: <Svg src={Trade} />,
+				icon: <Svg src={Kwenta} />,
 				title: t('dashboard.actions.trade.title'),
 				copy: t('dashboard.actions.trade.copy'),
 				externalLink: 'http://kwenta.io/',
+				visible: true,
 			},
 			{
-				gridLocations: ['col-1', 'col-3', 'row-2', 'row-3'],
+				gridLocations: ['col-1', 'col-2', 'row-2', 'row-3'],
 				icon: <Svg src={Stake} />,
 				title: t('dashboard.actions.migrate.title'),
 				copy: t('dashboard.actions.migrate.copy'),
 				link: ROUTES.L2.Home,
+				visible: true,
 			},
-			// {
-			// 	gridLocations: ['col-1', 'col-2', 'row-2', 'row-3'],
-			// 	icon: () => <Svg src={Stake} />,
-			// 	title: t('dashboard.actions.earn.title', { percent: '10%' }),
-			// 	copy: t('dashboard.actions.earn.alt-copy', { synth: 'sUSD', supplier: 'Curve Finance' }),
-			// 	link: ROUTES.Earn.Home,
-			// },
-			// {
-			// 	gridLocations: ['col-2', 'col-3', 'row-2', 'row-3'],
-			// 	icon: () => <Svg src={Stake} />,
-			// 	title: t('dashboard.actions.earn.title', { percent: '14%' }),
-			// 	copy: t('dashboard.actions.earn.copy', { synth: 'iETH' }),
-			// 	link: ROUTES.Earn.Home,
-			// },
+			{
+				gridLocations: ['col-2', 'col-3', 'row-2', 'row-3'],
+				icon: <Svg src={Stake} />,
+				title: t('dashboard.actions.earn.title', {
+					percent: formatPercent(lpData[Synths.iBTC].APR, { minDecimals: 0 }),
+				}),
+				copy: t('dashboard.actions.earn.copy', {
+					asset: Synths.iBTC,
+					supplier: 'Synthetix',
+				}),
+				link: ROUTES.Earn.iBTC_LP,
+				visible: true,
+			},
 			{
 				gridLocations: ['col-3', 'col-4', 'row-2', 'row-3'],
 				icon: <Svg src={Stake} />,
-				title: t('dashboard.actions.earn.title', { percent: '6%' }),
-				copy: t('dashboard.actions.earn.alt-copy', { synth: 'sBTC', supplier: 'Curve Finance' }),
-				link: ROUTES.Earn.Home,
+				title: t('dashboard.actions.earn.title', {
+					percent: formatPercent(lpData[Synths.iETH].APR, { minDecimals: 0 }),
+				}),
+				copy: t('dashboard.actions.earn.copy', { asset: Synths.iETH, supplier: 'Synthetix' }),
+				link: ROUTES.Earn.iETH_LP,
+				visible: true,
 			},
 			{
 				gridLocations: ['col-4', 'col-5', 'row-2', 'row-3'],
 				icon: <Svg src={Stake} />,
-				title: t('dashboard.actions.earn.title', { percent: '65%' }),
-				copy: t('dashboard.actions.earn.alt-copy', { synth: 'sETH', supplier: 'Uniswap' }),
-				link: ROUTES.Earn.Home,
+				title: t('dashboard.actions.earn.title', {
+					percent: formatPercent(lpData[CryptoCurrency.CurveLPToken].APR, { minDecimals: 0 }),
+				}),
+				copy: t('dashboard.actions.earn.copy', {
+					asset: 'Curve sUSD LP Token',
+					supplier: 'Curve Finance',
+				}),
+				link: ROUTES.Earn.Curve_LP,
+				visible: true,
 			},
 		],
-		[t]
+		[t, lpData]
 	);
 	return (
 		<>
@@ -82,4 +99,4 @@ const WelcomeLayout: FC = () => {
 	);
 };
 
-export default WelcomeLayout;
+export default LayoutOne;

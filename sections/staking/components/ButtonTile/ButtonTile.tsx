@@ -56,7 +56,7 @@ const IconContainer = styled.div`
 `;
 
 const Title = styled.p<{ disabled: boolean }>`
-	font-family: ${(props) => props.theme.fonts.expanded};
+	font-family: ${(props) => props.theme.fonts.extended};
 	font-size: 12px;
 	text-transform: uppercase;
 	color: ${(props) => (props.disabled ? props.theme.colors.gray : props.theme.colors.white)};

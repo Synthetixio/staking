@@ -63,7 +63,7 @@ const DashboardPage = () => {
 							}
 						)}
 					/>
-					<APY
+					<APR
 						title={t('common.stat-box.earning')}
 						value={formatPercent(stakingAPR ? stakingAPR : 0)}
 						size="lg"
@@ -93,7 +93,7 @@ const StakedValue = styled(StatBox)`
 	}
 `;
 
-const APY = styled(StatBox)`
+const APR = styled(StatBox)`
 	.title {
 		color: ${(props) => props.theme.colors.green};
 	}

@@ -234,7 +234,7 @@ const StyledTable = styled(Table)`
 
 const Header = styled.div`
 	color: ${(props) => props.theme.colors.white};
-	font-family: ${(props) => props.theme.fonts.expanded};
+	font-family: ${(props) => props.theme.fonts.extended};
 	font-size: 16px;
 	padding-bottom: 20px;
 `;

@@ -85,7 +85,7 @@ const Earn = () => {
 						sign: selectedPriceCurrency.sign,
 					})}
 				/>
-				<APY
+				<APR
 					title={t('common.stat-box.earning')}
 					value={formatPercent(stakingAPR ? stakingAPR : 0)}
 					size="lg"
@@ -114,7 +114,7 @@ const UpcomingRewards = styled(StatBox)`
 		color: ${(props) => props.theme.colors.green};
 	}
 `;
-const APY = styled(StatBox)`
+const APR = styled(StatBox)`
 	.title {
 		color: ${(props) => props.theme.colors.green};
 	}

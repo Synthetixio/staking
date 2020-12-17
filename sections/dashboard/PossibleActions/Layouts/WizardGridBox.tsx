@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useRef } from 'react';
 import styled from 'styled-components';
 import Img, { Svg } from 'react-optimized-image';
 
@@ -20,6 +20,7 @@ type WizardGridBoxProps = {
 
 export const WizardGridBox: FC<WizardGridBoxProps> = ({ gridLocations }) => {
 	const { t } = useTranslation();
+	const slider = useRef<any>();
 	const STEPS = [
 		{
 			icon: <Svg src={Welcome} />,
@@ -52,6 +53,11 @@ export const WizardGridBox: FC<WizardGridBoxProps> = ({ gridLocations }) => {
 			id: 'risks',
 		},
 	];
+
+	const gotoNext = () => {
+		slider.current.slickNext();
+	};
+
 	return (
 		<GridBoxContainer
 			columnStart={gridLocations[0]}
@@ -60,9 +66,9 @@ export const WizardGridBox: FC<WizardGridBoxProps> = ({ gridLocations }) => {
 			rowEnd={gridLocations[3]}
 		>
 			<SliderContainer>
-				<Slider arrows={false} dots={true}>
+				<Slider arrows={false} dots={true} fade={true} ref={slider}>
 					{STEPS.map(({ id, icon, subtitle, title }) => (
-						<div key={id}>
+						<div key={id} onClick={() => gotoNext()}>
 							<StepBox>
 								<IconContainer>{icon}</IconContainer>
 								<Title>{t(`${title}`)}</Title>
@@ -117,7 +123,7 @@ const IconContainer = styled(FlexDivCentered)`
 	justify-content: center;
 `;
 const Title = styled.p`
-	font-family: ${(props) => props.theme.fonts.expanded};
+	font-family: ${(props) => props.theme.fonts.extended};
 	font-size: 14px;
 	color: ${(props) => props.theme.colors.white};
 	text-transform: uppercase;

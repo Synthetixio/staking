@@ -23,7 +23,7 @@ export const StyledCTA = styled(Button)<{ blue: boolean }>`
 `;
 
 export const Title = styled.p`
-	font-family: ${(props) => props.theme.fonts.expanded};
+	font-family: ${(props) => props.theme.fonts.extended};
 	color: ${(props) => props.theme.colors.white};
 	font-size: 12px;
 `;

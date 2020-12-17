@@ -21,6 +21,7 @@ const WelcomeLayout: FC = () => {
 				title: t('dashboard.actions.stake.title'),
 				copy: t('dashboard.actions.stake.copy'),
 				link: ROUTES.Staking.Home,
+				visible: true,
 			},
 			{
 				gridLocations: ['col-3', 'col-4', 'row-2', 'row-3'],
@@ -28,6 +29,7 @@ const WelcomeLayout: FC = () => {
 				title: t('dashboard.actions.learn.title'),
 				copy: t('dashboard.actions.learn.copy'),
 				externalLink: 'https://blog.synthetix.io/',
+				visible: true,
 			},
 			{
 				gridLocations: ['col-4', 'col-5', 'row-2', 'row-3'],
@@ -35,6 +37,7 @@ const WelcomeLayout: FC = () => {
 				title: t('dashboard.actions.trade.title'),
 				copy: t('dashboard.actions.trade.copy'),
 				externalLink: 'http://kwenta.io/',
+				visible: true,
 			},
 		],
 		[t]

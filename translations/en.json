@@ -102,20 +102,19 @@
 			"title": "Possible Actions",
 			"claim": {
 				"title": "CLAIM {{amount}} SNX",
-				"copy": "Claim your rewards before the period ends"
+				"copy": "Claim your staking rewards before the end of this epoch"
 			},
 			"mint": {
-				"title": "MINT SUSD",
+				"title": "MINT sUSD",
 				"copy": "Mint {{sUSDAmount}} sUSD by Staking {{SNXAmount}} SNX"
 			},
 			"earn": {
 				"title": "EARN {{percent}}",
-				"copy": "Use your {{synth}} for the Liquidity Incentive",
-				"alt-copy": "Supply {{synth}} to {{supplier}} liquidity pools"
+				"copy": "Supply {{asset}} liquidity on {{supplier}}"
 			},
 			"learn": {
 				"title": "LEARN",
-				"copy": "Read the Synthetix blog to get up to speed on all things SNX"
+				"copy": "Check out the Synthetix blog to get informed about all things SNX"
 			},
 			"welcome": {
 				"title": "WELCOME TO SYNTHETIX",
@@ -123,11 +122,11 @@
 			},
 			"stake": {
 				"title": "STAKE",
-				"copy": "Stake your SNX to earn more SNX every 7 days"
+				"copy": "Stake your SNX to earn SNX rewards every week"
 			},
 			"trade": {
 				"title": "TRADE",
-				"copy": "Trade any Synth to any Synth on the Kwenta exchange"
+				"copy": "Trade between Synths on Kwenta"
 			},
 			"migrate": {
 				"title": "MIGRATE TO LAYER 2",
@@ -147,7 +146,7 @@
 					},
 					"custom": {
 						"title": "Mint custom",
-						"subtext": "Enter a custom amount of sUSD to mint"
+						"subtext": "Mint a custom amount of sUSD"
 					}
 				},
 				"info": {
@@ -155,7 +154,7 @@
 				},
 				"action": {
 					"empty": "Enter an amount",
-					"mint": "Mint sUSD",
+					"mint": "Mint <0>sUSD</0>",
 					"max": "Max",
 					"insufficient": "Insufficient collateral"
 				},
@@ -169,7 +168,7 @@
 				"completed": {
 					"title": "Success! Now put your {{synth}} to work:",
 					"curve": "Curve Finance {{synth}} LP Token Rewards",
-					"est-apy": "Est APY",
+					"est-apr": "Est. APR",
 					"subtext": "There are various Liquidity Providing incentives interacting with different DeFi products for you to choose from",
 					"dismiss": "DISMISS",
 					"see-more": "SEE MORE"
@@ -188,7 +187,7 @@
 					},
 					"custom": {
 						"title": "Burn custom",
-						"subtext": "Enter a custom amount of sUSD to burn"
+						"subtext": "Burn a custom amount of sUSD"
 					}
 				},
 				"info": {
@@ -196,10 +195,10 @@
 				},
 				"action": {
 					"empty": "Enter an amount",
-					"burn": "Burn sUSD",
+					"burn": "Burn <0>sUSD</0>",
 					"max": "Max",
 					"to-target": "600%",
-					"insufficient": "Insufficient debt"
+					"insufficient": "Insufficient sUSD"
 				},
 				"in-progress": {
 					"title": "Burning in progress",
@@ -220,11 +219,11 @@
 		"info": {
 			"mint": {
 				"title": "Mint sUSD by staking SNX",
-				"subtitle": "Mint sUSD by staking your SNX. This gives you a Collateralization Ratio and a debt, allowing you to earn weekly staking rewards. <0>Learn more.</0>"
+				"subtitle": "Mint sUSD by staking SNX: Mint sUSD by staking your SNX. SNX stakers earn weekly staking rewards in exchange for managing their Collateralization Ratio and debt. <0>Learn more.</0>"
 			},
 			"burn": {
 				"title": "Burn sUSD to unstake SNX",
-				"subtitle": "Burn your sUSD debt to unlock your staked SNX. This will raise your Collateralization Ratio and reduce your debt. <0>Learn more.</0>"
+				"subtitle": "Burn sUSD to unstake SNX: Burn your sUSD debt to unlock your staked SNX. This will increase your Collateralization Ratio and reduce your debt. <0>Learn more.</0>"
 			},
 			"table": {
 				"not-staked": "Not Staked",
@@ -239,7 +238,7 @@
 	"earn": {
 		"page-title": "Earn | Synthetix Staking",
 		"incentives": {
-			"est-apy": "Est APY",
+			"est-apr": "Est. APR",
 			"options": {
 				"select-a-pool": {
 					"title": "SELECT A POOL:"
@@ -356,7 +355,7 @@
 		"token": {
 			"info": {
 				"title": "Vest your escrowed SNX from the token sale.",
-				"subtitle": "If your SNX is still escrowed from the token sale, you can vest it here. <0>Learn more.<0>"
+				"subtitle": "Vest your escrowed SNX from the token sale: If you have escrowed SNX from the token sale, you can vest it here."
 			}
 		},
 		"table": {
@@ -376,7 +375,7 @@
 				"title": "Token Sale"
 			},
 			"vest-button": "Vest {{canVestAmount}}",
-			"disabled": "Vesting unavailable",
+			"disabled": "No SNX to vest",
 			"in-progress": {
 				"title": "Vesting in progress",
 				"vesting": "Vesting",
@@ -392,7 +391,13 @@
 		}
 	},
 	"layer2": {
-		"page-title": "Layer 2 | Staking",
+		"page-title": "Layer 2 | Synthetix Staking",
+		"deposit": {
+			"info": {
+				"title": "Deposit SNX",
+				"subtitle": "Deposit your SNX to complete the process of migrating your SNX from L1 to Layer 2. <0>Learn more.<0>"
+			}
+		},
 		"actions": {
 			"burn": {
 				"title": "Burn L1 debt",
@@ -400,7 +405,14 @@
 			},
 			"deposit": {
 				"title": "Deposit SNX",
-				"subtitle": "Deposit and Transfer SNX from L1 to L2"
+				"subtitle": "Deposit and Transfer SNX from L1 to L2",
+				"action": {
+					"deposit": "Deposit SNX to layer 2",
+					"approve": {
+						"description": "Before depositing your SNX, please approve the Deposit contract.",
+						"button-label": "Approve contract"
+					}
+				}
 			},
 			"migrate": {
 				"title": "Migrate Escrowed SNX",
@@ -428,9 +440,9 @@
 					"no-selection": "all dates"
 				},
 				"amount": {
-					"no-selection": "all sizes",
+					"no-selection": "all amounts",
 					"less-than-num": "< {{num}}",
-					"between-num1-and-num2": "{{num1}} < x < {{num2}}",
+					"between-num1-and-num2": "{{num1}} - {{num2}}",
 					"greater-than-num": "{{num}}+"
 				}
 			},
@@ -470,21 +482,25 @@
 		"history": "History",
 		"l2": "Layer 2",
 		"bars": {
-			"c-ratio": "C-RATIO",
+			"c-ratio": "c-ratio",
 			"period": {
-				"title": "PERIOD"
+				"title": "epoch"
 			}
 		}
 	},
 	"common": {
+		"approve": {
+			"approve-contract": "Approve contract"
+		},
 		"wallet": {
 			"connect-wallet": "connect wallet",
-			"no-wallet-connected": "No wallet connected"
+			"no-wallet-connected": "No wallet connected",
+			"balance": "Balance: {{balance}}"
 		},
 		"stat-box": {
 			"staked-value": "Staked value",
 			"earning": "Earning",
-			"active-debt": "Active-debt",
+			"active-debt": "Active debt",
 			"c-ratio": "c-ratio",
 			"synth-value": "Total synth value",
 			"tx-count": "Total transactions",
