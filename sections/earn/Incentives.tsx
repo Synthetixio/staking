@@ -9,8 +9,6 @@ import { useRouter } from 'next/router';
 import useSNXLockedValueQuery from 'queries/staking/useSNXLockedValueQuery';
 
 import useFeePeriodTimeAndProgress from 'hooks/useFeePeriodTimeAndProgress';
-
-import useClaimedStatus from 'sections/hooks/useClaimedStatus';
 import useLPData from 'hooks/useLPData';
 
 import ROUTES from 'constants/routes';
@@ -38,6 +36,7 @@ type IncentivesProps = {
 	totalRewards: BigNumber;
 	stakingAPR: number;
 	stakedValue: number;
+	hasClaimed: boolean;
 };
 
 const VALID_TABS = Object.values(Tab);
@@ -48,12 +47,12 @@ const Incentives: FC<IncentivesProps> = ({
 	totalRewards,
 	stakingAPR,
 	stakedValue,
+	hasClaimed,
 }) => {
 	const { t } = useTranslation();
 	const router = useRouter();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 
-	const claimedSNX = useClaimedStatus();
 	const lpData = useLPData();
 	const useSNXLockedValue = useSNXLockedValueQuery();
 	const { nextFeePeriodStarts, currentFeePeriodStarted } = useFeePeriodTimeAndProgress();
@@ -88,7 +87,7 @@ const Incentives: FC<IncentivesProps> = ({
 							rewards: stakingRewards.toNumber(),
 							periodStarted: currentFeePeriodStarted.getTime(),
 							periodFinish: nextFeePeriodStarts.getTime(),
-							claimed: claimedSNX,
+							claimed: hasClaimed,
 							now,
 							tab: Tab.Claim,
 							route: ROUTES.Earn.Claim,
@@ -158,7 +157,7 @@ const Incentives: FC<IncentivesProps> = ({
 			useSNXLockedValue.data,
 			nextFeePeriodStarts,
 			stakingRewards,
-			claimedSNX,
+			hasClaimed,
 			lpData,
 			currentFeePeriodStarted,
 			now,

@@ -21,7 +21,13 @@ const Earn = () => {
 
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
-	const { stakedValue, stakingAPR, tradingRewards, stakingRewards } = useUserStakingData();
+	const {
+		stakedValue,
+		stakingAPR,
+		tradingRewards,
+		stakingRewards,
+		hasClaimed,
+	} = useUserStakingData();
 
 	const SNXRate = exchangeRatesQuery.data?.SNX ?? 0;
 
@@ -77,6 +83,7 @@ const Earn = () => {
 				totalRewards={totalRewards}
 				stakingAPR={stakingAPR}
 				stakedValue={stakedValue.toNumber()}
+				hasClaimed={hasClaimed}
 			/>
 		</>
 	);

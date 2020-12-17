@@ -81,7 +81,7 @@ const SideNavContainer = styled.div`
 	border-right: 1px solid ${(props) => props.theme.colors.grayBlue};
 	display: grid;
 	grid-template-rows: auto 1fr auto;
-	overflow-y: auto;
+	overflow-y: hidden;
 `;
 
 const StakingLogoWrap = styled.div`
