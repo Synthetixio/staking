@@ -551,5 +551,10 @@
 		"title-line1": "Down for",
 		"title-line2": "maintenance.",
 		"subtitle": "We apologise for any inconvenience caused, it will be back shortly."
+	},
+	"system-status": {
+		"page-title": "Mobile is coming soon | Synthetix Staking",
+		"title-line1": "Mobile is coming",
+		"title-line2": "soonthetix"
 	}
 }

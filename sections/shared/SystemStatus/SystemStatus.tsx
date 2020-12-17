@@ -8,43 +8,19 @@ import media from 'styles/media';
 import {
 	FlexDivColCentered,
 	FullScreenContainer,
-	ExternalLink,
-	GridDivCenteredCol,
 	resetHeadingMixin,
 	FlexDivCol,
 } from 'styles/common';
 
-import { EXTERNAL_LINKS } from 'constants/links';
-
 import StakingLogo from 'assets/svg/app/staking-logo.svg';
 
-import DiscordIcon from 'assets/svg/social/discord.svg';
-import TwitterIcon from 'assets/svg/social/twitter.svg';
-import GithubIcon from 'assets/svg/social/github.svg';
-
 import useIsSystemOnMaintenance from 'queries/systemStatus/useIsSystemOnMaintenance';
+
+import SocialLinks from '../components/SocialLinks';
 
 type SystemStatusProps = {
 	children: React.ReactNode;
 };
-
-const SOCIAL_LINKS = [
-	{
-		id: 'discord',
-		href: EXTERNAL_LINKS.Social.Discord,
-		icon: <Svg src={DiscordIcon} />,
-	},
-	{
-		id: 'twitter',
-		href: EXTERNAL_LINKS.Social.Twitter,
-		icon: <Svg src={TwitterIcon} />,
-	},
-	{
-		id: 'github',
-		href: EXTERNAL_LINKS.Social.GitHub,
-		icon: <Svg src={GithubIcon} />,
-	},
-];
 
 export const REFRESH_INTERVAL = 2 * 60 * 1000; // 2 min
 
@@ -76,13 +52,7 @@ const SystemStatus: FC<SystemStatusProps> = ({ children }) => {
 							<span>{t('system-status.title-line2')}</span>
 						</Title>
 						<Subtitle>{t('system-status.subtitle')}</Subtitle>
-						<Links>
-							{SOCIAL_LINKS.map(({ id, href, icon }) => (
-								<StyledExternalLink key={id} href={href}>
-									{icon}
-								</StyledExternalLink>
-							))}
-						</Links>
+						<SocialLinks />
 					</Container>
 				</Content>
 			</FullScreenContainer>
@@ -134,22 +104,6 @@ const Subtitle = styled.h2`
 	${resetHeadingMixin};
 	font-size: 14px;
 	color: ${(props) => props.theme.colors.white};
-`;
-
-const Links = styled(GridDivCenteredCol)`
-	grid-gap: 24px;
-	position: relative;
-	top: 170px;
-	${media.lessThan('sm')`
-		top: 90px;
-	`}
-`;
-
-const StyledExternalLink = styled(ExternalLink)`
-	color: ${(props) => props.theme.colors.gray};
-	&:hover {
-		color: ${(props) => props.theme.colors.white};
-	}
 `;
 
 export default SystemStatus;
