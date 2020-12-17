@@ -36,11 +36,11 @@ export const StyledLink = styled.span`
 	color: ${(props) => props.theme.colors.blue};
 `;
 
-export const Title = styled.div`
+export const Title = styled.div<{ isStakingPanel?: boolean }>`
 	font-family: ${(props) => props.theme.fonts.extended};
 	font-size: 12px;
 	color: ${(props) => props.theme.colors.white};
-	margin-bottom: 20px;
+	margin-bottom: ${(props) => (props.isStakingPanel ? '5px' : '20px')};
 `;
 
 const Header = styled.div`
@@ -62,6 +62,7 @@ export const GreyText = styled.div`
 	color: ${(props) => props.theme.colors.gray};
 	font-size: 12px;
 	margin-bottom: 5px;
+	text-align: center;
 `;
 
 export const LinkText = styled.div`

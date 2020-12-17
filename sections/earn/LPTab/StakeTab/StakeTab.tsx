@@ -80,7 +80,7 @@ const StakeTab: FC<StakeTabProps> = ({ icon, stakedAsset, isStake, userBalance, 
 	const [gasPrice, setGasPrice] = useState<number>(0);
 	const [error, setError] = useState<string | null>(null);
 
-	const [transactionState, setTransactionState] = useState<Transaction>(Transaction.PRESUBMIT);
+	const [transactionState, setTransactionState] = useState<Transaction>(Transaction.SUCCESS);
 	const [txHash, setTxHash] = useState<string | null>(null);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 	const link =
@@ -154,6 +154,7 @@ const StakeTab: FC<StakeTabProps> = ({ icon, stakedAsset, isStake, userBalance, 
 		return (
 			<TxState
 				isStakingPanel={true}
+				isStakingPanelWaitingScreen={true}
 				description={null}
 				title={
 					isStake ? t('earn.actions.stake.in-progress') : t('earn.actions.unstake.in-progress')
@@ -175,7 +176,7 @@ const StakeTab: FC<StakeTabProps> = ({ icon, stakedAsset, isStake, userBalance, 
 										asset: stakedAsset,
 								  })}
 						</WhiteSubheader>
-						<Divider />
+						<StakeDivider />
 						<GreyText>{t('earn.actions.tx.notice')}</GreyText>
 						<ExternalLink href={link}>
 							<LinkText>{t('earn.actions.tx.link')}</LinkText>
@@ -209,7 +210,7 @@ const StakeTab: FC<StakeTabProps> = ({ icon, stakedAsset, isStake, userBalance, 
 										asset: stakedAsset,
 								  })}
 						</WhiteSubheader>
-						<Divider />
+						<StakeDivider />
 						<ButtonSpacer isStakingPanel={true}>
 							{link ? (
 								<ExternalLink href={link}>
@@ -336,7 +337,13 @@ const InputField = styled(StyledInput)`
 `;
 
 const StakeTxContainer = styled(FlexDivColCentered)`
-	margin: -20px;
+	width: 90%;
+`;
+
+const StakeDivider = styled(Divider)`
+	margin-top: 5px;
+	margin-bottom: 10px;
+	width: 215px;
 `;
 
 export default StakeTab;

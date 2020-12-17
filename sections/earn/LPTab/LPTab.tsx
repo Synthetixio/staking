@@ -228,7 +228,7 @@ const LPTab: FC<LPTabProps> = ({
 			</Label>
 			<FlexDivCentered>
 				<StructuredTab
-					tabHeight={40}
+					tabHeight={30}
 					inverseTabColor={true}
 					boxPadding={0}
 					boxHeight={242}
