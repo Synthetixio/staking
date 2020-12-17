@@ -29,12 +29,15 @@ const MobileUnsupported: FC<MobileUnsupportedProps> = ({ children }) => {
 
 	return (
 		<>
-			<DesktopOnlyView>{children}</DesktopOnlyView>
+			<DesktopOnlyView>
+				<DesktopGlobalStyle />
+				{children}
+			</DesktopOnlyView>
 			<MobileOrTabletView>
+				<MobileGlobalStyle />
 				<Head>
 					<title>{t('system-status.page-title')}</title>
 				</Head>
-				<GlobalStyle />
 				<FullScreenContainer>
 					<Content>
 						<Container>
@@ -56,7 +59,14 @@ const MobileUnsupported: FC<MobileUnsupportedProps> = ({ children }) => {
 	);
 };
 
-const GlobalStyle = createGlobalStyle`
+// global styles must be reapplied when switching between mobile <> desktop
+
+const DesktopGlobalStyle = createGlobalStyle`
+  body {
+		background: ${(props) => props.theme.colors.black};
+  }
+`;
+const MobileGlobalStyle = createGlobalStyle`
   body {
 		background: ${(props) => props.theme.colors.darkGradient1};
   }
