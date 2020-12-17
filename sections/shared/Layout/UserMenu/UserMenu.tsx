@@ -7,7 +7,7 @@ import { Svg } from 'react-optimized-image';
 import { FlexDivCentered, IconButton } from 'styles/common';
 
 import Button from 'components/Button';
-import { isWalletConnectedState, truncatedWalletAddressState } from 'store/wallet';
+import { isWalletConnectedState, truncatedWalletAddressState, networkState } from 'store/wallet';
 
 import WalletOptionsModal from 'sections/shared/modals/WalletOptionsModal';
 import SettingsModal from 'sections/shared/modals/SettingsModal';
@@ -23,6 +23,7 @@ const UserMenu: FC = () => {
 	const [walletOptionsModalOpened, setWalletOptionsModalOpened] = useState<boolean>(false);
 	const [settingsModalOpened, setSettingsModalOpened] = useState<boolean>(false);
 	const truncatedWalletAddress = useRecoilValue(truncatedWalletAddressState);
+	const network = useRecoilValue(networkState);
 
 	return (
 		<>
@@ -47,7 +48,7 @@ const UserMenu: FC = () => {
 								<StyledConnectionDot />
 								{truncatedWalletAddress}
 							</FlexDivCentered>
-
+							<NetworkTag>{network?.name}</NetworkTag>
 							{walletOptionsModalOpened ? <Svg src={CaretUp} /> : <Svg src={CaretDown} />}
 						</WalletButton>
 					) : (
@@ -105,6 +106,18 @@ const MenuButton = styled(IconButton)<{ isActive: boolean }>`
 		color: ${(props) => props.theme.colors.white};
 	}
 	height: 32px;
+`;
+
+const NetworkTag = styled(FlexDivCentered)`
+	background: ${(props) => props.theme.colors.mediumBlue};
+	font-size: 10px;
+	font-family: ${(props) => props.theme.fonts.condensedMedium};
+	padding: 2px 4px;
+	width: 45px;
+	border-radius: 100px;
+	height: 18px;
+	text-align: center;
+	justify-content: center;
 `;
 
 const Dropdown = styled.div`
