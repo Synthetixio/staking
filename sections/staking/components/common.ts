@@ -72,7 +72,7 @@ export const InputBox = styled(FlexDivColCentered)`
 export const StyledInput = styled(Input)`
 	font-size: 24px;
 	background: transparent;
-	font-family: ${(props) => props.theme.fonts.expanded};
+	font-family: ${(props) => props.theme.fonts.extended};
 	text-align: center;
 	margin-top: 16px;
 
@@ -83,7 +83,7 @@ export const StyledInput = styled(Input)`
 
 export const InputLocked = styled.p`
 	font-size: 24px;
-	font-family: ${(props) => props.theme.fonts.expanded};
+	font-family: ${(props) => props.theme.fonts.extended};
 	margin-top: 16px;
 `;
 

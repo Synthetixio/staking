@@ -171,7 +171,7 @@ const AprText = styled.div`
 const AprValue = styled.div`
 	color: ${(props) => props.theme.colors.white};
 	margin-bottom: 5px;
-	font-family: ${(props) => props.theme.fonts.expanded};
+	font-family: ${(props) => props.theme.fonts.extended};
 	font-size: 14px;
 `;
 

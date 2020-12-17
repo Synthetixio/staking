@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { FlexDivColCentered } from 'styles/common';
 
 export const SectionHeader = styled.div`
-	font-family: ${(props) => props.theme.fonts.expanded};
+	font-family: ${(props) => props.theme.fonts.extended};
 	color: ${(props) => props.theme.colors.white};
 	font-size: 12px;
 	text-align: center;

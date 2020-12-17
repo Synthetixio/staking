@@ -259,7 +259,7 @@ export const TableNoResults = styled.div`
 
 export const TableNoResultsTitle = styled.div`
 	font-size: 14px;
-	font-family: ${(props) => props.theme.fonts.expanded};
+	font-family: ${(props) => props.theme.fonts.extended};
 	padding-bottom: 4px;
 	color: ${(props) => props.theme.colors.white};
 `;

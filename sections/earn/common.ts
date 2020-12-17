@@ -19,7 +19,7 @@ export const Subtext = styled.div`
 
 export const Value = styled.div`
 	font-size: 16px;
-	font-family: ${(props) => props.theme.fonts.expanded};
+	font-family: ${(props) => props.theme.fonts.extended};
 	color: ${(props) => props.theme.colors.white};
 `;
 
@@ -37,7 +37,7 @@ export const StyledLink = styled.span`
 `;
 
 export const Title = styled.div`
-	font-family: ${(props) => props.theme.fonts.expanded};
+	font-family: ${(props) => props.theme.fonts.extended};
 	font-size: 12px;
 	color: ${(props) => props.theme.colors.white};
 	margin-bottom: 20px;

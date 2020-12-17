@@ -327,7 +327,7 @@ const InputField = styled(StyledInput)`
 	width: 50%;
 	font-size: 24px;
 	background: transparent;
-	font-family: ${(props) => props.theme.fonts.expanded};
+	font-family: ${(props) => props.theme.fonts.extended};
 	text-align: center;
 
 	&:disabled {

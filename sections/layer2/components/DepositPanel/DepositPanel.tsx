@@ -55,7 +55,7 @@ const InfoContainer = styled(FlexDivColCentered)``;
 
 const Data = styled.p`
 	color: ${(props) => props.theme.colors.white};
-	font-family: ${(props) => props.theme.fonts.expanded};
+	font-family: ${(props) => props.theme.fonts.extended};
 	font-size: 24px;
 `;
 
