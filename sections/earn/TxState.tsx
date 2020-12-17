@@ -11,13 +11,23 @@ type TxStateProps = {
 	content: ReactNode;
 	description?: ReactNode;
 	isStakingPanel?: boolean;
+	isStakingPanelWaitingScreen?: boolean;
 };
 
-const TxState: FC<TxStateProps> = ({ description, title, content, isStakingPanel = false }) => (
+const TxState: FC<TxStateProps> = ({
+	description,
+	title,
+	content,
+	isStakingPanel = false,
+	isStakingPanelWaitingScreen = false,
+}) => (
 	<Container isStakingPanel={isStakingPanel}>
 		{description != null ? <Description>{description}</Description> : null}
-		<InnerContainer isStakingPanel={isStakingPanel}>
-			<Title>{title}</Title>
+		<InnerContainer
+			isStakingPanelWaitingScreen={isStakingPanelWaitingScreen}
+			isStakingPanel={isStakingPanel}
+		>
+			<Title isStakingPanel={isStakingPanel}>{title}</Title>
 			{content}
 		</InnerContainer>
 	</Container>
@@ -37,14 +47,15 @@ const Container = styled.div<{ isStakingPanel: boolean }>`
 		css`
 			width: 270px;
 			height: 240px;
-			overflow-y: scroll;
-			overflow-x: hidden;
 		`}
 `;
 
-const InnerContainer = styled(FlexDivColCentered)<{ isStakingPanel: boolean }>`
-	margin-top: ${(props) => (props.isStakingPanel ? '0' : '20px')};
-	padding: 25px;
+const InnerContainer = styled(FlexDivColCentered)<{
+	isStakingPanel: boolean;
+	isStakingPanelWaitingScreen: boolean;
+}>`
+	margin: ${(props) => (props.isStakingPanel ? '-20px' : '20px 0 0 0')};
+	padding: ${(props) => (props.isStakingPanelWaitingScreen ? '20px' : '25px')};
 	background: ${(props) => props.theme.colors.black};
 `;
 

@@ -38,14 +38,19 @@ const Earn = () => {
 	const totalsUSDDebt = totalIssuedSynthsExclEth?.data ?? 0;
 	const SNXRate = exchangeRatesQuery.data?.SNX ?? 0;
 
-	const stakedValue = collateral
-		.multipliedBy(Math.min(1 / currentCRatio.dividedBy(targetCRatio).toNumber()))
-		.multipliedBy(SNXRate);
+	const stakedValue =
+		collateral.toNumber() > 0
+			? collateral
+					.multipliedBy(Math.min(1 / currentCRatio.dividedBy(targetCRatio).toNumber()))
+					.multipliedBy(SNXRate)
+			: toBigNumber(0);
 	const weeklyRewards = sUSDRate * feesToDistribute + SNXRate * rewardsToDistribute;
 
 	const stakingAPR =
-		(weeklyRewards * (debtBalance.toNumber() / totalsUSDDebt) * WEEKS_IN_YEAR) /
-		stakedValue.toNumber();
+		stakedValue.toNumber() > 0 && debtBalance.toNumber() > 0
+			? (weeklyRewards * (debtBalance.toNumber() / totalsUSDDebt) * WEEKS_IN_YEAR) /
+			  stakedValue.toNumber()
+			: 0;
 
 	const availableRewards = useClaimableRewards();
 

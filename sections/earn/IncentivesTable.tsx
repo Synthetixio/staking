@@ -163,7 +163,8 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab }
 							})}
 						</Title>
 						<Subtitle>
-							{cellProps.row.original.claimed === NOT_APPLICABLE ? (
+							{cellProps.row.original.claimed === NOT_APPLICABLE ||
+							(!cellProps.row.original.claimed && cellProps.row.original.rewards === 0) ? (
 								''
 							) : cellProps.row.original.claimed ? (
 								t('earn.incentives.options.rewards.claimed')
