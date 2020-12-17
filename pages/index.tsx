@@ -8,44 +8,15 @@ import { FlexDivCol, LineSpacer, StatsSection } from 'styles/common';
 import { PossibleActions } from 'sections/dashboard';
 
 import StatBox from 'components/StatBox';
+import useUserStakingData from 'hooks/useUserStakingData';
 
-import useGetFeePoolDataQuery from 'queries/staking/useGetFeePoolDataQuery';
-import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
-import useTotalIssuedSynthsExcludingEtherQuery from 'queries/synths/useTotalIssuedSynthsExcludingEtherQuery';
-
-import { Synths } from 'constants/currency';
 import { formatFiatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
-import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
-import { WEEKS_IN_YEAR } from 'constants/date';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
 const DashboardPage = () => {
 	const { t } = useTranslation();
-
-	const totalIssuedSynthsExclEth = useTotalIssuedSynthsExcludingEtherQuery(Synths.sUSD);
-	const exchangeRates = useExchangeRatesQuery();
-	const previousFeePeriod = useGetFeePoolDataQuery('1');
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
-
-	const { currentCRatio, targetCRatio, debtBalance, collateral } = useStakingCalculations();
-
-	const sUSDRate = exchangeRates.data?.sUSD ?? 0;
-	const feesToDistribute = previousFeePeriod?.data?.feesToDistribute ?? 0;
-	const rewardsToDistribute = previousFeePeriod?.data?.rewardsToDistribute ?? 0;
-	const totalsUSDDebt = totalIssuedSynthsExclEth?.data ?? 0;
-
-	// TODO: replace with selected currency instead of usd hardcode
-	// eslint-disable-next-line
-	const SNXRate = exchangeRates.data?.SNX ?? 0;
-	const stakedValue = collateral
-		.multipliedBy(Math.min(1 / currentCRatio.dividedBy(targetCRatio).toNumber()))
-		.multipliedBy(SNXRate);
-
-	// TODO: replace with useMemo
-	const weeklyRewards = sUSDRate * feesToDistribute + SNXRate * rewardsToDistribute;
-	const stakingAPR =
-		(weeklyRewards * (debtBalance.toNumber() / totalsUSDDebt) * WEEKS_IN_YEAR) /
-		stakedValue.toNumber();
+	const { stakedValue, stakingAPR, debtBalance } = useUserStakingData();
 
 	return (
 		<>
