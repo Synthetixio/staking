@@ -4,39 +4,30 @@ import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import { Svg } from 'react-optimized-image';
 
-import { FlexDivCentered, ConnectionDot, IconButton } from 'styles/common';
-
-import Connector from 'containers/Connector';
+import { FlexDivCentered, IconButton } from 'styles/common';
 
 import Button from 'components/Button';
-import { isWalletConnectedState, truncatedWalletAddressState } from 'store/wallet';
+import { isWalletConnectedState, truncatedWalletAddressState, networkState } from 'store/wallet';
 
 import WalletOptionsModal from 'sections/shared/modals/WalletOptionsModal';
 import SettingsModal from 'sections/shared/modals/SettingsModal';
+import ConnectionDot from 'sections/shared/ConnectionDot';
 
 import CogIcon from 'assets/svg/app/cog.svg';
+import CaretUp from 'assets/svg/app/caret-up.svg';
+import CaretDown from 'assets/svg/app/caret-down.svg';
 
 const UserMenu: FC = () => {
 	const { t } = useTranslation();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	const { connectWallet } = Connector.useContainer();
 	const [walletOptionsModalOpened, setWalletOptionsModalOpened] = useState<boolean>(false);
 	const [settingsModalOpened, setSettingsModalOpened] = useState<boolean>(false);
 	const truncatedWalletAddress = useRecoilValue(truncatedWalletAddressState);
+	const network = useRecoilValue(networkState);
 
 	return (
 		<>
 			<FlexDivCentered>
-				{isWalletConnected ? (
-					<WalletButton variant="solid" onClick={() => setWalletOptionsModalOpened(true)}>
-						<StyledConnectionDot />
-						{truncatedWalletAddress}
-					</WalletButton>
-				) : (
-					<Button variant="secondary" onClick={connectWallet}>
-						{t('common.wallet.connect-wallet')}
-					</Button>
-				)}
 				<Menu>
 					<MenuButton
 						onClick={() => {
@@ -47,17 +38,48 @@ const UserMenu: FC = () => {
 						<Svg src={CogIcon} />
 					</MenuButton>
 				</Menu>
+				<Dropdown>
+					{isWalletConnected ? (
+						<WalletButton
+							variant="solid"
+							onClick={() => setWalletOptionsModalOpened(!walletOptionsModalOpened)}
+						>
+							<FlexDivCentered>
+								<StyledConnectionDot />
+								{truncatedWalletAddress}
+							</FlexDivCentered>
+							<NetworkTag>{network?.name}</NetworkTag>
+							{walletOptionsModalOpened ? <Svg src={CaretUp} /> : <Svg src={CaretDown} />}
+						</WalletButton>
+					) : (
+						<WalletButton
+							variant="solid"
+							onClick={() => setWalletOptionsModalOpened(!walletOptionsModalOpened)}
+						>
+							<FlexDivCentered>
+								<StyledConnectionDot />
+								{t('common.wallet.not-connected')}
+							</FlexDivCentered>
+							{walletOptionsModalOpened ? <Svg src={CaretUp} /> : <Svg src={CaretDown} />}
+						</WalletButton>
+					)}
+					{walletOptionsModalOpened && (
+						<WalletOptionsModal onDismiss={() => setWalletOptionsModalOpened(false)} />
+					)}
+				</Dropdown>
 			</FlexDivCentered>
-			{walletOptionsModalOpened && (
-				<WalletOptionsModal onDismiss={() => setWalletOptionsModalOpened(false)} />
-			)}
+
 			{settingsModalOpened && <SettingsModal onDismiss={() => setSettingsModalOpened(false)} />}
 		</>
 	);
 };
 
+const StyledConnectionDot = styled(ConnectionDot)`
+	margin-right: 8px;
+`;
+
 const Menu = styled.div`
-	padding-left: 16px;
+	padding-right: 16px;
 	display: grid;
 	grid-gap: 10px;
 	grid-auto-flow: column;
@@ -66,10 +88,13 @@ const Menu = styled.div`
 const WalletButton = styled(Button)`
 	display: inline-flex;
 	align-items: center;
-`;
+	justify-content: space-between;
+	text-transform: uppercase;
 
-const StyledConnectionDot = styled(ConnectionDot)`
-	margin-right: 12px;
+	svg {
+		margin-left: 5px;
+		color: ${(props) => props.theme.colors.gray};
+	}
 `;
 
 const MenuButton = styled(IconButton)<{ isActive: boolean }>`
@@ -81,6 +106,27 @@ const MenuButton = styled(IconButton)<{ isActive: boolean }>`
 		color: ${(props) => props.theme.colors.white};
 	}
 	height: 32px;
+`;
+
+const NetworkTag = styled(FlexDivCentered)`
+	background: ${(props) => props.theme.colors.mediumBlue};
+	font-size: 10px;
+	font-family: ${(props) => props.theme.fonts.condensedMedium};
+	padding: 2px 4px;
+	width: 45px;
+	border-radius: 100px;
+	height: 18px;
+	text-align: center;
+	justify-content: center;
+`;
+
+const Dropdown = styled.div`
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	height: 100%;
+	z-index: 100;
+	width: 185px;
 `;
 
 export default UserMenu;

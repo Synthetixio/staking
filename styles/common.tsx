@@ -137,15 +137,6 @@ export const AbsoluteCenteredDiv = styled.div`
 	${absoluteCenteredCSS};
 `;
 
-export const ConnectionDot = styled.span`
-	display: inline-block;
-	width: 8px;
-	height: 8px;
-	border-radius: 100%;
-	background-color: ${(props) => props.theme.colors.green};
-	box-shadow: 0px 0px 15px rgba(68, 239, 193, 0.6);
-`;
-
 export const FixedFooterMixin = `
 	position: fixed;
 	bottom: 0;
@@ -300,4 +291,10 @@ export const Tooltip = styled(Tippy)`
 	.tippy-arrow {
 		color: ${(props) => props.theme.colors.mediumBlue};
 	}
+`;
+
+export const Divider = styled.div`
+	background: ${(props) => props.theme.colors.grayBlue};
+	height: 1px;
+	width: 100%;
 `;

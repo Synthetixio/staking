@@ -38,4 +38,12 @@ export default {
 	darkGradient1Flipped: 'linear-gradient(0, #08021E 0%, #120446 146.21%)',
 	darkGradient2: 'linear-gradient(180deg, #08021E 0%, #1F0777 146.21%)',
 	darkGradient2Flipped: 'linear-gradient(0, #08021E 0%, #1F0777 146.21%)',
+
+	// network colors
+	mainnet: '#29B6AF',
+	ropsten: '#FF4A8D',
+	kovan: '#7057FF',
+	rinkeby: '#F6C343',
+	goerli: 'rgb(48, 153, 242)',
+	noNetwork: 'rgb(155, 155, 155)',
 };

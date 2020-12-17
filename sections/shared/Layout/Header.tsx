@@ -23,7 +23,8 @@ const Container = styled.div`
 	> div {
 		height: ${HEADER_HEIGHT};
 		line-height: ${HEADER_HEIGHT};
-		padding: 30px;
+		padding: 0px 30px;
+		margin-top: 15px;
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
