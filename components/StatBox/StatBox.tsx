@@ -46,7 +46,7 @@ const Title = styled.span`
 `;
 
 const Value = styled.span`
-	font-family: ${(props) => props.theme.fonts.expanded};
+	font-family: ${(props) => props.theme.fonts.extended};
 	font-size: 24px;
 `;
 

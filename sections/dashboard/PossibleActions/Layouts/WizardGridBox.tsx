@@ -123,7 +123,7 @@ const IconContainer = styled(FlexDivCentered)`
 	justify-content: center;
 `;
 const Title = styled.p`
-	font-family: ${(props) => props.theme.fonts.expanded};
+	font-family: ${(props) => props.theme.fonts.extended};
 	font-size: 14px;
 	color: ${(props) => props.theme.colors.white};
 	text-transform: uppercase;

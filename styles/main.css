@@ -90,12 +90,11 @@ input::-webkit-inner-spin-button {
 }
 
 @font-face {
-	font-family: 'GT America Expanded Black';
+	font-family: 'GT America Extended Bold';
 	font-style: normal;
 	font-display: swap;
-	font-weight: 900;
-	font-stretch: expanded;
-	src: local('GT America Expanded Black'),
-		url('../public/fonts/GT-America-Expanded-Black.woff2') format('woff2'),
-		url('../public/fonts/GT-America-Expanded-Black.woff') format('woff');
+	font-weight: 700;
+	src: local('GT America Extended Bold'),
+		url('../public/fonts/GT-America-Extended-Bold.woff2') format('woff2'),
+		url('../public/fonts/GT-America-Extended-Bold.woff') format('woff');
 }

@@ -131,14 +131,14 @@ const RewardsContainer = styled(FlexDivColCentered)`
 `;
 
 const RewardsTitle = styled.div`
-	font-family: ${(props) => props.theme.fonts.expanded};
+	font-family: ${(props) => props.theme.fonts.extended};
 	font-size: 12px;
 	color: ${(props) => props.theme.colors.white};
 	margin-bottom: 10px;
 `;
 
 const RewardsAmountSNX = styled.div`
-	font-family: ${(props) => props.theme.fonts.expanded};
+	font-family: ${(props) => props.theme.fonts.extended};
 	font-size: 24px;
 	color: ${(props) => props.theme.colors.white};
 	margin-top: 10px;

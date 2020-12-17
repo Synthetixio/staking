@@ -233,7 +233,7 @@ const WalletAddress = styled(GridDivCenteredCol)`
 	align-items: center;
 	grid-gap: 10px;
 	padding-bottom: 18px;
-	font-family: ${(props) => props.theme.fonts.expanded};
+	font-family: ${(props) => props.theme.fonts.extended};
 `;
 
 const CopyClipboardContainer = styled(FlexDiv)`

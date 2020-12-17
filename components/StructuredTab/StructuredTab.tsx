@@ -85,7 +85,7 @@ const StructuredTab: FC<StructuredTabProps> = ({
 const TitleContainer = styled.p`
 	margin-left: 8px;
 	font-size: 12px;
-	font-family: ${(props) => props.theme.fonts.expanded};
+	font-family: ${(props) => props.theme.fonts.extended};
 	text-transform: uppercase;
 `;
 
