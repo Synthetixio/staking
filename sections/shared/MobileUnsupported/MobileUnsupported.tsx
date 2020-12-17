@@ -86,7 +86,6 @@ const Title = styled.h1`
 	font-size: 40px;
 	line-height: 40px;
 	padding-bottom: 30px;
-	margin-top: -24px;
 	span {
 		display: block;
 		font-size: 32px;
@@ -101,8 +100,8 @@ const StyledSocialLinks = styled(SocialLinks)`
 `;
 
 const SNXLogoContainer = styled.div`
-	position: absolute;
-	bottom: 60px;
+	position: relative;
+	top: 90px;
 	a {
 		color: ${(props) => props.theme.colors.white};
 		&:hover {
