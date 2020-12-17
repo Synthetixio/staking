@@ -368,6 +368,10 @@
 			"staking": {
 				"title": "Staking Rewards"
 			},
+			"stake": {
+				"no-escrowed-snx": "You have no escrowed SNX",
+				"stake-now": "Stake now"
+			},
 			"ico": {
 				"title": "Token Sale"
 			},

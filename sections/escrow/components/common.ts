@@ -40,11 +40,19 @@ export const StyledLink = styled.span`
 
 export const Container = styled.div`
 	background: ${(props) => props.theme.colors.navy};
+`;
+
+export const ContainerHeader = styled.div`
+	padding: 16px;
+	border-bottom: 1px solid ${(props) => props.theme.colors.grayBlue};
+`;
+
+export const ContainerBody = styled.div`
 	padding: 16px;
 `;
 
 export const StyledTable = styled(Table)`
-	margin-top: 16px;
+	margin-top: 0 16px;
 `;
 
 export const TableNoResults = styled(GridDivCenteredRow)`

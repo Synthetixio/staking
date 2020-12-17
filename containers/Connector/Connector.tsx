@@ -51,6 +51,7 @@ const useConnector = () => {
 			setNetwork(synthetix.js?.network);
 			setProvider(provider);
 			setAppReady(true);
+			console.log(synthetix.js);
 		};
 
 		init();
