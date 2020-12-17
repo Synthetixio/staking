@@ -20,8 +20,8 @@ import { walletAddressState, isWalletConnectedState, networkState } from 'store/
 import { LiquidityPoolData } from './types';
 
 export type CurveData = LiquidityPoolData & {
-	swapAPY: number;
-	rewardsAPY: number;
+	swapAPR: number;
+	rewardsAPR: number;
 };
 
 const useCurvePoolQuery_1 = (options?: QueryConfig<CurveData>) => {
@@ -128,8 +128,8 @@ const useCurvePoolQuery_1 = (options?: QueryConfig<CurveData>) => {
 
 			const curveRate =
 				(((inflationRate * relativeWeight * 31536000) / workingSupply) * 0.4) / curveSusdTokenPrice;
-			const rewardsAPY = curveRate * curvePrice * 1e18;
-			const swapAPY = swapData?.data?.apy?.day?.susd ?? 0;
+			const rewardsAPR = curveRate * curvePrice * 1e18;
+			const swapAPR = swapData?.data?.apy?.day?.susd ?? 0;
 
 			return {
 				periodFinish: Number(periodFinish) * 1000,
@@ -137,8 +137,8 @@ const useCurvePoolQuery_1 = (options?: QueryConfig<CurveData>) => {
 				address,
 				price,
 				balance,
-				swapAPY,
-				rewardsAPY,
+				swapAPR,
+				rewardsAPR,
 				rewards,
 				staked,
 				duration: Number(duration) * 1000,

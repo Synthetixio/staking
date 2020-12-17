@@ -108,8 +108,8 @@ const ActionCompleted: React.FC<ActionCompletedProps> = ({
 						{t('staking.actions.mint.completed.curve', { synth: Synths.sUSD })}
 					</MiddleInfoSection>
 					<RightInfoSection>
-						<AprText>{t('staking.actions.mint.completed.est-apy')}</AprText>
-						{/* @TODO: Replace with variable APY */}
+						<AprText>{t('staking.actions.mint.completed.est-apr')}</AprText>
+						{/* @TODO: Replace with variable APR */}
 						<AprValue>14%</AprValue>
 					</RightInfoSection>
 				</MainInfoBox>

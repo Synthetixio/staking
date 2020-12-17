@@ -41,7 +41,7 @@ import ROUTES from 'constants/routes';
 export type EarnItem = {
 	title: string;
 	subtitle: string;
-	apy: number;
+	apr: number;
 	icon: ReactNode;
 	tvl: number;
 	staked: {
@@ -91,7 +91,7 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab }
 				Header: (
 					<CellContainer>
 						{activeTab == null ? (
-							<>{t('earn.incentives.est-apy')}</>
+							<>{t('earn.incentives.est-apr')}</>
 						) : (
 							<StyledIconButton onClick={() => router.push(ROUTES.Earn.Home)}>
 								<Svg src={GoBackIcon} />
@@ -99,11 +99,11 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab }
 						)}
 					</CellContainer>
 				),
-				accessor: 'apy',
+				accessor: 'apr',
 				Cell: (cellProps: CellProps<EarnItem>) => (
 					<CellContainer>
-						<Title isNumeric={true}>{formatPercent(cellProps.row.original.apy)}</Title>
-						<Subtitle>{t('earn.incentives.est-apy')}</Subtitle>
+						<Title isNumeric={true}>{formatPercent(cellProps.row.original.apr)}</Title>
+						<Subtitle>{t('earn.incentives.est-apr')}</Subtitle>
 					</CellContainer>
 				),
 				width: 100,
