@@ -234,7 +234,7 @@ const StakeTab: FC<StakeTabProps> = ({ icon, stakedAsset, isStake, userBalance, 
 	return (
 		<>
 			<Container>
-				<div>{icon}</div>
+				<IconWrap>{icon}</IconWrap>
 				<InputSection>
 					<EmptyDiv />
 					<InputField
@@ -311,6 +311,11 @@ const StyledValue = styled(Value)`
 const PaddedButton = styled(StyledButton)`
 	margin-top: 20px;
 	width: 80%;
+`;
+
+const IconWrap = styled.div`
+	width: 64px;
+	height: 68px;
 `;
 
 const MaxButton = styled(StyledButton)`
