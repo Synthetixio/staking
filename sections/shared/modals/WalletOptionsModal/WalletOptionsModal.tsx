@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from 'react';
+import { Dispatch, FC, SetStateAction, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { useRecoilValue } from 'recoil';
@@ -36,6 +36,7 @@ import Connector from 'containers/Connector';
 import Etherscan from 'containers/Etherscan';
 
 import Button from 'components/Button';
+import WatchWalletModal from '../WatchWalletModal';
 
 import {
 	ExternalLink,
@@ -50,6 +51,7 @@ import {
 
 type WalletOptionsProps = {
 	onDismiss: () => void;
+	setWatchWalletModalOpened: Dispatch<SetStateAction>;
 };
 
 const getWalletIcon = (selectedWallet?: string | null) => {
@@ -87,7 +89,7 @@ const walletIcon = <Svg src={WalletIcon} />;
 const changeIcon = <Svg src={ArrowsChangeIcon} />;
 const searchIcon = <Svg src={SearchIcon} />;
 
-const WalletOptionsModal: FC<WalletOptionsProps> = ({ onDismiss }) => {
+const WalletOptionsModal: FC<WalletOptionsProps> = ({ onDismiss, setWatchWalletModalOpened }) => {
 	const { t } = useTranslation();
 	const [copiedAddress, setCopiedAddress] = useState<boolean>(false);
 	const {
@@ -113,116 +115,118 @@ const WalletOptionsModal: FC<WalletOptionsProps> = ({ onDismiss }) => {
 	}, [copiedAddress]);
 
 	return (
-		<StyledMenuModal>
-			{isWalletConnected ? (
-				<>
-					<WalletDetails>
-						<SelectedWallet>{getWalletIcon(selectedWallet?.toLowerCase())}</SelectedWallet>
-						<WalletAddress>{truncatedWalletAddress}</WalletAddress>
-						<ActionIcons>
-							<StyledTooltip
-								hideOnClick={false}
-								arrow={true}
-								placement="bottom"
-								content={
-									copiedAddress
-										? t('modals.wallet.copy-address.copied')
-										: t('modals.wallet.copy-address.copy-to-clipboard')
-								}
-							>
-								<CopyClipboardContainer>
-									<CopyToClipboard text={walletAddress!} onCopy={() => setCopiedAddress(true)}>
-										{copiedAddress ? (
-											<Svg
-												src={CheckIcon}
-												width="16"
-												height="16"
-												viewBox={`0 0 ${CheckIcon.width} ${CheckIcon.height}`}
-											/>
-										) : (
-											<Svg src={CopyIcon} />
-										)}
-									</CopyToClipboard>
-								</CopyClipboardContainer>
-							</StyledTooltip>
-							<StyledTooltip
-								hideOnClick={false}
-								arrow={true}
-								placement="bottom"
-								content={t('modals.wallet.etherscan')}
-							>
-								<LinkContainer>
-									<WrappedExternalLink href={etherscanInstance?.addressLink(walletAddress!)}>
-										<Svg src={LinkIcon} />
-									</WrappedExternalLink>
-								</LinkContainer>
-							</StyledTooltip>
-						</ActionIcons>
-					</WalletDetails>
-					<Buttons>
-						<StyledButton
-							onClick={() => {
-								onDismiss();
-								connectWallet();
-							}}
-						>
-							{walletIcon} {t('modals.wallet.change-wallet')}
-						</StyledButton>
-						<StyledTooltip
-							arrow={true}
-							placement="bottom"
-							content={t('modals.wallet.available-on-hardware-wallet')}
-						>
-							<span>
-								<StyledButton
-									onClick={() => {
-										onDismiss();
-										switchAccounts();
-									}}
-									disabled={!isHardwareWallet()}
+		<>
+			<StyledMenuModal>
+				{isWalletConnected ? (
+					<>
+						<WalletDetails>
+							<SelectedWallet>{getWalletIcon(selectedWallet?.toLowerCase())}</SelectedWallet>
+							<WalletAddress>{truncatedWalletAddress}</WalletAddress>
+							<ActionIcons>
+								<StyledTooltip
+									hideOnClick={false}
+									arrow={true}
+									placement="bottom"
+									content={
+										copiedAddress
+											? t('modals.wallet.copy-address.copied')
+											: t('modals.wallet.copy-address.copy-to-clipboard')
+									}
 								>
-									{changeIcon} {t('modals.wallet.switch-account')}
-								</StyledButton>
-							</span>
-						</StyledTooltip>
-						<StyledButton
+									<CopyClipboardContainer>
+										<CopyToClipboard text={walletAddress!} onCopy={() => setCopiedAddress(true)}>
+											{copiedAddress ? (
+												<Svg
+													src={CheckIcon}
+													width="16"
+													height="16"
+													viewBox={`0 0 ${CheckIcon.width} ${CheckIcon.height}`}
+												/>
+											) : (
+												<Svg src={CopyIcon} />
+											)}
+										</CopyToClipboard>
+									</CopyClipboardContainer>
+								</StyledTooltip>
+								<StyledTooltip
+									hideOnClick={false}
+									arrow={true}
+									placement="bottom"
+									content={t('modals.wallet.etherscan')}
+								>
+									<LinkContainer>
+										<WrappedExternalLink href={etherscanInstance?.addressLink(walletAddress!)}>
+											<Svg src={LinkIcon} />
+										</WrappedExternalLink>
+									</LinkContainer>
+								</StyledTooltip>
+							</ActionIcons>
+						</WalletDetails>
+						<Buttons>
+							<StyledButton
+								onClick={() => {
+									onDismiss();
+									connectWallet();
+								}}
+							>
+								{walletIcon} {t('modals.wallet.change-wallet')}
+							</StyledButton>
+							<StyledTooltip
+								arrow={true}
+								placement="bottom"
+								content={t('modals.wallet.available-on-hardware-wallet')}
+							>
+								<span>
+									<StyledButton
+										onClick={() => {
+											onDismiss();
+											switchAccounts();
+										}}
+										disabled={!isHardwareWallet()}
+									>
+										{changeIcon} {t('modals.wallet.switch-account')}
+									</StyledButton>
+								</span>
+							</StyledTooltip>
+							<StyledButton
+								onClick={() => {
+									onDismiss();
+									setWatchWalletModalOpened(true);
+								}}
+							>
+								{searchIcon} {t('modals.wallet.watch-wallet.title')}
+							</StyledButton>
+						</Buttons>
+						<StyledDivider />
+						<StyledTextButton
 							onClick={() => {
 								onDismiss();
 								disconnectWallet();
 							}}
 						>
-							{searchIcon} {t('modals.wallet.watch-wallet')}
-						</StyledButton>
-					</Buttons>
-					<StyledDivider />
-					<StyledTextButton
-						onClick={() => {
-							onDismiss();
-							disconnectWallet();
-						}}
-					>
-						{exitIcon} {t('modals.wallet.disconnect-wallet')}
-					</StyledTextButton>
-				</>
-			) : (
-				<WalletDetails>
-					<Buttons>
-						<StyledGlowingButton onClick={connectWallet}>
-							{t('common.wallet.connect-wallet')}
-						</StyledGlowingButton>
-						<DividerText>{t('common.wallet.or')}</DividerText>
-						<StyledButton
-							onClick={() => {
-								onDismiss();
-								disconnectWallet();
-							}}
-						>
-							{searchIcon} {t('modals.wallet.watch-wallet')}
-						</StyledButton>
-					</Buttons>
-				</WalletDetails>
-			)}
-		</StyledMenuModal>
+							{exitIcon} {t('modals.wallet.disconnect-wallet')}
+						</StyledTextButton>
+					</>
+				) : (
+					<WalletDetails>
+						<Buttons>
+							<StyledGlowingButton onClick={connectWallet}>
+								{t('common.wallet.connect-wallet')}
+							</StyledGlowingButton>
+							<DividerText>{t('common.wallet.or')}</DividerText>
+							<StyledButton
+								onClick={() => {
+									onDismiss();
+									setWatchWalletModalOpened(true);
+								}}
+							>
+								{searchIcon} {t('modals.wallet.watch-wallet.title')}
+							</StyledButton>
+						</Buttons>
+					</WalletDetails>
+				)}
+			</StyledMenuModal>
+		</>
 	);
 };
 

@@ -56,7 +56,12 @@
 			"change-wallet": "change wallet",
 			"switch-account": "switch account",
 			"available-on-hardware-wallet": "Available on hardware wallets",
-			"watch-wallet": "watch a wallet"
+			"watch-wallet": {
+				"title": "watch a wallet",
+				"subtitle": "Enter a valid ETH address or ENS domain to view staking as that wallet",
+				"placeholder": "Address or .eth name",
+				"action": "watch wallet"
+			}
 		},
 		"notifications": {
 			"title": "notifications",
