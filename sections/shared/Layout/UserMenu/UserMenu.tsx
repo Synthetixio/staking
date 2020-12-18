@@ -16,12 +16,14 @@ import ConnectionDot from 'sections/shared/ConnectionDot';
 import CogIcon from 'assets/svg/app/cog.svg';
 import CaretUp from 'assets/svg/app/caret-up.svg';
 import CaretDown from 'assets/svg/app/caret-down.svg';
+import WatchWalletModal from 'sections/shared/modals/WatchWalletModal';
 
 const UserMenu: FC = () => {
 	const { t } = useTranslation();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const [walletOptionsModalOpened, setWalletOptionsModalOpened] = useState<boolean>(false);
 	const [settingsModalOpened, setSettingsModalOpened] = useState<boolean>(false);
+	const [watchWalletModalOpened, setWatchWalletModalOpened] = useState<boolean>(false);
 	const truncatedWalletAddress = useRecoilValue(truncatedWalletAddressState);
 	const network = useRecoilValue(networkState);
 
@@ -64,11 +66,16 @@ const UserMenu: FC = () => {
 						</WalletButton>
 					)}
 					{walletOptionsModalOpened && (
-						<WalletOptionsModal onDismiss={() => setWalletOptionsModalOpened(false)} />
+						<WalletOptionsModal
+							onDismiss={() => setWalletOptionsModalOpened(false)}
+							setWatchWalletModalOpened={setWatchWalletModalOpened}
+						/>
 					)}
 				</Dropdown>
 			</FlexDivCentered>
-
+			{watchWalletModalOpened && (
+				<WatchWalletModal onDismiss={() => setWatchWalletModalOpened(false)} />
+			)}
 			{settingsModalOpened && <SettingsModal onDismiss={() => setSettingsModalOpened(false)} />}
 		</>
 	);
