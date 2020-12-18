@@ -48,6 +48,8 @@ import {
 	ModalItem,
 	ModalItemTitle,
 } from 'styles/common';
+import { EXTERNAL_LINKS } from 'constants/links';
+import Currency from 'components/Currency';
 
 import {
 	TotalValueWrapper,
@@ -59,7 +61,6 @@ import {
 	TabContainer,
 	HeaderLabel,
 } from '../common';
-import Currency from 'components/Currency';
 
 type ClaimTabProps = {
 	tradingRewards: BigNumber;
@@ -146,7 +147,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 					<Label>
 						<Trans
 							i18nKey="earn.incentives.options.snx.description"
-							components={[<StyledLink />]}
+							components={[<StyledLink href={EXTERNAL_LINKS.Synthetix.Incentives} />]}
 						/>
 					</Label>
 				}
@@ -192,7 +193,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 					<Label>
 						<Trans
 							i18nKey="earn.incentives.options.snx.description"
-							components={[<StyledLink />]}
+							components={[<StyledLink href={EXTERNAL_LINKS.Synthetix.Incentives} />]}
 						/>
 					</Label>
 				}
@@ -246,7 +247,10 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 		<>
 			<TabContainer>
 				<HeaderLabel>
-					<Trans i18nKey="earn.incentives.options.snx.description" components={[<StyledLink />]} />
+					<Trans
+						i18nKey="earn.incentives.options.snx.description"
+						components={[<StyledLink href={EXTERNAL_LINKS.Synthetix.Incentives} />]}
+					/>
 				</HeaderLabel>
 				<InnerContainer>
 					<ValueBoxWrapper>

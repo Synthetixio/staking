@@ -9,6 +9,7 @@ export const EXTERNAL_LINKS = {
 	Synthetix: {
 		Home: 'https://www.synthetix.io',
 		Litepaper: 'https://docs.synthetix.io/litepaper/',
+		Incentives: 'https://docs.synthetix.io/incentives/',
 	},
 	Social: {
 		Twitter: 'https://twitter.com/synthetix_io',

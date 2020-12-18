@@ -325,7 +325,7 @@
 				"claiming": "CLAIMING",
 				"claimed": "CLAIMED",
 				"amount": "{{amount}} {{asset}}",
-				"in-progress": "Claiming in progress!",
+				"in-progress": "Claiming in progress",
 				"success": "Claiming complete!"
 			},
 			"lp": {

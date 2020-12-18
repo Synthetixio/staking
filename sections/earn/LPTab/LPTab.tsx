@@ -19,6 +19,7 @@ import { getGasEstimateForTransaction } from 'utils/transactions';
 import Connector from 'containers/Connector';
 import Notify from 'containers/Notify';
 import TxState from 'sections/earn/TxState';
+import { EXTERNAL_LINKS } from 'constants/links';
 
 import StakeTab from './StakeTab';
 import Approve from './Approve';
@@ -149,7 +150,10 @@ const LPTab: FC<LPTabProps> = ({ stakedAsset, tokenRewards, allowance, userBalan
 			<TxState
 				description={
 					<Label>
-						<Trans i18nKey={translationKey} components={[<StyledLink />]} />
+						<Trans
+							i18nKey={translationKey}
+							components={[<StyledLink href={EXTERNAL_LINKS.Synthetix.Incentives} />]}
+						/>
 					</Label>
 				}
 				title={t('earn.actions.rewards.waiting')}
@@ -179,7 +183,10 @@ const LPTab: FC<LPTabProps> = ({ stakedAsset, tokenRewards, allowance, userBalan
 			<TxState
 				description={
 					<Label>
-						<Trans i18nKey={translationKey} components={[<StyledLink />]} />
+						<Trans
+							i18nKey={translationKey}
+							components={[<StyledLink href={EXTERNAL_LINKS.Synthetix.Incentives} />]}
+						/>
 					</Label>
 				}
 				title={t('earn.actions.claim.success')}
@@ -216,7 +223,10 @@ const LPTab: FC<LPTabProps> = ({ stakedAsset, tokenRewards, allowance, userBalan
 	return (
 		<TabContainer>
 			<HeaderLabel>
-				<Trans i18nKey={translationKey} components={[<StyledLink />]} />
+				<Trans
+					i18nKey={translationKey}
+					components={[<StyledLink href={EXTERNAL_LINKS.Synthetix.Incentives} />]}
+				/>
 			</HeaderLabel>
 			<FlexDivCentered>
 				<StructuredTab
