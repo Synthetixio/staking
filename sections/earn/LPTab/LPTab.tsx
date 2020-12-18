@@ -37,6 +37,7 @@ import {
 	LinkText,
 	TabContainer,
 	Label,
+	HeaderLabel,
 } from '../common';
 
 type LPTabProps = {
@@ -223,16 +224,16 @@ const LPTab: FC<LPTabProps> = ({
 
 	return (
 		<TabContainer>
-			<Label>
+			<HeaderLabel>
 				<Trans i18nKey={translationKey} components={[<StyledLink />]} />
-			</Label>
+			</HeaderLabel>
 			<FlexDivCentered>
 				<StructuredTab
 					tabHeight={30}
 					inverseTabColor={true}
 					boxPadding={0}
 					boxHeight={242}
-					boxWidth={270}
+					boxWidth={310}
 					tabData={tabData}
 				/>
 				<RewardsBox

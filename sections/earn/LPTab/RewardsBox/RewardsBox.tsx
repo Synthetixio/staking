@@ -120,9 +120,9 @@ const RewardsBox: FC<RewardsBoxProps> = ({
 };
 
 const RewardsContainer = styled(FlexDivColCentered)`
-	height: 280px;
-	width: 180px;
-	margin: 15px;
+	height: 272px;
+	width: 200px;
+	margin-left: 20px;
 	padding: 15px;
 	border: 1px solid ${(props) => props.theme.colors.pink};
 	border-radius: 4px;

@@ -39,11 +39,6 @@ type IncentivesProps = {
 	hasClaimed: boolean;
 };
 
-const snxImg = <Img src={snxSVG} />;
-const curveImg = <Img src={curveSVG} />;
-const iETHImg = <Img src={iETHSVG} />;
-const iBTCImg = <Img src={iBTCSVG} />;
-
 const VALID_TABS = Object.values(Tab);
 
 const Incentives: FC<IncentivesProps> = ({
@@ -80,7 +75,7 @@ const Incentives: FC<IncentivesProps> = ({
 			isWalletConnected
 				? [
 						{
-							icon: snxImg,
+							icon: <Img src={snxSVG} />,
 							title: t('earn.incentives.options.snx.title'),
 							subtitle: t('earn.incentives.options.snx.subtitle'),
 							apr: stakingAPR,
@@ -98,7 +93,7 @@ const Incentives: FC<IncentivesProps> = ({
 							route: ROUTES.Earn.Claim,
 						},
 						{
-							icon: curveImg,
+							icon: <Img src={curveSVG} />,
 							title: t('earn.incentives.options.curve.title'),
 							subtitle: t('earn.incentives.options.curve.subtitle'),
 							apr: lpData[CryptoCurrency.CurveLPToken].APR,
@@ -119,7 +114,7 @@ const Incentives: FC<IncentivesProps> = ({
 							tab: Tab.Curve_LP,
 						},
 						{
-							icon: iETHImg,
+							icon: <Img src={iETHSVG} />,
 							title: t('earn.incentives.options.ieth.title'),
 							subtitle: t('earn.incentives.options.ieth.subtitle'),
 							apr: lpData[Synths.iETH].APR,
@@ -137,7 +132,7 @@ const Incentives: FC<IncentivesProps> = ({
 							route: ROUTES.Earn.iETH_LP,
 						},
 						{
-							icon: iBTCImg,
+							icon: <Img src={iBTCSVG} />,
 							title: t('earn.incentives.options.ibtc.title'),
 							subtitle: t('earn.incentives.options.ibtc.subtitle'),
 							apr: lpData[Synths.iBTC].APR,
@@ -171,76 +166,76 @@ const Incentives: FC<IncentivesProps> = ({
 		]
 	);
 
-	return (
-		<StyledFlexDiv isOpen={activeTab != null}>
-			<IncentivesTable
-				activeTab={activeTab}
-				data={incentives}
-				isLoaded={
-					lpData[CryptoCurrency.CurveLPToken].data &&
-					lpData[Synths.iBTC].data &&
-					lpData[Synths.iETH].data
-						? true
-						: false
-				}
-			/>
-			{activeTab != null ? (
-				<TabContainer>
-					{activeTab === Tab.Claim && (
-						<ClaimTab
-							tradingRewards={tradingRewards}
-							stakingRewards={stakingRewards}
-							totalRewards={totalRewards}
-						/>
-					)}
-					{activeTab === Tab.Curve_LP && (
-						<LPTab
-							userBalance={lpData[CryptoCurrency.CurveLPToken].data?.userBalance ?? 0}
-							stakedAsset={CryptoCurrency.CurveLPToken}
-							allowance={lpData[CryptoCurrency.CurveLPToken].data?.allowance ?? null}
-							icon={incentives[1].icon}
-							tokenRewards={incentives[1].rewards}
-							staked={incentives[1].staked.balance}
-						/>
-					)}
-					{activeTab === Tab.iETH_LP && (
-						<LPTab
-							userBalance={lpData[Synths.iETH].data?.userBalance ?? 0}
-							stakedAsset={Synths.iETH}
-							allowance={lpData[Synths.iETH].data?.allowance ?? null}
-							icon={incentives[2].icon}
-							tokenRewards={incentives[2].rewards}
-							staked={incentives[2].staked.balance}
-						/>
-					)}
-					{activeTab === Tab.iBTC_LP && (
-						<LPTab
-							userBalance={lpData[Synths.iBTC].data?.userBalance ?? 0}
-							stakedAsset={Synths.iBTC}
-							allowance={lpData[Synths.iBTC].data?.allowance ?? null}
-							icon={incentives[3].icon}
-							tokenRewards={incentives[3].rewards}
-							staked={incentives[3].staked.balance}
-						/>
-					)}
-				</TabContainer>
-			) : null}
-		</StyledFlexDiv>
+	const incentivesTable = (
+		<IncentivesTable
+			activeTab={activeTab}
+			data={incentives}
+			isLoaded={
+				lpData[CryptoCurrency.CurveLPToken].data &&
+				lpData[Synths.iBTC].data &&
+				lpData[Synths.iETH].data
+					? true
+					: false
+			}
+		/>
+	);
+
+	return activeTab == null ? (
+		<>{incentivesTable}</>
+	) : (
+		<Container>
+			{incentivesTable}
+			<TabContainer>
+				{activeTab === Tab.Claim && (
+					<ClaimTab
+						tradingRewards={tradingRewards}
+						stakingRewards={stakingRewards}
+						totalRewards={totalRewards}
+					/>
+				)}
+				{activeTab === Tab.Curve_LP && (
+					<LPTab
+						userBalance={lpData[CryptoCurrency.CurveLPToken].data?.userBalance ?? 0}
+						stakedAsset={CryptoCurrency.CurveLPToken}
+						allowance={lpData[CryptoCurrency.CurveLPToken].data?.allowance ?? null}
+						icon={incentives[1].icon}
+						tokenRewards={incentives[1].rewards}
+						staked={incentives[1].staked.balance}
+					/>
+				)}
+				{activeTab === Tab.iETH_LP && (
+					<LPTab
+						userBalance={lpData[Synths.iETH].data?.userBalance ?? 0}
+						stakedAsset={Synths.iETH}
+						allowance={lpData[Synths.iETH].data?.allowance ?? null}
+						icon={incentives[2].icon}
+						tokenRewards={incentives[2].rewards}
+						staked={incentives[2].staked.balance}
+					/>
+				)}
+				{activeTab === Tab.iBTC_LP && (
+					<LPTab
+						userBalance={lpData[Synths.iBTC].data?.userBalance ?? 0}
+						stakedAsset={Synths.iBTC}
+						allowance={lpData[Synths.iBTC].data?.allowance ?? null}
+						icon={incentives[3].icon}
+						tokenRewards={incentives[3].rewards}
+						staked={incentives[3].staked.balance}
+					/>
+				)}
+			</TabContainer>
+		</Container>
 	);
 };
 
-const TabContainer = styled.div`
-	width: 60%;
+const Container = styled.div`
 	background-color: ${(props) => props.theme.colors.navy};
+	display: grid;
+	grid-template-columns: auto 639.5px;
 `;
 
-const StyledFlexDiv = styled(FlexDiv)<{ isOpen: boolean }>`
+const TabContainer = styled.div`
 	background-color: ${(props) => props.theme.colors.navy};
-	${(props) =>
-		props.isOpen &&
-		css`
-			min-height: 390px;
-		`};
 `;
 
 export default Incentives;
