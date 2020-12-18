@@ -13,7 +13,7 @@ import { Divider, GridDivCenteredRow } from 'styles/common';
 import { ethers } from 'ethers';
 import { truncateAddress } from 'utils/formatters/string';
 import Trash from 'assets/svg/app/trash.svg';
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 import { walletWatchedState, walletAddressState } from 'store/wallet';
 
 type WatchWalletModalProps = {
@@ -29,7 +29,7 @@ const WatchWalletModal: React.FC<WatchWalletModalProps> = ({ onDismiss }) => {
 	const [duplicatedWatchWallets, setDuplicatedWatchWallets] = useState<string[]>([]);
 	const [address, setAddress] = useState<string>('');
 	const [error, setError] = useState<boolean>(false);
-	const [walletWatched, setWalletWatched] = useRecoilState(walletWatchedState);
+	const setWalletWatched = useSetRecoilState(walletWatchedState);
 	const setWalletAddress = useSetRecoilState(walletAddressState);
 
 	useEffect(() => {
