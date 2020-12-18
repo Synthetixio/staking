@@ -1,7 +1,6 @@
 import { FC, useMemo } from 'react';
 import BigNumber from 'bignumber.js';
 import styled from 'styled-components';
-import Img from 'react-optimized-image';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
@@ -13,11 +12,6 @@ import useLPData from 'hooks/useLPData';
 
 import ROUTES from 'constants/routes';
 import { CryptoCurrency, Synths } from 'constants/currency';
-
-import curveSVG from 'assets/svg/incentives/pool-curve.svg';
-import iBTCSVG from 'assets/svg/incentives/pool-ibtc.svg';
-import iETHSVG from 'assets/svg/incentives/pool-ieth.svg';
-import snxSVG from 'assets/svg/incentives/pool-snx.svg';
 
 import IncentivesTable from './IncentivesTable';
 import ClaimTab from './ClaimTab';
@@ -73,7 +67,6 @@ const Incentives: FC<IncentivesProps> = ({
 			isWalletConnected
 				? [
 						{
-							icon: <Img src={snxSVG} />,
 							title: t('earn.incentives.options.snx.title'),
 							subtitle: t('earn.incentives.options.snx.subtitle'),
 							apr: stakingAPR,
@@ -91,7 +84,6 @@ const Incentives: FC<IncentivesProps> = ({
 							route: ROUTES.Earn.Claim,
 						},
 						{
-							icon: <Img src={curveSVG} />,
 							title: t('earn.incentives.options.curve.title'),
 							subtitle: t('earn.incentives.options.curve.subtitle'),
 							apr: lpData[CryptoCurrency.CurveLPToken].APR,
@@ -112,7 +104,6 @@ const Incentives: FC<IncentivesProps> = ({
 							tab: Tab.Curve_LP,
 						},
 						{
-							icon: <Img src={iETHSVG} />,
 							title: t('earn.incentives.options.ieth.title'),
 							subtitle: t('earn.incentives.options.ieth.subtitle'),
 							apr: lpData[Synths.iETH].APR,
@@ -130,7 +121,6 @@ const Incentives: FC<IncentivesProps> = ({
 							route: ROUTES.Earn.iETH_LP,
 						},
 						{
-							icon: <Img src={iBTCSVG} />,
 							title: t('earn.incentives.options.ibtc.title'),
 							subtitle: t('earn.incentives.options.ibtc.subtitle'),
 							apr: lpData[Synths.iBTC].APR,
@@ -196,7 +186,6 @@ const Incentives: FC<IncentivesProps> = ({
 						userBalance={lpData[CryptoCurrency.CurveLPToken].data?.userBalance ?? 0}
 						stakedAsset={CryptoCurrency.CurveLPToken}
 						allowance={lpData[CryptoCurrency.CurveLPToken].data?.allowance ?? null}
-						icon={incentives[1].icon}
 						tokenRewards={incentives[1].rewards}
 						staked={incentives[1].staked.balance}
 					/>
@@ -206,7 +195,6 @@ const Incentives: FC<IncentivesProps> = ({
 						userBalance={lpData[Synths.iETH].data?.userBalance ?? 0}
 						stakedAsset={Synths.iETH}
 						allowance={lpData[Synths.iETH].data?.allowance ?? null}
-						icon={incentives[2].icon}
 						tokenRewards={incentives[2].rewards}
 						staked={incentives[2].staked.balance}
 					/>
@@ -216,7 +204,6 @@ const Incentives: FC<IncentivesProps> = ({
 						userBalance={lpData[Synths.iBTC].data?.userBalance ?? 0}
 						stakedAsset={Synths.iBTC}
 						allowance={lpData[Synths.iBTC].data?.allowance ?? null}
-						icon={incentives[3].icon}
 						tokenRewards={incentives[3].rewards}
 						staked={incentives[3].staked.balance}
 					/>

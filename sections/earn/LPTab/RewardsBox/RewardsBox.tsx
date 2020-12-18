@@ -1,12 +1,11 @@
 import { FC, useState, useEffect } from 'react';
 import styled from 'styled-components';
-import Img from 'react-optimized-image';
 import { useTranslation } from 'react-i18next';
 
 import synthetix from 'lib/synthetix';
 import smallWaveSVG from 'assets/svg/app/small-wave.svg';
-import snxSVG from 'assets/svg/incentives/pool-snx.svg';
 import Connector from 'containers/Connector';
+import Currency from 'components/Currency';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { formatCurrency, formatFiatCurrency, toBigNumber } from 'utils/formatters/number';
@@ -77,7 +76,7 @@ const RewardsBox: FC<RewardsBoxProps> = ({
 		<>
 			<RewardsContainer>
 				<RewardsTitle>{t('earn.actions.rewards.title')}</RewardsTitle>
-				<Img src={snxSVG} />
+				<Currency.Icon currencyKey={CryptoCurrency.SNX} width="48" height="48" />
 				<RewardsAmountSNX>
 					{formatCurrency(CryptoCurrency.SNX, tokenRewards, {
 						currencyKey: '',
@@ -138,7 +137,7 @@ const RewardsTitle = styled.div`
 	font-family: ${(props) => props.theme.fonts.extended};
 	font-size: 12px;
 	color: ${(props) => props.theme.colors.white};
-	margin-bottom: 10px;
+	margin-bottom: 15px;
 `;
 
 const RewardsAmountSNX = styled.div`
