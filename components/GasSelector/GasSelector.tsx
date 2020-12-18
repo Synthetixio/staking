@@ -22,7 +22,7 @@ import { FlexDivRow, FlexDivRowCentered, NumericValue } from 'styles/common';
 
 type GasSelectorProps = {
 	gasLimitEstimate: number | null;
-	setGasPrice: (price: number) => void;
+	setGasPrice: Function;
 	altVersion?: boolean;
 };
 
