@@ -236,6 +236,7 @@ const Container = styled.div`
 
 const TabContainer = styled.div`
 	background-color: ${(props) => props.theme.colors.navy};
+	min-height: 380px;
 `;
 
 export default Incentives;
