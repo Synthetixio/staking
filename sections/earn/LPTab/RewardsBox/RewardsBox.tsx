@@ -1,6 +1,6 @@
 import { FC, useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { Svg } from 'react-optimized-image';
+import Img from 'react-optimized-image';
 import { useTranslation } from 'react-i18next';
 
 import synthetix from 'lib/synthetix';
@@ -77,7 +77,7 @@ const RewardsBox: FC<RewardsBoxProps> = ({
 		<>
 			<RewardsContainer>
 				<RewardsTitle>{t('earn.actions.rewards.title')}</RewardsTitle>
-				<Svg src={snxSVG} />
+				<Img src={snxSVG} />
 				<RewardsAmountSNX>
 					{formatCurrency(CryptoCurrency.SNX, tokenRewards, {
 						currencyKey: '',
@@ -123,7 +123,7 @@ const RewardsContainer = styled(FlexDivColCentered)`
 	height: 272px;
 	width: 200px;
 	margin-left: 20px;
-	padding: 15px;
+	padding: 10px;
 	border: 1px solid ${(props) => props.theme.colors.pink};
 	border-radius: 4px;
 	background-image: url(${smallWaveSVG.src});
