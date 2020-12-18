@@ -1,8 +1,9 @@
 import { Dispatch, FC, SetStateAction, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
+import OutsideClickHandler from 'react-outside-click-handler';
 
 import Img, { Svg } from 'react-optimized-image';
 
@@ -10,6 +11,7 @@ import {
 	isWalletConnectedState,
 	truncatedWalletAddressState,
 	walletAddressState,
+	walletWatchedState,
 } from 'store/wallet';
 
 import MetaMaskIcon from 'assets/wallet-icons/metamask.svg';
@@ -31,12 +33,12 @@ import ArrowsChangeIcon from 'assets/svg/app/arrows-change.svg';
 import ExitIcon from 'assets/svg/app/exit.svg';
 import CheckIcon from 'assets/svg/app/check.svg';
 import SearchIcon from 'assets/svg/app/search.svg';
+import Incognito from 'assets/svg/app/incognito.svg';
 
 import Connector from 'containers/Connector';
 import Etherscan from 'containers/Etherscan';
 
 import Button from 'components/Button';
-import WatchWalletModal from '../WatchWalletModal';
 
 import {
 	ExternalLink,
@@ -51,7 +53,7 @@ import {
 
 type WalletOptionsProps = {
 	onDismiss: () => void;
-	setWatchWalletModalOpened: Dispatch<SetStateAction>;
+	setWatchWalletModalOpened: Dispatch<SetStateAction<any>>;
 };
 
 const getWalletIcon = (selectedWallet?: string | null) => {
@@ -102,9 +104,10 @@ const WalletOptionsModal: FC<WalletOptionsProps> = ({ onDismiss, setWatchWalletM
 
 	const { etherscanInstance } = Etherscan.useContainer();
 
-	const walletAddress = useRecoilValue(walletAddressState);
+	const [walletAddress, setWalletAddress] = useRecoilState(walletAddressState);
 	const truncatedWalletAddress = useRecoilValue(truncatedWalletAddressState);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
+	const [walletWatched, setWalletWatched] = useRecoilState(walletWatchedState);
 
 	useEffect(() => {
 		if (copiedAddress) {
@@ -115,12 +118,18 @@ const WalletOptionsModal: FC<WalletOptionsProps> = ({ onDismiss, setWatchWalletM
 	}, [copiedAddress]);
 
 	return (
-		<>
+		<OutsideClickHandler onOutsideClick={() => onDismiss()}>
 			<StyledMenuModal>
 				{isWalletConnected ? (
 					<>
 						<WalletDetails>
-							<SelectedWallet>{getWalletIcon(selectedWallet?.toLowerCase())}</SelectedWallet>
+							{walletWatched ? (
+								<SelectedWallet>
+									<Svg src={Incognito} />
+								</SelectedWallet>
+							) : (
+								<SelectedWallet>{getWalletIcon(selectedWallet?.toLowerCase())}</SelectedWallet>
+							)}
 							<WalletAddress>{truncatedWalletAddress}</WalletAddress>
 							<ActionIcons>
 								<StyledTooltip
@@ -198,14 +207,26 @@ const WalletOptionsModal: FC<WalletOptionsProps> = ({ onDismiss, setWatchWalletM
 							</StyledButton>
 						</Buttons>
 						<StyledDivider />
-						<StyledTextButton
-							onClick={() => {
-								onDismiss();
-								disconnectWallet();
-							}}
-						>
-							{exitIcon} {t('modals.wallet.disconnect-wallet')}
-						</StyledTextButton>
+						{walletWatched ? (
+							<StyledTextButton
+								onClick={() => {
+									onDismiss();
+									setWalletWatched(null);
+									setWalletAddress(null);
+								}}
+							>
+								{exitIcon} {t('modals.wallet.stop-watching')}
+							</StyledTextButton>
+						) : (
+							<StyledTextButton
+								onClick={() => {
+									onDismiss();
+									disconnectWallet();
+								}}
+							>
+								{exitIcon} {t('modals.wallet.disconnect-wallet')}
+							</StyledTextButton>
+						)}
 					</>
 				) : (
 					<WalletDetails>
@@ -226,7 +247,7 @@ const WalletOptionsModal: FC<WalletOptionsProps> = ({ onDismiss, setWatchWalletM
 					</WalletDetails>
 				)}
 			</StyledMenuModal>
-		</>
+		</OutsideClickHandler>
 	);
 };
 
@@ -242,6 +263,7 @@ const StyledGlowingButton = styled(Button).attrs({
 	size: 'xl',
 })`
 	width: 150px;
+	font-size: 14px;
 	font-family: ${(props) => props.theme.fonts.condensedMedium};
 	text-transform: uppercase;
 	margin: 2px 0px;

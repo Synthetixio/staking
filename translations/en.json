@@ -53,14 +53,20 @@
 			},
 			"etherscan": "View on Etherscan",
 			"disconnect-wallet": "disconnect",
+			"stop-watching": "Stop watching",
 			"change-wallet": "change wallet",
 			"switch-account": "switch account",
 			"available-on-hardware-wallet": "Available on hardware wallets",
 			"watch-wallet": {
 				"title": "watch a wallet",
-				"subtitle": "Enter a valid ETH address or ENS domain to view staking as that wallet",
+				"subtitle": "Enter a valid ETH address or ENS domain to view this dApp as that wallet",
 				"placeholder": "Address or .eth name",
-				"action": "watch wallet"
+				"action": "watch wallet",
+				"error": "Not a valid ETH or ENS address",
+				"previous": {
+					"title": "Previously watching ({{count}}):",
+					"remove": "Remove address"
+				}
 			}
 		},
 		"notifications": {
