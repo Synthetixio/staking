@@ -1,7 +1,7 @@
 import { FC, useMemo } from 'react';
 import BigNumber from 'bignumber.js';
 import styled from 'styled-components';
-import { Svg } from 'react-optimized-image';
+import Img from 'react-optimized-image';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
@@ -73,7 +73,7 @@ const Incentives: FC<IncentivesProps> = ({
 			isWalletConnected
 				? [
 						{
-							icon: <Svg src={snxSVG} />,
+							icon: <Img src={snxSVG} />,
 							title: t('earn.incentives.options.snx.title'),
 							subtitle: t('earn.incentives.options.snx.subtitle'),
 							apr: stakingAPR,
@@ -91,7 +91,7 @@ const Incentives: FC<IncentivesProps> = ({
 							route: ROUTES.Earn.Claim,
 						},
 						{
-							icon: <Svg src={curveSVG} />,
+							icon: <Img src={curveSVG} />,
 							title: t('earn.incentives.options.curve.title'),
 							subtitle: t('earn.incentives.options.curve.subtitle'),
 							apr: lpData[CryptoCurrency.CurveLPToken].APR,
@@ -112,7 +112,7 @@ const Incentives: FC<IncentivesProps> = ({
 							tab: Tab.Curve_LP,
 						},
 						{
-							icon: <Svg src={iETHSVG} />,
+							icon: <Img src={iETHSVG} />,
 							title: t('earn.incentives.options.ieth.title'),
 							subtitle: t('earn.incentives.options.ieth.subtitle'),
 							apr: lpData[Synths.iETH].APR,
@@ -130,7 +130,7 @@ const Incentives: FC<IncentivesProps> = ({
 							route: ROUTES.Earn.iETH_LP,
 						},
 						{
-							icon: <Svg src={iBTCSVG} />,
+							icon: <Img src={iBTCSVG} />,
 							title: t('earn.incentives.options.ibtc.title'),
 							subtitle: t('earn.incentives.options.ibtc.subtitle'),
 							apr: lpData[Synths.iBTC].APR,

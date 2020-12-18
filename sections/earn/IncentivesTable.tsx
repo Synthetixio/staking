@@ -81,7 +81,7 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab }
 				accessor: 'title',
 				Cell: (cellProps: CellProps<EarnItem>) => (
 					<>
-						<div>{cellProps.row.original.icon}</div>
+						<IconWrap>{cellProps.row.original.icon}</IconWrap>
 						<FlexDivCol>
 							<Title>{cellProps.row.original.title}</Title>
 							<Subtitle>{cellProps.row.original.subtitle}</Subtitle>
@@ -251,6 +251,11 @@ const StyledProgressBar = styled(ProgressBar)`
 
 const CellContainer = styled(FlexDivCol)`
 	width: 100%;
+`;
+
+const IconWrap = styled.div`
+	width: 64px;
+	height: 67px;
 `;
 
 const StyledTable = styled(Table)`
