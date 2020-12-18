@@ -1,4 +1,4 @@
-import { FC, useState, useMemo, useEffect, ReactNode, useCallback } from 'react';
+import { FC, useState, useMemo, useEffect, useCallback } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import { ethers } from 'ethers';
 import { Svg } from 'react-optimized-image';
@@ -43,20 +43,12 @@ import {
 type LPTabProps = {
 	stakedAsset: CurrencyKey;
 	tokenRewards: number;
-	icon: ReactNode;
 	allowance: number | null;
 	userBalance: number;
 	staked: number;
 };
 
-const LPTab: FC<LPTabProps> = ({
-	icon,
-	stakedAsset,
-	tokenRewards,
-	allowance,
-	userBalance,
-	staked,
-}) => {
+const LPTab: FC<LPTabProps> = ({ stakedAsset, tokenRewards, allowance, userBalance, staked }) => {
 	const { t } = useTranslation();
 	const { signer } = Connector.useContainer();
 	const { monitorHash } = Notify.useContainer();
@@ -81,7 +73,6 @@ const LPTab: FC<LPTabProps> = ({
 
 	const tabData = useMemo(() => {
 		const commonStakeTabProps = {
-			icon,
 			stakedAsset,
 			userBalance,
 			staked,
@@ -101,7 +92,7 @@ const LPTab: FC<LPTabProps> = ({
 				key: 'unstake',
 			},
 		];
-	}, [t, icon, stakedAsset, userBalance, staked]);
+	}, [t, stakedAsset, userBalance, staked]);
 
 	useEffect(() => {
 		if (allowance === 0 && userBalance > 0) {

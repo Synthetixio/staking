@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { FlexDiv, linkCSS, FlexDivColCentered } from 'styles/common';
+import { FlexDiv, linkCSS, FlexDivColCentered, FlexDivCentered } from 'styles/common';
 import Button from 'components/Button';
 
 export const TotalValueWrapper = styled(FlexDiv)`
@@ -95,6 +95,12 @@ export const TabContainer = styled(FlexDivColCentered)`
 	height: 100%;
 	justify-content: space-evenly;
 	padding: 24px;
+`;
+
+export const IconWrap = styled(FlexDivCentered)`
+	width: 64px;
+	height: 67px;
+	justify-content: center;
 `;
 
 export const VerifyButton = styled.div<{ isStakingPanel?: boolean }>`

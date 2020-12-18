@@ -1,4 +1,4 @@
-import React, { FC, ReactNode, useCallback, useMemo } from 'react';
+import React, { FC, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps, Row } from 'react-table';
 import styled, { css } from 'styled-components';
@@ -8,6 +8,7 @@ import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
 
 import Connector from 'containers/Connector';
+import Currency from 'components/Currency';
 
 import ProgressBar from 'components/ProgressBar';
 import Table from 'components/Table';
@@ -33,22 +34,22 @@ import {
 	TableNoResultsButtonContainer,
 	TableNoResultsTitle,
 } from 'styles/common';
-import { CryptoCurrency } from 'constants/currency';
+import { CryptoCurrency, CurrencyKey, Synths } from 'constants/currency';
 import { NOT_APPLICABLE } from './Incentives';
 
 import ROUTES from 'constants/routes';
 
 import { Tab } from './types';
+import { IconWrap } from './common';
 
 export type EarnItem = {
 	title: string;
 	subtitle: string;
 	apr: number;
-	icon: ReactNode;
 	tvl: number;
 	staked: {
 		balance: number;
-		asset: string; // use Cyrpto type
+		asset: CurrencyKey;
 	};
 	rewards: number;
 	periodStarted: number;
@@ -81,7 +82,17 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab }
 				accessor: 'title',
 				Cell: (cellProps: CellProps<EarnItem>) => (
 					<>
-						<IconWrap>{cellProps.row.original.icon}</IconWrap>
+						<IconWrap>
+							<Currency.Icon
+								currencyKey={cellProps.row.original.staked.asset}
+								width={
+									cellProps.row.original.staked.asset === CryptoCurrency.CurveLPToken ? '64' : '32'
+								}
+								height={
+									cellProps.row.original.staked.asset === CryptoCurrency.CurveLPToken ? '64' : '32'
+								}
+							/>
+						</IconWrap>
 						<FlexDivCol>
 							<Title>{cellProps.row.original.title}</Title>
 							<Subtitle>{cellProps.row.original.subtitle}</Subtitle>
@@ -251,11 +262,6 @@ const StyledProgressBar = styled(ProgressBar)`
 
 const CellContainer = styled(FlexDivCol)`
 	width: 100%;
-`;
-
-const IconWrap = styled.div`
-	width: 64px;
-	height: 67px;
 `;
 
 const StyledTable = styled(Table)`

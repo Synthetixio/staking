@@ -1,4 +1,4 @@
-import { FC, useState, ReactNode, useEffect, useCallback } from 'react';
+import { FC, useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { ethers } from 'ethers';
@@ -25,6 +25,7 @@ import {
 	ModalItem,
 	ModalItemTitle,
 } from 'styles/common';
+import Currency from 'components/Currency';
 import { CurrencyKey, CryptoCurrency, Synths } from 'constants/currency';
 import { Transaction } from 'constants/network';
 import Notify from 'containers/Notify';
@@ -43,6 +44,7 @@ import {
 	ButtonSpacer,
 	GreyText,
 	LinkText,
+	IconWrap,
 } from '../../common';
 
 export const getContract = (stakedAsset: CurrencyKey, signer: ethers.Signer | null) => {
@@ -63,14 +65,13 @@ export const getContract = (stakedAsset: CurrencyKey, signer: ethers.Signer | nu
 };
 
 type StakeTabProps = {
-	icon: ReactNode;
 	isStake: boolean;
 	stakedAsset: CurrencyKey;
 	userBalance: number;
 	staked: number;
 };
 
-const StakeTab: FC<StakeTabProps> = ({ icon, stakedAsset, isStake, userBalance, staked }) => {
+const StakeTab: FC<StakeTabProps> = ({ stakedAsset, isStake, userBalance, staked }) => {
 	const { t } = useTranslation();
 	const [amount, setAmount] = useState<number | null>(null);
 	const { monitorHash } = Notify.useContainer();
@@ -234,7 +235,13 @@ const StakeTab: FC<StakeTabProps> = ({ icon, stakedAsset, isStake, userBalance, 
 	return (
 		<>
 			<Container>
-				<IconWrap>{icon}</IconWrap>
+				<IconWrap>
+					<Currency.Icon
+						currencyKey={stakedAsset}
+						width={stakedAsset === CryptoCurrency.CurveLPToken ? '64' : '38'}
+						height={stakedAsset === CryptoCurrency.CurveLPToken ? '64' : '38'}
+					/>
+				</IconWrap>
 				<InputSection>
 					<EmptyDiv />
 					<InputField
@@ -311,17 +318,17 @@ const StyledValue = styled(Value)`
 const PaddedButton = styled(StyledButton)`
 	margin-top: 20px;
 	width: 80%;
-`;
-
-const IconWrap = styled.div`
-	width: 64px;
-	height: 68px;
+	text-transform: none;
 `;
 
 const MaxButton = styled(StyledButton)`
-	width: 25%;
-	font-size: 14px;
-	height: 30px;
+	width: 20%;
+	font-size: 12px;
+	height: 24px;
+	background-color: ${(props) => props.theme.colors.black};
+	color: ${(props) => props.theme.colors.blue};
+	border: 1px solid ${(props) => props.theme.colors.blue};
+	line-height: 18px;
 `;
 
 const InputSection = styled(FlexDivCentered)`
@@ -330,11 +337,11 @@ const InputSection = styled(FlexDivCentered)`
 `;
 
 const EmptyDiv = styled.div`
-	width: 25%;
+	width: 20%;
 `;
 
 const InputField = styled(StyledInput)`
-	width: 50%;
+	width: 60%;
 	font-size: 24px;
 	background: transparent;
 	font-family: ${(props) => props.theme.fonts.extended};
