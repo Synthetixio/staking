@@ -39,6 +39,11 @@ type IncentivesProps = {
 	hasClaimed: boolean;
 };
 
+const snxImg = <Img src={snxSVG} />;
+const curveImg = <Img src={curveSVG} />;
+const iETHImg = <Img src={iETHSVG} />;
+const iBTCImg = <Img src={iBTCSVG} />;
+
 const VALID_TABS = Object.values(Tab);
 
 const Incentives: FC<IncentivesProps> = ({
@@ -75,7 +80,7 @@ const Incentives: FC<IncentivesProps> = ({
 			isWalletConnected
 				? [
 						{
-							icon: <Img src={snxSVG} />,
+							icon: snxImg,
 							title: t('earn.incentives.options.snx.title'),
 							subtitle: t('earn.incentives.options.snx.subtitle'),
 							apr: stakingAPR,
@@ -93,7 +98,7 @@ const Incentives: FC<IncentivesProps> = ({
 							route: ROUTES.Earn.Claim,
 						},
 						{
-							icon: <Img src={curveSVG} />,
+							icon: curveImg,
 							title: t('earn.incentives.options.curve.title'),
 							subtitle: t('earn.incentives.options.curve.subtitle'),
 							apr: lpData[CryptoCurrency.CurveLPToken].APR,
@@ -114,7 +119,7 @@ const Incentives: FC<IncentivesProps> = ({
 							tab: Tab.Curve_LP,
 						},
 						{
-							icon: <Img src={iETHSVG} />,
+							icon: iETHImg,
 							title: t('earn.incentives.options.ieth.title'),
 							subtitle: t('earn.incentives.options.ieth.subtitle'),
 							apr: lpData[Synths.iETH].APR,
@@ -132,7 +137,7 @@ const Incentives: FC<IncentivesProps> = ({
 							route: ROUTES.Earn.iETH_LP,
 						},
 						{
-							icon: <Img src={iBTCSVG} />,
+							icon: iBTCImg,
 							title: t('earn.incentives.options.ibtc.title'),
 							subtitle: t('earn.incentives.options.ibtc.subtitle'),
 							apr: lpData[Synths.iBTC].APR,

@@ -1,10 +1,11 @@
-import React, { FC, ReactNode, useMemo } from 'react';
+import React, { FC, ReactNode, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps, Row } from 'react-table';
 import styled from 'styled-components';
 import { Svg } from 'react-optimized-image';
 import Countdown from 'react-countdown';
 import { useRecoilValue } from 'recoil';
+import { useRouter } from 'next/router';
 
 import Connector from 'containers/Connector';
 
@@ -12,7 +13,7 @@ import ProgressBar from 'components/ProgressBar';
 import Table from 'components/Table';
 import Button from 'components/Button';
 
-import GoBackIcon from 'assets/svg/app/go-back.svg';
+import ExpandIcon from 'assets/svg/app/expand.svg';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
@@ -34,9 +35,10 @@ import {
 } from 'styles/common';
 import { CryptoCurrency } from 'constants/currency';
 import { NOT_APPLICABLE } from './Incentives';
-import { Tab } from './types';
-import { useRouter } from 'next/router';
+
 import ROUTES from 'constants/routes';
+
+import { Tab } from './types';
 
 export type EarnItem = {
 	title: string;
@@ -70,6 +72,8 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab }
 	const router = useRouter();
 	const { connectWallet } = Connector.useContainer();
 
+	const goToEarn = useCallback(() => router.push(ROUTES.Earn.Home), [router]);
+
 	const columns = useMemo(() => {
 		const leftColumns = [
 			{
@@ -93,8 +97,8 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab }
 						{activeTab == null ? (
 							<>{t('earn.incentives.est-apr')}</>
 						) : (
-							<StyledIconButton onClick={() => router.push(ROUTES.Earn.Home)}>
-								<Svg src={GoBackIcon} />
+							<StyledIconButton onClick={goToEarn}>
+								<Svg src={ExpandIcon} />
 							</StyledIconButton>
 						)}
 					</CellContainer>
@@ -199,7 +203,7 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab }
 			},
 		];
 		return activeTab != null ? leftColumns : [...leftColumns, ...rightColumns];
-	}, [activeTab, getPriceAtCurrentRate, selectedPriceCurrency.sign, t, router]);
+	}, [getPriceAtCurrentRate, selectedPriceCurrency.sign, t, activeTab, goToEarn]);
 
 	return (
 		<Container activeTab={activeTab}>
@@ -207,7 +211,6 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab }
 				palette="primary"
 				columns={columns}
 				data={data}
-				columnsDeps={[activeTab, selectedPriceCurrency]}
 				isLoading={isWalletConnected && !isLoaded}
 				showPagination={true}
 				onTableRowClick={(row: Row<EarnItem>) => router.push(row.original.route)}

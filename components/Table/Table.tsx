@@ -25,7 +25,6 @@ type TableProps = {
 	palette?: TablePalette;
 	data: object[];
 	columns: ColumnWithSorting<object>[];
-	columnsDeps?: DependencyList;
 	options?: any;
 	onTableRowClick?: (row: Row<any>) => void;
 	isActiveRow?: (row: Row<any>) => boolean;
@@ -37,7 +36,6 @@ type TableProps = {
 
 export const Table: FC<TableProps> = ({
 	columns = [],
-	columnsDeps = [],
 	data = [],
 	options = {},
 	noResultsMessage = null,
@@ -48,12 +46,6 @@ export const Table: FC<TableProps> = ({
 	showPagination = false,
 	isActiveRow,
 }) => {
-	const memoizedColumns = useMemo(
-		() => columns,
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-		columnsDeps
-	);
-
 	// TODO: How do I tell Typescript about the usePagination props?
 	const {
 		getTableProps,
@@ -78,7 +70,7 @@ export const Table: FC<TableProps> = ({
 		state: { pageIndex },
 	} = useTable(
 		{
-			columns: memoizedColumns,
+			columns,
 			data,
 			initialState: { pageSize: showPagination ? MAX_PAGE_ROWS : data.length },
 			...options,
