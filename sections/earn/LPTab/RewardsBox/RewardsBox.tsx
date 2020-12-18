@@ -93,7 +93,11 @@ const RewardsBox: FC<RewardsBoxProps> = ({
 				<StyledButton variant="primary" onClick={handleClaim} disabled={tokenRewards === 0}>
 					{t('earn.actions.claim.claim-snx-button')}
 				</StyledButton>
-				<GasSelector gasLimitEstimate={gasLimitEstimate} setGasPrice={setClaimGasPrice} />
+				<GasSelector
+					altVersion={true}
+					gasLimitEstimate={gasLimitEstimate}
+					setGasPrice={setClaimGasPrice}
+				/>
 			</RewardsContainer>
 			{claimTxModalOpen && (
 				<TxConfirmationModal

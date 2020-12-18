@@ -273,7 +273,11 @@ const StakeTab: FC<StakeTabProps> = ({ icon, stakedAsset, isStake, userBalance, 
 						? t('earn.actions.stake.stake-button', { stakedAsset })
 						: t('earn.actions.unstake.unstake-button', { stakedAsset })}
 				</PaddedButton>
-				<GasSelector gasLimitEstimate={gasLimitEstimate} setGasPrice={setGasPrice} />
+				<GasSelector
+					altVersion={true}
+					gasLimitEstimate={gasLimitEstimate}
+					setGasPrice={setGasPrice}
+				/>
 			</Container>
 			{txModalOpen && (
 				<TxConfirmationModal

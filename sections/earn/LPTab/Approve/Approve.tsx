@@ -239,7 +239,11 @@ const Approve: FC<ApproveProps> = ({ stakedAsset, setShowApproveOverlayModal }) 
 					<PaddedButton variant="primary" onClick={handleApprove}>
 						{t('modals.approve.button')}
 					</PaddedButton>
-					<GasSelector gasLimitEstimate={gasLimitEstimate} setGasPrice={setGasPrice} />
+					<GasSelector
+						altVersion={true}
+						gasLimitEstimate={gasLimitEstimate}
+						setGasPrice={setGasPrice}
+					/>
 				</InnerContainer>
 			</OverlayContainer>
 			{txModalOpen && (

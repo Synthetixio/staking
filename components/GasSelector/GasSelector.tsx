@@ -22,10 +22,16 @@ import { FlexDivRow, FlexDivRowCentered, NumericValue } from 'styles/common';
 
 type GasSelectorProps = {
 	gasLimitEstimate: number | null;
-	setGasPrice: Function;
+	setGasPrice: (price: number) => void;
+	altVersion?: boolean;
 };
 
-const GasSelector: React.FC<GasSelectorProps> = ({ gasLimitEstimate, setGasPrice, ...rest }) => {
+const GasSelector: React.FC<GasSelectorProps> = ({
+	gasLimitEstimate,
+	setGasPrice,
+	altVersion = false,
+	...rest
+}) => {
 	const { t } = useTranslation();
 	const [gasSpeed, setGasSpeed] = useRecoilState(gasSpeedState);
 	const [customGasPrice, setCustomGasPrice] = useRecoilState(customGasPriceState);
@@ -79,10 +85,55 @@ const GasSelector: React.FC<GasSelectorProps> = ({ gasLimitEstimate, setGasPrice
 		</span>
 	);
 
+	const content = (
+		<GasSelectContainer>
+			<CustomGasPriceContainer>
+				<CustomGasPrice
+					value={customGasPrice}
+					onChange={(_, value) => setCustomGasPrice(value)}
+					placeholder={t('common.custom')}
+				/>
+			</CustomGasPriceContainer>
+			{GAS_SPEEDS.map((speed) => (
+				<StyedGasButton
+					key={speed}
+					variant="solid"
+					onClick={() => {
+						setCustomGasPrice('');
+						setGasSpeed(speed);
+					}}
+					isActive={hasCustomGasPrice ? false : gasSpeed === speed}
+				>
+					<GasPriceText>{t(`common.gas-prices.${speed}`)}</GasPriceText>
+					<NumericValue>{gasPrices![speed]}</NumericValue>
+				</StyedGasButton>
+			))}
+		</GasSelectContainer>
+	);
+
+	if (altVersion) {
+		return (
+			<GasPriceContainer>
+				<GasPriceTooltip trigger="click" arrow={false} content={content} interactive={true}>
+					<div>
+						{t('common.gas-prices.est', {
+							amount:
+								transactionFee != null
+									? `(${formatCurrency(selectedPriceCurrency.name, transactionFee, {
+											sign: selectedPriceCurrency.sign,
+									  })})`
+									: '',
+						})}
+					</div>
+				</GasPriceTooltip>
+			</GasPriceContainer>
+		);
+	}
+
 	return (
 		<Container {...rest}>
 			<GasPriceHeader>{t('common.gas-header')}</GasPriceHeader>
-			<GasPriceContainer>
+			<FlexDivRowCentered>
 				<GasPriceItem>
 					<GasPriceText>
 						{gasPriceItem}{' '}
@@ -92,39 +143,10 @@ const GasSelector: React.FC<GasSelectorProps> = ({ gasLimitEstimate, setGasPrice
 							})})`}
 					</GasPriceText>
 				</GasPriceItem>
-				<GasPriceTooltip
-					trigger="click"
-					arrow={false}
-					content={
-						<GasSelectContainer>
-							<CustomGasPriceContainer>
-								<CustomGasPrice
-									value={customGasPrice}
-									onChange={(_, value) => setCustomGasPrice(value)}
-									placeholder={t('common.custom')}
-								/>
-							</CustomGasPriceContainer>
-							{GAS_SPEEDS.map((speed) => (
-								<StyedGasButton
-									key={speed}
-									variant="solid"
-									onClick={() => {
-										setCustomGasPrice('');
-										setGasSpeed(speed);
-									}}
-									isActive={hasCustomGasPrice ? false : gasSpeed === speed}
-								>
-									<GasPriceText>{t(`common.gas-prices.${speed}`)}</GasPriceText>
-									<NumericValue>{gasPrices![speed]}</NumericValue>
-								</StyedGasButton>
-							))}
-						</GasSelectContainer>
-					}
-					interactive={true}
-				>
+				<GasPriceTooltip trigger="click" arrow={false} content={content} interactive={true}>
 					<StyledGasEditButton role="button">{t('common.edit')}</StyledGasEditButton>
 				</GasPriceTooltip>
-			</GasPriceContainer>
+			</FlexDivRowCentered>
 		</Container>
 	);
 };
@@ -134,7 +156,15 @@ const Container = styled(FlexDivRow)`
 	justify-content: space-between;
 `;
 
-const GasPriceContainer = styled(FlexDivRowCentered)``;
+const GasPriceContainer = styled(FlexDivRowCentered)`
+	margin-top: 10px;
+	font-family: ${(props) => props.theme.fonts.interBold};
+	font-size: 12px;
+	color: ${(props) => props.theme.colors.gray};
+	padding: 2px 0;
+	cursor: pointer;
+	border-bottom: 1px dashed ${(props) => props.theme.colors.gray};
+`;
 
 const GasPriceHeader = styled.p`
 	font-family: ${(props) => props.theme.fonts.interBold};

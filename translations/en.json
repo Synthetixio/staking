@@ -539,6 +539,7 @@
 			"synthetic-currency-name": "Synthetic {{currencyName}}"
 		},
 		"gas-prices": {
+			"est": "Est Fees: {{amount}}",
 			"average": "Average",
 			"fast": "Fast",
 			"fastest": "Fastest"
