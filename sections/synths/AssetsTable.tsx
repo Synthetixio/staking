@@ -68,6 +68,10 @@ const AssetsTable: FC<AssetsTableProps> = ({
 	const { selectedPriceCurrency, selectPriceCurrencyRate } = useSelectedPriceCurrency();
 
 	const assetColumns = useMemo(() => {
+		if (!isAppReady) {
+			return [];
+		}
+
 		const columns = [
 			{
 				Header: <>{t('synths.assets.synths.table.asset')}</>,
@@ -179,6 +183,7 @@ const AssetsTable: FC<AssetsTableProps> = ({
 		totalValue,
 		selectPriceCurrencyRate,
 		selectedPriceCurrency.sign,
+		isAppReady,
 	]);
 
 	return (
@@ -215,7 +220,6 @@ const AssetsTable: FC<AssetsTableProps> = ({
 						</TableNoResults>
 					) : undefined
 				}
-				columnsDeps={[isAppReady, totalValue, selectPriceCurrencyRate]}
 				showPagination={true}
 			/>
 		</Container>

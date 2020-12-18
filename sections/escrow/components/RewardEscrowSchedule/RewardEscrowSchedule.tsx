@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import { Svg } from 'react-optimized-image';
@@ -23,8 +23,34 @@ import {
 const RewardEscrowSchedule: React.FC = () => {
 	const { t } = useTranslation();
 	const escrowDataQuery = useEscrowDataQuery();
-	const escrowData = escrowDataQuery.data;
-	const data = escrowData?.schedule;
+	const escrowData = escrowDataQuery.data?.schedule;
+	const data = useMemo(() => escrowData ?? [], [escrowData]);
+
+	const columns = useMemo(
+		() => [
+			{
+				Header: <Header>{t('escrow.table.vesting-date')}</Header>,
+				accessor: 'date',
+				Cell: (cellProps: CellProps<EscrowData['schedule'], Date>) => (
+					<Data>{formatShortDate(cellProps.value)}</Data>
+				),
+				width: 250,
+				sortable: false,
+			},
+			{
+				Header: <Header style={{ textAlign: 'right' }}>{t('escrow.table.snx-amount')}</Header>,
+				accessor: 'quantity',
+				Cell: (cellProps: CellProps<EscrowData['schedule'], number>) => (
+					<Data style={{ textAlign: 'right' }}>
+						{formatCurrency(CryptoCurrency.SNX, cellProps.value)}
+					</Data>
+				),
+				width: 250,
+				sortable: false,
+			},
+		],
+		[t]
+	);
 
 	return (
 		<Container>
@@ -34,30 +60,8 @@ const RewardEscrowSchedule: React.FC = () => {
 			</Subtitle>
 			<StyledTable
 				palette="primary"
-				columns={[
-					{
-						Header: <Header>{t('escrow.table.vesting-date')}</Header>,
-						accessor: 'date',
-						Cell: (cellProps: CellProps<EscrowData['schedule'], Date>) => (
-							<Data>{formatShortDate(cellProps.value)}</Data>
-						),
-						width: 250,
-						sortable: false,
-					},
-					{
-						Header: <Header style={{ textAlign: 'right' }}>{t('escrow.table.snx-amount')}</Header>,
-						accessor: 'quantity',
-						Cell: (cellProps: CellProps<EscrowData['schedule'], number>) => (
-							<Data style={{ textAlign: 'right' }}>
-								{formatCurrency(CryptoCurrency.SNX, cellProps.value)}
-							</Data>
-						),
-						width: 250,
-						sortable: false,
-					},
-				]}
-				data={data ? data : []}
-				columnsDeps={[]}
+				columns={columns}
+				data={data}
 				isLoading={escrowDataQuery.isLoading}
 				noResultsMessage={
 					!escrowDataQuery.isLoading && data?.length === 0 ? (
