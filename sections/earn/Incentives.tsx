@@ -1,6 +1,6 @@
 import { FC, useMemo } from 'react';
 import BigNumber from 'bignumber.js';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import Img from 'react-optimized-image';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
@@ -13,8 +13,6 @@ import useLPData from 'hooks/useLPData';
 
 import ROUTES from 'constants/routes';
 import { CryptoCurrency, Synths } from 'constants/currency';
-
-import { FlexDiv } from 'styles/common';
 
 import curveSVG from 'assets/svg/incentives/pool-curve.svg';
 import iBTCSVG from 'assets/svg/incentives/pool-ibtc.svg';

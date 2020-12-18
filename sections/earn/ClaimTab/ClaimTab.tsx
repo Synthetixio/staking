@@ -292,7 +292,11 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 							? t('earn.actions.claim.claim-button')
 							: t('earn.actions.claim.nothing-to-claim')}
 					</PaddedButton>
-					<GasSelector gasLimitEstimate={gasLimitEstimate} setGasPrice={setGasPrice} />
+					<GasSelector
+						altVersion={true}
+						gasLimitEstimate={gasLimitEstimate}
+						setGasPrice={setGasPrice}
+					/>
 				</InnerContainer>
 			</TabContainer>
 			{txModalOpen && (
