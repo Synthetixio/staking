@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { FlexDiv, linkCSS, FlexDivColCentered, FlexDivCentered } from 'styles/common';
+import { FlexDiv, FlexDivColCentered, FlexDivCentered, ExternalLink } from 'styles/common';
 import Button from 'components/Button';
 
 export const TotalValueWrapper = styled(FlexDiv)`
@@ -35,8 +35,7 @@ export const HeaderLabel = styled(Label)`
 	padding-bottom: 24px;
 `;
 
-export const StyledLink = styled.span`
-	${linkCSS}
+export const StyledLink = styled(ExternalLink)`
 	color: ${(props) => props.theme.colors.blue};
 `;
 
