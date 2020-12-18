@@ -34,7 +34,7 @@ import {
 	TableNoResultsButtonContainer,
 	TableNoResultsTitle,
 } from 'styles/common';
-import { CryptoCurrency, CurrencyKey, Synths } from 'constants/currency';
+import { CryptoCurrency, CurrencyKey } from 'constants/currency';
 import { NOT_APPLICABLE } from './Incentives';
 
 import ROUTES from 'constants/routes';
