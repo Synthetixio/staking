@@ -1,7 +1,7 @@
 import React, { FC, ReactNode, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps, Row } from 'react-table';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { Svg } from 'react-optimized-image';
 import Countdown from 'react-countdown';
 import { useRecoilValue } from 'recoil';
@@ -111,7 +111,6 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab }
 					</CellContainer>
 				),
 				width: 100,
-				maxWidth: 100,
 				sortable: false,
 			},
 		];
@@ -234,7 +233,16 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab }
 
 const Container = styled.div<{ activeTab: Tab | null }>`
 	background: ${(props) => props.theme.colors.navy};
-	width: ${(props) => (props.activeTab == null ? '100%' : '40%')};
+	width: 100%;
+	${(props) =>
+		props.activeTab &&
+		css`
+			.table-header-cell {
+				&:last-child {
+					padding-right: 0;
+				}
+			}
+		`}
 `;
 
 const StyledProgressBar = styled(ProgressBar)`
@@ -249,6 +257,7 @@ const StyledTable = styled(Table)`
 	.table-body-row {
 		height: 70px;
 		align-items: center;
+		border-right: 1px solid ${(props) => props.theme.colors.grayBlue};
 		&:hover {
 			background-color: ${(props) => props.theme.colors.mediumBlue};
 		}

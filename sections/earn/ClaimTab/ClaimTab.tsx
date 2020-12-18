@@ -57,6 +57,7 @@ import {
 	Label,
 	StyledLink,
 	TabContainer,
+	HeaderLabel,
 } from '../common';
 import Currency from 'components/Currency';
 
@@ -244,10 +245,9 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 	return (
 		<>
 			<TabContainer>
-				<Label>
+				<HeaderLabel>
 					<Trans i18nKey="earn.incentives.options.snx.description" components={[<StyledLink />]} />
-				</Label>
-
+				</HeaderLabel>
 				<InnerContainer>
 					<ValueBoxWrapper>
 						<ValueBox>
@@ -315,7 +315,6 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 
 const InnerContainer = styled(FlexDivColCentered)`
 	width: 90%;
-	margin: 15px auto;
 	padding: 20px;
 	border: 1px solid ${(props) => props.theme.colors.pink};
 	border-radius: 4px;

@@ -31,6 +31,10 @@ export const Label = styled.p`
 	font-size: 12px;
 `;
 
+export const HeaderLabel = styled(Label)`
+	padding-bottom: 24px;
+`;
+
 export const StyledLink = styled.span`
 	${linkCSS}
 	color: ${(props) => props.theme.colors.blue};

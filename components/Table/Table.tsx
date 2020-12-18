@@ -1,4 +1,4 @@
-import React, { FC, useMemo, DependencyList } from 'react';
+import React, { FC } from 'react';
 import styled, { css } from 'styled-components';
 import { useTable, useFlexLayout, useSortBy, Column, Row, usePagination, Cell } from 'react-table';
 import { Svg } from 'react-optimized-image';
@@ -91,6 +91,7 @@ export const Table: FC<TableProps> = ({
 									{...column.getHeaderProps(
 										column.sortable ? column.getSortByToggleProps() : undefined
 									)}
+									className="table-header-cell"
 								>
 									{column.render('Header')}
 									{column.sortable && (
