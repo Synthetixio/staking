@@ -29,13 +29,12 @@ const useGetDebtDataQuery = (options?: QueryConfig<WalletDebtData>) => {
 		QUERY_KEYS.Debt.WalletDebtData(walletAddress ?? '', network?.id!),
 		async () => {
 			const {
-				contracts: { SystemSettings, Synthetix, SynthetixState },
+				contracts: { SystemSettings, Synthetix },
 				utils,
 			} = synthetix.js!;
-			const IssuanceRatioContract = network?.id === 5 ? SystemSettings : SynthetixState;
 			const sUSDBytes = utils.formatBytes32String('sUSD');
 			const result = await Promise.all([
-				IssuanceRatioContract.issuanceRatio(),
+				SystemSettings.issuanceRatio(),
 				Synthetix.collateralisationRatio(walletAddress),
 				Synthetix.transferableSynthetix(walletAddress),
 				Synthetix.debtBalanceOf(walletAddress, sUSDBytes),
