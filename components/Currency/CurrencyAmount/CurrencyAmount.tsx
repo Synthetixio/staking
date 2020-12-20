@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import styled from 'styled-components';
 
-import { formatCurrency, formatNumber, NumericValue, toBigNumber } from 'utils/formatters/number';
+import { formatCurrency, NumericValue, toBigNumber } from 'utils/formatters/number';
 
 import { CurrencyKey } from 'constants/currency';
 
