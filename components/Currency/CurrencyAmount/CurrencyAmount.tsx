@@ -24,7 +24,7 @@ export const CurrencyAmount: FC<CurrencyAmountProps> = ({
 	...rest
 }) => (
 	<Container {...rest}>
-		<Amount className="amount">{formatNumber(amount)}</Amount>
+		<Amount className="amount">{formatCurrency(currencyKey, amount)}</Amount>
 		<TotalValue className="total-value">
 			{formatCurrency(
 				currencyKey,
