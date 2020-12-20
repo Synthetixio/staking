@@ -1,5 +1,5 @@
 import { FC, ReactNode, useMemo } from 'react';
-import { CellProps, Row } from 'react-table';
+import { CellProps } from 'react-table';
 import styled from 'styled-components';
 import { Trans, useTranslation } from 'react-i18next';
 import BigNumber from 'bignumber.js';
