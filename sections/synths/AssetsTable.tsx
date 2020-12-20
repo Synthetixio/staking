@@ -1,5 +1,5 @@
 import { FC, ReactNode, useMemo } from 'react';
-import { CellProps } from 'react-table';
+import { CellProps, Row } from 'react-table';
 import styled from 'styled-components';
 import { Trans, useTranslation } from 'react-i18next';
 import BigNumber from 'bignumber.js';
@@ -98,7 +98,8 @@ const AssetsTable: FC<AssetsTableProps> = ({
 			},
 			{
 				Header: <>{t('synths.assets.synths.table.balance')}</>,
-				accessor: 'usdBalance',
+				id: 'balance',
+				accessor: (originalRow: any) => originalRow.balance.toNumber(),
 				sortType: 'basic',
 				Cell: (cellProps: CellProps<CryptoBalance, CryptoBalance['balance']>) => (
 					<Currency.Amount
@@ -127,6 +128,7 @@ const AssetsTable: FC<AssetsTableProps> = ({
 			columns.push({
 				Header: <>{t('synths.assets.synths.table.holdings')}</>,
 				id: 'holdings',
+				accessor: (originalRow: any) => originalRow.usdBalance.toNumber(),
 				sortType: 'basic',
 				Cell: (cellProps: CellProps<CryptoBalance>) => (
 					<SynthHolding
@@ -135,13 +137,13 @@ const AssetsTable: FC<AssetsTableProps> = ({
 					/>
 				),
 				width: 200,
-				sortable: false,
+				sortable: true,
 			});
 		}
 		if (showConvert) {
 			columns.push({
 				Header: <></>,
-				accessor: 'holdings',
+				id: 'convert',
 				sortType: 'basic',
 				Cell: ({
 					row: {
