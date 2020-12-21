@@ -134,7 +134,7 @@ const Button = styled.button<ButtonProps>`
 				color: ${(props) => props.theme.colors.white};
 				&:hover {
 					&:not(:disabled) {
-						color: ${(props) => props.theme.colors.gray};
+						color: ${(props) => props.theme.colors.blue};
 					}
 				}
 			`}	
