@@ -29,6 +29,7 @@ import { isWalletConnectedState } from 'store/wallet';
 
 import {
 	FlexDivCol,
+	GlowingCircle,
 	IconButton,
 	TableNoResults,
 	TableNoResultsButtonContainer,
@@ -40,7 +41,6 @@ import { NOT_APPLICABLE } from './Incentives';
 import ROUTES from 'constants/routes';
 
 import { Tab } from './types';
-import { IconWrap } from './common';
 
 export type EarnItem = {
 	title: string;
@@ -80,25 +80,30 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab }
 			{
 				Header: <>{t('earn.incentives.options.select-a-pool.title')}</>,
 				accessor: 'title',
-				Cell: (cellProps: CellProps<EarnItem>) => (
-					<>
-						<IconWrap>
-							<Currency.Icon
-								currencyKey={cellProps.row.original.staked.asset}
-								width={
-									cellProps.row.original.staked.asset === CryptoCurrency.CurveLPToken ? '64' : '32'
-								}
-								height={
-									cellProps.row.original.staked.asset === CryptoCurrency.CurveLPToken ? '64' : '32'
-								}
-							/>
-						</IconWrap>
-						<FlexDivCol>
-							<Title>{cellProps.row.original.title}</Title>
-							<Subtitle>{cellProps.row.original.subtitle}</Subtitle>
-						</FlexDivCol>
-					</>
-				),
+				Cell: (cellProps: CellProps<EarnItem>) => {
+					let iconProps = {
+						width: '22',
+						height: '22',
+					};
+
+					// TODO: the CRV icon should be re-exported to look like our regular crypto icons
+					if (cellProps.row.original.staked.asset === CryptoCurrency.CurveLPToken) {
+						iconProps.width = '20';
+						iconProps.height = '20';
+					}
+
+					return (
+						<>
+							<StyledGlowingCircle variant="green" size="sm">
+								<Currency.Icon currencyKey={cellProps.row.original.staked.asset} {...iconProps} />
+							</StyledGlowingCircle>
+							<FlexDivCol>
+								<Title>{cellProps.row.original.title}</Title>
+								<Subtitle>{cellProps.row.original.subtitle}</Subtitle>
+							</FlexDivCol>
+						</>
+					);
+				},
 				width: 175,
 				sortable: false,
 			},
@@ -278,7 +283,6 @@ const StyledTable = styled(Table)`
 	}
 	.table-body-cell {
 		&:first-child {
-			padding-left: 2px;
 		}
 		&:last-child {
 			padding-left: 0;
@@ -312,4 +316,9 @@ const StyledIconButton = styled(IconButton)`
 const Claimable = styled.span`
 	color: ${(props) => props.theme.colors.green};
 `;
+
+const StyledGlowingCircle = styled(GlowingCircle)`
+	margin-right: 12px;
+`;
+
 export default IncentivesTable;

@@ -238,8 +238,8 @@ const StakeTab: FC<StakeTabProps> = ({ stakedAsset, isStake, userBalance, staked
 				<IconWrap>
 					<Currency.Icon
 						currencyKey={stakedAsset}
-						width={stakedAsset === CryptoCurrency.CurveLPToken ? '64' : '38'}
-						height={stakedAsset === CryptoCurrency.CurveLPToken ? '64' : '38'}
+						width={stakedAsset === CryptoCurrency.CurveLPToken ? '34' : '38'}
+						height={stakedAsset === CryptoCurrency.CurveLPToken ? '34' : '38'}
 					/>
 				</IconWrap>
 				<InputSection>

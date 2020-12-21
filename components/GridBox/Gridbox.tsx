@@ -55,7 +55,7 @@ const GridBoxTitle = styled.div`
 	font-size: 20px;
 	font-family: ${(props) => props.theme.fonts.extended};
 	color: ${(props) => props.theme.colors.white};
-	margin-bottom: 20px;
+	margin-top: 20px;
 	text-align: center;
 `;
 

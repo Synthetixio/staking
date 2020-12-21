@@ -11,6 +11,8 @@ import Stake from 'assets/svg/app/stake.svg';
 import Kwenta from 'assets/svg/app/kwenta.svg';
 
 import GridBox, { GridBoxProps } from 'components/GridBox/Gridbox';
+import { GlowingCircle } from 'styles/common';
+import Currency from 'components/Currency';
 
 const LayoutOne: FC = () => {
 	const { t } = useTranslation();
@@ -53,7 +55,11 @@ const LayoutOne: FC = () => {
 			},
 			{
 				gridLocations: ['col-2', 'col-3', 'row-2', 'row-3'],
-				icon: <Svg src={Stake} />,
+				icon: (
+					<GlowingCircle variant="green" size="md">
+						<Currency.Icon currencyKey={Synths.iBTC} width="32" height="32" />
+					</GlowingCircle>
+				),
 				title: t('dashboard.actions.earn.title', {
 					percent: formatPercent(lpData[Synths.iBTC].APR, { minDecimals: 0 }),
 				}),
@@ -66,7 +72,11 @@ const LayoutOne: FC = () => {
 			},
 			{
 				gridLocations: ['col-3', 'col-4', 'row-2', 'row-3'],
-				icon: <Svg src={Stake} />,
+				icon: (
+					<GlowingCircle variant="green" size="md">
+						<Currency.Icon currencyKey={Synths.iETH} width="32" height="32" />
+					</GlowingCircle>
+				),
 				title: t('dashboard.actions.earn.title', {
 					percent: formatPercent(lpData[Synths.iETH].APR, { minDecimals: 0 }),
 				}),
@@ -76,7 +86,11 @@ const LayoutOne: FC = () => {
 			},
 			{
 				gridLocations: ['col-4', 'col-5', 'row-2', 'row-3'],
-				icon: <Svg src={Stake} />,
+				icon: (
+					<GlowingCircle variant="green" size="md">
+						<Currency.Icon currencyKey={CryptoCurrency.CurveLPToken} width="28" height="28" />
+					</GlowingCircle>
+				),
 				title: t('dashboard.actions.earn.title', {
 					percent: formatPercent(lpData[CryptoCurrency.CurveLPToken].APR, { minDecimals: 0 }),
 				}),
