@@ -5,9 +5,22 @@ import Button from 'components/Button';
 import Table from 'components/Table';
 
 export const TabContainer = styled(FlexDivColCentered)`
+	width: 100%;
+`;
+
+export const InputContainer = styled(FlexDivColCentered)`
+	justify-content: space-between;
 	background: ${(props) => props.theme.colors.black};
-	height: 100%;
-	padding: 24px;
+	position: relative;
+	width: 100%;
+	padding: 16px;
+	margin-bottom: 24px;
+	/* @TODO: Replace with responsive height when mobile */
+`;
+
+export const InputBox = styled(FlexDivColCentered)`
+	margin: 24px auto;
+	justify-content: center;
 `;
 
 export const StyledCTA = styled(Button)<{ blue: boolean }>`

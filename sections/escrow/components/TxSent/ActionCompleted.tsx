@@ -8,6 +8,7 @@ import {
 	FlexDivCentered,
 	FlexDivColCentered,
 	ExternalLink,
+	boxShadowBlue,
 } from 'styles/common';
 import Success from 'assets/svg/app/circle-tick.svg';
 import { Transaction } from 'constants/network';
@@ -47,12 +48,12 @@ const ActionCompleted: FC<ActionCompletedProps> = ({
 			<ButtonWrap>
 				{link ? (
 					<ExternalLink href={link}>
-						<DismissButton>{t('escrow.actions.completed.verify')}</DismissButton>
+						<LeftButton>{t('escrow.actions.completed.verify')}</LeftButton>
 					</ExternalLink>
 				) : null}
-				<SeeMoreButton onClick={() => setTransactionState(Transaction.PRESUBMIT)}>
+				<RightButton onClick={() => setTransactionState(Transaction.PRESUBMIT)}>
 					{t('staking.actions.mint.completed.dismiss')}
-				</SeeMoreButton>
+				</RightButton>
 			</ButtonWrap>
 		</Container>
 	);
@@ -79,17 +80,19 @@ const ButtonWrap = styled(FlexDivRowCentered)`
 	margin: 16px 0px;
 `;
 
-const DismissButton = styled(BaseButton)`
+const LeftButton = styled(BaseButton)`
 	background-color: ${(props) => props.theme.colors.black};
 	color: ${(props) => props.theme.colors.white};
 	border: 1px solid ${(props) => props.theme.colors.gray};
 	text-transform: uppercase;
 `;
 
-const SeeMoreButton = styled(BaseButton)`
-	background-color: ${(props) => props.theme.colors.blue};
+const RightButton = styled(BaseButton)`
+	${boxShadowBlue}
+	background-color: ${(props) => props.theme.colors.grayBlue};
 	color: ${(props) => props.theme.colors.blue};
-	border: 1px solid ${(props) => props.theme.colors.blue};
+	text-transform: uppercase;
+
 `;
 
 export default ActionCompleted;

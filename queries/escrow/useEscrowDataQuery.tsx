@@ -7,20 +7,30 @@ import QUERY_KEYS from 'constants/queryKeys';
 
 import { isWalletConnectedState, networkState, walletAddressState } from 'store/wallet';
 import { appReadyState } from 'store/app';
-import BigNumber from 'bignumber.js';
 
 const VESTING_ENTRIES_PAGINATION = 50;
 
 export type EscrowData = {
-	canVest: number;
-	schedule: Array<{
-		date: Date;
-		quantity: number;
-	}>;
+	claimableAmount: number;
+	schedule: Schedule;
 	totalEscrowed: number;
 	totalVested: number;
-	tokenSaleEscrow: number;
+	claimableEntryIds: number[];
 };
+
+type VestingEntry = {
+	remainingAmount: number;
+	entryID: number;
+	endTime: number;
+};
+
+type Schedule = Array<
+	| {
+			quantity: number;
+			date: Date;
+	  }
+	| []
+>;
 
 const useEscrowDataQuery = (options?: QueryConfig<EscrowData>) => {
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
@@ -33,7 +43,6 @@ const useEscrowDataQuery = (options?: QueryConfig<EscrowData>) => {
 		async () => {
 			const {
 				contracts: { RewardEscrowV2 },
-				utils: { formatEther },
 			} = synthetix.js!;
 
 			const [numVestingEntries, totalEscrowed, totalVested] = await Promise.all([
@@ -45,7 +54,6 @@ const useEscrowDataQuery = (options?: QueryConfig<EscrowData>) => {
 			let vestingEntriesPromise = [];
 			let vestingEntriesIdPromise = [];
 			const totalVestingEntries = Number(numVestingEntries);
-			console.log(totalVestingEntries);
 
 			for (let index = 0; index < totalVestingEntries; index += VESTING_ENTRIES_PAGINATION) {
 				const pagination =
@@ -70,11 +78,13 @@ const useEscrowDataQuery = (options?: QueryConfig<EscrowData>) => {
 				vestingEntriesId
 			);
 
-			let schedule = [];
+			let schedule: Schedule = [];
+			let claimableEntryIds: number[] = [];
 
-			vestingEntries.forEach(({ remainingAmount, endTime }) => {
+			vestingEntries.forEach(({ remainingAmount, entryID, endTime }: VestingEntry) => {
 				const quantity = remainingAmount / 1e18;
-				if (remainingAmount) {
+				if (quantity) {
+					claimableEntryIds.push(entryID);
 					schedule.push({
 						quantity,
 						date: new Date(Number(endTime) * 1000),
@@ -82,37 +92,12 @@ const useEscrowDataQuery = (options?: QueryConfig<EscrowData>) => {
 				}
 			});
 
-			console.log('haha', schedule);
-			// const [accountSchedule, totalEscrowed, totalVested, tokenSaleEscrow] = await Promise.all([
-			// 	// RewardEscrow.checkAccountSchedule(walletAddress),
-			// 	// RewardEscrow.totalEscrowedAccountBalance(walletAddress),
-			// 	// RewardEscrow.totalVestedAccountBalance(walletAddress),
-			// 	// SynthetixEscrow.balanceOf(walletAddress),
-			// ]);
-
-			// const schedule = [];
-			// let canVest = 0;
-			// const currentUnixTime = new Date().getTime();
-
-			// for (let i = 0; i < accountSchedule.length; i += 2) {
-			// 	const quantity = Number(formatEther(accountSchedule[i + 1]));
-
-			// 	if (!accountSchedule[i].isZero() && quantity) {
-			// 		if (accountSchedule[i] * 1000 < currentUnixTime) {
-			// 			canVest += quantity;
-			// 		}
-			// 		schedule.push({
-			// 			date: new Date(Number(accountSchedule[i]) * 1000),
-			// 			quantity,
-			// 		});
-			// 	}
-			// }
 			return {
 				claimableAmount: claimableAmount / 1e18,
 				schedule,
 				totalEscrowed: totalEscrowed / 1e18,
 				totalVested: totalVested / 1e18,
-				// tokenSaleEscrow: Number(formatEther(tokenSaleEscrow)),
+				claimableEntryIds,
 			};
 		},
 		{

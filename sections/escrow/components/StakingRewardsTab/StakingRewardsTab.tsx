@@ -1,27 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
-import { Svg } from 'react-optimized-image';
+import { ethers } from 'ethers';
+import Notify from 'containers/Notify';
 
 import synthetix from 'lib/synthetix';
 
-import SNXLogo from 'assets/svg/currencies/crypto/SNX.svg';
-import { StyledCTA, TabContainer } from '../common';
-import GasSelector from 'components/GasSelector';
 import { getGasEstimateForTransaction } from 'utils/transactions';
-import { normalizedGasPrice, normalizeGasLimit } from 'utils/network';
+import { normalizedGasPrice } from 'utils/network';
 import { Transaction } from 'constants/network';
-import { formatCurrency } from 'utils/formatters/number';
-import { useTranslation } from 'react-i18next';
-import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
-import { ethers } from 'ethers';
-import Notify from 'containers/Notify';
-import { CryptoCurrency } from 'constants/currency';
-import { FlexDivColCentered, ModalItem, ModalItemText, ModalItemTitle } from 'styles/common';
-import { ActionCompleted, ActionInProgress } from '../TxSent';
 import useEscrowDataQuery from 'queries/escrow/useEscrowDataQuery';
 
+import { TabContainer } from '../common';
+import TabContent from './TabContent';
+
 const StakingRewardsTab: React.FC = () => {
-	const { t } = useTranslation();
 	const escrowDataQuery = useEscrowDataQuery();
 
 	const { monitorHash } = Notify.useContainer();
@@ -33,20 +24,22 @@ const StakingRewardsTab: React.FC = () => {
 	const [vestTxError, setVestTxError] = useState<string | null>(null);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 
-	const vestingCurrencyKey = CryptoCurrency['SNX'];
 	const escrowData = escrowDataQuery?.data;
-
 	const canVestAmount = escrowData?.claimableAmount ?? 0;
+	const claimableEntryIds = escrowData?.claimableEntryIds ?? null;
 
 	useEffect(() => {
 		const getGasLimitEstimate = async () => {
 			if (synthetix && synthetix.js) {
+				const {
+					contracts: { RewardsEscrowV2 },
+				} = synthetix.js;
 				try {
 					const gasEstimate = await getGasEstimateForTransaction(
 						[],
-						synthetix.js?.contracts.RewardEscrow.estimateGas.vest
+						RewardsEscrowV2.estimateGas.vest
 					);
-					setGasLimitEstimate(normalizeGasLimit(Number(gasEstimate)));
+					setGasLimitEstimate(gasEstimate);
 				} catch (error) {
 					setError(error.message);
 					setGasLimitEstimate(null);
@@ -62,10 +55,10 @@ const StakingRewardsTab: React.FC = () => {
 			setVestTxError(null);
 			setTxModalOpen(true);
 			const {
-				contracts: { RewardEscrow },
+				contracts: { RewardEscrowV2 },
 			} = synthetix.js!;
 
-			let transaction: ethers.ContractTransaction = await RewardEscrow.vest({
+			let transaction: ethers.ContractTransaction = await RewardEscrowV2.vest(claimableEntryIds, {
 				gasPrice: normalizedGasPrice(gasPrice),
 				gasLimitEstimate,
 			});
@@ -75,101 +68,35 @@ const StakingRewardsTab: React.FC = () => {
 				setTransactionState(Transaction.WAITING);
 				monitorHash({
 					txHash: transaction.hash,
-					onTxConfirmed: () => setTransactionState(Transaction.SUCCESS),
+					onTxConfirmed: () => {
+						setTransactionState(Transaction.SUCCESS);
+						escrowDataQuery.refetch();
+					},
 				});
 				setTxModalOpen(false);
 			}
 		} catch (e) {
 			setTransactionState(Transaction.PRESUBMIT);
-			// TODO: translate this
-			setVestTxError('vest tx error');
+			setVestTxError(e.message);
 		}
 	};
 
-	if (transactionState === Transaction.WAITING) {
-		return (
-			<ActionInProgress
-				vestingAmount={canVestAmount.toString()}
-				currencyKey={vestingCurrencyKey}
-				hash={txHash as string}
-			/>
-		);
-	}
-
-	if (transactionState === Transaction.SUCCESS) {
-		return (
-			<ActionCompleted
-				currencyKey={vestingCurrencyKey}
-				hash={txHash as string}
-				vestingAmount={canVestAmount.toString()}
+	return (
+		<TabContainer>
+			<TabContent
+				claimableAmount={canVestAmount}
+				onSubmit={handleVest}
+				error={vestTxError}
+				txModalOpen={txModalOpen}
+				setTxModalOpen={setTxModalOpen}
+				gasLimitEstimate={gasLimitEstimate}
+				setGasPrice={setGasPrice}
+				txHash={txHash}
+				transactionState={transactionState}
 				setTransactionState={setTransactionState}
 			/>
-		);
-	}
-
-	return (
-		<>
-			<TabContainer>
-				<InfoContainer>
-					<Svg src={SNXLogo} />
-					<Data>
-						{formatCurrency(vestingCurrencyKey, canVestAmount, {
-							currencyKey: vestingCurrencyKey,
-							decimals: 2,
-						})}
-					</Data>
-				</InfoContainer>
-
-				<GasSelector gasLimitEstimate={gasLimitEstimate} setGasPrice={setGasPrice} />
-				{canVestAmount > 0 ? (
-					<StyledCTA
-						blue={true}
-						onClick={handleVest}
-						variant="primary"
-						size="lg"
-						disabled={transactionState !== Transaction.PRESUBMIT}
-					>
-						{t('escrow.actions.vest-button', {
-							canVestAmount: formatCurrency(vestingCurrencyKey, canVestAmount, {
-								currencyKey: vestingCurrencyKey,
-							}),
-						})}
-					</StyledCTA>
-				) : (
-					<StyledCTA blue={true} variant="primary" size="lg" disabled={true}>
-						{t('escrow.actions.disabled')}
-					</StyledCTA>
-				)}
-			</TabContainer>
-			{txModalOpen && (
-				<TxConfirmationModal
-					onDismiss={() => setTxModalOpen(false)}
-					txError={vestTxError}
-					attemptRetry={handleVest}
-					content={
-						<ModalItem>
-							<ModalItemTitle>{t('modals.confirm-transaction.vesting.title')}</ModalItemTitle>
-							<ModalItemText>
-								{formatCurrency(vestingCurrencyKey, canVestAmount, {
-									currencyKey: vestingCurrencyKey,
-									decimals: 4,
-								})}
-							</ModalItemText>
-						</ModalItem>
-					}
-				/>
-			)}
-		</>
+		</TabContainer>
 	);
 };
-
-const InfoContainer = styled(FlexDivColCentered)`
-	height: 75%;
-`;
-const Data = styled.p`
-	color: ${(props) => props.theme.colors.white};
-	font-family: ${(props) => props.theme.fonts.extended};
-	font-size: 24px;
-`;
 
 export default StakingRewardsTab;
