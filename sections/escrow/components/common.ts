@@ -5,12 +5,25 @@ import Button from 'components/Button';
 import Table from 'components/Table';
 
 export const TabContainer = styled(FlexDivColCentered)`
-	background: ${(props) => props.theme.colors.black};
-	height: 100%;
-	padding: 24px;
+	width: 100%;
 `;
 
-export const StyledCTA = styled(Button)<{ blue: boolean }>`
+export const InputContainer = styled(FlexDivColCentered)`
+	justify-content: space-between;
+	background: ${(props) => props.theme.colors.black};
+	position: relative;
+	width: 100%;
+	padding: 16px;
+	margin-bottom: 24px;
+	/* @TODO: Replace with responsive height when mobile */
+`;
+
+export const InputBox = styled(FlexDivColCentered)`
+	margin: 24px auto;
+	justify-content: center;
+`;
+
+export const StyledCTA = styled(Button)<{ blue: boolean; disabled: boolean }>`
 	font-size: 14px;
 	font-family: ${(props) => props.theme.fonts.condensedMedium};
 	box-shadow: ${(props) =>
@@ -40,11 +53,19 @@ export const StyledLink = styled.span`
 
 export const Container = styled.div`
 	background: ${(props) => props.theme.colors.navy};
+`;
+
+export const ContainerHeader = styled.div`
+	padding: 16px;
+	border-bottom: 1px solid ${(props) => props.theme.colors.grayBlue};
+`;
+
+export const ContainerBody = styled.div`
 	padding: 16px;
 `;
 
 export const StyledTable = styled(Table)`
-	margin-top: 16px;
+	margin-top: 0 16px;
 `;
 
 export const TableNoResults = styled(GridDivCenteredRow)`

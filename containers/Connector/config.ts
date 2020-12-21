@@ -30,6 +30,7 @@ export const initOnboard = (network: Network, subscriptions: Subscriptions) => {
 					appUrl: 'https://www.synthetix.io',
 					email: 'info@synthetix.io',
 					rpcUrl: infuraRpc,
+					preferred: true,
 				},
 				{
 					walletName: 'walletConnect',
@@ -40,7 +41,6 @@ export const initOnboard = (network: Network, subscriptions: Subscriptions) => {
 				{
 					walletName: 'portis',
 					apiKey: process.env.NEXT_PUBLIC_PORTIS_APP_ID,
-					preferred: true,
 				},
 				{ walletName: 'trust', rpcUrl: infuraRpc },
 				{ walletName: 'dapper' },

@@ -26,20 +26,20 @@ const EscrowPage = () => {
 			<StatsSection>
 				<Available
 					title={t('common.stat-box.available-snx')}
-					value={formatCryptoCurrency(escrowData?.canVest ?? 0, {
+					value={formatCryptoCurrency(escrowData?.claimableAmount ?? 0, {
 						decimals: SNX_HEADER_DECIMALS,
 					})}
-				/>
-				<Vested
-					title={t('common.stat-box.vested-snx')}
-					value={formatCryptoCurrency(escrowData?.totalVested ?? 0, {
-						decimals: SNX_HEADER_DECIMALS,
-					})}
-					size="lg"
 				/>
 				<Escrowed
 					title={t('common.stat-box.escrowed-snx')}
 					value={formatCryptoCurrency(escrowData?.totalEscrowed ?? 0, {
+						decimals: SNX_HEADER_DECIMALS,
+					})}
+					size="lg"
+				/>
+				<Vested
+					title={t('common.stat-box.vested-snx')}
+					value={formatCryptoCurrency(escrowData?.totalVested ?? 0, {
 						decimals: SNX_HEADER_DECIMALS,
 					})}
 				/>
@@ -60,15 +60,15 @@ const Vested = styled(StatBox)`
 	.title {
 		color: ${(props) => props.theme.colors.green};
 	}
-	.value {
-		text-shadow: ${(props) => props.theme.colors.greenTextShadow};
-		color: #073124;
-	}
 `;
 
 const Escrowed = styled(StatBox)`
 	.title {
 		color: ${(props) => props.theme.colors.green};
+	}
+	.value {
+		text-shadow: ${(props) => props.theme.colors.greenTextShadow};
+		color: #073124;
 	}
 `;
 

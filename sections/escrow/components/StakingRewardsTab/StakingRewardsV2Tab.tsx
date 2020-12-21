@@ -7,7 +7,7 @@ import synthetix from 'lib/synthetix';
 import { getGasEstimateForTransaction } from 'utils/transactions';
 import { normalizedGasPrice } from 'utils/network';
 import { Transaction } from 'constants/network';
-import useEscrowDataQuery from 'queries/escrow/useEscrowDataQuery';
+import useEscrowDataQuery from 'queries/escrow/useEscrowV2DataQuery';
 import { useRecoilValue } from 'recoil';
 import { isWalletConnectedState } from 'store/wallet';
 
@@ -29,17 +29,20 @@ const StakingRewardsTab: React.FC = () => {
 
 	const escrowData = escrowDataQuery?.data;
 	const canVestAmount = escrowData?.claimableAmount ?? 0;
+	const claimableEntryIds = escrowData?.claimableEntryIds ?? null;
 
 	useEffect(() => {
 		const getGasLimitEstimate = async () => {
-			if (synthetix && synthetix.js && isWalletConnected) {
+			if (synthetix && synthetix.js) {
 				const {
-					contracts: { RewardEscrow },
+					contracts: { RewardsEscrowV2 },
 				} = synthetix.js;
 				try {
 					setGasEstimateError(null);
-					const gasEstimate = await getGasEstimateForTransaction([], RewardEscrow.estimateGas.vest);
-
+					const gasEstimate = await getGasEstimateForTransaction(
+						[],
+						RewardsEscrowV2.estimateGas.vest
+					);
 					setGasLimitEstimate(gasEstimate);
 				} catch (error) {
 					setGasEstimateError(error.message);
@@ -56,12 +59,12 @@ const StakingRewardsTab: React.FC = () => {
 			setVestTxError(null);
 			setTxModalOpen(true);
 			const {
-				contracts: { RewardEscrow },
+				contracts: { RewardEscrowV2 },
 			} = synthetix.js!;
 
-			let transaction: ethers.ContractTransaction = await RewardEscrow.vest({
+			let transaction: ethers.ContractTransaction = await RewardEscrowV2.vest(claimableEntryIds, {
 				gasPrice: normalizedGasPrice(gasPrice),
-				gasLimit: gasLimitEstimate,
+				gasLimitEstimate,
 			});
 
 			if (transaction) {

@@ -381,6 +381,10 @@
 			"staking": {
 				"title": "Staking Rewards"
 			},
+			"stake": {
+				"no-escrowed-snx": "You have no escrowed SNX",
+				"stake-now": "Stake now"
+			},
 			"ico": {
 				"title": "Token Sale"
 			},
@@ -493,7 +497,7 @@
 		"l2": "Layer 2",
 		"bars": {
 			"c-ratio": "c-ratio",
-			"target": "target",
+			"t-ratio": "target",
 			"period": {
 				"title": "epoch"
 			}
