@@ -285,14 +285,6 @@ export const boxShadowBlue = css`
 	border: 1px solid ${(props) => props.theme.colors.blue};
 `;
 
-export const Tooltip = styled(Tippy)`
-	background: ${(props) => props.theme.colors.navy};
-	border-radius: 4px;
-	.tippy-arrow {
-		color: ${(props) => props.theme.colors.mediumBlue};
-	}
-`;
-
 export const Divider = styled.div`
 	background: ${(props) => props.theme.colors.grayBlue};
 	height: 1px;
@@ -354,4 +346,16 @@ export const GlowingCircle = styled(FlexDivCentered)<{
 			border: 1.5px solid ${(props) => props.theme.colors.orange};
 			box-shadow: 0px 0px 15px ${(props) => props.theme.colors.orange};
 		`}		
+`;
+
+export const Tooltip = styled(Tippy)`
+	background: ${(props) => props.theme.colors.mediumBlue};
+	border-radius: 4px;
+	.tippy-arrow {
+		color: ${(props) => props.theme.colors.mediumBlue};
+	}
+	.tippy-content {
+		font-size: 12px;
+		padding: 10px;
+	}
 `;

@@ -132,7 +132,7 @@ const WalletOptionsModal: FC<WalletOptionsProps> = ({ onDismiss, setWatchWalletM
 							)}
 							<WalletAddress>{truncatedWalletAddress}</WalletAddress>
 							<ActionIcons>
-								<StyledTooltip
+								<Tooltip
 									hideOnClick={false}
 									arrow={true}
 									placement="bottom"
@@ -156,8 +156,8 @@ const WalletOptionsModal: FC<WalletOptionsProps> = ({ onDismiss, setWatchWalletM
 											)}
 										</CopyToClipboard>
 									</CopyClipboardContainer>
-								</StyledTooltip>
-								<StyledTooltip
+								</Tooltip>
+								<Tooltip
 									hideOnClick={false}
 									arrow={true}
 									placement="bottom"
@@ -168,7 +168,7 @@ const WalletOptionsModal: FC<WalletOptionsProps> = ({ onDismiss, setWatchWalletM
 											<Svg src={LinkIcon} />
 										</WrappedExternalLink>
 									</LinkContainer>
-								</StyledTooltip>
+								</Tooltip>
 							</ActionIcons>
 						</WalletDetails>
 						<Buttons>
@@ -180,7 +180,7 @@ const WalletOptionsModal: FC<WalletOptionsProps> = ({ onDismiss, setWatchWalletM
 							>
 								{walletIcon} {t('modals.wallet.change-wallet')}
 							</StyledButton>
-							<StyledTooltip
+							<Tooltip
 								arrow={true}
 								placement="bottom"
 								content={t('modals.wallet.available-on-hardware-wallet')}
@@ -196,7 +196,7 @@ const WalletOptionsModal: FC<WalletOptionsProps> = ({ onDismiss, setWatchWalletM
 										{changeIcon} {t('modals.wallet.switch-account')}
 									</StyledButton>
 								</span>
-							</StyledTooltip>
+							</Tooltip>
 							<StyledButton
 								onClick={() => {
 									onDismiss();
@@ -358,14 +358,6 @@ const LinkContainer = styled(FlexDiv)`
 
 const Buttons = styled(FlexDivCol)`
 	margin: 0px 8px;
-`;
-
-const StyledTooltip = styled(Tooltip)`
-	background: ${(props) => props.theme.colors.mediumBlue};
-	.tippy-content {
-		font-size: 12px;
-		padding: 10px;
-	}
 `;
 
 const StyledDivider = styled(Divider)`

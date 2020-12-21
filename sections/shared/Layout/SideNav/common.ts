@@ -13,14 +13,14 @@ export const BarStatBox = styled(FlexDivCol)`
 export const BarHeaderSection = styled(FlexDivRowCentered)``;
 
 export const BarTitle = styled(FlexDivCentered)`
-	font-size: 10px;
-	font-family: ${(props) => props.theme.fonts.condensedMedium};
+	font-size: 12px;
+	font-family: ${(props) => props.theme.fonts.interBold};
 	color: ${(props) => props.theme.colors.gray};
 	text-transform: uppercase;
 `;
 
 export const BarValue = styled.p`
-	font-size: 10px;
+	font-size: 12px;
 	color: ${(props) => props.theme.colors.white};
 	font-family: ${(props) => props.theme.fonts.mono};
 `;
