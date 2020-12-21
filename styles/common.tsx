@@ -1,5 +1,6 @@
 import styled, { css, keyframes } from 'styled-components';
 import { SIDE_NAV_WIDTH } from 'constants/ui';
+import Tippy from '@tippyjs/react';
 
 export const FlexDiv = styled.div`
 	display: flex;
@@ -136,14 +137,6 @@ export const AbsoluteCenteredDiv = styled.div`
 	${absoluteCenteredCSS};
 `;
 
-export const ConnectionDot = styled.span`
-	display: inline-block;
-	width: 8px;
-	height: 8px;
-	border-radius: 100%;
-	background-color: ${(props) => props.theme.colors.green};
-`;
-
 export const FixedFooterMixin = `
 	position: fixed;
 	bottom: 0;
@@ -227,6 +220,7 @@ export const ModalContent = styled.div`
 	justify-content: center;
 	grid-auto-flow: column;
 	align-items: flex-end;
+	border-bottom: 1px solid ${(props) => props.theme.colors.grayBlue};
 `;
 
 export const ModalItem = styled.div`
@@ -256,7 +250,7 @@ export const TableNoResults = styled.div`
 
 export const TableNoResultsTitle = styled.div`
 	font-size: 14px;
-	font-family: ${(props) => props.theme.fonts.expanded};
+	font-family: ${(props) => props.theme.fonts.extended};
 	padding-bottom: 4px;
 	color: ${(props) => props.theme.colors.white};
 `;
@@ -284,4 +278,91 @@ export const resetHeadingMixin = `
 export const IconButton = styled.button`
 	${resetButtonCSS};
 	background: transparent;
+`;
+
+export const boxShadowBlue = css`
+	box-shadow: 0px 0px 15px ${(props) => props.theme.colors.blue};
+	border: 1px solid ${(props) => props.theme.colors.blue};
+`;
+
+export const Divider = styled.div`
+	background: ${(props) => props.theme.colors.grayBlue};
+	height: 1px;
+	width: 100%;
+`;
+
+export const GlowingCircle = styled(FlexDivCentered)<{
+	variant: 'blue' | 'green' | 'orange' | 'yellow';
+	size: 'sm' | 'md' | 'lg';
+}>`
+	border-radius: 50%;
+	justify-content: center;
+
+	${(props) =>
+		props.size === 'sm' &&
+		css`
+			height: 32px;
+			width: 32px;
+		`}
+
+	${(props) =>
+		props.size === 'md' &&
+		css`
+			height: 56px;
+			width: 56px;
+		`}		
+
+	${(props) =>
+		props.size === 'lg' &&
+		css`
+			height: 64px;
+			width: 64px;
+		`}		
+
+	${(props) =>
+		props.variant === 'green' &&
+		css`
+			border: 1.5px solid ${(props) => props.theme.colors.green};
+			box-shadow: 0px 0px 15px ${(props) => props.theme.colors.green};
+		`}
+		
+	${(props) =>
+		props.variant === 'blue' &&
+		css`
+			border: 1.5px solid ${(props) => props.theme.colors.blue};
+			box-shadow: 0px 0px 15px ${(props) => props.theme.colors.blue};
+		`}
+
+	${(props) =>
+		props.variant === 'green' &&
+		css`
+			border: 1.5px solid ${(props) => props.theme.colors.green};
+			box-shadow: 0px 0px 15px ${(props) => props.theme.colors.green};
+		`}
+
+	${(props) =>
+		props.variant === 'orange' &&
+		css`
+			border: 1.5px solid ${(props) => props.theme.colors.orange};
+			box-shadow: 0px 0px 15px ${(props) => props.theme.colors.orange};
+		`}		
+
+${(props) =>
+	props.variant === 'yellow' &&
+	css`
+		border: 1.5px solid ${(props) => props.theme.colors.yellow};
+		box-shadow: 0px 0px 15px ${(props) => props.theme.colors.yellow};
+	`}				
+`;
+
+export const Tooltip = styled(Tippy)`
+	background: ${(props) => props.theme.colors.mediumBlue};
+	border-radius: 4px;
+	.tippy-arrow {
+		color: ${(props) => props.theme.colors.mediumBlue};
+	}
+	.tippy-content {
+		font-size: 12px;
+		padding: 10px;
+	}
 `;

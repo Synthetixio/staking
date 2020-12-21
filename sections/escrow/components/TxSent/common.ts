@@ -1,8 +1,18 @@
 import styled from 'styled-components';
 import { FlexDivColCentered } from 'styles/common';
 
+export const Container = styled(FlexDivColCentered)`
+	width: 100%;
+	/* @TODO: Replace with responsive height when mobile */
+	margin: 0 auto;
+	text-align: center;
+	padding: 48px 24px;
+	background: ${(props) => props.theme.colors.black};
+	justify-content: space-evenly;
+`;
+
 export const SectionHeader = styled.div`
-	font-family: ${(props) => props.theme.fonts.expanded};
+	font-family: ${(props) => props.theme.fonts.extended};
 	color: ${(props) => props.theme.colors.white};
 	font-size: 12px;
 	text-align: center;

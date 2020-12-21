@@ -1,27 +1,30 @@
-import { FC, useState, useMemo, useEffect, ReactNode } from 'react';
+import { FC, useState, useMemo, useEffect, useCallback } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import { ethers } from 'ethers';
 import { Svg } from 'react-optimized-image';
 
 import synthetix from 'lib/synthetix';
 import StructuredTab from 'components/StructuredTab';
-import { FlexDivCentered, FlexDivColCentered } from 'styles/common';
+import { FlexDivCentered, FlexDivColCentered, ExternalLink } from 'styles/common';
 import { CurrencyKey } from 'constants/currency';
+import Etherscan from 'containers/Etherscan';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import PendingConfirmation from 'assets/svg/app/pending-confirmation.svg';
 import Success from 'assets/svg/app/success.svg';
 import { Transaction } from 'constants/network';
 import { normalizedGasPrice } from 'utils/network';
-import { CryptoCurrency } from 'constants/currency';
+import { CryptoCurrency, Synths } from 'constants/currency';
 import { getGasEstimateForTransaction } from 'utils/transactions';
 
+import Connector from 'containers/Connector';
 import Notify from 'containers/Notify';
 import TxState from 'sections/earn/TxState';
+import { EXTERNAL_LINKS } from 'constants/links';
 
 import StakeTab from './StakeTab';
 import Approve from './Approve';
 import RewardsBox from './RewardsBox';
-import { getContractAndPoolAddress } from './Approve/Approve';
+import { getContract } from './StakeTab/StakeTab';
 
 import {
 	StyledLink,
@@ -35,19 +38,20 @@ import {
 	LinkText,
 	TabContainer,
 	Label,
+	HeaderLabel,
 } from '../common';
 
 type LPTabProps = {
-	synth: CurrencyKey;
-	title: ReactNode;
+	stakedAsset: CurrencyKey;
 	tokenRewards: number;
-	icon: ReactNode;
 	allowance: number | null;
 	userBalance: number;
+	staked: number;
 };
 
-const LPTab: FC<LPTabProps> = ({ icon, synth, title, tokenRewards, allowance, userBalance }) => {
+const LPTab: FC<LPTabProps> = ({ stakedAsset, tokenRewards, allowance, userBalance, staked }) => {
 	const { t } = useTranslation();
+	const { signer } = Connector.useContainer();
 	const { monitorHash } = Notify.useContainer();
 	const [showApproveOverlayModal, setShowApproveOverlayModal] = useState<boolean>(false);
 
@@ -58,14 +62,21 @@ const LPTab: FC<LPTabProps> = ({ icon, synth, title, tokenRewards, allowance, us
 	const [claimTxHash, setClaimTxHash] = useState<string | null>(null);
 	const [claimError, setClaimError] = useState<string | null>(null);
 	const [claimTxModalOpen, setClaimTxModalOpen] = useState<boolean>(false);
+
+	const { etherscanInstance } = Etherscan.useContainer();
+	const claimLink =
+		etherscanInstance != null && claimTxHash != null
+			? etherscanInstance.txLink(claimTxHash)
+			: undefined;
+
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const SNXRate = exchangeRatesQuery.data?.SNX ?? 0;
 
 	const tabData = useMemo(() => {
 		const commonStakeTabProps = {
-			icon,
-			synth,
+			stakedAsset,
 			userBalance,
+			staked,
 		};
 
 		return [
@@ -82,58 +93,68 @@ const LPTab: FC<LPTabProps> = ({ icon, synth, title, tokenRewards, allowance, us
 				key: 'unstake',
 			},
 		];
-	}, [t, icon, synth, userBalance]);
+	}, [t, stakedAsset, userBalance, staked]);
 
 	useEffect(() => {
-		if (allowance === 0) {
+		if (allowance === 0 && userBalance > 0) {
 			setShowApproveOverlayModal(true);
-		} else if (allowance == null) {
-			// TODO - loading state in this case
-		} else if (allowance > 0) {
-			setShowApproveOverlayModal(false);
 		}
-	}, [allowance]);
+	}, [allowance, userBalance]);
 
-	const handleClaim = async () => {
-		if (synthetix && synthetix.js) {
-			try {
-				setClaimError(null);
-				setClaimTxModalOpen(true);
-				const { contract } = getContractAndPoolAddress(synth);
+	const handleClaim = useCallback(() => {
+		async function claim() {
+			if (synthetix && synthetix.js) {
+				try {
+					setClaimError(null);
+					setClaimTxModalOpen(true);
+					const contract = getContract(stakedAsset, signer);
 
-				const gasLimit = await getGasEstimateForTransaction([], contract.estimateGas.getReward);
-				const transaction: ethers.ContractTransaction = await contract.getReward({
-					gasPrice: normalizedGasPrice(claimGasPrice),
-					gasLimit,
-				});
-
-				if (transaction) {
-					setClaimTxHash(transaction.hash);
-					setClaimTransactionState(Transaction.WAITING);
-					monitorHash({
-						txHash: transaction.hash,
-						onTxConfirmed: () => setClaimTransactionState(Transaction.SUCCESS),
+					const gasLimit = await getGasEstimateForTransaction([], contract.estimateGas.getReward);
+					const transaction: ethers.ContractTransaction = await contract.getReward({
+						gasPrice: normalizedGasPrice(claimGasPrice),
+						gasLimit,
 					});
-					setClaimTxModalOpen(false);
+
+					if (transaction) {
+						setClaimTxHash(transaction.hash);
+						setClaimTransactionState(Transaction.WAITING);
+						monitorHash({
+							txHash: transaction.hash,
+							onTxConfirmed: () => setClaimTransactionState(Transaction.SUCCESS),
+						});
+						setClaimTxModalOpen(false);
+					}
+				} catch (e) {
+					setClaimTransactionState(Transaction.PRESUBMIT);
+					setClaimError(e.message);
 				}
-			} catch (e) {
-				setClaimTransactionState(Transaction.PRESUBMIT);
-				setClaimError(e.message);
 			}
 		}
-	};
+		claim();
+	}, [stakedAsset, signer, claimGasPrice, monitorHash]);
+
+	const translationKey = useMemo(() => {
+		if (stakedAsset === Synths.iETH) {
+			return 'earn.incentives.options.ieth.description';
+		} else if (stakedAsset === Synths.iBTC) {
+			return 'earn.incentives.options.ibtc.description';
+		} else if (stakedAsset === CryptoCurrency.CurveLPToken) {
+			return 'earn.incentives.options.curve.description';
+		} else {
+			throw new Error('unexpected staking asset for translation key');
+		}
+	}, [stakedAsset]);
 
 	if (claimTransactionState === Transaction.WAITING) {
 		return (
 			<TxState
 				description={
-					<Trans
-						i18nKey="earn.incentives.options.snx.description"
-						values={{
-							synth,
-						}}
-						components={[<StyledLink />]}
-					/>
+					<Label>
+						<Trans
+							i18nKey={translationKey}
+							components={[<StyledLink href={EXTERNAL_LINKS.Synthetix.Incentives} />]}
+						/>
+					</Label>
 				}
 				title={t('earn.actions.rewards.waiting')}
 				content={
@@ -148,9 +169,9 @@ const LPTab: FC<LPTabProps> = ({ icon, synth, title, tokenRewards, allowance, us
 						</WhiteSubheader>
 						<Divider />
 						<GreyText>{t('earn.actions.tx.notice')}</GreyText>
-						<LinkText>
-							<Trans i18nKey="earn.actions.tx.link" components={[<StyledLink />]} />
-						</LinkText>
+						<ExternalLink href={claimLink}>
+							<LinkText>{t('earn.actions.tx.link')}</LinkText>
+						</ExternalLink>
 					</FlexDivColCentered>
 				}
 			/>
@@ -161,13 +182,12 @@ const LPTab: FC<LPTabProps> = ({ icon, synth, title, tokenRewards, allowance, us
 		return (
 			<TxState
 				description={
-					<Trans
-						i18nKey="earn.incentives.options.snx.description"
-						values={{
-							synth,
-						}}
-						components={[<StyledLink />]}
-					/>
+					<Label>
+						<Trans
+							i18nKey={translationKey}
+							components={[<StyledLink href={EXTERNAL_LINKS.Synthetix.Incentives} />]}
+						/>
+					</Label>
 				}
 				title={t('earn.actions.claim.success')}
 				content={
@@ -182,9 +202,11 @@ const LPTab: FC<LPTabProps> = ({ icon, synth, title, tokenRewards, allowance, us
 						</WhiteSubheader>
 						<Divider />
 						<ButtonSpacer>
-							<VerifyButton variant="secondary" onClick={() => console.log('verify tx')}>
-								{t('earn.actions.tx.verify')}
-							</VerifyButton>
+							{claimLink ? (
+								<ExternalLink href={claimLink}>
+									<VerifyButton>{t('earn.actions.tx.verify')}</VerifyButton>
+								</ExternalLink>
+							) : null}
 							<DismissButton
 								variant="secondary"
 								onClick={() => setClaimTransactionState(Transaction.PRESUBMIT)}
@@ -200,14 +222,19 @@ const LPTab: FC<LPTabProps> = ({ icon, synth, title, tokenRewards, allowance, us
 
 	return (
 		<TabContainer>
-			<Label>{title}</Label>
+			<HeaderLabel>
+				<Trans
+					i18nKey={translationKey}
+					components={[<StyledLink href={EXTERNAL_LINKS.Synthetix.Incentives} />]}
+				/>
+			</HeaderLabel>
 			<FlexDivCentered>
 				<StructuredTab
-					tabHeight={40}
+					tabHeight={30}
 					inverseTabColor={true}
 					boxPadding={0}
 					boxHeight={242}
-					boxWidth={270}
+					boxWidth={310}
 					tabData={tabData}
 				/>
 				<RewardsBox
@@ -217,12 +244,17 @@ const LPTab: FC<LPTabProps> = ({ icon, synth, title, tokenRewards, allowance, us
 					handleClaim={handleClaim}
 					claimError={claimError}
 					setClaimError={setClaimError}
-					synth={synth}
+					stakedAsset={stakedAsset}
 					tokenRewards={tokenRewards}
 					SNXRate={SNXRate}
 				/>
 			</FlexDivCentered>
-			{showApproveOverlayModal ? <Approve synth={synth} /> : null}
+			{showApproveOverlayModal ? (
+				<Approve
+					setShowApproveOverlayModal={setShowApproveOverlayModal}
+					stakedAsset={stakedAsset}
+				/>
+			) : null}
 		</TabContainer>
 	);
 };

@@ -51,6 +51,7 @@ const SideNav: FC = () => {
 				{MENU_LINKS.map(({ i18nLabel, link }) => (
 					<MenuLinkItem
 						key={link}
+						isDisabled={link === ROUTES.L2.Home}
 						isActive={asPath === link || (link !== ROUTES.Home && asPath.includes(link))}
 					>
 						<Link href={link}>
@@ -80,21 +81,21 @@ const SideNavContainer = styled.div`
 	background: ${(props) => props.theme.colors.darkGradient1Flipped};
 	border-right: 1px solid ${(props) => props.theme.colors.grayBlue};
 	display: grid;
-	grid-template-rows: auto 1fr auto;
-	overflow-y: auto;
+	grid-template-rows: auto 1fr auto auto;
+	overflow-y: hidden;
 `;
 
 const StakingLogoWrap = styled.div`
-	padding: 30px 0 87px 30px;
+	padding: 30px 0 87px 24px;
 	cursor: pointer;
 `;
 
 const MenuLinks = styled.div`
-	padding-left: 30px;
+	padding-left: 24px;
 	position: relative;
 `;
 
-const MenuLinkItem = styled.div<{ isActive: boolean }>`
+const MenuLinkItem = styled.div<{ isActive: boolean; isDisabled: boolean }>`
 	line-height: 40px;
 	padding-bottom: 10px;
 	position: relative;
@@ -102,12 +103,11 @@ const MenuLinkItem = styled.div<{ isActive: boolean }>`
 	a {
 		display: block;
 		${linkCSS};
-		font-family: ${(props) => props.theme.fonts.condensedBold};
+		font-family: ${(props) => props.theme.fonts.condensedMedium};
 		text-transform: uppercase;
-		font-weight: 700;
+		opacity: 0.4;
 		font-size: 14px;
 		cursor: pointer;
-		opacity: 0.5;
 		color: ${(props) => props.theme.colors.white};
 		&:hover {
 			opacity: unset;
@@ -117,6 +117,12 @@ const MenuLinkItem = styled.div<{ isActive: boolean }>`
 			props.isActive &&
 			css`
 				opacity: unset;
+			`}
+		${(props) =>
+			props.isDisabled &&
+			css`
+				opacity: 0.1;
+				pointer-events: none;
 			`}
 	}
 

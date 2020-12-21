@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import Mint from 'assets/svg/app/mint.svg';
+import MintCircle from 'assets/svg/app/mint-circle.svg';
 import { Svg } from 'react-optimized-image';
 import ButtonTile from '../ButtonTile';
 import { FlexDivCol } from 'styles/common';
@@ -10,7 +10,7 @@ import { amountToMintState, MintActionType, mintTypeState } from 'store/staking'
 
 type MintTilesProps = {};
 
-const mintIcon = <Svg src={Mint} />;
+const mintIcon = <Svg src={MintCircle} />;
 
 const MintTiles: React.FC<MintTilesProps> = () => {
 	const { t } = useTranslation();
@@ -48,7 +48,7 @@ const Container = styled(FlexDivCol)`
 const StyledButtonTile = styled(ButtonTile)`
 	padding: 16px;
 	flex: 1;
-	margin: 16px 0px;
+	margin: 8px 0px;
 `;
 
 export default MintTiles;

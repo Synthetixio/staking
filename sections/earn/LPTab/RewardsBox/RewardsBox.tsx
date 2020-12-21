@@ -1,11 +1,11 @@
 import { FC, useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { Svg } from 'react-optimized-image';
 import { useTranslation } from 'react-i18next';
 
 import synthetix from 'lib/synthetix';
 import smallWaveSVG from 'assets/svg/app/small-wave.svg';
-import snxSVG from 'assets/svg/incentives/pool-snx.svg';
+import Connector from 'containers/Connector';
+import Currency from 'components/Currency';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { formatCurrency, formatFiatCurrency, toBigNumber } from 'utils/formatters/number';
@@ -24,13 +24,13 @@ import {
 } from 'styles/common';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 
-import { getContractAndPoolAddress } from '../Approve/Approve';
+import { getContract } from '../StakeTab/StakeTab';
 import { StyledButton } from '../../common';
 
 type RewardsBoxProps = {
 	tokenRewards: number;
 	SNXRate: number;
-	synth: CurrencyKey;
+	stakedAsset: CurrencyKey;
 	handleClaim: () => void;
 	setClaimGasPrice: (num: number) => void;
 	claimTxModalOpen: boolean;
@@ -42,7 +42,7 @@ type RewardsBoxProps = {
 const RewardsBox: FC<RewardsBoxProps> = ({
 	tokenRewards,
 	SNXRate,
-	synth,
+	stakedAsset,
 	handleClaim,
 	setClaimGasPrice,
 	claimTxModalOpen,
@@ -51,6 +51,7 @@ const RewardsBox: FC<RewardsBoxProps> = ({
 	setClaimError,
 }) => {
 	const { t } = useTranslation();
+	const { signer } = Connector.useContainer();
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
 	const [gasLimitEstimate, setGasLimitEstimate] = useState<number | null>(null);
 
@@ -59,7 +60,7 @@ const RewardsBox: FC<RewardsBoxProps> = ({
 			if (synthetix && synthetix.js) {
 				try {
 					setClaimError(null);
-					const { contract } = getContractAndPoolAddress(synth);
+					const contract = getContract(stakedAsset, signer);
 					let gasEstimate = await getGasEstimateForTransaction([], contract.estimateGas.getReward);
 					setGasLimitEstimate(normalizeGasLimit(Number(gasEstimate)));
 				} catch (error) {
@@ -69,13 +70,13 @@ const RewardsBox: FC<RewardsBoxProps> = ({
 			}
 		};
 		getGasLimitEstimate();
-	}, [synth]);
+	}, [stakedAsset, signer, setClaimError]);
 
 	return (
 		<>
 			<RewardsContainer>
 				<RewardsTitle>{t('earn.actions.rewards.title')}</RewardsTitle>
-				<Svg src={snxSVG} />
+				<Currency.Icon currencyKey={CryptoCurrency.SNX} width="48" height="48" />
 				<RewardsAmountSNX>
 					{formatCurrency(CryptoCurrency.SNX, tokenRewards, {
 						currencyKey: '',
@@ -91,7 +92,11 @@ const RewardsBox: FC<RewardsBoxProps> = ({
 				<StyledButton variant="primary" onClick={handleClaim} disabled={tokenRewards === 0}>
 					{t('earn.actions.claim.claim-snx-button')}
 				</StyledButton>
-				<GasSelector gasLimitEstimate={gasLimitEstimate} setGasPrice={setClaimGasPrice} />
+				<GasSelector
+					altVersion={true}
+					gasLimitEstimate={gasLimitEstimate}
+					setGasPrice={setClaimGasPrice}
+				/>
 			</RewardsContainer>
 			{claimTxModalOpen && (
 				<TxConfirmationModal
@@ -101,9 +106,9 @@ const RewardsBox: FC<RewardsBoxProps> = ({
 					content={
 						<ModalContent>
 							<ModalItem>
-								<ModalItemTitle>{t('modals.confirm-transaction.claiming.claiming')}</ModalItemTitle>
+								<ModalItemTitle>{t('earn.actions.claim.claiming')}</ModalItemTitle>
 								<ModalItemText>
-									{t('modals.confirm-transaction.claiming.amount', {
+									{t('earn.actions.claim.amount', {
 										amount: tokenRewards,
 										asset: CryptoCurrency.SNX,
 									})}
@@ -118,10 +123,10 @@ const RewardsBox: FC<RewardsBoxProps> = ({
 };
 
 const RewardsContainer = styled(FlexDivColCentered)`
-	height: 280px;
-	width: 180px;
-	margin: 15px;
-	padding: 15px;
+	height: 272px;
+	width: 200px;
+	margin-left: 20px;
+	padding: 10px;
 	border: 1px solid ${(props) => props.theme.colors.pink};
 	border-radius: 4px;
 	background-image: url(${smallWaveSVG.src});
@@ -129,14 +134,14 @@ const RewardsContainer = styled(FlexDivColCentered)`
 `;
 
 const RewardsTitle = styled.div`
-	font-family: ${(props) => props.theme.fonts.expanded};
+	font-family: ${(props) => props.theme.fonts.extended};
 	font-size: 12px;
 	color: ${(props) => props.theme.colors.white};
-	margin-bottom: 10px;
+	margin-bottom: 15px;
 `;
 
 const RewardsAmountSNX = styled.div`
-	font-family: ${(props) => props.theme.fonts.expanded};
+	font-family: ${(props) => props.theme.fonts.extended};
 	font-size: 24px;
 	color: ${(props) => props.theme.colors.white};
 	margin-top: 10px;

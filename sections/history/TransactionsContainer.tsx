@@ -122,15 +122,6 @@ const TransactionsContainer: FC<TransactionsContainerProps> = ({
 				transactions = [...issued, ...burned, ...feesClaimed];
 			}
 
-			if (dateFilter.startDate != null && dateFilter.endDate != null) {
-				const startDate = dateFilter.startDate.getTime();
-				const endDate = dateFilter.endDate.getTime();
-
-				transactions = transactions.filter(
-					(transaction) => transaction.timestamp >= startDate && transaction.timestamp <= endDate
-				);
-			}
-
 			if (amountFilter != null) {
 				transactions = transactions.filter((transaction) => {
 					switch ((amountFilter as AmountFilterOptionType).value) {
@@ -146,6 +137,15 @@ const TransactionsContainer: FC<TransactionsContainerProps> = ({
 							return true;
 					}
 				});
+			}
+
+			if (dateFilter.startDate != null && dateFilter.endDate != null) {
+				const startDate = dateFilter.startDate.getTime();
+				const endDate = dateFilter.endDate.getTime();
+
+				transactions = transactions.filter(
+					(transaction) => transaction.timestamp >= startDate && transaction.timestamp <= endDate
+				);
 			}
 		}
 		return transactions.length ? orderBy(transactions, 'timestamp', 'desc') : transactions;
@@ -198,6 +198,21 @@ const TransactionsContainer: FC<TransactionsContainerProps> = ({
 						Option: CustomTypeOption,
 					}}
 				/>
+				<Select
+					inputId="order-amount-list"
+					formatOptionLabel={(option: AmountFilterOptionType) => (
+						<CapitalizedText>{option.label}</CapitalizedText>
+					)}
+					options={amountFilterList}
+					value={amountFilter}
+					onChange={(option: ValueType<AmountFilterOptionType>) => {
+						if (option) {
+							setAmountFilter(option);
+						}
+					}}
+					isSearchable={false}
+					placeholder={t('history.table.filters.amount.no-selection')}
+				/>
 				<DateSelect
 					id="tx-date-filter"
 					startDate={dateFilter.startDate}
@@ -221,21 +236,6 @@ const TransactionsContainer: FC<TransactionsContainerProps> = ({
 						});
 					}}
 					showClear={dateFilterSelectedDates}
-				/>
-				<Select
-					inputId="order-amount-list"
-					formatOptionLabel={(option: AmountFilterOptionType) => (
-						<CapitalizedText>{option.label}</CapitalizedText>
-					)}
-					options={amountFilterList}
-					value={amountFilter}
-					onChange={(option: ValueType<AmountFilterOptionType>) => {
-						if (option) {
-							setAmountFilter(option);
-						}
-					}}
-					isSearchable={false}
-					placeholder={t('history.table.filters.amount.no-selection')}
 				/>
 			</Filters>
 			<Transactions

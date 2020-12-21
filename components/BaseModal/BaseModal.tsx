@@ -55,7 +55,7 @@ const StyledDialogOverlay = styled(DialogOverlay)`
 const StyledDialogContent = styled(DialogContent)`
 	padding: 0;
 	border: 0;
-	background: none;
+	background: ${(props) => props.theme.colors.navy};
 	${media.lessThan('sm')`
 		&&& {		
 			width: 100%;
@@ -67,11 +67,12 @@ const StyledDialogContent = styled(DialogContent)`
 
 const StyledCard = styled(Card)`
 	height: 100%;
+	background: ${(props) => props.theme.colors.navy};
 `;
 
 const StyledCardHeader = styled(Card.Header)`
 	justify-content: center;
-	height: 45px;
+	height: 48px;
 `;
 
 const StyledCardBody = styled(Card.Body)`
@@ -87,9 +88,9 @@ const DismissButton = styled.button`
 	${resetButtonCSS};
 	position: absolute;
 	right: 20px;
-	color: ${(props) => props.theme.colors.gray};
+	color: ${(props) => props.theme.colors.white};
 	&:hover {
-		color: ${(props) => props.theme.colors.white};
+		color: ${(props) => props.theme.colors.blue};
 	}
 `;
 

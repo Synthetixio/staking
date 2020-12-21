@@ -2,6 +2,8 @@ export const ROUTES = {
 	Home: '/',
 	Staking: {
 		Home: '/staking',
+		Burn: '/staking/burn',
+		Mint: '/staking/mint',
 	},
 	Escrow: {
 		Home: '/escrow',

@@ -1,5 +1,5 @@
 import { FC, ReactNode } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import { FlexDivColCentered } from 'styles/common';
 import { zIndex } from 'constants/ui';
@@ -9,20 +9,31 @@ import { Title } from './common';
 type TxStateProps = {
 	title: string;
 	content: ReactNode;
-	description: ReactNode;
+	description?: ReactNode;
+	isStakingPanel?: boolean;
+	isStakingPanelWaitingScreen?: boolean;
 };
 
-const TxState: FC<TxStateProps> = ({ description, title, content }) => (
-	<Container>
-		<Description>{description}</Description>
-		<InnerContainer>
-			<Title>{title}</Title>
+const TxState: FC<TxStateProps> = ({
+	description,
+	title,
+	content,
+	isStakingPanel = false,
+	isStakingPanelWaitingScreen = false,
+}) => (
+	<Container isStakingPanel={isStakingPanel}>
+		{description != null ? <Description>{description}</Description> : null}
+		<InnerContainer
+			isStakingPanelWaitingScreen={isStakingPanelWaitingScreen}
+			isStakingPanel={isStakingPanel}
+		>
+			<Title isStakingPanel={isStakingPanel}>{title}</Title>
 			{content}
 		</InnerContainer>
 	</Container>
 );
 
-const Container = styled.div`
+const Container = styled.div<{ isStakingPanel: boolean }>`
 	z-index: ${zIndex.DIALOG_OVERLAY};
 	justify-content: space-around;
 	position: absolute;
@@ -30,11 +41,21 @@ const Container = styled.div`
 	height: 375px;
 	background: ${(props) => props.theme.colors.navy};
 	padding: 20px;
+
+	${(props) =>
+		props.isStakingPanel &&
+		css`
+			width: 270px;
+			height: 240px;
+		`}
 `;
 
-const InnerContainer = styled(FlexDivColCentered)`
-	margin-top: 20px;
-	padding: 25px;
+const InnerContainer = styled(FlexDivColCentered)<{
+	isStakingPanel: boolean;
+	isStakingPanelWaitingScreen: boolean;
+}>`
+	margin: ${(props) => (props.isStakingPanel ? '-20px' : '20px 0 0 0')};
+	padding: ${(props) => (props.isStakingPanelWaitingScreen ? '20px' : '25px')};
 	background: ${(props) => props.theme.colors.black};
 `;
 

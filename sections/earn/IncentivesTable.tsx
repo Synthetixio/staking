@@ -1,18 +1,20 @@
-import React, { FC, ReactNode, useMemo } from 'react';
+import React, { FC, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps, Row } from 'react-table';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { Svg } from 'react-optimized-image';
 import Countdown from 'react-countdown';
 import { useRecoilValue } from 'recoil';
+import { useRouter } from 'next/router';
 
 import Connector from 'containers/Connector';
+import Currency from 'components/Currency';
 
 import ProgressBar from 'components/ProgressBar';
 import Table from 'components/Table';
 import Button from 'components/Button';
 
-import GoBackIcon from 'assets/svg/app/go-back.svg';
+import ExpandIcon from 'assets/svg/app/expand.svg';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
@@ -27,26 +29,27 @@ import { isWalletConnectedState } from 'store/wallet';
 
 import {
 	FlexDivCol,
+	GlowingCircle,
 	IconButton,
 	TableNoResults,
 	TableNoResultsButtonContainer,
 	TableNoResultsTitle,
 } from 'styles/common';
-import { CryptoCurrency } from 'constants/currency';
+import { CryptoCurrency, CurrencyKey } from 'constants/currency';
 import { NOT_APPLICABLE } from './Incentives';
-import { Tab } from './types';
-import { useRouter } from 'next/router';
+
 import ROUTES from 'constants/routes';
+
+import { Tab } from './types';
 
 export type EarnItem = {
 	title: string;
 	subtitle: string;
-	apy: number;
-	icon: ReactNode;
+	apr: number;
 	tvl: number;
 	staked: {
 		balance: number;
-		asset: string; // use Cyrpto type
+		asset: CurrencyKey;
 	};
 	rewards: number;
 	periodStarted: number;
@@ -70,20 +73,37 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab }
 	const router = useRouter();
 	const { connectWallet } = Connector.useContainer();
 
+	const goToEarn = useCallback(() => router.push(ROUTES.Earn.Home), [router]);
+
 	const columns = useMemo(() => {
 		const leftColumns = [
 			{
 				Header: <>{t('earn.incentives.options.select-a-pool.title')}</>,
 				accessor: 'title',
-				Cell: (cellProps: CellProps<EarnItem>) => (
-					<>
-						<div>{cellProps.row.original.icon}</div>
-						<FlexDivCol>
-							<Title>{cellProps.row.original.title}</Title>
-							<Subtitle>{cellProps.row.original.subtitle}</Subtitle>
-						</FlexDivCol>
-					</>
-				),
+				Cell: (cellProps: CellProps<EarnItem>) => {
+					let iconProps = {
+						width: '22',
+						height: '22',
+					};
+
+					// TODO: the CRV icon should be re-exported to look like our regular crypto icons
+					if (cellProps.row.original.staked.asset === CryptoCurrency.CurveLPToken) {
+						iconProps.width = '20';
+						iconProps.height = '20';
+					}
+
+					return (
+						<>
+							<StyledGlowingCircle variant="green" size="sm">
+								<Currency.Icon currencyKey={cellProps.row.original.staked.asset} {...iconProps} />
+							</StyledGlowingCircle>
+							<FlexDivCol>
+								<Title>{cellProps.row.original.title}</Title>
+								<Subtitle>{cellProps.row.original.subtitle}</Subtitle>
+							</FlexDivCol>
+						</>
+					);
+				},
 				width: 175,
 				sortable: false,
 			},
@@ -91,23 +111,22 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab }
 				Header: (
 					<CellContainer>
 						{activeTab == null ? (
-							<>{t('earn.incentives.est-apy')}</>
+							<>{t('earn.incentives.est-apr')}</>
 						) : (
-							<StyledIconButton onClick={() => router.push(ROUTES.Earn.Home)}>
-								<Svg src={GoBackIcon} />
+							<StyledIconButton onClick={goToEarn}>
+								<Svg src={ExpandIcon} />
 							</StyledIconButton>
 						)}
 					</CellContainer>
 				),
-				accessor: 'apy',
+				accessor: 'apr',
 				Cell: (cellProps: CellProps<EarnItem>) => (
 					<CellContainer>
-						<Title isNumeric={true}>{formatPercent(cellProps.row.original.apy)}</Title>
-						<Subtitle>{t('earn.incentives.est-apy')}</Subtitle>
+						<Title isNumeric={true}>{formatPercent(cellProps.row.original.apr)}</Title>
+						<Subtitle>{t('earn.incentives.est-apr')}</Subtitle>
 					</CellContainer>
 				),
 				width: 100,
-				maxWidth: 100,
 				sortable: false,
 			},
 		];
@@ -163,7 +182,8 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab }
 							})}
 						</Title>
 						<Subtitle>
-							{cellProps.row.original.claimed === NOT_APPLICABLE ? (
+							{cellProps.row.original.claimed === NOT_APPLICABLE ||
+							(!cellProps.row.original.claimed && cellProps.row.original.rewards === 0) ? (
 								''
 							) : cellProps.row.original.claimed ? (
 								t('earn.incentives.options.rewards.claimed')
@@ -198,7 +218,7 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab }
 			},
 		];
 		return activeTab != null ? leftColumns : [...leftColumns, ...rightColumns];
-	}, [activeTab, getPriceAtCurrentRate, selectedPriceCurrency.sign, t, router]);
+	}, [getPriceAtCurrentRate, selectedPriceCurrency.sign, t, activeTab, goToEarn]);
 
 	return (
 		<Container activeTab={activeTab}>
@@ -206,7 +226,6 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab }
 				palette="primary"
 				columns={columns}
 				data={data}
-				columnsDeps={[activeTab, selectedPriceCurrency]}
 				isLoading={isWalletConnected && !isLoaded}
 				showPagination={true}
 				onTableRowClick={(row: Row<EarnItem>) => router.push(row.original.route)}
@@ -230,7 +249,16 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab }
 
 const Container = styled.div<{ activeTab: Tab | null }>`
 	background: ${(props) => props.theme.colors.navy};
-	width: ${(props) => (props.activeTab == null ? '100%' : '40%')};
+	width: 100%;
+	${(props) =>
+		props.activeTab &&
+		css`
+			.table-header-cell {
+				&:last-child {
+					padding-right: 0;
+				}
+			}
+		`}
 `;
 
 const StyledProgressBar = styled(ProgressBar)`
@@ -245,6 +273,7 @@ const StyledTable = styled(Table)`
 	.table-body-row {
 		height: 70px;
 		align-items: center;
+		border-right: 1px solid ${(props) => props.theme.colors.grayBlue};
 		&:hover {
 			background-color: ${(props) => props.theme.colors.mediumBlue};
 		}
@@ -254,7 +283,6 @@ const StyledTable = styled(Table)`
 	}
 	.table-body-cell {
 		&:first-child {
-			padding-left: 2px;
 		}
 		&:last-child {
 			padding-left: 0;
@@ -288,4 +316,9 @@ const StyledIconButton = styled(IconButton)`
 const Claimable = styled.span`
 	color: ${(props) => props.theme.colors.green};
 `;
+
+const StyledGlowingCircle = styled(GlowingCircle)`
+	margin-right: 12px;
+`;
+
 export default IncentivesTable;

@@ -4,7 +4,7 @@ import Color from 'color';
 
 type ButtonProps = {
 	size?: 'sm' | 'md' | 'lg' | 'xl';
-	variant: 'primary' | 'secondary' | 'solid' | 'text';
+	variant: 'primary' | 'secondary' | 'solid' | 'outline' | 'text';
 	isActive?: boolean;
 	isRounded?: boolean;
 };
@@ -26,8 +26,9 @@ const Button = styled.button<ButtonProps>`
   	&:disabled {
 		background: ${(props) => Color(props.theme.colors.blue).alpha(0.5).rgb().string()};
 		color: ${(props) => props.theme.colors.white};
-		cursor: default;
 		box-shadow: none;
+	cursor: not-allowed;
+
 	}
 
 	${(props) =>
@@ -109,13 +110,31 @@ const Button = styled.button<ButtonProps>`
 
 
 		${(props) =>
+			props.variant === 'outline' &&
+			css`
+				color: ${(props) => props.theme.colors.white};
+				background: ${(props) => props.theme.colors.navy};
+				border: 1px solid ${(props) => props.theme.colors.grayBlue};
+				&:hover {
+					&:not(:disabled) {
+						background: ${(props) => props.theme.colors.mediumBlue};
+					}
+				}
+				&:disabled {
+					background: ${(props) => Color(props.theme.colors.navy).alpha(0.2).rgb().string()};
+					opacity: 0.5;
+				}
+			`}		
+
+
+		${(props) =>
 			props.variant === 'text' &&
 			css`
 				${resetButtonCSS};
 				color: ${(props) => props.theme.colors.white};
 				&:hover {
 					&:not(:disabled) {
-						color: ${(props) => props.theme.colors.gray};
+						color: ${(props) => props.theme.colors.blue};
 					}
 				}
 			`}	

@@ -13,11 +13,13 @@ import { TabContainer } from '../common';
 import MintTiles from '../MintTiles';
 import StakingInput from '../StakingInput';
 import { getMintAmount } from '../helper';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { amountToMintState, MintActionType, mintTypeState } from 'store/staking';
+import { isWalletConnectedState } from 'store/wallet';
 
 const MintTab: React.FC = () => {
 	const { monitorHash } = Notify.useContainer();
+	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 
 	const [mintType, onMintTypeChange] = useRecoilState(mintTypeState);
 	const [amountToMint, onMintChange] = useRecoilState(amountToMintState);
@@ -37,7 +39,7 @@ const MintTab: React.FC = () => {
 
 	useEffect(() => {
 		const getGasLimitEstimate = async () => {
-			if (synthetix && synthetix.js) {
+			if (synthetix && synthetix.js && isWalletConnected && amountToMint.length > 0) {
 				try {
 					setError(null);
 					const {
@@ -64,7 +66,7 @@ const MintTab: React.FC = () => {
 			}
 		};
 		getGasLimitEstimate();
-	}, [amountToMint, mintMax]);
+	}, [amountToMint, mintMax, isWalletConnected]);
 
 	const handleStake = useCallback(
 		async (mintMax: boolean) => {
@@ -101,7 +103,6 @@ const MintTab: React.FC = () => {
 					monitorHash({
 						txHash: transaction.hash,
 						onTxConfirmed: () => {
-							onMintChange('');
 							setTransactionState(Transaction.SUCCESS);
 						},
 					});
@@ -112,7 +113,7 @@ const MintTab: React.FC = () => {
 				setError(e.message);
 			}
 		},
-		[amountToMint, gasPrice, monitorHash, onMintChange]
+		[amountToMint, gasPrice, monitorHash]
 	);
 
 	const returnPanel = useMemo(() => {

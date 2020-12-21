@@ -5,5 +5,5 @@ export default {
 	mono: `GT America Mono`,
 	condensedBold: `GT America Condensed-Bold`,
 	condensedMedium: `GT America Condensed-Medium`,
-	expanded: `GT America Expanded Black`,
+	extended: `GT America Extended Bold`,
 };

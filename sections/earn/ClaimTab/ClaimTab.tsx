@@ -1,13 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { ethers } from 'ethers';
 import BigNumber from 'bignumber.js';
+import { Svg } from 'react-optimized-image';
 
+import { ExternalLink, FlexDiv } from 'styles/common';
 import synthetix from 'lib/synthetix';
+import PendingConfirmation from 'assets/svg/app/pending-confirmation.svg';
+import Success from 'assets/svg/app/success.svg';
 
 import Etherscan from 'containers/Etherscan';
-import Connector from 'containers/Connector';
 import Notify from 'containers/Notify';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
@@ -20,6 +23,18 @@ import { normalizedGasPrice, normalizeGasLimit } from 'utils/network';
 
 import { Transaction } from 'constants/network';
 import { CryptoCurrency, Synths } from 'constants/currency';
+import TxState from 'sections/earn/TxState';
+
+import {
+	GreyHeader,
+	WhiteSubheader,
+	Divider,
+	VerifyButton,
+	DismissButton,
+	ButtonSpacer,
+	GreyText,
+	LinkText,
+} from '../common';
 
 import GasSelector from 'components/GasSelector';
 
@@ -33,6 +48,8 @@ import {
 	ModalItem,
 	ModalItemTitle,
 } from 'styles/common';
+import { EXTERNAL_LINKS } from 'constants/links';
+import Currency from 'components/Currency';
 
 import {
 	TotalValueWrapper,
@@ -42,8 +59,8 @@ import {
 	Label,
 	StyledLink,
 	TabContainer,
+	HeaderLabel,
 } from '../common';
-import Currency from 'components/Currency';
 
 type ClaimTabProps = {
 	tradingRewards: BigNumber;
@@ -57,7 +74,6 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 	const { monitorHash } = Notify.useContainer();
 	const { etherscanInstance } = Etherscan.useContainer();
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
-	const { notify } = Connector.useContainer();
 	const [gasLimitEstimate, setGasLimitEstimate] = useState<number | null>(null);
 	const [gasPrice, setGasPrice] = useState<number>(0);
 	const [error, setError] = useState<string | null>(null);
@@ -66,6 +82,8 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 	const [transactionState, setTransactionState] = useState<Transaction>(Transaction.PRESUBMIT);
 	const [txHash, setTxHash] = useState<string | null>(null);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
+	const link =
+		etherscanInstance != null && txHash != null ? etherscanInstance.txLink(txHash) : undefined;
 
 	useEffect(() => {
 		const getGasLimitEstimate = async () => {
@@ -90,42 +108,150 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 		getGasLimitEstimate();
 	}, []);
 
-	const handleClaim = async () => {
-		try {
-			setError(null);
-			setTxModalOpen(true);
-			const {
-				contracts: { FeePool },
-			} = synthetix.js!;
+	const handleClaim = useCallback(() => {
+		async function claim() {
+			try {
+				setError(null);
+				setTxModalOpen(true);
+				const {
+					contracts: { FeePool },
+				} = synthetix.js!;
 
-			const gasLimit = await getGasEstimateForTransaction([], FeePool.estimateGas.claimFees);
-			const transaction: ethers.ContractTransaction = await FeePool.claimFees({
-				gasPrice: normalizedGasPrice(gasPrice),
-				gasLimit,
-			});
-
-			if (transaction) {
-				setTxHash(transaction.hash);
-				setTransactionState(Transaction.WAITING);
-				monitorHash({
-					txHash: transaction.hash,
-					onTxConfirmed: () => setTransactionState(Transaction.SUCCESS),
+				const gasLimit = await getGasEstimateForTransaction([], FeePool.estimateGas.claimFees);
+				const transaction: ethers.ContractTransaction = await FeePool.claimFees({
+					gasPrice: normalizedGasPrice(gasPrice),
+					gasLimit,
 				});
-				setTxModalOpen(false);
+
+				if (transaction) {
+					setTxHash(transaction.hash);
+					setTransactionState(Transaction.WAITING);
+					monitorHash({
+						txHash: transaction.hash,
+						onTxConfirmed: () => setTransactionState(Transaction.SUCCESS),
+					});
+					setTxModalOpen(false);
+				}
+			} catch (e) {
+				setTransactionState(Transaction.PRESUBMIT);
+				setError(e.message);
 			}
-		} catch (e) {
-			setTransactionState(Transaction.PRESUBMIT);
-			setError(e.message);
 		}
-	};
+		claim();
+	}, [gasPrice, monitorHash]);
+
+	if (transactionState === Transaction.WAITING) {
+		return (
+			<TxState
+				description={
+					<Label>
+						<Trans
+							i18nKey="earn.incentives.options.snx.description"
+							components={[<StyledLink href={EXTERNAL_LINKS.Synthetix.Incentives} />]}
+						/>
+					</Label>
+				}
+				title={t('earn.actions.claim.in-progress')}
+				content={
+					<FlexDivColCentered>
+						<Svg src={PendingConfirmation} />
+						<StyledFlexDiv>
+							<StyledFlexDivColCentered>
+								<GreyHeader>{t('earn.actions.claim.claiming')}</GreyHeader>
+								<WhiteSubheader>
+									{t('earn.actions.claim.amount', {
+										amount: tradingRewards,
+										asset: Synths.sUSD,
+									})}
+								</WhiteSubheader>
+							</StyledFlexDivColCentered>
+							<StyledFlexDivColCentered>
+								<GreyHeader>{t('earn.actions.claim.claiming')}</GreyHeader>
+								<WhiteSubheader>
+									{t('earn.actions.claim.amount', {
+										amount: stakingRewards,
+										asset: CryptoCurrency.SNX,
+									})}
+								</WhiteSubheader>
+							</StyledFlexDivColCentered>
+						</StyledFlexDiv>
+						<Divider />
+						<GreyText>{t('earn.actions.tx.notice')}</GreyText>
+						<ExternalLink href={link}>
+							<LinkText>{t('earn.actions.tx.link')}</LinkText>
+						</ExternalLink>
+					</FlexDivColCentered>
+				}
+			/>
+		);
+	}
+
+	if (transactionState === Transaction.SUCCESS) {
+		return (
+			<TxState
+				description={
+					<Label>
+						<Trans
+							i18nKey="earn.incentives.options.snx.description"
+							components={[<StyledLink href={EXTERNAL_LINKS.Synthetix.Incentives} />]}
+						/>
+					</Label>
+				}
+				title={t('earn.actions.claim.success')}
+				content={
+					<FlexDivColCentered>
+						<Svg src={Success} />
+						<StyledFlexDiv>
+							<StyledFlexDivColCentered>
+								<GreyHeader>{t('earn.actions.claim.claimed')}</GreyHeader>
+								<WhiteSubheader>
+									{t('earn.actions.claim.amount', {
+										amount: tradingRewards,
+										asset: Synths.sUSD,
+									})}
+								</WhiteSubheader>
+							</StyledFlexDivColCentered>
+							<StyledFlexDivColCentered>
+								<GreyHeader>{t('earn.actions.claim.claimed')}</GreyHeader>
+								<WhiteSubheader>
+									{t('earn.actions.claim.amount', {
+										amount: stakingRewards,
+										asset: CryptoCurrency.SNX,
+									})}
+								</WhiteSubheader>
+							</StyledFlexDivColCentered>
+						</StyledFlexDiv>
+						<Divider />
+						<ButtonSpacer>
+							{link ? (
+								<ExternalLink href={link}>
+									<VerifyButton>{t('earn.actions.tx.verify')}</VerifyButton>
+								</ExternalLink>
+							) : null}
+							<DismissButton
+								variant="secondary"
+								onClick={() => {
+									setTransactionState(Transaction.PRESUBMIT);
+								}}
+							>
+								{t('earn.actions.tx.dismiss')}
+							</DismissButton>
+						</ButtonSpacer>
+					</FlexDivColCentered>
+				}
+			/>
+		);
+	}
 
 	return (
 		<>
 			<TabContainer>
-				<Label>
-					<Trans i18nKey="earn.incentives.options.snx.description" components={[<StyledLink />]} />
-				</Label>
-
+				<HeaderLabel>
+					<Trans
+						i18nKey="earn.incentives.options.snx.description"
+						components={[<StyledLink href={EXTERNAL_LINKS.Synthetix.Incentives} />]}
+					/>
+				</HeaderLabel>
 				<InnerContainer>
 					<ValueBoxWrapper>
 						<ValueBox>
@@ -157,7 +283,11 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 						</Value>
 					</TotalValueWrapper>
 					{error && <ErrorMessage>{error}</ErrorMessage>}
-					<PaddedButton variant="primary" onClick={handleClaim} disabled={error != null || claimed}>
+					<PaddedButton
+						variant="primary"
+						onClick={handleClaim}
+						disabled={totalRewards.toNumber() === 0 || claimed}
+					>
 						{claimed
 							? t('earn.actions.claim.claimed-button')
 							: lowCRatio && totalRewards.toNumber() > 0
@@ -166,7 +296,11 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 							? t('earn.actions.claim.claim-button')
 							: t('earn.actions.claim.nothing-to-claim')}
 					</PaddedButton>
-					<GasSelector gasLimitEstimate={gasLimitEstimate} setGasPrice={setGasPrice} />
+					<GasSelector
+						altVersion={true}
+						gasLimitEstimate={gasLimitEstimate}
+						setGasPrice={setGasPrice}
+					/>
 				</InnerContainer>
 			</TabContainer>
 			{txModalOpen && (
@@ -189,8 +323,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 
 const InnerContainer = styled(FlexDivColCentered)`
 	width: 90%;
-	margin: 15px auto;
-	padding: 15px;
+	padding: 20px;
 	border: 1px solid ${(props) => props.theme.colors.pink};
 	border-radius: 4px;
 	background-image: url(${largeWaveSVG.src});
@@ -199,14 +332,26 @@ const InnerContainer = styled(FlexDivColCentered)`
 
 const ValueBoxWrapper = styled(FlexDivCentered)`
 	justify-content: space-around;
+	width: 350px;
 `;
 
 const ValueBox = styled(FlexDivColCentered)`
-	width: 150px;
+	width: 160px;
 `;
 
 const PaddedButton = styled(StyledButton)`
 	margin-top: 20px;
+`;
+
+const StyledFlexDivColCentered = styled(FlexDivColCentered)`
+	padding: 20px 30px;
+	&:first-child {
+		border-right: 1px solid ${(props) => props.theme.colors.grayBlue};
+	}
+`;
+
+const StyledFlexDiv = styled(FlexDiv)`
+	margin-bottom: -20px;
 `;
 
 export default ClaimTab;

@@ -1,13 +1,23 @@
 import styled from 'styled-components';
 
-import { FlexDivColCentered, FlexDivRowCentered, linkCSS } from 'styles/common';
+import { FlexDivColCentered, FlexDivRowCentered, FlexDivCol, ExternalLink } from 'styles/common';
 import Button from 'components/Button';
 import Input from 'components/Input/Input';
 import Select from 'components/Select';
 
 export const TabContainer = styled(FlexDivColCentered)`
-	height: 100%;
+	height: 400px;
 	width: 100%;
+`;
+
+export const InfoContainer = styled(FlexDivCol)`
+	background: ${(props) => props.theme.colors.navy};
+	padding: 16px 0px;
+`;
+
+export const InfoHeader = styled.div`
+	border-bottom: ${(props) => `1px solid ${props.theme.colors.grayBlue}`};
+	padding-bottom: 16px;
 `;
 
 export const InputContainer = styled(FlexDivColCentered)`
@@ -16,6 +26,8 @@ export const InputContainer = styled(FlexDivColCentered)`
 	width: 100%;
 	padding: 16px;
 	margin-bottom: 24px;
+	/* @TODO: Replace with responsive height when mobile */
+	height: 600px;
 `;
 
 export const HeaderBox = styled(FlexDivRowCentered)`
@@ -60,7 +72,7 @@ export const InputBox = styled(FlexDivColCentered)`
 export const StyledInput = styled(Input)`
 	font-size: 24px;
 	background: transparent;
-	font-family: ${(props) => props.theme.fonts.expanded};
+	font-family: ${(props) => props.theme.fonts.extended};
 	text-align: center;
 	margin-top: 16px;
 
@@ -71,13 +83,13 @@ export const StyledInput = styled(Input)`
 
 export const InputLocked = styled.p`
 	font-size: 24px;
-	font-family: ${(props) => props.theme.fonts.expanded};
+	font-family: ${(props) => props.theme.fonts.extended};
 	margin-top: 16px;
 `;
 
 export const DataRow = styled(FlexDivRowCentered)`
 	justify-content: space-between;
-	margin: 16px 32px;
+	margin: 8px 24px;
 	border-bottom: ${(props) => `1px solid ${props.theme.colors.grayBlue}`};
 `;
 export const RowTitle = styled.p`
@@ -91,7 +103,6 @@ export const RowValue = styled.p`
 	font-size: 12px;
 	color: ${(props) => props.theme.colors.white};
 	text-transform: uppercase;
-	margin: 0px 8px;
 `;
 export const StyledCTA = styled(Button)`
 	font-size: 14px;
@@ -110,17 +121,19 @@ export const Title = styled.p`
 	font-family: ${(props) => props.theme.fonts.condensedBold};
 	color: ${(props) => props.theme.colors.white};
 	font-size: 16px;
+	margin: 8px 24px;
 `;
 export const Subtitle = styled.p`
 	font-family: ${(props) => props.theme.fonts.regular};
 	color: ${(props) => props.theme.colors.gray};
 	font-size: 14px;
+	height: 50px;
+	margin: 8px 24px;
 `;
 export const DataContainer = styled.div`
 	width: 100%;
 `;
-export const StyledLink = styled.span`
-	${linkCSS}
+export const StyledLink = styled(ExternalLink)`
 	color: ${(props) => props.theme.colors.blue};
 `;
 

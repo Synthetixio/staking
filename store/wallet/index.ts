@@ -21,6 +21,11 @@ export const walletAddressState = atom<string | null>({
 	default: null,
 });
 
+export const walletWatchedState = atom<string | null>({
+	key: getWalletKey('walletWatched'),
+	default: null,
+});
+
 export const isWalletConnectedState = selector<boolean>({
 	key: getWalletKey('isWalletConnected'),
 	get: ({ get }) => get(walletAddressState) != null,

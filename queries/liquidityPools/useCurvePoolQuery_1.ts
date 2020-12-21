@@ -20,8 +20,8 @@ import { walletAddressState, isWalletConnectedState, networkState } from 'store/
 import { LiquidityPoolData } from './types';
 
 export type CurveData = LiquidityPoolData & {
-	swapAPY: number;
-	rewardsAPY: number;
+	swapAPR: number;
+	rewardsAPR: number;
 };
 
 const useCurvePoolQuery_1 = (options?: QueryConfig<CurveData>) => {
@@ -47,6 +47,7 @@ const useCurvePoolQuery_1 = (options?: QueryConfig<CurveData>) => {
 			);
 			const curveSusdPoolTokenContract = new ethers.Contract(
 				curveSusdPoolToken.address,
+				// @ts-ignore
 				curveSusdPoolToken.abi,
 				provider as ethers.providers.Provider
 			);
@@ -62,9 +63,10 @@ const useCurvePoolQuery_1 = (options?: QueryConfig<CurveData>) => {
 				curveGaugeController.abi,
 				provider as ethers.providers.Provider
 			);
-			const address = contract.address;
 
+			const address = contract.address;
 			const getDuration = contract.DURATION || contract.rewardsDuration;
+
 			const [
 				duration,
 				rate,
@@ -79,7 +81,7 @@ const useCurvePoolQuery_1 = (options?: QueryConfig<CurveData>) => {
 				swapData,
 				curveRewards,
 				curveStaked,
-				// curveAllowance,
+				curveAllowance,
 			] = await Promise.all([
 				getDuration(),
 				contract.rewardRate(),
@@ -94,9 +96,8 @@ const useCurvePoolQuery_1 = (options?: QueryConfig<CurveData>) => {
 				axios.get('https://www.curve.fi/raw-stats/apys.json'),
 				contract.earned(walletAddress),
 				contract.balanceOf(walletAddress),
-				// curveSusdPoolContract.allowance(walletAddress, address),
+				curveSusdPoolTokenContract.allowance(walletAddress, address),
 			]);
-			const curveAllowance = 0;
 			const durationInWeeks = Number(duration) / 3600 / 24 / 7;
 			const isPeriodFinished = new Date().getTime() > Number(periodFinish) * 1000;
 			const distribution = isPeriodFinished
@@ -127,8 +128,8 @@ const useCurvePoolQuery_1 = (options?: QueryConfig<CurveData>) => {
 
 			const curveRate =
 				(((inflationRate * relativeWeight * 31536000) / workingSupply) * 0.4) / curveSusdTokenPrice;
-			const rewardsAPY = curveRate * curvePrice * 1e18;
-			const swapAPY = swapData?.data?.apy?.day?.susd ?? 0;
+			const rewardsAPR = curveRate * curvePrice * 1e18;
+			const swapAPR = swapData?.data?.apy?.day?.susd ?? 0;
 
 			return {
 				periodFinish: Number(periodFinish) * 1000,
@@ -136,8 +137,8 @@ const useCurvePoolQuery_1 = (options?: QueryConfig<CurveData>) => {
 				address,
 				price,
 				balance,
-				swapAPY,
-				rewardsAPY,
+				swapAPR,
+				rewardsAPR,
 				rewards,
 				staked,
 				duration: Number(duration) * 1000,

@@ -1,4 +1,4 @@
-import { FC, useState, useEffect } from 'react';
+import { FC, useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import { useTranslation, Trans } from 'react-i18next';
 import Img, { Svg } from 'react-optimized-image';
@@ -9,10 +9,13 @@ import PendingConfirmation from 'assets/svg/app/pending-confirmation.svg';
 import Success from 'assets/svg/app/success.svg';
 import synthetix from 'lib/synthetix';
 import Notify from 'containers/Notify';
+import Etherscan from 'containers/Etherscan';
 import { zIndex } from 'constants/ui';
 import LockedIcon from 'assets/svg/app/locked.svg';
-import { iBtcRewards, iEthRewards, curvepoolRewards } from 'contracts';
+import { curvepoolRewards, curveSusdPoolToken } from 'contracts';
+import Connector from 'containers/Connector';
 import {
+	ExternalLink,
 	FlexDivColCentered,
 	ModalContent,
 	ModalItem,
@@ -41,25 +44,28 @@ import {
 } from '../../common';
 import Color from 'color';
 
-type ApproveProps = {
-	synth: CurrencyKey;
-};
-
-export const getContractAndPoolAddress = (synth: CurrencyKey) => {
+export const getApprovalContractData = (
+	stakedAsset: CurrencyKey,
+	provider: ethers.providers.Provider | null
+) => {
 	const { contracts } = synthetix.js!;
-	if (synth === Synths.iBTC) {
+	if (stakedAsset === Synths.iBTC) {
 		return {
 			contract: contracts.SynthiBTC,
-			poolAddress: iBtcRewards.address,
+			poolAddress: contracts.StakingRewardsiBTC.address,
 		};
-	} else if (synth === Synths.iETH) {
+	} else if (stakedAsset === Synths.iETH) {
 		return {
 			contract: contracts.SynthiETH,
-			poolAddress: iEthRewards.address,
+			poolAddress: contracts.StakingRewardsiETH.address,
 		};
-	} else if (synth === Synths.sUSD) {
+	} else if (stakedAsset === Synths.sUSD) {
 		return {
-			contract: contracts.SynthsUSD,
+			contract: new ethers.Contract(
+				curveSusdPoolToken.address,
+				curveSusdPoolToken.abi,
+				provider as ethers.providers.Provider
+			),
 			poolAddress: curvepoolRewards.address,
 		};
 	} else {
@@ -67,22 +73,31 @@ export const getContractAndPoolAddress = (synth: CurrencyKey) => {
 	}
 };
 
-const Approve: FC<ApproveProps> = ({ synth }) => {
+type ApproveProps = {
+	stakedAsset: CurrencyKey;
+	setShowApproveOverlayModal: (show: boolean) => void;
+};
+
+const Approve: FC<ApproveProps> = ({ stakedAsset, setShowApproveOverlayModal }) => {
 	const { t } = useTranslation();
 	const { monitorHash } = Notify.useContainer();
+	const { provider } = Connector.useContainer();
+	const { etherscanInstance } = Etherscan.useContainer();
 	const [error, setError] = useState<string | null>(null);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 	const [gasLimitEstimate, setGasLimitEstimate] = useState<number | null>(null);
 	const [gasPrice, setGasPrice] = useState<number>(0);
 	const [transactionState, setTransactionState] = useState<Transaction>(Transaction.PRESUBMIT);
 	const [txHash, setTxHash] = useState<string | null>(null);
+	const link =
+		etherscanInstance != null && txHash != null ? etherscanInstance.txLink(txHash) : undefined;
 
 	useEffect(() => {
 		const getGasLimitEstimate = async () => {
 			if (synthetix && synthetix.js) {
 				try {
 					setError(null);
-					const { contract, poolAddress } = getContractAndPoolAddress(synth);
+					const { contract, poolAddress } = getApprovalContractData(stakedAsset, provider);
 					let gasEstimate = await getGasEstimateForTransaction(
 						[poolAddress, synthetix.js.utils.parseEther(TokenAllowanceLimit.toString())],
 						contract.estimateGas.approve
@@ -95,44 +110,47 @@ const Approve: FC<ApproveProps> = ({ synth }) => {
 			}
 		};
 		getGasLimitEstimate();
-	}, [synth]);
+	}, [stakedAsset, provider]);
 
-	const handleApprove = async () => {
-		if (synthetix && synthetix.js) {
-			try {
-				setError(null);
-				setTxModalOpen(true);
-				const { contract, poolAddress } = getContractAndPoolAddress(synth);
+	const handleApprove = useCallback(() => {
+		async function approve() {
+			if (synthetix && synthetix.js) {
+				try {
+					setError(null);
+					setTxModalOpen(true);
+					const { contract, poolAddress } = getApprovalContractData(stakedAsset, provider);
 
-				const allowance = synthetix.js.utils.parseEther(TokenAllowanceLimit.toString());
-				const gasLimit = await getGasEstimateForTransaction(
-					[poolAddress, allowance],
-					contract.estimateGas.approve
-				);
-				const transaction: ethers.ContractTransaction = await contract.approve(
-					poolAddress,
-					allowance,
-					{
-						gasPrice: normalizedGasPrice(gasPrice),
-						gasLimit,
+					const allowance = synthetix.js.utils.parseEther(TokenAllowanceLimit.toString());
+					const gasLimit = await getGasEstimateForTransaction(
+						[poolAddress, allowance],
+						contract.estimateGas.approve
+					);
+					const transaction: ethers.ContractTransaction = await contract.approve(
+						poolAddress,
+						allowance,
+						{
+							gasPrice: normalizedGasPrice(gasPrice),
+							gasLimit,
+						}
+					);
+
+					if (transaction) {
+						setTxHash(transaction.hash);
+						setTransactionState(Transaction.WAITING);
+						monitorHash({
+							txHash: transaction.hash,
+							onTxConfirmed: () => setTransactionState(Transaction.SUCCESS),
+						});
+						setTxModalOpen(false);
 					}
-				);
-
-				if (transaction) {
-					setTxHash(transaction.hash);
-					setTransactionState(Transaction.WAITING);
-					monitorHash({
-						txHash: transaction.hash,
-						onTxConfirmed: () => setTransactionState(Transaction.SUCCESS),
-					});
-					setTxModalOpen(false);
+				} catch (e) {
+					setTransactionState(Transaction.PRESUBMIT);
+					setError(e.message);
 				}
-			} catch (e) {
-				setTransactionState(Transaction.PRESUBMIT);
-				setError(e.message);
 			}
 		}
-	};
+		approve();
+	}, [stakedAsset, provider, gasPrice, monitorHash]);
 
 	if (transactionState === Transaction.WAITING) {
 		return (
@@ -141,7 +159,7 @@ const Approve: FC<ApproveProps> = ({ synth }) => {
 					<Trans
 						i18nKey="modals.approve.description"
 						values={{
-							synth,
+							stakedAsset,
 						}}
 						components={[<StyledLink />]}
 					/>
@@ -151,12 +169,12 @@ const Approve: FC<ApproveProps> = ({ synth }) => {
 					<FlexDivColCentered>
 						<Svg src={PendingConfirmation} />
 						<GreyHeader>{t('earn.actions.approve.approving')}</GreyHeader>
-						<WhiteSubheader>{t('earn.actions.approve.contract', { synth })}</WhiteSubheader>
+						<WhiteSubheader>{t('earn.actions.approve.contract', { stakedAsset })}</WhiteSubheader>
 						<Divider />
 						<GreyText>{t('earn.actions.tx.notice')}</GreyText>
-						<LinkText>
-							<Trans i18nKey="earn.actions.tx.link" components={[<StyledLink />]} />
-						</LinkText>
+						<ExternalLink href={link}>
+							<LinkText>{t('earn.actions.tx.link')}</LinkText>
+						</ExternalLink>
 					</FlexDivColCentered>
 				}
 			/>
@@ -170,7 +188,7 @@ const Approve: FC<ApproveProps> = ({ synth }) => {
 					<Trans
 						i18nKey="modals.approve.description"
 						values={{
-							synth,
+							stakedAsset,
 						}}
 						components={[<StyledLink />]}
 					/>
@@ -180,15 +198,20 @@ const Approve: FC<ApproveProps> = ({ synth }) => {
 					<FlexDivColCentered>
 						<Svg src={Success} />
 						<GreyHeader>{t('earn.actions.approve.approving')}</GreyHeader>
-						<WhiteSubheader>{t('earn.actions.approve.contract', { synth })}</WhiteSubheader>
+						<WhiteSubheader>{t('earn.actions.approve.contract', { stakedAsset })}</WhiteSubheader>
 						<Divider />
 						<ButtonSpacer>
-							<VerifyButton variant="secondary" onClick={() => console.log('verify tx')}>
-								{t('earn.actions.tx.verify')}
-							</VerifyButton>
+							{link ? (
+								<ExternalLink href={link}>
+									<VerifyButton>{t('earn.actions.tx.verify')}</VerifyButton>
+								</ExternalLink>
+							) : null}
 							<DismissButton
 								variant="secondary"
-								onClick={() => setTransactionState(Transaction.PRESUBMIT)}
+								onClick={() => {
+									setTransactionState(Transaction.PRESUBMIT);
+									setShowApproveOverlayModal(false);
+								}}
 							>
 								{t('earn.actions.tx.dismiss')}
 							</DismissButton>
@@ -208,7 +231,7 @@ const Approve: FC<ApproveProps> = ({ synth }) => {
 						<Trans
 							i18nKey="modals.approve.description"
 							values={{
-								synth,
+								stakedAsset,
 							}}
 							components={[<StyledLink />]}
 						/>
@@ -216,7 +239,11 @@ const Approve: FC<ApproveProps> = ({ synth }) => {
 					<PaddedButton variant="primary" onClick={handleApprove}>
 						{t('modals.approve.button')}
 					</PaddedButton>
-					<GasSelector gasLimitEstimate={gasLimitEstimate} setGasPrice={setGasPrice} />
+					<GasSelector
+						altVersion={true}
+						gasLimitEstimate={gasLimitEstimate}
+						setGasPrice={setGasPrice}
+					/>
 				</InnerContainer>
 			</OverlayContainer>
 			{txModalOpen && (
@@ -229,7 +256,7 @@ const Approve: FC<ApproveProps> = ({ synth }) => {
 							<ModalItem>
 								<ModalItemTitle>{t('modals.confirm-transaction.approve.approving')}</ModalItemTitle>
 								<ModalItemText>
-									{t('modals.confirm-transaction.approve.contract', { synth })}
+									{t('modals.confirm-transaction.approve.contract', { stakedAsset })}
 								</ModalItemText>
 							</ModalItem>
 						</ModalContent>

@@ -11,12 +11,16 @@ type ProgressBarProps = {
 	variant: ProgressBarType;
 };
 
-const ProgressBar: FC<ProgressBarProps> = ({ percentage, variant, ...rest }) => (
-	<ProgressBarWrapper variant={variant} {...rest}>
-		<Bar className="filled-bar" percentage={percentage} />
-		<Bar className="unfilled-bar" percentage={1 - percentage} />
-	</ProgressBarWrapper>
-);
+const ProgressBar: FC<ProgressBarProps> = ({ percentage, variant, ...rest }) => {
+	const unfilledPercentage = 1 - percentage;
+
+	return (
+		<ProgressBarWrapper variant={variant} {...rest}>
+			{percentage > 0 && <Bar className="filled-bar" percentage={Math.min(1, percentage)} />}
+			{unfilledPercentage > 0 && <Bar className="unfilled-bar" percentage={unfilledPercentage} />}
+		</ProgressBarWrapper>
+	);
+};
 
 const ProgressBarWrapper = styled(FlexDivRowCentered)<{
 	variant?: ProgressBarType;
@@ -64,7 +68,6 @@ const ProgressBarWrapper = styled(FlexDivRowCentered)<{
 
 			.unfilled-bar {
 				border: 1px solid ${(props) => props.theme.colors.green};
-				border-left: none;
 				box-shadow: 0px 0px 15px ${(props) => props.theme.colors.green};
 			}
 		`}		

@@ -4,6 +4,7 @@ import Img from 'react-optimized-image';
 // Crypto
 // import BTCIcon from 'assets/svg/currencies/crypto/BTC.svg';
 import ETHIcon from 'assets/svg/currencies/crypto/ETH.svg';
+import CRVIcon from 'assets/svg/currencies/crypto/CRV.svg';
 // import XRPIcon from 'assets/svg/currencies/crypto/XRP.svg';
 // import BCHIcon from 'assets/svg/currencies/crypto/BCH.svg';
 // import LTCIcon from 'assets/svg/currencies/crypto/LTC.svg';
@@ -118,6 +119,10 @@ export const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, type = 'synth
 		}
 		case CryptoCurrency.SNX: {
 			return <Img src={SNXIcon} {...props} />;
+		}
+		case CryptoCurrency.CurveLPToken:
+		case CryptoCurrency.CRV: {
+			return <Img src={CRVIcon} {...props} />;
 		}
 
 		case Synths.sBTC: {

@@ -1,89 +1,159 @@
 import { FC, useState } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import { Svg } from 'react-optimized-image';
 
-import Connector from 'containers/Connector';
+import { FlexDivCentered, IconButton } from 'styles/common';
+import { zIndex } from 'constants/ui';
 
 import Button from 'components/Button';
-import { isWalletConnectedState, truncatedWalletAddressState } from 'store/wallet';
-import { FlexDivCentered, resetButtonCSS, ConnectionDot } from 'styles/common';
+import { isWalletConnectedState, truncatedWalletAddressState, networkState } from 'store/wallet';
 
 import WalletOptionsModal from 'sections/shared/modals/WalletOptionsModal';
 import SettingsModal from 'sections/shared/modals/SettingsModal';
+import ConnectionDot from 'sections/shared/ConnectionDot';
 
-import MenuIcon from 'assets/svg/app/menu.svg';
+import CogIcon from 'assets/svg/app/cog.svg';
+import CaretUp from 'assets/svg/app/caret-up.svg';
+import CaretDown from 'assets/svg/app/caret-down.svg';
+import WatchWalletModal from 'sections/shared/modals/WatchWalletModal';
+
+const caretUp = <Svg src={CaretUp} viewBox={`0 0 ${CaretUp.width} ${CaretUp.height}`} />;
+const caretDown = <Svg src={CaretDown} viewBox={`0 0 ${CaretDown.width} ${CaretDown.height}`} />;
 
 const UserMenu: FC = () => {
 	const { t } = useTranslation();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	const { connectWallet } = Connector.useContainer();
 	const [walletOptionsModalOpened, setWalletOptionsModalOpened] = useState<boolean>(false);
 	const [settingsModalOpened, setSettingsModalOpened] = useState<boolean>(false);
+	const [watchWalletModalOpened, setWatchWalletModalOpened] = useState<boolean>(false);
 	const truncatedWalletAddress = useRecoilValue(truncatedWalletAddressState);
+	const network = useRecoilValue(networkState);
 
 	return (
 		<>
 			<FlexDivCentered>
-				<Menu data-testid="user-menu">
+				<Menu>
 					<MenuButton
 						onClick={() => {
 							setSettingsModalOpened(!settingsModalOpened);
 						}}
 						isActive={settingsModalOpened}
-						data-testid="settings-btn"
 					>
-						<Svg src={MenuIcon} />
+						<Svg src={CogIcon} />
 					</MenuButton>
 				</Menu>
-				{isWalletConnected ? (
-					<WalletButton
-						variant="solid"
-						onClick={() => setWalletOptionsModalOpened(true)}
-						data-testid="wallet-btn"
-					>
-						<StyledConnectionDot />
-						{truncatedWalletAddress}
-					</WalletButton>
-				) : (
-					<Button variant="secondary" onClick={connectWallet} data-testid="connect-wallet">
-						{t('common.wallet.connect-wallet')}
-					</Button>
-				)}
+				<Dropdown>
+					{isWalletConnected ? (
+						<WalletButton
+							variant="solid"
+							onClick={() => {
+								setWalletOptionsModalOpened(!walletOptionsModalOpened);
+							}}
+							isActive={walletOptionsModalOpened}
+						>
+							<FlexDivCentered>
+								<StyledConnectionDot />
+								{truncatedWalletAddress}
+							</FlexDivCentered>
+							<NetworkTag className="network-tag">{network?.name}</NetworkTag>
+							{walletOptionsModalOpened ? caretUp : caretDown}
+						</WalletButton>
+					) : (
+						<WalletButton
+							variant="solid"
+							onClick={() => setWalletOptionsModalOpened(!walletOptionsModalOpened)}
+						>
+							<FlexDivCentered>
+								<StyledConnectionDot />
+								{t('common.wallet.not-connected')}
+							</FlexDivCentered>
+							{walletOptionsModalOpened ? caretUp : caretDown}
+						</WalletButton>
+					)}
+					{walletOptionsModalOpened && (
+						<WalletOptionsModal
+							onDismiss={() => setWalletOptionsModalOpened(false)}
+							setWatchWalletModalOpened={setWatchWalletModalOpened}
+						/>
+					)}
+				</Dropdown>
 			</FlexDivCentered>
-			{walletOptionsModalOpened && (
-				<WalletOptionsModal onDismiss={() => setWalletOptionsModalOpened(false)} />
+			{watchWalletModalOpened && (
+				<WatchWalletModal onDismiss={() => setWatchWalletModalOpened(false)} />
 			)}
 			{settingsModalOpened && <SettingsModal onDismiss={() => setSettingsModalOpened(false)} />}
 		</>
 	);
 };
 
+const StyledConnectionDot = styled(ConnectionDot)`
+	margin-right: 8px;
+`;
+
 const Menu = styled.div`
-	padding-right: 26px;
+	padding-right: 16px;
 	display: grid;
 	grid-gap: 10px;
 	grid-auto-flow: column;
 `;
 
+const NetworkTag = styled(FlexDivCentered)`
+	background: ${(props) => props.theme.colors.mediumBlue};
+	font-size: 10px;
+	font-family: ${(props) => props.theme.fonts.condensedMedium};
+	padding: 2px 5px;
+	border-radius: 100px;
+	height: 18px;
+	text-align: center;
+	justify-content: center;
+	text-transform: uppercase;
+`;
+
 const WalletButton = styled(Button)`
 	display: inline-flex;
 	align-items: center;
+	justify-content: space-between;
+	border: 1px solid ${(props) => props.theme.colors.mediumBlue};
+
+	svg {
+		margin-left: 5px;
+		width: 10px;
+		height: 10px;
+		color: ${(props) => props.theme.colors.gray};
+		${(props) =>
+			props.isActive &&
+			css`
+				color: ${(props) => props.theme.colors.white};
+			`}
+	}
+	&:hover {
+		${NetworkTag} {
+			background: ${(props) => props.theme.colors.navy};
+		}
+	}
 `;
 
-const StyledConnectionDot = styled(ConnectionDot)`
-	margin-right: 12px;
-	box-shadow: 0px 0px 15px rgba(68, 239, 193, 0.6);
-`;
-
-const MenuButton = styled.button<{ isActive: boolean }>`
-	${resetButtonCSS};
+const MenuButton = styled(IconButton)<{ isActive: boolean }>`
+	border: 1px solid ${(props) => props.theme.colors.mediumBlue};
 	color: ${(props) => (props.isActive ? props.theme.colors.white : props.theme.colors.gray)};
+	padding: 7px;
+	border-radius: 4px;
+	background: ${(props) => props.theme.colors.navy};
 	&:hover {
 		color: ${(props) => props.theme.colors.white};
 	}
-	padding: 5px;
+	height: 32px;
+`;
+
+const Dropdown = styled.div`
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	height: 100%;
+	z-index: ${zIndex.DROPDOWN};
+	width: 185px;
 `;
 
 export default UserMenu;
