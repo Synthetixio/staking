@@ -52,6 +52,7 @@ const UserMenu: FC = () => {
 								setWalletOptionsModalOpened(!walletOptionsModalOpened);
 							}}
 							isActive={walletOptionsModalOpened}
+							data-testid="wallet-btn"
 						>
 							<FlexDivCentered>
 								<StyledConnectionDot />
@@ -64,6 +65,7 @@ const UserMenu: FC = () => {
 						<WalletButton
 							variant="solid"
 							onClick={() => setWalletOptionsModalOpened(!walletOptionsModalOpened)}
+							data-testid="connect-wallet"
 						>
 							<FlexDivCentered>
 								<StyledConnectionDot />
