@@ -98,7 +98,7 @@ export const GridBoxContainer = styled.div<{
 		props.isDisabled
 			? css`
 					opacity: 0.35;
-					cursor: default;
+					cursor: not-allowed;
 			  `
 			: css`
 					cursor: pointer;
