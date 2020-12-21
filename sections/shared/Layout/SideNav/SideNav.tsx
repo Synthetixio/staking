@@ -80,17 +80,17 @@ const SideNavContainer = styled.div`
 	background: ${(props) => props.theme.colors.darkGradient1Flipped};
 	border-right: 1px solid ${(props) => props.theme.colors.grayBlue};
 	display: grid;
-	grid-template-rows: auto 1fr auto;
+	grid-template-rows: auto 1fr auto auto;
 	overflow-y: hidden;
 `;
 
 const StakingLogoWrap = styled.div`
-	padding: 30px 0 87px 30px;
+	padding: 30px 0 87px 24px;
 	cursor: pointer;
 `;
 
 const MenuLinks = styled.div`
-	padding-left: 30px;
+	padding-left: 24px;
 	position: relative;
 `;
 
@@ -102,12 +102,11 @@ const MenuLinkItem = styled.div<{ isActive: boolean }>`
 	a {
 		display: block;
 		${linkCSS};
-		font-family: ${(props) => props.theme.fonts.condensedBold};
+		font-family: ${(props) => props.theme.fonts.condensedMedium};
 		text-transform: uppercase;
-		font-weight: 700;
+		opacity: 0.4;
 		font-size: 14px;
 		cursor: pointer;
-		opacity: 0.5;
 		color: ${(props) => props.theme.colors.white};
 		&:hover {
 			opacity: unset;

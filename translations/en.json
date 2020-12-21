@@ -493,6 +493,7 @@
 		"l2": "Layer 2",
 		"bars": {
 			"c-ratio": "c-ratio",
+			"target": "target",
 			"period": {
 				"title": "epoch"
 			}

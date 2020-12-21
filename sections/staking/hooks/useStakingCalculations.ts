@@ -2,26 +2,9 @@ import { useMemo } from 'react';
 import useGetDebtDataQuery from 'queries/debt/useGetDebtDataQuery';
 import useEscrowDataQuery from 'queries/escrow/useEscrowDataQuery';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
-import { BigNumber } from 'bignumber.js';
 import { toBigNumber } from 'utils/formatters/number';
 
-type StakingCalculations = {
-	collateral: BigNumber;
-	targetCRatio: BigNumber;
-	percentageTargetCRatio: BigNumber;
-	currentCRatio: BigNumber;
-	transferableCollateral: BigNumber;
-	debtBalance: BigNumber;
-	stakedCollateral: BigNumber;
-	stakedCollateralValue: BigNumber;
-	lockedCollateral: BigNumber;
-	unstakedCollateral: BigNumber;
-	SNXRate: BigNumber;
-	totalEscrowBalance: BigNumber;
-	percentageCurrentCRatio: BigNumber;
-	issuableSynths: BigNumber;
-};
-const useStakingCalculations = (): StakingCalculations => {
+const useStakingCalculations = () => {
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const debtDataQuery = useGetDebtDataQuery();
 	const escrowBalanceQuery = useEscrowDataQuery();
@@ -54,6 +37,7 @@ const useStakingCalculations = (): StakingCalculations => {
 		const percentageTargetCRatio = targetCRatio.isZero()
 			? toBigNumber(0)
 			: toBigNumber(1).div(targetCRatio);
+		const percentCurrentCRatioOfTarget = percentageCurrentCRatio.div(percentageTargetCRatio);
 
 		return {
 			collateral,
@@ -70,6 +54,7 @@ const useStakingCalculations = (): StakingCalculations => {
 			SNXRate,
 			totalEscrowBalance,
 			issuableSynths,
+			percentCurrentCRatioOfTarget,
 		};
 	}, [debtData, exchangeRates, escrowBalance]);
 

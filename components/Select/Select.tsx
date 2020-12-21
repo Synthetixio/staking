@@ -1,6 +1,6 @@
-import React, { useContext, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import ReactSelect, { Props, StylesConfig } from 'react-select';
-import { ThemeContext } from 'styled-components';
+import { useTheme } from 'styled-components';
 
 import { IndicatorSeparator, DropdownIndicator, MultiValueRemove } from './components';
 
@@ -9,7 +9,7 @@ type SelectProps<T> = Props<T> & {
 };
 
 function Select<T>(props: SelectProps<T>) {
-	const { colors, fonts } = useContext(ThemeContext);
+	const { colors, fonts } = useTheme();
 
 	const computedStyles = useMemo(() => {
 		const styles: StylesConfig = {
