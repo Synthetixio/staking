@@ -14,6 +14,8 @@ export default class HomePage extends Page {
 	}
 
 	connectMetamaskWallet() {
+		const userMenu = this.header.getUserMenu();
+		userMenu.click();
 		const connectWalletButton = this.header.getConnectWalletBtn();
 		connectWalletButton.click();
 		const onboardMetamaskButton = this.onboard.getMetamaskBtn();
@@ -22,13 +24,13 @@ export default class HomePage extends Page {
 
 	waitUntilLoggedIn() {
 		cy.waitUntil(() => {
-			const walletButton = this.header.getWalletButton();
-			return walletButton.should('exist');
+			const walletAddress = this.header.getWalletAddress();
+			return walletAddress.should('exist');
 		});
 	}
 
 	getLoggedInWalletAddress() {
-		const walletButton = this.header.getWalletButton();
-		return walletButton.invoke('text');
+		const walletAddress = this.header.getWalletAddress();
+		return walletAddress.invoke('text');
 	}
 }
