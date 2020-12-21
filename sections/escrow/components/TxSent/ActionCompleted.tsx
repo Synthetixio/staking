@@ -3,17 +3,11 @@ import { Svg } from 'react-optimized-image';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-import {
-	FlexDivRowCentered,
-	FlexDivCentered,
-	FlexDivColCentered,
-	ExternalLink,
-	boxShadowBlue,
-} from 'styles/common';
+import { FlexDivRowCentered, FlexDivCentered, ExternalLink, boxShadowBlue } from 'styles/common';
 import Success from 'assets/svg/app/circle-tick.svg';
 import { Transaction } from 'constants/network';
 
-import { InfoContainer, InfoData, InfoTitle, SectionHeader } from './common';
+import { InfoContainer, InfoData, InfoTitle, SectionHeader, Container } from './common';
 import { formatCurrency } from 'utils/formatters/number';
 import Etherscan from 'containers/Etherscan';
 
@@ -58,12 +52,6 @@ const ActionCompleted: FC<ActionCompletedProps> = ({
 		</Container>
 	);
 };
-
-const Container = styled(FlexDivColCentered)`
-	width: 90%;
-	margin: 0 auto;
-	text-align: center;
-`;
 
 const BaseButton = styled.div`
 	width: 175px;

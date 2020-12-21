@@ -70,7 +70,6 @@ const RewardEscrowSchedule: React.FC = () => {
 							},
 						]}
 						data={data ? data : []}
-						columnsDeps={[]}
 						isLoading={escrowDataQuery.isLoading}
 						showPagination={true}
 					/>

@@ -25,7 +25,8 @@ import {
 type TabContentProps = {
 	claimableAmount: number;
 	onSubmit: any;
-	error: string | null;
+	transactionError: string | null;
+	gasEstimateError: string | null;
 	txModalOpen: boolean;
 	setTxModalOpen: Function;
 	gasLimitEstimate: number | null;
@@ -38,10 +39,11 @@ type TabContentProps = {
 const TabContent: FC<TabContentProps> = ({
 	claimableAmount,
 	onSubmit,
-	error,
+	transactionError,
 	txModalOpen,
 	setTxModalOpen,
 	gasLimitEstimate,
+	gasEstimateError,
 	setGasPrice,
 	txHash,
 	transactionState,
@@ -58,7 +60,7 @@ const TabContent: FC<TabContentProps> = ({
 					onClick={onSubmit}
 					variant="primary"
 					size="lg"
-					disabled={transactionState !== Transaction.PRESUBMIT}
+					disabled={transactionState !== Transaction.PRESUBMIT || !!gasEstimateError}
 				>
 					{t('escrow.actions.vest-button', {
 						canVestAmount: formatCurrency(vestingCurrencyKey, claimableAmount, {
@@ -114,11 +116,11 @@ const TabContent: FC<TabContentProps> = ({
 				</SettingsContainer>
 			</InputContainer>
 			{renderButton()}
-			<ErrorMessage>{error}</ErrorMessage>
+			<ErrorMessage>{transactionError}</ErrorMessage>
 			{txModalOpen && (
 				<TxConfirmationModal
 					onDismiss={() => setTxModalOpen(false)}
-					txError={error}
+					txError={transactionError}
 					attemptRetry={onSubmit}
 					content={
 						<ModalContent>

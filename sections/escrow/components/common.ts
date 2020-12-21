@@ -23,7 +23,7 @@ export const InputBox = styled(FlexDivColCentered)`
 	justify-content: center;
 `;
 
-export const StyledCTA = styled(Button)<{ blue: boolean }>`
+export const StyledCTA = styled(Button)<{ blue: boolean; disabled: boolean }>`
 	font-size: 14px;
 	font-family: ${(props) => props.theme.fonts.condensedMedium};
 	box-shadow: ${(props) =>
