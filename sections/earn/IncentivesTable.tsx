@@ -41,7 +41,6 @@ import { NOT_APPLICABLE } from './Incentives';
 import ROUTES from 'constants/routes';
 
 import { Tab } from './types';
-import { IconWrap } from './common';
 
 export type EarnItem = {
 	title: string;
