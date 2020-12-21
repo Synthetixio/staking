@@ -38,7 +38,6 @@ const LayoutOne: FC = () => {
 				title: t('dashboard.actions.claim.title'),
 				copy: t('dashboard.actions.claim.copy'),
 				link: ROUTES.Earn.Claim,
-				visible: true,
 			},
 			{
 				gridLocations: ['col-3', 'col-4', 'row-1', 'row-2'],
@@ -50,7 +49,6 @@ const LayoutOne: FC = () => {
 				title: t('dashboard.actions.mint.title'),
 				copy: t('dashboard.actions.mint.copy'),
 				link: ROUTES.Staking.Home,
-				visible: true,
 			},
 			{
 				gridLocations: ['col-4', 'col-5', 'row-1', 'row-2'],
@@ -62,15 +60,19 @@ const LayoutOne: FC = () => {
 				title: t('dashboard.actions.trade.title'),
 				copy: t('dashboard.actions.trade.copy'),
 				externalLink: EXTERNAL_LINKS.Trading.Kwenta,
-				visible: true,
 			},
 			{
 				gridLocations: ['col-1', 'col-2', 'row-2', 'row-3'],
-				icon: <Svg src={Stake} />,
+				icon: (
+					<GlowingCircle variant="blue" size="md">
+						L2
+					</GlowingCircle>
+				),
 				title: t('dashboard.actions.migrate.title'),
 				copy: t('dashboard.actions.migrate.copy'),
 				link: ROUTES.L2.Home,
-				visible: true,
+				tooltip: t('dashboard.actions.migrate.tooltip'),
+				isDisabled: true,
 			},
 			{
 				gridLocations: ['col-2', 'col-3', 'row-2', 'row-3'],
@@ -87,7 +89,6 @@ const LayoutOne: FC = () => {
 					supplier: 'Synthetix',
 				}),
 				link: ROUTES.Earn.iBTC_LP,
-				visible: true,
 			},
 			{
 				gridLocations: ['col-3', 'col-4', 'row-2', 'row-3'],
@@ -101,7 +102,6 @@ const LayoutOne: FC = () => {
 				}),
 				copy: t('dashboard.actions.earn.copy', { asset: Synths.iETH, supplier: 'Synthetix' }),
 				link: ROUTES.Earn.iETH_LP,
-				visible: true,
 			},
 			{
 				gridLocations: ['col-4', 'col-5', 'row-2', 'row-3'],
@@ -118,7 +118,6 @@ const LayoutOne: FC = () => {
 					supplier: 'Curve Finance',
 				}),
 				link: ROUTES.Earn.Curve_LP,
-				visible: true,
 			},
 		],
 		[t, lpData]

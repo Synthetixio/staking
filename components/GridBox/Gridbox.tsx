@@ -1,17 +1,19 @@
-import { FC, ReactNode, ReactElement } from 'react';
+import { FC, ReactNode } from 'react';
 import Link from 'next/link';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
-import { FlexDivColCentered, ExternalLink } from 'styles/common';
+import { FlexDivColCentered, ExternalLink, Tooltip } from 'styles/common';
 
 export type GridBoxProps = {
 	gridLocations: [string, string, string, string];
 	title: string;
 	copy: string;
-	icon: ReactNode | ReactElement;
+	icon: ReactNode;
 	link?: string;
 	externalLink?: string;
 	visible?: boolean;
+	tooltip?: string;
+	isDisabled?: boolean;
 };
 
 export const GridBox: FC<GridBoxProps> = ({
@@ -22,7 +24,11 @@ export const GridBox: FC<GridBoxProps> = ({
 	link,
 	externalLink,
 	visible,
+	tooltip,
+	isDisabled,
 }) => {
+	if (visible != null && !visible) return <></>;
+
 	const components = (
 		<InnerGridContainer>
 			<GridBoxIcon>{icon}</GridBoxIcon>
@@ -30,17 +36,32 @@ export const GridBox: FC<GridBoxProps> = ({
 			<GridBoxCopy>{copy}</GridBoxCopy>
 		</InnerGridContainer>
 	);
-	if (!visible) return <></>;
+
 	return (
-		<GridBoxContainer
-			columnStart={gridLocations[0]}
-			columnEnd={gridLocations[1]}
-			rowStart={gridLocations[2]}
-			rowEnd={gridLocations[3]}
+		<StyledTooltip
+			arrow={true}
+			placement="bottom"
+			content={tooltip}
+			disabled={!tooltip}
+			hideOnClick={false}
 		>
-			{link ? <Link href={link}>{components}</Link> : null}
-			{externalLink ? <ExternalLink href={externalLink}>{components}</ExternalLink> : null}
-		</GridBoxContainer>
+			<GridBoxContainer
+				columnStart={gridLocations[0]}
+				columnEnd={gridLocations[1]}
+				rowStart={gridLocations[2]}
+				rowEnd={gridLocations[3]}
+				isDisabled={isDisabled}
+			>
+				{isDisabled ? (
+					components
+				) : (
+					<>
+						{link ? <Link href={link}>{components}</Link> : null}
+						{externalLink ? <ExternalLink href={externalLink}>{components}</ExternalLink> : null}
+					</>
+				)}
+			</GridBoxContainer>
+		</StyledTooltip>
 	);
 };
 
@@ -64,18 +85,28 @@ export const GridBoxContainer = styled.div<{
 	columnEnd: string;
 	rowStart: string;
 	rowEnd: string;
+	isDisabled?: boolean;
 }>`
 	background: ${(props) => props.theme.colors.darkGradient1};
 	box-shadow: 0px 0px 20px ${(props) => props.theme.colors.backgroundBoxShadow};
 	border-radius: 2px;
 	grid-column: ${(props) => `${props.columnStart} / ${props.columnEnd}`};
 	grid-row: ${(props) => `${props.rowStart} / ${props.rowEnd}`};
-	cursor: pointer;
 	transition: transform 0.25s ease-in-out;
-	&:hover {
-		background: ${(props) => props.theme.colors.darkGradient2};
-		transform: scale(1.03);
-	}
+
+	${(props) =>
+		props.isDisabled
+			? css`
+					opacity: 0.35;
+					cursor: default;
+			  `
+			: css`
+					cursor: pointer;
+					&:hover {
+						background: ${(props) => props.theme.colors.darkGradient2};
+						transform: scale(1.03);
+					}
+			  `}
 `;
 
 const GridBoxIcon = styled.div`
@@ -89,6 +120,14 @@ const GridBoxCopy = styled.p`
 	max-width: 75%;
 	text-align: center;
 	color: ${(props) => props.theme.colors.gray};
+`;
+
+const StyledTooltip = styled(Tooltip)`
+	background: ${(props) => props.theme.colors.mediumBlue};
+	.tippy-content {
+		font-size: 12px;
+		padding: 10px;
+	}
 `;
 
 export default GridBox;
