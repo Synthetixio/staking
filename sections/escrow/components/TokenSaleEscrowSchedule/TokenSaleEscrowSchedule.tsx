@@ -11,11 +11,13 @@ import { formatShortDate } from 'utils/formatters/date';
 import { formatCurrency } from 'utils/formatters/number';
 import {
 	Container,
+	ContainerHeader,
+	ContainerBody,
 	Data,
 	Header,
+	TableNoResults,
 	StyledTable,
 	Subtitle,
-	TableNoResults,
 	Title,
 } from 'sections/escrow/components/common';
 
@@ -24,7 +26,7 @@ const TokenSaleEscrowSchedule: React.FC = () => {
 	const tokenSaleEscrowQuery = useTokenSaleEscrowQuery();
 	const tokenSaleEscrow = tokenSaleEscrowQuery.data;
 
-	const data = useMemo(() => tokenSaleEscrow?.data ?? [], [tokenSaleEscrow]);
+	const schedule = useMemo(() => tokenSaleEscrow?.schedule ?? [], [tokenSaleEscrow]);
 
 	const columns = useMemo(
 		() => [
@@ -54,23 +56,27 @@ const TokenSaleEscrowSchedule: React.FC = () => {
 
 	return (
 		<Container>
-			<Title>{t('escrow.token.info.title')}</Title>
-			<Subtitle>{t('escrow.token.info.subtitle')}</Subtitle>
-			<StyledTable
-				palette="primary"
-				columns={columns}
-				data={data ? data : []}
-				isLoading={tokenSaleEscrowQuery.isLoading}
-				noResultsMessage={
-					!tokenSaleEscrowQuery.isLoading && data?.length === 0 ? (
-						<TableNoResults>
-							<Svg src={NoNotificationIcon} />
-							{t('escrow.table.no-results')}
-						</TableNoResults>
-					) : undefined
-				}
-				showPagination={true}
-			/>
+			<ContainerHeader>
+				<Title>{t('escrow.token.info.title')}</Title>
+				<Subtitle>{t('escrow.token.info.subtitle')}</Subtitle>
+			</ContainerHeader>
+			<ContainerBody>
+				<StyledTable
+					palette="primary"
+					columns={columns}
+					data={schedule ? schedule : []}
+					isLoading={tokenSaleEscrowQuery.isLoading}
+					noResultsMessage={
+						!tokenSaleEscrowQuery.isLoading && schedule?.length === 0 ? (
+							<TableNoResults>
+								<Svg src={NoNotificationIcon} />
+								{t('escrow.table.no-results')}
+							</TableNoResults>
+						) : undefined
+					}
+					showPagination={true}
+				/>
+			</ContainerBody>
 		</Container>
 	);
 };

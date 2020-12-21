@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import StatBox from 'components/StatBox';
 import { StatsSection, LineSpacer } from 'styles/common';
 
-import useEscrowDataQuery from 'queries/escrow/useEscrowDataQuery';
+import useEscrowCalculations from 'sections/escrow/hooks/useEscrowCalculations';
 import { formatCryptoCurrency } from '../utils/formatters/number';
 
 import Main from 'sections/escrow/index';
@@ -15,8 +15,11 @@ const SNX_HEADER_DECIMALS = 2;
 const EscrowPage = () => {
 	const { t } = useTranslation();
 
-	const escrowDataQuery = useEscrowDataQuery();
-	const escrowData = escrowDataQuery?.data;
+	const escrowCalculations = useEscrowCalculations();
+
+	const totalEscrowed = escrowCalculations?.totalEscrowBalance;
+	const totalClaimable = escrowCalculations?.totalClaimableBalance;
+	const totalVested = escrowCalculations?.totalVestedBalance;
 
 	return (
 		<>
@@ -26,20 +29,20 @@ const EscrowPage = () => {
 			<StatsSection>
 				<Available
 					title={t('common.stat-box.available-snx')}
-					value={formatCryptoCurrency(escrowData?.claimableAmount ?? 0, {
+					value={formatCryptoCurrency(totalClaimable ?? 0, {
 						decimals: SNX_HEADER_DECIMALS,
 					})}
 				/>
 				<Escrowed
 					title={t('common.stat-box.escrowed-snx')}
-					value={formatCryptoCurrency(escrowData?.totalEscrowed ?? 0, {
+					value={formatCryptoCurrency(totalEscrowed ?? 0, {
 						decimals: SNX_HEADER_DECIMALS,
 					})}
 					size="lg"
 				/>
 				<Vested
 					title={t('common.stat-box.vested-snx')}
-					value={formatCryptoCurrency(escrowData?.totalVested ?? 0, {
+					value={formatCryptoCurrency(totalVested ?? 0, {
 						decimals: SNX_HEADER_DECIMALS,
 					})}
 				/>

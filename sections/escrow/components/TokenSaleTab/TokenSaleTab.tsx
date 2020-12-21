@@ -1,62 +1,55 @@
 import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
-import { Svg } from 'react-optimized-image';
+import Notify from 'containers/Notify';
+import { ethers } from 'ethers';
 
 import synthetix from 'lib/synthetix';
 
-import SNXLogo from 'assets/svg/currencies/crypto/SNX.svg';
-import { StyledCTA, TabContainer } from '../common';
-import GasSelector from 'components/GasSelector';
+import { useRecoilValue } from 'recoil';
+import { isWalletConnectedState } from 'store/wallet';
+
+import TabContent from './TabContent';
+import { TabContainer } from '../common';
 import { getGasEstimateForTransaction } from 'utils/transactions';
 import { normalizedGasPrice, normalizeGasLimit } from 'utils/network';
 import { Transaction } from 'constants/network';
-import { formatCurrency } from 'utils/formatters/number';
-import { useTranslation } from 'react-i18next';
-import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
-import { ethers } from 'ethers';
-import Notify from 'containers/Notify';
-import { CryptoCurrency } from 'constants/currency';
-import { FlexDivColCentered, ModalItem, ModalItemText, ModalItemTitle } from 'styles/common';
-import { ActionCompleted, ActionInProgress } from '../TxSent';
+
 import useTokenSaleEscrowQuery from 'queries/escrow/useTokenSaleEscrowQuery';
 
 const TokenSaleTab: React.FC = () => {
-	const { t } = useTranslation();
 	const tokenSaleEscrowQuery = useTokenSaleEscrowQuery();
+	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 
 	const { monitorHash } = Notify.useContainer();
 	const [gasLimitEstimate, setGasLimitEstimate] = useState<number | null>(null);
 	const [gasPrice, setGasPrice] = useState<number>(0);
-	const [error, setError] = useState<string | null>(null);
+	const [gasEstimateError, setGasEstimateError] = useState<string | null>(null);
 	const [transactionState, setTransactionState] = useState<Transaction>(Transaction.PRESUBMIT);
 	const [txHash, setTxHash] = useState<string | null>(null);
 	const [vestTxError, setVestTxError] = useState<string | null>(null);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 
 	const tokenSaleData = tokenSaleEscrowQuery?.data;
-
-	const availableTokensForVesting = tokenSaleData?.availableTokensForVesting ?? 0;
-
-	const vestingCurrencyKey = CryptoCurrency['SNX'];
+	const canVestAmount = tokenSaleData?.claimableAmount ?? 0;
 
 	useEffect(() => {
 		const getGasLimitEstimate = async () => {
-			if (synthetix && synthetix.js) {
+			if (synthetix && synthetix.js && isWalletConnected) {
 				try {
+					setGasEstimateError(null);
 					const gasEstimate = await getGasEstimateForTransaction(
 						[],
 						synthetix.js?.contracts.SynthetixEscrow.estimateGas.vest
 					);
 					setGasLimitEstimate(normalizeGasLimit(Number(gasEstimate)));
 				} catch (error) {
-					setError(error.message);
+					setGasEstimateError(error.message);
 					setGasLimitEstimate(null);
 				}
 			}
 		};
 		getGasLimitEstimate();
 		// eslint-disable-next-line
-	}, [synthetix, error]);
+	}, [gasEstimateError, isWalletConnected]);
 
 	const handleVest = async () => {
 		try {
@@ -68,7 +61,7 @@ const TokenSaleTab: React.FC = () => {
 
 			let transaction: ethers.ContractTransaction = await SynthetixEscrow.vest({
 				gasPrice: normalizedGasPrice(gasPrice),
-				gasLimitEstimate,
+				gasLimit: gasLimitEstimate,
 			});
 
 			if (transaction) {
@@ -76,97 +69,36 @@ const TokenSaleTab: React.FC = () => {
 				setTransactionState(Transaction.WAITING);
 				monitorHash({
 					txHash: transaction.hash,
-					onTxConfirmed: () => setTransactionState(Transaction.SUCCESS),
+					onTxConfirmed: () => {
+						setTransactionState(Transaction.SUCCESS);
+						tokenSaleEscrowQuery.refetch();
+					},
 				});
 				setTxModalOpen(false);
 			}
 		} catch (e) {
 			setTransactionState(Transaction.PRESUBMIT);
-			// TODO: translate this
-			setVestTxError('vest tx error');
+			setVestTxError(e.message);
 		}
 	};
 
-	if (transactionState === Transaction.WAITING) {
-		return (
-			<ActionInProgress
-				vestingAmount={availableTokensForVesting.toString()}
-				currencyKey={vestingCurrencyKey}
-				hash={txHash as string}
-			/>
-		);
-	}
-
-	if (transactionState === Transaction.SUCCESS) {
-		return (
-			<ActionCompleted
-				currencyKey={vestingCurrencyKey}
-				hash={txHash as string}
-				vestingAmount={availableTokensForVesting.toString()}
+	return (
+		<TabContainer>
+			<TabContent
+				claimableAmount={canVestAmount}
+				onSubmit={handleVest}
+				transactionError={vestTxError}
+				gasEstimateError={gasEstimateError}
+				txModalOpen={txModalOpen}
+				setTxModalOpen={setTxModalOpen}
+				gasLimitEstimate={gasLimitEstimate}
+				setGasPrice={setGasPrice}
+				txHash={txHash}
+				transactionState={transactionState}
 				setTransactionState={setTransactionState}
 			/>
-		);
-	}
-
-	return (
-		<>
-			<TabContainer>
-				<InfoContainer>
-					<Svg src={SNXLogo} />
-					<Data>
-						{availableTokensForVesting} {vestingCurrencyKey}
-					</Data>
-				</InfoContainer>
-				<GasSelector gasLimitEstimate={gasLimitEstimate} setGasPrice={setGasPrice} />
-				{availableTokensForVesting ? (
-					<StyledCTA
-						blue={true}
-						onClick={handleVest}
-						variant="primary"
-						size="lg"
-						disabled={error !== null || transactionState !== Transaction.PRESUBMIT}
-					>
-						{t('escrow.actions.vest-button', {
-							canVestAmount: formatCurrency(vestingCurrencyKey, availableTokensForVesting, {
-								currencyKey: vestingCurrencyKey,
-							}),
-						})}
-					</StyledCTA>
-				) : (
-					<StyledCTA blue={true} variant="primary" size="lg" disabled={true}>
-						{t('escrow.actions.disabled')}
-					</StyledCTA>
-				)}
-			</TabContainer>
-			{txModalOpen && (
-				<TxConfirmationModal
-					onDismiss={() => setTxModalOpen(false)}
-					txError={vestTxError}
-					attemptRetry={handleVest}
-					content={
-						<ModalItem>
-							<ModalItemTitle>{t('modals.confirm-transaction.vesting.title')}</ModalItemTitle>
-							<ModalItemText>
-								{formatCurrency(vestingCurrencyKey, availableTokensForVesting, {
-									currencyKey: vestingCurrencyKey,
-									decimals: 4,
-								})}
-							</ModalItemText>
-						</ModalItem>
-					}
-				/>
-			)}
-		</>
+		</TabContainer>
 	);
 };
-
-const InfoContainer = styled(FlexDivColCentered)`
-	height: 75%;
-`;
-const Data = styled.p`
-	color: ${(props) => props.theme.colors.white};
-	font-family: ${(props) => props.theme.fonts.extended};
-	font-size: 24px;
-`;
 
 export default TokenSaleTab;
