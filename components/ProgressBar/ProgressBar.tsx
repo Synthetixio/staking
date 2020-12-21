@@ -68,7 +68,6 @@ const ProgressBarWrapper = styled(FlexDivRowCentered)<{
 
 			.unfilled-bar {
 				border: 1px solid ${(props) => props.theme.colors.green};
-				border-left: none;
 				box-shadow: 0px 0px 15px ${(props) => props.theme.colors.green};
 			}
 		`}		
