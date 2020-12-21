@@ -10,15 +10,21 @@ import { appReadyState } from 'store/app';
 
 export type TokenSaleEscrow = {
 	escrowPeriod: number;
+	totalEscrowed: number;
 	releaseIntervalMonths: number;
 	totalPeriod: number;
-	availableTokensForVesting: number;
-	data: {
-		time: number;
-		value: number;
-	}[];
-	totalVesting: number;
+	claimableAmount: number;
+	schedule: Schedule;
+	totalVested: number;
 };
+
+type Schedule = Array<
+	| {
+			quantity: number;
+			date: Date;
+	  }
+	| []
+>;
 
 const useTokenSaleEscrowQuery = (options?: QueryConfig<TokenSaleEscrow | null>) => {
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
@@ -30,20 +36,23 @@ const useTokenSaleEscrowQuery = (options?: QueryConfig<TokenSaleEscrow | null>) 
 		QUERY_KEYS.Escrow.TokenSale(walletAddress ?? '', network?.id!),
 		async () => {
 			const {
-				contracts: { EscrowChecker },
+				contracts: { EscrowChecker, SynthetixEscrow },
 				utils: { formatEther },
 			} = synthetix.js!;
-			const data = await EscrowChecker.checkAccountSchedule(walletAddress);
+			const [accountSchedule, totalEscrowed] = await Promise.all([
+				EscrowChecker.checkAccountSchedule(walletAddress),
+				SynthetixEscrow.balanceOf(walletAddress),
+			]);
 			const currentUnixTime = new Date().getTime();
 			const vestStartTime = 1520899200;
 			const monthInSeconds = 2592000;
-			const dataReversed = data.slice().reverse();
+			const dataReversed = accountSchedule.slice().reverse();
 			let totalPeriod = 0;
 			let hasVesting = false;
 			let lastVestTime;
-			let groupedData = [];
-			let availableTokensForVesting = 0;
-			let totalVesting;
+			let schedule: Schedule = [];
+			let claimableAmount = 0;
+			let totalVested;
 
 			for (let i = 0; i < dataReversed.length - 1; i += 2) {
 				const parsedQuantity = Number(formatEther(dataReversed[i]));
@@ -63,12 +72,12 @@ const useTokenSaleEscrowQuery = (options?: QueryConfig<TokenSaleEscrow | null>) 
 				}
 
 				if (parsedDate > 0 && parsedDate < currentUnixTime) {
-					availableTokensForVesting += parsedQuantity;
+					claimableAmount += parsedQuantity;
 				}
 
 				if (lastVestTime) {
-					totalVesting = totalVesting ? totalVesting.add(dataReversed[i]) : dataReversed[i];
-					groupedData.push({ time: parsedDate, value: parsedQuantity });
+					totalVested = totalVested ? totalVested.add(dataReversed[i]) : dataReversed[i];
+					schedule.push({ date: new Date(parsedDate), quantity: parsedQuantity });
 				}
 			}
 
@@ -79,9 +88,10 @@ const useTokenSaleEscrowQuery = (options?: QueryConfig<TokenSaleEscrow | null>) 
 						escrowPeriod,
 						releaseIntervalMonths,
 						totalPeriod,
-						availableTokensForVesting,
-						data: groupedData,
-						totalVesting: Number(formatEther(totalVesting)),
+						claimableAmount,
+						schedule,
+						totalEscrowed: totalEscrowed / 1e18,
+						totalVested: Number(formatEther(totalVested)),
 				  }
 				: null;
 		},
