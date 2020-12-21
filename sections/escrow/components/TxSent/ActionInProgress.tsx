@@ -4,10 +4,17 @@ import { Svg } from 'react-optimized-image';
 import { useTranslation } from 'react-i18next';
 
 import Etherscan from 'containers/Etherscan';
-import { FlexDivCentered, FlexDivColCentered, ExternalLink } from 'styles/common';
+import { FlexDivCentered, ExternalLink } from 'styles/common';
 import PendingConfirmation from 'assets/svg/app/pending-confirmation.svg';
 
-import { InfoContainer, SectionHeader, SectionSubtext, InfoTitle, InfoData } from './common';
+import {
+	InfoContainer,
+	SectionHeader,
+	SectionSubtext,
+	InfoTitle,
+	InfoData,
+	Container,
+} from './common';
 import { formatCurrency } from 'utils/formatters/number';
 
 type ActionInProgressProps = {
@@ -41,12 +48,6 @@ const ActionInProgress: FC<ActionInProgressProps> = ({ vestingAmount, currencyKe
 		</Container>
 	);
 };
-
-const Container = styled(FlexDivColCentered)`
-	width: 80%;
-	margin: 0 auto;
-	text-align: center;
-`;
 
 const StyledExternalLink = styled(ExternalLink)`
 	margin-top: 25px;

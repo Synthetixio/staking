@@ -38,7 +38,7 @@ const useStakingCalculations = (): StakingCalculations => {
 		const transferableCollateral = toBigNumber(debtData?.transferable ?? 0);
 		const debtBalance = toBigNumber(debtData?.debtBalance ?? 0);
 		const stakingEscrow = toBigNumber(escrowBalance?.totalEscrowed ?? 0);
-		const tokenSaleEscrow = toBigNumber(escrowBalance?.tokenSaleEscrow ?? 0);
+		// const tokenSaleEscrow = toBigNumber(escrowBalance?.tokenSaleEscrow ?? 0);
 		const issuableSynths = toBigNumber(debtData?.issuableSynths ?? 0);
 
 		const stakedCollateral = collateral.multipliedBy(
@@ -47,7 +47,8 @@ const useStakingCalculations = (): StakingCalculations => {
 		const stakedCollateralValue = stakedCollateral.multipliedBy(SNXRate);
 		const lockedCollateral = collateral.minus(transferableCollateral);
 		const unstakedCollateral = collateral.minus(stakedCollateral);
-		const totalEscrowBalance = stakingEscrow.plus(tokenSaleEscrow);
+		// const totalEscrowBalance = stakingEscrow.plus(tokenSaleEscrow);
+		const totalEscrowBalance = stakingEscrow;
 		const percentageCurrentCRatio = currentCRatio.isZero()
 			? toBigNumber(0)
 			: toBigNumber(1).div(currentCRatio);

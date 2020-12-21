@@ -9,15 +9,19 @@ import { isWalletConnectedState, networkState, walletAddressState } from 'store/
 import { appReadyState } from 'store/app';
 
 export type EscrowData = {
-	canVest: number;
-	schedule: Array<{
-		date: Date;
-		quantity: number;
-	}>;
+	claimableAmount: number;
+	schedule: Schedule;
 	totalEscrowed: number;
 	totalVested: number;
-	tokenSaleEscrow: number;
 };
+
+type Schedule = Array<
+	| {
+			quantity: number;
+			date: Date;
+	  }
+	| []
+>;
 
 const useEscrowDataQuery = (options?: QueryConfig<EscrowData>) => {
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
@@ -29,18 +33,18 @@ const useEscrowDataQuery = (options?: QueryConfig<EscrowData>) => {
 		QUERY_KEYS.Escrow.Data(walletAddress ?? '', network?.id!),
 		async () => {
 			const {
-				contracts: { RewardEscrow, SynthetixEscrow },
+				contracts: { RewardEscrow },
 				utils: { formatEther },
 			} = synthetix.js!;
-			const [accountSchedule, totalEscrowed, totalVested, tokenSaleEscrow] = await Promise.all([
+
+			const [accountSchedule, totalEscrowed, totalVested] = await Promise.all([
 				RewardEscrow.checkAccountSchedule(walletAddress),
 				RewardEscrow.totalEscrowedAccountBalance(walletAddress),
 				RewardEscrow.totalVestedAccountBalance(walletAddress),
-				SynthetixEscrow.balanceOf(walletAddress),
 			]);
 
-			const schedule = [];
-			let canVest = 0;
+			let schedule: Schedule = [];
+			let claimableAmount: number = 0;
 			const currentUnixTime = new Date().getTime();
 
 			for (let i = 0; i < accountSchedule.length; i += 2) {
@@ -48,7 +52,7 @@ const useEscrowDataQuery = (options?: QueryConfig<EscrowData>) => {
 
 				if (!accountSchedule[i].isZero() && quantity) {
 					if (accountSchedule[i] * 1000 < currentUnixTime) {
-						canVest += quantity;
+						claimableAmount += quantity;
 					}
 					schedule.push({
 						date: new Date(Number(accountSchedule[i]) * 1000),
@@ -56,12 +60,12 @@ const useEscrowDataQuery = (options?: QueryConfig<EscrowData>) => {
 					});
 				}
 			}
+
 			return {
-				canVest,
+				claimableAmount,
 				schedule,
-				totalEscrowed: Number(formatEther(totalEscrowed)),
-				totalVested: Number(formatEther(totalVested)),
-				tokenSaleEscrow: Number(formatEther(tokenSaleEscrow)),
+				totalEscrowed: totalEscrowed / 1e18,
+				totalVested: totalVested / 1e18,
 			};
 		},
 		{

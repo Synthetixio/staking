@@ -32,7 +32,6 @@ const ActionBox: React.FC = () => {
 	return (
 		<StructuredTab
 			boxPadding={20}
-			boxHeight={450}
 			boxWidth={BOX_COLUMN_WIDTH}
 			tabData={tabData}
 			setPanelType={setPanelType}
