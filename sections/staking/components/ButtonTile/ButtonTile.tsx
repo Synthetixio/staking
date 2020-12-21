@@ -40,7 +40,7 @@ const Container = styled(FlexDivColCentered)<{ disabled: boolean }>`
 	padding: 16px;
 	flex: 1;
 	margin: 8px 0px;
-	cursor: ${(props) => (props.disabled ? 'not-allowed' : 'not-allowed')};
+	cursor: ${(props) => (props.disabled ? 'not-allowed' : 'pointer')};
 	${(props) =>
 		!props.disabled &&
 		css`
