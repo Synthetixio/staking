@@ -300,7 +300,7 @@ export const Divider = styled.div`
 `;
 
 export const GlowingCircle = styled(FlexDivCentered)<{
-	variant: 'blue' | 'green' | 'orange';
+	variant: 'blue' | 'green' | 'orange' | 'yellow';
 	size: 'sm' | 'md' | 'lg';
 }>`
 	border-radius: 50%;
@@ -354,4 +354,11 @@ export const GlowingCircle = styled(FlexDivCentered)<{
 			border: 1.5px solid ${(props) => props.theme.colors.orange};
 			box-shadow: 0px 0px 15px ${(props) => props.theme.colors.orange};
 		`}		
+
+${(props) =>
+	props.variant === 'yellow' &&
+	css`
+		border: 1.5px solid ${(props) => props.theme.colors.yellow};
+		box-shadow: 0px 0px 15px ${(props) => props.theme.colors.yellow};
+	`}				
 `;

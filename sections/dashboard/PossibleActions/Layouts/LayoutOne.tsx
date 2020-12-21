@@ -1,8 +1,9 @@
 import { FC, useMemo } from 'react';
-import Img, { Svg } from 'react-optimized-image';
+import { Svg } from 'react-optimized-image';
 import { useTranslation } from 'react-i18next';
 
 import ROUTES from 'constants/routes';
+import { EXTERNAL_LINKS } from 'constants/links';
 import useLPData from 'hooks/useLPData';
 import { CryptoCurrency, Synths } from 'constants/currency';
 import { formatPercent } from 'utils/formatters/number';
@@ -27,7 +28,11 @@ const LayoutOne: FC = () => {
 				gridLocations: ['col-1', 'col-3', 'row-1', 'row-2'],
 				icon: (
 					<GlowingCircle variant="green" size="md">
-						<Img src={ClaimIcon} width="32" height="32" />
+						<Svg
+							src={ClaimIcon}
+							width="32"
+							viewBox={`0 0 ${ClaimIcon.width} ${ClaimIcon.height}`}
+						/>
 					</GlowingCircle>
 				),
 				title: t('dashboard.actions.claim.title'),
@@ -39,7 +44,7 @@ const LayoutOne: FC = () => {
 				gridLocations: ['col-3', 'col-4', 'row-1', 'row-2'],
 				icon: (
 					<GlowingCircle variant="blue" size="md">
-						<Img src={MintIcon} width="24" height="24" />
+						<Svg src={MintIcon} />
 					</GlowingCircle>
 				),
 				title: t('dashboard.actions.mint.title'),
@@ -51,12 +56,12 @@ const LayoutOne: FC = () => {
 				gridLocations: ['col-4', 'col-5', 'row-1', 'row-2'],
 				icon: (
 					<GlowingCircle variant="orange" size="md">
-						<Img src={KwentaIcon} width="32" height="32" />
+						<Svg src={KwentaIcon} width="32" />
 					</GlowingCircle>
 				),
 				title: t('dashboard.actions.trade.title'),
 				copy: t('dashboard.actions.trade.copy'),
-				externalLink: 'http://kwenta.io/',
+				externalLink: EXTERNAL_LINKS.Trading.Kwenta,
 				visible: true,
 			},
 			{
