@@ -74,6 +74,7 @@ const WatchWalletModal: React.FC<WatchWalletModalProps> = ({ onDismiss }) => {
 			<WatchWalletContainer>
 				<Subtitle>{t('modals.wallet.watch-wallet.subtitle')}</Subtitle>
 				<StyledInput
+					autoFocus={true}
 					value={address}
 					onChange={(e) => setAddress(e.target.value)}
 					placeholder={t('modals.wallet.watch-wallet.placeholder')}

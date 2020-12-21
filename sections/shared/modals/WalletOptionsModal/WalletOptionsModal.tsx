@@ -118,7 +118,7 @@ const WalletOptionsModal: FC<WalletOptionsProps> = ({ onDismiss, setWatchWalletM
 	}, [copiedAddress]);
 
 	return (
-		<OutsideClickHandler onOutsideClick={() => onDismiss()}>
+		<OutsideClickHandler onOutsideClick={(e) => onDismiss()}>
 			<StyledMenuModal>
 				{isWalletConnected ? (
 					<>
@@ -180,23 +180,16 @@ const WalletOptionsModal: FC<WalletOptionsProps> = ({ onDismiss, setWatchWalletM
 							>
 								{walletIcon} {t('modals.wallet.change-wallet')}
 							</StyledButton>
-							<Tooltip
-								arrow={true}
-								placement="bottom"
-								content={t('modals.wallet.available-on-hardware-wallet')}
-							>
-								<span>
-									<StyledButton
-										onClick={() => {
-											onDismiss();
-											switchAccounts();
-										}}
-										disabled={!isHardwareWallet()}
-									>
-										{changeIcon} {t('modals.wallet.switch-account')}
-									</StyledButton>
-								</span>
-							</Tooltip>
+							{isHardwareWallet() && (
+								<StyledButton
+									onClick={() => {
+										onDismiss();
+										switchAccounts();
+									}}
+								>
+									{changeIcon} {t('modals.wallet.switch-account')}
+								</StyledButton>
+							)}
 							<StyledButton
 								onClick={() => {
 									onDismiss();
@@ -341,6 +334,11 @@ const CopyClipboardContainer = styled(FlexDiv)`
 	cursor: pointer;
 	color: ${(props) => props.theme.colors.gray};
 	margin-right: 2px;
+	&:hover {
+		svg {
+			color: ${(props) => props.theme.colors.white};
+		}
+	}
 `;
 
 const WrappedExternalLink = styled(ExternalLink)`
@@ -352,8 +350,15 @@ const WrappedExternalLink = styled(ExternalLink)`
 
 const LinkContainer = styled(FlexDiv)`
 	cursor: pointer;
-	color: ${(props) => props.theme.colors.gray};
 	margin-left: 2px;
+	svg {
+		color: ${(props) => props.theme.colors.gray};
+	}
+	&:hover {
+		svg {
+			color: ${(props) => props.theme.colors.white};
+		}
+	}
 `;
 
 const Buttons = styled(FlexDivCol)`
