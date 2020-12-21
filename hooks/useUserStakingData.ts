@@ -28,9 +28,10 @@ export const useUserStakingData = () => {
 	const stakedValue =
 		collateral.toNumber() > 0 && currentCRatio.toNumber() > 0
 			? collateral
-					.multipliedBy(Math.min(1 / currentCRatio.dividedBy(targetCRatio).toNumber()))
+					.multipliedBy(Math.min(1, currentCRatio.dividedBy(targetCRatio).toNumber()))
 					.multipliedBy(SNXRate)
 			: toBigNumber(0);
+
 	const weeklyRewards = sUSDRate * feesToDistribute + SNXRate * rewardsToDistribute;
 
 	const stakingAPR =
