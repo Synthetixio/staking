@@ -149,7 +149,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 			}
 		}
 		claim();
-	}, [gasPrice, monitorHash]);
+	}, [gasPrice, monitorHash, tradingRewards, stakingRewards]);
 
 	const goToBurn = useCallback(() => router.push(ROUTES.Staking.Burn), [router]);
 
