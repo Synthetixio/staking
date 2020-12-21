@@ -12,6 +12,7 @@ import {
 	boxShadowBlue,
 } from 'styles/common';
 import Success from 'assets/svg/app/success.svg';
+import Link from 'next/link';
 
 import { Transaction } from 'constants/network';
 import ROUTES from 'constants/routes';
@@ -102,17 +103,19 @@ const ActionCompleted: React.FC<ActionCompletedProps> = ({
 				{t('staking.actions.mint.completed.title', { synth: Synths.sUSD })}
 			</SectionHeader>
 			<MiddleSection>
-				<MainInfoBox>
-					<Currency.Icon currencyKey={CryptoCurrency.CRV} width="20" height="20" />
-					<MiddleInfoSection>
-						{t('staking.actions.mint.completed.curve', { synth: Synths.sUSD })}
-					</MiddleInfoSection>
-					<RightInfoSection>
-						<AprText>{t('staking.actions.mint.completed.est-apr')}</AprText>
-						{/* @TODO: Replace with variable APR */}
-						<AprValue>14%</AprValue>
-					</RightInfoSection>
-				</MainInfoBox>
+				<Link href={ROUTES.Earn.Curve_LP}>
+					<MainInfoBox>
+						<Currency.Icon currencyKey={CryptoCurrency.CRV} width="20" height="20" />
+						<MiddleInfoSection>
+							{t('staking.actions.mint.completed.curve', { synth: Synths.sUSD })}
+						</MiddleInfoSection>
+						<RightInfoSection>
+							<AprText>{t('staking.actions.mint.completed.est-apr')}</AprText>
+							{/* @TODO: Replace with variable APR */}
+							<AprValue>14%</AprValue>
+						</RightInfoSection>
+					</MainInfoBox>
+				</Link>
 			</MiddleSection>
 			<SectionSubtext>{t('staking.actions.mint.completed.subtext')}</SectionSubtext>
 			<ButtonWrap>
@@ -140,6 +143,7 @@ const MainInfoBox = styled(FlexDivCentered)`
 	height: 95px;
 	width: 100%;
 	border-radius: 4px;
+	cursor: pointer;
 `;
 
 const MiddleInfoSection = styled.div`

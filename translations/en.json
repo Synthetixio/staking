@@ -115,11 +115,16 @@
 			"title": "Possible Actions",
 			"claim": {
 				"title": "CLAIM {{amount}} SNX",
-				"copy": "Claim your staking rewards before the end of this epoch"
+				"copy": "Claim your staking rewards before the end of this epoch",
+				"tooltip": "No rewards to claim"
 			},
 			"mint": {
 				"title": "MINT sUSD",
 				"copy": "Mint {{sUSDAmount}} sUSD by Staking {{SNXAmount}} SNX"
+			},
+			"burn": {
+				"title": "Burn to {{targetCRatio}}",
+				"copy": "Burn your sUSD to fix your c-ratio"
 			},
 			"earn": {
 				"title": "EARN {{percent}}",

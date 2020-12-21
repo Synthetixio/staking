@@ -124,7 +124,7 @@ const IconContainer = styled(FlexDivCentered)`
 `;
 const Title = styled.p`
 	font-family: ${(props) => props.theme.fonts.extended};
-	font-size: 14px;
+	font-size: 18px;
 	color: ${(props) => props.theme.colors.white};
 	text-transform: uppercase;
 	padding-top: 16px;
@@ -133,6 +133,7 @@ const Subtitle = styled.p`
 	font-family: ${(props) => props.theme.fonts.regular};
 	font-size: 12px;
 	color: ${(props) => props.theme.colors.white};
+	opacity: 0.75;
 	line-height: 17px;
 `;
 
