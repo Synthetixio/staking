@@ -1,7 +1,7 @@
 import { CurrencyKey } from 'constants/currency';
-import { FC, useContext } from 'react';
+import { FC } from 'react';
 import { AreaChart as RechartsAreaChart, Area } from 'recharts';
-import { ThemeContext } from 'styled-components';
+import { useTheme } from 'styled-components';
 
 export type LineChartData = Array<{ value: number }>;
 
@@ -12,7 +12,7 @@ type AreaChartProps = {
 };
 
 const AreaChart: FC<AreaChartProps> = ({ data, trendLinePositive, currencyKey }) => {
-	const { colors } = useContext(ThemeContext);
+	const { colors } = useTheme();
 
 	return (
 		<RechartsAreaChart width={120} height={40} data={data} id={`line-price-chart-${currencyKey}`}>

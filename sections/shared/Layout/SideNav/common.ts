@@ -1,12 +1,14 @@
 import styled from 'styled-components';
 import { FlexDivCentered, FlexDivCol, FlexDivRowCentered } from 'styles/common';
 
+import ProgressBar from 'components/ProgressBar';
+
 export const BarStatBox = styled(FlexDivCol)`
 	width: 100%;
 	margin-bottom: 35px;
 	&:last-child {
 		margin-bottom: 45px;
-		margin-top: 0;
+		margin-top: -10px;
 	}
 `;
 
@@ -19,8 +21,13 @@ export const BarTitle = styled(FlexDivCentered)`
 	text-transform: uppercase;
 `;
 
-export const BarValue = styled.p`
+export const BarValue = styled.span`
 	font-size: 12px;
 	color: ${(props) => props.theme.colors.white};
 	font-family: ${(props) => props.theme.fonts.mono};
+`;
+
+export const StyledProgressBar = styled(ProgressBar)`
+	height: 6px;
+	margin: 10px 0;
 `;
