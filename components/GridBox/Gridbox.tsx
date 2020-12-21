@@ -115,11 +115,12 @@ const GridBoxIcon = styled.div`
 `;
 
 const GridBoxCopy = styled.p`
-	font-family: ${(props) => props.theme.fonts.interSemiBold};
+	font-family: ${(props) => props.theme.fonts.regular};
 	font-size: 12px;
 	max-width: 75%;
 	text-align: center;
-	color: ${(props) => props.theme.colors.gray};
+	color: ${(props) => props.theme.colors.white};
+	opacity: 0.75;
 `;
 
 const StyledTooltip = styled(Tooltip)`

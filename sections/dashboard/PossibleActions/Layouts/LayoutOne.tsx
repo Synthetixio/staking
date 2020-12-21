@@ -6,23 +6,29 @@ import ROUTES from 'constants/routes';
 import { EXTERNAL_LINKS } from 'constants/links';
 import useLPData from 'hooks/useLPData';
 import { CryptoCurrency, Synths } from 'constants/currency';
-import { formatPercent } from 'utils/formatters/number';
+import { formatPercent, toBigNumber } from 'utils/formatters/number';
 
 import KwentaIcon from 'assets/svg/app/kwenta.svg';
 import MintIcon from 'assets/svg/app/mint.svg';
 import ClaimIcon from 'assets/svg/app/claim.svg';
+import BurnIcon from 'assets/svg/app/burn.svg';
 
 import GridBox, { GridBoxProps } from 'components/GridBox/Gridbox';
 import { GlowingCircle } from 'styles/common';
 import Currency from 'components/Currency';
+import useUserStakingData from 'hooks/useUserStakingData';
+import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 
 const LayoutOne: FC = () => {
 	const { t } = useTranslation();
 
 	const lpData = useLPData();
+	const { stakingRewards, tradingRewards } = useUserStakingData();
+	const { currentCRatio, targetCRatio } = useStakingCalculations();
 
-	const gridItems: GridBoxProps[] = useMemo(
-		() => [
+	const gridItems: GridBoxProps[] = useMemo(() => {
+		const aboveTargetCRatio = currentCRatio.isLessThanOrEqualTo(targetCRatio);
+		return [
 			{
 				gridLocations: ['col-1', 'col-3', 'row-1', 'row-2'],
 				icon: (
@@ -36,18 +42,29 @@ const LayoutOne: FC = () => {
 				),
 				title: t('dashboard.actions.claim.title'),
 				copy: t('dashboard.actions.claim.copy'),
+				tooltip:
+					stakingRewards.isZero() && tradingRewards.isZero()
+						? t('dashboard.actions.claim.tooltip')
+						: undefined,
 				link: ROUTES.Earn.Claim,
+				isDisabled: stakingRewards.isZero() && tradingRewards.isZero(),
 			},
 			{
 				gridLocations: ['col-3', 'col-4', 'row-1', 'row-2'],
 				icon: (
-					<GlowingCircle variant="blue" size="md">
-						<Svg src={MintIcon} />
+					<GlowingCircle variant={!aboveTargetCRatio ? 'orange' : 'blue'} size="md">
+						{!aboveTargetCRatio ? <Svg src={BurnIcon} /> : <Svg src={MintIcon} />}
 					</GlowingCircle>
 				),
-				title: t('dashboard.actions.mint.title'),
-				copy: t('dashboard.actions.mint.copy'),
-				link: ROUTES.Staking.Home,
+				title: !aboveTargetCRatio
+					? t('dashboard.actions.burn.title', {
+							targetCRatio: formatPercent(toBigNumber(1).div(targetCRatio), { minDecimals: 0 }),
+					  })
+					: t('dashboard.actions.mint.title'),
+				copy: !aboveTargetCRatio
+					? t('dashboard.actions.burn.copy')
+					: t('dashboard.actions.mint.title'),
+				link: !aboveTargetCRatio ? ROUTES.Staking.Mint : ROUTES.Staking.Burn,
 			},
 			{
 				gridLocations: ['col-4', 'col-5', 'row-1', 'row-2'],
@@ -118,9 +135,8 @@ const LayoutOne: FC = () => {
 				}),
 				link: ROUTES.Earn.Curve_LP,
 			},
-		],
-		[t, lpData]
-	);
+		];
+	}, [t, lpData, currentCRatio, targetCRatio, stakingRewards, tradingRewards]);
 	return (
 		<>
 			{gridItems.map((props, index) => (
