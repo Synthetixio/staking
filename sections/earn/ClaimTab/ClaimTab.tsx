@@ -261,22 +261,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 			/>
 		);
 	}
-
-	const button = (
-		<PaddedButton
-			variant="primary"
-			onClick={!claimed && lowCRatio && totalRewards.toNumber() > 0 ? goToBurn : handleClaim}
-			disabled={totalRewards.toNumber() === 0 || claimed}
-		>
-			{claimed
-				? t('earn.actions.claim.claimed-button')
-				: lowCRatio && totalRewards.toNumber() > 0
-				? t('earn.actions.claim.low-ratio')
-				: totalRewards.toNumber() > 0
-				? t('earn.actions.claim.claim-button')
-				: t('earn.actions.claim.nothing-to-claim')}
-		</PaddedButton>
-	);
+	const canClaim = !claimed && totalRewards.toNumber() > 0;
 
 	return (
 		<>
@@ -319,18 +304,29 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 						</Value>
 					</TotalValueWrapper>
 					{error && <ErrorMessage>{error}</ErrorMessage>}
-					{!claimed && lowCRatio && totalRewards.toNumber() > 0 ? (
-						<Tooltip
-							hideOnClick={true}
-							arrow={true}
-							placement="bottom"
-							content={t('earn.actions.claim.ratio-notice')}
-						>
-							{button}
-						</Tooltip>
-					) : (
-						button
-					)}
+					<Tooltip
+						hideOnClick={true}
+						arrow={true}
+						placement="bottom"
+						content={t('earn.actions.claim.ratio-notice')}
+						disabled={!canClaim || !lowCRatio}
+					>
+						<PaddedButtonContainer>
+							<PaddedButton
+								variant="primary"
+								onClick={canClaim && lowCRatio ? goToBurn : handleClaim}
+								disabled={!canClaim}
+							>
+								{claimed
+									? t('earn.actions.claim.claimed-button')
+									: lowCRatio && totalRewards.toNumber() > 0
+									? t('earn.actions.claim.low-ratio')
+									: totalRewards.toNumber() > 0
+									? t('earn.actions.claim.claim-button')
+									: t('earn.actions.claim.nothing-to-claim')}
+							</PaddedButton>
+						</PaddedButtonContainer>
+					</Tooltip>
 					<GasSelector
 						altVersion={true}
 						gasLimitEstimate={gasLimitEstimate}
@@ -372,6 +368,11 @@ const ValueBoxWrapper = styled(FlexDivCentered)`
 
 const ValueBox = styled(FlexDivColCentered)`
 	width: 175px;
+`;
+
+const PaddedButtonContainer = styled.div`
+	width: 100%;
+	text-align: center;
 `;
 
 const PaddedButton = styled(StyledButton)`
