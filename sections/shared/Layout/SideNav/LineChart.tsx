@@ -21,18 +21,18 @@ const AreaChart: FC<AreaChartProps> = ({ data, trendLinePositive, currencyKey })
 					<stop offset="5%" stopColor={colors.green} stopOpacity={0.2} />
 					<stop offset="45%" stopColor={colors.green} stopOpacity={0} />
 				</linearGradient>
-				<linearGradient id="colorPink" x1="0" y1="0" x2="0" y2="1">
-					<stop offset="5%" stopColor={colors.pink} stopOpacity={0.2} />
-					<stop offset="45%" stopColor={colors.pink} stopOpacity={0} />
+				<linearGradient id="colorRed" x1="0" y1="0" x2="0" y2="1">
+					<stop offset="5%" stopColor={colors.red} stopOpacity={0.2} />
+					<stop offset="45%" stopColor={colors.red} stopOpacity={0} />
 				</linearGradient>
 			</defs>
 			<Area
 				type="monotone"
 				dataKey="value"
 				stackId="1"
-				stroke={trendLinePositive ? colors.green : colors.pink}
+				stroke={trendLinePositive ? colors.green : colors.red}
 				fillOpacity={1}
-				fill={trendLinePositive ? `url(#colorGreen)` : `url(#colorPink)`}
+				fill={trendLinePositive ? `url(#colorGreen)` : `url(#colorRed)`}
 			/>
 		</RechartsAreaChart>
 	);

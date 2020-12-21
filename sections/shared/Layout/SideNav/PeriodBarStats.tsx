@@ -10,20 +10,24 @@ const PeriodBarStats: FC = () => {
 	const { t } = useTranslation();
 	const { nextFeePeriodStarts, currentFeePeriodProgress } = useFeePeriodTimeAndProgress();
 
+	const nextFeePeriodStartsTime = nextFeePeriodStarts.getTime();
+
 	return (
 		<BarStatBox>
 			<BarHeaderSection>
 				<BarTitle>{t('sidenav.bars.period.title')}</BarTitle>
 				<BarValue>
-					<Countdown
-						autoStart={true}
-						date={nextFeePeriodStarts.getTime()}
-						renderer={({ days, hours, minutes }) => (
-							<span>
-								{zeroPad(days)}:{zeroPad(hours)}:{zeroPad(minutes)}
-							</span>
-						)}
-					/>
+					{nextFeePeriodStartsTime > 0 && (
+						<Countdown
+							autoStart={true}
+							date={nextFeePeriodStartsTime}
+							renderer={({ days, hours, minutes }) => (
+								<span>
+									{zeroPad(days)}:{zeroPad(hours)}:{zeroPad(minutes)}
+								</span>
+							)}
+						/>
+					)}
 				</BarValue>
 			</BarHeaderSection>
 			<StyledProgressBar percentage={currentFeePeriodProgress} variant="green" />
