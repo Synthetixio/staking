@@ -30,7 +30,7 @@ const CRatioBarStats: FC = () => {
 				variant="blue-pink"
 			/>
 			<BarHeaderSection>
-				<BarTitle>{t('sidenav.bars.t-target')}</BarTitle>
+				<BarTitle>{t('sidenav.bars.t-ratio')}</BarTitle>
 				<StyledBarValue>{formatPercent(percentageTargetCRatio)}</StyledBarValue>
 			</BarHeaderSection>
 		</BarStatBox>
