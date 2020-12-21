@@ -1,5 +1,5 @@
 import { FC, useMemo } from 'react';
-import { Svg } from 'react-optimized-image';
+import Img, { Svg } from 'react-optimized-image';
 import { useTranslation } from 'react-i18next';
 
 import ROUTES from 'constants/routes';
@@ -8,7 +8,9 @@ import { CryptoCurrency, Synths } from 'constants/currency';
 import { formatPercent } from 'utils/formatters/number';
 
 import Stake from 'assets/svg/app/stake.svg';
-import Kwenta from 'assets/svg/app/kwenta.svg';
+import KwentaIcon from 'assets/svg/app/kwenta.svg';
+import MintIcon from 'assets/svg/app/mint.svg';
+import ClaimIcon from 'assets/svg/app/claim.svg';
 
 import GridBox, { GridBoxProps } from 'components/GridBox/Gridbox';
 import { GlowingCircle } from 'styles/common';
@@ -23,7 +25,11 @@ const LayoutOne: FC = () => {
 		() => [
 			{
 				gridLocations: ['col-1', 'col-3', 'row-1', 'row-2'],
-				icon: <Svg src={Stake} />,
+				icon: (
+					<GlowingCircle variant="green" size="md">
+						<Img src={ClaimIcon} width="32" height="32" />
+					</GlowingCircle>
+				),
 				title: t('dashboard.actions.claim.title'),
 				copy: t('dashboard.actions.claim.copy'),
 				link: ROUTES.Earn.Claim,
@@ -31,7 +37,11 @@ const LayoutOne: FC = () => {
 			},
 			{
 				gridLocations: ['col-3', 'col-4', 'row-1', 'row-2'],
-				icon: <Svg src={Stake} />,
+				icon: (
+					<GlowingCircle variant="blue" size="md">
+						<Img src={MintIcon} width="24" height="24" />
+					</GlowingCircle>
+				),
 				title: t('dashboard.actions.mint.title'),
 				copy: t('dashboard.actions.mint.copy'),
 				link: ROUTES.Staking.Home,
@@ -39,7 +49,11 @@ const LayoutOne: FC = () => {
 			},
 			{
 				gridLocations: ['col-4', 'col-5', 'row-1', 'row-2'],
-				icon: <Svg src={Kwenta} />,
+				icon: (
+					<GlowingCircle variant="orange" size="md">
+						<Img src={KwentaIcon} width="32" height="32" />
+					</GlowingCircle>
+				),
 				title: t('dashboard.actions.trade.title'),
 				copy: t('dashboard.actions.trade.copy'),
 				externalLink: 'http://kwenta.io/',
