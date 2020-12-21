@@ -11,12 +11,11 @@ import {
 	ExternalLink,
 	boxShadowBlue,
 } from 'styles/common';
-import curveSVG from 'assets/svg/incentives/pool-curve.svg';
 import Success from 'assets/svg/app/success.svg';
 
 import { Transaction } from 'constants/network';
 import ROUTES from 'constants/routes';
-import { Synths } from 'constants/currency';
+import { CryptoCurrency, Synths } from 'constants/currency';
 
 import {
 	SectionHeader,
@@ -31,6 +30,7 @@ import {
 import Etherscan from 'containers/Etherscan';
 import { amountToBurnState, amountToMintState, burnTypeState, mintTypeState } from 'store/staking';
 import { useSetRecoilState } from 'recoil';
+import Currency from 'components/Currency';
 
 type ActionCompletedProps = {
 	setTransactionState: (tx: Transaction) => void;
@@ -103,7 +103,7 @@ const ActionCompleted: React.FC<ActionCompletedProps> = ({
 			</SectionHeader>
 			<MiddleSection>
 				<MainInfoBox>
-					<Svg src={curveSVG} />
+					<Currency.Icon currencyKey={CryptoCurrency.CRV} width="20" height="20" />
 					<MiddleInfoSection>
 						{t('staking.actions.mint.completed.curve', { synth: Synths.sUSD })}
 					</MiddleInfoSection>

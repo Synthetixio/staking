@@ -298,3 +298,53 @@ export const Divider = styled.div`
 	height: 1px;
 	width: 100%;
 `;
+
+export const GlowingCircle = styled(FlexDivCentered)<{
+	variant: 'blue' | 'green';
+	size: 'sm' | 'md' | 'lg';
+}>`
+	border-radius: 50%;
+	justify-content: center;
+
+	${(props) =>
+		props.size === 'sm' &&
+		css`
+			height: 32px;
+			width: 32px;
+		`}
+
+	${(props) =>
+		props.size === 'md' &&
+		css`
+			height: 56px;
+			width: 56px;
+		`}		
+
+	${(props) =>
+		props.size === 'lg' &&
+		css`
+			height: 64px;
+			width: 64px;
+		`}		
+
+	${(props) =>
+		props.variant === 'green' &&
+		css`
+			border: 1.5px solid ${(props) => props.theme.colors.green};
+			box-shadow: 0px 0px 15px ${(props) => props.theme.colors.green};
+		`}
+		
+	${(props) =>
+		props.variant === 'blue' &&
+		css`
+			border: 1.5px solid ${(props) => props.theme.colors.blue};
+			box-shadow: 0px 0px 15px ${(props) => props.theme.colors.blue};
+		`}
+
+	${(props) =>
+		props.variant === 'green' &&
+		css`
+			border: 1.5px solid ${(props) => props.theme.colors.green};
+			box-shadow: 0px 0px 15px ${(props) => props.theme.colors.green};
+		`}
+`;
