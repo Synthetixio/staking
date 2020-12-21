@@ -15,6 +15,8 @@ import { Transaction } from 'constants/network';
 import { normalizedGasPrice } from 'utils/network';
 import { CryptoCurrency, Synths } from 'constants/currency';
 import { getGasEstimateForTransaction } from 'utils/transactions';
+import { formatNumber } from 'utils/formatters/number';
+import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 
 import Connector from 'containers/Connector';
 import Notify from 'containers/Notify';
@@ -163,7 +165,7 @@ const LPTab: FC<LPTabProps> = ({ stakedAsset, tokenRewards, allowance, userBalan
 						<GreyHeader>{t('earn.actions.claim.claiming')}</GreyHeader>
 						<WhiteSubheader>
 							{t('earn.actions.claim.amount', {
-								amount: tokenRewards,
+								amount: formatNumber(tokenRewards, { decimals: DEFAULT_CRYPTO_DECIMALS }),
 								asset: CryptoCurrency.SNX,
 							})}
 						</WhiteSubheader>
@@ -196,7 +198,7 @@ const LPTab: FC<LPTabProps> = ({ stakedAsset, tokenRewards, allowance, userBalan
 						<GreyHeader>{t('earn.actions.claim.claiming')}</GreyHeader>
 						<WhiteSubheader>
 							{t('earn.actions.claim.amount', {
-								amount: tokenRewards,
+								amount: formatNumber(tokenRewards, { decimals: DEFAULT_CRYPTO_DECIMALS }),
 								asset: CryptoCurrency.SNX,
 							})}
 						</WhiteSubheader>

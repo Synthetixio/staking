@@ -9,7 +9,8 @@ import Success from 'assets/svg/app/success.svg';
 import GasSelector from 'components/GasSelector';
 import synthetix from 'lib/synthetix';
 import { StyledInput } from 'components/Input/NumericInput';
-import { formatCryptoCurrency } from 'utils/formatters/number';
+import { formatCryptoCurrency, formatNumber } from 'utils/formatters/number';
+import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import { getGasEstimateForTransaction } from 'utils/transactions';
 import { normalizedGasPrice, normalizeGasLimit } from 'utils/network';
@@ -169,11 +170,11 @@ const StakeTab: FC<StakeTabProps> = ({ stakedAsset, isStake, userBalance, staked
 						<WhiteSubheader>
 							{isStake
 								? t('earn.actions.stake.amount', {
-										amount,
+										amount: formatNumber(amount as number, { decimals: DEFAULT_CRYPTO_DECIMALS }),
 										asset: stakedAsset,
 								  })
 								: t('earn.actions.unstake.amount', {
-										amount,
+										amount: formatNumber(amount as number, { decimals: DEFAULT_CRYPTO_DECIMALS }),
 										asset: stakedAsset,
 								  })}
 						</WhiteSubheader>
@@ -203,11 +204,11 @@ const StakeTab: FC<StakeTabProps> = ({ stakedAsset, isStake, userBalance, staked
 						<WhiteSubheader>
 							{isStake
 								? t('earn.actions.stake.amount', {
-										amount,
+										amount: formatNumber(amount as number, { decimals: DEFAULT_CRYPTO_DECIMALS }),
 										asset: stakedAsset,
 								  })
 								: t('earn.actions.unstake.amount', {
-										amount,
+										amount: formatNumber(amount as number, { decimals: DEFAULT_CRYPTO_DECIMALS }),
 										asset: stakedAsset,
 								  })}
 						</WhiteSubheader>

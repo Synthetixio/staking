@@ -4,7 +4,9 @@ import styled from 'styled-components';
 import { ethers } from 'ethers';
 import BigNumber from 'bignumber.js';
 import { Svg } from 'react-optimized-image';
+import { useRouter } from 'next/router';
 
+import ROUTES from 'constants/routes';
 import { ExternalLink, FlexDiv } from 'styles/common';
 import synthetix from 'lib/synthetix';
 import PendingConfirmation from 'assets/svg/app/pending-confirmation.svg';
@@ -17,7 +19,8 @@ import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import useClaimedStatus from 'sections/hooks/useClaimedStatus';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 
-import { formatCurrency, formatFiatCurrency } from 'utils/formatters/number';
+import { DEFAULT_CRYPTO_DECIMALS, DEFAULT_FIAT_DECIMALS } from 'constants/defaults';
+import { formatCurrency, formatFiatCurrency, formatNumber } from 'utils/formatters/number';
 import { getGasEstimateForTransaction } from 'utils/transactions';
 import { normalizedGasPrice, normalizeGasLimit } from 'utils/network';
 
@@ -47,6 +50,7 @@ import {
 	ModalContent,
 	ModalItem,
 	ModalItemTitle,
+	Tooltip,
 } from 'styles/common';
 import { EXTERNAL_LINKS } from 'constants/links';
 import Currency from 'components/Currency';
@@ -78,6 +82,9 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 	const [gasPrice, setGasPrice] = useState<number>(0);
 	const [error, setError] = useState<string | null>(null);
 	const [lowCRatio, setLowCRatio] = useState(false);
+	const [claimedTradingRewards, setClaimedTradingRewards] = useState<number | null>(null);
+	const [claimedStakingRewards, setClaimedStakingRewards] = useState<number | null>(null);
+	const router = useRouter();
 
 	const [transactionState, setTransactionState] = useState<Transaction>(Transaction.PRESUBMIT);
 	const [txHash, setTxHash] = useState<string | null>(null);
@@ -128,7 +135,11 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 					setTransactionState(Transaction.WAITING);
 					monitorHash({
 						txHash: transaction.hash,
-						onTxConfirmed: () => setTransactionState(Transaction.SUCCESS),
+						onTxConfirmed: () => {
+							setClaimedTradingRewards(tradingRewards.toNumber());
+							setClaimedStakingRewards(stakingRewards.toNumber());
+							setTransactionState(Transaction.SUCCESS);
+						},
 					});
 					setTxModalOpen(false);
 				}
@@ -138,7 +149,9 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 			}
 		}
 		claim();
-	}, [gasPrice, monitorHash]);
+	}, [gasPrice, monitorHash, tradingRewards, stakingRewards]);
+
+	const goToBurn = useCallback(() => router.push(ROUTES.Staking.Burn), [router]);
 
 	if (transactionState === Transaction.WAITING) {
 		return (
@@ -160,7 +173,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 								<GreyHeader>{t('earn.actions.claim.claiming')}</GreyHeader>
 								<WhiteSubheader>
 									{t('earn.actions.claim.amount', {
-										amount: tradingRewards,
+										amount: formatNumber(tradingRewards, { decimals: DEFAULT_FIAT_DECIMALS }),
 										asset: Synths.sUSD,
 									})}
 								</WhiteSubheader>
@@ -169,7 +182,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 								<GreyHeader>{t('earn.actions.claim.claiming')}</GreyHeader>
 								<WhiteSubheader>
 									{t('earn.actions.claim.amount', {
-										amount: stakingRewards,
+										amount: formatNumber(stakingRewards, { decimals: DEFAULT_CRYPTO_DECIMALS }),
 										asset: CryptoCurrency.SNX,
 									})}
 								</WhiteSubheader>
@@ -206,7 +219,9 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 								<GreyHeader>{t('earn.actions.claim.claimed')}</GreyHeader>
 								<WhiteSubheader>
 									{t('earn.actions.claim.amount', {
-										amount: tradingRewards,
+										amount: formatNumber(claimedTradingRewards as number, {
+											decimals: DEFAULT_FIAT_DECIMALS,
+										}),
 										asset: Synths.sUSD,
 									})}
 								</WhiteSubheader>
@@ -215,7 +230,9 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 								<GreyHeader>{t('earn.actions.claim.claimed')}</GreyHeader>
 								<WhiteSubheader>
 									{t('earn.actions.claim.amount', {
-										amount: stakingRewards,
+										amount: formatNumber(claimedStakingRewards as number, {
+											decimals: DEFAULT_CRYPTO_DECIMALS,
+										}),
 										asset: CryptoCurrency.SNX,
 									})}
 								</WhiteSubheader>
@@ -231,6 +248,8 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 							<DismissButton
 								variant="secondary"
 								onClick={() => {
+									setClaimedTradingRewards(null);
+									setClaimedStakingRewards(null);
 									setTransactionState(Transaction.PRESUBMIT);
 								}}
 							>
@@ -242,6 +261,22 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 			/>
 		);
 	}
+
+	const button = (
+		<PaddedButton
+			variant="primary"
+			onClick={!claimed && lowCRatio && totalRewards.toNumber() > 0 ? goToBurn : handleClaim}
+			disabled={totalRewards.toNumber() === 0 || claimed}
+		>
+			{claimed
+				? t('earn.actions.claim.claimed-button')
+				: lowCRatio && totalRewards.toNumber() > 0
+				? t('earn.actions.claim.low-ratio')
+				: totalRewards.toNumber() > 0
+				? t('earn.actions.claim.claim-button')
+				: t('earn.actions.claim.nothing-to-claim')}
+		</PaddedButton>
+	);
 
 	return (
 		<>
@@ -259,7 +294,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 							<Value>
 								{formatCurrency(Synths.sUSD, tradingRewards, {
 									currencyKey: Synths.sUSD,
-									decimals: 2,
+									decimals: DEFAULT_FIAT_DECIMALS,
 								})}
 							</Value>
 							<Subtext>{t('earn.incentives.options.snx.trading-rewards')}</Subtext>
@@ -269,6 +304,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 							<Value>
 								{formatCurrency(CryptoCurrency.SNX, stakingRewards, {
 									currencyKey: CryptoCurrency.SNX,
+									decimals: DEFAULT_CRYPTO_DECIMALS,
 								})}
 							</Value>
 							<Subtext>{t('earn.incentives.options.snx.staking-rewards')}</Subtext>
@@ -283,19 +319,18 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 						</Value>
 					</TotalValueWrapper>
 					{error && <ErrorMessage>{error}</ErrorMessage>}
-					<PaddedButton
-						variant="primary"
-						onClick={handleClaim}
-						disabled={totalRewards.toNumber() === 0 || claimed}
-					>
-						{claimed
-							? t('earn.actions.claim.claimed-button')
-							: lowCRatio && totalRewards.toNumber() > 0
-							? t('earn.actions.claim.low-ratio')
-							: totalRewards.toNumber() > 0
-							? t('earn.actions.claim.claim-button')
-							: t('earn.actions.claim.nothing-to-claim')}
-					</PaddedButton>
+					{!claimed && lowCRatio && totalRewards.toNumber() > 0 ? (
+						<Tooltip
+							hideOnClick={true}
+							arrow={true}
+							placement="bottom"
+							content={t('earn.actions.claim.ratio-notice')}
+						>
+							{button}
+						</Tooltip>
+					) : (
+						button
+					)}
 					<GasSelector
 						altVersion={true}
 						gasLimitEstimate={gasLimitEstimate}
@@ -332,15 +367,16 @@ const InnerContainer = styled(FlexDivColCentered)`
 
 const ValueBoxWrapper = styled(FlexDivCentered)`
 	justify-content: space-around;
-	width: 350px;
+	width: 380px;
 `;
 
 const ValueBox = styled(FlexDivColCentered)`
-	width: 160px;
+	width: 175px;
 `;
 
 const PaddedButton = styled(StyledButton)`
 	margin-top: 20px;
+	text-transform: none;
 `;
 
 const StyledFlexDivColCentered = styled(FlexDivColCentered)`

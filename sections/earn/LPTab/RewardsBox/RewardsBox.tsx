@@ -8,8 +8,14 @@ import Connector from 'containers/Connector';
 import Currency from 'components/Currency';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import { formatCurrency, formatFiatCurrency, toBigNumber } from 'utils/formatters/number';
+import {
+	formatCurrency,
+	formatFiatCurrency,
+	toBigNumber,
+	formatNumber,
+} from 'utils/formatters/number';
 import { CryptoCurrency, CurrencyKey } from 'constants/currency';
+import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { ESTIMATE_VALUE } from 'constants/placeholder';
 import { getGasEstimateForTransaction } from 'utils/transactions';
 import { normalizeGasLimit } from 'utils/network';
@@ -79,7 +85,7 @@ const RewardsBox: FC<RewardsBoxProps> = ({
 				<Currency.Icon currencyKey={CryptoCurrency.SNX} width="48" height="48" />
 				<RewardsAmountSNX>
 					{formatCurrency(CryptoCurrency.SNX, tokenRewards, {
-						currencyKey: '',
+						currencyKey: CryptoCurrency.SNX,
 						decimals: 2,
 					})}
 				</RewardsAmountSNX>
@@ -109,7 +115,7 @@ const RewardsBox: FC<RewardsBoxProps> = ({
 								<ModalItemTitle>{t('earn.actions.claim.claiming')}</ModalItemTitle>
 								<ModalItemText>
 									{t('earn.actions.claim.amount', {
-										amount: tokenRewards,
+										amount: formatNumber(tokenRewards, { decimals: DEFAULT_CRYPTO_DECIMALS }),
 										asset: CryptoCurrency.SNX,
 									})}
 								</ModalItemText>
