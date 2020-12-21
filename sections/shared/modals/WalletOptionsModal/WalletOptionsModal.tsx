@@ -224,7 +224,7 @@ const WalletOptionsModal: FC<WalletOptionsProps> = ({ onDismiss, setWatchWalletM
 				) : (
 					<WalletDetails>
 						<Buttons>
-							<StyledGlowingButton onClick={connectWallet}>
+							<StyledGlowingButton onClick={connectWallet} data-testid="connect-wallet">
 								{t('common.wallet.connect-wallet')}
 							</StyledGlowingButton>
 							<DividerText>{t('common.wallet.or')}</DividerText>
@@ -233,6 +233,7 @@ const WalletOptionsModal: FC<WalletOptionsProps> = ({ onDismiss, setWatchWalletM
 									onDismiss();
 									setWatchWalletModalOpened(true);
 								}}
+								data-testid="watch-wallet"
 							>
 								{searchIcon} {t('modals.wallet.watch-wallet.title')}
 							</StyledButton>
