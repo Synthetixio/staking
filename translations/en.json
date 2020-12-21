@@ -143,7 +143,8 @@
 			},
 			"migrate": {
 				"title": "MIGRATE TO LAYER 2",
-				"copy": "Migrate your SNX from L1 to L2"
+				"copy": "Migrate your SNX from L1 to L2",
+				"tooltip": "Coming soon"
 			}
 		}
 	},
