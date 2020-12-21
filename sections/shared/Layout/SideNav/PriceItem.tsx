@@ -97,7 +97,7 @@ const PercentChange = styled.div<{ trendLinePositive: boolean }>`
 	font-size: 10px;
 	font-family: ${(props) => props.theme.fonts.interBold};
 	color: ${(props) =>
-		props.trendLinePositive ? props.theme.colors.green : props.theme.colors.red};
+		props.trendLinePositive ? props.theme.colors.green : props.theme.colors.pink};
 `;
 
 const TriangleMixin = `
@@ -116,7 +116,7 @@ const TriangleUp = styled.div`
 
 const TriangleDown = styled.div`
 	${TriangleMixin};
-	border-top: ${(props) => `calc(2 * 4px * 0.866) solid ${props.theme.colors.red}`};
+	border-top: ${(props) => `calc(2 * 4px * 0.866) solid ${props.theme.colors.pink}`};
 	border-bottom: 4px solid transparent;
 	margin-bottom: -5px;
 	margin-right: 4px;
