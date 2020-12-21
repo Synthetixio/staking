@@ -326,13 +326,14 @@
 				"claim-button": "CLAIM REWARDS",
 				"claim-snx-button": "Claim SNX",
 				"claimed-button": "ALREADY CLAIMED",
-				"low-ratio": "ADD COLLATERAL TO CLAIM",
+				"low-ratio": "BURN sUSD TO CLAIM",
 				"nothing-to-claim": "NOTHING TO CLAIM",
 				"claiming": "CLAIMING",
 				"claimed": "CLAIMED",
 				"amount": "{{amount}} {{asset}}",
 				"in-progress": "Claiming in progress",
-				"success": "Claiming complete!"
+				"success": "Claiming complete!",
+				"ratio-notice": "To claim rewards, you must be within 1% of the Target Collateralization Ratio. You must burn sUSD or obtain more SNX to fix your ratio."
 			},
 			"lp": {
 				"title-curve": "CURVE REWARDS",
