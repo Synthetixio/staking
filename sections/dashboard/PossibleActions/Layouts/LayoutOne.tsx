@@ -8,7 +8,6 @@ import useLPData from 'hooks/useLPData';
 import { CryptoCurrency, Synths } from 'constants/currency';
 import { formatPercent } from 'utils/formatters/number';
 
-import Stake from 'assets/svg/app/stake.svg';
 import KwentaIcon from 'assets/svg/app/kwenta.svg';
 import MintIcon from 'assets/svg/app/mint.svg';
 import ClaimIcon from 'assets/svg/app/claim.svg';
