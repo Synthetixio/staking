@@ -9,7 +9,7 @@ import synthetix from 'lib/synthetix';
 import { getDefaultNetworkId } from 'utils/network';
 
 import { appReadyState, languageState } from 'store/app';
-import { walletAddressState, networkState } from 'store/wallet';
+import { walletAddressState, networkState, walletWatchedState } from 'store/wallet';
 
 import { Wallet as OnboardWallet } from 'bnc-onboard/dist/src/interfaces';
 
@@ -27,6 +27,7 @@ const useConnector = () => {
 	const [notify, setNotify] = useState<ReturnType<typeof initNotify> | null>(null);
 	const [isAppReady, setAppReady] = useRecoilState(appReadyState);
 	const setWalletAddress = useSetRecoilState(walletAddressState);
+	const setWalletWatched = useSetRecoilState(walletWatchedState);
 	const [selectedWallet, setSelectedWallet] = useLocalStorage<string | null>(
 		LOCAL_STORAGE_KEYS.SELECTED_WALLET,
 		''
@@ -154,6 +155,7 @@ const useConnector = () => {
 				const success = await onboard.walletSelect();
 				if (success) {
 					await onboard.walletCheck();
+					setWalletWatched(null);
 					resetCachedUI();
 				}
 			}

@@ -1,5 +1,6 @@
 import BigNumber from 'bignumber.js';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
+import { useCallback } from 'react';
 
 import { useRecoilValue } from 'recoil';
 import { priceCurrencyState } from 'store/app';
@@ -10,8 +11,11 @@ const useSelectedPriceCurrency = () => {
 	const exchangeRates = exchangeRatesQuery.data ?? null;
 	const selectPriceCurrencyRate = exchangeRates && exchangeRates[selectedPriceCurrency.name];
 
-	const getPriceAtCurrentRate = (price: BigNumber) =>
-		selectPriceCurrencyRate != null ? price.dividedBy(selectPriceCurrencyRate) : price;
+	const getPriceAtCurrentRate = useCallback(
+		(price: BigNumber) =>
+			selectPriceCurrencyRate != null ? price.dividedBy(selectPriceCurrencyRate) : price,
+		[selectPriceCurrencyRate]
+	);
 
 	return {
 		selectPriceCurrencyRate,

@@ -1,4 +1,4 @@
-import { FC, ReactNode } from 'react';
+import { FC, ReactNode, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import styled from 'styled-components';
@@ -31,83 +31,81 @@ const Transactions: FC<TransactionsProps> = ({ transactions, isLoaded, noResults
 	const { t } = useTranslation();
 	const { etherscanInstance } = Etherscan.useContainer();
 
+	const columns = useMemo(
+		() => [
+			{
+				Header: <>{t('history.table.type')}</>,
+				accessor: 'type',
+				Cell: (
+					cellProps: CellProps<HistoricalStakingTransaction, HistoricalStakingTransaction['type']>
+				) => (
+					<TypeContainer>
+						<TypeIconContainer>{<TypeIcon type={cellProps.value} />}</TypeIconContainer>
+						{t(`history.table.staking-tx-type.${cellProps.value}`)}
+					</TypeContainer>
+				),
+				sortable: true,
+				width: 200,
+			},
+			{
+				Header: <>{t('history.table.amount')}</>,
+				accessor: 'value',
+				Cell: (
+					cellProps: CellProps<HistoricalStakingTransaction, HistoricalStakingTransaction['value']>
+				) => (
+					<div>
+						{formatCurrency(Synths.sUSD, cellProps.value, {
+							currencyKey: Synths.sUSD,
+						})}
+						{cellProps.row.original.type === StakingTransactionType.FeesClaimed &&
+							cellProps.row.original.rewards != null && (
+								<>
+									{' / '}
+									{formatCurrency(CryptoCurrency.SNX, cellProps.row.original.rewards, {
+										currencyKey: CryptoCurrency.SNX,
+									})}
+								</>
+							)}
+					</div>
+				),
+				sortable: true,
+				width: 200,
+			},
+			{
+				Header: <>{t('history.table.date')}</>,
+				accessor: 'timestamp',
+				Cell: (
+					cellProps: CellProps<
+						HistoricalStakingTransaction,
+						HistoricalStakingTransaction['timestamp']
+					>
+				) => <div>{formatShortDate(cellProps.value)}</div>,
+				sortable: true,
+				width: 200,
+			},
+			{
+				Header: <>{t('history.table.view-tx')}</>,
+				id: 'link',
+				Cell: (cellProps: CellProps<HistoricalStakingTransaction>) =>
+					etherscanInstance != null && cellProps.row.original.hash ? (
+						<StyledExternalLink href={etherscanInstance.txLink(cellProps.row.original.hash)}>
+							{t('common.explorers.etherscan')} <Svg src={ArrowRightIcon} />
+						</StyledExternalLink>
+					) : (
+						NO_VALUE
+					),
+				sortable: false,
+			},
+		],
+		[etherscanInstance, t]
+	);
+
 	return (
 		<>
 			<StyledTable
 				palette="primary"
-				columns={[
-					{
-						Header: <>{t('history.table.type')}</>,
-						accessor: 'type',
-						Cell: (
-							cellProps: CellProps<
-								HistoricalStakingTransaction,
-								HistoricalStakingTransaction['type']
-							>
-						) => (
-							<TypeContainer>
-								<TypeIconContainer>{<TypeIcon type={cellProps.value} />}</TypeIconContainer>
-								{t(`history.table.staking-tx-type.${cellProps.value}`)}
-							</TypeContainer>
-						),
-						sortable: true,
-						width: 200,
-					},
-					{
-						Header: <>{t('history.table.amount')}</>,
-						accessor: 'value',
-						Cell: (
-							cellProps: CellProps<
-								HistoricalStakingTransaction,
-								HistoricalStakingTransaction['value']
-							>
-						) => (
-							<div>
-								{formatCurrency(Synths.sUSD, cellProps.value, {
-									currencyKey: Synths.sUSD,
-								})}
-								{cellProps.row.original.type === StakingTransactionType.FeesClaimed &&
-									cellProps.row.original.rewards != null && (
-										<>
-											{' / '}
-											{formatCurrency(CryptoCurrency.SNX, cellProps.row.original.rewards, {
-												currencyKey: CryptoCurrency.SNX,
-											})}
-										</>
-									)}
-							</div>
-						),
-						sortable: true,
-						width: 200,
-					},
-					{
-						Header: <>{t('history.table.date')}</>,
-						accessor: 'timestamp',
-						Cell: (
-							cellProps: CellProps<
-								HistoricalStakingTransaction,
-								HistoricalStakingTransaction['timestamp']
-							>
-						) => <div>{formatShortDate(cellProps.value)}</div>,
-						sortable: true,
-						width: 200,
-					},
-					{
-						Header: <>{t('history.table.view-tx')}</>,
-						id: 'link',
-						Cell: (cellProps: CellProps<HistoricalStakingTransaction>) =>
-							etherscanInstance != null && cellProps.row.original.hash ? (
-								<StyledExternalLink href={etherscanInstance.txLink(cellProps.row.original.hash)}>
-									{t('common.explorers.etherscan')} <Svg src={ArrowRightIcon} />
-								</StyledExternalLink>
-							) : (
-								NO_VALUE
-							),
-						sortable: false,
-					},
-				]}
+				columns={columns}
 				data={transactions}
-				columnsDeps={[etherscanInstance]}
 				isLoading={!isLoaded}
 				noResultsMessage={noResultsMessage}
 				showPagination={true}

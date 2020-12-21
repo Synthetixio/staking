@@ -48,6 +48,8 @@ import {
 	ModalItem,
 	ModalItemTitle,
 } from 'styles/common';
+import { EXTERNAL_LINKS } from 'constants/links';
+import Currency from 'components/Currency';
 
 import {
 	TotalValueWrapper,
@@ -57,8 +59,8 @@ import {
 	Label,
 	StyledLink,
 	TabContainer,
+	HeaderLabel,
 } from '../common';
-import Currency from 'components/Currency';
 
 type ClaimTabProps = {
 	tradingRewards: BigNumber;
@@ -145,7 +147,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 					<Label>
 						<Trans
 							i18nKey="earn.incentives.options.snx.description"
-							components={[<StyledLink />]}
+							components={[<StyledLink href={EXTERNAL_LINKS.Synthetix.Incentives} />]}
 						/>
 					</Label>
 				}
@@ -191,7 +193,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 					<Label>
 						<Trans
 							i18nKey="earn.incentives.options.snx.description"
-							components={[<StyledLink />]}
+							components={[<StyledLink href={EXTERNAL_LINKS.Synthetix.Incentives} />]}
 						/>
 					</Label>
 				}
@@ -244,10 +246,12 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 	return (
 		<>
 			<TabContainer>
-				<Label>
-					<Trans i18nKey="earn.incentives.options.snx.description" components={[<StyledLink />]} />
-				</Label>
-
+				<HeaderLabel>
+					<Trans
+						i18nKey="earn.incentives.options.snx.description"
+						components={[<StyledLink href={EXTERNAL_LINKS.Synthetix.Incentives} />]}
+					/>
+				</HeaderLabel>
 				<InnerContainer>
 					<ValueBoxWrapper>
 						<ValueBox>
@@ -292,7 +296,11 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 							? t('earn.actions.claim.claim-button')
 							: t('earn.actions.claim.nothing-to-claim')}
 					</PaddedButton>
-					<GasSelector gasLimitEstimate={gasLimitEstimate} setGasPrice={setGasPrice} />
+					<GasSelector
+						altVersion={true}
+						gasLimitEstimate={gasLimitEstimate}
+						setGasPrice={setGasPrice}
+					/>
 				</InnerContainer>
 			</TabContainer>
 			{txModalOpen && (
@@ -315,7 +323,6 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 
 const InnerContainer = styled(FlexDivColCentered)`
 	width: 90%;
-	margin: 15px auto;
 	padding: 20px;
 	border: 1px solid ${(props) => props.theme.colors.pink};
 	border-radius: 4px;

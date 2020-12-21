@@ -1,5 +1,23 @@
 import React, { useMemo } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
+import styled from 'styled-components';
+import { Svg } from 'react-optimized-image';
+import { useRecoilValue } from 'recoil';
+
+import ArrowRightIcon from 'assets/svg/app/arrow-right.svg';
+
+import { amountToBurnState, amountToMintState } from 'store/staking';
+
+import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
+
+import { formatCurrency, toBigNumber } from 'utils/formatters/number';
+
+import { CryptoCurrency, Synths } from 'constants/currency';
+
+import { EXTERNAL_LINKS } from 'constants/links';
+
+import { getStakingAmount } from '../helper';
+
 import {
 	Title,
 	Subtitle,
@@ -12,15 +30,6 @@ import {
 	InfoContainer,
 	InfoHeader,
 } from '../common';
-import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
-import { formatCurrency, toBigNumber } from 'utils/formatters/number';
-import { Svg } from 'react-optimized-image';
-import Arrows from 'assets/svg/app/arrows.svg';
-import { getStakingAmount } from '../helper';
-import { CryptoCurrency, Synths } from 'constants/currency';
-import { useRecoilValue } from 'recoil';
-import { amountToBurnState, amountToMintState } from 'store/staking';
-import { EXTERNAL_LINKS } from 'constants/links';
 
 type StakingInfoProps = {
 	isMint: boolean;
@@ -67,6 +76,7 @@ const StakingInfo: React.FC<StakingInfoProps> = ({ isMint }) => {
 			.plus(stakingAmount)
 			.multipliedBy(targetCRatio)
 			.multipliedBy(SNXRate);
+
 		const changedNotStakedValue = isMint
 			? unstakedCollateral.minus(stakingAmount)
 			: unstakedCollateral.plus(unlockedStakeAmount);
@@ -85,33 +95,31 @@ const StakingInfo: React.FC<StakingInfoProps> = ({ isMint }) => {
 					.multipliedBy(SNXRate)
 					.dividedBy(debtBalance.minus(amountToBurnBN))
 					.multipliedBy(100);
-		const changedDebt = isMint
-			? debtBalance.plus(mintAdditionalDebt)
-			: debtBalance.minus(amountToBurnBN);
+		const changedDebt = isMint ? mintAdditionalDebt : debtBalance.minus(amountToBurnBN);
 
 		return [
 			{
 				title: t('staking.info.table.not-staked'),
-				value: unstakedCollateral.isNaN() ? toBigNumber(0) : unstakedCollateral,
-				changedValue: changedNotStakedValue.isNaN() ? toBigNumber(0) : changedNotStakedValue,
+				value: unstakedCollateral.isNaN() ? toBigNumber(0) : unstakedCollateral.abs(),
+				changedValue: changedNotStakedValue.isNaN() ? toBigNumber(0) : changedNotStakedValue.abs(),
 				currencyKey: CryptoCurrency.SNX,
 			},
 			{
 				title: t('staking.info.table.staked'),
-				value: stakedCollateral.isNaN() ? toBigNumber(0) : stakedCollateral,
-				changedValue: changedStakedValue.isNaN() ? toBigNumber(0) : changedStakedValue,
+				value: stakedCollateral.isNaN() ? toBigNumber(0) : stakedCollateral.abs(),
+				changedValue: changedStakedValue.isNaN() ? toBigNumber(0) : changedStakedValue.abs(),
 				currencyKey: CryptoCurrency.SNX,
 			},
 			{
 				title: t('staking.info.table.transferable'),
-				value: transferableCollateral.isNaN() ? toBigNumber(0) : transferableCollateral,
-				changedValue: changedTransferable.isNaN() ? toBigNumber(0) : changedTransferable,
+				value: transferableCollateral.isNaN() ? toBigNumber(0) : transferableCollateral.abs(),
+				changedValue: changedTransferable.isNaN() ? toBigNumber(0) : changedTransferable.abs(),
 				currencyKey: CryptoCurrency.SNX,
 			},
 			{
 				title: t('staking.info.table.locked'),
-				value: lockedCollateral.isNaN() ? toBigNumber(0) : lockedCollateral,
-				changedValue: changedLocked.isNaN() ? toBigNumber(0) : changedLocked,
+				value: lockedCollateral.isNaN() ? toBigNumber(0) : lockedCollateral.abs(),
+				changedValue: changedLocked.isNaN() ? toBigNumber(0) : changedLocked.abs(),
 				currencyKey: CryptoCurrency.SNX,
 			},
 			{
@@ -129,8 +137,8 @@ const StakingInfo: React.FC<StakingInfoProps> = ({ isMint }) => {
 			},
 			{
 				title: t('staking.info.table.debt'),
-				value: debtBalance.isNaN() ? toBigNumber(0) : debtBalance,
-				changedValue: changedDebt.isNaN() ? toBigNumber(0) : changedDebt,
+				value: debtBalance.isNaN() ? toBigNumber(0) : debtBalance.abs(),
+				changedValue: changedDebt.isNaN() ? toBigNumber(0) : changedDebt.abs(),
 				currencyKey: Synths.sUSD,
 			},
 		];
@@ -177,7 +185,7 @@ const StakingInfo: React.FC<StakingInfoProps> = ({ isMint }) => {
 							</RowValue>
 							{!emptyInput && (
 								<>
-									<Svg src={Arrows} />
+									<StyledArrowRight src={ArrowRightIcon} />
 									<RowValue>
 										{formatCurrency(currencyKey, !changedValue.isNaN() ? changedValue : 0, {
 											currencyKey: currencyKey,
@@ -193,4 +201,10 @@ const StakingInfo: React.FC<StakingInfoProps> = ({ isMint }) => {
 		</InfoContainer>
 	);
 };
+
+const StyledArrowRight = styled(Svg)`
+	margin: 0 5px;
+	color: ${(props) => props.theme.colors.blue};
+`;
+
 export default StakingInfo;

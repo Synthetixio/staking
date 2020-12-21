@@ -68,6 +68,10 @@ const AssetsTable: FC<AssetsTableProps> = ({
 	const { selectedPriceCurrency, selectPriceCurrencyRate } = useSelectedPriceCurrency();
 
 	const assetColumns = useMemo(() => {
+		if (!isAppReady) {
+			return [];
+		}
+
 		const columns = [
 			{
 				Header: <>{t('synths.assets.synths.table.asset')}</>,
@@ -94,7 +98,8 @@ const AssetsTable: FC<AssetsTableProps> = ({
 			},
 			{
 				Header: <>{t('synths.assets.synths.table.balance')}</>,
-				accessor: 'usdBalance',
+				id: 'balance',
+				accessor: (originalRow: any) => originalRow.balance.toNumber(),
 				sortType: 'basic',
 				Cell: (cellProps: CellProps<CryptoBalance, CryptoBalance['balance']>) => (
 					<Currency.Amount
@@ -123,6 +128,7 @@ const AssetsTable: FC<AssetsTableProps> = ({
 			columns.push({
 				Header: <>{t('synths.assets.synths.table.holdings')}</>,
 				id: 'holdings',
+				accessor: (originalRow: any) => originalRow.usdBalance.toNumber(),
 				sortType: 'basic',
 				Cell: (cellProps: CellProps<CryptoBalance>) => (
 					<SynthHolding
@@ -131,13 +137,13 @@ const AssetsTable: FC<AssetsTableProps> = ({
 					/>
 				),
 				width: 200,
-				sortable: false,
+				sortable: true,
 			});
 		}
 		if (showConvert) {
 			columns.push({
 				Header: <></>,
-				accessor: 'holdings',
+				id: 'convert',
 				sortType: 'basic',
 				Cell: ({
 					row: {
@@ -179,6 +185,7 @@ const AssetsTable: FC<AssetsTableProps> = ({
 		totalValue,
 		selectPriceCurrencyRate,
 		selectedPriceCurrency.sign,
+		isAppReady,
 	]);
 
 	return (
@@ -215,7 +222,6 @@ const AssetsTable: FC<AssetsTableProps> = ({
 						</TableNoResults>
 					) : undefined
 				}
-				columnsDeps={[isAppReady, totalValue, selectPriceCurrencyRate]}
 				showPagination={true}
 			/>
 		</Container>

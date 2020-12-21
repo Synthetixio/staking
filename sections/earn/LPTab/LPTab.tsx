@@ -1,4 +1,4 @@
-import { FC, useState, useMemo, useEffect, ReactNode, useCallback } from 'react';
+import { FC, useState, useMemo, useEffect, useCallback } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import { ethers } from 'ethers';
 import { Svg } from 'react-optimized-image';
@@ -19,6 +19,7 @@ import { getGasEstimateForTransaction } from 'utils/transactions';
 import Connector from 'containers/Connector';
 import Notify from 'containers/Notify';
 import TxState from 'sections/earn/TxState';
+import { EXTERNAL_LINKS } from 'constants/links';
 
 import StakeTab from './StakeTab';
 import Approve from './Approve';
@@ -37,25 +38,18 @@ import {
 	LinkText,
 	TabContainer,
 	Label,
+	HeaderLabel,
 } from '../common';
 
 type LPTabProps = {
 	stakedAsset: CurrencyKey;
 	tokenRewards: number;
-	icon: ReactNode;
 	allowance: number | null;
 	userBalance: number;
 	staked: number;
 };
 
-const LPTab: FC<LPTabProps> = ({
-	icon,
-	stakedAsset,
-	tokenRewards,
-	allowance,
-	userBalance,
-	staked,
-}) => {
+const LPTab: FC<LPTabProps> = ({ stakedAsset, tokenRewards, allowance, userBalance, staked }) => {
 	const { t } = useTranslation();
 	const { signer } = Connector.useContainer();
 	const { monitorHash } = Notify.useContainer();
@@ -80,7 +74,6 @@ const LPTab: FC<LPTabProps> = ({
 
 	const tabData = useMemo(() => {
 		const commonStakeTabProps = {
-			icon,
 			stakedAsset,
 			userBalance,
 			staked,
@@ -100,7 +93,7 @@ const LPTab: FC<LPTabProps> = ({
 				key: 'unstake',
 			},
 		];
-	}, [t, icon, stakedAsset, userBalance, staked]);
+	}, [t, stakedAsset, userBalance, staked]);
 
 	useEffect(() => {
 		if (allowance === 0 && userBalance > 0) {
@@ -157,7 +150,10 @@ const LPTab: FC<LPTabProps> = ({
 			<TxState
 				description={
 					<Label>
-						<Trans i18nKey={translationKey} components={[<StyledLink />]} />
+						<Trans
+							i18nKey={translationKey}
+							components={[<StyledLink href={EXTERNAL_LINKS.Synthetix.Incentives} />]}
+						/>
 					</Label>
 				}
 				title={t('earn.actions.rewards.waiting')}
@@ -187,7 +183,10 @@ const LPTab: FC<LPTabProps> = ({
 			<TxState
 				description={
 					<Label>
-						<Trans i18nKey={translationKey} components={[<StyledLink />]} />
+						<Trans
+							i18nKey={translationKey}
+							components={[<StyledLink href={EXTERNAL_LINKS.Synthetix.Incentives} />]}
+						/>
 					</Label>
 				}
 				title={t('earn.actions.claim.success')}
@@ -223,16 +222,19 @@ const LPTab: FC<LPTabProps> = ({
 
 	return (
 		<TabContainer>
-			<Label>
-				<Trans i18nKey={translationKey} components={[<StyledLink />]} />
-			</Label>
+			<HeaderLabel>
+				<Trans
+					i18nKey={translationKey}
+					components={[<StyledLink href={EXTERNAL_LINKS.Synthetix.Incentives} />]}
+				/>
+			</HeaderLabel>
 			<FlexDivCentered>
 				<StructuredTab
-					tabHeight={40}
+					tabHeight={30}
 					inverseTabColor={true}
 					boxPadding={0}
 					boxHeight={242}
-					boxWidth={270}
+					boxWidth={310}
 					tabData={tabData}
 				/>
 				<RewardsBox

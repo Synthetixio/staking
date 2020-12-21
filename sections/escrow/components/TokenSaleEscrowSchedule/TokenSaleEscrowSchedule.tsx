@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import { Svg } from 'react-optimized-image';
@@ -23,37 +23,43 @@ const TokenSaleEscrowSchedule: React.FC = () => {
 	const { t } = useTranslation();
 	const tokenSaleEscrowQuery = useTokenSaleEscrowQuery();
 	const tokenSaleEscrow = tokenSaleEscrowQuery.data;
-	const data = tokenSaleEscrow?.data ?? [];
+
+	const data = useMemo(() => tokenSaleEscrow?.data ?? [], [tokenSaleEscrow]);
+
+	const columns = useMemo(
+		() => [
+			{
+				Header: <Header>{t('escrow.table.vesting-date')}</Header>,
+				accessor: 'date',
+				Cell: (cellProps: CellProps<EscrowData['schedule'], Date>) => (
+					<Data>{formatShortDate(cellProps.value)}</Data>
+				),
+				width: 250,
+				sortable: false,
+			},
+			{
+				Header: <Header style={{ textAlign: 'right' }}>{t('escrow.table.snx-amount')}</Header>,
+				accessor: 'quantity',
+				Cell: (cellProps: CellProps<EscrowData['schedule'], number>) => (
+					<Data style={{ textAlign: 'right' }}>
+						{formatCurrency(CryptoCurrency.SNX, cellProps.value)}
+					</Data>
+				),
+				width: 250,
+				sortable: false,
+			},
+		],
+		[t]
+	);
+
 	return (
 		<Container>
 			<Title>{t('escrow.token.info.title')}</Title>
 			<Subtitle>{t('escrow.token.info.subtitle')}</Subtitle>
 			<StyledTable
 				palette="primary"
-				columns={[
-					{
-						Header: <Header>{t('escrow.table.vesting-date')}</Header>,
-						accessor: 'date',
-						Cell: (cellProps: CellProps<EscrowData['schedule'], Date>) => (
-							<Data>{formatShortDate(cellProps.value)}</Data>
-						),
-						width: 250,
-						sortable: false,
-					},
-					{
-						Header: <Header style={{ textAlign: 'right' }}>{t('escrow.table.snx-amount')}</Header>,
-						accessor: 'quantity',
-						Cell: (cellProps: CellProps<EscrowData['schedule'], number>) => (
-							<Data style={{ textAlign: 'right' }}>
-								{formatCurrency(CryptoCurrency.SNX, cellProps.value)}
-							</Data>
-						),
-						width: 250,
-						sortable: false,
-					},
-				]}
+				columns={columns}
 				data={data ? data : []}
-				columnsDeps={[]}
 				isLoading={tokenSaleEscrowQuery.isLoading}
 				noResultsMessage={
 					!tokenSaleEscrowQuery.isLoading && data?.length === 0 ? (

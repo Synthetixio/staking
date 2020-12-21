@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { FlexDiv, linkCSS, FlexDivColCentered } from 'styles/common';
+import { FlexDiv, FlexDivColCentered, FlexDivCentered, ExternalLink } from 'styles/common';
 import Button from 'components/Button';
 
 export const TotalValueWrapper = styled(FlexDiv)`
@@ -31,16 +31,19 @@ export const Label = styled.p`
 	font-size: 12px;
 `;
 
-export const StyledLink = styled.span`
-	${linkCSS}
+export const HeaderLabel = styled(Label)`
+	padding-bottom: 24px;
+`;
+
+export const StyledLink = styled(ExternalLink)`
 	color: ${(props) => props.theme.colors.blue};
 `;
 
-export const Title = styled.div`
+export const Title = styled.div<{ isStakingPanel?: boolean }>`
 	font-family: ${(props) => props.theme.fonts.extended};
 	font-size: 12px;
 	color: ${(props) => props.theme.colors.white};
-	margin-bottom: 20px;
+	margin-bottom: ${(props) => (props.isStakingPanel ? '5px' : '20px')};
 `;
 
 const Header = styled.div`
@@ -62,6 +65,7 @@ export const GreyText = styled.div`
 	color: ${(props) => props.theme.colors.gray};
 	font-size: 12px;
 	margin-bottom: 5px;
+	text-align: center;
 `;
 
 export const LinkText = styled.div`
@@ -83,13 +87,19 @@ export const StyledButton = styled(Button)`
 	width: 80%;
 	text-transform: uppercase;
 	height: 40px;
-	backgroundcolor: ${(props) => props.theme.colors.blue};
+	background: ${(props) => props.theme.colors.blue};
 `;
 
 export const TabContainer = styled(FlexDivColCentered)`
 	height: 100%;
 	justify-content: space-evenly;
 	padding: 24px;
+`;
+
+export const IconWrap = styled(FlexDivCentered)`
+	width: 64px;
+	height: 67px;
+	justify-content: center;
 `;
 
 export const VerifyButton = styled.div<{ isStakingPanel?: boolean }>`

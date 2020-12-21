@@ -1,18 +1,20 @@
-import React, { FC, ReactNode, useMemo } from 'react';
+import React, { FC, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps, Row } from 'react-table';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { Svg } from 'react-optimized-image';
 import Countdown from 'react-countdown';
 import { useRecoilValue } from 'recoil';
+import { useRouter } from 'next/router';
 
 import Connector from 'containers/Connector';
+import Currency from 'components/Currency';
 
 import ProgressBar from 'components/ProgressBar';
 import Table from 'components/Table';
 import Button from 'components/Button';
 
-import GoBackIcon from 'assets/svg/app/go-back.svg';
+import ExpandIcon from 'assets/svg/app/expand.svg';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
@@ -32,21 +34,22 @@ import {
 	TableNoResultsButtonContainer,
 	TableNoResultsTitle,
 } from 'styles/common';
-import { CryptoCurrency } from 'constants/currency';
+import { CryptoCurrency, CurrencyKey } from 'constants/currency';
 import { NOT_APPLICABLE } from './Incentives';
-import { Tab } from './types';
-import { useRouter } from 'next/router';
+
 import ROUTES from 'constants/routes';
+
+import { Tab } from './types';
+import { IconWrap } from './common';
 
 export type EarnItem = {
 	title: string;
 	subtitle: string;
 	apr: number;
-	icon: ReactNode;
 	tvl: number;
 	staked: {
 		balance: number;
-		asset: string; // use Cyrpto type
+		asset: CurrencyKey;
 	};
 	rewards: number;
 	periodStarted: number;
@@ -70,6 +73,8 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab }
 	const router = useRouter();
 	const { connectWallet } = Connector.useContainer();
 
+	const goToEarn = useCallback(() => router.push(ROUTES.Earn.Home), [router]);
+
 	const columns = useMemo(() => {
 		const leftColumns = [
 			{
@@ -77,7 +82,17 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab }
 				accessor: 'title',
 				Cell: (cellProps: CellProps<EarnItem>) => (
 					<>
-						<div>{cellProps.row.original.icon}</div>
+						<IconWrap>
+							<Currency.Icon
+								currencyKey={cellProps.row.original.staked.asset}
+								width={
+									cellProps.row.original.staked.asset === CryptoCurrency.CurveLPToken ? '64' : '32'
+								}
+								height={
+									cellProps.row.original.staked.asset === CryptoCurrency.CurveLPToken ? '64' : '32'
+								}
+							/>
+						</IconWrap>
 						<FlexDivCol>
 							<Title>{cellProps.row.original.title}</Title>
 							<Subtitle>{cellProps.row.original.subtitle}</Subtitle>
@@ -93,8 +108,8 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab }
 						{activeTab == null ? (
 							<>{t('earn.incentives.est-apr')}</>
 						) : (
-							<StyledIconButton onClick={() => router.push(ROUTES.Earn.Home)}>
-								<Svg src={GoBackIcon} />
+							<StyledIconButton onClick={goToEarn}>
+								<Svg src={ExpandIcon} />
 							</StyledIconButton>
 						)}
 					</CellContainer>
@@ -107,7 +122,6 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab }
 					</CellContainer>
 				),
 				width: 100,
-				maxWidth: 100,
 				sortable: false,
 			},
 		];
@@ -163,7 +177,8 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab }
 							})}
 						</Title>
 						<Subtitle>
-							{cellProps.row.original.claimed === NOT_APPLICABLE ? (
+							{cellProps.row.original.claimed === NOT_APPLICABLE ||
+							(!cellProps.row.original.claimed && cellProps.row.original.rewards === 0) ? (
 								''
 							) : cellProps.row.original.claimed ? (
 								t('earn.incentives.options.rewards.claimed')
@@ -198,7 +213,7 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab }
 			},
 		];
 		return activeTab != null ? leftColumns : [...leftColumns, ...rightColumns];
-	}, [activeTab, getPriceAtCurrentRate, selectedPriceCurrency.sign, t, router]);
+	}, [getPriceAtCurrentRate, selectedPriceCurrency.sign, t, activeTab, goToEarn]);
 
 	return (
 		<Container activeTab={activeTab}>
@@ -206,7 +221,6 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab }
 				palette="primary"
 				columns={columns}
 				data={data}
-				columnsDeps={[activeTab, selectedPriceCurrency]}
 				isLoading={isWalletConnected && !isLoaded}
 				showPagination={true}
 				onTableRowClick={(row: Row<EarnItem>) => router.push(row.original.route)}
@@ -230,7 +244,16 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab }
 
 const Container = styled.div<{ activeTab: Tab | null }>`
 	background: ${(props) => props.theme.colors.navy};
-	width: ${(props) => (props.activeTab == null ? '100%' : '40%')};
+	width: 100%;
+	${(props) =>
+		props.activeTab &&
+		css`
+			.table-header-cell {
+				&:last-child {
+					padding-right: 0;
+				}
+			}
+		`}
 `;
 
 const StyledProgressBar = styled(ProgressBar)`
@@ -245,6 +268,7 @@ const StyledTable = styled(Table)`
 	.table-body-row {
 		height: 70px;
 		align-items: center;
+		border-right: 1px solid ${(props) => props.theme.colors.grayBlue};
 		&:hover {
 			background-color: ${(props) => props.theme.colors.mediumBlue};
 		}

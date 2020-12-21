@@ -5,21 +5,14 @@ import styled from 'styled-components';
 import { StatsSection, LineSpacer } from 'styles/common';
 import sumBy from 'lodash/sumBy';
 
-import { Synths } from 'constants/currency';
-import { WEEKS_IN_YEAR } from 'constants/date';
-
 import { Incentives } from 'sections/earn';
 import StatBox from 'components/StatBox';
+import useUserStakingData from 'hooks/useUserStakingData';
 
 import { formatFiatCurrency, formatPercent, toBigNumber } from 'utils/formatters/number';
 
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
-import useGetFeePoolDataQuery from 'queries/staking/useGetFeePoolDataQuery';
-import useTotalIssuedSynthsExcludingEtherQuery from 'queries/synths/useTotalIssuedSynthsExcludingEtherQuery';
-import useClaimableRewards from 'queries/staking/useClaimableRewardsQuery';
 import useFeeClaimHistoryQuery from 'queries/staking/useFeeClaimHistoryQuery';
-
-import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
@@ -27,30 +20,16 @@ const Earn = () => {
 	const { t } = useTranslation();
 
 	const exchangeRatesQuery = useExchangeRatesQuery();
-	const totalIssuedSynthsExclEth = useTotalIssuedSynthsExcludingEtherQuery(Synths.sUSD);
-	const previousFeePeriod = useGetFeePoolDataQuery('1');
-	const { currentCRatio, targetCRatio, debtBalance, collateral } = useStakingCalculations();
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
+	const {
+		stakedValue,
+		stakingAPR,
+		tradingRewards,
+		stakingRewards,
+		hasClaimed,
+	} = useUserStakingData();
 
-	const sUSDRate = exchangeRatesQuery.data?.sUSD ?? 0;
-	const feesToDistribute = previousFeePeriod?.data?.feesToDistribute ?? 0;
-	const rewardsToDistribute = previousFeePeriod?.data?.rewardsToDistribute ?? 0;
-	const totalsUSDDebt = totalIssuedSynthsExclEth?.data ?? 0;
 	const SNXRate = exchangeRatesQuery.data?.SNX ?? 0;
-
-	const stakedValue = collateral
-		.multipliedBy(Math.min(1 / currentCRatio.dividedBy(targetCRatio).toNumber()))
-		.multipliedBy(SNXRate);
-	const weeklyRewards = sUSDRate * feesToDistribute + SNXRate * rewardsToDistribute;
-
-	const stakingAPR =
-		(weeklyRewards * (debtBalance.toNumber() / totalsUSDDebt) * WEEKS_IN_YEAR) /
-		stakedValue.toNumber();
-
-	const availableRewards = useClaimableRewards();
-
-	const tradingRewards = availableRewards?.data?.tradingRewards ?? toBigNumber(0);
-	const stakingRewards = availableRewards?.data?.stakingRewards ?? toBigNumber(0);
 
 	const totalRewards = tradingRewards.plus(stakingRewards.multipliedBy(SNXRate));
 
@@ -104,6 +83,7 @@ const Earn = () => {
 				totalRewards={totalRewards}
 				stakingAPR={stakingAPR}
 				stakedValue={stakedValue.toNumber()}
+				hasClaimed={hasClaimed}
 			/>
 		</>
 	);
