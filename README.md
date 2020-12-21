@@ -55,3 +55,11 @@ Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 npm run build
 npm start
 ```
+
+### Test
+
+Before running e2e tests, you have to set environmental variable named `SECRET_WORDS` which can be imported as an account in metamask.
+
+```bash
+SECRET_WORDS="word1, word2, ..." npm run test:e2e
+```

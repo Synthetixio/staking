@@ -52,18 +52,22 @@ const UserMenu: FC = () => {
 								setWalletOptionsModalOpened(!walletOptionsModalOpened);
 							}}
 							isActive={walletOptionsModalOpened}
+							data-testid="user-menu"
 						>
-							<FlexDivCentered>
+							<FlexDivCentered data-testid="wallet-address">
 								<StyledConnectionDot />
 								{truncatedWalletAddress}
 							</FlexDivCentered>
-							<NetworkTag className="network-tag">{network?.name}</NetworkTag>
+							<NetworkTag className="network-tag" data-testid="network-tag">
+								{network?.name}
+							</NetworkTag>
 							{walletOptionsModalOpened ? caretUp : caretDown}
 						</WalletButton>
 					) : (
 						<WalletButton
 							variant="solid"
 							onClick={() => setWalletOptionsModalOpened(!walletOptionsModalOpened)}
+							data-testid="user-menu"
 						>
 							<FlexDivCentered>
 								<StyledConnectionDot />
