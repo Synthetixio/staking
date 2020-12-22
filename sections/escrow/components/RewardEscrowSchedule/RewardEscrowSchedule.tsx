@@ -52,7 +52,6 @@ const RewardEscrowSchedule: React.FC = () => {
 								Cell: (cellProps: CellProps<EscrowData['schedule'], Date>) => (
 									<Data>{formatShortDate(cellProps.value)}</Data>
 								),
-								width: 250,
 								sortable: false,
 							},
 							{
@@ -65,7 +64,6 @@ const RewardEscrowSchedule: React.FC = () => {
 										{formatCurrency(CryptoCurrency.SNX, cellProps.value)}
 									</Data>
 								),
-								width: 250,
 								sortable: false,
 							},
 						]}
