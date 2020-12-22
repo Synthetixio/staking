@@ -39,7 +39,7 @@ const MintTab: React.FC = () => {
 
 	useEffect(() => {
 		const getGasLimitEstimate = async () => {
-			if (synthetix && synthetix.js && isWalletConnected && amountToMint.length > 0) {
+			if (synthetix && synthetix.js && isWalletConnected) {
 				try {
 					setError(null);
 					const {
@@ -47,6 +47,10 @@ const MintTab: React.FC = () => {
 						utils: { parseEther },
 					} = synthetix.js!;
 					let gasEstimate;
+
+					if (unstakedCollateral.isZero())
+						throw new Error('staking.actions.mint.action.error.insufficient');
+
 					if (amountToMint.length > 0 && !mintMax) {
 						gasEstimate = await getGasEstimateForTransaction(
 							[parseEther(amountToMint)],
@@ -60,13 +64,19 @@ const MintTab: React.FC = () => {
 					}
 					setGasLimitEstimate(normalizeGasLimit(Number(gasEstimate)));
 				} catch (error) {
-					setError(error.message);
+					let errorMessage = error.message;
+					if (error.code === 'INVALID_ARGUMENT') {
+						errorMessage = 'staking.actions.mint.action.error.bad-input';
+					} else if (error.code === -32603) {
+						errorMessage = 'staking.actions.mint.action.error.insufficient';
+					}
+					setError(errorMessage);
 					setGasLimitEstimate(null);
 				}
 			}
 		};
 		getGasLimitEstimate();
-	}, [amountToMint, mintMax, isWalletConnected]);
+	}, [amountToMint, mintMax, isWalletConnected, unstakedCollateral]);
 
 	const handleStake = useCallback(
 		async (mintMax: boolean) => {
