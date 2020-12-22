@@ -37,8 +37,8 @@ const MobileUnsupported: FC<MobileUnsupportedProps> = ({ children }) => {
 					<Content>
 						<Container>
 							<Title>
-								{t('system-status.title-line1')}
-								<span>{t('system-status.title-line2')}</span>
+								{t('mobile-unsupported.title-line1')}
+								<span>{t('mobile-unsupported.title-line2')}</span>
 							</Title>
 							<SNXLogoContainer>
 								<StyledSocialLinks />
