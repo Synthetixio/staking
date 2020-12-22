@@ -26,7 +26,6 @@ import {
 	ModalItem,
 	ModalItemTitle,
 	ModalItemText,
-	ErrorMessage,
 	FlexDivRowCentered,
 	NoTextTransform,
 } from 'styles/common';
@@ -82,6 +81,7 @@ const StakingInput: React.FC<StakingInputProps> = ({
 		SNXRate,
 		debtBalance,
 		issuableSynths,
+		collateral,
 		currentCRatio,
 	} = useStakingCalculations();
 	const { connectWallet } = Connector.useContainer();
@@ -125,9 +125,7 @@ const StakingInput: React.FC<StakingInputProps> = ({
 		} else if (error) {
 			return (
 				<StyledCTA variant="primary" size="lg" disabled={true}>
-					{isMint
-						? t('staking.actions.mint.action.insufficient')
-						: t('staking.actions.burn.action.insufficient')}
+					{t(error.toLowerCase())}
 				</StyledCTA>
 			);
 		} else if (inputValue.toString().length === 0) {
@@ -211,10 +209,15 @@ const StakingInput: React.FC<StakingInputProps> = ({
 						<InputLocked>{formattedInput}</InputLocked>
 					) : (
 						<StyledInput
+							maxLength={12}
 							value={inputValue.isNaN() ? '0' : inputValue.toString()}
 							placeholder="0"
 							onChange={(e) => onInputChange(e.target.value)}
-							disabled={!isWalletConnected}
+							disabled={
+								!isWalletConnected ||
+								(!isMint && debtBalance.isZero()) ||
+								(isMint && collateral.isZero())
+							}
 						/>
 					)}
 				</InputBox>
@@ -233,7 +236,6 @@ const StakingInput: React.FC<StakingInputProps> = ({
 				</DataContainer>
 			</InputContainer>
 			{returnButtonStates}
-			<ErrorMessage>{error}</ErrorMessage>
 			{txModalOpen && (
 				<TxConfirmationModal
 					onDismiss={() => setTxModalOpen(false)}
