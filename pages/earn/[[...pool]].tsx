@@ -82,7 +82,7 @@ const Earn = () => {
 				stakingRewards={stakingRewards}
 				totalRewards={totalRewards}
 				stakingAPR={stakingAPR}
-				stakedValue={stakedValue.toNumber()}
+				stakedAmount={stakedValue.dividedBy(SNXRate).toNumber()}
 				hasClaimed={hasClaimed}
 			/>
 		</>

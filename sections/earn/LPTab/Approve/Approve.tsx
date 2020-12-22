@@ -14,6 +14,7 @@ import { zIndex } from 'constants/ui';
 import LockedIcon from 'assets/svg/app/locked.svg';
 import { curvepoolRewards, curveSusdPoolToken } from 'contracts';
 import Connector from 'containers/Connector';
+import { EXTERNAL_LINKS } from 'constants/links';
 import {
 	ExternalLink,
 	FlexDivColCentered,
@@ -161,7 +162,7 @@ const Approve: FC<ApproveProps> = ({ stakedAsset, setShowApproveOverlayModal }) 
 						values={{
 							stakedAsset,
 						}}
-						components={[<StyledLink />]}
+						components={[<StyledLink href={EXTERNAL_LINKS.Synthetix.Incentives} />]}
 					/>
 				}
 				title={t('earn.actions.approve.waiting')}
@@ -190,7 +191,7 @@ const Approve: FC<ApproveProps> = ({ stakedAsset, setShowApproveOverlayModal }) 
 						values={{
 							stakedAsset,
 						}}
-						components={[<StyledLink />]}
+						components={[<StyledLink href={EXTERNAL_LINKS.Synthetix.Incentives} />]}
 					/>
 				}
 				title={t('earn.actions.approve.success')}
@@ -233,7 +234,7 @@ const Approve: FC<ApproveProps> = ({ stakedAsset, setShowApproveOverlayModal }) 
 							values={{
 								stakedAsset,
 							}}
-							components={[<StyledLink />]}
+							components={[<StyledLink href={EXTERNAL_LINKS.Synthetix.Incentives} />]}
 						/>
 					</Label>
 					<PaddedButton variant="primary" onClick={handleApprove}>
