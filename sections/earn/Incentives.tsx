@@ -27,7 +27,7 @@ type IncentivesProps = {
 	stakingRewards: BigNumber;
 	totalRewards: BigNumber;
 	stakingAPR: number;
-	stakedValue: number;
+	stakedAmount: number;
 	hasClaimed: boolean;
 };
 
@@ -38,7 +38,7 @@ const Incentives: FC<IncentivesProps> = ({
 	stakingRewards,
 	totalRewards,
 	stakingAPR,
-	stakedValue,
+	stakedAmount,
 	hasClaimed,
 }) => {
 	const { t } = useTranslation();
@@ -72,7 +72,7 @@ const Incentives: FC<IncentivesProps> = ({
 							apr: stakingAPR,
 							tvl: useSNXLockedValue.data ?? 0,
 							staked: {
-								balance: stakedValue,
+								balance: stakedAmount,
 								asset: CryptoCurrency.SNX,
 							},
 							rewards: stakingRewards.toNumber(),
@@ -141,7 +141,7 @@ const Incentives: FC<IncentivesProps> = ({
 				: [],
 		[
 			stakingAPR,
-			stakedValue,
+			stakedAmount,
 			useSNXLockedValue.data,
 			nextFeePeriodStarts,
 			stakingRewards,
