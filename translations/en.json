@@ -381,7 +381,7 @@
 		"staking": {
 			"info": {
 				"title": "Vest your SNX staking rewards in escrow",
-				"subtitle": "If you have staked your SNX and minted sUSD, you are eligible to receive SNX staking rewards, which will be escrowed here which you can vest in 12 months from the claim date. <0>Learn more.<0>"
+				"subtitle": "If you have staked your SNX and minted sUSD, you are eligible to receive SNX staking rewards, which will be escrowed here which you can vest in 12 months from the claim date."
 			}
 		},
 		"token": {
