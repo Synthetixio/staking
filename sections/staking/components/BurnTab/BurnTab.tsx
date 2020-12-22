@@ -18,6 +18,8 @@ import { amountToBurnState, BurnActionType, burnTypeState } from 'store/staking'
 import { addSeconds, differenceInSeconds } from 'date-fns';
 import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
 
+// @TODO: Add for the countdown of waiting period and issuance delay
+
 const BurnTab: React.FC = () => {
 	const { monitorHash } = Notify.useContainer();
 	const [amountToBurn, onBurnChange] = useRecoilState(amountToBurnState);
@@ -61,8 +63,7 @@ const BurnTab: React.FC = () => {
 		} catch (e) {
 			console.log(e);
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [walletAddress]);
 
 	const getIssuanceDelay = useCallback(async () => {
 		const {
@@ -86,13 +87,11 @@ const BurnTab: React.FC = () => {
 		} catch (e) {
 			console.log(e);
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [walletAddress]);
 
 	useEffect(() => {
 		getMaxSecsLeftInWaitingPeriod();
 		getIssuanceDelay();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [getMaxSecsLeftInWaitingPeriod, getIssuanceDelay]);
 
 	useEffect(() => {
@@ -108,11 +107,12 @@ const BurnTab: React.FC = () => {
 					const maxBurnAmount = debtBalance.isGreaterThan(sUSDBalance)
 						? toBigNumber(sUSDBalance)
 						: debtBalance;
-					if (!parseFloat(amountToBurn)) throw new Error('input.error.invalidAmount');
-					if (waitingPeriod) throw new Error('Waiting period for sUSD is still ongoing');
-					if (issuanceDelay) throw new Error('Waiting period to burn is still ongoing');
+
+					if (debtBalance.isZero()) throw new Error('staking.actions.burn.action.error.no-debt');
 					if (Number(amountToBurn) > sUSDBalance.toNumber() || maxBurnAmount.isZero())
-						throw new Error('input.error.notEnoughToBurn');
+						throw new Error('staking.actions.burn.action.error.insufficient');
+					if (waitingPeriod) throw new Error('staking.actions.burn.action.error.waiting-period');
+					if (issuanceDelay) throw new Error('staking.actions.burn.action.error.issuance-period');
 
 					const gasEstimate = await getGasEstimateForTransaction(
 						[parseEther(amountToBurn.toString())],

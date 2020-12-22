@@ -1,5 +1,5 @@
 import React from 'react';
-import { Trans, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import { Svg } from 'react-optimized-image';
 import styled from 'styled-components';
@@ -19,7 +19,6 @@ import {
 	ContainerBody,
 	Data,
 	Header,
-	StyledLink,
 	StyledTable,
 	Subtitle,
 	Title,
@@ -37,9 +36,7 @@ const RewardEscrowSchedule: React.FC = () => {
 		<Container>
 			<ContainerHeader>
 				<Title>{t('escrow.staking.info.title')}</Title>
-				<Subtitle>
-					<Trans i18nKey="escrow.staking.info.subtitle" components={[<StyledLink />]} />
-				</Subtitle>
+				<Subtitle>{t('escrow.staking.info.subtitle')}</Subtitle>
 			</ContainerHeader>
 			<ContainerBody>
 				{(data && data.length > 0) || escrowDataQuery.isLoading ? (

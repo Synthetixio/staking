@@ -175,7 +175,11 @@
 					"empty": "Enter an amount",
 					"mint": "Mint <0>sUSD</0>",
 					"max": "Max",
-					"insufficient": "Insufficient collateral"
+					"error": {
+						"bad-input": "Please enter a valid number",
+						"insufficient": "Insufficient collateral to mint",
+						"exception": "Contract error"
+					}
 				},
 				"in-progress": {
 					"title": "Minting in progress",
@@ -217,7 +221,15 @@
 					"burn": "Burn <0>sUSD</0>",
 					"max": "Max",
 					"to-target": "600%",
-					"insufficient": "Insufficient sUSD"
+					"insufficient": "Insufficient sUSD",
+					"error": {
+						"no-debt": "No debt to burn",
+						"bad-input": "Invalid input amount",
+						"waiting-period": "sUSD waiting period still ongoing",
+						"issuance-period": "Issuance waiting period is still ongoing",
+						"insufficient": "Insufficient sUSD to burn debt",
+						"exception": "Contract error"
+					}
 				},
 				"in-progress": {
 					"title": "Burning in progress",
@@ -238,11 +250,11 @@
 		"info": {
 			"mint": {
 				"title": "Mint sUSD by staking SNX",
-				"subtitle": "Mint sUSD by staking SNX: Mint sUSD by staking your SNX. SNX stakers earn weekly staking rewards in exchange for managing their Collateralization Ratio and debt. <0>Learn more.</0>"
+				"subtitle": "Mint sUSD by staking your SNX. SNX stakers earn weekly staking rewards in exchange for managing their Collateralization Ratio and debt. <0>Learn more.</0>"
 			},
 			"burn": {
 				"title": "Burn sUSD to unstake SNX",
-				"subtitle": "Burn sUSD to unstake SNX: Burn your sUSD debt to unlock your staked SNX. This will increase your Collateralization Ratio and reduce your debt. <0>Learn more.</0>"
+				"subtitle": "Burn your sUSD debt to unlock your staked SNX. This will increase your Collateralization Ratio and reduce your debt. <0>Learn more.</0>"
 			},
 			"table": {
 				"not-staked": "Not Staked",
@@ -369,7 +381,7 @@
 		"staking": {
 			"info": {
 				"title": "Vest your SNX staking rewards in escrow",
-				"subtitle": "If you have staked your SNX and minted sUSD, you are eligible to receive SNX staking rewards, which will be escrowed here which you can vest in 12 months from the claim date. <0>Learn more.<0>"
+				"subtitle": "If you have staked your SNX and minted sUSD, you are eligible to receive SNX staking rewards, which will be escrowed here which you can vest in 12 months from the claim date."
 			}
 		},
 		"token": {
@@ -541,6 +553,9 @@
 			"page": "Page",
 			"page-of-total-pages": "{{page}} of {{totalPages}}"
 		},
+		"error": {
+			"default": "Something went wrong"
+		},
 		"transaction": {
 			"error": "An unexpected error occurred.",
 			"reattempt": "Try again"
@@ -576,7 +591,7 @@
 		"title-line2": "maintenance.",
 		"subtitle": "We apologise for any inconvenience caused, it will be back shortly."
 	},
-	"system-status": {
+	"mobile-unsupported": {
 		"page-title": "Mobile is coming soon | Synthetix Staking",
 		"title-line1": "Mobile is coming",
 		"title-line2": "soonthetix"
