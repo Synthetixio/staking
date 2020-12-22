@@ -63,7 +63,7 @@ const useSNXLockedValueQuery = (options?: QueryConfig<number>) => {
 			const percentLocked = snxLocked / snxTotal;
 			const totalSupply = Number(synthetix.js?.utils.formatEther(unformattedSnxTotalSupply));
 
-			return totalSupply * percentLocked;
+			return totalSupply * percentLocked * usdToSnxPrice;
 		},
 		{
 			enabled: snxData && synthetix.js,
