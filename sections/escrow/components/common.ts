@@ -65,7 +65,10 @@ export const ContainerBody = styled.div`
 `;
 
 export const StyledTable = styled(Table)`
-	margin-top: 0 16px;
+	.table-body-cell + .table-body-cell,
+	.table-header-cell + .table-header-cell {
+		justify-content: flex-end;
+	}
 `;
 
 export const TableNoResults = styled(GridDivCenteredRow)`
