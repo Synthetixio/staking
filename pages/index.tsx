@@ -1,20 +1,83 @@
+import React from 'react';
 import Head from 'next/head';
-import { useTranslation } from 'react-i18next';
-import Wallet from 'containers/Wallet';
+import styled from 'styled-components';
 
-const HomePage = () => {
+import { useTranslation } from 'react-i18next';
+
+import { FlexDivCol, LineSpacer, StatsSection } from 'styles/common';
+import { PossibleActions } from 'sections/dashboard';
+
+import StatBox from 'components/StatBox';
+import useUserStakingData from 'hooks/useUserStakingData';
+
+import { formatFiatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
+import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+
+const DashboardPage = () => {
 	const { t } = useTranslation();
-	const { connectWallet, walletAddress, network, networkId } = Wallet.useContainer();
+	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
+	const { stakedValue, stakingAPR, debtBalance } = useUserStakingData();
 
 	return (
 		<>
 			<Head>
-				<title>{t('homepage.page-title')}</title>
+				<title>{t('dashboard.page-title')}</title>
 			</Head>
-			<button onClick={connectWallet}>connect</button>
-			<div>{walletAddress}</div>
+			<Content>
+				<StatsSection>
+					<StakedValue
+						title={t('common.stat-box.staked-value')}
+						value={formatFiatCurrency(
+							getPriceAtCurrentRate(stakedValue.isNaN() ? zeroBN : stakedValue),
+							{
+								sign: selectedPriceCurrency.sign,
+							}
+						)}
+					/>
+					<APR
+						title={t('common.stat-box.earning')}
+						value={formatPercent(stakingAPR ? stakingAPR : 0)}
+						size="lg"
+					/>
+					<ActiveDebt
+						title={t('common.stat-box.active-debt')}
+						value={formatFiatCurrency(getPriceAtCurrentRate(debtBalance), {
+							sign: selectedPriceCurrency.sign,
+						})}
+					/>
+				</StatsSection>
+				<LineSpacer />
+				<PossibleActions />
+			</Content>
 		</>
 	);
 };
 
-export default HomePage;
+const Content = styled(FlexDivCol)`
+	width: 100%;
+	max-width: 1200px;
+`;
+
+const StakedValue = styled(StatBox)`
+	.title {
+		color: ${(props) => props.theme.colors.blue};
+	}
+`;
+
+const APR = styled(StatBox)`
+	.title {
+		color: ${(props) => props.theme.colors.green};
+	}
+	.value {
+		text-shadow: ${(props) => props.theme.colors.greenTextShadow};
+		color: #073124;
+	}
+`;
+
+const ActiveDebt = styled(StatBox)`
+	.title {
+		color: ${(props) => props.theme.colors.pink};
+	}
+`;
+
+export default DashboardPage;

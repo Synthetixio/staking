@@ -1,19 +1,38 @@
 // next.config.js
-const path = require('path');
+const withPlugins = require('next-compose-plugins');
+const optimizedImages = require('next-optimized-images');
 
-module.exports = {
-	webpack(config) {
-		config.module.rules.push({
-			test: /\.(svg)$/,
-			include: path.resolve(__dirname, 'assets/svg'),
-			loader: 'svg-react-loader',
-		});
+// all the dynamic pages need to be defined here (this needs to be imported from the routes)
 
-		return config;
+const stakingPages = ['/staking', '/staking/burn', '/staking/mint'].reduce((pages, page) => {
+	pages[page] = {
+		page: '/staking/[[...action]]',
+	};
+
+	return pages;
+}, {});
+
+const earnPages = [
+	'/earn',
+	'/earn/claim',
+	'/earn/curve-LP',
+	'/earn/iBTC-LP',
+	'/earn/iETH-LP',
+].reduce((pages, page) => {
+	pages[page] = {
+		page: '/earn/[[...pool]]',
+	};
+
+	return pages;
+}, {});
+
+module.exports = withPlugins([[optimizedImages]], {
+	trailingSlash: !!process.env.NEXT_PUBLIC_TRAILING_SLASH_ENABLED,
+	exportPathMap: function (defaultPathMap) {
+		return {
+			...defaultPathMap,
+			...stakingPages,
+			...earnPages,
+		};
 	},
-	env: {
-		BN_ONBOARD_API_KEY: '70015a31-1125-4f17-8b12-e56548202d3f',
-		BN_NOTIFY_API_KEY: '95a4ea13-9af6-4ea1-89db-a2c333236a77',
-		PORTIS_APP_ID: '26e198be-a8bb-4240-ad78-ae88579085bc',
-	},
-};
+});

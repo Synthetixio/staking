@@ -1,13 +1,19 @@
-import React, { FC } from 'react';
+import { FC, ReactNode } from 'react';
 
-import Wallet from './Wallet';
+import Connector from './Connector';
+import Etherscan from './Etherscan';
+import Notify from './Notify';
 
-type WithStateContainersProps = {
-	children: React.ReactNode;
+type WithAppContainersProps = {
+	children: ReactNode;
 };
 
-export const WithStateContainers: FC<WithStateContainersProps> = ({ children }) => (
-	<Wallet.Provider>{children}</Wallet.Provider>
+export const WithAppContainers: FC<WithAppContainersProps> = ({ children }) => (
+	<Connector.Provider>
+		<Etherscan.Provider>
+			<Notify.Provider>{children}</Notify.Provider>
+		</Etherscan.Provider>
+	</Connector.Provider>
 );
 
-export default WithStateContainers;
+export default WithAppContainers;
