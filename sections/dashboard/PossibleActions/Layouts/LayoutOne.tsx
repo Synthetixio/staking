@@ -64,7 +64,7 @@ const LayoutOne: FC = () => {
 				copy: !aboveTargetCRatio
 					? t('dashboard.actions.burn.copy')
 					: t('dashboard.actions.mint.title'),
-				link: !aboveTargetCRatio ? ROUTES.Staking.Mint : ROUTES.Staking.Burn,
+				link: !aboveTargetCRatio ? ROUTES.Staking.Burn : ROUTES.Staking.Mint,
 			},
 			{
 				gridLocations: ['col-4', 'col-5', 'row-1', 'row-2'],

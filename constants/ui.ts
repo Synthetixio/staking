@@ -1,4 +1,3 @@
-export const HEADER_HEIGHT = '32px';
 export const SIDE_NAV_WIDTH = '160px';
 
 export enum zIndex {
