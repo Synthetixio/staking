@@ -366,3 +366,7 @@ export const Tooltip = styled(Tippy)`
 		padding: 10px;
 	}
 `;
+
+export const UpperCased = styled.span`
+	text-transform: uppercase;
+`;
