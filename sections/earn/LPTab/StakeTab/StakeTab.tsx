@@ -8,7 +8,7 @@ import PendingConfirmation from 'assets/svg/app/pending-confirmation.svg';
 import Success from 'assets/svg/app/success.svg';
 import GasSelector from 'components/GasSelector';
 import synthetix from 'lib/synthetix';
-import { StyledInput } from 'components/Input/NumericInput';
+import NumericInput from 'components/Input/NumericInput';
 import { formatCryptoCurrency, formatNumber } from 'utils/formatters/number';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
@@ -47,6 +47,8 @@ import {
 	LinkText,
 	IconWrap,
 } from '../../common';
+import { useRecoilValue } from 'recoil';
+import { appReadyState } from 'store/app';
 
 export const getContract = (stakedAsset: CurrencyKey, signer: ethers.Signer | null) => {
 	const { contracts } = synthetix.js!;
@@ -74,13 +76,14 @@ type StakeTabProps = {
 
 const StakeTab: FC<StakeTabProps> = ({ stakedAsset, isStake, userBalance, staked }) => {
 	const { t } = useTranslation();
-	const [amount, setAmount] = useState<number | null>(null);
+	const [amount, setAmount] = useState<string>('');
 	const { monitorHash } = Notify.useContainer();
 	const { etherscanInstance } = Etherscan.useContainer();
 	const { signer } = Connector.useContainer();
 	const [gasLimitEstimate, setGasLimitEstimate] = useState<number | null>(null);
 	const [gasPrice, setGasPrice] = useState<number>(0);
 	const [error, setError] = useState<string | null>(null);
+	const isAppReady = useRecoilValue(appReadyState);
 
 	const [transactionState, setTransactionState] = useState<Transaction>(Transaction.PRESUBMIT);
 	const [txHash, setTxHash] = useState<string | null>(null);
@@ -90,12 +93,12 @@ const StakeTab: FC<StakeTabProps> = ({ stakedAsset, isStake, userBalance, staked
 
 	useEffect(() => {
 		const getGasLimitEstimate = async () => {
-			if (synthetix && synthetix.js && amount != null && amount > 0) {
+			if (isAppReady && Number(amount) > 0) {
 				try {
 					setError(null);
 					const contract = getContract(stakedAsset, signer);
 					let gasEstimate = await getGasEstimateForTransaction(
-						[synthetix.js.utils.parseEther(amount.toString())],
+						[synthetix.js!.utils.parseEther(amount)],
 						isStake ? contract.estimateGas.stake : contract.estimateGas.withdraw
 					);
 					setGasLimitEstimate(normalizeGasLimit(Number(gasEstimate)));
@@ -106,17 +109,17 @@ const StakeTab: FC<StakeTabProps> = ({ stakedAsset, isStake, userBalance, staked
 			}
 		};
 		getGasLimitEstimate();
-	}, [amount, isStake, stakedAsset, signer]);
+	}, [amount, isStake, stakedAsset, signer, isAppReady]);
 
 	const handleStake = useCallback(() => {
 		async function stake() {
-			if (synthetix && synthetix.js && amount != null && amount > 0) {
+			if (isAppReady && Number(amount) > 0) {
 				try {
 					setError(null);
 					setTxModalOpen(true);
 					const contract = getContract(stakedAsset, signer);
 
-					const formattedStakeAmount = synthetix.js.utils.parseEther(amount.toString());
+					const formattedStakeAmount = synthetix.js!.utils.parseEther(amount);
 					const gasLimit = await getGasEstimateForTransaction(
 						[formattedStakeAmount],
 						isStake ? contract.estimateGas.stake : contract.estimateGas.withdraw
@@ -150,7 +153,7 @@ const StakeTab: FC<StakeTabProps> = ({ stakedAsset, isStake, userBalance, staked
 			}
 		}
 		stake();
-	}, [gasPrice, isStake, monitorHash, amount, signer, stakedAsset]);
+	}, [gasPrice, isStake, monitorHash, amount, signer, stakedAsset, isAppReady]);
 
 	if (transactionState === Transaction.WAITING) {
 		return (
@@ -170,11 +173,11 @@ const StakeTab: FC<StakeTabProps> = ({ stakedAsset, isStake, userBalance, staked
 						<WhiteSubheader>
 							{isStake
 								? t('earn.actions.stake.amount', {
-										amount: formatNumber(amount as number, { decimals: DEFAULT_CRYPTO_DECIMALS }),
+										amount: formatNumber(amount, { decimals: DEFAULT_CRYPTO_DECIMALS }),
 										asset: stakedAsset,
 								  })
 								: t('earn.actions.unstake.amount', {
-										amount: formatNumber(amount as number, { decimals: DEFAULT_CRYPTO_DECIMALS }),
+										amount: formatNumber(amount, { decimals: DEFAULT_CRYPTO_DECIMALS }),
 										asset: stakedAsset,
 								  })}
 						</WhiteSubheader>
@@ -204,11 +207,11 @@ const StakeTab: FC<StakeTabProps> = ({ stakedAsset, isStake, userBalance, staked
 						<WhiteSubheader>
 							{isStake
 								? t('earn.actions.stake.amount', {
-										amount: formatNumber(amount as number, { decimals: DEFAULT_CRYPTO_DECIMALS }),
+										amount: formatNumber(amount, { decimals: DEFAULT_CRYPTO_DECIMALS }),
 										asset: stakedAsset,
 								  })
 								: t('earn.actions.unstake.amount', {
-										amount: formatNumber(amount as number, { decimals: DEFAULT_CRYPTO_DECIMALS }),
+										amount: formatNumber(amount, { decimals: DEFAULT_CRYPTO_DECIMALS }),
 										asset: stakedAsset,
 								  })}
 						</WhiteSubheader>
@@ -245,16 +248,16 @@ const StakeTab: FC<StakeTabProps> = ({ stakedAsset, isStake, userBalance, staked
 				</IconWrap>
 				<InputSection>
 					<EmptyDiv />
-					<InputField
-						value={amount ?? '0.00'}
+					<StyledNumericInput
+						value={amount}
 						placeholder="0.00"
-						onChange={(e) => setAmount(Number(e.target.value))}
+						onChange={(e) => setAmount(e.target.value)}
 					/>
 					<MaxButton
 						variant="primary"
 						disabled={isStake ? userBalance === 0 : staked === 0}
 						onClick={() => {
-							setAmount(isStake ? userBalance : staked);
+							setAmount(isStake ? `${userBalance}` : `${staked}`);
 						}}
 					>
 						{t('earn.actions.max')}
@@ -270,8 +273,9 @@ const StakeTab: FC<StakeTabProps> = ({ stakedAsset, isStake, userBalance, staked
 					variant="primary"
 					onClick={handleStake}
 					disabled={
-						synthetix && synthetix.js && amount != null && amount > 0
-							? (amount ?? 0) > (isStake ? userBalance : staked)
+						// TODO: refactor a bit
+						isAppReady && Number(amount) > 0
+							? (Number(amount) ?? 0) > (isStake ? userBalance : staked)
 								? true
 								: false
 							: true
@@ -341,7 +345,7 @@ const EmptyDiv = styled.div`
 	width: 20%;
 `;
 
-const InputField = styled(StyledInput)`
+const StyledNumericInput = styled(NumericInput)`
 	width: 60%;
 	font-size: 24px;
 	background: transparent;
