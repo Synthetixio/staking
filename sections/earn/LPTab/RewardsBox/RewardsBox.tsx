@@ -1,8 +1,9 @@
 import { FC, useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
+import { useRecoilValue } from 'recoil';
 
-import synthetix from 'lib/synthetix';
+import { appReadyState } from 'store/app';
 import smallWaveSVG from 'assets/svg/app/small-wave.svg';
 import Connector from 'containers/Connector';
 import Currency from 'components/Currency';
@@ -60,10 +61,11 @@ const RewardsBox: FC<RewardsBoxProps> = ({
 	const { signer } = Connector.useContainer();
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
 	const [gasLimitEstimate, setGasLimitEstimate] = useState<number | null>(null);
+	const isAppReady = useRecoilValue(appReadyState);
 
 	useEffect(() => {
 		const getGasLimitEstimate = async () => {
-			if (synthetix && synthetix.js) {
+			if (isAppReady) {
 				try {
 					setClaimError(null);
 					const contract = getContract(stakedAsset, signer);
@@ -76,7 +78,7 @@ const RewardsBox: FC<RewardsBoxProps> = ({
 			}
 		};
 		getGasLimitEstimate();
-	}, [stakedAsset, signer, setClaimError]);
+	}, [stakedAsset, signer, setClaimError, isAppReady]);
 
 	return (
 		<>

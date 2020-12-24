@@ -24,6 +24,7 @@ import {
 	FlexDivColCentered,
 	ModalContent,
 	ModalItem,
+	ModalItemText,
 	ModalItemTitle,
 } from 'styles/common';
 import Currency from 'components/Currency';
@@ -299,7 +300,20 @@ const StakeTab: FC<StakeTabProps> = ({ stakedAsset, isStake, userBalance, staked
 					content={
 						<ModalContent>
 							<ModalItem>
-								<ModalItemTitle>{t('modals.confirm-transaction.claiming.claiming')}</ModalItemTitle>
+								<ModalItemTitle>
+									{isStake ? t('earn.actions.stake.staking') : t('earn.actions.unstake.unstaking')}
+								</ModalItemTitle>
+								<ModalItemText>
+									{isStake
+										? t('earn.actions.stake.amount', {
+												amount: formatNumber(amount, { decimals: DEFAULT_CRYPTO_DECIMALS }),
+												asset: stakedAsset,
+										  })
+										: t('earn.actions.unstake.amount', {
+												amount: formatNumber(amount, { decimals: DEFAULT_CRYPTO_DECIMALS }),
+												asset: stakedAsset,
+										  })}
+								</ModalItemText>
 							</ModalItem>
 						</ModalContent>
 					}
