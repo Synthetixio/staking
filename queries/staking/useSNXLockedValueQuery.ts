@@ -28,7 +28,7 @@ const useSNXLockedValueQuery = (options?: QueryConfig<number>) => {
 				synthetix.js?.contracts.Synthetix.totalIssuedSynthsExcludeEtherCollateral(
 					synthetix.js?.toBytes32('sUSD')
 				),
-				synthetix.js?.contracts.SynthetixState.issuanceRatio(),
+				synthetix.js?.contracts.SystemSettings.issuanceRatio(),
 				snxData.snx.holders({ max: 1000 }),
 			]);
 
@@ -63,7 +63,7 @@ const useSNXLockedValueQuery = (options?: QueryConfig<number>) => {
 			const percentLocked = snxLocked / snxTotal;
 			const totalSupply = Number(synthetix.js?.utils.formatEther(unformattedSnxTotalSupply));
 
-			return totalSupply * percentLocked;
+			return totalSupply * percentLocked * usdToSnxPrice;
 		},
 		{
 			enabled: snxData && synthetix.js,

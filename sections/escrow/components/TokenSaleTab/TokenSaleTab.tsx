@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Notify from 'containers/Notify';
 import { ethers } from 'ethers';
 
@@ -6,6 +6,7 @@ import synthetix from 'lib/synthetix';
 
 import { useRecoilValue } from 'recoil';
 import { isWalletConnectedState } from 'store/wallet';
+import { appReadyState } from 'store/app';
 
 import TabContent from './TabContent';
 import { TabContainer } from '../common';
@@ -18,6 +19,7 @@ import useTokenSaleEscrowQuery from 'queries/escrow/useTokenSaleEscrowQuery';
 const TokenSaleTab: React.FC = () => {
 	const tokenSaleEscrowQuery = useTokenSaleEscrowQuery();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
+	const isAppReady = useRecoilValue(appReadyState);
 
 	const { monitorHash } = Notify.useContainer();
 	const [gasLimitEstimate, setGasLimitEstimate] = useState<number | null>(null);
@@ -33,12 +35,12 @@ const TokenSaleTab: React.FC = () => {
 
 	useEffect(() => {
 		const getGasLimitEstimate = async () => {
-			if (synthetix && synthetix.js && isWalletConnected) {
+			if (isAppReady && isWalletConnected) {
 				try {
 					setGasEstimateError(null);
 					const gasEstimate = await getGasEstimateForTransaction(
 						[],
-						synthetix.js?.contracts.SynthetixEscrow.estimateGas.vest
+						synthetix.js!.contracts.SynthetixEscrow.estimateGas.vest
 					);
 					setGasLimitEstimate(normalizeGasLimit(Number(gasEstimate)));
 				} catch (error) {
@@ -49,38 +51,43 @@ const TokenSaleTab: React.FC = () => {
 		};
 		getGasLimitEstimate();
 		// eslint-disable-next-line
-	}, [gasEstimateError, isWalletConnected]);
+	}, [gasEstimateError, isWalletConnected, isAppReady]);
 
-	const handleVest = async () => {
-		try {
-			setVestTxError(null);
-			setTxModalOpen(true);
-			const {
-				contracts: { SynthetixEscrow },
-			} = synthetix.js!;
+	const handleVest = useCallback(() => {
+		async function vest() {
+			if (isAppReady) {
+				try {
+					setVestTxError(null);
+					setTxModalOpen(true);
+					const {
+						contracts: { SynthetixEscrow },
+					} = synthetix.js!;
 
-			let transaction: ethers.ContractTransaction = await SynthetixEscrow.vest({
-				gasPrice: normalizedGasPrice(gasPrice),
-				gasLimit: gasLimitEstimate,
-			});
+					let transaction: ethers.ContractTransaction = await SynthetixEscrow.vest({
+						gasPrice: normalizedGasPrice(gasPrice),
+						gasLimit: gasLimitEstimate,
+					});
 
-			if (transaction) {
-				setTxHash(transaction.hash);
-				setTransactionState(Transaction.WAITING);
-				monitorHash({
-					txHash: transaction.hash,
-					onTxConfirmed: () => {
-						setTransactionState(Transaction.SUCCESS);
-						tokenSaleEscrowQuery.refetch();
-					},
-				});
-				setTxModalOpen(false);
+					if (transaction) {
+						setTxHash(transaction.hash);
+						setTransactionState(Transaction.WAITING);
+						monitorHash({
+							txHash: transaction.hash,
+							onTxConfirmed: () => {
+								setTransactionState(Transaction.SUCCESS);
+								tokenSaleEscrowQuery.refetch();
+							},
+						});
+						setTxModalOpen(false);
+					}
+				} catch (e) {
+					setTransactionState(Transaction.PRESUBMIT);
+					setVestTxError(e.message);
+				}
 			}
-		} catch (e) {
-			setTransactionState(Transaction.PRESUBMIT);
-			setVestTxError(e.message);
 		}
-	};
+		vest();
+	}, [isAppReady, gasPrice, gasLimitEstimate, tokenSaleEscrowQuery, monitorHash]);
 
 	return (
 		<TabContainer>

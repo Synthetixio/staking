@@ -3,8 +3,9 @@ import styled, { css } from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import { Svg } from 'react-optimized-image';
+import OutsideClickHandler from 'react-outside-click-handler';
 
-import { FlexDivCentered, IconButton } from 'styles/common';
+import { FlexDivCentered, GridDivCenteredCol, IconButton, UpperCased } from 'styles/common';
 import { zIndex } from 'constants/ui';
 
 import Button from 'components/Button';
@@ -32,7 +33,7 @@ const UserMenu: FC = () => {
 	const network = useRecoilValue(networkState);
 
 	return (
-		<>
+		<Container>
 			<FlexDivCentered>
 				<Menu>
 					<MenuButton
@@ -44,53 +45,59 @@ const UserMenu: FC = () => {
 						<Svg src={CogIcon} />
 					</MenuButton>
 				</Menu>
-				<Dropdown>
-					{isWalletConnected ? (
-						<WalletButton
-							variant="solid"
-							onClick={() => {
-								setWalletOptionsModalOpened(!walletOptionsModalOpened);
-							}}
-							isActive={walletOptionsModalOpened}
-							data-testid="user-menu"
-						>
-							<FlexDivCentered data-testid="wallet-address">
-								<StyledConnectionDot />
-								{truncatedWalletAddress}
-							</FlexDivCentered>
-							<NetworkTag className="network-tag" data-testid="network-tag">
-								{network?.name}
-							</NetworkTag>
-							{walletOptionsModalOpened ? caretUp : caretDown}
-						</WalletButton>
-					) : (
-						<WalletButton
-							variant="solid"
-							onClick={() => setWalletOptionsModalOpened(!walletOptionsModalOpened)}
-							data-testid="user-menu"
-						>
-							<FlexDivCentered>
-								<StyledConnectionDot />
-								{t('common.wallet.not-connected')}
-							</FlexDivCentered>
-							{walletOptionsModalOpened ? caretUp : caretDown}
-						</WalletButton>
-					)}
-					{walletOptionsModalOpened && (
-						<WalletOptionsModal
-							onDismiss={() => setWalletOptionsModalOpened(false)}
-							setWatchWalletModalOpened={setWatchWalletModalOpened}
-						/>
-					)}
-				</Dropdown>
+				<DropdownContainer>
+					<OutsideClickHandler onOutsideClick={() => setWalletOptionsModalOpened(false)}>
+						{isWalletConnected ? (
+							<WalletButton
+								variant="solid"
+								onClick={() => {
+									setWalletOptionsModalOpened(!walletOptionsModalOpened);
+								}}
+								isActive={walletOptionsModalOpened}
+								data-testid="user-menu"
+							>
+								<FlexDivCentered data-testid="wallet-address">
+									<StyledConnectionDot />
+									{truncatedWalletAddress}
+								</FlexDivCentered>
+								<NetworkTag className="network-tag" data-testid="network-tag">
+									{network?.name}
+								</NetworkTag>
+								{walletOptionsModalOpened ? caretUp : caretDown}
+							</WalletButton>
+						) : (
+							<WalletButton
+								variant="solid"
+								onClick={() => setWalletOptionsModalOpened(!walletOptionsModalOpened)}
+								data-testid="user-menu"
+							>
+								<FlexDivCentered>
+									<StyledConnectionDot />
+									<UpperCased>{t('common.wallet.not-connected')}</UpperCased>
+								</FlexDivCentered>
+								{walletOptionsModalOpened ? caretUp : caretDown}
+							</WalletButton>
+						)}
+						{walletOptionsModalOpened && (
+							<WalletOptionsModal
+								onDismiss={() => setWalletOptionsModalOpened(false)}
+								setWatchWalletModalOpened={setWatchWalletModalOpened}
+							/>
+						)}
+					</OutsideClickHandler>
+				</DropdownContainer>
 			</FlexDivCentered>
 			{watchWalletModalOpened && (
 				<WatchWalletModal onDismiss={() => setWatchWalletModalOpened(false)} />
 			)}
 			{settingsModalOpened && <SettingsModal onDismiss={() => setSettingsModalOpened(false)} />}
-		</>
+		</Container>
 	);
 };
+
+const Container = styled(GridDivCenteredCol)`
+	grid-gap: 15px;
+`;
 
 const StyledConnectionDot = styled(ConnectionDot)`
 	margin-right: 8px;
@@ -151,13 +158,19 @@ const MenuButton = styled(IconButton)<{ isActive: boolean }>`
 	height: 32px;
 `;
 
-const Dropdown = styled.div`
-	display: flex;
-	flex-direction: column;
-	justify-content: flex-start;
-	height: 100%;
-	z-index: ${zIndex.DROPDOWN};
+const DropdownContainer = styled.div`
 	width: 185px;
+	height: 32px;
+	position: relative;
+
+	> div {
+		position: absolute;
+		display: flex;
+		flex-direction: column;
+		justify-content: flex-start;
+		z-index: ${zIndex.DROPDOWN};
+		width: inherit;
+	}
 `;
 
 export default UserMenu;

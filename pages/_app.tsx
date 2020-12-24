@@ -20,7 +20,6 @@ import MobileUnsupported from 'sections/shared/MobileUnsupported';
 
 import 'styles/main.css';
 import '@reach/dialog/styles.css';
-import '@reach/tabs/styles.css';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import 'tippy.js/dist/tippy.css';
@@ -34,6 +33,8 @@ const queryCache = new QueryCache({
 		},
 	},
 });
+
+// trigger deploy - going live 22 Dec 2020
 
 const App: FC<AppProps> = ({ Component, pageProps }) => {
 	const { t } = useTranslation();
