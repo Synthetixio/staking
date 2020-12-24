@@ -3,7 +3,9 @@ import styled from 'styled-components';
 import { useTranslation, Trans } from 'react-i18next';
 import Img, { Svg } from 'react-optimized-image';
 import { ethers } from 'ethers';
+import { useRecoilValue } from 'recoil';
 
+import { appReadyState } from 'store/app';
 import GasSelector from 'components/GasSelector';
 import PendingConfirmation from 'assets/svg/app/pending-confirmation.svg';
 import Success from 'assets/svg/app/success.svg';
@@ -92,15 +94,16 @@ const Approve: FC<ApproveProps> = ({ stakedAsset, setShowApproveOverlayModal }) 
 	const [txHash, setTxHash] = useState<string | null>(null);
 	const link =
 		etherscanInstance != null && txHash != null ? etherscanInstance.txLink(txHash) : undefined;
+	const isAppReady = useRecoilValue(appReadyState);
 
 	useEffect(() => {
 		const getGasLimitEstimate = async () => {
-			if (synthetix && synthetix.js) {
+			if (isAppReady) {
 				try {
 					setError(null);
 					const { contract, poolAddress } = getApprovalContractData(stakedAsset, provider);
 					let gasEstimate = await getGasEstimateForTransaction(
-						[poolAddress, synthetix.js.utils.parseEther(TokenAllowanceLimit.toString())],
+						[poolAddress, synthetix.js!.utils.parseEther(TokenAllowanceLimit.toString())],
 						contract.estimateGas.approve
 					);
 					setGasLimitEstimate(normalizeGasLimit(Number(gasEstimate)));
@@ -111,17 +114,17 @@ const Approve: FC<ApproveProps> = ({ stakedAsset, setShowApproveOverlayModal }) 
 			}
 		};
 		getGasLimitEstimate();
-	}, [stakedAsset, provider]);
+	}, [stakedAsset, provider, isAppReady]);
 
 	const handleApprove = useCallback(() => {
 		async function approve() {
-			if (synthetix && synthetix.js) {
+			if (isAppReady) {
 				try {
 					setError(null);
 					setTxModalOpen(true);
 					const { contract, poolAddress } = getApprovalContractData(stakedAsset, provider);
 
-					const allowance = synthetix.js.utils.parseEther(TokenAllowanceLimit.toString());
+					const allowance = synthetix.js!.utils.parseEther(TokenAllowanceLimit.toString());
 					const gasLimit = await getGasEstimateForTransaction(
 						[poolAddress, allowance],
 						contract.estimateGas.approve
@@ -151,7 +154,7 @@ const Approve: FC<ApproveProps> = ({ stakedAsset, setShowApproveOverlayModal }) 
 			}
 		}
 		approve();
-	}, [stakedAsset, provider, gasPrice, monitorHash]);
+	}, [stakedAsset, provider, gasPrice, monitorHash, isAppReady]);
 
 	if (transactionState === Transaction.WAITING) {
 		return (

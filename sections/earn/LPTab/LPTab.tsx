@@ -2,8 +2,9 @@ import { FC, useState, useMemo, useEffect, useCallback } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import { ethers } from 'ethers';
 import { Svg } from 'react-optimized-image';
+import { useRecoilValue } from 'recoil';
 
-import synthetix from 'lib/synthetix';
+import { appReadyState } from 'store/app';
 import StructuredTab from 'components/StructuredTab';
 import { FlexDivCentered, FlexDivColCentered, ExternalLink } from 'styles/common';
 import { CurrencyKey } from 'constants/currency';
@@ -56,6 +57,7 @@ const LPTab: FC<LPTabProps> = ({ stakedAsset, tokenRewards, allowance, userBalan
 	const { signer } = Connector.useContainer();
 	const { monitorHash } = Notify.useContainer();
 	const [showApproveOverlayModal, setShowApproveOverlayModal] = useState<boolean>(false);
+	const isAppReady = useRecoilValue(appReadyState);
 
 	const [claimGasPrice, setClaimGasPrice] = useState<number>(0);
 	const [claimTransactionState, setClaimTransactionState] = useState<Transaction>(
@@ -105,7 +107,7 @@ const LPTab: FC<LPTabProps> = ({ stakedAsset, tokenRewards, allowance, userBalan
 
 	const handleClaim = useCallback(() => {
 		async function claim() {
-			if (synthetix && synthetix.js) {
+			if (isAppReady) {
 				try {
 					setClaimError(null);
 					setClaimTxModalOpen(true);
@@ -133,7 +135,7 @@ const LPTab: FC<LPTabProps> = ({ stakedAsset, tokenRewards, allowance, userBalan
 			}
 		}
 		claim();
-	}, [stakedAsset, signer, claimGasPrice, monitorHash]);
+	}, [stakedAsset, signer, claimGasPrice, monitorHash, isAppReady]);
 
 	const translationKey = useMemo(() => {
 		if (stakedAsset === Synths.iETH) {
