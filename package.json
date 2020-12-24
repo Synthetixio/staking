@@ -19,7 +19,7 @@
 		"@reach/dialog": "0.11.0",
 		"@reach/tabs": "0.11.2",
 		"@synthetixio/assets": "2.0.6",
-		"@synthetixio/js": "2.35.0-ovm",
+		"@synthetixio/js": "^2.35.2",
 		"@tippyjs/react": "4.1.0",
 		"bignumber.js": "9.0.0",
 		"bnc-notify": "1.5.0",
