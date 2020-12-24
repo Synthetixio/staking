@@ -17,6 +17,7 @@ import { toBigNumber } from 'utils/formatters/number';
 import { amountToBurnState, BurnActionType, burnTypeState } from 'store/staking';
 import { addSeconds, differenceInSeconds } from 'date-fns';
 import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
+import { appReadyState } from 'store/app';
 
 // @TODO: Add for the countdown of waiting period and issuance delay
 
@@ -26,6 +27,7 @@ const BurnTab: React.FC = () => {
 	const [burnType, onBurnTypeChange] = useRecoilState(burnTypeState);
 	const { percentageTargetCRatio, debtBalance, issuableSynths } = useStakingCalculations();
 	const walletAddress = useRecoilValue(walletAddressState);
+	const isAppReady = useRecoilValue(appReadyState);
 
 	const [transactionState, setTransactionState] = useState<Transaction>(Transaction.PRESUBMIT);
 	const [txHash, setTxHash] = useState<string | null>(null);
@@ -96,7 +98,7 @@ const BurnTab: React.FC = () => {
 
 	useEffect(() => {
 		const getGasLimitEstimate = async () => {
-			if (synthetix && synthetix.js && amountToBurn.length > 0 && isWalletConnected) {
+			if (isAppReady && amountToBurn.length > 0 && isWalletConnected) {
 				try {
 					setError(null);
 					const {
@@ -128,6 +130,7 @@ const BurnTab: React.FC = () => {
 		getGasLimitEstimate();
 	}, [
 		isWalletConnected,
+		isAppReady,
 		error,
 		amountToBurn,
 		debtBalance,
@@ -138,58 +141,60 @@ const BurnTab: React.FC = () => {
 
 	const handleBurn = useCallback(
 		async (burnToTarget: boolean) => {
-			try {
-				setError(null);
-				setTxModalOpen(true);
-				const {
-					contracts: { Synthetix, Issuer },
-					utils: { formatBytes32String, parseEther },
-				} = synthetix.js!;
+			if (isAppReady) {
+				try {
+					setError(null);
+					setTxModalOpen(true);
+					const {
+						contracts: { Synthetix, Issuer },
+						utils: { formatBytes32String, parseEther },
+					} = synthetix.js!;
 
-				if (await Synthetix.isWaitingPeriod(formatBytes32String(Synths.sUSD)))
-					throw new Error('Waiting period for sUSD is still ongoing');
-				if (!burnToTarget && !(await Issuer.canBurnSynths(walletAddress)))
-					throw new Error('Waiting period to burn is still ongoing');
+					if (await Synthetix.isWaitingPeriod(formatBytes32String(Synths.sUSD)))
+						throw new Error('Waiting period for sUSD is still ongoing');
+					if (!burnToTarget && !(await Issuer.canBurnSynths(walletAddress)))
+						throw new Error('Waiting period to burn is still ongoing');
 
-				let transaction: ethers.ContractTransaction;
+					let transaction: ethers.ContractTransaction;
 
-				if (burnToTarget) {
-					const gasLimit = getGasEstimateForTransaction(
-						[],
-						Synthetix.estimateGas.burnSynthsToTarget
-					);
-					transaction = await Synthetix.burnSynthsToTarget({
-						gasPrice: normalizedGasPrice(gasPrice),
-						gasLimit: gasLimit,
-					});
-				} else {
-					const amountToBurnBN = parseEther(amountToBurn.toString());
-					const gasLimit = getGasEstimateForTransaction(
-						[amountToBurnBN],
-						Synthetix.estimateGas.burnSynths
-					);
-					transaction = await Synthetix.burnSynths(amountToBurnBN, {
-						gasPrice: normalizedGasPrice(gasPrice),
-						gasLimit,
-					});
+					if (burnToTarget) {
+						const gasLimit = getGasEstimateForTransaction(
+							[],
+							Synthetix.estimateGas.burnSynthsToTarget
+						);
+						transaction = await Synthetix.burnSynthsToTarget({
+							gasPrice: normalizedGasPrice(gasPrice),
+							gasLimit: gasLimit,
+						});
+					} else {
+						const amountToBurnBN = parseEther(amountToBurn.toString());
+						const gasLimit = getGasEstimateForTransaction(
+							[amountToBurnBN],
+							Synthetix.estimateGas.burnSynths
+						);
+						transaction = await Synthetix.burnSynths(amountToBurnBN, {
+							gasPrice: normalizedGasPrice(gasPrice),
+							gasLimit,
+						});
+					}
+					if (transaction) {
+						setTxHash(transaction.hash);
+						setTransactionState(Transaction.WAITING);
+						monitorHash({
+							txHash: transaction.hash,
+							onTxConfirmed: () => {
+								setTransactionState(Transaction.SUCCESS);
+							},
+						});
+						setTxModalOpen(false);
+					}
+				} catch (e) {
+					setTransactionState(Transaction.PRESUBMIT);
+					setError(e.message);
 				}
-				if (transaction) {
-					setTxHash(transaction.hash);
-					setTransactionState(Transaction.WAITING);
-					monitorHash({
-						txHash: transaction.hash,
-						onTxConfirmed: () => {
-							setTransactionState(Transaction.SUCCESS);
-						},
-					});
-					setTxModalOpen(false);
-				}
-			} catch (e) {
-				setTransactionState(Transaction.PRESUBMIT);
-				setError(e.message);
 			}
 		},
-		[amountToBurn, gasPrice, monitorHash, walletAddress]
+		[amountToBurn, gasPrice, monitorHash, walletAddress, isAppReady]
 	);
 
 	const returnPanel = useMemo(() => {

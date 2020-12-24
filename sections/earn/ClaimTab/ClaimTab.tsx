@@ -5,7 +5,9 @@ import { ethers } from 'ethers';
 import BigNumber from 'bignumber.js';
 import { Svg } from 'react-optimized-image';
 import { useRouter } from 'next/router';
+import { useRecoilValue } from 'recoil';
 
+import { appReadyState } from 'store/app';
 import ROUTES from 'constants/routes';
 import { ExternalLink, FlexDiv } from 'styles/common';
 import synthetix from 'lib/synthetix';
@@ -49,7 +51,6 @@ import {
 	FlexDivColCentered,
 	ModalContent,
 	ModalItem,
-	ModalItemTitle,
 	Tooltip,
 } from 'styles/common';
 import { EXTERNAL_LINKS } from 'constants/links';
@@ -85,6 +86,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 	const [claimedTradingRewards, setClaimedTradingRewards] = useState<number | null>(null);
 	const [claimedStakingRewards, setClaimedStakingRewards] = useState<number | null>(null);
 	const router = useRouter();
+	const isAppReady = useRecoilValue(appReadyState);
 
 	const [transactionState, setTransactionState] = useState<Transaction>(Transaction.PRESUBMIT);
 	const [txHash, setTxHash] = useState<string | null>(null);
@@ -94,7 +96,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 
 	useEffect(() => {
 		const getGasLimitEstimate = async () => {
-			if (synthetix && synthetix.js) {
+			if (isAppReady) {
 				try {
 					setError(null);
 					const {
@@ -113,43 +115,45 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 			}
 		};
 		getGasLimitEstimate();
-	}, []);
+	}, [isAppReady]);
 
 	const handleClaim = useCallback(() => {
 		async function claim() {
-			try {
-				setError(null);
-				setTxModalOpen(true);
-				const {
-					contracts: { FeePool },
-				} = synthetix.js!;
+			if (isAppReady) {
+				try {
+					setError(null);
+					setTxModalOpen(true);
+					const {
+						contracts: { FeePool },
+					} = synthetix.js!;
 
-				const gasLimit = await getGasEstimateForTransaction([], FeePool.estimateGas.claimFees);
-				const transaction: ethers.ContractTransaction = await FeePool.claimFees({
-					gasPrice: normalizedGasPrice(gasPrice),
-					gasLimit,
-				});
-
-				if (transaction) {
-					setTxHash(transaction.hash);
-					setTransactionState(Transaction.WAITING);
-					monitorHash({
-						txHash: transaction.hash,
-						onTxConfirmed: () => {
-							setClaimedTradingRewards(tradingRewards.toNumber());
-							setClaimedStakingRewards(stakingRewards.toNumber());
-							setTransactionState(Transaction.SUCCESS);
-						},
+					const gasLimit = await getGasEstimateForTransaction([], FeePool.estimateGas.claimFees);
+					const transaction: ethers.ContractTransaction = await FeePool.claimFees({
+						gasPrice: normalizedGasPrice(gasPrice),
+						gasLimit,
 					});
-					setTxModalOpen(false);
+
+					if (transaction) {
+						setTxHash(transaction.hash);
+						setTransactionState(Transaction.WAITING);
+						monitorHash({
+							txHash: transaction.hash,
+							onTxConfirmed: () => {
+								setClaimedTradingRewards(tradingRewards.toNumber());
+								setClaimedStakingRewards(stakingRewards.toNumber());
+								setTransactionState(Transaction.SUCCESS);
+							},
+						});
+						setTxModalOpen(false);
+					}
+				} catch (e) {
+					setTransactionState(Transaction.PRESUBMIT);
+					setError(e.message);
 				}
-			} catch (e) {
-				setTransactionState(Transaction.PRESUBMIT);
-				setError(e.message);
 			}
 		}
 		claim();
-	}, [gasPrice, monitorHash, tradingRewards, stakingRewards]);
+	}, [gasPrice, monitorHash, tradingRewards, stakingRewards, isAppReady]);
 
 	const goToBurn = useCallback(() => router.push(ROUTES.Staking.Burn), [router]);
 
@@ -342,7 +346,26 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 					content={
 						<ModalContent>
 							<ModalItem>
-								<ModalItemTitle>{t('modals.confirm-transaction.claiming.claiming')}</ModalItemTitle>
+								<StyledFlexDiv>
+									<StyledFlexDivColCentered>
+										<GreyHeader>{t('earn.actions.claim.claiming')}</GreyHeader>
+										<WhiteSubheader>
+											{t('earn.actions.claim.amount', {
+												amount: formatNumber(tradingRewards, { decimals: DEFAULT_FIAT_DECIMALS }),
+												asset: Synths.sUSD,
+											})}
+										</WhiteSubheader>
+									</StyledFlexDivColCentered>
+									<StyledFlexDivColCentered>
+										<GreyHeader>{t('earn.actions.claim.claiming')}</GreyHeader>
+										<WhiteSubheader>
+											{t('earn.actions.claim.amount', {
+												amount: formatNumber(stakingRewards, { decimals: DEFAULT_CRYPTO_DECIMALS }),
+												asset: CryptoCurrency.SNX,
+											})}
+										</WhiteSubheader>
+									</StyledFlexDivColCentered>
+								</StyledFlexDiv>
 							</ModalItem>
 						</ModalContent>
 					}

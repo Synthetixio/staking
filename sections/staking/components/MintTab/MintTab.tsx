@@ -16,10 +16,12 @@ import { getMintAmount } from '../helper';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { amountToMintState, MintActionType, mintTypeState } from 'store/staking';
 import { isWalletConnectedState } from 'store/wallet';
+import { appReadyState } from 'store/app';
 
 const MintTab: React.FC = () => {
 	const { monitorHash } = Notify.useContainer();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
+	const isAppReady = useRecoilValue(appReadyState);
 
 	const [mintType, onMintTypeChange] = useRecoilState(mintTypeState);
 	const [amountToMint, onMintChange] = useRecoilState(amountToMintState);
@@ -39,7 +41,7 @@ const MintTab: React.FC = () => {
 
 	useEffect(() => {
 		const getGasLimitEstimate = async () => {
-			if (synthetix && synthetix.js && isWalletConnected) {
+			if (isAppReady && isWalletConnected) {
 				try {
 					setError(null);
 					const {
@@ -76,54 +78,56 @@ const MintTab: React.FC = () => {
 			}
 		};
 		getGasLimitEstimate();
-	}, [amountToMint, mintMax, isWalletConnected, unstakedCollateral]);
+	}, [amountToMint, mintMax, isWalletConnected, unstakedCollateral, isAppReady]);
 
 	const handleStake = useCallback(
 		async (mintMax: boolean) => {
-			try {
-				setError(null);
-				setTxModalOpen(true);
-				const {
-					contracts: { Synthetix },
-					utils: { parseEther },
-				} = synthetix.js!;
+			if (isAppReady) {
+				try {
+					setError(null);
+					setTxModalOpen(true);
+					const {
+						contracts: { Synthetix },
+						utils: { parseEther },
+					} = synthetix.js!;
 
-				let transaction: ethers.ContractTransaction;
+					let transaction: ethers.ContractTransaction;
 
-				if (mintMax) {
-					const gasLimit = getGasEstimateForTransaction([], Synthetix.estimateGas.issueMaxSynths);
-					transaction = await Synthetix.issueMaxSynths({
-						gasPrice: normalizedGasPrice(gasPrice),
-						gasLimit,
-					});
-				} else {
-					const amountToMintBN = parseEther(amountToMint);
-					const gasLimit = getGasEstimateForTransaction(
-						[amountToMintBN],
-						Synthetix.estimateGas.issueSynths
-					);
-					transaction = await Synthetix.issueSynths(amountToMintBN, {
-						gasPrice: normalizedGasPrice(gasPrice),
-						gasLimit,
-					});
+					if (mintMax) {
+						const gasLimit = getGasEstimateForTransaction([], Synthetix.estimateGas.issueMaxSynths);
+						transaction = await Synthetix.issueMaxSynths({
+							gasPrice: normalizedGasPrice(gasPrice),
+							gasLimit,
+						});
+					} else {
+						const amountToMintBN = parseEther(amountToMint);
+						const gasLimit = getGasEstimateForTransaction(
+							[amountToMintBN],
+							Synthetix.estimateGas.issueSynths
+						);
+						transaction = await Synthetix.issueSynths(amountToMintBN, {
+							gasPrice: normalizedGasPrice(gasPrice),
+							gasLimit,
+						});
+					}
+					if (transaction) {
+						setTxHash(transaction.hash);
+						setTransactionState(Transaction.WAITING);
+						monitorHash({
+							txHash: transaction.hash,
+							onTxConfirmed: () => {
+								setTransactionState(Transaction.SUCCESS);
+							},
+						});
+						setTxModalOpen(false);
+					}
+				} catch (e) {
+					setTransactionState(Transaction.PRESUBMIT);
+					setError(e.message);
 				}
-				if (transaction) {
-					setTxHash(transaction.hash);
-					setTransactionState(Transaction.WAITING);
-					monitorHash({
-						txHash: transaction.hash,
-						onTxConfirmed: () => {
-							setTransactionState(Transaction.SUCCESS);
-						},
-					});
-					setTxModalOpen(false);
-				}
-			} catch (e) {
-				setTransactionState(Transaction.PRESUBMIT);
-				setError(e.message);
 			}
 		},
-		[amountToMint, gasPrice, monitorHash]
+		[amountToMint, gasPrice, monitorHash, isAppReady]
 	);
 
 	const returnPanel = useMemo(() => {
