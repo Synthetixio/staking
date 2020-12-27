@@ -93,6 +93,7 @@ const StakeTab: FC<StakeTabProps> = ({ stakedAsset, isStake, userBalance, staked
 		etherscanInstance != null && txHash != null ? etherscanInstance.txLink(txHash) : undefined;
 
 	useEffect(() => {
+		console.log(synthetix.js);
 		const getGasLimitEstimate = async () => {
 			if (isAppReady && Number(amount) > 0) {
 				try {
