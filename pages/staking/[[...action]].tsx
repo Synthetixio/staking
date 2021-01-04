@@ -1,16 +1,21 @@
 import React from 'react';
 import Head from 'next/head';
 import { useTranslation } from 'react-i18next';
+import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
-import Main from 'sections/staking';
-import StatBox from 'components/StatBox';
 import { LineSpacer, StatsSection } from 'styles/common';
+
 import { formatFiatCurrency, formatPercent, toBigNumber } from 'utils/formatters/number';
+
+import Main from 'sections/staking';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
+
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import { useRecoilValue } from 'recoil';
+
 import { isWalletConnectedState } from 'store/wallet';
+
+import StatBox from 'components/StatBox';
 import ProgressBar from 'components/ProgressBar';
 
 const StakingPage = () => {
