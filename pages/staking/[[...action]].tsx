@@ -11,10 +11,16 @@ import useStakingCalculations from 'sections/staking/hooks/useStakingCalculation
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { useRecoilValue } from 'recoil';
 import { isWalletConnectedState } from 'store/wallet';
+import ProgressBar from 'components/ProgressBar';
 
 const StakingPage = () => {
 	const { t } = useTranslation();
-	const { stakedCollateralValue, percentageCurrentCRatio, debtBalance } = useStakingCalculations();
+	const {
+		stakedCollateralValue,
+		percentageCurrentCRatio,
+		debtBalance,
+		percentCurrentCRatioOfTarget,
+	} = useStakingCalculations();
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 
@@ -39,7 +45,14 @@ const StakingPage = () => {
 					title={t('common.stat-box.c-ratio')}
 					value={isWalletConnected ? formatPercent(percentageCurrentCRatio) : '-%'}
 					size="lg"
-				/>
+				>
+					<CRatioProgressBar
+						variant="blue-pink"
+						percentage={
+							percentCurrentCRatioOfTarget.isNaN() ? 0 : percentCurrentCRatioOfTarget.toNumber()
+						}
+					/>
+				</CRatio>
 				<ActiveDebt
 					title={t('common.stat-box.active-debt')}
 					value={formatFiatCurrency(
@@ -71,6 +84,14 @@ const ActiveDebt = styled(StatBox)`
 	.title {
 		color: ${(props) => props.theme.colors.pink};
 	}
+`;
+
+export const CRatioProgressBar = styled(ProgressBar)`
+	height: 6px;
+	width: 100%;
+	transform: translateY(12px);
+	// match StatBox "lg" background size width
+	max-width: 176px;
 `;
 
 export default StakingPage;
