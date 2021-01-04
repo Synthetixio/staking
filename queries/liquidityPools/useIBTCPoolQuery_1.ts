@@ -19,10 +19,14 @@ const useIBTCPoolQuery_1 = (options?: QueryConfig<LiquidityPoolData>) => {
 	return useQuery<LiquidityPoolData>(
 		QUERY_KEYS.LiquidityPools.iBTC(walletAddress ?? '', network?.id!),
 		async () => {
-			const contract = synthetix.js?.contracts.StakingRewardsiBTC as ethers.Contract;
-			const address = contract.address;
+			const {
+				contracts: { StakingRewardsiBTC, Exchanger, ProxyiBTC, ExchangeRates },
+				utils: { formatBytes32String },
+			} = synthetix.js!;
 
-			const getDuration = contract.DURATION || contract.rewardsDuration;
+			const address = StakingRewardsiBTC.address;
+
+			const getDuration = StakingRewardsiBTC.DURATION || StakingRewardsiBTC.rewardsDuration;
 			const [
 				duration,
 				rate,
@@ -33,22 +37,27 @@ const useIBTCPoolQuery_1 = (options?: QueryConfig<LiquidityPoolData>) => {
 				iBtcSNXRewards,
 				iBtcStaked,
 				iBtcAllowance,
+				settlementOwing,
 			] = await Promise.all([
 				getDuration(),
-				contract.rewardRate(),
-				contract.periodFinish(),
-				synthetix.js?.contracts.ProxyiBTC.balanceOf(address),
-				synthetix.js?.contracts.ProxyiBTC.balanceOf(walletAddress),
-				synthetix.js?.contracts.ExchangeRates.rateForCurrency(synthetix.js?.toBytes32(Synths.iBTC)),
-				contract.earned(walletAddress),
-				contract.balanceOf(walletAddress),
-				synthetix.js?.contracts.ProxyiBTC.allowance(walletAddress, address),
+				StakingRewardsiBTC.rewardRate(),
+				StakingRewardsiBTC.periodFinish(),
+				ProxyiBTC.balanceOf(address),
+				ProxyiBTC.balanceOf(walletAddress),
+				ExchangeRates.rateForCurrency(synthetix.js?.toBytes32(Synths.iBTC)),
+				StakingRewardsiBTC.earned(walletAddress),
+				StakingRewardsiBTC.balanceOf(walletAddress),
+				ProxyiBTC.allowance(walletAddress, address),
+				Exchanger.settlementOwing(walletAddress, formatBytes32String('iBTC')),
 			]);
 			const durationInWeeks = Number(duration) / 3600 / 24 / 7;
 			const isPeriodFinished = new Date().getTime() > Number(periodFinish) * 1000;
 			const distribution = isPeriodFinished
 				? 0
 				: Math.trunc(Number(duration) * (rate / 1e18)) / durationInWeeks;
+
+			const reclaimAmount = Number(settlementOwing.reclaimAmount);
+			const rebateAmount = Number(settlementOwing.rebateAmount);
 
 			const [balance, userBalance, price, rewards, staked, allowance] = [
 				iBtcBalance,
@@ -70,6 +79,7 @@ const useIBTCPoolQuery_1 = (options?: QueryConfig<LiquidityPoolData>) => {
 				staked,
 				allowance,
 				userBalance,
+				needsToSettle: reclaimAmount || rebateAmount ? true : false,
 			};
 		},
 		{
