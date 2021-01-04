@@ -26,6 +26,7 @@ import { EXTERNAL_LINKS } from 'constants/links';
 
 import StakeTab from './StakeTab';
 import Approve from './Approve';
+import Settle from './Settle';
 import RewardsBox from './RewardsBox';
 import { getContract } from './StakeTab/StakeTab';
 
@@ -50,13 +51,23 @@ type LPTabProps = {
 	allowance: number | null;
 	userBalance: number;
 	staked: number;
+	needsToSettle?: boolean;
 };
 
-const LPTab: FC<LPTabProps> = ({ stakedAsset, tokenRewards, allowance, userBalance, staked }) => {
+const LPTab: FC<LPTabProps> = ({
+	stakedAsset,
+	tokenRewards,
+	allowance,
+	userBalance,
+	staked,
+	needsToSettle,
+}) => {
 	const { t } = useTranslation();
 	const { signer } = Connector.useContainer();
 	const { monitorHash } = Notify.useContainer();
 	const [showApproveOverlayModal, setShowApproveOverlayModal] = useState<boolean>(false);
+	const [showSettleOverlayModal, setShowSettleOverlayModal] = useState<boolean>(false);
+
 	const isAppReady = useRecoilValue(appReadyState);
 
 	const [claimGasPrice, setClaimGasPrice] = useState<number>(0);
@@ -97,13 +108,19 @@ const LPTab: FC<LPTabProps> = ({ stakedAsset, tokenRewards, allowance, userBalan
 				key: 'unstake',
 			},
 		];
-	}, [t, stakedAsset, userBalance, staked]);
+	}, [t, stakedAsset, userBalance, staked, needsToSettle]);
 
 	useEffect(() => {
 		if (allowance === 0 && userBalance > 0) {
 			setShowApproveOverlayModal(true);
 		}
 	}, [allowance, userBalance]);
+
+	useEffect(() => {
+		if (needsToSettle) {
+			setShowSettleOverlayModal(true);
+		}
+	}, [needsToSettle]);
 
 	const handleClaim = useCallback(() => {
 		async function claim() {
@@ -253,12 +270,15 @@ const LPTab: FC<LPTabProps> = ({ stakedAsset, tokenRewards, allowance, userBalan
 					SNXRate={SNXRate}
 				/>
 			</FlexDivCentered>
-			{showApproveOverlayModal ? (
+			{showApproveOverlayModal && (
 				<Approve
 					setShowApproveOverlayModal={setShowApproveOverlayModal}
 					stakedAsset={stakedAsset}
 				/>
-			) : null}
+			)}
+			{showSettleOverlayModal && (
+				<Settle setShowSettleOverlayModal={setShowSettleOverlayModal} stakedAsset={stakedAsset} />
+			)}
 		</TabContainer>
 	);
 };
