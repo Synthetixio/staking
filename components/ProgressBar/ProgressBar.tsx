@@ -1,5 +1,6 @@
 import { FC } from 'react';
 import styled, { css } from 'styled-components';
+import Color from 'color';
 
 import { FlexDivRowCentered } from 'styles/common';
 
@@ -47,13 +48,15 @@ const ProgressBarWrapper = styled(FlexDivRowCentered)<{
 		css`
 			.filled-bar {
 				background: ${(props) => props.theme.colors.blue};
-				border: 1px solid ${(props) => props.theme.colors.blue};
-				box-shadow: 0px 0px 10px rgba(0, 209, 255, 0.6);
+				border: 2px solid ${(props) => props.theme.colors.blue};
+				box-shadow: 0px 0px 15px
+					${(props) => Color(props.theme.colors.blue).alpha(0.6).rgb().string()};
 			}
 
 			.unfilled-bar {
-				border: 1px solid ${(props) => props.theme.colors.pink};
-				box-shadow: 0px 0px 15px ${(props) => props.theme.colors.pink};
+				border: 2px solid ${(props) => props.theme.colors.pink};
+				box-shadow: 0px 0px 15px
+					${(props) => Color(props.theme.colors.pink).alpha(0.6).rgb().string()};
 			}
 		`}
 
@@ -62,13 +65,15 @@ const ProgressBarWrapper = styled(FlexDivRowCentered)<{
 		css`
 			.filled-bar {
 				background: ${(props) => props.theme.colors.green};
-				border: 1px solid ${(props) => props.theme.colors.green};
-				box-shadow: 0px 0px 10px rgba(77, 244, 184, 0.25);
+				border: 2px solid ${(props) => props.theme.colors.green};
+				box-shadow: 0px 0px 15px
+					${(props) => Color(props.theme.colors.green).alpha(0.6).rgb().string()};
 			}
 
 			.unfilled-bar {
-				border: 1px solid ${(props) => props.theme.colors.green};
-				box-shadow: 0px 0px 15px ${(props) => props.theme.colors.green};
+				border: 2px solid ${(props) => props.theme.colors.green};
+				box-shadow: 0px 0px 15px
+					${(props) => Color(props.theme.colors.green).alpha(0.6).rgb().string()};
 			}
 		`}		
 `;
