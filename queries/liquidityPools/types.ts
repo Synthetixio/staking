@@ -9,5 +9,5 @@ export type LiquidityPoolData = {
 	allowance: number;
 	duration: number;
 	userBalance: number;
-	needsToSettle: boolean;
+	needsToSettle?: boolean;
 };

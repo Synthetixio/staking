@@ -144,7 +144,6 @@ const useCurvePoolQuery_1 = (options?: QueryConfig<CurveData>) => {
 				duration: Number(duration) * 1000,
 				allowance,
 				userBalance,
-				needsToSettle: false,
 			};
 		},
 		{

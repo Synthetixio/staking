@@ -64,12 +64,12 @@ export const getSettleSynthType = (stakedAsset: CurrencyKey) => {
 	}
 };
 
-type ApproveProps = {
+type SettleProps = {
 	stakedAsset: CurrencyKey;
 	setShowSettleOverlayModal: (show: boolean) => void;
 };
 
-const Approve: FC<ApproveProps> = ({ stakedAsset, setShowSettleOverlayModal }) => {
+const Settle: FC<SettleProps> = ({ stakedAsset, setShowSettleOverlayModal }) => {
 	const { t } = useTranslation();
 	const { monitorHash } = Notify.useContainer();
 	const { provider } = Connector.useContainer();
@@ -278,4 +278,4 @@ const PaddedButton = styled(StyledButton)`
 	width: 100%;
 `;
 
-export default Approve;
+export default Settle;

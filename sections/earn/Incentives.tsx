@@ -82,7 +82,6 @@ const Incentives: FC<IncentivesProps> = ({
 							now,
 							tab: Tab.Claim,
 							route: ROUTES.Earn.Claim,
-							needsToSettle: false,
 						},
 						{
 							title: t('earn.incentives.options.curve.title'),
@@ -103,7 +102,6 @@ const Incentives: FC<IncentivesProps> = ({
 							now,
 							route: ROUTES.Earn.Curve_LP,
 							tab: Tab.Curve_LP,
-							needsToSettle: false,
 						},
 						{
 							title: t('earn.incentives.options.ieth.title'),
