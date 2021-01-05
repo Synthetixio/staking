@@ -52,7 +52,7 @@ export const getSettleSynthType = (stakedAsset: CurrencyKey) => {
 	if (stakedAsset === Synths.iBTC) {
 		return {
 			contract: contracts.Exchanger,
-			synth: utils.formatBytes32String('iBTC'),
+			synth: utils.formatBytes32String(Synths.iBTC),
 		};
 	} else if (stakedAsset === Synths.iETH) {
 		return {
