@@ -57,7 +57,7 @@ export const getSettleSynthType = (stakedAsset: CurrencyKey) => {
 	} else if (stakedAsset === Synths.iETH) {
 		return {
 			contract: contracts.Exchanger,
-			synth: utils.formatBytes32String('iETH'),
+			synth: utils.formatBytes32String(Synths.iETH),
 		};
 	} else {
 		throw new Error('unrecognizable asset');
