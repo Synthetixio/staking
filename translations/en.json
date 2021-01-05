@@ -23,10 +23,18 @@
 			"description": "You must approve your {{stakedAsset}} tokens before proceeding. <0>Learn more.<0>",
 			"button": "APPROVE {{stakedAsset}}"
 		},
+		"settle": {
+			"description": "You need to settle before being able to stake your {{stakedAsset}}.",
+			"button": "SETTLE {{stakedAsset}}"
+		},
 		"confirm-transaction": {
 			"title": "Confirm Transaction",
 			"approve": {
 				"approving": "APPROVING",
+				"contract": "{{stakedAsset}} CONTRACT"
+			},
+			"settle": {
+				"settling": "SETTLING",
 				"contract": "{{stakedAsset}} CONTRACT"
 			},
 			"claiming": {
@@ -324,6 +332,12 @@
 				"link": "View on Etherscan",
 				"verify": "VERIFY TX",
 				"dismiss": "DISMISS"
+			},
+			"settle": {
+				"waiting": "Settlement in progress",
+				"success": "Settlement complete!",
+				"settling": "Settling",
+				"contract": "{{stakedAsset}} CONTRACT"
 			},
 			"approve": {
 				"waiting": "Approval in progress",

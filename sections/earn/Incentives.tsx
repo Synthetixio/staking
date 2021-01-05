@@ -119,6 +119,7 @@ const Incentives: FC<IncentivesProps> = ({
 							now,
 							tab: Tab.iETH_LP,
 							route: ROUTES.Earn.iETH_LP,
+							needsToSettle: lpData[Synths.iETH].data?.needsToSettle,
 						},
 						{
 							title: t('earn.incentives.options.ibtc.title'),
@@ -136,6 +137,7 @@ const Incentives: FC<IncentivesProps> = ({
 							now,
 							tab: Tab.iBTC_LP,
 							route: ROUTES.Earn.iBTC_LP,
+							needsToSettle: lpData[Synths.iBTC].data?.needsToSettle,
 						},
 				  ]
 				: [],
@@ -197,6 +199,7 @@ const Incentives: FC<IncentivesProps> = ({
 						allowance={lpData[Synths.iETH].data?.allowance ?? null}
 						tokenRewards={incentives[2].rewards}
 						staked={incentives[2].staked.balance}
+						needsToSettle={incentives[2].needsToSettle}
 					/>
 				)}
 				{activeTab === Tab.iBTC_LP && (
@@ -206,6 +209,7 @@ const Incentives: FC<IncentivesProps> = ({
 						allowance={lpData[Synths.iBTC].data?.allowance ?? null}
 						tokenRewards={incentives[3].rewards}
 						staked={incentives[3].staked.balance}
+						needsToSettle={incentives[3].needsToSettle}
 					/>
 				)}
 			</TabContainer>

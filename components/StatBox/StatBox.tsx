@@ -11,12 +11,14 @@ type StatBoxProps = {
 	title: ReactNode;
 	value: ReactNode;
 	size?: Size;
+	children?: ReactNode;
 };
 
-const StatBox: FC<StatBoxProps> = ({ title, value, size = 'md', ...rest }) => (
+const StatBox: FC<StatBoxProps> = ({ title, value, size = 'md', children, ...rest }) => (
 	<Box {...rest} size={size}>
 		<Title className="title">{title}</Title>
 		<Value className="value">{value}</Value>
+		{children}
 	</Box>
 );
 
