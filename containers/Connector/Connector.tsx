@@ -27,7 +27,7 @@ const useConnector = () => {
 	const [notify, setNotify] = useState<ReturnType<typeof initNotify> | null>(null);
 	const [isAppReady, setAppReady] = useRecoilState(appReadyState);
 	const setWalletAddress = useSetRecoilState(walletAddressState);
-	const setWalletWatched = useSetRecoilState(walletWatchedState);
+	const [walletWatched, setWalletWatched] = useRecoilState(walletWatchedState);
 	const [selectedWallet, setSelectedWallet] = useLocalStorage<string | null>(
 		LOCAL_STORAGE_KEYS.SELECTED_WALLET,
 		''
@@ -127,6 +127,10 @@ const useConnector = () => {
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isAppReady]);
+
+	useEffect(() => {
+		setWalletAddress(walletWatched);
+	}, [walletWatched]);
 
 	// load previously saved wallet
 	useEffect(() => {
