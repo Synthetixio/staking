@@ -143,7 +143,7 @@ const Settle: FC<SettleProps> = ({ stakedAsset, setShowSettleOverlayModal }) => 
 			}
 		}
 		approve();
-	}, [stakedAsset, provider, gasPrice, monitorHash, isAppReady]);
+	}, [stakedAsset, provider, gasPrice, monitorHash, isAppReady, walletAddress]);
 
 	if (transactionState === Transaction.WAITING) {
 		return (
