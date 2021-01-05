@@ -108,7 +108,7 @@ const LPTab: FC<LPTabProps> = ({
 				key: 'unstake',
 			},
 		];
-	}, [t, stakedAsset, userBalance, staked, needsToSettle]);
+	}, [t, stakedAsset, userBalance, staked]);
 
 	useEffect(() => {
 		if (allowance === 0 && userBalance > 0) {
