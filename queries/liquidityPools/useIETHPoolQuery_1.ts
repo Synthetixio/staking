@@ -19,10 +19,14 @@ const useIETHPoolQuery_1 = (options?: QueryConfig<LiquidityPoolData>) => {
 	return useQuery<LiquidityPoolData>(
 		QUERY_KEYS.LiquidityPools.iETH(walletAddress ?? '', network?.id!),
 		async () => {
-			const contract = synthetix.js?.contracts.StakingRewardsiETH as ethers.Contract;
-			const address = contract.address;
+			const {
+				contracts: { StakingRewardsiETH, Exchanger, ProxyiETH, ExchangeRates },
+				utils: { formatBytes32String },
+			} = synthetix.js!;
 
-			const getDuration = contract.DURATION || contract.rewardsDuration;
+			const address = StakingRewardsiETH.address;
+
+			const getDuration = StakingRewardsiETH.DURATION || StakingRewardsiETH.rewardsDuration;
 			const [
 				duration,
 				rate,
@@ -33,22 +37,27 @@ const useIETHPoolQuery_1 = (options?: QueryConfig<LiquidityPoolData>) => {
 				iEthSNXRewards,
 				iEthStaked,
 				iETHAllowance,
+				settlementOwing,
 			] = await Promise.all([
 				getDuration(),
-				contract.rewardRate(),
-				contract.periodFinish(),
-				synthetix.js?.contracts.ProxyiETH.balanceOf(address),
-				synthetix.js?.contracts.ProxyiETH.balanceOf(walletAddress),
-				synthetix.js?.contracts.ExchangeRates.rateForCurrency(synthetix.js?.toBytes32(Synths.iETH)),
-				contract.earned(walletAddress),
-				contract.balanceOf(walletAddress),
-				synthetix.js?.contracts.ProxyiETH.allowance(walletAddress, address),
+				StakingRewardsiETH.rewardRate(),
+				StakingRewardsiETH.periodFinish(),
+				ProxyiETH.balanceOf(address),
+				ProxyiETH.balanceOf(walletAddress),
+				ExchangeRates.rateForCurrency(synthetix.js?.toBytes32(Synths.iETH)),
+				StakingRewardsiETH.earned(walletAddress),
+				StakingRewardsiETH.balanceOf(walletAddress),
+				ProxyiETH.allowance(walletAddress, address),
+				Exchanger.settlementOwing(walletAddress, formatBytes32String('iETH')),
 			]);
 			const durationInWeeks = Number(duration) / 3600 / 24 / 7;
 			const isPeriodFinished = new Date().getTime() > Number(periodFinish) * 1000;
 			const distribution = isPeriodFinished
 				? 0
 				: Math.trunc(Number(duration) * (rate / 1e18)) / durationInWeeks;
+
+			const reclaimAmount = Number(settlementOwing.reclaimAmount);
+			const rebateAmount = Number(settlementOwing.rebateAmount);
 
 			const [balance, userBalance, price, rewards, staked, allowance] = [
 				iEthBalance,
@@ -70,6 +79,7 @@ const useIETHPoolQuery_1 = (options?: QueryConfig<LiquidityPoolData>) => {
 				duration: Number(duration) * 1000,
 				allowance,
 				userBalance,
+				needsToSettle: reclaimAmount || rebateAmount ? true : false,
 			};
 		},
 		{
