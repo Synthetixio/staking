@@ -78,16 +78,24 @@ const StakingInfo: React.FC<StakingInfoProps> = ({ isMint }) => {
 			.multipliedBy(SNXRate);
 
 		const changedNotStakedValue = isMint
-			? unstakedCollateral.minus(stakingAmount)
+			? unstakedCollateral.isZero()
+				? toBigNumber(0)
+				: unstakedCollateral.minus(stakingAmount)
 			: unstakedCollateral.plus(unlockedStakeAmount);
 		const changedStakedValue = isMint
 			? stakedCollateral.plus(stakingAmount)
+			: stakedCollateral.isZero()
+			? toBigNumber(0)
 			: stakedCollateral.minus(unlockedStakeAmount);
 		const changedTransferable = isMint
-			? transferableCollateral.minus(stakingAmount.minus(totalEscrowBalance))
+			? transferableCollateral.isZero()
+				? toBigNumber(0)
+				: transferableCollateral.minus(stakingAmount.minus(totalEscrowBalance))
 			: transferableCollateral.plus(unlockedStakeAmount);
 		const changedLocked = isMint
 			? lockedCollateral.plus(stakingAmount)
+			: lockedCollateral.isZero()
+			? toBigNumber(0)
 			: lockedCollateral.minus(unlockedStakeAmount);
 		const changeCRatio = isMint
 			? changedStakedValue.multipliedBy(SNXRate).dividedBy(mintAdditionalDebt).multipliedBy(100)
@@ -95,7 +103,11 @@ const StakingInfo: React.FC<StakingInfoProps> = ({ isMint }) => {
 					.multipliedBy(SNXRate)
 					.dividedBy(debtBalance.minus(amountToBurnBN))
 					.multipliedBy(100);
-		const changedDebt = isMint ? mintAdditionalDebt : debtBalance.minus(amountToBurnBN);
+		const changedDebt = isMint
+			? mintAdditionalDebt
+			: debtBalance.isZero()
+			? toBigNumber(0)
+			: debtBalance.minus(amountToBurnBN);
 
 		return [
 			{
