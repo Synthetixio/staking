@@ -48,7 +48,7 @@ const useIBTCPoolQuery_1 = (options?: QueryConfig<LiquidityPoolData>) => {
 				StakingRewardsiBTC.earned(walletAddress),
 				StakingRewardsiBTC.balanceOf(walletAddress),
 				ProxyiBTC.allowance(walletAddress, address),
-				Exchanger.settlementOwing(walletAddress, formatBytes32String('iBTC')),
+				Exchanger.settlementOwing(walletAddress, formatBytes32String(Synths.iBTC)),
 			]);
 			const durationInWeeks = Number(duration) / 3600 / 24 / 7;
 			const isPeriodFinished = new Date().getTime() > Number(periodFinish) * 1000;
