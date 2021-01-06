@@ -47,6 +47,7 @@ const Incentives: FC<IncentivesProps> = ({
 
 	const lpData = useLPData();
 	const useSNXLockedValue = useSNXLockedValueQuery();
+
 	const { nextFeePeriodStarts, currentFeePeriodStarted } = useFeePeriodTimeAndProgress();
 
 	const now = useMemo(() => new Date().getTime(), []);
