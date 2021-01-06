@@ -40,6 +40,7 @@ export const useUserStakingData = () => {
 
 	let stakingAPR = 0;
 
+	// compute APR based on the user staked SNX
 	if (stakedValue.gt(0) && debtBalance.gt(0)) {
 		stakingAPR = weeklyRewards
 			.multipliedBy(debtBalance.dividedBy(totalsUSDDebt).multipliedBy(WEEKS_IN_YEAR))
@@ -51,6 +52,7 @@ export const useUserStakingData = () => {
 		currentFeePeriod.data != null &&
 		useSNXLockedValue.data != null
 	) {
+		// compute APR based using useSNXLockedValueQuery (top 1000 holders)
 		stakingAPR = sUSDRate
 			.multipliedBy(currentFeePeriod.data.feesToDistribute)
 			.plus(SNXRate.multipliedBy(currentFeePeriod.data.rewardsToDistribute))

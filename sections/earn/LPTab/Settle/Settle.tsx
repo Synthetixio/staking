@@ -103,7 +103,7 @@ const Settle: FC<SettleProps> = ({ stakedAsset, setShowSettleOverlayModal }) => 
 			}
 		};
 		getGasLimitEstimate();
-	}, [stakedAsset, provider, isAppReady]);
+	}, [stakedAsset, provider, isAppReady, walletAddress]);
 
 	const handleSettle = useCallback(() => {
 		async function approve() {
@@ -143,7 +143,7 @@ const Settle: FC<SettleProps> = ({ stakedAsset, setShowSettleOverlayModal }) => 
 			}
 		}
 		approve();
-	}, [stakedAsset, provider, gasPrice, monitorHash, isAppReady, walletAddress]);
+	}, [stakedAsset, gasPrice, monitorHash, isAppReady, walletAddress]);
 
 	if (transactionState === Transaction.WAITING) {
 		return (
