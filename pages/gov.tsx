@@ -26,8 +26,9 @@ const Gov: React.FC<GovProps> = ({}) => {
 			</Head>
 			<StatsSection>
 				<WalletVotingPower
-					title={t('common.stat-box.voting-power')}
+					title={t('common.stat-box.voting-power.title')}
 					value={formatNumber(votingWeight?.data ?? 0)}
+					tooltipContent={t('common.stat-box.voting-power.tooltip', { blocknumber: 123124 })}
 				/>
 			</StatsSection>
 			<LineSpacer />
