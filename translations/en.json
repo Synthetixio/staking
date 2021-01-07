@@ -566,7 +566,10 @@
 			"available-snx": "Total available SNX",
 			"vested-snx": "Total SNX vested",
 			"escrowed-snx": "Total SNX escrowed",
-			"voting-power": "Your voting power",
+			"voting-power": {
+				"title": "Your voting power",
+				"tooltip": "Your voting power was calculated based on block {{blocknumber}}"
+			},
 			"total-voting-power": "Total voting power"
 		},
 		"status": {
