@@ -171,6 +171,14 @@ export const QUERY_KEYS = {
 			networkId,
 		],
 	},
+	Gov: {
+		ScaledVotingWeight: (walletAddress: string, networkId: NetworkId) => [
+			'gov',
+			'scaledVotingWeight',
+			walletAddress,
+			networkId,
+		],
+	},
 };
 
 export default QUERY_KEYS;

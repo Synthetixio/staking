@@ -26,6 +26,9 @@ export const ROUTES = {
 		Deposit: '/l2/deposit',
 		Migrate: '/l2/migrate',
 	},
+	Gov: {
+		Home: '/gov',
+	},
 };
 
 export default ROUTES;
