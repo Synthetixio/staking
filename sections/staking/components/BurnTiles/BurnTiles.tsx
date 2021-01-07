@@ -25,7 +25,7 @@ type BurnTilesProps = {
 };
 
 const burnIcon = <Svg src={BurnCircle} />;
-const burnCustomIcon = <Img src={BurnCustomCircle} />; // TODO: investigate why it doesn't correctly with SVG (ids were replaced to be unique)
+const burnCustomIcon = <Img src={BurnCustomCircle} />; // TODO: investigate why it doesn't render correctly with <Svg /> (ids were replaced to be unique)
 const burnTargetIcon = <Svg src={BurnTargetCircle} />;
 
 const BurnTiles: React.FC<BurnTilesProps> = ({
