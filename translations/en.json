@@ -523,6 +523,9 @@
 			}
 		}
 	},
+	"gov": {
+		"page-title": "Governance | Synthetix Staking"
+	},
 	"sidenav": {
 		"dashboard": "Home",
 		"earn": "Earn",
@@ -531,6 +534,7 @@
 		"escrow": "Escrow",
 		"history": "History",
 		"l2": "Layer 2",
+		"gov": "Governance",
 		"bars": {
 			"c-ratio": "c-ratio",
 			"t-ratio": "target",
@@ -561,7 +565,9 @@
 			"lifetime-rewards": "Lifetime rewards",
 			"available-snx": "Total available SNX",
 			"vested-snx": "Total SNX vested",
-			"escrowed-snx": "Total SNX escrowed"
+			"escrowed-snx": "Total SNX escrowed",
+			"voting-power": "Your voting power",
+			"total-voting-power": "Total voting power"
 		},
 		"status": {
 			"claimed": "Claimed",
