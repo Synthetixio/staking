@@ -1,4 +1,5 @@
 import { NetworkId } from '@synthetixio/js';
+import { SPACES } from 'queries/gov/useSnapshotSpace';
 import { CurrencyKey } from './currency';
 import { Period } from './period';
 
@@ -178,6 +179,7 @@ export const QUERY_KEYS = {
 			walletAddress,
 			networkId,
 		],
+		SnapshotSpace: (spaceKey: SPACES) => ['gov', 'snapshotSpace', spaceKey],
 	},
 };
 
