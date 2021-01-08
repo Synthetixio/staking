@@ -13,14 +13,14 @@ import {
 } from 'utils/formatters/number';
 import { CRatioProgressBar } from './staking/[[...action]]';
 import useScaledVotingWeightQuery from 'queries/gov/useScaledVotingWeightQuery';
-import useSnapshotSpace from 'queries/gov/useSnapshotSpace';
+import useSnapshotSpace, { SPACES } from 'queries/gov/useSnapshotSpace';
 
 type GovProps = {};
 
 const Gov: React.FC<GovProps> = ({}) => {
 	const { t } = useTranslation();
 	const votingWeight = useScaledVotingWeightQuery();
-	const space = useSnapshotSpace();
+	const space = useSnapshotSpace(SPACES.COUNCIL);
 	return (
 		<>
 			<Head>
