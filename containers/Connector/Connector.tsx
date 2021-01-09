@@ -130,7 +130,7 @@ const useConnector = () => {
 
 	useEffect(() => {
 		setWalletAddress(walletWatched);
-	}, [walletWatched]);
+	}, [walletWatched, setWalletAddress]);
 
 	// load previously saved wallet
 	useEffect(() => {

@@ -198,7 +198,7 @@ const BurnTab: React.FC = () => {
 	);
 
 	const returnPanel = useMemo(() => {
-		let onSubmit;
+		let handleSubmit;
 		let inputValue;
 		let isLocked;
 
@@ -206,10 +206,14 @@ const BurnTab: React.FC = () => {
 			? toBigNumber(sUSDBalance)
 			: debtBalance;
 
+		const burnAmountToFixCRatio = toBigNumber(
+			Math.max(debtBalance.minus(issuableSynths).toNumber(), 0)
+		);
+
 		switch (burnType) {
 			case BurnActionType.MAX:
 				onBurnChange(maxBurnAmount.toString());
-				onSubmit = () => {
+				handleSubmit = () => {
 					handleBurn(false);
 				};
 				inputValue = maxBurnAmount;
@@ -218,21 +222,18 @@ const BurnTab: React.FC = () => {
 			case BurnActionType.TARGET:
 				const calculatedTargetBurn = Math.max(debtBalance.minus(issuableSynths).toNumber(), 0);
 				onBurnChange(calculatedTargetBurn.toString());
-				onSubmit = () => {
+				handleSubmit = () => {
 					handleBurn(true);
 				};
 				inputValue = toBigNumber(calculatedTargetBurn);
 				isLocked = true;
 				break;
 			case BurnActionType.CUSTOM:
-				onSubmit = () => handleBurn(false);
+				handleSubmit = () => handleBurn(false);
 				inputValue = toBigNumber(amountToBurn);
 				isLocked = false;
 				break;
 			default:
-				const burnAmountToFixCRatio = toBigNumber(
-					Math.max(debtBalance.minus(issuableSynths).toNumber(), 0)
-				);
 				return (
 					<BurnTiles
 						percentageTargetCRatio={percentageTargetCRatio}
@@ -243,7 +244,7 @@ const BurnTab: React.FC = () => {
 		}
 		return (
 			<StakingInput
-				onSubmit={onSubmit}
+				onSubmit={handleSubmit}
 				inputValue={inputValue}
 				isLocked={isLocked}
 				isMint={false}
@@ -258,6 +259,7 @@ const BurnTab: React.FC = () => {
 				transactionState={transactionState}
 				setTransactionState={setTransactionState}
 				maxBurnAmount={maxBurnAmount}
+				burnAmountToFixCRatio={burnAmountToFixCRatio}
 			/>
 		);
 	}, [

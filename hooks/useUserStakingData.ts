@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+
 import useFeeClaimHistoryQuery from 'queries/staking/useFeeClaimHistoryQuery';
 import useGetFeePoolDataQuery from 'queries/staking/useGetFeePoolDataQuery';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
@@ -8,7 +9,8 @@ import useStakingCalculations from 'sections/staking/hooks/useStakingCalculation
 import { Synths } from 'constants/currency';
 import { WEEKS_IN_YEAR } from 'constants/date';
 
-import { toBigNumber } from 'utils/formatters/number';
+import { toBigNumber, zeroBN } from 'utils/formatters/number';
+import useSNXLockedValueQuery from 'queries/staking/useSNXLockedValueQuery';
 
 export const useUserStakingData = () => {
 	const [hasClaimed, setHasClaimed] = useState<boolean>(false);
@@ -18,32 +20,51 @@ export const useUserStakingData = () => {
 	const totalIssuedSynthsExclEth = useTotalIssuedSynthsExcludingEtherQuery(Synths.sUSD);
 	const previousFeePeriod = useGetFeePoolDataQuery('1');
 	const { currentCRatio, targetCRatio, debtBalance, collateral } = useStakingCalculations();
-
-	const sUSDRate = exchangeRatesQuery.data?.sUSD ?? 0;
+	const useSNXLockedValue = useSNXLockedValueQuery();
 	const feesToDistribute = previousFeePeriod?.data?.feesToDistribute ?? 0;
 	const rewardsToDistribute = previousFeePeriod?.data?.rewardsToDistribute ?? 0;
 	const totalsUSDDebt = totalIssuedSynthsExclEth?.data ?? 0;
-	const SNXRate = exchangeRatesQuery.data?.SNX ?? 0;
+	const sUSDRate = toBigNumber(exchangeRatesQuery.data?.sUSD ?? 0);
+	const SNXRate = toBigNumber(exchangeRatesQuery.data?.SNX ?? 0);
 
 	const stakedValue =
-		collateral.toNumber() > 0 && currentCRatio.toNumber() > 0
+		collateral.gt(0) && currentCRatio.gt(0)
 			? collateral
 					.multipliedBy(Math.min(1, currentCRatio.dividedBy(targetCRatio).toNumber()))
 					.multipliedBy(SNXRate)
-			: toBigNumber(0);
+			: zeroBN;
 
-	const weeklyRewards = sUSDRate * feesToDistribute + SNXRate * rewardsToDistribute;
+	const weeklyRewards = sUSDRate
+		.multipliedBy(feesToDistribute)
+		.plus(SNXRate.multipliedBy(rewardsToDistribute));
 
-	const stakingAPR =
-		stakedValue.toNumber() > 0 && debtBalance.toNumber() > 0
-			? (weeklyRewards * (debtBalance.toNumber() / totalsUSDDebt) * WEEKS_IN_YEAR) /
-			  stakedValue.toNumber()
-			: 0;
+	let stakingAPR = 0;
+
+	// compute APR based on the user staked SNX
+	if (stakedValue.gt(0) && debtBalance.gt(0)) {
+		stakingAPR = weeklyRewards
+			.multipliedBy(debtBalance.dividedBy(totalsUSDDebt).multipliedBy(WEEKS_IN_YEAR))
+			.dividedBy(stakedValue)
+			.toNumber();
+	} else if (
+		SNXRate != null &&
+		sUSDRate != null &&
+		currentFeePeriod.data != null &&
+		useSNXLockedValue.data != null
+	) {
+		// compute APR based using useSNXLockedValueQuery (top 1000 holders)
+		stakingAPR = sUSDRate
+			.multipliedBy(currentFeePeriod.data.feesToDistribute)
+			.plus(SNXRate.multipliedBy(currentFeePeriod.data.rewardsToDistribute))
+			.multipliedBy(WEEKS_IN_YEAR)
+			.dividedBy(useSNXLockedValue.data)
+			.toNumber();
+	}
 
 	const availableRewards = useClaimableRewards();
 
-	const tradingRewards = availableRewards?.data?.tradingRewards ?? toBigNumber(0);
-	const stakingRewards = availableRewards?.data?.stakingRewards ?? toBigNumber(0);
+	const tradingRewards = availableRewards?.data?.tradingRewards ?? zeroBN;
+	const stakingRewards = availableRewards?.data?.stakingRewards ?? zeroBN;
 
 	const { currentFeePeriodStarts, nextFeePeriodStarts } = useMemo(() => {
 		return {

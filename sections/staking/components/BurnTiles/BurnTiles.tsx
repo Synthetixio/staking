@@ -1,14 +1,22 @@
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import BurnCircle from 'assets/svg/app/burn-circle.svg';
-import { Svg } from 'react-optimized-image';
-import ButtonTile from '../ButtonTile';
-import { FlexDivCol, FlexDivRow } from 'styles/common';
 import styled from 'styled-components';
 import BigNumber from 'bignumber.js';
+
+import Img, { Svg } from 'react-optimized-image';
+
+import BurnCircle from 'assets/svg/app/burn-circle.svg';
+import BurnCustomCircle from 'assets/svg/app/burn-custom-circle.svg';
+import BurnTargetCircle from 'assets/svg/app/burn-target-circle.svg';
+
+import { FlexDivCol, FlexDivRow } from 'styles/common';
+
 import { formatPercent } from 'utils/formatters/number';
+
 import { amountToBurnState, BurnActionType, burnTypeState } from 'store/staking';
-import { useRecoilState, useSetRecoilState } from 'recoil';
+
+import ButtonTile from '../ButtonTile';
 
 type BurnTilesProps = {
 	percentageTargetCRatio: BigNumber;
@@ -17,6 +25,8 @@ type BurnTilesProps = {
 };
 
 const burnIcon = <Svg src={BurnCircle} />;
+const burnCustomIcon = <Img src={BurnCustomCircle} />; // TODO: investigate why it doesn't render correctly with <Svg /> (ids were replaced to be unique)
+const burnTargetIcon = <Svg src={BurnTargetCircle} />;
 
 const BurnTiles: React.FC<BurnTilesProps> = ({
 	percentageTargetCRatio,
@@ -51,14 +61,14 @@ const BurnTiles: React.FC<BurnTilesProps> = ({
 						targetCRatio: formatPercent(percentageTargetCRatio),
 					})}
 					subtext={t('staking.actions.burn.tiles.target.subtext')}
-					icon={burnIcon}
+					icon={burnTargetIcon}
 					onAction={() => onBurnTypeChange(BurnActionType.TARGET)}
 				/>
 				<MarginedButtonTile
 					right={true}
 					title={t('staking.actions.burn.tiles.custom.title')}
 					subtext={t('staking.actions.burn.tiles.custom.subtext')}
-					icon={burnIcon}
+					icon={burnCustomIcon}
 					onAction={() => onBurnTypeChange(BurnActionType.CUSTOM)}
 				/>
 			</FlexDivRow>
