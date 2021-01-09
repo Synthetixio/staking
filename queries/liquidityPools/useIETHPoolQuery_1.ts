@@ -1,5 +1,4 @@
 import { useQuery, QueryConfig } from 'react-query';
-import { ethers } from 'ethers';
 import { useRecoilValue } from 'recoil';
 
 import synthetix from 'lib/synthetix';
