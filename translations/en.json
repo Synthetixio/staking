@@ -566,7 +566,11 @@
 				"title": "Your voting power",
 				"tooltip": "Your voting power was calculated based on block {{blocknumber}}"
 			},
-			"total-voting-power": "Total voting power"
+			"total-voting-power": {
+				"title": "Total voting power",
+				"tooltip": "Total voting power was calculated based on block {{blocknumber}}"
+			},
+			"active-proposals": "Active Proposals"
 		},
 		"status": {
 			"claimed": "Claimed",
