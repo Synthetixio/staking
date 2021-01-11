@@ -56,6 +56,7 @@ const Index: FC = () => {
 						},
 						{
 							gridLocations: ['col-2', 'col-3', 'row-1', 'row-2'],
+							isDisabled: true,
 							...ACTIONS.deposit,
 						},
 						{
