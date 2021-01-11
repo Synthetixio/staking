@@ -1,5 +1,5 @@
 import { NetworkId } from '@synthetixio/js';
-import { SPACES } from 'queries/gov/useSnapshotSpace';
+import { SPACES } from 'queries/gov/types';
 import { CurrencyKey } from './currency';
 import { Period } from './period';
 
