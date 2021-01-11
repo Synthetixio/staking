@@ -186,6 +186,7 @@ export const QUERY_KEYS = {
 			networkId,
 		],
 		SnapshotSpace: (spaceKey: SPACES) => ['gov', 'snapshotSpace', spaceKey],
+		Proposals: (spaceKey: SPACES) => ['gov', 'proposals', spaceKey],
 	},
 };
 
