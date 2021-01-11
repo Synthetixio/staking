@@ -2,6 +2,7 @@ import useIETHPoolQuery_1 from 'queries/liquidityPools/useIETHPoolQuery_1';
 import useIBTCPoolQuery_1 from 'queries/liquidityPools/useIBTCPoolQuery_1';
 import useCurvePoolQuery_1 from 'queries/liquidityPools/useCurvePoolQuery_1';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
+import useSeuroPoolQuery from 'queries/liquidityPools/useSeuroPoolQuery';
 
 import { CryptoCurrency, Synths } from 'constants/currency';
 import { WEEKS_IN_YEAR } from 'constants/date';
@@ -21,6 +22,7 @@ const useLPData = (): LPData => {
 	const useiETHPool = useIETHPoolQuery_1();
 	const useiBTCPool = useIBTCPoolQuery_1();
 	const useCurvePool = useCurvePoolQuery_1();
+	const usesEuroPool = useSeuroPoolQuery();
 	const iETHTVL = (useiETHPool.data?.balance ?? 0) * (useiETHPool.data?.price ?? 0);
 	const iETHAPR =
 		useiETHPool.data?.distribution && SNXRate && iETHTVL
@@ -45,6 +47,18 @@ const useLPData = (): LPData => {
 			  useCurvePool.data?.rewardsAPR
 			: 0;
 
+	const sEuroTVL = (usesEuroPool.data?.balance ?? 0) * (usesEuroPool.data?.price ?? 0);
+	const sEuroAPR =
+		usesEuroPool.data?.distribution &&
+		SNXRate &&
+		sEuroTVL &&
+		usesEuroPool.data?.swapAPR &&
+		usesEuroPool.data?.rewardsAPR
+			? ((usesEuroPool.data.distribution * SNXRate) / curveTVL) * WEEKS_IN_YEAR +
+			  usesEuroPool.data?.swapAPR +
+			  usesEuroPool.data?.rewardsAPR
+			: 0;
+
 	return {
 		[CryptoCurrency.CurveLPToken]: {
 			APR: curveAPR,
@@ -60,6 +74,11 @@ const useLPData = (): LPData => {
 			APR: iBTCAPR,
 			TVL: iBTCTVL,
 			data: useiBTCPool.data,
+		},
+		[Synths.sEUR]: {
+			APR: sEuroAPR,
+			TVL: sEuroTVL,
+			data: usesEuroPool.data,
 		},
 	};
 };

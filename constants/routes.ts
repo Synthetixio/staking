@@ -18,6 +18,7 @@ export const ROUTES = {
 		Home: '/earn',
 		Claim: '/earn/claim',
 		Curve_LP: '/earn/curve-LP',
+		sEURO_LP: '/earn/sEURO-LP',
 		iBTC_LP: '/earn/iBTC-LP',
 		iETH_LP: '/earn/iETH-LP',
 	},

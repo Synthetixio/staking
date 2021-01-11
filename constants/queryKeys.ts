@@ -170,6 +170,12 @@ export const QUERY_KEYS = {
 			walletAddress,
 			networkId,
 		],
+		sEUR: (walletAddress: string, networkId: NetworkId) => [
+			'liquidityPools',
+			'sEUR',
+			walletAddress,
+			networkId,
+		],
 	},
 };
 
