@@ -159,8 +159,10 @@ const LPTab: FC<LPTabProps> = ({
 			return 'earn.incentives.options.ieth.description';
 		} else if (stakedAsset === Synths.iBTC) {
 			return 'earn.incentives.options.ibtc.description';
-		} else if (stakedAsset === CryptoCurrency.CurveLPToken) {
+		} else if (stakedAsset === Synths.sUSD) {
 			return 'earn.incentives.options.curve.description';
+		} else if (stakedAsset === Synths.sEUR) {
+			return 'earn.incentives.options.seur.description';
 		} else {
 			throw new Error('unexpected staking asset for translation key');
 		}

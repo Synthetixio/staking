@@ -30,7 +30,7 @@ const LayoutOne: FC = () => {
 		const aboveTargetCRatio = currentCRatio.isLessThanOrEqualTo(targetCRatio);
 		return [
 			{
-				gridLocations: ['col-1', 'col-3', 'row-1', 'row-2'],
+				gridLocations: ['col-1', 'col-2', 'row-1', 'row-2'],
 				icon: (
 					<GlowingCircle variant="green" size="md">
 						<Svg
@@ -50,7 +50,7 @@ const LayoutOne: FC = () => {
 				isDisabled: stakingRewards.isZero() && tradingRewards.isZero(),
 			},
 			{
-				gridLocations: ['col-3', 'col-4', 'row-1', 'row-2'],
+				gridLocations: ['col-2', 'col-3', 'row-1', 'row-2'],
 				icon: (
 					<GlowingCircle variant={!aboveTargetCRatio ? 'orange' : 'blue'} size="md">
 						{!aboveTargetCRatio ? <Svg src={BurnIcon} /> : <Svg src={MintIcon} />}
@@ -67,7 +67,7 @@ const LayoutOne: FC = () => {
 				link: !aboveTargetCRatio ? ROUTES.Staking.Burn : ROUTES.Staking.Mint,
 			},
 			{
-				gridLocations: ['col-4', 'col-5', 'row-1', 'row-2'],
+				gridLocations: ['col-3', 'col-4', 'row-1', 'row-2'],
 				icon: (
 					<GlowingCircle variant="orange" size="md">
 						<Svg src={KwentaIcon} width="32" />
@@ -78,7 +78,7 @@ const LayoutOne: FC = () => {
 				externalLink: EXTERNAL_LINKS.Trading.Kwenta,
 			},
 			{
-				gridLocations: ['col-1', 'col-2', 'row-2', 'row-3'],
+				gridLocations: ['col-4', 'col-5', 'row-1', 'row-2'],
 				icon: (
 					<GlowingCircle variant="blue" size="md">
 						L2
@@ -91,7 +91,7 @@ const LayoutOne: FC = () => {
 				isDisabled: true,
 			},
 			{
-				gridLocations: ['col-2', 'col-3', 'row-2', 'row-3'],
+				gridLocations: ['col-1', 'col-2', 'row-2', 'row-3'],
 				icon: (
 					<GlowingCircle variant="green" size="md">
 						<Currency.Icon currencyKey={Synths.iBTC} width="32" height="32" />
@@ -107,7 +107,7 @@ const LayoutOne: FC = () => {
 				link: ROUTES.Earn.iBTC_LP,
 			},
 			{
-				gridLocations: ['col-3', 'col-4', 'row-2', 'row-3'],
+				gridLocations: ['col-2', 'col-3', 'row-2', 'row-3'],
 				icon: (
 					<GlowingCircle variant="green" size="md">
 						<Currency.Icon currencyKey={Synths.iETH} width="32" height="32" />
@@ -120,20 +120,38 @@ const LayoutOne: FC = () => {
 				link: ROUTES.Earn.iETH_LP,
 			},
 			{
-				gridLocations: ['col-4', 'col-5', 'row-2', 'row-3'],
+				gridLocations: ['col-3', 'col-4', 'row-2', 'row-3'],
 				icon: (
 					<GlowingCircle variant="green" size="md">
-						<Currency.Icon currencyKey={CryptoCurrency.CurveLPToken} width="28" height="28" />
+						<Currency.Icon currencyKey={CryptoCurrency.CRV} width="28" height="28" />
 					</GlowingCircle>
 				),
 				title: t('dashboard.actions.earn.title', {
-					percent: formatPercent(lpData[CryptoCurrency.CurveLPToken].APR, { minDecimals: 0 }),
+					percent: formatPercent(lpData[Synths.sUSD].APR, { minDecimals: 0 }),
 				}),
 				copy: t('dashboard.actions.earn.copy', {
 					asset: 'Curve sUSD LP Token',
 					supplier: 'Curve Finance',
 				}),
-				link: ROUTES.Earn.Curve_LP,
+				tooltip: t('common.tooltip.external', { link: 'Curve Finance' }),
+				externalLink: ROUTES.Earn.sUSD_EXTERNAL,
+			},
+			{
+				gridLocations: ['col-4', 'col-5', 'row-2', 'row-3'],
+				icon: (
+					<GlowingCircle variant="green" size="md">
+						<Currency.Icon currencyKey={CryptoCurrency.CRV} width="28" height="28" />
+					</GlowingCircle>
+				),
+				title: t('dashboard.actions.earn.title', {
+					percent: formatPercent(lpData[Synths.sEUR].APR, { minDecimals: 0 }),
+				}),
+				copy: t('dashboard.actions.earn.copy', {
+					asset: 'Curve sEUR LP Token',
+					supplier: 'Curve Finance',
+				}),
+				tooltip: t('common.tooltip.external', { link: 'Curve Finance' }),
+				externalLink: ROUTES.Earn.sEURO_EXTERNAL,
 			},
 		];
 	}, [t, lpData, currentCRatio, targetCRatio, stakingRewards, tradingRewards]);
