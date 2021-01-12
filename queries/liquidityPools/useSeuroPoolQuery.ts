@@ -8,7 +8,7 @@ import synthetix from 'lib/synthetix';
 import Connector from 'containers/Connector';
 import {
 	curveGaugeController,
-	curveSusdGauge,
+	curveSeuroGauge,
 	curveSEuroPool,
 	curveSeuroPoolToken,
 	curveSeroRewards,
@@ -52,7 +52,7 @@ const useSeuroPoolQuery = (options?: QueryConfig<CurveData>) => {
 				provider as ethers.providers.Provider
 			);
 			const curveSusdGaugeContract = new ethers.Contract(
-				curveSusdGauge.address,
+				curveSeuroGauge.address,
 				// @ts-ignore
 				curveSusdGauge.abi,
 				provider as ethers.providers.Provider
@@ -91,7 +91,7 @@ const useSeuroPoolQuery = (options?: QueryConfig<CurveData>) => {
 				curveSeuroPoolContract.get_virtual_price(),
 				curveSusdGaugeContract.inflation_rate(),
 				curveSusdGaugeContract.working_supply(),
-				curveGaugeControllerContract.gauge_relative_weight(curveSusdGauge.address),
+				curveGaugeControllerContract.gauge_relative_weight(curveSeuroGauge.address),
 				getCurveTokenPrice(),
 				axios.get('https://www.curve.fi/raw-stats/apys.json'),
 				contract.earned(walletAddress),

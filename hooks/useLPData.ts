@@ -23,6 +23,7 @@ const useLPData = (): LPData => {
 	const useiBTCPool = useIBTCPoolQuery_1();
 	const useCurvePool = useCurvePoolQuery_1();
 	const usesEuroPool = useSeuroPoolQuery();
+
 	const iETHTVL = (useiETHPool.data?.balance ?? 0) * (useiETHPool.data?.price ?? 0);
 	const iETHAPR =
 		useiETHPool.data?.distribution && SNXRate && iETHTVL
