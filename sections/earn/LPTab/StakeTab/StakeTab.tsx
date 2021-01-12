@@ -16,7 +16,7 @@ import { getGasEstimateForTransaction } from 'utils/transactions';
 import { normalizedGasPrice, normalizeGasLimit } from 'utils/network';
 import Etherscan from 'containers/Etherscan';
 import Connector from 'containers/Connector';
-import { curvepoolRewards } from 'contracts';
+import { curveSusdRewards } from 'contracts';
 
 import {
 	ExternalLink,
@@ -28,7 +28,7 @@ import {
 	ModalItemTitle,
 } from 'styles/common';
 import Currency from 'components/Currency';
-import { CurrencyKey, CryptoCurrency, Synths } from 'constants/currency';
+import { CurrencyKey, Synths } from 'constants/currency';
 import { Transaction } from 'constants/network';
 import Notify from 'containers/Notify';
 import TxState from 'sections/earn/TxState';
@@ -50,6 +50,7 @@ import {
 } from '../../common';
 import { useRecoilValue } from 'recoil';
 import { appReadyState } from 'store/app';
+import curveSeuroRewards from 'contracts/curveSeuroRewards';
 
 export const getContract = (stakedAsset: CurrencyKey, signer: ethers.Signer | null) => {
 	const { contracts } = synthetix.js!;
@@ -57,10 +58,16 @@ export const getContract = (stakedAsset: CurrencyKey, signer: ethers.Signer | nu
 		return contracts.StakingRewardsiBTC;
 	} else if (stakedAsset === Synths.iETH) {
 		return contracts.StakingRewardsiETH;
-	} else if (stakedAsset === CryptoCurrency.CurveLPToken && signer != null) {
+	} else if (stakedAsset === Synths.sUSD && signer != null) {
 		return new ethers.Contract(
-			curvepoolRewards.address,
-			curvepoolRewards.abi,
+			curveSusdRewards.address,
+			curveSusdRewards.abi,
+			signer as ethers.Signer
+		);
+	} else if (stakedAsset === Synths.sEUR && signer != null) {
+		return new ethers.Contract(
+			curveSeuroRewards.address,
+			curveSeuroRewards.abi,
 			signer as ethers.Signer
 		);
 	} else {
@@ -241,11 +248,7 @@ const StakeTab: FC<StakeTabProps> = ({ stakedAsset, isStake, userBalance, staked
 		<>
 			<Container>
 				<IconWrap>
-					<Currency.Icon
-						currencyKey={stakedAsset}
-						width={stakedAsset === CryptoCurrency.CurveLPToken ? '34' : '38'}
-						height={stakedAsset === CryptoCurrency.CurveLPToken ? '34' : '38'}
-					/>
+					<Currency.Icon currencyKey={stakedAsset} width={'38'} height={'38'} />
 				</IconWrap>
 				<InputSection>
 					<EmptyDiv />
