@@ -440,7 +440,7 @@
 		"deposit": {
 			"info": {
 				"title": "Deposit SNX",
-				"subtitle": "Deposit your SNX to complete the process of migrating your SNX from L1 to Layer 2. <0>Learn more.<0>"
+				"subtitle": "Deposit your SNX to complete the process of migrating your SNX from L1 to Layer 2."
 			}
 		},
 		"actions": {
@@ -452,7 +452,20 @@
 				"title": "Deposit SNX",
 				"subtitle": "Deposit and Transfer SNX from L1 to L2",
 				"action": {
-					"deposit": "Deposit SNX to layer 2",
+					"in-progress": {
+						"title": "Deposit in progress",
+						"subtext": "Waiting for the blockchain to confirm your transaction",
+						"depositing": "Depositing",
+						"etherscan": "View on Etherscan"
+					},
+					"completed": {
+						"title": "Deposit complete",
+						"deposited": "Deposited",
+						"verify": "Verify Tx",
+						"dismiss": "Dimiss"
+					},
+					"deposit-button": "Deposit {{depositAmount}}",
+					"disabled": "No SNX to deposit",
 					"approve": {
 						"description": "Before depositing your SNX, please approve the Deposit contract.",
 						"button-label": "Approve contract"

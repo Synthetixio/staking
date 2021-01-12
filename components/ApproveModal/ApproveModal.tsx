@@ -1,9 +1,20 @@
+import { FC, useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { FC } from 'react';
+import { ethers } from 'ethers';
+
+import synthetix from 'lib/synthetix';
+
 import { Svg } from 'react-optimized-image';
 import { useTranslation } from 'react-i18next';
+import { useRecoilValue } from 'recoil';
 
 import LockedIcon from 'assets/svg/app/locked.svg';
+
+import { Transaction, TokenAllowanceLimit } from 'constants/network';
+import { appReadyState } from 'store/app';
+import { isWalletConnectedState } from 'store/wallet';
+import { normalizedGasPrice, normalizeGasLimit } from 'utils/network';
+import { getGasEstimateForTransaction } from 'utils/transactions';
 
 import Button from 'components/Button';
 
@@ -11,9 +22,44 @@ type ApproveModalProps = {
 	description: string;
 	onApprove: () => void;
 	isApproving: boolean;
+	tokenContract: ethers.Contract;
+	addressToApprove: string;
 };
 
-const ApproveModal: FC<ApproveModalProps> = ({ description, onApprove, isApproving }) => {
+const ApproveModal: FC<ApproveModalProps> = ({
+	description,
+	onApprove,
+	isApproving,
+	tokenContract,
+	addressToApprove,
+}) => {
+	const isWalletConnected = useRecoilValue(isWalletConnectedState);
+	const isAppReady = useRecoilValue(appReadyState);
+
+	const [gasLimitEstimate, setGasLimitEstimate] = useState<number | null>(null);
+	const [error, setError] = useState<string | null>(null);
+
+	useEffect(() => {
+		const getGasLimitEstimate = async () => {
+			if (isAppReady && isWalletConnected) {
+				try {
+					const allowance = synthetix.js!.utils.parseEther(TokenAllowanceLimit.toString());
+					const gasEstimate = await getGasEstimateForTransaction(
+						[addressToApprove, allowance],
+						tokenContract.estimateGas.approve
+					);
+					console.log(gasEstimate);
+					setGasLimitEstimate(normalizeGasLimit(Number(gasEstimate)));
+				} catch (e) {
+					setError(e.message);
+					setGasLimitEstimate(null);
+				}
+			}
+		};
+		getGasLimitEstimate();
+		// eslint-disable-next-line
+	}, [isAppReady, isWalletConnected]);
+
 	const { t } = useTranslation();
 	return (
 		<Modal>
@@ -36,6 +82,7 @@ const Modal = styled.div`
 	bottom: 100%;
 	opacity: 0.95;
 	background: ${(props) => props.theme.colors.black};
+	z-index: 100;
 `;
 
 const Layer = styled.div`
