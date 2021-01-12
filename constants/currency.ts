@@ -67,7 +67,6 @@ export enum CryptoCurrency {
 	TRX = 'TRX',
 	DASH = 'DASH',
 	ETC = 'ETC',
-	CurveLPToken = 'CurveLPToken',
 	CRV = 'CRV',
 }
 

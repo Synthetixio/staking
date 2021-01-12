@@ -103,7 +103,7 @@ const ActionCompleted: React.FC<ActionCompletedProps> = ({
 				{t('staking.actions.mint.completed.title', { synth: Synths.sUSD })}
 			</SectionHeader>
 			<MiddleSection>
-				<Link href={ROUTES.Earn.Curve_LP}>
+				<Link href={ROUTES.Earn.Home}>
 					<MainInfoBox>
 						<Currency.Icon currencyKey={CryptoCurrency.CRV} width="20" height="20" />
 						<MiddleInfoSection>

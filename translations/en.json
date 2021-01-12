@@ -306,9 +306,14 @@
 					"total-value": "TOTAL VALUE"
 				},
 				"curve": {
-					"title": "Curve.fi",
+					"title": "Curve.fi sUSD",
 					"description": "Staking Curve LP tokens from the sUSD pool allows you to earn CRV rewards, Curve swap fees, and SNX rewards. <0>Learn more.<0>",
 					"subtitle": "sUSD LP Rewards"
+				},
+				"seur": {
+					"title": "Curve.fi sEUR",
+					"description": "Deposit sEUR into Curve.fi to receive eursCRV and stake to earn CRV rewards, Curve swap fees, and SNX Rewards.",
+					"subtitle": "sEUR Rewards"
 				},
 				"ieth": {
 					"title": "Synthetix",
@@ -628,7 +633,10 @@
 		"explorers": {
 			"etherscan": "etherscan"
 		},
-		"stake-snx": "Stake SNX"
+		"stake-snx": "Stake SNX",
+		"tooltip": {
+			"external": "Redirects to {{link}}"
+		}
 	},
 	"not-found": {
 		"page-title": "Not Found | Synthetix Staking",
