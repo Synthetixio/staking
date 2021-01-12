@@ -1,8 +1,8 @@
 import useIETHPoolQuery_1 from 'queries/liquidityPools/useIETHPoolQuery_1';
 import useIBTCPoolQuery_1 from 'queries/liquidityPools/useIBTCPoolQuery_1';
-import useCurvePoolQuery_1 from 'queries/liquidityPools/useCurvePoolQuery_1';
+import useCurveSusdPoolQuery from 'queries/liquidityPools/useCurveSusdPoolQuery';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
-import useSeuroPoolQuery from 'queries/liquidityPools/useSeuroPoolQuery';
+import useCurveSeuroPoolQuery from 'queries/liquidityPools/useCurveSeuroPoolQuery';
 
 import { CryptoCurrency, Synths } from 'constants/currency';
 import { WEEKS_IN_YEAR } from 'constants/date';
@@ -21,8 +21,8 @@ const useLPData = (): LPData => {
 	const SNXRate = exchangeRatesQuery.data?.SNX ?? 0;
 	const useiETHPool = useIETHPoolQuery_1();
 	const useiBTCPool = useIBTCPoolQuery_1();
-	const useCurvePool = useCurvePoolQuery_1();
-	const usesEuroPool = useSeuroPoolQuery();
+	const useCurvePool = useCurveSusdPoolQuery();
+	const usesEuroPool = useCurveSeuroPoolQuery();
 
 	const iETHTVL = (useiETHPool.data?.balance ?? 0) * (useiETHPool.data?.price ?? 0);
 	const iETHAPR =

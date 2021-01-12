@@ -1,7 +1,6 @@
 import { useQuery, QueryConfig } from 'react-query';
 import { ethers } from 'ethers';
 import { useRecoilValue } from 'recoil';
-import { pageResults } from 'synthetix-data';
 import axios from 'axios';
 
 import synthetix from 'lib/synthetix';
@@ -18,13 +17,14 @@ import { appReadyState } from 'store/app';
 import { walletAddressState, isWalletConnectedState, networkState } from 'store/wallet';
 
 import { LiquidityPoolData } from './types';
+import useCurveTokenPrice from './useCurveTokenPrice';
 
 export type CurveData = LiquidityPoolData & {
 	swapAPR: number;
 	rewardsAPR: number;
 };
 
-const useSeuroPoolQuery = (options?: QueryConfig<CurveData>) => {
+const useCurveSeuroPoolQuery = (options?: QueryConfig<CurveData>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
@@ -67,6 +67,8 @@ const useSeuroPoolQuery = (options?: QueryConfig<CurveData>) => {
 			const address = contract.address;
 			const getDuration = contract.DURATION || contract.rewardsDuration;
 
+			const curveTokenPrice = useCurveTokenPrice();
+
 			const [
 				duration,
 				rate,
@@ -92,7 +94,7 @@ const useSeuroPoolQuery = (options?: QueryConfig<CurveData>) => {
 				curveSusdGaugeContract.inflation_rate(),
 				curveSusdGaugeContract.working_supply(),
 				curveGaugeControllerContract.gauge_relative_weight(curveSeuroGauge.address),
-				getCurveTokenPrice(),
+				curveTokenPrice.data,
 				axios.get('https://www.curve.fi/raw-stats/apys.json'),
 				contract.earned(walletAddress),
 				contract.balanceOf(walletAddress),
@@ -153,28 +155,4 @@ const useSeuroPoolQuery = (options?: QueryConfig<CurveData>) => {
 	);
 };
 
-export default useSeuroPoolQuery;
-
-const uniswapV2SubgraphURL = 'https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v2';
-const CRVTokenAddress = '0xd533a949740bb3306d119cc777fa900ba034cd52';
-
-async function getCurveTokenPrice(): Promise<number> {
-	return pageResults({
-		api: uniswapV2SubgraphURL,
-		query: {
-			entity: 'tokenDayDatas',
-			selection: {
-				orderBy: 'id',
-				orderDirection: 'desc',
-				where: {
-					token: `\\"${CRVTokenAddress}\\"`,
-				},
-			},
-			properties: ['priceUSD'],
-		},
-		max: 1,
-		// @ts-ignore
-	}).then((result) => {
-		return Number(result[0].priceUSD);
-	});
-}
+export default useCurveSeuroPoolQuery;

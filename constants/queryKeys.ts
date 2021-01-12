@@ -164,7 +164,7 @@ export const QUERY_KEYS = {
 			walletAddress,
 			networkId,
 		],
-		Curve: (walletAddress: string, networkId: NetworkId) => [
+		sUSD: (walletAddress: string, networkId: NetworkId) => [
 			'liquidityPools',
 			'curve',
 			walletAddress,
@@ -176,6 +176,7 @@ export const QUERY_KEYS = {
 			walletAddress,
 			networkId,
 		],
+		CurveTokenPrice: ['liquidityPools', 'curvePrice'],
 	},
 };
 
