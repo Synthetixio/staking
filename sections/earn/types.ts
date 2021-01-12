@@ -1,6 +1,6 @@
 export enum Tab {
 	Claim = 'claim',
-	Curve_LP = 'curve-LP',
+	sUSD_LP = 'susd-LP',
 	sEURO_LP = 'seuro-lp',
 	iETH_LP = 'iETH-LP',
 	iBTC_LP = 'iBTC-LP',

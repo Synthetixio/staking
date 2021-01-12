@@ -120,7 +120,6 @@ export const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, type = 'synth
 		case CryptoCurrency.SNX: {
 			return <Img src={SNXIcon} {...props} />;
 		}
-		case CryptoCurrency.CurveLPToken:
 		case CryptoCurrency.CRV: {
 			return <Img src={CRVIcon} {...props} />;
 		}

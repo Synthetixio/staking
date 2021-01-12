@@ -17,7 +17,7 @@ import { appReadyState } from 'store/app';
 import { walletAddressState, isWalletConnectedState, networkState } from 'store/wallet';
 
 import { LiquidityPoolData } from './types';
-import useCurveTokenPrice from './useCurveTokenPrice';
+import { getCurveTokenPrice } from './helper';
 
 export type CurveData = LiquidityPoolData & {
 	swapAPR: number;
@@ -67,7 +67,7 @@ const useCurveSusdPoolQuery = (options?: QueryConfig<CurveData>) => {
 			const address = contract.address;
 			const getDuration = contract.DURATION || contract.rewardsDuration;
 
-			const curveTokenPrice = useCurveTokenPrice();
+			const curveTokenPrice = getCurveTokenPrice();
 
 			const [
 				duration,
@@ -94,7 +94,7 @@ const useCurveSusdPoolQuery = (options?: QueryConfig<CurveData>) => {
 				curveSusdGaugeContract.inflation_rate(),
 				curveSusdGaugeContract.working_supply(),
 				curveGaugeControllerContract.gauge_relative_weight(curveSusdGauge.address),
-				curveTokenPrice.data,
+				curveTokenPrice,
 				axios.get('https://www.curve.fi/raw-stats/apys.json'),
 				contract.earned(walletAddress),
 				contract.balanceOf(walletAddress),

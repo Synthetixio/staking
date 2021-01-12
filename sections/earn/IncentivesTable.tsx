@@ -58,6 +58,7 @@ export type EarnItem = {
 	now: number;
 	tab: Tab;
 	route: string;
+	externalLink?: string;
 };
 
 type IncentivesTableProps = {
@@ -85,13 +86,6 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab }
 						width: '22',
 						height: '22',
 					};
-
-					// TODO: the CRV icon should be re-exported to look like our regular crypto icons
-					if (cellProps.row.original.staked.asset === CryptoCurrency.CurveLPToken) {
-						iconProps.width = '20';
-						iconProps.height = '20';
-					}
-
 					return (
 						<>
 							<StyledGlowingCircle variant="green" size="sm">
@@ -228,7 +222,13 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab }
 				data={data}
 				isLoading={isWalletConnected && !isLoaded}
 				showPagination={true}
-				onTableRowClick={(row: Row<EarnItem>) => router.push(row.original.route)}
+				onTableRowClick={(row: Row<EarnItem>) => {
+					if (row.original.externalLink) {
+						router.push(row.original.externalLink);
+					} else {
+						router.push(row.original.route);
+					}
+				}}
 				isActiveRow={(row: Row<EarnItem>) => row.original.tab === activeTab}
 				noResultsMessage={
 					!isWalletConnected ? (

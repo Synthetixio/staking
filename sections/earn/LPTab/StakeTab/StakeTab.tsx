@@ -50,6 +50,7 @@ import {
 } from '../../common';
 import { useRecoilValue } from 'recoil';
 import { appReadyState } from 'store/app';
+import curveSEuroRewards from 'contracts/curveSEuroRewards';
 
 export const getContract = (stakedAsset: CurrencyKey, signer: ethers.Signer | null) => {
 	const { contracts } = synthetix.js!;
@@ -57,10 +58,16 @@ export const getContract = (stakedAsset: CurrencyKey, signer: ethers.Signer | nu
 		return contracts.StakingRewardsiBTC;
 	} else if (stakedAsset === Synths.iETH) {
 		return contracts.StakingRewardsiETH;
-	} else if (stakedAsset === CryptoCurrency.CurveLPToken && signer != null) {
+	} else if (stakedAsset === Synths.sUSD && signer != null) {
 		return new ethers.Contract(
 			curveSusdRewards.address,
 			curveSusdRewards.abi,
+			signer as ethers.Signer
+		);
+	} else if (stakedAsset === Synths.sEUR && signer != null) {
+		return new ethers.Contract(
+			curveSEuroRewards.address,
+			curveSEuroRewards.abi,
 			signer as ethers.Signer
 		);
 	} else {
@@ -241,11 +248,7 @@ const StakeTab: FC<StakeTabProps> = ({ stakedAsset, isStake, userBalance, staked
 		<>
 			<Container>
 				<IconWrap>
-					<Currency.Icon
-						currencyKey={stakedAsset}
-						width={stakedAsset === CryptoCurrency.CurveLPToken ? '34' : '38'}
-						height={stakedAsset === CryptoCurrency.CurveLPToken ? '34' : '38'}
-					/>
+					<Currency.Icon currencyKey={stakedAsset} width={'38'} height={'38'} />
 				</IconWrap>
 				<InputSection>
 					<EmptyDiv />

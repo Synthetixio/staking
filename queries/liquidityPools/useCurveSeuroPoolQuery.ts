@@ -8,7 +8,7 @@ import Connector from 'containers/Connector';
 import {
 	curveGaugeController,
 	curveSeuroGauge,
-	curveSEuroPool,
+	curveSeuroPool,
 	curveSeuroPoolToken,
 	curveSeroRewards,
 } from 'contracts';
@@ -17,7 +17,7 @@ import { appReadyState } from 'store/app';
 import { walletAddressState, isWalletConnectedState, networkState } from 'store/wallet';
 
 import { LiquidityPoolData } from './types';
-import useCurveTokenPrice from './useCurveTokenPrice';
+import { getCurveTokenPrice } from './helper';
 
 export type CurveData = LiquidityPoolData & {
 	swapAPR: number;
@@ -40,21 +40,21 @@ const useCurveSeuroPoolQuery = (options?: QueryConfig<CurveData>) => {
 				provider as ethers.providers.Provider
 			);
 			const curveSeuroPoolContract = new ethers.Contract(
-				curveSEuroPool.address,
+				curveSeuroPool.address,
 				// @ts-ignore
-				curveSusdPool.abi,
+				curveSeuroPool.abi,
 				provider as ethers.providers.Provider
 			);
 			const curveSeuroPoolTokenContract = new ethers.Contract(
 				curveSeuroPoolToken.address,
 				// @ts-ignore
-				curveSusdPoolToken.abi,
+				curveSeuroPoolToken.abi,
 				provider as ethers.providers.Provider
 			);
-			const curveSusdGaugeContract = new ethers.Contract(
+			const curveSeuroGaugeContract = new ethers.Contract(
 				curveSeuroGauge.address,
 				// @ts-ignore
-				curveSusdGauge.abi,
+				curveSeuroGauge.abi,
 				provider as ethers.providers.Provider
 			);
 			const curveGaugeControllerContract = new ethers.Contract(
@@ -67,15 +67,15 @@ const useCurveSeuroPoolQuery = (options?: QueryConfig<CurveData>) => {
 			const address = contract.address;
 			const getDuration = contract.DURATION || contract.rewardsDuration;
 
-			const curveTokenPrice = useCurveTokenPrice();
+			const curveTokenPrice = getCurveTokenPrice();
 
 			const [
 				duration,
 				rate,
 				periodFinish,
-				curveSusdBalance,
-				curveSusdUserBalance,
-				curveSusdTokenPrice,
+				curveSeuroBalance,
+				curveSeuroUserBalance,
+				curveSeuroTokenPrice,
 				curveInflationRate,
 				curveWorkingSupply,
 				gaugeRelativeWeight,
@@ -91,10 +91,10 @@ const useCurveSeuroPoolQuery = (options?: QueryConfig<CurveData>) => {
 				curveSeuroPoolTokenContract.balanceOf(address),
 				curveSeuroPoolTokenContract.balanceOf(walletAddress),
 				curveSeuroPoolContract.get_virtual_price(),
-				curveSusdGaugeContract.inflation_rate(),
-				curveSusdGaugeContract.working_supply(),
+				curveSeuroGaugeContract.inflation_rate(),
+				curveSeuroGaugeContract.working_supply(),
 				curveGaugeControllerContract.gauge_relative_weight(curveSeuroGauge.address),
-				curveTokenPrice.data,
+				curveTokenPrice,
 				axios.get('https://www.curve.fi/raw-stats/apys.json'),
 				contract.earned(walletAddress),
 				contract.balanceOf(walletAddress),
@@ -117,9 +117,9 @@ const useCurveSeuroPoolQuery = (options?: QueryConfig<CurveData>) => {
 				staked,
 				allowance,
 			] = [
-				curveSusdBalance,
-				curveSusdUserBalance,
-				curveSusdTokenPrice,
+				curveSeuroBalance,
+				curveSeuroUserBalance,
+				curveSeuroTokenPrice,
 				curveInflationRate,
 				curveWorkingSupply,
 				gaugeRelativeWeight,
@@ -129,7 +129,8 @@ const useCurveSeuroPoolQuery = (options?: QueryConfig<CurveData>) => {
 			].map((data) => Number(synthetix.js?.utils.formatEther(data)));
 
 			const curveRate =
-				(((inflationRate * relativeWeight * 31536000) / workingSupply) * 0.4) / curveSusdTokenPrice;
+				(((inflationRate * relativeWeight * 31536000) / workingSupply) * 0.4) /
+				curveSeuroTokenPrice;
 			const rewardsAPR = curveRate * curvePrice * 1e18;
 			const swapAPR = swapData?.data?.apy?.day?.susd ?? 0;
 

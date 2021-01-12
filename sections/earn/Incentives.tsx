@@ -85,43 +85,6 @@ const Incentives: FC<IncentivesProps> = ({
 							route: ROUTES.Earn.Claim,
 						},
 						{
-							title: t('earn.incentives.options.curve.title'),
-							subtitle: t('earn.incentives.options.curve.subtitle'),
-							apr: lpData[CryptoCurrency.CurveLPToken].APR,
-							tvl: lpData[CryptoCurrency.CurveLPToken].TVL,
-							staked: {
-								balance: lpData[CryptoCurrency.CurveLPToken].data?.staked ?? 0,
-								asset: CryptoCurrency.CurveLPToken,
-							},
-							rewards: lpData[CryptoCurrency.CurveLPToken].data?.rewards ?? 0,
-							periodStarted: now - (lpData[CryptoCurrency.CurveLPToken].data?.duration ?? 0),
-							periodFinish: lpData[CryptoCurrency.CurveLPToken].data?.periodFinish ?? 0,
-							claimed:
-								(lpData[CryptoCurrency.CurveLPToken].data?.rewards ?? 0) > 0
-									? false
-									: NOT_APPLICABLE,
-							now,
-							route: ROUTES.Earn.Curve_LP,
-							tab: Tab.Curve_LP,
-						},
-						{
-							title: t('earn.incentives.options.seur.title'),
-							subtitle: t('earn.incentives.options.seur.subtitle'),
-							apr: lpData[Synths.sEUR].APR,
-							tvl: lpData[Synths.sEUR].TVL,
-							staked: {
-								balance: lpData[Synths.sEUR].data?.staked ?? 0,
-								asset: Synths.sEUR,
-							},
-							rewards: lpData[Synths.sEUR].data?.rewards ?? 0,
-							periodStarted: now - (lpData[Synths.sEUR].data?.duration ?? 0),
-							periodFinish: lpData[Synths.sEUR].data?.periodFinish ?? 0,
-							claimed: (lpData[Synths.sEUR].data?.rewards ?? 0) > 0 ? false : NOT_APPLICABLE,
-							now,
-							route: ROUTES.Earn.sEURO_LP,
-							tab: Tab.sEURO_LP,
-						},
-						{
 							title: t('earn.incentives.options.ieth.title'),
 							subtitle: t('earn.incentives.options.ieth.subtitle'),
 							apr: lpData[Synths.iETH].APR,
@@ -157,6 +120,42 @@ const Incentives: FC<IncentivesProps> = ({
 							route: ROUTES.Earn.iBTC_LP,
 							needsToSettle: lpData[Synths.iBTC].data?.needsToSettle,
 						},
+						{
+							title: t('earn.incentives.options.curve.title'),
+							subtitle: t('earn.incentives.options.curve.subtitle'),
+							apr: lpData[Synths.sUSD].APR,
+							tvl: lpData[Synths.sUSD].TVL,
+							staked: {
+								balance: lpData[Synths.sUSD].data?.staked ?? 0,
+								asset: Synths.sUSD,
+							},
+							rewards: lpData[Synths.sUSD].data?.rewards ?? 0,
+							periodStarted: now - (lpData[Synths.sUSD].data?.duration ?? 0),
+							periodFinish: lpData[Synths.sUSD].data?.periodFinish ?? 0,
+							claimed: (lpData[Synths.sUSD].data?.rewards ?? 0) > 0 ? false : NOT_APPLICABLE,
+							now,
+							route: ROUTES.Earn.sUSD_LP,
+							tab: Tab.sUSD_LP,
+							externalLink: ROUTES.Earn.sUSD_EXTERNAL,
+						},
+						{
+							title: t('earn.incentives.options.seur.title'),
+							subtitle: t('earn.incentives.options.seur.subtitle'),
+							apr: lpData[Synths.sEUR].APR,
+							tvl: lpData[Synths.sEUR].TVL,
+							staked: {
+								balance: lpData[Synths.sEUR].data?.staked ?? 0,
+								asset: Synths.sEUR,
+							},
+							rewards: lpData[Synths.sEUR].data?.rewards ?? 0,
+							periodStarted: now - (lpData[Synths.sEUR].data?.duration ?? 0),
+							periodFinish: lpData[Synths.sEUR].data?.periodFinish ?? 0,
+							claimed: (lpData[Synths.sEUR].data?.rewards ?? 0) > 0 ? false : NOT_APPLICABLE,
+							now,
+							route: ROUTES.Earn.sEURO_LP,
+							tab: Tab.sEURO_LP,
+							externalLink: ROUTES.Earn.sEURO_EXTERNAL,
+						},
 				  ]
 				: [],
 		[
@@ -179,7 +178,8 @@ const Incentives: FC<IncentivesProps> = ({
 			activeTab={activeTab}
 			data={incentives}
 			isLoaded={
-				lpData[CryptoCurrency.CurveLPToken].data &&
+				lpData[Synths.sUSD].data &&
+				lpData[Synths.sEUR].data &&
 				lpData[Synths.iBTC].data &&
 				lpData[Synths.iETH].data
 					? true
@@ -201,11 +201,11 @@ const Incentives: FC<IncentivesProps> = ({
 						totalRewards={totalRewards}
 					/>
 				)}
-				{activeTab === Tab.Curve_LP && (
+				{/* {activeTab === Tab.sUSD_LP && (
 					<LPTab
-						userBalance={lpData[CryptoCurrency.CurveLPToken].data?.userBalance ?? 0}
-						stakedAsset={CryptoCurrency.CurveLPToken}
-						allowance={lpData[CryptoCurrency.CurveLPToken].data?.allowance ?? null}
+						userBalance={lpData[Synths.sUSD].data?.userBalance ?? 0}
+						stakedAsset={Synths.sUSD}
+						allowance={lpData[Synths.sUSD].data?.allowance ?? null}
 						tokenRewards={incentives[1].rewards}
 						staked={incentives[1].staked.balance}
 					/>
@@ -218,7 +218,7 @@ const Incentives: FC<IncentivesProps> = ({
 						tokenRewards={incentives[1].rewards}
 						staked={incentives[1].staked.balance}
 					/>
-				)}
+				)} */}
 				{activeTab === Tab.iETH_LP && (
 					<LPTab
 						userBalance={lpData[Synths.iETH].data?.userBalance ?? 0}

@@ -176,7 +176,6 @@ export const QUERY_KEYS = {
 			walletAddress,
 			networkId,
 		],
-		CurveTokenPrice: ['liquidityPools', 'curvePrice'],
 	},
 };
 
