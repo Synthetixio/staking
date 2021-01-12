@@ -11,7 +11,7 @@ import {
 	curveSusdGauge,
 	curveSusdPool,
 	curveSusdPoolToken,
-	curvepoolRewards,
+	curveSusdRewards,
 } from 'contracts';
 import QUERY_KEYS from 'constants/queryKeys';
 import { appReadyState } from 'store/app';
@@ -35,8 +35,8 @@ const useCurvePoolQuery_1 = (options?: QueryConfig<CurveData>) => {
 		QUERY_KEYS.LiquidityPools.Curve(walletAddress ?? '', network?.id!),
 		async () => {
 			const contract = new ethers.Contract(
-				curvepoolRewards.address,
-				curvepoolRewards.abi,
+				curveSusdRewards.address,
+				curveSusdRewards.abi,
 				provider as ethers.providers.Provider
 			);
 			const curveSusdPoolContract = new ethers.Contract(
