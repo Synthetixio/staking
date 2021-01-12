@@ -2,63 +2,76 @@ import Head from 'next/head';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 
+import Main from 'sections/layer2/migrate/index';
 import StatBox from 'components/StatBox';
 import { StatsSection, LineSpacer } from 'styles/common';
 
-import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
-import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import { formatFiatCurrency, formatPercent } from 'utils/formatters/number';
+import useEscrowCalculations from 'sections/escrow/hooks/useEscrowCalculations';
+import { formatCryptoCurrency } from 'utils/formatters/number';
+
+const SNX_HEADER_DECIMALS = 2;
 
 const L2Page = () => {
 	const { t } = useTranslation();
 
-	const { stakedCollateralValue, percentageCurrentCRatio, debtBalance } = useStakingCalculations();
-	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
+	const escrowCalculations = useEscrowCalculations();
+
+	const totalEscrowed = escrowCalculations?.totalEscrowBalance;
+	const totalClaimable = escrowCalculations?.totalClaimableBalance;
+	const totalVested = escrowCalculations?.totalVestedBalance;
 
 	return (
 		<>
 			<Head>
-				<title>{t('layer2.page-title')}</title>
+				<title>{t('escrow.page-title')}</title>
 			</Head>
 			<StatsSection>
-				<StakedValue
-					title={t('common.stat-box.staked-value')}
-					value={formatFiatCurrency(getPriceAtCurrentRate(stakedCollateralValue), {
-						sign: selectedPriceCurrency.sign,
+				<Available
+					title={t('common.stat-box.available-snx')}
+					value={formatCryptoCurrency(totalClaimable ?? 0, {
+						decimals: SNX_HEADER_DECIMALS,
 					})}
 				/>
-				<CRatio
-					title={t('common.stat-box.c-ratio')}
-					value={formatPercent(percentageCurrentCRatio)}
+				<Escrowed
+					title={t('common.stat-box.escrowed-snx')}
+					value={formatCryptoCurrency(totalEscrowed ?? 0, {
+						decimals: SNX_HEADER_DECIMALS,
+					})}
 					size="lg"
 				/>
-				<ActiveDebt
-					title={t('common.stat-box.active-debt')}
-					value={formatFiatCurrency(getPriceAtCurrentRate(debtBalance), {
-						sign: selectedPriceCurrency.sign,
+				<Vested
+					title={t('common.stat-box.vested-snx')}
+					value={formatCryptoCurrency(totalVested ?? 0, {
+						decimals: SNX_HEADER_DECIMALS,
 					})}
 				/>
 			</StatsSection>
 			<LineSpacer />
-			<h1>Migrate</h1>
+			<Main />
 		</>
 	);
 };
 
-const StakedValue = styled(StatBox)`
+const Available = styled(StatBox)`
 	.title {
-		color: ${(props) => props.theme.colors.blue};
+		color: ${(props) => props.theme.colors.green};
 	}
 `;
-const CRatio = styled(StatBox)`
+
+const Vested = styled(StatBox)`
+	.title {
+		color: ${(props) => props.theme.colors.green};
+	}
+`;
+
+const Escrowed = styled(StatBox)`
+	.title {
+		color: ${(props) => props.theme.colors.green};
+	}
 	.value {
-		text-shadow: ${(props) => props.theme.colors.blueTextShadow};
-		color: ${(props) => props.theme.colors.black};
+		text-shadow: ${(props) => props.theme.colors.greenTextShadow};
+		color: #073124;
 	}
 `;
-const ActiveDebt = styled(StatBox)`
-	.title {
-		color: ${(props) => props.theme.colors.pink};
-	}
-`;
+
 export default L2Page;

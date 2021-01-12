@@ -6,15 +6,15 @@ import { useTranslation } from 'react-i18next';
 
 import { formatCurrency } from 'utils/formatters/number';
 import { CryptoCurrency } from 'constants/currency';
-import { InputContainer, InputBox } from '../common';
+import { InputContainer, InputBox } from '../../components/common';
 import { Transaction } from 'constants/network';
 
 import GasSelector from 'components/GasSelector';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
-import { ActionCompleted, ActionInProgress } from '../TxSent';
+import { ActionCompleted, ActionInProgress } from '../../components/TxSent';
 
 import SNXLogo from 'assets/svg/currencies/crypto/SNX.svg';
-import { StyledCTA } from '../common';
+import { StyledCTA } from '../../components/common';
 import {
 	ModalContent,
 	ModalItem,
@@ -24,7 +24,7 @@ import {
 } from 'styles/common';
 
 type TabContentProps = {
-	depositAmount: BigNumber;
+	escrowedAmount: BigNumber;
 	onSubmit: any;
 	transactionError: string | null;
 	gasEstimateError: string | null;
@@ -38,7 +38,7 @@ type TabContentProps = {
 };
 
 const TabContent: FC<TabContentProps> = ({
-	depositAmount,
+	escrowedAmount,
 	onSubmit,
 	transactionError,
 	txModalOpen,
@@ -54,7 +54,7 @@ const TabContent: FC<TabContentProps> = ({
 	const vestingCurrencyKey = CryptoCurrency['SNX'];
 
 	const renderButton = () => {
-		if (depositAmount) {
+		if (escrowedAmount) {
 			return (
 				<StyledCTA
 					blue={true}
@@ -63,8 +63,8 @@ const TabContent: FC<TabContentProps> = ({
 					size="lg"
 					disabled={transactionState !== Transaction.PRESUBMIT || !!gasEstimateError}
 				>
-					{t('layer2.actions.deposit.action.deposit-button', {
-						depositAmount: formatCurrency(vestingCurrencyKey, depositAmount, {
+					{t('layer2.actions.migrate.action.deposit-button', {
+						escrowedAmount: formatCurrency(vestingCurrencyKey, escrowedAmount, {
 							currencyKey: vestingCurrencyKey,
 						}),
 					})}
@@ -73,7 +73,7 @@ const TabContent: FC<TabContentProps> = ({
 		} else {
 			return (
 				<StyledCTA blue={true} variant="primary" size="lg" disabled={true}>
-					{t('layer2.actions.deposit.action.disabled')}
+					{t('layer2.actions.migrate.action.disabled')}
 				</StyledCTA>
 			);
 		}
@@ -82,7 +82,8 @@ const TabContent: FC<TabContentProps> = ({
 	if (transactionState === Transaction.WAITING) {
 		return (
 			<ActionInProgress
-				depositAmount={depositAmount.toString()}
+				action="migrate"
+				amount={escrowedAmount.toString()}
 				currencyKey={vestingCurrencyKey}
 				hash={txHash as string}
 			/>
@@ -92,9 +93,10 @@ const TabContent: FC<TabContentProps> = ({
 	if (transactionState === Transaction.SUCCESS) {
 		return (
 			<ActionCompleted
+				action="migrate"
 				currencyKey={vestingCurrencyKey}
 				hash={txHash as string}
-				depositAmount={depositAmount.toString()}
+				amount={escrowedAmount.toString()}
 				setTransactionState={setTransactionState}
 			/>
 		);
@@ -106,7 +108,7 @@ const TabContent: FC<TabContentProps> = ({
 				<InputBox>
 					<Svg src={SNXLogo} />
 					<Data>
-						{formatCurrency(vestingCurrencyKey, depositAmount, {
+						{formatCurrency(vestingCurrencyKey, escrowedAmount, {
 							currencyKey: vestingCurrencyKey,
 							decimals: 2,
 						})}
@@ -128,7 +130,7 @@ const TabContent: FC<TabContentProps> = ({
 							<ModalItem>
 								<ModalItemTitle>{t('modals.confirm-transaction.vesting.title')}</ModalItemTitle>
 								<ModalItemText>
-									{formatCurrency(vestingCurrencyKey, depositAmount, {
+									{formatCurrency(vestingCurrencyKey, escrowedAmount, {
 										currencyKey: vestingCurrencyKey,
 										decimals: 4,
 									})}

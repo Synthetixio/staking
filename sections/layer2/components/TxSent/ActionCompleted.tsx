@@ -13,36 +13,36 @@ import Etherscan from 'containers/Etherscan';
 
 type ActionCompletedProps = {
 	setTransactionState: (tx: Transaction) => void;
-	depositAmount: string;
+	amount: string;
+	action: string;
 	currencyKey: string;
 	hash: string;
 };
 
 const ActionCompleted: FC<ActionCompletedProps> = ({
 	setTransactionState,
-	depositAmount,
+	amount,
 	currencyKey,
 	hash,
+	action,
 }) => {
 	const { t } = useTranslation();
 	const { etherscanInstance } = Etherscan.useContainer();
 	const link = etherscanInstance != null ? etherscanInstance.txLink(hash) : undefined;
 	return (
 		<Container>
-			<SectionHeader>{t('layer2.actions.deposit.action.completed.title')}</SectionHeader>
+			<SectionHeader>{t(`layer2.actions.${action}.action.completed.title`)}</SectionHeader>
 			<Svg src={Success} />
 			<FlexDivCentered>
 				<InfoContainer key="one">
-					<InfoTitle>{t('layer2.actions.deposit.action.completed.deposited')}</InfoTitle>
-					<InfoData>
-						{formatCurrency(currencyKey, depositAmount, { currencyKey: currencyKey })}
-					</InfoData>
+					<InfoTitle>{t(`layer2.actions.${action}.action.completed.deposited`)}</InfoTitle>
+					<InfoData>{formatCurrency(currencyKey, amount, { currencyKey: currencyKey })}</InfoData>
 				</InfoContainer>
 			</FlexDivCentered>
 			<ButtonWrap>
 				{link ? (
 					<ExternalLink href={link}>
-						<LeftButton>{t('layer2.actions.deposit.action.completed.verify')}</LeftButton>
+						<LeftButton>{t(`layer2.actions.${action}.action.completed.verify`)}</LeftButton>
 					</ExternalLink>
 				) : null}
 				<RightButton onClick={() => setTransactionState(Transaction.PRESUBMIT)}>

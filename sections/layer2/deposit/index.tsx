@@ -4,8 +4,8 @@ import styled from 'styled-components';
 import { BOX_COLUMN_WIDTH } from 'constants/styles';
 import { Row, FlexDivCol } from 'styles/common';
 
-import ActionBox from './components/ActionBox';
-import InfoBox from './components/InfoBox';
+import ActionBox from './ActionBox';
+import InfoBox from './InfoBox';
 
 const Index: React.FC = () => {
 	return (

@@ -443,6 +443,14 @@
 				"subtitle": "Deposit your SNX to complete the process of migrating your SNX from L1 to Layer 2."
 			}
 		},
+		"migrate": {
+			"info": {
+				"title": "Migrate your escrowed SNX to Layer 2",
+				"subtitle": "Migrate your escrowed SNX to Layer 2",
+				"warning-title": "Warning",
+				"warning-description": "Migrating escrowed SNX to Layer 2 cannot be reversed"
+			}
+		},
 		"actions": {
 			"burn": {
 				"title": "Burn L1 debt",
@@ -462,7 +470,7 @@
 						"title": "Deposit complete",
 						"deposited": "Deposited",
 						"verify": "Verify Tx",
-						"dismiss": "Dimiss"
+						"dismiss": "Dismiss"
 					},
 					"deposit-button": "Deposit {{depositAmount}}",
 					"disabled": "No SNX to deposit",
@@ -474,7 +482,23 @@
 			},
 			"migrate": {
 				"title": "Migrate Escrowed SNX",
-				"subtitle": "Migrate Escrowed schedule from L1 to L2"
+				"subtitle": "Migrate Escrowed schedule from L1 to L2",
+				"action": {
+					"in-progress": {
+						"title": "Migration in progress",
+						"subtext": "Waiting for the blockchain to confirm your transaction",
+						"depositing": "Migrating",
+						"etherscan": "View on Etherscan"
+					},
+					"completed": {
+						"title": "Migration complete",
+						"deposited": "Migrated",
+						"verify": "Verify Tx",
+						"dismiss": "Dismiss"
+					},
+					"deposit-button": "Migrate {{escrowedAmount}}",
+					"disabled": "No SNX to migrate"
+				}
 			}
 		}
 	},

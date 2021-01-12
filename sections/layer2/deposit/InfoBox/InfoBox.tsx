@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 
-import { InfoContainer, Title, Subtitle } from '../common';
+import { InfoContainer, Title, Subtitle } from '../../components/common';
 
 const InfoBox = () => {
 	const { t } = useTranslation();

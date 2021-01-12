@@ -6,13 +6,13 @@ import { useRecoilValue } from 'recoil';
 
 import { FlexDivColCentered } from 'styles/common';
 import SNXLogo from 'assets/svg/currencies/crypto/SNX.svg';
-import { TabContainer } from '../common';
+import { TabContainer } from '../../components/common';
 import { Transaction } from 'constants/network';
 
 import { CryptoCurrency } from 'constants/currency';
 import { formatCryptoCurrency } from 'utils/formatters/number';
 
-import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
+import useEscrowCalculations from 'sections/escrow/hooks/useEscrowCalculations';
 import { appReadyState } from 'store/app';
 import { isWalletConnectedState } from 'store/wallet';
 
@@ -23,10 +23,13 @@ import TabContent from './TabContent';
 
 const SNX_DECIMALS = 2;
 
-const DepositTab = () => {
+const MigrateTab = () => {
 	const { t } = useTranslation();
 	const depositCurrencyKey = CryptoCurrency['SNX'];
-	const { transferableCollateral } = useStakingCalculations();
+
+	const escrowCalculations = useEscrowCalculations();
+	const totalEscrowed = escrowCalculations?.totalEscrowBalance;
+
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const isAppReady = useRecoilValue(appReadyState);
 
@@ -97,7 +100,7 @@ const DepositTab = () => {
 				/>
 			) : null}
 			<TabContent
-				depositAmount={transferableCollateral}
+				escrowedAmount={totalEscrowed}
 				onSubmit={handleDeposit}
 				transactionError={depositTxError}
 				gasEstimateError={gasEstimateError}
@@ -113,4 +116,4 @@ const DepositTab = () => {
 	);
 };
 
-export default DepositTab;
+export default MigrateTab;
