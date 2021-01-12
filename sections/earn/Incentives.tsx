@@ -201,32 +201,14 @@ const Incentives: FC<IncentivesProps> = ({
 						totalRewards={totalRewards}
 					/>
 				)}
-				{/* {activeTab === Tab.sUSD_LP && (
-					<LPTab
-						userBalance={lpData[Synths.sUSD].data?.userBalance ?? 0}
-						stakedAsset={Synths.sUSD}
-						allowance={lpData[Synths.sUSD].data?.allowance ?? null}
-						tokenRewards={incentives[1].rewards}
-						staked={incentives[1].staked.balance}
-					/>
-				)}
-				{activeTab === Tab.sEURO_LP && (
-					<LPTab
-						userBalance={lpData[Synths.sEUR].data?.userBalance ?? 0}
-						stakedAsset={Synths.sEUR}
-						allowance={lpData[Synths.sEUR].data?.allowance ?? null}
-						tokenRewards={incentives[1].rewards}
-						staked={incentives[1].staked.balance}
-					/>
-				)} */}
 				{activeTab === Tab.iETH_LP && (
 					<LPTab
 						userBalance={lpData[Synths.iETH].data?.userBalance ?? 0}
 						stakedAsset={Synths.iETH}
 						allowance={lpData[Synths.iETH].data?.allowance ?? null}
-						tokenRewards={incentives[2].rewards}
-						staked={incentives[2].staked.balance}
-						needsToSettle={incentives[2].needsToSettle}
+						tokenRewards={incentives[1].rewards}
+						staked={incentives[1].staked.balance}
+						needsToSettle={incentives[1].needsToSettle}
 					/>
 				)}
 				{activeTab === Tab.iBTC_LP && (
@@ -234,9 +216,9 @@ const Incentives: FC<IncentivesProps> = ({
 						userBalance={lpData[Synths.iBTC].data?.userBalance ?? 0}
 						stakedAsset={Synths.iBTC}
 						allowance={lpData[Synths.iBTC].data?.allowance ?? null}
-						tokenRewards={incentives[3].rewards}
-						staked={incentives[3].staked.balance}
-						needsToSettle={incentives[3].needsToSettle}
+						tokenRewards={incentives[2].rewards}
+						staked={incentives[2].staked.balance}
+						needsToSettle={incentives[2].needsToSettle}
 					/>
 				)}
 			</TabContainer>
