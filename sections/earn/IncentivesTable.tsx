@@ -224,7 +224,7 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab }
 				showPagination={true}
 				onTableRowClick={(row: Row<EarnItem>) => {
 					if (row.original.externalLink) {
-						router.push(row.original.externalLink);
+						window.open(row.original.externalLink, '_blank');
 					} else {
 						router.push(row.original.route);
 					}
