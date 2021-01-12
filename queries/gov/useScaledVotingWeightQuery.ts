@@ -7,6 +7,8 @@ import QUERY_KEYS from 'constants/queryKeys';
 
 import { isWalletConnectedState, networkState, walletAddressState } from 'store/wallet';
 import { appReadyState } from 'store/app';
+import { quadraticWeighting } from 'constants/snapshot';
+import { toBigNumber } from 'utils/formatters/number';
 
 const useScaledVotingWeightQuery = (options?: QueryConfig<number>) => {
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
@@ -24,17 +26,14 @@ const useScaledVotingWeightQuery = (options?: QueryConfig<number>) => {
 
 			let issuanceData = await SynthetixState.issuanceData(walletAddress, { blockTag: 11509852 });
 
-			const quadraticWeighting = (value: number) => {
-				// Scale the value by 100000
-				const scaledValue = value * 1e5;
-				return Math.sqrt(scaledValue);
-			};
+			console.log(formatUnits(issuanceData.initialDebtOwnership.toString(), 27));
+			// console.log(issuanceData.initialDebtOwnership.toString());
 
 			const scaledVotingWeight = quadraticWeighting(
-				parseFloat(formatUnits(issuanceData.initialDebtOwnership.toString(), 27))
+				toBigNumber(formatUnits(issuanceData.initialDebtOwnership.toString(), 27))
 			);
 
-			return scaledVotingWeight;
+			return Number(scaledVotingWeight);
 		},
 		{
 			enabled: isAppReady && isWalletConnected,

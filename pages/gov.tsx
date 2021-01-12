@@ -16,6 +16,7 @@ import useScaledVotingWeightQuery from 'queries/gov/useScaledVotingWeightQuery';
 import useSnapshotSpace from 'queries/gov/useSnapshotSpace';
 import { SPACES } from 'queries/gov/types';
 import useProposals from 'queries/gov/useProposals';
+import useTotalDebtWeighted from 'sections/gov/hooks/useTotalDebtWeighted';
 
 type GovProps = {};
 
@@ -23,21 +24,37 @@ const Gov: React.FC<GovProps> = ({}) => {
 	const { t } = useTranslation();
 	const votingWeight = useScaledVotingWeightQuery();
 	const space = useSnapshotSpace(SPACES.COUNCIL);
-	const proposals = useProposals(SPACES.COUNCIL);
+	const councilProposals = useProposals(SPACES.COUNCIL);
+	const govProposals = useProposals(SPACES.PROPOSAL);
 
 	const [latestElectionBlock, setLatestElectionBlock] = useState<number | null>(null);
+	const [activeProposals, setActiveProposals] = useState<number | null>(null);
+
+	const totalWeightedDebt = useTotalDebtWeighted(latestElectionBlock);
 
 	useEffect(() => {
-		if (proposals.data) {
+		if (govProposals.data) {
+			let count = 0;
+			govProposals.data.map((proposal) => {
+				if (proposal.msg.payload.end > Date.now()) {
+					count++;
+				}
+			});
+			setActiveProposals(count);
+		}
+	}, [govProposals]);
+
+	useEffect(() => {
+		if (councilProposals.data) {
 			let latest = 0;
-			proposals.data.map((proposal) => {
+			councilProposals.data.map((proposal) => {
 				if (proposal.msg.payload.snapshot > latest) {
 					latest = proposal.msg.payload.snapshot;
 				}
 			});
 			setLatestElectionBlock(latest);
 		}
-	}, [proposals]);
+	}, [councilProposals]);
 
 	return (
 		<>
@@ -54,14 +71,11 @@ const Gov: React.FC<GovProps> = ({}) => {
 				/>
 				<ActiveProposals
 					title={t('common.stat-box.active-proposals')}
-					value={formatNumber(votingWeight?.data ?? 0)}
-					tooltipContent={t('common.stat-box.voting-power.tooltip', {
-						blocknumber: formatNumber(latestElectionBlock ?? 0, { decimals: 0 }),
-					})}
+					value={formatNumber(activeProposals ?? 0)}
 				/>
 				<TotalVotingPower
 					title={t('common.stat-box.total-voting-power.title')}
-					value={formatNumber(votingWeight?.data ?? 0)}
+					value={formatNumber(totalWeightedDebt ?? 0)}
 					tooltipContent={t('common.stat-box.voting-power.tooltip', {
 						blocknumber: formatNumber(latestElectionBlock ?? 0, { decimals: 0 }),
 					})}

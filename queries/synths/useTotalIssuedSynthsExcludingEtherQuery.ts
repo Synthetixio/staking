@@ -9,6 +9,7 @@ import { appReadyState } from 'store/app';
 
 const useTotalIssuedSynthsExcludingEtherQuery = (
 	currencyKey: string,
+	block?: number | null,
 	options?: QueryConfig<number>
 ) => {
 	const isAppReady = useRecoilValue(appReadyState);
@@ -20,8 +21,12 @@ const useTotalIssuedSynthsExcludingEtherQuery = (
 				contracts: { Synthetix },
 				utils,
 			} = synthetix.js!;
+
 			const totalIssuedSynthsExclEther = await Synthetix.totalIssuedSynthsExcludeEtherCollateral(
-				utils.formatBytes32String(currencyKey)
+				utils.formatBytes32String(currencyKey),
+				{
+					blockTag: block ? block : 'latest',
+				}
 			);
 
 			return Number(utils.formatEther(totalIssuedSynthsExclEther));
