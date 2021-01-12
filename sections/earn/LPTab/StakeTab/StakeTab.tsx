@@ -50,7 +50,7 @@ import {
 } from '../../common';
 import { useRecoilValue } from 'recoil';
 import { appReadyState } from 'store/app';
-import curveSEuroRewards from 'contracts/curveSEuroRewards';
+import curveSeuroRewards from 'contracts/curveSeuroRewards';
 
 export const getContract = (stakedAsset: CurrencyKey, signer: ethers.Signer | null) => {
 	const { contracts } = synthetix.js!;
@@ -66,8 +66,8 @@ export const getContract = (stakedAsset: CurrencyKey, signer: ethers.Signer | nu
 		);
 	} else if (stakedAsset === Synths.sEUR && signer != null) {
 		return new ethers.Contract(
-			curveSEuroRewards.address,
-			curveSEuroRewards.abi,
+			curveSeuroRewards.address,
+			curveSeuroRewards.abi,
 			signer as ethers.Signer
 		);
 	} else {

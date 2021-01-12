@@ -1,5 +1,5 @@
 import curveSusdRewards from './curveSusdRewards';
-import curveSeroRewards from './curveSEuroRewards';
+import curveSeuroRewards from './curveSeuroRewards';
 
 import curveSusdPool from './curveSusdPool';
 import curveSeuroPool from './curveSeuroPool';
@@ -14,7 +14,7 @@ import curveGaugeController from './curveGaugeController';
 
 export {
 	curveSusdRewards,
-	curveSeroRewards,
+	curveSeuroRewards,
 	curveSusdPool,
 	curveSeuroPool,
 	curveSusdPoolToken,

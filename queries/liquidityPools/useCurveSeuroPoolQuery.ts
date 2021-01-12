@@ -10,7 +10,7 @@ import {
 	curveSeuroGauge,
 	curveSeuroPool,
 	curveSeuroPoolToken,
-	curveSeroRewards,
+	curveSeuroRewards,
 } from 'contracts';
 import QUERY_KEYS from 'constants/queryKeys';
 import { appReadyState } from 'store/app';
@@ -35,8 +35,8 @@ const useCurveSeuroPoolQuery = (options?: QueryConfig<CurveData>) => {
 		QUERY_KEYS.LiquidityPools.sEUR(walletAddress ?? '', network?.id!),
 		async () => {
 			const contract = new ethers.Contract(
-				curveSeroRewards.address,
-				curveSeroRewards.abi,
+				curveSeuroRewards.address,
+				curveSeuroRewards.abi,
 				provider as ethers.providers.Provider
 			);
 			const curveSeuroPoolContract = new ethers.Contract(
