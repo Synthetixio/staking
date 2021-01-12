@@ -28,7 +28,7 @@ import {
 	ModalItemTitle,
 } from 'styles/common';
 import Currency from 'components/Currency';
-import { CurrencyKey, CryptoCurrency, Synths } from 'constants/currency';
+import { CurrencyKey, Synths } from 'constants/currency';
 import { Transaction } from 'constants/network';
 import Notify from 'containers/Notify';
 import TxState from 'sections/earn/TxState';

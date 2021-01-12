@@ -133,6 +133,7 @@ const LayoutOne: FC = () => {
 					asset: 'Curve sUSD LP Token',
 					supplier: 'Curve Finance',
 				}),
+				tooltip: t('common.tooltip.external', { link: 'Curve Finance' }),
 				link: ROUTES.Earn.sUSD_EXTERNAL,
 			},
 			{
@@ -149,6 +150,7 @@ const LayoutOne: FC = () => {
 					asset: 'Curve sEUR LP Token',
 					supplier: 'Curve Finance',
 				}),
+				tooltip: t('common.tooltip.external', { link: 'Curve Finance' }),
 				link: ROUTES.Earn.sEURO_EXTERNAL,
 			},
 		];

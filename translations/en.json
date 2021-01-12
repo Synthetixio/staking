@@ -596,7 +596,10 @@
 		"explorers": {
 			"etherscan": "etherscan"
 		},
-		"stake-snx": "Stake SNX"
+		"stake-snx": "Stake SNX",
+		"tooltip": {
+			"external": "Redirects to {{link}}"
+		}
 	},
 	"not-found": {
 		"page-title": "Not Found | Synthetix Staking",
