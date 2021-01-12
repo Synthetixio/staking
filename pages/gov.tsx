@@ -5,13 +5,7 @@ import { useTranslation } from 'react-i18next';
 import StatBox from 'components/StatBox';
 import styled from 'styled-components';
 import { StatsSection, LineSpacer } from 'styles/common';
-import {
-	formatFiatCurrency,
-	toBigNumber,
-	formatPercent,
-	formatNumber,
-} from 'utils/formatters/number';
-import { CRatioProgressBar } from './staking/[[...action]]';
+import { formatNumber } from 'utils/formatters/number';
 import useScaledVotingWeightQuery from 'queries/gov/useScaledVotingWeightQuery';
 import useSnapshotSpace from 'queries/gov/useSnapshotSpace';
 import { SPACES } from 'queries/gov/types';
@@ -36,7 +30,10 @@ const Gov: React.FC<GovProps> = ({}) => {
 		if (govProposals.data) {
 			let count = 0;
 			govProposals.data.map((proposal) => {
-				if (proposal.msg.payload.end > Date.now()) {
+				if (
+					proposal.msg.payload.end > Date.now() / 1000 &&
+					proposal.msg.payload.start < Date.now() / 1000
+				) {
 					count++;
 				}
 			});
@@ -71,7 +68,7 @@ const Gov: React.FC<GovProps> = ({}) => {
 				/>
 				<ActiveProposals
 					title={t('common.stat-box.active-proposals')}
-					value={formatNumber(activeProposals ?? 0)}
+					value={activeProposals ?? 0}
 				/>
 				<TotalVotingPower
 					title={t('common.stat-box.total-voting-power.title')}
