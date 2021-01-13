@@ -51,6 +51,9 @@
 			"vesting": {
 				"title": "Vesting"
 			},
+			"deposit": {
+				"title": "Depositing"
+			},
 			"helper": "Follow the Metamask prompts to authorize the transaction"
 		},
 		"wallet": {

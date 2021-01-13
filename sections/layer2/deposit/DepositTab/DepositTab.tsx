@@ -1,35 +1,27 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import { Svg } from 'react-optimized-image';
 import { useRecoilValue } from 'recoil';
 
-import { FlexDivColCentered } from 'styles/common';
-import SNXLogo from 'assets/svg/currencies/crypto/SNX.svg';
 import { TabContainer } from '../../components/common';
 import { Transaction } from 'constants/network';
 
-import { CryptoCurrency } from 'constants/currency';
-import { formatCryptoCurrency } from 'utils/formatters/number';
-
+import { getGasEstimateForTransaction } from 'utils/transactions';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 import synthetix from 'lib/synthetix';
+import Notify from 'containers/Notify';
 import { appReadyState } from 'store/app';
 import { walletAddressState } from 'store/wallet';
 
-import GasSelector from 'components/GasSelector';
-import Button from 'components/Button';
 import ApproveModal from 'components/ApproveModal';
 import TabContent from './TabContent';
-
-const SNX_DECIMALS = 2;
+import { normalizedGasPrice } from 'utils/network';
 
 const DepositTab = () => {
 	const { t } = useTranslation();
-	const tokenToApprove = CryptoCurrency['SNX'];
 	const { transferableCollateral } = useStakingCalculations();
 	const walletAddress = useRecoilValue(walletAddressState);
 	const isAppReady = useRecoilValue(appReadyState);
+	const { monitorHash } = Notify.useContainer();
 
 	const [gasLimitEstimate, setGasLimitEstimate] = useState<number | null>(null);
 	const [depositTxError, setDepositTxError] = useState<string | null>(null);
@@ -42,15 +34,27 @@ const DepositTab = () => {
 
 	useEffect(() => {
 		const getGasLimitEstimate = async () => {
-			if (isAppReady && walletAddress) {
+			if (isAppReady && walletAddress && isApproved && transferableCollateral) {
 				try {
-					setIsApproved(true);
-				} catch (e) {}
+					setGasEstimateError(null);
+					const {
+						contracts: { SynthetixBridgeToOptimism },
+						utils: { parseEther },
+					} = synthetix.js!;
+					const gasEstimate = await getGasEstimateForTransaction(
+						[parseEther(transferableCollateral.toString())],
+						SynthetixBridgeToOptimism.estimateGas.initiateDeposit
+					);
+					setGasLimitEstimate(gasEstimate);
+				} catch (e) {
+					console.log(e);
+					setGasEstimateError(e.message);
+				}
 			}
 		};
 		getGasLimitEstimate();
 		// eslint-disable-next-line
-	}, [gasEstimateError, walletAddress, isAppReady]);
+	}, [walletAddress, isAppReady, isApproved, transferableCollateral]);
 
 	const getAllowance = useCallback(async () => {
 		if (walletAddress && isAppReady) {
@@ -76,26 +80,35 @@ const DepositTab = () => {
 	}, [getAllowance]);
 
 	const handleDeposit = async () => {
-		if (isAppReady) {
+		if (isAppReady && !gasEstimateError) {
+			const {
+				contracts: { SynthetixBridgeToOptimism },
+				utils: { parseEther },
+			} = synthetix.js!;
 			try {
 				setDepositTxError(null);
 				setTxModalOpen(true);
 
-				// INSERT TX HERE
-				const transaction = { hash: '0x000' };
+				const transaction = await SynthetixBridgeToOptimism.initiateDeposit(
+					parseEther(transferableCollateral.toString()),
+					{ gasLimit: gasLimitEstimate, gasPrice: normalizedGasPrice(gasPrice) }
+				);
+
 				if (transaction) {
 					setTxHash(transaction.hash);
 					setTransactionState(Transaction.WAITING);
-					// monitorHash({
-					// 	txHash: transaction.hash,
-					// 	onTxConfirmed: () => {
-					// 		setTransactionState(Transaction.SUCCESS);
-					// 	},
-					// });
-					setTransactionState(Transaction.SUCCESS);
+					monitorHash({
+						txHash: transaction.hash,
+						onTxConfirmed: () => {
+							setTransactionState(Transaction.SUCCESS);
+						},
+					});
 					setTxModalOpen(false);
 				}
-			} catch (e) {}
+			} catch (e) {
+				console.log(e);
+				setDepositTxError(e.message);
+			}
 		}
 	};
 

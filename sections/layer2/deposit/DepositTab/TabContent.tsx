@@ -51,7 +51,7 @@ const TabContent: FC<TabContentProps> = ({
 	setTransactionState,
 }) => {
 	const { t } = useTranslation();
-	const vestingCurrencyKey = CryptoCurrency['SNX'];
+	const currencyKey = CryptoCurrency['SNX'];
 
 	const renderButton = () => {
 		if (depositAmount) {
@@ -64,8 +64,8 @@ const TabContent: FC<TabContentProps> = ({
 					disabled={transactionState !== Transaction.PRESUBMIT || !!gasEstimateError}
 				>
 					{t('layer2.actions.deposit.action.deposit-button', {
-						depositAmount: formatCurrency(vestingCurrencyKey, depositAmount, {
-							currencyKey: vestingCurrencyKey,
+						depositAmount: formatCurrency(currencyKey, depositAmount, {
+							currencyKey: currencyKey,
 						}),
 					})}
 				</StyledCTA>
@@ -83,7 +83,7 @@ const TabContent: FC<TabContentProps> = ({
 		return (
 			<ActionInProgress
 				amount={depositAmount.toString()}
-				currencyKey={vestingCurrencyKey}
+				currencyKey={currencyKey}
 				hash={txHash as string}
 				action="deposit"
 			/>
@@ -93,7 +93,7 @@ const TabContent: FC<TabContentProps> = ({
 	if (transactionState === Transaction.SUCCESS) {
 		return (
 			<ActionCompleted
-				currencyKey={vestingCurrencyKey}
+				currencyKey={currencyKey}
 				hash={txHash as string}
 				amount={depositAmount.toString()}
 				setTransactionState={setTransactionState}
@@ -108,8 +108,8 @@ const TabContent: FC<TabContentProps> = ({
 				<InputBox>
 					<Svg src={SNXLogo} />
 					<Data>
-						{formatCurrency(vestingCurrencyKey, depositAmount, {
-							currencyKey: vestingCurrencyKey,
+						{formatCurrency(currencyKey, depositAmount, {
+							currencyKey: currencyKey,
 							decimals: 2,
 						})}
 					</Data>
@@ -119,7 +119,7 @@ const TabContent: FC<TabContentProps> = ({
 				</SettingsContainer>
 			</InputContainer>
 			{renderButton()}
-			<ErrorMessage>{transactionError}</ErrorMessage>
+			<ErrorMessage>{transactionError || gasEstimateError}</ErrorMessage>
 			{txModalOpen && (
 				<TxConfirmationModal
 					onDismiss={() => setTxModalOpen(false)}
@@ -128,10 +128,10 @@ const TabContent: FC<TabContentProps> = ({
 					content={
 						<ModalContent>
 							<ModalItem>
-								<ModalItemTitle>{t('modals.confirm-transaction.vesting.title')}</ModalItemTitle>
+								<ModalItemTitle>{t('modals.confirm-transaction.deposit.title')}</ModalItemTitle>
 								<ModalItemText>
-									{formatCurrency(vestingCurrencyKey, depositAmount, {
-										currencyKey: vestingCurrencyKey,
+									{formatCurrency(currencyKey, depositAmount, {
+										currencyKey: currencyKey,
 										decimals: 4,
 									})}
 								</ModalItemText>

@@ -26,6 +26,7 @@ import {
 	ModalItemTitle,
 	ModalItemText,
 } from 'styles/common';
+import { normalizedGasPrice } from 'utils/network';
 
 type ApproveModalProps = {
 	description: string;
@@ -91,7 +92,7 @@ const ApproveModal: FC<ApproveModalProps> = ({
 					contracts[contractToApprove].address,
 					allowance,
 					{
-						gasPrice,
+						gasPrice: normalizedGasPrice(gasPrice),
 						gasLimit: gasLimitEstimate,
 					}
 				);
