@@ -94,8 +94,8 @@ const MigrateTab = () => {
 				<ApproveModal
 					description={t('layer2.actions.deposit.action.approve.description')}
 					isApproving={false}
-					tokenContract={''}
-					addressToApprove={''}
+					tokenContract="Synthetix"
+					contractToApprove="SynthetixBridgeToOptimism"
 					onApprove={() => setIsApproved(true)}
 				/>
 			) : null}

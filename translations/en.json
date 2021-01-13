@@ -578,7 +578,8 @@
 	},
 	"common": {
 		"approve": {
-			"approve-contract": "Approve contract"
+			"approve-contract": "Approve contract",
+			"is-approving": "Approving contract..."
 		},
 		"wallet": {
 			"connect-wallet": "connect wallet",

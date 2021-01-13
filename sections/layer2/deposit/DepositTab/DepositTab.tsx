@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { Svg } from 'react-optimized-image';
@@ -13,8 +13,9 @@ import { CryptoCurrency } from 'constants/currency';
 import { formatCryptoCurrency } from 'utils/formatters/number';
 
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
+import synthetix from 'lib/synthetix';
 import { appReadyState } from 'store/app';
-import { isWalletConnectedState } from 'store/wallet';
+import { walletAddressState } from 'store/wallet';
 
 import GasSelector from 'components/GasSelector';
 import Button from 'components/Button';
@@ -25,9 +26,9 @@ const SNX_DECIMALS = 2;
 
 const DepositTab = () => {
 	const { t } = useTranslation();
-	const depositCurrencyKey = CryptoCurrency['SNX'];
+	const tokenToApprove = CryptoCurrency['SNX'];
 	const { transferableCollateral } = useStakingCalculations();
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
+	const walletAddress = useRecoilValue(walletAddressState);
 	const isAppReady = useRecoilValue(appReadyState);
 
 	const [gasLimitEstimate, setGasLimitEstimate] = useState<number | null>(null);
@@ -41,7 +42,7 @@ const DepositTab = () => {
 
 	useEffect(() => {
 		const getGasLimitEstimate = async () => {
-			if (isAppReady && isWalletConnected) {
+			if (isAppReady && walletAddress) {
 				try {
 					setIsApproved(true);
 				} catch (e) {}
@@ -49,17 +50,30 @@ const DepositTab = () => {
 		};
 		getGasLimitEstimate();
 		// eslint-disable-next-line
-	}, [gasEstimateError, isWalletConnected, isAppReady]);
+	}, [gasEstimateError, walletAddress, isAppReady]);
+
+	const getAllowance = useCallback(async () => {
+		if (walletAddress && isAppReady) {
+			const {
+				contracts: { Synthetix, SynthetixBridgeToOptimism },
+			} = synthetix.js!;
+			try {
+				const allowance = await Synthetix.allowance(
+					walletAddress,
+					SynthetixBridgeToOptimism.address
+				);
+
+				setIsApproved(!!(allowance / 1e18));
+			} catch (e) {
+				console.log(e);
+				setIsApproved(false);
+			}
+		}
+	}, [walletAddress, isAppReady]);
 
 	useEffect(() => {
-		const getAllowance = async () => {
-			if (isWalletConnected && isAppReady) {
-				try {
-				} catch (e) {}
-			}
-		};
 		getAllowance();
-	}, [isWalletConnected, isAppReady]);
+	}, [getAllowance]);
 
 	const handleDeposit = async () => {
 		if (isAppReady) {
@@ -90,10 +104,9 @@ const DepositTab = () => {
 			{!isApproved ? (
 				<ApproveModal
 					description={t('layer2.actions.deposit.action.approve.description')}
-					isApproving={false}
-					tokenContract={''}
-					addressToApprove={''}
-					onApprove={() => setIsApproved(true)}
+					tokenContract="Synthetix"
+					contractToApprove="SynthetixBridgeToOptimism"
+					onApproved={getAllowance}
 				/>
 			) : null}
 			<TabContent
