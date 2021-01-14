@@ -1,4 +1,4 @@
-export const L1_MESSENGER_ADDRESS = '0x387E26F9443D2BECBec1687D41f35baC04b16556';
+export const L1_MESSENGER_ADDRESS = '0xb89065D5eB05Cac554FDB11fC764C679b4202322';
 export const L2_MESSENGER_ADDRESS = '0x4200000000000000000000000000000000000007';
 
-export const OVM_RPC_URL = 'https://kovan.optimism.io/';
+export const OVM_RPC_URL = 'https://kovan2.optimism.io/';
