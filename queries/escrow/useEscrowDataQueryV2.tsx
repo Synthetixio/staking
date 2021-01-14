@@ -31,21 +31,11 @@ const useEscrowDataQueryV2 = (options?: QueryConfig<EscrowData>) => {
 				utils: { formatEther },
 			} = synthetix.js!;
 
-			const [
-				numVestingEntries,
-				totalEscrowed,
-				totalVested,
-				unformattedTotalBalancePendingMigration,
-			] = await Promise.all([
+			const [numVestingEntries, totalEscrowed, totalVested] = await Promise.all([
 				RewardEscrowV2.numVestingEntries(walletAddress),
 				RewardEscrowV2.balanceOf(walletAddress),
 				RewardEscrowV2.totalVestedAccountBalance(walletAddress),
-				RewardEscrowV2.totalBalancePendingMigration(walletAddress),
 			]);
-
-			const totalBalancePendingMigration = Number(
-				formatEther(unformattedTotalBalancePendingMigration)
-			);
 
 			let vestingEntriesPromise = [];
 			let vestingEntriesIdPromise = [];
@@ -69,15 +59,16 @@ const useEscrowDataQueryV2 = (options?: QueryConfig<EscrowData>) => {
 				Promise.all(vestingEntriesIdPromise),
 			]);
 
-			const claimableAmount = await RewardEscrowV2.getVestingQuantity(
-				walletAddress,
-				vestingEntriesId
-			);
+			let claimableAmount = 0;
+
+			if (vestingEntriesId != null) {
+				claimableAmount = await RewardEscrowV2.getVestingQuantity(walletAddress, vestingEntriesId);
+			}
 
 			let schedule: Schedule = [];
 			let claimableEntryIds: number[] = [];
 
-			vestingEntries.forEach(({ escrowAmount, entryID, endTime }: VestingEntry) => {
+			(vestingEntries ?? []).forEach(({ escrowAmount, entryID, endTime }: VestingEntry) => {
 				const quantity = escrowAmount / 1e18;
 				if (quantity) {
 					claimableEntryIds.push(entryID);
@@ -94,7 +85,6 @@ const useEscrowDataQueryV2 = (options?: QueryConfig<EscrowData>) => {
 				totalEscrowed: totalEscrowed / 1e18,
 				totalVested: totalVested / 1e18,
 				claimableEntryIds,
-				totalBalancePendingMigration,
 			};
 		},
 		{

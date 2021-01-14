@@ -24,7 +24,7 @@ function useEscrowDataQueryWrapper(): QueryResult<EscrowData, unknown> {
 	const rewardEscrowQueryV1 = useEscrowDataQueryV1();
 
 	return rewardEscrowQueryV2.isLoading ||
-		rewardEscrowQueryV2?.data?.totalBalancePendingMigration === 0
+		rewardEscrowQueryV1?.data?.totalBalancePendingMigration === 0
 		? rewardEscrowQueryV2
 		: rewardEscrowQueryV1;
 }

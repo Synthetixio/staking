@@ -19,15 +19,25 @@ const useEscrowDataQueryV1 = (options?: QueryConfig<EscrowData>) => {
 		QUERY_KEYS.Escrow.DataV1(walletAddress ?? '', network?.id!),
 		async () => {
 			const {
-				contracts: { RewardEscrow },
+				contracts: { RewardEscrow, RewardEscrowV2 },
 				utils: { formatEther },
 			} = synthetix.js!;
 
-			const [accountSchedule, totalEscrowed, totalVested] = await Promise.all([
+			const [
+				accountSchedule,
+				totalEscrowed,
+				totalVested,
+				unformattedTotalBalancePendingMigration,
+			] = await Promise.all([
 				RewardEscrow.checkAccountSchedule(walletAddress),
 				RewardEscrow.totalEscrowedAccountBalance(walletAddress),
 				RewardEscrow.totalVestedAccountBalance(walletAddress),
+				RewardEscrowV2.totalBalancePendingMigration(walletAddress),
 			]);
+
+			const totalBalancePendingMigration = Number(
+				formatEther(unformattedTotalBalancePendingMigration)
+			);
 
 			let schedule: Schedule = [];
 			let claimableAmount: number = 0;
@@ -52,6 +62,7 @@ const useEscrowDataQueryV1 = (options?: QueryConfig<EscrowData>) => {
 				schedule,
 				totalEscrowed: totalEscrowed / 1e18,
 				totalVested: totalVested / 1e18,
+				totalBalancePendingMigration,
 			};
 		},
 		{

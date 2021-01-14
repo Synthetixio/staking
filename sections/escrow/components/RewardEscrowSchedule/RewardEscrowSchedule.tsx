@@ -45,9 +45,6 @@ const RewardEscrowSchedule: React.FC = () => {
 					{totalBalancePendingMigration > 0 ? (
 						<Trans
 							i18nKey="escrow.staking.info.subtitle-migrate-l1"
-							values={{
-								link: EXTERNAL_LINKS.Synthetix.SIP60,
-							}}
 							components={[<StyledLink href={EXTERNAL_LINKS.Synthetix.SIP60} />]}
 						/>
 					) : (
