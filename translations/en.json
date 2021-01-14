@@ -54,6 +54,10 @@
 			"deposit": {
 				"title": "Depositing"
 			},
+			"migration": {
+				"title": "Migrating",
+				"escrow-schedule": "ESCROW SCHEDULE"
+			},
 			"helper": "Follow the Metamask prompts to authorize the transaction"
 		},
 		"wallet": {
@@ -156,6 +160,11 @@
 			"trade": {
 				"title": "TRADE",
 				"copy": "Trade between Synths on Kwenta"
+			},
+			"migrate-l1": {
+				"title": "MIGRATE ESCROW SCHEDULE",
+				"copy": "Migrate your current escrowed rewards from L1 to the new escrow rewards contract, which is also on L1. This enables escrowed rewards to migrate to L2.",
+				"tooltip": "This step is necessary in order to continue using the Synthetix protocol."
 			},
 			"migrate": {
 				"title": "MIGRATE TO LAYER 2",
@@ -402,7 +411,9 @@
 		"staking": {
 			"info": {
 				"title": "Vest your SNX staking rewards in escrow",
-				"subtitle": "If you have staked your SNX and minted sUSD, you are eligible to receive SNX staking rewards, which will be escrowed here which you can vest in 12 months from the claim date."
+				"title-migrate-l1": "Migrate Layer 1 Escrow Schedule",
+				"subtitle": "If you have staked your SNX and minted sUSD, you are eligible to receive SNX staking rewards, which will be escrowed here which you can vest in 12 months from the claim date.",
+				"subtitle-migrate-l1": "Since the implementation of <0>SIP-60<0> with new escrow features including migration to L2 a new SNX Escrow Contact was released and requires you to migrate your escrowed SNX to be able to vest it. Please migrate your escrowed SNX to the new contract."
 			}
 		},
 		"token": {
@@ -428,12 +439,25 @@
 				"title": "Token Sale"
 			},
 			"vest-button": "Vest {{canVestAmount}}",
+			"migrate-button": "Migrate SNX",
 			"disabled": "No SNX to vest",
 			"in-progress": {
 				"title": "Vesting in progress",
 				"vesting": "Vesting",
 				"subtext": "Waiting for the blockchain to confirm your transaction",
 				"etherscan": "View on Etherscan"
+			},
+			"migration": {
+				"completed": {
+					"title": "Transaction complete",
+					"migrating": "Migrating",
+					"escrow-schedule": "ESCROW SCHEDULE"
+				},
+				"in-progress": {
+					"title": "Transaction in progress",
+					"migrating": "Migrating",
+					"escrow-schedule": "ESCROW SCHEDULE"
+				}
 			},
 			"completed": {
 				"title": "Vesting complete",

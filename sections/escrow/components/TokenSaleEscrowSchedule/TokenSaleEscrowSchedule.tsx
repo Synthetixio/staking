@@ -5,7 +5,7 @@ import { Svg } from 'react-optimized-image';
 
 import NoNotificationIcon from 'assets/svg/app/no-notifications.svg';
 import { CryptoCurrency } from 'constants/currency';
-import { EscrowData } from 'queries/escrow/useEscrowDataQuery';
+import { EscrowData } from 'hooks/useEscrowDataQueryWrapper';
 import useTokenSaleEscrowQuery from 'queries/escrow/useTokenSaleEscrowQuery';
 import { formatShortDate } from 'utils/formatters/date';
 import { formatCurrency } from 'utils/formatters/number';
