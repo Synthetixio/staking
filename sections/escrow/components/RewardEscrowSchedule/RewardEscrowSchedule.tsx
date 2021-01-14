@@ -1,11 +1,12 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslation, Trans } from 'react-i18next';
 import { CellProps } from 'react-table';
 import { Svg } from 'react-optimized-image';
 import styled from 'styled-components';
 import { useRouter } from 'next/router';
 
-import useEscrowDataQuery, { EscrowData } from 'queries/escrow/useEscrowDataQuery';
+import { EXTERNAL_LINKS } from 'constants/links';
+import useEscrowDataQuery, { EscrowData } from 'hooks/useEscrowDataQueryWrapper';
 import { CryptoCurrency } from 'constants/currency';
 import { formatShortDate } from 'utils/formatters/date';
 import { formatCurrency } from 'utils/formatters/number';
@@ -24,22 +25,38 @@ import {
 	Title,
 } from 'sections/escrow/components/common';
 import Button from 'components/Button';
-import { FlexDivCentered, FlexDivColCentered } from 'styles/common';
+import { FlexDivCentered, FlexDivColCentered, ExternalLink } from 'styles/common';
 
 const RewardEscrowSchedule: React.FC = () => {
 	const { t } = useTranslation();
 	const escrowDataQuery = useEscrowDataQuery();
-	const escrowData = escrowDataQuery.data;
-	const data = escrowData?.schedule;
+	const schedule = escrowDataQuery?.data?.schedule;
+	const totalBalancePendingMigration = escrowDataQuery?.data?.totalBalancePendingMigration ?? 0;
 	const router = useRouter();
 	return (
 		<Container>
 			<ContainerHeader>
-				<Title>{t('escrow.staking.info.title')}</Title>
-				<Subtitle>{t('escrow.staking.info.subtitle')}</Subtitle>
+				<Title>
+					{totalBalancePendingMigration > 0
+						? t('escrow.staking.info.title-migrate-l1')
+						: t('escrow.staking.info.title')}
+				</Title>
+				<Subtitle>
+					{totalBalancePendingMigration > 0 ? (
+						<Trans
+							i18nKey="escrow.staking.info.subtitle-migrate-l1"
+							values={{
+								link: EXTERNAL_LINKS.Synthetix.SIP60,
+							}}
+							components={[<StyledLink href={EXTERNAL_LINKS.Synthetix.SIP60} />]}
+						/>
+					) : (
+						t('escrow.staking.info.subtitle')
+					)}
+				</Subtitle>
 			</ContainerHeader>
 			<ContainerBody>
-				{(data && data.length > 0) || escrowDataQuery.isLoading ? (
+				{(schedule ?? []).length > 0 || escrowDataQuery.isLoading ? (
 					<StyledTable
 						palette="primary"
 						columns={[
@@ -64,7 +81,7 @@ const RewardEscrowSchedule: React.FC = () => {
 								sortable: false,
 							},
 						]}
-						data={data ? data : []}
+						data={schedule ?? []}
 						isLoading={escrowDataQuery.isLoading}
 						showPagination={true}
 					/>
@@ -99,6 +116,10 @@ const CallToActionInfo = styled(Subtitle)`
 
 const StyledButton = styled(Button)`
 	width: 100%;
+`;
+
+export const StyledLink = styled(ExternalLink)`
+	color: ${(props) => props.theme.colors.blue};
 `;
 
 export default RewardEscrowSchedule;

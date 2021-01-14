@@ -7,16 +7,9 @@ import QUERY_KEYS from 'constants/queryKeys';
 
 import { isWalletConnectedState, networkState, walletAddressState } from 'store/wallet';
 import { appReadyState } from 'store/app';
+import { EscrowData, Schedule } from 'hooks/useEscrowDataQueryWrapper';
 
 const VESTING_ENTRIES_PAGINATION = 50;
-
-export type EscrowData = {
-	claimableAmount: number;
-	schedule: Schedule;
-	totalEscrowed: number;
-	totalVested: number;
-	claimableEntryIds: number[];
-};
 
 type VestingEntry = {
 	remainingAmount: number;
@@ -24,32 +17,35 @@ type VestingEntry = {
 	endTime: number;
 };
 
-type Schedule = Array<
-	| {
-			quantity: number;
-			date: Date;
-	  }
-	| []
->;
-
-const useEscrowDataQuery = (options?: QueryConfig<EscrowData>) => {
+const useEscrowDataQueryV2 = (options?: QueryConfig<EscrowData>) => {
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const network = useRecoilValue(networkState);
 	const isAppReady = useRecoilValue(appReadyState);
 
 	return useQuery<EscrowData>(
-		QUERY_KEYS.Escrow.Data(walletAddress ?? '', network?.id!),
+		QUERY_KEYS.Escrow.DataV2(walletAddress ?? '', network?.id!),
 		async () => {
 			const {
 				contracts: { RewardEscrowV2 },
+				utils: { formatEther },
 			} = synthetix.js!;
 
-			const [numVestingEntries, totalEscrowed, totalVested] = await Promise.all([
+			const [
+				numVestingEntries,
+				totalEscrowed,
+				totalVested,
+				unformattedTotalBalancePendingMigration,
+			] = await Promise.all([
 				RewardEscrowV2.numVestingEntries(walletAddress),
 				RewardEscrowV2.balanceOf(walletAddress),
 				RewardEscrowV2.totalVestedAccountBalance(walletAddress),
+				RewardEscrowV2.totalBalancePendingMigration(walletAddress),
 			]);
+
+			const totalBalancePendingMigration = Number(
+				formatEther(unformattedTotalBalancePendingMigration)
+			);
 
 			let vestingEntriesPromise = [];
 			let vestingEntriesIdPromise = [];
@@ -98,6 +94,7 @@ const useEscrowDataQuery = (options?: QueryConfig<EscrowData>) => {
 				totalEscrowed: totalEscrowed / 1e18,
 				totalVested: totalVested / 1e18,
 				claimableEntryIds,
+				totalBalancePendingMigration,
 			};
 		},
 		{
@@ -107,4 +104,4 @@ const useEscrowDataQuery = (options?: QueryConfig<EscrowData>) => {
 	);
 };
 
-export default useEscrowDataQuery;
+export default useEscrowDataQueryV2;
