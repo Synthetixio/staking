@@ -1,6 +1,6 @@
 {
 	"name": "staking",
-	"version": "1.0.0",
+	"version": "2.36.0-alpha",
 	"scripts": {
 		"dev": "next",
 		"build": "next build",
