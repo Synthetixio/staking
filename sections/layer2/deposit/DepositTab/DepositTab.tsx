@@ -7,6 +7,7 @@ import { Transaction } from 'constants/network';
 
 import { getGasEstimateForTransaction } from 'utils/transactions';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
+import useGetDepositsDataQuery from 'queries/deposits/useGetDepositsDataQuery';
 import synthetix from 'lib/synthetix';
 import Notify from 'containers/Notify';
 import { appReadyState } from 'store/app';
@@ -22,6 +23,7 @@ const DepositTab = () => {
 	const walletAddress = useRecoilValue(walletAddressState);
 	const isAppReady = useRecoilValue(appReadyState);
 	const { monitorHash } = Notify.useContainer();
+	const depositsDataQuery = useGetDepositsDataQuery();
 
 	const [gasLimitEstimate, setGasLimitEstimate] = useState<number | null>(null);
 	const [depositTxError, setDepositTxError] = useState<string | null>(null);
@@ -101,6 +103,11 @@ const DepositTab = () => {
 						txHash: transaction.hash,
 						onTxConfirmed: () => {
 							setTransactionState(Transaction.SUCCESS);
+							depositsDataQuery.refetch();
+						},
+						onTxFailed: (txData) => {
+							setTransactionState(Transaction.PRESUBMIT);
+							setDepositTxError(txData?.failureReason ?? null);
 						},
 					});
 					setTxModalOpen(false);

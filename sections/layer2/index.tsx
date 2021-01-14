@@ -13,7 +13,7 @@ import useStakingCalculations from 'sections/staking/hooks/useStakingCalculation
 
 const Index: FC = () => {
 	const { t } = useTranslation();
-	const { debtBalance } = useStakingCalculations();
+	const { debtBalance, transferableCollateral } = useStakingCalculations();
 
 	const ACTIONS = useMemo(
 		() => ({
@@ -43,6 +43,7 @@ const Index: FC = () => {
 						{
 							gridLocations: ['col-1', 'col-2', 'row-1', 'row-3'],
 							...ACTIONS.deposit,
+							isDisabled: transferableCollateral.isZero(),
 						},
 						{
 							gridLocations: ['col-2', 'col-3', 'row-1', 'row-3'],

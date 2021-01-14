@@ -448,7 +448,8 @@
 		"deposit": {
 			"info": {
 				"title": "Deposit SNX",
-				"subtitle": "Deposit your SNX to complete the process of migrating your SNX from L1 to Layer 2.",
+				"subtitle": "Deposit your SNX to complete the process of migrating your SNX from L1 to L2. You may experience a delay during the migration process before your SNX is available on L2",
+				"no-deposit": "No deposit history",
 				"table": {
 					"deposit": "Deposit",
 					"date": "Date",

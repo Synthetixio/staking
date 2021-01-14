@@ -1,10 +1,14 @@
 import { useQuery, QueryConfig } from 'react-query';
 import { useRecoilValue } from 'recoil';
 import BigNumber from 'bignumber.js';
+import { providers } from 'ethers';
+import orderBy from 'lodash/orderBy';
+import { Watcher } from '@eth-optimism/watcher';
 
 import synthetix from 'lib/synthetix';
 
 import QUERY_KEYS from 'constants/queryKeys';
+import { L1_MESSENGER_ADDRESS, L2_MESSENGER_ADDRESS, OVM_RPC_URL } from 'constants/ovm';
 import Connector from 'containers/Connector';
 
 import { isWalletConnectedState, networkState, walletAddressState } from 'store/wallet';
@@ -29,6 +33,17 @@ const useGetDebtDataQuery = (options?: QueryConfig<DepositHistory>) => {
 	const network = useRecoilValue(networkState);
 	const { provider } = Connector.useContainer();
 
+	const watcher = new Watcher({
+		l1: {
+			provider,
+			messengerAddress: L1_MESSENGER_ADDRESS,
+		},
+		l2: {
+			provider: new providers.JsonRpcProvider(OVM_RPC_URL),
+			messengerAddress: L2_MESSENGER_ADDRESS,
+		},
+	});
+
 	return useQuery<DepositHistory>(
 		QUERY_KEYS.Deposits(walletAddress ?? '', network?.id!),
 		async () => {
@@ -48,13 +63,22 @@ const useGetDebtDataQuery = (options?: QueryConfig<DepositHistory>) => {
 					return {
 						timestamp,
 						amount: args.amount / 1e18,
-						isConfirmed: true,
 						transactionHash: l.transactionHash,
 					};
 				})
 			);
+			const eventsWithReceipt = await Promise.all(
+				events.map(async (event) => {
+					const msgHashes = await watcher.getMessageHashesFromL1Tx(event.transactionHash);
+					const receipt = await watcher.getL2TransactionReceipt(msgHashes[0], false);
+					return {
+						...event,
+						isConfirmed: !!receipt,
+					};
+				})
+			);
 
-			return events;
+			return orderBy(eventsWithReceipt, ['timestamp'], ['desc']);
 		},
 		{
 			enabled: isAppReady && isWalletConnected && provider,
