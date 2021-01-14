@@ -7,41 +7,37 @@ import QUERY_KEYS from 'constants/queryKeys';
 
 import { isWalletConnectedState, networkState, walletAddressState } from 'store/wallet';
 import { appReadyState } from 'store/app';
+import { EscrowData, Schedule } from 'hooks/useEscrowDataQueryWrapper';
 
-export type EscrowData = {
-	claimableAmount: number;
-	schedule: Schedule;
-	totalEscrowed: number;
-	totalVested: number;
-};
-
-type Schedule = Array<
-	| {
-			quantity: number;
-			date: Date;
-	  }
-	| []
->;
-
-const useEscrowDataQuery = (options?: QueryConfig<EscrowData>) => {
+const useEscrowDataQueryV1 = (options?: QueryConfig<EscrowData>) => {
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const network = useRecoilValue(networkState);
 	const isAppReady = useRecoilValue(appReadyState);
 
 	return useQuery<EscrowData>(
-		QUERY_KEYS.Escrow.Data(walletAddress ?? '', network?.id!),
+		QUERY_KEYS.Escrow.DataV1(walletAddress ?? '', network?.id!),
 		async () => {
 			const {
-				contracts: { RewardEscrow },
+				contracts: { RewardEscrow, RewardEscrowV2 },
 				utils: { formatEther },
 			} = synthetix.js!;
 
-			const [accountSchedule, totalEscrowed, totalVested] = await Promise.all([
+			const [
+				accountSchedule,
+				totalEscrowed,
+				totalVested,
+				unformattedTotalBalancePendingMigration,
+			] = await Promise.all([
 				RewardEscrow.checkAccountSchedule(walletAddress),
 				RewardEscrow.totalEscrowedAccountBalance(walletAddress),
 				RewardEscrow.totalVestedAccountBalance(walletAddress),
+				RewardEscrowV2.totalBalancePendingMigration(walletAddress),
 			]);
+
+			const totalBalancePendingMigration = Number(
+				formatEther(unformattedTotalBalancePendingMigration)
+			);
 
 			let schedule: Schedule = [];
 			let claimableAmount: number = 0;
@@ -66,6 +62,7 @@ const useEscrowDataQuery = (options?: QueryConfig<EscrowData>) => {
 				schedule,
 				totalEscrowed: totalEscrowed / 1e18,
 				totalVested: totalVested / 1e18,
+				totalBalancePendingMigration,
 			};
 		},
 		{
@@ -75,4 +72,4 @@ const useEscrowDataQuery = (options?: QueryConfig<EscrowData>) => {
 	);
 };
 
-export default useEscrowDataQuery;
+export default useEscrowDataQueryV1;

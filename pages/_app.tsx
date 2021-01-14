@@ -7,7 +7,6 @@ import { ThemeProvider } from 'styled-components';
 
 import WithAppContainers from 'containers';
 import theme from 'styles/theme';
-
 import Layout from 'sections/shared/Layout';
 import AppLayout from 'sections/shared/Layout/AppLayout';
 import { MediaContextProvider } from 'styles/media';
@@ -38,6 +37,7 @@ const queryCache = new QueryCache({
 
 const App: FC<AppProps> = ({ Component, pageProps }) => {
 	const { t } = useTranslation();
+
 	return (
 		<>
 			<Head>
