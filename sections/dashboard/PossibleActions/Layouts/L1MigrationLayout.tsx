@@ -14,15 +14,11 @@ import MigrateIcon from 'assets/svg/app/migrate.svg';
 import GridBox, { GridBoxProps } from 'components/GridBox/Gridbox';
 import { GlowingCircle } from 'styles/common';
 import Currency from 'components/Currency';
-import useUserStakingData from 'hooks/useUserStakingData';
-import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 
 const L1MigrationLayout: FC = () => {
 	const { t } = useTranslation();
 
 	const lpData = useLPData();
-	const { stakingRewards, tradingRewards } = useUserStakingData();
-	const { currentCRatio, targetCRatio } = useStakingCalculations();
 
 	const gridItems: GridBoxProps[] = useMemo(
 		() => [
@@ -104,7 +100,7 @@ const L1MigrationLayout: FC = () => {
 				isDisabled: true,
 			},
 		],
-		[t, lpData, currentCRatio, targetCRatio, stakingRewards, tradingRewards]
+		[t, lpData]
 	);
 	return (
 		<>

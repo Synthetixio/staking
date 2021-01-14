@@ -77,7 +77,7 @@ const useEscrowDataQueryV2 = (options?: QueryConfig<EscrowData>) => {
 			let schedule: Schedule = [];
 			let claimableEntryIds: number[] = [];
 
-			(vestingEntries ?? []).forEach(({ escrowAmount, entryID, endTime }: VestingEntry) => {
+			vestingEntries.forEach(({ escrowAmount, entryID, endTime }: VestingEntry) => {
 				const quantity = escrowAmount / 1e18;
 				if (quantity) {
 					claimableEntryIds.push(entryID);

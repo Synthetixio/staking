@@ -71,6 +71,7 @@ const StakingRewardsTab: React.FC = () => {
 		isAppReady,
 		totalBalancePendingMigration,
 		claimableEntryIds,
+		walletAddress,
 	]);
 
 	const handleSubmit = useCallback(async () => {
@@ -84,14 +85,22 @@ const StakingRewardsTab: React.FC = () => {
 
 				let transaction: ethers.ContractTransaction;
 				if (totalBalancePendingMigration === 0) {
+					const gasLimit = await getGasEstimateForTransaction(
+						[claimableEntryIds],
+						RewardEscrowV2.estimateGas.vest
+					);
 					transaction = await RewardEscrowV2.vest(claimableEntryIds, {
 						gasPrice: normalizedGasPrice(gasPrice),
-						gasLimitEstimate,
+						gasLimit,
 					});
 				} else {
+					const gasLimit = await getGasEstimateForTransaction(
+						[walletAddress],
+						RewardEscrowV2.estimateGas.migrateVestingSchedule
+					);
 					transaction = await RewardEscrowV2.migrateVestingSchedule(walletAddress, {
 						gasPrice: normalizedGasPrice(gasPrice),
-						gasLimitEstimate,
+						gasLimit,
 					});
 				}
 
@@ -116,10 +125,10 @@ const StakingRewardsTab: React.FC = () => {
 		isAppReady,
 		claimableEntryIds,
 		gasPrice,
-		gasLimitEstimate,
 		escrowDataQuery,
 		monitorHash,
 		totalBalancePendingMigration,
+		walletAddress,
 	]);
 
 	return (
