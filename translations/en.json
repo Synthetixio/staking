@@ -448,7 +448,15 @@
 		"deposit": {
 			"info": {
 				"title": "Deposit SNX",
-				"subtitle": "Deposit your SNX to complete the process of migrating your SNX from L1 to Layer 2."
+				"subtitle": "Deposit your SNX to complete the process of migrating your SNX from L1 to Layer 2.",
+				"table": {
+					"deposit": "Deposit",
+					"date": "Date",
+					"status": "Status",
+					"view": "View",
+					"pending": "Pending",
+					"confirmed": "Confirmed"
+				}
 			}
 		},
 		"migrate": {
