@@ -39,7 +39,7 @@ const StakingRewardsTab: React.FC = () => {
 		const getGasLimitEstimate = async () => {
 			if (isAppReady) {
 				const {
-					contracts: { RewardsEscrowV2 },
+					contracts: { RewardEscrowV2 },
 				} = synthetix.js!;
 				try {
 					setGasEstimateError(null);
@@ -47,12 +47,12 @@ const StakingRewardsTab: React.FC = () => {
 					if (totalBalancePendingMigration === 0 && claimableEntryIds != null) {
 						gasEstimate = await getGasEstimateForTransaction(
 							[claimableEntryIds],
-							RewardsEscrowV2.estimateGas.vest
+							RewardEscrowV2.estimateGas.vest
 						);
 					} else if (totalBalancePendingMigration > 0) {
 						gasEstimate = await getGasEstimateForTransaction(
 							[walletAddress],
-							RewardsEscrowV2.estimateGas.migrateVestingSchedule
+							RewardEscrowV2.estimateGas.migrateVestingSchedule
 						);
 					} else {
 						return;

@@ -12,7 +12,7 @@ import { EscrowData, Schedule } from 'hooks/useEscrowDataQueryWrapper';
 const VESTING_ENTRIES_PAGINATION = 50;
 
 type VestingEntry = {
-	remainingAmount: number;
+	escrowAmount: number;
 	entryID: number;
 	endTime: number;
 };
@@ -77,8 +77,8 @@ const useEscrowDataQueryV2 = (options?: QueryConfig<EscrowData>) => {
 			let schedule: Schedule = [];
 			let claimableEntryIds: number[] = [];
 
-			vestingEntries.forEach(({ remainingAmount, entryID, endTime }: VestingEntry) => {
-				const quantity = remainingAmount / 1e18;
+			(vestingEntries ?? []).forEach(({ escrowAmount, entryID, endTime }: VestingEntry) => {
+				const quantity = escrowAmount / 1e18;
 				if (quantity) {
 					claimableEntryIds.push(entryID);
 					schedule.push({
