@@ -12,7 +12,7 @@ export const EXTERNAL_LINKS = {
 		Litepaper: 'https://docs.synthetix.io/litepaper/',
 		Incentives: 'https://docs.synthetix.io/incentives/',
 		SIP60: 'https://sips.synthetix.io/sips/sip-60',
-		OEBlog: 'https://blog.synthetix.io/the-optimistic-ethereum-transition/',
+		OEBlog: 'https://blog.synthetix.io/l2-mainnet-launch/',
 	},
 	Social: {
 		Twitter: 'https://twitter.com/synthetix_io',
