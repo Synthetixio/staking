@@ -498,8 +498,8 @@
 				"subtitle": "Burn your debt to be able to migrate your SNX from L1 to L2"
 			},
 			"apr": {
-				"title": "{{amountSNX}} are earning {{apr}} APR in L2",
-				"subtitle": "To test the system, rewards in L2 will be minimal initially, and gradually incremented. Please consider the APR of participating before putting funds into L2"
+				"title": "{{amountSNX}} is earning {{apr}} APY in L2",
+				"subtitle": "L2 rewards will initially be minimal and gradually increased."
 			},
 			"deposit": {
 				"title": "Deposit SNX",
