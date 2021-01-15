@@ -13,6 +13,7 @@ export const EXTERNAL_LINKS = {
 		Incentives: 'https://docs.synthetix.io/incentives/',
 		SIP60: 'https://sips.synthetix.io/sips/sip-60',
 		OEBlog: 'https://blog.synthetix.io/l2-mainnet-launch/',
+		MintrL2: 'https://l2.mintr.synthetix.io',
 	},
 	Social: {
 		Twitter: 'https://twitter.com/synthetix_io',
