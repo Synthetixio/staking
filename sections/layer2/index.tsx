@@ -28,7 +28,7 @@ const Index: FC = () => {
 	});
 
 	const { t } = useTranslation();
-	const { debtBalance, transferableCollateral } = useStakingCalculations();
+	const { debtBalance, transferableCollateral, stakingEscrow } = useStakingCalculations();
 	const escrowDataQuery = useEscrowDataQuery();
 	const totalBalancePendingMigration = escrowDataQuery?.data?.totalBalancePendingMigration ?? 0;
 
@@ -91,7 +91,7 @@ const Index: FC = () => {
 						{
 							gridLocations: ['col-2', 'col-3', 'row-2', 'row-3'],
 							...ACTIONS.migrate,
-							isDisabled: totalBalancePendingMigration || transferableCollateral.isZero(),
+							isDisabled: totalBalancePendingMigration || stakingEscrow.isZero(),
 						},
 				  ]
 				: [
@@ -114,7 +114,7 @@ const Index: FC = () => {
 						},
 				  ],
 		// eslint-disable-next-line
-		[ACTIONS, debtBalance]
+		[ACTIONS, debtBalance, stakingEscrow, totalBalancePendingMigration, transferableCollateral]
 	) as GridBoxProps[];
 
 	return (

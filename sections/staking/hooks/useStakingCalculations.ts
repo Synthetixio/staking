@@ -59,6 +59,7 @@ const useStakingCalculations = () => {
 			totalEscrowBalance,
 			issuableSynths,
 			percentCurrentCRatioOfTarget,
+			stakingEscrow,
 		};
 	}, [debtData, exchangeRates, rewardEscrowBalance, tokenSaleEscrowBalance]);
 
