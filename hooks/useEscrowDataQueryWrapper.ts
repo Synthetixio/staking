@@ -9,6 +9,7 @@ export type EscrowData = {
 	totalVested: number;
 	totalBalancePendingMigration?: number;
 	claimableEntryIds?: number[];
+	claimableEntryIdsInChunk?: number[];
 };
 
 export type Schedule = Array<

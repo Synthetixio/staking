@@ -537,8 +537,10 @@
 						"verify": "Verify Tx",
 						"dismiss": "Dismiss"
 					},
-					"deposit-button": "Migrate {{escrowedAmount}}",
-					"disabled": "No SNX to migrate"
+					"migrate-button": "Migrate {{escrowedAmount}}",
+					"disabled": "No SNX to migrate",
+					"vest-needed": "You need to vest before being able to migrate your escrowed SNX",
+					"go-to-escrow-page": "Go to Escrow page"
 				}
 			}
 		}

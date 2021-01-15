@@ -1,13 +1,14 @@
 import { FC } from 'react';
 import { Svg } from 'react-optimized-image';
-import BigNumber from 'bignumber.js';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
+import router from 'next/router';
 
 import { formatCurrency } from 'utils/formatters/number';
 import { CryptoCurrency } from 'constants/currency';
 import { InputContainer, InputBox } from '../../components/common';
 import { Transaction } from 'constants/network';
+import ROUTES from 'constants/routes';
 
 import GasSelector from 'components/GasSelector';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
@@ -24,7 +25,7 @@ import {
 } from 'styles/common';
 
 type TabContentProps = {
-	escrowedAmount: BigNumber;
+	escrowedAmount: number;
 	onSubmit: any;
 	transactionError: string | null;
 	gasEstimateError: string | null;
@@ -34,6 +35,7 @@ type TabContentProps = {
 	setGasPrice: Function;
 	txHash: string | null;
 	transactionState: Transaction;
+	isVestNeeded: boolean;
 	setTransactionState: (tx: Transaction) => void;
 };
 
@@ -49,12 +51,25 @@ const TabContent: FC<TabContentProps> = ({
 	txHash,
 	transactionState,
 	setTransactionState,
+	isVestNeeded,
 }) => {
 	const { t } = useTranslation();
 	const vestingCurrencyKey = CryptoCurrency['SNX'];
 
 	const renderButton = () => {
-		if (escrowedAmount) {
+		if (isVestNeeded) {
+			return (
+				<StyledCTA
+					onClick={() => router.push(ROUTES.Escrow.Home)}
+					blue={true}
+					variant="primary"
+					size="lg"
+					disabled={false}
+				>
+					{t('layer2.actions.migrate.action.go-to-escrow-page')}
+				</StyledCTA>
+			);
+		} else if (escrowedAmount) {
 			return (
 				<StyledCTA
 					blue={true}
@@ -63,7 +78,7 @@ const TabContent: FC<TabContentProps> = ({
 					size="lg"
 					disabled={transactionState !== Transaction.PRESUBMIT || !!gasEstimateError}
 				>
-					{t('layer2.actions.migrate.action.deposit-button', {
+					{t('layer2.actions.migrate.action.migrate-button', {
 						escrowedAmount: formatCurrency(vestingCurrencyKey, escrowedAmount, {
 							currencyKey: vestingCurrencyKey,
 						}),
@@ -119,7 +134,12 @@ const TabContent: FC<TabContentProps> = ({
 				</SettingsContainer>
 			</InputContainer>
 			{renderButton()}
-			<ErrorMessage>{transactionError}</ErrorMessage>
+			{isVestNeeded ? (
+				<ErrorMessage>{t('layer2.actions.migrate.action.vest-needed')}</ErrorMessage>
+			) : (
+				<ErrorMessage>{transactionError || gasEstimateError}</ErrorMessage>
+			)}
+
 			{txModalOpen && (
 				<TxConfirmationModal
 					onDismiss={() => setTxModalOpen(false)}
@@ -128,7 +148,7 @@ const TabContent: FC<TabContentProps> = ({
 					content={
 						<ModalContent>
 							<ModalItem>
-								<ModalItemTitle>{t('modals.confirm-transaction.vesting.title')}</ModalItemTitle>
+								<ModalItemTitle>{t('modals.confirm-transaction.migration.title')}</ModalItemTitle>
 								<ModalItemText>
 									{formatCurrency(vestingCurrencyKey, escrowedAmount, {
 										currencyKey: vestingCurrencyKey,

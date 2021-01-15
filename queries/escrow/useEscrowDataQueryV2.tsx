@@ -1,6 +1,6 @@
 import { useQuery, QueryConfig } from 'react-query';
 import { useRecoilValue } from 'recoil';
-
+import chunk from 'lodash/chunk';
 import synthetix from 'lib/synthetix';
 
 import QUERY_KEYS from 'constants/queryKeys';
@@ -79,12 +79,16 @@ const useEscrowDataQueryV2 = (options?: QueryConfig<EscrowData>) => {
 				}
 			});
 
+			const claimableEntryIdsInChunk =
+				claimableEntryIds && claimableEntryIds.length > 0 ? chunk(claimableEntryIds, 26) : [];
+
 			return {
 				claimableAmount: claimableAmount / 1e18,
 				schedule,
 				totalEscrowed: totalEscrowed / 1e18,
 				totalVested: totalVested / 1e18,
 				claimableEntryIds,
+				claimableEntryIdsInChunk,
 			};
 		},
 		{

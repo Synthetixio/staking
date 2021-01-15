@@ -10,10 +10,13 @@ import { GridDiv } from 'styles/common';
 import media from 'styles/media';
 
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
+import useEscrowDataQuery from 'hooks/useEscrowDataQueryWrapper';
 
 const Index: FC = () => {
 	const { t } = useTranslation();
 	const { debtBalance, transferableCollateral } = useStakingCalculations();
+	const escrowDataQuery = useEscrowDataQuery();
+	const totalBalancePendingMigration = escrowDataQuery?.data?.totalBalancePendingMigration ?? 0;
 
 	const ACTIONS = useMemo(
 		() => ({
@@ -48,6 +51,7 @@ const Index: FC = () => {
 						{
 							gridLocations: ['col-2', 'col-3', 'row-1', 'row-3'],
 							...ACTIONS.migrate,
+							isDisabled: totalBalancePendingMigration,
 						},
 				  ]
 				: [

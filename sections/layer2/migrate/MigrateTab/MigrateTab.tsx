@@ -1,106 +1,113 @@
-import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
-import { useTranslation } from 'react-i18next';
-import { Svg } from 'react-optimized-image';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
+import Notify from 'containers/Notify';
 
-import { FlexDivColCentered } from 'styles/common';
-import SNXLogo from 'assets/svg/currencies/crypto/SNX.svg';
+import synthetix from 'lib/synthetix';
+
 import { TabContainer } from '../../components/common';
 import { Transaction } from 'constants/network';
+import { normalizedGasPrice } from 'utils/network';
 
-import { CryptoCurrency } from 'constants/currency';
-import { formatCryptoCurrency } from 'utils/formatters/number';
+import { getGasEstimateForTransaction } from 'utils/transactions';
 
-import useEscrowCalculations from 'sections/escrow/hooks/useEscrowCalculations';
+import useEscrowDataQuery from 'hooks/useEscrowDataQueryWrapper';
 import { appReadyState } from 'store/app';
-import { isWalletConnectedState } from 'store/wallet';
+import { walletAddressState } from 'store/wallet';
 
-import GasSelector from 'components/GasSelector';
-import Button from 'components/Button';
-import ApproveModal from 'components/ApproveModal';
 import TabContent from './TabContent';
 
-const SNX_DECIMALS = 2;
-
 const MigrateTab = () => {
-	const { t } = useTranslation();
-	const depositCurrencyKey = CryptoCurrency['SNX'];
+	const { monitorHash } = Notify.useContainer();
+	const escrowDataQuery = useEscrowDataQuery();
+	const claimableAmount = escrowDataQuery?.data?.claimableAmount ?? 0;
+	const escrowData = escrowDataQuery?.data ?? null;
+	const totalEscrowed = escrowData?.totalEscrowed ?? 0;
+	const entryIds = useMemo(() => escrowData?.claimableEntryIdsInChunk ?? [], [escrowData]);
 
-	const escrowCalculations = useEscrowCalculations();
-	const totalEscrowed = escrowCalculations?.totalEscrowBalance;
-
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
+	const walletAddress = useRecoilValue(walletAddressState);
 	const isAppReady = useRecoilValue(appReadyState);
 
 	const [gasLimitEstimate, setGasLimitEstimate] = useState<number | null>(null);
-	const [depositTxError, setDepositTxError] = useState<string | null>(null);
+	const [depositTxError, setMigrationTxError] = useState<string | null>(null);
 	const [gasEstimateError, setGasEstimateError] = useState<string | null>(null);
-	const [isApproved, setIsApproved] = useState<boolean>(false);
+	const [isVestNeeded, setIsVestNeeded] = useState<boolean>(false);
 	const [gasPrice, setGasPrice] = useState<number>(0);
 	const [transactionState, setTransactionState] = useState<Transaction>(Transaction.PRESUBMIT);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 	const [txHash, setTxHash] = useState<string | null>(null);
 
 	useEffect(() => {
+		if (claimableAmount) {
+			setIsVestNeeded(true);
+		}
+	}, [claimableAmount]);
+
+	useEffect(() => {
 		const getGasLimitEstimate = async () => {
-			if (isAppReady && isWalletConnected) {
+			if (walletAddress && isAppReady && entryIds && entryIds.length > 0) {
 				try {
-					setIsApproved(true);
-				} catch (e) {}
+					setGasEstimateError(null);
+					const {
+						contracts: { SynthetixBridgeToOptimism },
+					} = synthetix.js!;
+					const gasEstimate = await getGasEstimateForTransaction(
+						[entryIds],
+						SynthetixBridgeToOptimism.estimateGas.initiateEscrowMigration
+					);
+					setGasLimitEstimate(gasEstimate);
+				} catch (e) {
+					console.log(e);
+					setGasEstimateError(e.message);
+				}
 			}
 		};
 		getGasLimitEstimate();
 		// eslint-disable-next-line
-	}, [gasEstimateError, isWalletConnected, isAppReady]);
+	}, [walletAddress, isAppReady, entryIds]);
 
-	useEffect(() => {
-		const getAllowance = async () => {
-			if (isWalletConnected && isAppReady) {
-				try {
-				} catch (e) {}
-			}
-		};
-		getAllowance();
-	}, [isWalletConnected, isAppReady]);
-
-	const handleDeposit = async () => {
-		if (isAppReady) {
+	const handleMigration = async () => {
+		if (isAppReady && !gasEstimateError) {
+			const {
+				contracts: { SynthetixBridgeToOptimism },
+			} = synthetix.js!;
 			try {
-				setDepositTxError(null);
+				setMigrationTxError(null);
 				setTxModalOpen(true);
 
-				// INSERT TX HERE
-				const transaction = { hash: '0x000' };
+				const transaction = await SynthetixBridgeToOptimism.initiateEscrowMigration(entryIds, {
+					gasLimit: gasLimitEstimate,
+					gasPrice: normalizedGasPrice(gasPrice),
+				});
+
 				if (transaction) {
 					setTxHash(transaction.hash);
 					setTransactionState(Transaction.WAITING);
-					// monitorHash({
-					// 	txHash: transaction.hash,
-					// 	onTxConfirmed: () => {
-					// 		setTransactionState(Transaction.SUCCESS);
-					// 	},
-					// });
-					setTransactionState(Transaction.SUCCESS);
+					monitorHash({
+						txHash: transaction.hash,
+						onTxConfirmed: () => {
+							setTransactionState(Transaction.SUCCESS);
+							escrowDataQuery.refetch();
+						},
+						onTxFailed: (txData) => {
+							setTransactionState(Transaction.PRESUBMIT);
+							setMigrationTxError(txData?.failureReason ?? null);
+						},
+					});
 					setTxModalOpen(false);
 				}
-			} catch (e) {}
+			} catch (e) {
+				console.log(e);
+				setMigrationTxError(e.message);
+			}
 		}
 	};
 
 	return (
 		<TabContainer>
-			{!isApproved ? (
-				<ApproveModal
-					description={t('layer2.actions.deposit.action.approve.description')}
-					tokenContract="Synthetix"
-					contractToApprove="SynthetixBridgeToOptimism"
-					onApproved={() => setIsApproved(true)}
-				/>
-			) : null}
 			<TabContent
 				escrowedAmount={totalEscrowed}
-				onSubmit={handleDeposit}
+				isVestNeeded={isVestNeeded}
+				onSubmit={handleMigration}
 				transactionError={depositTxError}
 				gasEstimateError={gasEstimateError}
 				txModalOpen={txModalOpen}
