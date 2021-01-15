@@ -30,6 +30,7 @@ const StakingRewardsTab: React.FC = () => {
 	const [txHash, setTxHash] = useState<string | null>(null);
 	const [vestTxError, setVestTxError] = useState<string | null>(null);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
+	const [isMigration, setIsMigration] = useState<boolean>(false);
 
 	const canVestAmount = escrowDataQuery?.data?.claimableAmount ?? 0;
 	const claimableEntryIds = escrowDataQuery?.data?.claimableEntryIds ?? null;
@@ -50,6 +51,7 @@ const StakingRewardsTab: React.FC = () => {
 							RewardEscrowV2.estimateGas.vest
 						);
 					} else if (totalBalancePendingMigration > 0) {
+						setIsMigration(true);
 						gasEstimate = await getGasEstimateForTransaction(
 							[walletAddress],
 							RewardEscrowV2.estimateGas.migrateVestingSchedule
@@ -133,7 +135,7 @@ const StakingRewardsTab: React.FC = () => {
 
 	return (
 		<TabContainer>
-			{totalBalancePendingMigration > 0 ? (
+			{isMigration || totalBalancePendingMigration > 0 ? (
 				<MigrateTabContent
 					onSubmit={handleSubmit}
 					transactionError={vestTxError}
@@ -145,6 +147,7 @@ const StakingRewardsTab: React.FC = () => {
 					txHash={txHash}
 					transactionState={transactionState}
 					setTransactionState={setTransactionState}
+					setIsMigration={setIsMigration}
 				/>
 			) : (
 				<TabContent
