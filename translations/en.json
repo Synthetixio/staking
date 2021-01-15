@@ -51,6 +51,9 @@
 			"vesting": {
 				"title": "Vesting"
 			},
+			"deposit": {
+				"title": "Depositing"
+			},
 			"migration": {
 				"title": "Migrating",
 				"escrow-schedule": "ESCROW SCHEDULE"
@@ -410,7 +413,7 @@
 				"title": "Vest your SNX staking rewards in escrow",
 				"title-migrate-l1": "Migrate to new L1 escrow contract",
 				"subtitle": "If you have staked your SNX and minted sUSD, you are eligible to receive SNX staking rewards, which will be escrowed here which you can vest in 12 months from the claim date.",
-				"subtitle-migrate-l1": "As per <0>SIP-60<0>,  a new SNX Escrow Contact has been released with new features (including L2 migration). All SNX holders are required to migrate their escrowed SNX before they can vest any escrowed SNX."
+				"subtitle-migrate-l1": "As per <0>SIP-60</0>,  a new SNX Escrow Contact has been released with new features (including L2 migration). All SNX holders are required to migrate their escrowed SNX before they can vest any escrowed SNX."
 			}
 		},
 		"token": {
@@ -469,7 +472,24 @@
 		"deposit": {
 			"info": {
 				"title": "Deposit SNX",
-				"subtitle": "Deposit your SNX to complete the process of migrating your SNX from L1 to Layer 2. <0>Learn more.<0>"
+				"subtitle": "Deposit your SNX to complete the process of migrating your SNX from L1 to L2. You may experience a delay during the migration process before your SNX is available on L2",
+				"no-deposit": "No deposit history",
+				"table": {
+					"deposit": "Deposit",
+					"date": "Date",
+					"status": "Status",
+					"view": "View",
+					"pending": "Pending",
+					"confirmed": "Confirmed"
+				}
+			}
+		},
+		"migrate": {
+			"info": {
+				"title": "Migrate your escrowed SNX to Layer 2",
+				"subtitle": "Migrate your escrowed SNX to Layer 2",
+				"warning-title": "Warning",
+				"warning-description": "Migrating escrowed SNX to Layer 2 cannot be reversed"
 			}
 		},
 		"actions": {
@@ -477,11 +497,32 @@
 				"title": "Burn L1 debt",
 				"subtitle": "Burn your debt to be able to migrate your SNX from L1 to L2"
 			},
+			"apr": {
+				"title": "{{amountSNX}} is earning {{apr}} APY in L2",
+				"subtitle": "L2 rewards will initially be minimal and gradually increased."
+			},
+			"go-to-mintr": {
+				"title": "Go to Mintr L2",
+				"subtitle": "L2 is currently supported on Mintr"
+			},
 			"deposit": {
 				"title": "Deposit SNX",
 				"subtitle": "Deposit and Transfer SNX from L1 to L2",
 				"action": {
-					"deposit": "Deposit SNX to layer 2",
+					"in-progress": {
+						"title": "Deposit in progress",
+						"subtext": "Waiting for the blockchain to confirm your transaction",
+						"depositing": "Depositing",
+						"etherscan": "View on Etherscan"
+					},
+					"completed": {
+						"title": "Deposit complete",
+						"deposited": "Deposited",
+						"verify": "Verify Tx",
+						"dismiss": "Dismiss"
+					},
+					"deposit-button": "Deposit {{depositAmount}}",
+					"disabled": "No SNX to deposit",
 					"approve": {
 						"description": "Before depositing your SNX, please approve the Deposit contract.",
 						"button-label": "Approve contract"
@@ -490,7 +531,25 @@
 			},
 			"migrate": {
 				"title": "Migrate Escrowed SNX",
-				"subtitle": "Migrate Escrowed schedule from L1 to L2"
+				"subtitle": "Migrate Escrowed schedule from L1 to L2",
+				"action": {
+					"in-progress": {
+						"title": "Migration in progress",
+						"subtext": "Waiting for the blockchain to confirm your transaction",
+						"depositing": "Migrating",
+						"etherscan": "View on Etherscan"
+					},
+					"completed": {
+						"title": "Migration complete",
+						"deposited": "Migrated",
+						"verify": "Verify Tx",
+						"dismiss": "Dismiss"
+					},
+					"migrate-button": "Migrate {{escrowedAmount}}",
+					"disabled": "No SNX to migrate",
+					"vest-needed": "You need to vest before being able to migrate your escrowed SNX",
+					"go-to-escrow-page": "Go to Escrow page"
+				}
 			}
 		}
 	},
@@ -565,7 +624,8 @@
 	},
 	"common": {
 		"approve": {
-			"approve-contract": "Approve contract"
+			"approve-contract": "Approve contract",
+			"is-approving": "Approving contract..."
 		},
 		"wallet": {
 			"connect-wallet": "connect wallet",
