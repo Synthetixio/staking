@@ -89,7 +89,8 @@ const BurnTab: React.FC = () => {
 		} catch (e) {
 			console.log(e);
 		}
-	}, [walletAddress]);
+		// eslint-disable-next-line
+	}, [walletAddress, debtBalance]);
 
 	useEffect(() => {
 		getMaxSecsLeftInWaitingPeriod();
@@ -277,7 +278,6 @@ const BurnTab: React.FC = () => {
 		onBurnTypeChange,
 		percentageTargetCRatio,
 		sUSDBalance,
-		issuanceDelay
 	]);
 
 	return <TabContainer>{returnPanel}</TabContainer>;
