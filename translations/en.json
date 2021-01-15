@@ -413,7 +413,7 @@
 				"title": "Vest your SNX staking rewards in escrow",
 				"title-migrate-l1": "Migrate to new L1 escrow contract",
 				"subtitle": "If you have staked your SNX and minted sUSD, you are eligible to receive SNX staking rewards, which will be escrowed here which you can vest in 12 months from the claim date.",
-				"subtitle-migrate-l1": "As per <0>SIP-60<0>,  a new SNX Escrow Contact has been released with new features (including L2 migration). All SNX holders are required to migrate their escrowed SNX before they can vest any escrowed SNX."
+				"subtitle-migrate-l1": "As per <0>SIP-60</0>,  a new SNX Escrow Contact has been released with new features (including L2 migration). All SNX holders are required to migrate their escrowed SNX before they can vest any escrowed SNX."
 			}
 		},
 		"token": {
@@ -496,6 +496,10 @@
 			"burn": {
 				"title": "Burn L1 debt",
 				"subtitle": "Burn your debt to be able to migrate your SNX from L1 to L2"
+			},
+			"apr": {
+				"title": "{{amountSNX}} are earning {{apr}} APR in L2",
+				"subtitle": "To test the system, rewards in L2 will be minimal initially, and gradually incremented. Please consider the APR of participating before putting funds into L2"
 			},
 			"deposit": {
 				"title": "Deposit SNX",

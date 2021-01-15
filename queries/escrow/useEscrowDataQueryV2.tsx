@@ -2,6 +2,7 @@ import { useQuery, QueryConfig } from 'react-query';
 import { useRecoilValue } from 'recoil';
 import chunk from 'lodash/chunk';
 import synthetix from 'lib/synthetix';
+import { orderBy } from 'lodash';
 
 import QUERY_KEYS from 'constants/queryKeys';
 
@@ -64,19 +65,21 @@ const useEscrowDataQueryV2 = (options?: QueryConfig<EscrowData>) => {
 				claimableAmount = await RewardEscrowV2.getVestingQuantity(walletAddress, vestingEntriesId);
 			}
 
-			let schedule: Schedule = [];
+			let unorderedSchedule: Schedule = [];
 			let claimableEntryIds: number[] = [];
 
 			(vestingEntries ?? []).forEach(({ escrowAmount, entryID, endTime }: VestingEntry) => {
 				const quantity = escrowAmount / 1e18;
 				if (quantity) {
 					claimableEntryIds.push(entryID);
-					schedule.push({
+					unorderedSchedule.push({
 						quantity,
 						date: new Date(Number(endTime) * 1000),
 					});
 				}
 			});
+
+			const schedule = orderBy(unorderedSchedule, 'date', 'asc');
 
 			const claimableEntryIdsInChunk =
 				claimableEntryIds && claimableEntryIds.length > 0 ? chunk(claimableEntryIds, 26) : [];
