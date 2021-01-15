@@ -277,6 +277,7 @@ const BurnTab: React.FC = () => {
 		onBurnTypeChange,
 		percentageTargetCRatio,
 		sUSDBalance,
+		issuanceDelay
 	]);
 
 	return <TabContainer>{returnPanel}</TabContainer>;
