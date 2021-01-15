@@ -183,6 +183,12 @@ export const QUERY_KEYS = {
 			networkId,
 		],
 	},
+	Deposits: (walletAddress: string, networkId: NetworkId) => [
+		'deposits',
+		'depositsData',
+		walletAddress,
+		networkId,
+	],
 };
 
 export default QUERY_KEYS;

@@ -12,6 +12,7 @@ type TabProps = {
 	blue: boolean;
 	tabHeight?: number;
 	inverseTabColor?: boolean;
+	isSingle?: boolean;
 };
 
 export const TabButton = (props: TabProps) => (
@@ -118,6 +119,13 @@ const StyledTabButton = styled.button<TabProps>`
 					border-top: ${`2px solid ${props.theme.colors.black}`};
 					border-bottom: ${`1px solid ${props.theme.colors.grayBlue}`};
 			  `}
+
+	${(props) =>
+		props.isSingle &&
+		css`
+			border-left: none;
+			border-right: none;
+		`}
 
 	&:hover {
 		color: ${(props) =>
