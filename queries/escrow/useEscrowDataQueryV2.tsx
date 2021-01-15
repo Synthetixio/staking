@@ -7,42 +7,28 @@ import QUERY_KEYS from 'constants/queryKeys';
 
 import { isWalletConnectedState, networkState, walletAddressState } from 'store/wallet';
 import { appReadyState } from 'store/app';
+import { EscrowData, Schedule } from 'hooks/useEscrowDataQueryWrapper';
 
 const VESTING_ENTRIES_PAGINATION = 50;
 
-export type EscrowData = {
-	claimableAmount: number;
-	schedule: Schedule;
-	totalEscrowed: number;
-	totalVested: number;
-	claimableEntryIds: number[];
-};
-
 type VestingEntry = {
-	remainingAmount: number;
+	escrowAmount: number;
 	entryID: number;
 	endTime: number;
 };
 
-type Schedule = Array<
-	| {
-			quantity: number;
-			date: Date;
-	  }
-	| []
->;
-
-const useEscrowDataQuery = (options?: QueryConfig<EscrowData>) => {
+const useEscrowDataQueryV2 = (options?: QueryConfig<EscrowData>) => {
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const network = useRecoilValue(networkState);
 	const isAppReady = useRecoilValue(appReadyState);
 
 	return useQuery<EscrowData>(
-		QUERY_KEYS.Escrow.Data(walletAddress ?? '', network?.id!),
+		QUERY_KEYS.Escrow.DataV2(walletAddress ?? '', network?.id!),
 		async () => {
 			const {
 				contracts: { RewardEscrowV2 },
+				utils: { formatEther },
 			} = synthetix.js!;
 
 			const [numVestingEntries, totalEscrowed, totalVested] = await Promise.all([
@@ -73,16 +59,17 @@ const useEscrowDataQuery = (options?: QueryConfig<EscrowData>) => {
 				Promise.all(vestingEntriesIdPromise),
 			]);
 
-			const claimableAmount = await RewardEscrowV2.getVestingQuantity(
-				walletAddress,
-				vestingEntriesId
-			);
+			let claimableAmount = 0;
+
+			if (vestingEntriesId != null) {
+				claimableAmount = await RewardEscrowV2.getVestingQuantity(walletAddress, vestingEntriesId);
+			}
 
 			let schedule: Schedule = [];
 			let claimableEntryIds: number[] = [];
 
-			vestingEntries.forEach(({ remainingAmount, entryID, endTime }: VestingEntry) => {
-				const quantity = remainingAmount / 1e18;
+			(vestingEntries ?? []).forEach(({ escrowAmount, entryID, endTime }: VestingEntry) => {
+				const quantity = escrowAmount / 1e18;
 				if (quantity) {
 					claimableEntryIds.push(entryID);
 					schedule.push({
@@ -107,4 +94,4 @@ const useEscrowDataQuery = (options?: QueryConfig<EscrowData>) => {
 	);
 };
 
-export default useEscrowDataQuery;
+export default useEscrowDataQueryV2;

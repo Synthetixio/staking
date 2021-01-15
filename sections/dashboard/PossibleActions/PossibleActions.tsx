@@ -4,17 +4,28 @@ import { useRecoilValue } from 'recoil';
 
 import { GridDiv } from 'styles/common';
 import media from 'styles/media';
+import useEscrowDataQuery from 'hooks/useEscrowDataQueryWrapper';
 
 import { isWalletConnectedState } from 'store/wallet';
 
-import { WelcomeLayout, LayoutOne } from './Layouts';
+import { WelcomeLayout, LayoutOne, L1MigrationLayout } from './Layouts';
 
 const PossibleActions: FC = () => {
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
+	const rewardEscrowQuery = useEscrowDataQuery();
+	const totalBalancePendingMigration = rewardEscrowQuery?.data?.totalBalancePendingMigration ?? 0;
 
 	return (
 		<PossibleActionsContainer>
-			{isWalletConnected ? <LayoutOne /> : <WelcomeLayout />}
+			{isWalletConnected ? (
+				totalBalancePendingMigration > 0 ? (
+					<L1MigrationLayout />
+				) : (
+					<LayoutOne />
+				)
+			) : (
+				<WelcomeLayout />
+			)}
 		</PossibleActionsContainer>
 	);
 };
