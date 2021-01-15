@@ -4,6 +4,10 @@ import Connector from 'containers/Connector';
 import Etherscan from 'containers/Etherscan';
 import { createContainer } from 'unstated-next';
 
+export interface TransactionFailed extends TransactionData {
+	failureReason: string;
+}
+
 const useNotify = () => {
 	const { notify } = Connector.useContainer();
 	const { etherscanInstance } = Etherscan.useContainer();
@@ -12,9 +16,11 @@ const useNotify = () => {
 	const monitorHash = ({
 		txHash,
 		onTxConfirmed,
+		onTxFailed,
 	}: {
 		txHash: string;
 		onTxConfirmed?: (txData: TransactionData) => void;
+		onTxFailed?: (txData: TransactionFailed) => void;
 	}) => {
 		if (notify) {
 			const { emitter } = notify.hash(txHash);
@@ -27,6 +33,14 @@ const useNotify = () => {
 				}
 				return {
 					autoDismiss: 0,
+					link,
+				};
+			});
+			emitter.on('txFailed', (txData) => {
+				if (onTxFailed != null) {
+					onTxFailed(txData as TransactionFailed);
+				}
+				return {
 					link,
 				};
 			});

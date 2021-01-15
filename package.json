@@ -1,6 +1,6 @@
 {
 	"name": "staking",
-	"version": "2.36.0",
+	"version": "2.36.1",
 	"scripts": {
 		"dev": "next",
 		"build": "next build",
@@ -16,9 +16,11 @@
 	},
 	"dependencies": {
 		"@artsy/fresnel": "1.3.0",
+		"@eth-optimism/watcher": "0.0.1-alpha.8",
 		"@reach/dialog": "0.12.1",
 		"@synthetixio/assets": "2.0.6",
-		"@synthetixio/js": "2.36.0",
+		"@synthetixio/js": "^2.36.1",
+		"@synthetixio/js": "2.36.1",
 		"@tippyjs/react": "4.1.0",
 		"bignumber.js": "9.0.0",
 		"bnc-notify": "1.5.0",

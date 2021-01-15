@@ -57,7 +57,6 @@ const SideNav: FC = () => {
 				{menuLinks.map(({ i18nLabel, link }) => (
 					<MenuLinkItem
 						key={link}
-						isDisabled={link === ROUTES.L2.Home}
 						isActive={asPath === link || (link !== ROUTES.Home && asPath.includes(link))}
 					>
 						<Link href={link}>
@@ -101,7 +100,7 @@ const MenuLinks = styled.div`
 	position: relative;
 `;
 
-const MenuLinkItem = styled.div<{ isActive: boolean; isDisabled: boolean }>`
+const MenuLinkItem = styled.div<{ isActive: boolean }>`
 	line-height: 40px;
 	padding-bottom: 10px;
 	position: relative;
@@ -123,12 +122,6 @@ const MenuLinkItem = styled.div<{ isActive: boolean; isDisabled: boolean }>`
 			props.isActive &&
 			css`
 				opacity: unset;
-			`}
-		${(props) =>
-			props.isDisabled &&
-			css`
-				opacity: 0.1;
-				pointer-events: none;
 			`}
 	}
 
