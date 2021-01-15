@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { FlexDivColCentered, FlexDivRowCentered, FlexDivCol, ExternalLink } from 'styles/common';
+import { FlexDivColCentered, FlexDivCol } from 'styles/common';
 import Button from 'components/Button';
 
 export const TabContainer = styled(FlexDivColCentered)`

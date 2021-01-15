@@ -51,7 +51,7 @@ const Index: FC = () => {
 						{
 							gridLocations: ['col-2', 'col-3', 'row-1', 'row-3'],
 							...ACTIONS.migrate,
-							isDisabled: totalBalancePendingMigration,
+							isDisabled: totalBalancePendingMigration || transferableCollateral.isZero(),
 						},
 				  ]
 				: [
@@ -69,6 +69,7 @@ const Index: FC = () => {
 							...ACTIONS.migrate,
 						},
 				  ],
+		// eslint-disable-next-line
 		[ACTIONS, debtBalance]
 	) as GridBoxProps[];
 

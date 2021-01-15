@@ -1,6 +1,5 @@
 import { useQuery, QueryConfig } from 'react-query';
 import { useRecoilValue } from 'recoil';
-import BigNumber from 'bignumber.js';
 import { providers } from 'ethers';
 import orderBy from 'lodash/orderBy';
 import { Watcher } from '@eth-optimism/watcher';
@@ -13,7 +12,6 @@ import Connector from 'containers/Connector';
 
 import { isWalletConnectedState, networkState, walletAddressState } from 'store/wallet';
 import { appReadyState } from 'store/app';
-import { toBigNumber } from 'utils/formatters/number';
 
 const NUM_BLOCKS_TO_FETCH = 1000000;
 

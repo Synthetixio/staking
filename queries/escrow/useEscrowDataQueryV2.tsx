@@ -28,7 +28,6 @@ const useEscrowDataQueryV2 = (options?: QueryConfig<EscrowData>) => {
 		async () => {
 			const {
 				contracts: { RewardEscrowV2 },
-				utils: { formatEther },
 			} = synthetix.js!;
 
 			const [numVestingEntries, totalEscrowed, totalVested] = await Promise.all([
