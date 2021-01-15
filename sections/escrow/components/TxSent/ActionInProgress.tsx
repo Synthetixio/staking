@@ -15,27 +15,45 @@ import {
 	InfoData,
 	Container,
 } from './common';
-import { formatCurrency } from 'utils/formatters/number';
+import { formatCurrency, NumericValue } from 'utils/formatters/number';
 
 type ActionInProgressProps = {
-	vestingAmount: string;
+	vestingAmount?: string;
 	hash: string;
-	currencyKey: string;
+	currencyKey?: string;
+	isMigration?: boolean;
 };
 
-const ActionInProgress: FC<ActionInProgressProps> = ({ vestingAmount, currencyKey, hash }) => {
+const ActionInProgress: FC<ActionInProgressProps> = ({
+	vestingAmount,
+	currencyKey,
+	hash,
+	isMigration = false,
+}) => {
 	const { t } = useTranslation();
 	const { etherscanInstance } = Etherscan.useContainer();
 	const link = etherscanInstance != null ? etherscanInstance.txLink(hash) : undefined;
 	return (
 		<Container>
-			<SectionHeader>{t('escrow.actions.in-progress.title')}</SectionHeader>
+			<SectionHeader>
+				{isMigration
+					? t('escrow.actions.migration.in-progress.title')
+					: t('escrow.actions.in-progress.title')}
+			</SectionHeader>
 			<Svg src={PendingConfirmation} />
 			<FlexDivCentered>
 				<InfoContainer key="one">
-					<InfoTitle>{t('escrow.actions.in-progress.vesting')}</InfoTitle>
+					<InfoTitle>
+						{isMigration
+							? t('escrow.actions.migration.in-progress.migrating')
+							: t('escrow.actions.in-progress.vesting')}
+					</InfoTitle>
 					<InfoData>
-						{formatCurrency(currencyKey, vestingAmount, { currencyKey: currencyKey })}
+						{isMigration
+							? t('escrow.actions.migration.in-progress.escrow-schedule')
+							: formatCurrency(currencyKey as string, vestingAmount as NumericValue, {
+									currencyKey: currencyKey,
+							  })}
 					</InfoData>
 				</InfoContainer>
 			</FlexDivCentered>

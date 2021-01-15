@@ -10,12 +10,15 @@ import { Transaction } from 'constants/network';
 import { InfoContainer, InfoData, InfoTitle, SectionHeader, Container } from './common';
 import { formatCurrency } from 'utils/formatters/number';
 import Etherscan from 'containers/Etherscan';
+import { NumericValue } from 'utils/formatters/number';
 
 type ActionCompletedProps = {
 	setTransactionState: (tx: Transaction) => void;
-	vestingAmount: string;
-	currencyKey: string;
+	vestingAmount?: string;
+	currencyKey?: string;
 	hash: string;
+	isMigration?: boolean;
+	setIsMigration?: (isMigration: boolean) => void;
 };
 
 const ActionCompleted: FC<ActionCompletedProps> = ({
@@ -23,19 +26,33 @@ const ActionCompleted: FC<ActionCompletedProps> = ({
 	vestingAmount,
 	currencyKey,
 	hash,
+	isMigration = false,
+	setIsMigration = () => null,
 }) => {
 	const { t } = useTranslation();
 	const { etherscanInstance } = Etherscan.useContainer();
 	const link = etherscanInstance != null ? etherscanInstance.txLink(hash) : undefined;
 	return (
 		<Container>
-			<SectionHeader>{t('escrow.actions.completed.title')}</SectionHeader>
+			<SectionHeader>
+				{isMigration
+					? t('escrow.actions.migration.completed.title')
+					: t('escrow.actions.completed.title')}
+			</SectionHeader>
 			<Svg src={Success} />
 			<FlexDivCentered>
 				<InfoContainer key="one">
-					<InfoTitle>{t('escrow.actions.completed.vested')}</InfoTitle>
+					<InfoTitle>
+						{isMigration
+							? t('escrow.actions.migration.completed.migrating')
+							: t('escrow.actions.completed.vested')}
+					</InfoTitle>
 					<InfoData>
-						{formatCurrency(currencyKey, vestingAmount, { currencyKey: currencyKey })}
+						{isMigration
+							? t('escrow.actions.migration.completed.escrow-schedule')
+							: formatCurrency(currencyKey as string, vestingAmount as NumericValue, {
+									currencyKey: currencyKey,
+							  })}
 					</InfoData>
 				</InfoContainer>
 			</FlexDivCentered>
@@ -45,7 +62,12 @@ const ActionCompleted: FC<ActionCompletedProps> = ({
 						<LeftButton>{t('escrow.actions.completed.verify')}</LeftButton>
 					</ExternalLink>
 				) : null}
-				<RightButton onClick={() => setTransactionState(Transaction.PRESUBMIT)}>
+				<RightButton
+					onClick={() => {
+						setIsMigration(false);
+						setTransactionState(Transaction.PRESUBMIT);
+					}}
+				>
 					{t('staking.actions.mint.completed.dismiss')}
 				</RightButton>
 			</ButtonWrap>
