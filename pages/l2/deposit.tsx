@@ -2,7 +2,7 @@ import Head from 'next/head';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 
-import Main from 'sections/layer2/deposit/index';
+import Main from 'sections/layer2/deposit';
 import StatBox from 'components/StatBox';
 import { StatsSection, LineSpacer } from 'styles/common';
 
