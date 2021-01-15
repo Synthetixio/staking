@@ -34,6 +34,7 @@ type MigrateTabContentProps = {
 	txHash: string | null;
 	transactionState: Transaction;
 	setTransactionState: (tx: Transaction) => void;
+	setIsMigration: (isMigration: boolean) => void;
 };
 
 const MigrateTabContent: FC<MigrateTabContentProps> = ({
@@ -47,6 +48,7 @@ const MigrateTabContent: FC<MigrateTabContentProps> = ({
 	txHash,
 	transactionState,
 	setTransactionState,
+	setIsMigration,
 }) => {
 	const { t } = useTranslation();
 	const vestingCurrencyKey = CryptoCurrency['SNX'];
@@ -74,6 +76,7 @@ const MigrateTabContent: FC<MigrateTabContentProps> = ({
 		return (
 			<ActionCompleted
 				isMigration={true}
+				setIsMigration={setIsMigration}
 				hash={txHash as string}
 				setTransactionState={setTransactionState}
 			/>

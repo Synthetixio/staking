@@ -9,7 +9,7 @@ import { useRecoilValue } from 'recoil';
 
 import { appReadyState } from 'store/app';
 import ROUTES from 'constants/routes';
-import { ExternalLink, FlexDiv } from 'styles/common';
+import { ExternalLink, FlexDiv, GlowingCircle } from 'styles/common';
 import synthetix from 'lib/synthetix';
 import PendingConfirmation from 'assets/svg/app/pending-confirmation.svg';
 import Success from 'assets/svg/app/success.svg';
@@ -279,7 +279,9 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 				<InnerContainer>
 					<ValueBoxWrapper>
 						<ValueBox>
-							<Currency.Icon currencyKey={Synths.sUSD} width="48" height="48" />
+							<StyledGlowingCircle variant="green" size="md">
+								<Currency.Icon currencyKey={Synths.sUSD} width="36" height="36" />
+							</StyledGlowingCircle>
 							<Value>
 								{formatCurrency(Synths.sUSD, tradingRewards, {
 									currencyKey: Synths.sUSD,
@@ -289,7 +291,9 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 							<Subtext>{t('earn.incentives.options.snx.trading-rewards')}</Subtext>
 						</ValueBox>
 						<ValueBox>
-							<Currency.Icon currencyKey={CryptoCurrency.SNX} width="48" height="48" />
+							<StyledGlowingCircle variant="green" size="md">
+								<Currency.Icon currencyKey={CryptoCurrency.SNX} width="36" height="36" />
+							</StyledGlowingCircle>
 							<Value>
 								{formatCurrency(CryptoCurrency.SNX, stakingRewards, {
 									currencyKey: CryptoCurrency.SNX,
@@ -412,6 +416,10 @@ const StyledFlexDivColCentered = styled(FlexDivColCentered)`
 
 const StyledFlexDiv = styled(FlexDiv)`
 	margin-bottom: -20px;
+`;
+
+const StyledGlowingCircle = styled(GlowingCircle)`
+	margin-bottom: 12px;
 `;
 
 export default ClaimTab;

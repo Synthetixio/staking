@@ -162,8 +162,8 @@
 				"copy": "Trade between Synths on Kwenta"
 			},
 			"migrate-l1": {
-				"title": "MIGRATE ESCROW SCHEDULE",
-				"copy": "Migrate your current escrowed rewards from L1 to the new escrow rewards contract, which is also on L1. This enables escrowed rewards to migrate to L2.",
+				"title": "Migrate escrowed SNX",
+				"copy": "Migrate your escrowed SNX from L1 to the new L1 escrow rewards contract. This action is required to enable escrowed SNX to be migrated to L2.",
 				"tooltip": "This step is necessary in order to continue using the Synthetix protocol."
 			},
 			"migrate": {
@@ -411,9 +411,9 @@
 		"staking": {
 			"info": {
 				"title": "Vest your SNX staking rewards in escrow",
-				"title-migrate-l1": "Migrate Layer 1 Escrow Schedule",
+				"title-migrate-l1": "Migrate to new L1 escrow contract",
 				"subtitle": "If you have staked your SNX and minted sUSD, you are eligible to receive SNX staking rewards, which will be escrowed here which you can vest in 12 months from the claim date.",
-				"subtitle-migrate-l1": "Since the implementation of <0>SIP-60<0> with new escrow features including migration to L2 a new SNX Escrow Contact was released and requires you to migrate your escrowed SNX to be able to vest it. Please migrate your escrowed SNX to the new contract."
+				"subtitle-migrate-l1": "As per <0>SIP-60<0>,  a new SNX Escrow Contact has been released with new features (including L2 migration). All SNX holders are required to migrate their escrowed SNX before they can vest any escrowed SNX."
 			}
 		},
 		"token": {

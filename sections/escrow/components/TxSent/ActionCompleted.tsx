@@ -18,6 +18,7 @@ type ActionCompletedProps = {
 	currencyKey?: string;
 	hash: string;
 	isMigration?: boolean;
+	setIsMigration?: (isMigration: boolean) => void;
 };
 
 const ActionCompleted: FC<ActionCompletedProps> = ({
@@ -26,6 +27,7 @@ const ActionCompleted: FC<ActionCompletedProps> = ({
 	currencyKey,
 	hash,
 	isMigration = false,
+	setIsMigration = () => null,
 }) => {
 	const { t } = useTranslation();
 	const { etherscanInstance } = Etherscan.useContainer();
@@ -60,7 +62,12 @@ const ActionCompleted: FC<ActionCompletedProps> = ({
 						<LeftButton>{t('escrow.actions.completed.verify')}</LeftButton>
 					</ExternalLink>
 				) : null}
-				<RightButton onClick={() => setTransactionState(Transaction.PRESUBMIT)}>
+				<RightButton
+					onClick={() => {
+						setIsMigration(false);
+						setTransactionState(Transaction.PRESUBMIT);
+					}}
+				>
 					{t('staking.actions.mint.completed.dismiss')}
 				</RightButton>
 			</ButtonWrap>
