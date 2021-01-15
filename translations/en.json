@@ -501,6 +501,10 @@
 				"title": "{{amountSNX}} is earning {{apr}} APY in L2",
 				"subtitle": "L2 rewards will initially be minimal and gradually increased."
 			},
+			"go-to-mintr": {
+				"title": "Go to Mintr L2",
+				"subtitle": "L2 is currently supported on Mintr"
+			},
 			"deposit": {
 				"title": "Deposit SNX",
 				"subtitle": "Deposit and Transfer SNX from L1 to L2",
