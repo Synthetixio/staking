@@ -2,7 +2,7 @@ import { useQuery, QueryConfig } from 'react-query';
 import { useRecoilValue } from 'recoil';
 import chunk from 'lodash/chunk';
 import synthetix from 'lib/synthetix';
-import { orderBy } from 'lodash';
+import { orderBy, flatten } from 'lodash';
 
 import QUERY_KEYS from 'constants/queryKeys';
 
@@ -54,10 +54,8 @@ const useEscrowDataQueryV2 = (options?: QueryConfig<EscrowData>) => {
 				);
 			}
 
-			const [[vestingEntries], [vestingEntriesId]] = await Promise.all([
-				Promise.all(vestingEntriesPromise),
-				Promise.all(vestingEntriesIdPromise),
-			]);
+			const vestingEntries = flatten(await Promise.all(vestingEntriesPromise));
+			const vestingEntriesId = flatten(await Promise.all(vestingEntriesIdPromise));
 
 			let claimableAmount = 0;
 
