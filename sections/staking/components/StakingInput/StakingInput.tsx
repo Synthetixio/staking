@@ -241,6 +241,7 @@ const StakingInput: React.FC<StakingInputProps> = ({
 						<InputLocked>{formattedInput}</InputLocked>
 					) : (
 						<StyledInput
+							type="number"
 							maxLength={12}
 							value={inputValue.isNaN() ? '0' : inputValue.toString()}
 							placeholder="0"
