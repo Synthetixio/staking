@@ -3,6 +3,7 @@ import { Trans, useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { Svg } from 'react-optimized-image';
 import { useRecoilValue } from 'recoil';
+import BigNumber from 'bignumber.js';
 
 import ArrowRightIcon from 'assets/svg/app/arrow-right.svg';
 
@@ -10,7 +11,7 @@ import { amountToBurnState, amountToMintState } from 'store/staking';
 
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 
-import { formatCurrency, toBigNumber } from 'utils/formatters/number';
+import { formatCurrency, toBigNumber, zeroBN } from 'utils/formatters/number';
 
 import { CryptoCurrency, Synths } from 'constants/currency';
 
@@ -53,6 +54,14 @@ const StakingInfo: React.FC<StakingInfoProps> = ({ isMint }) => {
 	const amountToBurn = useRecoilValue(amountToBurnState);
 	const amountToMint = useRecoilValue(amountToMintState);
 
+	const sanitiseValue = (value: BigNumber) => {
+		if (value.isNegative() || value.isNaN() || !value.isFinite()) {
+			return zeroBN;
+		} else {
+			return value;
+		}
+	};
+
 	const Rows = useMemo(() => {
 		const calculatedTargetBurn = Math.max(debtBalance.minus(issuableSynths).toNumber(), 0);
 
@@ -66,7 +75,7 @@ const StakingInfo: React.FC<StakingInfoProps> = ({ isMint }) => {
 			currentCRatio.isGreaterThan(targetCRatio) &&
 			amountToBurnBN.isLessThanOrEqualTo(calculatedTargetBurn)
 		) {
-			unlockedStakeAmount = toBigNumber(0);
+			unlockedStakeAmount = zeroBN;
 		} else {
 			unlockedStakeAmount = getStakingAmount(targetCRatio, amountToBurnBN, SNXRate);
 		}
@@ -79,23 +88,23 @@ const StakingInfo: React.FC<StakingInfoProps> = ({ isMint }) => {
 
 		const changedNotStakedValue = isMint
 			? unstakedCollateral.isZero()
-				? toBigNumber(0)
+				? zeroBN
 				: unstakedCollateral.minus(stakingAmount)
 			: unstakedCollateral.plus(unlockedStakeAmount);
 		const changedStakedValue = isMint
 			? stakedCollateral.plus(stakingAmount)
 			: stakedCollateral.isZero()
-			? toBigNumber(0)
+			? zeroBN
 			: stakedCollateral.minus(unlockedStakeAmount);
 		const changedTransferable = isMint
 			? transferableCollateral.isZero()
-				? toBigNumber(0)
+				? zeroBN
 				: transferableCollateral.minus(stakingAmount.minus(totalEscrowBalance))
 			: transferableCollateral.plus(unlockedStakeAmount);
 		const changedLocked = isMint
 			? lockedCollateral.plus(stakingAmount)
 			: lockedCollateral.isZero()
-			? toBigNumber(0)
+			? zeroBN
 			: lockedCollateral.minus(unlockedStakeAmount);
 		const changeCRatio = isMint
 			? currentCRatio.isLessThan(targetCRatio)
@@ -112,51 +121,44 @@ const StakingInfo: React.FC<StakingInfoProps> = ({ isMint }) => {
 		const changedDebt = isMint
 			? mintAdditionalDebt
 			: debtBalance.isZero()
-			? toBigNumber(0)
+			? zeroBN
 			: debtBalance.minus(amountToBurnBN);
 
 		return [
 			{
 				title: t('staking.info.table.not-staked'),
-				value: unstakedCollateral.isNaN() ? toBigNumber(0) : unstakedCollateral.abs(),
-				changedValue: changedNotStakedValue.isNaN() ? toBigNumber(0) : changedNotStakedValue.abs(),
+				value: sanitiseValue(unstakedCollateral),
+				changedValue: sanitiseValue(changedNotStakedValue),
 				currencyKey: CryptoCurrency.SNX,
 			},
 			{
 				title: t('staking.info.table.staked'),
-				value: stakedCollateral.isNaN() ? toBigNumber(0) : stakedCollateral.abs(),
-				changedValue: changedStakedValue.isNaN() ? toBigNumber(0) : changedStakedValue.abs(),
+				value: sanitiseValue(stakedCollateral),
+				changedValue: sanitiseValue(changedStakedValue),
 				currencyKey: CryptoCurrency.SNX,
 			},
 			{
 				title: t('staking.info.table.transferable'),
-				value: transferableCollateral.isNaN() ? toBigNumber(0) : transferableCollateral.abs(),
-				changedValue: changedTransferable.isNaN() ? toBigNumber(0) : changedTransferable.abs(),
+				value: sanitiseValue(transferableCollateral),
+				changedValue: sanitiseValue(changedTransferable),
 				currencyKey: CryptoCurrency.SNX,
 			},
 			{
 				title: t('staking.info.table.locked'),
-				value: lockedCollateral.isNaN() ? toBigNumber(0) : lockedCollateral.abs(),
-				changedValue: changedLocked.isNaN() ? toBigNumber(0) : changedLocked.abs(),
+				value: sanitiseValue(lockedCollateral),
+				changedValue: sanitiseValue(changedLocked),
 				currencyKey: CryptoCurrency.SNX,
 			},
 			{
 				title: t('staking.info.table.c-ratio'),
-				value:
-					currentCRatio.isNaN() || currentCRatio.isZero()
-						? toBigNumber(0)
-						: toBigNumber(100).dividedBy(currentCRatio),
-				changedValue: changeCRatio.isNaN()
-					? toBigNumber(0)
-					: !changeCRatio.isFinite()
-					? toBigNumber(0)
-					: changeCRatio,
+				value: sanitiseValue(toBigNumber(100).dividedBy(currentCRatio)),
+				changedValue: sanitiseValue(changeCRatio),
 				currencyKey: '%',
 			},
 			{
 				title: t('staking.info.table.debt'),
-				value: debtBalance.isNaN() ? toBigNumber(0) : debtBalance.abs(),
-				changedValue: changedDebt.isNaN() ? toBigNumber(0) : changedDebt.abs(),
+				value: sanitiseValue(debtBalance),
+				changedValue: sanitiseValue(changedDebt),
 				currencyKey: Synths.sUSD,
 			},
 		];
