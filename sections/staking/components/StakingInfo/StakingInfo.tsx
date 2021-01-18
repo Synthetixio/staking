@@ -98,7 +98,13 @@ const StakingInfo: React.FC<StakingInfoProps> = ({ isMint }) => {
 			? toBigNumber(0)
 			: lockedCollateral.minus(unlockedStakeAmount);
 		const changeCRatio = isMint
-			? changedStakedValue.multipliedBy(SNXRate).dividedBy(mintAdditionalDebt).multipliedBy(100)
+			? currentCRatio.isLessThan(targetCRatio)
+				? unstakedCollateral
+						.plus(stakedCollateral)
+						.multipliedBy(SNXRate)
+						.dividedBy(mintAdditionalDebt)
+						.multipliedBy(100)
+				: changedStakedValue.multipliedBy(SNXRate).dividedBy(mintAdditionalDebt).multipliedBy(100)
 			: stakedCollateral
 					.multipliedBy(SNXRate)
 					.dividedBy(debtBalance.minus(amountToBurnBN))
