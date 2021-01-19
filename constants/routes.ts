@@ -24,6 +24,9 @@ export const ROUTES = {
 		sUSD_EXTERNAL: 'https://www.curve.fi/susdv2/',
 		sEURO_EXTERNAL: 'https://www.curve.fi/eurs/',
 	},
+	Withdraw: {
+		Home: '/withdraw',
+	},
 	L2: {
 		Home: '/l2',
 		Deposit: '/l2/deposit',

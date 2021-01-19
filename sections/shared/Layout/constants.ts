@@ -49,4 +49,27 @@ export const MIGRATE_MENU_LINKS: MenuLinks = [
 	},
 ];
 
+export const L2_MENU_LINKS: MenuLinks = [
+	{
+		i18nLabel: 'sidenav.dashboard',
+		link: ROUTES.Home,
+	},
+	{
+		i18nLabel: 'sidenav.staking',
+		link: ROUTES.Staking.Home,
+	},
+	{
+		i18nLabel: 'sidenav.earn',
+		link: ROUTES.Earn.Home,
+	},
+	{
+		i18nLabel: 'sidenav.escrow',
+		link: ROUTES.Escrow.Home,
+	},
+	{
+		i18nLabel: 'sidenav.withdraw',
+		link: ROUTES.Withdraw.Home,
+	},
+];
+
 export const MENU_LINKS_WALLET_CONNECTED: MenuLinks = [];

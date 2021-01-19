@@ -9,6 +9,7 @@ import { FlexDivCentered, GridDivCenteredCol, IconButton, UpperCased } from 'sty
 import { zIndex } from 'constants/ui';
 
 import Button from 'components/Button';
+import ChainSwitcher from 'components/ChainSwitcher';
 import { isWalletConnectedState, truncatedWalletAddressState, networkState } from 'store/wallet';
 
 import WalletOptionsModal from 'sections/shared/modals/WalletOptionsModal';
@@ -86,6 +87,7 @@ const UserMenu: FC = () => {
 						)}
 					</OutsideClickHandler>
 				</DropdownContainer>
+				<ChainSwitcher />
 			</FlexDivCentered>
 			{watchWalletModalOpened && (
 				<WatchWalletModal onDismiss={() => setWatchWalletModalOpened(false)} />

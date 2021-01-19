@@ -614,6 +614,7 @@
 		"escrow": "Escrow",
 		"history": "History",
 		"l2": "Layer 2",
+		"withdraw": "Withdraw",
 		"bars": {
 			"c-ratio": "c-ratio",
 			"t-ratio": "target",

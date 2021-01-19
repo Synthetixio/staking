@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components';
+import { useRecoilValue } from 'recoil';
 import { FC, useMemo } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
@@ -8,17 +9,21 @@ import { Svg } from 'react-optimized-image';
 import { linkCSS } from 'styles/common';
 
 import StakingLogo from 'assets/svg/app/staking-logo.svg';
+import StakingL2Logo from 'assets/svg/app/staking-l2-logo.svg';
 
 import useHistoricalRatesQuery from 'queries/rates/useHistoricalRatesQuery';
 import useSNX24hrPricesQuery from 'queries/rates/useSNX24hrPricesQuery';
 import useEscrowDataQuery from 'hooks/useEscrowDataQueryWrapper';
 
+import { currentLayerChainState } from 'store/ui';
+
 import ROUTES from 'constants/routes';
 import { CryptoCurrency } from 'constants/currency';
 import { SIDE_NAV_WIDTH, zIndex } from 'constants/ui';
+import { CHAINS_MAP } from 'constants/network';
 import { Period } from 'constants/period';
 
-import { MENU_LINKS, MIGRATE_MENU_LINKS } from '../constants';
+import { MENU_LINKS, MIGRATE_MENU_LINKS, L2_MENU_LINKS } from '../constants';
 import PriceItem from './PriceItem';
 import PeriodBarStats from './PeriodBarStats';
 import CRatioBarStats from './CRatioBarStats';
@@ -28,6 +33,7 @@ const SideNav: FC = () => {
 	const { asPath } = useRouter();
 	const SNX24hrPricesQuery = useSNX24hrPricesQuery();
 	const ETH24hrPricesQuery = useHistoricalRatesQuery(CryptoCurrency.ETH, Period.ONE_DAY);
+	const currentLayerChain = useRecoilValue(currentLayerChainState);
 
 	const snxPriceChartData = useMemo(() => {
 		return (SNX24hrPricesQuery?.data ?? [])
@@ -42,14 +48,23 @@ const SideNav: FC = () => {
 	const rewardEscrowQuery = useEscrowDataQuery();
 	const totalBalancePendingMigration = rewardEscrowQuery?.data?.totalBalancePendingMigration ?? 0;
 
-	const menuLinks = totalBalancePendingMigration > 0 ? MIGRATE_MENU_LINKS : MENU_LINKS;
+	const menuLinks =
+		currentLayerChain === CHAINS_MAP.L2
+			? L2_MENU_LINKS
+			: totalBalancePendingMigration > 0
+			? MIGRATE_MENU_LINKS
+			: MENU_LINKS;
 
 	return (
 		<SideNavContainer>
 			<StakingLogoWrap>
 				<Link href={ROUTES.Home}>
 					<a>
-						<Svg src={StakingLogo} />
+						{currentLayerChain === CHAINS_MAP.L1 ? (
+							<Svg src={StakingLogo} />
+						) : (
+							<Svg src={StakingL2Logo} />
+						)}
 					</a>
 				</Link>
 			</StakingLogoWrap>
