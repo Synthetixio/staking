@@ -97,7 +97,7 @@ const useCurveSeuroPoolQuery = (options?: QueryConfig<CurveData>) => {
 				curveTokenPrice,
 				axios.get('https://www.curve.fi/raw-stats/apys.json'),
 				contract.earned(walletAddress),
-				contract.balanceOf(walletAddress),
+				curveSeuroGaugeContract.balanceOf(walletAddress),
 				curveSeuroPoolTokenContract.allowance(walletAddress, address),
 			]);
 			const durationInWeeks = Number(duration) / 3600 / 24 / 7;
