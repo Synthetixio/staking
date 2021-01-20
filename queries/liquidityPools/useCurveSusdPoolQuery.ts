@@ -97,7 +97,7 @@ const useCurveSusdPoolQuery = (options?: QueryConfig<CurveData>) => {
 				curveTokenPrice,
 				axios.get('https://www.curve.fi/raw-stats/apys.json'),
 				contract.earned(walletAddress),
-				contract.balanceOf(walletAddress),
+				curveSusdGaugeContract.balanceOf(walletAddress),
 				curveSusdPoolTokenContract.allowance(walletAddress, address),
 			]);
 			const durationInWeeks = Number(duration) / 3600 / 24 / 7;
