@@ -28,11 +28,6 @@ export const amountToBurnState = atom<string>({
 	default: '',
 });
 
-export const panelTypeState = atom<StakingPanelType>({
-	key: getStakingKey('panelType'),
-	default: StakingPanelType.MINT,
-});
-
 export const mintTypeState = atom<MintActionType | null>({
 	key: getStakingKey('mintType'),
 	default: null,

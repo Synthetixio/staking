@@ -524,7 +524,18 @@
 		}
 	},
 	"gov": {
-		"page-title": "Governance | Synthetix Staking"
+		"page-title": "Governance | Synthetix Staking",
+		"panel": {
+			"council": {
+				"title": "council"
+			},
+			"proposal": {
+				"title": "proposals"
+			},
+			"grants": {
+				"title": "grants"
+			}
+		}
 	},
 	"sidenav": {
 		"dashboard": "Home",

@@ -31,6 +31,9 @@ export const ROUTES = {
 	},
 	Gov: {
 		Home: '/gov',
+		Council: '/gov/council',
+		Grants: '/gov/grants',
+		Proposal: '/gov/proposals',
 	},
 };
 

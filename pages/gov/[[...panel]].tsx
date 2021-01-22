@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-
 import Head from 'next/head';
 import { useTranslation } from 'react-i18next';
 import StatBox from 'components/StatBox';
@@ -11,6 +10,7 @@ import { SPACES } from 'queries/gov/types';
 import useProposals from 'queries/gov/useProposals';
 import useTotalDebtWeighted from 'sections/gov/hooks/useTotalDebtWeighted';
 import useIndividualDebtWeighted from 'sections/gov/hooks/useIndividualDebtWeighted';
+import MainContent from 'sections/gov';
 
 type GovProps = {};
 
@@ -23,8 +23,8 @@ const Gov: React.FC<GovProps> = ({}) => {
 	const [latestElectionBlock, setLatestElectionBlock] = useState<number | null>(null);
 	const [activeProposals, setActiveProposals] = useState<number | null>(null);
 
-	const totalWeightedDebt = useTotalDebtWeighted(latestElectionBlock);
-	const individualWeightedDebt = useIndividualDebtWeighted(latestElectionBlock);
+	const total = useTotalDebtWeighted(latestElectionBlock);
+	const individual = useIndividualDebtWeighted(latestElectionBlock);
 
 	useEffect(() => {
 		if (govProposals.data) {
@@ -45,13 +45,11 @@ const Gov: React.FC<GovProps> = ({}) => {
 		if (councilProposals.data) {
 			let latest = 0;
 			councilProposals.data.map((proposal) => {
-				if (proposal.msg.payload.snapshot > latest) {
-					latest = proposal.msg.payload.snapshot;
+				if (parseInt(proposal.msg.payload.snapshot) > latest) {
+					latest = parseInt(proposal.msg.payload.snapshot);
 				}
 			});
-			const latestBlockNumber = parseInt(latest.toString());
-			console.log(typeof latestBlockNumber);
-			setLatestElectionBlock(latestBlockNumber);
+			setLatestElectionBlock(latest);
 		}
 	}, [councilProposals]);
 
@@ -63,7 +61,7 @@ const Gov: React.FC<GovProps> = ({}) => {
 			<StatsSection>
 				<WalletVotingPower
 					title={t('common.stat-box.voting-power.title')}
-					value={formatNumber(individualWeightedDebt ?? 0)}
+					value={formatNumber(individual ?? 0)}
 					tooltipContent={t('common.stat-box.voting-power.tooltip', {
 						blocknumber: formatNumber(latestElectionBlock ?? 0, { decimals: 0 }),
 					})}
@@ -74,13 +72,14 @@ const Gov: React.FC<GovProps> = ({}) => {
 				/>
 				<TotalVotingPower
 					title={t('common.stat-box.total-voting-power.title')}
-					value={formatNumber(totalWeightedDebt ?? 0)}
+					value={formatNumber(total ?? 0)}
 					tooltipContent={t('common.stat-box.voting-power.tooltip', {
 						blocknumber: formatNumber(latestElectionBlock ?? 0, { decimals: 0 }),
 					})}
 				/>
 			</StatsSection>
 			<LineSpacer />
+			<MainContent />
 		</>
 	);
 };

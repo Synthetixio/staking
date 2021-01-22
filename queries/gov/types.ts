@@ -44,7 +44,7 @@ export type Proposal = {
 			metadata: {
 				stratgies: SpaceStrategy[];
 			};
-			snapshot: number;
+			snapshot: string;
 		};
 	};
 	sig: string;
