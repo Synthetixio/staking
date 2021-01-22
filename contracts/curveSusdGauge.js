@@ -187,7 +187,6 @@ export default {
 			inputs: [{ type: 'address', name: 'arg0' }],
 			stateMutability: 'view',
 			type: 'function',
-			gas: 1815,
 		},
 		{
 			name: 'totalSupply',
