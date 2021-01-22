@@ -1,4 +1,5 @@
 import { QueryResult } from 'react-query';
+
 import useEscrowDataQueryV1 from 'queries/escrow/useEscrowDataQueryV1';
 import useEscrowDataQueryV2 from 'queries/escrow/useEscrowDataQueryV2';
 
@@ -24,8 +25,7 @@ function useEscrowDataQueryWrapper(): QueryResult<EscrowData, unknown> {
 	const rewardEscrowQueryV2 = useEscrowDataQueryV2();
 	const rewardEscrowQueryV1 = useEscrowDataQueryV1();
 
-	return rewardEscrowQueryV2.isLoading ||
-		rewardEscrowQueryV1?.data?.totalBalancePendingMigration === 0
+	return !rewardEscrowQueryV1?.data?.totalBalancePendingMigration
 		? rewardEscrowQueryV2
 		: rewardEscrowQueryV1;
 }

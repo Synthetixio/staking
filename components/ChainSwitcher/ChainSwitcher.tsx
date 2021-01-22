@@ -4,17 +4,18 @@ import styled from 'styled-components';
 
 import { FlexDiv } from 'styles/common';
 import { CHAINS, CHAINS_MAP } from 'constants/network';
-import { currentLayerChainState } from 'store/ui';
+import { isLayerOneState } from 'store/chain';
 
 const ChainSwitcher: FC = () => {
-	const [currentLayerChain, setCurrentLayerChain] = useRecoilState(currentLayerChainState);
+	const [isLayerOne, setIslayerOne] = useRecoilState(isLayerOneState);
 	return (
 		<Container>
-			{CHAINS.map((chain) => (
+			{CHAINS.map((chain, index) => (
 				<Button
+					key={`chain-button-${index}`}
 					isL2={chain === CHAINS_MAP.L2}
-					isActive={currentLayerChain === chain}
-					onClick={() => setCurrentLayerChain(chain)}
+					isActive={isLayerOne ? chain === CHAINS_MAP.L1 : chain === CHAINS_MAP.L2}
+					onClick={() => setIslayerOne(chain === CHAINS_MAP.L1)}
 				>
 					{chain}
 				</Button>

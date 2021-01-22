@@ -15,12 +15,11 @@ import useHistoricalRatesQuery from 'queries/rates/useHistoricalRatesQuery';
 import useSNX24hrPricesQuery from 'queries/rates/useSNX24hrPricesQuery';
 import useEscrowDataQuery from 'hooks/useEscrowDataQueryWrapper';
 
-import { currentLayerChainState } from 'store/ui';
+import { isLayerOneState } from 'store/chain';
 
 import ROUTES from 'constants/routes';
 import { CryptoCurrency } from 'constants/currency';
 import { SIDE_NAV_WIDTH, zIndex } from 'constants/ui';
-import { CHAINS_MAP } from 'constants/network';
 import { Period } from 'constants/period';
 
 import { MENU_LINKS, MIGRATE_MENU_LINKS, L2_MENU_LINKS } from '../constants';
@@ -33,7 +32,7 @@ const SideNav: FC = () => {
 	const { asPath } = useRouter();
 	const SNX24hrPricesQuery = useSNX24hrPricesQuery();
 	const ETH24hrPricesQuery = useHistoricalRatesQuery(CryptoCurrency.ETH, Period.ONE_DAY);
-	const currentLayerChain = useRecoilValue(currentLayerChainState);
+	const isLayer1 = useRecoilValue(isLayerOneState);
 
 	const snxPriceChartData = useMemo(() => {
 		return (SNX24hrPricesQuery?.data ?? [])
@@ -48,24 +47,17 @@ const SideNav: FC = () => {
 	const rewardEscrowQuery = useEscrowDataQuery();
 	const totalBalancePendingMigration = rewardEscrowQuery?.data?.totalBalancePendingMigration ?? 0;
 
-	const menuLinks =
-		currentLayerChain === CHAINS_MAP.L2
-			? L2_MENU_LINKS
-			: totalBalancePendingMigration > 0
-			? MIGRATE_MENU_LINKS
-			: MENU_LINKS;
+	const menuLinks = !isLayer1
+		? L2_MENU_LINKS
+		: totalBalancePendingMigration > 0
+		? MIGRATE_MENU_LINKS
+		: MENU_LINKS;
 
 	return (
 		<SideNavContainer>
 			<StakingLogoWrap>
 				<Link href={ROUTES.Home}>
-					<a>
-						{currentLayerChain === CHAINS_MAP.L1 ? (
-							<Svg src={StakingLogo} />
-						) : (
-							<Svg src={StakingL2Logo} />
-						)}
-					</a>
+					<a>{isLayer1 ? <Svg src={StakingLogo} /> : <Svg src={StakingL2Logo} />}</a>
 				</Link>
 			</StakingLogoWrap>
 			<MenuLinks>

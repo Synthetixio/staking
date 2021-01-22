@@ -116,11 +116,11 @@ const BurnTab: React.FC = () => {
 						throw new Error('staking.actions.burn.action.error.insufficient');
 					if (waitingPeriod) throw new Error('staking.actions.burn.action.error.waiting-period');
 					if (issuanceDelay) throw new Error('staking.actions.burn.action.error.issuance-period');
-
 					const gasEstimate = await getGasEstimateForTransaction(
 						[parseEther(amountToBurn.toString())],
 						Synthetix.estimateGas.burnSynths
 					);
+
 					setGasLimitEstimate(normalizeGasLimit(Number(gasEstimate)));
 				} catch (error) {
 					setError(error.message);
@@ -159,14 +159,17 @@ const BurnTab: React.FC = () => {
 					let transaction: ethers.ContractTransaction;
 
 					if (burnToTarget) {
-						const gasLimit = getGasEstimateForTransaction(
+						const gasLimit = await getGasEstimateForTransaction(
 							[],
 							Synthetix.estimateGas.burnSynthsToTarget
 						);
+						console.log('here', gasPrice, gasLimit);
 						transaction = await Synthetix.burnSynthsToTarget({
 							gasPrice: normalizedGasPrice(gasPrice),
 							gasLimit: gasLimit,
 						});
+
+						console.log(transaction);
 					} else {
 						const amountToBurnBN = parseEther(amountToBurn.toString());
 						const gasLimit = getGasEstimateForTransaction(

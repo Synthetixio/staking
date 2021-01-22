@@ -7,21 +7,25 @@ import media from 'styles/media';
 import useEscrowDataQuery from 'hooks/useEscrowDataQueryWrapper';
 
 import { isWalletConnectedState } from 'store/wallet';
+import { isLayerOneState } from 'store/chain';
 
-import { WelcomeLayout, LayoutOne, L1MigrationLayout } from './Layouts';
+import { WelcomeLayout, LayoutLayer1, LayoutLayer2, L1MigrationLayout } from './Layouts';
 
 const PossibleActions: FC = () => {
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
+	const isLayer1 = useRecoilValue(isLayerOneState);
 	const rewardEscrowQuery = useEscrowDataQuery();
 	const totalBalancePendingMigration = rewardEscrowQuery?.data?.totalBalancePendingMigration ?? 0;
+
+	const LayerLayout = isLayer1 ? LayoutLayer1 : LayoutLayer2;
 
 	return (
 		<PossibleActionsContainer>
 			{isWalletConnected ? (
-				totalBalancePendingMigration > 0 ? (
+				totalBalancePendingMigration ? (
 					<L1MigrationLayout />
 				) : (
-					<LayoutOne />
+					<LayerLayout />
 				)
 			) : (
 				<WelcomeLayout />

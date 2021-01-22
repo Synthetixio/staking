@@ -672,7 +672,8 @@
 			"est": "Est Fees: {{amount}}",
 			"average": "Average",
 			"fast": "Fast",
-			"fastest": "Fastest"
+			"fastest": "Fastest",
+			"ovm": "Fees are temporarily subsidized by Optimism"
 		},
 		"custom": "Custom",
 		"edit": "Edit",

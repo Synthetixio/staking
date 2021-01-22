@@ -28,6 +28,7 @@ const useNotify = () => {
 			const link = etherscanInstance != null ? etherscanInstance.txLink(txHash) : undefined;
 
 			emitter.on('txConfirmed', (txData) => {
+				console.log(txData);
 				if (onTxConfirmed != null) {
 					onTxConfirmed(txData);
 				}

@@ -17,6 +17,28 @@ type LPData = {
 };
 
 const useLPData = (): LPData => {
+	return {
+		[Synths.iETH]: {
+			APR: 0,
+			TVL: 0,
+			data: undefined,
+		},
+		[Synths.iBTC]: {
+			APR: 0,
+			TVL: 0,
+			data: undefined,
+		},
+		[Synths.sEUR]: {
+			APR: 0,
+			TVL: 0,
+			data: undefined,
+		},
+		[Synths.sUSD]: {
+			APR: 0,
+			TVL: 0,
+			data: undefined,
+		},
+	};
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const SNXRate = exchangeRatesQuery.data?.SNX ?? 0;
 	const useiETHPool = useIETHPoolQuery_1();

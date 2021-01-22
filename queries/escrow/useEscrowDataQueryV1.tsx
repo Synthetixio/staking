@@ -5,6 +5,7 @@ import synthetix from 'lib/synthetix';
 
 import QUERY_KEYS from 'constants/queryKeys';
 
+import { isLayerOneState } from 'store/chain';
 import { isWalletConnectedState, networkState, walletAddressState } from 'store/wallet';
 import { appReadyState } from 'store/app';
 import { EscrowData, Schedule } from 'hooks/useEscrowDataQueryWrapper';
@@ -14,6 +15,7 @@ const useEscrowDataQueryV1 = (options?: QueryConfig<EscrowData>) => {
 	const walletAddress = useRecoilValue(walletAddressState);
 	const network = useRecoilValue(networkState);
 	const isAppReady = useRecoilValue(appReadyState);
+	const isLayer1 = useRecoilValue(isLayerOneState);
 
 	return useQuery<EscrowData>(
 		QUERY_KEYS.Escrow.DataV1(walletAddress ?? '', network?.id!),
@@ -22,7 +24,6 @@ const useEscrowDataQueryV1 = (options?: QueryConfig<EscrowData>) => {
 				contracts: { RewardEscrow, RewardEscrowV2 },
 				utils: { formatEther },
 			} = synthetix.js!;
-
 			const [
 				accountSchedule,
 				totalEscrowed,
@@ -66,7 +67,7 @@ const useEscrowDataQueryV1 = (options?: QueryConfig<EscrowData>) => {
 			};
 		},
 		{
-			enabled: isAppReady && isWalletConnected,
+			enabled: isAppReady && isWalletConnected && isLayer1,
 			...options,
 		}
 	);

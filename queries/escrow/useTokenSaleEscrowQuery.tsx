@@ -7,6 +7,7 @@ import QUERY_KEYS from 'constants/queryKeys';
 
 import { isWalletConnectedState, networkState, walletAddressState } from 'store/wallet';
 import { appReadyState } from 'store/app';
+import { isLayerOneState } from 'store/chain';
 
 export type TokenSaleEscrow = {
 	escrowPeriod: number;
@@ -31,6 +32,7 @@ const useTokenSaleEscrowQuery = (options?: QueryConfig<TokenSaleEscrow | null>) 
 	const walletAddress = useRecoilValue(walletAddressState);
 	const network = useRecoilValue(networkState);
 	const isAppReady = useRecoilValue(appReadyState);
+	const isLayer1 = useRecoilValue(isLayerOneState);
 
 	return useQuery<TokenSaleEscrow | null>(
 		QUERY_KEYS.Escrow.TokenSale(walletAddress ?? '', network?.id!),
@@ -96,7 +98,7 @@ const useTokenSaleEscrowQuery = (options?: QueryConfig<TokenSaleEscrow | null>) 
 				: null;
 		},
 		{
-			enabled: isAppReady && isWalletConnected,
+			enabled: isAppReady && isWalletConnected && isLayer1,
 			...options,
 		}
 	);

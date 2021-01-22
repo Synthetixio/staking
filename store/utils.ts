@@ -3,3 +3,4 @@ export const getUIKey = (subKey: string) => `ui/${subKey}`;
 export const getWalletKey = (subKey: string) => `wallet/${subKey}`;
 export const getStakingKey = (subKey: string) => `staking/${subKey}`;
 export const getEscrowKey = (subKey: string) => `escrow/${subKey}`;
+export const getChainKey = (subKey: string) => `chain/${subKey}`;

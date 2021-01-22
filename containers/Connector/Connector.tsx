@@ -3,13 +3,16 @@ import { createContainer } from 'unstated-next';
 import { useSetRecoilState, useRecoilState, useRecoilValue } from 'recoil';
 import { NetworkId } from '@synthetixio/js';
 import { ethers } from 'ethers';
+import { OptimismProvider } from '@eth-optimism/provider';
 
 import synthetix from 'lib/synthetix';
 
 import { getDefaultNetworkId } from 'utils/network';
+import { OVM_RPC_URL } from 'constants/ovm';
 
 import { appReadyState, languageState } from 'store/app';
 import { walletAddressState, networkState, walletWatchedState } from 'store/wallet';
+import { isLayerOneState } from 'store/chain';
 
 import { Wallet as OnboardWallet } from 'bnc-onboard/dist/src/interfaces';
 
@@ -28,6 +31,8 @@ const useConnector = () => {
 	const [isAppReady, setAppReady] = useRecoilState(appReadyState);
 	const setWalletAddress = useSetRecoilState(walletAddressState);
 	const [walletWatched, setWalletWatched] = useRecoilState(walletWatchedState);
+	const isLayer1 = useRecoilValue(isLayerOneState);
+	const useOvm = !isLayer1;
 	const [selectedWallet, setSelectedWallet] = useLocalStorage<string | null>(
 		LOCAL_STORAGE_KEYS.SELECTED_WALLET,
 		''
@@ -47,6 +52,7 @@ const useConnector = () => {
 			synthetix.setContractSettings({
 				networkId,
 				provider,
+				useOvm,
 			});
 			// @ts-ignore
 			setNetwork(synthetix.js?.network);
@@ -57,6 +63,28 @@ const useConnector = () => {
 		init();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
+
+	// useEffect(() => {
+	// 	console.log('here', useOvm, network, provider, signer);
+	// 	if (useOvm) {
+	// 		const web3 = onboard?.getState().wallet.provider ?? window.ethereum;
+	// 		if (!web3) return;
+	// 		const wrappedWeb3 = new ethers.providers.Web3Provider(web3);
+	// 		const ovmProvider = new OptimismProvider(OVM_RPC_URL, wrappedWeb3);
+
+	// 		const signer = ovmProvider.getSigner();
+	// 		synthetix.setContractSettings({
+	// 			networkId: network?.id,
+	// 			provider: ovmProvider,
+	// 			signer,
+	// 			useOvm,
+	// 		});
+	// 		setProvider(ovmProvider);
+	// 		setSigner(signer);
+	// 		console.log('PROVIDER', ovmProvider);
+	// 		console.log('SIGNER', signer);
+	// 	}
+	// }, [useOvm]);
 
 	useEffect(() => {
 		if (isAppReady && network) {
@@ -69,19 +97,20 @@ const useConnector = () => {
 							: false;
 
 					if (isSupportedNetwork) {
-						const provider = new ethers.providers.Web3Provider(onboard.getState().wallet.provider);
-						const signer = provider.getSigner();
+						const web3 = new ethers.providers.Web3Provider(onboard.getState().wallet.provider);
+						const ovmProvider = new OptimismProvider(OVM_RPC_URL, web3);
+						const ovmSigner = ovmProvider.getSigner();
 
 						synthetix.setContractSettings({
 							networkId,
-							provider,
-							signer,
+							provider: ovmSigner.provider,
+							signer: ovmSigner,
+							useOvm,
 						});
 						onboard.config({ networkId });
 						notify.config({ networkId });
-						setProvider(provider);
-						setSigner(signer);
-
+						setProvider(ovmProvider);
+						setSigner(ovmSigner);
 						setNetwork({
 							id: networkId,
 							// @ts-ignore
@@ -91,18 +120,20 @@ const useConnector = () => {
 				},
 				wallet: async (wallet: OnboardWallet) => {
 					if (wallet.provider) {
-						const provider = new ethers.providers.Web3Provider(wallet.provider);
-						const signer = provider.getSigner();
-						const network = await provider.getNetwork();
+						const web3 = new ethers.providers.Web3Provider(wallet.provider);
+						const ovmProvider = new OptimismProvider(OVM_RPC_URL, web3);
+						const ovmSigner = ovmProvider.getSigner();
+						const network = await web3.getNetwork();
 						const networkId = network.chainId as NetworkId;
 
 						synthetix.setContractSettings({
 							networkId,
-							provider,
-							signer,
+							provider: ovmProvider,
+							signer: ovmSigner,
+							useOvm,
 						});
-						setProvider(provider);
-						setSigner(provider.getSigner());
+						setProvider(ovmProvider);
+						setSigner(ovmSigner);
 						setNetwork({
 							id: networkId,
 							// @ts-ignore
@@ -126,7 +157,7 @@ const useConnector = () => {
 			setNotify(notify);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [isAppReady]);
+	}, [isAppReady, useOvm]);
 
 	useEffect(() => {
 		setWalletAddress(walletWatched);

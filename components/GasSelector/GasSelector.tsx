@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo } from 'react';
 
 import styled from 'styled-components';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import Tippy from '@tippyjs/react';
 
 import { customGasPriceState, gasSpeedState } from 'store/wallet';
@@ -12,13 +12,14 @@ import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { getTransactionPrice } from 'utils/network';
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
+import { isLayerOneState } from 'store/chain';
 
 import { Synths } from 'constants/currency';
 import { formatCurrency } from 'utils/formatters/number';
 import NumericInput from 'components/Input/NumericInput';
 import Button from 'components/Button';
 import { useTranslation } from 'react-i18next';
-import { FlexDivRow, FlexDivRowCentered, NumericValue } from 'styles/common';
+import { FlexDivRow, FlexDivRowCentered, NumericValue, FlexDivCol } from 'styles/common';
 
 type GasSelectorProps = {
 	gasLimitEstimate: number | null;
@@ -36,6 +37,7 @@ const GasSelector: React.FC<GasSelectorProps> = ({
 	const [gasSpeed, setGasSpeed] = useRecoilState(gasSpeedState);
 	const [customGasPrice, setCustomGasPrice] = useRecoilState(customGasPriceState);
 
+	const isLayer1 = useRecoilValue(isLayerOneState);
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const ethGasStationQuery = useEthGasStationQuery();
@@ -45,23 +47,24 @@ const GasSelector: React.FC<GasSelectorProps> = ({
 
 	const hasCustomGasPrice = customGasPrice !== '';
 
-	const gasPrice = useMemo(
-		() =>
-			customGasPrice !== ''
-				? Number(customGasPrice)
-				: ethGasStationQuery.data != null
-				? ethGasStationQuery.data[gasSpeed]
-				: null,
-		[customGasPrice, ethGasStationQuery.data, gasSpeed]
-	);
+	const gasPrice = useMemo(() => {
+		if (!isLayer1) return 0;
+		return customGasPrice !== ''
+			? Number(customGasPrice)
+			: ethGasStationQuery.data != null
+			? ethGasStationQuery.data[gasSpeed]
+			: null;
+	}, [isLayer1, customGasPrice, ethGasStationQuery.data, gasSpeed]);
 
 	useEffect(() => {
 		setGasPrice(
-			customGasPrice !== ''
-				? Number(customGasPrice)
-				: ethGasStationQuery.data != null
-				? ethGasStationQuery.data[gasSpeed]
-				: null
+			isLayer1
+				? customGasPrice !== ''
+					? Number(customGasPrice)
+					: ethGasStationQuery.data != null
+					? ethGasStationQuery.data[gasSpeed]
+					: null
+				: 0
 		);
 		// eslint-disable-next-line
 	}, [gasPrice, customGasPrice]);
@@ -132,26 +135,31 @@ const GasSelector: React.FC<GasSelectorProps> = ({
 
 	return (
 		<Container {...rest}>
-			<GasPriceHeader>{t('common.gas-header')}</GasPriceHeader>
-			<FlexDivRowCentered>
-				<GasPriceItem>
-					<GasPriceText>
-						{gasPriceItem}{' '}
-						{transactionFee != null &&
-							`(${formatCurrency(selectedPriceCurrency.name, transactionFee, {
-								sign: selectedPriceCurrency.sign,
-							})})`}
-					</GasPriceText>
-				</GasPriceItem>
-				<GasPriceTooltip trigger="click" arrow={false} content={content} interactive={true}>
-					<StyledGasEditButton role="button">{t('common.edit')}</StyledGasEditButton>
-				</GasPriceTooltip>
-			</FlexDivRowCentered>
+			<FlexDivRow>
+				<GasPriceHeader>{t('common.gas-header')}</GasPriceHeader>
+				<FlexDivRowCentered>
+					<GasPriceItem>
+						<GasPriceText>
+							{gasPriceItem}{' '}
+							{transactionFee != null &&
+								`(${formatCurrency(selectedPriceCurrency.name, transactionFee, {
+									sign: selectedPriceCurrency.sign,
+								})})`}
+						</GasPriceText>
+					</GasPriceItem>
+					<GasPriceTooltip trigger="click" arrow={false} content={content} interactive={true}>
+						<StyledGasEditButton disabled={!isLayer1} role="button">
+							{t('common.edit')}
+						</StyledGasEditButton>
+					</GasPriceTooltip>
+				</FlexDivRowCentered>
+			</FlexDivRow>
+			<OvmSubtext>{t('common.gas-prices.ovm')}</OvmSubtext>
 		</Container>
 	);
 };
 
-const Container = styled(FlexDivRow)`
+const Container = styled(FlexDivCol)`
 	width: 100%;
 	justify-content: space-between;
 `;
@@ -177,6 +185,13 @@ const GasPriceText = styled.span`
 	font-family: ${(props) => props.theme.fonts.interBold};
 	font-size: 12px;
 	color: ${(props) => props.theme.colors.white};
+`;
+
+const OvmSubtext = styled.span`
+	font-family: ${(props) => props.theme.fonts.interBold};
+	font-size: 12px;
+	color: ${(props) => props.theme.colors.blue};
+	margin: -6px 0 12px 0;
 `;
 
 const GasPriceTooltip = styled(Tippy)`
@@ -225,13 +240,14 @@ const GasPriceItem = styled.span`
 	}
 `;
 
-const StyledGasEditButton = styled.span`
+const StyledGasEditButton = styled.span<{ disabled: boolean }>`
 	font-family: ${(props) => props.theme.fonts.interBold};
 	padding-left: 5px;
 	font-size: 12px;
 	cursor: pointer;
 	color: ${(props) => props.theme.colors.blue};
 	text-transform: uppercase;
+	opacity: ${(props) => (props.disabled ? 0.25 : 1)};
 `;
 
 export default GasSelector;
