@@ -6,17 +6,16 @@ import StatBox from 'components/StatBox';
 import styled from 'styled-components';
 import { StatsSection, LineSpacer } from 'styles/common';
 import { formatNumber } from 'utils/formatters/number';
-import useScaledVotingWeightQuery from 'queries/gov/useScaledVotingWeightQuery';
 import useSnapshotSpace from 'queries/gov/useSnapshotSpace';
 import { SPACES } from 'queries/gov/types';
 import useProposals from 'queries/gov/useProposals';
 import useTotalDebtWeighted from 'sections/gov/hooks/useTotalDebtWeighted';
+import useIndividualDebtWeighted from 'sections/gov/hooks/useIndividualDebtWeighted';
 
 type GovProps = {};
 
 const Gov: React.FC<GovProps> = ({}) => {
 	const { t } = useTranslation();
-	const votingWeight = useScaledVotingWeightQuery();
 	const space = useSnapshotSpace(SPACES.COUNCIL);
 	const councilProposals = useProposals(SPACES.COUNCIL);
 	const govProposals = useProposals(SPACES.PROPOSAL);
@@ -25,6 +24,7 @@ const Gov: React.FC<GovProps> = ({}) => {
 	const [activeProposals, setActiveProposals] = useState<number | null>(null);
 
 	const totalWeightedDebt = useTotalDebtWeighted(latestElectionBlock);
+	const individualWeightedDebt = useIndividualDebtWeighted(latestElectionBlock);
 
 	useEffect(() => {
 		if (govProposals.data) {
@@ -49,7 +49,9 @@ const Gov: React.FC<GovProps> = ({}) => {
 					latest = proposal.msg.payload.snapshot;
 				}
 			});
-			setLatestElectionBlock(latest);
+			const latestBlockNumber = parseInt(latest.toString());
+			console.log(typeof latestBlockNumber);
+			setLatestElectionBlock(latestBlockNumber);
 		}
 	}, [councilProposals]);
 
@@ -61,7 +63,7 @@ const Gov: React.FC<GovProps> = ({}) => {
 			<StatsSection>
 				<WalletVotingPower
 					title={t('common.stat-box.voting-power.title')}
-					value={formatNumber(votingWeight?.data ?? 0)}
+					value={formatNumber(individualWeightedDebt ?? 0)}
 					tooltipContent={t('common.stat-box.voting-power.tooltip', {
 						blocknumber: formatNumber(latestElectionBlock ?? 0, { decimals: 0 }),
 					})}
@@ -91,13 +93,17 @@ const WalletVotingPower = styled(StatBox)`
 
 const TotalVotingPower = styled(StatBox)`
 	.title {
-		color: ${(props) => props.theme.colors.blue};
+		color: ${(props) => props.theme.colors.pink};
 	}
 `;
 
 const ActiveProposals = styled(StatBox)`
 	.title {
-		color: ${(props) => props.theme.colors.blue};
+		color: ${(props) => props.theme.colors.green};
+	}
+	.value {
+		text-shadow: ${(props) => props.theme.colors.greenTextShadow};
+		color: #073124;
 	}
 `;
 

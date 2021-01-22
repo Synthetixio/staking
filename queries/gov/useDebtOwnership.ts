@@ -7,33 +7,32 @@ import QUERY_KEYS from 'constants/queryKeys';
 
 import { isWalletConnectedState, networkState, walletAddressState } from 'store/wallet';
 import { appReadyState } from 'store/app';
-import { quadraticWeighting } from 'constants/snapshot';
 import { toBigNumber } from 'utils/formatters/number';
+import BigNumber from 'bignumber.js';
 
-const useScaledVotingWeightQuery = (options?: QueryConfig<number>) => {
+const useDebtOwnership = (block?: number | null, options?: QueryConfig<BigNumber>) => {
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const network = useRecoilValue(networkState);
 	const isAppReady = useRecoilValue(appReadyState);
 
-	return useQuery<number>(
-		QUERY_KEYS.Gov.ScaledVotingWeight(walletAddress ?? '', network?.id!),
+	return useQuery<BigNumber>(
+		QUERY_KEYS.Gov.DebtOwnership(walletAddress ?? '', network?.id!, block),
 		async () => {
 			const {
 				contracts: { SynthetixState },
 				utils: { formatUnits },
 			} = synthetix.js!;
 
-			let issuanceData = await SynthetixState.issuanceData(walletAddress, { blockTag: 11509852 });
+			let issuanceData = await SynthetixState.issuanceData(walletAddress, {
+				blockTag: block ? block : 'latest',
+			});
 
-			console.log(formatUnits(issuanceData.initialDebtOwnership.toString(), 27));
-			// console.log(issuanceData.initialDebtOwnership.toString());
-
-			const scaledVotingWeight = quadraticWeighting(
-				toBigNumber(formatUnits(issuanceData.initialDebtOwnership.toString(), 27))
+			const debtOwnership = toBigNumber(
+				formatUnits(issuanceData.initialDebtOwnership.toString(), 27)
 			);
 
-			return Number(scaledVotingWeight);
+			return debtOwnership;
 		},
 		{
 			enabled: isAppReady && isWalletConnected,
@@ -42,4 +41,4 @@ const useScaledVotingWeightQuery = (options?: QueryConfig<number>) => {
 	);
 };
 
-export default useScaledVotingWeightQuery;
+export default useDebtOwnership;

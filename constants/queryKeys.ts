@@ -179,11 +179,12 @@ export const QUERY_KEYS = {
 		],
 	},
 	Gov: {
-		ScaledVotingWeight: (walletAddress: string, networkId: NetworkId) => [
+		DebtOwnership: (walletAddress: string, networkId: NetworkId, block?: number | null) => [
 			'gov',
 			'scaledVotingWeight',
 			walletAddress,
 			networkId,
+			block,
 		],
 		SnapshotSpace: (spaceKey: SPACES) => ['gov', 'snapshotSpace', spaceKey],
 		Proposals: (spaceKey: SPACES) => ['gov', 'proposals', spaceKey],
