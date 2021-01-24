@@ -190,7 +190,7 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab }
 							</CellContainer>
 						);
 					} else {
-						return <p>{t('earn.incentives.curve.helper')}</p>;
+						return <p>{t('earn.incentives.options.curve.helper')}</p>;
 					}
 				},
 				width: 150,
