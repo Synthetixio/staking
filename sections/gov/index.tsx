@@ -8,10 +8,7 @@ import Panel from 'sections/gov/components/Panel';
 
 const Index: FC = () => {
 	const router = useRouter();
-	const defaultTab = (router.query.action && router.query.action[0]) || GovPanelType.COUNCIL;
-
-	console.log(defaultTab);
-
+	const defaultTab = (router.query.panel && router.query.panel[0]) || GovPanelType.COUNCIL;
 	return (
 		<Row>
 			<Cols>

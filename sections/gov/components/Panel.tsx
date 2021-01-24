@@ -28,7 +28,7 @@ const Panel: React.FC<PanelProps> = ({ currentTab }) => {
 				key: GovPanelType.GRANTS,
 			},
 			{
-				title: t('gov.panel.proposal.title'),
+				title: t('gov.panel.proposals.title'),
 				tabChildren: <></>,
 				blue: true,
 				key: GovPanelType.PROPOSAL,
