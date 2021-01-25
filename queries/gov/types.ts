@@ -49,5 +49,24 @@ export type Proposal = {
 	};
 	sig: string;
 	authorIpfsHash: string;
-	relayIpfsHash: string;
+	relayerIpfsHash: string;
+	filteredVoters: Vote[];
+};
+
+export type Vote = {
+	address: string;
+	authorIpfsHash: string;
+	msg: {
+		payload: {
+			choice: number;
+			metadata: {};
+			proposal: string;
+		};
+		space: string;
+		timestamp: string;
+		type: string;
+		version: string;
+	};
+	relayerIpfsHash: string;
+	sig: string;
 };

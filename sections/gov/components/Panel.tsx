@@ -4,6 +4,9 @@ import { BOX_COLUMN_WIDTH } from 'constants/styles';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
 import { GovPanelType } from 'store/gov';
+import ProposalList from './ProposalList';
+import { SPACES } from 'queries/gov/types';
+import useProposals from 'queries/gov/useProposals';
 
 type PanelProps = {
 	currentTab: string;
@@ -12,12 +15,15 @@ type PanelProps = {
 const Panel: React.FC<PanelProps> = ({ currentTab }) => {
 	const { t } = useTranslation();
 	const router = useRouter();
+	const councilProposals = useProposals(SPACES.COUNCIL);
 
 	const tabData = useMemo(
 		() => [
 			{
 				title: t('gov.panel.council.title'),
-				tabChildren: <></>,
+				tabChildren: (
+					<ProposalList data={councilProposals.data ?? []} isLoaded={!councilProposals.isLoading} />
+				),
 				blue: true,
 				key: GovPanelType.COUNCIL,
 			},
@@ -38,7 +44,7 @@ const Panel: React.FC<PanelProps> = ({ currentTab }) => {
 	);
 	return (
 		<StructuredTab
-			boxPadding={20}
+			boxPadding={0}
 			boxHeight={450}
 			boxWidth={BOX_COLUMN_WIDTH}
 			tabData={tabData}

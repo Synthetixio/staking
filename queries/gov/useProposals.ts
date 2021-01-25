@@ -2,34 +2,84 @@ import { useQuery, QueryConfig } from 'react-query';
 import { useRecoilValue } from 'recoil';
 
 import axios from 'axios';
+import synthetix from 'lib/synthetix';
 
 import QUERY_KEYS from 'constants/queryKeys';
-import { COUNCIL_PROPOSALS, PROPOSAL_PROPOSALS } from 'constants/snapshot';
+import {
+	COUNCIL_INDIVIDUAL_PROPOSAL,
+	COUNCIL_PROPOSALS,
+	PROPOSAL_INDIVIDUAL_PROPOSAL,
+	PROPOSAL_PROPOSALS,
+	quadraticWeighting,
+} from 'constants/snapshot';
 
 import { appReadyState } from 'store/app';
-import { Proposal, SPACES } from './types';
+import { Proposal, SPACES, Vote } from './types';
+import { toBigNumber } from 'utils/formatters/number';
+import { uniqBy } from 'lodash';
 
 const useProposals = (spaceKey: SPACES, options?: QueryConfig<Proposal[]>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	return useQuery<Proposal[]>(
 		QUERY_KEYS.Gov.Proposals(spaceKey),
 		async () => {
-			let response;
+			const {
+				contracts: { SynthetixState },
+				utils: { formatUnits },
+			} = synthetix.js!;
+
+			let proposalResponse;
 			if (spaceKey === SPACES.COUNCIL) {
-				response = await axios.get(COUNCIL_PROPOSALS);
+				proposalResponse = await axios.get(COUNCIL_PROPOSALS);
 			} else {
-				response = await axios.get(PROPOSAL_PROPOSALS);
+				proposalResponse = await axios.get(PROPOSAL_PROPOSALS);
 			}
 
-			const { data } = response;
+			const { data } = proposalResponse;
 
-			let result = [] as Proposal[];
+			let result = [];
 
 			for (var key in data) {
 				const rest = data[key];
 
+				const block = data[key].msg.payload.snapshot;
+
+				let voteResponse;
+				if (spaceKey === SPACES.COUNCIL) {
+					voteResponse = await axios.get(COUNCIL_INDIVIDUAL_PROPOSAL(key));
+				} else {
+					voteResponse = await axios.get(PROPOSAL_INDIVIDUAL_PROPOSAL(key));
+				}
+
+				let voters = [];
+
+				for (var key in voteResponse.data) {
+					const voterRest = voteResponse.data[key];
+
+					let issuanceData = await SynthetixState.issuanceData(key, {
+						blockTag: block ? parseInt(block) : 'latest',
+					});
+
+					const debtOwnership = toBigNumber(
+						formatUnits(issuanceData.initialDebtOwnership.toString(), 27)
+					);
+
+					voters.push({
+						address: key,
+						voterWeight: Number(quadraticWeighting(debtOwnership)),
+						...voterRest,
+					});
+				}
+
+				const ResolvedVoters = await Promise.resolve(Promise.all(voters));
+
+				const uniqVoters = uniqBy(ResolvedVoters, (e) => e.address);
+
+				const filteredVoters = uniqVoters.filter((e) => e.voterWeight > 0);
+
 				result.push({
 					proposalHash: key,
+					filteredVoters,
 					...rest,
 				});
 			}

@@ -535,6 +535,16 @@
 			"grants": {
 				"title": "grants"
 			}
+		},
+		"table": {
+			"description": "Description",
+			"status": {
+				"title": "Status",
+				"open": "Open",
+				"closed": "Closed"
+			},
+			"time": "Time left",
+			"votes": "Votes"
 		}
 	},
 	"sidenav": {

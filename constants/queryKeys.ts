@@ -188,6 +188,7 @@ export const QUERY_KEYS = {
 		],
 		SnapshotSpace: (spaceKey: SPACES) => ['gov', 'snapshotSpace', spaceKey],
 		Proposals: (spaceKey: SPACES) => ['gov', 'proposals', spaceKey],
+		Proposal: (spaceKey: SPACES, hash: string) => ['gov', 'proposal', spaceKey, hash],
 	},
 };
 
