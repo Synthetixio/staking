@@ -5,6 +5,7 @@ import { Row, FlexDivCol } from 'styles/common';
 import { useRouter } from 'next/router';
 import { GovPanelType } from 'store/gov';
 import Panel from 'sections/gov/components/Panel';
+import CouncilBoard from './components/CouncilBoard';
 
 const Index: FC = () => {
 	const router = useRouter();
@@ -14,7 +15,9 @@ const Index: FC = () => {
 			<Cols>
 				<Panel currentTab={defaultTab} />
 			</Cols>
-			<Cols>{/* <InfoBox currentTab={defaultTab} /> */}</Cols>
+			<Cols>
+				<CouncilBoard />
+			</Cols>
 		</Row>
 	);
 };

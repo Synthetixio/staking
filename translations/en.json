@@ -545,6 +545,9 @@
 			},
 			"time": "Time left",
 			"votes": "Votes"
+		},
+		"council": {
+			"title": "The current spartan council members:"
 		}
 	},
 	"sidenav": {
