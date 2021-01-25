@@ -181,13 +181,19 @@ export const QUERY_KEYS = {
 	Gov: {
 		DebtOwnership: (walletAddress: string, networkId: NetworkId, block?: number | null) => [
 			'gov',
-			'scaledVotingWeight',
+			'debtOwnership',
 			walletAddress,
 			networkId,
 			block,
 		],
 		SnapshotSpace: (spaceKey: SPACES) => ['gov', 'snapshotSpace', spaceKey],
-		Proposals: (spaceKey: SPACES) => ['gov', 'proposals', spaceKey],
+		Proposals: (spaceKey: SPACES, walletAddress: string, networkId: NetworkId) => [
+			'gov',
+			'proposals',
+			spaceKey,
+			walletAddress,
+			networkId,
+		],
 		Proposal: (spaceKey: SPACES, hash: string) => ['gov', 'proposal', spaceKey, hash],
 	},
 };

@@ -17,7 +17,7 @@ export const useTotalDebtWeighted = (block?: number | null) => {
 
 		getWeightedTotalDebt();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [block]);
+	}, [block, totalSynthDebt]);
 
 	return totalDebtWeighted;
 };

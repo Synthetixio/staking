@@ -17,11 +17,16 @@ import { appReadyState } from 'store/app';
 import { Proposal, SPACES, Vote } from './types';
 import { toBigNumber } from 'utils/formatters/number';
 import { uniqBy } from 'lodash';
+import { isWalletConnectedState, networkState, walletAddressState } from 'store/wallet';
 
 const useProposals = (spaceKey: SPACES, options?: QueryConfig<Proposal[]>) => {
 	const isAppReady = useRecoilValue(appReadyState);
+	const network = useRecoilValue(networkState);
+	const isWalletConnected = useRecoilValue(isWalletConnectedState);
+	const walletAddress = useRecoilValue(walletAddressState);
+
 	return useQuery<Proposal[]>(
-		QUERY_KEYS.Gov.Proposals(spaceKey),
+		QUERY_KEYS.Gov.Proposals(spaceKey, walletAddress ?? '', network?.id!),
 		async () => {
 			const {
 				contracts: { SynthetixState },
@@ -67,6 +72,7 @@ const useProposals = (spaceKey: SPACES, options?: QueryConfig<Proposal[]>) => {
 					voters.push({
 						address: key,
 						voterWeight: Number(quadraticWeighting(debtOwnership)),
+						// voterWeight: 12,
 						...voterRest,
 					});
 				}
@@ -79,7 +85,7 @@ const useProposals = (spaceKey: SPACES, options?: QueryConfig<Proposal[]>) => {
 
 				result.push({
 					proposalHash: key,
-					filteredVoters,
+					filteredVoters: filteredVoters,
 					...rest,
 				});
 			}
@@ -87,7 +93,7 @@ const useProposals = (spaceKey: SPACES, options?: QueryConfig<Proposal[]>) => {
 			return result;
 		},
 		{
-			enabled: isAppReady,
+			enabled: isAppReady && isWalletConnected,
 			...options,
 		}
 	);

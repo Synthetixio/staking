@@ -17,7 +17,7 @@ export const useIndividualDebtWeighted = (block?: number | null) => {
 
 		getIndividualWeightedDebt();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [block]);
+	}, [block, votingWeight]);
 
 	return individualDebtWeighted;
 };

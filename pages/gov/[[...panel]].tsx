@@ -16,7 +16,6 @@ type GovProps = {};
 
 const Gov: React.FC<GovProps> = ({}) => {
 	const { t } = useTranslation();
-	const space = useSnapshotSpace(SPACES.COUNCIL);
 	const councilProposals = useProposals(SPACES.COUNCIL);
 	const govProposals = useProposals(SPACES.PROPOSAL);
 
@@ -39,7 +38,7 @@ const Gov: React.FC<GovProps> = ({}) => {
 			});
 			setActiveProposals(count);
 		}
-	}, [govProposals]);
+	}, [govProposals, latestElectionBlock]);
 
 	useEffect(() => {
 		if (councilProposals.data) {
@@ -51,7 +50,7 @@ const Gov: React.FC<GovProps> = ({}) => {
 			});
 			setLatestElectionBlock(latest);
 		}
-	}, [councilProposals]);
+	}, [councilProposals, latestElectionBlock]);
 
 	return (
 		<>

@@ -16,6 +16,7 @@ const Panel: React.FC<PanelProps> = ({ currentTab }) => {
 	const { t } = useTranslation();
 	const router = useRouter();
 	const councilProposals = useProposals(SPACES.COUNCIL);
+	const proposalProposals = useProposals(SPACES.PROPOSAL);
 
 	const tabData = useMemo(
 		() => [
@@ -35,12 +36,17 @@ const Panel: React.FC<PanelProps> = ({ currentTab }) => {
 			},
 			{
 				title: t('gov.panel.proposals.title'),
-				tabChildren: <></>,
+				tabChildren: (
+					<ProposalList
+						data={proposalProposals.data ?? []}
+						isLoaded={!proposalProposals.isLoading}
+					/>
+				),
 				blue: true,
 				key: GovPanelType.PROPOSAL,
 			},
 		],
-		[t]
+		[t, councilProposals, proposalProposals]
 	);
 	return (
 		<StructuredTab

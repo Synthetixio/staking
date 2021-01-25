@@ -43,7 +43,7 @@ const ProposalList: React.FC<ProposalListProps> = ({ data, isLoaded }) => {
 						<Title>{cellProps.row.original.msg.payload.name}</Title>
 					</CellContainer>
 				),
-				width: 175,
+				width: 200,
 				sortable: false,
 			},
 			{
@@ -83,11 +83,11 @@ const ProposalList: React.FC<ProposalListProps> = ({ data, isLoaded }) => {
 						<Title isNumeric={true}>{cellProps.row.original.filteredVoters.length}</Title>
 					</CellContainer>
 				),
-				width: 100,
+				width: 75,
 				sortable: false,
 			},
 		],
-		[]
+		[t]
 	);
 
 	return (
