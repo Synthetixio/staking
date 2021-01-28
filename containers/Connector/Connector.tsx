@@ -20,6 +20,7 @@ import { LOCAL_STORAGE_KEYS } from 'constants/storage';
 
 const useConnector = () => {
 	const [network, setNetwork] = useRecoilState(networkState);
+	const [ens, setENS] = useState<any>(null);
 	const language = useRecoilValue(languageState);
 	const [provider, setProvider] = useState<ethers.providers.Provider | null>(null);
 	const [signer, setSigner] = useState<ethers.Signer | null>(null);
@@ -48,6 +49,7 @@ const useConnector = () => {
 				networkId,
 				provider,
 			});
+
 			// @ts-ignore
 			setNetwork(synthetix.js?.network);
 			setProvider(provider);
@@ -208,6 +210,7 @@ const useConnector = () => {
 		switchAccounts,
 		isHardwareWallet,
 		selectedWallet,
+		ens,
 	};
 };
 

@@ -18,6 +18,9 @@ import { Proposal, SPACES, Vote } from './types';
 import { toBigNumber } from 'utils/formatters/number';
 import { uniqBy } from 'lodash';
 import { isWalletConnectedState, networkState, walletAddressState } from 'store/wallet';
+import { getScores, getProvider } from '@snapshot-labs/snapshot.js';
+
+import COUNCIL from 'constants/snapshot/spaces/council.json';
 
 const useProposals = (spaceKey: SPACES, options?: QueryConfig<Proposal[]>) => {
 	const isAppReady = useRecoilValue(appReadyState);
@@ -42,55 +45,76 @@ const useProposals = (spaceKey: SPACES, options?: QueryConfig<Proposal[]>) => {
 
 			const { data } = proposalResponse;
 
-			let result = [];
+			let proposals: any;
 
-			for (var key in data) {
-				const rest = data[key];
+			const scores: any = await getScores(
+				COUNCIL.key,
+				COUNCIL.strategies,
+				COUNCIL.network,
+				getProvider(COUNCIL.network),
+				['0xBD015d82a36C9a05108ebC5FEE12672F24dA0Cf4']
+			);
 
-				const block = data[key].msg.payload.snapshot;
+			console.log('Scores', scores);
 
-				let voteResponse;
-				if (spaceKey === SPACES.COUNCIL) {
-					voteResponse = await axios.get(COUNCIL_INDIVIDUAL_PROPOSAL(key));
-				} else {
-					voteResponse = await axios.get(PROPOSAL_INDIVIDUAL_PROPOSAL(key));
-				}
+			// proposals = Object.fromEntries(
+			// 	Object.entries(data).map((proposal: any) => {
+			// 		proposal[1].score = scores.reduce((a, b) => a + (b[proposal[1].address] || 0), 0);
+			// 		return [proposal[0], proposal[1]];
+			// 	})
+			// );
 
-				let voters = [];
+			// let result = [];
 
-				for (var key in voteResponse.data) {
-					const voterRest = voteResponse.data[key];
+			// for (var key in data) {
+			// 	const rest = data[key];
 
-					let issuanceData = await SynthetixState.issuanceData(key, {
-						blockTag: block ? parseInt(block) : 'latest',
-					});
+			// 	const block = data[key].msg.payload.snapshot;
 
-					const debtOwnership = toBigNumber(
-						formatUnits(issuanceData.initialDebtOwnership.toString(), 27)
-					);
+			// 	let voteResponse;
+			// 	if (spaceKey === SPACES.COUNCIL) {
+			// 		voteResponse = await axios.get(COUNCIL_INDIVIDUAL_PROPOSAL(key));
+			// 	} else {
+			// 		voteResponse = await axios.get(PROPOSAL_INDIVIDUAL_PROPOSAL(key));
+			// 	}
 
-					voters.push({
-						address: key,
-						voterWeight: Number(quadraticWeighting(debtOwnership)),
-						// voterWeight: 12,
-						...voterRest,
-					});
-				}
+			// 	let voters = [];
 
-				const ResolvedVoters = await Promise.resolve(Promise.all(voters));
+			// 	for (var key in voteResponse.data) {
+			// 		const voterRest = voteResponse.data[key];
 
-				const uniqVoters = uniqBy(ResolvedVoters, (e) => e.address);
+			// 		let issuanceData = await SynthetixState.issuanceData(key, {
+			// 			blockTag: block ? parseInt(block) : 'latest',
+			// 		});
 
-				const filteredVoters = uniqVoters.filter((e) => e.voterWeight > 0);
+			// 		const debtOwnership = toBigNumber(
+			// 			formatUnits(issuanceData.initialDebtOwnership.toString(), 27)
+			// 		);
 
-				result.push({
-					proposalHash: key,
-					filteredVoters: filteredVoters,
-					...rest,
-				});
-			}
+			// 		voters.push({
+			// 			address: key,
+			// 			voterWeight: Number(quadraticWeighting(debtOwnership)),
+			// 			// voterWeight: 12,
+			// 			...voterRest,
+			// 		});
+			// 	}
 
-			return result;
+			// 	const ResolvedVoters = await Promise.resolve(Promise.all(voters));
+
+			// 	const uniqVoters = uniqBy(ResolvedVoters, (e) => e.address);
+
+			// 	const filteredVoters = uniqVoters.filter((e) => e.voterWeight > 0);
+
+			// 	result.push({
+			// 		proposalHash: key,
+			// 		filteredVoters: filteredVoters,
+			// 		...rest,
+			// 	});
+			// }
+
+			console.table(proposals);
+
+			return proposals;
 		},
 		{
 			enabled: isAppReady && isWalletConnected,
