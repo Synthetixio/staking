@@ -7,7 +7,7 @@ import Connector from 'containers/Connector';
 export const useCouncilMembers = () => {
 	const [councilMembers, setCouncilMembers] = useState<string[] | null>(null);
 	const numOfCouncil = 8;
-	const { provider, ens } = Connector.useContainer();
+	const { provider } = Connector.useContainer();
 
 	let contract = new ethers.Contract(
 		spartanCouncil.address,

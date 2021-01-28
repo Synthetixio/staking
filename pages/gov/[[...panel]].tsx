@@ -17,7 +17,7 @@ type GovProps = {};
 const Gov: React.FC<GovProps> = ({}) => {
 	const { t } = useTranslation();
 	const councilProposals = useProposals(SPACES.COUNCIL);
-	const govProposals = useProposals(SPACES.PROPOSAL);
+	// const govProposals = useProposals(SPACES.PROPOSAL);
 
 	const [latestElectionBlock, setLatestElectionBlock] = useState<number | null>(null);
 	const [activeProposals, setActiveProposals] = useState<number | null>(null);
@@ -25,23 +25,23 @@ const Gov: React.FC<GovProps> = ({}) => {
 	const total = useTotalDebtWeighted(latestElectionBlock);
 	const individual = useIndividualDebtWeighted(latestElectionBlock);
 
-	useEffect(() => {
-		if (govProposals.data) {
-			let count = 0;
-			govProposals.data.map((proposal) => {
-				if (
-					proposal.msg.payload.end > Date.now() / 1000 &&
-					proposal.msg.payload.start < Date.now() / 1000
-				) {
-					count++;
-				}
-			});
-			setActiveProposals(count);
-		}
-	}, [govProposals, latestElectionBlock]);
+	// useEffect(() => {
+	// 	if (govProposals.data) {
+	// 		let count = 0;
+	// 		govProposals.data.map((proposal) => {
+	// 			if (
+	// 				proposal.msg.payload.end > Date.now() / 1000 &&
+	// 				proposal.msg.payload.start < Date.now() / 1000
+	// 			) {
+	// 				count++;
+	// 			}
+	// 		});
+	// 		setActiveProposals(count);
+	// 	}
+	// }, [govProposals, latestElectionBlock]);
 
 	useEffect(() => {
-		if (councilProposals.data) {
+		if (councilProposals.data && !latestElectionBlock) {
 			let latest = 0;
 			councilProposals.data.map((proposal) => {
 				if (parseInt(proposal.msg.payload.snapshot) > latest) {
@@ -50,7 +50,7 @@ const Gov: React.FC<GovProps> = ({}) => {
 			});
 			setLatestElectionBlock(latest);
 		}
-	}, [councilProposals, latestElectionBlock]);
+	}, [councilProposals]);
 
 	return (
 		<>
@@ -78,7 +78,7 @@ const Gov: React.FC<GovProps> = ({}) => {
 				/>
 			</StatsSection>
 			<LineSpacer />
-			<MainContent />
+			{/* <MainContent /> */}
 		</>
 	);
 };

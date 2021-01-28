@@ -28,7 +28,6 @@ export type SpaceData = {
 };
 
 export type Proposal = {
-	proposalHash: string;
 	address: string;
 	msg: {
 		version: string;
