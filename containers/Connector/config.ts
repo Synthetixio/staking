@@ -21,6 +21,12 @@ export const initOnboard = (network: Network, subscriptions: Subscriptions) => {
 			wallets: [
 				{ walletName: 'metamask', preferred: true },
 				{
+					walletName: 'lattice',
+					appName: 'Synthetix',
+					rpcUrl: infuraRpc,
+					preferred: true,
+				},
+				{
 					walletName: 'ledger',
 					rpcUrl: infuraRpc,
 					preferred: true,
