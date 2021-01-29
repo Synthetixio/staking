@@ -21,12 +21,6 @@ import { CryptoCurrency } from 'constants/currency';
 const Index: FC = () => {
 	const [l2AmountSNX, setL2AmountSNX] = useState<number>(0);
 	const [l2APR, setL2APR] = useState<number>(0);
-	const provider = new providers.JsonRpcProvider(OVM_RPC_URL);
-	const synthetixOVM = initSynthetixJS({
-		provider,
-		useOvm: true,
-	});
-
 	const { t } = useTranslation();
 	const { debtBalance, transferableCollateral, stakingEscrow } = useStakingCalculations();
 	const escrowDataQuery = useEscrowDataQuery();
@@ -34,13 +28,29 @@ const Index: FC = () => {
 
 	useEffect(() => {
 		async function getData() {
-			const unformattedTotalSupply = await synthetixOVM.contracts.Synthetix.totalSupply();
-			const totalSupply = Number(synthetixOVM.utils.formatEther(unformattedTotalSupply));
-			const feePeriod = await synthetixOVM.contracts.FeePool.recentFeePeriods('0');
-			const rewards = Number(synthetixOVM.utils.formatEther(feePeriod.rewardsToDistribute));
+			try {
+				const provider = new providers.StaticJsonRpcProvider(OVM_RPC_URL);
+				const {
+					contracts: { Synthetix, FeePool },
+				} = initSynthetixJS({
+					provider,
+					useOvm: true,
+				});
 
-			setL2APR((rewards * 52) / totalSupply);
-			setL2AmountSNX(totalSupply);
+				const [totalSupplyBN, feePeriod] = await Promise.all([
+					Synthetix.totalSupply(),
+					FeePool.recentFeePeriods('0'),
+				]);
+
+				const totalSupply = totalSupplyBN / 1e18;
+				const rewards = feePeriod.rewardsToDistribute / 1e18;
+
+				setL2APR((rewards * 52) / totalSupply);
+				setL2AmountSNX(totalSupply);
+			} catch (e) {
+				setL2APR(0);
+				setL2AmountSNX(0);
+			}
 		}
 		getData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
