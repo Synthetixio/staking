@@ -52,11 +52,7 @@ const BurnTiles: React.FC<BurnTilesProps> = ({
 			<FlexDivRow>
 				<MarginedButtonTile
 					left={true}
-					disabled={
-						maxBurnAmount.isZero() ||
-						burnAmountToFixCRatio.isZero() ||
-						burnAmountToFixCRatio.isGreaterThan(maxBurnAmount)
-					}
+					disabled={burnAmountToFixCRatio.isZero()}
 					title={t('staking.actions.burn.tiles.target.title', {
 						targetCRatio: formatPercent(percentageTargetCRatio),
 					})}
