@@ -7,7 +7,7 @@ import { GovPanelType } from 'store/gov';
 import Panel from 'sections/gov/components/Panel';
 import CouncilBoard from './components/CouncilBoard';
 
-const Index: FC = () => {
+const Index: FC = ({}) => {
 	const router = useRouter();
 	const defaultTab = (router.query.panel && router.query.panel[0]) || GovPanelType.COUNCIL;
 	return (

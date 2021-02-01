@@ -187,10 +187,15 @@ export const QUERY_KEYS = {
 			block,
 		],
 		SnapshotSpace: (spaceKey: SPACES) => ['gov', 'snapshotSpace', spaceKey],
-		Proposals: (spaceKey: SPACES, walletAddress: string, networkId: NetworkId) => [
+		CouncilProposals: (walletAddress: string, networkId: NetworkId) => [
 			'gov',
-			'proposals',
-			spaceKey,
+			'councilProposals',
+			walletAddress,
+			networkId,
+		],
+		GovProposals: (walletAddress: string, networkId: NetworkId) => [
+			'gov',
+			'govProposals',
 			walletAddress,
 			networkId,
 		],

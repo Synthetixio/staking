@@ -6,7 +6,8 @@ import { useTranslation } from 'react-i18next';
 import { GovPanelType } from 'store/gov';
 import ProposalList from './ProposalList';
 import { SPACES } from 'queries/gov/types';
-import useProposals from 'queries/gov/useProposals';
+import useCouncilProposals from 'queries/gov/useCouncilProposals';
+import useGovernanceProposals from 'queries/gov/useGovernanceProposals';
 
 type PanelProps = {
 	currentTab: string;
@@ -15,8 +16,8 @@ type PanelProps = {
 const Panel: React.FC<PanelProps> = ({ currentTab }) => {
 	const { t } = useTranslation();
 	const router = useRouter();
-	const councilProposals = useProposals(SPACES.COUNCIL);
-	const proposalProposals = useProposals(SPACES.PROPOSAL);
+	const councilProposals = useCouncilProposals();
+	const govProposals = useGovernanceProposals();
 
 	const tabData = useMemo(
 		() => [
@@ -37,16 +38,13 @@ const Panel: React.FC<PanelProps> = ({ currentTab }) => {
 			{
 				title: t('gov.panel.proposals.title'),
 				tabChildren: (
-					<ProposalList
-						data={proposalProposals.data ?? []}
-						isLoaded={!proposalProposals.isLoading}
-					/>
+					<ProposalList data={govProposals.data ?? []} isLoaded={!govProposals.isLoading} />
 				),
 				blue: true,
 				key: GovPanelType.PROPOSAL,
 			},
 		],
-		[t, councilProposals, proposalProposals]
+		[t, councilProposals, govProposals]
 	);
 	return (
 		<StructuredTab

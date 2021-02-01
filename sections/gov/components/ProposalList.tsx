@@ -10,11 +10,10 @@ import {
 } from 'styles/common';
 import Button from 'components/Button';
 import { useRecoilValue } from 'recoil';
-import { Proposal, SPACES } from 'queries/gov/types';
+import { Proposal } from 'queries/gov/types';
 import Connector from 'containers/Connector';
 import Table from 'components/Table';
 import { useTranslation } from 'react-i18next';
-import useVotes from 'queries/gov/useVotes';
 import Countdown from 'react-countdown';
 
 type ProposalListProps = {
@@ -26,12 +25,6 @@ const ProposalList: React.FC<ProposalListProps> = ({ data, isLoaded }) => {
 	const { t } = useTranslation();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const { connectWallet } = Connector.useContainer();
-
-	// const e = useVotes(SPACES.COUNCIL, 'QmPyFrvjPRzqsxCpcUFdHU2hWGWV4EJa99ahFATtTyxyZ6');
-
-	// console.log(e);
-
-	console.log(data);
 
 	const columns = useMemo(
 		() => [
@@ -80,7 +73,7 @@ const ProposalList: React.FC<ProposalListProps> = ({ data, isLoaded }) => {
 				accessor: 'votes',
 				Cell: (cellProps: CellProps<Proposal>) => (
 					<CellContainer>
-						<Title isNumeric={true}>{cellProps.row.original.filteredVoters.length}</Title>
+						<Title isNumeric={true}>{cellProps.row.original.votes}</Title>
 					</CellContainer>
 				),
 				width: 75,

@@ -5,40 +5,26 @@ import StatBox from 'components/StatBox';
 import styled from 'styled-components';
 import { StatsSection, LineSpacer } from 'styles/common';
 import { formatNumber } from 'utils/formatters/number';
-import useSnapshotSpace from 'queries/gov/useSnapshotSpace';
-import { SPACES } from 'queries/gov/types';
-import useProposals from 'queries/gov/useProposals';
+
 import useTotalDebtWeighted from 'sections/gov/hooks/useTotalDebtWeighted';
 import useIndividualDebtWeighted from 'sections/gov/hooks/useIndividualDebtWeighted';
+
+import useCouncilProposals from 'queries/gov/useCouncilProposals';
+
 import MainContent from 'sections/gov';
+import useActiveProposalCount from 'sections/gov/hooks/useActiveProposalCount';
 
 type GovProps = {};
 
 const Gov: React.FC<GovProps> = ({}) => {
 	const { t } = useTranslation();
-	const councilProposals = useProposals(SPACES.COUNCIL);
-	// const govProposals = useProposals(SPACES.PROPOSAL);
+	const councilProposals = useCouncilProposals();
 
 	const [latestElectionBlock, setLatestElectionBlock] = useState<number | null>(null);
-	const [activeProposals, setActiveProposals] = useState<number | null>(null);
+	const activeProposals = useActiveProposalCount();
 
 	const total = useTotalDebtWeighted(latestElectionBlock);
 	const individual = useIndividualDebtWeighted(latestElectionBlock);
-
-	// useEffect(() => {
-	// 	if (govProposals.data) {
-	// 		let count = 0;
-	// 		govProposals.data.map((proposal) => {
-	// 			if (
-	// 				proposal.msg.payload.end > Date.now() / 1000 &&
-	// 				proposal.msg.payload.start < Date.now() / 1000
-	// 			) {
-	// 				count++;
-	// 			}
-	// 		});
-	// 		setActiveProposals(count);
-	// 	}
-	// }, [govProposals, latestElectionBlock]);
 
 	useEffect(() => {
 		if (councilProposals.data && !latestElectionBlock) {
@@ -78,7 +64,7 @@ const Gov: React.FC<GovProps> = ({}) => {
 				/>
 			</StatsSection>
 			<LineSpacer />
-			{/* <MainContent /> */}
+			<MainContent />
 		</>
 	);
 };

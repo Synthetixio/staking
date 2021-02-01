@@ -49,7 +49,7 @@ export type Proposal = {
 	sig: string;
 	authorIpfsHash: string;
 	relayerIpfsHash: string;
-	filteredVoters: Vote[];
+	votes: number;
 };
 
 export type Vote = {
