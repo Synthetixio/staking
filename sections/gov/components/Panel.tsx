@@ -1,6 +1,5 @@
 import React, { useMemo } from 'react';
 import StructuredTab from 'components/StructuredTab';
-import { BOX_COLUMN_WIDTH } from 'constants/styles';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
 import { GovPanelType } from 'store/gov';
@@ -46,7 +45,7 @@ const Panel: React.FC<PanelProps> = ({ currentTab }) => {
 				key: GovPanelType.PROPOSAL,
 			},
 		],
-		[t, councilProposals, govProposals]
+		[t, councilProposals, govProposals, grantsProposals]
 	);
 	return (
 		<StructuredTab

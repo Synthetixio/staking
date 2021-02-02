@@ -14,9 +14,7 @@ import SpartanCouncilNFT from 'assets/gifs/SC-NFT.gif';
 import Link from 'assets/svg/app/link.svg';
 import useCouncilMembers from '../hooks/useCouncilMembers';
 
-type CouncilBoardProps = {};
-
-const CouncilBoard: React.FC<CouncilBoardProps> = ({}) => {
+const CouncilBoard: React.FC = () => {
 	const { t } = useTranslation();
 	const { etherscanInstance } = Etherscan.useContainer();
 	const theme = useTheme();

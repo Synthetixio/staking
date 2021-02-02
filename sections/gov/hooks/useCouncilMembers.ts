@@ -31,7 +31,7 @@ export const useCouncilMembers = () => {
 			}
 		};
 		getCouncilMembers();
-	}, [provider, isAppReady]);
+	}, [provider, isAppReady, contract]);
 
 	return councilMembers;
 };

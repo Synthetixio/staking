@@ -15,9 +15,7 @@ import MainContent from 'sections/gov';
 import useActiveProposalCount from 'sections/gov/hooks/useActiveProposalCount';
 import { SPACE_KEY } from 'constants/snapshot';
 
-type GovProps = {};
-
-const Gov: React.FC<GovProps> = ({}) => {
+const Gov: React.FC = () => {
 	const { t } = useTranslation();
 	const councilProposals = useProposals(SPACE_KEY.COUNCIL);
 
@@ -28,7 +26,7 @@ const Gov: React.FC<GovProps> = ({}) => {
 	const individual = useIndividualDebtWeighted(latestElectionBlock);
 
 	useEffect(() => {
-		if (councilProposals.data && !latestElectionBlock) {
+		if (councilProposals.data) {
 			let latest = 0;
 			councilProposals.data.map((proposal) => {
 				if (parseInt(proposal.msg.payload.snapshot) > latest) {

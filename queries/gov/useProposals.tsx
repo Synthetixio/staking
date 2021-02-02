@@ -10,9 +10,6 @@ import { appReadyState } from 'store/app';
 import { Proposal, SpaceData } from './types';
 import { isWalletConnectedState, networkState, walletAddressState } from 'store/wallet';
 import snapshot from '@snapshot-labs/snapshot.js';
-
-import COUNCIL from 'constants/snapshot/spaces/council.json';
-
 import Connector from 'containers/Connector';
 
 const useProposals = (spaceKey: SPACE_KEY, options?: QueryConfig<Proposal[]>) => {

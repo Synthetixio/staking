@@ -4,22 +4,17 @@ import { useRecoilValue } from 'recoil';
 import axios from 'axios';
 
 import QUERY_KEYS from 'constants/queryKeys';
-import { COUNCIL_SPACE, PROPOSAL_SPACE } from 'constants/snapshot';
+import { SPACE, SPACE_KEY } from 'constants/snapshot';
 
 import { appReadyState } from 'store/app';
-import { SPACES, SpaceData } from './types';
+import { SpaceData } from './types';
 
-const useSnapshotSpace = (spaceKey: SPACES, options?: QueryConfig<SpaceData>) => {
+const useSnapshotSpace = (spaceKey: SPACE_KEY, options?: QueryConfig<SpaceData>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	return useQuery<SpaceData>(
 		QUERY_KEYS.Gov.SnapshotSpace(spaceKey),
 		async () => {
-			let response;
-			if (spaceKey === SPACES.COUNCIL) {
-				response = await axios.get(COUNCIL_SPACE);
-			} else {
-				response = await axios.get(PROPOSAL_SPACE);
-			}
+			const response = await axios.get(SPACE(spaceKey));
 
 			const { data }: { data: SpaceData } = response;
 
