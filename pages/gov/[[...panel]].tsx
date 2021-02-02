@@ -9,16 +9,17 @@ import { formatNumber } from 'utils/formatters/number';
 import useTotalDebtWeighted from 'sections/gov/hooks/useTotalDebtWeighted';
 import useIndividualDebtWeighted from 'sections/gov/hooks/useIndividualDebtWeighted';
 
-import useCouncilProposals from 'queries/gov/useCouncilProposals';
+import useProposals from 'queries/gov/useProposals';
 
 import MainContent from 'sections/gov';
 import useActiveProposalCount from 'sections/gov/hooks/useActiveProposalCount';
+import { SPACE_KEY } from 'constants/snapshot';
 
 type GovProps = {};
 
 const Gov: React.FC<GovProps> = ({}) => {
 	const { t } = useTranslation();
-	const councilProposals = useCouncilProposals();
+	const councilProposals = useProposals(SPACE_KEY.COUNCIL);
 
 	const [latestElectionBlock, setLatestElectionBlock] = useState<number | null>(null);
 	const activeProposals = useActiveProposalCount();

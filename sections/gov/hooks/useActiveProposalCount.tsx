@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
-import useGovernanceProposals from 'queries/gov/useGovernanceProposals';
 import { useRecoilValue } from 'recoil';
 import { appReadyState } from 'store/app';
+import { SPACE_KEY } from 'constants/snapshot';
+import useProposals from 'queries/gov/useProposals';
 
 export const useActiveProposalCount = () => {
 	const [activeCount, setActiveCount] = useState<number | null>(null);
 	const isAppReady = useRecoilValue(appReadyState);
-	const govProposals = useGovernanceProposals();
+	const govProposals = useProposals(SPACE_KEY.PROPOSAL);
 
 	useEffect(() => {
 		const getCount = async () => {

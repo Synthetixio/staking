@@ -1,5 +1,5 @@
 import { NetworkId } from '@synthetixio/js';
-import { SPACES } from 'queries/gov/types';
+import { SPACE_KEY } from 'constants/snapshot';
 import { CurrencyKey } from './currency';
 import { Period } from './period';
 
@@ -186,7 +186,14 @@ export const QUERY_KEYS = {
 			networkId,
 			block,
 		],
-		SnapshotSpace: (spaceKey: SPACES) => ['gov', 'snapshotSpace', spaceKey],
+		SnapshotSpace: (spaceKey: SPACE_KEY) => ['gov', 'snapshotSpace', spaceKey],
+		Proposals: (spaceKey: SPACE_KEY, walletAddress: string, networkId: NetworkId) => [
+			'gov',
+			'proposals',
+			spaceKey,
+			walletAddress,
+			networkId,
+		],
 		CouncilProposals: (walletAddress: string, networkId: NetworkId) => [
 			'gov',
 			'councilProposals',
@@ -199,7 +206,13 @@ export const QUERY_KEYS = {
 			walletAddress,
 			networkId,
 		],
-		Proposal: (spaceKey: SPACES, hash: string) => ['gov', 'proposal', spaceKey, hash],
+		GrantsProposals: (walletAddress: string, networkId: NetworkId) => [
+			'gov',
+			'grantsProposals',
+			walletAddress,
+			networkId,
+		],
+		Proposal: (spaceKey: SPACE_KEY, hash: string) => ['gov', 'proposal', spaceKey, hash],
 	},
 };
 

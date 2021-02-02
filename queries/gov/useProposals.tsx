@@ -4,17 +4,18 @@ import { useRecoilValue } from 'recoil';
 import axios from 'axios';
 
 import QUERY_KEYS from 'constants/queryKeys';
-import { PROPOSAL_INDIVIDUAL_PROPOSAL, PROPOSAL_PROPOSALS } from 'constants/snapshot';
+import { SPACE, PROPOSAL, SPACE_KEY, PROPOSALS } from 'constants/snapshot';
 
 import { appReadyState } from 'store/app';
-import { Proposal, SPACES } from './types';
+import { Proposal, SpaceData } from './types';
 import { isWalletConnectedState, networkState, walletAddressState } from 'store/wallet';
 import snapshot from '@snapshot-labs/snapshot.js';
 
-import PROPOSALS from 'constants/snapshot/spaces/proposals.json';
+import COUNCIL from 'constants/snapshot/spaces/council.json';
+
 import Connector from 'containers/Connector';
 
-const useGovernanceProposals = (options?: QueryConfig<Proposal[]>) => {
+const useProposals = (spaceKey: SPACE_KEY, options?: QueryConfig<Proposal[]>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const network = useRecoilValue(networkState);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
@@ -22,9 +23,13 @@ const useGovernanceProposals = (options?: QueryConfig<Proposal[]>) => {
 	const { provider } = Connector.useContainer();
 
 	return useQuery<Proposal[]>(
-		QUERY_KEYS.Gov.GovProposals(walletAddress ?? '', network?.id!),
+		QUERY_KEYS.Gov.Proposals(spaceKey, walletAddress ?? '', network?.id!),
 		async () => {
-			let proposalsResponse = await axios.get(PROPOSAL_PROPOSALS);
+			const space = await axios.get(SPACE(spaceKey));
+
+			const spaceData = space.data as SpaceData;
+
+			const proposalsResponse = await axios.get(PROPOSALS(spaceKey));
 
 			const { data } = proposalsResponse;
 
@@ -34,7 +39,7 @@ const useGovernanceProposals = (options?: QueryConfig<Proposal[]>) => {
 				const proposal = data[key] as Proposal;
 				const proposalSnapshot = proposal.msg.payload.snapshot;
 				const hash = key;
-				let voterResponse = await axios.get(PROPOSAL_INDIVIDUAL_PROPOSAL(hash));
+				let voterResponse = await axios.get(PROPOSAL(spaceKey, hash));
 
 				const blockNumber: any = await provider?.getBlockNumber();
 
@@ -43,18 +48,17 @@ const useGovernanceProposals = (options?: QueryConfig<Proposal[]>) => {
 						? 'latest'
 						: parseInt(proposalSnapshot);
 
-				const [scores] = await Promise.all([
+				const [scores]: any = await Promise.all([
 					snapshot.utils.getScores(
-						PROPOSALS.key,
-						PROPOSALS.strategies,
-						PROPOSALS.network,
+						spaceKey,
+						spaceData.strategies,
+						spaceData.network,
 						provider,
 						Object.values(voterResponse.data).map((vote: any) => vote.address),
-						// // @ts-ignore
+						// @ts-ignore
 						blockTag
 					),
 				]);
-
 				result.push({
 					...data[key],
 					votes: Object.values(scores[0]).filter((e: any) => e > 0).length,
@@ -69,4 +73,4 @@ const useGovernanceProposals = (options?: QueryConfig<Proposal[]>) => {
 	);
 };
 
-export default useGovernanceProposals;
+export default useProposals;

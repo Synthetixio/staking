@@ -5,9 +5,8 @@ import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
 import { GovPanelType } from 'store/gov';
 import ProposalList from './ProposalList';
-import { SPACES } from 'queries/gov/types';
-import useCouncilProposals from 'queries/gov/useCouncilProposals';
-import useGovernanceProposals from 'queries/gov/useGovernanceProposals';
+import useProposals from 'queries/gov/useProposals';
+import { SPACE_KEY } from 'constants/snapshot';
 
 type PanelProps = {
 	currentTab: string;
@@ -16,8 +15,9 @@ type PanelProps = {
 const Panel: React.FC<PanelProps> = ({ currentTab }) => {
 	const { t } = useTranslation();
 	const router = useRouter();
-	const councilProposals = useCouncilProposals();
-	const govProposals = useGovernanceProposals();
+	const councilProposals = useProposals(SPACE_KEY.COUNCIL);
+	const govProposals = useProposals(SPACE_KEY.PROPOSAL);
+	const grantsProposals = useProposals(SPACE_KEY.GRANTS);
 
 	const tabData = useMemo(
 		() => [
@@ -31,7 +31,9 @@ const Panel: React.FC<PanelProps> = ({ currentTab }) => {
 			},
 			{
 				title: t('gov.panel.grants.title'),
-				tabChildren: <></>,
+				tabChildren: (
+					<ProposalList data={grantsProposals.data ?? []} isLoaded={!grantsProposals.isLoading} />
+				),
 				blue: true,
 				key: GovPanelType.GRANTS,
 			},
@@ -50,7 +52,7 @@ const Panel: React.FC<PanelProps> = ({ currentTab }) => {
 		<StructuredTab
 			boxPadding={0}
 			boxHeight={450}
-			boxWidth={BOX_COLUMN_WIDTH}
+			boxWidth={500}
 			tabData={tabData}
 			setPanelType={(key) => router.push(`/gov/${key}`)}
 			currentPanel={t(`gov.panel.${currentTab}.title`)}

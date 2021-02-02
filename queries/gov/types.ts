@@ -1,12 +1,7 @@
-export enum SPACES {
-	COUNCIL = 'council',
-	PROPOSAL = 'proposal',
-}
-
 export type SpaceStrategy = {
 	name: string;
 	params: {
-		address: string;
+		address?: string;
 		decimals: number;
 		symbol: string;
 	};
@@ -23,7 +18,7 @@ export type SpaceData = {
 	name: string;
 	network: string;
 	skin: string;
-	stratgies: SpaceStrategy[];
+	strategies: SpaceStrategy[];
 	symbol: string;
 };
 
