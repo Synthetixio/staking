@@ -1,8 +1,9 @@
 import { useMemo } from 'react';
+
 import useGetDebtDataQuery from 'queries/debt/useGetDebtDataQuery';
-import useEscrowDataQuery from 'queries/escrow/useEscrowDataQuery';
 import useTokenSaleEscrowDateQuery from 'queries/escrow/useTokenSaleEscrowQuery';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
+import useEscrowDataQuery from 'hooks/useEscrowDataQueryWrapper';
 import { toBigNumber } from 'utils/formatters/number';
 
 const useStakingCalculations = () => {
@@ -58,6 +59,7 @@ const useStakingCalculations = () => {
 			totalEscrowBalance,
 			issuableSynths,
 			percentCurrentCRatioOfTarget,
+			stakingEscrow,
 		};
 	}, [debtData, exchangeRates, rewardEscrowBalance, tokenSaleEscrowBalance]);
 

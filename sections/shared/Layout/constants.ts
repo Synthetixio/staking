@@ -36,10 +36,21 @@ export const MENU_LINKS: MenuLinks = [
 		i18nLabel: 'sidenav.gov',
 		link: ROUTES.Gov.Home,
 	},
-	// {
-	// 	i18nLabel: 'sidenav.l2',
-	// 	link: ROUTES.L2.Home,
-	// },
+	{
+		i18nLabel: 'sidenav.l2',
+		link: ROUTES.L2.Home,
+	},
+];
+
+export const MIGRATE_MENU_LINKS: MenuLinks = [
+	{
+		i18nLabel: 'sidenav.dashboard',
+		link: ROUTES.Home,
+	},
+	{
+		i18nLabel: 'sidenav.escrow',
+		link: ROUTES.Escrow.Home,
+	},
 ];
 
 export const MENU_LINKS_WALLET_CONNECTED: MenuLinks = [];

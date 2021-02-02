@@ -89,7 +89,8 @@ const BurnTab: React.FC = () => {
 		} catch (e) {
 			console.log(e);
 		}
-	}, [walletAddress]);
+		// eslint-disable-next-line
+	}, [walletAddress, debtBalance]);
 
 	useEffect(() => {
 		getMaxSecsLeftInWaitingPeriod();
@@ -186,6 +187,7 @@ const BurnTab: React.FC = () => {
 								setTransactionState(Transaction.SUCCESS);
 							},
 						});
+						onBurnChange('0');
 						setTxModalOpen(false);
 					}
 				} catch (e) {

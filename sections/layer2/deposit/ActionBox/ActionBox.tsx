@@ -3,7 +3,7 @@ import StructuredTab from 'components/StructuredTab';
 import { BOX_COLUMN_WIDTH } from 'constants/styles';
 import { useTranslation } from 'react-i18next';
 
-import DepositPanel from '../DepositPanel';
+import DepositTab from '../DepositTab';
 
 const ActionBox: React.FC = () => {
 	const { t } = useTranslation();
@@ -12,7 +12,7 @@ const ActionBox: React.FC = () => {
 		() => [
 			{
 				title: t('layer2.actions.deposit.title'),
-				tabChildren: <DepositPanel />,
+				tabChildren: <DepositTab />,
 				key: 'deposit',
 				blue: true,
 			},
@@ -22,6 +22,7 @@ const ActionBox: React.FC = () => {
 
 	return (
 		<StructuredTab
+			singleTab={true}
 			boxPadding={20}
 			boxWidth={BOX_COLUMN_WIDTH}
 			tabData={tabData}

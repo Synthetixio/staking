@@ -87,8 +87,6 @@ const LayoutOne: FC = () => {
 				title: t('dashboard.actions.migrate.title'),
 				copy: t('dashboard.actions.migrate.copy'),
 				link: ROUTES.L2.Home,
-				tooltip: t('dashboard.actions.migrate.tooltip'),
-				isDisabled: true,
 			},
 			{
 				gridLocations: ['col-1', 'col-2', 'row-2', 'row-3'],

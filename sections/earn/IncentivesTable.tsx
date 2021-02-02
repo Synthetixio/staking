@@ -168,25 +168,31 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab }
 			{
 				Header: <>{t('earn.incentives.options.rewards.title')}</>,
 				accessor: 'rewards',
-				Cell: (cellProps: CellProps<EarnItem, EarnItem['rewards']>) => (
-					<CellContainer>
-						<Title isNumeric={true}>
-							{formatCurrency(CryptoCurrency.SNX, cellProps.value, {
-								currencyKey: CryptoCurrency.SNX,
-							})}
-						</Title>
-						<Subtitle>
-							{cellProps.row.original.claimed === NOT_APPLICABLE ||
-							(!cellProps.row.original.claimed && cellProps.row.original.rewards === 0) ? (
-								''
-							) : cellProps.row.original.claimed ? (
-								t('earn.incentives.options.rewards.claimed')
-							) : (
-								<Claimable>{t('earn.incentives.options.rewards.claimable')}</Claimable>
-							)}
-						</Subtitle>
-					</CellContainer>
-				),
+				Cell: (cellProps: CellProps<EarnItem, EarnItem['rewards']>) => {
+					if (!cellProps.row.original.externalLink) {
+						return (
+							<CellContainer>
+								<Title isNumeric={true}>
+									{formatCurrency(CryptoCurrency.SNX, cellProps.value, {
+										currencyKey: CryptoCurrency.SNX,
+									})}
+								</Title>
+								<Subtitle>
+									{cellProps.row.original.claimed === NOT_APPLICABLE ||
+									(!cellProps.row.original.claimed && cellProps.row.original.rewards === 0) ? (
+										''
+									) : cellProps.row.original.claimed ? (
+										t('earn.incentives.options.rewards.claimed')
+									) : (
+										<Claimable>{t('earn.incentives.options.rewards.claimable')}</Claimable>
+									)}
+								</Subtitle>
+							</CellContainer>
+						);
+					} else {
+						return <p>{t('earn.incentives.options.curve.helper')}</p>;
+					}
+				},
 				width: 150,
 				sortable: true,
 			},

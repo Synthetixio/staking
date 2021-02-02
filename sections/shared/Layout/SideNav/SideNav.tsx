@@ -11,13 +11,14 @@ import StakingLogo from 'assets/svg/app/staking-logo.svg';
 
 import useHistoricalRatesQuery from 'queries/rates/useHistoricalRatesQuery';
 import useSNX24hrPricesQuery from 'queries/rates/useSNX24hrPricesQuery';
+import useEscrowDataQuery from 'hooks/useEscrowDataQueryWrapper';
 
 import ROUTES from 'constants/routes';
 import { CryptoCurrency } from 'constants/currency';
 import { SIDE_NAV_WIDTH, zIndex } from 'constants/ui';
 import { Period } from 'constants/period';
 
-import { MENU_LINKS } from '../constants';
+import { MENU_LINKS, MIGRATE_MENU_LINKS } from '../constants';
 import PriceItem from './PriceItem';
 import PeriodBarStats from './PeriodBarStats';
 import CRatioBarStats from './CRatioBarStats';
@@ -38,6 +39,11 @@ const SideNav: FC = () => {
 		return (ETH24hrPricesQuery?.data?.rates ?? []).map((dataPoint) => ({ value: dataPoint.rate }));
 	}, [ETH24hrPricesQuery?.data?.rates]);
 
+	const rewardEscrowQuery = useEscrowDataQuery();
+	const totalBalancePendingMigration = rewardEscrowQuery?.data?.totalBalancePendingMigration ?? 0;
+
+	const menuLinks = totalBalancePendingMigration > 0 ? MIGRATE_MENU_LINKS : MENU_LINKS;
+
 	return (
 		<SideNavContainer>
 			<StakingLogoWrap>
@@ -48,10 +54,9 @@ const SideNav: FC = () => {
 				</Link>
 			</StakingLogoWrap>
 			<MenuLinks>
-				{MENU_LINKS.map(({ i18nLabel, link }) => (
+				{menuLinks.map(({ i18nLabel, link }) => (
 					<MenuLinkItem
 						key={link}
-						isDisabled={link === ROUTES.L2.Home}
 						isActive={asPath === link || (link !== ROUTES.Home && asPath.includes(link))}
 					>
 						<Link href={link}>
@@ -95,7 +100,7 @@ const MenuLinks = styled.div`
 	position: relative;
 `;
 
-const MenuLinkItem = styled.div<{ isActive: boolean; isDisabled: boolean }>`
+const MenuLinkItem = styled.div<{ isActive: boolean }>`
 	line-height: 40px;
 	padding-bottom: 10px;
 	position: relative;
@@ -117,12 +122,6 @@ const MenuLinkItem = styled.div<{ isActive: boolean; isDisabled: boolean }>`
 			props.isActive &&
 			css`
 				opacity: unset;
-			`}
-		${(props) =>
-			props.isDisabled &&
-			css`
-				opacity: 0.1;
-				pointer-events: none;
 			`}
 	}
 

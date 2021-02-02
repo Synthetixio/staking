@@ -139,9 +139,15 @@ export const QUERY_KEYS = {
 		],
 	},
 	Escrow: {
-		Data: (walletAddress: string, networkId: NetworkId) => [
+		DataV1: (walletAddress: string, networkId: NetworkId) => [
 			'escrow',
-			'data',
+			'dataV1',
+			walletAddress,
+			networkId,
+		],
+		DataV2: (walletAddress: string, networkId: NetworkId) => [
+			'escrow',
+			'dataV2',
 			walletAddress,
 			networkId,
 		],
@@ -178,6 +184,12 @@ export const QUERY_KEYS = {
 			networkId,
 		],
 	},
+	Deposits: (walletAddress: string, networkId: NetworkId) => [
+		'deposits',
+		'depositsData',
+		walletAddress,
+		networkId,
+	],
 	Gov: {
 		DebtOwnership: (walletAddress: string, networkId: NetworkId, block?: number | null) => [
 			'gov',
@@ -191,24 +203,6 @@ export const QUERY_KEYS = {
 			'gov',
 			'proposals',
 			spaceKey,
-			walletAddress,
-			networkId,
-		],
-		CouncilProposals: (walletAddress: string, networkId: NetworkId) => [
-			'gov',
-			'councilProposals',
-			walletAddress,
-			networkId,
-		],
-		GovProposals: (walletAddress: string, networkId: NetworkId) => [
-			'gov',
-			'govProposals',
-			walletAddress,
-			networkId,
-		],
-		GrantsProposals: (walletAddress: string, networkId: NetworkId) => [
-			'gov',
-			'grantsProposals',
 			walletAddress,
 			networkId,
 		],
