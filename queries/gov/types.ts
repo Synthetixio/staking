@@ -45,6 +45,7 @@ export type Proposal = {
 	authorIpfsHash: string;
 	relayerIpfsHash: string;
 	votes: number;
+	route: Function;
 };
 
 export type Vote = {

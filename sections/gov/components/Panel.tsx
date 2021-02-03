@@ -5,7 +5,6 @@ import { useTranslation } from 'react-i18next';
 import ProposalList from './ProposalList';
 import useProposals from 'queries/gov/useProposals';
 import { SPACE_KEY } from 'constants/snapshot';
-import ROUTES from 'constants/routes';
 
 type PanelProps = {
 	currentTab: string;
@@ -26,7 +25,6 @@ const Panel: React.FC<PanelProps> = ({ currentTab }) => {
 					<ProposalList data={councilProposals.data ?? []} isLoaded={!councilProposals.isLoading} />
 				),
 				blue: true,
-				route: ROUTES.Gov.Council.Home,
 				key: SPACE_KEY.COUNCIL,
 			},
 			{
@@ -35,7 +33,6 @@ const Panel: React.FC<PanelProps> = ({ currentTab }) => {
 					<ProposalList data={grantsProposals.data ?? []} isLoaded={!grantsProposals.isLoading} />
 				),
 				blue: true,
-				route: ROUTES.Gov.Grants.Home,
 				key: SPACE_KEY.GRANTS,
 			},
 			{
@@ -44,7 +41,6 @@ const Panel: React.FC<PanelProps> = ({ currentTab }) => {
 					<ProposalList data={govProposals.data ?? []} isLoaded={!govProposals.isLoading} />
 				),
 				blue: true,
-				route: ROUTES.Gov.Proposals.Home,
 				key: SPACE_KEY.PROPOSAL,
 			},
 		],

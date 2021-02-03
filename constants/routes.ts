@@ -33,21 +33,9 @@ export const ROUTES = {
 	},
 	Gov: {
 		Home: '/gov',
-		Council: {
-			Home: '/gov/counci',
-			Create: '/gov/council/create',
-			Proposal: '/gov/council/proposal',
-		},
-		Grants: {
-			Home: '/gov/grants',
-			Create: 'gov/grants/create',
-			Proposal: '/gov/council/proposal',
-		},
-		Proposals: {
-			Home: '/gov/proposals',
-			Create: '/gov/proposals/create',
-			Proposal: '/gov/proposals/proposal',
-		},
+		Space: (spaceKey: string) => `/gov/${spaceKey}`,
+		Create: (spaceKey: string) => `/gov/${spaceKey}/create`,
+		Proposal: (spaceKey: string, id: string) => `/gov/${spaceKey}/${id}`,
 	},
 };
 

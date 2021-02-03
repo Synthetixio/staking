@@ -30,16 +30,6 @@ export const InputContainer = styled(FlexDivColCentered)`
 	height: 600px;
 `;
 
-export const HeaderBox = styled(FlexDivRowCentered)`
-	padding: 16px 0px;
-	p {
-		color: ${(props) => props.theme.colors.white};
-		font-size: 16px;
-		font-family: ${(props) => props.theme.fonts.condensedBold};
-		margin-right: 16px;
-	}
-`;
-
 export const StyledSelect = styled(Select)`
 	border: ${(props) => `2px solid ${props.theme.colors.blue}`};
 	width: 100px;
