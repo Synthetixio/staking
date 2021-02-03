@@ -21,15 +21,16 @@ const CouncilBoard: React.FC = () => {
 	const members = useCouncilMembers();
 
 	return (
-		<TabPanelContainer width={BOX_COLUMN_WIDTH} padding={20}>
-			<Title>{t('gov.council.title')}</Title>
+		<TabPanelContainer width={300} padding={0}>
 			<Img width={'100%'} src={SpartanCouncilNFT} />
+			<Title>{t('gov.council.title')}</Title>
+
 			{members &&
 				members.map((member, i) => (
 					<MemberRow key={i}>
 						<FlexDivRowCentered>
 							<Blockie src={makeBlockie(member)} />
-							<Address>{truncateAddress(member)}</Address>
+							<Address>{truncateAddress(member, 7, 7)}</Address>
 						</FlexDivRowCentered>
 						<ExternalLink
 							href={etherscanInstance ? etherscanInstance.addressLink(member) : undefined}
@@ -57,12 +58,15 @@ const Title = styled.p`
 	font-family: ${(props) => props.theme.fonts.extended};
 	font-size: 14px;
 	text-transform: capitalize;
+	text-align: center;
+	padding: 4px 8px;
 `;
 
 const MemberRow = styled(FlexDivRowCentered)`
 	border-bottom: 1px solid ${(props) => props.theme.colors.grayBlue};
 	justify-content: space-between;
 	margin: 8px 0px;
+	padding: 4px 16px;
 `;
 
 const Address = styled.p`
