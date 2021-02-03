@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import makeBlockie from 'ethereum-blockies-base64';
 import Img, { Svg } from 'react-optimized-image';
 
-import { BOX_COLUMN_WIDTH } from 'constants/styles';
 import { ExternalLink, FlexDivRowCentered } from 'styles/common';
 
 import Etherscan from 'containers/Etherscan';

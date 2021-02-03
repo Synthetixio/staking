@@ -13,7 +13,7 @@ export const useActiveProposalCount = () => {
 		const getCount = async () => {
 			if (isAppReady && govProposals.data) {
 				let count = 0;
-				govProposals.data.map((proposal) => {
+				govProposals.data.forEach((proposal) => {
 					if (
 						proposal.msg.payload.end > Date.now() / 1000 &&
 						proposal.msg.payload.start < Date.now() / 1000

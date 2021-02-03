@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { ethers } from 'ethers';
 import spartanCouncil from 'contracts/spartanCouncil';
 import Connector from 'containers/Connector';
@@ -12,10 +12,14 @@ export const useCouncilMembers = () => {
 	const { provider } = Connector.useContainer();
 	const isAppReady = useRecoilValue(appReadyState);
 
-	let contract = new ethers.Contract(
-		spartanCouncil.address,
-		spartanCouncil.abi,
-		provider as ethers.providers.Provider
+	let contract = useMemo(
+		() =>
+			new ethers.Contract(
+				spartanCouncil.address,
+				spartanCouncil.abi,
+				provider as ethers.providers.Provider
+			),
+		[provider]
 	);
 
 	useEffect(() => {

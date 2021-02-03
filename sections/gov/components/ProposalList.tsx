@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import styled from 'styled-components';
 import { CellProps, Row } from 'react-table';
 import { isWalletConnectedState } from 'store/wallet';
@@ -15,6 +15,8 @@ import Connector from 'containers/Connector';
 import Table from 'components/Table';
 import { useTranslation } from 'react-i18next';
 import Countdown from 'react-countdown';
+import { useRouter } from 'next/router';
+import { SPACE_KEY } from 'constants/snapshot';
 
 type ProposalListProps = {
 	data: Proposal[];
@@ -25,6 +27,20 @@ const ProposalList: React.FC<ProposalListProps> = ({ data, isLoaded }) => {
 	const { t } = useTranslation();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const { connectWallet } = Connector.useContainer();
+	const router = useRouter();
+
+	const activeTab = useMemo(
+		() =>
+			isWalletConnected && Array.isArray(router.query.panel) && router.query.panel.length
+				? (router.query.panel[0] as SPACE_KEY)
+				: null,
+		[router.query.panel, isWalletConnected]
+	);
+
+	const handleCreate = useCallback(() => {
+		switch (activeTab) {
+		}
+	}, [activeTab]);
 
 	const columns = useMemo(
 		() => [
@@ -84,29 +100,42 @@ const ProposalList: React.FC<ProposalListProps> = ({ data, isLoaded }) => {
 	);
 
 	return (
-		<StyledTable
-			palette="primary"
-			columns={columns}
-			data={data}
-			isLoading={isWalletConnected && !isLoaded}
-			showPagination={true}
-			onTableRowClick={(row: Row<Proposal>) => {}}
-			noResultsMessage={
-				!isWalletConnected ? (
-					<TableNoResults>
-						<TableNoResultsTitle>{t('common.wallet.no-wallet-connected')}</TableNoResultsTitle>
-						<TableNoResultsButtonContainer>
-							<Button variant="primary" onClick={connectWallet}>
-								{t('common.wallet.connect-wallet')}
-							</Button>
-						</TableNoResultsButtonContainer>
-					</TableNoResults>
-				) : undefined
-			}
-		/>
+		<Container>
+			<StyledTable
+				palette="primary"
+				columns={columns}
+				data={data}
+				maxRows={5}
+				isLoading={isWalletConnected && !isLoaded}
+				showPagination={true}
+				onTableRowClick={(row: Row<Proposal>) => {
+					// router.push(row.original.route);
+				}}
+				noResultsMessage={
+					!isWalletConnected ? (
+						<TableNoResults>
+							<TableNoResultsTitle>{t('common.wallet.no-wallet-connected')}</TableNoResultsTitle>
+							<TableNoResultsButtonContainer>
+								<Button variant="primary" onClick={connectWallet}>
+									{t('common.wallet.connect-wallet')}
+								</Button>
+							</TableNoResultsButtonContainer>
+						</TableNoResults>
+					) : undefined
+				}
+			/>
+			<AbsoluteContainer onClick={() => handleCreate()}>
+				<CreateButton variant="secondary">Create Proposal</CreateButton>
+			</AbsoluteContainer>
+		</Container>
 	);
 };
 export default ProposalList;
+
+const Container = styled.div`
+	position: relative;
+	height: 100%;
+`;
 
 const StyledTable = styled(Table)`
 	.table-body-row {
@@ -130,6 +159,7 @@ const StyledTable = styled(Table)`
 
 const CellContainer = styled(FlexDivCol)`
 	width: 100%;
+	margin-right: 5px;
 `;
 
 const Title = styled.div<{ isNumeric?: boolean }>`
@@ -144,4 +174,17 @@ const Status = styled.div<{ closed: boolean }>`
 	text-transform: uppercase;
 	font-family: ${(props) => props.theme.fonts.interBold};
 	font-size: 12px;
+`;
+
+const AbsoluteContainer = styled.div`
+	position: absolute;
+	width: 100%;
+	bottom: 0px;
+	margin-bottom: 24px;
+	padding: 0px 16px;
+`;
+
+const CreateButton = styled(Button)`
+	text-transform: uppercase;
+	width: 100%;
 `;

@@ -1,19 +1,31 @@
+import { useRouter } from 'next/router';
 import React, { FC, useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
-import { EscrowPanelType, panelTypeState } from 'store/escrow';
+import { EscrowPanelType } from 'store/escrow';
+import { isWalletConnectedState } from 'store/wallet';
 import RewardEscrowSchedule from './RewardEscrowSchedule';
 import TokenSaleEscrowSchedule from './TokenSaleEscrowSchedule';
 
 const EscrowTable: FC = () => {
-	const panelType = useRecoilValue(panelTypeState);
+	const router = useRouter();
+	const isWalletConnected = useRecoilValue(isWalletConnectedState);
+
+	const activeTab = useMemo(
+		() =>
+			isWalletConnected && Array.isArray(router.query.action) && router.query.action.length
+				? router.query.action[0]
+				: null,
+		[router.query.action, isWalletConnected]
+	);
+
 	const returnSchedule = useMemo(
 		() =>
-			panelType === EscrowPanelType.REWARDS ? (
+			activeTab === EscrowPanelType.REWARDS ? (
 				<RewardEscrowSchedule />
 			) : (
 				<TokenSaleEscrowSchedule />
 			),
-		[panelType]
+		[activeTab]
 	);
 
 	return returnSchedule;

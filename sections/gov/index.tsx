@@ -1,29 +1,34 @@
 import { FC } from 'react';
 import styled from 'styled-components';
-import { BOX_COLUMN_WIDTH } from 'constants/styles';
 import { Row, FlexDivCol } from 'styles/common';
 import { useRouter } from 'next/router';
-import { GovPanelType } from 'store/gov';
 import Panel from 'sections/gov/components/Panel';
 import CouncilBoard from './components/CouncilBoard';
+import { SPACE_KEY } from 'constants/snapshot';
 
 const Index: FC = () => {
 	const router = useRouter();
-	const defaultTab = (router.query.panel && router.query.panel[0]) || GovPanelType.COUNCIL;
+	const defaultTab = (router.query.panel && router.query.panel[0]) || SPACE_KEY.COUNCIL;
 	return (
 		<Row>
-			<Cols>
+			<LeftCol>
 				<Panel currentTab={defaultTab} />
-			</Cols>
-			<Cols>
+			</LeftCol>
+			<RightCol>
 				<CouncilBoard />
-			</Cols>
+			</RightCol>
 		</Row>
 	);
 };
 
-const Cols = styled(FlexDivCol)`
-	width: ${BOX_COLUMN_WIDTH}px;
+const LeftCol = styled(FlexDivCol)`
+	width: 700px;
+	margin-right: 8px;
+`;
+
+const RightCol = styled(FlexDivCol)`
+	width: 200px;
+	margin-left: 8px;
 `;
 
 export default Index;

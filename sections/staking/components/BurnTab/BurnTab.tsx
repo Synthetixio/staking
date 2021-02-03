@@ -196,7 +196,7 @@ const BurnTab: React.FC = () => {
 				}
 			}
 		},
-		[amountToBurn, gasPrice, monitorHash, walletAddress, isAppReady]
+		[amountToBurn, gasPrice, monitorHash, walletAddress, isAppReady, onBurnChange]
 	);
 
 	const returnPanel = useMemo(() => {

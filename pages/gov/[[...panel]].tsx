@@ -28,7 +28,7 @@ const Gov: React.FC = () => {
 	useEffect(() => {
 		if (councilProposals.data) {
 			let latest = 0;
-			councilProposals.data.map((proposal) => {
+			councilProposals.data.forEach((proposal) => {
 				if (parseInt(proposal.msg.payload.snapshot) > latest) {
 					latest = parseInt(proposal.msg.payload.snapshot);
 				}
