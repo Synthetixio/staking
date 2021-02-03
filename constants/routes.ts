@@ -7,6 +7,8 @@ export const ROUTES = {
 	},
 	Escrow: {
 		Home: '/escrow',
+		Staking: '/escrow/staking',
+		ICO: '/escrow/ico',
 	},
 	History: {
 		Home: '/history',
@@ -31,9 +33,21 @@ export const ROUTES = {
 	},
 	Gov: {
 		Home: '/gov',
-		Council: '/gov/council',
-		Grants: '/gov/grants',
-		Proposal: '/gov/proposals',
+		Council: {
+			Home: '/gov/counci',
+			Create: '/gov/council/create',
+			Proposal: '/gov/council/proposal',
+		},
+		Grants: {
+			Home: '/gov/grants',
+			Create: 'gov/grants/create',
+			Proposal: '/gov/council/proposal',
+		},
+		Proposals: {
+			Home: '/gov/proposals',
+			Create: '/gov/proposals/create',
+			Proposal: '/gov/proposals/proposal',
+		},
 	},
 };
 

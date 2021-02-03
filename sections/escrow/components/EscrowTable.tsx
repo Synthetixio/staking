@@ -8,7 +8,7 @@ const EscrowTable: FC = () => {
 	const panelType = useRecoilValue(panelTypeState);
 	const returnSchedule = useMemo(
 		() =>
-			panelType === EscrowPanelType.STAKING ? (
+			panelType === EscrowPanelType.REWARDS ? (
 				<RewardEscrowSchedule />
 			) : (
 				<TokenSaleEscrowSchedule />
