@@ -76,8 +76,10 @@ const useIBTCPoolQuery_1 = (options?: QueryConfig<LiquidityPoolData>) => {
 				duration: Number(duration) * 1000,
 				rewards,
 				staked,
+				stakedBN: iBtcStaked,
 				allowance,
 				userBalance,
+				userBalanceBN: iBtcUserBalance,
 				needsToSettle: reclaimAmount || rebateAmount ? true : false,
 			};
 		},
