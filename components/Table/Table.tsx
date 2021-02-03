@@ -32,6 +32,7 @@ type TableProps = {
 	isLoading?: boolean;
 	noResultsMessage?: React.ReactNode;
 	showPagination?: boolean;
+	maxRows?: number;
 };
 
 export const Table: FC<TableProps> = ({
@@ -45,6 +46,7 @@ export const Table: FC<TableProps> = ({
 	className,
 	showPagination = false,
 	isActiveRow,
+	maxRows = MAX_PAGE_ROWS,
 }) => {
 	// TODO: How do I tell Typescript about the usePagination props?
 	const {
@@ -72,7 +74,7 @@ export const Table: FC<TableProps> = ({
 		{
 			columns,
 			data,
-			initialState: { pageSize: showPagination ? MAX_PAGE_ROWS : data.length },
+			initialState: { pageSize: showPagination ? maxRows : data.length },
 			...options,
 		},
 		useSortBy,
@@ -159,7 +161,7 @@ export const Table: FC<TableProps> = ({
 				</ReactTable>
 			</TableContainer>
 			{noResultsMessage}
-			{showPagination && data.length > MAX_PAGE_ROWS ? (
+			{showPagination && data.length > maxRows ? (
 				<Pagination
 					pageIndex={pageIndex}
 					pageCount={pageCount}
