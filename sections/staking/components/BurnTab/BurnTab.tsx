@@ -204,6 +204,7 @@ const BurnTab: React.FC = () => {
 		let inputValue;
 		let isLocked;
 
+		/* If a user has more sUSD than the debt balance, the max burn amount is their debt balance, else it is just the balance they have */
 		const maxBurnAmount = debtBalance.isGreaterThan(sUSDBalance)
 			? toBigNumber(sUSDBalance)
 			: debtBalance;
@@ -239,7 +240,6 @@ const BurnTab: React.FC = () => {
 				return (
 					<BurnTiles
 						percentageTargetCRatio={percentageTargetCRatio}
-						maxBurnAmount={maxBurnAmount}
 						burnAmountToFixCRatio={burnAmountToFixCRatio}
 					/>
 				);
