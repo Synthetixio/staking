@@ -187,7 +187,6 @@ const BurnTab: React.FC = () => {
 								setTransactionState(Transaction.SUCCESS);
 							},
 						});
-						onBurnChange('0');
 						setTxModalOpen(false);
 					}
 				} catch (e) {

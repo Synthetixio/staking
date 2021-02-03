@@ -4,7 +4,7 @@ import useGetDebtDataQuery from 'queries/debt/useGetDebtDataQuery';
 import useTokenSaleEscrowDateQuery from 'queries/escrow/useTokenSaleEscrowQuery';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import useEscrowDataQuery from 'hooks/useEscrowDataQueryWrapper';
-import { toBigNumber } from 'utils/formatters/number';
+import { toBigNumber, maxBN, zeroBN } from 'utils/formatters/number';
 
 const useStakingCalculations = () => {
 	const exchangeRatesQuery = useExchangeRatesQuery();
@@ -27,6 +27,7 @@ const useStakingCalculations = () => {
 		const stakingEscrow = toBigNumber(rewardEscrowBalance?.totalEscrowed ?? 0);
 		const tokenSaleEscrow = toBigNumber(tokenSaleEscrowBalance?.totalEscrowed ?? 0);
 		const issuableSynths = toBigNumber(debtData?.issuableSynths ?? 0);
+		const balance = toBigNumber(debtData?.balance ?? 0);
 
 		const stakedCollateral = collateral.multipliedBy(
 			Math.min(1, currentCRatio.dividedBy(targetCRatio).toNumber())
@@ -35,6 +36,14 @@ const useStakingCalculations = () => {
 		const lockedCollateral = collateral.minus(transferableCollateral);
 		const unstakedCollateral = collateral.minus(stakedCollateral);
 		const totalEscrowBalance = stakingEscrow.plus(tokenSaleEscrow);
+
+		const debtEscrowBalance = maxBN(
+			debtBalance
+				.plus(totalEscrowBalance.multipliedBy(SNXRate).multipliedBy(targetCRatio))
+				.minus(issuableSynths),
+			zeroBN
+		);
+
 		const percentageCurrentCRatio = currentCRatio.isZero()
 			? toBigNumber(0)
 			: toBigNumber(1).div(currentCRatio);
@@ -60,6 +69,8 @@ const useStakingCalculations = () => {
 			issuableSynths,
 			percentCurrentCRatioOfTarget,
 			stakingEscrow,
+			debtEscrowBalance,
+			balance,
 		};
 	}, [debtData, exchangeRates, rewardEscrowBalance, tokenSaleEscrowBalance]);
 

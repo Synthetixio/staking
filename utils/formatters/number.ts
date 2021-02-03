@@ -34,6 +34,10 @@ export const toBigNumber = (value: NumericValue) =>
 
 export const zeroBN = toBigNumber(0);
 
+export const maxBN = BigNumber.maximum;
+
+export const minBN = BigNumber.minimum;
+
 export const formatNumber = (value: NumericValue, options?: FormatNumberOptions) => {
 	const prefix = options?.prefix;
 	const suffix = options?.suffix;
