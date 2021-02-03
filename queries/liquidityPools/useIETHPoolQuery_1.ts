@@ -24,7 +24,6 @@ const useIETHPoolQuery_1 = (options?: QueryConfig<LiquidityPoolData>) => {
 			} = synthetix.js!;
 
 			const address = StakingRewardsiETH.address;
-
 			const getDuration = StakingRewardsiETH.DURATION || StakingRewardsiETH.rewardsDuration;
 			const [
 				duration,
@@ -75,9 +74,11 @@ const useIETHPoolQuery_1 = (options?: QueryConfig<LiquidityPoolData>) => {
 				periodFinish: Number(periodFinish) * 1000,
 				rewards,
 				staked,
+				stakedBN: iEthStaked,
 				duration: Number(duration) * 1000,
 				allowance,
 				userBalance,
+				userBalanceBN: iEthUserBalance,
 				needsToSettle: reclaimAmount || rebateAmount ? true : false,
 			};
 		},

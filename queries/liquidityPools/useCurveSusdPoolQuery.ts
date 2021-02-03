@@ -143,9 +143,11 @@ const useCurveSusdPoolQuery = (options?: QueryConfig<CurveData>) => {
 				rewardsAPR,
 				rewards,
 				staked,
+				stakedBN: curveStaked,
 				duration: Number(duration) * 1000,
 				allowance,
 				userBalance,
+				userBalanceBN: curveSusdUserBalance,
 			};
 		},
 		{
