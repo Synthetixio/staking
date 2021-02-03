@@ -24,7 +24,7 @@ const useIETHPoolQuery_1 = (options?: QueryConfig<LiquidityPoolData>) => {
 			} = synthetix.js!;
 
 			const address = StakingRewardsiETH.address;
-
+			console.log(StakingRewardsiETH);
 			const getDuration = StakingRewardsiETH.DURATION || StakingRewardsiETH.rewardsDuration;
 			const [
 				duration,
