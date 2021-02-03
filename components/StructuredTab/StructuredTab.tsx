@@ -34,9 +34,7 @@ const StructuredTab: FC<StructuredTabProps> = ({
 	currentPanel,
 	singleTab,
 }) => {
-	const [activeTab, setActiveTab] = useState<string>(
-		currentPanel ? currentPanel : tabData[0].title
-	);
+	const [activeTab, setActiveTab] = useState<string>(currentPanel ? currentPanel : tabData[0].key);
 
 	useEffect(() => {
 		if (currentPanel) {
@@ -54,11 +52,11 @@ const StructuredTab: FC<StructuredTabProps> = ({
 						inverseTabColor={inverseTabColor}
 						blue={blue}
 						numberTabs={tabData.length}
-						key={`${title}-${index}-button`}
+						key={`${key}-${index}-button`}
 						name={title}
-						active={activeTab === title}
+						active={activeTab === key}
 						onClick={() => {
-							setActiveTab(title);
+							setActiveTab(key);
 							if (setPanelType != null) {
 								setPanelType(key);
 							}
@@ -69,14 +67,14 @@ const StructuredTab: FC<StructuredTabProps> = ({
 					</TabButton>
 				))}
 			</TabList>
-			{tabData.map(({ title, tabChildren }, index) => (
+			{tabData.map(({ title, tabChildren, key }, index) => (
 				<TabPanel
 					padding={boxPadding}
 					height={boxHeight}
 					width={boxWidth}
-					key={`${title}-${index}-panel`}
+					key={`${key}-${index}-panel`}
 					name={title}
-					activeTab={activeTab}
+					active={activeTab === key}
 				>
 					{tabChildren}
 				</TabPanel>
