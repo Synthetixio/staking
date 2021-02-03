@@ -20,7 +20,6 @@ import ButtonTile from '../ButtonTile';
 
 type BurnTilesProps = {
 	percentageTargetCRatio: BigNumber;
-	maxBurnAmount: BigNumber;
 	burnAmountToFixCRatio: BigNumber;
 };
 
@@ -28,11 +27,7 @@ const burnIcon = <Svg src={BurnCircle} />;
 const burnCustomIcon = <Img src={BurnCustomCircle} />; // TODO: investigate why it doesn't render correctly with <Svg /> (ids were replaced to be unique)
 const burnTargetIcon = <Svg src={BurnTargetCircle} />;
 
-const BurnTiles: React.FC<BurnTilesProps> = ({
-	percentageTargetCRatio,
-	maxBurnAmount,
-	burnAmountToFixCRatio,
-}) => {
+const BurnTiles: React.FC<BurnTilesProps> = ({ percentageTargetCRatio, burnAmountToFixCRatio }) => {
 	const { t } = useTranslation();
 	const [burnType, onBurnTypeChange] = useRecoilState(burnTypeState);
 	const onBurnChange = useSetRecoilState(amountToBurnState);
@@ -52,11 +47,7 @@ const BurnTiles: React.FC<BurnTilesProps> = ({
 			<FlexDivRow>
 				<MarginedButtonTile
 					left={true}
-					disabled={
-						maxBurnAmount.isZero() ||
-						burnAmountToFixCRatio.isZero() ||
-						burnAmountToFixCRatio.isGreaterThan(maxBurnAmount)
-					}
+					disabled={burnAmountToFixCRatio.isZero()}
 					title={t('staking.actions.burn.tiles.target.title', {
 						targetCRatio: formatPercent(percentageTargetCRatio),
 					})}
