@@ -6,6 +6,8 @@ import Img, { Svg } from 'react-optimized-image';
 
 import { ExternalLink, FlexDivRowCentered } from 'styles/common';
 
+import Spinner from 'assets/svg/app/loader.svg';
+
 import Etherscan from 'containers/Etherscan';
 import { truncateAddress } from 'utils/formatters/string';
 
@@ -24,7 +26,7 @@ const CouncilBoard: React.FC = () => {
 			<Img width={'100%'} src={SpartanCouncilNFT} />
 			<Title>{t('gov.council.title')}</Title>
 
-			{members &&
+			{members ? (
 				members.map((member, i) => (
 					<MemberRow key={i}>
 						<FlexDivRowCentered>
@@ -37,7 +39,10 @@ const CouncilBoard: React.FC = () => {
 							<Svg color={theme.colors.blue} src={Link} />
 						</ExternalLink>
 					</MemberRow>
-				))}
+				))
+			) : (
+				<StyledSpinner src={Spinner} />
+			)}
 		</TabPanelContainer>
 	);
 };
@@ -78,4 +83,9 @@ const Blockie = styled.img`
 	height: 25px;
 	border-radius: 12.5px;
 	margin-right: 10px;
+`;
+
+const StyledSpinner = styled(Svg)`
+	display: block;
+	margin: 30px auto;
 `;

@@ -27,10 +27,26 @@ type ProposalListProps = {
 
 const ProposalList: React.FC<ProposalListProps> = ({ data, isLoaded }) => {
 	const { t } = useTranslation();
+	const router = useRouter();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const { connectWallet } = Connector.useContainer();
-	const router = useRouter();
-	const [proposalView, setProposalView] = useState<boolean>(false);
+	const [proposal, setProposal] = useState<ProposalType | null>(null);
+
+	useEffect(() => {
+		if (
+			data &&
+			isWalletConnected &&
+			Array.isArray(router.query.panel) &&
+			router.query.panel &&
+			router.query.panel[1]
+		) {
+			const hash = router.query.panel[1] ?? '';
+			const preloadedProposal = data.filter((e) => e.authorIpfsHash === hash);
+			setProposal(preloadedProposal[0]);
+		} else {
+			setProposal(null);
+		}
+	}, [router.query.panel, isWalletConnected, data]);
 
 	const activeTab = useMemo(
 		() =>
@@ -40,12 +56,7 @@ const ProposalList: React.FC<ProposalListProps> = ({ data, isLoaded }) => {
 		[router.query.panel, isWalletConnected]
 	);
 
-	const handleCreate = useCallback(() => {
-		switch (activeTab) {
-			case SPACE_KEY.COUNCIL:
-				return;
-		}
-	}, [activeTab]);
+	const handleCreate = useCallback(() => {}, []);
 
 	const columns = useMemo(
 		() => [
@@ -107,17 +118,18 @@ const ProposalList: React.FC<ProposalListProps> = ({ data, isLoaded }) => {
 	const returnProposal = useMemo(() => {
 		return (
 			<Proposal
+				proposal={proposal}
 				onBack={() => {
-					setProposalView(false);
+					setProposal(null);
 					router.push(ROUTES.Gov.Space(activeTab));
 				}}
 			/>
 		);
-	}, [activeTab]);
+	}, [activeTab, proposal, router]);
 
 	return (
 		<Container>
-			{proposalView ? (
+			{proposal ? (
 				returnProposal
 			) : (
 				<>
@@ -125,11 +137,11 @@ const ProposalList: React.FC<ProposalListProps> = ({ data, isLoaded }) => {
 						palette="primary"
 						columns={columns}
 						data={data}
-						maxRows={5}
+						maxRows={8}
 						isLoading={isWalletConnected && !isLoaded}
 						showPagination={true}
 						onTableRowClick={(row: Row<ProposalType>) => {
-							setProposalView(!proposalView);
+							setProposal(proposal ? null : row.original);
 							router.push(ROUTES.Gov.Proposal(activeTab, row.original.authorIpfsHash));
 						}}
 						noResultsMessage={
@@ -148,7 +160,7 @@ const ProposalList: React.FC<ProposalListProps> = ({ data, isLoaded }) => {
 						}
 					/>
 					<AbsoluteContainer onClick={() => handleCreate()}>
-						<CreateButton variant="secondary">Create ProposalType</CreateButton>
+						<CreateButton variant="secondary">{t('gov.create.button')}</CreateButton>
 					</AbsoluteContainer>
 				</>
 			)}
@@ -184,7 +196,7 @@ const StyledTable = styled(Table)`
 
 const CellContainer = styled(FlexDivCol)`
 	width: 100%;
-	margin-right: 5px;
+	margin-right: 15px;
 `;
 
 const Title = styled.div<{ isNumeric?: boolean }>`

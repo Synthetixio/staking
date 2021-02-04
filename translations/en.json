@@ -620,6 +620,9 @@
 				"title": "grants"
 			}
 		},
+		"create": {
+			"button": "Create proposal"
+		},
 		"table": {
 			"description": "Description",
 			"status": {
@@ -629,6 +632,12 @@
 			},
 			"time": "Time left",
 			"votes": "Votes"
+		},
+		"proposal": {
+			"status": {
+				"open": "Open",
+				"closed": "Closed"
+			}
 		},
 		"council": {
 			"title": "The current spartan council members"

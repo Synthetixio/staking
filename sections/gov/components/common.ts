@@ -1,16 +1,20 @@
 import styled from 'styled-components';
 
-import { FlexDivColCentered, FlexDivRowCentered, FlexDivCol, ExternalLink } from 'styles/common';
-import Button from 'components/Button';
-import Input from 'components/Input/Input';
-import Select from 'components/Select';
+import { FlexDivColCentered } from 'styles/common';
 
 export const InputContainer = styled(FlexDivColCentered)`
 	background: ${(props) => props.theme.colors.black};
 	position: relative;
 	width: 100%;
+	height: 100%;
 	padding: 16px;
 	margin-bottom: 24px;
-	/* @TODO: Replace with responsive height when mobile */
-	height: 600px;
+`;
+
+export const Divider = styled.div`
+	background: ${(props) => props.theme.colors.grayBlue};
+	height: 1px;
+	width: 100%;
+	margin-top: 20px;
+	margin-bottom: 20px;
 `;

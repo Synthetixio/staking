@@ -48,9 +48,9 @@ const Panel: React.FC<PanelProps> = ({ currentTab }) => {
 	);
 	return (
 		<StructuredTab
-			boxPadding={0}
-			boxHeight={500}
-			boxWidth={500}
+			boxPadding={20}
+			boxHeight={800}
+			boxWidth={750}
 			tabData={tabData}
 			setPanelType={(key) => router.push(`/gov/${key}`)}
 			currentPanel={currentTab}
