@@ -225,15 +225,12 @@ const StakingInput: React.FC<StakingInputProps> = ({
 					<IconButton onClick={() => onBack(null)}>
 						<Svg src={NavigationBack} />
 					</IconButton>
-					{!isMint &&
-						burnType != null &&
-						[(BurnActionType.CUSTOM, BurnActionType.TARGET)].includes(burnType) &&
-						maxBurnAmount && (
-							<BalanceButton variant="text" onClick={() => onInputChange(maxBurnAmount.toString())}>
-								<span>{t('common.wallet.balance')}</span>
-								{formatNumber(maxBurnAmount)}
-							</BalanceButton>
-						)}
+					{!isMint && burnType != null && [BurnActionType.CUSTOM].includes(burnType) && (
+						<BalanceButton variant="text" onClick={() => onInputChange(maxBurnAmount)}>
+							<span>{t('common.wallet.balance')}</span>
+							{formatNumber(maxBurnAmount ?? zeroBN)}
+						</BalanceButton>
+					)}
 				</HeaderRow>
 				<InputBox>
 					<Currency.Icon currencyKey={Synths.sUSD} width="50" height="50" />
