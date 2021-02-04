@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
+import { Svg } from 'react-optimized-image';
 
 import { InfoContainer, Title, Subtitle } from '../../components/common';
 import ExternalLink from '../../components/ExternalLink';
@@ -10,6 +11,8 @@ import { FlexDivColCentered } from 'styles/common';
 import { formatShortDate } from 'utils/formatters/date';
 import { formatCurrency } from 'utils/formatters/number';
 import { CryptoCurrency } from 'constants/currency';
+
+import Warning from 'assets/svg/app/warning.svg';
 
 // This needs to be put somewhere else
 import {
@@ -96,7 +99,13 @@ const InfoBox = () => {
 						showPagination={true}
 					/>
 				) : (
-					<StyledFlexDivColCentered>{t('layer2.deposit.info.no-deposit')}</StyledFlexDivColCentered>
+					<StyledFlexDivColCentered>
+						<Svg src={Warning} />
+						<WarningHeading>{t('layer2.deposit.info.warning')}</WarningHeading>
+						<WarningBody>{t('layer2.deposit.info.metamask-only')}</WarningBody>
+						<WarningBody>{t('layer2.deposit.info.layer2-withdraw-delay')}</WarningBody>
+						<WarningBody>{t('layer2.deposit.info.layer2-rewards')}</WarningBody>
+					</StyledFlexDivColCentered>
 				)}
 			</ContainerBody>
 		</InfoContainer>
@@ -114,7 +123,26 @@ const StyledSubtitle = styled(Subtitle)`
 `;
 
 const StyledFlexDivColCentered = styled(FlexDivColCentered)`
-	margin: 20px 0;
+	padding: 0 20px;
 `;
 
+const Bold = css`
+	font-family: ${(props) => props.theme.fonts.condensedBold};
+`;
+
+const WarningHeading = styled.h2`
+	color: ${(props) => props.theme.colors.pink};
+	font-size: 20px;
+	margin: 4px 0;
+	${Bold};
+`;
+
+const WarningBody = styled.p`
+	margin: 0;
+	font-size: 14px;
+	text-align: left;
+	&:not(:first-child) {
+		margin-top: 6px;
+	}
+`;
 export default InfoBox;
