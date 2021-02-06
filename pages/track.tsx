@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import snxData from 'synthetix-data';
+
 import orderBy from 'lodash/orderBy';
 import last from 'lodash/last';
 import Head from 'next/head';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
-import SynthetixJs from 'utils/snxjs';
+import { SynthetixJs, snxData } from 'utils/snxjs';
 
 import { zeroBN } from 'utils/formatters/number';
 
