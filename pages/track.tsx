@@ -158,29 +158,4 @@ const TrackPage = () => {
 	);
 };
 
-const StakedValue = styled(StatBox)`
-	.title {
-		color: ${(props) => props.theme.colors.blue};
-	}
-`;
-const CRatio = styled(StatBox)`
-	.value {
-		text-shadow: ${(props) => props.theme.colors.blueTextShadow};
-		color: ${(props) => props.theme.colors.black};
-	}
-`;
-const ActiveDebt = styled(StatBox)`
-	.title {
-		color: ${(props) => props.theme.colors.pink};
-	}
-`;
-
-export const CRatioProgressBar = styled(ProgressBar)`
-	height: 6px;
-	width: 100%;
-	transform: translateY(12px);
-	// match StatBox "lg" background size width
-	max-width: 176px;
-`;
-
 export default TrackPage;
