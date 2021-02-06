@@ -68,7 +68,7 @@ const TrackPage = () => {
 
 				// We set historicalIssuanceAggregation array, to store all the cumulative
 				// values of every mint and burns
-				const historicalIssuanceAggregation = [];
+				const historicalIssuanceAggregation: any[] = [];
 				eventBlocks.forEach((event, i) => {
 					const multiplier = event.type === 'burn' ? -1 : 1;
 					const aggregation =
