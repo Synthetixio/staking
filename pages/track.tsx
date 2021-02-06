@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { SynthetixJs } from 'synthetix-js';
 import snxData from 'synthetix-data';
 import orderBy from 'lodash/orderBy';
 import last from 'lodash/last';
@@ -7,6 +6,7 @@ import Head from 'next/head';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
+const { SynthetixJs } = require('synthetix-js');
 
 import { zeroBN } from 'utils/formatters/number';
 
@@ -37,7 +37,7 @@ const TrackPage = () => {
 
 	const walletAddress = useRecoilValue(walletAddressState);
 
-	const bytesFormatter = (input) => snxjs.ethers.utils.formatBytes32String(input);
+	const bytesFormatter = (input: String) => snxjs.ethers.utils.formatBytes32String(input);
 
 	const sUSDRate = exchangeRatesQuery.data?.sUSD ?? 0;
 
@@ -55,11 +55,11 @@ const TrackPage = () => {
 					snxjs.Synthetix.debtBalanceOf(walletAddress, bytesFormatter('sUSD')),
 				]);
 
-				const burnEventsMap = burnEvents.map((event) => {
+				const burnEventsMap = burnEvents.map((event: any) => {
 					return { ...event, type: 'burn' };
 				});
 
-				const mintEventsMap = mintEvents.map((event) => {
+				const mintEventsMap = mintEvents.map((event: any) => {
 					return { ...event, type: 'mint' };
 				});
 
@@ -80,7 +80,7 @@ const TrackPage = () => {
 				});
 
 				// We merge both actual & issuance debt into an array
-				let historicalDebtAndIssuance = [];
+				let historicalDebtAndIssuance: Object[] = [];
 				debtHistory.reverse().forEach((debtSnapshot, i) => {
 					historicalDebtAndIssuance.push({
 						timestamp: debtSnapshot.timestamp,
