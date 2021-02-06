@@ -2,9 +2,6 @@ import React, { useMemo } from 'react';
 import styled, { css } from 'styled-components';
 import { useTable, useFlexLayout, useSortBy } from 'react-table';
 import { Svg } from 'react-optimized-image';
-
-// import Spinner from '../../components/Spinner';
-
 import SortDownIcon from 'assets/svg/app/sort-down.svg';
 import SortUpIcon from 'assets/svg/app/sort-up.svg';
 import SortIcon from 'assets/svg/app/sort.svg';

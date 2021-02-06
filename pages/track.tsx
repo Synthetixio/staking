@@ -6,7 +6,7 @@ import Head from 'next/head';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
-const { SynthetixJs } = require('synthetix-js');
+import SynthetixJs from 'utils/snxjs';
 
 import { zeroBN } from 'utils/formatters/number';
 
