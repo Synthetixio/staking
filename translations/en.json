@@ -590,6 +590,31 @@
 			"connect-wallet-to-view": "Connect wallet to view transactions."
 		}
 	},
+	"debt": {
+		"page-title": "Debt Tracker",
+		"track": {
+			"title": "Track",
+			"subtitle": "Track your debt over time, with charts via",
+			"data": {
+				"actualDebt": "Actual Debt",
+				"totalSynths": "Total Synths",
+				"issuedDebt": "Issued Debt"
+			},
+			"chart": {
+				"title": "Debt Over Time"
+			},
+
+			"table": {
+				"title": "Synths Balance",
+				"yourSynths": "Your synths",
+				"balance": "Balance",
+				"price": "Price"
+			},
+			"tooltip": {
+				"info": "<0>Issued debt:</0> This displays the total of all your mints and burns over time, revealing how only your C-Ratio management has affected your debt.<1 /><2>Actual debt:</2> This displays your total debt over time."
+			}
+		}
+	},
 	"synths": {
 		"page-title": "Synths | Synthetix Staking",
 		"assets": {
@@ -619,6 +644,7 @@
 		"escrow": "Escrow",
 		"history": "History",
 		"l2": "Layer 2",
+		"debt": "Debt Tracker",
 		"bars": {
 			"c-ratio": "c-ratio",
 			"t-ratio": "target",

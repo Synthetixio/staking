@@ -10,7 +10,7 @@ import { isWalletConnectedState, networkState, walletAddressState } from 'store/
 import { appReadyState } from 'store/app';
 import { toBigNumber } from 'utils/formatters/number';
 
-type WalletDebtData = {
+export type WalletDebtData = {
 	targetCRatio: BigNumber;
 	currentCRatio: BigNumber;
 	transferable: BigNumber;

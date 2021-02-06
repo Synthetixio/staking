@@ -8,7 +8,7 @@ import QUERY_KEYS from 'constants/queryKeys';
 import { isWalletConnectedState, networkState, walletAddressState } from 'store/wallet';
 import { HistoricalStakingTransaction } from './types';
 
-const useSynthBurnedQuery = (options?: QueryConfig<HistoricalStakingTransaction[]>) => {
+const useSynthBurnedQuery = (max?: number, options?: QueryConfig<HistoricalStakingTransaction[]>) => {
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const network = useRecoilValue(networkState);
@@ -18,6 +18,7 @@ const useSynthBurnedQuery = (options?: QueryConfig<HistoricalStakingTransaction[
 		async () => {
 			const transactions = (await snxData.snx.burned({
 				account: walletAddress,
+				max: max
 			})) as HistoricalStakingTransaction[];
 
 			return transactions;

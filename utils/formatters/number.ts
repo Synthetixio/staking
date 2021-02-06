@@ -41,7 +41,6 @@ export const minBN = BigNumber.minimum;
 export const formatNumber = (value: NumericValue, options?: FormatNumberOptions) => {
 	const prefix = options?.prefix;
 	const suffix = options?.suffix;
-
 	const formattedValue = [];
 	if (prefix) {
 		formattedValue.push(prefix);
@@ -97,10 +96,10 @@ const getPrecision = (amount: NumericValue) => {
 
 // TODO: use a library for this, because the sign does not always appear on the left. (perhaps something like number.toLocaleString)
 export const formatCurrencyWithSign = (
-	sign: string | null | undefined,
+	sign: string,
 	value: NumericValue,
 	decimals?: number
-) => `${sign}${formatCurrency(String(value), decimals || getPrecision(value))}`;
+) => `${sign}${formatCurrency(sign, value)}`;
 
 export const formatCurrencyWithKey = (
 	currencyKey: CurrencyKey,

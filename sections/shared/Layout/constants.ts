@@ -36,6 +36,10 @@ export const MENU_LINKS: MenuLinks = [
 		i18nLabel: 'sidenav.l2',
 		link: ROUTES.L2.Home,
 	},
+	{
+		i18nLabel: 'sidenav.debt',
+		link: ROUTES.Debt.Home,
+	},
 ];
 
 export const MIGRATE_MENU_LINKS: MenuLinks = [
