@@ -13,3 +13,8 @@ export type HistoricalStakingTransaction = {
 	type: StakingTransactionType;
 	rewards?: number;
 };
+
+export type HistoricalDebtSnapshot = {
+	timestamp:number;
+	debtBalanceOf:number;
+};

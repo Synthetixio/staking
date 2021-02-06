@@ -11,6 +11,9 @@ export const ROUTES = {
 	History: {
 		Home: '/history',
 	},
+	DebtHistory: {
+		Home: '/debt-history',
+	},
 	Synths: {
 		Home: '/synths',
 	},

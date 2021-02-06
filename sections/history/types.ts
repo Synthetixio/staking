@@ -1,4 +1,5 @@
-import { HistoricalStakingTransaction, StakingTransactionType } from 'queries/staking/types';
+import { HistoricalStakingTransaction, StakingTransactionType, HistoricalDebtSnapshot } from 'queries/staking/types';
+import BigNumber from 'bignumber.js';
 
 export type TransactionsContainerProps = {
 	issued: HistoricalStakingTransaction[];
@@ -6,6 +7,15 @@ export type TransactionsContainerProps = {
 	feesClaimed: HistoricalStakingTransaction[];
 	isLoaded: boolean;
 };
+
+export type DebtHistoryContainerProps = {
+    issued: HistoricalStakingTransaction[];
+    burned: HistoricalStakingTransaction[];
+	debtHistory: HistoricalDebtSnapshot[];
+    debtBalance: BigNumber;
+	isLoaded: boolean;
+};
+
 
 export enum AmountFilterType {
 	LESS_THAN_1K,
