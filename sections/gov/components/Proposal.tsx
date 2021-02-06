@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Svg } from 'react-optimized-image';
 import { Remarkable } from 'remarkable';
@@ -21,6 +21,7 @@ type ProposalProps = {
 };
 
 const Proposal: React.FC<ProposalProps> = ({ onBack, proposal }) => {
+	const [selected, setSelected] = useState<number | null>(null);
 	const { t } = useTranslation();
 
 	// Left side panel
@@ -29,6 +30,8 @@ const Proposal: React.FC<ProposalProps> = ({ onBack, proposal }) => {
 
 	// Right side panel
 	// Get the voting results and make the UI
+
+	const handleVote = () => {};
 
 	const expired = (timestamp?: number) => {
 		if (!timestamp) return;
@@ -74,12 +77,16 @@ const Proposal: React.FC<ProposalProps> = ({ onBack, proposal }) => {
 				<Divider />
 				<OptionsContainer>
 					{proposal?.msg.payload.choices.map((choice, i) => (
-						<Option variant="text" key={i}>
+						<Option selected={selected === i} onClick={() => setSelected(i)} variant="text" key={i}>
 							{choice}
 						</Option>
 					))}
 				</OptionsContainer>
-				<ActionContainer></ActionContainer>
+				<ActionContainer>
+					<StyledCTA onClick={handleVote} variant="primary">
+						{t('gov.proposal.action.vote')}
+					</StyledCTA>
+				</ActionContainer>
 			</InputContainer>
 		</>
 	);
@@ -114,7 +121,7 @@ const Title = styled.p`
 `;
 
 const Description = styled.div`
-	height: 300px;
+	height: 200px;
 	overflow: scroll;
 	font-size: 14px;
 	text-align: center;
@@ -164,8 +171,10 @@ const OptionsContainer = styled.div`
 	/* grid-template-columns: 40px 40px 40px; */
 `;
 
-const Option = styled(Button)`
-	background-color: ${(props) => props.theme.colors.navy};
+const Option = styled(Button)<{ selected: boolean }>`
+	background-color: ${(props) =>
+		props.selected ? props.theme.colors.mediumBlue : props.theme.colors.navy};
+	color: ${(props) => (props.selected ? props.theme.colors.blue : props.theme.colors.white)};
 	font-size: 12px;
 	font-family: ${(props) => props.theme.fonts.interBold};
 	text-transform: uppercase;
@@ -177,4 +186,14 @@ const Option = styled(Button)`
 	}
 `;
 
-const ActionContainer = styled.div``;
+const ActionContainer = styled.div`
+	width: 100%;
+`;
+
+const StyledCTA = styled(Button)`
+	text-transform: uppercase;
+	font-family: ${(props) => props.theme.fonts.condensedMedium};
+	font-size: 12px;
+	width: 100%;
+	margin: 4px 0px;
+`;

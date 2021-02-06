@@ -637,6 +637,10 @@
 			"status": {
 				"open": "Open",
 				"closed": "Closed"
+			},
+			"action": {
+				"vote": "Vote",
+				"withdraw": "Withdraw"
 			}
 		},
 		"council": {
