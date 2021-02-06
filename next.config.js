@@ -35,7 +35,4 @@ module.exports = withPlugins([[optimizedImages]], {
 			...earnPages,
 		};
 	},
-	typescript: {
-		ignoreBuildErrors: true,
-	},
 });

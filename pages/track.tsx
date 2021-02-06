@@ -19,11 +19,33 @@ import ProgressBar from 'components/ProgressBar';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
 
+export type HistoricalDebtAndIssuance = {
+	timestamp: number;
+	actualDebt: number;
+	issuanceDebt: number | undefined;
+};
+
+type DebtModel = {
+	mintAndBurnDebt: number;
+	actualDebt: number;
+};
+type DebtHistory = {
+	account: string;
+	block: number;
+	debtBalanceOf: number;
+	timestamp: number;
+};
+type Event = {
+	account: string;
+	block: number;
+	timestamp: number;
+};
+
 const TrackPage = () => {
 	const { t } = useTranslation();
 	const snxjs = new SynthetixJs();
-	const [debtData, setDebtData] = useState({});
-	const [historicalDebt, setHistoricalDebt] = useState([]);
+	const [debtData, setDebtData] = useState<DebtModel | null>();
+	const [historicalDebt, setHistoricalDebt] = useState<HistoricalDebtAndIssuance[]>([]);
 	const exchangeRatesQuery = useExchangeRatesQuery();
 
 	const synthsBalancesQuery = useSynthsBalancesQuery();
@@ -31,7 +53,6 @@ const TrackPage = () => {
 	const totalSynthValue = synthsBalancesQuery.isSuccess
 		? synthsBalancesQuery.data?.totalUSDBalance ?? zeroBN
 		: zeroBN;
-	const allSynths = synthsBalancesQuery.isSuccess ? synthsBalancesQuery.data ?? zeroBN : zeroBN;
 
 	const totalSynths = totalSynthValue.toNumber();
 
@@ -45,7 +66,12 @@ const TrackPage = () => {
 		if (!walletAddress) return;
 		const fetchEvents = async () => {
 			try {
-				const [burnEvents, mintEvents, debtHistory, currentDebt] = await Promise.all([
+				const [burnEvents, mintEvents, debtHistory, currentDebt]: [
+					Event[],
+					Event[],
+					DebtHistory[],
+					number
+				] = await Promise.all([
 					snxData.snx.burned({ account: walletAddress, max: 1000 }),
 					snxData.snx.issued({ account: walletAddress, max: 1000 }),
 					snxData.snx.debtSnapshot({
@@ -68,7 +94,7 @@ const TrackPage = () => {
 
 				// We set historicalIssuanceAggregation array, to store all the cumulative
 				// values of every mint and burns
-				const historicalIssuanceAggregation: any[] = [];
+				const historicalIssuanceAggregation: number[] = [];
 				eventBlocks.forEach((event, i) => {
 					const multiplier = event.type === 'burn' ? -1 : 1;
 					const aggregation =
@@ -80,13 +106,12 @@ const TrackPage = () => {
 				});
 
 				// We merge both actual & issuance debt into an array
-				let historicalDebtAndIssuance: Object[] = [];
+				let historicalDebtAndIssuance: HistoricalDebtAndIssuance[] = [];
 				debtHistory.reverse().forEach((debtSnapshot, i) => {
 					historicalDebtAndIssuance.push({
 						timestamp: debtSnapshot.timestamp,
 						issuanceDebt: historicalIssuanceAggregation[i],
 						actualDebt: debtSnapshot.debtBalanceOf,
-						// netDebt: debtSnapshot.debtBalanceOf - historicalIssuanceAggregation[i],
 					});
 				});
 
@@ -101,7 +126,7 @@ const TrackPage = () => {
 
 				setHistoricalDebt(historicalDebtAndIssuance);
 				setDebtData({
-					mintAndBurnDebt: last(historicalIssuanceAggregation),
+					mintAndBurnDebt: last(historicalIssuanceAggregation) ?? 0,
 					actualDebt: currentDebt / 1e18,
 					// netDebt: currentDebt / 1e18 - last(historicalIssuanceAggregation),
 				});
@@ -112,8 +137,8 @@ const TrackPage = () => {
 		fetchEvents();
 	}, [walletAddress]);
 
-	const mintAndBurnDebtValue = debtData ? debtData?.mintAndBurnDebt * sUSDRate : 0;
-	const actualDebtValue = debtData ? debtData?.actualDebt * sUSDRate : 0;
+	const mintAndBurnDebtValue = debtData ? (debtData?.mintAndBurnDebt || 0) * sUSDRate : 0;
+	const actualDebtValue = debtData ? (debtData?.actualDebt || 0) * sUSDRate : 0;
 
 	const totalSynthsValue = totalSynths ? totalSynths * sUSDRate : 0;
 
@@ -128,7 +153,6 @@ const TrackPage = () => {
 				mintAndBurnDebtValue={mintAndBurnDebtValue}
 				actualDebtValue={actualDebtValue}
 				totalSynthsValue={totalSynthsValue}
-				allSynthsData={allSynths}
 			/>
 		</>
 	);

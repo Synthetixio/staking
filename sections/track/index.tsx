@@ -8,12 +8,34 @@ import { FlexDivCentered } from 'styles/common';
 
 import { LineSpacer } from 'styles/common';
 import SynthsTable from './SynthsTable';
+import { HistoricalDebtAndIssuance } from 'pages/track';
+import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
 
-export const formatCurrencyWithSign = (sign, value, decimals = 2) =>
+export const formatCurrencyWithSign = (sign: string, value: number, decimals = 2) =>
 	`${sign}${value.toFixed(decimals)}`;
 
-const Track: FC = (props) => {
+type Balance = {
+	currencyKey: string;
+	balance: number;
+	usdBalance: number;
+};
+
+type Balances = {
+	balances: Balance[];
+	totalUSDBalance: number;
+};
+
+type TrackProps = {
+	data: HistoricalDebtAndIssuance[];
+	mintAndBurnDebtValue: number;
+	actualDebtValue: number;
+	totalSynthsValue: number;
+};
+
+const Track: FC<TrackProps> = (props) => {
 	const { t } = useTranslation();
+	const synthsBalancesQuery = useSynthsBalancesQuery();
+	const allSynthsData = synthsBalancesQuery.isSuccess ? synthsBalancesQuery.data ?? null : null;
 
 	return (
 		<div>
@@ -48,12 +70,13 @@ const Track: FC = (props) => {
 			</Grid>
 			<TableBorderedContainer>
 				<SynthsTable
-					data={(props.allSynthsData && props.allSynthsData.balances) || []}
+					data={(allSynthsData && allSynthsData.balances) || []}
+					className=""
 					columns={[
 						{
 							Header: t('track.table.yourSynths'),
 							accessor: 'currencyKey',
-							Cell: ({ value }) => {
+							Cell: ({ value }: { value: string }) => {
 								return (
 									<FlexDivCentered>
 										<CurrencyIcon src={`/images/currencies/${value}.svg`} />
@@ -66,7 +89,7 @@ const Track: FC = (props) => {
 						{
 							Header: t('track.table.balance'),
 							accessor: 'balance',
-							Cell: ({ value }) => {
+							Cell: ({ value }: { value: number }) => {
 								return `${value.toFixed(2)}`;
 							},
 							sortable: true,
@@ -74,7 +97,7 @@ const Track: FC = (props) => {
 						{
 							Header: '$ USD',
 							accessor: 'usdBalance',
-							Cell: ({ value }) => {
+							Cell: ({ value }: { value: number }) => {
 								return `${formatCurrencyWithSign('$', value)}`;
 							},
 							sortable: true,
