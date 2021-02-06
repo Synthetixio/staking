@@ -12,6 +12,7 @@ import KwentaIcon from 'assets/svg/app/kwenta.svg';
 import MintIcon from 'assets/svg/app/mint.svg';
 import ClaimIcon from 'assets/svg/app/claim.svg';
 import BurnIcon from 'assets/svg/app/burn.svg';
+import TrackIcon from 'assets/svg/app/track.svg';
 
 import GridBox, { GridBoxProps } from 'components/GridBox/Gridbox';
 import { GlowingCircle } from 'styles/common';
@@ -150,6 +151,13 @@ const LayoutOne: FC = () => {
 				}),
 				tooltip: t('common.tooltip.external', { link: 'Curve Finance' }),
 				externalLink: ROUTES.Earn.sEURO_EXTERNAL,
+			},
+			{
+				gridLocations: ['col-1', 'col-2', 'row-3', 'row-4'],
+				icon: <Svg src={TrackIcon} width="64" />,
+				title: t('dashboard.actions.track.title'),
+				copy: t('dashboard.actions.track.copy'),
+				link: ROUTES.Track.Home,
 			},
 		];
 	}, [t, lpData, currentCRatio, targetCRatio, stakingRewards, tradingRewards]);

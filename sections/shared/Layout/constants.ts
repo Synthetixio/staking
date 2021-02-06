@@ -17,6 +17,10 @@ export const MENU_LINKS: MenuLinks = [
 		link: ROUTES.Staking.Home,
 	},
 	{
+		i18nLabel: 'sidenav.track',
+		link: ROUTES.Track.Home,
+	},
+	{
 		i18nLabel: 'sidenav.earn',
 		link: ROUTES.Earn.Home,
 	},

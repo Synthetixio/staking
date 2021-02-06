@@ -157,6 +157,10 @@
 				"title": "STAKE",
 				"copy": "Stake your SNX to earn SNX rewards every week"
 			},
+			"track": {
+				"title": "Track",
+				"copy": "Track your debt over time"
+			},
 			"trade": {
 				"title": "TRADE",
 				"copy": "Trade between Synths on Kwenta"
@@ -171,6 +175,25 @@
 				"copy": "Migrate your SNX from L1 to L2",
 				"tooltip": "Coming soon"
 			}
+		}
+	},
+	"track": {
+		"page-title": "Track | Track your debt over time",
+
+		"title": "Track",
+		"subtitle": "Track your debt over time, with charts via",
+		"data": {
+			"issuedDebt": "Issued debt",
+			"actualDebt": "Actual debt",
+			"totalSynths": "Total Synths",
+			"netDebt": "Net debt"
+		},
+		"chart": {
+			"title": "Debt over time"
+		},
+		"table": {
+			"yourSynths": "Your synths",
+			"balance": "Balance"
 		}
 	},
 	"staking": {
@@ -614,6 +637,7 @@
 	"sidenav": {
 		"dashboard": "Home",
 		"earn": "Earn",
+		"track": "Track",
 		"staking": "Staking",
 		"synths": "Synths",
 		"escrow": "Escrow",

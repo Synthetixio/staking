@@ -8,6 +8,7 @@ import { EXTERNAL_LINKS } from 'constants/links';
 import KwentaIcon from 'assets/svg/app/kwenta.svg';
 import MintIcon from 'assets/svg/app/mint.svg';
 import LearnIcon from 'assets/svg/app/learn.svg';
+import TrackIcon from 'assets/svg/app/track.svg';
 
 import GridBox, { GridBoxProps } from 'components/GridBox/Gridbox';
 import { GlowingCircle } from 'styles/common';
@@ -20,7 +21,7 @@ const WelcomeLayout: FC = () => {
 	const gridItems: GridBoxProps[] = useMemo(
 		() => [
 			{
-				gridLocations: ['col-3', 'col-5', 'row-1', 'row-2'],
+				gridLocations: ['col-3', 'col-4', 'row-1', 'row-2'],
 				icon: (
 					<GlowingCircle variant="blue" size="md">
 						<Svg src={MintIcon} />
@@ -29,6 +30,13 @@ const WelcomeLayout: FC = () => {
 				title: t('dashboard.actions.stake.title'),
 				copy: t('dashboard.actions.stake.copy'),
 				link: ROUTES.Staking.Home,
+			},
+			{
+				gridLocations: ['col-4', 'col-5', 'row-1', 'row-2'],
+				icon: <Svg src={TrackIcon} width="64" />,
+				title: t('dashboard.actions.track.title'),
+				copy: t('dashboard.actions.track.copy'),
+				link: ROUTES.Track.Home,
 			},
 			{
 				gridLocations: ['col-3', 'col-4', 'row-2', 'row-3'],
