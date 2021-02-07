@@ -2,6 +2,7 @@ import Head from 'next/head';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { useRecoilValue } from 'recoil';
+import { BigNumber } from 'bignumber.js';
 
 import { StatsSection, LineSpacer } from 'styles/common';
 
@@ -17,11 +18,13 @@ import { formatCurrency, zeroBN } from 'utils/formatters/number';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import useCryptoBalances from 'hooks/useCryptoBalances';
+import useSynthsTotalSupplyQuery from 'queries/synths/useSynthsTotalSupplyQuery';
 
 const SynthsPage = () => {
 	const { t } = useTranslation();
 
 	const synthsBalancesQuery = useSynthsBalancesQuery();
+	const synthsTotalSupplyQuery = useSynthsTotalSupplyQuery();
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
 	const cryptoBalances = useCryptoBalances();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
@@ -34,6 +37,8 @@ const SynthsPage = () => {
 		synthsBalancesQuery.isSuccess && synthsBalancesQuery.data != null
 			? synthsBalancesQuery.data
 			: null;
+
+	const totalSupply = synthsTotalSupplyQuery.isSuccess ? synthsTotalSupplyQuery.data : undefined;
 
 	const synthAssets = synthBalances?.balances ?? [];
 
@@ -64,6 +69,7 @@ const SynthsPage = () => {
 				isLoaded={synthsBalancesQuery.isSuccess}
 				showHoldings={true}
 				showConvert={false}
+				synthsTotalSupply={totalSupply}
 			/>
 			{isWalletConnected && cryptoBalances.balances.length > 0 && (
 				<AssetsTable
