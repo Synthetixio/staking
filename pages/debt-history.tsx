@@ -9,7 +9,7 @@ import DebtHistoryContainer from 'sections/history/DebtHistoryContainer';
 
 import useSynthBurnedQuery from 'queries/staking/useSynthBurnedQuery';
 import useSynthIssuedQuery from 'queries/staking/useSynthIssuedQuery';
-import useDebtSnapshotHistoryQuery from 'queries/staking/useDebtSnapshotHistoryQuery';
+import useDebtSnapshotHistoryQuery from 'queries/debt/useDebtSnapshotHistoryQuery';
 import useGetDebtDataQuery from 'queries/debt/useGetDebtDataQuery';
 import useSynthBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';

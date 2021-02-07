@@ -6,7 +6,16 @@ import snxData from 'synthetix-data';
 import QUERY_KEYS from 'constants/queryKeys';
 
 import { isWalletConnectedState, networkState, walletAddressState } from 'store/wallet';
-import { HistoricalDebtSnapshot } from './types';
+
+type HistoricalDebtSnapshot = {
+	account: string;
+	balanceOf: number;
+	block: number;
+	collateral: number;
+	debtBalanceOf:number;
+	id: string;
+	timestamp: number;
+};
 
 const useDebtSnapshotHistoryQuery = (options?: QueryConfig<HistoricalDebtSnapshot[]>) => {
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);

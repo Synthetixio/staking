@@ -13,13 +13,3 @@ export type HistoricalStakingTransaction = {
 	type: StakingTransactionType;
 	rewards?: number;
 };
-
-export type HistoricalDebtSnapshot = {
-	account: string;
-	balanceOf: number;
-	block: number;
-	collateral: number;
-	debtBalanceOf:number;
-	id: string;
-	timestamp: number;
-};
