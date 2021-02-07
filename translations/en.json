@@ -570,13 +570,8 @@
 			"data": {
 				"issuedDebt": "Issued debt",
 				"actualDebt": "Actual debt",
-				"totalSynths": "Total Synths",
-				"netDebt": "Net debt"
+				"totalSynths": "Total Synths"
 			}
-		},
-		"table": {
-			"yourSynths": "Your synths",
-			"balance": "Balance"
 		}
 	},
 	"history": {

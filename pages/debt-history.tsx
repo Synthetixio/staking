@@ -1,9 +1,7 @@
-import { useMemo } from 'react';
 import Head from 'next/head';
 import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
 
-import { StatsSection, LineSpacer } from 'styles/common';
+import { LineSpacer } from 'styles/common';
 
 import DebtHistoryContainer from 'sections/history/DebtHistoryContainer';
 
@@ -17,7 +15,6 @@ import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import { CryptoCurrency } from 'constants/currency';
 const { SNX } = CryptoCurrency;
 
-import StatBox from 'components/StatBox';
 
 const DebtHistoryPage = () => {
 	const { t } = useTranslation();
@@ -36,10 +33,6 @@ const DebtHistoryPage = () => {
 	const currentDebt = getDebtDataQuery.data ? getDebtDataQuery.data.debtBalance.toNumber() : 0;
 	const synthBalances = synthBalancesQuery.data ?? null;
 
-	//const totalSynthUSD = synthBalancesQuery.data ? synthBalancesQuery.data.totalUSDBalance.toNumber() : 0;
-	//const sUSDRate = exchangeRatesQuery.data ? exchangeRatesQuery.data[SNX] : 0;
-//    synthBalancesQuery.data.balancesMap['usd'].
-	//synthBalancesQuery.data.balances[0].
 	return (
 		<>
 			<Head>
@@ -57,12 +50,5 @@ const DebtHistoryPage = () => {
 		</>
 	);
 };
-
-const TxCount = styled(StatBox)`
-	.value {
-		text-shadow: ${(props) => props.theme.colors.blueTextShadow};
-		color: ${(props) => props.theme.colors.black};
-	}
-`;
 
 export default DebtHistoryPage;

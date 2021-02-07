@@ -37,8 +37,7 @@ const DebtHistoryContainer: FC<DebtHistoryContainerProps> = ({
 	burned,
 	debtHistory,
 	currentDebt,
-	synthBalances,
-	isLoaded,
+	synthBalances
 }) => {
 	const { t } = useTranslation();
 
@@ -80,11 +79,14 @@ const DebtHistoryContainer: FC<DebtHistoryContainerProps> = ({
 
 	// Last occurrence is the current state of the debt
 	// Issuance debt = last occurrence of the historicalDebtAndIssuance array
-	historicalDebtAndIssuance.push({
-		timestamp: new Date().getTime(),
-		actualDebt: currentDebt,
-		issuanceDebt: last(historicalIssuanceAggregation) ?? 0,
-	});
+	if (historicalDebtAndIssuance.length>0)
+	{
+		historicalDebtAndIssuance.push({
+			timestamp: new Date().getTime(),
+			actualDebt: currentDebt,
+			issuanceDebt: last(historicalIssuanceAggregation) ?? 0,
+		});
+	}
 
 	let debtData = {
 		mintAndBurnDebt: last(historicalIssuanceAggregation) ?? 0,
@@ -125,7 +127,7 @@ const DebtHistoryContainer: FC<DebtHistoryContainerProps> = ({
 							<FlexDivCentered>
 								<StyledSubtext>{t('debt-history.chart.subtitle')}</StyledSubtext>
 							</FlexDivCentered>
-							<DebtChart data={isLoaded?historicalDebtAndIssuance:[]} />
+							<DebtChart data={historicalDebtAndIssuance} />
 						</ChartBorderedContainer>
 					</GridColumn>
 				</Grid>
