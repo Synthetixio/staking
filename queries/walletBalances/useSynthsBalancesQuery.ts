@@ -32,10 +32,7 @@ const useSynthsBalancesQuery = (options?: QueryConfig<Balances>) => {
 	const network = useRecoilValue(networkState);
 
 	return useQuery<Balances>(
-		QUERY_KEYS.WalletBalances.Synths(
-			'0x5b97680e165b4dbf5c45f4ff4241e85f418c66c2' ?? '',
-			network?.id!
-		),
+		QUERY_KEYS.WalletBalances.Synths(walletAddress ?? '', network?.id!),
 		async () => {
 			const balancesMap: SynthBalancesMap = {};
 			const [
