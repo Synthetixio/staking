@@ -37,72 +37,70 @@ const DebtHistoryContainer: FC<DebtHistoryContainerProps> = ({
 	burned,
 	debtHistory,
 	currentDebt,
-	synthBalances
+	synthBalances,
+	isLoaded
 }) => {
 	const { t } = useTranslation();
 
-	const burnEventsMap = burned.map(event => {
-		return { ...event, type: 'burn' };
-	});
-
-	const issuedEventsMap = issued.map(event => {
-		return { ...event, type: 'issued' };
-	});
-
-	// We concat both the events and order them (asc)
-	const eventBlocks = orderBy(burnEventsMap.concat(issuedEventsMap), 'block', 'asc');
-
-	// We set historicalIssuanceAggregation array, to store all the cumulative
-	// values of every mint and burns
-	const historicalIssuanceAggregation:Array<number> = [];
-	eventBlocks.forEach((event, i) => {
-		const multiplier = event.type === 'burn' ? -1 : 1;
-		const aggregation =
-			historicalIssuanceAggregation.length === 0
-				? multiplier * event.value
-				: multiplier * event.value + historicalIssuanceAggregation[i - 1];
-
-		historicalIssuanceAggregation.push(aggregation);
-	});
-
-	// We merge both actual & issuance debt into an array
 	let historicalDebtAndIssuance:Array<HistoricalDebtAndIssuance> = [];
-	for (let i=0; i<debtHistory.length; i++)
-	{
-		let debtSnapshot = debtHistory[debtHistory.length-i-1];
-		historicalDebtAndIssuance.push({
-			timestamp: debtSnapshot.timestamp,
-			issuanceDebt: historicalIssuanceAggregation[i],
-			actualDebt: debtSnapshot.debtBalanceOf,
-		});
-	}
-
-	// Last occurrence is the current state of the debt
-	// Issuance debt = last occurrence of the historicalDebtAndIssuance array
-	if (historicalDebtAndIssuance.length>0)
-	{
-		historicalDebtAndIssuance.push({
-			timestamp: new Date().getTime(),
-			actualDebt: currentDebt,
-			issuanceDebt: last(historicalIssuanceAggregation) ?? 0,
-		});
-	}
-
-	let debtData = {
-		mintAndBurnDebt: last(historicalIssuanceAggregation) ?? 0,
-		actualDebt: currentDebt,
-	};
-
-	const mintAndBurnDebtValue = debtData.mintAndBurnDebt;
-	const actualDebtValue = debtData.actualDebt;
-	
+	const historicalIssuanceAggregation:Array<number> = [];
 	const totalSynthUSD = synthBalances ? synthBalances.totalUSDBalance.toNumber() : 0;
 
+	if (isLoaded)
+	{
+		const burnEventsMap = burned.map(event => {
+			return { ...event, type: 'burn' };
+		});
+
+		const issuedEventsMap = issued.map(event => {
+			return { ...event, type: 'issued' };
+		});
+
+		// We concat both the events and order them (asc)
+		const eventBlocks = orderBy(burnEventsMap.concat(issuedEventsMap), 'block', 'asc');
+
+		// We set historicalIssuanceAggregation array, to store all the cumulative
+		// values of every mint and burns
+		eventBlocks.forEach((event, i) => {
+			const multiplier = event.type === 'burn' ? -1 : 1;
+			const aggregation =
+				historicalIssuanceAggregation.length === 0
+					? multiplier * event.value
+					: multiplier * event.value + historicalIssuanceAggregation[i - 1];
+
+			historicalIssuanceAggregation.push(aggregation);
+		});
+
+		// We merge both actual & issuance debt into an array
+		for (let i=0; i<debtHistory.length; i++)
+		{
+			let debtSnapshot = debtHistory[debtHistory.length-i-1];
+			historicalDebtAndIssuance.push({
+				timestamp: debtSnapshot.timestamp,
+				issuanceDebt: historicalIssuanceAggregation[i],
+				actualDebt: debtSnapshot.debtBalanceOf,
+			});
+		}
+
+		// Last occurrence is the current state of the debt
+		// Issuance debt = last occurrence of the historicalDebtAndIssuance array
+		if (historicalDebtAndIssuance.length>0)
+		{
+			historicalDebtAndIssuance.push({
+				timestamp: new Date().getTime(),
+				actualDebt: currentDebt,
+				issuanceDebt: last(historicalIssuanceAggregation) ?? 0,
+			});
+		}
+	}
+
+	const mintAndBurnDebtValue = last(historicalIssuanceAggregation) ?? 0;
+	
 	return (
 		<>
 			<Header>
 				<GlowingCircle variant="purple" size="md">
-					<Svg src={TrackIcon} style={{transform:'translate(-1px,-2px)'}} />
+					<Svg src={TrackIcon} style={{transform:'translate(-2px,-3px)'}} />
 				</GlowingCircle>
 				<Title>{t('debt-history.chart.title')}</Title>
 			</Header>
@@ -115,7 +113,7 @@ const DebtHistoryContainer: FC<DebtHistoryContainerProps> = ({
 						</BorderedContainer>
 						<BorderedContainer>
 							<StyledSubtext>{t('debt-history.chart.data.actualDebt')}</StyledSubtext>
-							<Amount>{formatCurrencyWithSign('$', actualDebtValue)}</Amount>
+							<Amount>{formatCurrencyWithSign('$', currentDebt)}</Amount>
 						</BorderedContainer>
 						<BorderedContainer>
 							<StyledSubtext>{t('debt-history.chart.data.totalSynths')}</StyledSubtext>

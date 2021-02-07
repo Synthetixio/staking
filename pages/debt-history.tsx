@@ -1,19 +1,13 @@
 import Head from 'next/head';
 import { useTranslation } from 'react-i18next';
-
 import { LineSpacer } from 'styles/common';
-
 import DebtHistoryContainer from 'sections/history/DebtHistoryContainer';
-
 import useSynthBurnedQuery from 'queries/staking/useSynthBurnedQuery';
 import useSynthIssuedQuery from 'queries/staking/useSynthIssuedQuery';
 import useDebtSnapshotHistoryQuery from 'queries/debt/useDebtSnapshotHistoryQuery';
 import useGetDebtDataQuery from 'queries/debt/useGetDebtDataQuery';
 import useSynthBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
-
-import { CryptoCurrency } from 'constants/currency';
-const { SNX } = CryptoCurrency;
 
 
 const DebtHistoryPage = () => {
@@ -35,10 +29,6 @@ const DebtHistoryPage = () => {
 
 	return (
 		<>
-			<Head>
-				<title>{t('debt-history.page-title')}</title>
-			</Head>
-			<LineSpacer />
 			<DebtHistoryContainer
 				burned={burned}
 				issued={issued}
