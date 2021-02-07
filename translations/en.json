@@ -285,6 +285,24 @@
 			}
 		}
 	},
+	"debt": {
+		"page-title": "Debt | Synthetix Staking",
+		"actions": {
+			"track": {
+				"title": "Historical Debt",
+				"tooltip": {
+					"info": {
+						"actualDebt": "Active Debt",
+						"issuedDebt": "Issued Debt"
+					},
+					"custom": {
+						"title": "Mint custom",
+						"subtext": "Mint a custom amount of sUSD"
+					}
+				}
+			}
+		}
+	},
 	"earn": {
 		"page-title": "Earn | Synthetix Staking",
 		"incentives": {
@@ -615,6 +633,7 @@
 		"dashboard": "Home",
 		"earn": "Earn",
 		"staking": "Staking",
+		"debt": "Debt",
 		"synths": "Synths",
 		"escrow": "Escrow",
 		"history": "History",
@@ -650,7 +669,8 @@
 			"lifetime-rewards": "Lifetime rewards",
 			"available-snx": "Total available SNX",
 			"vested-snx": "Total SNX vested",
-			"escrowed-snx": "Total SNX escrowed"
+			"escrowed-snx": "Total SNX escrowed",
+			"issued-debt": "Issued Debt"
 		},
 		"status": {
 			"claimed": "Claimed",

@@ -5,6 +5,9 @@ export const ROUTES = {
 		Burn: '/staking/burn',
 		Mint: '/staking/mint',
 	},
+	Debt: {
+		Home: '/debt'
+	},
 	Escrow: {
 		Home: '/escrow',
 	},
