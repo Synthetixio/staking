@@ -32,6 +32,7 @@
 		"next": "10.0.1",
 		"next-compose-plugins": "2.2.0",
 		"next-optimized-images": "3.0.0-canary.10",
+		"numbro": "^2.3.2",
 		"react": "17.0.1",
 		"react-copy-to-clipboard": "5.0.2",
 		"react-countdown": "2.3.0",

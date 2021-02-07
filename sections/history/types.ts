@@ -9,10 +9,12 @@ export type TransactionsContainerProps = {
 };
 
 export type DebtHistoryContainerProps = {
-    issued: HistoricalStakingTransaction[];
-    burned: HistoricalStakingTransaction[];
+	issued: HistoricalStakingTransaction[];
+	burned: HistoricalStakingTransaction[];
 	debtHistory: HistoricalDebtSnapshot[];
-    debtBalance: BigNumber;
+	currentDebt: number;
+    totalSynthUSD: number;
+    sUSDRate: number;
 	isLoaded: boolean;
 };
 

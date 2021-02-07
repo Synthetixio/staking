@@ -562,6 +562,23 @@
 			}
 		}
 	},
+	"debt-history": {
+		"page-title": "Debt Tracking | Synthetix Staking",
+		"chart": {
+			"title": "Track",
+			"subtitle": "Debt over time",
+			"data": {
+				"issuedDebt": "Issued debt",
+				"actualDebt": "Actual debt",
+				"totalSynths": "Total Synths",
+				"netDebt": "Net debt"
+			},
+			"table": {
+				"yourSynths": "Your synths",
+				"balance": "Balance"
+			}
+		}
+	},
 	"history": {
 		"page-title": "History | Synthetix Staking",
 		"table": {

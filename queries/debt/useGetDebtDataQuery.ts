@@ -23,7 +23,9 @@ type WalletDebtData = {
 const useGetDebtDataQuery = (options?: QueryConfig<WalletDebtData>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	const walletAddress = useRecoilValue(walletAddressState);
+	const _walletAddress = useRecoilValue(walletAddressState);
+    const walletAddress = '0x49BE88F0fcC3A8393a59d3688480d7D253C37D2A';
+
 	const network = useRecoilValue(networkState);
 
 	return useQuery<WalletDebtData>(
