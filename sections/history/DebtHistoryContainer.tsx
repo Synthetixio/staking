@@ -7,16 +7,14 @@ import last from 'lodash/last';
 import { ExternalLink,  FlexDivCentered } from 'styles/common';
 import DebtChart from './DebtChart';
 import numbro from 'numbro';
-import { isWalletConnectedState } from 'store/wallet';
-import Connector from 'containers/Connector';
 import {
 	DebtHistoryContainerProps
 } from './types';
-/*
+
 import { Svg } from 'react-optimized-image';
 import TrackIcon from 'assets/svg/app/track.svg';
 import { GlowingCircle } from 'styles/common';
-*/
+
 
 //needed to pull these old formatters from Mintr
 export const formatCurrency = (value:number, decimals:number = 2) => {
@@ -39,8 +37,7 @@ const DebtHistoryContainer: FC<DebtHistoryContainerProps> = ({
 	burned,
 	debtHistory,
 	currentDebt,
-	totalSynthUSD,
-	sUSDRate,
+	synthBalances,
 	isLoaded,
 }) => {
 	const { t } = useTranslation();
@@ -94,19 +91,18 @@ const DebtHistoryContainer: FC<DebtHistoryContainerProps> = ({
 		actualDebt: currentDebt,
 	};
 
-	let hmmRate = 1; //seems like these values may already be USD..?
-	const mintAndBurnDebtValue = debtData.mintAndBurnDebt * hmmRate; //*sUSDRate
-	const actualDebtValue = debtData.actualDebt * hmmRate; //*sUSDRate
+	const mintAndBurnDebtValue = debtData.mintAndBurnDebt;
+	const actualDebtValue = debtData.actualDebt;
+	
+	const totalSynthUSD = synthBalances ? synthBalances.totalUSDBalance.toNumber() : 0;
 
 	return (
 		<>
 			<Header>
-				{/*
 				<GlowingCircle variant="purple" size="md">
-					<Svg src={TrackIcon} />
+					<Svg src={TrackIcon} style={{transform:'translate(-1px,-2px)'}} />
 				</GlowingCircle>
-				*/}
-				<StyledH1>{t('debt-history.chart.title')}</StyledH1>
+				<Title>{t('debt-history.chart.title')}</Title>
 			</Header>
 			<Body>
 				<Grid>
@@ -138,28 +134,21 @@ const DebtHistoryContainer: FC<DebtHistoryContainerProps> = ({
 	)
 };
 
-const Header = styled.div``;
+const Header = styled.div`
+	display: flex;
+	margin-bottom: 16px;
+	align-items: center;
+	font-family: "GT America Extended Bold";
+`;
+
 const Body = styled.div`
 	width: 100%;
+	background: ${(props) => props.theme.colors.backgroundBlue};
 `;
 
-const ActionImage = styled.svg`
-	height: 48px;
-	width: 48px;
-`;
-
-const StyledH1 = styled.h1`
-	margin: 18px 0 8px 0;
-`;
-
-const PLarge = styled.p``;
-
-const StyledExternalLink = styled(ExternalLink)`
-	color: ${props => props.theme.colors.blue};
-`;
-
-const LinkArrow = styled.span`
-	font-size: 10px;
+const Title = styled.span`
+	font-size: 18px;
+	margin-left: 8px;
 `;
 
 const Grid = styled.div`
@@ -177,7 +166,7 @@ const GridColumn = styled.div`
 export const BorderedContainer = styled.div`
 	padding: 18px;
 	white-space: nowrap;
-	border: 1px solid ${props => props.theme.colors.blue};
+	border: 1px solid ${props => props.theme.colors.purple};
 	border-radius: 2px;
 	display: flex;
 	flex-direction: column;
@@ -188,11 +177,6 @@ export const BorderedContainer = styled.div`
 const ChartBorderedContainer = styled(BorderedContainer)`
 	justify-content: flex-start;
 	align-items: flex-start;
-`;
-
-const TableBorderedContainer = styled(BorderedContainer)`
-	margin-top: 18px;
-	height: 248px;
 `;
 
 const StyledSubtext = styled.span`

@@ -1,5 +1,6 @@
 import { HistoricalStakingTransaction, StakingTransactionType } from 'queries/staking/types';
 import { HistoricalDebtSnapshot } from 'queries/debt/useDebtSnapshotHistoryQuery'
+import { Balances } from 'queries/walletBalances/useSynthsBalancesQuery';
 
 export type TransactionsContainerProps = {
 	issued: HistoricalStakingTransaction[];
@@ -13,8 +14,7 @@ export type DebtHistoryContainerProps = {
 	burned: HistoricalStakingTransaction[];
 	debtHistory: HistoricalDebtSnapshot[];
 	currentDebt: number;
-	totalSynthUSD: number;
-	sUSDRate: number;
+	synthBalances: Balances | null;
 	isLoaded: boolean;
 };
 

@@ -24,26 +24,23 @@ export const formatCurrency = (value:number, decimals:number = 2) => {
 	return numbro(value).format('0,0.' + '0'.repeat(decimals));
 };
 
-export const formatCurrencyWithSign = (sign:number, value:number, decimals:number = 2) =>
-	`${sign}${formatCurrency(value, decimals)}`;
-
 const LEGEND_LABELS = {
 	actualDebt: 'debt-history.chart.data.actualDebt',
 	issuanceDebt: 'debt-history.chart.data.issuedDebt'
 };
 
-const CustomTooltip: FC<{active:boolean, payload:Array<{color:string,name:'actualDebt'|'issuanceDebt',value:number}>, label:string}> = ({
+const CustomTooltip: FC<{active:boolean, payload:Array<{color:string,name:'actualDebt'|'issuanceDebt',value:number}> | null, label:string}> = ({
 	active,
 	payload,
 	label
 }) => {
 	const { t } = useTranslation();
 
-	if (!active || !label) return null;
+	if (!active || !label || !payload) return null;
 
 	return (
 		<TooltipWrapper>
-			<StyledH5>{format(new Date(label), 'MMM dd YYY, h:mma')}</StyledH5>
+			<StyledH1>{format(new Date(label), 'MMM dd YYY, h:mma')}</StyledH1>
 			<Legend>
 				{payload.map(({ color, name, value }) => {
 					return (
@@ -80,22 +77,20 @@ const Chart: FC<{data:Array<HistoricalDebtAndIssuance>}> = ({
 				/>
 				<YAxis
 					width={35}
-					//stroke="#E8E7FD"
-					//strokeWidth={1}
 					domain={['auto', 'auto']}
 					tickLine={false}
 					tickFormatter={tick => numbro(tick).format({ average: true })}
 					tick={{ fontSize: 11, fill: colors.white }}
 				/>
-				{ /* <Tooltip
-					cursor={{ stroke: colors.blue }}
-					content={<CustomTooltip />}
+				<Tooltip
+					cursor={{ strokeDasharray:"", stroke: colors.blue }}
+					content={<CustomTooltip active={true} payload={null} label="" />}
 					contentStyle={{
-						backgroundColor: colors.gray,
+						backgroundColor: colors.dark,
 						zIndex: 1000,
 						borderColor: colors.blue,
 					}}
-				/> */}
+				/>
 				<Line type="monotone" dataKey="issuanceDebt" stroke="#419EF8" strokeWidth={2} dot={false} />
 				<Line type="monotone" dataKey="actualDebt" stroke="#5C2AF5" strokeWidth={2} dot={false} />
 				<ReferenceLine y={0} isFront={false} strokeWidth={1} stroke={colors.blue} />
@@ -106,16 +101,16 @@ const Chart: FC<{data:Array<HistoricalDebtAndIssuance>}> = ({
 
 const TooltipWrapper = styled.div`
 	width: 250px;
-	background-color: ${props => props.theme.colors.gray};
+	background-color: ${props => props.theme.colors.black};
 	border: 1px solid ${props => props.theme.colors.blue};
 	border-radius: 2px;
 	padding: 16px;
 	text-align: left;
 `;
 
-const StyledH5 = styled.h5`
+const StyledH1 = styled.div`
 	font-size: 14px;
-	text-transform: none;
+	margin-bottom: 8px;
 `;
 
 const Legend = styled.div`
@@ -142,8 +137,7 @@ const LegendIcon = styled.div`
 `;
 
 const LegendText = styled.span`
-	font-family: 'apercu-regular';
 	font-size: 12px;
-	color: ${props => props.theme.colors.blue};
+	color: ${props => props.theme.colors.white};
 `;
 export default Chart;

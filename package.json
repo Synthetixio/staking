@@ -2,7 +2,7 @@
 	"name": "staking",
 	"version": "2.38.0",
 	"scripts": {
-		"dev": "next",
+		"dev": "next -p 8080",
 		"build": "next build",
 		"start": "next start",
 		"tsc": "tsc --noEmit",

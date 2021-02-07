@@ -34,9 +34,12 @@ const DebtHistoryPage = () => {
 	const burned = burnedQuery.data ?? [];
 	const debtHistory = debtSnapshotHistoryQuery.data ?? [];
 	const currentDebt = getDebtDataQuery.data ? getDebtDataQuery.data.debtBalance.toNumber() : 0;
-	const totalSynthUSD = synthBalancesQuery.data ? synthBalancesQuery.data.totalUSDBalance.toNumber() : 0;
-	const sUSDRate = exchangeRatesQuery.data ? exchangeRatesQuery.data[SNX] : 0;
+	const synthBalances = synthBalancesQuery.data ?? null;
 
+	//const totalSynthUSD = synthBalancesQuery.data ? synthBalancesQuery.data.totalUSDBalance.toNumber() : 0;
+	//const sUSDRate = exchangeRatesQuery.data ? exchangeRatesQuery.data[SNX] : 0;
+//    synthBalancesQuery.data.balancesMap['usd'].
+	//synthBalancesQuery.data.balances[0].
 	return (
 		<>
 			<Head>
@@ -48,8 +51,7 @@ const DebtHistoryPage = () => {
 				issued={issued}
 				debtHistory={debtHistory}
 				currentDebt={currentDebt}
-				totalSynthUSD={totalSynthUSD}
-				sUSDRate={sUSDRate}
+				synthBalances={synthBalances}
 				isLoaded={isLoaded}
 			/>
 		</>
