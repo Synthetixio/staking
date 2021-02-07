@@ -161,10 +161,6 @@
 				"title": "TRADE",
 				"copy": "Trade between Synths on Kwenta"
 			},
-			"track": {
-				"title": "TRACK",
-				"copy": "Track your debt over time"
-			},
 			"migrate-l1": {
 				"title": "Migrate escrowed SNX",
 				"copy": "Migrate your escrowed SNX from L1 to the new L1 escrow rewards contract. This action is required to enable escrowed SNX to be migrated to L2.",
