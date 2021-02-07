@@ -289,7 +289,7 @@
 		"page-title": "Debt | Synthetix Staking",
 		"actions": {
 			"track": {
-				"title": "Historical Debt",
+				"title": "Debt Over Time",
 				"tooltip": {
 					"info": {
 						"actualDebt": "Active Debt",

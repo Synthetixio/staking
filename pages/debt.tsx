@@ -63,9 +63,8 @@ const DashboardPage = () => {
 					/>
 				</StatsSection>
 				<LineSpacer />
-        
+        <Header>{t('debt.actions.track.title')}</Header>
         <ChartSection>
-          <Header>{t('debt.actions.track.title')}</Header>
 				  <DebtChart data={historicalDebt}/>
         </ChartSection>
 			</Content>
@@ -87,6 +86,10 @@ const IssuedDebt = styled(StatBox)`
 const ActiveDebt = styled(StatBox)`
 	.title {
 		color: ${(props) => props.theme.colors.pink};
+  }
+  .value {
+		text-shadow: ${(props) => props.theme.colors.pinkTextShadow};
+    color: ${(props) => props.theme.colors.navy};
 	}
 `;
 
