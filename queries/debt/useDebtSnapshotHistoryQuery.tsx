@@ -7,7 +7,7 @@ import QUERY_KEYS from 'constants/queryKeys';
 
 import { isWalletConnectedState, networkState, walletAddressState } from 'store/wallet';
 
-type HistoricalDebtSnapshot = {
+export type HistoricalDebtSnapshot = {
 	account: string;
 	balanceOf: number;
 	block: number;

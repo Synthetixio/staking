@@ -1,4 +1,5 @@
-import { HistoricalStakingTransaction, StakingTransactionType, HistoricalDebtSnapshot } from 'queries/staking/types';
+import { HistoricalStakingTransaction, StakingTransactionType } from 'queries/staking/types';
+import { HistoricalDebtSnapshot } from 'queries/debt/useDebtSnapshotHistoryQuery'
 
 export type TransactionsContainerProps = {
 	issued: HistoricalStakingTransaction[];
@@ -12,8 +13,8 @@ export type DebtHistoryContainerProps = {
 	burned: HistoricalStakingTransaction[];
 	debtHistory: HistoricalDebtSnapshot[];
 	currentDebt: number;
-    totalSynthUSD: number;
-    sUSDRate: number;
+	totalSynthUSD: number;
+	sUSDRate: number;
 	isLoaded: boolean;
 };
 
