@@ -25,12 +25,12 @@ type Payload = {
 	color: string;
 	name: keyof typeof LEGEND_LABELS;
 	value: number;
-}
+};
 
 interface CustomTooltipProps {
-	active?: boolean,
-	payload?: Payload[],
-	label?: Date,
+	active?: boolean;
+	payload?: Payload[];
+	label?: Date;
 }
 
 const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
@@ -58,9 +58,9 @@ const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
 };
 
 type Data = {
-	issuanceDebt: number
-	actualDebt: number
-}
+	issuanceDebt: number;
+	actualDebt: number;
+};
 
 const DebtChart = ({ data }: { data: Data[] }) => {
 	const { colors, fonts } = useContext(ThemeContext);
@@ -75,19 +75,19 @@ const DebtChart = ({ data }: { data: Data[] }) => {
 					tick={{ fontSize: 12, fill: colors.gray, fontFamily: fonts.regular }}
 					axisLine={false}
 					tickLine={false}
-					tickFormatter={tick => format(new Date(tick), 'd MMM yy')}
+					tickFormatter={(tick) => format(new Date(tick), 'd MMM yy')}
 				/>
 				<YAxis
 					width={35}
-					stroke={colors.white}
+					// stroke={colors.white}
 					domain={['auto', 'auto']}
 					tickLine={false}
-					strokeWidth={1}
-					tickFormatter={tick => numbro(tick).format({ average: true })}
+					// strokeWidth={1}
+					tickFormatter={(tick) => numbro(tick).format({ average: true })}
 					tick={{ fontSize: 12, fill: colors.gray, fontFamily: fonts.interSemiBold }}
 				/>
 				<Tooltip
-					cursor={{ stroke: colors.white }}
+					// cursor={{ stroke: colors.white }}
 					content={<CustomTooltip />}
 					contentStyle={{
 						opacity: 1,
@@ -96,8 +96,20 @@ const DebtChart = ({ data }: { data: Data[] }) => {
 						borderColor: colors.navy,
 					}}
 				/>
-				<Line type="monotone" dataKey="issuanceDebt" stroke={colors.blue} strokeWidth={2} dot={false} />
-				<Line type="monotone" dataKey="actualDebt" stroke={colors.pink} strokeWidth={2} dot={false} />
+				<Line
+					type="monotone"
+					dataKey="issuanceDebt"
+					stroke={colors.blue}
+					strokeWidth={2}
+					dot={false}
+				/>
+				<Line
+					type="monotone"
+					dataKey="actualDebt"
+					stroke={colors.pink}
+					strokeWidth={2}
+					dot={false}
+				/>
 				<ReferenceLine y={0} isFront={false} strokeWidth={1} stroke={colors.grayBlue} />
 			</LineChart>
 		</ResponsiveContainer>
@@ -106,8 +118,8 @@ const DebtChart = ({ data }: { data: Data[] }) => {
 
 const TooltipWrapper = styled.div`
 	width: 250px;
-	background-color: ${props => props.theme.colors.grayBlue};
-	border: 1px solid ${props => props.theme.colors.grayBlue};
+	background-color: ${(props) => props.theme.colors.grayBlue};
+	border: 1px solid ${(props) => props.theme.colors.grayBlue};
 	border-radius: 2px;
 	padding: 0 16px 16px 16px;
 	text-align: left;
@@ -142,8 +154,8 @@ const LegendIcon = styled.div`
 `;
 
 const LegendText = styled.span`
-	font-family: ${props => props.theme.fonts.regular};
+	font-family: ${(props) => props.theme.fonts.regular};
 	font-size: 12px;
-	color: ${props => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.white};
 `;
 export default DebtChart;

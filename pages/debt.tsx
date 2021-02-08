@@ -17,18 +17,18 @@ import { last } from 'lodash';
 import useHistoricalDebtData from 'hooks/useHistoricalDebtData';
 
 const DashboardPage = () => {
-  const { t } = useTranslation();
+	const { t } = useTranslation();
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
-  const { debtBalance: actualDebt } = useUserStakingData();
-  const synthsBalancesQuery = useSynthsBalancesQuery();
+	const { debtBalance: actualDebt } = useUserStakingData();
+	const synthsBalancesQuery = useSynthsBalancesQuery();
 
 	const historicalDebt = useHistoricalDebtData();
 
 	const totalSynthValue = synthsBalancesQuery.isSuccess
 		? synthsBalancesQuery.data?.totalUSDBalance ?? zeroBN
-    : zeroBN;
+		: zeroBN;
 
-  const issuedDebt = toBigNumber(last(historicalDebt)?.issuanceDebt ?? 0);
+	const issuedDebt = toBigNumber(last(historicalDebt)?.issuanceDebt ?? 0);
 
 	return (
 		<>
@@ -39,12 +39,9 @@ const DashboardPage = () => {
 				<StatsSection>
 					<IssuedDebt
 						title={t('common.stat-box.issued-debt')}
-						value={formatFiatCurrency(
-							getPriceAtCurrentRate(issuedDebt),
-							{
-								sign: selectedPriceCurrency.sign,
-							}
-						)}
+						value={formatFiatCurrency(getPriceAtCurrentRate(issuedDebt), {
+							sign: selectedPriceCurrency.sign,
+						})}
 					/>
 					<ActiveDebt
 						title={t('common.stat-box.active-debt')}
@@ -55,18 +52,16 @@ const DashboardPage = () => {
 					/>
 					<TotalSynthValue
 						title={t('common.stat-box.synth-value')}
-						value={formatFiatCurrency(getPriceAtCurrentRate(totalSynthValue),
-              {
-                sign: selectedPriceCurrency.sign,
-              }
-            )}
+						value={formatFiatCurrency(getPriceAtCurrentRate(totalSynthValue), {
+							sign: selectedPriceCurrency.sign,
+						})}
 					/>
 				</StatsSection>
 				<LineSpacer />
-        <Header>{t('debt.actions.track.title')}</Header>
-        <ChartSection>
-				  <DebtChart data={historicalDebt}/>
-        </ChartSection>
+				<Header>{t('debt.actions.track.title')}</Header>
+				<ChartSection>
+					<DebtChart data={historicalDebt} />
+				</ChartSection>
 			</Content>
 		</>
 	);
@@ -86,10 +81,10 @@ const IssuedDebt = styled(StatBox)`
 const ActiveDebt = styled(StatBox)`
 	.title {
 		color: ${(props) => props.theme.colors.pink};
-  }
-  .value {
+	}
+	.value {
 		text-shadow: ${(props) => props.theme.colors.pinkTextShadow};
-    color: ${(props) => props.theme.colors.navy};
+		color: ${(props) => props.theme.colors.navy};
 	}
 `;
 
@@ -107,8 +102,8 @@ const Header = styled.div`
 `;
 
 const ChartSection = styled.div`
-  background: ${(props) => props.theme.colors.navy};
-  padding: 32px;
+	background: ${(props) => props.theme.colors.navy};
+	padding: 32px;
 `;
 
 export default DashboardPage;
