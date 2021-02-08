@@ -119,7 +119,6 @@ const MintTab: React.FC = () => {
 								setTransactionState(Transaction.SUCCESS);
 							},
 						});
-						onMintChange('0');
 						setTxModalOpen(false);
 					}
 				} catch (e) {

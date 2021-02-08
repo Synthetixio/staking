@@ -1,6 +1,6 @@
 {
 	"name": "staking",
-	"version": "2.37.1",
+	"version": "2.38.0",
 	"scripts": {
 		"dev": "next",
 		"build": "next build",
@@ -20,7 +20,7 @@
 		"@reach/dialog": "0.12.1",
 		"@snapshot-labs/snapshot.js": "0.1.4",
 		"@synthetixio/assets": "2.0.6",
-		"@synthetixio/js": "2.37.1",
+		"@synthetixio/js": "2.38.0",
 		"@tippyjs/react": "4.1.0",
 		"axios": "0.21.1",
 		"bignumber.js": "9.0.0",

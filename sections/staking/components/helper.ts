@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js';
-import { NumericValue, toBigNumber } from 'utils/formatters/number';
+import { NumericValue, toBigNumber, zeroBN, maxBN } from 'utils/formatters/number';
 
 export function getMintAmount(
 	targetCRatio: BigNumber,
@@ -17,4 +17,31 @@ export function getStakingAmount(
 ): BigNumber {
 	if (!mintAmount || !targetCRatio || !SNXPrice) return toBigNumber(0);
 	return toBigNumber(mintAmount).dividedBy(targetCRatio).dividedBy(SNXPrice);
+}
+
+export function getTransferableAmountFromMint(
+	balance: BigNumber,
+	stakedValue: BigNumber
+): BigNumber {
+	if (!balance || !stakedValue) return toBigNumber(0);
+	return maxBN(balance.minus(stakedValue), zeroBN);
+}
+
+export function getTransferableAmountFromBurn(
+	amountToBurn: NumericValue,
+	debtEscrowBalance: BigNumber,
+	targetCRatio: BigNumber,
+	SNXPrice: BigNumber,
+	transferable: BigNumber
+): BigNumber {
+	if (!amountToBurn) return toBigNumber(0);
+	return transferable.plus(
+		maxBN(
+			toBigNumber(amountToBurn)
+				.minus(debtEscrowBalance)
+				.dividedBy(targetCRatio)
+				.dividedBy(SNXPrice),
+			zeroBN
+		)
+	);
 }

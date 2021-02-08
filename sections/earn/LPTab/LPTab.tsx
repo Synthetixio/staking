@@ -3,6 +3,7 @@ import { useTranslation, Trans } from 'react-i18next';
 import { ethers } from 'ethers';
 import { Svg } from 'react-optimized-image';
 import { useRecoilValue } from 'recoil';
+import BigNumber from 'bignumber.js';
 
 import { appReadyState } from 'store/app';
 import StructuredTab from 'components/StructuredTab';
@@ -50,7 +51,9 @@ type LPTabProps = {
 	tokenRewards: number;
 	allowance: number | null;
 	userBalance: number;
+	userBalanceBN: BigNumber;
 	staked: number;
+	stakedBN: BigNumber;
 	needsToSettle?: boolean;
 };
 
@@ -59,7 +62,9 @@ const LPTab: FC<LPTabProps> = ({
 	tokenRewards,
 	allowance,
 	userBalance,
+	userBalanceBN,
 	staked,
+	stakedBN,
 	needsToSettle,
 }) => {
 	const { t } = useTranslation();
@@ -91,7 +96,9 @@ const LPTab: FC<LPTabProps> = ({
 		const commonStakeTabProps = {
 			stakedAsset,
 			userBalance,
+			userBalanceBN,
 			staked,
+			stakedBN,
 		};
 
 		return [
