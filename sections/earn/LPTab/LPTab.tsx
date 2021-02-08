@@ -115,6 +115,7 @@ const LPTab: FC<LPTabProps> = ({
 				key: 'unstake',
 			},
 		];
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [t, stakedAsset, userBalance, staked]);
 
 	useEffect(() => {

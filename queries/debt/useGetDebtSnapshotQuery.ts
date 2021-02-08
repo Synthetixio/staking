@@ -1,8 +1,6 @@
 import { useQuery, QueryConfig } from 'react-query';
 import { useRecoilValue } from 'recoil';
 
-import synthetix from 'lib/synthetix';
-
 import QUERY_KEYS from 'constants/queryKeys';
 
 import { isWalletConnectedState, networkState, walletAddressState } from 'store/wallet';
@@ -15,7 +13,7 @@ type DebtSnapshotData = {
 	block: number;
 	debtBalanceOf: number;
 	timestamp: number;
-}
+};
 
 const useGetDebtSnapshotQuery = (options?: QueryConfig<DebtSnapshotData[]>) => {
 	const isAppReady = useRecoilValue(appReadyState);
@@ -26,7 +24,7 @@ const useGetDebtSnapshotQuery = (options?: QueryConfig<DebtSnapshotData[]>) => {
 	return useQuery<DebtSnapshotData[]>(
 		QUERY_KEYS.Debt.DebtSnapshot(walletAddress ?? '', network?.id!),
 		async () => {
-			return await snxData.snx.debtSnapshot({account: walletAddress, max: 1000});
+			return await snxData.snx.debtSnapshot({ account: walletAddress, max: 1000 });
 		},
 		{
 			enabled: isAppReady && isWalletConnected,
