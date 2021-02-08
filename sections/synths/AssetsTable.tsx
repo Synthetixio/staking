@@ -22,10 +22,9 @@ import {
 	NoTextTransform,
 } from 'styles/common';
 import { CryptoBalance } from 'queries/walletBalances/types';
-import { SynthsTotalSupplyData } from 'queries/synths/useSynthsTotalSupplyQuery';
 
 import { EXTERNAL_LINKS } from 'constants/links';
-import { CryptoCurrency, Synths } from 'constants/currency';
+import { CryptoCurrency } from 'constants/currency';
 import ROUTES from 'constants/routes';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
@@ -49,7 +48,6 @@ type AssetsTableProps = {
 	isLoaded: boolean;
 	showConvert: boolean;
 	showHoldings: boolean;
-	synthsTotalSupply?: SynthsTotalSupplyData;
 };
 
 const AssetsTable: FC<AssetsTableProps> = ({
@@ -60,7 +58,6 @@ const AssetsTable: FC<AssetsTableProps> = ({
 	title,
 	showHoldings,
 	showConvert,
-	synthsTotalSupply,
 }) => {
 	const { t } = useTranslation();
 	const { connectWallet } = Connector.useContainer();
@@ -134,19 +131,12 @@ const AssetsTable: FC<AssetsTableProps> = ({
 				id: 'holdings',
 				accessor: (originalRow: any) => originalRow.usdBalance.toNumber(),
 				sortType: 'basic',
-				Cell: (cellProps: CellProps<CryptoBalance>) => {
-					const { currencyKey } = cellProps.row.original;
-					const debtPoolProportion =
-						synthsTotalSupply?.supplyData[currencyKey]?.poolProportion || new BigNumber(0);
-
-					return (
-						<SynthHolding
-							debtPoolProportion={debtPoolProportion}
-							usdBalance={cellProps.row.original.usdBalance}
-							totalUSDBalance={totalValue ?? zeroBN}
-						/>
-					);
-				},
+				Cell: (cellProps: CellProps<CryptoBalance>) => (
+					<SynthHolding
+						usdBalance={cellProps.row.original.usdBalance}
+						totalUSDBalance={totalValue ?? zeroBN}
+					/>
+				),
 				width: 200,
 				sortable: true,
 			});
