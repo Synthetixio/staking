@@ -155,7 +155,7 @@ const Grid = styled.div`
 	border-radius: 2px;
 	display: grid;
 	width: 100%;
-	grid-template-columns: auto 1fr;
+	grid-template-columns: minmax(180px, max-content) 1fr;
 	grid-column-gap: 2px;
 `;
 
