@@ -65,7 +65,6 @@ const useHistoricalDebtData = () => {
 					actualDebt: debtSnapshot.debtBalanceOf,
 				});
 			});
-			console.log(historicalDebtAndIssuance);
 
 			// Last occurrence is the current state of the debt
 			// Issuance debt = last occurrence of the historicalDebtAndIssuance array
@@ -73,7 +72,6 @@ const useHistoricalDebtData = () => {
 				timestamp: new Date().getTime(),
 				actualDebt: toBigNumber(debtDataQuery.data?.debtBalance ?? 0).toNumber(),
 				issuanceDebt: last(historicalIssuanceAggregation) ?? 0,
-				// netDebt: currentDebt / 1e18 - last(historicalIssuanceAggregation),
 			});
 
 			setHistoricalDebt(historicalDebtAndIssuance);
