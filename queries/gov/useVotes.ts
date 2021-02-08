@@ -10,15 +10,20 @@ import { appReadyState } from 'store/app';
 import { Vote } from './types';
 import { networkState, walletAddressState } from 'store/wallet';
 
-const useVotes = (spaceKey: SPACE_KEY, hash: string, options?: QueryConfig<Vote[]>) => {
+const useVotes = (
+	spaceKey: SPACE_KEY,
+	hash: string,
+	testnet?: boolean,
+	options?: QueryConfig<Vote[]>
+) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const network = useRecoilValue(networkState);
 	const walletAddress = useRecoilValue(walletAddressState);
 
 	return useQuery<Vote[]>(
-		QUERY_KEYS.Gov.Proposal(spaceKey, hash, walletAddress ?? '', network?.id!),
+		QUERY_KEYS.Gov.Proposal(spaceKey, hash, walletAddress ?? '', network?.id!, testnet),
 		async () => {
-			const { data } = await axios.get(PROPOSAL(spaceKey, hash));
+			const { data } = await axios.get(PROPOSAL(spaceKey, hash, testnet));
 
 			let result = [] as Vote[];
 

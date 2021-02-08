@@ -12,7 +12,11 @@ import { isWalletConnectedState, networkState, walletAddressState } from 'store/
 import snapshot from '@snapshot-labs/snapshot.js';
 import Connector from 'containers/Connector';
 
-const useProposals = (spaceKey: SPACE_KEY, options?: QueryConfig<Proposal[]>) => {
+const useProposals = (
+	spaceKey: SPACE_KEY,
+	testnet?: boolean,
+	options?: QueryConfig<Proposal[]>
+) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const network = useRecoilValue(networkState);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
@@ -20,13 +24,13 @@ const useProposals = (spaceKey: SPACE_KEY, options?: QueryConfig<Proposal[]>) =>
 	const { provider } = Connector.useContainer();
 
 	return useQuery<Proposal[]>(
-		QUERY_KEYS.Gov.Proposals(spaceKey, walletAddress ?? '', network?.id!),
+		QUERY_KEYS.Gov.Proposals(spaceKey, walletAddress ?? '', network?.id!, testnet),
 		async () => {
-			const space = await axios.get(SPACE(spaceKey));
+			const space = await axios.get(SPACE(spaceKey, testnet));
 
 			const spaceData = space.data as SpaceData;
 
-			const proposalsResponse = await axios.get(PROPOSALS(spaceKey));
+			const proposalsResponse = await axios.get(PROPOSALS(spaceKey, testnet));
 
 			const { data } = proposalsResponse;
 
@@ -36,7 +40,7 @@ const useProposals = (spaceKey: SPACE_KEY, options?: QueryConfig<Proposal[]>) =>
 				const proposal = data[key] as Proposal;
 				const proposalSnapshot = proposal.msg.payload.snapshot;
 				const hash = key;
-				let voterResponse = await axios.get(PROPOSAL(spaceKey, hash));
+				let voterResponse = await axios.get(PROPOSAL(spaceKey, hash, testnet));
 
 				const blockNumber: any = await provider?.getBlockNumber();
 

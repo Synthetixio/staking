@@ -9,12 +9,16 @@ import { SPACE, SPACE_KEY } from 'constants/snapshot';
 import { appReadyState } from 'store/app';
 import { SpaceData } from './types';
 
-const useSnapshotSpace = (spaceKey: SPACE_KEY, options?: QueryConfig<SpaceData>) => {
+const useSnapshotSpace = (
+	spaceKey: SPACE_KEY,
+	testnet?: boolean,
+	options?: QueryConfig<SpaceData>
+) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	return useQuery<SpaceData>(
-		QUERY_KEYS.Gov.SnapshotSpace(spaceKey),
+		QUERY_KEYS.Gov.SnapshotSpace(spaceKey, testnet),
 		async () => {
-			const response = await axios.get(SPACE(spaceKey));
+			const response = await axios.get(SPACE(spaceKey, testnet));
 
 			const { data }: { data: SpaceData } = response;
 

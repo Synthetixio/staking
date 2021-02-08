@@ -118,6 +118,7 @@ const ProposalList: React.FC<ProposalListProps> = ({ data, isLoaded }) => {
 	const returnProposal = useMemo(() => {
 		return (
 			<Proposal
+				spaceKey={activeTab}
 				proposal={proposal}
 				onBack={() => {
 					setProposal(null);
@@ -137,7 +138,7 @@ const ProposalList: React.FC<ProposalListProps> = ({ data, isLoaded }) => {
 						palette="primary"
 						columns={columns}
 						data={data}
-						maxRows={8}
+						maxRows={5}
 						isLoading={isWalletConnected && !isLoaded}
 						showPagination={true}
 						onTableRowClick={(row: Row<ProposalType>) => {

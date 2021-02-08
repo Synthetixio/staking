@@ -13,9 +13,9 @@ type PanelProps = {
 const Panel: React.FC<PanelProps> = ({ currentTab }) => {
 	const { t } = useTranslation();
 	const router = useRouter();
-	const councilProposals = useProposals(SPACE_KEY.COUNCIL);
-	const govProposals = useProposals(SPACE_KEY.PROPOSAL);
-	const grantsProposals = useProposals(SPACE_KEY.GRANTS);
+	const councilProposals = useProposals(SPACE_KEY.COUNCIL, true);
+	const govProposals = useProposals(SPACE_KEY.PROPOSAL, true);
+	const grantsProposals = useProposals(SPACE_KEY.GRANTS, true);
 
 	const tabData = useMemo(
 		() => [

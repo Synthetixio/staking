@@ -14,13 +14,23 @@ import { Proposal as ProposalItem } from 'queries/gov/types';
 import { truncateAddress } from 'utils/formatters/string';
 import { useTranslation } from 'react-i18next';
 import Button from 'components/Button';
+import { MSG, SPACE_KEY } from 'constants/snapshot';
+import { version } from '@snapshot-labs/snapshot.js/package.json';
+import snapshot from '@snapshot-labs/snapshot.js';
+import { useRecoilValue } from 'recoil';
+import { walletAddressState } from 'store/wallet';
+import Connector from 'containers/Connector';
+import axios from 'axios';
 
 type ProposalProps = {
 	onBack: Function;
 	proposal: ProposalItem | null;
+	spaceKey: SPACE_KEY;
 };
 
-const Proposal: React.FC<ProposalProps> = ({ onBack, proposal }) => {
+const Proposal: React.FC<ProposalProps> = ({ onBack, proposal, spaceKey }) => {
+	const { signer } = Connector.useContainer();
+	const walletAddress = useRecoilValue(walletAddressState);
 	const [selected, setSelected] = useState<number | null>(null);
 	const { t } = useTranslation();
 
@@ -31,7 +41,48 @@ const Proposal: React.FC<ProposalProps> = ({ onBack, proposal }) => {
 	// Right side panel
 	// Get the voting results and make the UI
 
-	const handleVote = () => {};
+	const saveVote = async (msg: any) => {
+		const url = `${MSG(true)}`;
+		return await axios.post(url, msg, {
+			method: 'POST',
+			headers: {
+				Accept: 'application/json',
+				'Content-Type': 'application/json',
+			},
+		});
+	};
+
+	const handleVote = async (hash?: string | null) => {
+		try {
+			// @TODO: Rely on package.json
+			const version = '0.1.3';
+			if (hash && selected !== null) {
+				const msg: any = {
+					address: walletAddress,
+					msg: JSON.stringify({
+						version,
+						timestamp: (Date.now() / 1e3).toFixed(),
+						space: spaceKey,
+						type: 'vote',
+						payload: {
+							proposal: hash,
+							choice: selected + 1,
+							metadata: {},
+						},
+					}),
+				};
+				msg.sig = await signer?.signMessage(msg.msg);
+				const result = await saveVote(msg);
+				console.log(result.data);
+			}
+		} catch (e) {
+			console.log(e);
+			// const errorMessage =
+			// 	e && e.error_description ? `Oops, ${e.error_description}` : 'Oops, something went wrong!';
+			// console.log(errorMessage);
+			return;
+		}
+	};
 
 	const expired = (timestamp?: number) => {
 		if (!timestamp) return;
@@ -83,7 +134,7 @@ const Proposal: React.FC<ProposalProps> = ({ onBack, proposal }) => {
 					))}
 				</OptionsContainer>
 				<ActionContainer>
-					<StyledCTA onClick={handleVote} variant="primary">
+					<StyledCTA onClick={() => handleVote(proposal?.authorIpfsHash)} variant="primary">
 						{t('gov.proposal.action.vote')}
 					</StyledCTA>
 				</ActionContainer>
