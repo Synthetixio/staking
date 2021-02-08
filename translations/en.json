@@ -290,14 +290,13 @@
 		"actions": {
 			"track": {
 				"title": "Debt Over Time",
-				"tooltip": {
-					"info": {
+				"info": {
+					"tooltip": "<0>Issued debt:</0> This displays the total of all your mints and burns over time, revealing how only your C-Ratio management has affected your debt.<1 /><2>Actual debt:</2> This displays your total debt over time."
+				},
+				"chart": {
+					"tooltip": {
 						"actualDebt": "Active Debt",
 						"issuedDebt": "Issued Debt"
-					},
-					"custom": {
-						"title": "Mint custom",
-						"subtext": "Mint a custom amount of sUSD"
 					}
 				}
 			}
