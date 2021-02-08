@@ -16,7 +16,7 @@ import DebtChart from 'sections/debt/DebtChart';
 import { last } from 'lodash';
 import useHistoricalDebtData from 'hooks/useHistoricalDebtData';
 
-import Info from 'assets/svg/app/info.svg'
+import Info from 'assets/svg/app/info.svg';
 
 const DashboardPage = () => {
 	const { t } = useTranslation();
@@ -60,26 +60,25 @@ const DashboardPage = () => {
 					/>
 				</StatsSection>
 				<LineSpacer />
-        <FlexDiv>
-        	<Header>{t('debt.actions.track.title')}</Header>
-          <DebtInfoTooltip
+				<FlexDiv>
+					<Header>{t('debt.actions.track.title')}</Header>
+					<DebtInfoTooltip
 						arrow={false}
-            content={
-              <Trans
-                i18nKey="debt.actions.track.info.tooltip"
-                components={[<Strong />, <br />, <Strong />]}
-              ></Trans>
-            }>
-            <TooltipIconContainer>
-              <ResizedInfoIcon 
-                src={Info}
-              />
-            </TooltipIconContainer>
-          </DebtInfoTooltip>
-        </FlexDiv>
-        <ChartSection>
-				  <DebtChart data={historicalDebt}/>
-        </ChartSection>
+						content={
+							<Trans
+								i18nKey="debt.actions.track.info.tooltip"
+								components={[<Strong />, <br />, <Strong />]}
+							></Trans>
+						}
+					>
+						<TooltipIconContainer>
+							<ResizedInfoIcon src={Info} />
+						</TooltipIconContainer>
+					</DebtInfoTooltip>
+				</FlexDiv>
+				<ChartSection>
+					<DebtChart data={historicalDebt} />
+				</ChartSection>
 			</Content>
 		</>
 	);
@@ -125,28 +124,28 @@ const ChartSection = styled.div`
 `;
 
 const DebtInfoTooltip = styled(Tooltip)`
-  background: ${(props) => props.theme.colors.navy};
+	background: ${(props) => props.theme.colors.navy};
 	.tippy-arrow {
 		color: ${(props) => props.theme.colors.navy};
 	}
 	.tippy-content {
 		font-size: 14px;
 	}
-`
+`;
 
 const TooltipIconContainer = styled.div`
 	margin-left: 10px;
 	width: 23px;
-  height: 23px;
-  opacity: 0.60;
+	height: 23px;
+	opacity: 0.6;
 `;
 
 const ResizedInfoIcon = styled(Svg)`
-  transform: scale(2) translateX(2.5px);
-`
+	transform: scale(2) translateX(2.5px);
+`;
 
 const Strong = styled.strong`
-    font-family: ${(props) => props.theme.fonts.interBold};
+	font-family: ${(props) => props.theme.fonts.interBold};
 `;
 
 export default DashboardPage;
