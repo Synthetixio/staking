@@ -2,9 +2,9 @@ import React from 'react';
 import Head from 'next/head';
 import styled from 'styled-components';
 
-import { useTranslation } from 'react-i18next';
-
-import { FlexDivCol, LineSpacer, StatsSection } from 'styles/common';
+import { Trans, useTranslation } from 'react-i18next';
+import { Svg } from 'react-optimized-image';
+import { FlexDiv, FlexDivCol, LineSpacer, StatsSection, Tooltip } from 'styles/common';
 
 import StatBox from 'components/StatBox';
 import useUserStakingData from 'hooks/useUserStakingData';
@@ -15,6 +15,8 @@ import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuer
 import DebtChart from 'sections/debt/DebtChart';
 import { last } from 'lodash';
 import useHistoricalDebtData from 'hooks/useHistoricalDebtData';
+
+import Info from 'assets/svg/app/info.svg'
 
 const DashboardPage = () => {
   const { t } = useTranslation();
@@ -63,7 +65,23 @@ const DashboardPage = () => {
 					/>
 				</StatsSection>
 				<LineSpacer />
-        <Header>{t('debt.actions.track.title')}</Header>
+        <FlexDiv>
+        	<Header>{t('debt.actions.track.title')}</Header>
+          <DebtInfoTooltip
+						arrow={false}
+            content={
+              <Trans
+                i18nKey="debt.actions.track.info.tooltip"
+                components={[<Strong />, <br />, <Strong />]}
+              ></Trans>
+            }>
+            <TooltipIconContainer>
+              <ResizedInfoIcon 
+                src={Info}
+              />
+            </TooltipIconContainer>
+          </DebtInfoTooltip>
+        </FlexDiv>
         <ChartSection>
 				  <DebtChart data={historicalDebt}/>
         </ChartSection>
@@ -109,6 +127,31 @@ const Header = styled.div`
 const ChartSection = styled.div`
   background: ${(props) => props.theme.colors.navy};
   padding: 32px;
+`;
+
+const DebtInfoTooltip = styled(Tooltip)`
+  background: ${(props) => props.theme.colors.navy};
+	.tippy-arrow {
+		color: ${(props) => props.theme.colors.navy};
+	}
+	.tippy-content {
+		font-size: 14px;
+	}
+`
+
+const TooltipIconContainer = styled.div`
+	margin-left: 10px;
+	width: 23px;
+  height: 23px;
+  opacity: 0.60;
+`;
+
+const ResizedInfoIcon = styled(Svg)`
+  transform: scale(2) translateX(2.5px);
+`
+
+const Strong = styled.strong`
+    font-family: ${(props) => props.theme.fonts.interBold};
 `;
 
 export default DashboardPage;

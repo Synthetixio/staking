@@ -17,8 +17,8 @@ import { formatCurrency } from 'utils/formatters/number';
 import { Synths } from 'constants/currency';
 
 const LEGEND_LABELS = {
-	actualDebt: 'debt.actions.track.tooltip.info.actualDebt',
-	issuanceDebt: 'debt.actions.track.tooltip.info.issuedDebt',
+	actualDebt: 'debt.actions.track.chart.tooltip.actualDebt',
+	issuanceDebt: 'debt.actions.track.chart.tooltip.issuedDebt',
 };
 
 type Payload = {
