@@ -2,7 +2,6 @@ import Head from 'next/head';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { useRecoilValue } from 'recoil';
-import { BigNumber } from 'bignumber.js';
 
 import { StatsSection, LineSpacer } from 'styles/common';
 
