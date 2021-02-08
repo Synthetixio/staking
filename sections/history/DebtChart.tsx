@@ -131,7 +131,6 @@ const LegendName = styled.div`
 const LegendIcon = styled.div`
 	width: 10px;
 	height: 10px;
-	background-color: red;
 	border-radius: 50%;
 	margin-right: 8px;
 `;

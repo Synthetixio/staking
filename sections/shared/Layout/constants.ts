@@ -16,6 +16,10 @@ export const MENU_LINKS: MenuLinks = [
 		i18nLabel: 'sidenav.staking',
 		link: ROUTES.Staking.Home,
 	},
+    {
+		i18nLabel: 'sidenav.debt-history',
+		link: ROUTES.DebtHistory.Home,
+	},
 	{
 		i18nLabel: 'sidenav.earn',
 		link: ROUTES.Earn.Home,

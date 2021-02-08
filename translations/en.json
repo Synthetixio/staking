@@ -630,6 +630,7 @@
 		"synths": "Synths",
 		"escrow": "Escrow",
 		"history": "History",
+		"debt-history": "Track",
 		"l2": "Layer 2",
 		"bars": {
 			"c-ratio": "c-ratio",

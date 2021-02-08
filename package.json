@@ -4,7 +4,7 @@
 	"scripts": {
 		"dev": "next -p 8080",
 		"build": "next build",
-		"start": "next start",
+		"start": "next start -p 8080",
 		"tsc": "tsc --noEmit",
 		"export": "next export",
 		"format": "prettier --write \"**/*.{ts,tsx}\"",

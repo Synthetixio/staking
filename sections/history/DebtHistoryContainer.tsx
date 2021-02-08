@@ -143,7 +143,6 @@ const Header = styled.div`
 
 const Body = styled.div`
 	width: 100%;
-	background: ${(props) => props.theme.colors.backgroundBlue};
 `;
 
 const Title = styled.span`
@@ -152,21 +151,23 @@ const Title = styled.span`
 `;
 
 const Grid = styled.div`
+	background: ${(props) => props.theme.colors.grayBlue};
+	border-radius: 2px;
 	display: grid;
 	width: 100%;
-	grid-template-columns: 170px 1fr;
-	grid-column-gap: 18px;
+	grid-template-columns: auto 1fr;
+	grid-column-gap: 2px;
 `;
 
 const GridColumn = styled.div`
 	display: grid;
-	grid-row-gap: 18px;
+	grid-row-gap: 2px;
 `;
 
 export const BorderedContainer = styled.div`
+	background: ${(props) => props.theme.colors.backgroundBlue};
 	padding: 18px;
 	white-space: nowrap;
-	border: 1px solid ${props => props.theme.colors.purple};
 	border-radius: 2px;
 	display: flex;
 	flex-direction: column;
