@@ -53,7 +53,6 @@ const StakingInfo: React.FC<StakingInfoProps> = ({ isMint }) => {
 		SNXRate,
 		issuableSynths,
 		debtEscrowBalance,
-		totalEscrowBalance,
 		collateral,
 		balance,
 	} = useStakingCalculations();
@@ -195,7 +194,6 @@ const StakingInfo: React.FC<StakingInfoProps> = ({ isMint }) => {
 		balance,
 		collateral,
 		debtEscrowBalance,
-		totalEscrowBalance,
 	]);
 
 	const emptyInput = isMint ? amountToMint.length === 0 : amountToBurn.length === 0;
