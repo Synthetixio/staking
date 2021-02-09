@@ -6,14 +6,22 @@ import useGetDebtDataQuery from 'queries/debt/useGetDebtDataQuery';
 import { last, orderBy } from 'lodash';
 import { toBigNumber } from 'utils/formatters/number';
 
-type HistoricalDebtAndIssuance = {
+type HistoricalDebtAndIssuanceData = {
 	timestamp: number;
 	actualDebt: number;
 	issuanceDebt: number;
 };
 
+type HistoricalDebtAndIssuance = {
+	isLoading: boolean;
+	data: HistoricalDebtAndIssuanceData[] | [];
+};
+
 const useHistoricalDebtData = () => {
-	const [historicalDebt, setHistoricalDebt] = useState<HistoricalDebtAndIssuance[]>([]);
+	const [historicalDebt, setHistoricalDebt] = useState<HistoricalDebtAndIssuance>({
+		isLoading: true,
+		data: [],
+	});
 
 	const issuedQuery = useSynthIssuedQuery();
 	const burnedQuery = useSynthBurnedQuery();
@@ -57,7 +65,7 @@ const useHistoricalDebtData = () => {
 			});
 
 			// We merge both actual & issuance debt into an array
-			let historicalDebtAndIssuance: HistoricalDebtAndIssuance[] = [];
+			let historicalDebtAndIssuance: HistoricalDebtAndIssuanceData[] = [];
 			debtHistory.reverse().forEach((debtSnapshot, i) => {
 				historicalDebtAndIssuance.push({
 					timestamp: debtSnapshot.timestamp,
@@ -74,7 +82,7 @@ const useHistoricalDebtData = () => {
 				issuanceDebt: last(historicalIssuanceAggregation) ?? 0,
 			});
 
-			setHistoricalDebt(historicalDebtAndIssuance);
+			setHistoricalDebt({ isLoading: false, data: historicalDebtAndIssuance });
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isLoaded]);

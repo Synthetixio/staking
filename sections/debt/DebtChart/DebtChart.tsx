@@ -1,8 +1,9 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { format } from 'date-fns';
-import { ThemeContext } from 'styled-components';
+import { Svg } from 'react-optimized-image';
+import { useTheme } from 'styled-components';
 import {
 	ResponsiveContainer,
 	LineChart,
@@ -12,8 +13,11 @@ import {
 	Tooltip,
 	ReferenceLine,
 } from 'recharts';
+import { FlexDivColCentered } from 'styles/common';
 import { formatCurrency } from 'utils/formatters/number';
 import { Synths } from 'constants/currency';
+
+import SpinnerIcon from 'assets/svg/app/loader.svg';
 
 const LEGEND_LABELS = {
 	actualDebt: 'debt.actions.track.tooltip.info.actualDebt',
@@ -61,9 +65,17 @@ type Data = {
 	actualDebt: number;
 };
 
-const DebtChart = ({ data }: { data: Data[] }) => {
-	const { colors, fonts } = useContext(ThemeContext);
-	if (!data || data.length === 0) return null;
+const DebtChart = ({ data, isLoading }: { data: Data[]; isLoading: boolean }) => {
+	const { t } = useTranslation();
+	const { colors, fonts } = useTheme();
+	if (isLoading)
+		return (
+			<DefaultContainer>
+				<Spinner src={SpinnerIcon} />
+			</DefaultContainer>
+		);
+	if (!data || data.length === 0)
+		return <DefaultContainer>{t('debt.actions.track.no-data')}</DefaultContainer>;
 	return (
 		<ResponsiveContainer width="100%" height={270}>
 			<LineChart margin={{ left: 10, top: 20, bottom: 0, right: 5 }} data={data}>
@@ -156,4 +168,15 @@ const LegendText = styled.span`
 	font-size: 12px;
 	color: ${(props) => props.theme.colors.white};
 `;
+
+const DefaultContainer = styled(FlexDivColCentered)`
+	height: 270px;
+	justify-content: center;
+`;
+
+const Spinner = styled(Svg)`
+	display: block;
+	margin: 30px auto;
+`;
+
 export default DebtChart;

@@ -28,7 +28,10 @@ const DashboardPage = () => {
 		? synthsBalancesQuery.data?.totalUSDBalance ?? zeroBN
 		: zeroBN;
 
-	const issuedDebt = toBigNumber(last(historicalDebt)?.issuanceDebt ?? 0);
+	const dataIsLoading = historicalDebt?.isLoading ?? false;
+	const issuedDebt = dataIsLoading
+		? toBigNumber(0)
+		: toBigNumber(last(historicalDebt.data)?.issuanceDebt ?? 0);
 
 	return (
 		<>
@@ -60,7 +63,7 @@ const DashboardPage = () => {
 				<LineSpacer />
 				<Header>{t('debt.actions.track.title')}</Header>
 				<ChartSection>
-					<DebtChart data={historicalDebt} />
+					<DebtChart data={historicalDebt.data} isLoading={dataIsLoading} />
 				</ChartSection>
 			</Content>
 		</>
@@ -97,7 +100,7 @@ const TotalSynthValue = styled(StatBox)`
 const Header = styled.div`
 	color: ${(props) => props.theme.colors.white};
 	font-family: ${(props) => props.theme.fonts.extended};
-	font-size: 16px;
+	font-size: 14px;
 	padding-bottom: 20px;
 `;
 

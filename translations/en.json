@@ -290,6 +290,7 @@
 		"actions": {
 			"track": {
 				"title": "Debt Over Time",
+				"no-data": "Debt data is not available for this wallet",
 				"tooltip": {
 					"info": {
 						"actualDebt": "Active Debt",
