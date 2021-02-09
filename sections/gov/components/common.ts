@@ -18,3 +18,10 @@ export const Divider = styled.div`
 	margin-top: 20px;
 	margin-bottom: 20px;
 `;
+
+export const Blockie = styled.img`
+	width: 25px;
+	height: 25px;
+	border-radius: 12.5px;
+	margin-right: 10px;
+`;

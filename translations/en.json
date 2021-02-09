@@ -645,6 +645,17 @@
 			"action": {
 				"vote": "Vote",
 				"withdraw": "Withdraw"
+			},
+			"info": {
+				"author": "Author",
+				"time": "Start - End",
+				"snapshot": "Snapshot"
+			},
+			"votes": {
+				"title": "Current results"
+			},
+			"history": {
+				"title": "Voting history"
 			}
 		},
 		"council": {

@@ -14,6 +14,7 @@ import { truncateAddress } from 'utils/formatters/string';
 import SpartanCouncilNFT from 'assets/gifs/SC-NFT.gif';
 import Link from 'assets/svg/app/link.svg';
 import useCouncilMembers from '../hooks/useCouncilMembers';
+import { Blockie } from './common';
 
 const CouncilBoard: React.FC = () => {
 	const { t } = useTranslation();
@@ -78,13 +79,6 @@ const Address = styled.p`
 	font-family: ${(props) => props.theme.fonts.interBold};
 	font-size: 12px;
 `;
-const Blockie = styled.img`
-	width: 25px;
-	height: 25px;
-	border-radius: 12.5px;
-	margin-right: 10px;
-`;
-
 const StyledSpinner = styled(Svg)`
 	display: block;
 	margin: 30px auto;

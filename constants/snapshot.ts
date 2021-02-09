@@ -1,7 +1,8 @@
 import BigNumber from 'bignumber.js';
 
+// @TODO: change back to council end point
 export enum SPACE_KEY {
-	COUNCIL = 'synthetixcouncil',
+	COUNCIL = 'ilv.eth',
 	PROPOSAL = 'synthetixproposal',
 	GRANTS = 'synthetixgrants',
 }

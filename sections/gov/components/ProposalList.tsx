@@ -9,7 +9,7 @@ import {
 	TableNoResultsTitle,
 } from 'styles/common';
 import Button from 'components/Button';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { Proposal as ProposalType } from 'queries/gov/types';
 import Connector from 'containers/Connector';
 import Table from 'components/Table';
@@ -19,6 +19,7 @@ import { useRouter } from 'next/router';
 import { SPACE_KEY } from 'constants/snapshot';
 import ROUTES from 'constants/routes';
 import Proposal from './Proposal';
+import { proposalState } from 'store/gov';
 
 type ProposalListProps = {
 	data: ProposalType[];
@@ -30,7 +31,7 @@ const ProposalList: React.FC<ProposalListProps> = ({ data, isLoaded }) => {
 	const router = useRouter();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const { connectWallet } = Connector.useContainer();
-	const [proposal, setProposal] = useState<ProposalType | null>(null);
+	const [proposal, setProposal] = useRecoilState(proposalState);
 
 	useEffect(() => {
 		if (
