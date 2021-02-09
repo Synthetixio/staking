@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { ProposalInfoType, proposalState } from 'store/gov';
 import styled, { useTheme } from 'styled-components';
 import { FlexDivRowCentered, ExternalLink, FlexDivColCentered } from 'styles/common';
@@ -12,20 +12,25 @@ import { Svg } from 'react-optimized-image';
 import Link from 'assets/svg/app/link.svg';
 import Etherscan from 'containers/Etherscan';
 import StructuredTab from 'components/StructuredTab';
+import Results from './Results';
+import { useRouter } from 'next/router';
+import { SPACE_KEY } from 'constants/snapshot';
+import useActiveTab from '../hooks/useActiveTab';
 
 type ProposalDataProps = {};
 
 const ProposalData: React.FC<ProposalDataProps> = ({}) => {
 	const { t } = useTranslation();
 	const theme = useTheme();
-	const [proposal, setProposal] = useRecoilState(proposalState);
+	const proposal = useRecoilValue(proposalState);
 	const { etherscanInstance } = Etherscan.useContainer();
+	const activeTab = useActiveTab();
 
 	const tabData = useMemo(
 		() => [
 			{
 				title: t('gov.proposal.votes.title'),
-				tabChildren: <></>,
+				tabChildren: <Results hash={proposal?.authorIpfsHash ?? ''} />,
 				blue: true,
 				key: ProposalInfoType.RESULTS,
 			},
@@ -36,7 +41,7 @@ const ProposalData: React.FC<ProposalDataProps> = ({}) => {
 				key: ProposalInfoType.HISTORY,
 			},
 		],
-		[ProposalInfoType, proposal]
+		[ProposalInfoType, proposal, activeTab]
 	);
 
 	if (!proposal) return <></>;

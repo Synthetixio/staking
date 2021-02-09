@@ -16,10 +16,10 @@ import Table from 'components/Table';
 import { useTranslation } from 'react-i18next';
 import Countdown from 'react-countdown';
 import { useRouter } from 'next/router';
-import { SPACE_KEY } from 'constants/snapshot';
 import ROUTES from 'constants/routes';
 import Proposal from './Proposal';
 import { proposalState } from 'store/gov';
+import useActiveTab from '../hooks/useActiveTab';
 
 type ProposalListProps = {
 	data: ProposalType[];
@@ -32,6 +32,7 @@ const ProposalList: React.FC<ProposalListProps> = ({ data, isLoaded }) => {
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const { connectWallet } = Connector.useContainer();
 	const [proposal, setProposal] = useRecoilState(proposalState);
+	const activeTab = useActiveTab();
 
 	useEffect(() => {
 		if (
@@ -49,13 +50,14 @@ const ProposalList: React.FC<ProposalListProps> = ({ data, isLoaded }) => {
 		}
 	}, [router.query.panel, isWalletConnected, data]);
 
-	const activeTab = useMemo(
-		() =>
-			isWalletConnected && Array.isArray(router.query.panel) && router.query.panel.length
-				? (router.query.panel[0] as SPACE_KEY)
-				: SPACE_KEY.COUNCIL,
-		[router.query.panel, isWalletConnected]
-	);
+	// @TODO: Store in recoil state
+	// const activeTab = useMemo(
+	// 	() =>
+	// 		isWalletConnected && Array.isArray(router.query.panel) && router.query.panel.length
+	// 			? (router.query.panel[0] as SPACE_KEY)
+	// 			: SPACE_KEY.COUNCIL,
+	// 	[router.query.panel, isWalletConnected]
+	// );
 
 	const handleCreate = useCallback(() => {}, []);
 

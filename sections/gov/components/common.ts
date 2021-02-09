@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-
 import { FlexDivColCentered } from 'styles/common';
 
 export const InputContainer = styled(FlexDivColCentered)`
