@@ -10,7 +10,7 @@ import { ContainerRowMixin } from '../common';
 type CurrencyAmountProps = {
 	amountCurrencyKey: CurrencyKey;
 	amount: NumericValue;
-    valueCurrencyKey: CurrencyKey;
+	valueCurrencyKey: CurrencyKey;
 	totalValue: NumericValue;
 	sign?: string;
 	conversionRate?: NumericValue | null;
@@ -19,7 +19,7 @@ type CurrencyAmountProps = {
 export const CurrencyAmount: FC<CurrencyAmountProps> = ({
 	amountCurrencyKey,
 	amount,
-    valueCurrencyKey,
+	valueCurrencyKey,
 	totalValue,
 	sign,
 	conversionRate,

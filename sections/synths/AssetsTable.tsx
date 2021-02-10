@@ -105,7 +105,7 @@ const AssetsTable: FC<AssetsTableProps> = ({
 					<Currency.Amount
 						amountCurrencyKey={cellProps.row.original.currencyKey}
 						amount={cellProps.value}
-                        valueCurrencyKey={selectedPriceCurrency.name}
+						valueCurrencyKey={selectedPriceCurrency.name}
 						totalValue={cellProps.row.original.usdBalance}
 						sign={selectedPriceCurrency.sign}
 						conversionRate={selectPriceCurrencyRate}
