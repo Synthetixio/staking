@@ -6,38 +6,44 @@ import { useTranslation } from 'react-i18next';
 import { Svg } from 'react-optimized-image';
 
 import { linkCSS } from 'styles/common';
+import { toBigNumber } from 'utils/formatters/number';
 
 import StakingLogo from 'assets/svg/app/staking-logo.svg';
 
-import useHistoricalRatesQuery from 'queries/rates/useHistoricalRatesQuery';
 import useSNX24hrPricesQuery from 'queries/rates/useSNX24hrPricesQuery';
 import useEscrowDataQuery from 'hooks/useEscrowDataQueryWrapper';
+import useCryptoBalances from 'hooks/useCryptoBalances';
+import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
 
 import ROUTES from 'constants/routes';
-import { CryptoCurrency } from 'constants/currency';
+import { CryptoCurrency, Synths } from 'constants/currency';
 import { SIDE_NAV_WIDTH, zIndex } from 'constants/ui';
-import { Period } from 'constants/period';
 
 import { MENU_LINKS, MIGRATE_MENU_LINKS } from '../constants';
 import PriceItem from './PriceItem';
 import PeriodBarStats from './PeriodBarStats';
+import BalanceItem from './BalanceItem';
 import CRatioBarStats from './CRatioBarStats';
 
 const SideNav: FC = () => {
 	const { t } = useTranslation();
 	const { asPath } = useRouter();
 	const SNX24hrPricesQuery = useSNX24hrPricesQuery();
-	const ETH24hrPricesQuery = useHistoricalRatesQuery(CryptoCurrency.ETH, Period.ONE_DAY);
+	const cryptoBalances = useCryptoBalances();
+	const synthsBalancesQuery = useSynthsBalancesQuery();
+
+	const snxBalance =
+		cryptoBalances?.balances?.find((balance) => balance.currencyKey === CryptoCurrency.SNX)
+			?.balance ?? toBigNumber(0);
+
+	const sUSDBalance =
+		synthsBalancesQuery?.data?.balancesMap[Synths.sUSD]?.balance ?? toBigNumber(0);
 
 	const snxPriceChartData = useMemo(() => {
 		return (SNX24hrPricesQuery?.data ?? [])
 			.map((dataPoint) => ({ value: dataPoint.averagePrice }))
 			.reverse();
 	}, [SNX24hrPricesQuery?.data]);
-
-	const ethPriceChartData = useMemo(() => {
-		return (ETH24hrPricesQuery?.data?.rates ?? []).map((dataPoint) => ({ value: dataPoint.rate }));
-	}, [ETH24hrPricesQuery?.data?.rates]);
 
 	const rewardEscrowQuery = useEscrowDataQuery();
 	const totalBalancePendingMigration = rewardEscrowQuery?.data?.totalBalancePendingMigration ?? 0;
@@ -68,8 +74,9 @@ const SideNav: FC = () => {
 			<LineSeparator />
 			<MenuCharts>
 				<CRatioBarStats />
+				<BalanceItem amount={snxBalance} currencyKey={CryptoCurrency.SNX} />
+				<BalanceItem amount={sUSDBalance} currencyKey={Synths.sUSD} />
 				<PriceItem currencyKey={CryptoCurrency.SNX} data={snxPriceChartData} />
-				<PriceItem currencyKey={CryptoCurrency.ETH} data={ethPriceChartData} />
 				<PeriodBarStats />
 			</MenuCharts>
 		</SideNavContainer>
