@@ -19,6 +19,7 @@ import LPTab from './LPTab';
 import { isWalletConnectedState } from 'store/wallet';
 
 import { Tab } from './types';
+import { zeroBN } from 'utils/formatters/number';
 
 export const NOT_APPLICABLE = 'n/a';
 
@@ -204,20 +205,24 @@ const Incentives: FC<IncentivesProps> = ({
 				{activeTab === Tab.iETH_LP && (
 					<LPTab
 						userBalance={lpData[Synths.iETH].data?.userBalance ?? 0}
+						userBalanceBN={lpData[Synths.iETH].data?.userBalanceBN ?? zeroBN}
 						stakedAsset={Synths.iETH}
 						allowance={lpData[Synths.iETH].data?.allowance ?? null}
 						tokenRewards={incentives[1].rewards}
 						staked={incentives[1].staked.balance}
+						stakedBN={lpData[Synths.iETH].data?.stakedBN ?? zeroBN}
 						needsToSettle={incentives[1].needsToSettle}
 					/>
 				)}
 				{activeTab === Tab.iBTC_LP && (
 					<LPTab
 						userBalance={lpData[Synths.iBTC].data?.userBalance ?? 0}
+						userBalanceBN={lpData[Synths.iBTC].data?.userBalanceBN ?? zeroBN}
 						stakedAsset={Synths.iBTC}
 						allowance={lpData[Synths.iBTC].data?.allowance ?? null}
 						tokenRewards={incentives[2].rewards}
 						staked={incentives[2].staked.balance}
+						stakedBN={lpData[Synths.iBTC].data?.stakedBN ?? zeroBN}
 						needsToSettle={incentives[2].needsToSettle}
 					/>
 				)}

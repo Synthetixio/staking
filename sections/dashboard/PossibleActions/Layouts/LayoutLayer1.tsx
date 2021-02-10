@@ -132,7 +132,7 @@ const LayoutOne: FC = () => {
 					supplier: 'Curve Finance',
 				}),
 				tooltip: t('common.tooltip.external', { link: 'Curve Finance' }),
-				link: ROUTES.Earn.sUSD_EXTERNAL,
+				externalLink: ROUTES.Earn.sUSD_EXTERNAL,
 			},
 			{
 				gridLocations: ['col-4', 'col-5', 'row-2', 'row-3'],
@@ -149,7 +149,7 @@ const LayoutOne: FC = () => {
 					supplier: 'Curve Finance',
 				}),
 				tooltip: t('common.tooltip.external', { link: 'Curve Finance' }),
-				link: ROUTES.Earn.sEURO_EXTERNAL,
+				externalLink: ROUTES.Earn.sEURO_EXTERNAL,
 			},
 		];
 	}, [t, lpData, currentCRatio, targetCRatio, stakingRewards, tradingRewards]);

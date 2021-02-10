@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { ethers } from 'ethers';
 import { Svg } from 'react-optimized-image';
+import BigNumber from 'bignumber.js';
 
 import PendingConfirmation from 'assets/svg/app/pending-confirmation.svg';
 import Success from 'assets/svg/app/success.svg';
@@ -79,10 +80,19 @@ type StakeTabProps = {
 	isStake: boolean;
 	stakedAsset: CurrencyKey;
 	userBalance: number;
+	userBalanceBN: BigNumber;
 	staked: number;
+	stakedBN: BigNumber;
 };
 
-const StakeTab: FC<StakeTabProps> = ({ stakedAsset, isStake, userBalance, staked }) => {
+const StakeTab: FC<StakeTabProps> = ({
+	stakedAsset,
+	isStake,
+	userBalance,
+	userBalanceBN,
+	staked,
+	stakedBN,
+}) => {
 	const { t } = useTranslation();
 	const [amount, setAmount] = useState<string>('');
 	const { monitorHash } = Notify.useContainer();
@@ -105,8 +115,18 @@ const StakeTab: FC<StakeTabProps> = ({ stakedAsset, isStake, userBalance, staked
 				try {
 					setError(null);
 					const contract = getContract(stakedAsset, signer);
+					let stakeAmount;
+					if (isStake) {
+						stakeAmount =
+							Number(amount) === userBalance
+								? userBalanceBN
+								: synthetix.js!.utils.parseEther(amount);
+					} else {
+						stakeAmount =
+							Number(amount) === staked ? stakedBN : synthetix.js!.utils.parseEther(amount);
+					}
 					let gasEstimate = await getGasEstimateForTransaction(
-						[synthetix.js!.utils.parseEther(amount)],
+						[stakeAmount],
 						isStake ? contract.estimateGas.stake : contract.estimateGas.withdraw
 					);
 					setGasLimitEstimate(normalizeGasLimit(Number(gasEstimate)));
@@ -117,7 +137,17 @@ const StakeTab: FC<StakeTabProps> = ({ stakedAsset, isStake, userBalance, staked
 			}
 		};
 		getGasLimitEstimate();
-	}, [amount, isStake, stakedAsset, signer, isAppReady]);
+	}, [
+		amount,
+		isStake,
+		stakedAsset,
+		signer,
+		isAppReady,
+		userBalance,
+		userBalanceBN,
+		staked,
+		stakedBN,
+	]);
 
 	const handleStake = useCallback(() => {
 		async function stake() {
@@ -127,7 +157,17 @@ const StakeTab: FC<StakeTabProps> = ({ stakedAsset, isStake, userBalance, staked
 					setTxModalOpen(true);
 					const contract = getContract(stakedAsset, signer);
 
-					const formattedStakeAmount = synthetix.js!.utils.parseEther(amount);
+					let formattedStakeAmount;
+
+					if (isStake) {
+						formattedStakeAmount =
+							Number(amount) === userBalance
+								? userBalanceBN
+								: synthetix.js!.utils.parseEther(amount);
+					} else {
+						formattedStakeAmount =
+							Number(amount) === staked ? stakedBN : synthetix.js!.utils.parseEther(amount);
+					}
 					const gasLimit = await getGasEstimateForTransaction(
 						[formattedStakeAmount],
 						isStake ? contract.estimateGas.stake : contract.estimateGas.withdraw
@@ -161,7 +201,19 @@ const StakeTab: FC<StakeTabProps> = ({ stakedAsset, isStake, userBalance, staked
 			}
 		}
 		stake();
-	}, [gasPrice, isStake, monitorHash, amount, signer, stakedAsset, isAppReady]);
+	}, [
+		gasPrice,
+		isStake,
+		monitorHash,
+		amount,
+		signer,
+		stakedAsset,
+		isAppReady,
+		userBalanceBN,
+		userBalance,
+		staked,
+		stakedBN,
+	]);
 
 	if (transactionState === Transaction.WAITING) {
 		return (

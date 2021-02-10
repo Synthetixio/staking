@@ -285,6 +285,24 @@
 			}
 		}
 	},
+	"debt": {
+		"page-title": "Debt | Synthetix Staking",
+		"actions": {
+			"track": {
+				"title": "Debt Over Time",
+				"no-data": "Debt data is not available for this wallet",
+				"info": {
+					"tooltip": "<0>Issued debt:</0> This displays the total of all your mints and burns over time, revealing how only your C-Ratio management has affected your debt.<1 /><2>Actual debt:</2> This displays your total debt over time."
+				},
+				"chart": {
+					"tooltip": {
+						"actualDebt": "Active Debt",
+						"issuedDebt": "Issued Debt"
+					}
+				}
+			}
+		}
+	},
 	"earn": {
 		"page-title": "Earn | Synthetix Staking",
 		"incentives": {
@@ -320,7 +338,8 @@
 				"curve": {
 					"title": "Curve.fi sUSD",
 					"description": "Staking Curve LP tokens from the sUSD pool allows you to earn CRV rewards, Curve swap fees, and SNX rewards. <0>Learn more.<0>",
-					"subtitle": "sUSD LP Rewards"
+					"subtitle": "sUSD LP Rewards",
+					"helper": "Visit curve.fi"
 				},
 				"seur": {
 					"title": "Curve.fi sEUR",
@@ -474,6 +493,10 @@
 				"title": "Deposit SNX",
 				"subtitle": "Deposit your SNX to complete the process of migrating your SNX from L1 to L2. You may experience a delay during the migration process before your SNX is available on L2",
 				"no-deposit": "No deposit history",
+				"warning": "Warning",
+				"metamask-only": "You are about to migrate funds to L2. Only Metamask is supported on L2, so make sure you are depositing from a Metamask wallet or a wallet that allows you to export your private key to Metamask.",
+				"layer2-withdraw-delay": "Once on L2, if you wish to withdraw your funds back to L1 it will take 7-10 days. On L2 there is currently limited functionality, including disabled transfers, and no usage for sUSD.",
+				"layer2-rewards": "SNX rewards for the first few weeks are low: Rewards will be 25k SNX a week for the 2 weeks between 2/1 and 2/15. Then, the synthetixDAO will assess the option of increasing the SNX rewards to incentivise further migration.",
 				"table": {
 					"deposit": "Deposit",
 					"date": "Date",
@@ -610,6 +633,7 @@
 		"dashboard": "Home",
 		"earn": "Earn",
 		"staking": "Staking",
+		"debt": "Debt",
 		"synths": "Synths",
 		"escrow": "Escrow",
 		"history": "History",
@@ -646,7 +670,8 @@
 			"lifetime-rewards": "Lifetime rewards",
 			"available-snx": "Total available SNX",
 			"vested-snx": "Total SNX vested",
-			"escrowed-snx": "Total SNX escrowed"
+			"escrowed-snx": "Total SNX escrowed",
+			"issued-debt": "Issued Debt"
 		},
 		"status": {
 			"claimed": "Claimed",
