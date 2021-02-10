@@ -29,7 +29,7 @@ export const CurrencyAmount: FC<CurrencyAmountProps> = ({
 			{formatCurrency(
 				currencyKey,
 				conversionRate != null ? toBigNumber(totalValue).dividedBy(conversionRate) : totalValue,
-				{ sign }
+				{ sign, decimals:2 }
 			)}
 		</TotalValue>
 	</Container>
