@@ -68,7 +68,7 @@ const PriceItem: FC<PriceItemProps> = ({ currencyKey, data }) => {
 const Container = styled(FlexDivCol)`
 	width: 100%;
 	font-size: 12px;
-	padding-bottom: 20px;
+	margin-bottom: 18px;
 	&:last-child {
 		padding-bottom: 0;
 	}

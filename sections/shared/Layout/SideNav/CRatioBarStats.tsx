@@ -18,7 +18,7 @@ const CRatioBarStats: FC = () => {
 	} = useStakingCalculations();
 
 	return (
-		<BarStatBox>
+		<StyledBarStatBox>
 			<BarHeaderSection>
 				<BarTitle>{t('sidenav.bars.c-ratio')}</BarTitle>
 				<BarValue>{formatPercent(percentageCurrentCRatio)}</BarValue>
@@ -33,10 +33,13 @@ const CRatioBarStats: FC = () => {
 				<BarTitle>{t('sidenav.bars.t-ratio')}</BarTitle>
 				<StyledBarValue>{formatPercent(percentageTargetCRatio)}</StyledBarValue>
 			</BarHeaderSection>
-		</BarStatBox>
+		</StyledBarStatBox>
 	);
 };
 
+const StyledBarStatBox = styled(BarStatBox)`
+	margin-bottom: 18px;
+`;
 const StyledBarValue = styled(BarValue)`
 	color: ${(props) => props.theme.colors.gray};
 `;

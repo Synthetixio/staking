@@ -689,6 +689,7 @@
 		},
 		"currency": {
 			"currency-price": "<0>{{currencyKey}}</0> Price",
+			"currency-balance": "<0>{{currencyKey}}</0> Balance",
 			"buy-currency": "Buy <0>{{currencyKey}}</0>",
 			"synthetic-currency-name": "Synthetic {{currencyName}}"
 		},
