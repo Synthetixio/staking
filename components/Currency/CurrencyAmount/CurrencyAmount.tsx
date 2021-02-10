@@ -8,28 +8,30 @@ import { CurrencyKey } from 'constants/currency';
 import { ContainerRowMixin } from '../common';
 
 type CurrencyAmountProps = {
-	currencyKey: CurrencyKey;
+	amountCurrencyKey: CurrencyKey;
 	amount: NumericValue;
+    valueCurrencyKey: CurrencyKey;
 	totalValue: NumericValue;
 	sign?: string;
 	conversionRate?: NumericValue | null;
 };
 
 export const CurrencyAmount: FC<CurrencyAmountProps> = ({
-	currencyKey,
+	amountCurrencyKey,
 	amount,
+    valueCurrencyKey,
 	totalValue,
 	sign,
 	conversionRate,
 	...rest
 }) => (
 	<Container {...rest}>
-		<Amount className="amount">{formatCurrency(currencyKey, amount)}</Amount>
+		<Amount className="amount">{formatCurrency(amountCurrencyKey, amount)}</Amount>
 		<TotalValue className="total-value">
 			{formatCurrency(
-				currencyKey,
+				valueCurrencyKey,
 				conversionRate != null ? toBigNumber(totalValue).dividedBy(conversionRate) : totalValue,
-				{ sign, decimals:2 }
+				{ sign }
 			)}
 		</TotalValue>
 	</Container>
