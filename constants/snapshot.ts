@@ -22,3 +22,18 @@ export const quadraticWeighting = (value: BigNumber) => {
 	const scaledValue = value.multipliedBy(1e5);
 	return scaledValue.sqrt();
 };
+
+const gateways = [
+	'cloudflare-ipfs.com',
+	'cf-ipfs.com',
+	'ipfs.io',
+	'ipfs.fleek.co',
+	'gateway.pinata.cloud',
+	'dweb.link',
+	'ipfs.infura.io',
+];
+
+export async function ipfsGet(ipfsHash: string, protocolType: string = 'ipfs') {
+	const url = `https://cloudflare-ipfs.com/${protocolType}/${ipfsHash}`;
+	return fetch(url).then((res) => res.json());
+}
