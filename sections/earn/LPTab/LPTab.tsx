@@ -258,7 +258,15 @@ const LPTab: FC<LPTabProps> = ({
 			<HeaderLabel>
 				<Trans
 					i18nKey={translationKey}
-					components={[<StyledLink href={EXTERNAL_LINKS.Synthetix.Incentives} />]}
+					components={[
+						<StyledLink
+							href={
+								stakedAsset === Synths.sTSLA
+									? `https://pools.balancer.exchange/#/pool/0x055db9aff4311788264798356bbf3a733ae181c6/`
+									: EXTERNAL_LINKS.Synthetix.Incentives
+							}
+						/>,
+					]}
 				/>
 			</HeaderLabel>
 			<FlexDivCentered>

@@ -360,7 +360,7 @@
 				},
 				"stsla": {
 					"title": "Balancer",
-					"description": "Stake sTLSA Balancer Pool LP to earn SNX rewards. <0>Learn more.<0>",
+					"description": "Stake sTLSA Balancer Pool LP to earn SNX rewards. <0>Add liquidity on Balancer here<0>.",
 					"subtitle": "sTSLA Rewards"
 				}
 			},

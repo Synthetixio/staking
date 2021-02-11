@@ -37,7 +37,6 @@ const useTSLAPoolQuery = (options?: QueryConfig<LiquidityPoolData>) => {
 				sTslaLPStaked,
 				sTslaLPAllowance,
 			] = await Promise.all([
-				// @notice - change ProxysTSLA for the sTSLA balance LP contract
 				getDuration(),
 				StakingRewardssTSLABalancer.rewardRate(),
 				StakingRewardssTSLABalancer.periodFinish(),
