@@ -124,6 +124,10 @@ const StakingInfo: React.FC<StakingInfoProps> = ({ isMint }) => {
 			? zeroBN
 			: debtBalance.minus(amountToBurnBN);
 
+		const changedSUSDBalance = isMint
+			? sUSDBalance.plus(amountToMintBN)
+			: sUSDBalance.minus(amountToBurnBN);
+
 		const changeCRatio = isMint
 			? currentCRatio.isLessThan(targetCRatio)
 				? unstakedCollateral
@@ -171,7 +175,7 @@ const StakingInfo: React.FC<StakingInfoProps> = ({ isMint }) => {
 				{
 					title: t('staking.info.table.susd-balance'),
 					value: sanitiseValue(sUSDBalance),
-					changedValue: sanitiseValue(changedDebt),
+					changedValue: sanitiseValue(changedSUSDBalance),
 					currencyKey: Synths.sUSD,
 				},
 				{
