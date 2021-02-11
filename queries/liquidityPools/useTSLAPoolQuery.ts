@@ -18,16 +18,13 @@ const useTSLAPoolQuery = (options?: QueryConfig<LiquidityPoolData>) => {
 	return useQuery<LiquidityPoolData>(
 		QUERY_KEYS.LiquidityPools.sTSLA(walletAddress ?? '', network?.id!),
 		async () => {
-			// @JJ - Add staking rewards contract
 			const {
-				contracts: { StakingRewardsiBTC, ProxyiBTC, ExchangeRates },
-				// utils: { formatBytes32String },
+				contracts: { StakingRewardssTSLABalancer, ProxysTSLA, ExchangeRates },
 			} = synthetix.js!;
 
-			// @JJ - Replace this with the sTSLA staking rewards address
-			const address = StakingRewardsiBTC.address;
-			// @JJ - Replace this with the sTSLA staking rewards params
-			const getDuration = StakingRewardsiBTC.DURATION || StakingRewardsiBTC.rewardsDuration;
+			const { address } = StakingRewardssTSLABalancer;
+			const getDuration =
+				StakingRewardssTSLABalancer.DURATION || StakingRewardssTSLABalancer.rewardsDuration;
 
 			const [
 				duration,
@@ -40,16 +37,16 @@ const useTSLAPoolQuery = (options?: QueryConfig<LiquidityPoolData>) => {
 				sTslaLPStaked,
 				sTslaLPAllowance,
 			] = await Promise.all([
-				// @notice - change ProxyiBTC for the sTSLA balance LP contract
+				// @notice - change ProxysTSLA for the sTSLA balance LP contract
 				getDuration(),
-				StakingRewardsiBTC.rewardRate(),
-				StakingRewardsiBTC.periodFinish(),
-				ProxyiBTC.balanceOf(address),
-				ProxyiBTC.balanceOf(walletAddress),
+				StakingRewardssTSLABalancer.rewardRate(),
+				StakingRewardssTSLABalancer.periodFinish(),
+				ProxysTSLA.balanceOf(address),
+				ProxysTSLA.balanceOf(walletAddress),
 				ExchangeRates.rateForCurrency(synthetix.js?.toBytes32(Synths.sTSLA)),
-				StakingRewardsiBTC.earned(walletAddress),
-				StakingRewardsiBTC.balanceOf(walletAddress),
-				ProxyiBTC.allowance(walletAddress, address),
+				StakingRewardssTSLABalancer.earned(walletAddress),
+				StakingRewardssTSLABalancer.balanceOf(walletAddress),
+				ProxysTSLA.allowance(walletAddress, address),
 			]);
 			const durationInWeeks = Number(duration) / 3600 / 24 / 7;
 			const isPeriodFinished = new Date().getTime() > Number(periodFinish) * 1000;
