@@ -3,6 +3,7 @@ import useIBTCPoolQuery_1 from 'queries/liquidityPools/useIBTCPoolQuery_1';
 import useCurveSusdPoolQuery from 'queries/liquidityPools/useCurveSusdPoolQuery';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import useCurveSeuroPoolQuery from 'queries/liquidityPools/useCurveSeuroPoolQuery';
+import useTSLAPoolQuery from 'queries/liquidityPools/useTSLAPoolQuery';
 
 import { Synths } from 'constants/currency';
 import { WEEKS_IN_YEAR } from 'constants/date';
@@ -23,6 +24,7 @@ const useLPData = (): LPData => {
 	const useiBTCPool = useIBTCPoolQuery_1();
 	const usesUSDPool = useCurveSusdPoolQuery();
 	const usesEuroPool = useCurveSeuroPoolQuery();
+	const usesTSLAPool = useTSLAPoolQuery();
 
 	const iETHTVL = (useiETHPool.data?.balance ?? 0) * (useiETHPool.data?.price ?? 0);
 	const iETHAPR =
@@ -34,6 +36,12 @@ const useLPData = (): LPData => {
 	const iBTCAPR =
 		useiBTCPool.data?.distribution && SNXRate && iBTCTVL
 			? ((useiBTCPool.data.distribution * SNXRate) / iBTCTVL) * WEEKS_IN_YEAR
+			: 0;
+
+	const sTSLATVL = (usesTSLAPool.data?.balance ?? 0) * (usesTSLAPool.data?.price ?? 0);
+	const sTSLAAPR =
+		usesTSLAPool.data?.distribution && SNXRate && sTSLATVL
+			? ((usesTSLAPool.data.distribution * SNXRate) / sTSLATVL) * WEEKS_IN_YEAR
 			: 0;
 
 	const sUsdTVL = (usesUSDPool.data?.balance ?? 0) * (usesUSDPool.data?.price ?? 0);
@@ -80,6 +88,11 @@ const useLPData = (): LPData => {
 			APR: sUsdAPR,
 			TVL: sUsdTVL,
 			data: usesUSDPool.data,
+		},
+		[Synths.sTSLA]: {
+			APR: sTSLAAPR,
+			TVL: sTSLATVL,
+			data: usesTSLAPool.data,
 		},
 	};
 };

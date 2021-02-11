@@ -89,7 +89,7 @@ const LayoutOne: FC = () => {
 				link: ROUTES.L2.Home,
 			},
 			{
-				gridLocations: ['col-1', 'col-2', 'row-2', 'row-3'],
+				gridLocations: ['col-1', 'col-3', 'row-2', 'row-3'],
 				icon: (
 					<GlowingCircle variant="green" size="md">
 						<Currency.Icon currencyKey={Synths.iBTC} width="32" height="32" />
@@ -105,7 +105,7 @@ const LayoutOne: FC = () => {
 				link: ROUTES.Earn.iBTC_LP,
 			},
 			{
-				gridLocations: ['col-2', 'col-3', 'row-2', 'row-3'],
+				gridLocations: ['col-3', 'col-5', 'row-2', 'row-3'],
 				icon: (
 					<GlowingCircle variant="green" size="md">
 						<Currency.Icon currencyKey={Synths.iETH} width="32" height="32" />
@@ -118,7 +118,7 @@ const LayoutOne: FC = () => {
 				link: ROUTES.Earn.iETH_LP,
 			},
 			{
-				gridLocations: ['col-3', 'col-4', 'row-2', 'row-3'],
+				gridLocations: ['col-1', 'col-2', 'row-3', 'row-4'],
 				icon: (
 					<GlowingCircle variant="green" size="md">
 						<Currency.Icon currencyKey={CryptoCurrency.CRV} width="28" height="28" />
@@ -135,7 +135,7 @@ const LayoutOne: FC = () => {
 				externalLink: ROUTES.Earn.sUSD_EXTERNAL,
 			},
 			{
-				gridLocations: ['col-4', 'col-5', 'row-2', 'row-3'],
+				gridLocations: ['col-2', 'col-3', 'row-3', 'row-4'],
 				icon: (
 					<GlowingCircle variant="green" size="md">
 						<Currency.Icon currencyKey={CryptoCurrency.CRV} width="28" height="28" />
@@ -150,6 +150,22 @@ const LayoutOne: FC = () => {
 				}),
 				tooltip: t('common.tooltip.external', { link: 'Curve Finance' }),
 				externalLink: ROUTES.Earn.sEURO_EXTERNAL,
+			},
+			{
+				gridLocations: ['col-3', 'col-5', 'row-3', 'row-4'],
+				icon: (
+					<GlowingCircle variant="green" size="md">
+						<Currency.Icon currencyKey={Synths.sTSLA} width="28" height="28" />
+					</GlowingCircle>
+				),
+				title: t('dashboard.actions.earn.title', {
+					percent: formatPercent(lpData[Synths.sTSLA].APR, { minDecimals: 0 }),
+				}),
+				copy: t('dashboard.actions.earn.copy', {
+					asset: 'Balancer sTSLA LP Token',
+					supplier: 'Synthetix',
+				}),
+				link: ROUTES.Earn.sTLSA_LP,
 			},
 		];
 	}, [t, lpData, currentCRatio, targetCRatio, stakingRewards, tradingRewards]);

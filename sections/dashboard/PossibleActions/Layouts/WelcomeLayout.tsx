@@ -31,7 +31,7 @@ const WelcomeLayout: FC = () => {
 				link: ROUTES.Staking.Home,
 			},
 			{
-				gridLocations: ['col-3', 'col-4', 'row-2', 'row-3'],
+				gridLocations: ['col-3', 'col-5', 'row-2', 'row-3'],
 				icon: (
 					<GlowingCircle variant="yellow" size="md">
 						<Svg src={LearnIcon} />
@@ -42,7 +42,7 @@ const WelcomeLayout: FC = () => {
 				externalLink: EXTERNAL_LINKS.Social.Blog,
 			},
 			{
-				gridLocations: ['col-4', 'col-5', 'row-2', 'row-3'],
+				gridLocations: ['col-3', 'col-5', 'row-3', 'row-4'],
 				icon: (
 					<GlowingCircle variant="orange" size="md">
 						<Svg src={KwentaIcon} width="32" />
@@ -57,7 +57,7 @@ const WelcomeLayout: FC = () => {
 	);
 	return (
 		<>
-			<WizardGridBox gridLocations={['col-1', 'col-3', 'row-1', 'row-3']} />
+			<WizardGridBox gridLocations={['col-1', 'col-3', 'row-1', 'row-4']} />
 			{gridItems.map((props, index) => (
 				<GridBox key={`${props.title}-${index}`} {...props} />
 			))}

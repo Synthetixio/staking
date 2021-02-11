@@ -70,6 +70,8 @@ import iLINKIcon from '@synthetixio/assets/synths/iLINK.svg';
 import iTRXIcon from '@synthetixio/assets/synths/iTRX.svg';
 import iDASHIcon from '@synthetixio/assets/synths/iDASH.svg';
 import iETCIcon from '@synthetixio/assets/synths/iETC.svg';
+import sTSLAIcon from '@synthetixio/assets/synths/sTSLA.svg';
+
 // Commoditiy Synths
 import sXAUIcon from '@synthetixio/assets/synths/sXAU.svg';
 import sXAGIcon from '@synthetixio/assets/synths/sXAG.svg';
@@ -211,6 +213,9 @@ export const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, type = 'synth
 		}
 		case Synths.iETC: {
 			return <Img src={iETCIcon} {...props} />;
+		}
+		case Synths.sTSLA: {
+			return <Img src={sTSLAIcon} {...props} />;
 		}
 		case Synths.sEUR: {
 			return <Img src={sEURIcon} {...props} />;
