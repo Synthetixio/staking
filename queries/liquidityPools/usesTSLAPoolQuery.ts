@@ -20,37 +20,36 @@ const usesTSLAPoolQuery = (options?: QueryConfig<LiquidityPoolData>) => {
 		async () => {
 			// @JJ - Add staking rewards contract
 			const {
-				contracts: { StakingRewardsiBTC, Exchanger, ProxyiBTC, ExchangeRates },
+				contracts: { StakingRewardsiBTC, ProxyiBTC, ExchangeRates },
 				utils: { formatBytes32String },
 			} = synthetix.js!;
 
 			// @JJ - Replace this with the sTSLA staking rewards address
 			const address = StakingRewardsiBTC.address;
-
 			// @JJ - Replace this with the sTSLA staking rewards params
 			const getDuration = StakingRewardsiBTC.DURATION || StakingRewardsiBTC.rewardsDuration;
+
 			const [
 				duration,
 				rate,
 				periodFinish,
-				iBtcBalance,
-				iBtcUserBalance,
-				iBtcPrice,
-				iBtcSNXRewards,
-				iBtcStaked,
-				iBtcAllowance,
-				settlementOwing,
+				sTslaLPBalance,
+				sTslaLPUserBalance,
+				sTslaLPPrice,
+				sTslaSNXRewards,
+				sTslaLPStaked,
+				sTslaLPAllowance,
 			] = await Promise.all([
+				// @notice - change ProxyiBTC for the sTSLA balance LP contract
 				getDuration(),
 				StakingRewardsiBTC.rewardRate(),
 				StakingRewardsiBTC.periodFinish(),
 				ProxyiBTC.balanceOf(address),
 				ProxyiBTC.balanceOf(walletAddress),
-				ExchangeRates.rateForCurrency(synthetix.js?.toBytes32(Synths.iBTC)),
+				ExchangeRates.rateForCurrency(synthetix.js?.toBytes32(Synths.sTSLA)),
 				StakingRewardsiBTC.earned(walletAddress),
 				StakingRewardsiBTC.balanceOf(walletAddress),
 				ProxyiBTC.allowance(walletAddress, address),
-				Exchanger.settlementOwing(walletAddress, formatBytes32String(Synths.iBTC)),
 			]);
 			const durationInWeeks = Number(duration) / 3600 / 24 / 7;
 			const isPeriodFinished = new Date().getTime() > Number(periodFinish) * 1000;
@@ -58,16 +57,13 @@ const usesTSLAPoolQuery = (options?: QueryConfig<LiquidityPoolData>) => {
 				? 0
 				: Math.trunc(Number(duration) * (rate / 1e18)) / durationInWeeks;
 
-			const reclaimAmount = Number(settlementOwing.reclaimAmount);
-			const rebateAmount = Number(settlementOwing.rebateAmount);
-
 			const [balance, userBalance, price, rewards, staked, allowance] = [
-				iBtcBalance,
-				iBtcUserBalance,
-				iBtcPrice,
-				iBtcSNXRewards,
-				iBtcStaked,
-				iBtcAllowance,
+				sTslaLPBalance,
+				sTslaLPUserBalance,
+				sTslaLPPrice,
+				sTslaSNXRewards,
+				sTslaLPStaked,
+				sTslaLPAllowance,
 			].map((data) => Number(synthetix.js?.utils.formatEther(data)));
 
 			return {
@@ -79,11 +75,11 @@ const usesTSLAPoolQuery = (options?: QueryConfig<LiquidityPoolData>) => {
 				duration: Number(duration) * 1000,
 				rewards,
 				staked,
-				stakedBN: iBtcStaked,
+				stakedBN: sTslaLPStaked,
 				allowance,
 				userBalance,
-				userBalanceBN: iBtcUserBalance,
-				needsToSettle: reclaimAmount || rebateAmount ? true : false,
+				userBalanceBN: sTslaLPUserBalance,
+				needsToSettle: false,
 			};
 		},
 		{
