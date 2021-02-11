@@ -276,12 +276,14 @@
 				"subtitle": "Burn your sUSD debt to unlock your staked SNX. This will increase your Collateralization Ratio and reduce your debt. <0>Learn more.</0>"
 			},
 			"table": {
+				"total-snx": "Total",
 				"not-staked": "Not Staked",
 				"staked": "Staked",
 				"transferable": "Transferable",
 				"locked": "Locked",
 				"c-ratio": "C-Ratio",
-				"debt": "Debt"
+				"debt": "Total Debt",
+				"susd-balance": "sUSD Balance"
 			}
 		}
 	},
@@ -336,13 +338,13 @@
 					"total-value": "TOTAL VALUE"
 				},
 				"curve": {
-					"title": "Curve.fi sUSD",
+					"title": "Curve",
 					"description": "Staking Curve LP tokens from the sUSD pool allows you to earn CRV rewards, Curve swap fees, and SNX rewards. <0>Learn more.<0>",
 					"subtitle": "sUSD LP Rewards",
 					"helper": "Visit curve.fi"
 				},
 				"seur": {
-					"title": "Curve.fi sEUR",
+					"title": "Curve",
 					"description": "Deposit sEUR into Curve.fi to receive eursCRV and stake to earn CRV rewards, Curve swap fees, and SNX Rewards.",
 					"subtitle": "sEUR Rewards"
 				},
@@ -355,6 +357,11 @@
 					"title": "Synthetix",
 					"description": "Staking iBTC tokens allows you to earn SNX rewards. <0>Learn more.<0>",
 					"subtitle": "iBTC Rewards"
+				},
+				"stsla": {
+					"title": "Balancer",
+					"description": "Stake sTLSA Balancer Pool LP to earn SNX rewards. <0>Add liquidity on Balancer here<0>.",
+					"subtitle": "sTSLA Rewards"
 				}
 			},
 			"weekly-rewards": "Weekly rewards {{weeklyRewards}} {{asset}}"
@@ -689,6 +696,7 @@
 		},
 		"currency": {
 			"currency-price": "<0>{{currencyKey}}</0> Price",
+			"currency-balance": "<0>{{currencyKey}}</0> Balance",
 			"buy-currency": "Buy <0>{{currencyKey}}</0>",
 			"synthetic-currency-name": "Synthetic {{currencyName}}"
 		},

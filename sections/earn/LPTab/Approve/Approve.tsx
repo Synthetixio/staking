@@ -14,7 +14,7 @@ import Notify from 'containers/Notify';
 import Etherscan from 'containers/Etherscan';
 import { zIndex } from 'constants/ui';
 import LockedIcon from 'assets/svg/app/locked.svg';
-import { curveSusdRewards, curveSusdPoolToken } from 'contracts';
+import { curveSusdRewards, curveSusdPoolToken, balancersTSLAPoolToken } from 'contracts';
 import Connector from 'containers/Connector';
 import { EXTERNAL_LINKS } from 'constants/links';
 import {
@@ -47,10 +47,7 @@ import {
 } from '../../common';
 import Color from 'color';
 
-export const getApprovalContractData = (
-	stakedAsset: CurrencyKey,
-	provider: ethers.providers.Provider | null
-) => {
+export const getApprovalContractData = (stakedAsset: CurrencyKey, signer: any) => {
 	const { contracts } = synthetix.js!;
 	if (stakedAsset === Synths.iBTC) {
 		return {
@@ -67,9 +64,18 @@ export const getApprovalContractData = (
 			contract: new ethers.Contract(
 				curveSusdPoolToken.address,
 				curveSusdPoolToken.abi,
-				provider as ethers.providers.Provider
+				signer as any
 			),
 			poolAddress: curveSusdRewards.address,
+		};
+	} else if (stakedAsset === Synths.sTSLA) {
+		return {
+			contract: new ethers.Contract(
+				balancersTSLAPoolToken.address,
+				balancersTSLAPoolToken.abi,
+				signer as any
+			),
+			poolAddress: contracts.StakingRewardssTSLABalancer.address,
 		};
 	} else {
 		throw new Error('unrecognizable asset');
@@ -84,7 +90,7 @@ type ApproveProps = {
 const Approve: FC<ApproveProps> = ({ stakedAsset, setShowApproveOverlayModal }) => {
 	const { t } = useTranslation();
 	const { monitorHash } = Notify.useContainer();
-	const { provider } = Connector.useContainer();
+	const { provider, signer } = Connector.useContainer();
 	const { etherscanInstance } = Etherscan.useContainer();
 	const [error, setError] = useState<string | null>(null);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
@@ -122,7 +128,7 @@ const Approve: FC<ApproveProps> = ({ stakedAsset, setShowApproveOverlayModal }) 
 				try {
 					setError(null);
 					setTxModalOpen(true);
-					const { contract, poolAddress } = getApprovalContractData(stakedAsset, provider);
+					const { contract, poolAddress } = getApprovalContractData(stakedAsset, signer);
 
 					const allowance = synthetix.js!.utils.parseEther(TokenAllowanceLimit.toString());
 					const gasLimit = await getGasEstimateForTransaction(
@@ -154,7 +160,7 @@ const Approve: FC<ApproveProps> = ({ stakedAsset, setShowApproveOverlayModal }) 
 			}
 		}
 		approve();
-	}, [stakedAsset, provider, gasPrice, monitorHash, isAppReady]);
+	}, [stakedAsset, signer, gasPrice, monitorHash, isAppReady]);
 
 	if (transactionState === Transaction.WAITING) {
 		return (

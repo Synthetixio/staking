@@ -59,6 +59,8 @@ export const getContract = (stakedAsset: CurrencyKey, signer: ethers.Signer | nu
 		return contracts.StakingRewardsiBTC;
 	} else if (stakedAsset === Synths.iETH) {
 		return contracts.StakingRewardsiETH;
+	} else if (stakedAsset === Synths.sTSLA) {
+		return contracts.StakingRewardssTSLABalancer;
 	} else if (stakedAsset === Synths.sUSD && signer != null) {
 		return new ethers.Contract(
 			curveSusdRewards.address,

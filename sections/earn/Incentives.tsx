@@ -122,6 +122,23 @@ const Incentives: FC<IncentivesProps> = ({
 							needsToSettle: lpData[Synths.iBTC].data?.needsToSettle,
 						},
 						{
+							title: t('earn.incentives.options.stsla.title'),
+							subtitle: t('earn.incentives.options.stsla.subtitle'),
+							apr: lpData[Synths.sTSLA].APR,
+							tvl: lpData[Synths.sTSLA].TVL,
+							staked: {
+								balance: lpData[Synths.sTSLA].data?.staked ?? 0,
+								asset: Synths.sTSLA,
+							},
+							rewards: lpData[Synths.sTSLA].data?.rewards ?? 0,
+							periodStarted: now - (lpData[Synths.sTSLA].data?.duration ?? 0),
+							periodFinish: lpData[Synths.sTSLA].data?.periodFinish ?? 0,
+							claimed: (lpData[Synths.sTSLA].data?.rewards ?? 0) > 0 ? false : NOT_APPLICABLE,
+							now,
+							route: ROUTES.Earn.sTLSA_LP,
+							tab: Tab.sTLSA_LP,
+						},
+						{
 							title: t('earn.incentives.options.curve.title'),
 							subtitle: t('earn.incentives.options.curve.subtitle'),
 							apr: lpData[Synths.sUSD].APR,
@@ -139,6 +156,7 @@ const Incentives: FC<IncentivesProps> = ({
 							tab: Tab.sUSD_LP,
 							externalLink: ROUTES.Earn.sUSD_EXTERNAL,
 						},
+
 						{
 							title: t('earn.incentives.options.seur.title'),
 							subtitle: t('earn.incentives.options.seur.subtitle'),
@@ -182,7 +200,8 @@ const Incentives: FC<IncentivesProps> = ({
 				lpData[Synths.sUSD].data &&
 				lpData[Synths.sEUR].data &&
 				lpData[Synths.iBTC].data &&
-				lpData[Synths.iETH].data
+				lpData[Synths.iETH].data &&
+				lpData[Synths.sTSLA].data
 					? true
 					: false
 			}
@@ -224,6 +243,18 @@ const Incentives: FC<IncentivesProps> = ({
 						staked={incentives[2].staked.balance}
 						stakedBN={lpData[Synths.iBTC].data?.stakedBN ?? zeroBN}
 						needsToSettle={incentives[2].needsToSettle}
+					/>
+				)}
+				{activeTab === Tab.sTLSA_LP && (
+					<LPTab
+						userBalance={lpData[Synths.sTSLA].data?.userBalance ?? 0}
+						userBalanceBN={lpData[Synths.sTSLA].data?.userBalanceBN ?? zeroBN}
+						stakedAsset={Synths.sTSLA}
+						allowance={lpData[Synths.sTSLA].data?.allowance ?? null}
+						tokenRewards={incentives[3].rewards}
+						staked={incentives[3].staked.balance}
+						stakedBN={lpData[Synths.sTSLA].data?.stakedBN ?? zeroBN}
+						needsToSettle={incentives[3].needsToSettle}
 					/>
 				)}
 			</TabContainer>
