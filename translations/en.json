@@ -276,12 +276,14 @@
 				"subtitle": "Burn your sUSD debt to unlock your staked SNX. This will increase your Collateralization Ratio and reduce your debt. <0>Learn more.</0>"
 			},
 			"table": {
+				"total-snx": "Total",
 				"not-staked": "Not Staked",
 				"staked": "Staked",
 				"transferable": "Transferable",
 				"locked": "Locked",
 				"c-ratio": "C-Ratio",
-				"debt": "Debt"
+				"debt": "Total Debt",
+				"susd-balance": "sUSD Balance"
 			}
 		}
 	},
