@@ -71,6 +71,11 @@ export const getApprovalContractData = (
 			),
 			poolAddress: curveSusdRewards.address,
 		};
+	} else if (stakedAsset === Synths.sTSLA) {
+		return {
+			contract: contracts.SynthsTSLA,
+			poolAddress: contracts.StakingRewardssTSLABalancer.address,
+		};
 	} else {
 		throw new Error('unrecognizable asset');
 	}
