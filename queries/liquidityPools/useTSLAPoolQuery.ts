@@ -9,7 +9,7 @@ import { Synths } from 'constants/currency';
 
 import { LiquidityPoolData } from './types';
 
-const usesTSLAPoolQuery = (options?: QueryConfig<LiquidityPoolData>) => {
+const useTSLAPoolQuery = (options?: QueryConfig<LiquidityPoolData>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
@@ -21,7 +21,7 @@ const usesTSLAPoolQuery = (options?: QueryConfig<LiquidityPoolData>) => {
 			// @JJ - Add staking rewards contract
 			const {
 				contracts: { StakingRewardsiBTC, ProxyiBTC, ExchangeRates },
-				utils: { formatBytes32String },
+				// utils: { formatBytes32String },
 			} = synthetix.js!;
 
 			// @JJ - Replace this with the sTSLA staking rewards address
@@ -89,4 +89,4 @@ const usesTSLAPoolQuery = (options?: QueryConfig<LiquidityPoolData>) => {
 	);
 };
 
-export default usesTSLAPoolQuery;
+export default useTSLAPoolQuery;
