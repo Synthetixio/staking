@@ -357,6 +357,11 @@
 					"title": "Synthetix",
 					"description": "Staking iBTC tokens allows you to earn SNX rewards. <0>Learn more.<0>",
 					"subtitle": "iBTC Rewards"
+				},
+				"stsla": {
+					"title": "Tesla",
+					"description": "Stake sTLSA Balancer Pool LP to earn SNX rewards. <0>Learn more.<0>",
+					"subtitle": "sTSLA Rewards"
 				}
 			},
 			"weekly-rewards": "Weekly rewards {{weeklyRewards}} {{asset}}"

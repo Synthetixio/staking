@@ -171,6 +171,8 @@ const LPTab: FC<LPTabProps> = ({
 			return 'earn.incentives.options.curve.description';
 		} else if (stakedAsset === Synths.sEUR) {
 			return 'earn.incentives.options.seur.description';
+		} else if (stakedAsset === Synths.sTSLA) {
+			return 'earn.incentives.options.stsla.description';
 		} else {
 			throw new Error('unexpected staking asset for translation key');
 		}
