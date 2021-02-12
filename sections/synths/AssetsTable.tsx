@@ -103,8 +103,9 @@ const AssetsTable: FC<AssetsTableProps> = ({
 				sortType: 'basic',
 				Cell: (cellProps: CellProps<CryptoBalance, CryptoBalance['balance']>) => (
 					<Currency.Amount
-						currencyKey={cellProps.row.original.currencyKey}
+						amountCurrencyKey={cellProps.row.original.currencyKey}
 						amount={cellProps.value}
+						valueCurrencyKey={selectedPriceCurrency.name}
 						totalValue={cellProps.row.original.usdBalance}
 						sign={selectedPriceCurrency.sign}
 						conversionRate={selectPriceCurrencyRate}
@@ -185,6 +186,7 @@ const AssetsTable: FC<AssetsTableProps> = ({
 		totalValue,
 		selectPriceCurrencyRate,
 		selectedPriceCurrency.sign,
+		selectedPriceCurrency.name,
 		isAppReady,
 	]);
 
