@@ -6,11 +6,11 @@ import synthetix from 'lib/synthetix';
 import QUERY_KEYS from 'constants/queryKeys';
 import { appReadyState } from 'store/app';
 import { walletAddressState, isWalletConnectedState, networkState } from 'store/wallet';
-import { Synths } from 'constants/currency';
 import Connector from 'containers/Connector';
 
 import { LiquidityPoolData } from './types';
 import { balancersTSLAPoolToken } from 'contracts';
+import { getsTSLABalancerPool } from './helper';
 
 const useTSLAPoolQuery = (options?: QueryConfig<LiquidityPoolData>) => {
 	const isAppReady = useRecoilValue(appReadyState);
@@ -25,6 +25,8 @@ const useTSLAPoolQuery = (options?: QueryConfig<LiquidityPoolData>) => {
 			const {
 				contracts: { StakingRewardssTSLABalancer, ExchangeRates },
 			} = synthetix.js!;
+
+			const sTSLABPTokenPrice = getsTSLABalancerPool();
 
 			const sTSLABalancerContract = new ethers.Contract(
 				balancersTSLAPoolToken.address,
@@ -42,7 +44,7 @@ const useTSLAPoolQuery = (options?: QueryConfig<LiquidityPoolData>) => {
 				periodFinish,
 				sTslaLPBalance,
 				sTslaLPUserBalance,
-				sTslaLPPrice,
+				price,
 				sTslaSNXRewards,
 				sTslaLPStaked,
 				sTslaLPAllowance,
@@ -52,7 +54,7 @@ const useTSLAPoolQuery = (options?: QueryConfig<LiquidityPoolData>) => {
 				StakingRewardssTSLABalancer.periodFinish(),
 				sTSLABalancerContract.balanceOf(address),
 				sTSLABalancerContract.balanceOf(walletAddress),
-				ExchangeRates.rateForCurrency(synthetix.js?.toBytes32(Synths.sTSLA)),
+				sTSLABPTokenPrice,
 				StakingRewardssTSLABalancer.earned(walletAddress),
 				StakingRewardssTSLABalancer.balanceOf(walletAddress),
 				sTSLABalancerContract.allowance(walletAddress, address),
@@ -63,10 +65,9 @@ const useTSLAPoolQuery = (options?: QueryConfig<LiquidityPoolData>) => {
 				? 0
 				: Math.trunc(Number(duration) * (rate / 1e18)) / durationInWeeks;
 
-			const [balance, userBalance, price, rewards, staked, allowance] = [
+			const [balance, userBalance, rewards, staked, allowance] = [
 				sTslaLPBalance,
 				sTslaLPUserBalance,
-				sTslaLPPrice,
 				sTslaSNXRewards,
 				sTslaLPStaked,
 				sTslaLPAllowance,
