@@ -23,7 +23,7 @@ const useTSLAPoolQuery = (options?: QueryConfig<LiquidityPoolData>) => {
 		QUERY_KEYS.LiquidityPools.sTSLA(walletAddress ?? '', network?.id!),
 		async () => {
 			const {
-				contracts: { StakingRewardssTSLABalancer, ExchangeRates },
+				contracts: { StakingRewardssTSLABalancer },
 			} = synthetix.js!;
 
 			const sTSLABPTokenPrice = getsTSLABalancerPool();
