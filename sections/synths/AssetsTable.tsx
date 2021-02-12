@@ -186,6 +186,7 @@ const AssetsTable: FC<AssetsTableProps> = ({
 		totalValue,
 		selectPriceCurrencyRate,
 		selectedPriceCurrency.sign,
+		selectedPriceCurrency.name,
 		isAppReady,
 	]);
 
