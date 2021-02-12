@@ -22,7 +22,11 @@ export async function getCurveTokenPrice(): Promise<number> {
 		max: 1,
 		// @ts-ignore
 	}).then((result) => {
-		return Number(result[0].priceUSD);
+		if (result) {
+			return Number(result[0].priceUSD);
+		} else {
+			return 0;
+		}
 	});
 }
 
@@ -43,6 +47,10 @@ export async function getsTSLABalancerPool(): Promise<any> {
 		max: 1,
 		// @ts-ignore
 	}).then((result) => {
-		return Number(result[0].liquidity) / Number(result[0].totalShares);
+		if (result) {
+			return Number(result[0].liquidity) / Number(result[0].totalShares);
+		} else {
+			return 0;
+		}
 	});
 }
