@@ -20,17 +20,16 @@ export async function getCurveTokenPrice(): Promise<number> {
 			properties: ['priceUSD'],
 		},
 		max: 1,
-		// @ts-ignore
-	}).then((result) => {
-		if (result) {
+	})
+		.then((result: any) => {
 			return Number(result[0].priceUSD);
-		} else {
-			return 0;
-		}
-	});
+		})
+		.catch((e: any) => {
+			throw Error(e);
+		});
 }
 
-export async function getsTSLABalancerPool(): Promise<any> {
+export async function getsTSLABalancerPool(): Promise<number> {
 	return pageResults({
 		api: balancerSubgraphURL,
 		query: {
@@ -46,11 +45,11 @@ export async function getsTSLABalancerPool(): Promise<any> {
 		},
 		max: 1,
 		// @ts-ignore
-	}).then((result) => {
-		if (result) {
+	})
+		.then((result: any) => {
 			return Number(result[0].liquidity) / Number(result[0].totalShares);
-		} else {
-			return 0;
-		}
-	});
+		})
+		.catch((e: any) => {
+			throw Error(e);
+		});
 }
