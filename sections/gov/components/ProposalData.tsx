@@ -13,8 +13,6 @@ import Link from 'assets/svg/app/link.svg';
 import Etherscan from 'containers/Etherscan';
 import StructuredTab from 'components/StructuredTab';
 import Results from './Results';
-import { useRouter } from 'next/router';
-import { SPACE_KEY } from 'constants/snapshot';
 import useActiveTab from '../hooks/useActiveTab';
 
 type ProposalDataProps = {};

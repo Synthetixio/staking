@@ -34,13 +34,6 @@ const Proposal: React.FC<ProposalProps> = ({ onBack, proposal, spaceKey }) => {
 	const [selected, setSelected] = useState<number | null>(null);
 	const { t } = useTranslation();
 
-	// Left side panel
-	// Get all proposals and filter only the prooposal that matches the hash from the array
-	// Retrieve options (description, end time, choices)
-
-	// Right side panel
-	// Get the voting results and make the UI
-
 	const saveVote = async (msg: any) => {
 		const url = `${MSG(true)}`;
 		return await axios.post(url, msg, {
