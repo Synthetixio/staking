@@ -285,7 +285,6 @@ const StyledTextButton = styled(Button).attrs({
 })`
 	font-family: ${(props) => props.theme.fonts.condensedMedium};
 	padding: 0 20px;
-	width: 150px;
 	display: inline-grid;
 	grid-template-columns: auto 1fr;
 	align-items: center;
@@ -294,7 +293,7 @@ const StyledTextButton = styled(Button).attrs({
 	margin: -2px 0 6px 0;
 
 	svg {
-		margin-left: 15px;
+		margin-right: 5px;
 		color: ${(props) => props.theme.colors.gray};
 	}
 `;
