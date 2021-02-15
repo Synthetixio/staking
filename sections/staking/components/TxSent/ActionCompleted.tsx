@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
 import { useSetRecoilState } from 'recoil';
-import Link from 'next/link';
 
 import {
 	FlexDivRowCentered,
@@ -114,7 +113,7 @@ const ActionCompleted: React.FC<ActionCompletedProps> = ({
 				{t('staking.actions.mint.completed.title', { synth: Synths.sUSD })}
 			</SectionHeader>
 			<MiddleSection>
-				<Link href={ROUTES.Earn.Home}>
+				<StyledExternalLink href={ROUTES.Earn.sUSD_EXTERNAL}>
 					<MainInfoBox>
 						<Currency.Icon currencyKey={CryptoCurrency.CRV} width="20" height="20" />
 						<MiddleInfoSection>
@@ -125,7 +124,7 @@ const ActionCompleted: React.FC<ActionCompletedProps> = ({
 							<AprValue>{formatPercent(lpData[LP.CURVE_sUSD].APR)}</AprValue>
 						</RightInfoSection>
 					</MainInfoBox>
-				</Link>
+				</StyledExternalLink>
 			</MiddleSection>
 			<SectionSubtext>{t('staking.actions.mint.completed.subtext')}</SectionSubtext>
 			<ButtonWrap>
@@ -216,6 +215,11 @@ const RightButton = styled(BaseButton)`
 	color: ${(props) => props.theme.colors.blue};
 	text-transform: uppercase;
 
+`;
+
+const StyledExternalLink = styled(ExternalLink)`
+	display: block;
+	width: 100%;
 `;
 
 export default ActionCompleted;
