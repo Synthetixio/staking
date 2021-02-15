@@ -12,10 +12,8 @@ type EthereumProvider = {
 export async function getDefaultNetworkId(): Promise<NetworkId> {
 	try {
 		const provider = (await detectEthereumProvider()) as EthereumProvider;
-		if (provider) {
-			return Number(provider.networkVersion);
-		}
-		return DEFAULT_NETWORK_ID;
+
+		return provider ? Number(provider.networkVersion) : DEFAULT_NETWORK_ID;
 	} catch (e) {
 		console.log(e);
 		return DEFAULT_NETWORK_ID;
