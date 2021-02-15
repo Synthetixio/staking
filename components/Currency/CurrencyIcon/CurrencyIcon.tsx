@@ -95,6 +95,7 @@ import sGBPIcon from '@synthetixio/assets/synths/sGBP.svg';
 import sCHFIcon from '@synthetixio/assets/synths/sCHF.svg';
 
 import { CryptoCurrency, CurrencyKey, Synths } from 'constants/currency';
+import { LP } from 'sections/earn/types';
 
 type CurrencyIconProps = {
 	currencyKey: CurrencyKey;
@@ -264,6 +265,15 @@ export const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, type = 'synth
 		}
 		case Synths.iOIL: {
 			return <Img src={iOILIcon} {...props} />;
+		}
+		case LP.BALANCER_sTSLA: {
+			return <Img src={sTSLAIcon} {...props} />;
+		}
+		case LP.CURVE_sUSD: {
+			return <Img src={sUSDIcon} {...props} />;
+		}
+		case LP.CURVE_sEURO: {
+			return <Img src={sEURIcon} {...props} />;
 		}
 		default:
 			return null;

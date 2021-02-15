@@ -340,13 +340,13 @@
 				"curve": {
 					"title": "Curve",
 					"description": "Staking Curve LP tokens from the sUSD pool allows you to earn CRV rewards, Curve swap fees, and SNX rewards. <0>Learn more.<0>",
-					"subtitle": "sUSD LP Rewards",
+					"subtitle": "sUSD CPT Rewards",
 					"helper": "Visit curve.fi"
 				},
 				"seur": {
 					"title": "Curve",
 					"description": "Deposit sEUR into Curve.fi to receive eursCRV and stake to earn CRV rewards, Curve swap fees, and SNX Rewards.",
-					"subtitle": "sEUR Rewards"
+					"subtitle": "sEUR CPT Rewards"
 				},
 				"ieth": {
 					"title": "Synthetix",
@@ -361,7 +361,7 @@
 				"stsla": {
 					"title": "Balancer",
 					"description": "Stake sTLSA Balancer Pool LP to earn SNX rewards. <0>Add liquidity on Balancer here<0>.",
-					"subtitle": "sTSLA Rewards"
+					"subtitle": "sTSLA BPT Rewards"
 				}
 			},
 			"weekly-rewards": "Weekly rewards {{weeklyRewards}} {{asset}}"
