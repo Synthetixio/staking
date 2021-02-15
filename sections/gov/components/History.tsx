@@ -5,32 +5,38 @@ import Spinner from 'assets/svg/app/loader.svg';
 import useActiveTab from '../hooks/useActiveTab';
 import { FlexDivRowCentered } from 'styles/common';
 import useProposal from 'queries/gov/useProposal';
-import { formatNumber, formatPercent } from 'utils/formatters/number';
-import ProgressBar from 'components/ProgressBar';
+import { useRecoilValue } from 'recoil';
+import { walletAddressState } from 'store/wallet';
+import { useTranslation } from 'react-i18next';
+import { truncateAddress } from 'utils/formatters/string';
+import { formatNumber } from 'utils/formatters/number';
 
-type ResultsProps = {
+type HistoryProps = {
 	hash: string;
 };
 
-const Results: React.FC<ResultsProps> = ({ hash }) => {
+const History: React.FC<HistoryProps> = ({ hash }) => {
+	const { t } = useTranslation();
 	const activeTab = useActiveTab();
 	const proposal = useProposal(activeTab, hash, true);
+	const walletAddress = useRecoilValue(walletAddressState);
+
 	if (proposal.isSuccess && proposal.data) {
 		const { data } = proposal;
 		return (
 			<>
-				{data.choices.map((choice: string, i: number) => {
-					const votes = data.totalBalances[i] !== 0 ? data.totalBalances[i] : 0;
-					const totalVotes = data.totalVotesBalances !== 0 ? data.totalVotesBalances : 1;
+				{data.voteList.map((vote: any, i: number) => {
 					return (
 						<Row key={i}>
 							<Title>
-								{choice} - {`${formatNumber(data.totalBalances[i])} ${data.spaceSymbol}`}
+								{vote.address === walletAddress
+									? t('gov.proposal.history.currentUser')
+									: vote.profile.ens
+									? vote.profile.ens
+									: truncateAddress(vote.address)}
 							</Title>
-							<BarContainer>
-								<StyledProgressBar percentage={(votes / totalVotes) * 100} variant="blue-pink" />
-								<Value>{formatPercent(votes / totalVotes)}</Value>
-							</BarContainer>
+							<Choice>{data.choices[vote.msg.payload.choice - 1]}</Choice>
+							<Value>{`${formatNumber(vote.balance)} ${data.spaceSymbol}`}</Value>
 						</Row>
 					);
 				})}
@@ -40,8 +46,7 @@ const Results: React.FC<ResultsProps> = ({ hash }) => {
 		return <StyledSpinner src={Spinner} />;
 	}
 };
-
-export default Results;
+export default History;
 
 const StyledSpinner = styled(Svg)`
 	display: block;
@@ -59,6 +64,7 @@ const Title = styled.div`
 	font-family: ${(props) => props.theme.fonts.interBold};
 	font-size: 12px;
 	color: ${(props) => props.theme.colors.white};
+	width: 33%;
 `;
 
 const Value = styled(FlexDivRowCentered)`
@@ -67,15 +73,13 @@ const Value = styled(FlexDivRowCentered)`
 	font-size: 12px;
 	width: 100px;
 	margin-left: 8px;
+	width: 33%;
 `;
-const BarContainer = styled.div`
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	width: 200px;
-`;
-
-const StyledProgressBar = styled(ProgressBar)`
-	height: 6px;
-	width: 100%;
+const Choice = styled.div`
+	color: ${(props) => props.theme.colors.white};
+	font-family: ${(props) => props.theme.fonts.interBold};
+	font-size: 12px;
+	width: 100px;
+	margin-left: 8px;
+	width: 33%;
 `;

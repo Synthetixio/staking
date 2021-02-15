@@ -21,6 +21,7 @@ import { useRecoilValue } from 'recoil';
 import { walletAddressState } from 'store/wallet';
 import Connector from 'containers/Connector';
 import axios from 'axios';
+import useProposal from 'queries/gov/useProposal';
 
 type ProposalProps = {
 	onBack: Function;
@@ -33,16 +34,26 @@ const Proposal: React.FC<ProposalProps> = ({ onBack, proposal, spaceKey }) => {
 	const walletAddress = useRecoilValue(walletAddressState);
 	const [selected, setSelected] = useState<number | null>(null);
 	const { t } = useTranslation();
+	const { refetch } = useProposal(spaceKey, proposal?.authorIpfsHash ?? '');
 
 	const saveVote = async (msg: any) => {
 		const url = `${MSG(true)}`;
-		return await axios.post(url, msg, {
-			method: 'POST',
-			headers: {
-				Accept: 'application/json',
-				'Content-Type': 'application/json',
-			},
-		});
+		return await axios
+			.post(url, msg, {
+				method: 'POST',
+				headers: {
+					Accept: 'application/json',
+					'Content-Type': 'application/json',
+				},
+			})
+			.then((response) => {
+				refetch();
+				return response;
+			})
+			.catch((e) => {
+				console.log(e);
+				return e;
+			});
 	};
 
 	const handleVote = async (hash?: string | null) => {
@@ -66,14 +77,12 @@ const Proposal: React.FC<ProposalProps> = ({ onBack, proposal, spaceKey }) => {
 				};
 				msg.sig = await signer?.signMessage(msg.msg);
 				const result = await saveVote(msg);
-				console.log(result.data);
+				if (result.data && result.data.ipfsHash) {
+					refetch();
+				}
 			}
 		} catch (e) {
 			console.log(e);
-			// const errorMessage =
-			// 	e && e.error_description ? `Oops, ${e.error_description}` : 'Oops, something went wrong!';
-			// console.log(errorMessage);
-			return;
 		}
 	};
 

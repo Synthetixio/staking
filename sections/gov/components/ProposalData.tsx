@@ -14,6 +14,7 @@ import Etherscan from 'containers/Etherscan';
 import StructuredTab from 'components/StructuredTab';
 import Results from './Results';
 import useActiveTab from '../hooks/useActiveTab';
+import History from './History';
 
 type ProposalDataProps = {};
 
@@ -34,7 +35,7 @@ const ProposalData: React.FC<ProposalDataProps> = ({}) => {
 			},
 			{
 				title: t('gov.proposal.history.title'),
-				tabChildren: <></>,
+				tabChildren: <History hash={proposal?.authorIpfsHash ?? ''} />,
 				blue: true,
 				key: ProposalInfoType.HISTORY,
 			},

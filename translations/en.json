@@ -655,7 +655,8 @@
 				"title": "Current results"
 			},
 			"history": {
-				"title": "Voting history"
+				"title": "Voting history",
+				"currentUser": "You"
 			}
 		},
 		"council": {

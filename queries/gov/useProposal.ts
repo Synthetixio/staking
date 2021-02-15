@@ -14,7 +14,6 @@ import {
 } from 'constants/snapshot';
 
 import { appReadyState } from 'store/app';
-import { Proposal, SpaceData, Vote } from './types';
 import { networkState, walletAddressState } from 'store/wallet';
 import Connector from 'containers/Connector';
 import snapshot from '@snapshot-labs/snapshot.js';
@@ -26,6 +25,7 @@ type ProposalResults = {
 	totalVotesBalances: number;
 	choices: string[];
 	spaceSymbol: string;
+	voteList: any[];
 };
 
 const useProposal = (
@@ -93,6 +93,20 @@ const useProposal = (
 					.filter((vote) => vote[1].balance > 0)
 			);
 
+			const returnVoteHistory = () => {
+				if (walletAddress && Object.keys(votes).includes(walletAddress)) {
+					// @ts-ignore
+					const { [[walletAddress]]: firstKeyValue, ...rest } = votes;
+					return {
+						// @ts-ignore
+						[[walletAddress]]: firstKeyValue,
+						...rest,
+					};
+				}
+
+				return votes.data;
+			};
+
 			/* Get results */
 			const results = {
 				totalVotes: proposal.msg.payload.choices.map(
@@ -114,6 +128,7 @@ const useProposal = (
 				totalVotesBalances: Object.values(votes).reduce((a, b: any) => a + b.balance, 0) as number,
 				choices: proposal.msg.payload.choices,
 				spaceSymbol: space.data.symbol,
+				voteList: Object.values(returnVoteHistory()),
 			};
 
 			return results;
