@@ -32,6 +32,8 @@ import { CurrencyKey, Synths } from 'constants/currency';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import TxState from 'sections/earn/TxState';
 
+import { LP } from 'sections/earn/types';
+
 import {
 	Label,
 	StyledLink,
@@ -59,7 +61,7 @@ export const getApprovalContractData = (stakedAsset: CurrencyKey, signer: any) =
 			contract: contracts.SynthiETH,
 			poolAddress: contracts.StakingRewardsiETH.address,
 		};
-	} else if (stakedAsset === Synths.sUSD) {
+	} else if (stakedAsset === LP.CURVE_sUSD) {
 		return {
 			contract: new ethers.Contract(
 				curveSusdPoolToken.address,
@@ -68,7 +70,7 @@ export const getApprovalContractData = (stakedAsset: CurrencyKey, signer: any) =
 			),
 			poolAddress: curveSusdRewards.address,
 		};
-	} else if (stakedAsset === Synths.sTSLA) {
+	} else if (stakedAsset === LP.BALANCER_sTSLA) {
 		return {
 			contract: new ethers.Contract(
 				balancersTSLAPoolToken.address,

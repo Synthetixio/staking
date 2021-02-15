@@ -46,6 +46,8 @@ import {
 	HeaderLabel,
 } from '../common';
 
+import { LP } from 'sections/earn/types';
+
 type LPTabProps = {
 	stakedAsset: CurrencyKey;
 	tokenRewards: number;
@@ -167,11 +169,11 @@ const LPTab: FC<LPTabProps> = ({
 			return 'earn.incentives.options.ieth.description';
 		} else if (stakedAsset === Synths.iBTC) {
 			return 'earn.incentives.options.ibtc.description';
-		} else if (stakedAsset === Synths.sUSD) {
+		} else if (stakedAsset === LP.CURVE_sUSD) {
 			return 'earn.incentives.options.curve.description';
-		} else if (stakedAsset === Synths.sEUR) {
+		} else if (stakedAsset === LP.CURVE_sEURO) {
 			return 'earn.incentives.options.seur.description';
-		} else if (stakedAsset === Synths.sTSLA) {
+		} else if (stakedAsset === LP.BALANCER_sTSLA) {
 			return 'earn.incentives.options.stsla.description';
 		} else {
 			throw new Error('unexpected staking asset for translation key');
@@ -261,7 +263,7 @@ const LPTab: FC<LPTabProps> = ({
 					components={[
 						<StyledLink
 							href={
-								stakedAsset === Synths.sTSLA
+								stakedAsset === LP.BALANCER_sTSLA
 									? `https://pools.balancer.exchange/#/pool/0x055db9aff4311788264798356bbf3a733ae181c6/`
 									: EXTERNAL_LINKS.Synthetix.Incentives
 							}

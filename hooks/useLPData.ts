@@ -8,6 +8,7 @@ import useTSLAPoolQuery from 'queries/liquidityPools/useTSLAPoolQuery';
 import { Synths } from 'constants/currency';
 import { WEEKS_IN_YEAR } from 'constants/date';
 import { LiquidityPoolData } from 'queries/liquidityPools/types';
+import { LP } from 'sections/earn/types';
 
 type LPData = {
 	[name: string]: {
@@ -79,17 +80,17 @@ const useLPData = (): LPData => {
 			TVL: iBTCTVL,
 			data: useiBTCPool.data,
 		},
-		[Synths.sEUR]: {
+		[LP.CURVE_sEURO]: {
 			APR: sEuroAPR,
 			TVL: sEuroTVL,
 			data: usesEuroPool.data,
 		},
-		[Synths.sUSD]: {
+		[LP.CURVE_sUSD]: {
 			APR: sUsdAPR,
 			TVL: sUsdTVL,
 			data: usesUSDPool.data,
 		},
-		[Synths.sTSLA]: {
+		[LP.BALANCER_sTSLA]: {
 			APR: sTSLAAPR,
 			TVL: sTSLATVL,
 			data: usesTSLAPool.data,

@@ -18,7 +18,7 @@ import ClaimTab from './ClaimTab';
 import LPTab from './LPTab';
 import { isWalletConnectedState } from 'store/wallet';
 
-import { Tab } from './types';
+import { Tab, LP } from './types';
 import { zeroBN } from 'utils/formatters/number';
 
 export const NOT_APPLICABLE = 'n/a';
@@ -124,16 +124,16 @@ const Incentives: FC<IncentivesProps> = ({
 						{
 							title: t('earn.incentives.options.stsla.title'),
 							subtitle: t('earn.incentives.options.stsla.subtitle'),
-							apr: lpData[Synths.sTSLA].APR,
-							tvl: lpData[Synths.sTSLA].TVL,
+							apr: lpData[LP.BALANCER_sTSLA].APR,
+							tvl: lpData[LP.BALANCER_sTSLA].TVL,
 							staked: {
-								balance: lpData[Synths.sTSLA].data?.staked ?? 0,
-								asset: Synths.sTSLA,
+								balance: lpData[LP.BALANCER_sTSLA].data?.staked ?? 0,
+								asset: LP.BALANCER_sTSLA,
 							},
-							rewards: lpData[Synths.sTSLA].data?.rewards ?? 0,
-							periodStarted: now - (lpData[Synths.sTSLA].data?.duration ?? 0),
-							periodFinish: lpData[Synths.sTSLA].data?.periodFinish ?? 0,
-							claimed: (lpData[Synths.sTSLA].data?.rewards ?? 0) > 0 ? false : NOT_APPLICABLE,
+							rewards: lpData[LP.BALANCER_sTSLA].data?.rewards ?? 0,
+							periodStarted: now - (lpData[LP.BALANCER_sTSLA].data?.duration ?? 0),
+							periodFinish: lpData[LP.BALANCER_sTSLA].data?.periodFinish ?? 0,
+							claimed: (lpData[LP.BALANCER_sTSLA].data?.rewards ?? 0) > 0 ? false : NOT_APPLICABLE,
 							now,
 							route: ROUTES.Earn.sTLSA_LP,
 							tab: Tab.sTLSA_LP,
@@ -141,16 +141,16 @@ const Incentives: FC<IncentivesProps> = ({
 						{
 							title: t('earn.incentives.options.curve.title'),
 							subtitle: t('earn.incentives.options.curve.subtitle'),
-							apr: lpData[Synths.sUSD].APR,
-							tvl: lpData[Synths.sUSD].TVL,
+							apr: lpData[LP.CURVE_sUSD].APR,
+							tvl: lpData[LP.CURVE_sUSD].TVL,
 							staked: {
-								balance: lpData[Synths.sUSD].data?.staked ?? 0,
-								asset: Synths.sUSD,
+								balance: lpData[LP.CURVE_sUSD].data?.staked ?? 0,
+								asset: LP.CURVE_sUSD,
 							},
-							rewards: lpData[Synths.sUSD].data?.rewards ?? 0,
-							periodStarted: now - (lpData[Synths.sUSD].data?.duration ?? 0),
-							periodFinish: lpData[Synths.sUSD].data?.periodFinish ?? 0,
-							claimed: (lpData[Synths.sUSD].data?.rewards ?? 0) > 0 ? false : NOT_APPLICABLE,
+							rewards: lpData[LP.CURVE_sUSD].data?.rewards ?? 0,
+							periodStarted: now - (lpData[LP.CURVE_sUSD].data?.duration ?? 0),
+							periodFinish: lpData[LP.CURVE_sUSD].data?.periodFinish ?? 0,
+							claimed: (lpData[LP.CURVE_sUSD].data?.rewards ?? 0) > 0 ? false : NOT_APPLICABLE,
 							now,
 							route: ROUTES.Earn.sUSD_LP,
 							tab: Tab.sUSD_LP,
@@ -160,16 +160,16 @@ const Incentives: FC<IncentivesProps> = ({
 						{
 							title: t('earn.incentives.options.seur.title'),
 							subtitle: t('earn.incentives.options.seur.subtitle'),
-							apr: lpData[Synths.sEUR].APR,
-							tvl: lpData[Synths.sEUR].TVL,
+							apr: lpData[LP.CURVE_sEURO].APR,
+							tvl: lpData[LP.CURVE_sEURO].TVL,
 							staked: {
-								balance: lpData[Synths.sEUR].data?.staked ?? 0,
-								asset: Synths.sEUR,
+								balance: lpData[LP.CURVE_sEURO].data?.staked ?? 0,
+								asset: LP.CURVE_sEURO,
 							},
-							rewards: lpData[Synths.sEUR].data?.rewards ?? 0,
-							periodStarted: now - (lpData[Synths.sEUR].data?.duration ?? 0),
-							periodFinish: lpData[Synths.sEUR].data?.periodFinish ?? 0,
-							claimed: (lpData[Synths.sEUR].data?.rewards ?? 0) > 0 ? false : NOT_APPLICABLE,
+							rewards: lpData[LP.CURVE_sEURO].data?.rewards ?? 0,
+							periodStarted: now - (lpData[LP.CURVE_sEURO].data?.duration ?? 0),
+							periodFinish: lpData[LP.CURVE_sEURO].data?.periodFinish ?? 0,
+							claimed: (lpData[LP.CURVE_sEURO].data?.rewards ?? 0) > 0 ? false : NOT_APPLICABLE,
 							now,
 							route: ROUTES.Earn.sEURO_LP,
 							tab: Tab.sEURO_LP,
@@ -197,11 +197,11 @@ const Incentives: FC<IncentivesProps> = ({
 			activeTab={activeTab}
 			data={incentives}
 			isLoaded={
-				lpData[Synths.sUSD].data &&
-				lpData[Synths.sEUR].data &&
+				lpData[LP.CURVE_sUSD].data &&
+				lpData[LP.CURVE_sEURO].data &&
 				lpData[Synths.iBTC].data &&
 				lpData[Synths.iETH].data &&
-				lpData[Synths.sTSLA].data
+				lpData[LP.BALANCER_sTSLA].data
 					? true
 					: false
 			}
@@ -247,13 +247,13 @@ const Incentives: FC<IncentivesProps> = ({
 				)}
 				{activeTab === Tab.sTLSA_LP && (
 					<LPTab
-						userBalance={lpData[Synths.sTSLA].data?.userBalance ?? 0}
-						userBalanceBN={lpData[Synths.sTSLA].data?.userBalanceBN ?? zeroBN}
-						stakedAsset={Synths.sTSLA}
-						allowance={lpData[Synths.sTSLA].data?.allowance ?? null}
+						userBalance={lpData[LP.BALANCER_sTSLA].data?.userBalance ?? 0}
+						userBalanceBN={lpData[LP.BALANCER_sTSLA].data?.userBalanceBN ?? zeroBN}
+						stakedAsset={LP.BALANCER_sTSLA}
+						allowance={lpData[LP.BALANCER_sTSLA].data?.allowance ?? null}
 						tokenRewards={incentives[3].rewards}
 						staked={incentives[3].staked.balance}
-						stakedBN={lpData[Synths.sTSLA].data?.stakedBN ?? zeroBN}
+						stakedBN={lpData[LP.BALANCER_sTSLA].data?.stakedBN ?? zeroBN}
 						needsToSettle={incentives[3].needsToSettle}
 					/>
 				)}
