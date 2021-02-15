@@ -716,6 +716,14 @@
 		"stake-snx": "Stake SNX",
 		"tooltip": {
 			"external": "Redirects to {{link}}"
+		},
+		"time": {
+			"years": "y",
+			"months": "mo",
+			"days": "d",
+			"hours": "h",
+			"minutes": "m",
+			"seconds": "s"
 		}
 	},
 	"not-found": {

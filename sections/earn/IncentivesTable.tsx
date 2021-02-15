@@ -36,6 +36,7 @@ import {
 	TableNoResultsTitle,
 } from 'styles/common';
 import { CryptoCurrency, CurrencyKey } from 'constants/currency';
+import { DURATION_SEPARATOR } from 'constants/date';
 import { NOT_APPLICABLE } from './Incentives';
 
 import ROUTES from 'constants/routes';
@@ -209,7 +210,19 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab }
 							variant="rainbow"
 						/>
 						<Subtitle>
-							<Countdown date={cellProps.value} />
+							<Countdown
+								date={cellProps.value}
+								renderer={({ days, hours, minutes, seconds }) => {
+									const duration = [
+										`${days}${t('common.time.days')}`,
+										`${hours}${t('common.time.hours')}`,
+										`${minutes}${t('common.time.minutes')}`,
+										`${seconds}${t('common.time.seconds')}`,
+									];
+
+									return <span>{duration.join(DURATION_SEPARATOR)}</span>;
+								}}
+							/>
 						</Subtitle>
 					</CellContainer>
 				),
