@@ -17,6 +17,7 @@
 	"dependencies": {
 		"@artsy/fresnel": "1.3.0",
 		"@eth-optimism/watcher": "0.0.1-alpha.8",
+		"@metamask/detect-provider": "1.2.0",
 		"@reach/dialog": "0.12.1",
 		"@synthetixio/assets": "2.0.7",
 		"@synthetixio/js": "2.39.1",
