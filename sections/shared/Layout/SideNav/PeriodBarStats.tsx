@@ -1,6 +1,8 @@
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import Countdown, { zeroPad } from 'react-countdown';
+import Countdown from 'react-countdown';
+
+import { DURATION_SEPARATOR } from 'constants/date';
 
 import useFeePeriodTimeAndProgress from 'hooks/useFeePeriodTimeAndProgress';
 
@@ -21,11 +23,15 @@ const PeriodBarStats: FC = () => {
 						<Countdown
 							autoStart={true}
 							date={nextFeePeriodStartsTime}
-							renderer={({ days, hours, minutes }) => (
-								<span>
-									{zeroPad(days)}:{zeroPad(hours)}:{zeroPad(minutes)}
-								</span>
-							)}
+							renderer={({ days, hours, minutes }) => {
+								const duration = [
+									`${days}${t('common.time.days')}`,
+									`${hours}${t('common.time.hours')}`,
+									`${minutes}${t('common.time.minutes')}`,
+								];
+
+								return <span>{duration.join(DURATION_SEPARATOR)}</span>;
+							}}
 						/>
 					)}
 				</BarValue>
