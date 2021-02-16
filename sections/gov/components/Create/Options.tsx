@@ -8,9 +8,7 @@ import { Svg } from 'react-optimized-image';
 import CrossIcon from 'assets/svg/app/cross.svg';
 import Connector from 'containers/Connector';
 
-type OptionsProps = {};
-
-const Options: React.FC<OptionsProps> = ({}) => {
+const Options: React.FC = () => {
 	const [options, setOptions] = useState<string[]>([]);
 	const [block, setBlock] = useState<string>('');
 

@@ -13,7 +13,6 @@ import Link from 'assets/svg/app/link.svg';
 import Etherscan from 'containers/Etherscan';
 import StructuredTab from 'components/StructuredTab';
 import Results from './Results';
-import useActiveTab from '../../hooks/useActiveTab';
 import History from './History';
 
 const Info: React.FC = () => {
@@ -21,7 +20,6 @@ const Info: React.FC = () => {
 	const theme = useTheme();
 	const proposal = useRecoilValue(proposalState);
 	const { etherscanInstance } = Etherscan.useContainer();
-	const activeTab = useActiveTab();
 
 	const tabData = useMemo(
 		() => [
@@ -38,7 +36,7 @@ const Info: React.FC = () => {
 				key: ProposalInfoType.HISTORY,
 			},
 		],
-		[ProposalInfoType, proposal, activeTab, t]
+		[proposal, t]
 	);
 
 	if (!proposal) return <></>;
