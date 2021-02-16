@@ -29,7 +29,7 @@ type ProposalProps = {
 	spaceKey: SPACE_KEY;
 };
 
-const Proposal: React.FC<ProposalProps> = ({ onBack, proposal, spaceKey }) => {
+const Index: React.FC<ProposalProps> = ({ onBack, proposal, spaceKey }) => {
 	const { signer } = Connector.useContainer();
 	const walletAddress = useRecoilValue(walletAddressState);
 	const [selected, setSelected] = useState<number | null>(null);
@@ -110,41 +110,43 @@ const Proposal: React.FC<ProposalProps> = ({ onBack, proposal, spaceKey }) => {
 	};
 
 	return (
-		<>
-			<InputContainer>
-				<HeaderRow>
-					<IconButton onClick={() => onBack(null)}>
-						<Svg src={NavigationBack} />
-					</IconButton>
-					<Hash>#{truncateAddress(proposal?.authorIpfsHash ?? '')}</Hash>
-					<Status active={!expired(proposal?.msg.payload.end)}>
-						{expired(proposal?.msg.payload.end)
-							? t('gov.proposal.status.closed')
-							: t('gov.proposal.status.open')}
-					</Status>
-				</HeaderRow>
-				<ProposalContainer>
-					<Title>{proposal?.msg.payload.name}</Title>
-					<Description dangerouslySetInnerHTML={getRawMarkup(proposal?.msg.payload.body)} />
-				</ProposalContainer>
-				<Divider />
-				<OptionsContainer>
-					{proposal?.msg.payload.choices.map((choice, i) => (
-						<Option selected={selected === i} onClick={() => setSelected(i)} variant="text" key={i}>
-							{choice}
-						</Option>
-					))}
-				</OptionsContainer>
-				<ActionContainer>
-					<StyledCTA onClick={() => handleVote(proposal?.authorIpfsHash)} variant="primary">
-						{t('gov.proposal.action.vote')}
-					</StyledCTA>
-				</ActionContainer>
-			</InputContainer>
-		</>
+		<StyledInputContainer>
+			<HeaderRow>
+				<IconButton onClick={() => onBack(null)}>
+					<Svg src={NavigationBack} />
+				</IconButton>
+				<Hash>#{truncateAddress(proposal?.authorIpfsHash ?? '')}</Hash>
+				<Status active={!expired(proposal?.msg.payload.end)}>
+					{expired(proposal?.msg.payload.end)
+						? t('gov.proposal.status.closed')
+						: t('gov.proposal.status.open')}
+				</Status>
+			</HeaderRow>
+			<ProposalContainer>
+				<Title>{proposal?.msg.payload.name}</Title>
+				<Description dangerouslySetInnerHTML={getRawMarkup(proposal?.msg.payload.body)} />
+			</ProposalContainer>
+			<Divider />
+			<OptionsContainer>
+				{proposal?.msg.payload.choices.map((choice, i) => (
+					<Option selected={selected === i} onClick={() => setSelected(i)} variant="text" key={i}>
+						{choice}
+					</Option>
+				))}
+			</OptionsContainer>
+			<ActionContainer>
+				<StyledCTA onClick={() => handleVote(proposal?.authorIpfsHash)} variant="primary">
+					{t('gov.proposal.action.vote')}
+				</StyledCTA>
+			</ActionContainer>
+		</StyledInputContainer>
 	);
 };
-export default Proposal;
+export default Index;
+
+const StyledInputContainer = styled(InputContainer)`
+	background-color: ${(props) => props.theme.colors.navy};
+`;
 
 const HeaderRow = styled(FlexDivRowCentered)`
 	justify-content: space-between;

@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { Svg } from 'react-optimized-image';
 import Spinner from 'assets/svg/app/loader.svg';
-import useActiveTab from '../hooks/useActiveTab';
+import useActiveTab from '../../hooks/useActiveTab';
 import { FlexDivRowCentered } from 'styles/common';
 import useProposal from 'queries/gov/useProposal';
 import { formatNumber, formatPercent } from 'utils/formatters/number';

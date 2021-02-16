@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState, useEffect } from 'react';
+import React, { useMemo } from 'react';
 import styled from 'styled-components';
 import { CellProps, Row } from 'react-table';
 import { isWalletConnectedState } from 'store/wallet';
@@ -9,7 +9,7 @@ import {
 	TableNoResultsTitle,
 } from 'styles/common';
 import Button from 'components/Button';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { Proposal as ProposalType } from 'queries/gov/types';
 import Connector from 'containers/Connector';
 import Table from 'components/Table';
@@ -17,49 +17,22 @@ import { useTranslation } from 'react-i18next';
 import Countdown from 'react-countdown';
 import { useRouter } from 'next/router';
 import ROUTES from 'constants/routes';
-import Proposal from './Proposal';
-import { proposalState } from 'store/gov';
-import useActiveTab from '../hooks/useActiveTab';
+import { panelState, PanelType, proposalState } from 'store/gov';
+import useActiveTab from '../../hooks/useActiveTab';
 
-type ProposalListProps = {
+type IndexProps = {
 	data: ProposalType[];
 	isLoaded: boolean;
 };
 
-const ProposalList: React.FC<ProposalListProps> = ({ data, isLoaded }) => {
+const Index: React.FC<IndexProps> = ({ data, isLoaded }) => {
 	const { t } = useTranslation();
 	const router = useRouter();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const { connectWallet } = Connector.useContainer();
-	const [proposal, setProposal] = useRecoilState(proposalState);
+	const setProposal = useSetRecoilState(proposalState);
+	const setPanelType = useSetRecoilState(panelState);
 	const activeTab = useActiveTab();
-
-	useEffect(() => {
-		if (
-			data &&
-			isWalletConnected &&
-			Array.isArray(router.query.panel) &&
-			router.query.panel &&
-			router.query.panel[1]
-		) {
-			const hash = router.query.panel[1] ?? '';
-			const preloadedProposal = data.filter((e) => e.authorIpfsHash === hash);
-			setProposal(preloadedProposal[0]);
-		} else {
-			setProposal(null);
-		}
-	}, [router.query.panel, isWalletConnected, data]);
-
-	// @TODO: Store in recoil state
-	// const activeTab = useMemo(
-	// 	() =>
-	// 		isWalletConnected && Array.isArray(router.query.panel) && router.query.panel.length
-	// 			? (router.query.panel[0] as SPACE_KEY)
-	// 			: SPACE_KEY.COUNCIL,
-	// 	[router.query.panel, isWalletConnected]
-	// );
-
-	const handleCreate = useCallback(() => {}, []);
 
 	const columns = useMemo(
 		() => [
@@ -118,60 +91,45 @@ const ProposalList: React.FC<ProposalListProps> = ({ data, isLoaded }) => {
 		[t]
 	);
 
-	const returnProposal = useMemo(() => {
-		return (
-			<Proposal
-				spaceKey={activeTab}
-				proposal={proposal}
-				onBack={() => {
-					setProposal(null);
-					router.push(ROUTES.Gov.Space(activeTab));
-				}}
-			/>
-		);
-	}, [activeTab, proposal, router]);
-
 	return (
 		<Container>
-			{proposal ? (
-				returnProposal
-			) : (
-				<>
-					<StyledTable
-						palette="primary"
-						columns={columns}
-						data={data}
-						maxRows={5}
-						isLoading={isWalletConnected && !isLoaded}
-						showPagination={true}
-						onTableRowClick={(row: Row<ProposalType>) => {
-							setProposal(proposal ? null : row.original);
-							router.push(ROUTES.Gov.Proposal(activeTab, row.original.authorIpfsHash));
-						}}
-						noResultsMessage={
-							!isWalletConnected ? (
-								<TableNoResults>
-									<TableNoResultsTitle>
-										{t('common.wallet.no-wallet-connected')}
-									</TableNoResultsTitle>
-									<TableNoResultsButtonContainer>
-										<Button variant="primary" onClick={connectWallet}>
-											{t('common.wallet.connect-wallet')}
-										</Button>
-									</TableNoResultsButtonContainer>
-								</TableNoResults>
-							) : undefined
-						}
-					/>
-					<AbsoluteContainer onClick={() => handleCreate()}>
-						<CreateButton variant="secondary">{t('gov.create.button')}</CreateButton>
-					</AbsoluteContainer>
-				</>
-			)}
+			<StyledTable
+				palette="primary"
+				columns={columns}
+				data={data}
+				maxRows={5}
+				isLoading={isWalletConnected && !isLoaded}
+				showPagination={true}
+				onTableRowClick={(row: Row<ProposalType>) => {
+					setProposal(row.original);
+					router.push(ROUTES.Gov.Proposal(activeTab, row.original.authorIpfsHash));
+					setPanelType(PanelType.PROPOSAL);
+				}}
+				noResultsMessage={
+					!isWalletConnected ? (
+						<TableNoResults>
+							<TableNoResultsTitle>{t('common.wallet.no-wallet-connected')}</TableNoResultsTitle>
+							<TableNoResultsButtonContainer>
+								<Button variant="primary" onClick={connectWallet}>
+									{t('common.wallet.connect-wallet')}
+								</Button>
+							</TableNoResultsButtonContainer>
+						</TableNoResults>
+					) : undefined
+				}
+			/>
+			<AbsoluteContainer
+				onClick={() => {
+					setPanelType(PanelType.CREATE);
+					router.push(ROUTES.Gov.Create(activeTab));
+				}}
+			>
+				<CreateButton variant="secondary">{t('gov.table.create')}</CreateButton>
+			</AbsoluteContainer>
 		</Container>
 	);
 };
-export default ProposalList;
+export default Index;
 
 const Container = styled.div`
 	position: relative;

@@ -13,8 +13,8 @@ import { truncateAddress } from 'utils/formatters/string';
 
 import SpartanCouncilNFT from 'assets/gifs/SC-NFT.gif';
 import Link from 'assets/svg/app/link.svg';
-import useCouncilMembers from '../hooks/useCouncilMembers';
-import { Blockie } from './common';
+import useCouncilMembers from '../../hooks/useCouncilMembers';
+import { Blockie } from '../common';
 
 const CouncilBoard: React.FC = () => {
 	const { t } = useTranslation();

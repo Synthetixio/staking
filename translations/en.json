@@ -624,9 +624,6 @@
 				"title": "grants"
 			}
 		},
-		"create": {
-			"button": "Create proposal"
-		},
 		"table": {
 			"description": "Description",
 			"status": {
@@ -635,7 +632,20 @@
 				"closed": "Closed"
 			},
 			"time": "Time left",
-			"votes": "Votes"
+			"votes": "Votes",
+			"create": "Create new proposal"
+		},
+		"create": {
+			"title": "Create new proposal",
+			"question": "Enter Question",
+			"description": "Enter description",
+			"action": "Publish",
+			"choices": "Create choices",
+			"add": "+ Add option",
+			"start": "Start date",
+			"end": "End date",
+			"select": "Select date",
+			"block": "Block"
 		},
 		"proposal": {
 			"status": {

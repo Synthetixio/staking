@@ -4,7 +4,7 @@ import { useRecoilValue } from 'recoil';
 import { ProposalInfoType, proposalState } from 'store/gov';
 import styled, { useTheme } from 'styled-components';
 import { FlexDivRowCentered, ExternalLink, FlexDivColCentered } from 'styles/common';
-import { Blockie } from './common';
+import { Blockie } from '../common';
 import makeBlockie from 'ethereum-blockies-base64';
 import { truncateAddress } from 'utils/formatters/string';
 import { formatTxTimestamp } from 'utils/formatters/date';
@@ -13,12 +13,10 @@ import Link from 'assets/svg/app/link.svg';
 import Etherscan from 'containers/Etherscan';
 import StructuredTab from 'components/StructuredTab';
 import Results from './Results';
-import useActiveTab from '../hooks/useActiveTab';
+import useActiveTab from '../../hooks/useActiveTab';
 import History from './History';
 
-type ProposalDataProps = {};
-
-const ProposalData: React.FC<ProposalDataProps> = ({}) => {
+const Info: React.FC = () => {
 	const { t } = useTranslation();
 	const theme = useTheme();
 	const proposal = useRecoilValue(proposalState);
@@ -40,7 +38,7 @@ const ProposalData: React.FC<ProposalDataProps> = ({}) => {
 				key: ProposalInfoType.HISTORY,
 			},
 		],
-		[ProposalInfoType, proposal, activeTab]
+		[ProposalInfoType, proposal, activeTab, t]
 	);
 
 	if (!proposal) return <></>;
@@ -87,7 +85,7 @@ const ProposalData: React.FC<ProposalDataProps> = ({}) => {
 		</Col>
 	);
 };
-export default ProposalData;
+export default Info;
 
 const Col = styled(FlexDivColCentered)`
 	width: 400px;
