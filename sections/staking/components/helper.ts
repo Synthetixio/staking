@@ -45,3 +45,11 @@ export function getTransferableAmountFromBurn(
 		)
 	);
 }
+
+export function sanitiseValue(value: BigNumber) {
+	if (value.isNegative() || value.isNaN() || !value.isFinite()) {
+		return zeroBN;
+	} else {
+		return value;
+	}
+}

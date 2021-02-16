@@ -231,6 +231,10 @@
 					"custom": {
 						"title": "Burn custom",
 						"subtext": "Burn a custom amount of sUSD"
+					},
+					"clear-debt": {
+						"title": "Clear debt",
+						"subtext": "Buy and burn sUSD to clear your total debt and unstake all SNX"
 					}
 				},
 				"info": {
@@ -240,6 +244,8 @@
 					"empty": "Enter an amount",
 					"burn": "Burn <0>sUSD</0>",
 					"max": "Max",
+					"clear-debt": "Clear debt",
+					"insufficient-sUSD-to-clear-debt": "Insufficient <0>sUSD</0> to clear debt",
 					"insufficient-sUSD-to-fix-c-ratio": "Insufficient <0>sUSD</0> to fix c-ratio. mint or by <0>sUSD</0> to proceed",
 					"error": {
 						"no-debt": "No debt to burn",
