@@ -7,10 +7,16 @@ import { FlexDivColCentered, FlexDivRowCentered } from 'styles/common';
 import { Svg } from 'react-optimized-image';
 import CrossIcon from 'assets/svg/app/cross.svg';
 import Connector from 'containers/Connector';
+import DateSelect from 'components/DateSelect';
 
 const Options: React.FC = () => {
 	const [options, setOptions] = useState<string[]>([]);
 	const [block, setBlock] = useState<string>('');
+	const [startTime, setStartTime] = useState<string | null>(null);
+	const [endTime, setEndTime] = useState<string | null>(null);
+
+	const [startDate, setStartDate] = useState<any>(new Date());
+	const [endDate, setEndDate] = useState<any>(new Date());
 
 	const { provider } = Connector.useContainer();
 
@@ -62,15 +68,27 @@ const Options: React.FC = () => {
 			</InfoCard>
 			<InfoCard>
 				<Row>
-					<Subtitle>{t('gov.create.start')}</Subtitle>
-					<DateSelector />
+					<Subtitle>{t('gov.create.start.date')}</Subtitle>
+					<DateSelect
+						selected={startDate}
+						onChange={(date) => setStartDate(date)}
+						onClear={() => setStartDate(null)}
+						showClear
+						showTimeSelect
+						dateFormat="Pp"
+					/>
 				</Row>
-
 				<Row>
-					<Subtitle>{t('gov.create.end')}</Subtitle>
-					<DateSelector />
+					<Subtitle>{t('gov.create.end.date')}</Subtitle>
+					<DateSelect
+						selected={endDate}
+						onChange={(date) => setEndDate(date)}
+						onClear={() => setEndDate(null)}
+						showClear
+						showTimeSelect
+						dateFormat="Pp"
+					/>
 				</Row>
-
 				<Row>
 					<Subtitle>{t('gov.create.block')}</Subtitle>
 					<BlockInput value={block} onChange={(e) => setBlock(e.target.value)} type="number" />
@@ -102,7 +120,6 @@ const Row = styled(FlexDivRowCentered)`
 const Title = styled.div`
 	font-family: ${(props) => props.theme.fonts.extended};
 	font-size: 12px;
-	text-transform: uppercase;
 	color: ${(props) => props.theme.colors.white};
 	text-align: center;
 `;
@@ -128,7 +145,7 @@ const Option = styled(Input)`
 
 const Delete = styled(Svg)`
 	margin-right: 8px;
-	color: ${(props) => props.theme.colors.blue};
+	color: ${(props) => props.theme.colors.gray};
 	cursor: pointer;
 `;
 
@@ -142,6 +159,7 @@ const AddOption = styled(Button)`
 	height: 45px;
 	width: 100%;
 	margin: 4px 0px;
+	text-transform: uppercase;
 `;
 
 const Subtitle = styled.p`

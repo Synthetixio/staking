@@ -642,8 +642,12 @@
 			"action": "Publish",
 			"choices": "Create choices",
 			"add": "+ Add option",
-			"start": "Start date",
-			"end": "End date",
+			"start": {
+				"date": "Start date"
+			},
+			"end": {
+				"date": "End date"
+			},
 			"select": "Select date",
 			"block": "Block"
 		},

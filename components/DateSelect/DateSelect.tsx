@@ -13,7 +13,7 @@ type DatePickerProps = ReactDatePickerProps & {
 	showClear: boolean;
 };
 
-export const DatePicker: FC<DatePickerProps> = ({ className, onClear, showClear, ...rest }) => {
+const DatePicker: FC<DatePickerProps> = ({ className, onClear, showClear, ...rest }) => {
 	const [isOpen, setIsOpen] = useState<boolean>(false);
 
 	return (

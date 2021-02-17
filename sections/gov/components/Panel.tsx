@@ -66,6 +66,7 @@ const Panel: React.FC<PanelProps> = ({ currentTab }) => {
 				setPanelType(PanelType.PROPOSAL);
 			}
 		} else {
+			setPanelType(PanelType.LIST);
 			setProposal(null);
 		}
 	}, [
