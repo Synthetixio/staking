@@ -195,6 +195,7 @@ const StakingInput: React.FC<StakingInputProps> = ({
 		error,
 		transactionState,
 		isMint,
+		canClearDebt,
 		onSubmit,
 		t,
 		isWalletConnected,

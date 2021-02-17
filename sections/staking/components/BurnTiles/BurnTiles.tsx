@@ -66,9 +66,11 @@ const BurnTiles: React.FC<BurnTilesProps> = ({ percentageTargetCRatio, burnAmoun
 					onAction={() => onBurnTypeChange(BurnActionType.CUSTOM)}
 				/>
 				<MarginedButtonTile
+					disabled={true}
 					right={true}
 					title={t('staking.actions.burn.tiles.clear-debt.title')}
-					subtext={t('staking.actions.burn.tiles.clear-debt.subtext')}
+					// subtext={t('staking.actions.burn.tiles.clear-debt.subtext')}
+					subtext={'Coming soon'}
 					icon={burnIcon}
 					onAction={() => onBurnTypeChange(BurnActionType.CLEAR)}
 				/>
