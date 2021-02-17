@@ -199,8 +199,8 @@ const BurnTab: React.FC = () => {
 	);
 
 	const handleClear = async () => {
-		// setup 1inch tx
-		// setup burn tx
+		// @TODO: setup 1inch tx
+		// @TODO: setup burn tx
 		console.log('clear');
 	};
 
