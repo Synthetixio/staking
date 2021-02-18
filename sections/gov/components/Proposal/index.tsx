@@ -14,14 +14,12 @@ import { Proposal as ProposalItem } from 'queries/gov/types';
 import { truncateAddress } from 'utils/formatters/string';
 import { useTranslation } from 'react-i18next';
 import Button from 'components/Button';
-import { MSG, SPACE_KEY } from 'constants/snapshot';
-import { version } from '@snapshot-labs/snapshot.js/package.json';
-import snapshot from '@snapshot-labs/snapshot.js';
+import { SPACE_KEY } from 'constants/snapshot';
 import { useRecoilValue } from 'recoil';
 import { walletAddressState } from 'store/wallet';
 import Connector from 'containers/Connector';
-import axios from 'axios';
 import useProposal from 'queries/gov/useProposal';
+import useSignMessage, { SignatureType } from 'mutations/gov/useSignMessage';
 
 type ProposalProps = {
 	onBack: Function;
@@ -30,56 +28,18 @@ type ProposalProps = {
 };
 
 const Index: React.FC<ProposalProps> = ({ onBack, proposal, spaceKey }) => {
-	const { signer } = Connector.useContainer();
-	const walletAddress = useRecoilValue(walletAddressState);
 	const [selected, setSelected] = useState<number | null>(null);
 	const { t } = useTranslation();
-	const { refetch } = useProposal(spaceKey, proposal?.authorIpfsHash ?? '');
-
-	const saveVote = async (msg: any) => {
-		const url = `${MSG(true)}`;
-		return await axios
-			.post(url, msg, {
-				method: 'POST',
-				headers: {
-					Accept: 'application/json',
-					'Content-Type': 'application/json',
-				},
-			})
-			.then((response) => {
-				refetch();
-				return response;
-			})
-			.catch((e) => {
-				console.log(e);
-				return e;
-			});
-	};
+	const [voteMutate, result] = useSignMessage();
 
 	const handleVote = async (hash?: string | null) => {
 		try {
-			// @TODO: Rely on package.json
-			const version = '0.1.3';
-			if (hash && selected !== null) {
-				const msg: any = {
-					address: walletAddress,
-					msg: JSON.stringify({
-						version,
-						timestamp: (Date.now() / 1e3).toFixed(),
-						space: spaceKey,
-						type: 'vote',
-						payload: {
-							proposal: hash,
-							choice: selected + 1,
-							metadata: {},
-						},
-					}),
-				};
-				msg.sig = await signer?.signMessage(msg.msg);
-				const result = await saveVote(msg);
-				if (result.data && result.data.ipfsHash) {
-					refetch();
-				}
+			if (hash && selected) {
+				voteMutate({
+					spaceKey: spaceKey,
+					type: SignatureType.VOTE,
+					payload: { proposal: hash, choice: selected + 1, metadata: {} },
+				});
 			}
 		} catch (e) {
 			console.log(e);
@@ -135,6 +95,9 @@ const Index: React.FC<ProposalProps> = ({ onBack, proposal, spaceKey }) => {
 				))}
 			</OptionsContainer>
 			<ActionContainer>
+				{/* @TODO Modify better loaders */}
+				{result.isSuccess && <p>Done!</p>}
+				{result.isLoading && <p>Loading!</p>}
 				<StyledCTA onClick={() => handleVote(proposal?.authorIpfsHash)} variant="primary">
 					{t('gov.proposal.action.vote')}
 				</StyledCTA>

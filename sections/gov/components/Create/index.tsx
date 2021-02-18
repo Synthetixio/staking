@@ -1,19 +1,16 @@
-import React, { useState } from 'react';
-import styled from 'styled-components';
-import { Svg } from 'react-optimized-image';
-import { Remarkable } from 'remarkable';
-import { linkify } from 'remarkable/linkify';
-import externalLink from 'remarkable-external-link';
-
-import { FlexDivRowCentered, IconButton } from 'styles/common';
-
-import NavigationBack from 'assets/svg/app/navigation-back.svg';
-
-import { InputContainer } from 'sections/gov/components/common';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import Button from 'components/Button';
 
-import Input, { inputCSS } from 'components/Input/Input';
+import { LeftCol, RightCol } from 'sections/gov/components/common';
+
+import { Row } from 'styles/common';
+import Options from './Options';
+import Timing from './Timing';
+import Question from './Question';
+import Connector from 'containers/Connector';
+import useSignMessage, { SignatureType } from 'mutations/gov/useSignMessage';
+import useActiveTab from 'sections/gov/hooks/useActiveTab';
+import useSnapshotSpace from 'queries/gov/useSnapshotSpace';
 
 type IndexProps = {
 	onBack: Function;
@@ -21,98 +18,102 @@ type IndexProps = {
 
 const Index: React.FC<IndexProps> = ({ onBack }) => {
 	const { t } = useTranslation();
-	const [question, setQuestion] = useState<string>('');
-	const [description, setDescription] = useState<string>('');
+	const { provider } = Connector.useContainer();
+	const [startDate, setStartDate] = useState<Date>(new Date());
+	const [endDate, setEndDate] = useState<Date>(new Date());
+	const [block, setBlock] = useState<number | null>(null);
+	const [name, setName] = useState<string>('');
+	const [body, setBody] = useState<string>('');
+	const [choices, setChoices] = useState<string[]>([]);
+	const activeTab = useActiveTab();
 
-	const handleCreate = () => {};
+	const space = useSnapshotSpace(activeTab, true);
+	const [createProposal, response] = useSignMessage();
 
-	const getRawMarkup = (value?: string | null) => {
-		const remarkable = new Remarkable({
-			html: false,
-			breaks: true,
-			typographer: false,
-		})
-			.use(linkify)
-			.use(externalLink);
-
-		if (!value) return { __html: '' };
-
-		return { __html: remarkable.render(value) };
+	const sanitiseTimestamp = (timestamp: number) => {
+		return timestamp / 1e3;
 	};
 
+	const validSubmission = useMemo(() => {
+		if (
+			name.length > 0 &&
+			body.length > 0 &&
+			block &&
+			sanitiseTimestamp(endDate.getTime()) > 0 &&
+			sanitiseTimestamp(startDate.getTime()) > 0 &&
+			choices.length > 0
+		) {
+			return true;
+		} else {
+			return false;
+		}
+	}, [name, body, block, endDate, startDate, choices]);
+
+	const handleCreate = () => {
+		try {
+			console.log(startDate.getTime());
+			console.log(space.data?.strategies);
+			console.log(choices);
+
+			if (validSubmission && space.data && block) {
+				createProposal({
+					spaceKey: activeTab,
+					type: SignatureType.PROPOSAL,
+					payload: {
+						name,
+						body,
+						choices,
+						start: sanitiseTimestamp(startDate.getTime()),
+						end: sanitiseTimestamp(endDate.getTime()),
+						snapshot: block,
+						metadata: {
+							strategies: space.data.strategies,
+						},
+					},
+				});
+			}
+		} catch (e) {
+			console.log(e);
+		}
+	};
+
+	useEffect(() => {
+		const getCurrentBlock = async () => {
+			if (provider) {
+				let blockNumber = await provider?.getBlockNumber();
+				if (blockNumber) {
+					setBlock(blockNumber);
+				}
+			}
+		};
+
+		getCurrentBlock();
+	}, [provider]);
+
 	return (
-		<StyledInputContainer>
-			<HeaderRow>
-				<IconButton onClick={() => onBack(null)}>
-					<Svg src={NavigationBack} />
-				</IconButton>
-				<Header>{t('gov.create.title')}</Header>
-				<div />
-			</HeaderRow>
-			<CreateContainer>
+		<Row>
+			<LeftCol>
 				<Question
-					placeholder={t('gov.create.question')}
-					value={question}
-					onChange={(e) => setQuestion(e.target.value)}
+					onBack={onBack}
+					body={body}
+					name={name}
+					setBody={setBody}
+					setName={setName}
+					handleCreate={handleCreate}
 				/>
-				<Description
-					placeholder={t('gov.create.description')}
-					value={description}
-					onChange={(e) => setDescription(e.target.value)}
+			</LeftCol>
+			<RightCol>
+				<Options choices={choices} setChoices={setChoices} />
+				<Timing
+					startDate={startDate}
+					endDate={endDate}
+					setStartDate={setStartDate}
+					setEndDate={setEndDate}
+					block={block}
+					setBlock={setBlock}
 				/>
-				<p>Preview</p>
-				<div dangerouslySetInnerHTML={getRawMarkup(description)} />
-			</CreateContainer>
-			<ActionContainer>
-				<StyledCTA onClick={() => handleCreate()} variant="primary">
-					{t('gov.create.action')}
-				</StyledCTA>
-			</ActionContainer>
-		</StyledInputContainer>
+			</RightCol>
+		</Row>
 	);
 };
 export default Index;
-
-const StyledInputContainer = styled(InputContainer)`
-	background-color: ${(props) => props.theme.colors.navy};
-`;
-
-const HeaderRow = styled(FlexDivRowCentered)`
-	justify-content: space-between;
-	width: 100%;
-	padding: 8px;
-`;
-
-const Header = styled.p`
-	color: ${(props) => props.theme.colors.white};
-	font-family: ${(props) => props.theme.fonts.extended};
-	font-size: 12px;
-`;
-
-const ActionContainer = styled.div`
-	width: 100%;
-`;
-
-const StyledCTA = styled(Button)`
-	text-transform: uppercase;
-	font-family: ${(props) => props.theme.fonts.condensedMedium};
-	font-size: 12px;
-	width: 100%;
-	margin: 4px 0px;
-`;
-
-const CreateContainer = styled.div``;
-
-const Question = styled(Input)`
-	font-family: ${(props) => props.theme.fonts.extended};
-	font-size: 24px;
-	text-align: center;
-`;
-
-const Description = styled.textarea`
-	${inputCSS}
-	resize: none;
-	font-family: ${(props) => props.theme.fonts.regular};
-	font-size: 14px;
-	text-align: center;
-`;

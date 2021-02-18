@@ -16,7 +16,8 @@ export const PROPOSALS = (spaceKey: string, testnet?: boolean) =>
 	`https://${BASE_URL(testnet)}.snapshot.page/api/${spaceKey}/proposals`;
 export const PROPOSAL = (spaceKey: string, ipfsHash: string, testnet?: boolean) =>
 	`https://${BASE_URL(testnet)}.snapshot.page/api/${spaceKey}/proposal/${ipfsHash}`;
-export const MSG = (testnet?: boolean) => `https://${BASE_URL(testnet)}.snapshot.page/api/message`;
+export const MESSAGE_URL = (testnet?: boolean) =>
+	`https://${BASE_URL(testnet)}.snapshot.page/api/message`;
 
 export const quadraticWeighting = (value: BigNumber) => {
 	// Scale the value by 100000

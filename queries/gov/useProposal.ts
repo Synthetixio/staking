@@ -40,7 +40,7 @@ const useProposal = (
 	const { provider } = Connector.useContainer();
 
 	return useQuery<ProposalResults>(
-		QUERY_KEYS.Gov.Proposal(spaceKey, hash, walletAddress ?? '', network?.id!, testnet),
+		QUERY_KEYS.Gov.Proposal,
 		async () => {
 			const response = await Promise.all([
 				ipfsGet(hash),
@@ -103,8 +103,7 @@ const useProposal = (
 						...rest,
 					};
 				}
-
-				return votes.data;
+				return votes.data ?? {};
 			};
 
 			/* Get results */

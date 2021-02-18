@@ -149,19 +149,12 @@ const Panel: React.FC<PanelProps> = ({ currentTab }) => {
 				);
 			case PanelType.CREATE:
 				return (
-					<Row>
-						<LeftCol>
-							<Create
-								onBack={() => {
-									setPanelType(PanelType.LIST);
-									router.push(ROUTES.Gov.Space(activeTab));
-								}}
-							/>
-						</LeftCol>
-						<RightCol>
-							<Options />
-						</RightCol>
-					</Row>
+					<Create
+						onBack={() => {
+							setPanelType(PanelType.LIST);
+							router.push(ROUTES.Gov.Space(activeTab));
+						}}
+					/>
 				);
 			default:
 				return (

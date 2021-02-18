@@ -210,13 +210,7 @@ export const QUERY_KEYS = {
 			networkId: NetworkId,
 			testnet?: boolean
 		) => ['gov', 'proposals', spaceKey, walletAddress, networkId, testnet],
-		Proposal: (
-			spaceKey: SPACE_KEY,
-			hash: string,
-			walletAddress: string,
-			networkId: NetworkId,
-			testnet?: boolean
-		) => ['gov', 'proposal', spaceKey, hash, walletAddress, networkId, testnet],
+		Proposal: ['gov', 'proposals'],
 	},
 };
 
