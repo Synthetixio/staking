@@ -20,7 +20,7 @@
 		"@metamask/detect-provider": "1.2.0",
 		"@reach/dialog": "0.12.1",
 		"@synthetixio/assets": "2.0.7",
-		"@synthetixio/js": "2.39.1",
+		"@synthetixio/js": "2.39.2",
 		"@tippyjs/react": "4.1.0",
 		"bignumber.js": "9.0.0",
 		"bnc-notify": "1.5.0",
