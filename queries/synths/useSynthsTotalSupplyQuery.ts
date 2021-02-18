@@ -10,13 +10,13 @@ import { CurrencyKey } from 'constants/currency';
 import { isWalletConnectedState } from 'store/wallet';
 import { appReadyState } from 'store/app';
 
-import { toBigNumber } from 'utils/formatters/number';
+import { toBigNumber, zeroBN } from 'utils/formatters/number';
 
-type SynthTotalSupply = {
+export type SynthTotalSupply = {
 	name: CurrencyKey;
 	value: BigNumber;
 	totalSupply: BigNumber;
-	poolProportion?: BigNumber;
+	poolProportion: BigNumber;
 };
 
 export type SynthsTotalSupplyData = {
@@ -75,6 +75,7 @@ const useSynthsTotalSupplyQuery = (options?: QueryConfig<SynthsTotalSupplyData>)
 					name,
 					totalSupply,
 					value: combinedWithShortsValue,
+					poolProportion: zeroBN, // true value to be computed in next step
 				});
 				totalValue = totalValue.plus(value);
 			}
@@ -82,7 +83,7 @@ const useSynthsTotalSupplyQuery = (options?: QueryConfig<SynthsTotalSupplyData>)
 			// Add proportion data to each SynthTotalSupply object
 			const supplyDataWithProportions = supplyData.map((datum) => ({
 				...datum,
-				poolProportion: totalValue.isGreaterThan(0) ? datum.value.dividedBy(totalValue) : undefined,
+				poolProportion: totalValue.isGreaterThan(0) ? datum.value.dividedBy(totalValue) : zeroBN,
 			}));
 
 			const supplyDataMap: { [name: string]: SynthTotalSupply } = {};

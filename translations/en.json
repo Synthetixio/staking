@@ -302,6 +302,17 @@
 						"issuedDebt": "Issued Debt"
 					}
 				}
+			},
+			"hedge": {
+				"info": {
+					"debt-pool-pie-chart": {
+						"title": "Global Debt Pool"
+					},
+					"portfolio-table": {
+						"title": "Your Portfolio"
+					},
+					"tooltip": "This table serves as a <0>hedging indicator</0>, showing the relationship between your Synth balances and the global debt pool"
+				}
 			}
 		}
 	},
@@ -625,6 +636,7 @@
 					"balance": "Balance",
 					"price": "Price",
 					"holdings": "Holdings %",
+					"debt-pool-proportion": "% of Global Debt",
 					"no-synths": {
 						"title": "You have no Synths",
 						"desc": "Mint sUSD by staking your SNX"
