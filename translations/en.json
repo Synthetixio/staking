@@ -671,7 +671,8 @@
 			},
 			"history": {
 				"title": "Voting history",
-				"currentUser": "You"
+				"currentUser": "You",
+				"empty": "No votes yet"
 			}
 		},
 		"council": {

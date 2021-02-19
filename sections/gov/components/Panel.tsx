@@ -1,5 +1,4 @@
 import React, { useMemo, useEffect } from 'react';
-import styled from 'styled-components';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
 import { useRecoilState, useRecoilValue } from 'recoil';
@@ -13,14 +12,13 @@ import { isWalletConnectedState } from 'store/wallet';
 import { panelState, PanelType, proposalState } from 'store/gov';
 
 import useActiveTab from '../hooks/useActiveTab';
-import { FlexDivCol, Row } from 'styles/common';
+import { Row } from 'styles/common';
+import { LeftCol, RightCol } from 'sections/gov/components/common';
 
 import StructuredTab from 'components/StructuredTab';
 import CouncilBoard from './List/CouncilBoard';
-import Info from './Proposal/Info';
 import Proposal from './Proposal';
 import List from './List';
-import Options from './Create/Options';
 import Create from './Create';
 
 type PanelProps = {
@@ -36,7 +34,7 @@ const Panel: React.FC<PanelProps> = ({ currentTab }) => {
 	const grantsProposals = useProposals(SPACE_KEY.GRANTS, true);
 
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	const [proposal, setProposal] = useRecoilState(proposalState);
+	const [, setProposal] = useRecoilState(proposalState);
 	const [panelType, setPanelType] = useRecoilState(panelState);
 	const activeTab = useActiveTab();
 
@@ -117,7 +115,7 @@ const Panel: React.FC<PanelProps> = ({ currentTab }) => {
 							<StructuredTab
 								boxPadding={20}
 								boxHeight={600}
-								boxWidth={750}
+								boxWidth={700}
 								tabData={tabData}
 								setPanelType={(key) => router.push(`/gov/${key}`)}
 								currentPanel={currentTab}
@@ -130,22 +128,13 @@ const Panel: React.FC<PanelProps> = ({ currentTab }) => {
 				);
 			case PanelType.PROPOSAL:
 				return (
-					<Row>
-						<LeftCol>
-							<Proposal
-								spaceKey={activeTab}
-								proposal={proposal}
-								onBack={() => {
-									setProposal(null);
-									setPanelType(PanelType.LIST);
-									router.push(ROUTES.Gov.Space(activeTab));
-								}}
-							/>
-						</LeftCol>
-						<RightCol>
-							<Info />
-						</RightCol>
-					</Row>
+					<Proposal
+						onBack={() => {
+							setProposal(null);
+							setPanelType(PanelType.LIST);
+							router.push(ROUTES.Gov.Space(activeTab));
+						}}
+					/>
 				);
 			case PanelType.CREATE:
 				return (
@@ -163,7 +152,7 @@ const Panel: React.FC<PanelProps> = ({ currentTab }) => {
 							<StructuredTab
 								boxPadding={20}
 								boxHeight={600}
-								boxWidth={750}
+								boxWidth={700}
 								tabData={tabData}
 								setPanelType={(key) => router.push(`/gov/${key}`)}
 								currentPanel={currentTab}
@@ -180,13 +169,3 @@ const Panel: React.FC<PanelProps> = ({ currentTab }) => {
 	return returnContent();
 };
 export default Panel;
-
-const LeftCol = styled(FlexDivCol)`
-	width: 700px;
-	margin-right: 8px;
-`;
-
-const RightCol = styled(FlexDivCol)`
-	width: 200px;
-	margin-left: 8px;
-`;

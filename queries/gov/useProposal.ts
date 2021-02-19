@@ -14,7 +14,7 @@ import {
 } from 'constants/snapshot';
 
 import { appReadyState } from 'store/app';
-import { networkState, walletAddressState } from 'store/wallet';
+import { walletAddressState } from 'store/wallet';
 import Connector from 'containers/Connector';
 import snapshot from '@snapshot-labs/snapshot.js';
 
@@ -35,7 +35,6 @@ const useProposal = (
 	options?: QueryConfig<ProposalResults>
 ) => {
 	const isAppReady = useRecoilValue(appReadyState);
-	const network = useRecoilValue(networkState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const { provider } = Connector.useContainer();
 

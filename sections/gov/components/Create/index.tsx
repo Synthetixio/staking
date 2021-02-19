@@ -17,7 +17,6 @@ type IndexProps = {
 };
 
 const Index: React.FC<IndexProps> = ({ onBack }) => {
-	const { t } = useTranslation();
 	const { provider } = Connector.useContainer();
 	const [startDate, setStartDate] = useState<Date>(new Date());
 	const [endDate, setEndDate] = useState<Date>(new Date());
@@ -67,7 +66,7 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 						end: sanitiseTimestamp(endDate.getTime()),
 						snapshot: block,
 						metadata: {
-							strategies: space.data.strategies,
+							strategies: space.data.strategies as any,
 						},
 					},
 				});

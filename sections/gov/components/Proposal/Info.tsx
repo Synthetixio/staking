@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import { ProposalInfoType, proposalState } from 'store/gov';
 import styled, { useTheme } from 'styled-components';
-import { FlexDivRowCentered, ExternalLink, FlexDivColCentered } from 'styles/common';
+import { FlexDivRowCentered, ExternalLink } from 'styles/common';
 import { Blockie } from '../common';
 import makeBlockie from 'ethereum-blockies-base64';
 import { truncateAddress } from 'utils/formatters/string';
@@ -14,6 +14,7 @@ import Etherscan from 'containers/Etherscan';
 import StructuredTab from 'components/StructuredTab';
 import Results from './Results';
 import History from './History';
+import { Card } from 'sections/gov/components/common';
 
 const Info: React.FC = () => {
 	const { t } = useTranslation();
@@ -41,7 +42,7 @@ const Info: React.FC = () => {
 
 	if (!proposal) return <></>;
 	return (
-		<Col>
+		<>
 			<InfoCard>
 				<Row>
 					<Title>{t('gov.proposal.info.author')}</Title>
@@ -80,16 +81,12 @@ const Info: React.FC = () => {
 				</Row>
 			</InfoCard>
 			<StructuredTab boxPadding={0} tabData={tabData} boxWidth={400} />
-		</Col>
+		</>
 	);
 };
 export default Info;
 
-const Col = styled(FlexDivColCentered)`
-	width: 400px;
-`;
-
-const InfoCard = styled.div`
+const InfoCard = styled(Card)`
 	background-color: ${(props) => props.theme.colors.navy};
 	margin-bottom: 16px;
 	padding: 16px;

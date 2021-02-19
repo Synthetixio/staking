@@ -25,21 +25,27 @@ const History: React.FC<HistoryProps> = ({ hash }) => {
 		const { data } = proposal;
 		return (
 			<>
-				{data.voteList.map((vote: any, i: number) => {
-					return (
-						<Row key={i}>
-							<Title>
-								{vote.address === walletAddress
-									? t('gov.proposal.history.currentUser')
-									: vote.profile.ens
-									? vote.profile.ens
-									: truncateAddress(vote.address)}
-							</Title>
-							<Choice>{data.choices[vote.msg.payload.choice - 1]}</Choice>
-							<Value>{`${formatNumber(vote.balance)} ${data.spaceSymbol}`}</Value>
-						</Row>
-					);
-				})}
+				{data.voteList.length > 0 ? (
+					data.voteList.map((vote: any, i: number) => {
+						return (
+							<Row key={i}>
+								<Title>
+									{vote.address === walletAddress
+										? t('gov.proposal.history.currentUser')
+										: vote.profile.ens
+										? vote.profile.ens
+										: truncateAddress(vote.address)}
+								</Title>
+								<Choice>{data.choices[vote.msg.payload.choice - 1]}</Choice>
+								<Value>{`${formatNumber(vote.balance)} ${data.spaceSymbol}`}</Value>
+							</Row>
+						);
+					})
+				) : (
+					<Row>
+						<Title>{t('gov.proposal.history.empty')}</Title>
+					</Row>
+				)}
 			</>
 		);
 	} else {

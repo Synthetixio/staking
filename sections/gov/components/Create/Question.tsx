@@ -5,10 +5,9 @@ import { Remarkable } from 'remarkable';
 import { linkify } from 'remarkable/linkify';
 import externalLink from 'remarkable-external-link';
 import NavigationBack from 'assets/svg/app/navigation-back.svg';
-import Button from 'components/Button';
 import Input, { inputCSS } from 'components/Input/Input';
-import { Divider, FlexDivRowCentered, IconButton } from 'styles/common';
-import { InputContainer } from '../common';
+import { Divider, IconButton } from 'styles/common';
+import { InputContainer, Container, HeaderRow, Header, StyledCTA } from '../common';
 import { useTranslation } from 'react-i18next';
 
 type QuestionProps = {
@@ -46,7 +45,7 @@ const Question: React.FC<QuestionProps> = ({
 
 	return (
 		<Container>
-			<StyledInputContainer>
+			<InputContainer>
 				<HeaderRow>
 					<IconButton onClick={() => onBack()}>
 						<Svg src={NavigationBack} />
@@ -69,7 +68,7 @@ const Question: React.FC<QuestionProps> = ({
 					<Header>{t('gov.create.preview')}</Header>
 					<Preview dangerouslySetInnerHTML={getRawMarkup(body)} />
 				</CreateContainer>
-			</StyledInputContainer>
+			</InputContainer>
 			<ActionContainer>
 				<StyledCTA onClick={() => handleCreate()} variant="primary">
 					{t('gov.create.action')}
@@ -80,42 +79,9 @@ const Question: React.FC<QuestionProps> = ({
 };
 export default Question;
 
-const Container = styled.div`
-	background-color: ${(props) => props.theme.colors.navy};
-	padding: 20px;
-`;
-
-const StyledInputContainer = styled(InputContainer)`
-	background-color: ${(props) => props.theme.colors.black};
-	height: inherit;
-`;
-
-const HeaderRow = styled(FlexDivRowCentered)`
-	justify-content: space-between;
-	width: 100%;
-	padding: 8px;
-`;
-
-const Header = styled.p`
-	color: ${(props) => props.theme.colors.white};
-	font-family: ${(props) => props.theme.fonts.extended};
-	font-size: 12px;
-	text-align: center;
-`;
-
 const ActionContainer = styled.div``;
 
-const StyledCTA = styled(Button)`
-	text-transform: uppercase;
-	font-family: ${(props) => props.theme.fonts.condensedMedium};
-	font-size: 12px;
-	width: 100%;
-	margin: 4px 0px;
-`;
-
-const CreateContainer = styled.div`
-	height: 100%;
-`;
+const CreateContainer = styled.div``;
 
 const Title = styled(Input)`
 	font-family: ${(props) => props.theme.fonts.extended};
@@ -131,7 +97,7 @@ const Description = styled.textarea`
 	font-size: 14px;
 	text-align: center;
 	margin: 16px 0px;
-	height: 150px;
+	max-height: 150px;
 `;
 
 const Preview = styled.div`
@@ -140,7 +106,7 @@ const Preview = styled.div`
 	font-size: 14px;
 	margin: 16px 0px;
 	text-align: center;
-	height: 200px;
+	max-height: 200px;
 	overflow: scroll;
 
 	a {

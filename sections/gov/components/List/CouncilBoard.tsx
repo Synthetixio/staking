@@ -15,6 +15,7 @@ import SpartanCouncilNFT from 'assets/gifs/SC-NFT.gif';
 import Link from 'assets/svg/app/link.svg';
 import useCouncilMembers from '../../hooks/useCouncilMembers';
 import { Blockie } from '../common';
+import { Card } from 'sections/gov/components/common';
 
 const CouncilBoard: React.FC = () => {
 	const { t } = useTranslation();
@@ -23,7 +24,7 @@ const CouncilBoard: React.FC = () => {
 	const members = useCouncilMembers();
 
 	return (
-		<TabPanelContainer width={300} padding={0}>
+		<StyledCard>
 			<Img width={'100%'} src={SpartanCouncilNFT} />
 			<Title>{t('gov.council.title')}</Title>
 
@@ -44,18 +45,14 @@ const CouncilBoard: React.FC = () => {
 			) : (
 				<StyledSpinner src={Spinner} />
 			)}
-		</TabPanelContainer>
+		</StyledCard>
 	);
 };
 export default CouncilBoard;
 
-const TabPanelContainer = styled.div<{ height?: number; width: number; padding: number }>`
-	outline: none;
-	background: ${(props) => props.theme.colors.backgroundBlue};
-	box-shadow: 0px 0px 20px ${(props) => props.theme.colors.backgroundBoxShadow};
-	height: ${(props) => (props.height != null ? `${props.height}px` : 'unset')};
-	width: ${(props) => props.width}px;
-	padding: ${(props) => props.padding}px;
+const StyledCard = styled(Card)`
+	padding: 0px;
+	width: 250px;
 `;
 
 const Title = styled.p`
@@ -79,6 +76,7 @@ const Address = styled.p`
 	font-family: ${(props) => props.theme.fonts.interBold};
 	font-size: 12px;
 `;
+
 const StyledSpinner = styled(Svg)`
 	display: block;
 	margin: 30px auto;

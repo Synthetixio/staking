@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Card, Row, Subtitle } from '../common';
+import { Card, DataRow, Subtitle } from '../common';
 import DateSelect from 'components/DateSelect';
 import { useTranslation } from 'react-i18next';
 import { Input } from 'components/Input/Input';
@@ -25,7 +25,7 @@ const Timing: React.FC<TimingProps> = ({
 	const { t } = useTranslation();
 	return (
 		<StyledCard>
-			<Row>
+			<DataRow>
 				<Subtitle>{t('gov.create.start.date')}</Subtitle>
 				<StyledDateSelect
 					selected={startDate}
@@ -35,8 +35,8 @@ const Timing: React.FC<TimingProps> = ({
 					showTimeSelect
 					dateFormat="Pp"
 				/>
-			</Row>
-			<Row>
+			</DataRow>
+			<DataRow>
 				<Subtitle>{t('gov.create.end.date')}</Subtitle>
 				<StyledDateSelect
 					selected={endDate}
@@ -46,11 +46,11 @@ const Timing: React.FC<TimingProps> = ({
 					showTimeSelect
 					dateFormat="Pp"
 				/>
-			</Row>
-			<Row>
+			</DataRow>
+			<DataRow>
 				<Subtitle>{t('gov.create.block')}</Subtitle>
 				<BlockInput value={block ?? 0} onChange={(e) => setBlock(e.target.value)} type="number" />
-			</Row>
+			</DataRow>
 		</StyledCard>
 	);
 };
