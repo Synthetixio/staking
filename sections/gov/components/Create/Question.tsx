@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import styled from 'styled-components';
 import { Svg } from 'react-optimized-image';
 import { Remarkable } from 'remarkable';
@@ -17,6 +17,8 @@ type QuestionProps = {
 	body: string;
 	name: string;
 	handleCreate: Function;
+	result: any;
+	validSubmission: boolean;
 };
 
 const Question: React.FC<QuestionProps> = ({
@@ -26,6 +28,8 @@ const Question: React.FC<QuestionProps> = ({
 	body,
 	name,
 	handleCreate,
+	result,
+	validSubmission,
 }) => {
 	const { t } = useTranslation();
 
@@ -42,6 +46,38 @@ const Question: React.FC<QuestionProps> = ({
 
 		return { __html: remarkable.render(value) };
 	};
+
+	const returnButtonStates = useMemo(() => {
+		if (result.isLoading) {
+			return (
+				<StyledCTA disabled variant="primary">
+					{t('gov.create.action.loading')}
+				</StyledCTA>
+			);
+		} else if (result.isSuccess) {
+			return (
+				<StyledCTA
+					onClick={() => {
+						onBack();
+					}}
+					variant="primary"
+				>
+					{t('gov.create.action.success')}
+				</StyledCTA>
+			);
+		} else if (!validSubmission || result.isError) {
+			return (
+				<StyledCTA onClick={() => handleCreate()} variant="primary">
+					{t('gov.create.action.error')}
+				</StyledCTA>
+			);
+		} else
+			return (
+				<StyledCTA onClick={() => handleCreate()} variant="primary">
+					{t('gov.create.action.idle')}
+				</StyledCTA>
+			);
+	}, [result, handleCreate, onBack, t, validSubmission]);
 
 	return (
 		<Container>
@@ -69,11 +105,7 @@ const Question: React.FC<QuestionProps> = ({
 					<Preview dangerouslySetInnerHTML={getRawMarkup(body)} />
 				</CreateContainer>
 			</InputContainer>
-			<ActionContainer>
-				<StyledCTA onClick={() => handleCreate()} variant="primary">
-					{t('gov.create.action')}
-				</StyledCTA>
-			</ActionContainer>
+			<ActionContainer>{returnButtonStates}</ActionContainer>
 		</Container>
 	);
 };
@@ -97,7 +129,7 @@ const Description = styled.textarea`
 	font-size: 14px;
 	text-align: center;
 	margin: 16px 0px;
-	max-height: 150px;
+	height: 200px;
 `;
 
 const Preview = styled.div`

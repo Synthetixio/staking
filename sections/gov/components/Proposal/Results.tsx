@@ -7,6 +7,7 @@ import { FlexDivRowCentered } from 'styles/common';
 import useProposal from 'queries/gov/useProposal';
 import { formatNumber, formatPercent } from 'utils/formatters/number';
 import ProgressBar from 'components/ProgressBar';
+import { MaxHeightColumn } from 'sections/gov/components/common';
 
 type ResultsProps = {
 	hash: string;
@@ -14,11 +15,12 @@ type ResultsProps = {
 
 const Results: React.FC<ResultsProps> = ({ hash }) => {
 	const activeTab = useActiveTab();
+	// @TODO remove testnet flag
 	const proposal = useProposal(activeTab, hash, true);
 	if (proposal.isSuccess && proposal.data) {
 		const { data } = proposal;
 		return (
-			<>
+			<MaxHeightColumn>
 				{data.choices.map((choice: string, i: number) => {
 					const votes = data.totalBalances[i] !== 0 ? data.totalBalances[i] : 0;
 					const totalVotes = data.totalVotesBalances !== 0 ? data.totalVotesBalances : 1;
@@ -34,7 +36,7 @@ const Results: React.FC<ResultsProps> = ({ hash }) => {
 						</Row>
 					);
 				})}
-			</>
+			</MaxHeightColumn>
 		);
 	} else {
 		return <StyledSpinner src={Spinner} />;

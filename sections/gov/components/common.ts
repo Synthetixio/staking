@@ -75,3 +75,8 @@ export const StyledCTA = styled(Button)`
 	width: 100%;
 	margin: 4px 0px;
 `;
+
+export const MaxHeightColumn = styled(FlexDivCol)`
+	max-height: 400px;
+	overflow: scroll;
+`;

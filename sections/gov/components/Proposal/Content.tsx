@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import styled from 'styled-components';
 import { Svg } from 'react-optimized-image';
 import { Remarkable } from 'remarkable';
@@ -73,6 +73,39 @@ const Content: React.FC<ContentProps> = ({ onBack }) => {
 		return { __html: remarkable.render(value) };
 	};
 
+	// @TODO add withdraw vote logic
+	const returnButtonStates = useMemo(() => {
+		if (result.isLoading) {
+			return (
+				<StyledCTA disabled variant="primary">
+					{t('gov.proposal.action.vote.loading')}
+				</StyledCTA>
+			);
+		} else if (result.isSuccess) {
+			return (
+				<StyledCTA
+					onClick={() => {
+						onBack();
+					}}
+					variant="primary"
+				>
+					{t('gov.proposal.action.vote.success')}
+				</StyledCTA>
+			);
+		} else if (result.isError) {
+			return (
+				<StyledCTA onClick={() => handleVote(proposal?.authorIpfsHash)} variant="primary">
+					{t('gov.proposal.action.vote.error')}
+				</StyledCTA>
+			);
+		} else
+			return (
+				<StyledCTA onClick={() => handleVote(proposal?.authorIpfsHash)} variant="primary">
+					{t('gov.proposal.action.vote.idle')}
+				</StyledCTA>
+			);
+	}, [result, t, handleVote, onBack, proposal]);
+
 	return (
 		<Container>
 			<InputContainer>
@@ -100,14 +133,7 @@ const Content: React.FC<ContentProps> = ({ onBack }) => {
 					))}
 				</OptionsContainer>
 			</InputContainer>
-			<ActionContainer>
-				{/* @TODO Modify better loaders */}
-				{result.isSuccess && <p>Done!</p>}
-				{result.isLoading && <p>Loading!</p>}
-				<StyledCTA onClick={() => handleVote(proposal?.authorIpfsHash)} variant="primary">
-					{t('gov.proposal.action.vote')}
-				</StyledCTA>
-			</ActionContainer>
+			<ActionContainer>{returnButtonStates}</ActionContainer>
 		</Container>
 	);
 };

@@ -25,8 +25,9 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 	const [choices, setChoices] = useState<string[]>([]);
 	const activeTab = useActiveTab();
 
+	// @TODO remove testnet flag
 	const space = useSnapshotSpace(activeTab, true);
-	const [createProposal, response] = useSignMessage();
+	const [createProposal, result] = useSignMessage();
 
 	const sanitiseTimestamp = (timestamp: number) => {
 		return timestamp / 1e3;
@@ -49,10 +50,6 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 
 	const handleCreate = () => {
 		try {
-			console.log(startDate.getTime());
-			console.log(space.data?.strategies);
-			console.log(choices);
-
 			if (validSubmission && space.data && block) {
 				createProposal({
 					spaceKey: activeTab,
@@ -98,6 +95,8 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 					setBody={setBody}
 					setName={setName}
 					handleCreate={handleCreate}
+					result={result}
+					validSubmission={validSubmission}
 				/>
 			</LeftCol>
 			<RightCol>

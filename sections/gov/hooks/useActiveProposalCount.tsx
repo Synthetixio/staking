@@ -5,6 +5,7 @@ import { SPACE_KEY } from 'constants/snapshot';
 import useProposals from 'queries/gov/useProposals';
 
 export const useActiveProposalCount = () => {
+	// @TODO add grants, council and proposals here
 	const [activeCount, setActiveCount] = useState<number | null>(null);
 	const isAppReady = useRecoilValue(appReadyState);
 	const govProposals = useProposals(SPACE_KEY.PROPOSAL);

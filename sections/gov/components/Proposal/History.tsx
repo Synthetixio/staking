@@ -10,6 +10,7 @@ import { walletAddressState } from 'store/wallet';
 import { useTranslation } from 'react-i18next';
 import { truncateAddress } from 'utils/formatters/string';
 import { formatNumber } from 'utils/formatters/number';
+import { MaxHeightColumn } from 'sections/gov/components/common';
 
 type HistoryProps = {
 	hash: string;
@@ -24,7 +25,7 @@ const History: React.FC<HistoryProps> = ({ hash }) => {
 	if (proposal.isSuccess && proposal.data) {
 		const { data } = proposal;
 		return (
-			<>
+			<MaxHeightColumn>
 				{data.voteList.length > 0 ? (
 					data.voteList.map((vote: any, i: number) => {
 						return (
@@ -46,7 +47,7 @@ const History: React.FC<HistoryProps> = ({ hash }) => {
 						<Title>{t('gov.proposal.history.empty')}</Title>
 					</Row>
 				)}
-			</>
+			</MaxHeightColumn>
 		);
 	} else {
 		return <StyledSpinner src={Spinner} />;

@@ -1,9 +1,8 @@
 import BigNumber from 'bignumber.js';
 import snapshot from '@snapshot-labs/snapshot.js';
 
-// @TODO: change back to council end point
 export enum SPACE_KEY {
-	COUNCIL = 'ilv.eth',
+	COUNCIL = 'synthetixcouncil',
 	PROPOSAL = 'synthetixproposal',
 	GRANTS = 'synthetixgrants',
 }
