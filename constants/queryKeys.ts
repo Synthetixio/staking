@@ -171,6 +171,12 @@ export const QUERY_KEYS = {
 			walletAddress,
 			networkId,
 		],
+		sTSLA: (walletAddress: string, networkId: NetworkId) => [
+			'liquidityPools',
+			'sTSLA',
+			walletAddress,
+			networkId,
+		],
 		sUSD: (walletAddress: string, networkId: NetworkId) => [
 			'liquidityPools',
 			'curve',

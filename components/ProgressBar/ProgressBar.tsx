@@ -4,7 +4,7 @@ import Color from 'color';
 
 import { FlexDivRowCentered } from 'styles/common';
 
-type ProgressBarType = 'rainbow' | 'blue-pink' | 'green';
+type ProgressBarType = 'rainbow' | 'blue-pink' | 'green' | 'blue';
 
 type ProgressBarProps = {
 	percentage: number;
@@ -75,7 +75,24 @@ const ProgressBarWrapper = styled(FlexDivRowCentered)<{
 				box-shadow: 0px 0px 15px
 					${(props) => Color(props.theme.colors.green).alpha(0.6).rgb().string()};
 			}
-		`}		
+		`}
+
+		${(props) =>
+			props.variant === 'blue' &&
+			css`
+				.filled-bar {
+					background: ${(props) => props.theme.colors.blue};
+					border: 2px solid ${(props) => props.theme.colors.blue};
+					box-shadow: 0px 0px 15px
+						${(props) => Color(props.theme.colors.blue).alpha(0.6).rgb().string()};
+				}
+
+				.unfilled-bar {
+					border: 2px solid ${(props) => props.theme.colors.blue};
+					box-shadow: 0px 0px 15px
+						${(props) => Color(props.theme.colors.blue).alpha(0.6).rgb().string()};
+				}
+			`}
 `;
 
 const Bar = styled.div<{ percentage: number }>`

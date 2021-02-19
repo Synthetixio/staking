@@ -276,12 +276,32 @@
 				"subtitle": "Burn your sUSD debt to unlock your staked SNX. This will increase your Collateralization Ratio and reduce your debt. <0>Learn more.</0>"
 			},
 			"table": {
+				"total-snx": "Total",
 				"not-staked": "Not Staked",
 				"staked": "Staked",
 				"transferable": "Transferable",
 				"locked": "Locked",
 				"c-ratio": "C-Ratio",
-				"debt": "Debt"
+				"debt": "Total Debt",
+				"susd-balance": "sUSD Balance"
+			}
+		}
+	},
+	"debt": {
+		"page-title": "Debt | Synthetix Staking",
+		"actions": {
+			"track": {
+				"title": "Debt Over Time",
+				"no-data": "Debt data is not available for this wallet",
+				"info": {
+					"tooltip": "<0>Issued debt:</0> This displays the total of all your mints and burns over time, revealing how only your C-Ratio management has affected your debt.<1 /><2>Actual debt:</2> This displays your total debt over time."
+				},
+				"chart": {
+					"tooltip": {
+						"actualDebt": "Active Debt",
+						"issuedDebt": "Issued Debt"
+					}
+				}
 			}
 		}
 	},
@@ -318,15 +338,15 @@
 					"total-value": "TOTAL VALUE"
 				},
 				"curve": {
-					"title": "Curve.fi sUSD",
+					"title": "Curve",
 					"description": "Staking Curve LP tokens from the sUSD pool allows you to earn CRV rewards, Curve swap fees, and SNX rewards. <0>Learn more.<0>",
-					"subtitle": "sUSD LP Rewards",
+					"subtitle": "sUSD CPT Rewards",
 					"helper": "Visit curve.fi"
 				},
 				"seur": {
-					"title": "Curve.fi sEUR",
+					"title": "Curve",
 					"description": "Deposit sEUR into Curve.fi to receive eursCRV and stake to earn CRV rewards, Curve swap fees, and SNX Rewards.",
-					"subtitle": "sEUR Rewards"
+					"subtitle": "sEUR CPT Rewards"
 				},
 				"ieth": {
 					"title": "Synthetix",
@@ -337,6 +357,11 @@
 					"title": "Synthetix",
 					"description": "Staking iBTC tokens allows you to earn SNX rewards. <0>Learn more.<0>",
 					"subtitle": "iBTC Rewards"
+				},
+				"stsla": {
+					"title": "Balancer",
+					"description": "Stake sTLSA Balancer Pool LP to earn SNX rewards. <0>Add liquidity on Balancer here<0>.",
+					"subtitle": "sTSLA BPT Rewards"
 				}
 			},
 			"weekly-rewards": "Weekly rewards {{weeklyRewards}} {{asset}}"
@@ -683,6 +708,7 @@
 		"dashboard": "Home",
 		"earn": "Earn",
 		"staking": "Staking",
+		"debt": "Debt",
 		"synths": "Synths",
 		"escrow": "Escrow",
 		"history": "History",
@@ -728,7 +754,8 @@
 				"title": "Total voting power",
 				"tooltip": "Total voting power was calculated based on block {{blocknumber}}"
 			},
-			"active-proposals": "Active Proposals"
+			"active-proposals": "Active Proposals",
+			"issued-debt": "Issued Debt"
 		},
 		"status": {
 			"claimed": "Claimed",
@@ -747,6 +774,7 @@
 		},
 		"currency": {
 			"currency-price": "<0>{{currencyKey}}</0> Price",
+			"currency-balance": "<0>{{currencyKey}}</0> Balance",
 			"buy-currency": "Buy <0>{{currencyKey}}</0>",
 			"synthetic-currency-name": "Synthetic {{currencyName}}"
 		},
@@ -766,6 +794,14 @@
 		"stake-snx": "Stake SNX",
 		"tooltip": {
 			"external": "Redirects to {{link}}"
+		},
+		"time": {
+			"years": "y",
+			"months": "mo",
+			"days": "d",
+			"hours": "h",
+			"minutes": "m",
+			"seconds": "s"
 		}
 	},
 	"not-found": {

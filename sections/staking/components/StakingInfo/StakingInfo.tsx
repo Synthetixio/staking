@@ -10,12 +10,16 @@ import ArrowRightIcon from 'assets/svg/app/arrow-right.svg';
 import { amountToBurnState, amountToMintState } from 'store/staking';
 
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
+import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
 
-import { formatCurrency, toBigNumber, zeroBN, minBN } from 'utils/formatters/number';
+import { formatCurrency, toBigNumber, zeroBN } from 'utils/formatters/number';
 
 import { CryptoCurrency, Synths } from 'constants/currency';
 
 import { EXTERNAL_LINKS } from 'constants/links';
+import { FlexDivCentered } from 'styles/common';
+
+import BarStatsRow from './BarStatsRow';
 
 import {
 	getStakingAmount,
@@ -49,17 +53,19 @@ const StakingInfo: React.FC<StakingInfoProps> = ({ isMint }) => {
 		currentCRatio,
 		transferableCollateral,
 		stakedCollateral,
-		lockedCollateral,
 		SNXRate,
 		issuableSynths,
 		debtEscrowBalance,
-		totalEscrowBalance,
 		collateral,
 		balance,
 	} = useStakingCalculations();
+	const synthsBalancesQuery = useSynthsBalancesQuery();
 
 	const amountToBurn = useRecoilValue(amountToBurnState);
 	const amountToMint = useRecoilValue(amountToMintState);
+
+	const sUSDBalance =
+		synthsBalancesQuery?.data?.balancesMap[Synths.sUSD]?.balance ?? toBigNumber(0);
 
 	const sanitiseValue = (value: BigNumber) => {
 		if (value.isNegative() || value.isNaN() || !value.isFinite()) {
@@ -94,12 +100,6 @@ const StakingInfo: React.FC<StakingInfoProps> = ({ isMint }) => {
 			.multipliedBy(targetCRatio)
 			.multipliedBy(SNXRate);
 
-		const changedNotStakedValue = isMint
-			? unstakedCollateral.isZero()
-				? zeroBN
-				: unstakedCollateral.minus(stakingAmount)
-			: unstakedCollateral.plus(unlockedStakeAmount);
-
 		const changedStakedValue = isMint
 			? stakedCollateral.plus(stakingAmount)
 			: stakedCollateral.isZero()
@@ -118,17 +118,15 @@ const StakingInfo: React.FC<StakingInfoProps> = ({ isMint }) => {
 					transferableCollateral
 			  );
 
-		const changedLocked = isMint
-			? minBN(collateral, lockedCollateral.plus(stakingAmount))
-			: lockedCollateral.isZero()
-			? zeroBN
-			: collateral.minus(changedTransferable);
-
 		const changedDebt = isMint
 			? mintAdditionalDebt
 			: debtBalance.isZero()
 			? zeroBN
 			: debtBalance.minus(amountToBurnBN);
+
+		const changedSUSDBalance = isMint
+			? sUSDBalance.plus(amountToMintBN)
+			: sUSDBalance.minus(amountToBurnBN);
 
 		const changeCRatio = isMint
 			? currentCRatio.isLessThan(targetCRatio)
@@ -140,44 +138,54 @@ const StakingInfo: React.FC<StakingInfoProps> = ({ isMint }) => {
 				: changedStakedValue.multipliedBy(SNXRate).dividedBy(mintAdditionalDebt).multipliedBy(100)
 			: toBigNumber(100).dividedBy(changedDebt.dividedBy(SNXRate).dividedBy(collateral));
 
-		return [
-			{
-				title: t('staking.info.table.not-staked'),
-				value: sanitiseValue(unstakedCollateral),
-				changedValue: sanitiseValue(changedNotStakedValue),
-				currencyKey: CryptoCurrency.SNX,
-			},
-			{
-				title: t('staking.info.table.staked'),
-				value: sanitiseValue(stakedCollateral),
-				changedValue: sanitiseValue(changedStakedValue),
-				currencyKey: CryptoCurrency.SNX,
-			},
-			{
-				title: t('staking.info.table.transferable'),
-				value: sanitiseValue(transferableCollateral),
-				changedValue: sanitiseValue(changedTransferable),
-				currencyKey: CryptoCurrency.SNX,
-			},
-			{
-				title: t('staking.info.table.locked'),
-				value: sanitiseValue(lockedCollateral),
-				changedValue: sanitiseValue(changedLocked),
-				currencyKey: CryptoCurrency.SNX,
-			},
-			{
-				title: t('staking.info.table.c-ratio'),
-				value: sanitiseValue(toBigNumber(100).dividedBy(currentCRatio)),
-				changedValue: sanitiseValue(changeCRatio),
-				currencyKey: '%',
-			},
-			{
-				title: t('staking.info.table.debt'),
-				value: sanitiseValue(debtBalance),
-				changedValue: sanitiseValue(changedDebt),
-				currencyKey: Synths.sUSD,
-			},
-		];
+		return {
+			barRows: [
+				{
+					title: t('staking.info.table.staked'),
+					value: sanitiseValue(stakedCollateral),
+					changedValue: sanitiseValue(changedStakedValue),
+					percentage: collateral.isZero()
+						? toBigNumber(0)
+						: sanitiseValue(stakedCollateral).dividedBy(collateral),
+					changedPercentage: collateral.isZero()
+						? toBigNumber(0)
+						: sanitiseValue(changedStakedValue).dividedBy(collateral),
+					currencyKey: CryptoCurrency.SNX,
+				},
+				{
+					title: t('staking.info.table.transferable'),
+					value: sanitiseValue(transferableCollateral),
+					changedValue: sanitiseValue(changedTransferable),
+					percentage: collateral.isZero()
+						? toBigNumber(0)
+						: sanitiseValue(transferableCollateral).dividedBy(sanitiseValue(collateral)),
+					changedPercentage: collateral.isZero()
+						? toBigNumber(0)
+						: sanitiseValue(changedTransferable).dividedBy(sanitiseValue(collateral)),
+					currencyKey: CryptoCurrency.SNX,
+				},
+			],
+			dataRows: [
+				{
+					title: t('staking.info.table.c-ratio'),
+					value: sanitiseValue(toBigNumber(100).dividedBy(currentCRatio)),
+					changedValue: sanitiseValue(changeCRatio),
+					currencyKey: '%',
+				},
+				{
+					title: t('staking.info.table.susd-balance'),
+					value: sanitiseValue(sUSDBalance),
+					changedValue: sanitiseValue(changedSUSDBalance),
+					currencyKey: Synths.sUSD,
+				},
+				{
+					title: t('staking.info.table.debt'),
+					value: sanitiseValue(debtBalance),
+					changedValue: sanitiseValue(changedDebt),
+					currencyKey: Synths.sUSD,
+				},
+			],
+		};
 	}, [
 		amountToBurn,
 		amountToMint,
@@ -186,7 +194,6 @@ const StakingInfo: React.FC<StakingInfoProps> = ({ isMint }) => {
 		SNXRate,
 		currentCRatio,
 		debtBalance,
-		lockedCollateral,
 		stakedCollateral,
 		targetCRatio,
 		transferableCollateral,
@@ -195,7 +202,7 @@ const StakingInfo: React.FC<StakingInfoProps> = ({ isMint }) => {
 		balance,
 		collateral,
 		debtEscrowBalance,
-		totalEscrowBalance,
+		sUSDBalance,
 	]);
 
 	const emptyInput = isMint ? amountToMint.length === 0 : amountToBurn.length === 0;
@@ -211,8 +218,29 @@ const StakingInfo: React.FC<StakingInfoProps> = ({ isMint }) => {
 					/>
 				</Subtitle>
 			</InfoHeader>
+			<TotalBalanceContainer>
+				<TotalBalanceHeading>{t('staking.info.table.total-snx')}</TotalBalanceHeading>
+				<RowValue>
+					{formatCurrency(CryptoCurrency.SNX, collateral, {
+						currencyKey: CryptoCurrency.SNX,
+						decimals: 2,
+					})}
+				</RowValue>
+			</TotalBalanceContainer>
 			<DataContainer>
-				{Rows.map(({ title, value, changedValue, currencyKey = '' }, i) => (
+				{Rows.barRows.map(
+					({ title, value, changedValue, percentage, changedPercentage, currencyKey }, i) => (
+						<BarStatsRow
+							title={title}
+							value={formatCurrency(currencyKey, emptyInput ? value : changedValue, {
+								currencyKey: currencyKey,
+								decimals: 2,
+							})}
+							percentage={emptyInput ? percentage.toNumber() : changedPercentage.toNumber()}
+						/>
+					)
+				)}
+				{Rows.dataRows.map(({ title, value, changedValue, currencyKey = '' }, i) => (
 					<DataRow key={i}>
 						<RowTitle>{title}</RowTitle>
 						<ValueContainer>
@@ -241,9 +269,20 @@ const StakingInfo: React.FC<StakingInfoProps> = ({ isMint }) => {
 	);
 };
 
+const TotalBalanceHeading = styled(RowTitle)`
+	border-bottom: none;
+	color: ${(props) => props.theme.colors.white};
+`;
+
 const StyledArrowRight = styled(Svg)`
 	margin: 0 5px;
 	color: ${(props) => props.theme.colors.blue};
+`;
+
+const TotalBalanceContainer = styled(FlexDivCentered)`
+	padding: 0px 24px;
+	justify-content: space-between;
+	border-bottom: ${(props) => `1px solid ${props.theme.colors.grayBlue}`};
 `;
 
 export default StakingInfo;

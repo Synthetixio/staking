@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
+import styled from 'styled-components';
 
 import { TabContainer } from '../../components/common';
 import { Transaction } from 'constants/network';
@@ -120,7 +121,7 @@ const DepositTab = () => {
 	};
 
 	return (
-		<TabContainer>
+		<StyledTabContainer>
 			{!isApproved ? (
 				<ApproveModal
 					description={t('layer2.actions.deposit.action.approve.description')}
@@ -142,8 +143,12 @@ const DepositTab = () => {
 				transactionState={transactionState}
 				setTransactionState={setTransactionState}
 			/>
-		</TabContainer>
+		</StyledTabContainer>
 	);
 };
+
+const StyledTabContainer = styled(TabContainer)`
+	padding: 0;
+`;
 
 export default DepositTab;

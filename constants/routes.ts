@@ -5,6 +5,9 @@ export const ROUTES = {
 		Burn: '/staking/burn',
 		Mint: '/staking/mint',
 	},
+	Debt: {
+		Home: '/debt',
+	},
 	Escrow: {
 		Home: '/escrow',
 		Staking: '/escrow/staking',
@@ -23,6 +26,7 @@ export const ROUTES = {
 		sEURO_LP: '/earn/sEURO-LP',
 		iBTC_LP: '/earn/iBTC-LP',
 		iETH_LP: '/earn/iETH-LP',
+		sTLSA_LP: '/earn/sTSLA-LP',
 		sUSD_EXTERNAL: 'https://www.curve.fi/susdv2/',
 		sEURO_EXTERNAL: 'https://www.curve.fi/eurs/',
 	},

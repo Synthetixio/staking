@@ -21,6 +21,11 @@ export const initOnboard = (network: Network, subscriptions: Subscriptions) => {
 			wallets: [
 				{ walletName: 'metamask', preferred: true },
 				{
+					walletName: 'lattice',
+					appName: 'Synthetix',
+					rpcUrl: infuraRpc,
+				},
+				{
 					walletName: 'ledger',
 					rpcUrl: infuraRpc,
 					preferred: true,
@@ -43,11 +48,9 @@ export const initOnboard = (network: Network, subscriptions: Subscriptions) => {
 					apiKey: process.env.NEXT_PUBLIC_PORTIS_APP_ID,
 				},
 				{ walletName: 'trust', rpcUrl: infuraRpc },
-				{ walletName: 'dapper' },
 				{ walletName: 'walletLink', rpcUrl: infuraRpc },
 				{ walletName: 'torus' },
 				{ walletName: 'status' },
-				// { walletName: 'unilogin' },
 				{ walletName: 'authereum' },
 			],
 		},
