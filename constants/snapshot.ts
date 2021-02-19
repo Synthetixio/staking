@@ -119,11 +119,18 @@ function lookupAddresses(addresses: any[]) {
 			})
 			.then(({ accounts }: { accounts: any }) => {
 				const ensNames = {} as any;
-				accounts.forEach((profile: { id: string; domains: { name: any; labelName: any }[] }) => {
-					ensNames[profile.id.toLowerCase()] = profile?.domains?.[0]?.labelName
-						? profile.domains[0].name
-						: '';
-				});
+				accounts.forEach(
+					(profile: {
+						id: string;
+						registrations: any;
+						domain: { name: any; labelName: any }[];
+					}) => {
+						ensNames[profile.id.toLowerCase()] =
+							(profile?.registrations?.[0]?.domain?.labelName &&
+								profile?.registrations?.[0]?.domain?.name) ||
+							'';
+					}
+				);
 				resolove(ensNames);
 			})
 			.catch((error: any) => {

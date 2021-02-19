@@ -46,7 +46,7 @@ const DatePickerContainer = styled.div`
 
 	.react-datepicker {
 		font-family: ${(props) => props.theme.fonts.regular};
-		font-size: 0.8rem;
+		font-size: 12px;
 		background-color: ${(props) => props.theme.colors.white};
 		border: 1px solid #aeaeae;
 		border-radius: 2px;

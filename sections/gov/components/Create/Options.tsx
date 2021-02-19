@@ -16,12 +16,13 @@ type OptionsProps = {
 const Options: React.FC<OptionsProps> = ({ choices, setChoices }) => {
 	const { t } = useTranslation();
 	return (
-		<Card>
+		<StyledCard>
 			<Title>{t('gov.create.choices')}</Title>
 			<OptionsCol>
 				{choices.map((_: string, i: number) => {
 					return (
 						<OptionRow key={i}>
+							<Number>{i}</Number>
 							<Option
 								value={choices[i]}
 								onChange={(e) => {
@@ -44,16 +45,29 @@ const Options: React.FC<OptionsProps> = ({ choices, setChoices }) => {
 					);
 				})}
 			</OptionsCol>
-			<AddOption
-				variant="outline"
-				onClick={() => setChoices((prevState: string[]) => [...prevState, ''])}
-			>
-				{t('gov.create.add')}
-			</AddOption>
-		</Card>
+			<ActionContainer>
+				<AddOption
+					variant="outline"
+					onClick={() => setChoices((prevState: string[]) => [...prevState, ''])}
+				>
+					{t('gov.create.add')}
+				</AddOption>
+			</ActionContainer>
+		</StyledCard>
 	);
 };
 export default Options;
+
+const StyledCard = styled(Card)`
+	max-height: 350px;
+`;
+
+const Number = styled.p`
+	font-size: 12px;
+	font-family: ${(props) => props.theme.fonts.extended};
+	color: ${(props) => props.theme.colors.white};
+	margin-left: 8px;
+`;
 
 const Title = styled.div`
 	font-family: ${(props) => props.theme.fonts.extended};
@@ -63,13 +77,16 @@ const Title = styled.div`
 `;
 
 const OptionsCol = styled(FlexDivColCentered)`
-	padding: 16px 0px;
+	padding: 16px 8px;
+	max-height: 220px;
+	overflow: scroll;
 `;
 
 const OptionRow = styled(FlexDivRowCentered)`
 	width: 100%;
-	height: 45px;
+	min-height: 45px;
 	margin: 4px 0px;
+	background-color: ${(props) => props.theme.colors.navy};
 	border: 1px dashed ${(props) => props.theme.colors.mediumBlueHover};
 `;
 
@@ -87,6 +104,9 @@ const Delete = styled(Svg)`
 	cursor: pointer;
 `;
 
+const ActionContainer = styled.div`
+	padding: 0px 8px;
+`;
 const AddOption = styled(Button)`
 	border: 1px dashed ${(props) => props.theme.colors.mediumBlueHover};
 	text-align: center;

@@ -7,7 +7,7 @@ import externalLink from 'remarkable-external-link';
 import NavigationBack from 'assets/svg/app/navigation-back.svg';
 import Button from 'components/Button';
 import Input, { inputCSS } from 'components/Input/Input';
-import { FlexDivRowCentered, IconButton } from 'styles/common';
+import { Divider, FlexDivRowCentered, IconButton } from 'styles/common';
 import { InputContainer } from '../common';
 import { useTranslation } from 'react-i18next';
 
@@ -45,40 +45,49 @@ const Question: React.FC<QuestionProps> = ({
 	};
 
 	return (
-		<StyledInputContainer>
-			<HeaderRow>
-				<IconButton onClick={() => onBack()}>
-					<Svg src={NavigationBack} />
-				</IconButton>
-				<Header>{t('gov.create.title')}</Header>
-				<div />
-			</HeaderRow>
-			<CreateContainer>
-				<Title
-					placeholder={t('gov.create.question')}
-					value={name}
-					onChange={(e) => setName(e.target.value)}
-				/>
-				<Description
-					placeholder={t('gov.create.description')}
-					value={body}
-					onChange={(e) => setBody(e.target.value)}
-				/>
-				<p>Preview</p>
-				<div dangerouslySetInnerHTML={getRawMarkup(body)} />
-			</CreateContainer>
+		<Container>
+			<StyledInputContainer>
+				<HeaderRow>
+					<IconButton onClick={() => onBack()}>
+						<Svg src={NavigationBack} />
+					</IconButton>
+					<Header>{t('gov.create.title')}</Header>
+					<div />
+				</HeaderRow>
+				<CreateContainer>
+					<Title
+						placeholder={t('gov.create.question')}
+						value={name}
+						onChange={(e) => setName(e.target.value)}
+					/>
+					<Description
+						placeholder={t('gov.create.description')}
+						value={body}
+						onChange={(e) => setBody(e.target.value)}
+					/>
+					<Divider />
+					<Header>{t('gov.create.preview')}</Header>
+					<Preview dangerouslySetInnerHTML={getRawMarkup(body)} />
+				</CreateContainer>
+			</StyledInputContainer>
 			<ActionContainer>
 				<StyledCTA onClick={() => handleCreate()} variant="primary">
 					{t('gov.create.action')}
 				</StyledCTA>
 			</ActionContainer>
-		</StyledInputContainer>
+		</Container>
 	);
 };
 export default Question;
 
-const StyledInputContainer = styled(InputContainer)`
+const Container = styled.div`
 	background-color: ${(props) => props.theme.colors.navy};
+	padding: 20px;
+`;
+
+const StyledInputContainer = styled(InputContainer)`
+	background-color: ${(props) => props.theme.colors.black};
+	height: inherit;
 `;
 
 const HeaderRow = styled(FlexDivRowCentered)`
@@ -91,11 +100,10 @@ const Header = styled.p`
 	color: ${(props) => props.theme.colors.white};
 	font-family: ${(props) => props.theme.fonts.extended};
 	font-size: 12px;
+	text-align: center;
 `;
 
-const ActionContainer = styled.div`
-	width: 100%;
-`;
+const ActionContainer = styled.div``;
 
 const StyledCTA = styled(Button)`
 	text-transform: uppercase;
@@ -105,12 +113,15 @@ const StyledCTA = styled(Button)`
 	margin: 4px 0px;
 `;
 
-const CreateContainer = styled.div``;
+const CreateContainer = styled.div`
+	height: 100%;
+`;
 
 const Title = styled(Input)`
 	font-family: ${(props) => props.theme.fonts.extended};
 	font-size: 24px;
 	text-align: center;
+	margin: 16px 0px;
 `;
 
 const Description = styled.textarea`
@@ -119,4 +130,20 @@ const Description = styled.textarea`
 	font-family: ${(props) => props.theme.fonts.regular};
 	font-size: 14px;
 	text-align: center;
+	margin: 16px 0px;
+	height: 150px;
+`;
+
+const Preview = styled.div`
+	font-family: ${(props) => props.theme.fonts.regular};
+	color: ${(props) => props.theme.colors.white};
+	font-size: 14px;
+	margin: 16px 0px;
+	text-align: center;
+	height: 200px;
+	overflow: scroll;
+
+	a {
+		color: ${(props) => props.theme.colors.blue};
+	}
 `;

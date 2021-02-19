@@ -639,6 +639,7 @@
 			"title": "Create new proposal",
 			"question": "Enter Question",
 			"description": "Enter description",
+			"preview": "Preview",
 			"action": "Publish",
 			"choices": "Create choices",
 			"add": "+ Add option",

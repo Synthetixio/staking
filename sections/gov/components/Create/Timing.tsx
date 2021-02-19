@@ -23,27 +23,26 @@ const Timing: React.FC<TimingProps> = ({
 	block,
 }) => {
 	const { t } = useTranslation();
-
 	return (
-		<Card>
+		<StyledCard>
 			<Row>
 				<Subtitle>{t('gov.create.start.date')}</Subtitle>
-				<DateSelect
+				<StyledDateSelect
 					selected={startDate}
 					onChange={(date) => setStartDate(date)}
 					onClear={() => setStartDate(null)}
-					showClear
+					showClear={false}
 					showTimeSelect
 					dateFormat="Pp"
 				/>
 			</Row>
 			<Row>
 				<Subtitle>{t('gov.create.end.date')}</Subtitle>
-				<DateSelect
+				<StyledDateSelect
 					selected={endDate}
 					onChange={(date) => setEndDate(date)}
 					onClear={() => setEndDate(null)}
-					showClear
+					showClear={false}
 					showTimeSelect
 					dateFormat="Pp"
 				/>
@@ -52,9 +51,31 @@ const Timing: React.FC<TimingProps> = ({
 				<Subtitle>{t('gov.create.block')}</Subtitle>
 				<BlockInput value={block ?? 0} onChange={(e) => setBlock(e.target.value)} type="number" />
 			</Row>
-		</Card>
+		</StyledCard>
 	);
 };
 export default Timing;
 
-const BlockInput = styled(Input)``;
+const StyledCard = styled(Card)`
+	height: 225px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+`;
+
+const BlockInput = styled(Input)`
+	background-color: ${(props) => props.theme.colors.navy};
+	font-size: 12px;
+	font-family: ${(props) => props.theme.fonts.extended};
+	width: 100px;
+`;
+
+const StyledDateSelect = styled(DateSelect)`
+	.react-datepicker-wrapper {
+		margin-right: 12px;
+	}
+	.select-button {
+		font-size: 12px;
+		font-family: ${(props) => props.theme.fonts.extended};
+	}
+`;
