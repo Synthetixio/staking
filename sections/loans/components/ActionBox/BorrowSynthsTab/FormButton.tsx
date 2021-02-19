@@ -4,14 +4,16 @@ import { useTranslation } from 'react-i18next';
 
 import Button from 'components/Button';
 
-type FormButtonProps = {};
+type FormButtonProps = {
+	assetName: string;
+};
 
-const FormButton: React.FC<FormButtonProps> = ({}) => {
+const FormButton: React.FC<FormButtonProps> = ({ assetName }) => {
 	const { t } = useTranslation();
 
 	return (
 		<StyledCTA blue={false} variant="primary" size="lg" disabled={false}>
-			{t('loans.tabs.form.default-button-label')} sETH
+			<span>{t('loans.tabs.form.default-button-label')}</span> {assetName}
 		</StyledCTA>
 	);
 };
@@ -27,5 +29,9 @@ const StyledCTA = styled(Button)<{ blue: boolean; disabled: boolean }>`
 			: `0px 0px 8.38542px rgba(252, 135, 56, 0.6);`};
 	border-radius: 4px;
 	width: 100%;
-	text-transform: uppercase;
+	text-transform: unset;
+
+	span {
+		text-transform: uppercase;
+	}
 `;

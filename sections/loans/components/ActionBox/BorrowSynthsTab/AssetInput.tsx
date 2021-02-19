@@ -6,16 +6,30 @@ import { FlexDivCentered, FlexDivColCentered } from 'styles/common';
 import NumericInput from 'components/Input/NumericInput';
 import Select from 'components/Select';
 
-const DEBT_ASSET_OPTIONS: Array<string> = ['sUSD', 'sETH', 'sBTC'];
-
 type AssetInputProps = {
 	label: string;
+
+	asset: string;
+	setAsset: (tx: string) => void;
+
+	amount: string;
+	setAmount: (tx: string) => void;
+
+	assets: Array<string>;
 };
 
-const AssetInput: React.FC<AssetInputProps> = ({ label }) => {
+const AssetInput: React.FC<AssetInputProps> = ({
+	label,
+	asset,
+	setAsset,
+
+	amount,
+	setAmount,
+
+	assets,
+}) => {
 	const { t } = useTranslation();
-	const [amount, setAmount] = React.useState<string>('');
-	const [asset, setAsset] = React.useState<string>('');
+	const options = assets.map((value) => ({ label: value, value }));
 
 	return (
 		<Container>
@@ -24,13 +38,12 @@ const AssetInput: React.FC<AssetInputProps> = ({ label }) => {
 				<SelectInput>
 					<Select
 						inputId="debt-asset-options"
-						formatOptionLabel={(option) => <span>{option}</span>}
-						options={DEBT_ASSET_OPTIONS}
-						value={asset}
+						formatOptionLabel={(option) => <span>{option.label}</span>}
+						options={options}
+						value={options.find(({ value }) => value === asset)}
 						onChange={(option: any) => {
 							if (option) {
-								console.log(option);
-								setAsset(option);
+								setAsset(option.value);
 							}
 						}}
 						variant="outline"
@@ -53,6 +66,7 @@ export default AssetInput;
 
 export const Container = styled(FlexDivColCentered)`
 	margin: 24px auto;
+	padding-right: 12px;
 	justify-content: center;
 `;
 
