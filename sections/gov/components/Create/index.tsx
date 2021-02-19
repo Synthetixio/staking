@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import { LeftCol, RightCol } from 'sections/gov/components/common';
 
