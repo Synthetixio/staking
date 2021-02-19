@@ -493,6 +493,29 @@
 			}
 		}
 	},
+	"loans": {
+		"page-title": "Borrow Synths | Synthetix Staking",
+		"interest-rate": "Interest Rate",
+		"tabs": {
+			"form": {
+				"title": "Borrow Synths",
+				"default-button-label": "BORROW",
+				"debt": {
+					"label": "Borrow"
+				},
+				"collateral": {
+					"label": "Using"
+				}
+			},
+			"table": {
+				"title": "Active Borrows"
+			}
+		},
+		"info": {
+			"title": "Borrow Synths using your other assets",
+			"subtitle": "..."
+		}
+	},
 	"layer2": {
 		"page-title": "Layer 2 | Synthetix Staking",
 		"deposit": {
@@ -638,6 +661,7 @@
 	},
 	"sidenav": {
 		"dashboard": "Home",
+		"loans": "Loans",
 		"earn": "Earn",
 		"staking": "Staking",
 		"debt": "Debt",
