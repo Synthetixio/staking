@@ -644,6 +644,10 @@
 		"synths": "Synths",
 		"escrow": "Escrow",
 		"history": "History",
+		"loans": "Loans",
+		"governance": "Governance",
+		"wallet": "Wallet",
+		"mint-and-burn": "Mint & burn",
 		"l2": "Layer 2",
 		"bars": {
 			"c-ratio": "c-ratio",

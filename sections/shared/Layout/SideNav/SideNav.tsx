@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components';
-import { FC, useMemo } from 'react';
+import { FC, useMemo, useState, useRef } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
@@ -9,6 +9,7 @@ import { linkCSS } from 'styles/common';
 import { toBigNumber } from 'utils/formatters/number';
 
 import StakingLogo from 'assets/svg/app/staking-logo.svg';
+import CaretRightIcon from 'assets/svg/app/caret-right-small.svg';
 
 import useSNX24hrPricesQuery from 'queries/rates/useSNX24hrPricesQuery';
 import useEscrowDataQuery from 'hooks/useEscrowDataQueryWrapper';
@@ -20,17 +21,25 @@ import { CryptoCurrency, Synths } from 'constants/currency';
 import { SIDE_NAV_WIDTH, zIndex } from 'constants/ui';
 
 import { MENU_LINKS, MIGRATE_MENU_LINKS } from '../constants';
+import SubMenu from './SubMenu';
 import PriceItem from './PriceItem';
 import PeriodBarStats from './PeriodBarStats';
 import BalanceItem from './BalanceItem';
 import CRatioBarStats from './CRatioBarStats';
 
+const getKeyValue = <T extends object, U extends keyof T>(obj: T) => (key: U) => obj[key];
+
 const SideNav: FC = () => {
 	const { t } = useTranslation();
 	const { asPath } = useRouter();
+	const menuLinkItemRefs = useRef({});
 	const SNX24hrPricesQuery = useSNX24hrPricesQuery();
 	const cryptoBalances = useCryptoBalances();
 	const synthsBalancesQuery = useSynthsBalancesQuery();
+	const [subMenuConfiguration, setSubMenuConfiguration] = useState({
+		routes: null,
+		topPosition: 0,
+	});
 
 	const snxBalance =
 		cryptoBalances?.balances?.find((balance) => balance.currencyKey === CryptoCurrency.SNX)
@@ -51,22 +60,42 @@ const SideNav: FC = () => {
 	const menuLinks = totalBalancePendingMigration > 0 ? MIGRATE_MENU_LINKS : MENU_LINKS;
 
 	return (
-		<SideNavContainer>
+		<SideNavContainer
+			onMouseLeave={() => setSubMenuConfiguration({ ...subMenuConfiguration, routes: null })}
+		>
 			<StakingLogoWrap>
 				<Link href={ROUTES.Home}>
-					<a>
-						<Svg src={StakingLogo} />
-					</a>
+					<Svg src={StakingLogo} />
 				</Link>
 			</StakingLogoWrap>
 			<MenuLinks>
-				{menuLinks.map(({ i18nLabel, link }) => (
+				{menuLinks.map(({ i18nLabel, link, subMenu }, i) => (
 					<MenuLinkItem
+						ref={(r) => {
+							if (subMenu) {
+								menuLinkItemRefs.current = { ...menuLinkItemRefs.current, [i]: r };
+							}
+						}}
+						onMouseEnter={() => {
+							setSubMenuConfiguration(
+								subMenu
+									? {
+											routes: subMenu as any,
+											topPosition: (getKeyValue(menuLinkItemRefs.current) as any)(
+												i
+											).getBoundingClientRect().y as number,
+									  }
+									: { ...subMenuConfiguration, routes: null }
+							);
+						}}
 						key={link}
 						isActive={asPath === link || (link !== ROUTES.Home && asPath.includes(link))}
 					>
 						<Link href={link}>
-							<a>{t(i18nLabel)}</a>
+							<a>
+								{t(i18nLabel)}
+								{subMenu && <Svg src={CaretRightIcon} />}
+							</a>
 						</Link>
 					</MenuLinkItem>
 				))}
@@ -79,6 +108,7 @@ const SideNav: FC = () => {
 				<PriceItem currencyKey={CryptoCurrency.SNX} data={snxPriceChartData} />
 				<PeriodBarStats />
 			</MenuCharts>
+			<SubMenu currentPath={asPath} config={subMenuConfiguration} />
 		</SideNavContainer>
 	);
 };
@@ -95,6 +125,7 @@ const SideNavContainer = styled.div`
 	display: grid;
 	grid-template-rows: auto 1fr auto auto;
 	overflow-y: hidden;
+	overflow-x: visible;
 `;
 
 const StakingLogoWrap = styled.div`
@@ -112,8 +143,13 @@ const MenuLinkItem = styled.div<{ isActive: boolean }>`
 	padding-bottom: 10px;
 	position: relative;
 
+	svg {
+		margin-left: 6px;
+	}
+
 	a {
-		display: block;
+		display: flex;
+		align-items: center;
 		${linkCSS};
 		font-family: ${(props) => props.theme.fonts.condensedMedium};
 		text-transform: uppercase;
@@ -123,7 +159,10 @@ const MenuLinkItem = styled.div<{ isActive: boolean }>`
 		color: ${(props) => props.theme.colors.white};
 		&:hover {
 			opacity: unset;
-			color: ${(props) => props.theme.colors.white};
+			color: ${(props) => props.theme.colors.blue};
+			svg {
+				color: ${(props) => props.theme.colors.blue};
+			}
 		}
 		${(props) =>
 			props.isActive &&
