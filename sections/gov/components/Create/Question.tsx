@@ -65,10 +65,16 @@ const Question: React.FC<QuestionProps> = ({
 					{t('gov.create.action.success')}
 				</StyledCTA>
 			);
-		} else if (!validSubmission || result.isError) {
+		} else if (result.isError) {
 			return (
 				<StyledCTA onClick={() => handleCreate()} variant="primary">
 					{t('gov.create.action.error')}
+				</StyledCTA>
+			);
+		} else if (!validSubmission) {
+			return (
+				<StyledCTA disabled={true} variant="primary">
+					{t('gov.create.action.invalid')}
 				</StyledCTA>
 			);
 		} else

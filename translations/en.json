@@ -669,7 +669,8 @@
 				"loading": "Submitting...",
 				"error": "An unexpected error occurred.",
 				"success": "Submitted",
-				"idle": "Publish"
+				"idle": "Publish",
+				"invalid": "Invalid input"
 			},
 			"choices": "Create choices",
 			"add": "+ Add option",
