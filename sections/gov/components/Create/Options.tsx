@@ -22,7 +22,7 @@ const Options: React.FC<OptionsProps> = ({ choices, setChoices }) => {
 				{choices.map((_: string, i: number) => {
 					return (
 						<OptionRow key={i}>
-							<Number>{i}</Number>
+							<Number>{i + 1}</Number>
 							<Option
 								value={choices[i]}
 								onChange={(e) => {
@@ -77,9 +77,9 @@ const Title = styled.div`
 `;
 
 const OptionsCol = styled(FlexDivColCentered)`
-	padding: 16px 8px;
+	margin: 16px 8px;
 	max-height: 220px;
-	overflow: scroll;
+	overflow-y: scroll;
 `;
 
 const OptionRow = styled(FlexDivRowCentered)`
