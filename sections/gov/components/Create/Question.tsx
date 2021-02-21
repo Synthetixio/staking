@@ -6,7 +6,7 @@ import { linkify } from 'remarkable/linkify';
 import externalLink from 'remarkable-external-link';
 import NavigationBack from 'assets/svg/app/navigation-back.svg';
 import Input, { inputCSS } from 'components/Input/Input';
-import { Divider, IconButton } from 'styles/common';
+import { Divider, FlexDivColCentered, IconButton } from 'styles/common';
 import { InputContainer, Container, HeaderRow, Header, StyledCTA } from '../common';
 import { useTranslation } from 'react-i18next';
 
@@ -119,7 +119,9 @@ export default Question;
 
 const ActionContainer = styled.div``;
 
-const CreateContainer = styled.div``;
+const CreateContainer = styled(FlexDivColCentered)`
+	justify-content: center;
+`;
 
 const Title = styled(Input)`
 	font-family: ${(props) => props.theme.fonts.extended};
@@ -136,6 +138,8 @@ const Description = styled.textarea`
 	text-align: center;
 	margin: 16px 0px;
 	height: 200px;
+
+	width: 600px;
 `;
 
 const Preview = styled.div`
@@ -144,8 +148,10 @@ const Preview = styled.div`
 	font-size: 14px;
 	margin: 16px 0px;
 	text-align: center;
-	max-height: 200px;
-	overflow: scroll;
+	max-height: 300px;
+	overflow-y: scroll;
+
+	width: 600px;
 
 	a {
 		color: ${(props) => props.theme.colors.blue};
