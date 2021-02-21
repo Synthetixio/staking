@@ -1,37 +1,100 @@
 import React from 'react';
 import styled from 'styled-components';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 
 import Button from 'components/Button';
+import { NoTextTransform } from 'styles/common';
 
 type FormButtonProps = {
-	assetName: string;
+	collateralAsset: string;
+	debtAsset: string;
+	error: string | null;
+	isWalletConnected: boolean;
+	isApproved: boolean;
+	hasLessCollateralAmount: boolean;
+	minCollateralAmountString: string;
+	isApproving: boolean;
+	isBorrowing: boolean;
+	onClick: () => Promise<void>;
 };
 
-const FormButton: React.FC<FormButtonProps> = ({ assetName }) => {
+const FormButton: React.FC<FormButtonProps> = ({
+	collateralAsset,
+	debtAsset,
+	error,
+	isWalletConnected,
+	isApproved,
+	hasLessCollateralAmount,
+	minCollateralAmountString,
+	isApproving,
+	isBorrowing,
+	onClick,
+}) => {
 	const { t } = useTranslation();
 
 	return (
-		<StyledCTA blue={false} variant="primary" size="lg" disabled={false}>
-			<span>{t('loans.tabs.form.default-button-label')}</span> {assetName}
+		<StyledCTA
+			variant="primary"
+			size="lg"
+			disabled={!!error || hasLessCollateralAmount || isApproving || isBorrowing}
+			{...{ onClick }}
+		>
+			{!isWalletConnected ? (
+				t('common.wallet.connect-wallet')
+			) : error ? (
+				t(error.toLowerCase())
+			) : isApproving ? (
+				<Trans
+					i18nKey="loans.tabs.form.button.approving-label"
+					values={{
+						collateralAsset,
+					}}
+					components={[<NoTextTransform />]}
+				/>
+			) : isBorrowing ? (
+				<Trans
+					i18nKey="loans.tabs.form.button.borrowing-label"
+					values={{
+						collateralAsset,
+					}}
+					components={[<NoTextTransform />]}
+				/>
+			) : hasLessCollateralAmount ? (
+				<Trans
+					i18nKey="loans.tabs.form.button.less-collateral-label"
+					values={{
+						collateralAsset,
+						minCollateralAmountString,
+					}}
+					components={[<NoTextTransform />]}
+				/>
+			) : !isApproved ? (
+				<Trans
+					i18nKey="loans.tabs.form.button.approve-label"
+					values={{
+						collateralAsset,
+					}}
+					components={[<NoTextTransform />]}
+				/>
+			) : (
+				<Trans
+					i18nKey="loans.tabs.form.button.borrow-label"
+					values={{
+						debtAsset,
+					}}
+					components={[<NoTextTransform />]}
+				/>
+			)}
 		</StyledCTA>
 	);
 };
 
 export default FormButton;
 
-const StyledCTA = styled(Button)<{ blue: boolean; disabled: boolean }>`
+const StyledCTA = styled(Button)`
 	font-size: 14px;
 	font-family: ${(props) => props.theme.fonts.condensedMedium};
-	box-shadow: ${(props) =>
-		props.blue
-			? `0px 0px 10px rgba(0, 209, 255, 0.9)`
-			: `0px 0px 8.38542px rgba(252, 135, 56, 0.6);`};
+	box-shadow: 0px 0px 10px rgba(0, 209, 255, 0.9);
 	border-radius: 4px;
 	width: 100%;
-	text-transform: unset;
-
-	span {
-		text-transform: uppercase;
-	}
 `;

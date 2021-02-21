@@ -496,10 +496,17 @@
 	"loans": {
 		"page-title": "Borrow Synths | Synthetix Staking",
 		"interest-rate": "Interest Rate",
+		"cratio": "C-Ratio",
 		"tabs": {
 			"form": {
 				"title": "Borrow Synths",
-				"default-button-label": "BORROW",
+				"button": {
+					"less-collateral-label": "MINIMUM COLLATERAL IS <0>{{minCollateralAmountString}}</0> <0>{{collateralAsset}}</0>",
+					"approve-label": "APPROVE <0>{{collateralAsset}}</0>",
+					"borrow-label": "BORROW <0>{{debtAsset}}</0>",
+					"approving-label": "APPROVING <0>{{collateralAsset}}</0>",
+					"borrowing-label": "BORROWING <0>{{debtAsset}}</0>"
+				},
 				"debt": {
 					"label": "Borrow"
 				},

@@ -1,10 +1,21 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
+import { useRecoilValue } from 'recoil';
+import { ethers } from 'ethers';
 
+import { isWalletConnectedState, walletAddressState, networkState } from 'store/wallet';
+import { appReadyState } from 'store/app';
+import Connector from 'containers/Connector';
+import Notify from 'containers/Notify';
+import synthetix from 'lib/synthetix';
 import { FlexDivColCentered } from 'styles/common';
 import GasSelector from 'components/GasSelector';
+import { Big, toBig, isZero, formatUnits } from 'utils/formatters/big-number';
+import { tx } from 'utils/transactions';
+import { normalizedGasPrice } from 'utils/network';
 
+import { renBTCToken } from 'contracts';
 import { DEBT_ASSETS } from 'sections/loans/constants';
 import InterestRate from './InterestRate';
 import FormButton from './FormButton';
@@ -13,17 +24,75 @@ import AssetInput from './AssetInput';
 type BorrowSynthsTabProps = {};
 
 const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
+	const { t } = useTranslation();
+	const { monitorHash } = Notify.useContainer();
+	const { connectWallet, provider, signer } = Connector.useContainer();
+	const providerOrSigner = signer || provider;
+	const isWalletConnected = useRecoilValue(isWalletConnectedState);
+	const address = useRecoilValue(walletAddressState);
+	const network = useRecoilValue(networkState);
+	const isAppReady = useRecoilValue(appReadyState);
+
 	const [gasLimitEstimate, setGasLimitEstimate] = React.useState<number | null>(null);
 	const [gasPrice, setGasPrice] = React.useState<number>(0);
 
-	const [debtAmount, setDebtAmount] = React.useState<string>('');
+	const [debtAmountNumber, setDebtAmount] = React.useState<string>('');
 	const [debtAsset, setDebtAsset] = React.useState<string>('');
+	const debtDecimals = 18; // todo
+	const debtAmount = React.useMemo(() => {
+		try {
+			return toBig(ethers.utils.parseUnits(debtAmountNumber.toString(), debtDecimals));
+		} catch {
+			return toBig(0);
+		}
+	}, [debtAmountNumber, debtDecimals]);
 
-	const [collateralAmount, setCollateralAmount] = React.useState<string>('');
+	const [collateralAmountNumber, setCollateralAmount] = React.useState<string>('');
+	const [minCollateralAmount, setMinCollateralAmount] = React.useState<Big>(toBig(0));
 	const [collateralAsset, setCollateralAsset] = React.useState<string>('');
 	const [collateralAssets, setCollateralAssets] = React.useState<Array<string>>([]);
+	const collateralDecimals = collateralAsset === 'renBTC' ? 8 : 18; // todo
+	const collateralAmount = React.useMemo(() => {
+		try {
+			return toBig(ethers.utils.parseUnits(collateralAmountNumber.toString(), collateralDecimals));
+		} catch {
+			return toBig(0);
+		}
+	}, [collateralAmountNumber, collateralDecimals]);
+	const collateralIsETH = collateralAsset === 'ETH';
+	const collateralAddress = React.useMemo(
+		() =>
+			!network ? null : collateralAsset === 'renBTC' ? renBTCToken.address(network['name']) : null,
+		[collateralAsset, renBTCToken.address, network]
+	);
+	const collateralContract = React.useMemo(
+		() =>
+			providerOrSigner &&
+			!collateralIsETH &&
+			collateralAddress &&
+			new ethers.Contract(collateralAddress, renBTCToken.abi, providerOrSigner),
+		[collateralIsETH, collateralAddress, providerOrSigner]
+	);
+	const hasLessCollateralAmount = React.useMemo(
+		() => !isZero(collateralAmount) && collateralAmount.lt(minCollateralAmount),
+		[collateralAmount, minCollateralAmount]
+	);
+	const minCollateralAmountString = formatUnits(minCollateralAmount, collateralDecimals, 2);
 
-	const { t } = useTranslation();
+	const loanContract = React.useMemo(() => {
+		if (isAppReady) {
+			const {
+				contracts: { CollateralEth: ethLoanContract, CollateralErc20: erc20LoanContract },
+			} = synthetix.js!;
+			return collateralIsETH ? ethLoanContract : erc20LoanContract;
+		}
+	}, [isAppReady, collateralIsETH]);
+	const loanContractAddress = loanContract?.address;
+
+	const [isApproving, setIsApproving] = React.useState<boolean>(false);
+	const [isBorrowing, setIsBorrowing] = React.useState<boolean>(false);
+	const [isApproved, setIsApproved] = React.useState<boolean>(false);
+	const [error, setError] = React.useState<string | null>(null);
 
 	const onSetDebtAsset = React.useCallback(
 		(debtAsset: string): void => {
@@ -36,10 +105,141 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 		[setCollateralAssets, setCollateralAsset, setDebtAsset]
 	);
 
+	const onSetCollateralAmount = (amount: string) => {
+		setError('');
+		setCollateralAmount(amount);
+	};
+
+	const onSetDebtAmount = (amount: string) => {
+		setError('');
+		setDebtAmount(amount);
+	};
+
 	React.useEffect(() => {
 		const debtAsset = DEBT_ASSETS[0];
 		onSetDebtAsset(debtAsset);
 	}, []);
+
+	const connectOrApproveOrTrade = async (): Promise<void> => {
+		if (!isWalletConnected) {
+			return connectWallet();
+		}
+		!isApproved ? approve() : trade();
+	};
+
+	const approve = async () => {
+		setIsApproving(true);
+		try {
+			await tx(
+				() => [
+					collateralContract,
+					'approve',
+					[loanContractAddress, collateralAmount.toString()],
+					{ gasPrice: normalizedGasPrice(gasPrice) },
+				],
+				{
+					showErrorNotification: (e: Error) => setError(e.message),
+					showProgressNotification: (hash: string) =>
+						monitorHash({
+							txHash: hash,
+							onTxConfirmed: () => {},
+						}),
+					showSuccessNotification: (hash: string) => {},
+				}
+			);
+			if (collateralIsETH || !(collateralContract && loanContractAddress && address))
+				return setIsApproved(true);
+			// update approve
+			const allowance = toBig(await collateralContract.allowance(address, loanContractAddress));
+			setIsApproved(allowance.gte(collateralAmount.toString()));
+		} catch (e) {
+			console.log(e);
+		} finally {
+			setIsApproving(false);
+		}
+	};
+
+	const trade = async () => {
+		if (isZero(debtAmount)) {
+			return setError(`Enter ${debtAsset} amount..`);
+		}
+
+		const bigToBig = (a: any, b: number) =>
+			ethers.utils.parseUnits(a.div(Math.pow(10, b)).toString(), b);
+
+		setIsBorrowing(true);
+		const debtAssetCurrencyKey = ethers.utils.formatBytes32String(debtAsset);
+		try {
+			await tx(
+				() => [
+					loanContract,
+					'open',
+					collateralIsETH
+						? [
+								bigToBig(debtAmount, debtDecimals),
+								debtAssetCurrencyKey,
+								{
+									value: bigToBig(collateralAmount, collateralDecimals),
+									gasPrice: normalizedGasPrice(gasPrice),
+								},
+						  ]
+						: [
+								bigToBig(collateralAmount, collateralDecimals),
+								bigToBig(debtAmount, debtDecimals),
+								debtAssetCurrencyKey,
+								{ gasPrice: normalizedGasPrice(gasPrice) },
+						  ],
+				],
+				{
+					showErrorNotification: (e: Error) => setError(e.message),
+					showProgressNotification: (hash: string) =>
+						monitorHash({
+							txHash: hash,
+							onTxConfirmed: () => {},
+						}),
+					showSuccessNotification: (hash: string) => {},
+				}
+			);
+		} catch (e) {
+			console.log(e);
+		} finally {
+			setIsBorrowing(false);
+		}
+	};
+
+	// approved
+	React.useEffect(() => {
+		let isMounted = true;
+		const load = async () => {
+			if (collateralIsETH || !(collateralContract && loanContractAddress && address)) {
+				return setIsApproved(true);
+			}
+			const allowance = toBig(await collateralContract.allowance(address, loanContractAddress));
+			if (isMounted) setIsApproved(allowance.gte(collateralAmount));
+		};
+		load();
+		return () => {
+			isMounted = false;
+		};
+	}, [collateralIsETH, collateralContract, address, loanContractAddress, collateralAmount]);
+
+	// min collateral amount
+	React.useEffect(() => {
+		let isMounted = true;
+		const load = async () => {
+			if (!loanContract) {
+				return setMinCollateralAmount(toBig(0));
+			}
+			const minCollateralAmount = toBig(await loanContract.minCollateral()).div(
+				Math.pow(10, 18 - collateralDecimals)
+			);
+			if (isMounted) setMinCollateralAmount(minCollateralAmount);
+		};
+		load();
+		return () => {
+			isMounted = false;
+		};
+	}, [collateralIsETH, loanContract]);
 
 	return (
 		<>
@@ -49,8 +249,8 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 						label="debt"
 						asset={debtAsset}
 						setAsset={onSetDebtAsset}
-						amount={debtAmount}
-						setAmount={setDebtAmount}
+						amount={debtAmountNumber}
+						setAmount={onSetDebtAmount}
 						assets={DEBT_ASSETS}
 					/>
 					<AssetInputDivider />
@@ -58,8 +258,8 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 						label="collateral"
 						asset={collateralAsset}
 						setAsset={setCollateralAsset}
-						amount={collateralAmount}
-						setAmount={setCollateralAmount}
+						amount={collateralAmountNumber}
+						setAmount={onSetCollateralAmount}
 						assets={collateralAssets}
 					/>
 				</AssetInputsContainer>
@@ -74,7 +274,20 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 				</SettingsContainer>
 			</Container>
 
-			<FormButton assetName={debtAsset} />
+			<FormButton
+				onClick={connectOrApproveOrTrade}
+				{...{
+					error,
+					isWalletConnected,
+					isApproved,
+					collateralAsset,
+					debtAsset,
+					minCollateralAmountString,
+					hasLessCollateralAmount,
+					isApproving,
+					isBorrowing,
+				}}
+			/>
 		</>
 	);
 };

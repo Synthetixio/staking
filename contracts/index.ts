@@ -13,6 +13,7 @@ import curveSeuroGauge from './curveSeuroGauge';
 import curveGaugeController from './curveGaugeController';
 
 import balancersTSLAPoolToken from './balancersTSLAPoolToken';
+import renBTCToken from './renBTCToken';
 
 export {
 	curveSusdRewards,
@@ -25,4 +26,5 @@ export {
 	curveSeuroGauge,
 	curveGaugeController,
 	balancersTSLAPoolToken,
+	renBTCToken,
 };
