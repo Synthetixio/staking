@@ -16,28 +16,28 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 	const columns = React.useMemo(
 		() => [
 			{
-				Header: <>{t('loans.tabs.table.types.loan')}</>,
+				Header: <>{t('loans.tabs.list.types.loan')}</>,
 				accessor: 'type',
 				Cell: (cellProps: CellProps<Loan, Loan['loan']>) => null,
 				sortable: true,
 				width,
 			},
 			{
-				Header: <>{t('loans.tabs.table.types.collateral')}</>,
+				Header: <>{t('loans.tabs.list.types.collateral')}</>,
 				accessor: 'collateral',
 				Cell: (cellProps: CellProps<Loan, Loan['collateral']>) => null,
 				sortable: true,
 				width,
 			},
 			{
-				Header: <>{t('loans.tabs.table.types.value')}</>,
+				Header: <>{t('loans.tabs.list.types.value')}</>,
 				accessor: 'value',
 				Cell: (cellProps: CellProps<Loan, Loan['value']>) => null,
 				sortable: true,
 				width,
 			},
 			{
-				Header: <>{t('loans.tabs.table.types.modify')}</>,
+				Header: <>{t('loans.tabs.list.types.modify')}</>,
 				id: 'modify',
 				Cell: (cellProps: CellProps<Loan>) => null,
 				width,

@@ -34,10 +34,10 @@ const AssetInput: React.FC<AssetInputProps> = ({
 	return (
 		<Container>
 			<SelectContainer>
-				<SelectLabel>{t(`loans.tabs.form.${label}.label`)}</SelectLabel>
+				<SelectLabel>{t(`loans.tabs.new.${label}.label`)}</SelectLabel>
 				<SelectInput>
 					<Select
-						inputId="debt-asset-options"
+						inputId={`${label}-asset-options`}
 						formatOptionLabel={(option) => <span>{option.label}</span>}
 						options={options}
 						value={options.find(({ value }) => value === asset)}

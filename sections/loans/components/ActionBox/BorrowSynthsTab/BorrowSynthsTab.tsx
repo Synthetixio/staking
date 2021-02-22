@@ -173,7 +173,7 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 			return setError(`Enter ${debtAsset} amount..`);
 		}
 
-		const bigToBig = (a: any, b: number) =>
+		const toEthersBig = (a: any, b: number) =>
 			ethers.utils.parseUnits(a.div(Math.pow(10, b)).toString(), b);
 
 		setIsBorrowing(true);
@@ -185,16 +185,16 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 					'open',
 					collateralIsETH
 						? [
-								bigToBig(debtAmount, debtDecimals),
+								toEthersBig(debtAmount, debtDecimals),
 								debtAssetCurrencyKey,
 								{
-									value: bigToBig(collateralAmount, collateralDecimals),
+									value: toEthersBig(collateralAmount, collateralDecimals),
 									gasPrice: normalizedGasPrice(gasPrice),
 								},
 						  ]
 						: [
-								bigToBig(collateralAmount, collateralDecimals),
-								bigToBig(debtAmount, debtDecimals),
+								toEthersBig(collateralAmount, collateralDecimals),
+								toEthersBig(debtAmount, debtDecimals),
 								debtAssetCurrencyKey,
 								{ gasPrice: normalizedGasPrice(gasPrice) },
 						  ],
@@ -261,17 +261,20 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 			}
 
 			const collateralUSDPrice = toBig(
-				getExchangeRatesForCurrencies(exchangeRates, collateralAsset, Synths.sUSD)
+				getExchangeRatesForCurrencies(
+					exchangeRates,
+					collateralAsset === 'renBTC' ? Synths.sBTC : Synths.sETH,
+					Synths.sUSD
+				)
 			);
-
 			const debtUSDPrice = toBig(
 				getExchangeRatesForCurrencies(exchangeRates, debtAsset, Synths.sUSD)
 			);
-
 			const cratio = collateralAmount
 				.mul(collateralUSDPrice)
+				.div(Math.pow(10, collateralDecimals))
 				.mul(100)
-				.div(debtUSDPrice.mul(debtAmount));
+				.div(debtUSDPrice.mul(debtAmount).div(Math.pow(10, debtDecimals)));
 			if (isMounted) setCRatio(cratio);
 		};
 		load();

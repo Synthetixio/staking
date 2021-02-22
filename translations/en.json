@@ -498,7 +498,7 @@
 		"interest-rate": "Interest Rate",
 		"cratio": "C-Ratio",
 		"tabs": {
-			"form": {
+			"new": {
 				"title": "Borrow Synths",
 				"button": {
 					"less-collateral-label": "MINIMUM COLLATERAL IS <0>{{minCollateralAmountString}}</0> <0>{{collateralAsset}}</0>",
@@ -514,7 +514,7 @@
 					"label": "Using"
 				}
 			},
-			"table": {
+			"list": {
 				"title": "Active Borrows",
 				"types": {
 					"loan": "LOAN",

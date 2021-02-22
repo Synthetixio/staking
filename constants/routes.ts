@@ -1,6 +1,9 @@
 export const ROUTES = {
 	Home: '/',
-	Loans: '/loans',
+	Loans: {
+		New: '/loans/new',
+		List: '/loans/list',
+	},
 	Staking: {
 		Home: '/staking',
 		Burn: '/staking/burn',

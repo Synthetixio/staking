@@ -45,7 +45,7 @@ const FormButton: React.FC<FormButtonProps> = ({
 				t(error.toLowerCase())
 			) : isApproving ? (
 				<Trans
-					i18nKey="loans.tabs.form.button.approving-label"
+					i18nKey="loans.tabs.new.button.approving-label"
 					values={{
 						collateralAsset,
 					}}
@@ -53,7 +53,7 @@ const FormButton: React.FC<FormButtonProps> = ({
 				/>
 			) : isBorrowing ? (
 				<Trans
-					i18nKey="loans.tabs.form.button.borrowing-label"
+					i18nKey="loans.tabs.new.button.borrowing-label"
 					values={{
 						collateralAsset,
 					}}
@@ -61,7 +61,7 @@ const FormButton: React.FC<FormButtonProps> = ({
 				/>
 			) : hasLessCollateralAmount ? (
 				<Trans
-					i18nKey="loans.tabs.form.button.less-collateral-label"
+					i18nKey="loans.tabs.new.button.less-collateral-label"
 					values={{
 						collateralAsset,
 						minCollateralAmountString,
@@ -70,7 +70,7 @@ const FormButton: React.FC<FormButtonProps> = ({
 				/>
 			) : !isApproved ? (
 				<Trans
-					i18nKey="loans.tabs.form.button.approve-label"
+					i18nKey="loans.tabs.new.button.approve-label"
 					values={{
 						collateralAsset,
 					}}
@@ -78,7 +78,7 @@ const FormButton: React.FC<FormButtonProps> = ({
 				/>
 			) : (
 				<Trans
-					i18nKey="loans.tabs.form.button.borrow-label"
+					i18nKey="loans.tabs.new.button.borrow-label"
 					values={{
 						debtAsset,
 					}}
