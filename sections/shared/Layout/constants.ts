@@ -50,7 +50,7 @@ export const MENU_LINKS: MenuLinks = [
 	},
 	{
 		i18nLabel: 'sidenav.wallet',
-		link: ROUTES.Wallet.Home,
+		link: ROUTES.Escrow.Home,
 		subMenu: [
 			{
 				i18nLabel: 'sidenav.escrow',

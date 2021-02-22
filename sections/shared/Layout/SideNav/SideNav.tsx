@@ -89,7 +89,11 @@ const SideNav: FC = () => {
 							);
 						}}
 						key={link}
-						isActive={asPath === link || (link !== ROUTES.Home && asPath.includes(link))}
+						isActive={
+							subMenu
+								? !!subMenu.find(({ subLink }) => subLink === asPath)
+								: asPath === link || (link !== ROUTES.Home && asPath.includes(link))
+						}
 					>
 						<Link href={link}>
 							<a>

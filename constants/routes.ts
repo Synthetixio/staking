@@ -39,9 +39,6 @@ export const ROUTES = {
 	Governance: {
 		Home: '/governance',
 	},
-	Wallet: {
-		Home: '/wallet',
-	},
 };
 
 export default ROUTES;
