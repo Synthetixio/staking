@@ -64,6 +64,7 @@ const SynthsPage = () => {
 				isLoaded={synthsBalancesQuery.isSuccess}
 				showHoldings={true}
 				showConvert={false}
+				showDebtPoolProportion={false}
 			/>
 			{isWalletConnected && cryptoBalances.balances.length > 0 && (
 				<AssetsTable
@@ -74,6 +75,7 @@ const SynthsPage = () => {
 					isLoaded={cryptoBalances.isLoaded}
 					showHoldings={false}
 					showConvert={true}
+					showDebtPoolProportion={false}
 				/>
 			)}
 		</>

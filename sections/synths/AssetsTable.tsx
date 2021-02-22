@@ -22,6 +22,7 @@ import {
 	NoTextTransform,
 } from 'styles/common';
 import { CryptoBalance } from 'queries/walletBalances/types';
+import { SynthsTotalSupplyData } from 'queries/synths/useSynthsTotalSupplyQuery';
 
 import { EXTERNAL_LINKS } from 'constants/links';
 import { CryptoCurrency } from 'constants/currency';
@@ -39,6 +40,9 @@ import { isSynth } from 'utils/currencies';
 import SynthPriceCol from './components/SynthPriceCol';
 import SynthHolding from './components/SynthHolding';
 import Link from 'next/link';
+import { ProgressBarType } from 'components/ProgressBar/ProgressBar';
+
+const SHOW_HEDGING_INDICATOR_THRESHOLD = new BigNumber(0.05);
 
 type AssetsTableProps = {
 	title: ReactNode;
@@ -48,6 +52,8 @@ type AssetsTableProps = {
 	isLoaded: boolean;
 	showConvert: boolean;
 	showHoldings: boolean;
+	showDebtPoolProportion: boolean;
+	synthsTotalSupply?: SynthsTotalSupplyData;
 };
 
 const AssetsTable: FC<AssetsTableProps> = ({
@@ -58,6 +64,8 @@ const AssetsTable: FC<AssetsTableProps> = ({
 	title,
 	showHoldings,
 	showConvert,
+	showDebtPoolProportion,
+	synthsTotalSupply,
 }) => {
 	const { t } = useTranslation();
 	const { connectWallet } = Connector.useContainer();
@@ -131,12 +139,53 @@ const AssetsTable: FC<AssetsTableProps> = ({
 				id: 'holdings',
 				accessor: (originalRow: any) => originalRow.usdBalance.toNumber(),
 				sortType: 'basic',
-				Cell: (cellProps: CellProps<CryptoBalance>) => (
-					<SynthHolding
-						usdBalance={cellProps.row.original.usdBalance}
-						totalUSDBalance={totalValue ?? zeroBN}
-					/>
-				),
+				Cell: (cellProps: CellProps<CryptoBalance>) => {
+					let variant: ProgressBarType = 'rainbow';
+					if (showDebtPoolProportion && synthsTotalSupply) {
+						const { currencyKey } = cellProps.row.original;
+						const poolCurrencyPercent = synthsTotalSupply.supplyData[currencyKey].poolProportion;
+
+						if (poolCurrencyPercent) {
+							const holdingPercent = cellProps.row.original.usdBalance.dividedBy(
+								totalValue ?? zeroBN
+							);
+							const deviationFromPool = holdingPercent.minus(poolCurrencyPercent);
+
+							if (deviationFromPool.isGreaterThanOrEqualTo(SHOW_HEDGING_INDICATOR_THRESHOLD)) {
+								variant = 'red-simple';
+							} else if (
+								deviationFromPool.isLessThanOrEqualTo(SHOW_HEDGING_INDICATOR_THRESHOLD.negated())
+							) {
+								variant = 'green-simple';
+							}
+						}
+					}
+
+					return (
+						<SynthHolding
+							usdBalance={cellProps.row.original.usdBalance}
+							totalUSDBalance={totalValue ?? zeroBN}
+							progressBarVariant={variant}
+						/>
+					);
+				},
+				width: 200,
+				sortable: true,
+			});
+		}
+		if (showDebtPoolProportion) {
+			columns.push({
+				Header: <>{t('synths.assets.synths.table.debt-pool-proportion')}</>,
+				id: 'debt-pool-proportion',
+				accessor: (originalRow: any) => originalRow.usdBalance.toNumber(),
+				sortType: 'basic',
+				Cell: (cellProps: CellProps<CryptoBalance>) => {
+					const { currencyKey } = cellProps.row.original;
+					const totalPoolValue = synthsTotalSupply?.totalValue || zeroBN;
+					const currencyValue = synthsTotalSupply?.supplyData[currencyKey]?.value || zeroBN;
+
+					return <SynthHolding usdBalance={currencyValue} totalUSDBalance={totalPoolValue} />;
+				},
 				width: 200,
 				sortable: true,
 			});
@@ -182,12 +231,14 @@ const AssetsTable: FC<AssetsTableProps> = ({
 	}, [
 		showHoldings,
 		showConvert,
+		showDebtPoolProportion,
 		t,
 		totalValue,
 		selectPriceCurrencyRate,
 		selectedPriceCurrency.sign,
 		selectedPriceCurrency.name,
 		isAppReady,
+		synthsTotalSupply,
 	]);
 
 	return (
