@@ -133,7 +133,7 @@ const SideNavContainer = styled.div`
 `;
 
 const StakingLogoWrap = styled.div`
-	padding: 30px 0 87px 24px;
+	padding: 30px 0 64px 24px;
 	cursor: pointer;
 `;
 
