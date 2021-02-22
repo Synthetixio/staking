@@ -41,6 +41,9 @@ export const ROUTES = {
 		Create: (spaceKey: string) => `/gov/${spaceKey}/create`,
 		Proposal: (spaceKey: string, id: string) => `/gov/${spaceKey}/${id}`,
 	},
+	Loans: {
+		Home: '/loans',
+	},
 };
 
 export default ROUTES;

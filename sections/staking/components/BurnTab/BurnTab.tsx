@@ -198,10 +198,17 @@ const BurnTab: React.FC = () => {
 		[amountToBurn, gasPrice, monitorHash, walletAddress, isAppReady, onBurnChange]
 	);
 
+	const handleClear = async () => {
+		// @TODO: setup 1inch tx
+		// @TODO: setup burn tx
+		console.log('clear');
+	};
+
 	const returnPanel = useMemo(() => {
 		let handleSubmit;
 		let inputValue;
 		let isLocked;
+		let canClearDebt;
 
 		/* If a user has more sUSD than the debt balance, the max burn amount is their debt balance, else it is just the balance they have */
 		const maxBurnAmount = debtBalance.isGreaterThan(sUSDBalance)
@@ -235,6 +242,13 @@ const BurnTab: React.FC = () => {
 				inputValue = toBigNumber(amountToBurn);
 				isLocked = false;
 				break;
+			case BurnActionType.CLEAR:
+				onBurnChange(maxBurnAmount.toString());
+				handleSubmit = () => handleClear();
+				inputValue = maxBurnAmount;
+				isLocked = true;
+				canClearDebt = false;
+				break;
 			default:
 				return (
 					<BurnTiles
@@ -261,6 +275,7 @@ const BurnTab: React.FC = () => {
 				setTransactionState={setTransactionState}
 				maxBurnAmount={maxBurnAmount}
 				burnAmountToFixCRatio={burnAmountToFixCRatio}
+				canClearDebt={canClearDebt}
 			/>
 		);
 	}, [
