@@ -36,14 +36,14 @@ export const MENU_LINKS: MenuLinks = [
 			},
 		],
 	},
-	{
-		i18nLabel: 'sidenav.loans',
-		link: ROUTES.Loans.Home,
-	},
-	{
-		i18nLabel: 'sidenav.governance',
-		link: ROUTES.Governance.Home,
-	},
+	// {
+	// 	i18nLabel: 'sidenav.loans',
+	// 	link: ROUTES.Loans.Home,
+	// },
+	// {
+	// 	i18nLabel: 'sidenav.governance',
+	// 	link: ROUTES.Governance.Home,
+	// },
 	{
 		i18nLabel: 'sidenav.l2',
 		link: ROUTES.L2.Home,
