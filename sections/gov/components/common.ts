@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { FlexDivCol, FlexDivColCentered, FlexDivRowCentered } from 'styles/common';
+import { FlexDivCol, FlexDivColCentered, FlexDivRowCentered, Tooltip } from 'styles/common';
 import Button from 'components/Button';
 
 export const Container = styled.div`
@@ -78,5 +78,13 @@ export const StyledCTA = styled(Button)`
 
 export const MaxHeightColumn = styled(FlexDivCol)`
 	max-height: 400px;
-	overflow: scroll;
+	overflow-y: scroll;
+`;
+
+export const StyledTooltip = styled(Tooltip)`
+	background: ${(props) => props.theme.colors.mediumBlue};
+	.tippy-content {
+		font-size: 12px;
+		padding: 10px;
+	}
 `;

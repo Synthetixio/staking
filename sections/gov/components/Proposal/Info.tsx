@@ -51,7 +51,7 @@ const Info: React.FC = () => {
 						{truncateAddress(proposal.address)}
 
 						<ExternalLink
-							href={etherscanInstance ? etherscanInstance.blockLink(proposal.address) : undefined}
+							href={etherscanInstance ? etherscanInstance.addressLink(proposal.address) : undefined}
 						>
 							<Svg style={{ marginLeft: 4 }} color={theme.colors.blue} src={Link} />
 						</ExternalLink>

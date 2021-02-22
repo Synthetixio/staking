@@ -3,11 +3,11 @@ import styled from 'styled-components';
 import { Svg } from 'react-optimized-image';
 import Spinner from 'assets/svg/app/loader.svg';
 import useActiveTab from '../../hooks/useActiveTab';
-import { FlexDivRowCentered } from 'styles/common';
+import { FlexDivRowCentered, Tooltip } from 'styles/common';
 import useProposal from 'queries/gov/useProposal';
 import { formatNumber, formatPercent } from 'utils/formatters/number';
 import ProgressBar from 'components/ProgressBar';
-import { MaxHeightColumn } from 'sections/gov/components/common';
+import { MaxHeightColumn, StyledTooltip } from 'sections/gov/components/common';
 
 type ResultsProps = {
 	hash: string;
@@ -26,9 +26,11 @@ const Results: React.FC<ResultsProps> = ({ hash }) => {
 					const totalVotes = data.totalVotesBalances !== 0 ? data.totalVotesBalances : 1;
 					return (
 						<Row key={i}>
-							<Title>
-								{choice} - {`${formatNumber(data.totalBalances[i])} ${data.spaceSymbol}`}
-							</Title>
+							<StyledTooltip arrow={true} placement="bottom" content={choice} hideOnClick={false}>
+								<Title>
+									<p>{choice} </p> ({`${formatNumber(data.totalBalances[i])} ${data.spaceSymbol}`})
+								</Title>
+							</StyledTooltip>
 							<BarContainer>
 								<StyledProgressBar percentage={(votes / totalVotes) * 100} variant="blue-pink" />
 								<Value>{formatPercent(votes / totalVotes)}</Value>
@@ -61,6 +63,19 @@ const Title = styled.div`
 	font-family: ${(props) => props.theme.fonts.interBold};
 	font-size: 12px;
 	color: ${(props) => props.theme.colors.white};
+
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+
+	p {
+		text-overflow: ellipsis;
+		overflow: hidden;
+		white-space: nowrap;
+		width: 100px;
+	}
+
+	width: 250px;
 `;
 
 const Value = styled(FlexDivRowCentered)`

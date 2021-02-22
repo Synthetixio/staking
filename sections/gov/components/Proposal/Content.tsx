@@ -5,7 +5,7 @@ import { Remarkable } from 'remarkable';
 import { linkify } from 'remarkable/linkify';
 import externalLink from 'remarkable-external-link';
 
-import { IconButton, Divider } from 'styles/common';
+import { IconButton, Divider, FlexDivColCentered } from 'styles/common';
 
 import NavigationBack from 'assets/svg/app/navigation-back.svg';
 
@@ -15,6 +15,7 @@ import {
 	HeaderRow,
 	Header,
 	StyledCTA,
+	StyledTooltip,
 } from 'sections/gov/components/common';
 import { truncateAddress } from 'utils/formatters/string';
 import { useTranslation } from 'react-i18next';
@@ -125,13 +126,22 @@ const Content: React.FC<ContentProps> = ({ onBack }) => {
 					<Description dangerouslySetInnerHTML={getRawMarkup(proposal?.msg.payload.body)} />
 				</ProposalContainer>
 				<Divider />
-				<OptionsContainer>
-					{proposal?.msg.payload.choices.map((choice, i) => (
-						<Option selected={selected === i} onClick={() => setSelected(i)} variant="text" key={i}>
-							{choice}
-						</Option>
-					))}
-				</OptionsContainer>
+				{!expired(proposal?.msg.payload.end) && (
+					<OptionsContainer>
+						{proposal?.msg.payload.choices.map((choice, i) => (
+							<StyledTooltip arrow={true} placement="bottom" content={choice} hideOnClick={false}>
+								<Option
+									selected={selected === i}
+									onClick={() => setSelected(i)}
+									variant="text"
+									key={i}
+								>
+									<p>{choice}</p>
+								</Option>
+							</StyledTooltip>
+						))}
+					</OptionsContainer>
+				)}
 			</InputContainer>
 			<ActionContainer>{returnButtonStates}</ActionContainer>
 		</Container>
@@ -146,7 +156,9 @@ const Status = styled.p<{ active: boolean }>`
 	font-size: 14px;
 `;
 
-const ProposalContainer = styled.div``;
+const ProposalContainer = styled(FlexDivColCentered)`
+	min-height: 400px;
+`;
 
 const Title = styled.p`
 	font-family: ${(props) => props.theme.fonts.extended};
@@ -156,11 +168,13 @@ const Title = styled.p`
 
 const Description = styled.div`
 	max-height: 300px;
-	overflow: scroll;
+	overflow-y: auto;
 	font-size: 14px;
 	text-align: center;
 	font-family: ${(props) => props.theme.fonts.regular};
 	margin: 16px 8px;
+
+	width: 500px;
 
 	h1 {
 		font-size: 14px;
@@ -196,10 +210,10 @@ const Description = styled.div`
 
 const OptionsContainer = styled.div`
 	max-height: 200px;
-	overflow: scroll;
-	width: 100%;
+	overflow-y: auto;
+	width: 500px;
 	display: grid;
-	grid-template-columns: auto auto auto;
+	grid-template-columns: auto auto;
 	column-gap: 8px;
 	row-gap: 8px;
 `;
@@ -212,6 +226,15 @@ const Option = styled(Button)<{ selected: boolean }>`
 	font-family: ${(props) => props.theme.fonts.interBold};
 	text-transform: uppercase;
 	text-align: center;
+
+	width: 235px;
+
+	p {
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		overflow: hidden;
+		padding: 0px 16px;
+	}
 
 	:hover {
 		background-color: ${(props) => props.theme.colors.mediumBlue};

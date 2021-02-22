@@ -32,6 +32,8 @@ export const useCouncilMembers = () => {
 				}
 				let resolvedMembers = await Promise.resolve(councilMembers);
 				setCouncilMembers(resolvedMembers);
+			} else {
+				setCouncilMembers([]);
 			}
 		};
 		getCouncilMembers();

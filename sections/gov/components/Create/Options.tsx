@@ -79,7 +79,7 @@ const Title = styled.div`
 const OptionsCol = styled(FlexDivColCentered)`
 	margin: 16px 8px;
 	max-height: 220px;
-	overflow-y: scroll;
+	overflow-y: auto;
 `;
 
 const OptionRow = styled(FlexDivRowCentered)`

@@ -119,9 +119,7 @@ export default Question;
 
 const ActionContainer = styled.div``;
 
-const CreateContainer = styled(FlexDivColCentered)`
-	justify-content: center;
-`;
+const CreateContainer = styled(FlexDivColCentered)``;
 
 const Title = styled(Input)`
 	font-family: ${(props) => props.theme.fonts.extended};
@@ -139,7 +137,7 @@ const Description = styled.textarea`
 	margin: 16px 0px;
 	height: 200px;
 
-	width: 600px;
+	width: 500px;
 `;
 
 const Preview = styled.div`
@@ -149,9 +147,9 @@ const Preview = styled.div`
 	margin: 16px 0px;
 	text-align: center;
 	max-height: 300px;
-	overflow-y: scroll;
+	overflow-y: auto;
 
-	width: 600px;
+	width: 500px;
 
 	a {
 		color: ${(props) => props.theme.colors.blue};
