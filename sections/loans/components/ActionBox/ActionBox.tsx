@@ -4,6 +4,7 @@ import StructuredTab from 'components/StructuredTab';
 
 import { ACTION_BOX_WIDTH } from 'sections/loans/constants';
 import BorrowSynthsTab from './BorrowSynthsTab/BorrowSynthsTab';
+import ActiveBorrowsTab from './ActiveBorrowsTab/ActiveBorrowsTab';
 
 const ActionBox: React.FC = () => {
 	const { t } = useTranslation();
@@ -18,7 +19,7 @@ const ActionBox: React.FC = () => {
 			},
 			{
 				title: t('loans.tabs.table.title'),
-				tabChildren: <BorrowSynthsTab />,
+				tabChildren: <ActiveBorrowsTab />,
 				key: 'table',
 				blue: true,
 			},

@@ -515,7 +515,13 @@
 				}
 			},
 			"table": {
-				"title": "Active Borrows"
+				"title": "Active Borrows",
+				"types": {
+					"loan": "LOAN",
+					"collateral": "COLLATERAL",
+					"value": "VALUE (sUSD)",
+					"modify": "MODIFY"
+				}
 			}
 		},
 		"info": {
