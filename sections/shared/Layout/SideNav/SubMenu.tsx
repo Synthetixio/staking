@@ -27,8 +27,8 @@ const SubMenu: FC<SubMenuProps> = ({ config, currentPath }) => {
 					<Inner>
 						<FloatingContent topPosition={config?.topPosition ?? 0}>
 							<LinkList>
-								{config?.routes?.map(({ i18nLabel, subLink }) => (
-									<MenuLinkItem isActive={currentPath === subLink}>
+								{config?.routes?.map(({ i18nLabel, subLink }, i) => (
+									<MenuLinkItem key={`subMenuLinkItem-${i}`} isActive={currentPath === subLink}>
 										<Link href={subLink}>
 											<a>{t(i18nLabel)}</a>
 										</Link>
