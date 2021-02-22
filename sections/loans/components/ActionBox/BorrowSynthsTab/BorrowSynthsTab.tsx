@@ -14,10 +14,14 @@ import GasSelector from 'components/GasSelector';
 import { Big, toBig, isZero, formatUnits } from 'utils/formatters/big-number';
 import { tx } from 'utils/transactions';
 import { normalizedGasPrice } from 'utils/network';
-
+import { Synths } from 'constants/currency';
 import { renBTCToken } from 'contracts';
+import { getExchangeRatesForCurrencies } from 'utils/currencies';
+import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import { DEBT_ASSETS } from 'sections/loans/constants';
+
 import InterestRate from './InterestRate';
+import CRatio from './CRatio';
 import FormButton from './FormButton';
 import AssetInput from './AssetInput';
 
@@ -89,6 +93,11 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 	}, [isAppReady, collateralIsETH]);
 	const loanContractAddress = loanContract?.address;
 
+	const [cratio, setCRatio] = React.useState(toBig(0));
+
+	const exchangeRatesQuery = useExchangeRatesQuery();
+	const exchangeRates = exchangeRatesQuery.data ?? null;
+
 	const [isApproving, setIsApproving] = React.useState<boolean>(false);
 	const [isBorrowing, setIsBorrowing] = React.useState<boolean>(false);
 	const [isApproved, setIsApproved] = React.useState<boolean>(false);
@@ -159,7 +168,7 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 		}
 	};
 
-	const trade = async () => {
+	const borrow = async () => {
 		if (isZero(debtAmount)) {
 			return setError(`Enter ${debtAsset} amount..`);
 		}
@@ -200,6 +209,8 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 					showSuccessNotification: (hash: string) => {},
 				}
 			);
+			onSetDebtAmount('0');
+			onSetCollateralAmount('0');
 		} catch (e) {
 			console.log(e);
 		} finally {
@@ -241,6 +252,34 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 		};
 	}, [collateralIsETH, loanContract]);
 
+	// cratio
+	React.useEffect(() => {
+		let isMounted = true;
+		const load = async () => {
+			if (!(exchangeRates && !isZero(collateralAmount) && !isZero(debtAmount))) {
+				return setCRatio(toBig('0'));
+			}
+
+			const collateralUSDPrice = toBig(
+				getExchangeRatesForCurrencies(exchangeRates, collateralAsset, Synths.sUSD)
+			);
+
+			const debtUSDPrice = toBig(
+				getExchangeRatesForCurrencies(exchangeRates, debtAsset, Synths.sUSD)
+			);
+
+			const cratio = collateralAmount
+				.mul(collateralUSDPrice)
+				.mul(100)
+				.div(debtUSDPrice.mul(debtAmount));
+			if (isMounted) setCRatio(cratio);
+		};
+		load();
+		return () => {
+			isMounted = false;
+		};
+	}, [collateralAmount, collateralAsset, debtAmount, debtAsset]);
+
 	return (
 		<>
 			<Container>
@@ -265,6 +304,9 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 				</AssetInputsContainer>
 
 				<SettingsContainer>
+					<SettingContainer>
+						<CRatio {...{ cratio }} />
+					</SettingContainer>
 					<SettingContainer>
 						<InterestRate />
 					</SettingContainer>
