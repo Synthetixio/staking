@@ -496,6 +496,7 @@
 	"loans": {
 		"page-title": "Borrow Synths | Synthetix Staking",
 		"interest-rate": "Interest Rate",
+		"issuance-fee": "Issuance Fee",
 		"cratio": "C-Ratio",
 		"tabs": {
 			"new": {

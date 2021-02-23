@@ -3,20 +3,24 @@ import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { FlexDivRow, FlexDivRowCentered } from 'styles/common';
 import { toFixed } from 'utils/formatters/big-number';
+import { LOAN_TYPE_ERC20, LOAN_TYPE_ETH } from 'sections/loans/constants';
 import { useConfig } from 'sections/loans/hooks/config';
 
-type InterestRateProps = {};
+type IssuanceFeeProps = {
+	collateralIsETH: boolean;
+};
 
-const InterestRate: React.FC<InterestRateProps> = () => {
+const IssuanceFee: React.FC<IssuanceFeeProps> = ({ collateralIsETH }) => {
 	const { t } = useTranslation();
-	const { interestRate } = useConfig();
+	const { issueFeeRates } = useConfig();
+	const issuanceFee = issueFeeRates[collateralIsETH ? LOAN_TYPE_ETH : LOAN_TYPE_ERC20];
 
 	return (
 		<Container>
-			<Header>{t('loans.interest-rate')}</Header>
+			<Header>{t('loans.issuance-fee')}</Header>
 			<FlexDivRowCentered>
 				<Item>
-					<Text>{toFixed(interestRate, 1, 2)}%</Text>
+					<Text>{toFixed(issuanceFee, 1, 2)}%</Text>
 				</Item>
 			</FlexDivRowCentered>
 		</Container>
@@ -50,4 +54,4 @@ const Item = styled.span`
 	}
 `;
 
-export default InterestRate;
+export default IssuanceFee;

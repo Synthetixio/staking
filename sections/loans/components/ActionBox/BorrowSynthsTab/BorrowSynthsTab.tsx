@@ -21,6 +21,7 @@ import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import { DEBT_ASSETS } from 'sections/loans/constants';
 
 import InterestRate from './InterestRate';
+import IssuanceFee from './IssuanceFee';
 import CRatio from './CRatio';
 import FormButton from './FormButton';
 import AssetInput from './AssetInput';
@@ -133,7 +134,7 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 		if (!isWalletConnected) {
 			return connectWallet();
 		}
-		!isApproved ? approve() : trade();
+		!isApproved ? approve() : borrow();
 	};
 
 	const approve = async () => {
@@ -312,6 +313,9 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 					</SettingContainer>
 					<SettingContainer>
 						<InterestRate />
+					</SettingContainer>
+					<SettingContainer>
+						<IssuanceFee {...{ collateralIsETH }} />
 					</SettingContainer>
 					<SettingContainer>
 						<GasSelector gasLimitEstimate={gasLimitEstimate} setGasPrice={setGasPrice} />

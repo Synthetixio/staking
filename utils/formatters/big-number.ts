@@ -1,11 +1,10 @@
-import BigJS from 'big.js';
+import BaseBigJS from 'big.js';
 import toformat from 'toformat';
 
-toformat(BigJS);
+const BigJS = toformat(BaseBigJS);
+export type Big = typeof BigJS;
 
 const PRECISION = 4;
-
-export type Big = BigJS;
 
 export function toFixed(a: any, b: any, precision?: number): string {
 	if (isZero(toBig(a)) || isZero(toBig(b))) {
@@ -16,11 +15,11 @@ export function toFixed(a: any, b: any, precision?: number): string {
 		.toFormat(precision ?? PRECISION);
 }
 
-export function formatUnits(a: any, decimals: number, precision?: number): Big {
+export function formatUnits(a: any, decimals: number, precision?: number): string {
 	return toFixed(a, toBig(10).pow(decimals), precision);
 }
 
-export function isZero(a: any): Big {
+export function isZero(a: any): boolean {
 	return toBig(a).eq(toBig('0'));
 }
 
