@@ -642,6 +642,8 @@
 					"balance": "Balance",
 					"price": "Price",
 					"holdings": "Holdings %",
+					"total": "Total",
+					"percentage-of-pool": "% of pool",
 					"debt-pool-proportion": "% of Global Debt",
 					"no-synths": {
 						"title": "You have no Synths",

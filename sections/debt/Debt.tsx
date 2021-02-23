@@ -15,6 +15,8 @@ import { zeroBN } from 'utils/formatters/number';
 
 import Info from 'assets/svg/app/info.svg';
 
+import SynthsTable from './components/SynthsTable';
+
 const DebtSection = () => {
 	const { t } = useTranslation();
 	const synthsBalancesQuery = useSynthsBalancesQuery();
@@ -32,87 +34,108 @@ const DebtSection = () => {
 	const totalSupply = synthsTotalSupplyQuery.isSuccess ? synthsTotalSupplyQuery.data : undefined;
 	const dataIsLoading = historicalDebt?.isLoading ?? false;
 
-	const PortfolioHeader = (
-		<PortfolioHeaderContainer>
-			<span>{t('debt.actions.hedge.info.portfolio-table.title')}</span>
-			<DebtInfoTooltip
-				arrow={false}
-				content={
-					<Trans i18nKey="debt.actions.hedge.info.tooltip" components={[<Strong />]}></Trans>
-				}
-			>
-				<TooltipIconContainer>
-					<ResizedInfoIcon src={Info} />
-				</TooltipIconContainer>
-			</DebtInfoTooltip>
-		</PortfolioHeaderContainer>
-	);
 	return (
 		<FlexDivCol>
-			<FlexDiv>
-				<Header>{t('debt.actions.track.title')}</Header>
-				<DebtInfoTooltip
-					arrow={false}
-					content={
-						<Trans
-							i18nKey="debt.actions.track.info.tooltip"
-							components={[<Strong />, <br />, <Strong />]}
-						></Trans>
-					}
-				>
-					<TooltipIconContainer>
-						<ResizedInfoIcon src={Info} />
-					</TooltipIconContainer>
-				</DebtInfoTooltip>
-			</FlexDiv>
-			<ChartSection>
-				<DebtChart data={historicalDebt.data} isLoading={dataIsLoading} />
-			</ChartSection>
-			{totalSupply && (
-				<Row>
-					<DebtPieChartContainer>
+			<Container>
+				<ContainerHeader>
+					<ContainerHeaderSection>
+						{t('debt.actions.track.title')}
+						<DebtInfoTooltip
+							arrow={false}
+							content={
+								<Trans
+									i18nKey="debt.actions.track.info.tooltip"
+									components={[<Strong />, <br />, <Strong />]}
+								></Trans>
+							}
+						>
+							<TooltipIconContainer>
+								<ResizedInfoIcon src={Info} />
+							</TooltipIconContainer>
+						</DebtInfoTooltip>
+					</ContainerHeaderSection>
+					<ContainerHeaderSection>legend</ContainerHeaderSection>
+				</ContainerHeader>
+				<ContainerBody>
+					<DebtChart data={historicalDebt.data} isLoading={dataIsLoading} />
+				</ContainerBody>
+			</Container>
+			<Row>
+				<DebtPieChartContainer>
+					<ContainerHeader>
+						{t('debt.actions.hedge.info.debt-pool-pie-chart.title')}
+					</ContainerHeader>
+					<ContainerBody style={{ padding: '24px 0' }}>
 						<DebtPieChart data={totalSupply} />
-					</DebtPieChartContainer>
-					<PortfolioContainer>
-						<AssetsTable
-							title={PortfolioHeader}
-							assets={synthAssets}
-							totalValue={totalSynthValue ?? zeroBN}
-							isLoading={synthsBalancesQuery.isLoading}
-							isLoaded={synthsBalancesQuery.isSuccess}
-							showHoldings={true}
-							showConvert={false}
-							showDebtPoolProportion={true}
-							synthsTotalSupply={totalSupply}
-						/>
-					</PortfolioContainer>
-				</Row>
-			)}
+					</ContainerBody>
+				</DebtPieChartContainer>
+				<PortfolioContainer>
+					<ContainerHeader>
+						<ContainerHeaderSection>
+							<span>{t('debt.actions.hedge.info.portfolio-table.title')}</span>
+							<DebtInfoTooltip
+								arrow={false}
+								content={
+									<Trans
+										i18nKey="debt.actions.hedge.info.tooltip"
+										components={[<Strong />]}
+									></Trans>
+								}
+							>
+								<TooltipIconContainer>
+									<ResizedInfoIcon src={Info} />
+								</TooltipIconContainer>
+							</DebtInfoTooltip>
+						</ContainerHeaderSection>
+					</ContainerHeader>
+					<ContainerBody style={{ padding: '24px 14px' }}>
+						<SynthsTable synths={[]} />
+					</ContainerBody>
+					{/* <AssetsTable
+						title={PortfolioHeader}
+						assets={synthAssets}
+						totalValue={totalSynthValue ?? zeroBN}
+						isLoading={synthsBalancesQuery.isLoading}
+						isLoaded={synthsBalancesQuery.isSuccess}
+						showHoldings={true}
+						showConvert={false}
+						showDebtPoolProportion={true}
+						synthsTotalSupply={totalSupply}
+					/> */}
+				</PortfolioContainer>
+			</Row>
 		</FlexDivCol>
 	);
 };
 
-const Header = styled.div`
-	color: ${(props) => props.theme.colors.white};
+const Container = styled(FlexDivCol)`
+	background: ${(props) => props.theme.colors.navy};
+`;
+
+const ContainerHeader = styled(FlexDiv)`
+	width: 100%;
+	padding: 14px 24px;
+	border-bottom: 1px solid ${(props) => props.theme.colors.grayBlue};
 	font-family: ${(props) => props.theme.fonts.extended};
-	font-size: 14px;
-	padding-bottom: 20px;
+	text-transform: uppercase;
+	font-size: 12px;
+	align-items: center;
+	justify-content: space-between;
 `;
 
-const ChartSection = styled.div`
-	background: ${(props) => props.theme.colors.navy};
-	padding: 32px;
+const ContainerHeaderSection = styled(FlexDiv)``;
+
+const ContainerBody = styled.div`
+	padding: 24px;
 `;
 
-const DebtPieChartContainer = styled(FlexDivCol)`
+const DebtPieChartContainer = styled(Container)`
 	width: 360px;
-	background: ${(props) => props.theme.colors.navy};
 `;
 
-const PortfolioContainer = styled(FlexDivCol)`
+const PortfolioContainer = styled(Container)`
 	width: 580px;
-	align-self: flex-start;
-	background: ${(props) => props.theme.colors.navy};
+	/* align-self: flex-start; */
 `;
 
 const DebtInfoTooltip = styled(Tooltip)`
@@ -125,15 +148,14 @@ const DebtInfoTooltip = styled(Tooltip)`
 	}
 `;
 
-const TooltipIconContainer = styled.div`
+const TooltipIconContainer = styled(FlexDiv)`
 	margin-left: 10px;
-	width: 23px;
-	height: 23px;
 	opacity: 0.6;
+	align-items: center;
 `;
 
 const ResizedInfoIcon = styled(Svg)`
-	transform: scale(2) translateX(2.5px);
+	transform: scale(1.4);
 `;
 
 const Strong = styled.strong`
