@@ -58,7 +58,7 @@ const FormButton: React.FC<FormButtonProps> = ({
 				/>
 			) : hasLowCollateralAmount ? (
 				<Trans
-					i18nKey="loans.tabs.new.button.less-collateral-label"
+					i18nKey="loans.tabs.new.button.low-collateral-label"
 					values={{
 						collateralAsset,
 						minCollateralAmountString,
