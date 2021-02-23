@@ -4,7 +4,7 @@ export type Loan = {
 	id: Big;
 	currency: string;
 	collateral: Big;
-	amount: string;
+	amount: Big;
 	type: string;
 	minCRatio: Big;
 	cratio: Big;

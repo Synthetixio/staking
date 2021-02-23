@@ -28,14 +28,14 @@ type BorrowModifyModalProps = {};
 
 export const BorrowModifyModal: React.FC<BorrowModifyModalProps> = () => {
 	const { t } = useTranslation();
-	const buttonRef = React.useRef();
+	const buttonRef = React.useRef<HTMLDivElement>(null);
 	const [{ top, left }, setPosition] = React.useState<any>({});
-	const [modalContainer, setModalContainer] = React.useState(null);
+	const [modalContainer, setModalContainer] = React.useState<HTMLElement | null>(null);
 
 	const open = top && left;
 
 	const onOpen = () => {
-		const el = buttonRef.current!;
+		const el: HTMLElement = buttonRef.current!;
 		const elRect = el.getBoundingClientRect();
 		const left = elRect.left - window.scrollX - 20;
 		const top = elRect.top + window.scrollY + MODAL_TOP_PADDING;

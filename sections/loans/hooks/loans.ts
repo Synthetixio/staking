@@ -169,7 +169,7 @@ export function useLoans() {
 			setIsLoading(true);
 
 			const loanIndices = await Promise.all(Object.keys(loanStateContracts).map(getLoanIndices));
-			const loans = await Promise.all(loanIndices.map(getLoans));
+			const loans: Array<any> = await Promise.all(loanIndices.map(getLoans));
 			let activeLoans: Array<any> = [];
 			for (let i = 0; i < loans.length; i++) {
 				for (let j = 0; j < loans[i].length; j++) {
@@ -200,14 +200,14 @@ export function useLoans() {
 			for (const type in loanContracts) {
 				const contract = loanContracts[type];
 
-				const fetchLoan = async (owner, id) =>
+				const fetchLoan = async (owner: string, id: string) =>
 					makeLoan({
 						loan: await loanStateContracts[type].getLoan(owner, id),
 						type,
 						minCRatio: await loanContracts[type].minCratio(),
 					});
 
-				const updateLoan = async (owner, id) => {
+				const updateLoan = async (owner: string, id: string) => {
 					const loan = await fetchLoan(owner, id);
 					setLoans((originalLoans) => {
 						const loans = originalLoans.slice();
@@ -221,16 +221,20 @@ export function useLoans() {
 					});
 				};
 
-				const onLoanCreated = async (owner, id) => {
+				const onLoanCreated = async (owner: string, id: string) => {
 					const loan = await fetchLoan(owner, id);
 					setLoans((loans) => [loan, ...loans]);
 				};
 
-				const onLoanClosed = (owner, id) => {
+				const onLoanClosed = (owner: string, id: string) => {
 					setLoans((loans) => loans.filter((loan) => !loan.id.eq(id)));
 				};
 
-				const onCollateralDeposited = async (owner, id, amount) => {
+				const onCollateralDeposited = async (
+					owner: string,
+					id: string,
+					amount: ethers.BigNumber
+				) => {
 					setLoans((loans) =>
 						loans.map((loan) => {
 							if (loan.id.eq(id)) {
@@ -242,7 +246,11 @@ export function useLoans() {
 					await updateLoan(owner, id);
 				};
 
-				const onCollateralWithdrawn = async (owner, id, amount) => {
+				const onCollateralWithdrawn = async (
+					owner: string,
+					id: string,
+					amount: ethers.BigNumber
+				) => {
 					setLoans((loans) =>
 						loans.map((loan) => {
 							if (loan.id.eq(id)) {
@@ -254,7 +262,12 @@ export function useLoans() {
 					await updateLoan(owner, id);
 				};
 
-				const onLoanRepaymentMade = async (borrower, repayer, id, payment) => {
+				const onLoanRepaymentMade = async (
+					borrower: string,
+					repayer: string,
+					id: string,
+					payment: ethers.BigNumber
+				) => {
 					setLoans((loans) =>
 						loans.map((loan) => {
 							if (loan.id.eq(id)) {
@@ -266,7 +279,7 @@ export function useLoans() {
 					await updateLoan(borrower, id);
 				};
 
-				const onLoanDrawnDown = async (owner, id, amount) => {
+				const onLoanDrawnDown = async (owner: string, id: string, amount: ethers.BigNumber) => {
 					setLoans((loans) =>
 						loans.map((loan) => {
 							if (loan.id.eq(id)) {
