@@ -1,4 +1,5 @@
 import React from 'react';
+import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import OutsideClickHandler from 'react-outside-click-handler';
@@ -20,18 +21,37 @@ const ACTIONS: Record<string, any> = {
 
 const ACTION_NAMES: Array<string> = Object.keys(ACTIONS);
 
+const MODAL_WIDTH: number = 105;
+const MODAL_TOP_PADDING: number = 15;
+
 type BorrowModifyModalProps = {};
 
 export const BorrowModifyModal: React.FC<BorrowModifyModalProps> = () => {
 	const { t } = useTranslation();
-	const [open, setOpen] = React.useState(false);
+	const buttonRef = React.useRef();
+	const [{ top, left }, setPosition] = React.useState<any>({});
+	const [modalContainer, setModalContainer] = React.useState(null);
 
-	const onOpen = () => setOpen(true);
-	const onClose = () => setOpen(false);
+	const open = top && left;
+
+	const onOpen = () => {
+		const el = buttonRef.current!;
+		const elRect = el.getBoundingClientRect();
+		const left = elRect.left - window.scrollX - 20;
+		const top = elRect.top + window.scrollY + MODAL_TOP_PADDING;
+		setPosition({ top, left });
+	};
+	const onClose = () => setPosition({});
+
+	React.useEffect(() => {
+		if (typeof window !== 'undefined') {
+			setModalContainer(document.getElementById('modal-container'));
+		}
+	}, []);
 
 	return (
 		<Menu>
-			<Button onClick={onOpen}>
+			<Button onClick={onOpen} ref={buttonRef}>
 				ACTIONS{' '}
 				<svg
 					width="12"
@@ -47,19 +67,22 @@ export const BorrowModifyModal: React.FC<BorrowModifyModalProps> = () => {
 				</svg>
 			</Button>
 
-			{!open ? null : (
-				<OutsideClickHandler onOutsideClick={onClose}>
-					<Container>
-						<ul>
-							{ACTION_NAMES.map((action) => (
-								<li key={action} onClick={onClose}>
-									{action}
-								</li>
-							))}
-						</ul>
-					</Container>
-				</OutsideClickHandler>
-			)}
+			{!open || !modalContainer
+				? null
+				: createPortal(
+						<OutsideClickHandler onOutsideClick={onClose}>
+							<Container {...{ top, left }}>
+								<ul>
+									{ACTION_NAMES.map((action) => (
+										<li key={action} onClick={onClose}>
+											{action}
+										</li>
+									))}
+								</ul>
+							</Container>
+						</OutsideClickHandler>,
+						modalContainer
+				  )}
 		</Menu>
 	);
 };
@@ -76,10 +99,14 @@ const Button = styled.div`
 	cursor: pointer;
 `;
 
-const Container = styled.div`
+const Container = styled.div<{
+	top: number;
+	left: number;
+}>`
 	position: absolute;
-	right: -15px;
-	width: 105px;
+	top: ${(props) => props.top}px;
+	left: ${(props) => props.left}px;
+	width: ${MODAL_WIDTH}px;
 	display: flex;
 	flex-direction: column;
 	justify-content: flex-start;
@@ -88,6 +115,7 @@ const Container = styled.div`
 	background: ${(props) => props.theme.colors.mediumBlue};
 	border: 1px solid ${(props) => props.theme.colors.navy};
 	border-radius: 4px;
+	font-size: 12px;
 
 	li {
 		padding: 10px 20px;

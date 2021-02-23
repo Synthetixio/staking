@@ -506,8 +506,8 @@
 					"low-cratio-label": "MINIMUM C-RATIO IS 150%",
 					"approve-label": "APPROVE <0>{{collateralAsset}}</0>",
 					"borrow-label": "BORROW <0>{{debtAsset}}</0>",
-					"approving-label": "APPROVING <0>{{collateralAsset}}</0>",
-					"borrowing-label": "BORROWING <0>{{debtAsset}}</0>"
+					"approving-label": "APPROVING...",
+					"borrowing-label": "BORROWING..."
 				},
 				"debt": {
 					"label": "Borrow"

@@ -78,6 +78,10 @@ const StyledTable = styled(Table)`
 			justify-content: flex-end;
 		}
 	}
+
+	.table-body {
+		min-height: 300px;
+	}
 `;
 
 const NoResultsMessage = styled.div`
