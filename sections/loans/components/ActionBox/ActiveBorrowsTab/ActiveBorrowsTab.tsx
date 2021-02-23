@@ -5,57 +5,64 @@ import { CellProps } from 'react-table';
 import Table from 'components/Table';
 import { Loan } from 'queries/loans/types';
 import { ACTION_BOX_WIDTH } from 'sections/loans/constants';
+import { useLoans } from 'sections/loans/hooks/loans';
+import { formatUnits } from 'utils/formatters/big-number';
+import LoanModifyModal from './LoanModifyModal';
 
-type BorrowSynthsTabProps = {};
+const COL_WIDTH = ACTION_BOX_WIDTH / 4 - 10;
 
-const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
+type ActiveBorrowsTabProps = {};
+
+const ActiveBorrowsTab: React.FC<ActiveBorrowsTabProps> = (props) => {
 	const { t } = useTranslation();
-	const isLoaded = true;
-	const width = ACTION_BOX_WIDTH / 4 - 10;
+	const { isLoading, loans } = useLoans();
+
+	const data: Array<any> = loans.map((loan) => ({
+		debt: `${formatUnits(loan.amount, 18, 2)} ${loan.debtAsset}`,
+		collateral: `${formatUnits(loan.collateral, 18, 2)} ${loan.collateralAsset}`,
+		pnl: `0 sUSD`,
+	}));
 
 	const columns = React.useMemo(
 		() => [
 			{
-				Header: <>{t('loans.tabs.list.types.loan')}</>,
-				accessor: 'type',
-				Cell: (cellProps: CellProps<Loan, Loan['loan']>) => null,
+				Header: <>{t('loans.tabs.list.types.debt')}</>,
+				accessor: 'debt',
 				sortable: true,
-				width,
+				width: COL_WIDTH,
 			},
 			{
 				Header: <>{t('loans.tabs.list.types.collateral')}</>,
 				accessor: 'collateral',
-				Cell: (cellProps: CellProps<Loan, Loan['collateral']>) => null,
 				sortable: true,
-				width,
+				width: COL_WIDTH,
 			},
 			{
-				Header: <>{t('loans.tabs.list.types.value')}</>,
-				accessor: 'value',
-				Cell: (cellProps: CellProps<Loan, Loan['value']>) => null,
+				Header: <>{t('loans.tabs.list.types.pnl')}</>,
+				accessor: 'pnl',
 				sortable: true,
-				width,
+				width: COL_WIDTH,
 			},
 			{
 				Header: <>{t('loans.tabs.list.types.modify')}</>,
 				id: 'modify',
-				Cell: (cellProps: CellProps<Loan>) => null,
-				width,
+				width: COL_WIDTH,
+				sortable: false,
+				Cell: (cellProps: CellProps<Loan>) => <LoanModifyModal />,
 			},
 		],
 		[]
 	);
 
-	const loans: Array<Loan> = [];
-
-	const noResultsMessage = null;
+	const noResultsMessage =
+		!isLoading && data.length === 0 ? (
+			<NoResultsMessage>You have no active borrows.</NoResultsMessage>
+		) : null;
 
 	return (
 		<StyledTable
 			palette="primary"
-			columns={columns}
-			data={loans}
-			isLoading={!isLoaded}
+			{...{ isLoading, columns, data }}
 			noResultsMessage={noResultsMessage}
 			showPagination={true}
 		/>
@@ -73,4 +80,10 @@ const StyledTable = styled(Table)`
 	}
 `;
 
-export default BorrowSynthsTab;
+const NoResultsMessage = styled.div`
+	text-align: center;
+	font-size: 12px;
+	padding: 20px 0 0;
+`;
+
+export default ActiveBorrowsTab;

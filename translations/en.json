@@ -503,7 +503,7 @@
 				"title": "Borrow Synths",
 				"button": {
 					"low-collateral-label": "MINIMUM COLLATERAL IS <0>{{minCollateralAmountString}}</0> <0>{{collateralAsset}}</0>",
-					"low-cratio-label": "MINIMUM CRATIO IS 150%",
+					"low-cratio-label": "MINIMUM C-RATIO IS 150%",
 					"approve-label": "APPROVE <0>{{collateralAsset}}</0>",
 					"borrow-label": "BORROW <0>{{debtAsset}}</0>",
 					"approving-label": "APPROVING <0>{{collateralAsset}}</0>",
@@ -519,9 +519,9 @@
 			"list": {
 				"title": "Active Borrows",
 				"types": {
-					"loan": "LOAN",
+					"debt": "LOAN",
 					"collateral": "COLLATERAL",
-					"value": "VALUE (sUSD)",
+					"pnl": "PNL (sUSD)",
 					"modify": "MODIFY"
 				}
 			}
