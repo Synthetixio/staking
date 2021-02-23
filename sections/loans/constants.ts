@@ -8,3 +8,5 @@ export const COLLATERAL_ASSETS: Array<string> = ['renBTC', 'ETH'];
 
 export const LOAN_TYPE_ERC20 = 'erc20';
 export const LOAN_TYPE_ETH = 'eth';
+
+export const MIN_CRATIO = 150;

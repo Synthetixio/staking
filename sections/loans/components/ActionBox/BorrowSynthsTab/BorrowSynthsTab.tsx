@@ -18,7 +18,7 @@ import { Synths } from 'constants/currency';
 import { renBTCToken } from 'contracts';
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
-import { DEBT_ASSETS } from 'sections/loans/constants';
+import { DEBT_ASSETS, MIN_CRATIO } from 'sections/loans/constants';
 
 import InterestRate from './InterestRate';
 import IssuanceFee from './IssuanceFee';
@@ -78,7 +78,7 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 			new ethers.Contract(collateralAddress, renBTCToken.abi, providerOrSigner),
 		[collateralIsETH, collateralAddress, providerOrSigner]
 	);
-	const hasLessCollateralAmount = React.useMemo(
+	const hasLowCollateralAmount = React.useMemo(
 		() => !isZero(collateralAmount) && collateralAmount.lt(minCollateralAmount),
 		[collateralAmount, minCollateralAmount]
 	);
@@ -103,6 +103,11 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 	const [isBorrowing, setIsBorrowing] = React.useState<boolean>(false);
 	const [isApproved, setIsApproved] = React.useState<boolean>(false);
 	const [error, setError] = React.useState<string | null>(null);
+
+	const hasLowCRatio = React.useMemo(
+		() => !isZero(collateralAmount) && !isZero(debtAmount) && cratio.lt(MIN_CRATIO),
+		[collateralAmount, debtAmount, cratio]
+	);
 
 	const onSetDebtAsset = React.useCallback(
 		(debtAsset: string): void => {
@@ -309,7 +314,7 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 
 				<SettingsContainer>
 					<SettingContainer>
-						<CRatio {...{ cratio }} />
+						<CRatio {...{ cratio, hasLowCRatio }} />
 					</SettingContainer>
 					<SettingContainer>
 						<InterestRate />
@@ -326,13 +331,13 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 			<FormButton
 				onClick={connectOrApproveOrTrade}
 				{...{
-					error,
 					isWalletConnected,
 					isApproved,
 					collateralAsset,
 					debtAsset,
 					minCollateralAmountString,
-					hasLessCollateralAmount,
+					hasLowCollateralAmount,
+					hasLowCRatio,
 					isApproving,
 					isBorrowing,
 				}}

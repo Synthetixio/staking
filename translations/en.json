@@ -502,7 +502,8 @@
 			"new": {
 				"title": "Borrow Synths",
 				"button": {
-					"less-collateral-label": "MINIMUM COLLATERAL IS <0>{{minCollateralAmountString}}</0> <0>{{collateralAsset}}</0>",
+					"low-collateral-label": "MINIMUM COLLATERAL IS <0>{{minCollateralAmountString}}</0> <0>{{collateralAsset}}</0>",
+					"low-cratio-label": "MINIMUM CRATIO IS 150%",
 					"approve-label": "APPROVE <0>{{collateralAsset}}</0>",
 					"borrow-label": "BORROW <0>{{debtAsset}}</0>",
 					"approving-label": "APPROVING <0>{{collateralAsset}}</0>",

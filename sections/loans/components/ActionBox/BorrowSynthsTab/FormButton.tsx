@@ -1,17 +1,16 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Trans, useTranslation } from 'react-i18next';
-
 import Button from 'components/Button';
 import { NoTextTransform } from 'styles/common';
 
 type FormButtonProps = {
 	collateralAsset: string;
 	debtAsset: string;
-	error: string | null;
 	isWalletConnected: boolean;
 	isApproved: boolean;
-	hasLessCollateralAmount: boolean;
+	hasLowCollateralAmount: boolean;
+	hasLowCRatio: boolean;
 	minCollateralAmountString: string;
 	isApproving: boolean;
 	isBorrowing: boolean;
@@ -21,10 +20,10 @@ type FormButtonProps = {
 const FormButton: React.FC<FormButtonProps> = ({
 	collateralAsset,
 	debtAsset,
-	error,
 	isWalletConnected,
 	isApproved,
-	hasLessCollateralAmount,
+	hasLowCollateralAmount,
+	hasLowCRatio,
 	minCollateralAmountString,
 	isApproving,
 	isBorrowing,
@@ -36,13 +35,11 @@ const FormButton: React.FC<FormButtonProps> = ({
 		<StyledCTA
 			variant="primary"
 			size="lg"
-			disabled={!!error || hasLessCollateralAmount || isApproving || isBorrowing}
+			disabled={hasLowCollateralAmount || hasLowCRatio || isApproving || isBorrowing}
 			{...{ onClick }}
 		>
 			{!isWalletConnected ? (
 				t('common.wallet.connect-wallet')
-			) : error ? (
-				t(error.toLowerCase())
 			) : isApproving ? (
 				<Trans
 					i18nKey="loans.tabs.new.button.approving-label"
@@ -59,9 +56,18 @@ const FormButton: React.FC<FormButtonProps> = ({
 					}}
 					components={[<NoTextTransform />]}
 				/>
-			) : hasLessCollateralAmount ? (
+			) : hasLowCollateralAmount ? (
 				<Trans
 					i18nKey="loans.tabs.new.button.less-collateral-label"
+					values={{
+						collateralAsset,
+						minCollateralAmountString,
+					}}
+					components={[<NoTextTransform />]}
+				/>
+			) : hasLowCRatio ? (
+				<Trans
+					i18nKey="loans.tabs.new.button.low-cratio-label"
 					values={{
 						collateralAsset,
 						minCollateralAmountString,
