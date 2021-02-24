@@ -668,7 +668,8 @@
 					"holdings": "Holdings %",
 					"total": "Total",
 					"percentage-of-pool": "% of pool",
-					"debt-pool-proportion": "% of Global Debt",
+					"percentage-of-portfolio": "% of portfolio",
+					"debt-pool-proportion": "% of global debt",
 					"no-synths": {
 						"title": "You have no Synths",
 						"desc": "Mint sUSD by staking your SNX"
@@ -905,6 +906,9 @@
 			"hours": "h",
 			"minutes": "m",
 			"seconds": "s"
+		},
+		"table": {
+			"no-data": "No Data"
 		}
 	},
 	"not-found": {

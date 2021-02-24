@@ -1,10 +1,11 @@
 import { FC } from 'react';
 import styled from 'styled-components';
 
-import { SynthsTotalSupplyData, SynthTotalSupply } from 'queries/synths/useSynthsTotalSupplyQuery';
+import { SynthTotalSupply, SynthsTotalSupplyData } from 'queries/synths/useSynthsTotalSupplyQuery';
+import useSynthsTotalSupplyQuery from 'queries/synths/useSynthsTotalSupplyQuery';
 
 import PieChart from 'components/PieChart';
-import SynthsTable from '../SynthsTable';
+import DebtPoolTable from '../DebtPoolTable';
 import colors from 'styles/theme/colors';
 
 const MIN_PERCENT_FOR_PIE_CHART = 0.03;
@@ -39,13 +40,17 @@ const BRIGHT_COLORS = [
 const synthDataSortFn = (a: SynthTotalSupply, b: SynthTotalSupply) =>
 	a.value.isLessThan(b.value) ? 1 : -1;
 
-type SynthsPieChartProps = {
+type DebtPieChartProps = {
 	data: SynthsTotalSupplyData;
 };
 
-const SynthsPieChart: FC<SynthsPieChartProps> = ({ data }) => {
-	if (!data) return null;
-	const sortedData = Object.values(data.supplyData).sort(synthDataSortFn);
+const SynthsPieChart: FC<DebtPieChartProps> = () => {
+	const synthsTotalSupplyQuery = useSynthsTotalSupplyQuery();
+	const totalSupply = synthsTotalSupplyQuery.isSuccess ? synthsTotalSupplyQuery.data : undefined;
+
+	const supplyData = totalSupply?.supplyData ?? [];
+	let pieData = [];
+	const sortedData = Object.values(supplyData).sort(synthDataSortFn);
 
 	const cutoffIndex = sortedData.findIndex((synth) =>
 		synth.poolProportion.isLessThan(MIN_PERCENT_FOR_PIE_CHART)
@@ -60,11 +65,11 @@ const SynthsPieChart: FC<SynthsPieChartProps> = ({ data }) => {
 		for (const data of remaining.slice(1)) {
 			remainingSupply.value = remainingSupply.value.plus(data.value);
 		}
-		remainingSupply.poolProportion = remainingSupply.value.div(data.totalValue);
+		remainingSupply.poolProportion = remainingSupply.value.div(totalSupply?.totalValue ?? 0);
 		topNSynths.push(remainingSupply);
 	}
 
-	const pieData = topNSynths
+	pieData = topNSynths
 		.sort((a, b) => (a.value.isLessThan(b.value) ? 1 : -1))
 		.map((supply, index) => ({
 			...supply,
@@ -77,7 +82,11 @@ const SynthsPieChart: FC<SynthsPieChartProps> = ({ data }) => {
 		<SynthsPieChartContainer>
 			<PieChart data={pieData} dataKey={'value'} />
 			<TableWrapper>
-				<SynthsTable synths={pieData} />
+				<DebtPoolTable
+					synths={pieData}
+					isLoading={synthsTotalSupplyQuery.isLoading}
+					isLoaded={synthsTotalSupplyQuery.isSuccess}
+				/>
 			</TableWrapper>
 		</SynthsPieChartContainer>
 	);

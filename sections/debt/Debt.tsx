@@ -2,12 +2,13 @@ import styled from 'styled-components';
 import { useTranslation, Trans } from 'react-i18next';
 import { Svg } from 'react-optimized-image';
 
-import { FlexDiv, FlexDivCol, LineSpacer, Row, StatsSection, Tooltip } from 'styles/common';
+import { FlexDiv, FlexDivCol, Row, Tooltip } from 'styles/common';
 import DebtChart from 'sections/debt/components/DebtChart';
 import DebtPieChart from 'sections/debt/components/DebtPieChart';
-import AssetsTable from 'sections/synths/AssetsTable';
 
-import useSynthsTotalSupplyQuery from 'queries/synths/useSynthsTotalSupplyQuery';
+import useSynthsTotalSupplyQuery, {
+	SynthsTotalSupplyData,
+} from 'queries/synths/useSynthsTotalSupplyQuery';
 import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
 import useHistoricalDebtData from 'hooks/useHistoricalDebtData';
 
@@ -15,7 +16,7 @@ import { zeroBN } from 'utils/formatters/number';
 
 import Info from 'assets/svg/app/info.svg';
 
-import SynthsTable from './components/SynthsTable';
+import PorfolioTable from './components/PortfolioTable';
 
 const DebtSection = () => {
 	const { t } = useTranslation();
@@ -31,7 +32,7 @@ const DebtSection = () => {
 		: zeroBN;
 
 	const synthsTotalSupplyQuery = useSynthsTotalSupplyQuery();
-	const totalSupply = synthsTotalSupplyQuery.isSuccess ? synthsTotalSupplyQuery.data : undefined;
+	const totalSupply = synthsTotalSupplyQuery?.data ?? [];
 	const dataIsLoading = historicalDebt?.isLoading ?? false;
 
 	return (
@@ -54,7 +55,6 @@ const DebtSection = () => {
 							</TooltipIconContainer>
 						</DebtInfoTooltip>
 					</ContainerHeaderSection>
-					<ContainerHeaderSection>legend</ContainerHeaderSection>
 				</ContainerHeader>
 				<ContainerBody>
 					<DebtChart data={historicalDebt.data} isLoading={dataIsLoading} />
@@ -66,7 +66,7 @@ const DebtSection = () => {
 						{t('debt.actions.hedge.info.debt-pool-pie-chart.title')}
 					</ContainerHeader>
 					<ContainerBody style={{ padding: '24px 0' }}>
-						<DebtPieChart data={totalSupply} />
+						<DebtPieChart data={totalSupply as SynthsTotalSupplyData} />
 					</ContainerBody>
 				</DebtPieChartContainer>
 				<PortfolioContainer>
@@ -89,19 +89,14 @@ const DebtSection = () => {
 						</ContainerHeaderSection>
 					</ContainerHeader>
 					<ContainerBody style={{ padding: '24px 14px' }}>
-						<SynthsTable synths={[]} />
+						<PorfolioTable
+							synths={synthAssets}
+							synthsTotalSupply={totalSupply as SynthsTotalSupplyData}
+							isLoading={synthsBalancesQuery.isLoading}
+							isLoaded={synthsBalancesQuery.isSuccess}
+							synthsTotalValue={totalSynthValue ?? zeroBN}
+						/>
 					</ContainerBody>
-					{/* <AssetsTable
-						title={PortfolioHeader}
-						assets={synthAssets}
-						totalValue={totalSynthValue ?? zeroBN}
-						isLoading={synthsBalancesQuery.isLoading}
-						isLoaded={synthsBalancesQuery.isSuccess}
-						showHoldings={true}
-						showConvert={false}
-						showDebtPoolProportion={true}
-						synthsTotalSupply={totalSupply}
-					/> */}
 				</PortfolioContainer>
 			</Row>
 		</FlexDivCol>
@@ -135,7 +130,7 @@ const DebtPieChartContainer = styled(Container)`
 
 const PortfolioContainer = styled(Container)`
 	width: 580px;
-	/* align-self: flex-start; */
+	align-self: flex-start;
 `;
 
 const DebtInfoTooltip = styled(Tooltip)`
@@ -160,11 +155,6 @@ const ResizedInfoIcon = styled(Svg)`
 
 const Strong = styled.strong`
 	font-family: ${(props) => props.theme.fonts.interBold};
-`;
-
-const PortfolioHeaderContainer = styled(FlexDiv)`
-	padding-left: 24px;
-	padding-top: 24px;
 `;
 
 export default DebtSection;
