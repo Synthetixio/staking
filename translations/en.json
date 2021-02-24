@@ -529,8 +529,14 @@
 			}
 		},
 		"info": {
-			"title": "Borrow Synths using your other assets",
-			"subtitle": "..."
+			"title": "Borrow Synths using other assets",
+			"subtitle": "Lorem ipsum dolor sit amet, consectetur id feugiat vel quis urna consequat in. Netus arcu massa purus dolor sit. Learn more."
+		},
+		"stats": {
+			"title": "STATS",
+			"asset": "ASSET",
+			"open-interest": "OPEN INTEREST",
+			"total": "Total"
 		}
 	},
 	"layer2": {
