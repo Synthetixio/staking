@@ -23,9 +23,8 @@ const CRatio: React.FC<CRatioProps> = ({ cratio, hasLowCRatio }) => {
 						content={
 							<TooltipText>
 								{hasLowCRatio
-									? `You can only short at 150% or higher. Your position will be
-						eligible for liquidation if it falls below 120%.`
-									: `Ensure your position stays above 120% to prevent liquidation.`}
+									? t('loans.tabs.new.low-cratio-tip')
+									: t('loans.tabs.new.healthy-cratio-tip')}
 							</TooltipText>
 						}
 						hideOnClick={true}

@@ -514,7 +514,9 @@
 				},
 				"collateral": {
 					"label": "Using"
-				}
+				},
+				"low-cratio-tip": "You can only borrow at 150% or higher. Your position will be eligible for liquidation if it falls below 120%.",
+				"healthy-cratio-tip": "Ensure your position stays above 120% to prevent liquidation."
 			},
 			"list": {
 				"title": "Active Borrows",
