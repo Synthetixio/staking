@@ -17,6 +17,7 @@ import { zeroBN } from 'utils/formatters/number';
 import Info from 'assets/svg/app/info.svg';
 
 import PorfolioTable from './components/PortfolioTable';
+import useCryptoBalances from 'hooks/useCryptoBalances';
 
 const DebtSection = () => {
 	const { t } = useTranslation();
@@ -26,6 +27,8 @@ const DebtSection = () => {
 			? synthsBalancesQuery.data
 			: null;
 	const synthAssets = synthBalances?.balances ?? [];
+	const cryptoBalances = useCryptoBalances();
+
 	const historicalDebt = useHistoricalDebtData();
 	const totalSynthValue = synthsBalancesQuery.isSuccess
 		? synthsBalancesQuery.data?.totalUSDBalance ?? zeroBN
@@ -90,7 +93,8 @@ const DebtSection = () => {
 					</ContainerHeader>
 					<ContainerBody style={{ padding: '24px 14px' }}>
 						<PorfolioTable
-							synths={synthAssets}
+							synthBalances={synthAssets}
+							cryptoBalances={cryptoBalances.balances}
 							synthsTotalSupply={totalSupply as SynthsTotalSupplyData}
 							isLoading={synthsBalancesQuery.isLoading}
 							isLoaded={synthsBalancesQuery.isSuccess}
