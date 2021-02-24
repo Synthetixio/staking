@@ -116,6 +116,7 @@ const Container = styled.div<{
 	border: 1px solid ${(props) => props.theme.colors.navy};
 	border-radius: 4px;
 	font-size: 12px;
+	padding: 10px 0;
 
 	li {
 		padding: 10px 20px;

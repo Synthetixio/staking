@@ -530,7 +530,8 @@
 		},
 		"info": {
 			"title": "Borrow Synths using other assets",
-			"subtitle": "Lorem ipsum dolor sit amet, consectetur id feugiat vel quis urna consequat in. Netus arcu massa purus dolor sit. Learn more."
+			"subtitle": "Lorem ipsum dolor sit amet, consectetur id feugiat vel quis urna consequat in. Netus arcu massa purus dolor sit.",
+			"learn-more": "Learn more."
 		},
 		"stats": {
 			"title": "STATS",

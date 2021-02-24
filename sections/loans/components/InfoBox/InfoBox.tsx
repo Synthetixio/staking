@@ -85,7 +85,12 @@ const InfoBox: React.FC = () => {
 			<Container>
 				<ContainerHeader>
 					<Title>{t('loans.info.title')}</Title>
-					<Subtitle>{t('loans.info.subtitle')}</Subtitle>
+					<Subtitle>
+						{t('loans.info.subtitle')}{' '}
+						<a href="/" target="_blank">
+							{t('loans.info.learn-more')}
+						</a>
+					</Subtitle>
 				</ContainerHeader>
 			</Container>
 
@@ -129,6 +134,12 @@ export default InfoBox;
 export const Root = styled.div`
 	& > div {
 		margin-bottom: 32px;
+	}
+
+	a,
+	a:visited {
+		color: ${(props) => props.theme.colors.blue};
+		text-decoration: none;
 	}
 `;
 
