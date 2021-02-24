@@ -315,7 +315,9 @@
 						"title": "Global Debt Pool"
 					},
 					"portfolio-table": {
-						"title": "Your Portfolio"
+						"title": "Your Portfolio",
+						"sETH-tooltip": "The sETH total includes other related assets such as <0>ETH</0> and <0>wETH</0>",
+						"sBTC-tooltip": "The sBTC total includes other related assets such as <0>wBTC</0> and <0>renBTC</0>"
 					},
 					"tooltip": "This table serves as a <0>hedging indicator</0>, showing the relationship between your Synth balances and the global debt pool"
 				}
