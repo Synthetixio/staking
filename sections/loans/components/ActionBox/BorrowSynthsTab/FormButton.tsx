@@ -103,4 +103,5 @@ const StyledCTA = styled(Button)`
 	box-shadow: 0px 0px 10px rgba(0, 209, 255, 0.9);
 	border-radius: 4px;
 	width: 100%;
+	text-transform: uppercase;
 `;

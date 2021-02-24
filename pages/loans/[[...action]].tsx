@@ -1,7 +1,8 @@
+import { useEffect } from 'react';
 import Head from 'next/head';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-
+import { useRouter } from 'next/router';
 import StatBox from 'components/StatBox';
 import { StatsSection, LineSpacer } from 'styles/common';
 import { formatCryptoCurrency } from 'utils/formatters/number';
@@ -10,8 +11,17 @@ import Main from 'sections/loans/index';
 
 const SNX_HEADER_DECIMALS = 2;
 
-const LoansPage = () => {
+type LoansPageProps = {};
+
+const LoansPage: React.FC<LoansPageProps> = () => {
 	const { t } = useTranslation();
+	const router = useRouter();
+
+	useEffect(() => {
+		if (router.asPath === '/loans') {
+			router.push('/loans/new');
+		}
+	}, []);
 
 	return (
 		<>

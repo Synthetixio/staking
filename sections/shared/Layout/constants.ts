@@ -14,7 +14,7 @@ export const MENU_LINKS: MenuLinks = [
 	},
 	{
 		i18nLabel: 'sidenav.loans',
-		link: ROUTES.Loans.New,
+		link: ROUTES.Loans.Home,
 	},
 	{
 		i18nLabel: 'sidenav.staking',
