@@ -501,6 +501,7 @@
 				"subtitle": "Deposit your SNX to complete the process of migrating your SNX from L1 to L2. You may experience a delay during the migration process before your SNX is available on L2",
 				"no-deposit": "No deposit history",
 				"warning": "Warning",
+				"temporarily-down": "SNX deposits are temporarily disabled. Please check <0>discord</0> for updates",
 				"metamask-only": "You are about to migrate funds to L2. Only Metamask is supported on L2, so make sure you are depositing from a Metamask wallet or a wallet that allows you to export your private key to Metamask.",
 				"layer2-withdraw-delay": "Once on L2, if you wish to withdraw your funds back to L1 it will take 7-10 days. On L2 there is currently limited functionality, including disabled transfers, and no usage for sUSD.",
 				"layer2-rewards": "SNX rewards for the first few weeks are low: Rewards will be 25k SNX a week for the 2 weeks between 2/1 and 2/15. Then, the synthetixDAO will assess the option of increasing the SNX rewards to incentivise further migration.",
@@ -553,6 +554,7 @@
 					},
 					"deposit-button": "Deposit {{depositAmount}}",
 					"disabled": "No SNX to deposit",
+					"disabled-down": "SNX deposits disabled",
 					"approve": {
 						"description": "Before depositing your SNX, please approve the Deposit contract.",
 						"button-label": "Approve contract"
