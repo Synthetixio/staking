@@ -1,12 +1,13 @@
 import { FC, useMemo } from 'react';
 import { CellProps } from 'react-table';
 import styled from 'styled-components';
-import { useTranslation } from 'react-i18next';
+import { useTranslation, Trans } from 'react-i18next';
+import { Svg } from 'react-optimized-image';
 import BigNumber from 'bignumber.js';
 
 import { useRecoilValue } from 'recoil';
 
-import { TableNoResults, TableNoResultsTitle, FlexDiv } from 'styles/common';
+import { TableNoResults, TableNoResultsTitle, FlexDiv, Tooltip } from 'styles/common';
 
 import { appReadyState } from 'store/app';
 import { CryptoBalance } from 'queries/walletBalances/types';
@@ -15,17 +16,21 @@ import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
 import Table from 'components/Table';
 import Currency from 'components/Currency';
+import SynthHolding from 'components/SynthHolding';
 
 import { ProgressBarType } from 'components/ProgressBar/ProgressBar';
 
 import { SynthsTotalSupplyData } from 'queries/synths/useSynthsTotalSupplyQuery';
 import { zeroBN } from 'utils/formatters/number';
-import SynthHolding from 'components/SynthHolding';
+import { CryptoCurrency, Synths } from 'constants/currency';
+
+import Info from 'assets/svg/app/info.svg';
 
 const SHOW_HEDGING_INDICATOR_THRESHOLD = new BigNumber(0.05);
 
 type DebtPoolTableProps = {
-	synths: any;
+	synthBalances: any;
+	cryptoBalances: any;
 	synthsTotalSupply: SynthsTotalSupplyData;
 	synthsTotalValue: BigNumber;
 	isLoading: boolean;
@@ -33,7 +38,8 @@ type DebtPoolTableProps = {
 };
 
 const DebtPoolTable: FC<DebtPoolTableProps> = ({
-	synths,
+	synthBalances,
+	cryptoBalances,
 	isLoading,
 	isLoaded,
 	synthsTotalSupply,
@@ -43,6 +49,56 @@ const DebtPoolTable: FC<DebtPoolTableProps> = ({
 	const { selectedPriceCurrency, selectPriceCurrencyRate } = useSelectedPriceCurrency();
 
 	const isAppReady = useRecoilValue(appReadyState);
+
+	const renBTCBalance = cryptoBalances.find(
+		(cryptoBalance: any) => cryptoBalance.currencyKey === CryptoCurrency.RENBTC
+	);
+	const wBTCBalance = cryptoBalances.find(
+		(cryptoBalance: any) => cryptoBalance.currencyKey === CryptoCurrency.WBTC
+	);
+	const wETHBalance = cryptoBalances.find(
+		(cryptoBalance: any) => cryptoBalance.currencyKey === CryptoCurrency.WETH
+	);
+	const ETHBalance = cryptoBalances.find(
+		(cryptoBalance: any) => cryptoBalance.currencyKey === CryptoCurrency.ETH
+	);
+
+	const mergedTotalValue = [renBTCBalance, wBTCBalance, wETHBalance, ETHBalance].reduce(
+		(total, current) => {
+			const usdValue = current?.usdBalance ?? zeroBN;
+			return total.plus(usdValue);
+		},
+		synthsTotalValue
+	);
+
+	const mergedBalances = synthBalances.map((synthBalance: any) => {
+		if (synthBalance.currencyKey === 'sBTC') {
+			const renBTCAmount = renBTCBalance?.balance ?? zeroBN;
+			const renBTCUSDAmount = renBTCBalance?.usdBalance ?? zeroBN;
+			const wBTCAmount = wBTCBalance?.balance ?? zeroBN;
+			const wBTCUSDAmount = wBTCBalance?.usdBalance ?? zeroBN;
+
+			return {
+				...synthBalance,
+				balance: synthBalance.balance.plus(renBTCAmount).plus(wBTCAmount),
+				usdBalance: synthBalance.usdBalance.plus(renBTCUSDAmount).plus(wBTCUSDAmount),
+			};
+		}
+		if (synthBalance.currencyKey === 'sETH') {
+			const wETHAmount = wETHBalance?.balance ?? zeroBN;
+			const wETHUSDAmount = wETHBalance?.usdBalance ?? zeroBN;
+			const ETHAmount = ETHBalance?.balance ?? zeroBN;
+			const ETHUSDAmount = ETHBalance?.usdBalance ?? zeroBN;
+
+			return {
+				...synthBalance,
+				balance: synthBalance.balance.plus(wETHAmount).plus(ETHAmount),
+				usdBalance: synthBalance.usdBalance.plus(wETHUSDAmount).plus(ETHUSDAmount),
+			};
+		}
+		return synthBalance;
+	});
+
 	const assetColumns = useMemo(() => {
 		if (!isAppReady) {
 			return [];
@@ -56,6 +112,9 @@ const DebtPoolTable: FC<DebtPoolTableProps> = ({
 					return (
 						<Legend>
 							<Currency.Name currencyKey={cellProps.value} showIcon={true} />
+							{(cellProps.value === Synths.sETH || cellProps.value === Synths.sBTC) && (
+								<PortfolioTableTooltip currencyKey={cellProps.value} />
+							)}
 						</Legend>
 					);
 				},
@@ -88,21 +147,21 @@ const DebtPoolTable: FC<DebtPoolTableProps> = ({
 				sortType: 'basic',
 				Cell: (cellProps: CellProps<CryptoBalance>) => {
 					let variant: ProgressBarType = 'rainbow';
-					if (synthsTotalSupply && synthsTotalSupply.supplyData && synthsTotalValue) {
+					if (synthsTotalSupply && synthsTotalSupply.supplyData && mergedTotalValue) {
 						const { currencyKey } = cellProps.row.original;
 						const poolCurrencyPercent = synthsTotalSupply.supplyData[currencyKey].poolProportion;
 
 						if (poolCurrencyPercent) {
-							const holdingPercent = synthsTotalValue.isZero()
+							const holdingPercent = mergedTotalValue.isZero()
 								? zeroBN
-								: cellProps.row.original.usdBalance.dividedBy(synthsTotalValue);
+								: cellProps.row.original.usdBalance.dividedBy(mergedTotalValue);
 							const deviationFromPool = holdingPercent.minus(poolCurrencyPercent);
 
-							if (deviationFromPool.isGreaterThanOrEqualTo(SHOW_HEDGING_INDICATOR_THRESHOLD)) {
-								variant = 'red-simple';
-							} else if (
-								deviationFromPool.isLessThanOrEqualTo(SHOW_HEDGING_INDICATOR_THRESHOLD.negated())
+							if (
+								deviationFromPool.abs().isGreaterThanOrEqualTo(SHOW_HEDGING_INDICATOR_THRESHOLD)
 							) {
+								variant = 'red-simple';
+							} else {
 								variant = 'green-simple';
 							}
 						}
@@ -112,7 +171,7 @@ const DebtPoolTable: FC<DebtPoolTableProps> = ({
 						<SynthHoldingWrapper>
 							<SynthHolding
 								usdBalance={cellProps.row.original.usdBalance}
-								totalUSDBalance={synthsTotalValue ?? zeroBN}
+								totalUSDBalance={mergedTotalValue ?? zeroBN}
 								progressBarVariant={variant}
 							/>
 						</SynthHoldingWrapper>
@@ -151,17 +210,17 @@ const DebtPoolTable: FC<DebtPoolTableProps> = ({
 		synthsTotalSupply,
 		selectPriceCurrencyRate,
 		selectedPriceCurrency.name,
-		synthsTotalValue,
+		mergedTotalValue,
 	]);
 
 	return (
 		<StyledTable
 			palette="primary"
 			columns={assetColumns}
-			data={synths && synths.length > 0 ? synths : []}
+			data={mergedBalances && mergedBalances.length > 0 ? mergedBalances : []}
 			isLoading={isLoading}
 			noResultsMessage={
-				isLoaded && synths.length === 0 ? (
+				isLoaded && mergedBalances.length === 0 ? (
 					<TableNoResults>
 						<TableNoResultsTitle>{t('common.table.no-data')}</TableNoResultsTitle>
 					</TableNoResults>
@@ -172,8 +231,30 @@ const DebtPoolTable: FC<DebtPoolTableProps> = ({
 	);
 };
 
+type PortfolioTableTooptipProps = {
+	currencyKey: string;
+};
+
+const PortfolioTableTooltip: FC<PortfolioTableTooptipProps> = ({ currencyKey }) => {
+	return (
+		<StyledTooltip
+			arrow={false}
+			content={
+				<Trans
+					i18nKey={`debt.actions.hedge.info.portfolio-table.${currencyKey}-tooltip`}
+					components={[<Strong />, <Strong />]}
+				></Trans>
+			}
+		>
+			<TooltipIconContainer>
+				<Svg src={Info} />
+			</TooltipIconContainer>
+		</StyledTooltip>
+	);
+};
+
 const Legend = styled(FlexDiv)`
-	align-items: baseline;
+	align-items: center;
 `;
 
 const SynthHoldingWrapper = styled.div`
@@ -191,6 +272,26 @@ const StyledTable = styled(Table)`
 			justify-content: flex-end;
 		}
 	}
+`;
+
+const StyledTooltip = styled(Tooltip)`
+	background: ${(props) => props.theme.colors.navy};
+	.tippy-arrow {
+		color: ${(props) => props.theme.colors.navy};
+	}
+	.tippy-content {
+		font-size: 14px;
+	}
+`;
+
+const TooltipIconContainer = styled(FlexDiv)`
+	margin-left: 14px;
+	align-items: center;
+	height: 100%;
+`;
+
+const Strong = styled.strong`
+	font-family: ${(props) => props.theme.fonts.interBold};
 `;
 
 export default DebtPoolTable;
