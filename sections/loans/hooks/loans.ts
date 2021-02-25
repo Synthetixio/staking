@@ -1,24 +1,17 @@
 import React from 'react';
 import { useRecoilValue } from 'recoil';
-import { Synths } from 'constants/currency';
 import { ethers } from 'ethers';
 import { isWalletConnectedState, walletAddressState, networkState } from 'store/wallet';
 import { appReadyState } from 'store/app';
 import Connector from 'containers/Connector';
 import synthetix from 'lib/synthetix';
 import { Big, toBig } from 'utils/formatters/big-number';
-import { LOAN_TYPE_ERC20, LOAN_TYPE_ETH } from 'sections/loans/constants';
+import { LOAN_TYPE_ERC20, LOAN_TYPE_ETH, SYNTH_BY_CURRENCY_KEY } from 'sections/loans/constants';
 import { Loan } from 'queries/loans/types';
 
 const COLLATERAL_ASSETS: Record<string, string> = {
 	[LOAN_TYPE_ERC20]: 'renBTC',
 	[LOAN_TYPE_ETH]: 'ETH',
-};
-
-const SYNTH_BY_CURRENCY_KEY = {
-	[ethers.utils.formatBytes32String(Synths.sUSD)]: Synths.sUSD,
-	[ethers.utils.formatBytes32String(Synths.sBTC)]: Synths.sBTC,
-	[ethers.utils.formatBytes32String(Synths.sETH)]: Synths.sETH,
 };
 
 export function useLoans() {
@@ -40,7 +33,7 @@ export function useLoans() {
 		return data;
 	};
 
-	const kovan = network!.name === 'kovan';
+	const kovan = network!?.name === 'kovan';
 	const erc20LoansSubgraphUrl = kovan
 		? 'https://api.thegraph.com/subgraphs/name/vbstreetz/collateral-erc20-loans-kovan'
 		: 'https://api.thegraph.com/subgraphs/name/vbstreetz/collateral-erc20-loans';

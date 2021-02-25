@@ -8,6 +8,7 @@ import { StatsSection, LineSpacer } from 'styles/common';
 import { formatCryptoCurrency } from 'utils/formatters/number';
 
 import Main from 'sections/loans/index';
+import { LoansProvider } from 'sections/loans/contexts/loans';
 
 const SNX_HEADER_DECIMALS = 2;
 
@@ -24,7 +25,7 @@ const LoansPage: React.FC<LoansPageProps> = () => {
 	}, [router.asPath, router.push]);
 
 	return (
-		<>
+		<LoansProvider>
 			<Head>
 				<title>{t('loans.page-title')}</title>
 			</Head>
@@ -51,7 +52,7 @@ const LoansPage: React.FC<LoansPageProps> = () => {
 			</StatsSection>
 			<LineSpacer />
 			<Main />
-		</>
+		</LoansProvider>
 	);
 };
 

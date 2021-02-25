@@ -4,8 +4,8 @@ import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import Table from 'components/Table';
 import { Loan } from 'queries/loans/types';
-import { ACTION_BOX_WIDTH } from 'sections/loans/constants';
-import { useLoans } from 'sections/loans/hooks/loans';
+import { ACTION_BOX_WIDTH, LOAN_TYPE_ETH } from 'sections/loans/constants';
+import { useLoans } from 'sections/loans/contexts/loans';
 import { formatUnits } from 'utils/formatters/big-number';
 import ModifyLoanMenu from './ModifyLoanMenu';
 
@@ -24,6 +24,7 @@ const LoanList: React.FC<LoanListProps> = ({ actions }) => {
 		collateral: `${formatUnits(loan.collateral, 18, 2)} ${loan.collateralAsset}`,
 		pnl: `0 sUSD`,
 		id: loan.id.toString(),
+		type: loan.type,
 	}));
 
 	const columns = React.useMemo(
@@ -52,7 +53,11 @@ const LoanList: React.FC<LoanListProps> = ({ actions }) => {
 				width: COL_WIDTH,
 				sortable: false,
 				Cell: (cellProps: CellProps<Loan>) => (
-					<ModifyLoanMenu loanId={cellProps.row.original.id} {...{ actions }} />
+					<ModifyLoanMenu
+						loanId={cellProps.row.original.id}
+						loanTypeIsEth={cellProps.row.original.type === LOAN_TYPE_ETH}
+						{...{ actions }}
+					/>
 				),
 			},
 		],

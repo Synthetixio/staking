@@ -503,7 +503,7 @@
 				"title": "Borrow Synths",
 				"button": {
 					"low-collateral-label": "MINIMUM COLLATERAL IS <0>{{minCollateralAmountString}}</0> <0>{{collateralAsset}}</0>",
-					"low-cratio-label": "MINIMUM C-RATIO IS 150%",
+					"low-cratio-label": "C-RATIO TOO LOW",
 					"approve-label": "APPROVE <0>{{collateralAsset}}</0>",
 					"borrow-label": "BORROW <0>{{debtAsset}}</0>",
 					"approving-label": "APPROVING...",
@@ -538,6 +538,13 @@
 			"asset": "ASSET",
 			"open-interest": "OPEN INTEREST",
 			"total": "TOTAL"
+		},
+		"modify-loan": {
+			"close": {
+				"repay-label": "REPAY",
+				"receive-label": "RECEIVE",
+				"button-label": "CLOSE LOAN"
+			}
 		}
 	},
 	"layer2": {

@@ -8,25 +8,22 @@ import Select from 'components/Select';
 
 type AssetInputProps = {
 	label: string;
-
 	asset: string;
-	setAsset: (tx: string) => void;
-
+	setAsset: (asset: string) => void;
 	amount: string;
-	setAmount: (tx: string) => void;
-
+	setAmount: (amount: string) => void;
 	assets: Array<string>;
+	disabled?: boolean;
 };
 
 const AssetInput: React.FC<AssetInputProps> = ({
 	label,
 	asset,
 	setAsset,
-
 	amount,
 	setAmount,
-
 	assets,
+	disabled,
 }) => {
 	const { t } = useTranslation();
 	const options = assets.map((value) => ({ label: value, value }));
@@ -34,7 +31,7 @@ const AssetInput: React.FC<AssetInputProps> = ({
 	return (
 		<Container>
 			<SelectContainer>
-				<SelectLabel>{t(`loans.tabs.new.${label}.label`)}</SelectLabel>
+				<SelectLabel>{t(label)}</SelectLabel>
 				<SelectInput>
 					<Select
 						inputId={`${label}-asset-options`}
@@ -47,6 +44,7 @@ const AssetInput: React.FC<AssetInputProps> = ({
 							}
 						}}
 						variant="outline"
+						{...{ disabled }}
 					/>
 				</SelectInput>
 			</SelectContainer>

@@ -1,5 +1,4 @@
 import React from 'react';
-import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import { ethers } from 'ethers';
@@ -9,7 +8,6 @@ import { appReadyState } from 'store/app';
 import Connector from 'containers/Connector';
 import Notify from 'containers/Notify';
 import synthetix from 'lib/synthetix';
-import { FlexDivColCentered } from 'styles/common';
 import GasSelector from 'components/GasSelector';
 import { Big, toBig, isZero, formatUnits } from 'utils/formatters/big-number';
 import { tx } from 'utils/transactions';
@@ -19,6 +17,13 @@ import { renBTCToken } from 'contracts';
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import { DEBT_ASSETS, MIN_CRATIO } from 'sections/loans/constants';
+import {
+	FormContainer,
+	InputsContainer,
+	InputsDivider,
+	SettingsContainer,
+	SettingContainer,
+} from 'sections/loans/components/common';
 
 import InterestRate from './InterestRate';
 import IssuanceFee from './IssuanceFee';
@@ -291,26 +296,26 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 
 	return (
 		<>
-			<Container>
-				<AssetInputsContainer>
+			<FormContainer>
+				<InputsContainer>
 					<AssetInput
-						label="debt"
+						label="loans.tabs.new.debt.label"
 						asset={debtAsset}
 						setAsset={onSetDebtAsset}
 						amount={debtAmountNumber}
 						setAmount={onSetDebtAmount}
 						assets={DEBT_ASSETS}
 					/>
-					<AssetInputDivider />
+					<InputsDivider />
 					<AssetInput
-						label="collateral"
+						label="loans.tabs.new.collateral.label"
 						asset={collateralAsset}
 						setAsset={setCollateralAsset}
 						amount={collateralAmountNumber}
 						setAmount={onSetCollateralAmount}
 						assets={collateralAssets}
 					/>
-				</AssetInputsContainer>
+				</InputsContainer>
 
 				<SettingsContainer>
 					<SettingContainer>
@@ -326,7 +331,7 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 						<GasSelector gasLimitEstimate={gasLimitEstimate} setGasPrice={setGasPrice} />
 					</SettingContainer>
 				</SettingsContainer>
-			</Container>
+			</FormContainer>
 
 			<FormButton
 				onClick={connectOrApproveOrTrade}
@@ -345,37 +350,5 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 		</>
 	);
 };
-
-//
-
-export const Container = styled(FlexDivColCentered)`
-	justify-content: space-between;
-	background: ${(props) => props.theme.colors.black};
-	position: relative;
-	width: 100%;
-	padding: 16px;
-	margin-bottom: 24px;
-`;
-
-const AssetInputsContainer = styled.div`
-	display: grid;
-	grid-template-columns: 1fr 1px 1fr;
-	align-items: center;
-`;
-
-const AssetInputDivider = styled.div`
-	background: #161b44;
-	height: 92px;
-	width: 1px;
-`;
-
-const SettingsContainer = styled.div`
-	width: 100%;
-	margin-bottom: 16px;
-`;
-
-const SettingContainer = styled.div`
-	border-bottom: ${(props) => `1px solid ${props.theme.colors.grayBlue}`};
-`;
 
 export default BorrowSynthsTab;

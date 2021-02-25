@@ -18,13 +18,18 @@ const ACTIONS: Record<string, any> = {
 const ACTION_NAMES: Array<string> = Object.keys(ACTIONS);
 
 type ActiveBorrowsTabProps = {
-	loanId: number;
+	loanId: string;
 	loanAction: string;
+	loanTypeIsEth: boolean;
 };
 
-const ActiveBorrowsTab: React.FC<ActiveBorrowsTabProps> = ({ loanId, loanAction }) => {
+const ActiveBorrowsTab: React.FC<ActiveBorrowsTabProps> = ({
+	loanId,
+	loanAction,
+	loanTypeIsEth,
+}) => {
 	const Action = ACTIONS[loanAction];
-	return Action ? <Action {...{ loanId }} /> : <LoanList actions={ACTION_NAMES} />;
+	return Action ? <Action {...{ loanId, loanTypeIsEth }} /> : <LoanList actions={ACTION_NAMES} />;
 };
 
 export default ActiveBorrowsTab;
