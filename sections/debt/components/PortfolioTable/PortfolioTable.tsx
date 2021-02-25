@@ -157,11 +157,11 @@ const DebtPoolTable: FC<DebtPoolTableProps> = ({
 								: cellProps.row.original.usdBalance.dividedBy(mergedTotalValue);
 							const deviationFromPool = holdingPercent.minus(poolCurrencyPercent);
 
-							if (deviationFromPool.isGreaterThanOrEqualTo(SHOW_HEDGING_INDICATOR_THRESHOLD)) {
-								variant = 'red-simple';
-							} else if (
-								deviationFromPool.isLessThanOrEqualTo(SHOW_HEDGING_INDICATOR_THRESHOLD.negated())
+							if (
+								deviationFromPool.abs().isGreaterThanOrEqualTo(SHOW_HEDGING_INDICATOR_THRESHOLD)
 							) {
+								variant = 'red-simple';
+							} else {
 								variant = 'green-simple';
 							}
 						}
