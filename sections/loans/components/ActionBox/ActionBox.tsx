@@ -6,13 +6,26 @@ import { ACTION_BOX_WIDTH } from 'sections/loans/constants';
 import BorrowSynthsTab from './BorrowSynthsTab/BorrowSynthsTab';
 import ActiveBorrowsTab from './ActiveBorrowsTab/ActiveBorrowsTab';
 
-type ActionBoxProps = {
-	currentTab: string;
-};
+type ActionBoxProps = {};
 
-const ActionBox: React.FC<ActionBoxProps> = ({ currentTab }) => {
+const ActionBox: React.FC<ActionBoxProps> = ({}) => {
 	const { t } = useTranslation();
 	const router = useRouter();
+
+	const action = router.query.action!;
+	let currentTab = 'list';
+	let loanId: number = 0;
+	let loanIdString: string = '',
+		loanAction: string = '';
+	if (action) {
+		loanIdString = action[0];
+	}
+	if (!loanIdString || loanIdString === 'new') {
+		currentTab = 'new';
+	} else {
+		loanId = parseInt(loanIdString);
+		loanAction = action[1];
+	}
 
 	const tabData = useMemo(
 		() => [
@@ -24,12 +37,12 @@ const ActionBox: React.FC<ActionBoxProps> = ({ currentTab }) => {
 			},
 			{
 				title: t('loans.tabs.list.title'),
-				tabChildren: <ActiveBorrowsTab />,
+				tabChildren: <ActiveBorrowsTab {...{ loanId, loanAction }} />,
 				key: 'list',
 				blue: true,
 			},
 		],
-		[t]
+		[t, loanId, loanAction]
 	);
 
 	return (

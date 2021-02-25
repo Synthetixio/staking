@@ -8,13 +8,10 @@ import ActionBox from './components/ActionBox/ActionBox';
 import InfoBox from './components/InfoBox/InfoBox';
 
 const Index: React.FC = () => {
-	const router = useRouter();
-	const defaultTab = (router.query.action && router.query.action[0]) || 'new';
-
 	return (
 		<Row>
 			<ActionBoxCol>
-				<ActionBox currentTab={defaultTab} />
+				<ActionBox />
 			</ActionBoxCol>
 			<InfoBoxCol>
 				<InfoBox />

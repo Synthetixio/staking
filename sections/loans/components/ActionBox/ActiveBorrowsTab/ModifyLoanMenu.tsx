@@ -1,33 +1,23 @@
 import React from 'react';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
+import { useRouter } from 'next/router';
 import styled from 'styled-components';
 import OutsideClickHandler from 'react-outside-click-handler';
 import { zIndex } from 'constants/ui';
 
-import Deposit from './Deposit';
-import Withdraw from './Withdraw';
-import Repay from './Repay';
-import Draw from './Draw';
-import Close from './Close';
-
-const ACTIONS: Record<string, any> = {
-	DEPOSIT: Deposit,
-	WITHDRAW: Withdraw,
-	DRAW: Draw,
-	REPAY: Repay,
-	CLOSE: Close,
-};
-
-const ACTION_NAMES: Array<string> = Object.keys(ACTIONS);
-
 const MODAL_WIDTH: number = 105;
 const MODAL_TOP_PADDING: number = 15;
 
-type BorrowModifyModalProps = {};
+type BorrowModifyModalProps = {
+	actions: Array<string>;
+	loanId: string;
+};
 
-export const BorrowModifyModal: React.FC<BorrowModifyModalProps> = () => {
+const BorrowModifyModal: React.FC<BorrowModifyModalProps> = ({ actions, loanId }) => {
 	const { t } = useTranslation();
+	const router = useRouter();
+
 	const buttonRef = React.useRef<HTMLDivElement>(null);
 	const [{ top, left }, setPosition] = React.useState<any>({});
 	const [modalContainer, setModalContainer] = React.useState<HTMLElement | null>(null);
@@ -42,6 +32,10 @@ export const BorrowModifyModal: React.FC<BorrowModifyModalProps> = () => {
 		setPosition({ top, left });
 	};
 	const onClose = () => setPosition({});
+
+	const onStartModify = (action: string) => {
+		router.push(`/loans/${loanId}/${action}`);
+	};
 
 	React.useEffect(() => {
 		if (typeof window !== 'undefined') {
@@ -73,8 +67,8 @@ export const BorrowModifyModal: React.FC<BorrowModifyModalProps> = () => {
 						<OutsideClickHandler onOutsideClick={onClose}>
 							<Container {...{ top, left }}>
 								<ul>
-									{ACTION_NAMES.map((action) => (
-										<li key={action} onClick={onClose}>
+									{actions.map((action) => (
+										<li key={action} onClick={() => onStartModify(action)}>
 											{action}
 										</li>
 									))}
@@ -121,6 +115,7 @@ const Container = styled.div<{
 	li {
 		padding: 10px 20px;
 		cursor: pointer;
+		text-transform: uppercase;
 
 		&:hover {
 			opacity: 0.7;
