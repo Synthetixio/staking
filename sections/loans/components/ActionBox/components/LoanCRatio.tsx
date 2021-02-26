@@ -5,11 +5,11 @@ import { Synths } from 'constants/currency';
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import { MIN_CRATIO, SYNTH_BY_CURRENCY_KEY } from 'sections/loans/constants';
-import { LoanEntity } from 'queries/loans/types';
+import { Loan } from 'queries/loans/types';
 import CRatio from './CRatio';
 
 type LoanCRatioProps = {
-	loan: LoanEntity;
+	loan: Loan;
 	loanTypeIsETH: boolean;
 };
 

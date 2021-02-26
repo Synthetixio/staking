@@ -4,10 +4,10 @@ import { useTranslation } from 'react-i18next';
 import { FlexDivRow, FlexDivRowCentered } from 'styles/common';
 import { toFixed } from 'utils/formatters/big-number';
 import { SYNTH_BY_CURRENCY_KEY } from 'sections/loans/constants';
-import { LoanEntity } from 'queries/loans/types';
+import { Loan } from 'queries/loans/types';
 
 type AccruedInterestProps = {
-	loan: LoanEntity;
+	loan: Loan;
 };
 
 const AccruedInterest: React.FC<AccruedInterestProps> = ({ loan }) => {

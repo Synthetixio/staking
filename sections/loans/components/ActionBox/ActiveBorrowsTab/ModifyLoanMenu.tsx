@@ -1,31 +1,34 @@
 import React from 'react';
+import moment from 'moment';
 import { createPortal } from 'react-dom';
-import { useTranslation } from 'react-i18next';
+import { useTranslation, Trans } from 'react-i18next';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
+import { NoTextTransform } from 'styles/common';
 import OutsideClickHandler from 'react-outside-click-handler';
 import { zIndex } from 'constants/ui';
+import { Loan } from 'queries/loans/types';
+import { useConfig } from 'sections/loans/hooks/config';
+import { Big, toBig } from 'utils/formatters/big-number';
+import { LOAN_TYPE_ETH } from 'sections/loans/constants';
 
 const MODAL_WIDTH: number = 105;
 const MODAL_TOP_PADDING: number = 15;
 
 type BorrowModifyModalProps = {
 	actions: Array<string>;
-	loanId: string;
-	loanTypeIsETH: boolean;
+	loan: Loan;
 };
 
-const BorrowModifyModal: React.FC<BorrowModifyModalProps> = ({
-	actions,
-	loanId,
-	loanTypeIsETH,
-}) => {
+const BorrowModifyModal: React.FC<BorrowModifyModalProps> = ({ actions, loan }) => {
 	const { t } = useTranslation();
 	const router = useRouter();
+	const { interactionDelays } = useConfig();
 
 	const buttonRef = React.useRef<HTMLDivElement>(null);
 	const [{ top, left }, setPosition] = React.useState<any>({});
 	const [modalContainer, setModalContainer] = React.useState<HTMLElement | null>(null);
+	const [waitETA, setWaitETA] = React.useState<string>('');
 
 	const open = top && left;
 
@@ -39,7 +42,7 @@ const BorrowModifyModal: React.FC<BorrowModifyModalProps> = ({
 	const onClose = () => setPosition({});
 
 	const onStartModify = (action: string) => {
-		router.push(`/loans/${loanTypeIsETH ? 'eth' : 'erc20'}/${loanId}/${action}`);
+		router.push(`/loans/${loan.type === LOAN_TYPE_ETH ? 'eth' : 'erc20'}/${loan.id}/${action}`);
 	};
 
 	React.useEffect(() => {
@@ -47,6 +50,48 @@ const BorrowModifyModal: React.FC<BorrowModifyModalProps> = ({
 			setModalContainer(document.getElementById('modal-container'));
 		}
 	}, []);
+
+	const nextInteractionDate = React.useMemo(() => {
+		if (!(loan.type && interactionDelays && loan.type in interactionDelays)) return;
+		const interactionDelay = interactionDelays[loan.type];
+		return moment
+			.unix(parseInt(loan.lastInteraction.toString()))
+			.add(parseInt(interactionDelay.toString()), 'seconds');
+	}, [loan.type, loan.lastInteraction, interactionDelays]);
+
+	React.useEffect(() => {
+		if (!nextInteractionDate) return;
+
+		let isMounted = true;
+		const unsubs: Array<any> = [() => (isMounted = false)];
+
+		const timer = () => {
+			const intervalId = setInterval(() => {
+				const now = moment.utc();
+				if (now.isAfter(nextInteractionDate)) {
+					return stopTimer();
+				}
+				if (isMounted) {
+					setWaitETA(toHumanizedDuration(toBig(nextInteractionDate.diff(now, 'seconds'))));
+				}
+			}, 1000);
+
+			const stopTimer = () => {
+				if (isMounted) {
+					setWaitETA('');
+				}
+				clearInterval(intervalId);
+			};
+
+			unsubs.push(stopTimer);
+		};
+
+		timer();
+
+		return () => {
+			unsubs.forEach((unsub) => unsub());
+		};
+	}, [nextInteractionDate]);
 
 	return (
 		<Menu>
@@ -71,13 +116,23 @@ const BorrowModifyModal: React.FC<BorrowModifyModalProps> = ({
 				: createPortal(
 						<OutsideClickHandler onOutsideClick={onClose}>
 							<Container {...{ top, left }}>
-								<ul>
-									{actions.map((action) => (
-										<li key={action} onClick={() => onStartModify(action)}>
-											{action}
-										</li>
-									))}
-								</ul>
+								{waitETA ? (
+									<WaitETA>
+										<Trans
+											i18nKey={'loans.modify-loan.loan-interation-delay'}
+											values={{ waitETA }}
+											components={[<NoTextTransform />]}
+										/>
+									</WaitETA>
+								) : (
+									<ul>
+										{actions.map((action) => (
+											<li key={action} onClick={() => onStartModify(action)}>
+												{action}
+											</li>
+										))}
+									</ul>
+								)}
 							</Container>
 						</OutsideClickHandler>,
 						modalContainer
@@ -85,6 +140,34 @@ const BorrowModifyModal: React.FC<BorrowModifyModalProps> = ({
 		</Menu>
 	);
 };
+
+function toHumanizedDuration(ms: Big) {
+	const dur: Record<string, string> = {};
+	const units: Array<any> = [
+		{ label: 's', mod: 60 },
+		{ label: 'm', mod: 60 },
+		// { label: 'h', mod: 24 },
+		// { label: 'd', mod: 31 },
+		// {label: "w", mod: 7},
+	];
+	units.forEach((u) => {
+		const z = (dur[u.label] = ms.mod(u.mod));
+		ms = ms.sub(z).div(u.mod);
+	});
+	return units
+		.reverse()
+		.filter((u) => {
+			return u.label !== 'ms'; // && dur[u.label]
+		})
+		.map((u) => {
+			let val = dur[u.label];
+			if (u.label === 'm' || u.label === 's') {
+				val = val.toString().padStart(2, '0');
+			}
+			return val + u.label;
+		})
+		.join(':');
+}
 
 const Menu = styled.div`
 	position: relative;
@@ -126,6 +209,10 @@ const Container = styled.div<{
 			opacity: 0.7;
 		}
 	}
+`;
+
+const WaitETA = styled.div`
+	padding: 8px;
 `;
 
 export default BorrowModifyModal;

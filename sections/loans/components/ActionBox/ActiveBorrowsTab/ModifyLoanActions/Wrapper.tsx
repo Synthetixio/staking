@@ -16,7 +16,7 @@ import {
 	SettingContainer,
 } from 'sections/loans/components/common';
 import AssetInput from 'sections/loans/components/ActionBox/BorrowSynthsTab/AssetInput';
-import { LoanEntity } from 'queries/loans/types';
+import { Loan } from 'queries/loans/types';
 import AccruedInterest from 'sections/loans/components/ActionBox/components/AccruedInterest';
 import CRatio from 'sections/loans/components/ActionBox/components/LoanCRatio';
 
@@ -24,22 +24,24 @@ type WrapperProps = {
 	aLabel: string;
 	aAsset: string;
 	aAmountNumber: string;
-	onSetAAmount: (amount: string) => void;
+	onSetAAmount?: (amount: string) => void;
+	onSetAMaxAmount?: (amount: string) => void;
 
 	bLabel: string;
 	bAsset: string;
 	bAmountNumber: string;
-	onSetBAmount: (amount: string) => void;
+	onSetBAmount?: (amount: string) => void;
+	onSetBMaxAmount?: (amount: string) => void;
 
 	buttonLabel: string;
 	buttonIsDisabled: boolean;
 	onButtonClick: () => void;
 
-	loan: LoanEntity;
+	loan: Loan;
 	loanTypeIsETH: boolean;
 
 	showCRatio?: boolean;
-	showInterestAccrued?: booelan;
+	showInterestAccrued?: boolean;
 };
 
 const Wrapper: React.FC<WrapperProps> = ({
@@ -47,11 +49,13 @@ const Wrapper: React.FC<WrapperProps> = ({
 	aAsset,
 	aAmountNumber,
 	onSetAAmount,
+	onSetAMaxAmount,
 
 	bLabel,
 	bAsset,
 	bAmountNumber,
 	onSetBAmount,
+	onSetBMaxAmount,
 
 	buttonLabel,
 	buttonIsDisabled,
@@ -87,9 +91,10 @@ const Wrapper: React.FC<WrapperProps> = ({
 						asset={aAsset}
 						setAsset={onSetAAsset}
 						amount={aAmountNumber}
-						setAmount={onSetAAmount}
+						setAmount={onSetAAmount || noop}
 						assets={[aAsset]}
-						disabled={true}
+						disabled={!onSetAAmount}
+						onSetMaxAmount={onSetAMaxAmount}
 					/>
 					<InputsDivider />
 					<AssetInput
@@ -97,9 +102,10 @@ const Wrapper: React.FC<WrapperProps> = ({
 						asset={bAsset}
 						setAsset={onSetBAsset}
 						amount={bAmountNumber}
-						setAmount={onSetBAmount}
+						setAmount={onSetBAmount || noop}
 						assets={[bAsset]}
-						disabled={true}
+						disabled={!onSetBAmount}
+						onSetMaxAmount={onSetBMaxAmount}
 					/>
 				</InputsContainer>
 
@@ -126,6 +132,8 @@ const Wrapper: React.FC<WrapperProps> = ({
 		</>
 	);
 };
+
+function noop() {}
 
 const Header = styled(FlexDivRowCentered)`
 	justify-content: space-between;

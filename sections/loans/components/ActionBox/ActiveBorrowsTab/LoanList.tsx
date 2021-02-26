@@ -11,6 +11,13 @@ import ModifyLoanMenu from './ModifyLoanMenu';
 
 const COL_WIDTH = ACTION_BOX_WIDTH / 4 - 10;
 
+type LoanRowWrap = {
+	debt: string;
+	collateral: string;
+	pnl: string;
+	loan: Loan;
+};
+
 type LoanListProps = {
 	actions: Array<string>;
 };
@@ -19,12 +26,11 @@ const LoanList: React.FC<LoanListProps> = ({ actions }) => {
 	const { t } = useTranslation();
 	const { isLoading, loans } = useLoans();
 
-	const data: Array<any> = loans.map((loan) => ({
+	const data: Array<LoanRowWrap> = loans.map((loan: Loan) => ({
 		debt: `${formatUnits(loan.amount, 18, 2)} ${loan.debtAsset}`,
 		collateral: `${formatUnits(loan.collateral, 18, 2)} ${loan.collateralAsset}`,
 		pnl: `0 sUSD`,
-		id: loan.id.toString(),
-		type: loan.type,
+		loan,
 	}));
 
 	const columns = React.useMemo(
@@ -52,12 +58,8 @@ const LoanList: React.FC<LoanListProps> = ({ actions }) => {
 				id: 'modify',
 				width: COL_WIDTH,
 				sortable: false,
-				Cell: (cellProps: CellProps<Loan>) => (
-					<ModifyLoanMenu
-						loanId={cellProps.row.original.id}
-						loanTypeIsETH={cellProps.row.original.type === LOAN_TYPE_ETH}
-						{...{ actions }}
-					/>
+				Cell: (cellProps: CellProps<LoanRowWrap>) => (
+					<ModifyLoanMenu loan={cellProps.row.original.loan} {...{ actions }} />
 				),
 			},
 		],

@@ -3,7 +3,7 @@ import { useRecoilValue } from 'recoil';
 import { ethers } from 'ethers';
 import synthetix from 'lib/synthetix';
 import { walletAddressState } from 'store/wallet';
-import { LoanEntity } from 'queries/loans/types';
+import { Loan } from 'queries/loans/types';
 
 import Deposit from './Deposit';
 import Withdraw from './Withdraw';
@@ -30,7 +30,7 @@ type ActionsProps = {
 const Actions: FC<ActionsProps> = ({ loanId, loanAction, loanTypeIsETH }) => {
 	const address = useRecoilValue(walletAddressState);
 	const Action = ACTIONS[loanAction];
-	const [loan, setLoan] = useState<LoanEntity | null>(null);
+	const [loan, setLoan] = useState<Loan | null>(null);
 	const [loanContract, setLoanContract] = useState<ethers.Contract | null>(null);
 	const [loanStateContract, setLoanStateContract] = useState<ethers.Contract | null>(null);
 
@@ -53,7 +53,7 @@ const Actions: FC<ActionsProps> = ({ loanId, loanAction, loanTypeIsETH }) => {
 			const contract = loanTypeIsETH ? ethLoanStateContract : erc20LoanStateContract;
 			setLoanStateContract(contract);
 
-			const loan: LoanEntity = await contract.getLoan(address, loanId);
+			const loan: Loan = await contract.getLoan(address, loanId);
 			if (isMounted) {
 				setLoan(loan);
 			}

@@ -9,7 +9,7 @@ import Connector from 'containers/Connector';
 import Notify from 'containers/Notify';
 import synthetix from 'lib/synthetix';
 import GasSelector from 'components/GasSelector';
-import { Big, toBig, isZero, formatUnits } from 'utils/formatters/big-number';
+import { Big, toBig, isZero, formatUnits, toEthersBig } from 'utils/formatters/big-number';
 import { tx } from 'utils/transactions';
 import { normalizedGasPrice } from 'utils/network';
 import { Synths } from 'constants/currency';
@@ -25,7 +25,6 @@ import {
 	SettingContainer,
 } from 'sections/loans/components/common';
 
-import AccruedInterest from 'sections/loans/components/ActionBox/components/AccruedInterest';
 import CRatio from 'sections/loans/components/ActionBox/components/CRatio';
 import InterestRate from 'sections/loans/components/ActionBox/components/InterestRate';
 import IssuanceFee from 'sections/loans/components/ActionBox/components/IssuanceFee';
@@ -185,9 +184,6 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 		if (isZero(debtAmount)) {
 			return setError(`Enter ${debtAsset} amount..`);
 		}
-
-		const toEthersBig = (a: any, b: number) =>
-			ethers.utils.parseUnits(a.div(Math.pow(10, b)).toString(), b);
 
 		setIsBorrowing(true);
 		const debtAssetCurrencyKey = ethers.utils.formatBytes32String(debtAsset);

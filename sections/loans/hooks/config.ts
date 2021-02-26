@@ -4,7 +4,7 @@ import { useRecoilValue } from 'recoil';
 import { appReadyState } from 'store/app';
 import synthetix from 'lib/synthetix';
 import { LOAN_TYPE_ERC20, LOAN_TYPE_ETH } from 'sections/loans/constants';
-import { toBig } from 'utils/formatters/big-number';
+import { toBig, Big } from 'utils/formatters/big-number';
 
 const SECONDS_IN_A_YR = 365 * 24 * 60 * 60;
 
@@ -12,11 +12,11 @@ export function useConfig() {
 	const isAppReady = useRecoilValue(appReadyState);
 
 	const [interestRate, setInterestRate] = React.useState(toBig('0'));
-	const [issueFeeRates, setIssueFeeRates] = React.useState({
+	const [issueFeeRates, setIssueFeeRates] = React.useState<Record<string, Big>>({
 		[LOAN_TYPE_ERC20]: toBig('0'),
 		[LOAN_TYPE_ETH]: toBig('0'),
 	});
-	const [interactionDelays, setInteractionDelays] = React.useState({
+	const [interactionDelays, setInteractionDelays] = React.useState<Record<string, Big>>({
 		[LOAN_TYPE_ERC20]: toBig('0'),
 		[LOAN_TYPE_ETH]: toBig('0'),
 	});
