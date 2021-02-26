@@ -17,14 +17,15 @@ const useRenBTCBalanceQuery = (options?: QueryConfig<BigNumber>) => {
 	const walletAddress = useRecoilValue(walletAddressState);
 	const network = useRecoilValue(networkState);
 
+	const contract = new ethers.Contract(
+		renBTCToken.address,
+		renBTCToken.abi,
+		provider as ethers.providers.Provider
+	);
+
 	return useQuery<BigNumber>(
 		QUERY_KEYS.WalletBalances.RenBTC(walletAddress ?? '', network?.id!),
 		async () => {
-			const contract = new ethers.Contract(
-				renBTCToken.address,
-				renBTCToken.abi,
-				provider as ethers.providers.Provider
-			);
 			const balance = await contract.balanceOfUnderlying(walletAddress);
 			return toBigNumber(ethers.utils.formatUnits(balance, 8));
 		},

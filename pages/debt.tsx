@@ -2,7 +2,7 @@ import React from 'react';
 import Head from 'next/head';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import { last } from 'lodash';
+import last from 'lodash/last';
 
 import { FlexDivCol, LineSpacer, StatsSection } from 'styles/common';
 
