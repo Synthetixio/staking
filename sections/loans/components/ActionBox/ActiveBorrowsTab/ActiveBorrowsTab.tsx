@@ -6,16 +6,16 @@ import LoanList from './LoanList';
 type ActiveBorrowsTabProps = {
 	loanId: string;
 	loanAction: string;
-	loanTypeIsEth: boolean;
+	loanTypeIsETH: boolean;
 };
 
 const ActiveBorrowsTab: React.FC<ActiveBorrowsTabProps> = ({
 	loanId,
 	loanAction,
-	loanTypeIsEth,
+	loanTypeIsETH,
 }) => {
 	return loanId ? (
-		<Action {...{ loanId, loanTypeIsEth, loanAction }} />
+		<Action {...{ loanId, loanTypeIsETH, loanAction }} />
 	) : (
 		<LoanList actions={ACTION_NAMES} />
 	);

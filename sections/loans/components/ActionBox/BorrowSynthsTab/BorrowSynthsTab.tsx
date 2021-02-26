@@ -25,9 +25,11 @@ import {
 	SettingContainer,
 } from 'sections/loans/components/common';
 
-import InterestRate from './InterestRate';
-import IssuanceFee from './IssuanceFee';
-import CRatio from './CRatio';
+import AccruedInterest from 'sections/loans/components/ActionBox/components/AccruedInterest';
+import CRatio from 'sections/loans/components/ActionBox/components/CRatio';
+import InterestRate from 'sections/loans/components/ActionBox/components/InterestRate';
+import IssuanceFee from 'sections/loans/components/ActionBox/components/IssuanceFee';
+
 import FormButton from './FormButton';
 import AssetInput from './AssetInput';
 

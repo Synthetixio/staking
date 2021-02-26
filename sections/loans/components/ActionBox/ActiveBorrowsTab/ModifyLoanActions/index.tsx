@@ -24,10 +24,10 @@ export const ACTION_NAMES: Array<string> = Object.keys(ACTIONS);
 type ActionsProps = {
 	loanId: string;
 	loanAction: string;
-	loanTypeIsEth: boolean;
+	loanTypeIsETH: boolean;
 };
 
-const Actions: FC<ActionsProps> = ({ loanId, loanAction, loanTypeIsEth }) => {
+const Actions: FC<ActionsProps> = ({ loanId, loanAction, loanTypeIsETH }) => {
 	const address = useRecoilValue(walletAddressState);
 	const Action = ACTIONS[loanAction];
 	const [loan, setLoan] = useState<LoanEntity | null>(null);
@@ -48,9 +48,9 @@ const Actions: FC<ActionsProps> = ({ loanId, loanAction, loanTypeIsEth }) => {
 					CollateralStateErc20: erc20LoanStateContract,
 				},
 			} = synthetix.js!;
-			setLoanContract(loanTypeIsEth ? ethLoanContract : erc20LoanContract);
+			setLoanContract(loanTypeIsETH ? ethLoanContract : erc20LoanContract);
 
-			const contract = loanTypeIsEth ? ethLoanStateContract : erc20LoanStateContract;
+			const contract = loanTypeIsETH ? ethLoanStateContract : erc20LoanStateContract;
 			setLoanStateContract(contract);
 
 			const loan: LoanEntity = await contract.getLoan(address, loanId);
@@ -65,7 +65,7 @@ const Actions: FC<ActionsProps> = ({ loanId, loanAction, loanTypeIsEth }) => {
 	}, [address]);
 
 	return !loan ? null : (
-		<Action {...{ loanId, loanTypeIsEth, loan, loanContract, loanStateContract }} />
+		<Action {...{ loanId, loanTypeIsETH, loan, loanContract, loanStateContract }} />
 	);
 };
 

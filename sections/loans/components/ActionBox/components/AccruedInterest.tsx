@@ -16,7 +16,7 @@ const AccruedInterest: React.FC<AccruedInterestProps> = ({ loan }) => {
 
 	return (
 		<Container>
-			<Header>{t('loans.accrued-interest')}</Header>
+			<Header>{t('loans.interest-accrued')}</Header>
 			<FlexDivRowCentered>
 				<Item>
 					<Text>

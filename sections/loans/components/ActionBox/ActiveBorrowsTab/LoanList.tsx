@@ -55,7 +55,7 @@ const LoanList: React.FC<LoanListProps> = ({ actions }) => {
 				Cell: (cellProps: CellProps<Loan>) => (
 					<ModifyLoanMenu
 						loanId={cellProps.row.original.id}
-						loanTypeIsEth={cellProps.row.original.type === LOAN_TYPE_ETH}
+						loanTypeIsETH={cellProps.row.original.type === LOAN_TYPE_ETH}
 						{...{ actions }}
 					/>
 				),

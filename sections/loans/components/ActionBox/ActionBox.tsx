@@ -40,7 +40,7 @@ const ActionBox: React.FC<ActionBoxProps> = ({}) => {
 				title: t('loans.tabs.list.title'),
 				tabChildren: (
 					<ActiveBorrowsTab
-						loanTypeIsEth={loanType === LOAN_TYPE_ETH}
+						loanTypeIsETH={loanType === LOAN_TYPE_ETH}
 						{...{ loanId, loanAction }}
 					/>
 				),

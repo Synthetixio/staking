@@ -1,12 +1,12 @@
 import React from 'react';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
-import { Trans, useTranslation } from 'react-i18next';
+import { Trans } from 'react-i18next';
 import Button from 'components/Button';
 import { NoTextTransform } from 'styles/common';
 import { Svg } from 'react-optimized-image';
 import NavigationBack from 'assets/svg/app/navigation-back.svg';
-import { IconButton, FlexDivRowCentered, FlexDivColCentered } from 'styles/common';
+import { IconButton, FlexDivRowCentered } from 'styles/common';
 import GasSelector from 'components/GasSelector';
 import {
 	FormContainer,
@@ -17,7 +17,8 @@ import {
 } from 'sections/loans/components/common';
 import AssetInput from 'sections/loans/components/ActionBox/BorrowSynthsTab/AssetInput';
 import { LoanEntity } from 'queries/loans/types';
-import AccruedInterest from './components/AccruedInterest';
+import AccruedInterest from 'sections/loans/components/ActionBox/components/AccruedInterest';
+import CRatio from 'sections/loans/components/ActionBox/components/LoanCRatio';
 
 type WrapperProps = {
 	aLabel: string;
@@ -35,7 +36,10 @@ type WrapperProps = {
 	onButtonClick: () => void;
 
 	loan: LoanEntity;
-	debtAsset: string;
+	loanTypeIsETH: boolean;
+
+	showCRatio?: boolean;
+	showInterestAccrued?: booelan;
 };
 
 const Wrapper: React.FC<WrapperProps> = ({
@@ -54,7 +58,10 @@ const Wrapper: React.FC<WrapperProps> = ({
 	onButtonClick,
 
 	loan,
-	debtAsset,
+	loanTypeIsETH,
+
+	showCRatio,
+	showInterestAccrued,
 }) => {
 	const router = useRouter();
 
@@ -97,9 +104,16 @@ const Wrapper: React.FC<WrapperProps> = ({
 				</InputsContainer>
 
 				<SettingsContainer>
-					<SettingContainer>
-						<AccruedInterest {...{ loan }} />
-					</SettingContainer>
+					{!showCRatio ? null : (
+						<SettingContainer>
+							<CRatio {...{ loan, loanTypeIsETH }} />
+						</SettingContainer>
+					)}
+					{!showInterestAccrued ? null : (
+						<SettingContainer>
+							<AccruedInterest {...{ loan }} />
+						</SettingContainer>
+					)}
 					<SettingContainer>
 						<GasSelector gasLimitEstimate={gasLimitEstimate} setGasPrice={setGasPrice} />
 					</SettingContainer>

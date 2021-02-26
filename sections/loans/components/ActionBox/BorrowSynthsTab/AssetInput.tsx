@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { FlexDivCentered, FlexDivColCentered } from 'styles/common';
 import NumericInput from 'components/Input/NumericInput';
 import Select from 'components/Select';
-import Balance from 'sections/loans/components/ActionBox/Balance';
+import Balance from 'sections/loans/components/ActionBox/components/Balance';
 
 type AssetInputProps = {
 	label: string;

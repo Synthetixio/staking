@@ -12,13 +12,13 @@ const MODAL_TOP_PADDING: number = 15;
 type BorrowModifyModalProps = {
 	actions: Array<string>;
 	loanId: string;
-	loanTypeIsEth: boolean;
+	loanTypeIsETH: boolean;
 };
 
 const BorrowModifyModal: React.FC<BorrowModifyModalProps> = ({
 	actions,
 	loanId,
-	loanTypeIsEth,
+	loanTypeIsETH,
 }) => {
 	const { t } = useTranslation();
 	const router = useRouter();
@@ -39,7 +39,7 @@ const BorrowModifyModal: React.FC<BorrowModifyModalProps> = ({
 	const onClose = () => setPosition({});
 
 	const onStartModify = (action: string) => {
-		router.push(`/loans/${loanTypeIsEth ? 'eth' : 'erc20'}/${loanId}/${action}`);
+		router.push(`/loans/${loanTypeIsETH ? 'eth' : 'erc20'}/${loanId}/${action}`);
 	};
 
 	React.useEffect(() => {

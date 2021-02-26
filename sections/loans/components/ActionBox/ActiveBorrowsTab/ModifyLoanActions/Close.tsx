@@ -9,12 +9,12 @@ import Wrapper from './Wrapper';
 
 type CloseProps = {
 	loanId: number;
-	loanTypeIsEth: boolean;
+	loanTypeIsETH: boolean;
 	loan: LoanEntity;
 	loanContract: ethers.Contract;
 };
 
-const Close: React.FC<CloseProps> = ({ loan, loanId, loanTypeIsEth, loanContract }) => {
+const Close: React.FC<CloseProps> = ({ loan, loanId, loanTypeIsETH, loanContract }) => {
 	const [isClosing, setIsClosing] = useState<boolean>(false);
 	const router = useRouter();
 
@@ -38,6 +38,8 @@ const Close: React.FC<CloseProps> = ({ loan, loanId, loanTypeIsEth, loanContract
 		<Wrapper
 			{...{
 				loan,
+				loanTypeIsETH,
+				showInterestAccrued: true,
 
 				aLabel: 'loans.modify-loan.close.repay-label',
 				aAsset: SYNTH_BY_CURRENCY_KEY[loan.currency],
@@ -45,7 +47,7 @@ const Close: React.FC<CloseProps> = ({ loan, loanId, loanTypeIsEth, loanContract
 				onSetAAmount,
 
 				bLabel: 'loans.modify-loan.close.receive-label',
-				bAsset: loanTypeIsEth ? 'ETH' : 'renBTC',
+				bAsset: loanTypeIsETH ? 'ETH' : 'renBTC',
 				bAmountNumber: ethers.utils.formatUnits(loan.collateral, 18),
 				onSetBAmount,
 

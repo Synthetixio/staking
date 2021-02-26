@@ -498,7 +498,7 @@
 		"interest-rate": "Interest Rate",
 		"issuance-fee": "Issuance Fee",
 		"cratio": "C-Ratio",
-		"accrued-interest": "Accrued Interest",
+		"interest-accrued": "Interest Accrued",
 		"balance-input-label": "Balance:",
 		"tabs": {
 			"new": {
