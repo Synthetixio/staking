@@ -44,7 +44,7 @@ const AssetInput: React.FC<AssetInputProps> = ({
 							}
 						}}
 						variant="outline"
-						{...{ disabled }}
+						isDisabled={disabled}
 					/>
 				</SelectInput>
 			</SelectContainer>
@@ -54,6 +54,7 @@ const AssetInput: React.FC<AssetInputProps> = ({
 					value={amount}
 					placeholder="0.00"
 					onChange={(e) => setAmount(e.target.value)}
+					{...{ disabled }}
 				/>
 			</AmountContainer>
 		</Container>
@@ -66,6 +67,10 @@ export const Container = styled(FlexDivColCentered)`
 	margin: 24px auto;
 	padding-right: 12px;
 	justify-content: center;
+
+	.react-select--is-disabled {
+		opacity: 1;
+	}
 `;
 
 const SelectContainer = styled.div`

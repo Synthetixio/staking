@@ -1,21 +1,7 @@
 import React from 'react';
 
-import Deposit from './ModifyLoanActions/Deposit';
-import Withdraw from './ModifyLoanActions/Withdraw';
-import Repay from './ModifyLoanActions/Repay';
-import Draw from './ModifyLoanActions/Draw';
-import Close from './ModifyLoanActions/Close';
+import Action, { ACTION_NAMES } from './ModifyLoanActions';
 import LoanList from './LoanList';
-
-const ACTIONS: Record<string, any> = {
-	deposit: Deposit,
-	withdraw: Withdraw,
-	draw: Draw,
-	repay: Repay,
-	close: Close,
-};
-
-const ACTION_NAMES: Array<string> = Object.keys(ACTIONS);
 
 type ActiveBorrowsTabProps = {
 	loanId: string;
@@ -28,8 +14,11 @@ const ActiveBorrowsTab: React.FC<ActiveBorrowsTabProps> = ({
 	loanAction,
 	loanTypeIsEth,
 }) => {
-	const Action = ACTIONS[loanAction];
-	return Action ? <Action {...{ loanId, loanTypeIsEth }} /> : <LoanList actions={ACTION_NAMES} />;
+	return loanId ? (
+		<Action {...{ loanId, loanTypeIsEth, loanAction }} />
+	) : (
+		<LoanList actions={ACTION_NAMES} />
+	);
 };
 
 export default ActiveBorrowsTab;

@@ -14,3 +14,15 @@ export type Loan = {
 	collateralAsset: string;
 	debtAsset: string;
 };
+
+export type LoanEntity = {
+	id: Big;
+	account: string;
+	collateral: Big;
+	currency: string;
+	amount: Big;
+	short: boolean;
+	accruedInterest: Big;
+	interestIndex: Big;
+	lastInteraction: Big;
+};

@@ -1,6 +1,9 @@
 import React from 'react';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
+import { Trans, useTranslation } from 'react-i18next';
+import Button from 'components/Button';
+import { NoTextTransform } from 'styles/common';
 import { Svg } from 'react-optimized-image';
 import NavigationBack from 'assets/svg/app/navigation-back.svg';
 import { IconButton, FlexDivRowCentered, FlexDivColCentered } from 'styles/common';
@@ -13,7 +16,8 @@ import {
 	SettingContainer,
 } from 'sections/loans/components/common';
 import AssetInput from 'sections/loans/components/ActionBox/BorrowSynthsTab/AssetInput';
-import FormButton from './components/FormButton';
+import { LoanEntity } from 'queries/loans/types';
+import AccruedInterest from './components/AccruedInterest';
 
 type WrapperProps = {
 	aLabel: string;
@@ -27,6 +31,11 @@ type WrapperProps = {
 	onSetBAmount: (amount: string) => void;
 
 	buttonLabel: string;
+	buttonIsDisabled: boolean;
+	onButtonClick: () => void;
+
+	loan: LoanEntity;
+	debtAsset: string;
 };
 
 const Wrapper: React.FC<WrapperProps> = ({
@@ -41,6 +50,11 @@ const Wrapper: React.FC<WrapperProps> = ({
 	onSetBAmount,
 
 	buttonLabel,
+	buttonIsDisabled,
+	onButtonClick,
+
+	loan,
+	debtAsset,
 }) => {
 	const router = useRouter();
 
@@ -83,18 +97,18 @@ const Wrapper: React.FC<WrapperProps> = ({
 				</InputsContainer>
 
 				<SettingsContainer>
-					{/*
-          <SettingContainer>
-						<InterestRate />
-          </SettingContainer>
-          */}
+					<SettingContainer>
+						<AccruedInterest {...{ loan }} />
+					</SettingContainer>
 					<SettingContainer>
 						<GasSelector gasLimitEstimate={gasLimitEstimate} setGasPrice={setGasPrice} />
 					</SettingContainer>
 				</SettingsContainer>
 			</FormContainer>
 
-			<FormButton label={buttonLabel} />
+			<FormButton onClick={onButtonClick} variant="primary" size="lg" disabled={buttonIsDisabled}>
+				<Trans i18nKey={buttonLabel} values={{}} components={[<NoTextTransform />]} />
+			</FormButton>
 		</>
 	);
 };
@@ -103,6 +117,15 @@ const Header = styled(FlexDivRowCentered)`
 	justify-content: space-between;
 	width: 100%;
 	padding: 8px;
+`;
+
+const FormButton = styled(Button)`
+	font-size: 14px;
+	font-family: ${(props) => props.theme.fonts.condensedMedium};
+	box-shadow: 0px 0px 10px rgba(0, 209, 255, 0.9);
+	border-radius: 4px;
+	width: 100%;
+	text-transform: uppercase;
 `;
 
 export default Wrapper;

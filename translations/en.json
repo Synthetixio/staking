@@ -498,6 +498,7 @@
 		"interest-rate": "Interest Rate",
 		"issuance-fee": "Issuance Fee",
 		"cratio": "C-Ratio",
+		"accrued-interest": "Accrued Interest",
 		"tabs": {
 			"new": {
 				"title": "Borrow Synths",
@@ -543,7 +544,8 @@
 			"close": {
 				"repay-label": "REPAY",
 				"receive-label": "RECEIVE",
-				"button-label": "CLOSE LOAN"
+				"button-label": "CLOSE LOAN",
+				"progress-label": "CLOSING LOAN..."
 			}
 		}
 	},

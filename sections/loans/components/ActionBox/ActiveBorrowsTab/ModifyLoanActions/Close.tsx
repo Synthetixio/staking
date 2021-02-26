@@ -1,71 +1,59 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { ethers } from 'ethers';
-import synthetix from 'lib/synthetix';
-import Wrapper from './Wrapper';
-import { walletAddressState } from 'store/wallet';
-import { useRecoilValue } from 'recoil';
+import { useRouter } from 'next/router';
+
+import { LoanEntity } from 'queries/loans/types';
 import { SYNTH_BY_CURRENCY_KEY } from 'sections/loans/constants';
+import { tx } from 'utils/transactions';
+import Wrapper from './Wrapper';
 
 type CloseProps = {
 	loanId: number;
 	loanTypeIsEth: boolean;
+	loan: LoanEntity;
+	loanContract: ethers.Contract;
 };
 
-const Close: React.FC<CloseProps> = ({ loanId, loanTypeIsEth }) => {
-	const address = useRecoilValue(walletAddressState);
-
-	const [aAsset, setAAsset] = useState<string>('');
-	const [bAsset, setBAsset] = useState<string>('');
-
-	const [aAmountNumber, setAAmountNumber] = useState<string>('');
-	const [bAmountNumber, setBAmountNumber] = useState<string>('');
-
-	const [accruedInterest, setAccruedInterest] = useState<string>('');
+const Close: React.FC<CloseProps> = ({ loan, loanId, loanTypeIsEth, loanContract }) => {
+	const [isClosing, setIsClosing] = useState<boolean>(false);
+	const router = useRouter();
 
 	const onSetAAmount = () => {};
 	const onSetBAmount = () => {};
 
-	useEffect(() => {
-		if (!address) return;
-
-		let isMounted = true;
-		const load = async () => {
-			const {
-				contracts: {
-					CollateralStateEth: ethLoanStateContract,
-					CollateralStateErc20: erc20LoanStateContract,
-				},
-			} = synthetix.js!;
-			const contract = loanTypeIsEth ? ethLoanStateContract : erc20LoanStateContract;
-			const loan = await contract.getLoan(address, loanId);
-			if (isMounted) {
-				setAAsset(SYNTH_BY_CURRENCY_KEY[loan.currency]);
-				setBAsset(loanTypeIsEth ? 'ETH' : 'renBTC');
-				setAAmountNumber(ethers.utils.formatUnits(loan.amount, 18));
-				setBAmountNumber(ethers.utils.formatUnits(loan.collateral, 18));
-				setAccruedInterest(loan.accruedInterest.toString());
-			}
-		};
-		load();
-		return () => {
-			isMounted = false;
-		};
-	}, [address]);
+	const close = async () => {
+		try {
+			setIsClosing(true);
+			await tx(() => [loanContract, 'close', [loanId]], {
+				showErrorNotification: (e: string) => console.log(e),
+			});
+			router.push('/loans/list');
+		} catch {
+		} finally {
+			setIsClosing(false);
+		}
+	};
 
 	return (
 		<Wrapper
 			{...{
+				loan,
+
 				aLabel: 'loans.modify-loan.close.repay-label',
-				aAsset,
-				aAmountNumber,
+				aAsset: SYNTH_BY_CURRENCY_KEY[loan.currency],
+				aAmountNumber: ethers.utils.formatUnits(loan.amount, 18),
 				onSetAAmount,
 
 				bLabel: 'loans.modify-loan.close.receive-label',
-				bAsset,
-				bAmountNumber,
+				bAsset: loanTypeIsEth ? 'ETH' : 'renBTC',
+				bAmountNumber: ethers.utils.formatUnits(loan.collateral, 18),
 				onSetBAmount,
 
-				buttonLabel: 'loans.modify-loan.close.button-label',
+				buttonLabel: isClosing
+					? 'loans.modify-loan.close.progress-label'
+					: 'loans.modify-loan.close.button-label',
+				buttonIsDisabled: isClosing,
+				onButtonClick: close,
 			}}
 		/>
 	);

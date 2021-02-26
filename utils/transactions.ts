@@ -10,9 +10,9 @@ export const getGasEstimateForTransaction = async (txArgs: any[], method: Functi
 };
 
 type TxOptions = {
-	showErrorNotification: Function;
-	showProgressNotification: Function;
-	showSuccessNotification: Function;
+	showErrorNotification?: Function;
+	showProgressNotification?: Function;
+	showSuccessNotification?: Function;
 };
 
 export async function tx(makeTx: Function, options?: TxOptions): Promise<void> {
