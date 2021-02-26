@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import { ethers } from 'ethers';
 
 import { Loan } from 'queries/loans/types';
+import Notify from 'containers/Notify';
 import { tx } from 'utils/transactions';
 import Wrapper from './Wrapper';
 
@@ -13,6 +14,8 @@ type WithdrawProps = {
 };
 
 const Withdraw: React.FC<WithdrawProps> = ({ loan, loanId, loanTypeIsETH, loanContract }) => {
+	const { monitorHash } = Notify.useContainer();
+
 	const [isWithdrawing, setIsWithdrawing] = useState<boolean>(false);
 	const [withdrawalAmount, setWithdrawalAmount] = useState<string>('0');
 	const collateralAsset = loanTypeIsETH ? 'ETH' : 'renBTC';
@@ -40,6 +43,11 @@ const Withdraw: React.FC<WithdrawProps> = ({ loan, loanId, loanTypeIsETH, loanCo
 				() => [loanContract, 'withdraw', [loanId, ethers.utils.parseUnits(withdrawalAmount, 18)]],
 				{
 					showErrorNotification: (e: string) => console.log(e),
+					showProgressNotification: (hash: string) =>
+						monitorHash({
+							txHash: hash,
+							onTxConfirmed: () => {},
+						}),
 				}
 			);
 			loan.collateral = ethers.utils.parseUnits(remainingAmount, 18);

@@ -3,6 +3,7 @@ import { ethers } from 'ethers';
 import { useRouter } from 'next/router';
 
 import { Loan } from 'queries/loans/types';
+import Notify from 'containers/Notify';
 import { SYNTH_BY_CURRENCY_KEY } from 'sections/loans/constants';
 import { tx } from 'utils/transactions';
 import Wrapper from './Wrapper';
@@ -17,12 +18,18 @@ type CloseProps = {
 const Close: React.FC<CloseProps> = ({ loan, loanId, loanTypeIsETH, loanContract }) => {
 	const [isClosing, setIsClosing] = useState<boolean>(false);
 	const router = useRouter();
+	const { monitorHash } = Notify.useContainer();
 
 	const close = async () => {
 		try {
 			setIsClosing(true);
 			await tx(() => [loanContract, 'close', [loanId]], {
 				showErrorNotification: (e: string) => console.log(e),
+				showProgressNotification: (hash: string) =>
+					monitorHash({
+						txHash: hash,
+						onTxConfirmed: () => {},
+					}),
 			});
 			router.push('/loans/list');
 		} catch {

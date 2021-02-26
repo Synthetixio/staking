@@ -5,6 +5,7 @@ import { useRecoilValue } from 'recoil';
 import { walletAddressState } from 'store/wallet';
 import { Loan } from 'queries/loans/types';
 import { tx } from 'utils/transactions';
+import Notify from 'containers/Notify';
 import Wrapper from './Wrapper';
 
 type DepositProps = {
@@ -23,6 +24,7 @@ const Deposit: React.FC<DepositProps> = ({
 	collateralAssetContract,
 }) => {
 	const address = useRecoilValue(walletAddressState);
+	const { monitorHash } = Notify.useContainer();
 
 	const [isWorking, setIsWorking] = useState<string>('');
 	const [isApproved, setIsApproved] = useState(false);
@@ -69,7 +71,13 @@ const Deposit: React.FC<DepositProps> = ({
 	const approve = async () => {
 		try {
 			setIsWorking('approving');
-			await tx(() => [collateralAssetContract, 'approve', [loanContractAddress, depositAmount]]);
+			await tx(() => [collateralAssetContract, 'approve', [loanContractAddress, depositAmount]], {
+				showProgressNotification: (hash: string) =>
+					monitorHash({
+						txHash: hash,
+						onTxConfirmed: () => {},
+					}),
+			});
 
 			if (loanTypeIsETH || !(loanContractAddress && address)) return setIsApproved(true);
 			const allowance = await collateralAssetContract.allowance(address, loanContractAddress);
@@ -91,6 +99,11 @@ const Deposit: React.FC<DepositProps> = ({
 				],
 				{
 					showErrorNotification: (e: string) => console.log(e),
+					showProgressNotification: (hash: string) =>
+						monitorHash({
+							txHash: hash,
+							onTxConfirmed: () => {},
+						}),
 				}
 			);
 			loan.collateral = ethers.utils.parseUnits(totalAmount, 18);
