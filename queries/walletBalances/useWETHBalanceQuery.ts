@@ -17,14 +17,15 @@ const useWETHBalanceQuery = (options?: QueryConfig<BigNumber>) => {
 	const walletAddress = useRecoilValue(walletAddressState);
 	const network = useRecoilValue(networkState);
 
+	const contract = new ethers.Contract(
+		wETHToken.address,
+		wETHToken.abi,
+		provider as ethers.providers.Provider
+	);
+
 	return useQuery<BigNumber>(
 		QUERY_KEYS.WalletBalances.WETH(walletAddress ?? '', network?.id!),
 		async () => {
-			const contract = new ethers.Contract(
-				wETHToken.address,
-				wETHToken.abi,
-				provider as ethers.providers.Provider
-			);
 			const balance = await contract.balanceOf(walletAddress);
 			return toBigNumber(ethers.utils.formatEther(balance));
 		},
