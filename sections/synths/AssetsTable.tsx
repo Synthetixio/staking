@@ -37,7 +37,7 @@ import { zeroBN } from 'utils/formatters/number';
 import { isSynth } from 'utils/currencies';
 
 import SynthPriceCol from './components/SynthPriceCol';
-import SynthHolding from './components/SynthHolding';
+import SynthHolding from 'components/SynthHolding';
 import Link from 'next/link';
 
 type AssetsTableProps = {

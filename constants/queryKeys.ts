@@ -97,6 +97,24 @@ export const QUERY_KEYS = {
 			walletAddress,
 			networkId,
 		],
+		WETH: (walletAddress: string, networkId: NetworkId) => [
+			'walletBalance',
+			'wETH',
+			walletAddress,
+			networkId,
+		],
+		WBTC: (walletAddress: string, networkId: NetworkId) => [
+			'walletBalance',
+			'wBTC',
+			walletAddress,
+			networkId,
+		],
+		RenBTC: (walletAddress: string, networkId: NetworkId) => [
+			'walletBalance',
+			'renBTC',
+			walletAddress,
+			networkId,
+		],
 	},
 	Synths: {
 		FrozenSynths: ['synths', 'frozenSynths'],
@@ -109,6 +127,7 @@ export const QUERY_KEYS = {
 			baseCurrencyKey,
 		],
 		TotalIssuedSynths: ['synths', 'totalIssuedSynths'],
+		TotalSupply: ['synths', 'totalSupply'],
 	},
 	Trades: {
 		AllTrades: ['trades', 'allTrades'],
