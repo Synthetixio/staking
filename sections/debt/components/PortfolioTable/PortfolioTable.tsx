@@ -40,64 +40,82 @@ type DebtPoolTableProps = {
 const DebtPoolTable: FC<DebtPoolTableProps> = ({
 	synthBalances,
 	cryptoBalances,
-	isLoading,
-	isLoaded,
 	synthsTotalSupply,
 	synthsTotalValue,
+	isLoading,
+	isLoaded,
 }) => {
 	const { t } = useTranslation();
 	const { selectedPriceCurrency, selectPriceCurrencyRate } = useSelectedPriceCurrency();
 
 	const isAppReady = useRecoilValue(appReadyState);
 
-	const renBTCBalance = cryptoBalances.find(
-		(cryptoBalance: any) => cryptoBalance.currencyKey === CryptoCurrency.RENBTC
-	);
-	const wBTCBalance = cryptoBalances.find(
-		(cryptoBalance: any) => cryptoBalance.currencyKey === CryptoCurrency.WBTC
-	);
-	const wETHBalance = cryptoBalances.find(
-		(cryptoBalance: any) => cryptoBalance.currencyKey === CryptoCurrency.WETH
-	);
-	const ETHBalance = cryptoBalances.find(
-		(cryptoBalance: any) => cryptoBalance.currencyKey === CryptoCurrency.ETH
-	);
-
-	const mergedTotalValue = [renBTCBalance, wBTCBalance, wETHBalance, ETHBalance].reduce(
-		(total, current) => {
-			const usdValue = current?.usdBalance ?? zeroBN;
-			return total.plus(usdValue);
-		},
-		synthsTotalValue
+	const [renBTCBalance, wBTCBalance, wETHBalance, ETHBalance] = useMemo(
+		() => [
+			cryptoBalances.find(
+				(cryptoBalance: any) => cryptoBalance.currencyKey === CryptoCurrency.RENBTC
+			),
+			cryptoBalances.find(
+				(cryptoBalance: any) => cryptoBalance.currencyKey === CryptoCurrency.WBTC
+			),
+			cryptoBalances.find(
+				(cryptoBalance: any) => cryptoBalance.currencyKey === CryptoCurrency.WETH
+			),
+			cryptoBalances.find((cryptoBalance: any) => cryptoBalance.currencyKey === CryptoCurrency.ETH),
+		],
+		[cryptoBalances]
 	);
 
-	const mergedBalances = synthBalances.map((synthBalance: any) => {
-		if (synthBalance.currencyKey === 'sBTC') {
-			const renBTCAmount = renBTCBalance?.balance ?? zeroBN;
-			const renBTCUSDAmount = renBTCBalance?.usdBalance ?? zeroBN;
-			const wBTCAmount = wBTCBalance?.balance ?? zeroBN;
-			const wBTCUSDAmount = wBTCBalance?.usdBalance ?? zeroBN;
+	const mergedTotalValue = useMemo(
+		() =>
+			[renBTCBalance, wBTCBalance, wETHBalance, ETHBalance].reduce((total, current) => {
+				const usdValue = current?.usdBalance ?? zeroBN;
+				return total.plus(usdValue);
+			}, synthsTotalValue),
+		[ETHBalance, renBTCBalance, wBTCBalance, wETHBalance, synthsTotalValue]
+	);
 
-			return {
-				...synthBalance,
-				balance: synthBalance.balance.plus(renBTCAmount).plus(wBTCAmount),
-				usdBalance: synthBalance.usdBalance.plus(renBTCUSDAmount).plus(wBTCUSDAmount),
-			};
-		}
-		if (synthBalance.currencyKey === 'sETH') {
-			const wETHAmount = wETHBalance?.balance ?? zeroBN;
-			const wETHUSDAmount = wETHBalance?.usdBalance ?? zeroBN;
-			const ETHAmount = ETHBalance?.balance ?? zeroBN;
-			const ETHUSDAmount = ETHBalance?.usdBalance ?? zeroBN;
+	const mergedBalances = useMemo(
+		() =>
+			synthBalances.map((synthBalance: any) => {
+				if (synthBalance.currencyKey === Synths.sBTC) {
+					const renBTCAmount = renBTCBalance?.balance ?? zeroBN;
+					const renBTCUSDAmount = renBTCBalance?.usdBalance ?? zeroBN;
+					const wBTCAmount = wBTCBalance?.balance ?? zeroBN;
+					const wBTCUSDAmount = wBTCBalance?.usdBalance ?? zeroBN;
 
-			return {
-				...synthBalance,
-				balance: synthBalance.balance.plus(wETHAmount).plus(ETHAmount),
-				usdBalance: synthBalance.usdBalance.plus(wETHUSDAmount).plus(ETHUSDAmount),
-			};
-		}
-		return synthBalance;
-	});
+					return {
+						...synthBalance,
+						balance: synthBalance.balance.plus(renBTCAmount).plus(wBTCAmount),
+						usdBalance: synthBalance.usdBalance.plus(renBTCUSDAmount).plus(wBTCUSDAmount),
+					};
+				}
+				if (synthBalance.currencyKey === Synths.sETH) {
+					const wETHAmount = wETHBalance?.balance ?? zeroBN;
+					const wETHUSDAmount = wETHBalance?.usdBalance ?? zeroBN;
+					const ETHAmount = ETHBalance?.balance ?? zeroBN;
+					const ETHUSDAmount = ETHBalance?.usdBalance ?? zeroBN;
+
+					return {
+						...synthBalance,
+						balance: synthBalance.balance.plus(wETHAmount).plus(ETHAmount),
+						usdBalance: synthBalance.usdBalance.plus(wETHUSDAmount).plus(ETHUSDAmount),
+					};
+				}
+				return synthBalance;
+			}),
+		[
+			synthBalances,
+			ETHBalance?.balance,
+			ETHBalance?.usdBalance,
+			renBTCBalance?.balance,
+			renBTCBalance?.usdBalance,
+			wBTCBalance?.balance,
+			wBTCBalance?.usdBalance,
+			wETHBalance?.balance,
+			wETHBalance?.usdBalance,
+		]
+	);
 
 	const assetColumns = useMemo(() => {
 		if (!isAppReady) {

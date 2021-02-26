@@ -17,14 +17,15 @@ const useWBTCBalanceQuery = (options?: QueryConfig<BigNumber>) => {
 	const walletAddress = useRecoilValue(walletAddressState);
 	const network = useRecoilValue(networkState);
 
+	const contract = new ethers.Contract(
+		wBTCToken.address,
+		wBTCToken.abi,
+		provider as ethers.providers.Provider
+	);
+
 	return useQuery<BigNumber>(
 		QUERY_KEYS.WalletBalances.WBTC(walletAddress ?? '', network?.id!),
 		async () => {
-			const contract = new ethers.Contract(
-				wBTCToken.address,
-				wBTCToken.abi,
-				provider as ethers.providers.Provider
-			);
 			const balance = await contract.balanceOf(walletAddress);
 			return toBigNumber(ethers.utils.formatUnits(balance, 8));
 		},

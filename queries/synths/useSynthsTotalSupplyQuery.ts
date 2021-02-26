@@ -5,7 +5,7 @@ import BigNumber from 'bignumber.js';
 import synthetix from 'lib/synthetix';
 
 import QUERY_KEYS from 'constants/queryKeys';
-import { CurrencyKey } from 'constants/currency';
+import { CurrencyKey, Synths } from 'constants/currency';
 
 import { isWalletConnectedState } from 'store/wallet';
 import { appReadyState } from 'store/app';
@@ -44,10 +44,10 @@ const useSynthsTotalSupplyQuery = (options?: QueryConfig<SynthsTotalSupplyData>)
 				unformattedEthPrice,
 			] = await Promise.all([
 				SynthUtil.synthsTotalSupplies(),
-				CollateralManager.short(utils.formatBytes32String('sETH')),
-				CollateralManager.short(utils.formatBytes32String('sBTC')),
-				ExchangeRates.rateForCurrency(utils.formatBytes32String('sBTC')),
-				ExchangeRates.rateForCurrency(utils.formatBytes32String('sETH')),
+				CollateralManager.short(utils.formatBytes32String(Synths.sETH)),
+				CollateralManager.short(utils.formatBytes32String(Synths.sBTC)),
+				ExchangeRates.rateForCurrency(utils.formatBytes32String(Synths.sBTC)),
+				ExchangeRates.rateForCurrency(utils.formatBytes32String(Synths.sETH)),
 			]);
 
 			const [ethShorts, btcShorts, btcPrice, ethPrice] = [
@@ -66,9 +66,9 @@ const useSynthsTotalSupplyQuery = (options?: QueryConfig<SynthsTotalSupplyData>)
 				const totalSupply = toBigNumber(utils.formatEther(synthTotalSupplies[1][i]));
 
 				let combinedWithShortsValue = value;
-				if (name === 'iETH') {
+				if (name === Synths.iETH) {
 					combinedWithShortsValue = combinedWithShortsValue.plus(ethShorts.times(ethPrice));
-				} else if (name === 'iBTC') {
+				} else if (name === Synths.iBTC) {
 					combinedWithShortsValue = combinedWithShortsValue.plus(btcShorts.times(btcPrice));
 				}
 				supplyData.push({
