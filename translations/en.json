@@ -499,6 +499,7 @@
 		"issuance-fee": "Issuance Fee",
 		"cratio": "C-Ratio",
 		"accrued-interest": "Accrued Interest",
+		"balance-input-label": "Balance:",
 		"tabs": {
 			"new": {
 				"title": "Borrow Synths",

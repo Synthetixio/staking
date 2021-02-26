@@ -314,6 +314,7 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 						amount={collateralAmountNumber}
 						setAmount={onSetCollateralAmount}
 						assets={collateralAssets}
+						onSetMaxAmount={onSetCollateralAmount}
 					/>
 				</InputsContainer>
 

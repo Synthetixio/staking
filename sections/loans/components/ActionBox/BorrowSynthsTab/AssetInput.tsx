@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { FlexDivCentered, FlexDivColCentered } from 'styles/common';
 import NumericInput from 'components/Input/NumericInput';
 import Select from 'components/Select';
+import Balance from 'sections/loans/components/ActionBox/Balance';
 
 type AssetInputProps = {
 	label: string;
@@ -14,6 +15,7 @@ type AssetInputProps = {
 	setAmount: (amount: string) => void;
 	assets: Array<string>;
 	disabled?: boolean;
+	onSetMaxAmount?: (amount: string) => string;
 };
 
 const AssetInput: React.FC<AssetInputProps> = ({
@@ -24,6 +26,7 @@ const AssetInput: React.FC<AssetInputProps> = ({
 	setAmount,
 	assets,
 	disabled,
+	onSetMaxAmount,
 }) => {
 	const { t } = useTranslation();
 	const options = assets.map((value) => ({ label: value, value }));
@@ -57,6 +60,8 @@ const AssetInput: React.FC<AssetInputProps> = ({
 					{...{ disabled }}
 				/>
 			</AmountContainer>
+
+			<Balance {...{ asset, onSetMaxAmount }} />
 		</Container>
 	);
 };
