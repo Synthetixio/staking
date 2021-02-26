@@ -9,6 +9,7 @@ import { appReadyState } from 'store/app';
 import { walletAddressState } from 'store/wallet';
 import Connector from 'containers/Connector';
 import { formatUnits } from 'utils/formatters/big-number';
+import { useConfig } from 'sections/loans/hooks/config';
 
 type BalanceProps = {
 	asset: string;
@@ -89,6 +90,7 @@ const ERC20: React.FC<ERC20Props> = ({ asset, onSetMaxAmount }) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const [balance, setBalance] = React.useState<ethers.BigNumber>(ethers.BigNumber.from('0'));
 	const [decimals, setDecimals] = React.useState<number>(0);
+	const { renBTCContract: renBTC } = useConfig();
 
 	const handleSetMaxAmount = () => {
 		if (onSetMaxAmount && balance && decimals) {
@@ -101,7 +103,7 @@ const ERC20: React.FC<ERC20Props> = ({ asset, onSetMaxAmount }) => {
 			const {
 				contracts: { ProxysBTC: sBTC, ProxysETH: sETH, ProxyERC20sUSD: sUSD },
 			} = synthetix.js!;
-			const tokens: Record<string, ethers.Contract> = { sBTC, sETH, sUSD };
+			const tokens: Record<string, ethers.Contract> = { sBTC, sETH, sUSD, renBTC };
 			return tokens[asset];
 		}
 	}, [asset, isAppReady]);

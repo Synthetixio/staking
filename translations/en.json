@@ -549,6 +549,14 @@
 				"button-label": "CLOSE LOAN",
 				"progress-label": "CLOSING LOAN..."
 			},
+			"deposit": {
+				"a-label": "TOTAL",
+				"b-label": "DEPOSIT",
+				"button-label": "DEPOSIT",
+				"approve-label": "APPROVE",
+				"approving-label": "APPROVING...",
+				"depositing-label": "DEPOSITING..."
+			},
 			"withdraw": {
 				"a-label": "REMAINING",
 				"b-label": "WITHDRAW",

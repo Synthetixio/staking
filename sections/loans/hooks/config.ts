@@ -1,6 +1,10 @@
-import React from 'react';
+import { useMemo, useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
+import { ethers } from 'ethers';
+import { renBTCToken } from 'contracts';
+import Connector from 'containers/Connector';
 
+import { networkState } from 'store/wallet';
 import { appReadyState } from 'store/app';
 import synthetix from 'lib/synthetix';
 import { LOAN_TYPE_ERC20, LOAN_TYPE_ETH } from 'sections/loans/constants';
@@ -10,18 +14,26 @@ const SECONDS_IN_A_YR = 365 * 24 * 60 * 60;
 
 export function useConfig() {
 	const isAppReady = useRecoilValue(appReadyState);
+	const network = useRecoilValue(networkState);
+	const { signer } = Connector.useContainer();
 
-	const [interestRate, setInterestRate] = React.useState(toBig('0'));
-	const [issueFeeRates, setIssueFeeRates] = React.useState<Record<string, Big>>({
+	const [interestRate, setInterestRate] = useState(toBig('0'));
+	const [issueFeeRates, setIssueFeeRates] = useState<Record<string, Big>>({
 		[LOAN_TYPE_ERC20]: toBig('0'),
 		[LOAN_TYPE_ETH]: toBig('0'),
 	});
-	const [interactionDelays, setInteractionDelays] = React.useState<Record<string, Big>>({
+	const [interactionDelays, setInteractionDelays] = useState<Record<string, Big>>({
 		[LOAN_TYPE_ERC20]: toBig('0'),
 		[LOAN_TYPE_ETH]: toBig('0'),
 	});
 
-	React.useEffect(() => {
+	const renBTCContract = useMemo(
+		(): ethers.Contract | null =>
+			!(network && signer) ? null : renBTCToken.makeContract(network['name'], signer),
+		[signer, network]
+	);
+
+	useEffect(() => {
 		if (!isAppReady) return;
 
 		let isMounted = true;
@@ -74,5 +86,6 @@ export function useConfig() {
 		interestRate,
 		issueFeeRates,
 		interactionDelays,
+		renBTCContract,
 	};
 }

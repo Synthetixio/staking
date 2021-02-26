@@ -13,7 +13,6 @@ import { Big, toBig, isZero, formatUnits, toEthersBig } from 'utils/formatters/b
 import { tx } from 'utils/transactions';
 import { normalizedGasPrice } from 'utils/network';
 import { Synths } from 'constants/currency';
-import { renBTCToken } from 'contracts';
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import { DEBT_ASSETS, MIN_CRATIO } from 'sections/loans/constants';
@@ -24,6 +23,7 @@ import {
 	SettingsContainer,
 	SettingContainer,
 } from 'sections/loans/components/common';
+import { useConfig } from 'sections/loans/hooks/config';
 
 import CRatio from 'sections/loans/components/ActionBox/components/CRatio';
 import InterestRate from 'sections/loans/components/ActionBox/components/InterestRate';
@@ -43,6 +43,7 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 	const address = useRecoilValue(walletAddressState);
 	const network = useRecoilValue(networkState);
 	const isAppReady = useRecoilValue(appReadyState);
+	const { renBTCContract } = useConfig();
 
 	const [gasLimitEstimate, setGasLimitEstimate] = React.useState<number | null>(null);
 	const [gasPrice, setGasPrice] = React.useState<number>(0);
@@ -71,19 +72,16 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 		}
 	}, [collateralAmountNumber, collateralDecimals]);
 	const collateralIsETH = collateralAsset === 'ETH';
-	const collateralAddress = React.useMemo(
-		() =>
-			!network ? null : collateralAsset === 'renBTC' ? renBTCToken.address(network['name']) : null,
-		[collateralAsset, renBTCToken.address, network]
-	);
 	const collateralContract = React.useMemo(
-		() =>
-			providerOrSigner &&
-			!collateralIsETH &&
-			collateralAddress &&
-			new ethers.Contract(collateralAddress, renBTCToken.abi, providerOrSigner),
-		[collateralIsETH, collateralAddress, providerOrSigner]
+		(): ethers.Contract | null =>
+			!(providerOrSigner && !collateralIsETH && collateralAddress && network!)
+				? null
+				: renBTCContract,
+		[collateralIsETH, providerOrSigner, renBTCContract]
 	);
+
+	const collateralAddress = collateralContract?.address;
+
 	const hasLowCollateralAmount = React.useMemo(
 		() => !isZero(collateralAmount) && collateralAmount.lt(minCollateralAmount),
 		[collateralAmount, minCollateralAmount]
