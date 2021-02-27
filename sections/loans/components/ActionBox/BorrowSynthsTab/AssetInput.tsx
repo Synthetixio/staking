@@ -14,7 +14,8 @@ type AssetInputProps = {
 	amount: string;
 	setAmount: (amount: string) => void;
 	assets: Array<string>;
-	disabled?: boolean;
+	selectDisabled?: boolean;
+	inputDisabled?: boolean;
 	onSetMaxAmount?: (amount: string) => string;
 };
 
@@ -25,7 +26,8 @@ const AssetInput: React.FC<AssetInputProps> = ({
 	amount,
 	setAmount,
 	assets,
-	disabled,
+	selectDisabled,
+	inputDisabled,
 	onSetMaxAmount,
 }) => {
 	const { t } = useTranslation();
@@ -47,7 +49,7 @@ const AssetInput: React.FC<AssetInputProps> = ({
 							}
 						}}
 						variant="outline"
-						isDisabled={disabled}
+						isDisabled={selectDisabled}
 					/>
 				</SelectInput>
 			</SelectContainer>
@@ -57,7 +59,7 @@ const AssetInput: React.FC<AssetInputProps> = ({
 					value={amount}
 					placeholder="0.00"
 					onChange={(e) => setAmount(e.target.value)}
-					{...{ disabled }}
+					disabled={inputDisabled}
 				/>
 			</AmountContainer>
 
@@ -75,6 +77,9 @@ export const Container = styled(FlexDivColCentered)`
 
 	.react-select--is-disabled {
 		opacity: 1;
+	}
+	input:disabled {
+		color: ${(props) => props.theme.colors.white};
 	}
 `;
 

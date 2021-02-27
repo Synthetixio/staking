@@ -546,22 +546,28 @@
 			"close": {
 				"a-label": "REPAY",
 				"b-label": "RECEIVE",
-				"button-label": "CLOSE LOAN",
-				"progress-label": "CLOSING LOAN..."
+				"button-labels": {
+					"default": "CLOSE LOAN",
+					"closing": "CLOSING LOAN..."
+				}
 			},
 			"deposit": {
-				"a-label": "TOTAL",
-				"b-label": "DEPOSIT",
-				"button-label": "DEPOSIT",
-				"approve-label": "APPROVE",
-				"approving-label": "APPROVING...",
-				"depositing-label": "DEPOSITING..."
+				"a-label": "DEPOSIT",
+				"b-label": "NEW TOTAL",
+				"button-labels": {
+					"default": "DEPOSIT",
+					"approve": "APPROVE",
+					"approving": "APPROVING...",
+					"depositing": "DEPOSITING..."
+				}
 			},
 			"withdraw": {
-				"a-label": "REMAINING",
-				"b-label": "WITHDRAW",
-				"button-label": "WITHDRAW",
-				"progress-label": "WITHDRAWING..."
+				"a-label": "WITHDRAW",
+				"b-label": "REMAINING",
+				"button-labels": {
+					"default": "WITHDRAW",
+					"withdrawing": "WITHDRAWING..."
+				}
 			}
 		}
 	},

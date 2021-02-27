@@ -16,7 +16,7 @@ type WithdrawProps = {
 const Withdraw: React.FC<WithdrawProps> = ({ loan, loanId, loanTypeIsETH, loanContract }) => {
 	const { monitorHash } = Notify.useContainer();
 
-	const [isWithdrawing, setIsWithdrawing] = useState<boolean>(false);
+	const [isWorking, setIsWorking] = useState<string>('');
 	const [withdrawalAmount, setWithdrawalAmount] = useState<string>('0');
 	const collateralAsset = loanTypeIsETH ? 'ETH' : 'renBTC';
 	const remainingAmount = useMemo(
@@ -28,17 +28,17 @@ const Withdraw: React.FC<WithdrawProps> = ({ loan, loanId, loanTypeIsETH, loanCo
 		[loan.collateral, withdrawalAmount]
 	);
 
-	const onSetBAmount = (amount: string) =>
+	const onSetAAmount = (amount: string) =>
 		!amount
 			? setWithdrawalAmount('0')
 			: ethers.utils.parseUnits(amount, 18).gt(loan.collateral)
-			? onSetBMaxAmount()
+			? onSetAMaxAmount()
 			: setWithdrawalAmount(amount);
-	const onSetBMaxAmount = () => setWithdrawalAmount(ethers.utils.formatUnits(loan.collateral));
+	const onSetAMaxAmount = () => setWithdrawalAmount(ethers.utils.formatUnits(loan.collateral));
 
 	const withdraw = async () => {
 		try {
-			setIsWithdrawing(true);
+			setIsWorking('withdrawing');
 			await tx(
 				() => [loanContract, 'withdraw', [loanId, ethers.utils.parseUnits(withdrawalAmount, 18)]],
 				{
@@ -53,7 +53,7 @@ const Withdraw: React.FC<WithdrawProps> = ({ loan, loanId, loanTypeIsETH, loanCo
 			loan.collateral = ethers.utils.parseUnits(remainingAmount, 18);
 		} catch {
 		} finally {
-			setIsWithdrawing(false);
+			setIsWorking('');
 		}
 	};
 
@@ -66,18 +66,18 @@ const Withdraw: React.FC<WithdrawProps> = ({ loan, loanId, loanTypeIsETH, loanCo
 
 				aLabel: 'loans.modify-loan.withdraw.a-label',
 				aAsset: collateralAsset,
-				aAmountNumber: remainingAmount,
+				aAmountNumber: withdrawalAmount,
+				onSetAAmount,
+				onSetAMaxAmount,
 
 				bLabel: 'loans.modify-loan.withdraw.b-label',
 				bAsset: collateralAsset,
-				bAmountNumber: withdrawalAmount,
-				onSetBAmount,
-				onSetBMaxAmount,
+				bAmountNumber: remainingAmount,
 
-				buttonLabel: isWithdrawing
-					? 'loans.modify-loan.withdraw.progress-label'
-					: 'loans.modify-loan.withdraw.button-label',
-				buttonIsDisabled: isWithdrawing,
+				buttonLabel: `loans.modify-loan.withdraw.button-labels.${
+					isWorking ? isWorking : 'default'
+				}`,
+				buttonIsDisabled: !!isWorking,
 				onButtonClick: withdraw,
 			}}
 		/>

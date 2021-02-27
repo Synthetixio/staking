@@ -16,13 +16,14 @@ type CloseProps = {
 };
 
 const Close: React.FC<CloseProps> = ({ loan, loanId, loanTypeIsETH, loanContract }) => {
-	const [isClosing, setIsClosing] = useState<boolean>(false);
 	const router = useRouter();
 	const { monitorHash } = Notify.useContainer();
 
+	const [isWorking, setIsWorking] = useState<string>('');
+
 	const close = async () => {
 		try {
-			setIsClosing(true);
+			setIsWorking('closing');
 			await tx(() => [loanContract, 'close', [loanId]], {
 				showErrorNotification: (e: string) => console.log(e),
 				showProgressNotification: (hash: string) =>
@@ -34,7 +35,7 @@ const Close: React.FC<CloseProps> = ({ loan, loanId, loanTypeIsETH, loanContract
 			router.push('/loans/list');
 		} catch {
 		} finally {
-			setIsClosing(false);
+			setIsWorking('');
 		}
 	};
 
@@ -53,10 +54,8 @@ const Close: React.FC<CloseProps> = ({ loan, loanId, loanTypeIsETH, loanContract
 				bAsset: loanTypeIsETH ? 'ETH' : 'renBTC',
 				bAmountNumber: ethers.utils.formatUnits(loan.collateral, 18),
 
-				buttonLabel: isClosing
-					? 'loans.modify-loan.close.progress-label'
-					: 'loans.modify-loan.close.button-label',
-				buttonIsDisabled: isClosing,
+				buttonLabel: `loans.modify-loan.close.button-labels.${isWorking ? isWorking : 'default'}`,
+				buttonIsDisabled: !!isWorking,
 				onButtonClick: close,
 			}}
 		/>

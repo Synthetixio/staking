@@ -93,7 +93,8 @@ const Wrapper: React.FC<WrapperProps> = ({
 						amount={aAmountNumber}
 						setAmount={onSetAAmount || noop}
 						assets={[aAsset]}
-						disabled={!onSetAAmount}
+						selectDisabled={true}
+						inputDisabled={!onSetAAmount}
 						onSetMaxAmount={onSetAMaxAmount}
 					/>
 					<InputsDivider />
@@ -104,7 +105,8 @@ const Wrapper: React.FC<WrapperProps> = ({
 						amount={bAmountNumber}
 						setAmount={onSetBAmount || noop}
 						assets={[bAsset]}
-						disabled={!onSetBAmount}
+						selectDisabled={true}
+						inputDisabled={!onSetBAmount}
 						onSetMaxAmount={onSetBMaxAmount}
 					/>
 				</InputsContainer>

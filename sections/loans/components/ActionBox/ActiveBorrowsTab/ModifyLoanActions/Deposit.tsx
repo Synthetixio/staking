@@ -30,23 +30,29 @@ const Deposit: React.FC<DepositProps> = ({
 	const [isApproved, setIsApproved] = useState(false);
 
 	const collateralAsset = loanTypeIsETH ? 'ETH' : 'renBTC';
+	const collateralDecimals = loanTypeIsETH ? 18 : 8;
 
 	const [depositAmountString, setDepositalAmount] = useState<string>('0');
+	const collateralAmount = useMemo(
+		() =>
+			ethers.utils.parseUnits(ethers.utils.formatUnits(loan.collateral, 18), collateralDecimals), // normalize collateral decimals
+		[loan.collateral]
+	);
 	const depositAmount = useMemo(
-		() => ethers.utils.parseUnits(depositAmountString, loanTypeIsETH ? 18 : 8),
+		() => ethers.utils.parseUnits(depositAmountString, collateralDecimals),
 		[depositAmountString]
 	);
 
 	const totalAmount = useMemo(
-		() => ethers.utils.formatUnits(loan.collateral.add(depositAmount), 18),
+		() => ethers.utils.formatUnits(collateralAmount.add(depositAmount), collateralDecimals),
 		[loan.collateral, depositAmount]
 	);
 
 	const loanContractAddress = loanContract?.address;
 
-	const onSetBAmount = (amount: string) =>
+	const onSetAAmount = (amount: string) =>
 		!amount ? setDepositalAmount('0') : setDepositalAmount(amount);
-	const onSetBMaxAmount = (amount: string) => setDepositalAmount(amount);
+	const onSetAMaxAmount = (amount: string) => setDepositalAmount(amount);
 
 	useEffect(() => {
 		let isMounted = true;
@@ -122,17 +128,15 @@ const Deposit: React.FC<DepositProps> = ({
 
 				aLabel: 'loans.modify-loan.deposit.a-label',
 				aAsset: collateralAsset,
-				aAmountNumber: totalAmount,
+				aAmountNumber: depositAmountString,
+				onSetAAmount,
+				onSetAMaxAmount,
 
 				bLabel: 'loans.modify-loan.deposit.b-label',
 				bAsset: collateralAsset,
-				bAmountNumber: depositAmountString,
-				onSetBAmount,
-				onSetBMaxAmount,
+				bAmountNumber: totalAmount,
 
-				buttonLabel: `loans.modify-loan.deposit.${
-					isWorking ? isWorking : !isApproved ? 'approve' : 'button'
-				}-label`,
+				buttonLabel: `loans.modify-loan.deposit.button-labels.${isWorking ? isWorking : 'default'}`,
 				buttonIsDisabled: !!isWorking,
 				onButtonClick: onApproveOrDeposit,
 			}}
