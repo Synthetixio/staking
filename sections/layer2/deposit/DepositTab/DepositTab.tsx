@@ -13,7 +13,7 @@ import Notify from 'containers/Notify';
 import { appReadyState } from 'store/app';
 import { walletAddressState } from 'store/wallet';
 
-// import ApproveModal from 'components/ApproveModal';
+import ApproveModal from 'components/ApproveModal';
 import TabContent from './TabContent';
 import { normalizedGasPrice } from 'utils/network';
 
@@ -121,14 +121,14 @@ const DepositTab = () => {
 
 	return (
 		<TabContainer>
-			{/* !isApproved ? (
+			{!isApproved ? (
 				<ApproveModal
 					description={t('layer2.actions.deposit.action.approve.description')}
 					tokenContract="Synthetix"
 					contractToApprove="SynthetixBridgeToOptimism"
 					onApproved={getAllowance}
 				/>
-			) : null */}
+			) : null}
 			<TabContent
 				depositAmount={transferableCollateral}
 				onSubmit={handleDeposit}

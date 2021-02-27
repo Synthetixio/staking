@@ -1,4 +1,4 @@
-import { useTranslation, Trans } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import styled, { css } from 'styled-components';
 import { Svg } from 'react-optimized-image';
@@ -6,12 +6,11 @@ import { Svg } from 'react-optimized-image';
 import { InfoContainer, Title, Subtitle } from '../../components/common';
 import ExternalLink from '../../components/ExternalLink';
 import useGetDepositsDataQuery, { DepositHistory } from 'queries/deposits/useGetDepositsDataQuery';
-import { FlexDivColCentered, ExternalLink as Link } from 'styles/common';
+import { FlexDivColCentered } from 'styles/common';
 
 import { formatShortDate } from 'utils/formatters/date';
 import { formatCurrency } from 'utils/formatters/number';
 import { CryptoCurrency } from 'constants/currency';
-import { EXTERNAL_LINKS } from 'constants/links';
 
 import Warning from 'assets/svg/app/warning.svg';
 
@@ -103,17 +102,9 @@ const InfoBox = () => {
 					<StyledFlexDivColCentered>
 						<Svg src={Warning} />
 						<WarningHeading>{t('layer2.deposit.info.warning')}</WarningHeading>
-						<WarningBody>
-							{
-								<Trans
-									i18nKey="layer2.deposit.info.temporarily-down"
-									components={[<StyledLink href={EXTERNAL_LINKS.Social.Discord} />]}
-								/>
-							}
-						</WarningBody>
-						{/*<WarningBody>{t('layer2.deposit.info.metamask-only')}</WarningBody>
+						<WarningBody>{t('layer2.deposit.info.metamask-only')}</WarningBody>
 						<WarningBody>{t('layer2.deposit.info.layer2-withdraw-delay')}</WarningBody>
-				<WarningBody>{t('layer2.deposit.info.layer2-rewards')}</WarningBody>*/}
+						<WarningBody>{t('layer2.deposit.info.layer2-rewards')}</WarningBody>
 					</StyledFlexDivColCentered>
 				)}
 			</ContainerBody>
@@ -125,10 +116,6 @@ const Data = styled.span`
 	font-family: ${(props) => props.theme.fonts.interBold};
 	font-size: 12px;
 	color: ${(props) => props.theme.colors.white};
-`;
-
-export const StyledLink = styled(Link)`
-	color: ${(props) => props.theme.colors.blue};
 `;
 
 const StyledSubtitle = styled(Subtitle)`

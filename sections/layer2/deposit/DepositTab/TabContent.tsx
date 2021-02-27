@@ -54,33 +54,29 @@ const TabContent: FC<TabContentProps> = ({
 	const currencyKey = CryptoCurrency['SNX'];
 
 	const renderButton = () => {
-		return (
-			<StyledCTA blue={true} variant="primary" size="lg" disabled={true}>
-				{t('layer2.actions.deposit.action.disabled-down')}
-			</StyledCTA>
-		);
-		// if (depositAmount) {
-		// 	return (
-		// 		<StyledCTA
-		// 			blue={true}
-		// 			onClick={onSubmit}
-		// 			variant="primary"
-		// 			size="lg"
-		// 			disabled={transactionState !== Transaction.PRESUBMIT || !!gasEstimateError}
-		// 		>
-		// 			{t('layer2.actions.deposit.action.deposit-button', {
-		// 				depositAmount: formatCurrency(currencyKey, depositAmount, {
-		// 					currencyKey: currencyKey,
-		// 				}),
-		// 			})}
-		// 		</StyledCTA>
-		// 	);
-		// } else {
-		// 	return (
-		// 		<StyledCTA blue={true} variant="primary" size="lg" disabled={true}>
-		// 			{t('layer2.actions.deposit.action.disabled')}
-		// 		</StyledCTA>
-		// 	);
+		if (depositAmount) {
+			return (
+				<StyledCTA
+					blue={true}
+					onClick={onSubmit}
+					variant="primary"
+					size="lg"
+					disabled={transactionState !== Transaction.PRESUBMIT || !!gasEstimateError}
+				>
+					{t('layer2.actions.deposit.action.deposit-button', {
+						depositAmount: formatCurrency(currencyKey, depositAmount, {
+							currencyKey: currencyKey,
+						}),
+					})}
+				</StyledCTA>
+			);
+		} else {
+			return (
+				<StyledCTA blue={true} variant="primary" size="lg" disabled={true}>
+					{t('layer2.actions.deposit.action.disabled')}
+				</StyledCTA>
+			);
+		}
 	};
 
 	if (transactionState === Transaction.WAITING) {
