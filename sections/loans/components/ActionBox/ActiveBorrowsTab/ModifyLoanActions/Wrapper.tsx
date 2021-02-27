@@ -1,4 +1,5 @@
 import React from 'react';
+import moment from 'moment';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
 import { Trans } from 'react-i18next';
@@ -8,6 +9,8 @@ import { Svg } from 'react-optimized-image';
 import NavigationBack from 'assets/svg/app/navigation-back.svg';
 import { IconButton, FlexDivRowCentered } from 'styles/common';
 import GasSelector from 'components/GasSelector';
+import { useConfig } from 'sections/loans/hooks/config';
+import { Big, toBig } from 'utils/formatters/big-number';
 import {
 	FormContainer,
 	InputsContainer,
@@ -68,13 +71,58 @@ const Wrapper: React.FC<WrapperProps> = ({
 	showInterestAccrued,
 }) => {
 	const router = useRouter();
+	const { interactionDelays } = useConfig();
 
 	const [gasLimitEstimate, setGasLimitEstimate] = React.useState<number | null>(null);
 	const [gasPrice, setGasPrice] = React.useState<number>(0);
+	const [waitETA, setWaitETA] = React.useState<string>('');
 
 	const onGoBack = () => router.back();
 	const onSetAAsset = () => {};
 	const onSetBAsset = () => {};
+
+	const nextInteractionDate = React.useMemo(() => {
+		const loanType = loanTypeIsETH ? 'eth' : 'erc20';
+		if (!(interactionDelays && loanType in interactionDelays)) return;
+		const interactionDelay = interactionDelays[loanType];
+		return moment
+			.unix(parseInt(loan.lastInteraction.toString()))
+			.add(parseInt(interactionDelay.toString()), 'seconds');
+	}, [loanTypeIsETH, loan.lastInteraction, interactionDelays]);
+
+	React.useEffect(() => {
+		if (!nextInteractionDate) return;
+
+		let isMounted = true;
+		const unsubs: Array<any> = [() => (isMounted = false)];
+
+		const timer = () => {
+			const intervalId = setInterval(() => {
+				const now = moment.utc();
+				if (now.isAfter(nextInteractionDate)) {
+					return stopTimer();
+				}
+				if (isMounted) {
+					setWaitETA(toHumanizedDuration(toBig(nextInteractionDate.diff(now, 'seconds'))));
+				}
+			}, 1000);
+
+			const stopTimer = () => {
+				if (isMounted) {
+					setWaitETA('');
+				}
+				clearInterval(intervalId);
+			};
+
+			unsubs.push(stopTimer);
+		};
+
+		timer();
+
+		return () => {
+			unsubs.forEach((unsub) => unsub());
+		};
+	}, [nextInteractionDate]);
 
 	return (
 		<>
@@ -128,14 +176,51 @@ const Wrapper: React.FC<WrapperProps> = ({
 				</SettingsContainer>
 			</FormContainer>
 
-			<FormButton onClick={onButtonClick} variant="primary" size="lg" disabled={buttonIsDisabled}>
-				<Trans i18nKey={buttonLabel} values={{}} components={[<NoTextTransform />]} />
+			<FormButton
+				onClick={onButtonClick}
+				variant="primary"
+				size="lg"
+				disabled={!!waitETA || buttonIsDisabled}
+			>
+				<Trans
+					i18nKey={waitETA ? 'loans.modify-loan.loan-interation-delay' : buttonLabel}
+					values={{ waitETA }}
+					components={[<NoTextTransform />]}
+				/>
 			</FormButton>
 		</>
 	);
 };
 
 function noop() {}
+
+function toHumanizedDuration(ms: Big) {
+	const dur: Record<string, string> = {};
+	const units: Array<any> = [
+		{ label: 's', mod: 60 },
+		{ label: 'm', mod: 60 },
+		// { label: 'h', mod: 24 },
+		// { label: 'd', mod: 31 },
+		// {label: "w", mod: 7},
+	];
+	units.forEach((u) => {
+		const z = (dur[u.label] = ms.mod(u.mod));
+		ms = ms.sub(z).div(u.mod);
+	});
+	return units
+		.reverse()
+		.filter((u) => {
+			return u.label !== 'ms'; // && dur[u.label]
+		})
+		.map((u) => {
+			let val = dur[u.label];
+			if (u.label === 'm' || u.label === 's') {
+				val = val.toString().padStart(2, '0');
+			}
+			return val + u.label;
+		})
+		.join(':');
+}
 
 const Header = styled(FlexDivRowCentered)`
 	justify-content: space-between;

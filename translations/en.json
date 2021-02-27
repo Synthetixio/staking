@@ -542,7 +542,7 @@
 			"total": "TOTAL"
 		},
 		"modify-loan": {
-			"loan-interation-delay": "There is a waiting period after interacting with a loan. Please wait  approximately <0>{{waitETA}}</0> before reinteracting with it.",
+			"loan-interation-delay": "Please wait <0>{{waitETA}}</0> before reinteracting with the loan",
 			"close": {
 				"a-label": "REPAY",
 				"b-label": "RECEIVE",

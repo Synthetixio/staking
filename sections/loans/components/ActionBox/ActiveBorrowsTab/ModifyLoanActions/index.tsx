@@ -63,7 +63,7 @@ const Actions: FC<ActionsProps> = ({ loanId, loanAction, loanTypeIsETH }) => {
 
 			const contract = loanTypeIsETH ? ethLoanStateContract : erc20LoanStateContract;
 			const loan: Loan = await contract.getLoan(address, loanId);
-			const tokens: Record<string, ethers.Contract> = { sBTC, sETH, sUSD, renBTC: renBTCContract };
+			const tokens: Record<string, ethers.Contract> = { sBTC, sETH, sUSD, renBTC: renBTCContract! };
 			const collateralAsset = loanTypeIsETH ? 'ETH' : 'renBTC';
 			const debtAsset = SYNTH_BY_CURRENCY_KEY[loan.currency];
 
