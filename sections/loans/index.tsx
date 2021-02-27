@@ -1,5 +1,8 @@
 import React from 'react';
+import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
+import { appReadyState } from 'store/app';
+import Connector from 'containers/Connector';
 
 import { Row, FlexDivCol } from 'styles/common';
 import { ACTION_BOX_WIDTH, INFO_BOX_WIDTH } from './constants';
@@ -7,7 +10,10 @@ import ActionBox from './components/ActionBox/ActionBox';
 import InfoBox from './components/InfoBox/InfoBox';
 
 const Index: React.FC = () => {
-	return (
+	const isAppReady = useRecoilValue(appReadyState);
+	const { signer } = Connector.useContainer();
+
+	return !(isAppReady && signer) ? null : (
 		<Row>
 			<ActionBoxCol>
 				<ActionBox />

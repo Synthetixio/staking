@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { ethers } from 'ethers';
 
 import { Loan } from 'queries/loans/types';
@@ -48,10 +48,18 @@ const Withdraw: React.FC<WithdrawProps> = ({ loan, loanId, loanTypeIsETH, loanCo
 	const onSetAMaxAmount = () =>
 		setWithdrawalAmount(ethers.utils.formatUnits(collateralAmount, collateralDecimals));
 
-	const withdraw = async (gasPrice: number) => {
+	const getTxData = useCallback(
+		(gas: Record<string, number>) => {
+			if (!(loanContract && !withdrawalAmount.isZero())) return null;
+			return [loanContract, 'withdraw', [loanId, withdrawalAmount, gas]];
+		},
+		[loanContract, loanId, withdrawalAmount]
+	);
+
+	const withdraw = async (gas: Record<string, number>) => {
 		try {
 			setIsWorking('withdrawing');
-			await tx(() => [loanContract, 'withdraw', [loanId, withdrawalAmount], { gasPrice }], {
+			await tx(() => getTxData(gas), {
 				showErrorNotification: (e: string) => console.log(e),
 				showProgressNotification: (hash: string) =>
 					monitorHash({
@@ -68,6 +76,8 @@ const Withdraw: React.FC<WithdrawProps> = ({ loan, loanId, loanTypeIsETH, loanCo
 	return (
 		<Wrapper
 			{...{
+				getTxData,
+
 				loan,
 				loanTypeIsETH,
 				showCRatio: true,

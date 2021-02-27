@@ -1,4 +1,4 @@
-import React from 'react';
+import { useState, useMemo, useEffect, FC } from 'react';
 import moment from 'moment';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
@@ -7,7 +7,6 @@ import Button from 'components/Button';
 import { NoTextTransform } from 'styles/common';
 import { Svg } from 'react-optimized-image';
 import NavigationBack from 'assets/svg/app/navigation-back.svg';
-import { normalizedGasPrice } from 'utils/network';
 import { IconButton, FlexDivRowCentered } from 'styles/common';
 import GasSelector from 'components/GasSelector';
 import { useLoans } from 'sections/loans/contexts/loans';
@@ -19,12 +18,19 @@ import {
 	SettingsContainer,
 	SettingContainer,
 } from 'sections/loans/components/common';
+import { getGasEstimateForTransaction } from 'utils/transactions';
+import {
+	normalizeGasLimit as getNormalizedGasLimit,
+	normalizedGasPrice as getNormalizedGasPrice,
+} from 'utils/network';
 import AssetInput from 'sections/loans/components/ActionBox/BorrowSynthsTab/AssetInput';
 import { Loan } from 'queries/loans/types';
 import AccruedInterest from 'sections/loans/components/ActionBox/components/AccruedInterest';
 import CRatio from 'sections/loans/components/ActionBox/components/LoanCRatio';
 
 type WrapperProps = {
+	getTxData: (gas: Record<string, number>) => any[] | null;
+
 	aLabel: string;
 	aAsset: string;
 	aAmountNumber: string;
@@ -39,7 +45,7 @@ type WrapperProps = {
 
 	buttonLabel: string;
 	buttonIsDisabled: boolean;
-	onButtonClick: (gasPrice: number) => void;
+	onButtonClick: (gas: Record<string, number>) => void;
 
 	loan: Loan;
 	loanTypeIsETH: boolean;
@@ -48,7 +54,9 @@ type WrapperProps = {
 	showInterestAccrued?: boolean;
 };
 
-const Wrapper: React.FC<WrapperProps> = ({
+const Wrapper: FC<WrapperProps> = ({
+	getTxData,
+
 	aLabel,
 	aAsset,
 	aAmountNumber,
@@ -74,15 +82,16 @@ const Wrapper: React.FC<WrapperProps> = ({
 	const router = useRouter();
 	const { interactionDelays } = useLoans();
 
-	const [gasLimitEstimate, setGasLimitEstimate] = React.useState<number | null>(null);
-	const [gasPrice, setGasPrice] = React.useState<number>(0);
-	const [waitETA, setWaitETA] = React.useState<string>('');
+	const [waitETA, setWaitETA] = useState<string>('');
+
+	const [gasPrice, setGasPrice] = useState<number>(0);
+	const [gasLimit, setGasLimitEstimate] = useState<number | null>(null);
 
 	const onGoBack = () => router.back();
 	const onSetAAsset = () => {};
 	const onSetBAsset = () => {};
 
-	const nextInteractionDate = React.useMemo(() => {
+	const nextInteractionDate = useMemo(() => {
 		const loanType = loanTypeIsETH ? 'eth' : 'erc20';
 		if (!(interactionDelays && loanType in interactionDelays)) return;
 		const interactionDelay = interactionDelays[loanType];
@@ -91,7 +100,7 @@ const Wrapper: React.FC<WrapperProps> = ({
 			.add(parseInt(interactionDelay.toString()), 'seconds');
 	}, [loanTypeIsETH, loan.lastInteraction, interactionDelays]);
 
-	React.useEffect(() => {
+	useEffect(() => {
 		if (!nextInteractionDate) return;
 
 		let isMounted = true;
@@ -124,6 +133,25 @@ const Wrapper: React.FC<WrapperProps> = ({
 			unsubs.forEach((unsub) => unsub());
 		};
 	}, [nextInteractionDate]);
+
+	useEffect(() => {
+		let isMounted = true;
+		(async () => {
+			try {
+				const data: any[] | null = getTxData({});
+				if (!data) return;
+				const [contract, method, args] = data;
+				const gasEstimate = await getGasEstimateForTransaction(args, contract.estimateGas[method]);
+				if (isMounted) setGasLimitEstimate(getNormalizedGasLimit(Number(gasEstimate)));
+			} catch (error) {
+				// console.error(error);
+				if (isMounted) setGasLimitEstimate(null);
+			}
+		})();
+		return () => {
+			isMounted = false;
+		};
+	}, [getTxData]);
 
 	return (
 		<>
@@ -172,13 +200,15 @@ const Wrapper: React.FC<WrapperProps> = ({
 						</SettingContainer>
 					)}
 					<SettingContainer>
-						<GasSelector gasLimitEstimate={gasLimitEstimate} setGasPrice={setGasPrice} />
+						<GasSelector gasLimitEstimate={gasLimit} setGasPrice={setGasPrice} />
 					</SettingContainer>
 				</SettingsContainer>
 			</FormContainer>
 
 			<FormButton
-				onClick={() => onButtonClick(normalizedGasPrice(gasPrice))}
+				onClick={() =>
+					onButtonClick({ gasPrice: getNormalizedGasPrice(gasPrice), gasLimit: gasLimit! })
+				}
 				variant="primary"
 				size="lg"
 				disabled={!!waitETA || buttonIsDisabled}

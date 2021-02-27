@@ -4,14 +4,16 @@ import { ethers } from 'ethers';
 import { useRouter } from 'next/router';
 
 import { isWalletConnectedState, walletAddressState } from 'store/wallet';
-import { appReadyState } from 'store/app';
 import Connector from 'containers/Connector';
 import Notify from 'containers/Notify';
 import synthetix from 'lib/synthetix';
 import GasSelector from 'components/GasSelector';
 import { Big, toBig, isZero, formatUnits, toEthersBig } from 'utils/formatters/big-number';
-import { tx } from 'utils/transactions';
-import { normalizedGasPrice } from 'utils/network';
+import { tx, getGasEstimateForTransaction } from 'utils/transactions';
+import {
+	normalizeGasLimit as getNormalizedGasLimit,
+	normalizedGasPrice as getNormalizedGasPrice,
+} from 'utils/network';
 import { Synths } from 'constants/currency';
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
@@ -24,11 +26,9 @@ import {
 	SettingContainer,
 } from 'sections/loans/components/common';
 import { useLoans } from 'sections/loans/contexts/loans';
-
 import CRatio from 'sections/loans/components/ActionBox/components/CRatio';
 import InterestRate from 'sections/loans/components/ActionBox/components/InterestRate';
 import IssuanceFee from 'sections/loans/components/ActionBox/components/IssuanceFee';
-
 import FormButton from './FormButton';
 import AssetInput from './AssetInput';
 
@@ -40,11 +40,10 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 	const router = useRouter();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const address = useRecoilValue(walletAddressState);
-	const isAppReady = useRecoilValue(appReadyState);
 	const { renBTCContract } = useLoans();
 
-	const [gasLimitEstimate, setGasLimitEstimate] = React.useState<number | null>(null);
 	const [gasPrice, setGasPrice] = React.useState<number>(0);
+	const [gasLimit, setGasLimitEstimate] = React.useState<number | null>(null);
 
 	const [debtAmountNumber, setDebtAmount] = React.useState<string>('');
 	const [debtAsset, setDebtAsset] = React.useState<string>('');
@@ -82,13 +81,11 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 	const minCollateralAmountString = formatUnits(minCollateralAmount, collateralDecimals, 2);
 
 	const loanContract = React.useMemo(() => {
-		if (isAppReady) {
-			const {
-				contracts: { CollateralEth: ethLoanContract, CollateralErc20: erc20LoanContract },
-			} = synthetix.js!;
-			return collateralIsETH ? ethLoanContract : erc20LoanContract;
-		}
-	}, [isAppReady, collateralIsETH]);
+		const {
+			contracts: { CollateralEth: ethLoanContract, CollateralErc20: erc20LoanContract },
+		} = synthetix.js!;
+		return collateralIsETH ? ethLoanContract : erc20LoanContract;
+	}, [collateralIsETH]);
 	const loanContractAddress = loanContract?.address;
 
 	const [cratio, setCRatio] = React.useState(toBig(0));
@@ -132,33 +129,82 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 		onSetDebtAsset(debtAsset);
 	}, [onSetDebtAsset]);
 
-	const connectOrApproveOrTrade = async (): Promise<void> => {
+	const connectOrApproveOrTrade = async () => {
 		if (!isWalletConnected) {
 			return connectWallet();
 		}
-		!isApproved ? approve() : borrow();
+		const gas: Record<string, number> = {
+			gasPrice: getNormalizedGasPrice(gasPrice),
+			gasLimit: gasLimit!,
+		};
+		!isApproved ? approve(gas) : borrow(gas);
 	};
 
-	const approve = async () => {
+	const getApproveTxData = React.useCallback(
+		(gas: Record<string, number>) => {
+			if (!(collateralContract && !collateralAmount.isZero())) return null;
+			return [
+				collateralContract,
+				'approve',
+				[loanContractAddress, collateralAmount.toString(), gas],
+			];
+		},
+		[collateralContract, loanContractAddress, collateralAmount]
+	);
+
+	const getBorrowTxData = React.useCallback(
+		(gas: Record<string, number>) => {
+			if (!(loanContract && !isZero(debtAmount))) return null;
+			const debtAssetCurrencyKey = ethers.utils.formatBytes32String(debtAsset);
+			return [
+				loanContract,
+				'open',
+				collateralIsETH
+					? [
+							toEthersBig(debtAmount, debtDecimals),
+							debtAssetCurrencyKey,
+							{
+								value: toEthersBig(collateralAmount, collateralDecimals),
+								...gas,
+							},
+					  ]
+					: [
+							toEthersBig(collateralAmount, collateralDecimals),
+							toEthersBig(debtAmount, debtDecimals),
+							debtAssetCurrencyKey,
+							gas,
+					  ],
+			];
+		},
+		[
+			loanContract,
+			debtAmount,
+			debtDecimals,
+			debtAsset,
+			collateralAmount,
+			collateralDecimals,
+			collateralIsETH,
+		]
+	);
+
+	const getTxData = React.useMemo(() => (!isApproved ? getApproveTxData : getBorrowTxData), [
+		isApproved,
+		getApproveTxData,
+		getBorrowTxData,
+	]);
+
+	const approve = async (gas: Record<string, number>) => {
 		setIsApproving(true);
 		try {
-			await tx(
-				() => [
-					collateralContract,
-					'approve',
-					[loanContractAddress, collateralAmount.toString()],
-					{ gasPrice: normalizedGasPrice(gasPrice) },
-				],
-				{
-					showErrorNotification: (e: Error) => setError(e.message),
-					showProgressNotification: (hash: string) =>
-						monitorHash({
-							txHash: hash,
-							onTxConfirmed: () => {},
-						}),
-					showSuccessNotification: (hash: string) => {},
-				}
-			);
+			await tx(() => getApproveTxData(gas), {
+				showErrorNotification: (e: Error) => setError(e.message),
+				showProgressNotification: (hash: string) =>
+					monitorHash({
+						txHash: hash,
+						onTxConfirmed: () => {},
+					}),
+				showSuccessNotification: (hash: string) => {},
+			});
 			if (collateralIsETH || !(collateralContract && loanContractAddress && address))
 				return setIsApproved(true);
 			// update approve
@@ -171,44 +217,21 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 		}
 	};
 
-	const borrow = async () => {
+	const borrow = async (gas: Record<string, number>) => {
 		if (isZero(debtAmount)) {
 			return setError(`Enter ${debtAsset} amount..`);
 		}
-
 		setIsBorrowing(true);
-		const debtAssetCurrencyKey = ethers.utils.formatBytes32String(debtAsset);
 		try {
-			await tx(
-				() => [
-					loanContract,
-					'open',
-					collateralIsETH
-						? [
-								toEthersBig(debtAmount, debtDecimals),
-								debtAssetCurrencyKey,
-								{
-									value: toEthersBig(collateralAmount, collateralDecimals),
-									gasPrice: normalizedGasPrice(gasPrice),
-								},
-						  ]
-						: [
-								toEthersBig(collateralAmount, collateralDecimals),
-								toEthersBig(debtAmount, debtDecimals),
-								debtAssetCurrencyKey,
-								{ gasPrice: normalizedGasPrice(gasPrice) },
-						  ],
-				],
-				{
-					showErrorNotification: (e: Error) => setError(e.message),
-					showProgressNotification: (hash: string) =>
-						monitorHash({
-							txHash: hash,
-							onTxConfirmed: () => {},
-						}),
-					showSuccessNotification: (hash: string) => {},
-				}
-			);
+			await tx(() => getBorrowTxData(gas), {
+				showErrorNotification: (e: Error) => setError(e.message),
+				showProgressNotification: (hash: string) =>
+					monitorHash({
+						txHash: hash,
+						onTxConfirmed: () => {},
+					}),
+				showSuccessNotification: (hash: string) => {},
+			});
 			onSetDebtAmount('0');
 			onSetCollateralAmount('0');
 			router.push('/loans/list');
@@ -284,6 +307,26 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 		};
 	}, [collateralAmount, collateralAsset, debtAmount, debtAsset, exchangeRates, collateralDecimals]);
 
+	// gas limit
+	React.useEffect(() => {
+		let isMounted = true;
+		(async () => {
+			try {
+				const data: any[] | null = getTxData({});
+				if (!data) return;
+				const [contract, method, args] = data;
+				const gasEstimate = await getGasEstimateForTransaction(args, contract.estimateGas[method]);
+				if (isMounted) setGasLimitEstimate(getNormalizedGasLimit(Number(gasEstimate)));
+			} catch (error) {
+				// console.error(error);
+				if (isMounted) setGasLimitEstimate(null);
+			}
+		})();
+		return () => {
+			isMounted = false;
+		};
+	}, [getTxData]);
+
 	return (
 		<>
 			<FormContainer>
@@ -319,7 +362,7 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 						<IssuanceFee {...{ collateralIsETH }} />
 					</SettingContainer>
 					<SettingContainer>
-						<GasSelector gasLimitEstimate={gasLimitEstimate} setGasPrice={setGasPrice} />
+						<GasSelector gasLimitEstimate={gasLimit} setGasPrice={setGasPrice} />
 					</SettingContainer>
 				</SettingsContainer>
 			</FormContainer>

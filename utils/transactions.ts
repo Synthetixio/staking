@@ -15,6 +15,14 @@ type TxOptions = {
 	showSuccessNotification?: Function;
 };
 
+/**
+ * Perform a contract transaction.
+ * Dry re-run on failure to obtain revert reason and call `options.showErrorNotification?`.
+ *
+ * @param  {Function} makeTx
+ * @param  {TxOptions} options?
+ * @returns Promise
+ */
 export async function tx(makeTx: Function, options?: TxOptions): Promise<void> {
 	const [contract, method, args] = makeTx();
 	let hash, wait;
@@ -25,7 +33,7 @@ export async function tx(makeTx: Function, options?: TxOptions): Promise<void> {
 			await contract.callStatic[method](...args);
 			throw e;
 		} catch (e) {
-			options?.showErrorNotification?.(e.data ? hexToASCII(e.data) : e);
+			options?.showErrorNotification?.(e.data ? hexToASCII(e.data.substr(147).toString()) : e);
 			throw e;
 		}
 	}
@@ -41,12 +49,11 @@ export async function tx(makeTx: Function, options?: TxOptions): Promise<void> {
 	}
 }
 
-function hexToASCII(S: string): string {
+function hexToASCII(hex: string): string {
 	// https://gist.github.com/gluk64/fdea559472d957f1138ed93bcbc6f78a#file-reason-js
 	// return ethers.utils.toUtf8String(S.split(' ')[1].toString());
-	const hex = S.substr(147).toString();
 	let str = '';
-	for (var n = 0; n < hex.length; n += 2) {
+	for (let n = 0; n < hex.length; n += 2) {
 		str += String.fromCharCode(parseInt(hex.substr(n, 2), 16));
 	}
 	return str;

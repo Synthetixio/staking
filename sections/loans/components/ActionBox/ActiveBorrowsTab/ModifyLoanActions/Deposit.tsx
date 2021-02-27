@@ -1,11 +1,11 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import { ethers } from 'ethers';
 import { useRecoilValue } from 'recoil';
 
 import { walletAddressState } from 'store/wallet';
 import { Loan } from 'queries/loans/types';
-import { tx } from 'utils/transactions';
 import Notify from 'containers/Notify';
+import { tx } from 'utils/transactions';
 import Wrapper from './Wrapper';
 
 type DepositProps = {
@@ -58,9 +58,79 @@ const Deposit: React.FC<DepositProps> = ({
 		!amount ? setDepositalAmount('0') : setDepositalAmount(amount);
 	const onSetAMaxAmount = (amount: string) => setDepositalAmount(amount);
 
+	const getApproveTxData = useCallback(
+		(gas: Record<string, number>) => {
+			if (!(collateralAssetContract && !depositAmount.isZero())) return null;
+			return [collateralAssetContract, 'approve', [loanContractAddress, depositAmount, gas]];
+		},
+		[collateralAssetContract, loanContractAddress, depositAmount]
+	);
+
+	const getDepositTxData = useCallback(
+		(gas: Record<string, number>) => {
+			if (!(loanContract && !depositAmount.isZero())) return null;
+			return [
+				loanContract,
+				'deposit',
+				[
+					address,
+					loanId,
+					...(loanTypeIsETH ? [{ value: depositAmount, ...gas }] : [depositAmount, gas]),
+				],
+			];
+		},
+		[loanContract, address, loanId, loanTypeIsETH, depositAmount]
+	);
+
+	const getTxData = useMemo(() => (!isApproved ? getApproveTxData : getDepositTxData), [
+		isApproved,
+		getApproveTxData,
+		getDepositTxData,
+	]);
+
+	const onApproveOrDeposit = async (gas: Record<string, number>) => {
+		!isApproved ? approve(gas) : deposit(gas);
+	};
+
+	const approve = async (gas: Record<string, number>) => {
+		try {
+			setIsWorking('approving');
+			await tx(() => getApproveTxData(gas), {
+				showProgressNotification: (hash: string) =>
+					monitorHash({
+						txHash: hash,
+						onTxConfirmed: () => {},
+					}),
+			});
+
+			if (loanTypeIsETH || !(loanContractAddress && address)) return setIsApproved(true);
+			const allowance = await collateralAssetContract.allowance(address, loanContractAddress);
+			setIsApproved(allowance.gte(depositAmount));
+		} catch {
+		} finally {
+			setIsWorking('');
+		}
+	};
+
+	const deposit = async (gas: Record<string, number>) => {
+		try {
+			setIsWorking('depositing');
+			await tx(() => getDepositTxData(gas), {
+				showErrorNotification: (e: string) => console.log(e),
+				showProgressNotification: (hash: string) =>
+					monitorHash({
+						txHash: hash,
+						onTxConfirmed: () => {},
+					}),
+			});
+		} catch {
+		} finally {
+			setIsWorking('');
+		}
+	};
+
 	useEffect(() => {
 		let isMounted = true;
-
 		(async () => {
 			if (loanTypeIsETH || !(collateralAssetContract && loanContractAddress && address)) {
 				return setIsApproved(true);
@@ -73,71 +143,11 @@ const Deposit: React.FC<DepositProps> = ({
 		};
 	}, [loanTypeIsETH, collateralAssetContract, address, loanContractAddress, depositAmount]);
 
-	const onApproveOrDeposit = async (gasPrice: number) => {
-		!isApproved ? approve(gasPrice) : deposit(gasPrice);
-	};
-
-	const approve = async (gasPrice: number) => {
-		try {
-			setIsWorking('approving');
-			await tx(
-				() => [
-					collateralAssetContract,
-					'approve',
-					[loanContractAddress, depositAmount],
-					{ gasPrice },
-				],
-				{
-					showProgressNotification: (hash: string) =>
-						monitorHash({
-							txHash: hash,
-							onTxConfirmed: () => {},
-						}),
-				}
-			);
-
-			if (loanTypeIsETH || !(loanContractAddress && address)) return setIsApproved(true);
-			const allowance = await collateralAssetContract.allowance(address, loanContractAddress);
-			setIsApproved(allowance.gte(depositAmount));
-		} catch {
-		} finally {
-			setIsWorking('');
-		}
-	};
-
-	const deposit = async (gasPrice: number) => {
-		try {
-			setIsWorking('depositing');
-			await tx(
-				() => [
-					loanContract,
-					'deposit',
-					[
-						address,
-						loanId,
-						...(loanTypeIsETH
-							? [{ value: depositAmount, gasPrice }]
-							: [depositAmount, { gasPrice }]),
-					],
-				],
-				{
-					showErrorNotification: (e: string) => console.log(e),
-					showProgressNotification: (hash: string) =>
-						monitorHash({
-							txHash: hash,
-							onTxConfirmed: () => {},
-						}),
-				}
-			);
-		} catch {
-		} finally {
-			setIsWorking('');
-		}
-	};
-
 	return (
 		<Wrapper
 			{...{
+				getTxData,
+
 				loan,
 				loanTypeIsETH,
 				showCRatio: true,

@@ -51,6 +51,7 @@ export const LoansProvider: React.FC<LoansProviderProps> = ({ children }) => {
 	const [loans, setLoans] = useState<Array<Loan>>([]);
 
 	const kovan = network!?.name === 'kovan';
+	// todo: put in a config
 	const erc20LoansSubgraphUrl = kovan
 		? 'https://api.thegraph.com/subgraphs/name/vbstreetz/collateral-erc20-loans-kovan'
 		: 'https://api.thegraph.com/subgraphs/name/vbstreetz/collateral-erc20-loans';

@@ -2,15 +2,12 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ethers } from 'ethers';
 import styled from 'styled-components';
-import { useRecoilValue } from 'recoil';
 import Connector from 'containers/Connector';
-import { appReadyState } from 'store/app';
 import synthetix from 'lib/synthetix';
 import { toFixed, toBig } from 'utils/formatters/big-number';
 
 const InfoBox: React.FC = () => {
 	const { t } = useTranslation();
-	const isAppReady = useRecoilValue(appReadyState);
 	const { provider } = Connector.useContainer();
 
 	const [borrows, setBorrows] = React.useState<Array<any>>([]);
@@ -21,7 +18,7 @@ const InfoBox: React.FC = () => {
 	);
 
 	React.useEffect(() => {
-		if (!(isAppReady && provider)) {
+		if (!provider) {
 			return;
 		}
 
@@ -73,7 +70,7 @@ const InfoBox: React.FC = () => {
 		return () => {
 			unsubs.forEach((unsub) => unsub());
 		};
-	}, [isAppReady, provider]);
+	}, [provider]);
 
 	return (
 		<Root>

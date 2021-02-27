@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { ethers } from 'ethers';
 
 import { Loan } from 'queries/loans/types';
@@ -39,10 +39,19 @@ const Repay: React.FC<RepayProps> = ({ loan, loanId, loanTypeIsETH, loanContract
 			: setRepayAmount(amount);
 	const onSetAMaxAmount = () => setRepayAmount(ethers.utils.formatUnits(loan.amount));
 
-	const draw = async (gasPrice: number) => {
+	const getTxData = useCallback(
+		(gas: Record<string, number>) => {
+			if (!(loanContract && !drawAmount.isZero())) return null;
+
+			return [loanContract, 'draw', [loanId, drawAmount, gas]];
+		},
+		[loanContract, loanId, drawAmount]
+	);
+
+	const draw = async (gas: Record<string, number>) => {
 		try {
 			setIsWorking('drawing');
-			await tx(() => [loanContract, 'draw', [loanId, drawAmount], { gasPrice }], {
+			await tx(() => getTxData(gas), {
 				showErrorNotification: (e: string) => console.log(e),
 				showProgressNotification: (hash: string) =>
 					monitorHash({
@@ -59,6 +68,8 @@ const Repay: React.FC<RepayProps> = ({ loan, loanId, loanTypeIsETH, loanContract
 	return (
 		<Wrapper
 			{...{
+				getTxData,
+
 				loan,
 				loanTypeIsETH,
 				showCRatio: true,

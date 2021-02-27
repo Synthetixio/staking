@@ -5,7 +5,6 @@ import { useRecoilValue } from 'recoil';
 import { useTranslation } from 'react-i18next';
 
 import synthetix from 'lib/synthetix';
-import { appReadyState } from 'store/app';
 import { walletAddressState } from 'store/wallet';
 import Connector from 'containers/Connector';
 import { formatUnits } from 'utils/formatters/big-number';
@@ -87,7 +86,6 @@ type ERC20Props = {
 const ERC20: React.FC<ERC20Props> = ({ asset, onSetMaxAmount }) => {
 	const { t } = useTranslation();
 	const address = useRecoilValue(walletAddressState);
-	const isAppReady = useRecoilValue(appReadyState);
 	const [balance, setBalance] = React.useState<ethers.BigNumber>(ethers.BigNumber.from('0'));
 	const [decimals, setDecimals] = React.useState<number>(0);
 	const { renBTCContract } = useLoans();
@@ -99,14 +97,12 @@ const ERC20: React.FC<ERC20Props> = ({ asset, onSetMaxAmount }) => {
 	};
 
 	const contract = React.useMemo(() => {
-		if (isAppReady) {
-			const {
-				contracts: { ProxysBTC: sBTC, ProxysETH: sETH, ProxyERC20sUSD: sUSD },
-			} = synthetix.js!;
-			const tokens: Record<string, ethers.Contract> = { sBTC, sETH, sUSD, renBTC: renBTCContract! };
-			return tokens[asset];
-		}
-	}, [asset, isAppReady, renBTCContract]);
+		const {
+			contracts: { ProxysBTC: sBTC, ProxysETH: sETH, ProxyERC20sUSD: sUSD },
+		} = synthetix.js!;
+		const tokens: Record<string, ethers.Contract> = { sBTC, sETH, sUSD, renBTC: renBTCContract! };
+		return tokens[asset];
+	}, [asset, renBTCContract]);
 
 	React.useEffect(() => {
 		if (!(contract && address)) return;

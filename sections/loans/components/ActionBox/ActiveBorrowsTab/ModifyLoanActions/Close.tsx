@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { ethers } from 'ethers';
 import { useRouter } from 'next/router';
 
@@ -21,10 +21,18 @@ const Close: React.FC<CloseProps> = ({ loan, loanId, loanTypeIsETH, loanContract
 
 	const [isWorking, setIsWorking] = useState<string>('');
 
-	const close = async (gasPrice: number) => {
+	const getTxData = useCallback(
+		(gas: Record<string, number>) => {
+			if (!loanContract) return null;
+			return [loanContract, 'close', [loanId, gas]];
+		},
+		[loanContract, loanId]
+	);
+
+	const close = async (gas: Record<string, number>) => {
 		try {
 			setIsWorking('closing');
-			await tx(() => [loanContract, 'close', [loanId], { gasPrice }], {
+			await tx(() => getTxData(gas), {
 				showErrorNotification: (e: string) => console.log(e),
 				showProgressNotification: (hash: string) =>
 					monitorHash({
@@ -42,6 +50,8 @@ const Close: React.FC<CloseProps> = ({ loan, loanId, loanTypeIsETH, loanContract
 	return (
 		<Wrapper
 			{...{
+				getTxData,
+
 				loan,
 				loanTypeIsETH,
 				showInterestAccrued: true,

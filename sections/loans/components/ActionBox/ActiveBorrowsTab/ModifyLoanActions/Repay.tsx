@@ -1,12 +1,12 @@
-import { useState, useMemo } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { ethers } from 'ethers';
 import { useRecoilValue } from 'recoil';
 
 import { walletAddressState } from 'store/wallet';
 import { Loan } from 'queries/loans/types';
 import Notify from 'containers/Notify';
-import { tx } from 'utils/transactions';
 import { SYNTH_BY_CURRENCY_KEY } from 'sections/loans/constants';
+import { tx } from 'utils/transactions';
 import Wrapper from './Wrapper';
 
 type RepayProps = {
@@ -43,10 +43,18 @@ const Repay: React.FC<RepayProps> = ({ loan, loanId, loanTypeIsETH, loanContract
 			: setRepayAmount(amount);
 	const onSetAMaxAmount = () => setRepayAmount(ethers.utils.formatUnits(loan.amount));
 
-	const repay = async (gasPrice: number) => {
+	const getTxData = useCallback(
+		(gas: Record<string, number>) => {
+			if (!(loanContract && !repayAmount.isZero())) return null;
+			return [loanContract, 'repay', [address, loanId, repayAmount, gas]];
+		},
+		[loanContract, address, loanId, repayAmount]
+	);
+
+	const repay = async (gas: Record<string, number>) => {
 		try {
 			setIsWorking('repaying');
-			await tx(() => [loanContract, 'repay', [address, loanId, repayAmount], { gasPrice }], {
+			await tx(() => getTxData(gas), {
 				showErrorNotification: (e: string) => console.log(e),
 				showProgressNotification: (hash: string) =>
 					monitorHash({
@@ -63,6 +71,8 @@ const Repay: React.FC<RepayProps> = ({ loan, loanId, loanTypeIsETH, loanContract
 	return (
 		<Wrapper
 			{...{
+				getTxData,
+
 				loan,
 				loanTypeIsETH,
 				showCRatio: true,
