@@ -2,6 +2,9 @@ dev:
 	@NODE_OPTIONS=--max_old_space_size=4096 npm run dev
 
 build:
-	@npm run build
+	@npm run $@
 
-.PHONY: dev build
+lint:
+	@npm run $@
+
+.PHONY: dev build lint

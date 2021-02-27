@@ -50,7 +50,6 @@ const Withdraw: React.FC<WithdrawProps> = ({ loan, loanId, loanTypeIsETH, loanCo
 						onTxConfirmed: () => {},
 					}),
 			});
-			loan.collateral = remainingAmount;
 		} catch {
 		} finally {
 			setIsWorking('');

@@ -129,7 +129,6 @@ const Deposit: React.FC<DepositProps> = ({
 						}),
 				}
 			);
-			loan.collateral = totalAmount;
 		} catch {
 		} finally {
 			setIsWorking('');

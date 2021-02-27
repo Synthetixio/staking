@@ -48,7 +48,6 @@ const Repay: React.FC<RepayProps> = ({ loan, loanId, loanTypeIsETH, loanContract
 						onTxConfirmed: () => {},
 					}),
 			});
-			loan.amount = newTotalAmount;
 		} catch {
 		} finally {
 			setIsWorking('');

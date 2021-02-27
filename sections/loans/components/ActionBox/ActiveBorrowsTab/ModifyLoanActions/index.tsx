@@ -1,9 +1,6 @@
-import { useEffect, useState, FC } from 'react';
-import { useRecoilValue } from 'recoil';
+import { FC, useMemo } from 'react';
 import { ethers } from 'ethers';
 import synthetix from 'lib/synthetix';
-import { walletAddressState } from 'store/wallet';
-import { Loan } from 'queries/loans/types';
 import { useLoans } from 'sections/loans/contexts/loans';
 
 import Deposit from './Deposit';
@@ -11,7 +8,6 @@ import Withdraw from './Withdraw';
 import Repay from './Repay';
 import Draw from './Draw';
 import Close from './Close';
-import { SYNTH_BY_CURRENCY_KEY } from 'sections/loans/constants';
 
 export const ACTIONS: Record<string, any> = {
 	deposit: Deposit,
@@ -30,56 +26,42 @@ type ActionsProps = {
 };
 
 const Actions: FC<ActionsProps> = ({ loanId, loanAction, loanTypeIsETH }) => {
-	const address = useRecoilValue(walletAddressState);
 	const { renBTCContract } = useLoans();
+	const { loans } = useLoans();
 
 	const Action = ACTIONS[loanAction];
-	const [loan, setLoan] = useState<Loan | null>(null);
-	const [loanContract, setLoanContract] = useState<ethers.Contract | null>(null);
-	const [loanStateContract, setLoanStateContract] = useState<ethers.Contract | null>(null);
-	const [collateralAssetContract, setCollateralAssetContract] = useState<ethers.Contract | null>(
-		null
-	);
-	const [debtAssetContract, setDebtAssetContract] = useState<ethers.Contract | null>(null);
 
-	useEffect(() => {
-		if (!address) return;
+	const loan = useMemo(() => loans.find((l) => l.id.toString() === loanId), [loans, loanId]);
 
-		let isMounted = true;
-		const load = async () => {
-			const {
-				contracts: {
-					CollateralEth: ethLoanContract,
-					CollateralErc20: erc20LoanContract,
+	const collateralAssetContract = useMemo(() => {
+		const {
+			contracts: { ProxysBTC: sBTC, ProxysETH: sETH, ProxyERC20sUSD: sUSD },
+		} = synthetix.js!;
+		const tokens: Record<string, ethers.Contract> = { sBTC, sETH, sUSD };
+		const collateralAsset = loanTypeIsETH ? 'ETH' : 'renBTC';
+		return tokens[collateralAsset];
+	}, [loanTypeIsETH]);
 
-					CollateralStateEth: ethLoanStateContract,
-					CollateralStateErc20: erc20LoanStateContract,
+	const loanContract = useMemo(() => {
+		const {
+			contracts: { CollateralEth: ethLoanContract, CollateralErc20: erc20LoanContract },
+		} = synthetix.js!;
+		return loanTypeIsETH ? ethLoanContract : erc20LoanContract;
+	}, [loanTypeIsETH]);
 
-					ProxysBTC: sBTC,
-					ProxysETH: sETH,
-					ProxyERC20sUSD: sUSD,
-				},
-			} = synthetix.js!;
+	const loanStateContract = useMemo(() => {
+		const {
+			contracts: {
+				CollateralStateEth: ethLoanStateContract,
+				CollateralStateErc20: erc20LoanStateContract,
+			},
+		} = synthetix.js!;
+		return loanTypeIsETH ? ethLoanStateContract : erc20LoanStateContract;
+	}, [loanTypeIsETH]);
 
-			const contract = loanTypeIsETH ? ethLoanStateContract : erc20LoanStateContract;
-			const loan: Loan = await contract.getLoan(address, loanId);
-			const tokens: Record<string, ethers.Contract> = { sBTC, sETH, sUSD, renBTC: renBTCContract! };
-			const collateralAsset = loanTypeIsETH ? 'ETH' : 'renBTC';
-			const debtAsset = SYNTH_BY_CURRENCY_KEY[loan.currency];
-
-			if (isMounted) {
-				setCollateralAssetContract(tokens[collateralAsset] ?? null);
-				setDebtAssetContract(tokens[debtAsset]);
-				setLoanStateContract(contract);
-				setLoanContract(loanTypeIsETH ? ethLoanContract : erc20LoanContract);
-				setLoan(loan);
-			}
-		};
-		load();
-		return () => {
-			isMounted = false;
-		};
-	}, [address, loanId, loanTypeIsETH, renBTCContract]);
+	const debtAssetContract = useMemo(() => {
+		return loanTypeIsETH ? null : renBTCContract;
+	}, [loanTypeIsETH, renBTCContract]);
 
 	return !loan ? null : (
 		<Action
