@@ -19,7 +19,7 @@ type LoanRowWrap = {
 };
 
 type LoanListProps = {
-	actions: Array<string>;
+	actions: string[];
 };
 
 const LoanList: React.FC<LoanListProps> = ({ actions }) => {
@@ -68,7 +68,7 @@ const LoanList: React.FC<LoanListProps> = ({ actions }) => {
 
 	const noResultsMessage =
 		!isLoading && data.length === 0 ? (
-			<NoResultsMessage>You have no active borrows.</NoResultsMessage>
+			<NoResultsMessage>{t('loans.no-active-loans')}</NoResultsMessage>
 		) : null;
 
 	return (

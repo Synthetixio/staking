@@ -500,6 +500,7 @@
 		"cratio": "C-Ratio",
 		"interest-accrued": "Interest Accrued",
 		"balance-input-label": "Balance:",
+		"no-active-loans": "You have no active borrows",
 		"tabs": {
 			"new": {
 				"title": "Borrow Synths",

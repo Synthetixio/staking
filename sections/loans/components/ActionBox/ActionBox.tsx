@@ -13,20 +13,23 @@ const ActionBox: React.FC<ActionBoxProps> = ({}) => {
 	const router = useRouter();
 
 	const action = router.query.action!;
-	let currentTab = 'list';
-	let loanType: string = '';
-	let loanId: string = '';
-	let loanAction: string = '';
+	const [currentTab, loanType, loanId, loanAction] = useMemo(() => {
+		let currentTab = 'list';
+		let loanType: string = '';
+		let loanId: string = '';
+		let loanAction: string = '';
 
-	if (action) {
-		loanType = action[0];
-	}
-	if (!loanType || loanType === 'new') {
-		currentTab = 'new';
-	} else {
-		loanId = action[1];
-		loanAction = action[2];
-	}
+		if (action) {
+			loanType = action[0];
+		}
+		if (!loanType || loanType === 'new') {
+			currentTab = 'new';
+		} else {
+			loanId = action[1];
+			loanAction = action[2];
+		}
+		return [currentTab, loanType, loanId, loanAction];
+	}, [action]);
 
 	const tabData = useMemo(
 		() => [

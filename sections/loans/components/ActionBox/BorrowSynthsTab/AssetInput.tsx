@@ -31,7 +31,8 @@ const AssetInput: React.FC<AssetInputProps> = ({
 	onSetMaxAmount,
 }) => {
 	const { t } = useTranslation();
-	const options = assets.map((value) => ({ label: value, value }));
+	const options = React.useMemo(() => assets.map((value) => ({ label: value, value })), [assets]);
+	const value = React.useMemo(() => options.find(({ value }) => value === asset), [options, asset]);
 
 	return (
 		<Container>
@@ -41,8 +42,7 @@ const AssetInput: React.FC<AssetInputProps> = ({
 					<Select
 						inputId={`${label}-asset-options`}
 						formatOptionLabel={(option) => <span>{option.label}</span>}
-						options={options}
-						value={options.find(({ value }) => value === asset)}
+						{...{ options, value }}
 						onChange={(option: any) => {
 							if (option) {
 								setAsset(option.value);
