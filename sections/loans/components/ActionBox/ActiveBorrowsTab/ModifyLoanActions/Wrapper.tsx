@@ -7,9 +7,10 @@ import Button from 'components/Button';
 import { NoTextTransform } from 'styles/common';
 import { Svg } from 'react-optimized-image';
 import NavigationBack from 'assets/svg/app/navigation-back.svg';
+import { normalizedGasPrice } from 'utils/network';
 import { IconButton, FlexDivRowCentered } from 'styles/common';
 import GasSelector from 'components/GasSelector';
-import { useConfig } from 'sections/loans/hooks/config';
+import { useLoans } from 'sections/loans/contexts/loans';
 import { Big, toBig } from 'utils/formatters/big-number';
 import {
 	FormContainer,
@@ -38,7 +39,7 @@ type WrapperProps = {
 
 	buttonLabel: string;
 	buttonIsDisabled: boolean;
-	onButtonClick: () => void;
+	onButtonClick: (gasPrice: number) => void;
 
 	loan: Loan;
 	loanTypeIsETH: boolean;
@@ -71,7 +72,7 @@ const Wrapper: React.FC<WrapperProps> = ({
 	showInterestAccrued,
 }) => {
 	const router = useRouter();
-	const { interactionDelays } = useConfig();
+	const { interactionDelays } = useLoans();
 
 	const [gasLimitEstimate, setGasLimitEstimate] = React.useState<number | null>(null);
 	const [gasPrice, setGasPrice] = React.useState<number>(0);
@@ -177,7 +178,7 @@ const Wrapper: React.FC<WrapperProps> = ({
 			</FormContainer>
 
 			<FormButton
-				onClick={onButtonClick}
+				onClick={() => onButtonClick(normalizedGasPrice(gasPrice))}
 				variant="primary"
 				size="lg"
 				disabled={!!waitETA || buttonIsDisabled}

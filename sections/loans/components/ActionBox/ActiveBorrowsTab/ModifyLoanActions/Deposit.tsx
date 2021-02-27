@@ -36,20 +36,20 @@ const Deposit: React.FC<DepositProps> = ({
 	const collateralAmount = useMemo(
 		() =>
 			ethers.utils.parseUnits(ethers.utils.formatUnits(loan.collateral, 18), collateralDecimals), // normalize collateral decimals
-		[loan.collateral]
+		[loan.collateral, collateralDecimals]
 	);
 	const depositAmount = useMemo(
 		() => ethers.utils.parseUnits(depositAmountString, collateralDecimals),
-		[depositAmountString]
+		[depositAmountString, collateralDecimals]
 	);
 
 	const totalAmount = useMemo(() => collateralAmount.add(depositAmount), [
-		loan.collateral,
+		collateralAmount,
 		depositAmount,
 	]);
 	const totalAmountString = useMemo(
 		() => ethers.utils.formatUnits(totalAmount, collateralDecimals),
-		[totalAmount]
+		[totalAmount, collateralDecimals]
 	);
 
 	const loanContractAddress = loanContract?.address;
@@ -73,21 +73,28 @@ const Deposit: React.FC<DepositProps> = ({
 		};
 	}, [loanTypeIsETH, collateralAssetContract, address, loanContractAddress, depositAmount]);
 
-	const onApproveOrDeposit = async (e: Event) => {
-		e.preventDefault();
-		!isApproved ? approve() : deposit();
+	const onApproveOrDeposit = async (gasPrice: number) => {
+		!isApproved ? approve(gasPrice) : deposit(gasPrice);
 	};
 
-	const approve = async () => {
+	const approve = async (gasPrice: number) => {
 		try {
 			setIsWorking('approving');
-			await tx(() => [collateralAssetContract, 'approve', [loanContractAddress, depositAmount]], {
-				showProgressNotification: (hash: string) =>
-					monitorHash({
-						txHash: hash,
-						onTxConfirmed: () => {},
-					}),
-			});
+			await tx(
+				() => [
+					collateralAssetContract,
+					'approve',
+					[loanContractAddress, depositAmount],
+					{ gasPrice },
+				],
+				{
+					showProgressNotification: (hash: string) =>
+						monitorHash({
+							txHash: hash,
+							onTxConfirmed: () => {},
+						}),
+				}
+			);
 
 			if (loanTypeIsETH || !(loanContractAddress && address)) return setIsApproved(true);
 			const allowance = await collateralAssetContract.allowance(address, loanContractAddress);
@@ -98,14 +105,20 @@ const Deposit: React.FC<DepositProps> = ({
 		}
 	};
 
-	const deposit = async () => {
+	const deposit = async (gasPrice: number) => {
 		try {
 			setIsWorking('depositing');
 			await tx(
 				() => [
 					loanContract,
 					'deposit',
-					[address, loanId, loanTypeIsETH ? { value: depositAmount } : depositAmount],
+					[
+						address,
+						loanId,
+						...(loanTypeIsETH
+							? [{ value: depositAmount, gasPrice }]
+							: [depositAmount, { gasPrice }]),
+					],
 				],
 				{
 					showErrorNotification: (e: string) => console.log(e),

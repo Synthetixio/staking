@@ -9,11 +9,11 @@ import { appReadyState } from 'store/app';
 import { walletAddressState } from 'store/wallet';
 import Connector from 'containers/Connector';
 import { formatUnits } from 'utils/formatters/big-number';
-import { useConfig } from 'sections/loans/hooks/config';
+import { useLoans } from 'sections/loans/contexts/loans';
 
 type BalanceProps = {
 	asset: string;
-	onSetMaxAmount?: (amount: string) => string;
+	onSetMaxAmount?: (amount: string) => void;
 };
 
 const Balance: React.FC<BalanceProps> = ({ asset, onSetMaxAmount }) => {
@@ -28,7 +28,7 @@ const Balance: React.FC<BalanceProps> = ({ asset, onSetMaxAmount }) => {
 export default Balance;
 
 type ETHProps = {
-	onSetMaxAmount?: (amount: string) => string;
+	onSetMaxAmount?: (amount: string) => void;
 };
 
 const ETH: React.FC<ETHProps> = ({ onSetMaxAmount }) => {
@@ -67,7 +67,7 @@ const ETH: React.FC<ETHProps> = ({ onSetMaxAmount }) => {
 			isMounted = false;
 			unsubs.forEach((unsub) => unsub());
 		};
-	}, [signer]);
+	}, [signer, provider]);
 
 	return (
 		balance && (
@@ -81,7 +81,7 @@ const ETH: React.FC<ETHProps> = ({ onSetMaxAmount }) => {
 
 type ERC20Props = {
 	asset: string;
-	onSetMaxAmount?: (amount: string) => string;
+	onSetMaxAmount?: (amount: string) => void;
 };
 
 const ERC20: React.FC<ERC20Props> = ({ asset, onSetMaxAmount }) => {
@@ -90,7 +90,7 @@ const ERC20: React.FC<ERC20Props> = ({ asset, onSetMaxAmount }) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const [balance, setBalance] = React.useState<ethers.BigNumber>(ethers.BigNumber.from('0'));
 	const [decimals, setDecimals] = React.useState<number>(0);
-	const { renBTCContract: renBTC } = useConfig();
+	const { renBTCContract } = useLoans();
 
 	const handleSetMaxAmount = () => {
 		if (onSetMaxAmount && balance && decimals) {
@@ -103,10 +103,10 @@ const ERC20: React.FC<ERC20Props> = ({ asset, onSetMaxAmount }) => {
 			const {
 				contracts: { ProxysBTC: sBTC, ProxysETH: sETH, ProxyERC20sUSD: sUSD },
 			} = synthetix.js!;
-			const tokens: Record<string, ethers.Contract> = { sBTC, sETH, sUSD, renBTC };
+			const tokens: Record<string, ethers.Contract> = { sBTC, sETH, sUSD, renBTC: renBTCContract! };
 			return tokens[asset];
 		}
-	}, [asset, isAppReady]);
+	}, [asset, isAppReady, renBTCContract]);
 
 	React.useEffect(() => {
 		if (!(contract && address)) return;

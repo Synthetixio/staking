@@ -4,7 +4,7 @@ import { ethers } from 'ethers';
 import synthetix from 'lib/synthetix';
 import { walletAddressState } from 'store/wallet';
 import { Loan } from 'queries/loans/types';
-import { useConfig } from 'sections/loans/hooks/config';
+import { useLoans } from 'sections/loans/contexts/loans';
 
 import Deposit from './Deposit';
 import Withdraw from './Withdraw';
@@ -31,7 +31,7 @@ type ActionsProps = {
 
 const Actions: FC<ActionsProps> = ({ loanId, loanAction, loanTypeIsETH }) => {
 	const address = useRecoilValue(walletAddressState);
-	const { renBTCContract } = useConfig();
+	const { renBTCContract } = useLoans();
 
 	const Action = ACTIONS[loanAction];
 	const [loan, setLoan] = useState<Loan | null>(null);
@@ -79,7 +79,7 @@ const Actions: FC<ActionsProps> = ({ loanId, loanAction, loanTypeIsETH }) => {
 		return () => {
 			isMounted = false;
 		};
-	}, [address]);
+	}, [address, loanId, loanTypeIsETH, renBTCContract]);
 
 	return !loan ? null : (
 		<Action

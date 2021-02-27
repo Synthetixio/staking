@@ -24,7 +24,7 @@ type LoanListProps = {
 
 const LoanList: React.FC<LoanListProps> = ({ actions }) => {
 	const { t } = useTranslation();
-	const { isLoading, loans } = useLoans();
+	const { isLoadingLoans: isLoading, loans } = useLoans();
 
 	const data: Array<LoanRowWrap> = loans.map((loan: Loan) => ({
 		debt: `${formatUnits(loan.amount, 18, 2)} ${loan.debtAsset}`,
@@ -63,7 +63,7 @@ const LoanList: React.FC<LoanListProps> = ({ actions }) => {
 				),
 			},
 		],
-		[]
+		[t, actions]
 	);
 
 	const noResultsMessage =

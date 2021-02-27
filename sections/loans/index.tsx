@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-import { useRouter } from 'next/router';
 
 import { Row, FlexDivCol } from 'styles/common';
 import { ACTION_BOX_WIDTH, INFO_BOX_WIDTH } from './constants';

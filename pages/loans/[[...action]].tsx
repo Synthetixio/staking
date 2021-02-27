@@ -22,7 +22,7 @@ const LoansPage: React.FC<LoansPageProps> = () => {
 		if (router.asPath === '/loans') {
 			router.push('/loans/new');
 		}
-	}, [router.asPath, router.push]);
+	}, [router, router.asPath, router.push]);
 
 	return (
 		<LoansProvider>

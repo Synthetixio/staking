@@ -16,7 +16,7 @@ type AssetInputProps = {
 	assets: Array<string>;
 	selectDisabled?: boolean;
 	inputDisabled?: boolean;
-	onSetMaxAmount?: (amount: string) => string;
+	onSetMaxAmount?: (amount: string) => void;
 };
 
 const AssetInput: React.FC<AssetInputProps> = ({
@@ -59,7 +59,7 @@ const AssetInput: React.FC<AssetInputProps> = ({
 					value={amount}
 					placeholder="0.00"
 					onChange={(e) => setAmount(e.target.value)}
-					disabled={inputDisabled}
+					disabled={!!inputDisabled}
 				/>
 			</AmountContainer>
 

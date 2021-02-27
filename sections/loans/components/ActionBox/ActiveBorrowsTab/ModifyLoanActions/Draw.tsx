@@ -37,10 +37,10 @@ const Repay: React.FC<RepayProps> = ({ loan, loanId, loanTypeIsETH, loanContract
 			: setRepayAmount(amount);
 	const onSetAMaxAmount = () => setRepayAmount(ethers.utils.formatUnits(loan.amount));
 
-	const draw = async () => {
+	const draw = async (gasPrice: number) => {
 		try {
 			setIsWorking('drawing');
-			await tx(() => [loanContract, 'draw', [loanId, drawAmount]], {
+			await tx(() => [loanContract, 'draw', [loanId, drawAmount], { gasPrice }], {
 				showErrorNotification: (e: string) => console.log(e),
 				showProgressNotification: (hash: string) =>
 					monitorHash({

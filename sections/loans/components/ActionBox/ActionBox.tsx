@@ -8,7 +8,7 @@ import ActiveBorrowsTab from './ActiveBorrowsTab/ActiveBorrowsTab';
 
 type ActionBoxProps = {};
 
-const ActionBox: React.FC<ActionBoxProps> = ({}) => {
+const ActionBox: React.FC<ActionBoxProps> = () => {
 	const { t } = useTranslation();
 	const router = useRouter();
 
@@ -51,7 +51,7 @@ const ActionBox: React.FC<ActionBoxProps> = ({}) => {
 				blue: true,
 			},
 		],
-		[t, loanId, loanAction]
+		[t, loanId, loanAction, loanType]
 	);
 
 	return (

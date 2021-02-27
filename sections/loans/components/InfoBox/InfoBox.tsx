@@ -6,14 +6,13 @@ import { useRecoilValue } from 'recoil';
 import Connector from 'containers/Connector';
 import { appReadyState } from 'store/app';
 import synthetix from 'lib/synthetix';
-import { toFixed, formatUnits, toBig } from 'utils/formatters/big-number';
+import { toFixed, toBig } from 'utils/formatters/big-number';
 
 const InfoBox: React.FC = () => {
 	const { t } = useTranslation();
 	const isAppReady = useRecoilValue(appReadyState);
 	const { provider } = Connector.useContainer();
 
-	const [isLoading, setIsLoading] = React.useState(false);
 	const [borrows, setBorrows] = React.useState<Array<any>>([]);
 
 	const borrowsOpenInterest = React.useMemo(
@@ -23,7 +22,7 @@ const InfoBox: React.FC = () => {
 
 	React.useEffect(() => {
 		if (!(isAppReady && provider)) {
-			return setIsLoading(true);
+			return;
 		}
 
 		const {
@@ -60,10 +59,6 @@ const InfoBox: React.FC = () => {
 				}
 			} catch (e) {
 				console.error(e);
-			} finally {
-				if (isMounted) {
-					setIsLoading(false);
-				}
 			}
 		};
 

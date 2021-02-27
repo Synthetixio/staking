@@ -1,5 +1,4 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 import { toBig } from 'utils/formatters/big-number';
 import { Synths } from 'constants/currency';
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
@@ -14,12 +13,10 @@ type LoanCRatioProps = {
 };
 
 const LoanCRatio: React.FC<LoanCRatioProps> = ({ loan, loanTypeIsETH }) => {
-	const { t } = useTranslation();
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const exchangeRates = exchangeRatesQuery.data ?? null;
 
 	const [cratio, setCRatio] = React.useState(toBig(0));
-
 	const hasLowCRatio = React.useMemo(() => cratio.lt(MIN_CRATIO), [cratio]);
 
 	// cratio
@@ -52,7 +49,7 @@ const LoanCRatio: React.FC<LoanCRatioProps> = ({ loan, loanTypeIsETH }) => {
 		return () => {
 			isMounted = false;
 		};
-	}, [loan.collateral, loan.amount]);
+	}, [loan.collateral, loan.amount, exchangeRates, loan.currency, loanTypeIsETH]);
 
 	return <CRatio {...{ cratio, hasLowCRatio }} />;
 };

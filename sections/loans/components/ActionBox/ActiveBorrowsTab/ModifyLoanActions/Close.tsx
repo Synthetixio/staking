@@ -21,10 +21,10 @@ const Close: React.FC<CloseProps> = ({ loan, loanId, loanTypeIsETH, loanContract
 
 	const [isWorking, setIsWorking] = useState<string>('');
 
-	const close = async () => {
+	const close = async (gasPrice: number) => {
 		try {
 			setIsWorking('closing');
-			await tx(() => [loanContract, 'close', [loanId]], {
+			await tx(() => [loanContract, 'close', [loanId], { gasPrice }], {
 				showErrorNotification: (e: string) => console.log(e),
 				showProgressNotification: (hash: string) =>
 					monitorHash({

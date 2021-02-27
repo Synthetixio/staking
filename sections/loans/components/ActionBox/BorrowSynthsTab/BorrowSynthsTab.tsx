@@ -1,9 +1,8 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import { ethers } from 'ethers';
 
-import { isWalletConnectedState, walletAddressState, networkState } from 'store/wallet';
+import { isWalletConnectedState, walletAddressState } from 'store/wallet';
 import { appReadyState } from 'store/app';
 import Connector from 'containers/Connector';
 import Notify from 'containers/Notify';
@@ -23,7 +22,7 @@ import {
 	SettingsContainer,
 	SettingContainer,
 } from 'sections/loans/components/common';
-import { useConfig } from 'sections/loans/hooks/config';
+import { useLoans } from 'sections/loans/contexts/loans';
 
 import CRatio from 'sections/loans/components/ActionBox/components/CRatio';
 import InterestRate from 'sections/loans/components/ActionBox/components/InterestRate';
@@ -35,15 +34,12 @@ import AssetInput from './AssetInput';
 type BorrowSynthsTabProps = {};
 
 const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
-	const { t } = useTranslation();
 	const { monitorHash } = Notify.useContainer();
-	const { connectWallet, provider, signer } = Connector.useContainer();
-	const providerOrSigner = signer || provider;
+	const { connectWallet } = Connector.useContainer();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const address = useRecoilValue(walletAddressState);
-	const network = useRecoilValue(networkState);
 	const isAppReady = useRecoilValue(appReadyState);
-	const { renBTCContract } = useConfig();
+	const { renBTCContract } = useLoans();
 
 	const [gasLimitEstimate, setGasLimitEstimate] = React.useState<number | null>(null);
 	const [gasPrice, setGasPrice] = React.useState<number>(0);
@@ -73,14 +69,9 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 	}, [collateralAmountNumber, collateralDecimals]);
 	const collateralIsETH = collateralAsset === 'ETH';
 	const collateralContract = React.useMemo(
-		(): ethers.Contract | null =>
-			!(providerOrSigner && !collateralIsETH && collateralAddress && network!)
-				? null
-				: renBTCContract,
-		[collateralIsETH, providerOrSigner, renBTCContract]
+		(): ethers.Contract | null => (!collateralIsETH ? null : renBTCContract),
+		[collateralIsETH, renBTCContract]
 	);
-
-	const collateralAddress = collateralContract?.address;
 
 	const hasLowCollateralAmount = React.useMemo(
 		() => !isZero(collateralAmount) && collateralAmount.lt(minCollateralAmount),
@@ -106,7 +97,7 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 	const [isApproving, setIsApproving] = React.useState<boolean>(false);
 	const [isBorrowing, setIsBorrowing] = React.useState<boolean>(false);
 	const [isApproved, setIsApproved] = React.useState<boolean>(false);
-	const [error, setError] = React.useState<string | null>(null);
+	const [, setError] = React.useState<string | null>(null);
 
 	const hasLowCRatio = React.useMemo(
 		() => !isZero(collateralAmount) && !isZero(debtAmount) && cratio.lt(MIN_CRATIO),
@@ -137,7 +128,7 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 	React.useEffect(() => {
 		const debtAsset = DEBT_ASSETS[0];
 		onSetDebtAsset(debtAsset);
-	}, []);
+	}, [onSetDebtAsset]);
 
 	const connectOrApproveOrTrade = async (): Promise<void> => {
 		if (!isWalletConnected) {
@@ -257,7 +248,7 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 		return () => {
 			isMounted = false;
 		};
-	}, [collateralIsETH, loanContract]);
+	}, [collateralIsETH, loanContract, collateralDecimals]);
 
 	// cratio
 	React.useEffect(() => {
@@ -288,7 +279,7 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 		return () => {
 			isMounted = false;
 		};
-	}, [collateralAmount, collateralAsset, debtAmount, debtAsset]);
+	}, [collateralAmount, collateralAsset, debtAmount, debtAsset, exchangeRates, collateralDecimals]);
 
 	return (
 		<>

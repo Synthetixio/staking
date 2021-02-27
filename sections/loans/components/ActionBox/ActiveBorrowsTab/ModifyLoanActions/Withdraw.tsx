@@ -39,10 +39,10 @@ const Withdraw: React.FC<WithdrawProps> = ({ loan, loanId, loanTypeIsETH, loanCo
 			: setWithdrawalAmount(amount);
 	const onSetAMaxAmount = () => setWithdrawalAmount(ethers.utils.formatUnits(loan.collateral));
 
-	const withdraw = async () => {
+	const withdraw = async (gasPrice: number) => {
 		try {
 			setIsWorking('withdrawing');
-			await tx(() => [loanContract, 'withdraw', [loanId, withdrawalAmount]], {
+			await tx(() => [loanContract, 'withdraw', [loanId, withdrawalAmount], { gasPrice }], {
 				showErrorNotification: (e: string) => console.log(e),
 				showProgressNotification: (hash: string) =>
 					monitorHash({
