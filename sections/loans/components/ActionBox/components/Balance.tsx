@@ -9,6 +9,7 @@ import { walletAddressState } from 'store/wallet';
 import Connector from 'containers/Connector';
 import { formatUnits } from 'utils/formatters/big-number';
 import { useLoans } from 'sections/loans/contexts/loans';
+import { sleep } from 'utils/promise';
 
 type BalanceProps = {
 	asset: string;
@@ -45,7 +46,7 @@ const ETH: React.FC<ETHProps> = ({ onSetMaxAmount }) => {
 		if (!signer) return;
 
 		let isMounted = true;
-		const unsubs: Array<any> = [];
+		const unsubs: Array<any> = [() => (isMounted = false)];
 
 		const onSetBalance = async () => {
 			const balance = await signer.getBalance();
@@ -63,7 +64,6 @@ const ETH: React.FC<ETHProps> = ({ onSetMaxAmount }) => {
 		onSetBalance();
 		subscribe();
 		return () => {
-			isMounted = false;
 			unsubs.forEach((unsub) => unsub());
 		};
 	}, [signer, provider]);
@@ -108,15 +108,17 @@ const ERC20: React.FC<ERC20Props> = ({ asset, onSetMaxAmount }) => {
 		if (!(contract && address)) return;
 
 		let isMounted = true;
-		const unsubs: Array<any> = [];
+		const unsubs: Array<any> = [() => (isMounted = false)];
 
 		const loadBalance = async () => {
 			const [decimals, balance] = await Promise.all([
 				contract.decimals(),
 				contract.balanceOf(address),
 			]);
-			setDecimals(decimals);
-			setBalance(balance);
+			if (isMounted) {
+				setDecimals(decimals);
+				setBalance(balance);
+			}
 		};
 
 		const subscribe = () => {
@@ -135,7 +137,6 @@ const ERC20: React.FC<ERC20Props> = ({ asset, onSetMaxAmount }) => {
 		loadBalance();
 		subscribe();
 		return () => {
-			isMounted = false;
 			unsubs.forEach((unsub) => unsub());
 		};
 	}, [contract, address]);
@@ -155,10 +156,6 @@ type MaxButtonProps = {
 const MaxButton: React.FC<MaxButtonProps> = ({ onClick }) => {
 	return <StyleMaxButton {...{ onClick }}>MAX</StyleMaxButton>;
 };
-
-function sleep(ms: number): Promise<void> {
-	return new Promise((r) => setTimeout(r, ms));
-}
 
 const Container = styled.div`
 	display: flex;

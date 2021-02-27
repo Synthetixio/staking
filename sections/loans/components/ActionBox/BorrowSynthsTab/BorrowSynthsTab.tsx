@@ -207,7 +207,7 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 			});
 			if (collateralIsETH || !(collateralContract && loanContractAddress && address))
 				return setIsApproved(true);
-			// update approve
+			// update isApproved
 			const allowance = toBig(await collateralContract.allowance(address, loanContractAddress));
 			setIsApproved(allowance.gte(collateralAmount.toString()));
 		} catch (e) {

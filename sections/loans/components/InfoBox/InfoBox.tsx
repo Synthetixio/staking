@@ -1,21 +1,46 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslation, Trans } from 'react-i18next';
 import { ethers } from 'ethers';
+import { useRecoilValue } from 'recoil';
+
+import { walletAddressState } from 'store/wallet';
 import styled from 'styled-components';
+import { NoTextTransform } from 'styles/common';
 import Connector from 'containers/Connector';
+import Button from 'components/Button';
 import synthetix from 'lib/synthetix';
-import { toFixed, toBig } from 'utils/formatters/big-number';
+import { tx } from 'utils/transactions';
+import { toFixed, toBig, formatUnits } from 'utils/formatters/big-number';
+import { sleep } from 'utils/promise';
+import { useLoans } from 'sections/loans/contexts/loans';
 
 const InfoBox: React.FC = () => {
 	const { t } = useTranslation();
+	const address = useRecoilValue(walletAddressState);
 	const { provider } = Connector.useContainer();
+	const { pendingWithdrawals, reloadPendingWithdrawals, ethLoanContract } = useLoans();
+	const [isClaimingPendingWithdrawals, setIsClaimingPendingWithdrawals] = React.useState(false);
 
 	const [borrows, setBorrows] = React.useState<Array<any>>([]);
-
 	const borrowsOpenInterest = React.useMemo(
 		() => borrows.reduce((sum, stat) => sum.add(stat.openInterest), toBig('0')),
 		[borrows]
 	);
+
+	const claimPendingWithdrawals = async () => {
+		if (!ethLoanContract) return;
+		try {
+			setIsClaimingPendingWithdrawals(true);
+			const pw = await ethLoanContract.pendingWithdrawals(address);
+			await tx(() => [ethLoanContract, 'claim', [pw]]);
+			await sleep(1000);
+
+			await reloadPendingWithdrawals();
+		} catch {
+		} finally {
+			setIsClaimingPendingWithdrawals(false);
+		}
+	};
 
 	React.useEffect(() => {
 		if (!provider) {
@@ -37,9 +62,7 @@ const InfoBox: React.FC = () => {
 				collateralManagerContract.long(ethers.utils.formatBytes32String(currency)),
 				exchangeRatesContract.rateAndInvalid(ethers.utils.formatBytes32String(currency)),
 			]);
-
 			const openInterestUSD = toBig(openInterest).div(1e18).mul(toBig(assetUSDPrice).div(1e18));
-
 			return {
 				currency,
 				openInterest: openInterestUSD,
@@ -82,6 +105,37 @@ const InfoBox: React.FC = () => {
 						<a href="/" target="_blank">
 							{t('loans.info.learn-more')}
 						</a>
+					</Subtitle>
+				</ContainerHeader>
+			</Container>
+
+			<Container>
+				<ContainerHeader>
+					<Title>{t('loans.pending-withdrawals.title')}</Title>
+					<Subtitle>
+						{pendingWithdrawals.isZero() ? (
+							<div>{t('loans.pending-withdrawals.empty')}</div>
+						) : (
+							<div>
+								<Trans
+									i18nKey={'loans.pending-withdrawals.subtitle'}
+									values={{ pendingWithdrawals: formatUnits(pendingWithdrawals, 18) }}
+									components={[<NoTextTransform />]}
+								/>{' '}
+								<ClaimButton
+									variant="text"
+									size="sm"
+									onClick={claimPendingWithdrawals}
+									disabled={isClaimingPendingWithdrawals}
+								>
+									{t(
+										`loans.pending-withdrawals.${
+											isClaimingPendingWithdrawals ? 'claiming' : 'claim'
+										}`
+									)}
+								</ClaimButton>
+							</div>
+						)}
 					</Subtitle>
 				</ContainerHeader>
 			</Container>
@@ -198,4 +252,16 @@ export const StatsCol = styled.div`
 
 export const TotalColHeading = styled(StatsCol)`
 	color: ${(props) => props.theme.colors.gray};
+`;
+
+export const ClaimButton = styled(Button)`
+	color: ${(props) => props.theme.colors.blue};
+	cursor: pointer;
+	margin-left: 5px;
+	padding: 0;
+
+	&,
+	&:disabled {
+		background: transparent;
+	}
 `;

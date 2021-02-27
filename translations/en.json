@@ -536,6 +536,13 @@
 			"subtitle": "Lorem ipsum dolor sit amet, consectetur id feugiat vel quis urna consequat in. Netus arcu massa purus dolor sit.",
 			"learn-more": "Learn more."
 		},
+		"pending-withdrawals": {
+			"title": "Pending Withdrawals",
+			"subtitle": "You have pending withdrawals totaling <0>{{pendingWithdrawals}}</0> ETH",
+			"empty": "You have no pending withdrawals.",
+			"claiming": "CLAIMING...",
+			"claim": "CLAIM"
+		},
 		"stats": {
 			"title": "STATS",
 			"asset": "ASSET",
