@@ -1,6 +1,7 @@
 import React from 'react';
 import { useRecoilValue } from 'recoil';
 import { ethers } from 'ethers';
+import { useRouter } from 'next/router';
 
 import { isWalletConnectedState, walletAddressState } from 'store/wallet';
 import { appReadyState } from 'store/app';
@@ -36,6 +37,7 @@ type BorrowSynthsTabProps = {};
 const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 	const { monitorHash } = Notify.useContainer();
 	const { connectWallet } = Connector.useContainer();
+	const router = useRouter();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const address = useRecoilValue(walletAddressState);
 	const isAppReady = useRecoilValue(appReadyState);
@@ -209,6 +211,7 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 			);
 			onSetDebtAmount('0');
 			onSetCollateralAmount('0');
+			router.push('/loans/list');
 		} catch (e) {
 			console.log(e);
 		} finally {

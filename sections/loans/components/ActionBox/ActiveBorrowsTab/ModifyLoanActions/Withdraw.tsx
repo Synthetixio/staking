@@ -19,25 +19,34 @@ const Withdraw: React.FC<WithdrawProps> = ({ loan, loanId, loanTypeIsETH, loanCo
 	const [isWorking, setIsWorking] = useState<string>('');
 	const [withdrawalAmountString, setWithdrawalAmount] = useState<string>('0');
 	const collateralAsset = loanTypeIsETH ? 'ETH' : 'renBTC';
+	const collateralDecimals = loanTypeIsETH ? 18 : 8; // todo
 
-	const withdrawalAmount = useMemo(() => ethers.utils.parseUnits(withdrawalAmountString, 18), [
-		withdrawalAmountString,
-	]);
-	const remainingAmount = useMemo(
-		() => ethers.utils.formatUnits(loan.collateral.sub(withdrawalAmount), 18),
-		[loan.collateral, withdrawalAmount]
+	const collateralAmount = useMemo(
+		() =>
+			ethers.utils.parseUnits(ethers.utils.formatUnits(loan.collateral, 18), collateralDecimals), // normalize collateral decimals
+		[loan.collateral, collateralDecimals]
 	);
-	const remainingAmountString = useMemo(() => ethers.utils.formatUnits(remainingAmount, 18), [
-		remainingAmount,
+	const withdrawalAmount = useMemo(
+		() => ethers.utils.parseUnits(withdrawalAmountString, collateralDecimals),
+		[withdrawalAmountString, collateralDecimals]
+	);
+	const remainingAmount = useMemo(() => collateralAmount.sub(withdrawalAmount), [
+		collateralAmount,
+		withdrawalAmount,
 	]);
+	const remainingAmountString = useMemo(
+		() => ethers.utils.formatUnits(remainingAmount, collateralDecimals),
+		[remainingAmount, collateralDecimals]
+	);
 
 	const onSetAAmount = (amount: string) =>
 		!amount
 			? setWithdrawalAmount('0')
-			: ethers.utils.parseUnits(amount, 18).gt(loan.collateral)
+			: ethers.utils.parseUnits(amount, collateralDecimals).gt(collateralAmount)
 			? onSetAMaxAmount()
 			: setWithdrawalAmount(amount);
-	const onSetAMaxAmount = () => setWithdrawalAmount(ethers.utils.formatUnits(loan.collateral));
+	const onSetAMaxAmount = () =>
+		setWithdrawalAmount(ethers.utils.formatUnits(collateralAmount, collateralDecimals));
 
 	const withdraw = async (gasPrice: number) => {
 		try {

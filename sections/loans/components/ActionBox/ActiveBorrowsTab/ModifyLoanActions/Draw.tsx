@@ -20,19 +20,21 @@ const Repay: React.FC<RepayProps> = ({ loan, loanId, loanTypeIsETH, loanContract
 	const [isWorking, setIsWorking] = useState<string>('');
 	const [drawAmountString, setRepayAmount] = useState<string>('0');
 	const debtAsset = SYNTH_BY_CURRENCY_KEY[loan.currency];
+	const debtAssetDecimals = 18;
 
-	const drawAmount = useMemo(() => ethers.utils.parseUnits(drawAmountString, 18), [
+	const drawAmount = useMemo(() => ethers.utils.parseUnits(drawAmountString, debtAssetDecimals), [
 		drawAmountString,
 	]);
 	const newTotalAmount = useMemo(() => loan.amount.add(drawAmount), [loan.amount, drawAmount]);
-	const newTotalAmountString = useMemo(() => ethers.utils.formatUnits(newTotalAmount, 18), [
-		newTotalAmount,
-	]);
+	const newTotalAmountString = useMemo(
+		() => ethers.utils.formatUnits(newTotalAmount, debtAssetDecimals),
+		[newTotalAmount]
+	);
 
 	const onSetAAmount = (amount: string) =>
 		!amount
 			? setRepayAmount('0')
-			: ethers.utils.parseUnits(amount, 18).gt(loan.amount)
+			: ethers.utils.parseUnits(amount, debtAssetDecimals).gt(loan.amount)
 			? onSetAMaxAmount()
 			: setRepayAmount(amount);
 	const onSetAMaxAmount = () => setRepayAmount(ethers.utils.formatUnits(loan.amount));

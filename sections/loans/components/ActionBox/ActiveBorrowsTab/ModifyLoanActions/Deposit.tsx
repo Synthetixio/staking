@@ -30,7 +30,7 @@ const Deposit: React.FC<DepositProps> = ({
 	const [isApproved, setIsApproved] = useState(false);
 
 	const collateralAsset = loanTypeIsETH ? 'ETH' : 'renBTC';
-	const collateralDecimals = loanTypeIsETH ? 18 : 8;
+	const collateralDecimals = loanTypeIsETH ? 18 : 8; // todo
 
 	const [depositAmountString, setDepositalAmount] = useState<string>('0');
 	const collateralAmount = useMemo(

@@ -23,20 +23,22 @@ const Repay: React.FC<RepayProps> = ({ loan, loanId, loanTypeIsETH, loanContract
 	const [isWorking, setIsWorking] = useState<string>('');
 	const [repayAmountString, setRepayAmount] = useState<string>('0');
 	const debtAsset = SYNTH_BY_CURRENCY_KEY[loan.currency];
+	const debtAssetDecimals = 18;
 
-	const repayAmount = useMemo(() => ethers.utils.parseUnits(repayAmountString, 18), [
+	const repayAmount = useMemo(() => ethers.utils.parseUnits(repayAmountString, debtAssetDecimals), [
 		repayAmountString,
 	]);
 	const remainingAmount = useMemo(() => loan.amount.sub(repayAmount), [loan.amount, repayAmount]);
-	const remainingAmountString = useMemo(() => ethers.utils.formatUnits(remainingAmount, 18), [
-		remainingAmount,
-	]);
+	const remainingAmountString = useMemo(
+		() => ethers.utils.formatUnits(remainingAmount, debtAssetDecimals),
+		[remainingAmount]
+	);
 	const isRepayingFully = useMemo(() => remainingAmount.isZero(), [remainingAmount]);
 
 	const onSetAAmount = (amount: string) =>
 		!amount
 			? setRepayAmount('0')
-			: ethers.utils.parseUnits(amount, 18).gt(loan.amount)
+			: ethers.utils.parseUnits(amount, debtAssetDecimals).gt(loan.amount)
 			? onSetAMaxAmount()
 			: setRepayAmount(amount);
 	const onSetAMaxAmount = () => setRepayAmount(ethers.utils.formatUnits(loan.amount));
