@@ -16,8 +16,8 @@ import { SYNTH_BY_CURRENCY_KEY } from 'sections/loans/constants';
 export const ACTIONS: Record<string, any> = {
 	deposit: Deposit,
 	withdraw: Withdraw,
-	draw: Draw,
 	repay: Repay,
+	draw: Draw,
 	close: Close,
 };
 

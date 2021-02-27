@@ -17,16 +17,19 @@ const Withdraw: React.FC<WithdrawProps> = ({ loan, loanId, loanTypeIsETH, loanCo
 	const { monitorHash } = Notify.useContainer();
 
 	const [isWorking, setIsWorking] = useState<string>('');
-	const [withdrawalAmount, setWithdrawalAmount] = useState<string>('0');
+	const [withdrawalAmountString, setWithdrawalAmount] = useState<string>('0');
 	const collateralAsset = loanTypeIsETH ? 'ETH' : 'renBTC';
+
+	const withdrawalAmount = useMemo(() => ethers.utils.parseUnits(withdrawalAmountString, 18), [
+		withdrawalAmountString,
+	]);
 	const remainingAmount = useMemo(
-		() =>
-			ethers.utils.formatUnits(
-				loan.collateral.sub(ethers.utils.parseUnits(withdrawalAmount, 18)),
-				18
-			),
+		() => ethers.utils.formatUnits(loan.collateral.sub(withdrawalAmount), 18),
 		[loan.collateral, withdrawalAmount]
 	);
+	const remainingAmountString = useMemo(() => ethers.utils.formatUnits(remainingAmount, 18), [
+		remainingAmount,
+	]);
 
 	const onSetAAmount = (amount: string) =>
 		!amount
@@ -39,18 +42,15 @@ const Withdraw: React.FC<WithdrawProps> = ({ loan, loanId, loanTypeIsETH, loanCo
 	const withdraw = async () => {
 		try {
 			setIsWorking('withdrawing');
-			await tx(
-				() => [loanContract, 'withdraw', [loanId, ethers.utils.parseUnits(withdrawalAmount, 18)]],
-				{
-					showErrorNotification: (e: string) => console.log(e),
-					showProgressNotification: (hash: string) =>
-						monitorHash({
-							txHash: hash,
-							onTxConfirmed: () => {},
-						}),
-				}
-			);
-			loan.collateral = ethers.utils.parseUnits(remainingAmount, 18);
+			await tx(() => [loanContract, 'withdraw', [loanId, withdrawalAmount]], {
+				showErrorNotification: (e: string) => console.log(e),
+				showProgressNotification: (hash: string) =>
+					monitorHash({
+						txHash: hash,
+						onTxConfirmed: () => {},
+					}),
+			});
+			loan.collateral = remainingAmount;
 		} catch {
 		} finally {
 			setIsWorking('');
@@ -66,13 +66,13 @@ const Withdraw: React.FC<WithdrawProps> = ({ loan, loanId, loanTypeIsETH, loanCo
 
 				aLabel: 'loans.modify-loan.withdraw.a-label',
 				aAsset: collateralAsset,
-				aAmountNumber: withdrawalAmount,
+				aAmountNumber: withdrawalAmountString,
 				onSetAAmount,
 				onSetAMaxAmount,
 
 				bLabel: 'loans.modify-loan.withdraw.b-label',
 				bAsset: collateralAsset,
-				bAmountNumber: remainingAmount,
+				bAmountNumber: remainingAmountString,
 
 				buttonLabel: `loans.modify-loan.withdraw.button-labels.${
 					isWorking ? isWorking : 'default'

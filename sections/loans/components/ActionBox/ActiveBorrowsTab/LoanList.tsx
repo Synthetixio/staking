@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import Table from 'components/Table';
 import { Loan } from 'queries/loans/types';
-import { ACTION_BOX_WIDTH, LOAN_TYPE_ETH } from 'sections/loans/constants';
+import { ACTION_BOX_WIDTH } from 'sections/loans/constants';
 import { useLoans } from 'sections/loans/contexts/loans';
 import { formatUnits } from 'utils/formatters/big-number';
 import ModifyLoanMenu from './ModifyLoanMenu';

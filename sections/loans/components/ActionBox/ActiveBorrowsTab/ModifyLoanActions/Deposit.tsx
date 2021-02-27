@@ -43,9 +43,13 @@ const Deposit: React.FC<DepositProps> = ({
 		[depositAmountString]
 	);
 
-	const totalAmount = useMemo(
-		() => ethers.utils.formatUnits(collateralAmount.add(depositAmount), collateralDecimals),
-		[loan.collateral, depositAmount]
+	const totalAmount = useMemo(() => collateralAmount.add(depositAmount), [
+		loan.collateral,
+		depositAmount,
+	]);
+	const totalAmountString = useMemo(
+		() => ethers.utils.formatUnits(totalAmount, collateralDecimals),
+		[totalAmount]
 	);
 
 	const loanContractAddress = loanContract?.address;
@@ -112,7 +116,7 @@ const Deposit: React.FC<DepositProps> = ({
 						}),
 				}
 			);
-			loan.collateral = ethers.utils.parseUnits(totalAmount, 18);
+			loan.collateral = totalAmount;
 		} catch {
 		} finally {
 			setIsWorking('');
@@ -134,7 +138,7 @@ const Deposit: React.FC<DepositProps> = ({
 
 				bLabel: 'loans.modify-loan.deposit.b-label',
 				bAsset: collateralAsset,
-				bAmountNumber: totalAmount,
+				bAmountNumber: totalAmountString,
 
 				buttonLabel: `loans.modify-loan.deposit.button-labels.${isWorking ? isWorking : 'default'}`,
 				buttonIsDisabled: !!isWorking,

@@ -568,6 +568,23 @@
 					"default": "WITHDRAW",
 					"withdrawing": "WITHDRAWING..."
 				}
+			},
+			"repay": {
+				"a-label": "REPAY",
+				"b-label": "REMAINING",
+				"button-labels": {
+					"default": "REPAY DEBT",
+					"repaying-fully-error": "CONSIDER CLOSING THE LOAN INSTEAD OF FULL REPAYMENT",
+					"repaying": "REPAYING DEBT..."
+				}
+			},
+			"draw": {
+				"a-label": "INCREASE",
+				"b-label": "NEW TOTAL",
+				"button-labels": {
+					"default": "INCREASE DEBT",
+					"drawing": "INCREASING DEBT..."
+				}
 			}
 		}
 	},
