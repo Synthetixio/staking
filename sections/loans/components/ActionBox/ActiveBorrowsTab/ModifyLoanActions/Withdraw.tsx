@@ -4,6 +4,7 @@ import { ethers } from 'ethers';
 import { Loan } from 'queries/loans/types';
 import Notify from 'containers/Notify';
 import { tx } from 'utils/transactions';
+import { useLoans } from 'sections/loans/contexts/loans';
 import Wrapper from './Wrapper';
 
 type WithdrawProps = {
@@ -15,6 +16,7 @@ type WithdrawProps = {
 
 const Withdraw: React.FC<WithdrawProps> = ({ loan, loanId, loanTypeIsETH, loanContract }) => {
 	const { monitorHash } = Notify.useContainer();
+	const { reloadPendingWithdrawals } = useLoans();
 
 	const [isWorking, setIsWorking] = useState<string>('');
 	const [withdrawalAmountString, setWithdrawalAmount] = useState<string>('0');
@@ -67,6 +69,7 @@ const Withdraw: React.FC<WithdrawProps> = ({ loan, loanId, loanTypeIsETH, loanCo
 						onTxConfirmed: () => {},
 					}),
 			});
+			await reloadPendingWithdrawals();
 		} catch {
 		} finally {
 			setIsWorking('');

@@ -11,7 +11,6 @@ import Button from 'components/Button';
 import synthetix from 'lib/synthetix';
 import { tx } from 'utils/transactions';
 import { toFixed, toBig, formatUnits } from 'utils/formatters/big-number';
-import { sleep } from 'utils/promise';
 import { useLoans } from 'sections/loans/contexts/loans';
 
 const InfoBox: React.FC = () => {
@@ -23,7 +22,7 @@ const InfoBox: React.FC = () => {
 
 	const [borrows, setBorrows] = React.useState<Array<any>>([]);
 	const borrowsOpenInterest = React.useMemo(
-		() => borrows.reduce((sum, stat) => sum.add(stat.openInterest), toBig('0')),
+		() => borrows.reduce((sum, stat) => sum.plus(stat.openInterest), toBig('0')),
 		[borrows]
 	);
 
@@ -33,8 +32,6 @@ const InfoBox: React.FC = () => {
 			setIsClaimingPendingWithdrawals(true);
 			const pw = await ethLoanContract.pendingWithdrawals(address);
 			await tx(() => [ethLoanContract, 'claim', [pw]]);
-			await sleep(1000);
-
 			await reloadPendingWithdrawals();
 		} catch {
 		} finally {
@@ -62,7 +59,9 @@ const InfoBox: React.FC = () => {
 				collateralManagerContract.long(ethers.utils.formatBytes32String(currency)),
 				exchangeRatesContract.rateAndInvalid(ethers.utils.formatBytes32String(currency)),
 			]);
-			const openInterestUSD = toBig(openInterest).div(1e18).mul(toBig(assetUSDPrice).div(1e18));
+			const openInterestUSD = toBig(openInterest)
+				.dividedBy(1e18)
+				.multipliedBy(toBig(assetUSDPrice).dividedBy(1e18));
 			return {
 				currency,
 				openInterest: openInterestUSD,

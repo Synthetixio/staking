@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect, FC } from 'react';
 import moment from 'moment';
 import { useRouter } from 'next/router';
+import Big from 'bignumber.js';
 import styled from 'styled-components';
 import { Trans } from 'react-i18next';
 import Button from 'components/Button';
@@ -10,7 +11,7 @@ import NavigationBack from 'assets/svg/app/navigation-back.svg';
 import { IconButton, FlexDivRowCentered } from 'styles/common';
 import GasSelector from 'components/GasSelector';
 import { useLoans } from 'sections/loans/contexts/loans';
-import { Big, toBig } from 'utils/formatters/big-number';
+import { toBig } from 'utils/formatters/big-number';
 import {
 	FormContainer,
 	InputsContainer,
@@ -226,7 +227,7 @@ const Wrapper: FC<WrapperProps> = ({
 function noop() {}
 
 function toHumanizedDuration(ms: Big) {
-	const dur: Record<string, string> = {};
+	const dur: Record<string, Big> = {};
 	const units: Array<any> = [
 		{ label: 's', mod: 60 },
 		{ label: 'm', mod: 60 },
@@ -236,7 +237,7 @@ function toHumanizedDuration(ms: Big) {
 	];
 	units.forEach((u) => {
 		const z = (dur[u.label] = ms.mod(u.mod));
-		ms = ms.sub(z).div(u.mod);
+		ms = ms.minus(z).dividedBy(u.mod);
 	});
 	return units
 		.reverse()
@@ -244,9 +245,9 @@ function toHumanizedDuration(ms: Big) {
 			return u.label !== 'ms'; // && dur[u.label]
 		})
 		.map((u) => {
-			let val = dur[u.label];
+			let val = dur[u.label].toString();
 			if (u.label === 'm' || u.label === 's') {
-				val = val.toString().padStart(2, '0');
+				val = val.padStart(2, '0');
 			}
 			return val + u.label;
 		})

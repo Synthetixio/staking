@@ -2,13 +2,14 @@ import React from 'react';
 import { useRecoilValue } from 'recoil';
 import { ethers } from 'ethers';
 import { useRouter } from 'next/router';
+import Big from 'bignumber.js';
 
 import { isWalletConnectedState, walletAddressState } from 'store/wallet';
 import Connector from 'containers/Connector';
 import Notify from 'containers/Notify';
 import synthetix from 'lib/synthetix';
 import GasSelector from 'components/GasSelector';
-import { Big, toBig, isZero, formatUnits, toEthersBig } from 'utils/formatters/big-number';
+import { toBig, isZero, formatUnits, toEthersBig } from 'utils/formatters/big-number';
 import { tx, getGasEstimateForTransaction } from 'utils/transactions';
 import {
 	normalizeGasLimit as getNormalizedGasLimit,
@@ -265,7 +266,7 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 			if (!loanContract) {
 				return setMinCollateralAmount(toBig(0));
 			}
-			const minCollateralAmount = toBig(await loanContract.minCollateral()).div(
+			const minCollateralAmount = toBig(await loanContract.minCollateral()).dividedBy(
 				Math.pow(10, 18 - collateralDecimals)
 			);
 			if (isMounted) setMinCollateralAmount(minCollateralAmount);
@@ -295,10 +296,10 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 				getExchangeRatesForCurrencies(exchangeRates, debtAsset, Synths.sUSD)
 			);
 			const cratio = collateralAmount
-				.mul(collateralUSDPrice)
-				.div(Math.pow(10, collateralDecimals))
-				.mul(100)
-				.div(debtUSDPrice.mul(debtAmount).div(Math.pow(10, debtDecimals)));
+				.multipliedBy(collateralUSDPrice)
+				.dividedBy(Math.pow(10, collateralDecimals))
+				.multipliedBy(100)
+				.dividedBy(debtUSDPrice.multipliedBy(debtAmount).dividedBy(Math.pow(10, debtDecimals)));
 			if (isMounted) setCRatio(cratio);
 		};
 		load();

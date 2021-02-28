@@ -1,8 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
+import Big from 'bignumber.js';
 import { useTranslation } from 'react-i18next';
 import { FlexDivRow, FlexDivRowCentered, Tooltip } from 'styles/common';
-import { Big, toFixed, isZero } from 'utils/formatters/big-number';
+import { formatUnits, isZero } from 'utils/formatters/big-number';
 
 type CRatioProps = {
 	hasLowCRatio: boolean;
@@ -30,7 +31,7 @@ const CRatio: React.FC<CRatioProps> = ({ cratio, hasLowCRatio }) => {
 						hideOnClick={true}
 					>
 						<Text {...{ hasLowCRatio }}>
-							{toFixed(cratio, 1, 0)}% <SVG {...{ hasLowCRatio }} />
+							{formatUnits(cratio, 18 - 2, 0)}% <SVG {...{ hasLowCRatio }} />
 						</Text>
 					</StyledTooltip>
 				</Item>

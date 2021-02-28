@@ -1,6 +1,9 @@
 import { FC, useMemo } from 'react';
 import { ethers } from 'ethers';
 import synthetix from 'lib/synthetix';
+import styled from 'styled-components';
+import { Svg } from 'react-optimized-image';
+import Spinner from 'assets/svg/app/loader.svg';
 import { useLoans } from 'sections/loans/contexts/loans';
 
 import Deposit from './Deposit';
@@ -27,7 +30,7 @@ type ActionsProps = {
 
 const Actions: FC<ActionsProps> = ({ loanId, loanAction, loanTypeIsETH }) => {
 	const { renBTCContract } = useLoans();
-	const { loans } = useLoans();
+	const { isLoadingLoans, loans } = useLoans();
 
 	const Action = ACTIONS[loanAction];
 
@@ -63,7 +66,9 @@ const Actions: FC<ActionsProps> = ({ loanId, loanAction, loanTypeIsETH }) => {
 		return loanTypeIsETH ? null : renBTCContract;
 	}, [loanTypeIsETH, renBTCContract]);
 
-	return !loan ? null : (
+	return isLoadingLoans ? (
+		<StyledSpinner src={Spinner} />
+	) : !loan ? null : (
 		<Action
 			{...{
 				loanId,
@@ -79,3 +84,8 @@ const Actions: FC<ActionsProps> = ({ loanId, loanAction, loanTypeIsETH }) => {
 };
 
 export default Actions;
+
+const StyledSpinner = styled(Svg)`
+	display: block;
+	margin: 30px auto;
+`;

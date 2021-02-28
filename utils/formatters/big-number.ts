@@ -1,9 +1,5 @@
-import BaseBigJS from 'big.js';
-import toformat from 'toformat';
+import Big from 'bignumber.js';
 import { ethers } from 'ethers';
-
-const BigJS = toformat(BaseBigJS);
-export type Big = typeof BigJS;
 
 const PRECISION = 4;
 
@@ -21,11 +17,11 @@ export function formatUnits(a: any, decimals: number, precision?: number): strin
 }
 
 export function isZero(a: any): boolean {
-	return toBig(a).eq(toBig('0'));
+	return toBig(a).isZero();
 }
 
 export function toBig(n: any): Big {
-	return new BigJS(n.toString());
+	return new Big(n.toString());
 }
 
 export function toEthersBig(a: any, b: number): ethers.BigNumber {

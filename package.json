@@ -53,14 +53,12 @@
 		"styled-media-query": "2.1.2",
 		"svg-react-loader": "0.4.6",
 		"synthetix-data": "2.1.42",
-		"toformat": "^2.0.0",
 		"unstated-next": "1.1.0",
 		"use-immer": "0.4.1"
 	},
 	"devDependencies": {
 		"@microsoft/eslint-formatter-sarif": "2.1.5",
 		"@synthetixio/synpress": "0.6.1",
-		"@types/big.js": "^6.0.2",
 		"@types/color": "3.0.1",
 		"@types/date-fns": "2.6.0",
 		"@types/lodash": "4.14.159",

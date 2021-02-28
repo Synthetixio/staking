@@ -6,6 +6,7 @@ import { Loan } from 'queries/loans/types';
 import Notify from 'containers/Notify';
 import { SYNTH_BY_CURRENCY_KEY } from 'sections/loans/constants';
 import { tx } from 'utils/transactions';
+import { useLoans } from 'sections/loans/contexts/loans';
 import Wrapper from './Wrapper';
 
 type CloseProps = {
@@ -18,6 +19,7 @@ type CloseProps = {
 const Close: React.FC<CloseProps> = ({ loan, loanId, loanTypeIsETH, loanContract }) => {
 	const router = useRouter();
 	const { monitorHash } = Notify.useContainer();
+	const { reloadPendingWithdrawals } = useLoans();
 
 	const [isWorking, setIsWorking] = useState<string>('');
 
@@ -40,6 +42,7 @@ const Close: React.FC<CloseProps> = ({ loan, loanId, loanTypeIsETH, loanContract
 						onTxConfirmed: () => {},
 					}),
 			});
+			await reloadPendingWithdrawals();
 			router.push('/loans/list');
 		} catch {
 		} finally {

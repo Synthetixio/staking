@@ -1,20 +1,20 @@
-import { Big } from 'utils/formatters/big-number';
+import { ethers } from 'ethers';
 
 export type Loan = {
-	id: Big;
+	id: ethers.BigNumber;
 	account: string;
-	collateral: Big;
+	collateral: ethers.BigNumber;
 	currency: string;
-	amount: Big;
+	amount: ethers.BigNumber;
 	short: boolean;
-	accruedInterest: Big;
-	interestIndex: Big;
-	lastInteraction: Big;
+	accruedInterest: ethers.BigNumber;
+	interestIndex: ethers.BigNumber;
+	lastInteraction: ethers.BigNumber;
 
 	// derived
 	type: string;
-	minCRatio: Big;
-	cratio: Big;
+	minCRatio: ethers.BigNumber;
+	cratio: ethers.BigNumber;
 	collateralAsset: string;
 	debtAsset: string;
 };

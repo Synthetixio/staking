@@ -1,15 +1,17 @@
 import { useMemo, useEffect, useState, createContext, useContext, ReactNode } from 'react';
 import { useRecoilValue } from 'recoil';
 import { ethers } from 'ethers';
+import Big from 'bignumber.js';
 
 import { renBTCToken } from 'contracts';
 import Connector from 'containers/Connector';
 import { appReadyState } from 'store/app';
 import synthetix from 'lib/synthetix';
 import { walletAddressState, networkState } from 'store/wallet';
-import { Big, toBig } from 'utils/formatters/big-number';
+import { toBig } from 'utils/formatters/big-number';
 import { LOAN_TYPE_ERC20, LOAN_TYPE_ETH, SYNTH_BY_CURRENCY_KEY } from 'sections/loans/constants';
 import { Loan } from 'queries/loans/types';
+import { sleep } from 'utils/promise';
 
 const SECONDS_IN_A_YR = 365 * 24 * 60 * 60;
 const COLLATERAL_ASSETS: Record<string, string> = {
@@ -367,10 +369,10 @@ export const LoansProvider: React.FC<LoansProviderProps> = ({ children }) => {
 			]);
 			if (isMounted) {
 				const perYr = SECONDS_IN_A_YR * 1e2 * (1 / 1e18);
-				setInterestRate(toBig(borrowRate).mul(perYr));
+				setInterestRate(toBig(borrowRate).multipliedBy(perYr));
 				setIssueFeeRates({
-					[LOAN_TYPE_ERC20]: toBig(erc20BorrowIssueFeeRate).mul(1e2 / 1e18),
-					[LOAN_TYPE_ETH]: toBig(ethBorrowIssueFeeRate).mul(1e2 / 1e18),
+					[LOAN_TYPE_ERC20]: toBig(erc20BorrowIssueFeeRate).multipliedBy(1e2 / 1e18),
+					[LOAN_TYPE_ETH]: toBig(ethBorrowIssueFeeRate).multipliedBy(1e2 / 1e18),
 				});
 				setInteractionDelays({
 					[LOAN_TYPE_ERC20]: erc20InteractionDelay,
@@ -403,6 +405,7 @@ export const LoansProvider: React.FC<LoansProviderProps> = ({ children }) => {
 
 	const reloadPendingWithdrawals = async () => {
 		if (address && ethLoanContract) {
+			await sleep(1000);
 			await loadPendingWithdrawals(ethLoanContract, true, setPendingWithdrawals, address);
 		}
 	};
