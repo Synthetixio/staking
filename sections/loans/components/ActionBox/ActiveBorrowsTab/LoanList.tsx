@@ -14,7 +14,7 @@ const COL_WIDTH = ACTION_BOX_WIDTH / 4 - 10;
 type LoanRowWrap = {
 	debt: string;
 	collateral: string;
-	pnl: string;
+	cratio: string;
 	loan: Loan;
 };
 
@@ -29,7 +29,7 @@ const LoanList: React.FC<LoanListProps> = ({ actions }) => {
 	const data: Array<LoanRowWrap> = loans.map((loan: Loan) => ({
 		debt: `${formatUnits(loan.amount, 18, 2)} ${loan.debtAsset}`,
 		collateral: `${formatUnits(loan.collateral, 18, 2)} ${loan.collateralAsset}`,
-		pnl: `0 sUSD`,
+		cratio: `${formatUnits(loan.cratio.toString(), 18 - 2, 2)}%`,
 		loan,
 	}));
 
@@ -48,8 +48,8 @@ const LoanList: React.FC<LoanListProps> = ({ actions }) => {
 				width: COL_WIDTH,
 			},
 			{
-				Header: <>{t('loans.tabs.list.types.pnl')}</>,
-				accessor: 'pnl',
+				Header: <>{t('loans.tabs.list.types.cratio')}</>,
+				accessor: 'cratio',
 				sortable: true,
 				width: COL_WIDTH,
 			},

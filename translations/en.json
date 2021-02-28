@@ -500,7 +500,7 @@
 		"cratio": "C-Ratio",
 		"interest-accrued": "Interest Accrued",
 		"balance-input-label": "Balance:",
-		"no-active-loans": "You have no active borrows",
+		"no-active-loans": "You have no active borrows.",
 		"tabs": {
 			"new": {
 				"title": "Borrow Synths",
@@ -526,7 +526,7 @@
 				"types": {
 					"debt": "LOAN",
 					"collateral": "COLLATERAL",
-					"pnl": "PNL (sUSD)",
+					"cratio": "C-RATIO",
 					"modify": "MODIFY"
 				}
 			}

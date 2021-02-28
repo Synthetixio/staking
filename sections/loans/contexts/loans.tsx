@@ -1,12 +1,4 @@
-import {
-	useMemo,
-	useEffect,
-	useState,
-	createContext,
-	useContext,
-	useCallback,
-	ReactNode,
-} from 'react';
+import { useMemo, useEffect, useState, createContext, useContext, ReactNode } from 'react';
 import { useRecoilValue } from 'recoil';
 import { ethers } from 'ethers';
 
@@ -59,34 +51,6 @@ export const LoansProvider: React.FC<LoansProviderProps> = ({ children }) => {
 	const [isLoadingLoans, setIsLoadingLoans] = useState(false);
 	const [loans, setLoans] = useState<Array<Loan>>([]);
 
-	const kovan = network!?.name === 'kovan';
-	// todo: put in a config
-	const erc20LoansSubgraphUrl = kovan
-		? 'https://api.thegraph.com/subgraphs/name/vbstreetz/collateral-erc20-loans-kovan'
-		: 'https://api.thegraph.com/subgraphs/name/vbstreetz/collateral-erc20-loans';
-	const ethLoansSubgraphUrl = kovan
-		? 'https://api.thegraph.com/subgraphs/name/vbstreetz/collateral-eth-loans-kovan'
-		: 'https://api.thegraph.com/subgraphs/name/vbstreetz/collateral-eth-loans';
-
-	const subgraph = (subgraphUrl: string) => async (query: any, variables: any) => {
-		const res = await fetch(subgraphUrl, {
-			method: 'POST',
-			body: JSON.stringify({ query, variables }),
-		});
-		const { data } = await res.json();
-		return data;
-	};
-
-	const erc20LoansSubgraph = useCallback(
-		(query: any, variables: any) => subgraph(erc20LoansSubgraphUrl)(query, variables),
-		[erc20LoansSubgraphUrl]
-	);
-
-	const ethLoansSubgraph = useCallback(
-		(query: any, variables: any) => subgraph(ethLoansSubgraphUrl)(query, variables),
-		[ethLoansSubgraphUrl]
-	);
-
 	const [
 		ethLoanContract,
 		erc20LoanContract,
@@ -116,24 +80,17 @@ export const LoansProvider: React.FC<LoansProviderProps> = ({ children }) => {
 		];
 	}, [isAppReady]);
 
-	const subgraphs: Record<string, Function> = useMemo(
-		() => ({
-			[LOAN_TYPE_ERC20]: erc20LoansSubgraph,
-			[LOAN_TYPE_ETH]: ethLoansSubgraph,
-		}),
-		[erc20LoansSubgraph, ethLoansSubgraph]
-	);
-
 	useEffect(() => {
 		if (
 			!(
 				isAppReady &&
+				address &&
 				provider &&
+				exchangeRatesContract &&
 				ethLoanContract &&
 				erc20LoanContract &&
 				ethLoanStateContract &&
-				erc20LoanStateContract &&
-				exchangeRatesContract
+				erc20LoanStateContract
 			)
 		)
 			return;
@@ -148,20 +105,15 @@ export const LoansProvider: React.FC<LoansProviderProps> = ({ children }) => {
 			[LOAN_TYPE_ETH]: ethLoanStateContract,
 		};
 
-		const queries: Record<string, string> = {
-			[LOAN_TYPE_ERC20]: 'erc20Loans',
-			[LOAN_TYPE_ETH]: 'ethLoans',
-		};
-
 		let isMounted = true;
 		const unsubs: Array<any> = [() => (isMounted = false)];
 
 		const loadLoans = async () => {
 			setIsLoadingLoans(true);
-
 			const loanIndices = await Promise.all(Object.keys(loanStateContracts).map(getLoanIndices));
 			const loans: Array<any> = await Promise.all(loanIndices.map(getLoans));
 			let activeLoans: Array<any> = [];
+
 			for (let i = 0; i < loans.length; i++) {
 				for (let j = 0; j < loans[i].length; j++) {
 					const { type, minCRatio, loan } = loans[i][j];
@@ -174,6 +126,7 @@ export const LoansProvider: React.FC<LoansProviderProps> = ({ children }) => {
 					}
 				}
 			}
+
 			activeLoans = await Promise.all(activeLoans.map(makeLoan));
 			activeLoans.sort((a, b) => {
 				if (a.id.gt(b.id)) return -1;
@@ -216,51 +169,11 @@ export const LoansProvider: React.FC<LoansProviderProps> = ({ children }) => {
 
 		const makeLoan = async ({ loan, type, minCRatio }: Record<any, any>) => {
 			const loanContract = loanContracts[type];
-			const variables = {
-				id: loan.id.toString(),
-			};
-			const subgraph = subgraphs[type];
-			const query = queries[type];
-			const {
-				[query]: [{ txHash }],
-			} = await subgraph(
-				`query ($id: String!) {
-          ${query}(where: {id: $id}) {
-            txHash
-          }
-        }`,
-				variables
-			);
-			const { blockNumber: creationBlockNumber } = await provider.getTransaction(txHash);
-			// const interest = loan.amount.add(loan.accruedInterest).mul(debtUSDPrice);
-			let [initialUSDPrice, latestUSDPrice] = await Promise.all([
-				exchangeRatesContract.rateForCurrency(loan.currency, {
-					blockTag: creationBlockNumber,
-				}),
-				exchangeRatesContract.rateForCurrency(loan.currency),
-			]);
-			const loanAmount = toBig(loan.amount).div(1e18);
-			initialUSDPrice = toBig(initialUSDPrice).div(1e18);
-			latestUSDPrice = toBig(latestUSDPrice).div(1e18);
-			let pnlPercentage;
-			if ('short' === type) {
-				pnlPercentage = initialUSDPrice.sub(latestUSDPrice).div(initialUSDPrice);
-			} else {
-				pnlPercentage = latestUSDPrice.sub(initialUSDPrice).div(latestUSDPrice);
-			}
-			const pnl = pnlPercentage.mul(loanAmount).mul(initialUSDPrice);
-			pnlPercentage = pnlPercentage.mul(1e2);
-
-			const accruedInterestUSD = toBig(loan.accruedInterest).mul(latestUSDPrice);
-
 			return {
 				...loan,
 				type,
 				minCRatio,
 				cratio: await loanContract.collateralRatio(loan),
-				pnl,
-				pnlPercentage,
-				accruedInterestUSD,
 				collateralAsset: COLLATERAL_ASSETS[type],
 				debtAsset: SYNTH_BY_CURRENCY_KEY[loan.currency],
 			};
@@ -396,15 +309,12 @@ export const LoansProvider: React.FC<LoansProviderProps> = ({ children }) => {
 	}, [
 		isAppReady,
 		address,
-		erc20LoansSubgraph,
-		ethLoansSubgraph,
 		provider,
 		exchangeRatesContract,
 		ethLoanContract,
 		erc20LoanContract,
 		ethLoanStateContract,
 		erc20LoanStateContract,
-		subgraphs,
 	]);
 
 	const [interestRate, setInterestRate] = useState(toBig('0'));

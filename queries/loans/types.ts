@@ -15,9 +15,6 @@ export type Loan = {
 	type: string;
 	minCRatio: Big;
 	cratio: Big;
-	pnl: Big;
-	pnlPercentage: Big;
-	accruedInterestUSD: Big;
 	collateralAsset: string;
 	debtAsset: string;
 };
