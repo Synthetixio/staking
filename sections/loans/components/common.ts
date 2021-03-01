@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { FlexDivColCentered } from 'styles/common';
+import { FlexDivColCentered, ErrorMessage as BaseErrorMessage } from 'styles/common';
 
 export const FormContainer = styled(FlexDivColCentered)`
 	justify-content: space-between;
@@ -29,4 +29,8 @@ export const SettingsContainer = styled.div`
 
 export const SettingContainer = styled.div`
 	border-bottom: ${(props) => `1px solid ${props.theme.colors.grayBlue}`};
+`;
+
+export const ErrorMessage = styled(BaseErrorMessage)`
+	margin-bottom: 24px;
 `;

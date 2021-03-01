@@ -20,6 +20,8 @@ const Withdraw: React.FC<WithdrawProps> = ({ loan, loanId, loanTypeIsETH, loanCo
 
 	const [isWorking, setIsWorking] = useState<string>('');
 	const [withdrawalAmountString, setWithdrawalAmount] = useState<string>('0');
+	const [error, setError] = useState<string | null>(null);
+
 	const collateralAsset = loanTypeIsETH ? 'ETH' : 'renBTC';
 	const collateralDecimals = loanTypeIsETH ? 18 : 8; // todo
 
@@ -62,7 +64,7 @@ const Withdraw: React.FC<WithdrawProps> = ({ loan, loanId, loanTypeIsETH, loanCo
 		try {
 			setIsWorking('withdrawing');
 			await tx(() => getTxData(gas), {
-				showErrorNotification: (e: string) => console.log(e),
+				showErrorNotification: (e: string) => setError(e),
 				showProgressNotification: (hash: string) =>
 					monitorHash({
 						txHash: hash,
@@ -100,6 +102,9 @@ const Withdraw: React.FC<WithdrawProps> = ({ loan, loanId, loanTypeIsETH, loanCo
 				}`,
 				buttonIsDisabled: !!isWorking,
 				onButtonClick: withdraw,
+
+				error,
+				setError,
 			}}
 		/>
 	);

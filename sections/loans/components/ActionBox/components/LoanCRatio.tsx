@@ -9,7 +9,7 @@ type LoanCRatioProps = {
 };
 
 const LoanCRatio: React.FC<LoanCRatioProps> = ({ loan }) => {
-	const cratio = toBig(loan.cratio);
+	const cratio = toBig(loan.cratio).div(1e16);
 	const hasLowCRatio = React.useMemo(() => cratio.lt(MIN_CRATIO), [cratio]);
 	return <CRatio {...{ cratio, hasLowCRatio }} />;
 };

@@ -538,7 +538,7 @@
 		},
 		"pending-withdrawals": {
 			"title": "Pending Withdrawals",
-			"subtitle": "You have pending withdrawals totaling <0>{{pendingWithdrawals}}</0> ETH",
+			"title-tip": "You will need to claim your ether collateral separately after your loan is closed, withdrawn or liquidated.",
 			"empty": "You have no pending withdrawals.",
 			"claiming": "CLAIMING...",
 			"claim": "CLAIM"

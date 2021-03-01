@@ -28,6 +28,7 @@ const Deposit: React.FC<DepositProps> = ({
 
 	const [isWorking, setIsWorking] = useState<string>('');
 	const [isApproved, setIsApproved] = useState(false);
+	const [error, setError] = useState<string | null>(null);
 
 	const collateralAsset = loanTypeIsETH ? 'ETH' : 'renBTC';
 	const collateralDecimals = loanTypeIsETH ? 18 : 8; // todo
@@ -116,7 +117,7 @@ const Deposit: React.FC<DepositProps> = ({
 		try {
 			setIsWorking('depositing');
 			await tx(() => getDepositTxData(gas), {
-				showErrorNotification: (e: string) => console.log(e),
+				showErrorNotification: (e: string) => setError(e),
 				showProgressNotification: (hash: string) =>
 					monitorHash({
 						txHash: hash,
@@ -165,6 +166,9 @@ const Deposit: React.FC<DepositProps> = ({
 				buttonLabel: `loans.modify-loan.deposit.button-labels.${isWorking ? isWorking : 'default'}`,
 				buttonIsDisabled: !!isWorking,
 				onButtonClick: onApproveOrDeposit,
+
+				error,
+				setError,
 			}}
 		/>
 	);

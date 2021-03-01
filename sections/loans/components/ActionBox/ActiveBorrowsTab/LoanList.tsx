@@ -29,7 +29,7 @@ const LoanList: React.FC<LoanListProps> = ({ actions }) => {
 	const data: Array<LoanRowWrap> = loans.map((loan: Loan) => ({
 		debt: `${formatUnits(loan.amount, 18, 2)} ${loan.debtAsset}`,
 		collateral: `${formatUnits(loan.collateral, 18, 2)} ${loan.collateralAsset}`,
-		cratio: `${formatUnits(loan.cratio.toString(), 18 - 2, 2)}%`,
+		cratio: `${formatUnits(loan.cratio.toString(), 18 - 2, 0)}%`,
 		loan,
 	}));
 

@@ -1,17 +1,17 @@
 import React from 'react';
-import { useTranslation, Trans } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { ethers } from 'ethers';
 import { useRecoilValue } from 'recoil';
 
 import { walletAddressState } from 'store/wallet';
 import styled from 'styled-components';
-import { NoTextTransform } from 'styles/common';
 import Connector from 'containers/Connector';
 import Button from 'components/Button';
 import synthetix from 'lib/synthetix';
 import { tx } from 'utils/transactions';
 import { toFixed, toBig, formatUnits } from 'utils/formatters/big-number';
 import { useLoans } from 'sections/loans/contexts/loans';
+import InfoSVG from 'sections/loans/components/ActionBox/components/InfoSVG';
 
 const InfoBox: React.FC = () => {
 	const { t } = useTranslation();
@@ -110,19 +110,18 @@ const InfoBox: React.FC = () => {
 
 			<Container>
 				<ContainerHeader>
-					<Title>{t('loans.pending-withdrawals.title')}</Title>
-					<Subtitle>
+					<PendingWithdrawalsTitle>
+						{t('loans.pending-withdrawals.title')}{' '}
+						<InfoSVG tip={t('loans.pending-withdrawals.title-tip')} />
+					</PendingWithdrawalsTitle>
+					<PendingWithdrawalsSubtitle>
 						{pendingWithdrawals.isZero() ? (
-							<div>{t('loans.pending-withdrawals.empty')}</div>
+							<>{t('loans.pending-withdrawals.empty')}</>
 						) : (
-							<div>
-								<Trans
-									i18nKey={'loans.pending-withdrawals.subtitle'}
-									values={{ pendingWithdrawals: formatUnits(pendingWithdrawals, 18) }}
-									components={[<NoTextTransform />]}
-								/>{' '}
+							<>
+								{formatUnits(pendingWithdrawals, 18)}ETH{' '}
 								<ClaimButton
-									variant="text"
+									variant="secondary"
 									size="sm"
 									onClick={claimPendingWithdrawals}
 									disabled={isClaimingPendingWithdrawals}
@@ -133,9 +132,9 @@ const InfoBox: React.FC = () => {
 										}`
 									)}
 								</ClaimButton>
-							</div>
+							</>
 						)}
-					</Subtitle>
+					</PendingWithdrawalsSubtitle>
 				</ContainerHeader>
 			</Container>
 
@@ -254,13 +253,29 @@ export const TotalColHeading = styled(StatsCol)`
 `;
 
 export const ClaimButton = styled(Button)`
-	color: ${(props) => props.theme.colors.blue};
 	cursor: pointer;
-	margin-left: 5px;
-	padding: 0;
+	margin-left: 50px;
+`;
 
-	&,
-	&:disabled {
-		background: transparent;
+export const PendingWithdrawalsTitle = styled.div`
+	font-family: ${(props) => props.theme.fonts.regular};
+	color: ${(props) => props.theme.colors.gray};
+	font-weight: bold;
+	font-size: 12px;
+	text-transform: uppercase;
+	display: flex;
+	align-items: center;
+
+	svg {
+		margin-left: 10px;
 	}
+`;
+
+export const PendingWithdrawalsSubtitle = styled.div`
+	font-family: ${(props) => props.theme.fonts.extended};
+	color: ${(props) => props.theme.colors.white};
+	font-size: 20px;
+	margin-top: 12px;
+	display: flex;
+	align-items: center;
 `;

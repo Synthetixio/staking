@@ -5,10 +5,9 @@ import Big from 'bignumber.js';
 import styled from 'styled-components';
 import { Trans } from 'react-i18next';
 import Button from 'components/Button';
-import { NoTextTransform } from 'styles/common';
+import { NoTextTransform, IconButton, FlexDivRowCentered } from 'styles/common';
 import { Svg } from 'react-optimized-image';
 import NavigationBack from 'assets/svg/app/navigation-back.svg';
-import { IconButton, FlexDivRowCentered } from 'styles/common';
 import GasSelector from 'components/GasSelector';
 import { useLoans } from 'sections/loans/contexts/loans';
 import { toBig } from 'utils/formatters/big-number';
@@ -18,6 +17,7 @@ import {
 	InputsDivider,
 	SettingsContainer,
 	SettingContainer,
+	ErrorMessage,
 } from 'sections/loans/components/common';
 import { getGasEstimateForTransaction } from 'utils/transactions';
 import {
@@ -53,6 +53,9 @@ type WrapperProps = {
 
 	showCRatio?: boolean;
 	showInterestAccrued?: boolean;
+
+	error: string | null;
+	setError: (error: string | null) => void;
 };
 
 const Wrapper: FC<WrapperProps> = ({
@@ -79,6 +82,9 @@ const Wrapper: FC<WrapperProps> = ({
 
 	showCRatio,
 	showInterestAccrued,
+
+	error,
+	setError,
 }) => {
 	const router = useRouter();
 	const { interactionDelays } = useLoans();
@@ -135,10 +141,12 @@ const Wrapper: FC<WrapperProps> = ({
 		};
 	}, [nextInteractionDate]);
 
+	// gas
 	useEffect(() => {
 		let isMounted = true;
 		(async () => {
 			try {
+				setError(null);
 				const data: any[] | null = getTxData({});
 				if (!data) return;
 				const [contract, method, args] = data;
@@ -152,7 +160,7 @@ const Wrapper: FC<WrapperProps> = ({
 		return () => {
 			isMounted = false;
 		};
-	}, [getTxData]);
+	}, [getTxData, setError]);
 
 	return (
 		<>
@@ -205,6 +213,8 @@ const Wrapper: FC<WrapperProps> = ({
 					</SettingContainer>
 				</SettingsContainer>
 			</FormContainer>
+
+			{!error ? null : <ErrorMessage>{error}</ErrorMessage>}
 
 			<FormButton
 				onClick={() =>

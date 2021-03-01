@@ -18,7 +18,9 @@ const Repay: React.FC<RepayProps> = ({ loan, loanId, loanTypeIsETH, loanContract
 	const { monitorHash } = Notify.useContainer();
 
 	const [isWorking, setIsWorking] = useState<string>('');
+	const [error, setError] = useState<string | null>(null);
 	const [drawAmountString, setRepayAmount] = useState<string>('0');
+
 	const debtAsset = SYNTH_BY_CURRENCY_KEY[loan.currency];
 	const debtAssetDecimals = 18;
 
@@ -52,7 +54,7 @@ const Repay: React.FC<RepayProps> = ({ loan, loanId, loanTypeIsETH, loanContract
 		try {
 			setIsWorking('drawing');
 			await tx(() => getTxData(gas), {
-				showErrorNotification: (e: string) => console.log(e),
+				showErrorNotification: (e: string) => setError(e),
 				showProgressNotification: (hash: string) =>
 					monitorHash({
 						txHash: hash,
@@ -87,6 +89,9 @@ const Repay: React.FC<RepayProps> = ({ loan, loanId, loanTypeIsETH, loanContract
 				buttonLabel: `loans.modify-loan.draw.button-labels.${isWorking ? isWorking : 'default'}`,
 				buttonIsDisabled: !!isWorking,
 				onButtonClick: draw,
+
+				error,
+				setError,
 			}}
 		/>
 	);

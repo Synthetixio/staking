@@ -22,6 +22,7 @@ const Close: React.FC<CloseProps> = ({ loan, loanId, loanTypeIsETH, loanContract
 	const { reloadPendingWithdrawals } = useLoans();
 
 	const [isWorking, setIsWorking] = useState<string>('');
+	const [error, setError] = useState<string | null>(null);
 
 	const getTxData = useCallback(
 		(gas: Record<string, number>) => {
@@ -35,7 +36,7 @@ const Close: React.FC<CloseProps> = ({ loan, loanId, loanTypeIsETH, loanContract
 		try {
 			setIsWorking('closing');
 			await tx(() => getTxData(gas), {
-				showErrorNotification: (e: string) => console.log(e),
+				showErrorNotification: (e: string) => setError(e),
 				showProgressNotification: (hash: string) =>
 					monitorHash({
 						txHash: hash,
@@ -70,6 +71,9 @@ const Close: React.FC<CloseProps> = ({ loan, loanId, loanTypeIsETH, loanContract
 				buttonLabel: `loans.modify-loan.close.button-labels.${isWorking ? isWorking : 'default'}`,
 				buttonIsDisabled: !!isWorking,
 				onButtonClick: close,
+
+				error,
+				setError,
 			}}
 		/>
 	);

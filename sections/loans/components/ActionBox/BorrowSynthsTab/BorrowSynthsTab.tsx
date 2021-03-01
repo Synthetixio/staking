@@ -9,7 +9,7 @@ import Connector from 'containers/Connector';
 import Notify from 'containers/Notify';
 import synthetix from 'lib/synthetix';
 import GasSelector from 'components/GasSelector';
-import { toBig, isZero, formatUnits, toEthersBig } from 'utils/formatters/big-number';
+import { toBig, formatUnits, toEthersBig } from 'utils/formatters/big-number';
 import { tx, getGasEstimateForTransaction } from 'utils/transactions';
 import {
 	normalizeGasLimit as getNormalizedGasLimit,
@@ -25,6 +25,7 @@ import {
 	InputsDivider,
 	SettingsContainer,
 	SettingContainer,
+	ErrorMessage,
 } from 'sections/loans/components/common';
 import { useLoans } from 'sections/loans/contexts/loans';
 import CRatio from 'sections/loans/components/ActionBox/components/CRatio';
@@ -76,7 +77,7 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 	);
 
 	const hasLowCollateralAmount = React.useMemo(
-		() => !isZero(collateralAmount) && collateralAmount.lt(minCollateralAmount),
+		() => !collateralAmount.isZero() && collateralAmount.lt(minCollateralAmount),
 		[collateralAmount, minCollateralAmount]
 	);
 	const minCollateralAmountString = formatUnits(minCollateralAmount, collateralDecimals, 2);
@@ -97,10 +98,10 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 	const [isApproving, setIsApproving] = React.useState<boolean>(false);
 	const [isBorrowing, setIsBorrowing] = React.useState<boolean>(false);
 	const [isApproved, setIsApproved] = React.useState<boolean>(false);
-	const [, setError] = React.useState<string | null>(null);
+	const [error, setError] = React.useState<string | null>(null);
 
 	const hasLowCRatio = React.useMemo(
-		() => !isZero(collateralAmount) && !isZero(debtAmount) && cratio.lt(MIN_CRATIO),
+		() => !collateralAmount.isZero() && !debtAmount.isZero() && cratio.lt(MIN_CRATIO),
 		[collateralAmount, debtAmount, cratio]
 	);
 
@@ -114,16 +115,6 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 		},
 		[setCollateralAssets, setCollateralAsset, setDebtAsset]
 	);
-
-	const onSetCollateralAmount = (amount: string) => {
-		setError('');
-		setCollateralAmount(amount);
-	};
-
-	const onSetDebtAmount = (amount: string) => {
-		setError('');
-		setDebtAmount(amount);
-	};
 
 	React.useEffect(() => {
 		const debtAsset = DEBT_ASSETS[0];
@@ -155,7 +146,7 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 
 	const getBorrowTxData = React.useCallback(
 		(gas: Record<string, number>) => {
-			if (!(loanContract && !isZero(debtAmount))) return null;
+			if (!(loanContract && !debtAmount.isZero())) return null;
 			const debtAssetCurrencyKey = ethers.utils.formatBytes32String(debtAsset);
 			return [
 				loanContract,
@@ -198,7 +189,7 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 		setIsApproving(true);
 		try {
 			await tx(() => getApproveTxData(gas), {
-				showErrorNotification: (e: Error) => setError(e.message),
+				showErrorNotification: (e: string) => setError(e),
 				showProgressNotification: (hash: string) =>
 					monitorHash({
 						txHash: hash,
@@ -211,21 +202,20 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 			// update isApproved
 			const allowance = toBig(await collateralContract.allowance(address, loanContractAddress));
 			setIsApproved(allowance.gte(collateralAmount.toString()));
-		} catch (e) {
-			console.log(e);
+		} catch {
 		} finally {
 			setIsApproving(false);
 		}
 	};
 
 	const borrow = async (gas: Record<string, number>) => {
-		if (isZero(debtAmount)) {
+		if (debtAmount.isZero()) {
 			return setError(`Enter ${debtAsset} amount..`);
 		}
 		setIsBorrowing(true);
 		try {
 			await tx(() => getBorrowTxData(gas), {
-				showErrorNotification: (e: Error) => setError(e.message),
+				showErrorNotification: (e: string) => setError(e),
 				showProgressNotification: (hash: string) =>
 					monitorHash({
 						txHash: hash,
@@ -233,11 +223,10 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 					}),
 				showSuccessNotification: (hash: string) => {},
 			});
-			onSetDebtAmount('0');
-			onSetCollateralAmount('0');
+			setDebtAmount('0');
+			setCollateralAmount('0');
 			router.push('/loans/list');
-		} catch (e) {
-			console.log(e);
+		} catch {
 		} finally {
 			setIsBorrowing(false);
 		}
@@ -281,7 +270,7 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 	React.useEffect(() => {
 		let isMounted = true;
 		const load = async () => {
-			if (!(exchangeRates && !isZero(collateralAmount) && !isZero(debtAmount))) {
+			if (!(exchangeRates && !collateralAmount.isZero() && !debtAmount.isZero())) {
 				return setCRatio(toBig('0'));
 			}
 
@@ -308,11 +297,13 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 		};
 	}, [collateralAmount, collateralAsset, debtAmount, debtAsset, exchangeRates, collateralDecimals]);
 
-	// gas limit
+	// gas
 	React.useEffect(() => {
+		if (!(!debtAmount.isZero() && !collateralAmount.isZero())) return;
 		let isMounted = true;
 		(async () => {
 			try {
+				setError(null);
 				const data: any[] | null = getTxData({});
 				if (!data) return;
 				const [contract, method, args] = data;
@@ -326,7 +317,7 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 		return () => {
 			isMounted = false;
 		};
-	}, [getTxData]);
+	}, [getTxData, collateralAmount, debtAmount]);
 
 	return (
 		<>
@@ -337,7 +328,7 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 						asset={debtAsset}
 						setAsset={onSetDebtAsset}
 						amount={debtAmountNumber}
-						setAmount={onSetDebtAmount}
+						setAmount={setDebtAmount}
 						assets={DEBT_ASSETS}
 					/>
 					<InputsDivider />
@@ -346,9 +337,9 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 						asset={collateralAsset}
 						setAsset={setCollateralAsset}
 						amount={collateralAmountNumber}
-						setAmount={onSetCollateralAmount}
+						setAmount={setCollateralAmount}
 						assets={collateralAssets}
-						onSetMaxAmount={onSetCollateralAmount}
+						onSetMaxAmount={setCollateralAmount}
 					/>
 				</InputsContainer>
 
@@ -367,6 +358,8 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 					</SettingContainer>
 				</SettingsContainer>
 			</FormContainer>
+
+			{!error ? null : <ErrorMessage>{error}</ErrorMessage>}
 
 			<FormButton
 				onClick={connectOrApproveOrTrade}

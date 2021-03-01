@@ -4,7 +4,7 @@ import { ethers } from 'ethers';
 const PRECISION = 4;
 
 export function toFixed(a: any, b: any, precision?: number): string {
-	if (isZero(toBig(a)) || isZero(toBig(b))) {
+	if (toBig(a).isZero() || toBig(b).isZero()) {
 		return '0';
 	}
 	return toBig(a)
@@ -14,10 +14,6 @@ export function toFixed(a: any, b: any, precision?: number): string {
 
 export function formatUnits(a: any, decimals: number, precision?: number): string {
 	return toFixed(a, toBig(10).pow(decimals), precision);
-}
-
-export function isZero(a: any): boolean {
-	return toBig(a).isZero();
 }
 
 export function toBig(n: any): Big {
