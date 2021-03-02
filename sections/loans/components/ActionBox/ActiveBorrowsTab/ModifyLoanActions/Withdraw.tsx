@@ -21,6 +21,7 @@ const Withdraw: React.FC<WithdrawProps> = ({ loan, loanId, loanTypeIsETH, loanCo
 	const [isWorking, setIsWorking] = useState<string>('');
 	const [withdrawalAmountString, setWithdrawalAmount] = useState<string>('0');
 	const [error, setError] = useState<string | null>(null);
+	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 
 	const collateralAsset = loanTypeIsETH ? 'ETH' : 'renBTC';
 	const collateralDecimals = loanTypeIsETH ? 18 : 8; // todo
@@ -43,13 +44,13 @@ const Withdraw: React.FC<WithdrawProps> = ({ loan, loanId, loanTypeIsETH, loanCo
 		[remainingAmount, collateralDecimals]
 	);
 
-	const onSetAAmount = (amount: string) =>
+	const onSetLeftColAmount = (amount: string) =>
 		!amount
 			? setWithdrawalAmount('0')
 			: ethers.utils.parseUnits(amount, collateralDecimals).gt(collateralAmount)
-			? onSetAMaxAmount()
+			? onSetLeftColMaxAmount()
 			: setWithdrawalAmount(amount);
-	const onSetAMaxAmount = () =>
+	const onSetLeftColMaxAmount = () =>
 		setWithdrawalAmount(ethers.utils.formatUnits(collateralAmount, collateralDecimals));
 
 	const getTxData = useCallback(
@@ -63,6 +64,7 @@ const Withdraw: React.FC<WithdrawProps> = ({ loan, loanId, loanTypeIsETH, loanCo
 	const withdraw = async (gas: Record<string, number>) => {
 		try {
 			setIsWorking('withdrawing');
+			setTxModalOpen(true);
 			await tx(() => getTxData(gas), {
 				showErrorNotification: (e: string) => setError(e),
 				showProgressNotification: (hash: string) =>
@@ -75,6 +77,7 @@ const Withdraw: React.FC<WithdrawProps> = ({ loan, loanId, loanTypeIsETH, loanCo
 		} catch {
 		} finally {
 			setIsWorking('');
+			setTxModalOpen(false);
 		}
 	};
 
@@ -87,15 +90,15 @@ const Withdraw: React.FC<WithdrawProps> = ({ loan, loanId, loanTypeIsETH, loanCo
 				loanTypeIsETH,
 				showCRatio: true,
 
-				aLabel: 'loans.modify-loan.withdraw.a-label',
-				aAsset: collateralAsset,
-				aAmountNumber: withdrawalAmountString,
-				onSetAAmount,
-				onSetAMaxAmount,
+				leftColLabel: 'loans.modify-loan.withdraw.left-col-label',
+				leftColAssetName: collateralAsset,
+				leftColAmount: withdrawalAmountString,
+				onSetLeftColAmount,
+				onSetLeftColMaxAmount,
 
-				bLabel: 'loans.modify-loan.withdraw.b-label',
-				bAsset: collateralAsset,
-				bAmountNumber: remainingAmountString,
+				rightColLabel: 'loans.modify-loan.withdraw.right-col-label',
+				rightColAssetName: collateralAsset,
+				rightColAmount: remainingAmountString,
 
 				buttonLabel: `loans.modify-loan.withdraw.button-labels.${
 					isWorking ? isWorking : 'default'
@@ -105,6 +108,9 @@ const Withdraw: React.FC<WithdrawProps> = ({ loan, loanId, loanTypeIsETH, loanCo
 
 				error,
 				setError,
+
+				txModalOpen,
+				setTxModalOpen,
 			}}
 		/>
 	);

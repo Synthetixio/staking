@@ -29,6 +29,7 @@ const Deposit: React.FC<DepositProps> = ({
 	const [isWorking, setIsWorking] = useState<string>('');
 	const [isApproved, setIsApproved] = useState(false);
 	const [error, setError] = useState<string | null>(null);
+	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 
 	const collateralAsset = loanTypeIsETH ? 'ETH' : 'renBTC';
 	const collateralDecimals = loanTypeIsETH ? 18 : 8; // todo
@@ -55,9 +56,9 @@ const Deposit: React.FC<DepositProps> = ({
 
 	const loanContractAddress = loanContract?.address;
 
-	const onSetAAmount = (amount: string) =>
+	const onSetLeftColAmount = (amount: string) =>
 		!amount ? setDepositalAmount('0') : setDepositalAmount(amount);
-	const onSetAMaxAmount = (amount: string) => setDepositalAmount(amount);
+	const onSetLeftColMaxAmount = (amount: string) => setDepositalAmount(amount);
 
 	const getApproveTxData = useCallback(
 		(gas: Record<string, number>) => {
@@ -96,6 +97,7 @@ const Deposit: React.FC<DepositProps> = ({
 	const approve = async (gas: Record<string, number>) => {
 		try {
 			setIsWorking('approving');
+			setTxModalOpen(true);
 			await tx(() => getApproveTxData(gas), {
 				showProgressNotification: (hash: string) =>
 					monitorHash({
@@ -110,12 +112,14 @@ const Deposit: React.FC<DepositProps> = ({
 		} catch {
 		} finally {
 			setIsWorking('');
+			setTxModalOpen(false);
 		}
 	};
 
 	const deposit = async (gas: Record<string, number>) => {
 		try {
 			setIsWorking('depositing');
+			setTxModalOpen(true);
 			await tx(() => getDepositTxData(gas), {
 				showErrorNotification: (e: string) => setError(e),
 				showProgressNotification: (hash: string) =>
@@ -127,6 +131,7 @@ const Deposit: React.FC<DepositProps> = ({
 		} catch {
 		} finally {
 			setIsWorking('');
+			setTxModalOpen(false);
 		}
 	};
 
@@ -153,15 +158,15 @@ const Deposit: React.FC<DepositProps> = ({
 				loanTypeIsETH,
 				showCRatio: true,
 
-				aLabel: 'loans.modify-loan.deposit.a-label',
-				aAsset: collateralAsset,
-				aAmountNumber: depositAmountString,
-				onSetAAmount,
-				onSetAMaxAmount,
+				leftColLabel: 'loans.modify-loan.deposit.left-col-label',
+				leftColAssetName: collateralAsset,
+				leftColAmount: depositAmountString,
+				onSetLeftColAmount,
+				onSetLeftColMaxAmount,
 
-				bLabel: 'loans.modify-loan.deposit.b-label',
-				bAsset: collateralAsset,
-				bAmountNumber: totalAmountString,
+				rightColLabel: 'loans.modify-loan.deposit.right-col-label',
+				rightColAssetName: collateralAsset,
+				rightColAmount: totalAmountString,
 
 				buttonLabel: `loans.modify-loan.deposit.button-labels.${isWorking ? isWorking : 'default'}`,
 				buttonIsDisabled: !!isWorking,
@@ -169,6 +174,9 @@ const Deposit: React.FC<DepositProps> = ({
 
 				error,
 				setError,
+
+				txModalOpen,
+				setTxModalOpen,
 			}}
 		/>
 	);

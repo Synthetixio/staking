@@ -23,6 +23,7 @@ const Close: React.FC<CloseProps> = ({ loan, loanId, loanTypeIsETH, loanContract
 
 	const [isWorking, setIsWorking] = useState<string>('');
 	const [error, setError] = useState<string | null>(null);
+	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 
 	const getTxData = useCallback(
 		(gas: Record<string, number>) => {
@@ -35,6 +36,7 @@ const Close: React.FC<CloseProps> = ({ loan, loanId, loanTypeIsETH, loanContract
 	const close = async (gas: Record<string, number>) => {
 		try {
 			setIsWorking('closing');
+			setTxModalOpen(true);
 			await tx(() => getTxData(gas), {
 				showErrorNotification: (e: string) => setError(e),
 				showProgressNotification: (hash: string) =>
@@ -48,6 +50,7 @@ const Close: React.FC<CloseProps> = ({ loan, loanId, loanTypeIsETH, loanContract
 		} catch {
 		} finally {
 			setIsWorking('');
+			setTxModalOpen(false);
 		}
 	};
 
@@ -60,13 +63,13 @@ const Close: React.FC<CloseProps> = ({ loan, loanId, loanTypeIsETH, loanContract
 				loanTypeIsETH,
 				showInterestAccrued: true,
 
-				aLabel: 'loans.modify-loan.close.a-label',
-				aAsset: SYNTH_BY_CURRENCY_KEY[loan.currency],
-				aAmountNumber: ethers.utils.formatUnits(loan.amount, 18),
+				leftColLabel: 'loans.modify-loan.close.left-col-label',
+				leftColAssetName: SYNTH_BY_CURRENCY_KEY[loan.currency],
+				leftColAmount: ethers.utils.formatUnits(loan.amount, 18),
 
-				bLabel: 'loans.modify-loan.close.b-label',
-				bAsset: loanTypeIsETH ? 'ETH' : 'renBTC',
-				bAmountNumber: ethers.utils.formatUnits(loan.collateral, 18),
+				rightColLabel: 'loans.modify-loan.close.right-col-label',
+				rightColAssetName: loanTypeIsETH ? 'ETH' : 'renBTC',
+				rightColAmount: ethers.utils.formatUnits(loan.collateral, 18),
 
 				buttonLabel: `loans.modify-loan.close.button-labels.${isWorking ? isWorking : 'default'}`,
 				buttonIsDisabled: !!isWorking,
@@ -74,6 +77,9 @@ const Close: React.FC<CloseProps> = ({ loan, loanId, loanTypeIsETH, loanContract
 
 				error,
 				setError,
+
+				txModalOpen,
+				setTxModalOpen,
 			}}
 		/>
 	);

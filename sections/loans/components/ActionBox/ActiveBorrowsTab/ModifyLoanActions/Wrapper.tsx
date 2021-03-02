@@ -1,16 +1,23 @@
 import { useState, useMemo, useEffect, FC } from 'react';
+import { ethers } from 'ethers';
 import moment from 'moment';
 import { useRouter } from 'next/router';
 import Big from 'bignumber.js';
 import styled from 'styled-components';
-import { Trans } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import Button from 'components/Button';
-import { NoTextTransform, IconButton, FlexDivRowCentered } from 'styles/common';
+import {
+	ModalItemTitle as TxModalItemTitle,
+	ModalItemText as TxModalItemText,
+	NoTextTransform,
+	IconButton,
+	FlexDivRowCentered,
+} from 'styles/common';
 import { Svg } from 'react-optimized-image';
 import NavigationBack from 'assets/svg/app/navigation-back.svg';
 import GasSelector from 'components/GasSelector';
 import { useLoans } from 'sections/loans/contexts/loans';
-import { toBig } from 'utils/formatters/big-number';
+import { toBig, toFixed } from 'utils/formatters/big-number';
 import {
 	FormContainer,
 	InputsContainer,
@@ -18,6 +25,9 @@ import {
 	SettingsContainer,
 	SettingContainer,
 	ErrorMessage,
+	TxModalContent,
+	TxModalItem,
+	TxModalItemSeperator,
 } from 'sections/loans/components/common';
 import { getGasEstimateForTransaction } from 'utils/transactions';
 import {
@@ -28,21 +38,22 @@ import AssetInput from 'sections/loans/components/ActionBox/BorrowSynthsTab/Asse
 import { Loan } from 'queries/loans/types';
 import AccruedInterest from 'sections/loans/components/ActionBox/components/AccruedInterest';
 import CRatio from 'sections/loans/components/ActionBox/components/LoanCRatio';
+import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 
 type WrapperProps = {
 	getTxData: (gas: Record<string, number>) => any[] | null;
 
-	aLabel: string;
-	aAsset: string;
-	aAmountNumber: string;
-	onSetAAmount?: (amount: string) => void;
-	onSetAMaxAmount?: (amount: string) => void;
+	leftColLabel: string;
+	leftColAssetName: string;
+	leftColAmount: string;
+	onSetLeftColAmount?: (amount: string) => void;
+	onSetLeftColMaxAmount?: (amount: string) => void;
 
-	bLabel: string;
-	bAsset: string;
-	bAmountNumber: string;
-	onSetBAmount?: (amount: string) => void;
-	onSetBMaxAmount?: (amount: string) => void;
+	rightColLabel: string;
+	rightColAssetName: string;
+	rightColAmount: string;
+	onSetRightColAmount?: (amount: string) => void;
+	onSetRightColMaxAmount?: (amount: string) => void;
 
 	buttonLabel: string;
 	buttonIsDisabled: boolean;
@@ -56,22 +67,25 @@ type WrapperProps = {
 
 	error: string | null;
 	setError: (error: string | null) => void;
+
+	txModalOpen: boolean;
+	setTxModalOpen: (txModalOpen: boolean) => void;
 };
 
 const Wrapper: FC<WrapperProps> = ({
 	getTxData,
 
-	aLabel,
-	aAsset,
-	aAmountNumber,
-	onSetAAmount,
-	onSetAMaxAmount,
+	leftColLabel,
+	leftColAssetName,
+	leftColAmount,
+	onSetLeftColAmount,
+	onSetLeftColMaxAmount,
 
-	bLabel,
-	bAsset,
-	bAmountNumber,
-	onSetBAmount,
-	onSetBMaxAmount,
+	rightColLabel,
+	rightColAssetName,
+	rightColAmount,
+	onSetRightColAmount,
+	onSetRightColMaxAmount,
 
 	buttonLabel,
 	buttonIsDisabled,
@@ -85,7 +99,11 @@ const Wrapper: FC<WrapperProps> = ({
 
 	error,
 	setError,
+
+	txModalOpen,
+	setTxModalOpen,
 }) => {
+	const { t } = useTranslation();
 	const router = useRouter();
 	const { interactionDelays } = useLoans();
 
@@ -95,8 +113,8 @@ const Wrapper: FC<WrapperProps> = ({
 	const [gasLimit, setGasLimitEstimate] = useState<number | null>(null);
 
 	const onGoBack = () => router.back();
-	const onSetAAsset = () => {};
-	const onSetBAsset = () => {};
+	const onSetleftColAssetName = () => {};
+	const onSetrightColAssetName = () => {};
 
 	const nextInteractionDate = useMemo(() => {
 		const loanType = loanTypeIsETH ? 'eth' : 'erc20';
@@ -106,6 +124,9 @@ const Wrapper: FC<WrapperProps> = ({
 			.unix(parseInt(loan.lastInteraction.toString()))
 			.add(parseInt(interactionDelay.toString()), 'seconds');
 	}, [loanTypeIsETH, loan.lastInteraction, interactionDelays]);
+
+	const handleButtonClick = () =>
+		onButtonClick({ gasPrice: getNormalizedGasPrice(gasPrice), gasLimit: gasLimit! });
 
 	useEffect(() => {
 		if (!nextInteractionDate) return;
@@ -173,27 +194,27 @@ const Wrapper: FC<WrapperProps> = ({
 
 				<InputsContainer>
 					<AssetInput
-						label={aLabel}
-						asset={aAsset}
-						setAsset={onSetAAsset}
-						amount={aAmountNumber}
-						setAmount={onSetAAmount || noop}
-						assets={[aAsset]}
+						label={leftColLabel}
+						asset={leftColAssetName}
+						setAsset={onSetleftColAssetName}
+						amount={leftColAmount}
+						setAmount={onSetLeftColAmount || noop}
+						assets={[leftColAssetName]}
 						selectDisabled={true}
-						inputDisabled={!onSetAAmount}
-						onSetMaxAmount={onSetAMaxAmount}
+						inputDisabled={!onSetLeftColAmount}
+						onSetMaxAmount={onSetLeftColMaxAmount}
 					/>
 					<InputsDivider />
 					<AssetInput
-						label={bLabel}
-						asset={bAsset}
-						setAsset={onSetBAsset}
-						amount={bAmountNumber}
-						setAmount={onSetBAmount || noop}
-						assets={[bAsset]}
+						label={rightColLabel}
+						asset={rightColAssetName}
+						setAsset={onSetrightColAssetName}
+						amount={rightColAmount}
+						setAmount={onSetRightColAmount || noop}
+						assets={[rightColAssetName]}
 						selectDisabled={true}
-						inputDisabled={!onSetBAmount}
-						onSetMaxAmount={onSetBMaxAmount}
+						inputDisabled={!onSetRightColAmount}
+						onSetMaxAmount={onSetRightColMaxAmount}
 					/>
 				</InputsContainer>
 
@@ -214,12 +235,8 @@ const Wrapper: FC<WrapperProps> = ({
 				</SettingsContainer>
 			</FormContainer>
 
-			{!error ? null : <ErrorMessage>{error}</ErrorMessage>}
-
 			<FormButton
-				onClick={() =>
-					onButtonClick({ gasPrice: getNormalizedGasPrice(gasPrice), gasLimit: gasLimit! })
-				}
+				onClick={handleButtonClick}
 				variant="primary"
 				size="lg"
 				disabled={!!waitETA || buttonIsDisabled}
@@ -230,6 +247,33 @@ const Wrapper: FC<WrapperProps> = ({
 					components={[<NoTextTransform />]}
 				/>
 			</FormButton>
+
+			{!error ? null : <ErrorMessage>{error}</ErrorMessage>}
+
+			{txModalOpen && (
+				<TxConfirmationModal
+					onDismiss={() => setTxModalOpen(false)}
+					txError={null}
+					attemptRetry={handleButtonClick}
+					content={
+						<TxModalContent>
+							<TxModalItem>
+								<TxModalItemTitle>{t(leftColLabel)}</TxModalItemTitle>
+								<TxModalItemText>
+									{toFixed(ethers.utils.parseEther(leftColAmount), 1e18, 2)} {leftColAssetName}
+								</TxModalItemText>
+							</TxModalItem>
+							<TxModalItemSeperator />
+							<TxModalItem>
+								<TxModalItemTitle>{t(rightColLabel)}</TxModalItemTitle>
+								<TxModalItemText>
+									{toFixed(ethers.utils.parseEther(rightColAmount), 1e18, 2)} {rightColAssetName}
+								</TxModalItemText>
+							</TxModalItem>
+						</TxModalContent>
+					}
+				/>
+			)}
 		</>
 	);
 };

@@ -519,7 +519,11 @@
 					"label": "Using"
 				},
 				"low-cratio-tip": "You can only borrow at 150% or higher. Your position will be eligible for liquidation if it falls below 120%.",
-				"healthy-cratio-tip": "Ensure your position stays above 120% to prevent liquidation."
+				"healthy-cratio-tip": "Ensure your position stays above 120% to prevent liquidation.",
+				"confirm-transaction": {
+					"left-panel-label": "BORROWING",
+					"right-panel-label": "POSTING"
+				}
 			},
 			"list": {
 				"title": "Active Borrows",
@@ -552,16 +556,16 @@
 		"modify-loan": {
 			"loan-interation-delay": "Please wait <0>{{waitETA}}</0> before reinteracting with the loan",
 			"close": {
-				"a-label": "REPAY",
-				"b-label": "RECEIVE",
+				"left-col-label": "REPAY",
+				"right-col-label": "RECEIVE",
 				"button-labels": {
 					"default": "CLOSE LOAN",
 					"closing": "CLOSING LOAN..."
 				}
 			},
 			"deposit": {
-				"a-label": "DEPOSIT",
-				"b-label": "NEW TOTAL",
+				"left-col-label": "DEPOSIT",
+				"right-col-label": "NEW TOTAL",
 				"button-labels": {
 					"default": "DEPOSIT",
 					"approve": "APPROVE",
@@ -570,16 +574,16 @@
 				}
 			},
 			"withdraw": {
-				"a-label": "WITHDRAW",
-				"b-label": "REMAINING",
+				"left-col-label": "WITHDRAW",
+				"right-col-label": "REMAINING",
 				"button-labels": {
 					"default": "WITHDRAW",
 					"withdrawing": "WITHDRAWING..."
 				}
 			},
 			"repay": {
-				"a-label": "REPAY",
-				"b-label": "REMAINING",
+				"left-col-label": "REPAY",
+				"right-col-label": "REMAINING",
 				"button-labels": {
 					"default": "REPAY DEBT",
 					"repaying-fully-error": "CONSIDER CLOSING THE LOAN INSTEAD OF FULL REPAYMENT",
@@ -587,8 +591,8 @@
 				}
 			},
 			"draw": {
-				"a-label": "INCREASE",
-				"b-label": "NEW TOTAL",
+				"left-col-label": "INCREASE",
+				"right-col-label": "NEW TOTAL",
 				"button-labels": {
 					"default": "INCREASE DEBT",
 					"drawing": "INCREASING DEBT..."

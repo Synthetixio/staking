@@ -1,5 +1,6 @@
 import React from 'react';
 import { useRecoilValue } from 'recoil';
+import { useTranslation } from 'react-i18next';
 import { ethers } from 'ethers';
 import { useRouter } from 'next/router';
 import Big from 'bignumber.js';
@@ -18,6 +19,10 @@ import {
 import { Synths } from 'constants/currency';
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
+import {
+	ModalItemTitle as TxModalItemTitle,
+	ModalItemText as TxModalItemText,
+} from 'styles/common';
 import { DEBT_ASSETS, MIN_CRATIO } from 'sections/loans/constants';
 import {
 	FormContainer,
@@ -26,17 +31,22 @@ import {
 	SettingsContainer,
 	SettingContainer,
 	ErrorMessage,
+	TxModalContent,
+	TxModalItem,
+	TxModalItemSeperator,
 } from 'sections/loans/components/common';
 import { useLoans } from 'sections/loans/contexts/loans';
 import CRatio from 'sections/loans/components/ActionBox/components/CRatio';
 import InterestRate from 'sections/loans/components/ActionBox/components/InterestRate';
 import IssuanceFee from 'sections/loans/components/ActionBox/components/IssuanceFee';
+import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import FormButton from './FormButton';
 import AssetInput from './AssetInput';
 
 type BorrowSynthsTabProps = {};
 
 const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
+	const { t } = useTranslation();
 	const { monitorHash } = Notify.useContainer();
 	const { connectWallet } = Connector.useContainer();
 	const router = useRouter();
@@ -46,6 +56,8 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 
 	const [gasPrice, setGasPrice] = React.useState<number>(0);
 	const [gasLimit, setGasLimitEstimate] = React.useState<number | null>(null);
+
+	const [txModalOpen, setTxModalOpen] = React.useState<boolean>(false);
 
 	const [debtAmountNumber, setDebtAmount] = React.useState<string>('');
 	const [debtAsset, setDebtAsset] = React.useState<string>('');
@@ -187,6 +199,7 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 
 	const approve = async (gas: Record<string, number>) => {
 		setIsApproving(true);
+		setTxModalOpen(true);
 		try {
 			await tx(() => getApproveTxData(gas), {
 				showErrorNotification: (e: string) => setError(e),
@@ -204,6 +217,7 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 			setIsApproved(allowance.gte(collateralAmount.toString()));
 		} catch {
 		} finally {
+			setTxModalOpen(false);
 			setIsApproving(false);
 		}
 	};
@@ -213,6 +227,7 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 			return setError(`Enter ${debtAsset} amount..`);
 		}
 		setIsBorrowing(true);
+		setTxModalOpen(true);
 		try {
 			await tx(() => getBorrowTxData(gas), {
 				showErrorNotification: (e: string) => setError(e),
@@ -228,6 +243,7 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 			router.push('/loans/list');
 		} catch {
 		} finally {
+			setTxModalOpen(false);
 			setIsBorrowing(false);
 		}
 	};
@@ -359,8 +375,6 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 				</SettingsContainer>
 			</FormContainer>
 
-			{!error ? null : <ErrorMessage>{error}</ErrorMessage>}
-
 			<FormButton
 				onClick={connectOrApproveOrTrade}
 				{...{
@@ -375,6 +389,37 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 					isBorrowing,
 				}}
 			/>
+
+			{!error ? null : <ErrorMessage>{error}</ErrorMessage>}
+
+			{txModalOpen && (
+				<TxConfirmationModal
+					onDismiss={() => setTxModalOpen(false)}
+					txError={null}
+					attemptRetry={connectOrApproveOrTrade}
+					content={
+						<TxModalContent>
+							<TxModalItem>
+								<TxModalItemTitle>
+									{t('loans.tabs.new.confirm-transaction.left-panel-label')}
+								</TxModalItemTitle>
+								<TxModalItemText>
+									{formatUnits(debtAmount, debtDecimals, 2)} {debtAsset}
+								</TxModalItemText>
+							</TxModalItem>
+							<TxModalItemSeperator />
+							<TxModalItem>
+								<TxModalItemTitle>
+									{t('loans.tabs.new.confirm-transaction.right-panel-label')}
+								</TxModalItemTitle>
+								<TxModalItemText>
+									{formatUnits(collateralAmount, collateralDecimals, 2)} {collateralAsset}
+								</TxModalItemText>
+							</TxModalItem>
+						</TxModalContent>
+					}
+				/>
+			)}
 		</>
 	);
 };

@@ -23,6 +23,7 @@ const Repay: React.FC<RepayProps> = ({ loan, loanId, loanTypeIsETH, loanContract
 	const [isWorking, setIsWorking] = useState<string>('');
 	const [repayAmountString, setRepayAmount] = useState<string>('0');
 	const [error, setError] = useState<string | null>(null);
+	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 
 	const debtAsset = SYNTH_BY_CURRENCY_KEY[loan.currency];
 	const debtAssetDecimals = 18;
@@ -37,13 +38,13 @@ const Repay: React.FC<RepayProps> = ({ loan, loanId, loanTypeIsETH, loanContract
 	);
 	const isRepayingFully = useMemo(() => remainingAmount.isZero(), [remainingAmount]);
 
-	const onSetAAmount = (amount: string) =>
+	const onSetLeftColAmount = (amount: string) =>
 		!amount
 			? setRepayAmount('0')
 			: ethers.utils.parseUnits(amount, debtAssetDecimals).gt(loan.amount)
-			? onSetAMaxAmount()
+			? onSetLeftColMaxAmount()
 			: setRepayAmount(amount);
-	const onSetAMaxAmount = () => setRepayAmount(ethers.utils.formatUnits(loan.amount));
+	const onSetLeftColMaxAmount = () => setRepayAmount(ethers.utils.formatUnits(loan.amount));
 
 	const getTxData = useCallback(
 		(gas: Record<string, number>) => {
@@ -56,6 +57,7 @@ const Repay: React.FC<RepayProps> = ({ loan, loanId, loanTypeIsETH, loanContract
 	const repay = async (gas: Record<string, number>) => {
 		try {
 			setIsWorking('repaying');
+			setTxModalOpen(true);
 			await tx(() => getTxData(gas), {
 				showErrorNotification: (e: string) => setError(e),
 				showProgressNotification: (hash: string) =>
@@ -67,6 +69,7 @@ const Repay: React.FC<RepayProps> = ({ loan, loanId, loanTypeIsETH, loanContract
 		} catch {
 		} finally {
 			setIsWorking('');
+			setTxModalOpen(false);
 		}
 	};
 
@@ -79,15 +82,15 @@ const Repay: React.FC<RepayProps> = ({ loan, loanId, loanTypeIsETH, loanContract
 				loanTypeIsETH,
 				showCRatio: true,
 
-				aLabel: 'loans.modify-loan.repay.a-label',
-				aAsset: debtAsset,
-				aAmountNumber: repayAmountString,
-				onSetAAmount,
-				onSetAMaxAmount,
+				leftColLabel: 'loans.modify-loan.repay.left-col-label',
+				leftColAssetName: debtAsset,
+				leftColAmount: repayAmountString,
+				onSetLeftColAmount,
+				onSetLeftColMaxAmount,
 
-				bLabel: 'loans.modify-loan.repay.b-label',
-				bAsset: debtAsset,
-				bAmountNumber: remainingAmountString,
+				rightColLabel: 'loans.modify-loan.repay.right-col-label',
+				rightColAssetName: debtAsset,
+				rightColAmount: remainingAmountString,
 
 				buttonLabel: `loans.modify-loan.repay.button-labels.${
 					isWorking ? isWorking : isRepayingFully ? 'repaying-fully-error' : 'default'
@@ -97,6 +100,9 @@ const Repay: React.FC<RepayProps> = ({ loan, loanId, loanTypeIsETH, loanContract
 
 				error,
 				setError,
+
+				txModalOpen,
+				setTxModalOpen,
 			}}
 		/>
 	);
