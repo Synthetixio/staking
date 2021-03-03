@@ -11,10 +11,13 @@ const BASE_URL = (testnet?: boolean) => (testnet ? `testnet` : `hub`);
 
 export const SPACE = (spaceKey: string, testnet?: boolean) =>
 	`https://${BASE_URL(testnet)}.snapshot.page/api/spaces/${spaceKey}`;
+
 export const PROPOSALS = (spaceKey: string, testnet?: boolean) =>
 	`https://${BASE_URL(testnet)}.snapshot.page/api/${spaceKey}/proposals`;
+
 export const PROPOSAL = (spaceKey: string, ipfsHash: string, testnet?: boolean) =>
 	`https://${BASE_URL(testnet)}.snapshot.page/api/${spaceKey}/proposal/${ipfsHash}`;
+
 export const MESSAGE_URL = (testnet?: boolean) =>
 	`https://${BASE_URL(testnet)}.snapshot.page/api/message`;
 
@@ -70,7 +73,7 @@ export function formatProposal(proposal: any) {
 }
 
 function get3BoxProfiles(addresses: any) {
-	return new Promise((resolove, reject) => {
+	return new Promise((resolve, reject) => {
 		snapshot.utils
 			.subgraphRequest('https://api.3box.io/graph', {
 				profiles: {
@@ -87,7 +90,7 @@ function get3BoxProfiles(addresses: any) {
 				profiles.forEach((profile: { eth_address: string }) => {
 					_3BoxProfiles[profile.eth_address.toLowerCase()] = profile;
 				});
-				resolove(_3BoxProfiles);
+				resolve(_3BoxProfiles);
 			})
 			.catch((error: any) => {
 				reject(error);
@@ -96,7 +99,7 @@ function get3BoxProfiles(addresses: any) {
 }
 
 function lookupAddresses(addresses: any[]) {
-	return new Promise((resolove, reject) => {
+	return new Promise((resolve, reject) => {
 		snapshot.utils
 			.subgraphRequest('https://api.thegraph.com/subgraphs/name/ensdomains/ens', {
 				accounts: {
@@ -130,7 +133,7 @@ function lookupAddresses(addresses: any[]) {
 							'';
 					}
 				);
-				resolove(ensNames);
+				resolve(ensNames);
 			})
 			.catch((error: any) => {
 				reject(error);
