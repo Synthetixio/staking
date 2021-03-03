@@ -26,7 +26,7 @@ import { CryptoCurrency, Synths } from 'constants/currency';
 
 import Info from 'assets/svg/app/info.svg';
 
-const SHOW_HEDGING_INDICATOR_THRESHOLD = new BigNumber(0.05);
+const SHOW_HEDGING_INDICATOR_THRESHOLD = new BigNumber(0.1);
 
 type DebtPoolTableProps = {
 	synthBalances: any;
