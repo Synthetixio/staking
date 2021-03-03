@@ -16,6 +16,7 @@ export enum BurnActionType {
 	MAX = 'max',
 	TARGET = 'target',
 	CUSTOM = 'custom',
+	CLEAR = 'clear',
 }
 
 export const amountToMintState = atom<string>({

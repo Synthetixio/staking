@@ -1,10 +1,10 @@
 import React from 'react';
 import Head from 'next/head';
 import styled from 'styled-components';
+import { useTranslation } from 'react-i18next';
+import last from 'lodash/last';
 
-import { Trans, useTranslation } from 'react-i18next';
-import { Svg } from 'react-optimized-image';
-import { FlexDiv, FlexDivCol, LineSpacer, StatsSection, Tooltip } from 'styles/common';
+import { FlexDivCol, LineSpacer, StatsSection } from 'styles/common';
 
 import StatBox from 'components/StatBox';
 import useUserStakingData from 'hooks/useUserStakingData';
@@ -12,11 +12,9 @@ import useUserStakingData from 'hooks/useUserStakingData';
 import { formatFiatCurrency, toBigNumber, zeroBN } from 'utils/formatters/number';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
-import DebtChart from 'sections/debt/DebtChart';
-import { last } from 'lodash';
-import useHistoricalDebtData from 'hooks/useHistoricalDebtData';
 
-import Info from 'assets/svg/app/info.svg';
+import useHistoricalDebtData from 'hooks/useHistoricalDebtData';
+import Main from 'sections/debt';
 
 const DashboardPage = () => {
 	const { t } = useTranslation();
@@ -63,25 +61,7 @@ const DashboardPage = () => {
 					/>
 				</StatsSection>
 				<LineSpacer />
-				<FlexDiv>
-					<Header>{t('debt.actions.track.title')}</Header>
-					<DebtInfoTooltip
-						arrow={false}
-						content={
-							<Trans
-								i18nKey="debt.actions.track.info.tooltip"
-								components={[<Strong />, <br />, <Strong />]}
-							></Trans>
-						}
-					>
-						<TooltipIconContainer>
-							<ResizedInfoIcon src={Info} />
-						</TooltipIconContainer>
-					</DebtInfoTooltip>
-				</FlexDiv>
-				<ChartSection>
-					<DebtChart data={historicalDebt.data} isLoading={dataIsLoading} />
-				</ChartSection>
+				<Main />
 			</Content>
 		</>
 	);
@@ -112,43 +92,6 @@ const TotalSynthValue = styled(StatBox)`
 	.title {
 		color: ${(props) => props.theme.colors.purple};
 	}
-`;
-
-const Header = styled.div`
-	color: ${(props) => props.theme.colors.white};
-	font-family: ${(props) => props.theme.fonts.extended};
-	font-size: 14px;
-	padding-bottom: 20px;
-`;
-
-const ChartSection = styled.div`
-	background: ${(props) => props.theme.colors.navy};
-	padding: 32px;
-`;
-
-const DebtInfoTooltip = styled(Tooltip)`
-	background: ${(props) => props.theme.colors.navy};
-	.tippy-arrow {
-		color: ${(props) => props.theme.colors.navy};
-	}
-	.tippy-content {
-		font-size: 14px;
-	}
-`;
-
-const TooltipIconContainer = styled.div`
-	margin-left: 10px;
-	width: 23px;
-	height: 23px;
-	opacity: 0.6;
-`;
-
-const ResizedInfoIcon = styled(Svg)`
-	transform: scale(2) translateX(2.5px);
-`;
-
-const Strong = styled.strong`
-	font-family: ${(props) => props.theme.fonts.interBold};
 `;
 
 export default DashboardPage;

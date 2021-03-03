@@ -52,6 +52,7 @@ import {
 import { useRecoilValue } from 'recoil';
 import { appReadyState } from 'store/app';
 import curveSeuroRewards from 'contracts/curveSeuroRewards';
+import { LP } from 'sections/earn/types';
 
 export const getContract = (stakedAsset: CurrencyKey, signer: ethers.Signer | null) => {
 	const { contracts } = synthetix.js!;
@@ -59,15 +60,15 @@ export const getContract = (stakedAsset: CurrencyKey, signer: ethers.Signer | nu
 		return contracts.StakingRewardsiBTC;
 	} else if (stakedAsset === Synths.iETH) {
 		return contracts.StakingRewardsiETH;
-	} else if (stakedAsset === Synths.sTSLA) {
+	} else if (stakedAsset === LP.BALANCER_sTSLA) {
 		return contracts.StakingRewardssTSLABalancer;
-	} else if (stakedAsset === Synths.sUSD && signer != null) {
+	} else if (stakedAsset === LP.CURVE_sUSD && signer != null) {
 		return new ethers.Contract(
 			curveSusdRewards.address,
 			curveSusdRewards.abi,
 			signer as ethers.Signer
 		);
-	} else if (stakedAsset === Synths.sEUR && signer != null) {
+	} else if (stakedAsset === LP.CURVE_sEURO && signer != null) {
 		return new ethers.Contract(
 			curveSeuroRewards.address,
 			curveSeuroRewards.abi,

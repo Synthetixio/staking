@@ -18,6 +18,7 @@ import { GlowingCircle } from 'styles/common';
 import Currency from 'components/Currency';
 import useUserStakingData from 'hooks/useUserStakingData';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
+import { LP } from 'sections/earn/types';
 
 const LayoutOne: FC = () => {
 	const { t } = useTranslation();
@@ -125,10 +126,10 @@ const LayoutOne: FC = () => {
 					</GlowingCircle>
 				),
 				title: t('dashboard.actions.earn.title', {
-					percent: formatPercent(lpData[Synths.sUSD].APR, { minDecimals: 0 }),
+					percent: formatPercent(lpData[LP.CURVE_sUSD].APR, { minDecimals: 0 }),
 				}),
 				copy: t('dashboard.actions.earn.copy', {
-					asset: 'Curve sUSD LP Token',
+					asset: 'Curve sUSD Pool Token',
 					supplier: 'Curve Finance',
 				}),
 				tooltip: t('common.tooltip.external', { link: 'Curve Finance' }),
@@ -142,10 +143,10 @@ const LayoutOne: FC = () => {
 					</GlowingCircle>
 				),
 				title: t('dashboard.actions.earn.title', {
-					percent: formatPercent(lpData[Synths.sEUR].APR, { minDecimals: 0 }),
+					percent: formatPercent(lpData[LP.CURVE_sEURO].APR, { minDecimals: 0 }),
 				}),
 				copy: t('dashboard.actions.earn.copy', {
-					asset: 'Curve sEUR LP Token',
+					asset: 'Curve sEUR Pool Token',
 					supplier: 'Curve Finance',
 				}),
 				tooltip: t('common.tooltip.external', { link: 'Curve Finance' }),
@@ -159,10 +160,10 @@ const LayoutOne: FC = () => {
 					</GlowingCircle>
 				),
 				title: t('dashboard.actions.earn.title', {
-					percent: formatPercent(lpData[Synths.sTSLA].APR, { minDecimals: 0 }),
+					percent: formatPercent(lpData[LP.BALANCER_sTSLA].APR, { minDecimals: 0 }),
 				}),
 				copy: t('dashboard.actions.earn.copy', {
-					asset: 'Balancer sTSLA LP Token',
+					asset: 'Balancer sTSLA Pool Token',
 					supplier: 'Synthetix',
 				}),
 				link: ROUTES.Earn.sTLSA_LP,

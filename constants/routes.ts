@@ -33,6 +33,12 @@ export const ROUTES = {
 		Deposit: '/l2/deposit',
 		Migrate: '/l2/migrate',
 	},
+	Loans: {
+		Home: '/loans',
+	},
+	Governance: {
+		Home: '/governance',
+	},
 };
 
 export default ROUTES;

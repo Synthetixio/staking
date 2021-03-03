@@ -3,6 +3,7 @@ import { Svg } from 'react-optimized-image';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
+import { useSetRecoilState } from 'recoil';
 
 import {
 	FlexDivRowCentered,
@@ -11,12 +12,24 @@ import {
 	ExternalLink,
 	boxShadowBlue,
 } from 'styles/common';
+
 import Success from 'assets/svg/app/success.svg';
-import Link from 'next/link';
 
 import { Transaction } from 'constants/network';
 import ROUTES from 'constants/routes';
 import { CryptoCurrency, Synths } from 'constants/currency';
+
+import Etherscan from 'containers/Etherscan';
+
+import { formatPercent } from 'utils/formatters/number';
+
+import { amountToBurnState, amountToMintState, burnTypeState, mintTypeState } from 'store/staking';
+
+import Currency from 'components/Currency';
+
+import useLPData from 'hooks/useLPData';
+
+import { LP } from 'sections/earn/types';
 
 import {
 	SectionHeader,
@@ -28,10 +41,6 @@ import {
 	MiddleSection,
 	IconContainer,
 } from './common';
-import Etherscan from 'containers/Etherscan';
-import { amountToBurnState, amountToMintState, burnTypeState, mintTypeState } from 'store/staking';
-import { useSetRecoilState } from 'recoil';
-import Currency from 'components/Currency';
 
 type ActionCompletedProps = {
 	setTransactionState: (tx: Transaction) => void;
@@ -50,6 +59,7 @@ const ActionCompleted: React.FC<ActionCompletedProps> = ({
 }) => {
 	const { t } = useTranslation();
 	const { push } = useRouter();
+	const lpData = useLPData();
 	const { etherscanInstance } = Etherscan.useContainer();
 	const link = etherscanInstance != null ? etherscanInstance.txLink(hash ?? '') : undefined;
 	const onMintTypeChange = useSetRecoilState(mintTypeState);
@@ -103,7 +113,7 @@ const ActionCompleted: React.FC<ActionCompletedProps> = ({
 				{t('staking.actions.mint.completed.title', { synth: Synths.sUSD })}
 			</SectionHeader>
 			<MiddleSection>
-				<Link href={ROUTES.Earn.Home}>
+				<StyledExternalLink href={ROUTES.Earn.sUSD_EXTERNAL}>
 					<MainInfoBox>
 						<Currency.Icon currencyKey={CryptoCurrency.CRV} width="20" height="20" />
 						<MiddleInfoSection>
@@ -111,11 +121,10 @@ const ActionCompleted: React.FC<ActionCompletedProps> = ({
 						</MiddleInfoSection>
 						<RightInfoSection>
 							<AprText>{t('staking.actions.mint.completed.est-apr')}</AprText>
-							{/* @TODO: Replace with variable APR */}
-							<AprValue>14%</AprValue>
+							<AprValue>{formatPercent(lpData[LP.CURVE_sUSD].APR)}</AprValue>
 						</RightInfoSection>
 					</MainInfoBox>
-				</Link>
+				</StyledExternalLink>
 			</MiddleSection>
 			<SectionSubtext>{t('staking.actions.mint.completed.subtext')}</SectionSubtext>
 			<ButtonWrap>
@@ -206,6 +215,11 @@ const RightButton = styled(BaseButton)`
 	color: ${(props) => props.theme.colors.blue};
 	text-transform: uppercase;
 
+`;
+
+const StyledExternalLink = styled(ExternalLink)`
+	display: block;
+	width: 100%;
 `;
 
 export default ActionCompleted;

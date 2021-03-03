@@ -38,15 +38,16 @@ const BurnTiles: React.FC<BurnTilesProps> = ({ percentageTargetCRatio, burnAmoun
 
 	return (
 		<Container>
-			<ButtonTile
-				title={t('staking.actions.burn.tiles.max.title')}
-				subtext={t('staking.actions.burn.tiles.max.subtext')}
-				icon={burnIcon}
-				onAction={() => onBurnTypeChange(BurnActionType.MAX)}
-			/>
-			<FlexDivRow>
+			<StyledRow>
 				<MarginedButtonTile
 					left={true}
+					title={t('staking.actions.burn.tiles.max.title')}
+					subtext={t('staking.actions.burn.tiles.max.subtext')}
+					icon={burnIcon}
+					onAction={() => onBurnTypeChange(BurnActionType.MAX)}
+				/>
+				<MarginedButtonTile
+					right={true}
 					disabled={burnAmountToFixCRatio.isZero()}
 					title={t('staking.actions.burn.tiles.target.title', {
 						targetCRatio: formatPercent(percentageTargetCRatio),
@@ -55,14 +56,25 @@ const BurnTiles: React.FC<BurnTilesProps> = ({ percentageTargetCRatio, burnAmoun
 					icon={burnTargetIcon}
 					onAction={() => onBurnTypeChange(BurnActionType.TARGET)}
 				/>
+			</StyledRow>
+			<StyledRow>
 				<MarginedButtonTile
-					right={true}
+					left={true}
 					title={t('staking.actions.burn.tiles.custom.title')}
 					subtext={t('staking.actions.burn.tiles.custom.subtext')}
 					icon={burnCustomIcon}
 					onAction={() => onBurnTypeChange(BurnActionType.CUSTOM)}
 				/>
-			</FlexDivRow>
+				<MarginedButtonTile
+					disabled={true}
+					right={true}
+					title={t('staking.actions.burn.tiles.clear-debt.title')}
+					// subtext={t('staking.actions.burn.tiles.clear-debt.subtext')}
+					subtext={'Coming soon'}
+					icon={burnIcon}
+					onAction={() => onBurnTypeChange(BurnActionType.CLEAR)}
+				/>
+			</StyledRow>
 		</Container>
 	);
 };
@@ -70,6 +82,9 @@ const BurnTiles: React.FC<BurnTilesProps> = ({ percentageTargetCRatio, burnAmoun
 const Container = styled(FlexDivCol)`
 	width: 100%;
 	flex: 1;
+`;
+const StyledRow = styled(FlexDivRow)`
+	height: 50%;
 `;
 
 const MarginedButtonTile = styled(ButtonTile)<{ right?: boolean; left?: boolean }>`

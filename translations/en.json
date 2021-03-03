@@ -231,6 +231,10 @@
 					"custom": {
 						"title": "Burn custom",
 						"subtext": "Burn a custom amount of sUSD"
+					},
+					"clear-debt": {
+						"title": "Clear debt",
+						"subtext": "Buy and burn sUSD to clear your total debt and unstake all SNX"
 					}
 				},
 				"info": {
@@ -240,6 +244,8 @@
 					"empty": "Enter an amount",
 					"burn": "Burn <0>sUSD</0>",
 					"max": "Max",
+					"clear-debt": "Clear debt",
+					"insufficient-sUSD-to-clear-debt": "Insufficient <0>sUSD</0> to clear debt",
 					"insufficient-sUSD-to-fix-c-ratio": "Insufficient <0>sUSD</0> to fix c-ratio. mint or by <0>sUSD</0> to proceed",
 					"error": {
 						"no-debt": "No debt to burn",
@@ -302,6 +308,19 @@
 						"issuedDebt": "Issued Debt"
 					}
 				}
+			},
+			"hedge": {
+				"info": {
+					"debt-pool-pie-chart": {
+						"title": "Global Debt Pool"
+					},
+					"portfolio-table": {
+						"title": "Your Portfolio",
+						"sETH-tooltip": "The sETH total includes other related assets such as <0>ETH</0> and <0>wETH</0>",
+						"sBTC-tooltip": "The sBTC total includes other related assets such as <0>wBTC</0> and <0>renBTC</0>"
+					},
+					"tooltip": "This table serves as a <0>hedging indicator</0>, showing the relationship between your Synth balances and the global debt pool"
+				}
 			}
 		}
 	},
@@ -340,13 +359,13 @@
 				"curve": {
 					"title": "Curve",
 					"description": "Staking Curve LP tokens from the sUSD pool allows you to earn CRV rewards, Curve swap fees, and SNX rewards. <0>Learn more.<0>",
-					"subtitle": "sUSD LP Rewards",
+					"subtitle": "sUSD CPT Rewards",
 					"helper": "Visit curve.fi"
 				},
 				"seur": {
 					"title": "Curve",
 					"description": "Deposit sEUR into Curve.fi to receive eursCRV and stake to earn CRV rewards, Curve swap fees, and SNX Rewards.",
-					"subtitle": "sEUR Rewards"
+					"subtitle": "sEUR CPT Rewards"
 				},
 				"ieth": {
 					"title": "Synthetix",
@@ -361,7 +380,7 @@
 				"stsla": {
 					"title": "Balancer",
 					"description": "Stake sTLSA Balancer Pool LP to earn SNX rewards. <0>Add liquidity on Balancer here<0>.",
-					"subtitle": "sTSLA Rewards"
+					"subtitle": "sTSLA BPT Rewards"
 				}
 			},
 			"weekly-rewards": "Weekly rewards {{weeklyRewards}} {{asset}}"
@@ -625,6 +644,10 @@
 					"balance": "Balance",
 					"price": "Price",
 					"holdings": "Holdings %",
+					"total": "Total",
+					"percentage-of-pool": "% of pool",
+					"percentage-of-portfolio": "% of portfolio",
+					"debt-pool-proportion": "% of global debt",
 					"no-synths": {
 						"title": "You have no Synths",
 						"desc": "Mint sUSD by staking your SNX"
@@ -644,6 +667,10 @@
 		"synths": "Synths",
 		"escrow": "Escrow",
 		"history": "History",
+		"loans": "Loans",
+		"governance": "Governance",
+		"wallet": "Wallet",
+		"mint-and-burn": "Mint & burn",
 		"l2": "Layer 2",
 		"bars": {
 			"c-ratio": "c-ratio",
@@ -716,6 +743,17 @@
 		"stake-snx": "Stake SNX",
 		"tooltip": {
 			"external": "Redirects to {{link}}"
+		},
+		"time": {
+			"years": "y",
+			"months": "mo",
+			"days": "d",
+			"hours": "h",
+			"minutes": "m",
+			"seconds": "s"
+		},
+		"table": {
+			"no-data": "No Data"
 		}
 	},
 	"not-found": {
