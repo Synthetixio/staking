@@ -32,6 +32,7 @@ const Panel: React.FC<PanelProps> = ({ currentTab }) => {
 	const councilProposals = useProposals(SPACE_KEY.COUNCIL);
 	const govProposals = useProposals(SPACE_KEY.PROPOSAL);
 	const grantsProposals = useProposals(SPACE_KEY.GRANTS);
+	const ambassadorProposals = useProposals(SPACE_KEY.AMBASSADOR);
 
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const [, setProposal] = useRecoilState(proposalState);
@@ -89,6 +90,12 @@ const Panel: React.FC<PanelProps> = ({ currentTab }) => {
 				key: SPACE_KEY.COUNCIL,
 			},
 			{
+				title: t('gov.panel.proposals.title'),
+				tabChildren: <List data={govProposals.data ?? []} isLoaded={!govProposals.isLoading} />,
+				blue: true,
+				key: SPACE_KEY.PROPOSAL,
+			},
+			{
 				title: t('gov.panel.grants.title'),
 				tabChildren: (
 					<List data={grantsProposals.data ?? []} isLoaded={!grantsProposals.isLoading} />
@@ -97,10 +104,12 @@ const Panel: React.FC<PanelProps> = ({ currentTab }) => {
 				key: SPACE_KEY.GRANTS,
 			},
 			{
-				title: t('gov.panel.proposals.title'),
-				tabChildren: <List data={govProposals.data ?? []} isLoaded={!govProposals.isLoading} />,
+				title: t('gov.panel.ambassador.title'),
+				tabChildren: (
+					<List data={ambassadorProposals.data ?? []} isLoaded={!ambassadorProposals.isLoading} />
+				),
 				blue: true,
-				key: SPACE_KEY.PROPOSAL,
+				key: SPACE_KEY.AMBASSADOR,
 			},
 		],
 		[t, councilProposals, govProposals, grantsProposals]
