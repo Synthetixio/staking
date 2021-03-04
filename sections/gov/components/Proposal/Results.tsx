@@ -66,6 +66,7 @@ const Title = styled.div`
 	display: flex;
 	flex-direction: row;
 	align-items: center;
+	margin-left: 16px;
 
 	p {
 		text-overflow: ellipsis;
