@@ -25,8 +25,7 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 	const [choices, setChoices] = useState<string[]>([]);
 	const activeTab = useActiveTab();
 
-	// @TODO remove testnet flag
-	const space = useSnapshotSpace(activeTab, true);
+	const space = useSnapshotSpace(activeTab);
 	const [createProposal, result] = useSignMessage();
 
 	const sanitiseTimestamp = (timestamp: number) => {

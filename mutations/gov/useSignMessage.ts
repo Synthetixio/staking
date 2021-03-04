@@ -1,6 +1,6 @@
 import { useRecoilValue } from 'recoil';
 import { useMutation, useQueryCache } from 'react-query';
-import { version } from '@snapshot-labs/snapshot.js/package.json';
+// import { version } from '@snapshot-labs/snapshot.js/package.json';
 import axios from 'axios';
 
 import { MESSAGE_URL, SPACE_KEY } from 'constants/snapshot';
@@ -51,7 +51,6 @@ const useSignMessage = () => {
 
 	return useMutation(
 		async (payload: SignaturePayload) => {
-			// @TODO remove this hardcoded version
 			const version = '0.1.3';
 			let msg: any = {
 				address: walletAddress,
@@ -66,7 +65,7 @@ const useSignMessage = () => {
 
 			msg.sig = await signer?.signMessage(msg.msg);
 
-			return axios.post(MESSAGE_URL(true), msg, {
+			return axios.post(MESSAGE_URL, msg, {
 				method: 'POST',
 				headers: {
 					Accept: 'application/json',

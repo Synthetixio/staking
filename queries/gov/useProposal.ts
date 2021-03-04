@@ -28,12 +28,7 @@ type ProposalResults = {
 	voteList: any[];
 };
 
-const useProposal = (
-	spaceKey: SPACE_KEY,
-	hash: string,
-	testnet?: boolean,
-	options?: QueryConfig<ProposalResults>
-) => {
+const useProposal = (spaceKey: SPACE_KEY, hash: string, options?: QueryConfig<ProposalResults>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const { provider } = Connector.useContainer();
@@ -43,7 +38,7 @@ const useProposal = (
 		async () => {
 			const response = await Promise.all([
 				ipfsGet(hash),
-				axios.get(PROPOSAL(spaceKey, hash, testnet)),
+				axios.get(PROPOSAL(spaceKey, hash)),
 				axios.get(SPACE(spaceKey)),
 			]);
 

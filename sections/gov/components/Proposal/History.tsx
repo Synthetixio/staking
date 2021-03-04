@@ -19,7 +19,7 @@ type HistoryProps = {
 const History: React.FC<HistoryProps> = ({ hash }) => {
 	const { t } = useTranslation();
 	const activeTab = useActiveTab();
-	const proposal = useProposal(activeTab, hash, true);
+	const proposal = useProposal(activeTab, hash);
 	const walletAddress = useRecoilValue(walletAddressState);
 
 	if (proposal.isSuccess && proposal.data) {

@@ -15,8 +15,7 @@ type ResultsProps = {
 
 const Results: React.FC<ResultsProps> = ({ hash }) => {
 	const activeTab = useActiveTab();
-	// @TODO remove testnet flag
-	const proposal = useProposal(activeTab, hash, true);
+	const proposal = useProposal(activeTab, hash);
 	if (proposal.isSuccess && proposal.data) {
 		const { data } = proposal;
 		return (

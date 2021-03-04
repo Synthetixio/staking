@@ -2,27 +2,30 @@ import BigNumber from 'bignumber.js';
 import snapshot from '@snapshot-labs/snapshot.js';
 
 export enum SPACE_KEY {
-	COUNCIL = 'synthetixcouncil',
-	PROPOSAL = 'synthetixproposal',
-	GRANTS = 'synthetixgrants',
+	COUNCIL = 'spartancouncil.eth',
+	PROPOSAL = 'snxgov.eth',
+	GRANTS = 'snxgrants.eth',
+	AMBASSADOR = 'snxambassador.eth',
 }
 
-const BASE_URL = (testnet?: boolean) => (testnet ? `testnet` : `hub`);
+// @notice toggle flag for testnet or live snapshot spaces
+const isTestNet = true;
 
-export const SPACE = (spaceKey: string, testnet?: boolean) =>
-	`https://${BASE_URL(testnet)}.snapshot.page/api/spaces/${spaceKey}`;
+const BASE_URL = () => (isTestNet ? `testnet` : `hub`);
 
-export const PROPOSALS = (spaceKey: string, testnet?: boolean) =>
-	`https://${BASE_URL(testnet)}.snapshot.page/api/${spaceKey}/proposals`;
+export const SPACE = (spaceKey: string) =>
+	`https://${BASE_URL()}.snapshot.page/api/spaces/${spaceKey}`;
 
-export const PROPOSAL = (spaceKey: string, ipfsHash: string, testnet?: boolean) =>
-	`https://${BASE_URL(testnet)}.snapshot.page/api/${spaceKey}/proposal/${ipfsHash}`;
+export const PROPOSALS = (spaceKey: string) =>
+	`https://${BASE_URL()}.snapshot.page/api/${spaceKey}/proposals`;
 
-export const MESSAGE_URL = (testnet?: boolean) =>
-	`https://${BASE_URL(testnet)}.snapshot.page/api/message`;
+export const PROPOSAL = (spaceKey: string, ipfsHash: string) =>
+	`https://${BASE_URL()}.snapshot.page/api/${spaceKey}/proposal/${ipfsHash}`;
+
+export const MESSAGE_URL = `https://${BASE_URL()}.snapshot.page/api/message`;
 
 export const quadraticWeighting = (value: BigNumber) => {
-	// Scale the value by 100000
+	// @notice Scale the value by 100000
 	const scaledValue = value.multipliedBy(1e5);
 	return scaledValue.sqrt();
 };
@@ -37,8 +40,8 @@ export const quadraticWeighting = (value: BigNumber) => {
 // 	'ipfs.infura.io',
 // ];
 
-export async function ipfsGet(ipfsHash: string, protocolType: string = 'ipfs') {
-	const url = `https://cloudflare-ipfs.com/${protocolType}/${ipfsHash}`;
+export async function ipfsGet(ipfsHash: string) {
+	const url = `https://cloudflare-ipfs.com/ipfs/${ipfsHash}`;
 	return fetch(url).then((res) => res.json());
 }
 
