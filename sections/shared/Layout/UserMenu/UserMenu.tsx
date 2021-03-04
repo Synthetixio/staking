@@ -14,6 +14,7 @@ import { isWalletConnectedState, truncatedWalletAddressState, networkState } fro
 import WalletOptionsModal from 'sections/shared/modals/WalletOptionsModal';
 import SettingsModal from 'sections/shared/modals/SettingsModal';
 import ConnectionDot from 'sections/shared/ConnectionDot';
+import ChainSwitcher from 'components/ChainSwitcher';
 
 import CogIcon from 'assets/svg/app/cog.svg';
 import CaretUp from 'assets/svg/app/caret-up.svg';
@@ -86,6 +87,7 @@ const UserMenu: FC = () => {
 						)}
 					</OutsideClickHandler>
 				</DropdownContainer>
+				<ChainSwitcher />
 			</FlexDivCentered>
 			{watchWalletModalOpened && (
 				<WatchWalletModal onDismiss={() => setWatchWalletModalOpened(false)} />

@@ -1,5 +1,6 @@
-import styled, { css } from 'styled-components';
 import { FC, useMemo, useState, useRef } from 'react';
+import styled, { css } from 'styled-components';
+import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
@@ -9,6 +10,7 @@ import { linkCSS } from 'styles/common';
 import { toBigNumber } from 'utils/formatters/number';
 
 import StakingLogo from 'assets/svg/app/staking-logo.svg';
+import StakingL2Logo from 'assets/svg/app/staking-l2-logo.svg';
 import CaretRightIcon from 'assets/svg/app/caret-right-small.svg';
 
 import useSNX24hrPricesQuery from 'queries/rates/useSNX24hrPricesQuery';
@@ -19,6 +21,8 @@ import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuer
 import ROUTES from 'constants/routes';
 import { CryptoCurrency, Synths } from 'constants/currency';
 import { SIDE_NAV_WIDTH, zIndex } from 'constants/ui';
+
+import { isLayerOneState } from 'store/chain';
 
 import { MENU_LINKS, MIGRATE_MENU_LINKS } from '../constants';
 import SubMenu from './SubMenu';
@@ -31,6 +35,7 @@ const getKeyValue = <T extends object, U extends keyof T>(obj: T) => (key: U) =>
 
 const SideNav: FC = () => {
 	const { t } = useTranslation();
+	const isLayer1 = useRecoilValue(isLayerOneState);
 	const { asPath } = useRouter();
 	const menuLinkItemRefs = useRef({});
 	const SNX24hrPricesQuery = useSNX24hrPricesQuery();
@@ -65,7 +70,7 @@ const SideNav: FC = () => {
 		>
 			<StakingLogoWrap>
 				<Link href={ROUTES.Home}>
-					<Svg src={StakingLogo} />
+					{isLayer1 ? <Svg src={StakingLogo} /> : <Svg src={StakingL2Logo} />}
 				</Link>
 			</StakingLogoWrap>
 			<MenuLinks>
