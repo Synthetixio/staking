@@ -6,9 +6,19 @@ import { linkify } from 'remarkable/linkify';
 import externalLink from 'remarkable-external-link';
 import NavigationBack from 'assets/svg/app/navigation-back.svg';
 import Input, { inputCSS } from 'components/Input/Input';
-import { Divider, FlexDivColCentered, IconButton } from 'styles/common';
+import {
+	Divider,
+	FlexDivColCentered,
+	IconButton,
+	ModalContent,
+	ModalItem,
+	ModalItemText,
+	ModalItemTitle,
+} from 'styles/common';
 import { InputContainer, Container, HeaderRow, Header, StyledCTA } from '../common';
 import { useTranslation } from 'react-i18next';
+import { Transaction } from 'constants/network';
+import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 
 type QuestionProps = {
 	onBack: Function;
@@ -16,9 +26,17 @@ type QuestionProps = {
 	setName: Function;
 	body: string;
 	name: string;
-	handleCreate: Function;
+	handleCreate: () => void;
 	result: any;
 	validSubmission: boolean;
+	signTransactionState: Transaction;
+	txTransactionState: Transaction;
+	txModalOpen: boolean;
+	signModalOpen: boolean;
+	signError: string | null;
+	txError: string | null;
+	setTxModalOpen: Function;
+	setSignModalOpen: Function;
 };
 
 const Question: React.FC<QuestionProps> = ({
@@ -28,8 +46,15 @@ const Question: React.FC<QuestionProps> = ({
 	body,
 	name,
 	handleCreate,
-	result,
 	validSubmission,
+	signTransactionState,
+	txTransactionState,
+	setTxModalOpen,
+	setSignModalOpen,
+	txModalOpen,
+	signModalOpen,
+	signError,
+	txError,
 }) => {
 	const { t } = useTranslation();
 
@@ -48,30 +73,7 @@ const Question: React.FC<QuestionProps> = ({
 	};
 
 	const returnButtonStates = useMemo(() => {
-		if (result.isLoading) {
-			return (
-				<StyledCTA disabled variant="primary">
-					{t('gov.create.action.loading')}
-				</StyledCTA>
-			);
-		} else if (result.isSuccess) {
-			return (
-				<StyledCTA
-					onClick={() => {
-						onBack();
-					}}
-					variant="primary"
-				>
-					{t('gov.create.action.success')}
-				</StyledCTA>
-			);
-		} else if (result.isError) {
-			return (
-				<StyledCTA onClick={() => handleCreate()} variant="primary">
-					{t('gov.create.action.error')}
-				</StyledCTA>
-			);
-		} else if (!validSubmission) {
+		if (!validSubmission) {
 			return (
 				<StyledCTA disabled={true} variant="primary">
 					{t('gov.create.action.invalid')}
@@ -83,36 +85,78 @@ const Question: React.FC<QuestionProps> = ({
 					{t('gov.create.action.idle')}
 				</StyledCTA>
 			);
-	}, [result, handleCreate, onBack, t, validSubmission]);
+	}, [handleCreate, t, validSubmission]);
 
 	return (
-		<Container>
-			<InputContainer>
-				<HeaderRow>
-					<IconButton onClick={() => onBack()}>
-						<Svg src={NavigationBack} />
-					</IconButton>
-					<Header>{t('gov.create.title')}</Header>
-					<div />
-				</HeaderRow>
-				<CreateContainer>
-					<Title
-						placeholder={t('gov.create.question')}
-						value={name}
-						onChange={(e) => setName(e.target.value)}
-					/>
-					<Description
-						placeholder={t('gov.create.description')}
-						value={body}
-						onChange={(e) => setBody(e.target.value)}
-					/>
-					<Divider />
-					<Header>{t('gov.create.preview')}</Header>
-					<Preview dangerouslySetInnerHTML={getRawMarkup(body)} />
-				</CreateContainer>
-			</InputContainer>
-			<ActionContainer>{returnButtonStates}</ActionContainer>
-		</Container>
+		<>
+			<Container>
+				<InputContainer>
+					<HeaderRow>
+						<IconButton onClick={() => onBack()}>
+							<Svg src={NavigationBack} />
+						</IconButton>
+						<Header>{t('gov.create.title')}</Header>
+						<div />
+					</HeaderRow>
+					<CreateContainer>
+						<Title
+							placeholder={t('gov.create.question')}
+							value={name}
+							onChange={(e) => setName(e.target.value)}
+						/>
+						<Description
+							placeholder={t('gov.create.description')}
+							value={body}
+							onChange={(e) => setBody(e.target.value)}
+						/>
+						<Divider />
+						<Header>{t('gov.create.preview')}</Header>
+						<Preview dangerouslySetInnerHTML={getRawMarkup(body)} />
+					</CreateContainer>
+				</InputContainer>
+
+				<ActionContainer>{returnButtonStates}</ActionContainer>
+			</Container>
+			{txModalOpen && (
+				<TxConfirmationModal
+					onDismiss={() => setTxModalOpen(false)}
+					txError={txError}
+					attemptRetry={handleCreate}
+					content={
+						<ModalContent>
+							<ModalItem>
+								<ModalItemTitle>{t('modals.confirm-signature.vote.title')}</ModalItemTitle>
+								<ModalItemText>
+									{/* {t('modals.confirm-signature.vote.hash', {
+										hash: truncateAddress(proposal?.authorIpfsHash ?? ''),
+									})} */}
+								</ModalItemText>
+							</ModalItem>
+						</ModalContent>
+					}
+				/>
+			)}
+			{signModalOpen && (
+				<TxConfirmationModal
+					isSignature={true}
+					onDismiss={() => setSignModalOpen(false)}
+					txError={signError}
+					attemptRetry={handleCreate}
+					content={
+						<ModalContent>
+							<ModalItem>
+								<ModalItemTitle>{t('modals.confirm-signature.vote.title')}</ModalItemTitle>
+								<ModalItemText>
+									{/* {t('modals.confirm-signature.vote.hash', {
+										hash: truncateAddress(proposal?.authorIpfsHash ?? ''),
+									})} */}
+								</ModalItemText>
+							</ModalItem>
+						</ModalContent>
+					}
+				/>
+			)}
+		</>
 	);
 };
 export default Question;

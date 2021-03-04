@@ -1,6 +1,6 @@
 export default {
 	// @TODO: Change to main-net address
-	address: '0x3E4DaEC7fb631aFf0BF08e66020d126801EE4350',
+	address: '0xd793d97DbB6fD38b30C89B628b98b3c33952f99B',
 	abi: [
 		{
 			inputs: [{ internalType: 'uint256', name: '_numOfSeats', type: 'uint256' }],
@@ -157,6 +157,18 @@ export default {
 		{
 			constant: true,
 			inputs: [
+				{ internalType: 'string', name: '', type: 'string' },
+				{ internalType: 'address', name: '', type: 'address' },
+			],
+			name: 'electionMemberVotedFor',
+			outputs: [{ internalType: 'address', name: '', type: 'address' }],
+			payable: false,
+			stateMutability: 'view',
+			type: 'function',
+		},
+		{
+			constant: true,
+			inputs: [
 				{ internalType: 'string', name: 'proposalHash', type: 'string' },
 				{ internalType: 'address', name: 'councilMember', type: 'address' },
 			],
@@ -180,6 +192,15 @@ export default {
 		},
 		{
 			constant: true,
+			inputs: [{ internalType: 'string[]', name: 'proposalHashes', type: 'string[]' }],
+			name: 'getValidProposals',
+			outputs: [{ internalType: 'string[]', name: '', type: 'string[]' }],
+			payable: false,
+			stateMutability: 'view',
+			type: 'function',
+		},
+		{
+			constant: true,
 			inputs: [
 				{ internalType: 'string', name: 'proposalHash', type: 'string' },
 				{ internalType: 'address', name: 'memberDiluted', type: 'address' },
@@ -187,6 +208,18 @@ export default {
 			],
 			name: 'getVoterDilutionWeightingForDilutionReceipt',
 			outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+			payable: false,
+			stateMutability: 'view',
+			type: 'function',
+		},
+		{
+			constant: true,
+			inputs: [
+				{ internalType: 'string', name: '', type: 'string' },
+				{ internalType: 'address', name: '', type: 'address' },
+			],
+			name: 'hasAddressDilutedForProposal',
+			outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
 			payable: false,
 			stateMutability: 'view',
 			type: 'function',

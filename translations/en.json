@@ -58,7 +58,16 @@
 				"title": "Migrating",
 				"escrow-schedule": "ESCROW SCHEDULE"
 			},
+
 			"helper": "Follow the Metamask prompts to authorize the transaction"
+		},
+		"confirm-signature": {
+			"title": "Confirm Signature",
+			"vote": {
+				"title": "Submitting vote for",
+				"hash": "{{hash}}"
+			},
+			"helper": "Follow the Metamask prompts to confirm your signature"
 		},
 		"wallet": {
 			"title": "connected wallet",
@@ -646,13 +655,16 @@
 		"page-title": "Governance | Synthetix Staking",
 		"panel": {
 			"council": {
-				"title": "council"
+				"title": "Elections"
 			},
 			"proposals": {
-				"title": "proposals"
+				"title": "SIP/SCCP"
 			},
 			"grants": {
-				"title": "grants"
+				"title": "Grants"
+			},
+			"ambassador": {
+				"title": "Ambassadors"
 			}
 		},
 		"table": {
@@ -695,12 +707,7 @@
 				"closed": "Closed"
 			},
 			"action": {
-				"vote": {
-					"loading": "Submitting...",
-					"error": "An unexpected error occurred.",
-					"success": "Submitted",
-					"idle": "Vote"
-				},
+				"vote": "Vote",
 				"withdraw": "Withdraw"
 			},
 			"info": {
@@ -719,6 +726,17 @@
 		},
 		"council": {
 			"title": "The current spartan council members"
+		},
+		"actions": {
+			"vote": {
+				"waiting": "Voting in progress",
+				"signing": "Signing",
+				"hash": "{{hash}}",
+				"success": "Your vote is in!"
+			},
+			"withdraw": {
+				"waiting": "Withdrawal in progress"
+			}
 		}
 	},
 	"sidenav": {

@@ -10,6 +10,11 @@ import Connector from 'containers/Connector';
 import useSignMessage, { SignatureType } from 'mutations/gov/useSignMessage';
 import useActiveTab from 'sections/gov/hooks/useActiveTab';
 import useSnapshotSpace from 'queries/gov/useSnapshotSpace';
+import { Transaction } from 'constants/network';
+import { SPACE_KEY } from 'constants/snapshot';
+import { ethers } from 'ethers';
+
+import CouncilDilution from 'contracts/councilDilution.js';
 
 type IndexProps = {
 	onBack: Function;
@@ -24,9 +29,19 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 	const [body, setBody] = useState<string>('');
 	const [choices, setChoices] = useState<string[]>([]);
 	const activeTab = useActiveTab();
-
+	const [signTransactionState, setSignTransactionState] = useState<Transaction>(
+		Transaction.PRESUBMIT
+	);
+	const [txTransactionState, setTxTransactionState] = useState<Transaction>(Transaction.PRESUBMIT);
+	const [signModalOpen, setSignModalOpen] = useState<boolean>(false);
+	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
+	const [signError, setSignError] = useState<string | null>(null);
+	const [txError, setTxError] = useState<string | null>(null);
 	const space = useSnapshotSpace(activeTab);
 	const [createProposal, result] = useSignMessage();
+
+	// @TODO: change to L2 signer
+	const { signer } = Connector.useContainer();
 
 	const sanitiseTimestamp = (timestamp: number) => {
 		return timestamp / 1e3;
@@ -49,7 +64,11 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 
 	const handleCreate = () => {
 		try {
-			if (validSubmission && space.data && block) {
+			if (space.data && block) {
+				setTxError(null);
+				setSignError(null);
+				setSignModalOpen(true);
+				setSignTransactionState(Transaction.WAITING);
 				createProposal({
 					spaceKey: activeTab,
 					type: SignatureType.PROPOSAL,
@@ -64,10 +83,49 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 							strategies: space.data.strategies as any,
 						},
 					},
-				});
+				})
+					.then((response) => {
+						setSignModalOpen(false);
+
+						console.log(response);
+
+						if (activeTab === SPACE_KEY.PROPOSAL) {
+							setTxTransactionState(Transaction.PRESUBMIT);
+
+							const contract = new ethers.Contract(
+								CouncilDilution.address,
+								CouncilDilution.abi,
+								signer as any
+							);
+
+							setTxModalOpen(true);
+							setTxTransactionState(Transaction.WAITING);
+
+							const tx = contract.logProposal(
+								response?.data.ipfs,
+								sanitiseTimestamp(startDate.getTime())
+							);
+
+							if (tx) {
+								setTxModalOpen(false);
+								setTxTransactionState(Transaction.SUCCESS);
+							}
+						} else {
+							setSignTransactionState(Transaction.SUCCESS);
+						}
+					})
+					.catch((error) => {
+						console.log(error);
+						setSignTransactionState(Transaction.PRESUBMIT);
+						setSignError(error.message);
+					});
 			}
 		} catch (e) {
 			console.log(e);
+			setSignTransactionState(Transaction.PRESUBMIT);
+			setTxTransactionState(Transaction.PRESUBMIT);
+			setSignError(e.message);
+			setTxError(e.message);
 		}
 	};
 
@@ -96,6 +154,14 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 					handleCreate={handleCreate}
 					result={result}
 					validSubmission={validSubmission}
+					signTransactionState={signTransactionState}
+					txTransactionState={txTransactionState}
+					signModalOpen={signModalOpen}
+					txModalOpen={txModalOpen}
+					signError={signError}
+					txError={txError}
+					setTxModalOpen={setTxModalOpen}
+					setSignModalOpen={setSignModalOpen}
 				/>
 			</LeftCol>
 			<RightCol>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import styled from 'styled-components';
 import { Svg } from 'react-optimized-image';
 import { Remarkable } from 'remarkable';
@@ -13,6 +13,7 @@ import {
 	ModalItem,
 	ModalItemText,
 	ModalItemTitle,
+	ExternalLink,
 } from 'styles/common';
 
 import NavigationBack from 'assets/svg/app/navigation-back.svg';
@@ -27,28 +28,44 @@ import {
 	StyledCTA,
 	StyledTooltip,
 	GreyHeader,
+	GreyText,
+	LinkText,
+	VerifyButton,
 	DismissButton,
 	ButtonSpacer,
 	WhiteSubheader,
 } from 'sections/gov/components/common';
 
 import { truncateAddress } from 'utils/formatters/string';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import useSignMessage, { SignatureType } from 'mutations/gov/useSignMessage';
 import useActiveTab from 'sections/gov/hooks/useActiveTab';
 import { useRecoilValue } from 'recoil';
 import { proposalState } from 'store/gov';
 import Button from 'components/Button';
 
+import CouncilDilution from 'contracts/councilDilution.js';
+import { ethers } from 'ethers';
+import Connector from 'containers/Connector';
+import { appReadyState } from 'store/app';
+import { getGasEstimateForTransaction } from 'utils/transactions';
+import { walletAddressState } from 'store/wallet';
+import { normalizedGasPrice, normalizeGasLimit } from 'utils/network';
+import { useCouncilMembers } from 'sections/gov/hooks/useCouncilMembers';
+
 import { Transaction } from 'constants/network';
+import Etherscan from 'containers/Etherscan';
+import GasSelector from 'components/GasSelector';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
+
+import Notify from 'containers/Notify';
 import TxState from 'sections/gov/components/TxState';
 
-type ContentProps = {
+type DilutionContentProps = {
 	onBack: Function;
 };
 
-const Content: React.FC<ContentProps> = ({ onBack }) => {
+const DilutionContent: React.FC<DilutionContentProps> = ({ onBack }) => {
 	const { t } = useTranslation();
 
 	const [voteMutate] = useSignMessage();
@@ -57,10 +74,107 @@ const Content: React.FC<ContentProps> = ({ onBack }) => {
 
 	const [error, setError] = useState<string | null>(null);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
+	const [gasLimitEstimate, setGasLimitEstimate] = useState<number | null>(null);
+	const [gasPrice, setGasPrice] = useState<number>(0);
 
 	const [transactionState, setTransactionState] = useState<Transaction>(Transaction.PRESUBMIT);
+	const [txHash, setTxHash] = useState<string | null>(null);
+	const [hasDiluted, setHasDiluted] = useState<boolean>(false);
+	const [canDilute, setCanDilute] = useState<boolean>(false);
+
+	// @TODO: Change to L2 explorer
+	const { monitorHash } = Notify.useContainer();
+	const { etherscanInstance } = Etherscan.useContainer();
+	const link =
+		etherscanInstance != null && txHash != null ? etherscanInstance.txLink(txHash) : undefined;
+
+	//* *//
 
 	const proposal = useRecoilValue(proposalState);
+	const isAppReady = useRecoilValue(appReadyState);
+	const walletAddress = useRecoilValue(walletAddressState);
+
+	const { signer } = Connector.useContainer();
+
+	// const councilMembers = useCouncilMembers();
+
+	// const isCouncilMember = councilMembers.includes(walletAddress);
+
+	const isCouncilMember = false;
+
+	useEffect(() => {
+		const getGasLimitEstimate = async () => {
+			if (isAppReady && proposal && !isCouncilMember && canDilute) {
+				try {
+					setError(null);
+					const contract = new ethers.Contract(
+						CouncilDilution.address,
+						CouncilDilution.abi,
+						signer as any
+					);
+					const hash = proposal.authorIpfsHash;
+
+					const memberVotedFor = await contract.electionMemberVotedFor(hash, walletAddress);
+
+					let gasEstimate = await getGasEstimateForTransaction(
+						[hash, memberVotedFor],
+						contract.estimateGas.dilute
+					);
+					setGasLimitEstimate(normalizeGasLimit(Number(gasEstimate)));
+				} catch (error) {
+					setError(error.message);
+					setGasLimitEstimate(null);
+				}
+			}
+		};
+		getGasLimitEstimate();
+	}, [proposal, signer, isAppReady, canDilute, isCouncilMember]);
+
+	useEffect(() => {
+		const hasUserDiluted = async () => {
+			if (isAppReady && proposal && !isCouncilMember) {
+				const contract = new ethers.Contract(
+					CouncilDilution.address,
+					CouncilDilution.abi,
+					signer as any
+				);
+
+				const hasDiluted = contract.hasAddressDilutedForProposal(
+					proposal.authorIpfsHash,
+					walletAddress
+				);
+
+				setHasDiluted(hasDiluted);
+			}
+		};
+		hasUserDiluted();
+	}, [proposal, isAppReady, isCouncilMember]);
+
+	useEffect(() => {
+		const checkCanDilute = async () => {
+			if (isAppReady && proposal && !isCouncilMember) {
+				const contract = new ethers.Contract(
+					CouncilDilution.address,
+					CouncilDilution.abi,
+					signer as any
+				);
+
+				const latestElectionHash = await contract.latestElectionHash();
+
+				const memberVotedFor = await contract.electionMemberVotedFor(
+					latestElectionHash,
+					walletAddress
+				);
+
+				if (memberVotedFor === ethers.constants.AddressZero) {
+					setCanDilute(false);
+				} else {
+					setCanDilute(true);
+				}
+			}
+		};
+		checkCanDilute();
+	}, [proposal, isCouncilMember, isAppReady]);
 
 	const handleVote = async (hash?: string | null) => {
 		if (hash && selected !== null) {
@@ -71,18 +185,67 @@ const Content: React.FC<ContentProps> = ({ onBack }) => {
 				payload: { proposal: hash, choice: selected + 1, metadata: {} },
 			})
 				.then((response) => {
-					setTransactionState(Transaction.SUCCESS);
-
 					console.log(response);
+					setTransactionState(Transaction.SUCCESS);
 				})
 				.catch((error) => {
 					console.log(error);
-					setTransactionState(Transaction.PRESUBMIT);
-
 					setError(error);
+					setTransactionState(Transaction.PRESUBMIT);
 				});
 		}
 	};
+
+	const handleDilute = useCallback(() => {
+		async function dilute() {
+			if (isAppReady && proposal) {
+				try {
+					setError(null);
+					setTxModalOpen(true);
+
+					const contract = new ethers.Contract(
+						CouncilDilution.address,
+						CouncilDilution.abi,
+						signer as any
+					);
+
+					const hash = proposal.authorIpfsHash;
+
+					const latestElectionHash = await contract.latestElectionHash();
+
+					const memberVotedFor = contract.electionMemberVotedFor(latestElectionHash, walletAddress);
+
+					const gasLimit = await getGasEstimateForTransaction(
+						[hash, memberVotedFor],
+						contract.estimateGas.dilute
+					);
+					const transaction: ethers.ContractTransaction = await contract.dilute(
+						hash,
+						memberVotedFor,
+						{
+							gasPrice: normalizedGasPrice(gasPrice),
+							gasLimit,
+						}
+					);
+
+					if (transaction) {
+						console.log(transaction);
+						setTxHash(transaction.hash);
+						setTransactionState(Transaction.WAITING);
+						monitorHash({
+							txHash: transaction.hash,
+							onTxConfirmed: () => setTransactionState(Transaction.SUCCESS),
+						});
+						setTxModalOpen(false);
+					}
+				} catch (e) {
+					setTransactionState(Transaction.PRESUBMIT);
+					setError(e.message);
+				}
+			}
+		}
+		dilute();
+	}, [signer, gasPrice, monitorHash, isAppReady, proposal, walletAddress]);
 
 	const expired = (timestamp?: number) => {
 		if (!timestamp) return;
@@ -120,6 +283,11 @@ const Content: React.FC<ContentProps> = ({ onBack }) => {
 								hash: truncateAddress(proposal?.authorIpfsHash ?? ''),
 							})}
 						</WhiteSubheader>
+						{/* <Divider />
+						<GreyText>{t('gov.actions.tx.notice')}</GreyText>
+						<ExternalLink href={link}>
+							<LinkText>{t('earn.actions.tx.link')}</LinkText>
+						</ExternalLink> */}
 					</FlexDivColCentered>
 				}
 			/>
@@ -176,7 +344,7 @@ const Content: React.FC<ContentProps> = ({ onBack }) => {
 						<Description dangerouslySetInnerHTML={getRawMarkup(proposal?.msg.payload.body)} />
 					</ProposalContainer>
 					<Divider />
-					{!expired(proposal?.msg.payload.end) && (
+					{!expired(proposal?.msg.payload.end) && isCouncilMember && (
 						<OptionsContainer>
 							{proposal?.msg.payload.choices.map((choice, i) => (
 								<StyledTooltip arrow={true} placement="bottom" content={choice} hideOnClick={false}>
@@ -193,16 +361,24 @@ const Content: React.FC<ContentProps> = ({ onBack }) => {
 						</OptionsContainer>
 					)}
 				</InputContainer>
-				<StyledCTA onClick={() => handleVote(proposal?.authorIpfsHash)} variant="primary">
-					{t('gov.proposal.action.vote')}
-				</StyledCTA>
+				{isCouncilMember ? (
+					<StyledCTA onClick={() => handleVote(proposal?.authorIpfsHash)} variant="primary">
+						{t('gov.proposal.action.vote')}
+					</StyledCTA>
+				) : (
+					<>
+						<StyledCTA disabled={!canDilute} onClick={() => handleDilute()} variant="primary">
+							{t('gov.proposal.action.withdraw')}
+						</StyledCTA>
+					</>
+				)}
 			</Container>
 			{txModalOpen && (
 				<TxConfirmationModal
 					isSignature={true}
 					onDismiss={() => setTxModalOpen(false)}
 					txError={error}
-					attemptRetry={handleVote}
+					attemptRetry={handleDilute}
 					content={
 						<ModalContent>
 							<ModalItem>
@@ -220,7 +396,7 @@ const Content: React.FC<ContentProps> = ({ onBack }) => {
 		</>
 	);
 };
-export default Content;
+export default DilutionContent;
 
 const Status = styled.p<{ active: boolean }>`
 	color: ${(props) => (props.active ? props.theme.colors.green : props.theme.colors.gray)};

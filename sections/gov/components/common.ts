@@ -1,5 +1,11 @@
 import styled from 'styled-components';
-import { FlexDivCol, FlexDivColCentered, FlexDivRowCentered, Tooltip } from 'styles/common';
+import {
+	FlexDiv,
+	FlexDivCol,
+	FlexDivColCentered,
+	FlexDivRowCentered,
+	Tooltip,
+} from 'styles/common';
 import Button from 'components/Button';
 
 export const Container = styled.div`
@@ -87,4 +93,58 @@ export const StyledTooltip = styled(Tooltip)`
 		font-size: 12px;
 		padding: 10px;
 	}
+`;
+
+export const Title = styled.div`
+	font-family: ${(props) => props.theme.fonts.extended};
+	font-size: 12px;
+	color: ${(props) => props.theme.colors.white};
+	margin-bottom: 20px;
+`;
+
+export const GreyHeader = styled(Header)`
+	color: ${(props) => props.theme.colors.gray};
+`;
+
+export const WhiteSubheader = styled(Header)`
+	color: ${(props) => props.theme.colors.white};
+`;
+
+export const GreyText = styled.div`
+	color: ${(props) => props.theme.colors.gray};
+	font-size: 12px;
+	margin-bottom: 5px;
+	text-align: center;
+`;
+
+export const LinkText = styled.div`
+	font-size: 12px;
+	color: ${(props) => props.theme.colors.blue};
+`;
+
+export const ButtonSpacer = styled(FlexDiv)`
+	width: 300px;
+	justify-content: space-between;
+`;
+
+export const VerifyButton = styled.div`
+	width: 125px;
+	height: 32px;
+	padding-top: 8px;
+	font-family: ${(props) => props.theme.fonts.condensedMedium};
+	font-size: 12px;
+	border-radius: 4px;
+	cursor: pointer;
+	background-color: ${(props) => props.theme.colors.black};
+	color: ${(props) => props.theme.colors.white};
+	border: 1px solid ${(props) => props.theme.colors.gray};
+	box-shadow: none;
+	text-transform: uppercase;
+	text-align: center;
+`;
+
+export const DismissButton = styled(Button)`
+	width: 100%;
+	box-shadow: none;
+	margin-top: 16px;
 `;

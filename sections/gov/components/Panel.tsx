@@ -112,7 +112,7 @@ const Panel: React.FC<PanelProps> = ({ currentTab }) => {
 				key: SPACE_KEY.AMBASSADOR,
 			},
 		],
-		[t, councilProposals, govProposals, grantsProposals]
+		[t, councilProposals, govProposals, grantsProposals, ambassadorProposals]
 	);
 
 	const returnContent = () => {
