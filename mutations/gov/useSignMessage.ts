@@ -78,7 +78,7 @@ const useSignMessage = () => {
 				queryCache.invalidateQueries(QUERY_KEYS.Gov.Proposal);
 			},
 			onError: (e: any) => {
-				throw new Error(e);
+				return e;
 			},
 		}
 	);

@@ -31,7 +31,7 @@ const Results: React.FC<ResultsProps> = ({ hash }) => {
 								</Title>
 							</StyledTooltip>
 							<BarContainer>
-								<StyledProgressBar percentage={(votes / totalVotes) * 100} variant="blue-pink" />
+								<StyledProgressBar percentage={votes / totalVotes} variant="blue-pink" />
 								<Value>{formatPercent(votes / totalVotes)}</Value>
 							</BarContainer>
 						</Row>

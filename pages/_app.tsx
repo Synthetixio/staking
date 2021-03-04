@@ -30,6 +30,9 @@ const queryCache = new QueryCache({
 		queries: {
 			refetchInterval: DEFAULT_REQUEST_REFRESH_INTERVAL,
 		},
+		mutations: {
+			throwOnError: true,
+		},
 	},
 });
 

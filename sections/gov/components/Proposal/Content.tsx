@@ -36,18 +36,24 @@ const Content: React.FC<ContentProps> = ({ onBack }) => {
 	const activeTab = useActiveTab();
 	const proposal = useRecoilValue(proposalState);
 	const [selected, setSelected] = useState<number | null>(null);
+	const [loading, setLoading] = useState<boolean>(false);
 
 	const handleVote = async (hash?: string | null) => {
-		try {
-			if (hash && selected) {
-				voteMutate({
-					spaceKey: activeTab,
-					type: SignatureType.VOTE,
-					payload: { proposal: hash, choice: selected + 1, metadata: {} },
+		setLoading(true);
+		if (hash && selected !== null) {
+			voteMutate({
+				spaceKey: activeTab,
+				type: SignatureType.VOTE,
+				payload: { proposal: hash, choice: selected + 1, metadata: {} },
+			})
+				.then((response) => {
+					console.log(response);
+					setLoading(false);
+				})
+				.catch((error) => {
+					console.log(error);
+					setLoading(false);
 				});
-			}
-		} catch (e) {
-			console.log(e);
 		}
 	};
 
@@ -76,7 +82,7 @@ const Content: React.FC<ContentProps> = ({ onBack }) => {
 
 	// @TODO add withdraw vote logic
 	const returnButtonStates = useMemo(() => {
-		if (result.isLoading) {
+		if (loading) {
 			return (
 				<StyledCTA disabled variant="primary">
 					{t('gov.proposal.action.vote.loading')}
@@ -216,6 +222,7 @@ const OptionsContainer = styled.div`
 	grid-template-columns: auto auto;
 	column-gap: 8px;
 	row-gap: 8px;
+	padding-top: 16px;
 `;
 
 const Option = styled(Button)<{ selected: boolean }>`
@@ -226,6 +233,7 @@ const Option = styled(Button)<{ selected: boolean }>`
 	font-family: ${(props) => props.theme.fonts.interBold};
 	text-transform: uppercase;
 	text-align: center;
+	align-items: center;
 
 	width: 235px;
 
@@ -234,6 +242,7 @@ const Option = styled(Button)<{ selected: boolean }>`
 		white-space: nowrap;
 		overflow: hidden;
 		padding: 0px 16px;
+		margin: 0;
 	}
 
 	:hover {
