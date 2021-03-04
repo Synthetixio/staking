@@ -72,7 +72,7 @@ type SettleProps = {
 const Settle: FC<SettleProps> = ({ stakedAsset, setShowSettleOverlayModal }) => {
 	const { t } = useTranslation();
 	const { monitorHash } = Notify.useContainer();
-	const { provider } = Connector.useContainer();
+	const { currentProvider } = Connector.useContainer();
 	const { etherscanInstance } = Etherscan.useContainer();
 	const walletAddress = useRecoilValue(walletAddressState);
 	const [error, setError] = useState<string | null>(null);
@@ -103,7 +103,7 @@ const Settle: FC<SettleProps> = ({ stakedAsset, setShowSettleOverlayModal }) => 
 			}
 		};
 		getGasLimitEstimate();
-	}, [stakedAsset, provider, isAppReady, walletAddress]);
+	}, [stakedAsset, currentProvider, isAppReady, walletAddress]);
 
 	const handleSettle = useCallback(() => {
 		async function approve() {

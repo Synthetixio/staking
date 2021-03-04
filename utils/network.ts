@@ -1,7 +1,7 @@
 import detectEthereumProvider from '@metamask/detect-provider';
 
 import { DEFAULT_GAS_BUFFER, DEFAULT_NETWORK_ID } from 'constants/defaults';
-import { NetworkId } from '@synthetixio/js';
+import { NetworkId } from '@synthetixio/contracts-interface';
 import { GWEI_UNIT } from 'constants/network';
 
 type EthereumProvider = {

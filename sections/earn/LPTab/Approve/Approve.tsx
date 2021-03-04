@@ -92,7 +92,7 @@ type ApproveProps = {
 const Approve: FC<ApproveProps> = ({ stakedAsset, setShowApproveOverlayModal }) => {
 	const { t } = useTranslation();
 	const { monitorHash } = Notify.useContainer();
-	const { provider, signer } = Connector.useContainer();
+	const { currentProvider, signer } = Connector.useContainer();
 	const { etherscanInstance } = Etherscan.useContainer();
 	const [error, setError] = useState<string | null>(null);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
@@ -109,7 +109,7 @@ const Approve: FC<ApproveProps> = ({ stakedAsset, setShowApproveOverlayModal }) 
 			if (isAppReady) {
 				try {
 					setError(null);
-					const { contract, poolAddress } = getApprovalContractData(stakedAsset, provider);
+					const { contract, poolAddress } = getApprovalContractData(stakedAsset, currentProvider);
 					let gasEstimate = await getGasEstimateForTransaction(
 						[poolAddress, synthetix.js!.utils.parseEther(TokenAllowanceLimit.toString())],
 						contract.estimateGas.approve
@@ -122,7 +122,7 @@ const Approve: FC<ApproveProps> = ({ stakedAsset, setShowApproveOverlayModal }) 
 			}
 		};
 		getGasLimitEstimate();
-	}, [stakedAsset, provider, isAppReady]);
+	}, [stakedAsset, currentProvider, isAppReady]);
 
 	const handleApprove = useCallback(() => {
 		async function approve() {

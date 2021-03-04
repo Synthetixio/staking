@@ -12,7 +12,7 @@ import { toBigNumber } from 'utils/formatters/number';
 import { wBTCToken } from 'contracts';
 
 const useWBTCBalanceQuery = (options?: QueryConfig<BigNumber>) => {
-	const { provider } = Connector.useContainer();
+	const { currentProvider } = Connector.useContainer();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const network = useRecoilValue(networkState);
@@ -20,7 +20,7 @@ const useWBTCBalanceQuery = (options?: QueryConfig<BigNumber>) => {
 	const contract = new ethers.Contract(
 		wBTCToken.address,
 		wBTCToken.abi,
-		provider as ethers.providers.Provider
+		currentProvider as ethers.providers.Provider
 	);
 
 	return useQuery<BigNumber>(
@@ -30,7 +30,7 @@ const useWBTCBalanceQuery = (options?: QueryConfig<BigNumber>) => {
 			return toBigNumber(ethers.utils.formatUnits(balance, 8));
 		},
 		{
-			enabled: provider && isWalletConnected,
+			enabled: currentProvider && isWalletConnected,
 			...options,
 		}
 	);

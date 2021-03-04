@@ -11,7 +11,7 @@ import Connector from 'containers/Connector';
 import { toBigNumber } from 'utils/formatters/number';
 
 const useETHBalanceQuery = (options?: QueryConfig<BigNumber>) => {
-	const { provider } = Connector.useContainer();
+	const { currentProvider } = Connector.useContainer();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const network = useRecoilValue(networkState);
@@ -19,12 +19,12 @@ const useETHBalanceQuery = (options?: QueryConfig<BigNumber>) => {
 	return useQuery<BigNumber>(
 		QUERY_KEYS.WalletBalances.ETH(walletAddress ?? '', network?.id!),
 		async () => {
-			const balance = await provider!.getBalance(walletAddress!);
+			const balance = await currentProvider!.getBalance(walletAddress!);
 
 			return toBigNumber(ethers.utils.formatEther(balance));
 		},
 		{
-			enabled: provider && isWalletConnected,
+			enabled: currentProvider && isWalletConnected,
 			...options,
 		}
 	);

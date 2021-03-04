@@ -1,4 +1,10 @@
-import initSynthetixJS, { NetworkId, Network, Token, Synth, SynthetixJS } from '@synthetixio/js';
+import initSynthetixJS, {
+	NetworkId,
+	Network,
+	Token,
+	Synth,
+	SynthetixJS,
+} from '@synthetixio/contracts-interface';
 import { ethers, Signer } from 'ethers';
 
 import keyBy from 'lodash/keyBy';

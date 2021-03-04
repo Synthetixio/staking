@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { createContainer } from 'unstated-next';
 import { useSetRecoilState, useRecoilState, useRecoilValue } from 'recoil';
-import { NetworkId } from '@synthetixio/js';
+import { NetworkId } from '@synthetixio/contracts-interface';
+import SynthetixProviders, { defaultProviders, SynthetixProvider } from '@synthetixio/providers';
 import { ethers } from 'ethers';
 
 import synthetix from 'lib/synthetix';
@@ -10,6 +11,7 @@ import { getDefaultNetworkId } from 'utils/network';
 
 import { appReadyState, languageState } from 'store/app';
 import { walletAddressState, networkState, walletWatchedState } from 'store/wallet';
+import { isLayerOneState } from 'store/chain';
 
 import { Wallet as OnboardWallet } from 'bnc-onboard/dist/src/interfaces';
 
@@ -17,11 +19,14 @@ import useLocalStorage from 'hooks/useLocalStorage';
 
 import { initOnboard, initNotify } from './config';
 import { LOCAL_STORAGE_KEYS } from 'constants/storage';
+import { CHAINS_MAP } from 'constants/network';
 
 const useConnector = () => {
 	const [network, setNetwork] = useRecoilState(networkState);
 	const language = useRecoilValue(languageState);
-	const [provider, setProvider] = useState<ethers.providers.Provider | null>(null);
+	const isLayerOne = useRecoilValue(isLayerOneState);
+	const [currentProvider, setCurrentProvider] = useState<ethers.providers.Provider | null>(null);
+	const [multiLayerProviders, setMultiLayerProviders] = useState<SynthetixProvider | null>(null);
 	const [signer, setSigner] = useState<ethers.Signer | null>(null);
 	const [onboard, setOnboard] = useState<ReturnType<typeof initOnboard> | null>(null);
 	const [notify, setNotify] = useState<ReturnType<typeof initNotify> | null>(null);
@@ -39,18 +44,20 @@ const useConnector = () => {
 			const networkId = await getDefaultNetworkId();
 
 			// @ts-ignore
-			const provider = new ethers.providers.InfuraProvider(
+			const providers = defaultProviders({
 				networkId,
-				process.env.NEXT_PUBLIC_INFURA_PROJECT_ID
-			);
+				infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
+			});
 
+			const provider = isLayerOne ? providers[CHAINS_MAP.L1] : providers[CHAINS_MAP.L2];
 			synthetix.setContractSettings({
 				networkId,
 				provider,
 			});
 			// @ts-ignore
 			setNetwork(synthetix.js?.network);
-			setProvider(provider);
+			setCurrentProvider(provider);
+			setMultiLayerProviders(providers);
 			setAppReady(true);
 		};
 
@@ -69,7 +76,10 @@ const useConnector = () => {
 							: false;
 
 					if (isSupportedNetwork) {
-						const provider = new ethers.providers.Web3Provider(onboard.getState().wallet.provider);
+						const providers = SynthetixProviders({
+							provider: onboard.getState().wallet.provider,
+						});
+						const provider = isLayerOne ? providers[CHAINS_MAP.L1] : providers[CHAINS_MAP.L2];
 						const signer = provider.getSigner();
 
 						synthetix.setContractSettings({
@@ -79,7 +89,8 @@ const useConnector = () => {
 						});
 						onboard.config({ networkId });
 						notify.config({ networkId });
-						setProvider(provider);
+						setCurrentProvider(provider);
+						setMultiLayerProviders(providers);
 						setSigner(signer);
 
 						setNetwork({
@@ -91,7 +102,9 @@ const useConnector = () => {
 				},
 				wallet: async (wallet: OnboardWallet) => {
 					if (wallet.provider) {
-						const provider = new ethers.providers.Web3Provider(wallet.provider);
+						const providers = SynthetixProviders({ provider: wallet.provider });
+						const provider = isLayerOne ? providers[CHAINS_MAP.L1] : providers[CHAINS_MAP.L2];
+
 						const signer = provider.getSigner();
 						const network = await provider.getNetwork();
 						const networkId = network.chainId as NetworkId;
@@ -101,7 +114,8 @@ const useConnector = () => {
 							provider,
 							signer,
 						});
-						setProvider(provider);
+						setCurrentProvider(provider);
+						setMultiLayerProviders(providers);
 						setSigner(provider.getSigner());
 						setNetwork({
 							id: networkId,
@@ -111,7 +125,7 @@ const useConnector = () => {
 						setSelectedWallet(wallet.name);
 					} else {
 						// TODO: setting provider to null might cause issues, perhaps use a default provider?
-						// setProvider(null);
+						// setCurrentProvider(null);
 						setSigner(null);
 						setWalletAddress(null);
 						setSelectedWallet(null);
@@ -126,7 +140,7 @@ const useConnector = () => {
 			setNotify(notify);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [isAppReady]);
+	}, [isAppReady, isLayerOne]);
 
 	useEffect(() => {
 		setWalletAddress(walletWatched);
@@ -199,7 +213,8 @@ const useConnector = () => {
 	};
 
 	return {
-		provider,
+		currentProvider,
+		multiLayerProviders,
 		signer,
 		onboard,
 		notify,

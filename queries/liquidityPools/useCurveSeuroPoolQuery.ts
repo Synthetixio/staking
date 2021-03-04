@@ -29,7 +29,7 @@ const useCurveSeuroPoolQuery = (options?: QueryConfig<CurveData>) => {
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const network = useRecoilValue(networkState);
-	const { provider } = Connector.useContainer();
+	const { currentProvider } = Connector.useContainer();
 
 	return useQuery<CurveData>(
 		QUERY_KEYS.LiquidityPools.sEUR(walletAddress ?? '', network?.id!),
@@ -37,31 +37,31 @@ const useCurveSeuroPoolQuery = (options?: QueryConfig<CurveData>) => {
 			const contract = new ethers.Contract(
 				curveSeuroRewards.address,
 				curveSeuroRewards.abi,
-				provider as ethers.providers.Provider
+				currentProvider as ethers.providers.Provider
 			);
 			const curveSeuroPoolContract = new ethers.Contract(
 				curveSeuroPool.address,
 				// @ts-ignore
 				curveSeuroPool.abi,
-				provider as ethers.providers.Provider
+				currentProvider as ethers.providers.Provider
 			);
 			const curveSeuroPoolTokenContract = new ethers.Contract(
 				curveSeuroPoolToken.address,
 				// @ts-ignore
 				curveSeuroPoolToken.abi,
-				provider as ethers.providers.Provider
+				currentProvider as ethers.providers.Provider
 			);
 			const curveSeuroGaugeContract = new ethers.Contract(
 				curveSeuroGauge.address,
 				// @ts-ignore
 				curveSeuroGauge.abi,
-				provider as ethers.providers.Provider
+				currentProvider as ethers.providers.Provider
 			);
 			const curveGaugeControllerContract = new ethers.Contract(
 				curveGaugeController.address,
 				// @ts-ignore
 				curveGaugeController.abi,
-				provider as ethers.providers.Provider
+				currentProvider as ethers.providers.Provider
 			);
 
 			const address = contract.address;
@@ -152,7 +152,7 @@ const useCurveSeuroPoolQuery = (options?: QueryConfig<CurveData>) => {
 			};
 		},
 		{
-			enabled: isAppReady && isWalletConnected && provider != null,
+			enabled: isAppReady && isWalletConnected && currentProvider != null,
 			...options,
 		}
 	);

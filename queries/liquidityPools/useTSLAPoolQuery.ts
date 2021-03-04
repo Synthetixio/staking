@@ -17,7 +17,7 @@ const useTSLAPoolQuery = (options?: QueryConfig<LiquidityPoolData>) => {
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const network = useRecoilValue(networkState);
-	const { provider } = Connector.useContainer();
+	const { currentProvider } = Connector.useContainer();
 
 	return useQuery<LiquidityPoolData>(
 		QUERY_KEYS.LiquidityPools.sTSLA(walletAddress ?? '', network?.id!),
@@ -31,7 +31,7 @@ const useTSLAPoolQuery = (options?: QueryConfig<LiquidityPoolData>) => {
 			const sTSLABalancerContract = new ethers.Contract(
 				balancersTSLAPoolToken.address,
 				balancersTSLAPoolToken.abi,
-				provider as ethers.providers.Provider
+				currentProvider as ethers.providers.Provider
 			);
 
 			const { address } = StakingRewardssTSLABalancer;

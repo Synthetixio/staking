@@ -1,13 +1,12 @@
 import { FC, useMemo, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import { providers } from 'ethers';
-import initSynthetixJS from '@synthetixio/js';
+import initSynthetixJS from '@synthetixio/contracts-interface';
+import { optimismProvider } from '@synthetixio/providers';
 
 import { formatCryptoCurrency, formatPercent } from 'utils/formatters/number';
 import ROUTES from 'constants/routes';
 import { EXTERNAL_LINKS } from 'constants/links';
-import { OVM_RPC_URL } from 'constants/ovm';
 
 import GridBox, { GridBoxProps } from 'components/GridBox/Gridbox';
 import GlowingCircle from 'components/GlowingCircle';
@@ -29,7 +28,7 @@ const Index: FC = () => {
 	useEffect(() => {
 		async function getData() {
 			try {
-				const provider = new providers.StaticJsonRpcProvider(OVM_RPC_URL);
+				const provider = optimismProvider();
 				const {
 					contracts: { Synthetix, FeePool },
 				} = initSynthetixJS({
