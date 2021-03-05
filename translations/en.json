@@ -771,5 +771,15 @@
 		"page-title": "Mobile is coming soon | Synthetix Staking",
 		"title-line1": "Mobile is coming",
 		"title-line2": "soonthetix"
+	},
+	"notifications": {
+		"debt-liquidation-warning": {
+			"heading": "warning:",
+			"message": "Your wallet has been flagged for liquidation"
+		},
+		"gov-voting-proposal": {
+			"heading": "governance:",
+			"message": "Voting for {{proposal}} is now required"
+		}
 	}
 }
