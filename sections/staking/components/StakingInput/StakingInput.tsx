@@ -5,6 +5,7 @@ import { useRecoilValue } from 'recoil';
 import { Trans, useTranslation } from 'react-i18next';
 
 import NavigationBack from 'assets/svg/app/navigation-back.svg';
+import Logo1Inch from 'assets/svg/providers/1inch.svg';
 
 import GasSelector from 'components/GasSelector';
 import {
@@ -15,6 +16,7 @@ import {
 	RowTitle,
 	RowValue,
 	StyledInput,
+	Tagline,
 } from 'sections/staking/components/common';
 
 import { ActionInProgress, ActionCompleted } from 'sections/staking/components/TxSent';
@@ -28,6 +30,8 @@ import {
 	FlexDivRowCentered,
 	NoTextTransform,
 	IconButton,
+	FlexDivRow,
+	FlexDivCentered,
 } from 'styles/common';
 import { InputContainer, InputLocked } from '../common';
 import { Transaction } from 'constants/network';
@@ -60,6 +64,9 @@ type StakingInputProps = {
 	maxBurnAmount?: BigNumber;
 	burnAmountToFixCRatio?: BigNumber;
 	canClearDebt?: boolean;
+	etherNeededToBuy?: string;
+	sUSDNeededToBuy?: string;
+	sUSDNeededToBurn?: string;
 };
 
 const StakingInput: React.FC<StakingInputProps> = ({
@@ -80,6 +87,9 @@ const StakingInput: React.FC<StakingInputProps> = ({
 	maxBurnAmount,
 	burnAmountToFixCRatio,
 	canClearDebt,
+	etherNeededToBuy,
+	sUSDNeededToBuy,
+	sUSDNeededToBurn,
 }) => {
 	const {
 		targetCRatio,
@@ -241,6 +251,29 @@ const StakingInput: React.FC<StakingInputProps> = ({
 		);
 	}
 
+	const BurnInputBox = () => (
+		<>
+			<InputGroup>
+				<FlexDivRow>
+					<InputBoxInGroup>
+						<Tagline>Tx 1: Buy additional sUSD</Tagline>
+						<InputLocked>{sUSDNeededToBuy}</InputLocked>
+						<Tagline>Spending {etherNeededToBuy} ETH</Tagline>
+					</InputBoxInGroup>
+					<InputBoxInGroup>
+						<Tagline>Tx 2: Burn sUSD to clear debt</Tagline>
+						<InputLocked>{sUSDNeededToBurn}</InputLocked>
+						<Tagline>Including 0.05% buffer</Tagline>
+					</InputBoxInGroup>
+				</FlexDivRow>
+			</InputGroup>
+			<FlexDivCentered>
+				<Tagline>POWERED BY</Tagline>
+				<Svg height={20} src={Logo1Inch} />
+			</FlexDivCentered>
+		</>
+	);
+
 	return (
 		<>
 			<InputContainer>
@@ -255,25 +288,29 @@ const StakingInput: React.FC<StakingInputProps> = ({
 						</BalanceButton>
 					)}
 				</HeaderRow>
-				<InputBox>
-					<Currency.Icon currencyKey={Synths.sUSD} width="50" height="50" />
-					{isLocked ? (
-						<InputLocked>{formattedInput}</InputLocked>
-					) : (
-						<StyledInput
-							type="number"
-							maxLength={12}
-							value={inputValue.isNaN() ? '0' : inputValue.toString()}
-							placeholder="0"
-							onChange={(e) => onInputChange(e.target.value)}
-							disabled={
-								!isWalletConnected ||
-								(!isMint && debtBalance.isZero()) ||
-								(isMint && collateral.isZero())
-							}
-						/>
-					)}
-				</InputBox>
+				{burnType === BurnActionType.CLEAR ? (
+					<BurnInputBox />
+				) : (
+					<InputBox>
+						<Currency.Icon currencyKey={Synths.sUSD} width="50" height="50" />
+						{isLocked ? (
+							<InputLocked>{formattedInput}</InputLocked>
+						) : (
+							<StyledInput
+								type="number"
+								maxLength={12}
+								value={inputValue.isNaN() ? '0' : inputValue.toString()}
+								placeholder="0"
+								onChange={(e) => onInputChange(e.target.value)}
+								disabled={
+									!isWalletConnected ||
+									(!isMint && debtBalance.isZero()) ||
+									(isMint && collateral.isZero())
+								}
+							/>
+						)}
+					</InputBox>
+				)}
 				<DataContainer>
 					<DataRow>
 						<RowTitle>
@@ -312,6 +349,14 @@ const StakingInput: React.FC<StakingInputProps> = ({
 								</ModalItemTitle>
 								<ModalItemText>{formattedInput}</ModalItemText>
 							</ModalItem>
+							<ModalItem>
+								<ModalItemTitle>
+									{isMint
+										? null
+										: t('modals.confirm-transaction.burning.spending')}
+								</ModalItemTitle>
+								<ModalItemText>{etherNeededToBuy} ETH</ModalItemText>
+							</ModalItem>
 						</ModalContent>
 					}
 				/>
@@ -338,6 +383,17 @@ const BalanceButton = styled(Button)`
 	span {
 		color: ${(props) => props.theme.colors.gray};
 	}
+`;
+
+const InputGroup = styled.div`
+	width: 100%;
+`;
+
+const InputBoxInGroup = styled(InputBox)`
+	:not(:first-child) {
+		border-left: 1px solid ${(props) => props.theme.colors.mediumBlue};
+	}
+	flex: 1 1 auto;
 `;
 
 export default StakingInput;

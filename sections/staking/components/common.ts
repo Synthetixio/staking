@@ -84,6 +84,7 @@ export const StyledInput = styled(Input)`
 export const InputLocked = styled.p`
 	font-size: 24px;
 	font-family: ${(props) => props.theme.fonts.extended};
+	text-align: center;
 	margin-top: 16px;
 `;
 
@@ -139,4 +140,12 @@ export const StyledLink = styled(ExternalLink)`
 
 export const ValueContainer = styled(FlexDivRowCentered)`
 	align-items: center;
+`;
+
+export const Tagline = styled.p`
+	font-family: ${(props) => props.theme.fonts.condensedMedium};
+	color: ${(props) => props.theme.colors.gray};
+	font-size: 12px;
+	text-transform: capitalize;
+	margin: 0px 8px;
 `;

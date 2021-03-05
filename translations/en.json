@@ -46,7 +46,8 @@
 			},
 			"burning": {
 				"from": "Unstaking",
-				"to": "Burning"
+				"to": "Burning",
+				"spending": "Spending"
 			},
 			"vesting": {
 				"title": "Vesting"

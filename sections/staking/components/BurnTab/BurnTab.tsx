@@ -1,23 +1,30 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { TabContainer } from '../common';
-import { Synths } from 'constants/currency';
+import { CryptoCurrency, Synths } from 'constants/currency';
 import Notify from 'containers/Notify';
-import { ethers } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 import { normalizedGasPrice, normalizeGasLimit } from 'utils/network';
 import { getGasEstimateForTransaction } from 'utils/transactions';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { isWalletConnectedState, walletAddressState } from 'store/wallet';
+import { isWalletConnectedState, networkState, walletAddressState } from 'store/wallet';
 import synthetix from 'lib/synthetix';
 import BurnTiles from '../BurnTiles';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 import StakingInput from '../StakingInput';
 import { Transaction } from 'constants/network';
-import { toBigNumber } from 'utils/formatters/number';
+import {
+	formatCurrency,
+	NumericValue,
+	toBigNumber,
+} from 'utils/formatters/number';
 import { amountToBurnState, BurnActionType, burnTypeState } from 'store/staking';
 import { addSeconds, differenceInSeconds } from 'date-fns';
 import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
 import { appReadyState } from 'store/app';
+import use1InchQuoteQuery from 'queries/1inch/use1InchQuoteQuery';
+import Connector from 'containers/Connector';
+import use1InchSwapQuery from 'queries/1inch/use1InchSwapQuery';
 
 // @TODO: Add for the countdown of waiting period and issuance delay
 
@@ -28,6 +35,7 @@ const BurnTab: React.FC = () => {
 	const { percentageTargetCRatio, debtBalance, issuableSynths } = useStakingCalculations();
 	const walletAddress = useRecoilValue(walletAddressState);
 	const isAppReady = useRecoilValue(appReadyState);
+	const { signer } = Connector.useContainer();
 
 	const [transactionState, setTransactionState] = useState<Transaction>(Transaction.PRESUBMIT);
 	const [txHash, setTxHash] = useState<string | null>(null);
@@ -49,6 +57,27 @@ const BurnTab: React.FC = () => {
 	const sUSDBalance = synthBalances?.balancesMap.sUSD
 		? synthBalances.balancesMap.sUSD.balance
 		: toBigNumber(0);
+
+	const debtBalanceWithBuffer = debtBalance.plus(debtBalance.multipliedBy(0.05));
+	const missingSUSD: NumericValue = debtBalanceWithBuffer.minus(sUSDBalance).toFixed(18);
+
+	const quoteQuery = use1InchQuoteQuery(
+		'0x57ab1ec28d129707052df4df418d58a2d46d5f51',
+		'0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
+		missingSUSD
+	);
+	const quoteData = quoteQuery.isSuccess && quoteQuery.data != null ? quoteQuery.data : null;
+	const quoteAmount = quoteData?.toTokenAmount;
+
+	const tmpAmt = '0.01';
+	const swapQuery = use1InchSwapQuery(
+		'0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
+		'0x57ab1ec28d129707052df4df418d58a2d46d5f51',
+		tmpAmt,
+		walletAddress,
+		50
+	);
+	const swapData = swapQuery.isSuccess && swapQuery.data != null ? swapQuery.data : null;
 
 	const getMaxSecsLeftInWaitingPeriod = useCallback(async () => {
 		const {
@@ -201,7 +230,70 @@ const BurnTab: React.FC = () => {
 	const handleClear = async () => {
 		// @TODO: setup 1inch tx
 		// @TODO: setup burn tx
-		console.log('clear');
+		//console.log('TX', swapData);
+		if (!swapData) {
+			return;	
+		}
+
+		try {
+			setError(null);
+			setTxModalOpen(true);
+
+			const transaction = await signer?.sendTransaction({
+				from: swapData.from,
+				to: swapData.to,
+				value: BigNumber.from(swapData.value),
+				gasPrice: BigNumber.from(swapData.gasPrice),
+				data: swapData.data,
+			});
+
+			if (transaction) {
+				setTxHash(transaction.hash);
+				setTransactionState(Transaction.WAITING);
+				monitorHash({
+					txHash: transaction.hash,
+					onTxConfirmed: async () => {
+						const {
+							contracts: { Synthetix, Issuer },
+							utils: { formatBytes32String, parseEther },
+						} = synthetix.js!;
+			
+						if (await Synthetix.isWaitingPeriod(formatBytes32String(Synths.sUSD)))
+							throw new Error('Waiting period for sUSD is still ongoing');
+						if (!(await Issuer.canBurnSynths(walletAddress)))
+							throw new Error('Waiting period to burn is still ongoing');
+			
+						let burnTransaction: ethers.ContractTransaction;
+			
+						const amountToBurnBN = parseEther(debtBalanceWithBuffer.toString());
+						const gasLimit = getGasEstimateForTransaction(
+							[amountToBurnBN],
+							Synthetix.estimateGas.burnSynths
+						);
+						burnTransaction = await Synthetix.burnSynths(amountToBurnBN, {
+							gasPrice: normalizedGasPrice(gasPrice),
+							gasLimit,
+						});
+
+						setTxHash(burnTransaction.hash);
+						setTransactionState(Transaction.WAITING);
+						monitorHash({
+							txHash: burnTransaction.hash,
+							onTxConfirmed: () => {
+								setTransactionState(Transaction.SUCCESS);
+							},
+						});
+						setTxModalOpen(false);
+					},
+				});
+				
+			}
+
+		} catch (e) {
+			setTransactionState(Transaction.PRESUBMIT);
+			setError(e.message);
+		}
+
 	};
 
 	const returnPanel = useMemo(() => {
@@ -209,6 +301,9 @@ const BurnTab: React.FC = () => {
 		let inputValue;
 		let isLocked;
 		let canClearDebt;
+		let etherNeededToBuy;
+		let sUSDNeededToBuy;
+		let sUSDNeededToBurn;
 
 		/* If a user has more sUSD than the debt balance, the max burn amount is their debt balance, else it is just the balance they have */
 		const maxBurnAmount = debtBalance.isGreaterThan(sUSDBalance)
@@ -245,9 +340,14 @@ const BurnTab: React.FC = () => {
 			case BurnActionType.CLEAR:
 				onBurnChange(maxBurnAmount.toString());
 				handleSubmit = () => handleClear();
-				inputValue = maxBurnAmount;
+				inputValue = debtBalanceWithBuffer;
 				isLocked = true;
-				canClearDebt = false;
+				canClearDebt = true;
+				if (quoteAmount) {
+					etherNeededToBuy = formatCurrency(CryptoCurrency.ETH, quoteAmount);
+				}
+				sUSDNeededToBuy = formatCurrency(Synths.sUSD, missingSUSD);
+				sUSDNeededToBurn = formatCurrency(Synths.sUSD, debtBalanceWithBuffer);
 				break;
 			default:
 				return (
@@ -276,6 +376,9 @@ const BurnTab: React.FC = () => {
 				maxBurnAmount={maxBurnAmount}
 				burnAmountToFixCRatio={burnAmountToFixCRatio}
 				canClearDebt={canClearDebt}
+				etherNeededToBuy={etherNeededToBuy}
+				sUSDNeededToBuy={sUSDNeededToBuy}
+				sUSDNeededToBurn={sUSDNeededToBurn}
 			/>
 		);
 	}, [

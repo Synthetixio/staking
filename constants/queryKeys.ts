@@ -214,6 +214,20 @@ export const QUERY_KEYS = {
 		walletAddress,
 		networkId,
 	],
+	["1Inch"]: {
+		quote: (walletAddress: string, networkId: NetworkId) => [
+			'quote',
+			'1inch',
+			walletAddress,
+			networkId,
+		],
+		swap: (walletAddress: string, networkId: NetworkId) => [
+			'swap',
+			'1inch',
+			walletAddress,
+			networkId,
+		],
+	}
 };
 
 export default QUERY_KEYS;
