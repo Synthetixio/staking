@@ -8,6 +8,7 @@ import useEscrowDataQuery from 'hooks/useEscrowDataQueryWrapper';
 
 import Header from './Header';
 import SideNav from './SideNav';
+import UserNotifications from './UserNotifications';
 
 type AppLayoutProps = {
 	children: ReactNode;
@@ -32,6 +33,7 @@ const AppLayout: FC<AppLayoutProps> = ({ children }) => {
 			<SideNav />
 			<Header />
 			<Content>{children}</Content>
+			<UserNotifications />
 		</>
 	);
 };
