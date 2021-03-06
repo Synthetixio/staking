@@ -180,13 +180,14 @@ const Content: React.FC<ContentProps> = ({ onBack }) => {
 					{!expired(proposal?.msg.payload.end) && (
 						<OptionsContainer>
 							{proposal?.msg.payload.choices.map((choice, i) => (
-								<StyledTooltip arrow={true} placement="bottom" content={choice} hideOnClick={false}>
-									<Option
-										selected={selected === i}
-										onClick={() => setSelected(i)}
-										variant="text"
-										key={i}
-									>
+								<StyledTooltip
+									key={i}
+									arrow={true}
+									placement="bottom"
+									content={choice}
+									hideOnClick={false}
+								>
+									<Option selected={selected === i} onClick={() => setSelected(i)} variant="text">
 										<p>{choice}</p>
 									</Option>
 								</StyledTooltip>

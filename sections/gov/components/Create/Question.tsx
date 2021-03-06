@@ -140,7 +140,7 @@ const Question: React.FC<QuestionProps> = ({
 									onBack();
 								}}
 							>
-								{t('gov.actions.dismiss')}
+								{t('gov.actions.tx.dismiss')}
 							</DismissButton>
 						</ButtonSpacer>
 					</FlexDivColCentered>

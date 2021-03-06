@@ -44,6 +44,7 @@ const Panel: React.FC<PanelProps> = ({ currentTab }) => {
 			councilProposals.data &&
 			govProposals.data &&
 			grantsProposals.data &&
+			ambassadorProposals.data &&
 			isWalletConnected &&
 			Array.isArray(router.query.panel) &&
 			router.query.panel[1]
@@ -56,6 +57,8 @@ const Panel: React.FC<PanelProps> = ({ currentTab }) => {
 					data = councilProposals.data;
 				} else if (activeTab === SPACE_KEY.GRANTS) {
 					data = grantsProposals.data;
+				} else if (activeTab === SPACE_KEY.AMBASSADOR) {
+					data = ambassadorProposals.data;
 				} else {
 					data = govProposals.data;
 				}
@@ -74,6 +77,7 @@ const Panel: React.FC<PanelProps> = ({ currentTab }) => {
 		councilProposals,
 		govProposals,
 		grantsProposals,
+		ambassadorProposals,
 		activeTab,
 		setPanelType,
 		setProposal,

@@ -11,6 +11,8 @@ import { useTranslation } from 'react-i18next';
 import { truncateAddress } from 'utils/formatters/string';
 import { formatNumber } from 'utils/formatters/number';
 import { MaxHeightColumn, StyledTooltip } from 'sections/gov/components/common';
+import { Blockie } from '../common';
+import makeBlockie from 'ethereum-blockies-base64';
 
 type HistoryProps = {
 	hash: string;
@@ -31,33 +33,37 @@ const History: React.FC<HistoryProps> = ({ hash }) => {
 					data.voteList.map((vote: any, i: number) => {
 						return (
 							<Row key={i}>
-								<StyledTooltip
-									arrow={true}
-									placement="bottom"
-									content={
-										vote.address === walletAddress
-											? t('gov.proposal.history.currentUser')
-											: vote.profile.ens
-											? vote.profile.ens
-											: vote.address
-									}
-									hideOnClick={false}
-								>
-									<Title>
-										{vote.address === walletAddress
-											? t('gov.proposal.history.currentUser')
-											: vote.profile.ens
-											? vote.profile.ens
-											: truncateAddress(vote.address)}
-									</Title>
-								</StyledTooltip>
+								<FlexDivRowCentered>
+									<Blockie src={makeBlockie(vote.address)} />
+									<StyledTooltip
+										arrow={true}
+										placement="bottom"
+										content={
+											vote.address === walletAddress
+												? t('gov.proposal.history.currentUser')
+												: vote.profile.ens
+												? vote.profile.ens
+												: vote.address
+										}
+										hideOnClick={false}
+									>
+										<Title>
+											{vote.address === walletAddress
+												? t('gov.proposal.history.currentUser')
+												: vote.profile.ens
+												? vote.profile.ens
+												: truncateAddress(vote.address)}
+										</Title>
+									</StyledTooltip>
+								</FlexDivRowCentered>
+
 								<StyledTooltip
 									arrow={true}
 									placement="bottom"
 									content={data.choices[vote.msg.payload.choice - 1]}
 									hideOnClick={false}
 								>
-									<Choice>{truncateAddress(data.choices[vote.msg.payload.choice - 1])}</Choice>
+									<Choice>- {truncateAddress(data.choices[vote.msg.payload.choice - 1])}</Choice>
 								</StyledTooltip>
 								<Value>{`${formatNumber(vote.balance)} ${data.spaceSymbol}`}</Value>
 							</Row>
@@ -92,8 +98,7 @@ const Title = styled.div`
 	font-family: ${(props) => props.theme.fonts.interBold};
 	font-size: 12px;
 	color: ${(props) => props.theme.colors.white};
-	width: 33%;
-	margin-left: 16px;
+	margin-left: 8px;
 `;
 
 const Value = styled(FlexDivRowCentered)`
@@ -106,7 +111,7 @@ const Value = styled(FlexDivRowCentered)`
 `;
 const Choice = styled.div`
 	color: ${(props) => props.theme.colors.white};
-	font-family: ${(props) => props.theme.fonts.interBold};
+	font-family: ${(props) => props.theme.fonts.regular};
 	font-size: 12px;
 	width: 100px;
 	margin-left: 8px;

@@ -99,7 +99,7 @@ const useProposal = (spaceKey: SPACE_KEY, hash: string, options?: QueryConfig<Pr
 						...rest,
 					};
 				}
-				return votes.data ?? {};
+				return votes ?? {};
 			};
 
 			let voteArray = Object.values(votes);
@@ -155,7 +155,7 @@ const useProposal = (spaceKey: SPACE_KEY, hash: string, options?: QueryConfig<Pr
 			return results;
 		},
 		{
-			enabled: isAppReady && spaceKey && hash,
+			enabled: isAppReady && spaceKey,
 			...options,
 		}
 	);
