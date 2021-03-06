@@ -28,7 +28,7 @@ export const useCouncilMembers = () => {
 				let councilMembers = [] as any;
 				for (let i = 1; i <= numOfCouncil; i++) {
 					let address = await contract.ownerOf(i);
-					councilMembers.push(address);
+					councilMembers.push(address.toLowerCase());
 				}
 				let resolvedMembers = await Promise.resolve(councilMembers);
 				setCouncilMembers(resolvedMembers);

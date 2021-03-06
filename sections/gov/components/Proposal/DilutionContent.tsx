@@ -108,7 +108,7 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ onBack }) => {
 
 	useEffect(() => {
 		if (isAppReady && walletAddress && councilMembers) {
-			setIsCouncilMember(councilMembers.includes(walletAddress));
+			setIsCouncilMember(councilMembers.includes(walletAddress.toLowerCase()));
 		}
 	}, [isAppReady, walletAddress, councilMembers]);
 
@@ -502,23 +502,29 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ onBack }) => {
 						</OptionsContainer>
 					)}
 				</InputContainer>
-				{isCouncilMember ? (
-					<StyledCTA onClick={() => handleVote()} variant="primary">
-						{t('gov.proposal.action.vote')}
-					</StyledCTA>
-				) : (
-					<>
-						{hasDiluted ? (
-							<StyledCTA disabled={!canDilute} onClick={() => handleUndoDilute()} variant="primary">
-								{t('gov.proposal.action.support')}
-							</StyledCTA>
-						) : (
-							<StyledCTA disabled={!canDilute} onClick={() => handleDilute()} variant="primary">
-								{t('gov.proposal.action.withdraw')}
-							</StyledCTA>
-						)}
-					</>
-				)}
+				{!expired(proposal?.msg.payload.end) ? (
+					isCouncilMember ? (
+						<StyledCTA onClick={() => handleVote()} variant="primary">
+							{t('gov.proposal.action.vote')}
+						</StyledCTA>
+					) : (
+						<>
+							{hasDiluted ? (
+								<StyledCTA
+									disabled={!canDilute}
+									onClick={() => handleUndoDilute()}
+									variant="primary"
+								>
+									{t('gov.proposal.action.support')}
+								</StyledCTA>
+							) : (
+								<StyledCTA disabled={!canDilute} onClick={() => handleDilute()} variant="primary">
+									{t('gov.proposal.action.withdraw')}
+								</StyledCTA>
+							)}
+						</>
+					)
+				) : null}
 			</Container>
 		);
 	};

@@ -1,6 +1,6 @@
 export default {
 	// @TODO: Change to main-net address
-	address: '0x2639F441526014E46316463b1035ffA86Af16F16',
+	address: '0xc8ddA2B8221e35f44B771FcE6b641Aa4589D06b5',
 	abi: [
 		{
 			inputs: [{ internalType: 'uint256', name: '_numOfSeats', type: 'uint256' }],

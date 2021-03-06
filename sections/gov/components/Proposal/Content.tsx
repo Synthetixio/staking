@@ -194,9 +194,11 @@ const Content: React.FC<ContentProps> = ({ onBack }) => {
 						</OptionsContainer>
 					)}
 				</InputContainer>
-				<StyledCTA onClick={() => handleVote(proposal?.authorIpfsHash)} variant="primary">
-					{t('gov.proposal.action.vote')}
-				</StyledCTA>
+				{!expired(proposal?.msg.payload.end) && (
+					<StyledCTA onClick={() => handleVote(proposal?.authorIpfsHash)} variant="primary">
+						{t('gov.proposal.action.vote')}
+					</StyledCTA>
+				)}
 			</Container>
 		);
 	};
