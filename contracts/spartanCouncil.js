@@ -1,5 +1,6 @@
 export default {
-	address: '0x1D78ec233c424B38c3893F2B19c3C85B7Ba2b39a',
+	// @TODO change to main-net
+	address: '0xebaecac6ffe33bd0819d5d6ec0ba25267fe9532c',
 	abi: [
 		{
 			inputs: [
@@ -50,7 +51,7 @@ export default {
 				{ indexed: true, internalType: 'address', name: 'to', type: 'address' },
 				{ indexed: true, internalType: 'uint256', name: 'tokenId', type: 'uint256' },
 			],
-			name: 'Transferred',
+			name: 'Transfer',
 			type: 'event',
 		},
 		{
