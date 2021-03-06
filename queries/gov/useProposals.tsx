@@ -19,7 +19,6 @@ const useProposals = (spaceKey: SPACE_KEY, options?: QueryConfig<Proposal[]>) =>
 	const network = useRecoilValue(networkState);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
-	// @TODO: Support L2 provider
 	const { provider } = Connector.useContainer();
 
 	const contract = new ethers.Contract(

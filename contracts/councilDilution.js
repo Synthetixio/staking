@@ -1,6 +1,6 @@
 export default {
 	// @TODO: Change to main-net address
-	address: '0xd793d97DbB6fD38b30C89B628b98b3c33952f99B',
+	address: '0x2639F441526014E46316463b1035ffA86Af16F16',
 	abi: [
 		{
 			inputs: [{ internalType: 'uint256', name: '_numOfSeats', type: 'uint256' }],
@@ -283,10 +283,7 @@ export default {
 		},
 		{
 			constant: false,
-			inputs: [
-				{ internalType: 'string', name: 'proposalHash', type: 'string' },
-				{ internalType: 'uint256', name: 'start', type: 'uint256' },
-			],
+			inputs: [{ internalType: 'string', name: 'proposalHash', type: 'string' }],
 			name: 'logProposal',
 			outputs: [{ internalType: 'string', name: '', type: 'string' }],
 			payable: false,

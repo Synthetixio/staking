@@ -82,7 +82,6 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ onBack }) => {
 	const [hasDiluted, setHasDiluted] = useState<boolean>(false);
 	const [canDilute, setCanDilute] = useState<boolean>(false);
 
-	// @TODO: Change to L2 explorer
 	const { monitorHash } = Notify.useContainer();
 	const { etherscanInstance } = Etherscan.useContainer();
 	const link =

@@ -58,7 +58,10 @@
 				"title": "Migrating",
 				"escrow-schedule": "ESCROW SCHEDULE"
 			},
-
+			"propose": {
+				"title": "Writing proposal to contract",
+				"hash": "{{hash}}"
+			},
 			"helper": "Follow the Metamask prompts to authorize the transaction"
 		},
 		"confirm-signature": {
@@ -66,6 +69,10 @@
 			"vote": {
 				"title": "Submitting vote for",
 				"hash": "{{hash}}"
+			},
+			"propose": {
+				"title": "Creating a proposal on",
+				"space": "{{space}}"
 			},
 			"helper": "Follow the Metamask prompts to confirm your signature"
 		},
@@ -688,7 +695,7 @@
 				"error": "An unexpected error occurred.",
 				"success": "Submitted",
 				"idle": "Publish",
-				"invalid": "Invalid input"
+				"invalid": "Missing proposal inputs"
 			},
 			"choices": "Create choices",
 			"add": "+ Add option",
@@ -699,7 +706,8 @@
 				"date": "End date"
 			},
 			"select": "Select date",
-			"block": "Block"
+			"block": "Block",
+			"helper": "NOTE: Creating a SCCP/SIP requires the proposer to pay a TX fee after the snapshot proposal is created."
 		},
 		"proposal": {
 			"status": {
@@ -730,13 +738,34 @@
 		"actions": {
 			"vote": {
 				"waiting": "Voting in progress",
-				"signing": "Signing",
+				"signing": "Voting on",
 				"hash": "{{hash}}",
 				"success": "Your vote is in!"
 			},
 			"withdraw": {
 				"waiting": "Withdrawal in progress"
-			}
+			},
+			"propose": {
+				"waiting": "Submitting proposal",
+				"signing": "Proposing on",
+				"signed": "Proposal hash",
+				"space": "{{space}}",
+				"hash": "{{hash}}",
+				"success": "Your proposal is in!"
+			},
+			"log-proposal": {
+				"waiting": "Logging proposal",
+				"logging": "Saving proposal",
+				"hash": "{{hash}}",
+				"success": "Transaction Success",
+				"logged": "Saved proposal",
+				"tx": {
+					"link": "View on Etherscan",
+					"notice": "Waiting for the blockchain to confirm your transaction.",
+					"verify": "Verify Tx"
+				}
+			},
+			"dismiss": "Dismiss"
 		}
 	},
 	"sidenav": {

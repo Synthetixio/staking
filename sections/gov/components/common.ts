@@ -125,10 +125,11 @@ export const LinkText = styled.div`
 export const ButtonSpacer = styled(FlexDiv)`
 	width: 300px;
 	justify-content: space-between;
+	margin-top: 16px;
 `;
 
 export const VerifyButton = styled.div`
-	width: 125px;
+	width: 145px;
 	height: 32px;
 	padding-top: 8px;
 	font-family: ${(props) => props.theme.fonts.condensedMedium};
@@ -141,10 +142,11 @@ export const VerifyButton = styled.div`
 	box-shadow: none;
 	text-transform: uppercase;
 	text-align: center;
+	margin-right: 8px;
 `;
 
 export const DismissButton = styled(Button)`
 	width: 100%;
 	box-shadow: none;
-	margin-top: 16px;
+	text-transform: uppercase;
 `;

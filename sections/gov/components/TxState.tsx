@@ -19,6 +19,7 @@ const TxState: FC<TxStateProps> = ({ title, content }) => (
 
 const InnerContainer = styled(InputContainer)`
 	padding: 40px 0px;
+	margin: 0px;
 	height: 300px;
 	background: ${(props) => props.theme.colors.black};
 `;

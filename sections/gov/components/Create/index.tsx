@@ -14,13 +14,21 @@ import { Transaction } from 'constants/network';
 import { SPACE_KEY } from 'constants/snapshot';
 import { ethers } from 'ethers';
 
+import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
+
+import { ModalContent, ModalItem, ModalItemText, ModalItemTitle } from 'styles/common';
+
 import CouncilDilution from 'contracts/councilDilution.js';
+import Notify from 'containers/Notify';
+import { truncateAddress } from 'utils/formatters/string';
+import { useTranslation } from 'react-i18next';
 
 type IndexProps = {
 	onBack: Function;
 };
 
 const Index: React.FC<IndexProps> = ({ onBack }) => {
+	const { t } = useTranslation();
 	const { provider } = Connector.useContainer();
 	const [startDate, setStartDate] = useState<Date>(new Date());
 	const [endDate, setEndDate] = useState<Date>(new Date());
@@ -37,10 +45,12 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 	const [signError, setSignError] = useState<string | null>(null);
 	const [txError, setTxError] = useState<string | null>(null);
+	const [txHash, setTxHash] = useState<string | null>(null);
 	const space = useSnapshotSpace(activeTab);
 	const [createProposal, result] = useSignMessage();
+	const [hash, setHash] = useState<string | null>(null);
+	const { monitorHash } = Notify.useContainer();
 
-	// @TODO: change to L2 signer
 	const { signer } = Connector.useContainer();
 
 	const sanitiseTimestamp = (timestamp: number) => {
@@ -62,13 +72,35 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 		}
 	}, [name, body, block, endDate, startDate, choices]);
 
-	const handleCreate = () => {
+	const handleCreate = async () => {
 		try {
 			if (space.data && block) {
+				const isFixed = activeTab === SPACE_KEY.PROPOSAL;
+
 				setTxError(null);
 				setSignError(null);
+
 				setSignModalOpen(true);
 				setSignTransactionState(Transaction.WAITING);
+
+				const contract = new ethers.Contract(
+					CouncilDilution.address,
+					CouncilDilution.abi,
+					signer as any
+				);
+
+				let proposalStartDate;
+				let proposalEndDate;
+
+				if (isFixed) {
+					const proposalPeriod = await contract.proposalPeriod();
+					proposalStartDate = Math.round(new Date().getTime() / 1000);
+					proposalEndDate = proposalStartDate + proposalPeriod.toNumber();
+				} else {
+					proposalStartDate = sanitiseTimestamp(startDate.getTime());
+					proposalEndDate = sanitiseTimestamp(endDate.getTime());
+				}
+
 				createProposal({
 					spaceKey: activeTab,
 					type: SignatureType.PROPOSAL,
@@ -76,39 +108,42 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 						name,
 						body,
 						choices,
-						start: sanitiseTimestamp(startDate.getTime()),
-						end: sanitiseTimestamp(endDate.getTime()),
+						start: proposalStartDate,
+						end: proposalEndDate,
 						snapshot: block,
 						metadata: {
 							strategies: space.data.strategies as any,
 						},
 					},
 				})
-					.then((response) => {
+					.then(async (response) => {
 						setSignModalOpen(false);
 
-						console.log(response);
+						let ipfsHash = response?.data.ipfsHash;
+
+						setHash(ipfsHash);
 
 						if (activeTab === SPACE_KEY.PROPOSAL) {
-							setTxTransactionState(Transaction.PRESUBMIT);
+							try {
+								setSignTransactionState(Transaction.PRESUBMIT);
+								setTxTransactionState(Transaction.PRESUBMIT);
+								setTxModalOpen(true);
 
-							const contract = new ethers.Contract(
-								CouncilDilution.address,
-								CouncilDilution.abi,
-								signer as any
-							);
+								const transaction = await contract.logProposal(ipfsHash);
 
-							setTxModalOpen(true);
-							setTxTransactionState(Transaction.WAITING);
-
-							const tx = contract.logProposal(
-								response?.data.ipfs,
-								sanitiseTimestamp(startDate.getTime())
-							);
-
-							if (tx) {
-								setTxModalOpen(false);
-								setTxTransactionState(Transaction.SUCCESS);
+								if (transaction) {
+									setTxHash(transaction.hash);
+									setTxTransactionState(Transaction.WAITING);
+									monitorHash({
+										txHash: transaction.hash,
+										onTxConfirmed: () => setTxTransactionState(Transaction.SUCCESS),
+									});
+									setTxModalOpen(false);
+								}
+							} catch (error) {
+								console.log(error);
+								setTxTransactionState(Transaction.PRESUBMIT);
+								setTxError(error);
 							}
 						} else {
 							setSignTransactionState(Transaction.SUCCESS);
@@ -120,12 +155,12 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 						setSignError(error.message);
 					});
 			}
-		} catch (e) {
-			console.log(e);
+		} catch (error) {
+			console.log(error);
 			setSignTransactionState(Transaction.PRESUBMIT);
 			setTxTransactionState(Transaction.PRESUBMIT);
-			setSignError(e.message);
-			setTxError(e.message);
+			setSignError(error.message);
+			setTxError(error.message);
 		}
 	};
 
@@ -143,39 +178,78 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 	}, [provider]);
 
 	return (
-		<Row>
-			<LeftCol>
-				<Question
-					onBack={onBack}
-					body={body}
-					name={name}
-					setBody={setBody}
-					setName={setName}
-					handleCreate={handleCreate}
-					result={result}
-					validSubmission={validSubmission}
-					signTransactionState={signTransactionState}
-					txTransactionState={txTransactionState}
-					signModalOpen={signModalOpen}
-					txModalOpen={txModalOpen}
-					signError={signError}
+		<>
+			<Row>
+				<LeftCol>
+					<Question
+						onBack={onBack}
+						body={body}
+						name={name}
+						setBody={setBody}
+						setName={setName}
+						handleCreate={handleCreate}
+						result={result}
+						validSubmission={validSubmission}
+						signTransactionState={signTransactionState}
+						setSignTransactionState={setSignTransactionState}
+						setTxTransactionState={setTxTransactionState}
+						txTransactionState={txTransactionState}
+						hash={hash}
+						txHash={txHash}
+					/>
+				</LeftCol>
+				<RightCol>
+					<Options choices={choices} setChoices={setChoices} />
+					<Timing
+						startDate={startDate}
+						endDate={endDate}
+						setStartDate={setStartDate}
+						setEndDate={setEndDate}
+						block={block}
+						setBlock={setBlock}
+					/>
+				</RightCol>
+			</Row>
+			{txModalOpen && (
+				<TxConfirmationModal
+					onDismiss={() => setTxModalOpen(false)}
 					txError={txError}
-					setTxModalOpen={setTxModalOpen}
-					setSignModalOpen={setSignModalOpen}
+					attemptRetry={handleCreate}
+					content={
+						<ModalContent>
+							<ModalItem>
+								<ModalItemTitle>{t('modals.confirm-transaction.propose.title')}</ModalItemTitle>
+								<ModalItemText>
+									{t('modals.confirm-transaction.propose.hash', {
+										hash: truncateAddress(hash ?? ''),
+									})}
+								</ModalItemText>
+							</ModalItem>
+						</ModalContent>
+					}
 				/>
-			</LeftCol>
-			<RightCol>
-				<Options choices={choices} setChoices={setChoices} />
-				<Timing
-					startDate={startDate}
-					endDate={endDate}
-					setStartDate={setStartDate}
-					setEndDate={setEndDate}
-					block={block}
-					setBlock={setBlock}
+			)}
+			{signModalOpen && (
+				<TxConfirmationModal
+					isSignature={true}
+					onDismiss={() => setSignModalOpen(false)}
+					txError={signError}
+					attemptRetry={handleCreate}
+					content={
+						<ModalContent>
+							<ModalItem>
+								<ModalItemTitle>{t('modals.confirm-signature.propose.title')}</ModalItemTitle>
+								<ModalItemText>
+									{t('modals.confirm-signature.propose.space', {
+										space: activeTab,
+									})}
+								</ModalItemText>
+							</ModalItem>
+						</ModalContent>
+					}
 				/>
-			</RightCol>
-		</Row>
+			)}
+		</>
 	);
 };
 export default Index;
