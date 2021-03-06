@@ -6,6 +6,7 @@ import { Trans, useTranslation } from 'react-i18next';
 
 import NavigationBack from 'assets/svg/app/navigation-back.svg';
 import Logo1Inch from 'assets/svg/providers/1inch.svg';
+import Info from 'assets/svg/app/info.svg';
 
 import GasSelector from 'components/GasSelector';
 import {
@@ -32,6 +33,8 @@ import {
 	IconButton,
 	FlexDivRow,
 	FlexDivCentered,
+	Tooltip,
+	FlexDiv,
 } from 'styles/common';
 import { InputContainer, InputLocked } from '../common';
 import { Transaction } from 'constants/network';
@@ -64,6 +67,7 @@ type StakingInputProps = {
 	maxBurnAmount?: BigNumber;
 	burnAmountToFixCRatio?: BigNumber;
 	canClearDebt?: boolean;
+	needToBuy?: boolean;
 	etherNeededToBuy?: string;
 	sUSDNeededToBuy?: string;
 	sUSDNeededToBurn?: string;
@@ -86,6 +90,7 @@ const StakingInput: React.FC<StakingInputProps> = ({
 	setTransactionState,
 	maxBurnAmount,
 	burnAmountToFixCRatio,
+	needToBuy,
 	canClearDebt,
 	etherNeededToBuy,
 	sUSDNeededToBuy,
@@ -251,19 +256,35 @@ const StakingInput: React.FC<StakingInputProps> = ({
 		);
 	}
 
-	const BurnInputBox = () => (
+	const BuySUSDToBurnInputBox = () => (
 		<>
 			<InputGroup>
 				<FlexDivRow>
 					<InputBoxInGroup>
-						<Tagline>Tx 1: Buy additional sUSD</Tagline>
+						<Tagline>{t('staking.actions.burn.info.clear-debt.tx1')}</Tagline>
 						<InputLocked>{sUSDNeededToBuy}</InputLocked>
-						<Tagline>Spending {etherNeededToBuy} ETH</Tagline>
+						<FlexDiv>
+							<Tagline>
+								{t('staking.actions.burn.info.clear-debt.spending')} {etherNeededToBuy} ETH
+							</Tagline>
+							<Tooltip arrow={false} content={t('staking.actions.burn.info.clear-debt.tooltip')}>
+								<TooltipIconContainer>
+									<Svg src={Info} />
+								</TooltipIconContainer>
+							</Tooltip>
+						</FlexDiv>
 					</InputBoxInGroup>
 					<InputBoxInGroup>
-						<Tagline>Tx 2: Burn sUSD to clear debt</Tagline>
+						<Tagline>{t('staking.actions.burn.info.clear-debt.tx2')}</Tagline>
 						<InputLocked>{sUSDNeededToBurn}</InputLocked>
-						<Tagline>Including 0.05% buffer</Tagline>
+						<FlexDiv>
+							<Tagline>{t('staking.actions.burn.info.clear-debt.buffer')}</Tagline>
+							<Tooltip arrow={false} content={t('staking.actions.burn.info.clear-debt.tooltip')}>
+								<TooltipIconContainer>
+									<Svg src={Info} />
+								</TooltipIconContainer>
+							</Tooltip>
+						</FlexDiv>
 					</InputBoxInGroup>
 				</FlexDivRow>
 			</InputGroup>
@@ -288,8 +309,8 @@ const StakingInput: React.FC<StakingInputProps> = ({
 						</BalanceButton>
 					)}
 				</HeaderRow>
-				{burnType === BurnActionType.CLEAR ? (
-					<BurnInputBox />
+				{burnType === BurnActionType.CLEAR && needToBuy ? (
+					<BuySUSDToBurnInputBox />
 				) : (
 					<InputBox>
 						<Currency.Icon currencyKey={Synths.sUSD} width="50" height="50" />
@@ -349,14 +370,14 @@ const StakingInput: React.FC<StakingInputProps> = ({
 								</ModalItemTitle>
 								<ModalItemText>{formattedInput}</ModalItemText>
 							</ModalItem>
-							<ModalItem>
-								<ModalItemTitle>
-									{isMint
-										? null
-										: t('modals.confirm-transaction.burning.spending')}
-								</ModalItemTitle>
-								<ModalItemText>{etherNeededToBuy} ETH</ModalItemText>
-							</ModalItem>
+							{burnType === BurnActionType.CLEAR && needToBuy && (
+								<ModalItem>
+									<ModalItemTitle>
+										{isMint ? null : t('modals.confirm-transaction.burning.spending')}
+									</ModalItemTitle>
+									<ModalItemText>{etherNeededToBuy} ETH</ModalItemText>
+								</ModalItem>
+							)}
 						</ModalContent>
 					}
 				/>
@@ -394,6 +415,10 @@ const InputBoxInGroup = styled(InputBox)`
 		border-left: 1px solid ${(props) => props.theme.colors.mediumBlue};
 	}
 	flex: 1 1 auto;
+`;
+
+const TooltipIconContainer = styled(FlexDiv)`
+	align-items: center;
 `;
 
 export default StakingInput;

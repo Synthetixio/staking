@@ -214,7 +214,7 @@ export const QUERY_KEYS = {
 		walletAddress,
 		networkId,
 	],
-	["1Inch"]: {
+	['1Inch']: {
 		quote: (walletAddress: string, networkId: NetworkId) => [
 			'quote',
 			'1inch',
@@ -227,7 +227,7 @@ export const QUERY_KEYS = {
 			walletAddress,
 			networkId,
 		],
-	}
+	},
 };
 
 export default QUERY_KEYS;

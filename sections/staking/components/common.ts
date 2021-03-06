@@ -142,7 +142,7 @@ export const ValueContainer = styled(FlexDivRowCentered)`
 	align-items: center;
 `;
 
-export const Tagline = styled.p`
+export const Tagline = styled.span`
 	font-family: ${(props) => props.theme.fonts.condensedMedium};
 	color: ${(props) => props.theme.colors.gray};
 	font-size: 12px;

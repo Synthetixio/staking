@@ -50,17 +50,40 @@ type InfoLayoutProps = {
 	stakingInfo: StakingInfo;
 	collateral: BigNumber;
 	isInputEmpty: boolean;
+	infoType: 'mint' | 'burn' | 'clear';
 };
 
-const InfoLayout: FC<InfoLayoutProps> = ({ stakingInfo, collateral, isInputEmpty }) => {
+const InfoLayout: FC<InfoLayoutProps> = ({ stakingInfo, collateral, isInputEmpty, infoType }) => {
+	const title = () => {
+		switch (infoType) {
+			case 'mint':
+				return t('staking.info.mint.title');
+			case 'burn':
+				return t('staking.info.burn.title');
+			case 'clear':
+				return t('staking.info.clear.title');
+		}
+	};
+
+	const subtitle = () => {
+		switch (infoType) {
+			case 'mint':
+				return 'staking.info.mint.subtitle';
+			case 'burn':
+				return 'staking.info.burn.subtitle';
+			case 'clear':
+				return 'staking.info.clear.subtitle';
+		}
+	};
+
 	const { t } = useTranslation();
 	return (
 		<InfoContainer>
 			<InfoHeader>
-				<Title>{t('staking.info.mint.title')}</Title>
+				<Title>{title()}</Title>
 				<Subtitle>
 					<Trans
-						i18nKey={'staking.info.mint.subtitle'}
+						i18nKey={subtitle()}
 						components={[<StyledLink href={EXTERNAL_LINKS.Synthetix.Litepaper} />]}
 					/>
 				</Subtitle>

@@ -128,7 +128,14 @@ const StakingInfo: FC = () => {
 
 	const isInputEmpty = amountToMint.length === 0;
 
-	return <InfoLayout stakingInfo={Rows} isInputEmpty={isInputEmpty} collateral={collateral} />;
+	return (
+		<InfoLayout
+			stakingInfo={Rows}
+			isInputEmpty={isInputEmpty}
+			collateral={collateral}
+			infoType={'mint'}
+		/>
+	);
 };
 
 export default StakingInfo;

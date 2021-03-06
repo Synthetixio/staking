@@ -239,7 +239,14 @@
 					}
 				},
 				"info": {
-					"unstaking": "Unstaking"
+					"unstaking": "Unstaking",
+					"clear-debt": {
+						"tx1": "Tx 1: Buy additional sUSD",
+						"tx2": "Tx 2: Burn sUSD to clear debt",
+						"spending": "Spending",
+						"buffer": "Including 0.05% buffer",
+						"tooltip": "This total includes a 0.05% buffer to protect aginst the debt shifting during the transaction."
+					}
 				},
 				"action": {
 					"empty": "Enter an amount",
@@ -281,6 +288,10 @@
 			"burn": {
 				"title": "Burn sUSD to unstake SNX",
 				"subtitle": "Burn your sUSD debt to unlock your staked SNX. This will increase your Collateralization Ratio and reduce your debt. <0>Learn more.</0>"
+			},
+			"clear": {
+				"title": "Clear debt by buying more sUSD via 1inch",
+				"subtitle": "Burn your sUSD to unlock your staked SNX and clear your debt. As you don’t have enough sUSD, buy more with ETH in the left form. <0>Learn more.</0>"
 			},
 			"table": {
 				"total-snx": "Total",
