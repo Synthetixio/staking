@@ -24,7 +24,7 @@ const use1InchQuoteQuery = (
 	const walletAddress = useRecoilValue(walletAddressState);
 	const network = useRecoilValue(networkState);
 	return useQuery<QuoteData>(
-		QUERY_KEYS.Swap.quote1Inch(walletAddress ?? '', network?.id!),
+		[QUERY_KEYS.Swap.quote1Inch(walletAddress ?? '', network?.id!), amount],
 		async () => {
 			const response = await axios.get('https://api.1inch.exchange/v2.0/quote', {
 				params: {

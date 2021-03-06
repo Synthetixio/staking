@@ -32,7 +32,7 @@ const use1InchSwapQuery = (
 	const network = useRecoilValue(networkState);
 
 	return useQuery<SwapTxData>(
-		QUERY_KEYS.Swap.swap1Inch(walletAddress ?? '', network?.id!),
+		[QUERY_KEYS.Swap.swap1Inch(walletAddress ?? '', network?.id!), amount, fromAddress],
 		async () => {
 			const response = await axios.get('https://api.1inch.exchange/v2.0/swap', {
 				params: {
