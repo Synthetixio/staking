@@ -10,7 +10,7 @@ import { walletAddressState } from 'store/wallet';
 import { useTranslation } from 'react-i18next';
 import { truncateAddress } from 'utils/formatters/string';
 import { formatNumber } from 'utils/formatters/number';
-import { MaxHeightColumn } from 'sections/gov/components/common';
+import { MaxHeightColumn, StyledTooltip } from 'sections/gov/components/common';
 
 type HistoryProps = {
 	hash: string;
@@ -24,20 +24,41 @@ const History: React.FC<HistoryProps> = ({ hash }) => {
 
 	if (proposal.isSuccess && proposal.data) {
 		const { data } = proposal;
+
 		return (
 			<MaxHeightColumn>
 				{data.voteList.length > 0 ? (
 					data.voteList.map((vote: any, i: number) => {
 						return (
 							<Row key={i}>
-								<Title>
-									{vote.address === walletAddress
-										? t('gov.proposal.history.currentUser')
-										: vote.profile.ens
-										? vote.profile.ens
-										: truncateAddress(vote.address)}
-								</Title>
-								<Choice>{data.choices[vote.msg.payload.choice - 1]}</Choice>
+								<StyledTooltip
+									arrow={true}
+									placement="bottom"
+									content={
+										vote.address === walletAddress
+											? t('gov.proposal.history.currentUser')
+											: vote.profile.ens
+											? vote.profile.ens
+											: vote.address
+									}
+									hideOnClick={false}
+								>
+									<Title>
+										{vote.address === walletAddress
+											? t('gov.proposal.history.currentUser')
+											: vote.profile.ens
+											? vote.profile.ens
+											: truncateAddress(vote.address)}
+									</Title>
+								</StyledTooltip>
+								<StyledTooltip
+									arrow={true}
+									placement="bottom"
+									content={data.choices[vote.msg.payload.choice - 1]}
+									hideOnClick={false}
+								>
+									<Choice>{truncateAddress(data.choices[vote.msg.payload.choice - 1])}</Choice>
+								</StyledTooltip>
 								<Value>{`${formatNumber(vote.balance)} ${data.spaceSymbol}`}</Value>
 							</Row>
 						);
@@ -72,6 +93,7 @@ const Title = styled.div`
 	font-size: 12px;
 	color: ${(props) => props.theme.colors.white};
 	width: 33%;
+	margin-left: 16px;
 `;
 
 const Value = styled(FlexDivRowCentered)`

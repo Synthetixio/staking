@@ -36,8 +36,7 @@ export const useCouncilMembers = () => {
 				setCouncilMembers([]);
 			}
 		};
-		// @TODO uncomment
-		// getCouncilMembers();
+		getCouncilMembers();
 	}, [provider, isAppReady, contract]);
 
 	return councilMembers;

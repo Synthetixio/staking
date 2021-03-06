@@ -56,7 +56,7 @@ const Content: React.FC<ContentProps> = ({ onBack }) => {
 	const [selected, setSelected] = useState<number | null>(null);
 
 	const [error, setError] = useState<string | null>(null);
-	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
+	const [signModalOpen, setSignModalOpen] = useState<boolean>(false);
 
 	const [transactionState, setTransactionState] = useState<Transaction>(Transaction.PRESUBMIT);
 
@@ -64,6 +64,7 @@ const Content: React.FC<ContentProps> = ({ onBack }) => {
 
 	const handleVote = async (hash?: string | null) => {
 		if (hash && selected !== null) {
+			setSignModalOpen(true);
 			setTransactionState(Transaction.WAITING);
 			voteMutate({
 				spaceKey: activeTab,
@@ -72,13 +73,12 @@ const Content: React.FC<ContentProps> = ({ onBack }) => {
 			})
 				.then((response) => {
 					setTransactionState(Transaction.SUCCESS);
-
+					setSignModalOpen(false);
 					console.log(response);
 				})
 				.catch((error) => {
 					console.log(error);
 					setTransactionState(Transaction.PRESUBMIT);
-
 					setError(error);
 				});
 		}
@@ -107,57 +107,58 @@ const Content: React.FC<ContentProps> = ({ onBack }) => {
 		return { __html: remarkable.render(value) };
 	};
 
-	if (transactionState === Transaction.WAITING) {
-		return (
-			<TxState
-				title={t('gov.actions.vote.waiting')}
-				content={
-					<FlexDivColCentered>
-						<Svg src={PendingConfirmation} />
-						<GreyHeader>{t('gov.actions.vote.signing')}</GreyHeader>
-						<WhiteSubheader>
-							{t('gov.actions.vote.hash', {
-								hash: truncateAddress(proposal?.authorIpfsHash ?? ''),
-							})}
-						</WhiteSubheader>
-					</FlexDivColCentered>
-				}
-			/>
-		);
-	}
+	const returnInnerContent = () => {
+		if (transactionState === Transaction.WAITING) {
+			return (
+				<TxState
+					title={t('gov.actions.vote.waiting')}
+					content={
+						<FlexDivColCentered>
+							<Svg src={PendingConfirmation} />
+							<GreyHeader>{t('gov.actions.vote.signing')}</GreyHeader>
+							<WhiteSubheader>
+								{t('gov.actions.vote.hash', {
+									hash: truncateAddress(proposal?.authorIpfsHash ?? ''),
+								})}
+							</WhiteSubheader>
+						</FlexDivColCentered>
+					}
+				/>
+			);
+		}
 
-	if (transactionState === Transaction.SUCCESS) {
-		return (
-			<TxState
-				title={t('gov.actions.vote.success')}
-				content={
-					<FlexDivColCentered>
-						<Svg src={Success} />
-						<GreyHeader>{t('gov.actions.vote.signing')}</GreyHeader>
-						<WhiteSubheader>
-							{t('gov.actions.vote.hash', {
-								hash: truncateAddress(proposal?.authorIpfsHash ?? ''),
-							})}
-						</WhiteSubheader>
-						<Divider />
-						<ButtonSpacer>
-							<DismissButton
-								variant="secondary"
-								onClick={() => {
-									setTransactionState(Transaction.PRESUBMIT);
-								}}
-							>
-								{t('earn.actions.tx.dismiss')}
-							</DismissButton>
-						</ButtonSpacer>
-					</FlexDivColCentered>
-				}
-			/>
-		);
-	}
+		if (transactionState === Transaction.SUCCESS) {
+			return (
+				<TxState
+					title={t('gov.actions.vote.success')}
+					content={
+						<FlexDivColCentered>
+							<Svg src={Success} />
+							<GreyHeader>{t('gov.actions.vote.signed')}</GreyHeader>
+							<WhiteSubheader>
+								{t('gov.actions.vote.hash', {
+									hash: truncateAddress(proposal?.authorIpfsHash ?? ''),
+								})}
+							</WhiteSubheader>
+							<Divider />
+							<ButtonSpacer>
+								<DismissButton
+									variant="secondary"
+									onClick={() => {
+										setTransactionState(Transaction.PRESUBMIT);
+										onBack();
+									}}
+								>
+									{t('earn.actions.tx.dismiss')}
+								</DismissButton>
+							</ButtonSpacer>
+						</FlexDivColCentered>
+					}
+				/>
+			);
+		}
 
-	return (
-		<>
+		return (
 			<Container>
 				<InputContainer>
 					<HeaderRow>
@@ -197,10 +198,16 @@ const Content: React.FC<ContentProps> = ({ onBack }) => {
 					{t('gov.proposal.action.vote')}
 				</StyledCTA>
 			</Container>
-			{txModalOpen && (
+		);
+	};
+
+	return (
+		<>
+			{returnInnerContent()}
+			{signModalOpen && (
 				<TxConfirmationModal
 					isSignature={true}
-					onDismiss={() => setTxModalOpen(false)}
+					onDismiss={() => setSignModalOpen(false)}
 					txError={error}
 					attemptRetry={handleVote}
 					content={
@@ -317,5 +324,3 @@ const Option = styled(Button)<{ selected: boolean }>`
 		transition: background-color 0.25s;
 	}
 `;
-
-const ActionContainer = styled.div``;

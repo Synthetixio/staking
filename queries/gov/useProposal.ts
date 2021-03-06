@@ -17,6 +17,8 @@ import { appReadyState } from 'store/app';
 import { walletAddressState } from 'store/wallet';
 import Connector from 'containers/Connector';
 import snapshot from '@snapshot-labs/snapshot.js';
+import CouncilDilution from 'contracts/councilDilution.js';
+import { ethers } from 'ethers';
 
 type ProposalResults = {
 	totalBalances: number[];
@@ -100,25 +102,51 @@ const useProposal = (spaceKey: SPACE_KEY, hash: string, options?: QueryConfig<Pr
 				return votes.data ?? {};
 			};
 
+			let voteArray = Object.values(votes);
+
+			/* Apply dilution penalties for SIP/SCCP pages */
+
+			if (spaceKey === SPACE_KEY.PROPOSAL) {
+				const contract = new ethers.Contract(
+					CouncilDilution.address,
+					CouncilDilution.abi,
+					provider as any
+				);
+
+				voteArray = await Promise.all(
+					voteArray.map(async (vote: any) => {
+						const dilutedValueBN = await contract.getDilutedWeightForProposal(hash, vote.address);
+						const diluteValueNumber = Number(ethers.utils.formatEther(dilutedValueBN));
+
+						const dilutedResult = vote.balance * diluteValueNumber;
+						return {
+							...vote,
+							balance: dilutedResult,
+							scores: [dilutedResult],
+						};
+					})
+				);
+			}
+
 			/* Get results */
 			const results = {
 				totalVotes: proposal.msg.payload.choices.map(
 					(_: any, i: number) =>
-						Object.values(votes).filter((vote: any) => vote.msg.payload.choice === i + 1).length
+						voteArray.filter((vote: any) => vote.msg.payload.choice === i + 1).length
 				),
 				totalBalances: proposal.msg.payload.choices.map((_: any, i: number) =>
-					Object.values(votes)
+					voteArray
 						.filter((vote: any) => vote.msg.payload.choice === i + 1)
 						.reduce((a, b: any) => a + b.balance, 0)
 				),
 				totalScores: proposal.msg.payload.choices.map((_: any, i: number) =>
 					space.data.strategies.map((_: any, sI: number) =>
-						Object.values(votes)
+						voteArray
 							.filter((vote: any) => vote.msg.payload.choice === i + 1)
 							.reduce((a, b: any) => a + b.scores[sI], 0)
 					)
 				),
-				totalVotesBalances: Object.values(votes).reduce((a, b: any) => a + b.balance, 0) as number,
+				totalVotesBalances: voteArray.reduce((a, b: any) => a + b.balance, 0) as number,
 				choices: proposal.msg.payload.choices,
 				spaceSymbol: space.data.symbol,
 				voteList: Object.values(returnVoteHistory()),

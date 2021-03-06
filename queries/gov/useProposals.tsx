@@ -81,12 +81,12 @@ const useProposals = (spaceKey: SPACE_KEY, options?: QueryConfig<Proposal[]>) =>
 					}
 				}
 			} else {
-				for (var key in data) {
-					const proposal = data[key] as Proposal;
+				for (var hash in data) {
+					const proposal = data[hash] as Proposal;
 					const proposalSnapshot = proposal.msg.payload.snapshot;
-					const hash = key;
+					const ipfsHash = hash;
 
-					let voterResponse = await axios.get(PROPOSAL(spaceKey, hash));
+					let voterResponse = await axios.get(PROPOSAL(spaceKey, ipfsHash));
 
 					const blockNumber: any = await provider?.getBlockNumber();
 
@@ -108,7 +108,7 @@ const useProposals = (spaceKey: SPACE_KEY, options?: QueryConfig<Proposal[]>) =>
 						),
 					]);
 					result.push({
-						...data[key],
+						...data[hash],
 						votes: Object.values(scores[0]).filter((e: any) => e > 0).length,
 					});
 				}

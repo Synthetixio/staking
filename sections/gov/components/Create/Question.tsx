@@ -190,7 +190,7 @@ const Question: React.FC<QuestionProps> = ({
 						<ButtonSpacer>
 							{link && (
 								<ExternalLink href={link}>
-									<VerifyButton>{t('gov.actions.log-proposal.tx.verify')}</VerifyButton>
+									<VerifyButton>{t('gov.actions.tx.verify')}</VerifyButton>
 								</ExternalLink>
 							)}
 							<DismissButton
@@ -200,7 +200,7 @@ const Question: React.FC<QuestionProps> = ({
 									onBack();
 								}}
 							>
-								{t('earn.actions.tx.dismiss')}
+								{t('gov.actions.tx.dismiss')}
 							</DismissButton>
 						</ButtonSpacer>
 					</FlexDivColCentered>
