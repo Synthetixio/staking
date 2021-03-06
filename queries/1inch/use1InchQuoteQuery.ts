@@ -23,9 +23,8 @@ const use1InchQuoteQuery = (
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const network = useRecoilValue(networkState);
-
 	return useQuery<QuoteData>(
-		QUERY_KEYS['1Inch'].quote(walletAddress ?? '', network?.id!),
+		QUERY_KEYS.Swap.quote1Inch(walletAddress ?? '', network?.id!),
 		async () => {
 			const response = await axios.get('https://api.1inch.exchange/v2.0/quote', {
 				params: {
@@ -34,7 +33,6 @@ const use1InchQuoteQuery = (
 					amount: parseUnits(amount.toString(), 18).toString(),
 				},
 			});
-
 			const toTokenAmountString: string = response.data.toTokenAmount;
 			const toTokenAmount: NumericValue = toBigNumber(formatEther(toTokenAmountString));
 			return {
@@ -42,7 +40,11 @@ const use1InchQuoteQuery = (
 			};
 		},
 		{
-			enabled: isAppReady && isWalletConnected,
+			enabled:
+				isAppReady &&
+				isWalletConnected &&
+				!toBigNumber(amount).isZero() &&
+				toBigNumber(amount).isPositive(),
 			...options,
 		}
 	);

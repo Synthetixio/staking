@@ -243,8 +243,9 @@
 					"clear-debt": {
 						"tx1": "Tx 1: Buy additional sUSD",
 						"tx2": "Tx 2: Burn sUSD to clear debt",
-						"spending": "Spending",
+						"spending": "Spending {{value}}",
 						"buffer": "Including 0.05% buffer",
+						"tagline": "POWERED BY",
 						"tooltip": "This total includes a 0.05% buffer to protect aginst the debt shifting during the transaction."
 					}
 				},

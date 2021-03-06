@@ -66,8 +66,6 @@ type StakingInputProps = {
 	setTransactionState: (tx: Transaction) => void;
 	maxBurnAmount?: BigNumber;
 	burnAmountToFixCRatio?: BigNumber;
-	canClearDebt?: boolean;
-	needToBuy?: boolean;
 	etherNeededToBuy?: string;
 	sUSDNeededToBuy?: string;
 	sUSDNeededToBurn?: string;
@@ -90,8 +88,6 @@ const StakingInput: React.FC<StakingInputProps> = ({
 	setTransactionState,
 	maxBurnAmount,
 	burnAmountToFixCRatio,
-	needToBuy,
-	canClearDebt,
 	etherNeededToBuy,
 	sUSDNeededToBuy,
 	sUSDNeededToBurn,
@@ -168,15 +164,6 @@ const StakingInput: React.FC<StakingInputProps> = ({
 					/>
 				</StyledCTA>
 			);
-		} else if (burnType === BurnActionType.CLEAR && !canClearDebt) {
-			return (
-				<StyledCTA variant="primary" size="lg" disabled={true} style={{ padding: 0 }}>
-					<Trans
-						i18nKey="staking.actions.burn.action.insufficient-sUSD-to-clear-debt"
-						components={[<NoTextTransform />]}
-					/>
-				</StyledCTA>
-			);
 		} else if (burnType === BurnActionType.CLEAR) {
 			return (
 				<StyledCTA
@@ -210,7 +197,6 @@ const StakingInput: React.FC<StakingInputProps> = ({
 		error,
 		transactionState,
 		isMint,
-		canClearDebt,
 		onSubmit,
 		t,
 		isWalletConnected,
@@ -265,7 +251,7 @@ const StakingInput: React.FC<StakingInputProps> = ({
 						<InputLocked>{sUSDNeededToBuy}</InputLocked>
 						<FlexDiv>
 							<Tagline>
-								{t('staking.actions.burn.info.clear-debt.spending')} {etherNeededToBuy} ETH
+								{t('staking.actions.burn.info.clear-debt.spending', { value: etherNeededToBuy })}
 							</Tagline>
 							<Tooltip arrow={false} content={t('staking.actions.burn.info.clear-debt.tooltip')}>
 								<TooltipIconContainer>
@@ -289,7 +275,7 @@ const StakingInput: React.FC<StakingInputProps> = ({
 				</FlexDivRow>
 			</InputGroup>
 			<FlexDivCentered>
-				<Tagline>POWERED BY</Tagline>
+				<Tagline>{t('staking.actions.burn.info.clear-debt.tagline')}</Tagline>
 				<Svg height={20} src={Logo1Inch} />
 			</FlexDivCentered>
 		</>
@@ -309,7 +295,7 @@ const StakingInput: React.FC<StakingInputProps> = ({
 						</BalanceButton>
 					)}
 				</HeaderRow>
-				{burnType === BurnActionType.CLEAR && needToBuy ? (
+				{burnType === BurnActionType.CLEAR ? (
 					<BuySUSDToBurnInputBox />
 				) : (
 					<InputBox>
@@ -370,12 +356,12 @@ const StakingInput: React.FC<StakingInputProps> = ({
 								</ModalItemTitle>
 								<ModalItemText>{formattedInput}</ModalItemText>
 							</ModalItem>
-							{burnType === BurnActionType.CLEAR && needToBuy && (
+							{burnType === BurnActionType.CLEAR && (
 								<ModalItem>
 									<ModalItemTitle>
 										{isMint ? null : t('modals.confirm-transaction.burning.spending')}
 									</ModalItemTitle>
-									<ModalItemText>{etherNeededToBuy} ETH</ModalItemText>
+									<ModalItemText>{etherNeededToBuy}</ModalItemText>
 								</ModalItem>
 							)}
 						</ModalContent>
