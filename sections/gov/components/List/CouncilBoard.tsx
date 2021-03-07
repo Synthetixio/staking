@@ -14,7 +14,7 @@ import { truncateAddress } from 'utils/formatters/string';
 import SpartanCouncilNFT from 'assets/gifs/SC-NFT.gif';
 import Link from 'assets/svg/app/link.svg';
 import useCouncilMembers from '../../hooks/useCouncilMembers';
-import { Blockie } from '../common';
+import { Blockie, StyledTooltip } from '../common';
 import { Card } from 'sections/gov/components/common';
 
 const CouncilBoard: React.FC = () => {
@@ -30,19 +30,37 @@ const CouncilBoard: React.FC = () => {
 
 			{councilMembers ? (
 				councilMembers.length > 0 ? (
-					councilMembers.map((member, i) => (
-						<MemberRow key={i}>
-							<FlexDivRowCentered>
-								<Blockie src={makeBlockie(member)} />
-								<Address>{truncateAddress(member, 7, 7)}</Address>
-							</FlexDivRowCentered>
-							<ExternalLink
-								href={etherscanInstance ? etherscanInstance.addressLink(member) : undefined}
-							>
-								<Svg color={theme.colors.blue} src={Link} />
-							</ExternalLink>
-						</MemberRow>
-					))
+					councilMembers.map((member, i) => {
+						const displayName = member.ens
+							? member.ens
+							: member.name
+							? member.name
+							: member.address;
+						const isAddress = member.ens || member.name ? false : true;
+						return (
+							<MemberRow key={i}>
+								<FlexDivRowCentered>
+									<Blockie src={makeBlockie(member.address)} />
+									<StyledTooltip
+										key={i}
+										arrow={true}
+										placement="bottom"
+										content={member.ens ? member.ens : member.name ? member.name : member.address}
+										hideOnClick={false}
+									>
+										<Address>{isAddress ? truncateAddress(displayName) : displayName}</Address>
+									</StyledTooltip>
+								</FlexDivRowCentered>
+								<ExternalLink
+									href={
+										etherscanInstance ? etherscanInstance.addressLink(member.address) : undefined
+									}
+								>
+									<Svg color={theme.colors.blue} src={Link} />
+								</ExternalLink>
+							</MemberRow>
+						);
+					})
 				) : (
 					<MemberRow>
 						<Address>{t('gov.council.empty')}</Address>

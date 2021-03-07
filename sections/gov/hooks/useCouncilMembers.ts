@@ -5,10 +5,10 @@ import councilDilution from 'contracts/councilDilution';
 import Connector from 'containers/Connector';
 import { useRecoilValue } from 'recoil';
 import { appReadyState } from 'store/app';
+import { getProfiles } from '../components/helper';
 
-// @TODO: Add to snx-js after redeploying Spartan Council NFT with transfer event to conform to ERC20
 export const useCouncilMembers = () => {
-	const [councilMembers, setCouncilMembers] = useState<string[] | null>(null);
+	const [councilMembers, setCouncilMembers] = useState<any[] | null>(null);
 	const { provider } = Connector.useContainer();
 	const isAppReady = useRecoilValue(appReadyState);
 
@@ -38,7 +38,19 @@ export const useCouncilMembers = () => {
 					councilMembers.push(address.toLowerCase());
 				}
 				let resolvedMembers = await Promise.resolve(councilMembers);
-				setCouncilMembers(resolvedMembers);
+
+				const profiles = await getProfiles(resolvedMembers);
+
+				const profileArray = Object.keys(profiles).map((profile) => {
+					const accessor = profiles[profile];
+					return {
+						ens: accessor.ens.length > 0 ? accessor.ens : null,
+						address: profile,
+						name: accessor.name ? accessor.name : null,
+					};
+				});
+
+				setCouncilMembers(profileArray);
 			} else {
 				setCouncilMembers(null);
 			}

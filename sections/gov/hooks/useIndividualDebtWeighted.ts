@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { quadraticWeighting } from 'constants/snapshot';
+import { quadraticWeighting } from 'sections/gov/components/helper';
 import { toBigNumber } from 'utils/formatters/number';
 import useDebtOwnership from 'queries/gov/useDebtOwnership';
 import { useRecoilValue } from 'recoil';

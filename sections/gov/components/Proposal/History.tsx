@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { Svg } from 'react-optimized-image';
 import Spinner from 'assets/svg/app/loader.svg';
 import useActiveTab from '../../hooks/useActiveTab';
-import { FlexDivRowCentered } from 'styles/common';
+import { FlexDivRow, FlexDivRowCentered } from 'styles/common';
 import useProposal from 'queries/gov/useProposal';
 import { useRecoilValue } from 'recoil';
 import { walletAddressState } from 'store/wallet';
@@ -33,7 +33,7 @@ const History: React.FC<HistoryProps> = ({ hash }) => {
 					data.voteList.map((vote: any, i: number) => {
 						return (
 							<Row key={i}>
-								<FlexDivRowCentered>
+								<InnerRow>
 									<Blockie src={makeBlockie(vote.address)} />
 									<StyledTooltip
 										arrow={true}
@@ -55,8 +55,7 @@ const History: React.FC<HistoryProps> = ({ hash }) => {
 												: truncateAddress(vote.address)}
 										</Title>
 									</StyledTooltip>
-								</FlexDivRowCentered>
-
+								</InnerRow>
 								<StyledTooltip
 									arrow={true}
 									placement="bottom"
@@ -87,6 +86,11 @@ const StyledSpinner = styled(Svg)`
 	margin: 30px auto;
 `;
 
+const InnerRow = styled(FlexDivRow)`
+	width: 150px;
+	justify-content: flex-start;
+	align-items: center;
+`;
 const Row = styled(FlexDivRowCentered)`
 	border-bottom: 0.5px solid ${(props) => props.theme.colors.grayBlue};
 	justify-content: space-between;
@@ -99,6 +103,7 @@ const Title = styled.div`
 	font-size: 12px;
 	color: ${(props) => props.theme.colors.white};
 	margin-left: 8px;
+	text-align: left;
 `;
 
 const Value = styled(FlexDivRowCentered)`

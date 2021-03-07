@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import useTotalIssuedSynthsExcludingEtherQuery from 'queries/synths/useTotalIssuedSynthsExcludingEtherQuery';
-import { quadraticWeighting } from 'constants/snapshot';
+import { quadraticWeighting } from 'sections/gov/components/helper';
 import { toBigNumber } from 'utils/formatters/number';
 import { useRecoilValue } from 'recoil';
 import { appReadyState } from 'store/app';

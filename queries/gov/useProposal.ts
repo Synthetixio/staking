@@ -4,14 +4,9 @@ import { useRecoilValue } from 'recoil';
 import axios from 'axios';
 
 import QUERY_KEYS from 'constants/queryKeys';
-import {
-	formatProposal,
-	getProfiles,
-	ipfsGet,
-	PROPOSAL,
-	SPACE,
-	SPACE_KEY,
-} from 'constants/snapshot';
+import { PROPOSAL, SPACE, SPACE_KEY } from 'constants/snapshot';
+
+import { formatProposal, getProfiles, ipfsGet } from 'sections/gov/components/helper';
 
 import { appReadyState } from 'store/app';
 import { walletAddressState } from 'store/wallet';
