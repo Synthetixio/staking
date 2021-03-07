@@ -36,7 +36,7 @@ const useProposal = (spaceKey: SPACE_KEY, hash: string, options?: QueryConfig<Pr
 	const { provider } = Connector.useContainer();
 
 	return useQuery<ProposalResults>(
-		QUERY_KEYS.Gov.Proposal,
+		QUERY_KEYS.Gov.Proposal(spaceKey, hash),
 		async () => {
 			const response = await Promise.all([
 				ipfsGet(hash),

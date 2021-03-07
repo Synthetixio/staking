@@ -231,7 +231,7 @@ export const QUERY_KEYS = {
 			walletAddress,
 			networkId,
 		],
-		Proposal: ['gov', 'proposals'],
+		Proposal: (spaceKey: SPACE_KEY, hash: string) => ['gov', 'proposals', spaceKey, hash],
 	},
 };
 
