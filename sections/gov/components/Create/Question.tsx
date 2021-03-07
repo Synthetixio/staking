@@ -163,9 +163,9 @@ const Question: React.FC<QuestionProps> = ({
 							})}
 						</WhiteSubheader>
 						<Divider />
-						<GreyText>{t('gov.actions.log-proposal.tx.notice')}</GreyText>
+						<GreyText>{t('gov.actions.tx.notice')}</GreyText>
 						<ExternalLink href={link}>
-							<LinkText>{t('gov.actions.log-proposal.tx.link')}</LinkText>
+							<LinkText>{t('gov.actions.tx.link')}</LinkText>
 						</ExternalLink>
 					</FlexDivColCentered>
 				}

@@ -738,7 +738,8 @@
 		"proposal": {
 			"status": {
 				"open": "Open",
-				"closed": "Closed"
+				"closed": "Closed",
+				"pending": "Pending"
 			},
 			"action": {
 				"vote": "Vote",
@@ -936,9 +937,9 @@
 			"heading": "warning:",
 			"message": "Your wallet has been flagged for liquidation"
 		},
-		"gov-voting-proposal": {
+		"gov-voting-election": {
 			"heading": "governance:",
-			"message": "{{proposal}} is now active. Voting cost zero-gas."
+			"message": "Have your say on who will represent the SNX community, vote for your Spartan Council now! Voting costs zero-gas."
 		}
 	}
 }

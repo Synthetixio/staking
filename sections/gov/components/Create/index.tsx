@@ -32,7 +32,7 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 	const { t } = useTranslation();
 	const { provider } = Connector.useContainer();
 	const [startDate, setStartDate] = useState<Date>(new Date());
-	const [endDate, setEndDate] = useState<Date>(new Date());
+	const [endDate, setEndDate] = useState<Date>(new Date(startDate.getTime() + 86400000));
 	const [block, setBlock] = useState<number | null>(null);
 	const [name, setName] = useState<string>('');
 	const [body, setBody] = useState<string>('');

@@ -43,6 +43,7 @@ import Button from 'components/Button';
 import { Transaction } from 'constants/network';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import TxState from 'sections/gov/components/TxState';
+import { expired, pending } from '../helper';
 
 type ContentProps = {
 	onBack: Function;
@@ -81,15 +82,6 @@ const Content: React.FC<ContentProps> = ({ onBack }) => {
 					setTransactionState(Transaction.PRESUBMIT);
 					setError(error);
 				});
-		}
-	};
-
-	const expired = (timestamp?: number) => {
-		if (!timestamp) return;
-		if (Date.now() / 1000 > timestamp) {
-			return true;
-		} else {
-			return false;
 		}
 	};
 
@@ -166,9 +158,14 @@ const Content: React.FC<ContentProps> = ({ onBack }) => {
 							<Svg src={NavigationBack} />
 						</IconButton>
 						<Header>#{truncateAddress(proposal?.authorIpfsHash ?? '')}</Header>
-						<Status active={!expired(proposal?.msg.payload.end)}>
+						<Status
+							closed={expired(proposal?.msg.payload.end)}
+							pending={pending(proposal?.msg.payload.start)}
+						>
 							{expired(proposal?.msg.payload.end)
 								? t('gov.proposal.status.closed')
+								: pending(proposal?.msg.payload.start)
+								? t('gov.proposal.status.pending')
 								: t('gov.proposal.status.open')}
 						</Status>
 					</HeaderRow>
@@ -177,7 +174,7 @@ const Content: React.FC<ContentProps> = ({ onBack }) => {
 						<Description dangerouslySetInnerHTML={getRawMarkup(proposal?.msg.payload.body)} />
 					</ProposalContainer>
 					<Divider />
-					{!expired(proposal?.msg.payload.end) && (
+					{!expired(proposal?.msg.payload.end) && !pending(proposal?.msg.payload.start) && (
 						<OptionsContainer>
 							{proposal?.msg.payload.choices.map((choice, i) => (
 								<StyledTooltip
@@ -195,7 +192,7 @@ const Content: React.FC<ContentProps> = ({ onBack }) => {
 						</OptionsContainer>
 					)}
 				</InputContainer>
-				{!expired(proposal?.msg.payload.end) && (
+				{!expired(proposal?.msg.payload.end) && !pending(proposal?.msg.payload.start) && (
 					<StyledCTA onClick={() => handleVote(proposal?.authorIpfsHash)} variant="primary">
 						{t('gov.proposal.action.vote')}
 					</StyledCTA>
@@ -232,8 +229,13 @@ const Content: React.FC<ContentProps> = ({ onBack }) => {
 };
 export default Content;
 
-const Status = styled.p<{ active: boolean }>`
-	color: ${(props) => (props.active ? props.theme.colors.green : props.theme.colors.gray)};
+const Status = styled.p<{ closed: boolean; pending: boolean }>`
+	color: ${(props) =>
+		props.closed
+			? props.theme.colors.gray
+			: props.pending
+			? props.theme.colors.yellow
+			: props.theme.colors.green};
 	text-transform: uppercase;
 	font-family: ${(props) => props.theme.fonts.extended};
 	font-size: 14px;

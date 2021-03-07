@@ -60,6 +60,7 @@ import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import Notify from 'containers/Notify';
 import TxState from 'sections/gov/components/TxState';
 import useProposal from 'queries/gov/useProposal';
+import { expired, pending } from '../helper';
 
 type DilutionContentProps = {
 	onBack: Function;
@@ -247,7 +248,7 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ onBack }) => {
 						hash,
 						memberVotedFor,
 						{
-							gasLimitEstimate,
+							gasLimit: gasLimitEstimate,
 						}
 					);
 
@@ -296,7 +297,7 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ onBack }) => {
 						hash,
 						memberVotedFor,
 						{
-							gasLimitEstimate,
+							gasLimit: gasLimitEstimate,
 						}
 					);
 
@@ -320,15 +321,6 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ onBack }) => {
 		}
 		dilute();
 	}, [signer, monitorHash, isAppReady, proposal, walletAddress, gasLimitEstimate, proposalQuery]);
-
-	const expired = (timestamp?: number) => {
-		if (!timestamp) return;
-		if (Date.now() / 1000 > timestamp) {
-			return true;
-		} else {
-			return false;
-		}
-	};
 
 	const getRawMarkup = (value?: string | null) => {
 		const remarkable = new Remarkable({
@@ -367,7 +359,7 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ onBack }) => {
 							<Divider />
 							<GreyText>{t('gov.actions.tx.notice')}</GreyText>
 							<ExternalLink href={link}>
-								<LinkText>{t('earn.actions.tx.link')}</LinkText>
+								<LinkText>{t('gov.actions.tx.dismiss')}</LinkText>
 							</ExternalLink>
 						</FlexDivColCentered>
 					}
@@ -458,7 +450,7 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ onBack }) => {
 										onBack();
 									}}
 								>
-									{t('earn.actions.tx.dismiss')}
+									{t('gov.actions.tx.dismiss')}
 								</DismissButton>
 							</ButtonSpacer>
 						</FlexDivColCentered>
@@ -475,9 +467,14 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ onBack }) => {
 							<Svg src={NavigationBack} />
 						</IconButton>
 						<Header>#{truncateAddress(proposal?.authorIpfsHash ?? '')}</Header>
-						<Status active={!expired(proposal?.msg.payload.end)}>
+						<Status
+							closed={expired(proposal?.msg.payload.end)}
+							pending={pending(proposal?.msg.payload.start)}
+						>
 							{expired(proposal?.msg.payload.end)
 								? t('gov.proposal.status.closed')
+								: pending(proposal?.msg.payload.start)
+								? t('gov.proposal.status.pending')
 								: t('gov.proposal.status.open')}
 						</Status>
 					</HeaderRow>
@@ -486,25 +483,33 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ onBack }) => {
 						<Description dangerouslySetInnerHTML={getRawMarkup(proposal?.msg.payload.body)} />
 					</ProposalContainer>
 					<Divider />
-					{!expired(proposal?.msg.payload.end) && isCouncilMember && (
-						<OptionsContainer>
-							{proposal?.msg.payload.choices.map((choice, i) => (
-								<StyledTooltip arrow={true} placement="bottom" content={choice} hideOnClick={false}>
-									<Option
-										selected={selected === i}
-										onClick={() => setSelected(i)}
-										variant="text"
-										key={i}
+					{!expired(proposal?.msg.payload.end) &&
+						!pending(proposal?.msg.payload.start) &&
+						isCouncilMember && (
+							<OptionsContainer>
+								{proposal?.msg.payload.choices.map((choice, i) => (
+									<StyledTooltip
+										arrow={true}
+										placement="bottom"
+										content={choice}
+										hideOnClick={false}
 									>
-										<p>{choice}</p>
-									</Option>
-								</StyledTooltip>
-							))}
-						</OptionsContainer>
-					)}
+										<Option
+											selected={selected === i}
+											onClick={() => setSelected(i)}
+											variant="text"
+											key={i}
+										>
+											<p>{choice}</p>
+										</Option>
+									</StyledTooltip>
+								))}
+							</OptionsContainer>
+						)}
 				</InputContainer>
-				{!expired(proposal?.msg.payload.end) ? (
-					isCouncilMember ? (
+				{!expired(proposal?.msg.payload.end) &&
+					!pending(proposal?.msg.payload.start) &&
+					(isCouncilMember ? (
 						<StyledCTA onClick={() => handleVote()} variant="primary">
 							{t('gov.proposal.action.vote')}
 						</StyledCTA>
@@ -524,8 +529,7 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ onBack }) => {
 								</StyledCTA>
 							)}
 						</>
-					)
-				) : null}
+					))}
 			</Container>
 		);
 	};
@@ -572,8 +576,13 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ onBack }) => {
 };
 export default DilutionContent;
 
-const Status = styled.p<{ active: boolean }>`
-	color: ${(props) => (props.active ? props.theme.colors.green : props.theme.colors.gray)};
+const Status = styled.p<{ closed: boolean; pending: boolean }>`
+	color: ${(props) =>
+		props.closed
+			? props.theme.colors.gray
+			: props.pending
+			? props.theme.colors.yellow
+			: props.theme.colors.green};
 	text-transform: uppercase;
 	font-family: ${(props) => props.theme.fonts.extended};
 	font-size: 14px;

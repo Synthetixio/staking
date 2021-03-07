@@ -57,7 +57,7 @@ const Index: React.FC<IndexProps> = ({ data, isLoaded }) => {
 					const closed =
 						cellProps.row.original.msg.payload.end < currentTimestampSeconds ? true : false;
 					const pending =
-						currentTimestampSeconds > cellProps.row.original.msg.payload.start ? true : false;
+						currentTimestampSeconds < cellProps.row.original.msg.payload.start ? true : false;
 					return (
 						<CellContainer>
 							<Status closed={closed} pending={pending}>
@@ -208,7 +208,7 @@ const AbsoluteContainer = styled.div`
 	position: absolute;
 	width: 100%;
 	bottom: 0px;
-	margin-bottom: 24px;
+	margin-bottom: 24px;3
 	padding: 0px 16px;
 `;
 

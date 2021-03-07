@@ -107,7 +107,6 @@ const useProposal = (spaceKey: SPACE_KEY, hash: string, options?: QueryConfig<Pr
 					CouncilDilution.abi,
 					provider as any
 				);
-
 				voteArray = await Promise.all(
 					voteArray.map(async (vote: any) => {
 						const dilutedValueBN = await contract.getDilutedWeightForProposal(hash, vote.address);

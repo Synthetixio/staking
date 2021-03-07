@@ -10,7 +10,7 @@ import { languageState } from 'store/app';
 import { SPACE_KEY } from 'constants/snapshot';
 import { Proposal } from 'queries/gov/types';
 import useProposals from 'queries/gov/useProposals';
-import { userNotificationState } from 'store/ui';
+import { NotificationTemplate, userNotificationState } from 'store/ui';
 
 type LayoutProps = {
 	children: ReactNode;
@@ -49,7 +49,7 @@ const Layout: FC<LayoutProps> = ({ children }) => {
 			if (new Date().getTime() / 1000 < (latestProposal?.msg?.payload.end ?? 0)) {
 				setNotificationState({
 					type: 'info',
-					template: 'gov-voting-proposal',
+					template: NotificationTemplate.ELECTION,
 					props: {
 						proposal: latestProposal?.msg?.payload.name,
 						link: `${latestProposal.msg?.space}/${latestProposal.authorIpfsHash}`,

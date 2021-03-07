@@ -1,5 +1,6 @@
 import BigNumber from 'bignumber.js';
 import snapshot from '@snapshot-labs/snapshot.js';
+import { getCurrentTimestampSeconds } from 'utils/formatters/date';
 
 export const quadraticWeighting = (value: BigNumber) => {
 	// @notice Scale the value by 100000
@@ -123,3 +124,21 @@ export async function getProfiles(addresses: any) {
 		})
 	);
 }
+
+export const expired = (end?: number) => {
+	if (!end) return true;
+	if (getCurrentTimestampSeconds() > end) {
+		return true;
+	} else {
+		return false;
+	}
+};
+
+export const pending = (start?: number) => {
+	if (!start) return true;
+	if (getCurrentTimestampSeconds() < start) {
+		return true;
+	} else {
+		return false;
+	}
+};

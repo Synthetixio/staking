@@ -2,7 +2,7 @@ import { FC } from 'react';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
-import { userNotificationState } from 'store/ui';
+import { NotificationTemplate, userNotificationState } from 'store/ui';
 import { isWalletConnectedState } from 'store/wallet';
 
 import { SIDE_NAV_WIDTH } from 'constants/ui';
@@ -17,11 +17,11 @@ const UserNotifications: FC = () => {
 	if (isWalletConnected && userNotification != null) {
 		let template;
 		switch (userNotification.template) {
-			case 'gov-voting-proposal': {
+			case NotificationTemplate.ELECTION: {
 				template = <GovVotingProposal {...userNotification} />;
 				break;
 			}
-			case 'debt-liquidation-warning': {
+			case NotificationTemplate.LIQUIDATION: {
 				template = <DebtLiquidationWarning {...userNotification} />;
 				break;
 			}
