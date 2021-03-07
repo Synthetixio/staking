@@ -938,7 +938,7 @@
 		},
 		"gov-voting-proposal": {
 			"heading": "governance:",
-			"message": "Voting for {{proposal}} is now required"
+			"message": "{{proposal}} is now active. Voting cost zero-gas."
 		}
 	}
 }

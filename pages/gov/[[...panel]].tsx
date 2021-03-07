@@ -14,8 +14,6 @@ import useProposals from 'queries/gov/useProposals';
 import MainContent from 'sections/gov';
 import useActiveProposalCount from 'sections/gov/hooks/useActiveProposalCount';
 import { SPACE_KEY } from 'constants/snapshot';
-import { useSetRecoilState } from 'recoil';
-import { userNotificationState } from 'store/ui';
 import { Proposal } from 'queries/gov/types';
 
 const Gov: React.FC = () => {
@@ -27,7 +25,6 @@ const Gov: React.FC = () => {
 
 	const total = useTotalDebtWeighted(latestElectionBlock);
 	const individual = useIndividualDebtWeighted(latestElectionBlock);
-	const setNotificationState = useSetRecoilState(userNotificationState);
 
 	useEffect(() => {
 		if (councilProposals.data) {
@@ -48,20 +45,9 @@ const Gov: React.FC = () => {
 				}
 			});
 
-			if (new Date().getTime() / 1000 < (latestProposal?.msg?.payload.end ?? 0)) {
-				setNotificationState({
-					type: 'info',
-					template: 'gov-voting-proposal',
-					props: {
-						proposal: latestProposal?.msg?.payload.name,
-						link: `${latestProposal.msg?.space}/${latestProposal.authorIpfsHash}`,
-					},
-				});
-			}
-
 			setLatestElectionBlock(parseInt(latestProposal?.msg?.payload.snapshot ?? '0'));
 		}
-	}, [councilProposals, setNotificationState]);
+	}, [councilProposals]);
 
 	return (
 		<>
