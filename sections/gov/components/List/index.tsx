@@ -19,6 +19,7 @@ import { useRouter } from 'next/router';
 import ROUTES from 'constants/routes';
 import { panelState, PanelType, proposalState } from 'store/gov';
 import useActiveTab from '../../hooks/useActiveTab';
+import { DURATION_SEPARATOR } from 'constants/date';
 
 type IndexProps = {
 	data: ProposalType[];
@@ -69,7 +70,19 @@ const Index: React.FC<IndexProps> = ({ data, isLoaded }) => {
 				Cell: (cellProps: CellProps<ProposalType>) => (
 					<CellContainer>
 						<Title isNumeric={true}>
-							<Countdown date={cellProps.row.original.msg.payload.end * 1000} />
+							<Countdown
+								autoStart={true}
+								date={cellProps.row.original.msg.payload.end * 1000}
+								renderer={({ days, hours, minutes }) => {
+									const duration = [
+										`${days}${t('common.time.days')}`,
+										`${hours}${t('common.time.hours')}`,
+										`${minutes}${t('common.time.minutes')}`,
+									];
+
+									return <span>{duration.join(DURATION_SEPARATOR)}</span>;
+								}}
+							/>
 						</Title>
 					</CellContainer>
 				),

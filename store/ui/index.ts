@@ -11,15 +11,7 @@ export type UserNotification = {
 	props?: any;
 };
 
-// TODO: remove default placeholder
-
 export const userNotificationState = atom<UserNotification | null>({
 	key: userNotificationKey,
-	default: localStore.get(userNotificationKey) || {
-		type: 'info',
-		template: 'gov-voting-proposal',
-		props: {
-			proposal: 'SCCP-71',
-		},
-	},
+	default: localStore.get(userNotificationKey),
 });

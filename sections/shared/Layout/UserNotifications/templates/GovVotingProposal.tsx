@@ -10,8 +10,7 @@ const GovVotingProposal: FC<UserNotification> = ({ type, props, template }) => {
 	const { t } = useTranslation();
 
 	return (
-		// TODO: replace with correct link to proposal voting
-		<Notification type={type} link={`/gov/${props.proposal}`}>
+		<Notification type={type} link={`/gov/${props.link}`}>
 			<Heading>{t(`notifications.${template}.heading`)}</Heading>
 			<Message>{t(`notifications.${template}.message`, { proposal: props.proposal })}</Message>
 		</Notification>
