@@ -21,15 +21,15 @@ const useProposals = (spaceKey: SPACE_KEY, options?: QueryConfig<Proposal[]>) =>
 	const walletAddress = useRecoilValue(walletAddressState);
 	const { provider } = Connector.useContainer();
 
-	const contract = new ethers.Contract(
-		CouncilDilution.address,
-		CouncilDilution.abi,
-		provider as any
-	);
-
 	return useQuery<Proposal[]>(
 		QUERY_KEYS.Gov.Proposals(spaceKey, walletAddress ?? '', network?.id!),
 		async () => {
+			const contract = new ethers.Contract(
+				CouncilDilution.address,
+				CouncilDilution.abi,
+				provider as any
+			);
+
 			const space = await axios.get(SPACE(spaceKey));
 
 			const spaceData = space.data as SpaceData;
@@ -117,7 +117,7 @@ const useProposals = (spaceKey: SPACE_KEY, options?: QueryConfig<Proposal[]>) =>
 			return result;
 		},
 		{
-			enabled: isAppReady && isWalletConnected && contract,
+			enabled: isAppReady && isWalletConnected,
 			...options,
 		}
 	);

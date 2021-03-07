@@ -20,6 +20,7 @@ import ROUTES from 'constants/routes';
 import { panelState, PanelType, proposalState } from 'store/gov';
 import useActiveTab from '../../hooks/useActiveTab';
 import { DURATION_SEPARATOR } from 'constants/date';
+import { getCurrentTimestampSeconds } from 'utils/formatters/date';
 
 type IndexProps = {
 	data: ProposalType[];
@@ -52,11 +53,19 @@ const Index: React.FC<IndexProps> = ({ data, isLoaded }) => {
 				Header: <>{t('gov.table.status.title')}</>,
 				accessor: 'status',
 				Cell: (cellProps: CellProps<ProposalType>) => {
-					const closed = cellProps.row.original.msg.payload.end < Date.now() / 1000 ? true : false;
+					const currentTimestampSeconds = getCurrentTimestampSeconds();
+					const closed =
+						cellProps.row.original.msg.payload.end < currentTimestampSeconds ? true : false;
+					const pending =
+						currentTimestampSeconds > cellProps.row.original.msg.payload.start ? true : false;
 					return (
 						<CellContainer>
-							<Status closed={closed}>
-								{closed ? `${t('gov.table.status.closed')}` : `${t('gov.table.status.open')}`}
+							<Status closed={closed} pending={pending}>
+								{closed
+									? `${t('gov.table.status.closed')}`
+									: pending
+									? `${t('gov.table.status.pending')}`
+									: `${t('gov.table.status.open')}`}
 							</Status>
 						</CellContainer>
 					);
@@ -183,8 +192,13 @@ const Title = styled.div<{ isNumeric?: boolean }>`
 	font-size: 12px;
 `;
 
-const Status = styled.div<{ closed: boolean }>`
-	color: ${(props) => (props.closed ? props.theme.colors.gray : props.theme.colors.green)};
+const Status = styled.div<{ closed: boolean; pending: boolean }>`
+	color: ${(props) =>
+		props.closed
+			? props.theme.colors.gray
+			: props.pending
+			? props.theme.colors.yellow
+			: props.theme.colors.green};
 	text-transform: uppercase;
 	font-family: ${(props) => props.theme.fonts.interBold};
 	font-size: 12px;

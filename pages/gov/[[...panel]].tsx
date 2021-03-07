@@ -61,7 +61,7 @@ const Gov: React.FC = () => {
 
 			setLatestElectionBlock(parseInt(latestProposal?.msg?.payload.snapshot ?? '0'));
 		}
-	}, [councilProposals]);
+	}, [councilProposals, setNotificationState]);
 
 	return (
 		<>

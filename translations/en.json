@@ -704,7 +704,8 @@
 			"status": {
 				"title": "Status",
 				"open": "Open",
-				"closed": "Closed"
+				"closed": "Closed",
+				"pending": "Pending"
 			},
 			"time": "Time left",
 			"votes": "Votes",
@@ -755,11 +756,12 @@
 			"history": {
 				"title": "Voting history",
 				"currentUser": "You",
-				"empty": "No votes yet"
+				"empty": "There are no votes yet"
 			}
 		},
 		"council": {
-			"title": "The current spartan council members"
+			"title": "The current spartan council members",
+			"empty": "The Spartan Council is empty"
 		},
 		"actions": {
 			"vote": {

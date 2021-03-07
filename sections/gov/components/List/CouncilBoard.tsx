@@ -21,27 +21,33 @@ const CouncilBoard: React.FC = () => {
 	const { t } = useTranslation();
 	const { etherscanInstance } = Etherscan.useContainer();
 	const theme = useTheme();
-	const members = useCouncilMembers();
+	const councilMembers = useCouncilMembers();
 
 	return (
 		<StyledCard>
 			<Img width={'100%'} src={SpartanCouncilNFT} />
 			<Title>{t('gov.council.title')}</Title>
 
-			{members ? (
-				members.map((member, i) => (
-					<MemberRow key={i}>
-						<FlexDivRowCentered>
-							<Blockie src={makeBlockie(member)} />
-							<Address>{truncateAddress(member, 7, 7)}</Address>
-						</FlexDivRowCentered>
-						<ExternalLink
-							href={etherscanInstance ? etherscanInstance.addressLink(member) : undefined}
-						>
-							<Svg color={theme.colors.blue} src={Link} />
-						</ExternalLink>
+			{councilMembers ? (
+				councilMembers.length > 0 ? (
+					councilMembers.map((member, i) => (
+						<MemberRow key={i}>
+							<FlexDivRowCentered>
+								<Blockie src={makeBlockie(member)} />
+								<Address>{truncateAddress(member, 7, 7)}</Address>
+							</FlexDivRowCentered>
+							<ExternalLink
+								href={etherscanInstance ? etherscanInstance.addressLink(member) : undefined}
+							>
+								<Svg color={theme.colors.blue} src={Link} />
+							</ExternalLink>
+						</MemberRow>
+					))
+				) : (
+					<MemberRow>
+						<Address>{t('gov.council.empty')}</Address>
 					</MemberRow>
-				))
+				)
 			) : (
 				<StyledSpinner src={Spinner} />
 			)}
