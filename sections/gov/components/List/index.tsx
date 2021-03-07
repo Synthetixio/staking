@@ -118,6 +118,7 @@ const Index: React.FC<IndexProps> = ({ data, isLoaded }) => {
 					router.push(ROUTES.Gov.Proposal(activeTab, row.original.authorIpfsHash));
 					setPanelType(PanelType.PROPOSAL);
 				}}
+				minHeight={isWalletConnected}
 				noResultsMessage={
 					!isWalletConnected ? (
 						<TableNoResults>
@@ -149,7 +150,8 @@ const Container = styled.div`
 	height: 100%;
 `;
 
-const StyledTable = styled(Table)`
+const StyledTable = styled(Table)<{ minHeight: boolean }>`
+	min-height: ${(props) => (props.minHeight ? `400px` : `0px`)};
 	.table-body-row {
 		height: 70px;
 		align-items: center;
