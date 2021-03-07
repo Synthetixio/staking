@@ -4,7 +4,14 @@ import Color from 'color';
 
 import { FlexDivRowCentered } from 'styles/common';
 
-type ProgressBarType = 'rainbow' | 'blue-pink' | 'green' | 'blue';
+export type ProgressBarType =
+	| 'rainbow'
+	| 'blue-pink'
+	| 'green'
+	| 'green-simple'
+	| 'blue'
+	| 'red'
+	| 'red-simple';
 
 type ProgressBarProps = {
 	percentage: number;
@@ -77,22 +84,65 @@ const ProgressBarWrapper = styled(FlexDivRowCentered)<{
 			}
 		`}
 
-		${(props) =>
-			props.variant === 'blue' &&
-			css`
-				.filled-bar {
-					background: ${(props) => props.theme.colors.blue};
-					border: 2px solid ${(props) => props.theme.colors.blue};
-					box-shadow: 0px 0px 15px
-						${(props) => Color(props.theme.colors.blue).alpha(0.6).rgb().string()};
-				}
+	${(props) =>
+		props.variant === 'green-simple' &&
+		css`
+			.filled-bar {
+				background: ${(props) => props.theme.colors.green};
+			}
 
-				.unfilled-bar {
-					border: 2px solid ${(props) => props.theme.colors.blue};
-					box-shadow: 0px 0px 15px
-						${(props) => Color(props.theme.colors.blue).alpha(0.6).rgb().string()};
-				}
-			`}
+			.unfilled-bar {
+				background: ${(props) => props.theme.colors.white};
+				opacity: 0.2;
+			}
+		`}
+
+	${(props) =>
+		props.variant === 'blue' &&
+		css`
+			.filled-bar {
+				background: ${(props) => props.theme.colors.blue};
+				border: 2px solid ${(props) => props.theme.colors.blue};
+				box-shadow: 0px 0px 15px
+					${(props) => Color(props.theme.colors.blue).alpha(0.6).rgb().string()};
+			}
+
+			.unfilled-bar {
+				border: 2px solid ${(props) => props.theme.colors.blue};
+				box-shadow: 0px 0px 15px
+					${(props) => Color(props.theme.colors.blue).alpha(0.6).rgb().string()};
+			}
+		`}
+
+	${(props) =>
+		props.variant === 'red' &&
+		css`
+			.filled-bar {
+				background: ${(props) => props.theme.colors.red};
+				border: 2px solid ${(props) => props.theme.colors.red};
+				box-shadow: 0px 0px 15px
+					${(props) => Color(props.theme.colors.red).alpha(0.6).rgb().string()};
+			}
+
+			.unfilled-bar {
+				border: 2px solid ${(props) => props.theme.colors.red};
+				box-shadow: 0px 0px 15px
+					${(props) => Color(props.theme.colors.red).alpha(0.6).rgb().string()};
+			}
+		`}
+
+	${(props) =>
+		props.variant === 'red-simple' &&
+		css`
+			.filled-bar {
+				background: ${(props) => props.theme.colors.red};
+			}
+
+			.unfilled-bar {
+				background: ${(props) => props.theme.colors.white};
+				opacity: 0.2;
+			}
+		`}
 `;
 
 const Bar = styled.div<{ percentage: number }>`

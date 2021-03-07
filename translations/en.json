@@ -332,6 +332,19 @@
 						"issuedDebt": "Issued Debt"
 					}
 				}
+			},
+			"hedge": {
+				"info": {
+					"debt-pool-pie-chart": {
+						"title": "Global Debt Pool"
+					},
+					"portfolio-table": {
+						"title": "Your Portfolio",
+						"sETH-tooltip": "The sETH total includes other related assets such as <0>ETH</0> and <0>wETH</0>",
+						"sBTC-tooltip": "The sBTC total includes other related assets such as <0>wBTC</0> and <0>renBTC</0>"
+					},
+					"tooltip": "This table serves as a <0>hedging indicator</0>, showing the relationship between your Synth balances and the global debt pool"
+				}
 			}
 		}
 	},
@@ -655,6 +668,10 @@
 					"balance": "Balance",
 					"price": "Price",
 					"holdings": "Holdings %",
+					"total": "Total",
+					"percentage-of-pool": "% of pool",
+					"percentage-of-portfolio": "% of portfolio",
+					"debt-pool-proportion": "% of global debt",
 					"no-synths": {
 						"title": "You have no Synths",
 						"desc": "Mint sUSD by staking your SNX"
@@ -891,6 +908,9 @@
 			"hours": "h",
 			"minutes": "m",
 			"seconds": "s"
+		},
+		"table": {
+			"no-data": "No Data"
 		}
 	},
 	"not-found": {
@@ -908,5 +928,15 @@
 		"page-title": "Mobile is coming soon | Synthetix Staking",
 		"title-line1": "Mobile is coming",
 		"title-line2": "soonthetix"
+	},
+	"notifications": {
+		"debt-liquidation-warning": {
+			"heading": "warning:",
+			"message": "Your wallet has been flagged for liquidation"
+		},
+		"gov-voting-proposal": {
+			"heading": "governance:",
+			"message": "Voting for {{proposal}} is now required"
+		}
 	}
 }
