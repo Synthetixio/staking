@@ -13,7 +13,7 @@ type DatePickerProps = ReactDatePickerProps & {
 	showClear: boolean;
 };
 
-export const DatePicker: FC<DatePickerProps> = ({ className, onClear, showClear, ...rest }) => {
+const DatePicker: FC<DatePickerProps> = ({ className, onClear, showClear, ...rest }) => {
 	const [isOpen, setIsOpen] = useState<boolean>(false);
 
 	return (
@@ -46,7 +46,7 @@ const DatePickerContainer = styled.div`
 
 	.react-datepicker {
 		font-family: ${(props) => props.theme.fonts.regular};
-		font-size: 0.8rem;
+		font-size: 12px;
 		background-color: ${(props) => props.theme.colors.white};
 		border: 1px solid #aeaeae;
 		border-radius: 2px;

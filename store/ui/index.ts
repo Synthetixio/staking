@@ -1,8 +1,22 @@
 import { atom } from 'recoil';
 
-import { getUIKey } from '../utils';
+import { NotificationType } from 'components/Notification/types';
+import localStore from 'utils/localStore';
 
-export const hasOrdersNotificationState = atom<boolean>({
-	key: getUIKey('hasOrderNotifications'),
-	default: false,
+import { userNotificationKey } from './constants';
+
+export enum NotificationTemplate {
+	ELECTION = 'gov-voting-election',
+	LIQUIDATION = 'debt-liquidation-warning',
+}
+
+export type UserNotification = {
+	type: NotificationType;
+	template: NotificationTemplate;
+	props?: any;
+};
+
+export const userNotificationState = atom<UserNotification | null>({
+	key: userNotificationKey,
+	default: localStore.get(userNotificationKey),
 });

@@ -6,7 +6,7 @@ import StatBox from 'components/StatBox';
 import { StatsSection, LineSpacer } from 'styles/common';
 
 import useEscrowCalculations from 'sections/escrow/hooks/useEscrowCalculations';
-import { formatCryptoCurrency } from '../utils/formatters/number';
+import { formatCryptoCurrency } from '../../utils/formatters/number';
 
 import Main from 'sections/escrow/index';
 

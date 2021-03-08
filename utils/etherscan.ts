@@ -33,6 +33,10 @@ class EtherscanLinks {
 	public tokenLink(address: string) {
 		return `${this.baseURL}/token/${address}`;
 	}
+
+	public blockLink(blockNumber: string) {
+		return `${this.baseURL}/block/${blockNumber}`;
+	}
 }
 
 export default EtherscanLinks;

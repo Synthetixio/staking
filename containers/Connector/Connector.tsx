@@ -48,6 +48,7 @@ const useConnector = () => {
 				networkId,
 				provider,
 			});
+
 			// @ts-ignore
 			setNetwork(synthetix.js?.network);
 			setProvider(provider);

@@ -15,7 +15,6 @@ export const InputContainer = styled(FlexDivColCentered)`
 	width: 100%;
 	padding: 16px;
 	margin-bottom: 24px;
-	/* @TODO: Replace with responsive height when mobile */
 `;
 
 export const InputBox = styled(FlexDivColCentered)`
