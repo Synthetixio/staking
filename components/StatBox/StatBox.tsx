@@ -1,9 +1,11 @@
 import { FC, ReactNode } from 'react';
 import styled, { css } from 'styled-components';
+import Svg from 'react-optimized-image';
 
 import SNXStatBackground from 'assets/svg/app/snx-stat-background.svg';
 
-import { FlexDivColCentered } from 'styles/common';
+import { FlexDivRowCentered, FlexDivColCentered, Tooltip } from 'styles/common';
+import InfoIcon from 'assets/svg/app/info.svg';
 
 type Size = 'md' | 'lg';
 
@@ -12,15 +14,44 @@ type StatBoxProps = {
 	value: ReactNode;
 	size?: Size;
 	children?: ReactNode;
+	tooltipContent?: string;
 };
 
-const StatBox: FC<StatBoxProps> = ({ title, value, size = 'md', children, ...rest }) => (
-	<Box {...rest} size={size}>
-		<Title className="title">{title}</Title>
-		<Value className="value">{value}</Value>
-		{children}
-	</Box>
-);
+const StatBox: FC<StatBoxProps> = ({
+	title,
+	value,
+	tooltipContent,
+	size = 'md',
+	children,
+	...rest
+}) => {
+	return (
+		<Box {...rest} size={size}>
+			<FlexDivRowCentered>
+				<Title className="title">{title}</Title>
+				{tooltipContent && (
+					<StyledTooltip
+						arrow={true}
+						placement="bottom"
+						content={tooltipContent}
+						hideOnClick={false}
+					>
+						<IconContainer>
+							<Svg src={InfoIcon} />
+						</IconContainer>
+					</StyledTooltip>
+				)}
+			</FlexDivRowCentered>
+			<Value className="value">{value}</Value>
+			{children}
+		</Box>
+	);
+};
+
+const IconContainer = styled.div`
+	margin-left: 4px;
+	margin-bottom: 4px;
+`;
 
 const Box = styled(FlexDivColCentered)<{ size: Size }>`
 	height: 200px;
@@ -50,6 +81,14 @@ const Title = styled.span`
 const Value = styled.span`
 	font-family: ${(props) => props.theme.fonts.extended};
 	font-size: 24px;
+`;
+
+const StyledTooltip = styled(Tooltip)`
+	background: ${(props) => props.theme.colors.mediumBlue};
+	.tippy-content {
+		font-size: 12px;
+		padding: 10px;
+	}
 `;
 
 export default StatBox;

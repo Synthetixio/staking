@@ -119,7 +119,7 @@ const LayoutOne: FC = () => {
 				link: ROUTES.Earn.iETH_LP,
 			},
 			{
-				gridLocations: ['col-1', 'col-2', 'row-3', 'row-4'],
+				gridLocations: ['col-1', 'col-3', 'row-3', 'row-4'],
 				icon: (
 					<GlowingCircle variant="green" size="md">
 						<Currency.Icon currencyKey={CryptoCurrency.CRV} width="28" height="28" />
@@ -134,23 +134,6 @@ const LayoutOne: FC = () => {
 				}),
 				tooltip: t('common.tooltip.external', { link: 'Curve Finance' }),
 				externalLink: ROUTES.Earn.sUSD_EXTERNAL,
-			},
-			{
-				gridLocations: ['col-2', 'col-3', 'row-3', 'row-4'],
-				icon: (
-					<GlowingCircle variant="green" size="md">
-						<Currency.Icon currencyKey={CryptoCurrency.CRV} width="28" height="28" />
-					</GlowingCircle>
-				),
-				title: t('dashboard.actions.earn.title', {
-					percent: formatPercent(lpData[LP.CURVE_sEURO].APR, { minDecimals: 0 }),
-				}),
-				copy: t('dashboard.actions.earn.copy', {
-					asset: 'Curve sEUR Pool Token',
-					supplier: 'Curve Finance',
-				}),
-				tooltip: t('common.tooltip.external', { link: 'Curve Finance' }),
-				externalLink: ROUTES.Earn.sEURO_EXTERNAL,
 			},
 			{
 				gridLocations: ['col-3', 'col-5', 'row-3', 'row-4'],
