@@ -67,7 +67,7 @@ const Content: React.FC<ContentProps> = ({ onBack }) => {
 	const [choices, setChoices] = useState<any>(null);
 
 	useEffect(() => {
-		if (proposal && activeTab === SPACE_KEY.COUNCIL) {
+		if (proposal && proposal.msg.payload.choices && activeTab === SPACE_KEY.COUNCIL) {
 			const loadProfiles = async () => {
 				const profiles = await getProfiles(proposal.msg.payload.choices);
 				const mappedProfiles = [] as any;

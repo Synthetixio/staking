@@ -21,7 +21,7 @@ const Results: React.FC<ResultsProps> = ({ hash }) => {
 	const [choices, setChoices] = useState<any>(null);
 
 	useEffect(() => {
-		if (proposal && activeTab === SPACE_KEY.COUNCIL) {
+		if (proposal && proposal?.data?.choices && activeTab === SPACE_KEY.COUNCIL) {
 			const loadProfiles = async () => {
 				const profiles = await getProfiles(proposal?.data?.choices);
 				const mappedProfiles = [] as any;
