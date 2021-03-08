@@ -4,11 +4,13 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 import { Svg } from 'react-optimized-image';
+import { useRecoilValue } from 'recoil';
 
 import { linkCSS } from 'styles/common';
 import { toBigNumber } from 'utils/formatters/number';
 
 import StakingLogo from 'assets/svg/app/staking-logo.svg';
+import StakingL2Logo from 'assets/svg/app/staking-l2-logo.svg';
 import CaretRightIcon from 'assets/svg/app/caret-right-small.svg';
 
 import useSNX24hrPricesQuery from 'queries/rates/useSNX24hrPricesQuery';
@@ -19,8 +21,10 @@ import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuer
 import ROUTES from 'constants/routes';
 import { CryptoCurrency, Synths } from 'constants/currency';
 import { SIDE_NAV_WIDTH, zIndex } from 'constants/ui';
-
 import { MENU_LINKS, MIGRATE_MENU_LINKS } from '../constants';
+
+import { networkState } from 'store/wallet';
+
 import SubMenu from './SubMenu';
 import PriceItem from './PriceItem';
 import PeriodBarStats from './PeriodBarStats';
@@ -36,10 +40,13 @@ const SideNav: FC = () => {
 	const SNX24hrPricesQuery = useSNX24hrPricesQuery();
 	const cryptoBalances = useCryptoBalances();
 	const synthsBalancesQuery = useSynthsBalancesQuery();
+	const network = useRecoilValue(networkState);
 	const [subMenuConfiguration, setSubMenuConfiguration] = useState({
 		routes: null,
 		topPosition: 0,
 	});
+
+	const isL2 = network?.useOvm ?? false;
 
 	const snxBalance =
 		cryptoBalances?.balances?.find((balance) => balance.currencyKey === CryptoCurrency.SNX)
@@ -65,7 +72,7 @@ const SideNav: FC = () => {
 		>
 			<StakingLogoWrap>
 				<Link href={ROUTES.Home}>
-					<Svg src={StakingLogo} />
+					{isL2 ? <Svg src={StakingL2Logo} /> : <Svg src={StakingLogo} />}
 				</Link>
 			</StakingLogoWrap>
 			<MenuLinks>

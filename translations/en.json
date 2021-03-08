@@ -680,6 +680,15 @@
 			}
 		}
 	},
+	"user-menu": {
+		"layer-2": {
+			"switch-to-l2": "Switch to L2",
+			"connected-to-l2": "Layer 2"
+		},
+		"error": {
+			"please-install-metamask": "Please install Metamask"
+		}
+	},
 	"common": {
 		"approve": {
 			"approve-contract": "Approve contract",

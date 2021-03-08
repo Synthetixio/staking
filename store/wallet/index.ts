@@ -1,4 +1,4 @@
-import { NetworkId, Network as NetworkName } from '@synthetixio/js';
+import { NetworkId, Network as NetworkName } from '@synthetixio/contracts-interface';
 import { GasSpeed } from 'queries/network/useEthGasPriceQuery';
 import { atom, selector } from 'recoil';
 
@@ -9,6 +9,7 @@ import { getWalletKey } from '../utils';
 export type Network = {
 	id: NetworkId;
 	name: NetworkName;
+	useOvm?: boolean;
 };
 
 export const networkState = atom<Network | null>({

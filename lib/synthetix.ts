@@ -1,4 +1,10 @@
-import initSynthetixJS, { NetworkId, Network, Token, Synth, SynthetixJS } from '@synthetixio/js';
+import initSynthetixJS, {
+	NetworkId,
+	Network,
+	Token,
+	Synth,
+	SynthetixJS,
+} from '@synthetixio/contracts-interface';
 import { ethers, Signer } from 'ethers';
 
 import keyBy from 'lodash/keyBy';
@@ -21,6 +27,7 @@ type ContractSettings = {
 	networkId: NetworkId;
 	provider?: ethers.providers.Provider;
 	signer?: Signer;
+	useOvm?: boolean;
 };
 
 type Synthetix = {
@@ -39,11 +46,12 @@ const synthetix: Synthetix = {
 	tokensMap: null,
 	chainIdToNetwork: null,
 
-	setContractSettings({ networkId, provider, signer }: ContractSettings) {
+	setContractSettings({ networkId, provider, signer, useOvm = false }: ContractSettings) {
 		this.js = initSynthetixJS({
 			networkId,
 			provider,
 			signer,
+			useOvm,
 		});
 
 		this.synthsMap = keyBy(this.js.synths, 'name');

@@ -2,7 +2,7 @@ import { FC, useMemo, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { providers } from 'ethers';
-import initSynthetixJS from '@synthetixio/js';
+import initSynthetixJS from '@synthetixio/contracts-interface';
 
 import { formatCryptoCurrency, formatPercent } from 'utils/formatters/number';
 import ROUTES from 'constants/routes';
