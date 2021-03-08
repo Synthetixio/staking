@@ -8,7 +8,7 @@ import useProposal from 'queries/gov/useProposal';
 import { useRecoilValue } from 'recoil';
 import { walletAddressState } from 'store/wallet';
 import { useTranslation } from 'react-i18next';
-import { truncateAddress } from 'utils/formatters/string';
+import { truncateAddress, truncateString } from 'utils/formatters/string';
 import { formatNumber } from 'utils/formatters/number';
 import { MaxHeightColumn, StyledTooltip } from 'sections/gov/components/common';
 import { Blockie } from '../common';
@@ -62,7 +62,7 @@ const History: React.FC<HistoryProps> = ({ hash }) => {
 									content={data.choices[vote.msg.payload.choice - 1]}
 									hideOnClick={false}
 								>
-									<Choice>- {truncateAddress(data.choices[vote.msg.payload.choice - 1])}</Choice>
+									<Choice>- {truncateString(data.choices[vote.msg.payload.choice - 1], 15)}</Choice>
 								</StyledTooltip>
 								<Value>{`${formatNumber(vote.balance)} ${data.spaceSymbol}`}</Value>
 							</Row>

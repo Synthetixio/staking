@@ -1,6 +1,5 @@
 export default {
-	// @TODO: Change to main-net address
-	address: '0xc8ddA2B8221e35f44B771FcE6b641Aa4589D06b5',
+	address: '0x30Ba359FE295E311D24BcCb1502c7a6e89Fb2100',
 	abi: [
 		{
 			inputs: [{ internalType: 'uint256', name: '_numOfSeats', type: 'uint256' }],
@@ -148,7 +147,6 @@ export default {
 			outputs: [
 				{ internalType: 'string', name: 'electionHash', type: 'string' },
 				{ internalType: 'uint256', name: 'created', type: 'uint256' },
-				{ internalType: 'bool', name: 'exist', type: 'bool' },
 			],
 			payable: false,
 			stateMutability: 'view',

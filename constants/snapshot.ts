@@ -5,8 +5,7 @@ export enum SPACE_KEY {
 	AMBASSADOR = 'snxambassador.eth',
 }
 
-// @TODO toggle flag for testnet or live snapshot spaces
-const isTestNet = true;
+const isTestNet = false;
 
 const BASE_URL = () => (isTestNet ? `testnet` : `hub`);
 

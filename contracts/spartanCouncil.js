@@ -1,6 +1,5 @@
 export default {
-	// @TODO change to main-net
-	address: '0xebaecac6ffe33bd0819d5d6ec0ba25267fe9532c',
+	address: '0x023c66b7e13d30a3c46aa433fd2829763d5817c5',
 	abi: [
 		{
 			inputs: [

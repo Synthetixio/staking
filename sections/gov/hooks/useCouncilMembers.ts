@@ -35,7 +35,9 @@ export const useCouncilMembers = () => {
 
 				for (let i = 1; i <= numOfCouncilMembers; i++) {
 					let address = await spartanCouncilContract.ownerOf(i);
-					councilMembers.push(address.toLowerCase());
+					if (address !== ethers.constants.AddressZero) {
+						councilMembers.push(address.toLowerCase());
+					}
 				}
 				let resolvedMembers = await Promise.resolve(councilMembers);
 

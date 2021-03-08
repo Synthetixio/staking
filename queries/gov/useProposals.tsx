@@ -70,8 +70,7 @@ const useProposals = (spaceKey: SPACE_KEY, options?: QueryConfig<Proposal[]>) =>
 								provider,
 								Object.values(voterResponse.data).map((vote: any) => vote.address),
 								// @ts-ignore
-								// @TODO: change back to block tag
-								'latest'
+								blockTag
 							),
 						]);
 						result.push({
@@ -103,8 +102,7 @@ const useProposals = (spaceKey: SPACE_KEY, options?: QueryConfig<Proposal[]>) =>
 							provider,
 							Object.values(voterResponse.data).map((vote: any) => vote.address),
 							// @ts-ignore
-							// @TODO: change back to block tag
-							'latest'
+							blockTag
 						),
 					]);
 					result.push({
