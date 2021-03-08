@@ -762,7 +762,7 @@
 		},
 		"council": {
 			"title": "The current spartan council members",
-			"empty": "The Spartan Council is empty"
+			"empty": "The Spartan Council is awaiting its elect"
 		},
 		"actions": {
 			"vote": {
