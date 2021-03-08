@@ -53,7 +53,7 @@ const useSignMessage = () => {
 		async (payload: SignaturePayload) => {
 			const version = '0.1.3';
 			let msg: any = {
-				address: walletAddress,
+				address: walletAddress?.toLowerCase(),
 				msg: JSON.stringify({
 					version,
 					timestamp: (Date.now() / 1e3).toFixed(),
