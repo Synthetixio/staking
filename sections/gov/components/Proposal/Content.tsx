@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Svg } from 'react-optimized-image';
 import { Remarkable } from 'remarkable';
@@ -43,7 +43,8 @@ import Button from 'components/Button';
 import { Transaction } from 'constants/network';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import TxState from 'sections/gov/components/TxState';
-import { expired, pending } from '../helper';
+import { expired, getProfiles, pending } from '../helper';
+import { SPACE_KEY } from 'constants/snapshot';
 
 type ContentProps = {
 	onBack: Function;
@@ -63,6 +64,32 @@ const Content: React.FC<ContentProps> = ({ onBack }) => {
 
 	const proposal = useRecoilValue(proposalState);
 
+	const [choices, setChoices] = useState<any>(null);
+
+	useEffect(() => {
+		if (proposal && activeTab === SPACE_KEY.COUNCIL) {
+			const loadProfiles = async () => {
+				const profiles = await getProfiles(proposal.msg.payload.choices);
+				const mappedProfiles = [] as any;
+				Object.keys(profiles).forEach((profile) => {
+					mappedProfiles.push({
+						address: profile,
+						ens: profiles[profile].ens ? profiles[profile].ens : null,
+						name: profiles[profile].name ? profiles[profile].name : null,
+					});
+				});
+				setChoices(mappedProfiles);
+			};
+			loadProfiles();
+		}
+	}, [proposal, activeTab]);
+
+	useEffect(() => {
+		if (proposal && activeTab !== SPACE_KEY.COUNCIL) {
+			setChoices(proposal?.msg.payload.choices);
+		}
+	}, [proposal, activeTab]);
+
 	const handleVote = async (hash?: string | null) => {
 		if (hash && selected !== null) {
 			setSignModalOpen(true);
@@ -75,7 +102,6 @@ const Content: React.FC<ContentProps> = ({ onBack }) => {
 				.then((response) => {
 					setTransactionState(Transaction.SUCCESS);
 					setSignModalOpen(false);
-					console.log(response);
 				})
 				.catch((error) => {
 					console.log(error);
@@ -174,21 +200,49 @@ const Content: React.FC<ContentProps> = ({ onBack }) => {
 						<Description dangerouslySetInnerHTML={getRawMarkup(proposal?.msg.payload.body)} />
 					</ProposalContainer>
 					<Divider />
-					{!expired(proposal?.msg.payload.end) && !pending(proposal?.msg.payload.start) && (
+					{!expired(proposal?.msg.payload.end) && !pending(proposal?.msg.payload.start) && choices && (
 						<OptionsContainer>
-							{proposal?.msg.payload.choices.map((choice, i) => (
-								<StyledTooltip
-									key={i}
-									arrow={true}
-									placement="bottom"
-									content={choice}
-									hideOnClick={false}
-								>
-									<Option selected={selected === i} onClick={() => setSelected(i)} variant="text">
-										<p>{choice}</p>
-									</Option>
-								</StyledTooltip>
-							))}
+							{choices.map((choice: any, i: any) => {
+								if (activeTab === SPACE_KEY.COUNCIL) {
+									return (
+										<StyledTooltip
+											key={i}
+											arrow={true}
+											placement="bottom"
+											content={choice.ens ? choice.ens : choice.name ? choice.name : choice.address}
+											hideOnClick={false}
+										>
+											<Option
+												selected={selected === i}
+												onClick={() => setSelected(i)}
+												variant="text"
+											>
+												<p>
+													{choice.ens ? choice.ens : choice.name ? choice.name : choice.address}
+												</p>
+											</Option>
+										</StyledTooltip>
+									);
+								} else {
+									return (
+										<StyledTooltip
+											key={i}
+											arrow={true}
+											placement="bottom"
+											content={choice}
+											hideOnClick={false}
+										>
+											<Option
+												selected={selected === i}
+												onClick={() => setSelected(i)}
+												variant="text"
+											>
+												<p>{choice}</p>
+											</Option>
+										</StyledTooltip>
+									);
+								}
+							})}
 						</OptionsContainer>
 					)}
 				</InputContainer>
