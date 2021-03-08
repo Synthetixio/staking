@@ -62,7 +62,7 @@ const History: React.FC<HistoryProps> = ({ hash }) => {
 									content={data.choices[vote.msg.payload.choice - 1]}
 									hideOnClick={false}
 								>
-									<Choice>- {truncateString(data.choices[vote.msg.payload.choice - 1], 15)}</Choice>
+									<Choice>- {truncateString(data.choices[vote.msg.payload.choice - 1], 13)}</Choice>
 								</StyledTooltip>
 								<Value>{`${formatNumber(vote.balance)} ${data.spaceSymbol}`}</Value>
 							</Row>
