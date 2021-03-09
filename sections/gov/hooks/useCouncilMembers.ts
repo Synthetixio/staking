@@ -31,7 +31,7 @@ export const useCouncilMembers = () => {
 
 				const numOfCouncilMembersBN = await councilDilutionContract.numOfSeats();
 
-				const numOfCouncilMembers = parseInt(numOfCouncilMembersBN.toString());
+				const numOfCouncilMembers = Number(numOfCouncilMembersBN);
 
 				for (let i = 1; i <= numOfCouncilMembers; i++) {
 					let address = await spartanCouncilContract.ownerOf(i);
