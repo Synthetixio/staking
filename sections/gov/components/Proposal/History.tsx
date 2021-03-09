@@ -51,7 +51,7 @@ const History: React.FC<HistoryProps> = ({ hash }) => {
 											{vote.address === walletAddress
 												? t('gov.proposal.history.currentUser')
 												: vote.profile.ens
-												? vote.profile.ens
+												? truncateString(vote.profile.ens, 13)
 												: truncateAddress(vote.address)}
 										</Title>
 									</StyledTooltip>

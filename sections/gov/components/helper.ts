@@ -93,7 +93,7 @@ export function lookupAddresses(addresses: any[]) {
 			.then(({ accounts }: { accounts: any }) => {
 				const ensNames = {} as any;
 				accounts.forEach((profile: any) => {
-					ensNames[profile.id.toLowerCase()] = profile.domains[0].name ?? null;
+					ensNames[profile.id.toLowerCase()] = profile.domains[0] ? profile.domains[0].name : null;
 				});
 				resolve(ensNames);
 			})

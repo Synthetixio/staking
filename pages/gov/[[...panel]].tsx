@@ -15,19 +15,48 @@ import MainContent from 'sections/gov';
 import useActiveProposalCount from 'sections/gov/hooks/useActiveProposalCount';
 import { SPACE_KEY } from 'constants/snapshot';
 import { Proposal } from 'queries/gov/types';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { councilElectionCountState, numOfCouncilSeatsState } from 'store/gov';
+import { ethers } from 'ethers';
+import Connector from 'containers/Connector';
+import councilDilution from 'contracts/councilDilution';
+import { appReadyState } from 'store/app';
 
 const Gov: React.FC = () => {
 	const { t } = useTranslation();
 	const councilProposals = useProposals(SPACE_KEY.COUNCIL);
+	const { provider } = Connector.useContainer();
 
 	const [latestElectionBlock, setLatestElectionBlock] = useState<number | null>(null);
 	const activeProposals = useActiveProposalCount();
 
 	const total = useTotalDebtWeighted(latestElectionBlock);
 	const individual = useIndividualDebtWeighted(latestElectionBlock);
+	const setCouncilElectionCount = useSetRecoilState(councilElectionCountState);
+	const setNumOfCouncilSeats = useSetRecoilState(numOfCouncilSeatsState);
+	const isAppReady = useRecoilValue(appReadyState);
 
 	useEffect(() => {
-		if (councilProposals.data) {
+		if (isAppReady && provider) {
+			const getNumberOfCouncilSeats = async () => {
+				let contract = new ethers.Contract(
+					councilDilution.address,
+					councilDilution.abi,
+					provider as ethers.providers.Provider
+				);
+
+				const numOfCouncilMembersBN = await contract.numOfSeats();
+
+				const numOfCouncilMembers = Number(numOfCouncilMembersBN);
+				setNumOfCouncilSeats(numOfCouncilMembers);
+			};
+
+			getNumberOfCouncilSeats();
+		}
+	}, [isAppReady, provider, setNumOfCouncilSeats]);
+
+	useEffect(() => {
+		if (councilProposals.data && isAppReady) {
 			let latestProposal = {
 				msg: {
 					payload: {
@@ -35,6 +64,8 @@ const Gov: React.FC = () => {
 					},
 				},
 			} as Partial<Proposal>;
+
+			setCouncilElectionCount(councilProposals.data.length);
 
 			councilProposals.data.forEach((proposal) => {
 				if (
@@ -47,7 +78,7 @@ const Gov: React.FC = () => {
 
 			setLatestElectionBlock(parseInt(latestProposal?.msg?.payload.snapshot ?? '0'));
 		}
-	}, [councilProposals]);
+	}, [councilProposals, setCouncilElectionCount, isAppReady]);
 
 	return (
 		<>

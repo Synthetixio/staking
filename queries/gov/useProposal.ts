@@ -14,7 +14,7 @@ import Connector from 'containers/Connector';
 import snapshot from '@snapshot-labs/snapshot.js';
 import CouncilDilution from 'contracts/councilDilution.js';
 import { ethers } from 'ethers';
-import { uniq, uniqBy } from 'lodash';
+import { uniqBy } from 'lodash';
 
 type ProposalResults = {
 	totalBalances: number[];
@@ -44,7 +44,7 @@ const useProposal = (spaceKey: SPACE_KEY, hash: string, options?: QueryConfig<Pr
 
 			proposal = formatProposal(proposal);
 
-			const voters = uniq(Object.keys(votes.data).map((vote: string) => vote.toLowerCase()));
+			const voters = Object.keys(votes.data);
 
 			const block = proposal.msg.payload.snapshot;
 
@@ -77,7 +77,7 @@ const useProposal = (spaceKey: SPACE_KEY, hash: string, options?: QueryConfig<Pr
 				uniqBy(
 					Object.entries(votes.data).map((vote: any) => {
 						vote[1].scores = space.data.strategies.map(
-							(_: any, i: number) => scores[i][vote[1].address.toLowerCase()] || 0
+							(_: any, i: number) => scores[i][vote[1].address] || 0
 						);
 						vote[1].balance = vote[1].scores.reduce((a: any, b: any) => a + b, 0);
 						return vote;

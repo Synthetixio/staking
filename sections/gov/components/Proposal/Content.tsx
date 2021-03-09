@@ -37,14 +37,15 @@ import { useTranslation } from 'react-i18next';
 import useSignMessage, { SignatureType } from 'mutations/gov/useSignMessage';
 import useActiveTab from 'sections/gov/hooks/useActiveTab';
 import { useRecoilValue } from 'recoil';
-import { proposalState } from 'store/gov';
+import { councilElectionCountState, proposalState } from 'store/gov';
 import Button from 'components/Button';
 
 import { Transaction } from 'constants/network';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import TxState from 'sections/gov/components/TxState';
-import { expired, getProfiles, pending } from '../helper';
+import { expired, pending } from '../helper';
 import { SPACE_KEY } from 'constants/snapshot';
+import CouncilNominations from 'constants/nominations.json';
 
 type ContentProps = {
 	onBack: Function;
@@ -66,23 +67,25 @@ const Content: React.FC<ContentProps> = ({ onBack }) => {
 
 	const [choices, setChoices] = useState<any>(null);
 
+	const electionCount = useRecoilValue(councilElectionCountState);
+
 	useEffect(() => {
 		if (proposal && proposal.msg.payload.choices && activeTab === SPACE_KEY.COUNCIL) {
-			const loadProfiles = async () => {
-				const profiles = await getProfiles(proposal.msg.payload.choices);
+			const loadDiscordNames = async () => {
+				const currentElectionMembers = CouncilNominations as any;
 				const mappedProfiles = [] as any;
-				Object.keys(profiles).forEach((profile) => {
+
+				currentElectionMembers[electionCount].forEach((member: any) => {
 					mappedProfiles.push({
-						address: profile,
-						ens: profiles[profile].ens ? profiles[profile].ens : null,
-						name: profiles[profile].name ? profiles[profile].name : null,
+						address: member.address,
+						name: member.discord,
 					});
 				});
 				setChoices(mappedProfiles);
 			};
-			loadProfiles();
+			loadDiscordNames();
 		}
-	}, [proposal, activeTab]);
+	}, [proposal, activeTab, electionCount]);
 
 	useEffect(() => {
 		if (proposal && activeTab !== SPACE_KEY.COUNCIL) {
@@ -209,7 +212,7 @@ const Content: React.FC<ContentProps> = ({ onBack }) => {
 											key={i}
 											arrow={true}
 											placement="bottom"
-											content={choice.ens ? choice.ens : choice.name ? choice.name : choice.address}
+											content={choice.name ? choice.name : choice.address}
 											hideOnClick={false}
 										>
 											<Option
@@ -217,9 +220,7 @@ const Content: React.FC<ContentProps> = ({ onBack }) => {
 												onClick={() => setSelected(i)}
 												variant="text"
 											>
-												<p>
-													{choice.ens ? choice.ens : choice.name ? choice.name : choice.address}
-												</p>
+												<p>{choice.name ? choice.name : choice.address}</p>
 											</Option>
 										</StyledTooltip>
 									);
