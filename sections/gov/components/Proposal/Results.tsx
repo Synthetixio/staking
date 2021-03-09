@@ -53,25 +53,21 @@ const Results: React.FC<ResultsProps> = ({ hash }) => {
 
 		const totalVotes = data.totalVotesBalances !== 0 ? data.totalVotesBalances : 1;
 
-		const mappedResults = [] as any;
-
-		if (activeTab === SPACE_KEY.COUNCIL) {
-			data.totalBalances.forEach((balance, key) => {
-				mappedResults.push({
-					label: choices[key].name ? choices[key].name : choices[key].address,
-					balance: balance,
-				});
-			});
-		} else {
-			data.totalBalances.forEach((balance, key) => {
-				mappedResults.push({
-					label: choices[key],
-					balance: balance,
-				});
-			});
-		}
-
-		mappedResults.sort((a: any, b: any) => b.balance - a.balance);
+		const mappedResults = data.totalBalances
+			.map((balance, key) => {
+				if (activeTab === SPACE_KEY.COUNCIL) {
+					return {
+						label: choices[key].name ? choices[key].name : choices[key].address,
+						balance: balance,
+					};
+				} else {
+					return {
+						label: choices[key],
+						balance: balance,
+					};
+				}
+			})
+			.sort((a: any, b: any) => b.balance - a.balance);
 
 		return (
 			<MaxHeightColumn>
