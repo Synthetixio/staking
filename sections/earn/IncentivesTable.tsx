@@ -37,11 +37,12 @@ import {
 } from 'styles/common';
 import { CryptoCurrency, CurrencyKey } from 'constants/currency';
 import { DURATION_SEPARATOR } from 'constants/date';
-import { NOT_APPLICABLE } from './Incentives';
 
 import ROUTES from 'constants/routes';
 
 import { Tab } from './types';
+
+export const NOT_APPLICABLE = 'n/a';
 
 export type EarnItem = {
 	title: string;

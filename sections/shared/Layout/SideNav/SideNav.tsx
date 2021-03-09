@@ -21,7 +21,7 @@ import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuer
 import ROUTES from 'constants/routes';
 import { CryptoCurrency, Synths } from 'constants/currency';
 import { SIDE_NAV_WIDTH, zIndex } from 'constants/ui';
-import { MENU_LINKS, MIGRATE_MENU_LINKS } from '../constants';
+import { MENU_LINKS, MIGRATE_MENU_LINKS, MENU_LINKS_L2 } from '../constants';
 
 import { networkState } from 'store/wallet';
 
@@ -64,7 +64,11 @@ const SideNav: FC = () => {
 	const rewardEscrowQuery = useEscrowDataQuery();
 	const totalBalancePendingMigration = rewardEscrowQuery?.data?.totalBalancePendingMigration ?? 0;
 
-	const menuLinks = totalBalancePendingMigration > 0 ? MIGRATE_MENU_LINKS : MENU_LINKS;
+	const menuLinks = isL2
+		? MENU_LINKS_L2
+		: totalBalancePendingMigration > 0
+		? MIGRATE_MENU_LINKS
+		: MENU_LINKS;
 
 	return (
 		<SideNavContainer
