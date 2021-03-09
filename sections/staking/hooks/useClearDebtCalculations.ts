@@ -12,7 +12,7 @@ const useClearDebtCalculations = (
 ) => {
 	const needToBuy = debtBalance.minus(sUSDBalance).isPositive();
 	const debtBalanceWithBuffer: NumericValue = toBigNumber(
-		debtBalance.plus(debtBalance.multipliedBy(0.05)).toFixed(18)
+		debtBalance.plus(debtBalance.multipliedBy(0.0005)).toFixed(18)
 	);
 	const missingSUSDWithBuffer: NumericValue = toBigNumber(
 		debtBalanceWithBuffer.minus(sUSDBalance).toFixed(18)
