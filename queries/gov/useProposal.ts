@@ -77,7 +77,7 @@ const useProposal = (spaceKey: SPACE_KEY, hash: string, options?: QueryConfig<Pr
 				uniqBy(
 					Object.entries(votes.data).map((vote: any) => {
 						vote[1].scores = space.data.strategies.map(
-							(_: any, i: number) => scores[i][vote[1].address.toLowerCase()] || 0
+							(_: any, i: number) => scores[i][vote[1].address] || 0
 						);
 						vote[1].balance = vote[1].scores.reduce((a: any, b: any) => a + b, 0);
 						return vote;
