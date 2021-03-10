@@ -44,6 +44,9 @@ export const ROUTES = {
 	Loans: {
 		Home: '/loans',
 	},
+	Delegate: {
+		Home: '/delegate',
+	},
 };
 
 export default ROUTES;

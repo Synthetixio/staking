@@ -829,7 +829,8 @@
 			"period": {
 				"title": "epoch"
 			}
-		}
+		},
+		"delegate": "Delegate"
 	},
 	"common": {
 		"approve": {
@@ -940,6 +941,32 @@
 		"gov-voting-election": {
 			"heading": "governance:",
 			"message": "Have your say on who will represent the SNX community, vote for your Spartan Council now! Voting costs zero-gas."
+		}
+	},
+	"delegate": {
+		"page-title": "Delegate",
+		"form": {
+			"title": "Delegate to a new Address",
+			"input-placeholder": "e.g. 0x3b18a4...",
+			"tx-confirmation-title": "Delegating to",
+			"button-labels": {
+				"enter-address": "Enter an address",
+				"delegate": "Delegate",
+				"delegating": "Delegating..."
+			}
+		},
+		"info": {
+			"title": "Delegate another address for Staking",
+			"subtitle": "Delegation enables a wallet to execute functions on behalf of another wallet: mint, burn, arn, and exchange, but not transfer.",
+			"learn-more": "Learn more."
+		},
+		"list": {
+			"title": "Manage addresses",
+			"empty": "No addresses to show",
+			"cols": {
+				"address": "Address",
+				"actions": "Actions"
+			}
 		}
 	}
 }
