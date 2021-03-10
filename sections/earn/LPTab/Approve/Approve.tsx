@@ -14,7 +14,13 @@ import Notify from 'containers/Notify';
 import Etherscan from 'containers/Etherscan';
 import { zIndex } from 'constants/ui';
 import LockedIcon from 'assets/svg/app/locked.svg';
-import { curveSusdRewards, curveSusdPoolToken, balancersTSLAPoolToken } from 'contracts';
+import {
+	curveSusdRewards,
+	curveSusdPoolToken,
+	balancersTSLAPoolToken,
+	dualStakingRewards,
+	DHTsUSDLPToken,
+} from 'contracts';
 import Connector from 'containers/Connector';
 import { EXTERNAL_LINKS } from 'constants/links';
 import {
@@ -78,6 +84,15 @@ export const getApprovalContractData = (stakedAsset: CurrencyKey, signer: any) =
 				signer as any
 			),
 			poolAddress: contracts.StakingRewardssTSLABalancer.address,
+		};
+	} else if (stakedAsset === LP.UNISWAP_DHT) {
+		return {
+			contract: new ethers.Contract(
+				dualStakingRewards.address,
+				dualStakingRewards.abi,
+				signer as any
+			),
+			poolAddress: DHTsUSDLPToken.address,
 		};
 	} else {
 		throw new Error('unrecognizable asset');
