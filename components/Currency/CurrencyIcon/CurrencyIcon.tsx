@@ -71,7 +71,7 @@ import iTRXIcon from '@synthetixio/assets/synths/iTRX.svg';
 import iDASHIcon from '@synthetixio/assets/synths/iDASH.svg';
 import iETCIcon from '@synthetixio/assets/synths/iETC.svg';
 import sTSLAIcon from '@synthetixio/assets/synths/sTSLA.svg';
-import DHTIcon from 'assets/svg/currencies/crypto/dhedge.svg';
+import DHTIcon from 'assets/svg/currencies/crypto/DHEDGE.svg';
 
 // Commoditiy Synths
 import sXAUIcon from '@synthetixio/assets/synths/sXAU.svg';
