@@ -48,9 +48,14 @@ import {
 
 import { LP } from 'sections/earn/types';
 
+type DualRewards = {
+	a: number;
+	b: number;
+};
+
 type LPTabProps = {
 	stakedAsset: CurrencyKey;
-	tokenRewards: number;
+	tokenRewards: number | DualRewards;
 	allowance: number | null;
 	userBalance: number;
 	userBalanceBN: BigNumber;
@@ -175,6 +180,8 @@ const LPTab: FC<LPTabProps> = ({
 			return 'earn.incentives.options.seur.description';
 		} else if (stakedAsset === LP.BALANCER_sTSLA) {
 			return 'earn.incentives.options.stsla.description';
+		} else if (stakedAsset === LP.UNISWAP_DHT) {
+			return 'earn.incentives.options.dht.description';
 		} else {
 			throw new Error('unexpected staking asset for translation key');
 		}
@@ -198,7 +205,7 @@ const LPTab: FC<LPTabProps> = ({
 						<GreyHeader>{t('earn.actions.claim.claiming')}</GreyHeader>
 						<WhiteSubheader>
 							{t('earn.actions.claim.amount', {
-								amount: formatNumber(tokenRewards, { decimals: DEFAULT_CRYPTO_DECIMALS }),
+								amount: formatNumber(tokenRewards as number, { decimals: DEFAULT_CRYPTO_DECIMALS }),
 								asset: CryptoCurrency.SNX,
 							})}
 						</WhiteSubheader>
@@ -231,7 +238,7 @@ const LPTab: FC<LPTabProps> = ({
 						<GreyHeader>{t('earn.actions.claim.claiming')}</GreyHeader>
 						<WhiteSubheader>
 							{t('earn.actions.claim.amount', {
-								amount: formatNumber(tokenRewards, { decimals: DEFAULT_CRYPTO_DECIMALS }),
+								amount: formatNumber(tokenRewards as number, { decimals: DEFAULT_CRYPTO_DECIMALS }),
 								asset: CryptoCurrency.SNX,
 							})}
 						</WhiteSubheader>
@@ -255,43 +262,69 @@ const LPTab: FC<LPTabProps> = ({
 		);
 	}
 
+	const getLink = () => {
+		switch (stakedAsset) {
+			case LP.BALANCER_sTSLA:
+				return `https://pools.balancer.exchange/#/pool/0x055db9aff4311788264798356bbf3a733ae181c6/`;
+			case LP.UNISWAP_DHT:
+				return `https://uniswap.exchange/add/0x57ab1ec28d129707052df4df418d58a2d46d5f51/0xca1207647ff814039530d7d35df0e1dd2e91fa84`;
+			default:
+				return EXTERNAL_LINKS.Synthetix.Incentives;
+		}
+	};
+
 	return (
 		<TabContainer>
 			<HeaderLabel>
-				<Trans
-					i18nKey={translationKey}
-					components={[
-						<StyledLink
-							href={
-								stakedAsset === LP.BALANCER_sTSLA
-									? `https://pools.balancer.exchange/#/pool/0x055db9aff4311788264798356bbf3a733ae181c6/`
-									: EXTERNAL_LINKS.Synthetix.Incentives
-							}
-						/>,
-					]}
-				/>
+				<Trans i18nKey={translationKey} components={[<StyledLink href={getLink()} />]} />
 			</HeaderLabel>
-			<FlexDivCentered>
-				<StructuredTab
-					tabHeight={30}
-					inverseTabColor={true}
-					boxPadding={0}
-					boxHeight={242}
-					boxWidth={310}
-					tabData={tabData}
-				/>
-				<RewardsBox
-					setClaimGasPrice={setClaimGasPrice}
-					claimTxModalOpen={claimTxModalOpen}
-					setClaimTxModalOpen={setClaimTxModalOpen}
-					handleClaim={handleClaim}
-					claimError={claimError}
-					setClaimError={setClaimError}
-					stakedAsset={stakedAsset}
-					tokenRewards={tokenRewards}
-					SNXRate={SNXRate}
-				/>
-			</FlexDivCentered>
+			{stakedAsset === LP.UNISWAP_DHT ? (
+				<>
+					<StructuredTab
+						tabHeight={30}
+						inverseTabColor={true}
+						boxPadding={0}
+						boxHeight={242}
+						boxWidth={512}
+						tabData={tabData}
+					/>
+					<RewardsBox
+						setClaimGasPrice={setClaimGasPrice}
+						claimTxModalOpen={claimTxModalOpen}
+						setClaimTxModalOpen={setClaimTxModalOpen}
+						handleClaim={handleClaim}
+						claimError={claimError}
+						setClaimError={setClaimError}
+						stakedAsset={stakedAsset}
+						tokenRewards={(tokenRewards as DualRewards).a}
+						SNXRate={SNXRate}
+						secondTokenReward={(tokenRewards as DualRewards).b}
+						secondTokenKey={CryptoCurrency.DHT}
+					/>
+				</>
+			) : (
+				<FlexDivCentered>
+					<StructuredTab
+						tabHeight={30}
+						inverseTabColor={true}
+						boxPadding={0}
+						boxHeight={242}
+						boxWidth={310}
+						tabData={tabData}
+					/>
+					<RewardsBox
+						setClaimGasPrice={setClaimGasPrice}
+						claimTxModalOpen={claimTxModalOpen}
+						setClaimTxModalOpen={setClaimTxModalOpen}
+						handleClaim={handleClaim}
+						claimError={claimError}
+						setClaimError={setClaimError}
+						stakedAsset={stakedAsset}
+						tokenRewards={tokenRewards as number}
+						SNXRate={SNXRate}
+					/>
+				</FlexDivCentered>
+			)}
 			{showApproveOverlayModal && (
 				<Approve
 					setShowApproveOverlayModal={setShowApproveOverlayModal}

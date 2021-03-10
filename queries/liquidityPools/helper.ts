@@ -53,3 +53,27 @@ export async function getsTSLABalancerPool(): Promise<number> {
 			throw Error(e);
 		});
 }
+
+export async function getUniswapPairLiquidity(DHTLPTokenAddress: string): Promise<number> {
+	return pageResults({
+		api: uniswapV2SubgraphURL,
+		query: {
+			entity: 'pairs',
+			selection: {
+				orderBy: 'id',
+				orderDirection: 'desc',
+				where: {
+					id: `\\"${DHTLPTokenAddress}\\"`,
+				},
+			},
+			properties: ['reserveUSD'],
+		},
+		max: 1,
+	})
+		.then((result: any) => {
+			return Number(result[0].reserveUSD);
+		})
+		.catch((e: any) => {
+			throw Error(e);
+		});
+}

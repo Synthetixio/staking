@@ -175,6 +175,23 @@ const Incentives: FC<IncentivesProps> = ({
 							tab: Tab.sEURO_LP,
 							externalLink: ROUTES.Earn.sEURO_EXTERNAL,
 						},
+						{
+							title: t('earn.incentives.options.dht.title'),
+							subtitle: t('earn.incentives.options.dht.subtitle'),
+							apr: lpData[LP.UNISWAP_DHT].APR,
+							tvl: lpData[LP.UNISWAP_DHT].TVL,
+							staked: {
+								balance: lpData[LP.UNISWAP_DHT].data?.staked ?? 0,
+								asset: LP.UNISWAP_DHT,
+							},
+							rewards: lpData[LP.UNISWAP_DHT].data?.rewards ?? 0,
+							periodStarted: now - (lpData[LP.UNISWAP_DHT].data?.duration ?? 0),
+							periodFinish: lpData[LP.UNISWAP_DHT].data?.periodFinish ?? 0,
+							claimed: (lpData[LP.UNISWAP_DHT].data?.rewards ?? 0) > 0 ? false : NOT_APPLICABLE,
+							now,
+							route: ROUTES.Earn.DHT_LP,
+							tab: Tab.DHT_LP,
+						},
 				  ]
 				: [],
 		[
@@ -255,6 +272,18 @@ const Incentives: FC<IncentivesProps> = ({
 						staked={incentives[3].staked.balance}
 						stakedBN={lpData[LP.BALANCER_sTSLA].data?.stakedBN ?? zeroBN}
 						needsToSettle={incentives[3].needsToSettle}
+					/>
+				)}
+				{activeTab === Tab.DHT_LP && (
+					<LPTab
+						userBalance={lpData[LP.UNISWAP_DHT].data?.userBalance ?? 0}
+						userBalanceBN={lpData[LP.UNISWAP_DHT].data?.userBalanceBN ?? zeroBN}
+						stakedAsset={LP.UNISWAP_DHT}
+						allowance={lpData[LP.UNISWAP_DHT].data?.allowance ?? null}
+						tokenRewards={incentives[6].rewards}
+						staked={incentives[6].staked.balance}
+						stakedBN={lpData[LP.UNISWAP_DHT].data?.stakedBN ?? zeroBN}
+						needsToSettle={incentives[6].needsToSettle}
 					/>
 				)}
 			</TabContainer>

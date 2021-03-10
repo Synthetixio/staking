@@ -207,6 +207,12 @@ export const QUERY_KEYS = {
 			walletAddress,
 			networkId,
 		],
+		DHTsUSD: (walletAddress: string, networkId: NetworkId) => [
+			'liquidityPools',
+			'DHT-sUSD',
+			walletAddress,
+			networkId,
+		],
 	},
 	Deposits: (walletAddress: string, networkId: NetworkId) => [
 		'deposits',
