@@ -7,7 +7,7 @@ import BigNumber from 'bignumber.js';
 
 import { appReadyState } from 'store/app';
 import StructuredTab from 'components/StructuredTab';
-import { FlexDivCentered, FlexDivColCentered, ExternalLink } from 'styles/common';
+import { FlexDivCentered, FlexDivColCentered, ExternalLink, FlexDiv } from 'styles/common';
 import { CurrencyKey } from 'constants/currency';
 import Etherscan from 'containers/Etherscan';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
@@ -47,6 +47,7 @@ import {
 } from '../common';
 
 import { LP } from 'sections/earn/types';
+import styled from 'styled-components';
 
 type DualRewards = {
 	a: number;
@@ -187,6 +188,33 @@ const LPTab: FC<LPTabProps> = ({
 		}
 	}, [stakedAsset]);
 
+	const DualRewardsClaimInfo = (
+		<StyledFlexDiv>
+			<StyledFlexDivColCentered>
+				<GreyHeader>{t('earn.actions.claim.claiming')}</GreyHeader>
+				<WhiteSubheader>
+					{t('earn.actions.claim.amount', {
+						amount: formatNumber((tokenRewards as DualRewards).a, {
+							decimals: DEFAULT_CRYPTO_DECIMALS,
+						}),
+						asset: CryptoCurrency.SNX,
+					})}
+				</WhiteSubheader>
+			</StyledFlexDivColCentered>
+			<StyledFlexDivColCentered>
+				<GreyHeader>{t('earn.actions.claim.claiming')}</GreyHeader>
+				<WhiteSubheader>
+					{t('earn.actions.claim.amount', {
+						amount: formatNumber((tokenRewards as DualRewards).b, {
+							decimals: DEFAULT_CRYPTO_DECIMALS,
+						}),
+						asset: CryptoCurrency.DHT,
+					})}
+				</WhiteSubheader>
+			</StyledFlexDivColCentered>
+		</StyledFlexDiv>
+	);
+
 	if (claimTransactionState === Transaction.WAITING) {
 		return (
 			<TxState
@@ -202,13 +230,21 @@ const LPTab: FC<LPTabProps> = ({
 				content={
 					<FlexDivColCentered>
 						<Svg src={PendingConfirmation} />
-						<GreyHeader>{t('earn.actions.claim.claiming')}</GreyHeader>
-						<WhiteSubheader>
-							{t('earn.actions.claim.amount', {
-								amount: formatNumber(tokenRewards as number, { decimals: DEFAULT_CRYPTO_DECIMALS }),
-								asset: CryptoCurrency.SNX,
-							})}
-						</WhiteSubheader>
+						{stakedAsset === LP.UNISWAP_DHT ? (
+							DualRewardsClaimInfo
+						) : (
+							<>
+								<GreyHeader>{t('earn.actions.claim.claiming')}</GreyHeader>
+								<WhiteSubheader>
+									{t('earn.actions.claim.amount', {
+										amount: formatNumber(tokenRewards as number, {
+											decimals: DEFAULT_CRYPTO_DECIMALS,
+										}),
+										asset: CryptoCurrency.SNX,
+									})}
+								</WhiteSubheader>
+							</>
+						)}
 						<Divider />
 						<GreyText>{t('earn.actions.tx.notice')}</GreyText>
 						<ExternalLink href={claimLink}>
@@ -235,13 +271,21 @@ const LPTab: FC<LPTabProps> = ({
 				content={
 					<FlexDivColCentered>
 						<Svg src={Success} />
-						<GreyHeader>{t('earn.actions.claim.claiming')}</GreyHeader>
-						<WhiteSubheader>
-							{t('earn.actions.claim.amount', {
-								amount: formatNumber(tokenRewards as number, { decimals: DEFAULT_CRYPTO_DECIMALS }),
-								asset: CryptoCurrency.SNX,
-							})}
-						</WhiteSubheader>
+						{stakedAsset === LP.UNISWAP_DHT ? (
+							DualRewardsClaimInfo
+						) : (
+							<>
+								<GreyHeader>{t('earn.actions.claim.claiming')}</GreyHeader>
+								<WhiteSubheader>
+									{t('earn.actions.claim.amount', {
+										amount: formatNumber(tokenRewards as number, {
+											decimals: DEFAULT_CRYPTO_DECIMALS,
+										}),
+										asset: CryptoCurrency.SNX,
+									})}
+								</WhiteSubheader>
+							</>
+						)}
 						<Divider />
 						<ButtonSpacer>
 							{claimLink ? (
@@ -337,5 +381,16 @@ const LPTab: FC<LPTabProps> = ({
 		</TabContainer>
 	);
 };
+
+const StyledFlexDivColCentered = styled(FlexDivColCentered)`
+	padding: 20px 30px;
+	&:first-child {
+		border-right: 1px solid ${(props) => props.theme.colors.grayBlue};
+	}
+`;
+
+const StyledFlexDiv = styled(FlexDiv)`
+	margin-bottom: -20px;
+`;
 
 export default LPTab;
