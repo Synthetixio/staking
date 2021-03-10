@@ -61,7 +61,7 @@ const useDHTsUSDPoolQuery = (options?: QueryConfig<DualRewardsLiquidityPoolData>
 				StakingDualRewards.earnedB(walletAddress),
 				StakingDualRewards.balanceOf(walletAddress),
 				DHTsUSDLPToken.allowance(walletAddress, address),
-				getUniswapPairLiquidity(lpToken.address),
+				getUniswapPairLiquidity(),
 			]);
 			const durationInWeeks = Number(duration) / 3600 / 24 / 7;
 			const isPeriodFinished = new Date().getTime() > Number(periodFinish) * 1000;
