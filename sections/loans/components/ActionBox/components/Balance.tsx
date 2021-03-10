@@ -9,7 +9,6 @@ import { walletAddressState } from 'store/wallet';
 import Connector from 'containers/Connector';
 import { formatUnits } from 'utils/formatters/big-number';
 import { useLoans } from 'sections/loans/contexts/loans';
-import { sleep } from 'utils/promise';
 
 type BalanceProps = {
 	asset: string;
@@ -71,7 +70,7 @@ const ETH: React.FC<ETHProps> = ({ onSetMaxAmount }) => {
 	return (
 		balance && (
 			<Container>
-				{t('loans.balance-input-label')} {formatUnits(balance, 18, 2)}{' '}
+				{t('balance.input-label')} {formatUnits(balance, 18, 2)}{' '}
 				{!onSetMaxAmount ? null : <MaxButton onClick={handleSetMaxAmount} />}
 			</Container>
 		)
@@ -125,7 +124,6 @@ const ERC20: React.FC<ERC20Props> = ({ asset, onSetMaxAmount }) => {
 			const transferEvent = contract.filters.Transfer();
 			const onBalanceChange = async (from: string, to: string) => {
 				if (from === address || to === address) {
-					await sleep(1000);
 					if (isMounted) setBalance(await contract.balanceOf(address));
 				}
 			};
@@ -143,7 +141,7 @@ const ERC20: React.FC<ERC20Props> = ({ asset, onSetMaxAmount }) => {
 
 	return !(decimals && balance) ? null : (
 		<Container>
-			{t('loans.balance-input-label')} {formatUnits(balance, decimals, 2)}{' '}
+			{t('balance.input-label')} {formatUnits(balance, decimals, 2)}{' '}
 			{!onSetMaxAmount ? null : <MaxButton onClick={handleSetMaxAmount} />}
 		</Container>
 	);
@@ -154,7 +152,8 @@ type MaxButtonProps = {
 };
 
 const MaxButton: React.FC<MaxButtonProps> = ({ onClick }) => {
-	return <StyleMaxButton {...{ onClick }}>MAX</StyleMaxButton>;
+	const { t } = useTranslation();
+	return <StyleMaxButton {...{ onClick }}>{t('balance.max')}</StyleMaxButton>;
 };
 
 const Container = styled.div`
@@ -168,4 +167,5 @@ const StyleMaxButton = styled.div`
 	color: ${(props) => props.theme.colors.blue};
 	cursor: pointer;
 	margin-left: 5px;
+	text-transform: uppercase;
 `;

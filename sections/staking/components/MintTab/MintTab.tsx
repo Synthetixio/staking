@@ -127,7 +127,7 @@ const MintTab: React.FC = () => {
 				}
 			}
 		},
-		[amountToMint, gasPrice, monitorHash, isAppReady, onMintChange]
+		[amountToMint, gasPrice, monitorHash, isAppReady]
 	);
 
 	const returnPanel = useMemo(() => {

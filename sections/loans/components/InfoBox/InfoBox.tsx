@@ -7,6 +7,7 @@ import { walletAddressState } from 'store/wallet';
 import styled from 'styled-components';
 import Connector from 'containers/Connector';
 import Button from 'components/Button';
+import { Synths } from 'constants/currency';
 import synthetix from 'lib/synthetix';
 import { tx } from 'utils/transactions';
 import { toFixed, toBig, formatUnits } from 'utils/formatters/big-number';
@@ -68,7 +69,8 @@ const InfoBox: React.FC = () => {
 			};
 		};
 
-		const loadBorrowsStats = () => Promise.all(['sBTC', 'sETH', 'sUSD'].map(getBorrowStats));
+		const loadBorrowsStats = () =>
+			Promise.all([Synths.sBTC, Synths.sETH, Synths.sUSD].map(getBorrowStats));
 
 		const load = async () => {
 			try {
@@ -101,7 +103,7 @@ const InfoBox: React.FC = () => {
 					<Title>{t('loans.info.title')}</Title>
 					<Subtitle>
 						{t('loans.info.subtitle')}{' '}
-						<a href="/" target="_blank">
+						<a href="https://sips.synthetix.io/sips/sip-97" target="_blank" rel="noreferrer">
 							{t('loans.info.learn-more')}
 						</a>
 					</Subtitle>

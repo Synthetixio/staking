@@ -195,7 +195,7 @@ const BurnTab: React.FC = () => {
 				}
 			}
 		},
-		[amountToBurn, gasPrice, monitorHash, walletAddress, isAppReady, onBurnChange]
+		[amountToBurn, gasPrice, monitorHash, walletAddress, isAppReady]
 	);
 
 	const handleClear = async () => {

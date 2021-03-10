@@ -60,7 +60,7 @@ const ActionBox: React.FC<ActionBoxProps> = () => {
 			boxWidth={ACTION_BOX_WIDTH}
 			tabData={tabData}
 			setPanelType={(key) => router.push(`/loans/${key}`)}
-			currentPanel={t(`loans.tabs.${currentTab}.title`)}
+			currentPanel={currentTab}
 		/>
 	);
 };

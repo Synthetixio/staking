@@ -542,7 +542,6 @@
 		"issuance-fee": "Issuance Fee",
 		"cratio": "C-Ratio",
 		"interest-accrued": "Interest Accrued",
-		"balance-input-label": "Balance:",
 		"no-active-loans": "You have no active borrows.",
 		"tabs": {
 			"new": {
@@ -580,7 +579,7 @@
 		},
 		"info": {
 			"title": "Borrow Synths using other assets",
-			"subtitle": "Lorem ipsum dolor sit amet, consectetur id feugiat vel quis urna consequat in. Netus arcu massa purus dolor sit.",
+			"subtitle": "Borrow synthetic assets against ETH and renBTC collateral.",
 			"learn-more": "Learn more."
 		},
 		"pending-withdrawals": {
@@ -1049,5 +1048,9 @@
 			"heading": "governance:",
 			"message": "Have your say on who will represent the SNX community, vote for your Spartan Council now! Voting costs zero-gas."
 		}
+	},
+	"balance": {
+		"input-label": "Balance:",
+		"max": "Max"
 	}
 }
