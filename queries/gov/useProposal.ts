@@ -6,7 +6,7 @@ import axios from 'axios';
 import QUERY_KEYS from 'constants/queryKeys';
 import { PROPOSAL, SPACE, SPACE_KEY } from 'constants/snapshot';
 
-import { formatProposal, getProfiles, ipfsGet } from 'sections/gov/components/helper';
+import { getProfiles, ipfsGet } from 'sections/gov/components/helper';
 
 import { appReadyState } from 'store/app';
 import { walletAddressState } from 'store/wallet';
@@ -42,7 +42,7 @@ const useProposal = (spaceKey: SPACE_KEY, hash: string, options?: QueryConfig<Pr
 
 			let [proposal, votes, space]: any = response;
 
-			proposal = formatProposal(proposal);
+			proposal.msg = JSON.parse(proposal.msg);
 
 			const voters = Object.keys(votes.data);
 
