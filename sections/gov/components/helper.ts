@@ -13,36 +13,6 @@ export async function ipfsGet(ipfsHash: string) {
 	return fetch(url).then((res) => res.json());
 }
 
-export function jsonParse(input: any, fallback?: any) {
-	if (typeof input !== 'string') {
-		return fallback || {};
-	}
-	try {
-		return JSON.parse(input);
-	} catch (err) {
-		return fallback || {};
-	}
-}
-
-export function formatProposal(proposal: any) {
-	proposal.msg = jsonParse(proposal.msg, proposal.msg);
-
-	// v0.1.0
-	if (proposal.msg.version === '0.1.0') {
-		proposal.msg.payload.start = 1595088000;
-		proposal.msg.payload.end = 1595174400;
-		proposal.msg.payload.snapshot = 10484400;
-		proposal.bpt_voting_disabled = '1';
-	}
-
-	// v0.1.1
-	if (proposal.msg.version === '0.1.0' || proposal.msg.version === '0.1.1') {
-		proposal.msg.payload.metadata = {};
-	}
-
-	return proposal;
-}
-
 function get3BoxProfiles(addresses: any) {
 	return new Promise((resolve, reject) => {
 		snapshot.utils
