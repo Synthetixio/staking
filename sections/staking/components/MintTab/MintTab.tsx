@@ -17,6 +17,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { amountToMintState, MintActionType, mintTypeState } from 'store/staking';
 import { isWalletConnectedState } from 'store/wallet';
 import { appReadyState } from 'store/app';
+import { useTranslation } from 'react-i18next';
 
 const MintTab: React.FC = () => {
 	const { monitorHash } = Notify.useContainer();
@@ -38,6 +39,7 @@ const MintTab: React.FC = () => {
 
 	const [gasPrice, setGasPrice] = useState<number>(0);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
+	const { t } = useTranslation();
 
 	useEffect(() => {
 		const getGasLimitEstimate = async () => {
@@ -51,7 +53,7 @@ const MintTab: React.FC = () => {
 					let gasEstimate;
 
 					if (unstakedCollateral.isZero())
-						throw new Error('staking.actions.mint.action.error.insufficient');
+						throw new Error(t('staking.actions.mint.action.error.insufficient'));
 
 					if (amountToMint.length > 0 && !mintMax) {
 						gasEstimate = await getGasEstimateForTransaction(
@@ -68,9 +70,9 @@ const MintTab: React.FC = () => {
 				} catch (error) {
 					let errorMessage = error.message;
 					if (error.code === 'INVALID_ARGUMENT') {
-						errorMessage = 'staking.actions.mint.action.error.bad-input';
+						errorMessage = t('staking.actions.mint.action.error.bad-input');
 					} else if (error.code === -32603) {
-						errorMessage = 'staking.actions.mint.action.error.insufficient';
+						errorMessage = t('staking.actions.mint.action.error.insufficient');
 					}
 					setError(errorMessage);
 					setGasLimitEstimate(null);

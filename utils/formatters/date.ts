@@ -17,3 +17,7 @@ export const secondsToTime = (seconds: number) => {
 
 	return `${strPadLeft(minutes, '0', 2)}:${strPadLeft(secondsLeft, '0', 2)}`;
 };
+
+export const toFutureDate = (seconds: number) => {
+	return formatShortDateWithTime(new Date(new Date().getTime() + seconds * 1000));
+};

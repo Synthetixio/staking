@@ -259,8 +259,8 @@
 					"error": {
 						"no-debt": "No debt to burn",
 						"bad-input": "Invalid input amount",
-						"waiting-period": "sUSD waiting period still ongoing",
-						"issuance-period": "Issuance waiting period is still ongoing",
+						"waiting-period": "Burning blocked until {{date}}",
+						"issuance-period": "Burning blocked until {{date}}",
 						"insufficient": "Insufficient sUSD to burn debt",
 						"exception": "Contract error"
 					}
