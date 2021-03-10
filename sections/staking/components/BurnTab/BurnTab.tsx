@@ -167,6 +167,7 @@ const BurnTab: React.FC = () => {
 		getGasLimitEstimate();
 	}, [
 		isWalletConnected,
+		t,
 		isAppReady,
 		error,
 		amountToBurn,

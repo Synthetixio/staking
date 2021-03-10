@@ -80,7 +80,7 @@ const MintTab: React.FC = () => {
 			}
 		};
 		getGasLimitEstimate();
-	}, [amountToMint, mintMax, isWalletConnected, unstakedCollateral, isAppReady]);
+	}, [amountToMint, mintMax, isWalletConnected, unstakedCollateral, isAppReady, t]);
 
 	const handleStake = useCallback(
 		async (mintMax: boolean) => {
