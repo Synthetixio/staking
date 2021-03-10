@@ -17,3 +17,5 @@ export const secondsToTime = (seconds: number) => {
 
 	return `${strPadLeft(minutes, '0', 2)}:${strPadLeft(secondsLeft, '0', 2)}`;
 };
+
+export const getCurrentTimestampSeconds = () => Date.now() / 1000;

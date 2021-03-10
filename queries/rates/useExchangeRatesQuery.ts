@@ -16,7 +16,9 @@ type CurrencyRate = BigNumberish;
 type SynthRatesTuple = [string[], CurrencyRate[]];
 
 // Additional commonly used currencies to fetch, besides the one returned by the SynthUtil.synthsRates
-const additionalCurrencies = [CryptoCurrency.SNX].map(ethers.utils.formatBytes32String);
+const additionalCurrencies = [CryptoCurrency.SNX, CryptoCurrency.BTC].map(
+	ethers.utils.formatBytes32String
+);
 
 const useExchangeRatesQuery = (options?: QueryConfig<Rates>) => {
 	const isAppReady = useRecoilValue(appReadyState);

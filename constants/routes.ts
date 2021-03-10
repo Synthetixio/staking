@@ -1,10 +1,5 @@
 export const ROUTES = {
 	Home: '/',
-	Loans: {
-		Home: '/loans',
-		New: '/loans/new',
-		List: '/loans/list',
-	},
 	Staking: {
 		Home: '/staking',
 		Burn: '/staking/burn',
@@ -15,6 +10,8 @@ export const ROUTES = {
 	},
 	Escrow: {
 		Home: '/escrow',
+		Staking: '/escrow/staking',
+		ICO: '/escrow/ico',
 	},
 	History: {
 		Home: '/history',
@@ -37,6 +34,17 @@ export const ROUTES = {
 		Home: '/l2',
 		Deposit: '/l2/deposit',
 		Migrate: '/l2/migrate',
+	},
+	Gov: {
+		Home: '/gov',
+		Space: (spaceKey: string) => `/gov/${spaceKey}`,
+		Create: (spaceKey: string) => `/gov/${spaceKey}/create`,
+		Proposal: (spaceKey: string, id: string) => `/gov/${spaceKey}/${id}`,
+	},
+	Loans: {
+		Home: '/loans',
+		New: '/loans/new',
+		List: '/loans/list',
 	},
 };
 

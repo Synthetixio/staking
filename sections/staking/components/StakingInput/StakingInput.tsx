@@ -59,6 +59,7 @@ type StakingInputProps = {
 	setTransactionState: (tx: Transaction) => void;
 	maxBurnAmount?: BigNumber;
 	burnAmountToFixCRatio?: BigNumber;
+	canClearDebt?: boolean;
 };
 
 const StakingInput: React.FC<StakingInputProps> = ({
@@ -78,6 +79,7 @@ const StakingInput: React.FC<StakingInputProps> = ({
 	setTransactionState,
 	maxBurnAmount,
 	burnAmountToFixCRatio,
+	canClearDebt,
 }) => {
 	const {
 		targetCRatio,
@@ -151,6 +153,26 @@ const StakingInput: React.FC<StakingInputProps> = ({
 					/>
 				</StyledCTA>
 			);
+		} else if (burnType === BurnActionType.CLEAR && !canClearDebt) {
+			return (
+				<StyledCTA variant="primary" size="lg" disabled={true} style={{ padding: 0 }}>
+					<Trans
+						i18nKey="staking.actions.burn.action.insufficient-sUSD-to-clear-debt"
+						components={[<NoTextTransform />]}
+					/>
+				</StyledCTA>
+			);
+		} else if (burnType === BurnActionType.CLEAR) {
+			return (
+				<StyledCTA
+					onClick={onSubmit}
+					variant="primary"
+					size="lg"
+					disabled={transactionState !== Transaction.PRESUBMIT}
+				>
+					{t('staking.actions.burn.action.clear-debt')}
+				</StyledCTA>
+			);
 		} else {
 			return (
 				<StyledCTA
@@ -173,6 +195,7 @@ const StakingInput: React.FC<StakingInputProps> = ({
 		error,
 		transactionState,
 		isMint,
+		canClearDebt,
 		onSubmit,
 		t,
 		isWalletConnected,

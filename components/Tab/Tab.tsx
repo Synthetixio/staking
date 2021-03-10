@@ -43,7 +43,7 @@ export const TabList = ({
 
 export const TabPanel = ({
 	name,
-	activeTab,
+	active,
 	children,
 	height,
 	width,
@@ -51,13 +51,13 @@ export const TabPanel = ({
 	...props
 }: {
 	name: string;
-	activeTab: string;
+	active: boolean;
 	children: ReactNode;
 	height?: number;
 	width: number;
 	padding: number;
 }) =>
-	activeTab === name ? (
+	active ? (
 		<TabPanelContainer
 			id={`${name}-tabpanel`}
 			role="tabpanel"

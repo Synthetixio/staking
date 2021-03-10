@@ -58,7 +58,31 @@
 				"title": "Migrating",
 				"escrow-schedule": "ESCROW SCHEDULE"
 			},
+			"propose": {
+				"title": "Writing proposal to contract",
+				"hash": "{{hash}}"
+			},
+			"withdraw": {
+				"title": "Diluting Member",
+				"address": "{{address}}"
+			},
+			"support": {
+				"title": "Supporting Member",
+				"address": "{{address}}"
+			},
 			"helper": "Follow the Metamask prompts to authorize the transaction"
+		},
+		"confirm-signature": {
+			"title": "Confirm Signature",
+			"vote": {
+				"title": "Submitting vote for",
+				"hash": "{{hash}}"
+			},
+			"propose": {
+				"title": "Creating a proposal on",
+				"space": "{{space}}"
+			},
+			"helper": "Follow the Metamask prompts to confirm your signature"
 		},
 		"wallet": {
 			"title": "connected wallet",
@@ -231,6 +255,10 @@
 					"custom": {
 						"title": "Burn custom",
 						"subtext": "Burn a custom amount of sUSD"
+					},
+					"clear-debt": {
+						"title": "Clear debt",
+						"subtext": "Buy and burn sUSD to clear your total debt and unstake all SNX"
 					}
 				},
 				"info": {
@@ -240,6 +268,8 @@
 					"empty": "Enter an amount",
 					"burn": "Burn <0>sUSD</0>",
 					"max": "Max",
+					"clear-debt": "Clear debt",
+					"insufficient-sUSD-to-clear-debt": "Insufficient <0>sUSD</0> to clear debt",
 					"insufficient-sUSD-to-fix-c-ratio": "Insufficient <0>sUSD</0> to fix c-ratio. mint or by <0>sUSD</0> to proceed",
 					"error": {
 						"no-debt": "No debt to burn",
@@ -301,6 +331,19 @@
 						"actualDebt": "Active Debt",
 						"issuedDebt": "Issued Debt"
 					}
+				}
+			},
+			"hedge": {
+				"info": {
+					"debt-pool-pie-chart": {
+						"title": "Global Debt Pool"
+					},
+					"portfolio-table": {
+						"title": "Your Portfolio",
+						"sETH-tooltip": "The sETH total includes other related assets such as <0>ETH</0> and <0>wETH</0>",
+						"sBTC-tooltip": "The sBTC total includes other related assets such as <0>wBTC</0> and <0>renBTC</0>"
+					},
+					"tooltip": "This table serves as a <0>hedging indicator</0>, showing the relationship between your Synth balances and the global debt pool"
 				}
 			}
 		}
@@ -732,6 +775,10 @@
 					"balance": "Balance",
 					"price": "Price",
 					"holdings": "Holdings %",
+					"total": "Total",
+					"percentage-of-pool": "% of pool",
+					"percentage-of-portfolio": "% of portfolio",
+					"debt-pool-proportion": "% of global debt",
 					"no-synths": {
 						"title": "You have no Synths",
 						"desc": "Mint sUSD by staking your SNX"
@@ -740,6 +787,132 @@
 			},
 			"non-synths": {
 				"title": "Non-Synth Balances"
+			}
+		}
+	},
+	"gov": {
+		"page-title": "Governance | Synthetix Staking",
+		"panel": {
+			"council": {
+				"title": "Elections"
+			},
+			"proposals": {
+				"title": "SIP/SCCP"
+			},
+			"grants": {
+				"title": "Grants"
+			},
+			"ambassador": {
+				"title": "Ambassadors"
+			}
+		},
+		"table": {
+			"description": "Description",
+			"status": {
+				"title": "Status",
+				"open": "Open",
+				"closed": "Closed",
+				"pending": "Pending"
+			},
+			"time": "Time left",
+			"votes": "Votes",
+			"create": "Create new proposal"
+		},
+		"create": {
+			"title": "Create new proposal",
+			"question": "Enter Question",
+			"description": "Enter description",
+			"preview": "Preview",
+			"action": {
+				"loading": "Submitting...",
+				"error": "An unexpected error occurred.",
+				"success": "Submitted",
+				"idle": "Publish",
+				"invalid": "Missing proposal inputs"
+			},
+			"choices": "Create choices",
+			"add": "+ Add option",
+			"start": {
+				"date": "Start date"
+			},
+			"end": {
+				"date": "End date"
+			},
+			"select": "Select date",
+			"block": "Block",
+			"helper": "NOTE: Creating a SCCP/SIP requires the proposer to pay a TX fee after the snapshot proposal is created."
+		},
+		"proposal": {
+			"status": {
+				"open": "Open",
+				"closed": "Closed",
+				"pending": "Pending"
+			},
+			"action": {
+				"vote": "Vote",
+				"withdraw": "Withdraw",
+				"support": "Support"
+			},
+			"info": {
+				"author": "Author",
+				"time": "Start - End",
+				"snapshot": "Snapshot"
+			},
+			"votes": {
+				"title": "Current results"
+			},
+			"history": {
+				"title": "Voting history",
+				"currentUser": "You",
+				"empty": "There are no votes yet"
+			}
+		},
+		"council": {
+			"title": "The current spartan council members",
+			"empty": "The Spartan Council is awaiting its elect"
+		},
+		"actions": {
+			"vote": {
+				"waiting": "Voting in progress",
+				"signing": "Voting on",
+				"signed": "Voted on",
+				"hash": "{{hash}}",
+				"success": "Your vote is in!"
+			},
+			"withdraw": {
+				"waiting": "Withdrawal in progress",
+				"signing": "Withdrawing from",
+				"signed": "Withdrew votes from",
+				"address": "{{address}}",
+				"success": "Dilution successful"
+			},
+			"support": {
+				"waiting": "Reassigning vote weight",
+				"signing": "Reverting dilution for",
+				"signed": "Reverted dilution for",
+				"address": "{{address}}",
+				"success": "Dilution removed successfully"
+			},
+			"propose": {
+				"waiting": "Submitting proposal",
+				"signing": "Proposing on",
+				"signed": "Proposal hash",
+				"space": "{{space}}",
+				"hash": "{{hash}}",
+				"success": "Your proposal is in!"
+			},
+			"log-proposal": {
+				"waiting": "Logging proposal",
+				"logging": "Saving proposal",
+				"hash": "{{hash}}",
+				"success": "Transaction Success",
+				"logged": "Saved proposal"
+			},
+			"tx": {
+				"link": "View on Etherscan",
+				"notice": "Waiting for the blockchain to confirm your transaction.",
+				"verify": "Verify Tx",
+				"dismiss": "Dismiss"
 			}
 		}
 	},
@@ -752,7 +925,12 @@
 		"synths": "Synths",
 		"escrow": "Escrow",
 		"history": "History",
+		"loans": "Loans",
+		"governance": "Governance",
+		"wallet": "Wallet",
+		"mint-and-burn": "Mint & burn",
 		"l2": "Layer 2",
+		"gov": "Governance",
 		"bars": {
 			"c-ratio": "c-ratio",
 			"t-ratio": "target",
@@ -785,6 +963,15 @@
 			"available-snx": "Total available SNX",
 			"vested-snx": "Total SNX vested",
 			"escrowed-snx": "Total SNX escrowed",
+			"voting-power": {
+				"title": "Your voting power",
+				"tooltip": "Your voting power was calculated based on block {{blocknumber}}"
+			},
+			"total-voting-power": {
+				"title": "Total voting power",
+				"tooltip": "Total voting power was calculated based on block {{blocknumber}}"
+			},
+			"active-proposals": "Active Proposals",
 			"issued-debt": "Issued Debt"
 		},
 		"status": {
@@ -832,6 +1019,9 @@
 			"hours": "h",
 			"minutes": "m",
 			"seconds": "s"
+		},
+		"table": {
+			"no-data": "No Data"
 		}
 	},
 	"not-found": {
@@ -849,5 +1039,15 @@
 		"page-title": "Mobile is coming soon | Synthetix Staking",
 		"title-line1": "Mobile is coming",
 		"title-line2": "soonthetix"
+	},
+	"notifications": {
+		"debt-liquidation-warning": {
+			"heading": "warning:",
+			"message": "Your wallet has been flagged for liquidation"
+		},
+		"gov-voting-election": {
+			"heading": "governance:",
+			"message": "Have your say on who will represent the SNX community, vote for your Spartan Council now! Voting costs zero-gas."
+		}
 	}
 }

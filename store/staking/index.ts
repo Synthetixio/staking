@@ -16,6 +16,7 @@ export enum BurnActionType {
 	MAX = 'max',
 	TARGET = 'target',
 	CUSTOM = 'custom',
+	CLEAR = 'clear',
 }
 
 export const amountToMintState = atom<string>({
@@ -26,11 +27,6 @@ export const amountToMintState = atom<string>({
 export const amountToBurnState = atom<string>({
 	key: getStakingKey('amountToBurn'),
 	default: '',
-});
-
-export const panelTypeState = atom<StakingPanelType>({
-	key: getStakingKey('panelType'),
-	default: StakingPanelType.MINT,
 });
 
 export const mintTypeState = atom<MintActionType | null>({
