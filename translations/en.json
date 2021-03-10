@@ -385,7 +385,7 @@
 				"dht": {
 					"title": "Uniswap",
 					"description": "Stake sUSD-DHT Uniswap Pool Tokens to earn SNX and DHT rewards. <0>Add liquidity on Uniswap here<0>.",
-					"subtitle": "DHT Uniswap LP Token Rewards"
+					"subtitle": "DHT Uniswap LP Rewards"
 				}
 			},
 			"weekly-rewards": "Weekly rewards {{weeklyRewards}} {{asset}}"
