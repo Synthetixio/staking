@@ -6,7 +6,6 @@ import Notify from 'containers/Notify';
 import { Transaction } from 'constants/network';
 import { normalizedGasPrice, normalizeGasLimit } from 'utils/network';
 import { toBigNumber } from 'utils/formatters/number';
-import { getGasEstimateForTransaction } from 'utils/transactions';
 
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 import { TabContainer } from '../common';
@@ -45,24 +44,26 @@ const MintTab: React.FC = () => {
 				try {
 					setError(null);
 					const {
-						contracts: { Synthetix },
-						utils: { parseEther },
-					} = synthetix.js!;
+						js: {
+							contracts: { Synthetix },
+							utils: { parseEther },
+						},
+					} = synthetix;
 					let gasEstimate;
 
 					if (unstakedCollateral.isZero())
 						throw new Error('staking.actions.mint.action.error.insufficient');
 
 					if (amountToMint.length > 0 && !mintMax) {
-						gasEstimate = await getGasEstimateForTransaction(
-							[parseEther(amountToMint)],
-							Synthetix.estimateGas.issueSynths
-						);
+						gasEstimate = await synthetix.getGasEstimateForTransaction({
+							txArgs: [parseEther(amountToMint)],
+							method: Synthetix.estimateGas.issueSynths,
+						});
 					} else {
-						gasEstimate = await getGasEstimateForTransaction(
-							[],
-							Synthetix.estimateGas.issueMaxSynths
-						);
+						gasEstimate = await synthetix.getGasEstimateForTransaction({
+							txArgs: [],
+							method: Synthetix.estimateGas.issueMaxSynths,
+						});
 					}
 					setGasLimitEstimate(normalizeGasLimit(Number(gasEstimate)));
 				} catch (error) {
@@ -87,24 +88,29 @@ const MintTab: React.FC = () => {
 					setError(null);
 					setTxModalOpen(true);
 					const {
-						contracts: { Synthetix },
-						utils: { parseEther },
-					} = synthetix.js!;
+						js: {
+							contracts: { Synthetix },
+							utils: { parseEther },
+						},
+					} = synthetix;
 
 					let transaction: ethers.ContractTransaction;
 
 					if (mintMax) {
-						const gasLimit = getGasEstimateForTransaction([], Synthetix.estimateGas.issueMaxSynths);
+						const gasLimit = synthetix.getGasEstimateForTransaction({
+							txArgs: [],
+							method: Synthetix.estimateGas.issueMaxSynths,
+						});
 						transaction = await Synthetix.issueMaxSynths({
 							gasPrice: normalizedGasPrice(gasPrice),
 							gasLimit,
 						});
 					} else {
 						const amountToMintBN = parseEther(amountToMint);
-						const gasLimit = getGasEstimateForTransaction(
-							[amountToMintBN],
-							Synthetix.estimateGas.issueSynths
-						);
+						const gasLimit = synthetix.getGasEstimateForTransaction({
+							txArgs: [amountToMintBN],
+							method: Synthetix.estimateGas.issueSynths,
+						});
 						transaction = await Synthetix.issueSynths(amountToMintBN, {
 							gasPrice: normalizedGasPrice(gasPrice),
 							gasLimit,

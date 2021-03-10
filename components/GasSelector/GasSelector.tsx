@@ -1,11 +1,12 @@
 import React, { useEffect, useMemo } from 'react';
 
 import styled from 'styled-components';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import Tippy from '@tippyjs/react';
 
-import { customGasPriceState, gasSpeedState } from 'store/wallet';
+import { customGasPriceState, gasSpeedState, networkState } from 'store/wallet';
 import { ESTIMATE_VALUE } from 'constants/placeholder';
+import { DEFAULT_GAS_PRICE } from 'constants/network';
 
 import useEthGasStationQuery, { GasPrices, GAS_SPEEDS } from 'queries/network/useEthGasPriceQuery';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
@@ -35,6 +36,7 @@ const GasSelector: React.FC<GasSelectorProps> = ({
 	const { t } = useTranslation();
 	const [gasSpeed, setGasSpeed] = useRecoilState(gasSpeedState);
 	const [customGasPrice, setCustomGasPrice] = useRecoilState(customGasPriceState);
+	const network = useRecoilValue(networkState);
 
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
@@ -42,29 +44,34 @@ const GasSelector: React.FC<GasSelectorProps> = ({
 
 	const gasPrices = ethGasStationQuery.data ?? ({} as GasPrices);
 	const exchangeRates = exchangeRatesQuery.data ?? null;
+	const isL2 = network?.useOvm ?? false;
 
 	const hasCustomGasPrice = customGasPrice !== '';
 
 	const gasPrice = useMemo(
 		() =>
-			customGasPrice !== ''
+			isL2
+				? DEFAULT_GAS_PRICE
+				: customGasPrice !== ''
 				? Number(customGasPrice)
 				: ethGasStationQuery.data != null
 				? ethGasStationQuery.data[gasSpeed]
 				: null,
-		[customGasPrice, ethGasStationQuery.data, gasSpeed]
+		[customGasPrice, ethGasStationQuery.data, gasSpeed, isL2]
 	);
 
 	useEffect(() => {
 		setGasPrice(
-			customGasPrice !== ''
+			isL2
+				? DEFAULT_GAS_PRICE
+				: customGasPrice !== ''
 				? Number(customGasPrice)
 				: ethGasStationQuery.data != null
 				? ethGasStationQuery.data[gasSpeed]
 				: null
 		);
 		// eslint-disable-next-line
-	}, [gasPrice, customGasPrice]);
+	}, [gasPrice, customGasPrice, isL2]);
 
 	const ethPriceRate = getExchangeRatesForCurrencies(
 		exchangeRates,
@@ -143,9 +150,11 @@ const GasSelector: React.FC<GasSelectorProps> = ({
 							})})`}
 					</GasPriceText>
 				</GasPriceItem>
-				<GasPriceTooltip trigger="click" arrow={false} content={content} interactive={true}>
-					<StyledGasEditButton role="button">{t('common.edit')}</StyledGasEditButton>
-				</GasPriceTooltip>
+				{isL2 ? null : (
+					<GasPriceTooltip trigger="click" arrow={false} content={content} interactive={true}>
+						<StyledGasEditButton role="button">{t('common.edit')}</StyledGasEditButton>
+					</GasPriceTooltip>
+				)}
 			</FlexDivRowCentered>
 		</Container>
 	);
