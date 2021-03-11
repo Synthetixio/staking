@@ -88,11 +88,11 @@ export const getApprovalContractData = (stakedAsset: CurrencyKey, signer: any) =
 	} else if (stakedAsset === LP.UNISWAP_DHT) {
 		return {
 			contract: new ethers.Contract(
-				dualStakingRewards.address,
-				dualStakingRewards.abi,
+				DHTsUSDLPToken.address,
+				DHTsUSDLPToken.abi,
 				signer as any
 			),
-			poolAddress: DHTsUSDLPToken.address,
+			poolAddress: dualStakingRewards.address,
 		};
 	} else {
 		throw new Error('unrecognizable asset');
