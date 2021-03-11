@@ -47,11 +47,16 @@ const useLPData = (): LPData => {
 			? ((usesTSLAPool.data.distribution * SNXRate) / sTSLATVL) * WEEKS_IN_YEAR
 			: 0;
 
+	const DHTRate = usesDHTPool.data?.price;
 	const DHTTVL = usesDHTPool.data?.liquidity ?? 0;
 	const DHTAPR =
-		usesDHTPool.data?.distribution.a && usesDHTPool.data?.distribution.b && SNXRate && DHTTVL
+		usesDHTPool.data?.distribution.a &&
+		usesDHTPool.data?.distribution.b &&
+		SNXRate &&
+		DHTRate &&
+		DHTTVL
 			? ((usesDHTPool.data.distribution.a * SNXRate) / DHTTVL) * WEEKS_IN_YEAR +
-			  ((usesDHTPool.data.distribution.b * SNXRate) / DHTTVL) * WEEKS_IN_YEAR
+			  ((usesDHTPool.data.distribution.b * DHTRate) / DHTTVL) * WEEKS_IN_YEAR
 			: 0;
 
 	const sUsdTVL = (usesUSDPool.data?.balance ?? 0) * (usesUSDPool.data?.price ?? 0);

@@ -4,6 +4,7 @@ const uniswapV2SubgraphURL = 'https://api.thegraph.com/subgraphs/name/uniswap/un
 const CRVTokenAddress = '0xd533a949740bb3306d119cc777fa900ba034cd52';
 const balancerSubgraphURL = 'https://api.thegraph.com/subgraphs/name/balancer-labs/balancer';
 const sTSLAPoolTokenAddress = '0x055db9aff4311788264798356bbf3a733ae181c6';
+const DHedgeTokenAddress = '0xca1207647ff814039530d7d35df0e1dd2e91fa84';
 const DHTLPTokenAddress = '0x303ffcd201831db88422b76f633458e94e05c33e';
 
 export async function getCurveTokenPrice(): Promise<number> {
@@ -49,6 +50,30 @@ export async function getsTSLABalancerPool(): Promise<number> {
 	})
 		.then((result: any) => {
 			return Number(result[0].liquidity) / Number(result[0].totalShares);
+		})
+		.catch((e: any) => {
+			throw Error(e);
+		});
+}
+
+export async function getDHTPrice(): Promise<number> {
+	return pageResults({
+		api: uniswapV2SubgraphURL,
+		query: {
+			entity: 'tokenDayDatas',
+			selection: {
+				orderBy: 'id',
+				orderDirection: 'desc',
+				where: {
+					token: `\\"${DHedgeTokenAddress}\\"`,
+				},
+			},
+			properties: ['priceUSD'],
+		},
+		max: 1,
+	})
+		.then((result: any) => {
+			return Number(result[0].priceUSD);
 		})
 		.catch((e: any) => {
 			throw Error(e);

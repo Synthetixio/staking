@@ -10,7 +10,7 @@ import { dualStakingRewards, DHTsUSDLPToken as lpToken } from 'contracts';
 import { DualRewardsLiquidityPoolData } from './types';
 import { ethers } from 'ethers';
 import Connector from 'containers/Connector';
-import { getUniswapPairLiquidity } from './helper';
+import { getDHTPrice, getUniswapPairLiquidity } from './helper';
 
 const useDHTsUSDPoolQuery = (options?: QueryConfig<DualRewardsLiquidityPoolData>) => {
 	const isAppReady = useRecoilValue(appReadyState);
@@ -49,18 +49,20 @@ const useDHTsUSDPoolQuery = (options?: QueryConfig<DualRewardsLiquidityPoolData>
 				DHTRewards,
 				DHTsUSDLPStaked,
 				DHTsUSDLPAllowance,
+				DHTprice,
 				liquidity,
 			] = await Promise.all([
 				StakingDualRewards.rewardsDuration(),
-				StakingDualRewards.rewardRateA(),
 				StakingDualRewards.rewardRateB(),
+				StakingDualRewards.rewardRateA(),
 				StakingDualRewards.periodFinish(),
 				DHTsUSDLPToken.balanceOf(address),
 				DHTsUSDLPToken.balanceOf(walletAddress),
-				StakingDualRewards.earnedA(walletAddress),
 				StakingDualRewards.earnedB(walletAddress),
+				StakingDualRewards.earnedA(walletAddress),
 				StakingDualRewards.balanceOf(walletAddress),
 				DHTsUSDLPToken.allowance(walletAddress, address),
+				getDHTPrice(),
 				getUniswapPairLiquidity(),
 			]);
 			const durationInWeeks = Number(duration) / 3600 / 24 / 7;
@@ -94,6 +96,7 @@ const useDHTsUSDPoolQuery = (options?: QueryConfig<DualRewardsLiquidityPoolData>
 				allowance,
 				userBalance,
 				userBalanceBN: DHTsUSDLPUserBalance,
+				price: DHTprice * 1e18,
 				liquidity,
 			};
 		},
