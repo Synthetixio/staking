@@ -7,8 +7,8 @@ import QUERY_KEYS from 'constants/queryKeys';
 import { SPACE, PROPOSAL, SPACE_KEY, PROPOSALS } from 'constants/snapshot';
 
 import { appReadyState } from 'store/app';
-import { Proposal, SpaceData, Votes } from './types';
-import { isWalletConnectedState, networkState, walletAddressState } from 'store/wallet';
+import { Proposal, SpaceData } from './types';
+import { networkState, walletAddressState } from 'store/wallet';
 import snapshot from '@snapshot-labs/snapshot.js';
 import Connector from 'containers/Connector';
 import { ethers } from 'ethers';
@@ -17,7 +17,6 @@ import CouncilDilution from 'contracts/councilDilution.js';
 const useProposals = (spaceKey: SPACE_KEY, options?: QueryConfig<Proposal[]>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const network = useRecoilValue(networkState);
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const { provider } = Connector.useContainer();
 
@@ -27,7 +26,7 @@ const useProposals = (spaceKey: SPACE_KEY, options?: QueryConfig<Proposal[]>) =>
 		provider as any
 	);
 
-	return useQuery<Proposal[]>(
+	return useQuery<any[]>(
 		QUERY_KEYS.Gov.Proposals(spaceKey, walletAddress ?? '', network?.id!),
 		async () => {
 			let [{ proposalHashes, proposalContent }, space]: [
@@ -62,7 +61,7 @@ const useProposals = (spaceKey: SPACE_KEY, options?: QueryConfig<Proposal[]>) =>
 								return {
 									voterAddresses: Object.keys(response.data).map((address) =>
 										address.toLowerCase()
-									) as any,
+									) as string[],
 								};
 							})
 						);
@@ -106,7 +105,7 @@ const useProposals = (spaceKey: SPACE_KEY, options?: QueryConfig<Proposal[]>) =>
 							return {
 								voterAddresses: Object.keys(response.data).map((address) =>
 									address.toLowerCase()
-								) as any,
+								) as string[],
 							};
 						})
 					);
@@ -140,7 +139,7 @@ const useProposals = (spaceKey: SPACE_KEY, options?: QueryConfig<Proposal[]>) =>
 			}
 		},
 		{
-			enabled: isAppReady && isWalletConnected && spaceKey,
+			enabled: isAppReady && spaceKey,
 			...options,
 		}
 	);

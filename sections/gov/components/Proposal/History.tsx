@@ -52,7 +52,7 @@ const History: React.FC<HistoryProps> = ({ hash }) => {
 										hideOnClick={false}
 									>
 										<Title>
-											{vote.address.toLowerCase() === walletAddress.toLowerCase()
+											{vote.address.toLowerCase() === walletAddress?.toLowerCase()
 												? t('gov.proposal.history.currentUser')
 												: vote.profile.ens
 												? truncateString(vote.profile.ens, 13)

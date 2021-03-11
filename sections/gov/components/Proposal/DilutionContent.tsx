@@ -49,7 +49,7 @@ import { ethers } from 'ethers';
 import Connector from 'containers/Connector';
 import { appReadyState } from 'store/app';
 import { getGasEstimateForTransaction } from 'utils/transactions';
-import { walletAddressState } from 'store/wallet';
+import { isWalletConnectedState, walletAddressState } from 'store/wallet';
 import { normalizeGasLimit } from 'utils/network';
 import { useCouncilMembers } from 'sections/gov/hooks/useCouncilMembers';
 
@@ -106,6 +106,8 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ onBack }) => {
 	const { signer } = Connector.useContainer();
 
 	const councilMembers = useCouncilMembers();
+
+	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 
 	useEffect(() => {
 		if (isAppReady && walletAddress && councilMembers) {
@@ -483,7 +485,8 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ onBack }) => {
 						<Description dangerouslySetInnerHTML={getRawMarkup(proposal?.msg.payload.body)} />
 					</ProposalContainer>
 					<Divider />
-					{!expired(proposal?.msg.payload.end) &&
+					{isWalletConnected &&
+						!expired(proposal?.msg.payload.end) &&
 						!pending(proposal?.msg.payload.start) &&
 						isCouncilMember && (
 							<OptionsContainer>
@@ -507,7 +510,8 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ onBack }) => {
 							</OptionsContainer>
 						)}
 				</InputContainer>
-				{!expired(proposal?.msg.payload.end) &&
+				{isWalletConnected &&
+					!expired(proposal?.msg.payload.end) &&
 					!pending(proposal?.msg.payload.start) &&
 					(isCouncilMember ? (
 						<StyledCTA onClick={() => handleVote()} variant="primary">
