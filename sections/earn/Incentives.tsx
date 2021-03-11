@@ -156,25 +156,6 @@ const Incentives: FC<IncentivesProps> = ({
 							tab: Tab.sUSD_LP,
 							externalLink: ROUTES.Earn.sUSD_EXTERNAL,
 						},
-
-						{
-							title: t('earn.incentives.options.seur.title'),
-							subtitle: t('earn.incentives.options.seur.subtitle'),
-							apr: lpData[LP.CURVE_sEURO].APR,
-							tvl: lpData[LP.CURVE_sEURO].TVL,
-							staked: {
-								balance: lpData[LP.CURVE_sEURO].data?.staked ?? 0,
-								asset: LP.CURVE_sEURO,
-							},
-							rewards: lpData[LP.CURVE_sEURO].data?.rewards ?? 0,
-							periodStarted: now - (lpData[LP.CURVE_sEURO].data?.duration ?? 0),
-							periodFinish: lpData[LP.CURVE_sEURO].data?.periodFinish ?? 0,
-							claimed: (lpData[LP.CURVE_sEURO].data?.rewards ?? 0) > 0 ? false : NOT_APPLICABLE,
-							now,
-							route: ROUTES.Earn.sEURO_LP,
-							tab: Tab.sEURO_LP,
-							externalLink: ROUTES.Earn.sEURO_EXTERNAL,
-						},
 						{
 							title: t('earn.incentives.options.dht.title'),
 							subtitle: t('earn.incentives.options.dht.subtitle'),

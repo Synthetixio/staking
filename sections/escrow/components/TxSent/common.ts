@@ -3,7 +3,6 @@ import { FlexDivColCentered } from 'styles/common';
 
 export const Container = styled(FlexDivColCentered)`
 	width: 100%;
-	/* @TODO: Replace with responsive height when mobile */
 	margin: 0 auto;
 	text-align: center;
 	padding: 48px 24px;

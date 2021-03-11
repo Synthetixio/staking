@@ -1,12 +1,16 @@
 import { FC, ReactNode, useEffect } from 'react';
 import { createGlobalStyle } from 'styled-components';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import i18n from 'i18n';
 
 import { zIndex } from 'constants/ui';
 import media from 'styles/media';
 
 import { languageState } from 'store/app';
+import { SPACE_KEY } from 'constants/snapshot';
+import { Proposal } from 'queries/gov/types';
+import useProposals from 'queries/gov/useProposals';
+import { NotificationTemplate, userNotificationState } from 'store/ui';
 
 type LayoutProps = {
 	children: ReactNode;
@@ -15,9 +19,45 @@ type LayoutProps = {
 const Layout: FC<LayoutProps> = ({ children }) => {
 	const language = useRecoilValue(languageState);
 
+	const councilProposals = useProposals(SPACE_KEY.COUNCIL);
+
+	const setNotificationState = useSetRecoilState(userNotificationState);
+
 	useEffect(() => {
 		i18n.changeLanguage(language);
 	}, [language]);
+
+	useEffect(() => {
+		if (councilProposals.data) {
+			let latestProposal = {
+				msg: {
+					payload: {
+						snapshot: '0',
+					},
+				},
+			} as Partial<Proposal>;
+
+			councilProposals.data.forEach((proposal) => {
+				if (
+					parseInt(proposal.msg.payload.snapshot) >
+					parseInt(latestProposal?.msg?.payload.snapshot ?? '0')
+				) {
+					latestProposal = proposal;
+				}
+			});
+
+			if (new Date().getTime() / 1000 < (latestProposal?.msg?.payload.end ?? 0)) {
+				setNotificationState({
+					type: 'info',
+					template: NotificationTemplate.ELECTION,
+					props: {
+						proposal: latestProposal?.msg?.payload.name,
+						link: `${latestProposal.msg?.space}/${latestProposal.authorIpfsHash}`,
+					},
+				});
+			}
+		}
+	}, [councilProposals, setNotificationState]);
 
 	return (
 		<>

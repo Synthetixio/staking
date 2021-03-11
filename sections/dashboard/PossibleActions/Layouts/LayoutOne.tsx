@@ -119,7 +119,7 @@ const LayoutOne: FC = () => {
 				link: ROUTES.Earn.iETH_LP,
 			},
 			{
-				gridLocations: ['col-1', 'col-2', 'row-3', 'row-4'],
+				gridLocations: ['col-1', 'col-3', 'row-3', 'row-4'],
 				icon: (
 					<GlowingCircle variant="green" size="md">
 						<Currency.Icon currencyKey={CryptoCurrency.CRV} width="28" height="28" />
