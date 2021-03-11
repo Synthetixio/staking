@@ -3,43 +3,11 @@ import snapshot from '@snapshot-labs/snapshot.js';
 import { getCurrentTimestampSeconds } from 'utils/formatters/date';
 
 export const quadraticWeighting = (value: BigNumber) => {
-	// @notice Scale the value by 100000
 	const scaledValue = value.multipliedBy(1e5);
 	return scaledValue.sqrt();
 };
 
-export async function ipfsGet(ipfsHash: string) {
-	const url = `https://cloudflare-ipfs.com/ipfs/${ipfsHash}`;
-	return fetch(url).then((res) => res.json());
-}
-
-function get3BoxProfiles(addresses: any) {
-	return new Promise((resolve, reject) => {
-		snapshot.utils
-			.subgraphRequest('https://api.3box.io/graph', {
-				profiles: {
-					__args: {
-						ids: addresses,
-					},
-					name: true,
-					eth_address: true,
-					image: true,
-				},
-			})
-			.then(({ profiles }: { profiles: any }) => {
-				const _3BoxProfiles = {} as any;
-				profiles.forEach((profile: { eth_address: string }) => {
-					_3BoxProfiles[profile.eth_address.toLowerCase()] = profile;
-				});
-				resolve(_3BoxProfiles);
-			})
-			.catch((error: any) => {
-				reject(error);
-			});
-	});
-}
-
-export function lookupAddresses(addresses: any[]) {
+export function getENSForAddresses(addresses: any[]) {
 	return new Promise((resolve, reject) => {
 		snapshot.utils
 			.subgraphRequest('https://api.thegraph.com/subgraphs/name/ensdomains/ens', {
@@ -74,22 +42,20 @@ export function lookupAddresses(addresses: any[]) {
 }
 
 export async function getProfiles(addresses: any) {
-	let ensNames: any = {};
-	let _3BoxProfiles: any = {};
+	let ensNames = [] as any;
+
 	try {
-		[ensNames, _3BoxProfiles] = await Promise.all([
-			lookupAddresses(addresses),
-			get3BoxProfiles(addresses),
-		]);
+		[ensNames] = await Promise.all([getENSForAddresses(addresses)]);
 	} catch (e) {
 		console.log(e);
 	}
 
 	const profiles = Object.fromEntries(addresses.map((address: any) => [address, {}]));
+
 	return Object.fromEntries(
 		Object.entries(profiles).map(([address, profile]) => {
-			profile = _3BoxProfiles[address.toLowerCase()] || {};
 			profile.ens = ensNames[address.toLowerCase()] || '';
+			profile.address = address.toLowerCase();
 			return [address, profile];
 		})
 	);

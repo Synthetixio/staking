@@ -26,11 +26,15 @@ const History: React.FC<HistoryProps> = ({ hash }) => {
 
 	if (proposal.isSuccess && proposal.data) {
 		const { data } = proposal;
-
 		return (
 			<MaxHeightColumn>
+				<Row>
+					<Title>
+						{t('gov.proposal.history.total', { totalVotes: proposal.data.voteList.length })}
+					</Title>
+				</Row>
 				{data.voteList.length > 0 ? (
-					data.voteList.map((vote: any, i: number) => {
+					data.voteList.map((vote, i: number) => {
 						return (
 							<Row key={i}>
 								<InnerRow>
@@ -39,20 +43,20 @@ const History: React.FC<HistoryProps> = ({ hash }) => {
 										arrow={true}
 										placement="bottom"
 										content={
-											vote.address === walletAddress
+											vote.address.toLowerCase() === walletAddress?.toLowerCase()
 												? t('gov.proposal.history.currentUser')
 												: vote.profile.ens
 												? vote.profile.ens
-												: vote.address
+												: vote.address.toLowerCase()
 										}
 										hideOnClick={false}
 									>
 										<Title>
-											{vote.address === walletAddress
+											{vote.address.toLowerCase() === walletAddress.toLowerCase()
 												? t('gov.proposal.history.currentUser')
 												: vote.profile.ens
 												? truncateString(vote.profile.ens, 13)
-												: truncateAddress(vote.address)}
+												: truncateAddress(vote.address.toLowerCase())}
 										</Title>
 									</StyledTooltip>
 								</InnerRow>
