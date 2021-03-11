@@ -47,6 +47,7 @@ type RewardsBoxProps = {
 	setClaimError: (err: string | null) => void;
 	secondTokenReward?: number;
 	secondTokenKey?: CryptoCurrency;
+	secondTokenRate?: number;
 };
 
 const RewardsBox: FC<RewardsBoxProps> = ({
@@ -61,6 +62,7 @@ const RewardsBox: FC<RewardsBoxProps> = ({
 	setClaimError,
 	secondTokenReward,
 	secondTokenKey,
+	secondTokenRate,
 }) => {
 	const { t } = useTranslation();
 	const { signer } = Connector.useContainer();
@@ -119,7 +121,7 @@ const RewardsBox: FC<RewardsBoxProps> = ({
 							<RewardsAmountUSD>
 								{ESTIMATE_VALUE}{' '}
 								{formatFiatCurrency(
-									getPriceAtCurrentRate(toBigNumber(secondTokenReward! * SNXRate)),
+									getPriceAtCurrentRate(toBigNumber(secondTokenReward! * secondTokenRate!)),
 									{
 										sign: selectedPriceCurrency.sign,
 									}

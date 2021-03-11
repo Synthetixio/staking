@@ -63,6 +63,7 @@ type LPTabProps = {
 	staked: number;
 	stakedBN: BigNumber;
 	needsToSettle?: boolean;
+	secondTokenRate?: number;
 };
 
 const LPTab: FC<LPTabProps> = ({
@@ -74,6 +75,7 @@ const LPTab: FC<LPTabProps> = ({
 	staked,
 	stakedBN,
 	needsToSettle,
+	secondTokenRate,
 }) => {
 	const { t } = useTranslation();
 	const { signer } = Connector.useContainer();
@@ -344,6 +346,7 @@ const LPTab: FC<LPTabProps> = ({
 						SNXRate={SNXRate}
 						secondTokenReward={(tokenRewards as DualRewards).b}
 						secondTokenKey={CryptoCurrency.DHT}
+						secondTokenRate={secondTokenRate}
 					/>
 				</>
 			) : (
