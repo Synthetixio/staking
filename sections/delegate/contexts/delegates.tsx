@@ -125,7 +125,10 @@ export const DelegatesProvider: React.FC<DelegatesProviderProps> = ({ children }
 			setDelegateApprovals((delegateApprovals) =>
 				delegateApprovals.filter(
 					(delegateApproval) =>
-						!(delegateApproval.delegate === delegate && delegateApproval.action === action)
+						!(
+							ethers.utils.getAddress(delegateApproval.delegate) ===
+								ethers.utils.getAddress(delegate) && delegateApproval.action === action
+						)
 				)
 			);
 		};
