@@ -65,6 +65,8 @@ const useDHTsUSDPoolQuery = (options?: QueryConfig<DualRewardsLiquidityPoolData>
 				getDHTPrice(),
 				getUniswapPairLiquidity(),
 			]);
+
+			console.log(DHTprice);
 			const durationInWeeks = Number(duration) / 3600 / 24 / 7;
 			const isPeriodFinished = new Date().getTime() > Number(periodFinish) * 1000;
 			const distribution = {
