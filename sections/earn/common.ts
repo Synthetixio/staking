@@ -94,6 +94,7 @@ export const TabContainer = styled(FlexDivColCentered)`
 	height: 100%;
 	justify-content: space-evenly;
 	padding: 24px;
+	position: relative;
 `;
 
 export const IconWrap = styled(FlexDivCentered)`
