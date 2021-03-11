@@ -266,7 +266,6 @@ const Incentives: FC<IncentivesProps> = ({
 						stakedBN={lpData[LP.UNISWAP_DHT].data?.stakedBN ?? zeroBN}
 						needsToSettle={incentives[5].needsToSettle}
 						secondTokenRate={lpData[LP.UNISWAP_DHT].data?.price ?? 0}
-
 					/>
 				)}
 			</TabContainer>
