@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import styled from 'styled-components';
 import { Svg } from 'react-optimized-image';
 import Spinner from 'assets/svg/app/loader.svg';
@@ -24,64 +24,68 @@ const History: React.FC<HistoryProps> = ({ hash }) => {
 	const proposal = useProposal(activeTab, hash);
 	const walletAddress = useRecoilValue(walletAddressState);
 
-	if (proposal.isSuccess && proposal.data) {
-		const { data } = proposal;
-		return (
-			<MaxHeightColumn>
-				<Row>
-					<Title>
-						{t('gov.proposal.history.total', { totalVotes: proposal.data.voteList.length })}
-					</Title>
-				</Row>
-				{data.voteList.length > 0 ? (
-					data.voteList.map((vote, i: number) => {
-						return (
-							<Row key={i}>
-								<InnerRow>
-									<Blockie src={makeBlockie(vote.address)} />
+	const history = useMemo(() => {
+		if (proposal.data) {
+			const { data } = proposal;
+			return (
+				<MaxHeightColumn>
+					<Row>
+						<Title>{t('gov.proposal.history.total', { totalVotes: data.voteList.length })}</Title>
+					</Row>
+					{data.voteList.length > 0 ? (
+						data.voteList.map((vote, i: number) => {
+							return (
+								<Row key={i}>
+									<InnerRow>
+										<Blockie src={makeBlockie(vote.address)} />
+										<StyledTooltip
+											arrow={true}
+											placement="bottom"
+											content={
+												vote.address.toLowerCase() === walletAddress?.toLowerCase()
+													? t('gov.proposal.history.currentUser')
+													: vote.profile.ens
+													? vote.profile.ens
+													: vote.address.toLowerCase()
+											}
+											hideOnClick={false}
+										>
+											<Title>
+												{vote.address.toLowerCase() === walletAddress?.toLowerCase()
+													? t('gov.proposal.history.currentUser')
+													: vote.profile.ens
+													? truncateString(vote.profile.ens, 13)
+													: truncateAddress(vote.address.toLowerCase())}
+											</Title>
+										</StyledTooltip>
+									</InnerRow>
 									<StyledTooltip
 										arrow={true}
 										placement="bottom"
-										content={
-											vote.address.toLowerCase() === walletAddress?.toLowerCase()
-												? t('gov.proposal.history.currentUser')
-												: vote.profile.ens
-												? vote.profile.ens
-												: vote.address.toLowerCase()
-										}
+										content={data.choices[vote.msg.payload.choice - 1]}
 										hideOnClick={false}
 									>
-										<Title>
-											{vote.address.toLowerCase() === walletAddress?.toLowerCase()
-												? t('gov.proposal.history.currentUser')
-												: vote.profile.ens
-												? truncateString(vote.profile.ens, 13)
-												: truncateAddress(vote.address.toLowerCase())}
-										</Title>
+										<Choice>
+											- {truncateString(data.choices[vote.msg.payload.choice - 1], 13)}
+										</Choice>
 									</StyledTooltip>
-								</InnerRow>
-								<StyledTooltip
-									arrow={true}
-									placement="bottom"
-									content={data.choices[vote.msg.payload.choice - 1]}
-									hideOnClick={false}
-								>
-									<Choice>- {truncateString(data.choices[vote.msg.payload.choice - 1], 13)}</Choice>
-								</StyledTooltip>
-								<Value>{`${formatNumber(vote.balance)} ${data.spaceSymbol}`}</Value>
-							</Row>
-						);
-					})
-				) : (
-					<Row>
-						<Title>{t('gov.proposal.history.empty')}</Title>
-					</Row>
-				)}
-			</MaxHeightColumn>
-		);
-	} else {
-		return <StyledSpinner src={Spinner} />;
-	}
+									<Value>{`${formatNumber(vote.balance)} ${data.spaceSymbol}`}</Value>
+								</Row>
+							);
+						})
+					) : (
+						<Row>
+							<Title>{t('gov.proposal.history.empty')}</Title>
+						</Row>
+					)}
+				</MaxHeightColumn>
+			);
+		} else {
+			return <StyledSpinner src={Spinner} />;
+		}
+	}, [proposal, walletAddress, t]);
+
+	return history;
 };
 export default History;
 
