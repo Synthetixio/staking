@@ -51,10 +51,7 @@ const useProposals = (spaceKey: SPACE_KEY, options?: QueryConfig<Proposal[]>) =>
 				const validHashes = hashes
 					.filter((e: string) => e !== '')
 					.map((hash) => hash.toLowerCase());
-
-				let mappedProposals = [] as any[];
-
-				proposalContent.forEach(async (proposal) => {
+				const mappedProposals = proposalContent.map(async (proposal) => {
 					if (validHashes.includes(proposal.authorIpfsHash.toLowerCase())) {
 						const block = parseInt(proposal.msg.payload.snapshot);
 						const currentBlock = provider?.getBlockNumber() ?? 0;
@@ -88,18 +85,18 @@ const useProposals = (spaceKey: SPACE_KEY, options?: QueryConfig<Proposal[]>) =>
 							voteCount = voteCount + arrayOfVotes.filter((score: number) => score > 0).length;
 						});
 
-						mappedProposals.push({
+						return {
 							...proposal,
 							votes: voteCount,
-						});
+						};
+					} else {
+						return null;
 					}
 				});
 				const resolvedProposals = await Promise.all(mappedProposals);
-				return resolvedProposals;
+				return resolvedProposals.filter((e) => e !== null);
 			} else {
-				let mappedProposals = [] as any[];
-
-				proposalContent.forEach(async (proposal) => {
+				const mappedProposals = proposalContent.map(async (proposal) => {
 					const block = parseInt(proposal.msg.payload.snapshot);
 					const currentBlock = provider?.getBlockNumber() ?? 0;
 					const blockTag = block > currentBlock ? 'latest' : block;
@@ -132,10 +129,10 @@ const useProposals = (spaceKey: SPACE_KEY, options?: QueryConfig<Proposal[]>) =>
 						voteCount = voteCount + arrayOfVotes.filter((score: number) => score > 0).length;
 					});
 
-					mappedProposals.push({
+					return {
 						...proposal,
 						votes: voteCount,
-					});
+					};
 				});
 
 				const resolvedProposals = await Promise.all(mappedProposals);
