@@ -17,7 +17,7 @@ import { getGasEstimateForTransaction } from 'utils/transactions';
 import { normalizedGasPrice, normalizeGasLimit } from 'utils/network';
 import Etherscan from 'containers/Etherscan';
 import Connector from 'containers/Connector';
-import { curveSusdRewards } from 'contracts';
+import { curveSusdRewards, dualStakingRewards } from 'contracts';
 
 import {
 	ExternalLink,
@@ -72,6 +72,12 @@ export const getContract = (stakedAsset: CurrencyKey, signer: ethers.Signer | nu
 		return new ethers.Contract(
 			curveSeuroRewards.address,
 			curveSeuroRewards.abi,
+			signer as ethers.Signer
+		);
+	} else if (stakedAsset === LP.UNISWAP_DHT && signer != null) {
+		return new ethers.Contract(
+			dualStakingRewards.address,
+			dualStakingRewards.abi,
 			signer as ethers.Signer
 		);
 	} else {
