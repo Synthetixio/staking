@@ -915,6 +915,16 @@
 		},
 		"table": {
 			"no-data": "No Data"
+		},
+		"delegate-actions": {
+			"header": "Action",
+			"actions": {
+				"ApproveAll": "All",
+				"BurnForAddress": "Burn",
+				"IssueForAddress": "Mint",
+				"ClaimForAddress": "Claim",
+				"ExchangeForAddress": "Exchange"
+			}
 		}
 	},
 	"not-found": {
@@ -944,7 +954,7 @@
 		}
 	},
 	"delegate": {
-		"page-title": "Delegate",
+		"page-title": "Delegate | Synthetix Staking",
 		"form": {
 			"title": "Delegate to a new Address",
 			"input-placeholder": "e.g. 0x3b18a4...",
@@ -964,8 +974,16 @@
 			"title": "Manage addresses",
 			"empty": "No addresses to show",
 			"cols": {
-				"address": "Address",
+				"delegate": "Address",
+				"action": "Permission",
 				"actions": "Actions"
+			},
+			"withdraw-approval": {
+				"button": {
+					"default": "Remove powers",
+					"withdrawing": "Withdrawing..."
+				},
+				"tx-confirmation-title": "Withdrawing approval"
 			}
 		}
 	}

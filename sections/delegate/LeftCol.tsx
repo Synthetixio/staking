@@ -1,10 +1,13 @@
-import { useState, useMemo, useEffect, FC } from 'react';
+import { useState, useMemo, useEffect, FC, useCallback } from 'react';
 import { ethers } from 'ethers';
+import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
 import { Trans, useTranslation } from 'react-i18next';
 import Button from 'components/Button';
 import StructuredTab from 'components/StructuredTab';
+import Connector from 'containers/Connector';
+import Notify from 'containers/Notify';
 import {
 	ModalItemTitle as TxModalItemTitle,
 	ModalItemText as TxModalItemText,
@@ -16,7 +19,8 @@ import { Svg } from 'react-optimized-image';
 import NavigationBack from 'assets/svg/app/navigation-back.svg';
 import GasSelector from 'components/GasSelector';
 import { LEFT_COL_WIDTH } from 'sections/delegate/constants';
-import { toBig, toFixed } from 'utils/formatters/big-number';
+import { isWalletConnectedState } from 'store/wallet';
+import { Action, APPROVE_CONTRACT_METHODS } from 'queries/delegate/types';
 import {
 	FormContainer,
 	InputsContainer,
@@ -25,12 +29,14 @@ import {
 	ErrorMessage,
 	TxModalItem,
 } from 'sections/delegate/common';
-import { getGasEstimateForTransaction } from 'utils/transactions';
+import { tx, getGasEstimateForTransaction } from 'utils/transactions';
 import {
 	normalizeGasLimit as getNormalizedGasLimit,
 	normalizedGasPrice as getNormalizedGasPrice,
 } from 'utils/network';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
+import { useDelegates } from 'sections/delegate/contexts/delegates';
+import ActionSelector from './ActionSelector';
 
 const LeftCol: FC = () => {
 	const { t } = useTranslation();
@@ -61,22 +67,91 @@ const LeftCol: FC = () => {
 const Tab: FC = () => {
 	const { t } = useTranslation();
 	const router = useRouter();
+	const { connectWallet } = Connector.useContainer();
+	const isWalletConnected = useRecoilValue(isWalletConnectedState);
+	const { delegateApprovalsContract } = useDelegates();
+	const { monitorHash } = Notify.useContainer();
 
-	const [buttonState] = useState<string>('');
+	const [action, setAction] = useState<string>(Action.APPROVE_ALL);
+
 	const [gasPrice, setGasPrice] = useState<number>(0);
 	const [gasLimit, setGasLimitEstimate] = useState<number | null>(null);
 	const [delegateAddress, setDelegateAddress] = useState<string>('');
+
 	const [error, setError] = useState<string | null>(null);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
+	const [buttonState, setButtonState] = useState<string | null>(null);
 
 	const shortenedDelegateAddress = useMemo(
 		() => `${delegateAddress.slice(0, 8)}....${delegateAddress.slice(-6)}`,
 		[delegateAddress]
 	);
 
+	const getApproveTxData = useCallback(
+		(gas: Record<string, number>) => {
+			if (!(delegateApprovalsContract && ethers.utils.isAddress(delegateAddress))) return null;
+			return [
+				delegateApprovalsContract,
+				APPROVE_CONTRACT_METHODS.get(action),
+				[delegateAddress, gas],
+			];
+		},
+		[delegateApprovalsContract, delegateAddress, action]
+	);
+
 	const onGoBack = () => router.back();
 	const onEnterAddress = (e: any) => setDelegateAddress((e.target.value ?? '').trim());
-	const onButtonClick = async () => {};
+	const onButtonClick = async () => {
+		if (!isWalletConnected) {
+			return connectWallet();
+		}
+		approve();
+	};
+
+	const approve = async () => {
+		setButtonState('delegating');
+		setTxModalOpen(true);
+		try {
+			const gas: Record<string, number> = {
+				gasPrice: getNormalizedGasPrice(gasPrice),
+				gasLimit: gasLimit!,
+			};
+			await tx(() => getApproveTxData(gas), {
+				showErrorNotification: (e: string) => setError(e),
+				showProgressNotification: (hash: string) =>
+					monitorHash({
+						txHash: hash,
+						onTxConfirmed: () => {},
+					}),
+				showSuccessNotification: (hash: string) => {},
+			});
+		} catch {
+		} finally {
+			setButtonState(null);
+			setTxModalOpen(false);
+		}
+	};
+
+	// gas
+	useEffect(() => {
+		let isMounted = true;
+		(async () => {
+			try {
+				setError(null);
+				const data: any[] | null = getApproveTxData({});
+				if (!data) return;
+				const [contract, method, args] = data;
+				const gasEstimate = await getGasEstimateForTransaction(args, contract.estimateGas[method]);
+				if (isMounted) setGasLimitEstimate(getNormalizedGasLimit(Number(gasEstimate)));
+			} catch (error) {
+				// console.error(error);
+				if (isMounted) setGasLimitEstimate(null);
+			}
+		})();
+		return () => {
+			isMounted = false;
+		};
+	}, [getApproveTxData]);
 
 	return (
 		<>
@@ -100,6 +175,9 @@ const Tab: FC = () => {
 
 				<SettingsContainer>
 					<SettingContainer>
+						<ActionSelector {...{ action, setAction }} />
+					</SettingContainer>
+					<SettingContainer>
 						<GasSelector gasLimitEstimate={gasLimit} setGasPrice={setGasPrice} />
 					</SettingContainer>
 				</SettingsContainer>
@@ -109,14 +187,21 @@ const Tab: FC = () => {
 				onClick={onButtonClick}
 				variant="primary"
 				size="lg"
-				disabled={!delegateAddress || !!buttonState}
+				disabled={
+					isWalletConnected &&
+					(!delegateAddress || !ethers.utils.isAddress(delegateAddress) || !!buttonState)
+				}
 			>
-				<Trans
-					i18nKey={`delegate.form.button-labels.${
-						buttonState || (!delegateAddress ? 'enter-address' : 'delegate')
-					}`}
-					components={[<NoTextTransform />]}
-				/>
+				{!isWalletConnected ? (
+					t('common.wallet.connect-wallet')
+				) : (
+					<Trans
+						i18nKey={`delegate.form.button-labels.${
+							buttonState || (!delegateAddress ? 'enter-address' : 'delegate')
+						}`}
+						components={[<NoTextTransform />]}
+					/>
+				)}
 			</FormButton>
 
 			{!error ? null : <ErrorMessage>{error}</ErrorMessage>}

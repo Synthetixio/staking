@@ -4,16 +4,22 @@ import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import StatBox from 'components/StatBox';
 import { StatsSection, LineSpacer } from 'styles/common';
-import { formatCryptoCurrency } from 'utils/formatters/number';
 import { DelegatesProvider } from 'sections/delegate/contexts/delegates';
+import useUserStakingData from 'hooks/useUserStakingData';
 import Main from 'sections/delegate/index';
 
-const SNX_HEADER_DECIMALS = 2;
+import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
+import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import { formatFiatCurrency, formatPercent, toBigNumber } from 'utils/formatters/number';
 
 type DelegatePageProps = {};
 
 const DelegatePage: FC<DelegatePageProps> = () => {
 	const { t } = useTranslation();
+
+	const { stakedCollateralValue, debtBalance } = useStakingCalculations();
+	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
+	const { stakingAPR } = useUserStakingData();
 
 	return (
 		<DelegatesProvider>
@@ -23,22 +29,28 @@ const DelegatePage: FC<DelegatePageProps> = () => {
 			<StatsSection>
 				<StakedValue
 					title={t('common.stat-box.staked-value')}
-					value={formatCryptoCurrency(0, {
-						decimals: SNX_HEADER_DECIMALS,
-					})}
+					value={formatFiatCurrency(
+						getPriceAtCurrentRate(
+							stakedCollateralValue.isNaN() ? toBigNumber(0) : stakedCollateralValue
+						),
+						{
+							sign: selectedPriceCurrency.sign,
+						}
+					)}
 				/>
 				<Earning
 					title={t('common.stat-box.earning')}
-					value={formatCryptoCurrency(0, {
-						decimals: SNX_HEADER_DECIMALS,
-					})}
+					value={formatPercent(stakingAPR ? stakingAPR : 0)}
 					size="lg"
 				/>
 				<ActiveDebt
 					title={t('common.stat-box.active-debt')}
-					value={formatCryptoCurrency(0, {
-						decimals: SNX_HEADER_DECIMALS,
-					})}
+					value={formatFiatCurrency(
+						getPriceAtCurrentRate(debtBalance.isNaN() ? toBigNumber(0) : debtBalance),
+						{
+							sign: selectedPriceCurrency.sign,
+						}
+					)}
 				/>
 			</StatsSection>
 			<LineSpacer />

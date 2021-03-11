@@ -2,37 +2,54 @@ import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { CellProps } from 'react-table';
-
 import { useDelegates } from 'sections/delegate/contexts/delegates';
-import { Delegate } from 'queries/delegates/types';
+import { DelegateApproval } from 'queries/delegate/types';
 import Table from 'components/Table';
+import RevokeDelegate from './RevokeDelegate';
+import { RIGHT_COL_WIDTH } from './constants';
 
 const RightCol: FC = () => {
 	const { t } = useTranslation();
 
-	const { isLoadingDelegates: isLoading, delegates } = useDelegates();
+	const { isLoadingDelegates: isLoading, delegateApprovals, getActionByBytes } = useDelegates();
 
 	const columns = useMemo(
 		() => [
 			{
-				Header: <>{t('delegate.list.cols.address')}</>,
-				accessor: 'address',
+				Header: <>{t('delegate.list.cols.delegate')}</>,
+				accessor: 'delegate',
+				width: 100,
 				sortable: true,
+				Cell: (cellProps: CellProps<DelegateApproval>) => {
+					const delegateAddress = cellProps.value;
+					return `${delegateAddress.slice(0, 4)}....${delegateAddress.slice(-2)}`;
+				},
+			},
+			{
+				Header: <>{t('delegate.list.cols.action')}</>,
+				accessor: 'action',
+				width: 100,
+				sortable: true,
+				Cell: (cellProps: CellProps<DelegateApproval>) => {
+					const action = getActionByBytes(cellProps.value);
+					return action ? t(`common.delegate-actions.actions.${action}`) : '-';
+				},
 			},
 			{
 				Header: <>{t('delegate.list.cols.actions')}</>,
 				id: 'actions',
 				sortable: false,
-				Cell: (cellProps: CellProps<Delegate>) => (
-					<RevokeDelegate delegateAddress={cellProps.row.original.address} />
+				width: RIGHT_COL_WIDTH - 200 - 50,
+				Cell: (cellProps: CellProps<DelegateApproval>) => (
+					<RevokeDelegate delegateApproval={cellProps.row.original} />
 				),
 			},
 		],
-		[t]
+		[t, getActionByBytes]
 	);
 
 	const noResultsMessage =
-		!isLoading && delegates.length === 0 ? (
+		!isLoading && delegateApprovals.length === 0 ? (
 			<ListTableEmptyMessage>
 				<svg
 					width="38"
@@ -72,7 +89,7 @@ const RightCol: FC = () => {
 					<ListTable
 						palette="primary"
 						{...{ isLoading, columns }}
-						data={delegates}
+						data={delegateApprovals}
 						noResultsMessage={noResultsMessage}
 						showPagination={true}
 					/>
@@ -83,12 +100,6 @@ const RightCol: FC = () => {
 };
 
 export default RightCol;
-
-type RevokeDelegateProps = {
-	delegateAddress: string;
-};
-
-const RevokeDelegate: FC<RevokeDelegateProps> = ({ delegateAddress }) => null;
 
 //
 
