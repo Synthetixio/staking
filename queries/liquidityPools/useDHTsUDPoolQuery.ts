@@ -96,7 +96,7 @@ const useDHTsUSDPoolQuery = (options?: QueryConfig<DualRewardsLiquidityPoolData>
 				allowance,
 				userBalance,
 				userBalanceBN: DHTsUSDLPUserBalance,
-				price: DHTprice * 1e18,
+				price: DHTprice,
 				liquidity,
 			};
 		},
