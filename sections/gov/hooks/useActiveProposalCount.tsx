@@ -26,6 +26,7 @@ export const useActiveProposalCount = () => {
 				const timestampSecondsNow = getCurrentTimestampSeconds();
 				govProposals.data.forEach((proposal) => {
 					if (
+						proposal &&
 						proposal.msg.payload.end > timestampSecondsNow &&
 						proposal.msg.payload.start < timestampSecondsNow
 					) {
@@ -34,6 +35,7 @@ export const useActiveProposalCount = () => {
 				});
 				councilProposals.data.forEach((proposal) => {
 					if (
+						proposal &&
 						proposal.msg.payload.end > timestampSecondsNow &&
 						proposal.msg.payload.start < timestampSecondsNow
 					) {
@@ -43,6 +45,7 @@ export const useActiveProposalCount = () => {
 
 				ambassadorProposal.data.forEach((proposal) => {
 					if (
+						proposal &&
 						proposal.msg.payload.end > timestampSecondsNow &&
 						proposal.msg.payload.start < timestampSecondsNow
 					) {
@@ -52,6 +55,7 @@ export const useActiveProposalCount = () => {
 
 				grantsProposals.data.forEach((proposal) => {
 					if (
+						proposal &&
 						proposal.msg.payload.end > timestampSecondsNow &&
 						proposal.msg.payload.start < timestampSecondsNow
 					) {
