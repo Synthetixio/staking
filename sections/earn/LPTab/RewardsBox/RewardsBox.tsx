@@ -121,7 +121,7 @@ const RewardsBox: FC<RewardsBoxProps> = ({
 							<RewardsAmountUSD>
 								{ESTIMATE_VALUE}{' '}
 								{formatFiatCurrency(
-									getPriceAtCurrentRate(toBigNumber(secondTokenReward! * secondTokenRate)),
+									getPriceAtCurrentRate(toBigNumber(secondTokenReward! * secondTokenRate!)),
 									{
 										sign: selectedPriceCurrency.sign,
 									}
