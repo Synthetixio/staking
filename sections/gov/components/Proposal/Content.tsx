@@ -46,6 +46,7 @@ import TxState from 'sections/gov/components/TxState';
 import { expired, pending } from '../helper';
 import { SPACE_KEY } from 'constants/snapshot';
 import CouncilNominations from 'constants/nominations.json';
+import { shuffle } from 'lodash';
 
 type ContentProps = {
 	onBack: Function;
@@ -75,13 +76,14 @@ const Content: React.FC<ContentProps> = ({ onBack }) => {
 				const currentElectionMembers = CouncilNominations as any;
 				const mappedProfiles = [] as any;
 
-				currentElectionMembers[electionCount].forEach((member: any) => {
+				currentElectionMembers[electionCount].forEach((member: any, i: number) => {
 					mappedProfiles.push({
 						address: member.address,
 						name: member.discord,
+						key: i,
 					});
 				});
-				setChoices(mappedProfiles);
+				setChoices(shuffle(mappedProfiles));
 			};
 			loadDiscordNames();
 		}
@@ -107,7 +109,6 @@ const Content: React.FC<ContentProps> = ({ onBack }) => {
 					setSignModalOpen(false);
 				})
 				.catch((error) => {
-					console.log(error);
 					setTransactionState(Transaction.PRESUBMIT);
 					setError(error);
 				});
@@ -205,45 +206,51 @@ const Content: React.FC<ContentProps> = ({ onBack }) => {
 					<Divider />
 					{!expired(proposal?.msg.payload.end) && !pending(proposal?.msg.payload.start) && choices && (
 						<OptionsContainer>
-							{choices.map((choice: any, i: any) => {
-								if (activeTab === SPACE_KEY.COUNCIL) {
-									return (
-										<StyledTooltip
-											key={i}
-											arrow={true}
-											placement="bottom"
-											content={choice.name ? choice.name : choice.address}
-											hideOnClick={false}
-										>
-											<Option
-												selected={selected === i}
-												onClick={() => setSelected(i)}
-												variant="text"
+							{activeTab === SPACE_KEY.COUNCIL ? (
+								<>
+									{choices.map((choice: any, i: any) => {
+										return (
+											<StyledTooltip
+												key={i}
+												arrow={true}
+												placement="bottom"
+												content={choice.name ? choice.name : choice.address}
+												hideOnClick={false}
 											>
-												<p>{choice.name ? choice.name : choice.address}</p>
-											</Option>
-										</StyledTooltip>
-									);
-								} else {
-									return (
-										<StyledTooltip
-											key={i}
-											arrow={true}
-											placement="bottom"
-											content={choice}
-											hideOnClick={false}
-										>
-											<Option
-												selected={selected === i}
-												onClick={() => setSelected(i)}
-												variant="text"
+												<Option
+													selected={selected === choice.key}
+													onClick={() => setSelected(choice.key)}
+													variant="text"
+												>
+													<p>{choice.name ? choice.name : choice.address}</p>
+												</Option>
+											</StyledTooltip>
+										);
+									})}
+								</>
+							) : (
+								<>
+									{choices.map((choice: any, i: any) => {
+										return (
+											<StyledTooltip
+												key={i}
+												arrow={true}
+												placement="bottom"
+												content={choice}
+												hideOnClick={false}
 											>
-												<p>{choice}</p>
-											</Option>
-										</StyledTooltip>
-									);
-								}
-							})}
+												<Option
+													selected={selected === i}
+													onClick={() => setSelected(i)}
+													variant="text"
+												>
+													<p>{choice}</p>
+												</Option>
+											</StyledTooltip>
+										);
+									})}
+								</>
+							)}
 						</OptionsContainer>
 					)}
 				</InputContainer>
