@@ -96,10 +96,10 @@ const LayoutOne: FC = () => {
 						<Currency.Icon currencyKey={Synths.iBTC} width="32" height="32" />
 					</GlowingCircle>
 				),
-				title: t('dashboard.actions.earn.title', {
+				title: t('dashboard.actions.loans.title', {
 					percent: formatPercent(lpData[Synths.iBTC].APR, { minDecimals: 0 }),
 				}),
-				copy: t('dashboard.actions.earn.copy', {
+				copy: t('dashboard.actions.loans.copy', {
 					asset: Synths.iBTC,
 					supplier: 'Synthetix',
 				}),

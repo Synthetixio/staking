@@ -169,6 +169,10 @@
 				"title": "EARN {{percent}}",
 				"copy": "Supply {{asset}} liquidity on {{supplier}}"
 			},
+			"loans": {
+				"title": "EARN {{percent}}",
+				"copy": "Open a short on {{asset}} to earn rewards"
+			},
 			"learn": {
 				"title": "LEARN",
 				"copy": "Check out the Synthetix blog to get informed about all things SNX"
