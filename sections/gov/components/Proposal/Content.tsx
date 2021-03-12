@@ -46,6 +46,7 @@ import TxState from 'sections/gov/components/TxState';
 import { expired, pending } from '../helper';
 import { SPACE_KEY } from 'constants/snapshot';
 import CouncilNominations from 'constants/nominations.json';
+import { isWalletConnectedState } from 'store/wallet';
 import { shuffle } from 'lodash';
 
 type ContentProps = {
@@ -69,6 +70,7 @@ const Content: React.FC<ContentProps> = ({ onBack }) => {
 	const [choices, setChoices] = useState<any>(null);
 
 	const electionCount = useRecoilValue(councilElectionCountState);
+	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 
 	useEffect(() => {
 		if (proposal && proposal.msg.payload.choices && activeTab === SPACE_KEY.COUNCIL) {
@@ -204,61 +206,66 @@ const Content: React.FC<ContentProps> = ({ onBack }) => {
 						<Description dangerouslySetInnerHTML={getRawMarkup(proposal?.msg.payload.body)} />
 					</ProposalContainer>
 					<Divider />
-					{!expired(proposal?.msg.payload.end) && !pending(proposal?.msg.payload.start) && choices && (
-						<OptionsContainer>
-							{activeTab === SPACE_KEY.COUNCIL ? (
-								<>
-									{choices.map((choice: any, i: any) => {
-										return (
-											<StyledTooltip
-												key={i}
-												arrow={true}
-												placement="bottom"
-												content={choice.name ? choice.name : choice.address}
-												hideOnClick={false}
-											>
-												<Option
-													selected={selected === choice.key}
-													onClick={() => setSelected(choice.key)}
-													variant="text"
+					{isWalletConnected &&
+						!expired(proposal?.msg.payload.end) &&
+						!pending(proposal?.msg.payload.start) &&
+						choices && (
+							<OptionsContainer>
+								{activeTab === SPACE_KEY.COUNCIL ? (
+									<>
+										{choices.map((choice: any, i: number) => {
+											return (
+												<StyledTooltip
+													key={i}
+													arrow={true}
+													placement="bottom"
+													content={choice.name ? choice.name : choice.address}
+													hideOnClick={false}
 												>
-													<p>{choice.name ? choice.name : choice.address}</p>
-												</Option>
-											</StyledTooltip>
-										);
-									})}
-								</>
-							) : (
-								<>
-									{choices.map((choice: any, i: any) => {
-										return (
-											<StyledTooltip
-												key={i}
-												arrow={true}
-												placement="bottom"
-												content={choice}
-												hideOnClick={false}
-											>
-												<Option
-													selected={selected === i}
-													onClick={() => setSelected(i)}
-													variant="text"
+													<Option
+														selected={selected === choice.key}
+														onClick={() => setSelected(choice.key)}
+														variant="text"
+													>
+														<p>{choice.name ? choice.name : choice.address}</p>
+													</Option>
+												</StyledTooltip>
+											);
+										})}
+									</>
+								) : (
+									<>
+										{choices.map((choice: any, i: number) => {
+											return (
+												<StyledTooltip
+													key={i}
+													arrow={true}
+													placement="bottom"
+													content={choice}
+													hideOnClick={false}
 												>
-													<p>{choice}</p>
-												</Option>
-											</StyledTooltip>
-										);
-									})}
-								</>
-							)}
-						</OptionsContainer>
-					)}
+													<Option
+														selected={selected === i}
+														onClick={() => setSelected(i)}
+														variant="text"
+													>
+														<p>{choice}</p>
+													</Option>
+												</StyledTooltip>
+											);
+										})}
+									</>
+								)}
+							</OptionsContainer>
+						)}
 				</InputContainer>
-				{!expired(proposal?.msg.payload.end) && !pending(proposal?.msg.payload.start) && (
-					<StyledCTA onClick={() => handleVote(proposal?.authorIpfsHash)} variant="primary">
-						{t('gov.proposal.action.vote')}
-					</StyledCTA>
-				)}
+				{isWalletConnected &&
+					!expired(proposal?.msg.payload.end) &&
+					!pending(proposal?.msg.payload.start) && (
+						<StyledCTA onClick={() => handleVote(proposal?.authorIpfsHash)} variant="primary">
+							{t('gov.proposal.action.vote')}
+						</StyledCTA>
+					)}
 			</Container>
 		);
 	};
