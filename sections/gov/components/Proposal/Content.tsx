@@ -46,8 +46,8 @@ import TxState from 'sections/gov/components/TxState';
 import { expired, pending } from '../helper';
 import { SPACE_KEY } from 'constants/snapshot';
 import CouncilNominations from 'constants/nominations.json';
-import { shuffle } from 'lodash';
 import { isWalletConnectedState } from 'store/wallet';
+import { shuffle } from 'lodash';
 
 type ContentProps = {
 	onBack: Function;
