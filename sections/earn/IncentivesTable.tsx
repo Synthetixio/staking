@@ -41,7 +41,12 @@ import { NOT_APPLICABLE } from './Incentives';
 
 import ROUTES from 'constants/routes';
 
-import { Tab } from './types';
+import { LP, Tab } from './types';
+
+type DualRewards = {
+	a: number;
+	b: number;
+};
 
 export type EarnItem = {
 	title: string;
@@ -52,7 +57,7 @@ export type EarnItem = {
 		balance: number;
 		asset: CurrencyKey;
 	};
-	rewards: number;
+	rewards: number | DualRewards;
 	periodStarted: number;
 	periodFinish: number;
 	claimed: boolean | string;
@@ -170,14 +175,29 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab }
 				Header: <>{t('earn.incentives.options.rewards.title')}</>,
 				accessor: 'rewards',
 				Cell: (cellProps: CellProps<EarnItem, EarnItem['rewards']>) => {
+					const isDualRewards = cellProps.row.original.staked.asset === LP.UNISWAP_DHT;
+
 					if (!cellProps.row.original.externalLink) {
 						return (
 							<CellContainer>
 								<Title isNumeric={true}>
-									{formatCurrency(CryptoCurrency.SNX, cellProps.value, {
-										currencyKey: CryptoCurrency.SNX,
-									})}
+									{formatCurrency(
+										CryptoCurrency.SNX,
+										isDualRewards
+											? (cellProps.value as DualRewards).a
+											: (cellProps.value as number),
+										{
+											currencyKey: CryptoCurrency.SNX,
+										}
+									)}
 								</Title>
+								{isDualRewards && (
+									<Title isNumeric={true}>
+										{formatCurrency(CryptoCurrency.DHT, (cellProps.value as DualRewards).b, {
+											currencyKey: CryptoCurrency.DHT,
+										})}
+									</Title>
+								)}
 								<Subtitle>
 									{cellProps.row.original.claimed === NOT_APPLICABLE ||
 									(!cellProps.row.original.claimed && cellProps.row.original.rewards === 0) ? (
