@@ -59,7 +59,7 @@ const ActionBox: React.FC<ActionBoxProps> = () => {
 			boxPadding={20}
 			boxWidth={ACTION_BOX_WIDTH}
 			tabData={tabData}
-			setPanelType={(key) => router.push(`/loans/${key}`)}
+			setPanelType={(key: string) => router.push(`/loans/${key}`)}
 			currentPanel={currentTab}
 		/>
 	);

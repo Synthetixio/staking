@@ -98,8 +98,10 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 		const {
 			contracts: { CollateralEth: ethLoanContract, CollateralErc20: erc20LoanContract },
 		} = synthetix.js!;
-		return collateralIsETH ? ethLoanContract : erc20LoanContract;
-	}, [collateralIsETH]);
+		const contract = collateralIsETH ? ethLoanContract : erc20LoanContract;
+		return !isWalletConnected ? contract : contract; // hack to ensure contract is bound to signer
+	}, [collateralIsETH, isWalletConnected]);
+
 	const loanContractAddress = loanContract?.address;
 
 	const [cratio, setCRatio] = React.useState(toBig(0));
