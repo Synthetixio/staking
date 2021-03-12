@@ -43,9 +43,10 @@ import Button from 'components/Button';
 import { Transaction } from 'constants/network';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import TxState from 'sections/gov/components/TxState';
-import { expired, pending, shuffleArray } from '../helper';
+import { expired, pending } from '../helper';
 import { SPACE_KEY } from 'constants/snapshot';
 import CouncilNominations from 'constants/nominations.json';
+import { shuffle } from 'lodash';
 
 type ContentProps = {
 	onBack: Function;
@@ -82,7 +83,7 @@ const Content: React.FC<ContentProps> = ({ onBack }) => {
 						key: i,
 					});
 				});
-				setChoices(shuffleArray(mappedProfiles));
+				setChoices(shuffle(mappedProfiles));
 			};
 			loadDiscordNames();
 		}
