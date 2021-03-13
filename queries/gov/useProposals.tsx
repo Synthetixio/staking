@@ -8,7 +8,7 @@ import { SPACE, PROPOSAL, SPACE_KEY, PROPOSALS } from 'constants/snapshot';
 
 import { appReadyState } from 'store/app';
 import { Proposal, SpaceData } from './types';
-import { isWalletConnectedState, networkState, walletAddressState } from 'store/wallet';
+import { networkState, walletAddressState } from 'store/wallet';
 import snapshot from '@snapshot-labs/snapshot.js';
 import Connector from 'containers/Connector';
 import { ethers } from 'ethers';
@@ -17,105 +17,129 @@ import CouncilDilution from 'contracts/councilDilution.js';
 const useProposals = (spaceKey: SPACE_KEY, options?: QueryConfig<Proposal[]>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const network = useRecoilValue(networkState);
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const { provider } = Connector.useContainer();
 
-	return useQuery<Proposal[]>(
+	const contract = new ethers.Contract(
+		CouncilDilution.address,
+		CouncilDilution.abi,
+		provider as any
+	);
+
+	return useQuery<any[]>(
 		QUERY_KEYS.Gov.Proposals(spaceKey, walletAddress ?? '', network?.id!),
 		async () => {
-			const contract = new ethers.Contract(
-				CouncilDilution.address,
-				CouncilDilution.abi,
-				provider as any
-			);
-
-			const space = await axios.get(SPACE(spaceKey));
-
-			const spaceData = space.data as SpaceData;
-
-			const proposalsResponse = await axios.get(PROPOSALS(spaceKey));
-
-			const { data } = proposalsResponse;
-
-			let result = [];
-
-			// Check if the SCCP/SIP hashes are valid
+			let [{ proposalHashes, proposalContent }, space]: [
+				{
+					proposalHashes: string[];
+					proposalContent: Proposal[];
+				},
+				SpaceData
+			] = await Promise.all([
+				axios.get(PROPOSALS(spaceKey)).then((response) => {
+					return {
+						proposalHashes: Object.keys(response.data) as string[],
+						proposalContent: Object.values(response.data) as Proposal[],
+					};
+				}),
+				axios.get(SPACE(spaceKey)).then((response) => response.data),
+			]);
 
 			if (spaceKey === SPACE_KEY.PROPOSAL) {
-				const hashes = await contract.getValidProposals(Object.keys(data));
+				const hashes = (await contract.getValidProposals(proposalHashes)) as string[];
+				const validHashes = hashes
+					.filter((e: string) => e !== '')
+					.map((hash) => hash.toLowerCase());
+				const mappedProposals = proposalContent.map(async (proposal) => {
+					if (validHashes.includes(proposal.authorIpfsHash.toLowerCase())) {
+						const block = parseInt(proposal.msg.payload.snapshot);
+						const currentBlock = provider?.getBlockNumber() ?? 0;
+						const blockTag = block > currentBlock ? 'latest' : block;
 
-				const validHashes = hashes.filter((e: string) => e !== '');
-
-				for (var key in data) {
-					if (validHashes.includes(key)) {
-						const proposal = data[key] as Proposal;
-						const proposalSnapshot = proposal.msg.payload.snapshot;
-						const hash = key;
-
-						let voterResponse = await axios.get(PROPOSAL(spaceKey, hash));
-
-						const blockNumber: any = await provider?.getBlockNumber();
-
-						const blockTag =
-							parseInt(proposalSnapshot) > parseInt(blockNumber)
-								? 'latest'
-								: parseInt(proposalSnapshot);
+						let { voterAddresses } = await Promise.resolve(
+							axios.get(PROPOSAL(spaceKey, proposal.authorIpfsHash)).then((response) => {
+								return {
+									voterAddresses: Object.keys(response.data).map((address) =>
+										address.toLowerCase()
+									) as string[],
+								};
+							})
+						);
 
 						const [scores]: any = await Promise.all([
 							snapshot.utils.getScores(
 								spaceKey,
-								spaceData.strategies,
-								spaceData.network,
+								space.strategies,
+								space.network,
 								provider,
-								Object.values(voterResponse.data).map((vote: any) => vote.address),
-								// @ts-ignore
+								voterAddresses,
 								blockTag
 							),
 						]);
-						result.push({
-							...data[key],
-							votes: Object.values(scores[0]).filter((e: any) => e > 0).length,
+
+						let voteCount = 0;
+
+						space.strategies.forEach((_, i: number) => {
+							let arrayOfVotes = Object.values(scores[i]) as number[];
+							voteCount = voteCount + arrayOfVotes.filter((score: number) => score > 0).length;
 						});
+
+						return {
+							...proposal,
+							votes: voteCount,
+						};
+					} else {
+						return null;
 					}
-				}
+				});
+				const resolvedProposals = await Promise.all(mappedProposals);
+				return resolvedProposals.filter((e) => e !== null);
 			} else {
-				for (var hash in data) {
-					const proposal = data[hash] as Proposal;
-					const proposalSnapshot = proposal.msg.payload.snapshot;
-					const ipfsHash = hash;
+				const mappedProposals = proposalContent.map(async (proposal) => {
+					const block = parseInt(proposal.msg.payload.snapshot);
+					const currentBlock = provider?.getBlockNumber() ?? 0;
+					const blockTag = block > currentBlock ? 'latest' : block;
 
-					let voterResponse = await axios.get(PROPOSAL(spaceKey, ipfsHash));
-
-					const blockNumber: any = await provider?.getBlockNumber();
-
-					const blockTag =
-						parseInt(proposalSnapshot) > parseInt(blockNumber)
-							? 'latest'
-							: parseInt(proposalSnapshot);
+					let { voterAddresses } = await Promise.resolve(
+						axios.get(PROPOSAL(spaceKey, proposal.authorIpfsHash)).then((response) => {
+							return {
+								voterAddresses: Object.keys(response.data).map((address) =>
+									address.toLowerCase()
+								) as string[],
+							};
+						})
+					);
 
 					const [scores]: any = await Promise.all([
 						snapshot.utils.getScores(
 							spaceKey,
-							spaceData.strategies,
-							spaceData.network,
+							space.strategies,
+							space.network,
 							provider,
-							Object.values(voterResponse.data).map((vote: any) => vote.address),
-							// @ts-ignore
+							voterAddresses,
 							blockTag
 						),
 					]);
-					result.push({
-						...data[hash],
-						votes: Object.values(scores[0]).filter((e: any) => e > 0).length,
-					});
-				}
-			}
 
-			return result;
+					let voteCount = 0;
+
+					space.strategies.forEach((_, i: number) => {
+						let arrayOfVotes = Object.values(scores[i]) as number[];
+						voteCount = voteCount + arrayOfVotes.filter((score: number) => score > 0).length;
+					});
+
+					return {
+						...proposal,
+						votes: voteCount,
+					};
+				});
+
+				const resolvedProposals = await Promise.all(mappedProposals);
+				return resolvedProposals;
+			}
 		},
 		{
-			enabled: isAppReady && isWalletConnected,
+			enabled: isAppReady && spaceKey,
 			...options,
 		}
 	);

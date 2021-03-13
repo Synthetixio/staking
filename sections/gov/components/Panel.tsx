@@ -1,14 +1,12 @@
 import React, { useMemo, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 
 import useProposals from 'queries/gov/useProposals';
 
 import ROUTES from 'constants/routes';
 import { SPACE_KEY } from 'constants/snapshot';
-
-import { isWalletConnectedState } from 'store/wallet';
 import { panelState, PanelType, proposalState } from 'store/gov';
 
 import useActiveTab from '../hooks/useActiveTab';
@@ -34,7 +32,6 @@ const Panel: React.FC<PanelProps> = ({ currentTab }) => {
 	const grantsProposals = useProposals(SPACE_KEY.GRANTS);
 	const ambassadorProposals = useProposals(SPACE_KEY.AMBASSADOR);
 
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const [, setProposal] = useRecoilState(proposalState);
 	const [panelType, setPanelType] = useRecoilState(panelState);
 	const activeTab = useActiveTab();
@@ -45,7 +42,6 @@ const Panel: React.FC<PanelProps> = ({ currentTab }) => {
 			govProposals.data &&
 			grantsProposals.data &&
 			ambassadorProposals.data &&
-			isWalletConnected &&
 			Array.isArray(router.query.panel) &&
 			router.query.panel[1]
 		) {
@@ -73,7 +69,6 @@ const Panel: React.FC<PanelProps> = ({ currentTab }) => {
 		}
 	}, [
 		router.query.panel,
-		isWalletConnected,
 		councilProposals,
 		govProposals,
 		grantsProposals,

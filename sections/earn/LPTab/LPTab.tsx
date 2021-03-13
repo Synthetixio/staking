@@ -7,7 +7,7 @@ import BigNumber from 'bignumber.js';
 
 import { appReadyState } from 'store/app';
 import StructuredTab from 'components/StructuredTab';
-import { FlexDivCentered, FlexDivColCentered, ExternalLink } from 'styles/common';
+import { FlexDivCentered, FlexDivColCentered, ExternalLink, FlexDiv } from 'styles/common';
 import { CurrencyKey } from 'constants/currency';
 import Etherscan from 'containers/Etherscan';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
@@ -47,16 +47,23 @@ import {
 } from '../common';
 
 import { LP } from 'sections/earn/types';
+import styled from 'styled-components';
+
+type DualRewards = {
+	a: number;
+	b: number;
+};
 
 type LPTabProps = {
 	stakedAsset: CurrencyKey;
-	tokenRewards: number;
+	tokenRewards: number | DualRewards;
 	allowance: number | null;
 	userBalance: number;
 	userBalanceBN: BigNumber;
 	staked: number;
 	stakedBN: BigNumber;
 	needsToSettle?: boolean;
+	secondTokenRate?: number;
 };
 
 const LPTab: FC<LPTabProps> = ({
@@ -68,6 +75,7 @@ const LPTab: FC<LPTabProps> = ({
 	staked,
 	stakedBN,
 	needsToSettle,
+	secondTokenRate,
 }) => {
 	const { t } = useTranslation();
 	const { signer } = Connector.useContainer();
@@ -175,10 +183,39 @@ const LPTab: FC<LPTabProps> = ({
 			return 'earn.incentives.options.seur.description';
 		} else if (stakedAsset === LP.BALANCER_sTSLA) {
 			return 'earn.incentives.options.stsla.description';
+		} else if (stakedAsset === LP.UNISWAP_DHT) {
+			return 'earn.incentives.options.dht.description';
 		} else {
 			throw new Error('unexpected staking asset for translation key');
 		}
 	}, [stakedAsset]);
+
+	const DualRewardsClaimInfo = (
+		<StyledFlexDiv>
+			<StyledFlexDivColCentered>
+				<GreyHeader>{t('earn.actions.claim.claiming')}</GreyHeader>
+				<WhiteSubheader>
+					{t('earn.actions.claim.amount', {
+						amount: formatNumber((tokenRewards as DualRewards).a, {
+							decimals: DEFAULT_CRYPTO_DECIMALS,
+						}),
+						asset: CryptoCurrency.SNX,
+					})}
+				</WhiteSubheader>
+			</StyledFlexDivColCentered>
+			<StyledFlexDivColCentered>
+				<GreyHeader>{t('earn.actions.claim.claiming')}</GreyHeader>
+				<WhiteSubheader>
+					{t('earn.actions.claim.amount', {
+						amount: formatNumber((tokenRewards as DualRewards).b, {
+							decimals: DEFAULT_CRYPTO_DECIMALS,
+						}),
+						asset: CryptoCurrency.DHT,
+					})}
+				</WhiteSubheader>
+			</StyledFlexDivColCentered>
+		</StyledFlexDiv>
+	);
 
 	if (claimTransactionState === Transaction.WAITING) {
 		return (
@@ -195,13 +232,21 @@ const LPTab: FC<LPTabProps> = ({
 				content={
 					<FlexDivColCentered>
 						<Svg src={PendingConfirmation} />
-						<GreyHeader>{t('earn.actions.claim.claiming')}</GreyHeader>
-						<WhiteSubheader>
-							{t('earn.actions.claim.amount', {
-								amount: formatNumber(tokenRewards, { decimals: DEFAULT_CRYPTO_DECIMALS }),
-								asset: CryptoCurrency.SNX,
-							})}
-						</WhiteSubheader>
+						{stakedAsset === LP.UNISWAP_DHT ? (
+							DualRewardsClaimInfo
+						) : (
+							<>
+								<GreyHeader>{t('earn.actions.claim.claiming')}</GreyHeader>
+								<WhiteSubheader>
+									{t('earn.actions.claim.amount', {
+										amount: formatNumber(tokenRewards as number, {
+											decimals: DEFAULT_CRYPTO_DECIMALS,
+										}),
+										asset: CryptoCurrency.SNX,
+									})}
+								</WhiteSubheader>
+							</>
+						)}
 						<Divider />
 						<GreyText>{t('earn.actions.tx.notice')}</GreyText>
 						<ExternalLink href={claimLink}>
@@ -228,13 +273,21 @@ const LPTab: FC<LPTabProps> = ({
 				content={
 					<FlexDivColCentered>
 						<Svg src={Success} />
-						<GreyHeader>{t('earn.actions.claim.claiming')}</GreyHeader>
-						<WhiteSubheader>
-							{t('earn.actions.claim.amount', {
-								amount: formatNumber(tokenRewards, { decimals: DEFAULT_CRYPTO_DECIMALS }),
-								asset: CryptoCurrency.SNX,
-							})}
-						</WhiteSubheader>
+						{stakedAsset === LP.UNISWAP_DHT ? (
+							DualRewardsClaimInfo
+						) : (
+							<>
+								<GreyHeader>{t('earn.actions.claim.claiming')}</GreyHeader>
+								<WhiteSubheader>
+									{t('earn.actions.claim.amount', {
+										amount: formatNumber(tokenRewards as number, {
+											decimals: DEFAULT_CRYPTO_DECIMALS,
+										}),
+										asset: CryptoCurrency.SNX,
+									})}
+								</WhiteSubheader>
+							</>
+						)}
 						<Divider />
 						<ButtonSpacer>
 							{claimLink ? (
@@ -255,43 +308,70 @@ const LPTab: FC<LPTabProps> = ({
 		);
 	}
 
+	const getLink = () => {
+		switch (stakedAsset) {
+			case LP.BALANCER_sTSLA:
+				return `https://pools.balancer.exchange/#/pool/0x055db9aff4311788264798356bbf3a733ae181c6/`;
+			case LP.UNISWAP_DHT:
+				return `https://uniswap.exchange/add/0x57ab1ec28d129707052df4df418d58a2d46d5f51/0xca1207647ff814039530d7d35df0e1dd2e91fa84`;
+			default:
+				return EXTERNAL_LINKS.Synthetix.Incentives;
+		}
+	};
+
 	return (
 		<TabContainer>
 			<HeaderLabel>
-				<Trans
-					i18nKey={translationKey}
-					components={[
-						<StyledLink
-							href={
-								stakedAsset === LP.BALANCER_sTSLA
-									? `https://pools.balancer.exchange/#/pool/0x055db9aff4311788264798356bbf3a733ae181c6/`
-									: EXTERNAL_LINKS.Synthetix.Incentives
-							}
-						/>,
-					]}
-				/>
+				<Trans i18nKey={translationKey} components={[<StyledLink href={getLink()} />]} />
 			</HeaderLabel>
-			<FlexDivCentered>
-				<StructuredTab
-					tabHeight={30}
-					inverseTabColor={true}
-					boxPadding={0}
-					boxHeight={242}
-					boxWidth={310}
-					tabData={tabData}
-				/>
-				<RewardsBox
-					setClaimGasPrice={setClaimGasPrice}
-					claimTxModalOpen={claimTxModalOpen}
-					setClaimTxModalOpen={setClaimTxModalOpen}
-					handleClaim={handleClaim}
-					claimError={claimError}
-					setClaimError={setClaimError}
-					stakedAsset={stakedAsset}
-					tokenRewards={tokenRewards}
-					SNXRate={SNXRate}
-				/>
-			</FlexDivCentered>
+			{stakedAsset === LP.UNISWAP_DHT ? (
+				<>
+					<StructuredTab
+						tabHeight={30}
+						inverseTabColor={true}
+						boxPadding={0}
+						boxHeight={242}
+						boxWidth={512}
+						tabData={tabData}
+					/>
+					<RewardsBox
+						setClaimGasPrice={setClaimGasPrice}
+						claimTxModalOpen={claimTxModalOpen}
+						setClaimTxModalOpen={setClaimTxModalOpen}
+						handleClaim={handleClaim}
+						claimError={claimError}
+						setClaimError={setClaimError}
+						stakedAsset={stakedAsset}
+						tokenRewards={(tokenRewards as DualRewards).a}
+						SNXRate={SNXRate}
+						secondTokenReward={(tokenRewards as DualRewards).b}
+						secondTokenKey={CryptoCurrency.DHT}
+						secondTokenRate={secondTokenRate}
+					/>
+				</>
+			) : (
+				<FlexDivCentered>
+					<StructuredTab
+						tabHeight={30}
+						inverseTabColor={true}
+						boxPadding={0}
+						boxHeight={242}
+						boxWidth={310}
+						tabData={tabData}
+					/>
+					<RewardsBox
+						setClaimGasPrice={setClaimGasPrice}
+						claimTxModalOpen={claimTxModalOpen}
+						setClaimTxModalOpen={setClaimTxModalOpen}
+						handleClaim={handleClaim}
+						claimError={claimError}
+						setClaimError={setClaimError}
+						stakedAsset={stakedAsset}
+						tokenRewards={tokenRewards as number}
+						SNXRate={SNXRate}
+					/>
+				</FlexDivCentered>
+			)}
 			{showApproveOverlayModal && (
 				<Approve
 					setShowApproveOverlayModal={setShowApproveOverlayModal}
@@ -304,5 +384,16 @@ const LPTab: FC<LPTabProps> = ({
 		</TabContainer>
 	);
 };
+
+const StyledFlexDivColCentered = styled(FlexDivColCentered)`
+	padding: 20px 30px;
+	&:first-child {
+		border-right: 1px solid ${(props) => props.theme.colors.grayBlue};
+	}
+`;
+
+const StyledFlexDiv = styled(FlexDiv)`
+	margin-bottom: -20px;
+`;
 
 export default LPTab;

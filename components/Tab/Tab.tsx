@@ -74,7 +74,7 @@ export const TabPanel = ({
 
 const TabPanelContainer = styled.div<{ height?: number; width: number; padding: number }>`
 	outline: none;
-	background: ${(props) => props.theme.colors.backgroundBlue};
+	background: ${(props) => props.theme.colors.navy};
 	box-shadow: 0px 0px 20px ${(props) => props.theme.colors.backgroundBoxShadow};
 	height: ${(props) => (props.height != null ? `${props.height}px` : 'unset')};
 	width: ${(props) => props.width}px;

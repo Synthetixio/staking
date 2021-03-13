@@ -208,6 +208,12 @@ export const QUERY_KEYS = {
 			walletAddress,
 			networkId,
 		],
+		DHTsUSD: (walletAddress: string, networkId: NetworkId) => [
+			'liquidityPools',
+			'DHT-sUSD',
+			walletAddress,
+			networkId,
+		],
 	},
 	Deposits: (walletAddress: string, networkId: NetworkId) => [
 		'deposits',
@@ -231,7 +237,7 @@ export const QUERY_KEYS = {
 			walletAddress,
 			networkId,
 		],
-		Proposal: (spaceKey: SPACE_KEY, hash: string) => ['gov', 'proposals', spaceKey, hash],
+		Proposal: (spaceKey: SPACE_KEY, hash: string) => ['gov', 'proposal', spaceKey, hash],
 	},
 };
 
