@@ -139,7 +139,7 @@ const useProposals = (spaceKey: SPACE_KEY, options?: QueryConfig<Proposal[]>) =>
 			}
 		},
 		{
-			enabled: isAppReady && spaceKey,
+			enabled: isAppReady && spaceKey && false,
 			...options,
 		}
 	);
