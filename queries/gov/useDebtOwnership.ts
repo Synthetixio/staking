@@ -35,7 +35,7 @@ const useDebtOwnership = (block?: number | null, options?: QueryConfig<BigNumber
 			return debtOwnership;
 		},
 		{
-			enabled: isAppReady && isWalletConnected,
+			enabled: isAppReady && isWalletConnected && false,
 			...options,
 		}
 	);
