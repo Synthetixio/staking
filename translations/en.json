@@ -762,7 +762,8 @@
 			"history": {
 				"title": "Voting history",
 				"currentUser": "You",
-				"empty": "There are no votes yet"
+				"empty": "There are no votes yet",
+				"total": "{{totalVotes}} votes"
 			}
 		},
 		"council": {
