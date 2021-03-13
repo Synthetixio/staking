@@ -2,9 +2,10 @@ import React from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 
-import { FlexDivCentered, FlexDivColCentered } from 'styles/common';
-import NumericInput from 'components/Input/NumericInput';
 import Select from 'components/Select';
+import Currency from 'components/Currency';
+import NumericInput from 'components/Input/NumericInput';
+import { FlexDivCentered, FlexDivColCentered } from 'styles/common';
 import Balance from 'sections/loans/components/ActionBox/components/Balance';
 
 type AssetInputProps = {
@@ -41,7 +42,9 @@ const AssetInput: React.FC<AssetInputProps> = ({
 				<SelectInput>
 					<Select
 						inputId={`${label}-asset-options`}
-						formatOptionLabel={(option) => <span>{option.label}</span>}
+						formatOptionLabel={(option) => (
+							<Currency.Name currencyKey={option.label} showIcon={true} />
+						)}
 						{...{ options, value }}
 						onChange={(option: any) => {
 							if (option) {
@@ -100,7 +103,7 @@ const SelectLabel = styled.div`
 `;
 
 const SelectInput = styled.div`
-	width: 90px;
+	width: 110px;
 `;
 
 const AmountContainer = styled(FlexDivCentered)`

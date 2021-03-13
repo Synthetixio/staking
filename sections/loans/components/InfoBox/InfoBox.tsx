@@ -7,6 +7,7 @@ import { walletAddressState } from 'store/wallet';
 import styled from 'styled-components';
 import Connector from 'containers/Connector';
 import Button from 'components/Button';
+import Currency from 'components/Currency';
 import { Synths } from 'constants/currency';
 import synthetix from 'lib/synthetix';
 import { tx } from 'utils/transactions';
@@ -154,7 +155,9 @@ const InfoBox: React.FC = () => {
 					{borrows.map((stat) => (
 						<React.Fragment key={stat.currency}>
 							<StatsCol>
-								<div>{stat.currency}</div>
+								<div>
+									<Currency.Name currencyKey={stat.currency} showIcon={true} />
+								</div>
 							</StatsCol>
 							<StatsCol>
 								<div>${toFixed(stat.openInterest, 1, 2)}</div>
@@ -229,7 +232,7 @@ export const StatsHeader = styled.div`
 		text-align: right;
 	}
 
-	div {
+	& > div {
 		padding: 8px 16px;
 	}
 `;
@@ -240,12 +243,18 @@ export const StatsCol = styled.div`
 	}
 
 	&:nth-child(even) {
-		text-align: right;
 		margin-right: 16px;
+
+		& div {
+			justify-content: flex-end;
+		}
 	}
 
-	div {
+	& > div {
 		padding: 8px 0;
+		height: 100%;
+		display: flex;
+		align-items: center;
 		border-bottom: 1px solid ${(props) => props.theme.colors.grayBlue};
 	}
 `;

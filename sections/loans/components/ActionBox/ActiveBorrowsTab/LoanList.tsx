@@ -2,21 +2,17 @@ import React from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
+
 import Table from 'components/Table';
+import Currency from 'components/Currency';
 import { Loan } from 'queries/loans/types';
 import { ACTION_BOX_WIDTH } from 'sections/loans/constants';
 import { useLoans } from 'sections/loans/contexts/loans';
 import { formatUnits } from 'utils/formatters/big-number';
 import ModifyLoanMenu from './ModifyLoanMenu';
 
-const COL_WIDTH = ACTION_BOX_WIDTH / 4 - 10;
-
-type LoanRowWrap = {
-	debt: string;
-	collateral: string;
-	cratio: string;
-	loan: Loan;
-};
+const SMALL_COL_WIDTH = 80;
+const LARGE_COL_WIDTH = (ACTION_BOX_WIDTH - SMALL_COL_WIDTH * 2) / 2 - 20;
 
 type LoanListProps = {
 	actions: string[];
@@ -24,14 +20,7 @@ type LoanListProps = {
 
 const LoanList: React.FC<LoanListProps> = ({ actions }) => {
 	const { t } = useTranslation();
-	const { isLoadingLoans: isLoading, loans } = useLoans();
-
-	const data: Array<LoanRowWrap> = loans.map((loan: Loan) => ({
-		debt: `${formatUnits(loan.amount, 18, 2)} ${loan.debtAsset}`,
-		collateral: `${formatUnits(loan.collateral, 18, 2)} ${loan.collateralAsset}`,
-		cratio: `${formatUnits(loan.cratio.toString(), 18 - 2, 0)}%`,
-		loan,
-	}));
+	const { isLoadingLoans: isLoading, loans: data } = useLoans();
 
 	const columns = React.useMemo(
 		() => [
@@ -39,27 +28,49 @@ const LoanList: React.FC<LoanListProps> = ({ actions }) => {
 				Header: <>{t('loans.tabs.list.types.debt')}</>,
 				accessor: 'debt',
 				sortable: true,
-				width: COL_WIDTH,
+				width: LARGE_COL_WIDTH,
+				Cell: (cellProps: CellProps<Loan>) => {
+					const loan = cellProps.row.original;
+					return (
+						<CurrencyIconContainer>
+							<Currency.Name currencyKey={loan.debtAsset} showIcon={true} />
+							{formatUnits(loan.amount, 18, 2)}
+						</CurrencyIconContainer>
+					);
+				},
 			},
 			{
 				Header: <>{t('loans.tabs.list.types.collateral')}</>,
 				accessor: 'collateral',
 				sortable: true,
-				width: COL_WIDTH,
+				width: LARGE_COL_WIDTH,
+				Cell: (cellProps: CellProps<Loan>) => {
+					const loan = cellProps.row.original;
+					return (
+						<CurrencyIconContainer>
+							<Currency.Name currencyKey={loan.collateralAsset} showIcon={true} />
+							{formatUnits(loan.collateral, 18, 2)}
+						</CurrencyIconContainer>
+					);
+				},
 			},
 			{
 				Header: <>{t('loans.tabs.list.types.cratio')}</>,
 				accessor: 'cratio',
 				sortable: true,
-				width: COL_WIDTH,
+				width: SMALL_COL_WIDTH,
+				Cell: (cellProps: CellProps<Loan>) => {
+					const loan = cellProps.row.original;
+					return <div>{formatUnits(loan.cratio.toString(), 18 - 2, 0)}%</div>;
+				},
 			},
 			{
 				Header: <>{t('loans.tabs.list.types.modify')}</>,
 				id: 'modify',
-				width: COL_WIDTH,
+				width: SMALL_COL_WIDTH,
 				sortable: false,
-				Cell: (cellProps: CellProps<LoanRowWrap>) => (
-					<ModifyLoanMenu loan={cellProps.row.original.loan} {...{ actions }} />
+				Cell: (cellProps: CellProps<Loan>) => (
+					<ModifyLoanMenu loan={cellProps.row.original} {...{ actions }} />
 				),
 			},
 		],
@@ -100,6 +111,13 @@ const NoResultsMessage = styled.div`
 	text-align: center;
 	font-size: 12px;
 	padding: 20px 0 0;
+`;
+
+const CurrencyIconContainer = styled.div`
+	display: grid;
+	align-items: center;
+	grid-column-gap: 10px;
+	grid-template-columns: 1fr 1fr;
 `;
 
 export default LoanList;

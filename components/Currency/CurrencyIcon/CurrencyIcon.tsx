@@ -5,6 +5,7 @@ import Img from 'react-optimized-image';
 // import BTCIcon from 'assets/svg/currencies/crypto/BTC.svg';
 import ETHIcon from 'assets/svg/currencies/crypto/ETH.svg';
 import CRVIcon from 'assets/svg/currencies/crypto/CRV.svg';
+import renBTCIcon from 'assets/svg/currencies/crypto/BTC.svg'; // todo: use actual RENBTC icon
 // import XRPIcon from 'assets/svg/currencies/crypto/XRP.svg';
 // import BCHIcon from 'assets/svg/currencies/crypto/BCH.svg';
 // import LTCIcon from 'assets/svg/currencies/crypto/LTC.svg';
@@ -29,7 +30,7 @@ import SNXIcon from '@synthetixio/assets/snx/SNX.svg';
 // import FTSEIcon from 'assets/svg/currencies/equities/FTSE.svg';
 // import NIKKEIIcon from 'assets/svg/currencies/equities/NIKKEI.svg';
 // Fiat
-// import AUDIcon from 'assets/svg/currencies/fiat/AUD.svg';
+// import AUDIcon from 'assets/svg/currencies/fiat/AUD.svg';a
 // import CADIcon  from 'assets/svg/currencies/fiat/CAD.svg';
 // import CHFIcon from 'assets/svg/currencies/fiat/CHF.svg';
 // import EURIcon from 'assets/svg/currencies/fiat/EUR.svg';
@@ -122,6 +123,9 @@ export const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, type = 'synth
 		}
 		case CryptoCurrency.SNX: {
 			return <Img src={SNXIcon} {...props} />;
+		}
+		case CryptoCurrency.RENBTC: {
+			return <Img src={renBTCIcon} {...props} />;
 		}
 		case CryptoCurrency.CRV: {
 			return <Img src={CRVIcon} {...props} />;
