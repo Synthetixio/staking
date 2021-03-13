@@ -9,7 +9,7 @@ import { PROPOSAL, SPACE, SPACE_KEY } from 'constants/snapshot';
 import { getProfiles } from 'sections/gov/components/helper';
 
 import { appReadyState } from 'store/app';
-import { isWalletConnectedState, walletAddressState } from 'store/wallet';
+import { walletAddressState } from 'store/wallet';
 import Connector from 'containers/Connector';
 import snapshot from '@snapshot-labs/snapshot.js';
 import CouncilDilution from 'contracts/councilDilution.js';
@@ -30,7 +30,6 @@ type ProposalResults = {
 const useProposal = (spaceKey: SPACE_KEY, hash: string, options?: QueryConfig<ProposalResults>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const walletAddress = useRecoilValue(walletAddressState);
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const { provider } = Connector.useContainer();
 
 	return useQuery<ProposalResults>(
@@ -160,7 +159,7 @@ const useProposal = (spaceKey: SPACE_KEY, hash: string, options?: QueryConfig<Pr
 			return results;
 		},
 		{
-			enabled: isAppReady && spaceKey && false,
+			enabled: isAppReady && spaceKey,
 			...options,
 		}
 	);
