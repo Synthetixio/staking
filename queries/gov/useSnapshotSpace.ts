@@ -20,7 +20,7 @@ const useSnapshotSpace = (spaceKey: SPACE_KEY, options?: QueryConfig<SpaceData>)
 			return space;
 		},
 		{
-			enabled: isAppReady && spaceKey,
+			enabled: isAppReady && spaceKey && false,
 			...options,
 		}
 	);
