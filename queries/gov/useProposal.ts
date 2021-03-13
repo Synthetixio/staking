@@ -160,7 +160,7 @@ const useProposal = (spaceKey: SPACE_KEY, hash: string, options?: QueryConfig<Pr
 			return results;
 		},
 		{
-			enabled: isAppReady && spaceKey && isWalletConnected,
+			enabled: isAppReady && spaceKey && false,
 			...options,
 		}
 	);
