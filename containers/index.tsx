@@ -3,6 +3,7 @@ import { FC, ReactNode } from 'react';
 import Connector from './Connector';
 import Etherscan from './Etherscan';
 import Notify from './Notify';
+import TransactionNotifier from './TransactionNotifier';
 
 type WithAppContainersProps = {
 	children: ReactNode;
@@ -11,7 +12,9 @@ type WithAppContainersProps = {
 export const WithAppContainers: FC<WithAppContainersProps> = ({ children }) => (
 	<Connector.Provider>
 		<Etherscan.Provider>
-			<Notify.Provider>{children}</Notify.Provider>
+			<Notify.Provider>
+				<TransactionNotifier.Provider>{children}</TransactionNotifier.Provider>
+			</Notify.Provider>
 		</Etherscan.Provider>
 	</Connector.Provider>
 );

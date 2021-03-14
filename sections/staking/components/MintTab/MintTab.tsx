@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { ethers } from 'ethers';
 import synthetix from 'lib/synthetix';
 
-import Notify from 'containers/Notify';
 import { Transaction } from 'constants/network';
 import { normalizedGasPrice, normalizeGasLimit } from 'utils/network';
 import { toBigNumber } from 'utils/formatters/number';
@@ -16,9 +15,10 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { amountToMintState, MintActionType, mintTypeState } from 'store/staking';
 import { isWalletConnectedState } from 'store/wallet';
 import { appReadyState } from 'store/app';
+import TransactionNotifier from 'containers/TransactionNotifier';
 
 const MintTab: React.FC = () => {
-	const { monitorHash } = Notify.useContainer();
+	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const isAppReady = useRecoilValue(appReadyState);
 
@@ -119,10 +119,13 @@ const MintTab: React.FC = () => {
 					if (transaction) {
 						setTxHash(transaction.hash);
 						setTransactionState(Transaction.WAITING);
-						monitorHash({
+						monitorTransaction({
 							txHash: transaction.hash,
 							onTxConfirmed: () => {
 								setTransactionState(Transaction.SUCCESS);
+							},
+							onTxFailed: (error) => {
+								console.log('failed', error);
 							},
 						});
 						setTxModalOpen(false);
@@ -133,7 +136,7 @@ const MintTab: React.FC = () => {
 				}
 			}
 		},
-		[amountToMint, gasPrice, monitorHash, isAppReady]
+		[amountToMint, gasPrice, monitorTransaction, isAppReady]
 	);
 
 	const returnPanel = useMemo(() => {

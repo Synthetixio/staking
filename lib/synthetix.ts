@@ -45,7 +45,6 @@ type Synthetix = {
 	tokensMap: TokensMap | null;
 	synthSummaryUtil: ethers.Contract | null;
 	chainIdToNetwork: Record<NetworkId, Network> | null;
-	useOvm: boolean;
 };
 
 const synthetix: Synthetix = {
@@ -54,17 +53,14 @@ const synthetix: Synthetix = {
 	synthsMap: null,
 	tokensMap: null,
 	chainIdToNetwork: null,
-	useOvm: false,
 
-	setContractSettings({ networkId, provider, signer, useOvm = false }: ContractSettings) {
+	setContractSettings({ networkId, provider, signer }: ContractSettings) {
 		this.js = initSynthetixJS({
 			networkId,
 			provider,
 			signer,
-			useOvm,
 		});
 
-		this.useOvm = useOvm;
 		this.synthsMap = keyBy(this.js.synths, 'name');
 		this.tokensMap = keyBy(this.js.tokens, 'symbol');
 
@@ -72,7 +68,7 @@ const synthetix: Synthetix = {
 		this.chainIdToNetwork = invert(this.js.networkToChainId);
 	},
 	getGasEstimateForTransaction({ txArgs, method }: GasEstimateForTransactionParams) {
-		if (this.useOvm) return MAX_BLOCK_SIZE;
+		if (this.js?.network.useOvm) return MAX_BLOCK_SIZE;
 		return method(...txArgs).then(
 			(estimate: Number): Number => {
 				return normalizeGasLimit(Number(estimate));
