@@ -1,33 +1,34 @@
 import { Synths } from 'constants/currency';
 import { WEEKS_IN_YEAR } from 'constants/date';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
-import useIBTCShortsQuery from 'queries/shorts/useIBTCShortsQuery';
+import { ShortRewardsData } from 'queries/shorts/types';
+import useSBTCShortsQuery from 'queries/shorts/useSBTCShortsQuery';
 
-type LPData = {
+type SRData = {
 	[name: string]: {
 		APR: number;
-		TVL: number;
-		data: any | undefined;
+		OI: number;
+		data: ShortRewardsData | undefined;
 	};
 };
 
-const useShortRewardsData = (): LPData => {
+const useShortRewardsData = (): SRData => {
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const SNXRate = exchangeRatesQuery.data?.SNX ?? 0;
-	const useiBTCRewards = useIBTCShortsQuery();
+	const usesBTCRewards = useSBTCShortsQuery();
 
-	const weeklyStats = 8000;
-	const weeksInAYear = 52;
+	const sBTCOpenInterestUSD = usesBTCRewards.data?.openInterestUSD ?? 0;
 
-	const iBTCTVL = (useiBTCRewards.data?.balance ?? 0) * (useiBTCRewards.data?.price ?? 0);
-
-	const iBTCAPR = (weeklyStats * SNXRate * 100 * weeksInAYear) / useiBTCRewards.data?.openInterest;
+	const sBTCAPR =
+		usesBTCRewards.data?.distribution && SNXRate && sBTCOpenInterestUSD
+			? ((usesBTCRewards.data.distribution * SNXRate) / sBTCOpenInterestUSD) * WEEKS_IN_YEAR
+			: 0;
 
 	return {
-		[Synths.iBTC]: {
-			APR: iBTCAPR,
-			TVL: iBTCTVL,
-			data: useiBTCRewards.data,
+		[Synths.sBTC]: {
+			APR: sBTCAPR,
+			OI: sBTCOpenInterestUSD,
+			data: usesBTCRewards.data,
 		},
 	};
 };

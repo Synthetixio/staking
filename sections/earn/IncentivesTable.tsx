@@ -35,7 +35,7 @@ import {
 	TableNoResultsButtonContainer,
 	TableNoResultsTitle,
 } from 'styles/common';
-import { CryptoCurrency, CurrencyKey } from 'constants/currency';
+import { CryptoCurrency, CurrencyKey, Synths } from 'constants/currency';
 import { DURATION_SEPARATOR } from 'constants/date';
 import { NOT_APPLICABLE } from './Incentives';
 
@@ -176,8 +176,10 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab }
 				accessor: 'rewards',
 				Cell: (cellProps: CellProps<EarnItem, EarnItem['rewards']>) => {
 					const isDualRewards = cellProps.row.original.staked.asset === LP.UNISWAP_DHT;
-
-					if (!cellProps.row.original.externalLink) {
+					if (
+						!cellProps.row.original.externalLink ||
+						cellProps.row.original.staked.asset === Synths.sBTC
+					) {
 						return (
 							<CellContainer>
 								<Title isNumeric={true}>

@@ -20,6 +20,7 @@ import { isWalletConnectedState } from 'store/wallet';
 
 import { Tab, LP } from './types';
 import { zeroBN } from 'utils/formatters/number';
+import useShortRewardsData from 'hooks/useShortRewardsData';
 
 export const NOT_APPLICABLE = 'n/a';
 
@@ -47,6 +48,7 @@ const Incentives: FC<IncentivesProps> = ({
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 
 	const lpData = useLPData();
+	const shortData = useShortRewardsData();
 	const useSNXLockedValue = useSNXLockedValueQuery();
 
 	const { nextFeePeriodStarts, currentFeePeriodStarted } = useFeePeriodTimeAndProgress();
@@ -104,22 +106,22 @@ const Incentives: FC<IncentivesProps> = ({
 							needsToSettle: lpData[Synths.iETH].data?.needsToSettle,
 						},
 						{
-							title: t('earn.incentives.options.ibtc.title'),
-							subtitle: t('earn.incentives.options.ibtc.subtitle'),
-							apr: lpData[Synths.iBTC].APR,
-							tvl: lpData[Synths.iBTC].TVL,
+							title: t('earn.incentives.options.sbtc.title'),
+							subtitle: t('earn.incentives.options.sbtc.subtitle'),
+							apr: shortData[Synths.sBTC].APR,
+							tvl: shortData[Synths.sBTC].OI,
 							staked: {
-								balance: lpData[Synths.iBTC].data?.staked ?? 0,
-								asset: Synths.iBTC,
+								balance: shortData[Synths.sBTC].data?.staked ?? 0,
+								asset: Synths.sBTC,
 							},
-							rewards: lpData[Synths.iBTC].data?.rewards ?? 0,
-							periodStarted: now - (lpData[Synths.iBTC].data?.duration ?? 0),
-							periodFinish: lpData[Synths.iBTC].data?.periodFinish ?? 0,
-							claimed: (lpData[Synths.iBTC].data?.rewards ?? 0) > 0 ? false : NOT_APPLICABLE,
+							rewards: shortData[Synths.sBTC].data?.rewards ?? 0,
+							periodStarted: now - (shortData[Synths.sBTC].data?.duration ?? 0),
+							periodFinish: shortData[Synths.sBTC].data?.periodFinish ?? 0,
+							claimed: (shortData[Synths.sBTC].data?.rewards ?? 0) > 0 ? false : NOT_APPLICABLE,
 							now,
-							tab: Tab.iBTC_LP,
-							route: ROUTES.Earn.iBTC_LP,
-							needsToSettle: lpData[Synths.iBTC].data?.needsToSettle,
+							tab: Tab.sBTC_SHORT,
+							route: ROUTES.Earn.sBTC_SHORT,
+							externalLink: ROUTES.Earn.sBTC_EXTERNAL,
 						},
 						{
 							title: t('earn.incentives.options.stsla.title'),
@@ -187,6 +189,7 @@ const Incentives: FC<IncentivesProps> = ({
 			now,
 			t,
 			isWalletConnected,
+			shortData,
 		]
 	);
 
@@ -197,7 +200,7 @@ const Incentives: FC<IncentivesProps> = ({
 			isLoaded={
 				lpData[LP.CURVE_sUSD].data &&
 				lpData[LP.CURVE_sEURO].data &&
-				lpData[Synths.iBTC].data &&
+				shortData[Synths.sBTC].data &&
 				lpData[Synths.iETH].data &&
 				lpData[LP.BALANCER_sTSLA].data
 					? true
@@ -229,18 +232,6 @@ const Incentives: FC<IncentivesProps> = ({
 						staked={incentives[1].staked.balance}
 						stakedBN={lpData[Synths.iETH].data?.stakedBN ?? zeroBN}
 						needsToSettle={incentives[1].needsToSettle}
-					/>
-				)}
-				{activeTab === Tab.iBTC_LP && (
-					<LPTab
-						userBalance={lpData[Synths.iBTC].data?.userBalance ?? 0}
-						userBalanceBN={lpData[Synths.iBTC].data?.userBalanceBN ?? zeroBN}
-						stakedAsset={Synths.iBTC}
-						allowance={lpData[Synths.iBTC].data?.allowance ?? null}
-						tokenRewards={incentives[2].rewards}
-						staked={incentives[2].staked.balance}
-						stakedBN={lpData[Synths.iBTC].data?.stakedBN ?? zeroBN}
-						needsToSettle={incentives[2].needsToSettle}
 					/>
 				)}
 				{activeTab === Tab.sTLSA_LP && (

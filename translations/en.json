@@ -400,10 +400,10 @@
 					"description": "Staking iETH tokens allows you to earn SNX rewards. <0>Learn more.<0>",
 					"subtitle": "iETH Rewards"
 				},
-				"ibtc": {
+				"sbtc": {
 					"title": "Synthetix",
-					"description": "Staking iBTC tokens allows you to earn SNX rewards. <0>Learn more.<0>",
-					"subtitle": "iBTC Rewards"
+					"description": "Opening a short allows you to earn SNX rewards. <0>Learn more.<0>",
+					"subtitle": "sBTC Short Rewards"
 				},
 				"stsla": {
 					"title": "Balancer",

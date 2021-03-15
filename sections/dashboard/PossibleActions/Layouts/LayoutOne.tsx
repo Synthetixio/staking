@@ -95,17 +95,17 @@ const LayoutOne: FC = () => {
 				gridLocations: ['col-1', 'col-3', 'row-2', 'row-3'],
 				icon: (
 					<GlowingCircle variant="green" size="md">
-						<Currency.Icon currencyKey={Synths.iBTC} width="32" height="32" />
+						<Currency.Icon currencyKey={Synths.sBTC} width="32" height="32" />
 					</GlowingCircle>
 				),
 				title: t('dashboard.actions.loans.title', {
-					percent: formatPercent(lpData[Synths.iBTC].APR, { minDecimals: 0 }),
+					percent: formatPercent(shortData[Synths.sBTC].APR, { minDecimals: 0 }),
 				}),
 				copy: t('dashboard.actions.loans.copy', {
-					asset: Synths.iBTC,
+					asset: Synths.sBTC,
 					supplier: 'Synthetix',
 				}),
-				link: ROUTES.Earn.iBTC_LP,
+				externalLink: ROUTES.Earn.sBTC_EXTERNAL,
 			},
 			{
 				gridLocations: ['col-3', 'col-5', 'row-2', 'row-3'],
@@ -170,7 +170,7 @@ const LayoutOne: FC = () => {
 				link: ROUTES.Earn.sTLSA_LP,
 			},
 		];
-	}, [t, lpData, currentCRatio, targetCRatio, stakingRewards, tradingRewards]);
+	}, [t, lpData, currentCRatio, targetCRatio, stakingRewards, tradingRewards, shortData]);
 	return (
 		<>
 			{gridItems.map((props, index) => (
