@@ -3,7 +3,7 @@ import { toast } from 'react-toastify';
 import { TransactionStatusData, TransactionFailureData } from '@synthetixio/transaction-notifier';
 
 import Connector from 'containers/Connector';
-import Etherscan from 'containers/Etherscan';
+import Etherscan from 'containers/BlockExplorer';
 
 import {
 	NotificationSuccess,
@@ -13,7 +13,7 @@ import {
 
 const useTransactionNotifier = () => {
 	const { transactionNotifier } = Connector.useContainer();
-	const { etherscanInstance } = Etherscan.useContainer();
+	const { blockExplorerInstance } = Etherscan.useContainer();
 
 	const monitorTransaction = ({
 		txHash,
@@ -24,7 +24,7 @@ const useTransactionNotifier = () => {
 		onTxConfirmed?: () => void;
 		onTxFailed?: (failureMessage: TransactionFailureData) => void;
 	}) => {
-		const link = etherscanInstance != null ? etherscanInstance.txLink(txHash) : undefined;
+		const link = blockExplorerInstance != null ? blockExplorerInstance.txLink(txHash) : undefined;
 		if (transactionNotifier) {
 			const toastProps = {
 				onClick: () => window.open(link, '_blank'),

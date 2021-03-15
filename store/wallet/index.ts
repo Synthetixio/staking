@@ -9,7 +9,7 @@ import { getWalletKey } from '../utils';
 export type Network = {
 	id: NetworkId;
 	name: NetworkName;
-	useOvm?: boolean;
+	useOvm: boolean;
 };
 
 export const networkState = atom<Network | null>({

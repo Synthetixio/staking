@@ -1,7 +1,7 @@
 import { TransactionData } from 'bnc-notify';
 
 import Connector from 'containers/Connector';
-import Etherscan from 'containers/Etherscan';
+import Etherscan from 'containers/BlockExplorer';
 import { createContainer } from 'unstated-next';
 
 export interface TransactionFailed extends TransactionData {
@@ -10,7 +10,7 @@ export interface TransactionFailed extends TransactionData {
 
 const useNotify = () => {
 	const { notify } = Connector.useContainer();
-	const { etherscanInstance } = Etherscan.useContainer();
+	const { blockExplorerInstance } = Etherscan.useContainer();
 
 	// TODO: perhaps, find a better name?
 	const monitorHash = ({
@@ -25,7 +25,7 @@ const useNotify = () => {
 		if (notify) {
 			const { emitter } = notify.hash(txHash);
 
-			const link = etherscanInstance != null ? etherscanInstance.txLink(txHash) : undefined;
+			const link = blockExplorerInstance != null ? blockExplorerInstance.txLink(txHash) : undefined;
 
 			emitter.on('txConfirmed', (txData) => {
 				if (onTxConfirmed != null) {

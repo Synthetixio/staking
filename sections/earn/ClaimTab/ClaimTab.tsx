@@ -14,7 +14,7 @@ import synthetix from 'lib/synthetix';
 import PendingConfirmation from 'assets/svg/app/pending-confirmation.svg';
 import Success from 'assets/svg/app/success.svg';
 
-import Etherscan from 'containers/Etherscan';
+import Etherscan from 'containers/BlockExplorer';
 import Notify from 'containers/Notify';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
@@ -77,7 +77,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 	const { t } = useTranslation();
 	const claimed = useClaimedStatus();
 	const { monitorHash } = Notify.useContainer();
-	const { etherscanInstance } = Etherscan.useContainer();
+	const { blockExplorerInstance } = Etherscan.useContainer();
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
 	const [gasLimitEstimate, setGasLimitEstimate] = useState<number | null>(null);
 	const [gasPrice, setGasPrice] = useState<number>(0);
@@ -92,7 +92,9 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 	const [txHash, setTxHash] = useState<string | null>(null);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 	const link =
-		etherscanInstance != null && txHash != null ? etherscanInstance.txLink(txHash) : undefined;
+		blockExplorerInstance != null && txHash != null
+			? blockExplorerInstance.txLink(txHash)
+			: undefined;
 
 	useEffect(() => {
 		const getGasLimitEstimate = async () => {

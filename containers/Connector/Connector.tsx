@@ -93,7 +93,6 @@ const useConnector = () => {
 						transactionNotifier.setProvider(provider);
 						setProvider(provider);
 						setSigner(signer);
-						console.log(synthetix, 'haha');
 
 						setNetwork({
 							...synthetix.js?.network,

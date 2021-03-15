@@ -9,7 +9,7 @@ import { appReadyState } from 'store/app';
 import StructuredTab from 'components/StructuredTab';
 import { FlexDivCentered, FlexDivColCentered, ExternalLink } from 'styles/common';
 import { CurrencyKey } from 'constants/currency';
-import Etherscan from 'containers/Etherscan';
+import Etherscan from 'containers/BlockExplorer';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import PendingConfirmation from 'assets/svg/app/pending-confirmation.svg';
 import Success from 'assets/svg/app/success.svg';
@@ -85,10 +85,10 @@ const LPTab: FC<LPTabProps> = ({
 	const [claimError, setClaimError] = useState<string | null>(null);
 	const [claimTxModalOpen, setClaimTxModalOpen] = useState<boolean>(false);
 
-	const { etherscanInstance } = Etherscan.useContainer();
+	const { blockExplorerInstance } = Etherscan.useContainer();
 	const claimLink =
-		etherscanInstance != null && claimTxHash != null
-			? etherscanInstance.txLink(claimTxHash)
+		blockExplorerInstance != null && claimTxHash != null
+			? blockExplorerInstance.txLink(claimTxHash)
 			: undefined;
 
 	const exchangeRatesQuery = useExchangeRatesQuery();

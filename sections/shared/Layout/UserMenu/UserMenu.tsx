@@ -40,18 +40,26 @@ const UserMenu: FC = () => {
 			setNetworkError(null);
 			if (!window.ethereum || !window.ethereum.isMetaMask) {
 				setNetworkError(t('user-menu.error.please-install-metamask'));
-			} else addOptimismNetworkToMetamask({ ethereum: window.ethereum });
+			} else await addOptimismNetworkToMetamask({ ethereum: window.ethereum });
 		} catch (e) {
 			setNetworkError(e.message);
 		}
 	};
 
+	const getNetworkName = () => {
+		if (network?.useOvm) {
+			return `0Ξ ${network?.name}`;
+		} else return network?.name;
+	};
+
 	return (
 		<Container>
 			<FlexDivCentered>
-				<OptimismButton isL2={isL2} variant="solid" onClick={addOptimismNetwork}>
-					{isL2 ? t('user-menu.layer-2.connected-to-l2') : t('user-menu.layer-2.switch-to-l2')}
-				</OptimismButton>
+				{!isL2 ? (
+					<OptimismButton variant="solid" onClick={addOptimismNetwork}>
+						{t('user-menu.layer-2.switch-to-l2')}
+					</OptimismButton>
+				) : null}
 				<Menu>
 					<MenuButton
 						onClick={() => {
@@ -78,7 +86,7 @@ const UserMenu: FC = () => {
 									{truncatedWalletAddress}
 								</FlexDivCentered>
 								<NetworkTag className="network-tag" data-testid="network-tag">
-									{network?.name}
+									{getNetworkName()}
 								</NetworkTag>
 								{walletOptionsModalOpened ? caretUp : caretDown}
 							</WalletButton>
@@ -177,7 +185,7 @@ const MenuButton = styled(IconButton)<{ isActive: boolean }>`
 	height: 32px;
 `;
 
-const OptimismButton = styled(Button)<{ isL2: boolean }>`
+const OptimismButton = styled(Button)`
 	border: 1px solid ${(props) => props.theme.colors.pink};
 	background: ${(props) => props.theme.colors.navy};
 	color: ${(props) => props.theme.colors.pink};

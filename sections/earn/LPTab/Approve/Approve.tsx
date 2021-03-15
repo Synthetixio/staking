@@ -11,7 +11,7 @@ import PendingConfirmation from 'assets/svg/app/pending-confirmation.svg';
 import Success from 'assets/svg/app/success.svg';
 import synthetix from 'lib/synthetix';
 import Notify from 'containers/Notify';
-import Etherscan from 'containers/Etherscan';
+import Etherscan from 'containers/BlockExplorer';
 import { zIndex } from 'constants/ui';
 import LockedIcon from 'assets/svg/app/locked.svg';
 import { curveSusdRewards, curveSusdPoolToken, balancersTSLAPoolToken } from 'contracts';
@@ -93,7 +93,7 @@ const Approve: FC<ApproveProps> = ({ stakedAsset, setShowApproveOverlayModal }) 
 	const { t } = useTranslation();
 	const { monitorHash } = Notify.useContainer();
 	const { provider, signer } = Connector.useContainer();
-	const { etherscanInstance } = Etherscan.useContainer();
+	const { blockExplorerInstance } = Etherscan.useContainer();
 	const [error, setError] = useState<string | null>(null);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 	const [gasLimitEstimate, setGasLimitEstimate] = useState<number | null>(null);
@@ -101,7 +101,9 @@ const Approve: FC<ApproveProps> = ({ stakedAsset, setShowApproveOverlayModal }) 
 	const [transactionState, setTransactionState] = useState<Transaction>(Transaction.PRESUBMIT);
 	const [txHash, setTxHash] = useState<string | null>(null);
 	const link =
-		etherscanInstance != null && txHash != null ? etherscanInstance.txLink(txHash) : undefined;
+		blockExplorerInstance != null && txHash != null
+			? blockExplorerInstance.txLink(txHash)
+			: undefined;
 	const isAppReady = useRecoilValue(appReadyState);
 
 	useEffect(() => {

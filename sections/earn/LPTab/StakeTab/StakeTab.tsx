@@ -15,7 +15,7 @@ import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import { getGasEstimateForTransaction } from 'utils/transactions';
 import { normalizedGasPrice, normalizeGasLimit } from 'utils/network';
-import Etherscan from 'containers/Etherscan';
+import Etherscan from 'containers/BlockExplorer';
 import Connector from 'containers/Connector';
 import { curveSusdRewards } from 'contracts';
 
@@ -99,7 +99,7 @@ const StakeTab: FC<StakeTabProps> = ({
 	const { t } = useTranslation();
 	const [amount, setAmount] = useState<string>('');
 	const { monitorHash } = Notify.useContainer();
-	const { etherscanInstance } = Etherscan.useContainer();
+	const { blockExplorerInstance } = Etherscan.useContainer();
 	const { signer } = Connector.useContainer();
 	const [gasLimitEstimate, setGasLimitEstimate] = useState<number | null>(null);
 	const [gasPrice, setGasPrice] = useState<number>(0);
@@ -110,7 +110,9 @@ const StakeTab: FC<StakeTabProps> = ({
 	const [txHash, setTxHash] = useState<string | null>(null);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 	const link =
-		etherscanInstance != null && txHash != null ? etherscanInstance.txLink(txHash) : undefined;
+		blockExplorerInstance != null && txHash != null
+			? blockExplorerInstance.txLink(txHash)
+			: undefined;
 
 	useEffect(() => {
 		const getGasLimitEstimate = async () => {

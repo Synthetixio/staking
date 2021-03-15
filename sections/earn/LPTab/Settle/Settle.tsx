@@ -11,7 +11,7 @@ import PendingConfirmation from 'assets/svg/app/pending-confirmation.svg';
 import Success from 'assets/svg/app/success.svg';
 import synthetix from 'lib/synthetix';
 import Notify from 'containers/Notify';
-import Etherscan from 'containers/Etherscan';
+import Etherscan from 'containers/BlockExplorer';
 import { zIndex } from 'constants/ui';
 import LockedIcon from 'assets/svg/app/locked.svg';
 import Connector from 'containers/Connector';
@@ -73,7 +73,7 @@ const Settle: FC<SettleProps> = ({ stakedAsset, setShowSettleOverlayModal }) => 
 	const { t } = useTranslation();
 	const { monitorHash } = Notify.useContainer();
 	const { provider } = Connector.useContainer();
-	const { etherscanInstance } = Etherscan.useContainer();
+	const { blockExplorerInstance } = Etherscan.useContainer();
 	const walletAddress = useRecoilValue(walletAddressState);
 	const [error, setError] = useState<string | null>(null);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
@@ -82,7 +82,9 @@ const Settle: FC<SettleProps> = ({ stakedAsset, setShowSettleOverlayModal }) => 
 	const [transactionState, setTransactionState] = useState<Transaction>(Transaction.PRESUBMIT);
 	const [txHash, setTxHash] = useState<string | null>(null);
 	const link =
-		etherscanInstance != null && txHash != null ? etherscanInstance.txLink(txHash) : undefined;
+		blockExplorerInstance != null && txHash != null
+			? blockExplorerInstance.txLink(txHash)
+			: undefined;
 	const isAppReady = useRecoilValue(appReadyState);
 
 	useEffect(() => {
