@@ -1,6 +1,6 @@
 import { createContainer } from 'unstated-next';
 import { toast } from 'react-toastify';
-import { TransactionStatusData, TransactionFailureData } from '@synthetixio/transaction-notifier';
+import { TransactionStatusData } from '@synthetixio/transaction-notifier';
 
 import Connector from 'containers/Connector';
 import Etherscan from 'containers/BlockExplorer';
@@ -21,8 +21,9 @@ const useTransactionNotifier = () => {
 		onTxFailed,
 	}: {
 		txHash: string;
+		onTxSent?: () => void;
 		onTxConfirmed?: () => void;
-		onTxFailed?: (failureMessage: TransactionFailureData) => void;
+		onTxFailed?: (failureMessage: TransactionStatusData) => void;
 	}) => {
 		const link = blockExplorerInstance != null ? blockExplorerInstance.txLink(txHash) : undefined;
 		if (transactionNotifier) {
@@ -37,19 +38,19 @@ const useTransactionNotifier = () => {
 				toast.update(transactionHash, {
 					...toastProps,
 					render: NotificationSuccess,
-					// autoClose: 10000,
+					autoClose: 10000,
 				});
 				if (onTxConfirmed != null) {
 					onTxConfirmed();
 				}
 			});
-			emitter.on('txFailed', ({ transactionHash, failureReason }: TransactionFailureData) => {
+			emitter.on('txFailed', ({ transactionHash, failureReason }: TransactionStatusData) => {
 				toast.update(transactionHash, {
 					...toastProps,
 					render: <NotificationError failureReason={failureReason} />,
 				});
 				if (onTxFailed != null) {
-					onTxFailed(failureReason);
+					onTxFailed({ transactionHash, failureReason });
 				}
 			});
 		}

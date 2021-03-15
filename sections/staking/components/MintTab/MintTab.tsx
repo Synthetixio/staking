@@ -44,11 +44,9 @@ const MintTab: React.FC = () => {
 				try {
 					setError(null);
 					const {
-						js: {
-							contracts: { Synthetix },
-							utils: { parseEther },
-						},
-					} = synthetix;
+						contracts: { Synthetix },
+						utils: { parseEther },
+					} = synthetix.js!;
 					let gasEstimate;
 
 					if (unstakedCollateral.isZero())
@@ -88,11 +86,9 @@ const MintTab: React.FC = () => {
 					setError(null);
 					setTxModalOpen(true);
 					const {
-						js: {
-							contracts: { Synthetix },
-							utils: { parseEther },
-						},
-					} = synthetix;
+						contracts: { Synthetix },
+						utils: { parseEther },
+					} = synthetix.js!;
 
 					let transaction: ethers.ContractTransaction;
 

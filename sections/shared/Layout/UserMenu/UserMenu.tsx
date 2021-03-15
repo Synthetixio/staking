@@ -195,13 +195,6 @@ const OptimismButton = styled(Button)`
 		background: ${(props) => props.theme.colors.pink} !important;
 		color: ${(props) => props.theme.colors.navy} !important;
 	}
-	${(props) =>
-		props.isL2 &&
-		css`
-			background: ${(props) => props.theme.colors.pink};
-			color: ${(props) => props.theme.colors.navy};
-			pointer-events: none;
-		`}
 `;
 
 const DropdownContainer = styled.div`
