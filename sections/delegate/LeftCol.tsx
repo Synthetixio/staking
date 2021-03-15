@@ -3,6 +3,7 @@ import { ethers } from 'ethers';
 import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
+import { truncateAddress } from 'utils/formatters/string';
 import { Trans, useTranslation } from 'react-i18next';
 import Button from 'components/Button';
 import StructuredTab from 'components/StructuredTab';
@@ -82,10 +83,9 @@ const Tab: FC = () => {
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 	const [buttonState, setButtonState] = useState<string | null>(null);
 
-	const shortenedDelegateAddress = useMemo(
-		() => `${delegateAddress.slice(0, 8)}....${delegateAddress.slice(-6)}`,
-		[delegateAddress]
-	);
+	const shortenedDelegateAddress = useMemo(() => truncateAddress(delegateAddress, 8, 6), [
+		delegateAddress,
+	]);
 
 	const getApproveTxData = useCallback(
 		(gas: Record<string, number>) => {

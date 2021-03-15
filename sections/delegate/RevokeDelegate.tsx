@@ -12,6 +12,7 @@ import {
 	ModalItemTitle as TxModalItemTitle,
 	ModalItemText as TxModalItemText,
 } from 'styles/common';
+import { truncateAddress } from 'utils/formatters/string';
 import { TxModalItem } from 'sections/delegate/common';
 import {
 	tx,
@@ -42,10 +43,9 @@ const RevokeDelegate: FC<RevokeDelegateProps> = ({ delegateApproval }) => {
 	// const [gasPrice, setGasPrice] = useState<number>(0);
 	// const [gasLimit, setGasLimitEstimate] = useState<number | null>(null);
 
-	const shortenedDelegateAddress = useMemo(
-		() => `${delegateApproval.delegate.slice(0, 8)}....${delegateApproval.delegate.slice(-6)}`,
-		[delegateApproval.delegate]
-	);
+	const shortenedDelegateAddress = useMemo(() => truncateAddress(delegateApproval.delegate, 8, 6), [
+		delegateApproval.delegate,
+	]);
 
 	const getWithdrawTxData = useCallback(
 		(gas: Record<string, number>) => {
