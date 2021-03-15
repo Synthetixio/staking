@@ -17,7 +17,7 @@ import { Svg } from 'react-optimized-image';
 import NavigationBack from 'assets/svg/app/navigation-back.svg';
 import GasSelector from 'components/GasSelector';
 import { useLoans } from 'sections/loans/contexts/loans';
-import { formatNumber, toBigNumber, formatUnits } from 'utils/formatters/number';
+import { toBigNumber, formatUnits } from 'utils/formatters/number';
 import {
 	FormContainer,
 	InputsContainer,
