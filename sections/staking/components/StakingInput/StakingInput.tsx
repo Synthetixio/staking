@@ -141,7 +141,7 @@ const StakingInput: React.FC<StakingInputProps> = ({
 		} else if (error) {
 			return (
 				<StyledCTA variant="primary" size="lg" disabled={true}>
-					{t(error.toLowerCase())}
+					{error}
 				</StyledCTA>
 			);
 		} else if (inputValue.toString().length === 0) {

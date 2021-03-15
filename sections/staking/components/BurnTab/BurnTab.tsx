@@ -20,8 +20,8 @@ import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuer
 import { appReadyState } from 'store/app';
 import Connector from 'containers/Connector';
 import useClearDebtCalculations from 'sections/staking/hooks/useClearDebtCalculations';
-
-// @TODO: Add for the countdown of waiting period and issuance delay
+import { useTranslation } from 'react-i18next';
+import { toFutureDate } from 'utils/formatters/date';
 
 const BurnTab: React.FC = () => {
 	const { monitorHash } = Notify.useContainer();
@@ -31,6 +31,7 @@ const BurnTab: React.FC = () => {
 	const walletAddress = useRecoilValue(walletAddressState);
 	const isAppReady = useRecoilValue(appReadyState);
 	const { signer } = Connector.useContainer();
+	const { t } = useTranslation();
 
 	const [transactionState, setTransactionState] = useState<Transaction>(Transaction.PRESUBMIT);
 	const [txHash, setTxHash] = useState<string | null>(null);
@@ -122,14 +123,27 @@ const BurnTab: React.FC = () => {
 						? toBigNumber(sUSDBalance)
 						: debtBalance;
 
-					if (debtBalance.isZero()) throw new Error('staking.actions.burn.action.error.no-debt');
+					if (debtBalance.isZero()) throw new Error(t('staking.actions.burn.action.error.no-debt'));
 					if (
 						(Number(amountToBurn) > sUSDBalance.toNumber() || maxBurnAmount.isZero()) &&
 						burnType !== BurnActionType.CLEAR
 					)
-						throw new Error('staking.actions.burn.action.error.insufficient');
-					if (waitingPeriod) throw new Error('staking.actions.burn.action.error.waiting-period');
-					if (issuanceDelay) throw new Error('staking.actions.burn.action.error.issuance-period');
+						throw new Error(t('staking.actions.burn.action.error.insufficient'));
+					if (waitingPeriod) {
+						throw new Error(
+							t('staking.actions.burn.action.error.waiting-period', {
+								date: toFutureDate(waitingPeriod),
+							})
+						);
+					}
+
+					if (issuanceDelay) {
+						throw new Error(
+							t('staking.actions.burn.action.error.issuance-period', {
+								date: toFutureDate(issuanceDelay),
+							})
+						);
+					}
 
 					if (burnType === BurnActionType.CLEAR) {
 						const gasEstimate = await getGasEstimateForTransaction(
@@ -153,6 +167,7 @@ const BurnTab: React.FC = () => {
 		getGasLimitEstimate();
 	}, [
 		isWalletConnected,
+		t,
 		isAppReady,
 		error,
 		amountToBurn,
@@ -173,11 +188,6 @@ const BurnTab: React.FC = () => {
 						contracts: { Synthetix, Issuer },
 						utils: { formatBytes32String, parseEther },
 					} = synthetix.js!;
-
-					if (await Synthetix.isWaitingPeriod(formatBytes32String(Synths.sUSD)))
-						throw new Error('Waiting period for sUSD is still ongoing');
-					if (!burnToTarget && !(await Issuer.canBurnSynths(walletAddress)))
-						throw new Error('Waiting period to burn is still ongoing');
 
 					let transaction: ethers.ContractTransaction;
 
@@ -248,11 +258,6 @@ const BurnTab: React.FC = () => {
 							contracts: { Synthetix, Issuer },
 							utils: { formatBytes32String, parseEther },
 						} = synthetix.js!;
-
-						if (await Synthetix.isWaitingPeriod(formatBytes32String(Synths.sUSD)))
-							throw new Error('Waiting period for sUSD is still ongoing');
-						if (!(await Issuer.canBurnSynths(walletAddress)))
-							throw new Error('Waiting period to burn is still ongoing');
 
 						let burnTransaction: ethers.ContractTransaction;
 
