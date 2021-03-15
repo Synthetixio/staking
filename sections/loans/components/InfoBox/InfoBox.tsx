@@ -12,7 +12,7 @@ import Currency from 'components/Currency';
 import { Synths } from 'constants/currency';
 import synthetix from 'lib/synthetix';
 import { tx } from 'utils/transactions';
-import { toFixed, toBig, formatUnits } from 'utils/formatters/big-number';
+import { formatNumber, toBigNumber, formatUnits } from 'utils/formatters/number';
 import { useLoans } from 'sections/loans/contexts/loans';
 import InfoSVG from 'sections/loans/components/ActionBox/components/InfoSVG';
 
@@ -25,7 +25,7 @@ const InfoBox: React.FC = () => {
 
 	const [borrows, setBorrows] = React.useState<Array<any>>([]);
 	const borrowsOpenInterest = React.useMemo(
-		() => borrows.reduce((sum, stat) => sum.plus(stat.openInterest), toBig('0')),
+		() => borrows.reduce((sum, stat) => sum.plus(stat.openInterest), toBigNumber(0)),
 		[borrows]
 	);
 
@@ -62,9 +62,9 @@ const InfoBox: React.FC = () => {
 				collateralManagerContract.long(ethers.utils.formatBytes32String(currency)),
 				exchangeRatesContract.rateAndInvalid(ethers.utils.formatBytes32String(currency)),
 			]);
-			const openInterestUSD = toBig(openInterest)
+			const openInterestUSD = toBigNumber(openInterest.toString())
 				.dividedBy(1e18)
-				.multipliedBy(toBig(assetUSDPrice).dividedBy(1e18));
+				.multipliedBy(toBigNumber(assetUSDPrice.toString()).dividedBy(1e18));
 			return {
 				currency,
 				openInterest: openInterestUSD,
@@ -161,7 +161,7 @@ const InfoBox: React.FC = () => {
 								</div>
 							</StatsCol>
 							<StatsCol>
-								<div>${toFixed(stat.openInterest, 1, 2)}</div>
+								<div>${formatNumber(stat.openInterest, { decimals: 2 })}</div>
 							</StatsCol>
 						</React.Fragment>
 					))}
@@ -169,7 +169,7 @@ const InfoBox: React.FC = () => {
 						<div>{t('loans.stats.total')}</div>
 					</TotalColHeading>
 					<StatsCol>
-						<div>${toFixed(borrowsOpenInterest, 1, 2)}</div>
+						<div>${formatNumber(borrowsOpenInterest, { decimals: 2 })}</div>
 					</StatsCol>
 				</StatsGrid>
 			</Container>

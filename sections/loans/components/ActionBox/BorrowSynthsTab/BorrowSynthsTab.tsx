@@ -10,7 +10,7 @@ import Connector from 'containers/Connector';
 import Notify from 'containers/Notify';
 import synthetix from 'lib/synthetix';
 import GasSelector from 'components/GasSelector';
-import { toBig, formatUnits, toEthersBig } from 'utils/formatters/big-number';
+import { toBigNumber, formatUnits, toEthersBig } from 'utils/formatters/number';
 import { tx, getGasEstimateForTransaction } from 'utils/transactions';
 import {
 	normalizeGasLimit as getNormalizedGasLimit,
@@ -64,22 +64,26 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 	const debtDecimals = 18; // todo
 	const debtAmount = React.useMemo(() => {
 		try {
-			return toBig(ethers.utils.parseUnits(debtAmountNumber.toString(), debtDecimals));
+			return toBigNumber(
+				ethers.utils.parseUnits(debtAmountNumber.toString(), debtDecimals).toString()
+			);
 		} catch {
-			return toBig(0);
+			return toBigNumber(0);
 		}
 	}, [debtAmountNumber, debtDecimals]);
 
 	const [collateralAmountNumber, setCollateralAmount] = React.useState<string>('');
-	const [minCollateralAmount, setMinCollateralAmount] = React.useState<Big>(toBig(0));
+	const [minCollateralAmount, setMinCollateralAmount] = React.useState<Big>(toBigNumber(0));
 	const [collateralAsset, setCollateralAsset] = React.useState<string>('');
 	const [collateralAssets, setCollateralAssets] = React.useState<Array<string>>([]);
 	const collateralDecimals = collateralAsset === 'renBTC' ? 8 : 18; // todo
 	const collateralAmount = React.useMemo(() => {
 		try {
-			return toBig(ethers.utils.parseUnits(collateralAmountNumber.toString(), collateralDecimals));
+			return toBigNumber(
+				ethers.utils.parseUnits(collateralAmountNumber.toString(), collateralDecimals).toString()
+			);
 		} catch {
-			return toBig(0);
+			return toBigNumber(0);
 		}
 	}, [collateralAmountNumber, collateralDecimals]);
 	const collateralIsETH = collateralAsset === 'ETH';
@@ -104,7 +108,7 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 
 	const loanContractAddress = loanContract?.address;
 
-	const [cratio, setCRatio] = React.useState(toBig(0));
+	const [cratio, setCRatio] = React.useState(toBigNumber(0));
 
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const exchangeRates = exchangeRatesQuery.data ?? null;
@@ -215,7 +219,9 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 			if (collateralIsETH || !(collateralContract && loanContractAddress && address))
 				return setIsApproved(true);
 			// update isApproved
-			const allowance = toBig(await collateralContract.allowance(address, loanContractAddress));
+			const allowance = toBigNumber(
+				await collateralContract.allowance(address, loanContractAddress)
+			);
 			setIsApproved(allowance.gte(collateralAmount.toString()));
 		} catch {
 		} finally {
@@ -257,7 +263,9 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 			if (collateralIsETH || !(collateralContract && loanContractAddress && address)) {
 				return setIsApproved(true);
 			}
-			const allowance = toBig(await collateralContract.allowance(address, loanContractAddress));
+			const allowance = toBigNumber(
+				await collateralContract.allowance(address, loanContractAddress)
+			);
 			if (isMounted) setIsApproved(allowance.gte(collateralAmount));
 		};
 		load();
@@ -271,11 +279,11 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 		let isMounted = true;
 		const load = async () => {
 			if (!loanContract) {
-				return setMinCollateralAmount(toBig(0));
+				return setMinCollateralAmount(toBigNumber(0));
 			}
-			const minCollateralAmount = toBig(await loanContract.minCollateral()).dividedBy(
-				Math.pow(10, 18 - collateralDecimals)
-			);
+			const minCollateralAmount = toBigNumber(
+				(await loanContract.minCollateral()).toString()
+			).dividedBy(Math.pow(10, 18 - collateralDecimals));
 			if (isMounted) setMinCollateralAmount(minCollateralAmount);
 		};
 		load();
@@ -289,17 +297,17 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 		let isMounted = true;
 		const load = async () => {
 			if (!(exchangeRates && !collateralAmount.isZero() && !debtAmount.isZero())) {
-				return setCRatio(toBig('0'));
+				return setCRatio(toBigNumber('0'));
 			}
 
-			const collateralUSDPrice = toBig(
+			const collateralUSDPrice = toBigNumber(
 				getExchangeRatesForCurrencies(
 					exchangeRates,
 					collateralAsset === 'renBTC' ? Synths.sBTC : Synths.sETH,
 					Synths.sUSD
 				)
 			);
-			const debtUSDPrice = toBig(
+			const debtUSDPrice = toBigNumber(
 				getExchangeRatesForCurrencies(exchangeRates, debtAsset, Synths.sUSD)
 			);
 			const cratio = collateralAmount

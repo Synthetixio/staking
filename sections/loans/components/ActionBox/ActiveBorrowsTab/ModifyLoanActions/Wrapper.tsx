@@ -17,7 +17,7 @@ import { Svg } from 'react-optimized-image';
 import NavigationBack from 'assets/svg/app/navigation-back.svg';
 import GasSelector from 'components/GasSelector';
 import { useLoans } from 'sections/loans/contexts/loans';
-import { toBig, toFixed } from 'utils/formatters/big-number';
+import { formatNumber, toBigNumber, formatUnits } from 'utils/formatters/number';
 import {
 	FormContainer,
 	InputsContainer,
@@ -141,7 +141,7 @@ const Wrapper: FC<WrapperProps> = ({
 					return stopTimer();
 				}
 				if (isMounted) {
-					setWaitETA(toHumanizedDuration(toBig(nextInteractionDate.diff(now, 'seconds'))));
+					setWaitETA(toHumanizedDuration(toBigNumber(nextInteractionDate.diff(now, 'seconds'))));
 				}
 			}, 1000);
 
@@ -260,14 +260,24 @@ const Wrapper: FC<WrapperProps> = ({
 							<TxModalItem>
 								<TxModalItemTitle>{t(leftColLabel)}</TxModalItemTitle>
 								<TxModalItemText>
-									{toFixed(ethers.utils.parseEther(leftColAmount), 1e18, 2)} {leftColAssetName}
+									{formatUnits(
+										toBigNumber(ethers.utils.parseEther(leftColAmount).toString()),
+										18,
+										2
+									)}{' '}
+									{leftColAssetName}
 								</TxModalItemText>
 							</TxModalItem>
 							<TxModalItemSeperator />
 							<TxModalItem>
 								<TxModalItemTitle>{t(rightColLabel)}</TxModalItemTitle>
 								<TxModalItemText>
-									{toFixed(ethers.utils.parseEther(rightColAmount), 1e18, 2)} {rightColAssetName}
+									{formatUnits(
+										toBigNumber(ethers.utils.parseEther(rightColAmount).toString()),
+										18,
+										2
+									)}{' '}
+									{rightColAssetName}
 								</TxModalItemText>
 							</TxModalItem>
 						</TxModalContent>

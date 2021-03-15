@@ -8,7 +8,7 @@ import Connector from 'containers/Connector';
 import { appReadyState } from 'store/app';
 import synthetix from 'lib/synthetix';
 import { walletAddressState, networkState } from 'store/wallet';
-import { toBig } from 'utils/formatters/big-number';
+import { toBigNumber } from 'utils/formatters/number';
 import { LOAN_TYPE_ERC20, LOAN_TYPE_ETH, SYNTH_BY_CURRENCY_KEY } from 'sections/loans/constants';
 import { Loan } from 'queries/loans/types';
 import { sleep } from 'utils/promise';
@@ -319,14 +319,14 @@ export const LoansProvider: React.FC<LoansProviderProps> = ({ children }) => {
 		erc20LoanStateContract,
 	]);
 
-	const [interestRate, setInterestRate] = useState(toBig('0'));
+	const [interestRate, setInterestRate] = useState(toBigNumber(0));
 	const [issueFeeRates, setIssueFeeRates] = useState<Record<string, Big>>({
-		[LOAN_TYPE_ERC20]: toBig('0'),
-		[LOAN_TYPE_ETH]: toBig('0'),
+		[LOAN_TYPE_ERC20]: toBigNumber(0),
+		[LOAN_TYPE_ETH]: toBigNumber(0),
 	});
 	const [interactionDelays, setInteractionDelays] = useState<Record<string, Big>>({
-		[LOAN_TYPE_ERC20]: toBig('0'),
-		[LOAN_TYPE_ETH]: toBig('0'),
+		[LOAN_TYPE_ERC20]: toBigNumber(0),
+		[LOAN_TYPE_ETH]: toBigNumber(0),
 	});
 
 	const renBTCContract = useMemo(
@@ -369,10 +369,12 @@ export const LoansProvider: React.FC<LoansProviderProps> = ({ children }) => {
 			]);
 			if (isMounted) {
 				const perYr = SECONDS_IN_A_YR * 1e2 * (1 / 1e18);
-				setInterestRate(toBig(borrowRate).multipliedBy(perYr));
+				setInterestRate(toBigNumber(borrowRate.toString()).multipliedBy(perYr));
 				setIssueFeeRates({
-					[LOAN_TYPE_ERC20]: toBig(erc20BorrowIssueFeeRate).multipliedBy(1e2 / 1e18),
-					[LOAN_TYPE_ETH]: toBig(ethBorrowIssueFeeRate).multipliedBy(1e2 / 1e18),
+					[LOAN_TYPE_ERC20]: toBigNumber(erc20BorrowIssueFeeRate.toString()).multipliedBy(
+						1e2 / 1e18
+					),
+					[LOAN_TYPE_ETH]: toBigNumber(ethBorrowIssueFeeRate.toString()).multipliedBy(1e2 / 1e18),
 				});
 				setInteractionDelays({
 					[LOAN_TYPE_ERC20]: erc20InteractionDelay,

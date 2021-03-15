@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { FlexDivRow, FlexDivRowCentered } from 'styles/common';
-import { toFixed } from 'utils/formatters/big-number';
+import { formatNumber } from 'utils/formatters/number';
 import { useLoans } from 'sections/loans/contexts/loans';
 
 type InterestRateProps = {};
@@ -16,7 +16,7 @@ const InterestRate: React.FC<InterestRateProps> = () => {
 			<Header>{t('loans.interest-rate')}</Header>
 			<FlexDivRowCentered>
 				<Item>
-					<Text>{toFixed(interestRate, 1, 2)}%</Text>
+					<Text>{formatNumber(interestRate, { decimals: 2 })}%</Text>
 				</Item>
 			</FlexDivRowCentered>
 		</Container>

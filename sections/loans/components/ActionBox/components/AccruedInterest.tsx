@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { FlexDivRow, FlexDivRowCentered } from 'styles/common';
-import { toFixed } from 'utils/formatters/big-number';
+import { formatNumber, toBigNumber } from 'utils/formatters/number';
 import { SYNTH_BY_CURRENCY_KEY } from 'sections/loans/constants';
 import { Loan } from 'queries/loans/types';
 
@@ -20,7 +20,10 @@ const AccruedInterest: React.FC<AccruedInterestProps> = ({ loan }) => {
 			<FlexDivRowCentered>
 				<Item>
 					<Text>
-						{toFixed(loan.accruedInterest, 1e18, 4)} {debtAsset}
+						{formatNumber(toBigNumber(loan.accruedInterest.toString()).dividedBy(1e18), {
+							decimals: 4,
+						})}{' '}
+						{debtAsset}
 					</Text>
 				</Item>
 			</FlexDivRowCentered>

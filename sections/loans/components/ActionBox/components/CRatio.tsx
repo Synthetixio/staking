@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import Big from 'bignumber.js';
 import { useTranslation } from 'react-i18next';
 import { FlexDivRow, FlexDivRowCentered } from 'styles/common';
-import { toFixed } from 'utils/formatters/big-number';
+import { formatNumber } from 'utils/formatters/number';
 import InfoSVG from 'sections/loans/components/ActionBox/components/InfoSVG';
 
 type CRatioProps = {
@@ -24,7 +24,7 @@ const CRatio: React.FC<CRatioProps> = ({ cratio, hasLowCRatio }) => {
 							'-'
 						) : (
 							<>
-								{toFixed(cratio, 1, 0)}%{' '}
+								{formatNumber(cratio, { decimals: 0 })}%{' '}
 								<InfoSVG
 									tip={
 										hasLowCRatio

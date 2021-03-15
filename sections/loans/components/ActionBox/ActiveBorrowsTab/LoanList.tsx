@@ -8,7 +8,7 @@ import Currency from 'components/Currency';
 import { Loan } from 'queries/loans/types';
 import { ACTION_BOX_WIDTH } from 'sections/loans/constants';
 import { useLoans } from 'sections/loans/contexts/loans';
-import { formatUnits } from 'utils/formatters/big-number';
+import { formatUnits } from 'utils/formatters/number';
 import ModifyLoanMenu from './ModifyLoanMenu';
 
 const SMALL_COL_WIDTH = 80;

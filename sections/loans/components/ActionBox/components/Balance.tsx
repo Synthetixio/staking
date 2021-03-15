@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import synthetix from 'lib/synthetix';
 import { walletAddressState } from 'store/wallet';
 import Connector from 'containers/Connector';
-import { formatUnits } from 'utils/formatters/big-number';
+import { formatUnits } from 'utils/formatters/number';
 import { useLoans } from 'sections/loans/contexts/loans';
 
 type BalanceProps = {

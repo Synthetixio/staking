@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { FlexDivRow, FlexDivRowCentered } from 'styles/common';
-import { toFixed } from 'utils/formatters/big-number';
+import { formatNumber } from 'utils/formatters/number';
 import { LOAN_TYPE_ERC20, LOAN_TYPE_ETH } from 'sections/loans/constants';
 import { useLoans } from 'sections/loans/contexts/loans';
 
@@ -20,7 +20,7 @@ const IssuanceFee: React.FC<IssuanceFeeProps> = ({ collateralIsETH }) => {
 			<Header>{t('loans.issuance-fee')}</Header>
 			<FlexDivRowCentered>
 				<Item>
-					<Text>{toFixed(issuanceFee, 1, 2)}%</Text>
+					<Text>{formatNumber(issuanceFee, { decimals: 2 })}%</Text>
 				</Item>
 			</FlexDivRowCentered>
 		</Container>
