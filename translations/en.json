@@ -405,6 +405,11 @@
 					"title": "Balancer",
 					"description": "Stake sTLSA Balancer Pool LP to earn SNX rewards. <0>Add liquidity on Balancer here<0>.",
 					"subtitle": "sTSLA BPT Rewards"
+				},
+				"dht": {
+					"title": "Uniswap",
+					"description": "Stake sUSD-DHT Uniswap Pool Tokens to earn SNX and DHT rewards. <0>Add liquidity on Uniswap here<0>.",
+					"subtitle": "DHT Uniswap LP Rewards"
 				}
 			},
 			"weekly-rewards": "Weekly rewards {{weeklyRewards}} {{asset}}"
@@ -757,7 +762,8 @@
 			"history": {
 				"title": "Voting history",
 				"currentUser": "You",
-				"empty": "There are no votes yet"
+				"empty": "There are no votes yet",
+				"total": "{{totalVotes}} votes"
 			}
 		},
 		"council": {

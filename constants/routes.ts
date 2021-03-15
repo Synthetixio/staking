@@ -29,6 +29,7 @@ export const ROUTES = {
 		sTLSA_LP: '/earn/sTSLA-LP',
 		sUSD_EXTERNAL: 'https://www.curve.fi/susdv2/',
 		sEURO_EXTERNAL: 'https://www.curve.fi/eurs/',
+		DHT_LP: '/earn/DHT-LP',
 	},
 	L2: {
 		Home: '/l2',

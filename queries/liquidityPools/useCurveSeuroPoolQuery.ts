@@ -95,7 +95,7 @@ const useCurveSeuroPoolQuery = (options?: QueryConfig<CurveData>) => {
 				curveSeuroGaugeContract.working_supply(),
 				curveGaugeControllerContract.gauge_relative_weight(curveSeuroGauge.address),
 				curveTokenPrice,
-				axios.get('https://www.curve.fi/raw-stats/apys.json'),
+				axios.get('https://stats.curve.fi/raw-stats/apys.json'),
 				contract.earned(walletAddress),
 				curveSeuroGaugeContract.balanceOf(walletAddress),
 				curveSeuroPoolTokenContract.allowance(walletAddress, address),
