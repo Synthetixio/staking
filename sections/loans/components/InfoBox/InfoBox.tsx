@@ -4,6 +4,7 @@ import { ethers } from 'ethers';
 import { useRecoilValue } from 'recoil';
 
 import { walletAddressState } from 'store/wallet';
+import { ExternalLink } from 'styles/common';
 import styled from 'styled-components';
 import Connector from 'containers/Connector';
 import Button from 'components/Button';
@@ -104,9 +105,9 @@ const InfoBox: React.FC = () => {
 					<Title>{t('loans.info.title')}</Title>
 					<Subtitle>
 						{t('loans.info.subtitle')}{' '}
-						<a href="https://sips.synthetix.io/sips/sip-97" target="_blank" rel="noreferrer">
+						<ExternalLink href="https://sips.synthetix.io/sips/sip-97">
 							{t('loans.info.learn-more')}
-						</a>
+						</ExternalLink>
 					</Subtitle>
 				</ContainerHeader>
 			</Container>
