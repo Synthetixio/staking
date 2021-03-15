@@ -14,14 +14,13 @@ const useSnapshotSpace = (spaceKey: SPACE_KEY, options?: QueryConfig<SpaceData>)
 	return useQuery<SpaceData>(
 		QUERY_KEYS.Gov.SnapshotSpace(spaceKey),
 		async () => {
-			const response = await axios.get(SPACE(spaceKey));
-
-			const { data }: { data: SpaceData } = response;
-
-			return data;
+			let space: SpaceData = await Promise.resolve(
+				axios.get(SPACE(spaceKey)).then((response) => response.data)
+			);
+			return space;
 		},
 		{
-			enabled: isAppReady,
+			enabled: isAppReady && spaceKey,
 			...options,
 		}
 	);

@@ -1,12 +1,3 @@
-export type SpaceStrategy = {
-	name: string;
-	params: {
-		address?: string;
-		decimals: number;
-		symbol: string;
-	};
-};
-
 export type SpaceData = {
 	domain: string;
 	filters: {
@@ -20,6 +11,15 @@ export type SpaceData = {
 	skin: string;
 	strategies: SpaceStrategy[];
 	symbol: string;
+};
+
+export type SpaceStrategy = {
+	name: string;
+	params: {
+		address?: string;
+		decimals: number;
+		symbol: string;
+	};
 };
 
 export type Proposal = {
@@ -46,6 +46,34 @@ export type Proposal = {
 	relayerIpfsHash: string;
 	votes: number;
 	route: Function;
+};
+
+export type IpfsProposal = {
+	address: string;
+	msg: {
+		payload: {
+			body: string;
+			choices: string[];
+			end: number;
+			metadata: {
+				stratgies: SpaceStrategy[];
+			};
+			name: string;
+			snapshot: string;
+			start: number;
+		};
+		space: string;
+		timestamp: string;
+		type: string;
+		version: string;
+	};
+	sig: string;
+	version: string;
+};
+
+export type Votes = {
+	voterAddresses: string[];
+	voterSignatures: Vote[];
 };
 
 export type Vote = {

@@ -2,16 +2,10 @@ import React, { useMemo } from 'react';
 import styled from 'styled-components';
 import { CellProps, Row } from 'react-table';
 import { isWalletConnectedState } from 'store/wallet';
-import {
-	FlexDivCol,
-	TableNoResults,
-	TableNoResultsButtonContainer,
-	TableNoResultsTitle,
-} from 'styles/common';
+import { FlexDivCol } from 'styles/common';
 import Button from 'components/Button';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { Proposal as ProposalType } from 'queries/gov/types';
-import Connector from 'containers/Connector';
 import Table from 'components/Table';
 import { useTranslation } from 'react-i18next';
 import Countdown from 'react-countdown';
@@ -31,7 +25,6 @@ const Index: React.FC<IndexProps> = ({ data, isLoaded }) => {
 	const { t } = useTranslation();
 	const router = useRouter();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	const { connectWallet } = Connector.useContainer();
 	const setProposal = useSetRecoilState(proposalState);
 	const setPanelType = useSetRecoilState(panelState);
 	const activeTab = useActiveTab();
@@ -120,7 +113,7 @@ const Index: React.FC<IndexProps> = ({ data, isLoaded }) => {
 				columns={columns}
 				data={data}
 				maxRows={5}
-				isLoading={isWalletConnected && !isLoaded}
+				isLoading={!isLoaded}
 				showPagination={true}
 				onTableRowClick={(row: Row<ProposalType>) => {
 					setProposal(row.original);
@@ -128,27 +121,17 @@ const Index: React.FC<IndexProps> = ({ data, isLoaded }) => {
 					setPanelType(PanelType.PROPOSAL);
 				}}
 				minHeight={isWalletConnected}
-				noResultsMessage={
-					!isWalletConnected ? (
-						<TableNoResults>
-							<TableNoResultsTitle>{t('common.wallet.no-wallet-connected')}</TableNoResultsTitle>
-							<TableNoResultsButtonContainer>
-								<Button variant="primary" onClick={connectWallet}>
-									{t('common.wallet.connect-wallet')}
-								</Button>
-							</TableNoResultsButtonContainer>
-						</TableNoResults>
-					) : undefined
-				}
 			/>
-			<AbsoluteContainer
-				onClick={() => {
-					setPanelType(PanelType.CREATE);
-					router.push(ROUTES.Gov.Create(activeTab));
-				}}
-			>
-				<CreateButton variant="secondary">{t('gov.table.create')}</CreateButton>
-			</AbsoluteContainer>
+			{isWalletConnected && (
+				<AbsoluteContainer
+					onClick={() => {
+						setPanelType(PanelType.CREATE);
+						router.push(ROUTES.Gov.Create(activeTab));
+					}}
+				>
+					<CreateButton variant="secondary">{t('gov.table.create')}</CreateButton>
+				</AbsoluteContainer>
+			)}
 		</Container>
 	);
 };
@@ -208,7 +191,7 @@ const AbsoluteContainer = styled.div`
 	position: absolute;
 	width: 100%;
 	bottom: 0px;
-	margin-bottom: 24px;3
+	margin-bottom: 24px;
 	padding: 0px 16px;
 `;
 
