@@ -1,11 +1,12 @@
 import React from 'react';
-import styled from 'styled-components';
-import { Img, Svg } from 'react-optimized-image';
-import { FlexDivCentered } from 'styles/common';
+import styled, { css } from 'styled-components';
+import { Img } from 'react-optimized-image';
+import { FlexDivCentered, FlexDivCol, FlexDivRowCentered } from 'styles/common';
 import i18n from 'i18n';
 
 import Spinner from 'assets/svg/app/spinner.svg';
 import Success from 'assets/svg/app/success.svg';
+import Failure from 'assets/svg/app/failure.svg';
 
 type NotificationProps = {
 	closeToast?: Function;
@@ -15,7 +16,9 @@ type NotificationProps = {
 const NotificationPending = () => {
 	return (
 		<NotificationContainer>
-			<StyledImg width={25} src={Spinner} />
+			<IconContainer>
+				<StyledImg width={25} src={Spinner} />
+			</IconContainer>
 			<TransactionInfo>{i18n.t('common.transaction.transaction-sent')}</TransactionInfo>
 		</NotificationContainer>
 	);
@@ -24,7 +27,9 @@ const NotificationPending = () => {
 const NotificationSuccess = () => {
 	return (
 		<NotificationContainer>
-			<Svg src={Success} />
+			<IconContainer>
+				<StyledImg width={35} src={Success} />
+			</IconContainer>
 			<TransactionInfo>{i18n.t('common.transaction.transaction-confirmed')}</TransactionInfo>
 		</NotificationContainer>
 	);
@@ -33,18 +38,31 @@ const NotificationSuccess = () => {
 const NotificationError = ({ failureReason }: NotificationProps) => {
 	return (
 		<NotificationContainer>
-			<StyledImg width={25} src={Spinner} />
-			<TransactionInfo>{i18n.t('common.transaction.transaction-failed')}</TransactionInfo>
+			<IconContainer>
+				<StyledImg width={35} src={Failure} />
+			</IconContainer>
+			<TransactionInfo>
+				<TransactionInfoBody>{i18n.t('common.transaction.transaction-failed')}</TransactionInfoBody>
+				<TransactionInfoBody isFailureMessage={true}>{failureReason}</TransactionInfoBody>
+			</TransactionInfo>
 		</NotificationContainer>
 	);
 };
 
 const NotificationContainer = styled(FlexDivCentered)``;
-
-const TransactionInfo = styled.div``;
-
-const StyledImg = styled(Img)`
-	margin-right: 10px;
+const IconContainer = styled(FlexDivRowCentered)`
+	width: 35px;
 `;
+
+const TransactionInfo = styled(FlexDivCol)``;
+const TransactionInfoBody = styled.div<{ isFailureMessage?: boolean }>`
+	${(props) =>
+		props.isFailureMessage &&
+		css`
+			color: ${(props) => props.theme.colors.gray};
+		`}
+`;
+
+const StyledImg = styled(Img)``;
 
 export { NotificationPending, NotificationSuccess, NotificationError };
