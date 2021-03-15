@@ -95,7 +95,7 @@ const useCurveSusdPoolQuery = (options?: QueryConfig<CurveData>) => {
 				curveSusdGaugeContract.working_supply(),
 				curveGaugeControllerContract.gauge_relative_weight(curveSusdGauge.address),
 				curveTokenPrice,
-				axios.get('https://www.curve.fi/raw-stats/apys.json'),
+				axios.get('https://stats.curve.fi/raw-stats/apys.json'),
 				contract.earned(walletAddress),
 				curveSusdGaugeContract.balanceOf(walletAddress),
 				curveSusdPoolTokenContract.allowance(walletAddress, address),
