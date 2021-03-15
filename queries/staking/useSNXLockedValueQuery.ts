@@ -46,20 +46,24 @@ const useSNXLockedValueQuery = (options?: QueryConfig<number>) => {
 			let snxTotal = 0;
 			let snxLocked = 0;
 
-			for (const { collateral, debtEntryAtIndex, initialDebtOwnership } of holders) {
-				const formattedCollateral = Number(synthetix.js?.utils.formatEther(collateral));
+			for (const {
+				collateral: unformattedCollateral,
+				debtEntryAtIndex,
+				initialDebtOwnership,
+			} of holders) {
+				const collateral = Number(synthetix.js?.utils.formatEther(unformattedCollateral));
 
 				let debtBalance =
 					((totalIssuedSynths * lastDebtLedgerEntry) / debtEntryAtIndex) * initialDebtOwnership;
-				let collateralRatio = debtBalance / formattedCollateral / usdToSnxPrice;
+				let collateralRatio = debtBalance / collateral / usdToSnxPrice;
 
 				if (isNaN(debtBalance)) {
 					debtBalance = 0;
 					collateralRatio = 0;
 				}
-				const lockedSnx = formattedCollateral * Math.min(1, collateralRatio / issuanceRatio);
+				const lockedSnx = collateral * Math.min(1, collateralRatio / issuanceRatio);
 
-				snxTotal += Number(formattedCollateral);
+				snxTotal += Number(collateral);
 				snxLocked += Number(lockedSnx);
 			}
 
