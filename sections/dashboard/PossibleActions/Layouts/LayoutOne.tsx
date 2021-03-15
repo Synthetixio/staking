@@ -19,11 +19,13 @@ import Currency from 'components/Currency';
 import useUserStakingData from 'hooks/useUserStakingData';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 import { LP } from 'sections/earn/types';
+import useShortRewardsData from 'hooks/useShortRewardsData';
 
 const LayoutOne: FC = () => {
 	const { t } = useTranslation();
 
 	const lpData = useLPData();
+	const shortData = useShortRewardsData();
 	const { stakingRewards, tradingRewards } = useUserStakingData();
 	const { currentCRatio, targetCRatio } = useStakingCalculations();
 
