@@ -12,7 +12,7 @@ import useGetDepositsDataQuery from 'queries/deposits/useGetDepositsDataQuery';
 import synthetix from 'lib/synthetix';
 import Notify from 'containers/Notify';
 import { appReadyState } from 'store/app';
-import { walletAddressState } from 'store/wallet';
+import { walletAddressState, isEOAWalletState } from 'store/wallet';
 
 import ApproveModal from 'components/ApproveModal';
 import TabContent from './TabContent';
@@ -23,6 +23,7 @@ const DepositTab = () => {
 	const { transferableCollateral } = useStakingCalculations();
 	const walletAddress = useRecoilValue(walletAddressState);
 	const isAppReady = useRecoilValue(appReadyState);
+	const isEOAWallet = useRecoilValue(isEOAWalletState);
 	const { monitorHash } = Notify.useContainer();
 	const depositsDataQuery = useGetDepositsDataQuery();
 
@@ -39,6 +40,7 @@ const DepositTab = () => {
 		const getGasLimitEstimate = async () => {
 			if (isAppReady && walletAddress && isApproved && transferableCollateral) {
 				try {
+					if (!isEOAWallet) throw new Error(t('layer2.error.non-eoa-wallet'));
 					setGasEstimateError(null);
 					const {
 						contracts: { SynthetixBridgeToOptimism },
