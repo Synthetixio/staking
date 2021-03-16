@@ -34,8 +34,7 @@ const use1InchQuoteQuery = (
 					amount: parseEther(amount.toString()).toString(),
 				},
 			});
-			const toTokenAmountString: string = response.data.toTokenAmount;
-			const toTokenAmount: NumericValue = toBigNumber(formatEther(toTokenAmountString));
+			const toTokenAmount: NumericValue = formatEther(response.data.toTokenAmount);
 			return {
 				toTokenAmount,
 			};
