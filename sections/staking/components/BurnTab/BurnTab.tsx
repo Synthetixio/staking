@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { TabContainer } from '../common';
 import { Synths } from 'constants/currency';
-import Notify from 'containers/Notify';
+import TransactionNotifier from 'containers/TransactionNotifier';
 import { ethers } from 'ethers';
 import { normalizedGasPrice, normalizeGasLimit } from 'utils/network';
 import { getGasEstimateForTransaction } from 'utils/transactions';
@@ -22,7 +22,7 @@ import { appReadyState } from 'store/app';
 // @TODO: Add for the countdown of waiting period and issuance delay
 
 const BurnTab: React.FC = () => {
-	const { monitorHash } = Notify.useContainer();
+	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const [amountToBurn, onBurnChange] = useRecoilState(amountToBurnState);
 	const [burnType, onBurnTypeChange] = useRecoilState(burnTypeState);
 	const { percentageTargetCRatio, debtBalance, issuableSynths } = useStakingCalculations();
@@ -181,7 +181,7 @@ const BurnTab: React.FC = () => {
 					if (transaction) {
 						setTxHash(transaction.hash);
 						setTransactionState(Transaction.WAITING);
-						monitorHash({
+						monitorTransaction({
 							txHash: transaction.hash,
 							onTxConfirmed: () => {
 								setTransactionState(Transaction.SUCCESS);
@@ -195,7 +195,7 @@ const BurnTab: React.FC = () => {
 				}
 			}
 		},
-		[amountToBurn, gasPrice, monitorHash, walletAddress, isAppReady]
+		[amountToBurn, gasPrice, monitorTransaction, walletAddress, isAppReady]
 	);
 
 	const handleClear = async () => {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import Notify from 'containers/Notify';
+import TransactionNotifier from 'containers/TransactionNotifier';
 import { ethers } from 'ethers';
 
 import synthetix from 'lib/synthetix';
@@ -21,7 +21,7 @@ const TokenSaleTab: React.FC = () => {
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const isAppReady = useRecoilValue(appReadyState);
 
-	const { monitorHash } = Notify.useContainer();
+	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const [gasLimitEstimate, setGasLimitEstimate] = useState<number | null>(null);
 	const [gasPrice, setGasPrice] = useState<number>(0);
 	const [gasEstimateError, setGasEstimateError] = useState<string | null>(null);
@@ -71,7 +71,7 @@ const TokenSaleTab: React.FC = () => {
 					if (transaction) {
 						setTxHash(transaction.hash);
 						setTransactionState(Transaction.WAITING);
-						monitorHash({
+						monitorTransaction({
 							txHash: transaction.hash,
 							onTxConfirmed: () => {
 								setTransactionState(Transaction.SUCCESS);
@@ -87,7 +87,7 @@ const TokenSaleTab: React.FC = () => {
 			}
 		}
 		vest();
-	}, [isAppReady, gasPrice, gasLimitEstimate, tokenSaleEscrowQuery, monitorHash]);
+	}, [isAppReady, gasPrice, gasLimitEstimate, tokenSaleEscrowQuery, monitorTransaction]);
 
 	return (
 		<TabContainer>

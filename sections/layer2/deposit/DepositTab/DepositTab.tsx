@@ -10,7 +10,7 @@ import { getGasEstimateForTransaction } from 'utils/transactions';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 import useGetDepositsDataQuery from 'queries/deposits/useGetDepositsDataQuery';
 import synthetix from 'lib/synthetix';
-import Notify from 'containers/Notify';
+import TransactionNotifier from 'containers/TransactionNotifier';
 import { appReadyState } from 'store/app';
 import { walletAddressState, isEOAWalletState } from 'store/wallet';
 
@@ -24,7 +24,7 @@ const DepositTab = () => {
 	const walletAddress = useRecoilValue(walletAddressState);
 	const isAppReady = useRecoilValue(appReadyState);
 	const isEOAWallet = useRecoilValue(isEOAWalletState);
-	const { monitorHash } = Notify.useContainer();
+	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const depositsDataQuery = useGetDepositsDataQuery();
 
 	const [gasLimitEstimate, setGasLimitEstimate] = useState<number | null>(null);
@@ -102,7 +102,7 @@ const DepositTab = () => {
 				if (transaction) {
 					setTxHash(transaction.hash);
 					setTransactionState(Transaction.WAITING);
-					monitorHash({
+					monitorTransaction({
 						txHash: transaction.hash,
 						onTxConfirmed: () => {
 							setTransactionState(Transaction.SUCCESS);

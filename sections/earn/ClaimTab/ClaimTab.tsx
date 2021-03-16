@@ -15,7 +15,7 @@ import PendingConfirmation from 'assets/svg/app/pending-confirmation.svg';
 import Success from 'assets/svg/app/success.svg';
 
 import Etherscan from 'containers/BlockExplorer';
-import Notify from 'containers/Notify';
+import TransactionNotifier from 'containers/TransactionNotifier';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import useClaimedStatus from 'sections/hooks/useClaimedStatus';
@@ -76,7 +76,7 @@ type ClaimTabProps = {
 const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, totalRewards }) => {
 	const { t } = useTranslation();
 	const claimed = useClaimedStatus();
-	const { monitorHash } = Notify.useContainer();
+	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const { blockExplorerInstance } = Etherscan.useContainer();
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
 	const [gasLimitEstimate, setGasLimitEstimate] = useState<number | null>(null);
@@ -138,7 +138,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 					if (transaction) {
 						setTxHash(transaction.hash);
 						setTransactionState(Transaction.WAITING);
-						monitorHash({
+						monitorTransaction({
 							txHash: transaction.hash,
 							onTxConfirmed: () => {
 								setClaimedTradingRewards(tradingRewards.toNumber());
@@ -155,7 +155,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 			}
 		}
 		claim();
-	}, [gasPrice, monitorHash, tradingRewards, stakingRewards, isAppReady]);
+	}, [gasPrice, monitorTransaction, tradingRewards, stakingRewards, isAppReady]);
 
 	const goToBurn = useCallback(() => router.push(ROUTES.Staking.Burn), [router]);
 

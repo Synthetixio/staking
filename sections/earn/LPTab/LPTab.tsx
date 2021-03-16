@@ -21,7 +21,7 @@ import { formatNumber } from 'utils/formatters/number';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 
 import Connector from 'containers/Connector';
-import Notify from 'containers/Notify';
+import TransactionNotifier from 'containers/TransactionNotifier';
 import TxState from 'sections/earn/TxState';
 import { EXTERNAL_LINKS } from 'constants/links';
 
@@ -79,7 +79,7 @@ const LPTab: FC<LPTabProps> = ({
 }) => {
 	const { t } = useTranslation();
 	const { signer } = Connector.useContainer();
-	const { monitorHash } = Notify.useContainer();
+	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const [showApproveOverlayModal, setShowApproveOverlayModal] = useState<boolean>(false);
 	const [showSettleOverlayModal, setShowSettleOverlayModal] = useState<boolean>(false);
 
@@ -157,7 +157,7 @@ const LPTab: FC<LPTabProps> = ({
 					if (transaction) {
 						setClaimTxHash(transaction.hash);
 						setClaimTransactionState(Transaction.WAITING);
-						monitorHash({
+						monitorTransaction({
 							txHash: transaction.hash,
 							onTxConfirmed: () => setClaimTransactionState(Transaction.SUCCESS),
 						});
@@ -170,7 +170,7 @@ const LPTab: FC<LPTabProps> = ({
 			}
 		}
 		claim();
-	}, [stakedAsset, signer, claimGasPrice, monitorHash, isAppReady]);
+	}, [stakedAsset, signer, claimGasPrice, monitorTransaction, isAppReady]);
 
 	const translationKey = useMemo(() => {
 		if (stakedAsset === Synths.iETH) {

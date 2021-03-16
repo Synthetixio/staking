@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { createContainer } from 'unstated-next';
-import { useSetRecoilState, useRecoilState, useRecoilValue } from 'recoil';
+import { useSetRecoilState, useRecoilState } from 'recoil';
 import { NetworkId } from '@synthetixio/contracts-interface';
 import { loadProvider } from '@synthetixio/providers';
 import {
@@ -13,7 +13,7 @@ import synthetix from 'lib/synthetix';
 
 import { getDefaultNetworkId } from 'utils/network';
 
-import { appReadyState, languageState } from 'store/app';
+import { appReadyState } from 'store/app';
 import {
 	walletAddressState,
 	networkState,
@@ -25,16 +25,14 @@ import { Wallet as OnboardWallet } from 'bnc-onboard/dist/src/interfaces';
 
 import useLocalStorage from 'hooks/useLocalStorage';
 
-import { initOnboard, initNotify } from './config';
+import { initOnboard } from './config';
 import { LOCAL_STORAGE_KEYS } from 'constants/storage';
 
 const useConnector = () => {
 	const [network, setNetwork] = useRecoilState(networkState);
-	const language = useRecoilValue(languageState);
 	const [provider, setProvider] = useState<ethers.providers.Provider | null>(null);
 	const [signer, setSigner] = useState<ethers.Signer | null>(null);
 	const [onboard, setOnboard] = useState<ReturnType<typeof initOnboard> | null>(null);
-	const [notify, setNotify] = useState<ReturnType<typeof initNotify> | null>(null);
 	const [
 		transactionNotifier,
 		setTransactionNotifier,
@@ -94,7 +92,6 @@ const useConnector = () => {
 							signer,
 						});
 						onboard.config({ networkId });
-						notify.config({ networkId });
 
 						if (transactionNotifier) {
 							transactionNotifier.setProvider(provider);
@@ -145,12 +142,8 @@ const useConnector = () => {
 					}
 				},
 			});
-			const notify = initNotify(network, {
-				clientLocale: language,
-			});
 
 			setOnboard(onboard);
-			setNotify(notify);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isAppReady]);
@@ -175,14 +168,6 @@ const useConnector = () => {
 		};
 		getAddressCode();
 	}, [walletAddress, provider, setIsEOAWallet]);
-
-	useEffect(() => {
-		if (notify) {
-			notify.config({
-				clientLocale: language,
-			});
-		}
-	}, [language, notify]);
 
 	const resetCachedUI = () => {
 		// TODO: implement
@@ -239,7 +224,6 @@ const useConnector = () => {
 		provider,
 		signer,
 		onboard,
-		notify,
 		connectWallet,
 		disconnectWallet,
 		switchAccounts,

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
-import Notify from 'containers/Notify';
+import TransactionNotifier from 'containers/TransactionNotifier';
 import { useTranslation } from 'react-i18next';
 
 import synthetix from 'lib/synthetix';
@@ -19,7 +19,7 @@ import TabContent from './TabContent';
 
 const MigrateTab = () => {
 	const { t } = useTranslation();
-	const { monitorHash } = Notify.useContainer();
+	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const escrowDataQuery = useEscrowDataQuery();
 	const claimableAmount = escrowDataQuery?.data?.claimableAmount ?? 0;
 	const escrowData = escrowDataQuery?.data ?? null;
@@ -86,7 +86,7 @@ const MigrateTab = () => {
 				if (transaction) {
 					setTxHash(transaction.hash);
 					setTransactionState(Transaction.WAITING);
-					monitorHash({
+					monitorTransaction({
 						txHash: transaction.hash,
 						onTxConfirmed: () => {
 							setTransactionState(Transaction.SUCCESS);

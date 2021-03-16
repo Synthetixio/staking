@@ -10,7 +10,7 @@ import GasSelector from 'components/GasSelector';
 import PendingConfirmation from 'assets/svg/app/pending-confirmation.svg';
 import Success from 'assets/svg/app/success.svg';
 import synthetix from 'lib/synthetix';
-import Notify from 'containers/Notify';
+import TransactionNotifier from 'containers/TransactionNotifier';
 import Etherscan from 'containers/BlockExplorer';
 import { zIndex } from 'constants/ui';
 import LockedIcon from 'assets/svg/app/locked.svg';
@@ -71,7 +71,7 @@ type SettleProps = {
 
 const Settle: FC<SettleProps> = ({ stakedAsset, setShowSettleOverlayModal }) => {
 	const { t } = useTranslation();
-	const { monitorHash } = Notify.useContainer();
+	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const { provider } = Connector.useContainer();
 	const { blockExplorerInstance } = Etherscan.useContainer();
 	const walletAddress = useRecoilValue(walletAddressState);
@@ -132,7 +132,7 @@ const Settle: FC<SettleProps> = ({ stakedAsset, setShowSettleOverlayModal }) => 
 					if (transaction) {
 						setTxHash(transaction.hash);
 						setTransactionState(Transaction.WAITING);
-						monitorHash({
+						monitorTransaction({
 							txHash: transaction.hash,
 							onTxConfirmed: () => setTransactionState(Transaction.SUCCESS),
 						});
@@ -145,7 +145,7 @@ const Settle: FC<SettleProps> = ({ stakedAsset, setShowSettleOverlayModal }) => 
 			}
 		}
 		approve();
-	}, [stakedAsset, gasPrice, monitorHash, isAppReady, walletAddress]);
+	}, [stakedAsset, gasPrice, monitorTransaction, isAppReady, walletAddress]);
 
 	if (transactionState === Transaction.WAITING) {
 		return (

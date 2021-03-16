@@ -10,7 +10,7 @@ import GasSelector from 'components/GasSelector';
 import PendingConfirmation from 'assets/svg/app/pending-confirmation.svg';
 import Success from 'assets/svg/app/success.svg';
 import synthetix from 'lib/synthetix';
-import Notify from 'containers/Notify';
+import TransactionNotifier from 'containers/TransactionNotifier';
 import Etherscan from 'containers/BlockExplorer';
 import { zIndex } from 'constants/ui';
 import LockedIcon from 'assets/svg/app/locked.svg';
@@ -102,7 +102,7 @@ type ApproveProps = {
 
 const Approve: FC<ApproveProps> = ({ stakedAsset, setShowApproveOverlayModal }) => {
 	const { t } = useTranslation();
-	const { monitorHash } = Notify.useContainer();
+	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const { provider, signer } = Connector.useContainer();
 	const { blockExplorerInstance } = Etherscan.useContainer();
 	const [error, setError] = useState<string | null>(null);
@@ -162,7 +162,7 @@ const Approve: FC<ApproveProps> = ({ stakedAsset, setShowApproveOverlayModal }) 
 					if (transaction) {
 						setTxHash(transaction.hash);
 						setTransactionState(Transaction.WAITING);
-						monitorHash({
+						monitorTransaction({
 							txHash: transaction.hash,
 							onTxConfirmed: () => setTransactionState(Transaction.SUCCESS),
 						});
@@ -175,7 +175,7 @@ const Approve: FC<ApproveProps> = ({ stakedAsset, setShowApproveOverlayModal }) 
 			}
 		}
 		approve();
-	}, [stakedAsset, signer, gasPrice, monitorHash, isAppReady]);
+	}, [stakedAsset, signer, gasPrice, monitorTransaction, isAppReady]);
 
 	if (transactionState === Transaction.WAITING) {
 		return (

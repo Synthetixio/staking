@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { ethers } from 'ethers';
-import Notify from 'containers/Notify';
+import TransactionNotifier from 'containers/TransactionNotifier';
 
 import synthetix from 'lib/synthetix';
 
@@ -22,7 +22,7 @@ const StakingRewardsTab: React.FC = () => {
 	const walletAddress = useRecoilValue(walletAddressState);
 	const isAppReady = useRecoilValue(appReadyState);
 
-	const { monitorHash } = Notify.useContainer();
+	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const [gasLimitEstimate, setGasLimitEstimate] = useState<number | null>(null);
 	const [gasPrice, setGasPrice] = useState<number>(0);
 	const [gasEstimateError, setGasEstimateError] = useState<string | null>(null);
@@ -109,7 +109,7 @@ const StakingRewardsTab: React.FC = () => {
 				if (transaction) {
 					setTxHash(transaction.hash);
 					setTransactionState(Transaction.WAITING);
-					monitorHash({
+					monitorTransaction({
 						txHash: transaction.hash,
 						onTxConfirmed: () => {
 							setTransactionState(Transaction.SUCCESS);
@@ -128,7 +128,7 @@ const StakingRewardsTab: React.FC = () => {
 		claimableEntryIds,
 		gasPrice,
 		escrowDataQuery,
-		monitorHash,
+		monitorTransaction,
 		totalBalancePendingMigration,
 		walletAddress,
 	]);

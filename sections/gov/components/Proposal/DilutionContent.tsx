@@ -57,7 +57,7 @@ import { Transaction } from 'constants/network';
 import Etherscan from 'containers/BlockExplorer';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 
-import Notify from 'containers/Notify';
+import TransactionNotifier from 'containers/TransactionNotifier';
 import TxState from 'sections/gov/components/TxState';
 import useProposal from 'queries/gov/useProposal';
 import { expired, pending } from '../helper';
@@ -92,7 +92,7 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ onBack }) => {
 	const [isCouncilMember, setIsCouncilMember] = useState<boolean>(false);
 	const [targetDilutionAddress, setTargetDilutionAddress] = useState<string | null>(null);
 
-	const { monitorHash } = Notify.useContainer();
+	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const { blockExplorerInstance } = Etherscan.useContainer();
 	const link =
 		blockExplorerInstance != null && txHash != null
@@ -259,7 +259,7 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ onBack }) => {
 					if (transaction) {
 						setTxHash(transaction.hash);
 						setTransactionState(Transaction.WAITING);
-						monitorHash({
+						monitorTransaction({
 							txHash: transaction.hash,
 							onTxConfirmed: () => {
 								setTransactionState(Transaction.SUCCESS);
@@ -276,7 +276,15 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ onBack }) => {
 			}
 		}
 		undoDilute();
-	}, [gasLimitEstimate, isAppReady, monitorHash, proposal, proposalQuery, signer, walletAddress]);
+	}, [
+		gasLimitEstimate,
+		isAppReady,
+		monitorTransaction,
+		proposal,
+		proposalQuery,
+		signer,
+		walletAddress,
+	]);
 
 	const handleDilute = useCallback(() => {
 		async function dilute() {
@@ -308,7 +316,7 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ onBack }) => {
 					if (transaction) {
 						setTxHash(transaction.hash);
 						setTransactionState(Transaction.WAITING);
-						monitorHash({
+						monitorTransaction({
 							txHash: transaction.hash,
 							onTxConfirmed: () => {
 								setTransactionState(Transaction.SUCCESS);
@@ -324,7 +332,15 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ onBack }) => {
 			}
 		}
 		dilute();
-	}, [signer, monitorHash, isAppReady, proposal, walletAddress, gasLimitEstimate, proposalQuery]);
+	}, [
+		signer,
+		monitorTransaction,
+		isAppReady,
+		proposal,
+		walletAddress,
+		gasLimitEstimate,
+		proposalQuery,
+	]);
 
 	const getRawMarkup = (value?: string | null) => {
 		const remarkable = new Remarkable({

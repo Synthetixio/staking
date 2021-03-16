@@ -19,7 +19,7 @@ import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import { ModalContent, ModalItem, ModalItemText, ModalItemTitle } from 'styles/common';
 
 import CouncilDilution from 'contracts/councilDilution.js';
-import Notify from 'containers/Notify';
+import TransactionNotifier from 'containers/TransactionNotifier';
 import { truncateAddress } from 'utils/formatters/string';
 import { useTranslation } from 'react-i18next';
 import { getGasEstimateForTransaction } from 'utils/transactions';
@@ -50,7 +50,7 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 	const space = useSnapshotSpace(activeTab);
 	const [createProposal, result] = useSignMessage();
 	const [hash, setHash] = useState<string | null>(null);
-	const { monitorHash } = Notify.useContainer();
+	const { monitorTransaction } = TransactionNotifier.useContainer();
 
 	const { signer } = Connector.useContainer();
 
@@ -140,7 +140,7 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 								if (transaction) {
 									setTxHash(transaction.hash);
 									setTxTransactionState(Transaction.WAITING);
-									monitorHash({
+									monitorTransaction({
 										txHash: transaction.hash,
 										onTxConfirmed: () => setTxTransactionState(Transaction.SUCCESS),
 									});

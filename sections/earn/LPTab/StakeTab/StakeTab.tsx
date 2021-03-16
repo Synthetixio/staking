@@ -31,7 +31,7 @@ import {
 import Currency from 'components/Currency';
 import { CurrencyKey, Synths } from 'constants/currency';
 import { Transaction } from 'constants/network';
-import Notify from 'containers/Notify';
+import TransactionNotifier from 'containers/TransactionNotifier';
 import TxState from 'sections/earn/TxState';
 
 import {
@@ -104,7 +104,7 @@ const StakeTab: FC<StakeTabProps> = ({
 }) => {
 	const { t } = useTranslation();
 	const [amount, setAmount] = useState<string>('');
-	const { monitorHash } = Notify.useContainer();
+	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const { blockExplorerInstance } = Etherscan.useContainer();
 	const { signer } = Connector.useContainer();
 	const [gasLimitEstimate, setGasLimitEstimate] = useState<number | null>(null);
@@ -199,7 +199,7 @@ const StakeTab: FC<StakeTabProps> = ({
 					if (transaction) {
 						setTxHash(transaction.hash);
 						setTransactionState(Transaction.WAITING);
-						monitorHash({
+						monitorTransaction({
 							txHash: transaction.hash,
 							onTxConfirmed: () => setTransactionState(Transaction.SUCCESS),
 						});
@@ -215,7 +215,7 @@ const StakeTab: FC<StakeTabProps> = ({
 	}, [
 		gasPrice,
 		isStake,
-		monitorHash,
+		monitorTransaction,
 		amount,
 		signer,
 		stakedAsset,

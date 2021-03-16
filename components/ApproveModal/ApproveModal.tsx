@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { ethers } from 'ethers';
 
 import synthetix from 'lib/synthetix';
-import Notify from 'containers/Notify';
+import TransactionNotifier from 'containers/TransactionNotifier';
 
 import { Svg } from 'react-optimized-image';
 import { useTranslation } from 'react-i18next';
@@ -43,7 +43,7 @@ const ApproveModal: FC<ApproveModalProps> = ({
 }) => {
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const isAppReady = useRecoilValue(appReadyState);
-	const { monitorHash } = Notify.useContainer();
+	const { monitorTransaction } = TransactionNotifier.useContainer();
 
 	const [gasLimitEstimate, setGasLimitEstimate] = useState<number | null>(null);
 	const [error, setError] = useState<string | null>(null);
@@ -97,7 +97,7 @@ const ApproveModal: FC<ApproveModalProps> = ({
 					}
 				);
 				if (transaction) {
-					monitorHash({
+					monitorTransaction({
 						txHash: transaction.hash,
 						onTxConfirmed: () =>
 							setTimeout(() => {
