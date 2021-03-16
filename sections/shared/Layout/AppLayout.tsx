@@ -8,7 +8,9 @@ import useEscrowDataQuery from 'hooks/useEscrowDataQueryWrapper';
 
 import Header from './Header';
 import SideNav from './SideNav';
-import NotificationContainer from 'components/Notification/NotificationContainer';
+import NotificationContainer from 'constants/NotificationContainer';
+import UserNotifications from './UserNotifications';
+
 type AppLayoutProps = {
 	children: ReactNode;
 };
@@ -33,6 +35,7 @@ const AppLayout: FC<AppLayoutProps> = ({ children }) => {
 			<Header />
 			<Content>{children}</Content>
 			<NotificationContainer />
+			<UserNotifications />
 		</>
 	);
 };

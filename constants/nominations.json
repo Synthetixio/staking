@@ -1,0 +1,252 @@
+{
+	"3": [
+		{
+			"discord": "NaotoSake",
+			"address": "0xFA6C97f0efFaB1Ce8D7CD80EB96DDF2ac6bf0e38"
+		},
+		{
+			"discord": "MrSolver",
+			"address": "0xaC495c0192C2c776C293F7B29eB09AAf3DDf3224"
+		},
+		{
+			"discord": "MoneyManDoug",
+			"address": "0xb1346105fdF5eEEc401618fbA677d544B3a536eA"
+		},
+		{
+			"discord": "BIgPenny",
+			"address": "0x9cFc4cfB2aa99bedc98d52E2DCc0Eb010F20718f"
+		},
+		{
+			"discord": "Spreek",
+			"address": "0x935D2fD458fdf41B6F7B62471f593797866a3Ce6"
+		},
+		{
+			"discord": "TerraBellus",
+			"address": "0x2825396379c61308388f5edb183c3216191e0642"
+		},
+		{
+			"discord": "Bojan",
+			"address": "0x4412bCaf3c6e37d0e6Fb14a00167B5d98D1dd8C1"
+		},
+		{
+			"discord": "Danijel",
+			"address": "0x461783a831e6db52d68ba2f3194f6fd1e0087e04"
+		},
+		{
+			"discord": "Farmwell",
+			"address": "0x9d256b839C1b46e57122eBb3C5e6da97288FaCf1"
+		},
+		{
+			"discord": "Synthaman",
+			"address": "0x0bc3668d2AaFa53eD5E5134bA13ec74ea195D000"
+		},
+		{
+			"discord": "justwanttoknowathing",
+			"address": "0x682C4184286415344a35a0Ff6699bb8EdAbDdc17"
+		},
+		{
+			"discord": "Farmer Joe - The DeFi Oracle",
+			"address": "0xfBAB3FAE4a4011984B7D9A1D047e0F94c0EDd509"
+		},
+		{
+			"discord": "Kaleb",
+			"address": "0xBD015d82a36C9a05108ebC5FEE12672F24dA0Cf4"
+		},
+		{
+			"discord": "Akin",
+			"address": "0x5aC2e309B412c7c1A49837144852A3f726452B30"
+		},
+		{
+			"discord": "Samantha",
+			"address": "0x15f5d2df1b44c45b48174d0121B9cE2dccD96AC9"
+		},
+		{
+			"discord": "Michael | Framework",
+			"address": "0x65DCD62932fEf5af25AdA91F0F24658e94e259c5"
+		},
+		{
+			"discord": "Chevis",
+			"address": "0x527A3ab8f1ff9172fD7d380863c54EdEc60bd41d"
+		},
+		{
+			"discord": "Simone | Dialectic",
+			"address": "0xa6e02f6D53B6BFFbfcF92f4B0786452d0f28A5Ed"
+		},
+		{
+			"discord": "larpras",
+			"address": "0x5fC5528E1f363B48c375Ae2Db28BBE82533d8439"
+		},
+		{
+			"discord": "Andy | synthetix",
+			"address": "0xbeBF7295A9Ddc37e33609790b12FBe3dAF93cC73"
+		},
+		{
+			"discord": "Jackson | synthetix",
+			"address": "0x0120666306F4D15bb125696f322BFD8EE83423a9"
+		},
+		{
+			"discord": "redmarglar",
+			"address": "0x5f024dba3bcbbfe6dece556dbb59c5776aec5903"
+		}
+	],
+	"2": [
+		{
+			"discord": "BigPenny",
+			"address": "0x9cFc4cfB2aa99bedc98d52E2DCc0Eb010F20718f"
+		},
+		{
+			"discord": "Danijel",
+			"address": "0x461783a831e6db52d68ba2f3194f6fd1e0087e04"
+		},
+		{
+			"discord": "Farmwell",
+			"address": "0x9d256b839C1b46e57122eBb3C5e6da97288FaCf1"
+		},
+		{
+			"discord": "Jackson | Synthetix",
+			"address": "wacko.eth"
+		},
+		{
+			"discord": "Spreek",
+			"address": "0x935D2fD458fdf41B6F7B62471f593797866a3Ce6"
+		},
+		{
+			"discord": "Synthaman",
+			"address": "Spartan.eth"
+		},
+		{
+			"discord": "justwanttoknowathing",
+			"address": "0x682C4184286415344a35a0Ff6699bb8EdAbDdc17"
+		},
+		{
+			"discord": "Farmer Joe - The DeFi Oracle",
+			"address": "0xfBAB3FAE4a4011984B7D9A1D047e0F94c0EDd509"
+		},
+		{
+			"discord": "Psybull",
+			"address": "spartan.psybull.eth"
+		},
+		{
+			"discord": "Kaleb",
+			"address": "0xBD015d82a36C9a05108ebC5FEE12672F24dA0Cf4"
+		},
+		{
+			"discord": "rubber^ duck",
+			"address": "cyberduck.eth"
+		},
+		{
+			"discord": "Akin",
+			"address": "0x5aC2e309B412c7c1A49837144852A3f726452B30"
+		},
+		{
+			"discord": "Samantha",
+			"address": "0x15f5d2df1b44c45b48174d0121B9cE2dccD96AC9"
+		},
+		{
+			"discord": "Michael | Framework",
+			"address": "0x65DCD62932fEf5af25AdA91F0F24658e94e259c5"
+		},
+		{
+			"discord": "Andy | Synthetix",
+			"address": "0xbeBF7295A9Ddc37e33609790b12FBe3dAF93cC73"
+		},
+		{
+			"discord": "Chevis",
+			"address": "cleetus.eth"
+		},
+		{
+			"discord": "Simone | Dialectic",
+			"address": "0xa6e02f6D53B6BFFbfcF92f4B0786452d0f28A5Ed"
+		},
+		{
+			"discord": "TerraBellus",
+			"address": "0x62a2AD82CD017065D8040986c6Ef5E619A053fC6"
+		},
+		{
+			"discord": "larpras",
+			"address": "0x5fC5528E1f363B48c375Ae2Db28BBE82533d8439"
+		}
+	],
+	"1": [
+		{
+			"discord": "Danijel",
+			"address": "0x461783a831e6db52d68ba2f3194f6fd1e0087e04"
+		},
+		{
+			"discord": "Farmwell",
+			"address": "0x9d256b839C1b46e57122eBb3C5e6da97288FaCf1"
+		},
+		{
+			"discord": "Jackson | Synthetix",
+			"address": "wacko.eth"
+		},
+		{
+			"discord": "Spreek",
+			"address": "0x935D2fD458fdf41B6F7B62471f593797866a3Ce6"
+		},
+		{
+			"discord": "Brendan",
+			"address": "0xF9d9EB4CDf653f1315aDC09eFDF9A11385DC0546"
+		},
+		{
+			"discord": "Synthaman",
+			"address": "Spartan.eth"
+		},
+		{
+			"discord": "justwanttoknowathing",
+			"address": "0x682C4184286415344a35a0Ff6699bb8EdAbDdc17"
+		},
+		{
+			"discord": "Farmer Joe - The DeFi Oracle",
+			"address": "0xfBAB3FAE4a4011984B7D9A1D047e0F94c0EDd509"
+		},
+		{
+			"discord": "Psybull",
+			"address": "spartan.psybull.eth"
+		},
+		{
+			"discord": "Kaleb",
+			"address": "0xBD015d82a36C9a05108ebC5FEE12672F24dA0Cf4"
+		},
+		{
+			"discord": "BigPenny",
+			"address": "0x9cFc4cfB2aa99bedc98d52E2DCc0Eb010F20718f"
+		},
+		{
+			"discord": "rubber^ duck",
+			"address": "cyberduck.eth"
+		},
+		{
+			"discord": "Akin",
+			"address": "0x5aC2e309B412c7c1A49837144852A3f726452B30"
+		},
+		{
+			"discord": "Samantha",
+			"address": "0x15f5d2df1b44c45b48174d0121B9cE2dccD96AC9"
+		},
+		{
+			"discord": "Michael | Framework",
+			"address": "0x65DCD62932fEf5af25AdA91F0F24658e94e259c5"
+		},
+		{
+			"discord": "Andy | Synthetix",
+			"address": "0xbeBF7295A9Ddc37e33609790b12FBe3dAF93cC73"
+		},
+		{
+			"discord": "Chevis",
+			"address": "cleetus.eth"
+		},
+		{
+			"discord": "Simone | Dialectic",
+			"address": "0xa6e02f6D53B6BFFbfcF92f4B0786452d0f28A5Ed"
+		},
+		{
+			"discord": "TerraBellus",
+			"address": "0x62a2AD82CD017065D8040986c6Ef5E619A053fC6"
+		},
+		{
+			"discord": "larpras",
+			"address": "0x5fC5528E1f363B48c375Ae2Db28BBE82533d8439"
+		}
+	]
+}

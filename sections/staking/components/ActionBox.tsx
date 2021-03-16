@@ -58,7 +58,7 @@ const ActionBox: FC<ActionBoxProps> = ({ currentTab }) => {
 			boxWidth={BOX_COLUMN_WIDTH}
 			tabData={tabData}
 			setPanelType={(key) => router.push(`/staking/${key}`)}
-			currentPanel={t(`staking.actions.${currentTab}.title`)}
+			currentPanel={currentTab}
 		/>
 	);
 };

@@ -139,18 +139,17 @@ const LayoutLayerOne: FC = () => {
 				gridLocations: ['col-2', 'col-3', 'row-3', 'row-4'],
 				icon: (
 					<GlowingCircle variant="green" size="md">
-						<Currency.Icon currencyKey={CryptoCurrency.CRV} width="28" height="28" />
+						<Currency.Icon currencyKey={LP.UNISWAP_DHT} width="28" height="28" />
 					</GlowingCircle>
 				),
 				title: t('dashboard.actions.earn.title', {
-					percent: formatPercent(lpData[LP.CURVE_sEURO].APR, { minDecimals: 0 }),
+					percent: formatPercent(lpData[LP.UNISWAP_DHT].APR, { minDecimals: 0 }),
 				}),
 				copy: t('dashboard.actions.earn.copy', {
-					asset: 'Curve sEUR Pool Token',
-					supplier: 'Curve Finance',
+					asset: 'Uniswap DHT Pool Token',
+					supplier: 'Uniswap',
 				}),
-				tooltip: t('common.tooltip.external', { link: 'Curve Finance' }),
-				externalLink: ROUTES.Earn.sEURO_EXTERNAL,
+				link: ROUTES.Earn.DHT_LP,
 			},
 			{
 				gridLocations: ['col-3', 'col-5', 'row-3', 'row-4'],

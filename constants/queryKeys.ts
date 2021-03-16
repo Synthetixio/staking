@@ -1,4 +1,5 @@
 import { NetworkId } from '@synthetixio/contracts-interface';
+import { SPACE_KEY } from 'constants/snapshot';
 import { CurrencyKey } from './currency';
 import { Period } from './period';
 
@@ -207,6 +208,12 @@ export const QUERY_KEYS = {
 			walletAddress,
 			networkId,
 		],
+		DHTsUSD: (walletAddress: string, networkId: NetworkId) => [
+			'liquidityPools',
+			'DHT-sUSD',
+			walletAddress,
+			networkId,
+		],
 	},
 	Deposits: (walletAddress: string, networkId: NetworkId) => [
 		'deposits',
@@ -214,6 +221,24 @@ export const QUERY_KEYS = {
 		walletAddress,
 		networkId,
 	],
+	Gov: {
+		DebtOwnership: (walletAddress: string, networkId: NetworkId, block?: number | null) => [
+			'gov',
+			'debtOwnership',
+			walletAddress,
+			networkId,
+			block,
+		],
+		SnapshotSpace: (spaceKey: SPACE_KEY) => ['gov', 'snapshotSpace', spaceKey],
+		Proposals: (spaceKey: SPACE_KEY, walletAddress: string, networkId: NetworkId) => [
+			'gov',
+			'proposals',
+			spaceKey,
+			walletAddress,
+			networkId,
+		],
+		Proposal: (spaceKey: SPACE_KEY, hash: string) => ['gov', 'proposal', spaceKey, hash],
+	},
 };
 
 export default QUERY_KEYS;

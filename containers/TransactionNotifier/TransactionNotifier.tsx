@@ -9,7 +9,7 @@ import {
 	NotificationSuccess,
 	NotificationPending,
 	NotificationError,
-} from 'components/Notification';
+} from 'components/TransactionNotification';
 
 const useTransactionNotifier = () => {
 	const { transactionNotifier } = Connector.useContainer();

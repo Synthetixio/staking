@@ -1,68 +1,89 @@
-import React from 'react';
-import styled, { css } from 'styled-components';
-import { Img } from 'react-optimized-image';
-import { FlexDivCentered, FlexDivCol, FlexDivRowCentered } from 'styles/common';
-import i18n from 'i18n';
+import { FC, ReactNode } from 'react';
+import styled from 'styled-components';
+import Link from 'next/link';
+import { Svg } from 'react-optimized-image';
 
-import Spinner from 'assets/svg/app/spinner.svg';
-import Success from 'assets/svg/app/success.svg';
-import Failure from 'assets/svg/app/failure.svg';
+import ArrowRightLongIcon from 'assets/svg/app/arrow-right-long.svg';
+
+import { ExternalLink, FlexDivCentered } from 'styles/common';
+
+import { NotificationType } from './types';
 
 type NotificationProps = {
-	closeToast?: Function;
-	failureReason?: string;
+	type: NotificationType;
+	children: ReactNode;
+	link?: string;
+	isExternal?: boolean;
 };
 
-const NotificationPending = () => {
-	return (
-		<NotificationContainer>
-			<IconContainer>
-				<StyledImg width={25} src={Spinner} />
-			</IconContainer>
-			<TransactionInfo>{i18n.t('common.transaction.transaction-sent')}</TransactionInfo>
-		</NotificationContainer>
+const arrowIcon = <Svg src={ArrowRightLongIcon} />;
+
+const Notification: FC<NotificationProps> = ({ type, children, link, isExternal }) => {
+	const hasLink = link != null;
+
+	const notification = (
+		<Container>
+			<Indicator type={type} />
+			<Content>{children}</Content>
+			{link && <LinkContainer>{arrowIcon}</LinkContainer>}
+		</Container>
+	);
+
+	return hasLink ? (
+		<>
+			{isExternal ? (
+				<ExternalLink href={link}>{notification}</ExternalLink>
+			) : (
+				<Link href={link!}>
+					<a>{notification}</a>
+				</Link>
+			)}
+		</>
+	) : (
+		notification
 	);
 };
 
-const NotificationSuccess = () => {
-	return (
-		<NotificationContainer>
-			<IconContainer>
-				<StyledImg width={35} src={Success} />
-			</IconContainer>
-			<TransactionInfo>{i18n.t('common.transaction.transaction-confirmed')}</TransactionInfo>
-		</NotificationContainer>
-	);
-};
-
-const NotificationError = ({ failureReason }: NotificationProps) => {
-	return (
-		<NotificationContainer>
-			<IconContainer>
-				<StyledImg width={35} src={Failure} />
-			</IconContainer>
-			<TransactionInfo>
-				<TransactionInfoBody>{i18n.t('common.transaction.transaction-failed')}</TransactionInfoBody>
-				<TransactionInfoBody isFailureMessage={true}>{failureReason}</TransactionInfoBody>
-			</TransactionInfo>
-		</NotificationContainer>
-	);
-};
-
-const NotificationContainer = styled(FlexDivCentered)``;
-const IconContainer = styled(FlexDivRowCentered)`
-	width: 35px;
+const Container = styled(FlexDivCentered)`
+	border-radius: 4px;
+	font-size: 12px;
+	background-color: ${(props) => props.theme.colors.mediumBlue};
+	font-family: ${(props) => props.theme.fonts.condensedMedium};
+	height: 32px;
+	line-height: 32px;
+	color: ${(props) => props.theme.colors.white};
 `;
 
-const TransactionInfo = styled(FlexDivCol)``;
-const TransactionInfoBody = styled.div<{ isFailureMessage?: boolean }>`
-	${(props) =>
-		props.isFailureMessage &&
-		css`
-			color: ${(props) => props.theme.colors.gray};
-		`}
+const Indicator = styled.div<{ type: NotificationType }>`
+	width: 4px;
+	height: 100%;
+	background-color: ${(props) => {
+		switch (props.type) {
+			case 'info': {
+				return props.theme.colors.blue;
+			}
+			case 'warning': {
+				return props.theme.colors.pink;
+			}
+			default: {
+				return props.theme.colors.blue;
+			}
+		}
+	}};
+	box-shadow: 0px 0px 15px rgba(237, 30, 255, 0.4);
 `;
 
-const StyledImg = styled(Img)``;
+const Content = styled.div`
+	padding: 0 15px;
+`;
 
-export { NotificationPending, NotificationSuccess, NotificationError };
+const LinkContainer = styled.div`
+	margin-left: auto;
+	display: flex;
+	padding-right: 15px;
+	svg {
+		color: ${(props) => props.theme.colors.white};
+	}
+`;
+
+export default Notification;

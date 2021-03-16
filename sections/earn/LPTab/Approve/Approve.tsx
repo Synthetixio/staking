@@ -14,7 +14,13 @@ import Notify from 'containers/Notify';
 import Etherscan from 'containers/BlockExplorer';
 import { zIndex } from 'constants/ui';
 import LockedIcon from 'assets/svg/app/locked.svg';
-import { curveSusdRewards, curveSusdPoolToken, balancersTSLAPoolToken } from 'contracts';
+import {
+	curveSusdRewards,
+	curveSusdPoolToken,
+	balancersTSLAPoolToken,
+	dualStakingRewards,
+	DHTsUSDLPToken,
+} from 'contracts';
 import Connector from 'containers/Connector';
 import { EXTERNAL_LINKS } from 'constants/links';
 import {
@@ -78,6 +84,11 @@ export const getApprovalContractData = (stakedAsset: CurrencyKey, signer: any) =
 				signer as any
 			),
 			poolAddress: contracts.StakingRewardssTSLABalancer.address,
+		};
+	} else if (stakedAsset === LP.UNISWAP_DHT) {
+		return {
+			contract: new ethers.Contract(DHTsUSDLPToken.address, DHTsUSDLPToken.abi, signer as any),
+			poolAddress: dualStakingRewards.address,
 		};
 	} else {
 		throw new Error('unrecognizable asset');
@@ -285,8 +296,8 @@ const OverlayContainer = styled(FlexDivColCentered)`
 	z-index: ${zIndex.DIALOG_OVERLAY};
 	justify-content: space-around;
 	position: absolute;
-	width: 575px;
-	height: 390px;
+	width: calc(100% - 24px);
+	height: calc(100% - 24px);
 	background: ${(props) => Color(props.theme.colors.black).alpha(0.9).rgb().string()};
 `;
 
