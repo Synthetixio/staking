@@ -232,7 +232,7 @@ const BurnTab: React.FC = () => {
 	);
 
 	const handleClear = useCallback(async () => {
-		if (!swapData) {
+		if (!swapData || !signer) {
 			return;
 		}
 
