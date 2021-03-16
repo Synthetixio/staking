@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 
 import { useRecoilValue } from 'recoil';
 
-import { amountToBurnState } from 'store/staking';
+import { amountToBurnState, StakingPanelType } from 'store/staking';
 
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
@@ -142,7 +142,7 @@ const StakingInfo: FC = () => {
 			stakingInfo={Rows}
 			isInputEmpty={isInputEmpty}
 			collateral={collateral}
-			infoType={'burn'}
+			infoType={StakingPanelType.BURN}
 		/>
 	);
 };

@@ -1,4 +1,5 @@
 import { NetworkId } from '@synthetixio/js';
+import { NumericValue } from 'utils/formatters/number';
 import { CurrencyKey } from './currency';
 import { Period } from './period';
 
@@ -215,18 +216,19 @@ export const QUERY_KEYS = {
 		networkId,
 	],
 	Swap: {
-		quote1Inch: (walletAddress: string, networkId: NetworkId) => [
+		quote1Inch: (walletAddress: string, networkId: NetworkId, amount: NumericValue) => [
 			'quote',
 			'1inch',
 			walletAddress,
 			networkId,
+			amount,
 		],
-		swap1Inch: (walletAddress: string, networkId: NetworkId) => [
-			'swap',
-			'1inch',
-			walletAddress,
-			networkId,
-		],
+		swap1Inch: (
+			walletAddress: string,
+			networkId: NetworkId,
+			amount: NumericValue,
+			fromAddress: string
+		) => ['swap', '1inch', walletAddress, networkId, amount, fromAddress],
 	},
 };
 

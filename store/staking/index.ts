@@ -5,6 +5,7 @@ import { getStakingKey } from '../utils';
 export enum StakingPanelType {
 	BURN = 'burn',
 	MINT = 'mint',
+	CLEAR = 'clear',
 }
 
 export enum MintActionType {

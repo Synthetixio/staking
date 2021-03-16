@@ -6,10 +6,11 @@ import QUERY_KEYS from 'constants/queryKeys';
 import { isWalletConnectedState, networkState, walletAddressState } from 'store/wallet';
 import { appReadyState } from 'store/app';
 import { NumericValue, toBigNumber } from 'utils/formatters/number';
-import { parseUnits } from 'ethers/lib/utils';
+import { parseEther } from 'ethers/lib/utils';
 import axios from 'axios';
+import { swapEndpoint } from 'constants/1inch';
 
-type SwapTxData = {
+export type SwapTxData = {
 	from: string;
 	to: string;
 	data: string;
@@ -32,13 +33,13 @@ const use1InchSwapQuery = (
 	const network = useRecoilValue(networkState);
 
 	return useQuery<SwapTxData>(
-		[QUERY_KEYS.Swap.swap1Inch(walletAddress ?? '', network?.id!), amount, fromAddress],
+		QUERY_KEYS.Swap.swap1Inch(walletAddress ?? '', network?.id!, amount, fromAddress),
 		async () => {
-			const response = await axios.get('https://api.1inch.exchange/v2.0/swap', {
+			const response = await axios.get(swapEndpoint, {
 				params: {
 					fromTokenAddress,
 					toTokenAddress,
-					amount: parseUnits(amount.toString(), 18).toString(),
+					amount: parseEther(amount.toString()).toString(),
 					fromAddress,
 					slippage: slippage.toString(),
 				},

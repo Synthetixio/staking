@@ -1,15 +1,23 @@
 import synthetix from 'lib/synthetix';
 import { NumericValue, toBigNumber, zeroBN } from 'utils/formatters/number';
 import use1InchQuoteQuery from 'queries/1inch/use1InchQuoteQuery';
-import use1InchSwapQuery from 'queries/1inch/use1InchSwapQuery';
+import use1InchSwapQuery, { SwapTxData } from 'queries/1inch/use1InchSwapQuery';
 import { ethAddress } from 'constants/1inch';
 import { BigNumber } from 'bignumber.js';
+
+type ClearDebtCalculations = {
+	needToBuy: boolean;
+	debtBalanceWithBuffer: NumericValue;
+	missingSUSDWithBuffer: NumericValue;
+	quoteAmount: NumericValue;
+	swapData: SwapTxData | null;
+};
 
 const useClearDebtCalculations = (
 	debtBalance: BigNumber,
 	sUSDBalance: BigNumber,
 	walletAddress: string
-) => {
+): ClearDebtCalculations => {
 	const needToBuy = debtBalance.minus(sUSDBalance).isPositive();
 	const debtBalanceWithBuffer: NumericValue = toBigNumber(
 		debtBalance.plus(debtBalance.multipliedBy(0.0005)).toFixed(18)

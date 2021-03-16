@@ -255,8 +255,8 @@ const BurnTab: React.FC = () => {
 					txHash: swapTransaction.hash,
 					onTxConfirmed: async () => {
 						const {
-							contracts: { Synthetix, Issuer },
-							utils: { formatBytes32String, parseEther },
+							contracts: { Synthetix },
+							utils: { parseEther },
 						} = synthetix.js!;
 
 						let burnTransaction: ethers.ContractTransaction;
@@ -341,7 +341,7 @@ const BurnTab: React.FC = () => {
 				}
 				onBurnChange(debtBalance.toString());
 				handleSubmit = () => handleClear();
-				inputValue = debtBalanceWithBuffer;
+				inputValue = toBigNumber(debtBalanceWithBuffer);
 				isLocked = true;
 				if (quoteAmount) {
 					etherNeededToBuy = formatCurrency(CryptoCurrency.ETH, quoteAmount, {

@@ -6,8 +6,9 @@ import QUERY_KEYS from 'constants/queryKeys';
 import { isWalletConnectedState, networkState, walletAddressState } from 'store/wallet';
 import { appReadyState } from 'store/app';
 import { NumericValue, toBigNumber } from 'utils/formatters/number';
-import { formatEther, parseUnits } from 'ethers/lib/utils';
+import { formatEther, parseEther } from 'ethers/lib/utils';
 import axios from 'axios';
+import { quoteEndpoint } from 'constants/1inch';
 
 type QuoteData = {
 	toTokenAmount: NumericValue;
@@ -24,13 +25,13 @@ const use1InchQuoteQuery = (
 	const walletAddress = useRecoilValue(walletAddressState);
 	const network = useRecoilValue(networkState);
 	return useQuery<QuoteData>(
-		[QUERY_KEYS.Swap.quote1Inch(walletAddress ?? '', network?.id!), amount],
+		QUERY_KEYS.Swap.quote1Inch(walletAddress ?? '', network?.id!, amount),
 		async () => {
-			const response = await axios.get('https://api.1inch.exchange/v2.0/quote', {
+			const response = await axios.get(quoteEndpoint, {
 				params: {
 					fromTokenAddress,
 					toTokenAddress,
-					amount: parseUnits(amount.toString(), 18).toString(),
+					amount: parseEther(amount.toString()).toString(),
 				},
 			});
 			const toTokenAmountString: string = response.data.toTokenAmount;
