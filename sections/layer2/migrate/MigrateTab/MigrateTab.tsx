@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 import Notify from 'containers/Notify';
+import { useTranslation } from 'react-i18next';
 
 import synthetix from 'lib/synthetix';
 
@@ -12,11 +13,12 @@ import { getGasEstimateForTransaction } from 'utils/transactions';
 
 import useEscrowDataQuery from 'hooks/useEscrowDataQueryWrapper';
 import { appReadyState } from 'store/app';
-import { walletAddressState } from 'store/wallet';
+import { walletAddressState, isEOAWalletState } from 'store/wallet';
 
 import TabContent from './TabContent';
 
 const MigrateTab = () => {
+	const { t } = useTranslation();
 	const { monitorHash } = Notify.useContainer();
 	const escrowDataQuery = useEscrowDataQuery();
 	const claimableAmount = escrowDataQuery?.data?.claimableAmount ?? 0;
@@ -26,6 +28,7 @@ const MigrateTab = () => {
 
 	const walletAddress = useRecoilValue(walletAddressState);
 	const isAppReady = useRecoilValue(appReadyState);
+	const isEOAWallet = useRecoilValue(isEOAWalletState);
 
 	const [gasLimitEstimate, setGasLimitEstimate] = useState<number | null>(null);
 	const [depositTxError, setMigrationTxError] = useState<string | null>(null);
@@ -46,6 +49,7 @@ const MigrateTab = () => {
 		const getGasLimitEstimate = async () => {
 			if (walletAddress && isAppReady && entryIds && entryIds.length > 0) {
 				try {
+					if (!isEOAWallet) throw new Error(t('layer2.error.non-eoa-wallet'));
 					setGasEstimateError(null);
 					const {
 						contracts: { SynthetixBridgeToOptimism },

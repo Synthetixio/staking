@@ -12,11 +12,11 @@ const InfoBox = () => {
 		<InfoContainer>
 			<InfoContainerHeader>
 				<Title>{t('layer2.migrate.info.title')}</Title>
-				<Subtitle> {t('layer2.migrate.info.subtitle')}</Subtitle>
 			</InfoContainerHeader>
 			<InfoContainerBody>
 				<Svg src={Warning} />
 				<WarningHeading>{t('layer2.migrate.info.warning-title')}</WarningHeading>
+				<WarningBody>{t('layer2.deposit.info.metamask-only')}</WarningBody>
 				<WarningBody>{t('layer2.migrate.info.warning-description')}</WarningBody>
 			</InfoContainerBody>
 		</InfoContainer>
@@ -25,12 +25,14 @@ const InfoBox = () => {
 
 const InfoContainerHeader = styled(FlexDivCol)`
 	border-bottom: ${(props) => `1px solid ${props.theme.colors.grayBlue}`};
+	padding-bottom: 12px;
 `;
 
 const InfoContainerBody = styled(FlexDivCol)`
+	padding: 0 20px;
 	margin: 42px auto;
 	align-items: center;
-	width: 60%;
+	text-align: center;
 `;
 
 const Bold = css`
@@ -44,9 +46,11 @@ const WarningHeading = styled.h2`
 `;
 
 const WarningBody = styled.p`
-	${Bold}
 	margin: 0;
-	text-align: center;
+	font-size: 14px;
+	&:not(:first-child) {
+		margin-top: 6px;
+	}
 `;
 
 export default InfoBox;
