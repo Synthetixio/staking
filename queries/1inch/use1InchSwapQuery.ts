@@ -9,13 +9,14 @@ import { NumericValue, toBigNumber } from 'utils/formatters/number';
 import { parseEther } from 'ethers/lib/utils';
 import axios from 'axios';
 import { swapEndpoint } from 'constants/1inch';
+import { BigNumber as EthersBigNumber } from 'ethers';
 
 export type SwapTxData = {
 	from: string;
 	to: string;
 	data: string;
-	value: string;
-	gasPrice: string;
+	value: EthersBigNumber;
+	gasPrice: EthersBigNumber;
 	gas: number;
 };
 
@@ -48,6 +49,8 @@ const use1InchSwapQuery = (
 			const transaction = response.data.tx;
 			return {
 				...transaction,
+				value: EthersBigNumber.from(transaction.value),
+				gasPrice: EthersBigNumber.from(transaction.gasPrice),
 			};
 		},
 		{

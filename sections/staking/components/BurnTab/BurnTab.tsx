@@ -243,8 +243,8 @@ const BurnTab: React.FC = () => {
 			const swapTransaction = await signer?.sendTransaction({
 				from: swapData.from,
 				to: swapData.to,
-				value: BigNumber.from(swapData.value),
-				gasPrice: BigNumber.from(swapData.gasPrice),
+				value: swapData.value,
+				gasPrice: swapData.gasPrice,
 				data: swapData.data,
 			});
 
