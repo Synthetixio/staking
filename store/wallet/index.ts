@@ -51,3 +51,8 @@ export const customGasPriceState = atom<string>({
 	key: getWalletKey('customGasPrice'),
 	default: '',
 });
+
+export const isEOAWalletState = atom<boolean>({
+	key: getWalletKey('isEOAWallet'),
+	default: false,
+});

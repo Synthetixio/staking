@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { createContainer } from 'unstated-next';
-import { useSetRecoilState, useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { NetworkId } from '@synthetixio/js';
 import { ethers } from 'ethers';
 
@@ -9,7 +9,12 @@ import synthetix from 'lib/synthetix';
 import { getDefaultNetworkId } from 'utils/network';
 
 import { appReadyState, languageState } from 'store/app';
-import { walletAddressState, networkState, walletWatchedState } from 'store/wallet';
+import {
+	walletAddressState,
+	networkState,
+	walletWatchedState,
+	isEOAWalletState,
+} from 'store/wallet';
 
 import { Wallet as OnboardWallet } from 'bnc-onboard/dist/src/interfaces';
 
@@ -26,8 +31,9 @@ const useConnector = () => {
 	const [onboard, setOnboard] = useState<ReturnType<typeof initOnboard> | null>(null);
 	const [notify, setNotify] = useState<ReturnType<typeof initNotify> | null>(null);
 	const [isAppReady, setAppReady] = useRecoilState(appReadyState);
-	const setWalletAddress = useSetRecoilState(walletAddressState);
+	const [walletAddress, setWalletAddress] = useRecoilState(walletAddressState);
 	const [walletWatched, setWalletWatched] = useRecoilState(walletWatchedState);
+	const [isEOAWallet, setIsEOAWallet] = useRecoilState(isEOAWalletState);
 	const [selectedWallet, setSelectedWallet] = useLocalStorage<string | null>(
 		LOCAL_STORAGE_KEYS.SELECTED_WALLET,
 		''
@@ -139,6 +145,16 @@ const useConnector = () => {
 			onboard.walletSelect(selectedWallet);
 		}
 	}, [onboard, selectedWallet]);
+
+	useEffect(() => {
+		const getAddressCode = async () => {
+			if (!walletAddress || !provider) return;
+			const code = await provider.getCode(walletAddress);
+			// If code = 0x then it's an EOA wallet. Otherwise, it's a contract.
+			setIsEOAWallet(code === '0x');
+		};
+		getAddressCode();
+	}, [walletAddress, provider, setIsEOAWallet]);
 
 	useEffect(() => {
 		if (notify) {
