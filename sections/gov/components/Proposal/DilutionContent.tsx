@@ -54,7 +54,7 @@ import { normalizeGasLimit } from 'utils/network';
 import { useCouncilMembers } from 'sections/gov/hooks/useCouncilMembers';
 
 import { Transaction } from 'constants/network';
-import Etherscan from 'containers/Etherscan';
+import Etherscan from 'containers/BlockExplorer';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 
 import Notify from 'containers/Notify';
@@ -93,9 +93,11 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ onBack }) => {
 	const [targetDilutionAddress, setTargetDilutionAddress] = useState<string | null>(null);
 
 	const { monitorHash } = Notify.useContainer();
-	const { etherscanInstance } = Etherscan.useContainer();
+	const { blockExplorerInstance } = Etherscan.useContainer();
 	const link =
-		etherscanInstance != null && txHash != null ? etherscanInstance.txLink(txHash) : undefined;
+		blockExplorerInstance != null && txHash != null
+			? blockExplorerInstance.txLink(txHash)
+			: undefined;
 
 	const proposal = useRecoilValue(proposalState);
 	const isAppReady = useRecoilValue(appReadyState);

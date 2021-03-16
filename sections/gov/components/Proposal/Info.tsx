@@ -10,7 +10,7 @@ import { truncateAddress } from 'utils/formatters/string';
 import { formatTxTimestamp } from 'utils/formatters/date';
 import { Svg } from 'react-optimized-image';
 import Link from 'assets/svg/app/link.svg';
-import Etherscan from 'containers/Etherscan';
+import Etherscan from 'containers/BlockExplorer';
 import StructuredTab from 'components/StructuredTab';
 import Results from './Results';
 import History from './History';
@@ -20,7 +20,7 @@ const Info: React.FC = () => {
 	const { t } = useTranslation();
 	const theme = useTheme();
 	const proposal = useRecoilValue(proposalState);
-	const { etherscanInstance } = Etherscan.useContainer();
+	const { blockExplorerInstance } = Etherscan.useContainer();
 
 	const tabData = useMemo(
 		() => [
@@ -51,7 +51,11 @@ const Info: React.FC = () => {
 						{truncateAddress(proposal.address)}
 
 						<ExternalLink
-							href={etherscanInstance ? etherscanInstance.addressLink(proposal.address) : undefined}
+							href={
+								blockExplorerInstance
+									? blockExplorerInstance.addressLink(proposal.address)
+									: undefined
+							}
 						>
 							<Svg style={{ marginLeft: 4 }} color={theme.colors.blue} src={Link} />
 						</ExternalLink>
@@ -70,8 +74,8 @@ const Info: React.FC = () => {
 						{proposal.msg.payload.snapshot}
 						<ExternalLink
 							href={
-								etherscanInstance
-									? etherscanInstance.blockLink(proposal.msg.payload.snapshot)
+								blockExplorerInstance
+									? blockExplorerInstance.blockLink(proposal.msg.payload.snapshot)
 									: undefined
 							}
 						>

@@ -30,7 +30,7 @@ import { Transaction } from 'constants/network';
 import { truncateAddress } from 'utils/formatters/string';
 import useActiveTab from 'sections/gov/hooks/useActiveTab';
 import TxState from 'sections/gov/components/TxState';
-import Etherscan from 'containers/Etherscan';
+import Etherscan from 'containers/BlockExplorer';
 
 type QuestionProps = {
 	onBack: Function;
@@ -66,9 +66,11 @@ const Question: React.FC<QuestionProps> = ({
 }) => {
 	const { t } = useTranslation();
 	const activeTab = useActiveTab();
-	const { etherscanInstance } = Etherscan.useContainer();
+	const { blockExplorerInstance } = Etherscan.useContainer();
 	const link =
-		etherscanInstance != null && txHash != null ? etherscanInstance.txLink(txHash) : undefined;
+		blockExplorerInstance != null && txHash != null
+			? blockExplorerInstance.txLink(txHash)
+			: undefined;
 
 	const getRawMarkup = (value?: string | null) => {
 		const remarkable = new Remarkable({
