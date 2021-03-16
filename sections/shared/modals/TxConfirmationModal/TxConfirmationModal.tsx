@@ -15,6 +15,7 @@ type TxConfirmationModalProps = {
 	txError: string | null;
 	attemptRetry: () => void;
 	content: React.ReactNode;
+	isSignature?: boolean;
 };
 
 export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
@@ -22,6 +23,7 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 	txError,
 	attemptRetry,
 	content,
+	isSignature,
 }) => {
 	const { t } = useTranslation();
 
@@ -29,13 +31,19 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 		<StyledBaseModal
 			onDismiss={onDismiss}
 			isOpen={true}
-			title={t('modals.confirm-transaction.title')}
+			title={
+				!isSignature ? t('modals.confirm-transaction.title') : t('modals.confirm-signature.title')
+			}
 		>
 			<FlexDivColCentered>
 				<Svg src={PendingConfirmation} />
 			</FlexDivColCentered>
 			{content}
-			<Subtitle>{t('modals.confirm-transaction.helper')}</Subtitle>
+			<Subtitle>
+				{!isSignature
+					? t('modals.confirm-transaction.helper')
+					: t('modals.confirm-signature.helper')}
+			</Subtitle>
 			{txError && (
 				<Actions>
 					<Message>{t('common.transaction.error')}</Message>

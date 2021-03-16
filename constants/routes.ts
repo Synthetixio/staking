@@ -10,6 +10,8 @@ export const ROUTES = {
 	},
 	Escrow: {
 		Home: '/escrow',
+		Staking: '/escrow/staking',
+		ICO: '/escrow/ico',
 	},
 	History: {
 		Home: '/history',
@@ -27,17 +29,21 @@ export const ROUTES = {
 		sTLSA_LP: '/earn/sTSLA-LP',
 		sUSD_EXTERNAL: 'https://www.curve.fi/susdv2/',
 		sEURO_EXTERNAL: 'https://www.curve.fi/eurs/',
+		DHT_LP: '/earn/DHT-LP',
 	},
 	L2: {
 		Home: '/l2',
 		Deposit: '/l2/deposit',
 		Migrate: '/l2/migrate',
 	},
+	Gov: {
+		Home: '/gov',
+		Space: (spaceKey: string) => `/gov/${spaceKey}`,
+		Create: (spaceKey: string) => `/gov/${spaceKey}/create`,
+		Proposal: (spaceKey: string, id: string) => `/gov/${spaceKey}/${id}`,
+	},
 	Loans: {
 		Home: '/loans',
-	},
-	Governance: {
-		Home: '/governance',
 	},
 };
 

@@ -302,21 +302,21 @@ export const GlowingCircle = styled(FlexDivCentered)<{
 		props.size === 'sm' &&
 		css`
 			height: 32px;
-			width: 32px;
+			min-width: 32px;
 		`}
 
 	${(props) =>
 		props.size === 'md' &&
 		css`
 			height: 56px;
-			width: 56px;
+			min-width: 56px;
 		`}		
 
 	${(props) =>
 		props.size === 'lg' &&
 		css`
 			height: 64px;
-			width: 64px;
+			min-width: 64px;
 		`}		
 
 	${(props) =>

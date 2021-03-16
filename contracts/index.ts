@@ -20,6 +20,10 @@ import wBTCToken from './wBTCToken';
 
 import renBTCToken from './renBTCToken';
 
+import dualStakingRewards from './dualStakingRewards';
+
+import DHTsUSDLPToken from './DHTsUSDLPToken';
+
 export {
 	curveSusdRewards,
 	curveSeuroRewards,
@@ -34,4 +38,6 @@ export {
 	wETHToken,
 	wBTCToken,
 	renBTCToken,
+	dualStakingRewards,
+	DHTsUSDLPToken,
 };

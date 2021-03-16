@@ -21,3 +21,4 @@ export const secondsToTime = (seconds: number) => {
 export const toFutureDate = (seconds: number) => {
 	return formatShortDateWithTime(new Date(new Date().getTime() + seconds * 1000));
 };
+export const getCurrentTimestampSeconds = () => Date.now() / 1000;

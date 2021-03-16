@@ -36,8 +36,6 @@ const TxState: FC<TxStateProps> = ({
 const Container = styled.div<{ isStakingPanel: boolean }>`
 	z-index: ${zIndex.DIALOG_OVERLAY};
 	justify-content: space-around;
-	position: absolute;
-	width: 575px;
 	height: 375px;
 	background: ${(props) => props.theme.colors.navy};
 	padding: 20px;
@@ -45,7 +43,6 @@ const Container = styled.div<{ isStakingPanel: boolean }>`
 	${(props) =>
 		props.isStakingPanel &&
 		css`
-			width: 270px;
 			height: 240px;
 		`}
 `;

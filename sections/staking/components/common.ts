@@ -26,18 +26,7 @@ export const InputContainer = styled(FlexDivColCentered)`
 	width: 100%;
 	padding: 16px;
 	margin-bottom: 24px;
-	/* @TODO: Replace with responsive height when mobile */
 	height: 600px;
-`;
-
-export const HeaderBox = styled(FlexDivRowCentered)`
-	padding: 16px 0px;
-	p {
-		color: ${(props) => props.theme.colors.white};
-		font-size: 16px;
-		font-family: ${(props) => props.theme.fonts.condensedBold};
-		margin-right: 16px;
-	}
 `;
 
 export const StyledSelect = styled(Select)`

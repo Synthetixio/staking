@@ -28,6 +28,7 @@ import {
 	ModalItem,
 	ModalItemTitle,
 	ModalItemText,
+	FlexDivRow,
 } from 'styles/common';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 
@@ -44,6 +45,9 @@ type RewardsBoxProps = {
 	setClaimTxModalOpen: (open: boolean) => void;
 	claimError: string | null;
 	setClaimError: (err: string | null) => void;
+	secondTokenReward?: number;
+	secondTokenKey?: CryptoCurrency;
+	secondTokenRate?: number;
 };
 
 const RewardsBox: FC<RewardsBoxProps> = ({
@@ -56,6 +60,9 @@ const RewardsBox: FC<RewardsBoxProps> = ({
 	setClaimTxModalOpen,
 	claimError,
 	setClaimError,
+	secondTokenReward,
+	secondTokenKey,
+	secondTokenRate,
 }) => {
 	const { t } = useTranslation();
 	const { signer } = Connector.useContainer();
@@ -80,25 +87,53 @@ const RewardsBox: FC<RewardsBoxProps> = ({
 		getGasLimitEstimate();
 	}, [stakedAsset, signer, setClaimError, isAppReady]);
 
+	const isDualRewards = secondTokenReward !== undefined;
+
 	return (
 		<>
-			<RewardsContainer>
+			<RewardsContainer dualRewards={isDualRewards}>
 				<RewardsTitle>{t('earn.actions.rewards.title')}</RewardsTitle>
-				<Currency.Icon currencyKey={CryptoCurrency.SNX} width="48" height="48" />
-				<RewardsAmountSNX>
-					{formatCurrency(CryptoCurrency.SNX, tokenRewards, {
-						currencyKey: CryptoCurrency.SNX,
-						decimals: 2,
-					})}
-				</RewardsAmountSNX>
-				<RewardsAmountUSD>
-					{ESTIMATE_VALUE}{' '}
-					{formatFiatCurrency(getPriceAtCurrentRate(toBigNumber(tokenRewards * SNXRate)), {
-						sign: selectedPriceCurrency.sign,
-					})}
-				</RewardsAmountUSD>
+				<RewardsRow dualRewards={isDualRewards}>
+					<FlexDivColCentered>
+						<Currency.Icon currencyKey={CryptoCurrency.SNX} width="48" height="48" />
+						<RewardsAmountSNX>
+							{formatCurrency(CryptoCurrency.SNX, tokenRewards, {
+								currencyKey: CryptoCurrency.SNX,
+								decimals: 2,
+							})}
+						</RewardsAmountSNX>
+						<RewardsAmountUSD>
+							{ESTIMATE_VALUE}{' '}
+							{formatFiatCurrency(getPriceAtCurrentRate(toBigNumber(tokenRewards * SNXRate)), {
+								sign: selectedPriceCurrency.sign,
+							})}
+						</RewardsAmountUSD>
+					</FlexDivColCentered>
+					{isDualRewards && secondTokenKey && (
+						<FlexDivColCentered>
+							<Currency.Icon currencyKey={stakedAsset} width="48" height="48" />
+							<RewardsAmountSNX>
+								{formatCurrency(secondTokenKey, secondTokenReward!, {
+									currencyKey: secondTokenKey,
+									decimals: 2,
+								})}
+							</RewardsAmountSNX>
+							<RewardsAmountUSD>
+								{ESTIMATE_VALUE}{' '}
+								{formatFiatCurrency(
+									getPriceAtCurrentRate(toBigNumber(secondTokenReward! * secondTokenRate!)),
+									{
+										sign: selectedPriceCurrency.sign,
+									}
+								)}
+							</RewardsAmountUSD>
+						</FlexDivColCentered>
+					)}
+				</RewardsRow>
 				<StyledButton variant="primary" onClick={handleClaim} disabled={tokenRewards === 0}>
-					{t('earn.actions.claim.claim-snx-button')}
+					{isDualRewards
+						? t('earn.actions.claim.claim-button')
+						: t('earn.actions.claim.claim-snx-button')}
 				</StyledButton>
 				<GasSelector
 					altVersion={true}
@@ -132,13 +167,23 @@ const RewardsBox: FC<RewardsBoxProps> = ({
 
 const RewardsContainer = styled(FlexDivColCentered)`
 	height: 272px;
-	width: 200px;
-	margin-left: 20px;
+	width: ${(props: { dualRewards: boolean }) => (props.dualRewards ? '512px' : '200px')};
+	margin-top: ${(props: { dualRewards: boolean }) => (props.dualRewards ? '20px' : '0px')};
+	margin-left: ${(props: { dualRewards: boolean }) => (props.dualRewards ? '0px' : '20px')};
 	padding: 10px;
 	border: 1px solid ${(props) => props.theme.colors.pink};
 	border-radius: 4px;
 	background-image: url(${smallWaveSVG.src});
 	background-size: cover;
+`;
+
+const RewardsRow = styled(FlexDivRow)`
+	${(props: { dualRewards: boolean }) =>
+		props.dualRewards &&
+		`
+		width: 100%;
+		padding: 0px 96px;
+	`}
 `;
 
 const RewardsTitle = styled.div`
