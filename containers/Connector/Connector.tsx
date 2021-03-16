@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { createContainer } from 'unstated-next';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { NetworkId } from '@synthetixio/js';
 import { ethers } from 'ethers';
 
@@ -33,7 +33,7 @@ const useConnector = () => {
 	const [isAppReady, setAppReady] = useRecoilState(appReadyState);
 	const [walletAddress, setWalletAddress] = useRecoilState(walletAddressState);
 	const [walletWatched, setWalletWatched] = useRecoilState(walletWatchedState);
-	const [isEOAWallet, setIsEOAWallet] = useRecoilState(isEOAWalletState);
+	const setIsEOAWallet = useSetRecoilState(isEOAWalletState);
 	const [selectedWallet, setSelectedWallet] = useLocalStorage<string | null>(
 		LOCAL_STORAGE_KEYS.SELECTED_WALLET,
 		''
