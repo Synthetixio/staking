@@ -1,10 +1,12 @@
 import { SIDE_NAV_WIDTH } from 'constants/ui';
-import { FC, useEffect, ReactNode } from 'react';
+import { FC, ReactNode, useEffect } from 'react';
 import router from 'next/router';
+import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import ROUTES from 'constants/routes';
 import useEscrowDataQuery from 'hooks/useEscrowDataQueryWrapper';
+import { networkState } from 'store/wallet';
 
 import Header from './Header';
 import SideNav from './SideNav';
@@ -18,6 +20,8 @@ type AppLayoutProps = {
 const AppLayout: FC<AppLayoutProps> = ({ children }) => {
 	const rewardEscrowQuery = useEscrowDataQuery();
 	const totalBalancePendingMigration = rewardEscrowQuery?.data?.totalBalancePendingMigration ?? 0;
+	const network = useRecoilValue(networkState);
+	const isL1 = !network?.useOvm ?? null;
 
 	useEffect(() => {
 		if (
@@ -35,7 +39,7 @@ const AppLayout: FC<AppLayoutProps> = ({ children }) => {
 			<Header />
 			<Content>{children}</Content>
 			<NotificationContainer />
-			<UserNotifications />
+			{!!isL1 && <UserNotifications />}
 		</>
 	);
 };
