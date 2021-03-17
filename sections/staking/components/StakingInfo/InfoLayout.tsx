@@ -78,6 +78,7 @@ const InfoLayout: FC<InfoLayoutProps> = ({ stakingInfo, collateral, isInputEmpty
 				{stakingInfo.barRows.map(
 					({ title, value, changedValue, percentage, changedPercentage, currencyKey }, i) => (
 						<BarStatsRow
+							key={`bar-stats-row-${i}`}
 							title={title}
 							value={formatCurrency(currencyKey, isInputEmpty ? value : changedValue, {
 								currencyKey: currencyKey,
