@@ -16,9 +16,9 @@ import Success from 'assets/svg/app/success.svg';
 import { Transaction } from 'constants/network';
 import { normalizedGasPrice } from 'utils/network';
 import { CryptoCurrency, Synths } from 'constants/currency';
-import { getGasEstimateForTransaction } from 'utils/transactions';
 import { formatNumber } from 'utils/formatters/number';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
+import synthetix from 'lib/synthetix';
 
 import Connector from 'containers/Connector';
 import TransactionNotifier from 'containers/TransactionNotifier';
@@ -148,7 +148,10 @@ const LPTab: FC<LPTabProps> = ({
 					setClaimTxModalOpen(true);
 					const contract = getContract(stakedAsset, signer);
 
-					const gasLimit = await getGasEstimateForTransaction([], contract.estimateGas.getReward);
+					const gasLimit = await synthetix.getGasEstimateForTransaction({
+						txArgs: [],
+						method: contract.estimateGas.getReward,
+					});
 					const transaction: ethers.ContractTransaction = await contract.getReward({
 						gasPrice: normalizedGasPrice(claimGasPrice),
 						gasLimit,

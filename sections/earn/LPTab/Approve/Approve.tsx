@@ -31,9 +31,8 @@ import {
 	ModalItemTitle,
 	ModalItemText,
 } from 'styles/common';
-import { getGasEstimateForTransaction } from 'utils/transactions';
-import { Transaction, TokenAllowanceLimit } from 'constants/network';
-import { normalizedGasPrice, normalizeGasLimit } from 'utils/network';
+import { Transaction, TokenAllowanceLimit, GasLimitEstimate } from 'constants/network';
+import { normalizedGasPrice } from 'utils/network';
 import { CurrencyKey, Synths } from 'constants/currency';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import TxState from 'sections/earn/TxState';
@@ -107,7 +106,7 @@ const Approve: FC<ApproveProps> = ({ stakedAsset, setShowApproveOverlayModal }) 
 	const { blockExplorerInstance } = Etherscan.useContainer();
 	const [error, setError] = useState<string | null>(null);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
-	const [gasLimitEstimate, setGasLimitEstimate] = useState<number | null>(null);
+	const [gasLimitEstimate, setGasLimitEstimate] = useState<GasLimitEstimate>(null);
 	const [gasPrice, setGasPrice] = useState<number>(0);
 	const [transactionState, setTransactionState] = useState<Transaction>(Transaction.PRESUBMIT);
 	const [txHash, setTxHash] = useState<string | null>(null);
@@ -123,11 +122,11 @@ const Approve: FC<ApproveProps> = ({ stakedAsset, setShowApproveOverlayModal }) 
 				try {
 					setError(null);
 					const { contract, poolAddress } = getApprovalContractData(stakedAsset, provider);
-					let gasEstimate = await getGasEstimateForTransaction(
-						[poolAddress, synthetix.js!.utils.parseEther(TokenAllowanceLimit.toString())],
-						contract.estimateGas.approve
-					);
-					setGasLimitEstimate(normalizeGasLimit(Number(gasEstimate)));
+					let gasEstimate = await synthetix.getGasEstimateForTransaction({
+						txArgs: [poolAddress, synthetix.js!.utils.parseEther(TokenAllowanceLimit.toString())],
+						method: contract.estimateGas.approve,
+					});
+					setGasLimitEstimate(gasEstimate);
 				} catch (error) {
 					setError(error.message);
 					setGasLimitEstimate(null);
@@ -146,10 +145,10 @@ const Approve: FC<ApproveProps> = ({ stakedAsset, setShowApproveOverlayModal }) 
 					const { contract, poolAddress } = getApprovalContractData(stakedAsset, signer);
 
 					const allowance = synthetix.js!.utils.parseEther(TokenAllowanceLimit.toString());
-					const gasLimit = await getGasEstimateForTransaction(
-						[poolAddress, allowance],
-						contract.estimateGas.approve
-					);
+					const gasLimit = await synthetix.getGasEstimateForTransaction({
+						txArgs: [poolAddress, allowance],
+						method: contract.estimateGas.approve,
+					});
 					const transaction: ethers.ContractTransaction = await contract.approve(
 						poolAddress,
 						allowance,

@@ -11,10 +11,9 @@ import { useRecoilValue } from 'recoil';
 
 import LockedIcon from 'assets/svg/app/locked.svg';
 
-import { TokenAllowanceLimit } from 'constants/network';
+import { TokenAllowanceLimit, GasLimitEstimate } from 'constants/network';
 import { appReadyState } from 'store/app';
 import { isWalletConnectedState } from 'store/wallet';
-import { getGasEstimateForTransaction } from 'utils/transactions';
 import GasSelector from 'components/GasSelector';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 
@@ -45,7 +44,7 @@ const ApproveModal: FC<ApproveModalProps> = ({
 	const isAppReady = useRecoilValue(appReadyState);
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 
-	const [gasLimitEstimate, setGasLimitEstimate] = useState<number | null>(null);
+	const [gasLimitEstimate, setGasLimitEstimate] = useState<GasLimitEstimate>(null);
 	const [error, setError] = useState<string | null>(null);
 	const [gasPrice, setGasPrice] = useState<number>(0);
 	const [isApproving, setIsApproving] = useState<boolean>(false);
@@ -61,10 +60,10 @@ const ApproveModal: FC<ApproveModalProps> = ({
 					} = synthetix.js!;
 					setError(null);
 					const allowance = parseEther(TokenAllowanceLimit.toString());
-					const gasEstimate = await getGasEstimateForTransaction(
-						[contracts[contractToApprove].address, allowance],
-						contracts[tokenContract].estimateGas.approve
-					);
+					const gasEstimate = await synthetix.getGasEstimateForTransaction({
+						txArgs: [contracts[contractToApprove].address, allowance],
+						method: contracts[tokenContract].estimateGas.approve,
+					});
 					setGasLimitEstimate(gasEstimate);
 				} catch (e) {
 					console.log(e);

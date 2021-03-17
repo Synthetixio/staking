@@ -18,11 +18,11 @@ import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 
 import { ModalContent, ModalItem, ModalItemText, ModalItemTitle } from 'styles/common';
 
+import synthetix from 'lib/synthetix';
 import CouncilDilution from 'contracts/councilDilution.js';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import { truncateAddress } from 'utils/formatters/string';
 import { useTranslation } from 'react-i18next';
-import { getGasEstimateForTransaction } from 'utils/transactions';
 
 type IndexProps = {
 	onBack: Function;
@@ -130,10 +130,10 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 								setTxTransactionState(Transaction.PRESUBMIT);
 								setTxModalOpen(true);
 
-								const gasLimit = await getGasEstimateForTransaction(
-									[ipfsHash],
-									contract.estimateGas.logProposal
-								);
+								const gasLimit = await synthetix.getGasEstimateForTransaction({
+									txArgs: [ipfsHash],
+									method: contract.estimateGas.logProposal,
+								});
 
 								const transaction = await contract.logProposal(ipfsHash, { gasLimit });
 

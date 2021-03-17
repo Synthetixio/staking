@@ -2,8 +2,8 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { ethers } from 'ethers';
 import synthetix from 'lib/synthetix';
 
-import { Transaction } from 'constants/network';
-import { normalizedGasPrice, normalizeGasLimit } from 'utils/network';
+import { Transaction, GasLimitEstimate } from 'constants/network';
+import { normalizedGasPrice } from 'utils/network';
 import { toBigNumber } from 'utils/formatters/number';
 
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
@@ -32,7 +32,7 @@ const MintTab: React.FC = () => {
 
 	const [error, setError] = useState<string | null>(null);
 
-	const [gasLimitEstimate, setGasLimitEstimate] = useState<number | null>(null);
+	const [gasLimitEstimate, setGasLimitEstimate] = useState<GasLimitEstimate>(null);
 	const [mintMax, setMintMax] = useState<boolean>(false);
 
 	const [gasPrice, setGasPrice] = useState<number>(0);
@@ -63,7 +63,7 @@ const MintTab: React.FC = () => {
 							method: Synthetix.estimateGas.issueMaxSynths,
 						});
 					}
-					setGasLimitEstimate(normalizeGasLimit(Number(gasEstimate)));
+					setGasLimitEstimate(gasEstimate);
 				} catch (error) {
 					let errorMessage = error.message;
 					if (error.code === 'INVALID_ARGUMENT') {
@@ -93,7 +93,7 @@ const MintTab: React.FC = () => {
 					let transaction: ethers.ContractTransaction;
 
 					if (mintMax) {
-						const gasLimit = synthetix.getGasEstimateForTransaction({
+						const gasLimit = await synthetix.getGasEstimateForTransaction({
 							txArgs: [],
 							method: Synthetix.estimateGas.issueMaxSynths,
 						});
@@ -103,7 +103,7 @@ const MintTab: React.FC = () => {
 						});
 					} else {
 						const amountToMintBN = parseEther(amountToMint);
-						const gasLimit = synthetix.getGasEstimateForTransaction({
+						const gasLimit = await synthetix.getGasEstimateForTransaction({
 							txArgs: [amountToMintBN],
 							method: Synthetix.estimateGas.issueSynths,
 						});

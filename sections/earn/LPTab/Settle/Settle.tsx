@@ -24,9 +24,8 @@ import {
 	ModalItemTitle,
 	ModalItemText,
 } from 'styles/common';
-import { getGasEstimateForTransaction } from 'utils/transactions';
-import { Transaction } from 'constants/network';
-import { normalizedGasPrice, normalizeGasLimit } from 'utils/network';
+import { Transaction, GasLimitEstimate } from 'constants/network';
+import { normalizedGasPrice } from 'utils/network';
 import { CurrencyKey, Synths } from 'constants/currency';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import TxState from 'sections/earn/TxState';
@@ -77,7 +76,7 @@ const Settle: FC<SettleProps> = ({ stakedAsset, setShowSettleOverlayModal }) => 
 	const walletAddress = useRecoilValue(walletAddressState);
 	const [error, setError] = useState<string | null>(null);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
-	const [gasLimitEstimate, setGasLimitEstimate] = useState<number | null>(null);
+	const [gasLimitEstimate, setGasLimitEstimate] = useState<GasLimitEstimate>(null);
 	const [gasPrice, setGasPrice] = useState<number>(0);
 	const [transactionState, setTransactionState] = useState<Transaction>(Transaction.PRESUBMIT);
 	const [txHash, setTxHash] = useState<string | null>(null);
@@ -93,11 +92,11 @@ const Settle: FC<SettleProps> = ({ stakedAsset, setShowSettleOverlayModal }) => 
 				try {
 					setError(null);
 					const { contract, synth } = getSettleSynthType(stakedAsset);
-					let gasEstimate = await getGasEstimateForTransaction(
-						[walletAddress, synth],
-						contract.estimateGas.settle
-					);
-					setGasLimitEstimate(normalizeGasLimit(Number(gasEstimate)));
+					let gasEstimate = await synthetix.getGasEstimateForTransaction({
+						txArgs: [walletAddress, synth],
+						method: contract.estimateGas.settle,
+					});
+					setGasLimitEstimate(gasEstimate);
 				} catch (error) {
 					setError(error.message);
 					setGasLimitEstimate(null);
@@ -116,10 +115,10 @@ const Settle: FC<SettleProps> = ({ stakedAsset, setShowSettleOverlayModal }) => 
 
 					const { contract, synth } = getSettleSynthType(stakedAsset);
 
-					const gasLimit = await getGasEstimateForTransaction(
-						[walletAddress, synth],
-						contract?.estimateGas.settle
-					);
+					const gasLimit = await synthetix.getGasEstimateForTransaction({
+						txArgs: [walletAddress, synth],
+						method: contract?.estimateGas.settle,
+					});
 					const transaction: ethers.ContractTransaction = await contract.settle(
 						walletAddress,
 						synth,

@@ -13,8 +13,7 @@ import NumericInput from 'components/Input/NumericInput';
 import { formatCryptoCurrency, formatNumber } from 'utils/formatters/number';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
-import { getGasEstimateForTransaction } from 'utils/transactions';
-import { normalizedGasPrice, normalizeGasLimit } from 'utils/network';
+import { normalizedGasPrice } from 'utils/network';
 import Etherscan from 'containers/BlockExplorer';
 import Connector from 'containers/Connector';
 import { curveSusdRewards, dualStakingRewards } from 'contracts';
@@ -30,7 +29,7 @@ import {
 } from 'styles/common';
 import Currency from 'components/Currency';
 import { CurrencyKey, Synths } from 'constants/currency';
-import { Transaction } from 'constants/network';
+import { Transaction, GasLimitEstimate } from 'constants/network';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import TxState from 'sections/earn/TxState';
 
@@ -107,7 +106,7 @@ const StakeTab: FC<StakeTabProps> = ({
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const { blockExplorerInstance } = Etherscan.useContainer();
 	const { signer } = Connector.useContainer();
-	const [gasLimitEstimate, setGasLimitEstimate] = useState<number | null>(null);
+	const [gasLimitEstimate, setGasLimitEstimate] = useState<GasLimitEstimate>(null);
 	const [gasPrice, setGasPrice] = useState<number>(0);
 	const [error, setError] = useState<string | null>(null);
 	const isAppReady = useRecoilValue(appReadyState);
@@ -136,11 +135,11 @@ const StakeTab: FC<StakeTabProps> = ({
 						stakeAmount =
 							Number(amount) === staked ? stakedBN : synthetix.js!.utils.parseEther(amount);
 					}
-					let gasEstimate = await getGasEstimateForTransaction(
-						[stakeAmount],
-						isStake ? contract.estimateGas.stake : contract.estimateGas.withdraw
-					);
-					setGasLimitEstimate(normalizeGasLimit(Number(gasEstimate)));
+					let gasEstimate = await synthetix.getGasEstimateForTransaction({
+						txArgs: [stakeAmount],
+						method: isStake ? contract.estimateGas.stake : contract.estimateGas.withdraw,
+					});
+					setGasLimitEstimate(gasEstimate);
 				} catch (error) {
 					setError(error.message);
 					setGasLimitEstimate(null);
@@ -179,10 +178,10 @@ const StakeTab: FC<StakeTabProps> = ({
 						formattedStakeAmount =
 							Number(amount) === staked ? stakedBN : synthetix.js!.utils.parseEther(amount);
 					}
-					const gasLimit = await getGasEstimateForTransaction(
-						[formattedStakeAmount],
-						isStake ? contract.estimateGas.stake : contract.estimateGas.withdraw
-					);
+					const gasLimit = await synthetix.getGasEstimateForTransaction({
+						txArgs: [formattedStakeAmount],
+						method: isStake ? contract.estimateGas.stake : contract.estimateGas.withdraw,
+					});
 					let transaction: ethers.ContractTransaction;
 					if (isStake) {
 						transaction = await contract.stake(formattedStakeAmount, {

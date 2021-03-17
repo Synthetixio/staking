@@ -67,13 +67,18 @@ const synthetix: Synthetix = {
 		// @ts-ignore
 		this.chainIdToNetwork = invert(this.js.networkToChainId);
 	},
-	getGasEstimateForTransaction({ txArgs, method }: GasEstimateForTransactionParams) {
-		if (this.js?.network.useOvm) return MAX_BLOCK_SIZE;
-		return method(...txArgs).then(
-			(estimate: Number): Number => {
-				return normalizeGasLimit(Number(estimate));
-			}
-		);
+	getGasEstimateForTransaction({
+		txArgs,
+		method,
+	}: GasEstimateForTransactionParams): Promise<number> {
+		return new Promise((resolve) => {
+			if (this.js?.network.useOvm) resolve(MAX_BLOCK_SIZE);
+			return method(...txArgs).then(
+				(estimate: Number): Number => {
+					return normalizeGasLimit(Number(estimate));
+				}
+			);
+		});
 	},
 };
 

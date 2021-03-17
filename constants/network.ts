@@ -8,3 +8,4 @@ export enum Transaction {
 	FAILED = 'FAILED',
 	SUCCESS = 'SUCCESS',
 }
+export type GasLimitEstimate = number | null | void;
