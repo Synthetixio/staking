@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { TabContainer } from '../common';
 import { CryptoCurrency, Synths } from 'constants/currency';
 import Notify from 'containers/Notify';
-import { BigNumber, ethers } from 'ethers';
+import { ethers } from 'ethers';
 import { normalizedGasPrice, normalizeGasLimit } from 'utils/network';
 import { getGasEstimateForTransaction } from 'utils/transactions';
 import { useRecoilState, useRecoilValue } from 'recoil';
@@ -185,8 +185,8 @@ const BurnTab: React.FC = () => {
 					setError(null);
 					setTxModalOpen(true);
 					const {
-						contracts: { Synthetix, Issuer },
-						utils: { formatBytes32String, parseEther },
+						contracts: { Synthetix },
+						utils: { parseEther },
 					} = synthetix.js!;
 
 					let transaction: ethers.ContractTransaction;
@@ -228,7 +228,7 @@ const BurnTab: React.FC = () => {
 				}
 			}
 		},
-		[amountToBurn, gasPrice, monitorHash, walletAddress, isAppReady, onBurnChange]
+		[amountToBurn, gasPrice, monitorHash, isAppReady]
 	);
 
 	const handleClear = useCallback(async () => {
@@ -287,7 +287,7 @@ const BurnTab: React.FC = () => {
 			setTransactionState(Transaction.PRESUBMIT);
 			setError(e.message);
 		}
-	}, [amountToBurn, gasPrice, monitorHash, signer, swapData, walletAddress]);
+	}, [amountToBurn, gasPrice, monitorHash, signer, swapData]);
 
 	const returnPanel = useMemo(() => {
 		let handleSubmit;
