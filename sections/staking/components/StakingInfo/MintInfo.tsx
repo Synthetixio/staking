@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 
 import { useRecoilValue } from 'recoil';
 
-import { amountToMintState } from 'store/staking';
+import { amountToMintState, StakingPanelType } from 'store/staking';
 
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
@@ -128,7 +128,14 @@ const StakingInfo: FC = () => {
 
 	const isInputEmpty = amountToMint.length === 0;
 
-	return <InfoLayout stakingInfo={Rows} isInputEmpty={isInputEmpty} collateral={collateral} />;
+	return (
+		<InfoLayout
+			stakingInfo={Rows}
+			isInputEmpty={isInputEmpty}
+			collateral={collateral}
+			infoType={StakingPanelType.MINT}
+		/>
+	);
 };
 
 export default StakingInfo;
