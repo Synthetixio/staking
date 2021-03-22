@@ -14,14 +14,13 @@ import StakingL2Logo from 'assets/svg/app/staking-l2-logo.svg';
 import CaretRightIcon from 'assets/svg/app/caret-right-small.svg';
 
 import useSNX24hrPricesQuery from 'queries/rates/useSNX24hrPricesQuery';
-import useEscrowDataQuery from 'hooks/useEscrowDataQueryWrapper';
 import useCryptoBalances from 'hooks/useCryptoBalances';
 import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
 
 import ROUTES from 'constants/routes';
 import { CryptoCurrency, Synths } from 'constants/currency';
 import { SIDE_NAV_WIDTH, zIndex } from 'constants/ui';
-import { MENU_LINKS, MIGRATE_MENU_LINKS, MENU_LINKS_L2 } from '../constants';
+import { MENU_LINKS, MENU_LINKS_L2 } from '../constants';
 
 import { networkState } from 'store/wallet';
 
@@ -61,14 +60,7 @@ const SideNav: FC = () => {
 			.reverse();
 	}, [SNX24hrPricesQuery?.data]);
 
-	const rewardEscrowQuery = useEscrowDataQuery();
-	const totalBalancePendingMigration = rewardEscrowQuery?.data?.totalBalancePendingMigration ?? 0;
-
-	const menuLinks = isL2
-		? MENU_LINKS_L2
-		: totalBalancePendingMigration > 0
-		? MIGRATE_MENU_LINKS
-		: MENU_LINKS;
+	const menuLinks = isL2 ? MENU_LINKS_L2 : MENU_LINKS;
 
 	return (
 		<SideNavContainer

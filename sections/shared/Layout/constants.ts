@@ -107,15 +107,4 @@ export const MENU_LINKS_L2: MenuLinks = [
 	},
 ];
 
-export const MIGRATE_MENU_LINKS: MenuLinks = [
-	{
-		i18nLabel: 'sidenav.dashboard',
-		link: ROUTES.Home,
-	},
-	{
-		i18nLabel: 'sidenav.escrow',
-		link: ROUTES.Escrow.Home,
-	},
-];
-
 export const MENU_LINKS_WALLET_CONNECTED: MenuLinks = [];

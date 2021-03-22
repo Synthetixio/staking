@@ -9,7 +9,7 @@ import { TabContainer } from '../../components/common';
 import { Transaction, GasLimitEstimate } from 'constants/network';
 import { normalizedGasPrice } from 'utils/network';
 
-import useEscrowDataQuery from 'hooks/useEscrowDataQueryWrapper';
+import useEscrowDataQuery from 'queries/escrow/useEscrowDataQuery';
 import { appReadyState } from 'store/app';
 import { walletAddressState, isEOAWalletState } from 'store/wallet';
 

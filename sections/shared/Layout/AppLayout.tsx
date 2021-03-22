@@ -5,7 +5,6 @@ import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import ROUTES from 'constants/routes';
-import useEscrowDataQuery from 'hooks/useEscrowDataQueryWrapper';
 import { networkState } from 'store/wallet';
 
 import Header from './Header';
@@ -18,20 +17,8 @@ type AppLayoutProps = {
 };
 
 const AppLayout: FC<AppLayoutProps> = ({ children }) => {
-	const rewardEscrowQuery = useEscrowDataQuery();
-	const totalBalancePendingMigration = rewardEscrowQuery?.data?.totalBalancePendingMigration ?? 0;
 	const network = useRecoilValue(networkState);
 	const isL1 = !network?.useOvm ?? null;
-
-	useEffect(() => {
-		if (
-			totalBalancePendingMigration > 0 &&
-			router.pathname !== ROUTES.Home &&
-			router.pathname !== ROUTES.Escrow.Home
-		) {
-			router.push(ROUTES.Escrow.Home);
-		}
-	}, [totalBalancePendingMigration]);
 
 	useEffect(() => {
 		if (isL1 && router.pathname === ROUTES.Withdraw.Home) {

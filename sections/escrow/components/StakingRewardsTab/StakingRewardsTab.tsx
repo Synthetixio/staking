@@ -6,7 +6,7 @@ import synthetix from 'lib/synthetix';
 
 import { normalizedGasPrice } from 'utils/network';
 import { Transaction, GasLimitEstimate } from 'constants/network';
-import useEscrowDataQuery from 'hooks/useEscrowDataQueryWrapper';
+import useEscrowDataQuery from 'queries/escrow/useEscrowDataQuery';
 import { useRecoilValue } from 'recoil';
 import { isWalletConnectedState, walletAddressState } from 'store/wallet';
 import { appReadyState } from 'store/app';

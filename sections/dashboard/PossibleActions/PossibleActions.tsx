@@ -4,25 +4,17 @@ import { useRecoilValue } from 'recoil';
 
 import { GridDiv } from 'styles/common';
 import media from 'styles/media';
-import useEscrowDataQuery from 'hooks/useEscrowDataQueryWrapper';
 
 import { isWalletConnectedState, networkState } from 'store/wallet';
 
-import { WelcomeLayout, LayoutLayerOne, LayoutLayerTwo, L1MigrationLayout } from './Layouts';
+import { WelcomeLayout, LayoutLayerOne, LayoutLayerTwo } from './Layouts';
 
 const PossibleActions: FC = () => {
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const network = useRecoilValue(networkState);
 
-	const rewardEscrowQuery = useEscrowDataQuery();
-	const totalBalancePendingMigration = rewardEscrowQuery?.data?.totalBalancePendingMigration ?? 0;
-
 	const isL2 = network?.useOvm ?? false;
-	const Layout = isL2
-		? LayoutLayerTwo
-		: totalBalancePendingMigration > 0
-		? L1MigrationLayout
-		: LayoutLayerOne;
+	const Layout = isL2 ? LayoutLayerTwo : LayoutLayerOne;
 
 	return (
 		<PossibleActionsContainer>

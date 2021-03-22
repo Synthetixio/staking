@@ -16,7 +16,6 @@ import media from 'styles/media';
 
 import { networkState } from 'store/wallet';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
-import useEscrowDataQuery from 'hooks/useEscrowDataQueryWrapper';
 import { CryptoCurrency } from 'constants/currency';
 
 const Index: FC = () => {
@@ -24,9 +23,7 @@ const Index: FC = () => {
 	const [l2APR, setL2APR] = useState<number>(0);
 	const { t } = useTranslation();
 	const { debtBalance, transferableCollateral, stakingEscrow } = useStakingCalculations();
-	const escrowDataQuery = useEscrowDataQuery();
 	const network = useRecoilValue(networkState);
-	const totalBalancePendingMigration = escrowDataQuery?.data?.totalBalancePendingMigration ?? 0;
 
 	useEffect(() => {
 		async function getData() {
@@ -113,7 +110,7 @@ const Index: FC = () => {
 						{
 							gridLocations: ['col-1', 'col-2', 'row-2', 'row-3'],
 							...ACTIONS.migrate,
-							isDisabled: totalBalancePendingMigration || stakingEscrow.isZero(),
+							isDisabled: stakingEscrow.isZero(),
 						},
 						{
 							gridLocations: ['col-2', 'col-3', 'row-2', 'row-3'],
@@ -140,7 +137,7 @@ const Index: FC = () => {
 						},
 				  ],
 		// eslint-disable-next-line
-		[ACTIONS, debtBalance, stakingEscrow, totalBalancePendingMigration, transferableCollateral]
+		[ACTIONS, debtBalance, stakingEscrow, transferableCollateral]
 	) as GridBoxProps[];
 
 	return (
