@@ -22,7 +22,6 @@ export const WITHDRAW_CONTRACT_METHODS: Map<string, string> = new Map([
 	[Action.EXCHANGE_FOR_ADDRESS, 'removeExchangeOnBehalf'],
 ]);
 
-export const ACTION_KEYS: string[] = Object.values(Action);
 export const ACTIONS: string[] = Object.values(Action);
 
 export type DelegateApproval = {

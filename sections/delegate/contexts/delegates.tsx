@@ -13,7 +13,7 @@ import { useRecoilValue } from 'recoil';
 import synthetix from 'lib/synthetix';
 import { DelegateApproval } from 'queries/delegate/types';
 import { walletAddressState, networkState } from 'store/wallet';
-import { ACTIONS, ACTION_KEYS } from 'queries/delegate/types';
+import { ACTIONS } from 'queries/delegate/types';
 
 type Context = {
 	delegateApprovals: DelegateApproval[];
@@ -52,7 +52,7 @@ export const DelegatesProvider: React.FC<DelegatesProviderProps> = ({ children }
 	const getActionByBytes = useCallback(
 		(bytes) => {
 			const actionId = actionsAsBytes.indexOf(bytes);
-			return ~actionId ? ACTION_KEYS[actionId] : null;
+			return ~actionId ? ACTIONS[actionId] : null;
 		},
 		[actionsAsBytes]
 	);
