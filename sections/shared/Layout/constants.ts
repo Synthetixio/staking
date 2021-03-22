@@ -88,6 +88,10 @@ export const MENU_LINKS_L2: MenuLinks = [
 		],
 	},
 	{
+		i18nLabel: 'sidenav.withdraw',
+		link: ROUTES.Withdraw.Home,
+	},
+	{
 		i18nLabel: 'sidenav.wallet',
 		link: ROUTES.Escrow.Home,
 		subMenu: [

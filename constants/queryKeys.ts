@@ -221,6 +221,12 @@ export const QUERY_KEYS = {
 		walletAddress,
 		networkId,
 	],
+	Withdrawals: (walletAddress: string, networkId: NetworkId) => [
+		'withdrawals',
+		'withdrawalsData',
+		walletAddress,
+		networkId,
+	],
 	Gov: {
 		DebtOwnership: (walletAddress: string, networkId: NetworkId, block?: number | null) => [
 			'gov',

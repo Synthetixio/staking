@@ -33,6 +33,15 @@ const AppLayout: FC<AppLayoutProps> = ({ children }) => {
 		}
 	}, [totalBalancePendingMigration]);
 
+	useEffect(() => {
+		if (isL1 && router.pathname === ROUTES.Withdraw.Home) {
+			router.push(ROUTES.Home);
+		}
+		if (!isL1 && router.pathname === ROUTES.L2.Deposit) {
+			router.push(ROUTES.Home);
+		}
+	}, [isL1]);
+
 	return (
 		<>
 			<SideNav />

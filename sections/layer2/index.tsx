@@ -1,19 +1,20 @@
 import { FC, useMemo, useEffect, useState } from 'react';
+import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import { providers } from 'ethers';
+import { getOptimismProvider } from '@synthetixio/providers';
 import initSynthetixJS from '@synthetixio/contracts-interface';
 
 import { formatCryptoCurrency, formatPercent } from 'utils/formatters/number';
 import ROUTES from 'constants/routes';
 import { EXTERNAL_LINKS } from 'constants/links';
-import { OVM_RPC_URL } from 'constants/ovm';
 
 import GridBox, { GridBoxProps } from 'components/GridBox/Gridbox';
 import GlowingCircle from 'components/GlowingCircle';
 import { GridDiv } from 'styles/common';
 import media from 'styles/media';
 
+import { networkState } from 'store/wallet';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 import useEscrowDataQuery from 'hooks/useEscrowDataQueryWrapper';
 import { CryptoCurrency } from 'constants/currency';
@@ -24,12 +25,15 @@ const Index: FC = () => {
 	const { t } = useTranslation();
 	const { debtBalance, transferableCollateral, stakingEscrow } = useStakingCalculations();
 	const escrowDataQuery = useEscrowDataQuery();
+	const network = useRecoilValue(networkState);
 	const totalBalancePendingMigration = escrowDataQuery?.data?.totalBalancePendingMigration ?? 0;
 
 	useEffect(() => {
 		async function getData() {
 			try {
-				const provider = new providers.StaticJsonRpcProvider(OVM_RPC_URL);
+				const provider = getOptimismProvider({
+					layerOneNetworkId: network?.id ?? 1,
+				});
 				const {
 					contracts: { Synthetix, FeePool },
 				} = initSynthetixJS({
