@@ -5,6 +5,8 @@ import { useRecoilValue } from 'recoil';
 import { Trans, useTranslation } from 'react-i18next';
 
 import NavigationBack from 'assets/svg/app/navigation-back.svg';
+import Logo1Inch from 'assets/svg/providers/1inch.svg';
+import Info from 'assets/svg/app/info.svg';
 
 import GasSelector from 'components/GasSelector';
 import {
@@ -15,6 +17,7 @@ import {
 	RowTitle,
 	RowValue,
 	StyledInput,
+	Tagline,
 } from 'sections/staking/components/common';
 
 import { ActionInProgress, ActionCompleted } from 'sections/staking/components/TxSent';
@@ -28,6 +31,10 @@ import {
 	FlexDivRowCentered,
 	NoTextTransform,
 	IconButton,
+	FlexDivRow,
+	FlexDivCentered,
+	Tooltip,
+	FlexDiv,
 } from 'styles/common';
 import { InputContainer, InputLocked } from '../common';
 import { Transaction } from 'constants/network';
@@ -59,7 +66,9 @@ type StakingInputProps = {
 	setTransactionState: (tx: Transaction) => void;
 	maxBurnAmount?: BigNumber;
 	burnAmountToFixCRatio?: BigNumber;
-	canClearDebt?: boolean;
+	etherNeededToBuy?: string;
+	sUSDNeededToBuy?: string;
+	sUSDNeededToBurn?: string;
 };
 
 const StakingInput: React.FC<StakingInputProps> = ({
@@ -79,7 +88,9 @@ const StakingInput: React.FC<StakingInputProps> = ({
 	setTransactionState,
 	maxBurnAmount,
 	burnAmountToFixCRatio,
-	canClearDebt,
+	etherNeededToBuy,
+	sUSDNeededToBuy,
+	sUSDNeededToBurn,
 }) => {
 	const {
 		targetCRatio,
@@ -130,7 +141,7 @@ const StakingInput: React.FC<StakingInputProps> = ({
 		} else if (error) {
 			return (
 				<StyledCTA variant="primary" size="lg" disabled={true}>
-					{t(error.toLowerCase())}
+					{error}
 				</StyledCTA>
 			);
 		} else if (inputValue.toString().length === 0) {
@@ -149,15 +160,6 @@ const StakingInput: React.FC<StakingInputProps> = ({
 				<StyledCTA variant="primary" size="lg" disabled={true} style={{ padding: 0 }}>
 					<Trans
 						i18nKey="staking.actions.burn.action.insufficient-sUSD-to-fix-c-ratio"
-						components={[<NoTextTransform />]}
-					/>
-				</StyledCTA>
-			);
-		} else if (burnType === BurnActionType.CLEAR && !canClearDebt) {
-			return (
-				<StyledCTA variant="primary" size="lg" disabled={true} style={{ padding: 0 }}>
-					<Trans
-						i18nKey="staking.actions.burn.action.insufficient-sUSD-to-clear-debt"
 						components={[<NoTextTransform />]}
 					/>
 				</StyledCTA>
@@ -195,7 +197,6 @@ const StakingInput: React.FC<StakingInputProps> = ({
 		error,
 		transactionState,
 		isMint,
-		canClearDebt,
 		onSubmit,
 		t,
 		isWalletConnected,
@@ -241,6 +242,45 @@ const StakingInput: React.FC<StakingInputProps> = ({
 		);
 	}
 
+	const BuySUSDToBurnInputBox = () => (
+		<>
+			<InputGroup>
+				<FlexDivRow>
+					<InputBoxInGroup>
+						<Tagline>{t('staking.actions.burn.info.clear-debt.tx1')}</Tagline>
+						<InputLocked>{sUSDNeededToBuy}</InputLocked>
+						<FlexDiv>
+							<Tagline>
+								{t('staking.actions.burn.info.clear-debt.spending', { value: etherNeededToBuy })}
+							</Tagline>
+							<Tooltip arrow={false} content={t('staking.actions.burn.info.clear-debt.tooltip')}>
+								<TooltipIconContainer>
+									<Svg src={Info} />
+								</TooltipIconContainer>
+							</Tooltip>
+						</FlexDiv>
+					</InputBoxInGroup>
+					<InputBoxInGroup>
+						<Tagline>{t('staking.actions.burn.info.clear-debt.tx2')}</Tagline>
+						<InputLocked>{sUSDNeededToBurn}</InputLocked>
+						<FlexDiv>
+							<Tagline>{t('staking.actions.burn.info.clear-debt.buffer')}</Tagline>
+							<Tooltip arrow={false} content={t('staking.actions.burn.info.clear-debt.tooltip')}>
+								<TooltipIconContainer>
+									<Svg src={Info} />
+								</TooltipIconContainer>
+							</Tooltip>
+						</FlexDiv>
+					</InputBoxInGroup>
+				</FlexDivRow>
+			</InputGroup>
+			<FlexDivCentered>
+				<Tagline>{t('staking.actions.burn.info.clear-debt.tagline')}</Tagline>
+				<Svg height={20} src={Logo1Inch} />
+			</FlexDivCentered>
+		</>
+	);
+
 	return (
 		<>
 			<InputContainer>
@@ -255,25 +295,29 @@ const StakingInput: React.FC<StakingInputProps> = ({
 						</BalanceButton>
 					)}
 				</HeaderRow>
-				<InputBox>
-					<Currency.Icon currencyKey={Synths.sUSD} width="50" height="50" />
-					{isLocked ? (
-						<InputLocked>{formattedInput}</InputLocked>
-					) : (
-						<StyledInput
-							type="number"
-							maxLength={12}
-							value={inputValue.isNaN() ? '0' : inputValue.toString()}
-							placeholder="0"
-							onChange={(e) => onInputChange(e.target.value)}
-							disabled={
-								!isWalletConnected ||
-								(!isMint && debtBalance.isZero()) ||
-								(isMint && collateral.isZero())
-							}
-						/>
-					)}
-				</InputBox>
+				{burnType === BurnActionType.CLEAR ? (
+					<BuySUSDToBurnInputBox />
+				) : (
+					<InputBox>
+						<Currency.Icon currencyKey={Synths.sUSD} width="50" height="50" />
+						{isLocked ? (
+							<InputLocked>{formattedInput}</InputLocked>
+						) : (
+							<StyledInput
+								type="number"
+								maxLength={12}
+								value={inputValue.isNaN() ? '0' : inputValue.toString()}
+								placeholder="0"
+								onChange={(e) => onInputChange(e.target.value)}
+								disabled={
+									!isWalletConnected ||
+									(!isMint && debtBalance.isZero()) ||
+									(isMint && collateral.isZero())
+								}
+							/>
+						)}
+					</InputBox>
+				)}
 				<DataContainer>
 					<DataRow>
 						<RowTitle>
@@ -312,6 +356,14 @@ const StakingInput: React.FC<StakingInputProps> = ({
 								</ModalItemTitle>
 								<ModalItemText>{formattedInput}</ModalItemText>
 							</ModalItem>
+							{burnType === BurnActionType.CLEAR && (
+								<ModalItem>
+									<ModalItemTitle>
+										{isMint ? null : t('modals.confirm-transaction.burning.spending')}
+									</ModalItemTitle>
+									<ModalItemText>{etherNeededToBuy}</ModalItemText>
+								</ModalItem>
+							)}
 						</ModalContent>
 					}
 				/>
@@ -338,6 +390,21 @@ const BalanceButton = styled(Button)`
 	span {
 		color: ${(props) => props.theme.colors.gray};
 	}
+`;
+
+const InputGroup = styled.div`
+	width: 100%;
+`;
+
+const InputBoxInGroup = styled(InputBox)`
+	:not(:first-child) {
+		border-left: 1px solid ${(props) => props.theme.colors.mediumBlue};
+	}
+	flex: 1 1 auto;
+`;
+
+const TooltipIconContainer = styled(FlexDiv)`
+	align-items: center;
 `;
 
 export default StakingInput;

@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useMemo } from 'react';
 import styled from 'styled-components';
 import BigNumber from 'bignumber.js';
 import { Trans, useTranslation } from 'react-i18next';
@@ -24,6 +24,7 @@ import {
 	InfoContainer,
 	InfoHeader,
 } from '../common';
+import { StakingPanelType } from 'store/staking';
 
 type BarChartData = {
 	title: string;
@@ -50,17 +51,41 @@ type InfoLayoutProps = {
 	stakingInfo: StakingInfo;
 	collateral: BigNumber;
 	isInputEmpty: boolean;
+	infoType: StakingPanelType;
 };
 
-const InfoLayout: FC<InfoLayoutProps> = ({ stakingInfo, collateral, isInputEmpty }) => {
+const InfoLayout: FC<InfoLayoutProps> = ({ stakingInfo, collateral, isInputEmpty, infoType }) => {
 	const { t } = useTranslation();
+
+	const title = useMemo(() => {
+		switch (infoType) {
+			case StakingPanelType.MINT:
+				return t('staking.info.mint.title');
+			case StakingPanelType.BURN:
+				return t('staking.info.burn.title');
+			case StakingPanelType.CLEAR:
+				return t('staking.info.clear.title');
+		}
+	}, [infoType, t]);
+
+	const subtitle = useMemo(() => {
+		switch (infoType) {
+			case StakingPanelType.MINT:
+				return 'staking.info.mint.subtitle';
+			case StakingPanelType.BURN:
+				return 'staking.info.burn.subtitle';
+			case StakingPanelType.CLEAR:
+				return 'staking.info.clear.subtitle';
+		}
+	}, [infoType]);
+
 	return (
 		<InfoContainer>
 			<InfoHeader>
-				<Title>{t('staking.info.mint.title')}</Title>
+				<Title>{title}</Title>
 				<Subtitle>
 					<Trans
-						i18nKey={'staking.info.mint.subtitle'}
+						i18nKey={subtitle}
 						components={[<StyledLink href={EXTERNAL_LINKS.Synthetix.Litepaper} />]}
 					/>
 				</Subtitle>
