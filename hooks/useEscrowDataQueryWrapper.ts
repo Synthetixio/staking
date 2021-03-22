@@ -1,6 +1,8 @@
 import { QueryResult } from 'react-query';
+import { useRecoilValue } from 'recoil';
 import useEscrowDataQueryV1 from 'queries/escrow/useEscrowDataQueryV1';
 import useEscrowDataQueryV2 from 'queries/escrow/useEscrowDataQueryV2';
+import { networkState } from 'store/wallet';
 
 export type EscrowData = {
 	claimableAmount: number;
@@ -23,9 +25,11 @@ export type Schedule = Array<
 function useEscrowDataQueryWrapper(): QueryResult<EscrowData, unknown> {
 	const rewardEscrowQueryV2 = useEscrowDataQueryV2();
 	const rewardEscrowQueryV1 = useEscrowDataQueryV1();
+	const network = useRecoilValue(networkState);
 
-	return rewardEscrowQueryV2.isLoading ||
-		rewardEscrowQueryV1?.data?.totalBalancePendingMigration === 0
+	const isL2 = network?.useOvm ?? false;
+
+	return isL2 || !rewardEscrowQueryV1?.data?.totalBalancePendingMigration
 		? rewardEscrowQueryV2
 		: rewardEscrowQueryV1;
 }

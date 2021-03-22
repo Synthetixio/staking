@@ -14,7 +14,7 @@ const useEscrowDataQueryV1 = (options?: QueryConfig<EscrowData>) => {
 	const walletAddress = useRecoilValue(walletAddressState);
 	const network = useRecoilValue(networkState);
 	const isAppReady = useRecoilValue(appReadyState);
-	const isL1 = !network?.useOvm ?? false;
+	const isL1 = !network?.useOvm;
 
 	return useQuery<EscrowData>(
 		QUERY_KEYS.Escrow.DataV1(walletAddress ?? '', network?.id!),
