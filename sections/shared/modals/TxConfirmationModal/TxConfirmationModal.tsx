@@ -56,7 +56,7 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 
 const StyledBaseModal = styled(BaseModal)`
 	[data-reach-dialog-content] {
-		width: 300px;
+		width: 400px;
 	}
 	.card-header {
 		font-size: 12px;
