@@ -13,6 +13,7 @@ import { formatNumber } from 'utils/formatters/number';
 import { MaxHeightColumn, StyledTooltip } from 'sections/gov/components/common';
 import { Blockie } from '../common';
 import makeBlockie from 'ethereum-blockies-base64';
+import { ethers } from 'ethers';
 
 type HistoryProps = {
 	hash: string;
@@ -23,6 +24,8 @@ const History: React.FC<HistoryProps> = ({ hash }) => {
 	const activeTab = useActiveTab();
 	const proposal = useProposal(activeTab, hash);
 	const walletAddress = useRecoilValue(walletAddressState);
+
+	const { getAddress } = ethers.utils;
 
 	const history = useMemo(() => {
 		if (proposal.data) {
@@ -42,20 +45,20 @@ const History: React.FC<HistoryProps> = ({ hash }) => {
 											arrow={true}
 											placement="bottom"
 											content={
-												vote.address.toLowerCase() === walletAddress?.toLowerCase()
+												getAddress(vote.address) === getAddress(walletAddress ?? '')
 													? t('gov.proposal.history.currentUser')
 													: vote.profile.ens
 													? vote.profile.ens
-													: vote.address.toLowerCase()
+													: getAddress(vote.address)
 											}
 											hideOnClick={false}
 										>
 											<Title>
-												{vote.address.toLowerCase() === walletAddress?.toLowerCase()
+												{getAddress(vote.address) === getAddress(walletAddress ?? '')
 													? t('gov.proposal.history.currentUser')
 													: vote.profile.ens
 													? truncateString(vote.profile.ens, 13)
-													: truncateAddress(vote.address.toLowerCase())}
+													: truncateAddress(getAddress(vote.address))}
 											</Title>
 										</StyledTooltip>
 									</InnerRow>

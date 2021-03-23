@@ -1,12 +1,12 @@
 import { useRecoilValue } from 'recoil';
 import { useMutation, useQueryCache } from 'react-query';
-// import { version } from '@snapshot-labs/snapshot.js/package.json';
 import axios from 'axios';
 
 import { MESSAGE_URL, SPACE_KEY } from 'constants/snapshot';
 import { walletAddressState } from 'store/wallet';
 import Connector from 'containers/Connector';
 import QUERY_KEYS from 'constants/queryKeys';
+import { ethers } from 'ethers';
 
 type VotePayload = {
 	proposal: string;
@@ -53,7 +53,7 @@ const useSignMessage = () => {
 		async (payload: SignaturePayload) => {
 			const version = '0.1.3';
 			let msg: any = {
-				address: walletAddress?.toLowerCase(),
+				address: ethers.utils.getAddress(walletAddress ?? ''),
 				msg: JSON.stringify({
 					version,
 					timestamp: (Date.now() / 1e3).toFixed(),
