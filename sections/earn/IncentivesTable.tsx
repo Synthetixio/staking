@@ -35,14 +35,14 @@ import {
 	TableNoResultsButtonContainer,
 	TableNoResultsTitle,
 } from 'styles/common';
-import { CryptoCurrency, CurrencyKey } from 'constants/currency';
+import { CryptoCurrency, CurrencyKey, Synths } from 'constants/currency';
 import { DURATION_SEPARATOR } from 'constants/date';
 
 import ROUTES from 'constants/routes';
 
 import { LP, Tab } from './types';
 
-type DualRewards = {
+export type DualRewards = {
 	a: number;
 	b: number;
 };
@@ -66,6 +66,7 @@ export type EarnItem = {
 	tab: Tab;
 	route: string;
 	externalLink?: string;
+	closed?: boolean;
 };
 
 type IncentivesTableProps = {
@@ -177,8 +178,10 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab }
 				accessor: 'rewards',
 				Cell: (cellProps: CellProps<EarnItem, EarnItem['rewards']>) => {
 					const isDualRewards = cellProps.row.original.staked.asset === LP.UNISWAP_DHT;
-
-					if (!cellProps.row.original.externalLink) {
+					if (
+						!cellProps.row.original.externalLink ||
+						cellProps.row.original.staked.asset === Synths.sBTC
+					) {
 						return (
 							<CellContainer>
 								<Title isNumeric={true}>

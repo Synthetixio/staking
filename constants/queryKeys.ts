@@ -210,6 +210,14 @@ export const QUERY_KEYS = {
 			networkId,
 		],
 	},
+	ShortRewards: {
+		iBTC: (walletAddress: string, networkId: NetworkId) => [
+			'shortRewards',
+			'iBTC',
+			walletAddress,
+			networkId,
+		],
+	},
 	Deposits: (walletAddress: string, networkId: NetworkId) => [
 		'deposits',
 		'depositsData',

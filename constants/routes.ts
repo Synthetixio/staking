@@ -30,6 +30,8 @@ export const ROUTES = {
 		sUSD_EXTERNAL: 'https://www.curve.fi/susdv2/',
 		sEURO_EXTERNAL: 'https://www.curve.fi/eurs/',
 		DHT_LP: '/earn/DHT-LP',
+		sBTC_EXTERNAL: 'https://kwenta.io/shorting',
+		sBTC_SHORT: '/earn/sBTC-SHORT',
 	},
 	L2: {
 		Home: '/l2',

@@ -170,6 +170,10 @@
 				"title": "EARN {{percent}}",
 				"copy": "Supply {{asset}} liquidity on {{supplier}}"
 			},
+			"loans": {
+				"title": "EARN {{percent}}",
+				"copy": "Open a short on {{asset}} to earn rewards"
+			},
 			"learn": {
 				"title": "LEARN",
 				"copy": "Check out the Synthetix blog to get informed about all things SNX"
@@ -363,6 +367,10 @@
 	},
 	"earn": {
 		"page-title": "Earn | Synthetix Staking",
+		"tab": {
+			"active": "Active",
+			"inactive": "Inactive"
+		},
 		"incentives": {
 			"est-apr": "Est. APR",
 			"options": {
@@ -409,10 +417,10 @@
 					"description": "Staking iETH tokens allows you to earn SNX rewards. <0>Learn more.<0>",
 					"subtitle": "iETH Rewards"
 				},
-				"ibtc": {
+				"sbtc": {
 					"title": "Synthetix",
-					"description": "Staking iBTC tokens allows you to earn SNX rewards. <0>Learn more.<0>",
-					"subtitle": "iBTC Rewards"
+					"description": "Opening a short allows you to earn SNX rewards. <0>Learn more.<0>",
+					"subtitle": "sBTC Short Rewards"
 				},
 				"stsla": {
 					"title": "Balancer",
@@ -423,6 +431,11 @@
 					"title": "Uniswap",
 					"description": "Stake sUSD-DHT Uniswap Pool Tokens to earn SNX and DHT rewards. <0>Add liquidity on Uniswap here<0>.",
 					"subtitle": "DHT Uniswap LP Rewards"
+				},
+				"ibtc": {
+					"title": "Synthetix",
+					"description": "Staking iBTC tokens allows you to earn SNX rewards. <0>Learn more.<0>",
+					"subtitle": "iBTC Rewards"
 				}
 			},
 			"weekly-rewards": "Weekly rewards {{weeklyRewards}} {{asset}}"
