@@ -1,4 +1,4 @@
-import { FC, useMemo } from 'react';
+import { FC, useMemo, useState } from 'react';
 import BigNumber from 'bignumber.js';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
@@ -21,8 +21,14 @@ import { isWalletConnectedState } from 'store/wallet';
 import { Tab, LP } from './types';
 import { zeroBN } from 'utils/formatters/number';
 import useShortRewardsData from 'hooks/useShortRewardsData';
+import { TabButton, TabList } from 'components/Tab';
 
 export const NOT_APPLICABLE = 'n/a';
+
+enum View {
+	ACTIVE = 'active',
+	INACTIVE = 'inactive',
+}
 
 type IncentivesProps = {
 	tradingRewards: BigNumber;
@@ -46,6 +52,7 @@ const Incentives: FC<IncentivesProps> = ({
 	const { t } = useTranslation();
 	const router = useRouter();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
+	const [view, setView] = useState<View>(View.ACTIVE);
 
 	const lpData = useLPData();
 	const shortData = useShortRewardsData();
@@ -219,7 +226,11 @@ const Incentives: FC<IncentivesProps> = ({
 	const incentivesTable = (
 		<IncentivesTable
 			activeTab={activeTab}
-			data={incentives}
+			data={
+				view === View.ACTIVE
+					? incentives.filter((e) => !e.closed)
+					: incentives.filter((e) => e.closed)
+			}
 			isLoaded={
 				lpData[LP.CURVE_sUSD].data &&
 				lpData[LP.CURVE_sEURO].data &&
@@ -234,7 +245,41 @@ const Incentives: FC<IncentivesProps> = ({
 	);
 
 	return activeTab == null ? (
-		<>{incentivesTable}</>
+		<>
+			<TabList padding={20} width={400}>
+				<TabButton
+					isSingle={false}
+					tabHeight={50}
+					inverseTabColor={true}
+					blue={true}
+					numberTabs={2}
+					key={`active-button`}
+					name={t('earn.tab.active')}
+					active={view === View.ACTIVE}
+					onClick={() => {
+						setView(View.ACTIVE);
+					}}
+				>
+					<TitleContainer>{t('earn.tab.active')}</TitleContainer>
+				</TabButton>
+				<TabButton
+					isSingle={false}
+					tabHeight={50}
+					inverseTabColor={true}
+					blue={false}
+					numberTabs={2}
+					key={`inactive-button`}
+					name={t('earn.tab.inactive')}
+					active={view === View.INACTIVE}
+					onClick={() => {
+						setView(View.INACTIVE);
+					}}
+				>
+					<TitleContainer>{t('earn.tab.inactive')}</TitleContainer>
+				</TabButton>
+			</TabList>
+			{incentivesTable}
+		</>
 	) : (
 		<Container>
 			{incentivesTable}
@@ -309,6 +354,13 @@ const Container = styled.div`
 const TabContainer = styled.div`
 	background-color: ${(props) => props.theme.colors.navy};
 	min-height: 380px;
+`;
+
+const TitleContainer = styled.p`
+	margin-left: 8px;
+	font-size: 12px;
+	font-family: ${(props) => props.theme.fonts.extended};
+	text-transform: uppercase;
 `;
 
 export default Incentives;

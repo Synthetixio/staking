@@ -43,8 +43,6 @@ import ROUTES from 'constants/routes';
 
 import { LP, Tab } from './types';
 
-import StructuredTab from 'components/StructuredTab';
-
 export type DualRewards = {
 	a: number;
 	b: number;
@@ -258,95 +256,36 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab }
 		return activeTab != null ? leftColumns : [...leftColumns, ...rightColumns];
 	}, [getPriceAtCurrentRate, selectedPriceCurrency.sign, t, activeTab, goToEarn]);
 
-	const tabData = useMemo(() => {
-		return [
-			{
-				title: t('earn.tab.open'),
-				tabChildren: (
-					<Container activeTab={activeTab}>
-						<StyledTable
-							palette="primary"
-							columns={columns}
-							data={data.filter((e) => !e.closed)}
-							isLoading={isWalletConnected && !isLoaded}
-							showPagination={true}
-							onTableRowClick={(row: Row<EarnItem>) => {
-								if (row.original.externalLink) {
-									window.open(row.original.externalLink, '_blank');
-								} else {
-									router.push(row.original.route);
-								}
-							}}
-							isActiveRow={(row: Row<EarnItem>) => row.original.tab === activeTab}
-							noResultsMessage={
-								!isWalletConnected ? (
-									<TableNoResults>
-										<TableNoResultsTitle>
-											{t('common.wallet.no-wallet-connected')}
-										</TableNoResultsTitle>
-										<TableNoResultsButtonContainer>
-											<Button variant="primary" onClick={connectWallet}>
-												{t('common.wallet.connect-wallet')}
-											</Button>
-										</TableNoResultsButtonContainer>
-									</TableNoResults>
-								) : undefined
-							}
-						/>
-					</Container>
-				),
-				blue: true,
-				key: 'open',
-			},
-			{
-				title: t('earn.tab.closed'),
-				tabChildren: (
-					<Container activeTab={activeTab}>
-						<StyledTable
-							palette="primary"
-							columns={columns}
-							data={data.filter((e) => e.closed)}
-							isLoading={isWalletConnected && !isLoaded}
-							showPagination={true}
-							onTableRowClick={(row: Row<EarnItem>) => {
-								if (row.original.externalLink) {
-									window.open(row.original.externalLink, '_blank');
-								} else {
-									router.push(row.original.route);
-								}
-							}}
-							isActiveRow={(row: Row<EarnItem>) => row.original.tab === activeTab}
-							noResultsMessage={
-								!isWalletConnected ? (
-									<TableNoResults>
-										<TableNoResultsTitle>
-											{t('common.wallet.no-wallet-connected')}
-										</TableNoResultsTitle>
-										<TableNoResultsButtonContainer>
-											<Button variant="primary" onClick={connectWallet}>
-												{t('common.wallet.connect-wallet')}
-											</Button>
-										</TableNoResultsButtonContainer>
-									</TableNoResults>
-								) : undefined
-							}
-						/>
-					</Container>
-				),
-				blue: false,
-				key: 'closed',
-			},
-		];
-	}, [t, isLoaded, isWalletConnected, activeTab, columns, connectWallet, router, data]);
-
 	return (
-		<StructuredTab
-			boxWidth={activeTab === null ? 1200 : 400}
-			tabHeight={50}
-			boxPadding={20}
-			inverseTabColor={true}
-			tabData={tabData}
-		/>
+		<Container activeTab={activeTab}>
+			<StyledTable
+				palette="primary"
+				columns={columns}
+				data={data}
+				isLoading={isWalletConnected && !isLoaded}
+				showPagination={true}
+				onTableRowClick={(row: Row<EarnItem>) => {
+					if (row.original.externalLink) {
+						window.open(row.original.externalLink, '_blank');
+					} else {
+						router.push(row.original.route);
+					}
+				}}
+				isActiveRow={(row: Row<EarnItem>) => row.original.tab === activeTab}
+				noResultsMessage={
+					!isWalletConnected ? (
+						<TableNoResults>
+							<TableNoResultsTitle>{t('common.wallet.no-wallet-connected')}</TableNoResultsTitle>
+							<TableNoResultsButtonContainer>
+								<Button variant="primary" onClick={connectWallet}>
+									{t('common.wallet.connect-wallet')}
+								</Button>
+							</TableNoResultsButtonContainer>
+						</TableNoResults>
+					) : undefined
+				}
+			/>
+		</Container>
 	);
 };
 

@@ -355,8 +355,8 @@
 	"earn": {
 		"page-title": "Earn | Synthetix Staking",
 		"tab": {
-			"open": "Active",
-			"closed": "Inactive"
+			"active": "Active",
+			"inactive": "Inactive"
 		},
 		"incentives": {
 			"est-apr": "Est. APR",
