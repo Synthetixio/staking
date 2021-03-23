@@ -35,7 +35,7 @@ import SearchIcon from 'assets/svg/app/search.svg';
 import Incognito from 'assets/svg/app/incognito.svg';
 
 import Connector from 'containers/Connector';
-import Etherscan from 'containers/Etherscan';
+import Etherscan from 'containers/BlockExplorer';
 
 import Button from 'components/Button';
 
@@ -100,7 +100,7 @@ const WalletOptionsModal: FC<WalletOptionsProps> = ({ onDismiss, setWatchWalletM
 		selectedWallet,
 	} = Connector.useContainer();
 
-	const { etherscanInstance } = Etherscan.useContainer();
+	const { blockExplorerInstance } = Etherscan.useContainer();
 
 	const [walletAddress, setWalletAddress] = useRecoilState(walletAddressState);
 	const truncatedWalletAddress = useRecoilValue(truncatedWalletAddressState);
@@ -161,7 +161,7 @@ const WalletOptionsModal: FC<WalletOptionsProps> = ({ onDismiss, setWatchWalletM
 								content={t('modals.wallet.etherscan')}
 							>
 								<LinkContainer>
-									<WrappedExternalLink href={etherscanInstance?.addressLink(walletAddress!)}>
+									<WrappedExternalLink href={blockExplorerInstance?.addressLink(walletAddress!)}>
 										<Svg src={LinkIcon} />
 									</WrappedExternalLink>
 								</LinkContainer>

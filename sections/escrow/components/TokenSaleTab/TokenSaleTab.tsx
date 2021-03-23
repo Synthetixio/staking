@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import Notify from 'containers/Notify';
+import TransactionNotifier from 'containers/TransactionNotifier';
 import { ethers } from 'ethers';
 
 import synthetix from 'lib/synthetix';
@@ -10,9 +10,8 @@ import { appReadyState } from 'store/app';
 
 import TabContent from './TabContent';
 import { TabContainer } from '../common';
-import { getGasEstimateForTransaction } from 'utils/transactions';
-import { normalizedGasPrice, normalizeGasLimit } from 'utils/network';
-import { Transaction } from 'constants/network';
+import { normalizedGasPrice } from 'utils/network';
+import { Transaction, GasLimitEstimate } from 'constants/network';
 
 import useTokenSaleEscrowQuery from 'queries/escrow/useTokenSaleEscrowQuery';
 
@@ -21,8 +20,8 @@ const TokenSaleTab: React.FC = () => {
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const isAppReady = useRecoilValue(appReadyState);
 
-	const { monitorHash } = Notify.useContainer();
-	const [gasLimitEstimate, setGasLimitEstimate] = useState<number | null>(null);
+	const { monitorTransaction } = TransactionNotifier.useContainer();
+	const [gasLimitEstimate, setGasLimitEstimate] = useState<GasLimitEstimate>(null);
 	const [gasPrice, setGasPrice] = useState<number>(0);
 	const [gasEstimateError, setGasEstimateError] = useState<string | null>(null);
 	const [transactionState, setTransactionState] = useState<Transaction>(Transaction.PRESUBMIT);
@@ -38,11 +37,11 @@ const TokenSaleTab: React.FC = () => {
 			if (isAppReady && isWalletConnected) {
 				try {
 					setGasEstimateError(null);
-					const gasEstimate = await getGasEstimateForTransaction(
-						[],
-						synthetix.js!.contracts.SynthetixEscrow.estimateGas.vest
-					);
-					setGasLimitEstimate(normalizeGasLimit(Number(gasEstimate)));
+					const gasEstimate = await synthetix.getGasEstimateForTransaction({
+						txArgs: [],
+						method: synthetix.js!.contracts.SynthetixEscrow.estimateGas.vest,
+					});
+					setGasLimitEstimate(gasEstimate);
 				} catch (error) {
 					setGasEstimateError(error.message);
 					setGasLimitEstimate(null);
@@ -71,7 +70,7 @@ const TokenSaleTab: React.FC = () => {
 					if (transaction) {
 						setTxHash(transaction.hash);
 						setTransactionState(Transaction.WAITING);
-						monitorHash({
+						monitorTransaction({
 							txHash: transaction.hash,
 							onTxConfirmed: () => {
 								setTransactionState(Transaction.SUCCESS);
@@ -87,7 +86,7 @@ const TokenSaleTab: React.FC = () => {
 			}
 		}
 		vest();
-	}, [isAppReady, gasPrice, gasLimitEstimate, tokenSaleEscrowQuery, monitorHash]);
+	}, [isAppReady, gasPrice, gasLimitEstimate, tokenSaleEscrowQuery, monitorTransaction]);
 
 	return (
 		<TabContainer>

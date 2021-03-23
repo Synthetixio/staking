@@ -4,7 +4,7 @@ import { CellProps } from 'react-table';
 import styled from 'styled-components';
 import { Svg } from 'react-optimized-image';
 
-import Etherscan from 'containers/Etherscan';
+import Etherscan from 'containers/BlockExplorer';
 
 import Table from 'components/Table';
 
@@ -29,7 +29,7 @@ type TransactionsProps = {
 
 const Transactions: FC<TransactionsProps> = ({ transactions, isLoaded, noResultsMessage }) => {
 	const { t } = useTranslation();
-	const { etherscanInstance } = Etherscan.useContainer();
+	const { blockExplorerInstance } = Etherscan.useContainer();
 
 	const columns = useMemo(
 		() => [
@@ -87,8 +87,8 @@ const Transactions: FC<TransactionsProps> = ({ transactions, isLoaded, noResults
 				Header: <>{t('history.table.view-tx')}</>,
 				id: 'link',
 				Cell: (cellProps: CellProps<HistoricalStakingTransaction>) =>
-					etherscanInstance != null && cellProps.row.original.hash ? (
-						<StyledExternalLink href={etherscanInstance.txLink(cellProps.row.original.hash)}>
+					blockExplorerInstance != null && cellProps.row.original.hash ? (
+						<StyledExternalLink href={blockExplorerInstance.txLink(cellProps.row.original.hash)}>
 							{t('common.explorers.etherscan')} <Svg src={ArrowRightIcon} />
 						</StyledExternalLink>
 					) : (
@@ -97,7 +97,7 @@ const Transactions: FC<TransactionsProps> = ({ transactions, isLoaded, noResults
 				sortable: false,
 			},
 		],
-		[etherscanInstance, t]
+		[blockExplorerInstance, t]
 	);
 
 	return (

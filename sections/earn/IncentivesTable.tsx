@@ -37,7 +37,6 @@ import {
 } from 'styles/common';
 import { CryptoCurrency, CurrencyKey, Synths } from 'constants/currency';
 import { DURATION_SEPARATOR } from 'constants/date';
-import { NOT_APPLICABLE } from './Incentives';
 
 import ROUTES from 'constants/routes';
 
@@ -47,6 +46,8 @@ export type DualRewards = {
 	a: number;
 	b: number;
 };
+
+export const NOT_APPLICABLE = 'n/a';
 
 export type EarnItem = {
 	title: string;

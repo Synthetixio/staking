@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { Svg } from 'react-optimized-image';
 import { useTranslation } from 'react-i18next';
 
-import Etherscan from 'containers/Etherscan';
+import Etherscan from 'containers/BlockExplorer';
 import { FlexDivCentered, ExternalLink } from 'styles/common';
 import PendingConfirmation from 'assets/svg/app/pending-confirmation.svg';
 
@@ -26,8 +26,8 @@ type ActionInProgressProps = {
 
 const ActionInProgress: FC<ActionInProgressProps> = ({ amount, currencyKey, hash, action }) => {
 	const { t } = useTranslation();
-	const { etherscanInstance } = Etherscan.useContainer();
-	const link = etherscanInstance != null ? etherscanInstance.txLink(hash) : undefined;
+	const { blockExplorerInstance } = Etherscan.useContainer();
+	const link = blockExplorerInstance != null ? blockExplorerInstance.txLink(hash) : undefined;
 	return (
 		<Container>
 			<SectionHeader>{t(`layer2.actions.${action}.action.in-progress.title`)}</SectionHeader>

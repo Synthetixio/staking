@@ -1,4 +1,4 @@
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState, useRecoilValue } from 'recoil';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
@@ -15,6 +15,7 @@ import { FlexDivCol, FlexDivRow } from 'styles/common';
 import { formatPercent } from 'utils/formatters/number';
 
 import { amountToBurnState, BurnActionType, burnTypeState } from 'store/staking';
+import { isL2State } from 'store/wallet';
 
 import ButtonTile from '../ButtonTile';
 
@@ -31,6 +32,7 @@ const BurnTiles: React.FC<BurnTilesProps> = ({ percentageTargetCRatio, burnAmoun
 	const { t } = useTranslation();
 	const [burnType, onBurnTypeChange] = useRecoilState(burnTypeState);
 	const onBurnChange = useSetRecoilState(amountToBurnState);
+	const isL2 = useRecoilValue(isL2State);
 
 	useEffect(() => {
 		onBurnChange('');
@@ -66,13 +68,16 @@ const BurnTiles: React.FC<BurnTilesProps> = ({ percentageTargetCRatio, burnAmoun
 					onAction={() => onBurnTypeChange(BurnActionType.CUSTOM)}
 				/>
 				<MarginedButtonTile
-					disabled={true}
 					right={true}
 					title={t('staking.actions.burn.tiles.clear-debt.title')}
-					// subtext={t('staking.actions.burn.tiles.clear-debt.subtext')}
-					subtext={'Coming soon'}
+					subtext={
+						isL2
+							? t('common.layer-2.not-available')
+							: t('staking.actions.burn.tiles.clear-debt.subtext')
+					}
 					icon={burnIcon}
 					onAction={() => onBurnTypeChange(BurnActionType.CLEAR)}
+					disabled={isL2}
 				/>
 			</StyledRow>
 		</Container>

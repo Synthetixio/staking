@@ -38,6 +38,9 @@ export const ROUTES = {
 		Deposit: '/l2/deposit',
 		Migrate: '/l2/migrate',
 	},
+	Withdraw: {
+		Home: '/withdraw',
+	},
 	Gov: {
 		Home: '/gov',
 		Space: (spaceKey: string) => `/gov/${spaceKey}`,

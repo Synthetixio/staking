@@ -21,7 +21,7 @@ import useStakingCalculations from 'sections/staking/hooks/useStakingCalculation
 import { LP } from 'sections/earn/types';
 import useShortRewardsData from 'hooks/useShortRewardsData';
 
-const LayoutOne: FC = () => {
+const LayoutLayerOne: FC = () => {
 	const { t } = useTranslation();
 
 	const lpData = useLPData();
@@ -180,4 +180,4 @@ const LayoutOne: FC = () => {
 	);
 };
 
-export default LayoutOne;
+export default LayoutLayerOne;
