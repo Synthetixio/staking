@@ -17,6 +17,7 @@ import media from 'styles/media';
 import { networkState } from 'store/wallet';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 import { CryptoCurrency } from 'constants/currency';
+import { DEFAULT_NETWORK_ID } from 'constants/defaults';
 
 const Index: FC = () => {
 	const [l2AmountSNX, setL2AmountSNX] = useState<number>(0);
@@ -29,7 +30,7 @@ const Index: FC = () => {
 		async function getData() {
 			try {
 				const provider = getOptimismProvider({
-					layerOneNetworkId: network?.id ?? 1,
+					layerOneNetworkId: network?.id ?? DEFAULT_NETWORK_ID,
 				});
 				const {
 					contracts: { Synthetix, FeePool },
