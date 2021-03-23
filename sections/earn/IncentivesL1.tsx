@@ -1,4 +1,4 @@
-import { FC, useMemo } from 'react';
+import { FC, useMemo, useState } from 'react';
 import BigNumber from 'bignumber.js';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
@@ -13,15 +13,20 @@ import useLPData from 'hooks/useLPData';
 import ROUTES from 'constants/routes';
 import { CryptoCurrency, Synths } from 'constants/currency';
 
-import IncentivesTable from './IncentivesTable';
+import IncentivesTable, { DualRewards, NOT_APPLICABLE } from './IncentivesTable';
 import ClaimTab from './ClaimTab';
 import LPTab from './LPTab';
 import { isWalletConnectedState } from 'store/wallet';
 
 import { Tab, LP } from './types';
 import { zeroBN } from 'utils/formatters/number';
+import useShortRewardsData from 'hooks/useShortRewardsData';
+import { TabButton, TabList } from 'components/Tab';
 
-export const NOT_APPLICABLE = 'n/a';
+enum View {
+	ACTIVE = 'active',
+	INACTIVE = 'inactive',
+}
 
 type IncentivesProps = {
 	tradingRewards: BigNumber;
@@ -45,9 +50,12 @@ const Incentives: FC<IncentivesProps> = ({
 	const { t } = useTranslation();
 	const router = useRouter();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
+	const [view, setView] = useState<View>(View.ACTIVE);
 
 	const lpData = useLPData();
+	const shortData = useShortRewardsData();
 	const useSNXLockedValue = useSNXLockedValueQuery();
+
 	const { nextFeePeriodStarts, currentFeePeriodStarted } = useFeePeriodTimeAndProgress();
 
 	const now = useMemo(() => new Date().getTime(), []);
@@ -103,22 +111,22 @@ const Incentives: FC<IncentivesProps> = ({
 							needsToSettle: lpData[Synths.iETH].data?.needsToSettle,
 						},
 						{
-							title: t('earn.incentives.options.ibtc.title'),
-							subtitle: t('earn.incentives.options.ibtc.subtitle'),
-							apr: lpData[Synths.iBTC].APR,
-							tvl: lpData[Synths.iBTC].TVL,
+							title: t('earn.incentives.options.sbtc.title'),
+							subtitle: t('earn.incentives.options.sbtc.subtitle'),
+							apr: shortData[Synths.sBTC].APR,
+							tvl: shortData[Synths.sBTC].OI,
 							staked: {
-								balance: lpData[Synths.iBTC].data?.staked ?? 0,
-								asset: Synths.iBTC,
+								balance: shortData[Synths.sBTC].data?.staked ?? 0,
+								asset: Synths.sBTC,
 							},
-							rewards: lpData[Synths.iBTC].data?.rewards ?? 0,
-							periodStarted: now - (lpData[Synths.iBTC].data?.duration ?? 0),
-							periodFinish: lpData[Synths.iBTC].data?.periodFinish ?? 0,
-							claimed: (lpData[Synths.iBTC].data?.rewards ?? 0) > 0 ? false : NOT_APPLICABLE,
+							rewards: shortData[Synths.sBTC].data?.rewards ?? 0,
+							periodStarted: now - (shortData[Synths.sBTC].data?.duration ?? 0),
+							periodFinish: shortData[Synths.sBTC].data?.periodFinish ?? 0,
+							claimed: (shortData[Synths.sBTC].data?.rewards ?? 0) > 0 ? false : NOT_APPLICABLE,
 							now,
-							tab: Tab.iBTC_LP,
-							route: ROUTES.Earn.iBTC_LP,
-							needsToSettle: lpData[Synths.iBTC].data?.needsToSettle,
+							tab: Tab.sBTC_SHORT,
+							route: ROUTES.Earn.sBTC_SHORT,
+							externalLink: ROUTES.Earn.sBTC_EXTERNAL,
 						},
 						{
 							title: t('earn.incentives.options.stsla.title'),
@@ -167,10 +175,33 @@ const Incentives: FC<IncentivesProps> = ({
 							rewards: lpData[LP.UNISWAP_DHT].data?.rewards ?? 0,
 							periodStarted: now - (lpData[LP.UNISWAP_DHT].data?.duration ?? 0),
 							periodFinish: lpData[LP.UNISWAP_DHT].data?.periodFinish ?? 0,
-							claimed: (lpData[LP.UNISWAP_DHT].data?.rewards ?? 0) > 0 ? false : NOT_APPLICABLE,
+							claimed:
+								((lpData[LP.UNISWAP_DHT].data?.rewards as DualRewards)?.a ?? 0) > 0 &&
+								((lpData[LP.UNISWAP_DHT].data?.rewards as DualRewards)?.b ?? 0) > 0
+									? false
+									: NOT_APPLICABLE,
 							now,
 							route: ROUTES.Earn.DHT_LP,
 							tab: Tab.DHT_LP,
+						},
+						{
+							title: t('earn.incentives.options.ibtc.title'),
+							subtitle: t('earn.incentives.options.ibtc.subtitle'),
+							apr: lpData[Synths.iBTC].APR,
+							tvl: lpData[Synths.iBTC].TVL,
+							staked: {
+								balance: lpData[Synths.iBTC].data?.staked ?? 0,
+								asset: Synths.iBTC,
+							},
+							rewards: lpData[Synths.iBTC].data?.rewards ?? 0,
+							periodStarted: now - (lpData[Synths.iBTC].data?.duration ?? 0),
+							periodFinish: lpData[Synths.iBTC].data?.periodFinish ?? 0,
+							claimed: (lpData[Synths.iBTC].data?.rewards ?? 0) > 0 ? false : NOT_APPLICABLE,
+							now,
+							tab: Tab.iBTC_LP,
+							route: ROUTES.Earn.iBTC_LP,
+							needsToSettle: lpData[Synths.iBTC].data?.needsToSettle,
+							closed: true,
 						},
 				  ]
 				: [],
@@ -186,18 +217,24 @@ const Incentives: FC<IncentivesProps> = ({
 			now,
 			t,
 			isWalletConnected,
+			shortData,
 		]
 	);
 
 	const incentivesTable = (
 		<IncentivesTable
 			activeTab={activeTab}
-			data={incentives}
+			data={
+				view === View.ACTIVE
+					? incentives.filter((e) => !e.closed)
+					: incentives.filter((e) => e.closed)
+			}
 			isLoaded={
 				lpData[LP.CURVE_sUSD].data &&
 				lpData[LP.CURVE_sEURO].data &&
-				lpData[Synths.iBTC].data &&
+				shortData[Synths.sBTC].data &&
 				lpData[Synths.iETH].data &&
+				lpData[Synths.iBTC].data &&
 				lpData[LP.BALANCER_sTSLA].data
 					? true
 					: false
@@ -206,7 +243,41 @@ const Incentives: FC<IncentivesProps> = ({
 	);
 
 	return activeTab == null ? (
-		<>{incentivesTable}</>
+		<>
+			<TabList padding={20} width={400}>
+				<TabButton
+					isSingle={false}
+					tabHeight={50}
+					inverseTabColor={true}
+					blue={true}
+					numberTabs={2}
+					key={`active-button`}
+					name={t('earn.tab.active')}
+					active={view === View.ACTIVE}
+					onClick={() => {
+						setView(View.ACTIVE);
+					}}
+				>
+					<TitleContainer>{t('earn.tab.active')}</TitleContainer>
+				</TabButton>
+				<TabButton
+					isSingle={false}
+					tabHeight={50}
+					inverseTabColor={true}
+					blue={false}
+					numberTabs={2}
+					key={`inactive-button`}
+					name={t('earn.tab.inactive')}
+					active={view === View.INACTIVE}
+					onClick={() => {
+						setView(View.INACTIVE);
+					}}
+				>
+					<TitleContainer>{t('earn.tab.inactive')}</TitleContainer>
+				</TabButton>
+			</TabList>
+			{incentivesTable}
+		</>
 	) : (
 		<Container>
 			{incentivesTable}
@@ -228,18 +299,6 @@ const Incentives: FC<IncentivesProps> = ({
 						staked={incentives[1].staked.balance}
 						stakedBN={lpData[Synths.iETH].data?.stakedBN ?? zeroBN}
 						needsToSettle={incentives[1].needsToSettle}
-					/>
-				)}
-				{activeTab === Tab.iBTC_LP && (
-					<LPTab
-						userBalance={lpData[Synths.iBTC].data?.userBalance ?? 0}
-						userBalanceBN={lpData[Synths.iBTC].data?.userBalanceBN ?? zeroBN}
-						stakedAsset={Synths.iBTC}
-						allowance={lpData[Synths.iBTC].data?.allowance ?? null}
-						tokenRewards={incentives[2].rewards}
-						staked={incentives[2].staked.balance}
-						stakedBN={lpData[Synths.iBTC].data?.stakedBN ?? zeroBN}
-						needsToSettle={incentives[2].needsToSettle}
 					/>
 				)}
 				{activeTab === Tab.sTLSA_LP && (
@@ -267,6 +326,18 @@ const Incentives: FC<IncentivesProps> = ({
 						secondTokenRate={lpData[LP.UNISWAP_DHT].data?.price ?? 0}
 					/>
 				)}
+				{activeTab === Tab.iBTC_LP && (
+					<LPTab
+						userBalance={lpData[Synths.iBTC].data?.userBalance ?? 0}
+						userBalanceBN={lpData[Synths.iBTC].data?.userBalanceBN ?? zeroBN}
+						stakedAsset={Synths.iBTC}
+						allowance={lpData[Synths.iBTC].data?.allowance ?? null}
+						tokenRewards={incentives[6].rewards}
+						staked={incentives[6].staked.balance}
+						stakedBN={lpData[Synths.iBTC].data?.stakedBN ?? zeroBN}
+						needsToSettle={incentives[6].needsToSettle}
+					/>
+				)}
 			</TabContainer>
 		</Container>
 	);
@@ -281,6 +352,13 @@ const Container = styled.div`
 const TabContainer = styled.div`
 	background-color: ${(props) => props.theme.colors.navy};
 	min-height: 380px;
+`;
+
+const TitleContainer = styled.p`
+	margin-left: 8px;
+	font-size: 12px;
+	font-family: ${(props) => props.theme.fonts.extended};
+	text-transform: uppercase;
 `;
 
 export default Incentives;
