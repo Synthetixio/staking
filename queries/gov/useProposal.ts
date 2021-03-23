@@ -84,17 +84,18 @@ const useProposal = (spaceKey: SPACE_KEY, hash: string, options?: QueryConfig<Pr
 
 			let mappedVotes = voterSignatures as MappedVotes[];
 
+			const { getAddress } = ethers.utils;
 			mappedVotes = uniqBy(
 				mappedVotes
 					.map((vote) => {
 						vote.scores = space.strategies.map(
-							(_: SpaceStrategy, key: number) => scores[key][vote.address.toLowerCase()] || 0
+							(_: SpaceStrategy, key: number) => scores[key][getAddress(vote.address)] || 0
 						);
 						vote.balance = vote.scores.reduce((a: number, b: number) => a + b, 0);
-						vote.profile = profiles[vote.address.toLowerCase()];
+						vote.profile = profiles[getAddress(vote.address)];
 						return vote;
 					})
-					.filter((vote) => vote.balance > 0)
+					// .filter((vote) => vote.balance > 0)
 					.sort((a, b) => b.balance - a.balance),
 				(a) => a.address.toLowerCase()
 			);
