@@ -9,10 +9,12 @@ type ConnectionDotProps = {};
 const ConnectionDot: React.FC<ConnectionDotProps> = ({ ...rest }) => {
 	const network = useRecoilValue(networkState);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
+	const isL2 = network?.useOvm ?? false;
 
 	const theme = useTheme();
 
 	if (network && isWalletConnected) {
+		if (isL2) return <Dot {...rest} background={theme.colors.layer2} />;
 		switch (network.id) {
 			case NetworkId.Mainnet:
 				return <Dot {...rest} background={theme.colors.mainnet} />;

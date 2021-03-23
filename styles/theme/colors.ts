@@ -60,6 +60,7 @@ export default {
 
 	// network colors
 	mainnet: '#29B6AF',
+	layer2: '#ED1EFF',
 	ropsten: '#FF4A8D',
 	kovan: '#7057FF',
 	rinkeby: '#F6C343',
