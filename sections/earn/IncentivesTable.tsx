@@ -45,7 +45,7 @@ import { LP, Tab } from './types';
 
 import StructuredTab from 'components/StructuredTab';
 
-type DualRewards = {
+export type DualRewards = {
 	a: number;
 	b: number;
 };
@@ -341,7 +341,7 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab }
 
 	return (
 		<StructuredTab
-			boxWidth={1200}
+			boxWidth={activeTab === null ? 1200 : 400}
 			tabHeight={50}
 			boxPadding={20}
 			inverseTabColor={true}

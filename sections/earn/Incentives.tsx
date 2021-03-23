@@ -13,7 +13,7 @@ import useLPData from 'hooks/useLPData';
 import ROUTES from 'constants/routes';
 import { CryptoCurrency, Synths } from 'constants/currency';
 
-import IncentivesTable from './IncentivesTable';
+import IncentivesTable, { DualRewards } from './IncentivesTable';
 import ClaimTab from './ClaimTab';
 import LPTab from './LPTab';
 import { isWalletConnectedState } from 'store/wallet';
@@ -170,7 +170,11 @@ const Incentives: FC<IncentivesProps> = ({
 							rewards: lpData[LP.UNISWAP_DHT].data?.rewards ?? 0,
 							periodStarted: now - (lpData[LP.UNISWAP_DHT].data?.duration ?? 0),
 							periodFinish: lpData[LP.UNISWAP_DHT].data?.periodFinish ?? 0,
-							claimed: (lpData[LP.UNISWAP_DHT].data?.rewards ?? 0) > 0 ? false : NOT_APPLICABLE,
+							claimed:
+								((lpData[LP.UNISWAP_DHT].data?.rewards as DualRewards)?.a ?? 0) > 0 &&
+								((lpData[LP.UNISWAP_DHT].data?.rewards as DualRewards)?.b ?? 0) > 0
+									? false
+									: NOT_APPLICABLE,
 							now,
 							route: ROUTES.Earn.DHT_LP,
 							tab: Tab.DHT_LP,
