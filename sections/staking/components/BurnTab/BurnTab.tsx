@@ -1,12 +1,12 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-
-import { TabContainer } from '../common';
-import { CryptoCurrency, Synths } from 'constants/currency';
-import Notify from 'containers/Notify';
-import { BigNumber, ethers } from 'ethers';
-import { normalizedGasPrice, normalizeGasLimit } from 'utils/network';
-import { getGasEstimateForTransaction } from 'utils/transactions';
+import { ethers } from 'ethers';
 import { useRecoilState, useRecoilValue } from 'recoil';
+
+import TransactionNotifier from 'containers/TransactionNotifier';
+import { normalizedGasPrice } from 'utils/network';
+import { CryptoCurrency, Synths } from 'constants/currency';
+import { TabContainer } from '../common';
+
 import { isWalletConnectedState, walletAddressState } from 'store/wallet';
 import synthetix from 'lib/synthetix';
 import BurnTiles from '../BurnTiles';
@@ -18,13 +18,16 @@ import { amountToBurnState, BurnActionType, burnTypeState } from 'store/staking'
 import { addSeconds, differenceInSeconds } from 'date-fns';
 import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
 import { appReadyState } from 'store/app';
+import { GasLimitEstimate } from 'constants/network';
+
+// @TODO: Add for the countdown of waiting period and issuance delay
 import Connector from 'containers/Connector';
 import useClearDebtCalculations from 'sections/staking/hooks/useClearDebtCalculations';
 import { useTranslation } from 'react-i18next';
 import { toFutureDate } from 'utils/formatters/date';
 
 const BurnTab: React.FC = () => {
-	const { monitorHash } = Notify.useContainer();
+	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const [amountToBurn, onBurnChange] = useRecoilState(amountToBurnState);
 	const [burnType, onBurnTypeChange] = useRecoilState(burnTypeState);
 	const { percentageTargetCRatio, debtBalance, issuableSynths } = useStakingCalculations();
@@ -36,7 +39,7 @@ const BurnTab: React.FC = () => {
 	const [transactionState, setTransactionState] = useState<Transaction>(Transaction.PRESUBMIT);
 	const [txHash, setTxHash] = useState<string | null>(null);
 	const [error, setError] = useState<string | null>(null);
-	const [gasLimitEstimate, setGasLimitEstimate] = useState<number | null>(null);
+	const [gasLimitEstimate, setGasLimitEstimate] = useState<GasLimitEstimate>(null);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 	const [gasPrice, setGasPrice] = useState<number>(0);
 	const [waitingPeriod, setWaitingPeriod] = useState(0);
@@ -146,17 +149,17 @@ const BurnTab: React.FC = () => {
 					}
 
 					if (burnType === BurnActionType.CLEAR) {
-						const gasEstimate = await getGasEstimateForTransaction(
-							[parseEther(sUSDBalance.toString())],
-							Synthetix.estimateGas.burnSynths
-						);
-						setGasLimitEstimate(normalizeGasLimit(Number(gasEstimate)));
+						const gasEstimate = await synthetix.getGasEstimateForTransaction({
+							txArgs: [parseEther(sUSDBalance.toString())],
+							method: Synthetix.estimateGas.burnSynths,
+						});
+						setGasLimitEstimate(gasEstimate);
 					} else {
-						const gasEstimate = await getGasEstimateForTransaction(
-							[parseEther(amountToBurn.toString())],
-							Synthetix.estimateGas.burnSynths
-						);
-						setGasLimitEstimate(normalizeGasLimit(Number(gasEstimate)));
+						const gasEstimate = await synthetix.getGasEstimateForTransaction({
+							txArgs: [parseEther(amountToBurn.toString())],
+							method: Synthetix.estimateGas.burnSynths,
+						});
+						setGasLimitEstimate(gasEstimate);
 					}
 				} catch (error) {
 					setError(error.message);
@@ -185,27 +188,27 @@ const BurnTab: React.FC = () => {
 					setError(null);
 					setTxModalOpen(true);
 					const {
-						contracts: { Synthetix, Issuer },
-						utils: { formatBytes32String, parseEther },
+						contracts: { Synthetix },
+						utils: { parseEther },
 					} = synthetix.js!;
 
 					let transaction: ethers.ContractTransaction;
 
 					if (burnToTarget) {
-						const gasLimit = getGasEstimateForTransaction(
-							[],
-							Synthetix.estimateGas.burnSynthsToTarget
-						);
+						const gasLimit = await synthetix.getGasEstimateForTransaction({
+							txArgs: [],
+							method: Synthetix.estimateGas.burnSynthsToTarget,
+						});
 						transaction = await Synthetix.burnSynthsToTarget({
 							gasPrice: normalizedGasPrice(gasPrice),
 							gasLimit: gasLimit,
 						});
 					} else {
 						const amountToBurnBN = parseEther(amountToBurn.toString());
-						const gasLimit = getGasEstimateForTransaction(
-							[amountToBurnBN],
-							Synthetix.estimateGas.burnSynths
-						);
+						const gasLimit = await synthetix.getGasEstimateForTransaction({
+							txArgs: [amountToBurnBN],
+							method: Synthetix.estimateGas.burnSynths,
+						});
 						transaction = await Synthetix.burnSynths(amountToBurnBN, {
 							gasPrice: normalizedGasPrice(gasPrice),
 							gasLimit,
@@ -214,7 +217,7 @@ const BurnTab: React.FC = () => {
 					if (transaction) {
 						setTxHash(transaction.hash);
 						setTransactionState(Transaction.WAITING);
-						monitorHash({
+						monitorTransaction({
 							txHash: transaction.hash,
 							onTxConfirmed: () => {
 								setTransactionState(Transaction.SUCCESS);
@@ -228,7 +231,7 @@ const BurnTab: React.FC = () => {
 				}
 			}
 		},
-		[amountToBurn, gasPrice, monitorHash, walletAddress, isAppReady, onBurnChange]
+		[amountToBurn, gasPrice, monitorTransaction, isAppReady]
 	);
 
 	const handleClear = useCallback(async () => {
@@ -251,7 +254,7 @@ const BurnTab: React.FC = () => {
 			if (swapTransaction) {
 				setTxHash(swapTransaction.hash);
 				setTransactionState(Transaction.WAITING);
-				monitorHash({
+				monitorTransaction({
 					txHash: swapTransaction.hash,
 					onTxConfirmed: async () => {
 						const {
@@ -262,10 +265,10 @@ const BurnTab: React.FC = () => {
 						let burnTransaction: ethers.ContractTransaction;
 
 						const amountToBurnBN = parseEther(amountToBurn.toString());
-						const gasLimit = getGasEstimateForTransaction(
-							[amountToBurnBN],
-							Synthetix.estimateGas.burnSynths
-						);
+						const gasLimit = await synthetix.getGasEstimateForTransaction({
+							txArgs: [amountToBurnBN],
+							method: Synthetix.estimateGas.burnSynths,
+						});
 						burnTransaction = await Synthetix.burnSynths(amountToBurnBN, {
 							gasPrice: normalizedGasPrice(gasPrice),
 							gasLimit,
@@ -273,7 +276,7 @@ const BurnTab: React.FC = () => {
 
 						setTxHash(burnTransaction.hash);
 						setTransactionState(Transaction.WAITING);
-						monitorHash({
+						monitorTransaction({
 							txHash: burnTransaction.hash,
 							onTxConfirmed: () => {
 								setTransactionState(Transaction.SUCCESS);
@@ -287,7 +290,7 @@ const BurnTab: React.FC = () => {
 			setTransactionState(Transaction.PRESUBMIT);
 			setError(e.message);
 		}
-	}, [amountToBurn, gasPrice, monitorHash, signer, swapData, walletAddress]);
+	}, [amountToBurn, gasPrice, monitorTransaction, signer, swapData]);
 
 	const returnPanel = useMemo(() => {
 		let handleSubmit;

@@ -18,9 +18,9 @@ import {
 import { CryptoCurrency, CurrencyKey } from 'constants/currency';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { ESTIMATE_VALUE } from 'constants/placeholder';
-import { getGasEstimateForTransaction } from 'utils/transactions';
-import { normalizeGasLimit } from 'utils/network';
+import { GasLimitEstimate } from 'constants/network';
 import GasSelector from 'components/GasSelector';
+import synthetix from 'lib/synthetix';
 
 import {
 	FlexDivColCentered,
@@ -67,7 +67,7 @@ const RewardsBox: FC<RewardsBoxProps> = ({
 	const { t } = useTranslation();
 	const { signer } = Connector.useContainer();
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
-	const [gasLimitEstimate, setGasLimitEstimate] = useState<number | null>(null);
+	const [gasLimitEstimate, setGasLimitEstimate] = useState<GasLimitEstimate>(null);
 	const isAppReady = useRecoilValue(appReadyState);
 
 	useEffect(() => {
@@ -76,8 +76,11 @@ const RewardsBox: FC<RewardsBoxProps> = ({
 				try {
 					setClaimError(null);
 					const contract = getContract(stakedAsset, signer);
-					let gasEstimate = await getGasEstimateForTransaction([], contract.estimateGas.getReward);
-					setGasLimitEstimate(normalizeGasLimit(Number(gasEstimate)));
+					let gasEstimate = await synthetix.getGasEstimateForTransaction({
+						txArgs: [],
+						method: contract.estimateGas.getReward,
+					});
+					setGasLimitEstimate(gasEstimate);
 				} catch (error) {
 					setClaimError(error.message);
 					setGasLimitEstimate(null);

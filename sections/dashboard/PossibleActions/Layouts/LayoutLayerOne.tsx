@@ -20,7 +20,7 @@ import useUserStakingData from 'hooks/useUserStakingData';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 import { LP } from 'sections/earn/types';
 
-const LayoutOne: FC = () => {
+const LayoutLayerOne: FC = () => {
 	const { t } = useTranslation();
 
 	const lpData = useLPData();
@@ -178,4 +178,4 @@ const LayoutOne: FC = () => {
 	);
 };
 
-export default LayoutOne;
+export default LayoutLayerOne;

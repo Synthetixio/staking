@@ -10,8 +10,8 @@ import GasSelector from 'components/GasSelector';
 import PendingConfirmation from 'assets/svg/app/pending-confirmation.svg';
 import Success from 'assets/svg/app/success.svg';
 import synthetix from 'lib/synthetix';
-import Notify from 'containers/Notify';
-import Etherscan from 'containers/Etherscan';
+import TransactionNotifier from 'containers/TransactionNotifier';
+import Etherscan from 'containers/BlockExplorer';
 import { zIndex } from 'constants/ui';
 import LockedIcon from 'assets/svg/app/locked.svg';
 import {
@@ -31,9 +31,8 @@ import {
 	ModalItemTitle,
 	ModalItemText,
 } from 'styles/common';
-import { getGasEstimateForTransaction } from 'utils/transactions';
-import { Transaction, TokenAllowanceLimit } from 'constants/network';
-import { normalizedGasPrice, normalizeGasLimit } from 'utils/network';
+import { Transaction, TokenAllowanceLimit, GasLimitEstimate } from 'constants/network';
+import { normalizedGasPrice } from 'utils/network';
 import { CurrencyKey, Synths } from 'constants/currency';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import TxState from 'sections/earn/TxState';
@@ -102,17 +101,19 @@ type ApproveProps = {
 
 const Approve: FC<ApproveProps> = ({ stakedAsset, setShowApproveOverlayModal }) => {
 	const { t } = useTranslation();
-	const { monitorHash } = Notify.useContainer();
+	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const { provider, signer } = Connector.useContainer();
-	const { etherscanInstance } = Etherscan.useContainer();
+	const { blockExplorerInstance } = Etherscan.useContainer();
 	const [error, setError] = useState<string | null>(null);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
-	const [gasLimitEstimate, setGasLimitEstimate] = useState<number | null>(null);
+	const [gasLimitEstimate, setGasLimitEstimate] = useState<GasLimitEstimate>(null);
 	const [gasPrice, setGasPrice] = useState<number>(0);
 	const [transactionState, setTransactionState] = useState<Transaction>(Transaction.PRESUBMIT);
 	const [txHash, setTxHash] = useState<string | null>(null);
 	const link =
-		etherscanInstance != null && txHash != null ? etherscanInstance.txLink(txHash) : undefined;
+		blockExplorerInstance != null && txHash != null
+			? blockExplorerInstance.txLink(txHash)
+			: undefined;
 	const isAppReady = useRecoilValue(appReadyState);
 
 	useEffect(() => {
@@ -121,11 +122,11 @@ const Approve: FC<ApproveProps> = ({ stakedAsset, setShowApproveOverlayModal }) 
 				try {
 					setError(null);
 					const { contract, poolAddress } = getApprovalContractData(stakedAsset, provider);
-					let gasEstimate = await getGasEstimateForTransaction(
-						[poolAddress, synthetix.js!.utils.parseEther(TokenAllowanceLimit.toString())],
-						contract.estimateGas.approve
-					);
-					setGasLimitEstimate(normalizeGasLimit(Number(gasEstimate)));
+					let gasEstimate = await synthetix.getGasEstimateForTransaction({
+						txArgs: [poolAddress, synthetix.js!.utils.parseEther(TokenAllowanceLimit.toString())],
+						method: contract.estimateGas.approve,
+					});
+					setGasLimitEstimate(gasEstimate);
 				} catch (error) {
 					setError(error.message);
 					setGasLimitEstimate(null);
@@ -144,10 +145,10 @@ const Approve: FC<ApproveProps> = ({ stakedAsset, setShowApproveOverlayModal }) 
 					const { contract, poolAddress } = getApprovalContractData(stakedAsset, signer);
 
 					const allowance = synthetix.js!.utils.parseEther(TokenAllowanceLimit.toString());
-					const gasLimit = await getGasEstimateForTransaction(
-						[poolAddress, allowance],
-						contract.estimateGas.approve
-					);
+					const gasLimit = await synthetix.getGasEstimateForTransaction({
+						txArgs: [poolAddress, allowance],
+						method: contract.estimateGas.approve,
+					});
 					const transaction: ethers.ContractTransaction = await contract.approve(
 						poolAddress,
 						allowance,
@@ -160,7 +161,7 @@ const Approve: FC<ApproveProps> = ({ stakedAsset, setShowApproveOverlayModal }) 
 					if (transaction) {
 						setTxHash(transaction.hash);
 						setTransactionState(Transaction.WAITING);
-						monitorHash({
+						monitorTransaction({
 							txHash: transaction.hash,
 							onTxConfirmed: () => setTransactionState(Transaction.SUCCESS),
 						});
@@ -173,7 +174,7 @@ const Approve: FC<ApproveProps> = ({ stakedAsset, setShowApproveOverlayModal }) 
 			}
 		}
 		approve();
-	}, [stakedAsset, signer, gasPrice, monitorHash, isAppReady]);
+	}, [stakedAsset, signer, gasPrice, monitorTransaction, isAppReady]);
 
 	if (transactionState === Transaction.WAITING) {
 		return (

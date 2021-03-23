@@ -19,7 +19,7 @@ import { Transaction } from 'constants/network';
 import ROUTES from 'constants/routes';
 import { CryptoCurrency, Synths } from 'constants/currency';
 
-import Etherscan from 'containers/Etherscan';
+import Etherscan from 'containers/BlockExplorer';
 
 import { formatPercent } from 'utils/formatters/number';
 
@@ -60,8 +60,8 @@ const ActionCompleted: React.FC<ActionCompletedProps> = ({
 	const { t } = useTranslation();
 	const { push } = useRouter();
 	const lpData = useLPData();
-	const { etherscanInstance } = Etherscan.useContainer();
-	const link = etherscanInstance != null ? etherscanInstance.txLink(hash ?? '') : undefined;
+	const { blockExplorerInstance } = Etherscan.useContainer();
+	const link = blockExplorerInstance != null ? blockExplorerInstance.txLink(hash ?? '') : undefined;
 	const onMintTypeChange = useSetRecoilState(mintTypeState);
 	const onBurnTypeChange = useSetRecoilState(burnTypeState);
 	const onBurnChange = useSetRecoilState(amountToBurnState);

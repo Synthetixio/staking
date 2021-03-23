@@ -1,5 +1,5 @@
 import WelcomeLayout from './WelcomeLayout';
-import LayoutOne from './LayoutOne';
-import L1MigrationLayout from './L1MigrationLayout';
+import LayoutLayerOne from './LayoutLayerOne';
+import LayoutLayerTwo from './LayoutLayerTwo';
 
-export { WelcomeLayout, LayoutOne, L1MigrationLayout };
+export { WelcomeLayout, LayoutLayerOne, LayoutLayerTwo };

@@ -1,8 +1,16 @@
-import initSynthetixJS, { NetworkId, Network, Token, Synth, SynthetixJS } from '@synthetixio/js';
+import initSynthetixJS, {
+	NetworkId,
+	Network,
+	Token,
+	Synth,
+	SynthetixJS,
+} from '@synthetixio/contracts-interface';
 import { ethers, Signer } from 'ethers';
 
 import keyBy from 'lodash/keyBy';
 import invert from 'lodash/invert';
+import { normalizeGasLimit } from 'utils/network';
+import { MAX_BLOCK_SIZE } from 'constants/network';
 
 export type Feed = {
 	asset: string;
@@ -21,11 +29,18 @@ type ContractSettings = {
 	networkId: NetworkId;
 	provider?: ethers.providers.Provider;
 	signer?: Signer;
+	useOvm?: boolean;
+};
+
+type GasEstimateForTransactionParams = {
+	txArgs: any[];
+	method: Function;
 };
 
 type Synthetix = {
 	js: SynthetixJS | null;
 	setContractSettings: (contractSettings: ContractSettings) => void;
+	getGasEstimateForTransaction: (params: GasEstimateForTransactionParams) => void;
 	synthsMap: SynthsMap | null;
 	tokensMap: TokensMap | null;
 	synthSummaryUtil: ethers.Contract | null;
@@ -51,6 +66,19 @@ const synthetix: Synthetix = {
 
 		// @ts-ignore
 		this.chainIdToNetwork = invert(this.js.networkToChainId);
+	},
+	getGasEstimateForTransaction({
+		txArgs,
+		method,
+	}: GasEstimateForTransactionParams): Promise<number> {
+		return new Promise((resolve, reject) => {
+			if (this.js?.network.useOvm) resolve(MAX_BLOCK_SIZE);
+			method(...txArgs)
+				.then((estimate: Number) => {
+					resolve(normalizeGasLimit(Number(estimate)));
+				})
+				.catch((e: Error) => reject(e));
+		});
 	},
 };
 

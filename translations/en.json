@@ -578,6 +578,21 @@
 				}
 			}
 		},
+		"withdraw": {
+			"info": {
+				"title": "Withdraw SNX from Layer 1 to Layer 2",
+				"subtitle": "Warning: withdrawing your SNX will take 7-10 days to be received on L1, during which time you will not have access to your funds. Once you initiate a withdrawal you will not be able to cancel it.",
+				"no-withdrawals": "No withdrawal history",
+				"table": {
+					"withdrawal": "Withdrawal",
+					"date": "Date",
+					"status": "Status",
+					"view": "View",
+					"pending": "Pending",
+					"confirmed": "Confirmed"
+				}
+			}
+		},
 		"migrate": {
 			"info": {
 				"title": "Migrate your escrowed SNX to Layer 2",
@@ -598,6 +613,13 @@
 			"go-to-mintr": {
 				"title": "Go to Mintr L2",
 				"subtitle": "L2 is currently supported on Mintr"
+			},
+			"withdraw": {
+				"title": "Withdraw SNX",
+				"action": {
+					"withdraw-button": "Withdraw {{withdrawAmount}}",
+					"disabled": "No SNX to withdraw"
+				}
 			},
 			"deposit": {
 				"title": "Deposit SNX",
@@ -845,12 +867,22 @@
 		"mint-and-burn": "Mint & burn",
 		"l2": "Layer 2",
 		"gov": "Governance",
+		"withdraw": "Withdraw",
 		"bars": {
 			"c-ratio": "c-ratio",
 			"t-ratio": "target",
 			"period": {
 				"title": "epoch"
 			}
+		}
+	},
+	"user-menu": {
+		"layer-2": {
+			"switch-to-l2": "Switch to L2",
+			"connected-to-l2": "Layer 2"
+		},
+		"error": {
+			"please-install-metamask": "Please install Metamask"
 		}
 	},
 	"common": {
@@ -862,6 +894,7 @@
 			"connect-wallet": "connect wallet",
 			"no-wallet-connected": "No wallet connected",
 			"balance": "Balance: {{balance}}",
+			"transferable": "<0>Transferable</0> {{transferable}}",
 			"not-connected": "Not connected",
 			"or": "or"
 		},
@@ -899,7 +932,13 @@
 		"error": {
 			"default": "Something went wrong"
 		},
+		"layer-2": {
+			"not-available": "Not available on Layer 2"
+		},
 		"transaction": {
+			"transaction-sent": "Your transaction has been sent to the network",
+			"transaction-failed": "Your transaction has failed",
+			"transaction-confirmed": "Your transaction has succeeded!",
 			"error": "An unexpected error occurred.",
 			"reattempt": "Try again"
 		},

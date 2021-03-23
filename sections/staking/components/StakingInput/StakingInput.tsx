@@ -37,7 +37,7 @@ import {
 	FlexDiv,
 } from 'styles/common';
 import { InputContainer, InputLocked } from '../common';
-import { Transaction } from 'constants/network';
+import { Transaction, GasLimitEstimate } from 'constants/network';
 import { formatCurrency, formatNumber, zeroBN } from 'utils/formatters/number';
 import { getStakingAmount } from '../helper';
 import { CryptoCurrency, Synths } from 'constants/currency';
@@ -58,7 +58,7 @@ type StakingInputProps = {
 	error: string | null;
 	txModalOpen: boolean;
 	setTxModalOpen: Function;
-	gasLimitEstimate: number | null;
+	gasLimitEstimate: GasLimitEstimate;
 	setGasPrice: Function;
 	onInputChange: Function;
 	txHash: string | null;

@@ -9,7 +9,7 @@ import { Transaction } from 'constants/network';
 
 import { InfoContainer, InfoData, InfoTitle, SectionHeader, Container } from './common';
 import { formatCurrency } from 'utils/formatters/number';
-import Etherscan from 'containers/Etherscan';
+import Etherscan from 'containers/BlockExplorer';
 import { NumericValue } from 'utils/formatters/number';
 
 type ActionCompletedProps = {
@@ -30,8 +30,8 @@ const ActionCompleted: FC<ActionCompletedProps> = ({
 	setIsMigration = () => null,
 }) => {
 	const { t } = useTranslation();
-	const { etherscanInstance } = Etherscan.useContainer();
-	const link = etherscanInstance != null ? etherscanInstance.txLink(hash) : undefined;
+	const { blockExplorerInstance } = Etherscan.useContainer();
+	const link = blockExplorerInstance != null ? blockExplorerInstance.txLink(hash) : undefined;
 	return (
 		<Container>
 			<SectionHeader>

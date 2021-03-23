@@ -1,4 +1,4 @@
-import { NetworkId } from '@synthetixio/js';
+import { NetworkId } from '@synthetixio/contracts-interface';
 import { NumericValue } from 'utils/formatters/number';
 import { SPACE_KEY } from 'constants/snapshot';
 import { CurrencyKey } from './currency';
@@ -159,15 +159,9 @@ export const QUERY_KEYS = {
 		],
 	},
 	Escrow: {
-		DataV1: (walletAddress: string, networkId: NetworkId) => [
+		StakingRewards: (walletAddress: string, networkId: NetworkId) => [
 			'escrow',
-			'dataV1',
-			walletAddress,
-			networkId,
-		],
-		DataV2: (walletAddress: string, networkId: NetworkId) => [
-			'escrow',
-			'dataV2',
+			'stakingRewards',
 			walletAddress,
 			networkId,
 		],
@@ -219,6 +213,12 @@ export const QUERY_KEYS = {
 	Deposits: (walletAddress: string, networkId: NetworkId) => [
 		'deposits',
 		'depositsData',
+		walletAddress,
+		networkId,
+	],
+	Withdrawals: (walletAddress: string, networkId: NetworkId) => [
+		'withdrawals',
+		'withdrawalsData',
 		walletAddress,
 		networkId,
 	],
