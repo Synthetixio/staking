@@ -21,7 +21,7 @@
 		"@snapshot-labs/snapshot.js": "0.1.6",
 		"@synthetixio/assets": "2.0.7",
 		"@synthetixio/contracts-interface": "^0.0.7",
-		"@synthetixio/optimism-networks": "^0.0.10",
+		"@synthetixio/optimism-networks": "0.0.10",
 		"@synthetixio/providers": "^0.0.11",
 		"@synthetixio/transaction-notifier": "^0.0.8",
 		"@tippyjs/react": "4.1.0",
