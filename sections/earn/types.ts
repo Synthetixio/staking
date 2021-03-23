@@ -6,6 +6,7 @@ export enum Tab {
 	sTLSA_LP = 'sTSLA-LP',
 	DHT_LP = 'DHT-LP',
 	sBTC_SHORT = 'sBTC Short',
+	iBTC_LP = 'iBTC-LP',
 }
 
 export enum LP {

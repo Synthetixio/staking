@@ -175,6 +175,25 @@ const Incentives: FC<IncentivesProps> = ({
 							route: ROUTES.Earn.DHT_LP,
 							tab: Tab.DHT_LP,
 						},
+						{
+							title: t('earn.incentives.options.ibtc.title'),
+							subtitle: t('earn.incentives.options.ibtc.subtitle'),
+							apr: lpData[Synths.iBTC].APR,
+							tvl: lpData[Synths.iBTC].TVL,
+							staked: {
+								balance: lpData[Synths.iBTC].data?.staked ?? 0,
+								asset: Synths.iBTC,
+							},
+							rewards: lpData[Synths.iBTC].data?.rewards ?? 0,
+							periodStarted: now - (lpData[Synths.iBTC].data?.duration ?? 0),
+							periodFinish: lpData[Synths.iBTC].data?.periodFinish ?? 0,
+							claimed: (lpData[Synths.iBTC].data?.rewards ?? 0) > 0 ? false : NOT_APPLICABLE,
+							now,
+							tab: Tab.iBTC_LP,
+							route: ROUTES.Earn.iBTC_LP,
+							needsToSettle: lpData[Synths.iBTC].data?.needsToSettle,
+							closed: true,
+						},
 				  ]
 				: [],
 		[
@@ -202,6 +221,7 @@ const Incentives: FC<IncentivesProps> = ({
 				lpData[LP.CURVE_sEURO].data &&
 				shortData[Synths.sBTC].data &&
 				lpData[Synths.iETH].data &&
+				lpData[Synths.iBTC].data &&
 				lpData[LP.BALANCER_sTSLA].data
 					? true
 					: false
@@ -257,6 +277,18 @@ const Incentives: FC<IncentivesProps> = ({
 						stakedBN={lpData[LP.UNISWAP_DHT].data?.stakedBN ?? zeroBN}
 						needsToSettle={incentives[5].needsToSettle}
 						secondTokenRate={lpData[LP.UNISWAP_DHT].data?.price ?? 0}
+					/>
+				)}
+				{activeTab === Tab.iBTC_LP && (
+					<LPTab
+						userBalance={lpData[Synths.iBTC].data?.userBalance ?? 0}
+						userBalanceBN={lpData[Synths.iBTC].data?.userBalanceBN ?? zeroBN}
+						stakedAsset={Synths.iBTC}
+						allowance={lpData[Synths.iBTC].data?.allowance ?? null}
+						tokenRewards={incentives[6].rewards}
+						staked={incentives[6].staked.balance}
+						stakedBN={lpData[Synths.iBTC].data?.stakedBN ?? zeroBN}
+						needsToSettle={incentives[6].needsToSettle}
 					/>
 				)}
 			</TabContainer>

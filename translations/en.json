@@ -354,6 +354,10 @@
 	},
 	"earn": {
 		"page-title": "Earn | Synthetix Staking",
+		"tab": {
+			"open": "Active",
+			"closed": "Inactive"
+		},
 		"incentives": {
 			"est-apr": "Est. APR",
 			"options": {
@@ -414,6 +418,11 @@
 					"title": "Uniswap",
 					"description": "Stake sUSD-DHT Uniswap Pool Tokens to earn SNX and DHT rewards. <0>Add liquidity on Uniswap here<0>.",
 					"subtitle": "DHT Uniswap LP Rewards"
+				},
+				"ibtc": {
+					"title": "Synthetix",
+					"description": "Staking iBTC tokens allows you to earn SNX rewards. <0>Learn more.<0>",
+					"subtitle": "iBTC Rewards"
 				}
 			},
 			"weekly-rewards": "Weekly rewards {{weeklyRewards}} {{asset}}"

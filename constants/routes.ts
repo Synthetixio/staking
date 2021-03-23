@@ -24,6 +24,7 @@ export const ROUTES = {
 		Claim: '/earn/claim',
 		sUSD_LP: '/earn/sUSD-LP',
 		sEURO_LP: '/earn/sEURO-LP',
+		iBTC_LP: '/earn/iBTC-LP',
 		iETH_LP: '/earn/iETH-LP',
 		sTLSA_LP: '/earn/sTSLA-LP',
 		sUSD_EXTERNAL: 'https://www.curve.fi/susdv2/',
