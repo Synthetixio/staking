@@ -932,6 +932,9 @@
 		"error": {
 			"default": "Something went wrong"
 		},
+		"layer-2": {
+			"not-available": "Not available on Layer 2"
+		},
 		"transaction": {
 			"transaction-sent": "Your transaction has been sent to the network",
 			"transaction-failed": "Your transaction has failed",
