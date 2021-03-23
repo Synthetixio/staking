@@ -8,7 +8,7 @@ import StakingRewardsTab from './StakingRewardsTab';
 import { EscrowPanelType } from 'store/escrow';
 import TokenSaleTab from './TokenSaleTab';
 import { useRouter } from 'next/router';
-import { networkState } from 'store/wallet';
+import { isL2State } from 'store/wallet';
 
 type ActionBoxProps = {
 	currentTab: string;
@@ -17,8 +17,7 @@ type ActionBoxProps = {
 const ActionBox: React.FC<ActionBoxProps> = ({ currentTab }) => {
 	const { t } = useTranslation();
 	const router = useRouter();
-	const network = useRecoilValue(networkState);
-	const isL1 = !network?.useOvm;
+	const isL2 = useRecoilValue(isL2State);
 
 	const tabData = useMemo(
 		() => [
@@ -32,11 +31,11 @@ const ActionBox: React.FC<ActionBoxProps> = ({ currentTab }) => {
 				title: t('escrow.actions.ico.title'),
 				tabChildren: <TokenSaleTab />,
 				key: EscrowPanelType.ICO,
-				disabled: !isL1,
+				disabled: isL2,
 				blue: false,
 			},
 		],
-		[t, isL1]
+		[t, isL2]
 	);
 
 	return (

@@ -22,7 +22,7 @@ import { CryptoCurrency, Synths } from 'constants/currency';
 import { SIDE_NAV_WIDTH, zIndex } from 'constants/ui';
 import { MENU_LINKS, MENU_LINKS_L2 } from '../constants';
 
-import { networkState } from 'store/wallet';
+import { isL2State } from 'store/wallet';
 
 import SubMenu from './SubMenu';
 import PriceItem from './PriceItem';
@@ -39,13 +39,11 @@ const SideNav: FC = () => {
 	const SNX24hrPricesQuery = useSNX24hrPricesQuery();
 	const cryptoBalances = useCryptoBalances();
 	const synthsBalancesQuery = useSynthsBalancesQuery();
-	const network = useRecoilValue(networkState);
+	const isL2 = useRecoilValue(isL2State);
 	const [subMenuConfiguration, setSubMenuConfiguration] = useState({
 		routes: null,
 		topPosition: 0,
 	});
-
-	const isL2 = network?.useOvm ?? false;
 
 	const snxBalance =
 		cryptoBalances?.balances?.find((balance) => balance.currencyKey === CryptoCurrency.SNX)

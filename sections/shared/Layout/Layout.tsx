@@ -7,7 +7,7 @@ import { zIndex } from 'constants/ui';
 import media from 'styles/media';
 
 import { languageState } from 'store/app';
-import { networkState } from 'store/wallet';
+import { isL2State } from 'store/wallet';
 import { SPACE_KEY } from 'constants/snapshot';
 import { Proposal } from 'queries/gov/types';
 import useProposals from 'queries/gov/useProposals';
@@ -19,19 +19,17 @@ type LayoutProps = {
 
 const Layout: FC<LayoutProps> = ({ children }) => {
 	const language = useRecoilValue(languageState);
-	const network = useRecoilValue(networkState);
+	const isL2 = useRecoilValue(isL2State);
 
 	const councilProposals = useProposals(SPACE_KEY.COUNCIL);
 	const setNotificationState = useSetRecoilState(userNotificationState);
-
-	const isL1 = !network?.useOvm ?? null;
 
 	useEffect(() => {
 		i18n.changeLanguage(language);
 	}, [language]);
 
 	useEffect(() => {
-		if (councilProposals.data && !!isL1) {
+		if (councilProposals.data && !isL2) {
 			let latestProposal = {
 				msg: {
 					payload: {
@@ -60,7 +58,7 @@ const Layout: FC<LayoutProps> = ({ children }) => {
 				});
 			}
 		}
-	}, [councilProposals, setNotificationState, isL1]);
+	}, [councilProposals, setNotificationState, isL2]);
 
 	return (
 		<>

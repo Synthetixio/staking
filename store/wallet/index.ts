@@ -17,6 +17,13 @@ export const networkState = atom<Network | null>({
 	default: null,
 });
 
+export const isL2State = selector<boolean>({
+	key: getWalletKey('isL2'),
+	get: ({ get }) => {
+		return get(networkState)?.useOvm ?? false;
+	},
+});
+
 export const walletAddressState = atom<string | null>({
 	key: getWalletKey('walletAddress'),
 	default: null,

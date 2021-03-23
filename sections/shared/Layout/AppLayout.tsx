@@ -5,7 +5,7 @@ import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import ROUTES from 'constants/routes';
-import { networkState } from 'store/wallet';
+import { isL2State } from 'store/wallet';
 
 import Header from './Header';
 import SideNav from './SideNav';
@@ -17,17 +17,16 @@ type AppLayoutProps = {
 };
 
 const AppLayout: FC<AppLayoutProps> = ({ children }) => {
-	const network = useRecoilValue(networkState);
-	const isL1 = !network?.useOvm ?? null;
+	const isL2 = useRecoilValue(isL2State);
 
 	useEffect(() => {
-		if (isL1 && router.pathname === ROUTES.Withdraw.Home) {
+		if (!isL2 && router.pathname === ROUTES.Withdraw.Home) {
 			router.push(ROUTES.Home);
 		}
-		if (!isL1 && router.pathname === ROUTES.L2.Deposit) {
+		if (isL2 && router.pathname === ROUTES.L2.Deposit) {
 			router.push(ROUTES.Home);
 		}
-	}, [isL1]);
+	}, [isL2]);
 
 	return (
 		<>
@@ -35,7 +34,7 @@ const AppLayout: FC<AppLayoutProps> = ({ children }) => {
 			<Header />
 			<Content>{children}</Content>
 			<NotificationContainer />
-			{!!isL1 && <UserNotifications />}
+			{!isL2 && <UserNotifications />}
 		</>
 	);
 };

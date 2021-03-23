@@ -20,7 +20,7 @@ const useProposals = (spaceKey: SPACE_KEY, options?: QueryConfig<Proposal[]>) =>
 	const walletAddress = useRecoilValue(walletAddressState);
 	const { provider } = Connector.useContainer();
 
-	const isL1 = !network?.useOvm ?? null;
+	const isL1 = !network?.useOvm ?? true;
 
 	const contract = new ethers.Contract(
 		CouncilDilution.address,
@@ -141,7 +141,7 @@ const useProposals = (spaceKey: SPACE_KEY, options?: QueryConfig<Proposal[]>) =>
 			}
 		},
 		{
-			enabled: isAppReady && spaceKey && !!isL1,
+			enabled: isAppReady && spaceKey && isL1,
 			...options,
 		}
 	);

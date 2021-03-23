@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import Tippy from '@tippyjs/react';
 
-import { customGasPriceState, gasSpeedState, networkState } from 'store/wallet';
+import { customGasPriceState, gasSpeedState, isL2State } from 'store/wallet';
 import { ESTIMATE_VALUE } from 'constants/placeholder';
 import { DEFAULT_GAS_PRICE, GasLimitEstimate } from 'constants/network';
 
@@ -36,7 +36,7 @@ const GasSelector: React.FC<GasSelectorProps> = ({
 	const { t } = useTranslation();
 	const [gasSpeed, setGasSpeed] = useRecoilState(gasSpeedState);
 	const [customGasPrice, setCustomGasPrice] = useRecoilState(customGasPriceState);
-	const network = useRecoilValue(networkState);
+	const isL2 = useRecoilValue(isL2State);
 
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
@@ -44,8 +44,7 @@ const GasSelector: React.FC<GasSelectorProps> = ({
 
 	const gasPrices = ethGasStationQuery.data ?? ({} as GasPrices);
 	const exchangeRates = exchangeRatesQuery.data ?? null;
-	const isL2 = network?.useOvm ?? false;
-
+	
 	const hasCustomGasPrice = customGasPrice !== '';
 
 	const gasPrice = useMemo(

@@ -5,7 +5,7 @@ import BigNumber from 'bignumber.js';
 import IncentivesL1 from './IncentivesL1';
 import IncentivesL2 from './IncentivesL2';
 
-import { networkState } from 'store/wallet';
+import { isL2State } from 'store/wallet';
 
 type IncentivesProps = {
 	tradingRewards: BigNumber;
@@ -17,8 +17,7 @@ type IncentivesProps = {
 };
 
 const Incentives: FC<IncentivesProps> = (props) => {
-	const network = useRecoilValue(networkState);
-	const isL2 = network?.useOvm ?? false;
+	const isL2 = useRecoilValue(isL2State);
 	const Incentives = isL2 ? IncentivesL2 : IncentivesL1;
 
 	return <Incentives {...props} />;
