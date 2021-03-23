@@ -86,7 +86,7 @@ const History: React.FC<HistoryProps> = ({ hash }) => {
 		} else {
 			return <StyledSpinner src={Spinner} />;
 		}
-	}, [proposal, walletAddress, t]);
+	}, [proposal, walletAddress, t, getAddress]);
 
 	return history;
 };
