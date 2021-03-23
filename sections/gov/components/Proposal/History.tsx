@@ -45,7 +45,9 @@ const History: React.FC<HistoryProps> = ({ hash }) => {
 											arrow={true}
 											placement="bottom"
 											content={
-												getAddress(vote.address) === getAddress(walletAddress ?? '')
+												getAddress(vote.address) === walletAddress
+													? getAddress(walletAddress)
+													: ''
 													? t('gov.proposal.history.currentUser')
 													: vote.profile.ens
 													? vote.profile.ens
@@ -54,7 +56,9 @@ const History: React.FC<HistoryProps> = ({ hash }) => {
 											hideOnClick={false}
 										>
 											<Title>
-												{getAddress(vote.address) === getAddress(walletAddress ?? '')
+												{getAddress(vote.address) === walletAddress
+													? getAddress(walletAddress)
+													: ''
 													? t('gov.proposal.history.currentUser')
 													: vote.profile.ens
 													? truncateString(vote.profile.ens, 13)
