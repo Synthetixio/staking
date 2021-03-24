@@ -73,7 +73,16 @@ const History: React.FC<HistoryProps> = ({ hash }) => {
 											- {truncateString(data.choices[vote.msg.payload.choice - 1], 13)}
 										</Choice>
 									</StyledTooltip>
-									<Value>{`${formatNumber(vote.balance)} ${data.spaceSymbol}`}</Value>
+									<StyledTooltip
+										arrow={true}
+										placement="bottom"
+										content={`${formatNumber(vote.scores[0])} WD + ${formatNumber(
+											vote.scores[1]
+										)} WD (delegated)`}
+										hideOnClick={false}
+									>
+										<Value>{`${formatNumber(vote.balance)} ${data.spaceSymbol}`}</Value>
+									</StyledTooltip>
 								</Row>
 							);
 						})
