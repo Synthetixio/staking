@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect, FC } from 'react';
 import { ethers } from 'ethers';
-import moment from 'moment';
+import { isAfter, addSeconds, fromUnixTime, differenceInSeconds } from 'date-fns';
 import { useRouter } from 'next/router';
 import Big from 'bignumber.js';
 import styled from 'styled-components';
@@ -120,9 +120,8 @@ const Wrapper: FC<WrapperProps> = ({
 		const loanType = loanTypeIsETH ? 'eth' : 'erc20';
 		if (!(interactionDelays && loanType in interactionDelays)) return;
 		const interactionDelay = interactionDelays[loanType];
-		return moment
-			.unix(parseInt(loan.lastInteraction.toString()))
-			.add(parseInt(interactionDelay.toString()), 'seconds');
+		const lastInteractionTime = fromUnixTime(parseInt(loan.lastInteraction.toString()));
+		return addSeconds(lastInteractionTime, parseInt(interactionDelay.toString()));
 	}, [loanTypeIsETH, loan.lastInteraction, interactionDelays]);
 
 	const handleButtonClick = () =>
@@ -136,12 +135,14 @@ const Wrapper: FC<WrapperProps> = ({
 
 		const timer = () => {
 			const intervalId = setInterval(() => {
-				const now = moment.utc();
-				if (now.isAfter(nextInteractionDate)) {
+				const now = new Date();
+				if (isAfter(now, nextInteractionDate)) {
 					return stopTimer();
 				}
 				if (isMounted) {
-					setWaitETA(toHumanizedDuration(toBigNumber(nextInteractionDate.diff(now, 'seconds'))));
+					setWaitETA(
+						toHumanizedDuration(toBigNumber(differenceInSeconds(nextInteractionDate, now)))
+					);
 				}
 			}, 1000);
 
