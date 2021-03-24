@@ -1,53 +1,51 @@
-import React from 'react';
-import { createPortal } from 'react-dom';
+import { FC, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import OutsideClickHandler from 'react-outside-click-handler';
-import { zIndex } from 'constants/ui';
+import { Tooltip } from 'styles/common';
 import { Loan } from 'queries/loans/types';
 import { LOAN_TYPE_ETH } from 'sections/loans/constants';
 
 const MODAL_WIDTH: number = 105;
-const MODAL_TOP_PADDING: number = 15;
 
 type BorrowModifyModalProps = {
 	actions: Array<string>;
 	loan: Loan;
 };
 
-const BorrowModifyModal: React.FC<BorrowModifyModalProps> = ({ actions, loan }) => {
+const BorrowModifyModal: FC<BorrowModifyModalProps> = ({ actions, loan }) => {
 	const router = useRouter();
 	const { t } = useTranslation();
+	const [showMenu, setShowMenu] = useState<boolean>(false);
 
-	const buttonRef = React.useRef<HTMLDivElement>(null);
-	const [{ top, left }, setPosition] = React.useState<any>({});
-	const [modalContainer, setModalContainer] = React.useState<HTMLElement | null>(null);
-
-	const open = top && left;
-
-	const onOpen = () => {
-		const el: HTMLElement = buttonRef.current!;
-		const elRect = el.getBoundingClientRect();
-		const left = elRect.left - window.scrollX - 20;
-		const top = elRect.top + window.scrollY + MODAL_TOP_PADDING;
-		setPosition({ top, left });
+	const openMenu = () => {
+		setShowMenu(true);
 	};
-	const onClose = () => setPosition({});
-
+	const closeMenu = () => {
+		setShowMenu(false);
+	};
 	const onStartModify = (action: string) => {
+		closeMenu();
 		router.push(`/loans/${loan.type === LOAN_TYPE_ETH ? 'eth' : 'erc20'}/${loan.id}/${action}`);
 	};
 
-	React.useEffect(() => {
-		if (typeof window !== 'undefined') {
-			setModalContainer(document.getElementById('modal-container'));
-		}
-	}, []);
-
 	return (
-		<Menu>
-			<Button onClick={onOpen} ref={buttonRef}>
+		<Container
+			visible={showMenu}
+			arrow={true}
+			placement="bottom"
+			onClickOutside={closeMenu}
+			content={
+				<ul>
+					{actions.map((action) => (
+						<li key={action} onClick={() => onStartModify(action)}>
+							{action}
+						</li>
+					))}
+				</ul>
+			}
+		>
+			<Button onClick={openMenu}>
 				{t('loans.tabs.list.actions-menu-label')}{' '}
 				<svg
 					width="12"
@@ -62,30 +60,9 @@ const BorrowModifyModal: React.FC<BorrowModifyModalProps> = ({ actions, loan }) 
 					/>
 				</svg>
 			</Button>
-
-			{!open || !modalContainer
-				? null
-				: createPortal(
-						<OutsideClickHandler onOutsideClick={onClose}>
-							<Container {...{ top, left }}>
-								<ul>
-									{actions.map((action) => (
-										<li key={action} onClick={() => onStartModify(action)}>
-											{action}
-										</li>
-									))}
-								</ul>
-							</Container>
-						</OutsideClickHandler>,
-						modalContainer
-				  )}
-		</Menu>
+		</Container>
 	);
 };
-
-const Menu = styled.div`
-	position: relative;
-`;
 
 const Button = styled.div`
 	display: flex;
@@ -96,32 +73,28 @@ const Button = styled.div`
 	text-transform: uppercase;
 `;
 
-const Container = styled.div<{
-	top: number;
-	left: number;
-}>`
-	position: absolute;
-	top: ${(props) => props.top}px;
-	left: ${(props) => props.left}px;
-	width: ${MODAL_WIDTH}px;
-	display: flex;
-	flex-direction: column;
-	justify-content: flex-start;
-	z-index: ${zIndex.DROPDOWN};
-	margin-top: 2px;
-	background: ${(props) => props.theme.colors.mediumBlue};
-	border: 1px solid ${(props) => props.theme.colors.navy};
-	border-radius: 4px;
-	font-size: 12px;
-	padding: 10px 0;
+const Container = styled(Tooltip)`
+	pointer-events: initial;
 
-	li {
-		padding: 10px 20px;
-		cursor: pointer;
-		text-transform: uppercase;
+	.tippy-content {
+		width: ${MODAL_WIDTH}px;
+		display: flex;
+		flex-direction: column;
+		justify-content: flex-start;
+		margin-top: 2px;
+		background-color: ${(props) => props.theme.colors.mediumBlue};
+		border-radius: 4px;
+		font-size: 12px;
+		padding: 0;
 
-		&:hover {
-			opacity: 0.7;
+		li {
+			padding: 10px 20px;
+			cursor: pointer;
+			text-transform: uppercase;
+
+			&:hover {
+				background-color: ${(props) => props.theme.colors.mediumBlueHover};
+			}
 		}
 	}
 `;
