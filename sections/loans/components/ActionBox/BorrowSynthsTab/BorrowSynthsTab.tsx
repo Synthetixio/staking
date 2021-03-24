@@ -7,11 +7,11 @@ import Big from 'bignumber.js';
 
 import { isWalletConnectedState, walletAddressState } from 'store/wallet';
 import Connector from 'containers/Connector';
-import Notify from 'containers/Notify';
+import TransactionNotifier from 'containers/TransactionNotifier';
 import synthetix from 'lib/synthetix';
 import GasSelector from 'components/GasSelector';
 import { toBigNumber, formatUnits, toEthersBig } from 'utils/formatters/number';
-import { tx, getGasEstimateForTransaction } from 'utils/transactions';
+import { tx } from 'utils/transactions';
 import {
 	normalizeGasLimit as getNormalizedGasLimit,
 	normalizedGasPrice as getNormalizedGasPrice,
@@ -47,7 +47,7 @@ type BorrowSynthsTabProps = {};
 
 const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 	const { t } = useTranslation();
-	const { monitorHash } = Notify.useContainer();
+	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const { connectWallet } = Connector.useContainer();
 	const router = useRouter();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
@@ -210,7 +210,7 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 			await tx(() => getApproveTxData(gas), {
 				showErrorNotification: (e: string) => setError(e),
 				showProgressNotification: (hash: string) =>
-					monitorHash({
+					monitorTransaction({
 						txHash: hash,
 						onTxConfirmed: () => {},
 					}),
@@ -240,7 +240,7 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 			await tx(() => getBorrowTxData(gas), {
 				showErrorNotification: (e: string) => setError(e),
 				showProgressNotification: (hash: string) =>
-					monitorHash({
+					monitorTransaction({
 						txHash: hash,
 						onTxConfirmed: () => {},
 					}),
@@ -333,7 +333,10 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 				const data: any[] | null = getTxData({});
 				if (!data) return;
 				const [contract, method, args] = data;
-				const gasEstimate = await getGasEstimateForTransaction(args, contract.estimateGas[method]);
+				const gasEstimate = await synthetix.getGasEstimateForTransaction({
+					txArgs: args,
+					method: contract.estimateGas[method],
+				});
 				if (isMounted) setGasLimitEstimate(getNormalizedGasLimit(Number(gasEstimate)));
 			} catch (error) {
 				// console.error(error);

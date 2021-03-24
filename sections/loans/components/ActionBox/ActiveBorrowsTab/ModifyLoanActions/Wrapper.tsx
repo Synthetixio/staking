@@ -29,7 +29,6 @@ import {
 	TxModalItem,
 	TxModalItemSeperator,
 } from 'sections/loans/components/common';
-import { getGasEstimateForTransaction } from 'utils/transactions';
 import {
 	normalizeGasLimit as getNormalizedGasLimit,
 	normalizedGasPrice as getNormalizedGasPrice,
@@ -39,6 +38,7 @@ import { Loan } from 'queries/loans/types';
 import AccruedInterest from 'sections/loans/components/ActionBox/components/AccruedInterest';
 import CRatio from 'sections/loans/components/ActionBox/components/LoanCRatio';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
+import synthetix from 'lib/synthetix';
 
 type WrapperProps = {
 	getTxData: (gas: Record<string, number>) => any[] | null;
@@ -171,7 +171,10 @@ const Wrapper: FC<WrapperProps> = ({
 				const data: any[] | null = getTxData({});
 				if (!data) return;
 				const [contract, method, args] = data;
-				const gasEstimate = await getGasEstimateForTransaction(args, contract.estimateGas[method]);
+				const gasEstimate = await synthetix.getGasEstimateForTransaction({
+					txArgs: args,
+					method: contract.estimateGas[method],
+				});
 				if (isMounted) setGasLimitEstimate(getNormalizedGasLimit(Number(gasEstimate)));
 			} catch (error) {
 				// console.error(error);

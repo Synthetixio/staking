@@ -2,7 +2,7 @@ import { useState, useCallback, useMemo } from 'react';
 import { ethers } from 'ethers';
 
 import { Loan } from 'queries/loans/types';
-import Notify from 'containers/Notify';
+import TransactionNotifier from 'containers/TransactionNotifier';
 import { tx } from 'utils/transactions';
 import { useLoans } from 'sections/loans/contexts/loans';
 import Wrapper from './Wrapper';
@@ -15,7 +15,7 @@ type WithdrawProps = {
 };
 
 const Withdraw: React.FC<WithdrawProps> = ({ loan, loanId, loanTypeIsETH, loanContract }) => {
-	const { monitorHash } = Notify.useContainer();
+	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const { reloadPendingWithdrawals } = useLoans();
 
 	const [isWorking, setIsWorking] = useState<string>('');
@@ -68,7 +68,7 @@ const Withdraw: React.FC<WithdrawProps> = ({ loan, loanId, loanTypeIsETH, loanCo
 			await tx(() => getTxData(gas), {
 				showErrorNotification: (e: string) => setError(e),
 				showProgressNotification: (hash: string) =>
-					monitorHash({
+					monitorTransaction({
 						txHash: hash,
 						onTxConfirmed: () => {},
 					}),

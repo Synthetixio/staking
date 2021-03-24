@@ -4,7 +4,7 @@ import { useRecoilValue } from 'recoil';
 
 import { walletAddressState } from 'store/wallet';
 import { Loan } from 'queries/loans/types';
-import Notify from 'containers/Notify';
+import TransactionNotifier from 'containers/TransactionNotifier';
 import { SYNTH_BY_CURRENCY_KEY } from 'sections/loans/constants';
 import { tx } from 'utils/transactions';
 import Wrapper from './Wrapper';
@@ -18,7 +18,7 @@ type RepayProps = {
 
 const Repay: React.FC<RepayProps> = ({ loan, loanId, loanTypeIsETH, loanContract }) => {
 	const address = useRecoilValue(walletAddressState);
-	const { monitorHash } = Notify.useContainer();
+	const { monitorTransaction } = TransactionNotifier.useContainer();
 
 	const [isWorking, setIsWorking] = useState<string>('');
 	const [repayAmountString, setRepayAmount] = useState<string>('0');
@@ -61,7 +61,7 @@ const Repay: React.FC<RepayProps> = ({ loan, loanId, loanTypeIsETH, loanContract
 			await tx(() => getTxData(gas), {
 				showErrorNotification: (e: string) => setError(e),
 				showProgressNotification: (hash: string) =>
-					monitorHash({
+					monitorTransaction({
 						txHash: hash,
 						onTxConfirmed: () => {},
 					}),

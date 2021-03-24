@@ -2,7 +2,7 @@ import { useState, useCallback, useMemo } from 'react';
 import { ethers } from 'ethers';
 
 import { Loan } from 'queries/loans/types';
-import Notify from 'containers/Notify';
+import TransactionNotifier from 'containers/TransactionNotifier';
 import { tx } from 'utils/transactions';
 import { SYNTH_BY_CURRENCY_KEY } from 'sections/loans/constants';
 import Wrapper from './Wrapper';
@@ -15,7 +15,7 @@ type RepayProps = {
 };
 
 const Repay: React.FC<RepayProps> = ({ loan, loanId, loanTypeIsETH, loanContract }) => {
-	const { monitorHash } = Notify.useContainer();
+	const { monitorTransaction } = TransactionNotifier.useContainer();
 
 	const [isWorking, setIsWorking] = useState<string>('');
 	const [error, setError] = useState<string | null>(null);
@@ -58,7 +58,7 @@ const Repay: React.FC<RepayProps> = ({ loan, loanId, loanTypeIsETH, loanContract
 			await tx(() => getTxData(gas), {
 				showErrorNotification: (e: string) => setError(e),
 				showProgressNotification: (hash: string) =>
-					monitorHash({
+					monitorTransaction({
 						txHash: hash,
 						onTxConfirmed: () => {},
 					}),

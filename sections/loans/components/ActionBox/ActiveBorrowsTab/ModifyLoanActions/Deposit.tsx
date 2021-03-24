@@ -4,7 +4,7 @@ import { useRecoilValue } from 'recoil';
 
 import { walletAddressState } from 'store/wallet';
 import { Loan } from 'queries/loans/types';
-import Notify from 'containers/Notify';
+import TransactionNotifier from 'containers/TransactionNotifier';
 import { tx } from 'utils/transactions';
 import Wrapper from './Wrapper';
 
@@ -24,7 +24,7 @@ const Deposit: React.FC<DepositProps> = ({
 	collateralAssetContract,
 }) => {
 	const address = useRecoilValue(walletAddressState);
-	const { monitorHash } = Notify.useContainer();
+	const { monitorTransaction } = TransactionNotifier.useContainer();
 
 	const [isWorking, setIsWorking] = useState<string>('');
 	const [isApproved, setIsApproved] = useState(false);
@@ -100,7 +100,7 @@ const Deposit: React.FC<DepositProps> = ({
 			setTxModalOpen(true);
 			await tx(() => getApproveTxData(gas), {
 				showProgressNotification: (hash: string) =>
-					monitorHash({
+					monitorTransaction({
 						txHash: hash,
 						onTxConfirmed: () => {},
 					}),
@@ -123,7 +123,7 @@ const Deposit: React.FC<DepositProps> = ({
 			await tx(() => getDepositTxData(gas), {
 				showErrorNotification: (e: string) => setError(e),
 				showProgressNotification: (hash: string) =>
-					monitorHash({
+					monitorTransaction({
 						txHash: hash,
 						onTxConfirmed: () => {},
 					}),
