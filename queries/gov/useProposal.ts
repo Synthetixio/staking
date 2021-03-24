@@ -35,6 +35,8 @@ const useProposal = (spaceKey: SPACE_KEY, hash: string, options?: QueryConfig<Pr
 	return useQuery<ProposalResults>(
 		QUERY_KEYS.Gov.Proposal(spaceKey, hash),
 		async () => {
+			const { getAddress } = ethers.utils;
+
 			let [proposal, { voterAddresses, voterSignatures }, space]: [
 				IpfsProposal,
 				Votes,
@@ -47,9 +49,7 @@ const useProposal = (spaceKey: SPACE_KEY, hash: string, options?: QueryConfig<Pr
 				}),
 				axios.get(PROPOSAL(spaceKey, hash)).then((response) => {
 					return {
-						voterAddresses: Object.keys(response.data).map((address) =>
-							address.toLowerCase()
-						) as any,
+						voterAddresses: Object.keys(response.data).map((address) => getAddress(address)) as any,
 						voterSignatures: Object.values(response.data) as any,
 					};
 				}),
@@ -84,7 +84,6 @@ const useProposal = (spaceKey: SPACE_KEY, hash: string, options?: QueryConfig<Pr
 
 			let mappedVotes = voterSignatures as MappedVotes[];
 
-			const { getAddress } = ethers.utils;
 			mappedVotes = uniqBy(
 				mappedVotes
 					.map((vote) => {
@@ -95,9 +94,9 @@ const useProposal = (spaceKey: SPACE_KEY, hash: string, options?: QueryConfig<Pr
 						vote.profile = profiles[getAddress(vote.address)];
 						return vote;
 					})
-					// .filter((vote) => vote.balance > 0)
+					.filter((vote) => vote.balance > 0)
 					.sort((a, b) => b.balance - a.balance),
-				(a) => a.address.toLowerCase()
+				(a) => getAddress(a.address)
 			);
 
 			/* Apply dilution penalties for SIP/SCCP pages */
@@ -109,7 +108,10 @@ const useProposal = (spaceKey: SPACE_KEY, hash: string, options?: QueryConfig<Pr
 				);
 				mappedVotes = await Promise.all(
 					mappedVotes.map(async (vote: any) => {
-						const dilutedValueBN = await contract.getDilutedWeightForProposal(hash, vote.address);
+						const dilutedValueBN = await contract.getDilutedWeightForProposal(
+							hash,
+							getAddress(vote.address)
+						);
 						const diluteValueNumber = Number(ethers.utils.formatEther(dilutedValueBN));
 
 						const dilutedResult = vote.balance * diluteValueNumber;
@@ -123,9 +125,9 @@ const useProposal = (spaceKey: SPACE_KEY, hash: string, options?: QueryConfig<Pr
 			}
 
 			const returnVoteHistory = () => {
-				if (walletAddress && voterAddresses.includes(walletAddress.toLowerCase())) {
+				if (walletAddress && voterAddresses.includes(getAddress(walletAddress))) {
 					const index = mappedVotes.findIndex(
-						(a) => a.address.toLowerCase() === walletAddress.toLowerCase()
+						(a) => getAddress(a.address) === getAddress(walletAddress)
 					);
 					const currentUserVote = mappedVotes[index];
 					mappedVotes.splice(index, 1);

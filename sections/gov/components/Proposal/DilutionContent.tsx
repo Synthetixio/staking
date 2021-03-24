@@ -113,7 +113,7 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ onBack }) => {
 	useEffect(() => {
 		if (isAppReady && walletAddress && councilMembers) {
 			const councilMemberAddresses = councilMembers.map((member) => member.address);
-			setIsCouncilMember(councilMemberAddresses.includes(walletAddress.toLowerCase()));
+			setIsCouncilMember(councilMemberAddresses.includes(ethers.utils.getAddress(walletAddress)));
 		}
 	}, [isAppReady, walletAddress, councilMembers]);
 
