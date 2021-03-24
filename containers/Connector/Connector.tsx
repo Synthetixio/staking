@@ -78,37 +78,51 @@ const useConnector = () => {
 						synthetix.chainIdToNetwork != null && synthetix.chainIdToNetwork[networkId as NetworkId]
 							? true
 							: false;
-
-					if (isSupportedNetwork) {
-						const provider = loadProvider({
+					if (!isSupportedNetwork) return;
+					let provider;
+					if (onboard.getState().address) {
+						provider = loadProvider({
 							provider: onboard.getState().wallet.provider,
+							networkId,
+							infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
 						});
 
 						const signer = provider.getSigner();
-
 						synthetix.setContractSettings({
 							networkId,
 							provider,
 							signer,
 						});
-						onboard.config({ networkId });
 
 						if (transactionNotifier) {
 							transactionNotifier.setProvider(provider);
 						} else {
 							setTransactionNotifier(new TransactionNotifier(provider));
 						}
-						setProvider(provider);
-						setSigner(signer);
 
-						setNetwork(
-							synthetix.js
-								? {
-										...synthetix.js.network,
-								  }
-								: null
-						);
+						setSigner(signer);
+					} else {
+						provider = loadProvider({
+							provider: window.ethereum,
+							networkId,
+							infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
+						});
+
+						synthetix.setContractSettings({
+							networkId,
+							provider,
+						});
 					}
+
+					onboard.config({ networkId });
+					setProvider(provider);
+					setNetwork(
+						synthetix.js
+							? {
+									...synthetix.js.network,
+							  }
+							: null
+					);
 				},
 				wallet: async (wallet: OnboardWallet) => {
 					if (wallet.provider) {
@@ -169,10 +183,6 @@ const useConnector = () => {
 		getAddressCode();
 	}, [walletAddress, provider, setIsEOAWallet]);
 
-	const resetCachedUI = () => {
-		// TODO: implement
-	};
-
 	const connectWallet = async () => {
 		try {
 			if (onboard) {
@@ -181,7 +191,6 @@ const useConnector = () => {
 				if (success) {
 					await onboard.walletCheck();
 					setWalletWatched(null);
-					resetCachedUI();
 				}
 			}
 		} catch (e) {
@@ -193,7 +202,6 @@ const useConnector = () => {
 		try {
 			if (onboard) {
 				onboard.walletReset();
-				resetCachedUI();
 			}
 		} catch (e) {
 			console.log(e);
