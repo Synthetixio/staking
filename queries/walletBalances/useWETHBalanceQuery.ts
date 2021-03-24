@@ -16,6 +16,7 @@ const useWETHBalanceQuery = (options?: QueryConfig<BigNumber>) => {
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const network = useRecoilValue(networkState);
+	const isL1 = !network?.useOvm ?? true;
 
 	const contract = new ethers.Contract(
 		wETHToken.address,
@@ -30,7 +31,7 @@ const useWETHBalanceQuery = (options?: QueryConfig<BigNumber>) => {
 			return toBigNumber(ethers.utils.formatEther(balance));
 		},
 		{
-			enabled: provider && isWalletConnected,
+			enabled: provider && isWalletConnected && isL1,
 			...options,
 		}
 	);

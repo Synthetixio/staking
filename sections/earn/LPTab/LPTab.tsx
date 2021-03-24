@@ -9,19 +9,19 @@ import { appReadyState } from 'store/app';
 import StructuredTab from 'components/StructuredTab';
 import { FlexDivCentered, FlexDivColCentered, ExternalLink, FlexDiv } from 'styles/common';
 import { CurrencyKey } from 'constants/currency';
-import Etherscan from 'containers/Etherscan';
+import Etherscan from 'containers/BlockExplorer';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import PendingConfirmation from 'assets/svg/app/pending-confirmation.svg';
 import Success from 'assets/svg/app/success.svg';
 import { Transaction } from 'constants/network';
 import { normalizedGasPrice } from 'utils/network';
 import { CryptoCurrency, Synths } from 'constants/currency';
-import { getGasEstimateForTransaction } from 'utils/transactions';
 import { formatNumber } from 'utils/formatters/number';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
+import synthetix from 'lib/synthetix';
 
 import Connector from 'containers/Connector';
-import Notify from 'containers/Notify';
+import TransactionNotifier from 'containers/TransactionNotifier';
 import TxState from 'sections/earn/TxState';
 import { EXTERNAL_LINKS } from 'constants/links';
 
@@ -79,7 +79,7 @@ const LPTab: FC<LPTabProps> = ({
 }) => {
 	const { t } = useTranslation();
 	const { signer } = Connector.useContainer();
-	const { monitorHash } = Notify.useContainer();
+	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const [showApproveOverlayModal, setShowApproveOverlayModal] = useState<boolean>(false);
 	const [showSettleOverlayModal, setShowSettleOverlayModal] = useState<boolean>(false);
 
@@ -93,10 +93,10 @@ const LPTab: FC<LPTabProps> = ({
 	const [claimError, setClaimError] = useState<string | null>(null);
 	const [claimTxModalOpen, setClaimTxModalOpen] = useState<boolean>(false);
 
-	const { etherscanInstance } = Etherscan.useContainer();
+	const { blockExplorerInstance } = Etherscan.useContainer();
 	const claimLink =
-		etherscanInstance != null && claimTxHash != null
-			? etherscanInstance.txLink(claimTxHash)
+		blockExplorerInstance != null && claimTxHash != null
+			? blockExplorerInstance.txLink(claimTxHash)
 			: undefined;
 
 	const exchangeRatesQuery = useExchangeRatesQuery();
@@ -148,7 +148,10 @@ const LPTab: FC<LPTabProps> = ({
 					setClaimTxModalOpen(true);
 					const contract = getContract(stakedAsset, signer);
 
-					const gasLimit = await getGasEstimateForTransaction([], contract.estimateGas.getReward);
+					const gasLimit = await synthetix.getGasEstimateForTransaction({
+						txArgs: [],
+						method: contract.estimateGas.getReward,
+					});
 					const transaction: ethers.ContractTransaction = await contract.getReward({
 						gasPrice: normalizedGasPrice(claimGasPrice),
 						gasLimit,
@@ -157,7 +160,7 @@ const LPTab: FC<LPTabProps> = ({
 					if (transaction) {
 						setClaimTxHash(transaction.hash);
 						setClaimTransactionState(Transaction.WAITING);
-						monitorHash({
+						monitorTransaction({
 							txHash: transaction.hash,
 							onTxConfirmed: () => setClaimTransactionState(Transaction.SUCCESS),
 						});
@@ -170,7 +173,7 @@ const LPTab: FC<LPTabProps> = ({
 			}
 		}
 		claim();
-	}, [stakedAsset, signer, claimGasPrice, monitorHash, isAppReady]);
+	}, [stakedAsset, signer, claimGasPrice, monitorTransaction, isAppReady]);
 
 	const translationKey = useMemo(() => {
 		if (stakedAsset === Synths.iETH) {

@@ -2,17 +2,19 @@ import React from 'react';
 import styled, { useTheme } from 'styled-components';
 import { useRecoilValue } from 'recoil';
 import { networkState, isWalletConnectedState } from 'store/wallet';
-import { NetworkId } from '@synthetixio/js';
+import { NetworkId } from '@synthetixio/contracts-interface';
 
 type ConnectionDotProps = {};
 
 const ConnectionDot: React.FC<ConnectionDotProps> = ({ ...rest }) => {
 	const network = useRecoilValue(networkState);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
+	const isL2 = network?.useOvm ?? false;
 
 	const theme = useTheme();
 
 	if (network && isWalletConnected) {
+		if (isL2) return <Dot {...rest} background={theme.colors.layer2} />;
 		switch (network.id) {
 			case NetworkId.Mainnet:
 				return <Dot {...rest} background={theme.colors.mainnet} />;

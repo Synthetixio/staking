@@ -9,7 +9,7 @@ import { Transaction } from 'constants/network';
 
 import { InfoContainer, InfoData, InfoTitle, SectionHeader, Container } from './common';
 import { formatCurrency } from 'utils/formatters/number';
-import Etherscan from 'containers/Etherscan';
+import Etherscan from 'containers/BlockExplorer';
 
 type ActionCompletedProps = {
 	setTransactionState: (tx: Transaction) => void;
@@ -27,8 +27,8 @@ const ActionCompleted: FC<ActionCompletedProps> = ({
 	action,
 }) => {
 	const { t } = useTranslation();
-	const { etherscanInstance } = Etherscan.useContainer();
-	const link = etherscanInstance != null ? etherscanInstance.txLink(hash) : undefined;
+	const { blockExplorerInstance } = Etherscan.useContainer();
+	const link = blockExplorerInstance != null ? blockExplorerInstance.txLink(hash) : undefined;
 	return (
 		<Container>
 			<SectionHeader>{t(`layer2.actions.${action}.action.completed.title`)}</SectionHeader>

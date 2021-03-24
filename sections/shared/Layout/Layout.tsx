@@ -7,6 +7,7 @@ import { zIndex } from 'constants/ui';
 import media from 'styles/media';
 
 import { languageState } from 'store/app';
+import { isL2State } from 'store/wallet';
 import { SPACE_KEY } from 'constants/snapshot';
 import { Proposal } from 'queries/gov/types';
 import useProposals from 'queries/gov/useProposals';
@@ -18,9 +19,9 @@ type LayoutProps = {
 
 const Layout: FC<LayoutProps> = ({ children }) => {
 	const language = useRecoilValue(languageState);
+	const isL2 = useRecoilValue(isL2State);
 
 	const councilProposals = useProposals(SPACE_KEY.COUNCIL);
-
 	const setNotificationState = useSetRecoilState(userNotificationState);
 
 	useEffect(() => {
@@ -28,7 +29,7 @@ const Layout: FC<LayoutProps> = ({ children }) => {
 	}, [language]);
 
 	useEffect(() => {
-		if (councilProposals.data) {
+		if (councilProposals.data && !isL2) {
 			let latestProposal = {
 				msg: {
 					payload: {
@@ -57,7 +58,7 @@ const Layout: FC<LayoutProps> = ({ children }) => {
 				});
 			}
 		}
-	}, [councilProposals, setNotificationState]);
+	}, [councilProposals, setNotificationState, isL2]);
 
 	return (
 		<>
@@ -72,7 +73,7 @@ const GlobalStyle = createGlobalStyle`
 		background-color: ${(props) => props.theme.colors.black};
 		color: ${(props) => props.theme.colors.white}
   }
-  
+
   .bn-notify-custom {
 		&& {
 			font-family: ${(props) => props.theme.fonts.regular};
@@ -83,7 +84,7 @@ const GlobalStyle = createGlobalStyle`
 		&&& {
 			font-family: ${(props) => props.theme.fonts.regular};
 			color: ${(props) => props.theme.colors.white};
-			
+
 		}
 		&&.bn-onboard-modal {
 			z-index: ${zIndex.DIALOG_OVERLAY};
@@ -122,7 +123,7 @@ const GlobalStyle = createGlobalStyle`
 		}
 		.bn-onboard-clickable {
 			color: ${(props) => props.theme.colors.white} !important;
-		}		
+		}
 	}
 `;
 

@@ -1,4 +1,5 @@
-import { NetworkId } from '@synthetixio/js';
+import { NetworkId } from '@synthetixio/contracts-interface';
+import { NumericValue } from 'utils/formatters/number';
 import { SPACE_KEY } from 'constants/snapshot';
 import { CurrencyKey } from './currency';
 import { Period } from './period';
@@ -158,15 +159,9 @@ export const QUERY_KEYS = {
 		],
 	},
 	Escrow: {
-		DataV1: (walletAddress: string, networkId: NetworkId) => [
+		StakingRewards: (walletAddress: string, networkId: NetworkId) => [
 			'escrow',
-			'dataV1',
-			walletAddress,
-			networkId,
-		],
-		DataV2: (walletAddress: string, networkId: NetworkId) => [
-			'escrow',
-			'dataV2',
+			'stakingRewards',
 			walletAddress,
 			networkId,
 		],
@@ -215,12 +210,41 @@ export const QUERY_KEYS = {
 			networkId,
 		],
 	},
+	ShortRewards: {
+		iBTC: (walletAddress: string, networkId: NetworkId) => [
+			'shortRewards',
+			'iBTC',
+			walletAddress,
+			networkId,
+		],
+	},
 	Deposits: (walletAddress: string, networkId: NetworkId) => [
 		'deposits',
 		'depositsData',
 		walletAddress,
 		networkId,
 	],
+	Withdrawals: (walletAddress: string, networkId: NetworkId) => [
+		'withdrawals',
+		'withdrawalsData',
+		walletAddress,
+		networkId,
+	],
+	Swap: {
+		quote1Inch: (walletAddress: string, networkId: NetworkId, amount: NumericValue) => [
+			'quote',
+			'1inch',
+			walletAddress,
+			networkId,
+			amount,
+		],
+		swap1Inch: (
+			walletAddress: string,
+			networkId: NetworkId,
+			amount: NumericValue,
+			fromAddress: string
+		) => ['swap', '1inch', walletAddress, networkId, amount, fromAddress],
+	},
 	Gov: {
 		DebtOwnership: (walletAddress: string, networkId: NetworkId, block?: number | null) => [
 			'gov',

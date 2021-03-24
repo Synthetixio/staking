@@ -46,7 +46,8 @@
 			},
 			"burning": {
 				"from": "Unstaking",
-				"to": "Burning"
+				"to": "Burning",
+				"spending": "Spending"
 			},
 			"vesting": {
 				"title": "Vesting"
@@ -169,6 +170,10 @@
 				"title": "EARN {{percent}}",
 				"copy": "Supply {{asset}} liquidity on {{supplier}}"
 			},
+			"loans": {
+				"title": "EARN {{percent}}",
+				"copy": "Open a short on {{asset}} to earn rewards"
+			},
 			"learn": {
 				"title": "LEARN",
 				"copy": "Check out the Synthetix blog to get informed about all things SNX"
@@ -262,7 +267,15 @@
 					}
 				},
 				"info": {
-					"unstaking": "Unstaking"
+					"unstaking": "Unstaking",
+					"clear-debt": {
+						"tx1": "Tx 1: Buy additional sUSD",
+						"tx2": "Tx 2: Burn sUSD to clear debt",
+						"spending": "Spending {{value}}",
+						"buffer": "Including 0.05% buffer",
+						"tagline": "POWERED BY",
+						"tooltip": "This total includes a 0.05% buffer to protect aginst the debt shifting during the transaction."
+					}
 				},
 				"action": {
 					"empty": "Enter an amount",
@@ -274,8 +287,8 @@
 					"error": {
 						"no-debt": "No debt to burn",
 						"bad-input": "Invalid input amount",
-						"waiting-period": "sUSD waiting period still ongoing",
-						"issuance-period": "Issuance waiting period is still ongoing",
+						"waiting-period": "Burning blocked until {{date}}",
+						"issuance-period": "Burning blocked until {{date}}",
 						"insufficient": "Insufficient sUSD to burn debt",
 						"exception": "Contract error"
 					}
@@ -304,6 +317,10 @@
 			"burn": {
 				"title": "Burn sUSD to unstake SNX",
 				"subtitle": "Burn your sUSD debt to unlock your staked SNX. This will increase your Collateralization Ratio and reduce your debt. <0>Learn more.</0>"
+			},
+			"clear": {
+				"title": "Clear debt by buying more sUSD via 1inch",
+				"subtitle": "Burn your sUSD to unlock your staked SNX and clear your debt. As you don’t have enough sUSD, buy more with ETH in the left form. <0>Learn more.</0>"
 			},
 			"table": {
 				"total-snx": "Total",
@@ -350,6 +367,10 @@
 	},
 	"earn": {
 		"page-title": "Earn | Synthetix Staking",
+		"tab": {
+			"active": "Active",
+			"inactive": "Inactive"
+		},
 		"incentives": {
 			"est-apr": "Est. APR",
 			"options": {
@@ -396,10 +417,10 @@
 					"description": "Staking iETH tokens allows you to earn SNX rewards. <0>Learn more.<0>",
 					"subtitle": "iETH Rewards"
 				},
-				"ibtc": {
+				"sbtc": {
 					"title": "Synthetix",
-					"description": "Staking iBTC tokens allows you to earn SNX rewards. <0>Learn more.<0>",
-					"subtitle": "iBTC Rewards"
+					"description": "Opening a short allows you to earn SNX rewards. <0>Learn more.<0>",
+					"subtitle": "sBTC Short Rewards"
 				},
 				"stsla": {
 					"title": "Balancer",
@@ -410,6 +431,11 @@
 					"title": "Uniswap",
 					"description": "Stake sUSD-DHT Uniswap Pool Tokens to earn SNX and DHT rewards. <0>Add liquidity on Uniswap here<0>.",
 					"subtitle": "DHT Uniswap LP Rewards"
+				},
+				"ibtc": {
+					"title": "Synthetix",
+					"description": "Staking iBTC tokens allows you to earn SNX rewards. <0>Learn more.<0>",
+					"subtitle": "iBTC Rewards"
 				}
 			},
 			"weekly-rewards": "Weekly rewards {{weeklyRewards}} {{asset}}"
@@ -649,6 +675,9 @@
 	},
 	"layer2": {
 		"page-title": "Layer 2 | Synthetix Staking",
+		"error": {
+			"non-eoa-wallet": "Smart contract wallets are not compatible with Layer 2"
+		},
 		"deposit": {
 			"info": {
 				"title": "Deposit SNX",
@@ -660,6 +689,21 @@
 				"layer2-rewards": "SNX rewards for the first few weeks are low: Rewards will be 25k SNX a week for the 2 weeks between 2/1 and 2/15. Then, the synthetixDAO will assess the option of increasing the SNX rewards to incentivise further migration.",
 				"table": {
 					"deposit": "Deposit",
+					"date": "Date",
+					"status": "Status",
+					"view": "View",
+					"pending": "Pending",
+					"confirmed": "Confirmed"
+				}
+			}
+		},
+		"withdraw": {
+			"info": {
+				"title": "Withdraw SNX from Layer 1 to Layer 2",
+				"subtitle": "Warning: withdrawing your SNX will take 7-10 days to be received on L1, during which time you will not have access to your funds. Once you initiate a withdrawal you will not be able to cancel it.",
+				"no-withdrawals": "No withdrawal history",
+				"table": {
+					"withdrawal": "Withdrawal",
 					"date": "Date",
 					"status": "Status",
 					"view": "View",
@@ -688,6 +732,13 @@
 			"go-to-mintr": {
 				"title": "Go to Mintr L2",
 				"subtitle": "L2 is currently supported on Mintr"
+			},
+			"withdraw": {
+				"title": "Withdraw SNX",
+				"action": {
+					"withdraw-button": "Withdraw {{withdrawAmount}}",
+					"disabled": "No SNX to withdraw"
+				}
 			},
 			"deposit": {
 				"title": "Deposit SNX",
@@ -936,12 +987,22 @@
 		"mint-and-burn": "Mint & burn",
 		"l2": "Layer 2",
 		"gov": "Governance",
+		"withdraw": "Withdraw",
 		"bars": {
 			"c-ratio": "c-ratio",
 			"t-ratio": "target",
 			"period": {
 				"title": "epoch"
 			}
+		}
+	},
+	"user-menu": {
+		"layer-2": {
+			"switch-to-l2": "Switch to L2",
+			"connected-to-l2": "Layer 2"
+		},
+		"error": {
+			"please-install-metamask": "Please install Metamask"
 		}
 	},
 	"common": {
@@ -953,6 +1014,7 @@
 			"connect-wallet": "connect wallet",
 			"no-wallet-connected": "No wallet connected",
 			"balance": "Balance: {{balance}}",
+			"transferable": "<0>Transferable</0> {{transferable}}",
 			"not-connected": "Not connected",
 			"or": "or"
 		},
@@ -990,7 +1052,13 @@
 		"error": {
 			"default": "Something went wrong"
 		},
+		"layer-2": {
+			"not-available": "Not available on Layer 2"
+		},
 		"transaction": {
+			"transaction-sent": "Your transaction has been sent to the network",
+			"transaction-failed": "Your transaction has failed",
+			"transaction-confirmed": "Your transaction has succeeded!",
 			"error": "An unexpected error occurred.",
 			"reattempt": "Try again"
 		},

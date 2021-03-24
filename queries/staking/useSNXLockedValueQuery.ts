@@ -7,6 +7,7 @@ import QUERY_KEYS from 'constants/queryKeys';
 
 import { networkState } from 'store/wallet';
 import synthetix from 'lib/synthetix';
+import { getHolders } from './helpers';
 
 const useSNXLockedValueQuery = (options?: QueryConfig<number>) => {
 	const network = useRecoilValue(networkState);
@@ -29,7 +30,7 @@ const useSNXLockedValueQuery = (options?: QueryConfig<number>) => {
 					synthetix.js?.toBytes32('sUSD')
 				),
 				synthetix.js?.contracts.SystemSettings.issuanceRatio(),
-				snxData.snx.holders({ max: 1000 }),
+				getHolders(),
 			]);
 
 			const lastDebtLedgerEntry = Number(
@@ -45,7 +46,13 @@ const useSNXLockedValueQuery = (options?: QueryConfig<number>) => {
 			let snxTotal = 0;
 			let snxLocked = 0;
 
-			for (const { collateral, debtEntryAtIndex, initialDebtOwnership } of holders) {
+			for (const {
+				collateral: unformattedCollateral,
+				debtEntryAtIndex,
+				initialDebtOwnership,
+			} of holders) {
+				const collateral = Number(synthetix.js?.utils.formatEther(unformattedCollateral));
+
 				let debtBalance =
 					((totalIssuedSynths * lastDebtLedgerEntry) / debtEntryAtIndex) * initialDebtOwnership;
 				let collateralRatio = debtBalance / collateral / usdToSnxPrice;

@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import useGetDebtDataQuery from 'queries/debt/useGetDebtDataQuery';
 import useTokenSaleEscrowDateQuery from 'queries/escrow/useTokenSaleEscrowQuery';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
-import useEscrowDataQuery from 'hooks/useEscrowDataQueryWrapper';
+import useEscrowDataQuery from 'queries/escrow/useEscrowDataQuery';
 import { toBigNumber, maxBN, zeroBN } from 'utils/formatters/number';
 
 const useStakingCalculations = () => {

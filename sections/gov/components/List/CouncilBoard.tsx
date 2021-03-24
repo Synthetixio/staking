@@ -8,7 +8,7 @@ import { ExternalLink, FlexDivRowCentered } from 'styles/common';
 
 import Spinner from 'assets/svg/app/loader.svg';
 
-import Etherscan from 'containers/Etherscan';
+import Etherscan from 'containers/BlockExplorer';
 import { truncateAddress } from 'utils/formatters/string';
 
 import SpartanCouncilNFT from 'assets/gifs/SC-NFT.gif';
@@ -19,7 +19,7 @@ import { Card } from 'sections/gov/components/common';
 
 const CouncilBoard: React.FC = () => {
 	const { t } = useTranslation();
-	const { etherscanInstance } = Etherscan.useContainer();
+	const { blockExplorerInstance } = Etherscan.useContainer();
 	const theme = useTheme();
 	const councilMembers = useCouncilMembers();
 
@@ -53,7 +53,9 @@ const CouncilBoard: React.FC = () => {
 								</FlexDivRowCentered>
 								<ExternalLink
 									href={
-										etherscanInstance ? etherscanInstance.addressLink(member.address) : undefined
+										blockExplorerInstance
+											? blockExplorerInstance.addressLink(member.address)
+											: undefined
 									}
 								>
 									<Svg color={theme.colors.blue} src={Link} />

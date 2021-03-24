@@ -1,13 +1,15 @@
 import { SIDE_NAV_WIDTH } from 'constants/ui';
-import { FC, useEffect, ReactNode } from 'react';
+import { FC, ReactNode, useEffect } from 'react';
 import router from 'next/router';
+import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import ROUTES from 'constants/routes';
-import useEscrowDataQuery from 'hooks/useEscrowDataQueryWrapper';
+import { isL2State } from 'store/wallet';
 
 import Header from './Header';
 import SideNav from './SideNav';
+import NotificationContainer from 'constants/NotificationContainer';
 import UserNotifications from './UserNotifications';
 
 type AppLayoutProps = {
@@ -15,25 +17,24 @@ type AppLayoutProps = {
 };
 
 const AppLayout: FC<AppLayoutProps> = ({ children }) => {
-	const rewardEscrowQuery = useEscrowDataQuery();
-	const totalBalancePendingMigration = rewardEscrowQuery?.data?.totalBalancePendingMigration ?? 0;
+	const isL2 = useRecoilValue(isL2State);
 
 	useEffect(() => {
-		if (
-			totalBalancePendingMigration > 0 &&
-			router.pathname !== ROUTES.Home &&
-			router.pathname !== ROUTES.Escrow.Home
-		) {
-			router.push(ROUTES.Escrow.Home);
+		if (!isL2 && router.pathname === ROUTES.Withdraw.Home) {
+			router.push(ROUTES.Home);
 		}
-	}, [totalBalancePendingMigration]);
+		if (isL2 && router.pathname === ROUTES.L2.Deposit) {
+			router.push(ROUTES.Home);
+		}
+	}, [isL2]);
 
 	return (
 		<>
 			<SideNav />
 			<Header />
 			<Content>{children}</Content>
-			<UserNotifications />
+			<NotificationContainer />
+			{!isL2 && <UserNotifications />}
 		</>
 	);
 };

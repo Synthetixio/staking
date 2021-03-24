@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 import { Svg } from 'react-optimized-image';
 import { useTranslation } from 'react-i18next';
 
-import Etherscan from 'containers/Etherscan';
+import Etherscan from 'containers/BlockExplorer';
 import { FlexDivCentered } from 'styles/common';
 import PendingConfirmation from 'assets/svg/app/pending-confirmation.svg';
 import {
@@ -26,8 +26,8 @@ type ActionInProgressProps = {
 
 const ActionInProgress: FC<ActionInProgressProps> = ({ isMint, from, to, hash }) => {
 	const { t } = useTranslation();
-	const { etherscanInstance } = Etherscan.useContainer();
-	const link = etherscanInstance != null ? etherscanInstance.txLink(hash) : undefined;
+	const { blockExplorerInstance } = Etherscan.useContainer();
+	const link = blockExplorerInstance != null ? blockExplorerInstance.txLink(hash) : undefined;
 	return (
 		<Container>
 			<SectionHeader>
