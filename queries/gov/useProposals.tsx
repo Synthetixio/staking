@@ -60,7 +60,7 @@ const useProposals = (spaceKey: SPACE_KEY, options?: QueryConfig<Proposal[]>) =>
 							axios.get(PROPOSAL(spaceKey, proposal.authorIpfsHash)).then((response) => {
 								return {
 									voterAddresses: Object.keys(response.data).map((address) =>
-										address.toLowerCase()
+										ethers.utils.getAddress(address)
 									) as string[],
 								};
 							})
@@ -104,7 +104,7 @@ const useProposals = (spaceKey: SPACE_KEY, options?: QueryConfig<Proposal[]>) =>
 						axios.get(PROPOSAL(spaceKey, proposal.authorIpfsHash)).then((response) => {
 							return {
 								voterAddresses: Object.keys(response.data).map((address) =>
-									address.toLowerCase()
+									ethers.utils.getAddress(address)
 								) as string[],
 							};
 						})
