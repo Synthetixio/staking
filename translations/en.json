@@ -605,7 +605,8 @@
 					"collateral": "COLLATERAL",
 					"cratio": "C-RATIO",
 					"modify": "MODIFY"
-				}
+				},
+				"actions-menu-label": "actions"
 			}
 		},
 		"info": {

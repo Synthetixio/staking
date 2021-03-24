@@ -1,6 +1,7 @@
 import React from 'react';
 import { createPortal } from 'react-dom';
 import { useRouter } from 'next/router';
+import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import OutsideClickHandler from 'react-outside-click-handler';
 import { zIndex } from 'constants/ui';
@@ -17,6 +18,7 @@ type BorrowModifyModalProps = {
 
 const BorrowModifyModal: React.FC<BorrowModifyModalProps> = ({ actions, loan }) => {
 	const router = useRouter();
+	const { t } = useTranslation();
 
 	const buttonRef = React.useRef<HTMLDivElement>(null);
 	const [{ top, left }, setPosition] = React.useState<any>({});
@@ -46,7 +48,7 @@ const BorrowModifyModal: React.FC<BorrowModifyModalProps> = ({ actions, loan }) 
 	return (
 		<Menu>
 			<Button onClick={onOpen} ref={buttonRef}>
-				ACTIONS{' '}
+				{t('loans.tabs.list.actions-menu-label')}{' '}
 				<svg
 					width="12"
 					height="12"
@@ -91,6 +93,7 @@ const Button = styled.div`
 	align-items: center;
 	color: ${(props) => props.theme.colors.blue};
 	cursor: pointer;
+	text-transform: uppercase;
 `;
 
 const Container = styled.div<{
