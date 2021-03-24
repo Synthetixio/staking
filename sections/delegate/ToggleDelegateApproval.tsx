@@ -23,57 +23,52 @@ import {
 // 	normalizedGasPrice as getNormalizedGasPrice,
 // } from 'utils/network';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
-import { DelegateApproval } from 'queries/delegate/types';
+import { Account } from 'queries/delegate/types';
 import { useDelegates } from 'sections/delegate/contexts/delegates';
-import { WITHDRAW_CONTRACT_METHODS } from 'queries/delegate/types';
+import { APPROVE_CONTRACT_METHODS, WITHDRAW_CONTRACT_METHODS } from 'queries/delegate/types';
 
-type RevokeDelegateProps = {
-	delegateApproval: DelegateApproval;
+type ToggleDelegateApprovalProps = {
+	account: Account;
+	action: string;
+	value: boolean;
 };
 
-const RevokeDelegate: FC<RevokeDelegateProps> = ({ delegateApproval }) => {
+const ToggleDelegateApproval: FC<ToggleDelegateApprovalProps> = ({
+	account,
+	action,
+	value: checked,
+}) => {
 	const { t } = useTranslation();
 	const { monitorHash } = Notify.useContainer();
-	const { delegateApprovalsContract, getActionByBytes } = useDelegates();
+	const { delegateApprovalsContract } = useDelegates();
 
 	const [, setError] = useState<string | null>(null);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
-	const [buttonState, setButtonState] = useState<string | null>(null);
 
 	// const [gasPrice, setGasPrice] = useState<number>(0);
 	// const [gasLimit, setGasLimitEstimate] = useState<number | null>(null);
 
-	const shortenedDelegateAddress = useMemo(() => truncateAddress(delegateApproval.delegate, 8, 6), [
-		delegateApproval.delegate,
+	const shortenedDelegateAddress = useMemo(() => truncateAddress(account.delegate, 8, 6), [
+		account.delegate,
 	]);
 
-	const getWithdrawTxData = useCallback(
+	const getTxData = useCallback(
 		(gas: Record<string, number>) => {
-			const action = getActionByBytes(delegateApproval.action);
-			if (!(delegateApprovalsContract && action)) return null;
-			return [
-				delegateApprovalsContract,
-				WITHDRAW_CONTRACT_METHODS.get(action),
-				[delegateApproval.delegate, gas],
-			];
+			if (!delegateApprovalsContract) return null;
+			const meths = checked ? WITHDRAW_CONTRACT_METHODS : APPROVE_CONTRACT_METHODS;
+			return [delegateApprovalsContract, meths.get(action), [account.delegate, gas]];
 		},
-		[
-			delegateApprovalsContract,
-			delegateApproval.delegate,
-			delegateApproval.action,
-			getActionByBytes,
-		]
+		[delegateApprovalsContract, account.delegate, action, checked]
 	);
 
-	const withdrawApproval = async () => {
-		setButtonState('withdrawing');
+	const onChange = async () => {
 		setTxModalOpen(true);
 		try {
 			const gas: Record<string, number> = {
 				// gasPrice: getNormalizedGasPrice(gasPrice),
 				// gasLimit: gasLimit!,
 			};
-			await tx(() => getWithdrawTxData(gas), {
+			await tx(() => getTxData(gas), {
 				showErrorNotification: (e: string) => setError(e),
 				showProgressNotification: (hash: string) =>
 					monitorHash({
@@ -84,7 +79,6 @@ const RevokeDelegate: FC<RevokeDelegateProps> = ({ delegateApproval }) => {
 			});
 		} catch {
 		} finally {
-			setButtonState(null);
 			setTxModalOpen(false);
 		}
 	};
@@ -95,7 +89,7 @@ const RevokeDelegate: FC<RevokeDelegateProps> = ({ delegateApproval }) => {
 	// 	(async () => {
 	// 		try {
 	// 			setError(null);
-	// 			const data: any[] | null = getWithdrawTxData({});
+	// 			const data: any[] | null = getTxData({});
 	// 			if (!data) return;
 	// 			const [contract, method, args] = data;
 	// 			const gasEstimate = await getGasEstimateForTransaction(args, contract.estimateGas[method]);
@@ -108,23 +102,22 @@ const RevokeDelegate: FC<RevokeDelegateProps> = ({ delegateApproval }) => {
 	// 	return () => {
 	// 		isMounted = false;
 	// 	};
-	// }, [getWithdrawTxData]);
+	// }, [getTxData]);
 
 	return (
 		<>
-			<Container onClick={withdrawApproval}>
-				{t(`delegate.list.withdraw-approval.button.${buttonState ?? 'default'}`)}
+			<Container>
+				<input name={action} type="checkbox" {...{ onChange, checked }} />
+				<span className="checkmark"></span>
 			</Container>
 			{txModalOpen && (
 				<TxConfirmationModal
 					onDismiss={() => setTxModalOpen(false)}
 					txError={null}
-					attemptRetry={withdrawApproval}
+					attemptRetry={onChange}
 					content={
 						<TxModalItem>
-							<TxModalItemTitle>
-								{t('delegate.list.withdraw-approval.tx-confirmation-title')}
-							</TxModalItemTitle>
+							<TxModalItemTitle>{t('delegate.tx-confirmation-title')}</TxModalItemTitle>
 							<TxModalItemText>{shortenedDelegateAddress}</TxModalItemText>
 						</TxModalItem>
 					}
@@ -134,14 +127,67 @@ const RevokeDelegate: FC<RevokeDelegateProps> = ({ delegateApproval }) => {
 	);
 };
 
-const Container = styled.div`
-	text-align: right;
-	color: ${(props) => props.theme.colors.pink};
+const Container = styled.label`
+	display: block;
+	position: relative;
+	padding-left: 45px;
+	margin-bottom: 12px;
 	cursor: pointer;
-	white-space: nowrap;
-	text-transform: uppercase;
-	font-weight: bold;
-	font-size: 12px;
+	font-size: 22px;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+
+	input {
+		position: absolute;
+		opacity: 0;
+		cursor: pointer;
+		height: 0;
+		width: 0;
+	}
+
+	.checkmark {
+		position: absolute;
+		top: 0;
+		left: 0;
+		height: 16px;
+		width: 16px;
+		border: 1px solid ${(props) => props.theme.colors.mediumBlueHover};
+		border-radius: 1px;
+		background-color: ${(props) => props.theme.colors.mediumBlue};
+		color: ${(props) => props.theme.colors.blue};
+		opacity: 0.8;
+	}
+
+	&:hover input ~ .checkmark {
+		opacity: 1;
+	}
+
+	input:checked ~ .checkmark {
+	}
+
+	.checkmark:after {
+		content: '';
+		position: absolute;
+		display: none;
+	}
+
+	input:checked ~ .checkmark:after {
+		display: block;
+	}
+
+	.checkmark:after {
+		left: 4px;
+		top: 2px;
+		width: 3px;
+		height: 6px;
+		border: solid ${(props) => props.theme.colors.blue};
+		border-width: 0 2px 2px 0;
+		-webkit-transform: rotate(45deg);
+		-ms-transform: rotate(45deg);
+		transform: rotate(45deg);
+	}
 `;
 
-export default RevokeDelegate;
+export default ToggleDelegateApproval;

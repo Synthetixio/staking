@@ -4,56 +4,53 @@ import styled from 'styled-components';
 import { truncateAddress } from 'utils/formatters/string';
 import { CellProps } from 'react-table';
 import { useDelegates } from 'sections/delegate/contexts/delegates';
-import { DelegateApproval } from 'queries/delegate/types';
+import { Account, ENTITY_ATTRS } from 'queries/delegate/types';
 import Table from 'components/Table';
 import { ExternalLink } from 'styles/common';
 import { Svg } from 'react-optimized-image';
 import WalletIcon from 'assets/svg/app/wallet-yellow.svg';
-import RevokeDelegate from './RevokeDelegate';
-import { RIGHT_COL_WIDTH } from './constants';
+import ToggleDelegateApproval from './ToggleDelegateApproval';
+
+const ACTION_COL_WIDTH = 50;
 
 const RightCol: FC = () => {
 	const { t } = useTranslation();
 
-	const { isLoadingDelegates: isLoading, delegateApprovals, getActionByBytes } = useDelegates();
+	const { isLoading, accounts } = useDelegates();
 
 	const columns = useMemo(
 		() => [
 			{
-				Header: <>{t('delegate.list.cols.delegate')}</>,
+				Header: <>{t('delegate.list.cols.address')}</>,
 				accessor: 'delegate',
 				width: 100,
 				sortable: true,
-				Cell: (cellProps: CellProps<DelegateApproval>) => {
+				Cell: (cellProps: CellProps<Account>) => {
 					const delegateAddress = cellProps.value;
 					return truncateAddress(delegateAddress, 5, 3);
 				},
 			},
-			{
-				Header: <>{t('delegate.list.cols.action')}</>,
-				accessor: 'action',
-				width: 100,
+			...Array.from(ENTITY_ATTRS.entries()).map(([action, attr]) => ({
+				Header: <>{t(`delegate.list.cols.${attr}`)}</>,
+				accessor: attr,
+				width: ACTION_COL_WIDTH,
 				sortable: true,
-				Cell: (cellProps: CellProps<DelegateApproval>) => {
-					const action = getActionByBytes(cellProps.value);
-					return action ? t(`common.delegate-actions.actions.${action}`) : '-';
+				Cell: (cellProps: CellProps<Account>) => {
+					return (
+						<ToggleDelegateApproval
+							account={cellProps.row.original}
+							action={action}
+							value={cellProps.value}
+						/>
+					);
 				},
-			},
-			{
-				Header: <>{t('delegate.list.cols.actions')}</>,
-				id: 'actions',
-				sortable: false,
-				width: RIGHT_COL_WIDTH - 200 - 50,
-				Cell: (cellProps: CellProps<DelegateApproval>) => (
-					<RevokeDelegate delegateApproval={cellProps.row.original} />
-				),
-			},
+			})),
 		],
-		[t, getActionByBytes]
+		[t]
 	);
 
 	const noResultsMessage =
-		!isLoading && delegateApprovals.length === 0 ? (
+		!isLoading && accounts.length === 0 ? (
 			<ListTableEmptyMessage>
 				<Svg src={WalletIcon} />
 				{t('delegate.list.empty')}
@@ -81,7 +78,7 @@ const RightCol: FC = () => {
 					<ListTable
 						palette="primary"
 						{...{ isLoading, columns }}
-						data={delegateApprovals}
+						data={accounts}
 						noResultsMessage={noResultsMessage}
 						showPagination={true}
 					/>

@@ -11,13 +11,13 @@ import { ethers } from 'ethers';
 import { appReadyState } from 'store/app';
 import { useRecoilValue } from 'recoil';
 import synthetix from 'lib/synthetix';
-import { DelegateApproval } from 'queries/delegate/types';
+import { Account } from 'queries/delegate/types';
 import { walletAddressState, networkState } from 'store/wallet';
-import { ACTIONS } from 'queries/delegate/types';
+import { Action, ACTIONS } from 'queries/delegate/types';
 
 type Context = {
-	delegateApprovals: DelegateApproval[];
-	isLoadingDelegates: boolean;
+	accounts: Account[];
+	isLoading: boolean;
 	delegateApprovalsContract: ethers.Contract | null;
 	getActionByBytes: (bytes: string) => string | null;
 };
@@ -33,8 +33,8 @@ export const DelegatesProvider: React.FC<DelegatesProviderProps> = ({ children }
 	const network = useRecoilValue(networkState);
 	const isAppReady = useRecoilValue(appReadyState);
 
-	const [isLoadingDelegates, setIsLoadingDelegates] = useState(false);
-	const [delegateApprovals, setDelegateApprovals] = useState<Array<DelegateApproval>>([]);
+	const [isLoading, setIsLoading] = useState(false);
+	const [accounts, setAccount] = useState<Array<Account>>([]);
 
 	const delegateApprovalsContract = useMemo(() => {
 		if (!(isAppReady && synthetix.js && address)) return null;
@@ -59,22 +59,13 @@ export const DelegatesProvider: React.FC<DelegatesProviderProps> = ({ children }
 
 	const kovan = network!?.name === 'kovan';
 	// todo: put in a config
-	const delegateApprovalsSubgraphUrl = kovan
-		? 'https://api.thegraph.com/subgraphs/name/vbstreetz/delegate-approvals-kovan'
+	const subgraphUrl = kovan
+		? 'https://api.thegraph.com/subgraphs/id/QmVBwNXcvn1wxh4uKb7gLjGBUxAi5WvDGY4waDTFV5da19'
 		: 'https://api.thegraph.com/subgraphs/name/vbstreetz/delegate-approvals';
 
-	const subgraph = (subgraphUrl: string) => async (query: any, variables: any) => {
-		const res = await fetch(subgraphUrl, {
-			method: 'POST',
-			body: JSON.stringify({ query, variables }),
-		});
-		const { data } = await res.json();
-		return data;
-	};
-
-	const delegateApprovalsSubgraph = useCallback(
-		(query: any, variables: any) => subgraph(delegateApprovalsSubgraphUrl)(query, variables),
-		[delegateApprovalsSubgraphUrl]
+	const subgraph = useCallback(
+		(query: any, variables: any) => makeSubgraph(subgraphUrl)(query, variables),
+		[subgraphUrl]
 	);
 
 	useEffect(() => {
@@ -84,24 +75,28 @@ export const DelegatesProvider: React.FC<DelegatesProviderProps> = ({ children }
 		const unsubs: Array<any> = [() => (isMounted = false)];
 
 		const load = async () => {
-			setIsLoadingDelegates(true);
+			setIsLoading(true);
 
-			const { delegateApprovals } = await delegateApprovalsSubgraph(
-				`query ($authoriser: String!, $withdrawn: Boolean) {
-          delegateApprovals(where: {authoriser: $authoriser, withdrawn: $withdrawn}) {
-            delegate
-						action
+			const { accounts } = await subgraph(
+				`query ($authoriser: String!) {
+          accounts(where: {authoriser: $authoriser}) {
+						authoriser
+						delegate
+						all
+						mint
+						burn
+						claim
+						exchange
           }
         }`,
 				{
 					authoriser: address,
-					withdrawn: false,
 				}
 			);
 
 			if (isMounted) {
-				setDelegateApprovals(delegateApprovals);
-				setIsLoadingDelegates(false);
+				setAccount(accounts);
+				setIsLoading(false);
 			}
 		};
 
@@ -114,23 +109,48 @@ export const DelegatesProvider: React.FC<DelegatesProviderProps> = ({ children }
 			delegateApprovalsContract.on(withdrawApprovalEvent, onWithdrawApproval);
 		};
 
+		const updateAccount = (bool: boolean, authoriser: string, delegate: string, action: string) => {
+			setAccount((accounts) => {
+				let entity = accounts.find((e) => e.authoriser === authoriser && e.delegate === delegate);
+				if (!entity) {
+					entity = {
+						authoriser,
+						delegate,
+						all: false,
+						mint: false,
+						burn: false,
+						claim: false,
+						exchange: false,
+					};
+					accounts.push(entity!);
+				}
+
+				if (action === Action.APPROVE_ALL) {
+					entity.all = bool;
+					entity.burn = bool;
+					entity.mint = bool;
+					entity.claim = bool;
+					entity.exchange = bool;
+				} else if (action === Action.BURN_FOR_ADDRESS) {
+					entity.burn = bool;
+				} else if (action === Action.ISSUE_FOR_ADDRESS) {
+					entity.mint = bool;
+				} else if (action === Action.CLAIM_FOR_ADDRESS) {
+					entity.claim = bool;
+				} else if (action === Action.EXCHANGE_FOR_ADDRESS) {
+					entity.exchange = bool;
+				}
+
+				return accounts;
+			});
+		};
+
 		const onApproval = (authoriser: string, delegate: string, action: string) => {
-			setDelegateApprovals((delegateApprovals) => [
-				{ authoriser, delegate, action },
-				...delegateApprovals,
-			]);
+			updateAccount(true, authoriser, delegate, action);
 		};
 
 		const onWithdrawApproval = (authoriser: string, delegate: string, action: string) => {
-			setDelegateApprovals((delegateApprovals) =>
-				delegateApprovals.filter(
-					(delegateApproval) =>
-						!(
-							ethers.utils.getAddress(delegateApproval.delegate) ===
-								ethers.utils.getAddress(delegate) && delegateApproval.action === action
-						)
-				)
-			);
+			updateAccount(false, authoriser, delegate, action);
 		};
 
 		load();
@@ -139,13 +159,13 @@ export const DelegatesProvider: React.FC<DelegatesProviderProps> = ({ children }
 		return () => {
 			unsubs.forEach((unsub) => unsub());
 		};
-	}, [delegateApprovalsContract, delegateApprovalsSubgraph, address]);
+	}, [delegateApprovalsContract, subgraph, address]);
 
 	return (
 		<DelegatesContext.Provider
 			value={{
-				delegateApprovals,
-				isLoadingDelegates,
+				accounts,
+				isLoading,
 				delegateApprovalsContract,
 				getActionByBytes,
 			}}
@@ -162,3 +182,12 @@ export function useDelegates() {
 	}
 	return context;
 }
+
+const makeSubgraph = (subgraphUrl: string) => async (query: any, variables: any) => {
+	const res = await fetch(subgraphUrl, {
+		method: 'POST',
+		body: JSON.stringify({ query, variables }),
+	});
+	const { data } = await res.json();
+	return data;
+};

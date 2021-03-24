@@ -973,24 +973,21 @@
 		},
 		"info": {
 			"title": "Delegate another address for Staking",
-			"subtitle": "Delegation enables a wallet to execute functions on behalf of another wallet: mint, burn, arn, and exchange, but not transfer.",
+			"subtitle": "Delegation enables a wallet to execute functions on behalf of another wallet: mint, burn, claim, and trade, but not transfer.",
 			"learn-more": "Learn more."
 		},
 		"list": {
 			"title": "Manage addresses",
 			"empty": "No addresses to show",
 			"cols": {
-				"delegate": "Address",
-				"action": "Permission",
-				"actions": "Actions"
-			},
-			"withdraw-approval": {
-				"button": {
-					"default": "Remove powers",
-					"withdrawing": "Withdrawing..."
-				},
-				"tx-confirmation-title": "Withdrawing approval"
+				"address": "Address",
+				"all": "all",
+				"burn": "burn",
+				"mint": "mint",
+				"claim": "claim",
+				"exchange": "trade"
 			}
-		}
+		},
+		"tx-confirmation-title": "Updating approval"
 	}
 }
