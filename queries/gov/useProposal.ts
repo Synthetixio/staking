@@ -94,7 +94,7 @@ const useProposal = (spaceKey: SPACE_KEY, hash: string, options?: QueryConfig<Pr
 						vote.profile = profiles[getAddress(vote.address)];
 						return vote;
 					})
-					// .filter((vote) => vote.balance > 0)
+					.filter((vote) => vote.balance > 0)
 					.sort((a, b) => b.balance - a.balance),
 				(a) => getAddress(a.address)
 			);

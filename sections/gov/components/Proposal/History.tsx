@@ -37,6 +37,7 @@ const History: React.FC<HistoryProps> = ({ hash }) => {
 					</Row>
 					{data.voteList.length > 0 ? (
 						data.voteList.map((vote, i: number) => {
+							const currentWalletAddress = walletAddress ? getAddress(walletAddress) : '';
 							return (
 								<Row key={i}>
 									<InnerRow>
@@ -45,9 +46,7 @@ const History: React.FC<HistoryProps> = ({ hash }) => {
 											arrow={true}
 											placement="bottom"
 											content={
-												getAddress(vote.address) === walletAddress
-													? getAddress(walletAddress)
-													: ''
+												getAddress(vote.address) === currentWalletAddress
 													? t('gov.proposal.history.currentUser')
 													: vote.profile.ens
 													? vote.profile.ens
@@ -56,9 +55,7 @@ const History: React.FC<HistoryProps> = ({ hash }) => {
 											hideOnClick={false}
 										>
 											<Title>
-												{getAddress(vote.address) === walletAddress
-													? getAddress(walletAddress)
-													: ''
+												{getAddress(vote.address) === currentWalletAddress
 													? t('gov.proposal.history.currentUser')
 													: vote.profile.ens
 													? truncateString(vote.profile.ens, 13)
