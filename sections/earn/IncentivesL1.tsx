@@ -201,7 +201,6 @@ const Incentives: FC<IncentivesProps> = ({
 							tab: Tab.iBTC_LP,
 							route: ROUTES.Earn.iBTC_LP,
 							needsToSettle: lpData[Synths.iBTC].data?.needsToSettle,
-							closed: true,
 						},
 				  ]
 				: [],
@@ -226,8 +225,8 @@ const Incentives: FC<IncentivesProps> = ({
 			activeTab={activeTab}
 			data={
 				view === View.ACTIVE
-					? incentives.filter((e) => !e.closed)
-					: incentives.filter((e) => e.closed)
+					? incentives.filter((e) => e.periodFinish > Date.now())
+					: incentives.filter((e) => e.periodFinish <= Date.now())
 			}
 			isLoaded={
 				lpData[LP.CURVE_sUSD].data &&
