@@ -1,6 +1,6 @@
 {
 	"name": "staking",
-	"version": "2.41.0-alpha",
+	"version": "2.41.0",
 	"scripts": {
 		"dev": "next",
 		"build": "next build",
@@ -21,7 +21,7 @@
 		"@snapshot-labs/snapshot.js": "0.1.7",
 		"@synthetixio/assets": "2.0.7",
 		"@synthetixio/contracts-interface": "2.40.1-alpha",
-		"@synthetixio/js": "2.41.0-alpha",
+		"@synthetixio/js": "2.41.0",
 		"@synthetixio/optimism-networks": "0.0.10",
 		"@synthetixio/providers": "0.0.11",
 		"@synthetixio/transaction-notifier": "0.0.8",
