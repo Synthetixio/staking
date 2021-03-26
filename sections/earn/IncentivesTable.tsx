@@ -66,7 +66,6 @@ export type EarnItem = {
 	tab: Tab;
 	route: string;
 	externalLink?: string;
-	closed?: boolean;
 };
 
 type IncentivesTableProps = {
