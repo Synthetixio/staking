@@ -1,13 +1,15 @@
 import { FC, useMemo, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import { providers } from 'ethers';
+import { ethers, providers } from 'ethers';
 import initSynthetixJS from '@synthetixio/js';
 
 import { formatCryptoCurrency, formatPercent } from 'utils/formatters/number';
 import ROUTES from 'constants/routes';
 import { EXTERNAL_LINKS } from 'constants/links';
 import { OVM_RPC_URL } from 'constants/ovm';
+import { CryptoCurrency } from 'constants/currency';
+import { WEEKS_IN_YEAR } from 'constants/date';
 
 import GridBox, { GridBoxProps } from 'components/GridBox/Gridbox';
 import GlowingCircle from 'components/GlowingCircle';
@@ -16,7 +18,9 @@ import media from 'styles/media';
 
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 import useEscrowDataQuery from 'hooks/useEscrowDataQueryWrapper';
-import { CryptoCurrency } from 'constants/currency';
+
+// hardcoded weekly L2 rewards
+const WEEKLY_L2_REWARDS = 25000;
 
 const Index: FC = () => {
 	const [l2AmountSNX, setL2AmountSNX] = useState<number>(0);
@@ -31,23 +35,20 @@ const Index: FC = () => {
 			try {
 				const provider = new providers.StaticJsonRpcProvider(OVM_RPC_URL);
 				const {
-					contracts: { Synthetix, FeePool },
+					contracts: { Synthetix },
 				} = initSynthetixJS({
 					provider,
 					useOvm: true,
 				});
 
-				const [totalSupplyBN, feePeriod] = await Promise.all([
-					Synthetix.totalSupply(),
-					FeePool.recentFeePeriods('0'),
-				]);
+				const totalSupplyBN = (await Synthetix.totalSupply()) as ethers.BigNumber;
 
-				const totalSupply = totalSupplyBN / 1e18;
-				const rewards = feePeriod.rewardsToDistribute / 1e18;
+				const totalSupply = Number(totalSupplyBN) / 1e18;
 
-				setL2APR((rewards * 52) / totalSupply);
+				setL2APR((WEEKLY_L2_REWARDS * WEEKS_IN_YEAR) / totalSupply);
 				setL2AmountSNX(totalSupply);
 			} catch (e) {
+				console.log(e);
 				setL2APR(0);
 				setL2AmountSNX(0);
 			}
