@@ -68,9 +68,10 @@ const MintTab: React.FC = () => {
 					setGasLimitEstimate(gasEstimate);
 				} catch (error) {
 					let errorMessage = error.message;
+					console.log(error.code);
 					if (error.code === 'INVALID_ARGUMENT') {
 						errorMessage = t('staking.actions.mint.action.error.bad-input');
-					} else if (error.code === -32603) {
+					} else if (error.code === 'UNPREDICTABLE_GAS_LIMIT') {
 						errorMessage = t('staking.actions.mint.action.error.insufficient');
 					}
 					setError(errorMessage);
