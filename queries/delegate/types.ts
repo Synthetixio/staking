@@ -32,12 +32,31 @@ export const ENTITY_ATTRS: Map<string, string> = new Map([
 
 export const ACTIONS: string[] = Object.values(Action);
 
-export type Account = {
+export class Account {
 	authoriser: string;
 	delegate: string;
-	all: boolean;
 	mint: boolean;
 	burn: boolean;
 	claim: boolean;
 	exchange: boolean;
-};
+
+	constructor(
+		authoriser: string,
+		delegate: string,
+		mint: boolean,
+		burn: boolean,
+		claim: boolean,
+		exchange: boolean
+	) {
+		this.authoriser = authoriser;
+		this.delegate = delegate;
+		this.mint = mint;
+		this.burn = burn;
+		this.claim = claim;
+		this.exchange = exchange;
+	}
+
+	get all(): boolean {
+		return this.mint && this.burn && this.claim && this.exchange;
+	}
+}

@@ -51,7 +51,7 @@ export async function tx(makeTx: Function, options?: TxOptions): Promise<void> {
 	}
 }
 
-function hexToASCII(hex: string): string {
+export function hexToASCII(hex: string): string {
 	// https://gist.github.com/gluk64/fdea559472d957f1138ed93bcbc6f78a#file-reason-js
 	// return ethers.utils.toUtf8String(S.split(' ')[1].toString());
 	let str = '';
@@ -60,3 +60,5 @@ function hexToASCII(hex: string): string {
 	}
 	return str;
 }
+
+export const fromBytes32 = hexToASCII;

@@ -174,9 +174,8 @@ const Tab: FC = () => {
 				</InputsContainer>
 
 				<SettingsContainer>
-					<SettingContainer>
-						<ActionSelector {...{ action, setAction }} />
-					</SettingContainer>
+					<ActionSelector {...{ action, setAction }} />
+
 					<SettingContainer>
 						<GasSelector gasLimitEstimate={gasLimit} setGasPrice={setGasPrice} />
 					</SettingContainer>

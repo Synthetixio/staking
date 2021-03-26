@@ -14,6 +14,7 @@ import synthetix from 'lib/synthetix';
 import { Account } from 'queries/delegate/types';
 import { walletAddressState, networkState } from 'store/wallet';
 import { Action, ACTIONS } from 'queries/delegate/types';
+import { fromBytes32 } from 'utils/transactions';
 
 type Context = {
 	accounts: Account[];
@@ -34,7 +35,7 @@ export const DelegatesProvider: React.FC<DelegatesProviderProps> = ({ children }
 	const isAppReady = useRecoilValue(appReadyState);
 
 	const [isLoading, setIsLoading] = useState(false);
-	const [accounts, setAccount] = useState<Array<Account>>([]);
+	const [accounts, setAccounts] = useState<Array<Account>>([]);
 
 	const delegateApprovalsContract = useMemo(() => {
 		if (!(isAppReady && synthetix.js && address)) return null;
@@ -60,7 +61,7 @@ export const DelegatesProvider: React.FC<DelegatesProviderProps> = ({ children }
 	const kovan = network!?.name === 'kovan';
 	// todo: put in a config
 	const subgraphUrl = kovan
-		? 'https://api.thegraph.com/subgraphs/id/QmVBwNXcvn1wxh4uKb7gLjGBUxAi5WvDGY4waDTFV5da19'
+		? 'https://api.thegraph.com/subgraphs/name/vbstreetz/delegate-approvals-kovan'
 		: 'https://api.thegraph.com/subgraphs/name/vbstreetz/delegate-approvals';
 
 	const subgraph = useCallback(
@@ -78,11 +79,14 @@ export const DelegatesProvider: React.FC<DelegatesProviderProps> = ({ children }
 			setIsLoading(true);
 
 			const { accounts } = await subgraph(
-				`query ($authoriser: String!) {
-          accounts(where: {authoriser: $authoriser}) {
+				`query (
+					$authoriser: String!
+				) {
+          accounts(where: {
+						authoriser: $authoriser
+					}) {
 						authoriser
 						delegate
-						all
 						mint
 						burn
 						claim
@@ -95,7 +99,12 @@ export const DelegatesProvider: React.FC<DelegatesProviderProps> = ({ children }
 			);
 
 			if (isMounted) {
-				setAccount(accounts);
+				setAccounts(
+					accounts.map(
+						({ authoriser, delegate, mint, burn, claim, exchange }: Account) =>
+							new Account(authoriser, delegate, mint, burn, claim, exchange)
+					)
+				);
 				setIsLoading(false);
 			}
 		};
@@ -109,35 +118,36 @@ export const DelegatesProvider: React.FC<DelegatesProviderProps> = ({ children }
 			delegateApprovalsContract.on(withdrawApprovalEvent, onWithdrawApproval);
 		};
 
-		const updateAccount = (bool: boolean, authoriser: string, delegate: string, action: string) => {
-			setAccount((accounts) => {
-				let entity = accounts.find((e) => e.authoriser === authoriser && e.delegate === delegate);
+		const updateAccount = (
+			bool: boolean,
+			authoriser: string,
+			delegate: string,
+			action32: string
+		) => {
+			setAccounts((a) => {
+				const action: string = fromBytes32(action32);
+				const accounts = a.slice();
+				let entity = accounts.find(
+					(e) =>
+						ethers.utils.getAddress(e.authoriser) === authoriser &&
+						ethers.utils.getAddress(e.delegate) === delegate
+				);
 				if (!entity) {
-					entity = {
-						authoriser,
-						delegate,
-						all: false,
-						mint: false,
-						burn: false,
-						claim: false,
-						exchange: false,
-					};
+					entity = new Account(authoriser, delegate, false, false, false, false);
 					accounts.push(entity!);
 				}
-
-				if (action === Action.APPROVE_ALL) {
-					entity.all = bool;
+				if (0 === action.localeCompare(Action.APPROVE_ALL)) {
 					entity.burn = bool;
 					entity.mint = bool;
 					entity.claim = bool;
 					entity.exchange = bool;
-				} else if (action === Action.BURN_FOR_ADDRESS) {
+				} else if (0 === action.localeCompare(Action.BURN_FOR_ADDRESS)) {
 					entity.burn = bool;
-				} else if (action === Action.ISSUE_FOR_ADDRESS) {
+				} else if (0 === action.localeCompare(Action.ISSUE_FOR_ADDRESS)) {
 					entity.mint = bool;
-				} else if (action === Action.CLAIM_FOR_ADDRESS) {
+				} else if (0 === action.localeCompare(Action.CLAIM_FOR_ADDRESS)) {
 					entity.claim = bool;
-				} else if (action === Action.EXCHANGE_FOR_ADDRESS) {
+				} else if (0 === action.localeCompare(Action.EXCHANGE_FOR_ADDRESS)) {
 					entity.exchange = bool;
 				}
 

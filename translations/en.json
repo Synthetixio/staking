@@ -929,7 +929,7 @@
 				"BurnForAddress": "Burn",
 				"IssueForAddress": "Mint",
 				"ClaimForAddress": "Claim",
-				"ExchangeForAddress": "Exchange"
+				"ExchangeForAddress": "Trade"
 			}
 		}
 	},
