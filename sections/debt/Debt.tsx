@@ -1,16 +1,17 @@
+import { useMemo } from 'react';
 import styled from 'styled-components';
+import { useRouter } from 'next/router';
 import { useTranslation, Trans } from 'react-i18next';
 import { Svg } from 'react-optimized-image';
 
-import { FlexDiv, FlexDivCol, Row, Tooltip } from 'styles/common';
-import DebtChart from 'sections/debt/components/DebtChart';
 import DebtPieChart from 'sections/debt/components/DebtPieChart';
+import { FlexDiv, FlexDivCol, Row, Tooltip } from 'styles/common';
+import { DebtPanelType } from 'store/debt';
 
 import useSynthsTotalSupplyQuery, {
 	SynthsTotalSupplyData,
 } from 'queries/synths/useSynthsTotalSupplyQuery';
 import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
-import useHistoricalDebtData from 'hooks/useHistoricalDebtData';
 
 import { zeroBN } from 'utils/formatters/number';
 
@@ -18,9 +19,13 @@ import Info from 'assets/svg/app/info.svg';
 
 import PorfolioTable from './components/PortfolioTable';
 import useCryptoBalances from 'hooks/useCryptoBalances';
+import OverviewTab from './components/OverviewTab';
+import ManageTab from './components/ManageTab';
+import DebtTabs from './components/DebtTabs';
 
 const DebtSection = () => {
 	const { t } = useTranslation();
+	const router = useRouter();
 	const synthsBalancesQuery = useSynthsBalancesQuery();
 	const synthBalances =
 		synthsBalancesQuery.isSuccess && synthsBalancesQuery.data != null
@@ -29,40 +34,35 @@ const DebtSection = () => {
 	const synthAssets = synthBalances?.balances ?? [];
 	const cryptoBalances = useCryptoBalances();
 
-	const historicalDebt = useHistoricalDebtData();
 	const totalSynthValue = synthsBalancesQuery.isSuccess
 		? synthsBalancesQuery.data?.totalUSDBalance ?? zeroBN
 		: zeroBN;
 
 	const synthsTotalSupplyQuery = useSynthsTotalSupplyQuery();
 	const totalSupply = synthsTotalSupplyQuery?.data ?? [];
-	const dataIsLoading = historicalDebt?.isLoading ?? false;
+
+	const tabData = useMemo(
+		() => [
+			{
+				title: t('debt.actions.track.title'),
+				tabChildren: <OverviewTab />,
+				blue: true,
+				key: DebtPanelType.OVERVIEW,
+			},
+			{
+				title: t('debt.actions.manage.title'),
+				tabChildren: <ManageTab />,
+				blue: true,
+				key: DebtPanelType.MANAGE,
+				width: 450,
+			},
+		],
+		[t]
+	);
 
 	return (
 		<FlexDivCol>
-			<Container>
-				<ContainerHeader>
-					<ContainerHeaderSection>
-						{t('debt.actions.track.title')}
-						<DebtInfoTooltip
-							arrow={false}
-							content={
-								<Trans
-									i18nKey="debt.actions.track.info.tooltip"
-									components={[<Strong />, <br />, <Strong />]}
-								></Trans>
-							}
-						>
-							<TooltipIconContainer>
-								<ResizedInfoIcon src={Info} />
-							</TooltipIconContainer>
-						</DebtInfoTooltip>
-					</ContainerHeaderSection>
-				</ContainerHeader>
-				<ContainerBody>
-					<DebtChart data={historicalDebt.data} isLoading={dataIsLoading} />
-				</ContainerBody>
-			</Container>
+			<DebtTabs boxPadding={20} boxHeight={450} boxWidth={450} tabData={tabData} />
 			<Row>
 				<DebtPieChartContainer>
 					<ContainerHeader>

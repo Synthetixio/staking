@@ -1,1 +1,1 @@
-export { TabList, TabButton, TabPanel } from './Tab';
+export { TabList, TabButton, TabPanel, TabPanelContainer } from './Tab';
