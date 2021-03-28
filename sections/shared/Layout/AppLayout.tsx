@@ -1,7 +1,7 @@
 import { SIDE_NAV_WIDTH } from 'constants/ui';
 import { FC, ReactNode, useEffect } from 'react';
 import router from 'next/router';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import styled from 'styled-components';
 
 import ROUTES from 'constants/routes';
@@ -11,6 +11,10 @@ import Header from './Header';
 import SideNav from './SideNav';
 import NotificationContainer from 'constants/NotificationContainer';
 import UserNotifications from './UserNotifications';
+import useProposals from 'queries/gov/useProposals';
+import { SPACE_KEY } from 'constants/snapshot';
+import { NotificationTemplate, userNotificationState } from 'store/ui';
+import { Proposal } from 'queries/gov/types';
 
 type AppLayoutProps = {
 	children: ReactNode;
@@ -18,6 +22,8 @@ type AppLayoutProps = {
 
 const AppLayout: FC<AppLayoutProps> = ({ children }) => {
 	const isL2 = useRecoilValue(isL2State);
+	const councilProposals = useProposals(SPACE_KEY.COUNCIL);
+	const setNotificationState = useSetRecoilState(userNotificationState);
 
 	useEffect(() => {
 		if (!isL2 && router.pathname === ROUTES.Withdraw.Home) {
@@ -27,6 +33,38 @@ const AppLayout: FC<AppLayoutProps> = ({ children }) => {
 			router.push(ROUTES.Home);
 		}
 	}, [isL2]);
+
+	useEffect(() => {
+		if (councilProposals.data && !isL2) {
+			let latestProposal = {
+				msg: {
+					payload: {
+						snapshot: '0',
+					},
+				},
+			} as Partial<Proposal>;
+
+			councilProposals.data.forEach((proposal) => {
+				if (
+					parseInt(proposal.msg.payload.snapshot) >
+					parseInt(latestProposal?.msg?.payload.snapshot ?? '0')
+				) {
+					latestProposal = proposal;
+				}
+			});
+
+			if (new Date().getTime() / 1000 < (latestProposal?.msg?.payload.end ?? 0)) {
+				setNotificationState({
+					type: 'info',
+					template: NotificationTemplate.ELECTION,
+					props: {
+						proposal: latestProposal?.msg?.payload.name,
+						link: `${latestProposal.msg?.space}/${latestProposal.authorIpfsHash}`,
+					},
+				});
+			}
+		}
+	}, [councilProposals, setNotificationState, isL2]);
 
 	return (
 		<>
