@@ -8,6 +8,7 @@ import { useRouter } from 'next/router';
 import { useRecoilValue } from 'recoil';
 
 import { appReadyState } from 'store/app';
+import { isWalletConnectedState } from 'store/wallet';
 import ROUTES from 'constants/routes';
 import { ExternalLink, FlexDiv, GlowingCircle } from 'styles/common';
 import synthetix from 'lib/synthetix';
@@ -84,6 +85,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 	const [lowCRatio, setLowCRatio] = useState(false);
 	const [claimedTradingRewards, setClaimedTradingRewards] = useState<number | null>(null);
 	const [claimedStakingRewards, setClaimedStakingRewards] = useState<number | null>(null);
+	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const router = useRouter();
 	const isAppReady = useRecoilValue(appReadyState);
 
@@ -97,16 +99,18 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 
 	useEffect(() => {
 		const getGasLimitEstimate = async () => {
-			if (isAppReady) {
+			if (isAppReady && isWalletConnected) {
 				try {
 					setError(null);
 					const {
 						contracts: { FeePool },
 					} = synthetix.js!;
+
 					let gasEstimate = await synthetix.getGasEstimateForTransaction({
 						txArgs: [],
 						method: FeePool.estimateGas.claimFees,
 					});
+
 					setGasLimitEstimate(gasEstimate);
 				} catch (error) {
 					if (error.message.includes('below penalty threshold')) {
@@ -119,7 +123,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 			}
 		};
 		getGasLimitEstimate();
-	}, [isAppReady]);
+	}, [isAppReady, isWalletConnected]);
 
 	const handleClaim = useCallback(() => {
 		async function claim() {
