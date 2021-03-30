@@ -422,6 +422,11 @@
 					"description": "Opening a short allows you to earn SNX rewards. <0>Learn more.<0>",
 					"subtitle": "sBTC Short Rewards"
 				},
+				"seth": {
+					"title": "Synthetix",
+					"description": "Opening a short allows you to earn SNX rewards. <0>Learn more.<0>",
+					"subtitle": "sETH Short Rewards"
+				},
 				"stsla": {
 					"title": "Balancer",
 					"description": "Stake sTLSA Balancer Pool LP to earn SNX rewards. <0>Add liquidity on Balancer here<0>.",

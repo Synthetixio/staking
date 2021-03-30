@@ -179,7 +179,7 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab }
 					const isDualRewards = cellProps.row.original.staked.asset === LP.UNISWAP_DHT;
 					if (
 						!cellProps.row.original.externalLink ||
-						cellProps.row.original.staked.asset === Synths.sBTC
+						cellProps.row.original.staked.asset !== LP.CURVE_sUSD
 					) {
 						return (
 							<CellContainer>
