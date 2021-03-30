@@ -8,37 +8,37 @@ import { walletAddressState, isWalletConnectedState, networkState } from 'store/
 import { Synths } from 'constants/currency';
 import { ShortRewardsData } from './types';
 
-const useSBTCShortsQuery = (options?: QueryConfig<ShortRewardsData>) => {
+const useSETHShortsQuery = (options?: QueryConfig<ShortRewardsData>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const network = useRecoilValue(networkState);
 
 	return useQuery<ShortRewardsData>(
-		QUERY_KEYS.ShortRewards.sBTC(walletAddress ?? '', network?.id!),
+		QUERY_KEYS.ShortRewards.sETH(walletAddress ?? '', network?.id!),
 		async () => {
 			const {
-				contracts: { CollateralManager, ExchangeRates, ShortingRewardssBTC },
+				contracts: { CollateralManager, ExchangeRates, ShortingRewardssETH },
 			} = synthetix.js!;
 
-			const getDuration = ShortingRewardssBTC.DURATION || ShortingRewardssBTC.rewardsDuration;
+			const getDuration = ShortingRewardssETH.DURATION || ShortingRewardssETH.rewardsDuration;
 
 			const [
 				duration,
 				rate,
 				periodFinish,
-				sBtcSNXRewards,
-				sBtcStaked,
+				sEthSNXRewards,
+				sEthStaked,
 				openInterestBN,
 				[assetUSDPriceBN],
 			] = await Promise.all([
 				getDuration(),
-				ShortingRewardssBTC.rewardRate(),
-				ShortingRewardssBTC.periodFinish(),
-				ShortingRewardssBTC.earned(walletAddress),
-				ShortingRewardssBTC.balanceOf(walletAddress),
-				CollateralManager.short(synthetix.js?.toBytes32(Synths.sBTC)),
-				ExchangeRates.rateAndInvalid(synthetix.js?.toBytes32(Synths.sBTC)),
+				ShortingRewardssETH.rewardRate(),
+				ShortingRewardssETH.periodFinish(),
+				ShortingRewardssETH.earned(walletAddress),
+				ShortingRewardssETH.balanceOf(walletAddress),
+				CollateralManager.short(synthetix.js?.toBytes32(Synths.sETH)),
+				ExchangeRates.rateAndInvalid(synthetix.js?.toBytes32(Synths.sETH)),
 			]);
 
 			const durationInWeeks = Number(duration) / 3600 / 24 / 7;
@@ -50,8 +50,8 @@ const useSBTCShortsQuery = (options?: QueryConfig<ShortRewardsData>) => {
 			const [openInterest, assetUSDPrice, rewards, staked] = [
 				openInterestBN,
 				assetUSDPriceBN,
-				sBtcSNXRewards,
-				sBtcStaked,
+				sEthSNXRewards,
+				sEthStaked,
 			].map((data) => Number(synthetix.js?.utils.formatEther(data)));
 
 			const openInterestUSD = openInterest * assetUSDPrice;
@@ -72,4 +72,4 @@ const useSBTCShortsQuery = (options?: QueryConfig<ShortRewardsData>) => {
 	);
 };
 
-export default useSBTCShortsQuery;
+export default useSETHShortsQuery;
