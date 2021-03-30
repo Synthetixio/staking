@@ -4,7 +4,12 @@ import { useRecoilValue } from 'recoil';
 import synthetix from 'lib/synthetix';
 import QUERY_KEYS from 'constants/queryKeys';
 import { appReadyState } from 'store/app';
-import { walletAddressState, isWalletConnectedState, networkState } from 'store/wallet';
+import {
+	walletAddressState,
+	isWalletConnectedState,
+	networkState,
+	isMainnetState,
+} from 'store/wallet';
 import { Synths } from 'constants/currency';
 import { ShortRewardsData } from './types';
 
@@ -13,6 +18,7 @@ const useSETHShortsQuery = (options?: QueryConfig<ShortRewardsData>) => {
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const network = useRecoilValue(networkState);
+	const isMainnet = useRecoilValue(isMainnetState);
 
 	return useQuery<ShortRewardsData>(
 		QUERY_KEYS.ShortRewards.sETH(walletAddress ?? '', network?.id!),
@@ -66,7 +72,7 @@ const useSETHShortsQuery = (options?: QueryConfig<ShortRewardsData>) => {
 			};
 		},
 		{
-			enabled: isAppReady && isWalletConnected,
+			enabled: isAppReady && isWalletConnected && isMainnet,
 			...options,
 		}
 	);
