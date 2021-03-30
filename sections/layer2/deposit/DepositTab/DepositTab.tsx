@@ -39,7 +39,7 @@ const DepositTab = () => {
 		const getGasLimitEstimate = async () => {
 			if (isAppReady && walletAddress && isApproved && transferableCollateral) {
 				try {
-					if (!isEOAWallet) throw new Error(t('layer2.error.non-eoa-wallet'));
+					if (isEOAWallet === false) throw new Error(t('layer2.error.non-eoa-wallet'));
 					setGasEstimateError(null);
 					const {
 						contracts: { SynthetixBridgeToOptimism },
