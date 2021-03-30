@@ -16,7 +16,7 @@ import {
 import { Svg } from 'react-optimized-image';
 import NavigationBack from 'assets/svg/app/navigation-back.svg';
 import GasSelector from 'components/GasSelector';
-import { useLoans } from 'sections/loans/contexts/loans';
+import Loans from 'containers/Loans';
 import { toBigNumber, formatUnits } from 'utils/formatters/number';
 import {
 	FormContainer,
@@ -105,7 +105,7 @@ const Wrapper: FC<WrapperProps> = ({
 }) => {
 	const { t } = useTranslation();
 	const router = useRouter();
-	const { interactionDelays } = useLoans();
+	const { interactionDelays } = Loans.useContainer();
 
 	const [waitETA, setWaitETA] = useState<string>('');
 

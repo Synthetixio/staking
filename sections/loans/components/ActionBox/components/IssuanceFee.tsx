@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { FlexDivRow, FlexDivRowCentered } from 'styles/common';
 import { formatNumber } from 'utils/formatters/number';
 import { LOAN_TYPE_ERC20, LOAN_TYPE_ETH } from 'sections/loans/constants';
-import { useLoans } from 'sections/loans/contexts/loans';
+import Loans from 'containers/Loans';
 
 type IssuanceFeeProps = {
 	collateralIsETH: boolean;
@@ -12,7 +12,7 @@ type IssuanceFeeProps = {
 
 const IssuanceFee: React.FC<IssuanceFeeProps> = ({ collateralIsETH }) => {
 	const { t } = useTranslation();
-	const { issueFeeRates } = useLoans();
+	const { issueFeeRates } = Loans.useContainer();
 	const issuanceFee = issueFeeRates[collateralIsETH ? LOAN_TYPE_ETH : LOAN_TYPE_ERC20];
 
 	return (

@@ -4,7 +4,7 @@ import synthetix from 'lib/synthetix';
 import styled from 'styled-components';
 import { Svg } from 'react-optimized-image';
 import Spinner from 'assets/svg/app/loader.svg';
-import { useLoans } from 'sections/loans/contexts/loans';
+import Loans from 'containers/Loans';
 
 import Deposit from './Deposit';
 import Withdraw from './Withdraw';
@@ -29,8 +29,8 @@ type ActionsProps = {
 };
 
 const Actions: FC<ActionsProps> = ({ loanId, loanAction, loanTypeIsETH }) => {
-	const { renBTCContract } = useLoans();
-	const { isLoadingLoans, loans } = useLoans();
+	const { renBTCContract } = Loans.useContainer();
+	const { isLoadingLoans, loans } = Loans.useContainer();
 
 	const Action = ACTIONS[loanAction];
 

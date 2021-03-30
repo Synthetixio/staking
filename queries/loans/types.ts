@@ -6,7 +6,6 @@ export type Loan = {
 	collateral: ethers.BigNumber;
 	currency: string;
 	amount: ethers.BigNumber;
-	short: boolean;
 	accruedInterest: ethers.BigNumber;
 	interestIndex: ethers.BigNumber;
 	lastInteraction: ethers.BigNumber;

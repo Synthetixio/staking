@@ -1,12 +1,13 @@
-import { useMemo, useEffect, useState, createContext, useContext, ReactNode } from 'react';
+import { createContainer } from 'unstated-next';
+import { useMemo, useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { ethers } from 'ethers';
 import Big from 'bignumber.js';
 
 import { renBTCToken } from 'contracts';
+import synthetix from 'lib/synthetix';
 import Connector from 'containers/Connector';
 import { appReadyState } from 'store/app';
-import synthetix from 'lib/synthetix';
 import { walletAddressState, networkState } from 'store/wallet';
 import { toBigNumber } from 'utils/formatters/number';
 import { LOAN_TYPE_ERC20, LOAN_TYPE_ETH, SYNTH_BY_CURRENCY_KEY } from 'sections/loans/constants';
@@ -19,32 +20,9 @@ const COLLATERAL_ASSETS: Record<string, string> = {
 	[LOAN_TYPE_ETH]: 'ETH',
 };
 
-type Context = {
-	loans: Loan[];
-	isLoadingLoans: boolean;
-	interestRate: Big;
-	issueFeeRates: Record<string, Big>;
-	interactionDelays: Record<string, Big>;
+export default createContainer(Container);
 
-	pendingWithdrawals: ethers.BigNumber;
-	reloadPendingWithdrawals: () => void;
-
-	ethLoanContract: ethers.Contract | null;
-	erc20LoanContract: ethers.Contract | null;
-	ethLoanStateContract: ethers.Contract | null;
-	erc20LoanStateContract: ethers.Contract | null;
-	collateralManagerContract: ethers.Contract | null;
-	exchangeRatesContract: ethers.Contract | null;
-	renBTCContract: ethers.Contract | null;
-};
-
-const LoansContext = createContext<Context | null>(null);
-
-type LoansProviderProps = {
-	children: ReactNode;
-};
-
-export const LoansProvider: React.FC<LoansProviderProps> = ({ children }) => {
+function Container() {
 	const { provider, signer } = Connector.useContainer();
 	const address = useRecoilValue(walletAddressState);
 	const network = useRecoilValue(networkState);
@@ -423,37 +401,23 @@ export const LoansProvider: React.FC<LoansProviderProps> = ({ children }) => {
 		};
 	}, [ethLoanContract, address]);
 
-	return (
-		<LoansContext.Provider
-			value={{
-				loans,
-				isLoadingLoans,
+	return {
+		loans,
+		isLoadingLoans,
 
-				interestRate,
-				issueFeeRates,
-				interactionDelays,
+		interestRate,
+		issueFeeRates,
+		interactionDelays,
 
-				pendingWithdrawals,
-				reloadPendingWithdrawals,
+		pendingWithdrawals,
+		reloadPendingWithdrawals,
 
-				ethLoanContract,
-				erc20LoanContract,
-				ethLoanStateContract,
-				erc20LoanStateContract,
-				collateralManagerContract,
-				exchangeRatesContract,
-				renBTCContract,
-			}}
-		>
-			{children}
-		</LoansContext.Provider>
-	);
-};
-
-export function useLoans() {
-	const context = useContext(LoansContext);
-	if (!context) {
-		throw new Error('Missing loans context');
-	}
-	return context;
+		ethLoanContract,
+		erc20LoanContract,
+		ethLoanStateContract,
+		erc20LoanStateContract,
+		collateralManagerContract,
+		exchangeRatesContract,
+		renBTCContract,
+	};
 }

@@ -35,7 +35,7 @@ import {
 	TxModalItem,
 	TxModalItemSeperator,
 } from 'sections/loans/components/common';
-import { useLoans } from 'sections/loans/contexts/loans';
+import Loans from 'containers/Loans';
 import CRatio from 'sections/loans/components/ActionBox/components/CRatio';
 import InterestRate from 'sections/loans/components/ActionBox/components/InterestRate';
 import IssuanceFee from 'sections/loans/components/ActionBox/components/IssuanceFee';
@@ -52,7 +52,7 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 	const router = useRouter();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const address = useRecoilValue(walletAddressState);
-	const { renBTCContract } = useLoans();
+	const { renBTCContract } = Loans.useContainer();
 
 	const [gasPrice, setGasPrice] = React.useState<number>(0);
 	const [gasLimit, setGasLimitEstimate] = React.useState<number | null>(null);

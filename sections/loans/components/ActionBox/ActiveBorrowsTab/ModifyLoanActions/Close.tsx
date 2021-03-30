@@ -6,7 +6,7 @@ import { Loan } from 'queries/loans/types';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import { SYNTH_BY_CURRENCY_KEY } from 'sections/loans/constants';
 import { tx } from 'utils/transactions';
-import { useLoans } from 'sections/loans/contexts/loans';
+import Loans from 'containers/Loans';
 import Wrapper from './Wrapper';
 
 type CloseProps = {
@@ -19,7 +19,7 @@ type CloseProps = {
 const Close: React.FC<CloseProps> = ({ loan, loanId, loanTypeIsETH, loanContract }) => {
 	const router = useRouter();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
-	const { reloadPendingWithdrawals } = useLoans();
+	const { reloadPendingWithdrawals } = Loans.useContainer();
 
 	const [isWorking, setIsWorking] = useState<string>('');
 	const [error, setError] = useState<string | null>(null);

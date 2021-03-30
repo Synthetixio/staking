@@ -8,7 +8,7 @@ import synthetix from 'lib/synthetix';
 import { walletAddressState } from 'store/wallet';
 import Connector from 'containers/Connector';
 import { formatUnits } from 'utils/formatters/number';
-import { useLoans } from 'sections/loans/contexts/loans';
+import Loans from 'containers/Loans';
 
 type BalanceProps = {
 	asset: string;
@@ -87,7 +87,7 @@ const ERC20: React.FC<ERC20Props> = ({ asset, onSetMaxAmount }) => {
 	const address = useRecoilValue(walletAddressState);
 	const [balance, setBalance] = React.useState<ethers.BigNumber>(ethers.BigNumber.from('0'));
 	const [decimals, setDecimals] = React.useState<number>(0);
-	const { renBTCContract } = useLoans();
+	const { renBTCContract } = Loans.useContainer();
 
 	const handleSetMaxAmount = () => {
 		if (onSetMaxAmount && balance && decimals) {

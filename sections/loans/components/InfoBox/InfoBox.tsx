@@ -13,14 +13,14 @@ import { Synths } from 'constants/currency';
 import synthetix from 'lib/synthetix';
 import { tx } from 'utils/transactions';
 import { formatNumber, toBigNumber, formatUnits } from 'utils/formatters/number';
-import { useLoans } from 'sections/loans/contexts/loans';
+import Loans from 'containers/Loans';
 import InfoSVG from 'sections/loans/components/ActionBox/components/InfoSVG';
 
 const InfoBox: React.FC = () => {
 	const { t } = useTranslation();
 	const address = useRecoilValue(walletAddressState);
 	const { provider } = Connector.useContainer();
-	const { pendingWithdrawals, reloadPendingWithdrawals, ethLoanContract } = useLoans();
+	const { pendingWithdrawals, reloadPendingWithdrawals, ethLoanContract } = Loans.useContainer();
 	const [isClaimingPendingWithdrawals, setIsClaimingPendingWithdrawals] = React.useState(false);
 
 	const [borrows, setBorrows] = React.useState<Array<any>>([]);

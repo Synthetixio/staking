@@ -11,7 +11,6 @@ import useUserStakingData from 'hooks/useUserStakingData';
 import { formatFiatCurrency, formatPercent, toBigNumber } from 'utils/formatters/number';
 
 import Main from 'sections/loans/index';
-import { LoansProvider } from 'sections/loans/contexts/loans';
 
 type LoansPageProps = {};
 
@@ -30,7 +29,7 @@ const LoansPage: FC<LoansPageProps> = () => {
 	}, [router, router.asPath, router.push]);
 
 	return (
-		<LoansProvider>
+		<>
 			<Head>
 				<title>{t('loans.page-title')}</title>
 			</Head>
@@ -63,7 +62,7 @@ const LoansPage: FC<LoansPageProps> = () => {
 			</StatsSection>
 			<LineSpacer />
 			<Main />
-		</LoansProvider>
+		</>
 	);
 };
 

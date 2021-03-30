@@ -3,13 +3,13 @@ import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { FlexDivRow, FlexDivRowCentered } from 'styles/common';
 import { formatNumber } from 'utils/formatters/number';
-import { useLoans } from 'sections/loans/contexts/loans';
+import Loans from 'containers/Loans';
 
 type InterestRateProps = {};
 
 const InterestRate: React.FC<InterestRateProps> = () => {
 	const { t } = useTranslation();
-	const { interestRate } = useLoans();
+	const { interestRate } = Loans.useContainer();
 
 	return (
 		<Container>

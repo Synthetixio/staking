@@ -7,7 +7,7 @@ import Table from 'components/Table';
 import Currency from 'components/Currency';
 import { Loan } from 'queries/loans/types';
 import { ACTION_BOX_WIDTH } from 'sections/loans/constants';
-import { useLoans } from 'sections/loans/contexts/loans';
+import Loans from 'containers/Loans';
 import { formatUnits } from 'utils/formatters/number';
 import ModifyLoanMenu from './ModifyLoanMenu';
 
@@ -20,7 +20,7 @@ type LoanListProps = {
 
 const LoanList: React.FC<LoanListProps> = ({ actions }) => {
 	const { t } = useTranslation();
-	const { isLoadingLoans: isLoading, loans: data } = useLoans();
+	const { isLoadingLoans: isLoading, loans: data } = Loans.useContainer();
 
 	const columns = React.useMemo(
 		() => [
