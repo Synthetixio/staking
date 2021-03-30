@@ -15,7 +15,7 @@ import synthetix from 'lib/synthetix';
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
 
-import { isWalletConnectedState, networkState, walletAddressState } from 'store/wallet';
+import { isWalletConnectedState, networkState, walletAddressState, isL2State } from 'store/wallet';
 import { appReadyState } from 'store/app';
 
 const NUM_BLOCKS_TO_FETCH = 1000000;
@@ -36,9 +36,10 @@ const useGetWithdrawalsDataQuery = (options?: QueryConfig<WithdrawalHistory>) =>
 	const network = useRecoilValue(networkState);
 	const { provider } = Connector.useContainer();
 	const [watcher, setWatcher] = useState<OptimismWatcher | null>(null);
+	const isL2 = useRecoilValue(isL2State);
 
 	useEffect(() => {
-		if (network && provider) {
+		if (network && provider && isL2) {
 			setWatcher(
 				optimismMessengerWatcher({
 					layerOneProvider: loadProvider({
@@ -50,7 +51,7 @@ const useGetWithdrawalsDataQuery = (options?: QueryConfig<WithdrawalHistory>) =>
 				})
 			);
 		}
-	}, [network, provider]);
+	}, [network, provider, isL2]);
 
 	return useQuery<WithdrawalHistory>(
 		QUERY_KEYS.Withdrawals(walletAddress ?? '', network?.id!),
@@ -89,7 +90,7 @@ const useGetWithdrawalsDataQuery = (options?: QueryConfig<WithdrawalHistory>) =>
 			return orderBy(eventsWithReceipt, ['timestamp'], ['desc']);
 		},
 		{
-			enabled: isAppReady && isWalletConnected && provider && watcher,
+			enabled: isAppReady && isWalletConnected && provider && watcher && isL2,
 			...options,
 		}
 	);

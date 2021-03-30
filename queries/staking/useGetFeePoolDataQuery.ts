@@ -1,7 +1,9 @@
 import { useQuery, QueryConfig } from 'react-query';
 import { useRecoilValue } from 'recoil';
+import BigNumber from 'bignumber.js';
 
 import synthetix from 'lib/synthetix';
+import { toBigNumber } from 'utils/formatters/number';
 
 import QUERY_KEYS from 'constants/queryKeys';
 
@@ -13,6 +15,7 @@ export type FeePoolData = {
 	feesToDistribute: number;
 	feesClaimed: number;
 	rewardsToDistribute: number;
+	rewardsToDistributeBN: BigNumber;
 	rewardsClaimed: number;
 };
 
@@ -34,6 +37,7 @@ const useGetFeePoolDataQuery = (period: string, options?: QueryConfig<FeePoolDat
 				feesToDistribute: Number(formatEther(feePeriod.feesToDistribute)) || 0,
 				feesClaimed: Number(formatEther(feePeriod.feesClaimed)) || 0,
 				rewardsToDistribute: Number(formatEther(feePeriod.rewardsToDistribute)) || 0,
+				rewardsToDistributeBN: toBigNumber(formatEther(feePeriod.rewardsToDistribute)),
 				rewardsClaimed: Number(formatEther(feePeriod.rewardsClaimed)) || 0,
 			};
 		},
