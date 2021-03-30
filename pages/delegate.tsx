@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import StatBox from 'components/StatBox';
 import { StatsSection, LineSpacer } from 'styles/common';
-import { DelegatesProvider } from 'sections/delegate/contexts/delegates';
 import useUserStakingData from 'hooks/useUserStakingData';
 import Main from 'sections/delegate/index';
 
@@ -22,7 +21,7 @@ const DelegatePage: FC<DelegatePageProps> = () => {
 	const { stakingAPR } = useUserStakingData();
 
 	return (
-		<DelegatesProvider>
+		<>
 			<Head>
 				<title>{t('delegate.page-title')}</title>
 			</Head>
@@ -55,7 +54,7 @@ const DelegatePage: FC<DelegatePageProps> = () => {
 			</StatsSection>
 			<LineSpacer />
 			<Main />
-		</DelegatesProvider>
+		</>
 	);
 };
 

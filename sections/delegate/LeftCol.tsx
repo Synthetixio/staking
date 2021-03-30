@@ -36,7 +36,7 @@ import {
 	normalizedGasPrice as getNormalizedGasPrice,
 } from 'utils/network';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
-import { useDelegates } from 'sections/delegate/contexts/delegates';
+import Delegates from 'containers/Delegates';
 import ActionSelector from './ActionSelector';
 
 const LeftCol: FC = () => {
@@ -70,7 +70,7 @@ const Tab: FC = () => {
 	const router = useRouter();
 	const { connectWallet } = Connector.useContainer();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	const { delegateApprovalsContract } = useDelegates();
+	const { delegateApprovalsContract } = Delegates.useContainer();
 	const { monitorHash } = Notify.useContainer();
 
 	const [action, setAction] = useState<string>(Action.APPROVE_ALL);

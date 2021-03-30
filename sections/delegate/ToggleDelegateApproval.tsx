@@ -23,8 +23,8 @@ import {
 // 	normalizedGasPrice as getNormalizedGasPrice,
 // } from 'utils/network';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
-import { Account } from 'queries/delegate/types';
-import { useDelegates } from 'sections/delegate/contexts/delegates';
+import { Account, Action } from 'queries/delegate/types';
+import Delegates from 'containers/Delegates';
 import { APPROVE_CONTRACT_METHODS, WITHDRAW_CONTRACT_METHODS } from 'queries/delegate/types';
 
 type ToggleDelegateApprovalProps = {
@@ -40,7 +40,7 @@ const ToggleDelegateApproval: FC<ToggleDelegateApprovalProps> = ({
 }) => {
 	const { t } = useTranslation();
 	const { monitorHash } = Notify.useContainer();
-	const { delegateApprovalsContract } = useDelegates();
+	const { delegateApprovalsContract } = Delegates.useContainer();
 
 	const [, setError] = useState<string | null>(null);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
@@ -107,7 +107,12 @@ const ToggleDelegateApproval: FC<ToggleDelegateApprovalProps> = ({
 	return (
 		<>
 			<Container>
-				<input name={action} type="checkbox" {...{ onChange, checked }} />
+				<input
+					name={action}
+					type="checkbox"
+					disabled={account.all && action !== Action.APPROVE_ALL}
+					{...{ onChange, checked }}
+				/>
 				<span className="checkmark"></span>
 			</Container>
 			{txModalOpen && (
@@ -164,7 +169,8 @@ const Container = styled.label`
 		opacity: 1;
 	}
 
-	input:checked ~ .checkmark {
+	input:disabled ~ .checkmark {
+		opacity: 0.2;
 	}
 
 	.checkmark:after {

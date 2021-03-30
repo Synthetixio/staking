@@ -1,12 +1,5 @@
-import {
-	useMemo,
-	useEffect,
-	useState,
-	createContext,
-	useContext,
-	ReactNode,
-	useCallback,
-} from 'react';
+import { createContainer } from 'unstated-next';
+import { useMemo, useEffect, useState, useCallback } from 'react';
 import { ethers } from 'ethers';
 import { appReadyState } from 'store/app';
 import { useRecoilValue } from 'recoil';
@@ -16,20 +9,9 @@ import { walletAddressState, networkState } from 'store/wallet';
 import { Action, ACTIONS } from 'queries/delegate/types';
 import { fromBytes32 } from 'utils/transactions';
 
-type Context = {
-	accounts: Account[];
-	isLoading: boolean;
-	delegateApprovalsContract: ethers.Contract | null;
-	getActionByBytes: (bytes: string) => string | null;
-};
+export default createContainer(Container);
 
-const DelegatesContext = createContext<Context | null>(null);
-
-type DelegatesProviderProps = {
-	children: ReactNode;
-};
-
-export const DelegatesProvider: React.FC<DelegatesProviderProps> = ({ children }) => {
+function Container() {
 	const address = useRecoilValue(walletAddressState);
 	const network = useRecoilValue(networkState);
 	const isAppReady = useRecoilValue(appReadyState);
@@ -171,33 +153,21 @@ export const DelegatesProvider: React.FC<DelegatesProviderProps> = ({ children }
 		};
 	}, [delegateApprovalsContract, subgraph, address]);
 
-	return (
-		<DelegatesContext.Provider
-			value={{
-				accounts,
-				isLoading,
-				delegateApprovalsContract,
-				getActionByBytes,
-			}}
-		>
-			{children}
-		</DelegatesContext.Provider>
-	);
-};
-
-export function useDelegates() {
-	const context = useContext(DelegatesContext);
-	if (!context) {
-		throw new Error('Missing delegates context');
-	}
-	return context;
+	return {
+		accounts,
+		isLoading,
+		delegateApprovalsContract,
+		getActionByBytes,
+	};
 }
 
-const makeSubgraph = (subgraphUrl: string) => async (query: any, variables: any) => {
-	const res = await fetch(subgraphUrl, {
-		method: 'POST',
-		body: JSON.stringify({ query, variables }),
-	});
-	const { data } = await res.json();
-	return data;
-};
+function makeSubgraph(subgraphUrl: string) {
+	return async function (query: any, variables: any) {
+		const res = await fetch(subgraphUrl, {
+			method: 'POST',
+			body: JSON.stringify({ query, variables }),
+		});
+		const { data } = await res.json();
+		return data;
+	};
+}

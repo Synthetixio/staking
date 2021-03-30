@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { truncateAddress } from 'utils/formatters/string';
 import { CellProps } from 'react-table';
-import { useDelegates } from 'sections/delegate/contexts/delegates';
+import Delegates from 'containers/Delegates';
 import { Account, ENTITY_ATTRS } from 'queries/delegate/types';
 import Table from 'components/Table';
 import { ExternalLink } from 'styles/common';
@@ -16,7 +16,7 @@ const ACTION_COL_WIDTH = 50;
 const RightCol: FC = () => {
 	const { t } = useTranslation();
 
-	const { isLoading, accounts } = useDelegates();
+	const { isLoading, accounts } = Delegates.useContainer();
 
 	const columns = useMemo(
 		() => [
