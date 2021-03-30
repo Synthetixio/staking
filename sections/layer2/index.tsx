@@ -1,45 +1,48 @@
 import { FC, useMemo, useEffect, useState } from 'react';
+import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import { providers } from 'ethers';
-import initSynthetixJS from '@synthetixio/js';
+import { getOptimismProvider } from '@synthetixio/providers';
+import initSynthetixJS from '@synthetixio/contracts-interface';
 
 import { formatCryptoCurrency, formatPercent } from 'utils/formatters/number';
 import ROUTES from 'constants/routes';
 import { EXTERNAL_LINKS } from 'constants/links';
-import { OVM_RPC_URL } from 'constants/ovm';
 
 import GridBox, { GridBoxProps } from 'components/GridBox/Gridbox';
 import GlowingCircle from 'components/GlowingCircle';
 import { GridDiv } from 'styles/common';
 import media from 'styles/media';
 
+import { networkState } from 'store/wallet';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
-import useEscrowDataQuery from 'hooks/useEscrowDataQueryWrapper';
 import { CryptoCurrency } from 'constants/currency';
+import { DEFAULT_NETWORK_ID } from 'constants/defaults';
+import { L1_TO_L2_NETWORK_MAPPER } from '@synthetixio/optimism-networks';
 
 const Index: FC = () => {
 	const [l2AmountSNX, setL2AmountSNX] = useState<number>(0);
 	const [l2APR, setL2APR] = useState<number>(0);
 	const { t } = useTranslation();
 	const { debtBalance, transferableCollateral, stakingEscrow } = useStakingCalculations();
-	const escrowDataQuery = useEscrowDataQuery();
-	const totalBalancePendingMigration = escrowDataQuery?.data?.totalBalancePendingMigration ?? 0;
+	const network = useRecoilValue(networkState);
 
 	useEffect(() => {
 		async function getData() {
 			try {
-				const provider = new providers.StaticJsonRpcProvider(OVM_RPC_URL);
+				const provider = getOptimismProvider({
+					layerOneNetworkId: network?.id ?? DEFAULT_NETWORK_ID,
+				});
 				const {
 					contracts: { Synthetix, FeePool },
 				} = initSynthetixJS({
 					provider,
-					useOvm: true,
+					networkId: L1_TO_L2_NETWORK_MAPPER[network?.id ?? DEFAULT_NETWORK_ID],
 				});
 
 				const [totalSupplyBN, feePeriod] = await Promise.all([
 					Synthetix.totalSupply(),
-					FeePool.recentFeePeriods('0'),
+					FeePool.recentFeePeriods('1'),
 				]);
 
 				const totalSupply = totalSupplyBN / 1e18;
@@ -48,6 +51,7 @@ const Index: FC = () => {
 				setL2APR((rewards * 52) / totalSupply);
 				setL2AmountSNX(totalSupply);
 			} catch (e) {
+				console.log(e);
 				setL2APR(0);
 				setL2AmountSNX(0);
 			}
@@ -109,7 +113,7 @@ const Index: FC = () => {
 						{
 							gridLocations: ['col-1', 'col-2', 'row-2', 'row-3'],
 							...ACTIONS.migrate,
-							isDisabled: totalBalancePendingMigration || stakingEscrow.isZero(),
+							isDisabled: stakingEscrow.isZero(),
 						},
 						{
 							gridLocations: ['col-2', 'col-3', 'row-2', 'row-3'],
@@ -136,7 +140,7 @@ const Index: FC = () => {
 						},
 				  ],
 		// eslint-disable-next-line
-		[ACTIONS, debtBalance, stakingEscrow, totalBalancePendingMigration, transferableCollateral]
+		[ACTIONS, debtBalance, stakingEscrow, transferableCollateral]
 	) as GridBoxProps[];
 
 	return (

@@ -20,6 +20,8 @@ const useProposals = (spaceKey: SPACE_KEY, options?: QueryConfig<Proposal[]>) =>
 	const walletAddress = useRecoilValue(walletAddressState);
 	const { provider } = Connector.useContainer();
 
+	const isL1 = !network?.useOvm ?? true;
+
 	const contract = new ethers.Contract(
 		CouncilDilution.address,
 		CouncilDilution.abi,
@@ -60,7 +62,7 @@ const useProposals = (spaceKey: SPACE_KEY, options?: QueryConfig<Proposal[]>) =>
 							axios.get(PROPOSAL(spaceKey, proposal.authorIpfsHash)).then((response) => {
 								return {
 									voterAddresses: Object.keys(response.data).map((address) =>
-										address.toLowerCase()
+										ethers.utils.getAddress(address)
 									) as string[],
 								};
 							})
@@ -104,7 +106,7 @@ const useProposals = (spaceKey: SPACE_KEY, options?: QueryConfig<Proposal[]>) =>
 						axios.get(PROPOSAL(spaceKey, proposal.authorIpfsHash)).then((response) => {
 							return {
 								voterAddresses: Object.keys(response.data).map((address) =>
-									address.toLowerCase()
+									ethers.utils.getAddress(address)
 								) as string[],
 							};
 						})
@@ -139,7 +141,7 @@ const useProposals = (spaceKey: SPACE_KEY, options?: QueryConfig<Proposal[]>) =>
 			}
 		},
 		{
-			enabled: isAppReady && spaceKey,
+			enabled: isAppReady && spaceKey && isL1,
 			...options,
 		}
 	);

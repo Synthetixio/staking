@@ -14,7 +14,12 @@ import {
 } from 'contracts';
 import QUERY_KEYS from 'constants/queryKeys';
 import { appReadyState } from 'store/app';
-import { walletAddressState, isWalletConnectedState, networkState } from 'store/wallet';
+import {
+	walletAddressState,
+	isWalletConnectedState,
+	networkState,
+	isMainnetState,
+} from 'store/wallet';
 
 import { LiquidityPoolData } from './types';
 import { getCurveTokenPrice } from './helper';
@@ -30,6 +35,7 @@ const useCurveSeuroPoolQuery = (options?: QueryConfig<CurveData>) => {
 	const walletAddress = useRecoilValue(walletAddressState);
 	const network = useRecoilValue(networkState);
 	const { provider } = Connector.useContainer();
+	const isMainnet = useRecoilValue(isMainnetState);
 
 	return useQuery<CurveData>(
 		QUERY_KEYS.LiquidityPools.sEUR(walletAddress ?? '', network?.id!),
@@ -152,7 +158,7 @@ const useCurveSeuroPoolQuery = (options?: QueryConfig<CurveData>) => {
 			};
 		},
 		{
-			enabled: isAppReady && isWalletConnected && provider != null,
+			enabled: isAppReady && isWalletConnected && provider != null && isMainnet,
 			...options,
 		}
 	);

@@ -13,6 +13,7 @@ type TabProps = {
 	tabHeight?: number;
 	inverseTabColor?: boolean;
 	isSingle?: boolean;
+	isDisabled?: boolean;
 };
 
 export const TabButton = (props: TabProps) => (
@@ -22,6 +23,7 @@ export const TabButton = (props: TabProps) => (
 		aria-selected={props.active}
 		aria-controls={`${props.name}-tabpanel`}
 		tabIndex={-1}
+		isDisabled={props.isDisabled}
 		{...props}
 	/>
 );
@@ -127,7 +129,15 @@ const StyledTabButton = styled.button<TabProps>`
 			border-right: none;
 		`}
 
-	&:hover {
+		${(props) =>
+			props.isDisabled &&
+			css`
+				pointer-events: none;
+				opacity: 0.3;
+			`}
+
+
+	&:hover{
 		color: ${(props) =>
 			props.active
 				? props.theme.colors.white

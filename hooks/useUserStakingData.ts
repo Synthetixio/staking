@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useRecoilValue } from 'recoil';
 
 import useFeeClaimHistoryQuery from 'queries/staking/useFeeClaimHistoryQuery';
 import useGetFeePoolDataQuery from 'queries/staking/useGetFeePoolDataQuery';
@@ -11,9 +12,11 @@ import { WEEKS_IN_YEAR } from 'constants/date';
 
 import { toBigNumber, zeroBN } from 'utils/formatters/number';
 import useSNXLockedValueQuery from 'queries/staking/useSNXLockedValueQuery';
+import { isL2State } from 'store/wallet';
 
 export const useUserStakingData = () => {
 	const [hasClaimed, setHasClaimed] = useState<boolean>(false);
+	const isL2 = useRecoilValue(isL2State);
 	const history = useFeeClaimHistoryQuery();
 	const currentFeePeriod = useGetFeePoolDataQuery('0');
 	const exchangeRatesQuery = useExchangeRatesQuery();
@@ -53,12 +56,14 @@ export const useUserStakingData = () => {
 		useSNXLockedValue.data != null
 	) {
 		// compute APR based using useSNXLockedValueQuery (top 1000 holders)
-		stakingAPR = sUSDRate
-			.multipliedBy(currentFeePeriod.data.feesToDistribute)
-			.plus(SNXRate.multipliedBy(currentFeePeriod.data.rewardsToDistribute))
-			.multipliedBy(WEEKS_IN_YEAR)
-			.dividedBy(useSNXLockedValue.data)
-			.toNumber();
+		stakingAPR = isL2
+			? 0
+			: sUSDRate
+					.multipliedBy(currentFeePeriod.data.feesToDistribute)
+					.plus(SNXRate.multipliedBy(currentFeePeriod.data.rewardsToDistribute))
+					.multipliedBy(WEEKS_IN_YEAR)
+					.dividedBy(useSNXLockedValue.data)
+					.toNumber();
 	}
 
 	const availableRewards = useClaimableRewards();

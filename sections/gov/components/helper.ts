@@ -1,6 +1,7 @@
 import BigNumber from 'bignumber.js';
 import snapshot from '@snapshot-labs/snapshot.js';
 import { getCurrentTimestampSeconds } from 'utils/formatters/date';
+import { ethers } from 'ethers';
 
 export const quadraticWeighting = (value: BigNumber) => {
 	const scaledValue = value.multipliedBy(1e5);
@@ -31,7 +32,9 @@ export function getENSForAddresses(addresses: any[]) {
 			.then(({ accounts }: { accounts: any }) => {
 				const ensNames = {} as any;
 				accounts.forEach((profile: any) => {
-					ensNames[profile.id.toLowerCase()] = profile.domains[0] ? profile.domains[0].name : null;
+					ensNames[ethers.utils.getAddress(profile.id)] = profile.domains[0]
+						? profile.domains[0].name
+						: null;
 				});
 				resolve(ensNames);
 			})
@@ -54,8 +57,8 @@ export async function getProfiles(addresses: any) {
 
 	return Object.fromEntries(
 		Object.entries(profiles).map(([address, profile]) => {
-			profile.ens = ensNames[address.toLowerCase()] || '';
-			profile.address = address.toLowerCase();
+			profile.ens = ensNames[ethers.utils.getAddress(address)] || '';
+			profile.address = ethers.utils.getAddress(address);
 			return [address, profile];
 		})
 	);

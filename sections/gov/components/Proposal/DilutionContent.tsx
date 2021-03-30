@@ -48,19 +48,18 @@ import CouncilDilution from 'contracts/councilDilution.js';
 import { ethers } from 'ethers';
 import Connector from 'containers/Connector';
 import { appReadyState } from 'store/app';
-import { getGasEstimateForTransaction } from 'utils/transactions';
 import { isWalletConnectedState, walletAddressState } from 'store/wallet';
-import { normalizeGasLimit } from 'utils/network';
 import { useCouncilMembers } from 'sections/gov/hooks/useCouncilMembers';
 
-import { Transaction } from 'constants/network';
-import Etherscan from 'containers/Etherscan';
+import { Transaction, GasLimitEstimate } from 'constants/network';
+import Etherscan from 'containers/BlockExplorer';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 
-import Notify from 'containers/Notify';
+import TransactionNotifier from 'containers/TransactionNotifier';
 import TxState from 'sections/gov/components/TxState';
 import useProposal from 'queries/gov/useProposal';
 import { expired, pending } from '../helper';
+import synthetix from 'lib/synthetix';
 
 type DilutionContentProps = {
 	onBack: Function;
@@ -78,7 +77,7 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ onBack }) => {
 	const [txError, setTxError] = useState<string | null>(null);
 
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
-	const [gasLimitEstimate, setGasLimitEstimate] = useState<number | null>(null);
+	const [gasLimitEstimate, setGasLimitEstimate] = useState<GasLimitEstimate>(null);
 
 	const [transactionState, setTransactionState] = useState<Transaction>(Transaction.PRESUBMIT);
 	const [signTransactionState, setSignTransactionState] = useState<Transaction>(
@@ -92,10 +91,12 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ onBack }) => {
 	const [isCouncilMember, setIsCouncilMember] = useState<boolean>(false);
 	const [targetDilutionAddress, setTargetDilutionAddress] = useState<string | null>(null);
 
-	const { monitorHash } = Notify.useContainer();
-	const { etherscanInstance } = Etherscan.useContainer();
+	const { monitorTransaction } = TransactionNotifier.useContainer();
+	const { blockExplorerInstance } = Etherscan.useContainer();
 	const link =
-		etherscanInstance != null && txHash != null ? etherscanInstance.txLink(txHash) : undefined;
+		blockExplorerInstance != null && txHash != null
+			? blockExplorerInstance.txLink(txHash)
+			: undefined;
 
 	const proposal = useRecoilValue(proposalState);
 	const isAppReady = useRecoilValue(appReadyState);
@@ -112,7 +113,7 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ onBack }) => {
 	useEffect(() => {
 		if (isAppReady && walletAddress && councilMembers) {
 			const councilMemberAddresses = councilMembers.map((member) => member.address);
-			setIsCouncilMember(councilMemberAddresses.includes(walletAddress.toLowerCase()));
+			setIsCouncilMember(councilMemberAddresses.includes(ethers.utils.getAddress(walletAddress)));
 		}
 	}, [isAppReady, walletAddress, councilMembers]);
 
@@ -138,18 +139,18 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ onBack }) => {
 					);
 
 					if (hasDiluted) {
-						gasEstimate = await getGasEstimateForTransaction(
-							[hash, memberVotedFor],
-							contract.estimateGas.invalidateDilution
-						);
+						gasEstimate = await synthetix.getGasEstimateForTransaction({
+							txArgs: [hash, memberVotedFor],
+							method: contract.estimateGas.invalidateDilution,
+						});
 					} else {
-						gasEstimate = await getGasEstimateForTransaction(
-							[hash, memberVotedFor],
-							contract.estimateGas.dilute
-						);
+						gasEstimate = await synthetix.getGasEstimateForTransaction({
+							txArgs: [hash, memberVotedFor],
+							method: contract.estimateGas.dilute,
+						});
 					}
 
-					setGasLimitEstimate(normalizeGasLimit(Number(gasEstimate)));
+					setGasLimitEstimate(gasEstimate);
 				} catch (error) {
 					setTxError(error.message);
 					setGasLimitEstimate(null);
@@ -257,7 +258,7 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ onBack }) => {
 					if (transaction) {
 						setTxHash(transaction.hash);
 						setTransactionState(Transaction.WAITING);
-						monitorHash({
+						monitorTransaction({
 							txHash: transaction.hash,
 							onTxConfirmed: () => {
 								setTransactionState(Transaction.SUCCESS);
@@ -274,7 +275,15 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ onBack }) => {
 			}
 		}
 		undoDilute();
-	}, [gasLimitEstimate, isAppReady, monitorHash, proposal, proposalQuery, signer, walletAddress]);
+	}, [
+		gasLimitEstimate,
+		isAppReady,
+		monitorTransaction,
+		proposal,
+		proposalQuery,
+		signer,
+		walletAddress,
+	]);
 
 	const handleDilute = useCallback(() => {
 		async function dilute() {
@@ -306,7 +315,7 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ onBack }) => {
 					if (transaction) {
 						setTxHash(transaction.hash);
 						setTransactionState(Transaction.WAITING);
-						monitorHash({
+						monitorTransaction({
 							txHash: transaction.hash,
 							onTxConfirmed: () => {
 								setTransactionState(Transaction.SUCCESS);
@@ -322,7 +331,15 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ onBack }) => {
 			}
 		}
 		dilute();
-	}, [signer, monitorHash, isAppReady, proposal, walletAddress, gasLimitEstimate, proposalQuery]);
+	}, [
+		signer,
+		monitorTransaction,
+		isAppReady,
+		proposal,
+		walletAddress,
+		gasLimitEstimate,
+		proposalQuery,
+	]);
 
 	const getRawMarkup = (value?: string | null) => {
 		const remarkable = new Remarkable({

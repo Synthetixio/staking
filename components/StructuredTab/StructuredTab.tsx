@@ -9,6 +9,7 @@ export type TabInfo = {
 	tabChildren: ReactNode;
 	key: string;
 	blue: boolean;
+	disabled?: boolean;
 };
 
 type StructuredTabProps = {
@@ -45,7 +46,7 @@ const StructuredTab: FC<StructuredTabProps> = ({
 	return (
 		<FlexDivColCentered>
 			<TabList padding={boxPadding} width={boxWidth}>
-				{tabData.map(({ title, icon, key, blue }, index) => (
+				{tabData.map(({ title, icon, key, blue, disabled = false }, index) => (
 					<TabButton
 						isSingle={singleTab}
 						tabHeight={tabHeight}
@@ -55,6 +56,7 @@ const StructuredTab: FC<StructuredTabProps> = ({
 						key={`${key}-${index}-button`}
 						name={title}
 						active={activeTab === key}
+						isDisabled={disabled}
 						onClick={() => {
 							setActiveTab(key);
 							if (setPanelType != null) {

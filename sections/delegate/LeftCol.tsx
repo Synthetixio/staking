@@ -8,7 +8,7 @@ import { Trans, useTranslation } from 'react-i18next';
 import Button from 'components/Button';
 import StructuredTab from 'components/StructuredTab';
 import Connector from 'containers/Connector';
-import Notify from 'containers/Notify';
+import TransactionNotifier from 'containers/TransactionNotifier';
 import {
 	ModalItemTitle as TxModalItemTitle,
 	ModalItemText as TxModalItemText,
@@ -71,7 +71,7 @@ const Tab: FC = () => {
 	const { connectWallet } = Connector.useContainer();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const { delegateApprovalsContract } = Delegates.useContainer();
-	const { monitorHash } = Notify.useContainer();
+	const { monitorTransaction } = TransactionNotifier.useContainer();
 
 	const [action, setAction] = useState<string>(Action.APPROVE_ALL);
 
@@ -119,7 +119,7 @@ const Tab: FC = () => {
 			await tx(() => getApproveTxData(gas), {
 				showErrorNotification: (e: string) => setError(e),
 				showProgressNotification: (hash: string) =>
-					monitorHash({
+					monitorTransaction({
 						txHash: hash,
 						onTxConfirmed: () => {},
 					}),

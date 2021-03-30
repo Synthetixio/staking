@@ -1,8 +1,8 @@
 import { FC, ReactNode } from 'react';
 
 import Connector from './Connector';
-import Etherscan from './Etherscan';
-import Notify from './Notify';
+import BlockExplorer from './BlockExplorer';
+import TransactionNotifier from './TransactionNotifier';
 import Delegates from './Delegates';
 
 type WithAppContainersProps = {
@@ -11,11 +11,11 @@ type WithAppContainersProps = {
 
 export const WithAppContainers: FC<WithAppContainersProps> = ({ children }) => (
 	<Connector.Provider>
-		<Etherscan.Provider>
-			<Notify.Provider>
+		<BlockExplorer.Provider>
+			<TransactionNotifier.Provider>
 				<Delegates.Provider>{children}</Delegates.Provider>
-			</Notify.Provider>
-		</Etherscan.Provider>
+			</TransactionNotifier.Provider>
+		</BlockExplorer.Provider>
 	</Connector.Provider>
 );
 

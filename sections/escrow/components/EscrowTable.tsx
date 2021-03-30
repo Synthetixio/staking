@@ -20,7 +20,7 @@ const EscrowTable: FC = () => {
 
 	const returnSchedule = useMemo(
 		() =>
-			activeTab === EscrowPanelType.REWARDS ? (
+			!activeTab || activeTab === EscrowPanelType.REWARDS ? (
 				<RewardEscrowSchedule />
 			) : (
 				<TokenSaleEscrowSchedule />

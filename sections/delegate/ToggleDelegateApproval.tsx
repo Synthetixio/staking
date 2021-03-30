@@ -7,7 +7,7 @@ import {
 } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import Notify from 'containers/Notify';
+import TransactionNotifier from 'containers/TransactionNotifier';
 import {
 	ModalItemTitle as TxModalItemTitle,
 	ModalItemText as TxModalItemText,
@@ -39,7 +39,7 @@ const ToggleDelegateApproval: FC<ToggleDelegateApprovalProps> = ({
 	value: checked,
 }) => {
 	const { t } = useTranslation();
-	const { monitorHash } = Notify.useContainer();
+	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const { delegateApprovalsContract } = Delegates.useContainer();
 
 	const [, setError] = useState<string | null>(null);
@@ -71,7 +71,7 @@ const ToggleDelegateApproval: FC<ToggleDelegateApprovalProps> = ({
 			await tx(() => getTxData(gas), {
 				showErrorNotification: (e: string) => setError(e),
 				showProgressNotification: (hash: string) =>
-					monitorHash({
+					monitorTransaction({
 						txHash: hash,
 						onTxConfirmed: () => {},
 					}),
