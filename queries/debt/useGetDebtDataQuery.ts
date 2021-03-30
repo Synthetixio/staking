@@ -18,6 +18,7 @@ type WalletDebtData = {
 	collateral: BigNumber;
 	issuableSynths: BigNumber;
 	balance: BigNumber;
+	totalSupply: BigNumber;
 };
 
 const useGetDebtDataQuery = (options?: QueryConfig<WalletDebtData>) => {
@@ -42,6 +43,7 @@ const useGetDebtDataQuery = (options?: QueryConfig<WalletDebtData>) => {
 				Synthetix.collateral(walletAddress),
 				Synthetix.maxIssuableSynths(walletAddress),
 				Synthetix.balanceOf(walletAddress),
+				Synthetix.totalSupply(),
 			]);
 			const [
 				targetCRatio,
@@ -51,6 +53,7 @@ const useGetDebtDataQuery = (options?: QueryConfig<WalletDebtData>) => {
 				collateral,
 				issuableSynths,
 				balance,
+				totalSupply,
 			] = result.map((item) => toBigNumber(utils.formatEther(item)));
 			return {
 				targetCRatio,
@@ -60,6 +63,7 @@ const useGetDebtDataQuery = (options?: QueryConfig<WalletDebtData>) => {
 				collateral,
 				issuableSynths,
 				balance,
+				totalSupply,
 			};
 		},
 		{
