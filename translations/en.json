@@ -244,6 +244,13 @@
 					"subtext": "There are various Liquidity Providing incentives interacting with different DeFi products for you to choose from",
 					"dismiss": "DISMISS",
 					"see-more": "SEE MORE"
+				},
+				"completed-default": {
+					"title": "Minting complete!",
+					"staked": "Staked",
+					"minted": "Minted",
+					"dismiss": "Dismiss",
+					"verify": "Verify Tx"
 				}
 			},
 			"burn": {
