@@ -124,7 +124,8 @@ const MintTab: React.FC = () => {
 								setTransactionState(Transaction.SUCCESS);
 							},
 							onTxFailed: (error) => {
-								console.log('failed', error);
+								console.log('Transaction failed', error);
+								setTransactionState(Transaction.PRESUBMIT);
 							},
 						});
 						setTxModalOpen(false);
