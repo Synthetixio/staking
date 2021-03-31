@@ -1041,7 +1041,7 @@
 		},
 		"info": {
 			"title": "Delegate powers to another wallet address",
-			"subtitle": "Delegation enables a wallet to execute functions on behalf of another wallet: mint, burn, earn, and exchange, but not transfer. Manage addresses and their powers below. Learn more.",
+			"subtitle": "Delegation enables a wallet to execute functions on behalf of another wallet: mint, burn, earn, and exchange, but not transfer. Manage addresses and their powers below.",
 			"learn-more": "Learn more."
 		},
 		"list": {
