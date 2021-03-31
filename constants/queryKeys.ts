@@ -211,9 +211,15 @@ export const QUERY_KEYS = {
 		],
 	},
 	ShortRewards: {
-		iBTC: (walletAddress: string, networkId: NetworkId) => [
+		sBTC: (walletAddress: string, networkId: NetworkId) => [
 			'shortRewards',
-			'iBTC',
+			'sBTC',
+			walletAddress,
+			networkId,
+		],
+		sETH: (walletAddress: string, networkId: NetworkId) => [
+			'shortRewards',
+			'sETH',
 			walletAddress,
 			networkId,
 		],

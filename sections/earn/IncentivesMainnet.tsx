@@ -129,6 +129,24 @@ const Incentives: FC<IncentivesProps> = ({
 							externalLink: ROUTES.Earn.sBTC_EXTERNAL,
 						},
 						{
+							title: t('earn.incentives.options.seth.title'),
+							subtitle: t('earn.incentives.options.seth.subtitle'),
+							apr: shortData[Synths.sETH].APR,
+							tvl: shortData[Synths.sETH].OI,
+							staked: {
+								balance: shortData[Synths.sETH].data?.staked ?? 0,
+								asset: Synths.sETH,
+							},
+							rewards: shortData[Synths.sETH].data?.rewards ?? 0,
+							periodStarted: now - (shortData[Synths.sETH].data?.duration ?? 0),
+							periodFinish: shortData[Synths.sETH].data?.periodFinish ?? 0,
+							claimed: (shortData[Synths.sETH].data?.rewards ?? 0) > 0 ? false : NOT_APPLICABLE,
+							now,
+							tab: Tab.sETH_SHORT,
+							route: ROUTES.Earn.sETH_SHORT,
+							externalLink: ROUTES.Earn.sETH_EXTERNAL,
+						},
+						{
 							title: t('earn.incentives.options.stsla.title'),
 							subtitle: t('earn.incentives.options.stsla.subtitle'),
 							apr: lpData[LP.BALANCER_sTSLA].APR,
@@ -232,6 +250,7 @@ const Incentives: FC<IncentivesProps> = ({
 				lpData[LP.CURVE_sUSD].data &&
 				lpData[LP.CURVE_sEURO].data &&
 				shortData[Synths.sBTC].data &&
+				shortData[Synths.sETH].data &&
 				lpData[Synths.iETH].data &&
 				lpData[Synths.iBTC].data &&
 				lpData[LP.BALANCER_sTSLA].data
@@ -294,10 +313,10 @@ const Incentives: FC<IncentivesProps> = ({
 						userBalanceBN={lpData[Synths.iETH].data?.userBalanceBN ?? zeroBN}
 						stakedAsset={Synths.iETH}
 						allowance={lpData[Synths.iETH].data?.allowance ?? null}
-						tokenRewards={incentives[1].rewards}
-						staked={incentives[1].staked.balance}
+						tokenRewards={lpData[Synths.iETH].data?.rewards ?? 0}
+						staked={lpData[Synths.iETH].data?.staked ?? 0}
 						stakedBN={lpData[Synths.iETH].data?.stakedBN ?? zeroBN}
-						needsToSettle={incentives[1].needsToSettle}
+						needsToSettle={lpData[Synths.iETH].data?.needsToSettle}
 					/>
 				)}
 				{activeTab === Tab.sTLSA_LP && (
@@ -306,10 +325,10 @@ const Incentives: FC<IncentivesProps> = ({
 						userBalanceBN={lpData[LP.BALANCER_sTSLA].data?.userBalanceBN ?? zeroBN}
 						stakedAsset={LP.BALANCER_sTSLA}
 						allowance={lpData[LP.BALANCER_sTSLA].data?.allowance ?? null}
-						tokenRewards={incentives[3].rewards}
-						staked={incentives[3].staked.balance}
+						tokenRewards={lpData[LP.BALANCER_sTSLA].data?.rewards ?? 0}
+						staked={lpData[LP.BALANCER_sTSLA].data?.staked ?? 0}
 						stakedBN={lpData[LP.BALANCER_sTSLA].data?.stakedBN ?? zeroBN}
-						needsToSettle={incentives[3].needsToSettle}
+						needsToSettle={lpData[LP.BALANCER_sTSLA].data?.needsToSettle}
 					/>
 				)}
 				{activeTab === Tab.DHT_LP && (
@@ -318,10 +337,10 @@ const Incentives: FC<IncentivesProps> = ({
 						userBalanceBN={lpData[LP.UNISWAP_DHT].data?.userBalanceBN ?? zeroBN}
 						stakedAsset={LP.UNISWAP_DHT}
 						allowance={lpData[LP.UNISWAP_DHT].data?.allowance ?? null}
-						tokenRewards={incentives[5].rewards}
-						staked={incentives[5].staked.balance}
+						tokenRewards={lpData[LP.UNISWAP_DHT].data?.rewards ?? 0}
+						staked={lpData[LP.UNISWAP_DHT].data?.staked ?? 0}
 						stakedBN={lpData[LP.UNISWAP_DHT].data?.stakedBN ?? zeroBN}
-						needsToSettle={incentives[5].needsToSettle}
+						needsToSettle={lpData[LP.UNISWAP_DHT].data?.needsToSettle}
 						secondTokenRate={lpData[LP.UNISWAP_DHT].data?.price ?? 0}
 					/>
 				)}
@@ -331,10 +350,10 @@ const Incentives: FC<IncentivesProps> = ({
 						userBalanceBN={lpData[Synths.iBTC].data?.userBalanceBN ?? zeroBN}
 						stakedAsset={Synths.iBTC}
 						allowance={lpData[Synths.iBTC].data?.allowance ?? null}
-						tokenRewards={incentives[6].rewards}
-						staked={incentives[6].staked.balance}
+						tokenRewards={lpData[Synths.iBTC].data?.rewards ?? 0}
+						staked={lpData[Synths.iBTC].data?.staked ?? 0}
 						stakedBN={lpData[Synths.iBTC].data?.stakedBN ?? zeroBN}
-						needsToSettle={incentives[6].needsToSettle}
+						needsToSettle={lpData[Synths.iBTC].data?.needsToSettle}
 					/>
 				)}
 			</TabContainer>

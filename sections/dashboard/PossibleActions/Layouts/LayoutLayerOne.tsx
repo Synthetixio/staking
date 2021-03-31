@@ -106,19 +106,21 @@ const LayoutLayerOne: FC = () => {
 					supplier: 'Synthetix',
 				}),
 				externalLink: ROUTES.Earn.sBTC_EXTERNAL,
+				isDisabled: shortData[Synths.sBTC].APR === 0,
 			},
 			{
 				gridLocations: ['col-3', 'col-5', 'row-2', 'row-3'],
 				icon: (
 					<GlowingCircle variant="green" size="md">
-						<Currency.Icon currencyKey={Synths.iETH} width="32" height="32" />
+						<Currency.Icon currencyKey={Synths.sETH} width="32" height="32" />
 					</GlowingCircle>
 				),
 				title: t('dashboard.actions.earn.title', {
-					percent: formatPercent(lpData[Synths.iETH].APR, { minDecimals: 0 }),
+					percent: formatPercent(shortData[Synths.sETH].APR, { minDecimals: 0 }),
 				}),
-				copy: t('dashboard.actions.earn.copy', { asset: Synths.iETH, supplier: 'Synthetix' }),
-				link: ROUTES.Earn.iETH_LP,
+				copy: t('dashboard.actions.loans.copy', { asset: Synths.sETH, supplier: 'Synthetix' }),
+				externalLink: ROUTES.Earn.sETH_EXTERNAL,
+				isDisabled: shortData[Synths.sETH].APR === 0,
 			},
 			{
 				gridLocations: ['col-1', 'col-2', 'row-3', 'row-4'],
@@ -136,6 +138,7 @@ const LayoutLayerOne: FC = () => {
 				}),
 				tooltip: t('common.tooltip.external', { link: 'Curve Finance' }),
 				externalLink: ROUTES.Earn.sUSD_EXTERNAL,
+				isDisabled: lpData[LP.CURVE_sUSD].APR === 0,
 			},
 			{
 				gridLocations: ['col-2', 'col-3', 'row-3', 'row-4'],
@@ -152,9 +155,10 @@ const LayoutLayerOne: FC = () => {
 					supplier: 'Uniswap',
 				}),
 				link: ROUTES.Earn.DHT_LP,
+				isDisabled: lpData[LP.UNISWAP_DHT].APR === 0,
 			},
 			{
-				gridLocations: ['col-3', 'col-5', 'row-3', 'row-4'],
+				gridLocations: ['col-3', 'col-4', 'row-3', 'row-4'],
 				icon: (
 					<GlowingCircle variant="green" size="md">
 						<Currency.Icon currencyKey={Synths.sTSLA} width="28" height="28" />
@@ -168,6 +172,7 @@ const LayoutLayerOne: FC = () => {
 					supplier: 'Synthetix',
 				}),
 				link: ROUTES.Earn.sTLSA_LP,
+				isDisabled: lpData[LP.BALANCER_sTSLA].APR === 0,
 			},
 		];
 	}, [t, lpData, currentCRatio, targetCRatio, stakingRewards, tradingRewards, shortData]);
