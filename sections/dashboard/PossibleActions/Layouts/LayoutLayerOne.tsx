@@ -19,11 +19,13 @@ import Currency from 'components/Currency';
 import useUserStakingData from 'hooks/useUserStakingData';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 import { LP } from 'sections/earn/types';
+import useShortRewardsData from 'hooks/useShortRewardsData';
 
-const LayoutOne: FC = () => {
+const LayoutLayerOne: FC = () => {
 	const { t } = useTranslation();
 
 	const lpData = useLPData();
+	const shortData = useShortRewardsData();
 	const { stakingRewards, tradingRewards } = useUserStakingData();
 	const { currentCRatio, targetCRatio } = useStakingCalculations();
 
@@ -93,30 +95,32 @@ const LayoutOne: FC = () => {
 				gridLocations: ['col-1', 'col-3', 'row-2', 'row-3'],
 				icon: (
 					<GlowingCircle variant="green" size="md">
-						<Currency.Icon currencyKey={Synths.iBTC} width="32" height="32" />
+						<Currency.Icon currencyKey={Synths.sBTC} width="32" height="32" />
 					</GlowingCircle>
 				),
-				title: t('dashboard.actions.earn.title', {
-					percent: formatPercent(lpData[Synths.iBTC].APR, { minDecimals: 0 }),
+				title: t('dashboard.actions.loans.title', {
+					percent: formatPercent(shortData[Synths.sBTC].APR, { minDecimals: 0 }),
 				}),
-				copy: t('dashboard.actions.earn.copy', {
-					asset: Synths.iBTC,
+				copy: t('dashboard.actions.loans.copy', {
+					asset: Synths.sBTC,
 					supplier: 'Synthetix',
 				}),
-				link: ROUTES.Earn.iBTC_LP,
+				externalLink: ROUTES.Earn.sBTC_EXTERNAL,
+				isDisabled: shortData[Synths.sBTC].APR === 0,
 			},
 			{
 				gridLocations: ['col-3', 'col-5', 'row-2', 'row-3'],
 				icon: (
 					<GlowingCircle variant="green" size="md">
-						<Currency.Icon currencyKey={Synths.iETH} width="32" height="32" />
+						<Currency.Icon currencyKey={Synths.sETH} width="32" height="32" />
 					</GlowingCircle>
 				),
 				title: t('dashboard.actions.earn.title', {
-					percent: formatPercent(lpData[Synths.iETH].APR, { minDecimals: 0 }),
+					percent: formatPercent(shortData[Synths.sETH].APR, { minDecimals: 0 }),
 				}),
-				copy: t('dashboard.actions.earn.copy', { asset: Synths.iETH, supplier: 'Synthetix' }),
-				link: ROUTES.Earn.iETH_LP,
+				copy: t('dashboard.actions.loans.copy', { asset: Synths.sETH, supplier: 'Synthetix' }),
+				externalLink: ROUTES.Earn.sETH_EXTERNAL,
+				isDisabled: shortData[Synths.sETH].APR === 0,
 			},
 			{
 				gridLocations: ['col-1', 'col-2', 'row-3', 'row-4'],
@@ -134,6 +138,7 @@ const LayoutOne: FC = () => {
 				}),
 				tooltip: t('common.tooltip.external', { link: 'Curve Finance' }),
 				externalLink: ROUTES.Earn.sUSD_EXTERNAL,
+				isDisabled: lpData[LP.CURVE_sUSD].APR === 0,
 			},
 			{
 				gridLocations: ['col-2', 'col-3', 'row-3', 'row-4'],
@@ -150,9 +155,10 @@ const LayoutOne: FC = () => {
 					supplier: 'Uniswap',
 				}),
 				link: ROUTES.Earn.DHT_LP,
+				isDisabled: lpData[LP.UNISWAP_DHT].APR === 0,
 			},
 			{
-				gridLocations: ['col-3', 'col-5', 'row-3', 'row-4'],
+				gridLocations: ['col-3', 'col-4', 'row-3', 'row-4'],
 				icon: (
 					<GlowingCircle variant="green" size="md">
 						<Currency.Icon currencyKey={Synths.sTSLA} width="28" height="28" />
@@ -166,9 +172,10 @@ const LayoutOne: FC = () => {
 					supplier: 'Synthetix',
 				}),
 				link: ROUTES.Earn.sTLSA_LP,
+				isDisabled: lpData[LP.BALANCER_sTSLA].APR === 0,
 			},
 		];
-	}, [t, lpData, currentCRatio, targetCRatio, stakingRewards, tradingRewards]);
+	}, [t, lpData, currentCRatio, targetCRatio, stakingRewards, tradingRewards, shortData]);
 	return (
 		<>
 			{gridItems.map((props, index) => (
@@ -178,4 +185,4 @@ const LayoutOne: FC = () => {
 	);
 };
 
-export default LayoutOne;
+export default LayoutLayerOne;

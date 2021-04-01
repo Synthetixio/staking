@@ -1,17 +1,15 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
-import Notify from 'containers/Notify';
+import TransactionNotifier from 'containers/TransactionNotifier';
 import { useTranslation } from 'react-i18next';
 
 import synthetix from 'lib/synthetix';
 
 import { TabContainer } from '../../components/common';
-import { Transaction } from 'constants/network';
+import { Transaction, GasLimitEstimate } from 'constants/network';
 import { normalizedGasPrice } from 'utils/network';
 
-import { getGasEstimateForTransaction } from 'utils/transactions';
-
-import useEscrowDataQuery from 'hooks/useEscrowDataQueryWrapper';
+import useEscrowDataQuery from 'queries/escrow/useEscrowDataQuery';
 import { appReadyState } from 'store/app';
 import { walletAddressState, isEOAWalletState } from 'store/wallet';
 
@@ -19,7 +17,7 @@ import TabContent from './TabContent';
 
 const MigrateTab = () => {
 	const { t } = useTranslation();
-	const { monitorHash } = Notify.useContainer();
+	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const escrowDataQuery = useEscrowDataQuery();
 	const claimableAmount = escrowDataQuery?.data?.claimableAmount ?? 0;
 	const escrowData = escrowDataQuery?.data ?? null;
@@ -30,7 +28,7 @@ const MigrateTab = () => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isEOAWallet = useRecoilValue(isEOAWalletState);
 
-	const [gasLimitEstimate, setGasLimitEstimate] = useState<number | null>(null);
+	const [gasLimitEstimate, setGasLimitEstimate] = useState<GasLimitEstimate>(null);
 	const [depositTxError, setMigrationTxError] = useState<string | null>(null);
 	const [gasEstimateError, setGasEstimateError] = useState<string | null>(null);
 	const [isVestNeeded, setIsVestNeeded] = useState<boolean>(false);
@@ -54,10 +52,10 @@ const MigrateTab = () => {
 					const {
 						contracts: { SynthetixBridgeToOptimism },
 					} = synthetix.js!;
-					const gasEstimate = await getGasEstimateForTransaction(
-						[entryIds],
-						SynthetixBridgeToOptimism.estimateGas.initiateEscrowMigration
-					);
+					const gasEstimate = await synthetix.getGasEstimateForTransaction({
+						txArgs: [entryIds],
+						method: SynthetixBridgeToOptimism.estimateGas.initiateEscrowMigration,
+					});
 					setGasLimitEstimate(gasEstimate);
 				} catch (e) {
 					console.log(e);
@@ -86,7 +84,7 @@ const MigrateTab = () => {
 				if (transaction) {
 					setTxHash(transaction.hash);
 					setTransactionState(Transaction.WAITING);
-					monitorHash({
+					monitorTransaction({
 						txHash: transaction.hash,
 						onTxConfirmed: () => {
 							setTransactionState(Transaction.SUCCESS);

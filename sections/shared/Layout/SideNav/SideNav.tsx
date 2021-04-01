@@ -4,23 +4,26 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 import { Svg } from 'react-optimized-image';
+import { useRecoilValue } from 'recoil';
 
 import { linkCSS } from 'styles/common';
 import { toBigNumber } from 'utils/formatters/number';
 
 import StakingLogo from 'assets/svg/app/staking-logo.svg';
+import StakingL2Logo from 'assets/svg/app/staking-l2-logo.svg';
 import CaretRightIcon from 'assets/svg/app/caret-right-small.svg';
 
 import useSNX24hrPricesQuery from 'queries/rates/useSNX24hrPricesQuery';
-import useEscrowDataQuery from 'hooks/useEscrowDataQueryWrapper';
 import useCryptoBalances from 'hooks/useCryptoBalances';
 import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
 
 import ROUTES from 'constants/routes';
 import { CryptoCurrency, Synths } from 'constants/currency';
 import { SIDE_NAV_WIDTH, zIndex } from 'constants/ui';
+import { MENU_LINKS, MENU_LINKS_L2 } from '../constants';
 
-import { MENU_LINKS, MIGRATE_MENU_LINKS } from '../constants';
+import { isL2State } from 'store/wallet';
+
 import SubMenu from './SubMenu';
 import PriceItem from './PriceItem';
 import PeriodBarStats from './PeriodBarStats';
@@ -36,6 +39,7 @@ const SideNav: FC = () => {
 	const SNX24hrPricesQuery = useSNX24hrPricesQuery();
 	const cryptoBalances = useCryptoBalances();
 	const synthsBalancesQuery = useSynthsBalancesQuery();
+	const isL2 = useRecoilValue(isL2State);
 	const [subMenuConfiguration, setSubMenuConfiguration] = useState({
 		routes: null,
 		topPosition: 0,
@@ -54,10 +58,7 @@ const SideNav: FC = () => {
 			.reverse();
 	}, [SNX24hrPricesQuery?.data]);
 
-	const rewardEscrowQuery = useEscrowDataQuery();
-	const totalBalancePendingMigration = rewardEscrowQuery?.data?.totalBalancePendingMigration ?? 0;
-
-	const menuLinks = totalBalancePendingMigration > 0 ? MIGRATE_MENU_LINKS : MENU_LINKS;
+	const menuLinks = isL2 ? MENU_LINKS_L2 : MENU_LINKS;
 
 	return (
 		<SideNavContainer
@@ -65,7 +66,7 @@ const SideNav: FC = () => {
 		>
 			<StakingLogoWrap>
 				<Link href={ROUTES.Home}>
-					<Svg src={StakingLogo} />
+					{isL2 ? <Svg src={StakingL2Logo} /> : <Svg src={StakingLogo} />}
 				</Link>
 			</StakingLogoWrap>
 			<MenuLinks>

@@ -1,13 +1,18 @@
+import { useEffect, useState } from 'react';
 import { useQuery, QueryConfig } from 'react-query';
 import { useRecoilValue } from 'recoil';
 import { providers } from 'ethers';
 import orderBy from 'lodash/orderBy';
-import { Watcher } from '@eth-optimism/watcher';
+import {
+	optimismMessengerWatcher,
+	L1_TO_L2_NETWORK_MAPPER,
+	OptimismWatcher,
+} from '@synthetixio/optimism-networks';
+import { getOptimismProvider } from '@synthetixio/providers';
 
 import synthetix from 'lib/synthetix';
 
 import QUERY_KEYS from 'constants/queryKeys';
-import { L1_MESSENGER_ADDRESS, L2_MESSENGER_ADDRESS, OVM_RPC_URL } from 'constants/ovm';
 import Connector from 'containers/Connector';
 
 import { isWalletConnectedState, networkState, walletAddressState } from 'store/wallet';
@@ -24,23 +29,27 @@ export type DepositRecord = {
 
 export type DepositHistory = Array<DepositRecord>;
 
-const useGetDebtDataQuery = (options?: QueryConfig<DepositHistory>) => {
+const useGetDepositsDataQuery = (options?: QueryConfig<DepositHistory>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const network = useRecoilValue(networkState);
 	const { provider } = Connector.useContainer();
+	const [watcher, setWatcher] = useState<OptimismWatcher | null>(null);
 
-	const watcher = new Watcher({
-		l1: {
-			provider,
-			messengerAddress: L1_MESSENGER_ADDRESS,
-		},
-		l2: {
-			provider: new providers.JsonRpcProvider(OVM_RPC_URL),
-			messengerAddress: L2_MESSENGER_ADDRESS,
-		},
-	});
+	useEffect(() => {
+		if (network && !network.useOvm && provider) {
+			setWatcher(
+				optimismMessengerWatcher({
+					layerOneProvider: provider as providers.Web3Provider,
+					layerTwoProvider: getOptimismProvider({
+						layerOneNetworkId: network.id,
+					}) as providers.Web3Provider,
+					layerTwoNetworkId: L1_TO_L2_NETWORK_MAPPER[network.id],
+				})
+			);
+		}
+	}, [network, provider]);
 
 	return useQuery<DepositHistory>(
 		QUERY_KEYS.Deposits(walletAddress ?? '', network?.id!),
@@ -48,7 +57,7 @@ const useGetDebtDataQuery = (options?: QueryConfig<DepositHistory>) => {
 			const {
 				contracts: { SynthetixBridgeToOptimism },
 			} = synthetix.js!;
-			if (!provider) return [];
+			if (!provider || !watcher) return [];
 			const blockNumber = await provider.getBlockNumber();
 			const startBlock = Math.max(blockNumber - NUM_BLOCKS_TO_FETCH, 0);
 			const filters = SynthetixBridgeToOptimism.filters.Deposit(walletAddress);
@@ -79,10 +88,10 @@ const useGetDebtDataQuery = (options?: QueryConfig<DepositHistory>) => {
 			return orderBy(eventsWithReceipt, ['timestamp'], ['desc']);
 		},
 		{
-			enabled: isAppReady && isWalletConnected && provider,
+			enabled: isAppReady && isWalletConnected && provider && watcher,
 			...options,
 		}
 	);
 };
 
-export default useGetDebtDataQuery;
+export default useGetDepositsDataQuery;

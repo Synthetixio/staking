@@ -1,12 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { ethers } from 'ethers';
 import synthetix from 'lib/synthetix';
+import { useTranslation } from 'react-i18next';
 
-import Notify from 'containers/Notify';
-import { Transaction } from 'constants/network';
-import { normalizedGasPrice, normalizeGasLimit } from 'utils/network';
+import { Transaction, GasLimitEstimate } from 'constants/network';
+import { normalizedGasPrice } from 'utils/network';
 import { toBigNumber } from 'utils/formatters/number';
-import { getGasEstimateForTransaction } from 'utils/transactions';
 
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 import { TabContainer } from '../common';
@@ -17,10 +16,10 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { amountToMintState, MintActionType, mintTypeState } from 'store/staking';
 import { isWalletConnectedState } from 'store/wallet';
 import { appReadyState } from 'store/app';
-import { useTranslation } from 'react-i18next';
+import TransactionNotifier from 'containers/TransactionNotifier';
 
 const MintTab: React.FC = () => {
-	const { monitorHash } = Notify.useContainer();
+	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const isAppReady = useRecoilValue(appReadyState);
 
@@ -34,7 +33,7 @@ const MintTab: React.FC = () => {
 
 	const [error, setError] = useState<string | null>(null);
 
-	const [gasLimitEstimate, setGasLimitEstimate] = useState<number | null>(null);
+	const [gasLimitEstimate, setGasLimitEstimate] = useState<GasLimitEstimate>(null);
 	const [mintMax, setMintMax] = useState<boolean>(false);
 
 	const [gasPrice, setGasPrice] = useState<number>(0);
@@ -56,22 +55,23 @@ const MintTab: React.FC = () => {
 						throw new Error(t('staking.actions.mint.action.error.insufficient'));
 
 					if (amountToMint.length > 0 && !mintMax) {
-						gasEstimate = await getGasEstimateForTransaction(
-							[parseEther(amountToMint)],
-							Synthetix.estimateGas.issueSynths
-						);
+						gasEstimate = await synthetix.getGasEstimateForTransaction({
+							txArgs: [parseEther(amountToMint)],
+							method: Synthetix.estimateGas.issueSynths,
+						});
 					} else {
-						gasEstimate = await getGasEstimateForTransaction(
-							[],
-							Synthetix.estimateGas.issueMaxSynths
-						);
+						gasEstimate = await synthetix.getGasEstimateForTransaction({
+							txArgs: [],
+							method: Synthetix.estimateGas.issueMaxSynths,
+						});
 					}
-					setGasLimitEstimate(normalizeGasLimit(Number(gasEstimate)));
+					setGasLimitEstimate(gasEstimate);
 				} catch (error) {
+					console.log(error);
 					let errorMessage = error.message;
 					if (error.code === 'INVALID_ARGUMENT') {
 						errorMessage = t('staking.actions.mint.action.error.bad-input');
-					} else if (error.code === -32603) {
+					} else if (error.code === 'UNPREDICTABLE_GAS_LIMIT') {
 						errorMessage = t('staking.actions.mint.action.error.insufficient');
 					}
 					setError(errorMessage);
@@ -96,17 +96,20 @@ const MintTab: React.FC = () => {
 					let transaction: ethers.ContractTransaction;
 
 					if (mintMax) {
-						const gasLimit = getGasEstimateForTransaction([], Synthetix.estimateGas.issueMaxSynths);
+						const gasLimit = await synthetix.getGasEstimateForTransaction({
+							txArgs: [],
+							method: Synthetix.estimateGas.issueMaxSynths,
+						});
 						transaction = await Synthetix.issueMaxSynths({
 							gasPrice: normalizedGasPrice(gasPrice),
 							gasLimit,
 						});
 					} else {
 						const amountToMintBN = parseEther(amountToMint);
-						const gasLimit = getGasEstimateForTransaction(
-							[amountToMintBN],
-							Synthetix.estimateGas.issueSynths
-						);
+						const gasLimit = await synthetix.getGasEstimateForTransaction({
+							txArgs: [amountToMintBN],
+							method: Synthetix.estimateGas.issueSynths,
+						});
 						transaction = await Synthetix.issueSynths(amountToMintBN, {
 							gasPrice: normalizedGasPrice(gasPrice),
 							gasLimit,
@@ -115,10 +118,14 @@ const MintTab: React.FC = () => {
 					if (transaction) {
 						setTxHash(transaction.hash);
 						setTransactionState(Transaction.WAITING);
-						monitorHash({
+						monitorTransaction({
 							txHash: transaction.hash,
 							onTxConfirmed: () => {
 								setTransactionState(Transaction.SUCCESS);
+							},
+							onTxFailed: (error) => {
+								console.log('Transaction failed', error);
+								setTransactionState(Transaction.PRESUBMIT);
 							},
 						});
 						setTxModalOpen(false);
@@ -129,7 +136,7 @@ const MintTab: React.FC = () => {
 				}
 			}
 		},
-		[amountToMint, gasPrice, monitorHash, isAppReady, onMintChange]
+		[amountToMint, gasPrice, monitorTransaction, isAppReady]
 	);
 
 	const returnPanel = useMemo(() => {

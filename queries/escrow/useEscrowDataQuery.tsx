@@ -8,9 +8,26 @@ import QUERY_KEYS from 'constants/queryKeys';
 
 import { isWalletConnectedState, networkState, walletAddressState } from 'store/wallet';
 import { appReadyState } from 'store/app';
-import { EscrowData, Schedule } from 'hooks/useEscrowDataQueryWrapper';
 
 const VESTING_ENTRIES_PAGINATION = 50;
+
+export type EscrowData = {
+	claimableAmount: number;
+	schedule: Schedule;
+	totalEscrowed: number;
+	totalVested: number;
+	totalBalancePendingMigration?: number;
+	claimableEntryIds?: number[];
+	claimableEntryIdsInChunk?: number[][];
+};
+
+export type Schedule = Array<
+	| {
+			quantity: number;
+			date: Date;
+	  }
+	| []
+>;
 
 type VestingEntry = {
 	escrowAmount: number;
@@ -18,14 +35,14 @@ type VestingEntry = {
 	endTime: number;
 };
 
-const useEscrowDataQueryV2 = (options?: QueryConfig<EscrowData>) => {
+const useEscrowDataQuery = (options?: QueryConfig<EscrowData>) => {
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const network = useRecoilValue(networkState);
 	const isAppReady = useRecoilValue(appReadyState);
 
 	return useQuery<EscrowData>(
-		QUERY_KEYS.Escrow.DataV2(walletAddress ?? '', network?.id!),
+		QUERY_KEYS.Escrow.StakingRewards(walletAddress ?? '', network?.id!),
 		async () => {
 			const {
 				contracts: { RewardEscrowV2 },
@@ -98,4 +115,4 @@ const useEscrowDataQueryV2 = (options?: QueryConfig<EscrowData>) => {
 	);
 };
 
-export default useEscrowDataQueryV2;
+export default useEscrowDataQuery;

@@ -4,13 +4,12 @@ import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import { TabContainer } from '../../components/common';
-import { Transaction } from 'constants/network';
+import { Transaction, GasLimitEstimate } from 'constants/network';
 
-import { getGasEstimateForTransaction } from 'utils/transactions';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 import useGetDepositsDataQuery from 'queries/deposits/useGetDepositsDataQuery';
 import synthetix from 'lib/synthetix';
-import Notify from 'containers/Notify';
+import TransactionNotifier from 'containers/TransactionNotifier';
 import { appReadyState } from 'store/app';
 import { walletAddressState, isEOAWalletState } from 'store/wallet';
 
@@ -24,10 +23,10 @@ const DepositTab = () => {
 	const walletAddress = useRecoilValue(walletAddressState);
 	const isAppReady = useRecoilValue(appReadyState);
 	const isEOAWallet = useRecoilValue(isEOAWalletState);
-	const { monitorHash } = Notify.useContainer();
+	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const depositsDataQuery = useGetDepositsDataQuery();
 
-	const [gasLimitEstimate, setGasLimitEstimate] = useState<number | null>(null);
+	const [gasLimitEstimate, setGasLimitEstimate] = useState<GasLimitEstimate>(null);
 	const [depositTxError, setDepositTxError] = useState<string | null>(null);
 	const [gasEstimateError, setGasEstimateError] = useState<string | null>(null);
 	const [isApproved, setIsApproved] = useState<boolean>(false);
@@ -40,16 +39,16 @@ const DepositTab = () => {
 		const getGasLimitEstimate = async () => {
 			if (isAppReady && walletAddress && isApproved && transferableCollateral) {
 				try {
-					if (!isEOAWallet) throw new Error(t('layer2.error.non-eoa-wallet'));
+					if (isEOAWallet === false) throw new Error(t('layer2.error.non-eoa-wallet'));
 					setGasEstimateError(null);
 					const {
 						contracts: { SynthetixBridgeToOptimism },
 						utils: { parseEther },
 					} = synthetix.js!;
-					const gasEstimate = await getGasEstimateForTransaction(
-						[parseEther(transferableCollateral.toString())],
-						SynthetixBridgeToOptimism.estimateGas.initiateDeposit
-					);
+					const gasEstimate = await synthetix.getGasEstimateForTransaction({
+						txArgs: [parseEther(transferableCollateral.toString())],
+						method: SynthetixBridgeToOptimism.estimateGas.initiateDeposit,
+					});
 					setGasLimitEstimate(gasEstimate);
 				} catch (e) {
 					console.log(e);
@@ -102,7 +101,7 @@ const DepositTab = () => {
 				if (transaction) {
 					setTxHash(transaction.hash);
 					setTransactionState(Transaction.WAITING);
-					monitorHash({
+					monitorTransaction({
 						txHash: transaction.hash,
 						onTxConfirmed: () => {
 							setTransactionState(Transaction.SUCCESS);
@@ -150,6 +149,7 @@ const DepositTab = () => {
 };
 
 const StyledTabContainer = styled(TabContainer)`
+	position: relative;
 	padding: 0;
 `;
 

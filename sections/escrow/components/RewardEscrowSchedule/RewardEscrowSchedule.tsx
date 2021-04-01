@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import { useRouter } from 'next/router';
 
 import { EXTERNAL_LINKS } from 'constants/links';
-import useEscrowDataQuery, { EscrowData } from 'hooks/useEscrowDataQueryWrapper';
+import useEscrowDataQuery, { EscrowData } from 'queries/escrow/useEscrowDataQuery';
 import { CryptoCurrency } from 'constants/currency';
 import { formatShortDate } from 'utils/formatters/date';
 import { formatCurrency } from 'utils/formatters/number';

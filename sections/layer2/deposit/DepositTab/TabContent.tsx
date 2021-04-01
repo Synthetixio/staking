@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { formatCurrency } from 'utils/formatters/number';
 import { CryptoCurrency } from 'constants/currency';
 import { InputContainer, InputBox } from '../../components/common';
-import { Transaction } from 'constants/network';
+import { Transaction, GasLimitEstimate } from 'constants/network';
 
 import GasSelector from 'components/GasSelector';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
@@ -30,7 +30,7 @@ type TabContentProps = {
 	gasEstimateError: string | null;
 	txModalOpen: boolean;
 	setTxModalOpen: Function;
-	gasLimitEstimate: number | null;
+	gasLimitEstimate: GasLimitEstimate;
 	setGasPrice: Function;
 	txHash: string | null;
 	transactionState: Transaction;
@@ -54,7 +54,7 @@ const TabContent: FC<TabContentProps> = ({
 	const currencyKey = CryptoCurrency['SNX'];
 
 	const renderButton = () => {
-		if (depositAmount) {
+		if (depositAmount && !depositAmount.isZero()) {
 			return (
 				<StyledCTA
 					blue={true}

@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import { Svg } from 'react-optimized-image';
 import OutsideClickHandler from 'react-outside-click-handler';
+import { addOptimismNetworkToMetamask } from '@synthetixio/optimism-networks';
 
 import { FlexDivCentered, GridDivCenteredCol, IconButton, UpperCased } from 'styles/common';
 import { zIndex } from 'constants/ui';
@@ -27,14 +28,38 @@ const UserMenu: FC = () => {
 	const { t } = useTranslation();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const [walletOptionsModalOpened, setWalletOptionsModalOpened] = useState<boolean>(false);
+	const [networkError, setNetworkError] = useState<string | null>(null);
 	const [settingsModalOpened, setSettingsModalOpened] = useState<boolean>(false);
 	const [watchWalletModalOpened, setWatchWalletModalOpened] = useState<boolean>(false);
 	const truncatedWalletAddress = useRecoilValue(truncatedWalletAddressState);
 	const network = useRecoilValue(networkState);
+	const isL2 = network?.useOvm ?? false;
+
+	const addOptimismNetwork = async () => {
+		try {
+			setNetworkError(null);
+			if (!window.ethereum || !window.ethereum.isMetaMask) {
+				setNetworkError(t('user-menu.error.please-install-metamask'));
+			} else await addOptimismNetworkToMetamask({ ethereum: window.ethereum });
+		} catch (e) {
+			setNetworkError(e.message);
+		}
+	};
+
+	const getNetworkName = () => {
+		if (network?.useOvm) {
+			return `0Ξ ${network?.name}`;
+		} else return network?.name;
+	};
 
 	return (
 		<Container>
 			<FlexDivCentered>
+				{!isL2 && isWalletConnected ? (
+					<OptimismButton variant="solid" onClick={addOptimismNetwork}>
+						{t('user-menu.layer-2.switch-to-l2')}
+					</OptimismButton>
+				) : null}
 				<Menu>
 					<MenuButton
 						onClick={() => {
@@ -61,7 +86,7 @@ const UserMenu: FC = () => {
 									{truncatedWalletAddress}
 								</FlexDivCentered>
 								<NetworkTag className="network-tag" data-testid="network-tag">
-									{network?.name}
+									{getNetworkName()}
 								</NetworkTag>
 								{walletOptionsModalOpened ? caretUp : caretDown}
 							</WalletButton>
@@ -91,12 +116,14 @@ const UserMenu: FC = () => {
 				<WatchWalletModal onDismiss={() => setWatchWalletModalOpened(false)} />
 			)}
 			{settingsModalOpened && <SettingsModal onDismiss={() => setSettingsModalOpened(false)} />}
+			<Error>{networkError}</Error>
 		</Container>
 	);
 };
 
 const Container = styled(GridDivCenteredCol)`
 	grid-gap: 15px;
+	position: relative;
 `;
 
 const StyledConnectionDot = styled(ConnectionDot)`
@@ -158,6 +185,18 @@ const MenuButton = styled(IconButton)<{ isActive: boolean }>`
 	height: 32px;
 `;
 
+const OptimismButton = styled(Button)`
+	border: 1px solid ${(props) => props.theme.colors.pink};
+	background: ${(props) => props.theme.colors.navy};
+	color: ${(props) => props.theme.colors.pink};
+	text-transform: uppercase;
+	margin-right: 16px;
+	&:hover {
+		background: ${(props) => props.theme.colors.pink} !important;
+		color: ${(props) => props.theme.colors.navy} !important;
+	}
+`;
+
 const DropdownContainer = styled.div`
 	width: 185px;
 	height: 32px;
@@ -171,6 +210,14 @@ const DropdownContainer = styled.div`
 		z-index: ${zIndex.DROPDOWN};
 		width: inherit;
 	}
+`;
+
+const Error = styled.div`
+	position: absolute;
+	top: calc(100% + 10px);
+	right: 0;
+	font-size: 12px;
+	color: ${(props) => props.theme.colors.pink};
 `;
 
 export default UserMenu;

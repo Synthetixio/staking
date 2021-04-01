@@ -4,7 +4,12 @@ import { useRecoilValue } from 'recoil';
 import synthetix from 'lib/synthetix';
 import QUERY_KEYS from 'constants/queryKeys';
 import { appReadyState } from 'store/app';
-import { walletAddressState, isWalletConnectedState, networkState } from 'store/wallet';
+import {
+	walletAddressState,
+	isWalletConnectedState,
+	networkState,
+	isMainnetState,
+} from 'store/wallet';
 import { Synths } from 'constants/currency';
 
 import { LiquidityPoolData } from './types';
@@ -14,6 +19,7 @@ const useIBTCPoolQuery_1 = (options?: QueryConfig<LiquidityPoolData>) => {
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const network = useRecoilValue(networkState);
+	const isMainnet = useRecoilValue(isMainnetState);
 
 	return useQuery<LiquidityPoolData>(
 		QUERY_KEYS.LiquidityPools.iBTC(walletAddress ?? '', network?.id!),
@@ -84,7 +90,7 @@ const useIBTCPoolQuery_1 = (options?: QueryConfig<LiquidityPoolData>) => {
 			};
 		},
 		{
-			enabled: isAppReady && isWalletConnected,
+			enabled: isAppReady && isWalletConnected && isMainnet,
 			...options,
 		}
 	);

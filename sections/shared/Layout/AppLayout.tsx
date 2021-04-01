@@ -1,39 +1,81 @@
 import { SIDE_NAV_WIDTH } from 'constants/ui';
-import { FC, useEffect, ReactNode } from 'react';
+import { FC, ReactNode, useEffect } from 'react';
 import router from 'next/router';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import styled from 'styled-components';
 
 import ROUTES from 'constants/routes';
-import useEscrowDataQuery from 'hooks/useEscrowDataQueryWrapper';
+import { isL2State } from 'store/wallet';
 
 import Header from './Header';
 import SideNav from './SideNav';
+import NotificationContainer from 'constants/NotificationContainer';
 import UserNotifications from './UserNotifications';
+import useProposals from 'queries/gov/useProposals';
+import { SPACE_KEY } from 'constants/snapshot';
+import { NotificationTemplate, userNotificationState } from 'store/ui';
+import { Proposal } from 'queries/gov/types';
 
 type AppLayoutProps = {
 	children: ReactNode;
 };
 
 const AppLayout: FC<AppLayoutProps> = ({ children }) => {
-	const rewardEscrowQuery = useEscrowDataQuery();
-	const totalBalancePendingMigration = rewardEscrowQuery?.data?.totalBalancePendingMigration ?? 0;
+	const isL2 = useRecoilValue(isL2State);
+	const councilProposals = useProposals(SPACE_KEY.COUNCIL);
+	const setNotificationState = useSetRecoilState(userNotificationState);
 
 	useEffect(() => {
-		if (
-			totalBalancePendingMigration > 0 &&
-			router.pathname !== ROUTES.Home &&
-			router.pathname !== ROUTES.Escrow.Home
-		) {
-			router.push(ROUTES.Escrow.Home);
+		if (!isL2 && router.pathname === ROUTES.Withdraw.Home) {
+			router.push(ROUTES.Home);
 		}
-	}, [totalBalancePendingMigration]);
+		if (isL2 && router.pathname === ROUTES.L2.Deposit) {
+			router.push(ROUTES.Home);
+		}
+		if (isL2 && router.pathname.includes(ROUTES.Gov.Home)) {
+			router.push(ROUTES.Home);
+		}
+	}, [isL2]);
+
+	useEffect(() => {
+		if (councilProposals.data && !isL2) {
+			let latestProposal = {
+				msg: {
+					payload: {
+						snapshot: '0',
+					},
+				},
+			} as Partial<Proposal>;
+
+			councilProposals.data.forEach((proposal) => {
+				if (
+					parseInt(proposal.msg.payload.snapshot) >
+					parseInt(latestProposal?.msg?.payload.snapshot ?? '0')
+				) {
+					latestProposal = proposal;
+				}
+			});
+
+			if (new Date().getTime() / 1000 < (latestProposal?.msg?.payload.end ?? 0)) {
+				setNotificationState({
+					type: 'info',
+					template: NotificationTemplate.ELECTION,
+					props: {
+						proposal: latestProposal?.msg?.payload.name,
+						link: `${latestProposal.msg?.space}/${latestProposal.authorIpfsHash}`,
+					},
+				});
+			}
+		}
+	}, [councilProposals, setNotificationState, isL2]);
 
 	return (
 		<>
 			<SideNav />
 			<Header />
 			<Content>{children}</Content>
-			<UserNotifications />
+			<NotificationContainer />
+			{!isL2 && <UserNotifications />}
 		</>
 	);
 };

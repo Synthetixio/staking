@@ -1,13 +1,12 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { ethers } from 'ethers';
-import Notify from 'containers/Notify';
+import TransactionNotifier from 'containers/TransactionNotifier';
 
 import synthetix from 'lib/synthetix';
 
-import { getGasEstimateForTransaction } from 'utils/transactions';
 import { normalizedGasPrice } from 'utils/network';
-import { Transaction } from 'constants/network';
-import useEscrowDataQuery from 'hooks/useEscrowDataQueryWrapper';
+import { Transaction, GasLimitEstimate } from 'constants/network';
+import useEscrowDataQuery from 'queries/escrow/useEscrowDataQuery';
 import { useRecoilValue } from 'recoil';
 import { isWalletConnectedState, walletAddressState } from 'store/wallet';
 import { appReadyState } from 'store/app';
@@ -22,8 +21,8 @@ const StakingRewardsTab: React.FC = () => {
 	const walletAddress = useRecoilValue(walletAddressState);
 	const isAppReady = useRecoilValue(appReadyState);
 
-	const { monitorHash } = Notify.useContainer();
-	const [gasLimitEstimate, setGasLimitEstimate] = useState<number | null>(null);
+	const { monitorTransaction } = TransactionNotifier.useContainer();
+	const [gasLimitEstimate, setGasLimitEstimate] = useState<GasLimitEstimate>(null);
 	const [gasPrice, setGasPrice] = useState<number>(0);
 	const [gasEstimateError, setGasEstimateError] = useState<string | null>(null);
 	const [transactionState, setTransactionState] = useState<Transaction>(Transaction.PRESUBMIT);
@@ -46,16 +45,16 @@ const StakingRewardsTab: React.FC = () => {
 					setGasEstimateError(null);
 					let gasEstimate;
 					if (totalBalancePendingMigration === 0 && claimableEntryIds != null) {
-						gasEstimate = await getGasEstimateForTransaction(
-							[claimableEntryIds],
-							RewardEscrowV2.estimateGas.vest
-						);
+						gasEstimate = await synthetix.getGasEstimateForTransaction({
+							txArgs: [claimableEntryIds],
+							method: RewardEscrowV2.estimateGas.vest,
+						});
 					} else if (totalBalancePendingMigration > 0) {
 						setIsMigration(true);
-						gasEstimate = await getGasEstimateForTransaction(
-							[walletAddress],
-							RewardEscrowV2.estimateGas.migrateVestingSchedule
-						);
+						gasEstimate = await synthetix.getGasEstimateForTransaction({
+							txArgs: [walletAddress],
+							method: RewardEscrowV2.estimateGas.migrateVestingSchedule,
+						});
 					} else {
 						return;
 					}
@@ -87,19 +86,19 @@ const StakingRewardsTab: React.FC = () => {
 
 				let transaction: ethers.ContractTransaction;
 				if (totalBalancePendingMigration === 0) {
-					const gasLimit = await getGasEstimateForTransaction(
-						[claimableEntryIds],
-						RewardEscrowV2.estimateGas.vest
-					);
+					const gasLimit = await synthetix.getGasEstimateForTransaction({
+						txArgs: [claimableEntryIds],
+						method: RewardEscrowV2.estimateGas.vest,
+					});
 					transaction = await RewardEscrowV2.vest(claimableEntryIds, {
 						gasPrice: normalizedGasPrice(gasPrice),
 						gasLimit,
 					});
 				} else {
-					const gasLimit = await getGasEstimateForTransaction(
-						[walletAddress],
-						RewardEscrowV2.estimateGas.migrateVestingSchedule
-					);
+					const gasLimit = await synthetix.getGasEstimateForTransaction({
+						txArgs: [walletAddress],
+						method: RewardEscrowV2.estimateGas.migrateVestingSchedule,
+					});
 					transaction = await RewardEscrowV2.migrateVestingSchedule(walletAddress, {
 						gasPrice: normalizedGasPrice(gasPrice),
 						gasLimit,
@@ -109,7 +108,7 @@ const StakingRewardsTab: React.FC = () => {
 				if (transaction) {
 					setTxHash(transaction.hash);
 					setTransactionState(Transaction.WAITING);
-					monitorHash({
+					monitorTransaction({
 						txHash: transaction.hash,
 						onTxConfirmed: () => {
 							setTransactionState(Transaction.SUCCESS);
@@ -128,7 +127,7 @@ const StakingRewardsTab: React.FC = () => {
 		claimableEntryIds,
 		gasPrice,
 		escrowDataQuery,
-		monitorHash,
+		monitorTransaction,
 		totalBalancePendingMigration,
 		walletAddress,
 	]);

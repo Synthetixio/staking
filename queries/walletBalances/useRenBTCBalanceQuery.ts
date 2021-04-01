@@ -5,7 +5,12 @@ import { ethers } from 'ethers';
 
 import QUERY_KEYS from 'constants/queryKeys';
 
-import { walletAddressState, isWalletConnectedState, networkState } from 'store/wallet';
+import {
+	walletAddressState,
+	isWalletConnectedState,
+	networkState,
+	isMainnetState,
+} from 'store/wallet';
 
 import Connector from 'containers/Connector';
 import { toBigNumber } from 'utils/formatters/number';
@@ -16,6 +21,7 @@ const useRenBTCBalanceQuery = (options?: QueryConfig<BigNumber>) => {
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const network = useRecoilValue(networkState);
+	const isMainnet = useRecoilValue(isMainnetState);
 
 	const contract = new ethers.Contract(
 		renBTCToken.address,
@@ -30,7 +36,7 @@ const useRenBTCBalanceQuery = (options?: QueryConfig<BigNumber>) => {
 			return toBigNumber(ethers.utils.formatUnits(balance, 8));
 		},
 		{
-			enabled: provider && isWalletConnected,
+			enabled: provider && isWalletConnected && isMainnet,
 			...options,
 		}
 	);

@@ -17,6 +17,7 @@ updates:
       - dependency-name: "@synthetixio/*"
         dependency-type: "production"
     labels:
+      - "npm"
       - "dependencies"
     pull-request-branch-name:
       separator: "-"

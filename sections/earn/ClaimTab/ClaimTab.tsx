@@ -8,14 +8,15 @@ import { useRouter } from 'next/router';
 import { useRecoilValue } from 'recoil';
 
 import { appReadyState } from 'store/app';
+import { isWalletConnectedState } from 'store/wallet';
 import ROUTES from 'constants/routes';
 import { ExternalLink, FlexDiv, GlowingCircle } from 'styles/common';
 import synthetix from 'lib/synthetix';
 import PendingConfirmation from 'assets/svg/app/pending-confirmation.svg';
 import Success from 'assets/svg/app/success.svg';
 
-import Etherscan from 'containers/Etherscan';
-import Notify from 'containers/Notify';
+import Etherscan from 'containers/BlockExplorer';
+import TransactionNotifier from 'containers/TransactionNotifier';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import useClaimedStatus from 'sections/hooks/useClaimedStatus';
@@ -23,10 +24,9 @@ import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 
 import { DEFAULT_CRYPTO_DECIMALS, DEFAULT_FIAT_DECIMALS } from 'constants/defaults';
 import { formatCurrency, formatFiatCurrency, formatNumber } from 'utils/formatters/number';
-import { getGasEstimateForTransaction } from 'utils/transactions';
-import { normalizedGasPrice, normalizeGasLimit } from 'utils/network';
+import { normalizedGasPrice } from 'utils/network';
 
-import { Transaction } from 'constants/network';
+import { Transaction, GasLimitEstimate } from 'constants/network';
 import { CryptoCurrency, Synths } from 'constants/currency';
 import TxState from 'sections/earn/TxState';
 
@@ -76,15 +76,16 @@ type ClaimTabProps = {
 const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, totalRewards }) => {
 	const { t } = useTranslation();
 	const claimed = useClaimedStatus();
-	const { monitorHash } = Notify.useContainer();
-	const { etherscanInstance } = Etherscan.useContainer();
+	const { monitorTransaction } = TransactionNotifier.useContainer();
+	const { blockExplorerInstance } = Etherscan.useContainer();
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
-	const [gasLimitEstimate, setGasLimitEstimate] = useState<number | null>(null);
+	const [gasLimitEstimate, setGasLimitEstimate] = useState<GasLimitEstimate>(null);
 	const [gasPrice, setGasPrice] = useState<number>(0);
 	const [error, setError] = useState<string | null>(null);
 	const [lowCRatio, setLowCRatio] = useState(false);
 	const [claimedTradingRewards, setClaimedTradingRewards] = useState<number | null>(null);
 	const [claimedStakingRewards, setClaimedStakingRewards] = useState<number | null>(null);
+	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const router = useRouter();
 	const isAppReady = useRecoilValue(appReadyState);
 
@@ -92,18 +93,25 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 	const [txHash, setTxHash] = useState<string | null>(null);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 	const link =
-		etherscanInstance != null && txHash != null ? etherscanInstance.txLink(txHash) : undefined;
+		blockExplorerInstance != null && txHash != null
+			? blockExplorerInstance.txLink(txHash)
+			: undefined;
 
 	useEffect(() => {
 		const getGasLimitEstimate = async () => {
-			if (isAppReady) {
+			if (isAppReady && isWalletConnected) {
 				try {
 					setError(null);
 					const {
 						contracts: { FeePool },
 					} = synthetix.js!;
-					let gasEstimate = await getGasEstimateForTransaction([], FeePool.estimateGas.claimFees);
-					setGasLimitEstimate(normalizeGasLimit(Number(gasEstimate)));
+
+					let gasEstimate = await synthetix.getGasEstimateForTransaction({
+						txArgs: [],
+						method: FeePool.estimateGas.claimFees,
+					});
+
+					setGasLimitEstimate(gasEstimate);
 				} catch (error) {
 					if (error.message.includes('below penalty threshold')) {
 						setLowCRatio(true);
@@ -115,7 +123,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 			}
 		};
 		getGasLimitEstimate();
-	}, [isAppReady]);
+	}, [isAppReady, isWalletConnected]);
 
 	const handleClaim = useCallback(() => {
 		async function claim() {
@@ -127,7 +135,10 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 						contracts: { FeePool },
 					} = synthetix.js!;
 
-					const gasLimit = await getGasEstimateForTransaction([], FeePool.estimateGas.claimFees);
+					const gasLimit = await synthetix.getGasEstimateForTransaction({
+						txArgs: [],
+						method: FeePool.estimateGas.claimFees,
+					});
 					const transaction: ethers.ContractTransaction = await FeePool.claimFees({
 						gasPrice: normalizedGasPrice(gasPrice),
 						gasLimit,
@@ -136,7 +147,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 					if (transaction) {
 						setTxHash(transaction.hash);
 						setTransactionState(Transaction.WAITING);
-						monitorHash({
+						monitorTransaction({
 							txHash: transaction.hash,
 							onTxConfirmed: () => {
 								setClaimedTradingRewards(tradingRewards.toNumber());
@@ -153,7 +164,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 			}
 		}
 		claim();
-	}, [gasPrice, monitorHash, tradingRewards, stakingRewards, isAppReady]);
+	}, [gasPrice, monitorTransaction, tradingRewards, stakingRewards, isAppReady]);
 
 	const goToBurn = useCallback(() => router.push(ROUTES.Staking.Burn), [router]);
 

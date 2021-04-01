@@ -37,16 +37,17 @@ import {
 } from 'styles/common';
 import { CryptoCurrency, CurrencyKey } from 'constants/currency';
 import { DURATION_SEPARATOR } from 'constants/date';
-import { NOT_APPLICABLE } from './Incentives';
 
 import ROUTES from 'constants/routes';
 
 import { LP, Tab } from './types';
 
-type DualRewards = {
+export type DualRewards = {
 	a: number;
 	b: number;
 };
+
+export const NOT_APPLICABLE = 'n/a';
 
 export type EarnItem = {
 	title: string;
@@ -176,8 +177,10 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab }
 				accessor: 'rewards',
 				Cell: (cellProps: CellProps<EarnItem, EarnItem['rewards']>) => {
 					const isDualRewards = cellProps.row.original.staked.asset === LP.UNISWAP_DHT;
-
-					if (!cellProps.row.original.externalLink) {
+					if (
+						!cellProps.row.original.externalLink ||
+						cellProps.row.original.staked.asset !== LP.CURVE_sUSD
+					) {
 						return (
 							<CellContainer>
 								<Title isNumeric={true}>

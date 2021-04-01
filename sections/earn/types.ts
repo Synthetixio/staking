@@ -3,9 +3,11 @@ export enum Tab {
 	sUSD_LP = 'susd-LP',
 	sEURO_LP = 'seuro-lp',
 	iETH_LP = 'iETH-LP',
-	iBTC_LP = 'iBTC-LP',
 	sTLSA_LP = 'sTSLA-LP',
 	DHT_LP = 'DHT-LP',
+	sBTC_SHORT = 'sBTC Short',
+	sETH_SHORT = 'sETH Short',
+	iBTC_LP = 'iBTC-LP',
 }
 
 export enum LP {

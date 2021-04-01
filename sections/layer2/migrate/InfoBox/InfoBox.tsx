@@ -2,7 +2,7 @@ import styled, { css } from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { Svg } from 'react-optimized-image';
 
-import { InfoContainer, Title, Subtitle } from '../../components/common';
+import { InfoContainer, Title } from '../../components/common';
 import { FlexDivCol } from 'styles/common';
 import Warning from 'assets/svg/app/warning.svg';
 
