@@ -605,7 +605,7 @@
 		},
 		"withdraw": {
 			"info": {
-				"title": "Withdraw SNX from Layer 1 to Layer 2",
+				"title": "Withdraw SNX from Layer 2 to Layer 1",
 				"subtitle": "Warning: withdrawing your SNX will take 7-10 days to be received on L1, during which time you will not have access to your funds. Once you initiate a withdrawal you will not be able to cancel it.",
 				"no-withdrawals": "No withdrawal history",
 				"table": {
