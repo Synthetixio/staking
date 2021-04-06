@@ -8,6 +8,7 @@ import { Account } from 'queries/delegate/types';
 import { walletAddressState, networkState } from 'store/wallet';
 import { Action, ACTIONS } from 'queries/delegate/types';
 import { fromBytes32 } from 'utils/transactions';
+import Connector from 'containers/Connector';
 
 export default createContainer(Container);
 
@@ -15,17 +16,18 @@ function Container() {
 	const address = useRecoilValue(walletAddressState);
 	const network = useRecoilValue(networkState);
 	const isAppReady = useRecoilValue(appReadyState);
+	const { signer } = Connector.useContainer();
 
 	const [isLoading, setIsLoading] = useState(false);
 	const [accounts, setAccounts] = useState<Array<Account>>([]);
 
 	const delegateApprovalsContract = useMemo(() => {
-		if (!(isAppReady && synthetix.js && address)) return null;
+		if (!(isAppReady && synthetix.js && signer)) return null;
 		const {
 			contracts: { DelegateApprovals },
 		} = synthetix.js;
 		return DelegateApprovals;
-	}, [isAppReady, address]);
+	}, [isAppReady, signer]);
 
 	const actionsAsBytes = useMemo(
 		() => (!(isAppReady && synthetix.js) ? [] : ACTIONS.map(synthetix.js.toBytes32)),
