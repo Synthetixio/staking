@@ -1,5 +1,5 @@
 import { FC, useMemo } from 'react';
-import { Contract } from '@synthetixio/contracts-interface/node_modules/@ethersproject/contracts/lib/';
+import { ethers } from 'ethers';
 import synthetix from 'lib/synthetix';
 import styled from 'styled-components';
 import { Svg } from 'react-optimized-image';
@@ -40,7 +40,7 @@ const Actions: FC<ActionsProps> = ({ loanId, loanAction, loanTypeIsETH }) => {
 		const {
 			contracts: { ProxysBTC: sBTC, ProxysETH: sETH, ProxyERC20sUSD: sUSD },
 		} = synthetix.js!;
-		const tokens: Record<string, Contract> = { sBTC, sETH, sUSD };
+		const tokens: Record<string, ethers.Contract> = { sBTC, sETH, sUSD };
 		const collateralAsset = loanTypeIsETH ? 'ETH' : 'renBTC';
 		return tokens[collateralAsset];
 	}, [loanTypeIsETH]);
