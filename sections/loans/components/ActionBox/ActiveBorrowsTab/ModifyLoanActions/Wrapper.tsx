@@ -45,7 +45,7 @@ type WrapperProps = {
 
 	leftColLabel: string;
 	leftColAssetName: string;
-	leftColAmount: string;
+	leftColAmount: string | null;
 	onSetLeftColAmount?: (amount: string) => void;
 	onSetLeftColMaxAmount?: (amount: string) => void;
 
@@ -201,7 +201,7 @@ const Wrapper: FC<WrapperProps> = ({
 						label={leftColLabel}
 						asset={leftColAssetName}
 						setAsset={onSetleftColAssetName}
-						amount={leftColAmount}
+						amount={leftColAmount ?? ''}
 						setAmount={onSetLeftColAmount || noop}
 						assets={[leftColAssetName]}
 						selectDisabled={true}
@@ -264,11 +264,13 @@ const Wrapper: FC<WrapperProps> = ({
 							<TxModalItem>
 								<TxModalItemTitle>{t(leftColLabel)}</TxModalItemTitle>
 								<TxModalItemText>
-									{formatUnits(
-										toBigNumber(ethers.utils.parseEther(leftColAmount).toString()),
-										18,
-										2
-									)}{' '}
+									{!leftColAmount
+										? null
+										: formatUnits(
+												toBigNumber(ethers.utils.parseEther(leftColAmount).toString()),
+												18,
+												2
+										  )}{' '}
 									{leftColAssetName}
 								</TxModalItemText>
 							</TxModalItem>

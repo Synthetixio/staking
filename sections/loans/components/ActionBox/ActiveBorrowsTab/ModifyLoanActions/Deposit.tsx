@@ -34,14 +34,17 @@ const Deposit: React.FC<DepositProps> = ({
 	const collateralAsset = loanTypeIsETH ? 'ETH' : 'renBTC';
 	const collateralDecimals = loanTypeIsETH ? 18 : 8; // todo
 
-	const [depositAmountString, setDepositalAmount] = useState<string>('0');
+	const [depositAmountString, setDepositalAmount] = useState<string | null>(null);
 	const collateralAmount = useMemo(
 		() =>
 			ethers.utils.parseUnits(ethers.utils.formatUnits(loan.collateral, 18), collateralDecimals), // normalize collateral decimals
 		[loan.collateral, collateralDecimals]
 	);
 	const depositAmount = useMemo(
-		() => ethers.utils.parseUnits(depositAmountString, collateralDecimals),
+		() =>
+			depositAmountString
+				? ethers.utils.parseUnits(depositAmountString, collateralDecimals)
+				: ethers.BigNumber.from(0),
 		[depositAmountString, collateralDecimals]
 	);
 
@@ -57,7 +60,7 @@ const Deposit: React.FC<DepositProps> = ({
 	const loanContractAddress = loanContract?.address;
 
 	const onSetLeftColAmount = (amount: string) =>
-		!amount ? setDepositalAmount('0') : setDepositalAmount(amount);
+		!amount ? setDepositalAmount(null) : setDepositalAmount(amount);
 	const onSetLeftColMaxAmount = (amount: string) => setDepositalAmount(amount);
 
 	const getApproveTxData = useCallback(

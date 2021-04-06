@@ -21,16 +21,20 @@ const Repay: React.FC<RepayProps> = ({ loan, loanId, loanTypeIsETH, loanContract
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 
 	const [isWorking, setIsWorking] = useState<string>('');
-	const [repayAmountString, setRepayAmount] = useState<string>('0');
+	const [repayAmountString, setRepayAmount] = useState<string | null>(null);
 	const [error, setError] = useState<string | null>(null);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 
 	const debtAsset = SYNTH_BY_CURRENCY_KEY[loan.currency];
 	const debtAssetDecimals = 18;
 
-	const repayAmount = useMemo(() => ethers.utils.parseUnits(repayAmountString, debtAssetDecimals), [
-		repayAmountString,
-	]);
+	const repayAmount = useMemo(
+		() =>
+			repayAmountString
+				? ethers.utils.parseUnits(repayAmountString, debtAssetDecimals)
+				: ethers.BigNumber.from(0),
+		[repayAmountString]
+	);
 	const remainingAmount = useMemo(() => loan.amount.sub(repayAmount), [loan.amount, repayAmount]);
 	const remainingAmountString = useMemo(
 		() => ethers.utils.formatUnits(remainingAmount, debtAssetDecimals),
@@ -40,7 +44,7 @@ const Repay: React.FC<RepayProps> = ({ loan, loanId, loanTypeIsETH, loanContract
 
 	const onSetLeftColAmount = (amount: string) =>
 		!amount
-			? setRepayAmount('0')
+			? setRepayAmount(null)
 			: ethers.utils.parseUnits(amount, debtAssetDecimals).gt(loan.amount)
 			? onSetLeftColMaxAmount()
 			: setRepayAmount(amount);

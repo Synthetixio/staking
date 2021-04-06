@@ -19,7 +19,7 @@ const Withdraw: React.FC<WithdrawProps> = ({ loan, loanId, loanTypeIsETH, loanCo
 	const { reloadPendingWithdrawals } = Loans.useContainer();
 
 	const [isWorking, setIsWorking] = useState<string>('');
-	const [withdrawalAmountString, setWithdrawalAmount] = useState<string>('0');
+	const [withdrawalAmountString, setWithdrawalAmount] = useState<string | null>(null);
 	const [error, setError] = useState<string | null>(null);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 
@@ -32,7 +32,10 @@ const Withdraw: React.FC<WithdrawProps> = ({ loan, loanId, loanTypeIsETH, loanCo
 		[loan.collateral, collateralDecimals]
 	);
 	const withdrawalAmount = useMemo(
-		() => ethers.utils.parseUnits(withdrawalAmountString, collateralDecimals),
+		() =>
+			withdrawalAmountString
+				? ethers.utils.parseUnits(withdrawalAmountString, collateralDecimals)
+				: ethers.BigNumber.from(0),
 		[withdrawalAmountString, collateralDecimals]
 	);
 	const remainingAmount = useMemo(() => collateralAmount.sub(withdrawalAmount), [
@@ -46,7 +49,7 @@ const Withdraw: React.FC<WithdrawProps> = ({ loan, loanId, loanTypeIsETH, loanCo
 
 	const onSetLeftColAmount = (amount: string) =>
 		!amount
-			? setWithdrawalAmount('0')
+			? setWithdrawalAmount(null)
 			: ethers.utils.parseUnits(amount, collateralDecimals).gt(collateralAmount)
 			? onSetLeftColMaxAmount()
 			: setWithdrawalAmount(amount);
