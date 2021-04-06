@@ -48,7 +48,7 @@ type BorrowSynthsTabProps = {};
 const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 	const { t } = useTranslation();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
-	const { connectWallet } = Connector.useContainer();
+	const { connectWallet, signer } = Connector.useContainer();
 	const router = useRouter();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const address = useRecoilValue(walletAddressState);
@@ -99,12 +99,12 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 	const minCollateralAmountString = formatUnits(minCollateralAmount, collateralDecimals, 2);
 
 	const loanContract = React.useMemo(() => {
+		if (!signer) return;
 		const {
 			contracts: { CollateralEth: ethLoanContract, CollateralErc20: erc20LoanContract },
 		} = synthetix.js!;
-		const contract = collateralIsETH ? ethLoanContract : erc20LoanContract;
-		return !isWalletConnected ? contract : contract; // hack to ensure contract is bound to signer
-	}, [collateralIsETH, isWalletConnected]);
+		return collateralIsETH ? ethLoanContract : erc20LoanContract;
+	}, [collateralIsETH, signer]);
 
 	const loanContractAddress = loanContract?.address;
 

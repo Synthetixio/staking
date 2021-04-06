@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect, useCallback } from 'react';
 import { ethers } from 'ethers';
+import { Contract } from '@synthetixio/contracts-interface/node_modules/@ethersproject/contracts/lib/';
 import { useRecoilValue } from 'recoil';
 
 import { walletAddressState } from 'store/wallet';
@@ -12,8 +13,8 @@ type DepositProps = {
 	loanId: number;
 	loanTypeIsETH: boolean;
 	loan: Loan;
-	loanContract: ethers.Contract;
-	collateralAssetContract: ethers.Contract;
+	loanContract: Contract;
+	collateralAssetContract: Contract;
 };
 
 const Deposit: React.FC<DepositProps> = ({

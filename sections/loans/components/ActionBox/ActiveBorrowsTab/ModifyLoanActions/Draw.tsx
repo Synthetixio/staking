@@ -1,5 +1,6 @@
 import { useState, useCallback, useMemo } from 'react';
 import { ethers } from 'ethers';
+import { Contract } from '@synthetixio/contracts-interface/node_modules/@ethersproject/contracts/lib/';
 
 import { Loan } from 'queries/loans/types';
 import TransactionNotifier from 'containers/TransactionNotifier';
@@ -11,7 +12,7 @@ type RepayProps = {
 	loanId: number;
 	loanTypeIsETH: boolean;
 	loan: Loan;
-	loanContract: ethers.Contract;
+	loanContract: Contract;
 };
 
 const Repay: React.FC<RepayProps> = ({ loan, loanId, loanTypeIsETH, loanContract }) => {

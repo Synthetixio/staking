@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { ethers } from 'ethers';
+import { Contract } from '@synthetixio/contracts-interface/node_modules/@ethersproject/contracts/lib/';
 import { useRouter } from 'next/router';
 
 import { Loan } from 'queries/loans/types';
@@ -13,7 +14,7 @@ type CloseProps = {
 	loanId: number;
 	loanTypeIsETH: boolean;
 	loan: Loan;
-	loanContract: ethers.Contract;
+	loanContract: Contract;
 };
 
 const Close: React.FC<CloseProps> = ({ loan, loanId, loanTypeIsETH, loanContract }) => {

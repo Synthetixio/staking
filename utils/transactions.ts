@@ -22,9 +22,9 @@ export async function tx(makeTx: Function, options?: TxOptions): Promise<void> {
 			await contract.callStatic[method](...args);
 			throw e;
 		} catch (e) {
-			options?.showErrorNotification?.(
-				e.data ? hexToASCII(e.data.substr(147).toString()) : e.message
-			);
+			const errorMessage = e.data ? hexToASCII(e.data.substr(147).toString()) : e.message;
+			console.log(errorMessage);
+			options?.showErrorNotification?.(errorMessage);
 			throw e;
 		}
 	}
@@ -35,6 +35,7 @@ export async function tx(makeTx: Function, options?: TxOptions): Promise<void> {
 		await wait();
 		options?.showSuccessNotification?.(hash);
 	} catch (e) {
+		console.log(e.message);
 		options?.showErrorNotification?.(e.message);
 		throw e;
 	}

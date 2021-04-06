@@ -1,5 +1,6 @@
 import React from 'react';
 import { ethers } from 'ethers';
+import { Contract } from '@synthetixio/contracts-interface/node_modules/@ethersproject/contracts/lib/';
 import styled from 'styled-components';
 import { useRecoilValue } from 'recoil';
 import { useTranslation } from 'react-i18next';
@@ -99,7 +100,12 @@ const ERC20: React.FC<ERC20Props> = ({ asset, onSetMaxAmount }) => {
 		const {
 			contracts: { ProxysBTC: sBTC, ProxysETH: sETH, ProxyERC20sUSD: sUSD },
 		} = synthetix.js!;
-		const tokens: Record<string, ethers.Contract> = { sBTC, sETH, sUSD, renBTC: renBTCContract! };
+		const tokens: Record<string, ethers.Contract | Contract> = {
+			sBTC,
+			sETH,
+			sUSD,
+			renBTC: renBTCContract!,
+		};
 		return tokens[asset];
 	}, [asset, renBTCContract]);
 

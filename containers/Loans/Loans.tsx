@@ -2,6 +2,7 @@ import { createContainer } from 'unstated-next';
 import { useMemo, useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { ethers } from 'ethers';
+import { Contract } from '@synthetixio/contracts-interface/node_modules/@ethersproject/contracts/lib/';
 import Big from 'bignumber.js';
 
 import { renBTCToken } from 'contracts';
@@ -39,7 +40,7 @@ function Container() {
 		collateralManagerContract,
 		exchangeRatesContract,
 	] = useMemo(() => {
-		if (!(isAppReady && synthetix.js)) return [null, null, null, null, null, null];
+		if (!(isAppReady && synthetix.js && signer)) return [null, null, null, null, null, null];
 		const {
 			contracts: {
 				CollateralEth: ethLoanContract,
@@ -58,7 +59,7 @@ function Container() {
 			collateralManagerContract,
 			exchangeRatesContract,
 		];
-	}, [isAppReady]);
+	}, [isAppReady, signer]);
 
 	useEffect(() => {
 		if (
@@ -75,12 +76,12 @@ function Container() {
 		)
 			return;
 
-		const loanContracts: Record<string, ethers.Contract> = {
+		const loanContracts: Record<string, Contract> = {
 			[LOAN_TYPE_ERC20]: erc20LoanContract,
 			[LOAN_TYPE_ETH]: ethLoanContract,
 		};
 
-		const loanStateContracts: Record<string, ethers.Contract> = {
+		const loanStateContracts: Record<string, Contract> = {
 			[LOAN_TYPE_ERC20]: erc20LoanStateContract,
 			[LOAN_TYPE_ETH]: ethLoanStateContract,
 		};
@@ -372,7 +373,7 @@ function Container() {
 	const [pendingWithdrawals, setPendingWithdrawals] = useState(ethers.BigNumber.from('0'));
 
 	const loadPendingWithdrawals = async (
-		ethLoanContract: ethers.Contract,
+		ethLoanContract: ethers.Contract | Contract,
 		isMounted: boolean,
 		setPendingWithdrawals: (pw: ethers.BigNumber) => void,
 		address: string
