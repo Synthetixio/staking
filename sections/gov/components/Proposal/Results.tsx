@@ -42,7 +42,7 @@ const Results: React.FC<ResultsProps> = ({ hash }) => {
 			};
 			loadDiscordNames();
 		}
-	}, [proposal, activeTab, electionCount]);
+	}, [proposal, activeTab, electionCount, hash]);
 
 	useEffect(() => {
 		if (proposal && activeTab !== SPACE_KEY.COUNCIL) {
