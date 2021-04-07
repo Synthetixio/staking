@@ -78,14 +78,16 @@ const Content: React.FC<ContentProps> = ({ onBack }) => {
 				const currentElectionMembers = CouncilNominations as any;
 				const mappedProfiles = [] as any;
 
-				currentElectionMembers[electionCount].forEach((member: any, i: number) => {
-					mappedProfiles.push({
-						address: member.address,
-						name: member.discord,
-						key: i,
+				if (currentElectionMembers[proposal.authorIpfsHash]) {
+					currentElectionMembers[proposal.authorIpfsHash].forEach((member: any, i: number) => {
+						mappedProfiles.push({
+							address: member.address,
+							name: member.discord,
+							key: i,
+						});
 					});
-				});
-				setChoices(shuffle(mappedProfiles));
+					setChoices(shuffle(mappedProfiles));
+				}
 			};
 			loadDiscordNames();
 		}
