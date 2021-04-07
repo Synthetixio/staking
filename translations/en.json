@@ -1036,7 +1036,9 @@
 			"button-labels": {
 				"enter-address": "Enter an address",
 				"delegate": "Delegate",
-				"delegating": "Delegating..."
+				"delegating": "Delegating...",
+				"cannot-delegate-to-self": "Cannot delegate to self",
+				"already-delegated": "Already delegated"
 			}
 		},
 		"info": {

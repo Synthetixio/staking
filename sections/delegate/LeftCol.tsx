@@ -20,8 +20,12 @@ import { Svg } from 'react-optimized-image';
 import NavigationBack from 'assets/svg/app/navigation-back.svg';
 import GasSelector from 'components/GasSelector';
 import { LEFT_COL_WIDTH } from 'sections/delegate/constants';
-import { isWalletConnectedState } from 'store/wallet';
-import { Action, APPROVE_CONTRACT_METHODS } from 'queries/delegate/types';
+import { isWalletConnectedState, walletAddressState } from 'store/wallet';
+import {
+	Action,
+	APPROVE_CONTRACT_METHODS,
+	GET_IS_APPROVED_CONTRACT_METHODS,
+} from 'queries/delegate/types';
 import {
 	FormContainer,
 	InputsContainer,
@@ -70,6 +74,7 @@ const Tab: FC = () => {
 	const router = useRouter();
 	const { connectWallet } = Connector.useContainer();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
+	const address = useRecoilValue(walletAddressState);
 	const { delegateApprovalsContract } = Delegates.useContainer();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 
@@ -82,21 +87,34 @@ const Tab: FC = () => {
 	const [error, setError] = useState<string | null>(null);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 	const [buttonState, setButtonState] = useState<string | null>(null);
+	const [alreadyDelegated, setAlreadyDelegated] = useState<boolean>(false);
 
+	const properDelegateAddress = useMemo(
+		() => (delegateAddress && ethers.utils.isAddress(delegateAddress) ? delegateAddress : null),
+		[delegateAddress]
+	);
+	const delegateAddressIsSelf = useMemo(
+		() =>
+			properDelegateAddress && address
+				? properDelegateAddress === ethers.utils.getAddress(address)
+				: null,
+		[properDelegateAddress, address]
+	);
 	const shortenedDelegateAddress = useMemo(() => truncateAddress(delegateAddress, 8, 6), [
 		delegateAddress,
 	]);
 
 	const getApproveTxData = useCallback(
 		(gas: Record<string, number>) => {
-			if (!(delegateApprovalsContract && ethers.utils.isAddress(delegateAddress))) return null;
+			if (!(delegateApprovalsContract && properDelegateAddress && !delegateAddressIsSelf))
+				return null;
 			return [
 				delegateApprovalsContract,
 				APPROVE_CONTRACT_METHODS.get(action),
-				[delegateAddress, gas],
+				[properDelegateAddress, gas],
 			];
 		},
-		[delegateApprovalsContract, delegateAddress, action]
+		[delegateApprovalsContract, properDelegateAddress, action, delegateAddressIsSelf]
 	);
 
 	const onGoBack = () => router.back();
@@ -153,6 +171,22 @@ const Tab: FC = () => {
 		};
 	}, [getApproveTxData]);
 
+	// already delegated
+	useEffect(() => {
+		if (!delegateApprovalsContract) return;
+		let isMounted = true;
+		(async () => {
+			if (!(properDelegateAddress && action)) return setAlreadyDelegated(false);
+			const alreadyDelegated = await delegateApprovalsContract[
+				GET_IS_APPROVED_CONTRACT_METHODS.get(action)!
+			](address, properDelegateAddress);
+			if (isMounted) setAlreadyDelegated(alreadyDelegated);
+		})();
+		return () => {
+			isMounted = false;
+		};
+	}, [delegateApprovalsContract, properDelegateAddress, address, action]);
+
 	return (
 		<>
 			<FormContainer>
@@ -188,7 +222,7 @@ const Tab: FC = () => {
 				size="lg"
 				disabled={
 					isWalletConnected &&
-					(!delegateAddress || !ethers.utils.isAddress(delegateAddress) || !!buttonState)
+					(!properDelegateAddress || !!buttonState || delegateAddressIsSelf || alreadyDelegated)
 				}
 			>
 				{!isWalletConnected ? (
@@ -196,7 +230,14 @@ const Tab: FC = () => {
 				) : (
 					<Trans
 						i18nKey={`delegate.form.button-labels.${
-							buttonState || (!delegateAddress ? 'enter-address' : 'delegate')
+							buttonState ||
+							(!delegateAddress
+								? 'enter-address'
+								: delegateAddressIsSelf
+								? 'cannot-delegate-to-self'
+								: alreadyDelegated
+								? 'already-delegated'
+								: 'delegate')
 						}`}
 						components={[<NoTextTransform />]}
 					/>

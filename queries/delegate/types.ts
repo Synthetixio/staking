@@ -22,6 +22,14 @@ export const WITHDRAW_CONTRACT_METHODS: Map<string, string> = new Map([
 	[Action.EXCHANGE_FOR_ADDRESS, 'removeExchangeOnBehalf'],
 ]);
 
+export const GET_IS_APPROVED_CONTRACT_METHODS: Map<string, string> = new Map([
+	[Action.APPROVE_ALL, 'approvedAll'],
+	[Action.ISSUE_FOR_ADDRESS, 'canIssueFor'],
+	[Action.BURN_FOR_ADDRESS, 'canBurnFor'],
+	[Action.CLAIM_FOR_ADDRESS, 'canClaimFor'],
+	[Action.EXCHANGE_FOR_ADDRESS, 'canExchangeFor'],
+]);
+
 export const ENTITY_ATTRS: Map<string, string> = new Map([
 	[Action.APPROVE_ALL, 'all'],
 	[Action.ISSUE_FOR_ADDRESS, 'mint'],
