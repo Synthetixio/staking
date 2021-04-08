@@ -83,7 +83,7 @@ const DebtChart = ({ data, isLoading }: { data: Data[]; isLoading: boolean }) =>
 					height={20}
 					dataKey="timestamp"
 					interval="preserveEnd"
-					tick={{ fontSize: 12, fill: colors.white, fontFamily: fonts.regular }}
+					tick={{ fontSize: 8, fill: colors.white, fontFamily: fonts.regular }}
 					tickLine={false}
 					tickFormatter={(tick) => format(new Date(tick), 'd MMM yy')}
 				/>

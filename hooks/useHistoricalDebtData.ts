@@ -17,7 +17,7 @@ type HistoricalDebtAndIssuance = {
 	data: HistoricalDebtAndIssuanceData[] | [];
 };
 
-const useHistoricalDebtData = () => {
+const useHistoricalDebtData = (global = false) => {
 	const [historicalDebt, setHistoricalDebt] = useState<HistoricalDebtAndIssuance>({
 		isLoading: true,
 		data: [],
