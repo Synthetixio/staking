@@ -58,7 +58,7 @@ const Index: FC = () => {
 		}
 		getData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [network?.id]);
 
 	const ACTIONS = useMemo(
 		() => ({

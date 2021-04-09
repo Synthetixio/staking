@@ -55,7 +55,7 @@ const UserMenu: FC = () => {
 	return (
 		<Container>
 			<FlexDivCentered>
-				{!isL2 ? (
+				{!isL2 && isWalletConnected ? (
 					<OptimismButton variant="solid" onClick={addOptimismNetwork}>
 						{t('user-menu.layer-2.switch-to-l2')}
 					</OptimismButton>

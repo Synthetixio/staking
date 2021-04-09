@@ -18,14 +18,14 @@ jobs:
         password: ${{ secrets.GH_PACKAGES_READ_ONLY }}
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@ee5a9d1395988d7c82c67c69571871f5994b94df # pin@v2
+      - name: Checkout
+        uses: actions/checkout@ee5a9d1395988d7c82c67c69571871f5994b94df # pin@v2
 
-    - name: Audit dependencies
-      run: npm audit --audit-level=critical
+      - name: Audit dependencies
+        run: npm audit --audit-level=critical
 
-    - name: Lockfile lint
-      run: lockfile-lint -p package-lock.json --type npm --allowed-hosts npm github.com --allowed-schemes "https:" "git+https:" "git+ssh:"
+      - name: Lockfile lint
+        run: lockfile-lint -p package-lock.json --type npm --allowed-hosts npm github.com --allowed-schemes "https:" "git+https:" "git+ssh:"
 
   build:
     needs: audit
@@ -40,72 +40,70 @@ jobs:
         password: ${{ secrets.GH_PACKAGES_READ_ONLY }}
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@ee5a9d1395988d7c82c67c69571871f5994b94df # pin@v2
+      - name: Checkout
+        uses: actions/checkout@ee5a9d1395988d7c82c67c69571871f5994b94df # pin@v2
 
-    - name: Cache node modules
-      uses: actions/cache@3b70782066bd817837b6bd8c518d45b54d91bf76 # pin@v2
-      with:
-        path: |
-          .npm
-          node_modules
-        key: ${{ runner.os }}-build-${{ hashFiles('**/package-lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-build-
-      continue-on-error: true
+      - name: Cache node modules
+        uses: actions/cache@3b70782066bd817837b6bd8c518d45b54d91bf76 # pin@v2
+        with:
+          path: |
+            .npm
+            node_modules
+          key: ${{ runner.os }}-build-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-
+        continue-on-error: true
 
-    - name: Install dependencies
-      run: npm install --no-audit
+      - name: Install dependencies
+        run: npm install --no-audit
 
-    - name: Lint
-      # run only on master/dev branch and pull requests
-      if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'
-      run: npm run lint:sarif
-  
-    - name: Upload lint results
-      # run if lint failed and only on master/dev branch and pull requests
-      if: always() && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request')
-      uses: github/codeql-action/upload-sarif@b1e2c9b8bd0550a90e66c967d9795316f9f21910 # pin@codeql-bundle-20201008
-      with:
-        sarif_file: lint-results.sarif
-      continue-on-error: true
+      - name: Lint
+        # run only on master/dev branch and pull requests
+        if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'
+        run: npm run lint:sarif
 
-    - name: Cache next.js build cache
-      uses: actions/cache@3b70782066bd817837b6bd8c518d45b54d91bf76 # pin@v2
-      with:
-        path: .next/cache
-        key: ${{ runner.os }}-next.js-${{ hashFiles('**/package-lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-next.js-
-      continue-on-error: true
+      - name: Upload lint results
+        # run if lint failed and only on master/dev branch and pull requests
+        if: always() && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request')
+        uses: github/codeql-action/upload-sarif@b1e2c9b8bd0550a90e66c967d9795316f9f21910 # pin@codeql-bundle-20201008
+        with:
+          sarif_file: lint-results.sarif
+        continue-on-error: true
 
-    - name: Build
-      run: npm run build
+      - name: Cache next.js build cache
+        uses: actions/cache@3b70782066bd817837b6bd8c518d45b54d91bf76 # pin@v2
+        with:
+          path: .next/cache
+          key: ${{ runner.os }}-next.js-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-next.js-
+        continue-on-error: true
 
-    - name: Compress build
-      run: tar -zcvf build.tar.gz .next
+      - name: Build
+        run: npm run build
 
-    - name: Archive build
-      if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'
-      uses: actions/upload-artifact@e448a9b857ee2131e752b06002bf0e093c65e571 # pin@v2
-      with:
-        name: build
-        path: build.tar.gz
+      - name: Compress build
+        run: tar -zcvf build.tar.gz .next
+
+      - name: Archive build
+        if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'
+        uses: actions/upload-artifact@ee69f02b3dfdecd58bb31b4d133da38ba6fe3700 # pin@v2
+        with:
+          name: build
+          path: build.tar.gz
 
   e2e:
-      needs: build
-      # run only on master/dev branch
-      if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'
-      runs-on: ubuntu-latest
+    needs: build
+    runs-on: ubuntu-latest
 
-      container:
-        image: ghcr.io/synthetixio/docker-e2e/base:12.21-npm6
-        credentials:
-          username: synthetixio
-          password: ${{ secrets.GH_PACKAGES_READ_ONLY }}
-        options: --shm-size=7gb
+    container:
+      image: ghcr.io/synthetixio/docker-e2e/base:12.21-npm6
+      credentials:
+        username: synthetixio
+        password: ${{ secrets.GH_PACKAGES_READ_ONLY }}
+      options: --shm-size=7gb
 
-      steps:
+    steps:
       - name: Checkout
         uses: actions/checkout@ee5a9d1395988d7c82c67c69571871f5994b94df # pin@v2
 
@@ -123,7 +121,7 @@ jobs:
       - name: Install dependencies
         run: npm install --no-audit
         env:
-            CYPRESS_CACHE_FOLDER: ${{ github.workspace }}/node_modules/.cache/Cypress
+          CYPRESS_CACHE_FOLDER: ${{ github.workspace }}/node_modules/.cache/Cypress
 
       - name: Set deployment url
         shell: bash
@@ -138,7 +136,7 @@ jobs:
           fi
 
       - name: Download build
-        uses: actions/download-artifact@4a7a711286f30c025902c28b541c10e147a9b843 # pin@v2
+        uses: actions/download-artifact@158ca71f7c614ae705e79f25522ef4658df18253 # pin@v2
         with:
           name: build
 
@@ -148,15 +146,15 @@ jobs:
       - name: Run e2e tests
         run: npm run test:e2e:ci
         env:
-            SECRET_WORDS: ${{ secrets.SECRET_WORDS }}
-            PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
-            CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_PROJECT_ID }}
-            CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            CYPRESS_CACHE_FOLDER: ${{ github.workspace }}/node_modules/.cache/Cypress
+          SECRET_WORDS: ${{ secrets.SECRET_WORDS }}
+          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+          CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_PROJECT_ID }}
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CYPRESS_CACHE_FOLDER: ${{ github.workspace }}/node_modules/.cache/Cypress
 
       - name: Archive e2e artifacts
-        uses: actions/upload-artifact@e448a9b857ee2131e752b06002bf0e093c65e571 # pin@v2
+        uses: actions/upload-artifact@ee69f02b3dfdecd58bb31b4d133da38ba6fe3700 # pin@v2
         if: always()
         with:
           name: e2e-artifacts

@@ -30,17 +30,19 @@ const Results: React.FC<ResultsProps> = ({ hash }) => {
 				const currentElectionMembers = CouncilNominations as any;
 				const mappedProfiles = [] as any;
 
-				currentElectionMembers[electionCount].forEach((member: any) => {
-					mappedProfiles.push({
-						address: member.address,
-						name: member.discord,
+				if (currentElectionMembers[hash]) {
+					currentElectionMembers[hash].forEach((member: any) => {
+						mappedProfiles.push({
+							address: member.address,
+							name: member.discord,
+						});
 					});
-				});
+				}
 				setChoices(mappedProfiles);
 			};
 			loadDiscordNames();
 		}
-	}, [proposal, activeTab, electionCount]);
+	}, [proposal, activeTab, electionCount, hash]);
 
 	useEffect(() => {
 		if (proposal && activeTab !== SPACE_KEY.COUNCIL) {
@@ -48,7 +50,7 @@ const Results: React.FC<ResultsProps> = ({ hash }) => {
 		}
 	}, [proposal, activeTab]);
 
-	if (proposal.isSuccess && proposal.data && choices) {
+	if (proposal.isSuccess && proposal.data && choices && choices.length > 0) {
 		const { data } = proposal;
 
 		const totalVotes = data.totalVotesBalances !== 0 ? data.totalVotesBalances : 1;

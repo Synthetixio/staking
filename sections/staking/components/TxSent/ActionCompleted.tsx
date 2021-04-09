@@ -3,7 +3,7 @@ import { Svg } from 'react-optimized-image';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
-import { useSetRecoilState } from 'recoil';
+import { useSetRecoilState, useRecoilValue } from 'recoil';
 
 import {
 	FlexDivRowCentered,
@@ -24,6 +24,7 @@ import Etherscan from 'containers/BlockExplorer';
 import { formatPercent } from 'utils/formatters/number';
 
 import { amountToBurnState, amountToMintState, burnTypeState, mintTypeState } from 'store/staking';
+import { isMainnetState } from 'store/wallet';
 
 import Currency from 'components/Currency';
 
@@ -66,6 +67,7 @@ const ActionCompleted: React.FC<ActionCompletedProps> = ({
 	const onBurnTypeChange = useSetRecoilState(burnTypeState);
 	const onBurnChange = useSetRecoilState(amountToBurnState);
 	const onMintChange = useSetRecoilState(amountToMintState);
+	const isMainnet = useRecoilValue(isMainnetState);
 
 	if (!isMint) {
 		return (
@@ -102,6 +104,45 @@ const ActionCompleted: React.FC<ActionCompletedProps> = ({
 						}}
 					>
 						{t('staking.actions.burn.completed.dismiss')}
+					</RightButton>
+				</ButtonWrap>
+			</Container>
+		);
+	} else if (!isMainnet) {
+		return (
+			<Container>
+				<SectionHeader>{t('staking.actions.mint.completed-default.title')}</SectionHeader>
+				<MiddleSection>
+					<IconContainer>
+						<Svg src={Success} />
+					</IconContainer>
+					<FlexDivCentered>
+						<InfoContainer key="one">
+							<InfoTitle>{t('staking.actions.mint.completed-default.staked')}</InfoTitle>
+							<InfoData>{from}</InfoData>
+						</InfoContainer>
+						<InfoContainer key="two">
+							<InfoTitle>{t('staking.actions.mint.completed-default.minted')}</InfoTitle>
+							<InfoData>{to}</InfoData>
+						</InfoContainer>
+					</FlexDivCentered>
+				</MiddleSection>
+				<ButtonWrap>
+					{link ? (
+						<ExternalLink href={link}>
+							<LeftButton onClick={() => setTransactionState(Transaction.PRESUBMIT)}>
+								{t('staking.actions.mint.completed-default.verify')}
+							</LeftButton>
+						</ExternalLink>
+					) : null}
+					<RightButton
+						onClick={() => {
+							setTransactionState(Transaction.PRESUBMIT);
+							onMintTypeChange(null);
+							onMintChange('');
+						}}
+					>
+						{t('staking.actions.mint.completed-default.dismiss')}
 					</RightButton>
 				</ButtonWrap>
 			</Container>
