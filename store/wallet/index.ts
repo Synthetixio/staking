@@ -20,7 +20,7 @@ export const networkState = atom<Network | null>({
 export const isL2State = selector<boolean>({
 	key: getWalletKey('isL2'),
 	get: ({ get }) => {
-		return get(networkState)?.useOvm ?? false;
+		return get(networkState)?.useOvm ?? true;
 	},
 });
 

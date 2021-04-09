@@ -74,7 +74,14 @@ const AppLayout: FC<AppLayoutProps> = ({ children }) => {
 		<>
 			<SideNav />
 			<Header />
-			<FullScreenModal isOpen={isL2}>System is undergoing maintenance.</FullScreenModal>
+			<FullScreenModal isOpen={isL2}>
+				<h2>
+					L2 is currently undergoing scheduled maintenance.{' '}
+					<a href="https://blog.synthetix.io/optimism-mainnet-upgrade-scheduled-downtime-and-regenesis/">
+						See blog.
+					</a>
+				</h2>
+			</FullScreenModal>
 			<Content>{children}</Content>
 			<NotificationContainer />
 			{!isL2 && <UserNotifications />}
