@@ -63,6 +63,7 @@ const SideNav: FC = () => {
 	return (
 		<SideNavContainer
 			onMouseLeave={() => setSubMenuConfiguration({ ...subMenuConfiguration, routes: null })}
+			data-testid="sidenav"
 		>
 			<StakingLogoWrap>
 				<Link href={ROUTES.Home}>
@@ -90,6 +91,7 @@ const SideNav: FC = () => {
 							);
 						}}
 						key={link}
+						data-testid={`sidenav-${link}`}
 						isActive={
 							subMenu
 								? !!subMenu.find(({ subLink }) => subLink === asPath)

@@ -110,7 +110,7 @@ function Container() {
 		) => {
 			setAccounts((a) => {
 				const action: string = fromBytes32(action32);
-				const accounts = a.slice();
+				let accounts = a.slice();
 				let entity = accounts.find(
 					(e) =>
 						ethers.utils.getAddress(e.authoriser) === authoriser &&
@@ -118,7 +118,7 @@ function Container() {
 				);
 				if (!entity) {
 					entity = new Account(authoriser, delegate, false, false, false, false);
-					accounts.push(entity!);
+					accounts = [entity!, ...accounts];
 				}
 				if (0 === action.localeCompare(Action.APPROVE_ALL)) {
 					entity.burn = bool;

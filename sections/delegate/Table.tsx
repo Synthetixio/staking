@@ -58,7 +58,7 @@ const RightCol: FC = () => {
 		) : null;
 
 	return (
-		<Root>
+		<Root data-testid="table">
 			<Container>
 				<ContainerHeader>
 					<Title>{t('delegate.info.title')}</Title>

@@ -17,6 +17,7 @@ const Selector: FC<SelectorProps> = ({ action, setAction }) => {
 				<ActionButton
 					key={actionId}
 					variant="solid"
+					data-testid={`action-${t(`common.delegate-actions.actions.${actionId}`)}`}
 					onClick={() => {
 						setAction(actionId);
 					}}

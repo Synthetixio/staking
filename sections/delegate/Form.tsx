@@ -19,7 +19,7 @@ import {
 import { Svg } from 'react-optimized-image';
 import NavigationBack from 'assets/svg/app/navigation-back.svg';
 import GasSelector from 'components/GasSelector';
-import { LEFT_COL_WIDTH } from 'sections/delegate/constants';
+import { FORM_COL_WIDTH } from 'sections/delegate/constants';
 import { isWalletConnectedState, walletAddressState } from 'store/wallet';
 import {
 	Action,
@@ -62,7 +62,7 @@ const LeftCol: FC = () => {
 		<StructuredTab
 			singleTab={true}
 			boxPadding={20}
-			boxWidth={LEFT_COL_WIDTH}
+			boxWidth={FORM_COL_WIDTH}
 			tabData={tabData}
 			setPanelType={() => null}
 		/>
@@ -123,10 +123,10 @@ const Tab: FC = () => {
 		if (!isWalletConnected) {
 			return connectWallet();
 		}
-		approve();
+		delegate();
 	};
 
-	const approve = async () => {
+	const delegate = async () => {
 		setButtonState('delegating');
 		setTxModalOpen(true);
 		try {
@@ -143,6 +143,8 @@ const Tab: FC = () => {
 					}),
 				showSuccessNotification: (hash: string) => {},
 			});
+			setDelegateAddress('');
+			setAction(Action.APPROVE_ALL);
 		} catch {
 		} finally {
 			setButtonState(null);
@@ -188,7 +190,7 @@ const Tab: FC = () => {
 	}, [delegateApprovalsContract, properDelegateAddress, address, action]);
 
 	return (
-		<>
+		<div data-testid="form">
 			<FormContainer>
 				<Header>
 					<IconButton onClick={onGoBack}>
@@ -204,6 +206,7 @@ const Tab: FC = () => {
 						disabled={false}
 						rows={3}
 						autoComplete={'off'}
+						data-testid="form-input"
 					/>
 				</InputsContainer>
 
@@ -220,6 +223,7 @@ const Tab: FC = () => {
 				onClick={onButtonClick}
 				variant="primary"
 				size="lg"
+				data-testid="form-button"
 				disabled={
 					isWalletConnected &&
 					(!properDelegateAddress || !!buttonState || delegateAddressIsSelf || alreadyDelegated)
@@ -259,7 +263,7 @@ const Tab: FC = () => {
 					}
 				/>
 			)}
-		</>
+		</div>
 	);
 };
 

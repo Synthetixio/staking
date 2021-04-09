@@ -4,31 +4,31 @@ import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 import { appReadyState } from 'store/app';
 import { Row, FlexDivCol } from 'styles/common';
-import { LEFT_COL_WIDTH, RIGHT_COL_WIDTH } from 'sections/delegate/constants';
-import LeftCol from 'sections/delegate/LeftCol';
-import RightCol from 'sections/delegate/RightCol';
+import { FORM_COL_WIDTH, TABLE_COL_WIDTH } from 'sections/delegate/constants';
+import Form from 'sections/delegate/Form';
+import Table from 'sections/delegate/Table';
 
 const Index: FC = () => {
 	const isAppReady = useRecoilValue(appReadyState);
 
 	return !isAppReady ? null : (
 		<Row>
-			<LeftColCol>
-				<LeftCol />
-			</LeftColCol>
-			<RightColCol>
-				<RightCol />
-			</RightColCol>
+			<FormCol>
+				<Form />
+			</FormCol>
+			<TableCol>
+				<Table />
+			</TableCol>
 		</Row>
 	);
 };
 
-const LeftColCol = styled(FlexDivCol)`
-	width: ${LEFT_COL_WIDTH}px;
+const FormCol = styled(FlexDivCol)`
+	width: ${FORM_COL_WIDTH}px;
 `;
 
-const RightColCol = styled(FlexDivCol)`
-	width: ${RIGHT_COL_WIDTH}px;
+const TableCol = styled(FlexDivCol)`
+	width: ${TABLE_COL_WIDTH}px;
 `;
 
 export default Index;

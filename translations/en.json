@@ -993,11 +993,11 @@
 		"delegate-actions": {
 			"header": "Action",
 			"actions": {
-				"ApproveAll": "All",
-				"BurnForAddress": "Burn",
-				"IssueForAddress": "Mint",
-				"ClaimForAddress": "Claim",
-				"ExchangeForAddress": "Trade"
+				"ApproveAll": "all",
+				"BurnForAddress": "burn",
+				"IssueForAddress": "mint",
+				"ClaimForAddress": "claim",
+				"ExchangeForAddress": "trade"
 			}
 		}
 	},
@@ -1034,11 +1034,11 @@
 			"input-placeholder": "e.g. 0x3b18a4...",
 			"tx-confirmation-title": "Delegating to",
 			"button-labels": {
-				"enter-address": "Enter an address",
-				"delegate": "Delegate",
-				"delegating": "Delegating...",
-				"cannot-delegate-to-self": "Cannot delegate to self",
-				"already-delegated": "Already delegated"
+				"enter-address": "enter an address",
+				"delegate": "delegate",
+				"delegating": "delegating...",
+				"cannot-delegate-to-self": "cannot delegate to self",
+				"already-delegated": "already delegated"
 			}
 		},
 		"info": {
