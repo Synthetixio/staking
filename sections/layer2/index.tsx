@@ -63,7 +63,7 @@ const Index: FC = () => {
 	const ACTIONS = useMemo(
 		() => ({
 			deposit: {
-				title: "*Temporarily paused* " + t('layer2.actions.deposit.title'),
+				title: '*Temporarily paused* ' + t('layer2.actions.deposit.title'),
 				copy: t('layer2.actions.deposit.subtitle'),
 				//link: ROUTES.L2.Deposit,
 			},
