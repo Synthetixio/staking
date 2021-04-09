@@ -63,9 +63,9 @@ const Index: FC = () => {
 	const ACTIONS = useMemo(
 		() => ({
 			deposit: {
-				title: t('layer2.actions.deposit.title'),
+				title: '*Temporarily paused* ' + t('layer2.actions.deposit.title'),
 				copy: t('layer2.actions.deposit.subtitle'),
-				link: ROUTES.L2.Deposit,
+				//link: ROUTES.L2.Deposit,
 			},
 			migrate: {
 				title: t('layer2.actions.migrate.title'),
@@ -108,7 +108,7 @@ const Index: FC = () => {
 						{
 							gridLocations: ['col-2', 'col-3', 'row-1', 'row-2'],
 							...ACTIONS.deposit,
-							isDisabled: transferableCollateral.isZero(),
+							isDisabled: /* transferableCollateral.isZero() */ true,
 						},
 						{
 							gridLocations: ['col-1', 'col-2', 'row-2', 'row-3'],
