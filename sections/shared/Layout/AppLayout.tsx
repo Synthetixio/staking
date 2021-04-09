@@ -15,7 +15,6 @@ import useProposals from 'queries/gov/useProposals';
 import { SPACE_KEY } from 'constants/snapshot';
 import { NotificationTemplate, userNotificationState } from 'store/ui';
 import { Proposal } from 'queries/gov/types';
-import FullScreenModal from 'components/FullScreenModal';
 
 type AppLayoutProps = {
 	children: ReactNode;
@@ -74,14 +73,6 @@ const AppLayout: FC<AppLayoutProps> = ({ children }) => {
 		<>
 			<SideNav />
 			<Header />
-			<FullScreenModal isOpen={isL2}>
-				<h2>
-					L2 is currently undergoing scheduled maintenance.{' '}
-					<a href="https://blog.synthetix.io/optimism-mainnet-upgrade-scheduled-downtime-and-regenesis/">
-						See blog.
-					</a>
-				</h2>
-			</FullScreenModal>
 			<Content>{children}</Content>
 			<NotificationContainer />
 			{!isL2 && <UserNotifications />}
