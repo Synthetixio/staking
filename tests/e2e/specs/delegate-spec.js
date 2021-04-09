@@ -10,7 +10,7 @@ describe('Delegate Page', () => {
 		cy.findByTestId('sidenav-submenu-/delegate').click();
 		cy.findByTestId('form', { timeout: 30 * 1e3 }).should('be.visible');
 	});
-	it.only('should delegate & undelegate powers to an account', () => {
+	it('should delegate & undelegate powers to an account', () => {
 		const { address: delegateAddress } = ethers.Wallet.createRandom();
 		const shortenedDelegateAddress = `${delegateAddress.slice(0, 5)}...${delegateAddress.slice(
 			-3
