@@ -8,10 +8,21 @@ export default class Page {
 	}
 
 	acceptMetamaskAccessRequest() {
-		cy.acceptMetamaskAccess();
+		cy.wait(1000);
+		cy.window()
+			.then((win) => {
+				return !win.ethereum ? [] : win.ethereum.request({ method: 'eth_accounts' });
+			})
+			.then((accounts) => {
+				cy.log('yo yo');
+				cy.log('t ' + accounts.length);
+				if (!accounts.length) {
+					cy.acceptMetamaskAccess();
+				}
+			});
 	}
 
 	confirmMetamaskTransaction() {
-		cy.confirmMetamaskTransaction();
+		return cy.confirmMetamaskTransaction();
 	}
 }
