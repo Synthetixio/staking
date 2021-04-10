@@ -607,6 +607,8 @@
 			"info": {
 				"title": "Withdraw SNX from Layer 2 to Layer 1",
 				"subtitle": "Warning: withdrawing your SNX will take 7-10 days to be received on L1, during which time you will not have access to your funds. Once you initiate a withdrawal you will not be able to cancel it.",
+				"regenesis": "Historical transactions before Friday, April 9, 2021 at 06:00:00pm UTC have been cleared <0>see the blog post</0>.",
+				"view-withdrawals": "To view your withdrawals from before the upgrade, <0>see Synthetix withdrawals</0>.",
 				"no-withdrawals": "No withdrawal history",
 				"table": {
 					"withdrawal": "Withdrawal",
