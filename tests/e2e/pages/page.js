@@ -14,8 +14,6 @@ export default class Page {
 				return !win.ethereum ? [] : win.ethereum.request({ method: 'eth_accounts' });
 			})
 			.then((accounts) => {
-				cy.log('yo yo');
-				cy.log('t ' + accounts.length);
 				if (!accounts.length) {
 					cy.acceptMetamaskAccess();
 				}
