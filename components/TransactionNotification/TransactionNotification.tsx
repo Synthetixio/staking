@@ -26,7 +26,7 @@ const NotificationPending = () => {
 
 const NotificationSuccess = () => {
 	return (
-		<NotificationContainer>
+		<NotificationContainer data-testid="tx-notification-transaction-confirmed">
 			<IconContainer>
 				<StyledImg width={35} src={Success} />
 			</IconContainer>

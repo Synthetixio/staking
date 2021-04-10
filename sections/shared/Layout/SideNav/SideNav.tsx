@@ -90,6 +90,7 @@ const SideNav: FC = () => {
 							);
 						}}
 						key={link}
+						data-testid={`sidenav-${link}`}
 						isActive={
 							subMenu
 								? !!subMenu.find(({ subLink }) => subLink === asPath)

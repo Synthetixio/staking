@@ -36,6 +36,7 @@ const FormButton: React.FC<FormButtonProps> = ({
 			variant="primary"
 			size="lg"
 			disabled={hasLowCollateralAmount || hasLowCRatio || isApproving || isBorrowing}
+			data-testid="loans-form-button"
 			{...{ onClick }}
 		>
 			{!isWalletConnected ? (
