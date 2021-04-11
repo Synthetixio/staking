@@ -18,6 +18,7 @@ import { networkState } from 'store/wallet';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 import { CryptoCurrency } from 'constants/currency';
 import { DEFAULT_NETWORK_ID } from 'constants/defaults';
+import { L1_TO_L2_NETWORK_MAPPER } from '@synthetixio/optimism-networks';
 
 const Index: FC = () => {
 	const [l2AmountSNX, setL2AmountSNX] = useState<number>(0);
@@ -36,12 +37,12 @@ const Index: FC = () => {
 					contracts: { Synthetix, FeePool },
 				} = initSynthetixJS({
 					provider,
-					useOvm: true,
+					networkId: L1_TO_L2_NETWORK_MAPPER[network?.id ?? DEFAULT_NETWORK_ID],
 				});
 
 				const [totalSupplyBN, feePeriod] = await Promise.all([
 					Synthetix.totalSupply(),
-					FeePool.recentFeePeriods('0'),
+					FeePool.recentFeePeriods('1'),
 				]);
 
 				const totalSupply = totalSupplyBN / 1e18;
@@ -50,13 +51,14 @@ const Index: FC = () => {
 				setL2APR((rewards * 52) / totalSupply);
 				setL2AmountSNX(totalSupply);
 			} catch (e) {
+				console.log(e);
 				setL2APR(0);
 				setL2AmountSNX(0);
 			}
 		}
 		getData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [network?.id]);
 
 	const ACTIONS = useMemo(
 		() => ({

@@ -13,6 +13,7 @@ import { formatNumber } from 'utils/formatters/number';
 import { MaxHeightColumn, StyledTooltip } from 'sections/gov/components/common';
 import { Blockie } from '../common';
 import makeBlockie from 'ethereum-blockies-base64';
+import { ethers } from 'ethers';
 
 type HistoryProps = {
 	hash: string;
@@ -24,6 +25,8 @@ const History: React.FC<HistoryProps> = ({ hash }) => {
 	const proposal = useProposal(activeTab, hash);
 	const walletAddress = useRecoilValue(walletAddressState);
 
+	const { getAddress } = ethers.utils;
+
 	const history = useMemo(() => {
 		if (proposal.data) {
 			const { data } = proposal;
@@ -34,6 +37,7 @@ const History: React.FC<HistoryProps> = ({ hash }) => {
 					</Row>
 					{data.voteList.length > 0 ? (
 						data.voteList.map((vote, i: number) => {
+							const currentWalletAddress = walletAddress ? getAddress(walletAddress) : '';
 							return (
 								<Row key={i}>
 									<InnerRow>
@@ -42,20 +46,20 @@ const History: React.FC<HistoryProps> = ({ hash }) => {
 											arrow={true}
 											placement="bottom"
 											content={
-												vote.address.toLowerCase() === walletAddress?.toLowerCase()
+												getAddress(vote.address) === currentWalletAddress
 													? t('gov.proposal.history.currentUser')
 													: vote.profile.ens
 													? vote.profile.ens
-													: vote.address.toLowerCase()
+													: getAddress(vote.address)
 											}
 											hideOnClick={false}
 										>
 											<Title>
-												{vote.address.toLowerCase() === walletAddress?.toLowerCase()
+												{getAddress(vote.address) === currentWalletAddress
 													? t('gov.proposal.history.currentUser')
 													: vote.profile.ens
 													? truncateString(vote.profile.ens, 13)
-													: truncateAddress(vote.address.toLowerCase())}
+													: truncateAddress(getAddress(vote.address))}
 											</Title>
 										</StyledTooltip>
 									</InnerRow>
@@ -69,7 +73,16 @@ const History: React.FC<HistoryProps> = ({ hash }) => {
 											- {truncateString(data.choices[vote.msg.payload.choice - 1], 13)}
 										</Choice>
 									</StyledTooltip>
-									<Value>{`${formatNumber(vote.balance)} ${data.spaceSymbol}`}</Value>
+									<StyledTooltip
+										arrow={true}
+										placement="bottom"
+										content={`${formatNumber(vote.scores[0])} WD + ${formatNumber(
+											vote.scores[1]
+										)} WD (delegated)`}
+										hideOnClick={false}
+									>
+										<Value>{`${formatNumber(vote.balance)} ${data.spaceSymbol}`}</Value>
+									</StyledTooltip>
 								</Row>
 							);
 						})
@@ -83,7 +96,7 @@ const History: React.FC<HistoryProps> = ({ hash }) => {
 		} else {
 			return <StyledSpinner src={Spinner} />;
 		}
-	}, [proposal, walletAddress, t]);
+	}, [proposal, walletAddress, t, getAddress]);
 
 	return history;
 };

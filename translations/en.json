@@ -244,6 +244,13 @@
 					"subtext": "There are various Liquidity Providing incentives interacting with different DeFi products for you to choose from",
 					"dismiss": "DISMISS",
 					"see-more": "SEE MORE"
+				},
+				"completed-default": {
+					"title": "Minting complete!",
+					"staked": "Staked",
+					"minted": "Minted",
+					"dismiss": "Dismiss",
+					"verify": "Verify Tx"
 				}
 			},
 			"burn": {
@@ -369,7 +376,7 @@
 		"page-title": "Earn | Synthetix Staking",
 		"tab": {
 			"active": "Active",
-			"inactive": "Inactive"
+			"inactive": "Expired"
 		},
 		"incentives": {
 			"est-apr": "Est. APR",
@@ -421,6 +428,11 @@
 					"title": "Synthetix",
 					"description": "Opening a short allows you to earn SNX rewards. <0>Learn more.<0>",
 					"subtitle": "sBTC Short Rewards"
+				},
+				"seth": {
+					"title": "Synthetix",
+					"description": "Opening a short allows you to earn SNX rewards. <0>Learn more.<0>",
+					"subtitle": "sETH Short Rewards"
 				},
 				"stsla": {
 					"title": "Balancer",
@@ -700,7 +712,7 @@
 		},
 		"withdraw": {
 			"info": {
-				"title": "Withdraw SNX from Layer 1 to Layer 2",
+				"title": "Withdraw SNX from Layer 2 to Layer 1",
 				"subtitle": "Warning: withdrawing your SNX will take 7-10 days to be received on L1, during which time you will not have access to your funds. Once you initiate a withdrawal you will not be able to cancel it.",
 				"no-withdrawals": "No withdrawal history",
 				"table": {

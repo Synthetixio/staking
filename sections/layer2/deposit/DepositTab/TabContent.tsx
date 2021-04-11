@@ -54,7 +54,7 @@ const TabContent: FC<TabContentProps> = ({
 	const currencyKey = CryptoCurrency['SNX'];
 
 	const renderButton = () => {
-		if (depositAmount) {
+		if (depositAmount && !depositAmount.isZero()) {
 			return (
 				<StyledCTA
 					blue={true}

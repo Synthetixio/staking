@@ -18,6 +18,7 @@ type AssetInputProps = {
 	selectDisabled?: boolean;
 	inputDisabled?: boolean;
 	onSetMaxAmount?: (amount: string) => void;
+	testId?: string;
 };
 
 const AssetInput: React.FC<AssetInputProps> = ({
@@ -30,16 +31,17 @@ const AssetInput: React.FC<AssetInputProps> = ({
 	selectDisabled,
 	inputDisabled,
 	onSetMaxAmount,
+	testId,
 }) => {
 	const { t } = useTranslation();
 	const options = React.useMemo(() => assets.map((value) => ({ label: value, value })), [assets]);
 	const value = React.useMemo(() => options.find(({ value }) => value === asset), [options, asset]);
 
 	return (
-		<Container>
+		<Container data-testid={testId}>
 			<SelectContainer>
 				<SelectLabel>{t(label)}</SelectLabel>
-				<SelectInput>
+				<SelectInput data-testid="select">
 					<Select
 						inputId={`${label}-asset-options`}
 						formatOptionLabel={(option) => (
@@ -63,6 +65,7 @@ const AssetInput: React.FC<AssetInputProps> = ({
 					placeholder="0.00"
 					onChange={(e) => setAmount(e.target.value)}
 					disabled={!!inputDisabled}
+					data-testid="input"
 				/>
 			</AmountContainer>
 

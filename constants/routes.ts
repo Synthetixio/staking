@@ -32,6 +32,8 @@ export const ROUTES = {
 		DHT_LP: '/earn/DHT-LP',
 		sBTC_EXTERNAL: 'https://kwenta.io/shorting',
 		sBTC_SHORT: '/earn/sBTC-SHORT',
+		sETH_EXTERNAL: 'https://kwenta.io/shorting',
+		sETH_SHORT: '/earn/sETH-SHORT',
 	},
 	L2: {
 		Home: '/l2',

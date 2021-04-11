@@ -359,7 +359,7 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 						amount={debtAmountNumber}
 						setAmount={setDebtAmount}
 						assets={DEBT_ASSETS}
-						data-testid="loans-form-left-input"
+						testId="loans-form-left-input"
 					/>
 					<InputsDivider />
 					<AssetInput
@@ -370,7 +370,7 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 						setAmount={setCollateralAmount}
 						assets={collateralAssets}
 						onSetMaxAmount={setCollateralAmount}
-						data-testid="loans-form-right-input"
+						testId="loans-form-right-input"
 					/>
 				</InputsContainer>
 

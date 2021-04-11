@@ -13,6 +13,7 @@ import snapshot from '@snapshot-labs/snapshot.js';
 import Connector from 'containers/Connector';
 import { ethers } from 'ethers';
 import CouncilDilution from 'contracts/councilDilution.js';
+import CouncilNominations from 'constants/nominations.json';
 
 const useProposals = (spaceKey: SPACE_KEY, options?: QueryConfig<Proposal[]>) => {
 	const isAppReady = useRecoilValue(appReadyState);
@@ -62,7 +63,58 @@ const useProposals = (spaceKey: SPACE_KEY, options?: QueryConfig<Proposal[]>) =>
 							axios.get(PROPOSAL(spaceKey, proposal.authorIpfsHash)).then((response) => {
 								return {
 									voterAddresses: Object.keys(response.data).map((address) =>
-										address.toLowerCase()
+										ethers.utils.getAddress(address)
+									) as string[],
+								};
+							})
+						);
+
+						const [scores]: any = await Promise.all([
+							snapshot.utils.getScores(
+								spaceKey,
+								space.strategies,
+								space.network,
+								provider,
+								voterAddresses,
+								blockTag
+							),
+						]);
+
+						let voteCount = 0;
+
+						space.strategies.forEach((_, i: number) => {
+							let arrayOfVotes = Object.values(scores[i]) as number[];
+							voteCount = voteCount + arrayOfVotes.filter((score: number) => score > 0).length;
+						});
+
+						return {
+							...proposal,
+							votes: voteCount,
+						};
+					} else {
+						return null;
+					}
+				});
+				const resolvedProposals = await Promise.all(mappedProposals);
+				return resolvedProposals.filter((e) => e !== null);
+			} else if (spaceKey === SPACE_KEY.COUNCIL) {
+				const nominationHashes = Object.keys(CouncilNominations);
+
+				const validHashes = proposalHashes
+					.filter((e: string) => nominationHashes.includes(e))
+					.map((hash) => hash.toLowerCase());
+
+				const mappedProposals = proposalContent.map(async (proposal) => {
+					if (validHashes.includes(proposal.authorIpfsHash.toLowerCase())) {
+						const block = parseInt(proposal.msg.payload.snapshot);
+						const currentBlock = provider?.getBlockNumber() ?? 0;
+						const blockTag = block > currentBlock ? 'latest' : block;
+
+						let { voterAddresses } = await Promise.resolve(
+							axios.get(PROPOSAL(spaceKey, proposal.authorIpfsHash)).then((response) => {
+								return {
+									voterAddresses: Object.keys(response.data).map((address) =>
+										ethers.utils.getAddress(address)
 									) as string[],
 								};
 							})
@@ -106,7 +158,7 @@ const useProposals = (spaceKey: SPACE_KEY, options?: QueryConfig<Proposal[]>) =>
 						axios.get(PROPOSAL(spaceKey, proposal.authorIpfsHash)).then((response) => {
 							return {
 								voterAddresses: Object.keys(response.data).map((address) =>
-									address.toLowerCase()
+									ethers.utils.getAddress(address)
 								) as string[],
 							};
 						})
