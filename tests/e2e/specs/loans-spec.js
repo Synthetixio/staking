@@ -9,7 +9,7 @@ describe('Loans', () => {
 			cy.findByTestId('sidenav-/loans').click();
 			cy.findByTestId('loans-form', { timeout: 30 * 1e3 }).should('be.visible');
 		});
-		it.only('should create & manage loans', () => {
+		it('should create & manage loans', () => {
 			loansPage.visit();
 			loansPage.getFormButton().contains('connect wallet').click();
 			cy.findByAltText('MetaMask').click();
