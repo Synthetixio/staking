@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useQuery, QueryConfig } from 'react-query';
 import { useRecoilValue } from 'recoil';
-// import { providers } from 'ethers';
+// import { providers } from 'ethers'; // todo: fix lint error & revert to this
 import providers from '@ethersproject/providers';
 import orderBy from 'lodash/orderBy';
 import {

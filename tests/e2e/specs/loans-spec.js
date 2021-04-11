@@ -3,7 +3,6 @@ import LoansPage from '../pages/loans-page';
 const loansPage = new LoansPage();
 
 describe('Loans', () => {
-	before(() => {});
 	context('Page', () => {
 		it('should be accessible from sidenav', () => {
 			cy.visit('/');
