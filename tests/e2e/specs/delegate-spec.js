@@ -3,77 +3,86 @@ import DelegatePage from '../pages/wallet/delegate-page';
 
 const delegatePage = new DelegatePage();
 
-describe('Delegate', () => {
-	before(() => {});
-	context('Page', () => {
-		it('should be accessible from sidenav', () => {
+describe('Delegate', function () {
+	context('Navigation', function () {
+		it('should be accessible from sidenav', function () {
 			cy.visit('/');
 			cy.findByTestId('sidenav-/escrow').trigger('mouseover');
 			cy.findByTestId('sidenav-submenu-/delegate').click();
 			cy.findByTestId('form', { timeout: 30 * 1e3 }).should('be.visible');
 		});
-		it('should delegate & undelegate powers to an account', () => {
-			const { address: delegateAddress } = ethers.Wallet.createRandom();
-			const shortenedDelegateAddress = `${delegateAddress.slice(0, 5)}...${delegateAddress.slice(
-				-3
-			)}`;
-
+		it('should be accessible from url', function () {
 			delegatePage.visit();
+			cy.findByTestId('form', { timeout: 30 * 1e3 }).should('be.visible');
+		});
+	});
+
+	context('Page', function () {
+		before(function () {
+			const { address: delegateAddress } = ethers.Wallet.createRandom();
+			cy.wrap(delegateAddress).as('delegateAddress');
+			cy.wrap(`${delegateAddress.slice(0, 5)}...${delegateAddress.slice(-3)}`).as(
+				'shortenedDelegateAddress'
+			);
+			delegatePage.visit();
+		});
+		it('should delegate a power to an account', function () {
 			delegatePage.getFormButton().contains('connect wallet').click();
 			cy.findByAltText('MetaMask').click();
 			delegatePage.acceptMetamaskAccessRequest();
 			delegatePage.getFormButton().contains('enter an address');
 
-			// approve burn
-			delegatePage.getFormInput().type(delegateAddress);
-			// delegatePage.getTable().contains('No addresses to show');
-			cy.findByTestId('action-burn').click();
-			delegatePage.getFormButton().contains('delegate').click();
-			delegatePage.confirmMetamaskTransaction();
-			// delegatePage.getTable().not.contains('No addresses to show');
-			delegatePage.getTable().contains(shortenedDelegateAddress, { timeout: 30 * 1e3 });
-			delegatePage.getAllCheckbox(delegateAddress).should('not.be.checked');
-			delegatePage.getMintCheckbox(delegateAddress).should('not.be.checked');
-			delegatePage.getBurnCheckbox(delegateAddress).should('be.checked');
-			delegatePage.getClaimCheckbox(delegateAddress).should('not.be.checked');
-			delegatePage.getTradeCheckbox(delegateAddress).should('not.be.checked');
+			delegatePage.createApproval(this.delegateAddress, 'burn');
 
-			// check mint
-			delegatePage.getMintCheckbox(delegateAddress).siblings().click();
-			delegatePage.confirmMetamaskTransaction();
-			delegatePage.getAllCheckbox(delegateAddress).should('not.be.checked');
-			delegatePage.getMintCheckbox(delegateAddress).should('be.checked');
-			delegatePage.getBurnCheckbox(delegateAddress).should('be.checked');
-			delegatePage.getClaimCheckbox(delegateAddress).should('not.be.checked');
-			delegatePage.getTradeCheckbox(delegateAddress).should('not.be.checked');
+			delegatePage.getTable().contains(this.shortenedDelegateAddress, { timeout: 30 * 1e3 });
+			delegatePage.getAllCheckbox(this.delegateAddress).should('not.be.checked');
+			delegatePage.getMintCheckbox(this.delegateAddress).should('not.be.checked');
+			delegatePage.getBurnCheckbox(this.delegateAddress).should('be.checked');
+			delegatePage.getClaimCheckbox(this.delegateAddress).should('not.be.checked');
+			delegatePage.getTradeCheckbox(this.delegateAddress).should('not.be.checked');
+		});
 
-			// check all
-			delegatePage.getAllCheckbox(delegateAddress).siblings().click();
-			delegatePage.confirmMetamaskTransaction();
-			delegatePage.getAllCheckbox(delegateAddress).should('be.checked');
-			delegatePage.getMintCheckbox(delegateAddress).should('be.checked');
-			delegatePage.getBurnCheckbox(delegateAddress).should('be.checked');
-			delegatePage.getClaimCheckbox(delegateAddress).should('be.checked');
-			delegatePage.getTradeCheckbox(delegateAddress).should('be.checked');
-			delegatePage.getAllCheckbox(delegateAddress).should('not.be.disabled');
-			delegatePage.getMintCheckbox(delegateAddress).should('be.disabled');
-			delegatePage.getBurnCheckbox(delegateAddress).should('be.disabled');
-			delegatePage.getClaimCheckbox(delegateAddress).should('be.disabled');
-			delegatePage.getTradeCheckbox(delegateAddress).should('be.disabled');
-
-			// uncheck all
-			delegatePage.getAllCheckbox(delegateAddress).siblings().click();
-			delegatePage.confirmMetamaskTransaction();
-			delegatePage.getAllCheckbox(delegateAddress).should('not.be.checked');
-			delegatePage.getMintCheckbox(delegateAddress).should('not.be.checked');
-			delegatePage.getBurnCheckbox(delegateAddress).should('not.be.checked');
-			delegatePage.getClaimCheckbox(delegateAddress).should('not.be.checked');
-			delegatePage.getTradeCheckbox(delegateAddress).should('not.be.checked');
-			delegatePage.getAllCheckbox(delegateAddress).should('not.be.disabled');
-			delegatePage.getMintCheckbox(delegateAddress).should('not.be.disabled');
-			delegatePage.getBurnCheckbox(delegateAddress).should('not.be.disabled');
-			delegatePage.getClaimCheckbox(delegateAddress).should('not.be.disabled');
-			delegatePage.getTradeCheckbox(delegateAddress).should('not.be.disabled');
+		context('Existing Approval', function () {
+			before(function () {
+				delegatePage.createApproval(this.delegateAddress, 'burn');
+			});
+			it('should allow updating to a none-ALL power', function () {
+				delegatePage.getMintCheckbox(this.delegateAddress).siblings().click();
+				delegatePage.confirmMetamaskTransaction();
+				delegatePage.getAllCheckbox(this.delegateAddress).should('not.be.checked');
+				delegatePage.getMintCheckbox(this.delegateAddress).should('be.checked');
+				delegatePage.getBurnCheckbox(this.delegateAddress).should('be.checked');
+				delegatePage.getClaimCheckbox(this.delegateAddress).should('not.be.checked');
+				delegatePage.getTradeCheckbox(this.delegateAddress).should('not.be.checked');
+			});
+			it('should allow changing to all powers state', function () {
+				delegatePage.getAllCheckbox(this.delegateAddress).siblings().click();
+				delegatePage.confirmMetamaskTransaction();
+				delegatePage.getAllCheckbox(this.delegateAddress).should('be.checked');
+				delegatePage.getMintCheckbox(this.delegateAddress).should('be.checked');
+				delegatePage.getBurnCheckbox(this.delegateAddress).should('be.checked');
+				delegatePage.getClaimCheckbox(this.delegateAddress).should('be.checked');
+				delegatePage.getTradeCheckbox(this.delegateAddress).should('be.checked');
+				delegatePage.getAllCheckbox(this.delegateAddress).should('not.be.disabled');
+				delegatePage.getMintCheckbox(this.delegateAddress).should('be.disabled');
+				delegatePage.getBurnCheckbox(this.delegateAddress).should('be.disabled');
+				delegatePage.getClaimCheckbox(this.delegateAddress).should('be.disabled');
+				delegatePage.getTradeCheckbox(this.delegateAddress).should('be.disabled');
+			});
+			it('should allow undelegating powers', function () {
+				delegatePage.getAllCheckbox(this.delegateAddress).siblings().click();
+				delegatePage.confirmMetamaskTransaction();
+				delegatePage.getAllCheckbox(this.delegateAddress).should('not.be.checked');
+				delegatePage.getMintCheckbox(this.delegateAddress).should('not.be.checked');
+				delegatePage.getBurnCheckbox(this.delegateAddress).should('not.be.checked');
+				delegatePage.getClaimCheckbox(this.delegateAddress).should('not.be.checked');
+				delegatePage.getTradeCheckbox(this.delegateAddress).should('not.be.checked');
+				delegatePage.getAllCheckbox(this.delegateAddress).should('not.be.disabled');
+				delegatePage.getMintCheckbox(this.delegateAddress).should('not.be.disabled');
+				delegatePage.getBurnCheckbox(this.delegateAddress).should('not.be.disabled');
+				delegatePage.getClaimCheckbox(this.delegateAddress).should('not.be.disabled');
+				delegatePage.getTradeCheckbox(this.delegateAddress).should('not.be.disabled');
+			});
 		});
 	});
 });

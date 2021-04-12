@@ -44,4 +44,13 @@ export default class DelegatePage extends Page {
 	getCheckbox(delegateAddress, power) {
 		return cy.findByTestId(`checkbox-${delegateAddress}-${power}`);
 	}
+
+	createApproval(delegateAddress, power) {
+		this.getFormInput().type(delegateAddress);
+		// this.getTable().contains('No addresses to show');
+		cy.findByTestId(`action-${power}`).click();
+		this.getFormButton().contains('delegate').click();
+		this.confirmMetamaskTransaction();
+		// this.getTable().not.contains('No addresses to show');
+	}
 }
