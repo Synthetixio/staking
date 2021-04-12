@@ -1,6 +1,6 @@
 import Page from '../page';
 export default class Onboard extends Page {
-	getMetamaskBtn() {
-		return cy.findByAltText('MetaMask');
+	c() {
+		return cy.findByAltText('Browser Wallet');
 	}
 }
