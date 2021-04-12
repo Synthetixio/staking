@@ -6,14 +6,16 @@ import { GWEI_UNIT, GasLimitEstimate } from 'constants/network';
 
 type EthereumProvider = {
 	isMetaMask: boolean;
-	networkVersion: string;
+	chainId: string;
 };
 
 export async function getDefaultNetworkId(): Promise<NetworkId> {
 	try {
 		const provider = (await detectEthereumProvider()) as EthereumProvider;
-
-		return provider ? Number(provider.networkVersion) : DEFAULT_NETWORK_ID;
+		if (provider && provider.chainId) {
+			return Number(provider.chainId);
+		}
+		return DEFAULT_NETWORK_ID;
 	} catch (e) {
 		console.log(e);
 		return DEFAULT_NETWORK_ID;
