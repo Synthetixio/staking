@@ -1,3 +1,4 @@
+let initialized;
 export default class Page {
 	getTitle() {
 		return cy.title();
@@ -8,6 +9,12 @@ export default class Page {
 	}
 
 	acceptMetamaskAccessRequest() {
+		if (initialized) return;
+		initialized = true;
+
+		this.getFormButton().contains('connect wallet').click();
+		cy.findByAltText('MetaMask').click();
+
 		cy.wait(1000);
 		cy.window()
 			.then((win) => {

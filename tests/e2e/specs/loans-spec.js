@@ -3,29 +3,30 @@ import LoansPage from '../pages/loans-page';
 const loansPage = new LoansPage();
 
 describe('Loans', () => {
-	context('Page', () => {
+	context('Navigation', () => {
 		it('should be accessible from sidenav', () => {
 			cy.visit('/');
 			cy.findByTestId('sidenav-/loans').click();
 			cy.findByTestId('loans-form', { timeout: 30 * 1e3 }).should('be.visible');
 		});
-		it('should create & manage loans', () => {
+	});
+	context('Form', () => {
+		before(() => {
 			loansPage.visit();
-			loansPage.getFormButton().contains('connect wallet').click();
-			cy.findByAltText('MetaMask').click();
 			loansPage.acceptMetamaskAccessRequest();
+		});
+		it('should default debt asset to sUSD', () => {
 			loansPage.getFormButton().contains('BORROW sUSD');
-
-			// switch debt to sETH
+		});
+		it('should allow switching debt to sETH', () => {
 			loansPage.getLeftInput().within(() => {
 				cy.findByTestId('select').click();
 				cy.findAllByText('sETH').click();
 			});
 			loansPage.getFormButton().contains('BORROW sETH');
 			loansPage.getLeftInput().contains('sETH');
-
-			// switch debt to sBTC
-			// should update default collateral to renBTC
+		});
+		it('should allow switching debt to sBTC', () => {
 			loansPage.getLeftInput().within(() => {
 				cy.findByTestId('select').click();
 				cy.findAllByText('sBTC').click();
@@ -43,28 +44,70 @@ describe('Loans', () => {
 			loansPage.getLeftInput().contains('sUSD');
 			loansPage.getRightInput().contains('ETH');
 			loansPage.getFormButton().contains('BORROW sUSD');
+		});
+		it('should allow switching collateral to renBTC', () => {
+			loansPage.getRightInput().within(() => {
+				cy.findByTestId('select').click();
+				cy.findAllByText('renBTC').click();
+			});
+			loansPage.getLeftInput().contains('sUSD');
+			loansPage.getRightInput().contains('renBTC');
+			loansPage.getFormButton().contains('BORROW sUSD');
 
-			// fill collateral and debt amounts
+			//
+			loansPage.getRightInput().within(() => {
+				cy.findByTestId('select').click();
+				cy.findAllByText('ETH').click();
+			});
+		});
+		it('should indicate minimum ETH collateral', () => {
 			loansPage.getLeftInput().within(() => {
-				cy.findByTestId('input').type(5000);
+				cy.findByTestId('input').clear().type(5000);
 			});
 			loansPage.getRightInput().within(() => {
-				cy.findByTestId('input').type(1);
+				cy.findByTestId('input').clear().type(1);
 			});
-			loansPage.getRightInput().contains('ETH');
 			loansPage.getFormButton().contains('MINIMUM COLLATERAL IS 2.00 ETH');
-
+		});
+		it('should indicate minimum renBTC collateral', () => {
+			loansPage.getLeftInput().within(() => {
+				cy.findByTestId('input').clear().type(5000);
+			});
 			loansPage.getRightInput().within(() => {
-				cy.findByTestId('input').clear().type(2);
+				cy.findByTestId('input').clear().type(0.01);
+				cy.findByTestId('select').click();
+				cy.findAllByText('renBTC').click();
+			});
+			loansPage.getFormButton().contains('MINIMUM COLLATERAL IS 0.05 renBTC');
+
+			//
+			loansPage.getRightInput().within(() => {
+				cy.findByTestId('select').click();
+				cy.findAllByText('ETH').click();
+			});
+		});
+		it('should indicate low c-ratio', () => {
+			loansPage.getLeftInput().within(() => {
+				cy.findByTestId('input').clear().type(5000);
+			});
+			loansPage.getRightInput().within(() => {
+				cy.findByTestId('input').clear().clear().type(2);
 			});
 			loansPage.getFormButton().contains('C-RATIO TOO LOW');
+		});
+		it('should allow creating a loan', () => {
+			loansPage.getLeftInput().within(() => {
+				cy.findByTestId('input').clear().clear().type(1000);
+			});
+			loansPage.getRightInput().within(() => {
+				cy.findByTestId('input').clear().clear().type(2);
+			});
 
 			// todo validate c-ratio, interest rate and issuance fee stats
 
-			loansPage.getLeftInput().within(() => {
-				cy.findByTestId('input').clear().type(1000);
-			});
-			loansPage.getFormButton().contains('BORROW sUSD');
+			loansPage.getFormButton().contains('BORROW sUSD').click();
+
+			cy.rejectMetamaskTransaction();
 		});
 	});
 });
