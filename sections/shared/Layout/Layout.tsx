@@ -45,6 +45,9 @@ const GlobalStyle = createGlobalStyle`
 			color: ${(props) => props.theme.colors.white};
 
 		}
+		&&.bn-onboard-account-select {
+			background-color: ${(props) => props.theme.colors.navy};
+		}
 		&&.bn-onboard-modal {
 			z-index: ${zIndex.DIALOG_OVERLAY};
 			background: rgba(0, 0, 0, 0.8);
@@ -68,6 +71,9 @@ const GlobalStyle = createGlobalStyle`
 		&&.bn-onboard-select-wallet-info {
 			cursor: pointer;
 			color: ${(props) => props.theme.colors.white};
+		}
+		&&.bn-onboard-dark-mode-background.bn-onboard-prepare-error {
+			background-color: ${(props) => props.theme.colors.navy};
 		}
 		&&.bn-onboard-dark-mode-background-hover {
 			&:hover {

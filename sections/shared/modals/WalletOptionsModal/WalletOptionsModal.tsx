@@ -13,7 +13,6 @@ import {
 	walletWatchedState,
 } from 'store/wallet';
 
-import MetaMaskIcon from 'assets/wallet-icons/metamask.svg';
 import LedgerIcon from 'assets/wallet-icons/ledger.svg';
 import TrezorIcon from 'assets/wallet-icons/trezor.svg';
 import WalletConnectIcon from 'assets/wallet-icons/walletConnect.svg';
@@ -24,6 +23,7 @@ import DapperIcon from 'assets/wallet-icons/dapper.png';
 import TorusIcon from 'assets/wallet-icons/torus.svg';
 import StatusIcon from 'assets/wallet-icons/status.svg';
 import AuthereumIcon from 'assets/wallet-icons/authereum.png';
+import BrowserWalletIcon from 'assets/wallet-icons/browserWallet.png';
 
 import CopyIcon from 'assets/svg/app/copy.svg';
 import LinkIcon from 'assets/svg/app/link.svg';
@@ -56,8 +56,8 @@ type WalletOptionsProps = {
 
 const getWalletIcon = (selectedWallet?: string | null) => {
 	switch (selectedWallet) {
-		case 'metamask':
-			return <Img src={MetaMaskIcon} />;
+		case 'browser wallet':
+			return <Img src={BrowserWalletIcon} />;
 		case 'trezor':
 			return <Img src={TrezorIcon} />;
 		case 'ledger':

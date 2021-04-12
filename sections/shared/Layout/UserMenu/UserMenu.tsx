@@ -11,6 +11,7 @@ import { zIndex } from 'constants/ui';
 
 import Button from 'components/Button';
 import { isWalletConnectedState, truncatedWalletAddressState, networkState } from 'store/wallet';
+import Connector from 'containers/Connector';
 
 import WalletOptionsModal from 'sections/shared/modals/WalletOptionsModal';
 import SettingsModal from 'sections/shared/modals/SettingsModal';
@@ -27,6 +28,7 @@ const caretDown = <Svg src={CaretDown} viewBox={`0 0 ${CaretDown.width} ${CaretD
 const UserMenu: FC = () => {
 	const { t } = useTranslation();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
+	const { onboard, selectedWallet, switchNetwork } = Connector.useContainer();
 	const [walletOptionsModalOpened, setWalletOptionsModalOpened] = useState<boolean>(false);
 	const [networkError, setNetworkError] = useState<string | null>(null);
 	const [settingsModalOpened, setSettingsModalOpened] = useState<boolean>(false);
@@ -38,9 +40,15 @@ const UserMenu: FC = () => {
 	const addOptimismNetwork = async () => {
 		try {
 			setNetworkError(null);
-			if (!window.ethereum || !window.ethereum.isMetaMask) {
-				setNetworkError(t('user-menu.error.please-install-metamask'));
-			} else await addOptimismNetworkToMetamask({ ethereum: window.ethereum });
+			if (window.ethereum && window.ethereum.isMetaMask && selectedWallet === 'Browser Wallet') {
+				console.log(onboard?.getState());
+				await addOptimismNetworkToMetamask({ ethereum: window.ethereum });
+			} else {
+				switchNetwork();
+			}
+			// if (!window.ethereum || !window.ethereum.isMetaMask) {
+			// 	setNetworkError(t('user-menu.error.please-install-metamask'));
+			// } else await addOptimismNetworkToMetamask({ ethereum: window.ethereum });
 		} catch (e) {
 			setNetworkError(e.message);
 		}

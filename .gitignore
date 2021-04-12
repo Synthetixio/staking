@@ -2,6 +2,7 @@
 .env
 
 # dependencies
+/certificates
 /node_modules
 /.pnp
 .pnp.js

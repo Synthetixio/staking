@@ -59,6 +59,7 @@ const useGetDepositsDataQuery = (options?: QueryConfig<DepositHistory>) => {
 			} = synthetix.js!;
 			if (!provider || !watcher) return [];
 			const blockNumber = await provider.getBlockNumber();
+			console.log('here');
 			const startBlock = Math.max(blockNumber - NUM_BLOCKS_TO_FETCH, 0);
 			const filters = SynthetixBridgeToOptimism.filters.Deposit(walletAddress);
 			const logs = await provider.getLogs({ ...filters, fromBlock: startBlock });

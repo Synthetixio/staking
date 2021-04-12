@@ -907,7 +907,7 @@
 			"connected-to-l2": "Layer 2"
 		},
 		"error": {
-			"please-install-metamask": "Please install Metamask"
+			"please-install-metamask": "Please install Metamask or manually add the Optimism network to your browser wallet."
 		}
 	},
 	"common": {

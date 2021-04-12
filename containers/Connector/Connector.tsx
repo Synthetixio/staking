@@ -74,6 +74,7 @@ const useConnector = () => {
 			const onboard = initOnboard(network, {
 				address: setWalletAddress,
 				network: (networkId: number) => {
+					console.log('changed', networkId);
 					const isSupportedNetwork =
 						synthetix.chainIdToNetwork != null && synthetix.chainIdToNetwork[networkId as NetworkId]
 							? true
@@ -125,11 +126,12 @@ const useConnector = () => {
 					);
 				},
 				wallet: async (wallet: OnboardWallet) => {
+					console.log(wallet, network);
 					if (wallet.provider) {
 						const provider = loadProvider({ provider: wallet.provider });
 						const signer = provider.getSigner();
-						const network = await provider.getNetwork();
-						const networkId = network.chainId as NetworkId;
+						// const network = await provider.getNetwork();
+						const networkId = network.id as NetworkId;
 
 						synthetix.setContractSettings({
 							networkId,
@@ -138,6 +140,7 @@ const useConnector = () => {
 						});
 						setProvider(provider);
 						setSigner(provider.getSigner());
+						console.log(network, 'hjaja');
 						setNetwork(
 							synthetix.js
 								? {
@@ -168,10 +171,10 @@ const useConnector = () => {
 
 	// load previously saved wallet
 	useEffect(() => {
-		if (onboard && selectedWallet) {
+		if (onboard && selectedWallet && !walletAddress) {
 			onboard.walletSelect(selectedWallet);
 		}
-	}, [onboard, selectedWallet]);
+	}, [onboard, selectedWallet, walletAddress]);
 
 	useEffect(() => {
 		const getAddressCode = async () => {
@@ -228,6 +231,51 @@ const useConnector = () => {
 		return false;
 	};
 
+	const switchNetwork = () => {
+		const network = { id: 69, name: 'kovan', useOvm: true };
+		console.log('here');
+		const onboard = initOnboard(network, {
+			address: setWalletAddress,
+			wallet: async (wallet: OnboardWallet) => {
+				console.log(wallet, network);
+				if (wallet.provider) {
+					const provider = loadProvider({ provider: wallet.provider });
+					const signer = provider.getSigner();
+					// const network = await provider.getNetwork();
+					const networkId = network.id as NetworkId;
+
+					synthetix.setContractSettings({
+						networkId,
+						provider,
+						signer,
+					});
+					setProvider(provider);
+					setSigner(provider.getSigner());
+					console.log(network, 'hjaja');
+					setNetwork(
+						synthetix.js
+							? {
+									...synthetix.js.network,
+							  }
+							: null
+					);
+					setSelectedWallet(wallet.name);
+					setTransactionNotifier(new TransactionNotifier(provider));
+				} else {
+					// TODO: setting provider to null might cause issues, perhaps use a default provider?
+					// setProvider(null);
+					setSigner(null);
+					setWalletAddress(null);
+					setSelectedWallet(null);
+				}
+			},
+		});
+		setOnboard(onboard);
+		console.log(onboard.getState());
+		// connectWallet();
+		onboard.walletSelect(selectedWallet);
+	};
+
 	return {
 		provider,
 		signer,
@@ -238,6 +286,7 @@ const useConnector = () => {
 		isHardwareWallet,
 		selectedWallet,
 		transactionNotifier,
+		switchNetwork,
 	};
 };
 
