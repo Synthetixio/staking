@@ -13,13 +13,13 @@ export default class HomePage extends Page {
 		cy.visit('/');
 	}
 
-	connectMetamaskWallet() {
+	connectBrowserWallet() {
 		const userMenu = this.header.getUserMenu();
 		userMenu.click();
 		const connectWalletButton = this.header.getConnectWalletBtn();
 		connectWalletButton.click();
-		const onboardMetamaskButton = this.onboard.getMetamaskBtn();
-		onboardMetamaskButton.click();
+		const onboardBrowserWalletButton = this.onboard.getBrowserWalletBtn();
+		onboardBrowserWalletButton.click();
 	}
 
 	waitUntilLoggedIn() {
