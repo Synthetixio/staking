@@ -1,6 +1,6 @@
 import Page from '../page';
 export default class Onboard extends Page {
-	c() {
+	getBrowserWalletBtn() {
 		return cy.findByAltText('Browser Wallet');
 	}
 }
