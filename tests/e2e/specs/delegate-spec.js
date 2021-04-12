@@ -1,8 +1,6 @@
 import * as ethers from 'ethers';
 import DelegatePage from '../pages/wallet/delegate-page';
 
-cy.setupMetamask = () => {};
-
 const delegatePage = new DelegatePage();
 
 describe('Delegate', () => {
