@@ -1,6 +1,8 @@
 import * as ethers from 'ethers';
 import DelegatePage from '../pages/wallet/delegate-page';
 
+cy.setupMetamask = () => {};
+
 const delegatePage = new DelegatePage();
 
 describe('Delegate', () => {
@@ -32,48 +34,48 @@ describe('Delegate', () => {
 			delegatePage.confirmMetamaskTransaction();
 			// delegatePage.getTable().not.contains('No addresses to show');
 			delegatePage.getTable().contains(shortenedDelegateAddress, { timeout: 30 * 1e3 });
-			cy.findByTestId(`checkbox-${delegateAddress}-all`).should('not.be.checked');
-			cy.findByTestId(`checkbox-${delegateAddress}-mint`).should('not.be.checked');
-			cy.findByTestId(`checkbox-${delegateAddress}-burn`).should('be.checked');
-			cy.findByTestId(`checkbox-${delegateAddress}-claim`).should('not.be.checked');
-			cy.findByTestId(`checkbox-${delegateAddress}-trade`).should('not.be.checked');
+			delegatePage.getAllCheckbox(delegateAddress).should('not.be.checked');
+			delegatePage.getMintCheckbox(delegateAddress).should('not.be.checked');
+			delegatePage.getBurnCheckbox(delegateAddress).should('be.checked');
+			delegatePage.getClaimCheckbox(delegateAddress).should('not.be.checked');
+			delegatePage.getTradeCheckbox(delegateAddress).should('not.be.checked');
 
 			// check mint
-			cy.findByTestId(`checkbox-${delegateAddress}-mint`).siblings().click();
+			delegatePage.getMintCheckbox(delegateAddress).siblings().click();
 			delegatePage.confirmMetamaskTransaction();
-			cy.findByTestId(`checkbox-${delegateAddress}-all`).should('not.be.checked');
-			cy.findByTestId(`checkbox-${delegateAddress}-mint`).should('be.checked');
-			cy.findByTestId(`checkbox-${delegateAddress}-burn`).should('be.checked');
-			cy.findByTestId(`checkbox-${delegateAddress}-claim`).should('not.be.checked');
-			cy.findByTestId(`checkbox-${delegateAddress}-trade`).should('not.be.checked');
+			delegatePage.getAllCheckbox(delegateAddress).should('not.be.checked');
+			delegatePage.getMintCheckbox(delegateAddress).should('be.checked');
+			delegatePage.getBurnCheckbox(delegateAddress).should('be.checked');
+			delegatePage.getClaimCheckbox(delegateAddress).should('not.be.checked');
+			delegatePage.getTradeCheckbox(delegateAddress).should('not.be.checked');
 
 			// check all
-			cy.findByTestId(`checkbox-${delegateAddress}-all`).siblings().click();
+			delegatePage.getAllCheckbox(delegateAddress).siblings().click();
 			delegatePage.confirmMetamaskTransaction();
-			cy.findByTestId(`checkbox-${delegateAddress}-all`).should('be.checked');
-			cy.findByTestId(`checkbox-${delegateAddress}-mint`).should('be.checked');
-			cy.findByTestId(`checkbox-${delegateAddress}-burn`).should('be.checked');
-			cy.findByTestId(`checkbox-${delegateAddress}-claim`).should('be.checked');
-			cy.findByTestId(`checkbox-${delegateAddress}-trade`).should('be.checked');
-			cy.findByTestId(`checkbox-${delegateAddress}-all`).should('not.be.disabled');
-			cy.findByTestId(`checkbox-${delegateAddress}-mint`).should('be.disabled');
-			cy.findByTestId(`checkbox-${delegateAddress}-burn`).should('be.disabled');
-			cy.findByTestId(`checkbox-${delegateAddress}-claim`).should('be.disabled');
-			cy.findByTestId(`checkbox-${delegateAddress}-trade`).should('be.disabled');
+			delegatePage.getAllCheckbox(delegateAddress).should('be.checked');
+			delegatePage.getMintCheckbox(delegateAddress).should('be.checked');
+			delegatePage.getBurnCheckbox(delegateAddress).should('be.checked');
+			delegatePage.getClaimCheckbox(delegateAddress).should('be.checked');
+			delegatePage.getTradeCheckbox(delegateAddress).should('be.checked');
+			delegatePage.getAllCheckbox(delegateAddress).should('not.be.disabled');
+			delegatePage.getMintCheckbox(delegateAddress).should('be.disabled');
+			delegatePage.getBurnCheckbox(delegateAddress).should('be.disabled');
+			delegatePage.getClaimCheckbox(delegateAddress).should('be.disabled');
+			delegatePage.getTradeCheckbox(delegateAddress).should('be.disabled');
 
 			// uncheck all
-			cy.findByTestId(`checkbox-${delegateAddress}-all`).siblings().click();
+			delegatePage.getAllCheckbox(delegateAddress).siblings().click();
 			delegatePage.confirmMetamaskTransaction();
-			cy.findByTestId(`checkbox-${delegateAddress}-all`).should('not.be.checked');
-			cy.findByTestId(`checkbox-${delegateAddress}-mint`).should('not.be.checked');
-			cy.findByTestId(`checkbox-${delegateAddress}-burn`).should('not.be.checked');
-			cy.findByTestId(`checkbox-${delegateAddress}-claim`).should('not.be.checked');
-			cy.findByTestId(`checkbox-${delegateAddress}-trade`).should('not.be.checked');
-			cy.findByTestId(`checkbox-${delegateAddress}-all`).should('not.be.disabled');
-			cy.findByTestId(`checkbox-${delegateAddress}-mint`).should('not.be.disabled');
-			cy.findByTestId(`checkbox-${delegateAddress}-burn`).should('not.be.disabled');
-			cy.findByTestId(`checkbox-${delegateAddress}-claim`).should('not.be.disabled');
-			cy.findByTestId(`checkbox-${delegateAddress}-trade`).should('not.be.disabled');
+			delegatePage.getAllCheckbox(delegateAddress).should('not.be.checked');
+			delegatePage.getMintCheckbox(delegateAddress).should('not.be.checked');
+			delegatePage.getBurnCheckbox(delegateAddress).should('not.be.checked');
+			delegatePage.getClaimCheckbox(delegateAddress).should('not.be.checked');
+			delegatePage.getTradeCheckbox(delegateAddress).should('not.be.checked');
+			delegatePage.getAllCheckbox(delegateAddress).should('not.be.disabled');
+			delegatePage.getMintCheckbox(delegateAddress).should('not.be.disabled');
+			delegatePage.getBurnCheckbox(delegateAddress).should('not.be.disabled');
+			delegatePage.getClaimCheckbox(delegateAddress).should('not.be.disabled');
+			delegatePage.getTradeCheckbox(delegateAddress).should('not.be.disabled');
 		});
 	});
 });

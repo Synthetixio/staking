@@ -64,4 +64,28 @@ export default class DelegatePage extends Page {
 			}
 		});
 	}
+
+	getAllCheckbox(delegateAddress) {
+		return this.getCheckbox(delegateAddress, 'all');
+	}
+
+	getMintCheckbox(delegateAddress) {
+		return this.getCheckbox(delegateAddress, 'mint');
+	}
+
+	getBurnCheckbox(delegateAddress) {
+		return this.getCheckbox(delegateAddress, 'burn');
+	}
+
+	getClaimCheckbox(delegateAddress) {
+		return this.getCheckbox(delegateAddress, 'claim');
+	}
+
+	getTradeCheckbox(delegateAddress) {
+		return this.getCheckbox(delegateAddress, 'trade');
+	}
+
+	getCheckbox(delegateAddress, power) {
+		return cy.findByTestId(`checkbox-${delegateAddress}-${power}`);
+	}
 }
