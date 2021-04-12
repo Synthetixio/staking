@@ -16,7 +16,22 @@ export const initOnboard = (network: Network, subscriptions: Subscriptions) => {
 		darkMode: true,
 		walletSelect: {
 			wallets: [
-				{ walletName: 'metamask', preferred: true },
+				{
+					name: 'Browser Wallet',
+					iconSrc: '/images/browserWallet.png',
+					type: 'injected',
+					wallet: async (helpers) => {
+						const { createModernProviderInterface } = helpers;
+						const provider = window.ethereum;
+						return {
+							provider,
+							interface: provider ? createModernProviderInterface(provider) : null,
+						};
+					},
+					preferred: true,
+					desktop: true,
+					mobile: true,
+				},
 				{
 					walletName: 'lattice',
 					appName: 'Synthetix',
