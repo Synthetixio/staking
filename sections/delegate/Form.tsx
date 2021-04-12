@@ -206,6 +206,7 @@ const Tab: FC = () => {
 						disabled={false}
 						rows={3}
 						autoComplete={'off'}
+						spellCheck={false}
 						data-testid="form-input"
 					/>
 				</InputsContainer>
