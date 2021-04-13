@@ -8,9 +8,6 @@ export default class Page {
 	}
 
 	acceptMetamaskAccessRequest() {
-		this.getFormButton().contains('connect wallet').click();
-		cy.findByAltText('MetaMask').click();
-
 		cy.wait(1000);
 		cy.window()
 			.then((win) => {

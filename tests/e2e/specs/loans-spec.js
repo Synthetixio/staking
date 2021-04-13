@@ -13,6 +13,8 @@ describe.skip('Loans', () => {
 	context('Form', () => {
 		before(() => {
 			loansPage.visit();
+			loansPage.getFormButton().contains('connect wallet').click();
+			cy.findByAltText('MetaMask').click();
 			loansPage.acceptMetamaskAccessRequest();
 		});
 		it('should default debt asset to sUSD', () => {
