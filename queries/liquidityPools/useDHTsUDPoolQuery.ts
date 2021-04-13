@@ -4,7 +4,12 @@ import { useRecoilValue } from 'recoil';
 import synthetix from 'lib/synthetix';
 import QUERY_KEYS from 'constants/queryKeys';
 import { appReadyState } from 'store/app';
-import { walletAddressState, isWalletConnectedState, networkState } from 'store/wallet';
+import {
+	walletAddressState,
+	isWalletConnectedState,
+	networkState,
+	isMainnetState,
+} from 'store/wallet';
 import { dualStakingRewards, DHTsUSDLPToken as lpToken } from 'contracts';
 
 import { DualRewardsLiquidityPoolData } from './types';
@@ -18,6 +23,7 @@ const useDHTsUSDPoolQuery = (options?: QueryConfig<DualRewardsLiquidityPoolData>
 	const walletAddress = useRecoilValue(walletAddressState);
 	const network = useRecoilValue(networkState);
 	const { provider } = Connector.useContainer();
+	const isMainnet = useRecoilValue(isMainnetState);
 
 	return useQuery<DualRewardsLiquidityPoolData>(
 		QUERY_KEYS.LiquidityPools.DHTsUSD(walletAddress ?? '', network?.id!),
@@ -102,7 +108,7 @@ const useDHTsUSDPoolQuery = (options?: QueryConfig<DualRewardsLiquidityPoolData>
 			};
 		},
 		{
-			enabled: isAppReady && isWalletConnected,
+			enabled: isAppReady && isWalletConnected && isMainnet,
 			...options,
 		}
 	);

@@ -2,10 +2,10 @@ import { FC } from 'react';
 import { useRecoilValue } from 'recoil';
 import BigNumber from 'bignumber.js';
 
-import IncentivesL1 from './IncentivesL1';
-import IncentivesL2 from './IncentivesL2';
+import IncentivesMainnet from './IncentivesMainnet';
+import IncentivesDefault from './IncentivesDefault';
 
-import { isL2State } from 'store/wallet';
+import { isMainnetState } from 'store/wallet';
 
 type IncentivesProps = {
 	tradingRewards: BigNumber;
@@ -17,8 +17,8 @@ type IncentivesProps = {
 };
 
 const Incentives: FC<IncentivesProps> = (props) => {
-	const isL2 = useRecoilValue(isL2State);
-	const Incentives = isL2 ? IncentivesL2 : IncentivesL1;
+	const isMainnet = useRecoilValue(isMainnetState);
+	const Incentives = isMainnet ? IncentivesMainnet : IncentivesDefault;
 
 	return <Incentives {...props} />;
 };

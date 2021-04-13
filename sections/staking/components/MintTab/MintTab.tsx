@@ -67,8 +67,8 @@ const MintTab: React.FC = () => {
 					}
 					setGasLimitEstimate(gasEstimate);
 				} catch (error) {
+					console.log(error);
 					let errorMessage = error.message;
-					console.log(error.code);
 					if (error.code === 'INVALID_ARGUMENT') {
 						errorMessage = t('staking.actions.mint.action.error.bad-input');
 					} else if (error.code === 'UNPREDICTABLE_GAS_LIMIT') {
@@ -124,7 +124,8 @@ const MintTab: React.FC = () => {
 								setTransactionState(Transaction.SUCCESS);
 							},
 							onTxFailed: (error) => {
-								console.log('failed', error);
+								console.log('Transaction failed', error);
+								setTransactionState(Transaction.PRESUBMIT);
 							},
 						});
 						setTxModalOpen(false);

@@ -24,6 +24,11 @@ export const isL2State = selector<boolean>({
 	},
 });
 
+export const isMainnetState = selector<boolean>({
+	key: getWalletKey('isMainnet'),
+	get: ({ get }) => get(networkState)?.id === NetworkId.Mainnet,
+});
+
 export const walletAddressState = atom<string | null>({
 	key: getWalletKey('walletAddress'),
 	default: null,
