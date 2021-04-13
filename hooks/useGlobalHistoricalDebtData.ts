@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { orderBy } from 'lodash';
-import useGlobalSynthIssuedQuery from 'queries/staking/useGlobalSynthIssuedQuery';
-import useGlobalSynthBurnedQuery from 'queries/staking/useGlobalSynthBurnedQuery';
+import useDailyIssuedQuery from 'queries/staking/useDailyIssuedQuery';
+import useDailyBurnedQuery from 'queries/staking/useDailyBurnedQuery';
 import { StakingTransactionType } from 'queries/staking/types';
 
 type HistoricalGlobalDebtAndIssuanceData = {
@@ -21,13 +21,8 @@ const useGlobalHistoricalDebtData = () => {
 		data: [],
 	});
 
-	// Only get data from within past year
-	const now = new Date();
-	now.setFullYear(now.getFullYear() - 1);
-	const timestamp = Math.floor(now.getTime() / 1000);
-
-	const issuedQuery = useGlobalSynthIssuedQuery(timestamp);
-	const burnedQuery = useGlobalSynthBurnedQuery(timestamp);
+	const issuedQuery = useDailyIssuedQuery();
+	const burnedQuery = useDailyBurnedQuery();
 
 	const isLoaded = issuedQuery.isSuccess && burnedQuery.isSuccess;
 
@@ -35,9 +30,6 @@ const useGlobalHistoricalDebtData = () => {
 		if (isLoaded) {
 			const issued = issuedQuery.data ?? [];
 			const burned = burnedQuery.data ?? [];
-
-			console.log(issued.length, burned.length);
-			console.log(issued[0], burned[0]);
 
 			// We concat both the events and order them (asc)
 			const eventBlocks = orderBy(burned.concat(issued), 'timestamp', 'asc');
@@ -52,12 +44,12 @@ const useGlobalHistoricalDebtData = () => {
 						? multiplier * event.value
 						: multiplier * event.value + data[i - 1].issuance;
 				if (data.length === 0) {
-					debtPoolStartingValue = event.totalIssuedSUSD;
+					debtPoolStartingValue = event.totalDebt;
 				}
 
 				data.push({
 					issuance: aggregation,
-					debtPool: event.totalIssuedSUSD - debtPoolStartingValue,
+					debtPool: event.totalDebt - debtPoolStartingValue,
 					timestamp: event.timestamp,
 				});
 			});

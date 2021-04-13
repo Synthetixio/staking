@@ -14,3 +14,10 @@ export type HistoricalStakingTransaction = {
 	totalIssuedSUSD: number;
 	rewards?: number;
 };
+
+export type DailyStakingRecord = {
+	value: number;
+	totalDebt: number;
+	timestamp: number;
+	type: StakingTransactionType;
+};
