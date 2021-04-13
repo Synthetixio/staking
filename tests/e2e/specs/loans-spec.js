@@ -2,7 +2,7 @@ import LoansPage from '../pages/loans-page';
 
 const loansPage = new LoansPage();
 
-describe('Loans', () => {
+describe.skip('Loans', () => {
 	context('Navigation', () => {
 		it('should be accessible from sidenav', () => {
 			cy.visit('/');
