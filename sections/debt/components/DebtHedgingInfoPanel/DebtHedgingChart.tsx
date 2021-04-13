@@ -16,7 +16,7 @@ import SpinnerIcon from 'assets/svg/app/loader.svg';
 const DebtHedgingChart: React.FC = () => {
 	const { t } = useTranslation();
 	const { data, isLoading } = useGlobalHistoricalDebtData();
-	console.log(data);
+	// console.log(data);
 
 	if (isLoading) {
 		return (

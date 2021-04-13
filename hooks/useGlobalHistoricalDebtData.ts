@@ -15,7 +15,7 @@ type HistoricalGlobalDebtAndIssuance = {
 	data: HistoricalGlobalDebtAndIssuanceData[];
 };
 
-const useGlobalHistoricalDebtData = (global = false) => {
+const useGlobalHistoricalDebtData = () => {
 	const [historicalDebt, setHistoricalDebt] = useState<HistoricalGlobalDebtAndIssuance>({
 		isLoading: true,
 		data: [],
@@ -25,7 +25,6 @@ const useGlobalHistoricalDebtData = (global = false) => {
 	const now = new Date();
 	now.setFullYear(now.getFullYear() - 1);
 	const timestamp = Math.floor(now.getTime() / 1000);
-	console.log(timestamp);
 
 	const issuedQuery = useGlobalSynthIssuedQuery(timestamp);
 	const burnedQuery = useGlobalSynthBurnedQuery(timestamp);
@@ -38,11 +37,13 @@ const useGlobalHistoricalDebtData = (global = false) => {
 			const burned = burnedQuery.data ?? [];
 
 			console.log(issued.length, burned.length);
+			console.log(issued[0], burned[0]);
 
 			// We concat both the events and order them (asc)
 			const eventBlocks = orderBy(burned.concat(issued), 'timestamp', 'asc');
 
 			const data: HistoricalGlobalDebtAndIssuanceData[] = [];
+			let debtPoolStartingValue: number = 0;
 
 			eventBlocks.forEach((event, i) => {
 				const multiplier = event.type === StakingTransactionType.Burned ? -1 : 1;
@@ -50,10 +51,13 @@ const useGlobalHistoricalDebtData = (global = false) => {
 					data.length === 0
 						? multiplier * event.value
 						: multiplier * event.value + data[i - 1].issuance;
+				if (data.length === 0) {
+					debtPoolStartingValue = event.totalIssuedSUSD;
+				}
 
 				data.push({
 					issuance: aggregation,
-					debtPool: event.totalIssuedSUSD,
+					debtPool: event.totalIssuedSUSD - debtPoolStartingValue,
 					timestamp: event.timestamp,
 				});
 			});
