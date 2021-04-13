@@ -3,7 +3,7 @@ import DelegatePage from '../pages/wallet/delegate-page';
 
 const delegatePage = new DelegatePage();
 
-describe('Delegate', function () {
+describe.skip('Delegate', function () {
 	context('Navigation', function () {
 		it('should be accessible from sidenav', function () {
 			cy.visit('/');
