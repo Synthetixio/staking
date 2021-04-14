@@ -51,6 +51,8 @@ export const ROUTES = {
 	},
 	Loans: {
 		Home: '/loans',
+		New: '/loans/new',
+		List: '/loans/list',
 	},
 	Delegate: {
 		Home: '/delegate',

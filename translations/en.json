@@ -579,6 +579,113 @@
 			}
 		}
 	},
+	"loans": {
+		"page-title": "Borrow Synths | Synthetix Staking",
+		"interest-rate": "Interest Rate",
+		"issuance-fee": "Issuance Fee",
+		"cratio": "C-Ratio",
+		"interest-accrued": "Interest Accrued",
+		"no-active-loans": "You have no active borrows.",
+		"tabs": {
+			"new": {
+				"title": "Borrow Synths",
+				"button": {
+					"low-collateral-label": "MINIMUM COLLATERAL IS <0>{{minCollateralAmountString}}</0> <0>{{collateralAsset}}</0>",
+					"low-cratio-label": "C-RATIO TOO LOW",
+					"approve-label": "APPROVE <0>{{collateralAsset}}</0>",
+					"borrow-label": "BORROW <0>{{debtAsset}}</0>",
+					"approving-label": "APPROVING...",
+					"borrowing-label": "BORROWING..."
+				},
+				"debt": {
+					"label": "Borrow"
+				},
+				"collateral": {
+					"label": "Using"
+				},
+				"low-cratio-tip": "You can only borrow at 150% or higher. Your position will be eligible for liquidation if it falls below 120%.",
+				"healthy-cratio-tip": "Ensure your position stays above 120% to prevent liquidation.",
+				"confirm-transaction": {
+					"left-panel-label": "BORROWING",
+					"right-panel-label": "POSTING"
+				}
+			},
+			"list": {
+				"title": "Active Borrows",
+				"types": {
+					"debt": "LOAN",
+					"collateral": "COLLATERAL",
+					"cratio": "C-RATIO",
+					"modify": "MODIFY"
+				},
+				"actions-menu-label": "actions"
+			}
+		},
+		"info": {
+			"title": "Borrow Synths using other assets",
+			"subtitle": "Borrow synthetic assets against ETH and renBTC collateral.",
+			"learn-more": "Learn more."
+		},
+		"pending-withdrawals": {
+			"title": "Pending Withdrawals",
+			"title-tip": "You will need to claim your ether collateral separately after your loan is closed, withdrawn or liquidated.",
+			"empty": "You have no pending withdrawals.",
+			"claiming": "CLAIMING...",
+			"claim": "CLAIM"
+		},
+		"stats": {
+			"title": "STATS",
+			"asset": "ASSET",
+			"open-interest": "OPEN INTEREST",
+			"total": "TOTAL"
+		},
+		"modify-loan": {
+			"loan-interation-delay": "Please wait <0>{{waitETA}}</0> before reinteracting with the loan",
+			"close": {
+				"left-col-label": "REPAY",
+				"right-col-label": "RECEIVE",
+				"button-labels": {
+					"default": "CLOSE LOAN",
+					"closing": "CLOSING LOAN..."
+				}
+			},
+			"deposit": {
+				"left-col-label": "DEPOSIT",
+				"right-col-label": "NEW TOTAL",
+				"button-labels": {
+					"default": "DEPOSIT",
+					"approve": "APPROVE",
+					"approving": "APPROVING...",
+					"depositing": "DEPOSITING..."
+				}
+			},
+			"withdraw": {
+				"left-col-label": "WITHDRAW",
+				"right-col-label": "REMAINING",
+				"button-labels": {
+					"default": "WITHDRAW",
+					"withdrawing": "WITHDRAWING..."
+				}
+			},
+			"repay": {
+				"left-col-label": "REPAY",
+				"right-col-label": "REMAINING",
+				"button-labels": {
+					"default": "REPAY DEBT",
+					"repaying-fully-error": "CONSIDER CLOSING THE LOAN INSTEAD OF FULL REPAYMENT",
+					"repaying": "REPAYING DEBT..."
+				}
+			},
+			"draw": {
+				"left-col-label": "INCREASE",
+				"right-col-label": "NEW TOTAL",
+				"button-labels": {
+					"default": "INCREASE DEBT",
+					"drawing": "INCREASING DEBT..."
+				}
+			}
+		}
+	},
 	"layer2": {
 		"page-title": "Layer 2 | Synthetix Staking",
 		"error": {
@@ -607,6 +714,8 @@
 			"info": {
 				"title": "Withdraw SNX from Layer 2 to Layer 1",
 				"subtitle": "Warning: withdrawing your SNX will take 7-10 days to be received on L1, during which time you will not have access to your funds. Once you initiate a withdrawal you will not be able to cancel it.",
+				"regenesis": "Historical transactions before Friday, April 9, 2021 at 06:00:00pm UTC have been cleared <0>see the blog post</0>.",
+				"view-withdrawals": "To view your withdrawals from before the upgrade, <0>see Synthetix withdrawals</0>.",
 				"no-withdrawals": "No withdrawal history",
 				"table": {
 					"withdrawal": "Withdrawal",
@@ -880,6 +989,7 @@
 	},
 	"sidenav": {
 		"dashboard": "Home",
+		"loans": "Loans",
 		"earn": "Earn",
 		"staking": "Staking",
 		"debt": "Debt",
@@ -1071,5 +1181,9 @@
 			}
 		},
 		"tx-confirmation-title": "Updating approval"
+	},
+	"balance": {
+		"input-label": "Balance:",
+		"max": "Max"
 	}
 }

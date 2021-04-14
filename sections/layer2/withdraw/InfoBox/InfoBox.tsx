@@ -1,4 +1,4 @@
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import styled from 'styled-components';
 
@@ -31,6 +31,20 @@ const InfoBox = () => {
 			<ContainerHeader>
 				<Title>{t('layer2.withdraw.info.title')}</Title>
 				<StyledSubtitle> {t('layer2.withdraw.info.subtitle')}</StyledSubtitle>
+				<StyledSubtitle>
+					<Trans
+						i18nKey="layer2.withdraw.info.regenesis"
+						components={[
+							<a href="https://blog.synthetix.io/optimism-mainnet-upgrade-scheduled-downtime-and-regenesis/" />,
+						]}
+					/>
+				</StyledSubtitle>
+				<StyledSubtitle>
+					<Trans
+						i18nKey="layer2.withdraw.info.view-withdrawals"
+						components={[<a href="https://optimism.io/snx-history"></a>]}
+					/>
+				</StyledSubtitle>
 			</ContainerHeader>
 			<ContainerBody>
 				{withdrawalHistory && withdrawalHistory.length > 0 ? (

@@ -67,7 +67,7 @@ const SideNav: FC = () => {
 		>
 			<StakingLogoWrap>
 				<Link href={ROUTES.Home}>
-					{isL2 ? <Svg src={StakingL2Logo} /> : <Svg src={StakingLogo} />}
+					<div>{isL2 ? <Svg src={StakingL2Logo} /> : <Svg src={StakingLogo} />}</div>
 				</Link>
 			</StakingLogoWrap>
 			<MenuLinks>
