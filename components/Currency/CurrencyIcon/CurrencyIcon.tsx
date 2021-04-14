@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 import Img from 'react-optimized-image';
 
 // Crypto
-// import BTCIcon from 'assets/svg/currencies/crypto/BTC.svg';
+import BTCIcon from 'assets/svg/currencies/crypto/BTC.svg';
 import ETHIcon from 'assets/svg/currencies/crypto/ETH.svg';
 import CRVIcon from 'assets/svg/currencies/crypto/CRV.svg';
 import renBTCIcon from 'assets/svg/currencies/crypto/BTC.svg'; // todo: use actual RENBTC icon
@@ -119,6 +119,9 @@ export const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, type = 'synth
 
 	// most of the "asset" types were disabled since they were not widely used.
 	switch (currencyKey) {
+		case CryptoCurrency.BTC: {
+			return <Img src={BTCIcon} {...props} />;
+		}
 		case CryptoCurrency.ETH: {
 			return <Img src={ETHIcon} {...props} />;
 		}
