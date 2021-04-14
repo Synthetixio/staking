@@ -100,6 +100,7 @@ export const GridBoxContainer = styled.div<{
 	*/
 	grid-area: ${(props) => props.gridArea};
 	transition: transform 0.25s ease-in-out;
+	max-width: 500px;
 
 	${(props) =>
 		props.isDisabled
