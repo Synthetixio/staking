@@ -14,6 +14,7 @@ export type GridBoxProps = {
 	visible?: boolean;
 	tooltip?: string;
 	isDisabled?: boolean;
+	gridArea?: string;
 };
 
 export const GridBox: FC<GridBoxProps> = ({
@@ -26,6 +27,7 @@ export const GridBox: FC<GridBoxProps> = ({
 	visible,
 	tooltip,
 	isDisabled,
+	gridArea,
 }) => {
 	if (visible != null && !visible) return <></>;
 
@@ -51,6 +53,7 @@ export const GridBox: FC<GridBoxProps> = ({
 				rowStart={gridLocations[2]}
 				rowEnd={gridLocations[3]}
 				isDisabled={isDisabled}
+				{...{ gridArea }}
 			>
 				{isDisabled ? (
 					components
@@ -86,12 +89,16 @@ export const GridBoxContainer = styled.div<{
 	rowStart: string;
 	rowEnd: string;
 	isDisabled?: boolean;
+	gridArea?: string;
 }>`
 	background: ${(props) => props.theme.colors.darkGradient1};
 	box-shadow: 0px 0px 20px ${(props) => props.theme.colors.backgroundBoxShadow};
 	border-radius: 2px;
+	/*
 	grid-column: ${(props) => `${props.columnStart} / ${props.columnEnd}`};
 	grid-row: ${(props) => `${props.rowStart} / ${props.rowEnd}`};
+	*/
+	grid-area: ${(props) => props.gridArea};
 	transition: transform 0.25s ease-in-out;
 
 	${(props) =>

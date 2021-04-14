@@ -3,7 +3,7 @@ import styled, { css } from 'styled-components';
 import Svg from 'react-optimized-image';
 
 import SNXStatBackground from 'assets/svg/app/snx-stat-background.svg';
-
+import media from 'styles/media';
 import { FlexDivRowCentered, FlexDivColCentered, Tooltip } from 'styles/common';
 import InfoIcon from 'assets/svg/app/info.svg';
 
@@ -69,6 +69,35 @@ const Box = styled(FlexDivColCentered)<{ size: Size }>`
 				font-size: 32px;
 			}
 		`}
+
+	&:first-child,
+	&:last-child {
+		${media.lessThan('mdUp')`
+			position: relative;
+			top: 50px;
+			background-image: none;
+			margin: auto;
+
+			.title,
+			.value {
+				font-size: 12px;
+				white-space: pre;
+			}
+		`}
+	}
+
+	&:first-child {
+		${media.lessThan('mdUp')`
+			align-items: flex-start;
+		`}
+	}
+
+	&:last-child {
+		${media.lessThan('mdUp')`
+			align-items: flex-end;
+			text-align: right;
+		`}
+	}
 `;
 
 const Title = styled.span`

@@ -10,6 +10,8 @@ import { FlexDivCentered, GridDivCenteredCol, IconButton, UpperCased } from 'sty
 import { zIndex } from 'constants/ui';
 
 import Button from 'components/Button';
+import { DesktopOnlyView } from 'components/Media';
+
 import { isWalletConnectedState, truncatedWalletAddressState, networkState } from 'store/wallet';
 
 import WalletOptionsModal from 'sections/shared/modals/WalletOptionsModal';
@@ -55,11 +57,13 @@ const UserMenu: FC = () => {
 	return (
 		<Container>
 			<FlexDivCentered>
-				{!isL2 && isWalletConnected ? (
-					<OptimismButton variant="solid" onClick={addOptimismNetwork}>
-						{t('user-menu.layer-2.switch-to-l2')}
-					</OptimismButton>
-				) : null}
+				<DesktopOnlyView>
+					{!isL2 && isWalletConnected ? (
+						<OptimismButton variant="solid" onClick={addOptimismNetwork}>
+							{t('user-menu.layer-2.switch-to-l2')}
+						</OptimismButton>
+					) : null}
+				</DesktopOnlyView>
 				<Menu>
 					<MenuButton
 						onClick={() => {

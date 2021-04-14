@@ -15,7 +15,6 @@ import { DEFAULT_REQUEST_REFRESH_INTERVAL } from 'constants/defaults';
 import { ReactQueryDevtools } from 'react-query-devtools';
 
 import SystemStatus from 'sections/shared/SystemStatus';
-import MobileUnsupported from 'sections/shared/MobileUnsupported';
 
 import 'styles/main.css';
 import '@reach/dialog/styles.css';
@@ -69,13 +68,11 @@ const App: FC<AppProps> = ({ Component, pageProps }) => {
 						<MediaContextProvider>
 							<ReactQueryCacheProvider queryCache={queryCache}>
 								<Layout>
-									<MobileUnsupported>
-										<SystemStatus>
-											<AppLayout>
-												<Component {...pageProps} />
-											</AppLayout>
-										</SystemStatus>
-									</MobileUnsupported>
+									<SystemStatus>
+										<AppLayout>
+											<Component {...pageProps} />
+										</AppLayout>
+									</SystemStatus>
 								</Layout>
 								<ReactQueryDevtools />
 							</ReactQueryCacheProvider>

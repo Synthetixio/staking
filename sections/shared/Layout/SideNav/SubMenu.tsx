@@ -4,7 +4,8 @@ import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
 import { FlexDivColCentered } from 'styles/common';
-import { SIDE_NAV_WIDTH } from 'constants/ui';
+import media from 'styles/media';
+import { DESKTOP_SIDE_NAV_WIDTH, MOBILE_SIDE_NAV_WIDTH } from 'constants/ui';
 
 import { linkCSS } from 'styles/common';
 import { SubMenuLink } from 'sections/shared/Layout/constants';
@@ -87,7 +88,11 @@ const Container = styled(FlexDivColCentered)<{ isVisible: boolean }>`
 	${(props) =>
 		props.isVisible &&
 		css`
-			transform: translateX(calc(${SIDE_NAV_WIDTH}));
+			transform: translateX(calc(${MOBILE_SIDE_NAV_WIDTH}px));
+
+			${media.greaterThan('mdUp')`
+				transform: translateX(calc(${DESKTOP_SIDE_NAV_WIDTH}px));
+			`}
 		`}
 `;
 

@@ -16,9 +16,10 @@ import media from 'styled-media-query';
 
 type WizardGridBoxProps = {
 	gridLocations: [string, string, string, string];
+	gridArea?: string;
 };
 
-export const WizardGridBox: FC<WizardGridBoxProps> = ({ gridLocations }) => {
+export const WizardGridBox: FC<WizardGridBoxProps> = ({ gridLocations, gridArea }) => {
 	const { t } = useTranslation();
 	const slider = useRef<any>();
 	const STEPS = [
@@ -64,6 +65,7 @@ export const WizardGridBox: FC<WizardGridBoxProps> = ({ gridLocations }) => {
 			columnEnd={gridLocations[1]}
 			rowStart={gridLocations[2]}
 			rowEnd={gridLocations[3]}
+			{...{ gridArea }}
 		>
 			<SliderContainer>
 				<Slider arrows={false} dots={true} fade={true} ref={slider}>

@@ -21,6 +21,7 @@ const WelcomeLayout: FC = () => {
 		() => [
 			{
 				gridLocations: ['col-3', 'col-5', 'row-1', 'row-2'],
+				gridArea: 'tile-1',
 				icon: (
 					<GlowingCircle variant="blue" size="md">
 						<Svg src={MintIcon} />
@@ -32,6 +33,7 @@ const WelcomeLayout: FC = () => {
 			},
 			{
 				gridLocations: ['col-3', 'col-5', 'row-2', 'row-3'],
+				gridArea: 'tile-2',
 				icon: (
 					<GlowingCircle variant="yellow" size="md">
 						<Svg src={LearnIcon} />
@@ -43,6 +45,7 @@ const WelcomeLayout: FC = () => {
 			},
 			{
 				gridLocations: ['col-3', 'col-5', 'row-3', 'row-4'],
+				gridArea: 'tile-3',
 				icon: (
 					<GlowingCircle variant="orange" size="md">
 						<Svg src={KwentaIcon} width="32" />
@@ -57,7 +60,7 @@ const WelcomeLayout: FC = () => {
 	);
 	return (
 		<>
-			<WizardGridBox gridLocations={['col-1', 'col-3', 'row-1', 'row-4']} />
+			<WizardGridBox gridLocations={['col-1', 'col-3', 'row-1', 'row-4']} gridArea="main-tile" />
 			{gridItems.map((props, index) => (
 				<GridBox key={`${props.title}-${index}`} {...props} />
 			))}

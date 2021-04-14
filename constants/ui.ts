@@ -1,4 +1,7 @@
-export const SIDE_NAV_WIDTH = '160px';
+export const DESKTOP_SIDE_NAV_WIDTH = 160;
+export const MOBILE_SIDE_NAV_WIDTH = 320;
+
+export const MAIN_BODY_PADDING = 40;
 
 export enum zIndex {
 	BASE = 1,

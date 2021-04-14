@@ -35,4 +35,8 @@ export const mediaStyles = AppMedia.createMediaStyle();
 
 export const { Media, MediaContextProvider } = AppMedia;
 
+export function getIsMediumScreen() {
+	return globalThis.outerWidth <= breakpoints.md;
+}
+
 export default media;

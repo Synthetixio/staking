@@ -1,17 +1,19 @@
 import styled, { css } from 'styled-components';
-import { FC, useMemo, useState, useRef } from 'react';
+import { FC, useMemo, useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 import { Svg } from 'react-optimized-image';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { linkCSS } from 'styles/common';
 import { toBigNumber } from 'utils/formatters/number';
 
 import StakingLogo from 'assets/svg/app/staking-logo.svg';
 import StakingL2Logo from 'assets/svg/app/staking-l2-logo.svg';
+import StakingLogoSmall from 'assets/svg/app/staking-logo-small.svg';
 import CaretRightIcon from 'assets/svg/app/caret-right-small.svg';
+import CloseIcon from 'assets/svg/app/cross.svg';
 
 import useSNX24hrPricesQuery from 'queries/rates/useSNX24hrPricesQuery';
 import useCryptoBalances from 'hooks/useCryptoBalances';
@@ -19,10 +21,14 @@ import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuer
 
 import ROUTES from 'constants/routes';
 import { CryptoCurrency, Synths } from 'constants/currency';
-import { SIDE_NAV_WIDTH, zIndex } from 'constants/ui';
+import { DESKTOP_SIDE_NAV_WIDTH, MOBILE_SIDE_NAV_WIDTH, zIndex } from 'constants/ui';
 import { MENU_LINKS, MENU_LINKS_L2 } from '../constants';
 
 import { isL2State } from 'store/wallet';
+import { isShowingSideNavState } from 'store/ui';
+import media, { getIsMediumScreen } from 'styles/media';
+
+import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 
 import SubMenu from './SubMenu';
 import PriceItem from './PriceItem';
@@ -40,6 +46,13 @@ const SideNav: FC = () => {
 	const cryptoBalances = useCryptoBalances();
 	const synthsBalancesQuery = useSynthsBalancesQuery();
 	const isL2 = useRecoilValue(isL2State);
+	const [defaultIsShowingNav, setDefaultIsShowingNav] = useState<boolean>(false);
+	const isShowingSideNav = useRecoilValue(isShowingSideNavState) ?? defaultIsShowingNav;
+
+	useEffect(() => {
+		setDefaultIsShowingNav(!getIsMediumScreen());
+	}, []);
+
 	const [subMenuConfiguration, setSubMenuConfiguration] = useState({
 		routes: null,
 		topPosition: 0,
@@ -59,17 +72,32 @@ const SideNav: FC = () => {
 	}, [SNX24hrPricesQuery?.data]);
 
 	const menuLinks = isL2 ? MENU_LINKS_L2 : MENU_LINKS;
+	const setIsShowingSideNav = useSetRecoilState(isShowingSideNavState);
+	const closeSideNav = () => setIsShowingSideNav(false);
 
 	return (
 		<SideNavContainer
 			onMouseLeave={() => setSubMenuConfiguration({ ...subMenuConfiguration, routes: null })}
 			data-testid="sidenav"
+			isShowing={isShowingSideNav}
 		>
-			<StakingLogoWrap>
-				<Link href={ROUTES.Home}>
-					<div>{isL2 ? <Svg src={StakingL2Logo} /> : <Svg src={StakingLogo} />}</div>
-				</Link>
-			</StakingLogoWrap>
+			<DesktopOnlyView>
+				<StakingLogoWrap>
+					<Link href={ROUTES.Home}>
+						<div>{isL2 ? <Svg src={StakingL2Logo} /> : <Svg src={StakingLogo} />}</div>
+					</Link>
+				</StakingLogoWrap>
+			</DesktopOnlyView>
+			<MobileOrTabletView>
+				<StakingLogoWrap>
+					<Link href={ROUTES.Home}>
+						<div>
+							<Svg src={StakingLogoSmall} />
+						</div>
+					</Link>
+					<Svg src={CloseIcon} onClick={closeSideNav} />
+				</StakingLogoWrap>
+			</MobileOrTabletView>
 			<MenuLinks>
 				{menuLinks.map(({ i18nLabel, link, subMenu }, i) => (
 					<MenuLinkItem
@@ -120,24 +148,38 @@ const SideNav: FC = () => {
 	);
 };
 
-const SideNavContainer = styled.div`
-	z-index: ${zIndex.BASE};
+const SideNavContainer = styled.div<{ isShowing: boolean }>`
+	z-index: ${zIndex.DIALOG_OVERLAY};
 	height: 100%;
-	width: ${SIDE_NAV_WIDTH};
 	position: fixed;
 	top: 0;
-	left: 0;
+	width: ${MOBILE_SIDE_NAV_WIDTH}px;
+	left: -${(props) => (props.isShowing ? 0 : MOBILE_SIDE_NAV_WIDTH)}px;
+	${media.greaterThan('mdUp')`
+		width: ${DESKTOP_SIDE_NAV_WIDTH}px;
+		left: -${(props: any) => (props.isShowing ? 0 : DESKTOP_SIDE_NAV_WIDTH)}px;
+	`}
 	background: ${(props) => props.theme.colors.darkGradient1Flipped};
 	border-right: 1px solid ${(props) => props.theme.colors.grayBlue};
 	display: grid;
 	grid-template-rows: auto 1fr auto auto;
 	overflow-y: hidden;
 	overflow-x: visible;
+	transition: left 0.3s ease-out;
 `;
 
 const StakingLogoWrap = styled.div`
-	padding: 30px 0 64px 24px;
-	cursor: pointer;
+	${media.lessThan('md')`
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 24px;
+	`}
+
+	${media.greaterThan('mdUp')`
+		padding: 30px 0 64px 24px;
+		cursor: pointer;
+	`}
 `;
 
 const MenuLinks = styled.div`
