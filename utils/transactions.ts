@@ -1,3 +1,14 @@
+import { normalizeGasLimit } from './network';
+
+export const getGasEstimateForTransaction = async (txArgs: any[], method: Function) => {
+	try {
+		const gasEstimate = await method(...txArgs);
+		return normalizeGasLimit(Number(gasEstimate));
+	} catch (error) {
+		throw error;
+	}
+};
+
 type TxOptions = {
 	showErrorNotification?: Function;
 	showProgressNotification?: Function;
@@ -41,7 +52,7 @@ export async function tx(makeTx: Function, options?: TxOptions): Promise<void> {
 	}
 }
 
-function hexToASCII(hex: string): string {
+export function hexToASCII(hex: string): string {
 	// https://gist.github.com/gluk64/fdea559472d957f1138ed93bcbc6f78a#file-reason-js
 	// return ethers.utils.toUtf8String(S.split(' ')[1].toString());
 	let str = '';
@@ -50,3 +61,5 @@ function hexToASCII(hex: string): string {
 	}
 	return str;
 }
+
+export const fromBytes32 = hexToASCII;

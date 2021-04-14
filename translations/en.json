@@ -1009,7 +1009,8 @@
 			"period": {
 				"title": "epoch"
 			}
-		}
+		},
+		"delegate": "Delegate"
 	},
 	"user-menu": {
 		"layer-2": {
@@ -1110,6 +1111,16 @@
 		},
 		"table": {
 			"no-data": "No Data"
+		},
+		"delegate-actions": {
+			"header": "Action",
+			"actions": {
+				"ApproveAll": "all",
+				"BurnForAddress": "burn",
+				"IssueForAddress": "mint",
+				"ClaimForAddress": "claim",
+				"ExchangeForAddress": "trade"
+			}
 		}
 	},
 	"not-found": {
@@ -1137,6 +1148,39 @@
 			"heading": "governance:",
 			"message": "Have your say on who will represent the SNX community, vote for your Spartan Council now! Voting costs zero-gas."
 		}
+	},
+	"delegate": {
+		"page-title": "Delegate | Synthetix Staking",
+		"form": {
+			"title": "Delegate to a new Address",
+			"input-placeholder": "e.g. 0x3b18a4...",
+			"tx-confirmation-title": "Delegating to",
+			"button-labels": {
+				"enter-address": "enter an address",
+				"delegate": "delegate",
+				"delegating": "delegating...",
+				"cannot-delegate-to-self": "cannot delegate to self",
+				"already-delegated": "already delegated"
+			}
+		},
+		"info": {
+			"title": "Delegate powers to another wallet address",
+			"subtitle": "Delegation enables a wallet to execute functions on behalf of another wallet: mint, burn, earn, and exchange, but not transfer. Manage addresses and their powers below.",
+			"learn-more": "Learn more."
+		},
+		"list": {
+			"title": "Manage addresses",
+			"empty": "No addresses to show",
+			"cols": {
+				"address": "Address",
+				"all": "all",
+				"burn": "burn",
+				"mint": "mint",
+				"claim": "claim",
+				"exchange": "trade"
+			}
+		},
+		"tx-confirmation-title": "Updating approval"
 	},
 	"balance": {
 		"input-label": "Balance:",

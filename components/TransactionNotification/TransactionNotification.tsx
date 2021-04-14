@@ -11,6 +11,7 @@ import Failure from 'assets/svg/app/failure.svg';
 type NotificationProps = {
 	closeToast?: Function;
 	failureReason?: string;
+	link?: string;
 };
 
 const NotificationPending = () => {
@@ -24,9 +25,9 @@ const NotificationPending = () => {
 	);
 };
 
-const NotificationSuccess = () => {
+const NotificationSuccess = ({ link }: NotificationProps) => {
 	return (
-		<NotificationContainer data-testid="tx-notification-transaction-confirmed">
+		<NotificationContainer data-testid="tx-notification-transaction-confirmed" data-href={link}>
 			<IconContainer>
 				<StyledImg width={35} src={Success} />
 			</IconContainer>

@@ -68,6 +68,10 @@ export const MENU_LINKS: MenuLinks = [
 				i18nLabel: 'sidenav.history',
 				subLink: ROUTES.History.Home,
 			},
+			{
+				i18nLabel: 'sidenav.delegate',
+				subLink: ROUTES.Delegate.Home,
+			},
 		],
 	},
 ];
