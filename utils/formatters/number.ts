@@ -1,4 +1,5 @@
 import BigNumber from 'bignumber.js';
+import { ethers } from 'ethers';
 
 import {
 	DEFAULT_CRYPTO_DECIMALS,
@@ -107,3 +108,13 @@ export const formatCurrencyWithKey = (
 	value: NumericValue,
 	decimals?: number
 ) => `${formatCurrency(String(value), decimals || getPrecision(value))} ${currencyKey}`;
+
+export function formatUnits(value: any, units: number, decimals?: number): string {
+	return formatNumber(toBigNumber(value.toString()).dividedBy(toBigNumber(10).pow(units)), {
+		decimals: decimals,
+	});
+}
+
+export function toEthersBig(a: any, b: number): ethers.BigNumber {
+	return ethers.utils.parseUnits(a.div(Math.pow(10, b)).toString(), b);
+}
