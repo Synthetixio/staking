@@ -133,12 +133,10 @@ const DebtPoolTable: FC<DebtPoolTableProps> = ({
 					} else if (cellProps.value === Synths.sBTC) {
 						displayName = CryptoCurrency.BTC;
 					}
-
 					return (
 						<Legend>
 							<Currency.Name currencyKey={displayName} showIcon={true} />
-							{(cellProps.value === CryptoCurrency.ETH ||
-								cellProps.value === CryptoCurrency.BTC) && (
+							{(displayName === CryptoCurrency.ETH || displayName === CryptoCurrency.BTC) && (
 								<PortfolioTableTooltip currencyKey={cellProps.value} />
 							)}
 						</Legend>
