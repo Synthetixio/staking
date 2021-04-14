@@ -20,6 +20,7 @@ export const initOnboard = (network: Network, subscriptions: Subscriptions) => {
 					name: 'Browser Wallet',
 					iconSrc: '/images/browserWallet.png',
 					type: 'injected',
+					link: 'https://metamask.io',
 					wallet: async (helpers) => {
 						const { createModernProviderInterface } = helpers;
 						const provider = window.ethereum;

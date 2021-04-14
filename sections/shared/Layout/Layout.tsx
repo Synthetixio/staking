@@ -45,6 +45,9 @@ const GlobalStyle = createGlobalStyle`
 			color: ${(props) => props.theme.colors.white};
 
 		}
+		&&.bn-onboard-modal-selected-wallet-footer {
+			margin-top: 20px;
+		}
 		&&.bn-onboard-account-select {
 			background-color: ${(props) => props.theme.colors.navy};
 		}
