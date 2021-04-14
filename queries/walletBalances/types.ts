@@ -5,4 +5,5 @@ export type CryptoBalance = {
 	currencyKey: CurrencyKey;
 	balance: BigNumber;
 	usdBalance: BigNumber;
+	synth?: string;
 };
