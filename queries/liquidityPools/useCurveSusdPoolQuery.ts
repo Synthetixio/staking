@@ -3,7 +3,6 @@ import { ethers } from 'ethers';
 import { useRecoilValue } from 'recoil';
 import axios from 'axios';
 
-import synthetix from 'lib/synthetix';
 import Connector from 'containers/Connector';
 import {
 	curveGaugeController,
@@ -20,9 +19,11 @@ import {
 	networkState,
 	isMainnetState,
 } from 'store/wallet';
+import { makeWeb3Contract } from 'utils/web3';
 
 import { LiquidityPoolData } from './types';
 import { getCurveTokenPrice } from './helper';
+import { toBigNumber } from 'utils/formatters/number';
 
 export type CurveData = LiquidityPoolData & {
 	swapAPR: number;
@@ -70,6 +71,11 @@ const useCurveSusdPoolQuery = (options?: QueryConfig<CurveData>) => {
 				provider as ethers.providers.Provider
 			);
 
+			const curveSusdGaugeContractWeb3 = makeWeb3Contract(
+				curveSusdGauge.address,
+				curveSusdGauge.abi
+			);
+
 			const address = contract.address;
 			const getDuration = contract.DURATION || contract.rewardsDuration;
 
@@ -97,8 +103,20 @@ const useCurveSusdPoolQuery = (options?: QueryConfig<CurveData>) => {
 				curveSusdPoolTokenContract.balanceOf(address),
 				curveSusdPoolTokenContract.balanceOf(walletAddress),
 				curveSusdPoolContract.get_virtual_price(),
-				curveSusdGaugeContract.inflation_rate(),
-				curveSusdGaugeContract.working_supply(),
+				// curveSusdGaugeContract.inflation_rate(),
+				// curveSusdGaugeContract.working_supply(),
+				new Promise((resolve, reject) => {
+					curveSusdGaugeContractWeb3.methods.inflation_rate().call((err: any, v: string) => {
+						if (err) return reject(err);
+						resolve(v);
+					});
+				}),
+				new Promise((resolve, reject) => {
+					curveSusdGaugeContractWeb3.methods.working_supply().call((err: any, v: string) => {
+						if (err) return reject(err);
+						resolve(v);
+					});
+				}),
 				curveGaugeControllerContract.gauge_relative_weight(curveSusdGauge.address),
 				curveTokenPrice,
 				axios.get('https://stats.curve.fi/raw-stats/apys.json'),
@@ -106,6 +124,7 @@ const useCurveSusdPoolQuery = (options?: QueryConfig<CurveData>) => {
 				curveSusdGaugeContract.balanceOf(walletAddress),
 				curveSusdPoolTokenContract.allowance(walletAddress, address),
 			]);
+
 			const durationInWeeks = Number(duration) / 3600 / 24 / 7;
 			const isPeriodFinished = new Date().getTime() > Number(periodFinish) * 1000;
 			const distribution = isPeriodFinished
@@ -132,7 +151,7 @@ const useCurveSusdPoolQuery = (options?: QueryConfig<CurveData>) => {
 				curveRewards,
 				curveStaked,
 				curveAllowance,
-			].map((data) => Number(synthetix.js?.utils.formatEther(data)));
+			].map((data) => Number(toBigNumber(data.toString()).div(1e18)));
 
 			const curveRate =
 				(((inflationRate * relativeWeight * 31536000) / workingSupply) * 0.4) / curveSusdTokenPrice;

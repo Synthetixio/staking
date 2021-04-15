@@ -3,7 +3,6 @@ import { ethers } from 'ethers';
 import { useRecoilValue } from 'recoil';
 import axios from 'axios';
 
-import synthetix from 'lib/synthetix';
 import Connector from 'containers/Connector';
 import {
 	curveGaugeController,
@@ -20,6 +19,8 @@ import {
 	networkState,
 	isMainnetState,
 } from 'store/wallet';
+import { toBigNumber } from 'utils/formatters/number';
+import { makeWeb3Contract } from 'utils/web3';
 
 import { LiquidityPoolData } from './types';
 import { getCurveTokenPrice } from './helper';
@@ -70,6 +71,11 @@ const useCurveSeuroPoolQuery = (options?: QueryConfig<CurveData>) => {
 				provider as ethers.providers.Provider
 			);
 
+			const curveSeuroGaugeContractWeb3 = makeWeb3Contract(
+				curveSeuroGauge.address,
+				curveSeuroGauge.abi
+			);
+
 			const address = contract.address;
 			const getDuration = contract.DURATION || contract.rewardsDuration;
 
@@ -97,8 +103,20 @@ const useCurveSeuroPoolQuery = (options?: QueryConfig<CurveData>) => {
 				curveSeuroPoolTokenContract.balanceOf(address),
 				curveSeuroPoolTokenContract.balanceOf(walletAddress),
 				curveSeuroPoolContract.get_virtual_price(),
-				curveSeuroGaugeContract.inflation_rate(),
-				curveSeuroGaugeContract.working_supply(),
+				// curveSeuroGaugeContract.inflation_rate(),
+				// curveSeuroGaugeContract.working_supply(),
+				new Promise((resolve, reject) => {
+					curveSeuroGaugeContractWeb3.methods.inflation_rate().call((err: any, v: string) => {
+						if (err) return reject(err);
+						resolve(v);
+					});
+				}),
+				new Promise((resolve, reject) => {
+					curveSeuroGaugeContractWeb3.methods.working_supply().call((err: any, v: string) => {
+						if (err) return reject(err);
+						resolve(v);
+					});
+				}),
 				curveGaugeControllerContract.gauge_relative_weight(curveSeuroGauge.address),
 				curveTokenPrice,
 				axios.get('https://stats.curve.fi/raw-stats/apys.json'),
@@ -132,7 +150,7 @@ const useCurveSeuroPoolQuery = (options?: QueryConfig<CurveData>) => {
 				curveRewards,
 				curveStaked,
 				curveAllowance,
-			].map((data) => Number(synthetix.js?.utils.formatEther(data)));
+			].map((data) => Number(toBigNumber(data.toString()).div(1e18)));
 
 			const curveRate =
 				(((inflationRate * relativeWeight * 31536000) / workingSupply) * 0.4) /
