@@ -15,10 +15,8 @@ import curveGaugeController from './curveGaugeController';
 import balancersTSLAPoolToken from './balancersTSLAPoolToken';
 
 import wETHToken from './wETHToken';
-
 import wBTCToken from './wBTCToken';
-
-import renBTCToken from './renBTCToken';
+import * as renBTCToken from './renBTCToken';
 
 import dualStakingRewards from './dualStakingRewards';
 

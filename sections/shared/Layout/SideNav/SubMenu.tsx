@@ -30,7 +30,7 @@ const SubMenu: FC<SubMenuProps> = ({ config, currentPath }) => {
 								{config?.routes?.map(({ i18nLabel, subLink }, i) => (
 									<MenuLinkItem key={`subMenuLinkItem-${i}`} isActive={currentPath === subLink}>
 										<Link href={subLink}>
-											<a>{t(i18nLabel)}</a>
+											<a data-testid={`sidenav-submenu-${subLink}`}>{t(i18nLabel)}</a>
 										</Link>
 									</MenuLinkItem>
 								)) ?? null}

@@ -29,6 +29,7 @@ const useTransactionNotifier = () => {
 		if (transactionNotifier) {
 			const toastProps = {
 				onClick: () => window.open(link, '_blank'),
+				link,
 			};
 			const emitter = transactionNotifier.hash(txHash);
 			emitter.on('txSent', () => {
@@ -37,7 +38,7 @@ const useTransactionNotifier = () => {
 			emitter.on('txConfirmed', ({ transactionHash }: TransactionStatusData) => {
 				toast.update(transactionHash, {
 					...toastProps,
-					render: NotificationSuccess,
+					render: <NotificationSuccess {...{ link }} />,
 					autoClose: 10000,
 				});
 				if (onTxConfirmed != null) {
