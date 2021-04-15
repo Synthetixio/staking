@@ -24,6 +24,7 @@ import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 
 import { DEFAULT_CRYPTO_DECIMALS, DEFAULT_FIAT_DECIMALS } from 'constants/defaults';
 import { formatCurrency, formatFiatCurrency, formatNumber } from 'utils/formatters/number';
+import { getCurrentTimestampSeconds } from 'utils/formatters/date';
 import { normalizedGasPrice } from 'utils/network';
 
 import { Transaction, GasLimitEstimate } from 'constants/network';
@@ -110,7 +111,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 				FeePool.recentFeePeriods(0),
 			]);
 
-			const now = Math.ceil(new Date().getTime() / 1000);
+			const now = Math.ceil(getCurrentTimestampSeconds());
 			const startTime = Number(recentFeePeriods.startTime);
 			const duration = Number(feePeriodDuration);
 
