@@ -69,7 +69,7 @@ const useHistoricalDebtData = () => {
 			debtHistory.reverse().forEach((debtSnapshot, i) => {
 				historicalDebtAndIssuance.push({
 					timestamp: debtSnapshot.timestamp,
-					issuanceDebt: historicalIssuanceAggregation[i],
+					issuanceDebt: historicalIssuanceAggregation[i] ?? last(historicalIssuanceAggregation),
 					actualDebt: debtSnapshot.debtBalanceOf,
 				});
 			});
