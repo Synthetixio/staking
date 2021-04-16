@@ -35,21 +35,15 @@ const useGlobalHistoricalDebtData = () => {
 			const eventBlocks = orderBy(burned.concat(issued), 'timestamp', 'asc');
 
 			const data: HistoricalGlobalDebtAndIssuanceData[] = [];
-			let debtPoolStartingValue: number = 0;
 
 			eventBlocks.forEach((event, i) => {
 				const multiplier = event.type === StakingTransactionType.Burned ? -1 : 1;
 				const aggregation =
-					data.length === 0
-						? multiplier * event.value
-						: multiplier * event.value + data[i - 1].issuance;
-				if (data.length === 0) {
-					debtPoolStartingValue = event.totalDebt;
-				}
+					data.length === 0 ? event.totalDebt : multiplier * event.value + data[i - 1].issuance;
 
 				data.push({
 					issuance: aggregation,
-					debtPool: event.totalDebt - debtPoolStartingValue,
+					debtPool: event.totalDebt,
 					timestamp: event.timestamp,
 				});
 			});

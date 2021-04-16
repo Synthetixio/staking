@@ -364,7 +364,9 @@
 					"title": "sUSD underperforms against debt pool",
 					"body": "Your debt will fluctuate over time with the debt pool. We recommend that you hedge your debt to reduce your risk owning more debt than you hold.",
 					"chart": {
-						"title": "sUSD vs DEBT POOL"
+						"title": "sUSD vs DEBT POOL",
+						"sUSD-label": "sUSD",
+						"debtPool-label": "DEBT POOL"
 					}
 				}
 			},
