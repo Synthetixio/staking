@@ -20,12 +20,15 @@ import { CryptoCurrency } from 'constants/currency';
 import { DEFAULT_NETWORK_ID } from 'constants/defaults';
 import { L1_TO_L2_NETWORK_MAPPER } from '@synthetixio/optimism-networks';
 
+import { isMetaMaskWallet } from 'store/wallet';
+
 const Index: FC = () => {
 	const [l2AmountSNX, setL2AmountSNX] = useState<number>(0);
 	const [l2APR, setL2APR] = useState<number>(0);
 	const { t } = useTranslation();
 	const { debtBalance, transferableCollateral, stakingEscrow } = useStakingCalculations();
 	const network = useRecoilValue(networkState);
+	const isMetaMask = useRecoilValue(isMetaMaskWallet)
 
 	useEffect(() => {
 		async function getData() {
@@ -99,6 +102,29 @@ const Index: FC = () => {
 
 	const gridItems = useMemo(
 		() =>
+			(!isMetaMask)
+				? [
+						{
+							gridLocations: ['col-1', 'col-2', 'row-1', 'row-2'],
+							isDisabled: true,
+							...ACTIONS.apr,
+						},
+						{
+							gridLocations: ['col-2', 'col-3', 'row-1', 'row-2'],
+							...ACTIONS.deposit,
+							isDisabled: true,
+						},
+						{
+							gridLocations: ['col-1', 'col-2', 'row-2', 'row-3'],
+							...ACTIONS.migrate,
+							isDisabled: true,
+						},
+						{
+							gridLocations: ['col-2', 'col-3', 'row-2', 'row-3'],
+							...ACTIONS.goToMintr,
+							isDisabled: true,
+						},
+	  			] :
 			debtBalance.isZero()
 				? [
 						{
@@ -144,15 +170,17 @@ const Index: FC = () => {
 	) as GridBoxProps[];
 
 	return (
-		<PossibleActionsContainer fullHeight={gridItems.length === 2}>
-			{gridItems.map((props, index) => (
-				<GridBox
-					key={`${props.title}-${index}`}
-					{...props}
-					icon={<GlowingCircle content={<IconHeading>{index + 1}</IconHeading>} />}
-				/>
-			))}
-		</PossibleActionsContainer>
+		<div> Only MetaMask available on L2 at this time
+			<PossibleActionsContainer fullHeight={gridItems.length === 2}>
+				{gridItems.map((props, index) => (
+					<GridBox
+						key={`${props.title}-${index}`}
+						{...props}
+						icon={<GlowingCircle content={<IconHeading>{index + 1}</IconHeading>} />}
+					/>
+				))}
+			</PossibleActionsContainer>
+		</div>
 	);
 };
 

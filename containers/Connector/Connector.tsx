@@ -19,6 +19,7 @@ import {
 	networkState,
 	walletWatchedState,
 	isEOAWalletState,
+	isMetaMaskWallet,
 } from 'store/wallet';
 
 import { Wallet as OnboardWallet } from 'bnc-onboard/dist/src/interfaces';
@@ -41,6 +42,7 @@ const useConnector = () => {
 	const [walletAddress, setWalletAddress] = useRecoilState(walletAddressState);
 	const [walletWatched, setWalletWatched] = useRecoilState(walletWatchedState);
 	const setIsEOAWallet = useSetRecoilState(isEOAWalletState);
+	const [isMetaMask, setIsMetaMask] = useRecoilState(isMetaMaskWallet);
 	const [selectedWallet, setSelectedWallet] = useLocalStorage<string | null>(
 		LOCAL_STORAGE_KEYS.SELECTED_WALLET,
 		''
@@ -146,6 +148,9 @@ const useConnector = () => {
 								: null
 						);
 						setSelectedWallet(wallet.name);
+						if (wallet.name == 'MetaMask') {
+							setIsMetaMask(true)
+						} else { setIsMetaMask(false) }
 						setTransactionNotifier(new TransactionNotifier(provider));
 					} else {
 						// TODO: setting provider to null might cause issues, perhaps use a default provider?

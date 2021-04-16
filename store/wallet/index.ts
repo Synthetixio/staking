@@ -29,6 +29,11 @@ export const isMainnetState = selector<boolean>({
 	get: ({ get }) => get(networkState)?.id === NetworkId.Mainnet,
 });
 
+export const isMetaMaskWallet = atom<boolean>({
+	key: getWalletKey('isMetaMaskWallet'),
+	default: false,
+});
+
 export const walletAddressState = atom<string | null>({
 	key: getWalletKey('walletAddress'),
 	default: null,
