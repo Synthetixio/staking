@@ -1,17 +1,20 @@
-import React from 'react';
-import { MIN_CRATIO } from 'sections/loans/constants';
-import { Loan } from 'queries/loans/types';
+import { FC, useMemo } from 'react';
+import Big from 'bignumber.js';
+
 import { toBigNumber } from 'utils/formatters/number';
+import { Loan } from 'queries/loans/types';
+
 import CRatio from './CRatio';
 
 type LoanCRatioProps = {
 	loan: Loan;
+	minCRatio: Big;
 };
 
-const LoanCRatio: React.FC<LoanCRatioProps> = ({ loan }) => {
-	const cratio = toBigNumber(loan.cratio.toString()).dividedBy(1e16);
-	const hasLowCRatio = React.useMemo(() => cratio.lt(MIN_CRATIO), [cratio]);
-	return <CRatio {...{ cratio, hasLowCRatio }} />;
+const LoanCRatio: FC<LoanCRatioProps> = ({ loan, minCRatio }) => {
+	const cratio = useMemo(() => toBigNumber(loan.cratio.toString()).dividedBy(1e16), [loan.cratio]);
+	const hasLowCRatio = useMemo(() => cratio.lt(minCRatio), [cratio, minCRatio]);
+	return <CRatio {...{ cratio, hasLowCRatio, minCRatio }} />;
 };
 
 export default LoanCRatio;

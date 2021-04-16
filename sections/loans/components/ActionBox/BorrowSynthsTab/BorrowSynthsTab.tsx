@@ -23,7 +23,12 @@ import {
 	ModalItemTitle as TxModalItemTitle,
 	ModalItemText as TxModalItemText,
 } from 'styles/common';
-import { DEBT_ASSETS, MIN_CRATIO } from 'sections/loans/constants';
+import {
+	DEBT_ASSETS,
+	LOAN_TYPE_ERC20,
+	LOAN_TYPE_ETH,
+	SAFE_MIN_CRATIO,
+} from 'sections/loans/constants';
 import {
 	FormContainer,
 	InputsContainer,
@@ -52,7 +57,7 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 	const router = useRouter();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const address = useRecoilValue(walletAddressState);
-	const { renBTCContract } = Loans.useContainer();
+	const { renBTCContract, minCRatios } = Loans.useContainer();
 
 	const [gasPrice, setGasPrice] = useState<number>(0);
 	const [gasLimit, setGasLimitEstimate] = useState<number | null>(null);
@@ -94,6 +99,9 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 		[collateralIsETH, renBTCContract]
 	);
 
+	const minCRatio =
+		minCRatios.get(collateralIsETH ? LOAN_TYPE_ETH : LOAN_TYPE_ERC20) || toBigNumber(0);
+
 	const hasLowCollateralAmount = useMemo(
 		() => !collateralAmount.isZero() && collateralAmount.lt(minCollateralAmount),
 		[collateralAmount, minCollateralAmount]
@@ -120,8 +128,12 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 	const [isApproved, setIsApproved] = useState<boolean>(false);
 	const [error, setError] = useState<string | null>(null);
 
+	// const hasLowCRatio = useMemo(
+	// 	() => !collateralAmount.isZero() && !debtAmount.isZero() && cratio.lt(minCRatio),
+	// 	[collateralAmount, debtAmount, cratio, minCRatio]
+	// );
 	const hasLowCRatio = useMemo(
-		() => !collateralAmount.isZero() && !debtAmount.isZero() && cratio.lt(MIN_CRATIO),
+		() => !collateralAmount.isZero() && !debtAmount.isZero() && cratio.lt(SAFE_MIN_CRATIO),
 		[collateralAmount, debtAmount, cratio]
 	);
 
@@ -159,7 +171,14 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 
 	const getApproveTxData = useCallback(
 		(gas: Record<string, number>) => {
-			if (!(collateralContract && !collateralAmount.isZero() && !hasInsufficientCollateral))
+			if (
+				!(
+					collateralContract &&
+					!collateralAmount.isZero() &&
+					!hasLowCRatio &&
+					!hasInsufficientCollateral
+				)
+			)
 				return null;
 			return [
 				collateralContract,
@@ -167,12 +186,20 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 				[loanContractAddress, collateralAmount.toString(), gas],
 			];
 		},
-		[collateralContract, loanContractAddress, collateralAmount, hasInsufficientCollateral]
+		[
+			collateralContract,
+			loanContractAddress,
+			collateralAmount,
+			hasInsufficientCollateral,
+			hasLowCRatio,
+		]
 	);
 
 	const getBorrowTxData = useCallback(
 		(gas: Record<string, number>) => {
-			if (!(loanContract && !debtAmount.isZero() && !hasInsufficientCollateral)) return null;
+			if (!(loanContract && !debtAmount.isZero() && !hasLowCRatio && !hasInsufficientCollateral))
+				return null;
+
 			const debtAssetCurrencyKey = ethers.utils.formatBytes32String(debtAsset);
 			return [
 				loanContract,
@@ -202,6 +229,8 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 			collateralAmount,
 			collateralDecimals,
 			collateralIsETH,
+			hasInsufficientCollateral,
+			hasLowCRatio,
 		]
 	);
 
@@ -404,7 +433,7 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 
 				<SettingsContainer>
 					<SettingContainer>
-						<CRatio {...{ cratio, hasLowCRatio }} />
+						<CRatio {...{ cratio, hasLowCRatio, minCRatio }} />
 					</SettingContainer>
 					<SettingContainer>
 						<InterestRate />
