@@ -47,6 +47,11 @@ const StyledDialogOverlay = styled(DialogOverlay)`
 	z-index: ${zIndex.DIALOG_OVERLAY};
 	padding: 0px 200px;
 	background: hsla(0, 0%, 0%, 0.8);
+
+	${media.lessThan('md')`
+		padding: 0px 40px;
+	`}
+
 	${media.lessThan('sm')`
 		overflow: hidden;
 	`}

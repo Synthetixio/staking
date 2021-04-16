@@ -27,6 +27,14 @@ export const FlexDivRowCentered = styled(FlexDivRow)`
 	align-items: center;
 `;
 
+export const FlexDivJustifyCenter = styled(FlexDiv)`
+	justify-content: center;
+`;
+
+export const FlexDivItemsCenter = styled(FlexDiv)`
+	align-items: center;
+`;
+
 export const linkCSS = css`
 	text-decoration: none;
 	&:hover {
