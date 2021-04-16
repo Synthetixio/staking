@@ -596,7 +596,8 @@
 					"approve-label": "APPROVE <0>{{collateralAsset}}</0>",
 					"borrow-label": "BORROW <0>{{debtAsset}}</0>",
 					"approving-label": "APPROVING...",
-					"borrowing-label": "BORROWING..."
+					"borrowing-label": "BORROWING...",
+					"insufficient-label": "insufficient collateral to borrow"
 				},
 				"debt": {
 					"label": "Borrow"
