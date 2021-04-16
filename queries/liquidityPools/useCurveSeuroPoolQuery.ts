@@ -20,7 +20,6 @@ import {
 	isMainnetState,
 } from 'store/wallet';
 import { toBigNumber } from 'utils/formatters/number';
-import { makeWeb3Contract } from 'utils/web3';
 
 import { LiquidityPoolData } from './types';
 import { getCurveTokenPrice } from './helper';
@@ -71,11 +70,6 @@ const useCurveSeuroPoolQuery = (options?: QueryConfig<CurveData>) => {
 				provider as ethers.providers.Provider
 			);
 
-			const curveSeuroGaugeContractWeb3 = makeWeb3Contract(
-				curveSeuroGauge.address,
-				curveSeuroGauge.abi
-			);
-
 			const address = contract.address;
 			const getDuration = contract.DURATION || contract.rewardsDuration;
 
@@ -103,20 +97,8 @@ const useCurveSeuroPoolQuery = (options?: QueryConfig<CurveData>) => {
 				curveSeuroPoolTokenContract.balanceOf(address),
 				curveSeuroPoolTokenContract.balanceOf(walletAddress),
 				curveSeuroPoolContract.get_virtual_price(),
-				// curveSeuroGaugeContract.inflation_rate(),
-				// curveSeuroGaugeContract.working_supply(),
-				new Promise((resolve, reject) => {
-					curveSeuroGaugeContractWeb3.methods.inflation_rate().call((err: any, v: string) => {
-						if (err) return reject(err);
-						resolve(v);
-					});
-				}),
-				new Promise((resolve, reject) => {
-					curveSeuroGaugeContractWeb3.methods.working_supply().call((err: any, v: string) => {
-						if (err) return reject(err);
-						resolve(v);
-					});
-				}),
+				curveSeuroGaugeContract.inflation_rate({ gasLimit: 1e5 }),
+				curveSeuroGaugeContract.working_supply({ gasLimit: 1e5 }),
 				curveGaugeControllerContract.gauge_relative_weight(curveSeuroGauge.address),
 				curveTokenPrice,
 				axios.get('https://stats.curve.fi/raw-stats/apys.json'),
