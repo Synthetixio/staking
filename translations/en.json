@@ -997,7 +997,6 @@
 		"synths": "Synths",
 		"escrow": "Escrow",
 		"history": "History",
-		"loans": "Loans",
 		"governance": "Governance",
 		"wallet": "Wallet",
 		"mint-and-burn": "Mint & burn",
@@ -1017,6 +1016,9 @@
 		"layer-2": {
 			"switch-to-l2": "Switch to L2",
 			"connected-to-l2": "Layer 2"
+		},
+		"banner": {
+			"warning-url": "WARNING: Please make sure the URL is <0>staking.synthetix.io</0> (bookmark this page to be safe)"
 		},
 		"error": {
 			"please-install-metamask": "Please install Metamask"
