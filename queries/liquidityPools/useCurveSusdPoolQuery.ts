@@ -19,7 +19,6 @@ import {
 	networkState,
 	isMainnetState,
 } from 'store/wallet';
-import { makeWeb3Contract } from 'utils/web3';
 
 import { LiquidityPoolData } from './types';
 import { getCurveTokenPrice } from './helper';
@@ -71,11 +70,6 @@ const useCurveSusdPoolQuery = (options?: QueryConfig<CurveData>) => {
 				provider as ethers.providers.Provider
 			);
 
-			const curveSusdGaugeContractWeb3 = makeWeb3Contract(
-				curveSusdGauge.address,
-				curveSusdGauge.abi
-			);
-
 			const address = contract.address;
 			const getDuration = contract.DURATION || contract.rewardsDuration;
 
@@ -103,20 +97,8 @@ const useCurveSusdPoolQuery = (options?: QueryConfig<CurveData>) => {
 				curveSusdPoolTokenContract.balanceOf(address),
 				curveSusdPoolTokenContract.balanceOf(walletAddress),
 				curveSusdPoolContract.get_virtual_price(),
-				// curveSusdGaugeContract.inflation_rate(),
-				// curveSusdGaugeContract.working_supply(),
-				new Promise((resolve, reject) => {
-					curveSusdGaugeContractWeb3.methods.inflation_rate().call((err: any, v: string) => {
-						if (err) return reject(err);
-						resolve(v);
-					});
-				}),
-				new Promise((resolve, reject) => {
-					curveSusdGaugeContractWeb3.methods.working_supply().call((err: any, v: string) => {
-						if (err) return reject(err);
-						resolve(v);
-					});
-				}),
+				curveSusdGaugeContract.inflation_rate({ gasLimit: 1e5 }),
+				curveSusdGaugeContract.working_supply({ gasLimit: 1e5 }),
 				curveGaugeControllerContract.gauge_relative_weight(curveSusdGauge.address),
 				curveTokenPrice,
 				axios.get('https://stats.curve.fi/raw-stats/apys.json'),

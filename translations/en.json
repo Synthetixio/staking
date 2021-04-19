@@ -596,7 +596,8 @@
 					"approve-label": "APPROVE <0>{{collateralAsset}}</0>",
 					"borrow-label": "BORROW <0>{{debtAsset}}</0>",
 					"approving-label": "APPROVING...",
-					"borrowing-label": "BORROWING..."
+					"borrowing-label": "BORROWING...",
+					"insufficient-label": "insufficient collateral to borrow"
 				},
 				"debt": {
 					"label": "Borrow"
@@ -604,8 +605,8 @@
 				"collateral": {
 					"label": "Using"
 				},
-				"low-cratio-tip": "You can only borrow at 150% or higher. Your position will be eligible for liquidation if it falls below 120%.",
-				"healthy-cratio-tip": "Ensure your position stays above 120% to prevent liquidation.",
+				"low-cratio-tip": "You can only borrow at {{safeMinCRatio}}% or higher. Your position will be eligible for liquidation if it falls below {{minCRatio}}%.",
+				"healthy-cratio-tip": "Ensure your position stays above {{minCRatio}}% to prevent liquidation.",
 				"confirm-transaction": {
 					"left-panel-label": "BORROWING",
 					"right-panel-label": "POSTING"
@@ -997,7 +998,6 @@
 		"synths": "Synths",
 		"escrow": "Escrow",
 		"history": "History",
-		"loans": "Loans",
 		"governance": "Governance",
 		"wallet": "Wallet",
 		"mint-and-burn": "Mint & burn",
@@ -1017,6 +1017,9 @@
 		"layer-2": {
 			"switch-to-l2": "Switch to L2",
 			"connected-to-l2": "Layer 2"
+		},
+		"banner": {
+			"warning-url": "WARNING: Please make sure the URL is <0>staking.synthetix.io</0> (bookmark this page to be safe)"
 		},
 		"error": {
 			"please-install-metamask": "Please install Metamask"
