@@ -70,6 +70,11 @@ const useCurveSeuroPoolQuery = (options?: QueryConfig<CurveData>) => {
 				provider as ethers.providers.Provider
 			);
 
+			const curveSeuroGaugeContractWeb3 = makeWeb3Contract(
+				curveSeuroGauge.address,
+				curveSeuroGauge.abi
+			);
+
 			const address = contract.address;
 			const getDuration = contract.DURATION || contract.rewardsDuration;
 
