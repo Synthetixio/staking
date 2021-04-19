@@ -18,6 +18,7 @@ const useSynthIssuedQuery = (options?: QueryConfig<HistoricalStakingTransaction[
 		async () => {
 			const transactions = (await snxData.snx.issued({
 				account: walletAddress,
+				max: 1000,
 			})) as HistoricalStakingTransaction[];
 
 			return transactions;

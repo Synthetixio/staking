@@ -377,8 +377,8 @@
 					},
 					"portfolio-table": {
 						"title": "Your Portfolio",
-						"sETH-tooltip": "The sETH total includes other related assets such as <0>ETH</0> and <0>wETH</0>",
-						"sBTC-tooltip": "The sBTC total includes other related assets such as <0>wBTC</0> and <0>renBTC</0>"
+						"sETH-tooltip": "The ETH total includes other related assets such as <0>sETH</0> and <0>wETH</0>",
+						"sBTC-tooltip": "The BTC total includes other related assets such as <0>sBTC</0>, <0>wBTC</0> and <0>renBTC</0>"
 					},
 					"tooltip": "This table serves as a <0>hedging indicator</0>, showing the relationship between your Synth balances and the global debt pool"
 				}
@@ -492,6 +492,7 @@
 				"staking-rewards": "SNX staking rewards",
 				"claim-button": "CLAIM REWARDS",
 				"claim-snx-button": "Claim SNX",
+				"close-fee-period": "Close fee period",
 				"claimed-button": "ALREADY CLAIMED",
 				"low-ratio": "BURN sUSD TO CLAIM",
 				"nothing-to-claim": "NOTHING TO CLAIM",
@@ -589,6 +590,114 @@
 				"vested": "Vested",
 				"verify": "Verify Tx",
 				"dismiss": "Dimiss"
+			}
+		}
+	},
+	"loans": {
+		"page-title": "Borrow Synths | Synthetix Staking",
+		"interest-rate": "Interest Rate",
+		"issuance-fee": "Issuance Fee",
+		"cratio": "C-Ratio",
+		"interest-accrued": "Interest Accrued",
+		"no-active-loans": "You have no active borrows.",
+		"tabs": {
+			"new": {
+				"title": "Borrow Synths",
+				"button": {
+					"low-collateral-label": "MINIMUM COLLATERAL IS <0>{{minCollateralAmountString}}</0> <0>{{collateralAsset}}</0>",
+					"low-cratio-label": "C-RATIO TOO LOW",
+					"approve-label": "APPROVE <0>{{collateralAsset}}</0>",
+					"borrow-label": "BORROW <0>{{debtAsset}}</0>",
+					"approving-label": "APPROVING...",
+					"borrowing-label": "BORROWING...",
+					"insufficient-label": "insufficient collateral to borrow"
+				},
+				"debt": {
+					"label": "Borrow"
+				},
+				"collateral": {
+					"label": "Using"
+				},
+				"low-cratio-tip": "You can only borrow at {{safeMinCRatio}}% or higher. Your position will be eligible for liquidation if it falls below {{minCRatio}}%.",
+				"healthy-cratio-tip": "Ensure your position stays above {{minCRatio}}% to prevent liquidation.",
+				"confirm-transaction": {
+					"left-panel-label": "BORROWING",
+					"right-panel-label": "POSTING"
+				}
+			},
+			"list": {
+				"title": "Active Borrows",
+				"types": {
+					"debt": "LOAN",
+					"collateral": "COLLATERAL",
+					"cratio": "C-RATIO",
+					"modify": "MODIFY"
+				},
+				"actions-menu-label": "actions"
+			}
+		},
+		"info": {
+			"title": "Borrow Synths using other assets",
+			"subtitle": "Borrow synthetic assets against ETH and renBTC collateral.",
+			"learn-more": "Learn more."
+		},
+		"pending-withdrawals": {
+			"title": "Pending Withdrawals",
+			"title-tip": "You will need to claim your ether collateral separately after your loan is closed, withdrawn or liquidated.",
+			"empty": "You have no pending withdrawals.",
+			"claiming": "CLAIMING...",
+			"claim": "CLAIM"
+		},
+		"stats": {
+			"title": "STATS",
+			"asset": "ASSET",
+			"open-interest": "OPEN INTEREST",
+			"total": "TOTAL"
+		},
+		"modify-loan": {
+			"loan-interation-delay": "Please wait <0>{{waitETA}}</0> before reinteracting with the loan",
+			"close": {
+				"left-col-label": "REPAY",
+				"right-col-label": "RECEIVE",
+				"button-labels": {
+					"default": "CLOSE LOAN",
+					"closing": "CLOSING LOAN..."
+				}
+			},
+			"deposit": {
+				"left-col-label": "DEPOSIT",
+				"right-col-label": "NEW TOTAL",
+				"button-labels": {
+					"default": "DEPOSIT",
+					"approve": "APPROVE",
+					"approving": "APPROVING...",
+					"depositing": "DEPOSITING..."
+				}
+			},
+			"withdraw": {
+				"left-col-label": "WITHDRAW",
+				"right-col-label": "REMAINING",
+				"button-labels": {
+					"default": "WITHDRAW",
+					"withdrawing": "WITHDRAWING..."
+				}
+			},
+			"repay": {
+				"left-col-label": "REPAY",
+				"right-col-label": "REMAINING",
+				"button-labels": {
+					"default": "REPAY DEBT",
+					"repaying-fully-error": "CONSIDER CLOSING THE LOAN INSTEAD OF FULL REPAYMENT",
+					"repaying": "REPAYING DEBT..."
+				}
+			},
+			"draw": {
+				"left-col-label": "INCREASE",
+				"right-col-label": "NEW TOTAL",
+				"button-labels": {
+					"default": "INCREASE DEBT",
+					"drawing": "INCREASING DEBT..."
+				}
 			}
 		}
 	},
@@ -895,13 +1004,13 @@
 	},
 	"sidenav": {
 		"dashboard": "Home",
+		"loans": "Loans",
 		"earn": "Earn",
 		"staking": "Staking",
 		"debt": "Debt",
 		"synths": "Synths",
 		"escrow": "Escrow",
 		"history": "History",
-		"loans": "Loans",
 		"governance": "Governance",
 		"wallet": "Wallet",
 		"mint-and-burn": "Mint & burn",
@@ -914,12 +1023,16 @@
 			"period": {
 				"title": "epoch"
 			}
-		}
+		},
+		"delegate": "Delegate"
 	},
 	"user-menu": {
 		"layer-2": {
 			"switch-to-l2": "Switch to L2",
 			"connected-to-l2": "Layer 2"
+		},
+		"banner": {
+			"warning-url": "WARNING: Please make sure the URL is <0>staking.synthetix.io</0> (bookmark this page to be safe)"
 		},
 		"error": {
 			"please-install-metamask": "Please install Metamask"
@@ -1015,6 +1128,16 @@
 		},
 		"table": {
 			"no-data": "No Data"
+		},
+		"delegate-actions": {
+			"header": "Action",
+			"actions": {
+				"ApproveAll": "all",
+				"BurnForAddress": "burn",
+				"IssueForAddress": "mint",
+				"ClaimForAddress": "claim",
+				"ExchangeForAddress": "trade"
+			}
 		}
 	},
 	"not-found": {
@@ -1042,5 +1165,42 @@
 			"heading": "governance:",
 			"message": "Have your say on who will represent the SNX community, vote for your Spartan Council now! Voting costs zero-gas."
 		}
+	},
+	"delegate": {
+		"page-title": "Delegate | Synthetix Staking",
+		"form": {
+			"title": "Delegate to a new Address",
+			"input-placeholder": "e.g. 0x3b18a4...",
+			"tx-confirmation-title": "Delegating to",
+			"button-labels": {
+				"enter-address": "enter an address",
+				"delegate": "delegate",
+				"delegating": "delegating...",
+				"cannot-delegate-to-self": "cannot delegate to self",
+				"already-delegated": "already delegated"
+			}
+		},
+		"info": {
+			"title": "Delegate powers to another wallet address",
+			"subtitle": "Delegation enables a wallet to execute functions on behalf of another wallet: mint, burn, earn, and exchange, but not transfer. Manage addresses and their powers below.",
+			"learn-more": "Learn more."
+		},
+		"list": {
+			"title": "Manage addresses",
+			"empty": "No addresses to show",
+			"cols": {
+				"address": "Address",
+				"all": "all",
+				"burn": "burn",
+				"mint": "mint",
+				"claim": "claim",
+				"exchange": "trade"
+			}
+		},
+		"tx-confirmation-title": "Updating approval"
+	},
+	"balance": {
+		"input-label": "Balance:",
+		"max": "Max"
 	}
 }

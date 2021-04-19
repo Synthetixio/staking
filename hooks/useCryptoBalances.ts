@@ -10,6 +10,7 @@ import { assetToSynth } from 'utils/currencies';
 import useWETHBalanceQuery from 'queries/walletBalances/useWETHBalanceQuery';
 import useWBTCBalanceQuery from 'queries/walletBalances/useWBTCBalanceQuery';
 import useRenBTCBalanceQuery from 'queries/walletBalances/useRenBTCBalanceQuery';
+import { CryptoBalance } from 'queries/walletBalances/types';
 import { zeroBN } from 'utils/formatters/number';
 
 const { ETH, WETH, SNX, BTC, WBTC, RENBTC } = CryptoCurrency;
@@ -33,7 +34,7 @@ const useCryptoBalances = () => {
 	const wBTCBalance = wBTCBalanceQuery.data ?? zeroBN;
 	const renBTCBalance = renBTCBalanceQuery.data ?? zeroBN;
 
-	const balances = useMemo(() => {
+	const balances = useMemo<CryptoBalance[]>(() => {
 		if (isLoaded && exchangeRates != null) {
 			return orderBy(
 				[

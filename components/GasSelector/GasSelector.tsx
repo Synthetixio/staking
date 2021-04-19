@@ -98,6 +98,7 @@ const GasSelector: React.FC<GasSelectorProps> = ({
 					value={customGasPrice}
 					onChange={(_, value) => setCustomGasPrice(value)}
 					placeholder={t('common.custom')}
+					data-testid="edit-gas-price-input"
 				/>
 			</CustomGasPriceContainer>
 			{GAS_SPEEDS.map((speed) => (
@@ -151,7 +152,9 @@ const GasSelector: React.FC<GasSelectorProps> = ({
 				</GasPriceItem>
 				{isL2 ? null : (
 					<GasPriceTooltip trigger="click" arrow={false} content={content} interactive={true}>
-						<StyledGasEditButton role="button">{t('common.edit')}</StyledGasEditButton>
+						<StyledGasEditButton role="button" data-testid="edit-gas-price-button">
+							{t('common.edit')}
+						</StyledGasEditButton>
 					</GasPriceTooltip>
 				)}
 			</FlexDivRowCentered>

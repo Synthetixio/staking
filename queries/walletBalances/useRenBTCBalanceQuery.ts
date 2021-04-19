@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useQuery, QueryConfig } from 'react-query';
 import { useRecoilValue } from 'recoil';
 import BigNumber from 'bignumber.js';
@@ -23,15 +24,16 @@ const useRenBTCBalanceQuery = (options?: QueryConfig<BigNumber>) => {
 	const network = useRecoilValue(networkState);
 	const isMainnet = useRecoilValue(isMainnetState);
 
-	const contract = new ethers.Contract(
-		renBTCToken.address,
-		renBTCToken.abi,
-		provider as ethers.providers.Provider
+	const contract = useMemo(
+		(): ethers.Contract | null =>
+			!(network && provider) ? null : renBTCToken.makeContract(network['name'], provider),
+		[provider, network]
 	);
 
 	return useQuery<BigNumber>(
 		QUERY_KEYS.WalletBalances.RenBTC(walletAddress ?? '', network?.id!),
 		async () => {
+			if (!contract) return toBigNumber(0);
 			const balance = await contract.balanceOfUnderlying(walletAddress);
 			return toBigNumber(ethers.utils.formatUnits(balance, 8));
 		},

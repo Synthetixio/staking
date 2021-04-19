@@ -8,6 +8,7 @@ type NumericInputProps = {
 	placeholder?: string;
 	onChange: (e: ChangeEvent<HTMLInputElement>, value: string) => void;
 	className?: string;
+	disabled?: boolean;
 };
 
 const INVALID_CHARS = ['-', '+', 'e'];
