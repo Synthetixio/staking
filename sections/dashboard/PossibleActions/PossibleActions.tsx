@@ -43,7 +43,7 @@ const PossibleActionsContainer = styled(GridDiv)`
 			'tile-1 tile-1'
 			'tile-2 tile-3';
 		grid-template-columns: 1fr 1fr;
-		grid-template-rows: 1fr 1fr 1fr;
+		grid-template-rows: 2fr 1fr 1fr;
 	`}
 
 	${media.lessThan('sm')`

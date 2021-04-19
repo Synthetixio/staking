@@ -1,7 +1,7 @@
 import { FC, ReactNode } from 'react';
 import Link from 'next/link';
 import styled, { css } from 'styled-components';
-
+import media from 'styles/media';
 import { FlexDivColCentered, ExternalLink, Tooltip } from 'styles/common';
 
 export type GridBoxProps = {
@@ -100,7 +100,10 @@ export const GridBoxContainer = styled.div<{
 	*/
 	grid-area: ${(props) => props.gridArea};
 	transition: transform 0.25s ease-in-out;
-	max-width: 500px;
+
+	${media.greaterThan('mdUp')`
+		max-width: 500px;
+	`}
 
 	${(props) =>
 		props.isDisabled

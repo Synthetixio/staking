@@ -64,16 +64,6 @@ const UserMenu: FC = () => {
 						</OptimismButton>
 					) : null}
 				</DesktopOnlyView>
-				<Menu>
-					<MenuButton
-						onClick={() => {
-							setSettingsModalOpened(!settingsModalOpened);
-						}}
-						isActive={settingsModalOpened}
-					>
-						<Svg src={CogIcon} />
-					</MenuButton>
-				</Menu>
 				<DropdownContainer>
 					<OutsideClickHandler onOutsideClick={() => setWalletOptionsModalOpened(false)}>
 						{isWalletConnected ? (
@@ -115,6 +105,15 @@ const UserMenu: FC = () => {
 						)}
 					</OutsideClickHandler>
 				</DropdownContainer>
+				<Menu>
+					<MenuButton
+						onClick={() => {
+							setSettingsModalOpened(!settingsModalOpened);
+						}}
+					>
+						<Svg src={CogIcon} />
+					</MenuButton>
+				</Menu>
 			</FlexDivCentered>
 			{watchWalletModalOpened && (
 				<WatchWalletModal onDismiss={() => setWatchWalletModalOpened(false)} />
@@ -135,7 +134,7 @@ const StyledConnectionDot = styled(ConnectionDot)`
 `;
 
 const Menu = styled.div`
-	padding-right: 16px;
+	padding-left: 16px;
 	display: grid;
 	grid-gap: 10px;
 	grid-auto-flow: column;
@@ -177,9 +176,9 @@ const WalletButton = styled(Button)`
 	}
 `;
 
-const MenuButton = styled(IconButton)<{ isActive: boolean }>`
+const MenuButton = styled(IconButton)`
 	border: 1px solid ${(props) => props.theme.colors.mediumBlue};
-	color: ${(props) => (props.isActive ? props.theme.colors.white : props.theme.colors.gray)};
+	color: ${(props) => props.theme.colors.white};
 	padding: 7px;
 	border-radius: 4px;
 	background: ${(props) => props.theme.colors.navy};

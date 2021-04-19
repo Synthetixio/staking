@@ -3,13 +3,13 @@ import { useSetRecoilState } from 'recoil';
 import styled from 'styled-components';
 import { Svg } from 'react-optimized-image';
 
-import { FlexDivCentered, FlexDivCol, FlexDivItemsCenter } from 'styles/common';
+import { FlexDivCentered, FlexDivCol } from 'styles/common';
 import { isShowingSideNavState } from 'store/ui';
 import media from 'styles/media';
 import { MobileOnlyView, MobileOrTabletView, TabletOnlyView } from 'components/Media';
 import TitleIcon from 'assets/svg/app/menu-hamburger-white.svg';
-import StakingLogo from 'assets/svg/app/staking-logo.svg';
-import StakingLogoSmall from 'assets/svg/app/staking-logo-small.svg';
+import StakingLogoTablet from 'assets/svg/app/staking-logo-tablet.svg';
+import StakingLogoMobile from 'assets/svg/app/staking-logo-mobile.svg';
 
 import UserMenu from './UserMenu';
 
@@ -18,14 +18,14 @@ const Header: FC = () => {
 	const showSideNav = () => setIsShowingSideNav(true);
 	return (
 		<Container>
-			<FlexDivItemsCenter>
+			<LogoContainer>
 				<TabletOnlyView>
-					<Svg src={StakingLogo} />
+					<Svg src={StakingLogoTablet} />
 				</TabletOnlyView>
 				<MobileOnlyView>
-					<Svg src={StakingLogoSmall} />
+					<Svg src={StakingLogoMobile} />
 				</MobileOnlyView>
-			</FlexDivItemsCenter>
+			</LogoContainer>
 			<FlexDivCentered>
 				<MobileOrTabletView>
 					<Title onClick={showSideNav}>
@@ -44,7 +44,7 @@ const Container = styled(FlexDivCol)`
 	padding: 24px 30px 0 0;
 
 	${media.lessThan('mdUp')`
-		padding-left: 30px;
+		padding: 10px 30px 0;
 	`}
 `;
 
@@ -63,6 +63,12 @@ const Title = styled.div`
 
 const Sep = styled.div`
 	flex: 1;
+`;
+
+const LogoContainer = styled.div`
+	display: flex;
+	justify-content: center;
+	padding-bottom: 5px;
 `;
 
 export default Header;
