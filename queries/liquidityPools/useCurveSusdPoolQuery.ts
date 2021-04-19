@@ -19,7 +19,6 @@ import {
 	networkState,
 	isMainnetState,
 } from 'store/wallet';
-import { makeWeb3Contract } from 'utils/web3';
 
 import { LiquidityPoolData } from './types';
 import { getCurveTokenPrice } from './helper';
@@ -69,11 +68,6 @@ const useCurveSusdPoolQuery = (options?: QueryConfig<CurveData>) => {
 				// @ts-ignore
 				curveGaugeController.abi,
 				provider as ethers.providers.Provider
-			);
-
-			const curveSusdGaugeContractWeb3 = makeWeb3Contract(
-				curveSusdGauge.address,
-				curveSusdGauge.abi
 			);
 
 			const address = contract.address;

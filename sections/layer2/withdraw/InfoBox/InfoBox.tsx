@@ -1,13 +1,12 @@
 import { Trans, useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import styled from 'styled-components';
-
-import { InfoContainer, Title, Subtitle } from '../../components/common';
 import ExternalLink from '../../components/ExternalLink';
+import { InfoContainer, Title, Subtitle } from '../../components/common';
 import useGetWithdrawalsDataQuery, {
 	WithdrawRecord,
 } from 'queries/withdrawals/useGetWithdrawalsDataQuery';
-import { FlexDivColCentered } from 'styles/common';
+import { FlexDivColCentered, ExternalLink as Link } from 'styles/common';
 
 import { formatShortDate } from 'utils/formatters/date';
 import { formatCurrency } from 'utils/formatters/number';
@@ -35,14 +34,16 @@ const InfoBox = () => {
 					<Trans
 						i18nKey="layer2.withdraw.info.regenesis"
 						components={[
-							<a href="https://blog.synthetix.io/optimism-mainnet-upgrade-scheduled-downtime-and-regenesis/" />,
+							<StyledAnchor href="https://blog.synthetix.io/optimism-mainnet-upgrade-scheduled-downtime-and-regenesis/">
+								{' '}
+							</StyledAnchor>,
 						]}
 					/>
 				</StyledSubtitle>
 				<StyledSubtitle>
 					<Trans
 						i18nKey="layer2.withdraw.info.view-withdrawals"
-						components={[<a href="https://optimism.io/snx-history"></a>]}
+						components={[<StyledAnchor href="https://optimism.io/snx-history"> </StyledAnchor>]}
 					/>
 				</StyledSubtitle>
 			</ContainerHeader>
@@ -133,6 +134,15 @@ const StyledSubtitle = styled(Subtitle)`
 
 const StyledFlexDivColCentered = styled(FlexDivColCentered)`
 	padding: 0 20px;
+`;
+
+const StyledAnchor = styled(Link)`
+	color: ${(props) => props.theme.colors.gray};
+	text-decoration: underline;
+	&:hover {
+		color: ${(props) => props.theme.colors.white};
+		text-decoration: underline;
+	}
 `;
 
 export default InfoBox;

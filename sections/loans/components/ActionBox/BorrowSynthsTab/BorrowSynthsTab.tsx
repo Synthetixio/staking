@@ -128,10 +128,6 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 	const [isApproved, setIsApproved] = useState<boolean>(false);
 	const [error, setError] = useState<string | null>(null);
 
-	// const hasLowCRatio = useMemo(
-	// 	() => !collateralAmount.isZero() && !debtAmount.isZero() && cratio.lt(minCRatio),
-	// 	[collateralAmount, debtAmount, cratio, minCRatio]
-	// );
 	const hasLowCRatio = useMemo(
 		() => !collateralAmount.isZero() && !debtAmount.isZero() && cratio.lt(SAFE_MIN_CRATIO),
 		[collateralAmount, debtAmount, cratio]
