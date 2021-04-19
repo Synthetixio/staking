@@ -1,11 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Svg } from 'react-optimized-image';
-import { ResponsiveContainer, XAxis, YAxis, Line, ReferenceLine, LineChart } from 'recharts';
+import { ResponsiveContainer, XAxis, YAxis, Line, LineChart } from 'recharts';
 import { useTranslation } from 'react-i18next';
 import { format } from 'date-fns';
 
-import { FlexDivColCentered, FlexDivRow, FlexDivRowCentered, Tooltip } from 'styles/common';
+import { FlexDivColCentered, FlexDivRow } from 'styles/common';
 
 import useGlobalHistoricalDebtData from 'hooks/useGlobalHistoricalDebtData';
 import colors from 'styles/theme/colors';
@@ -46,7 +46,7 @@ const DebtHedgingChart: React.FC = () => {
 						interval="preserveEnd"
 						tick={{ fontSize: 10, fill: colors.white, fontFamily: fonts.mono }}
 						tickLine={false}
-						tickFormatter={(tick) => format(new Date(tick), 'd MMM yy').toUpperCase()}
+						tickFormatter={(tick) => format(new Date(tick * 1000), 'd MMM yy').toUpperCase()}
 					/>
 					<YAxis
 						width={0}
