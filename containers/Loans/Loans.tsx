@@ -30,6 +30,7 @@ function Container() {
 
 	const [isLoadingLoans, setIsLoadingLoans] = useState(false);
 	const [loans, setLoans] = useState<Array<Loan>>([]);
+	const [minCRatios, setMinCRatios] = useState<Map<string, Big>>(new Map());
 
 	const [
 		ethLoanContract,
@@ -91,12 +92,19 @@ function Container() {
 		const loadLoans = async () => {
 			setIsLoadingLoans(true);
 			const loanIndices = await Promise.all(Object.keys(loanStateContracts).map(getLoanIndices));
+			if (isMounted) {
+				loanIndices.forEach(({ type, minCRatio }) => {
+					setMinCRatios((cratios) =>
+						cratios.set(type, toBigNumber(minCRatio.toString()).div(1e18).times(1e2))
+					);
+				});
+			}
+
 			const loans: Array<any> = await Promise.all(loanIndices.map(getLoans));
 			let activeLoans: Array<any> = [];
 
-			for (let i = 0; i < loans.length; i++) {
-				for (let j = 0; j < loans[i].length; j++) {
-					const { type, minCRatio, loan } = loans[i][j];
+			loans.forEach((a) => {
+				a.forEach(({ type, minCRatio, loan }: any) => {
 					if (!loan.amount.isZero()) {
 						activeLoans.push({
 							loan,
@@ -104,8 +112,8 @@ function Container() {
 							minCRatio,
 						});
 					}
-				}
-			}
+				});
+			});
 
 			activeLoans = await Promise.all(activeLoans.map(makeLoan));
 			activeLoans.sort((a, b) => {
@@ -408,6 +416,7 @@ function Container() {
 		interestRate,
 		issueFeeRates,
 		interactionDelays,
+		minCRatios,
 
 		pendingWithdrawals,
 		reloadPendingWithdrawals,

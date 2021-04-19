@@ -14,6 +14,7 @@ type FormButtonProps = {
 	minCollateralAmountString: string;
 	isApproving: boolean;
 	isBorrowing: boolean;
+	hasInsufficientCollateral: boolean;
 	onClick: () => Promise<void>;
 };
 
@@ -27,6 +28,7 @@ const FormButton: React.FC<FormButtonProps> = ({
 	minCollateralAmountString,
 	isApproving,
 	isBorrowing,
+	hasInsufficientCollateral,
 	onClick,
 }) => {
 	const { t } = useTranslation();
@@ -35,7 +37,13 @@ const FormButton: React.FC<FormButtonProps> = ({
 		<StyledCTA
 			variant="primary"
 			size="lg"
-			disabled={hasLowCollateralAmount || hasLowCRatio || isApproving || isBorrowing}
+			disabled={
+				hasLowCollateralAmount ||
+				hasLowCRatio ||
+				isApproving ||
+				isBorrowing ||
+				hasInsufficientCollateral
+			}
 			data-testid="loans-form-button"
 			{...{ onClick }}
 		>
@@ -64,6 +72,12 @@ const FormButton: React.FC<FormButtonProps> = ({
 						collateralAsset,
 						minCollateralAmountString,
 					}}
+					components={[<NoTextTransform />]}
+				/>
+			) : hasInsufficientCollateral ? (
+				<Trans
+					i18nKey="loans.tabs.new.button.insufficient-label"
+					values={{}}
 					components={[<NoTextTransform />]}
 				/>
 			) : hasLowCRatio ? (

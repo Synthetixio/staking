@@ -596,7 +596,8 @@
 					"approve-label": "APPROVE <0>{{collateralAsset}}</0>",
 					"borrow-label": "BORROW <0>{{debtAsset}}</0>",
 					"approving-label": "APPROVING...",
-					"borrowing-label": "BORROWING..."
+					"borrowing-label": "BORROWING...",
+					"insufficient-label": "insufficient collateral to borrow"
 				},
 				"debt": {
 					"label": "Borrow"
@@ -604,8 +605,8 @@
 				"collateral": {
 					"label": "Using"
 				},
-				"low-cratio-tip": "You can only borrow at 150% or higher. Your position will be eligible for liquidation if it falls below 120%.",
-				"healthy-cratio-tip": "Ensure your position stays above 120% to prevent liquidation.",
+				"low-cratio-tip": "You can only borrow at {{safeMinCRatio}}% or higher. Your position will be eligible for liquidation if it falls below {{minCRatio}}%.",
+				"healthy-cratio-tip": "Ensure your position stays above {{minCRatio}}% to prevent liquidation.",
 				"confirm-transaction": {
 					"left-panel-label": "BORROWING",
 					"right-panel-label": "POSTING"

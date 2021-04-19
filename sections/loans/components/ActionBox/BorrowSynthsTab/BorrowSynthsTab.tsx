@@ -1,4 +1,4 @@
-import React from 'react';
+import { FC, useState, useMemo, useCallback, useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 import { useTranslation } from 'react-i18next';
 import { ethers } from 'ethers';
@@ -23,7 +23,12 @@ import {
 	ModalItemTitle as TxModalItemTitle,
 	ModalItemText as TxModalItemText,
 } from 'styles/common';
-import { DEBT_ASSETS, MIN_CRATIO } from 'sections/loans/constants';
+import {
+	DEBT_ASSETS,
+	LOAN_TYPE_ERC20,
+	LOAN_TYPE_ETH,
+	SAFE_MIN_CRATIO,
+} from 'sections/loans/constants';
 import {
 	FormContainer,
 	InputsContainer,
@@ -45,24 +50,24 @@ import AssetInput from './AssetInput';
 
 type BorrowSynthsTabProps = {};
 
-const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
+const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 	const { t } = useTranslation();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const { connectWallet, signer } = Connector.useContainer();
 	const router = useRouter();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const address = useRecoilValue(walletAddressState);
-	const { renBTCContract } = Loans.useContainer();
+	const { renBTCContract, minCRatios } = Loans.useContainer();
 
-	const [gasPrice, setGasPrice] = React.useState<number>(0);
-	const [gasLimit, setGasLimitEstimate] = React.useState<number | null>(null);
+	const [gasPrice, setGasPrice] = useState<number>(0);
+	const [gasLimit, setGasLimitEstimate] = useState<number | null>(null);
 
-	const [txModalOpen, setTxModalOpen] = React.useState<boolean>(false);
+	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 
-	const [debtAmountNumber, setDebtAmount] = React.useState<string>('');
-	const [debtAsset, setDebtAsset] = React.useState<string>('');
+	const [debtAmountNumber, setDebtAmount] = useState<string>('');
+	const [debtAsset, setDebtAsset] = useState<string>('');
 	const debtDecimals = 18; // todo
-	const debtAmount = React.useMemo(() => {
+	const debtAmount = useMemo(() => {
 		try {
 			return toBigNumber(
 				ethers.utils.parseUnits(debtAmountNumber.toString(), debtDecimals).toString()
@@ -72,12 +77,14 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 		}
 	}, [debtAmountNumber, debtDecimals]);
 
-	const [collateralAmountNumber, setCollateralAmount] = React.useState<string>('');
-	const [minCollateralAmount, setMinCollateralAmount] = React.useState<Big>(toBigNumber(0));
-	const [collateralAsset, setCollateralAsset] = React.useState<string>('');
-	const [collateralAssets, setCollateralAssets] = React.useState<Array<string>>([]);
+	const [collateralAmountNumber, setCollateralAmount] = useState<string>('');
+	const [minCollateralAmount, setMinCollateralAmount] = useState<Big>(toBigNumber(0));
+	const [collateralAsset, setCollateralAsset] = useState<string>('');
+	const [collateralAssets, setCollateralAssets] = useState<Array<string>>([]);
+	const [collateralBalance, setCollateralBalance] = useState<Big>(toBigNumber(0));
+
 	const collateralDecimals = collateralAsset === 'renBTC' ? 8 : 18; // todo
-	const collateralAmount = React.useMemo(() => {
+	const collateralAmount = useMemo(() => {
 		try {
 			return toBigNumber(
 				ethers.utils.parseUnits(collateralAmountNumber.toString(), collateralDecimals).toString()
@@ -87,18 +94,21 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 		}
 	}, [collateralAmountNumber, collateralDecimals]);
 	const collateralIsETH = collateralAsset === 'ETH';
-	const collateralContract = React.useMemo(
+	const collateralContract = useMemo(
 		(): ethers.Contract | null => (!collateralIsETH ? null : renBTCContract),
 		[collateralIsETH, renBTCContract]
 	);
 
-	const hasLowCollateralAmount = React.useMemo(
+	const minCRatio =
+		minCRatios.get(collateralIsETH ? LOAN_TYPE_ETH : LOAN_TYPE_ERC20) || toBigNumber(0);
+
+	const hasLowCollateralAmount = useMemo(
 		() => !collateralAmount.isZero() && collateralAmount.lt(minCollateralAmount),
 		[collateralAmount, minCollateralAmount]
 	);
 	const minCollateralAmountString = formatUnits(minCollateralAmount, collateralDecimals, 2);
 
-	const loanContract = React.useMemo(() => {
+	const loanContract = useMemo(() => {
 		if (!signer) return;
 		const {
 			contracts: { CollateralEth: ethLoanContract, CollateralErc20: erc20LoanContract },
@@ -108,22 +118,31 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 
 	const loanContractAddress = loanContract?.address;
 
-	const [cratio, setCRatio] = React.useState(toBigNumber(0));
+	const [cratio, setCRatio] = useState(toBigNumber(0));
 
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const exchangeRates = exchangeRatesQuery.data ?? null;
 
-	const [isApproving, setIsApproving] = React.useState<boolean>(false);
-	const [isBorrowing, setIsBorrowing] = React.useState<boolean>(false);
-	const [isApproved, setIsApproved] = React.useState<boolean>(false);
-	const [error, setError] = React.useState<string | null>(null);
+	const [isApproving, setIsApproving] = useState<boolean>(false);
+	const [isBorrowing, setIsBorrowing] = useState<boolean>(false);
+	const [isApproved, setIsApproved] = useState<boolean>(false);
+	const [error, setError] = useState<string | null>(null);
 
-	const hasLowCRatio = React.useMemo(
-		() => !collateralAmount.isZero() && !debtAmount.isZero() && cratio.lt(MIN_CRATIO),
+	// const hasLowCRatio = useMemo(
+	// 	() => !collateralAmount.isZero() && !debtAmount.isZero() && cratio.lt(minCRatio),
+	// 	[collateralAmount, debtAmount, cratio, minCRatio]
+	// );
+	const hasLowCRatio = useMemo(
+		() => !collateralAmount.isZero() && !debtAmount.isZero() && cratio.lt(SAFE_MIN_CRATIO),
 		[collateralAmount, debtAmount, cratio]
 	);
 
-	const onSetDebtAsset = React.useCallback(
+	const hasInsufficientCollateral = useMemo(() => collateralBalance.lt(minCollateralAmount), [
+		collateralBalance,
+		minCollateralAmount,
+	]);
+
+	const onSetDebtAsset = useCallback(
 		(debtAsset: string): void => {
 			const collateralAssets =
 				debtAsset === 'sETH' ? ['ETH'] : debtAsset === 'sBTC' ? ['renBTC'] : ['ETH', 'renBTC'];
@@ -134,7 +153,7 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 		[setCollateralAssets, setCollateralAsset, setDebtAsset]
 	);
 
-	React.useEffect(() => {
+	useEffect(() => {
 		const debtAsset = DEBT_ASSETS[0];
 		onSetDebtAsset(debtAsset);
 	}, [onSetDebtAsset]);
@@ -150,21 +169,37 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 		!isApproved ? approve(gas) : borrow(gas);
 	};
 
-	const getApproveTxData = React.useCallback(
+	const getApproveTxData = useCallback(
 		(gas: Record<string, number>) => {
-			if (!(collateralContract && !collateralAmount.isZero())) return null;
+			if (
+				!(
+					collateralContract &&
+					!collateralAmount.isZero() &&
+					!hasLowCRatio &&
+					!hasInsufficientCollateral
+				)
+			)
+				return null;
 			return [
 				collateralContract,
 				'approve',
 				[loanContractAddress, collateralAmount.toString(), gas],
 			];
 		},
-		[collateralContract, loanContractAddress, collateralAmount]
+		[
+			collateralContract,
+			loanContractAddress,
+			collateralAmount,
+			hasInsufficientCollateral,
+			hasLowCRatio,
+		]
 	);
 
-	const getBorrowTxData = React.useCallback(
+	const getBorrowTxData = useCallback(
 		(gas: Record<string, number>) => {
-			if (!(loanContract && !debtAmount.isZero())) return null;
+			if (!(loanContract && !debtAmount.isZero() && !hasLowCRatio && !hasInsufficientCollateral))
+				return null;
+
 			const debtAssetCurrencyKey = ethers.utils.formatBytes32String(debtAsset);
 			return [
 				loanContract,
@@ -194,10 +229,12 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 			collateralAmount,
 			collateralDecimals,
 			collateralIsETH,
+			hasInsufficientCollateral,
+			hasLowCRatio,
 		]
 	);
 
-	const getTxData = React.useMemo(() => (!isApproved ? getApproveTxData : getBorrowTxData), [
+	const getTxData = useMemo(() => (!isApproved ? getApproveTxData : getBorrowTxData), [
 		isApproved,
 		getApproveTxData,
 		getBorrowTxData,
@@ -257,7 +294,7 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 	};
 
 	// approved
-	React.useEffect(() => {
+	useEffect(() => {
 		let isMounted = true;
 		const load = async () => {
 			if (collateralIsETH || !(collateralContract && loanContractAddress && address)) {
@@ -275,7 +312,7 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 	}, [collateralIsETH, collateralContract, address, loanContractAddress, collateralAmount]);
 
 	// min collateral amount
-	React.useEffect(() => {
+	useEffect(() => {
 		let isMounted = true;
 		const load = async () => {
 			if (!loanContract) {
@@ -293,7 +330,7 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 	}, [collateralIsETH, loanContract, collateralDecimals]);
 
 	// cratio
-	React.useEffect(() => {
+	useEffect(() => {
 		let isMounted = true;
 		const load = async () => {
 			if (!(exchangeRates && !collateralAmount.isZero() && !debtAmount.isZero())) {
@@ -324,7 +361,7 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 	}, [collateralAmount, collateralAsset, debtAmount, debtAsset, exchangeRates, collateralDecimals]);
 
 	// gas
-	React.useEffect(() => {
+	useEffect(() => {
 		if (!(!debtAmount.isZero() && !collateralAmount.isZero())) return;
 		let isMounted = true;
 		(async () => {
@@ -347,6 +384,26 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 			isMounted = false;
 		};
 	}, [getTxData, collateralAmount, debtAmount]);
+
+	// balance
+	useEffect(() => {
+		let isMounted = true;
+		const load = async () => {
+			let balance = ethers.BigNumber.from(0);
+			if (collateralIsETH) {
+				if (signer) {
+					balance = await signer.getBalance();
+				}
+			} else if (collateralContract && address) {
+				balance = await collateralContract.balanceOf(address);
+			}
+			if (isMounted) setCollateralBalance(toBigNumber(balance.toString()));
+		};
+		load();
+		return () => {
+			isMounted = false;
+		};
+	}, [collateralIsETH, collateralContract, address, signer]);
 
 	return (
 		<>
@@ -376,7 +433,7 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 
 				<SettingsContainer>
 					<SettingContainer>
-						<CRatio {...{ cratio, hasLowCRatio }} />
+						<CRatio {...{ cratio, hasLowCRatio, minCRatio }} />
 					</SettingContainer>
 					<SettingContainer>
 						<InterestRate />
@@ -402,6 +459,7 @@ const BorrowSynthsTab: React.FC<BorrowSynthsTabProps> = (props) => {
 					hasLowCRatio,
 					isApproving,
 					isBorrowing,
+					hasInsufficientCollateral: !collateralAmount.isZero() && hasInsufficientCollateral,
 				}}
 			/>
 
