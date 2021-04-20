@@ -5,7 +5,6 @@ import media from 'styles/media';
 import { FlexDivColCentered, ExternalLink, Tooltip } from 'styles/common';
 
 export type GridBoxProps = {
-	gridLocations: [string, string, string, string];
 	title: string;
 	copy: string;
 	icon: ReactNode;
@@ -18,7 +17,6 @@ export type GridBoxProps = {
 };
 
 export const GridBox: FC<GridBoxProps> = ({
-	gridLocations,
 	title,
 	copy,
 	icon,
@@ -47,14 +45,7 @@ export const GridBox: FC<GridBoxProps> = ({
 			disabled={!tooltip}
 			hideOnClick={false}
 		>
-			<GridBoxContainer
-				columnStart={gridLocations[0]}
-				columnEnd={gridLocations[1]}
-				rowStart={gridLocations[2]}
-				rowEnd={gridLocations[3]}
-				isDisabled={isDisabled}
-				{...{ gridArea }}
-			>
+			<GridBoxContainer isDisabled={isDisabled} {...{ gridArea }}>
 				{isDisabled ? (
 					components
 				) : (
@@ -84,20 +75,12 @@ const GridBoxTitle = styled.div`
 `;
 
 export const GridBoxContainer = styled.div<{
-	columnStart: string;
-	columnEnd: string;
-	rowStart: string;
-	rowEnd: string;
 	isDisabled?: boolean;
 	gridArea?: string;
 }>`
 	background: ${(props) => props.theme.colors.darkGradient1};
 	box-shadow: 0px 0px 20px ${(props) => props.theme.colors.backgroundBoxShadow};
 	border-radius: 2px;
-	/*
-	grid-column: ${(props) => `${props.columnStart} / ${props.columnEnd}`};
-	grid-row: ${(props) => `${props.rowStart} / ${props.rowEnd}`};
-	*/
 	grid-area: ${(props) => props.gridArea};
 	transition: transform 0.25s ease-in-out;
 

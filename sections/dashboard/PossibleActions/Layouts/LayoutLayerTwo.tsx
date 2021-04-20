@@ -1,6 +1,7 @@
 import { FC, useMemo } from 'react';
 import { Svg } from 'react-optimized-image';
 import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
 
 import ROUTES from 'constants/routes';
 import { EXTERNAL_LINKS } from 'constants/links';
@@ -13,10 +14,15 @@ import ClaimIcon from 'assets/svg/app/claim.svg';
 import BurnIcon from 'assets/svg/app/burn.svg';
 
 import GridBox, { GridBoxProps } from 'components/GridBox/Gridbox';
+
 import { GlowingCircle } from 'styles/common';
+import media from 'styles/media';
 
 import useUserStakingData from 'hooks/useUserStakingData';
+
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
+
+import { ActionsContainer as Container } from './common-styles';
 
 const LayoutLayerTwo: FC = () => {
 	const { t } = useTranslation();
@@ -28,7 +34,6 @@ const LayoutLayerTwo: FC = () => {
 		const aboveTargetCRatio = currentCRatio.isLessThanOrEqualTo(targetCRatio);
 		return [
 			{
-				gridLocations: ['col-1', 'col-2', 'row-1', 'row-4'],
 				icon: (
 					<GlowingCircle variant="green" size="md">
 						<Svg
@@ -48,7 +53,6 @@ const LayoutLayerTwo: FC = () => {
 				isDisabled: stakingRewards.isZero() && tradingRewards.isZero(),
 			},
 			{
-				gridLocations: ['col-2', 'col-3', 'row-1', 'row-4'],
 				icon: (
 					<GlowingCircle variant={!aboveTargetCRatio ? 'orange' : 'blue'} size="md">
 						{!aboveTargetCRatio ? <Svg src={BurnIcon} /> : <Svg src={MintIcon} />}
@@ -65,7 +69,6 @@ const LayoutLayerTwo: FC = () => {
 				link: !aboveTargetCRatio ? ROUTES.Staking.Burn : ROUTES.Staking.Mint,
 			},
 			{
-				gridLocations: ['col-3', 'col-4', 'row-1', 'row-4'],
 				icon: (
 					<GlowingCircle variant="orange" size="md">
 						<Svg src={KwentaIcon} width="32" />
@@ -76,15 +79,22 @@ const LayoutLayerTwo: FC = () => {
 				externalLink: EXTERNAL_LINKS.Trading.Kwenta,
 				isDisabled: true,
 			},
-		];
+		].map((cell, i) => ({ ...cell, gridArea: `tile-${i + 1}` }));
 	}, [t, currentCRatio, targetCRatio, stakingRewards, tradingRewards]);
+
 	return (
-		<>
+		<StyledContainer>
 			{gridItems.map((props, index) => (
 				<GridBox key={`${props.title}-${index}`} {...props} />
 			))}
-		</>
+		</StyledContainer>
 	);
 };
+
+const StyledContainer = styled(Container)`
+	grid-template-areas: 'tile-1 tile-2 tile-3';
+	grid-template-columns: 1fr 1fr 1fr;
+	gap: 1rem;
+`;
 
 export default LayoutLayerTwo;

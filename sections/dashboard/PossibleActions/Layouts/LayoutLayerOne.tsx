@@ -1,6 +1,7 @@
 import { FC, useMemo } from 'react';
 import { Svg } from 'react-optimized-image';
 import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
 
 import ROUTES from 'constants/routes';
 import { EXTERNAL_LINKS } from 'constants/links';
@@ -13,13 +14,19 @@ import MintIcon from 'assets/svg/app/mint.svg';
 import ClaimIcon from 'assets/svg/app/claim.svg';
 import BurnIcon from 'assets/svg/app/burn.svg';
 
-import GridBox, { GridBoxProps } from 'components/GridBox/Gridbox';
 import { GlowingCircle } from 'styles/common';
+import media from 'styles/media';
+
+import GridBox, { GridBoxProps } from 'components/GridBox/Gridbox';
 import Currency from 'components/Currency';
+
 import useUserStakingData from 'hooks/useUserStakingData';
+
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 import { LP } from 'sections/earn/types';
 import useShortRewardsData from 'hooks/useShortRewardsData';
+
+import { ActionsContainer as Container } from './common-styles';
 
 const LayoutLayerOne: FC = () => {
 	const { t } = useTranslation();
@@ -33,7 +40,6 @@ const LayoutLayerOne: FC = () => {
 		const aboveTargetCRatio = currentCRatio.isLessThanOrEqualTo(targetCRatio);
 		return [
 			{
-				gridLocations: ['col-1', 'col-2', 'row-1', 'row-2'],
 				icon: (
 					<GlowingCircle variant="green" size="md">
 						<Svg
@@ -53,7 +59,6 @@ const LayoutLayerOne: FC = () => {
 				isDisabled: stakingRewards.isZero() && tradingRewards.isZero(),
 			},
 			{
-				gridLocations: ['col-2', 'col-3', 'row-1', 'row-2'],
 				icon: (
 					<GlowingCircle variant={!aboveTargetCRatio ? 'orange' : 'blue'} size="md">
 						{!aboveTargetCRatio ? <Svg src={BurnIcon} /> : <Svg src={MintIcon} />}
@@ -70,7 +75,6 @@ const LayoutLayerOne: FC = () => {
 				link: !aboveTargetCRatio ? ROUTES.Staking.Burn : ROUTES.Staking.Mint,
 			},
 			{
-				gridLocations: ['col-3', 'col-4', 'row-1', 'row-2'],
 				icon: (
 					<GlowingCircle variant="orange" size="md">
 						<Svg src={KwentaIcon} width="32" />
@@ -81,7 +85,6 @@ const LayoutLayerOne: FC = () => {
 				externalLink: EXTERNAL_LINKS.Trading.Kwenta,
 			},
 			{
-				gridLocations: ['col-4', 'col-5', 'row-1', 'row-2'],
 				icon: (
 					<GlowingCircle variant="blue" size="md">
 						L2
@@ -92,7 +95,6 @@ const LayoutLayerOne: FC = () => {
 				link: ROUTES.L2.Home,
 			},
 			{
-				gridLocations: ['col-1', 'col-3', 'row-2', 'row-3'],
 				icon: (
 					<GlowingCircle variant="green" size="md">
 						<Currency.Icon currencyKey={Synths.sBTC} width="32" height="32" />
@@ -109,7 +111,6 @@ const LayoutLayerOne: FC = () => {
 				isDisabled: shortData[Synths.sBTC].APR === 0,
 			},
 			{
-				gridLocations: ['col-3', 'col-5', 'row-2', 'row-3'],
 				icon: (
 					<GlowingCircle variant="green" size="md">
 						<Currency.Icon currencyKey={Synths.sETH} width="32" height="32" />
@@ -123,7 +124,6 @@ const LayoutLayerOne: FC = () => {
 				isDisabled: shortData[Synths.sETH].APR === 0,
 			},
 			{
-				gridLocations: ['col-1', 'col-2', 'row-3', 'row-4'],
 				icon: (
 					<GlowingCircle variant="green" size="md">
 						<Currency.Icon currencyKey={CryptoCurrency.CRV} width="28" height="28" />
@@ -141,7 +141,6 @@ const LayoutLayerOne: FC = () => {
 				isDisabled: lpData[LP.CURVE_sUSD].APR === 0,
 			},
 			{
-				gridLocations: ['col-2', 'col-3', 'row-3', 'row-4'],
 				icon: (
 					<GlowingCircle variant="green" size="md">
 						<Currency.Icon currencyKey={LP.UNISWAP_DHT} width="28" height="28" />
@@ -158,7 +157,6 @@ const LayoutLayerOne: FC = () => {
 				isDisabled: lpData[LP.UNISWAP_DHT].APR === 0,
 			},
 			{
-				gridLocations: ['col-3', 'col-4', 'row-3', 'row-4'],
 				icon: (
 					<GlowingCircle variant="green" size="md">
 						<Currency.Icon currencyKey={Synths.sTSLA} width="28" height="28" />
@@ -174,15 +172,36 @@ const LayoutLayerOne: FC = () => {
 				link: ROUTES.Earn.sTLSA_LP,
 				isDisabled: lpData[LP.BALANCER_sTSLA].APR === 0,
 			},
-		];
+		].map((cell, i) => ({ ...cell, gridArea: `tile-${i + 1}` }));
 	}, [t, lpData, currentCRatio, targetCRatio, stakingRewards, tradingRewards, shortData]);
+
 	return (
-		<>
+		<StyledContainer>
 			{gridItems.map((props, index) => (
 				<GridBox key={`${props.title}-${index}`} {...props} />
 			))}
-		</>
+		</StyledContainer>
 	);
 };
+
+const StyledContainer = styled(Container)`
+	grid-template-areas:
+		'tile-1 tile-2 tile-3 tile-4'
+		'tile-5 tile-5 tile-6 tile-6'
+		'tile-7 tile-8 tile-9 tile-10';
+	grid-template-columns: 1fr 1fr 1fr 1fr;
+	grid-template-rows: 1fr 1fr 1fr;
+	gap: 1rem;
+
+	${media.lessThan('mdUp')`
+		grid-template-areas:
+			'tile-1 tile-2'
+			'tile-3 tile-4'
+			'tile-5 tile-6'
+			'tile-7 tile-8'
+			'tile-9 tile-10';
+		grid-template-columns: 1fr 1fr;
+	`}
+`;
 
 export default LayoutLayerOne;

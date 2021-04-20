@@ -15,11 +15,10 @@ import Slider from 'react-slick';
 import media from 'styled-media-query';
 
 type WizardGridBoxProps = {
-	gridLocations: [string, string, string, string];
 	gridArea?: string;
 };
 
-export const WizardGridBox: FC<WizardGridBoxProps> = ({ gridLocations, gridArea }) => {
+export const WizardGridBox: FC<WizardGridBoxProps> = ({ gridArea }) => {
 	const { t } = useTranslation();
 	const slider = useRef<any>();
 	const STEPS = [
@@ -60,13 +59,7 @@ export const WizardGridBox: FC<WizardGridBoxProps> = ({ gridLocations, gridArea 
 	};
 
 	return (
-		<GridBoxContainer
-			columnStart={gridLocations[0]}
-			columnEnd={gridLocations[1]}
-			rowStart={gridLocations[2]}
-			rowEnd={gridLocations[3]}
-			{...{ gridArea }}
-		>
+		<GridBoxContainer {...{ gridArea }}>
 			<SliderContainer>
 				<Slider arrows={false} dots={true} fade={true} ref={slider}>
 					{STEPS.map(({ id, icon, subtitle, title }) => (

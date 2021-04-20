@@ -1,17 +1,21 @@
 import { FC, useMemo } from 'react';
 import { Svg } from 'react-optimized-image';
 import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
 
 import ROUTES from 'constants/routes';
 import { EXTERNAL_LINKS } from 'constants/links';
+
+import media from 'styles/media';
+import { GlowingCircle } from 'styles/common';
 
 import KwentaIcon from 'assets/svg/app/kwenta.svg';
 import MintIcon from 'assets/svg/app/mint.svg';
 import LearnIcon from 'assets/svg/app/learn.svg';
 
 import GridBox, { GridBoxProps } from 'components/GridBox/Gridbox';
-import { GlowingCircle } from 'styles/common';
 
+import { ActionsContainer as Container } from '../common-styles';
 import WizardGridBox from './WizardGridBox';
 
 const WelcomeLayout: FC = () => {
@@ -20,7 +24,6 @@ const WelcomeLayout: FC = () => {
 	const gridItems: GridBoxProps[] = useMemo(
 		() => [
 			{
-				gridLocations: ['col-3', 'col-5', 'row-1', 'row-2'],
 				gridArea: 'tile-1',
 				icon: (
 					<GlowingCircle variant="blue" size="md">
@@ -32,7 +35,6 @@ const WelcomeLayout: FC = () => {
 				link: ROUTES.Staking.Home,
 			},
 			{
-				gridLocations: ['col-3', 'col-5', 'row-2', 'row-3'],
 				gridArea: 'tile-2',
 				icon: (
 					<GlowingCircle variant="yellow" size="md">
@@ -44,7 +46,6 @@ const WelcomeLayout: FC = () => {
 				externalLink: EXTERNAL_LINKS.Social.Blog,
 			},
 			{
-				gridLocations: ['col-3', 'col-5', 'row-3', 'row-4'],
 				gridArea: 'tile-3',
 				icon: (
 					<GlowingCircle variant="orange" size="md">
@@ -59,13 +60,31 @@ const WelcomeLayout: FC = () => {
 		[t]
 	);
 	return (
-		<>
-			<WizardGridBox gridLocations={['col-1', 'col-3', 'row-1', 'row-4']} gridArea="main-tile" />
+		<StyledContainer>
+			<WizardGridBox gridArea="main-tile" />
 			{gridItems.map((props, index) => (
 				<GridBox key={`${props.title}-${index}`} {...props} />
 			))}
-		</>
+		</StyledContainer>
 	);
 };
+
+const StyledContainer = styled(Container)`
+	grid-template-areas:
+		'main-tile tile-1 tile-1'
+		'main-tile tile-2 tile-3';
+	grid-template-columns: 1fr 1fr 1fr;
+	grid-template-rows: 1fr 1fr;
+	gap: 1rem;
+
+	${media.lessThan('mdUp')`
+		grid-template-areas:
+			'main-tile main-tile'
+			'tile-1 tile-1'
+			'tile-2 tile-3';
+		grid-template-columns: 1fr 1fr;
+		grid-template-rows: 2fr 1fr 1fr;
+	`}
+`;
 
 export default WelcomeLayout;
