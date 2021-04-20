@@ -30,11 +30,12 @@ import media, { getIsMediumScreen } from 'styles/media';
 
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 
+import PriceItem from 'sections/shared/Layout/Stats/PriceItem';
+import PeriodBarStats from 'sections/shared/Layout/Stats/PeriodBarStats';
+import BalanceItem from 'sections/shared/Layout/Stats/BalanceItem';
+import CRatioBarStats from 'sections/shared/Layout/Stats/CRatioBarStats';
+
 import SubMenu from './SubMenu';
-import PriceItem from './PriceItem';
-import PeriodBarStats from './PeriodBarStats';
-import BalanceItem from './BalanceItem';
-import CRatioBarStats from './CRatioBarStats';
 
 const getKeyValue = <T extends object, U extends keyof T>(obj: T) => (key: U) => obj[key];
 
@@ -135,14 +136,16 @@ const SideNav: FC = () => {
 					</MenuLinkItem>
 				))}
 			</MenuLinks>
-			<LineSeparator />
-			<MenuCharts>
-				<CRatioBarStats />
-				<BalanceItem amount={snxBalance} currencyKey={CryptoCurrency.SNX} />
-				<BalanceItem amount={sUSDBalance} currencyKey={Synths.sUSD} />
-				<PriceItem currencyKey={CryptoCurrency.SNX} data={snxPriceChartData} />
-				<PeriodBarStats />
-			</MenuCharts>
+			<DesktopOnlyView>
+				<LineSeparator />
+				<MenuCharts>
+					<CRatioBarStats />
+					<BalanceItem amount={snxBalance} currencyKey={CryptoCurrency.SNX} />
+					<BalanceItem amount={sUSDBalance} currencyKey={Synths.sUSD} />
+					<PriceItem currencyKey={CryptoCurrency.SNX} data={snxPriceChartData} />
+					<PeriodBarStats />
+				</MenuCharts>
+			</DesktopOnlyView>
 			<SubMenu currentPath={asPath} config={subMenuConfiguration} />
 		</SideNavContainer>
 	);
@@ -246,9 +249,6 @@ const LineSeparator = styled.div`
 
 const MenuCharts = styled.div`
 	margin: 0 auto;
-	@media screen and (max-height: 815px) {
-		display: none;
-	}
 `;
 
 export default SideNav;

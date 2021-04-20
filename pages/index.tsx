@@ -4,10 +4,11 @@ import styled from 'styled-components';
 
 import { useTranslation } from 'react-i18next';
 
-import { FlexDivCol, LineSpacer, StatsSection } from 'styles/common';
+import { FlexDivCol, LineSpacer } from 'styles/common';
 import { PossibleActions } from 'sections/dashboard';
 
 import StatBox from 'components/StatBox';
+import StatsSection from 'components/StatsSection';
 import useUserStakingData from 'hooks/useUserStakingData';
 
 import { formatFiatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
