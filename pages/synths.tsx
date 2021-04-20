@@ -3,11 +3,12 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { useRecoilValue } from 'recoil';
 
-import { StatsSection, LineSpacer } from 'styles/common';
+import { StatsSection, LineSpacer, VerticalSpacer } from 'styles/common';
 
 import AssetsTable from 'sections/synths/AssetsTable';
 
 import StatBox from 'components/StatBox';
+import KwentaBanner from 'components/KwentaBanner';
 
 import { isWalletConnectedState } from 'store/wallet';
 
@@ -65,6 +66,8 @@ const SynthsPage = () => {
 				showHoldings={true}
 				showConvert={false}
 			/>
+			{!totalSynthValue.isZero() ? <KwentaBanner /> : null}
+			<VerticalSpacer />
 			{isWalletConnected && cryptoBalances.balances.length > 0 && (
 				<AssetsTable
 					title={t('synths.assets.non-synths.title')}

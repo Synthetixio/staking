@@ -231,7 +231,7 @@ const AssetsTable: FC<AssetsTableProps> = ({
 };
 
 const Container = styled.div`
-	padding-bottom: 20px;
+	margin-bottom: 8px;
 `;
 
 const StyledTable = styled(Table)`
