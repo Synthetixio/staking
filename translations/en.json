@@ -1024,7 +1024,7 @@
 			"warning-url": "WARNING: Please make sure the URL is <0>staking.synthetix.io</0> (bookmark this page to be safe)"
 		},
 		"error": {
-			"please-install-metamask": "Please install Metamask"
+			"please-install-metamask": "Please install Metamask or manually add the Optimism network to your browser wallet."
 		}
 	},
 	"common": {
