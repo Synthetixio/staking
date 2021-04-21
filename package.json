@@ -21,7 +21,7 @@
 		"@metamask/detect-provider": "1.2.0",
 		"@reach/dialog": "0.12.1",
 		"@snapshot-labs/snapshot.js": "0.1.7",
-		"@synthetixio/assets": "2.0.7",
+		"@synthetixio/assets": "2.0.9",
 		"@synthetixio/contracts-interface": "2.41.0",
 		"@synthetixio/js": "2.41.0",
 		"@synthetixio/optimism-networks": "0.0.14",

@@ -46,7 +46,7 @@ import {
 	HeaderLabel,
 } from '../common';
 
-import { LP } from 'sections/earn/types';
+import { LP, lpToSynthTranslationKey } from 'sections/earn/types';
 import styled from 'styled-components';
 
 type DualRewards = {
@@ -188,6 +188,8 @@ const LPTab: FC<LPTabProps> = ({
 			return 'earn.incentives.options.stsla.description';
 		} else if (stakedAsset === LP.UNISWAP_DHT) {
 			return 'earn.incentives.options.dht.description';
+		} else if (stakedAsset in lpToSynthTranslationKey) {
+			return `earn.incentives.options.${lpToSynthTranslationKey[stakedAsset]}.description`;
 		} else {
 			throw new Error('unexpected staking asset for translation key');
 		}
