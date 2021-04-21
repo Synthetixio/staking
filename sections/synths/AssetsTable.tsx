@@ -157,7 +157,7 @@ const AssetsTable: FC<AssetsTableProps> = ({
 					if (currencyKey === CryptoCurrency.SNX) {
 						return (
 							<Link href={ROUTES.Staking.Home}>
-								<StyledButton>{t('common.stake-snx')}</StyledButton>
+								<StyledButtonPink>{t('common.stake-snx')}</StyledButtonPink>
 							</Link>
 						);
 					}
@@ -165,7 +165,7 @@ const AssetsTable: FC<AssetsTableProps> = ({
 						<ExternalLink
 							href={EXTERNAL_LINKS.Trading.OneInchLink(currencyKey, CryptoCurrency.SNX)}
 						>
-							<StyledButton>
+							<StyledButtonPink>
 								<Trans
 									i18nKey="common.currency.buy-currency"
 									values={{
@@ -173,7 +173,7 @@ const AssetsTable: FC<AssetsTableProps> = ({
 									}}
 									components={[<NoTextTransform />]}
 								/>
-							</StyledButton>
+							</StyledButtonPink>
 						</ExternalLink>
 					);
 				},
@@ -191,9 +191,11 @@ const AssetsTable: FC<AssetsTableProps> = ({
 					original: { currencyKey },
 				},
 			}: CellProps<CryptoBalance>) => {
-				return currencyKey.isSynth ? (
-					<StyledButton>{t('synths.assets.synths.table.transfer')}</StyledButton>
-				) : null;
+				return isSynth(currencyKey) || currencyKey === CryptoCurrency.SNX ? (
+					<StyledButtonBlue>{t('synths.assets.synths.table.transfer')}</StyledButtonBlue>
+				) : (
+					<></>
+				);
 			},
 			width: 200,
 			sortable: false,
@@ -267,11 +269,12 @@ const Header = styled.div`
 	padding-bottom: 20px;
 `;
 
-const StyledButton = styled(Button).attrs({
-	variant: 'secondary',
-})`
+const StyledButton = styled(Button)`
 	text-transform: uppercase;
 	width: 120px;
 `;
+
+const StyledButtonBlue = styled(StyledButton).attrs({ variant: 'secondary' })``;
+const StyledButtonPink = styled(StyledButton).attrs({ variant: 'tertiary' })``;
 
 export default AssetsTable;

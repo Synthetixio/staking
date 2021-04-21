@@ -4,7 +4,7 @@ import Color from 'color';
 
 type ButtonProps = {
 	size?: 'sm' | 'md' | 'lg' | 'xl';
-	variant: 'primary' | 'secondary' | 'solid' | 'outline' | 'text';
+	variant: 'primary' | 'secondary' | 'tertiary' | 'solid' | 'outline' | 'text';
 	isActive?: boolean;
 	isRounded?: boolean;
 };
@@ -51,7 +51,7 @@ const Button = styled.button<ButtonProps>`
 			padding: 0 40px;
 			height: 40px;
 			line-height: 40px;
-		`}		
+		`}
 
 
 	${(props) =>
@@ -59,7 +59,7 @@ const Button = styled.button<ButtonProps>`
 		css`
 			height: 48px;
 			line-height: 48px;
-		`}				
+		`}
 
 	${(props) =>
 		props.variant === 'primary' &&
@@ -90,7 +90,22 @@ const Button = styled.button<ButtonProps>`
 						color: ${(props) => props.theme.colors.black};
 					}
 				}
-			`}	
+			`}
+
+		${(props) =>
+			props.variant === 'tertiary' &&
+			css`
+				color: ${(props) => props.theme.colors.pink};
+				background: ${(props) => props.theme.colors.grayBlue};
+				box-shadow: 0px 0px 15px rgba(237, 30, 255, 0.6);
+				border: 1px solid ${(props) => props.theme.colors.pink};
+				&:hover {
+					&:not(:disabled) {
+						background: ${(props) => props.theme.colors.pink};
+						color: ${(props) => props.theme.colors.black};
+					}
+				}
+			`}
 
 
 		${(props) =>
@@ -106,7 +121,7 @@ const Button = styled.button<ButtonProps>`
 				&:disabled {
 					background: ${(props) => Color(props.theme.colors.navy).alpha(0.2).rgb().string()};
 				}
-			`}		
+			`}
 
 
 		${(props) =>
@@ -124,7 +139,7 @@ const Button = styled.button<ButtonProps>`
 					background: ${(props) => Color(props.theme.colors.navy).alpha(0.2).rgb().string()};
 					opacity: 0.5;
 				}
-			`}		
+			`}
 
 
 		${(props) =>
@@ -137,7 +152,7 @@ const Button = styled.button<ButtonProps>`
 						color: ${(props) => props.theme.colors.blue};
 					}
 				}
-			`}	
+			`}
 `;
 
 export default Button;
