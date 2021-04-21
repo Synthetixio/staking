@@ -168,10 +168,10 @@ const useConnector = () => {
 
 	// load previously saved wallet
 	useEffect(() => {
-		if (onboard && selectedWallet) {
+		if (onboard && selectedWallet && !walletAddress) {
 			onboard.walletSelect(selectedWallet);
 		}
-	}, [onboard, selectedWallet]);
+	}, [onboard, selectedWallet, walletAddress]);
 
 	useEffect(() => {
 		const getAddressCode = async () => {
