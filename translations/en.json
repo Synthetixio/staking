@@ -852,6 +852,7 @@
 					"percentage-of-pool": "% of pool",
 					"percentage-of-portfolio": "% of portfolio",
 					"debt-pool-proportion": "% of global debt",
+					"transfer": "Transfer",
 					"no-synths": {
 						"title": "You have no Synths",
 						"desc": "Mint sUSD by staking your SNX"

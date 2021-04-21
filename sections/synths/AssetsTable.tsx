@@ -20,6 +20,7 @@ import {
 	TableNoResultsDesc,
 	TableNoResultsButtonContainer,
 	NoTextTransform,
+	FlexDiv,
 } from 'styles/common';
 import { CryptoBalance } from 'queries/walletBalances/types';
 
@@ -132,10 +133,12 @@ const AssetsTable: FC<AssetsTableProps> = ({
 				accessor: (originalRow: any) => originalRow.usdBalance.toNumber(),
 				sortType: 'basic',
 				Cell: (cellProps: CellProps<CryptoBalance>) => (
-					<SynthHolding
-						usdBalance={cellProps.row.original.usdBalance}
-						totalUSDBalance={totalValue ?? zeroBN}
-					/>
+					<FlexDiv style={{ width: '50%' }}>
+						<SynthHolding
+							usdBalance={cellProps.row.original.usdBalance}
+							totalUSDBalance={totalValue ?? zeroBN}
+						/>
+					</FlexDiv>
 				),
 				width: 200,
 				sortable: true,
@@ -178,6 +181,23 @@ const AssetsTable: FC<AssetsTableProps> = ({
 				sortable: false,
 			});
 		}
+
+		columns.push({
+			Header: <></>,
+			id: 'transfer',
+			sortType: 'basic',
+			Cell: ({
+				row: {
+					original: { currencyKey },
+				},
+			}: CellProps<CryptoBalance>) => {
+				return currencyKey.isSynth ? (
+					<StyledButton>{t('synths.assets.synths.table.transfer')}</StyledButton>
+				) : null;
+			},
+			width: 200,
+			sortable: false,
+		});
 		return columns;
 	}, [
 		showHoldings,
