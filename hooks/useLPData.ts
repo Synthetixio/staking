@@ -10,7 +10,7 @@ import { DualRewardsLiquidityPoolData, LiquidityPoolData } from 'queries/liquidi
 import { LP } from 'sections/earn/types';
 import useDHTsUSDPoolQuery from 'queries/liquidityPools/useDHTsUDPoolQuery';
 import useBalancerPoolQuery from 'queries/liquidityPools/useBalancerPoolQuery';
-import { balancersTSLAPoolToken } from 'contracts';
+import { balancersTSLAPoolToken, balancersFBPoolToken } from 'contracts';
 
 type LPData = {
 	[name: string]: {
@@ -35,7 +35,7 @@ const useLPData = (): LPData => {
 	const usesFBPool = useBalancerPoolQuery(
 		Synths.sFB,
 		'StakingRewardssTSLABalancer',
-		balancersTSLAPoolToken
+		balancersFBPoolToken
 	);
 	const usesAAPLPool = useBalancerPoolQuery(
 		Synths.sAAPL,
