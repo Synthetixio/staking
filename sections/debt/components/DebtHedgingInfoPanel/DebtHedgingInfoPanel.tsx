@@ -14,9 +14,7 @@ const DebtHedgingInfoPanel: React.FC<DebtHedgingInfoPanelProps> = ({ hidden }) =
 	return (
 		<InfoPanelContainer>
 			<InfoPanelTitle>{t('debt.actions.manage.info-panel.title')}</InfoPanelTitle>
-			<InfoPanelBody>
-				{t('debt.actions.manage.info-panel.body')} <a href="#">Learn more</a>
-			</InfoPanelBody>
+			<InfoPanelBody>{t('debt.actions.manage.info-panel.body')}</InfoPanelBody>
 			<DebtHedgingChart />
 		</InfoPanelContainer>
 	);

@@ -48,22 +48,7 @@ const DebtHedgingChart: React.FC = () => {
 						tickLine={false}
 						tickFormatter={(tick) => format(new Date(tick * 1000), 'd MMM yy').toUpperCase()}
 					/>
-					<YAxis
-						width={0}
-						// axisLine={{ stroke: colors.white, strokeWidth: 1 }}
-						domain={['auto', 'auto']}
-						tickLine={false}
-					/>
-					{/* <Tooltip
-						cursor={{ stroke: colors.white, strokeDasharray: 2 }}
-						content={<CustomTooltip />}
-						contentStyle={{
-							opacity: 1,
-							backgroundColor: colors.navy,
-							zIndex: 1000,
-							borderColor: colors.navy,
-						}}
-					/> */}
+					<YAxis width={0} domain={['auto', 'auto']} tickLine={false} />
 					<Line
 						type="monotone"
 						dataKey="issuance"
@@ -78,7 +63,6 @@ const DebtHedgingChart: React.FC = () => {
 						strokeWidth={2}
 						dot={false}
 					/>
-					{/* <ReferenceLine y={0} isFront={false} strokeWidth={1} stroke={colors.mediumBlue} /> */}
 				</LineChart>
 			</ResponsiveContainer>
 		</ChartContainer>
