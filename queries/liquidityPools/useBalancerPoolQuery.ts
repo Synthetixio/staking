@@ -38,7 +38,7 @@ const useBalancerPoolQuery = (
 	return useQuery<LiquidityPoolData>(
 		QUERY_KEYS.LiquidityPools.Balancer(walletAddress ?? '', synth, network?.id!),
 		async () => {
-			let {
+			const {
 				contracts: { [rewardsContractName]: StakingRewardsContract },
 			} = synthetix.js!;
 
