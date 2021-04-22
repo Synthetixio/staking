@@ -10,7 +10,14 @@ import { DualRewardsLiquidityPoolData, LiquidityPoolData } from 'queries/liquidi
 import { LP } from 'sections/earn/types';
 import useDHTsUSDPoolQuery from 'queries/liquidityPools/useDHTsUDPoolQuery';
 import useBalancerPoolQuery from 'queries/liquidityPools/useBalancerPoolQuery';
-import { balancersTSLAPoolToken, balancersFBPoolToken } from 'contracts';
+import {
+	balancersTSLAPoolToken,
+	balancersFBPoolToken,
+	balancersAAPLPoolToken,
+	balancersAMZNPoolToken,
+	balancersNFLXPoolToken,
+	balancersGOOGPoolToken,
+} from 'contracts';
 
 type LPData = {
 	[name: string]: {
@@ -34,28 +41,28 @@ const useLPData = (): LPData => {
 	);
 	const usesFBPool = useBalancerPoolQuery(
 		Synths.sFB,
-		'StakingRewardssTSLABalancer',
+		'StakingRewardssFBBalancer',
 		balancersFBPoolToken
 	);
 	const usesAAPLPool = useBalancerPoolQuery(
 		Synths.sAAPL,
-		'StakingRewardssTSLABalancer',
-		balancersTSLAPoolToken
+		'StakingRewardssAAPLBalancer',
+		balancersAAPLPoolToken
 	);
 	const usesAMZNPool = useBalancerPoolQuery(
 		Synths.sAMZN,
-		'StakingRewardssTSLABalancer',
-		balancersTSLAPoolToken
+		'StakingRewardssAMZNBalancer',
+		balancersAMZNPoolToken
 	);
 	const usesNFLXPool = useBalancerPoolQuery(
 		Synths.sNFLX,
-		'StakingRewardssTSLABalancer',
-		balancersTSLAPoolToken
+		'StakingRewardssNFLXBalancer',
+		balancersNFLXPoolToken
 	);
 	const usesGOOGPool = useBalancerPoolQuery(
 		Synths.sGOOG,
-		'StakingRewardssTSLABalancer',
-		balancersTSLAPoolToken
+		'StakingRewardssGOOGBalancer',
+		balancersGOOGPoolToken
 	);
 	const usesDHTPool = useDHTsUSDPoolQuery();
 
