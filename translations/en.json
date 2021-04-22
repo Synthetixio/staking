@@ -862,6 +862,10 @@
 			"non-synths": {
 				"title": "Non-Synth Balances"
 			}
+		},
+		"transfer": {
+			"modal-title": "Transfer to another wallet",
+			"input-label": "Transfer"
 		}
 	},
 	"gov": {

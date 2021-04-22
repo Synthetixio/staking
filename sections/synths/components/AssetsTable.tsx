@@ -37,7 +37,7 @@ import Button from 'components/Button';
 import { zeroBN } from 'utils/formatters/number';
 import { isSynth } from 'utils/currencies';
 
-import SynthPriceCol from './components/SynthPriceCol';
+import SynthPriceCol from './SynthPriceCol';
 import SynthHolding from 'components/SynthHolding';
 import Link from 'next/link';
 
@@ -49,6 +49,7 @@ type AssetsTableProps = {
 	isLoaded: boolean;
 	showConvert: boolean;
 	showHoldings: boolean;
+	onTransferClick: (asset: string) => void;
 };
 
 const AssetsTable: FC<AssetsTableProps> = ({
@@ -59,6 +60,7 @@ const AssetsTable: FC<AssetsTableProps> = ({
 	title,
 	showHoldings,
 	showConvert,
+	onTransferClick,
 }) => {
 	const { t } = useTranslation();
 	const { connectWallet } = Connector.useContainer();
@@ -192,7 +194,9 @@ const AssetsTable: FC<AssetsTableProps> = ({
 				},
 			}: CellProps<CryptoBalance>) => {
 				return isSynth(currencyKey) || currencyKey === CryptoCurrency.SNX ? (
-					<StyledButtonBlue>{t('synths.assets.synths.table.transfer')}</StyledButtonBlue>
+					<StyledButtonBlue onClick={() => onTransferClick(currencyKey)}>
+						{t('synths.assets.synths.table.transfer')}
+					</StyledButtonBlue>
 				) : (
 					<></>
 				);
