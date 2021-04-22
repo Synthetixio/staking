@@ -335,7 +335,7 @@ const LPTab: FC<LPTabProps> = ({
 	};
 
 	return (
-		<TabContainer>
+		<StyledTabContainer>
 			<HeaderLabel>
 				<Trans i18nKey={translationKey} components={[<StyledLink href={getLink()} />]} />
 			</HeaderLabel>
@@ -396,9 +396,13 @@ const LPTab: FC<LPTabProps> = ({
 			{showSettleOverlayModal && (
 				<Settle setShowSettleOverlayModal={setShowSettleOverlayModal} stakedAsset={stakedAsset} />
 			)}
-		</TabContainer>
+		</StyledTabContainer>
 	);
 };
+
+const StyledTabContainer = styled(TabContainer)`
+	height: inherit;
+`;
 
 const StyledFlexDivColCentered = styled(FlexDivColCentered)`
 	padding: 20px 30px;
