@@ -64,7 +64,7 @@ const StyledDialogContent = styled(DialogContent)`
 	${media.lessThan('sm')`
 		&&& {		
 			width: 100%;
-			height: 100%;
+			/* height: 100%; */
 			margin: 0;
 		}
 	`}

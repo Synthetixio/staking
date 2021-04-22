@@ -45,9 +45,11 @@ const StatsSection: FC = ({ children }) => {
 
 	return (
 		<>
-			<ToggleMobileStatsSection onClick={toggleMobileStatsSection}>
-				{mobileStatsSectionIsOpen ? <Svg src={CollapseIcon} /> : <Svg src={ExpandIcon} />}
-			</ToggleMobileStatsSection>
+			<MobileOrTabletView>
+				<ToggleMobileStatsSection onClick={toggleMobileStatsSection}>
+					{mobileStatsSectionIsOpen ? <Svg src={CollapseIcon} /> : <Svg src={ExpandIcon} />}
+				</ToggleMobileStatsSection>
+			</MobileOrTabletView>
 			<StatsContainer>{children}</StatsContainer>
 			<MobileOrTabletView>
 				<MobileOrTabletViewInner isVisible={mobileStatsSectionIsOpen}>
@@ -80,9 +82,10 @@ const ToggleMobileStatsSection = styled.div`
 `;
 
 const MobileOrTabletViewInner = styled.div<{ isVisible: boolean }>`
-	transition: height 0.25s ease-in-out;
+	transition: height, opacity 0.5s ease-in-out;
 	overflow-y: hidden;
 	height: ${(props) => (props.isVisible ? '180px' : '0')};
+	opacity: ${(props) => (props.isVisible ? '1' : '0')};
 `;
 
 const TopContainer = styled.div`

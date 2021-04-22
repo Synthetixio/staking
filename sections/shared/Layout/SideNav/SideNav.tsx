@@ -137,14 +137,16 @@ const SideNav: FC = () => {
 				))}
 			</MenuLinks>
 			<DesktopOnlyView>
-				<LineSeparator />
-				<MenuCharts>
-					<CRatioBarStats />
-					<BalanceItem amount={snxBalance} currencyKey={CryptoCurrency.SNX} />
-					<BalanceItem amount={sUSDBalance} currencyKey={Synths.sUSD} />
-					<PriceItem currencyKey={CryptoCurrency.SNX} data={snxPriceChartData} />
-					<PeriodBarStats />
-				</MenuCharts>
+				<>
+					<LineSeparator />
+					<MenuCharts>
+						<CRatioBarStats />
+						<BalanceItem amount={snxBalance} currencyKey={CryptoCurrency.SNX} />
+						<BalanceItem amount={sUSDBalance} currencyKey={Synths.sUSD} />
+						<PriceItem currencyKey={CryptoCurrency.SNX} data={snxPriceChartData} />
+						<PeriodBarStats />
+					</MenuCharts>
+				</>
 			</DesktopOnlyView>
 			<SubMenu currentPath={asPath} config={subMenuConfiguration} />
 		</SideNavContainer>
@@ -249,6 +251,7 @@ const LineSeparator = styled.div`
 
 const MenuCharts = styled.div`
 	margin: 0 auto;
+	width: calc(100% - 48px);
 `;
 
 export default SideNav;
