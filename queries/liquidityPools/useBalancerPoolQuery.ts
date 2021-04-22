@@ -14,10 +14,20 @@ import {
 import Connector from 'containers/Connector';
 
 import { LiquidityPoolData } from './types';
-import { balancersTSLAPoolToken } from 'contracts';
-import { getsTSLABalancerPool } from './helper';
+import { getBalancerPool } from './helper';
+import { Synths } from 'constants/currency';
 
-const useTSLAPoolQuery = (options?: QueryConfig<LiquidityPoolData>) => {
+type BalancerPoolTokenContract = {
+	address: string;
+	abi: any[];
+};
+
+const useBalancerPoolQuery = (
+	synth: Synths,
+	rewardsContractName: string,
+	balancerPoolTokenContract: BalancerPoolTokenContract,
+	options?: QueryConfig<LiquidityPoolData>
+) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
@@ -26,44 +36,43 @@ const useTSLAPoolQuery = (options?: QueryConfig<LiquidityPoolData>) => {
 	const isMainnet = useRecoilValue(isMainnetState);
 
 	return useQuery<LiquidityPoolData>(
-		QUERY_KEYS.LiquidityPools.sTSLA(walletAddress ?? '', network?.id!),
+		QUERY_KEYS.LiquidityPools.Balancer(walletAddress ?? '', synth, network?.id!),
 		async () => {
-			const {
-				contracts: { StakingRewardssTSLABalancer },
+			let {
+				contracts: { [rewardsContractName]: StakingRewardsContract },
 			} = synthetix.js!;
 
-			const sTSLABPTokenPrice = getsTSLABalancerPool();
+			const BPTokenPrice = getBalancerPool(balancerPoolTokenContract.address);
 
-			const sTSLABalancerContract = new ethers.Contract(
-				balancersTSLAPoolToken.address,
-				balancersTSLAPoolToken.abi,
+			const BalancerContract = new ethers.Contract(
+				balancerPoolTokenContract.address,
+				balancerPoolTokenContract.abi,
 				provider as ethers.providers.Provider
 			);
 
-			const { address } = StakingRewardssTSLABalancer;
-			const getDuration =
-				StakingRewardssTSLABalancer.DURATION || StakingRewardssTSLABalancer.rewardsDuration;
+			const { address } = StakingRewardsContract;
+			const getDuration = StakingRewardsContract.DURATION || StakingRewardsContract.rewardsDuration;
 
 			const [
 				duration,
 				rate,
 				periodFinish,
-				sTslaLPBalance,
-				sTslaLPUserBalance,
+				LPBalance,
+				LPUserBalance,
 				price,
-				sTslaSNXRewards,
-				sTslaLPStaked,
-				sTslaLPAllowance,
+				SNXRewards,
+				LPStaked,
+				LPAllowance,
 			] = await Promise.all([
 				getDuration(),
-				StakingRewardssTSLABalancer.rewardRate(),
-				StakingRewardssTSLABalancer.periodFinish(),
-				sTSLABalancerContract.balanceOf(address),
-				sTSLABalancerContract.balanceOf(walletAddress),
-				sTSLABPTokenPrice,
-				StakingRewardssTSLABalancer.earned(walletAddress),
-				StakingRewardssTSLABalancer.balanceOf(walletAddress),
-				sTSLABalancerContract.allowance(walletAddress, address),
+				StakingRewardsContract.rewardRate(),
+				StakingRewardsContract.periodFinish(),
+				BalancerContract.balanceOf(address),
+				BalancerContract.balanceOf(walletAddress),
+				BPTokenPrice,
+				StakingRewardsContract.earned(walletAddress),
+				StakingRewardsContract.balanceOf(walletAddress),
+				BalancerContract.allowance(walletAddress, address),
 			]);
 			const durationInWeeks = Number(duration) / 3600 / 24 / 7;
 			const isPeriodFinished = new Date().getTime() > Number(periodFinish) * 1000;
@@ -72,11 +81,11 @@ const useTSLAPoolQuery = (options?: QueryConfig<LiquidityPoolData>) => {
 				: Math.trunc(Number(duration) * (rate / 1e18)) / durationInWeeks;
 
 			const [balance, userBalance, rewards, staked, allowance] = [
-				sTslaLPBalance,
-				sTslaLPUserBalance,
-				sTslaSNXRewards,
-				sTslaLPStaked,
-				sTslaLPAllowance,
+				LPBalance,
+				LPUserBalance,
+				SNXRewards,
+				LPStaked,
+				LPAllowance,
 			].map((data) => Number(synthetix.js?.utils.formatEther(data)));
 
 			return {
@@ -88,10 +97,10 @@ const useTSLAPoolQuery = (options?: QueryConfig<LiquidityPoolData>) => {
 				duration: Number(duration) * 1000,
 				rewards,
 				staked,
-				stakedBN: sTslaLPStaked,
+				stakedBN: LPStaked,
 				allowance,
 				userBalance,
-				userBalanceBN: sTslaLPUserBalance,
+				userBalanceBN: LPUserBalance,
 				needsToSettle: false,
 			};
 		},
@@ -102,4 +111,4 @@ const useTSLAPoolQuery = (options?: QueryConfig<LiquidityPoolData>) => {
 	);
 };
 
-export default useTSLAPoolQuery;
+export default useBalancerPoolQuery;

@@ -46,6 +46,11 @@ export enum Synths {
 	iCEX = 'iCEX',
 	iDEFI = 'iDEFI',
 	sTSLA = 'sTSLA',
+	sFB = 'sFB',
+	sAAPL = 'sAAPL',
+	sAMZN = 'sAMZN',
+	sNFLX = 'sNFLX',
+	sGOOG = 'sGOOG',
 }
 
 export enum CryptoCurrency {
