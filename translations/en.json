@@ -107,6 +107,9 @@
 					"title": "Previously watching ({{count}}):",
 					"remove": "Remove address"
 				}
+			},
+			"wallet-options": {
+				"title": "Please choose:"
 			}
 		},
 		"notifications": {

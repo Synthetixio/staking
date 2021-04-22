@@ -6,15 +6,25 @@ import { Svg } from 'react-optimized-image';
 import OutsideClickHandler from 'react-outside-click-handler';
 import { addOptimismNetworkToMetamask } from '@synthetixio/optimism-networks';
 
-import { FlexDivCentered, GridDivCenteredCol, IconButton, UpperCased } from 'styles/common';
+import {
+	FlexDiv,
+	FlexDivCentered,
+	GridDivCenteredCol,
+	IconButton,
+	UpperCased,
+} from 'styles/common';
 import { zIndex } from 'constants/ui';
 
 import Button from 'components/Button';
-import { DesktopOnlyView } from 'components/Media';
+import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 
 import { isWalletConnectedState, truncatedWalletAddressState, networkState } from 'store/wallet';
 
-import WalletOptionsModal from 'sections/shared/modals/WalletOptionsModal';
+import {
+	DesktopWalletOptionsModal,
+	MobileWalletOptionsModal,
+	StyledGlowingButton,
+} from 'sections/shared/modals/WalletOptionsModal';
 import SettingsModal from 'sections/shared/modals/SettingsModal';
 import ConnectionDot from 'sections/shared/ConnectionDot';
 
@@ -58,53 +68,90 @@ const UserMenu: FC = () => {
 		<Container>
 			<FlexDivCentered>
 				<DesktopOnlyView>
-					{!isL2 && isWalletConnected ? (
-						<OptimismButton variant="solid" onClick={addOptimismNetwork}>
-							{t('user-menu.layer-2.switch-to-l2')}
-						</OptimismButton>
-					) : null}
+					<FlexDiv>
+						{!isL2 && isWalletConnected ? (
+							<OptimismButton variant="solid" onClick={addOptimismNetwork}>
+								{t('user-menu.layer-2.switch-to-l2')}
+							</OptimismButton>
+						) : null}
+
+						<DropdownContainer>
+							<OutsideClickHandler onOutsideClick={() => setWalletOptionsModalOpened(false)}>
+								{isWalletConnected ? (
+									<WalletButton
+										variant="solid"
+										onClick={() => {
+											setWalletOptionsModalOpened(!walletOptionsModalOpened);
+										}}
+										isActive={walletOptionsModalOpened}
+										data-testid="user-menu"
+									>
+										<FlexDivCentered data-testid="wallet-address">
+											<StyledConnectionDot />
+											{truncatedWalletAddress}
+										</FlexDivCentered>
+										<NetworkTag className="network-tag" data-testid="network-tag">
+											{getNetworkName()}
+										</NetworkTag>
+										{walletOptionsModalOpened ? caretUp : caretDown}
+									</WalletButton>
+								) : (
+									<WalletButton
+										variant="solid"
+										onClick={() => setWalletOptionsModalOpened(!walletOptionsModalOpened)}
+										data-testid="user-menu"
+									>
+										<FlexDivCentered>
+											<StyledConnectionDot />
+											<UpperCased>{t('common.wallet.not-connected')}</UpperCased>
+										</FlexDivCentered>
+										{walletOptionsModalOpened ? caretUp : caretDown}
+									</WalletButton>
+								)}
+								{walletOptionsModalOpened && (
+									<DesktopWalletOptionsModal
+										onDismiss={() => setWalletOptionsModalOpened(false)}
+										setWatchWalletModalOpened={setWatchWalletModalOpened}
+									/>
+								)}
+							</OutsideClickHandler>
+						</DropdownContainer>
+					</FlexDiv>
 				</DesktopOnlyView>
-				<DropdownContainer>
-					<OutsideClickHandler onOutsideClick={() => setWalletOptionsModalOpened(false)}>
-						{isWalletConnected ? (
-							<WalletButton
-								variant="solid"
-								onClick={() => {
-									setWalletOptionsModalOpened(!walletOptionsModalOpened);
-								}}
-								isActive={walletOptionsModalOpened}
-								data-testid="user-menu"
-							>
-								<FlexDivCentered data-testid="wallet-address">
-									<StyledConnectionDot />
-									{truncatedWalletAddress}
-								</FlexDivCentered>
-								<NetworkTag className="network-tag" data-testid="network-tag">
-									{getNetworkName()}
-								</NetworkTag>
-								{walletOptionsModalOpened ? caretUp : caretDown}
-							</WalletButton>
-						) : (
-							<WalletButton
-								variant="solid"
-								onClick={() => setWalletOptionsModalOpened(!walletOptionsModalOpened)}
-								data-testid="user-menu"
-							>
-								<FlexDivCentered>
-									<StyledConnectionDot />
-									<UpperCased>{t('common.wallet.not-connected')}</UpperCased>
-								</FlexDivCentered>
-								{walletOptionsModalOpened ? caretUp : caretDown}
-							</WalletButton>
-						)}
-						{walletOptionsModalOpened && (
-							<WalletOptionsModal
-								onDismiss={() => setWalletOptionsModalOpened(false)}
-								setWatchWalletModalOpened={setWatchWalletModalOpened}
-							/>
-						)}
-					</OutsideClickHandler>
-				</DropdownContainer>
+				<MobileOrTabletView>
+					{isWalletConnected ? (
+						<WalletButton
+							variant="solid"
+							onClick={() => {
+								setWalletOptionsModalOpened(!walletOptionsModalOpened);
+							}}
+							isActive={walletOptionsModalOpened}
+							data-testid="user-menu"
+						>
+							<FlexDivCentered data-testid="wallet-address">
+								<StyledConnectionDot />
+								{truncatedWalletAddress}
+							</FlexDivCentered>
+							<NetworkTag className="network-tag" data-testid="network-tag">
+								{getNetworkName()}
+							</NetworkTag>
+							{walletOptionsModalOpened ? caretUp : caretDown}
+						</WalletButton>
+					) : (
+						<MobileStyledGlowingButton
+							data-testid="connect-wallet"
+							onClick={() => setWalletOptionsModalOpened(true)}
+						>
+							{t('common.wallet.connect-wallet')}
+						</MobileStyledGlowingButton>
+					)}
+					{walletOptionsModalOpened && (
+						<MobileWalletOptionsModal
+							onDismiss={() => setWalletOptionsModalOpened(false)}
+							setWatchWalletModalOpened={setWatchWalletModalOpened}
+						/>
+					)}
+				</MobileOrTabletView>
 				<Menu>
 					<MenuButton
 						onClick={() => {
@@ -221,6 +268,11 @@ const Error = styled.div`
 	right: 0;
 	font-size: 12px;
 	color: ${(props) => props.theme.colors.pink};
+`;
+
+const MobileStyledGlowingButton = styled(StyledGlowingButton)`
+	max-height: 32px;
+	line-height: 32px;
 `;
 
 export default UserMenu;
