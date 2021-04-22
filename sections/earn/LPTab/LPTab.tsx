@@ -46,7 +46,7 @@ import {
 	HeaderLabel,
 } from '../common';
 
-import { LP } from 'sections/earn/types';
+import { LP, lpToSynthTranslationKey } from 'sections/earn/types';
 import styled from 'styled-components';
 
 type DualRewards = {
@@ -188,6 +188,8 @@ const LPTab: FC<LPTabProps> = ({
 			return 'earn.incentives.options.stsla.description';
 		} else if (stakedAsset === LP.UNISWAP_DHT) {
 			return 'earn.incentives.options.dht.description';
+		} else if (stakedAsset in lpToSynthTranslationKey) {
+			return `earn.incentives.options.${lpToSynthTranslationKey[stakedAsset]}.description`;
 		} else {
 			throw new Error('unexpected staking asset for translation key');
 		}
@@ -315,6 +317,16 @@ const LPTab: FC<LPTabProps> = ({
 		switch (stakedAsset) {
 			case LP.BALANCER_sTSLA:
 				return `https://pools.balancer.exchange/#/pool/0x055db9aff4311788264798356bbf3a733ae181c6/`;
+			case LP.BALANCER_sFB:
+				return `https://pools.balancer.exchange/#/pool/0x3f2d077acff8a66c4e0c79c37b6a662a7197889b/`;
+			case LP.BALANCER_sAAPL:
+				return `https://pools.balancer.exchange/#/pool/0xb94865e18b25114b2b10bd9ecbd689c877f949e8/`;
+			case LP.BALANCER_sAMZN:
+				return `https://pools.balancer.exchange/#/pool/0x74821343b5b969c0d4b31aff3931e00a40990cfd/`;
+			case LP.BALANCER_sNFLX:
+				return `https://pools.balancer.exchange/#/pool/0x6418c69b0de51873a1cc01cf73ba6e408acc1940/`;
+			case LP.BALANCER_sGOOG:
+				return `https://pools.balancer.exchange/#/pool/0x608410f602ce8967d1e59f599566aed340280efc/`;
 			case LP.UNISWAP_DHT:
 				return `https://uniswap.exchange/add/0x57ab1ec28d129707052df4df418d58a2d46d5f51/0xca1207647ff814039530d7d35df0e1dd2e91fa84`;
 			default:

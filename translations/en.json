@@ -439,6 +439,31 @@
 					"description": "Stake sTLSA Balancer Pool LP to earn SNX rewards. <0>Add liquidity on Balancer here<0>.",
 					"subtitle": "sTSLA BPT Rewards"
 				},
+				"sfb": {
+					"title": "Balancer",
+					"description": "Stake sFB Balancer Pool LP to earn SNX rewards. <0>Add liquidity on Balancer here<0>.",
+					"subtitle": "sFB BPT Rewards"
+				},
+				"saaple": {
+					"title": "Balancer",
+					"description": "Stake sAAPL Balancer Pool LP to earn SNX rewards. <0>Add liquidity on Balancer here<0>.",
+					"subtitle": "sAAPL BPT Rewards"
+				},
+				"samzn": {
+					"title": "Balancer",
+					"description": "Stake sAMZN Balancer Pool LP to earn SNX rewards. <0>Add liquidity on Balancer here<0>.",
+					"subtitle": "sAMZN BPT Rewards"
+				},
+				"snflx": {
+					"title": "Balancer",
+					"description": "Stake sNFLX Balancer Pool LP to earn SNX rewards. <0>Add liquidity on Balancer here<0>.",
+					"subtitle": "sNFLX BPT Rewards"
+				},
+				"sgoog": {
+					"title": "Balancer",
+					"description": "Stake sGOOG Balancer Pool LP to earn SNX rewards. <0>Add liquidity on Balancer here<0>.",
+					"subtitle": "sGOOG BPT Rewards"
+				},
 				"dht": {
 					"title": "Uniswap",
 					"description": "Stake sUSD-DHT Uniswap Pool Tokens to earn SNX and DHT rewards. <0>Add liquidity on Uniswap here<0>.",

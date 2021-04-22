@@ -56,6 +56,31 @@ export async function getsTSLABalancerPool(): Promise<number> {
 		});
 }
 
+export async function getBalancerPool(poolTokenAddress: string): Promise<number> {
+	return pageResults({
+		api: balancerSubgraphURL,
+		query: {
+			entity: 'pools',
+			selection: {
+				orderBy: 'id',
+				orderDirection: 'desc',
+				where: {
+					id: `\\"${poolTokenAddress.toLowerCase()}\\"`,
+				},
+			},
+			properties: ['id', 'liquidity', 'totalShares'],
+		},
+		max: 1,
+		// @ts-ignore
+	})
+		.then((result: any) => {
+			return Number(result[0].liquidity) / Number(result[0].totalShares);
+		})
+		.catch((e: any) => {
+			throw Error(e);
+		});
+}
+
 export async function getDHTPrice(): Promise<number> {
 	return pageResults({
 		api: uniswapV2SubgraphURL,

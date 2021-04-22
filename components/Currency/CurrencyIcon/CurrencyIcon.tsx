@@ -72,6 +72,11 @@ import iTRXIcon from '@synthetixio/assets/synths/iTRX.svg';
 import iDASHIcon from '@synthetixio/assets/synths/iDASH.svg';
 import iETCIcon from '@synthetixio/assets/synths/iETC.svg';
 import sTSLAIcon from '@synthetixio/assets/synths/sTSLA.svg';
+import sFBIcon from '@synthetixio/assets/synths/sFB.svg';
+import sAAPLIcon from '@synthetixio/assets/synths/sAAPL.svg';
+import sAMZNIcon from '@synthetixio/assets/synths/sAMZN.svg';
+import sNFLXIcon from '@synthetixio/assets/synths/sNFLX.svg';
+import sGOOGIcon from '@synthetixio/assets/synths/sGOOG.svg';
 import DHTIcon from 'assets/svg/currencies/crypto/DHEDGE.svg';
 
 // Commoditiy Synths
@@ -276,6 +281,21 @@ export const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, type = 'synth
 		}
 		case LP.BALANCER_sTSLA: {
 			return <Img src={sTSLAIcon} {...props} />;
+		}
+		case LP.BALANCER_sFB: {
+			return <Img src={sFBIcon} {...props} />;
+		}
+		case LP.BALANCER_sAAPL: {
+			return <Img src={sAAPLIcon} {...props} />;
+		}
+		case LP.BALANCER_sAMZN: {
+			return <Img src={sAMZNIcon} {...props} />;
+		}
+		case LP.BALANCER_sNFLX: {
+			return <Img src={sNFLXIcon} {...props} />;
+		}
+		case LP.BALANCER_sGOOG: {
+			return <Img src={sGOOGIcon} {...props} />;
 		}
 		case LP.CURVE_sUSD: {
 			return <Img src={sUSDIcon} {...props} />;
