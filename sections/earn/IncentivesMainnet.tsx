@@ -194,6 +194,13 @@ const Incentives: FC<IncentivesProps> = ({
 						route: ROUTES.Earn.sTLSA_LP,
 						tab: Tab.sTLSA_LP,
 					},
+					...[
+						LP.BALANCER_sFB,
+						LP.BALANCER_sAAPL,
+						LP.BALANCER_sAMZN,
+						LP.BALANCER_sNFLX,
+						LP.BALANCER_sGOOG,
+					].map(balancerIncentives),
 					{
 						title: t('earn.incentives.options.curve.title'),
 						subtitle: t('earn.incentives.options.curve.subtitle'),
@@ -251,13 +258,6 @@ const Incentives: FC<IncentivesProps> = ({
 						route: ROUTES.Earn.iBTC_LP,
 						needsToSettle: lpData[Synths.iBTC].data?.needsToSettle,
 					},
-					...[
-						LP.BALANCER_sFB,
-						LP.BALANCER_sAAPL,
-						LP.BALANCER_sAMZN,
-						LP.BALANCER_sNFLX,
-						LP.BALANCER_sGOOG,
-					].map(balancerIncentives),
 			  ]
 			: [];
 	}, [
