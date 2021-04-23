@@ -249,7 +249,7 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab }
 						</Subtitle>
 					</CellContainer>
 				),
-				width: 100,
+				width: 120,
 				sortable: true,
 			},
 		];
@@ -312,6 +312,9 @@ const CellContainer = styled(FlexDivCol)`
 `;
 
 const StyledTable = styled(Table)`
+	.table-body {
+		max-height: 400px;
+	}
 	.table-body-row {
 		height: 70px;
 		align-items: center;
