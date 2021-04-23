@@ -3,13 +3,21 @@ import useIBTCPoolQuery_1 from 'queries/liquidityPools/useIBTCPoolQuery_1';
 import useCurveSusdPoolQuery from 'queries/liquidityPools/useCurveSusdPoolQuery';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import useCurveSeuroPoolQuery from 'queries/liquidityPools/useCurveSeuroPoolQuery';
-import useTSLAPoolQuery from 'queries/liquidityPools/useTSLAPoolQuery';
 
 import { Synths } from 'constants/currency';
 import { WEEKS_IN_YEAR } from 'constants/date';
 import { DualRewardsLiquidityPoolData, LiquidityPoolData } from 'queries/liquidityPools/types';
 import { LP } from 'sections/earn/types';
 import useDHTsUSDPoolQuery from 'queries/liquidityPools/useDHTsUDPoolQuery';
+import useBalancerPoolQuery from 'queries/liquidityPools/useBalancerPoolQuery';
+import {
+	balancersTSLAPoolToken,
+	balancersFBPoolToken,
+	balancersAAPLPoolToken,
+	balancersAMZNPoolToken,
+	balancersNFLXPoolToken,
+	balancersGOOGPoolToken,
+} from 'contracts';
 
 type LPData = {
 	[name: string]: {
@@ -26,7 +34,36 @@ const useLPData = (): LPData => {
 	const useiBTCPool = useIBTCPoolQuery_1();
 	const usesUSDPool = useCurveSusdPoolQuery();
 	const usesEuroPool = useCurveSeuroPoolQuery();
-	const usesTSLAPool = useTSLAPoolQuery();
+	const usesTSLAPool = useBalancerPoolQuery(
+		Synths.sTSLA,
+		'StakingRewardssTSLABalancer',
+		balancersTSLAPoolToken
+	);
+	const usesFBPool = useBalancerPoolQuery(
+		Synths.sFB,
+		'StakingRewardssFBBalancer',
+		balancersFBPoolToken
+	);
+	const usesAAPLPool = useBalancerPoolQuery(
+		Synths.sAAPL,
+		'StakingRewardssAAPLBalancer',
+		balancersAAPLPoolToken
+	);
+	const usesAMZNPool = useBalancerPoolQuery(
+		Synths.sAMZN,
+		'StakingRewardssAMZNBalancer',
+		balancersAMZNPoolToken
+	);
+	const usesNFLXPool = useBalancerPoolQuery(
+		Synths.sNFLX,
+		'StakingRewardssNFLXBalancer',
+		balancersNFLXPoolToken
+	);
+	const usesGOOGPool = useBalancerPoolQuery(
+		Synths.sGOOG,
+		'StakingRewardssGOOGBalancer',
+		balancersGOOGPoolToken
+	);
 	const usesDHTPool = useDHTsUSDPoolQuery();
 
 	const iETHTVL = (useiETHPool.data?.balance ?? 0) * (useiETHPool.data?.price ?? 0);
@@ -39,12 +76,6 @@ const useLPData = (): LPData => {
 	const iBTCAPR =
 		useiBTCPool.data?.distribution && SNXRate && iBTCTVL
 			? ((useiBTCPool.data.distribution * SNXRate) / iBTCTVL) * WEEKS_IN_YEAR
-			: 0;
-
-	const sTSLATVL = (usesTSLAPool.data?.balance ?? 0) * (usesTSLAPool.data?.price ?? 0);
-	const sTSLAAPR =
-		usesTSLAPool.data?.distribution && SNXRate && sTSLATVL
-			? ((usesTSLAPool.data.distribution * SNXRate) / sTSLATVL) * WEEKS_IN_YEAR
 			: 0;
 
 	const DHTRate = usesDHTPool.data?.price;
@@ -83,6 +114,12 @@ const useLPData = (): LPData => {
 			  usesEuroPool.data?.rewardsAPR
 			: 0;
 
+	const balancerPoolTVL = (data?: LiquidityPoolData) => (data?.balance ?? 0) * (data?.price ?? 0);
+	const balancerPoolAPR = (data?: LiquidityPoolData) =>
+		data?.distribution && SNXRate && balancerPoolTVL(data)
+			? ((data?.distribution * SNXRate) / balancerPoolTVL(data)) * WEEKS_IN_YEAR
+			: 0;
+
 	return {
 		[Synths.iETH]: {
 			APR: iETHAPR,
@@ -105,9 +142,34 @@ const useLPData = (): LPData => {
 			data: usesUSDPool.data,
 		},
 		[LP.BALANCER_sTSLA]: {
-			APR: sTSLAAPR,
-			TVL: sTSLATVL,
+			APR: balancerPoolAPR(usesTSLAPool.data),
+			TVL: balancerPoolTVL(usesTSLAPool.data),
 			data: usesTSLAPool.data,
+		},
+		[LP.BALANCER_sFB]: {
+			APR: balancerPoolAPR(usesFBPool.data),
+			TVL: balancerPoolTVL(usesFBPool.data),
+			data: usesFBPool.data,
+		},
+		[LP.BALANCER_sAAPL]: {
+			APR: balancerPoolAPR(usesAAPLPool.data),
+			TVL: balancerPoolTVL(usesAAPLPool.data),
+			data: usesAAPLPool.data,
+		},
+		[LP.BALANCER_sAMZN]: {
+			APR: balancerPoolAPR(usesAMZNPool.data),
+			TVL: balancerPoolTVL(usesAMZNPool.data),
+			data: usesAMZNPool.data,
+		},
+		[LP.BALANCER_sNFLX]: {
+			APR: balancerPoolAPR(usesNFLXPool.data),
+			TVL: balancerPoolTVL(usesNFLXPool.data),
+			data: usesNFLXPool.data,
+		},
+		[LP.BALANCER_sGOOG]: {
+			APR: balancerPoolAPR(usesGOOGPool.data),
+			TVL: balancerPoolTVL(usesGOOGPool.data),
+			data: usesGOOGPool.data,
 		},
 		[LP.UNISWAP_DHT]: {
 			APR: DHTAPR,

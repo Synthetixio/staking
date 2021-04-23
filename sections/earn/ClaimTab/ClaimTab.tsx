@@ -337,7 +337,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 
 	return (
 		<>
-			<TabContainer>
+			<StyledTabContainer>
 				<HeaderLabel>
 					<Trans
 						i18nKey="earn.incentives.options.snx.description"
@@ -414,7 +414,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 						setGasPrice={setGasPrice}
 					/>
 				</InnerContainer>
-			</TabContainer>
+			</StyledTabContainer>
 			{txModalOpen && (
 				<TxConfirmationModal
 					onDismiss={() => setTxModalOpen(false)}
@@ -493,6 +493,10 @@ const StyledFlexDiv = styled(FlexDiv)`
 
 const StyledGlowingCircle = styled(GlowingCircle)`
 	margin-bottom: 12px;
+`;
+
+const StyledTabContainer = styled(TabContainer)`
+	height: inherit;
 `;
 
 export default ClaimTab;

@@ -61,6 +61,16 @@ export const getContract = (stakedAsset: CurrencyKey, signer: ethers.Signer | nu
 		return contracts.StakingRewardsiETH;
 	} else if (stakedAsset === LP.BALANCER_sTSLA) {
 		return contracts.StakingRewardssTSLABalancer;
+	} else if (stakedAsset === LP.BALANCER_sFB) {
+		return contracts.StakingRewardssFBBalancer;
+	} else if (stakedAsset === LP.BALANCER_sAAPL) {
+		return contracts.StakingRewardssAAPLBalancer;
+	} else if (stakedAsset === LP.BALANCER_sAMZN) {
+		return contracts.StakingRewardssAMZNBalancer;
+	} else if (stakedAsset === LP.BALANCER_sNFLX) {
+		return contracts.StakingRewardssNFLXBalancer;
+	} else if (stakedAsset === LP.BALANCER_sGOOG) {
+		return contracts.StakingRewardssGOOGBalancer;
 	} else if (stakedAsset === LP.CURVE_sUSD && signer != null) {
 		return new ethers.Contract(
 			curveSusdRewards.address,
