@@ -25,7 +25,7 @@ const StatsSection: FC = ({ children }) => {
 	const SNX24hrPricesQuery = useSNX24hrPricesQuery();
 	const cryptoBalances = useCryptoBalances();
 	const synthsBalancesQuery = useSynthsBalancesQuery();
-	const [mobileStatsSectionIsOpen, setMobileStatsSectionIsOpen] = useState(true);
+	const [mobileStatsSectionIsOpen, setMobileStatsSectionIsOpen] = useState(false);
 
 	const snxBalance =
 		cryptoBalances?.balances?.find((balance) => balance.currencyKey === CryptoCurrency.SNX)

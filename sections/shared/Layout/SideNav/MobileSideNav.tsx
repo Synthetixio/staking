@@ -11,8 +11,6 @@ import SideNavContainer from 'containers/SideNav';
 import ROUTES from 'constants/routes';
 import { MOBILE_SIDE_NAV_WIDTH, zIndex } from 'constants/ui';
 
-import media from 'styles/media';
-
 import SideNav from './SideNav';
 import SubMenu from './MobileSubMenu';
 

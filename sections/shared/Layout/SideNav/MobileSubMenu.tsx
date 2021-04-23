@@ -1,7 +1,5 @@
 import { FC } from 'react';
 import styled from 'styled-components';
-import { FlexDivColCentered } from 'styles/common';
-import { MOBILE_SIDE_NAV_WIDTH } from 'constants/ui';
 
 import SubMenu from './SubMenu';
 
