@@ -35,6 +35,9 @@ const AppLayout: FC<AppLayoutProps> = ({ children }) => {
 		if (isL2 && router.pathname.includes(ROUTES.Gov.Home)) {
 			router.push(ROUTES.Home);
 		}
+		if (isL2 && router.pathname.includes(ROUTES.Debt.Home)) {
+			router.push(ROUTES.Home);
+		}
 	}, [isL2]);
 
 	useEffect(() => {
