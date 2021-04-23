@@ -5,6 +5,7 @@ import BlockExplorer from './BlockExplorer';
 import TransactionNotifier from './TransactionNotifier';
 import Delegates from './Delegates';
 import Loans from './Loans';
+import SideNav from './SideNav';
 
 type WithAppContainersProps = {
 	children: ReactNode;
@@ -15,7 +16,9 @@ export const WithAppContainers: FC<WithAppContainersProps> = ({ children }) => (
 		<BlockExplorer.Provider>
 			<TransactionNotifier.Provider>
 				<Loans.Provider>
-					<Delegates.Provider>{children}</Delegates.Provider>
+					<Delegates.Provider>
+						<SideNav.Provider>{children}</SideNav.Provider>
+					</Delegates.Provider>
 				</Loans.Provider>
 			</TransactionNotifier.Provider>
 		</BlockExplorer.Provider>

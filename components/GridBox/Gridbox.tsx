@@ -62,8 +62,7 @@ export const GridBox: FC<GridBoxProps> = ({
 const InnerGridContainer = styled(FlexDivColCentered)`
 	width: 100%;
 	height: 100%;
-	padding: 20px;
-	justify-content: center;
+	padding: 40px 20px 20px;
 `;
 
 const GridBoxTitle = styled.div`

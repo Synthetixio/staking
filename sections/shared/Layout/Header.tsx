@@ -1,10 +1,9 @@
 import { FC } from 'react';
-import { useSetRecoilState } from 'recoil';
 import styled from 'styled-components';
 import { Svg } from 'react-optimized-image';
 
+import SideNavContainer from 'containers/SideNav';
 import { FlexDivCentered, FlexDivCol } from 'styles/common';
-import { isShowingSideNavState } from 'store/ui';
 import media from 'styles/media';
 import { MobileOnlyView, MobileOrTabletView, TabletOnlyView } from 'components/Media';
 import TitleIcon from 'assets/svg/app/menu-hamburger-white.svg';
@@ -14,8 +13,8 @@ import StakingLogoMobile from 'assets/svg/app/staking-logo-mobile.svg';
 import UserMenu from './UserMenu';
 
 const Header: FC = () => {
-	const setIsShowingSideNav = useSetRecoilState(isShowingSideNavState);
-	const showSideNav = () => setIsShowingSideNav(true);
+	const { showMobileSideNav } = SideNavContainer.useContainer();
+
 	return (
 		<Container>
 			<LogoContainer>
@@ -28,7 +27,7 @@ const Header: FC = () => {
 			</LogoContainer>
 			<FlexDivCentered>
 				<MobileOrTabletView>
-					<Title onClick={showSideNav}>
+					<Title onClick={showMobileSideNav}>
 						<Svg src={TitleIcon} />
 						HOME
 					</Title>
