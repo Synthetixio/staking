@@ -12,12 +12,15 @@ const useDailyIssuedQuery = (options?: QueryConfig<DailyStakingRecord[]>) => {
 	const network = useRecoilValue(networkState);
 	const isAppReady = useRecoilValue(appReadyState);
 
+	const SECONDS_PER_DAY = 86400;
+	const DAYS_TO_QUERY = 180;
+
 	return useQuery<DailyStakingRecord[]>(
 		QUERY_KEYS.Staking.Issued('', network?.id!),
 		async () => {
 			const now = new Date();
-			const minTimestamp = now.getTime() / 1000 - 180 * 86400;
-			const dailyIssueds = await snxData.snx.dailyIssued({ max: 6 * 30, minTimestamp });
+			const minTimestamp = now.getTime() / 1000 - DAYS_TO_QUERY * SECONDS_PER_DAY;
+			const dailyIssueds = await snxData.snx.dailyIssued({ max: DAYS_TO_QUERY, minTimestamp });
 			return dailyIssueds;
 		},
 		{
