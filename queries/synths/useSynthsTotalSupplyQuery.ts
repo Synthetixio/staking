@@ -97,7 +97,7 @@ const useSynthsTotalSupplyQuery = (options?: QueryConfig<SynthsTotalSupplyData>)
 			};
 		},
 		{
-			enabled: isAppReady && isWalletConnected,
+			enabled: isAppReady,
 			...options,
 		}
 	);

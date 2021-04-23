@@ -4,12 +4,13 @@ import snxData from 'synthetix-data';
 
 import QUERY_KEYS from 'constants/queryKeys';
 
-import { isWalletConnectedState, networkState } from 'store/wallet';
+import { networkState } from 'store/wallet';
+import { appReadyState } from 'store/app';
 import { DailyStakingRecord } from './types';
 
 const useDailyIssuedQuery = (options?: QueryConfig<DailyStakingRecord[]>) => {
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const network = useRecoilValue(networkState);
+	const isAppReady = useRecoilValue(appReadyState);
 
 	return useQuery<DailyStakingRecord[]>(
 		QUERY_KEYS.Staking.Issued('', network?.id!),
@@ -20,7 +21,7 @@ const useDailyIssuedQuery = (options?: QueryConfig<DailyStakingRecord[]>) => {
 			return dailyIssueds;
 		},
 		{
-			enabled: snxData && isWalletConnected,
+			enabled: snxData && isAppReady,
 			...options,
 		}
 	);

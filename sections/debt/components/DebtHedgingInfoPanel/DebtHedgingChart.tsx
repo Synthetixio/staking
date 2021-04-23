@@ -17,7 +17,6 @@ import ChartLabel from './ChartLabel';
 const DebtHedgingChart: React.FC = () => {
 	const { t } = useTranslation();
 	const { data, isLoading } = useGlobalHistoricalDebtData();
-	// console.log(data);
 
 	if (isLoading) {
 		return (
