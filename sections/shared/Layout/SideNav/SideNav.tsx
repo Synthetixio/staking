@@ -22,7 +22,7 @@ import { CryptoCurrency, Synths } from 'constants/currency';
 import { SIDE_NAV_WIDTH, zIndex } from 'constants/ui';
 import { MENU_LINKS, MENU_LINKS_L2 } from '../constants';
 
-import { isL2State } from 'store/wallet';
+import { isL2State, isMainnetState } from 'store/wallet';
 
 import SubMenu from './SubMenu';
 import PriceItem from './PriceItem';
@@ -40,6 +40,7 @@ const SideNav: FC = () => {
 	const cryptoBalances = useCryptoBalances();
 	const synthsBalancesQuery = useSynthsBalancesQuery();
 	const isL2 = useRecoilValue(isL2State);
+	const isMainnet = useRecoilValue(isMainnetState);
 	const [subMenuConfiguration, setSubMenuConfiguration] = useState({
 		routes: null,
 		topPosition: 0,
@@ -82,7 +83,10 @@ const SideNav: FC = () => {
 							setSubMenuConfiguration(
 								subMenu
 									? {
-											routes: subMenu as any,
+											// Debt data only exists on mainnet for now, need to hide otherwise
+											routes: (isMainnet
+												? subMenu
+												: subMenu.filter(({ subLink }) => subLink !== ROUTES.Debt.Home)) as any,
 											topPosition: (getKeyValue(menuLinkItemRefs.current) as any)(
 												i
 											).getBoundingClientRect().y as number,

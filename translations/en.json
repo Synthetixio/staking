@@ -345,15 +345,28 @@
 		"page-title": "Debt | Synthetix Staking",
 		"actions": {
 			"track": {
-				"title": "Debt Over Time",
+				"title": "Overview",
 				"no-data": "Debt data is not available for this wallet",
 				"info": {
 					"tooltip": "<0>Issued debt:</0> This displays the total of all your mints and burns over time, revealing how only your C-Ratio management has affected your debt.<1 /><2>Actual debt:</2> This displays your total debt over time."
 				},
 				"chart": {
+					"title": "Debt Over Time",
 					"tooltip": {
 						"actualDebt": "Active Debt",
 						"issuedDebt": "Issued Debt"
+					}
+				}
+			},
+			"manage": {
+				"title": "Manage",
+				"info-panel": {
+					"title": "sUSD underperforms against debt pool",
+					"body": "Your debt will fluctuate over time with the debt pool. We recommend that you hedge your debt to reduce your risk owning more debt than you hold.",
+					"chart": {
+						"title": "sUSD vs DEBT POOL",
+						"sUSD-label": "sUSD",
+						"debtPool-label": "DEBT POOL"
 					}
 				}
 			},
