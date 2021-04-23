@@ -7,3 +7,8 @@ export type CryptoBalance = {
 	usdBalance: BigNumber;
 	synth?: string;
 };
+
+export type Asset = {
+	currencyKey: string;
+	balance: BigNumber;
+};

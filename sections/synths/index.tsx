@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { FC, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { VerticalSpacer } from 'styles/common';
 import { useRecoilValue } from 'recoil';
@@ -14,10 +14,10 @@ import useCryptoBalances from 'hooks/useCryptoBalances';
 import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
 
 import { zeroBN } from 'utils/formatters/number';
+import { Asset } from 'queries/walletBalances/types';
 
 const Index: FC = () => {
-	const [assetToTransfer, setAssetToTransfer] = useState<string | null>(null);
-	const [balanceToTransfer, setBalanceToTransfer] = useState<string>('');
+	const [assetToTransfer, setAssetToTransfer] = useState<Asset | null>(null);
 
 	const { t } = useTranslation();
 	const synthsBalancesQuery = useSynthsBalancesQuery();
@@ -34,9 +34,17 @@ const Index: FC = () => {
 			? synthsBalancesQuery.data
 			: null;
 
-	const synthAssets = synthBalances?.balances ?? [];
+	const synthAssets = useMemo(() => synthBalances?.balances ?? [], [synthBalances]);
+	const cryptoAssets = useMemo(() => cryptoBalances?.balances ?? [], [cryptoBalances]);
+	const assetsHeld = useMemo(
+		() =>
+			synthAssets.concat(cryptoAssets).map(({ currencyKey, balance }) => ({
+				currencyKey,
+				balance,
+			})),
+		[synthAssets, cryptoAssets]
+	);
 
-	const assetsHeld = synthAssets.concat(cryptoBalances.balances).map((asset) => asset.currencyKey);
 	console.log(assetToTransfer);
 
 	return (
@@ -49,7 +57,7 @@ const Index: FC = () => {
 				isLoaded={synthsBalancesQuery.isSuccess}
 				showHoldings={true}
 				showConvert={false}
-				onTransferClick={(asset) => setAssetToTransfer(asset)}
+				onTransferClick={({ currencyKey, balance }) => setAssetToTransfer({ currencyKey, balance })}
 			/>
 			{!totalSynthValue.isZero() ? <KwentaBanner /> : null}
 			<VerticalSpacer />
@@ -62,7 +70,9 @@ const Index: FC = () => {
 					isLoaded={cryptoBalances.isLoaded}
 					showHoldings={false}
 					showConvert={true}
-					onTransferClick={(asset) => setAssetToTransfer(asset)}
+					onTransferClick={({ currencyKey, balance }) =>
+						setAssetToTransfer({ currencyKey, balance })
+					}
 				/>
 			)}
 			{assetToTransfer ? (
@@ -71,9 +81,6 @@ const Index: FC = () => {
 					assets={assetsHeld}
 					currentAsset={assetToTransfer}
 					setAsset={(asset) => setAssetToTransfer(asset)}
-					amount={balanceToTransfer}
-					setAmount={(balance) => setBalanceToTransfer(balance)}
-					onSetMaxAmount={() => setBalanceToTransfer('1000')}
 				/>
 			) : null}
 		</>

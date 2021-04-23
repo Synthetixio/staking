@@ -1,28 +1,25 @@
-import { FC } from 'react';
+import { FC, useState } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
+import BigNumber from 'bignumber.js';
 
 import BaseModal from 'components/BaseModal';
 import { FormContainer, InputsContainer, InputsDivider } from 'sections/loans/components/common';
-import AssetInput from 'sections/loans/components/ActionBox/BorrowSynthsTab/AssetInput';
+// import AssetInput from 'sections/loans/components/ActionBox/BorrowSynthsTab/AssetInput';
+import AssetInput from 'components/Form/AssetInput';
 
-import { CryptoBalance } from 'queries/walletBalances/types';
+import { CryptoBalance, Asset } from 'queries/walletBalances/types';
 
 type TransferModalProps = {
 	onDismiss: () => void;
-	assets: Array<string>;
+	assets: Array<Asset>;
+	currentAsset: Asset | null;
+	setAsset: (asset: Asset) => void;
 };
 
-const TransferModal: FC<TransferModalProps> = ({
-	onDismiss,
-	assets,
-	setAsset,
-	currentAsset,
-	amount,
-	setAmount,
-	onSetMaxAmount,
-}) => {
+const TransferModal: FC<TransferModalProps> = ({ onDismiss, assets, setAsset, currentAsset }) => {
 	const { t } = useTranslation();
+	const [amount, setAmount] = useState<string>('');
 	return (
 		<StyledModal onDismiss={onDismiss} isOpen={true} title={t('synths.transfer.modal-title')}>
 			<FormContainer>
@@ -34,7 +31,8 @@ const TransferModal: FC<TransferModalProps> = ({
 						setAsset={setAsset}
 						amount={amount}
 						setAmount={setAmount}
-						onSetMaxAmount={onSetMaxAmount}
+						onSetMaxAmount={() => setAmount(currentAsset?.balance)}
+						// balance={balance}
 					/>
 					<InputsDivider />
 					<div>there</div>
