@@ -14,29 +14,31 @@ const OverviewTab = () => {
 	const dataIsLoading = historicalDebt?.isLoading ?? false;
 
 	return (
-		<Container>
-			<ContainerHeader>
-				<ContainerHeaderSection>
-					{t('debt.actions.track.chart.title')}
-					<DebtInfoTooltip
-						arrow={false}
-						content={
-							<Trans
-								i18nKey="debt.actions.track.info.tooltip"
-								components={[<Strong />, <br />, <Strong />]}
-							></Trans>
-						}
-					>
-						<TooltipIconContainer>
-							<ResizedInfoIcon src={Info} />
-						</TooltipIconContainer>
-					</DebtInfoTooltip>
-				</ContainerHeaderSection>
-			</ContainerHeader>
-			<ContainerBody>
-				<DebtChart data={historicalDebt.data} isLoading={dataIsLoading} />
-			</ContainerBody>
-		</Container>
+		<>
+			<Container>
+				<ContainerHeader>
+					<ContainerHeaderSection>
+						{t('debt.actions.track.chart.title')}
+						<DebtInfoTooltip
+							arrow={false}
+							content={
+								<Trans
+									i18nKey="debt.actions.track.info.tooltip"
+									components={[<Strong />, <br />, <Strong />]}
+								></Trans>
+							}
+						>
+							<TooltipIconContainer>
+								<ResizedInfoIcon src={Info} />
+							</TooltipIconContainer>
+						</DebtInfoTooltip>
+					</ContainerHeaderSection>
+				</ContainerHeader>
+				<ContainerBody>
+					<DebtChart data={historicalDebt.data} isLoading={dataIsLoading} />
+				</ContainerBody>
+			</Container>
+		</>
 	);
 };
 

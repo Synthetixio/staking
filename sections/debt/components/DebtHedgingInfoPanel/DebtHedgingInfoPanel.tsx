@@ -29,13 +29,18 @@ const InfoPanelContainer = styled(FlexDivCol)`
 const InfoPanelTitle = styled.p`
 	padding: 30px;
 	margin: 0;
-	font-family: ${(props) => props.theme.fonts.extended};
+	font-family: ${(props) => props.theme.fonts.condensedBold};
+	color: ${(props) => props.theme.colors.white};
+	font-size: 16px;
 `;
 
 const InfoPanelBody = styled.p`
 	padding: 0px 30px 30px 30px;
 	margin: 0;
+	font-family: ${(props) => props.theme.fonts.regular};
 	color: ${(props) => props.theme.colors.gray};
+	font-size: 14px;
+
 	a {
 		color: ${(props) => props.theme.colors.blue};
 		text-decoration: none;
