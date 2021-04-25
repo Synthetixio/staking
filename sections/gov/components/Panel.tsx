@@ -2,9 +2,7 @@ import React, { useMemo, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
 import { useRecoilState } from 'recoil';
-import styled from 'styled-components';
 
-import media from 'styles/media';
 import useProposals from 'queries/gov/useProposals';
 
 import ROUTES from 'constants/routes';
@@ -12,8 +10,7 @@ import { SPACE_KEY } from 'constants/snapshot';
 import { panelState, PanelType, proposalState } from 'store/gov';
 
 import useActiveTab from '../hooks/useActiveTab';
-import { Row } from 'styles/common';
-import { LeftCol, RightCol } from 'sections/gov/components/common';
+import { Grid, Col } from 'sections/gov/components/common';
 
 import StructuredTab from 'components/StructuredTab';
 import CouncilBoard from './List/CouncilBoard';
@@ -121,7 +118,7 @@ const Panel: React.FC<PanelProps> = ({ currentTab }) => {
 			case PanelType.LIST:
 				return (
 					<Grid>
-						<LeftCol>
+						<Col>
 							<StructuredTab
 								boxPadding={20}
 								boxHeight={600}
@@ -129,10 +126,10 @@ const Panel: React.FC<PanelProps> = ({ currentTab }) => {
 								setPanelType={(key) => router.push(`/gov/${key}`)}
 								currentPanel={currentTab}
 							/>
-						</LeftCol>
-						<RightCol>
+						</Col>
+						<Col>
 							<CouncilBoard />
-						</RightCol>
+						</Col>
 					</Grid>
 				);
 			case PanelType.PROPOSAL:
@@ -156,8 +153,8 @@ const Panel: React.FC<PanelProps> = ({ currentTab }) => {
 				);
 			default:
 				return (
-					<Row>
-						<LeftCol>
+					<Grid>
+						<Col>
 							<StructuredTab
 								boxPadding={20}
 								boxHeight={600}
@@ -165,26 +162,16 @@ const Panel: React.FC<PanelProps> = ({ currentTab }) => {
 								setPanelType={(key) => router.push(`/gov/${key}`)}
 								currentPanel={currentTab}
 							/>
-						</LeftCol>
-						<RightCol>
+						</Col>
+						<Col>
 							<CouncilBoard />
-						</RightCol>
-					</Row>
+						</Col>
+					</Grid>
 				);
 		}
 	};
 
 	return returnContent();
 };
-
-const Grid = styled.div`
-	display: grid;
-	grid-template-columns: 2fr 1fr;
-
-	${media.lessThan('mdUp')`
-		display: flex;
-		flex-direction: column;
-	`}
-`;
 
 export default Panel;

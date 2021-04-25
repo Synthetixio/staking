@@ -1,7 +1,6 @@
 import { useState, useMemo, useEffect, FC, useCallback } from 'react';
 import { ethers } from 'ethers';
 import { useRecoilValue } from 'recoil';
-import { useRouter } from 'next/router';
 import styled from 'styled-components';
 import { truncateAddress } from 'utils/formatters/string';
 import { Trans, useTranslation } from 'react-i18next';
@@ -60,7 +59,6 @@ const LeftCol: FC = () => {
 
 const Tab: FC = () => {
 	const { t } = useTranslation();
-	const router = useRouter();
 	const { connectWallet } = Connector.useContainer();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const address = useRecoilValue(walletAddressState);
@@ -106,7 +104,6 @@ const Tab: FC = () => {
 		[delegateApprovalsContract, properDelegateAddress, action, delegateAddressIsSelf]
 	);
 
-	const onGoBack = () => router.back();
 	const onEnterAddress = (e: any) => setDelegateAddress((e.target.value ?? '').trim());
 	const onButtonClick = async () => {
 		if (!isWalletConnected) {

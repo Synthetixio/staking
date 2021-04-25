@@ -1,6 +1,5 @@
 import React from 'react';
-import { Row } from 'styles/common';
-import { RightCol, LeftCol } from 'sections/gov/components/common';
+import { Grid, Col } from 'sections/gov/components/common';
 import Content from './Content';
 import DilutionContent from './DilutionContent';
 import Info from './Info';
@@ -14,18 +13,18 @@ type ProposalProps = {
 const Index: React.FC<ProposalProps> = ({ onBack }) => {
 	const activeTab = useActiveTab();
 	return (
-		<Row>
-			<LeftCol>
+		<Grid>
+			<Col>
 				{activeTab === SPACE_KEY.PROPOSAL ? (
 					<DilutionContent onBack={onBack} />
 				) : (
 					<Content onBack={onBack} />
 				)}
-			</LeftCol>
-			<RightCol>
+			</Col>
+			<Col>
 				<Info />
-			</RightCol>
-		</Row>
+			</Col>
+		</Grid>
 	);
 };
 export default Index;

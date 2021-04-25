@@ -69,24 +69,18 @@ export const Subtitle = styled.p`
 	color: ${(props) => props.theme.colors.gray};
 `;
 
-export const LeftCol = styled(FlexDivCol)`
-	height: 100%;
-	/* width: 700px; */
-	margin-right: 8px;
+export const Grid = styled.div`
+	display: grid;
+	grid-template-columns: 2fr 1fr;
+	grid-gap: 1rem;
 
 	${media.lessThan('mdUp')`
-		width: unset;
+		display: flex;
+		flex-direction: column;
 	`}
 `;
-export const RightCol = styled(FlexDivCol)`
-	height: 100%;
-	/* width: 400px; */
-	margin-left: 8px;
 
-	${media.lessThan('mdUp')`
-		width: unset;
-	`}
-`;
+export const Col = styled(FlexDivCol)``;
 
 export const StyledCTA = styled(Button)`
 	text-transform: uppercase;
