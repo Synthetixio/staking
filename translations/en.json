@@ -1013,7 +1013,8 @@
 				"title": "epoch"
 			}
 		},
-		"delegate": "Delegate"
+		"delegate": "Delegate",
+		"switch-to-l2": "Switch to L2"
 	},
 	"user-menu": {
 		"layer-2": {

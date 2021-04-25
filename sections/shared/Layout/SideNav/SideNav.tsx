@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components';
-import { FC, useRef } from 'react';
+import { FC, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
 import { Svg } from 'react-optimized-image';
@@ -11,6 +11,9 @@ import { linkCSS } from 'styles/common';
 import media from 'styles/media';
 import CaretRightIcon from 'assets/svg/app/caret-right-small.svg';
 import ROUTES from 'constants/routes';
+import { addOptimismNetworkToMetamask } from '@synthetixio/optimism-networks';
+import { isWalletConnectedState } from 'store/wallet';
+
 import { MENU_LINKS, MENU_LINKS_L2 } from '../constants';
 
 const getKeyValue = <T extends object, U extends keyof T>(obj: T) => (key: U) => obj[key];
@@ -23,6 +26,8 @@ const SideNav: FC<SideNavProps> = ({ isDesktop }) => {
 	const { t } = useTranslation();
 	const router = useRouter();
 	const menuLinkItemRefs = useRef({});
+	const [networkError, setNetworkError] = useState<string | null>(null);
+	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const isL2 = useRecoilValue(isL2State);
 	const {
 		closeMobileSideNav,
@@ -31,6 +36,17 @@ const SideNav: FC<SideNavProps> = ({ isDesktop }) => {
 	} = SideNavContainer.useContainer();
 
 	const menuLinks = isL2 ? MENU_LINKS_L2 : MENU_LINKS;
+
+	const addOptimismNetwork = async () => {
+		try {
+			setNetworkError(null);
+			if (!window.ethereum || !window.ethereum.isMetaMask) {
+				setNetworkError(t('user-menu.error.please-install-metamask'));
+			} else await addOptimismNetworkToMetamask({ ethereum: window.ethereum });
+		} catch (e) {
+			setNetworkError(e.message);
+		}
+	};
 
 	return (
 		<MenuLinks>
@@ -90,6 +106,19 @@ const SideNav: FC<SideNavProps> = ({ isDesktop }) => {
 					</MenuLinkItem>
 				);
 			})}
+
+			{!isDesktop && !isL2 && isWalletConnected ? (
+				<MenuLinkItem
+					onClick={() => {
+						addOptimismNetwork();
+						closeMobileSideNav();
+					}}
+					data-testid="sidenav-switch-to-l2"
+					isL2Switcher
+				>
+					<div className="link">{t('sidenav.switch-to-l2')}</div>
+				</MenuLinkItem>
+			) : null}
 		</MenuLinks>
 	);
 };
@@ -99,7 +128,7 @@ const MenuLinks = styled.div`
 	position: relative;
 `;
 
-const MenuLinkItem = styled.div<{ isActive: boolean }>`
+const MenuLinkItem = styled.div<{ isActive?: boolean; isL2Switcher?: boolean }>`
 	line-height: 40px;
 	padding-bottom: 10px;
 	position: relative;
@@ -114,10 +143,10 @@ const MenuLinkItem = styled.div<{ isActive: boolean }>`
 		${linkCSS};
 		font-family: ${(props) => props.theme.fonts.condensedMedium};
 		text-transform: uppercase;
-		opacity: 0.4;
+		opacity: ${(props) => (props.isL2Switcher ? 1 : 0.4)};
 		font-size: 14px;
 		cursor: pointer;
-		color: ${(props) => props.theme.colors.white};
+		color: ${(props) => (props.isL2Switcher ? props.theme.colors.pink : props.theme.colors.white)};
 		&:hover {
 			opacity: unset;
 			color: ${(props) => props.theme.colors.blue};
