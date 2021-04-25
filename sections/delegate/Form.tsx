@@ -13,11 +13,7 @@ import {
 	ModalItemTitle as TxModalItemTitle,
 	ModalItemText as TxModalItemText,
 	NoTextTransform,
-	IconButton,
-	FlexDivRowCentered,
 } from 'styles/common';
-import { Svg } from 'react-optimized-image';
-import NavigationBack from 'assets/svg/app/navigation-back.svg';
 import GasSelector from 'components/GasSelector';
 import { isWalletConnectedState, walletAddressState } from 'store/wallet';
 import {
@@ -185,12 +181,6 @@ const Tab: FC = () => {
 	return (
 		<div data-testid="form">
 			<FormContainer>
-				<Header>
-					<IconButton onClick={onGoBack}>
-						<Svg src={NavigationBack} />
-					</IconButton>
-				</Header>
-
 				<InputsContainer>
 					<AmountInput
 						value={delegateAddress}
@@ -260,12 +250,6 @@ const Tab: FC = () => {
 		</div>
 	);
 };
-
-const Header = styled(FlexDivRowCentered)`
-	justify-content: space-between;
-	width: 100%;
-	padding: 8px;
-`;
 
 const AmountInput = styled.textarea`
 	padding: 0;

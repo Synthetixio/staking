@@ -56,7 +56,7 @@ const DesktopSideNav: FC = () => {
 				</Link>
 			</StakingLogoWrap>
 
-			<SideNav setSubMenuOnItemMouseEnter={true} />
+			<SideNav isDesktop={true} />
 
 			<>
 				<LineSeparator />

@@ -1,4 +1,6 @@
 import styled from 'styled-components';
+import media from 'styles/media';
+
 import {
 	FlexDiv,
 	FlexDivCol,
@@ -54,6 +56,10 @@ export const Card = styled.div`
 	margin-bottom: 16px;
 	padding: 16px;
 	width: 400px;
+
+	${media.lessThan('mdUp')`
+		width: unset;
+	`}
 `;
 
 export const Subtitle = styled.p`
@@ -65,13 +71,21 @@ export const Subtitle = styled.p`
 
 export const LeftCol = styled(FlexDivCol)`
 	height: 100%;
-	width: 700px;
+	/* width: 700px; */
 	margin-right: 8px;
+
+	${media.lessThan('mdUp')`
+		width: unset;
+	`}
 `;
 export const RightCol = styled(FlexDivCol)`
 	height: 100%;
-	width: 400px;
+	/* width: 400px; */
 	margin-left: 8px;
+
+	${media.lessThan('mdUp')`
+		width: unset;
+	`}
 `;
 
 export const StyledCTA = styled(Button)`

@@ -16,10 +16,10 @@ import { MENU_LINKS, MENU_LINKS_L2 } from '../constants';
 const getKeyValue = <T extends object, U extends keyof T>(obj: T) => (key: U) => obj[key];
 
 export type SideNavProps = {
-	setSubMenuOnItemMouseEnter?: boolean;
+	isDesktop?: boolean;
 };
 
-const SideNav: FC<SideNavProps> = ({ setSubMenuOnItemMouseEnter }) => {
+const SideNav: FC<SideNavProps> = ({ isDesktop }) => {
 	const { t } = useTranslation();
 	const router = useRouter();
 	const menuLinkItemRefs = useRef({});
@@ -35,19 +35,14 @@ const SideNav: FC<SideNavProps> = ({ setSubMenuOnItemMouseEnter }) => {
 	return (
 		<MenuLinks>
 			{menuLinks.map(({ i18nLabel, link, subMenu }, i) => {
-				const onHandleEvent = () => {
-					if (!subMenu) {
-						router.push(link);
-						closeMobileSideNav();
-						clearSubMenuConfiguration();
-					} else {
-						setSubMenuConfiguration({
-							routes: subMenu as any,
-							topPosition: (getKeyValue(menuLinkItemRefs.current) as any)(i).getBoundingClientRect()
-								.y as number,
-						});
-					}
+				const onSetSubMenuConfiguration = () => {
+					setSubMenuConfiguration({
+						routes: subMenu as any,
+						topPosition: (getKeyValue(menuLinkItemRefs.current) as any)(i).getBoundingClientRect()
+							.y as number,
+					});
 				};
+
 				return (
 					<MenuLinkItem
 						ref={(r) => {
@@ -55,12 +50,30 @@ const SideNav: FC<SideNavProps> = ({ setSubMenuOnItemMouseEnter }) => {
 								menuLinkItemRefs.current = { ...menuLinkItemRefs.current, [i]: r };
 							}
 						}}
-						{...(setSubMenuOnItemMouseEnter
+						{...(isDesktop
 							? {
-									onMouseEnter: onHandleEvent,
+									onMouseEnter: () => {
+										if (subMenu) {
+											onSetSubMenuConfiguration();
+										}
+									},
+									onClick: () => {
+										if (!subMenu) {
+											router.push(link);
+											clearSubMenuConfiguration();
+										}
+									},
 							  }
 							: {
-									onClick: onHandleEvent,
+									onClick: () => {
+										if (subMenu) {
+											onSetSubMenuConfiguration();
+										} else {
+											router.push(link);
+											closeMobileSideNav();
+											clearSubMenuConfiguration();
+										}
+									},
 							  })}
 						key={link}
 						data-testid={`sidenav-${link}`}

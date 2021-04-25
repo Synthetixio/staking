@@ -78,7 +78,6 @@ export default CouncilBoard;
 
 const StyledCard = styled(Card)`
 	padding: 0px;
-	width: 250px;
 `;
 
 const Title = styled.p`

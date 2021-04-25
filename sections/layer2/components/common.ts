@@ -34,7 +34,7 @@ export const InputContainer = styled(FlexDivColCentered)`
 	position: relative;
 	width: 100%;
 	padding: 16px;
-	height: 600px;
+	/* height: 600px; */
 	margin-bottom: 24px;
 `;
 

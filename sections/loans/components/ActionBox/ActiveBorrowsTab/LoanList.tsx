@@ -6,13 +6,11 @@ import { CellProps } from 'react-table';
 import Table from 'components/Table';
 import Currency from 'components/Currency';
 import { Loan } from 'queries/loans/types';
-import { ACTION_BOX_WIDTH } from 'sections/loans/constants';
 import Loans from 'containers/Loans';
 import { formatUnits } from 'utils/formatters/number';
 import ModifyLoanMenu from './ModifyLoanMenu';
 
 const SMALL_COL_WIDTH = 80;
-const LARGE_COL_WIDTH = (ACTION_BOX_WIDTH - SMALL_COL_WIDTH * 2) / 2 - 20;
 
 type LoanListProps = {
 	actions: string[];
@@ -28,7 +26,7 @@ const LoanList: React.FC<LoanListProps> = ({ actions }) => {
 				Header: <>{t('loans.tabs.list.types.debt')}</>,
 				accessor: 'debt',
 				sortable: true,
-				width: LARGE_COL_WIDTH,
+				// width: LARGE_COL_WIDTH,
 				Cell: (cellProps: CellProps<Loan>) => {
 					const loan = cellProps.row.original;
 					return (
@@ -43,7 +41,7 @@ const LoanList: React.FC<LoanListProps> = ({ actions }) => {
 				Header: <>{t('loans.tabs.list.types.collateral')}</>,
 				accessor: 'collateral',
 				sortable: true,
-				width: LARGE_COL_WIDTH,
+				// width: LARGE_COL_WIDTH,
 				Cell: (cellProps: CellProps<Loan>) => {
 					const loan = cellProps.row.original;
 					return (
@@ -117,7 +115,7 @@ const CurrencyIconContainer = styled.div`
 	display: grid;
 	align-items: center;
 	grid-column-gap: 10px;
-	grid-template-columns: 1fr 1fr;
+	grid-template-columns: 2fr 1fr;
 `;
 
 export default LoanList;

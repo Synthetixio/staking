@@ -1,8 +1,9 @@
 import { FC } from 'react';
 import styled from 'styled-components';
-import { FlexDivCol } from 'styles/common';
 import { useRouter } from 'next/router';
+
 import { StakingPanelType } from 'store/staking';
+import { FlexDivCol } from 'styles/common';
 import media from 'styles/media';
 
 import InfoBox from './components/InfoBox';
@@ -14,19 +15,19 @@ const Index: FC = () => {
 
 	return (
 		<Container>
-			<Cols>
+			<Col>
 				<ActionBox currentTab={defaultTab} />
-			</Cols>
-			<Cols>
+			</Col>
+			<Col>
 				<InfoBox currentTab={defaultTab} />
-			</Cols>
+			</Col>
 		</Container>
 	);
 };
 
 const Container = styled.div`
 	display: grid;
-	grid-template-columns: 1fr 1fr;
+	grid-template-columns: 2fr 1fr;
 	grid-gap: 1rem;
 
 	${media.lessThan('mdUp')`
@@ -35,6 +36,6 @@ const Container = styled.div`
 	`}
 `;
 
-const Cols = styled(FlexDivCol)``;
+const Col = styled(FlexDivCol)``;
 
 export default Index;

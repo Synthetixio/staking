@@ -2,7 +2,9 @@ import React, { useMemo, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
 import { useRecoilState } from 'recoil';
+import styled from 'styled-components';
 
+import media from 'styles/media';
 import useProposals from 'queries/gov/useProposals';
 
 import ROUTES from 'constants/routes';
@@ -118,7 +120,7 @@ const Panel: React.FC<PanelProps> = ({ currentTab }) => {
 		switch (panelType) {
 			case PanelType.LIST:
 				return (
-					<Row>
+					<Grid>
 						<LeftCol>
 							<StructuredTab
 								boxPadding={20}
@@ -131,7 +133,7 @@ const Panel: React.FC<PanelProps> = ({ currentTab }) => {
 						<RightCol>
 							<CouncilBoard />
 						</RightCol>
-					</Row>
+					</Grid>
 				);
 			case PanelType.PROPOSAL:
 				return (
@@ -174,4 +176,15 @@ const Panel: React.FC<PanelProps> = ({ currentTab }) => {
 
 	return returnContent();
 };
+
+const Grid = styled.div`
+	display: grid;
+	grid-template-columns: 2fr 1fr;
+
+	${media.lessThan('mdUp')`
+		display: flex;
+		flex-direction: column;
+	`}
+`;
+
 export default Panel;

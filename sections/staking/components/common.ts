@@ -26,7 +26,7 @@ export const InputContainer = styled(FlexDivColCentered)`
 	width: 100%;
 	padding: 16px;
 	margin-bottom: 24px;
-	height: 600px;
+	/* height: 600px; */
 `;
 
 export const StyledSelect = styled(Select)`
