@@ -4,8 +4,8 @@ import { useTranslation } from 'react-i18next';
 
 import Main from 'sections/layer2/deposit';
 import StatBox from 'components/StatBox';
-import { StatsSection, LineSpacer } from 'styles/common';
-
+import { LineSpacer } from 'styles/common';
+import StatsSection from 'components/StatsSection';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { formatFiatCurrency, formatPercent } from 'utils/formatters/number';

@@ -3,10 +3,10 @@ import Head from 'next/head';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-import { StatsSection, LineSpacer } from 'styles/common';
+import { LineSpacer } from 'styles/common';
 
 import TransactionsContainer from 'sections/history/TransactionsContainer';
-
+import StatsSection from 'components/StatsSection';
 import useFeeClaimHistoryQuery from 'queries/staking/useFeeClaimHistoryQuery';
 import useSynthBurnedQuery from 'queries/staking/useSynthBurnedQuery';
 import useSynthIssuedQuery from 'queries/staking/useSynthIssuedQuery';

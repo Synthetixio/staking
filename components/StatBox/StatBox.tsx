@@ -81,7 +81,7 @@ const Box = styled(FlexDivColCentered)<{ size: Size }>`
 			.title,
 			.value {
 				font-size: 12px;
-				white-space: pre;
+				/* white-space: pre; */
 			}
 		`}
 	}

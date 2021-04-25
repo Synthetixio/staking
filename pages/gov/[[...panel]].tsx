@@ -3,14 +3,14 @@ import Head from 'next/head';
 import { useTranslation } from 'react-i18next';
 import StatBox from 'components/StatBox';
 import styled from 'styled-components';
-import { StatsSection, LineSpacer } from 'styles/common';
+import { LineSpacer } from 'styles/common';
 import { formatNumber } from 'utils/formatters/number';
 
 import useTotalDebtWeighted from 'sections/gov/hooks/useTotalDebtWeighted';
 import useIndividualDebtWeighted from 'sections/gov/hooks/useIndividualDebtWeighted';
 
 import useProposals from 'queries/gov/useProposals';
-
+import StatsSection from 'components/StatsSection';
 import MainContent from 'sections/gov';
 import useActiveProposalCount from 'sections/gov/hooks/useActiveProposalCount';
 import { SPACE_KEY } from 'constants/snapshot';

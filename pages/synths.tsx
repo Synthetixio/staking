@@ -3,12 +3,12 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { useRecoilValue } from 'recoil';
 
-import { StatsSection, LineSpacer } from 'styles/common';
+import { LineSpacer } from 'styles/common';
 
 import AssetsTable from 'sections/synths/AssetsTable';
 
 import StatBox from 'components/StatBox';
-
+import StatsSection from 'components/StatsSection';
 import { isWalletConnectedState } from 'store/wallet';
 
 import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';

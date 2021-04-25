@@ -4,8 +4,8 @@ import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
-import { LineSpacer, StatsSection } from 'styles/common';
-
+import { LineSpacer } from 'styles/common';
+import StatsSection from 'components/StatsSection';
 import { formatFiatCurrency, formatPercent, toBigNumber } from 'utils/formatters/number';
 
 import Main from 'sections/staking';

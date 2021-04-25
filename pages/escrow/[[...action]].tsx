@@ -3,8 +3,8 @@ import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 
 import StatBox from 'components/StatBox';
-import { StatsSection, LineSpacer } from 'styles/common';
-
+import { LineSpacer } from 'styles/common';
+import StatsSection from 'components/StatsSection';
 import useEscrowCalculations from 'sections/escrow/hooks/useEscrowCalculations';
 import { formatCryptoCurrency } from '../../utils/formatters/number';
 

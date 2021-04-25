@@ -2,11 +2,12 @@ import Head from 'next/head';
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { StatsSection, LineSpacer } from 'styles/common';
+import { LineSpacer } from 'styles/common';
 import sumBy from 'lodash/sumBy';
 
 import { Incentives } from 'sections/earn';
 import StatBox from 'components/StatBox';
+import StatsSection from 'components/StatsSection';
 import useUserStakingData from 'hooks/useUserStakingData';
 
 import { formatFiatCurrency, formatPercent, toBigNumber } from 'utils/formatters/number';
