@@ -6,7 +6,7 @@ import Input from 'components/Input/Input';
 import Select from 'components/Select';
 
 export const TabContainer = styled(FlexDivColCentered)`
-	height: 400px;
+	min-height: 400px;
 	width: 100%;
 `;
 

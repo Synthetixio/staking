@@ -123,7 +123,6 @@ const Panel: React.FC<PanelProps> = ({ currentTab }) => {
 							<StructuredTab
 								boxPadding={20}
 								boxHeight={600}
-								boxWidth={700}
 								tabData={tabData}
 								setPanelType={(key) => router.push(`/gov/${key}`)}
 								currentPanel={currentTab}
@@ -160,7 +159,6 @@ const Panel: React.FC<PanelProps> = ({ currentTab }) => {
 							<StructuredTab
 								boxPadding={20}
 								boxHeight={600}
-								boxWidth={700}
 								tabData={tabData}
 								setPanelType={(key) => router.push(`/gov/${key}`)}
 								currentPanel={currentTab}

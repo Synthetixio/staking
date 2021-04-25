@@ -19,7 +19,6 @@ import {
 import { Svg } from 'react-optimized-image';
 import NavigationBack from 'assets/svg/app/navigation-back.svg';
 import GasSelector from 'components/GasSelector';
-import { FORM_COL_WIDTH } from 'sections/delegate/constants';
 import { isWalletConnectedState, walletAddressState } from 'store/wallet';
 import {
 	Action,
@@ -59,13 +58,7 @@ const LeftCol: FC = () => {
 	);
 
 	return (
-		<StructuredTab
-			singleTab={true}
-			boxPadding={20}
-			boxWidth={FORM_COL_WIDTH}
-			tabData={tabData}
-			setPanelType={() => null}
-		/>
+		<StructuredTab singleTab={true} boxPadding={20} tabData={tabData} setPanelType={() => null} />
 	);
 };
 

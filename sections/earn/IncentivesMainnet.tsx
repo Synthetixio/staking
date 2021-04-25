@@ -262,13 +262,13 @@ const Incentives: FC<IncentivesProps> = ({
 
 	return activeTab == null ? (
 		<>
-			<TabList padding={20} width={400}>
+			<TabList noOfTabs={2}>
 				<TabButton
 					isSingle={false}
 					tabHeight={50}
 					inverseTabColor={true}
 					blue={true}
-					numberTabs={2}
+					noOfTabs={2}
 					key={`active-button`}
 					name={t('earn.tab.active')}
 					active={view === View.ACTIVE}
@@ -283,7 +283,7 @@ const Incentives: FC<IncentivesProps> = ({
 					tabHeight={50}
 					inverseTabColor={true}
 					blue={false}
-					numberTabs={2}
+					noOfTabs={2}
 					key={`inactive-button`}
 					name={t('earn.tab.inactive')}
 					active={view === View.INACTIVE}

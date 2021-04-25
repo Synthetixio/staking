@@ -334,7 +334,6 @@ const LPTab: FC<LPTabProps> = ({
 						inverseTabColor={true}
 						boxPadding={0}
 						boxHeight={242}
-						boxWidth={512}
 						tabData={tabData}
 					/>
 					<RewardsBox
@@ -359,7 +358,6 @@ const LPTab: FC<LPTabProps> = ({
 						inverseTabColor={true}
 						boxPadding={0}
 						boxHeight={242}
-						boxWidth={310}
 						tabData={tabData}
 					/>
 					<RewardsBox

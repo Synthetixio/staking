@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
 import StructuredTab from 'components/StructuredTab';
-import { ACTION_BOX_WIDTH, LOAN_TYPE_ETH } from 'sections/loans/constants';
+import { LOAN_TYPE_ETH } from 'sections/loans/constants';
 import BorrowSynthsTab from './BorrowSynthsTab/BorrowSynthsTab';
 import ActiveBorrowsTab from './ActiveBorrowsTab/ActiveBorrowsTab';
 
@@ -57,7 +57,6 @@ const ActionBox: React.FC<ActionBoxProps> = () => {
 	return (
 		<StructuredTab
 			boxPadding={20}
-			boxWidth={ACTION_BOX_WIDTH}
 			tabData={tabData}
 			setPanelType={(key: string) => router.push(`/loans/${key}`)}
 			currentPanel={currentTab}

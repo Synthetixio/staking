@@ -84,7 +84,7 @@ const Info: React.FC = () => {
 					</Value>
 				</Row>
 			</InfoCard>
-			<StructuredTab boxPadding={0} tabData={tabData} boxWidth={400} />
+			<StructuredTab boxPadding={0} tabData={tabData} />
 		</>
 	);
 };

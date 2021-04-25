@@ -1,5 +1,4 @@
 import { Dispatch, FC, ReactNode, SetStateAction, useState, useEffect } from 'react';
-import { FlexDivColCentered } from 'styles/common';
 import { TabButton, TabList, TabPanel } from '../Tab';
 import styled from 'styled-components';
 
@@ -15,7 +14,6 @@ export type TabInfo = {
 type StructuredTabProps = {
 	tabData: TabInfo[];
 	boxHeight?: number;
-	boxWidth: number;
 	boxPadding: number;
 	setPanelType?: Dispatch<SetStateAction<any>>;
 	tabHeight?: number;
@@ -27,7 +25,6 @@ type StructuredTabProps = {
 const StructuredTab: FC<StructuredTabProps> = ({
 	tabData,
 	boxHeight,
-	boxWidth,
 	boxPadding,
 	setPanelType,
 	tabHeight,
@@ -44,15 +41,15 @@ const StructuredTab: FC<StructuredTabProps> = ({
 	}, [currentPanel]);
 
 	return (
-		<FlexDivColCentered>
-			<TabList padding={boxPadding} width={boxWidth}>
+		<div>
+			<TabList noOfTabs={tabData.length}>
 				{tabData.map(({ title, icon, key, blue, disabled = false }, index) => (
 					<TabButton
 						isSingle={singleTab}
 						tabHeight={tabHeight}
 						inverseTabColor={inverseTabColor}
 						blue={blue}
-						numberTabs={tabData.length}
+						noOfTabs={tabData.length}
 						key={`${key}-${index}-button`}
 						name={title}
 						active={activeTab === key}
@@ -73,7 +70,6 @@ const StructuredTab: FC<StructuredTabProps> = ({
 				<TabPanel
 					padding={boxPadding}
 					height={boxHeight}
-					width={boxWidth}
 					key={`${key}-${index}-panel`}
 					name={title}
 					active={activeTab === key}
@@ -81,7 +77,7 @@ const StructuredTab: FC<StructuredTabProps> = ({
 					{tabChildren}
 				</TabPanel>
 			))}
-		</FlexDivColCentered>
+		</div>
 	);
 };
 
