@@ -62,6 +62,7 @@ const MenuLinkItem = styled.div<{ isActive: boolean }>`
 	${media.lessThan('md')`
 		font-family: ${(props) => props.theme.fonts.extended};
 		font-size: 20px;
+		opacity: 1;
 	`}
 `;
 

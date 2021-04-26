@@ -143,7 +143,7 @@ const MenuLinkItem = styled.div<{ isActive?: boolean; isL2Switcher?: boolean }>`
 		${linkCSS};
 		font-family: ${(props) => props.theme.fonts.condensedMedium};
 		text-transform: uppercase;
-		opacity: ${(props) => (props.isL2Switcher ? 1 : 0.4)};
+		opacity: 0.4;
 		font-size: 14px;
 		cursor: pointer;
 		color: ${(props) => (props.isL2Switcher ? props.theme.colors.pink : props.theme.colors.white)};
@@ -163,6 +163,7 @@ const MenuLinkItem = styled.div<{ isActive?: boolean; isL2Switcher?: boolean }>`
 		${media.lessThan('md')`
 			font-family: ${(props) => props.theme.fonts.extended};
 			font-size: 20px;
+			opacity: 1;
 		`}
 	}
 
