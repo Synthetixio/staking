@@ -72,9 +72,10 @@ const synthetix: Synthetix = {
 		method,
 	}: GasEstimateForTransactionParams): Promise<number> {
 		return new Promise((resolve, reject) => {
-			if (this.js?.network.useOvm) resolve(MAX_BLOCK_SIZE);
+			//if (this.js?.network.useOvm) resolve(MAX_BLOCK_SIZE);
 			method(...txArgs)
 				.then((estimate: Number) => {
+					console.log('GAS ESTIMATE', Number(estimate));
 					resolve(normalizeGasLimit(Number(estimate)));
 				})
 				.catch((e: Error) => reject(e));
