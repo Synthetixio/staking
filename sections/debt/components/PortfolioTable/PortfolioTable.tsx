@@ -1,4 +1,4 @@
-import { FC, useMemo } from 'react';
+import React, { FC, useMemo } from 'react';
 import { CellProps } from 'react-table';
 import styled from 'styled-components';
 import { useTranslation, Trans } from 'react-i18next';
@@ -7,9 +7,16 @@ import BigNumber from 'bignumber.js';
 
 import { useRecoilValue } from 'recoil';
 
-import { TableNoResults, TableNoResultsTitle, FlexDiv, Tooltip } from 'styles/common';
+import {
+	TableNoResults,
+	TableNoResultsTitle,
+	FlexDiv,
+	Tooltip,
+	FlexDivCentered,
+} from 'styles/common';
 
 import { appReadyState } from 'store/app';
+import { isWalletConnectedState } from 'store/wallet';
 import { CryptoBalance } from 'queries/walletBalances/types';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
@@ -17,9 +24,11 @@ import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import Table from 'components/Table';
 import Currency from 'components/Currency';
 import SynthHolding from 'components/SynthHolding';
+import Button from 'components/Button';
 
 import { ProgressBarType } from 'components/ProgressBar/ProgressBar';
 
+import Connector from 'containers/Connector';
 import { SynthsTotalSupplyData } from 'queries/synths/useSynthsTotalSupplyQuery';
 import { zeroBN } from 'utils/formatters/number';
 import { CryptoCurrency, Synths } from 'constants/currency';
@@ -47,8 +56,9 @@ const DebtPoolTable: FC<DebtPoolTableProps> = ({
 }) => {
 	const { t } = useTranslation();
 	const { selectedPriceCurrency, selectPriceCurrencyRate } = useSelectedPriceCurrency();
-
+	const { connectWallet } = Connector.useContainer();
 	const isAppReady = useRecoilValue(appReadyState);
+	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 
 	const [renBTCBalance, wBTCBalance, wETHBalance, ETHBalance] = useMemo(
 		() => [
@@ -237,6 +247,16 @@ const DebtPoolTable: FC<DebtPoolTableProps> = ({
 		mergedTotalValue,
 	]);
 
+	if (!isWalletConnected) {
+		return (
+			<DefaultContainer>
+				<Button variant="primary" onClick={connectWallet}>
+					{t('common.wallet.connect-wallet')}
+				</Button>
+			</DefaultContainer>
+		);
+	}
+
 	return (
 		<StyledTable
 			palette="primary"
@@ -316,6 +336,11 @@ const TooltipIconContainer = styled(FlexDiv)`
 
 const Strong = styled.strong`
 	font-family: ${(props) => props.theme.fonts.interBold};
+`;
+
+const DefaultContainer = styled(FlexDivCentered)`
+	width: 100%;
+	justify-content: center;
 `;
 
 export default DebtPoolTable;

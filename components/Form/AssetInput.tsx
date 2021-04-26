@@ -12,7 +12,7 @@ import Currency from 'components/Currency';
 import { Asset } from 'queries/walletBalances/types';
 
 type MaxBalanceProps = {
-	balance: string;
+	balance: BigNumber;
 	onSetMaxAmount: () => void;
 };
 
@@ -21,12 +21,11 @@ type AssetInputProps = {
 	assets: Array<Asset>;
 	asset: Asset | null;
 	setAsset: (asset: Asset) => void;
-	selectDisabled?: boolean;
 	amount: string;
 	setAmount: (amount: string) => void;
-	onSetMaxAmount?: (amount: string) => void;
-	balance: BigNumber;
-	inputDisabled: boolean;
+	onSetMaxAmount: () => void;
+	selectDisabled?: boolean;
+	inputDisabled?: boolean;
 };
 
 const Balance: FC<MaxBalanceProps> = ({ balance, onSetMaxAmount }) => {
@@ -44,23 +43,24 @@ const AssetInput: FC<AssetInputProps> = ({
 	assets,
 	asset,
 	setAsset,
-	selectDisabled,
 	amount,
 	setAmount,
 	onSetMaxAmount,
+	selectDisabled,
 	inputDisabled,
 }) => {
 	const { t } = useTranslation();
 	const options = useMemo(
-		() => assets.map(({ currencyKey }) => ({ label: currencyKey, value: currencyKey })),
+		() => assets.map((asset) => ({ label: asset.currencyKey, value: asset })),
 		[assets]
 	);
-	const value = useMemo(() => options.find(({ value }) => value === asset?.currencyKey), [
-		options,
-		asset,
-	]);
+	const value = useMemo(
+		() => options.find(({ value }: { value: Asset }) => value.currencyKey === asset?.currencyKey),
+		[options, asset]
+	);
 
 	const balance = useMemo(() => asset?.balance ?? zeroBN, [asset]);
+
 	return (
 		<Container>
 			<SelectContainer>
@@ -75,6 +75,7 @@ const AssetInput: FC<AssetInputProps> = ({
 						onChange={(option: any) => {
 							if (option) {
 								setAsset(option.value);
+								setAmount('');
 							}
 						}}
 						variant="outline"

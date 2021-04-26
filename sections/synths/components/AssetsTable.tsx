@@ -22,7 +22,7 @@ import {
 	NoTextTransform,
 	FlexDiv,
 } from 'styles/common';
-import { CryptoBalance } from 'queries/walletBalances/types';
+import { CryptoBalance, Asset } from 'queries/walletBalances/types';
 
 import { EXTERNAL_LINKS } from 'constants/links';
 import { CryptoCurrency } from 'constants/currency';
@@ -49,7 +49,7 @@ type AssetsTableProps = {
 	isLoaded: boolean;
 	showConvert: boolean;
 	showHoldings: boolean;
-	onTransferClick: (asset: { currencyKey: string; balance: BigNumber }) => void;
+	onTransferClick: (asset: Asset) => void;
 };
 
 const AssetsTable: FC<AssetsTableProps> = ({
@@ -214,6 +214,7 @@ const AssetsTable: FC<AssetsTableProps> = ({
 		selectedPriceCurrency.sign,
 		selectedPriceCurrency.name,
 		isAppReady,
+		onTransferClick,
 	]);
 
 	return (

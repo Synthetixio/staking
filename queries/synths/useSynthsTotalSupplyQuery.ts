@@ -7,7 +7,6 @@ import synthetix from 'lib/synthetix';
 import QUERY_KEYS from 'constants/queryKeys';
 import { CurrencyKey, Synths } from 'constants/currency';
 
-import { isWalletConnectedState } from 'store/wallet';
 import { appReadyState } from 'store/app';
 
 import { toBigNumber, zeroBN } from 'utils/formatters/number';
@@ -26,7 +25,6 @@ export type SynthsTotalSupplyData = {
 
 const useSynthsTotalSupplyQuery = (options?: QueryConfig<SynthsTotalSupplyData>) => {
 	const isAppReady = useRecoilValue(appReadyState);
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 
 	return useQuery<SynthsTotalSupplyData>(
 		QUERY_KEYS.Synths.TotalSupply,
@@ -97,7 +95,7 @@ const useSynthsTotalSupplyQuery = (options?: QueryConfig<SynthsTotalSupplyData>)
 			};
 		},
 		{
-			enabled: isAppReady && isWalletConnected,
+			enabled: isAppReady,
 			...options,
 		}
 	);

@@ -1,4 +1,4 @@
-import { FC, useState, useMemo } from 'react';
+import { FC, useState, useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { VerticalSpacer } from 'styles/common';
 import { useRecoilValue } from 'recoil';
@@ -44,8 +44,9 @@ const Index: FC = () => {
 			})),
 		[synthAssets, cryptoAssets]
 	);
-
-	console.log(assetToTransfer);
+	const handleOnTransferClick = useCallback((asset) => {
+		setAssetToTransfer(asset);
+	}, []);
 
 	return (
 		<>
@@ -57,7 +58,7 @@ const Index: FC = () => {
 				isLoaded={synthsBalancesQuery.isSuccess}
 				showHoldings={true}
 				showConvert={false}
-				onTransferClick={({ currencyKey, balance }) => setAssetToTransfer({ currencyKey, balance })}
+				onTransferClick={handleOnTransferClick}
 			/>
 			{!totalSynthValue.isZero() ? <KwentaBanner /> : null}
 			<VerticalSpacer />
@@ -70,9 +71,7 @@ const Index: FC = () => {
 					isLoaded={cryptoBalances.isLoaded}
 					showHoldings={false}
 					showConvert={true}
-					onTransferClick={({ currencyKey, balance }) =>
-						setAssetToTransfer({ currencyKey, balance })
-					}
+					onTransferClick={handleOnTransferClick}
 				/>
 			)}
 			{assetToTransfer ? (

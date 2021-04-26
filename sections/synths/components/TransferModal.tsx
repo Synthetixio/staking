@@ -1,14 +1,14 @@
 import { FC, useState } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import BigNumber from 'bignumber.js';
+import { ethers } from 'ethers';
 
 import BaseModal from 'components/BaseModal';
 import { FormContainer, InputsContainer, InputsDivider } from 'sections/loans/components/common';
-// import AssetInput from 'sections/loans/components/ActionBox/BorrowSynthsTab/AssetInput';
 import AssetInput from 'components/Form/AssetInput';
 
-import { CryptoBalance, Asset } from 'queries/walletBalances/types';
+import { Asset } from 'queries/walletBalances/types';
+import { zeroBN } from 'utils/formatters/number';
 
 type TransferModalProps = {
 	onDismiss: () => void;
@@ -20,6 +20,7 @@ type TransferModalProps = {
 const TransferModal: FC<TransferModalProps> = ({ onDismiss, assets, setAsset, currentAsset }) => {
 	const { t } = useTranslation();
 	const [amount, setAmount] = useState<string>('');
+
 	return (
 		<StyledModal onDismiss={onDismiss} isOpen={true} title={t('synths.transfer.modal-title')}>
 			<FormContainer>
@@ -31,8 +32,11 @@ const TransferModal: FC<TransferModalProps> = ({ onDismiss, assets, setAsset, cu
 						setAsset={setAsset}
 						amount={amount}
 						setAmount={setAmount}
-						onSetMaxAmount={() => setAmount(currentAsset?.balance)}
-						// balance={balance}
+						onSetMaxAmount={() =>
+							setAmount(
+								ethers.utils.formatUnits(ethers.BigNumber.from(currentAsset?.balance ?? zeroBN))
+							)
+						}
 					/>
 					<InputsDivider />
 					<div>there</div>
