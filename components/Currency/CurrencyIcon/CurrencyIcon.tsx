@@ -10,9 +10,15 @@ import useSynthetixTokenList from 'queries/tokenLists/useSynthetixTokenList';
 import useZapperTokenList from 'queries/tokenLists/useZapperTokenList';
 import { FlexDivCentered } from 'styles/common';
 
+export enum CurrencyIconType {
+	SYNTH = 'synth',
+	ASSET = 'asset',
+	TOKEN = 'token',
+}
+
 type CurrencyIconProps = {
 	currencyKey: CurrencyKey;
-	type?: 'synth' | 'asset' | 'token';
+	type?: CurrencyIconType;
 	className?: string;
 	width?: string;
 	height?: string;
@@ -68,7 +74,7 @@ export const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, type, ...rest
 				return <Img src={ETHIcon} {...props} />;
 			}
 			case CryptoCurrency.SNX: {
-				return <img src={SNXIcon} {...props} />;
+				return <img src={SNXIcon} {...props} alt="snx-icon" />;
 			}
 			default:
 				return (
@@ -80,6 +86,7 @@ export const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, type, ...rest
 						}
 						onError={() => setIsError(true)}
 						{...props}
+						alt={currencyKey}
 					/>
 				);
 		}
