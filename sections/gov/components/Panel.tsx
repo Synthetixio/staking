@@ -115,23 +115,6 @@ const Panel: React.FC<PanelProps> = ({ currentTab }) => {
 
 	const returnContent = () => {
 		switch (panelType) {
-			case PanelType.LIST:
-				return (
-					<Grid>
-						<Col>
-							<StructuredTab
-								boxPadding={20}
-								boxHeight={600}
-								tabData={tabData}
-								setPanelType={(key) => router.push(`/gov/${key}`)}
-								currentPanel={currentTab}
-							/>
-						</Col>
-						<Col>
-							<CouncilBoard />
-						</Col>
-					</Grid>
-				);
 			case PanelType.PROPOSAL:
 				return (
 					<Proposal
@@ -151,6 +134,7 @@ const Panel: React.FC<PanelProps> = ({ currentTab }) => {
 						}}
 					/>
 				);
+			// PanelType.LIST:
 			default:
 				return (
 					<Grid>

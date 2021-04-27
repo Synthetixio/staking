@@ -1,6 +1,10 @@
 import { Dispatch, FC, ReactNode, SetStateAction, useState, useEffect } from 'react';
-import { TabButton, TabList, TabPanel } from '../Tab';
 import styled from 'styled-components';
+
+import Select from 'components/Select';
+import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
+
+import { TabButton, TabList, TabPanel } from '../Tab';
 
 export type TabInfo = {
 	title: string;
@@ -40,32 +44,55 @@ const StructuredTab: FC<StructuredTabProps> = ({
 		}
 	}, [currentPanel]);
 
+	const desktop = () => (
+		<TabList noOfTabs={tabData.length}>
+			{tabData.map(({ title, icon, key, blue, disabled = false }, index) => (
+				<TabButton
+					isSingle={singleTab}
+					tabHeight={tabHeight}
+					inverseTabColor={inverseTabColor}
+					blue={blue}
+					noOfTabs={tabData.length}
+					key={`${key}-${index}-button`}
+					name={title}
+					active={activeTab === key}
+					isDisabled={disabled}
+					onClick={() => {
+						setActiveTab(key);
+						if (setPanelType != null) {
+							setPanelType(key);
+						}
+					}}
+				>
+					{icon != null && icon}
+					<TitleContainer>{title}</TitleContainer>
+				</TabButton>
+			))}
+		</TabList>
+	);
+
+	const mobile = () => (
+		<Select
+			inputId={'tabs'}
+			formatOptionLabel={(option) => option.title}
+			options={tabData}
+			value={tabData.find(({ key }) => key === activeTab)}
+			onChange={(option: any) => {
+				if (option) {
+					setActiveTab(option.key);
+					if (setPanelType != null) {
+						setPanelType(option.key);
+					}
+				}
+			}}
+			variant="outline"
+		/>
+	);
+
 	return (
 		<div>
-			<TabList noOfTabs={tabData.length}>
-				{tabData.map(({ title, icon, key, blue, disabled = false }, index) => (
-					<TabButton
-						isSingle={singleTab}
-						tabHeight={tabHeight}
-						inverseTabColor={inverseTabColor}
-						blue={blue}
-						noOfTabs={tabData.length}
-						key={`${key}-${index}-button`}
-						name={title}
-						active={activeTab === key}
-						isDisabled={disabled}
-						onClick={() => {
-							setActiveTab(key);
-							if (setPanelType != null) {
-								setPanelType(key);
-							}
-						}}
-					>
-						{icon != null && icon}
-						<TitleContainer>{title}</TitleContainer>
-					</TabButton>
-				))}
-			</TabList>
+			<DesktopOnlyView>{desktop()}</DesktopOnlyView>
+			<MobileOrTabletView>{tabData.length <= 2 ? desktop() : mobile()}</MobileOrTabletView>
 			{tabData.map(({ title, tabChildren, key }, index) => (
 				<TabPanel
 					padding={boxPadding}
