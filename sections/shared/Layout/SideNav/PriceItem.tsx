@@ -1,5 +1,5 @@
+import React, { FC } from 'react';
 import styled from 'styled-components';
-import { FC } from 'react';
 import { Trans } from 'react-i18next';
 
 import { FlexDivCentered, FlexDivCol, FlexDivRowCentered, NoTextTransform } from 'styles/common';
@@ -7,12 +7,15 @@ import { FlexDivCentered, FlexDivCol, FlexDivRowCentered, NoTextTransform } from
 import { CurrencyKey } from 'constants/currency';
 import { NO_VALUE } from 'constants/placeholder';
 import CurrencyPrice from 'components/Currency/CurrencyPrice';
+import ChangePercent from 'components/ChangePercent';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
+import useHistoricalRatesQuery from 'queries/rates/useHistoricalRatesQuery';
+
+import { Period } from 'constants/period';
 
 import LineChart, { LineChartData } from './LineChart';
-import { formatPercent } from 'utils/formatters/number';
 
 type PriceItemProps = {
 	currencyKey: CurrencyKey;
@@ -22,6 +25,7 @@ type PriceItemProps = {
 const PriceItem: FC<PriceItemProps> = ({ currencyKey, data }) => {
 	const { selectedPriceCurrency, selectPriceCurrencyRate } = useSelectedPriceCurrency();
 	const exchangeRatesQuery = useExchangeRatesQuery();
+	const historicalRates = useHistoricalRatesQuery(currencyKey, Period.ONE_DAY);
 
 	const exchangeRates = exchangeRatesQuery.data ?? null;
 	const price = exchangeRates && exchangeRates[currencyKey];
@@ -39,10 +43,11 @@ const PriceItem: FC<PriceItemProps> = ({ currencyKey, data }) => {
 				</span>
 				{data.length > 0 ? (
 					<FlexDivCentered>
-						{trendLinePositive ? <TriangleUp /> : <TriangleDown />}
-						<PercentChange trendLinePositive={trendLinePositive}>
-							{formatPercent(data[data.length - 1].value / data[0].value - 1)}
-						</PercentChange>
+						{historicalRates.data?.change && (
+							<PercentChange>
+								<ChangePercent className="percent" value={historicalRates.data?.change} />
+							</PercentChange>
+						)}
 					</FlexDivCentered>
 				) : (
 					<div>{NO_VALUE}</div>
@@ -93,32 +98,9 @@ const PriceInfo = styled(FlexDivCentered)`
 	justify-content: space-between;
 `;
 
-const PercentChange = styled.div<{ trendLinePositive: boolean }>`
+const PercentChange = styled.div`
 	font-size: 10px;
 	font-family: ${(props) => props.theme.fonts.interBold};
-	color: ${(props) =>
-		props.trendLinePositive ? props.theme.colors.green : props.theme.colors.pink};
 `;
 
-const TriangleMixin = `
-	border-right: 4px solid transparent;
-	border-left: 4px solid transparent;
-	display: inline-block;
-`;
-
-const TriangleUp = styled.div`
-	${TriangleMixin};
-	border-bottom: ${(props) => `calc(2 * 4px * 0.866) solid ${props.theme.colors.green}`};
-	border-top: 4px solid transparent;
-	margin-bottom: 4px;
-	margin-right: 4px;
-`;
-
-const TriangleDown = styled.div`
-	${TriangleMixin};
-	border-top: ${(props) => `calc(2 * 4px * 0.866) solid ${props.theme.colors.pink}`};
-	border-bottom: 4px solid transparent;
-	margin-bottom: -5px;
-	margin-right: 4px;
-`;
 export default PriceItem;
