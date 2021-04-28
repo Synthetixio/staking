@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { FlexDiv, FlexDivColCentered, FlexDivCentered, ExternalLink } from 'styles/common';
+import media from 'styles/media';
 import Button from 'components/Button';
 
 export const TotalValueWrapper = styled(FlexDiv)`
@@ -76,9 +77,12 @@ export const LinkText = styled.div`
 export const Divider = styled.div`
 	background: ${(props) => props.theme.colors.grayBlue};
 	height: 1px;
-	width: 257px;
 	margin-top: 20px;
 	margin-bottom: 20px;
+
+	${media.greaterThan('mdUp')`
+		width: 257px;
+	`}
 `;
 
 export const StyledButton = styled(Button)`

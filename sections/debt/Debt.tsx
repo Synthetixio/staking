@@ -2,7 +2,8 @@ import styled from 'styled-components';
 import { useTranslation, Trans } from 'react-i18next';
 import { Svg } from 'react-optimized-image';
 
-import { FlexDiv, FlexDivCol, Row, Tooltip } from 'styles/common';
+import media from 'styles/media';
+import { FlexDiv, FlexDivCol, Tooltip } from 'styles/common';
 import DebtChart from 'sections/debt/components/DebtChart';
 import DebtPieChart from 'sections/debt/components/DebtPieChart';
 
@@ -63,7 +64,7 @@ const DebtSection = () => {
 					<DebtChart data={historicalDebt.data} isLoading={dataIsLoading} />
 				</ContainerBody>
 			</Container>
-			<Row>
+			<BottomContainer>
 				<DebtPieChartContainer>
 					<ContainerHeader>
 						{t('debt.actions.hedge.info.debt-pool-pie-chart.title')}
@@ -102,13 +103,19 @@ const DebtSection = () => {
 						/>
 					</ContainerBody>
 				</PortfolioContainer>
-			</Row>
+			</BottomContainer>
 		</FlexDivCol>
 	);
 };
 
 const Container = styled(FlexDivCol)`
 	background: ${(props) => props.theme.colors.navy};
+`;
+
+const BottomContainer = styled(FlexDiv)`
+	${media.lessThan('mdUp')`
+		flex-direction: column;
+	`}
 `;
 
 const ContainerHeader = styled(FlexDiv)`
@@ -129,7 +136,9 @@ const ContainerBody = styled.div`
 `;
 
 const DebtPieChartContainer = styled(Container)`
-	width: 360px;
+	${media.greaterThan('mdUp')`
+		width: 360px;
+	`}
 `;
 
 const PortfolioContainer = styled(Container)`

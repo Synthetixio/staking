@@ -8,10 +8,12 @@ import useSNX24hrPricesQuery from 'queries/rates/useSNX24hrPricesQuery';
 import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
 import useCryptoBalances from 'hooks/useCryptoBalances';
 
+import { MOBILE_BODY_PADDING } from 'constants/ui';
 import { CryptoCurrency, Synths } from 'constants/currency';
 import { MobileOrTabletView } from 'components/Media';
 
 import { FlexDivRowCentered } from 'styles/common';
+import media from 'styles/media';
 
 import PriceItem from 'sections/shared/Layout/Stats/PriceItem';
 import PeriodBarStats from 'sections/shared/Layout/Stats/PeriodBarStats';
@@ -72,6 +74,11 @@ const StatsContainer = styled(FlexDivRowCentered)`
 	width: 100%;
 	justify-content: center;
 	margin: 0 auto;
+
+	${media.lessThan('mdUp')`
+		padding-right: ${MOBILE_BODY_PADDING}px;
+		padding-left: ${MOBILE_BODY_PADDING}px;
+	`}
 `;
 
 const ToggleMobileStatsSection = styled.div`
@@ -79,6 +86,7 @@ const ToggleMobileStatsSection = styled.div`
 	justify-content: flex-end;
 	position: relative;
 	top: 50px;
+	right: ${MOBILE_BODY_PADDING}px;
 `;
 
 const MobileOrTabletViewInner = styled.div<{ isVisible: boolean }>`
@@ -86,6 +94,8 @@ const MobileOrTabletViewInner = styled.div<{ isVisible: boolean }>`
 	overflow-y: hidden;
 	height: ${(props) => (props.isVisible ? '180px' : '0')};
 	opacity: ${(props) => (props.isVisible ? '1' : '0')};
+	padding-right: ${MOBILE_BODY_PADDING}px;
+	padding-left: ${MOBILE_BODY_PADDING}px;
 `;
 
 const TopContainer = styled.div`

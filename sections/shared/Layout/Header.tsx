@@ -2,6 +2,7 @@ import { FC } from 'react';
 import styled from 'styled-components';
 import { Svg } from 'react-optimized-image';
 
+import { MOBILE_BODY_PADDING } from 'constants/ui';
 import SideNavContainer from 'containers/SideNav';
 import { FlexDivCentered, FlexDivCol } from 'styles/common';
 import media from 'styles/media';
@@ -43,7 +44,7 @@ const Container = styled(FlexDivCol)`
 	padding: 24px 30px 0 0;
 
 	${media.lessThan('mdUp')`
-		padding: 10px 30px 0;
+		padding: 10px ${MOBILE_BODY_PADDING}px 0;
 	`}
 `;
 

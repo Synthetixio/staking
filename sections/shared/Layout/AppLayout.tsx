@@ -1,4 +1,4 @@
-import { DESKTOP_SIDE_NAV_WIDTH, DESKTOP_BODY_PADDING, MOBILE_BODY_PADDING } from 'constants/ui';
+import { DESKTOP_SIDE_NAV_WIDTH, DESKTOP_BODY_PADDING } from 'constants/ui';
 import { FC, ReactNode, useEffect } from 'react';
 import router from 'next/router';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
@@ -88,11 +88,6 @@ const Content = styled.div`
 	${media.greaterThan('mdUp')`
 		padding-left: calc(${DESKTOP_SIDE_NAV_WIDTH + DESKTOP_BODY_PADDING}px);
 	`}
-
-	${media.lessThan('mdUp')`
-		padding-right: ${MOBILE_BODY_PADDING}px;
-		padding-left: ${MOBILE_BODY_PADDING}px;
-		`}
 `;
 
 export default AppLayout;

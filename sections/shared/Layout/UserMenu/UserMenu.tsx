@@ -271,8 +271,9 @@ const Error = styled.div`
 `;
 
 const MobileStyledGlowingButton = styled(StyledGlowingButton)`
+	height: 32px;
 	max-height: 32px;
-	line-height: 32px;
+	line-height: unset;
 `;
 
 export default UserMenu;

@@ -140,6 +140,9 @@ const SelectLabel = styled.div`
 
 	${media.lessThan('mdUp')`
 		grid-area: tile-1;
+		align-items: flex-end;
+    height: 40px;
+    display: flex;
 	`}
 `;
 
