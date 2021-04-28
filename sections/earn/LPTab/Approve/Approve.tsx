@@ -78,7 +78,7 @@ export const getApprovalContractData = (stakedAsset: CurrencyKey, signer: any) =
 			contract: new ethers.Contract(
 				curveSusdPoolToken.address,
 				curveSusdPoolToken.abi,
-				signer as any
+				signer as ethers.Signer
 			),
 			poolAddress: curveSusdRewards.address,
 		};
@@ -87,7 +87,7 @@ export const getApprovalContractData = (stakedAsset: CurrencyKey, signer: any) =
 			contract: new ethers.Contract(
 				balancersTSLAPoolToken.address,
 				balancersTSLAPoolToken.abi,
-				signer as any
+				signer as ethers.Signer
 			),
 			poolAddress: contracts.StakingRewardssTSLABalancer.address,
 		};
@@ -96,7 +96,7 @@ export const getApprovalContractData = (stakedAsset: CurrencyKey, signer: any) =
 			contract: new ethers.Contract(
 				balancersFBPoolToken.address,
 				balancersFBPoolToken.abi,
-				signer as any
+				signer as ethers.Signer
 			),
 			poolAddress: contracts.StakingRewardssFBBalancer.address,
 		};
@@ -105,7 +105,7 @@ export const getApprovalContractData = (stakedAsset: CurrencyKey, signer: any) =
 			contract: new ethers.Contract(
 				balancersAAPLPoolToken.address,
 				balancersAAPLPoolToken.abi,
-				signer as any
+				signer as ethers.Signer
 			),
 			poolAddress: contracts.StakingRewardssAAPLBalancer.address,
 		};
@@ -114,7 +114,7 @@ export const getApprovalContractData = (stakedAsset: CurrencyKey, signer: any) =
 			contract: new ethers.Contract(
 				balancersAMZNPoolToken.address,
 				balancersAMZNPoolToken.abi,
-				signer as any
+				signer as ethers.Signer
 			),
 			poolAddress: contracts.StakingRewardssAMZNBalancer.address,
 		};
@@ -123,7 +123,7 @@ export const getApprovalContractData = (stakedAsset: CurrencyKey, signer: any) =
 			contract: new ethers.Contract(
 				balancersNFLXPoolToken.address,
 				balancersNFLXPoolToken.abi,
-				signer as any
+				signer as ethers.Signer
 			),
 			poolAddress: contracts.StakingRewardssNFLXBalancer.address,
 		};
@@ -132,7 +132,7 @@ export const getApprovalContractData = (stakedAsset: CurrencyKey, signer: any) =
 			contract: new ethers.Contract(
 				balancersGOOGPoolToken.address,
 				balancersGOOGPoolToken.abi,
-				signer as any
+				signer as ethers.Signer
 			),
 			poolAddress: contracts.StakingRewardssGOOGBalancer.address,
 		};
@@ -141,7 +141,7 @@ export const getApprovalContractData = (stakedAsset: CurrencyKey, signer: any) =
 			contract: new ethers.Contract(
 				balancersMSFTPoolToken.address,
 				balancersMSFTPoolToken.abi,
-				signer as any
+				signer as ethers.Signer
 			),
 			poolAddress: contracts.StakingRewardssMSFTBalancer.address,
 		};
@@ -150,7 +150,7 @@ export const getApprovalContractData = (stakedAsset: CurrencyKey, signer: any) =
 			contract: new ethers.Contract(
 				balancersCOINPoolToken.address,
 				balancersCOINPoolToken.abi,
-				signer as any
+				signer as ethers.Signer
 			),
 			poolAddress: contracts.StakingRewardssCOINBalancer.address,
 		};
