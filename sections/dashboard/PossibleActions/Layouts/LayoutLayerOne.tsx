@@ -253,6 +253,40 @@ const LayoutLayerOne: FC = () => {
 				link: ROUTES.Earn.sNFLX_LP,
 				isDisabled: lpData[LP.BALANCER_sNFLX].APR === 0,
 			},
+			{
+				gridLocations: ['col-4', 'col-5', 'row-4', 'row-5'],
+				icon: (
+					<GlowingCircle variant="green" size="md">
+						<Currency.Icon currencyKey={Synths.sMSFT} width="28" height="28" />
+					</GlowingCircle>
+				),
+				title: t('dashboard.actions.earn.title', {
+					percent: formatPercent(lpData[LP.BALANCER_sMSFT].APR, { minDecimals: 0 }),
+				}),
+				copy: t('dashboard.actions.earn.copy', {
+					asset: 'Balancer sMSFT Pool Token',
+					supplier: 'Synthetix',
+				}),
+				link: ROUTES.Earn.sMSFT_LP,
+				isDisabled: lpData[LP.BALANCER_sMSFT].APR === 0,
+			},
+			{
+				gridLocations: ['col-1', 'col-2', 'row-5', 'row-6'],
+				icon: (
+					<GlowingCircle variant="green" size="md">
+						<Currency.Icon currencyKey={Synths.sCOIN} width="28" height="28" />
+					</GlowingCircle>
+				),
+				title: t('dashboard.actions.earn.title', {
+					percent: formatPercent(lpData[LP.BALANCER_sCOIN].APR, { minDecimals: 0 }),
+				}),
+				copy: t('dashboard.actions.earn.copy', {
+					asset: 'Balancer sNFLX Pool Token',
+					supplier: 'Synthetix',
+				}),
+				link: ROUTES.Earn.sCOIN_LP,
+				isDisabled: lpData[LP.BALANCER_sCOIN].APR === 0,
+			},
 		];
 	}, [t, lpData, currentCRatio, targetCRatio, stakingRewards, tradingRewards, shortData]);
 	return (

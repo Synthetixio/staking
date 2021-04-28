@@ -25,6 +25,8 @@ import {
 	balancersAMZNPoolToken,
 	balancersGOOGPoolToken,
 	balancersNFLXPoolToken,
+	balancersMSFTPoolToken,
+	balancersCOINPoolToken,
 } from 'contracts';
 import Connector from 'containers/Connector';
 import { EXTERNAL_LINKS } from 'constants/links';
@@ -133,6 +135,24 @@ export const getApprovalContractData = (stakedAsset: CurrencyKey, signer: any) =
 				signer as any
 			),
 			poolAddress: contracts.StakingRewardssGOOGBalancer.address,
+		};
+	} else if (stakedAsset === LP.BALANCER_sMSFT) {
+		return {
+			contract: new ethers.Contract(
+				balancersMSFTPoolToken.address,
+				balancersMSFTPoolToken.abi,
+				signer as any
+			),
+			poolAddress: contracts.StakingRewardssMSFTBalancer.address,
+		};
+	} else if (stakedAsset === LP.BALANCER_sCOIN) {
+		return {
+			contract: new ethers.Contract(
+				balancersCOINPoolToken.address,
+				balancersCOINPoolToken.abi,
+				signer as any
+			),
+			poolAddress: contracts.StakingRewardssCOINBalancer.address,
 		};
 	} else if (stakedAsset === LP.UNISWAP_DHT) {
 		return {

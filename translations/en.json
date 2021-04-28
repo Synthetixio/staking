@@ -477,6 +477,16 @@
 					"description": "Stake sGOOG Balancer Pool LP to earn SNX rewards. <0>Add liquidity on Balancer here<0>.",
 					"subtitle": "sGOOG BPT Rewards"
 				},
+				"smsft": {
+					"title": "Balancer",
+					"description": "Stake sMSFT Balancer Pool LP to earn SNX rewards. <0>Add liquidity on Balancer here<0>.",
+					"subtitle": "sMSFT BPT Rewards"
+				},
+				"scoin": {
+					"title": "Balancer",
+					"description": "Stake sCOIN Balancer Pool LP to earn SNX rewards. <0>Add liquidity on Balancer here<0>.",
+					"subtitle": "sCOIN BPT Rewards"
+				},
 				"dht": {
 					"title": "Uniswap",
 					"description": "Stake sUSD-DHT Uniswap Pool Tokens to earn SNX and DHT rewards. <0>Add liquidity on Uniswap here<0>.",

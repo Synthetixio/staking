@@ -1,4 +1,5 @@
 import { Synths } from 'constants/currency';
+import ROUTES from 'constants/routes';
 import { invert } from 'lodash';
 
 export enum Tab {
@@ -12,6 +13,8 @@ export enum Tab {
 	sAMZN_LP = 'sAMZN-LP',
 	sNFLX_LP = 'sNFLX-LP',
 	sGOOG_LP = 'sGOOG-LP',
+	sMSFT_LP = 'sMSFT-LP',
+	sCOIN_LP = 'sCOIN-LP',
 	DHT_LP = 'DHT-LP',
 	sBTC_SHORT = 'sBTC Short',
 	sETH_SHORT = 'sETH Short',
@@ -27,6 +30,8 @@ export enum LP {
 	BALANCER_sAMZN = 'sAMZN BPT',
 	BALANCER_sNFLX = 'sNFLX BPT',
 	BALANCER_sGOOG = 'sGOOG BPT',
+	BALANCER_sMSFT = 'sMSFT BPT',
+	BALANCER_sCOIN = 'sCOIN BPT',
 	UNISWAP_DHT = 'DHT LPT',
 }
 
@@ -36,24 +41,41 @@ export const lpToTab: { [name: string]: Tab } = {
 	[LP.BALANCER_sAMZN]: Tab.sAMZN_LP,
 	[LP.BALANCER_sNFLX]: Tab.sNFLX_LP,
 	[LP.BALANCER_sGOOG]: Tab.sGOOG_LP,
+	[LP.BALANCER_sMSFT]: Tab.sMSFT_LP,
+	[LP.BALANCER_sCOIN]: Tab.sCOIN_LP,
 };
 
 export const tabToLP = invert(lpToTab);
 
 export const lpToSynthTranslationKey: { [name: string]: string } = {
+	[LP.BALANCER_sTSLA]: 'stsla',
 	[LP.BALANCER_sFB]: 'sfb',
 	[LP.BALANCER_sAAPL]: 'saaple',
 	[LP.BALANCER_sAMZN]: 'samzn',
 	[LP.BALANCER_sNFLX]: 'snflx',
 	[LP.BALANCER_sGOOG]: 'sgoog',
-	[LP.BALANCER_sTSLA]: 'stsla',
+	[LP.BALANCER_sMSFT]: 'smsft',
+	[LP.BALANCER_sCOIN]: 'scoin',
 };
 
 export const lpToSynthIcon: { [name: string]: string } = {
+	[LP.BALANCER_sTSLA]: Synths.sTSLA,
 	[LP.BALANCER_sFB]: Synths.sFB,
 	[LP.BALANCER_sAAPL]: Synths.sAAPL,
 	[LP.BALANCER_sAMZN]: Synths.sAMZN,
 	[LP.BALANCER_sNFLX]: Synths.sNFLX,
 	[LP.BALANCER_sGOOG]: Synths.sGOOG,
-	[LP.BALANCER_sTSLA]: Synths.sTSLA,
+	[LP.BALANCER_sMSFT]: Synths.sMSFT,
+	[LP.BALANCER_sCOIN]: Synths.sCOIN,
+};
+
+export const lpToRoute: { [name: string]: string } = {
+	[LP.BALANCER_sTSLA]: ROUTES.Earn.sTLSA_LP,
+	[LP.BALANCER_sFB]: ROUTES.Earn.sFB_LP,
+	[LP.BALANCER_sAAPL]: ROUTES.Earn.sAAPL_LP,
+	[LP.BALANCER_sAMZN]: ROUTES.Earn.sAMZN_LP,
+	[LP.BALANCER_sNFLX]: ROUTES.Earn.sNFLX_LP,
+	[LP.BALANCER_sGOOG]: ROUTES.Earn.sGOOG_LP,
+	[LP.BALANCER_sMSFT]: ROUTES.Earn.sMSFT_LP,
+	[LP.BALANCER_sCOIN]: ROUTES.Earn.sCOIN_LP,
 };
