@@ -68,12 +68,12 @@ const useLPData = (): LPData => {
 	);
 	const usesMSFTPool = useBalancerPoolQuery(
 		Synths.sMSFT,
-		'StakingRewardssGOOGBalancer',
+		'StakingRewardssMSFTBalancer',
 		balancersMSFTPoolToken
 	);
 	const usesCOINPool = useBalancerPoolQuery(
 		Synths.sCOIN,
-		'StakingRewardssGOOGBalancer',
+		'StakingRewardssCOINBalancer',
 		balancersCOINPoolToken
 	);
 	const usesDHTPool = useDHTsUSDPoolQuery();
