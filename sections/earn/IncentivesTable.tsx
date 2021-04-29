@@ -187,7 +187,7 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab }
 				Header: <>{t('earn.incentives.options.rewards.title')}</>,
 				accessor: 'rewards',
 				Cell: (cellProps: CellProps<EarnItem, EarnItem['rewards']>) => {
-					const isDualRewards = cellProps.row.original.staked.asset === LP.UNISWAP_DHT;
+					const isDualRewards = typeof cellProps.row.original.rewards === 'object';
 					if (
 						!cellProps.row.original.externalLink ||
 						cellProps.row.original.staked.asset !== LP.CURVE_sUSD
