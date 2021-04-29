@@ -34,14 +34,11 @@ import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 
 import { getContract } from '../StakeTab/StakeTab';
 import { StyledButton } from '../../common';
-import { CurrencyIconType } from 'components/Currency/CurrencyIcon/CurrencyIcon';
 
 type RewardsBoxProps = {
 	tokenRewards: number;
 	SNXRate: number;
 	stakedAsset: CurrencyKey;
-	icon: CurrencyKey;
-	type?: CurrencyIconType;
 	handleClaim: () => void;
 	setClaimGasPrice: (num: number) => void;
 	claimTxModalOpen: boolean;
@@ -57,8 +54,6 @@ const RewardsBox: FC<RewardsBoxProps> = ({
 	tokenRewards,
 	SNXRate,
 	stakedAsset,
-	icon,
-	type,
 	handleClaim,
 	setClaimGasPrice,
 	claimTxModalOpen,
@@ -119,12 +114,7 @@ const RewardsBox: FC<RewardsBoxProps> = ({
 					</FlexDivColCentered>
 					{isDualRewards && secondTokenKey && (
 						<FlexDivColCentered>
-							<Currency.Icon
-								currencyKey={icon}
-								type={type ? type : undefined}
-								width="48"
-								height="48"
-							/>
+							<Currency.Icon currencyKey={stakedAsset} width="48" height="48" />
 							<RewardsAmountSNX>
 								{formatCurrency(secondTokenKey, secondTokenReward!, {
 									currencyKey: secondTokenKey,
