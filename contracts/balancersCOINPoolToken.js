@@ -1,5 +1,5 @@
 export default {
-	address: '0x6418c69b0de51873a1cc01cf73ba6e408acc1940', //TODO update address
+	address: '0x2e27d4160b257708375a7bf23381110d2328bc1b',
 	abi: [
 		{ inputs: [], payable: false, stateMutability: 'nonpayable', type: 'constructor' },
 		{
