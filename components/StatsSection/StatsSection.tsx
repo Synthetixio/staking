@@ -90,7 +90,7 @@ const ToggleMobileStatsSection = styled.div`
 `;
 
 const MobileOrTabletViewInner = styled.div<{ isVisible: boolean }>`
-	transition: height, opacity 0.5s ease-in-out;
+	transition: height 0.3s ease-out, opacity 0.3s ease-out;
 	overflow-y: hidden;
 	height: ${(props) => (props.isVisible ? '180px' : '0')};
 	opacity: ${(props) => (props.isVisible ? '1' : '0')};
