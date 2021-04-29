@@ -70,7 +70,6 @@ const Incentives: FC<IncentivesProps> = ({
 							staked: {
 								balance: stakedAmount,
 								asset: CryptoCurrency.SNX,
-								ticker: CryptoCurrency.SNX,
 							},
 							rewards: stakingRewards.toNumber(),
 							periodStarted: currentFeePeriodStarted.getTime(),
