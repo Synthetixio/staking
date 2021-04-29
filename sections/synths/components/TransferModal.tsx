@@ -140,7 +140,7 @@ const TransferModal: FC<TransferModalProps> = ({
 				size="lg"
 				variant="primary"
 				onClick={handleTransfer}
-				disabled={!gasLimit || gasEstimateError}
+				disabled={!gasLimit || !!gasEstimateError}
 			>
 				<Trans
 					i18nKey="synths.transfer.button.transfer"

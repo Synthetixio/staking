@@ -80,7 +80,16 @@ const useCryptoBalances = () => {
 			);
 		}
 		return [];
-	}, [isLoaded, ETHBalance, SNXBalance, wETHBalance, wBTCBalance, renBTCBalance, exchangeRates]);
+	}, [
+		isLoaded,
+		ETHBalance,
+		SNXBalance,
+		wETHBalance,
+		wBTCBalance,
+		renBTCBalance,
+		exchangeRates,
+		transferrableSNX,
+	]);
 
 	return {
 		balances,

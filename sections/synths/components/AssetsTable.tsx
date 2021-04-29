@@ -22,7 +22,7 @@ import {
 	NoTextTransform,
 	FlexDiv,
 } from 'styles/common';
-import { CryptoBalance, Asset } from 'queries/walletBalances/types';
+import { CryptoBalance } from 'queries/walletBalances/types';
 
 import { EXTERNAL_LINKS } from 'constants/links';
 import { CryptoCurrency } from 'constants/currency';
