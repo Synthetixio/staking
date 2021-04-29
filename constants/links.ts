@@ -21,4 +21,8 @@ export const EXTERNAL_LINKS = {
 		Discord: 'https://discordapp.com/invite/AEdUHzt',
 		GitHub: 'https://github.com/synthetixio/staking',
 	},
+	TokenLists: {
+		Synthetix: 'https://synths.snx.eth.link',
+		Zapper: 'https://zapper.fi/api/token-list',
+	},
 };

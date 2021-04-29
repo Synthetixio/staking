@@ -3,7 +3,7 @@ import { useRecoilValue } from 'recoil';
 
 import QUERY_KEYS from 'constants/queryKeys';
 
-import { isWalletConnectedState, networkState, walletAddressState } from 'store/wallet';
+import { isL2State, isWalletConnectedState, networkState, walletAddressState } from 'store/wallet';
 import { appReadyState } from 'store/app';
 import { NumericValue, toBigNumber } from 'utils/formatters/number';
 import { formatEther, parseEther } from 'ethers/lib/utils';
@@ -24,6 +24,8 @@ const use1InchQuoteQuery = (
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const network = useRecoilValue(networkState);
+	const isL2 = useRecoilValue(isL2State);
+
 	return useQuery<QuoteData>(
 		QUERY_KEYS.Swap.quote1Inch(walletAddress ?? '', network?.id!, amount),
 		async () => {
@@ -43,6 +45,7 @@ const use1InchQuoteQuery = (
 			enabled:
 				isAppReady &&
 				isWalletConnected &&
+				!isL2 &&
 				!toBigNumber(amount).isZero() &&
 				toBigNumber(amount).isPositive(),
 			...options,
