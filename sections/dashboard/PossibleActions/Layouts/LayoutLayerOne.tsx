@@ -281,7 +281,7 @@ const LayoutLayerOne: FC = () => {
 					percent: formatPercent(lpData[LP.BALANCER_sCOIN].APR, { minDecimals: 0 }),
 				}),
 				copy: t('dashboard.actions.earn.copy', {
-					asset: 'Balancer sNFLX Pool Token',
+					asset: 'Balancer sCOIN Pool Token',
 					supplier: 'Synthetix',
 				}),
 				link: ROUTES.Earn.sCOIN_LP,
