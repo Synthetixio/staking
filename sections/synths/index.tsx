@@ -42,20 +42,25 @@ const Index: FC = () => {
 
 	const synthAssets = useMemo(() => synthBalances?.balances ?? [], [synthBalances]);
 	const cryptoAssets = useMemo(() => cryptoBalances?.balances ?? [], [cryptoBalances]);
+
 	const transferableAssets = useMemo(
 		() =>
 			synthAssets
 				.concat(cryptoAssets)
-				.map(({ currencyKey, balance }) => ({
+				.map(({ currencyKey, balance, transferrable }) => ({
 					currencyKey,
-					balance,
+					balance: transferrable || balance,
 				}))
 				.filter(({ currencyKey }) => isSynth(currencyKey) || currencyKey === CryptoCurrency.SNX),
 		[synthAssets, cryptoAssets]
 	);
-	const handleOnTransferClick = useCallback((asset) => {
-		setAssetToTransfer(asset);
-	}, []);
+	const handleOnTransferClick = useCallback(
+		(key) => {
+			const selectedAsset = transferableAssets.find(({ currencyKey }) => key === currencyKey);
+			setAssetToTransfer(selectedAsset || null);
+		},
+		[transferableAssets]
+	);
 
 	const handleTransferConfirmation = (txHash: string) => {
 		setAssetToTransfer(null);

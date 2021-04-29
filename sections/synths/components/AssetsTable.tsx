@@ -49,7 +49,7 @@ type AssetsTableProps = {
 	isLoaded: boolean;
 	showConvert: boolean;
 	showHoldings: boolean;
-	onTransferClick: (asset: Asset) => void;
+	onTransferClick: (currencyKey: string) => void;
 };
 
 const AssetsTable: FC<AssetsTableProps> = ({
@@ -190,11 +190,11 @@ const AssetsTable: FC<AssetsTableProps> = ({
 			sortType: 'basic',
 			Cell: ({
 				row: {
-					original: { currencyKey, balance },
+					original: { currencyKey },
 				},
 			}: CellProps<CryptoBalance>) => {
 				return isSynth(currencyKey) || currencyKey === CryptoCurrency.SNX ? (
-					<StyledButtonBlue onClick={() => onTransferClick({ currencyKey, balance })}>
+					<StyledButtonBlue onClick={() => onTransferClick(currencyKey)}>
 						{t('synths.assets.synths.table.transfer')}
 					</StyledButtonBlue>
 				) : (

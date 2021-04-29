@@ -10,6 +10,7 @@ import { assetToSynth } from 'utils/currencies';
 import useWETHBalanceQuery from 'queries/walletBalances/useWETHBalanceQuery';
 import useWBTCBalanceQuery from 'queries/walletBalances/useWBTCBalanceQuery';
 import useRenBTCBalanceQuery from 'queries/walletBalances/useRenBTCBalanceQuery';
+import useGetDebtDataQuery from 'queries/debt/useGetDebtDataQuery';
 import { CryptoBalance } from 'queries/walletBalances/types';
 import { zeroBN } from 'utils/formatters/number';
 
@@ -22,6 +23,7 @@ const useCryptoBalances = () => {
 	const renBTCBalanceQuery = useRenBTCBalanceQuery();
 	const SNXBalanceQuery = useSNXBalanceQuery();
 	const exchangeRatesQuery = useExchangeRatesQuery();
+	const debtQuery = useGetDebtDataQuery();
 
 	const exchangeRates = exchangeRatesQuery.data ?? null;
 
@@ -33,6 +35,7 @@ const useCryptoBalances = () => {
 	const wETHBalance = wETHBalanceQuery.data ?? zeroBN;
 	const wBTCBalance = wBTCBalanceQuery.data ?? zeroBN;
 	const renBTCBalance = renBTCBalanceQuery.data ?? zeroBN;
+	const transferrableSNX = debtQuery?.data?.transferable ?? zeroBN;
 
 	const balances = useMemo<CryptoBalance[]>(() => {
 		if (isLoaded && exchangeRates != null) {
@@ -55,6 +58,7 @@ const useCryptoBalances = () => {
 						balance: SNXBalance,
 						usdBalance: SNXBalance ? SNXBalance.multipliedBy(exchangeRates[SNX]) : zeroBN,
 						synth: assetToSynth(ETH),
+						transferrable: transferrableSNX,
 					},
 					{
 						currencyKey: WBTC,

@@ -6,6 +6,7 @@ export type CryptoBalance = {
 	balance: BigNumber;
 	usdBalance: BigNumber;
 	synth?: string;
+	transferrable?: BigNumber;
 };
 
 export type Asset = {
