@@ -71,6 +71,10 @@
 				"title": "Supporting Member",
 				"address": "{{address}}"
 			},
+			"transfer": {
+				"transferring": "Transferring",
+				"to": "To"
+			},
 			"helper": "Follow the Metamask prompts to authorize the transaction"
 		},
 		"confirm-signature": {
@@ -903,7 +907,17 @@
 		},
 		"transfer": {
 			"modal-title": "Transfer to another wallet",
-			"input-label": "Transfer"
+			"input-label": "Transfer",
+			"button": {
+				"no-amount": "Enter an amount to transfer",
+				"no-address": "Enter an address",
+				"transfer": "Transfer <0>{{asset}}</0>"
+			},
+			"error": {
+				"invalid-address": "Address is invalid",
+				"insufficient-balance": "Insufficient balance",
+				"unsupported-asset": "Asset is not supported"
+			}
 		}
 	},
 	"gov": {
@@ -1070,6 +1084,10 @@
 		}
 	},
 	"common": {
+		"form": {
+			"to-address": "To address",
+			"address-input-placeholder": "e.g. 0x3b18a4..."
+		},
 		"approve": {
 			"approve-contract": "Approve contract",
 			"is-approving": "Approving contract..."
@@ -1201,7 +1219,6 @@
 		"page-title": "Delegate | Synthetix Staking",
 		"form": {
 			"title": "Delegate to a new Address",
-			"input-placeholder": "e.g. 0x3b18a4...",
 			"tx-confirmation-title": "Delegating to",
 			"button-labels": {
 				"enter-address": "enter an address",

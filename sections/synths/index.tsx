@@ -7,20 +7,26 @@ import AssetsTable from 'sections/synths/components/AssetsTable';
 import TransferModal from 'sections/synths/components/TransferModal';
 
 import KwentaBanner from 'components/KwentaBanner';
+import TransactionNotifier from 'containers/TransactionNotifier';
 
 import { isWalletConnectedState } from 'store/wallet';
 
 import useCryptoBalances from 'hooks/useCryptoBalances';
 import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
+import useSNXBalanceQuery from 'queries/walletBalances/useSNXBalanceQuery';
 
 import { zeroBN } from 'utils/formatters/number';
 import { Asset } from 'queries/walletBalances/types';
+import { isSynth } from 'utils/currencies';
+import { CryptoCurrency } from 'constants/currency';
 
 const Index: FC = () => {
 	const [assetToTransfer, setAssetToTransfer] = useState<Asset | null>(null);
 
 	const { t } = useTranslation();
+	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const synthsBalancesQuery = useSynthsBalancesQuery();
+	const SNXBalanceQuery = useSNXBalanceQuery();
 	const cryptoBalances = useCryptoBalances();
 
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
@@ -36,17 +42,36 @@ const Index: FC = () => {
 
 	const synthAssets = useMemo(() => synthBalances?.balances ?? [], [synthBalances]);
 	const cryptoAssets = useMemo(() => cryptoBalances?.balances ?? [], [cryptoBalances]);
-	const assetsHeld = useMemo(
+	const transferableAssets = useMemo(
 		() =>
-			synthAssets.concat(cryptoAssets).map(({ currencyKey, balance }) => ({
-				currencyKey,
-				balance,
-			})),
+			synthAssets
+				.concat(cryptoAssets)
+				.map(({ currencyKey, balance }) => ({
+					currencyKey,
+					balance,
+				}))
+				.filter(({ currencyKey }) => isSynth(currencyKey) || currencyKey === CryptoCurrency.SNX),
 		[synthAssets, cryptoAssets]
 	);
 	const handleOnTransferClick = useCallback((asset) => {
 		setAssetToTransfer(asset);
 	}, []);
+
+	const handleTransferConfirmation = (txHash: string) => {
+		setAssetToTransfer(null);
+		monitorTransaction({
+			txHash,
+			onTxConfirmed: () => {
+				setTimeout(() => {
+					synthsBalancesQuery.refetch();
+					SNXBalanceQuery.refetch();
+				}, 1000 * 5);
+			},
+			onTxFailed: (error) => {
+				console.log(`Transaction failed: ${error}`);
+			},
+		});
+	};
 
 	return (
 		<>
@@ -77,9 +102,10 @@ const Index: FC = () => {
 			{assetToTransfer ? (
 				<TransferModal
 					onDismiss={() => setAssetToTransfer(null)}
-					assets={assetsHeld}
+					assets={transferableAssets}
 					currentAsset={assetToTransfer}
 					setAsset={(asset) => setAssetToTransfer(asset)}
+					onTransferConfirmation={handleTransferConfirmation}
 				/>
 			) : null}
 		</>

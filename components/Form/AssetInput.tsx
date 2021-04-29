@@ -10,6 +10,7 @@ import NumericInput from 'components/Input/NumericInput';
 import Select from 'components/Select';
 import Currency from 'components/Currency';
 import { Asset } from 'queries/walletBalances/types';
+import { FormLabel } from './common';
 
 type MaxBalanceProps = {
 	balance: BigNumber;
@@ -32,7 +33,9 @@ const Balance: FC<MaxBalanceProps> = ({ balance, onSetMaxAmount }) => {
 	const { t } = useTranslation();
 	return (
 		<BalanceContainer>
-			{t('balance.input-label')} {formatNumber(balance)}{' '}
+			<BalanceAmount>
+				{t('balance.input-label')} {formatNumber(balance)}
+			</BalanceAmount>
 			<MaxButton onClick={onSetMaxAmount}>{t('balance.max')}</MaxButton>
 		</BalanceContainer>
 	);
@@ -108,6 +111,12 @@ const BalanceContainer = styled.div`
 	color: ${(props) => props.theme.colors.gray};
 `;
 
+const BalanceAmount = styled.div`
+	font-size: 12px;
+	font-family: ${(props) => props.theme.fonts.condensedMedium};
+	margin-right: 8px;
+`;
+
 const Container = styled(FlexDivColCentered)`
 	margin: 24px auto;
 	padding-right: 12px;
@@ -131,14 +140,7 @@ const AmountContainer = styled(FlexDivCentered)`
 
 const SelectContainer = styled(FlexDivCentered)``;
 
-const SelectLabel = styled.div`
-	font-family: ${(props) => props.theme.fonts.condensedBold};
-	font-style: normal;
-	font-weight: 500;
-	font-size: 12px;
-	line-height: 120%;
-	text-transform: uppercase;
-	color: #828295;
+const SelectLabel = styled(FormLabel)`
 	margin-right: 10px;
 `;
 
@@ -157,10 +159,12 @@ const AmountInput = styled(NumericInput)`
 
 const MaxButton = styled(TextButton)`
 	background: none;
+	font-family: ${(props) => props.theme.fonts.condensedMedium};
 	border: none;
 	outline: none;
 	color: ${(props) => props.theme.colors.blue};
 	cursor: pointer;
 	margin-left: 5px;
+	font-size: 12px;
 	text-transform: uppercase;
 `;
