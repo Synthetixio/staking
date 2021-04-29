@@ -52,6 +52,7 @@ import { useRecoilValue } from 'recoil';
 import { appReadyState } from 'store/app';
 import curveSeuroRewards from 'contracts/curveSeuroRewards';
 import { LP } from 'sections/earn/types';
+import { CurrencyIconType } from 'components/Currency/CurrencyIcon/CurrencyIcon';
 
 export const getContract = (stakedAsset: CurrencyKey, signer: ethers.Signer | null) => {
 	const { contracts } = synthetix.js!;
@@ -97,6 +98,8 @@ export const getContract = (stakedAsset: CurrencyKey, signer: ethers.Signer | nu
 type StakeTabProps = {
 	isStake: boolean;
 	stakedAsset: CurrencyKey;
+	icon: CurrencyKey;
+	type?: CurrencyIconType;
 	userBalance: number;
 	userBalanceBN: BigNumber;
 	staked: number;
@@ -105,6 +108,8 @@ type StakeTabProps = {
 
 const StakeTab: FC<StakeTabProps> = ({
 	stakedAsset,
+	icon,
+	type,
 	isStake,
 	userBalance,
 	userBalanceBN,
@@ -320,7 +325,12 @@ const StakeTab: FC<StakeTabProps> = ({
 		<>
 			<Container>
 				<IconWrap>
-					<Currency.Icon currencyKey={stakedAsset} width={'38'} height={'38'} />
+					<Currency.Icon
+						currencyKey={icon}
+						width={'38'}
+						height={'38'}
+						type={type ? type : undefined}
+					/>
 				</IconWrap>
 				<InputSection>
 					<EmptyDiv />
