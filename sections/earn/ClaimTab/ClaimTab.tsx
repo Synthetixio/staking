@@ -391,7 +391,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 							<PaddedButton
 								variant="primary"
 								onClick={canClaim && lowCRatio ? goToBurn : handleClaim}
-								disabled={!canClaim}
+								disabled={!canClaim || lowCRatio}
 							>
 								{claimed
 									? t('earn.actions.claim.claimed-button')

@@ -269,6 +269,10 @@ export const QUERY_KEYS = {
 		],
 		Proposal: (spaceKey: SPACE_KEY, hash: string) => ['gov', 'proposal', spaceKey, hash],
 	},
+	TokenLists: {
+		Synthetix: ['tokenLists', 'synthetix'],
+		Zapper: ['tokenLists', 'zapper'],
+	},
 };
 
 export default QUERY_KEYS;
