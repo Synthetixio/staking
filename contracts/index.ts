@@ -18,6 +18,8 @@ import balancersAAPLPoolToken from './balancersAAPLPoolToken';
 import balancersAMZNPoolToken from './balancersAMZNPoolToken';
 import balancersNFLXPoolToken from './balancersNFLXPoolToken';
 import balancersGOOGPoolToken from './balancersGOOGPoolToken';
+import balancersMSFTPoolToken from './balancersMSFTPoolToken';
+import balancersCOINPoolToken from './balancersCOINPoolToken';
 
 import wETHToken from './wETHToken';
 import wBTCToken from './wBTCToken';
@@ -43,6 +45,8 @@ export {
 	balancersAMZNPoolToken,
 	balancersNFLXPoolToken,
 	balancersGOOGPoolToken,
+	balancersMSFTPoolToken,
+	balancersCOINPoolToken,
 	wETHToken,
 	wBTCToken,
 	renBTCToken,

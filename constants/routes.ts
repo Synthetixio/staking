@@ -32,6 +32,8 @@ export const ROUTES = {
 		sAMZN_LP: '/earn/sAMZN-LP',
 		sNFLX_LP: '/earn/sNFLX-LP',
 		sGOOG_LP: '/earn/sGOOG-LP',
+		sMSFT_LP: '/earn/sMSFT-LP',
+		sCOIN_LP: '/earn/sCOIN-LP',
 		sUSD_EXTERNAL: 'https://www.curve.fi/susdv2/',
 		sEURO_EXTERNAL: 'https://www.curve.fi/eurs/',
 		DHT_LP: '/earn/DHT-LP',

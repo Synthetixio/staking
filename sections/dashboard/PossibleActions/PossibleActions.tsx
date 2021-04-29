@@ -27,7 +27,7 @@ const PossibleActionsContainer = styled(GridDiv)`
 	justify-items: stretch;
 	align-items: stretch;
 	grid-template-columns: [col-1] 25% [col-2] 25% [col-3] 25% [col-4] 25% [col-5];
-	grid-template-rows: [row-1] 33% [row-2] 33% [row-3] 33% [row-4];
+	grid-template-rows: [row-1] 25% [row-2] 25% [row-3] 25% [row-4] 25% [row-5];
 	gap: 1rem;
 	${media.lessThan('sm')`
 		display: flex;
