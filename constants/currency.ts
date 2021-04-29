@@ -51,6 +51,8 @@ export enum Synths {
 	sAMZN = 'sAMZN',
 	sNFLX = 'sNFLX',
 	sGOOG = 'sGOOG',
+	sMSFT = 'sMSFT',
+	sCOIN = 'sCOIN',
 }
 
 export enum CryptoCurrency {

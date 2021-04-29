@@ -334,6 +334,10 @@ const LPTab: FC<LPTabProps> = ({
 				return `https://pools.balancer.exchange/#/pool/0x6418c69b0de51873a1cc01cf73ba6e408acc1940/`;
 			case LP.BALANCER_sGOOG:
 				return `https://pools.balancer.exchange/#/pool/0x608410f602ce8967d1e59f599566aed340280efc/`;
+			case LP.BALANCER_sMSFT:
+				return `https://pools.balancer.exchange/#/pool/0x41c91eb43b7f0afd332725461b86a0e39e143789/`;
+			case LP.BALANCER_sCOIN:
+				return `https://pools.balancer.exchange/#/pool/0x2e27d4160b257708375a7bf23381110d2328bc1b/`;
 			case LP.UNISWAP_DHT:
 				return `https://uniswap.exchange/add/0x57ab1ec28d129707052df4df418d58a2d46d5f51/0xca1207647ff814039530d7d35df0e1dd2e91fa84`;
 			default:
