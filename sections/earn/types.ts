@@ -1,4 +1,3 @@
-import { Synths } from 'constants/currency';
 import { invert } from 'lodash';
 
 export enum Tab {
@@ -46,14 +45,4 @@ export const lpToSynthTranslationKey: { [name: string]: string } = {
 	[LP.BALANCER_sAMZN]: 'samzn',
 	[LP.BALANCER_sNFLX]: 'snflx',
 	[LP.BALANCER_sGOOG]: 'sgoog',
-	[LP.BALANCER_sTSLA]: 'stsla',
-};
-
-export const lpToSynthIcon: { [name: string]: string } = {
-	[LP.BALANCER_sFB]: Synths.sFB,
-	[LP.BALANCER_sAAPL]: Synths.sAAPL,
-	[LP.BALANCER_sAMZN]: Synths.sAMZN,
-	[LP.BALANCER_sNFLX]: Synths.sNFLX,
-	[LP.BALANCER_sGOOG]: Synths.sGOOG,
-	[LP.BALANCER_sTSLA]: Synths.sTSLA,
 };

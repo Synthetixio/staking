@@ -89,6 +89,4 @@ export const FIAT_SYNTHS = new Set([
 	Synths.sCHF,
 ]);
 
-export const ETH_ADDRESS = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';
-
 export const sUSD_EXCHANGE_RATE = 1;

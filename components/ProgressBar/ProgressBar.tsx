@@ -24,7 +24,7 @@ const ProgressBar: FC<ProgressBarProps> = ({ percentage, variant, ...rest }) => 
 
 	return (
 		<ProgressBarWrapper variant={variant} {...rest}>
-			{percentage <= 0 && <Bar className="filled-bar" percentage={1000} />}
+			{percentage <= 0 && <Bar className="filled-bar" percentage={100} />}
 			{percentage > 0 && <Bar className="filled-bar" percentage={Math.min(1, percentage)} />}
 			{unfilledPercentage > 0 && <Bar className="unfilled-bar" percentage={unfilledPercentage} />}
 		</ProgressBarWrapper>

@@ -41,7 +41,6 @@ import { DURATION_SEPARATOR } from 'constants/date';
 import ROUTES from 'constants/routes';
 
 import { LP, Tab } from './types';
-import { CurrencyIconType } from 'components/Currency/CurrencyIcon/CurrencyIcon';
 
 export type DualRewards = {
 	a: number;
@@ -58,8 +57,6 @@ export type EarnItem = {
 	staked: {
 		balance: number;
 		asset: CurrencyKey;
-		ticker: CurrencyKey;
-		type?: CurrencyIconType;
 	};
 	rewards: number | DualRewards;
 	periodStarted: number;
@@ -99,15 +96,7 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab }
 					return (
 						<>
 							<StyledGlowingCircle variant="green" size="sm">
-								<Currency.Icon
-									currencyKey={cellProps.row.original.staked.asset}
-									type={
-										cellProps.row.original.staked.type
-											? cellProps.row.original.staked.type
-											: undefined
-									}
-									{...iconProps}
-								/>
+								<Currency.Icon currencyKey={cellProps.row.original.staked.asset} {...iconProps} />
 							</StyledGlowingCircle>
 							<FlexDivCol>
 								<Title>{cellProps.row.original.title}</Title>
@@ -151,10 +140,10 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab }
 					<CellContainer>
 						<Title isNumeric={true}>
 							{formatCurrency(
-								cellProps.row.original.staked.ticker,
+								cellProps.row.original.staked.asset,
 								cellProps.row.original.staked.balance,
 								{
-									currencyKey: cellProps.row.original.staked.ticker,
+									currencyKey: cellProps.row.original.staked.asset,
 								}
 							)}
 						</Title>
