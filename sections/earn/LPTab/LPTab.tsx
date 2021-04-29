@@ -48,6 +48,7 @@ import {
 
 import { LP, lpToSynthTranslationKey } from 'sections/earn/types';
 import styled from 'styled-components';
+import { CurrencyIconType } from 'components/Currency/CurrencyIcon/CurrencyIcon';
 
 type DualRewards = {
 	a: number;
@@ -56,6 +57,8 @@ type DualRewards = {
 
 type LPTabProps = {
 	stakedAsset: CurrencyKey;
+	icon?: CurrencyKey;
+	type?: CurrencyIconType;
 	tokenRewards: number | DualRewards;
 	allowance: number | null;
 	userBalance: number;
@@ -68,6 +71,8 @@ type LPTabProps = {
 
 const LPTab: FC<LPTabProps> = ({
 	stakedAsset,
+	icon = stakedAsset,
+	type,
 	tokenRewards,
 	allowance,
 	userBalance,
@@ -109,6 +114,8 @@ const LPTab: FC<LPTabProps> = ({
 			userBalanceBN,
 			staked,
 			stakedBN,
+			icon,
+			type,
 		};
 
 		return [
@@ -357,6 +364,8 @@ const LPTab: FC<LPTabProps> = ({
 						claimError={claimError}
 						setClaimError={setClaimError}
 						stakedAsset={stakedAsset}
+						icon={icon}
+						type={type}
 						tokenRewards={(tokenRewards as DualRewards).a}
 						SNXRate={SNXRate}
 						secondTokenReward={(tokenRewards as DualRewards).b}
@@ -382,6 +391,8 @@ const LPTab: FC<LPTabProps> = ({
 						claimError={claimError}
 						setClaimError={setClaimError}
 						stakedAsset={stakedAsset}
+						icon={icon}
+						type={type}
 						tokenRewards={tokenRewards as number}
 						SNXRate={SNXRate}
 					/>
