@@ -245,6 +245,7 @@ const Incentives: FC<IncentivesProps> = ({
 							type: CurrencyIconType.TOKEN,
 						},
 						rewards: lpData[LP.UNISWAP_DHT].data?.rewards ?? 0,
+						dualRewards: true,
 						periodStarted: now - (lpData[LP.UNISWAP_DHT].data?.duration ?? 0),
 						periodFinish: lpData[LP.UNISWAP_DHT].data?.periodFinish ?? 0,
 						claimed:

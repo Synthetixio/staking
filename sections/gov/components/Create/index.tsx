@@ -55,7 +55,7 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 	const { signer } = Connector.useContainer();
 
 	const sanitiseTimestamp = (timestamp: number) => {
-		return (timestamp / 1e3).toFixed();
+		return Math.round(timestamp / 1e3);
 	};
 
 	const validSubmission = useMemo(() => {
