@@ -11,7 +11,7 @@ import Connector from 'containers/Connector';
 import synthetix from 'lib/synthetix';
 
 import { appReadyState } from 'store/app';
-import { isWalletConnectedState } from 'store/wallet';
+import { isWalletConnectedState, isL2State } from 'store/wallet';
 
 import {
 	ExternalLink,
@@ -66,6 +66,7 @@ const AssetsTable: FC<AssetsTableProps> = ({
 	const { connectWallet } = Connector.useContainer();
 	const isAppReady = useRecoilValue(appReadyState);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
+	const isL2 = useRecoilValue(isL2State);
 	const router = useRouter();
 
 	const { selectedPriceCurrency, selectPriceCurrencyRate } = useSelectedPriceCurrency();
@@ -97,7 +98,7 @@ const AssetsTable: FC<AssetsTableProps> = ({
 				},
 
 				sortable: true,
-				width: 200,
+				width: 180,
 			},
 			{
 				Header: <>{t('synths.assets.synths.table.balance')}</>,
@@ -114,7 +115,7 @@ const AssetsTable: FC<AssetsTableProps> = ({
 						conversionRate={selectPriceCurrencyRate}
 					/>
 				),
-				width: 200,
+				width: 180,
 				sortable: true,
 			},
 			{
@@ -124,7 +125,7 @@ const AssetsTable: FC<AssetsTableProps> = ({
 				Cell: (cellProps: CellProps<CryptoBalance>) => (
 					<SynthPriceCol currencyKey={cellProps.row.original.currencyKey} />
 				),
-				width: 200,
+				width: 180,
 				sortable: false,
 			},
 		];
@@ -142,7 +143,7 @@ const AssetsTable: FC<AssetsTableProps> = ({
 						/>
 					</FlexDiv>
 				),
-				width: 200,
+				width: 180,
 				sortable: true,
 			});
 		}
@@ -179,31 +180,32 @@ const AssetsTable: FC<AssetsTableProps> = ({
 						</ExternalLink>
 					);
 				},
-				width: 200,
+				width: 180,
 				sortable: false,
 			});
 		}
-
-		columns.push({
-			Header: <></>,
-			id: 'transfer',
-			sortType: 'basic',
-			Cell: ({
-				row: {
-					original: { currencyKey },
+		if (!isL2) {
+			columns.push({
+				Header: <></>,
+				id: 'transfer',
+				sortType: 'basic',
+				Cell: ({
+					row: {
+						original: { currencyKey },
+					},
+				}: CellProps<CryptoBalance>) => {
+					return isSynth(currencyKey) || currencyKey === CryptoCurrency.SNX ? (
+						<StyledButtonBlue onClick={() => onTransferClick(currencyKey)}>
+							{t('synths.assets.synths.table.transfer')}
+						</StyledButtonBlue>
+					) : (
+						<></>
+					);
 				},
-			}: CellProps<CryptoBalance>) => {
-				return isSynth(currencyKey) || currencyKey === CryptoCurrency.SNX ? (
-					<StyledButtonBlue onClick={() => onTransferClick(currencyKey)}>
-						{t('synths.assets.synths.table.transfer')}
-					</StyledButtonBlue>
-				) : (
-					<></>
-				);
-			},
-			width: 200,
-			sortable: false,
-		});
+				width: 180,
+				sortable: false,
+			});
+		}
 		return columns;
 	}, [
 		showHoldings,
@@ -215,6 +217,7 @@ const AssetsTable: FC<AssetsTableProps> = ({
 		selectedPriceCurrency.name,
 		isAppReady,
 		onTransferClick,
+		isL2,
 	]);
 
 	return (
