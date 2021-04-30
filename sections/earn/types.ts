@@ -36,6 +36,7 @@ export enum LP {
 }
 
 export const lpToTab: { [name: string]: Tab } = {
+	[LP.BALANCER_sTSLA]: Tab.sTLSA_LP,
 	[LP.BALANCER_sFB]: Tab.sFB_LP,
 	[LP.BALANCER_sAAPL]: Tab.sAAPL_LP,
 	[LP.BALANCER_sAMZN]: Tab.sAMZN_LP,
