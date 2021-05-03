@@ -10,7 +10,7 @@ import { Loan } from 'queries/loans/types';
 import Loans from 'containers/Loans';
 import { formatUnits } from 'utils/formatters/number';
 import ModifyLoanMenu from './ModifyLoanMenu';
-import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
+import { DesktopOrTabletView, MobileOnlyView } from 'components/Media';
 
 const SMALL_COL_WIDTH = 80;
 
@@ -127,7 +127,7 @@ const LoanList: React.FC<LoanListProps> = ({ actions }) => {
 
 	return (
 		<>
-			<DesktopOnlyView>
+			<DesktopOrTabletView>
 				<StyledTable
 					palette="primary"
 					{...{ isLoading, data }}
@@ -135,8 +135,8 @@ const LoanList: React.FC<LoanListProps> = ({ actions }) => {
 					noResultsMessage={noResultsMessage}
 					showPagination={true}
 				/>
-			</DesktopOnlyView>
-			<MobileOrTabletView>
+			</DesktopOrTabletView>
+			<MobileOnlyView>
 				<StyledTable
 					palette="primary"
 					{...{ isLoading, data }}
@@ -144,7 +144,7 @@ const LoanList: React.FC<LoanListProps> = ({ actions }) => {
 					noResultsMessage={noResultsMessage}
 					showPagination={true}
 				/>
-			</MobileOrTabletView>
+			</MobileOnlyView>
 		</>
 	);
 };
@@ -171,7 +171,7 @@ const NoResultsMessage = styled.div`
 `;
 
 const CurrencyIconContainer = styled.div`
-	${media.greaterThan('mdUp')`
+	${media.greaterThan('md')`
 		display: grid;
 		align-items: center;
 		grid-column-gap: 10px;

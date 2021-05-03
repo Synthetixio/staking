@@ -26,7 +26,7 @@ const SideNav: FC<SideNavProps> = ({ isDesktop }) => {
 	const { t } = useTranslation();
 	const router = useRouter();
 	const menuLinkItemRefs = useRef({});
-	const [networkError, setNetworkError] = useState<string | null>(null);
+	const [, setNetworkError] = useState<string | null>(null);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const isL2 = useRecoilValue(isL2State);
 	const {

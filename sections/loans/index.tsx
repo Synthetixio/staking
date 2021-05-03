@@ -25,9 +25,11 @@ const Index: React.FC = () => {
 };
 
 const Container = styled.div`
-	display: grid;
-	grid-template-columns: 2fr 1fr;
-	grid-gap: 1rem;
+	${media.greaterThan('mdUp')`
+		display: grid;
+		grid-template-columns: 2fr 1fr;
+		grid-gap: 1rem;
+	`}
 
 	${media.lessThan('mdUp')`
 		display: flex;

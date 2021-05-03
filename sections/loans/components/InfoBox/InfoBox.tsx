@@ -2,10 +2,11 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ethers } from 'ethers';
 import { useRecoilValue } from 'recoil';
+import styled from 'styled-components';
 
 import { walletAddressState } from 'store/wallet';
 import { ExternalLink } from 'styles/common';
-import styled from 'styled-components';
+import media from 'styles/media';
 import Connector from 'containers/Connector';
 import Button from 'components/Button';
 import Currency from 'components/Currency';
@@ -183,7 +184,13 @@ export default InfoBox;
 
 export const Root = styled.div`
 	& > div {
-		margin-bottom: 32px;
+		${media.greaterThan('mdUp')`
+			margin: 0 0 16px;
+		`}
+
+		${media.lessThan('mdUp')`
+			margin: 16px 0;
+		`}
 	}
 
 	a,
