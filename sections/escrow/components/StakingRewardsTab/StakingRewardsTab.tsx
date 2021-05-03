@@ -29,7 +29,6 @@ const StakingRewardsTab: React.FC = () => {
 	const [txHash, setTxHash] = useState<string | null>(null);
 	const [vestTxError, setVestTxError] = useState<string | null>(null);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
-	const [isMigration, setIsMigration] = useState<boolean>(false);
 
 	const canVestAmount = escrowDataQuery?.data?.claimableAmount ?? 0;
 	const claimableEntryIds = escrowDataQuery?.data?.claimableEntryIds ?? null;
@@ -44,16 +43,15 @@ const StakingRewardsTab: React.FC = () => {
 				try {
 					setGasEstimateError(null);
 					let gasEstimate;
-					if (totalBalancePendingMigration === 0 && claimableEntryIds != null) {
-						gasEstimate = await synthetix.getGasEstimateForTransaction({
-							txArgs: [claimableEntryIds],
-							method: RewardEscrowV2.estimateGas.vest,
-						});
-					} else if (totalBalancePendingMigration > 0) {
-						setIsMigration(true);
+					if (totalBalancePendingMigration) {
 						gasEstimate = await synthetix.getGasEstimateForTransaction({
 							txArgs: [walletAddress],
 							method: RewardEscrowV2.estimateGas.migrateVestingSchedule,
+						});
+					} else if (!totalBalancePendingMigration && claimableEntryIds != null) {
+						gasEstimate = await synthetix.getGasEstimateForTransaction({
+							txArgs: [claimableEntryIds],
+							method: RewardEscrowV2.estimateGas.vest,
 						});
 					} else {
 						return;
@@ -85,21 +83,21 @@ const StakingRewardsTab: React.FC = () => {
 				} = synthetix.js!;
 
 				let transaction: ethers.ContractTransaction;
-				if (totalBalancePendingMigration === 0) {
-					const gasLimit = await synthetix.getGasEstimateForTransaction({
-						txArgs: [claimableEntryIds],
-						method: RewardEscrowV2.estimateGas.vest,
-					});
-					transaction = await RewardEscrowV2.vest(claimableEntryIds, {
-						gasPrice: normalizedGasPrice(gasPrice),
-						gasLimit,
-					});
-				} else {
+				if (totalBalancePendingMigration) {
 					const gasLimit = await synthetix.getGasEstimateForTransaction({
 						txArgs: [walletAddress],
 						method: RewardEscrowV2.estimateGas.migrateVestingSchedule,
 					});
 					transaction = await RewardEscrowV2.migrateVestingSchedule(walletAddress, {
+						gasPrice: normalizedGasPrice(gasPrice),
+						gasLimit,
+					});
+				} else {
+					const gasLimit = await synthetix.getGasEstimateForTransaction({
+						txArgs: [claimableEntryIds],
+						method: RewardEscrowV2.estimateGas.vest,
+					});
+					transaction = await RewardEscrowV2.vest(claimableEntryIds, {
 						gasPrice: normalizedGasPrice(gasPrice),
 						gasLimit,
 					});
@@ -112,7 +110,9 @@ const StakingRewardsTab: React.FC = () => {
 						txHash: transaction.hash,
 						onTxConfirmed: () => {
 							setTransactionState(Transaction.SUCCESS);
-							escrowDataQuery.refetch();
+							setTimeout(() => {
+								escrowDataQuery.refetch();
+							}, 5 * 1000);
 						},
 					});
 					setTxModalOpen(false);
@@ -134,7 +134,7 @@ const StakingRewardsTab: React.FC = () => {
 
 	return (
 		<TabContainer>
-			{isMigration || totalBalancePendingMigration > 0 ? (
+			{totalBalancePendingMigration ? (
 				<MigrateTabContent
 					onSubmit={handleSubmit}
 					transactionError={vestTxError}
@@ -146,7 +146,6 @@ const StakingRewardsTab: React.FC = () => {
 					txHash={txHash}
 					transactionState={transactionState}
 					setTransactionState={setTransactionState}
-					setIsMigration={setIsMigration}
 				/>
 			) : (
 				<TabContent
