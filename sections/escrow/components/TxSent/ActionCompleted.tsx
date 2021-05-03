@@ -18,7 +18,6 @@ type ActionCompletedProps = {
 	currencyKey?: string;
 	hash: string;
 	isMigration?: boolean;
-	setIsMigration?: (isMigration: boolean) => void;
 };
 
 const ActionCompleted: FC<ActionCompletedProps> = ({
@@ -27,7 +26,6 @@ const ActionCompleted: FC<ActionCompletedProps> = ({
 	currencyKey,
 	hash,
 	isMigration = false,
-	setIsMigration = () => null,
 }) => {
 	const { t } = useTranslation();
 	const { blockExplorerInstance } = Etherscan.useContainer();
@@ -64,7 +62,6 @@ const ActionCompleted: FC<ActionCompletedProps> = ({
 				) : null}
 				<RightButton
 					onClick={() => {
-						setIsMigration(false);
 						setTransactionState(Transaction.PRESUBMIT);
 					}}
 				>
