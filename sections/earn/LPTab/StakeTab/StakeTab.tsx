@@ -52,6 +52,7 @@ import { useRecoilValue } from 'recoil';
 import { appReadyState } from 'store/app';
 import curveSeuroRewards from 'contracts/curveSeuroRewards';
 import { LP } from 'sections/earn/types';
+import { CurrencyIconType } from 'components/Currency/CurrencyIcon/CurrencyIcon';
 
 export const getContract = (stakedAsset: CurrencyKey, signer: ethers.Signer | null) => {
 	const { contracts } = synthetix.js!;
@@ -61,6 +62,20 @@ export const getContract = (stakedAsset: CurrencyKey, signer: ethers.Signer | nu
 		return contracts.StakingRewardsiETH;
 	} else if (stakedAsset === LP.BALANCER_sTSLA) {
 		return contracts.StakingRewardssTSLABalancer;
+	} else if (stakedAsset === LP.BALANCER_sFB) {
+		return contracts.StakingRewardssFBBalancer;
+	} else if (stakedAsset === LP.BALANCER_sAAPL) {
+		return contracts.StakingRewardssAAPLBalancer;
+	} else if (stakedAsset === LP.BALANCER_sAMZN) {
+		return contracts.StakingRewardssAMZNBalancer;
+	} else if (stakedAsset === LP.BALANCER_sNFLX) {
+		return contracts.StakingRewardssNFLXBalancer;
+	} else if (stakedAsset === LP.BALANCER_sGOOG) {
+		return contracts.StakingRewardssGOOGBalancer;
+	} else if (stakedAsset === LP.BALANCER_sMSFT) {
+		return contracts.StakingRewardssMSFTBalancer;
+	} else if (stakedAsset === LP.BALANCER_sCOIN) {
+		return contracts.StakingRewardssCOINBalancer;
 	} else if (stakedAsset === LP.CURVE_sUSD && signer != null) {
 		return new ethers.Contract(
 			curveSusdRewards.address,
@@ -87,6 +102,8 @@ export const getContract = (stakedAsset: CurrencyKey, signer: ethers.Signer | nu
 type StakeTabProps = {
 	isStake: boolean;
 	stakedAsset: CurrencyKey;
+	icon: CurrencyKey;
+	type?: CurrencyIconType;
 	userBalance: number;
 	userBalanceBN: BigNumber;
 	staked: number;
@@ -95,6 +112,8 @@ type StakeTabProps = {
 
 const StakeTab: FC<StakeTabProps> = ({
 	stakedAsset,
+	icon,
+	type,
 	isStake,
 	userBalance,
 	userBalanceBN,
@@ -310,7 +329,12 @@ const StakeTab: FC<StakeTabProps> = ({
 		<>
 			<Container>
 				<IconWrap>
-					<Currency.Icon currencyKey={stakedAsset} width={'38'} height={'38'} />
+					<Currency.Icon
+						currencyKey={icon}
+						width={'38'}
+						height={'38'}
+						type={type ? type : undefined}
+					/>
 				</IconWrap>
 				<InputSection>
 					<EmptyDiv />

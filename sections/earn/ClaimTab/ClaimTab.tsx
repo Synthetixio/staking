@@ -8,7 +8,7 @@ import { useRouter } from 'next/router';
 import { useRecoilValue } from 'recoil';
 
 import { appReadyState } from 'store/app';
-import { isWalletConnectedState } from 'store/wallet';
+import { isWalletConnectedState, isL2State } from 'store/wallet';
 import ROUTES from 'constants/routes';
 import { ExternalLink, FlexDiv, GlowingCircle } from 'styles/common';
 import synthetix from 'lib/synthetix';
@@ -24,6 +24,7 @@ import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 
 import { DEFAULT_CRYPTO_DECIMALS, DEFAULT_FIAT_DECIMALS } from 'constants/defaults';
 import { formatCurrency, formatFiatCurrency, formatNumber } from 'utils/formatters/number';
+import { getCurrentTimestampSeconds } from 'utils/formatters/date';
 import { normalizedGasPrice } from 'utils/network';
 
 import { Transaction, GasLimitEstimate } from 'constants/network';
@@ -86,9 +87,11 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 	const [claimedTradingRewards, setClaimedTradingRewards] = useState<number | null>(null);
 	const [claimedStakingRewards, setClaimedStakingRewards] = useState<number | null>(null);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
+	const isL2 = useRecoilValue(isL2State);
 	const router = useRouter();
 	const isAppReady = useRecoilValue(appReadyState);
 
+	const [isCloseFeePeriodEnabled, setIsCloseFeePeriodEnabled] = useState<boolean>(false);
 	const [transactionState, setTransactionState] = useState<Transaction>(Transaction.PRESUBMIT);
 	const [txHash, setTxHash] = useState<string | null>(null);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
@@ -96,6 +99,32 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 		blockExplorerInstance != null && txHash != null
 			? blockExplorerInstance.txLink(txHash)
 			: undefined;
+
+	const fetchFeePeriodData = useCallback(async () => {
+		if (!isL2) return;
+		try {
+			const {
+				contracts: { FeePool },
+			} = synthetix.js!;
+			const [feePeriodDuration, recentFeePeriods] = await Promise.all([
+				FeePool.feePeriodDuration(),
+				FeePool.recentFeePeriods(0),
+			]);
+
+			const now = Math.ceil(getCurrentTimestampSeconds());
+			const startTime = Number(recentFeePeriods.startTime);
+			const duration = Number(feePeriodDuration);
+
+			setIsCloseFeePeriodEnabled(now > duration + startTime);
+		} catch (e) {
+			console.log(e);
+			setIsCloseFeePeriodEnabled(false);
+		}
+	}, [isL2]);
+
+	useEffect(() => {
+		fetchFeePeriodData();
+	}, [fetchFeePeriodData]);
 
 	useEffect(() => {
 		const getGasLimitEstimate = async () => {
@@ -167,6 +196,34 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 	}, [gasPrice, monitorTransaction, tradingRewards, stakingRewards, isAppReady]);
 
 	const goToBurn = useCallback(() => router.push(ROUTES.Staking.Burn), [router]);
+
+	const handleCloseFeePeriod = async () => {
+		const {
+			contracts: { FeePool },
+		} = synthetix.js!;
+		try {
+			const gasLimit = await synthetix.getGasEstimateForTransaction({
+				txArgs: [],
+				method: FeePool.estimateGas.closeCurrentFeePeriod,
+			});
+			const transaction: ethers.ContractTransaction = await FeePool.closeCurrentFeePeriod({
+				gasPrice: normalizedGasPrice(gasPrice),
+				gasLimit,
+			});
+			if (transaction) {
+				setTxHash(transaction.hash);
+				monitorTransaction({
+					txHash: transaction.hash,
+					onTxConfirmed: () => {
+						fetchFeePeriodData();
+					},
+				});
+				setTxModalOpen(false);
+			}
+		} catch (e) {
+			console.log(e);
+		}
+	};
 
 	if (transactionState === Transaction.WAITING) {
 		return (
@@ -280,7 +337,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 
 	return (
 		<>
-			<TabContainer>
+			<StyledTabContainer>
 				<HeaderLabel>
 					<Trans
 						i18nKey="earn.incentives.options.snx.description"
@@ -334,7 +391,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 							<PaddedButton
 								variant="primary"
 								onClick={canClaim && lowCRatio ? goToBurn : handleClaim}
-								disabled={!canClaim}
+								disabled={!canClaim || lowCRatio}
 							>
 								{claimed
 									? t('earn.actions.claim.claimed-button')
@@ -344,6 +401,11 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 									? t('earn.actions.claim.claim-button')
 									: t('earn.actions.claim.nothing-to-claim')}
 							</PaddedButton>
+							{isCloseFeePeriodEnabled ? (
+								<PaddedButton variant="primary" onClick={handleCloseFeePeriod}>
+									{t('earn.actions.claim.close-fee-period')}
+								</PaddedButton>
+							) : null}
 						</PaddedButtonContainer>
 					</Tooltip>
 					<GasSelector
@@ -352,7 +414,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 						setGasPrice={setGasPrice}
 					/>
 				</InnerContainer>
-			</TabContainer>
+			</StyledTabContainer>
 			{txModalOpen && (
 				<TxConfirmationModal
 					onDismiss={() => setTxModalOpen(false)}
@@ -415,7 +477,7 @@ const PaddedButtonContainer = styled.div`
 
 const PaddedButton = styled(StyledButton)`
 	margin-top: 20px;
-	text-transform: none;
+	text-transform: uppercase;
 `;
 
 const StyledFlexDivColCentered = styled(FlexDivColCentered)`
@@ -431,6 +493,10 @@ const StyledFlexDiv = styled(FlexDiv)`
 
 const StyledGlowingCircle = styled(GlowingCircle)`
 	margin-bottom: 12px;
+`;
+
+const StyledTabContainer = styled(TabContainer)`
+	height: inherit;
 `;
 
 export default ClaimTab;

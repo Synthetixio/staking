@@ -1,7 +1,7 @@
 import { NetworkId } from '@synthetixio/contracts-interface';
 import { NumericValue } from 'utils/formatters/number';
 import { SPACE_KEY } from 'constants/snapshot';
-import { CurrencyKey } from './currency';
+import { CurrencyKey, Synths } from './currency';
 import { Period } from './period';
 
 export const QUERY_KEYS = {
@@ -185,9 +185,9 @@ export const QUERY_KEYS = {
 			walletAddress,
 			networkId,
 		],
-		sTSLA: (walletAddress: string, networkId: NetworkId) => [
+		Balancer: (walletAddress: string, synth: Synths, networkId: NetworkId) => [
 			'liquidityPools',
-			'sTSLA',
+			synth,
 			walletAddress,
 			networkId,
 		],
@@ -268,6 +268,10 @@ export const QUERY_KEYS = {
 			networkId,
 		],
 		Proposal: (spaceKey: SPACE_KEY, hash: string) => ['gov', 'proposal', spaceKey, hash],
+	},
+	TokenLists: {
+		Synthetix: ['tokenLists', 'synthetix'],
+		Zapper: ['tokenLists', 'zapper'],
 	},
 };
 

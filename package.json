@@ -1,6 +1,6 @@
 {
 	"name": "staking",
-	"version": "2.41.0",
+	"version": "2.43.1",
 	"scripts": {
 		"dev": "next",
 		"build": "next build",
@@ -21,9 +21,8 @@
 		"@metamask/detect-provider": "1.2.0",
 		"@reach/dialog": "0.12.1",
 		"@snapshot-labs/snapshot.js": "0.1.7",
-		"@synthetixio/assets": "2.0.7",
-		"@synthetixio/contracts-interface": "2.41.0",
-		"@synthetixio/js": "2.41.0",
+		"@synthetixio/assets": "2.0.10",
+		"@synthetixio/contracts-interface": "2.43.1",
 		"@synthetixio/optimism-networks": "0.0.14",
 		"@synthetixio/providers": "0.0.12",
 		"@synthetixio/transaction-notifier": "0.0.9",
@@ -61,7 +60,7 @@
 		"styled-components": "5.1.1",
 		"styled-media-query": "2.1.2",
 		"svg-react-loader": "0.4.6",
-		"synthetix-data": "2.1.42",
+		"synthetix-data": "2.1.43",
 		"unstated-next": "1.1.0",
 		"use-immer": "0.4.1"
 	},

@@ -20,6 +20,13 @@ import {
 	balancersTSLAPoolToken,
 	dualStakingRewards,
 	DHTsUSDLPToken,
+	balancersFBPoolToken,
+	balancersAAPLPoolToken,
+	balancersAMZNPoolToken,
+	balancersGOOGPoolToken,
+	balancersNFLXPoolToken,
+	balancersMSFTPoolToken,
+	balancersCOINPoolToken,
 } from 'contracts';
 import Connector from 'containers/Connector';
 import { EXTERNAL_LINKS } from 'constants/links';
@@ -71,7 +78,7 @@ export const getApprovalContractData = (stakedAsset: CurrencyKey, signer: any) =
 			contract: new ethers.Contract(
 				curveSusdPoolToken.address,
 				curveSusdPoolToken.abi,
-				signer as any
+				signer as ethers.Signer
 			),
 			poolAddress: curveSusdRewards.address,
 		};
@@ -80,9 +87,72 @@ export const getApprovalContractData = (stakedAsset: CurrencyKey, signer: any) =
 			contract: new ethers.Contract(
 				balancersTSLAPoolToken.address,
 				balancersTSLAPoolToken.abi,
-				signer as any
+				signer as ethers.Signer
 			),
 			poolAddress: contracts.StakingRewardssTSLABalancer.address,
+		};
+	} else if (stakedAsset === LP.BALANCER_sFB) {
+		return {
+			contract: new ethers.Contract(
+				balancersFBPoolToken.address,
+				balancersFBPoolToken.abi,
+				signer as ethers.Signer
+			),
+			poolAddress: contracts.StakingRewardssFBBalancer.address,
+		};
+	} else if (stakedAsset === LP.BALANCER_sAAPL) {
+		return {
+			contract: new ethers.Contract(
+				balancersAAPLPoolToken.address,
+				balancersAAPLPoolToken.abi,
+				signer as ethers.Signer
+			),
+			poolAddress: contracts.StakingRewardssAAPLBalancer.address,
+		};
+	} else if (stakedAsset === LP.BALANCER_sAMZN) {
+		return {
+			contract: new ethers.Contract(
+				balancersAMZNPoolToken.address,
+				balancersAMZNPoolToken.abi,
+				signer as ethers.Signer
+			),
+			poolAddress: contracts.StakingRewardssAMZNBalancer.address,
+		};
+	} else if (stakedAsset === LP.BALANCER_sNFLX) {
+		return {
+			contract: new ethers.Contract(
+				balancersNFLXPoolToken.address,
+				balancersNFLXPoolToken.abi,
+				signer as ethers.Signer
+			),
+			poolAddress: contracts.StakingRewardssNFLXBalancer.address,
+		};
+	} else if (stakedAsset === LP.BALANCER_sGOOG) {
+		return {
+			contract: new ethers.Contract(
+				balancersGOOGPoolToken.address,
+				balancersGOOGPoolToken.abi,
+				signer as ethers.Signer
+			),
+			poolAddress: contracts.StakingRewardssGOOGBalancer.address,
+		};
+	} else if (stakedAsset === LP.BALANCER_sMSFT) {
+		return {
+			contract: new ethers.Contract(
+				balancersMSFTPoolToken.address,
+				balancersMSFTPoolToken.abi,
+				signer as ethers.Signer
+			),
+			poolAddress: contracts.StakingRewardssMSFTBalancer.address,
+		};
+	} else if (stakedAsset === LP.BALANCER_sCOIN) {
+		return {
+			contract: new ethers.Contract(
+				balancersCOINPoolToken.address,
+				balancersCOINPoolToken.abi,
+				signer as ethers.Signer
+			),
+			poolAddress: contracts.StakingRewardssCOINBalancer.address,
 		};
 	} else if (stakedAsset === LP.UNISWAP_DHT) {
 		return {

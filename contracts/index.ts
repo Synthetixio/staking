@@ -13,6 +13,13 @@ import curveSeuroGauge from './curveSeuroGauge';
 import curveGaugeController from './curveGaugeController';
 
 import balancersTSLAPoolToken from './balancersTSLAPoolToken';
+import balancersFBPoolToken from './balancersFBPoolToken';
+import balancersAAPLPoolToken from './balancersAAPLPoolToken';
+import balancersAMZNPoolToken from './balancersAMZNPoolToken';
+import balancersNFLXPoolToken from './balancersNFLXPoolToken';
+import balancersGOOGPoolToken from './balancersGOOGPoolToken';
+import balancersMSFTPoolToken from './balancersMSFTPoolToken';
+import balancersCOINPoolToken from './balancersCOINPoolToken';
 
 import wETHToken from './wETHToken';
 import wBTCToken from './wBTCToken';
@@ -33,6 +40,13 @@ export {
 	curveSeuroGauge,
 	curveGaugeController,
 	balancersTSLAPoolToken,
+	balancersFBPoolToken,
+	balancersAAPLPoolToken,
+	balancersAMZNPoolToken,
+	balancersNFLXPoolToken,
+	balancersGOOGPoolToken,
+	balancersMSFTPoolToken,
+	balancersCOINPoolToken,
 	wETHToken,
 	wBTCToken,
 	renBTCToken,

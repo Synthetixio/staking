@@ -29,6 +29,7 @@ import {
 	TxModalItem,
 	TxModalItemSeperator,
 } from 'sections/loans/components/common';
+import { LOAN_TYPE_ERC20, LOAN_TYPE_ETH } from 'sections/loans/constants';
 import {
 	normalizeGasLimit as getNormalizedGasLimit,
 	normalizedGasPrice as getNormalizedGasPrice,
@@ -105,12 +106,17 @@ const Wrapper: FC<WrapperProps> = ({
 }) => {
 	const { t } = useTranslation();
 	const router = useRouter();
-	const { interactionDelays } = Loans.useContainer();
+	const { interactionDelays, minCRatios } = Loans.useContainer();
 
 	const [waitETA, setWaitETA] = useState<string>('');
 
 	const [gasPrice, setGasPrice] = useState<number>(0);
 	const [gasLimit, setGasLimitEstimate] = useState<number | null>(null);
+
+	const minCRatio = useMemo(
+		() => minCRatios.get(loanTypeIsETH ? LOAN_TYPE_ETH : LOAN_TYPE_ERC20) || toBigNumber(0),
+		[minCRatios, loanTypeIsETH]
+	);
 
 	const onGoBack = () => router.back();
 	const onSetleftColAssetName = () => {};
@@ -225,7 +231,7 @@ const Wrapper: FC<WrapperProps> = ({
 				<SettingsContainer>
 					{!showCRatio ? null : (
 						<SettingContainer>
-							<CRatio {...{ loan, loanTypeIsETH }} />
+							<CRatio {...{ loan, loanTypeIsETH, minCRatio }} />
 						</SettingContainer>
 					)}
 					{!showInterestAccrued ? null : (

@@ -9,9 +9,9 @@ import NotificationContainer from 'constants/NotificationContainer';
 import { SPACE_KEY } from 'constants/snapshot';
 import useProposals from 'queries/gov/useProposals';
 import { NotificationTemplate, userNotificationState } from 'store/ui';
-import { isL2State } from 'store/wallet';
 import media from 'styles/media';
 import { Proposal } from 'queries/gov/types';
+import { isL2State, isMainnetState } from 'store/wallet';
 
 import Header from './Header';
 import SideNav from './SideNav';
@@ -23,6 +23,7 @@ type AppLayoutProps = {
 
 const AppLayout: FC<AppLayoutProps> = ({ children }) => {
 	const isL2 = useRecoilValue(isL2State);
+	const isMainnet = useRecoilValue(isMainnetState);
 	const councilProposals = useProposals(SPACE_KEY.COUNCIL);
 	const setNotificationState = useSetRecoilState(userNotificationState);
 
@@ -36,7 +37,10 @@ const AppLayout: FC<AppLayoutProps> = ({ children }) => {
 		if (isL2 && router.pathname.includes(ROUTES.Gov.Home)) {
 			router.push(ROUTES.Home);
 		}
-	}, [isL2]);
+		if (!isMainnet && router.pathname.includes(ROUTES.Debt.Home)) {
+			router.push(ROUTES.Home);
+		}
+	}, [isL2, isMainnet]);
 
 	useEffect(() => {
 		if (councilProposals.data && !isL2) {

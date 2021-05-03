@@ -13,7 +13,7 @@ describe('Wallet tests', () => {
 	});
 	context('Connect metamask wallet', () => {
 		it(`should login with success`, () => {
-			home.connectMetamaskWallet();
+			home.connectBrowserWallet();
 			home.acceptMetamaskAccessRequest();
 			home.waitUntilLoggedIn();
 			home.getLoggedInWalletAddress().then((stakingWalletAddress) => {

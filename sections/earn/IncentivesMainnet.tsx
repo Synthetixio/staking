@@ -18,10 +18,19 @@ import ClaimTab from './ClaimTab';
 import LPTab from './LPTab';
 import { isWalletConnectedState } from 'store/wallet';
 
-import { Tab, LP } from './types';
+import {
+	Tab,
+	LP,
+	lpToTab,
+	tabToLP,
+	lpToSynthTranslationKey,
+	lpToSynthIcon,
+	lpToRoute,
+} from './types';
 import { zeroBN } from 'utils/formatters/number';
 import useShortRewardsData from 'hooks/useShortRewardsData';
 import { TabButton, TabList } from 'components/Tab';
+import { CurrencyIconType } from 'components/Currency/CurrencyIcon/CurrencyIcon';
 
 enum View {
 	ACTIVE = 'active',
@@ -71,172 +80,199 @@ const Incentives: FC<IncentivesProps> = ({
 		[router.query.pool, isWalletConnected]
 	);
 
-	const incentives = useMemo(
-		() =>
-			isWalletConnected
-				? [
-						{
-							title: t('earn.incentives.options.snx.title'),
-							subtitle: t('earn.incentives.options.snx.subtitle'),
-							apr: stakingAPR,
-							tvl: useSNXLockedValue.data ?? 0,
-							staked: {
-								balance: stakedAmount,
-								asset: CryptoCurrency.SNX,
-							},
-							rewards: stakingRewards.toNumber(),
-							periodStarted: currentFeePeriodStarted.getTime(),
-							periodFinish: nextFeePeriodStarts.getTime(),
-							claimed: hasClaimed,
-							now,
-							tab: Tab.Claim,
-							route: ROUTES.Earn.Claim,
+	const incentives = useMemo(() => {
+		const balancerIncentives = (balancerLP: LP) => {
+			const tab = lpToTab[balancerLP];
+			const synthTransKey = lpToSynthTranslationKey[balancerLP];
+			const route = lpToRoute[balancerLP];
+			const currencyKey = lpToSynthIcon[balancerLP];
+
+			return {
+				title: t(`earn.incentives.options.${synthTransKey}.title`),
+				subtitle: t(`earn.incentives.options.${synthTransKey}.subtitle`),
+				apr: lpData[balancerLP].APR,
+				tvl: lpData[balancerLP].TVL,
+				staked: {
+					balance: lpData[balancerLP].data?.staked ?? 0,
+					asset: currencyKey,
+					ticker: balancerLP,
+				},
+				rewards: lpData[balancerLP].data?.rewards ?? 0,
+				periodStarted: now - (lpData[balancerLP].data?.duration ?? 0),
+				periodFinish: lpData[balancerLP].data?.periodFinish ?? 0,
+				claimed: (lpData[balancerLP].data?.rewards ?? 0) > 0 ? false : NOT_APPLICABLE,
+				now,
+				route: route,
+				tab: tab,
+			};
+		};
+
+		return isWalletConnected
+			? [
+					{
+						title: t('earn.incentives.options.snx.title'),
+						subtitle: t('earn.incentives.options.snx.subtitle'),
+						apr: stakingAPR,
+						tvl: useSNXLockedValue.data ?? 0,
+						staked: {
+							balance: stakedAmount,
+							asset: CryptoCurrency.SNX,
+							ticker: CryptoCurrency.SNX,
 						},
-						{
-							title: t('earn.incentives.options.ieth.title'),
-							subtitle: t('earn.incentives.options.ieth.subtitle'),
-							apr: lpData[Synths.iETH].APR,
-							tvl: lpData[Synths.iETH].TVL,
-							staked: {
-								balance: lpData[Synths.iETH].data?.staked ?? 0,
-								asset: Synths.iETH,
-							},
-							rewards: lpData[Synths.iETH].data?.rewards ?? 0,
-							periodStarted: now - (lpData[Synths.iETH].data?.duration ?? 0),
-							periodFinish: lpData[Synths.iETH].data?.periodFinish ?? 0,
-							claimed: (lpData[Synths.iETH].data?.rewards ?? 0) > 0 ? false : NOT_APPLICABLE,
-							now,
-							tab: Tab.iETH_LP,
-							route: ROUTES.Earn.iETH_LP,
-							needsToSettle: lpData[Synths.iETH].data?.needsToSettle,
+						rewards: stakingRewards.toNumber(),
+						periodStarted: currentFeePeriodStarted.getTime(),
+						periodFinish: nextFeePeriodStarts.getTime(),
+						claimed: hasClaimed,
+						now,
+						tab: Tab.Claim,
+						route: ROUTES.Earn.Claim,
+					},
+					{
+						title: t('earn.incentives.options.ieth.title'),
+						subtitle: t('earn.incentives.options.ieth.subtitle'),
+						apr: lpData[Synths.iETH].APR,
+						tvl: lpData[Synths.iETH].TVL,
+						staked: {
+							balance: lpData[Synths.iETH].data?.staked ?? 0,
+							asset: Synths.iETH,
+							ticker: Synths.iETH,
 						},
-						{
-							title: t('earn.incentives.options.sbtc.title'),
-							subtitle: t('earn.incentives.options.sbtc.subtitle'),
-							apr: shortData[Synths.sBTC].APR,
-							tvl: shortData[Synths.sBTC].OI,
-							staked: {
-								balance: shortData[Synths.sBTC].data?.staked ?? 0,
-								asset: Synths.sBTC,
-							},
-							rewards: shortData[Synths.sBTC].data?.rewards ?? 0,
-							periodStarted: now - (shortData[Synths.sBTC].data?.duration ?? 0),
-							periodFinish: shortData[Synths.sBTC].data?.periodFinish ?? 0,
-							claimed: (shortData[Synths.sBTC].data?.rewards ?? 0) > 0 ? false : NOT_APPLICABLE,
-							now,
-							tab: Tab.sBTC_SHORT,
-							route: ROUTES.Earn.sBTC_SHORT,
-							externalLink: ROUTES.Earn.sBTC_EXTERNAL,
+						rewards: lpData[Synths.iETH].data?.rewards ?? 0,
+						periodStarted: now - (lpData[Synths.iETH].data?.duration ?? 0),
+						periodFinish: lpData[Synths.iETH].data?.periodFinish ?? 0,
+						claimed: (lpData[Synths.iETH].data?.rewards ?? 0) > 0 ? false : NOT_APPLICABLE,
+						now,
+						tab: Tab.iETH_LP,
+						route: ROUTES.Earn.iETH_LP,
+						needsToSettle: lpData[Synths.iETH].data?.needsToSettle,
+					},
+					{
+						title: t('earn.incentives.options.ibtc.title'),
+						subtitle: t('earn.incentives.options.ibtc.subtitle'),
+						apr: lpData[Synths.iBTC].APR,
+						tvl: lpData[Synths.iBTC].TVL,
+						staked: {
+							balance: lpData[Synths.iBTC].data?.staked ?? 0,
+							asset: Synths.iBTC,
+							ticker: Synths.iBTC,
 						},
-						{
-							title: t('earn.incentives.options.seth.title'),
-							subtitle: t('earn.incentives.options.seth.subtitle'),
-							apr: shortData[Synths.sETH].APR,
-							tvl: shortData[Synths.sETH].OI,
-							staked: {
-								balance: shortData[Synths.sETH].data?.staked ?? 0,
-								asset: Synths.sETH,
-							},
-							rewards: shortData[Synths.sETH].data?.rewards ?? 0,
-							periodStarted: now - (shortData[Synths.sETH].data?.duration ?? 0),
-							periodFinish: shortData[Synths.sETH].data?.periodFinish ?? 0,
-							claimed: (shortData[Synths.sETH].data?.rewards ?? 0) > 0 ? false : NOT_APPLICABLE,
-							now,
-							tab: Tab.sETH_SHORT,
-							route: ROUTES.Earn.sETH_SHORT,
-							externalLink: ROUTES.Earn.sETH_EXTERNAL,
+						rewards: lpData[Synths.iBTC].data?.rewards ?? 0,
+						periodStarted: now - (lpData[Synths.iBTC].data?.duration ?? 0),
+						periodFinish: lpData[Synths.iBTC].data?.periodFinish ?? 0,
+						claimed: (lpData[Synths.iBTC].data?.rewards ?? 0) > 0 ? false : NOT_APPLICABLE,
+						now,
+						tab: Tab.iBTC_LP,
+						route: ROUTES.Earn.iBTC_LP,
+						needsToSettle: lpData[Synths.iBTC].data?.needsToSettle,
+					},
+					{
+						title: t('earn.incentives.options.sbtc.title'),
+						subtitle: t('earn.incentives.options.sbtc.subtitle'),
+						apr: shortData[Synths.sBTC].APR,
+						tvl: shortData[Synths.sBTC].OI,
+						staked: {
+							balance: shortData[Synths.sBTC].data?.staked ?? 0,
+							asset: Synths.sBTC,
+							ticker: Synths.sBTC,
 						},
-						{
-							title: t('earn.incentives.options.stsla.title'),
-							subtitle: t('earn.incentives.options.stsla.subtitle'),
-							apr: lpData[LP.BALANCER_sTSLA].APR,
-							tvl: lpData[LP.BALANCER_sTSLA].TVL,
-							staked: {
-								balance: lpData[LP.BALANCER_sTSLA].data?.staked ?? 0,
-								asset: LP.BALANCER_sTSLA,
-							},
-							rewards: lpData[LP.BALANCER_sTSLA].data?.rewards ?? 0,
-							periodStarted: now - (lpData[LP.BALANCER_sTSLA].data?.duration ?? 0),
-							periodFinish: lpData[LP.BALANCER_sTSLA].data?.periodFinish ?? 0,
-							claimed: (lpData[LP.BALANCER_sTSLA].data?.rewards ?? 0) > 0 ? false : NOT_APPLICABLE,
-							now,
-							route: ROUTES.Earn.sTLSA_LP,
-							tab: Tab.sTLSA_LP,
+						rewards: shortData[Synths.sBTC].data?.rewards ?? 0,
+						periodStarted: now - (shortData[Synths.sBTC].data?.duration ?? 0),
+						periodFinish: shortData[Synths.sBTC].data?.periodFinish ?? 0,
+						claimed: (shortData[Synths.sBTC].data?.rewards ?? 0) > 0 ? false : NOT_APPLICABLE,
+						now,
+						tab: Tab.sBTC_SHORT,
+						route: ROUTES.Earn.sBTC_SHORT,
+						externalLink: ROUTES.Earn.sBTC_EXTERNAL,
+					},
+					{
+						title: t('earn.incentives.options.seth.title'),
+						subtitle: t('earn.incentives.options.seth.subtitle'),
+						apr: shortData[Synths.sETH].APR,
+						tvl: shortData[Synths.sETH].OI,
+						staked: {
+							balance: shortData[Synths.sETH].data?.staked ?? 0,
+							asset: Synths.sETH,
+							ticker: Synths.sETH,
 						},
-						{
-							title: t('earn.incentives.options.curve.title'),
-							subtitle: t('earn.incentives.options.curve.subtitle'),
-							apr: lpData[LP.CURVE_sUSD].APR,
-							tvl: lpData[LP.CURVE_sUSD].TVL,
-							staked: {
-								balance: lpData[LP.CURVE_sUSD].data?.staked ?? 0,
-								asset: LP.CURVE_sUSD,
-							},
-							rewards: lpData[LP.CURVE_sUSD].data?.rewards ?? 0,
-							periodStarted: now - (lpData[LP.CURVE_sUSD].data?.duration ?? 0),
-							periodFinish: lpData[LP.CURVE_sUSD].data?.periodFinish ?? 0,
-							claimed: (lpData[LP.CURVE_sUSD].data?.rewards ?? 0) > 0 ? false : NOT_APPLICABLE,
-							now,
-							route: ROUTES.Earn.sUSD_LP,
-							tab: Tab.sUSD_LP,
-							externalLink: ROUTES.Earn.sUSD_EXTERNAL,
+						rewards: shortData[Synths.sETH].data?.rewards ?? 0,
+						periodStarted: now - (shortData[Synths.sETH].data?.duration ?? 0),
+						periodFinish: shortData[Synths.sETH].data?.periodFinish ?? 0,
+						claimed: (shortData[Synths.sETH].data?.rewards ?? 0) > 0 ? false : NOT_APPLICABLE,
+						now,
+						tab: Tab.sETH_SHORT,
+						route: ROUTES.Earn.sETH_SHORT,
+						externalLink: ROUTES.Earn.sETH_EXTERNAL,
+					},
+					...[
+						LP.BALANCER_sFB,
+						LP.BALANCER_sAAPL,
+						LP.BALANCER_sAMZN,
+						LP.BALANCER_sNFLX,
+						LP.BALANCER_sGOOG,
+						LP.BALANCER_sTSLA,
+						LP.BALANCER_sMSFT,
+						LP.BALANCER_sCOIN,
+					].map(balancerIncentives),
+					{
+						title: t('earn.incentives.options.curve.title'),
+						subtitle: t('earn.incentives.options.curve.subtitle'),
+						apr: lpData[LP.CURVE_sUSD].APR,
+						tvl: lpData[LP.CURVE_sUSD].TVL,
+						staked: {
+							balance: lpData[LP.CURVE_sUSD].data?.staked ?? 0,
+							asset: CryptoCurrency.CRV,
+							ticker: LP.CURVE_sUSD,
+							type: CurrencyIconType.TOKEN,
 						},
-						{
-							title: t('earn.incentives.options.dht.title'),
-							subtitle: t('earn.incentives.options.dht.subtitle'),
-							apr: lpData[LP.UNISWAP_DHT].APR,
-							tvl: lpData[LP.UNISWAP_DHT].TVL,
-							staked: {
-								balance: lpData[LP.UNISWAP_DHT].data?.staked ?? 0,
-								asset: LP.UNISWAP_DHT,
-							},
-							rewards: lpData[LP.UNISWAP_DHT].data?.rewards ?? 0,
-							periodStarted: now - (lpData[LP.UNISWAP_DHT].data?.duration ?? 0),
-							periodFinish: lpData[LP.UNISWAP_DHT].data?.periodFinish ?? 0,
-							claimed:
-								((lpData[LP.UNISWAP_DHT].data?.rewards as DualRewards)?.a ?? 0) > 0 &&
-								((lpData[LP.UNISWAP_DHT].data?.rewards as DualRewards)?.b ?? 0) > 0
-									? false
-									: NOT_APPLICABLE,
-							now,
-							route: ROUTES.Earn.DHT_LP,
-							tab: Tab.DHT_LP,
+						rewards: lpData[LP.CURVE_sUSD].data?.rewards ?? 0,
+						periodStarted: now - (lpData[LP.CURVE_sUSD].data?.duration ?? 0),
+						periodFinish: lpData[LP.CURVE_sUSD].data?.periodFinish ?? 0,
+						claimed: (lpData[LP.CURVE_sUSD].data?.rewards ?? 0) > 0 ? false : NOT_APPLICABLE,
+						now,
+						route: ROUTES.Earn.sUSD_LP,
+						tab: Tab.sUSD_LP,
+						externalLink: ROUTES.Earn.sUSD_EXTERNAL,
+					},
+					{
+						title: t('earn.incentives.options.dht.title'),
+						subtitle: t('earn.incentives.options.dht.subtitle'),
+						apr: lpData[LP.UNISWAP_DHT].APR,
+						tvl: lpData[LP.UNISWAP_DHT].TVL,
+						staked: {
+							balance: lpData[LP.UNISWAP_DHT].data?.staked ?? 0,
+							asset: CryptoCurrency.DHT,
+							ticker: LP.UNISWAP_DHT,
+							type: CurrencyIconType.TOKEN,
 						},
-						{
-							title: t('earn.incentives.options.ibtc.title'),
-							subtitle: t('earn.incentives.options.ibtc.subtitle'),
-							apr: lpData[Synths.iBTC].APR,
-							tvl: lpData[Synths.iBTC].TVL,
-							staked: {
-								balance: lpData[Synths.iBTC].data?.staked ?? 0,
-								asset: Synths.iBTC,
-							},
-							rewards: lpData[Synths.iBTC].data?.rewards ?? 0,
-							periodStarted: now - (lpData[Synths.iBTC].data?.duration ?? 0),
-							periodFinish: lpData[Synths.iBTC].data?.periodFinish ?? 0,
-							claimed: (lpData[Synths.iBTC].data?.rewards ?? 0) > 0 ? false : NOT_APPLICABLE,
-							now,
-							tab: Tab.iBTC_LP,
-							route: ROUTES.Earn.iBTC_LP,
-							needsToSettle: lpData[Synths.iBTC].data?.needsToSettle,
-						},
-				  ]
-				: [],
-		[
-			stakingAPR,
-			stakedAmount,
-			useSNXLockedValue.data,
-			nextFeePeriodStarts,
-			stakingRewards,
-			hasClaimed,
-			lpData,
-			currentFeePeriodStarted,
-			now,
-			t,
-			isWalletConnected,
-			shortData,
-		]
-	);
+						rewards: lpData[LP.UNISWAP_DHT].data?.rewards ?? 0,
+						dualRewards: true,
+						periodStarted: now - (lpData[LP.UNISWAP_DHT].data?.duration ?? 0),
+						periodFinish: lpData[LP.UNISWAP_DHT].data?.periodFinish ?? 0,
+						claimed:
+							((lpData[LP.UNISWAP_DHT].data?.rewards as DualRewards)?.a ?? 0) > 0 &&
+							((lpData[LP.UNISWAP_DHT].data?.rewards as DualRewards)?.b ?? 0) > 0
+								? false
+								: NOT_APPLICABLE,
+						now,
+						route: ROUTES.Earn.DHT_LP,
+						tab: Tab.DHT_LP,
+					},
+			  ]
+			: [];
+	}, [
+		stakingAPR,
+		stakedAmount,
+		useSNXLockedValue.data,
+		nextFeePeriodStarts,
+		stakingRewards,
+		hasClaimed,
+		lpData,
+		currentFeePeriodStarted,
+		now,
+		t,
+		isWalletConnected,
+		shortData,
+	]);
 
 	const incentivesTable = (
 		<IncentivesTable
@@ -260,6 +296,28 @@ const Incentives: FC<IncentivesProps> = ({
 		/>
 	);
 
+	const balancerTab = (selectedTab: Tab) => {
+		const lp = tabToLP[selectedTab];
+		const currencyKey = lpToSynthIcon[lp];
+
+		return (
+			activeTab === selectedTab && (
+				<LPTab
+					key={selectedTab}
+					userBalance={lpData[lp].data?.userBalance ?? 0}
+					userBalanceBN={lpData[lp].data?.userBalanceBN ?? zeroBN}
+					stakedAsset={lp}
+					icon={currencyKey}
+					allowance={lpData[lp].data?.allowance ?? null}
+					tokenRewards={lpData[lp].data?.rewards ?? 0}
+					staked={lpData[lp].data?.staked ?? 0}
+					stakedBN={lpData[lp].data?.stakedBN ?? zeroBN}
+					needsToSettle={lpData[lp].data?.needsToSettle}
+				/>
+			)
+		);
+	};
+
 	return activeTab == null ? (
 		<>
 			<TabList noOfTabs={2}>
@@ -268,7 +326,6 @@ const Incentives: FC<IncentivesProps> = ({
 					tabHeight={50}
 					inverseTabColor={true}
 					blue={true}
-					noOfTabs={2}
 					key={`active-button`}
 					name={t('earn.tab.active')}
 					active={view === View.ACTIVE}
@@ -283,7 +340,6 @@ const Incentives: FC<IncentivesProps> = ({
 					tabHeight={50}
 					inverseTabColor={true}
 					blue={false}
-					noOfTabs={2}
 					key={`inactive-button`}
 					name={t('earn.tab.inactive')}
 					active={view === View.INACTIVE}
@@ -319,23 +375,36 @@ const Incentives: FC<IncentivesProps> = ({
 						needsToSettle={lpData[Synths.iETH].data?.needsToSettle}
 					/>
 				)}
-				{activeTab === Tab.sTLSA_LP && (
+				{/* {activeTab === Tab.sTLSA_LP && (
 					<LPTab
 						userBalance={lpData[LP.BALANCER_sTSLA].data?.userBalance ?? 0}
 						userBalanceBN={lpData[LP.BALANCER_sTSLA].data?.userBalanceBN ?? zeroBN}
 						stakedAsset={LP.BALANCER_sTSLA}
+						icon={Synths.sTSLA}
 						allowance={lpData[LP.BALANCER_sTSLA].data?.allowance ?? null}
 						tokenRewards={lpData[LP.BALANCER_sTSLA].data?.rewards ?? 0}
 						staked={lpData[LP.BALANCER_sTSLA].data?.staked ?? 0}
 						stakedBN={lpData[LP.BALANCER_sTSLA].data?.stakedBN ?? zeroBN}
 						needsToSettle={lpData[LP.BALANCER_sTSLA].data?.needsToSettle}
 					/>
-				)}
+				)} */}
+				{[
+					Tab.sTLSA_LP,
+					Tab.sFB_LP,
+					Tab.sAAPL_LP,
+					Tab.sAMZN_LP,
+					Tab.sNFLX_LP,
+					Tab.sGOOG_LP,
+					Tab.sMSFT_LP,
+					Tab.sCOIN_LP,
+				].map(balancerTab)}
 				{activeTab === Tab.DHT_LP && (
 					<LPTab
 						userBalance={lpData[LP.UNISWAP_DHT].data?.userBalance ?? 0}
 						userBalanceBN={lpData[LP.UNISWAP_DHT].data?.userBalanceBN ?? zeroBN}
 						stakedAsset={LP.UNISWAP_DHT}
+						icon={CryptoCurrency.DHT}
+						type={CurrencyIconType.TOKEN}
 						allowance={lpData[LP.UNISWAP_DHT].data?.allowance ?? null}
 						tokenRewards={lpData[LP.UNISWAP_DHT].data?.rewards ?? 0}
 						staked={lpData[LP.UNISWAP_DHT].data?.staked ?? 0}

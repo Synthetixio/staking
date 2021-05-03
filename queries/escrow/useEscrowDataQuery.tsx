@@ -16,7 +16,7 @@ export type EscrowData = {
 	schedule: Schedule;
 	totalEscrowed: number;
 	totalVested: number;
-	totalBalancePendingMigration?: number;
+	totalBalancePendingMigration: number;
 	claimableEntryIds?: number[];
 	claimableEntryIdsInChunk?: number[][];
 };
@@ -48,10 +48,16 @@ const useEscrowDataQuery = (options?: QueryConfig<EscrowData>) => {
 				contracts: { RewardEscrowV2 },
 			} = synthetix.js!;
 
-			const [numVestingEntries, totalEscrowed, totalVested] = await Promise.all([
+			const [
+				numVestingEntries,
+				totalEscrowed,
+				totalVested,
+				totalBalancePendingMigration,
+			] = await Promise.all([
 				RewardEscrowV2.numVestingEntries(walletAddress),
 				RewardEscrowV2.balanceOf(walletAddress),
 				RewardEscrowV2.totalVestedAccountBalance(walletAddress),
+				RewardEscrowV2.totalBalancePendingMigration(walletAddress),
 			]);
 
 			let vestingEntriesPromise = [];
@@ -99,13 +105,23 @@ const useEscrowDataQuery = (options?: QueryConfig<EscrowData>) => {
 			const claimableEntryIdsInChunk =
 				claimableEntryIds && claimableEntryIds.length > 0 ? chunk(claimableEntryIds, 26) : [];
 
+			const [
+				formattedClaimableAmount,
+				formattedTotalEscrowed,
+				formattedTotalVested,
+				formattedTotalBalanceMigration,
+			] = [claimableAmount, totalEscrowed, totalVested, totalBalancePendingMigration].map((data) =>
+				Number(synthetix.js?.utils.formatEther(data))
+			);
+
 			return {
-				claimableAmount: claimableAmount / 1e18,
+				claimableAmount: formattedClaimableAmount,
 				schedule,
-				totalEscrowed: totalEscrowed / 1e18,
-				totalVested: totalVested / 1e18,
+				totalEscrowed: formattedTotalEscrowed,
+				totalVested: formattedTotalVested,
 				claimableEntryIds,
 				claimableEntryIdsInChunk,
+				totalBalancePendingMigration: formattedTotalBalanceMigration,
 			};
 		},
 		{

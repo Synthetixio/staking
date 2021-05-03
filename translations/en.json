@@ -297,6 +297,7 @@
 					"error": {
 						"no-debt": "No debt to burn",
 						"bad-input": "Invalid input amount",
+						"insufficient-eth-1inch": "Insufficient ETH to execute 1inch swap",
 						"waiting-period": "Burning blocked until {{date}}",
 						"issuance-period": "Burning blocked until {{date}}",
 						"insufficient": "Insufficient sUSD to burn debt",
@@ -348,15 +349,28 @@
 		"page-title": "Debt | Synthetix Staking",
 		"actions": {
 			"track": {
-				"title": "Debt Over Time",
+				"title": "Overview",
 				"no-data": "Debt data is not available for this wallet",
 				"info": {
 					"tooltip": "<0>Issued debt:</0> This displays the total of all your mints and burns over time, revealing how only your C-Ratio management has affected your debt.<1 /><2>Actual debt:</2> This displays your total debt over time."
 				},
 				"chart": {
+					"title": "Debt Over Time",
 					"tooltip": {
 						"actualDebt": "Active Debt",
 						"issuedDebt": "Issued Debt"
+					}
+				}
+			},
+			"manage": {
+				"title": "Manage",
+				"info-panel": {
+					"title": "sUSD underperforms against debt pool",
+					"body": "Your debt will fluctuate over time with the debt pool. We recommend that you hedge your debt to reduce your risk owning more debt than you hold.",
+					"chart": {
+						"title": "sUSD vs DEBT POOL",
+						"sUSD-label": "sUSD",
+						"debtPool-label": "DEBT POOL"
 					}
 				}
 			},
@@ -442,6 +456,41 @@
 					"description": "Stake sTLSA Balancer Pool LP to earn SNX rewards. <0>Add liquidity on Balancer here<0>.",
 					"subtitle": "sTSLA BPT Rewards"
 				},
+				"sfb": {
+					"title": "Balancer",
+					"description": "Stake sFB Balancer Pool LP to earn SNX rewards. <0>Add liquidity on Balancer here<0>.",
+					"subtitle": "sFB BPT Rewards"
+				},
+				"saaple": {
+					"title": "Balancer",
+					"description": "Stake sAAPL Balancer Pool LP to earn SNX rewards. <0>Add liquidity on Balancer here<0>.",
+					"subtitle": "sAAPL BPT Rewards"
+				},
+				"samzn": {
+					"title": "Balancer",
+					"description": "Stake sAMZN Balancer Pool LP to earn SNX rewards. <0>Add liquidity on Balancer here<0>.",
+					"subtitle": "sAMZN BPT Rewards"
+				},
+				"snflx": {
+					"title": "Balancer",
+					"description": "Stake sNFLX Balancer Pool LP to earn SNX rewards. <0>Add liquidity on Balancer here<0>.",
+					"subtitle": "sNFLX BPT Rewards"
+				},
+				"sgoog": {
+					"title": "Balancer",
+					"description": "Stake sGOOG Balancer Pool LP to earn SNX rewards. <0>Add liquidity on Balancer here<0>.",
+					"subtitle": "sGOOG BPT Rewards"
+				},
+				"smsft": {
+					"title": "Balancer",
+					"description": "Stake sMSFT Balancer Pool LP to earn SNX rewards. <0>Add liquidity on Balancer here<0>.",
+					"subtitle": "sMSFT BPT Rewards"
+				},
+				"scoin": {
+					"title": "Balancer",
+					"description": "Stake sCOIN Balancer Pool LP to earn SNX rewards. <0>Add liquidity on Balancer here<0>.",
+					"subtitle": "sCOIN BPT Rewards"
+				},
 				"dht": {
 					"title": "Uniswap",
 					"description": "Stake sUSD-DHT Uniswap Pool Tokens to earn SNX and DHT rewards. <0>Add liquidity on Uniswap here<0>.",
@@ -482,6 +531,7 @@
 				"staking-rewards": "SNX staking rewards",
 				"claim-button": "CLAIM REWARDS",
 				"claim-snx-button": "Claim SNX",
+				"close-fee-period": "Close fee period",
 				"claimed-button": "ALREADY CLAIMED",
 				"low-ratio": "BURN sUSD TO CLAIM",
 				"nothing-to-claim": "NOTHING TO CLAIM",
@@ -598,7 +648,8 @@
 					"approve-label": "APPROVE <0>{{collateralAsset}}</0>",
 					"borrow-label": "BORROW <0>{{debtAsset}}</0>",
 					"approving-label": "APPROVING...",
-					"borrowing-label": "BORROWING..."
+					"borrowing-label": "BORROWING...",
+					"insufficient-label": "insufficient collateral to borrow"
 				},
 				"debt": {
 					"label": "Borrow"
@@ -606,8 +657,8 @@
 				"collateral": {
 					"label": "Using"
 				},
-				"low-cratio-tip": "You can only borrow at 150% or higher. Your position will be eligible for liquidation if it falls below 120%.",
-				"healthy-cratio-tip": "Ensure your position stays above 120% to prevent liquidation.",
+				"low-cratio-tip": "You can only borrow at {{safeMinCRatio}}% or higher. Your position will be eligible for liquidation if it falls below {{minCRatio}}%.",
+				"healthy-cratio-tip": "Ensure your position stays above {{minCRatio}}% to prevent liquidation.",
 				"confirm-transaction": {
 					"left-panel-label": "BORROWING",
 					"right-panel-label": "POSTING"
@@ -999,7 +1050,6 @@
 		"synths": "Synths",
 		"escrow": "Escrow",
 		"history": "History",
-		"loans": "Loans",
 		"governance": "Governance",
 		"wallet": "Wallet",
 		"mint-and-burn": "Mint & burn",
@@ -1021,8 +1071,11 @@
 			"switch-to-l2": "Switch to L2",
 			"connected-to-l2": "Layer 2"
 		},
+		"banner": {
+			"warning-url": "WARNING: Please make sure the URL is <0>staking.synthetix.io</0> (bookmark this page to be safe)"
+		},
 		"error": {
-			"please-install-metamask": "Please install Metamask"
+			"please-install-metamask": "Please install Metamask or manually add the Optimism network to your browser wallet."
 		}
 	},
 	"common": {

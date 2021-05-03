@@ -3,7 +3,6 @@ import { ethers } from 'ethers';
 import { useRecoilValue } from 'recoil';
 import axios from 'axios';
 
-import synthetix from 'lib/synthetix';
 import Connector from 'containers/Connector';
 import {
 	curveGaugeController,
@@ -20,6 +19,7 @@ import {
 	networkState,
 	isMainnetState,
 } from 'store/wallet';
+import { toBigNumber } from 'utils/formatters/number';
 
 import { LiquidityPoolData } from './types';
 import { getCurveTokenPrice } from './helper';
@@ -97,8 +97,8 @@ const useCurveSeuroPoolQuery = (options?: QueryConfig<CurveData>) => {
 				curveSeuroPoolTokenContract.balanceOf(address),
 				curveSeuroPoolTokenContract.balanceOf(walletAddress),
 				curveSeuroPoolContract.get_virtual_price(),
-				curveSeuroGaugeContract.inflation_rate(),
-				curveSeuroGaugeContract.working_supply(),
+				curveSeuroGaugeContract.inflation_rate({ gasLimit: 1e5 }),
+				curveSeuroGaugeContract.working_supply({ gasLimit: 1e5 }),
 				curveGaugeControllerContract.gauge_relative_weight(curveSeuroGauge.address),
 				curveTokenPrice,
 				axios.get('https://stats.curve.fi/raw-stats/apys.json'),
@@ -132,7 +132,7 @@ const useCurveSeuroPoolQuery = (options?: QueryConfig<CurveData>) => {
 				curveRewards,
 				curveStaked,
 				curveAllowance,
-			].map((data) => Number(synthetix.js?.utils.formatEther(data)));
+			].map((data) => Number(toBigNumber(data.toString()).div(1e18)));
 
 			const curveRate =
 				(((inflationRate * relativeWeight * 31536000) / workingSupply) * 0.4) /

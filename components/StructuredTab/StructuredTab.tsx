@@ -52,7 +52,6 @@ const StructuredTab: FC<StructuredTabProps> = ({
 					tabHeight={tabHeight}
 					inverseTabColor={inverseTabColor}
 					blue={blue}
-					noOfTabs={tabData.length}
 					key={`${key}-${index}-button`}
 					name={title}
 					active={activeTab === key}

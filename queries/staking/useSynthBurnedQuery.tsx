@@ -18,6 +18,7 @@ const useSynthBurnedQuery = (options?: QueryConfig<HistoricalStakingTransaction[
 		async () => {
 			const transactions = (await snxData.snx.burned({
 				account: walletAddress,
+				max: 1000,
 			})) as HistoricalStakingTransaction[];
 
 			return transactions;

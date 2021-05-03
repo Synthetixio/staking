@@ -1,17 +1,19 @@
-import React from 'react';
+import { FC } from 'react';
 import styled from 'styled-components';
 import Big from 'bignumber.js';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { FlexDivRow, FlexDivRowCentered } from 'styles/common';
 import { formatNumber } from 'utils/formatters/number';
 import InfoSVG from 'sections/loans/components/ActionBox/components/InfoSVG';
+import { SAFE_MIN_CRATIO } from 'sections/loans/constants';
 
 type CRatioProps = {
 	hasLowCRatio: boolean;
 	cratio: Big;
+	minCRatio: Big;
 };
 
-const CRatio: React.FC<CRatioProps> = ({ cratio, hasLowCRatio }) => {
+const CRatio: FC<CRatioProps> = ({ cratio, hasLowCRatio, minCRatio }) => {
 	const { t } = useTranslation();
 
 	return (
@@ -27,9 +29,17 @@ const CRatio: React.FC<CRatioProps> = ({ cratio, hasLowCRatio }) => {
 								{formatNumber(cratio, { decimals: 0 })}%{' '}
 								<InfoSVG
 									tip={
-										hasLowCRatio
-											? t('loans.tabs.new.low-cratio-tip')
-											: t('loans.tabs.new.healthy-cratio-tip')
+										<Trans
+											i18nKey={
+												hasLowCRatio
+													? 'loans.tabs.new.low-cratio-tip'
+													: 'loans.tabs.new.healthy-cratio-tip'
+											}
+											values={{
+												minCRatio: minCRatio.toString(),
+												safeMinCRatio: SAFE_MIN_CRATIO,
+											}}
+										/>
 									}
 								/>
 							</>

@@ -19,10 +19,6 @@ export const MENU_LINKS: MenuLinks = [
 		link: ROUTES.Home,
 	},
 	{
-		i18nLabel: 'sidenav.loans',
-		link: ROUTES.Loans.Home,
-	},
-	{
 		i18nLabel: 'sidenav.staking',
 		link: ROUTES.Staking.Home,
 		subMenu: [
@@ -40,10 +36,10 @@ export const MENU_LINKS: MenuLinks = [
 			},
 		],
 	},
-	// {
-	// 	i18nLabel: 'sidenav.loans',
-	// 	link: ROUTES.Loans.Home,
-	// },
+	{
+		i18nLabel: 'sidenav.loans',
+		link: ROUTES.Loans.Home,
+	},
 	{
 		i18nLabel: 'sidenav.gov',
 		link: ROUTES.Gov.Home,

@@ -46,6 +46,13 @@ export enum Synths {
 	iCEX = 'iCEX',
 	iDEFI = 'iDEFI',
 	sTSLA = 'sTSLA',
+	sFB = 'sFB',
+	sAAPL = 'sAAPL',
+	sAMZN = 'sAMZN',
+	sNFLX = 'sNFLX',
+	sGOOG = 'sGOOG',
+	sMSFT = 'sMSFT',
+	sCOIN = 'sCOIN',
 }
 
 export enum CryptoCurrency {
@@ -83,5 +90,7 @@ export const FIAT_SYNTHS = new Set([
 	Synths.sGBP,
 	Synths.sCHF,
 ]);
+
+export const ETH_ADDRESS = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';
 
 export const sUSD_EXCHANGE_RATE = 1;

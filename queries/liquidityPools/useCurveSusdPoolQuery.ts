@@ -3,7 +3,6 @@ import { ethers } from 'ethers';
 import { useRecoilValue } from 'recoil';
 import axios from 'axios';
 
-import synthetix from 'lib/synthetix';
 import Connector from 'containers/Connector';
 import {
 	curveGaugeController,
@@ -23,6 +22,7 @@ import {
 
 import { LiquidityPoolData } from './types';
 import { getCurveTokenPrice } from './helper';
+import { toBigNumber } from 'utils/formatters/number';
 
 export type CurveData = LiquidityPoolData & {
 	swapAPR: number;
@@ -97,8 +97,8 @@ const useCurveSusdPoolQuery = (options?: QueryConfig<CurveData>) => {
 				curveSusdPoolTokenContract.balanceOf(address),
 				curveSusdPoolTokenContract.balanceOf(walletAddress),
 				curveSusdPoolContract.get_virtual_price(),
-				curveSusdGaugeContract.inflation_rate(),
-				curveSusdGaugeContract.working_supply(),
+				curveSusdGaugeContract.inflation_rate({ gasLimit: 1e5 }),
+				curveSusdGaugeContract.working_supply({ gasLimit: 1e5 }),
 				curveGaugeControllerContract.gauge_relative_weight(curveSusdGauge.address),
 				curveTokenPrice,
 				axios.get('https://stats.curve.fi/raw-stats/apys.json'),
@@ -106,6 +106,7 @@ const useCurveSusdPoolQuery = (options?: QueryConfig<CurveData>) => {
 				curveSusdGaugeContract.balanceOf(walletAddress),
 				curveSusdPoolTokenContract.allowance(walletAddress, address),
 			]);
+
 			const durationInWeeks = Number(duration) / 3600 / 24 / 7;
 			const isPeriodFinished = new Date().getTime() > Number(periodFinish) * 1000;
 			const distribution = isPeriodFinished
@@ -132,7 +133,7 @@ const useCurveSusdPoolQuery = (options?: QueryConfig<CurveData>) => {
 				curveRewards,
 				curveStaked,
 				curveAllowance,
-			].map((data) => Number(synthetix.js?.utils.formatEther(data)));
+			].map((data) => Number(toBigNumber(data.toString()).div(1e18)));
 
 			const curveRate =
 				(((inflationRate * relativeWeight * 31536000) / workingSupply) * 0.4) / curveSusdTokenPrice;

@@ -41,6 +41,7 @@ import { DURATION_SEPARATOR } from 'constants/date';
 import ROUTES from 'constants/routes';
 
 import { LP, Tab } from './types';
+import { CurrencyIconType } from 'components/Currency/CurrencyIcon/CurrencyIcon';
 
 export type DualRewards = {
 	a: number;
@@ -57,6 +58,8 @@ export type EarnItem = {
 	staked: {
 		balance: number;
 		asset: CurrencyKey;
+		ticker: CurrencyKey;
+		type?: CurrencyIconType;
 	};
 	rewards: number | DualRewards;
 	periodStarted: number;
@@ -66,6 +69,7 @@ export type EarnItem = {
 	tab: Tab;
 	route: string;
 	externalLink?: string;
+	dualRewards?: boolean;
 };
 
 type IncentivesTableProps = {
@@ -96,7 +100,15 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab }
 					return (
 						<>
 							<StyledGlowingCircle variant="green" size="sm">
-								<Currency.Icon currencyKey={cellProps.row.original.staked.asset} {...iconProps} />
+								<Currency.Icon
+									currencyKey={cellProps.row.original.staked.asset}
+									type={
+										cellProps.row.original.staked.type
+											? cellProps.row.original.staked.type
+											: undefined
+									}
+									{...iconProps}
+								/>
 							</StyledGlowingCircle>
 							<FlexDivCol>
 								<Title>{cellProps.row.original.title}</Title>
@@ -140,10 +152,10 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab }
 					<CellContainer>
 						<Title isNumeric={true}>
 							{formatCurrency(
-								cellProps.row.original.staked.asset,
+								cellProps.row.original.staked.ticker,
 								cellProps.row.original.staked.balance,
 								{
-									currencyKey: cellProps.row.original.staked.asset,
+									currencyKey: cellProps.row.original.staked.ticker,
 								}
 							)}
 						</Title>
@@ -176,7 +188,7 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab }
 				Header: <>{t('earn.incentives.options.rewards.title')}</>,
 				accessor: 'rewards',
 				Cell: (cellProps: CellProps<EarnItem, EarnItem['rewards']>) => {
-					const isDualRewards = cellProps.row.original.staked.asset === LP.UNISWAP_DHT;
+					const isDualRewards = cellProps.row.original.dualRewards;
 					if (
 						!cellProps.row.original.externalLink ||
 						cellProps.row.original.staked.asset !== LP.CURVE_sUSD
@@ -249,7 +261,7 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab }
 						</Subtitle>
 					</CellContainer>
 				),
-				width: 100,
+				width: 120,
 				sortable: true,
 			},
 		];
@@ -312,6 +324,9 @@ const CellContainer = styled(FlexDivCol)`
 `;
 
 const StyledTable = styled(Table)`
+	.table-body {
+		max-height: 400px;
+	}
 	.table-body-row {
 		height: 70px;
 		align-items: center;
