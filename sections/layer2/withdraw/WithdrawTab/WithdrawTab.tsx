@@ -44,7 +44,7 @@ const WithdrawTab = () => {
 					} = synthetix.js!;
 					const gasEstimate = await synthetix.getGasEstimateForTransaction({
 						txArgs: [parseEther(amountToWithdraw.toString())],
-						method: SynthetixBridgeToBase.estimateGas.initiateWithdrawal,
+						method: SynthetixBridgeToBase.estimateGas.withdraw,
 					});
 					setGasLimitEstimate(gasEstimate);
 				} catch (e) {
@@ -65,7 +65,7 @@ const WithdrawTab = () => {
 			try {
 				setDepositTxError(null);
 				setTxModalOpen(true);
-				const transaction = await SynthetixBridgeToBase.initiateWithdrawal(
+				const transaction = await SynthetixBridgeToBase.withdraw(
 					parseEther(amountToWithdraw.toString()),
 					{ gasLimit: gasLimitEstimate, gasPrice: normalizedGasPrice(gasPrice) }
 				);
