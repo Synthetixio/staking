@@ -294,6 +294,7 @@
 					"error": {
 						"no-debt": "No debt to burn",
 						"bad-input": "Invalid input amount",
+						"insufficient-eth-1inch": "Insufficient ETH to execute 1inch swap",
 						"waiting-period": "Burning blocked until {{date}}",
 						"issuance-period": "Burning blocked until {{date}}",
 						"insufficient": "Insufficient sUSD to burn debt",
