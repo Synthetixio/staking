@@ -105,14 +105,23 @@ const useEscrowDataQuery = (options?: QueryConfig<EscrowData>) => {
 			const claimableEntryIdsInChunk =
 				claimableEntryIds && claimableEntryIds.length > 0 ? chunk(claimableEntryIds, 26) : [];
 
+			const [
+				formattedClaimableAmount,
+				formattedTotalEscrowed,
+				formattedTotalVested,
+				formattedTotalBalanceMigration,
+			] = [claimableAmount, totalEscrowed, totalVested, totalBalancePendingMigration].map((data) =>
+				Number(synthetix.js?.utils.formatEther(data))
+			);
+
 			return {
-				claimableAmount: claimableAmount / 1e18,
+				claimableAmount: formattedClaimableAmount,
 				schedule,
-				totalEscrowed: totalEscrowed / 1e18,
-				totalVested: totalVested / 1e18,
+				totalEscrowed: formattedTotalEscrowed,
+				totalVested: formattedTotalVested,
 				claimableEntryIds,
 				claimableEntryIdsInChunk,
-				totalBalancePendingMigration: totalBalancePendingMigration / 1e18,
+				totalBalancePendingMigration: formattedTotalBalanceMigration,
 			};
 		},
 		{
