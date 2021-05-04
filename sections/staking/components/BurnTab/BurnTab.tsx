@@ -137,7 +137,10 @@ const BurnTab: React.FC = () => {
 					)
 						throw new Error(t('staking.actions.burn.action.error.insufficient'));
 
-					if (toBigNumber(quoteAmount).isGreaterThan(ethBalance)) {
+					if (
+						burnType === BurnActionType.CLEAR &&
+						toBigNumber(quoteAmount).isGreaterThan(ethBalance)
+					) {
 						throw new Error(t('staking.actions.burn.action.error.insufficient-eth-1inch'));
 					}
 
