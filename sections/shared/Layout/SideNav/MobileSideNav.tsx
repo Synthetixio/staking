@@ -35,7 +35,9 @@ const DesktopSideNav: FC = () => {
 					</Link>
 				)}
 
-				<Svg src={CloseIcon} onClick={closeMobileSideNav} />
+				<CloseContainer onClick={closeMobileSideNav}>
+					<Svg src={CloseIcon} />
+				</CloseContainer>
 			</StakingLogoWrap>
 
 			{isShowingSubMenu ? <SubMenu /> : <SideNav />}
@@ -67,4 +69,8 @@ const StakingLogoWrap = styled.div`
 	align-items: center;
 	justify-content: space-between;
 	padding: 0 24px;
+`;
+
+const CloseContainer = styled.div`
+	padding: 10px;
 `;
