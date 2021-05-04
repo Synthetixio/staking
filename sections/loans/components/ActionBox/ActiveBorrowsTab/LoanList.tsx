@@ -28,7 +28,6 @@ const LoanList: React.FC<LoanListProps> = ({ actions }) => {
 				Header: <>{t('loans.tabs.list.types.debt')}</>,
 				accessor: 'debt',
 				sortable: true,
-				// width: LARGE_COL_WIDTH,
 				Cell: (cellProps: CellProps<Loan>) => {
 					const loan = cellProps.row.original;
 					return (
@@ -43,7 +42,6 @@ const LoanList: React.FC<LoanListProps> = ({ actions }) => {
 				Header: <>{t('loans.tabs.list.types.collateral')}</>,
 				accessor: 'collateral',
 				sortable: true,
-				// width: LARGE_COL_WIDTH,
 				Cell: (cellProps: CellProps<Loan>) => {
 					const loan = cellProps.row.original;
 					return (
@@ -83,7 +81,6 @@ const LoanList: React.FC<LoanListProps> = ({ actions }) => {
 				Header: <>{t('loans.tabs.list.types.debt')}</>,
 				accessor: 'debt',
 				sortable: true,
-				// width: LARGE_COL_WIDTH,
 				Cell: (cellProps: CellProps<Loan>) => {
 					const loan = cellProps.row.original;
 					return (
@@ -97,7 +94,6 @@ const LoanList: React.FC<LoanListProps> = ({ actions }) => {
 				Header: <>{t('loans.tabs.list.types.collateral')}</>,
 				accessor: 'collateral',
 				sortable: true,
-				// width: LARGE_COL_WIDTH,
 				Cell: (cellProps: CellProps<Loan>) => {
 					const loan = cellProps.row.original;
 					return (
