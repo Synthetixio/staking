@@ -16,7 +16,7 @@ function Container() {
 		routes: null,
 		topPosition: 0,
 	});
-	const isShowingSubMenu = !!subMenuConfiguration?.routes ?? false;
+	const isShowingSubMenu = !!subMenuConfiguration?.routes;
 
 	const clearSubMenuConfiguration = () =>
 		setSubMenuConfiguration((subMenuConfiguration: SubMenuConfiguration) => ({
