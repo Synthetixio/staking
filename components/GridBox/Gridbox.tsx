@@ -103,7 +103,6 @@ export const GridBoxContainer = styled.div<{
 `;
 
 const GridBoxIcon = styled.div`
-	/* height: 20px;
 	margin: 20px auto 40px auto; */
 `;
 
