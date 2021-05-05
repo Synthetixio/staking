@@ -349,7 +349,7 @@ const Incentives: FC<IncentivesProps> = ({
 					<TitleContainer>{t('earn.tab.inactive')}</TitleContainer>
 				</TabButton>
 			</TabList>
-			{incentivesTable}
+			<DesktopOrTabletView>{incentivesTable}</DesktopOrTabletView>
 		</>
 	) : (
 		<Container>

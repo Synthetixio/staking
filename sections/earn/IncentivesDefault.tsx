@@ -15,6 +15,7 @@ import useFeePeriodTimeAndProgress from 'hooks/useFeePeriodTimeAndProgress';
 import IncentivesTable from './IncentivesTable';
 import ClaimTab from './ClaimTab';
 import { Tab } from './types';
+import { DesktopOrTabletView } from 'components/Media';
 
 type IncentivesProps = {
 	tradingRewards: BigNumber;
@@ -102,7 +103,7 @@ const Incentives: FC<IncentivesProps> = ({
 		<>{incentivesTable}</>
 	) : (
 		<Container>
-			{incentivesTable}
+			<DesktopOrTabletView>{incentivesTable}</DesktopOrTabletView>
 			<TabContainer>
 				{activeTab === Tab.Claim && (
 					<ClaimTab

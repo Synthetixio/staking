@@ -2,6 +2,7 @@ import { FC } from 'react';
 import styled from 'styled-components';
 import { BigNumber } from 'bignumber.js';
 
+import media from 'styles/media';
 import ProgressBar from 'components/ProgressBar';
 import { ProgressBarType } from 'components/ProgressBar/ProgressBar';
 import { FlexDivCol } from 'styles/common';
@@ -33,6 +34,13 @@ const SynthHolding: FC<SynthHoldingProps> = ({
 
 const Container = styled(FlexDivCol)`
 	width: 100%;
+
+	${media.lessThan('md')`
+		display: grid;
+		grid-template-columns: 2fr 1fr;
+		align-items: center;
+		grid-gap: 1rem;
+	`}
 `;
 
 const StyledPercentage = styled.span`

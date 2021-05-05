@@ -897,6 +897,7 @@
 				"table": {
 					"asset": "Asset",
 					"balance": "Balance",
+					"balance-mobile": "Balance / Price",
 					"price": "Price",
 					"holdings": "Holdings %",
 					"total": "Total",

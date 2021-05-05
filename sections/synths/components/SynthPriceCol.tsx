@@ -1,6 +1,7 @@
 import { FC } from 'react';
 import styled from 'styled-components';
 
+import media from 'styles/media';
 import useHistoricalRatesQuery from 'queries/rates/useHistoricalRatesQuery';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 
@@ -40,6 +41,11 @@ const SynthPriceCol: FC<SynthPriceColProps> = ({ currencyKey }) => {
 	);
 };
 
-const StyledCurrencyPrice = styled(CurrencyPrice)``;
+const StyledCurrencyPrice = styled(CurrencyPrice)`
+	${media.lessThan('md')`
+		display: flex;
+		grid-gap: 1rem;
+	`}
+`;
 
 export default SynthPriceCol;

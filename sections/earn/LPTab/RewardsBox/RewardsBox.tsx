@@ -192,8 +192,7 @@ const RewardsRow = styled(FlexDivRow)`
 	${(props: { dualRewards: boolean }) =>
 		props.dualRewards &&
 		`
-		width: 100%;
-		padding: 0px 96px;
+		grid-gap: 1rem;
 	`}
 `;
 
