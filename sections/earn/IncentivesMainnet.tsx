@@ -5,20 +5,22 @@ import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
 
-import useSNXLockedValueQuery from 'queries/staking/useSNXLockedValueQuery';
-
-import useFeePeriodTimeAndProgress from 'hooks/useFeePeriodTimeAndProgress';
 import useLPData from 'hooks/useLPData';
-
 import ROUTES from 'constants/routes';
 import { CryptoCurrency, Synths } from 'constants/currency';
 import media from 'styles/media';
+import useSNXLockedValueQuery from 'queries/staking/useSNXLockedValueQuery';
+import useFeePeriodTimeAndProgress from 'hooks/useFeePeriodTimeAndProgress';
+import { isWalletConnectedState } from 'store/wallet';
+import { zeroBN } from 'utils/formatters/number';
+import useShortRewardsData from 'hooks/useShortRewardsData';
+import { TabButton, TabList } from 'components/Tab';
+import { CurrencyIconType } from 'components/Currency/CurrencyIcon/CurrencyIcon';
+import { DesktopOrTabletView } from 'components/Media';
 
 import IncentivesTable, { DualRewards, NOT_APPLICABLE } from './IncentivesTable';
 import ClaimTab from './ClaimTab';
 import LPTab from './LPTab';
-import { isWalletConnectedState } from 'store/wallet';
-
 import {
 	Tab,
 	LP,
@@ -28,11 +30,6 @@ import {
 	lpToSynthIcon,
 	lpToRoute,
 } from './types';
-import { zeroBN } from 'utils/formatters/number';
-import useShortRewardsData from 'hooks/useShortRewardsData';
-import { TabButton, TabList } from 'components/Tab';
-import { CurrencyIconType } from 'components/Currency/CurrencyIcon/CurrencyIcon';
-import { DesktopOrTabletView } from 'components/Media';
 
 enum View {
 	ACTIVE = 'active',
@@ -436,7 +433,7 @@ const Container = styled.div`
 	background-color: ${(props) => props.theme.colors.navy};
 	${media.greaterThan('md')`
 		display: grid;
-		grid-template-columns: 2fr 1fr;
+		grid-template-columns: 1fr 2fr;
 	`}
 `;
 

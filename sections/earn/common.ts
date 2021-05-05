@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { FlexDiv, FlexDivColCentered, FlexDivCentered, ExternalLink } from 'styles/common';
+import { FlexDiv, FlexDivCol, FlexDivCentered, ExternalLink } from 'styles/common';
 import media from 'styles/media';
 import Button from 'components/Button';
 
@@ -94,9 +94,8 @@ export const StyledButton = styled(Button)`
 	background: ${(props) => props.theme.colors.blue};
 `;
 
-export const TabContainer = styled(FlexDivColCentered)`
+export const TabContainer = styled(FlexDivCol)`
 	height: 100%;
-	justify-content: space-evenly;
 	padding: 24px;
 	position: relative;
 `;

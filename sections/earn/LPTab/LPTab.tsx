@@ -7,7 +7,8 @@ import BigNumber from 'bignumber.js';
 
 import { appReadyState } from 'store/app';
 import StructuredTab from 'components/StructuredTab';
-import { FlexDivCentered, FlexDivColCentered, ExternalLink, FlexDiv } from 'styles/common';
+import { FlexDivColCentered, ExternalLink, FlexDiv } from 'styles/common';
+import media from 'styles/media';
 import { CurrencyKey } from 'constants/currency';
 import Etherscan from 'containers/BlockExplorer';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
@@ -377,7 +378,7 @@ const LPTab: FC<LPTabProps> = ({
 					/>
 				</>
 			) : (
-				<FlexDivCentered>
+				<GridContainer>
 					<StructuredTab
 						tabHeight={30}
 						inverseTabColor={true}
@@ -398,7 +399,7 @@ const LPTab: FC<LPTabProps> = ({
 						tokenRewards={tokenRewards as number}
 						SNXRate={SNXRate}
 					/>
-				</FlexDivCentered>
+				</GridContainer>
 			)}
 			{showApproveOverlayModal && (
 				<Approve
@@ -426,6 +427,17 @@ const StyledFlexDivColCentered = styled(FlexDivColCentered)`
 
 const StyledFlexDiv = styled(FlexDiv)`
 	margin-bottom: -20px;
+`;
+
+const GridContainer = styled.div`
+	display: grid;
+	grid-template-columns: 2fr 1fr;
+	grid-gap: 1rem;
+
+	${media.lessThan('mdUp')`
+		display: flex;
+		flex-direction: column;
+	`}
 `;
 
 export default LPTab;

@@ -180,14 +180,12 @@ const RewardsBox: FC<RewardsBoxProps> = ({
 
 const RewardsContainer = styled(FlexDivColCentered)`
 	height: 272px;
-	width: ${(props: { dualRewards: boolean }) => (props.dualRewards ? '512px' : '200px')};
-	margin-top: ${(props: { dualRewards: boolean }) => (props.dualRewards ? '20px' : '0px')};
-	margin-left: ${(props: { dualRewards: boolean }) => (props.dualRewards ? '0px' : '20px')};
 	padding: 10px;
 	border: 1px solid ${(props) => props.theme.colors.pink};
 	border-radius: 4px;
 	background-image: url(${smallWaveSVG.src});
 	background-size: cover;
+	margin-top: ${(props: { dualRewards: boolean }) => (props.dualRewards ? '20px' : '0px')};
 `;
 
 const RewardsRow = styled(FlexDivRow)`
