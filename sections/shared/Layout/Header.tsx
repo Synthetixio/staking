@@ -1,7 +1,8 @@
 import { FC } from 'react';
 import styled from 'styled-components';
 import { Svg } from 'react-optimized-image';
-import { Trans } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
+import { NextRouter, useRouter } from 'next/router';
 
 import { MOBILE_BODY_PADDING } from 'constants/ui';
 import { LOCAL_STORAGE_KEYS } from 'constants/storage';
@@ -21,7 +22,11 @@ import Banner from 'sections/shared/Layout/Banner';
 import UserMenu from './UserMenu';
 
 const Header: FC = () => {
+	const { t } = useTranslation();
 	const { showMobileSideNav } = SideNavContainer.useContainer();
+	const router = useRouter();
+
+	const path = getRouterPath(router);
 
 	return (
 		<HeaderWrapper>
@@ -49,7 +54,7 @@ const Header: FC = () => {
 					<MobileOrTabletView>
 						<Title onClick={showMobileSideNav}>
 							<Svg src={TitleIcon} />
-							HOME
+							{t(`header.${path}`)}
 						</Title>
 					</MobileOrTabletView>
 					<Sep />
@@ -79,6 +84,7 @@ const Title = styled.div`
 	cursor: pointer;
 	font-family: ${(props) => props.theme.fonts.condensedMedium};
 	font-size: 12px;
+	text-transform: uppercase;
 
 	svg {
 		margin-right: 10px;
@@ -102,5 +108,11 @@ const StyledExternalLink = styled(ExternalLink)`
 		text-decoration: underline;
 	}
 `;
+
+function getRouterPath(router: NextRouter): string {
+	const match = router.asPath.match(/\/(\w+)\/?/);
+	const path = !match ? 'home' : match[1];
+	return path;
+}
 
 export default Header;

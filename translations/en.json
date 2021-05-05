@@ -1243,5 +1243,19 @@
 	"balance": {
 		"input-label": "Balance:",
 		"max": "Max"
+	},
+	"header": {
+		"home": "home",
+		"staking": "staking",
+		"debt": "debt",
+		"escrow": "escrow",
+		"history": "history",
+		"synths": "synths",
+		"earn": "earn",
+		"l2": "layer 2",
+		"withdraw": "withdraw",
+		"gov": "gov",
+		"loans": "loans",
+		"delegate": "delegate"
 	}
 }
