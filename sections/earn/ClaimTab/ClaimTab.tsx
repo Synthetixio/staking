@@ -475,7 +475,7 @@ const InnerContainer = styled(FlexDivColCentered)`
 
 const ValueBoxWrapper = styled(FlexDivCentered)`
 	justify-content: space-around;
-	${media.greaterThan('md')`
+	${media.greaterThan('mdUp')`
 		width: 380px;
 	`}
 	${media.lessThan('md')`
@@ -484,7 +484,7 @@ const ValueBoxWrapper = styled(FlexDivCentered)`
 `;
 
 const ValueBox = styled(FlexDivColCentered)`
-	${media.greaterThan('md')`
+	${media.greaterThan('mdUp')`
 		width: 175px;
 	`}
 `;

@@ -431,7 +431,7 @@ const Incentives: FC<IncentivesProps> = ({
 
 const Container = styled.div`
 	background-color: ${(props) => props.theme.colors.navy};
-	${media.greaterThan('md')`
+	${media.greaterThan('mdUp')`
 		display: grid;
 		grid-template-columns: 1fr 2fr;
 	`}
