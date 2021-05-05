@@ -31,6 +31,10 @@ export const FlexDivJustifyCenter = styled(FlexDiv)`
 	justify-content: center;
 `;
 
+export const FlexDivJustifyEnd = styled(FlexDiv)`
+	justify-content: flex-end;
+`;
+
 export const FlexDivItemsCenter = styled(FlexDiv)`
 	align-items: center;
 `;

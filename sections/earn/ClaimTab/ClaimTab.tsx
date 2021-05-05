@@ -10,10 +10,12 @@ import { useRecoilValue } from 'recoil';
 import { appReadyState } from 'store/app';
 import { isWalletConnectedState, isL2State } from 'store/wallet';
 import ROUTES from 'constants/routes';
-import { ExternalLink, FlexDiv, GlowingCircle } from 'styles/common';
+import { ExternalLink, FlexDiv, GlowingCircle, IconButton, FlexDivJustifyEnd } from 'styles/common';
+import media from 'styles/media';
 import synthetix from 'lib/synthetix';
 import PendingConfirmation from 'assets/svg/app/pending-confirmation.svg';
 import Success from 'assets/svg/app/success.svg';
+import ExpandIcon from 'assets/svg/app/expand.svg';
 
 import Etherscan from 'containers/BlockExplorer';
 import TransactionNotifier from 'containers/TransactionNotifier';
@@ -67,6 +69,7 @@ import {
 	TabContainer,
 	HeaderLabel,
 } from '../common';
+import { MobileOnlyView } from 'components/Media';
 
 type ClaimTabProps = {
 	tradingRewards: BigNumber;
@@ -196,6 +199,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 	}, [gasPrice, monitorTransaction, tradingRewards, stakingRewards, isAppReady]);
 
 	const goToBurn = useCallback(() => router.push(ROUTES.Staking.Burn), [router]);
+	const goToEarn = useCallback(() => router.push(ROUTES.Earn.Home), [router]);
 
 	const handleCloseFeePeriod = async () => {
 		const {
@@ -338,6 +342,14 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 	return (
 		<>
 			<StyledTabContainer>
+				<GoToEarnButtonContainer>
+					<MobileOnlyView>
+						<StyledIconButton onClick={goToEarn}>
+							<Svg src={ExpandIcon} />
+						</StyledIconButton>
+					</MobileOnlyView>
+				</GoToEarnButtonContainer>
+
 				<HeaderLabel>
 					<Trans
 						i18nKey="earn.incentives.options.snx.description"
@@ -463,11 +475,18 @@ const InnerContainer = styled(FlexDivColCentered)`
 
 const ValueBoxWrapper = styled(FlexDivCentered)`
 	justify-content: space-around;
-	width: 380px;
+	${media.greaterThan('md')`
+		width: 380px;
+	`}
+	${media.lessThan('md')`
+		grid-gap: 1rem;
+	`}
 `;
 
 const ValueBox = styled(FlexDivColCentered)`
-	width: 175px;
+	${media.greaterThan('md')`
+		width: 175px;
+	`}
 `;
 
 const PaddedButtonContainer = styled.div`
@@ -497,6 +516,22 @@ const StyledGlowingCircle = styled(GlowingCircle)`
 
 const StyledTabContainer = styled(TabContainer)`
 	height: inherit;
+`;
+
+const StyledIconButton = styled(IconButton)`
+	margin-left: auto;
+	svg {
+		color: ${(props) => props.theme.colors.gray};
+	}
+	&:hover {
+		svg {
+			color: ${(props) => props.theme.colors.white};
+		}
+	}
+`;
+
+const GoToEarnButtonContainer = styled(FlexDivJustifyEnd)`
+	width: 100%;
 `;
 
 export default ClaimTab;

@@ -12,6 +12,7 @@ import useLPData from 'hooks/useLPData';
 
 import ROUTES from 'constants/routes';
 import { CryptoCurrency, Synths } from 'constants/currency';
+import media from 'styles/media';
 
 import IncentivesTable, { DualRewards, NOT_APPLICABLE } from './IncentivesTable';
 import ClaimTab from './ClaimTab';
@@ -31,6 +32,7 @@ import { zeroBN } from 'utils/formatters/number';
 import useShortRewardsData from 'hooks/useShortRewardsData';
 import { TabButton, TabList } from 'components/Tab';
 import { CurrencyIconType } from 'components/Currency/CurrencyIcon/CurrencyIcon';
+import { DesktopOrTabletView } from 'components/Media';
 
 enum View {
 	ACTIVE = 'active',
@@ -354,7 +356,7 @@ const Incentives: FC<IncentivesProps> = ({
 		</>
 	) : (
 		<Container>
-			{incentivesTable}
+			<DesktopOrTabletView>{incentivesTable}</DesktopOrTabletView>
 			<TabContainer>
 				{activeTab === Tab.Claim && (
 					<ClaimTab
@@ -432,8 +434,10 @@ const Incentives: FC<IncentivesProps> = ({
 
 const Container = styled.div`
 	background-color: ${(props) => props.theme.colors.navy};
-	display: grid;
-	grid-template-columns: auto 639.5px;
+	${media.greaterThan('md')`
+		display: grid;
+		grid-template-columns: 2fr 1fr;
+	`}
 `;
 
 const TabContainer = styled.div`
