@@ -68,15 +68,6 @@
 					"value": "public, max-age=31536000, immutable"
 				}
 			]
-		},
-		{
-			"source": "/(.*).(js|css|xml|gz|html)",
-			"headers": [
-				{
-					"key": "Vary",
-					"value": "Accept-Encoding"
-				}
-			]
 		}
 	]
 }
