@@ -50,9 +50,13 @@ const useProposals = (spaceKey: SPACE_KEY, options?: QueryConfig<Proposal[]>) =>
 
 			if (spaceKey === SPACE_KEY.PROPOSAL) {
 				const hashes = (await contract.getValidProposals(proposalHashes)) as string[];
+
 				const validHashes = hashes
 					.filter((e: string) => e !== '')
-					.map((hash) => hash.toLowerCase());
+					.map((hash) => hash.toLowerCase())
+					// @TODO: remove limit when snapshot enables graphql end point
+					.slice(0, 8);
+
 				const mappedProposals = proposalContent.map(async (proposal) => {
 					if (validHashes.includes(proposal.authorIpfsHash.toLowerCase())) {
 						const block = parseInt(proposal.msg.payload.snapshot);
@@ -102,7 +106,9 @@ const useProposals = (spaceKey: SPACE_KEY, options?: QueryConfig<Proposal[]>) =>
 
 				const validHashes = proposalHashes
 					.filter((e: string) => nominationHashes.includes(e))
-					.map((hash) => hash.toLowerCase());
+					.map((hash) => hash.toLowerCase())
+					// @TODO: remove limit when snapshot enables graphql end point
+					.slice(0, 8);
 
 				const mappedProposals = proposalContent.map(async (proposal) => {
 					if (validHashes.includes(proposal.authorIpfsHash.toLowerCase())) {
