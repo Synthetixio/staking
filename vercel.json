@@ -1,7 +1,7 @@
 {
 	"headers": [
 		{
-			"source": "/(.*).html",
+			"source": "/(.*)",
 			"headers": [
 				{
 					"key": "X-Content-Type-Options",
@@ -30,10 +30,6 @@
 				{
 					"key": "Access-Control-Allow-Headers",
 					"value": "*"
-				},
-				{
-					"key": "Vary",
-					"value": "Accept-Encoding"
 				}
 			]
 		},
@@ -70,6 +66,15 @@
 				{
 					"key": "Cache-Control",
 					"value": "public, max-age=31536000, immutable"
+				}
+			]
+		},
+		{
+			"source": "/(.*).(js|css|xml|gz|html)",
+			"headers": [
+				{
+					"key": "Vary",
+					"value": "Accept-Encoding"
 				}
 			]
 		}
