@@ -30,6 +30,10 @@
 				{
 					"key": "Access-Control-Allow-Headers",
 					"value": "*"
+				},
+				{
+					"key": "Vary",
+					"value": "Accept-Encoding"
 				}
 			]
 		},
