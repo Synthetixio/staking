@@ -12,22 +12,30 @@ type SynthHoldingProps = {
 	usdBalance: BigNumber;
 	totalUSDBalance: BigNumber;
 	progressBarVariant?: ProgressBarType;
+	showProgressBar?: boolean;
 };
 
 const SynthHolding: FC<SynthHoldingProps> = ({
 	usdBalance,
 	totalUSDBalance,
 	progressBarVariant,
+	showProgressBar = true,
 }) => {
 	const percent = usdBalance.dividedBy(totalUSDBalance);
 
 	return (
 		<Container>
-			<StyledProgressBar
-				percentage={percent.toNumber()}
-				variant={progressBarVariant || 'rainbow'}
-			/>
-			<StyledPercentage>{formatPercent(percent)}</StyledPercentage>
+			{!showProgressBar ? (
+				<StyledPercentage>{formatPercent(percent)}</StyledPercentage>
+			) : (
+				<>
+					<StyledProgressBar
+						percentage={percent.toNumber()}
+						variant={progressBarVariant || 'rainbow'}
+					/>
+					<StyledPercentage>{formatPercent(percent)}</StyledPercentage>
+				</>
+			)}
 		</Container>
 	);
 };

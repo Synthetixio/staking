@@ -23,14 +23,14 @@ type IndexProps = {
 	isLoaded: boolean;
 };
 
-const Index: React.FC<IndexProps> = ({ data, isLoaded }) => {
+const Index: React.FC<IndexProps> = (props) => {
 	return (
 		<>
 			<DesktopOrTabletView>
-				<ResponsiveTable {...{ data, isLoaded }} />
+				<ResponsiveTable {...props} />
 			</DesktopOrTabletView>
 			<MobileOnlyView>
-				<ResponsiveTable {...{ data, isLoaded }} mobile />
+				<ResponsiveTable {...props} mobile />
 			</MobileOnlyView>
 		</>
 	);
