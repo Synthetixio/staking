@@ -8,7 +8,7 @@ export const ActionsContainer = styled(GridDiv)`
 	justify-items: stretch;
 	align-items: stretch;
 
-	${media.lessThan('sm')`
+	${media.lessThan('md')`
     display: flex;
     flex-direction: column;
   `}

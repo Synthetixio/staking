@@ -308,7 +308,7 @@ const StyledContainer = styled(Container)`
 	grid-template-rows: 1fr 1fr 1fr;
 	gap: 1rem;
 
-	${media.lessThan('mdUp')`
+	${media.lessThan('md')`
 		grid-template-areas: 
 			'tile-1 tile-2'
 			'tile-3 tile-4'
@@ -319,6 +319,8 @@ const StyledContainer = styled(Container)`
 			'tile-13 tile-14'
 			'tile-15 tile-16';
 		grid-template-columns: 1fr 1fr;
+		display: grid;
+    flex-direction: unset;
 	`}
 `;
 

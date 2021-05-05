@@ -25,7 +25,6 @@ const Header: FC = () => {
 	const { t } = useTranslation();
 	const { showMobileSideNav } = SideNavContainer.useContainer();
 	const router = useRouter();
-
 	const path = getRouterPath(router);
 
 	return (
