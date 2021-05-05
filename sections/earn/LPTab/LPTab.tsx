@@ -4,16 +4,26 @@ import { ethers } from 'ethers';
 import { Svg } from 'react-optimized-image';
 import { useRecoilValue } from 'recoil';
 import BigNumber from 'bignumber.js';
+import { useRouter } from 'next/router';
 
 import { appReadyState } from 'store/app';
 import StructuredTab from 'components/StructuredTab';
-import { FlexDivColCentered, ExternalLink, FlexDiv } from 'styles/common';
+import ROUTES from 'constants/routes';
+import {
+	FlexDivColCentered,
+	ExternalLink,
+	FlexDiv,
+	IconButton,
+	FlexDivJustifyEnd,
+} from 'styles/common';
 import media from 'styles/media';
 import { CurrencyKey } from 'constants/currency';
 import Etherscan from 'containers/BlockExplorer';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import PendingConfirmation from 'assets/svg/app/pending-confirmation.svg';
 import Success from 'assets/svg/app/success.svg';
+import ExpandIcon from 'assets/svg/app/expand.svg';
+
 import { Transaction } from 'constants/network';
 import { normalizedGasPrice } from 'utils/network';
 import { CryptoCurrency, Synths } from 'constants/currency';
@@ -50,6 +60,7 @@ import {
 import { LP, lpToSynthTranslationKey } from 'sections/earn/types';
 import styled from 'styled-components';
 import { CurrencyIconType } from 'components/Currency/CurrencyIcon/CurrencyIcon';
+import { MobileOnlyView } from 'components/Media';
 
 type DualRewards = {
 	a: number;
@@ -107,6 +118,9 @@ const LPTab: FC<LPTabProps> = ({
 
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const SNXRate = exchangeRatesQuery.data?.SNX ?? 0;
+
+	const router = useRouter();
+	const goToEarn = useCallback(() => router.push(ROUTES.Earn.Home), [router]);
 
 	const tabData = useMemo(() => {
 		const commonStakeTabProps = {
@@ -348,6 +362,14 @@ const LPTab: FC<LPTabProps> = ({
 
 	return (
 		<StyledTabContainer>
+			<GoToEarnButtonContainer>
+				<MobileOnlyView>
+					<StyledIconButton onClick={goToEarn}>
+						<Svg src={ExpandIcon} />
+					</StyledIconButton>
+				</MobileOnlyView>
+			</GoToEarnButtonContainer>
+
 			<HeaderLabel>
 				<Trans i18nKey={translationKey} components={[<StyledLink href={getLink()} />]} />
 			</HeaderLabel>
@@ -438,6 +460,22 @@ const GridContainer = styled.div`
 		display: flex;
 		flex-direction: column;
 	`}
+`;
+
+const StyledIconButton = styled(IconButton)`
+	margin-left: auto;
+	svg {
+		color: ${(props) => props.theme.colors.gray};
+	}
+	&:hover {
+		svg {
+			color: ${(props) => props.theme.colors.white};
+		}
+	}
+`;
+
+const GoToEarnButtonContainer = styled(FlexDivJustifyEnd)`
+	width: 100%;
 `;
 
 export default LPTab;
