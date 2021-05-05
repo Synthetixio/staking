@@ -167,7 +167,7 @@ const NoResultsMessage = styled.div`
 `;
 
 const CurrencyIconContainer = styled.div`
-	${media.greaterThan('md')`
+	${media.greaterThan('mdUp')`
 		display: grid;
 		align-items: center;
 		grid-column-gap: 10px;

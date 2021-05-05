@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { CellProps, Row } from 'react-table';
 import { isWalletConnectedState } from 'store/wallet';
 import { FlexDivCol } from 'styles/common';
+import media from 'styles/media';
 import Button from 'components/Button';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { Proposal as ProposalType } from 'queries/gov/types';
@@ -15,6 +16,7 @@ import { panelState, PanelType, proposalState } from 'store/gov';
 import useActiveTab from '../../hooks/useActiveTab';
 import { DURATION_SEPARATOR } from 'constants/date';
 import { getCurrentTimestampSeconds } from 'utils/formatters/date';
+import { DesktopOrTabletView, MobileOnlyView } from 'components/Media';
 
 type IndexProps = {
 	data: ProposalType[];
@@ -22,6 +24,25 @@ type IndexProps = {
 };
 
 const Index: React.FC<IndexProps> = ({ data, isLoaded }) => {
+	return (
+		<>
+			<DesktopOrTabletView>
+				<ResponsiveTable {...{ data, isLoaded }} />
+			</DesktopOrTabletView>
+			<MobileOnlyView>
+				<ResponsiveTable {...{ data, isLoaded }} mobile />
+			</MobileOnlyView>
+		</>
+	);
+};
+
+type ResponsiveTableProps = {
+	data: ProposalType[];
+	isLoaded: boolean;
+	mobile?: boolean;
+};
+
+const ResponsiveTable: React.FC<ResponsiveTableProps> = ({ data, isLoaded, mobile }) => {
 	const { t } = useTranslation();
 	const router = useRouter();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
@@ -29,8 +50,9 @@ const Index: React.FC<IndexProps> = ({ data, isLoaded }) => {
 	const setPanelType = useSetRecoilState(panelState);
 	const activeTab = useActiveTab();
 
-	const columns = useMemo(
-		() => [
+	const columns = useMemo(() => {
+		const widths = mobile ? ['auto', 70, 70, 50] : [200, 75, 100, 75];
+		return [
 			{
 				Header: <>{t('gov.table.description')}</>,
 				accessor: 'description',
@@ -39,7 +61,6 @@ const Index: React.FC<IndexProps> = ({ data, isLoaded }) => {
 						<Title>{cellProps.row.original.msg.payload.name}</Title>
 					</CellContainer>
 				),
-				width: 200,
 				sortable: false,
 			},
 			{
@@ -63,7 +84,6 @@ const Index: React.FC<IndexProps> = ({ data, isLoaded }) => {
 						</CellContainer>
 					);
 				},
-				width: 75,
 				sortable: false,
 			},
 			{
@@ -76,6 +96,11 @@ const Index: React.FC<IndexProps> = ({ data, isLoaded }) => {
 								autoStart={true}
 								date={cellProps.row.original.msg.payload.end * 1000}
 								renderer={({ days, hours, minutes }) => {
+									if (mobile) {
+										const duration = [days, hours, minutes];
+										return <span>{duration.join(':')}</span>;
+									}
+
 									const duration = [
 										`${days}${t('common.time.days')}`,
 										`${hours}${t('common.time.hours')}`,
@@ -88,7 +113,6 @@ const Index: React.FC<IndexProps> = ({ data, isLoaded }) => {
 						</Title>
 					</CellContainer>
 				),
-				width: 100,
 				sortable: false,
 			},
 			{
@@ -99,12 +123,10 @@ const Index: React.FC<IndexProps> = ({ data, isLoaded }) => {
 						<Title isNumeric={true}>{cellProps.row.original.votes}</Title>
 					</CellContainer>
 				),
-				width: 75,
 				sortable: false,
 			},
-		],
-		[t]
-	);
+		].map((c, i) => ({ ...c, width: widths[i] }));
+	}, [t, mobile]);
 
 	return (
 		<Container>
@@ -156,6 +178,9 @@ const StyledTable = styled(Table)<{ minHeight: boolean }>`
 	}
 	.table-body-cell {
 		&:first-child {
+			${media.lessThan('md')`
+				padding-left: 0;
+			`}
 		}
 		&:last-child {
 			padding-left: 0;
@@ -173,6 +198,9 @@ const Title = styled.div<{ isNumeric?: boolean }>`
 		props.isNumeric ? props.theme.fonts.mono : props.theme.fonts.interBold};
 	color: ${(props) => props.theme.colors.white};
 	font-size: 12px;
+	${media.lessThan('mdUp')`
+		overflow-x: hidden;
+	`}
 `;
 
 const Status = styled.div<{ closed: boolean; pending: boolean }>`
@@ -188,7 +216,9 @@ const Status = styled.div<{ closed: boolean; pending: boolean }>`
 `;
 
 const AbsoluteContainer = styled.div`
-	position: absolute;
+	${media.greaterThan('mdUp')`
+		position: absolute;
+	`}
 	width: 100%;
 	bottom: 0px;
 	margin-bottom: 24px;
