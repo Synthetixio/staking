@@ -194,6 +194,9 @@ const useProposals = (spaceKey: SPACE_KEY, options?: QueryConfig<Proposal[]>) =>
 		},
 		{
 			enabled: isAppReady && spaceKey && isL1,
+			refetchInterval: false,
+			refetchOnWindowFocus: false,
+			refetchOnMount: false,
 			...options,
 		}
 	);
