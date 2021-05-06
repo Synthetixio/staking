@@ -70,7 +70,7 @@ const useGetDepositsDataQuery = (options?: QueryConfig<DepositHistory>) => {
 					const timestamp = Number(block.timestamp * 1000);
 					return {
 						timestamp,
-						amount: args.amount / 1e18,
+						amount: args._amount / 1e18,
 						transactionHash: l.transactionHash,
 					};
 				})
