@@ -460,9 +460,7 @@ const StyledNumericInput = styled(NumericInput)`
 	}
 `;
 
-const StakeTxContainer = styled(FlexDivColCentered)`
-	width: 90%;
-`;
+const StakeTxContainer = styled(FlexDivColCentered)``;
 
 const StakeDivider = styled(Divider)`
 	margin-top: 5px;

@@ -465,7 +465,6 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 };
 
 const InnerContainer = styled(FlexDivColCentered)`
-	width: 90%;
 	padding: 20px;
 	border: 1px solid ${(props) => props.theme.colors.pink};
 	border-radius: 4px;

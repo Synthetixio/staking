@@ -25,7 +25,6 @@ export const Value = styled.div`
 `;
 
 export const Label = styled.p`
-	width: 90%;
 	margin: 0 auto;
 	font-family: ${(props) => props.theme.fonts.interSemiBold};
 	color: ${(props) => props.theme.colors.gray};
