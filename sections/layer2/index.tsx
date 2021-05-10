@@ -63,17 +63,17 @@ const Index: FC = () => {
 	const ACTIONS = useMemo(
 		() => ({
 			deposit: {
-				title: t('layer2.actions.deposit.title'),
+				title: '*Temporarily Paused* ' + t('layer2.actions.deposit.title'),
 				copy: t('layer2.actions.deposit.subtitle'),
 				link: ROUTES.L2.Deposit,
 			},
 			migrate: {
-				title: t('layer2.actions.migrate.title'),
+				title: '*Temporarily Paused* ' + t('layer2.actions.migrate.title'),
 				copy: t('layer2.actions.migrate.subtitle'),
 				link: ROUTES.L2.Migrate,
 			},
 			burn: {
-				title: t('layer2.actions.burn.title'),
+				title: '*Temporarily Paused* ' + t('layer2.actions.burn.title'),
 				copy: t('layer2.actions.burn.subtitle'),
 				link: ROUTES.Staking.Burn,
 			},
@@ -108,12 +108,12 @@ const Index: FC = () => {
 						{
 							gridLocations: ['col-2', 'col-3', 'row-1', 'row-2'],
 							...ACTIONS.deposit,
-							isDisabled: transferableCollateral.isZero(),
+							isDisabled: /* transferableCollateral.isZero() */ true,
 						},
 						{
 							gridLocations: ['col-1', 'col-2', 'row-2', 'row-3'],
 							...ACTIONS.migrate,
-							isDisabled: stakingEscrow.isZero(),
+							isDisabled: /* stakingEscrow.isZero() */ true,
 						},
 						{
 							gridLocations: ['col-2', 'col-3', 'row-2', 'row-3'],
@@ -128,6 +128,7 @@ const Index: FC = () => {
 						{
 							gridLocations: ['col-1', 'col-2', 'row-2', 'row-3'],
 							...ACTIONS.burn,
+							isDisabled: true,
 						},
 						{
 							gridLocations: ['col-2', 'col-3', 'row-1', 'row-2'],
@@ -137,6 +138,7 @@ const Index: FC = () => {
 						{
 							gridLocations: ['col-2', 'col-3', 'row-2', 'row-3'],
 							...ACTIONS.migrate,
+							isDisabled: true,
 						},
 				  ],
 		// eslint-disable-next-line
