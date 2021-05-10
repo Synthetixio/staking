@@ -41,14 +41,6 @@ const Header: FC = () => {
 				/>
 			</DesktopOnlyView>
 			<Container>
-				<LogoContainer>
-					<TabletOnlyView>
-						<Svg src={StakingLogoTablet} />
-					</TabletOnlyView>
-					<MobileOnlyView>
-						<Svg src={StakingLogoMobile} />
-					</MobileOnlyView>
-				</LogoContainer>
 				<FlexDivCentered>
 					<MobileOrTabletView>
 						<Title onClick={showMobileSideNav}>
@@ -92,12 +84,6 @@ const Title = styled.div`
 
 const Sep = styled.div`
 	flex: 1;
-`;
-
-const LogoContainer = styled.div`
-	display: flex;
-	justify-content: center;
-	padding-bottom: 5px;
 `;
 
 const StyledExternalLink = styled(ExternalLink)`
