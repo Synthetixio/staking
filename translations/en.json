@@ -1065,7 +1065,8 @@
 			}
 		},
 		"delegate": "Delegate",
-		"switch-to-l2": "Switch to L2"
+		"switch-to-l2": "Switch to L2",
+		"settings": "Settings"
 	},
 	"user-menu": {
 		"layer-2": {

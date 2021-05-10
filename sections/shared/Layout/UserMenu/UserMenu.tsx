@@ -16,7 +16,7 @@ import {
 import { zIndex } from 'constants/ui';
 
 import Button from 'components/Button';
-import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
+import { DesktopOnlyView, DesktopOrTabletView, MobileOrTabletView } from 'components/Media';
 
 import { isWalletConnectedState, truncatedWalletAddressState, networkState } from 'store/wallet';
 
@@ -152,15 +152,17 @@ const UserMenu: FC = () => {
 						/>
 					)}
 				</MobileOrTabletView>
-				<Menu>
-					<MenuButton
-						onClick={() => {
-							setSettingsModalOpened(!settingsModalOpened);
-						}}
-					>
-						<Svg src={CogIcon} />
-					</MenuButton>
-				</Menu>
+				<DesktopOrTabletView>
+					<Menu>
+						<MenuButton
+							onClick={() => {
+								setSettingsModalOpened(!settingsModalOpened);
+							}}
+						>
+							<Svg src={CogIcon} />
+						</MenuButton>
+					</Menu>
+				</DesktopOrTabletView>
 			</FlexDivCentered>
 			{watchWalletModalOpened && (
 				<WatchWalletModal onDismiss={() => setWatchWalletModalOpened(false)} />

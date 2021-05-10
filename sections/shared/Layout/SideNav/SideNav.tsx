@@ -4,13 +4,14 @@ import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
 import { Svg } from 'react-optimized-image';
 import { useRecoilValue } from 'recoil';
+import { addOptimismNetworkToMetamask } from '@synthetixio/optimism-networks';
 
 import SideNavContainer from 'containers/SideNav';
 import { linkCSS } from 'styles/common';
 import media from 'styles/media';
 import CaretRightIcon from 'assets/svg/app/caret-right-small.svg';
 import ROUTES from 'constants/routes';
-import { addOptimismNetworkToMetamask } from '@synthetixio/optimism-networks';
+import SettingsModal from 'sections/shared/modals/SettingsModal';
 import { isWalletConnectedState } from 'store/wallet';
 import { isL2State, isMainnetState } from 'store/wallet';
 import { MENU_LINKS, MENU_LINKS_L2 } from '../constants';
@@ -34,6 +35,7 @@ const SideNav: FC<SideNavProps> = ({ isDesktop }) => {
 		clearSubMenuConfiguration,
 	} = SideNavContainer.useContainer();
 	const isMainnet = useRecoilValue(isMainnetState);
+	const [settingsModalOpened, setSettingsModalOpened] = useState<boolean>(false);
 
 	const menuLinks = isL2 ? MENU_LINKS_L2 : MENU_LINKS;
 
@@ -121,6 +123,21 @@ const SideNav: FC<SideNavProps> = ({ isDesktop }) => {
 				>
 					<div className="link">{t('sidenav.switch-to-l2')}</div>
 				</MenuLinkItem>
+			) : null}
+
+			{!isDesktop ? (
+				<>
+					<MenuLinkItem
+						onClick={() => {
+							closeMobileSideNav();
+							setSettingsModalOpened(!settingsModalOpened);
+						}}
+						data-testid="sidenav-settings"
+					>
+						<div className="link">{t('sidenav.settings')}</div>
+					</MenuLinkItem>
+					{settingsModalOpened && <SettingsModal onDismiss={() => setSettingsModalOpened(false)} />}
+				</>
 			) : null}
 		</MenuLinks>
 	);
