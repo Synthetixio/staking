@@ -1,12 +1,13 @@
-import { DESKTOP_SIDE_NAV_WIDTH, DESKTOP_BODY_PADDING } from 'constants/ui';
-import { FC, ReactNode, useEffect } from 'react';
+import { FC, ReactNode, useEffect, useState } from 'react';
 import router from 'next/router';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import styled from 'styled-components';
 
+import { DESKTOP_SIDE_NAV_WIDTH, DESKTOP_BODY_PADDING } from 'constants/ui';
 import ROUTES from 'constants/routes';
 import NotificationContainer from 'constants/NotificationContainer';
 import { SPACE_KEY } from 'constants/snapshot';
+import SideNavContainer from 'containers/SideNav';
 import useProposals from 'queries/gov/useProposals';
 import { NotificationTemplate, userNotificationState } from 'store/ui';
 import media from 'styles/media';
@@ -26,6 +27,10 @@ const AppLayout: FC<AppLayoutProps> = ({ children }) => {
 	const isMainnet = useRecoilValue(isMainnetState);
 	const councilProposals = useProposals(SPACE_KEY.COUNCIL);
 	const setNotificationState = useSetRecoilState(userNotificationState);
+	const { showMobileSideNav, closeMobileSideNav } = SideNavContainer.useContainer();
+
+	const [touchStart, setTouchStart] = useState(0);
+	const [touchEnd, setTouchEnd] = useState(0);
 
 	useEffect(() => {
 		if (!isL2 && router.pathname === ROUTES.Withdraw.Home) {
@@ -74,14 +79,40 @@ const AppLayout: FC<AppLayoutProps> = ({ children }) => {
 		}
 	}, [councilProposals, setNotificationState, isL2]);
 
+	const onTouchStart = (e: any) => {
+		setTouchStart(e.targetTouches[0].clientX);
+	};
+
+	const onTouchMove = (e: any) => {
+		setTouchEnd(e.targetTouches[0].clientX);
+	};
+
+	const onTouchEnd = () => {
+		if (touchStart - touchEnd > 150) {
+			// left swipe
+			closeMobileSideNav();
+		}
+
+		if (touchStart - touchEnd < -150) {
+			// right swipe
+			showMobileSideNav();
+		}
+	};
+
 	return (
-		<>
+		<div
+			{...{
+				onTouchStart,
+				onTouchMove,
+				onTouchEnd,
+			}}
+		>
 			<SideNav />
 			<Header />
 			<Content>{children}</Content>
 			<NotificationContainer />
 			{!isL2 && <UserNotifications />}
-		</>
+		</div>
 	);
 };
 
