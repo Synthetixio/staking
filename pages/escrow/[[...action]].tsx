@@ -1,3 +1,4 @@
+import { FC, useEffect } from 'react';
 import Head from 'next/head';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
@@ -5,21 +6,27 @@ import { useTranslation } from 'react-i18next';
 import StatBox from 'components/StatBox';
 import { LineSpacer } from 'styles/common';
 import StatsSection from 'components/StatsSection';
+import UIContainer from 'containers/UI';
 import useEscrowCalculations from 'sections/escrow/hooks/useEscrowCalculations';
 import { formatCryptoCurrency } from '../../utils/formatters/number';
-
 import Main from 'sections/escrow/index';
 
 const SNX_HEADER_DECIMALS = 2;
 
-const EscrowPage = () => {
+const EscrowPage: FC = () => {
 	const { t } = useTranslation();
+	const { setTitle } = UIContainer.useContainer();
 
 	const escrowCalculations = useEscrowCalculations();
 
 	const totalEscrowed = escrowCalculations?.totalEscrowBalance;
 	const totalClaimable = escrowCalculations?.totalClaimableBalance;
 	const totalVested = escrowCalculations?.totalVestedBalance;
+
+	// header title
+	useEffect(() => {
+		setTitle('wallet', 'escrow');
+	}, [setTitle]);
 
 	return (
 		<>

@@ -210,7 +210,7 @@ const StyledTable = styled(Table)`
 		height: auto;
 		align-items: flex-start;
 		padding: 10px 0;
-		width: auto;
+		width: unset !important;
 	}
 `;
 

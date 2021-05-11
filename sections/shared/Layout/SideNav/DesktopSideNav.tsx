@@ -16,7 +16,7 @@ import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuer
 import ROUTES from 'constants/routes';
 import { CryptoCurrency, Synths } from 'constants/currency';
 import { DESKTOP_SIDE_NAV_WIDTH, zIndex } from 'constants/ui';
-import SideNavContainer from 'containers/SideNav';
+import UIContainer from 'containers/UI';
 
 import { isL2State } from 'store/wallet';
 
@@ -33,7 +33,7 @@ const DesktopSideNav: FC = () => {
 	const cryptoBalances = useCryptoBalances();
 	const synthsBalancesQuery = useSynthsBalancesQuery();
 	const isL2 = useRecoilValue(isL2State);
-	const { clearSubMenuConfiguration } = SideNavContainer.useContainer();
+	const { clearSubMenuConfiguration } = UIContainer.useContainer();
 
 	const snxBalance =
 		cryptoBalances?.balances?.find((balance) => balance.currencyKey === CryptoCurrency.SNX)

@@ -6,7 +6,7 @@ import { Svg } from 'react-optimized-image';
 import { useRecoilValue } from 'recoil';
 import { addOptimismNetworkToMetamask } from '@synthetixio/optimism-networks';
 
-import SideNavContainer from 'containers/SideNav';
+import UIContainer from 'containers/UI';
 import { linkCSS } from 'styles/common';
 import media from 'styles/media';
 import CaretRightIcon from 'assets/svg/app/caret-right-small.svg';
@@ -33,7 +33,7 @@ const SideNav: FC<SideNavProps> = ({ isDesktop }) => {
 		closeMobileSideNav,
 		setSubMenuConfiguration,
 		clearSubMenuConfiguration,
-	} = SideNavContainer.useContainer();
+	} = UIContainer.useContainer();
 	const isMainnet = useRecoilValue(isMainnetState);
 	const [settingsModalOpened, setSettingsModalOpened] = useState<boolean>(false);
 

@@ -5,7 +5,7 @@ import BlockExplorer from './BlockExplorer';
 import TransactionNotifier from './TransactionNotifier';
 import Delegates from './Delegates';
 import Loans from './Loans';
-import SideNav from './SideNav';
+import SideNav from './UI';
 
 type WithAppContainersProps = {
 	children: ReactNode;

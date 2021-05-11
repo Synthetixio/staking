@@ -1,3 +1,4 @@
+import { FC, useEffect } from 'react';
 import Head from 'next/head';
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -5,6 +6,7 @@ import styled from 'styled-components';
 import { LineSpacer } from 'styles/common';
 import sumBy from 'lodash/sumBy';
 
+import UIContainer from 'containers/UI';
 import { Incentives } from 'sections/earn';
 import StatBox from 'components/StatBox';
 import StatsSection from 'components/StatsSection';
@@ -17,8 +19,9 @@ import useFeeClaimHistoryQuery from 'queries/staking/useFeeClaimHistoryQuery';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
-const Earn = () => {
+const Earn: FC = () => {
 	const { t } = useTranslation();
+	const { setTitle } = UIContainer.useContainer();
 
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
@@ -52,6 +55,11 @@ const Earn = () => {
 			),
 		[feeClaimHistory, SNXRate]
 	);
+
+	// header title
+	useEffect(() => {
+		setTitle('staking', 'earn');
+	}, [setTitle]);
 
 	return (
 		<>

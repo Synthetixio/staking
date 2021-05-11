@@ -1,25 +1,23 @@
+import { FC, useEffect } from 'react';
 import Head from 'next/head';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { useRecoilValue } from 'recoil';
 
 import { LineSpacer } from 'styles/common';
-
+import UIContainer from 'containers/UI';
 import AssetsTable from 'sections/synths/AssetsTable';
-
 import StatBox from 'components/StatBox';
 import StatsSection from 'components/StatsSection';
 import { isWalletConnectedState } from 'store/wallet';
-
 import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
-
 import { formatCurrency, zeroBN } from 'utils/formatters/number';
-
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import useCryptoBalances from 'hooks/useCryptoBalances';
 
-const SynthsPage = () => {
+const SynthsPage: FC = () => {
 	const { t } = useTranslation();
+	const { setTitle } = UIContainer.useContainer();
 
 	const synthsBalancesQuery = useSynthsBalancesQuery();
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
@@ -36,6 +34,11 @@ const SynthsPage = () => {
 			: null;
 
 	const synthAssets = synthBalances?.balances ?? [];
+
+	// header title
+	useEffect(() => {
+		setTitle('wallet', 'synths');
+	}, [setTitle]);
 
 	return (
 		<>

@@ -2,7 +2,7 @@ import { FC } from 'react';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
-import SideNavContainer from 'containers/SideNav';
+import UIContainer from 'containers/UI';
 import { linkCSS } from 'styles/common';
 import media from 'styles/media';
 import { SubMenuLink } from '../constants';
@@ -10,7 +10,7 @@ import { SubMenuLink } from '../constants';
 const SubMenu: FC = () => {
 	const router = useRouter();
 	const { t } = useTranslation();
-	const { closeMobileSideNav, subMenuConfiguration } = SideNavContainer.useContainer();
+	const { closeMobileSideNav, subMenuConfiguration } = UIContainer.useContainer();
 
 	return (
 		<div>

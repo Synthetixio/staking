@@ -3,6 +3,7 @@ import { ethers } from 'ethers';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
 import TransactionNotifier from 'containers/TransactionNotifier';
+import UIContainer from 'containers/UI';
 import { normalizedGasPrice } from 'utils/network';
 import { CryptoCurrency, Synths } from 'constants/currency';
 import { TabContainer } from '../common';
@@ -69,6 +70,8 @@ const BurnTab: React.FC = () => {
 	const ethBalanceQuery = useETHBalanceQuery();
 	const ethBalance = ethBalanceQuery.data ?? zeroBN;
 
+	const { setTitle } = UIContainer.useContainer();
+
 	const getMaxSecsLeftInWaitingPeriod = useCallback(async () => {
 		const {
 			contracts: { Exchanger },
@@ -110,6 +113,11 @@ const BurnTab: React.FC = () => {
 		}
 		// eslint-disable-next-line
 	}, [walletAddress, debtBalance]);
+
+	// header title
+	useEffect(() => {
+		setTitle('staking', 'burn');
+	}, [setTitle]);
 
 	useEffect(() => {
 		getMaxSecsLeftInWaitingPeriod();

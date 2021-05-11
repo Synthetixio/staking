@@ -7,7 +7,7 @@ import StakingLogo from 'assets/svg/app/staking-logo-small.svg';
 import BackIcon from 'assets/svg/app/back.svg';
 import CloseIcon from 'assets/svg/app/close.svg';
 
-import SideNavContainer from 'containers/SideNav';
+import UIContainer from 'containers/UI';
 import ROUTES from 'constants/routes';
 import { MOBILE_SIDE_NAV_WIDTH, zIndex } from 'constants/ui';
 
@@ -20,7 +20,7 @@ const DesktopSideNav: FC = () => {
 		clearSubMenuConfiguration,
 		isShowingSubMenu,
 		isShowingMobileSideNav,
-	} = SideNavContainer.useContainer();
+	} = UIContainer.useContainer();
 
 	return (
 		<Container data-testid="sidenav" isShowing={isShowingMobileSideNav}>

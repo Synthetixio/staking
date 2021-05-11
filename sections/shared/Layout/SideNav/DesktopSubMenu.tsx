@@ -4,12 +4,12 @@ import styled, { css } from 'styled-components';
 import { FlexDivColCentered } from 'styles/common';
 import media from 'styles/media';
 import { DESKTOP_SIDE_NAV_WIDTH, MOBILE_SIDE_NAV_WIDTH } from 'constants/ui';
-import SideNavContainer from 'containers/SideNav';
+import UIContainer from 'containers/UI';
 
 import SubMenu from './SubMenu';
 
 const DesktopSubMenu: FC = () => {
-	const { isShowingSubMenu, subMenuConfiguration } = SideNavContainer.useContainer();
+	const { isShowingSubMenu, subMenuConfiguration } = UIContainer.useContainer();
 
 	return typeof document !== 'undefined'
 		? createPortal(

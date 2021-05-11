@@ -1,8 +1,10 @@
-import { FC } from 'react';
+import { FC, useEffect } from 'react';
 import Head from 'next/head';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
+
 import StatBox from 'components/StatBox';
+import UIContainer from 'containers/UI';
 import { LineSpacer } from 'styles/common';
 import useUserStakingData from 'hooks/useUserStakingData';
 import Main from 'sections/delegate/index';
@@ -11,14 +13,18 @@ import useStakingCalculations from 'sections/staking/hooks/useStakingCalculation
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { formatFiatCurrency, formatPercent, toBigNumber } from 'utils/formatters/number';
 
-type DelegatePageProps = {};
-
-const DelegatePage: FC<DelegatePageProps> = () => {
+const DelegatePage: FC = () => {
 	const { t } = useTranslation();
+	const { setTitle } = UIContainer.useContainer();
 
 	const { stakedCollateralValue, debtBalance } = useStakingCalculations();
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
 	const { stakingAPR } = useUserStakingData();
+
+	// header title
+	useEffect(() => {
+		setTitle('wallet', 'delegate');
+	}, [setTitle]);
 
 	return (
 		<>

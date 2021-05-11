@@ -1,4 +1,4 @@
-import React from 'react';
+import { FC, useEffect } from 'react';
 import Head from 'next/head';
 import styled from 'styled-components';
 
@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { FlexDivCol, LineSpacer } from 'styles/common';
 import { PossibleActions } from 'sections/dashboard';
 
+import UIContainer from 'containers/UI';
 import StatBox from 'components/StatBox';
 import StatsSection from 'components/StatsSection';
 import useUserStakingData from 'hooks/useUserStakingData';
@@ -14,10 +15,16 @@ import useUserStakingData from 'hooks/useUserStakingData';
 import { formatFiatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
-const DashboardPage = () => {
+const DashboardPage: FC = () => {
 	const { t } = useTranslation();
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
 	const { stakedValue, stakingAPR, debtBalance } = useUserStakingData();
+	const { setTitle } = UIContainer.useContainer();
+
+	// header title
+	useEffect(() => {
+		setTitle('home');
+	}, [setTitle]);
 
 	return (
 		<>

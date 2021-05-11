@@ -7,7 +7,7 @@ import { DESKTOP_SIDE_NAV_WIDTH, DESKTOP_BODY_PADDING } from 'constants/ui';
 import ROUTES from 'constants/routes';
 import NotificationContainer from 'constants/NotificationContainer';
 import { SPACE_KEY } from 'constants/snapshot';
-import SideNavContainer from 'containers/SideNav';
+import UIContainer from 'containers/UI';
 import useProposals from 'queries/gov/useProposals';
 import { NotificationTemplate, userNotificationState } from 'store/ui';
 import media from 'styles/media';
@@ -27,7 +27,7 @@ const AppLayout: FC<AppLayoutProps> = ({ children }) => {
 	const isMainnet = useRecoilValue(isMainnetState);
 	const councilProposals = useProposals(SPACE_KEY.COUNCIL);
 	const setNotificationState = useSetRecoilState(userNotificationState);
-	const { showMobileSideNav, closeMobileSideNav } = SideNavContainer.useContainer();
+	const { showMobileSideNav, closeMobileSideNav } = UIContainer.useContainer();
 
 	const [touchStart, setTouchStart] = useState(0);
 	const [touchEnd, setTouchEnd] = useState(0);

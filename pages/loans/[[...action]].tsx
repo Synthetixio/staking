@@ -3,6 +3,7 @@ import Head from 'next/head';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
+
 import StatBox from 'components/StatBox';
 import { LineSpacer } from 'styles/common';
 import StatsSection from 'components/StatsSection';

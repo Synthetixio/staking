@@ -1,3 +1,4 @@
+import { FC, useEffect } from 'react';
 import Head from 'next/head';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
@@ -9,12 +10,19 @@ import StatsSection from 'components/StatsSection';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { formatFiatCurrency, formatPercent } from 'utils/formatters/number';
+import UIContainer from 'containers/UI';
 
-const L2Page = () => {
+const L2Page: FC = () => {
 	const { t } = useTranslation();
+	const { setTitle } = UIContainer.useContainer();
 
 	const { stakedCollateralValue, percentageCurrentCRatio, debtBalance } = useStakingCalculations();
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
+
+	// header title
+	useEffect(() => {
+		setTitle('l2', 'deposit');
+	}, [setTitle]);
 
 	return (
 		<>

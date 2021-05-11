@@ -5,6 +5,7 @@ import StatBox from 'components/StatBox';
 import styled from 'styled-components';
 import { LineSpacer } from 'styles/common';
 import { formatNumber } from 'utils/formatters/number';
+import UIContainer from 'containers/UI';
 
 import useTotalDebtWeighted from 'sections/gov/hooks/useTotalDebtWeighted';
 import useIndividualDebtWeighted from 'sections/gov/hooks/useIndividualDebtWeighted';
@@ -26,6 +27,7 @@ const Gov: React.FC = () => {
 	const { t } = useTranslation();
 	const councilProposals = useProposals(SPACE_KEY.COUNCIL);
 	const { provider } = Connector.useContainer();
+	const { setTitle } = UIContainer.useContainer();
 
 	const [latestElectionBlock, setLatestElectionBlock] = useState<number | null>(null);
 	const activeProposals = useActiveProposalCount();
@@ -79,6 +81,11 @@ const Gov: React.FC = () => {
 			setLatestElectionBlock(parseInt(latestProposal?.msg?.payload.snapshot ?? '0'));
 		}
 	}, [councilProposals, setCouncilElectionCount, isAppReady]);
+
+	// header title
+	useEffect(() => {
+		setTitle('gov');
+	}, [setTitle]);
 
 	return (
 		<>

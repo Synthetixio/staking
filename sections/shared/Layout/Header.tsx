@@ -2,30 +2,20 @@ import { FC } from 'react';
 import styled from 'styled-components';
 import { Svg } from 'react-optimized-image';
 import { Trans, useTranslation } from 'react-i18next';
-import { NextRouter, useRouter } from 'next/router';
 
 import { MOBILE_BODY_PADDING } from 'constants/ui';
 import { LOCAL_STORAGE_KEYS } from 'constants/storage';
-import SideNavContainer from 'containers/SideNav';
+import UIContainer from 'containers/UI';
 import { FlexDivCentered, FlexDivCol, ExternalLink } from 'styles/common';
 import media from 'styles/media';
-import {
-	DesktopOnlyView,
-	MobileOnlyView,
-	MobileOrTabletView,
-	TabletOnlyView,
-} from 'components/Media';
+import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import TitleIcon from 'assets/svg/app/menu-hamburger-white.svg';
-import StakingLogoTablet from 'assets/svg/app/staking-logo-tablet.svg';
-import StakingLogoMobile from 'assets/svg/app/staking-logo-mobile.svg';
 import Banner from 'sections/shared/Layout/Banner';
 import UserMenu from './UserMenu';
 
 const Header: FC = () => {
 	const { t } = useTranslation();
-	const { showMobileSideNav } = SideNavContainer.useContainer();
-	const router = useRouter();
-	const path = getRouterPath(router);
+	const { showMobileSideNav, headerTitle, headerSubtitle } = UIContainer.useContainer();
 
 	return (
 		<HeaderWrapper>
@@ -45,7 +35,13 @@ const Header: FC = () => {
 					<MobileOrTabletView>
 						<Title onClick={showMobileSideNav}>
 							<Svg src={TitleIcon} />
-							{t(`header.${path}`)}
+							<TitleText hasSubTitle={!!headerSubtitle}>{t(`header.${headerTitle}`)}</TitleText>
+							{!headerSubtitle ? null : (
+								<>
+									<TitleSep>|</TitleSep>
+									<SubtitleText>{t(`header.${headerTitle}/${headerSubtitle}`)}</SubtitleText>
+								</>
+							)}
 						</Title>
 					</MobileOrTabletView>
 					<Sep />
@@ -71,15 +67,27 @@ const Container = styled(FlexDivCol)`
 const Title = styled.div`
 	display: flex;
 	align-items: center;
-	color: ${(props) => props.theme.colors.blue};
 	cursor: pointer;
 	font-family: ${(props) => props.theme.fonts.condensedMedium};
 	font-size: 12px;
 	text-transform: uppercase;
+	color: ${(props) => props.theme.colors.gray};
 
 	svg {
 		margin-right: 10px;
 	}
+`;
+
+const TitleText = styled.div<{ hasSubTitle: boolean }>`
+	color: ${(props) => (props.hasSubTitle ? props.theme.colors.gray : props.theme.colors.blue)};
+`;
+
+const TitleSep = styled.div`
+	padding: 0 5px;
+`;
+
+const SubtitleText = styled.div`
+	color: ${(props) => props.theme.colors.blue};
 `;
 
 const Sep = styled.div`
@@ -93,11 +101,5 @@ const StyledExternalLink = styled(ExternalLink)`
 		text-decoration: underline;
 	}
 `;
-
-function getRouterPath(router: NextRouter): string {
-	const match = router.asPath.match(/\/(\w+)\/?/);
-	const path = !match ? 'home' : match[1];
-	return path;
-}
 
 export default Header;

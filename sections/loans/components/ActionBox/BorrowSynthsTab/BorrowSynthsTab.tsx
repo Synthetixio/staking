@@ -8,6 +8,7 @@ import Big from 'bignumber.js';
 import { isWalletConnectedState, walletAddressState } from 'store/wallet';
 import Connector from 'containers/Connector';
 import TransactionNotifier from 'containers/TransactionNotifier';
+import UIContainer from 'containers/UI';
 import synthetix from 'lib/synthetix';
 import GasSelector from 'components/GasSelector';
 import { toBigNumber, formatUnits, toEthersBig } from 'utils/formatters/number';
@@ -58,6 +59,7 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const address = useRecoilValue(walletAddressState);
 	const { renBTCContract, minCRatios } = Loans.useContainer();
+	const { setTitle } = UIContainer.useContainer();
 
 	const [gasPrice, setGasPrice] = useState<number>(0);
 	const [gasLimit, setGasLimitEstimate] = useState<number | null>(null);
@@ -400,6 +402,11 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 			isMounted = false;
 		};
 	}, [collateralIsETH, collateralContract, address, signer]);
+
+	// header title
+	useEffect(() => {
+		setTitle('loans', 'new');
+	}, [setTitle]);
 
 	return (
 		<>

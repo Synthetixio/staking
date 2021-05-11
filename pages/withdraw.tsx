@@ -1,7 +1,9 @@
+import { FC, useEffect } from 'react';
 import Head from 'next/head';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 
+import UIContainer from 'containers/UI';
 import Main from 'sections/layer2/withdraw';
 import StatBox from 'components/StatBox';
 import { LineSpacer } from 'styles/common';
@@ -12,11 +14,17 @@ import { formatFiatCurrency, formatPercent, formatCryptoCurrency } from 'utils/f
 
 const SNX_HEADER_DECIMALS = 2;
 
-const WidthdrawPage = () => {
+const WidthdrawPage: FC = () => {
 	const { t } = useTranslation();
+	const { setTitle } = UIContainer.useContainer();
 
 	const { percentageCurrentCRatio, debtBalance, transferableCollateral } = useStakingCalculations();
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
+
+	// header title
+	useEffect(() => {
+		setTitle('l2', 'withdraw');
+	}, [setTitle]);
 
 	return (
 		<>

@@ -1,4 +1,4 @@
-import React from 'react';
+import { FC, useEffect } from 'react';
 import Head from 'next/head';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
@@ -8,6 +8,7 @@ import { FlexDivCol, LineSpacer } from 'styles/common';
 import StatsSection from 'components/StatsSection';
 import StatBox from 'components/StatBox';
 import useUserStakingData from 'hooks/useUserStakingData';
+import UIContainer from 'containers/UI';
 
 import { formatFiatCurrency, toBigNumber, zeroBN } from 'utils/formatters/number';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
@@ -16,12 +17,12 @@ import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuer
 import useHistoricalDebtData from 'hooks/useHistoricalDebtData';
 import Main from 'sections/debt';
 
-const DashboardPage = () => {
+const DashboardPage: FC = () => {
 	const { t } = useTranslation();
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
 	const { debtBalance: actualDebt } = useUserStakingData();
 	const synthsBalancesQuery = useSynthsBalancesQuery();
-
+	const { setTitle } = UIContainer.useContainer();
 	const historicalDebt = useHistoricalDebtData();
 
 	const totalSynthValue = synthsBalancesQuery.isSuccess
@@ -32,6 +33,11 @@ const DashboardPage = () => {
 	const issuedDebt = dataIsLoading
 		? toBigNumber(0)
 		: toBigNumber(last(historicalDebt.data)?.issuanceDebt ?? 0);
+
+	// header title
+	useEffect(() => {
+		setTitle('staking', 'debt');
+	}, [setTitle]);
 
 	return (
 		<>
