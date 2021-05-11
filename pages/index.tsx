@@ -10,7 +10,7 @@ import { PossibleActions } from 'sections/dashboard';
 import StatBox from 'components/StatBox';
 import useUserStakingData from 'hooks/useUserStakingData';
 
-import { formatFiatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
+import { formatBNFiatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
 const DashboardPage = () => {
@@ -27,8 +27,8 @@ const DashboardPage = () => {
 				<StatsSection>
 					<StakedValue
 						title={t('common.stat-box.staked-value')}
-						value={formatFiatCurrency(
-							getPriceAtCurrentRate(stakedValue.isNaN() ? zeroBN : stakedValue),
+						value={formatBNFiatCurrency(
+							getPriceAtCurrentRate(!stakedValue ? zeroBN : stakedValue),
 							{
 								sign: selectedPriceCurrency.sign,
 							}
@@ -36,12 +36,12 @@ const DashboardPage = () => {
 					/>
 					<APR
 						title={t('common.stat-box.earning')}
-						value={formatPercent(stakingAPR ? stakingAPR : 0)}
+						value={formatPercent(stakingAPR ? stakingAPR / 1e18 : 0)}
 						size="lg"
 					/>
 					<ActiveDebt
 						title={t('common.stat-box.active-debt')}
-						value={formatFiatCurrency(getPriceAtCurrentRate(debtBalance), {
+						value={formatBNFiatCurrency(getPriceAtCurrentRate(debtBalance), {
 							sign: selectedPriceCurrency.sign,
 						})}
 					/>

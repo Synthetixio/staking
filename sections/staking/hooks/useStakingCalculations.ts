@@ -4,7 +4,7 @@ import useGetDebtDataQuery from 'queries/debt/useGetDebtDataQuery';
 import useTokenSaleEscrowDateQuery from 'queries/escrow/useTokenSaleEscrowQuery';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import useEscrowDataQuery from 'queries/escrow/useEscrowDataQuery';
-import { toBigNumber, maxBN, zeroBN } from 'utils/formatters/number';
+import { toBigNumber, maxBN, minBN, zeroBN, mulBN, divBN } from 'utils/formatters/number';
 
 const useStakingCalculations = () => {
 	const exchangeRatesQuery = useExchangeRatesQuery();
@@ -29,28 +29,32 @@ const useStakingCalculations = () => {
 		const issuableSynths = toBigNumber(debtData?.issuableSynths ?? 0);
 		const balance = toBigNumber(debtData?.balance ?? 0);
 
-		const stakedCollateral = collateral.multipliedBy(
-			Math.min(1, currentCRatio.dividedBy(targetCRatio).toNumber())
-		);
-		const stakedCollateralValue = stakedCollateral.multipliedBy(SNXRate);
-		const lockedCollateral = collateral.minus(transferableCollateral);
-		const unstakedCollateral = collateral.minus(stakedCollateral);
-		const totalEscrowBalance = stakingEscrow.plus(tokenSaleEscrow);
+		const stakedCollateral = targetCRatio.isZero()
+			? zeroBN
+			: collateral.mul(minBN(toBigNumber(1), currentCRatio.div(targetCRatio)));
+
+		const stakedCollateralValue = stakedCollateral.mul(SNXRate).div(toBigNumber(1e18));
+
+		const lockedCollateral = collateral.sub(transferableCollateral);
+		const unstakedCollateral = collateral.sub(stakedCollateral);
+		const totalEscrowBalance = stakingEscrow.add(tokenSaleEscrow);
 
 		const debtEscrowBalance = maxBN(
-			debtBalance
-				.plus(totalEscrowBalance.multipliedBy(SNXRate).multipliedBy(targetCRatio))
-				.minus(issuableSynths),
+			debtBalance.add(totalEscrowBalance.mul(SNXRate).mul(targetCRatio)).sub(issuableSynths),
 			zeroBN
 		);
 
 		const percentageCurrentCRatio = currentCRatio.isZero()
 			? toBigNumber(0)
-			: toBigNumber(1).div(currentCRatio);
+			: divBN(toBigNumber(1e18), currentCRatio);
+
 		const percentageTargetCRatio = targetCRatio.isZero()
 			? toBigNumber(0)
-			: toBigNumber(1).div(targetCRatio);
-		const percentCurrentCRatioOfTarget = percentageCurrentCRatio.div(percentageTargetCRatio);
+			: divBN(toBigNumber(1e18), targetCRatio);
+
+		const percentCurrentCRatioOfTarget = percentageTargetCRatio.isZero()
+			? zeroBN
+			: divBN(percentageCurrentCRatio, percentageTargetCRatio);
 
 		return {
 			collateral,

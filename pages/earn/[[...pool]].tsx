@@ -9,12 +9,13 @@ import { Incentives } from 'sections/earn';
 import StatBox from 'components/StatBox';
 import useUserStakingData from 'hooks/useUserStakingData';
 
-import { formatFiatCurrency, formatPercent, toBigNumber } from 'utils/formatters/number';
+import { formatFiatCurrency, formatPercent, toBigNumber, zeroBN } from 'utils/formatters/number';
 
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import useFeeClaimHistoryQuery from 'queries/staking/useFeeClaimHistoryQuery';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import { ethers } from 'ethers';
 
 const Earn = () => {
 	const { t } = useTranslation();
@@ -22,16 +23,16 @@ const Earn = () => {
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
 	const {
-		stakedValue,
+		stakedCollateral,
 		stakingAPR,
 		tradingRewards,
 		stakingRewards,
 		hasClaimed,
 	} = useUserStakingData();
 
-	const SNXRate = exchangeRatesQuery.data?.SNX ?? 0;
+	const SNXRate = exchangeRatesQuery.data?.SNX ?? zeroBN;
 
-	const totalRewards = tradingRewards.plus(stakingRewards.multipliedBy(SNXRate));
+	const totalRewards = tradingRewards.add(stakingRewards.mul(SNXRate));
 
 	const feeClaimHistoryQuery = useFeeClaimHistoryQuery();
 
@@ -45,7 +46,7 @@ const Earn = () => {
 				sumBy(feeClaimHistory, (claim) => {
 					const usdAmount = claim.value;
 					const snxAmount = claim.rewards ?? 0;
-					const snxUsdValue = snxAmount * SNXRate;
+					const snxUsdValue = snxAmount * Number(ethers.utils.formatEther(SNXRate.toString()));
 					return usdAmount + snxUsdValue;
 				})
 			),
@@ -82,7 +83,7 @@ const Earn = () => {
 				stakingRewards={stakingRewards}
 				totalRewards={totalRewards}
 				stakingAPR={stakingAPR}
-				stakedAmount={stakedValue.dividedBy(SNXRate).toNumber()}
+				stakedAmount={stakedCollateral}
 				hasClaimed={hasClaimed}
 			/>
 		</>

@@ -1,13 +1,13 @@
 import { useMemo } from 'react';
 import useEscrowDataQuery from 'queries/escrow/useEscrowDataQuery';
 import useTokenSaleEscrowDateQuery from 'queries/escrow/useTokenSaleEscrowQuery';
-import { BigNumber } from 'bignumber.js';
+import BN from 'bn.js';
 import { toBigNumber } from 'utils/formatters/number';
 
 type EscrowCalculations = {
-	totalEscrowBalance: BigNumber;
-	totalClaimableBalance: BigNumber;
-	totalVestedBalance: BigNumber;
+	totalEscrowBalance: BN;
+	totalClaimableBalance: BN;
+	totalVestedBalance: BN;
 };
 const useStakingCalculations = (): EscrowCalculations => {
 	const rewardEscrowQuery = useEscrowDataQuery();
@@ -25,9 +25,9 @@ const useStakingCalculations = (): EscrowCalculations => {
 		const tokenSaleClaimableBalance = toBigNumber(tokenSaleEscrow?.claimableAmount ?? 0);
 		const tokenSaleVestedBalance = toBigNumber(tokenSaleEscrow?.totalVested ?? 0);
 
-		const totalEscrowBalance = stakingEscrowBalance.plus(tokenSaleEscrowBalance);
-		const totalClaimableBalance = stakingClaimableBalance.plus(tokenSaleClaimableBalance);
-		const totalVestedBalance = stakingVestedBalance.plus(tokenSaleVestedBalance);
+		const totalEscrowBalance = stakingEscrowBalance.add(tokenSaleEscrowBalance);
+		const totalClaimableBalance = stakingClaimableBalance.add(tokenSaleClaimableBalance);
+		const totalVestedBalance = stakingVestedBalance.add(tokenSaleVestedBalance);
 
 		return {
 			totalEscrowBalance,

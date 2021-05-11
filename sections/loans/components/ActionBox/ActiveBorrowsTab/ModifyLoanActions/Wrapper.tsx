@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect, FC } from 'react';
 import { ethers } from 'ethers';
 import { isAfter, addSeconds, fromUnixTime, differenceInSeconds } from 'date-fns';
 import { useRouter } from 'next/router';
-import Big from 'bignumber.js';
+import BN from 'bn.js';
 import styled from 'styled-components';
 import { Trans, useTranslation } from 'react-i18next';
 import Button from 'components/Button';
@@ -302,8 +302,8 @@ const Wrapper: FC<WrapperProps> = ({
 
 function noop() {}
 
-function toHumanizedDuration(ms: Big) {
-	const dur: Record<string, Big> = {};
+function toHumanizedDuration(ms: BN) {
+	const dur: Record<string, BN> = {};
 	const units: Array<any> = [
 		{ label: 's', mod: 60 },
 		{ label: 'm', mod: 60 },
@@ -313,7 +313,7 @@ function toHumanizedDuration(ms: Big) {
 	];
 	units.forEach((u) => {
 		const z = (dur[u.label] = ms.mod(u.mod));
-		ms = ms.minus(z).dividedBy(u.mod);
+		ms = ms.sub(z).div(u.mod);
 	});
 	return units
 		.reverse()

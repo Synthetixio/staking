@@ -3,7 +3,7 @@ import { CellProps } from 'react-table';
 import styled from 'styled-components';
 import { useTranslation, Trans } from 'react-i18next';
 import { Svg } from 'react-optimized-image';
-import BigNumber from 'bignumber.js';
+import BN from 'bn.js';
 
 import { useRecoilValue } from 'recoil';
 
@@ -35,13 +35,13 @@ import { CryptoCurrency, Synths } from 'constants/currency';
 
 import Info from 'assets/svg/app/info.svg';
 
-const SHOW_HEDGING_INDICATOR_THRESHOLD = new BigNumber(0.1);
+const SHOW_HEDGING_INDICATOR_THRESHOLD = new BN(0.1);
 
 type DebtPoolTableProps = {
 	synthBalances: CryptoBalance[];
 	cryptoBalances: CryptoBalance[];
 	synthsTotalSupply: SynthsTotalSupplyData;
-	synthsTotalValue: BigNumber;
+	synthsTotalValue: BN;
 	isLoading: boolean;
 	isLoaded: boolean;
 };
@@ -74,7 +74,7 @@ const DebtPoolTable: FC<DebtPoolTableProps> = ({
 		() =>
 			[renBTCBalance, wBTCBalance, wETHBalance, ETHBalance].reduce((total, current) => {
 				const usdValue = current?.usdBalance ?? zeroBN;
-				return total.plus(usdValue);
+				return total.add(usdValue);
 			}, synthsTotalValue),
 		[ETHBalance, renBTCBalance, wBTCBalance, wETHBalance, synthsTotalValue]
 	);
@@ -93,8 +93,8 @@ const DebtPoolTable: FC<DebtPoolTableProps> = ({
 
 		return {
 			currencyKey: Synths.sBTC,
-			balance: sBTCAmount.plus(renBTCAmount).plus(wBTCAmount),
-			usdBalance: sBTCUSDAmount.plus(renBTCUSDAmount).plus(wBTCUSDAmount),
+			balance: sBTCAmount.add(renBTCAmount).add(wBTCAmount),
+			usdBalance: sBTCUSDAmount.add(renBTCUSDAmount).add(wBTCUSDAmount),
 		};
 	}, [synthBalances, renBTCBalance, wBTCBalance]);
 
@@ -112,8 +112,8 @@ const DebtPoolTable: FC<DebtPoolTableProps> = ({
 
 		return {
 			currencyKey: Synths.sETH,
-			balance: sETHAmount.plus(ETHAmount).plus(wETHAmount),
-			usdBalance: sETHUSDAmount.plus(ETHUSDAmount).plus(wETHUSDAmount),
+			balance: sETHAmount.add(ETHAmount).add(wETHAmount),
+			usdBalance: sETHUSDAmount.add(ETHUSDAmount).add(wETHUSDAmount),
 		};
 	}, [synthBalances, ETHBalance, wETHBalance]);
 
@@ -188,12 +188,10 @@ const DebtPoolTable: FC<DebtPoolTableProps> = ({
 						if (poolCurrencyPercent) {
 							const holdingPercent = mergedTotalValue.isZero()
 								? zeroBN
-								: cellProps.row.original.usdBalance.dividedBy(mergedTotalValue);
-							const deviationFromPool = holdingPercent.minus(poolCurrencyPercent);
+								: cellProps.row.original.usdBalance.div(mergedTotalValue);
+							const deviationFromPool = holdingPercent.sub(poolCurrencyPercent);
 
-							if (
-								deviationFromPool.abs().isGreaterThanOrEqualTo(SHOW_HEDGING_INDICATOR_THRESHOLD)
-							) {
+							if (deviationFromPool.abs().gte(SHOW_HEDGING_INDICATOR_THRESHOLD)) {
 								variant = 'red-simple';
 							} else {
 								variant = 'green-simple';

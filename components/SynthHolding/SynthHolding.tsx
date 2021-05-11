@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import styled from 'styled-components';
-import { BigNumber } from 'bignumber.js';
+import BN from 'bn.js';
 
 import ProgressBar from 'components/ProgressBar';
 import { ProgressBarType } from 'components/ProgressBar/ProgressBar';
@@ -8,8 +8,8 @@ import { FlexDivCol } from 'styles/common';
 import { formatPercent } from 'utils/formatters/number';
 
 type SynthHoldingProps = {
-	usdBalance: BigNumber;
-	totalUSDBalance: BigNumber;
+	usdBalance: BN;
+	totalUSDBalance: BN;
 	progressBarVariant?: ProgressBarType;
 };
 
@@ -18,7 +18,7 @@ const SynthHolding: FC<SynthHoldingProps> = ({
 	totalUSDBalance,
 	progressBarVariant,
 }) => {
-	const percent = usdBalance.dividedBy(totalUSDBalance);
+	const percent = usdBalance.div(totalUSDBalance);
 
 	return (
 		<Container>

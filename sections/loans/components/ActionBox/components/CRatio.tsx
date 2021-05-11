@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import styled from 'styled-components';
-import Big from 'bignumber.js';
+import BN from 'bn.js';
 import { Trans, useTranslation } from 'react-i18next';
 import { FlexDivRow, FlexDivRowCentered } from 'styles/common';
 import { formatNumber } from 'utils/formatters/number';
@@ -9,8 +9,8 @@ import { SAFE_MIN_CRATIO } from 'sections/loans/constants';
 
 type CRatioProps = {
 	hasLowCRatio: boolean;
-	cratio: Big;
-	minCRatio: Big;
+	cratio: BN;
+	minCRatio: BN;
 };
 
 const CRatio: FC<CRatioProps> = ({ cratio, hasLowCRatio, minCRatio }) => {

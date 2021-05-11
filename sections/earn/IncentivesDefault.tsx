@@ -1,5 +1,5 @@
 import { FC, useMemo } from 'react';
-import BigNumber from 'bignumber.js';
+import BN from 'bn.js';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
@@ -19,9 +19,9 @@ import { isWalletConnectedState } from 'store/wallet';
 import { Tab } from './types';
 
 type IncentivesProps = {
-	tradingRewards: BigNumber;
-	stakingRewards: BigNumber;
-	totalRewards: BigNumber;
+	tradingRewards: BN;
+	stakingRewards: BN;
+	totalRewards: BN;
 	stakingAPR: number;
 	stakedAmount: number;
 	hasClaimed: boolean;

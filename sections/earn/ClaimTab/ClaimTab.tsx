@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { ethers } from 'ethers';
-import BigNumber from 'bignumber.js';
+import BN from 'bn.js';
 import { Svg } from 'react-optimized-image';
 import { useRouter } from 'next/router';
 import { useRecoilValue } from 'recoil';
@@ -69,9 +69,9 @@ import {
 } from '../common';
 
 type ClaimTabProps = {
-	tradingRewards: BigNumber;
-	stakingRewards: BigNumber;
-	totalRewards: BigNumber;
+	tradingRewards: BN;
+	stakingRewards: BN;
+	totalRewards: BN;
 };
 
 const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, totalRewards }) => {

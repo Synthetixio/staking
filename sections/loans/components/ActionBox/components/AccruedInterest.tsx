@@ -20,7 +20,7 @@ const AccruedInterest: React.FC<AccruedInterestProps> = ({ loan }) => {
 			<FlexDivRowCentered>
 				<Item>
 					<Text>
-						{formatNumber(toBigNumber(loan.accruedInterest.toString()).dividedBy(1e18), {
+						{formatNumber(toBigNumber(loan.accruedInterest.toString()).div(toBigNumber(1e18)), {
 							decimals: 4,
 						})}{' '}
 						{debtAsset}

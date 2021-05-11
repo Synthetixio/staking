@@ -40,12 +40,9 @@ const StakingInfo: FC = () => {
 
 		const stakingAmount = getStakingAmount(targetCRatio, amountToMintBN, SNXRate);
 
-		const mintAdditionalDebt = stakedCollateral
-			.plus(stakingAmount)
-			.multipliedBy(targetCRatio)
-			.multipliedBy(SNXRate);
+		const mintAdditionalDebt = stakedCollateral.add(stakingAmount).mul(targetCRatio).mul(SNXRate);
 
-		const changedStakedValue = stakedCollateral.plus(stakingAmount);
+		const changedStakedValue = stakedCollateral.add(stakingAmount);
 
 		const changedTransferable = transferableCollateral.isZero()
 			? zeroBN
@@ -53,15 +50,15 @@ const StakingInfo: FC = () => {
 
 		const changedDebt = mintAdditionalDebt;
 
-		const changedSUSDBalance = sUSDBalance.plus(amountToMintBN);
+		const changedSUSDBalance = sUSDBalance.add(amountToMintBN);
 
-		const changeCRatio = currentCRatio.isLessThan(targetCRatio)
+		const changeCRatio = currentCRatio.lt(targetCRatio)
 			? unstakedCollateral
-					.plus(stakedCollateral)
-					.multipliedBy(SNXRate)
-					.dividedBy(mintAdditionalDebt)
-					.multipliedBy(100)
-			: changedStakedValue.multipliedBy(SNXRate).dividedBy(mintAdditionalDebt).multipliedBy(100);
+					.add(stakedCollateral)
+					.mul(SNXRate)
+					.div(mintAdditionalDebt)
+					.mul(toBigNumber(100))
+			: changedStakedValue.mul(SNXRate).div(mintAdditionalDebt).mul(toBigNumber(100));
 
 		return {
 			barRows: [
@@ -71,10 +68,10 @@ const StakingInfo: FC = () => {
 					changedValue: sanitiseValue(changedStakedValue),
 					percentage: collateral.isZero()
 						? toBigNumber(0)
-						: sanitiseValue(stakedCollateral).dividedBy(collateral),
+						: sanitiseValue(stakedCollateral).div(collateral),
 					changedPercentage: collateral.isZero()
 						? toBigNumber(0)
-						: sanitiseValue(changedStakedValue).dividedBy(collateral),
+						: sanitiseValue(changedStakedValue).div(collateral),
 					currencyKey: CryptoCurrency.SNX,
 				},
 				{
@@ -83,17 +80,17 @@ const StakingInfo: FC = () => {
 					changedValue: sanitiseValue(changedTransferable),
 					percentage: collateral.isZero()
 						? toBigNumber(0)
-						: sanitiseValue(transferableCollateral).dividedBy(sanitiseValue(collateral)),
+						: sanitiseValue(transferableCollateral).div(sanitiseValue(collateral)),
 					changedPercentage: collateral.isZero()
 						? toBigNumber(0)
-						: sanitiseValue(changedTransferable).dividedBy(sanitiseValue(collateral)),
+						: sanitiseValue(changedTransferable).div(sanitiseValue(collateral)),
 					currencyKey: CryptoCurrency.SNX,
 				},
 			],
 			dataRows: [
 				{
 					title: t('staking.info.table.c-ratio'),
-					value: sanitiseValue(toBigNumber(100).dividedBy(currentCRatio)),
+					value: sanitiseValue(toBigNumber(100).div(currentCRatio)),
 					changedValue: sanitiseValue(changeCRatio),
 					currencyKey: '%',
 				},

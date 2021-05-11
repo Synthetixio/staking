@@ -8,7 +8,7 @@ import { amountToBurnState, StakingPanelType } from 'store/staking';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
 
-import { toBigNumber, zeroBN } from 'utils/formatters/number';
+import { toBigNumber, zeroBN, maxBN } from 'utils/formatters/number';
 
 import { CryptoCurrency, Synths } from 'constants/currency';
 
@@ -37,16 +37,13 @@ const StakingInfo: FC = () => {
 		synthsBalancesQuery?.data?.balancesMap[Synths.sUSD]?.balance ?? toBigNumber(0);
 
 	const Rows = useMemo(() => {
-		const calculatedTargetBurn = Math.max(debtBalance.minus(issuableSynths).toNumber(), 0);
+		const calculatedTargetBurn = maxBN(debtBalance.sub(issuableSynths), zeroBN);
 
 		const amountToBurnBN = toBigNumber(amountToBurn);
 
 		let unlockedStakeAmount;
 
-		if (
-			currentCRatio.isGreaterThan(targetCRatio) &&
-			amountToBurnBN.isLessThanOrEqualTo(calculatedTargetBurn)
-		) {
+		if (currentCRatio.gt(targetCRatio) && amountToBurnBN.lte(calculatedTargetBurn)) {
 			unlockedStakeAmount = zeroBN;
 		} else {
 			unlockedStakeAmount = getStakingAmount(targetCRatio, amountToBurnBN, SNXRate);
@@ -54,7 +51,7 @@ const StakingInfo: FC = () => {
 
 		const changedStakedValue = stakedCollateral.isZero()
 			? zeroBN
-			: stakedCollateral.minus(unlockedStakeAmount);
+			: stakedCollateral.sub(unlockedStakeAmount);
 
 		const changedTransferable = getTransferableAmountFromBurn(
 			amountToBurn,
@@ -64,13 +61,11 @@ const StakingInfo: FC = () => {
 			transferableCollateral
 		);
 
-		const changedDebt = debtBalance.isZero() ? zeroBN : debtBalance.minus(amountToBurnBN);
+		const changedDebt = debtBalance.isZero() ? zeroBN : debtBalance.sub(amountToBurnBN);
 
-		const changedSUSDBalance = sUSDBalance.minus(amountToBurnBN);
+		const changedSUSDBalance = sUSDBalance.sub(amountToBurnBN);
 
-		const changeCRatio = toBigNumber(100).dividedBy(
-			changedDebt.dividedBy(SNXRate).dividedBy(collateral)
-		);
+		const changeCRatio = toBigNumber(100).div(changedDebt.div(SNXRate).div(collateral));
 
 		return {
 			barRows: [
@@ -80,10 +75,10 @@ const StakingInfo: FC = () => {
 					changedValue: sanitiseValue(changedStakedValue),
 					percentage: collateral.isZero()
 						? toBigNumber(0)
-						: sanitiseValue(stakedCollateral).dividedBy(collateral),
+						: sanitiseValue(stakedCollateral).div(collateral),
 					changedPercentage: collateral.isZero()
 						? toBigNumber(0)
-						: sanitiseValue(changedStakedValue).dividedBy(collateral),
+						: sanitiseValue(changedStakedValue).div(collateral),
 					currencyKey: CryptoCurrency.SNX,
 				},
 				{
@@ -92,17 +87,17 @@ const StakingInfo: FC = () => {
 					changedValue: sanitiseValue(changedTransferable),
 					percentage: collateral.isZero()
 						? toBigNumber(0)
-						: sanitiseValue(transferableCollateral).dividedBy(sanitiseValue(collateral)),
+						: sanitiseValue(transferableCollateral).div(sanitiseValue(collateral)),
 					changedPercentage: collateral.isZero()
 						? toBigNumber(0)
-						: sanitiseValue(changedTransferable).dividedBy(sanitiseValue(collateral)),
+						: sanitiseValue(changedTransferable).div(sanitiseValue(collateral)),
 					currencyKey: CryptoCurrency.SNX,
 				},
 			],
 			dataRows: [
 				{
 					title: t('staking.info.table.c-ratio'),
-					value: sanitiseValue(toBigNumber(100).dividedBy(currentCRatio)),
+					value: sanitiseValue(toBigNumber(100).div(currentCRatio)),
 					changedValue: sanitiseValue(changeCRatio),
 					currencyKey: '%',
 				},

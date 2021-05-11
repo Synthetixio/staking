@@ -1,12 +1,12 @@
 import { FC } from 'react';
 import styled from 'styled-components';
-import BigNumber from 'bignumber.js';
+import BN from 'bn.js';
 import { Trans } from 'react-i18next';
 import { FlexDivCol, NoTextTransform } from 'styles/common';
-import { formatFiatCurrency } from 'utils/formatters/number';
+import { formatBNFiatCurrency } from 'utils/formatters/number';
 
 type BalanceItemProps = {
-	amount: BigNumber;
+	amount: BN;
 	currencyKey: string;
 };
 
@@ -20,7 +20,7 @@ const BalanceItem: FC<BalanceItemProps> = ({ amount, currencyKey }) => {
 					components={[<NoTextTransform />]}
 				/>
 			</Title>
-			<Balance>{formatFiatCurrency(amount)}</Balance>
+			<Balance>{formatBNFiatCurrency(amount)}</Balance>
 		</Container>
 	);
 };

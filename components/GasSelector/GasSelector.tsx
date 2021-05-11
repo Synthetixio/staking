@@ -79,7 +79,7 @@ const GasSelector: React.FC<GasSelectorProps> = ({
 	);
 
 	const transactionFee = useMemo(
-		() => getTransactionPrice(gasPrice, gasLimitEstimate, ethPriceRate),
+		() => getTransactionPrice(gasPrice, gasLimitEstimate, ethPriceRate.toNumber()),
 		[gasPrice, gasLimitEstimate, ethPriceRate]
 	);
 

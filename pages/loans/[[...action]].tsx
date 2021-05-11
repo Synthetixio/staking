@@ -8,7 +8,7 @@ import { StatsSection, LineSpacer } from 'styles/common';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import useUserStakingData from 'hooks/useUserStakingData';
-import { formatFiatCurrency, formatPercent, toBigNumber } from 'utils/formatters/number';
+import { formatFiatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 
 import Main from 'sections/loans/index';
 
@@ -37,9 +37,7 @@ const LoansPage: FC<LoansPageProps> = () => {
 				<StakedValue
 					title={t('common.stat-box.staked-value')}
 					value={formatFiatCurrency(
-						getPriceAtCurrentRate(
-							stakedCollateralValue.isNaN() ? toBigNumber(0) : stakedCollateralValue
-						),
+						getPriceAtCurrentRate(!stakedCollateralValue ? zeroBN : stakedCollateralValue),
 						{
 							sign: selectedPriceCurrency.sign,
 						}
@@ -52,12 +50,9 @@ const LoansPage: FC<LoansPageProps> = () => {
 				/>
 				<ActiveDebt
 					title={t('common.stat-box.active-debt')}
-					value={formatFiatCurrency(
-						getPriceAtCurrentRate(debtBalance.isNaN() ? toBigNumber(0) : debtBalance),
-						{
-							sign: selectedPriceCurrency.sign,
-						}
-					)}
+					value={formatFiatCurrency(getPriceAtCurrentRate(!debtBalance ? zeroBN : debtBalance), {
+						sign: selectedPriceCurrency.sign,
+					})}
 				/>
 			</StatsSection>
 			<LineSpacer />

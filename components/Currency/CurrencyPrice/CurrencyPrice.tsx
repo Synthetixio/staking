@@ -1,21 +1,22 @@
 import React, { FC } from 'react';
 import styled from 'styled-components';
+import BN from 'bn.js';
 
 import ChangePercent from 'components/ChangePercent';
 
 import { CurrencyKey } from 'constants/currency';
 
-import { formatCurrency, NumericValue, toBigNumber } from 'utils/formatters/number';
+import { formatBNFiatCurrency, zeroBN } from 'utils/formatters/number';
 
 import { ContainerRowMixin } from '../common';
-import { DEFAULT_FIAT_DECIMALS } from 'constants/defaults';
+import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
 type CurrencyPriceProps = {
 	currencyKey: CurrencyKey;
-	price: NumericValue;
+	price: BN;
 	sign?: string;
 	change?: number;
-	conversionRate?: NumericValue | null;
+	conversionRate?: BN | null;
 };
 
 export const CurrencyPrice: FC<CurrencyPriceProps> = ({
@@ -26,17 +27,13 @@ export const CurrencyPrice: FC<CurrencyPriceProps> = ({
 	conversionRate,
 	...rest
 }) => {
+	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
 	return (
 		<Container {...rest}>
 			<Price className="price">
-				{formatCurrency(
-					currencyKey,
-					conversionRate != null ? toBigNumber(price).dividedBy(conversionRate) : price,
-					{
-						sign,
-						decimals: DEFAULT_FIAT_DECIMALS,
-					}
-				)}
+				{formatBNFiatCurrency(getPriceAtCurrentRate(price || zeroBN), {
+					sign: selectedPriceCurrency.sign,
+				})}
 			</Price>
 			{change != null && <ChangePercent className="percent" value={change} />}
 		</Container>

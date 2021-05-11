@@ -1,5 +1,6 @@
 import React, { FC } from 'react';
 import styled from 'styled-components';
+import BN from 'bn.js';
 
 import { formatCurrency, NumericValue, toBigNumber } from 'utils/formatters/number';
 
@@ -13,7 +14,7 @@ type CurrencyAmountProps = {
 	valueCurrencyKey: CurrencyKey;
 	totalValue: NumericValue;
 	sign?: string;
-	conversionRate?: NumericValue | null;
+	conversionRate?: BN | null;
 };
 
 export const CurrencyAmount: FC<CurrencyAmountProps> = ({
@@ -30,7 +31,7 @@ export const CurrencyAmount: FC<CurrencyAmountProps> = ({
 		<TotalValue className="total-value">
 			{formatCurrency(
 				valueCurrencyKey,
-				conversionRate != null ? toBigNumber(totalValue).dividedBy(conversionRate) : totalValue,
+				conversionRate != null ? toBigNumber(totalValue).div(conversionRate) : totalValue,
 				{ sign }
 			)}
 		</TotalValue>

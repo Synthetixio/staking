@@ -5,7 +5,7 @@ import QUERY_KEYS from 'constants/queryKeys';
 
 import { isL2State, isWalletConnectedState, networkState, walletAddressState } from 'store/wallet';
 import { appReadyState } from 'store/app';
-import { NumericValue, toBigNumber } from 'utils/formatters/number';
+import { NumericValue, toBigNumber, zeroBN } from 'utils/formatters/number';
 import { formatEther, parseEther } from 'ethers/lib/utils';
 import axios from 'axios';
 import { quoteEndpoint } from 'constants/1inch';
@@ -42,12 +42,7 @@ const use1InchQuoteQuery = (
 			};
 		},
 		{
-			enabled:
-				isAppReady &&
-				isWalletConnected &&
-				!isL2 &&
-				!toBigNumber(amount).isZero() &&
-				toBigNumber(amount).isPositive(),
+			enabled: isAppReady && isWalletConnected && !isL2 && toBigNumber(amount).gt(zeroBN),
 			...options,
 		}
 	);

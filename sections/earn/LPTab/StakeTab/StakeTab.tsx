@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { ethers } from 'ethers';
 import { Svg } from 'react-optimized-image';
-import BigNumber from 'bignumber.js';
+import BN from 'bn.js';
 
 import PendingConfirmation from 'assets/svg/app/pending-confirmation.svg';
 import Success from 'assets/svg/app/success.svg';
@@ -105,9 +105,9 @@ type StakeTabProps = {
 	icon: CurrencyKey;
 	type?: CurrencyIconType;
 	userBalance: number;
-	userBalanceBN: BigNumber;
+	userBalanceBN: BN;
 	staked: number;
-	stakedBN: BigNumber;
+	stakedBN: BN;
 };
 
 const StakeTab: FC<StakeTabProps> = ({

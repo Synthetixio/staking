@@ -11,7 +11,7 @@ import { isWalletConnectedState } from 'store/wallet';
 
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import { formatFiatCurrency, formatPercent, toBigNumber } from 'utils/formatters/number';
+import { formatFiatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 import ProgressBar from 'components/ProgressBar';
 
 const L2Page = () => {
@@ -34,9 +34,7 @@ const L2Page = () => {
 				<StakedValue
 					title={t('common.stat-box.staked-value')}
 					value={formatFiatCurrency(
-						getPriceAtCurrentRate(
-							stakedCollateralValue.isNaN() ? toBigNumber(0) : stakedCollateralValue
-						),
+						getPriceAtCurrentRate(!stakedCollateralValue ? zeroBN : stakedCollateralValue),
 						{
 							sign: selectedPriceCurrency.sign,
 						}
@@ -49,19 +47,14 @@ const L2Page = () => {
 				>
 					<CRatioProgressBar
 						variant="blue-pink"
-						percentage={
-							percentCurrentCRatioOfTarget.isNaN() ? 0 : percentCurrentCRatioOfTarget.toNumber()
-						}
+						percentage={!percentCurrentCRatioOfTarget ? 0 : percentCurrentCRatioOfTarget.toNumber()}
 					/>
 				</CRatio>
 				<ActiveDebt
 					title={t('common.stat-box.active-debt')}
-					value={formatFiatCurrency(
-						getPriceAtCurrentRate(debtBalance.isNaN() ? toBigNumber(0) : debtBalance),
-						{
-							sign: selectedPriceCurrency.sign,
-						}
-					)}
+					value={formatFiatCurrency(getPriceAtCurrentRate(!debtBalance ? zeroBN : debtBalance), {
+						sign: selectedPriceCurrency.sign,
+					})}
 				/>
 			</StatsSection>
 			<LineSpacer />

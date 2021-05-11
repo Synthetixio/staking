@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import BigNumber from 'bignumber.js';
+import BN from 'bn.js';
 import styled from 'styled-components';
 import { useTranslation, Trans } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
@@ -28,9 +28,9 @@ import {
 } from 'styles/common';
 
 type TabContentProps = {
-	inputValue: BigNumber;
+	inputValue: BN;
 	onInputChange: Function;
-	transferableCollateral: BigNumber;
+	transferableCollateral: BN;
 	onSubmit: any;
 	transactionError: string | null;
 	gasEstimateError: string | null;
@@ -67,8 +67,8 @@ const TabContent: FC<TabContentProps> = ({
 			isWalletConnected &&
 			inputValue &&
 			!inputValue.isZero() &&
-			inputValue.isFinite() &&
-			inputValue.isLessThanOrEqualTo(transferableCollateral)
+			Number.isFinite(inputValue.toNumber()) &&
+			inputValue.lte(transferableCollateral)
 		) {
 			return (
 				<StyledCTA
@@ -134,7 +134,7 @@ const TabContent: FC<TabContentProps> = ({
 					<StyledInput
 						type="number"
 						maxLength={12}
-						value={inputValue.isNaN() ? '0' : inputValue.toString()}
+						value={Number.isNaN(inputValue.toNumber()) ? '0' : inputValue.toString()}
 						placeholder="0"
 						onChange={(e) => onInputChange(e.target.value)}
 						disabled={

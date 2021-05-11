@@ -1,15 +1,16 @@
-import BigNumber from 'bignumber.js';
+import BN from 'bn.js';
 import { ethers } from 'ethers';
 
 import {
 	DEFAULT_CRYPTO_DECIMALS,
 	DEFAULT_FIAT_DECIMALS,
 	DEFAULT_NUMBER_DECIMALS,
+	DEFAULT_UNIT,
 } from 'constants/defaults';
 import { CurrencyKey } from 'constants/currency';
 import { isFiatCurrency } from 'utils/currencies';
 
-export type NumericValue = BigNumber | string | number;
+export type NumericValue = BN | string | number;
 
 export type FormatNumberOptions = {
 	decimals?: number;
@@ -31,13 +32,15 @@ export const getDecimalPlaces = (value: NumericValue) =>
 	(value.toString().split('.')[1] || '').length;
 
 export const toBigNumber = (value: NumericValue) =>
-	BigNumber.isBigNumber(value) ? value : new BigNumber(value);
+	BN.isBN(value) ? value : new BN(value.toString());
 
 export const zeroBN = toBigNumber(0);
+export const maxBN = BN.max;
+export const minBN = BN.min;
+export const weiBN = toBigNumber(1e18);
 
-export const maxBN = BigNumber.maximum;
-
-export const minBN = BigNumber.minimum;
+export const mulBN = (x: BN, y: BN): BN => x.mul(y).div(weiBN);
+export const divBN = (x: BN, y: BN): BN => x.mul(weiBN).div(y);
 
 export const formatNumber = (value: NumericValue, options?: FormatNumberOptions) => {
 	const prefix = options?.prefix;
@@ -48,7 +51,7 @@ export const formatNumber = (value: NumericValue, options?: FormatNumberOptions)
 		formattedValue.push(prefix);
 	}
 
-	formattedValue.push(toBigNumber(value).toFormat(options?.decimals ?? DEFAULT_NUMBER_DECIMALS));
+	formattedValue.push(toBigNumber(value).toString());
 	if (suffix) {
 		formattedValue.push(` ${suffix}`);
 	}
@@ -110,7 +113,7 @@ export const formatCurrencyWithKey = (
 ) => `${formatCurrency(String(value), decimals || getPrecision(value))} ${currencyKey}`;
 
 export function formatUnits(value: any, units: number, decimals?: number): string {
-	return formatNumber(toBigNumber(value.toString()).dividedBy(toBigNumber(10).pow(units)), {
+	return formatNumber(toBigNumber(value.toString()).div(toBigNumber(10).pow(toBigNumber(units))), {
 		decimals: decimals,
 	});
 }
@@ -118,3 +121,59 @@ export function formatUnits(value: any, units: number, decimals?: number): strin
 export function toEthersBig(a: any, b: number): ethers.BigNumber {
 	return ethers.utils.parseUnits(a.div(Math.pow(10, b)).toString(), b);
 }
+
+export const formatBNumber = (value: BN, options?: FormatNumberOptions) => {
+	const prefix = options?.prefix;
+	const suffix = options?.suffix;
+	const decimals = options?.decimals;
+
+	const formattedValue = [];
+	if (prefix) {
+		formattedValue.push(prefix);
+	}
+
+	const decimalValue = Number(ethers.utils.formatUnits(value.toString(), 18));
+
+	formattedValue.push(ethers.utils.commify(decimalValue.toFixed(decimals)));
+	if (suffix) {
+		formattedValue.push(` ${suffix}`);
+	}
+
+	return formattedValue.join('');
+};
+
+export const formatBNCryptoCurrency = (value: BN, options?: FormatCurrencyOptions) =>
+	formatBNumber(value, {
+		prefix: options?.sign,
+		suffix: options?.currencyKey,
+		decimals: options?.decimals ?? DEFAULT_CRYPTO_DECIMALS,
+	});
+
+export const formatBNFiatCurrency = (value: BN, options?: FormatCurrencyOptions) =>
+	formatBNumber(value, {
+		prefix: options?.sign,
+		suffix: options?.currencyKey,
+		decimals: options?.decimals ?? DEFAULT_CURRENCY_DECIMALS,
+	});
+
+export const formatBNCurrency = ({
+	value,
+	currencyKey,
+	decimals,
+	sign,
+}: {
+	value: BN;
+	currencyKey: CurrencyKey;
+	decimals?: number;
+	sign?: string;
+}): string => {
+	return isFiatCurrency(currencyKey)
+		? formatBNFiatCurrency(value, { sign, currencyKey })
+		: formatBNCryptoCurrency(value, { sign, currencyKey });
+};
+
+export const formatBNPercent = (value: BN, options?: { minDecimals: number }) => {
+	const decimals = options?.minDecimals ?? 2;
+
+	return `${(Number(ethers.utils.formatUnits(value.toString(), 18)) * 100).toFixed(decimals)}%`;
+};

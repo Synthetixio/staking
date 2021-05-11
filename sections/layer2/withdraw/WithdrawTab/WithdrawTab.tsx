@@ -14,8 +14,8 @@ import { walletAddressState } from 'store/wallet';
 
 import TabContent from './TabContent';
 import { normalizedGasPrice } from 'utils/network';
-import BigNumber from 'bignumber.js';
-import { toBigNumber } from 'utils/formatters/number';
+import BN from 'bn.js';
+import { toBigNumber, zeroBN } from 'utils/formatters/number';
 
 const WithdrawTab = () => {
 	const { transferableCollateral } = useStakingCalculations();
@@ -31,11 +31,11 @@ const WithdrawTab = () => {
 	const [transactionState, setTransactionState] = useState<Transaction>(Transaction.PRESUBMIT);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 	const [txHash, setTxHash] = useState<string | null>(null);
-	const [amountToWithdraw, setAmountToWithdraw] = useState<BigNumber>(toBigNumber(0));
+	const [amountToWithdraw, setAmountToWithdraw] = useState<BN>(zeroBN);
 
 	useEffect(() => {
 		const getGasLimitEstimate = async () => {
-			if (isAppReady && walletAddress && !amountToWithdraw.isZero() && !amountToWithdraw.isNaN()) {
+			if (isAppReady && walletAddress && !amountToWithdraw.isZero()) {
 				try {
 					setGasEstimateError(null);
 					const {

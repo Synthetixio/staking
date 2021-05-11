@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { Svg } from 'react-optimized-image';
-import BigNumber from 'bignumber.js';
+import BN from 'bn.js';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 
@@ -24,7 +24,7 @@ import {
 } from 'styles/common';
 
 type TabContentProps = {
-	depositAmount: BigNumber;
+	depositAmount: BN;
 	onSubmit: any;
 	transactionError: string | null;
 	gasEstimateError: string | null;

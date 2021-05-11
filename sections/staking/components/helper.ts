@@ -1,53 +1,36 @@
-import BigNumber from 'bignumber.js';
+import BN from 'bn.js';
 import { NumericValue, toBigNumber, zeroBN, maxBN } from 'utils/formatters/number';
 
-export function getMintAmount(
-	targetCRatio: BigNumber,
-	stakeAmount: NumericValue,
-	SNXPrice: BigNumber
-): BigNumber {
+export function getMintAmount(targetCRatio: BN, stakeAmount: NumericValue, SNXPrice: BN): BN {
 	if (!stakeAmount || !targetCRatio || !SNXPrice) return toBigNumber(0);
-	return toBigNumber(stakeAmount).multipliedBy(targetCRatio).multipliedBy(SNXPrice);
+	return toBigNumber(stakeAmount).mul(targetCRatio).mul(SNXPrice);
 }
 
-export function getStakingAmount(
-	targetCRatio: BigNumber,
-	mintAmount: NumericValue,
-	SNXPrice: BigNumber
-): BigNumber {
+export function getStakingAmount(targetCRatio: BN, mintAmount: NumericValue, SNXPrice: BN): BN {
 	if (!mintAmount || !targetCRatio || !SNXPrice) return toBigNumber(0);
-	return toBigNumber(mintAmount).dividedBy(targetCRatio).dividedBy(SNXPrice);
+	return toBigNumber(mintAmount).div(targetCRatio).div(SNXPrice);
 }
 
-export function getTransferableAmountFromMint(
-	balance: BigNumber,
-	stakedValue: BigNumber
-): BigNumber {
+export function getTransferableAmountFromMint(balance: BN, stakedValue: BN): BN {
 	if (!balance || !stakedValue) return toBigNumber(0);
-	return maxBN(balance.minus(stakedValue), zeroBN);
+	return maxBN(balance.sub(stakedValue), zeroBN);
 }
 
 export function getTransferableAmountFromBurn(
 	amountToBurn: NumericValue,
-	debtEscrowBalance: BigNumber,
-	targetCRatio: BigNumber,
-	SNXPrice: BigNumber,
-	transferable: BigNumber
-): BigNumber {
+	debtEscrowBalance: BN,
+	targetCRatio: BN,
+	SNXPrice: BN,
+	transferable: BN
+): BN {
 	if (!amountToBurn) return toBigNumber(0);
-	return transferable.plus(
-		maxBN(
-			toBigNumber(amountToBurn)
-				.minus(debtEscrowBalance)
-				.dividedBy(targetCRatio)
-				.dividedBy(SNXPrice),
-			zeroBN
-		)
+	return transferable.add(
+		maxBN(toBigNumber(amountToBurn).sub(debtEscrowBalance).div(targetCRatio).div(SNXPrice), zeroBN)
 	);
 }
 
-export function sanitiseValue(value: BigNumber) {
-	if (value.isNegative() || value.isNaN() || !value.isFinite()) {
+export function sanitiseValue(value: BN) {
+	if (value.lt(zeroBN) || Number.isNaN(value.toNumber()) || !Number.isFinite(value.toNumber())) {
 		return zeroBN;
 	} else {
 		return value;

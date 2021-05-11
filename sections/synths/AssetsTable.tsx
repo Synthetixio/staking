@@ -2,7 +2,7 @@ import { FC, ReactNode, useMemo } from 'react';
 import { CellProps } from 'react-table';
 import styled from 'styled-components';
 import { Trans, useTranslation } from 'react-i18next';
-import BigNumber from 'bignumber.js';
+import BN from 'bn.js';
 import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
 
@@ -43,7 +43,7 @@ import Link from 'next/link';
 type AssetsTableProps = {
 	title: ReactNode;
 	assets: CryptoBalance[];
-	totalValue: BigNumber;
+	totalValue: BN;
 	isLoading: boolean;
 	isLoaded: boolean;
 	showConvert: boolean;

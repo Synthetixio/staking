@@ -3,7 +3,7 @@ import { useTranslation, Trans } from 'react-i18next';
 import { ethers } from 'ethers';
 import { Svg } from 'react-optimized-image';
 import { useRecoilValue } from 'recoil';
-import BigNumber from 'bignumber.js';
+import BN from 'bn.js';
 
 import { appReadyState } from 'store/app';
 import StructuredTab from 'components/StructuredTab';
@@ -16,7 +16,7 @@ import Success from 'assets/svg/app/success.svg';
 import { Transaction } from 'constants/network';
 import { normalizedGasPrice } from 'utils/network';
 import { CryptoCurrency, Synths } from 'constants/currency';
-import { formatNumber } from 'utils/formatters/number';
+import { formatNumber, zeroBN } from 'utils/formatters/number';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import synthetix from 'lib/synthetix';
 
@@ -62,9 +62,9 @@ type LPTabProps = {
 	tokenRewards: number | DualRewards;
 	allowance: number | null;
 	userBalance: number;
-	userBalanceBN: BigNumber;
+	userBalanceBN: BN;
 	staked: number;
-	stakedBN: BigNumber;
+	stakedBN: BN;
 	needsToSettle?: boolean;
 	secondTokenRate?: number;
 };
@@ -105,7 +105,7 @@ const LPTab: FC<LPTabProps> = ({
 			: undefined;
 
 	const exchangeRatesQuery = useExchangeRatesQuery();
-	const SNXRate = exchangeRatesQuery.data?.SNX ?? 0;
+	const SNXRate = exchangeRatesQuery.data?.SNX ?? zeroBN;
 
 	const tabData = useMemo(() => {
 		const commonStakeTabProps = {
@@ -371,7 +371,7 @@ const LPTab: FC<LPTabProps> = ({
 						icon={icon}
 						type={type}
 						tokenRewards={(tokenRewards as DualRewards).a}
-						SNXRate={SNXRate}
+						SNXRate={SNXRate.toNumber()}
 						secondTokenReward={(tokenRewards as DualRewards).b}
 						secondTokenKey={CryptoCurrency.DHT}
 						secondTokenRate={secondTokenRate}
@@ -398,7 +398,7 @@ const LPTab: FC<LPTabProps> = ({
 						icon={icon}
 						type={type}
 						tokenRewards={tokenRewards as number}
-						SNXRate={SNXRate}
+						SNXRate={SNXRate.toNumber()}
 					/>
 				</FlexDivCentered>
 			)}

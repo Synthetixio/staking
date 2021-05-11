@@ -2,7 +2,7 @@ import { useRecoilState, useSetRecoilState, useRecoilValue } from 'recoil';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import BigNumber from 'bignumber.js';
+import BN from 'bn.js';
 
 import Img, { Svg } from 'react-optimized-image';
 
@@ -20,8 +20,8 @@ import { isL2State } from 'store/wallet';
 import ButtonTile from '../ButtonTile';
 
 type BurnTilesProps = {
-	percentageTargetCRatio: BigNumber;
-	burnAmountToFixCRatio: BigNumber;
+	percentageTargetCRatio: BN;
+	burnAmountToFixCRatio: BN;
 };
 
 const burnIcon = <Svg src={BurnCircle} />;

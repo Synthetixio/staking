@@ -1,4 +1,4 @@
-import BigNumber from 'bignumber.js';
+import BN from 'bn.js';
 
 export type LiquidityPoolData = {
 	distribution: number;
@@ -8,11 +8,11 @@ export type LiquidityPoolData = {
 	periodFinish: number;
 	rewards: number;
 	staked: number;
-	stakedBN: BigNumber;
+	stakedBN: BN;
 	allowance: number;
 	duration: number;
 	userBalance: number;
-	userBalanceBN: BigNumber;
+	userBalanceBN: BN;
 	needsToSettle?: boolean;
 	liquidity?: number;
 };

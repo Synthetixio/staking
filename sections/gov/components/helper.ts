@@ -1,11 +1,12 @@
-import BigNumber from 'bignumber.js';
+import BN from 'bn.js';
 import snapshot from '@snapshot-labs/snapshot.js';
 import { getCurrentTimestampSeconds } from 'utils/formatters/date';
 import { ethers } from 'ethers';
+import { toBigNumber } from 'utils/formatters/number';
 
-export const quadraticWeighting = (value: BigNumber) => {
-	const scaledValue = value.multipliedBy(1e5);
-	return scaledValue.sqrt();
+export const quadraticWeighting = (value: BN) => {
+	const scaledValue = value.mul(toBigNumber(1e5));
+	return scaledValue.sqr();
 };
 
 export function getENSForAddresses(addresses: any[]) {

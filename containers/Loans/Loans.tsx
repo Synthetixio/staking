@@ -2,7 +2,7 @@ import { createContainer } from 'unstated-next';
 import { useMemo, useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { ethers } from 'ethers';
-import Big from 'bignumber.js';
+import BN from 'bn.js';
 
 import { renBTCToken } from 'contracts';
 import synthetix from 'lib/synthetix';
@@ -30,7 +30,7 @@ function Container() {
 
 	const [isLoadingLoans, setIsLoadingLoans] = useState(false);
 	const [loans, setLoans] = useState<Array<Loan>>([]);
-	const [minCRatios, setMinCRatios] = useState<Map<string, Big>>(new Map());
+	const [minCRatios, setMinCRatios] = useState<Map<string, BN>>(new Map());
 
 	const [
 		ethLoanContract,
@@ -95,7 +95,10 @@ function Container() {
 			if (isMounted) {
 				loanIndices.forEach(({ type, minCRatio }) => {
 					setMinCRatios((cratios) =>
-						cratios.set(type, toBigNumber(minCRatio.toString()).div(1e18).times(1e2))
+						cratios.set(
+							type,
+							toBigNumber(minCRatio.toString()).div(toBigNumber(1e18)).mul(toBigNumber(1e2))
+						)
 					);
 				});
 			}
@@ -146,7 +149,7 @@ function Container() {
 			return Promise.all(loanIndices.map(getLoan.bind(null, type, minCRatio)));
 		};
 
-		const getLoan = async (type: string, minCRatio: Big, loanIndex: number) => {
+		const getLoan = async (type: string, minCRatio: BN, loanIndex: number) => {
 			const loanStateContract = loanStateContracts[type];
 			return {
 				type,
@@ -306,11 +309,11 @@ function Container() {
 	]);
 
 	const [interestRate, setInterestRate] = useState(toBigNumber(0));
-	const [issueFeeRates, setIssueFeeRates] = useState<Record<string, Big>>({
+	const [issueFeeRates, setIssueFeeRates] = useState<Record<string, BN>>({
 		[LOAN_TYPE_ERC20]: toBigNumber(0),
 		[LOAN_TYPE_ETH]: toBigNumber(0),
 	});
-	const [interactionDelays, setInteractionDelays] = useState<Record<string, Big>>({
+	const [interactionDelays, setInteractionDelays] = useState<Record<string, BN>>({
 		[LOAN_TYPE_ERC20]: toBigNumber(0),
 		[LOAN_TYPE_ETH]: toBigNumber(0),
 	});
@@ -355,12 +358,14 @@ function Container() {
 			]);
 			if (isMounted) {
 				const perYr = SECONDS_IN_A_YR * 1e2 * (1 / 1e18);
-				setInterestRate(toBigNumber(borrowRate.toString()).multipliedBy(perYr));
+				setInterestRate(toBigNumber(borrowRate.toString()).mul(toBigNumber(perYr)));
 				setIssueFeeRates({
-					[LOAN_TYPE_ERC20]: toBigNumber(erc20BorrowIssueFeeRate.toString()).multipliedBy(
-						1e2 / 1e18
+					[LOAN_TYPE_ERC20]: toBigNumber(erc20BorrowIssueFeeRate.toString()).mul(
+						toBigNumber(1e2 / 1e18)
 					),
-					[LOAN_TYPE_ETH]: toBigNumber(ethBorrowIssueFeeRate.toString()).multipliedBy(1e2 / 1e18),
+					[LOAN_TYPE_ETH]: toBigNumber(ethBorrowIssueFeeRate.toString()).mul(
+						toBigNumber(1e2 / 1e18)
+					),
 				});
 				setInteractionDelays({
 					[LOAN_TYPE_ERC20]: erc20InteractionDelay,

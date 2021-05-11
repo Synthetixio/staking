@@ -41,37 +41,35 @@ const useCryptoBalances = () => {
 					{
 						currencyKey: ETH,
 						balance: ETHBalance,
-						usdBalance: ETHBalance ? ETHBalance.multipliedBy(exchangeRates[ETH]) : zeroBN,
+						usdBalance: ETHBalance ? ETHBalance.mul(exchangeRates[ETH]) : zeroBN,
 						synth: assetToSynth(ETH),
 					},
 					{
 						currencyKey: WETH,
 						balance: wETHBalance,
-						usdBalance: wETHBalance ? wETHBalance.multipliedBy(exchangeRates[ETH]) : zeroBN,
+						usdBalance: wETHBalance ? wETHBalance.mul(exchangeRates[ETH]) : zeroBN,
 						synth: assetToSynth(ETH),
 					},
 					{
 						currencyKey: SNX,
 						balance: SNXBalance,
-						usdBalance: SNXBalance ? SNXBalance.multipliedBy(exchangeRates[SNX]) : zeroBN,
+						usdBalance: SNXBalance ? SNXBalance.mul(exchangeRates[SNX]) : zeroBN,
 						synth: assetToSynth(ETH),
 					},
 					{
 						currencyKey: WBTC,
 						balance: wBTCBalance,
-						usdBalance: wBTCBalance ? wBTCBalance.multipliedBy(exchangeRates[Synths.sBTC]) : zeroBN,
+						usdBalance: wBTCBalance ? wBTCBalance.mul(exchangeRates[Synths.sBTC]) : zeroBN,
 						synth: assetToSynth(BTC),
 					},
 					{
 						currencyKey: RENBTC,
 						balance: renBTCBalance,
-						usdBalance: renBTCBalance
-							? renBTCBalance.multipliedBy(exchangeRates[Synths.sBTC])
-							: zeroBN,
+						usdBalance: renBTCBalance ? renBTCBalance.mul(exchangeRates[Synths.sBTC]) : zeroBN,
 						synth: assetToSynth(BTC),
 					},
-				].filter((cryptoBalance) => cryptoBalance.balance.gt(0)),
-				(balance) => balance.usdBalance.toNumber(),
+				].filter((cryptoBalance) => cryptoBalance.balance.gt(zeroBN)),
+				(balance) => Number(balance.usdBalance.toString()),
 				'desc'
 			);
 		}

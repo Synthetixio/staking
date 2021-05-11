@@ -1,9 +1,10 @@
 import { FC, useMemo, useState } from 'react';
-import BigNumber from 'bignumber.js';
+import BN from 'bn.js';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
+import { ethers } from 'ethers';
 
 import useSNXLockedValueQuery from 'queries/staking/useSNXLockedValueQuery';
 
@@ -38,11 +39,11 @@ enum View {
 }
 
 type IncentivesProps = {
-	tradingRewards: BigNumber;
-	stakingRewards: BigNumber;
-	totalRewards: BigNumber;
-	stakingAPR: number;
-	stakedAmount: number;
+	tradingRewards: BN;
+	stakingRewards: BN;
+	totalRewards: BN;
+	stakingAPR: BN;
+	stakedAmount: BN;
 	hasClaimed: boolean;
 };
 
@@ -119,7 +120,7 @@ const Incentives: FC<IncentivesProps> = ({
 							asset: CryptoCurrency.SNX,
 							ticker: CryptoCurrency.SNX,
 						},
-						rewards: stakingRewards.toNumber(),
+						rewards: Number(ethers.utils.formatEther(stakingRewards.toString())),
 						periodStarted: currentFeePeriodStarted.getTime(),
 						periodFinish: nextFeePeriodStarts.getTime(),
 						claimed: hasClaimed,

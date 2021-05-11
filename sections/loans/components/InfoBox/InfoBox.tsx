@@ -25,7 +25,7 @@ const InfoBox: React.FC = () => {
 
 	const [borrows, setBorrows] = React.useState<Array<any>>([]);
 	const borrowsOpenInterest = React.useMemo(
-		() => borrows.reduce((sum, stat) => sum.plus(stat.openInterest), toBigNumber(0)),
+		() => borrows.reduce((sum, stat) => sum.add(stat.openInterest), toBigNumber(0)),
 		[borrows]
 	);
 
@@ -63,8 +63,8 @@ const InfoBox: React.FC = () => {
 				exchangeRatesContract.rateAndInvalid(ethers.utils.formatBytes32String(currency)),
 			]);
 			const openInterestUSD = toBigNumber(openInterest.toString())
-				.dividedBy(1e18)
-				.multipliedBy(toBigNumber(assetUSDPrice.toString()).dividedBy(1e18));
+				.div(toBigNumber(1e18))
+				.mul(toBigNumber(assetUSDPrice.toString()).div(toBigNumber(1e18)));
 			return {
 				currency,
 				openInterest: openInterestUSD,

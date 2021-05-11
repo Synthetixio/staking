@@ -1,6 +1,7 @@
 import { useQuery, QueryConfig } from 'react-query';
 import { BigNumberish, ethers } from 'ethers';
 import { useRecoilValue } from 'recoil';
+import BN from 'bn.js';
 
 import synthetix from 'lib/synthetix';
 
@@ -9,8 +10,9 @@ import { CryptoCurrency, CurrencyKey } from 'constants/currency';
 import { iStandardSynth, synthToAsset } from 'utils/currencies';
 
 import { appReadyState } from 'store/app';
+import { toBigNumber } from 'utils/formatters/number';
 
-export type Rates = Record<CurrencyKey, number>;
+export type Rates = Record<CurrencyKey, BN>;
 
 type CurrencyRate = BigNumberish;
 type SynthRatesTuple = [string[], CurrencyRate[]];
@@ -38,7 +40,7 @@ const useExchangeRatesQuery = (options?: QueryConfig<Rates>) => {
 
 			synths.forEach((currencyKeyBytes32: CurrencyKey, idx: number) => {
 				const currencyKey = ethers.utils.parseBytes32String(currencyKeyBytes32);
-				const rate = Number(ethers.utils.formatEther(rates[idx]));
+				const rate = toBigNumber(rates[idx].toString());
 
 				exchangeRates[currencyKey] = rate;
 				// only interested in the standard synths (sETH -> ETH, etc)

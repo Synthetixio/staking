@@ -2,7 +2,7 @@ import { useQuery, QueryConfig } from 'react-query';
 import { ethers } from 'ethers';
 import { useRecoilValue } from 'recoil';
 import { orderBy } from 'lodash';
-import BigNumber from 'bignumber.js';
+import BN from 'bn.js';
 
 import synthetix from 'lib/synthetix';
 
@@ -12,7 +12,7 @@ import { CurrencyKey } from 'constants/currency';
 import { walletAddressState, isWalletConnectedState, networkState } from 'store/wallet';
 import { appReadyState } from 'store/app';
 
-import { toBigNumber } from 'utils/formatters/number';
+import { toBigNumber, zeroBN } from 'utils/formatters/number';
 import { CryptoBalance } from './types';
 
 export type SynthBalancesMap = Record<CurrencyKey, CryptoBalance>;
@@ -22,7 +22,7 @@ type SynthBalancesTuple = [CurrencyKey[], number[], number[]];
 export type Balances = {
 	balancesMap: SynthBalancesMap;
 	balances: CryptoBalance[];
-	totalUSDBalance: BigNumber;
+	totalUSDBalance: BN;
 };
 
 const useSynthsBalancesQuery = (options?: QueryConfig<Balances>) => {
@@ -46,12 +46,12 @@ const useSynthsBalancesQuery = (options?: QueryConfig<Balances>) => {
 			let totalUSDBalance = toBigNumber(0);
 
 			currencyKeys.forEach((currencyKey: string, idx: number) => {
-				const balance = toBigNumber(ethers.utils.formatEther(synthsBalances[idx]));
+				const balance = toBigNumber(synthsBalances[idx]);
 
 				// discard empty balances
-				if (balance.gt(0)) {
+				if (balance.gt(zeroBN)) {
 					const synthName = ethers.utils.parseBytes32String(currencyKey) as CurrencyKey;
-					const usdBalance = toBigNumber(ethers.utils.formatEther(synthsUSDBalances[idx]));
+					const usdBalance = toBigNumber(synthsUSDBalances[idx]);
 
 					balancesMap[synthName] = {
 						currencyKey: synthName,
@@ -59,7 +59,7 @@ const useSynthsBalancesQuery = (options?: QueryConfig<Balances>) => {
 						usdBalance,
 					};
 
-					totalUSDBalance = totalUSDBalance.plus(usdBalance);
+					totalUSDBalance = totalUSDBalance.add(usdBalance);
 				}
 			});
 
@@ -67,7 +67,7 @@ const useSynthsBalancesQuery = (options?: QueryConfig<Balances>) => {
 				balancesMap,
 				balances: orderBy(
 					Object.values(balancesMap),
-					(balance) => balance.usdBalance.toNumber(),
+					(balance) => Number(balance.usdBalance),
 					'desc'
 				),
 				totalUSDBalance,

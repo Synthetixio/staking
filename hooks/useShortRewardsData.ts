@@ -15,7 +15,8 @@ type SRData = {
 
 const useShortRewardsData = (): SRData => {
 	const exchangeRatesQuery = useExchangeRatesQuery();
-	const SNXRate = exchangeRatesQuery.data?.SNX ?? 0;
+	// const SNXRate = exchangeRatesQuery.data?.SNX.toNumber() ?? 0;
+	const SNXRate = 20;
 	const usesBTCRewards = useSBTCShortsQuery();
 	const usesETHRewards = useSETHShortsQuery();
 

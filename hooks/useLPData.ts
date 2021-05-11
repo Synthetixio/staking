@@ -31,7 +31,7 @@ type LPData = {
 
 const useLPData = (): LPData => {
 	const exchangeRatesQuery = useExchangeRatesQuery();
-	const SNXRate = exchangeRatesQuery.data?.SNX ?? 0;
+	const SNXRate = 20;
 	const useiETHPool = useIETHPoolQuery_1();
 	const useiBTCPool = useIBTCPoolQuery_1();
 	const usesUSDPool = useCurveSusdPoolQuery();

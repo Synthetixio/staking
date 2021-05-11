@@ -1,6 +1,6 @@
 import { useQuery, QueryConfig } from 'react-query';
 import { useRecoilValue } from 'recoil';
-import BigNumber from 'bignumber.js';
+import BN from 'bn.js';
 
 import synthetix from 'lib/synthetix';
 
@@ -13,14 +13,14 @@ import { toBigNumber, zeroBN } from 'utils/formatters/number';
 
 export type SynthTotalSupply = {
 	name: CurrencyKey;
-	value: BigNumber;
-	totalSupply: BigNumber;
-	poolProportion: BigNumber;
+	value: BN;
+	totalSupply: BN;
+	poolProportion: BN;
 };
 
 export type SynthsTotalSupplyData = {
 	supplyData: { [name: string]: SynthTotalSupply };
-	totalValue: BigNumber;
+	totalValue: BN;
 };
 
 const useSynthsTotalSupplyQuery = (options?: QueryConfig<SynthsTotalSupplyData>) => {
@@ -65,9 +65,9 @@ const useSynthsTotalSupplyQuery = (options?: QueryConfig<SynthsTotalSupplyData>)
 
 				let combinedWithShortsValue = value;
 				if (name === Synths.iETH) {
-					combinedWithShortsValue = combinedWithShortsValue.plus(ethShorts.times(ethPrice));
+					combinedWithShortsValue = combinedWithShortsValue.add(ethShorts.mul(ethPrice));
 				} else if (name === Synths.iBTC) {
-					combinedWithShortsValue = combinedWithShortsValue.plus(btcShorts.times(btcPrice));
+					combinedWithShortsValue = combinedWithShortsValue.add(btcShorts.mul(btcPrice));
 				}
 				supplyData.push({
 					name,
@@ -75,13 +75,13 @@ const useSynthsTotalSupplyQuery = (options?: QueryConfig<SynthsTotalSupplyData>)
 					value: combinedWithShortsValue,
 					poolProportion: zeroBN, // true value to be computed in next step
 				});
-				totalValue = totalValue.plus(value);
+				totalValue = totalValue.add(value);
 			}
 
 			// Add proportion data to each SynthTotalSupply object
 			const supplyDataWithProportions = supplyData.map((datum) => ({
 				...datum,
-				poolProportion: totalValue.isGreaterThan(0) ? datum.value.dividedBy(totalValue) : zeroBN,
+				poolProportion: totalValue.gt(zeroBN) ? datum.value.div(totalValue) : zeroBN,
 			}));
 
 			const supplyDataMap: { [name: string]: SynthTotalSupply } = {};

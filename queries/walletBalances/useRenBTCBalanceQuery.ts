@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useQuery, QueryConfig } from 'react-query';
 import { useRecoilValue } from 'recoil';
-import BigNumber from 'bignumber.js';
+import BN from 'bn.js';
 import { ethers } from 'ethers';
 
 import QUERY_KEYS from 'constants/queryKeys';
@@ -17,7 +17,7 @@ import Connector from 'containers/Connector';
 import { toBigNumber } from 'utils/formatters/number';
 import { renBTCToken } from 'contracts';
 
-const useRenBTCBalanceQuery = (options?: QueryConfig<BigNumber>) => {
+const useRenBTCBalanceQuery = (options?: QueryConfig<BN>) => {
 	const { provider } = Connector.useContainer();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
@@ -30,7 +30,7 @@ const useRenBTCBalanceQuery = (options?: QueryConfig<BigNumber>) => {
 		[provider, network]
 	);
 
-	return useQuery<BigNumber>(
+	return useQuery<BN>(
 		QUERY_KEYS.WalletBalances.RenBTC(walletAddress ?? '', network?.id!),
 		async () => {
 			if (!contract) return toBigNumber(0);

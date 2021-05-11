@@ -133,7 +133,7 @@ const useCurveSusdPoolQuery = (options?: QueryConfig<CurveData>) => {
 				curveRewards,
 				curveStaked,
 				curveAllowance,
-			].map((data) => Number(toBigNumber(data.toString()).div(1e18)));
+			].map((data) => Number(toBigNumber(data.toString()).div(toBigNumber(1e18))));
 
 			const curveRate =
 				(((inflationRate * relativeWeight * 31536000) / workingSupply) * 0.4) / curveSusdTokenPrice;

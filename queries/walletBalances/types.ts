@@ -1,9 +1,9 @@
-import BigNumber from 'bignumber.js';
+import BN from 'bn.js';
 import { CurrencyKey } from 'constants/currency';
 
 export type CryptoBalance = {
 	currencyKey: CurrencyKey;
-	balance: BigNumber;
-	usdBalance: BigNumber;
+	balance: BN;
+	usdBalance: BN;
 	synth?: string;
 };

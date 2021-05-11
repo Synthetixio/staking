@@ -25,6 +25,7 @@ const PriceItem: FC<PriceItemProps> = ({ currencyKey, data }) => {
 
 	const exchangeRates = exchangeRatesQuery.data ?? null;
 	const price = exchangeRates && exchangeRates[currencyKey];
+
 	const trendLinePositive = data.length > 0 ? data[data.length - 1].value >= data[0].value : false;
 
 	return (

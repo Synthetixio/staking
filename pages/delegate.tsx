@@ -9,7 +9,7 @@ import Main from 'sections/delegate/index';
 
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import { formatFiatCurrency, formatPercent, toBigNumber } from 'utils/formatters/number';
+import { formatFiatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 
 type DelegatePageProps = {};
 
@@ -29,9 +29,7 @@ const DelegatePage: FC<DelegatePageProps> = () => {
 				<StakedValue
 					title={t('common.stat-box.staked-value')}
 					value={formatFiatCurrency(
-						getPriceAtCurrentRate(
-							stakedCollateralValue.isNaN() ? toBigNumber(0) : stakedCollateralValue
-						),
+						getPriceAtCurrentRate(!stakedCollateralValue ? zeroBN : stakedCollateralValue),
 						{
 							sign: selectedPriceCurrency.sign,
 						}
@@ -44,12 +42,9 @@ const DelegatePage: FC<DelegatePageProps> = () => {
 				/>
 				<ActiveDebt
 					title={t('common.stat-box.active-debt')}
-					value={formatFiatCurrency(
-						getPriceAtCurrentRate(debtBalance.isNaN() ? toBigNumber(0) : debtBalance),
-						{
-							sign: selectedPriceCurrency.sign,
-						}
-					)}
+					value={formatFiatCurrency(getPriceAtCurrentRate(!debtBalance ? zeroBN : debtBalance), {
+						sign: selectedPriceCurrency.sign,
+					})}
 				/>
 			</StatsSection>
 			<LineSpacer />

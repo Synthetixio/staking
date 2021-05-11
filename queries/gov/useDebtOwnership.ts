@@ -1,5 +1,6 @@
 import { useQuery, QueryConfig } from 'react-query';
 import { useRecoilValue } from 'recoil';
+import BN from 'bn.js';
 
 import synthetix from 'lib/synthetix';
 
@@ -8,15 +9,14 @@ import QUERY_KEYS from 'constants/queryKeys';
 import { isWalletConnectedState, networkState, walletAddressState } from 'store/wallet';
 import { appReadyState } from 'store/app';
 import { toBigNumber } from 'utils/formatters/number';
-import BigNumber from 'bignumber.js';
 
-const useDebtOwnership = (block?: number | null, options?: QueryConfig<BigNumber>) => {
+const useDebtOwnership = (block?: number | null, options?: QueryConfig<BN>) => {
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const network = useRecoilValue(networkState);
 	const isAppReady = useRecoilValue(appReadyState);
 
-	return useQuery<BigNumber>(
+	return useQuery<BN>(
 		QUERY_KEYS.Gov.DebtOwnership(walletAddress ?? '', network?.id!, block),
 		async () => {
 			const {

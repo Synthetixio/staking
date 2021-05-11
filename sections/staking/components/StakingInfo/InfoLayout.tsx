@@ -1,6 +1,6 @@
 import { FC, useMemo } from 'react';
 import styled from 'styled-components';
-import BigNumber from 'bignumber.js';
+import BN from 'bn.js';
 import { Trans, useTranslation } from 'react-i18next';
 import { Svg } from 'react-optimized-image';
 
@@ -28,17 +28,17 @@ import { StakingPanelType } from 'store/staking';
 
 type BarChartData = {
 	title: string;
-	value: BigNumber;
-	changedValue: BigNumber;
-	percentage: BigNumber;
-	changedPercentage: BigNumber;
+	value: BN;
+	changedValue: BN;
+	percentage: BN;
+	changedPercentage: BN;
 	currencyKey: CryptoCurrency;
 };
 
 type RowData = {
 	title: string;
-	value: BigNumber;
-	changedValue: BigNumber;
+	value: BN;
+	changedValue: BN;
 	currencyKey: CryptoCurrency | string;
 };
 
@@ -49,7 +49,7 @@ type StakingInfo = {
 
 type InfoLayoutProps = {
 	stakingInfo: StakingInfo;
-	collateral: BigNumber;
+	collateral: BN;
 	isInputEmpty: boolean;
 	infoType: StakingPanelType;
 };
@@ -127,10 +127,14 @@ const InfoLayout: FC<InfoLayoutProps> = ({ stakingInfo, collateral, isInputEmpty
 								<>
 									<StyledArrowRight src={ArrowRightIcon} />
 									<RowValue>
-										{formatCurrency(currencyKey, !changedValue.isNaN() ? changedValue : 0, {
-											currencyKey: currencyKey,
-											decimals: 2,
-										})}
+										{formatCurrency(
+											currencyKey,
+											!Number.isNaN(changedValue.toNumber()) ? changedValue : zeroBN,
+											{
+												currencyKey: currencyKey,
+												decimals: 2,
+											}
+										)}
 									</RowValue>
 								</>
 							)}

@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 
-import { formatPercent } from 'utils/formatters/number';
+import { formatBNPercent } from 'utils/formatters/number';
 
 import { BarStatBox, BarHeaderSection, BarTitle, BarValue, StyledProgressBar } from './common';
 
@@ -21,17 +21,15 @@ const CRatioBarStats: FC = () => {
 		<StyledBarStatBox>
 			<BarHeaderSection>
 				<BarTitle>{t('sidenav.bars.c-ratio')}</BarTitle>
-				<BarValue>{formatPercent(percentageCurrentCRatio)}</BarValue>
+				<BarValue>{formatBNPercent(percentageCurrentCRatio)}</BarValue>
 			</BarHeaderSection>
 			<StyledProgressBar
-				percentage={
-					percentCurrentCRatioOfTarget.isNaN() ? 0 : percentCurrentCRatioOfTarget.toNumber()
-				}
+				percentage={percentCurrentCRatioOfTarget ? Number(percentCurrentCRatioOfTarget) / 1e18 : 0}
 				variant="blue-pink"
 			/>
 			<BarHeaderSection>
 				<BarTitle>{t('sidenav.bars.t-ratio')}</BarTitle>
-				<StyledBarValue>{formatPercent(percentageTargetCRatio)}</StyledBarValue>
+				<StyledBarValue>{formatBNPercent(percentageTargetCRatio)}</StyledBarValue>
 			</BarHeaderSection>
 		</StyledBarStatBox>
 	);

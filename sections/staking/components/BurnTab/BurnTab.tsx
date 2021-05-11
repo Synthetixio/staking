@@ -126,7 +126,7 @@ const BurnTab: React.FC = () => {
 						utils: { parseEther },
 					} = synthetix.js!;
 
-					const maxBurnAmount = debtBalance.isGreaterThan(sUSDBalance)
+					const maxBurnAmount = debtBalance.gt(sUSDBalance)
 						? toBigNumber(sUSDBalance)
 						: debtBalance;
 
@@ -137,7 +137,7 @@ const BurnTab: React.FC = () => {
 					)
 						throw new Error(t('staking.actions.burn.action.error.insufficient'));
 
-					if (toBigNumber(quoteAmount).isGreaterThan(ethBalance)) {
+					if (toBigNumber(quoteAmount).gt(ethBalance)) {
 						throw new Error(t('staking.actions.burn.action.error.insufficient-eth-1inch'));
 					}
 
@@ -312,12 +312,10 @@ const BurnTab: React.FC = () => {
 		let sUSDNeededToBurn;
 
 		/* If a user has more sUSD than the debt balance, the max burn amount is their debt balance, else it is just the balance they have */
-		const maxBurnAmount = debtBalance.isGreaterThan(sUSDBalance)
-			? toBigNumber(sUSDBalance)
-			: debtBalance;
+		const maxBurnAmount = debtBalance.gt(sUSDBalance) ? toBigNumber(sUSDBalance) : debtBalance;
 
 		const burnAmountToFixCRatio = toBigNumber(
-			Math.max(debtBalance.minus(issuableSynths).toNumber(), 0)
+			Math.max(debtBalance.sub(issuableSynths).toNumber(), 0)
 		);
 
 		switch (burnType) {
@@ -330,7 +328,7 @@ const BurnTab: React.FC = () => {
 				isLocked = true;
 				break;
 			case BurnActionType.TARGET:
-				const calculatedTargetBurn = Math.max(debtBalance.minus(issuableSynths).toNumber(), 0);
+				const calculatedTargetBurn = Math.max(debtBalance.sub(issuableSynths).toNumber(), 0);
 				onBurnChange(calculatedTargetBurn.toString());
 				handleSubmit = () => {
 					handleBurn(true);

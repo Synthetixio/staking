@@ -7,8 +7,9 @@ import useSynthsTotalSupplyQuery from 'queries/synths/useSynthsTotalSupplyQuery'
 import PieChart from 'components/PieChart';
 import DebtPoolTable from '../DebtPoolTable';
 import colors from 'styles/theme/colors';
+import { toBigNumber, zeroBN } from 'utils/formatters/number';
 
-const MIN_PERCENT_FOR_PIE_CHART = 0.03;
+const MIN_PERCENT_FOR_PIE_CHART = toBigNumber(0.03);
 
 const MUTED_COLORS = [
 	colors.mutedBlue,
@@ -38,7 +39,7 @@ const BRIGHT_COLORS = [
 ];
 
 const synthDataSortFn = (a: SynthTotalSupply, b: SynthTotalSupply) =>
-	a.value.isLessThan(b.value) ? 1 : -1;
+	a.value.lt(b.value) ? 1 : -1;
 
 type DebtPieChartProps = {
 	data: SynthsTotalSupplyData;
@@ -53,7 +54,7 @@ const SynthsPieChart: FC<DebtPieChartProps> = () => {
 		const sortedData = Object.values(supplyData).sort(synthDataSortFn);
 
 		const cutoffIndex = sortedData.findIndex((synth) =>
-			synth.poolProportion.isLessThan(MIN_PERCENT_FOR_PIE_CHART)
+			synth.poolProportion.lt(MIN_PERCENT_FOR_PIE_CHART)
 		);
 
 		const topNSynths = sortedData.slice(0, cutoffIndex);
@@ -63,13 +64,13 @@ const SynthsPieChart: FC<DebtPieChartProps> = () => {
 			const remainingSupply = { ...remaining[0] };
 			remainingSupply.name = 'Other';
 			for (const data of remaining.slice(1)) {
-				remainingSupply.value = remainingSupply.value.plus(data.value);
+				remainingSupply.value = remainingSupply.value.add(data.value);
 			}
-			remainingSupply.poolProportion = remainingSupply.value.div(totalSupply?.totalValue ?? 0);
+			remainingSupply.poolProportion = remainingSupply.value.div(totalSupply?.totalValue ?? zeroBN);
 			topNSynths.push(remainingSupply);
 		}
 		return topNSynths
-			.sort((a, b) => (a.value.isLessThan(b.value) ? 1 : -1))
+			.sort((a, b) => (a.value.lt(b.value) ? 1 : -1))
 			.map((supply, index) => ({
 				...supply,
 				value: supply.value.toNumber(),

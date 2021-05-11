@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { Svg } from 'react-optimized-image';
 import { useRecoilValue } from 'recoil';
 import { Trans, useTranslation } from 'react-i18next';
+import BN from 'bn.js';
 
 import NavigationBack from 'assets/svg/app/navigation-back.svg';
 import Logo1Inch from 'assets/svg/providers/1inch.svg';
@@ -38,11 +39,10 @@ import {
 } from 'styles/common';
 import { InputContainer, InputLocked } from '../common';
 import { Transaction, GasLimitEstimate } from 'constants/network';
-import { formatCurrency, formatNumber, zeroBN } from 'utils/formatters/number';
+import { formatCurrency, formatNumber, zeroBN, maxBN } from 'utils/formatters/number';
 import { getStakingAmount } from '../helper';
 import { CryptoCurrency, Synths } from 'constants/currency';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
-import BigNumber from 'bignumber.js';
 import { isWalletConnectedState } from 'store/wallet';
 import Connector from 'containers/Connector';
 import { BurnActionType, burnTypeState } from 'store/staking';
@@ -51,7 +51,7 @@ import Currency from 'components/Currency';
 
 type StakingInputProps = {
 	onSubmit: () => void;
-	inputValue: BigNumber;
+	inputValue: BN;
 	isLocked: boolean;
 	isMint: boolean;
 	onBack: Function;
@@ -64,8 +64,8 @@ type StakingInputProps = {
 	txHash: string | null;
 	transactionState: Transaction;
 	setTransactionState: (tx: Transaction) => void;
-	maxBurnAmount?: BigNumber;
-	burnAmountToFixCRatio?: BigNumber;
+	maxBurnAmount?: BN;
+	burnAmountToFixCRatio?: BN;
 	etherNeededToBuy?: string;
 	sUSDNeededToBuy?: string;
 	sUSDNeededToBurn?: string;
@@ -112,10 +112,10 @@ const StakingInput: React.FC<StakingInputProps> = ({
 	 * @param mintInput Amount to mint
 	 */
 	const stakeInfo = useCallback(
-		(mintInput: BigNumber) =>
+		(mintInput: BN) =>
 			formatCurrency(
 				stakingCurrencyKey,
-				getStakingAmount(targetCRatio, mintInput.isNaN() ? 0 : mintInput, SNXRate),
+				getStakingAmount(targetCRatio, Number.isNaN(mintInput.toNumber()) ? 0 : mintInput, SNXRate),
 				{
 					currencyKey: stakingCurrencyKey,
 				}
@@ -125,7 +125,7 @@ const StakingInput: React.FC<StakingInputProps> = ({
 
 	const formattedInput = formatCurrency(
 		synthCurrencyKey,
-		inputValue.isNaN() ? zeroBN : inputValue,
+		Number.isNaN(inputValue.toNumber()) ? zeroBN : inputValue,
 		{
 			currencyKey: synthCurrencyKey,
 		}
@@ -154,7 +154,7 @@ const StakingInput: React.FC<StakingInputProps> = ({
 			burnType === BurnActionType.TARGET &&
 			maxBurnAmount != null &&
 			burnAmountToFixCRatio != null &&
-			burnAmountToFixCRatio.isGreaterThan(maxBurnAmount)
+			burnAmountToFixCRatio.gt(maxBurnAmount)
 		) {
 			return (
 				<StyledCTA variant="primary" size="lg" disabled={true} style={{ padding: 0 }}>
@@ -207,12 +207,8 @@ const StakingInput: React.FC<StakingInputProps> = ({
 	]);
 
 	const equivalentSNXAmount = useMemo(() => {
-		const calculatedTargetBurn = Math.max(debtBalance.minus(issuableSynths).toNumber(), 0);
-		if (
-			!isMint &&
-			currentCRatio.isGreaterThan(targetCRatio) &&
-			inputValue.isLessThanOrEqualTo(calculatedTargetBurn)
-		) {
+		const calculatedTargetBurn = maxBN(debtBalance.sub(issuableSynths), zeroBN);
+		if (!isMint && currentCRatio.gt(targetCRatio) && inputValue.lte(calculatedTargetBurn)) {
 			return stakeInfo(zeroBN);
 		} else {
 			return stakeInfo(inputValue);
@@ -306,7 +302,7 @@ const StakingInput: React.FC<StakingInputProps> = ({
 							<StyledInput
 								type="number"
 								maxLength={12}
-								value={inputValue.isNaN() ? '0' : inputValue.toString()}
+								value={Number.isNaN(inputValue.toNumber()) ? '0' : inputValue.toString()}
 								placeholder="0"
 								onChange={(e) => onInputChange(e.target.value)}
 								disabled={

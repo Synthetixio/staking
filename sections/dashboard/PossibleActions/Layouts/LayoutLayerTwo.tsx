@@ -25,7 +25,7 @@ const LayoutLayerTwo: FC = () => {
 	const { currentCRatio, targetCRatio } = useStakingCalculations();
 
 	const gridItems: GridBoxProps[] = useMemo(() => {
-		const aboveTargetCRatio = currentCRatio.isLessThanOrEqualTo(targetCRatio);
+		const aboveTargetCRatio = currentCRatio.lte(targetCRatio);
 		return [
 			{
 				gridLocations: ['col-1', 'col-2', 'row-1', 'row-4'],

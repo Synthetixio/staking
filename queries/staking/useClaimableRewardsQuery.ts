@@ -1,16 +1,16 @@
 import { QueryConfig, useQuery } from 'react-query';
 import synthetix from 'lib/synthetix';
+import BN from 'bn.js';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import { useRecoilValue } from 'recoil';
 import { isWalletConnectedState, networkState, walletAddressState } from 'store/wallet';
 import { appReadyState } from 'store/app';
-import BigNumber from 'bignumber.js';
 import { toBigNumber } from 'utils/formatters/number';
 
 type AvailableFees = {
-	tradingRewards: BigNumber;
-	stakingRewards: BigNumber;
+	tradingRewards: BN;
+	stakingRewards: BN;
 };
 
 const useClaimableRewards = (options?: QueryConfig<AvailableFees>) => {

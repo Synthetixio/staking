@@ -3,7 +3,7 @@ import { useRecoilValue } from 'recoil';
 import { useTranslation } from 'react-i18next';
 import { ethers } from 'ethers';
 import { useRouter } from 'next/router';
-import Big from 'bignumber.js';
+import BN from 'bn.js';
 
 import { isWalletConnectedState, walletAddressState } from 'store/wallet';
 import Connector from 'containers/Connector';
@@ -78,10 +78,10 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 	}, [debtAmountNumber, debtDecimals]);
 
 	const [collateralAmountNumber, setCollateralAmount] = useState<string>('');
-	const [minCollateralAmount, setMinCollateralAmount] = useState<Big>(toBigNumber(0));
+	const [minCollateralAmount, setMinCollateralAmount] = useState<BN>(toBigNumber(0));
 	const [collateralAsset, setCollateralAsset] = useState<string>('');
 	const [collateralAssets, setCollateralAssets] = useState<Array<string>>([]);
-	const [collateralBalance, setCollateralBalance] = useState<Big>(toBigNumber(0));
+	const [collateralBalance, setCollateralBalance] = useState<BN>(toBigNumber(0));
 
 	const collateralDecimals = collateralAsset === 'renBTC' ? 8 : 18; // todo
 	const collateralAmount = useMemo(() => {
@@ -129,7 +129,8 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 	const [error, setError] = useState<string | null>(null);
 
 	const hasLowCRatio = useMemo(
-		() => !collateralAmount.isZero() && !debtAmount.isZero() && cratio.lt(SAFE_MIN_CRATIO),
+		() =>
+			!collateralAmount.isZero() && !debtAmount.isZero() && cratio.lt(toBigNumber(SAFE_MIN_CRATIO)),
 		[collateralAmount, debtAmount, cratio]
 	);
 
@@ -255,7 +256,7 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 			const allowance = toBigNumber(
 				await collateralContract.allowance(address, loanContractAddress)
 			);
-			setIsApproved(allowance.gte(collateralAmount.toString()));
+			setIsApproved(allowance.gte(collateralAmount));
 		} catch {
 		} finally {
 			setTxModalOpen(false);
@@ -314,9 +315,9 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 			if (!loanContract) {
 				return setMinCollateralAmount(toBigNumber(0));
 			}
-			const minCollateralAmount = toBigNumber(
-				(await loanContract.minCollateral()).toString()
-			).dividedBy(Math.pow(10, 18 - collateralDecimals));
+			const minCollateralAmount = toBigNumber((await loanContract.minCollateral()).toString()).div(
+				toBigNumber(10).pow(toBigNumber(18).sub(toBigNumber(collateralDecimals)))
+			);
 			if (isMounted) setMinCollateralAmount(minCollateralAmount);
 		};
 		load();
@@ -344,10 +345,10 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 				getExchangeRatesForCurrencies(exchangeRates, debtAsset, Synths.sUSD)
 			);
 			const cratio = collateralAmount
-				.multipliedBy(collateralUSDPrice)
-				.dividedBy(Math.pow(10, collateralDecimals))
-				.multipliedBy(100)
-				.dividedBy(debtUSDPrice.multipliedBy(debtAmount).dividedBy(Math.pow(10, debtDecimals)));
+				.mul(collateralUSDPrice)
+				.div(toBigNumber(10).pow(toBigNumber(collateralDecimals)))
+				.mul(toBigNumber(100))
+				.div(debtUSDPrice.mul(debtAmount).div(toBigNumber(10).pow(toBigNumber(debtDecimals))));
 			if (isMounted) setCRatio(cratio);
 		};
 		load();
