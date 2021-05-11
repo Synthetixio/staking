@@ -163,6 +163,9 @@ const useProposal = (spaceKey: SPACE_KEY, hash: string, options?: QueryConfig<Pr
 		},
 		{
 			enabled: isAppReady && spaceKey,
+			refetchInterval: false,
+			refetchOnWindowFocus: false,
+			refetchOnMount: false,
 			...options,
 		}
 	);
