@@ -71,7 +71,7 @@ const Container = styled(FlexDivCol)`
 const Title = styled.div`
 	display: flex;
 	align-items: center;
-	color: white;
+	color: ${(props) => props.theme.colors.blue};
 	cursor: pointer;
 	font-family: ${(props) => props.theme.fonts.condensedMedium};
 	font-size: 12px;
