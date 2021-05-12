@@ -7,7 +7,7 @@ import { DESKTOP_SIDE_NAV_WIDTH, DESKTOP_BODY_PADDING } from 'constants/ui';
 import ROUTES from 'constants/routes';
 import NotificationContainer from 'constants/NotificationContainer';
 import { SPACE_KEY } from 'constants/snapshot';
-import UIContainer from 'containers/UI';
+// import UIContainer from 'containers/UI';
 import useProposals from 'queries/gov/useProposals';
 import { NotificationTemplate, userNotificationState } from 'store/ui';
 import media from 'styles/media';
@@ -27,10 +27,10 @@ const AppLayout: FC<AppLayoutProps> = ({ children }) => {
 	const isMainnet = useRecoilValue(isMainnetState);
 	const councilProposals = useProposals(SPACE_KEY.COUNCIL);
 	const setNotificationState = useSetRecoilState(userNotificationState);
-	const { showMobileSideNav, closeMobileSideNav } = UIContainer.useContainer();
+	// const { showMobileSideNav, closeMobileSideNav } = UIContainer.useContainer();
 
-	const [touchStart, setTouchStart] = useState(0);
-	const [touchEnd, setTouchEnd] = useState(0);
+	// const [touchStart, setTouchStart] = useState(0);
+	// const [touchEnd, setTouchEnd] = useState(0);
 
 	useEffect(() => {
 		if (!isL2 && router.pathname === ROUTES.Withdraw.Home) {
@@ -79,33 +79,37 @@ const AppLayout: FC<AppLayoutProps> = ({ children }) => {
 		}
 	}, [councilProposals, setNotificationState, isL2]);
 
-	const onTouchStart = (e: any) => {
-		setTouchStart(e.targetTouches[0].clientX);
-	};
+	// const onTouchStart = (e: any) => {
+	// 	setTouchStart(e.targetTouches[0].clientX);
+	// };
 
-	const onTouchMove = (e: any) => {
-		setTouchEnd(e.targetTouches[0].clientX);
-	};
+	// const onTouchMove = (e: any) => {
+	// 	setTouchEnd(e.targetTouches[0].clientX);
+	// };
 
-	const onTouchEnd = () => {
-		if (touchStart - touchEnd > 150) {
-			// left swipe
-			closeMobileSideNav();
-		}
+	// const onTouchEnd = () => {
+	// 	if (touchStart - touchEnd > 150) {
+	// 		// left swipe
+	// 		closeMobileSideNav();
+	// 	}
 
-		if (touchStart - touchEnd < -150) {
-			// right swipe
-			showMobileSideNav();
-		}
-	};
+	// 	if (touchStart - touchEnd < -150) {
+	// 		// right swipe
+	// 		showMobileSideNav();
+	// 	}
+	// };
 
 	return (
 		<div
-			{...{
+			{
+				...{
+					/*
 				onTouchStart,
 				onTouchMove,
 				onTouchEnd,
-			}}
+				*/
+				}
+			}
 		>
 			<SideNav />
 			<Header />
