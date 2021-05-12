@@ -15,6 +15,7 @@ import { FormLabel } from './common';
 type MaxBalanceProps = {
 	balance: BigNumber;
 	onSetMaxAmount: () => void;
+	label?: string;
 };
 
 type AssetInputProps = {
@@ -27,14 +28,19 @@ type AssetInputProps = {
 	onSetMaxAmount: () => void;
 	selectDisabled?: boolean;
 	inputDisabled?: boolean;
+	balanceLabel?: string;
 };
 
-const Balance: FC<MaxBalanceProps> = ({ balance, onSetMaxAmount }) => {
+const Balance: FC<MaxBalanceProps> = ({
+	balance,
+	onSetMaxAmount,
+	label = 'balance.input-label',
+}) => {
 	const { t } = useTranslation();
 	return (
 		<BalanceContainer>
 			<BalanceAmount>
-				{t('balance.input-label')} {formatNumber(balance)}
+				{t(label)} {formatNumber(balance)}
 			</BalanceAmount>
 			<MaxButton onClick={onSetMaxAmount}>{t('balance.max')}</MaxButton>
 		</BalanceContainer>
@@ -43,6 +49,7 @@ const Balance: FC<MaxBalanceProps> = ({ balance, onSetMaxAmount }) => {
 
 const AssetInput: FC<AssetInputProps> = ({
 	label,
+	balanceLabel,
 	assets,
 	asset,
 	setAsset,
@@ -97,7 +104,7 @@ const AssetInput: FC<AssetInputProps> = ({
 				/>
 			</AmountContainer>
 
-			<Balance {...{ balance, onSetMaxAmount }} />
+			<Balance {...{ balance, onSetMaxAmount, label: balanceLabel }} />
 		</Container>
 	);
 };

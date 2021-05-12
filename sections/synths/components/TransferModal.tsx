@@ -121,7 +121,7 @@ const TransferModal: FC<TransferModalProps> = ({
 	};
 
 	const renderButton = () => {
-		if (!amount) {
+		if (!amount || !Number(amount)) {
 			return (
 				<StyledButtonTransaction size="lg" variant="primary" disabled={true}>
 					{t('synths.transfer.button.no-amount')}
@@ -160,6 +160,7 @@ const TransferModal: FC<TransferModalProps> = ({
 					<InputsContainer>
 						<AssetInput
 							label="synths.transfer.input-label"
+							balanceLabel="synths.transfer.balance-label"
 							assets={assets}
 							asset={currentAsset}
 							setAsset={setAsset}

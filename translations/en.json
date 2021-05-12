@@ -908,6 +908,7 @@
 		"transfer": {
 			"modal-title": "Transfer to another wallet",
 			"input-label": "Transfer",
+			"balance-label": "Transferrable balance:",
 			"button": {
 				"no-amount": "Enter an amount to transfer",
 				"no-address": "Enter an address",
