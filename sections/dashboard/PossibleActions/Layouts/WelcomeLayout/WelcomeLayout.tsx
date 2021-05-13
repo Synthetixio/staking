@@ -85,6 +85,10 @@ const StyledContainer = styled(Container)`
 		grid-template-columns: 1fr 1fr;
 		grid-template-rows: 2fr 1fr 1fr;
 	`}
+
+	${media.lessThan('md')`
+		grid-template-rows: unset;
+	`}
 `;
 
 export default WelcomeLayout;

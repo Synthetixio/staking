@@ -12,7 +12,7 @@ import { GridBoxContainer } from 'components/GridBox/Gridbox';
 import { useTranslation } from 'react-i18next';
 import { FlexDivCentered } from 'styles/common';
 import Slider from 'react-slick';
-import media from 'styled-media-query';
+import media from 'styles/media';
 
 type WizardGridBoxProps = {
 	gridArea?: string;
@@ -81,6 +81,11 @@ const SliderContainer = styled.div`
 	padding-bottom: 50px;
 	padding-top: 50px;
 
+	${media.lessThan('mdUp')`
+		padding-bottom: 10px;
+		padding-top: 10px;
+	`}
+
 	.slick-dots {
 		li {
 			margin: 0 2px;
@@ -98,7 +103,7 @@ const SliderContainer = styled.div`
 		}
 		bottom: unset;
 		text-align: center;
-		${media.lessThan('medium')`
+		${media.lessThan('mdUp')`
 			position: unset;
 			margin-top: 40px;
 			text-align: center;

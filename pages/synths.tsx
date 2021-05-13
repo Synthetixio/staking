@@ -46,6 +46,7 @@ const SynthsPage: FC = () => {
 				<title>{t('synths.page-title')}</title>
 			</Head>
 			<StatsSection>
+				<div />
 				<TotalSynthValue
 					title={t('common.stat-box.synth-value')}
 					value={formatCurrency(
@@ -57,6 +58,7 @@ const SynthsPage: FC = () => {
 					)}
 					size="lg"
 				/>
+				<div />
 			</StatsSection>
 			<LineSpacer />
 			<AssetsTable

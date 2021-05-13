@@ -72,12 +72,16 @@ const StatsSection: FC = ({ children }) => {
 
 const StatsContainer = styled(FlexDivRowCentered)`
 	width: 100%;
-	justify-content: center;
 	margin: 0 auto;
+
+	${media.greaterThan('mdUp')`
+		justify-content: center;
+	`}
 
 	${media.lessThan('mdUp')`
 		padding-right: ${MOBILE_BODY_PADDING}px;
 		padding-left: ${MOBILE_BODY_PADDING}px;
+		display: grid;
 	`}
 `;
 

@@ -41,7 +41,9 @@ const HistoryPage: FC = () => {
 				<title>{t('history.page-title')}</title>
 			</Head>
 			<StatsSection>
+				<div />
 				<TxCount title={t('common.stat-box.tx-count')} value={txCount} size="lg" />
+				<div />
 			</StatsSection>
 			<LineSpacer />
 			<TransactionsContainer

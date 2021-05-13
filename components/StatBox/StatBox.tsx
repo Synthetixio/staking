@@ -54,12 +54,12 @@ const IconContainer = styled.div`
 `;
 
 const Box = styled(FlexDivColCentered)<{ size: Size }>`
-	height: 200px;
-	width: 400px;
 	background-position: center;
 	background-repeat: no-repeat;
 	justify-content: center;
-	margin: 0px 20px;
+	${media.greaterThan('sm')`
+		margin: 0px 20px;
+	`}
 	background-image: url(${SNXStatBackground.src});
 	${(props) =>
 		props.size === 'lg' &&
@@ -73,10 +73,10 @@ const Box = styled(FlexDivColCentered)<{ size: Size }>`
 	&:first-child,
 	&:last-child {
 		${media.lessThan('mdUp')`
-			position: relative;
-			top: 50px;
 			background-image: none;
-			margin: auto;
+			margin: unset;
+			position: relative;
+			top: -30px;
 
 			.title,
 			.value {
@@ -88,6 +88,17 @@ const Box = styled(FlexDivColCentered)<{ size: Size }>`
 	&:first-child {
 		${media.lessThan('mdUp')`
 			align-items: flex-start;
+			grid-area: 2 / 1 / 3 / 2;
+		`}
+	}
+
+	&:nth-child(2) {
+		height: 200px;
+		${media.greaterThan('mdUp')`
+			width: 400px;
+		`}
+		${media.lessThan('mdUp')`
+			grid-area: 1 / 1 / 2 / 3;
 		`}
 	}
 
@@ -95,6 +106,7 @@ const Box = styled(FlexDivColCentered)<{ size: Size }>`
 		${media.lessThan('mdUp')`
 			align-items: flex-end;
 			text-align: right;
+			grid-area: 2 / 2 / 3 / 3;
 		`}
 	}
 `;

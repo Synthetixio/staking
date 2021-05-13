@@ -242,6 +242,9 @@ export const StatsHeader = styled.div`
 
 	& > div {
 		padding: 8px 16px;
+		white-space: nowrap;
+		display: flex;
+		align-items: center;
 	}
 `;
 

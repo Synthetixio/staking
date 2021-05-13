@@ -210,7 +210,15 @@ const StyledTable = styled(Table)`
 		height: auto;
 		align-items: flex-start;
 		padding: 10px 0;
-		width: unset !important;
+
+		&:first-child {
+			width: 40px !important;
+			justify-content: center;
+			padding-left: 0;
+		}
+		&:last-child {
+			width: calc(100% - 40px) !important;
+		}
 	}
 `;
 
