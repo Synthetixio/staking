@@ -88,12 +88,14 @@ const AssetsTable: FC<AssetsTableProps> = ({
 					const synthDesc =
 						synthetix.synthsMap != null ? synthetix.synthsMap[asset.currencyKey]?.description : '';
 
+					const currencyIsSynth = useMemo(() => isSynth(asset.currencyKey), [asset.currencyKey]);
+
 					return (
 						<RightCol>
 							<div>
-								{isSynth(asset.currencyKey)
+								{currencyIsSynth
 									? t('common.currency.synthetic-currency-name', { currencyName: synthDesc })
-									: undefined}
+									: asset.currencyKey}
 							</div>
 							<div>
 								<Currency.Amount
@@ -106,7 +108,7 @@ const AssetsTable: FC<AssetsTableProps> = ({
 								/>
 							</div>
 
-							<div>{asset.currencyKey}</div>
+							<div>{currencyIsSynth ? asset.currencyKey : null}</div>
 							<div>
 								<SynthPriceCol currencyKey={asset.currencyKey} />
 							</div>
@@ -217,6 +219,7 @@ const StyledTable = styled(Table)`
 			padding-left: 0;
 		}
 		&:last-child {
+			padding-top: 14px;
 			width: calc(100% - 40px) !important;
 		}
 	}
