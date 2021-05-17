@@ -1,5 +1,6 @@
 import { ChangeEvent, FC } from 'react';
 import styled from 'styled-components';
+import { FixedNumber } from 'ethers';
 
 import Input from './Input';
 
@@ -13,6 +14,15 @@ type NumericInputProps = {
 
 const INVALID_CHARS = ['-', '+', 'e'];
 
+const isValidNumber = (value: string) => {
+	try {
+		FixedNumber.fromString(value);
+		return true;
+	} catch (e) {
+		return false;
+	}
+};
+
 const NumericInput: FC<NumericInputProps> = ({
 	value,
 	onChange,
@@ -22,7 +32,7 @@ const NumericInput: FC<NumericInputProps> = ({
 }) => {
 	const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
 		const { value } = e.target;
-
+		if (!isValidNumber(value)) return;
 		onChange(e, value.replace(/,/g, '.').replace(/[e+-]/gi, ''));
 	};
 

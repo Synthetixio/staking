@@ -11,7 +11,7 @@ import Connector from 'containers/Connector';
 import synthetix from 'lib/synthetix';
 
 import { appReadyState } from 'store/app';
-import { isWalletConnectedState } from 'store/wallet';
+import { isWalletConnectedState, isL2State } from 'store/wallet';
 
 import {
 	ExternalLink,
@@ -36,7 +36,7 @@ import Button from 'components/Button';
 import { zeroBN } from 'utils/formatters/number';
 import { isSynth } from 'utils/currencies';
 
-import SynthPriceCol from './components/SynthPriceCol';
+import SynthPriceCol from './SynthPriceCol';
 import SynthHolding from 'components/SynthHolding';
 import Link from 'next/link';
 
@@ -47,6 +47,7 @@ type AssetsTableProps = {
 	isLoaded: boolean;
 	showConvert: boolean;
 	showHoldings: boolean;
+	onTransferClick: (currencyKey: string) => void;
 };
 
 const AssetsTable: FC<AssetsTableProps> = ({
@@ -56,11 +57,13 @@ const AssetsTable: FC<AssetsTableProps> = ({
 	isLoaded,
 	showHoldings,
 	showConvert,
+	onTransferClick,
 }) => {
 	const { t } = useTranslation();
 	const { connectWallet } = Connector.useContainer();
 	const isAppReady = useRecoilValue(appReadyState);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
+	const isL2 = useRecoilValue(isL2State);
 	const router = useRouter();
 
 	const { selectedPriceCurrency, selectPriceCurrencyRate } = useSelectedPriceCurrency();
@@ -125,35 +128,49 @@ const AssetsTable: FC<AssetsTableProps> = ({
 								</>
 							)}
 
-							{!showConvert ? null : (
-								<>
-									<div></div>
-									<div>
-										{asset.currencyKey === CryptoCurrency.SNX ? (
-											<Link href={ROUTES.Staking.Home}>
-												<StyledButton>{t('common.stake-snx')}</StyledButton>
-											</Link>
-										) : (
-											<ExternalLink
-												href={EXTERNAL_LINKS.Trading.OneInchLink(
-													asset.currencyKey,
-													CryptoCurrency.SNX
-												)}
-											>
-												<StyledButton>
-													<Trans
-														i18nKey="common.currency.buy-currency"
-														values={{
-															currencyKey: CryptoCurrency.SNX,
-														}}
-														components={[<NoTextTransform />]}
-													/>
-												</StyledButton>
-											</ExternalLink>
-										)}
-									</div>
-								</>
-							)}
+							<div></div>
+							<div>
+								<ActionButtonsContainer>
+									{!showConvert ? null : (
+										<>
+											{asset.currencyKey === CryptoCurrency.SNX ? (
+												<Link href={ROUTES.Staking.Home}>
+													<StyledButtonPink>{t('common.stake-snx')}</StyledButtonPink>
+												</Link>
+											) : (
+												<ExternalLink
+													href={EXTERNAL_LINKS.Trading.OneInchLink(
+														asset.currencyKey,
+														CryptoCurrency.SNX
+													)}
+												>
+													<StyledButtonPink>
+														<Trans
+															i18nKey="common.currency.buy-currency"
+															values={{
+																currencyKey: CryptoCurrency.SNX,
+															}}
+															components={[<NoTextTransform />]}
+														/>
+													</StyledButtonPink>
+												</ExternalLink>
+											)}
+										</>
+									)}
+
+									{isL2 ? null : (
+										<>
+											{!(
+												isSynth(asset.currencyKey) || asset.currencyKey === CryptoCurrency.SNX
+											) ? null : (
+												<StyledButtonBlue onClick={() => onTransferClick(asset.currencyKey)}>
+													{t('synths.assets.synths.table.transfer')}
+												</StyledButtonBlue>
+											)}
+										</>
+									)}
+								</ActionButtonsContainer>
+							</div>
 						</RightCol>
 					);
 				},
@@ -168,6 +185,8 @@ const AssetsTable: FC<AssetsTableProps> = ({
 		selectedPriceCurrency.sign,
 		selectedPriceCurrency.name,
 		isAppReady,
+		onTransferClick,
+		isL2,
 	]);
 
 	return (
@@ -243,11 +262,17 @@ const RightColHeader = styled.div`
 	width: 100%;
 `;
 
-const StyledButton = styled(Button).attrs({
-	variant: 'secondary',
-})`
+const ActionButtonsContainer = styled.div`
+	display: flex;
+	gap: 1rem;
+`;
+
+const StyledButton = styled(Button)`
 	text-transform: uppercase;
 	width: 120px;
 `;
+
+const StyledButtonBlue = styled(StyledButton).attrs({ variant: 'secondary' })``;
+const StyledButtonPink = styled(StyledButton).attrs({ variant: 'tertiary' })``;
 
 export default AssetsTable;

@@ -155,7 +155,7 @@ export const FixedFooterMixin = `
 	bottom: 0;
 	left: 0;
 	right: 0;
-	border-radius: 0;	
+	border-radius: 0;
 `;
 
 export const MobileContainerMixin = `
@@ -224,6 +224,10 @@ export const LineSpacer = styled.div`
 			right: ${MOBILE_BODY_PADDING}px;
 		`}
 	}
+`;
+
+export const VerticalSpacer = styled.div`
+	height: 32px;
 `;
 
 export const ErrorMessage = styled.p`
@@ -331,14 +335,14 @@ export const GlowingCircle = styled(FlexDivCentered)<{
 		css`
 			height: 56px;
 			min-width: 56px;
-		`}		
+		`}
 
 	${(props) =>
 		props.size === 'lg' &&
 		css`
 			height: 64px;
 			min-width: 64px;
-		`}		
+		`}
 
 	${(props) =>
 		props.variant === 'green' &&
@@ -346,7 +350,7 @@ export const GlowingCircle = styled(FlexDivCentered)<{
 			border: 1.5px solid ${(props) => props.theme.colors.green};
 			box-shadow: 0px 0px 15px ${(props) => props.theme.colors.green};
 		`}
-		
+
 	${(props) =>
 		props.variant === 'blue' &&
 		css`
@@ -366,14 +370,14 @@ export const GlowingCircle = styled(FlexDivCentered)<{
 		css`
 			border: 1.5px solid ${(props) => props.theme.colors.orange};
 			box-shadow: 0px 0px 15px ${(props) => props.theme.colors.orange};
-		`}		
+		`}
 
 ${(props) =>
 	props.variant === 'yellow' &&
 	css`
 		border: 1.5px solid ${(props) => props.theme.colors.yellow};
 		box-shadow: 0px 0px 15px ${(props) => props.theme.colors.yellow};
-	`}				
+	`}
 `;
 
 export const Tooltip = styled(Tippy)`

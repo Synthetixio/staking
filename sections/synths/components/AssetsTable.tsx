@@ -20,6 +20,7 @@ type AssetsTableProps = {
 	isLoaded: boolean;
 	showConvert: boolean;
 	showHoldings: boolean;
+	onTransferClick: (currencyKey: string) => void;
 };
 
 const AssetsTable: FC<AssetsTableProps> = ({
@@ -30,6 +31,7 @@ const AssetsTable: FC<AssetsTableProps> = ({
 	title,
 	showHoldings,
 	showConvert,
+	onTransferClick,
 }) => {
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 
@@ -46,6 +48,7 @@ const AssetsTable: FC<AssetsTableProps> = ({
 						isLoaded,
 						showHoldings,
 						showConvert,
+						onTransferClick,
 					}}
 				/>
 			</DesktopOrTabletView>
@@ -59,6 +62,7 @@ const AssetsTable: FC<AssetsTableProps> = ({
 						isLoaded,
 						showHoldings,
 						showConvert,
+						onTransferClick,
 					}}
 				/>
 			</MobileOnlyView>
@@ -67,7 +71,7 @@ const AssetsTable: FC<AssetsTableProps> = ({
 };
 
 const Container = styled.div`
-	padding-bottom: 20px;
+	margin-bottom: 8px;
 `;
 
 const Header = styled.div`
