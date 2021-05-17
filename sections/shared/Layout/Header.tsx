@@ -35,7 +35,9 @@ const Header: FC = () => {
 					<MobileOrTabletView>
 						<Title onClick={showMobileSideNav}>
 							<Svg src={TitleIcon} />
-							<TitleText hasSubTitle={!!headerSubtitle}>{t(`header.${headerTitle}`)}</TitleText>
+							{!headerTitle ? null : (
+								<TitleText hasSubTitle={!!headerSubtitle}>{t(`header.${headerTitle}`)}</TitleText>
+							)}
 							{!headerSubtitle ? null : (
 								<>
 									<TitleSep>|</TitleSep>
