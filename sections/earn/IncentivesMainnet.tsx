@@ -18,7 +18,15 @@ import ClaimTab from './ClaimTab';
 import LPTab from './LPTab';
 import { isWalletConnectedState } from 'store/wallet';
 
-import { Tab, LP, lpToTab, tabToLP, lpToSynthTranslationKey, lpToSynthIcon } from './types';
+import {
+	Tab,
+	LP,
+	lpToTab,
+	tabToLP,
+	lpToSynthTranslationKey,
+	lpToSynthIcon,
+	lpToRoute,
+} from './types';
 import { zeroBN } from 'utils/formatters/number';
 import useShortRewardsData from 'hooks/useShortRewardsData';
 import { TabButton, TabList } from 'components/Tab';
@@ -74,15 +82,6 @@ const Incentives: FC<IncentivesProps> = ({
 
 	const incentives = useMemo(() => {
 		const balancerIncentives = (balancerLP: LP) => {
-			const lpToRoute: { [name: string]: string } = {
-				[LP.BALANCER_sFB]: ROUTES.Earn.sFB_LP,
-				[LP.BALANCER_sAAPL]: ROUTES.Earn.sAAPL_LP,
-				[LP.BALANCER_sAMZN]: ROUTES.Earn.sAMZN_LP,
-				[LP.BALANCER_sNFLX]: ROUTES.Earn.sNFLX_LP,
-				[LP.BALANCER_sGOOG]: ROUTES.Earn.sGOOG_LP,
-				[LP.BALANCER_sTSLA]: ROUTES.Earn.sTLSA_LP,
-			};
-
 			const tab = lpToTab[balancerLP];
 			const synthTransKey = lpToSynthTranslationKey[balancerLP];
 			const route = lpToRoute[balancerLP];
@@ -211,6 +210,8 @@ const Incentives: FC<IncentivesProps> = ({
 						LP.BALANCER_sNFLX,
 						LP.BALANCER_sGOOG,
 						LP.BALANCER_sTSLA,
+						LP.BALANCER_sMSFT,
+						LP.BALANCER_sCOIN,
 					].map(balancerIncentives),
 					{
 						title: t('earn.incentives.options.curve.title'),
@@ -244,6 +245,7 @@ const Incentives: FC<IncentivesProps> = ({
 							type: CurrencyIconType.TOKEN,
 						},
 						rewards: lpData[LP.UNISWAP_DHT].data?.rewards ?? 0,
+						dualRewards: true,
 						periodStarted: now - (lpData[LP.UNISWAP_DHT].data?.duration ?? 0),
 						periodFinish: lpData[LP.UNISWAP_DHT].data?.periodFinish ?? 0,
 						claimed:
@@ -388,9 +390,16 @@ const Incentives: FC<IncentivesProps> = ({
 						needsToSettle={lpData[LP.BALANCER_sTSLA].data?.needsToSettle}
 					/>
 				)} */}
-				{[Tab.sFB_LP, Tab.sAAPL_LP, Tab.sAMZN_LP, Tab.sNFLX_LP, Tab.sGOOG_LP, Tab.sTLSA_LP].map(
-					balancerTab
-				)}
+				{[
+					Tab.sTLSA_LP,
+					Tab.sFB_LP,
+					Tab.sAAPL_LP,
+					Tab.sAMZN_LP,
+					Tab.sNFLX_LP,
+					Tab.sGOOG_LP,
+					Tab.sMSFT_LP,
+					Tab.sCOIN_LP,
+				].map(balancerTab)}
 				{activeTab === Tab.DHT_LP && (
 					<LPTab
 						userBalance={lpData[LP.UNISWAP_DHT].data?.userBalance ?? 0}

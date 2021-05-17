@@ -21,6 +21,9 @@ const useSnapshotSpace = (spaceKey: SPACE_KEY, options?: QueryConfig<SpaceData>)
 		},
 		{
 			enabled: isAppReady && spaceKey,
+			refetchInterval: false,
+			refetchOnWindowFocus: false,
+			refetchOnMount: false,
 			...options,
 		}
 	);

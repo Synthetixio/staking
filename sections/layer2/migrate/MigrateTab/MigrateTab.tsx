@@ -54,7 +54,7 @@ const MigrateTab = () => {
 					} = synthetix.js!;
 					const gasEstimate = await synthetix.getGasEstimateForTransaction({
 						txArgs: [entryIds],
-						method: SynthetixBridgeToOptimism.estimateGas.initiateEscrowMigration,
+						method: SynthetixBridgeToOptimism.estimateGas.migrateEscrow,
 					});
 					setGasLimitEstimate(gasEstimate);
 				} catch (e) {
@@ -76,7 +76,7 @@ const MigrateTab = () => {
 				setMigrationTxError(null);
 				setTxModalOpen(true);
 
-				const transaction = await SynthetixBridgeToOptimism.initiateEscrowMigration(entryIds, {
+				const transaction = await SynthetixBridgeToOptimism.migrateEscrow(entryIds, {
 					gasLimit: gasLimitEstimate,
 					gasPrice: normalizedGasPrice(gasPrice),
 				});

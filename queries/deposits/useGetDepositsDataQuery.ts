@@ -61,7 +61,7 @@ const useGetDepositsDataQuery = (options?: QueryConfig<DepositHistory>) => {
 			if (!provider || !watcher) return [];
 			const blockNumber = await provider.getBlockNumber();
 			const startBlock = Math.max(blockNumber - NUM_BLOCKS_TO_FETCH, 0);
-			const filters = SynthetixBridgeToOptimism.filters.Deposit(walletAddress);
+			const filters = SynthetixBridgeToOptimism.filters.DepositInitiated(walletAddress);
 			const logs = await provider.getLogs({ ...filters, fromBlock: startBlock });
 			const events = await Promise.all(
 				logs.map(async (l) => {
@@ -70,7 +70,7 @@ const useGetDepositsDataQuery = (options?: QueryConfig<DepositHistory>) => {
 					const timestamp = Number(block.timestamp * 1000);
 					return {
 						timestamp,
-						amount: args.amount / 1e18,
+						amount: args._amount / 1e18,
 						transactionHash: l.transactionHash,
 					};
 				})
