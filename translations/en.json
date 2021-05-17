@@ -1091,7 +1091,8 @@
 			"balance": "Balance: {{balance}}",
 			"transferable": "<0>Transferable</0> {{transferable}}",
 			"not-connected": "Not connected",
-			"or": "or"
+			"or": "or",
+			"metamask-not-installed": "Metamask is not installed"
 		},
 		"stat-box": {
 			"staked-value": "Staked value",
