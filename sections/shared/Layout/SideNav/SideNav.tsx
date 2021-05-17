@@ -42,7 +42,7 @@ const SideNav: FC<SideNavProps> = ({ isDesktop }) => {
 	const addOptimismNetwork = async () => {
 		try {
 			setNetworkError(null);
-			if (!window.ethereum || !window.ethereum.isMetaMask) {
+			if (!window.ethereum) {
 				setNetworkError(t('user-menu.error.please-install-metamask'));
 			} else await addOptimismNetworkToMetamask({ ethereum: window.ethereum });
 		} catch (e) {
