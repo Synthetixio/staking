@@ -88,11 +88,6 @@ const Index: FC = () => {
 				copy: t('layer2.actions.apr.subtitle'),
 				externalLink: EXTERNAL_LINKS.Synthetix.OEBlog,
 			},
-			goToMintr: {
-				title: t('layer2.actions.go-to-mintr.title'),
-				copy: t('layer2.actions.go-to-mintr.subtitle'),
-				externalLink: EXTERNAL_LINKS.Synthetix.MintrL2,
-			},
 		}),
 		[t, l2AmountSNX, l2APR]
 	);
@@ -114,10 +109,6 @@ const Index: FC = () => {
 							gridLocations: ['col-1', 'col-2', 'row-2', 'row-3'],
 							...ACTIONS.migrate,
 							isDisabled: stakingEscrow.isZero(),
-						},
-						{
-							gridLocations: ['col-2', 'col-3', 'row-2', 'row-3'],
-							...ACTIONS.goToMintr,
 						},
 				  ]
 				: [

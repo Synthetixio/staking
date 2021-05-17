@@ -799,10 +799,6 @@
 				"title": "{{amountSNX}} is earning {{apr}} APY in L2",
 				"subtitle": "L2 rewards will initially be minimal and gradually increased."
 			},
-			"go-to-mintr": {
-				"title": "Go to Mintr L2",
-				"subtitle": "L2 is currently supported on Mintr"
-			},
 			"withdraw": {
 				"title": "Withdraw SNX",
 				"action": {
