@@ -4,7 +4,10 @@ import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
 import { Svg } from 'react-optimized-image';
 import { useRecoilValue } from 'recoil';
-import { addOptimismNetworkToMetamask } from '@synthetixio/optimism-networks';
+import {
+	getOptimismNetwork,
+	// addOptimismNetworkToMetamask
+} from '@synthetixio/optimism-networks';
 
 import UIContainer from 'containers/UI';
 import { linkCSS } from 'styles/common';
@@ -44,7 +47,17 @@ const SideNav: FC<SideNavProps> = ({ isDesktop }) => {
 			setNetworkError(null);
 			if (!window.ethereum) {
 				setNetworkError(t('user-menu.error.please-install-metamask'));
-			} else await addOptimismNetworkToMetamask({ ethereum: window.ethereum });
+			} else {
+				// await addOptimismNetworkToMetamask({ ethereum: window.ethereum });
+				if (!window.ethereum) return setNetworkError(t('common.wallet.metamask-not-installed'));
+				const optimismNetworkConfig = getOptimismNetwork({
+					layerOneNetworkId: Number(window.ethereum.chainId),
+				});
+				await window.ethereum.request({
+					method: 'wallet_addEthereumChain',
+					params: [optimismNetworkConfig],
+				});
+			}
 		} catch (e) {
 			setNetworkError(e.message);
 		}
