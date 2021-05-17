@@ -4,10 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import { Svg } from 'react-optimized-image';
 import OutsideClickHandler from 'react-outside-click-handler';
-import {
-	getOptimismNetwork,
-	// addOptimismNetworkToMetamask
-} from '@synthetixio/optimism-networks';
+import { addOptimismNetworkToMetamask } from '@synthetixio/optimism-networks';
 
 import {
 	FlexDiv,
@@ -51,21 +48,10 @@ const UserMenu: FC = () => {
 	const isL2 = network?.useOvm ?? false;
 
 	const addOptimismNetwork = async () => {
+		if (!window.ethereum) return setNetworkError(t('user-menu.error.please-install-metamask'));
 		try {
 			setNetworkError(null);
-			if (!window.ethereum) {
-				setNetworkError(t('user-menu.error.please-install-metamask'));
-			} else {
-				// await addOptimismNetworkToMetamask({ ethereum: window.ethereum });
-				if (!window.ethereum) return setNetworkError(t('common.wallet.metamask-not-installed'));
-				const optimismNetworkConfig = getOptimismNetwork({
-					layerOneNetworkId: Number(window.ethereum.chainId),
-				});
-				await window.ethereum.request({
-					method: 'wallet_addEthereumChain',
-					params: [optimismNetworkConfig],
-				});
-			}
+			await addOptimismNetworkToMetamask({ ethereum: window.ethereum });
 		} catch (e) {
 			setNetworkError(e.message);
 		}

@@ -45,19 +45,26 @@ const SideNav: FC<SideNavProps> = ({ isDesktop }) => {
 	const addOptimismNetwork = async () => {
 		try {
 			setNetworkError(null);
-			if (!window.ethereum) {
-				setNetworkError(t('user-menu.error.please-install-metamask'));
-			} else {
-				// await addOptimismNetworkToMetamask({ ethereum: window.ethereum });
-				if (!window.ethereum) return setNetworkError(t('common.wallet.metamask-not-installed'));
-				const optimismNetworkConfig = getOptimismNetwork({
-					layerOneNetworkId: Number(window.ethereum.chainId),
-				});
-				await window.ethereum.request({
-					method: 'wallet_addEthereumChain',
-					params: [optimismNetworkConfig],
-				});
+			if (!(window.ethereum && window.ethereum.isMetaMask)) {
+				return setNetworkError(t('user-menu.error.please-install-metamask'));
 			}
+			// await addOptimismNetworkToMetamask({ ethereum: window.ethereum });
+
+			// metamask mobile throws if iconUrls is included
+			const { chainId, chainName, rpcUrls, blockExplorerUrls } = getOptimismNetwork({
+				layerOneNetworkId: Number(window.ethereum.chainId),
+			});
+			await window.ethereum.request({
+				method: 'wallet_addEthereumChain',
+				params: [
+					{
+						chainId,
+						chainName,
+						rpcUrls,
+						blockExplorerUrls,
+					},
+				],
+			});
 		} catch (e) {
 			setNetworkError(e.message);
 		}
