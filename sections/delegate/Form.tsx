@@ -201,7 +201,7 @@ const Tab: FC = () => {
 				<InputsContainer>
 					<AmountInput
 						value={delegateAddress}
-						placeholder={t('delegate.form.input-placeholder')}
+						placeholder={t('common.form.address-input-placeholder')}
 						onChange={onEnterAddress}
 						disabled={false}
 						rows={3}
