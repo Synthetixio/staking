@@ -71,6 +71,10 @@
 				"title": "Supporting Member",
 				"address": "{{address}}"
 			},
+			"transfer": {
+				"transferring": "Transferring",
+				"to": "To"
+			},
 			"helper": "Follow the Metamask prompts to authorize the transaction"
 		},
 		"confirm-signature": {
@@ -795,10 +799,6 @@
 				"title": "{{amountSNX}} is earning {{apr}} APY in L2",
 				"subtitle": "L2 rewards will initially be minimal and gradually increased."
 			},
-			"go-to-mintr": {
-				"title": "Go to Mintr L2",
-				"subtitle": "L2 is currently supported on Mintr"
-			},
 			"withdraw": {
 				"title": "Withdraw SNX",
 				"action": {
@@ -888,6 +888,7 @@
 	},
 	"synths": {
 		"page-title": "Synths | Synthetix Staking",
+		"trade-on-kwenta": "Want more? Head to Kwenta to trade between Synths",
 		"assets": {
 			"synths": {
 				"title": "Synth Balances",
@@ -900,6 +901,7 @@
 					"percentage-of-pool": "% of pool",
 					"percentage-of-portfolio": "% of portfolio",
 					"debt-pool-proportion": "% of global debt",
+					"transfer": "Transfer",
 					"no-synths": {
 						"title": "You have no Synths",
 						"desc": "Mint sUSD by staking your SNX"
@@ -908,6 +910,21 @@
 			},
 			"non-synths": {
 				"title": "Non-Synth Balances"
+			}
+		},
+		"transfer": {
+			"modal-title": "Transfer to another wallet",
+			"input-label": "Transfer",
+			"balance-label": "Transferrable balance:",
+			"button": {
+				"no-amount": "Enter an amount to transfer",
+				"no-address": "Enter an address",
+				"transfer": "Transfer <0>{{asset}}</0>"
+			},
+			"error": {
+				"invalid-address": "Address is invalid",
+				"insufficient-balance": "Insufficient balance",
+				"unsupported-asset": "Asset is not supported"
 			}
 		}
 	},
@@ -1075,6 +1092,10 @@
 		}
 	},
 	"common": {
+		"form": {
+			"to-address": "To address",
+			"address-input-placeholder": "e.g. 0x3b18a4..."
+		},
 		"approve": {
 			"approve-contract": "Approve contract",
 			"is-approving": "Approving contract..."
@@ -1206,7 +1227,6 @@
 		"page-title": "Delegate | Synthetix Staking",
 		"form": {
 			"title": "Delegate to a new Address",
-			"input-placeholder": "e.g. 0x3b18a4...",
 			"tx-confirmation-title": "Delegating to",
 			"button-labels": {
 				"enter-address": "enter an address",
