@@ -19,6 +19,8 @@ function Container() {
 	const [headerTitle, setHeaderTitle] = useState<string | null>(null);
 	const [headerSubtitle, setHeaderSubtitle] = useState<string | null>(null);
 
+	const [networkError, setNetworkError] = useState<string | null>(null);
+
 	const isShowingSubMenu = !!subMenuConfiguration?.routes;
 
 	const clearSubMenuConfiguration = () =>
@@ -52,5 +54,8 @@ function Container() {
 		headerSubtitle,
 
 		setTitle,
+
+		networkError,
+		setNetworkError,
 	};
 }

@@ -240,6 +240,7 @@ const StyledTable = styled(Table)`
 		&:last-child {
 			padding-top: 14px;
 			width: calc(100% - 40px) !important;
+			padding-right: 10px;
 		}
 	}
 `;

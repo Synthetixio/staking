@@ -29,13 +29,13 @@ const SideNav: FC<SideNavProps> = ({ isDesktop }) => {
 	const { t } = useTranslation();
 	const router = useRouter();
 	const menuLinkItemRefs = useRef({});
-	const [, setNetworkError] = useState<string | null>(null);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const isL2 = useRecoilValue(isL2State);
 	const {
 		closeMobileSideNav,
 		setSubMenuConfiguration,
 		clearSubMenuConfiguration,
+		setNetworkError,
 	} = UIContainer.useContainer();
 	const isMainnet = useRecoilValue(isMainnetState);
 	const [settingsModalOpened, setSettingsModalOpened] = useState<boolean>(false);
@@ -132,11 +132,14 @@ const SideNav: FC<SideNavProps> = ({ isDesktop }) => {
 				);
 			})}
 
-			{!isDesktop && !isL2 && isWalletConnected ? (
+			{!isL2 && isWalletConnected ? (
 				<MenuLinkItem
 					onClick={() => {
 						addOptimismNetwork();
 						closeMobileSideNav();
+					}}
+					onMouseEnter={() => {
+						clearSubMenuConfiguration();
 					}}
 					data-testid="sidenav-switch-to-l2"
 					isL2Switcher
@@ -183,13 +186,13 @@ const MenuLinkItem = styled.div<{ isActive?: boolean; isL2Switcher?: boolean }>`
 		${linkCSS};
 		font-family: ${(props) => props.theme.fonts.condensedMedium};
 		text-transform: uppercase;
-		opacity: 0.4;
+		opacity: ${(props) => (props.isL2Switcher ? 1 : 0.4)};
 		font-size: 14px;
 		cursor: pointer;
 		color: ${(props) => (props.isL2Switcher ? props.theme.colors.pink : props.theme.colors.white)};
 		&:hover {
-			opacity: unset;
-			color: ${(props) => props.theme.colors.blue};
+			opacity: ${(props) => (props.isL2Switcher ? 0.8 : 1)};
+			color: ${(props) => (props.isL2Switcher ? props.theme.colors.pink : props.theme.colors.blue)};
 			svg {
 				color: ${(props) => props.theme.colors.blue};
 			}

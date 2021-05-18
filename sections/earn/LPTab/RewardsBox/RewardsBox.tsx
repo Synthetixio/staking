@@ -208,6 +208,7 @@ const RewardsAmountSNX = styled.div`
 	font-size: 24px;
 	color: ${(props) => props.theme.colors.white};
 	margin-top: 10px;
+	text-align: center;
 `;
 
 const RewardsAmountUSD = styled.div`

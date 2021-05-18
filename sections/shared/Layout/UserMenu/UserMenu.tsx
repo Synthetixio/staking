@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import { Svg } from 'react-optimized-image';
 import OutsideClickHandler from 'react-outside-click-handler';
-import { addOptimismNetworkToMetamask } from '@synthetixio/optimism-networks';
 
 import {
 	FlexDiv,
@@ -14,7 +13,7 @@ import {
 	UpperCased,
 } from 'styles/common';
 import { zIndex } from 'constants/ui';
-
+import UI from 'containers/UI';
 import Button from 'components/Button';
 import { DesktopOnlyView, DesktopOrTabletView, MobileOrTabletView } from 'components/Media';
 
@@ -38,24 +37,13 @@ const caretDown = <Svg src={CaretDown} viewBox={`0 0 ${CaretDown.width} ${CaretD
 
 const UserMenu: FC = () => {
 	const { t } = useTranslation();
+	const { networkError } = UI.useContainer();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const [walletOptionsModalOpened, setWalletOptionsModalOpened] = useState<boolean>(false);
-	const [networkError, setNetworkError] = useState<string | null>(null);
 	const [settingsModalOpened, setSettingsModalOpened] = useState<boolean>(false);
 	const [watchWalletModalOpened, setWatchWalletModalOpened] = useState<boolean>(false);
 	const truncatedWalletAddress = useRecoilValue(truncatedWalletAddressState);
 	const network = useRecoilValue(networkState);
-	const isL2 = network?.useOvm ?? false;
-
-	const addOptimismNetwork = async () => {
-		if (!window.ethereum) return setNetworkError(t('user-menu.error.please-install-metamask'));
-		try {
-			setNetworkError(null);
-			await addOptimismNetworkToMetamask({ ethereum: window.ethereum });
-		} catch (e) {
-			setNetworkError(e.message);
-		}
-	};
 
 	const getNetworkName = () => {
 		if (network?.useOvm) {
@@ -68,12 +56,6 @@ const UserMenu: FC = () => {
 			<FlexDivCentered>
 				<DesktopOnlyView>
 					<FlexDiv>
-						{!isL2 && isWalletConnected ? (
-							<OptimismButton variant="solid" onClick={addOptimismNetwork}>
-								{t('user-menu.layer-2.switch-to-l2')}
-							</OptimismButton>
-						) : null}
-
 						<DropdownContainer>
 							<OutsideClickHandler onOutsideClick={() => setWalletOptionsModalOpened(false)}>
 								{isWalletConnected ? (
@@ -131,9 +113,6 @@ const UserMenu: FC = () => {
 								<StyledConnectionDot />
 								{truncatedWalletAddress}
 							</FlexDivCentered>
-							<NetworkTag className="network-tag" data-testid="network-tag">
-								{getNetworkName()}
-							</NetworkTag>
 							{walletOptionsModalOpened ? caretUp : caretDown}
 						</WalletButton>
 					) : (
@@ -234,18 +213,6 @@ const MenuButton = styled(IconButton)`
 		color: ${(props) => props.theme.colors.white};
 	}
 	height: 32px;
-`;
-
-const OptimismButton = styled(Button)`
-	border: 1px solid ${(props) => props.theme.colors.pink};
-	background: ${(props) => props.theme.colors.navy};
-	color: ${(props) => props.theme.colors.pink};
-	text-transform: uppercase;
-	margin-right: 16px;
-	&:hover {
-		background: ${(props) => props.theme.colors.pink} !important;
-		color: ${(props) => props.theme.colors.navy} !important;
-	}
 `;
 
 const DropdownContainer = styled.div`
