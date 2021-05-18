@@ -5,6 +5,7 @@ import { Trans, useTranslation } from 'react-i18next';
 import BigNumber from 'bignumber.js';
 import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
+import Link from 'next/link';
 
 import Connector from 'containers/Connector';
 
@@ -33,13 +34,13 @@ import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import Table from 'components/Table';
 import Currency from 'components/Currency';
 import Button from 'components/Button';
+import SynthHolding from 'components/SynthHolding';
 
 import { zeroBN } from 'utils/formatters/number';
 import { isSynth } from 'utils/currencies';
 
 import SynthPriceCol from './SynthPriceCol';
-import SynthHolding from 'components/SynthHolding';
-import Link from 'next/link';
+import { StyledButtonBlue, StyledButtonPink } from './common';
 
 type AssetsTableProps = {
 	assets: CryptoBalance[];
@@ -260,13 +261,5 @@ const StyledTable = styled(Table)`
 		height: 70px;
 	}
 `;
-
-const StyledButton = styled(Button)`
-	text-transform: uppercase;
-	width: 120px;
-`;
-
-const StyledButtonBlue = styled(StyledButton).attrs({ variant: 'secondary' })``;
-const StyledButtonPink = styled(StyledButton).attrs({ variant: 'tertiary' })``;
 
 export default AssetsTable;
