@@ -119,7 +119,7 @@ const InfoBox: React.FC = () => {
 						{t('loans.pending-withdrawals.title')}{' '}
 						<InfoSVG tip={t('loans.pending-withdrawals.title-tip')} />
 					</PendingWithdrawalsTitle>
-					<PendingWithdrawalsSubtitle>
+					<PendingWithdrawalsSubtitle empty={pendingWithdrawals.isZero()}>
 						{pendingWithdrawals.isZero() ? (
 							<>{t('loans.pending-withdrawals.empty')}</>
 						) : (
@@ -276,7 +276,7 @@ export const TotalColHeading = styled(StatsCol)`
 
 export const ClaimButton = styled(Button)`
 	cursor: pointer;
-	margin-left: 50px;
+	margin-left: 15px;
 `;
 
 export const PendingWithdrawalsTitle = styled.div`
@@ -293,10 +293,10 @@ export const PendingWithdrawalsTitle = styled.div`
 	}
 `;
 
-export const PendingWithdrawalsSubtitle = styled.div`
-	font-family: ${(props) => props.theme.fonts.extended};
+export const PendingWithdrawalsSubtitle = styled.div<{ empty: boolean }>`
+	font-family: ${(props) => (props.empty ? props.theme.fonts.regular : props.theme.fonts.extended)};
 	color: ${(props) => props.theme.colors.white};
-	font-size: 20px;
+	font-size: ${(props) => (props.empty ? 12 : 20)}px;
 	margin-top: 12px;
 	display: flex;
 	align-items: center;
