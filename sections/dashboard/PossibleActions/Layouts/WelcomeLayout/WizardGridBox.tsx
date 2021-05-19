@@ -105,7 +105,6 @@ const SliderContainer = styled.div`
 		text-align: center;
 		${media.lessThan('mdUp')`
 			position: unset;
-			margin-top: 40px;
 			text-align: center;
 			top: unset;
 		`}

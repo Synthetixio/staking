@@ -63,6 +63,10 @@ const InnerGridContainer = styled(FlexDivColCentered)`
 	width: 100%;
 	height: 100%;
 	padding: 40px 20px 20px;
+
+	${media.lessThan('md')`
+		padding: 20px 0;
+	`}
 `;
 
 const GridBoxTitle = styled.div`
@@ -103,7 +107,7 @@ export const GridBoxContainer = styled.div<{
 `;
 
 const GridBoxIcon = styled.div`
-	margin: 20px auto 40px auto; */
+	margin: 0 auto;
 `;
 
 const GridBoxCopy = styled.p`

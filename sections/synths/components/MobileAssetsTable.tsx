@@ -231,17 +231,16 @@ const StyledTable = styled(Table)`
 	.table-body-cell {
 		height: auto;
 		align-items: flex-start;
-		padding: 10px 0;
 
 		&:first-child {
 			width: 40px !important;
 			justify-content: center;
-			padding-left: 0;
+			padding: 20px 0;
 		}
 		&:last-child {
 			padding-top: 14px;
 			width: calc(100% - 40px) !important;
-			padding-right: 10px;
+			padding: 20px 10px 20px 0;
 		}
 	}
 `;
