@@ -26,13 +26,13 @@ const Info: React.FC = () => {
 		() => [
 			{
 				title: t('gov.proposal.votes.title'),
-				tabChildren: <Results hash={proposal?.authorIpfsHash ?? ''} />,
+				tabChildren: <Results hash={proposal?.id ?? ''} />,
 				blue: true,
 				key: ProposalInfoType.RESULTS,
 			},
 			{
 				title: t('gov.proposal.history.title'),
-				tabChildren: <History hash={proposal?.authorIpfsHash ?? ''} />,
+				tabChildren: <History hash={proposal?.id ?? ''} />,
 				blue: true,
 				key: ProposalInfoType.HISTORY,
 			},
@@ -47,13 +47,13 @@ const Info: React.FC = () => {
 				<Row>
 					<Title>{t('gov.proposal.info.author')}</Title>
 					<Value>
-						<Blockie src={makeBlockie(proposal.address)} />
-						{truncateAddress(proposal.address)}
+						<Blockie src={makeBlockie(proposal.author)} />
+						{truncateAddress(proposal.author)}
 
 						<ExternalLink
 							href={
 								blockExplorerInstance
-									? blockExplorerInstance.addressLink(proposal.address)
+									? blockExplorerInstance.addressLink(proposal.author)
 									: undefined
 							}
 						>
@@ -64,18 +64,17 @@ const Info: React.FC = () => {
 				<Row>
 					<Title>{t('gov.proposal.info.time')}</Title>
 					<Value>
-						{formatTxTimestamp(proposal.msg.payload.start * 1000)} -{' '}
-						{formatTxTimestamp(proposal.msg.payload.end * 1000)}
+						{formatTxTimestamp(proposal.start * 1000)} - {formatTxTimestamp(proposal.end * 1000)}
 					</Value>
 				</Row>
 				<Row>
 					<Title>{t('gov.proposal.info.snapshot')}</Title>
 					<Value>
-						{proposal.msg.payload.snapshot}
+						{proposal.snapshot}
 						<ExternalLink
 							href={
 								blockExplorerInstance
-									? blockExplorerInstance.blockLink(proposal.msg.payload.snapshot)
+									? blockExplorerInstance.blockLink(proposal.snapshot)
 									: undefined
 							}
 						>

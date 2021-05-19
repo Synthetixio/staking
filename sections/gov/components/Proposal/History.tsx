@@ -41,37 +41,35 @@ const History: React.FC<HistoryProps> = ({ hash }) => {
 							return (
 								<Row key={i}>
 									<InnerRow>
-										<Blockie src={makeBlockie(vote.address)} />
+										<Blockie src={makeBlockie(vote.voter)} />
 										<StyledTooltip
 											arrow={true}
 											placement="bottom"
 											content={
-												getAddress(vote.address) === currentWalletAddress
+												getAddress(vote.voter) === currentWalletAddress
 													? t('gov.proposal.history.currentUser')
 													: vote.profile.ens
 													? vote.profile.ens
-													: getAddress(vote.address)
+													: getAddress(vote.voter)
 											}
 											hideOnClick={false}
 										>
 											<Title>
-												{getAddress(vote.address) === currentWalletAddress
+												{getAddress(vote.voter) === currentWalletAddress
 													? t('gov.proposal.history.currentUser')
 													: vote.profile.ens
 													? truncateString(vote.profile.ens, 13)
-													: truncateAddress(getAddress(vote.address))}
+													: truncateAddress(getAddress(vote.voter))}
 											</Title>
 										</StyledTooltip>
 									</InnerRow>
 									<StyledTooltip
 										arrow={true}
 										placement="bottom"
-										content={data.choices[vote.msg.payload.choice - 1]}
+										content={data.choices[vote.choice - 1]}
 										hideOnClick={false}
 									>
-										<Choice>
-											- {truncateString(data.choices[vote.msg.payload.choice - 1], 13)}
-										</Choice>
+										<Choice>- {truncateString(data.choices[vote.choice - 1], 13)}</Choice>
 									</StyledTooltip>
 									<StyledTooltip
 										arrow={true}

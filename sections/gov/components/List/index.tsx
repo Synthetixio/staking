@@ -12,22 +12,22 @@ import Countdown from 'react-countdown';
 import { useRouter } from 'next/router';
 import ROUTES from 'constants/routes';
 import { panelState, PanelType, proposalState } from 'store/gov';
-import useActiveTab from '../../hooks/useActiveTab';
 import { DURATION_SEPARATOR } from 'constants/date';
 import { getCurrentTimestampSeconds } from 'utils/formatters/date';
+import useProposals from 'queries/gov/useProposals';
+import { SPACE_KEY } from 'constants/snapshot';
 
 type IndexProps = {
-	data: ProposalType[];
-	isLoaded: boolean;
+	spaceKey: SPACE_KEY;
 };
 
-const Index: React.FC<IndexProps> = ({ data, isLoaded }) => {
+const Index: React.FC<IndexProps> = ({ spaceKey }) => {
 	const { t } = useTranslation();
 	const router = useRouter();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const setProposal = useSetRecoilState(proposalState);
 	const setPanelType = useSetRecoilState(panelState);
-	const activeTab = useActiveTab();
+	const proposals = useProposals(spaceKey);
 
 	const columns = useMemo(
 		() => [
@@ -36,7 +36,7 @@ const Index: React.FC<IndexProps> = ({ data, isLoaded }) => {
 				accessor: 'description',
 				Cell: (cellProps: CellProps<ProposalType>) => (
 					<CellContainer>
-						<Title>{cellProps.row.original.msg.payload.name}</Title>
+						<Title>{cellProps.row.original.title}</Title>
 					</CellContainer>
 				),
 				width: 200,
@@ -47,10 +47,8 @@ const Index: React.FC<IndexProps> = ({ data, isLoaded }) => {
 				accessor: 'status',
 				Cell: (cellProps: CellProps<ProposalType>) => {
 					const currentTimestampSeconds = getCurrentTimestampSeconds();
-					const closed =
-						cellProps.row.original.msg.payload.end < currentTimestampSeconds ? true : false;
-					const pending =
-						currentTimestampSeconds < cellProps.row.original.msg.payload.start ? true : false;
+					const closed = cellProps.row.original.end < currentTimestampSeconds ? true : false;
+					const pending = currentTimestampSeconds < cellProps.row.original.start ? true : false;
 					return (
 						<CellContainer>
 							<Status closed={closed} pending={pending}>
@@ -74,7 +72,7 @@ const Index: React.FC<IndexProps> = ({ data, isLoaded }) => {
 						<Title isNumeric={true}>
 							<Countdown
 								autoStart={true}
-								date={cellProps.row.original.msg.payload.end * 1000}
+								date={cellProps.row.original.end * 1000}
 								renderer={({ days, hours, minutes }) => {
 									const duration = [
 										`${days}${t('common.time.days')}`,
@@ -111,13 +109,13 @@ const Index: React.FC<IndexProps> = ({ data, isLoaded }) => {
 			<StyledTable
 				palette="primary"
 				columns={columns}
-				data={data}
+				data={proposals.data ?? []}
 				maxRows={5}
-				isLoading={!isLoaded}
+				isLoading={proposals.isLoading}
 				showPagination={true}
 				onTableRowClick={(row: Row<ProposalType>) => {
 					setProposal(row.original);
-					router.push(ROUTES.Gov.Proposal(activeTab, row.original.authorIpfsHash));
+					router.push(ROUTES.Gov.Proposal(spaceKey, row.original.id));
 					setPanelType(PanelType.PROPOSAL);
 				}}
 				minHeight={isWalletConnected}
@@ -126,7 +124,7 @@ const Index: React.FC<IndexProps> = ({ data, isLoaded }) => {
 				<AbsoluteContainer
 					onClick={() => {
 						setPanelType(PanelType.CREATE);
-						router.push(ROUTES.Gov.Create(activeTab));
+						router.push(ROUTES.Gov.Create(spaceKey));
 					}}
 				>
 					<CreateButton variant="secondary">{t('gov.table.create')}</CreateButton>
