@@ -27,6 +27,21 @@ const earnPages = [
 }, {});
 
 module.exports = withPlugins([[optimizedImages]], {
+	async headers() {
+		return [
+			{
+				source: '/*',
+				headers: [
+					{ key: 'Access-Control-Allow-Origin', value: '*' },
+					{ key: 'Access-Control-Allow-Methods', value: 'GET' },
+					{
+						key: 'Access-Control-Allow-Headers',
+						value: 'X-Requested-With, content-type, Authorization',
+					},
+				],
+			},
+		];
+	},
 	trailingSlash: !!process.env.NEXT_PUBLIC_TRAILING_SLASH_ENABLED,
 	exportPathMap: function (defaultPathMap) {
 		return {
