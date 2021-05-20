@@ -37,7 +37,7 @@ import { useTranslation } from 'react-i18next';
 import useSignMessage, { SignatureType } from 'mutations/gov/useSignMessage';
 import useActiveTab from 'sections/gov/hooks/useActiveTab';
 import { useRecoilValue } from 'recoil';
-import { councilElectionCountState, proposalState } from 'store/gov';
+import { councilElectionCountState } from 'store/gov';
 import Button from 'components/Button';
 
 import { Transaction } from 'constants/network';
@@ -48,12 +48,14 @@ import { SPACE_KEY } from 'constants/snapshot';
 import CouncilNominations from 'constants/nominations.json';
 import { isWalletConnectedState } from 'store/wallet';
 import { shuffle } from 'lodash';
+import { Proposal } from 'queries/gov/types';
 
 type ContentProps = {
+	proposal: Proposal;
 	onBack: Function;
 };
 
-const Content: React.FC<ContentProps> = ({ onBack }) => {
+const Content: React.FC<ContentProps> = ({ proposal, onBack }) => {
 	const { t } = useTranslation();
 
 	const [voteMutate] = useSignMessage();
@@ -64,8 +66,6 @@ const Content: React.FC<ContentProps> = ({ onBack }) => {
 	const [signModalOpen, setSignModalOpen] = useState<boolean>(false);
 
 	const [transactionState, setTransactionState] = useState<Transaction>(Transaction.PRESUBMIT);
-
-	const proposal = useRecoilValue(proposalState);
 
 	const [choices, setChoices] = useState<any>(null);
 

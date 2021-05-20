@@ -26,10 +26,6 @@ export type ProposalResults = {
 	voteList: any[];
 };
 
-/* @TODO: Separate this query for
-	- getting current results only
-	- getting the voting history w/ pagination
-*/
 const useProposal = (spaceKey: SPACE_KEY, hash: string, options?: QueryConfig<ProposalResults>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const walletAddress = useRecoilValue(walletAddressState);
@@ -188,6 +184,8 @@ const useProposal = (spaceKey: SPACE_KEY, hash: string, options?: QueryConfig<Pr
 				return mappedVotes;
 			};
 
+			const voteList = returnVoteHistory();
+
 			const results = {
 				totalVotes: proposal.choices.map(
 					(_: string, i: number) => mappedVotes.filter((vote) => vote.choice === i + 1).length
@@ -205,7 +203,7 @@ const useProposal = (spaceKey: SPACE_KEY, hash: string, options?: QueryConfig<Pr
 				totalVotesBalances: mappedVotes.reduce((a, b) => a + b.balance, 0),
 				choices: proposal.choices,
 				spaceSymbol: space.symbol,
-				voteList: returnVoteHistory(),
+				voteList: voteList,
 			};
 
 			return results;

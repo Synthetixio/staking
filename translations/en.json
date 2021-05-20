@@ -1003,7 +1003,12 @@
 				"title": "Voting history",
 				"currentUser": "You",
 				"empty": "There are no votes yet",
-				"total": "{{totalVotes}} votes"
+				"total": "{{totalVotes}} votes",
+				"header": {
+					"voter": "Voter",
+					"choice": "Choice",
+					"weight": "Weight"
+				}
 			}
 		},
 		"council": {

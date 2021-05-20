@@ -41,7 +41,6 @@ import { useTranslation } from 'react-i18next';
 import useSignMessage, { SignatureType } from 'mutations/gov/useSignMessage';
 import useActiveTab from 'sections/gov/hooks/useActiveTab';
 import { useRecoilValue } from 'recoil';
-import { proposalState } from 'store/gov';
 import Button from 'components/Button';
 
 import CouncilDilution from 'contracts/councilDilution.js';
@@ -60,12 +59,14 @@ import TxState from 'sections/gov/components/TxState';
 import useProposal from 'queries/gov/useProposal';
 import { expired, pending } from '../helper';
 import synthetix from 'lib/synthetix';
+import { Proposal } from 'queries/gov/types';
 
 type DilutionContentProps = {
+	proposal: Proposal;
 	onBack: Function;
 };
 
-const DilutionContent: React.FC<DilutionContentProps> = ({ onBack }) => {
+const DilutionContent: React.FC<DilutionContentProps> = ({ proposal, onBack }) => {
 	const { t } = useTranslation();
 
 	const [voteMutate] = useSignMessage();
@@ -98,7 +99,6 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ onBack }) => {
 			? blockExplorerInstance.txLink(txHash)
 			: undefined;
 
-	const proposal = useRecoilValue(proposalState);
 	const isAppReady = useRecoilValue(appReadyState);
 	const walletAddress = useRecoilValue(walletAddressState);
 

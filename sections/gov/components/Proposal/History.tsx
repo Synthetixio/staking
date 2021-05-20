@@ -2,99 +2,120 @@ import React, { useMemo } from 'react';
 import styled from 'styled-components';
 import { Svg } from 'react-optimized-image';
 import Spinner from 'assets/svg/app/loader.svg';
-import useActiveTab from '../../hooks/useActiveTab';
 import { FlexDivRow, FlexDivRowCentered } from 'styles/common';
-import useProposal from 'queries/gov/useProposal';
+import { ProposalResults } from 'queries/gov/useProposal';
 import { useRecoilValue } from 'recoil';
 import { walletAddressState } from 'store/wallet';
 import { useTranslation } from 'react-i18next';
 import { truncateAddress, truncateString } from 'utils/formatters/string';
 import { formatNumber } from 'utils/formatters/number';
-import { MaxHeightColumn, StyledTooltip } from 'sections/gov/components/common';
+import { StyledTooltip } from 'sections/gov/components/common';
 import { Blockie } from '../common';
 import makeBlockie from 'ethereum-blockies-base64';
 import { ethers } from 'ethers';
+import { QueryResult } from 'react-query';
+import { List } from 'react-virtualized';
 
 type HistoryProps = {
+	proposalResults: QueryResult<ProposalResults, unknown>;
 	hash: string;
 };
 
-const History: React.FC<HistoryProps> = ({ hash }) => {
+const History: React.FC<HistoryProps> = ({ proposalResults }) => {
 	const { t } = useTranslation();
-	const activeTab = useActiveTab();
-	const proposal = useProposal(activeTab, hash);
 	const walletAddress = useRecoilValue(walletAddressState);
-
 	const { getAddress } = ethers.utils;
 
-	const history = useMemo(() => {
-		if (proposal.data) {
-			const { data } = proposal;
-			return (
-				<MaxHeightColumn>
-					<Row>
-						<Title>{t('gov.proposal.history.total', { totalVotes: data.voteList.length })}</Title>
-					</Row>
-					{data.voteList.length > 0 ? (
-						data.voteList.map((vote, i: number) => {
-							const currentWalletAddress = walletAddress ? getAddress(walletAddress) : '';
-							return (
-								<Row key={i}>
-									<InnerRow>
-										<Blockie src={makeBlockie(vote.voter)} />
-										<StyledTooltip
-											arrow={true}
-											placement="bottom"
-											content={
-												getAddress(vote.voter) === currentWalletAddress
-													? t('gov.proposal.history.currentUser')
-													: vote.profile.ens
-													? vote.profile.ens
-													: getAddress(vote.voter)
-											}
-											hideOnClick={false}
-										>
-											<Title>
-												{getAddress(vote.voter) === currentWalletAddress
-													? t('gov.proposal.history.currentUser')
-													: vote.profile.ens
-													? truncateString(vote.profile.ens, 13)
-													: truncateAddress(getAddress(vote.voter))}
-											</Title>
-										</StyledTooltip>
-									</InnerRow>
-									<StyledTooltip
-										arrow={true}
-										placement="bottom"
-										content={data.choices[vote.choice - 1]}
-										hideOnClick={false}
-									>
-										<Choice>- {truncateString(data.choices[vote.choice - 1], 13)}</Choice>
-									</StyledTooltip>
-									<StyledTooltip
-										arrow={true}
-										placement="bottom"
-										content={`${formatNumber(vote.scores[0])} WD + ${formatNumber(
-											vote.scores[1]
-										)} WD (delegated)`}
-										hideOnClick={false}
-									>
-										<Value>{`${formatNumber(vote.balance)} ${data.spaceSymbol}`}</Value>
-									</StyledTooltip>
-								</Row>
-							);
-						})
-					) : (
+	const returnVirtualizedList = (voteList: any[], choices: string[], spaceSymbol: string) => {
+		return (
+			<List
+				height={400}
+				width={400}
+				rowCount={voteList.length}
+				rowHeight={65}
+				overscanRowCount={20}
+				noRowsRenderer={() => {
+					return (
 						<Row>
 							<Title>{t('gov.proposal.history.empty')}</Title>
 						</Row>
-					)}
-				</MaxHeightColumn>
+					);
+				}}
+				rowRenderer={({ key, index, style }) => {
+					return (
+						<Row key={key} style={style}>
+							<LeftSide>
+								<Blockie src={makeBlockie(voteList[index].voter)} />
+								<StyledTooltip
+									arrow={true}
+									placement="bottom"
+									content={
+										getAddress(voteList[index].voter) === getAddress(walletAddress ?? '')
+											? t('gov.proposal.history.currentUser')
+											: voteList[index].profile.ens
+											? voteList[index].profile.ens
+											: getAddress(voteList[index].voter)
+									}
+									hideOnClick={false}
+								>
+									<Title>
+										{getAddress(voteList[index].voter) === getAddress(walletAddress ?? '')
+											? t('gov.proposal.history.currentUser')
+											: voteList[index].profile.ens
+											? truncateString(voteList[index].profile.ens, 13)
+											: truncateAddress(getAddress(voteList[index].voter))}
+									</Title>
+								</StyledTooltip>
+							</LeftSide>
+							<RightSide>
+								<StyledTooltip
+									arrow={true}
+									placement="bottom"
+									content={choices[voteList[index].choice - 1]}
+									hideOnClick={false}
+								>
+									<Choice>- {truncateString(choices[voteList[index].choice - 1], 13)}</Choice>
+								</StyledTooltip>
+								<StyledTooltip
+									arrow={true}
+									placement="bottom"
+									content={`${formatNumber(voteList[index].scores[0])} WD + ${formatNumber(
+										voteList[index].scores[1]
+									)} WD (delegated)`}
+									hideOnClick={false}
+								>
+									<Value>{`${formatNumber(voteList[index].balance)} ${spaceSymbol}`}</Value>
+								</StyledTooltip>
+							</RightSide>
+						</Row>
+					);
+				}}
+			/>
+		);
+	};
+
+	const history = useMemo(() => {
+		if (proposalResults.isLoading) {
+			return <StyledSpinner src={Spinner} />;
+		} else if (proposalResults.data) {
+			const { data } = proposalResults;
+			return (
+				<>
+					<HeaderRow>
+						<Title>{t('gov.proposal.history.total', { totalVotes: data.voteList.length })}</Title>
+					</HeaderRow>
+					<HeaderRow>
+						<Title>{t('gov.proposal.history.header.voter')}</Title>
+						<Title>{t('gov.proposal.history.header.choice')}</Title>
+						<Title>{t('gov.proposal.history.header.weight')}</Title>
+					</HeaderRow>
+					{returnVirtualizedList(data.voteList, data.choices, data.spaceSymbol)}
+				</>
 			);
 		} else {
-			return <StyledSpinner src={Spinner} />;
+			return null;
 		}
-	}, [proposal, walletAddress, t, getAddress]);
+	}, [proposalResults, t, returnVirtualizedList]);
 
 	return history;
 };
@@ -105,16 +126,30 @@ const StyledSpinner = styled(Svg)`
 	margin: 30px auto;
 `;
 
-const InnerRow = styled(FlexDivRow)`
-	width: 150px;
+const LeftSide = styled(FlexDivRow)`
+	width: 40%;
 	justify-content: flex-start;
 	align-items: center;
+	padding: 8px;
+	margin: 8px 8px;
 `;
+
+const RightSide = styled(FlexDivRow)`
+	width: 60%;
+	align-items: center;
+	padding: 8px;
+	margin: 8px 8px;
+`;
+
 const Row = styled(FlexDivRowCentered)`
 	border-bottom: 0.5px solid ${(props) => props.theme.colors.grayBlue};
 	justify-content: space-between;
+`;
+
+const HeaderRow = styled(FlexDivRow)`
 	padding: 8px;
 	margin: 8px 8px;
+	justify-content: space-between;
 `;
 
 const Title = styled.div`
@@ -129,15 +164,11 @@ const Value = styled(FlexDivRowCentered)`
 	color: ${(props) => props.theme.colors.white};
 	font-family: ${(props) => props.theme.fonts.interBold};
 	font-size: 12px;
-	width: 100px;
 	margin-left: 8px;
-	width: 33%;
 `;
 const Choice = styled.div`
 	color: ${(props) => props.theme.colors.white};
 	font-family: ${(props) => props.theme.fonts.regular};
 	font-size: 12px;
-	width: 100px;
 	margin-left: 8px;
-	width: 33%;
 `;

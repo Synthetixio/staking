@@ -6,6 +6,9 @@ import DilutionContent from './DilutionContent';
 import Info from './Info';
 import useActiveTab from 'sections/gov/hooks/useActiveTab';
 import { SPACE_KEY } from 'constants/snapshot';
+import { proposalState } from 'store/gov';
+import { useRecoilValue } from 'recoil';
+import Details from './Details';
 
 type ProposalProps = {
 	onBack: Function;
@@ -13,17 +16,21 @@ type ProposalProps = {
 
 const Index: React.FC<ProposalProps> = ({ onBack }) => {
 	const activeTab = useActiveTab();
+	const proposal = useRecoilValue(proposalState);
+
+	if (!proposal) return <></>;
 	return (
 		<Row>
 			<LeftCol>
 				{activeTab === SPACE_KEY.PROPOSAL ? (
-					<DilutionContent onBack={onBack} />
+					<DilutionContent proposal={proposal} onBack={onBack} />
 				) : (
-					<Content onBack={onBack} />
+					<Content proposal={proposal} onBack={onBack} />
 				)}
 			</LeftCol>
 			<RightCol>
-				<Info />
+				<Details proposal={proposal} />
+				<Info proposal={proposal} />
 			</RightCol>
 		</Row>
 	);
