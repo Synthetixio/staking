@@ -152,7 +152,7 @@ const BurnTab: React.FC = () => {
 						);
 					}
 
-					if (issuanceDelay) {
+					if (issuanceDelay && burnType !== BurnActionType.TARGET) {
 						throw new Error(
 							t('staking.actions.burn.action.error.issuance-period', {
 								date: toFutureDate(issuanceDelay),
