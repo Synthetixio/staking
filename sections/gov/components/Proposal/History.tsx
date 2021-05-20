@@ -26,96 +26,92 @@ const History: React.FC<HistoryProps> = ({ proposalResults }) => {
 	const walletAddress = useRecoilValue(walletAddressState);
 	const { getAddress } = ethers.utils;
 
-	const returnVirtualizedList = (voteList: any[], choices: string[], spaceSymbol: string) => {
-		return (
-			<List
-				height={400}
-				width={400}
-				rowCount={voteList.length}
-				rowHeight={65}
-				overscanRowCount={20}
-				noRowsRenderer={() => {
-					return (
-						<Row>
-							<Title>{t('gov.proposal.history.empty')}</Title>
-						</Row>
-					);
-				}}
-				rowRenderer={({ key, index, style }) => {
-					return (
-						<Row key={key} style={style}>
-							<LeftSide>
-								<Blockie src={makeBlockie(voteList[index].voter)} />
-								<StyledTooltip
-									arrow={true}
-									placement="bottom"
-									content={
-										getAddress(voteList[index].voter) === getAddress(walletAddress ?? '')
-											? t('gov.proposal.history.currentUser')
-											: voteList[index].profile.ens
-											? voteList[index].profile.ens
-											: getAddress(voteList[index].voter)
-									}
-									hideOnClick={false}
-								>
-									<Title>
-										{getAddress(voteList[index].voter) === getAddress(walletAddress ?? '')
-											? t('gov.proposal.history.currentUser')
-											: voteList[index].profile.ens
-											? truncateString(voteList[index].profile.ens, 13)
-											: truncateAddress(getAddress(voteList[index].voter))}
-									</Title>
-								</StyledTooltip>
-							</LeftSide>
-							<RightSide>
-								<StyledTooltip
-									arrow={true}
-									placement="bottom"
-									content={choices[voteList[index].choice - 1]}
-									hideOnClick={false}
-								>
-									<Choice>- {truncateString(choices[voteList[index].choice - 1], 13)}</Choice>
-								</StyledTooltip>
-								<StyledTooltip
-									arrow={true}
-									placement="bottom"
-									content={`${formatNumber(voteList[index].scores[0])} WD + ${formatNumber(
-										voteList[index].scores[1]
-									)} WD (delegated)`}
-									hideOnClick={false}
-								>
-									<Value>{`${formatNumber(voteList[index].balance)} ${spaceSymbol}`}</Value>
-								</StyledTooltip>
-							</RightSide>
-						</Row>
-					);
-				}}
-			/>
-		);
-	};
-
 	const history = useMemo(() => {
 		if (proposalResults.isLoading) {
 			return <StyledSpinner src={Spinner} />;
 		} else if (proposalResults.data) {
-			const { data } = proposalResults;
+			const {
+				data: { voteList, spaceSymbol, choices },
+			} = proposalResults;
 			return (
 				<>
 					<HeaderRow>
-						<Title>{t('gov.proposal.history.total', { totalVotes: data.voteList.length })}</Title>
+						<Title>{t('gov.proposal.history.total', { totalVotes: voteList.length })}</Title>
 					</HeaderRow>
 					<HeaderRow>
 						<Title>{t('gov.proposal.history.header.voter')}</Title>
 						<Title>{t('gov.proposal.history.header.choice')}</Title>
 						<Title>{t('gov.proposal.history.header.weight')}</Title>
 					</HeaderRow>
-					{returnVirtualizedList(data.voteList, data.choices, data.spaceSymbol)}
+					<List
+						height={400}
+						width={400}
+						rowCount={voteList.length}
+						rowHeight={65}
+						overscanRowCount={20}
+						noRowsRenderer={() => {
+							return (
+								<Row>
+									<Title>{t('gov.proposal.history.empty')}</Title>
+								</Row>
+							);
+						}}
+						rowRenderer={({ key, index, style }) => {
+							return (
+								<Row key={key} style={style}>
+									<LeftSide>
+										<Blockie src={makeBlockie(voteList[index].voter)} />
+										<StyledTooltip
+											arrow={true}
+											placement="bottom"
+											content={
+												getAddress(voteList[index].voter) === getAddress(walletAddress ?? '')
+													? t('gov.proposal.history.currentUser')
+													: voteList[index].profile.ens
+													? voteList[index].profile.ens
+													: getAddress(voteList[index].voter)
+											}
+											hideOnClick={false}
+										>
+											<Title>
+												{getAddress(voteList[index].voter) === getAddress(walletAddress ?? '')
+													? t('gov.proposal.history.currentUser')
+													: voteList[index].profile.ens
+													? truncateString(voteList[index].profile.ens, 13)
+													: truncateAddress(getAddress(voteList[index].voter))}
+											</Title>
+										</StyledTooltip>
+									</LeftSide>
+									<RightSide>
+										<StyledTooltip
+											arrow={true}
+											placement="bottom"
+											content={choices[voteList[index].choice - 1]}
+											hideOnClick={false}
+										>
+											<Choice>- {truncateString(choices[voteList[index].choice - 1], 13)}</Choice>
+										</StyledTooltip>
+										<StyledTooltip
+											arrow={true}
+											placement="bottom"
+											content={`${formatNumber(voteList[index].scores[0])} WD + ${formatNumber(
+												voteList[index].scores[1]
+											)} WD (delegated)`}
+											hideOnClick={false}
+										>
+											<Value>{`${formatNumber(voteList[index].balance)} ${spaceSymbol}`}</Value>
+										</StyledTooltip>
+									</RightSide>
+								</Row>
+							);
+						}}
+					/>
 				</>
 			);
 		} else {
 			return null;
 		}
-	}, [proposalResults, t, returnVirtualizedList]);
+	}, [proposalResults, t, getAddress, walletAddress]);
 
 	return history;
 };
