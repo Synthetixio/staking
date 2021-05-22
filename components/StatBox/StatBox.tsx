@@ -7,7 +7,7 @@ import media from 'styles/media';
 import { FlexDivRowCentered, FlexDivColCentered, Tooltip } from 'styles/common';
 import InfoIcon from 'assets/svg/app/info.svg';
 
-type Size = 'md' | 'lg';
+export type Size = 'md' | 'lg';
 
 type StatBoxProps = {
 	title: ReactNode;
@@ -15,6 +15,7 @@ type StatBoxProps = {
 	size?: Size;
 	children?: ReactNode;
 	tooltipContent?: string;
+	onClick?: () => void;
 };
 
 const StatBox: FC<StatBoxProps> = ({

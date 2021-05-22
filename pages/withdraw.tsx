@@ -11,6 +11,7 @@ import StatsSection from 'components/StatsSection';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { formatFiatCurrency, formatPercent, formatCryptoCurrency } from 'utils/formatters/number';
+import ActiveDebt from 'sections/shared/modals/DebtValueModal/DebtValueBox';
 
 const SNX_HEADER_DECIMALS = 2;
 
@@ -48,6 +49,7 @@ const WidthdrawPage: FC = () => {
 					value={formatFiatCurrency(getPriceAtCurrentRate(debtBalance), {
 						sign: selectedPriceCurrency.sign,
 					})}
+					isPink
 				/>
 			</StatsSection>
 			<LineSpacer />
@@ -67,9 +69,5 @@ const CRatio = styled(StatBox)`
 		color: ${(props) => props.theme.colors.black};
 	}
 `;
-const ActiveDebt = styled(StatBox)`
-	.title {
-		color: ${(props) => props.theme.colors.pink};
-	}
-`;
+
 export default WidthdrawPage;

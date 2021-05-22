@@ -14,6 +14,8 @@ import useUserStakingData from 'hooks/useUserStakingData';
 
 import { formatFiatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import StakedValue from 'sections/shared/modals/StakedValueModal/StakedValueBox';
+import ActiveDebt from 'sections/shared/modals/DebtValueModal/DebtValueBox';
 
 const DashboardPage: FC = () => {
 	const { t } = useTranslation();
@@ -52,6 +54,7 @@ const DashboardPage: FC = () => {
 						value={formatFiatCurrency(getPriceAtCurrentRate(debtBalance), {
 							sign: selectedPriceCurrency.sign,
 						})}
+						isPink
 					/>
 				</StatsSection>
 				<LineSpacer />
@@ -66,12 +69,6 @@ const Content = styled(FlexDivCol)`
 	max-width: 1200px;
 `;
 
-const StakedValue = styled(StatBox)`
-	.title {
-		color: ${(props) => props.theme.colors.blue};
-	}
-`;
-
 const APR = styled(StatBox)`
 	.title {
 		color: ${(props) => props.theme.colors.green};
@@ -79,12 +76,6 @@ const APR = styled(StatBox)`
 	.value {
 		text-shadow: ${(props) => props.theme.colors.greenTextShadow};
 		color: #073124;
-	}
-`;
-
-const ActiveDebt = styled(StatBox)`
-	.title {
-		color: ${(props) => props.theme.colors.pink};
 	}
 `;
 

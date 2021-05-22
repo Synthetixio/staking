@@ -16,6 +16,7 @@ import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuer
 
 import useHistoricalDebtData from 'hooks/useHistoricalDebtData';
 import Main from 'sections/debt';
+import ActiveDebt from 'sections/shared/modals/DebtValueModal/DebtValueBox';
 
 const DashboardPage: FC = () => {
 	const { t } = useTranslation();
@@ -58,6 +59,7 @@ const DashboardPage: FC = () => {
 							sign: selectedPriceCurrency.sign,
 						})}
 						size="lg"
+						isPink
 					/>
 					<TotalSynthValue
 						title={t('common.stat-box.synth-value')}
@@ -81,16 +83,6 @@ const Content = styled(FlexDivCol)`
 const IssuedDebt = styled(StatBox)`
 	.title {
 		color: ${(props) => props.theme.colors.blue};
-	}
-`;
-
-const ActiveDebt = styled(StatBox)`
-	.title {
-		color: ${(props) => props.theme.colors.pink};
-	}
-	.value {
-		text-shadow: ${(props) => props.theme.colors.pinkTextShadow};
-		color: ${(props) => props.theme.colors.navy};
 	}
 `;
 

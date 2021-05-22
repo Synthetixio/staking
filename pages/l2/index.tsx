@@ -14,6 +14,8 @@ import useStakingCalculations from 'sections/staking/hooks/useStakingCalculation
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { formatFiatCurrency, formatPercent, toBigNumber } from 'utils/formatters/number';
 import ProgressBar from 'components/ProgressBar';
+import StakedValue from 'sections/shared/modals/StakedValueModal/StakedValueBox';
+import ActiveDebt from 'sections/shared/modals/DebtValueModal/DebtValueBox';
 
 const L2Page: FC = () => {
 	const { t } = useTranslation();
@@ -70,6 +72,7 @@ const L2Page: FC = () => {
 							sign: selectedPriceCurrency.sign,
 						}
 					)}
+					isPink
 				/>
 			</StatsSection>
 			<LineSpacer />
@@ -78,20 +81,10 @@ const L2Page: FC = () => {
 	);
 };
 
-const StakedValue = styled(StatBox)`
-	.title {
-		color: ${(props) => props.theme.colors.blue};
-	}
-`;
 const CRatio = styled(StatBox)`
 	.value {
 		text-shadow: ${(props) => props.theme.colors.blueTextShadow};
 		color: ${(props) => props.theme.colors.black};
-	}
-`;
-const ActiveDebt = styled(StatBox)`
-	.title {
-		color: ${(props) => props.theme.colors.pink};
 	}
 `;
 

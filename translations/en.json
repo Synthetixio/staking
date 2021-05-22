@@ -131,6 +131,16 @@
 				"no-results": "None"
 			},
 			"view-all": "view all"
+		},
+		"staked-value": {
+			"title": "Staking Value",
+			"total-snx": "total snx" 
+		},
+		"debt-value": {
+			"title": "Debt Tracking",
+			"issued-debt": "issued debt",
+			"actual-debt": "actual debt",
+			"share-of-debt-pool": "share of debt pool"
 		}
 	},
 	"homepage": {

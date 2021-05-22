@@ -11,6 +11,8 @@ import useStakingCalculations from 'sections/staking/hooks/useStakingCalculation
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import useUserStakingData from 'hooks/useUserStakingData';
 import { formatFiatCurrency, formatPercent, toBigNumber } from 'utils/formatters/number';
+import StakedValue from 'sections/shared/modals/StakedValueModal/StakedValueBox';
+import ActiveDebt from 'sections/shared/modals/DebtValueModal/DebtValueBox';
 
 import Main from 'sections/loans/index';
 
@@ -46,6 +48,7 @@ const LoansPage: FC<LoansPageProps> = () => {
 							sign: selectedPriceCurrency.sign,
 						}
 					)}
+					isGreen
 				/>
 				<Earning
 					title={t('common.stat-box.earning')}
@@ -60,6 +63,7 @@ const LoansPage: FC<LoansPageProps> = () => {
 							sign: selectedPriceCurrency.sign,
 						}
 					)}
+					isGreen
 				/>
 			</StatsSection>
 			<LineSpacer />
@@ -68,12 +72,6 @@ const LoansPage: FC<LoansPageProps> = () => {
 	);
 };
 
-const StakedValue = styled(StatBox)`
-	.title {
-		color: ${(props) => props.theme.colors.green};
-	}
-`;
-
 const Earning = styled(StatBox)`
 	.title {
 		color: ${(props) => props.theme.colors.green};
@@ -81,12 +79,6 @@ const Earning = styled(StatBox)`
 	.value {
 		text-shadow: ${(props) => props.theme.colors.greenTextShadow};
 		color: #073124;
-	}
-`;
-
-const ActiveDebt = styled(StatBox)`
-	.title {
-		color: ${(props) => props.theme.colors.green};
 	}
 `;
 
