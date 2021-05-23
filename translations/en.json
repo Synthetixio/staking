@@ -134,7 +134,10 @@
 		},
 		"staked-value": {
 			"title": "Staking Value",
-			"total-snx": "total snx" 
+			"total-snx": "total snx",
+			"transferrable-snx": "transferrable snx",
+			"locked-snx": "locked snx",
+			"staked-snx": "staked snx"
 		},
 		"debt-value": {
 			"title": "Debt Tracking",

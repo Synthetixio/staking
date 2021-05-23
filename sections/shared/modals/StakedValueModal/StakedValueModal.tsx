@@ -1,11 +1,22 @@
-import { FC } from 'react';
+import { FC, useState, useMemo } from 'react';
+import get from 'lodash/get';
 import { useTranslation } from 'react-i18next';
 import styled, { useTheme } from 'styled-components';
-import { AreaChart, Area, Tooltip } from 'recharts';
+import { AreaChart, Area, Tooltip, XAxis, YAxis } from 'recharts';
 import formatDate from 'date-fns/format';
+import { Svg } from 'react-optimized-image';
 
-import useHistoricalDebtData from 'hooks/useHistoricalDebtData';
+import { formatCurrency } from 'utils/formatters/number';
+import ArrowForwardBlue from 'assets/svg/app/arrow-forward-blue.svg';
+import useHistoricalDebtData, { HistoricalDebtAndIssuanceData } from 'hooks/useHistoricalDebtData';
 import { CenteredModal } from '../common';
+
+const INITIAL_SNAPSHOT: HistoricalDebtAndIssuanceData = {
+	timestamp: 0,
+	actualDebt: 0,
+	issuanceDebt: 0,
+	index: 0,
+};
 
 export const StakedValueModal: FC<{ value: string; isOpened: boolean; onDismiss: () => void }> = ({
 	value,
@@ -18,16 +29,48 @@ export const StakedValueModal: FC<{ value: string; isOpened: boolean; onDismiss:
 	const chartColor = colors.blue;
 	const linearGradientId = '#colorBlue';
 
-	const historicalDebt = useHistoricalDebtData();
+	const historicalStaked = useHistoricalDebtData();
+	const data = historicalStaked.data ?? [];
 
-	const data = historicalDebt.data ?? [];
+	const [currentSnapshot, setCurrentSnapshot] = useState<HistoricalDebtAndIssuanceData | null>(
+		null
+	);
+	const currentSnapshotOrLast = useMemo(
+		() => (!(data.length && currentSnapshot) ? data[data.length - 1] : currentSnapshot),
+		[data, currentSnapshot]
+	);
+	const prevSnapshot = useMemo(
+		() =>
+			!(data.length && currentSnapshotOrLast)
+				? null
+				: currentSnapshotOrLast.index === 0
+				? INITIAL_SNAPSHOT
+				: data[currentSnapshotOrLast.index - 1],
+		[data, currentSnapshotOrLast]
+	);
 
 	return (
 		<StyledMenuModal onDismiss={onDismiss} isOpen={isOpened} title={t('modals.staked-value.title')}>
 			<Title>{value}</Title>
 
 			<AreaChartContainer>
-				<AreaChart width={383} height={94} data={data} id={'staked-value-chart'}>
+				<AreaChart
+					width={383}
+					height={94}
+					data={data}
+					id={'staked-value-chart'}
+					onMouseMove={(e: any) => {
+						const currentRate = get(e, 'activePayload[0].payload', null);
+						if (currentRate) {
+							setCurrentSnapshot(currentRate);
+						} else {
+							setCurrentSnapshot(null);
+						}
+					}}
+					onMouseLeave={(e: any) => {
+						setCurrentSnapshot(null);
+					}}
+				>
 					<defs>
 						<linearGradient id={linearGradientId} x1="0" y1="0" x2="0" y2="1">
 							<stop offset="0%" stopColor={chartColor} stopOpacity={0.5} />
@@ -35,8 +78,26 @@ export const StakedValueModal: FC<{ value: string; isOpened: boolean; onDismiss:
 						</linearGradient>
 					</defs>
 
+					<XAxis
+						type="number"
+						dataKey="timestamp"
+						domain={['auto', 'auto']}
+						hide
+						axisLine={false}
+						tickLine={false}
+						allowDataOverflow={true}
+					/>
+					<YAxis
+						type="number"
+						allowDataOverflow={true}
+						domain={['dataMin', 'dataMax']}
+						hide
+						axisLine={false}
+						tickLine={false}
+					/>
+
 					<Area
-						dataKey="actualDebt"
+						dataKey="issuanceDebt"
 						stroke={chartColor}
 						dot={false}
 						strokeWidth={2}
@@ -57,12 +118,78 @@ export const StakedValueModal: FC<{ value: string; isOpened: boolean; onDismiss:
 				</AreaChart>
 			</AreaChartContainer>
 
-			<Footer>
-				<FooterItem>
-					{t('modals.staked-value.title')}
-					<span>100,000</span>
-				</FooterItem>
-			</Footer>
+			{!(currentSnapshotOrLast && prevSnapshot) ? null : (
+				<Footer>
+					<FooterItem>
+						{t('modals.staked-value.total-snx')}
+						<FooterItemChange>
+							<div>
+								{formatCurrency('sUSD', prevSnapshot.issuanceDebt, {
+									sign: '$',
+								})}
+							</div>
+							<Svg src={ArrowForwardBlue} />
+							<div>
+								{' '}
+								{formatCurrency('sUSD', currentSnapshotOrLast.issuanceDebt, {
+									sign: '$',
+								})}
+							</div>
+						</FooterItemChange>
+					</FooterItem>
+					<FooterItem>
+						{t('modals.staked-value.transferrable-snx')}
+						<FooterItemChange>
+							<div>
+								{formatCurrency('sUSD', prevSnapshot.issuanceDebt, {
+									sign: '$',
+								})}
+							</div>
+							<Svg src={ArrowForwardBlue} />
+							<div>
+								{' '}
+								{formatCurrency('sUSD', currentSnapshotOrLast.issuanceDebt, {
+									sign: '$',
+								})}
+							</div>
+						</FooterItemChange>
+					</FooterItem>
+					<FooterItem>
+						{t('modals.staked-value.locked-snx')}
+						<FooterItemChange>
+							<div>
+								{formatCurrency('sUSD', prevSnapshot.issuanceDebt, {
+									sign: '$',
+								})}
+							</div>
+							<Svg src={ArrowForwardBlue} />
+							<div>
+								{' '}
+								{formatCurrency('sUSD', currentSnapshotOrLast.issuanceDebt, {
+									sign: '$',
+								})}
+							</div>
+						</FooterItemChange>
+					</FooterItem>
+					<FooterItem>
+						{t('modals.staked-value.staked-snx')}
+						<FooterItemChange>
+							<div>
+								{formatCurrency('sUSD', prevSnapshot.issuanceDebt, {
+									sign: '$',
+								})}
+							</div>
+							<Svg src={ArrowForwardBlue} />
+							<div>
+								{' '}
+								{formatCurrency('sUSD', currentSnapshotOrLast.issuanceDebt, {
+									sign: '$',
+								})}
+							</div>
+						</FooterItemChange>
+					</FooterItem>
+				</Footer>
+			)}
 		</StyledMenuModal>
 	);
 };
@@ -76,16 +203,29 @@ const CustomTooltip = ({
 	payload: [
 		{
 			value: number;
+			payload: {
+				timestamp: number;
+				issuanceDebt: number;
+			};
 		}
 	];
 	label: Date;
 }) => {
-	return active && payload && payload[0] ? (
+	if (!(active && payload && payload[0])) return null;
+	const {
+		payload: { timestamp, issuanceDebt },
+	} = payload[0];
+	return (
 		<TooltipContentStyle>
-			<LabelStyle>{formatDate(label, 'MMM d yyyy')}</LabelStyle>
-			<LabelStyle orange>30000 SNX TRANSFER</LabelStyle>
+			<LabelStyle>{formatDate(new Date(timestamp), 'MMM d yyyy')}</LabelStyle>
+			<LabelStyle orange>
+				STAKED:{' '}
+				{formatCurrency('sUSD', issuanceDebt, {
+					sign: '$',
+				})}
+			</LabelStyle>
 		</TooltipContentStyle>
-	) : null;
+	);
 };
 
 const StyledMenuModal = styled(CenteredModal)`
@@ -126,6 +266,11 @@ const FooterItem = styled.div`
 	span {
 		color: ${(props) => props.theme.colors.white};
 	}
+`;
+
+const FooterItemChange = styled.div`
+	display: flex;
+	grid-gap: 10px;
 `;
 
 const TooltipContentStyle = styled.div`

@@ -1,11 +1,22 @@
-import { FC, useMemo } from 'react';
+import { FC, useState, useMemo } from 'react';
+import get from 'lodash/get';
 import { useTranslation } from 'react-i18next';
 import styled, { useTheme } from 'styled-components';
-import { AreaChart, Area, Tooltip } from 'recharts';
+import { AreaChart, Area, Tooltip, XAxis, YAxis } from 'recharts';
 import formatDate from 'date-fns/format';
+import { Svg } from 'react-optimized-image';
 
-import useHistoricalDebtData from 'hooks/useHistoricalDebtData';
+import { formatCurrency } from 'utils/formatters/number';
+import ArrowForwardPink from 'assets/svg/app/arrow-forward-pink.svg';
+import useHistoricalDebtData, { HistoricalDebtAndIssuanceData } from 'hooks/useHistoricalDebtData';
 import { CenteredModal } from '../common';
+
+const INITIAL_SNAPSHOT: HistoricalDebtAndIssuanceData = {
+	timestamp: 0,
+	actualDebt: 0,
+	issuanceDebt: 0,
+	index: 0,
+};
 
 export const DebtValueModal: FC<{ value: string; isOpened: boolean; onDismiss: () => void }> = ({
 	value,
@@ -15,24 +26,75 @@ export const DebtValueModal: FC<{ value: string; isOpened: boolean; onDismiss: (
 	const { t } = useTranslation();
 	const { colors } = useTheme();
 
-	const chartColor = colors.blue;
-	const linearGradientId = '#colorBlue';
+	const chartColor = colors.pink;
+	const linearGradientId = '#colorPink';
 
 	const historicalDebt = useHistoricalDebtData();
 	const data = historicalDebt.data ?? [];
+
+	const [currentSnapshot, setCurrentSnapshot] = useState<HistoricalDebtAndIssuanceData | null>(
+		null
+	);
+	const currentSnapshotOrLast = useMemo(
+		() => (!(data.length && currentSnapshot) ? data[data.length - 1] : currentSnapshot),
+		[data, currentSnapshot]
+	);
+	const prevSnapshot = useMemo(
+		() =>
+			!(data.length && currentSnapshotOrLast)
+				? null
+				: currentSnapshotOrLast.index === 0
+				? INITIAL_SNAPSHOT
+				: data[currentSnapshotOrLast.index - 1],
+		[data, currentSnapshotOrLast]
+	);
 
 	return (
 		<StyledMenuModal onDismiss={onDismiss} isOpen={isOpened} title={t('modals.debt-value.title')}>
 			<Title>{value}</Title>
 
 			<AreaChartContainer>
-				<AreaChart width={383} height={94} data={data} id={'debt-value-chart'}>
+				<AreaChart
+					width={383}
+					height={94}
+					data={data}
+					id={'debt-value-chart'}
+					onMouseMove={(e: any) => {
+						const currentRate = get(e, 'activePayload[0].payload', null);
+						if (currentRate) {
+							setCurrentSnapshot(currentRate);
+						} else {
+							setCurrentSnapshot(null);
+						}
+					}}
+					onMouseLeave={(e: any) => {
+						setCurrentSnapshot(null);
+					}}
+				>
 					<defs>
 						<linearGradient id={linearGradientId} x1="0" y1="0" x2="0" y2="1">
 							<stop offset="0%" stopColor={chartColor} stopOpacity={0.5} />
 							<stop offset="100%" stopColor={chartColor} stopOpacity={0} />
 						</linearGradient>
 					</defs>
+
+					<XAxis
+						type="number"
+						dataKey="timestamp"
+						domain={['dataMin', 'dataMax']}
+						hide
+						axisLine={false}
+						tickLine={false}
+						allowDataOverflow={true}
+					/>
+					<YAxis
+						type="number"
+						allowDataOverflow={true}
+						domain={['dataMin', 'dataMax']}
+						hide
+						axisLine={false}
+						tickLine={false}
+					/>
 
 					<Area
 						dataKey="actualDebt"
@@ -56,20 +118,52 @@ export const DebtValueModal: FC<{ value: string; isOpened: boolean; onDismiss: (
 				</AreaChart>
 			</AreaChartContainer>
 
-			<Footer>
-				<FooterItem>
-					{t('modals.debt-value.issued-debt')}
-					<span>100,000</span>
-				</FooterItem>
-				<FooterItem>
-					{t('modals.debt-value.actual-debt')}
-					<span>100,000</span>
-				</FooterItem>
-				<FooterItem>
-					{t('modals.debt-value.share-of-debt-pool')}
-					<span>100,000</span>
-				</FooterItem>
-			</Footer>
+			{!(currentSnapshotOrLast && prevSnapshot) ? null : (
+				<Footer>
+					<FooterItem>
+						{t('modals.debt-value.issued-debt')}
+						<FooterItemChange>
+							<div>
+								{formatCurrency('sUSD', prevSnapshot.issuanceDebt, {
+									sign: '$',
+								})}
+							</div>
+							<Svg src={ArrowForwardPink} />
+							<div>
+								{' '}
+								{formatCurrency('sUSD', currentSnapshotOrLast.issuanceDebt, {
+									sign: '$',
+								})}
+							</div>
+						</FooterItemChange>
+					</FooterItem>
+					<FooterItem>
+						{t('modals.debt-value.actual-debt')}
+						<FooterItemChange>
+							<div>
+								{formatCurrency('sUSD', prevSnapshot.actualDebt, {
+									sign: '$',
+								})}
+							</div>
+							<Svg src={ArrowForwardPink} />
+							<div>
+								{' '}
+								{formatCurrency('sUSD', currentSnapshotOrLast.actualDebt, {
+									sign: '$',
+								})}
+							</div>
+						</FooterItemChange>
+					</FooterItem>
+					<FooterItem>
+						{t('modals.debt-value.share-of-debt-pool')}
+						<FooterItemChange>
+							<span>0%</span>
+							<Svg src={ArrowForwardPink} />
+							<span>0%</span>
+						</FooterItemChange>
+					</FooterItem>
+				</Footer>
+			)}
 		</StyledMenuModal>
 	);
 };
@@ -83,16 +177,27 @@ const CustomTooltip = ({
 	payload: [
 		{
 			value: number;
+			payload: {
+				timestamp: number;
+				actualDebt: number;
+			};
 		}
 	];
 	label: Date;
 }) => {
 	if (!(active && payload && payload[0])) return null;
-	const { value: timestamp } = payload[0];
+	const {
+		payload: { timestamp, actualDebt },
+	} = payload[0];
 	return (
 		<TooltipContentStyle>
-			<LabelStyle>{formatDate(timestamp, 'MMM d yyyy')}</LabelStyle>
-			<LabelStyle orange>30000 SNX TRANSFER</LabelStyle>
+			<LabelStyle>{formatDate(new Date(timestamp), 'MMM d yyyy')}</LabelStyle>
+			<LabelStyle orange>
+				DEBT:{' '}
+				{formatCurrency('sUSD', actualDebt, {
+					sign: '$',
+				})}
+			</LabelStyle>
 		</TooltipContentStyle>
 	);
 };
@@ -135,6 +240,11 @@ const FooterItem = styled.div`
 	span {
 		color: ${(props) => props.theme.colors.white};
 	}
+`;
+
+const FooterItemChange = styled.div`
+	display: flex;
+	grid-gap: 10px;
 `;
 
 const TooltipContentStyle = styled.div`
