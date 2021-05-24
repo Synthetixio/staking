@@ -6,14 +6,14 @@ import { SPACE_KEY, snapshotEndpoint } from 'constants/snapshot';
 
 import { appReadyState } from 'store/app';
 import { Proposal } from './types';
-import { networkState, walletAddressState } from 'store/wallet';
+import { isL2State, networkState, walletAddressState } from 'store/wallet';
 import request, { gql } from 'graphql-request';
 
 const useActiveProposalsQuery = (options?: QueryConfig<number>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const network = useRecoilValue(networkState);
 	const walletAddress = useRecoilValue(walletAddressState);
-	const isL1 = !network?.useOvm ?? true;
+	const isL2 = useRecoilValue(isL2State);
 
 	return useQuery<number>(
 		QUERY_KEYS.Gov.ActiveProposals(walletAddress ?? '', network?.id!),
@@ -54,7 +54,7 @@ const useActiveProposalsQuery = (options?: QueryConfig<number>) => {
 			return proposals.length;
 		},
 		{
-			enabled: isAppReady && isL1,
+			enabled: isAppReady && !isL2,
 			refetchInterval: false,
 			refetchOnWindowFocus: false,
 			refetchOnMount: false,

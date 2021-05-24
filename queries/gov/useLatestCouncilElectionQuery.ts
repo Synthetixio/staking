@@ -3,7 +3,7 @@ import { useRecoilValue } from 'recoil';
 import QUERY_KEYS from 'constants/queryKeys';
 import { snapshotEndpoint, SPACE_KEY } from 'constants/snapshot';
 import { appReadyState } from 'store/app';
-import { networkState, walletAddressState } from 'store/wallet';
+import { isL2State, networkState, walletAddressState } from 'store/wallet';
 import request, { gql } from 'graphql-request';
 import { Proposal } from './types';
 
@@ -11,7 +11,7 @@ const useLatestCouncilElectionQuery = (options?: QueryConfig<Proposal>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const network = useRecoilValue(networkState);
-	const isL1 = !network?.useOvm ?? true;
+	const isL2 = useRecoilValue(isL2State);
 
 	return useQuery<Proposal>(
 		QUERY_KEYS.Gov.LatestCouncilElection(walletAddress ?? '', network?.id!),
@@ -49,7 +49,7 @@ const useLatestCouncilElectionQuery = (options?: QueryConfig<Proposal>) => {
 			return proposal;
 		},
 		{
-			enabled: isAppReady && isL1,
+			enabled: isAppReady && !isL2,
 			refetchInterval: false,
 			refetchOnWindowFocus: false,
 			refetchOnMount: false,
