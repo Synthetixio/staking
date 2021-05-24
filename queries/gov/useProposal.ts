@@ -1,10 +1,8 @@
 import { useQuery, QueryConfig } from 'react-query';
 import { useRecoilValue } from 'recoil';
 
-import axios from 'axios';
-
 import QUERY_KEYS from 'constants/queryKeys';
-import { PROPOSAL, SPACE, SPACE_KEY } from 'constants/snapshot';
+import { snapshotEndpoint, SPACE_KEY } from 'constants/snapshot';
 
 import { getProfiles } from 'sections/gov/components/helper';
 
@@ -15,9 +13,10 @@ import snapshot from '@snapshot-labs/snapshot.js';
 import CouncilDilution from 'contracts/councilDilution.js';
 import { ethers } from 'ethers';
 import { uniqBy } from 'lodash';
-import { IpfsProposal, SpaceData, Votes, Vote, SpaceStrategy } from './types';
+import { SpaceData, Vote, SpaceStrategy, Proposal } from './types';
+import request, { gql } from 'graphql-request';
 
-type ProposalResults = {
+export type ProposalResults = {
 	totalBalances: number[];
 	totalScores: any;
 	totalVotes: number[];
@@ -37,31 +36,80 @@ const useProposal = (spaceKey: SPACE_KEY, hash: string, options?: QueryConfig<Pr
 		async () => {
 			const { getAddress } = ethers.utils;
 
-			let [proposal, { voterAddresses, voterSignatures }, space]: [
-				IpfsProposal,
-				Votes,
-				SpaceData
-			] = await Promise.all([
-				axios.get(`https://cloudflare-ipfs.com/ipfs/${hash}`).then((response) => {
-					let proposal = response.data;
-					proposal.msg = JSON.parse(proposal.msg);
-					return proposal;
-				}),
-				axios.get(PROPOSAL(spaceKey, hash)).then((response) => {
-					return {
-						voterAddresses: Object.keys(response.data).map((address) => getAddress(address)) as any,
-						voterSignatures: Object.values(response.data) as any,
-					};
-				}),
-				axios.get(SPACE(spaceKey)).then((response) => response.data),
-			]);
+			const { proposal }: { proposal: Proposal } = await request(
+				snapshotEndpoint,
+				gql`
+					query Proposal($id: String) {
+						proposal(id: $id) {
+							id
+							title
+							body
+							choices
+							start
+							end
+							snapshot
+							state
+							author
+							space {
+								id
+								name
+							}
+						}
+					}
+				`,
+				{ id: hash }
+			);
 
-			const block = parseInt(proposal.msg.payload.snapshot);
+			const { space }: { space: SpaceData } = await request(
+				snapshotEndpoint,
+				gql`
+					query Space($spaceKey: String) {
+						space(id: $spaceKey) {
+							domain
+							about
+							members
+							name
+							network
+							skin
+							symbol
+							strategies {
+								name
+								params
+							}
+							filters {
+								minScore
+								onlyMembers
+							}
+						}
+					}
+				`,
+				{ spaceKey: spaceKey }
+			);
+
+			const { votes }: { votes: Vote[] } = await request(
+				snapshotEndpoint,
+				gql`
+					query Votes($proposal: String) {
+						votes(first: 1000, where: { proposal: $proposal }) {
+							id
+							voter
+							created
+							proposal
+							choice
+						}
+					}
+				`,
+				{ proposal: proposal.id }
+			);
+
+			const voterAddresses = votes.map((e: Vote) => ethers.utils.getAddress(e.voter));
+
+			const block = parseInt(proposal.snapshot);
 			const currentBlock = provider?.getBlockNumber() ?? 0;
 			const blockTag = block > currentBlock ? 'latest' : block;
 
 			/* Get scores and ENS/3Box profiles */
-			const [scores, profiles]: any = await Promise.all([
+			const [scores, profiles] = await Promise.all([
 				snapshot.utils.getScores(
 					spaceKey,
 					space.strategies,
@@ -82,21 +130,21 @@ const useProposal = (spaceKey: SPACE_KEY, hash: string, options?: QueryConfig<Pr
 				balance: number;
 			}
 
-			let mappedVotes = voterSignatures as MappedVotes[];
+			let mappedVotes = votes as MappedVotes[];
 
 			mappedVotes = uniqBy(
 				mappedVotes
 					.map((vote) => {
 						vote.scores = space.strategies.map(
-							(_: SpaceStrategy, key: number) => scores[key][getAddress(vote.address)] || 0
+							(_: SpaceStrategy, key: number) => scores[key][getAddress(vote.voter)] || 0
 						);
 						vote.balance = vote.scores.reduce((a: number, b: number) => a + b, 0);
-						vote.profile = profiles[getAddress(vote.address)];
+						vote.profile = profiles[getAddress(vote.voter)];
 						return vote;
 					})
 					.filter((vote) => vote.balance > 0)
 					.sort((a, b) => b.balance - a.balance),
-				(a) => getAddress(a.address)
+				(a) => getAddress(a.voter)
 			);
 
 			/* Apply dilution penalties for SIP/SCCP pages */
@@ -107,10 +155,10 @@ const useProposal = (spaceKey: SPACE_KEY, hash: string, options?: QueryConfig<Pr
 					provider as any
 				);
 				mappedVotes = await Promise.all(
-					mappedVotes.map(async (vote: any) => {
+					mappedVotes.map(async (vote) => {
 						const dilutedValueBN = await contract.getDilutedWeightForProposal(
 							hash,
-							getAddress(vote.address)
+							getAddress(vote.voter)
 						);
 						const diluteValueNumber = Number(ethers.utils.formatEther(dilutedValueBN));
 
@@ -127,7 +175,7 @@ const useProposal = (spaceKey: SPACE_KEY, hash: string, options?: QueryConfig<Pr
 			const returnVoteHistory = () => {
 				if (walletAddress && voterAddresses.includes(getAddress(walletAddress))) {
 					const index = mappedVotes.findIndex(
-						(a) => getAddress(a.address) === getAddress(walletAddress)
+						(a) => getAddress(a.voter) === getAddress(walletAddress)
 					);
 					const currentUserVote = mappedVotes[index];
 					mappedVotes.splice(index, 1);
@@ -136,27 +184,26 @@ const useProposal = (spaceKey: SPACE_KEY, hash: string, options?: QueryConfig<Pr
 				return mappedVotes;
 			};
 
+			const voteList = returnVoteHistory();
+
 			const results = {
-				totalVotes: proposal.msg.payload.choices.map(
-					(_: string, i: number) =>
-						mappedVotes.filter((vote) => vote.msg.payload.choice === i + 1).length
+				totalVotes: proposal.choices.map(
+					(_: string, i: number) => mappedVotes.filter((vote) => vote.choice === i + 1).length
 				),
-				totalBalances: proposal.msg.payload.choices.map((_: string, i: number) =>
-					mappedVotes
-						.filter((vote) => vote.msg.payload.choice === i + 1)
-						.reduce((a, b) => a + b.balance, 0)
+				totalBalances: proposal.choices.map((_: string, i: number) =>
+					mappedVotes.filter((vote) => vote.choice === i + 1).reduce((a, b) => a + b.balance, 0)
 				),
-				totalScores: proposal.msg.payload.choices.map((_: string, i: number) =>
+				totalScores: proposal.choices.map((_: string, i: number) =>
 					space.strategies.map((_, sI) =>
 						mappedVotes
-							.filter((vote) => vote.msg.payload.choice === i + 1)
-							.reduce((a, b: any) => a + b.scores[sI], 0)
+							.filter((vote) => vote.choice === i + 1)
+							.reduce((a, b) => a + b.scores[sI], 0)
 					)
 				),
 				totalVotesBalances: mappedVotes.reduce((a, b) => a + b.balance, 0),
-				choices: proposal.msg.payload.choices,
+				choices: proposal.choices,
 				spaceSymbol: space.symbol,
-				voteList: returnVoteHistory(),
+				voteList: voteList,
 			};
 
 			return results;

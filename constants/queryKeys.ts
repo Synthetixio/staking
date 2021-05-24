@@ -267,6 +267,18 @@ export const QUERY_KEYS = {
 			walletAddress,
 			networkId,
 		],
+		ActiveProposals: (walletAddress: string, networkId: NetworkId) => [
+			'gov',
+			'activeProposals',
+			walletAddress,
+			networkId,
+		],
+		LatestCouncilElection: (walletAddress: string, networkId: NetworkId) => [
+			'gov',
+			'latestCouncilElection',
+			walletAddress,
+			networkId,
+		],
 		Proposal: (spaceKey: SPACE_KEY, hash: string) => ['gov', 'proposal', spaceKey, hash],
 	},
 	TokenLists: {

@@ -4,7 +4,7 @@ import { Svg } from 'react-optimized-image';
 import Spinner from 'assets/svg/app/loader.svg';
 import useActiveTab from '../../hooks/useActiveTab';
 import { FlexDivRowCentered } from 'styles/common';
-import useProposal from 'queries/gov/useProposal';
+import { ProposalResults } from 'queries/gov/useProposal';
 import { formatNumber, formatPercent } from 'utils/formatters/number';
 import ProgressBar from 'components/ProgressBar';
 import { MaxHeightColumn, StyledTooltip } from 'sections/gov/components/common';
@@ -12,20 +12,21 @@ import { SPACE_KEY } from 'constants/snapshot';
 import CouncilNominations from 'constants/nominations.json';
 import { useRecoilValue } from 'recoil';
 import { councilElectionCountState, numOfCouncilSeatsState } from 'store/gov';
+import { QueryResult } from 'react-query';
 
 type ResultsProps = {
+	proposalResults: QueryResult<ProposalResults, unknown>;
 	hash: string;
 };
 
-const Results: React.FC<ResultsProps> = ({ hash }) => {
+const Results: React.FC<ResultsProps> = ({ proposalResults, hash }) => {
 	const activeTab = useActiveTab();
-	const proposal = useProposal(activeTab, hash);
 	const [choices, setChoices] = useState<any>(null);
 	const electionCount = useRecoilValue(councilElectionCountState);
 	const numOfCouncilSeats = useRecoilValue(numOfCouncilSeatsState);
 
 	useEffect(() => {
-		if (proposal && activeTab === SPACE_KEY.COUNCIL) {
+		if (activeTab === SPACE_KEY.COUNCIL) {
 			const loadDiscordNames = async () => {
 				const currentElectionMembers = CouncilNominations as any;
 				const mappedProfiles = [] as any;
@@ -42,16 +43,16 @@ const Results: React.FC<ResultsProps> = ({ hash }) => {
 			};
 			loadDiscordNames();
 		}
-	}, [proposal, activeTab, electionCount, hash]);
+	}, [activeTab, electionCount, hash]);
 
 	useEffect(() => {
-		if (proposal && activeTab !== SPACE_KEY.COUNCIL) {
-			setChoices(proposal?.data?.choices);
+		if (proposalResults && activeTab !== SPACE_KEY.COUNCIL) {
+			setChoices(proposalResults?.data?.choices);
 		}
-	}, [proposal, activeTab]);
+	}, [proposalResults, activeTab]);
 
-	if (proposal.isSuccess && proposal.data && choices && choices.length > 0) {
-		const { data } = proposal;
+	if (proposalResults.isSuccess && proposalResults.data && choices && choices.length > 0) {
+		const { data } = proposalResults;
 
 		const totalVotes = data.totalVotesBalances !== 0 ? data.totalVotesBalances : 1;
 
@@ -88,7 +89,10 @@ const Results: React.FC<ResultsProps> = ({ hash }) => {
 								</Title>
 							</StyledTooltip>
 							<BarContainer>
-								<StyledProgressBar percentage={choice.balance / totalVotes} variant="blue-pink" />
+								<StyledProgressBar
+									percentage={choice.balance / totalVotes ?? 0}
+									variant="blue-pink"
+								/>
 								<Value>{formatPercent(choice.balance / totalVotes)}</Value>
 							</BarContainer>
 						</Row>
