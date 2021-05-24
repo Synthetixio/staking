@@ -30,7 +30,7 @@ export const DebtValueModal: FC<{ value: string; isOpened: boolean; onDismiss: (
 	const linearGradientId = '#colorPink';
 
 	const historicalDebt = useHistoricalDebtData();
-	const data = historicalDebt.data ?? [];
+	const data = useMemo(() => historicalDebt.data ?? [], [historicalDebt]);
 
 	const [currentSnapshot, setCurrentSnapshot] = useState<HistoricalDebtAndIssuanceData | null>(
 		null

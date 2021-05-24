@@ -29,8 +29,8 @@ export const StakedValueModal: FC<{ value: string; isOpened: boolean; onDismiss:
 	const chartColor = colors.blue;
 	const linearGradientId = '#colorBlue';
 
-	const historicalStaked = useHistoricalDebtData();
-	const data = historicalStaked.data ?? [];
+	const historicalDebt = useHistoricalDebtData();
+	const data = useMemo(() => historicalDebt.data ?? [], [historicalDebt]);
 
 	const [currentSnapshot, setCurrentSnapshot] = useState<HistoricalDebtAndIssuanceData | null>(
 		null
