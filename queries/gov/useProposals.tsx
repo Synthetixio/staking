@@ -31,10 +31,10 @@ const useProposals = (spaceKey: SPACE_KEY, options?: QueryConfig<Proposal[]>) =>
 	return useQuery<Proposal[]>(
 		QUERY_KEYS.Gov.Proposals(spaceKey, walletAddress ?? '', network?.id!),
 		async () => {
-			const { space }: { space: SpaceData } = await request(
+			const { space, proposals }: { space: SpaceData; proposals: Proposal[] } = await request(
 				snapshotEndpoint,
 				gql`
-					query Space($spaceKey: String) {
+					query ProposalsForSpace($spaceKey: String) {
 						space(id: $spaceKey) {
 							domain
 							about
@@ -52,15 +52,6 @@ const useProposals = (spaceKey: SPACE_KEY, options?: QueryConfig<Proposal[]>) =>
 								onlyMembers
 							}
 						}
-					}
-				`,
-				{ spaceKey: spaceKey }
-			);
-
-			const { proposals }: { proposals: Proposal[] } = await request(
-				snapshotEndpoint,
-				gql`
-					query Proposals($spaceKey: String) {
 						proposals(
 							first: 10
 							skip: 0
