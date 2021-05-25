@@ -16,6 +16,7 @@ import BurnIcon from 'assets/svg/app/burn.svg';
 import GridBox, { GridBoxProps } from 'components/GridBox/Gridbox';
 
 import { GlowingCircle } from 'styles/common';
+import media from 'styles/media';
 
 import useUserStakingData from 'hooks/useUserStakingData';
 
@@ -94,6 +95,15 @@ const StyledContainer = styled(Container)`
 	grid-template-areas: 'tile-1 tile-2 tile-3';
 	grid-template-columns: 1fr 1fr 1fr;
 	gap: 1rem;
+
+	${media.lessThan('md')`
+		grid-template-areas: 
+			'tile-1 tile-2'
+			'tile-3 tile-4';
+		grid-template-columns: 1fr 1fr;
+		display: grid;
+    flex-direction: unset;
+	`}
 `;
 
 export default LayoutLayerTwo;
