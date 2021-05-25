@@ -15,20 +15,17 @@ export enum BannerType {
 type BannerProps = {
 	message: JSX.Element;
 	localStorageKey?: string | undefined;
-	topOffset?: number | undefined;
 	type?: BannerType;
 };
 
-const Banner: FC<BannerProps> = ({
-	message,
-	localStorageKey,
-	topOffset,
-	type = BannerType.INFORMATION,
-}) => {
+const Banner: FC<BannerProps> = ({ message, localStorageKey, type = BannerType.INFORMATION }) => {
 	const [isBannerVisible, setIsBannerVisible] = useState<boolean>(true);
 
 	const fetchFromLocalStorage = useCallback(() => {
-		if (!localStorageKey) return;
+		if (!localStorageKey) {
+			setIsBannerVisible(true);
+			return;
+		}
 		if (!localStorage.getItem(localStorageKey)) return;
 		setIsBannerVisible(localStorage.getItem(localStorageKey) === 'true');
 	}, [localStorageKey]);
@@ -45,7 +42,7 @@ const Banner: FC<BannerProps> = ({
 
 	if (!isBannerVisible) return null;
 	return (
-		<Container topOffset={topOffset}>
+		<Container>
 			<Inner>
 				<Bar type={type} />
 				<Message>{message}</Message>
@@ -60,7 +57,7 @@ const Banner: FC<BannerProps> = ({
 	);
 };
 
-const Container = styled(FlexDivCentered)<{ topOffset: number | undefined }>`
+const Container = styled(FlexDivCentered)`
 	width: 568px;
 	height: 44px;
 	background-color: ${(props) => props.theme.colors.mediumBlue};
