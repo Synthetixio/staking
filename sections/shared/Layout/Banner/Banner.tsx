@@ -1,20 +1,31 @@
 import { FC, useCallback, useEffect, useState } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { Svg } from 'react-optimized-image';
 import Color from 'color';
 
 import { FlexDivCentered } from 'styles/common';
 import CloseIcon from 'assets/svg/app/close.svg';
 
+export enum BannerType {
+	INFORMATION = 'information',
+	ATTENTION = 'attention',
+	WARNING = 'warning',
+}
+
 type BannerProps = {
 	message: JSX.Element;
-	localStorageKey: string;
+	localStorageKey?: string | undefined;
+	type?: BannerType;
 };
 
-const Banner: FC<BannerProps> = ({ message, localStorageKey }) => {
+const Banner: FC<BannerProps> = ({ message, localStorageKey, type = BannerType.INFORMATION }) => {
 	const [isBannerVisible, setIsBannerVisible] = useState<boolean>(true);
 
 	const fetchFromLocalStorage = useCallback(() => {
+		if (!localStorageKey) {
+			setIsBannerVisible(true);
+			return;
+		}
 		if (!localStorage.getItem(localStorageKey)) return;
 		setIsBannerVisible(localStorage.getItem(localStorageKey) === 'true');
 	}, [localStorageKey]);
@@ -24,6 +35,7 @@ const Banner: FC<BannerProps> = ({ message, localStorageKey }) => {
 	}, [fetchFromLocalStorage]);
 
 	const handleHideBanner = () => {
+		if (!localStorageKey) return;
 		localStorage.setItem(localStorageKey, 'false');
 		fetchFromLocalStorage();
 	};
@@ -32,19 +44,22 @@ const Banner: FC<BannerProps> = ({ message, localStorageKey }) => {
 	return (
 		<Container>
 			<Inner>
-				<Bar />
+				<Bar type={type} />
 				<Message>{message}</Message>
-				<ButtonClose onClick={handleHideBanner}>
-					<Svg src={CloseIcon} />
-				</ButtonClose>
+
+				{type !== BannerType.WARNING && (
+					<ButtonClose onClick={handleHideBanner}>
+						<Svg src={CloseIcon} />
+					</ButtonClose>
+				)}
 			</Inner>
 		</Container>
 	);
 };
 
 const Container = styled(FlexDivCentered)`
-	width: 492px;
-	height: 32px;
+	width: 568px;
+	height: 44px;
 	background-color: ${(props) => props.theme.colors.mediumBlue};
 	border-radius: 4px;
 	position: absolute;
@@ -57,16 +72,30 @@ const Inner = styled(FlexDivCentered)`
 	position: relative;
 `;
 
-const Bar = styled.div`
+const BarInfo = css`
+	border-color: ${(props) => props.theme.colors.blue};
+`;
+const BarAttention = css`
+	border-color: ${(props) => props.theme.colors.yellow};
+`;
+const BarWarning = css`
+	border-color: ${(props) => props.theme.colors.pink};
+`;
+
+const Bar = styled.div<{ type: string }>`
 	height: 100%;
-	border: 2px solid ${(props) => props.theme.colors.pink};
+	border-width: 2px;
+	border-style: solid;
 	box-shadow: 0px 0px 15px ${(props) => Color(props.theme.colors.pink).alpha(0.6).rgb().string()};
+	${(props) => props.type === BannerType.INFORMATION && BarInfo}
+	${(props) => props.type === BannerType.ATTENTION && BarAttention}
+	${(props) => props.type === BannerType.WARNING && BarWarning}
 `;
 
 const Message = styled.div`
 	padding: 0 28px 0 16px;
 	font-family: ${(props) => props.theme.fonts.condensedMedium};
-	font-size: 12px;
+	font-size: 14px;
 `;
 
 const ButtonClose = styled.button`
