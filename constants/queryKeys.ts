@@ -19,6 +19,14 @@ export const QUERY_KEYS = {
 			networkId,
 		],
 	},
+	Liquidations: {
+		LiquidationsData: (walletAddress: string, networkId: NetworkId) => [
+			'liquidations',
+			'liquidationsData',
+			walletAddress,
+			networkId,
+		],
+	},
 	Staking: {
 		FeePoolData: (period: string) => ['staking', 'feePoolData', period],
 		FeeClaimHistory: (walletAddress: string, networkId: NetworkId) => [
