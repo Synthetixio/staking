@@ -463,6 +463,7 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 					isApproving,
 					isBorrowing,
 					hasInsufficientCollateral: !collateralAmount.isZero() && hasInsufficientCollateral,
+					hasBothInputsSet: !debtAmount.isZero() && !collateralAmount.isZero(),
 				}}
 			/>
 

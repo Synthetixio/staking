@@ -116,7 +116,6 @@ export const Subtitle = styled.p`
 	font-family: ${(props) => props.theme.fonts.regular};
 	color: ${(props) => props.theme.colors.gray};
 	font-size: 14px;
-	height: 50px;
 	margin: 8px 24px;
 `;
 export const DataContainer = styled.div`

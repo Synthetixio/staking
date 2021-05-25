@@ -416,6 +416,7 @@ const Container = styled(FlexDivColCentered)`
 	background-color: ${(props) => props.theme.colors.black};
 	height: 100%;
 	width: 100%;
+	padding-bottom: 10px;
 `;
 
 const StyledValue = styled(Value)`

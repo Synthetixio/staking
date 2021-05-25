@@ -93,7 +93,7 @@ const Container = styled.div`
 `;
 
 const StakingLogoWrap = styled.div`
-	padding: 30px 0 64px 24px;
+	padding: 30px 0 44px 24px;
 	cursor: pointer;
 `;
 
@@ -105,5 +105,4 @@ const LineSeparator = styled.div`
 
 const MenuCharts = styled.div`
 	margin: 0 auto;
-	width: calc(100% - 48px);
 `;
