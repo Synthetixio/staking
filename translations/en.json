@@ -1003,7 +1003,12 @@
 				"title": "Voting history",
 				"currentUser": "You",
 				"empty": "There are no votes yet",
-				"total": "{{totalVotes}} votes"
+				"total": "{{totalVotes}} votes",
+				"header": {
+					"voter": "Voter",
+					"choice": "Choice",
+					"weight": "Weight"
+				}
 			}
 		},
 		"council": {
@@ -1085,7 +1090,8 @@
 			"connected-to-l2": "Layer 2"
 		},
 		"banner": {
-			"warning-url": "WARNING: Please make sure the URL is <0>staking.synthetix.io</0> (bookmark this page to be safe)"
+			"url-warning": "ATTENTION: Please make sure the URL is <0>staking.synthetix.io</0> (bookmark this page to be safe)",
+			"liquidation-warning": "WARNING: Your staked SNX may be liquidated if you don't bring your C-Ratio above <0>{{liquidationRatio}}%</0> before <1>{{liquidationDeadline}}</1>. Click <2>here</2> for more info."
 		},
 		"error": {
 			"please-install-metamask": "Please install Metamask or manually add the Optimism network to your browser wallet."
