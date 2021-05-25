@@ -22,7 +22,7 @@ const BannerManager: FC = () => {
 		? 0
 		: 100 / Number(ethersUtils.formatEther(liquidationRatio.toString()));
 
-	if (!liquidationDeadlineForAccount?.isZero()) {
+	if (!liquidationDeadlineForAccount.isZero()) {
 		return (
 			<Banner
 				type={BannerType.WARNING}
