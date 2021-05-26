@@ -1,16 +1,15 @@
 import { FC } from 'react';
 import styled from 'styled-components';
 import { Svg } from 'react-optimized-image';
-import { Trans, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 
 import { MOBILE_BODY_PADDING } from 'constants/ui';
-import { LOCAL_STORAGE_KEYS } from 'constants/storage';
 import UIContainer from 'containers/UI';
-import { FlexDivCentered, FlexDivCol, ExternalLink } from 'styles/common';
+import { FlexDivCol, FlexDivCentered } from 'styles/common';
 import media from 'styles/media';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
+import BannerManager from 'components/BannerManager';
 import TitleIcon from 'assets/svg/app/menu-hamburger-white.svg';
-import Banner from 'sections/shared/Layout/Banner';
 import UserMenu from './UserMenu';
 
 const Header: FC = () => {
@@ -20,15 +19,7 @@ const Header: FC = () => {
 	return (
 		<HeaderWrapper>
 			<DesktopOnlyView>
-				<Banner
-					localStorageKey={LOCAL_STORAGE_KEYS.WARNING_URL_BANNER_VISIBLE}
-					message={
-						<Trans
-							i18nKey={'user-menu.banner.warning-url'}
-							components={[<StyledExternalLink href="https://staking.synthetix.io" />]}
-						/>
-					}
-				/>
+				<BannerManager />
 			</DesktopOnlyView>
 			<Container>
 				<FlexDivCentered>
@@ -94,14 +85,6 @@ const SubtitleText = styled.div`
 
 const Sep = styled.div`
 	flex: 1;
-`;
-
-const StyledExternalLink = styled(ExternalLink)`
-	color: ${(props) => props.theme.colors.white};
-	text-decoration: underline;
-	&:hover {
-		text-decoration: underline;
-	}
 `;
 
 export default Header;

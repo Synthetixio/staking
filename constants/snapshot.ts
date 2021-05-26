@@ -7,15 +7,8 @@ export enum SPACE_KEY {
 
 const isTestNet = false;
 
-const BASE_URL = () => (isTestNet ? `testnet` : `hub`);
+const BASE_URL = isTestNet ? `testnet` : `hub`;
 
-export const SPACE = (spaceKey: string) =>
-	`https://${BASE_URL()}.snapshot.page/api/spaces/${spaceKey}`;
+export const snapshotEndpoint = `https://${BASE_URL}.snapshot.page/graphql`;
 
-export const PROPOSALS = (spaceKey: string) =>
-	`https://${BASE_URL()}.snapshot.page/api/${spaceKey}/proposals`;
-
-export const PROPOSAL = (spaceKey: string, ipfsHash: string) =>
-	`https://${BASE_URL()}.snapshot.page/api/${spaceKey}/proposal/${ipfsHash}`;
-
-export const MESSAGE_URL = `https://${BASE_URL()}.snapshot.page/api/message`;
+export const MESSAGE_URL = `https://${BASE_URL}.snapshot.page/api/message`;

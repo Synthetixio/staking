@@ -6,13 +6,10 @@ import styled from 'styled-components';
 import { DESKTOP_SIDE_NAV_WIDTH, DESKTOP_BODY_PADDING } from 'constants/ui';
 import ROUTES from 'constants/routes';
 import NotificationContainer from 'constants/NotificationContainer';
-import { SPACE_KEY } from 'constants/snapshot';
-// import UIContainer from 'containers/UI';
-import useProposals from 'queries/gov/useProposals';
 import { NotificationTemplate, userNotificationState } from 'store/ui';
 import media from 'styles/media';
-import { Proposal } from 'queries/gov/types';
 import { isL2State, isMainnetState } from 'store/wallet';
+import useLatestCouncilElectionQuery from 'queries/gov/useLatestCouncilElectionQuery';
 
 import Header from './Header';
 import SideNav from './SideNav';
@@ -25,7 +22,7 @@ type AppLayoutProps = {
 const AppLayout: FC<AppLayoutProps> = ({ children }) => {
 	const isL2 = useRecoilValue(isL2State);
 	const isMainnet = useRecoilValue(isMainnetState);
-	const councilProposals = useProposals(SPACE_KEY.COUNCIL);
+	const latestCouncilElection = useLatestCouncilElectionQuery();
 	const setNotificationState = useSetRecoilState(userNotificationState);
 
 	useEffect(() => {
@@ -44,36 +41,20 @@ const AppLayout: FC<AppLayoutProps> = ({ children }) => {
 	}, [isL2, isMainnet]);
 
 	useEffect(() => {
-		if (councilProposals.data && !isL2) {
-			let latestProposal = {
-				msg: {
-					payload: {
-						snapshot: '0',
-					},
-				},
-			} as Partial<Proposal>;
-
-			councilProposals.data.forEach((proposal) => {
-				if (
-					parseInt(proposal.msg.payload.snapshot) >
-					parseInt(latestProposal?.msg?.payload.snapshot ?? '0')
-				) {
-					latestProposal = proposal;
-				}
-			});
-
-			if (new Date().getTime() / 1000 < (latestProposal?.msg?.payload.end ?? 0)) {
+		if (latestCouncilElection.data && !isL2) {
+			let latestProposal = latestCouncilElection.data;
+			if (new Date().getTime() / 1000 < (latestProposal.end ?? 0)) {
 				setNotificationState({
 					type: 'info',
 					template: NotificationTemplate.ELECTION,
 					props: {
-						proposal: latestProposal?.msg?.payload.name,
-						link: `${latestProposal.msg?.space}/${latestProposal.authorIpfsHash}`,
+						proposal: latestProposal.title,
+						link: `${latestProposal.space}/${latestProposal.id}`,
 					},
 				});
 			}
 		}
-	}, [councilProposals, setNotificationState, isL2]);
+	}, [latestCouncilElection, setNotificationState, isL2]);
 
 	return (
 		<>

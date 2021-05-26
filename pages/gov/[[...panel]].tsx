@@ -13,7 +13,6 @@ import useIndividualDebtWeighted from 'sections/gov/hooks/useIndividualDebtWeigh
 import useProposals from 'queries/gov/useProposals';
 import StatsSection from 'components/StatsSection';
 import MainContent from 'sections/gov';
-import useActiveProposalCount from 'sections/gov/hooks/useActiveProposalCount';
 import { SPACE_KEY } from 'constants/snapshot';
 import { Proposal } from 'queries/gov/types';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
@@ -22,6 +21,7 @@ import { ethers } from 'ethers';
 import Connector from 'containers/Connector';
 import councilDilution from 'contracts/councilDilution';
 import { appReadyState } from 'store/app';
+import useActiveProposalsQuery from 'queries/gov/useActiveProposalsQuery';
 
 const Gov: React.FC = () => {
 	const { t } = useTranslation();
@@ -30,7 +30,7 @@ const Gov: React.FC = () => {
 	const { setTitle } = UIContainer.useContainer();
 
 	const [latestElectionBlock, setLatestElectionBlock] = useState<number | null>(null);
-	const activeProposals = useActiveProposalCount();
+	const activeProposals = useActiveProposalsQuery();
 
 	const total = useTotalDebtWeighted(latestElectionBlock);
 	const individual = useIndividualDebtWeighted(latestElectionBlock);
@@ -60,25 +60,18 @@ const Gov: React.FC = () => {
 	useEffect(() => {
 		if (councilProposals.data && isAppReady) {
 			let latestProposal = {
-				msg: {
-					payload: {
-						snapshot: '0',
-					},
-				},
+				snapshot: '0',
 			} as Partial<Proposal>;
 
 			setCouncilElectionCount(councilProposals.data.length);
 
 			councilProposals.data.forEach((proposal) => {
-				if (
-					parseInt(proposal.msg.payload.snapshot) >
-					parseInt(latestProposal?.msg?.payload.snapshot ?? '0')
-				) {
+				if (parseInt(proposal.snapshot) > parseInt(latestProposal.snapshot ?? '0')) {
 					latestProposal = proposal;
 				}
 			});
 
-			setLatestElectionBlock(parseInt(latestProposal?.msg?.payload.snapshot ?? '0'));
+			setLatestElectionBlock(parseInt(latestProposal.snapshot ?? '0'));
 		}
 	}, [councilProposals, setCouncilElectionCount, isAppReady]);
 
@@ -102,7 +95,7 @@ const Gov: React.FC = () => {
 				/>
 				<ActiveProposals
 					title={t('common.stat-box.active-proposals')}
-					value={activeProposals ?? 0}
+					value={activeProposals.data ?? 0}
 				/>
 				<TotalVotingPower
 					title={t('common.stat-box.total-voting-power.title')}

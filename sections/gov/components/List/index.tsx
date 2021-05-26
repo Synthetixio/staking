@@ -13,14 +13,14 @@ import Countdown from 'react-countdown';
 import { useRouter } from 'next/router';
 import ROUTES from 'constants/routes';
 import { panelState, PanelType, proposalState } from 'store/gov';
-import useActiveTab from '../../hooks/useActiveTab';
 import { DURATION_SEPARATOR } from 'constants/date';
 import { getCurrentTimestampSeconds } from 'utils/formatters/date';
 import { DesktopOrTabletView, MobileOnlyView } from 'components/Media';
+import useProposals from 'queries/gov/useProposals';
+import { SPACE_KEY } from 'constants/snapshot';
 
 type IndexProps = {
-	data: ProposalType[];
-	isLoaded: boolean;
+	spaceKey: SPACE_KEY;
 };
 
 const Index: React.FC<IndexProps> = (props) => {
@@ -37,18 +37,17 @@ const Index: React.FC<IndexProps> = (props) => {
 };
 
 type ResponsiveTableProps = {
-	data: ProposalType[];
-	isLoaded: boolean;
 	mobile?: boolean;
+	spaceKey: SPACE_KEY;
 };
 
-const ResponsiveTable: React.FC<ResponsiveTableProps> = ({ data, isLoaded, mobile }) => {
+const ResponsiveTable: React.FC<ResponsiveTableProps> = ({ mobile, spaceKey }) => {
 	const { t } = useTranslation();
 	const router = useRouter();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const setProposal = useSetRecoilState(proposalState);
 	const setPanelType = useSetRecoilState(panelState);
-	const activeTab = useActiveTab();
+	const proposals = useProposals(spaceKey);
 
 	const columns = useMemo(() => {
 		const widths = mobile ? ['auto', 70, 70, 50] : [200, 75, 100, 75];
@@ -58,7 +57,7 @@ const ResponsiveTable: React.FC<ResponsiveTableProps> = ({ data, isLoaded, mobil
 				accessor: 'description',
 				Cell: (cellProps: CellProps<ProposalType>) => (
 					<CellContainer>
-						<Title>{cellProps.row.original.msg.payload.name}</Title>
+						<Title>{cellProps.row.original.title}</Title>
 					</CellContainer>
 				),
 				sortable: false,
@@ -68,10 +67,8 @@ const ResponsiveTable: React.FC<ResponsiveTableProps> = ({ data, isLoaded, mobil
 				accessor: 'status',
 				Cell: (cellProps: CellProps<ProposalType>) => {
 					const currentTimestampSeconds = getCurrentTimestampSeconds();
-					const closed =
-						cellProps.row.original.msg.payload.end < currentTimestampSeconds ? true : false;
-					const pending =
-						currentTimestampSeconds < cellProps.row.original.msg.payload.start ? true : false;
+					const closed = cellProps.row.original.end < currentTimestampSeconds ? true : false;
+					const pending = currentTimestampSeconds < cellProps.row.original.start ? true : false;
 					return (
 						<CellContainer>
 							<Status closed={closed} pending={pending}>
@@ -94,7 +91,7 @@ const ResponsiveTable: React.FC<ResponsiveTableProps> = ({ data, isLoaded, mobil
 						<Title isNumeric={true}>
 							<Countdown
 								autoStart={true}
-								date={cellProps.row.original.msg.payload.end * 1000}
+								date={cellProps.row.original.end * 1000}
 								renderer={({ days, hours, minutes }) => {
 									if (mobile) {
 										const duration = [days, hours, minutes];
@@ -133,13 +130,13 @@ const ResponsiveTable: React.FC<ResponsiveTableProps> = ({ data, isLoaded, mobil
 			<StyledTable
 				palette="primary"
 				columns={columns}
-				data={data}
+				data={proposals.data ?? []}
 				maxRows={5}
-				isLoading={!isLoaded}
+				isLoading={proposals.isLoading}
 				showPagination={true}
 				onTableRowClick={(row: Row<ProposalType>) => {
 					setProposal(row.original);
-					router.push(ROUTES.Gov.Proposal(activeTab, row.original.authorIpfsHash));
+					router.push(ROUTES.Gov.Proposal(spaceKey, row.original.id));
 					setPanelType(PanelType.PROPOSAL);
 				}}
 				minHeight={isWalletConnected}
@@ -148,7 +145,7 @@ const ResponsiveTable: React.FC<ResponsiveTableProps> = ({ data, isLoaded, mobil
 				<AbsoluteContainer
 					onClick={() => {
 						setPanelType(PanelType.CREATE);
-						router.push(ROUTES.Gov.Create(activeTab));
+						router.push(ROUTES.Gov.Create(spaceKey));
 					}}
 				>
 					<CreateButton variant="secondary">{t('gov.table.create')}</CreateButton>
@@ -216,9 +213,6 @@ const Status = styled.div<{ closed: boolean; pending: boolean }>`
 `;
 
 const AbsoluteContainer = styled.div`
-	${media.greaterThan('mdUp')`
-		position: absolute;
-	`}
 	width: 100%;
 	bottom: 0px;
 	margin-bottom: 24px;
