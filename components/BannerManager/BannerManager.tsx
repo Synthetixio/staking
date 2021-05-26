@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { utils as ethersUtils } from 'ethers';
 
 import useGetLiquidationData from 'queries/liquidations/useGetLiquidationDataQuery';
+import useGetDebtDataQuery from 'queries/debt/useGetDebtDataQuery';
 
 import Banner, { BannerType } from 'sections/shared/Layout/Banner';
 import { LOCAL_STORAGE_KEYS } from 'constants/storage';
@@ -13,16 +14,16 @@ import { formatShortDateWithTime } from 'utils/formatters/date';
 
 const BannerManager: FC = () => {
 	const liquidationData = useGetLiquidationData();
+	const debtData = useGetDebtDataQuery();
 
-	const liquidationRatio = liquidationData?.data?.liquidationRatio ?? zeroBN;
+	const issuanceRatio = debtData?.data?.targetCRatio ?? zeroBN;
+	const cRatio = debtData?.data?.currentCRatio ?? zeroBN;
 	const liquidationDeadlineForAccount =
 		liquidationData?.data?.liquidationDeadlineForAccount ?? zeroBN;
 
-	const liquidationRatioPercentage = liquidationRatio.isZero()
-		? 0
-		: 100 / Number(ethersUtils.formatEther(liquidationRatio.toString()));
+	const issuanceRatioPercentage = issuanceRatio.isZero() ? 0 : 100 / Number(issuanceRatio);
 
-	if (!liquidationDeadlineForAccount.isZero()) {
+	if (!liquidationDeadlineForAccount.isZero() && cRatio.isGreaterThan(issuanceRatio)) {
 		return (
 			<Banner
 				type={BannerType.WARNING}
@@ -30,7 +31,7 @@ const BannerManager: FC = () => {
 					<Trans
 						i18nKey={'user-menu.banner.liquidation-warning'}
 						values={{
-							liquidationRatio: liquidationRatioPercentage,
+							liquidationRatio: issuanceRatioPercentage,
 							liquidationDeadline: formatShortDateWithTime(
 								Number(liquidationDeadlineForAccount.toString()) * 1000
 							),
