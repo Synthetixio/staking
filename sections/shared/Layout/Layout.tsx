@@ -132,6 +132,15 @@ const GlobalStyle = createGlobalStyle`
 	::-webkit-resizer {
 		background-color: ${(props) => props.theme.colors.blue};
 	}
+
+	/* mobile tables */
+
+	${media.lessThan('md')`
+		.table-header-cell,
+		.table-body-cell {
+			white-space: nowrap;
+		}
+	`}
 `;
 
 export default Layout;
