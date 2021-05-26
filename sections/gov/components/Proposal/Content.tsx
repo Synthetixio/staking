@@ -325,6 +325,7 @@ const Description = styled.div`
 
 	${media.greaterThan('mdUp')`
 		width: 500px;
+		padding: 0 20px;
 	`}
 
 	h1 {

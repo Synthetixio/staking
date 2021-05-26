@@ -17,7 +17,7 @@ export const DebtValueBox: FC<{
 	const [isOpened, setIsOpened] = useState<boolean>(false);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 
-	const onOpen = () => isWalletConnected && setIsOpened(true);
+	const onOpen = () => isWalletConnected; //  && setIsOpened(true);
 	const onDismiss = () => setIsOpened(false);
 
 	return (
@@ -34,6 +34,7 @@ export const DebtValueBox: FC<{
 
 const DebtValue = styled(StatBox)<{ isGreen?: boolean; isPink?: boolean; isLarge: boolean }>`
 	cursor: pointer;
+	
 	.title {
 		color: ${(props) =>
 			props.isGreen
@@ -42,6 +43,7 @@ const DebtValue = styled(StatBox)<{ isGreen?: boolean; isPink?: boolean; isLarge
 				? props.theme.colors.pink
 				: props.theme.colors.blue};
 	}
+	
 	.value {
 		text-shadow: ${(props) =>
 			!props.isLarge

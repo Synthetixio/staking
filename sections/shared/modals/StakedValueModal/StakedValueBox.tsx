@@ -14,7 +14,7 @@ export const StakedValueBox: FC<{ title: any; value: any; isGreen?: boolean }> =
 	const [isOpened, setIsOpened] = useState<boolean>(false);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 
-	const onOpen = () => isWalletConnected && setIsOpened(true);
+	const onOpen = () => isWalletConnected; // && setIsOpened(true);
 	const onDismiss = () => setIsOpened(false);
 
 	return (

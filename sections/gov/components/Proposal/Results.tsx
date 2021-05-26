@@ -101,15 +101,20 @@ const Results: React.FC<ResultsProps> = ({ proposalResults, hash }) => {
 			</MaxHeightColumn>
 		);
 	} else {
-		return <StyledSpinner src={Spinner} />;
+		return (
+			<StyledSpinner>
+				<Svg src={Spinner} />
+			</StyledSpinner>
+		);
 	}
 };
 
 export default Results;
 
-const StyledSpinner = styled(Svg)`
-	display: block;
-	margin: 30px auto;
+const StyledSpinner = styled.div`
+	display: flex;
+	justify-content: center;
+	padding: 30px 0;
 `;
 
 const Row = styled(FlexDivRowCentered)<{ highlight: boolean }>`
