@@ -97,36 +97,29 @@ const Index: FC = () => {
 			debtBalance.isZero()
 				? [
 						{
-							gridLocations: ['col-1', 'col-2', 'row-1', 'row-2'],
 							...ACTIONS.apr,
 						},
 						{
-							gridLocations: ['col-2', 'col-3', 'row-1', 'row-2'],
 							...ACTIONS.deposit,
 							isDisabled: transferableCollateral.isZero(),
 						},
 						{
-							gridLocations: ['col-1', 'col-2', 'row-2', 'row-3'],
 							...ACTIONS.migrate,
 							isDisabled: stakingEscrow.isZero(),
 						},
 				  ]
 				: [
 						{
-							gridLocations: ['col-1', 'col-2', 'row-1', 'row-2'],
 							...ACTIONS.apr,
 						},
 						{
-							gridLocations: ['col-1', 'col-2', 'row-2', 'row-3'],
 							...ACTIONS.burn,
 						},
 						{
-							gridLocations: ['col-2', 'col-3', 'row-1', 'row-2'],
 							isDisabled: true,
 							...ACTIONS.deposit,
 						},
 						{
-							gridLocations: ['col-2', 'col-3', 'row-2', 'row-3'],
 							...ACTIONS.migrate,
 						},
 				  ],
@@ -135,7 +128,7 @@ const Index: FC = () => {
 	) as GridBoxProps[];
 
 	return (
-		<PossibleActionsContainer fullHeight={gridItems.length === 2}>
+		<Container>
 			{gridItems.map((props, index) => (
 				<GridBox
 					key={`${props.title}-${index}`}
@@ -143,7 +136,7 @@ const Index: FC = () => {
 					icon={<GlowingCircle content={<IconHeading>{index + 1}</IconHeading>} />}
 				/>
 			))}
-		</PossibleActionsContainer>
+		</Container>
 	);
 };
 
@@ -153,13 +146,12 @@ const IconHeading = styled.h2`
 	font-family: ${(props) => props.theme.fonts.interSemiBold};
 `;
 
-const PossibleActionsContainer = styled(GridDiv)<{ fullHeight: boolean }>`
+const Container = styled(GridDiv)`
 	margin-top: 30px;
 	justify-items: stretch;
 	align-items: stretch;
-	grid-template-columns: [col-1] 50% [col-2] 50% [col-3];
-	grid-template-rows: ${(props) =>
-		props.fullHeight ? '[row-1] 100% [row-2] 50% [row-3]' : '[row-1] 50% [row-2] 50% [row-3]'};
+	grid-template-columns: 1fr 1fr;
+	grid-template-rows: 1fr 1fr;
 	gap: 1rem;
 	${media.lessThan('sm')`
 		display: flex;

@@ -3,11 +3,11 @@ import styled, { css } from 'styled-components';
 import Svg from 'react-optimized-image';
 
 import SNXStatBackground from 'assets/svg/app/snx-stat-background.svg';
-
+import media from 'styles/media';
 import { FlexDivRowCentered, FlexDivColCentered, Tooltip } from 'styles/common';
 import InfoIcon from 'assets/svg/app/info.svg';
 
-type Size = 'md' | 'lg';
+export type Size = 'md' | 'lg';
 
 type StatBoxProps = {
 	title: ReactNode;
@@ -15,6 +15,7 @@ type StatBoxProps = {
 	size?: Size;
 	children?: ReactNode;
 	tooltipContent?: string;
+	onClick?: () => void;
 };
 
 const StatBox: FC<StatBoxProps> = ({
@@ -54,12 +55,12 @@ const IconContainer = styled.div`
 `;
 
 const Box = styled(FlexDivColCentered)<{ size: Size }>`
-	height: 200px;
-	width: 400px;
 	background-position: center;
 	background-repeat: no-repeat;
 	justify-content: center;
-	margin: 0px 20px;
+	${media.greaterThan('sm')`
+		margin: 0px 20px;
+	`}
 	background-image: url(${SNXStatBackground.src});
 	${(props) =>
 		props.size === 'lg' &&
@@ -69,6 +70,46 @@ const Box = styled(FlexDivColCentered)<{ size: Size }>`
 				font-size: 32px;
 			}
 		`}
+
+	&:first-child,
+	&:last-child {
+		${media.lessThan('mdUp')`
+			background-image: none;
+			margin: unset;
+			position: relative;
+			top: -30px;
+
+			.title,
+			.value {
+				font-size: 12px;
+			}
+		`}
+	}
+
+	&:first-child {
+		${media.lessThan('mdUp')`
+			align-items: flex-start;
+			grid-area: 2 / 1 / 3 / 2;
+		`}
+	}
+
+	&:nth-child(2) {
+		height: 200px;
+		${media.greaterThan('mdUp')`
+			width: 400px;
+		`}
+		${media.lessThan('mdUp')`
+			grid-area: 1 / 1 / 2 / 3;
+		`}
+	}
+
+	&:last-child {
+		${media.lessThan('mdUp')`
+			align-items: flex-end;
+			text-align: right;
+			grid-area: 2 / 2 / 3 / 3;
+		`}
+	}
 `;
 
 const Title = styled.span`

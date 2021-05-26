@@ -180,22 +180,19 @@ const RewardsBox: FC<RewardsBoxProps> = ({
 
 const RewardsContainer = styled(FlexDivColCentered)`
 	height: 272px;
-	width: ${(props: { dualRewards: boolean }) => (props.dualRewards ? '512px' : '200px')};
-	margin-top: ${(props: { dualRewards: boolean }) => (props.dualRewards ? '20px' : '0px')};
-	margin-left: ${(props: { dualRewards: boolean }) => (props.dualRewards ? '0px' : '20px')};
 	padding: 10px;
 	border: 1px solid ${(props) => props.theme.colors.pink};
 	border-radius: 4px;
 	background-image: url(${smallWaveSVG.src});
 	background-size: cover;
+	margin-top: ${(props: { dualRewards: boolean }) => (props.dualRewards ? '20px' : '0px')};
 `;
 
 const RewardsRow = styled(FlexDivRow)`
 	${(props: { dualRewards: boolean }) =>
 		props.dualRewards &&
 		`
-		width: 100%;
-		padding: 0px 96px;
+		grid-gap: 1rem;
 	`}
 `;
 
@@ -211,6 +208,7 @@ const RewardsAmountSNX = styled.div`
 	font-size: 24px;
 	color: ${(props) => props.theme.colors.white};
 	margin-top: 10px;
+	text-align: center;
 `;
 
 const RewardsAmountUSD = styled.div`

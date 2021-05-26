@@ -11,6 +11,7 @@ body {
 	min-height: 100vh;
 	position: relative;
 	scroll-behavior: smooth;
+	padding-bottom: 50px;
 }
 
 ul {

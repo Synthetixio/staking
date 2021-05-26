@@ -159,7 +159,6 @@ const MaxButton: React.FC<MaxButtonProps> = ({ onClick }) => {
 const Container = styled.div`
 	display: flex;
 	font-size: 12px;
-	margin-top: 14px;
 	color: ${(props) => props.theme.colors.gray};
 `;
 

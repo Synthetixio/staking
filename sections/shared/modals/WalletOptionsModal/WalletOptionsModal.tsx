@@ -44,12 +44,11 @@ import {
 	Tooltip,
 	FlexDiv,
 	FlexDivCol,
-	FlexDivColCentered,
 	FlexDivCentered,
 	Divider,
 } from 'styles/common';
 
-type WalletOptionsProps = {
+export type WalletOptionsProps = {
 	onDismiss: () => void;
 	setWatchWalletModalOpened: Dispatch<SetStateAction<any>>;
 };
@@ -116,7 +115,7 @@ const WalletOptionsModal: FC<WalletOptionsProps> = ({ onDismiss, setWatchWalletM
 	}, [copiedAddress]);
 
 	return (
-		<StyledMenuModal>
+		<>
 			{isWalletConnected ? (
 				<>
 					<WalletDetails>
@@ -222,7 +221,13 @@ const WalletOptionsModal: FC<WalletOptionsProps> = ({ onDismiss, setWatchWalletM
 			) : (
 				<WalletDetails>
 					<Buttons>
-						<StyledGlowingButton onClick={connectWallet} data-testid="connect-wallet">
+						<StyledGlowingButton
+							onClick={() => {
+								onDismiss();
+								connectWallet();
+							}}
+							data-testid="connect-wallet"
+						>
 							{t('common.wallet.connect-wallet')}
 						</StyledGlowingButton>
 						<DividerText>{t('common.wallet.or')}</DividerText>
@@ -238,18 +243,11 @@ const WalletOptionsModal: FC<WalletOptionsProps> = ({ onDismiss, setWatchWalletM
 					</Buttons>
 				</WalletDetails>
 			)}
-		</StyledMenuModal>
+		</>
 	);
 };
 
-const StyledMenuModal = styled(FlexDivColCentered)`
-	margin-top: 12px;
-	background: ${(props) => props.theme.colors.navy};
-	border: 1px solid ${(props) => props.theme.colors.mediumBlue};
-	border-radius: 4px;
-`;
-
-const StyledGlowingButton = styled(Button).attrs({
+export const StyledGlowingButton = styled(Button).attrs({
 	variant: 'secondary',
 	size: 'lg',
 })`

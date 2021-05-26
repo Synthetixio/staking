@@ -7,7 +7,7 @@ import { CurrencyKey } from 'constants/currency';
 
 import { formatCurrency, NumericValue, toBigNumber } from 'utils/formatters/number';
 
-import { ContainerRowMixin } from '../common';
+import { ContainerRow } from '../common';
 import { DEFAULT_FIAT_DECIMALS } from 'constants/defaults';
 
 type CurrencyPriceProps = {
@@ -43,8 +43,7 @@ export const CurrencyPrice: FC<CurrencyPriceProps> = ({
 	);
 };
 
-const Container = styled.span`
-	${ContainerRowMixin};
+const Container = styled(ContainerRow)`
 	color: ${(props) => props.theme.colors.white};
 `;
 
