@@ -129,7 +129,7 @@ const Panel: React.FC<PanelProps> = ({ currentTab }) => {
 			// PanelType.LIST:
 			default:
 				return (
-					<Grid>
+					<Grid equalCols={false}>
 						<Col>
 							<StructuredTab
 								boxPadding={20}

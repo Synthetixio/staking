@@ -68,9 +68,9 @@ export const Subtitle = styled.p`
 	color: ${(props) => props.theme.colors.gray};
 `;
 
-export const Grid = styled.div`
+export const Grid = styled.div<{ equalCols?: boolean }>`
 	display: grid;
-	grid-template-columns: 2fr 1fr;
+	grid-template-columns: ${(props) => (props.equalCols ?? true ? '1fr' : '2fr')} 1fr;
 	grid-gap: 1rem;
 
 	${media.lessThan('mdUp')`
