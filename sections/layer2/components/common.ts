@@ -4,7 +4,7 @@ import { FlexDivColCentered, FlexDivCol } from 'styles/common';
 import Button from 'components/Button';
 
 export const TabContainer = styled(FlexDivColCentered)`
-	height: 400px;
+	min-height: 400px;
 	width: 100%;
 `;
 
@@ -24,7 +24,7 @@ export const Subtitle = styled.p`
 	font-family: ${(props) => props.theme.fonts.regular};
 	color: ${(props) => props.theme.colors.gray};
 	font-size: 14px;
-	height: 50px;
+	min-height: 50px;
 	margin: 8px 24px;
 `;
 
@@ -34,7 +34,6 @@ export const InputContainer = styled(FlexDivColCentered)`
 	position: relative;
 	width: 100%;
 	padding: 16px;
-	height: 600px;
 	margin-bottom: 24px;
 `;
 

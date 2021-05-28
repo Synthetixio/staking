@@ -19,6 +19,14 @@ export const QUERY_KEYS = {
 			networkId,
 		],
 	},
+	Liquidations: {
+		LiquidationsData: (walletAddress: string, networkId: NetworkId) => [
+			'liquidations',
+			'liquidationsData',
+			walletAddress,
+			networkId,
+		],
+	},
 	Staking: {
 		FeePoolData: (period: string) => ['staking', 'feePoolData', period],
 		FeeClaimHistory: (walletAddress: string, networkId: NetworkId) => [
@@ -264,6 +272,18 @@ export const QUERY_KEYS = {
 			'gov',
 			'proposals',
 			spaceKey,
+			walletAddress,
+			networkId,
+		],
+		ActiveProposals: (walletAddress: string, networkId: NetworkId) => [
+			'gov',
+			'activeProposals',
+			walletAddress,
+			networkId,
+		],
+		LatestCouncilElection: (walletAddress: string, networkId: NetworkId) => [
+			'gov',
+			'latestCouncilElection',
 			walletAddress,
 			networkId,
 		],

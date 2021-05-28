@@ -1,24 +1,32 @@
-import { FC } from 'react';
+import { FC, useEffect } from 'react';
 import Head from 'next/head';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
+
 import StatBox from 'components/StatBox';
-import { StatsSection, LineSpacer } from 'styles/common';
+import UIContainer from 'containers/UI';
+import { LineSpacer } from 'styles/common';
 import useUserStakingData from 'hooks/useUserStakingData';
 import Main from 'sections/delegate/index';
-
+import StatsSection from 'components/StatsSection';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { formatFiatCurrency, formatPercent, toBigNumber } from 'utils/formatters/number';
+import StakedValue from 'sections/shared/modals/StakedValueModal/StakedValueBox';
+import ActiveDebt from 'sections/shared/modals/DebtValueModal/DebtValueBox';
 
-type DelegatePageProps = {};
-
-const DelegatePage: FC<DelegatePageProps> = () => {
+const DelegatePage: FC = () => {
 	const { t } = useTranslation();
+	const { setTitle } = UIContainer.useContainer();
 
 	const { stakedCollateralValue, debtBalance } = useStakingCalculations();
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
 	const { stakingAPR } = useUserStakingData();
+
+	// header title
+	useEffect(() => {
+		setTitle('wallet', 'delegate');
+	}, [setTitle]);
 
 	return (
 		<>
@@ -36,6 +44,7 @@ const DelegatePage: FC<DelegatePageProps> = () => {
 							sign: selectedPriceCurrency.sign,
 						}
 					)}
+					isGreen
 				/>
 				<Earning
 					title={t('common.stat-box.earning')}
@@ -50,6 +59,7 @@ const DelegatePage: FC<DelegatePageProps> = () => {
 							sign: selectedPriceCurrency.sign,
 						}
 					)}
+					isGreen
 				/>
 			</StatsSection>
 			<LineSpacer />
@@ -58,12 +68,6 @@ const DelegatePage: FC<DelegatePageProps> = () => {
 	);
 };
 
-const StakedValue = styled(StatBox)`
-	.title {
-		color: ${(props) => props.theme.colors.green};
-	}
-`;
-
 const Earning = styled(StatBox)`
 	.title {
 		color: ${(props) => props.theme.colors.green};
@@ -71,12 +75,6 @@ const Earning = styled(StatBox)`
 	.value {
 		text-shadow: ${(props) => props.theme.colors.greenTextShadow};
 		color: #073124;
-	}
-`;
-
-const ActiveDebt = styled(StatBox)`
-	.title {
-		color: ${(props) => props.theme.colors.green};
 	}
 `;
 

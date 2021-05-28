@@ -4,15 +4,26 @@ import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import { Svg } from 'react-optimized-image';
 import OutsideClickHandler from 'react-outside-click-handler';
-import { addOptimismNetworkToMetamask } from '@synthetixio/optimism-networks';
 
-import { FlexDivCentered, GridDivCenteredCol, IconButton, UpperCased } from 'styles/common';
+import {
+	FlexDiv,
+	FlexDivCentered,
+	GridDivCenteredCol,
+	IconButton,
+	UpperCased,
+} from 'styles/common';
 import { zIndex } from 'constants/ui';
-
+import UI from 'containers/UI';
 import Button from 'components/Button';
+import { DesktopOnlyView, DesktopOrTabletView, MobileOrTabletView } from 'components/Media';
+
 import { isWalletConnectedState, truncatedWalletAddressState, networkState } from 'store/wallet';
 
-import WalletOptionsModal from 'sections/shared/modals/WalletOptionsModal';
+import {
+	DesktopWalletOptionsModal,
+	MobileWalletOptionsModal,
+	StyledGlowingButton,
+} from 'sections/shared/modals/WalletOptionsModal';
 import SettingsModal from 'sections/shared/modals/SettingsModal';
 import ConnectionDot from 'sections/shared/ConnectionDot';
 
@@ -26,25 +37,13 @@ const caretDown = <Svg src={CaretDown} viewBox={`0 0 ${CaretDown.width} ${CaretD
 
 const UserMenu: FC = () => {
 	const { t } = useTranslation();
+	const { networkError } = UI.useContainer();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const [walletOptionsModalOpened, setWalletOptionsModalOpened] = useState<boolean>(false);
-	const [networkError, setNetworkError] = useState<string | null>(null);
 	const [settingsModalOpened, setSettingsModalOpened] = useState<boolean>(false);
 	const [watchWalletModalOpened, setWatchWalletModalOpened] = useState<boolean>(false);
 	const truncatedWalletAddress = useRecoilValue(truncatedWalletAddressState);
 	const network = useRecoilValue(networkState);
-	const isL2 = network?.useOvm ?? false;
-
-	const addOptimismNetwork = async () => {
-		try {
-			setNetworkError(null);
-			if (!window.ethereum || !window.ethereum.isMetaMask) {
-				setNetworkError(t('user-menu.error.please-install-metamask'));
-			} else await addOptimismNetworkToMetamask({ ethereum: window.ethereum });
-		} catch (e) {
-			setNetworkError(e.message);
-		}
-	};
 
 	const getNetworkName = () => {
 		if (network?.useOvm) {
@@ -55,62 +54,93 @@ const UserMenu: FC = () => {
 	return (
 		<Container>
 			<FlexDivCentered>
-				{!isL2 && isWalletConnected ? (
-					<OptimismButton variant="solid" onClick={addOptimismNetwork}>
-						{t('user-menu.layer-2.switch-to-l2')}
-					</OptimismButton>
-				) : null}
-				<Menu>
-					<MenuButton
-						onClick={() => {
-							setSettingsModalOpened(!settingsModalOpened);
-						}}
-						isActive={settingsModalOpened}
-					>
-						<Svg src={CogIcon} />
-					</MenuButton>
-				</Menu>
-				<DropdownContainer>
-					<OutsideClickHandler onOutsideClick={() => setWalletOptionsModalOpened(false)}>
-						{isWalletConnected ? (
-							<WalletButton
-								variant="solid"
-								onClick={() => {
-									setWalletOptionsModalOpened(!walletOptionsModalOpened);
-								}}
-								isActive={walletOptionsModalOpened}
-								data-testid="user-menu"
-							>
-								<FlexDivCentered data-testid="wallet-address">
-									<StyledConnectionDot />
-									{truncatedWalletAddress}
-								</FlexDivCentered>
-								<NetworkTag className="network-tag" data-testid="network-tag">
-									{getNetworkName()}
-								</NetworkTag>
-								{walletOptionsModalOpened ? caretUp : caretDown}
-							</WalletButton>
-						) : (
-							<WalletButton
-								variant="solid"
-								onClick={() => setWalletOptionsModalOpened(!walletOptionsModalOpened)}
-								data-testid="user-menu"
-							>
-								<FlexDivCentered>
-									<StyledConnectionDot />
-									<UpperCased>{t('common.wallet.not-connected')}</UpperCased>
-								</FlexDivCentered>
-								{walletOptionsModalOpened ? caretUp : caretDown}
-							</WalletButton>
-						)}
-						{walletOptionsModalOpened && (
-							<WalletOptionsModal
-								onDismiss={() => setWalletOptionsModalOpened(false)}
-								setWatchWalletModalOpened={setWatchWalletModalOpened}
-							/>
-						)}
-					</OutsideClickHandler>
-				</DropdownContainer>
+				<DesktopOnlyView>
+					<FlexDiv>
+						<DropdownContainer>
+							<OutsideClickHandler onOutsideClick={() => setWalletOptionsModalOpened(false)}>
+								{isWalletConnected ? (
+									<WalletButton
+										variant="solid"
+										onClick={() => {
+											setWalletOptionsModalOpened(!walletOptionsModalOpened);
+										}}
+										isActive={walletOptionsModalOpened}
+										data-testid="user-menu"
+									>
+										<FlexDivCentered data-testid="wallet-address">
+											<StyledConnectionDot />
+											{truncatedWalletAddress}
+										</FlexDivCentered>
+										<NetworkTag className="network-tag" data-testid="network-tag">
+											{getNetworkName()}
+										</NetworkTag>
+										{walletOptionsModalOpened ? caretUp : caretDown}
+									</WalletButton>
+								) : (
+									<WalletButton
+										variant="solid"
+										onClick={() => setWalletOptionsModalOpened(!walletOptionsModalOpened)}
+										data-testid="user-menu"
+									>
+										<FlexDivCentered>
+											<StyledConnectionDot />
+											<UpperCased>{t('common.wallet.not-connected')}</UpperCased>
+										</FlexDivCentered>
+										{walletOptionsModalOpened ? caretUp : caretDown}
+									</WalletButton>
+								)}
+								{walletOptionsModalOpened && (
+									<DesktopWalletOptionsModal
+										onDismiss={() => setWalletOptionsModalOpened(false)}
+										setWatchWalletModalOpened={setWatchWalletModalOpened}
+									/>
+								)}
+							</OutsideClickHandler>
+						</DropdownContainer>
+					</FlexDiv>
+				</DesktopOnlyView>
+				<MobileOrTabletView>
+					{isWalletConnected ? (
+						<WalletButton
+							variant="solid"
+							onClick={() => {
+								setWalletOptionsModalOpened(!walletOptionsModalOpened);
+							}}
+							isActive={walletOptionsModalOpened}
+							data-testid="user-menu"
+						>
+							<FlexDivCentered data-testid="wallet-address">
+								<StyledConnectionDot />
+								{truncatedWalletAddress}
+							</FlexDivCentered>
+							{walletOptionsModalOpened ? caretUp : caretDown}
+						</WalletButton>
+					) : (
+						<MobileStyledGlowingButton
+							data-testid="connect-wallet"
+							onClick={() => setWalletOptionsModalOpened(true)}
+						>
+							{t('common.wallet.connect-wallet')}
+						</MobileStyledGlowingButton>
+					)}
+					{walletOptionsModalOpened && (
+						<MobileWalletOptionsModal
+							onDismiss={() => setWalletOptionsModalOpened(false)}
+							setWatchWalletModalOpened={setWatchWalletModalOpened}
+						/>
+					)}
+				</MobileOrTabletView>
+				<DesktopOrTabletView>
+					<Menu>
+						<MenuButton
+							onClick={() => {
+								setSettingsModalOpened(!settingsModalOpened);
+							}}
+						>
+							<Svg src={CogIcon} />
+						</MenuButton>
+					</Menu>
+				</DesktopOrTabletView>
 			</FlexDivCentered>
 			{watchWalletModalOpened && (
 				<WatchWalletModal onDismiss={() => setWatchWalletModalOpened(false)} />
@@ -131,7 +161,7 @@ const StyledConnectionDot = styled(ConnectionDot)`
 `;
 
 const Menu = styled.div`
-	padding-right: 16px;
+	padding-left: 16px;
 	display: grid;
 	grid-gap: 10px;
 	grid-auto-flow: column;
@@ -173,9 +203,9 @@ const WalletButton = styled(Button)`
 	}
 `;
 
-const MenuButton = styled(IconButton)<{ isActive: boolean }>`
+const MenuButton = styled(IconButton)`
 	border: 1px solid ${(props) => props.theme.colors.mediumBlue};
-	color: ${(props) => (props.isActive ? props.theme.colors.white : props.theme.colors.gray)};
+	color: ${(props) => props.theme.colors.white};
 	padding: 7px;
 	border-radius: 4px;
 	background: ${(props) => props.theme.colors.navy};
@@ -183,18 +213,6 @@ const MenuButton = styled(IconButton)<{ isActive: boolean }>`
 		color: ${(props) => props.theme.colors.white};
 	}
 	height: 32px;
-`;
-
-const OptimismButton = styled(Button)`
-	border: 1px solid ${(props) => props.theme.colors.pink};
-	background: ${(props) => props.theme.colors.navy};
-	color: ${(props) => props.theme.colors.pink};
-	text-transform: uppercase;
-	margin-right: 16px;
-	&:hover {
-		background: ${(props) => props.theme.colors.pink} !important;
-		color: ${(props) => props.theme.colors.navy} !important;
-	}
 `;
 
 const DropdownContainer = styled.div`
@@ -218,6 +236,12 @@ const Error = styled.div`
 	right: 0;
 	font-size: 12px;
 	color: ${(props) => props.theme.colors.pink};
+`;
+
+const MobileStyledGlowingButton = styled(StyledGlowingButton)`
+	height: 32px;
+	max-height: 32px;
+	line-height: unset;
 `;
 
 export default UserMenu;

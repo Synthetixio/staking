@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { FlexDivColCentered, ErrorMessage as BaseErrorMessage } from 'styles/common';
+import media from 'styles/media';
 
 export const FormContainer = styled(FlexDivColCentered)`
 	justify-content: space-between;
@@ -14,12 +15,21 @@ export const InputsContainer = styled.div`
 	display: grid;
 	grid-template-columns: 1fr 1px 1fr;
 	align-items: center;
+
+	${media.lessThan('mdUp')`
+		display: flex;
+		flex-direction: column;
+	`}
 `;
 
 export const InputsDivider = styled.div`
 	background: #161b44;
 	height: 92px;
 	width: 1px;
+
+	${media.lessThan('mdUp')`
+		display: none;
+	`}
 `;
 
 export const SettingsContainer = styled.div`

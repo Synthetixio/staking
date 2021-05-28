@@ -1,3 +1,7 @@
+/**
+ * Remember to update `header.` in translations.
+ */
+
 export const ROUTES = {
 	Home: '/',
 	Staking: {

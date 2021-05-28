@@ -1,11 +1,10 @@
 import { FC, ReactNode } from 'react';
 import Link from 'next/link';
 import styled, { css } from 'styled-components';
-
+import media from 'styles/media';
 import { FlexDivColCentered, ExternalLink, Tooltip } from 'styles/common';
 
 export type GridBoxProps = {
-	gridLocations: [string, string, string, string];
 	title: string;
 	copy: string;
 	icon: ReactNode;
@@ -14,10 +13,10 @@ export type GridBoxProps = {
 	visible?: boolean;
 	tooltip?: string;
 	isDisabled?: boolean;
+	gridArea?: string;
 };
 
 export const GridBox: FC<GridBoxProps> = ({
-	gridLocations,
 	title,
 	copy,
 	icon,
@@ -26,6 +25,7 @@ export const GridBox: FC<GridBoxProps> = ({
 	visible,
 	tooltip,
 	isDisabled,
+	gridArea,
 }) => {
 	if (visible != null && !visible) return <></>;
 
@@ -45,13 +45,7 @@ export const GridBox: FC<GridBoxProps> = ({
 			disabled={!tooltip}
 			hideOnClick={false}
 		>
-			<GridBoxContainer
-				columnStart={gridLocations[0]}
-				columnEnd={gridLocations[1]}
-				rowStart={gridLocations[2]}
-				rowEnd={gridLocations[3]}
-				isDisabled={isDisabled}
-			>
+			<GridBoxContainer isDisabled={isDisabled} {...{ gridArea }}>
 				{isDisabled ? (
 					components
 				) : (
@@ -68,8 +62,11 @@ export const GridBox: FC<GridBoxProps> = ({
 const InnerGridContainer = styled(FlexDivColCentered)`
 	width: 100%;
 	height: 100%;
-	padding: 20px;
-	justify-content: center;
+	padding: 40px 20px 20px;
+
+	${media.lessThan('md')`
+		padding: 20px 0;
+	`}
 `;
 
 const GridBoxTitle = styled.div`
@@ -81,18 +78,18 @@ const GridBoxTitle = styled.div`
 `;
 
 export const GridBoxContainer = styled.div<{
-	columnStart: string;
-	columnEnd: string;
-	rowStart: string;
-	rowEnd: string;
 	isDisabled?: boolean;
+	gridArea?: string;
 }>`
 	background: ${(props) => props.theme.colors.darkGradient1};
 	box-shadow: 0px 0px 20px ${(props) => props.theme.colors.backgroundBoxShadow};
 	border-radius: 2px;
-	grid-column: ${(props) => `${props.columnStart} / ${props.columnEnd}`};
-	grid-row: ${(props) => `${props.rowStart} / ${props.rowEnd}`};
+	grid-area: ${(props) => props.gridArea};
 	transition: transform 0.25s ease-in-out;
+
+	${media.greaterThan('mdUp')`
+		max-width: 500px;
+	`}
 
 	${(props) =>
 		props.isDisabled
@@ -110,8 +107,7 @@ export const GridBoxContainer = styled.div<{
 `;
 
 const GridBoxIcon = styled.div`
-	/* height: 20px;
-	margin: 20px auto 40px auto; */
+	margin: 0 auto;
 `;
 
 const GridBoxCopy = styled.p`

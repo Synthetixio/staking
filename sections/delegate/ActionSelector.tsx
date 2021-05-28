@@ -1,7 +1,9 @@
 import { FC } from 'react';
 import styled from 'styled-components';
-import Button from 'components/Button';
 import { useTranslation } from 'react-i18next';
+import media from 'styles/media';
+
+import Button from 'components/Button';
 import { ACTIONS } from 'queries/delegate/types';
 
 type SelectorProps = {
@@ -47,6 +49,10 @@ const ActionButton = styled(Button)`
 	font-size: 12px;
 	color: ${(props) => props.theme.colors[props.isActive ? 'white' : 'gray']};
 	text-transform: uppercase;
+
+	${media.lessThan('sm')`
+		padding: 0;
+	`}
 `;
 
 export default Selector;

@@ -15,6 +15,7 @@ import {
 	ModalItemTitle,
 	ExternalLink,
 } from 'styles/common';
+import media from 'styles/media';
 
 import NavigationBack from 'assets/svg/app/navigation-back.svg';
 import PendingConfirmation from 'assets/svg/app/pending-confirmation.svg';
@@ -41,7 +42,6 @@ import { useTranslation } from 'react-i18next';
 import useSignMessage, { SignatureType } from 'mutations/gov/useSignMessage';
 import useActiveTab from 'sections/gov/hooks/useActiveTab';
 import { useRecoilValue } from 'recoil';
-import { proposalState } from 'store/gov';
 import Button from 'components/Button';
 
 import CouncilDilution from 'contracts/councilDilution.js';
@@ -60,12 +60,14 @@ import TxState from 'sections/gov/components/TxState';
 import useProposal from 'queries/gov/useProposal';
 import { expired, pending } from '../helper';
 import synthetix from 'lib/synthetix';
+import { Proposal } from 'queries/gov/types';
 
 type DilutionContentProps = {
+	proposal: Proposal;
 	onBack: Function;
 };
 
-const DilutionContent: React.FC<DilutionContentProps> = ({ onBack }) => {
+const DilutionContent: React.FC<DilutionContentProps> = ({ proposal, onBack }) => {
 	const { t } = useTranslation();
 
 	const [voteMutate] = useSignMessage();
@@ -98,11 +100,10 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ onBack }) => {
 			? blockExplorerInstance.txLink(txHash)
 			: undefined;
 
-	const proposal = useRecoilValue(proposalState);
 	const isAppReady = useRecoilValue(appReadyState);
 	const walletAddress = useRecoilValue(walletAddressState);
 
-	const proposalQuery = useProposal(activeTab, proposal?.authorIpfsHash ?? '');
+	const proposalQuery = useProposal(activeTab, proposal?.id ?? '');
 
 	const { signer } = Connector.useContainer();
 
@@ -127,7 +128,7 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ onBack }) => {
 						CouncilDilution.abi,
 						signer as any
 					);
-					const hash = proposal.authorIpfsHash;
+					const hash = proposal.id;
 
 					let gasEstimate;
 
@@ -169,10 +170,7 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ onBack }) => {
 					signer as any
 				);
 
-				const hasDiluted = await contract.hasAddressDilutedForProposal(
-					proposal.authorIpfsHash,
-					walletAddress
-				);
+				const hasDiluted = await contract.hasAddressDilutedForProposal(proposal.id, walletAddress);
 
 				setHasDiluted(hasDiluted);
 			}
@@ -214,7 +212,7 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ onBack }) => {
 			voteMutate({
 				spaceKey: activeTab,
 				type: SignatureType.VOTE,
-				payload: { proposal: proposal.authorIpfsHash, choice: selected + 1, metadata: {} },
+				payload: { proposal: proposal.id, choice: selected + 1, metadata: {} },
 			})
 				.then((_) => {
 					setTxModalOpen(false);
@@ -241,7 +239,7 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ onBack }) => {
 						signer as any
 					);
 
-					const hash = proposal.authorIpfsHash;
+					const hash = proposal.id;
 
 					const latestElectionHash = await contract.latestElectionHash();
 
@@ -298,7 +296,7 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ onBack }) => {
 						signer as any
 					);
 
-					const hash = proposal.authorIpfsHash;
+					const hash = proposal.id;
 
 					const latestElectionHash = await contract.latestElectionHash();
 
@@ -438,7 +436,7 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ onBack }) => {
 							<GreyHeader>{t('gov.actions.vote.signing')}</GreyHeader>
 							<WhiteSubheader>
 								{t('gov.actions.vote.hash', {
-									hash: truncateAddress(proposal?.authorIpfsHash ?? ''),
+									hash: truncateAddress(proposal?.id ?? ''),
 								})}
 							</WhiteSubheader>
 						</FlexDivColCentered>
@@ -457,7 +455,7 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ onBack }) => {
 							<GreyHeader>{t('gov.actions.vote.signed')}</GreyHeader>
 							<WhiteSubheader>
 								{t('gov.actions.vote.hash', {
-									hash: truncateAddress(proposal?.authorIpfsHash ?? ''),
+									hash: truncateAddress(proposal?.id ?? ''),
 								})}
 							</WhiteSubheader>
 							<Divider />
@@ -485,29 +483,26 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ onBack }) => {
 						<IconButton onClick={() => onBack(null)}>
 							<Svg src={NavigationBack} />
 						</IconButton>
-						<Header>#{truncateAddress(proposal?.authorIpfsHash ?? '')}</Header>
-						<Status
-							closed={expired(proposal?.msg.payload.end)}
-							pending={pending(proposal?.msg.payload.start)}
-						>
-							{expired(proposal?.msg.payload.end)
+						<Header>#{truncateAddress(proposal?.id ?? '')}</Header>
+						<Status closed={expired(proposal?.end)} pending={pending(proposal?.start)}>
+							{expired(proposal?.end)
 								? t('gov.proposal.status.closed')
-								: pending(proposal?.msg.payload.start)
+								: pending(proposal?.start)
 								? t('gov.proposal.status.pending')
 								: t('gov.proposal.status.open')}
 						</Status>
 					</HeaderRow>
 					<ProposalContainer>
-						<Title>{proposal?.msg.payload.name}</Title>
-						<Description dangerouslySetInnerHTML={getRawMarkup(proposal?.msg.payload.body)} />
+						<Title>{proposal?.title}</Title>
+						<Description dangerouslySetInnerHTML={getRawMarkup(proposal?.body)} />
 					</ProposalContainer>
 					<Divider />
 					{isWalletConnected &&
-						!expired(proposal?.msg.payload.end) &&
-						!pending(proposal?.msg.payload.start) &&
+						!expired(proposal?.end) &&
+						!pending(proposal?.start) &&
 						isCouncilMember && (
 							<OptionsContainer>
-								{proposal?.msg.payload.choices.map((choice, i) => (
+								{proposal?.choices.map((choice, i) => (
 									<StyledTooltip
 										arrow={true}
 										placement="bottom"
@@ -528,8 +523,8 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ onBack }) => {
 						)}
 				</InputContainer>
 				{isWalletConnected &&
-					!expired(proposal?.msg.payload.end) &&
-					!pending(proposal?.msg.payload.start) &&
+					!expired(proposal?.end) &&
+					!pending(proposal?.start) &&
 					(isCouncilMember ? (
 						<StyledCTA onClick={() => handleVote()} variant="primary">
 							{t('gov.proposal.action.vote')}
@@ -577,7 +572,7 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ onBack }) => {
 								<ModalItemText>
 									{isCouncilMember
 										? t('modals.confirm-signature.vote.hash', {
-												hash: truncateAddress(proposal?.authorIpfsHash ?? ''),
+												hash: truncateAddress(proposal?.id ?? ''),
 										  })
 										: hasDiluted
 										? t('modals.confirm-transaction.support.address', {
@@ -627,7 +622,9 @@ const Description = styled.div`
 	font-family: ${(props) => props.theme.fonts.regular};
 	margin: 16px 8px;
 
-	width: 500px;
+	${media.greaterThan('mdUp')`
+		width: 500px;
+	`}
 
 	h1 {
 		font-size: 14px;
@@ -664,7 +661,9 @@ const Description = styled.div`
 const OptionsContainer = styled.div`
 	max-height: 200px;
 	overflow-y: auto;
-	width: 500px;
+	${media.greaterThan('mdUp')`
+		width: 500px;
+	`}
 	display: grid;
 	grid-template-columns: auto auto;
 	column-gap: 8px;

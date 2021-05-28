@@ -12,13 +12,13 @@ import { GridBoxContainer } from 'components/GridBox/Gridbox';
 import { useTranslation } from 'react-i18next';
 import { FlexDivCentered } from 'styles/common';
 import Slider from 'react-slick';
-import media from 'styled-media-query';
+import media from 'styles/media';
 
 type WizardGridBoxProps = {
-	gridLocations: [string, string, string, string];
+	gridArea?: string;
 };
 
-export const WizardGridBox: FC<WizardGridBoxProps> = ({ gridLocations }) => {
+export const WizardGridBox: FC<WizardGridBoxProps> = ({ gridArea }) => {
 	const { t } = useTranslation();
 	const slider = useRef<any>();
 	const STEPS = [
@@ -59,12 +59,7 @@ export const WizardGridBox: FC<WizardGridBoxProps> = ({ gridLocations }) => {
 	};
 
 	return (
-		<GridBoxContainer
-			columnStart={gridLocations[0]}
-			columnEnd={gridLocations[1]}
-			rowStart={gridLocations[2]}
-			rowEnd={gridLocations[3]}
-		>
+		<GridBoxContainer {...{ gridArea }}>
 			<SliderContainer>
 				<Slider arrows={false} dots={true} fade={true} ref={slider}>
 					{STEPS.map(({ id, icon, subtitle, title }) => (
@@ -86,6 +81,11 @@ const SliderContainer = styled.div`
 	padding-bottom: 50px;
 	padding-top: 50px;
 
+	${media.lessThan('mdUp')`
+		padding-bottom: 10px;
+		padding-top: 10px;
+	`}
+
 	.slick-dots {
 		li {
 			margin: 0 2px;
@@ -103,9 +103,8 @@ const SliderContainer = styled.div`
 		}
 		bottom: unset;
 		text-align: center;
-		${media.lessThan('medium')`
+		${media.lessThan('mdUp')`
 			position: unset;
-			margin-top: 40px;
 			text-align: center;
 			top: unset;
 		`}

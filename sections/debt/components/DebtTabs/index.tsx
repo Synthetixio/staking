@@ -3,7 +3,8 @@ import React, { FC, ReactNode, useState, useEffect, Dispatch, SetStateAction } f
 import { Svg } from 'react-optimized-image';
 import { Trans, useTranslation } from 'react-i18next';
 
-import { FlexDiv, FlexDivCol, Row, Tooltip } from 'styles/common';
+import { FlexDiv, FlexDivCol, Tooltip } from 'styles/common';
+import media from 'styles/media';
 import { TabButton, TabList, TabPanelContainer } from '../../../../components/Tab';
 import DebtHedgingInfoPanel from '../DebtHedgingInfoPanel';
 import DebtPieChart from '../DebtPieChart';
@@ -71,17 +72,18 @@ const DebtTabs: FC<DebtTabsProps> = ({
 	const synthsTotalSupplyQuery = useSynthsTotalSupplyQuery();
 	const totalSupply = synthsTotalSupplyQuery?.data ?? [];
 
+	const isManageTab = activeTab === DebtPanelType.MANAGE;
+
 	return (
 		<>
-			<Row>
+			<TopContainer {...{ isManageTab }}>
 				<DebtTabsContainer>
-					<TabList padding={boxPadding} width={boxWidth}>
+					<TabList noOfTabs={tabData.length}>
 						{tabData.map(({ title, icon, key, disabled = false }, index) => (
 							<TabButton
 								isSingle={false}
 								tabHeight={tabHeight}
 								blue={true}
-								numberTabs={tabData.length}
 								key={`${key}-${index}-button`}
 								name={title}
 								active={activeTab === key}
@@ -101,25 +103,24 @@ const DebtTabs: FC<DebtTabsProps> = ({
 					{tabData.map(
 						({ title, tabChildren, key, width }, index) =>
 							activeTab === key && (
-								<TabPanelFullWidth
+								<TabPanelContainer
 									id={`${title}-tabpanel`}
 									role="tabpanel"
 									aria-labelledby={`${title}-tab`}
 									tabIndex={-1}
 									padding={boxPadding}
 									height={boxHeight}
-									width={width || 0}
 									key={`${key}-${index}-panel`}
 								>
 									{tabChildren}
-								</TabPanelFullWidth>
+								</TabPanelContainer>
 							)
 					)}
 				</DebtTabsContainer>
-				<DebtHedgingInfoPanel hidden={activeTab !== DebtPanelType.MANAGE} />
-			</Row>
+				<DebtHedgingInfoPanel hidden={!isManageTab} />
+			</TopContainer>
 			{activeTab === DebtPanelType.OVERVIEW && (
-				<Row>
+				<BottomContainer>
 					<DebtPieChartContainer>
 						<ContainerHeader>
 							{t('debt.actions.hedge.info.debt-pool-pie-chart.title')}
@@ -158,18 +159,40 @@ const DebtTabs: FC<DebtTabsProps> = ({
 							/>
 						</ContainerBody>
 					</PortfolioContainer>
-				</Row>
+				</BottomContainer>
 			)}
 		</>
 	);
 };
 
-const DebtTabsContainer = styled(FlexDivCol)`
-	width: 100%;
+export const TopContainer = styled.div<{ isManageTab: boolean }>`
+	${(props) =>
+		props.isManageTab
+			? `display: grid;
+					grid-template-columns: 2fr 1fr;
+					grid-gap: 1rem;`
+			: ``}
+	margin-bottom: 12px;
+
+	${media.lessThan('mdUp')`
+		display: flex;
+		flex-direction: column;
+	`}
 `;
 
-const TabPanelFullWidth = styled(TabPanelContainer)`
-	width: ${(props) => (props.width ? `${props.width}px` : '100%')};
+export const BottomContainer = styled.div`
+	display: grid;
+	grid-template-columns: 1fr 3fr;
+	grid-gap: 1rem;
+
+	${media.lessThan('mdUp')`
+		display: flex;
+		flex-direction: column;
+	`}
+`;
+
+const DebtTabsContainer = styled(FlexDivCol)`
+	width: 100%;
 `;
 
 const TitleContainer = styled.p`
@@ -216,13 +239,14 @@ const TooltipIconContainer = styled(FlexDiv)`
 	align-items: center;
 `;
 
-const DebtPieChartContainer = styled(Container)`
-	width: 360px;
-`;
+const DebtPieChartContainer = styled(Container)``;
 
 const PortfolioContainer = styled(Container)`
-	width: 580px;
 	align-self: flex-start;
+
+	${media.lessThan('mdUp')`
+		width: 100%;
+	`}
 `;
 
 const ResizedInfoIcon = styled(Svg)`

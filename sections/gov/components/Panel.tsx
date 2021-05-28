@@ -1,23 +1,22 @@
-import React, { useMemo, useEffect } from 'react';
+import React, { useMemo, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
 import { useRecoilState } from 'recoil';
 
-import useProposals from 'queries/gov/useProposals';
-
 import ROUTES from 'constants/routes';
-import { SPACE_KEY } from 'constants/snapshot';
+import { snapshotEndpoint, SPACE_KEY } from 'constants/snapshot';
 import { panelState, PanelType, proposalState } from 'store/gov';
 
 import useActiveTab from '../hooks/useActiveTab';
-import { Row } from 'styles/common';
-import { LeftCol, RightCol } from 'sections/gov/components/common';
+import { Grid, Col } from 'sections/gov/components/common';
 
 import StructuredTab from 'components/StructuredTab';
 import CouncilBoard from './List/CouncilBoard';
 import Proposal from './Proposal';
 import List from './List';
 import Create from './Create';
+import { Proposal as ProposalType } from 'queries/gov/types';
+import request, { gql } from 'graphql-request';
 
 type PanelProps = {
 	currentTab: string;
@@ -27,113 +26,87 @@ const Panel: React.FC<PanelProps> = ({ currentTab }) => {
 	const { t } = useTranslation();
 	const router = useRouter();
 
-	const councilProposals = useProposals(SPACE_KEY.COUNCIL);
-	const govProposals = useProposals(SPACE_KEY.PROPOSAL);
-	const grantsProposals = useProposals(SPACE_KEY.GRANTS);
-	const ambassadorProposals = useProposals(SPACE_KEY.AMBASSADOR);
-
 	const [, setProposal] = useRecoilState(proposalState);
 	const [panelType, setPanelType] = useRecoilState(panelState);
 	const activeTab = useActiveTab();
 
+	const fetchPreloadedProposal = useCallback(() => {
+		const fetch = async () => {
+			const hash = router && router.query.panel ? router.query?.panel[1] : '';
+			const { proposal }: { proposal: ProposalType } = await request(
+				snapshotEndpoint,
+				gql`
+					query Proposals($id: String) {
+						proposal(id: $id) {
+							id
+							title
+							body
+							choices
+							start
+							end
+							snapshot
+							state
+							author
+							space {
+								id
+								name
+							}
+						}
+					}
+				`,
+				{ id: hash }
+			);
+			setProposal(proposal);
+			setPanelType(PanelType.PROPOSAL);
+		};
+		fetch();
+	}, [router, setPanelType, setProposal]);
+
 	useEffect(() => {
-		if (
-			councilProposals.data &&
-			govProposals.data &&
-			grantsProposals.data &&
-			ambassadorProposals.data &&
-			Array.isArray(router.query.panel) &&
-			router.query.panel[1]
-		) {
+		if (Array.isArray(router.query.panel) && router.query.panel[1]) {
 			if (router.query.panel[1] === 'create') {
 				setPanelType(PanelType.CREATE);
 			} else {
-				let data;
-				if (activeTab === SPACE_KEY.COUNCIL) {
-					data = councilProposals.data;
-				} else if (activeTab === SPACE_KEY.GRANTS) {
-					data = grantsProposals.data;
-				} else if (activeTab === SPACE_KEY.AMBASSADOR) {
-					data = ambassadorProposals.data;
-				} else {
-					data = govProposals.data;
-				}
-				const hash = router.query.panel[1] ?? '';
-				const preloadedProposal = data.filter((e) => e.authorIpfsHash === hash);
-				setProposal(preloadedProposal[0]);
-				setPanelType(PanelType.PROPOSAL);
+				fetchPreloadedProposal();
 			}
 		} else {
 			setPanelType(PanelType.LIST);
 			setProposal(null);
 		}
-	}, [
-		router.query.panel,
-		councilProposals,
-		govProposals,
-		grantsProposals,
-		ambassadorProposals,
-		activeTab,
-		setPanelType,
-		setProposal,
-	]);
+	}, [router, fetchPreloadedProposal, setPanelType, setProposal]);
 
 	const tabData = useMemo(
 		() => [
 			{
 				title: t('gov.panel.council.title'),
-				tabChildren: (
-					<List data={councilProposals.data ?? []} isLoaded={!councilProposals.isLoading} />
-				),
+				tabChildren: <List spaceKey={activeTab} />,
 				blue: true,
 				key: SPACE_KEY.COUNCIL,
 			},
 			{
 				title: t('gov.panel.proposals.title'),
-				tabChildren: <List data={govProposals.data ?? []} isLoaded={!govProposals.isLoading} />,
+				tabChildren: <List spaceKey={activeTab} />,
 				blue: true,
 				key: SPACE_KEY.PROPOSAL,
 			},
 			{
 				title: t('gov.panel.grants.title'),
-				tabChildren: (
-					<List data={grantsProposals.data ?? []} isLoaded={!grantsProposals.isLoading} />
-				),
+				tabChildren: <List spaceKey={activeTab} />,
 				blue: true,
 				key: SPACE_KEY.GRANTS,
 			},
 			{
 				title: t('gov.panel.ambassador.title'),
-				tabChildren: (
-					<List data={ambassadorProposals.data ?? []} isLoaded={!ambassadorProposals.isLoading} />
-				),
+				tabChildren: <List spaceKey={activeTab} />,
 				blue: true,
 				key: SPACE_KEY.AMBASSADOR,
 			},
 		],
-		[t, councilProposals, govProposals, grantsProposals, ambassadorProposals]
+		[t, activeTab]
 	);
 
 	const returnContent = () => {
 		switch (panelType) {
-			case PanelType.LIST:
-				return (
-					<Row>
-						<LeftCol>
-							<StructuredTab
-								boxPadding={20}
-								boxHeight={600}
-								boxWidth={700}
-								tabData={tabData}
-								setPanelType={(key) => router.push(`/gov/${key}`)}
-								currentPanel={currentTab}
-							/>
-						</LeftCol>
-						<RightCol>
-							<CouncilBoard />
-						</RightCol>
-					</Row>
-				);
 			case PanelType.PROPOSAL:
 				return (
 					<Proposal
@@ -153,27 +126,28 @@ const Panel: React.FC<PanelProps> = ({ currentTab }) => {
 						}}
 					/>
 				);
+			// PanelType.LIST:
 			default:
 				return (
-					<Row>
-						<LeftCol>
+					<Grid>
+						<Col>
 							<StructuredTab
 								boxPadding={20}
 								boxHeight={600}
-								boxWidth={700}
 								tabData={tabData}
 								setPanelType={(key) => router.push(`/gov/${key}`)}
 								currentPanel={currentTab}
 							/>
-						</LeftCol>
-						<RightCol>
+						</Col>
+						<Col>
 							<CouncilBoard />
-						</RightCol>
-					</Row>
+						</Col>
+					</Grid>
 				);
 		}
 	};
 
 	return returnContent();
 };
+
 export default Panel;

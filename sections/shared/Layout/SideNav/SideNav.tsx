@@ -1,155 +1,177 @@
 import styled, { css } from 'styled-components';
-import { FC, useMemo, useState, useRef } from 'react';
+import { FC, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
-import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 import { Svg } from 'react-optimized-image';
 import { useRecoilValue } from 'recoil';
+import {
+	getOptimismNetwork,
+	// addOptimismNetworkToMetamask
+} from '@synthetixio/optimism-networks';
 
+import UIContainer from 'containers/UI';
 import { linkCSS } from 'styles/common';
-import { toBigNumber } from 'utils/formatters/number';
-
-import StakingLogo from 'assets/svg/app/staking-logo.svg';
-import StakingL2Logo from 'assets/svg/app/staking-l2-logo.svg';
+import media from 'styles/media';
 import CaretRightIcon from 'assets/svg/app/caret-right-small.svg';
-
-import useSNX24hrPricesQuery from 'queries/rates/useSNX24hrPricesQuery';
-import useCryptoBalances from 'hooks/useCryptoBalances';
-import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
-
 import ROUTES from 'constants/routes';
-import { CryptoCurrency, Synths } from 'constants/currency';
-import { SIDE_NAV_WIDTH, zIndex } from 'constants/ui';
-import { MENU_LINKS, MENU_LINKS_L2 } from '../constants';
-
+import SettingsModal from 'sections/shared/modals/SettingsModal';
+import { isWalletConnectedState } from 'store/wallet';
 import { isL2State, isMainnetState } from 'store/wallet';
-
-import SubMenu from './SubMenu';
-import PriceItem from './PriceItem';
-import PeriodBarStats from './PeriodBarStats';
-import BalanceItem from './BalanceItem';
-import CRatioBarStats from './CRatioBarStats';
+import { MENU_LINKS, MENU_LINKS_L2 } from '../constants';
 
 const getKeyValue = <T extends object, U extends keyof T>(obj: T) => (key: U) => obj[key];
 
-const SideNav: FC = () => {
+export type SideNavProps = {
+	isDesktop?: boolean;
+};
+
+const SideNav: FC<SideNavProps> = ({ isDesktop }) => {
 	const { t } = useTranslation();
-	const { asPath } = useRouter();
+	const router = useRouter();
 	const menuLinkItemRefs = useRef({});
-	const SNX24hrPricesQuery = useSNX24hrPricesQuery();
-	const cryptoBalances = useCryptoBalances();
-	const synthsBalancesQuery = useSynthsBalancesQuery();
+	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const isL2 = useRecoilValue(isL2State);
+	const {
+		closeMobileSideNav,
+		setSubMenuConfiguration,
+		clearSubMenuConfiguration,
+		setNetworkError,
+	} = UIContainer.useContainer();
 	const isMainnet = useRecoilValue(isMainnetState);
-	const [subMenuConfiguration, setSubMenuConfiguration] = useState({
-		routes: null,
-		topPosition: 0,
-	});
-
-	const snxBalance =
-		cryptoBalances?.balances?.find((balance) => balance.currencyKey === CryptoCurrency.SNX)
-			?.balance ?? toBigNumber(0);
-
-	const sUSDBalance =
-		synthsBalancesQuery?.data?.balancesMap[Synths.sUSD]?.balance ?? toBigNumber(0);
-
-	const snxPriceChartData = useMemo(() => {
-		return (SNX24hrPricesQuery?.data ?? [])
-			.map((dataPoint) => ({ value: dataPoint.averagePrice }))
-			.reverse();
-	}, [SNX24hrPricesQuery?.data]);
+	const [settingsModalOpened, setSettingsModalOpened] = useState<boolean>(false);
 
 	const menuLinks = isL2 ? MENU_LINKS_L2 : MENU_LINKS;
 
+	const addOptimismNetwork = async () => {
+		try {
+			setNetworkError(null);
+			if (!(window.ethereum && window.ethereum.isMetaMask)) {
+				return setNetworkError(t('user-menu.error.please-install-metamask'));
+			}
+			// await addOptimismNetworkToMetamask({ ethereum: window.ethereum });
+
+			// metamask mobile throws if iconUrls is included
+			const { chainId, chainName, rpcUrls, blockExplorerUrls } = getOptimismNetwork({
+				layerOneNetworkId: Number(window.ethereum.chainId),
+			});
+			await window.ethereum.request({
+				method: 'wallet_addEthereumChain',
+				params: [
+					{
+						chainId,
+						chainName,
+						rpcUrls,
+						blockExplorerUrls,
+					},
+				],
+			});
+		} catch (e) {
+			setNetworkError(e.message);
+		}
+	};
+
 	return (
-		<SideNavContainer
-			onMouseLeave={() => setSubMenuConfiguration({ ...subMenuConfiguration, routes: null })}
-			data-testid="sidenav"
-		>
-			<StakingLogoWrap>
-				<Link href={ROUTES.Home}>
-					<div>{isL2 ? <Svg src={StakingL2Logo} /> : <Svg src={StakingLogo} />}</div>
-				</Link>
-			</StakingLogoWrap>
-			<MenuLinks>
-				{menuLinks.map(({ i18nLabel, link, subMenu }, i) => (
+		<MenuLinks>
+			{menuLinks.map(({ i18nLabel, link, subMenu }, i) => {
+				const onSetSubMenuConfiguration = () => {
+					setSubMenuConfiguration({
+						// Debt data only exists on mainnet for now, need to hide otherwise
+						routes: (isMainnet
+							? subMenu
+							: subMenu!.filter(({ subLink }) => subLink !== ROUTES.Debt.Home)) as any,
+						topPosition: (getKeyValue(menuLinkItemRefs.current) as any)(i).getBoundingClientRect()
+							.y as number,
+					});
+				};
+
+				return (
 					<MenuLinkItem
 						ref={(r) => {
 							if (subMenu) {
 								menuLinkItemRefs.current = { ...menuLinkItemRefs.current, [i]: r };
 							}
 						}}
-						onMouseEnter={() => {
-							setSubMenuConfiguration(
-								subMenu
-									? {
-											// Debt data only exists on mainnet for now, need to hide otherwise
-											routes: (isMainnet
-												? subMenu
-												: subMenu.filter(({ subLink }) => subLink !== ROUTES.Debt.Home)) as any,
-											topPosition: (getKeyValue(menuLinkItemRefs.current) as any)(
-												i
-											).getBoundingClientRect().y as number,
-									  }
-									: { ...subMenuConfiguration, routes: null }
-							);
-						}}
+						{...(isDesktop
+							? {
+									onMouseEnter: () => {
+										if (subMenu) {
+											onSetSubMenuConfiguration();
+										}
+									},
+									onClick: () => {
+										if (!subMenu) {
+											router.push(link);
+											clearSubMenuConfiguration();
+										}
+									},
+							  }
+							: {
+									onClick: () => {
+										if (subMenu) {
+											onSetSubMenuConfiguration();
+										} else {
+											router.push(link);
+											closeMobileSideNav();
+											clearSubMenuConfiguration();
+										}
+									},
+							  })}
 						key={link}
 						data-testid={`sidenav-${link}`}
 						isActive={
 							subMenu
-								? !!subMenu.find(({ subLink }) => subLink === asPath)
-								: asPath === link || (link !== ROUTES.Home && asPath.includes(link))
+								? !!subMenu.find(({ subLink }) => subLink === router.asPath)
+								: router.asPath === link || (link !== ROUTES.Home && router.asPath.includes(link))
 						}
 					>
-						<Link href={link}>
-							<a>
-								{t(i18nLabel)}
-								{subMenu && <Svg src={CaretRightIcon} />}
-							</a>
-						</Link>
+						<div className="link">
+							{t(i18nLabel)}
+							{subMenu && <Svg src={CaretRightIcon} />}
+						</div>
 					</MenuLinkItem>
-				))}
-			</MenuLinks>
-			<LineSeparator />
-			<MenuCharts>
-				<CRatioBarStats />
-				<BalanceItem amount={snxBalance} currencyKey={CryptoCurrency.SNX} />
-				<BalanceItem amount={sUSDBalance} currencyKey={Synths.sUSD} />
-				<PriceItem currencyKey={CryptoCurrency.SNX} data={snxPriceChartData} />
-				<PeriodBarStats />
-			</MenuCharts>
-			<SubMenu currentPath={asPath} config={subMenuConfiguration} />
-		</SideNavContainer>
+				);
+			})}
+
+			{!isL2 && isWalletConnected ? (
+				<MenuLinkItem
+					onClick={() => {
+						addOptimismNetwork();
+						closeMobileSideNav();
+					}}
+					onMouseEnter={() => {
+						clearSubMenuConfiguration();
+					}}
+					data-testid="sidenav-switch-to-l2"
+					isL2Switcher
+				>
+					<div className="link">{t('sidenav.switch-to-l2')}</div>
+				</MenuLinkItem>
+			) : null}
+
+			{!isDesktop ? (
+				<>
+					<MenuLinkItem
+						onClick={() => {
+							closeMobileSideNav();
+							setSettingsModalOpened(!settingsModalOpened);
+						}}
+						data-testid="sidenav-settings"
+					>
+						<div className="link">{t('sidenav.settings')}</div>
+					</MenuLinkItem>
+					{settingsModalOpened && <SettingsModal onDismiss={() => setSettingsModalOpened(false)} />}
+				</>
+			) : null}
+		</MenuLinks>
 	);
 };
-
-const SideNavContainer = styled.div`
-	z-index: ${zIndex.BASE};
-	height: 100%;
-	width: ${SIDE_NAV_WIDTH};
-	position: fixed;
-	top: 0;
-	left: 0;
-	background: ${(props) => props.theme.colors.darkGradient1Flipped};
-	border-right: 1px solid ${(props) => props.theme.colors.grayBlue};
-	display: grid;
-	grid-template-rows: auto 1fr auto auto;
-	overflow-y: hidden;
-	overflow-x: visible;
-`;
-
-const StakingLogoWrap = styled.div`
-	padding: 30px 0 64px 24px;
-	cursor: pointer;
-`;
 
 const MenuLinks = styled.div`
 	padding-left: 24px;
 	position: relative;
 `;
 
-const MenuLinkItem = styled.div<{ isActive: boolean }>`
+const MenuLinkItem = styled.div<{ isActive?: boolean; isL2Switcher?: boolean }>`
 	line-height: 40px;
 	padding-bottom: 10px;
 	position: relative;
@@ -158,19 +180,19 @@ const MenuLinkItem = styled.div<{ isActive: boolean }>`
 		margin-left: 6px;
 	}
 
-	a {
+	.link {
 		display: flex;
 		align-items: center;
 		${linkCSS};
 		font-family: ${(props) => props.theme.fonts.condensedMedium};
 		text-transform: uppercase;
-		opacity: 0.4;
+		opacity: ${(props) => (props.isL2Switcher ? 1 : 0.4)};
 		font-size: 14px;
 		cursor: pointer;
-		color: ${(props) => props.theme.colors.white};
+		color: ${(props) => (props.isL2Switcher ? props.theme.colors.pink : props.theme.colors.white)};
 		&:hover {
-			opacity: unset;
-			color: ${(props) => props.theme.colors.blue};
+			opacity: ${(props) => (props.isL2Switcher ? 0.8 : 1)};
+			color: ${(props) => (props.isL2Switcher ? props.theme.colors.pink : props.theme.colors.blue)};
 			svg {
 				color: ${(props) => props.theme.colors.blue};
 			}
@@ -180,6 +202,12 @@ const MenuLinkItem = styled.div<{ isActive: boolean }>`
 			css`
 				opacity: unset;
 			`}
+
+		${media.lessThan('md')`
+			font-family: ${(props) => props.theme.fonts.extended};
+			font-size: 20px;
+			opacity: 1;
+		`}
 	}
 
 	&:after {
@@ -197,19 +225,6 @@ const MenuLinkItem = styled.div<{ isActive: boolean }>`
 			css`
 				display: block;
 			`}
-	}
-`;
-
-const LineSeparator = styled.div`
-	height: 1px;
-	background: ${(props) => props.theme.colors.grayBlue};
-	margin-bottom: 25px;
-`;
-
-const MenuCharts = styled.div`
-	margin: 0 auto;
-	@media screen and (max-height: 815px) {
-		display: none;
 	}
 `;
 

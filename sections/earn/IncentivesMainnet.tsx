@@ -5,19 +5,22 @@ import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
 
-import useSNXLockedValueQuery from 'queries/staking/useSNXLockedValueQuery';
-
-import useFeePeriodTimeAndProgress from 'hooks/useFeePeriodTimeAndProgress';
 import useLPData from 'hooks/useLPData';
-
 import ROUTES from 'constants/routes';
 import { CryptoCurrency, Synths } from 'constants/currency';
+import media from 'styles/media';
+import useSNXLockedValueQuery from 'queries/staking/useSNXLockedValueQuery';
+import useFeePeriodTimeAndProgress from 'hooks/useFeePeriodTimeAndProgress';
+import { isWalletConnectedState } from 'store/wallet';
+import { zeroBN } from 'utils/formatters/number';
+import useShortRewardsData from 'hooks/useShortRewardsData';
+import { TabButton, TabList } from 'components/Tab';
+import { CurrencyIconType } from 'components/Currency/CurrencyIcon/CurrencyIcon';
+import { DesktopOrTabletView } from 'components/Media';
 
 import IncentivesTable, { DualRewards, NOT_APPLICABLE } from './IncentivesTable';
 import ClaimTab from './ClaimTab';
 import LPTab from './LPTab';
-import { isWalletConnectedState } from 'store/wallet';
-
 import {
 	Tab,
 	LP,
@@ -27,10 +30,6 @@ import {
 	lpToSynthIcon,
 	lpToRoute,
 } from './types';
-import { zeroBN } from 'utils/formatters/number';
-import useShortRewardsData from 'hooks/useShortRewardsData';
-import { TabButton, TabList } from 'components/Tab';
-import { CurrencyIconType } from 'components/Currency/CurrencyIcon/CurrencyIcon';
 
 enum View {
 	ACTIVE = 'active',
@@ -320,13 +319,12 @@ const Incentives: FC<IncentivesProps> = ({
 
 	return activeTab == null ? (
 		<>
-			<TabList padding={20} width={400}>
+			<TabList noOfTabs={2}>
 				<TabButton
 					isSingle={false}
 					tabHeight={50}
 					inverseTabColor={true}
 					blue={true}
-					numberTabs={2}
 					key={`active-button`}
 					name={t('earn.tab.active')}
 					active={view === View.ACTIVE}
@@ -341,7 +339,6 @@ const Incentives: FC<IncentivesProps> = ({
 					tabHeight={50}
 					inverseTabColor={true}
 					blue={false}
-					numberTabs={2}
 					key={`inactive-button`}
 					name={t('earn.tab.inactive')}
 					active={view === View.INACTIVE}
@@ -356,7 +353,7 @@ const Incentives: FC<IncentivesProps> = ({
 		</>
 	) : (
 		<Container>
-			{incentivesTable}
+			<DesktopOrTabletView>{incentivesTable}</DesktopOrTabletView>
 			<TabContainer>
 				{activeTab === Tab.Claim && (
 					<ClaimTab
@@ -434,8 +431,10 @@ const Incentives: FC<IncentivesProps> = ({
 
 const Container = styled.div`
 	background-color: ${(props) => props.theme.colors.navy};
-	display: grid;
-	grid-template-columns: auto 639.5px;
+	${media.greaterThan('md')`
+		display: grid;
+		grid-template-columns: 1fr 2fr;
+	`}
 `;
 
 const TabContainer = styled.div`

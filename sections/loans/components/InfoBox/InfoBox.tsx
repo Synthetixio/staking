@@ -2,10 +2,11 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ethers } from 'ethers';
 import { useRecoilValue } from 'recoil';
+import styled from 'styled-components';
 
 import { walletAddressState } from 'store/wallet';
 import { ExternalLink } from 'styles/common';
-import styled from 'styled-components';
+import media from 'styles/media';
 import Connector from 'containers/Connector';
 import Button from 'components/Button';
 import Currency from 'components/Currency';
@@ -118,7 +119,7 @@ const InfoBox: React.FC = () => {
 						{t('loans.pending-withdrawals.title')}{' '}
 						<InfoSVG tip={t('loans.pending-withdrawals.title-tip')} />
 					</PendingWithdrawalsTitle>
-					<PendingWithdrawalsSubtitle>
+					<PendingWithdrawalsSubtitle empty={pendingWithdrawals.isZero()}>
 						{pendingWithdrawals.isZero() ? (
 							<>{t('loans.pending-withdrawals.empty')}</>
 						) : (
@@ -183,7 +184,13 @@ export default InfoBox;
 
 export const Root = styled.div`
 	& > div {
-		margin-bottom: 32px;
+		${media.greaterThan('mdUp')`
+			margin: 0 0 16px;
+		`}
+
+		${media.lessThan('mdUp')`
+			margin: 16px 0;
+		`}
 	}
 
 	a,
@@ -216,7 +223,7 @@ export const Subtitle = styled.div`
 export const StatsGrid = styled.div`
 	display: grid;
 	grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
-	grid-template-columns: 1fr 1fr;
+	grid-template-columns: 2fr 1fr;
 	font-size: 14px;
 	padding: 0 0 16px 0;
 `;
@@ -235,6 +242,9 @@ export const StatsHeader = styled.div`
 
 	& > div {
 		padding: 8px 16px;
+		white-space: nowrap;
+		display: flex;
+		align-items: center;
 	}
 `;
 
@@ -266,7 +276,7 @@ export const TotalColHeading = styled(StatsCol)`
 
 export const ClaimButton = styled(Button)`
 	cursor: pointer;
-	margin-left: 50px;
+	margin-left: 15px;
 `;
 
 export const PendingWithdrawalsTitle = styled.div`
@@ -283,10 +293,10 @@ export const PendingWithdrawalsTitle = styled.div`
 	}
 `;
 
-export const PendingWithdrawalsSubtitle = styled.div`
-	font-family: ${(props) => props.theme.fonts.extended};
+export const PendingWithdrawalsSubtitle = styled.div<{ empty: boolean }>`
+	font-family: ${(props) => (props.empty ? props.theme.fonts.regular : props.theme.fonts.extended)};
 	color: ${(props) => props.theme.colors.white};
-	font-size: 20px;
+	font-size: ${(props) => (props.empty ? 12 : 20)}px;
 	margin-top: 12px;
 	display: flex;
 	align-items: center;

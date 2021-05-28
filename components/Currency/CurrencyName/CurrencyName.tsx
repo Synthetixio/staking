@@ -5,7 +5,7 @@ import CurrencyIcon from '../CurrencyIcon';
 
 import { CurrencyKey } from 'constants/currency';
 
-import { ContainerRowMixin } from '../common';
+import { ContainerRow } from '../common';
 
 type CurrencyNameProps = {
 	currencyKey: CurrencyKey;
@@ -43,9 +43,7 @@ const Container = styled.span<{ showIcon?: boolean }>`
 		`}
 `;
 
-const NameAndSymbol = styled.span`
-	${ContainerRowMixin};
-`;
+const NameAndSymbol = styled(ContainerRow)``;
 
 const Symbol = styled.span`
 	color: ${(props) => props.theme.colors.white};
