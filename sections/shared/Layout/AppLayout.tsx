@@ -1,18 +1,19 @@
-import { SIDE_NAV_WIDTH } from 'constants/ui';
 import { FC, ReactNode, useEffect } from 'react';
 import router from 'next/router';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import styled from 'styled-components';
 
+import { DESKTOP_SIDE_NAV_WIDTH, DESKTOP_BODY_PADDING } from 'constants/ui';
 import ROUTES from 'constants/routes';
+import NotificationContainer from 'constants/NotificationContainer';
+import { NotificationTemplate, userNotificationState } from 'store/ui';
+import media from 'styles/media';
 import { isL2State, isMainnetState } from 'store/wallet';
+import useLatestCouncilElectionQuery from 'queries/gov/useLatestCouncilElectionQuery';
 
 import Header from './Header';
 import SideNav from './SideNav';
-import NotificationContainer from 'constants/NotificationContainer';
 import UserNotifications from './UserNotifications';
-import { NotificationTemplate, userNotificationState } from 'store/ui';
-import useLatestCouncilElectionQuery from 'queries/gov/useLatestCouncilElectionQuery';
 
 type AppLayoutProps = {
 	children: ReactNode;
@@ -69,8 +70,10 @@ const AppLayout: FC<AppLayoutProps> = ({ children }) => {
 const Content = styled.div`
 	max-width: 1200px;
 	margin: 0 auto;
-	padding-right: 40px;
-	padding-left: calc(${SIDE_NAV_WIDTH} + 40px);
+
+	${media.greaterThan('mdUp')`
+		padding-left: calc(${DESKTOP_SIDE_NAV_WIDTH + DESKTOP_BODY_PADDING}px);
+	`}
 `;
 
 export default AppLayout;

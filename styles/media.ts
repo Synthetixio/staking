@@ -2,7 +2,7 @@ import { generateMedia } from 'styled-media-query';
 import { createMedia } from '@artsy/fresnel';
 import mapValues from 'lodash/mapValues';
 
-type Breakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+export type Breakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 type Breakpoints = Record<Breakpoint, number>;
 
 export const breakpoints: Breakpoints = {
@@ -34,5 +34,9 @@ export const media = generateMedia({
 export const mediaStyles = AppMedia.createMediaStyle();
 
 export const { Media, MediaContextProvider } = AppMedia;
+
+export function getIsMediumScreen() {
+	return globalThis.outerWidth <= breakpoints.md;
+}
 
 export default media;

@@ -6,10 +6,11 @@ import useGetDebtDataQuery from 'queries/debt/useGetDebtDataQuery';
 import { last, orderBy } from 'lodash';
 import { toBigNumber } from 'utils/formatters/number';
 
-type HistoricalDebtAndIssuanceData = {
+export type HistoricalDebtAndIssuanceData = {
 	timestamp: number;
 	actualDebt: number;
 	issuanceDebt: number;
+	index: number;
 };
 
 type HistoricalDebtAndIssuance = {
@@ -71,6 +72,7 @@ const useHistoricalDebtData = () => {
 					timestamp: debtSnapshot.timestamp,
 					issuanceDebt: historicalIssuanceAggregation[i],
 					actualDebt: debtSnapshot.debtBalanceOf,
+					index: i,
 				});
 			});
 
@@ -80,6 +82,7 @@ const useHistoricalDebtData = () => {
 				timestamp: new Date().getTime(),
 				actualDebt: toBigNumber(debtDataQuery.data?.debtBalance ?? 0).toNumber(),
 				issuanceDebt: last(historicalIssuanceAggregation) ?? 0,
+				index: historicalDebtAndIssuance.length,
 			});
 
 			setHistoricalDebt({ isLoading: false, data: historicalDebtAndIssuance });

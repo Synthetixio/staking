@@ -8,8 +8,7 @@ import { snapshotEndpoint, SPACE_KEY } from 'constants/snapshot';
 import { panelState, PanelType, proposalState } from 'store/gov';
 
 import useActiveTab from '../hooks/useActiveTab';
-import { Row } from 'styles/common';
-import { LeftCol, RightCol } from 'sections/gov/components/common';
+import { Grid, Col } from 'sections/gov/components/common';
 
 import StructuredTab from 'components/StructuredTab';
 import CouncilBoard from './List/CouncilBoard';
@@ -108,24 +107,6 @@ const Panel: React.FC<PanelProps> = ({ currentTab }) => {
 
 	const returnContent = () => {
 		switch (panelType) {
-			case PanelType.LIST:
-				return (
-					<Row>
-						<LeftCol>
-							<StructuredTab
-								boxPadding={20}
-								boxHeight={600}
-								boxWidth={700}
-								tabData={tabData}
-								setPanelType={(key) => router.push(`/gov/${key}`)}
-								currentPanel={currentTab}
-							/>
-						</LeftCol>
-						<RightCol>
-							<CouncilBoard />
-						</RightCol>
-					</Row>
-				);
 			case PanelType.PROPOSAL:
 				return (
 					<Proposal
@@ -145,27 +126,28 @@ const Panel: React.FC<PanelProps> = ({ currentTab }) => {
 						}}
 					/>
 				);
+			// PanelType.LIST:
 			default:
 				return (
-					<Row>
-						<LeftCol>
+					<Grid>
+						<Col>
 							<StructuredTab
 								boxPadding={20}
 								boxHeight={600}
-								boxWidth={700}
 								tabData={tabData}
 								setPanelType={(key) => router.push(`/gov/${key}`)}
 								currentPanel={currentTab}
 							/>
-						</LeftCol>
-						<RightCol>
+						</Col>
+						<Col>
 							<CouncilBoard />
-						</RightCol>
-					</Row>
+						</Col>
+					</Grid>
 				);
 		}
 	};
 
 	return returnContent();
 };
+
 export default Panel;

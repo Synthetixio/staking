@@ -1,5 +1,6 @@
 import styled from 'styled-components';
-import { FlexDiv, FlexDivColCentered, FlexDivCentered, ExternalLink } from 'styles/common';
+import { FlexDiv, FlexDivCol, FlexDivCentered, ExternalLink } from 'styles/common';
+import media from 'styles/media';
 import Button from 'components/Button';
 
 export const TotalValueWrapper = styled(FlexDiv)`
@@ -24,7 +25,6 @@ export const Value = styled.div`
 `;
 
 export const Label = styled.p`
-	width: 90%;
 	margin: 0 auto;
 	font-family: ${(props) => props.theme.fonts.interSemiBold};
 	color: ${(props) => props.theme.colors.gray};
@@ -76,9 +76,12 @@ export const LinkText = styled.div`
 export const Divider = styled.div`
 	background: ${(props) => props.theme.colors.grayBlue};
 	height: 1px;
-	width: 257px;
 	margin-top: 20px;
 	margin-bottom: 20px;
+
+	${media.greaterThan('mdUp')`
+		width: 257px;
+	`}
 `;
 
 export const StyledButton = styled(Button)`
@@ -90,9 +93,8 @@ export const StyledButton = styled(Button)`
 	background: ${(props) => props.theme.colors.blue};
 `;
 
-export const TabContainer = styled(FlexDivColCentered)`
+export const TabContainer = styled(FlexDivCol)`
 	height: 100%;
-	justify-content: space-evenly;
 	padding: 24px;
 	position: relative;
 `;

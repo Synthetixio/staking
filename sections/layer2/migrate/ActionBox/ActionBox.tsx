@@ -1,6 +1,5 @@
 import React, { useMemo } from 'react';
 import StructuredTab from 'components/StructuredTab';
-import { BOX_COLUMN_WIDTH } from 'constants/styles';
 import { useTranslation } from 'react-i18next';
 
 import MigrateTab from '../MigrateTab';
@@ -21,13 +20,7 @@ const ActionBox: React.FC = () => {
 	);
 
 	return (
-		<StructuredTab
-			singleTab={true}
-			boxPadding={20}
-			boxWidth={BOX_COLUMN_WIDTH}
-			tabData={tabData}
-			setPanelType={() => null}
-		/>
+		<StructuredTab singleTab={true} boxPadding={20} tabData={tabData} setPanelType={() => null} />
 	);
 };
 

@@ -1,5 +1,6 @@
 import styled, { css, keyframes } from 'styled-components';
-import { SIDE_NAV_WIDTH } from 'constants/ui';
+import media from 'styles/media';
+import { DESKTOP_SIDE_NAV_WIDTH, MOBILE_BODY_PADDING } from 'constants/ui';
 import Tippy from '@tippyjs/react';
 
 export const FlexDiv = styled.div`
@@ -23,6 +24,18 @@ export const FlexDivRow = styled(FlexDiv)`
 `;
 
 export const FlexDivRowCentered = styled(FlexDivRow)`
+	align-items: center;
+`;
+
+export const FlexDivJustifyCenter = styled(FlexDiv)`
+	justify-content: center;
+`;
+
+export const FlexDivJustifyEnd = styled(FlexDiv)`
+	justify-content: flex-end;
+`;
+
+export const FlexDivItemsCenter = styled(FlexDiv)`
 	align-items: center;
 `;
 
@@ -198,10 +211,18 @@ export const LineSpacer = styled.div`
 	&:after {
 		background: ${(props) => props.theme.colors.grayBlue};
 		height: 1px;
-		width: calc(100% - ${SIDE_NAV_WIDTH});
-		left: ${SIDE_NAV_WIDTH};
 		position: absolute;
 		content: '';
+
+		${media.greaterThan('mdUp')`
+			width: calc(100% - ${DESKTOP_SIDE_NAV_WIDTH}px);
+			left: ${DESKTOP_SIDE_NAV_WIDTH}px;
+		`}
+
+		${media.lessThan('mdUp')`
+			left: ${MOBILE_BODY_PADDING}px;
+			right: ${MOBILE_BODY_PADDING}px;
+		`}
 	}
 `;
 

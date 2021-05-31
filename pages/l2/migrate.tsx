@@ -1,24 +1,31 @@
+import { FC, useEffect } from 'react';
 import Head from 'next/head';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 
 import Main from 'sections/layer2/migrate';
 import StatBox from 'components/StatBox';
-import { StatsSection, LineSpacer } from 'styles/common';
-
+import { LineSpacer } from 'styles/common';
+import StatsSection from 'components/StatsSection';
 import useEscrowCalculations from 'sections/escrow/hooks/useEscrowCalculations';
 import { formatCryptoCurrency } from 'utils/formatters/number';
+import UIContainer from 'containers/UI';
 
 const SNX_HEADER_DECIMALS = 2;
 
-const L2Page = () => {
+const L2Page: FC = () => {
 	const { t } = useTranslation();
-
+	const { setTitle } = UIContainer.useContainer();
 	const escrowCalculations = useEscrowCalculations();
 
 	const totalEscrowed = escrowCalculations?.totalEscrowBalance;
 	const totalClaimable = escrowCalculations?.totalClaimableBalance;
 	const totalVested = escrowCalculations?.totalVestedBalance;
+
+	// header title
+	useEffect(() => {
+		setTitle('l2', 'migrate');
+	}, [setTitle]);
 
 	return (
 		<>

@@ -15,6 +15,7 @@ import {
 	ModalItemTitle,
 	ExternalLink,
 } from 'styles/common';
+import media from 'styles/media';
 
 import NavigationBack from 'assets/svg/app/navigation-back.svg';
 import PendingConfirmation from 'assets/svg/app/pending-confirmation.svg';
@@ -621,7 +622,9 @@ const Description = styled.div`
 	font-family: ${(props) => props.theme.fonts.regular};
 	margin: 16px 8px;
 
-	width: 500px;
+	${media.greaterThan('mdUp')`
+		width: 500px;
+	`}
 
 	h1 {
 		font-size: 14px;
@@ -658,7 +661,9 @@ const Description = styled.div`
 const OptionsContainer = styled.div`
 	max-height: 200px;
 	overflow-y: auto;
-	width: 500px;
+	${media.greaterThan('mdUp')`
+		width: 500px;
+	`}
 	display: grid;
 	grid-template-columns: auto auto;
 	column-gap: 8px;

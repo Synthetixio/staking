@@ -28,7 +28,11 @@ const History: React.FC<HistoryProps> = ({ proposalResults }) => {
 
 	const history = useMemo(() => {
 		if (proposalResults.isLoading) {
-			return <StyledSpinner src={Spinner} />;
+			return (
+				<StyledSpinner>
+					<Svg src={Spinner} />
+				</StyledSpinner>
+			);
 		} else if (proposalResults.data) {
 			const {
 				data: { voteList, spaceSymbol, choices },
@@ -117,9 +121,10 @@ const History: React.FC<HistoryProps> = ({ proposalResults }) => {
 };
 export default History;
 
-const StyledSpinner = styled(Svg)`
-	display: block;
-	margin: 30px auto;
+const StyledSpinner = styled.div`
+	display: flex;
+	justify-content: center;
+	padding: 30px 0;
 `;
 
 const LeftSide = styled(FlexDivRow)`

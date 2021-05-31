@@ -4,8 +4,9 @@ import styled from 'styled-components';
 
 import { NotificationTemplate, userNotificationState } from 'store/ui';
 import { isWalletConnectedState } from 'store/wallet';
+import media from 'styles/media';
 
-import { SIDE_NAV_WIDTH } from 'constants/ui';
+import { DESKTOP_SIDE_NAV_WIDTH, MOBILE_SIDE_NAV_WIDTH } from 'constants/ui';
 
 import GovVotingProposal from './templates/GovVotingProposal';
 import DebtLiquidationWarning from './templates/DebtLiquidationWarning';
@@ -36,7 +37,11 @@ const UserNotifications: FC = () => {
 const Container = styled.div`
 	position: absolute;
 	top: 24px;
-	left: calc(${SIDE_NAV_WIDTH} + 30px);
+	left: calc(${MOBILE_SIDE_NAV_WIDTH + 30}px);
+
+	${media.greaterThan('mdUp')`
+		left: calc(${DESKTOP_SIDE_NAV_WIDTH + 30}px);
+	`}
 `;
 
 export default UserNotifications;

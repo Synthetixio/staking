@@ -416,6 +416,7 @@ const Container = styled(FlexDivColCentered)`
 	background-color: ${(props) => props.theme.colors.black};
 	height: 100%;
 	width: 100%;
+	padding-bottom: 10px;
 `;
 
 const StyledValue = styled(Value)`
@@ -460,9 +461,7 @@ const StyledNumericInput = styled(NumericInput)`
 	}
 `;
 
-const StakeTxContainer = styled(FlexDivColCentered)`
-	width: 90%;
-`;
+const StakeTxContainer = styled(FlexDivColCentered)``;
 
 const StakeDivider = styled(Divider)`
 	margin-top: 5px;

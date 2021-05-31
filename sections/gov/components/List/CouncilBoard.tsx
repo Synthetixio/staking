@@ -69,7 +69,9 @@ const CouncilBoard: React.FC = () => {
 					</MemberRow>
 				)
 			) : (
-				<StyledSpinner src={Spinner} />
+				<StyledSpinner>
+					<Svg src={Spinner} />
+				</StyledSpinner>
 			)}
 		</StyledCard>
 	);
@@ -78,7 +80,6 @@ export default CouncilBoard;
 
 const StyledCard = styled(Card)`
 	padding: 0px;
-	width: 250px;
 `;
 
 const Title = styled.p`
@@ -103,7 +104,8 @@ const Address = styled.p`
 	font-size: 12px;
 `;
 
-const StyledSpinner = styled(Svg)`
-	display: block;
-	margin: 30px auto;
+const StyledSpinner = styled.div`
+	display: flex;
+	justify-content: center;
+	padding: 30px 0;
 `;

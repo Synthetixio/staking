@@ -1,22 +1,32 @@
-import React from 'react';
+import { FC, useEffect } from 'react';
 import Head from 'next/head';
 import styled from 'styled-components';
 
 import { useTranslation } from 'react-i18next';
 
-import { FlexDivCol, LineSpacer, StatsSection } from 'styles/common';
+import { FlexDivCol, LineSpacer } from 'styles/common';
 import { PossibleActions } from 'sections/dashboard';
 
+import UIContainer from 'containers/UI';
 import StatBox from 'components/StatBox';
+import StatsSection from 'components/StatsSection';
 import useUserStakingData from 'hooks/useUserStakingData';
 
 import { formatFiatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import StakedValue from 'sections/shared/modals/StakedValueModal/StakedValueBox';
+import ActiveDebt from 'sections/shared/modals/DebtValueModal/DebtValueBox';
 
-const DashboardPage = () => {
+const DashboardPage: FC = () => {
 	const { t } = useTranslation();
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
 	const { stakedValue, stakingAPR, debtBalance } = useUserStakingData();
+	const { setTitle } = UIContainer.useContainer();
+
+	// header title
+	useEffect(() => {
+		setTitle('home');
+	}, [setTitle]);
 
 	return (
 		<>
@@ -44,6 +54,7 @@ const DashboardPage = () => {
 						value={formatFiatCurrency(getPriceAtCurrentRate(debtBalance), {
 							sign: selectedPriceCurrency.sign,
 						})}
+						isPink
 					/>
 				</StatsSection>
 				<LineSpacer />
@@ -58,12 +69,6 @@ const Content = styled(FlexDivCol)`
 	max-width: 1200px;
 `;
 
-const StakedValue = styled(StatBox)`
-	.title {
-		color: ${(props) => props.theme.colors.blue};
-	}
-`;
-
 const APR = styled(StatBox)`
 	.title {
 		color: ${(props) => props.theme.colors.green};
@@ -71,12 +76,6 @@ const APR = styled(StatBox)`
 	.value {
 		text-shadow: ${(props) => props.theme.colors.greenTextShadow};
 		color: #073124;
-	}
-`;
-
-const ActiveDebt = styled(StatBox)`
-	.title {
-		color: ${(props) => props.theme.colors.pink};
 	}
 `;
 

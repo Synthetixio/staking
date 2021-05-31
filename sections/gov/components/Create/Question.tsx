@@ -11,6 +11,7 @@ import PendingConfirmation from 'assets/svg/app/pending-confirmation.svg';
 
 import Input, { inputCSS } from 'components/Input/Input';
 import { Divider, FlexDivColCentered, IconButton, ExternalLink } from 'styles/common';
+import media from 'styles/media';
 import {
 	InputContainer,
 	Container,
@@ -265,7 +266,9 @@ const Description = styled.textarea`
 	margin: 16px 0px;
 	height: 200px;
 
-	width: 500px;
+	${media.greaterThan('mdUp')`
+		width: 500px;
+	`}
 `;
 
 const Preview = styled.div`
@@ -277,7 +280,9 @@ const Preview = styled.div`
 	max-height: 300px;
 	overflow-y: auto;
 
-	width: 500px;
+	${media.greaterThan('mdUp')`
+		width: 500px;
+	`}
 
 	a {
 		color: ${(props) => props.theme.colors.blue};

@@ -42,6 +42,7 @@ import ROUTES from 'constants/routes';
 
 import { LP, Tab } from './types';
 import { CurrencyIconType } from 'components/Currency/CurrencyIcon/CurrencyIcon';
+import { DesktopOrTabletView, MobileOnlyView } from 'components/Media';
 
 export type DualRewards = {
 	a: number;
@@ -81,14 +82,11 @@ type IncentivesTableProps = {
 const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab }) => {
 	const { t } = useTranslation();
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const router = useRouter();
-	const { connectWallet } = Connector.useContainer();
-
 	const goToEarn = useCallback(() => router.push(ROUTES.Earn.Home), [router]);
 
-	const columns = useMemo(() => {
-		const leftColumns = [
+	const leftColumns = useMemo(() => {
+		return [
 			{
 				Header: <>{t('earn.incentives.options.select-a-pool.title')}</>,
 				accessor: 'title',
@@ -143,8 +141,10 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab }
 				sortable: false,
 			},
 		];
+	}, [t, goToEarn, activeTab]);
 
-		const rightColumns = [
+	const rightColumns = useMemo(() => {
+		return [
 			{
 				Header: <>{t('earn.incentives.options.staked-balance.title')}</>,
 				accessor: 'staked.balance',
@@ -265,39 +265,70 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab }
 				sortable: true,
 			},
 		];
+	}, [getPriceAtCurrentRate, selectedPriceCurrency.sign, t]);
+
+	const columns = useMemo(() => {
 		return activeTab != null ? leftColumns : [...leftColumns, ...rightColumns];
-	}, [getPriceAtCurrentRate, selectedPriceCurrency.sign, t, activeTab, goToEarn]);
+	}, [activeTab, leftColumns, rightColumns]);
 
 	return (
 		<Container activeTab={activeTab}>
-			<StyledTable
-				palette="primary"
-				columns={columns}
-				data={data}
-				isLoading={isWalletConnected && !isLoaded}
-				showPagination={true}
-				onTableRowClick={(row: Row<EarnItem>) => {
-					if (row.original.externalLink) {
-						window.open(row.original.externalLink, '_blank');
-					} else {
-						router.push(row.original.route);
-					}
-				}}
-				isActiveRow={(row: Row<EarnItem>) => row.original.tab === activeTab}
-				noResultsMessage={
-					!isWalletConnected ? (
-						<TableNoResults>
-							<TableNoResultsTitle>{t('common.wallet.no-wallet-connected')}</TableNoResultsTitle>
-							<TableNoResultsButtonContainer>
-								<Button variant="primary" onClick={connectWallet}>
-									{t('common.wallet.connect-wallet')}
-								</Button>
-							</TableNoResultsButtonContainer>
-						</TableNoResults>
-					) : undefined
-				}
-			/>
+			<DesktopOrTabletView>
+				<IncentivesInnerTable {...{ columns, data, isLoaded, activeTab }} />
+			</DesktopOrTabletView>
+			<MobileOnlyView>
+				<IncentivesInnerTable columns={leftColumns} {...{ data, isLoaded, activeTab }} />
+			</MobileOnlyView>
 		</Container>
+	);
+};
+
+type IncentivesInnerTableProps = {
+	columns: any[];
+	data: EarnItem[];
+	isLoaded: boolean;
+	activeTab: Tab | null;
+};
+
+const IncentivesInnerTable: FC<IncentivesInnerTableProps> = ({
+	columns,
+	data,
+	isLoaded,
+	activeTab,
+}) => {
+	const { t } = useTranslation();
+	const isWalletConnected = useRecoilValue(isWalletConnectedState);
+	const { connectWallet } = Connector.useContainer();
+	const router = useRouter();
+
+	return (
+		<StyledTable
+			palette="primary"
+			{...{ columns, data }}
+			data={data}
+			isLoading={isWalletConnected && !isLoaded}
+			showPagination={true}
+			onTableRowClick={(row: Row<EarnItem>) => {
+				if (row.original.externalLink) {
+					window.open(row.original.externalLink, '_blank');
+				} else {
+					router.push(row.original.route);
+				}
+			}}
+			isActiveRow={(row: Row<EarnItem>) => row.original.tab === activeTab}
+			noResultsMessage={
+				!isWalletConnected ? (
+					<TableNoResults>
+						<TableNoResultsTitle>{t('common.wallet.no-wallet-connected')}</TableNoResultsTitle>
+						<TableNoResultsButtonContainer>
+							<Button variant="primary" onClick={connectWallet}>
+								{t('common.wallet.connect-wallet')}
+							</Button>
+						</TableNoResultsButtonContainer>
+					</TableNoResults>
+				) : undefined
+			}
+		/>
 	);
 };
 

@@ -37,7 +37,7 @@ const Info: React.FC<InfoProps> = ({ proposal }) => {
 
 	return (
 		<>
-			<StructuredTab boxPadding={0} tabData={tabData} boxWidth={400} />
+			<StructuredTab boxPadding={0} tabData={tabData} />
 		</>
 	);
 };

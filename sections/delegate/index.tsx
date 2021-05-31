@@ -1,10 +1,11 @@
 import { FC } from 'react';
 import { useRecoilValue } from 'recoil';
-
 import styled from 'styled-components';
+
 import { appReadyState } from 'store/app';
-import { Row, FlexDivCol } from 'styles/common';
-import { FORM_COL_WIDTH, TABLE_COL_WIDTH } from 'sections/delegate/constants';
+import { FlexDivCol } from 'styles/common';
+import media from 'styles/media';
+
 import Form from 'sections/delegate/Form';
 import Table from 'sections/delegate/Table';
 
@@ -12,23 +13,28 @@ const Index: FC = () => {
 	const isAppReady = useRecoilValue(appReadyState);
 
 	return !isAppReady ? null : (
-		<Row>
-			<FormCol>
+		<Container>
+			<Col>
 				<Form />
-			</FormCol>
-			<TableCol>
+			</Col>
+			<Col>
 				<Table />
-			</TableCol>
-		</Row>
+			</Col>
+		</Container>
 	);
 };
 
-const FormCol = styled(FlexDivCol)`
-	width: ${FORM_COL_WIDTH}px;
+const Container = styled.div`
+	display: grid;
+	grid-template-columns: 2fr 1fr;
+	grid-gap: 1rem;
+
+	${media.lessThan('mdUp')`
+		display: flex;
+		flex-direction: column;
+	`}
 `;
 
-const TableCol = styled(FlexDivCol)`
-	width: ${TABLE_COL_WIDTH}px;
-`;
+const Col = styled(FlexDivCol)``;
 
 export default Index;

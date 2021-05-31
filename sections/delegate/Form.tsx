@@ -1,7 +1,6 @@
 import { useState, useMemo, useEffect, FC, useCallback } from 'react';
 import { ethers } from 'ethers';
 import { useRecoilValue } from 'recoil';
-import { useRouter } from 'next/router';
 import styled from 'styled-components';
 import { truncateAddress } from 'utils/formatters/string';
 import { Trans, useTranslation } from 'react-i18next';
@@ -13,13 +12,8 @@ import {
 	ModalItemTitle as TxModalItemTitle,
 	ModalItemText as TxModalItemText,
 	NoTextTransform,
-	IconButton,
-	FlexDivRowCentered,
 } from 'styles/common';
-import { Svg } from 'react-optimized-image';
-import NavigationBack from 'assets/svg/app/navigation-back.svg';
 import GasSelector from 'components/GasSelector';
-import { FORM_COL_WIDTH } from 'sections/delegate/constants';
 import { isWalletConnectedState, walletAddressState } from 'store/wallet';
 import {
 	Action,
@@ -59,19 +53,12 @@ const LeftCol: FC = () => {
 	);
 
 	return (
-		<StructuredTab
-			singleTab={true}
-			boxPadding={20}
-			boxWidth={FORM_COL_WIDTH}
-			tabData={tabData}
-			setPanelType={() => null}
-		/>
+		<StructuredTab singleTab={true} boxPadding={20} tabData={tabData} setPanelType={() => null} />
 	);
 };
 
 const Tab: FC = () => {
 	const { t } = useTranslation();
-	const router = useRouter();
 	const { connectWallet } = Connector.useContainer();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const address = useRecoilValue(walletAddressState);
@@ -117,7 +104,6 @@ const Tab: FC = () => {
 		[delegateApprovalsContract, properDelegateAddress, action, delegateAddressIsSelf]
 	);
 
-	const onGoBack = () => router.back();
 	const onEnterAddress = (e: any) => setDelegateAddress((e.target.value ?? '').trim());
 	const onButtonClick = async () => {
 		if (!isWalletConnected) {
@@ -192,12 +178,6 @@ const Tab: FC = () => {
 	return (
 		<div data-testid="form">
 			<FormContainer>
-				<Header>
-					<IconButton onClick={onGoBack}>
-						<Svg src={NavigationBack} />
-					</IconButton>
-				</Header>
-
 				<InputsContainer>
 					<AmountInput
 						value={delegateAddress}
@@ -267,12 +247,6 @@ const Tab: FC = () => {
 		</div>
 	);
 };
-
-const Header = styled(FlexDivRowCentered)`
-	justify-content: space-between;
-	width: 100%;
-	padding: 8px;
-`;
 
 const AmountInput = styled.textarea`
 	padding: 0;

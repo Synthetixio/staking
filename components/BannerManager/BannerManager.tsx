@@ -1,7 +1,6 @@
 import { FC } from 'react';
 import { Trans } from 'react-i18next';
 import styled from 'styled-components';
-import { utils as ethersUtils } from 'ethers';
 
 import useGetLiquidationData from 'queries/liquidations/useGetLiquidationDataQuery';
 import useGetDebtDataQuery from 'queries/debt/useGetDebtDataQuery';

@@ -4,6 +4,7 @@ import synthetix from 'lib/synthetix';
 import { useTranslation } from 'react-i18next';
 
 import { Transaction, GasLimitEstimate } from 'constants/network';
+import UIContainer from 'containers/UI';
 import { normalizedGasPrice } from 'utils/network';
 import { toBigNumber } from 'utils/formatters/number';
 
@@ -39,6 +40,13 @@ const MintTab: React.FC = () => {
 	const [gasPrice, setGasPrice] = useState<number>(0);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 	const { t } = useTranslation();
+
+	const { setTitle } = UIContainer.useContainer();
+
+	// header title
+	useEffect(() => {
+		setTitle('staking', 'mint');
+	}, [setTitle]);
 
 	useEffect(() => {
 		const getGasLimitEstimate = async () => {

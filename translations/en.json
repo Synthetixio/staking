@@ -111,6 +111,9 @@
 					"title": "Previously watching ({{count}}):",
 					"remove": "Remove address"
 				}
+			},
+			"wallet-options": {
+				"title": "Please choose:"
 			}
 		},
 		"notifications": {
@@ -128,6 +131,19 @@
 				"no-results": "None"
 			},
 			"view-all": "view all"
+		},
+		"staked-value": {
+			"title": "Staking Value",
+			"total-snx": "total snx",
+			"transferrable-snx": "transferrable snx",
+			"locked-snx": "locked snx",
+			"staked-snx": "staked snx"
+		},
+		"debt-value": {
+			"title": "Debt Tracking",
+			"issued-debt": "issued debt",
+			"actual-debt": "actual debt",
+			"share-of-debt-pool": "share of debt pool"
 		}
 	},
 	"homepage": {
@@ -895,6 +911,7 @@
 				"table": {
 					"asset": "Asset",
 					"balance": "Balance",
+					"balance-mobile": "Balance / Price",
 					"price": "Price",
 					"holdings": "Holdings %",
 					"total": "Total",
@@ -1082,7 +1099,9 @@
 				"title": "epoch"
 			}
 		},
-		"delegate": "Delegate"
+		"delegate": "Delegate",
+		"switch-to-l2": "Switch to L2",
+		"settings": "Settings"
 	},
 	"user-menu": {
 		"layer-2": {
@@ -1264,5 +1283,32 @@
 	"balance": {
 		"input-label": "Balance:",
 		"max": "Max"
+	},
+	"header": {
+		"home": "home",
+		"staking": "staking",
+		"staking/mint": "mint",
+		"staking/burn": "burn",
+		"staking/earn": "earn",
+		"staking/debt": "debt",
+		"wallet": "wallet",
+		"wallet/escrow": "escrow",
+		"wallet/history": "history",
+		"wallet/synths": "synths",
+		"wallet/delegate": "delegate",
+		"l2": "layer 2",
+		"l2/deposit": "deposit",
+		"l2/migrate": "migrate",
+		"l2/withdraw": "withdraw",
+		"gov": "gov",
+		"loans": "loans",
+		"loans/new": "new",
+		"loans/list": "active",
+		"loan": "loan",
+		"loan/deposit": "deposit",
+		"loan/withdraw": "withdraw",
+		"loan/repay": "repay",
+		"loan/draw": "draw",
+		"loan/close": "close"
 	}
 }
