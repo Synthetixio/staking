@@ -24,7 +24,7 @@ const useZapperTokenList = (options?: QueryConfig<TokenListQueryResponse>) => {
 	return useQuery<TokenListQueryResponse>(
 		QUERY_KEYS.TokenLists.Zapper,
 		async () => {
-			const response = await axios.get<TokenListResponse>(EXTERNAL_LINKS.TokenLists.OneInch);
+			const response = await axios.get<TokenListResponse>(EXTERNAL_LINKS.TokenLists.Zapper);
 
 			const tokens = [ether, ...response.data.tokens];
 
