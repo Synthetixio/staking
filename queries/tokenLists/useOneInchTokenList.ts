@@ -20,9 +20,9 @@ const ether = {
 	tags: [],
 };
 
-const useZapperTokenList = (options?: QueryConfig<TokenListQueryResponse>) => {
+const useOneInchTokenList = (options?: QueryConfig<TokenListQueryResponse>) => {
 	return useQuery<TokenListQueryResponse>(
-		QUERY_KEYS.TokenLists.Zapper,
+		QUERY_KEYS.TokenLists.OneInch,
 		async () => {
 			const response = await axios.get<TokenListResponse>(EXTERNAL_LINKS.TokenLists.OneInch);
 
@@ -43,4 +43,4 @@ const useZapperTokenList = (options?: QueryConfig<TokenListQueryResponse>) => {
 	);
 };
 
-export default useZapperTokenList;
+export default useOneInchTokenList;

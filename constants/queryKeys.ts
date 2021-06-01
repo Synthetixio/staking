@@ -292,6 +292,7 @@ export const QUERY_KEYS = {
 	TokenLists: {
 		Synthetix: ['tokenLists', 'synthetix'],
 		Zapper: ['tokenLists', 'zapper'],
+		OneInch: ['tokenLists', 'oneInch'],
 	},
 };
 
