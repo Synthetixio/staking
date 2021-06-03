@@ -10,6 +10,7 @@ export type HistoricalDebtAndIssuanceData = {
 	timestamp: number;
 	actualDebt: number;
 	issuanceDebt: number;
+	globalDebtShare: number;
 	index: number;
 };
 
@@ -65,25 +66,31 @@ const useHistoricalDebtData = () => {
 				historicalIssuanceAggregation.push(aggregation);
 			});
 
-			console.log(historicalIssuanceAggregation.length, debtHistory.length);
-
 			// We merge both actual & issuance debt into an array
 			let historicalDebtAndIssuance: HistoricalDebtAndIssuanceData[] = [];
 			debtHistory.reverse().forEach((debtSnapshot, i) => {
+				console.log(debtSnapshot.globalDebtValue);
 				historicalDebtAndIssuance.push({
 					timestamp: debtSnapshot.timestamp,
 					issuanceDebt: historicalIssuanceAggregation[i],
 					actualDebt: debtSnapshot.debtBalanceOf,
+					globalDebtShare: toBigNumber(debtSnapshot.debtBalanceOf)
+						.div(toBigNumber(debtSnapshot.globalDebtValue))
+						.times(100)
+						.toNumber(),
 					index: i,
 				});
 			});
 
 			// Last occurrence is the current state of the debt
 			// Issuance debt = last occurrence of the historicalDebtAndIssuance array
+			const latestActualDebt = toBigNumber(debtDataQuery.data?.debtBalance ?? 0);
+			const latestGlobalDebtValue = toBigNumber(last(debtHistory.reverse())?.globalDebtValue ?? 0);
 			historicalDebtAndIssuance.push({
 				timestamp: new Date().getTime(),
-				actualDebt: toBigNumber(debtDataQuery.data?.debtBalance ?? 0).toNumber(),
+				actualDebt: latestActualDebt.toNumber(),
 				issuanceDebt: last(historicalIssuanceAggregation) ?? 0,
+				globalDebtShare: latestActualDebt.div(latestGlobalDebtValue).times(100).toNumber(),
 				index: historicalDebtAndIssuance.length,
 			});
 

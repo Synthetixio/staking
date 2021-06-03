@@ -6,15 +6,18 @@ import { AreaChart, Area, Tooltip, XAxis, YAxis } from 'recharts';
 import formatDate from 'date-fns/format';
 import { Svg } from 'react-optimized-image';
 
-import { formatCurrency } from 'utils/formatters/number';
+import { formatCurrency, formatNumber } from 'utils/formatters/number';
 import ArrowForwardPink from 'assets/svg/app/arrow-forward-pink.svg';
-import useHistoricalDebtData, { HistoricalDebtAndIssuanceData } from 'hooks/useHistoricalDebtData';
+import useHistoricalDebtData, {
+	HistoricalDebtAndIssuanceData,
+} from 'hooks/useCombinedGlobalUserHistoricalDebtData';
 import { CenteredModal } from '../common';
 
 const INITIAL_SNAPSHOT: HistoricalDebtAndIssuanceData = {
 	timestamp: 0,
 	actualDebt: 0,
 	issuanceDebt: 0,
+	globalDebtShare: 0,
 	index: 0,
 };
 
@@ -157,9 +160,9 @@ export const DebtValueModal: FC<{ value: string; isOpened: boolean; onDismiss: (
 					<FooterItem>
 						{t('modals.debt-value.share-of-debt-pool')}
 						<FooterItemChange>
-							<span>0%</span>
+							<span>{formatNumber(prevSnapshot.globalDebtShare, { decimals: 2 })}%</span>
 							<Svg src={ArrowForwardPink} />
-							<span>0%</span>
+							<span>{formatNumber(currentSnapshotOrLast.globalDebtShare, { decimals: 2 })}%</span>
 						</FooterItemChange>
 					</FooterItem>
 				</Footer>
