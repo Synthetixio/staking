@@ -6,7 +6,7 @@ import Tippy from '@tippyjs/react';
 
 import { customGasPriceState, gasSpeedState, isL2State } from 'store/wallet';
 import { ESTIMATE_VALUE } from 'constants/placeholder';
-import { DEFAULT_GAS_PRICE, GasLimitEstimate } from 'constants/network';
+import { GasLimitEstimate } from 'constants/network';
 
 import useEthGasStationQuery, { GasPrices, GAS_SPEEDS } from 'queries/network/useEthGasPriceQuery';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
@@ -49,28 +49,24 @@ const GasSelector: React.FC<GasSelectorProps> = ({
 
 	const gasPrice = useMemo(
 		() =>
-			isL2
-				? DEFAULT_GAS_PRICE
-				: customGasPrice !== ''
+			customGasPrice !== ''
 				? Number(customGasPrice)
 				: ethGasStationQuery.data != null
 				? ethGasStationQuery.data[gasSpeed]
 				: null,
-		[customGasPrice, ethGasStationQuery.data, gasSpeed, isL2]
+		[customGasPrice, ethGasStationQuery.data, gasSpeed]
 	);
 
 	useEffect(() => {
 		setGasPrice(
-			isL2
-				? DEFAULT_GAS_PRICE
-				: customGasPrice !== ''
+			customGasPrice !== ''
 				? Number(customGasPrice)
 				: ethGasStationQuery.data != null
 				? ethGasStationQuery.data[gasSpeed]
 				: null
 		);
 		// eslint-disable-next-line
-	}, [gasPrice, customGasPrice, isL2]);
+	}, [gasPrice, customGasPrice]);
 
 	const ethPriceRate = getExchangeRatesForCurrencies(
 		exchangeRates,
