@@ -93,8 +93,6 @@ const useProposal = (spaceKey: SPACE_KEY, hash: string, options?: QueryConfig<Pr
 						votes(first: 1000, where: { proposal: $proposal }) {
 							id
 							voter
-							created
-							proposal
 							choice
 						}
 					}

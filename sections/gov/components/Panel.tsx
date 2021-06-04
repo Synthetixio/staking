@@ -126,7 +126,6 @@ const Panel: React.FC<PanelProps> = ({ currentTab }) => {
 						}}
 					/>
 				);
-			// PanelType.LIST:
 			default:
 				return (
 					<Grid>

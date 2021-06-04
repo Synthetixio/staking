@@ -26,7 +26,9 @@ const Info: React.FC<InfoProps> = ({ proposal }) => {
 				key: ProposalInfoType.RESULTS,
 			},
 			{
-				title: t('gov.proposal.history.title'),
+				title: t('gov.proposal.history.title', {
+					count: proposalResults.data?.voteList.length ?? undefined,
+				}),
 				tabChildren: <History proposalResults={proposalResults} hash={proposal.id} />,
 				blue: true,
 				key: ProposalInfoType.HISTORY,
@@ -35,10 +37,6 @@ const Info: React.FC<InfoProps> = ({ proposal }) => {
 		[proposalResults, proposal, t]
 	);
 
-	return (
-		<>
-			<StructuredTab boxPadding={0} tabData={tabData} />
-		</>
-	);
+	return <StructuredTab boxPadding={0} tabData={tabData} />;
 };
 export default Info;
