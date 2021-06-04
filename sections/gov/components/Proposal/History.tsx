@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import styled from 'styled-components';
 import { Svg } from 'react-optimized-image';
 import Spinner from 'assets/svg/app/loader.svg';
-import { FlexDivRow, FlexDivRowCentered } from 'styles/common';
+import { FlexDivCol, FlexDivRow, FlexDivRowCentered } from 'styles/common';
 import { ProposalResults } from 'queries/gov/useProposal';
 import { useRecoilValue } from 'recoil';
 import { walletAddressState } from 'store/wallet';
@@ -38,10 +38,7 @@ const History: React.FC<HistoryProps> = ({ proposalResults }) => {
 				data: { voteList, spaceSymbol, choices },
 			} = proposalResults;
 			return (
-				<>
-					<HeaderRow>
-						<Title>{t('gov.proposal.history.total', { totalVotes: voteList.length })}</Title>
-					</HeaderRow>
+				<Column>
 					<HeaderRow>
 						<Title>{t('gov.proposal.history.header.voter')}</Title>
 						<Title>{t('gov.proposal.history.header.choice')}</Title>
@@ -49,7 +46,7 @@ const History: React.FC<HistoryProps> = ({ proposalResults }) => {
 					</HeaderRow>
 					<List
 						height={400}
-						width={400}
+						width={350}
 						rowCount={voteList.length}
 						rowHeight={65}
 						overscanRowCount={20}
@@ -110,7 +107,7 @@ const History: React.FC<HistoryProps> = ({ proposalResults }) => {
 							);
 						}}
 					/>
-				</>
+				</Column>
 			);
 		} else {
 			return null;
@@ -120,6 +117,16 @@ const History: React.FC<HistoryProps> = ({ proposalResults }) => {
 	return history;
 };
 export default History;
+
+const Row = styled(FlexDivRowCentered)`
+	border-bottom: 0.5px solid ${(props) => props.theme.colors.grayBlue};
+	justify-content: space-between;
+	padding: 0px 16px;
+`;
+
+const Column = styled(FlexDivCol)`
+	overflow-y: scroll;
+`;
 
 const StyledSpinner = styled.div`
 	display: flex;
@@ -131,26 +138,19 @@ const LeftSide = styled(FlexDivRow)`
 	width: 40%;
 	justify-content: flex-start;
 	align-items: center;
-	padding: 8px;
-	margin: 8px 8px;
 `;
 
 const RightSide = styled(FlexDivRow)`
 	width: 60%;
 	align-items: center;
-	padding: 8px;
-	margin: 8px 8px;
-`;
-
-const Row = styled(FlexDivRowCentered)`
-	border-bottom: 0.5px solid ${(props) => props.theme.colors.grayBlue};
-	justify-content: space-between;
 `;
 
 const HeaderRow = styled(FlexDivRow)`
-	padding: 8px;
-	margin: 8px 8px;
+	padding-top: 24px;
 	justify-content: space-between;
+	min-height: 65px;
+	padding-right: 16px;
+	padding-left: 16px;
 `;
 
 const Title = styled.div`
@@ -171,5 +171,5 @@ const Choice = styled.div`
 	color: ${(props) => props.theme.colors.white};
 	font-family: ${(props) => props.theme.fonts.regular};
 	font-size: 12px;
-	margin-left: 8px;
+	margin-left: 12px;
 `;

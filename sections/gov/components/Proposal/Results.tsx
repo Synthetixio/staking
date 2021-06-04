@@ -120,10 +120,11 @@ const StyledSpinner = styled.div`
 const Row = styled(FlexDivRowCentered)<{ highlight: boolean }>`
 	border-bottom: 0.5px solid ${(props) => props.theme.colors.grayBlue};
 	justify-content: space-between;
-	padding: 8px;
-	margin: 8px 8px;
 	background: ${(props) => props.highlight && props.theme.colors.mediumBlue};
-	width: 100%;
+	width: 350px;
+	min-height: 65px;
+	padding: 0px 8px;
+	margin: 4px 0px;
 `;
 
 const Title = styled.div`
@@ -136,7 +137,6 @@ const Title = styled.div`
 	align-items: center;
 	margin-left: 16px;
 
-	padding: 16px 0px;
 	width: 60%;
 `;
 
