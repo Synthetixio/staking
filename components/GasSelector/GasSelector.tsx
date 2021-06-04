@@ -20,6 +20,8 @@ import NumericInput from 'components/Input/NumericInput';
 import Button from 'components/Button';
 import { useTranslation } from 'react-i18next';
 import { FlexDivRow, FlexDivRowCentered, NumericValue } from 'styles/common';
+import { Svg } from 'react-optimized-image';
+import Info from 'assets/svg/app/info.svg';
 
 type GasSelectorProps = {
 	gasLimitEstimate: GasLimitEstimate;
@@ -146,7 +148,17 @@ const GasSelector: React.FC<GasSelectorProps> = ({
 							})})`}
 					</GasPriceText>
 				</GasPriceItem>
-				{isL2 ? null : (
+				{isL2 ? (
+					<GasPriceTooltip
+						arrow={false}
+						content={t('common.layer-2.gas-fee-info')}
+						interactive={true}
+					>
+						<span>
+							<ResizedInfoIcon src={Info} />
+						</span>
+					</GasPriceTooltip>
+				) : (
 					<GasPriceTooltip trigger="click" arrow={false} content={content} interactive={true}>
 						<StyledGasEditButton role="button" data-testid="edit-gas-price-button">
 							{t('common.edit')}
@@ -191,18 +203,13 @@ const GasPriceTooltip = styled(Tippy)`
 	border: 0.5px solid ${(props) => props.theme.colors.navy};
 	border-radius: 4px;
 	width: 120px;
-	.tippy-content {
-		padding: 0;
-	}
 `;
 
 const GasSelectContainer = styled.div`
 	padding: 16px 0 8px 0;
 `;
 
-const CustomGasPriceContainer = styled.div`
-	margin: 0 10px 5px 10px;
-`;
+const CustomGasPriceContainer = styled.div``;
 
 const CustomGasPrice = styled(NumericInput)`
 	width: 100%;
@@ -226,7 +233,6 @@ const StyedGasButton = styled(Button)`
 const GasPriceItem = styled.span`
 	display: inline-flex;
 	align-items: center;
-	cursor: pointer;
 	svg {
 		margin-left: 5px;
 	}
@@ -239,6 +245,11 @@ const StyledGasEditButton = styled.span`
 	cursor: pointer;
 	color: ${(props) => props.theme.colors.blue};
 	text-transform: uppercase;
+`;
+
+const ResizedInfoIcon = styled(Svg)`
+	transform: translateX(2px);
+	cursor: pointer;
 `;
 
 export default GasSelector;
