@@ -81,6 +81,7 @@ export const DebtValueModal: FC<{ value: string; isOpened: boolean; onDismiss: (
 						</linearGradient>
 					</defs>
 
+					{/*
 					<XAxis
 						type="number"
 						dataKey="timestamp"
@@ -98,6 +99,7 @@ export const DebtValueModal: FC<{ value: string; isOpened: boolean; onDismiss: (
 						axisLine={false}
 						tickLine={false}
 					/>
+					*/}
 
 					<Area
 						dataKey="actualDebt"
