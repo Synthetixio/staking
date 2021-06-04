@@ -2,7 +2,6 @@ import React, { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import StructuredTab from 'components/StructuredTab';
-import { BOX_COLUMN_WIDTH } from 'constants/styles';
 import { useTranslation } from 'react-i18next';
 import StakingRewardsTab from './StakingRewardsTab';
 import { EscrowPanelType } from 'store/escrow';
@@ -41,7 +40,6 @@ const ActionBox: React.FC<ActionBoxProps> = ({ currentTab }) => {
 	return (
 		<StructuredTab
 			boxPadding={20}
-			boxWidth={BOX_COLUMN_WIDTH}
 			tabData={tabData}
 			setPanelType={(key) => router.push(`/escrow/${key}`)}
 			currentPanel={currentTab}

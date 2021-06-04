@@ -1,4 +1,4 @@
-import onboard from 'bnc-onboard';
+import onboard from '@gnosis.pm/safe-apps-onboard';
 
 import { Subscriptions } from 'bnc-onboard/dist/src/interfaces';
 import { getInfuraRpcURL } from 'utils/infura';
@@ -60,6 +60,7 @@ export const initOnboard = (network: Network, subscriptions: Subscriptions) => {
 					walletName: 'portis',
 					apiKey: process.env.NEXT_PUBLIC_PORTIS_APP_ID,
 				},
+				{ walletName: 'gnosis' },
 				{ walletName: 'trust', rpcUrl: infuraRpc },
 				{ walletName: 'walletLink', rpcUrl: infuraRpc },
 				{ walletName: 'torus' },

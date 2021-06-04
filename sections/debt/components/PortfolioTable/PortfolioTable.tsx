@@ -14,6 +14,7 @@ import {
 	Tooltip,
 	FlexDivCentered,
 } from 'styles/common';
+import media from 'styles/media';
 
 import { appReadyState } from 'store/app';
 import { isWalletConnectedState } from 'store/wallet';
@@ -32,6 +33,7 @@ import Connector from 'containers/Connector';
 import { SynthsTotalSupplyData } from 'queries/synths/useSynthsTotalSupplyQuery';
 import { zeroBN } from 'utils/formatters/number';
 import { CryptoCurrency, Synths } from 'constants/currency';
+import { DesktopOrTabletView, MobileOnlyView } from 'components/Media';
 
 import Info from 'assets/svg/app/info.svg';
 
@@ -46,13 +48,37 @@ type DebtPoolTableProps = {
 	isLoaded: boolean;
 };
 
-const DebtPoolTable: FC<DebtPoolTableProps> = ({
+const DebtPoolTable: React.FC<DebtPoolTableProps> = (props) => {
+	return (
+		<>
+			<DesktopOrTabletView>
+				<ResponsiveDebtPoolTable {...props} />
+			</DesktopOrTabletView>
+			<MobileOnlyView>
+				<ResponsiveDebtPoolTable {...props} mobile />
+			</MobileOnlyView>
+		</>
+	);
+};
+
+type ResponsiveDebtPoolTableProps = {
+	synthBalances: CryptoBalance[];
+	cryptoBalances: CryptoBalance[];
+	synthsTotalSupply: SynthsTotalSupplyData;
+	synthsTotalValue: BigNumber;
+	isLoading: boolean;
+	isLoaded: boolean;
+	mobile?: boolean;
+};
+
+const ResponsiveDebtPoolTable: FC<ResponsiveDebtPoolTableProps> = ({
 	synthBalances,
 	cryptoBalances,
 	synthsTotalSupply,
 	synthsTotalValue,
 	isLoading,
 	isLoaded,
+	mobile,
 }) => {
 	const { t } = useTranslation();
 	const { selectedPriceCurrency, selectPriceCurrencyRate } = useSelectedPriceCurrency();
@@ -169,9 +195,10 @@ const DebtPoolTable: FC<DebtPoolTableProps> = ({
 						totalValue={cellProps.row.original.usdBalance}
 						sign={selectedPriceCurrency.sign}
 						conversionRate={selectPriceCurrencyRate}
+						showTotalValue={!mobile}
 					/>
 				),
-				width: 100,
+				width: mobile ? 50 : 100,
 				sortable: false,
 			},
 			{
@@ -207,11 +234,12 @@ const DebtPoolTable: FC<DebtPoolTableProps> = ({
 								usdBalance={cellProps.row.original.usdBalance}
 								totalUSDBalance={mergedTotalValue ?? zeroBN}
 								progressBarVariant={variant}
+								showProgressBar={!mobile}
 							/>
 						</SynthHoldingWrapper>
 					);
 				},
-				width: 100,
+				width: mobile ? 50 : 100,
 				sortable: false,
 			},
 			{
@@ -227,11 +255,15 @@ const DebtPoolTable: FC<DebtPoolTableProps> = ({
 
 					return (
 						<SynthHoldingWrapper>
-							<SynthHolding usdBalance={currencyValue} totalUSDBalance={totalPoolValue} />
+							<SynthHolding
+								usdBalance={currencyValue}
+								totalUSDBalance={totalPoolValue}
+								showProgressBar={!mobile}
+							/>
 						</SynthHoldingWrapper>
 					);
 				},
-				width: 100,
+				width: mobile ? 50 : 100,
 				sortable: false,
 			},
 		];
@@ -245,6 +277,7 @@ const DebtPoolTable: FC<DebtPoolTableProps> = ({
 		selectPriceCurrencyRate,
 		selectedPriceCurrency.name,
 		mergedTotalValue,
+		mobile,
 	]);
 
 	if (!isWalletConnected) {
@@ -306,7 +339,10 @@ const SynthHoldingWrapper = styled.div`
 `;
 
 const StyledTable = styled(Table)`
-	padding: 0 10px;
+	${media.greaterThan('md')`
+		padding: 0 10px;
+	`}
+
 	.table-body-cell {
 		height: 40px;
 	}

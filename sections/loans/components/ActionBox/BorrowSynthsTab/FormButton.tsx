@@ -16,6 +16,7 @@ type FormButtonProps = {
 	isBorrowing: boolean;
 	hasInsufficientCollateral: boolean;
 	onClick: () => Promise<void>;
+	hasBothInputsSet: boolean;
 };
 
 const FormButton: React.FC<FormButtonProps> = ({
@@ -30,6 +31,7 @@ const FormButton: React.FC<FormButtonProps> = ({
 	isBorrowing,
 	hasInsufficientCollateral,
 	onClick,
+	hasBothInputsSet,
 }) => {
 	const { t } = useTranslation();
 
@@ -38,6 +40,7 @@ const FormButton: React.FC<FormButtonProps> = ({
 			variant="primary"
 			size="lg"
 			disabled={
+				!hasBothInputsSet ||
 				hasLowCollateralAmount ||
 				hasLowCRatio ||
 				isApproving ||

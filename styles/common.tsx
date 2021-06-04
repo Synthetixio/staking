@@ -1,5 +1,6 @@
 import styled, { css, keyframes } from 'styled-components';
-import { SIDE_NAV_WIDTH } from 'constants/ui';
+import media from 'styles/media';
+import { DESKTOP_SIDE_NAV_WIDTH, MOBILE_BODY_PADDING } from 'constants/ui';
 import Tippy from '@tippyjs/react';
 
 export const FlexDiv = styled.div`
@@ -23,6 +24,18 @@ export const FlexDivRow = styled(FlexDiv)`
 `;
 
 export const FlexDivRowCentered = styled(FlexDivRow)`
+	align-items: center;
+`;
+
+export const FlexDivJustifyCenter = styled(FlexDiv)`
+	justify-content: center;
+`;
+
+export const FlexDivJustifyEnd = styled(FlexDiv)`
+	justify-content: flex-end;
+`;
+
+export const FlexDivItemsCenter = styled(FlexDiv)`
 	align-items: center;
 `;
 
@@ -142,7 +155,7 @@ export const FixedFooterMixin = `
 	bottom: 0;
 	left: 0;
 	right: 0;
-	border-radius: 0;	
+	border-radius: 0;
 `;
 
 export const MobileContainerMixin = `
@@ -198,11 +211,23 @@ export const LineSpacer = styled.div`
 	&:after {
 		background: ${(props) => props.theme.colors.grayBlue};
 		height: 1px;
-		width: calc(100% - ${SIDE_NAV_WIDTH});
-		left: ${SIDE_NAV_WIDTH};
 		position: absolute;
 		content: '';
+
+		${media.greaterThan('mdUp')`
+			width: calc(100% - ${DESKTOP_SIDE_NAV_WIDTH}px);
+			left: ${DESKTOP_SIDE_NAV_WIDTH}px;
+		`}
+
+		${media.lessThan('mdUp')`
+			left: ${MOBILE_BODY_PADDING}px;
+			right: ${MOBILE_BODY_PADDING}px;
+		`}
 	}
+`;
+
+export const VerticalSpacer = styled.div`
+	height: 32px;
 `;
 
 export const ErrorMessage = styled.p`
@@ -310,14 +335,14 @@ export const GlowingCircle = styled(FlexDivCentered)<{
 		css`
 			height: 56px;
 			min-width: 56px;
-		`}		
+		`}
 
 	${(props) =>
 		props.size === 'lg' &&
 		css`
 			height: 64px;
 			min-width: 64px;
-		`}		
+		`}
 
 	${(props) =>
 		props.variant === 'green' &&
@@ -325,7 +350,7 @@ export const GlowingCircle = styled(FlexDivCentered)<{
 			border: 1.5px solid ${(props) => props.theme.colors.green};
 			box-shadow: 0px 0px 15px ${(props) => props.theme.colors.green};
 		`}
-		
+
 	${(props) =>
 		props.variant === 'blue' &&
 		css`
@@ -345,14 +370,14 @@ export const GlowingCircle = styled(FlexDivCentered)<{
 		css`
 			border: 1.5px solid ${(props) => props.theme.colors.orange};
 			box-shadow: 0px 0px 15px ${(props) => props.theme.colors.orange};
-		`}		
+		`}
 
 ${(props) =>
 	props.variant === 'yellow' &&
 	css`
 		border: 1.5px solid ${(props) => props.theme.colors.yellow};
 		box-shadow: 0px 0px 15px ${(props) => props.theme.colors.yellow};
-	`}				
+	`}
 `;
 
 export const Tooltip = styled(Tippy)`

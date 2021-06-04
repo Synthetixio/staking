@@ -1,41 +1,32 @@
+import { FC, useEffect } from 'react';
 import Head from 'next/head';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { useRecoilValue } from 'recoil';
 
-import { StatsSection, LineSpacer } from 'styles/common';
-
-import AssetsTable from 'sections/synths/AssetsTable';
-
+import UIContainer from 'containers/UI';
 import StatBox from 'components/StatBox';
-
-import { isWalletConnectedState } from 'store/wallet';
-
+import StatsSection from 'components/StatsSection';
+import { LineSpacer } from 'styles/common';
+import Main from 'sections/synths';
 import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
-
 import { formatCurrency, zeroBN } from 'utils/formatters/number';
-
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import useCryptoBalances from 'hooks/useCryptoBalances';
 
-const SynthsPage = () => {
+const SynthsPage: FC = () => {
 	const { t } = useTranslation();
+	const { setTitle } = UIContainer.useContainer();
 
 	const synthsBalancesQuery = useSynthsBalancesQuery();
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
-	const cryptoBalances = useCryptoBalances();
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 
 	const totalSynthValue = synthsBalancesQuery.isSuccess
 		? synthsBalancesQuery.data?.totalUSDBalance ?? zeroBN
 		: zeroBN;
 
-	const synthBalances =
-		synthsBalancesQuery.isSuccess && synthsBalancesQuery.data != null
-			? synthsBalancesQuery.data
-			: null;
-
-	const synthAssets = synthBalances?.balances ?? [];
+	// header title
+	useEffect(() => {
+		setTitle('wallet', 'synths');
+	}, [setTitle]);
 
 	return (
 		<>
@@ -43,6 +34,7 @@ const SynthsPage = () => {
 				<title>{t('synths.page-title')}</title>
 			</Head>
 			<StatsSection>
+				<div />
 				<TotalSynthValue
 					title={t('common.stat-box.synth-value')}
 					value={formatCurrency(
@@ -54,28 +46,10 @@ const SynthsPage = () => {
 					)}
 					size="lg"
 				/>
+				<div />
 			</StatsSection>
 			<LineSpacer />
-			<AssetsTable
-				title={t('synths.assets.synths.title')}
-				assets={synthAssets}
-				totalValue={totalSynthValue ?? zeroBN}
-				isLoading={synthsBalancesQuery.isLoading}
-				isLoaded={synthsBalancesQuery.isSuccess}
-				showHoldings={true}
-				showConvert={false}
-			/>
-			{isWalletConnected && cryptoBalances.balances.length > 0 && (
-				<AssetsTable
-					title={t('synths.assets.non-synths.title')}
-					assets={cryptoBalances.balances}
-					totalValue={zeroBN}
-					isLoading={!cryptoBalances.isLoaded}
-					isLoaded={cryptoBalances.isLoaded}
-					showHoldings={false}
-					showConvert={true}
-				/>
-			)}
+			<Main />
 		</>
 	);
 };

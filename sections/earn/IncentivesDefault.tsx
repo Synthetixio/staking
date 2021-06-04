@@ -5,18 +5,17 @@ import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
 
-import useSNXLockedValueQuery from 'queries/staking/useSNXLockedValueQuery';
-
-import useFeePeriodTimeAndProgress from 'hooks/useFeePeriodTimeAndProgress';
-
 import ROUTES from 'constants/routes';
 import { CryptoCurrency } from 'constants/currency';
+import media from 'styles/media';
+import { isWalletConnectedState } from 'store/wallet';
+import useSNXLockedValueQuery from 'queries/staking/useSNXLockedValueQuery';
+import useFeePeriodTimeAndProgress from 'hooks/useFeePeriodTimeAndProgress';
 
 import IncentivesTable from './IncentivesTable';
 import ClaimTab from './ClaimTab';
-
-import { isWalletConnectedState } from 'store/wallet';
 import { Tab } from './types';
+import { DesktopOrTabletView } from 'components/Media';
 
 type IncentivesProps = {
 	tradingRewards: BigNumber;
@@ -70,6 +69,7 @@ const Incentives: FC<IncentivesProps> = ({
 							staked: {
 								balance: stakedAmount,
 								asset: CryptoCurrency.SNX,
+								ticker: CryptoCurrency.SNX,
 							},
 							rewards: stakingRewards.toNumber(),
 							periodStarted: currentFeePeriodStarted.getTime(),
@@ -103,7 +103,7 @@ const Incentives: FC<IncentivesProps> = ({
 		<>{incentivesTable}</>
 	) : (
 		<Container>
-			{incentivesTable}
+			<DesktopOrTabletView>{incentivesTable}</DesktopOrTabletView>
 			<TabContainer>
 				{activeTab === Tab.Claim && (
 					<ClaimTab
@@ -120,7 +120,10 @@ const Incentives: FC<IncentivesProps> = ({
 const Container = styled.div`
 	background-color: ${(props) => props.theme.colors.navy};
 	display: grid;
-	grid-template-columns: auto 639.5px;
+	${media.greaterThan('md')`
+		display: grid;
+		grid-template-columns: 1fr 2fr;
+	`}
 `;
 
 const TabContainer = styled.div`

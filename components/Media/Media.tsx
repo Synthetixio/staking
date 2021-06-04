@@ -22,3 +22,7 @@ export const MobileHiddenView: FC<MediaProps> = ({ children }) => (
 );
 
 export const MobileOnlyView: FC<MediaProps> = ({ children }) => <Media at="xs">{children}</Media>;
+
+export const DesktopOrTabletView: FC<MediaProps> = ({ children }) => (
+	<Media greaterThanOrEqual="sm">{children}</Media>
+);

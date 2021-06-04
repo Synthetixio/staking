@@ -3,6 +3,7 @@ import { ethers } from 'ethers';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
 import TransactionNotifier from 'containers/TransactionNotifier';
+import UIContainer from 'containers/UI';
 import { normalizedGasPrice } from 'utils/network';
 import { CryptoCurrency, Synths } from 'constants/currency';
 import { TabContainer } from '../common';
@@ -13,7 +14,7 @@ import BurnTiles from '../BurnTiles';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 import StakingInput from '../StakingInput';
 import { Transaction } from 'constants/network';
-import { formatCurrency, toBigNumber } from 'utils/formatters/number';
+import { formatCurrency, toBigNumber, zeroBN } from 'utils/formatters/number';
 import { amountToBurnState, BurnActionType, burnTypeState } from 'store/staking';
 import { addSeconds, differenceInSeconds } from 'date-fns';
 import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
@@ -25,6 +26,7 @@ import Connector from 'containers/Connector';
 import useClearDebtCalculations from 'sections/staking/hooks/useClearDebtCalculations';
 import { useTranslation } from 'react-i18next';
 import { toFutureDate } from 'utils/formatters/date';
+import useETHBalanceQuery from 'queries/walletBalances/useETHBalanceQuery';
 
 const BurnTab: React.FC = () => {
 	const { monitorTransaction } = TransactionNotifier.useContainer();
@@ -64,6 +66,11 @@ const BurnTab: React.FC = () => {
 		quoteAmount,
 		swapData,
 	} = useClearDebtCalculations(debtBalance, sUSDBalance, walletAddress!);
+
+	const ethBalanceQuery = useETHBalanceQuery();
+	const ethBalance = ethBalanceQuery.data ?? zeroBN;
+
+	const { setTitle } = UIContainer.useContainer();
 
 	const getMaxSecsLeftInWaitingPeriod = useCallback(async () => {
 		const {
@@ -107,6 +114,11 @@ const BurnTab: React.FC = () => {
 		// eslint-disable-next-line
 	}, [walletAddress, debtBalance]);
 
+	// header title
+	useEffect(() => {
+		setTitle('staking', 'burn');
+	}, [setTitle]);
+
 	useEffect(() => {
 		getMaxSecsLeftInWaitingPeriod();
 		getIssuanceDelay();
@@ -132,6 +144,14 @@ const BurnTab: React.FC = () => {
 						burnType !== BurnActionType.CLEAR
 					)
 						throw new Error(t('staking.actions.burn.action.error.insufficient'));
+
+					if (
+						burnType === BurnActionType.CLEAR &&
+						toBigNumber(quoteAmount).isGreaterThan(ethBalance)
+					) {
+						throw new Error(t('staking.actions.burn.action.error.insufficient-eth-1inch'));
+					}
+
 					if (waitingPeriod) {
 						throw new Error(
 							t('staking.actions.burn.action.error.waiting-period', {
@@ -140,7 +160,7 @@ const BurnTab: React.FC = () => {
 						);
 					}
 
-					if (issuanceDelay) {
+					if (issuanceDelay && burnType !== BurnActionType.TARGET) {
 						throw new Error(
 							t('staking.actions.burn.action.error.issuance-period', {
 								date: toFutureDate(issuanceDelay),
@@ -179,6 +199,8 @@ const BurnTab: React.FC = () => {
 		sUSDBalance,
 		waitingPeriod,
 		burnType,
+		ethBalance,
+		quoteAmount,
 	]);
 
 	const handleBurn = useCallback(
@@ -342,7 +364,7 @@ const BurnTab: React.FC = () => {
 					isLocked = true;
 					break;
 				}
-				onBurnChange(debtBalance.toString());
+				onBurnChange(debtBalanceWithBuffer.toString());
 				handleSubmit = () => handleClear();
 				inputValue = toBigNumber(debtBalanceWithBuffer);
 				isLocked = true;

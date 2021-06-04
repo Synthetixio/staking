@@ -3,10 +3,11 @@ import { useRecoilValue } from 'recoil';
 import chunk from 'lodash/chunk';
 import synthetix from 'lib/synthetix';
 import { orderBy, flatten } from 'lodash';
+import { ethers } from 'ethers';
 
 import QUERY_KEYS from 'constants/queryKeys';
 
-import { isWalletConnectedState, networkState, walletAddressState } from 'store/wallet';
+import { isWalletConnectedState, networkState, walletAddressState, isL2State } from 'store/wallet';
 import { appReadyState } from 'store/app';
 
 const VESTING_ENTRIES_PAGINATION = 50;
@@ -16,7 +17,7 @@ export type EscrowData = {
 	schedule: Schedule;
 	totalEscrowed: number;
 	totalVested: number;
-	totalBalancePendingMigration?: number;
+	totalBalancePendingMigration: number;
 	claimableEntryIds?: number[];
 	claimableEntryIdsInChunk?: number[][];
 };
@@ -40,6 +41,7 @@ const useEscrowDataQuery = (options?: QueryConfig<EscrowData>) => {
 	const walletAddress = useRecoilValue(walletAddressState);
 	const network = useRecoilValue(networkState);
 	const isAppReady = useRecoilValue(appReadyState);
+	const isL2 = useRecoilValue(isL2State);
 
 	return useQuery<EscrowData>(
 		QUERY_KEYS.Escrow.StakingRewards(walletAddress ?? '', network?.id!),
@@ -48,10 +50,18 @@ const useEscrowDataQuery = (options?: QueryConfig<EscrowData>) => {
 				contracts: { RewardEscrowV2 },
 			} = synthetix.js!;
 
-			const [numVestingEntries, totalEscrowed, totalVested] = await Promise.all([
+			const [
+				numVestingEntries,
+				totalEscrowed,
+				totalVested,
+				totalBalancePendingMigration,
+			] = await Promise.all([
 				RewardEscrowV2.numVestingEntries(walletAddress),
 				RewardEscrowV2.balanceOf(walletAddress),
 				RewardEscrowV2.totalVestedAccountBalance(walletAddress),
+				isL2
+					? ethers.BigNumber.from(0)
+					: RewardEscrowV2.totalBalancePendingMigration(walletAddress),
 			]);
 
 			let vestingEntriesPromise = [];
@@ -99,13 +109,23 @@ const useEscrowDataQuery = (options?: QueryConfig<EscrowData>) => {
 			const claimableEntryIdsInChunk =
 				claimableEntryIds && claimableEntryIds.length > 0 ? chunk(claimableEntryIds, 26) : [];
 
+			const [
+				formattedClaimableAmount,
+				formattedTotalEscrowed,
+				formattedTotalVested,
+				formattedTotalBalanceMigration,
+			] = [claimableAmount, totalEscrowed, totalVested, totalBalancePendingMigration].map((data) =>
+				Number(synthetix.js?.utils.formatEther(data))
+			);
+
 			return {
-				claimableAmount: claimableAmount / 1e18,
+				claimableAmount: formattedClaimableAmount,
 				schedule,
-				totalEscrowed: totalEscrowed / 1e18,
-				totalVested: totalVested / 1e18,
+				totalEscrowed: formattedTotalEscrowed,
+				totalVested: formattedTotalVested,
 				claimableEntryIds,
 				claimableEntryIdsInChunk,
+				totalBalancePendingMigration: formattedTotalBalanceMigration,
 			};
 		},
 		{

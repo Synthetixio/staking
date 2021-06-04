@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { CellProps, Row } from 'react-table';
 import { isWalletConnectedState } from 'store/wallet';
 import { FlexDivCol } from 'styles/common';
+import media from 'styles/media';
 import Button from 'components/Button';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { Proposal as ProposalType } from 'queries/gov/types';
@@ -12,34 +13,53 @@ import Countdown from 'react-countdown';
 import { useRouter } from 'next/router';
 import ROUTES from 'constants/routes';
 import { panelState, PanelType, proposalState } from 'store/gov';
-import useActiveTab from '../../hooks/useActiveTab';
 import { DURATION_SEPARATOR } from 'constants/date';
 import { getCurrentTimestampSeconds } from 'utils/formatters/date';
+import { DesktopOrTabletView, MobileOnlyView } from 'components/Media';
+import useProposals from 'queries/gov/useProposals';
+import { SPACE_KEY } from 'constants/snapshot';
 
 type IndexProps = {
-	data: ProposalType[];
-	isLoaded: boolean;
+	spaceKey: SPACE_KEY;
 };
 
-const Index: React.FC<IndexProps> = ({ data, isLoaded }) => {
+const Index: React.FC<IndexProps> = (props) => {
+	return (
+		<>
+			<DesktopOrTabletView>
+				<ResponsiveTable {...props} />
+			</DesktopOrTabletView>
+			<MobileOnlyView>
+				<ResponsiveTable {...props} mobile />
+			</MobileOnlyView>
+		</>
+	);
+};
+
+type ResponsiveTableProps = {
+	mobile?: boolean;
+	spaceKey: SPACE_KEY;
+};
+
+const ResponsiveTable: React.FC<ResponsiveTableProps> = ({ mobile, spaceKey }) => {
 	const { t } = useTranslation();
 	const router = useRouter();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const setProposal = useSetRecoilState(proposalState);
 	const setPanelType = useSetRecoilState(panelState);
-	const activeTab = useActiveTab();
+	const proposals = useProposals(spaceKey);
 
-	const columns = useMemo(
-		() => [
+	const columns = useMemo(() => {
+		const widths = mobile ? ['auto', 70, 70, 50] : [200, 75, 100, 75];
+		return [
 			{
 				Header: <>{t('gov.table.description')}</>,
 				accessor: 'description',
 				Cell: (cellProps: CellProps<ProposalType>) => (
 					<CellContainer>
-						<Title>{cellProps.row.original.msg.payload.name}</Title>
+						<Title>{cellProps.row.original.title}</Title>
 					</CellContainer>
 				),
-				width: 200,
 				sortable: false,
 			},
 			{
@@ -47,10 +67,8 @@ const Index: React.FC<IndexProps> = ({ data, isLoaded }) => {
 				accessor: 'status',
 				Cell: (cellProps: CellProps<ProposalType>) => {
 					const currentTimestampSeconds = getCurrentTimestampSeconds();
-					const closed =
-						cellProps.row.original.msg.payload.end < currentTimestampSeconds ? true : false;
-					const pending =
-						currentTimestampSeconds < cellProps.row.original.msg.payload.start ? true : false;
+					const closed = cellProps.row.original.end < currentTimestampSeconds ? true : false;
+					const pending = currentTimestampSeconds < cellProps.row.original.start ? true : false;
 					return (
 						<CellContainer>
 							<Status closed={closed} pending={pending}>
@@ -63,7 +81,6 @@ const Index: React.FC<IndexProps> = ({ data, isLoaded }) => {
 						</CellContainer>
 					);
 				},
-				width: 75,
 				sortable: false,
 			},
 			{
@@ -74,8 +91,13 @@ const Index: React.FC<IndexProps> = ({ data, isLoaded }) => {
 						<Title isNumeric={true}>
 							<Countdown
 								autoStart={true}
-								date={cellProps.row.original.msg.payload.end * 1000}
+								date={cellProps.row.original.end * 1000}
 								renderer={({ days, hours, minutes }) => {
+									if (mobile) {
+										const duration = [days, hours, minutes];
+										return <span>{duration.join(':')}</span>;
+									}
+
 									const duration = [
 										`${days}${t('common.time.days')}`,
 										`${hours}${t('common.time.hours')}`,
@@ -88,7 +110,6 @@ const Index: React.FC<IndexProps> = ({ data, isLoaded }) => {
 						</Title>
 					</CellContainer>
 				),
-				width: 100,
 				sortable: false,
 			},
 			{
@@ -99,25 +120,23 @@ const Index: React.FC<IndexProps> = ({ data, isLoaded }) => {
 						<Title isNumeric={true}>{cellProps.row.original.votes}</Title>
 					</CellContainer>
 				),
-				width: 75,
 				sortable: false,
 			},
-		],
-		[t]
-	);
+		].map((c, i) => ({ ...c, width: widths[i] }));
+	}, [t, mobile]);
 
 	return (
 		<Container>
 			<StyledTable
 				palette="primary"
 				columns={columns}
-				data={data}
+				data={proposals.data ?? []}
 				maxRows={5}
-				isLoading={!isLoaded}
+				isLoading={proposals.isLoading}
 				showPagination={true}
 				onTableRowClick={(row: Row<ProposalType>) => {
 					setProposal(row.original);
-					router.push(ROUTES.Gov.Proposal(activeTab, row.original.authorIpfsHash));
+					router.push(ROUTES.Gov.Proposal(spaceKey, row.original.id));
 					setPanelType(PanelType.PROPOSAL);
 				}}
 				minHeight={isWalletConnected}
@@ -126,7 +145,7 @@ const Index: React.FC<IndexProps> = ({ data, isLoaded }) => {
 				<AbsoluteContainer
 					onClick={() => {
 						setPanelType(PanelType.CREATE);
-						router.push(ROUTES.Gov.Create(activeTab));
+						router.push(ROUTES.Gov.Create(spaceKey));
 					}}
 				>
 					<CreateButton variant="secondary">{t('gov.table.create')}</CreateButton>
@@ -156,6 +175,9 @@ const StyledTable = styled(Table)<{ minHeight: boolean }>`
 	}
 	.table-body-cell {
 		&:first-child {
+			${media.lessThan('md')`
+				padding-left: 0;
+			`}
 		}
 		&:last-child {
 			padding-left: 0;
@@ -173,6 +195,9 @@ const Title = styled.div<{ isNumeric?: boolean }>`
 		props.isNumeric ? props.theme.fonts.mono : props.theme.fonts.interBold};
 	color: ${(props) => props.theme.colors.white};
 	font-size: 12px;
+	${media.lessThan('mdUp')`
+		overflow-x: hidden;
+	`}
 `;
 
 const Status = styled.div<{ closed: boolean; pending: boolean }>`
@@ -188,7 +213,6 @@ const Status = styled.div<{ closed: boolean; pending: boolean }>`
 `;
 
 const AbsoluteContainer = styled.div`
-	position: absolute;
 	width: 100%;
 	bottom: 0px;
 	margin-bottom: 24px;

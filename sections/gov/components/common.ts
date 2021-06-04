@@ -1,4 +1,6 @@
 import styled from 'styled-components';
+import media from 'styles/media';
+
 import {
 	FlexDiv,
 	FlexDivCol,
@@ -53,7 +55,10 @@ export const Card = styled.div`
 	background-color: ${(props) => props.theme.colors.navy};
 	margin-bottom: 16px;
 	padding: 16px;
-	width: 400px;
+
+	${media.lessThan('mdUp')`
+		width: unset;
+	`}
 `;
 
 export const Subtitle = styled.p`
@@ -63,16 +68,18 @@ export const Subtitle = styled.p`
 	color: ${(props) => props.theme.colors.gray};
 `;
 
-export const LeftCol = styled(FlexDivCol)`
-	height: 100%;
-	width: 700px;
-	margin-right: 8px;
+export const Grid = styled.div`
+	display: grid;
+	grid-template-columns: 2fr 1fr;
+	grid-gap: 1rem;
+
+	${media.lessThan('mdUp')`
+		display: flex;
+		flex-direction: column;
+	`}
 `;
-export const RightCol = styled(FlexDivCol)`
-	height: 100%;
-	width: 400px;
-	margin-left: 8px;
-`;
+
+export const Col = styled(FlexDivCol)``;
 
 export const StyledCTA = styled(Button)`
 	text-transform: uppercase;

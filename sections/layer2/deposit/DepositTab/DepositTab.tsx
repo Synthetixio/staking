@@ -47,7 +47,7 @@ const DepositTab = () => {
 					} = synthetix.js!;
 					const gasEstimate = await synthetix.getGasEstimateForTransaction({
 						txArgs: [parseEther(transferableCollateral.toString())],
-						method: SynthetixBridgeToOptimism.estimateGas.initiateDeposit,
+						method: SynthetixBridgeToOptimism.estimateGas.deposit,
 					});
 					setGasLimitEstimate(gasEstimate);
 				} catch (e) {
@@ -93,7 +93,7 @@ const DepositTab = () => {
 				setDepositTxError(null);
 				setTxModalOpen(true);
 
-				const transaction = await SynthetixBridgeToOptimism.initiateDeposit(
+				const transaction = await SynthetixBridgeToOptimism.deposit(
 					parseEther(transferableCollateral.toString()),
 					{ gasLimit: gasLimitEstimate, gasPrice: normalizedGasPrice(gasPrice) }
 				);

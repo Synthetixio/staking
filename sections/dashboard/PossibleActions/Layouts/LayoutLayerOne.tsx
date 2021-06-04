@@ -1,6 +1,7 @@
 import { FC, useMemo } from 'react';
 import { Svg } from 'react-optimized-image';
 import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
 
 import ROUTES from 'constants/routes';
 import { EXTERNAL_LINKS } from 'constants/links';
@@ -13,13 +14,20 @@ import MintIcon from 'assets/svg/app/mint.svg';
 import ClaimIcon from 'assets/svg/app/claim.svg';
 import BurnIcon from 'assets/svg/app/burn.svg';
 
-import GridBox, { GridBoxProps } from 'components/GridBox/Gridbox';
 import { GlowingCircle } from 'styles/common';
+import media from 'styles/media';
+
+import GridBox, { GridBoxProps } from 'components/GridBox/Gridbox';
 import Currency from 'components/Currency';
+
 import useUserStakingData from 'hooks/useUserStakingData';
+
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 import { LP } from 'sections/earn/types';
 import useShortRewardsData from 'hooks/useShortRewardsData';
+import { CurrencyIconType } from 'components/Currency/CurrencyIcon/CurrencyIcon';
+
+import { ActionsContainer as Container } from './common-styles';
 
 const LayoutLayerOne: FC = () => {
 	const { t } = useTranslation();
@@ -33,7 +41,6 @@ const LayoutLayerOne: FC = () => {
 		const aboveTargetCRatio = currentCRatio.isLessThanOrEqualTo(targetCRatio);
 		return [
 			{
-				gridLocations: ['col-1', 'col-2', 'row-1', 'row-2'],
 				icon: (
 					<GlowingCircle variant="green" size="md">
 						<Svg
@@ -53,7 +60,6 @@ const LayoutLayerOne: FC = () => {
 				isDisabled: stakingRewards.isZero() && tradingRewards.isZero(),
 			},
 			{
-				gridLocations: ['col-2', 'col-3', 'row-1', 'row-2'],
 				icon: (
 					<GlowingCircle variant={!aboveTargetCRatio ? 'orange' : 'blue'} size="md">
 						{!aboveTargetCRatio ? <Svg src={BurnIcon} /> : <Svg src={MintIcon} />}
@@ -70,7 +76,6 @@ const LayoutLayerOne: FC = () => {
 				link: !aboveTargetCRatio ? ROUTES.Staking.Burn : ROUTES.Staking.Mint,
 			},
 			{
-				gridLocations: ['col-3', 'col-4', 'row-1', 'row-2'],
 				icon: (
 					<GlowingCircle variant="orange" size="md">
 						<Svg src={KwentaIcon} width="32" />
@@ -81,7 +86,6 @@ const LayoutLayerOne: FC = () => {
 				externalLink: EXTERNAL_LINKS.Trading.Kwenta,
 			},
 			{
-				gridLocations: ['col-4', 'col-5', 'row-1', 'row-2'],
 				icon: (
 					<GlowingCircle variant="blue" size="md">
 						L2
@@ -92,7 +96,6 @@ const LayoutLayerOne: FC = () => {
 				link: ROUTES.L2.Home,
 			},
 			{
-				gridLocations: ['col-1', 'col-3', 'row-2', 'row-3'],
 				icon: (
 					<GlowingCircle variant="green" size="md">
 						<Currency.Icon currencyKey={Synths.sBTC} width="32" height="32" />
@@ -109,7 +112,6 @@ const LayoutLayerOne: FC = () => {
 				isDisabled: shortData[Synths.sBTC].APR === 0,
 			},
 			{
-				gridLocations: ['col-3', 'col-5', 'row-2', 'row-3'],
 				icon: (
 					<GlowingCircle variant="green" size="md">
 						<Currency.Icon currencyKey={Synths.sETH} width="32" height="32" />
@@ -123,10 +125,14 @@ const LayoutLayerOne: FC = () => {
 				isDisabled: shortData[Synths.sETH].APR === 0,
 			},
 			{
-				gridLocations: ['col-1', 'col-2', 'row-3', 'row-4'],
 				icon: (
 					<GlowingCircle variant="green" size="md">
-						<Currency.Icon currencyKey={CryptoCurrency.CRV} width="28" height="28" />
+						<Currency.Icon
+							currencyKey={CryptoCurrency.CRV}
+							type={CurrencyIconType.TOKEN}
+							width="28"
+							height="28"
+						/>
 					</GlowingCircle>
 				),
 				title: t('dashboard.actions.earn.title', {
@@ -141,10 +147,14 @@ const LayoutLayerOne: FC = () => {
 				isDisabled: lpData[LP.CURVE_sUSD].APR === 0,
 			},
 			{
-				gridLocations: ['col-2', 'col-3', 'row-3', 'row-4'],
 				icon: (
 					<GlowingCircle variant="green" size="md">
-						<Currency.Icon currencyKey={LP.UNISWAP_DHT} width="28" height="28" />
+						<Currency.Icon
+							currencyKey={CryptoCurrency.DHT}
+							type={CurrencyIconType.TOKEN}
+							width="28"
+							height="28"
+						/>
 					</GlowingCircle>
 				),
 				title: t('dashboard.actions.earn.title', {
@@ -158,31 +168,160 @@ const LayoutLayerOne: FC = () => {
 				isDisabled: lpData[LP.UNISWAP_DHT].APR === 0,
 			},
 			{
-				gridLocations: ['col-3', 'col-4', 'row-3', 'row-4'],
 				icon: (
 					<GlowingCircle variant="green" size="md">
-						<Currency.Icon currencyKey={Synths.sTSLA} width="28" height="28" />
+						<Currency.Icon currencyKey={Synths.sAAPL} width="28" height="28" />
 					</GlowingCircle>
 				),
 				title: t('dashboard.actions.earn.title', {
-					percent: formatPercent(lpData[LP.BALANCER_sTSLA].APR, { minDecimals: 0 }),
+					percent: formatPercent(lpData[LP.BALANCER_sAAPL].APR, { minDecimals: 0 }),
 				}),
 				copy: t('dashboard.actions.earn.copy', {
-					asset: 'Balancer sTSLA Pool Token',
+					asset: 'Balancer sAAPL Pool Token',
 					supplier: 'Synthetix',
 				}),
-				link: ROUTES.Earn.sTLSA_LP,
-				isDisabled: lpData[LP.BALANCER_sTSLA].APR === 0,
+				link: ROUTES.Earn.sAAPL_LP,
+				isDisabled: lpData[LP.BALANCER_sAAPL].APR === 0,
 			},
-		];
+			{
+				gridLocations: ['col-4', 'col-5', 'row-3', 'row-4'],
+				icon: (
+					<GlowingCircle variant="green" size="md">
+						<Currency.Icon currencyKey={Synths.sAMZN} width="28" height="28" />
+					</GlowingCircle>
+				),
+				title: t('dashboard.actions.earn.title', {
+					percent: formatPercent(lpData[LP.BALANCER_sAMZN].APR, { minDecimals: 0 }),
+				}),
+				copy: t('dashboard.actions.earn.copy', {
+					asset: 'Balancer sAMZN Pool Token',
+					supplier: 'Synthetix',
+				}),
+				link: ROUTES.Earn.sAMZN_LP,
+				isDisabled: lpData[LP.BALANCER_sAMZN].APR === 0,
+			},
+			{
+				gridLocations: ['col-1', 'col-2', 'row-4', 'row-5'],
+				icon: (
+					<GlowingCircle variant="green" size="md">
+						<Currency.Icon currencyKey={Synths.sFB} width="28" height="28" />
+					</GlowingCircle>
+				),
+				title: t('dashboard.actions.earn.title', {
+					percent: formatPercent(lpData[LP.BALANCER_sFB].APR, { minDecimals: 0 }),
+				}),
+				copy: t('dashboard.actions.earn.copy', {
+					asset: 'Balancer sFB Pool Token',
+					supplier: 'Synthetix',
+				}),
+				link: ROUTES.Earn.sFB_LP,
+				isDisabled: lpData[LP.BALANCER_sFB].APR === 0,
+			},
+			{
+				gridLocations: ['col-2', 'col-3', 'row-4', 'row-5'],
+				icon: (
+					<GlowingCircle variant="green" size="md">
+						<Currency.Icon currencyKey={Synths.sGOOG} width="28" height="28" />
+					</GlowingCircle>
+				),
+				title: t('dashboard.actions.earn.title', {
+					percent: formatPercent(lpData[LP.BALANCER_sGOOG].APR, { minDecimals: 0 }),
+				}),
+				copy: t('dashboard.actions.earn.copy', {
+					asset: 'Balancer sGOOG Pool Token',
+					supplier: 'Synthetix',
+				}),
+				link: ROUTES.Earn.sGOOG_LP,
+				isDisabled: lpData[LP.BALANCER_sGOOG].APR === 0,
+			},
+			{
+				gridLocations: ['col-3', 'col-4', 'row-4', 'row-5'],
+				icon: (
+					<GlowingCircle variant="green" size="md">
+						<Currency.Icon currencyKey={Synths.sNFLX} width="28" height="28" />
+					</GlowingCircle>
+				),
+				title: t('dashboard.actions.earn.title', {
+					percent: formatPercent(lpData[LP.BALANCER_sNFLX].APR, { minDecimals: 0 }),
+				}),
+				copy: t('dashboard.actions.earn.copy', {
+					asset: 'Balancer sNFLX Pool Token',
+					supplier: 'Synthetix',
+				}),
+				link: ROUTES.Earn.sNFLX_LP,
+				isDisabled: lpData[LP.BALANCER_sNFLX].APR === 0,
+			},
+			{
+				gridLocations: ['col-4', 'col-5', 'row-4', 'row-5'],
+				icon: (
+					<GlowingCircle variant="green" size="md">
+						<Currency.Icon currencyKey={Synths.sMSFT} width="28" height="28" />
+					</GlowingCircle>
+				),
+				title: t('dashboard.actions.earn.title', {
+					percent: formatPercent(lpData[LP.BALANCER_sMSFT].APR, { minDecimals: 0 }),
+				}),
+				copy: t('dashboard.actions.earn.copy', {
+					asset: 'Balancer sMSFT Pool Token',
+					supplier: 'Synthetix',
+				}),
+				link: ROUTES.Earn.sMSFT_LP,
+				isDisabled: lpData[LP.BALANCER_sMSFT].APR === 0,
+			},
+			{
+				gridLocations: ['col-1', 'col-2', 'row-5', 'row-6'],
+				icon: (
+					<GlowingCircle variant="green" size="md">
+						<Currency.Icon currencyKey={Synths.sCOIN} width="28" height="28" />
+					</GlowingCircle>
+				),
+				title: t('dashboard.actions.earn.title', {
+					percent: formatPercent(lpData[LP.BALANCER_sCOIN].APR, { minDecimals: 0 }),
+				}),
+				copy: t('dashboard.actions.earn.copy', {
+					asset: 'Balancer sCOIN Pool Token',
+					supplier: 'Synthetix',
+				}),
+				link: ROUTES.Earn.sCOIN_LP,
+				isDisabled: lpData[LP.BALANCER_sCOIN].APR === 0,
+			},
+		].map((cell, i) => ({ ...cell, gridArea: `tile-${i + 1}` }));
 	}, [t, lpData, currentCRatio, targetCRatio, stakingRewards, tradingRewards, shortData]);
+
 	return (
-		<>
+		<StyledContainer>
 			{gridItems.map((props, index) => (
 				<GridBox key={`${props.title}-${index}`} {...props} />
 			))}
-		</>
+		</StyledContainer>
 	);
 };
+
+const StyledContainer = styled(Container)`
+	grid-template-areas:
+		'tile-1 tile-2 tile-3 tile-4'
+		'tile-5 tile-5 tile-6 tile-6'
+		'tile-7 tile-8 tile-9 tile-10'
+		'tile-11 tile-12 tile-13 tile-14'
+		'tile-15 tile-16 tile-17 tile-18';
+	grid-template-columns: 1fr 1fr 1fr 1fr;
+	grid-template-rows: 1fr 1fr 1fr;
+	gap: 1rem;
+
+	${media.lessThan('md')`
+		grid-template-areas: 
+			'tile-1 tile-2'
+			'tile-3 tile-4'
+			'tile-5 tile-6'
+			'tile-7 tile-8'
+			'tile-9 tile-10'
+			'tile-11 tile-12'
+			'tile-13 tile-14'
+			'tile-15 tile-16';
+		grid-template-columns: 1fr 1fr;
+		display: grid;
+    flex-direction: unset;
+	`}
+`;
 
 export default LayoutLayerOne;

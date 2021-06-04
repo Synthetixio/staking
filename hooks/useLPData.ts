@@ -17,6 +17,8 @@ import {
 	balancersAMZNPoolToken,
 	balancersNFLXPoolToken,
 	balancersGOOGPoolToken,
+	balancersMSFTPoolToken,
+	balancersCOINPoolToken,
 } from 'contracts';
 
 type LPData = {
@@ -63,6 +65,16 @@ const useLPData = (): LPData => {
 		Synths.sGOOG,
 		'StakingRewardssGOOGBalancer',
 		balancersGOOGPoolToken
+	);
+	const usesMSFTPool = useBalancerPoolQuery(
+		Synths.sMSFT,
+		'StakingRewardssMSFTBalancer',
+		balancersMSFTPoolToken
+	);
+	const usesCOINPool = useBalancerPoolQuery(
+		Synths.sCOIN,
+		'StakingRewardssCOINBalancer',
+		balancersCOINPoolToken
 	);
 	const usesDHTPool = useDHTsUSDPoolQuery();
 
@@ -170,6 +182,16 @@ const useLPData = (): LPData => {
 			APR: balancerPoolAPR(usesGOOGPool.data),
 			TVL: balancerPoolTVL(usesGOOGPool.data),
 			data: usesGOOGPool.data,
+		},
+		[LP.BALANCER_sMSFT]: {
+			APR: balancerPoolAPR(usesMSFTPool.data),
+			TVL: balancerPoolTVL(usesMSFTPool.data),
+			data: usesMSFTPool.data,
+		},
+		[LP.BALANCER_sCOIN]: {
+			APR: balancerPoolAPR(usesCOINPool.data),
+			TVL: balancerPoolTVL(usesCOINPool.data),
+			data: usesCOINPool.data,
 		},
 		[LP.UNISWAP_DHT]: {
 			APR: DHTAPR,

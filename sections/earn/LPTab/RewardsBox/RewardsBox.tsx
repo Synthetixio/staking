@@ -34,11 +34,14 @@ import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 
 import { getContract } from '../StakeTab/StakeTab';
 import { StyledButton } from '../../common';
+import { CurrencyIconType } from 'components/Currency/CurrencyIcon/CurrencyIcon';
 
 type RewardsBoxProps = {
 	tokenRewards: number;
 	SNXRate: number;
 	stakedAsset: CurrencyKey;
+	icon: CurrencyKey;
+	type?: CurrencyIconType;
 	handleClaim: () => void;
 	setClaimGasPrice: (num: number) => void;
 	claimTxModalOpen: boolean;
@@ -54,6 +57,8 @@ const RewardsBox: FC<RewardsBoxProps> = ({
 	tokenRewards,
 	SNXRate,
 	stakedAsset,
+	icon,
+	type,
 	handleClaim,
 	setClaimGasPrice,
 	claimTxModalOpen,
@@ -114,7 +119,12 @@ const RewardsBox: FC<RewardsBoxProps> = ({
 					</FlexDivColCentered>
 					{isDualRewards && secondTokenKey && (
 						<FlexDivColCentered>
-							<Currency.Icon currencyKey={stakedAsset} width="48" height="48" />
+							<Currency.Icon
+								currencyKey={icon}
+								type={type ? type : undefined}
+								width="48"
+								height="48"
+							/>
 							<RewardsAmountSNX>
 								{formatCurrency(secondTokenKey, secondTokenReward!, {
 									currencyKey: secondTokenKey,
@@ -170,22 +180,19 @@ const RewardsBox: FC<RewardsBoxProps> = ({
 
 const RewardsContainer = styled(FlexDivColCentered)`
 	height: 272px;
-	width: ${(props: { dualRewards: boolean }) => (props.dualRewards ? '512px' : '200px')};
-	margin-top: ${(props: { dualRewards: boolean }) => (props.dualRewards ? '20px' : '0px')};
-	margin-left: ${(props: { dualRewards: boolean }) => (props.dualRewards ? '0px' : '20px')};
 	padding: 10px;
 	border: 1px solid ${(props) => props.theme.colors.pink};
 	border-radius: 4px;
 	background-image: url(${smallWaveSVG.src});
 	background-size: cover;
+	margin-top: ${(props: { dualRewards: boolean }) => (props.dualRewards ? '20px' : '0px')};
 `;
 
 const RewardsRow = styled(FlexDivRow)`
 	${(props: { dualRewards: boolean }) =>
 		props.dualRewards &&
 		`
-		width: 100%;
-		padding: 0px 96px;
+		grid-gap: 1rem;
 	`}
 `;
 
@@ -201,6 +208,7 @@ const RewardsAmountSNX = styled.div`
 	font-size: 24px;
 	color: ${(props) => props.theme.colors.white};
 	margin-top: 10px;
+	text-align: center;
 `;
 
 const RewardsAmountUSD = styled.div`

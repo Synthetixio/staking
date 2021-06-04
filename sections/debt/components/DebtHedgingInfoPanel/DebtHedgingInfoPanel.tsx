@@ -21,8 +21,6 @@ const DebtHedgingInfoPanel: React.FC<DebtHedgingInfoPanelProps> = ({ hidden }) =
 };
 
 const InfoPanelContainer = styled(FlexDivCol)`
-	min-width: 400px;
-	margin-left: 50px;
 	background: ${(props) => props.theme.colors.navy};
 `;
 

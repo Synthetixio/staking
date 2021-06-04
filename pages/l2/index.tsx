@@ -1,3 +1,4 @@
+import { FC, useEffect } from 'react';
 import Head from 'next/head';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
@@ -5,17 +6,21 @@ import { useRecoilValue } from 'recoil';
 
 import Main from 'sections/layer2';
 import StatBox from 'components/StatBox';
-import { StatsSection, LineSpacer } from 'styles/common';
-
+import { LineSpacer } from 'styles/common';
+import UIContainer from 'containers/UI';
 import { isWalletConnectedState } from 'store/wallet';
-
+import StatsSection from 'components/StatsSection';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { formatFiatCurrency, formatPercent, toBigNumber } from 'utils/formatters/number';
 import ProgressBar from 'components/ProgressBar';
+import StakedValue from 'sections/shared/modals/StakedValueModal/StakedValueBox';
+import ActiveDebt from 'sections/shared/modals/DebtValueModal/DebtValueBox';
 
-const L2Page = () => {
+const L2Page: FC = () => {
 	const { t } = useTranslation();
+	const { setTitle } = UIContainer.useContainer();
+
 	const {
 		stakedCollateralValue,
 		percentageCurrentCRatio,
@@ -24,6 +29,11 @@ const L2Page = () => {
 	} = useStakingCalculations();
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
+
+	// header title
+	useEffect(() => {
+		setTitle('l2');
+	}, [setTitle]);
 
 	return (
 		<>
@@ -62,6 +72,7 @@ const L2Page = () => {
 							sign: selectedPriceCurrency.sign,
 						}
 					)}
+					isPink
 				/>
 			</StatsSection>
 			<LineSpacer />
@@ -70,20 +81,10 @@ const L2Page = () => {
 	);
 };
 
-const StakedValue = styled(StatBox)`
-	.title {
-		color: ${(props) => props.theme.colors.blue};
-	}
-`;
 const CRatio = styled(StatBox)`
 	.value {
 		text-shadow: ${(props) => props.theme.colors.blueTextShadow};
 		color: ${(props) => props.theme.colors.black};
-	}
-`;
-const ActiveDebt = styled(StatBox)`
-	.title {
-		color: ${(props) => props.theme.colors.pink};
 	}
 `;
 

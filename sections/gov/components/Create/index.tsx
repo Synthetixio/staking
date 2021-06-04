@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 
-import { LeftCol, RightCol } from 'sections/gov/components/common';
+import { Grid, Col } from 'sections/gov/components/common';
 
-import { Row } from 'styles/common';
 import Options from './Options';
 import Timing from './Timing';
 import Question from './Question';
@@ -55,7 +54,7 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 	const { signer } = Connector.useContainer();
 
 	const sanitiseTimestamp = (timestamp: number) => {
-		return timestamp / 1e3;
+		return Math.round(timestamp / 1e3);
 	};
 
 	const validSubmission = useMemo(() => {
@@ -185,8 +184,8 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 
 	return (
 		<>
-			<Row>
-				<LeftCol>
+			<Grid>
+				<Col>
 					<Question
 						onBack={onBack}
 						body={body}
@@ -203,8 +202,8 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 						hash={hash}
 						txHash={txHash}
 					/>
-				</LeftCol>
-				<RightCol>
+				</Col>
+				<Col>
 					<Options choices={choices} setChoices={setChoices} />
 					<Timing
 						startDate={startDate}
@@ -214,8 +213,8 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 						block={block}
 						setBlock={setBlock}
 					/>
-				</RightCol>
-			</Row>
+				</Col>
+			</Grid>
 			{txModalOpen && (
 				<TxConfirmationModal
 					onDismiss={() => setTxModalOpen(false)}

@@ -4,15 +4,26 @@ import { ethers } from 'ethers';
 import { Svg } from 'react-optimized-image';
 import { useRecoilValue } from 'recoil';
 import BigNumber from 'bignumber.js';
+import { useRouter } from 'next/router';
 
 import { appReadyState } from 'store/app';
 import StructuredTab from 'components/StructuredTab';
-import { FlexDivCentered, FlexDivColCentered, ExternalLink, FlexDiv } from 'styles/common';
+import ROUTES from 'constants/routes';
+import {
+	FlexDivColCentered,
+	ExternalLink,
+	FlexDiv,
+	IconButton,
+	FlexDivJustifyEnd,
+} from 'styles/common';
+import media from 'styles/media';
 import { CurrencyKey } from 'constants/currency';
 import Etherscan from 'containers/BlockExplorer';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import PendingConfirmation from 'assets/svg/app/pending-confirmation.svg';
 import Success from 'assets/svg/app/success.svg';
+import ExpandIcon from 'assets/svg/app/expand.svg';
+
 import { Transaction } from 'constants/network';
 import { normalizedGasPrice } from 'utils/network';
 import { CryptoCurrency, Synths } from 'constants/currency';
@@ -48,6 +59,8 @@ import {
 
 import { LP, lpToSynthTranslationKey } from 'sections/earn/types';
 import styled from 'styled-components';
+import { CurrencyIconType } from 'components/Currency/CurrencyIcon/CurrencyIcon';
+import { MobileOnlyView } from 'components/Media';
 
 type DualRewards = {
 	a: number;
@@ -56,6 +69,8 @@ type DualRewards = {
 
 type LPTabProps = {
 	stakedAsset: CurrencyKey;
+	icon?: CurrencyKey;
+	type?: CurrencyIconType;
 	tokenRewards: number | DualRewards;
 	allowance: number | null;
 	userBalance: number;
@@ -68,6 +83,8 @@ type LPTabProps = {
 
 const LPTab: FC<LPTabProps> = ({
 	stakedAsset,
+	icon = stakedAsset,
+	type,
 	tokenRewards,
 	allowance,
 	userBalance,
@@ -102,6 +119,9 @@ const LPTab: FC<LPTabProps> = ({
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const SNXRate = exchangeRatesQuery.data?.SNX ?? 0;
 
+	const router = useRouter();
+	const goToEarn = useCallback(() => router.push(ROUTES.Earn.Home), [router]);
+
 	const tabData = useMemo(() => {
 		const commonStakeTabProps = {
 			stakedAsset,
@@ -109,6 +129,8 @@ const LPTab: FC<LPTabProps> = ({
 			userBalanceBN,
 			staked,
 			stakedBN,
+			icon,
+			type,
 		};
 
 		return [
@@ -327,6 +349,10 @@ const LPTab: FC<LPTabProps> = ({
 				return `https://pools.balancer.exchange/#/pool/0x6418c69b0de51873a1cc01cf73ba6e408acc1940/`;
 			case LP.BALANCER_sGOOG:
 				return `https://pools.balancer.exchange/#/pool/0x608410f602ce8967d1e59f599566aed340280efc/`;
+			case LP.BALANCER_sMSFT:
+				return `https://pools.balancer.exchange/#/pool/0x41c91eb43b7f0afd332725461b86a0e39e143789/`;
+			case LP.BALANCER_sCOIN:
+				return `https://pools.balancer.exchange/#/pool/0x2e27d4160b257708375a7bf23381110d2328bc1b/`;
 			case LP.UNISWAP_DHT:
 				return `https://uniswap.exchange/add/0x57ab1ec28d129707052df4df418d58a2d46d5f51/0xca1207647ff814039530d7d35df0e1dd2e91fa84`;
 			default:
@@ -336,6 +362,14 @@ const LPTab: FC<LPTabProps> = ({
 
 	return (
 		<StyledTabContainer>
+			<GoToEarnButtonContainer>
+				<MobileOnlyView>
+					<StyledIconButton onClick={goToEarn}>
+						<Svg src={ExpandIcon} />
+					</StyledIconButton>
+				</MobileOnlyView>
+			</GoToEarnButtonContainer>
+
 			<HeaderLabel>
 				<Trans i18nKey={translationKey} components={[<StyledLink href={getLink()} />]} />
 			</HeaderLabel>
@@ -346,7 +380,6 @@ const LPTab: FC<LPTabProps> = ({
 						inverseTabColor={true}
 						boxPadding={0}
 						boxHeight={242}
-						boxWidth={512}
 						tabData={tabData}
 					/>
 					<RewardsBox
@@ -357,6 +390,8 @@ const LPTab: FC<LPTabProps> = ({
 						claimError={claimError}
 						setClaimError={setClaimError}
 						stakedAsset={stakedAsset}
+						icon={icon}
+						type={type}
 						tokenRewards={(tokenRewards as DualRewards).a}
 						SNXRate={SNXRate}
 						secondTokenReward={(tokenRewards as DualRewards).b}
@@ -365,13 +400,12 @@ const LPTab: FC<LPTabProps> = ({
 					/>
 				</>
 			) : (
-				<FlexDivCentered>
+				<GridContainer>
 					<StructuredTab
 						tabHeight={30}
 						inverseTabColor={true}
 						boxPadding={0}
 						boxHeight={242}
-						boxWidth={310}
 						tabData={tabData}
 					/>
 					<RewardsBox
@@ -382,10 +416,12 @@ const LPTab: FC<LPTabProps> = ({
 						claimError={claimError}
 						setClaimError={setClaimError}
 						stakedAsset={stakedAsset}
+						icon={icon}
+						type={type}
 						tokenRewards={tokenRewards as number}
 						SNXRate={SNXRate}
 					/>
-				</FlexDivCentered>
+				</GridContainer>
 			)}
 			{showApproveOverlayModal && (
 				<Approve
@@ -413,6 +449,33 @@ const StyledFlexDivColCentered = styled(FlexDivColCentered)`
 
 const StyledFlexDiv = styled(FlexDiv)`
 	margin-bottom: -20px;
+`;
+
+const GridContainer = styled.div`
+	display: grid;
+	grid-template-columns: 2fr 1fr;
+	grid-gap: 1rem;
+
+	${media.lessThan('mdUp')`
+		display: flex;
+		flex-direction: column;
+	`}
+`;
+
+const StyledIconButton = styled(IconButton)`
+	margin-left: auto;
+	svg {
+		color: ${(props) => props.theme.colors.gray};
+	}
+	&:hover {
+		svg {
+			color: ${(props) => props.theme.colors.white};
+		}
+	}
+`;
+
+const GoToEarnButtonContainer = styled(FlexDivJustifyEnd)`
+	width: 100%;
 `;
 
 export default LPTab;

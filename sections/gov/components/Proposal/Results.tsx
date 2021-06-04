@@ -4,7 +4,7 @@ import { Svg } from 'react-optimized-image';
 import Spinner from 'assets/svg/app/loader.svg';
 import useActiveTab from '../../hooks/useActiveTab';
 import { FlexDivRowCentered } from 'styles/common';
-import useProposal from 'queries/gov/useProposal';
+import { ProposalResults } from 'queries/gov/useProposal';
 import { formatNumber, formatPercent } from 'utils/formatters/number';
 import ProgressBar from 'components/ProgressBar';
 import { MaxHeightColumn, StyledTooltip } from 'sections/gov/components/common';
@@ -12,20 +12,21 @@ import { SPACE_KEY } from 'constants/snapshot';
 import CouncilNominations from 'constants/nominations.json';
 import { useRecoilValue } from 'recoil';
 import { councilElectionCountState, numOfCouncilSeatsState } from 'store/gov';
+import { QueryResult } from 'react-query';
 
 type ResultsProps = {
+	proposalResults: QueryResult<ProposalResults, unknown>;
 	hash: string;
 };
 
-const Results: React.FC<ResultsProps> = ({ hash }) => {
+const Results: React.FC<ResultsProps> = ({ proposalResults, hash }) => {
 	const activeTab = useActiveTab();
-	const proposal = useProposal(activeTab, hash);
 	const [choices, setChoices] = useState<any>(null);
 	const electionCount = useRecoilValue(councilElectionCountState);
 	const numOfCouncilSeats = useRecoilValue(numOfCouncilSeatsState);
 
 	useEffect(() => {
-		if (proposal && activeTab === SPACE_KEY.COUNCIL) {
+		if (activeTab === SPACE_KEY.COUNCIL) {
 			const loadDiscordNames = async () => {
 				const currentElectionMembers = CouncilNominations as any;
 				const mappedProfiles = [] as any;
@@ -42,16 +43,16 @@ const Results: React.FC<ResultsProps> = ({ hash }) => {
 			};
 			loadDiscordNames();
 		}
-	}, [proposal, activeTab, electionCount, hash]);
+	}, [activeTab, electionCount, hash]);
 
 	useEffect(() => {
-		if (proposal && activeTab !== SPACE_KEY.COUNCIL) {
-			setChoices(proposal?.data?.choices);
+		if (proposalResults && activeTab !== SPACE_KEY.COUNCIL) {
+			setChoices(proposalResults?.data?.choices);
 		}
-	}, [proposal, activeTab]);
+	}, [proposalResults, activeTab]);
 
-	if (proposal.isSuccess && proposal.data && choices && choices.length > 0) {
-		const { data } = proposal;
+	if (proposalResults.isSuccess && proposalResults.data && choices && choices.length > 0) {
+		const { data } = proposalResults;
 
 		const totalVotes = data.totalVotesBalances !== 0 ? data.totalVotesBalances : 1;
 
@@ -88,7 +89,10 @@ const Results: React.FC<ResultsProps> = ({ hash }) => {
 								</Title>
 							</StyledTooltip>
 							<BarContainer>
-								<StyledProgressBar percentage={choice.balance / totalVotes} variant="blue-pink" />
+								<StyledProgressBar
+									percentage={choice.balance / totalVotes ?? 0}
+									variant="blue-pink"
+								/>
 								<Value>{formatPercent(choice.balance / totalVotes)}</Value>
 							</BarContainer>
 						</Row>
@@ -97,15 +101,20 @@ const Results: React.FC<ResultsProps> = ({ hash }) => {
 			</MaxHeightColumn>
 		);
 	} else {
-		return <StyledSpinner src={Spinner} />;
+		return (
+			<StyledSpinner>
+				<Svg src={Spinner} />
+			</StyledSpinner>
+		);
 	}
 };
 
 export default Results;
 
-const StyledSpinner = styled(Svg)`
-	display: block;
-	margin: 30px auto;
+const StyledSpinner = styled.div`
+	display: flex;
+	justify-content: center;
+	padding: 30px 0;
 `;
 
 const Row = styled(FlexDivRowCentered)<{ highlight: boolean }>`
@@ -114,6 +123,7 @@ const Row = styled(FlexDivRowCentered)<{ highlight: boolean }>`
 	padding: 8px;
 	margin: 8px 8px;
 	background: ${(props) => props.highlight && props.theme.colors.mediumBlue};
+	width: 100%;
 `;
 
 const Title = styled.div`
@@ -126,9 +136,8 @@ const Title = styled.div`
 	align-items: center;
 	margin-left: 16px;
 
-	width: 250px;
-
 	padding: 16px 0px;
+	width: 60%;
 `;
 
 const Label = styled.span`
@@ -136,21 +145,20 @@ const Label = styled.span`
 	text-overflow: ellipsis;
 	overflow: hidden;
 	white-space: nowrap;
-	width: 100px;
+	width: 75px;
 `;
 
 const Value = styled(FlexDivRowCentered)`
 	color: ${(props) => props.theme.colors.white};
 	font-family: ${(props) => props.theme.fonts.interBold};
 	font-size: 12px;
-	width: 100px;
 	margin-left: 8px;
 `;
 const BarContainer = styled.div`
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	width: 200px;
+	width: 40%;
 `;
 
 const StyledProgressBar = styled(ProgressBar)`

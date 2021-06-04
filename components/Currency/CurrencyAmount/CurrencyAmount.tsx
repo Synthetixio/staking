@@ -5,7 +5,7 @@ import { formatCurrency, NumericValue, toBigNumber } from 'utils/formatters/numb
 
 import { CurrencyKey } from 'constants/currency';
 
-import { ContainerRowMixin } from '../common';
+import { ContainerRow } from '../common';
 
 type CurrencyAmountProps = {
 	amountCurrencyKey: CurrencyKey;
@@ -14,6 +14,7 @@ type CurrencyAmountProps = {
 	totalValue: NumericValue;
 	sign?: string;
 	conversionRate?: NumericValue | null;
+	showTotalValue?: boolean;
 };
 
 export const CurrencyAmount: FC<CurrencyAmountProps> = ({
@@ -23,23 +24,24 @@ export const CurrencyAmount: FC<CurrencyAmountProps> = ({
 	totalValue,
 	sign,
 	conversionRate,
+	showTotalValue = true,
 	...rest
 }) => (
 	<Container {...rest}>
 		<Amount className="amount">{formatCurrency(amountCurrencyKey, amount)}</Amount>
-		<TotalValue className="total-value">
-			{formatCurrency(
-				valueCurrencyKey,
-				conversionRate != null ? toBigNumber(totalValue).dividedBy(conversionRate) : totalValue,
-				{ sign }
-			)}
-		</TotalValue>
+		{!showTotalValue ? null : (
+			<TotalValue className="total-value">
+				{formatCurrency(
+					valueCurrencyKey,
+					conversionRate != null ? toBigNumber(totalValue).dividedBy(conversionRate) : totalValue,
+					{ sign }
+				)}
+			</TotalValue>
+		)}
 	</Container>
 );
 
-const Container = styled.span`
-	${ContainerRowMixin};
-`;
+const Container = styled(ContainerRow)``;
 
 const Amount = styled.span`
 	color: ${(props) => props.theme.colors.white};

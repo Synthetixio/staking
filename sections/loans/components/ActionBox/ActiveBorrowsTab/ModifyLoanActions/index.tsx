@@ -1,10 +1,12 @@
-import { FC, useMemo } from 'react';
+import { FC, useMemo, useEffect } from 'react';
 import { ethers } from 'ethers';
-import synthetix from 'lib/synthetix';
 import styled from 'styled-components';
 import { Svg } from 'react-optimized-image';
+
+import synthetix from 'lib/synthetix';
 import Spinner from 'assets/svg/app/loader.svg';
 import Loans from 'containers/Loans';
+import UIContainer from 'containers/UI';
 
 import Deposit from './Deposit';
 import Withdraw from './Withdraw';
@@ -31,6 +33,7 @@ type ActionsProps = {
 const Actions: FC<ActionsProps> = ({ loanId, loanAction, loanTypeIsETH }) => {
 	const { renBTCContract } = Loans.useContainer();
 	const { isLoadingLoans, loans } = Loans.useContainer();
+	const { setTitle } = UIContainer.useContainer();
 
 	const Action = ACTIONS[loanAction];
 
@@ -65,6 +68,11 @@ const Actions: FC<ActionsProps> = ({ loanId, loanAction, loanTypeIsETH }) => {
 	const debtAssetContract = useMemo(() => {
 		return loanTypeIsETH ? null : renBTCContract;
 	}, [loanTypeIsETH, renBTCContract]);
+
+	// header title
+	useEffect(() => {
+		setTitle('loan', loanAction);
+	}, [setTitle, loanAction]);
 
 	return isLoadingLoans ? (
 		<StyledSpinner src={Spinner} />
