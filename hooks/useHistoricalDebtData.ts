@@ -67,14 +67,17 @@ const useHistoricalDebtData = () => {
 
 			// We merge both actual & issuance debt into an array
 			let historicalDebtAndIssuance: HistoricalDebtAndIssuanceData[] = [];
-			debtHistory.reverse().forEach((debtSnapshot, i) => {
-				historicalDebtAndIssuance.push({
-					timestamp: debtSnapshot.timestamp,
-					issuanceDebt: historicalIssuanceAggregation[i],
-					actualDebt: debtSnapshot.debtBalanceOf,
-					index: i,
+			debtHistory
+				.slice()
+				.reverse()
+				.forEach((debtSnapshot, i) => {
+					historicalDebtAndIssuance.push({
+						timestamp: debtSnapshot.timestamp,
+						issuanceDebt: historicalIssuanceAggregation[i],
+						actualDebt: debtSnapshot.debtBalanceOf,
+						index: i,
+					});
 				});
-			});
 
 			// Last occurrence is the current state of the debt
 			// Issuance debt = last occurrence of the historicalDebtAndIssuance array

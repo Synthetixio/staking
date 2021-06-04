@@ -316,6 +316,7 @@ function toHumanizedDuration(ms: Big) {
 		ms = ms.minus(z).dividedBy(u.mod);
 	});
 	return units
+		.slice()
 		.reverse()
 		.filter((u) => {
 			return u.label !== 'ms'; // && dur[u.label]
