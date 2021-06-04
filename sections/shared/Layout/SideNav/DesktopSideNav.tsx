@@ -45,6 +45,7 @@ const DesktopSideNav: FC = () => {
 	const snxPriceChartData = useMemo(() => {
 		return (SNX24hrPricesQuery?.data ?? [])
 			.map((dataPoint) => ({ value: dataPoint.averagePrice }))
+			.slice()
 			.reverse();
 	}, [SNX24hrPricesQuery?.data]);
 
