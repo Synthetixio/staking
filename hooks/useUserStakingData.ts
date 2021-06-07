@@ -23,7 +23,13 @@ export const useUserStakingData = () => {
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const totalIssuedSynthsExclEth = useTotalIssuedSynthsExcludingEtherQuery(Synths.sUSD);
 	const previousFeePeriod = useGetFeePoolDataQuery('1');
-	const { currentCRatio, targetCRatio, debtBalance, collateral } = useStakingCalculations();
+	const {
+		currentCRatio,
+		targetCRatio,
+		debtBalance,
+		collateral,
+		targetThreshold,
+	} = useStakingCalculations();
 	const useSNXLockedValue = useSNXLockedValueQuery();
 	const debtData = useGetDebtDataQuery();
 	const feesToDistribute = previousFeePeriod?.data?.feesToDistribute ?? 0;
@@ -34,6 +40,9 @@ export const useUserStakingData = () => {
 	const sUSDRate = toBigNumber(exchangeRatesQuery.data?.sUSD ?? 0);
 	const SNXRate = toBigNumber(exchangeRatesQuery.data?.SNX ?? 0);
 
+	const isBelowCRatio = currentCRatio.isGreaterThan(
+		targetCRatio.multipliedBy(toBigNumber(1).plus(targetThreshold))
+	);
 	const stakedValue =
 		collateral.gt(0) && currentCRatio.gt(0)
 			? collateral
@@ -113,6 +122,7 @@ export const useUserStakingData = () => {
 		tradingRewards,
 		stakingRewards,
 		debtBalance,
+		isBelowCRatio,
 	};
 };
 
