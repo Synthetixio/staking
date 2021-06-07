@@ -23,6 +23,7 @@ import TransactionNotifier from 'containers/TransactionNotifier';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import useClaimedStatus from 'sections/hooks/useClaimedStatus';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
+import useUserStakingData from 'hooks/useUserStakingData';
 
 import { DEFAULT_CRYPTO_DECIMALS, DEFAULT_FIAT_DECIMALS } from 'constants/defaults';
 import { formatCurrency, formatFiatCurrency, formatNumber } from 'utils/formatters/number';
@@ -80,24 +81,26 @@ type ClaimTabProps = {
 const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, totalRewards }) => {
 	const { t } = useTranslation();
 	const claimed = useClaimedStatus();
+	const { isBelowCRatio } = useUserStakingData();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const { blockExplorerInstance } = Etherscan.useContainer();
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
+	const isL2 = useRecoilValue(isL2State);
+	const isWalletConnected = useRecoilValue(isWalletConnectedState);
+	const isAppReady = useRecoilValue(appReadyState);
+	const router = useRouter();
+
 	const [gasLimitEstimate, setGasLimitEstimate] = useState<GasLimitEstimate>(null);
 	const [gasPrice, setGasPrice] = useState<number>(0);
 	const [error, setError] = useState<string | null>(null);
-	const [lowCRatio, setLowCRatio] = useState(false);
+	const [lowCRatio, setLowCRatio] = useState<boolean>(false);
 	const [claimedTradingRewards, setClaimedTradingRewards] = useState<number | null>(null);
 	const [claimedStakingRewards, setClaimedStakingRewards] = useState<number | null>(null);
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	const isL2 = useRecoilValue(isL2State);
-	const router = useRouter();
-	const isAppReady = useRecoilValue(appReadyState);
-
 	const [isCloseFeePeriodEnabled, setIsCloseFeePeriodEnabled] = useState<boolean>(false);
 	const [transactionState, setTransactionState] = useState<Transaction>(Transaction.PRESUBMIT);
 	const [txHash, setTxHash] = useState<string | null>(null);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
+
 	const link =
 		blockExplorerInstance != null && txHash != null
 			? blockExplorerInstance.txLink(txHash)
@@ -132,6 +135,10 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 	useEffect(() => {
 		const getGasLimitEstimate = async () => {
 			if (isAppReady && isWalletConnected) {
+				if (isBelowCRatio) {
+					setLowCRatio(true);
+					return;
+				}
 				try {
 					setError(null);
 					const {
@@ -155,7 +162,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 			}
 		};
 		getGasLimitEstimate();
-	}, [isAppReady, isWalletConnected]);
+	}, [isAppReady, isWalletConnected, isBelowCRatio]);
 
 	const handleClaim = useCallback(() => {
 		async function claim() {
@@ -400,19 +407,19 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 						disabled={!canClaim || !lowCRatio}
 					>
 						<PaddedButtonContainer>
-							<PaddedButton
-								variant="primary"
-								onClick={canClaim && lowCRatio ? goToBurn : handleClaim}
-								disabled={!canClaim || lowCRatio}
-							>
-								{claimed
-									? t('earn.actions.claim.claimed-button')
-									: lowCRatio && totalRewards.toNumber() > 0
-									? t('earn.actions.claim.low-ratio')
-									: totalRewards.toNumber() > 0
-									? t('earn.actions.claim.claim-button')
-									: t('earn.actions.claim.nothing-to-claim')}
-							</PaddedButton>
+							{lowCRatio ? (
+								<PaddedButton variant="primary" onClick={goToBurn}>
+									{t('earn.actions.claim.low-ratio')}
+								</PaddedButton>
+							) : (
+								<PaddedButton variant="primary" onClick={handleClaim} disabled={!canClaim}>
+									{claimed
+										? t('earn.actions.claim.claimed-button')
+										: totalRewards.toNumber() > 0
+										? t('earn.actions.claim.claim-button')
+										: t('earn.actions.claim.nothing-to-claim')}
+								</PaddedButton>
+							)}
 							{isCloseFeePeriodEnabled ? (
 								<PaddedButton variant="primary" onClick={handleCloseFeePeriod}>
 									{t('earn.actions.claim.close-fee-period')}

@@ -19,6 +19,7 @@ type WalletDebtData = {
 	issuableSynths: BigNumber;
 	balance: BigNumber;
 	totalSupply: BigNumber;
+	targetThreshold: BigNumber;
 };
 
 const useGetDebtDataQuery = (options?: QueryConfig<WalletDebtData>) => {
@@ -44,6 +45,7 @@ const useGetDebtDataQuery = (options?: QueryConfig<WalletDebtData>) => {
 				Synthetix.maxIssuableSynths(walletAddress),
 				Synthetix.balanceOf(walletAddress),
 				Synthetix.totalSupply(),
+				SystemSettings.targetThreshold(),
 			]);
 			const [
 				targetCRatio,
@@ -54,6 +56,7 @@ const useGetDebtDataQuery = (options?: QueryConfig<WalletDebtData>) => {
 				issuableSynths,
 				balance,
 				totalSupply,
+				targetThreshold,
 			] = result.map((item) => toBigNumber(utils.formatEther(item)));
 			return {
 				targetCRatio,
@@ -64,6 +67,7 @@ const useGetDebtDataQuery = (options?: QueryConfig<WalletDebtData>) => {
 				issuableSynths,
 				balance,
 				totalSupply,
+				targetThreshold,
 			};
 		},
 		{
