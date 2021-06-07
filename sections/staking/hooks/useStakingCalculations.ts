@@ -21,6 +21,7 @@ const useStakingCalculations = () => {
 		const SNXRate = toBigNumber(exchangeRates?.SNX ?? 0);
 		const collateral = toBigNumber(debtData?.collateral ?? 0);
 		const targetCRatio = toBigNumber(debtData?.targetCRatio ?? 0);
+		const targetThreshold = toBigNumber(debtData?.targetThreshold ?? 0);
 		const currentCRatio = toBigNumber(debtData?.currentCRatio ?? 0);
 		const transferableCollateral = toBigNumber(debtData?.transferable ?? 0);
 		const debtBalance = toBigNumber(debtData?.debtBalance ?? 0);
@@ -55,6 +56,7 @@ const useStakingCalculations = () => {
 		return {
 			collateral,
 			targetCRatio,
+			targetThreshold,
 			percentageTargetCRatio,
 			currentCRatio,
 			percentageCurrentCRatio,

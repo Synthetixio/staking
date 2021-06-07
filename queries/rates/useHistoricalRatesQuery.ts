@@ -42,7 +42,7 @@ const useHistoricalRatesQuery = (
 				const change = calculateRateChange(rates);
 
 				return {
-					rates: rates.reverse(),
+					rates: rates.slice().reverse(),
 					low,
 					high,
 					change,
