@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
+import useMediaQuery from 'hooks/useMediaQuery';
 
 import Img, { Svg } from 'react-optimized-image';
 
@@ -98,8 +99,8 @@ const WalletOptionsModal: FC<WalletOptionsProps> = ({ onDismiss, setWatchWalletM
 		isHardwareWallet,
 		selectedWallet,
 	} = Connector.useContainer();
-
 	const { blockExplorerInstance } = Etherscan.useContainer();
+	const isSM = useMediaQuery('sm');
 
 	const [walletAddress, setWalletAddress] = useRecoilState(walletAddressState);
 	const truncatedWalletAddress = useRecoilValue(truncatedWalletAddressState);
@@ -169,14 +170,16 @@ const WalletOptionsModal: FC<WalletOptionsProps> = ({ onDismiss, setWatchWalletM
 					</WalletDetails>
 					<StyledDivider />
 					<Buttons>
-						<StyledButton
-							onClick={() => {
-								onDismiss();
-								connectWallet();
-							}}
-						>
-							{walletIcon} {t('modals.wallet.change-wallet')}
-						</StyledButton>
+						{isSM ? null : (
+							<StyledButton
+								onClick={() => {
+									onDismiss();
+									connectWallet();
+								}}
+							>
+								{walletIcon} {t('modals.wallet.change-wallet')}
+							</StyledButton>
+						)}
 						{isHardwareWallet() && (
 							<StyledButton
 								onClick={() => {
