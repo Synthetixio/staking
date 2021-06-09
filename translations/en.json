@@ -1168,7 +1168,8 @@
 			"default": "Something went wrong"
 		},
 		"layer-2": {
-			"not-available": "Not available on Layer 2"
+			"not-available": "Not available on Layer 2",
+			"gas-fee-info": "Gas on L2 fluctuates based on congestion on L1 and L2"
 		},
 		"transaction": {
 			"transaction-sent": "Your transaction has been sent to the network",
