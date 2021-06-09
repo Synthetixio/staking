@@ -4,7 +4,6 @@ import useSynthBurnedQuery from 'queries/staking/useSynthBurnedQuery';
 import useGetDebtSnapshotQuery from 'queries/debt/useGetDebtSnapshotQuery';
 import useGetDebtDataQuery from 'queries/debt/useGetDebtDataQuery';
 import { last, orderBy } from 'lodash';
-import { toBigNumber } from 'utils/formatters/number';
 
 export type HistoricalDebtAndIssuanceData = {
 	timestamp: number;
@@ -83,7 +82,7 @@ const useHistoricalDebtData = () => {
 			// Issuance debt = last occurrence of the historicalDebtAndIssuance array
 			historicalDebtAndIssuance.push({
 				timestamp: new Date().getTime(),
-				actualDebt: toBigNumber(debtDataQuery.data?.debtBalance ?? 0).toNumber(),
+				actualDebt: debtDataQuery.data?.debtBalance.toNumber() || 0,
 				issuanceDebt: last(historicalIssuanceAggregation) ?? 0,
 				index: historicalDebtAndIssuance.length,
 			});

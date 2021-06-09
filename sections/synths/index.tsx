@@ -90,7 +90,7 @@ const Index: FC = () => {
 				showConvert={false}
 				onTransferClick={handleOnTransferClick}
 			/>
-			{!totalSynthValue.isZero() ? <KwentaBanner /> : null}
+			{!totalSynthValue.eq(0) ? <KwentaBanner /> : null}
 			<VerticalSpacer />
 			{isWalletConnected && cryptoBalances.balances.length > 0 && (
 				<AssetsTable

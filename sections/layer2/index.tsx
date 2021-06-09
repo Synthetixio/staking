@@ -24,7 +24,8 @@ const Index: FC = () => {
 	const [l2AmountSNX, setL2AmountSNX] = useState<number>(0);
 	const [l2APR, setL2APR] = useState<number>(0);
 	const { t } = useTranslation();
-	const { debtBalance, transferableCollateral, stakingEscrow } = useStakingCalculations();
+	const networkId = useRecoilValue(networkState)!.id;
+	const { debtBalance, transferableCollateral, stakingEscrow } = useStakingCalculations(networkId);
 	const network = useRecoilValue(networkState);
 
 	useEffect(() => {
@@ -94,18 +95,18 @@ const Index: FC = () => {
 
 	const gridItems = useMemo(
 		() =>
-			debtBalance.isZero()
+			debtBalance.eq(0)
 				? [
 						{
 							...ACTIONS.apr,
 						},
 						{
 							...ACTIONS.deposit,
-							isDisabled: transferableCollateral.isZero(),
+							isDisabled: transferableCollateral.eq(0),
 						},
 						{
 							...ACTIONS.migrate,
-							isDisabled: stakingEscrow.isZero(),
+							isDisabled: stakingEscrow.eq(0),
 						},
 				  ]
 				: [

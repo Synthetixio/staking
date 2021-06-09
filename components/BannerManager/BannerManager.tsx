@@ -8,21 +8,21 @@ import useGetDebtDataQuery from 'queries/debt/useGetDebtDataQuery';
 import Banner, { BannerType } from 'sections/shared/Layout/Banner';
 import { LOCAL_STORAGE_KEYS } from 'constants/storage';
 import { ExternalLink } from 'styles/common';
-import { zeroBN } from 'utils/formatters/number';
 import { formatShortDateWithTime } from 'utils/formatters/date';
+import { wei } from '@synthetixio/wei';
 
 const BannerManager: FC = () => {
 	const liquidationData = useGetLiquidationData();
 	const debtData = useGetDebtDataQuery();
 
-	const issuanceRatio = debtData?.data?.targetCRatio ?? zeroBN;
-	const cRatio = debtData?.data?.currentCRatio ?? zeroBN;
+	const issuanceRatio = debtData?.data?.targetCRatio ?? wei(0);
+	const cRatio = debtData?.data?.currentCRatio ?? wei(0);
 	const liquidationDeadlineForAccount =
-		liquidationData?.data?.liquidationDeadlineForAccount ?? zeroBN;
+		liquidationData?.data?.liquidationDeadlineForAccount ?? wei(0);
 
-	const issuanceRatioPercentage = issuanceRatio.isZero() ? 0 : 100 / Number(issuanceRatio);
+	const issuanceRatioPercentage = issuanceRatio.eq(0) ? 0 : 100 / Number(issuanceRatio);
 
-	if (!liquidationDeadlineForAccount.isZero() && cRatio.isGreaterThan(issuanceRatio)) {
+	if (!liquidationDeadlineForAccount.eq(0) && cRatio.gt(issuanceRatio)) {
 		return (
 			<Banner
 				type={BannerType.WARNING}

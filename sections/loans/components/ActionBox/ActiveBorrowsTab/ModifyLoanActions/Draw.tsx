@@ -48,7 +48,7 @@ const Repay: React.FC<RepayProps> = ({ loan, loanId, loanTypeIsETH, loanContract
 
 	const getTxData = useCallback(
 		(gas: Record<string, number>) => {
-			if (!(loanContract && !drawAmount.isZero())) return null;
+			if (!(loanContract && !drawAmount.eq(0))) return null;
 
 			return [loanContract, 'draw', [loanId, drawAmount, gas]];
 		},

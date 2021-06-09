@@ -1,4 +1,4 @@
-import { useQuery, QueryConfig } from 'react-query';
+import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
 
 import QUERY_KEYS from 'constants/queryKeys';
@@ -15,7 +15,7 @@ type DebtSnapshotData = {
 	timestamp: number;
 };
 
-const useGetDebtSnapshotQuery = (options?: QueryConfig<DebtSnapshotData[]>) => {
+const useGetDebtSnapshotQuery = (options?: UseQueryOptions<DebtSnapshotData[]>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);

@@ -1,9 +1,8 @@
-import { useQuery, QueryConfig } from 'react-query';
+import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
-import BigNumber from 'bignumber.js';
+import Wei, { wei } from '@synthetixio/wei';
 
 import synthetix from 'lib/synthetix';
-import { toBigNumber } from 'utils/formatters/number';
 
 import QUERY_KEYS from 'constants/queryKeys';
 
@@ -15,11 +14,11 @@ export type FeePoolData = {
 	feesToDistribute: number;
 	feesClaimed: number;
 	rewardsToDistribute: number;
-	rewardsToDistributeBN: BigNumber;
+	rewardsToDistributeBN: Wei;
 	rewardsClaimed: number;
 };
 
-const useGetFeePoolDataQuery = (period: string, options?: QueryConfig<FeePoolData>) => {
+const useGetFeePoolDataQuery = (period: string, options?: UseQueryOptions<FeePoolData>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 
 	return useQuery<FeePoolData>(
@@ -37,12 +36,12 @@ const useGetFeePoolDataQuery = (period: string, options?: QueryConfig<FeePoolDat
 				feesToDistribute: Number(formatEther(feePeriod.feesToDistribute)) || 0,
 				feesClaimed: Number(formatEther(feePeriod.feesClaimed)) || 0,
 				rewardsToDistribute: Number(formatEther(feePeriod.rewardsToDistribute)) || 0,
-				rewardsToDistributeBN: toBigNumber(formatEther(feePeriod.rewardsToDistribute)),
+				rewardsToDistributeBN: wei(formatEther(feePeriod.rewardsToDistribute)),
 				rewardsClaimed: Number(formatEther(feePeriod.rewardsClaimed)) || 0,
 			};
 		},
 		{
-			enabled: isAppReady && period,
+			enabled: isAppReady && !!period,
 			...options,
 		}
 	);

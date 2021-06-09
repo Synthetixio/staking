@@ -1,4 +1,4 @@
-import { useQuery, QueryConfig } from 'react-query';
+import { useQuery, UseQueryOptions } from 'react-query';
 import { ethers } from 'ethers';
 import { useRecoilValue } from 'recoil';
 import axios from 'axios';
@@ -19,7 +19,6 @@ import {
 	networkState,
 	isMainnetState,
 } from 'store/wallet';
-import { toBigNumber } from 'utils/formatters/number';
 
 import { LiquidityPoolData } from './types';
 import { getCurveTokenPrice } from './helper';
@@ -29,7 +28,7 @@ export type CurveData = LiquidityPoolData & {
 	rewardsAPR: number;
 };
 
-const useCurveSeuroPoolQuery = (options?: QueryConfig<CurveData>) => {
+const useCurveSeuroPoolQuery = (options?: UseQueryOptions<CurveData>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
@@ -132,7 +131,7 @@ const useCurveSeuroPoolQuery = (options?: QueryConfig<CurveData>) => {
 				curveRewards,
 				curveStaked,
 				curveAllowance,
-			].map((data) => Number(toBigNumber(data.toString()).div(1e18)));
+			].map((data) => Number(wei(data.toString()).div(1e18)));
 
 			const curveRate =
 				(((inflationRate * relativeWeight * 31536000) / workingSupply) * 0.4) /

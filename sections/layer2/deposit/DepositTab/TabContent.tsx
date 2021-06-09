@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { Svg } from 'react-optimized-image';
-import BigNumber from 'bignumber.js';
+import Wei from '@synthetixio/wei';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 
@@ -24,7 +24,7 @@ import {
 } from 'styles/common';
 
 type TabContentProps = {
-	depositAmount: BigNumber;
+	depositAmount: Wei;
 	onSubmit: any;
 	transactionError: string | null;
 	gasEstimateError: string | null;
@@ -54,7 +54,7 @@ const TabContent: FC<TabContentProps> = ({
 	const currencyKey = CryptoCurrency['SNX'];
 
 	const renderButton = () => {
-		if (depositAmount && !depositAmount.isZero()) {
+		if (depositAmount && !depositAmount.eq(0)) {
 			return (
 				<StyledCTA
 					blue={true}

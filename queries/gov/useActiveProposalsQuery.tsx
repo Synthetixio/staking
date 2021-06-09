@@ -1,4 +1,4 @@
-import { useQuery, QueryConfig } from 'react-query';
+import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
 
 import QUERY_KEYS from 'constants/queryKeys';
@@ -9,7 +9,7 @@ import { Proposal } from './types';
 import { isL2State, networkState, walletAddressState } from 'store/wallet';
 import request, { gql } from 'graphql-request';
 
-const useActiveProposalsQuery = (options?: QueryConfig<number>) => {
+const useActiveProposalsQuery = (options?: UseQueryOptions<number>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const network = useRecoilValue(networkState);
 	const walletAddress = useRecoilValue(walletAddressState);

@@ -35,7 +35,7 @@ const Earn: FC = () => {
 
 	const SNXRate = exchangeRatesQuery.data?.SNX ?? 0;
 
-	const totalRewards = tradingRewards.plus(stakingRewards.multipliedBy(SNXRate));
+	const totalRewards = tradingRewards.add(stakingRewards.mul(SNXRate));
 
 	const feeClaimHistoryQuery = useFeeClaimHistoryQuery();
 
@@ -45,7 +45,7 @@ const Earn: FC = () => {
 
 	const totalFees = useMemo(
 		() =>
-			toBigNumber(
+			wei(
 				sumBy(feeClaimHistory, (claim) => {
 					const usdAmount = claim.value;
 					const snxAmount = claim.rewards ?? 0;
@@ -91,7 +91,7 @@ const Earn: FC = () => {
 				stakingRewards={stakingRewards}
 				totalRewards={totalRewards}
 				stakingAPR={stakingAPR}
-				stakedAmount={stakedValue.dividedBy(SNXRate).toNumber()}
+				stakedAmount={stakedValue.div(SNXRate).toNumber()}
 				hasClaimed={hasClaimed}
 			/>
 		</>

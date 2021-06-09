@@ -1,36 +1,31 @@
 import synthetix from 'lib/synthetix';
-import { NumericValue, toBigNumber, zeroBN } from 'utils/formatters/number';
 import use1InchQuoteQuery from 'queries/1inch/use1InchQuoteQuery';
 import use1InchSwapQuery, { SwapTxData } from 'queries/1inch/use1InchSwapQuery';
 import { ethAddress } from 'constants/1inch';
-import { BigNumber } from 'bignumber.js';
+import Wei, { wei } from '@synthetixio/wei';
 
 type ClearDebtCalculations = {
 	needToBuy: boolean;
-	debtBalanceWithBuffer: NumericValue;
-	missingSUSDWithBuffer: NumericValue;
-	quoteAmount: NumericValue;
+	debtBalanceWithBuffer: Wei;
+	missingSUSDWithBuffer: Wei;
+	quoteAmount: Wei;
 	swapData: SwapTxData | null;
 };
 
 const useClearDebtCalculations = (
-	debtBalance: BigNumber,
-	sUSDBalance: BigNumber,
+	debtBalance: Wei,
+	sUSDBalance: Wei,
 	walletAddress: string
 ): ClearDebtCalculations => {
-	const needToBuy = debtBalance.minus(sUSDBalance).isPositive();
-	const debtBalanceWithBuffer: NumericValue = toBigNumber(
-		debtBalance.plus(debtBalance.multipliedBy(0.0005)).toFixed(18)
-	);
-	const missingSUSDWithBuffer: NumericValue = toBigNumber(
-		debtBalanceWithBuffer.minus(sUSDBalance).toFixed(18)
-	);
+	const needToBuy = debtBalance.sub(sUSDBalance).gt(0);
+	const debtBalanceWithBuffer = debtBalance.add(debtBalance.mul(0.0005));
+	const missingSUSDWithBuffer = debtBalanceWithBuffer.sub(sUSDBalance);
 
 	const sUSDAddress = synthetix.tokensMap!.sUSD.address;
 
 	const quoteQuery = use1InchQuoteQuery(sUSDAddress, ethAddress, missingSUSDWithBuffer);
 	const quoteData = quoteQuery.isSuccess && quoteQuery.data != null ? quoteQuery.data : null;
-	const quoteAmount = quoteData?.toTokenAmount ?? zeroBN;
+	const quoteAmount = wei(quoteData?.toTokenAmount ?? 0);
 
 	const swapQuery = use1InchSwapQuery(ethAddress, sUSDAddress, quoteAmount, walletAddress!, 50);
 	const swapData = swapQuery.isSuccess && swapQuery.data != null ? swapQuery.data : null;

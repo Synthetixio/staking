@@ -1,4 +1,4 @@
-import { useQuery, QueryConfig } from 'react-query';
+import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
 
 import synthetix from 'lib/synthetix';
@@ -17,7 +17,7 @@ import { ethers } from 'ethers';
 import Connector from 'containers/Connector';
 import { getDHTPrice, getUniswapPairLiquidity } from './helper';
 
-const useDHTsUSDPoolQuery = (options?: QueryConfig<DualRewardsLiquidityPoolData>) => {
+const useDHTsUSDPoolQuery = (options?: UseQueryOptions<DualRewardsLiquidityPoolData>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);

@@ -40,7 +40,7 @@ const Repay: React.FC<RepayProps> = ({ loan, loanId, loanTypeIsETH, loanContract
 		() => ethers.utils.formatUnits(remainingAmount, debtAssetDecimals),
 		[remainingAmount]
 	);
-	const isRepayingFully = useMemo(() => remainingAmount.isZero(), [remainingAmount]);
+	const isRepayingFully = useMemo(() => remainingAmount.eq(0), [remainingAmount]);
 
 	const onSetLeftColAmount = (amount: string) =>
 		!amount
@@ -52,7 +52,7 @@ const Repay: React.FC<RepayProps> = ({ loan, loanId, loanTypeIsETH, loanContract
 
 	const getTxData = useCallback(
 		(gas: Record<string, number>) => {
-			if (!(loanContract && !repayAmount.isZero())) return null;
+			if (!(loanContract && !repayAmount.eq(0))) return null;
 			return [loanContract, 'repay', [address, loanId, repayAmount, gas]];
 		},
 		[loanContract, address, loanId, repayAmount]

@@ -42,7 +42,7 @@ import { formatCurrency, formatNumber, zeroBN } from 'utils/formatters/number';
 import { getStakingAmount } from '../helper';
 import { CryptoCurrency, Synths } from 'constants/currency';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
-import BigNumber from 'bignumber.js';
+import Wei from '@synthetixio/wei';
 import { isWalletConnectedState } from 'store/wallet';
 import Connector from 'containers/Connector';
 import { BurnActionType, burnTypeState } from 'store/staking';
@@ -51,7 +51,7 @@ import Currency from 'components/Currency';
 
 type StakingInputProps = {
 	onSubmit: () => void;
-	inputValue: BigNumber;
+	inputValue: Wei;
 	isLocked: boolean;
 	isMint: boolean;
 	onBack: Function;
@@ -64,8 +64,8 @@ type StakingInputProps = {
 	txHash: string | null;
 	transactionState: Transaction;
 	setTransactionState: (tx: Transaction) => void;
-	maxBurnAmount?: BigNumber;
-	burnAmountToFixCRatio?: BigNumber;
+	maxBurnAmount?: Wei;
+	burnAmountToFixCRatio?: Wei;
 	etherNeededToBuy?: string;
 	sUSDNeededToBuy?: string;
 	sUSDNeededToBurn?: string;
@@ -112,7 +112,7 @@ const StakingInput: React.FC<StakingInputProps> = ({
 	 * @param mintInput Amount to mint
 	 */
 	const stakeInfo = useCallback(
-		(mintInput: BigNumber) =>
+		(mintInput: Wei) =>
 			formatCurrency(
 				stakingCurrencyKey,
 				getStakingAmount(targetCRatio, mintInput.isNaN() ? 0 : mintInput, SNXRate),
@@ -207,7 +207,7 @@ const StakingInput: React.FC<StakingInputProps> = ({
 	]);
 
 	const equivalentSNXAmount = useMemo(() => {
-		const calculatedTargetBurn = Math.max(debtBalance.minus(issuableSynths).toNumber(), 0);
+		const calculatedTargetBurn = Math.max(debtBalance.sub(issuableSynths).toNumber(), 0);
 		if (
 			!isMint &&
 			currentCRatio.isGreaterThan(targetCRatio) &&
@@ -311,8 +311,8 @@ const StakingInput: React.FC<StakingInputProps> = ({
 								onChange={(e) => onInputChange(e.target.value)}
 								disabled={
 									!isWalletConnected ||
-									(!isMint && debtBalance.isZero()) ||
-									(isMint && collateral.isZero())
+									(!isMint && debtBalance.eq(0)) ||
+									(isMint && collateral.eq(0))
 								}
 							/>
 						)}

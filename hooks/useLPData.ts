@@ -1,7 +1,6 @@
 import useIETHPoolQuery_1 from 'queries/liquidityPools/useIETHPoolQuery_1';
 import useIBTCPoolQuery_1 from 'queries/liquidityPools/useIBTCPoolQuery_1';
 import useCurveSusdPoolQuery from 'queries/liquidityPools/useCurveSusdPoolQuery';
-import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import useCurveSeuroPoolQuery from 'queries/liquidityPools/useCurveSeuroPoolQuery';
 
 import { Synths } from 'constants/currency';
@@ -20,6 +19,8 @@ import {
 	balancersMSFTPoolToken,
 	balancersCOINPoolToken,
 } from 'contracts';
+import { NetworkId } from '@synthetixio/contracts-interface';
+import useSynthetixQueries from '@synthetixio/queries';
 
 type LPData = {
 	[name: string]: {
@@ -29,7 +30,9 @@ type LPData = {
 	};
 };
 
-const useLPData = (): LPData => {
+const useLPData = (networkId: NetworkId): LPData => {
+	const { useExchangeRatesQuery } = useSynthetixQueries({ networkId });
+
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const SNXRate = exchangeRatesQuery.data?.SNX ?? 0;
 	const useiETHPool = useIETHPoolQuery_1();

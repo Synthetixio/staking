@@ -1,6 +1,6 @@
-import { useQuery, QueryConfig } from 'react-query';
+import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
-import BigNumber from 'bignumber.js';
+import Wei from '@synthetixio/wei';
 
 import synthetix from 'lib/synthetix';
 
@@ -8,20 +8,20 @@ import QUERY_KEYS from 'constants/queryKeys';
 
 import { isWalletConnectedState, networkState, walletAddressState } from 'store/wallet';
 import { appReadyState } from 'store/app';
-import { toBigNumber } from 'utils/formatters/number';
+import { wei } from '../../../js-monorepo/packages/queries/node_modules/@synthetixio/wei/build/node/wei';
 
 type WalletDebtData = {
-	targetCRatio: BigNumber;
-	currentCRatio: BigNumber;
-	transferable: BigNumber;
-	debtBalance: BigNumber;
-	collateral: BigNumber;
-	issuableSynths: BigNumber;
-	balance: BigNumber;
-	totalSupply: BigNumber;
+	targetCRatio: Wei;
+	currentCRatio: Wei;
+	transferable: Wei;
+	debtBalance: Wei;
+	collateral: Wei;
+	issuableSynths: Wei;
+	balance: Wei;
+	totalSupply: Wei;
 };
 
-const useGetDebtDataQuery = (options?: QueryConfig<WalletDebtData>) => {
+const useGetDebtDataQuery = (options?: UseQueryOptions<WalletDebtData>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
@@ -54,7 +54,7 @@ const useGetDebtDataQuery = (options?: QueryConfig<WalletDebtData>) => {
 				issuableSynths,
 				balance,
 				totalSupply,
-			] = result.map((item) => toBigNumber(utils.formatEther(item)));
+			] = result.map((item) => wei(utils.formatEther(item)));
 			return {
 				targetCRatio,
 				currentCRatio,

@@ -2,11 +2,14 @@ import { useMemo } from 'react';
 
 import useGetDebtDataQuery from 'queries/debt/useGetDebtDataQuery';
 import useTokenSaleEscrowDateQuery from 'queries/escrow/useTokenSaleEscrowQuery';
-import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import useEscrowDataQuery from 'queries/escrow/useEscrowDataQuery';
-import { toBigNumber, maxBN, zeroBN } from 'utils/formatters/number';
+import useSynthetixQueries from '@synthetixio/queries';
+import { NetworkId } from '@synthetixio/contracts-interface';
+import Wei, { wei } from '@synthetixio/wei';
 
-const useStakingCalculations = () => {
+const useStakingCalculations = (networkId: NetworkId) => {
+	const { useExchangeRatesQuery } = useSynthetixQueries({ networkId });
+
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const debtDataQuery = useGetDebtDataQuery();
 	const rewardEscrowQuery = useEscrowDataQuery();
@@ -18,38 +21,32 @@ const useStakingCalculations = () => {
 	const tokenSaleEscrowBalance = tokenSaleEscrowQuery.data ?? null;
 
 	const results = useMemo(() => {
-		const SNXRate = toBigNumber(exchangeRates?.SNX ?? 0);
-		const collateral = toBigNumber(debtData?.collateral ?? 0);
-		const targetCRatio = toBigNumber(debtData?.targetCRatio ?? 0);
-		const currentCRatio = toBigNumber(debtData?.currentCRatio ?? 0);
-		const transferableCollateral = toBigNumber(debtData?.transferable ?? 0);
-		const debtBalance = toBigNumber(debtData?.debtBalance ?? 0);
-		const stakingEscrow = toBigNumber(rewardEscrowBalance?.totalEscrowed ?? 0);
-		const tokenSaleEscrow = toBigNumber(tokenSaleEscrowBalance?.totalEscrowed ?? 0);
-		const issuableSynths = toBigNumber(debtData?.issuableSynths ?? 0);
-		const balance = toBigNumber(debtData?.balance ?? 0);
+		const SNXRate = wei(exchangeRates?.SNX ?? 0);
+		const collateral = wei(debtData?.collateral ?? 0);
+		const targetCRatio = wei(debtData?.targetCRatio ?? 0);
+		const currentCRatio = wei(debtData?.currentCRatio ?? 0);
+		const transferableCollateral = wei(debtData?.transferable ?? 0);
+		const debtBalance = wei(debtData?.debtBalance ?? 0);
+		const stakingEscrow = wei(rewardEscrowBalance?.totalEscrowed ?? 0);
+		const tokenSaleEscrow = wei(tokenSaleEscrowBalance?.totalEscrowed ?? 0);
+		const issuableSynths = wei(debtData?.issuableSynths ?? 0);
+		const balance = wei(debtData?.balance ?? 0);
 
-		const stakedCollateral = collateral.multipliedBy(
-			Math.min(1, currentCRatio.dividedBy(targetCRatio).toNumber())
+		const stakedCollateral = collateral.mul(
+			Math.min(1, currentCRatio.div(targetCRatio).toNumber())
 		);
-		const stakedCollateralValue = stakedCollateral.multipliedBy(SNXRate);
-		const lockedCollateral = collateral.minus(transferableCollateral);
-		const unstakedCollateral = collateral.minus(stakedCollateral);
-		const totalEscrowBalance = stakingEscrow.plus(tokenSaleEscrow);
+		const stakedCollateralValue = stakedCollateral.mul(SNXRate);
+		const lockedCollateral = collateral.sub(transferableCollateral);
+		const unstakedCollateral = collateral.sub(stakedCollateral);
+		const totalEscrowBalance = stakingEscrow.add(tokenSaleEscrow);
 
-		const debtEscrowBalance = maxBN(
-			debtBalance
-				.plus(totalEscrowBalance.multipliedBy(SNXRate).multipliedBy(targetCRatio))
-				.minus(issuableSynths),
-			zeroBN
+		const debtEscrowBalance = Wei.max(
+			debtBalance.add(totalEscrowBalance.mul(SNXRate).mul(targetCRatio)).sub(issuableSynths),
+			wei(0)
 		);
 
-		const percentageCurrentCRatio = currentCRatio.isZero()
-			? toBigNumber(0)
-			: toBigNumber(1).div(currentCRatio);
-		const percentageTargetCRatio = targetCRatio.isZero()
-			? toBigNumber(0)
-			: toBigNumber(1).div(targetCRatio);
+		const percentageCurrentCRatio = currentCRatio.eq(0) ? wei(0) : wei(1).div(currentCRatio);
+		const percentageTargetCRatio = targetCRatio.eq(0) ? wei(0) : wei(1).div(targetCRatio);
 		const percentCurrentCRatioOfTarget = percentageCurrentCRatio.div(percentageTargetCRatio);
 
 		return {

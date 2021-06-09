@@ -1,5 +1,5 @@
 import { FC, useMemo } from 'react';
-import BigNumber from 'bignumber.js';
+import Wei from '@synthetixio/wei';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
@@ -18,9 +18,9 @@ import { Tab } from './types';
 import { DesktopOrTabletView } from 'components/Media';
 
 type IncentivesProps = {
-	tradingRewards: BigNumber;
-	stakingRewards: BigNumber;
-	totalRewards: BigNumber;
+	tradingRewards: Wei;
+	stakingRewards: Wei;
+	totalRewards: Wei;
 	stakingAPR: number;
 	stakedAmount: number;
 	hasClaimed: boolean;

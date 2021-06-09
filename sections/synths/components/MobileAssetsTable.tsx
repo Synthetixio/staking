@@ -2,7 +2,7 @@ import { FC, useMemo } from 'react';
 import { CellProps } from 'react-table';
 import styled from 'styled-components';
 import { Trans, useTranslation } from 'react-i18next';
-import BigNumber from 'bignumber.js';
+import Wei from '@synthetixio/wei';
 import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
@@ -43,7 +43,7 @@ import { StyledButtonBlue, StyledButtonPink } from './common';
 
 type AssetsTableProps = {
 	assets: CryptoBalance[];
-	totalValue: BigNumber;
+	totalValue: Wei;
 	isLoading: boolean;
 	isLoaded: boolean;
 	showConvert: boolean;

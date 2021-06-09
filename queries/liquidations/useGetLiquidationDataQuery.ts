@@ -1,19 +1,19 @@
-import { useQuery, QueryConfig } from 'react-query';
+import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
-import BigNumber from 'bignumber.js';
 
 import synthetix from 'lib/synthetix';
 import { isWalletConnectedState, networkState, walletAddressState, isL2State } from 'store/wallet';
 import { appReadyState } from 'store/app';
 import QUERY_KEYS from 'constants/queryKeys';
+import Wei from '@synthetixio/wei';
 
 type LiquidationData = {
-	liquidationRatio: BigNumber;
-	liquidationDelay: BigNumber;
-	liquidationDeadlineForAccount: BigNumber;
+	liquidationRatio: Wei;
+	liquidationDelay: Wei;
+	liquidationDeadlineForAccount: Wei;
 };
 
-const useGetLiquidationDataQuery = (options?: QueryConfig<LiquidationData>) => {
+const useGetLiquidationDataQuery = (options?: UseQueryOptions<LiquidationData>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);

@@ -18,14 +18,9 @@ import ExpandIcon from 'assets/svg/app/expand.svg';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
-import {
-	formatPercent,
-	formatFiatCurrency,
-	formatCurrency,
-	toBigNumber,
-} from 'utils/formatters/number';
+import { formatPercent, formatFiatCurrency, formatCurrency } from 'utils/formatters/number';
 
-import { isWalletConnectedState } from 'store/wallet';
+import { isWalletConnectedState, networkState } from 'store/wallet';
 
 import {
 	FlexDivCol,
@@ -43,6 +38,7 @@ import ROUTES from 'constants/routes';
 import { LP, Tab } from './types';
 import { CurrencyIconType } from 'components/Currency/CurrencyIcon/CurrencyIcon';
 import { DesktopOrTabletView, MobileOnlyView } from 'components/Media';
+import { wei } from '@synthetixio/wei';
 
 export type DualRewards = {
 	a: number;
@@ -81,7 +77,8 @@ type IncentivesTableProps = {
 
 const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab }) => {
 	const { t } = useTranslation();
-	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
+	const networkId = useRecoilValue(networkState)!.id;
+	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency(networkId);
 	const router = useRouter();
 	const goToEarn = useCallback(() => router.push(ROUTES.Earn.Home), [router]);
 
@@ -171,12 +168,9 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab }
 				Cell: (cellProps: CellProps<EarnItem, EarnItem['tvl']>) => (
 					<CellContainer>
 						<Title isNumeric={true}>
-							{formatFiatCurrency(
-								getPriceAtCurrentRate(toBigNumber(cellProps.value != null ? cellProps.value : 0)),
-								{
-									sign: selectedPriceCurrency.sign,
-								}
-							)}
+							{formatFiatCurrency(getPriceAtCurrentRate(wei(cellProps.value || 0)), {
+								sign: selectedPriceCurrency.sign,
+							})}
 						</Title>
 					</CellContainer>
 				),

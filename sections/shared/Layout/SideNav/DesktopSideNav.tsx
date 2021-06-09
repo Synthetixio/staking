@@ -4,21 +4,17 @@ import Link from 'next/link';
 import { Svg } from 'react-optimized-image';
 import { useRecoilValue } from 'recoil';
 
-import { toBigNumber } from 'utils/formatters/number';
-
 import StakingLogo from 'assets/svg/app/staking-logo.svg';
 import StakingL2Logo from 'assets/svg/app/staking-l2-logo.svg';
 
-import useSNX24hrPricesQuery from 'queries/rates/useSNX24hrPricesQuery';
 import useCryptoBalances from 'hooks/useCryptoBalances';
-import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
 
 import ROUTES from 'constants/routes';
 import { CryptoCurrency, Synths } from 'constants/currency';
 import { DESKTOP_SIDE_NAV_WIDTH, zIndex } from 'constants/ui';
 import UIContainer from 'containers/UI';
 
-import { isL2State } from 'store/wallet';
+import { isL2State, networkState, walletAddressState } from 'store/wallet';
 
 import PriceItem from 'sections/shared/Layout/Stats/PriceItem';
 import PeriodBarStats from 'sections/shared/Layout/Stats/PeriodBarStats';
@@ -27,24 +23,34 @@ import CRatioBarStats from 'sections/shared/Layout/Stats/CRatioBarStats';
 
 import SideNav from './SideNav';
 import SubMenu from './DesktopSubMenu';
+import useSynthetixQueries from '@synthetixio/queries';
+import { wei } from '@synthetixio/wei';
 
 const DesktopSideNav: FC = () => {
+	const networkId = useRecoilValue(networkState)!.id;
+
+	const walletAddress = useRecoilValue(walletAddressState);
+
+	const { useSNX24hrPricesQuery, useCryptoBalances, useSynthsBalancesQuery } = useSynthetixQueries({
+		networkId,
+	});
+
 	const SNX24hrPricesQuery = useSNX24hrPricesQuery();
 	const cryptoBalances = useCryptoBalances();
-	const synthsBalancesQuery = useSynthsBalancesQuery();
+	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
 	const isL2 = useRecoilValue(isL2State);
 	const { clearSubMenuConfiguration } = UIContainer.useContainer();
 
 	const snxBalance =
-		cryptoBalances?.balances?.find((balance) => balance.currencyKey === CryptoCurrency.SNX)
-			?.balance ?? toBigNumber(0);
+		cryptoBalances?.balances?.find(
+			(balance: { currencyKey: CryptoCurrency }) => balance.currencyKey === CryptoCurrency.SNX
+		)?.balance ?? wei(0);
 
-	const sUSDBalance =
-		synthsBalancesQuery?.data?.balancesMap[Synths.sUSD]?.balance ?? toBigNumber(0);
+	const sUSDBalance = synthsBalancesQuery?.data?.balancesMap[Synths.sUSD]?.balance ?? wei(0);
 
 	const snxPriceChartData = useMemo(() => {
 		return (SNX24hrPricesQuery?.data ?? [])
-			.map((dataPoint) => ({ value: dataPoint.averagePrice }))
+			.map((dataPoint: { averagePrice: any }) => ({ value: dataPoint.averagePrice }))
 			.slice()
 			.reverse();
 	}, [SNX24hrPricesQuery?.data]);

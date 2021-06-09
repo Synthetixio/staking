@@ -1,10 +1,10 @@
 import { FC } from 'react';
-import BigNumber from 'bignumber.js';
+import Wei, { wei } from '@synthetixio/wei';
 import styled from 'styled-components';
 import { useTranslation, Trans } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 
-import { formatCurrency, formatNumber, zeroBN } from 'utils/formatters/number';
+import { formatCurrency, formatNumber } from 'utils/formatters/number';
 import { CryptoCurrency } from 'constants/currency';
 import { Transaction, GasLimitEstimate } from 'constants/network';
 
@@ -28,9 +28,9 @@ import {
 } from 'styles/common';
 
 type TabContentProps = {
-	inputValue: BigNumber;
+	inputValue: Wei;
 	onInputChange: Function;
-	transferableCollateral: BigNumber;
+	transferableCollateral: Wei;
 	onSubmit: any;
 	transactionError: string | null;
 	gasEstimateError: string | null;
@@ -66,9 +66,8 @@ const TabContent: FC<TabContentProps> = ({
 		if (
 			isWalletConnected &&
 			inputValue &&
-			!inputValue.isZero() &&
-			inputValue.isFinite() &&
-			inputValue.isLessThanOrEqualTo(transferableCollateral)
+			inputValue.gt(0) &&
+			inputValue.lte(transferableCollateral)
 		) {
 			return (
 				<StyledCTA
@@ -124,7 +123,7 @@ const TabContent: FC<TabContentProps> = ({
 					<BalanceButton variant="text" onClick={() => onInputChange(transferableCollateral)}>
 						<Trans
 							i18nKey="common.wallet.transferable"
-							values={{ transferable: formatNumber(transferableCollateral ?? zeroBN) }}
+							values={{ transferable: formatNumber(transferableCollateral ?? wei(0)) }}
 							components={[<BalanceButtonHeading />]}
 						/>
 					</BalanceButton>
@@ -134,12 +133,10 @@ const TabContent: FC<TabContentProps> = ({
 					<StyledInput
 						type="number"
 						maxLength={12}
-						value={inputValue.isNaN() ? '0' : inputValue.toString()}
+						value={inputValue.toString()}
 						placeholder="0"
 						onChange={(e) => onInputChange(e.target.value)}
-						disabled={
-							!isWalletConnected || !transferableCollateral || transferableCollateral.isZero()
-						}
+						disabled={!isWalletConnected || !transferableCollateral || transferableCollateral.eq(0)}
 					/>
 				</InputBox>
 				<SettingsContainer>

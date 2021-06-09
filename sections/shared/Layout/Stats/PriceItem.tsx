@@ -9,9 +9,12 @@ import { NO_VALUE } from 'constants/placeholder';
 import CurrencyPrice from 'components/Currency/CurrencyPrice';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 
 import LineChart, { LineChartData } from './LineChart';
+import { useRecoilValue } from 'recoil';
+import { networkState } from 'store/wallet';
+import { NetworkId } from '@synthetixio/contracts-interface';
+import useSynthetixQueries from '@synthetixio/queries';
 import { formatPercent } from 'utils/formatters/number';
 
 type PriceItemProps = {
@@ -20,7 +23,9 @@ type PriceItemProps = {
 };
 
 const PriceItem: FC<PriceItemProps> = ({ currencyKey, data }) => {
-	const { selectedPriceCurrency, selectPriceCurrencyRate } = useSelectedPriceCurrency();
+	const networkId = useRecoilValue(networkState)?.id || NetworkId.Mainnet;
+	const { selectedPriceCurrency, selectPriceCurrencyRate } = useSelectedPriceCurrency(networkId);
+	const { useExchangeRatesQuery } = useSynthetixQueries({ networkId });
 	const exchangeRatesQuery = useExchangeRatesQuery();
 
 	const exchangeRates = exchangeRatesQuery.data ?? null;

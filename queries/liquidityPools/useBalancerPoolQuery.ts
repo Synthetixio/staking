@@ -1,4 +1,4 @@
-import { useQuery, QueryConfig } from 'react-query';
+import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
 import { ethers } from 'ethers';
 
@@ -26,7 +26,7 @@ const useBalancerPoolQuery = (
 	synth: Synths,
 	rewardsContractName: string,
 	balancerPoolTokenContract: BalancerPoolTokenContract,
-	options?: QueryConfig<LiquidityPoolData>
+	options?: UseQueryOptions<LiquidityPoolData>
 ) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);

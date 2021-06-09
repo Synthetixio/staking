@@ -1,4 +1,4 @@
-import { useQuery, QueryConfig } from 'react-query';
+import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
 import snxData from 'synthetix-data';
 
@@ -8,7 +8,7 @@ import { appReadyState } from 'store/app';
 import { networkState } from 'store/wallet';
 import { DailyStakingRecord } from './types';
 
-const useDailyBurnedQuery = (options?: QueryConfig<DailyStakingRecord[]>) => {
+const useDailyBurnedQuery = (options?: UseQueryOptions<DailyStakingRecord[]>) => {
 	const network = useRecoilValue(networkState);
 	const isAppReady = useRecoilValue(appReadyState);
 

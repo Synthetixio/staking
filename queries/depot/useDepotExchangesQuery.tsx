@@ -1,4 +1,4 @@
-import { useQuery, QueryConfig } from 'react-query';
+import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
 
 import snxData from 'synthetix-data';
@@ -20,7 +20,7 @@ type ClearDepositsTransaction = {
 	date: Date;
 };
 
-const useDepotExchangesQuery = (options?: QueryConfig<ClearDepositsTransaction[]>) => {
+const useDepotExchangesQuery = (options?: UseQueryOptions<ClearDepositsTransaction[]>) => {
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const network = useRecoilValue(networkState);

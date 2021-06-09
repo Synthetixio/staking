@@ -1,5 +1,5 @@
 import { FC, useMemo, useState } from 'react';
-import BigNumber from 'bignumber.js';
+import Wei, { wei } from '@synthetixio/wei';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
@@ -11,8 +11,7 @@ import { CryptoCurrency, Synths } from 'constants/currency';
 import media from 'styles/media';
 import useSNXLockedValueQuery from 'queries/staking/useSNXLockedValueQuery';
 import useFeePeriodTimeAndProgress from 'hooks/useFeePeriodTimeAndProgress';
-import { isWalletConnectedState } from 'store/wallet';
-import { zeroBN } from 'utils/formatters/number';
+import { isWalletConnectedState, networkState } from 'store/wallet';
 import useShortRewardsData from 'hooks/useShortRewardsData';
 import { TabButton, TabList } from 'components/Tab';
 import { CurrencyIconType } from 'components/Currency/CurrencyIcon/CurrencyIcon';
@@ -37,9 +36,9 @@ enum View {
 }
 
 type IncentivesProps = {
-	tradingRewards: BigNumber;
-	stakingRewards: BigNumber;
-	totalRewards: BigNumber;
+	tradingRewards: Wei;
+	stakingRewards: Wei;
+	totalRewards: Wei;
 	stakingAPR: number;
 	stakedAmount: number;
 	hasClaimed: boolean;
@@ -60,8 +59,9 @@ const Incentives: FC<IncentivesProps> = ({
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const [view, setView] = useState<View>(View.ACTIVE);
 
-	const lpData = useLPData();
-	const shortData = useShortRewardsData();
+	const networkId = useRecoilValue(networkState)!.id;
+	const lpData = useLPData(networkId);
+	const shortData = useShortRewardsData(networkId);
 	const useSNXLockedValue = useSNXLockedValueQuery();
 
 	const { nextFeePeriodStarts, currentFeePeriodStarted } = useFeePeriodTimeAndProgress();
@@ -304,13 +304,13 @@ const Incentives: FC<IncentivesProps> = ({
 				<LPTab
 					key={selectedTab}
 					userBalance={lpData[lp].data?.userBalance ?? 0}
-					userBalanceBN={lpData[lp].data?.userBalanceBN ?? zeroBN}
+					userBalanceBN={lpData[lp].data?.userBalanceBN ?? wei(0)}
 					stakedAsset={lp}
 					icon={currencyKey}
 					allowance={lpData[lp].data?.allowance ?? null}
 					tokenRewards={lpData[lp].data?.rewards ?? 0}
 					staked={lpData[lp].data?.staked ?? 0}
-					stakedBN={lpData[lp].data?.stakedBN ?? zeroBN}
+					stakedBN={lpData[lp].data?.stakedBN ?? wei(0)}
 					needsToSettle={lpData[lp].data?.needsToSettle}
 				/>
 			)
@@ -365,12 +365,12 @@ const Incentives: FC<IncentivesProps> = ({
 				{activeTab === Tab.iETH_LP && (
 					<LPTab
 						userBalance={lpData[Synths.iETH].data?.userBalance ?? 0}
-						userBalanceBN={lpData[Synths.iETH].data?.userBalanceBN ?? zeroBN}
+						userBalanceBN={lpData[Synths.iETH].data?.userBalanceBN ?? wei(0)}
 						stakedAsset={Synths.iETH}
 						allowance={lpData[Synths.iETH].data?.allowance ?? null}
 						tokenRewards={lpData[Synths.iETH].data?.rewards ?? 0}
 						staked={lpData[Synths.iETH].data?.staked ?? 0}
-						stakedBN={lpData[Synths.iETH].data?.stakedBN ?? zeroBN}
+						stakedBN={lpData[Synths.iETH].data?.stakedBN ?? wei(0)}
 						needsToSettle={lpData[Synths.iETH].data?.needsToSettle}
 					/>
 				)}
@@ -400,14 +400,14 @@ const Incentives: FC<IncentivesProps> = ({
 				{activeTab === Tab.DHT_LP && (
 					<LPTab
 						userBalance={lpData[LP.UNISWAP_DHT].data?.userBalance ?? 0}
-						userBalanceBN={lpData[LP.UNISWAP_DHT].data?.userBalanceBN ?? zeroBN}
+						userBalanceBN={lpData[LP.UNISWAP_DHT].data?.userBalanceBN ?? wei(0)}
 						stakedAsset={LP.UNISWAP_DHT}
 						icon={CryptoCurrency.DHT}
 						type={CurrencyIconType.TOKEN}
 						allowance={lpData[LP.UNISWAP_DHT].data?.allowance ?? null}
 						tokenRewards={lpData[LP.UNISWAP_DHT].data?.rewards ?? 0}
 						staked={lpData[LP.UNISWAP_DHT].data?.staked ?? 0}
-						stakedBN={lpData[LP.UNISWAP_DHT].data?.stakedBN ?? zeroBN}
+						stakedBN={lpData[LP.UNISWAP_DHT].data?.stakedBN ?? wei(0)}
 						needsToSettle={lpData[LP.UNISWAP_DHT].data?.needsToSettle}
 						secondTokenRate={lpData[LP.UNISWAP_DHT].data?.price ?? 0}
 					/>
@@ -415,12 +415,12 @@ const Incentives: FC<IncentivesProps> = ({
 				{activeTab === Tab.iBTC_LP && (
 					<LPTab
 						userBalance={lpData[Synths.iBTC].data?.userBalance ?? 0}
-						userBalanceBN={lpData[Synths.iBTC].data?.userBalanceBN ?? zeroBN}
+						userBalanceBN={lpData[Synths.iBTC].data?.userBalanceBN ?? wei(0)}
 						stakedAsset={Synths.iBTC}
 						allowance={lpData[Synths.iBTC].data?.allowance ?? null}
 						tokenRewards={lpData[Synths.iBTC].data?.rewards ?? 0}
 						staked={lpData[Synths.iBTC].data?.staked ?? 0}
-						stakedBN={lpData[Synths.iBTC].data?.stakedBN ?? zeroBN}
+						stakedBN={lpData[Synths.iBTC].data?.stakedBN ?? wei(0)}
 						needsToSettle={lpData[Synths.iBTC].data?.needsToSettle}
 					/>
 				)}

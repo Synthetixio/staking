@@ -79,7 +79,7 @@ const TransferModal: FC<TransferModalProps> = ({
 			try {
 				setGasEstimateError(null);
 				if (!isAddress(walletAddress)) throw new Error(t('synths.transfer.error.invalid-address'));
-				if (toBigNumber(amount).isGreaterThan(currentAsset.balance))
+				if (wei(amount).isGreaterThan(currentAsset.balance))
 					throw new Error(t('synths.transfer.error.insufficient-balance'));
 
 				const transferFunction = getTransferFunctionForAsset({ isEstimate: true });

@@ -1,19 +1,18 @@
-import { QueryConfig, useQuery } from 'react-query';
+import { UseQueryOptions, useQuery } from 'react-query';
 import synthetix from 'lib/synthetix';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import { useRecoilValue } from 'recoil';
 import { isWalletConnectedState, networkState, walletAddressState } from 'store/wallet';
 import { appReadyState } from 'store/app';
-import BigNumber from 'bignumber.js';
-import { toBigNumber } from 'utils/formatters/number';
+import Wei, { wei } from '@synthetixio/wei';
 
 type AvailableFees = {
-	tradingRewards: BigNumber;
-	stakingRewards: BigNumber;
+	tradingRewards: Wei;
+	stakingRewards: Wei;
 };
 
-const useClaimableRewards = (options?: QueryConfig<AvailableFees>) => {
+const useClaimableRewards = (options?: UseQueryOptions<AvailableFees>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
@@ -28,8 +27,8 @@ const useClaimableRewards = (options?: QueryConfig<AvailableFees>) => {
 			} = synthetix.js!;
 			const feesAvailable = await FeePool.feesAvailable(walletAddress);
 			return {
-				tradingRewards: toBigNumber(utils.formatEther(feesAvailable[0])),
-				stakingRewards: toBigNumber(utils.formatEther(feesAvailable[1])),
+				tradingRewards: wei(utils.formatEther(feesAvailable[0])),
+				stakingRewards: wei(utils.formatEther(feesAvailable[1])),
 			};
 		},
 		{

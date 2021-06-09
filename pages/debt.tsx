@@ -31,9 +31,7 @@ const DashboardPage: FC = () => {
 		: zeroBN;
 
 	const dataIsLoading = historicalDebt?.isLoading ?? false;
-	const issuedDebt = dataIsLoading
-		? toBigNumber(0)
-		: toBigNumber(last(historicalDebt.data)?.issuanceDebt ?? 0);
+	const issuedDebt = dataIsLoading ? wei(0) : wei(last(historicalDebt.data)?.issuanceDebt ?? 0);
 
 	// header title
 	useEffect(() => {

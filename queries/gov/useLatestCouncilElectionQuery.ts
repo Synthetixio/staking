@@ -1,4 +1,4 @@
-import { useQuery, QueryConfig } from 'react-query';
+import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
 import QUERY_KEYS from 'constants/queryKeys';
 import { snapshotEndpoint, SPACE_KEY } from 'constants/snapshot';
@@ -7,7 +7,7 @@ import { isL2State, networkState, walletAddressState } from 'store/wallet';
 import request, { gql } from 'graphql-request';
 import { Proposal } from './types';
 
-const useLatestCouncilElectionQuery = (options?: QueryConfig<Proposal>) => {
+const useLatestCouncilElectionQuery = (options?: UseQueryOptions<Proposal>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const network = useRecoilValue(networkState);

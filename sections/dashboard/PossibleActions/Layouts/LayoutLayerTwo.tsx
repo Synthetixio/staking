@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import ROUTES from 'constants/routes';
 import { EXTERNAL_LINKS } from 'constants/links';
 
-import { formatPercent, toBigNumber } from 'utils/formatters/number';
+import { formatPercent } from 'utils/formatters/number';
 
 import KwentaIcon from 'assets/svg/app/kwenta.svg';
 import MintIcon from 'assets/svg/app/mint.svg';
@@ -23,15 +23,19 @@ import useUserStakingData from 'hooks/useUserStakingData';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 
 import { ActionsContainer as Container } from './common-styles';
+import { NetworkId } from '../../../../../js-monorepo/packages/queries/node_modules/@synthetixio/contracts-interface/build/node';
+import { wei } from '@synthetixio/wei';
 
 const LayoutLayerTwo: FC = () => {
 	const { t } = useTranslation();
 
-	const { stakingRewards, tradingRewards } = useUserStakingData();
-	const { currentCRatio, targetCRatio } = useStakingCalculations();
+	const networkId = NetworkId['Mainnet-Ovm'];
+
+	const { stakingRewards, tradingRewards } = useUserStakingData(networkId);
+	const { currentCRatio, targetCRatio } = useStakingCalculations(networkId);
 
 	const gridItems: GridBoxProps[] = useMemo(() => {
-		const aboveTargetCRatio = currentCRatio.isLessThanOrEqualTo(targetCRatio);
+		const aboveTargetCRatio = currentCRatio.lte(targetCRatio);
 		return [
 			{
 				icon: (
@@ -46,11 +50,11 @@ const LayoutLayerTwo: FC = () => {
 				title: t('dashboard.actions.claim.title'),
 				copy: t('dashboard.actions.claim.copy'),
 				tooltip:
-					stakingRewards.isZero() && tradingRewards.isZero()
+					stakingRewards.eq(0) && tradingRewards.eq(0)
 						? t('dashboard.actions.claim.tooltip')
 						: undefined,
 				link: ROUTES.Earn.Claim,
-				isDisabled: stakingRewards.isZero() && tradingRewards.isZero(),
+				isDisabled: stakingRewards.eq(0) && tradingRewards.eq(0),
 			},
 			{
 				icon: (
@@ -60,7 +64,7 @@ const LayoutLayerTwo: FC = () => {
 				),
 				title: !aboveTargetCRatio
 					? t('dashboard.actions.burn.title', {
-							targetCRatio: formatPercent(toBigNumber(1).div(targetCRatio), { minDecimals: 0 }),
+							targetCRatio: formatPercent(wei(1).div(targetCRatio), { minDecimals: 0 }),
 					  })
 					: t('dashboard.actions.mint.title'),
 				copy: !aboveTargetCRatio

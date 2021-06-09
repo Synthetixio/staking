@@ -1,16 +1,16 @@
 import { FC } from 'react';
 import styled from 'styled-components';
-import { BigNumber } from 'bignumber.js';
 
 import media from 'styles/media';
 import ProgressBar from 'components/ProgressBar';
 import { ProgressBarType } from 'components/ProgressBar/ProgressBar';
 import { FlexDivCol } from 'styles/common';
 import { formatPercent } from 'utils/formatters/number';
+import Wei from '@synthetixio/wei';
 
 type SynthHoldingProps = {
-	usdBalance: BigNumber;
-	totalUSDBalance: BigNumber;
+	usdBalance: Wei;
+	totalUSDBalance: Wei;
 	progressBarVariant?: ProgressBarType;
 	showProgressBar?: boolean;
 };
@@ -21,7 +21,7 @@ const SynthHolding: FC<SynthHoldingProps> = ({
 	progressBarVariant,
 	showProgressBar = true,
 }) => {
-	const percent = usdBalance.dividedBy(totalUSDBalance);
+	const percent = usdBalance.div(totalUSDBalance);
 
 	return (
 		<Container>

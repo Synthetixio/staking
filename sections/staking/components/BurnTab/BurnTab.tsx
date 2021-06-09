@@ -8,16 +8,15 @@ import { normalizedGasPrice } from 'utils/network';
 import { CryptoCurrency, Synths } from 'constants/currency';
 import { TabContainer } from '../common';
 
-import { isWalletConnectedState, walletAddressState } from 'store/wallet';
+import { isWalletConnectedState, networkState, walletAddressState } from 'store/wallet';
 import synthetix from 'lib/synthetix';
 import BurnTiles from '../BurnTiles';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 import StakingInput from '../StakingInput';
 import { Transaction } from 'constants/network';
-import { formatCurrency, toBigNumber, zeroBN } from 'utils/formatters/number';
+import { formatCurrency } from 'utils/formatters/number';
 import { amountToBurnState, BurnActionType, burnTypeState } from 'store/staking';
 import { addSeconds, differenceInSeconds } from 'date-fns';
-import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
 import { appReadyState } from 'store/app';
 import { GasLimitEstimate } from 'constants/network';
 
@@ -26,13 +25,15 @@ import Connector from 'containers/Connector';
 import useClearDebtCalculations from 'sections/staking/hooks/useClearDebtCalculations';
 import { useTranslation } from 'react-i18next';
 import { toFutureDate } from 'utils/formatters/date';
-import useETHBalanceQuery from 'queries/walletBalances/useETHBalanceQuery';
+import { wei } from '@synthetixio/wei';
 
 const BurnTab: React.FC = () => {
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const [amountToBurn, onBurnChange] = useRecoilState(amountToBurnState);
 	const [burnType, onBurnTypeChange] = useRecoilState(burnTypeState);
-	const { percentageTargetCRatio, debtBalance, issuableSynths } = useStakingCalculations();
+	const networkId = useRecoilValue(networkState)!.id;
+
+	const { percentageTargetCRatio, debtBalance, issuableSynths } = useStakingCalculations(networkId);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const isAppReady = useRecoilValue(appReadyState);
 	const { signer } = Connector.useContainer();
@@ -57,7 +58,7 @@ const BurnTab: React.FC = () => {
 
 	const sUSDBalance = synthBalances?.balancesMap.sUSD
 		? synthBalances.balancesMap.sUSD.balance
-		: toBigNumber(0);
+		: wei(0);
 
 	const {
 		needToBuy,
@@ -134,21 +135,16 @@ const BurnTab: React.FC = () => {
 						utils: { parseEther },
 					} = synthetix.js!;
 
-					const maxBurnAmount = debtBalance.isGreaterThan(sUSDBalance)
-						? toBigNumber(sUSDBalance)
-						: debtBalance;
+					const maxBurnAmount = debtBalance.gt(sUSDBalance) ? wei(sUSDBalance) : debtBalance;
 
-					if (debtBalance.isZero()) throw new Error(t('staking.actions.burn.action.error.no-debt'));
+					if (debtBalance.eq(0)) throw new Error(t('staking.actions.burn.action.error.no-debt'));
 					if (
-						(Number(amountToBurn) > sUSDBalance.toNumber() || maxBurnAmount.isZero()) &&
+						(Number(amountToBurn) > sUSDBalance.toNumber() || maxBurnAmount.eq(0)) &&
 						burnType !== BurnActionType.CLEAR
 					)
 						throw new Error(t('staking.actions.burn.action.error.insufficient'));
 
-					if (
-						burnType === BurnActionType.CLEAR &&
-						toBigNumber(quoteAmount).isGreaterThan(ethBalance)
-					) {
+					if (burnType === BurnActionType.CLEAR && wei(quoteAmount).gt(ethBalance)) {
 						throw new Error(t('staking.actions.burn.action.error.insufficient-eth-1inch'));
 					}
 
@@ -323,13 +319,9 @@ const BurnTab: React.FC = () => {
 		let sUSDNeededToBurn;
 
 		/* If a user has more sUSD than the debt balance, the max burn amount is their debt balance, else it is just the balance they have */
-		const maxBurnAmount = debtBalance.isGreaterThan(sUSDBalance)
-			? toBigNumber(sUSDBalance)
-			: debtBalance;
+		const maxBurnAmount = debtBalance.gt(sUSDBalance) ? wei(sUSDBalance) : debtBalance;
 
-		const burnAmountToFixCRatio = toBigNumber(
-			Math.max(debtBalance.minus(issuableSynths).toNumber(), 0)
-		);
+		const burnAmountToFixCRatio = wei(Math.max(debtBalance.sub(issuableSynths).toNumber(), 0));
 
 		switch (burnType) {
 			case BurnActionType.MAX:
@@ -341,17 +333,17 @@ const BurnTab: React.FC = () => {
 				isLocked = true;
 				break;
 			case BurnActionType.TARGET:
-				const calculatedTargetBurn = Math.max(debtBalance.minus(issuableSynths).toNumber(), 0);
+				const calculatedTargetBurn = Math.max(debtBalance.sub(issuableSynths).toNumber(), 0);
 				onBurnChange(calculatedTargetBurn.toString());
 				handleSubmit = () => {
 					handleBurn(true);
 				};
-				inputValue = toBigNumber(calculatedTargetBurn);
+				inputValue = wei(calculatedTargetBurn);
 				isLocked = true;
 				break;
 			case BurnActionType.CUSTOM:
 				handleSubmit = () => handleBurn(false);
-				inputValue = toBigNumber(amountToBurn);
+				inputValue = wei(amountToBurn);
 				isLocked = false;
 				break;
 			case BurnActionType.CLEAR:
@@ -366,7 +358,7 @@ const BurnTab: React.FC = () => {
 				}
 				onBurnChange(debtBalanceWithBuffer.toString());
 				handleSubmit = () => handleClear();
-				inputValue = toBigNumber(debtBalanceWithBuffer);
+				inputValue = wei(debtBalanceWithBuffer);
 				isLocked = true;
 				if (quoteAmount) {
 					etherNeededToBuy = formatCurrency(CryptoCurrency.ETH, quoteAmount, {

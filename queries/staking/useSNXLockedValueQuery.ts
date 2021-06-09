@@ -1,4 +1,4 @@
-import { useQuery, QueryConfig } from 'react-query';
+import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
 
 import snxData from 'synthetix-data';
@@ -9,7 +9,7 @@ import { networkState } from 'store/wallet';
 import synthetix from 'lib/synthetix';
 import { getHolders } from './helpers';
 
-const useSNXLockedValueQuery = (options?: QueryConfig<number>) => {
+const useSNXLockedValueQuery = (options?: UseQueryOptions<number>) => {
 	const network = useRecoilValue(networkState);
 
 	return useQuery<number>(

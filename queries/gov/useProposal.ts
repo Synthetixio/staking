@@ -1,4 +1,4 @@
-import { useQuery, QueryConfig } from 'react-query';
+import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
 
 import QUERY_KEYS from 'constants/queryKeys';
@@ -26,7 +26,11 @@ export type ProposalResults = {
 	voteList: any[];
 };
 
-const useProposal = (spaceKey: SPACE_KEY, hash: string, options?: QueryConfig<ProposalResults>) => {
+const useProposal = (
+	spaceKey: SPACE_KEY,
+	hash: string,
+	options?: UseQueryOptions<ProposalResults>
+) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const { provider } = Connector.useContainer();
@@ -207,7 +211,7 @@ const useProposal = (spaceKey: SPACE_KEY, hash: string, options?: QueryConfig<Pr
 			return results;
 		},
 		{
-			enabled: isAppReady && spaceKey,
+			enabled: isAppReady && !!spaceKey,
 			refetchInterval: false,
 			refetchOnWindowFocus: false,
 			refetchOnMount: false,

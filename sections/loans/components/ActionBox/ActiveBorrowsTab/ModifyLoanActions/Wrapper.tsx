@@ -1,8 +1,6 @@
 import { useState, useMemo, useEffect, FC } from 'react';
-import { ethers } from 'ethers';
 import { isAfter, addSeconds, fromUnixTime, differenceInSeconds } from 'date-fns';
 import { useRouter } from 'next/router';
-import Big from 'bignumber.js';
 import styled from 'styled-components';
 import { Trans, useTranslation } from 'react-i18next';
 import Button from 'components/Button';
@@ -17,7 +15,6 @@ import { Svg } from 'react-optimized-image';
 import NavigationBack from 'assets/svg/app/navigation-back.svg';
 import GasSelector from 'components/GasSelector';
 import Loans from 'containers/Loans';
-import { toBigNumber, formatUnits } from 'utils/formatters/number';
 import {
 	FormContainer,
 	InputsContainer,
@@ -40,6 +37,7 @@ import AccruedInterest from 'sections/loans/components/ActionBox/components/Accr
 import CRatio from 'sections/loans/components/ActionBox/components/LoanCRatio';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import synthetix from 'lib/synthetix';
+import Wei, { wei } from '@synthetixio/wei';
 
 type WrapperProps = {
 	getTxData: (gas: Record<string, number>) => any[] | null;
@@ -114,7 +112,7 @@ const Wrapper: FC<WrapperProps> = ({
 	const [gasLimit, setGasLimitEstimate] = useState<number | null>(null);
 
 	const minCRatio = useMemo(
-		() => minCRatios.get(loanTypeIsETH ? LOAN_TYPE_ETH : LOAN_TYPE_ERC20) || toBigNumber(0),
+		() => minCRatios.get(loanTypeIsETH ? LOAN_TYPE_ETH : LOAN_TYPE_ERC20) || wei(0),
 		[minCRatios, loanTypeIsETH]
 	);
 
@@ -146,9 +144,7 @@ const Wrapper: FC<WrapperProps> = ({
 					return stopTimer();
 				}
 				if (isMounted) {
-					setWaitETA(
-						toHumanizedDuration(toBigNumber(differenceInSeconds(nextInteractionDate, now)))
-					);
+					setWaitETA(toHumanizedDuration(wei(differenceInSeconds(nextInteractionDate, now))));
 				}
 			}, 1000);
 
@@ -270,26 +266,14 @@ const Wrapper: FC<WrapperProps> = ({
 							<TxModalItem>
 								<TxModalItemTitle>{t(leftColLabel)}</TxModalItemTitle>
 								<TxModalItemText>
-									{!leftColAmount
-										? null
-										: formatUnits(
-												toBigNumber(ethers.utils.parseEther(leftColAmount).toString()),
-												18,
-												2
-										  )}{' '}
-									{leftColAssetName}
+									{wei(leftColAmount || 0).toString(2)} {leftColAssetName}
 								</TxModalItemText>
 							</TxModalItem>
 							<TxModalItemSeperator />
 							<TxModalItem>
 								<TxModalItemTitle>{t(rightColLabel)}</TxModalItemTitle>
 								<TxModalItemText>
-									{formatUnits(
-										toBigNumber(ethers.utils.parseEther(rightColAmount).toString()),
-										18,
-										2
-									)}{' '}
-									{rightColAssetName}
+									{wei(rightColAmount).toString(2)} {rightColAssetName}
 								</TxModalItemText>
 							</TxModalItem>
 						</TxModalContent>
@@ -302,8 +286,8 @@ const Wrapper: FC<WrapperProps> = ({
 
 function noop() {}
 
-function toHumanizedDuration(ms: Big) {
-	const dur: Record<string, Big> = {};
+function toHumanizedDuration(ms: Wei) {
+	const dur: Record<string, Wei> = {};
 	const units: Array<any> = [
 		{ label: 's', mod: 60 },
 		{ label: 'm', mod: 60 },
@@ -312,8 +296,8 @@ function toHumanizedDuration(ms: Big) {
 		// {label: "w", mod: 7},
 	];
 	units.forEach((u) => {
-		const z = (dur[u.label] = ms.mod(u.mod));
-		ms = ms.minus(z).dividedBy(u.mod);
+		const z = (dur[u.label] = wei(ms.toBig().mod(u.mod)));
+		ms = ms.sub(z).div(u.mod);
 	});
 	return units
 		.slice()

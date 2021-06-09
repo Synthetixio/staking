@@ -2,10 +2,6 @@ import { FC, useMemo, useState } from 'react';
 import { Svg } from 'react-optimized-image';
 import styled from 'styled-components';
 
-import { toBigNumber } from 'utils/formatters/number';
-
-import useSNX24hrPricesQuery from 'queries/rates/useSNX24hrPricesQuery';
-import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
 import useCryptoBalances from 'hooks/useCryptoBalances';
 
 import { MOBILE_BODY_PADDING } from 'constants/ui';
@@ -22,8 +18,20 @@ import CRatioBarStats from 'sections/shared/Layout/Stats/CRatioBarStats';
 
 import CollapseIcon from 'assets/svg/app/chevron-collapse.svg';
 import ExpandIcon from 'assets/svg/app/chevron-expand.svg';
+import { useRecoilValue } from 'recoil';
+import { networkState } from 'store/wallet';
+import { NetworkId } from '@synthetixio/contracts-interface';
+import useSynthetixQueries from '@synthetixio/queries';
 
 const StatsSection: FC = ({ children }) => {
+	const networkId = useRecoilValue(networkState)?.id ?? NetworkId.Mainnet;
+	const {
+		useSynthsBalancesQuery,
+		useSNX24hrPricesQuery,
+		useCryptoBalances,
+		useSynthsBalancesQuery,
+	} = useSynthetixQueries({ networkId });
+
 	const SNX24hrPricesQuery = useSNX24hrPricesQuery();
 	const cryptoBalances = useCryptoBalances();
 	const synthsBalancesQuery = useSynthsBalancesQuery();
@@ -31,14 +39,13 @@ const StatsSection: FC = ({ children }) => {
 
 	const snxBalance =
 		cryptoBalances?.balances?.find((balance) => balance.currencyKey === CryptoCurrency.SNX)
-			?.balance ?? toBigNumber(0);
+			?.balance ?? wei(0);
 
-	const sUSDBalance =
-		synthsBalancesQuery?.data?.balancesMap[Synths.sUSD]?.balance ?? toBigNumber(0);
+	const sUSDBalance = synthsBalancesQuery?.data?.balancesMap[Synths.sUSD]?.balance ?? wei(0);
 
 	const snxPriceChartData = useMemo(() => {
 		return (SNX24hrPricesQuery?.data ?? [])
-			.map((dataPoint) => ({ value: dataPoint.averagePrice }))
+			.map((dataPoint: { averagePrice: any }) => ({ value: dataPoint.averagePrice }))
 			.slice()
 			.reverse();
 	}, [SNX24hrPricesQuery?.data]);

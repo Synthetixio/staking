@@ -1,4 +1,4 @@
-import { useQuery, QueryConfig } from 'react-query';
+import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
 
 import synthetix from 'lib/synthetix';
@@ -26,7 +26,7 @@ type Schedule = Array<
 	| []
 >;
 
-const useTokenSaleEscrowQuery = (options?: QueryConfig<TokenSaleEscrow | null>) => {
+const useTokenSaleEscrowQuery = (options?: UseQueryOptions<TokenSaleEscrow | null>) => {
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const network = useRecoilValue(networkState);

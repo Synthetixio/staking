@@ -1,4 +1,4 @@
-import { useQuery, QueryConfig } from 'react-query';
+import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
 
 import synthetix from 'lib/synthetix';
@@ -14,7 +14,7 @@ import { Synths } from 'constants/currency';
 
 import { LiquidityPoolData } from './types';
 
-const useIETHPoolQuery_1 = (options?: QueryConfig<LiquidityPoolData>) => {
+const useIETHPoolQuery_1 = (options?: UseQueryOptions<LiquidityPoolData>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);

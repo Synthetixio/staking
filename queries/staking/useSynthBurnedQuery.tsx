@@ -1,4 +1,4 @@
-import { useQuery, QueryConfig } from 'react-query';
+import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
 
 import snxData from 'synthetix-data';
@@ -8,7 +8,7 @@ import QUERY_KEYS from 'constants/queryKeys';
 import { isWalletConnectedState, networkState, walletAddressState } from 'store/wallet';
 import { HistoricalStakingTransaction } from './types';
 
-const useSynthBurnedQuery = (options?: QueryConfig<HistoricalStakingTransaction[]>) => {
+const useSynthBurnedQuery = (options?: UseQueryOptions<HistoricalStakingTransaction[]>) => {
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const network = useRecoilValue(networkState);

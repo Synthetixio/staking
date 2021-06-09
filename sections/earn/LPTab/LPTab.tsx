@@ -3,7 +3,7 @@ import { useTranslation, Trans } from 'react-i18next';
 import { ethers } from 'ethers';
 import { Svg } from 'react-optimized-image';
 import { useRecoilValue } from 'recoil';
-import BigNumber from 'bignumber.js';
+import Wei from '@synthetixio/wei';
 import { useRouter } from 'next/router';
 
 import { appReadyState } from 'store/app';
@@ -19,7 +19,6 @@ import {
 import media from 'styles/media';
 import { CurrencyKey } from 'constants/currency';
 import Etherscan from 'containers/BlockExplorer';
-import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import PendingConfirmation from 'assets/svg/app/pending-confirmation.svg';
 import Success from 'assets/svg/app/success.svg';
 import ExpandIcon from 'assets/svg/app/expand.svg';
@@ -61,6 +60,8 @@ import { LP, lpToSynthTranslationKey } from 'sections/earn/types';
 import styled from 'styled-components';
 import { CurrencyIconType } from 'components/Currency/CurrencyIcon/CurrencyIcon';
 import { MobileOnlyView } from 'components/Media';
+import useSynthetixQueries from '@synthetixio/queries';
+import { networkState } from 'store/wallet';
 
 type DualRewards = {
 	a: number;
@@ -74,9 +75,9 @@ type LPTabProps = {
 	tokenRewards: number | DualRewards;
 	allowance: number | null;
 	userBalance: number;
-	userBalanceBN: BigNumber;
+	userBalanceBN: Wei;
 	staked: number;
-	stakedBN: BigNumber;
+	stakedBN: Wei;
 	needsToSettle?: boolean;
 	secondTokenRate?: number;
 };
@@ -115,6 +116,9 @@ const LPTab: FC<LPTabProps> = ({
 		blockExplorerInstance != null && claimTxHash != null
 			? blockExplorerInstance.txLink(claimTxHash)
 			: undefined;
+
+	const networkId = useRecoilValue(networkState)!.id;
+	const { useExchangeRatesQuery } = useSynthetixQueries({ networkId });
 
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const SNXRate = exchangeRatesQuery.data?.SNX ?? 0;

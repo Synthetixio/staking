@@ -58,7 +58,7 @@ const Withdraw: React.FC<WithdrawProps> = ({ loan, loanId, loanTypeIsETH, loanCo
 
 	const getTxData = useCallback(
 		(gas: Record<string, number>) => {
-			if (!(loanContract && !withdrawalAmount.isZero())) return null;
+			if (!(loanContract && !withdrawalAmount.eq(0))) return null;
 			return [loanContract, 'withdraw', [loanId, withdrawalAmount, gas]];
 		},
 		[loanContract, loanId, withdrawalAmount]

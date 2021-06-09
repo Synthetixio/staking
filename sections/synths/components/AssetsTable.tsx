@@ -1,6 +1,6 @@
 import { FC, ReactNode } from 'react';
 import styled from 'styled-components';
-import BigNumber from 'bignumber.js';
+import Wei from '@synthetixio/wei';
 import { useRecoilValue } from 'recoil';
 
 import media from 'styles/media';
@@ -15,7 +15,7 @@ import MobileAssetsTable from './MobileAssetsTable';
 type AssetsTableProps = {
 	title: ReactNode;
 	assets: CryptoBalance[];
-	totalValue: BigNumber;
+	totalValue: Wei;
 	isLoading: boolean;
 	isLoaded: boolean;
 	showConvert: boolean;

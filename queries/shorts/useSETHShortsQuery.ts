@@ -1,4 +1,4 @@
-import { useQuery, QueryConfig } from 'react-query';
+import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
 
 import synthetix from 'lib/synthetix';
@@ -13,7 +13,7 @@ import {
 import { Synths } from 'constants/currency';
 import { ShortRewardsData } from './types';
 
-const useSETHShortsQuery = (options?: QueryConfig<ShortRewardsData>) => {
+const useSETHShortsQuery = (options?: UseQueryOptions<ShortRewardsData>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);

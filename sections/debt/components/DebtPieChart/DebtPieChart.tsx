@@ -1,14 +1,13 @@
 import { FC, useMemo } from 'react';
 import styled from 'styled-components';
 
-import useSynthsTotalSupplyQuery, {
-	SynthTotalSupply,
-	SynthsTotalSupplyData,
-} from 'queries/synths/useSynthsTotalSupplyQuery';
-
 import PieChart from 'components/PieChart';
 import DebtPoolTable from '../DebtPoolTable';
 import colors from 'styles/theme/colors';
+import { useRecoilValue } from 'recoil';
+import { networkState } from 'store/wallet';
+import { NetworkId } from '@synthetixio/contracts-interface';
+import useSynthetixQueries from '@synthetixio/queries';
 
 const MIN_PERCENT_FOR_PIE_CHART = 0.03;
 
@@ -47,6 +46,9 @@ type DebtPieChartProps = {
 };
 
 const SynthsPieChart: FC<DebtPieChartProps> = () => {
+	const networkId = useRecoilValue(networkState)?.id || NetworkId.Mainnet;
+	const { useSynthsTotalSupplyQuery } = useSynthetixQueries({ networkId });
+
 	const synthsTotalSupplyQuery = useSynthsTotalSupplyQuery();
 	const totalSupply = synthsTotalSupplyQuery.isSuccess ? synthsTotalSupplyQuery.data : undefined;
 
@@ -65,7 +67,7 @@ const SynthsPieChart: FC<DebtPieChartProps> = () => {
 			const remainingSupply = { ...remaining[0] };
 			remainingSupply.name = 'Other';
 			for (const data of remaining.slice(1)) {
-				remainingSupply.value = remainingSupply.value.plus(data.value);
+				remainingSupply.value = remainingSupply.value.add(data.value);
 			}
 			remainingSupply.poolProportion = remainingSupply.value.div(totalSupply?.totalValue ?? 0);
 			topNSynths.push(remainingSupply);

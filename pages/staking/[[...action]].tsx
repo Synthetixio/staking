@@ -40,9 +40,7 @@ const StakingPage = () => {
 				<StakedValue
 					title={t('common.stat-box.staked-value')}
 					value={formatFiatCurrency(
-						getPriceAtCurrentRate(
-							stakedCollateralValue.isNaN() ? toBigNumber(0) : stakedCollateralValue
-						),
+						getPriceAtCurrentRate(stakedCollateralValue.isNaN() ? wei(0) : stakedCollateralValue),
 						{
 							sign: selectedPriceCurrency.sign,
 						}
@@ -63,7 +61,7 @@ const StakingPage = () => {
 				<ActiveDebt
 					title={t('common.stat-box.active-debt')}
 					value={formatFiatCurrency(
-						getPriceAtCurrentRate(debtBalance.isNaN() ? toBigNumber(0) : debtBalance),
+						getPriceAtCurrentRate(debtBalance.isNaN() ? wei(0) : debtBalance),
 						{
 							sign: selectedPriceCurrency.sign,
 						}

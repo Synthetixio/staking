@@ -10,15 +10,15 @@ import useGetWithdrawalsDataQuery from 'queries/withdrawals/useGetWithdrawalsDat
 import synthetix from 'lib/synthetix';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import { appReadyState } from 'store/app';
-import { walletAddressState } from 'store/wallet';
+import { networkState, walletAddressState } from 'store/wallet';
 
 import TabContent from './TabContent';
 import { normalizedGasPrice } from 'utils/network';
-import BigNumber from 'bignumber.js';
-import { toBigNumber } from 'utils/formatters/number';
+import Wei, { wei } from '@synthetixio/wei';
 
 const WithdrawTab = () => {
-	const { transferableCollateral } = useStakingCalculations();
+	const networkId = useRecoilValue(networkState)!.id;
+	const { transferableCollateral } = useStakingCalculations(networkId);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const isAppReady = useRecoilValue(appReadyState);
 	const { monitorTransaction } = TransactionNotifier.useContainer();
@@ -31,11 +31,11 @@ const WithdrawTab = () => {
 	const [transactionState, setTransactionState] = useState<Transaction>(Transaction.PRESUBMIT);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 	const [txHash, setTxHash] = useState<string | null>(null);
-	const [amountToWithdraw, setAmountToWithdraw] = useState<BigNumber>(toBigNumber(0));
+	const [amountToWithdraw, setAmountToWithdraw] = useState<Wei>(wei(0));
 
 	useEffect(() => {
 		const getGasLimitEstimate = async () => {
-			if (isAppReady && walletAddress && !amountToWithdraw.isZero() && !amountToWithdraw.isNaN()) {
+			if (isAppReady && walletAddress && !amountToWithdraw.eq(0)) {
 				try {
 					setGasEstimateError(null);
 					const {
@@ -97,7 +97,7 @@ const WithdrawTab = () => {
 		<StyledTabContainer>
 			<TabContent
 				inputValue={amountToWithdraw}
-				onInputChange={(value: number) => setAmountToWithdraw(toBigNumber(value.toString()))}
+				onInputChange={(value: number) => setAmountToWithdraw(wei(value.toString()))}
 				transferableCollateral={transferableCollateral}
 				onSubmit={handleDeposit}
 				transactionError={depositTxError}

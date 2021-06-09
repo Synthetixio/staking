@@ -6,7 +6,6 @@ import { useTranslation } from 'react-i18next';
 import { Transaction, GasLimitEstimate } from 'constants/network';
 import UIContainer from 'containers/UI';
 import { normalizedGasPrice } from 'utils/network';
-import { toBigNumber } from 'utils/formatters/number';
 
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 import { TabContainer } from '../common';
@@ -59,7 +58,7 @@ const MintTab: React.FC = () => {
 					} = synthetix.js!;
 					let gasEstimate;
 
-					if (unstakedCollateral.isZero())
+					if (unstakedCollateral.eq(0))
 						throw new Error(t('staking.actions.mint.action.error.insufficient'));
 
 					if (amountToMint.length > 0 && !mintMax) {
@@ -162,7 +161,7 @@ const MintTab: React.FC = () => {
 				break;
 			case MintActionType.CUSTOM:
 				onSubmit = () => handleStake(false);
-				inputValue = toBigNumber(amountToMint);
+				inputValue = wei(amountToMint);
 				isLocked = false;
 				setMintMax(false);
 				break;

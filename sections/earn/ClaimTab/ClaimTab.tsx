@@ -2,13 +2,13 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { ethers } from 'ethers';
-import BigNumber from 'bignumber.js';
+import Wei from '@synthetixio/wei';
 import { Svg } from 'react-optimized-image';
 import { useRouter } from 'next/router';
 import { useRecoilValue } from 'recoil';
 
 import { appReadyState } from 'store/app';
-import { isWalletConnectedState, isL2State } from 'store/wallet';
+import { isWalletConnectedState, isL2State, networkState } from 'store/wallet';
 import ROUTES from 'constants/routes';
 import { ExternalLink, FlexDiv, GlowingCircle, IconButton, FlexDivJustifyEnd } from 'styles/common';
 import media from 'styles/media';
@@ -72,17 +72,18 @@ import {
 import { MobileOnlyView } from 'components/Media';
 
 type ClaimTabProps = {
-	tradingRewards: BigNumber;
-	stakingRewards: BigNumber;
-	totalRewards: BigNumber;
+	tradingRewards: Wei;
+	stakingRewards: Wei;
+	totalRewards: Wei;
 };
 
 const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, totalRewards }) => {
 	const { t } = useTranslation();
+	const networkId = useRecoilValue(networkState)!.id;
 	const claimed = useClaimedStatus();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const { blockExplorerInstance } = Etherscan.useContainer();
-	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
+	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency(networkId);
 	const [gasLimitEstimate, setGasLimitEstimate] = useState<GasLimitEstimate>(null);
 	const [gasPrice, setGasPrice] = useState<number>(0);
 	const [error, setError] = useState<string | null>(null);

@@ -1,5 +1,5 @@
 import { NetworkId } from '@synthetixio/contracts-interface';
-import { NumericValue } from 'utils/formatters/number';
+import { WeiSource } from '@synthetixio/wei';
 import { SPACE_KEY } from 'constants/snapshot';
 import { CurrencyKey, Synths } from './currency';
 import { Period } from './period';
@@ -55,96 +55,12 @@ export const QUERY_KEYS = {
 		],
 		SNXLockedValue: (networkId: NetworkId) => ['staking', 'lockedValue', networkId],
 	},
-	Rates: {
-		HistoricalVolume: (currencyKey: CurrencyKey, period: Period) => [
-			'rates',
-			'historicalVolume',
-			currencyKey,
-			period,
-		],
-		HistoricalRates: (currencyKey: CurrencyKey, period: Period) => [
-			'rates',
-			'historicalRates',
-			currencyKey,
-			period,
-		],
-		MarketCap: (currencyKey: CurrencyKey) => ['marketCap', currencyKey],
-		ExchangeRates: ['rates', 'exchangeRates'],
-		SNX24hrPrices: ['rates', 'SNX24hrPrices'],
-		CurrencyRates: (currencyKeys: CurrencyKey[]) => [
-			'rates',
-			'currencyRates',
-			currencyKeys.join(','),
-		],
-		SynthExchanges: (period: Period) => ['rates', 'synthExchanges', period],
-	},
 	Network: {
-		EthGasPrice: ['network', 'ethGasPrice'],
 		SNXTotalSupply: ['network', 'snxTotalSupply'],
-	},
-	WalletBalances: {
-		Synths: (walletAddress: string, networkId: NetworkId) => [
-			'walletBalances',
-			'synths',
-			walletAddress,
-			networkId,
-		],
-		ETH: (walletAddress: string, networkId: NetworkId) => [
-			'walletBalances',
-			'ETH',
-			walletAddress,
-			networkId,
-		],
-		SNX: (walletAddress: string, networkId: NetworkId) => [
-			'walletBalances',
-			'SNX',
-			walletAddress,
-			networkId,
-		],
-		Tokens: (walletAddress: string, networkId: NetworkId) => [
-			'walletBalances',
-			'tokens',
-			walletAddress,
-			networkId,
-		],
-		WETH: (walletAddress: string, networkId: NetworkId) => [
-			'walletBalance',
-			'wETH',
-			walletAddress,
-			networkId,
-		],
-		WBTC: (walletAddress: string, networkId: NetworkId) => [
-			'walletBalance',
-			'wBTC',
-			walletAddress,
-			networkId,
-		],
-		RenBTC: (walletAddress: string, networkId: NetworkId) => [
-			'walletBalance',
-			'renBTC',
-			walletAddress,
-			networkId,
-		],
-	},
-	Synths: {
-		FrozenSynths: ['synths', 'frozenSynths'],
-		Suspension: (currencyKey: CurrencyKey) => ['synths', 'suspension', currencyKey],
-		FeeReclaimPeriod: (currencyKey: CurrencyKey) => ['synths', 'feeReclaimPeriod', currencyKey],
-		ExchangeFeeRate: (quoteCurrencyKey: CurrencyKey, baseCurrencyKey: CurrencyKey) => [
-			'synths',
-			'exchangeFeeRate',
-			quoteCurrencyKey,
-			baseCurrencyKey,
-		],
-		TotalIssuedSynths: ['synths', 'totalIssuedSynths'],
-		TotalSupply: ['synths', 'totalSupply'],
 	},
 	Trades: {
 		AllTrades: ['trades', 'allTrades'],
 		WalletTrades: (walletAddress: string) => ['trades', 'walletTrades', walletAddress],
-	},
-	SystemStatus: {
-		IsUpgrading: ['systemStatus', 'isUpgrading'],
 	},
 	Depot: {
 		UserActions: (walletAddress: string, networkId: NetworkId) => [
@@ -245,7 +161,7 @@ export const QUERY_KEYS = {
 		networkId,
 	],
 	Swap: {
-		quote1Inch: (walletAddress: string, networkId: NetworkId, amount: NumericValue) => [
+		quote1Inch: (walletAddress: string, networkId: NetworkId, amount: WeiSource) => [
 			'quote',
 			'1inch',
 			walletAddress,
@@ -255,7 +171,7 @@ export const QUERY_KEYS = {
 		swap1Inch: (
 			walletAddress: string,
 			networkId: NetworkId,
-			amount: NumericValue,
+			amount: WeiSource,
 			fromAddress: string
 		) => ['swap', '1inch', walletAddress, networkId, amount, fromAddress],
 	},

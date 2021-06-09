@@ -1,4 +1,4 @@
-import BigNumber from 'bignumber.js';
+import Wei from '@synthetixio/wei';
 
 export type LiquidityPoolData = {
 	distribution: number;
@@ -8,11 +8,11 @@ export type LiquidityPoolData = {
 	periodFinish: number;
 	rewards: number;
 	staked: number;
-	stakedBN: BigNumber;
+	stakedBN: Wei;
 	allowance: number;
 	duration: number;
 	userBalance: number;
-	userBalanceBN: BigNumber;
+	userBalanceBN: Wei;
 	needsToSettle?: boolean;
 	liquidity?: number;
 };

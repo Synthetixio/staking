@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { quadraticWeighting } from 'sections/gov/components/helper';
-import { toBigNumber } from 'utils/formatters/number';
 import useDebtOwnership from 'queries/gov/useDebtOwnership';
 import { useRecoilValue } from 'recoil';
 import { appReadyState } from 'store/app';
+import { wei } from '@synthetixio/wei';
 
 export const useIndividualDebtWeighted = (block?: number | null) => {
 	const [individualDebtWeighted, setIndividualDebtWeighted] = useState<number | null>(null);
@@ -14,7 +14,7 @@ export const useIndividualDebtWeighted = (block?: number | null) => {
 		const getIndividualWeightedDebt = () => {
 			if (isAppReady) {
 				const individualDebtWeighted = Number(
-					quadraticWeighting(votingWeight?.data ? votingWeight.data : toBigNumber(0))
+					quadraticWeighting(votingWeight?.data ? votingWeight.data : wei(0))
 				);
 				setIndividualDebtWeighted(individualDebtWeighted);
 			}

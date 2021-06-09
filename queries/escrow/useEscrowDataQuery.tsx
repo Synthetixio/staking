@@ -1,4 +1,4 @@
-import { useQuery, QueryConfig } from 'react-query';
+import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
 import chunk from 'lodash/chunk';
 import synthetix from 'lib/synthetix';
@@ -36,7 +36,7 @@ type VestingEntry = {
 	endTime: number;
 };
 
-const useEscrowDataQuery = (options?: QueryConfig<EscrowData>) => {
+const useEscrowDataQuery = (options?: UseQueryOptions<EscrowData>) => {
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const network = useRecoilValue(networkState);

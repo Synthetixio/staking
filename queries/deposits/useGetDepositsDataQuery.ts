@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useQuery, QueryConfig } from 'react-query';
+import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
 // import { providers } from 'ethers'; // todo: fix lint error & revert to this
 import providers from '@ethersproject/providers';
@@ -30,7 +30,7 @@ export type DepositRecord = {
 
 export type DepositHistory = Array<DepositRecord>;
 
-const useGetDepositsDataQuery = (options?: QueryConfig<DepositHistory>) => {
+const useGetDepositsDataQuery = (options?: UseQueryOptions<DepositHistory>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
@@ -89,7 +89,7 @@ const useGetDepositsDataQuery = (options?: QueryConfig<DepositHistory>) => {
 			return orderBy(eventsWithReceipt, ['timestamp'], ['desc']);
 		},
 		{
-			enabled: isAppReady && isWalletConnected && provider && watcher,
+			enabled: isAppReady && isWalletConnected && !!provider && !!watcher,
 			...options,
 		}
 	);

@@ -13,9 +13,9 @@ import Currency from 'components/Currency';
 import { Synths } from 'constants/currency';
 import synthetix from 'lib/synthetix';
 import { tx } from 'utils/transactions';
-import { formatNumber, toBigNumber, formatUnits } from 'utils/formatters/number';
 import Loans from 'containers/Loans';
 import InfoSVG from 'sections/loans/components/ActionBox/components/InfoSVG';
+import { wei } from '@synthetixio/wei';
 
 const InfoBox: React.FC = () => {
 	const { t } = useTranslation();
@@ -26,7 +26,7 @@ const InfoBox: React.FC = () => {
 
 	const [borrows, setBorrows] = React.useState<Array<any>>([]);
 	const borrowsOpenInterest = React.useMemo(
-		() => borrows.reduce((sum, stat) => sum.plus(stat.openInterest), toBigNumber(0)),
+		() => borrows.reduce((sum, stat) => sum.add(stat.openInterest), wei(0)),
 		[borrows]
 	);
 
@@ -63,9 +63,8 @@ const InfoBox: React.FC = () => {
 				collateralManagerContract.long(ethers.utils.formatBytes32String(currency)),
 				exchangeRatesContract.rateAndInvalid(ethers.utils.formatBytes32String(currency)),
 			]);
-			const openInterestUSD = toBigNumber(openInterest.toString())
-				.dividedBy(1e18)
-				.multipliedBy(toBigNumber(assetUSDPrice.toString()).dividedBy(1e18));
+			const openInterestUSD = wei(openInterest).mul(wei(assetUSDPrice));
+
 			return {
 				currency,
 				openInterest: openInterestUSD,
@@ -119,12 +118,12 @@ const InfoBox: React.FC = () => {
 						{t('loans.pending-withdrawals.title')}{' '}
 						<InfoSVG tip={t('loans.pending-withdrawals.title-tip')} />
 					</PendingWithdrawalsTitle>
-					<PendingWithdrawalsSubtitle empty={pendingWithdrawals.isZero()}>
-						{pendingWithdrawals.isZero() ? (
+					<PendingWithdrawalsSubtitle empty={pendingWithdrawals.eq(0)}>
+						{pendingWithdrawals.eq(0) ? (
 							<>{t('loans.pending-withdrawals.empty')}</>
 						) : (
 							<>
-								{formatUnits(pendingWithdrawals, 18)}ETH{' '}
+								{pendingWithdrawals.toString()}ETH{' '}
 								<ClaimButton
 									variant="secondary"
 									size="sm"
@@ -162,7 +161,7 @@ const InfoBox: React.FC = () => {
 								</div>
 							</StatsCol>
 							<StatsCol>
-								<div>${formatNumber(stat.openInterest, { decimals: 2 })}</div>
+								<div>${stat.openInterest.toString(2)}</div>
 							</StatsCol>
 						</React.Fragment>
 					))}
@@ -170,7 +169,7 @@ const InfoBox: React.FC = () => {
 						<div>{t('loans.stats.total')}</div>
 					</TotalColHeading>
 					<StatsCol>
-						<div>${formatNumber(borrowsOpenInterest, { decimals: 2 })}</div>
+						<div>${borrowsOpenInterest.toString(2)}</div>
 					</StatsCol>
 				</StatsGrid>
 			</Container>
