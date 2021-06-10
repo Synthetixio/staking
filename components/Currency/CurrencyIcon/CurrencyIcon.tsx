@@ -33,9 +33,9 @@ export const getSynthIcon = (currencyKey: CurrencyKey) =>
 	`https://raw.githubusercontent.com/Synthetixio/synthetix-assets/master/synths/${currencyKey}.svg`;
 
 export const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, type, ...rest }) => {
-	const [error, setError] = useState<boolean>(false);
 	const [firstFallbackError, setFirstFallbackError] = useState<boolean>(false);
 	const [secondFallbackError, setSecondFallbackError] = useState<boolean>(false);
+	const [thirdFallbackError, setThirdFallbackError] = useState<boolean>(false);
 
 	const synthetixTokenListQuery = useSynthetixTokenList();
 	const synthetixTokenListMap = synthetixTokenListQuery.isSuccess
@@ -53,46 +53,37 @@ export const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, type, ...rest
 		: null;
 
 	const props = {
-		width: '36px',
-		height: '36px',
+		width: '24px',
+		height: '24px',
 		alt: currencyKey,
 		...rest,
 	};
 
-	const defaultIcon = (
-		<Placeholder style={{ width: props.width, height: props.height }}>{currencyKey}</Placeholder>
-	);
-
-	if (type === 'token') {
-		if (
-			ZapperTokenListMap != null &&
-			ZapperTokenListMap[currencyKey] != null &&
-			!firstFallbackError
-		) {
-			return (
-				<TokenIcon
-					src={ZapperTokenListMap[currencyKey].logoURI}
-					onError={() => setFirstFallbackError(true)}
-					{...props}
-				/>
-			);
-		} else if (
-			OneInchTokenListMap != null &&
-			OneInchTokenListMap[currencyKey] != null &&
-			!secondFallbackError
-		) {
-			return (
-				<TokenIcon
-					src={OneInchTokenListMap[currencyKey].logoURI}
-					onError={() => setSecondFallbackError(true)}
-					{...props}
-				/>
-			);
-		} else {
-			return defaultIcon;
-		}
-	} else {
-		if (error) return defaultIcon;
+	if (
+		ZapperTokenListMap != null &&
+		ZapperTokenListMap[currencyKey] != null &&
+		!firstFallbackError
+	) {
+		return (
+			<TokenIcon
+				src={ZapperTokenListMap[currencyKey].logoURI}
+				onError={() => setFirstFallbackError(true)}
+				{...props}
+			/>
+		);
+	} else if (
+		OneInchTokenListMap != null &&
+		OneInchTokenListMap[currencyKey] != null &&
+		!secondFallbackError
+	) {
+		return (
+			<TokenIcon
+				src={OneInchTokenListMap[currencyKey].logoURI}
+				onError={() => setSecondFallbackError(true)}
+				{...props}
+			/>
+		);
+	} else if (thirdFallbackError) {
 		switch (currencyKey) {
 			case CryptoCurrency.ETH: {
 				return <Img src={ETHIcon} {...props} />;
@@ -108,12 +99,16 @@ export const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, type, ...rest
 								? synthetixTokenListMap[currencyKey].logoURI
 								: getSynthIcon(currencyKey)
 						}
-						onError={() => setError(true)}
+						onError={() => setThirdFallbackError(true)}
 						{...props}
 						alt={currencyKey}
 					/>
 				);
 		}
+	} else {
+		return (
+			<Placeholder style={{ width: props.width, height: props.height }}>{currencyKey}</Placeholder>
+		);
 	}
 };
 
