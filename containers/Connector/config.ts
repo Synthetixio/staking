@@ -18,7 +18,7 @@ export const initOnboard = (network: Network, subscriptions: Subscriptions) => {
 			wallets: [
 				{
 					name: 'Browser Wallet',
-					iconSrc: '/images/browserWallet.png',
+					iconSrc: '/images/browserWallet.svg',
 					type: 'injected',
 					link: 'https://metamask.io',
 					wallet: async (helpers) => {
@@ -55,14 +55,14 @@ export const initOnboard = (network: Network, subscriptions: Subscriptions) => {
 					rpc: { [network.id]: infuraRpc },
 					preferred: true,
 				},
-				{ walletName: 'coinbase', preferred: true },
+				{ walletName: 'imToken', rpcUrl: infuraRpc },
 				{
 					walletName: 'portis',
 					apiKey: process.env.NEXT_PUBLIC_PORTIS_APP_ID,
 				},
 				{ walletName: 'gnosis' },
 				{ walletName: 'trust', rpcUrl: infuraRpc },
-				{ walletName: 'walletLink', rpcUrl: infuraRpc },
+				{ walletName: 'walletLink', rpcUrl: infuraRpc, preferred: true },
 				{ walletName: 'torus' },
 				{ walletName: 'status' },
 				{ walletName: 'authereum' },

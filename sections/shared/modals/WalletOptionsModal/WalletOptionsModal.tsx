@@ -13,7 +13,7 @@ import {
 	walletWatchedState,
 } from 'store/wallet';
 
-import BrowserWalletIcon from 'assets/wallet-icons/browserWallet.png';
+import BrowserWalletIcon from 'assets/wallet-icons/browserWallet.svg';
 import LedgerIcon from 'assets/wallet-icons/ledger.svg';
 import TrezorIcon from 'assets/wallet-icons/trezor.svg';
 import WalletConnectIcon from 'assets/wallet-icons/walletConnect.svg';
@@ -24,6 +24,7 @@ import DapperIcon from 'assets/wallet-icons/dapper.png';
 import TorusIcon from 'assets/wallet-icons/torus.svg';
 import StatusIcon from 'assets/wallet-icons/status.svg';
 import AuthereumIcon from 'assets/wallet-icons/authereum.png';
+import ImTokenIcon from 'assets/wallet-icons/imtoken.svg';
 
 import CopyIcon from 'assets/svg/app/copy.svg';
 import LinkIcon from 'assets/svg/app/link.svg';
@@ -63,7 +64,7 @@ const getWalletIcon = (selectedWallet?: string | null) => {
 			return <Img src={LedgerIcon} />;
 		case 'walletconnect':
 			return <Img src={WalletConnectIcon} />;
-		case 'coinbase':
+		case 'coinbase wallet':
 		case 'walletlink':
 			return <Img src={CoinbaseIcon} />;
 		case 'portis':
@@ -78,6 +79,8 @@ const getWalletIcon = (selectedWallet?: string | null) => {
 			return <Img src={StatusIcon} />;
 		case 'authereum':
 			return <Img src={AuthereumIcon} />;
+		case 'imtokem':
+			return <Img src={ImTokenIcon} />;
 		default:
 			return selectedWallet;
 	}
