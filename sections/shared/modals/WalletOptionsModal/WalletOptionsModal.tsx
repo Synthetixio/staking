@@ -79,7 +79,7 @@ const getWalletIcon = (selectedWallet?: string | null) => {
 			return <Img src={StatusIcon} />;
 		case 'authereum':
 			return <Img src={AuthereumIcon} />;
-		case 'imtokem':
+		case 'imtoken':
 			return <Img src={ImTokenIcon} />;
 		default:
 			return selectedWallet;

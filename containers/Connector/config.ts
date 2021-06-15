@@ -55,7 +55,7 @@ export const initOnboard = (network: Network, subscriptions: Subscriptions) => {
 					rpc: { [network.id]: infuraRpc },
 					preferred: true,
 				},
-				{ walletName: 'imToken', rpcUrl: infuraRpc },
+				{ walletName: 'imToken', rpcUrl: infuraRpc, preferred: true },
 				{
 					walletName: 'portis',
 					apiKey: process.env.NEXT_PUBLIC_PORTIS_APP_ID,
