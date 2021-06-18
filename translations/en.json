@@ -924,7 +924,7 @@
 						"desc": "Mint sUSD by staking your SNX"
 					}
 				},
-				"negative-skew-warning": "Negative means that short positions are required to hedge"
+				"negative-skew-warning": "Negatives mean that short positions are required to hedge"
 			},
 			"non-synths": {
 				"title": "Non-Synth Balances"
