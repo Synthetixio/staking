@@ -27,6 +27,7 @@
 		"@synthetixio/contracts-interface": "2.45.2",
 		"@synthetixio/optimism-networks": "0.0.14",
 		"@synthetixio/providers": "0.0.12",
+		"@synthetixio/queries": "0.0.2",
 		"@synthetixio/transaction-notifier": "0.0.9",
 		"@tippyjs/react": "4.1.0",
 		"axios": "0.21.1",

@@ -30,7 +30,7 @@ import Button from 'components/Button';
 import { ProgressBarType } from 'components/ProgressBar/ProgressBar';
 
 import Connector from 'containers/Connector';
-import { SynthsTotalSupplyData } from 'queries/synths/useSynthsTotalSupplyQuery';
+import { SynthsTotalSupplyData } from '@synthetixio/queries';
 import { zeroBN } from 'utils/formatters/number';
 import { CryptoCurrency, Synths } from 'constants/currency';
 import { DesktopOrTabletView, MobileOnlyView } from 'components/Media';
