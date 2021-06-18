@@ -517,6 +517,11 @@
 					"title": "Synthetix",
 					"description": "Staking iBTC tokens allows you to earn SNX rewards. <0>Learn more.<0>",
 					"subtitle": "iBTC Rewards"
+				},
+				"yvsnx": {
+					"title": "Yearn SNX Vault",
+					"description": "Deposit SNX into Yearn Finance's SNX Vault to earn SNX rewards. <0>Learn more<0>.",
+					"subtitle": ""
 				}
 			},
 			"weekly-rewards": "Weekly rewards {{weeklyRewards}} {{asset}}"
@@ -577,6 +582,24 @@
 				"title": "UNSTAKE",
 				"unstaking": "WITHDRAWING",
 				"unstake-button": "UNSTAKE {{stakedAsset}}",
+				"amount": "{{amount}} {{asset}}",
+				"in-progress": "Withdrawal in progress",
+				"success": "Withdrawal complete!",
+				"withdrew": "WITHDREW"
+			},
+			"deposit": {
+				"title": "DEPOSIT",
+				"depositing": "DEPOSITING",
+				"deposit-button": "DEPOSIT {{asset}}",
+				"amount": "{{amount}} {{asset}}",
+				"in-progress": "Deposit in progress",
+				"success": "Withdrawal complete!",
+				"deposited": "DEPOSITED"
+			},
+			"withdraw": {
+				"title": "WITHDRAW",
+				"withdrawing": "WITHDRAWING",
+				"withdraw-button": "WITHDRAW {{asset}}",
 				"amount": "{{amount}} {{asset}}",
 				"in-progress": "Withdrawal in progress",
 				"success": "Withdrawal complete!",
