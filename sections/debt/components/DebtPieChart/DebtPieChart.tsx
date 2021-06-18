@@ -9,6 +9,7 @@ import useSynthsTotalSupplyQuery, {
 import PieChart from 'components/PieChart';
 import DebtPoolTable from '../DebtPoolTable';
 import colors from 'styles/theme/colors';
+import { formatCurrency } from 'utils/formatters/number';
 
 const MIN_PERCENT_FOR_PIE_CHART = 0.03;
 
@@ -75,6 +76,7 @@ const SynthsPieChart: FC<DebtPieChartProps> = () => {
 			.map((supply, index) => ({
 				...supply,
 				value: supply.value.toNumber(),
+				skewValue: supply.skewValue,
 				fillColor: MUTED_COLORS[index % MUTED_COLORS.length],
 				strokeColor: BRIGHT_COLORS[index % BRIGHT_COLORS.length],
 			}));
@@ -82,7 +84,7 @@ const SynthsPieChart: FC<DebtPieChartProps> = () => {
 
 	return (
 		<SynthsPieChartContainer>
-			<PieChart data={pieData} dataKey={'value'} />
+			<PieChart data={pieData} dataKey={'value'} tooltipFormatter={Tooltip} />
 			<TableWrapper>
 				<DebtPoolTable
 					synths={pieData}
@@ -94,6 +96,14 @@ const SynthsPieChart: FC<DebtPieChartProps> = () => {
 	);
 };
 
+const Tooltip: FC<{ name: string; value: number; payload: any }> = ({ name, value, payload }) => {
+	return (
+		<StyledTooltip isNeg={payload.skewValue.isNegative()}>
+			{name}: {formatCurrency(name, payload.skewValue, { sign: '$' })}
+		</StyledTooltip>
+	);
+};
+
 const TableWrapper = styled.div`
 	border-top: 1px solid ${(props) => props.theme.colors.grayBlue};
 `;
@@ -101,6 +111,10 @@ const TableWrapper = styled.div`
 const SynthsPieChartContainer = styled.div`
 	background: ${(props) => props.theme.colors.navy};
 	width: 100%;
+`;
+
+const StyledTooltip = styled.div<{ isNeg: boolean }>`
+	color: ${(props) => (props.isNeg ? props.theme.colors.red : props.theme.colors.white)};
 `;
 
 export default SynthsPieChart;
