@@ -14,6 +14,7 @@ import { toBigNumber, zeroBN } from 'utils/formatters/number';
 export type SynthTotalSupply = {
 	name: CurrencyKey;
 	value: BigNumber;
+	skewValue: BigNumber;
 	totalSupply: BigNumber;
 	poolProportion: BigNumber;
 };
@@ -30,32 +31,83 @@ const useSynthsTotalSupplyQuery = (options?: QueryConfig<SynthsTotalSupplyData>)
 		QUERY_KEYS.Synths.TotalSupply,
 		async () => {
 			const {
-				contracts: { SynthUtil, ExchangeRates, CollateralManager, EtherWrapper },
+				contracts: {
+					SynthUtil,
+					ExchangeRates,
+					CollateralManagerState,
+					EtherWrapper,
+					EtherCollateral,
+					EtherCollateralsUSD,
+				},
 				utils,
 			} = synthetix.js!;
 
+			const [sETHKey, sBTCKey, sUSDKey] = [Synths.sETH, Synths.sBTC, Synths.sUSD].map(
+				utils.formatBytes32String
+			);
+
 			const [
 				synthTotalSupplies,
-				unformattedEthShorts,
-				unformattedBtcShorts,
-				unformattedBtcPrice,
 				unformattedEthPrice,
-				unformattedIssuedWETHWrapperSETH,
+				unformattedBtcPrice,
+				[unformattedETHBorrows, unformattedETHShorts],
+				[unformattedBTCBorrows, unformattedBTCShorts],
+				[unformattedSUSDBorrows, unformattedSUSDShorts],
+
+				unformattedWrapprSETH,
+				unformattedWrapprSUSD,
+
+				unformattedOldLoansETH,
+				unformattedOldLoansSUSD,
 			] = await Promise.all([
 				SynthUtil.synthsTotalSupplies(),
-				CollateralManager.short(utils.formatBytes32String(Synths.sETH)),
-				CollateralManager.short(utils.formatBytes32String(Synths.sBTC)),
-				ExchangeRates.rateForCurrency(utils.formatBytes32String(Synths.sBTC)),
-				ExchangeRates.rateForCurrency(utils.formatBytes32String(Synths.sETH)),
+				ExchangeRates.rateForCurrency(sETHKey),
+				ExchangeRates.rateForCurrency(sBTCKey),
+				CollateralManagerState.totalIssuedSynths(sETHKey),
+				CollateralManagerState.totalIssuedSynths(sBTCKey),
+				CollateralManagerState.totalIssuedSynths(sUSDKey),
 				EtherWrapper.sETHIssued(),
+				EtherWrapper.sUSDIssued(),
+				EtherCollateral.totalIssuedSynths(),
+				EtherCollateralsUSD.totalIssuedSynths(),
 			]);
 
-			const [ethShorts, btcShorts, btcPrice, ethPrice, issuedWETHWrapperSETH] = [
-				unformattedEthShorts,
-				unformattedBtcShorts,
-				unformattedBtcPrice,
+			const [
+				ethPrice,
+				btcPrice,
+
+				ethBorrows,
+				ethShorts,
+
+				btcBorrows,
+				btcShorts,
+
+				susdBorrows,
+				susdShorts,
+
+				wrapprSETH,
+				wrapprSUSD,
+
+				oldLoansETH,
+				oldLoansSUSD,
+			] = [
 				unformattedEthPrice,
-				unformattedIssuedWETHWrapperSETH,
+				unformattedBtcPrice,
+
+				unformattedETHShorts,
+				unformattedETHBorrows,
+
+				unformattedBTCShorts,
+				unformattedBTCBorrows,
+
+				unformattedSUSDShorts,
+				unformattedSUSDBorrows,
+
+				unformattedWrapprSETH,
+				unformattedWrapprSUSD,
+
+				unformattedOldLoansETH,
+				unformattedOldLoansSUSD,
 			].map((val) => toBigNumber(utils.formatEther(val)));
 
 			let totalValue = toBigNumber(0);
@@ -67,29 +119,40 @@ const useSynthsTotalSupplyQuery = (options?: QueryConfig<SynthsTotalSupplyData>)
 				let totalSupply = toBigNumber(utils.formatEther(synthTotalSupplies[1][i]));
 
 				switch (name) {
-					case Synths.iETH:
-						value = value.plus(ethShorts.times(ethPrice));
-						break;
+					case Synths.sBTC: {
+						const negativeEntries = btcShorts.plus(btcBorrows);
 
-					case Synths.iBTC:
-						value = value.plus(btcShorts.times(btcPrice));
+						value = totalSupply.minus(negativeEntries).times(btcPrice);
 						break;
+					}
 
-					case Synths.sETH:
-						// we deduct sETH amount issued by EthWrappr
-						// because it's not really part of the debt pool
-						// https://contracts.synthetix.io/EtherWrapper
-						totalSupply = totalSupply.minus(issuedWETHWrapperSETH);
-						value = totalSupply.times(ethPrice);
+					case Synths.sETH: {
+						const multiCollateralLoansETH = ethShorts.plus(ethBorrows);
+						const negativeEntries = multiCollateralLoansETH.plus(oldLoansETH).plus(wrapprSETH);
+
+						value = totalSupply.minus(negativeEntries).times(ethPrice);
 						break;
+					}
+
+					case Synths.sUSD: {
+						const multiCollateralLoansSUSD = susdShorts.plus(susdBorrows);
+						const negativeEntries = multiCollateralLoansSUSD.plus(oldLoansSUSD).plus(wrapprSUSD);
+
+						value = totalSupply.minus(negativeEntries);
+						break;
+					}
 
 					default:
 				}
+
+				const skewValue = value;
+				value = value.abs();
 
 				supplyData.push({
 					name,
 					totalSupply,
 					value,
+					skewValue,
 					poolProportion: zeroBN, // true value to be computed in next step
 				});
 				totalValue = totalValue.plus(value);
