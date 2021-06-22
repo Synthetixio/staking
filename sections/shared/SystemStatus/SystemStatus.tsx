@@ -55,6 +55,10 @@ const SystemStatus: FC<SystemStatusProps> = ({ children }) => {
 							<span>{t('system-status.title-line2')}</span>
 						</Title>
 						<Subtitle>{t('system-status.subtitle')}</Subtitle>
+						<br />
+						<a href="https://discord.com/channels/413890591840272394/479848656460316676/856952516653744168">
+							Optimism Regenesis Announcement
+						</a>
 						<SocialLinks />
 					</Container>
 				</Content>
