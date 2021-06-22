@@ -17,8 +17,6 @@ import StakingLogo from 'assets/svg/app/staking-logo.svg';
 import useIsSystemOnMaintenance from 'queries/systemStatus/useIsSystemOnMaintenance';
 
 import SocialLinks from '../components/SocialLinks';
-import { useRecoilValue } from 'recoil';
-import { isL2State } from 'store/wallet';
 
 type SystemStatusProps = {
 	children: React.ReactNode;
@@ -28,7 +26,6 @@ export const REFRESH_INTERVAL = 2 * 60 * 1000; // 2 min
 
 const SystemStatus: FC<SystemStatusProps> = ({ children }) => {
 	const { t } = useTranslation();
-	const isL2 = useRecoilValue(isL2State);
 
 	// current onchain state ( no interval for now, should be added when we are close to a release to save requests )
 	const isSystemOnMaintenanceQuery = useIsSystemOnMaintenance({
@@ -39,7 +36,7 @@ const SystemStatus: FC<SystemStatusProps> = ({ children }) => {
 		? isSystemOnMaintenanceQuery.data
 		: false;
 
-	return appOnMaintenance || isL2 ? (
+	return appOnMaintenance ? (
 		<>
 			<Head>
 				<title>{t('system-status.page-title')}</title>
@@ -55,10 +52,6 @@ const SystemStatus: FC<SystemStatusProps> = ({ children }) => {
 							<span>{t('system-status.title-line2')}</span>
 						</Title>
 						<Subtitle>{t('system-status.subtitle')}</Subtitle>
-						<br />
-						<a href="https://discord.com/channels/413890591840272394/479848656460316676/856952516653744168">
-							Optimism Regenesis Announcement
-						</a>
 						<SocialLinks />
 					</Container>
 				</Content>
