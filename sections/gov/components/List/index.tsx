@@ -217,6 +217,7 @@ const AbsoluteContainer = styled.div`
 	bottom: 0px;
 	margin-bottom: 24px;
 	padding: 0px 16px;
+	margin-top: 24px;
 `;
 
 const CreateButton = styled(Button)`

@@ -32,7 +32,7 @@ const Pagination: FC<PaginationProps> = ({
 	const { t } = useTranslation();
 
 	return (
-		<PaginationContainer>
+		<PaginationContainer className="table-pagination">
 			<span>
 				<ArrowButton onClick={() => setPage(0)} disabled={!canPreviousPage}>
 					<Svg src={LeftEndArrowIcon} />
