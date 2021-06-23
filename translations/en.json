@@ -1247,7 +1247,7 @@
 		},
 		"gov-voting-election": {
 			"heading": "governance:",
-			"message": "Have your say on who will represent the SNX community, vote for your Spartan Council now! Voting costs zero-gas."
+			"message": "Have your say on who will represent the SNX community, vote on the DAO elections gas-free here."
 		}
 	},
 	"delegate": {
