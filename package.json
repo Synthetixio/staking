@@ -123,5 +123,9 @@
 		"hooks": {
 			"pre-commit": "npm run lint"
 		}
-	}
+	},
+	"engines": {
+    "node": ">=14",
+		"npm": ">=7"
+  }
 }
