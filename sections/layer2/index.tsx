@@ -63,17 +63,17 @@ const Index: FC = () => {
 	const ACTIONS = useMemo(
 		() => ({
 			deposit: {
-				title: '*Temporarily Paused* ' + t('layer2.actions.deposit.title'),
+				title: t('layer2.actions.deposit.title'),
 				copy: t('layer2.actions.deposit.subtitle'),
 				link: ROUTES.L2.Deposit,
 			},
 			migrate: {
-				title: '*Temporarily Paused* ' + t('layer2.actions.migrate.title'),
+				title: t('layer2.actions.migrate.title'),
 				copy: t('layer2.actions.migrate.subtitle'),
 				link: ROUTES.L2.Migrate,
 			},
 			burn: {
-				title: '*Temporarily Paused* ' + t('layer2.actions.burn.title'),
+				title: t('layer2.actions.burn.title'),
 				copy: t('layer2.actions.burn.subtitle'),
 				link: ROUTES.Staking.Burn,
 			},
@@ -101,11 +101,11 @@ const Index: FC = () => {
 						},
 						{
 							...ACTIONS.deposit,
-							isDisabled: /* transferableCollateral.isZero() */ true,
+							isDisabled: transferableCollateral.isZero(),
 						},
 						{
 							...ACTIONS.migrate,
-							isDisabled: /* stakingEscrow.isZero() */ true,
+							isDisabled: stakingEscrow.isZero(),
 						},
 				  ]
 				: [
@@ -114,7 +114,6 @@ const Index: FC = () => {
 						},
 						{
 							...ACTIONS.burn,
-							isDisabled: true,
 						},
 						{
 							isDisabled: true,
@@ -122,7 +121,6 @@ const Index: FC = () => {
 						},
 						{
 							...ACTIONS.migrate,
-							isDisabled: true,
 						},
 				  ],
 		// eslint-disable-next-line
