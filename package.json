@@ -103,7 +103,7 @@
 		"eslint-plugin-react-hooks": "4.2.0",
 		"ethereum-blockies-base64": "1.0.2",
 		"file-loader": "6.0.0",
-		"husky": "4.3.0",
+		"husky": "5.0.9",
 		"imagemin-gifsicle": "7.0.0",
 		"imagemin-mozjpeg": "9.0.0",
 		"imagemin-optipng": "8.0.0",
