@@ -14,6 +14,8 @@ import { formatShortDateWithTime } from 'utils/formatters/date';
 const BannerManager: FC = () => {
 	const liquidationData = useGetLiquidationData();
 	const debtData = useGetDebtDataQuery();
+	// @TODO: change to check for council proposal
+	const electionsInProgress = true;
 
 	const issuanceRatio = debtData?.data?.targetCRatio ?? zeroBN;
 	const cRatio = debtData?.data?.currentCRatio ?? zeroBN;
@@ -40,6 +42,18 @@ const BannerManager: FC = () => {
 							<Strong />,
 							<StyledExternalLink href="https://blog.synthetix.io/liquidation-faqs" />,
 						]}
+					/>
+				}
+			/>
+		);
+	} else if (electionsInProgress) {
+		return (
+			<Banner
+				type={BannerType.WARNING}
+				message={
+					<Trans
+						i18nKey={'user-menu.banner.election-info'}
+						components={[<StyledExternalLink href="https://staking.synthetix.io/gov" />]}
 					/>
 				}
 			/>
