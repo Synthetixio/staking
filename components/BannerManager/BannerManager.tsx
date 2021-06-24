@@ -1,21 +1,24 @@
 import { FC } from 'react';
 import { Trans } from 'react-i18next';
 import styled from 'styled-components';
+import { useRecoilValue } from 'recoil';
 
 import useGetLiquidationData from 'queries/liquidations/useGetLiquidationDataQuery';
 import useGetDebtDataQuery from 'queries/debt/useGetDebtDataQuery';
+import useLatestCouncilElectionQuery from 'queries/gov/useLatestCouncilElectionQuery';
 
 import Banner, { BannerType } from 'sections/shared/Layout/Banner';
 import { LOCAL_STORAGE_KEYS } from 'constants/storage';
 import { ExternalLink } from 'styles/common';
 import { zeroBN } from 'utils/formatters/number';
 import { formatShortDateWithTime } from 'utils/formatters/date';
+import { isL2State } from 'store/wallet';
 
 const BannerManager: FC = () => {
 	const liquidationData = useGetLiquidationData();
 	const debtData = useGetDebtDataQuery();
-	// @TODO: change to check for council proposal
-	const electionsInProgress = true;
+	const latestCouncilElection = useLatestCouncilElectionQuery();
+	const isL2 = useRecoilValue(isL2State);
 
 	const issuanceRatio = debtData?.data?.targetCRatio ?? zeroBN;
 	const cRatio = debtData?.data?.currentCRatio ?? zeroBN;
@@ -46,7 +49,11 @@ const BannerManager: FC = () => {
 				}
 			/>
 		);
-	} else if (electionsInProgress) {
+	} else if (
+		!isL2 &&
+		latestCouncilElection.data &&
+		new Date().getTime() / 1000 < (latestCouncilElection.data.end ?? 0)
+	) {
 		return (
 			<Banner
 				type={BannerType.WARNING}
