@@ -288,6 +288,12 @@ export const QUERY_KEYS = {
 			networkId,
 		],
 		Proposal: (spaceKey: SPACE_KEY, hash: string) => ['gov', 'proposal', spaceKey, hash],
+		VotingWeight: (spaceKey: SPACE_KEY, block: number | null) => [
+			'gov',
+			'votingWeight',
+			spaceKey,
+			block,
+		],
 	},
 	TokenLists: {
 		Synthetix: ['tokenLists', 'synthetix'],

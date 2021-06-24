@@ -22,6 +22,8 @@ type ProposalPayload = {
 	end: number;
 	snapshot: number;
 	metadata: {
+		plugins: any;
+		network: string;
 		strategies: {
 			name: string;
 			params: {
@@ -31,6 +33,7 @@ type ProposalPayload = {
 			};
 		}[];
 	};
+	type: string;
 };
 
 export enum SignatureType {

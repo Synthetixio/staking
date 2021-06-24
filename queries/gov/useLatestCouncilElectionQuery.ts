@@ -16,10 +16,10 @@ const useLatestCouncilElectionQuery = (options?: QueryConfig<Proposal>) => {
 	return useQuery<Proposal>(
 		QUERY_KEYS.Gov.LatestCouncilElection(walletAddress ?? '', network?.id!),
 		async () => {
-			const { proposal }: { proposal: Proposal } = await request(
+			const { proposals }: { proposals: Proposal[] } = await request(
 				snapshotEndpoint,
 				gql`
-					query Proposals($space: String) {
+					query LatestElectionProposal($space: String) {
 						proposals(
 							first: 1
 							where: { space: $space }
@@ -46,7 +46,7 @@ const useLatestCouncilElectionQuery = (options?: QueryConfig<Proposal>) => {
 					space: SPACE_KEY.COUNCIL,
 				}
 			);
-			return proposal;
+			return proposals[0];
 		},
 		{
 			enabled: isAppReady && !isL2,

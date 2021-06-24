@@ -6,10 +6,6 @@ import styled from 'styled-components';
 import { LineSpacer } from 'styles/common';
 import { formatNumber } from 'utils/formatters/number';
 import UIContainer from 'containers/UI';
-
-import useTotalDebtWeighted from 'sections/gov/hooks/useTotalDebtWeighted';
-import useIndividualDebtWeighted from 'sections/gov/hooks/useIndividualDebtWeighted';
-
 import useProposals from 'queries/gov/useProposals';
 import StatsSection from 'components/StatsSection';
 import MainContent from 'sections/gov';
@@ -22,18 +18,16 @@ import Connector from 'containers/Connector';
 import councilDilution from 'contracts/councilDilution';
 import { appReadyState } from 'store/app';
 import useActiveProposalsQuery from 'queries/gov/useActiveProposalsQuery';
+import useVotingWeight from 'queries/gov/useVotingWeight';
 
 const Gov: React.FC = () => {
 	const { t } = useTranslation();
 	const councilProposals = useProposals(SPACE_KEY.COUNCIL);
 	const { provider } = Connector.useContainer();
 	const { setTitle } = UIContainer.useContainer();
-
 	const [latestElectionBlock, setLatestElectionBlock] = useState<number | null>(null);
 	const activeProposals = useActiveProposalsQuery();
-
-	const total = useTotalDebtWeighted(latestElectionBlock);
-	const individual = useIndividualDebtWeighted(latestElectionBlock);
+	const walletVotingWeight = useVotingWeight(SPACE_KEY.COUNCIL, latestElectionBlock);
 	const setCouncilElectionCount = useSetRecoilState(councilElectionCountState);
 	const setNumOfCouncilSeats = useSetRecoilState(numOfCouncilSeatsState);
 	const isAppReady = useRecoilValue(appReadyState);
@@ -88,7 +82,7 @@ const Gov: React.FC = () => {
 			<StatsSection>
 				<WalletVotingPower
 					title={t('common.stat-box.voting-power.title')}
-					value={formatNumber(individual ?? 0)}
+					value={formatNumber(walletVotingWeight.data ? walletVotingWeight.data[0] : 0)}
 					tooltipContent={t('common.stat-box.voting-power.tooltip', {
 						blocknumber: formatNumber(latestElectionBlock ?? 0, { decimals: 0 }),
 					})}
@@ -98,11 +92,9 @@ const Gov: React.FC = () => {
 					value={activeProposals.data ?? 0}
 				/>
 				<TotalVotingPower
-					title={t('common.stat-box.total-voting-power.title')}
-					value={formatNumber(total ?? 0)}
-					tooltipContent={t('common.stat-box.voting-power.tooltip', {
-						blocknumber: formatNumber(latestElectionBlock ?? 0, { decimals: 0 }),
-					})}
+					title={t('common.stat-box.delegated-voting-power.title')}
+					value={formatNumber(walletVotingWeight.data ? walletVotingWeight.data[1] : 0)}
+					tooltipContent={t('common.stat-box.delegated-voting-power.tooltip')}
 				/>
 			</StatsSection>
 			<LineSpacer />

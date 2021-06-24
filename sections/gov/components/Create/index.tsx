@@ -112,8 +112,11 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 						end: proposalEndDate,
 						snapshot: block,
 						metadata: {
+							plugins: {},
+							network: '1',
 							strategies: space.data.strategies as any,
 						},
+						type: 'single-choice',
 					},
 				})
 					.then(async (response) => {

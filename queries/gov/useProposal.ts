@@ -9,7 +9,6 @@ import { getProfiles } from 'sections/gov/components/helper';
 import { appReadyState } from 'store/app';
 import { walletAddressState } from 'store/wallet';
 import Connector from 'containers/Connector';
-import snapshot from '@snapshot-labs/snapshot.js';
 import CouncilDilution from 'contracts/councilDilution.js';
 import { ethers } from 'ethers';
 import { uniqBy } from 'lodash';
@@ -106,18 +105,40 @@ const useProposal = (spaceKey: SPACE_KEY, hash: string, options?: QueryConfig<Pr
 			const currentBlock = provider?.getBlockNumber() ?? 0;
 			const blockTag = block > currentBlock ? 'latest' : block;
 
-			/* Get scores and ENS/3Box profiles */
-			const [scores, profiles] = await Promise.all([
-				snapshot.utils.getScores(
+			const {
+				scores: { scores },
+			} = await request(
+				snapshotEndpoint,
+				gql`
+					query Scores(
+						$spaceKey: String
+						$strategies: [Any]!
+						$network: String!
+						$addresses: [String]!
+						$snapshot: Any
+					) {
+						scores(
+							space: $spaceKey
+							strategies: $strategies
+							network: $network
+							addresses: $addresses
+							snapshot: $snapshot
+						) {
+							scores
+						}
+					}
+				`,
+				{
 					spaceKey,
-					space.strategies,
-					space.network,
-					provider,
-					voterAddresses,
-					blockTag
-				),
-				getProfiles(voterAddresses),
-			]);
+					strategies: space.strategies,
+					network: space.network,
+					addresses: voterAddresses,
+					snapshot: blockTag,
+				}
+			);
+
+			/* Get scores and ENS/3Box profiles */
+			const [profiles] = await Promise.all([getProfiles(voterAddresses)]);
 
 			interface MappedVotes extends Vote {
 				profile: {
