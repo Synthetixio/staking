@@ -950,16 +950,16 @@
 		"page-title": "Governance | Synthetix Staking",
 		"panel": {
 			"council": {
-				"title": "Elections"
+				"title": "Spartan Council"
 			},
 			"proposals": {
 				"title": "SIP/SCCP"
 			},
 			"grants": {
-				"title": "Grants"
+				"title": "grantsDAO"
 			},
 			"ambassador": {
-				"title": "Ambassadors"
+				"title": "ambassadorDAO"
 			}
 		},
 		"table": {
