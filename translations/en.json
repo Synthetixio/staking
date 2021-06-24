@@ -1148,8 +1148,12 @@
 			"vested-snx": "Total SNX vested",
 			"escrowed-snx": "Total SNX escrowed",
 			"voting-power": {
-				"title": "Your voting power",
+				"title": "Your voting power (L1 + L2)",
 				"tooltip": "Your voting power was calculated based on block {{blocknumber}}"
+			},
+			"delegated-voting-power": {
+				"title": "Your delegated voting power",
+				"tooltip": "You can delegate to another wallet at https://snapshot.org/#/delegate"
 			},
 			"total-voting-power": {
 				"title": "Total voting power",
