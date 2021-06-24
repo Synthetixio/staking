@@ -86,9 +86,14 @@ const useVotingWeight = (
 					}
 				);
 
-				const arrayOfScores = space.strategies.map(
-					(_: SpaceStrategy, key: number) => scores[key][getAddress(walletAddress)]
-				);
+				let arrayOfScores: number[];
+				if (scores.length > 0) {
+					arrayOfScores = space.strategies.map(
+						(_: SpaceStrategy, key: number) => scores[key][getAddress(walletAddress)]
+					);
+				} else {
+					arrayOfScores = [0, 0];
+				}
 
 				return arrayOfScores;
 			} else {
