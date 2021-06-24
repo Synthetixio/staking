@@ -7,7 +7,6 @@ import { SPACE_KEY, snapshotEndpoint } from 'constants/snapshot';
 import { appReadyState } from 'store/app';
 import { Proposal, SpaceData, Vote } from './types';
 import { networkState, walletAddressState } from 'store/wallet';
-import snapshot from '@snapshot-labs/snapshot.js';
 import Connector from 'containers/Connector';
 import { ethers } from 'ethers';
 import CouncilDilution from 'contracts/councilDilution.js';
@@ -115,16 +114,37 @@ const useProposals = (spaceKey: SPACE_KEY, options?: QueryConfig<Proposal[]>) =>
 
 					const voterAddresses = votes.map((e: Vote) => ethers.utils.getAddress(e.voter));
 
-					const [scores]: any = await Promise.all([
-						snapshot.utils.getScores(
+					const {
+						scores: { scores },
+					} = await request(
+						snapshotEndpoint,
+						gql`
+							query Scores(
+								$spaceKey: String
+								$strategies: [Any]!
+								$network: String!
+								$addresses: [String]!
+								$snapshot: Any
+							) {
+								scores(
+									space: $spaceKey
+									strategies: $strategies
+									network: $network
+									addresses: $addresses
+									snapshot: $snapshot
+								) {
+									scores
+								}
+							}
+						`,
+						{
 							spaceKey,
-							space.strategies,
-							space.network,
-							provider,
-							voterAddresses,
-							blockTag
-						),
-					]);
+							strategies: space.strategies,
+							network: space.network,
+							addresses: voterAddresses,
+							snapshot: blockTag,
+						}
+					);
 
 					let voteCount = 0;
 
