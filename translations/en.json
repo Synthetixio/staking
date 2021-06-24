@@ -956,10 +956,10 @@
 				"title": "SIP/SCCP"
 			},
 			"grants": {
-				"title": "grantsDAO"
+				"title": "grants DAO"
 			},
 			"ambassador": {
-				"title": "ambassadorDAO"
+				"title": "ambassador DAO"
 			}
 		},
 		"table": {
