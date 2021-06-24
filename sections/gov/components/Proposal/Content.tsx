@@ -50,6 +50,7 @@ import CouncilNominations from 'constants/nominations.json';
 import { isWalletConnectedState } from 'store/wallet';
 import { shuffle } from 'lodash';
 import { Proposal } from 'queries/gov/types';
+import Head from 'next/head';
 
 type ContentProps = {
 	proposal: Proposal;
@@ -267,6 +268,9 @@ const Content: React.FC<ContentProps> = ({ proposal, onBack }) => {
 
 	return (
 		<>
+			<Head>
+				<meta property="og:title" content="SIP/SCCP" key="governance-title" />
+			</Head>
 			{returnInnerContent()}
 			{signModalOpen && (
 				<TxConfirmationModal
