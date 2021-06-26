@@ -13,7 +13,7 @@ import CouncilDilution from 'contracts/councilDilution.js';
 import CouncilNominations from 'constants/nominations.json';
 import request, { gql } from 'graphql-request';
 
-const useProposals = (spaceKey: SPACE_KEY, options?: QueryConfig<Proposal[]>) => {
+const useProposalsQuery = (spaceKey: SPACE_KEY, options?: QueryConfig<Proposal[]>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const network = useRecoilValue(networkState);
 	const walletAddress = useRecoilValue(walletAddressState);
@@ -174,4 +174,4 @@ const useProposals = (spaceKey: SPACE_KEY, options?: QueryConfig<Proposal[]>) =>
 	);
 };
 
-export default useProposals;
+export default useProposalsQuery;

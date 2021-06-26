@@ -11,7 +11,7 @@ import { ethers } from 'ethers';
 import { SpaceData, SpaceStrategy } from './types';
 import request, { gql } from 'graphql-request';
 
-const useVotingWeight = (
+const useVotingWeightQuery = (
 	spaceKey: SPACE_KEY,
 	block: number | null,
 	options?: QueryConfig<number[]>
@@ -110,4 +110,4 @@ const useVotingWeight = (
 	);
 };
 
-export default useVotingWeight;
+export default useVotingWeightQuery;

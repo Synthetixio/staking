@@ -16,7 +16,7 @@ import { panelState, PanelType, proposalState } from 'store/gov';
 import { DURATION_SEPARATOR } from 'constants/date';
 import { getCurrentTimestampSeconds } from 'utils/formatters/date';
 import { DesktopOrTabletView, MobileOnlyView } from 'components/Media';
-import useProposals from 'queries/gov/useProposals';
+import useProposalsQuery from 'queries/gov/useProposalsQuery';
 import { SPACE_KEY } from 'constants/snapshot';
 
 type IndexProps = {
@@ -47,7 +47,7 @@ const ResponsiveTable: React.FC<ResponsiveTableProps> = ({ mobile, spaceKey }) =
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const setProposal = useSetRecoilState(proposalState);
 	const setPanelType = useSetRecoilState(panelState);
-	const proposals = useProposals(spaceKey);
+	const proposals = useProposalsQuery(spaceKey);
 
 	const columns = useMemo(() => {
 		const widths = mobile ? ['auto', 70, 70, 50] : [200, 75, 100, 75];

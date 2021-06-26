@@ -25,7 +25,11 @@ export type ProposalResults = {
 	voteList: any[];
 };
 
-const useProposal = (spaceKey: SPACE_KEY, hash: string, options?: QueryConfig<ProposalResults>) => {
+const useProposalQuery = (
+	spaceKey: SPACE_KEY,
+	hash: string,
+	options?: QueryConfig<ProposalResults>
+) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const { provider } = Connector.useContainer();
@@ -237,4 +241,4 @@ const useProposal = (spaceKey: SPACE_KEY, hash: string, options?: QueryConfig<Pr
 	);
 };
 
-export default useProposal;
+export default useProposalQuery;

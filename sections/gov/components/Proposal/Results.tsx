@@ -4,7 +4,7 @@ import { Svg } from 'react-optimized-image';
 import Spinner from 'assets/svg/app/loader.svg';
 import useActiveTab from '../../hooks/useActiveTab';
 import { FlexDivRowCentered } from 'styles/common';
-import { ProposalResults } from 'queries/gov/useProposal';
+import { ProposalResults } from 'queries/gov/useProposalQuery';
 import { formatNumber, formatPercent } from 'utils/formatters/number';
 import ProgressBar from 'components/ProgressBar';
 import { MaxHeightColumn, StyledTooltip } from 'sections/gov/components/common';

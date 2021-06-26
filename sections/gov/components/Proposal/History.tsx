@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { Svg } from 'react-optimized-image';
 import Spinner from 'assets/svg/app/loader.svg';
 import { FlexDivCol, FlexDivRow, FlexDivRowCentered } from 'styles/common';
-import { ProposalResults } from 'queries/gov/useProposal';
+import { ProposalResults } from 'queries/gov/useProposalQuery';
 import { useRecoilValue } from 'recoil';
 import { walletAddressState } from 'store/wallet';
 import { useTranslation } from 'react-i18next';
