@@ -57,7 +57,7 @@ import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 
 import TransactionNotifier from 'containers/TransactionNotifier';
 import TxState from 'sections/gov/components/TxState';
-import useProposal from 'queries/gov/useProposal';
+import useProposalQuery from 'queries/gov/useProposalQuery';
 import { expired, pending } from '../helper';
 import synthetix from 'lib/synthetix';
 import { Proposal } from 'queries/gov/types';
@@ -103,7 +103,7 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ proposal, onBack }) =
 	const isAppReady = useRecoilValue(appReadyState);
 	const walletAddress = useRecoilValue(walletAddressState);
 
-	const proposalQuery = useProposal(activeTab, proposal?.id ?? '');
+	const proposalQuery = useProposalQuery(activeTab, proposal?.id ?? '');
 
 	const { signer } = Connector.useContainer();
 

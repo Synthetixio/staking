@@ -5,7 +5,7 @@ import { useRecoilValue } from 'recoil';
 
 import useGetLiquidationData from 'queries/liquidations/useGetLiquidationDataQuery';
 import useGetDebtDataQuery from 'queries/debt/useGetDebtDataQuery';
-import useLatestCouncilElectionQuery from 'queries/gov/useLatestCouncilElectionQuery';
+import useHasVotedForElectionsQuery from 'queries/gov/useHasVotedForElectionsQuery';
 
 import Banner, { BannerType } from 'sections/shared/Layout/Banner';
 import { LOCAL_STORAGE_KEYS } from 'constants/storage';
@@ -17,7 +17,7 @@ import { isL2State } from 'store/wallet';
 const BannerManager: FC = () => {
 	const liquidationData = useGetLiquidationData();
 	const debtData = useGetDebtDataQuery();
-	const latestCouncilElection = useLatestCouncilElectionQuery();
+	const hasVotedForElectionsQuery = useHasVotedForElectionsQuery();
 	const isL2 = useRecoilValue(isL2State);
 
 	const issuanceRatio = debtData?.data?.targetCRatio ?? zeroBN;
@@ -49,11 +49,7 @@ const BannerManager: FC = () => {
 				}
 			/>
 		);
-	} else if (
-		!isL2 &&
-		latestCouncilElection.data &&
-		new Date().getTime() / 1000 < (latestCouncilElection.data.end ?? 0)
-	) {
+	} else if (!isL2 && hasVotedForElectionsQuery.data && !hasVotedForElectionsQuery.data.hasVoted) {
 		return (
 			<Banner
 				type={BannerType.WARNING}

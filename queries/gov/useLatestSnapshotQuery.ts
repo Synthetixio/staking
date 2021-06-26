@@ -3,50 +3,45 @@ import { useRecoilValue } from 'recoil';
 import QUERY_KEYS from 'constants/queryKeys';
 import { snapshotEndpoint, SPACE_KEY } from 'constants/snapshot';
 import { appReadyState } from 'store/app';
-import { isL2State, networkState, walletAddressState } from 'store/wallet';
+import { isL2State } from 'store/wallet';
 import request, { gql } from 'graphql-request';
 import { Proposal } from './types';
+import { electionAuthor } from './constants';
 
-const useLatestCouncilElectionQuery = (options?: QueryConfig<Proposal>) => {
+type LatestSnapshotResult = {
+	latestSnapshot: string;
+};
+
+const useLatestSnapshotQuery = (options?: QueryConfig<LatestSnapshotResult>) => {
 	const isAppReady = useRecoilValue(appReadyState);
-	const walletAddress = useRecoilValue(walletAddressState);
-	const network = useRecoilValue(networkState);
 	const isL2 = useRecoilValue(isL2State);
 
-	return useQuery<Proposal>(
-		QUERY_KEYS.Gov.LatestCouncilElection(walletAddress ?? '', network?.id!),
+	return useQuery<LatestSnapshotResult>(
+		QUERY_KEYS.Gov.LatestSnapshot,
 		async () => {
 			const { proposals }: { proposals: Proposal[] } = await request(
 				snapshotEndpoint,
 				gql`
-					query LatestElectionProposal($space: String) {
+					query LatestSnapshot($councilKey: String, $author: String) {
 						proposals(
 							first: 1
-							where: { space: $space }
+							where: { space: $councilKey, author: $author }
 							orderBy: "created"
 							orderDirection: desc
 						) {
-							id
-							title
-							body
-							choices
-							start
-							end
 							snapshot
-							state
-							author
-							space {
-								id
-								name
-							}
 						}
 					}
 				`,
 				{
-					space: SPACE_KEY.COUNCIL,
+					councilKey: SPACE_KEY.COUNCIL,
+					author: electionAuthor,
 				}
 			);
-			return proposals[0];
+
+			return {
+				latestSnapshot: proposals[0].snapshot ?? 0,
+			};
 		},
 		{
 			enabled: isAppReady && !isL2,
@@ -58,4 +53,4 @@ const useLatestCouncilElectionQuery = (options?: QueryConfig<Proposal>) => {
 	);
 };
 
-export default useLatestCouncilElectionQuery;
+export default useLatestSnapshotQuery;

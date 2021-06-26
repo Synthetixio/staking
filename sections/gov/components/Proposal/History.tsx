@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import { Svg } from 'react-optimized-image';
 import Spinner from 'assets/svg/app/loader.svg';
 import { FlexDivCol, FlexDivRow, FlexDivRowCentered } from 'styles/common';
-import { ProposalResults } from 'queries/gov/useProposal';
 import { useRecoilValue } from 'recoil';
 import { walletAddressState } from 'store/wallet';
 import { useTranslation } from 'react-i18next';
@@ -15,6 +14,7 @@ import makeBlockie from 'ethereum-blockies-base64';
 import { ethers } from 'ethers';
 import { QueryResult } from 'react-query';
 import { List } from 'react-virtualized';
+import { ProposalResults } from 'queries/gov/types';
 
 type HistoryProps = {
 	proposalResults: QueryResult<ProposalResults, unknown>;

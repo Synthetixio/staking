@@ -8,7 +8,7 @@ import { snapshotEndpoint, SPACE_KEY } from 'constants/snapshot';
 import { appReadyState } from 'store/app';
 import { SpaceData } from './types';
 
-const useSnapshotSpace = (spaceKey: SPACE_KEY, options?: QueryConfig<SpaceData>) => {
+const useSnapshotSpaceQuery = (spaceKey: SPACE_KEY, options?: QueryConfig<SpaceData>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	return useQuery<SpaceData>(
 		QUERY_KEYS.Gov.SnapshotSpace(spaceKey),
@@ -51,4 +51,4 @@ const useSnapshotSpace = (spaceKey: SPACE_KEY, options?: QueryConfig<SpaceData>)
 	);
 };
 
-export default useSnapshotSpace;
+export default useSnapshotSpaceQuery;
