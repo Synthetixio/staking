@@ -75,7 +75,14 @@ const Results: React.FC<ResultsProps> = ({ proposalResults, hash }) => {
 			<MaxHeightColumn>
 				{mappedResults.map((choice: any, i: number) => {
 					return (
-						<Row key={i} highlight={activeTab === SPACE_KEY.COUNCIL && i < numOfCouncilSeats}>
+						<Row
+							key={i}
+							highlight={
+								(activeTab === SPACE_KEY.COUNCIL && i < numOfCouncilSeats) ||
+								(activeTab === SPACE_KEY.GRANTS && i < 5) ||
+								(activeTab === SPACE_KEY.AMBASSADOR && i < 3)
+							}
+						>
 							<StyledTooltip
 								arrow={true}
 								placement="bottom"
