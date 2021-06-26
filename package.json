@@ -22,7 +22,7 @@
 		"@gnosis.pm/safe-apps-sdk": "2.4.0",
 		"@metamask/detect-provider": "1.2.0",
 		"@reach/dialog": "0.12.1",
-		"@snapshot-labs/snapshot.js": "0.1.7",
+		"@snapshot-labs/snapshot.js": "0.1.10",
 		"@synthetixio/assets": "2.0.10",
 		"@synthetixio/contracts-interface": "2.45.2",
 		"@synthetixio/optimism-networks": "0.0.14",
