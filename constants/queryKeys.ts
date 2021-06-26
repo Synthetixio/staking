@@ -281,12 +281,7 @@ export const QUERY_KEYS = {
 			walletAddress,
 			networkId,
 		],
-		LatestElections: (walletAddress: string, networkId: NetworkId) => [
-			'gov',
-			'latestElections',
-			walletAddress,
-			networkId,
-		],
+		LatestSnapshot: () => ['gov', 'latestSnapshot'],
 		Proposal: (spaceKey: SPACE_KEY, hash: string) => ['gov', 'proposal', spaceKey, hash],
 		VotingWeight: (spaceKey: SPACE_KEY, block: number | null) => [
 			'gov',
@@ -294,12 +289,7 @@ export const QUERY_KEYS = {
 			spaceKey,
 			block,
 		],
-		HasVotedForElections: (electionHashes: string[], walletAddress: string) => [
-			'gov',
-			'hasVotedForElections',
-			electionHashes,
-			walletAddress,
-		],
+		HasVotedForElections: (walletAddress: string) => ['gov', 'hasVotedForElections', walletAddress],
 	},
 	TokenLists: {
 		Synthetix: ['tokenLists', 'synthetix'],
