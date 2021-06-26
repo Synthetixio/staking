@@ -5,7 +5,7 @@ import QUERY_KEYS from 'constants/queryKeys';
 import { SPACE_KEY, snapshotEndpoint } from 'constants/snapshot';
 
 import { appReadyState } from 'store/app';
-import { Proposal, SpaceData } from './types';
+import { Proposal } from './types';
 import { networkState, walletAddressState } from 'store/wallet';
 import Connector from 'containers/Connector';
 import { ethers } from 'ethers';
@@ -30,27 +30,10 @@ const useProposalsQuery = (spaceKey: SPACE_KEY, options?: QueryConfig<Proposal[]
 	return useQuery<Proposal[]>(
 		QUERY_KEYS.Gov.Proposals(spaceKey, walletAddress ?? '', network?.id!),
 		async () => {
-			const { space, proposals }: { space: SpaceData; proposals: Proposal[] } = await request(
+			const { proposals }: { proposals: Proposal[] } = await request(
 				snapshotEndpoint,
 				gql`
 					query ProposalsForSpace($spaceKey: String) {
-						space(id: $spaceKey) {
-							domain
-							about
-							members
-							name
-							network
-							skin
-							symbol
-							strategies {
-								name
-								params
-							}
-							filters {
-								minScore
-								onlyMembers
-							}
-						}
 						proposals(
 							first: 8
 							where: { space: $spaceKey }
