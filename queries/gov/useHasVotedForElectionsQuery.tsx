@@ -1,5 +1,6 @@
 import { useQuery, QueryConfig } from 'react-query';
 import { useRecoilValue } from 'recoil';
+import snapshot from '@snapshot-labs/snapshot.js';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import { snapshotEndpoint, SPACE_KEY } from 'constants/snapshot';
@@ -7,7 +8,9 @@ import { snapshotEndpoint, SPACE_KEY } from 'constants/snapshot';
 import { appReadyState } from 'store/app';
 import { walletAddressState } from 'store/wallet';
 import request, { gql } from 'graphql-request';
-import { Proposal, SpaceData } from './types';
+import { Proposal, SpaceData, SpaceStrategy } from './types';
+import Connector from 'containers/Connector';
+import { getAddress } from 'ethers/lib/utils';
 
 enum ProposalStates {
 	ACTIVE = 'active',
@@ -21,6 +24,7 @@ type HasVotedResult = {
 const useHasVotedForElectionsQuery = (options?: QueryConfig<HasVotedResult>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const walletAddress = useRecoilValue(walletAddressState);
+	const { provider } = Connector.useContainer();
 
 	return useQuery<HasVotedResult>(
 		QUERY_KEYS.Gov.HasVotedForElections(walletAddress ?? ''),
@@ -95,39 +99,20 @@ const useHasVotedForElectionsQuery = (options?: QueryConfig<HasVotedResult>) => 
 					{ spaceKey: SPACE_KEY.COUNCIL }
 				);
 
-				const {
-					scores: { scores },
-				} = await request(
-					snapshotEndpoint,
-					gql`
-						query Scores(
-							$spaceKey: String
-							$strategies: [Any]!
-							$network: String!
-							$addresses: [String]!
-							$snapshot: Any
-						) {
-							scores(
-								space: $spaceKey
-								strategies: $strategies
-								network: $network
-								addresses: $addresses
-								snapshot: $snapshot
-							) {
-								scores
-							}
-						}
-					`,
-					{
-						spaceKey: SPACE_KEY.COUNCIL,
-						strategies: space.strategies,
-						network: space.network,
-						addresses: [walletAddress],
-						snapshot: latestSnapshot,
-					}
+				const scores = await snapshot.utils.getScores(
+					SPACE_KEY.COUNCIL,
+					space.strategies,
+					space.network,
+					provider,
+					[getAddress(walletAddress ?? '')],
+					latestSnapshot
 				);
 
-				const totalWeight = scores.reduce((a: number, b: number) => a + b);
+				const totalScore = space.strategies.map(
+					(_: SpaceStrategy, key: number) => scores[key][getAddress(walletAddress ?? '')]
+				);
+
+				const totalWeight = totalScore.reduce((a: number, b: number) => a ?? 0 + b ?? 0);
 
 				//@notice user has no voting weight
 				if (totalWeight === 0) {

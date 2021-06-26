@@ -1,5 +1,6 @@
 import { useQuery, QueryConfig } from 'react-query';
 import { useRecoilValue } from 'recoil';
+import snapshot from '@snapshot-labs/snapshot.js';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import { snapshotEndpoint, SPACE_KEY } from 'constants/snapshot';
@@ -96,43 +97,19 @@ const useProposalQuery = (
 			const voterAddresses = votes.map((e: Vote) => ethers.utils.getAddress(e.voter));
 
 			const block = parseInt(proposal.snapshot);
-			const currentBlock = provider?.getBlockNumber() ?? 0;
-			const blockTag = block > currentBlock ? 'latest' : block;
 
-			const {
-				scores: { scores },
-			} = await request(
-				snapshotEndpoint,
-				gql`
-					query Scores(
-						$spaceKey: String
-						$strategies: [Any]!
-						$network: String!
-						$addresses: [String]!
-						$snapshot: Any
-					) {
-						scores(
-							space: $spaceKey
-							strategies: $strategies
-							network: $network
-							addresses: $addresses
-							snapshot: $snapshot
-						) {
-							scores
-						}
-					}
-				`,
-				{
+			const [scores, profiles] = await Promise.all([
+				snapshot.utils.getScores(
 					spaceKey,
-					strategies: space.strategies,
-					network: space.network,
-					addresses: voterAddresses,
-					snapshot: blockTag,
-				}
-			);
-
-			/* Get scores and ENS/3Box profiles */
-			const [profiles] = await Promise.all([getProfiles(voterAddresses)]);
+					space.strategies,
+					space.network,
+					provider,
+					voterAddresses,
+					block
+				),
+				/* Get scores and ENS/3Box profiles */
+				getProfiles(voterAddresses),
+			]);
 
 			interface MappedVotes extends Vote {
 				profile: {
