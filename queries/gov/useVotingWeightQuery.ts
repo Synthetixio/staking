@@ -1,5 +1,6 @@
 import { useQuery, QueryConfig } from 'react-query';
 import { useRecoilValue } from 'recoil';
+import snapshot from '@snapshot-labs/snapshot.js';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import { snapshotEndpoint, SPACE_KEY } from 'constants/snapshot';
@@ -11,7 +12,7 @@ import { ethers } from 'ethers';
 import { SpaceData, SpaceStrategy } from './types';
 import request, { gql } from 'graphql-request';
 
-const useVotingWeight = (
+const useVotingWeightQuery = (
 	spaceKey: SPACE_KEY,
 	block: number | null,
 	options?: QueryConfig<number[]>
@@ -51,51 +52,20 @@ const useVotingWeight = (
 					{ spaceKey: spaceKey }
 				);
 
-				const currentBlock = provider?.getBlockNumber() ?? 0;
-				const blockTag = block !== null && block > currentBlock ? 'latest' : block;
-
-				const {
-					scores: { scores },
-				} = await request(
-					snapshotEndpoint,
-					gql`
-						query Scores(
-							$spaceKey: String
-							$strategies: [Any]!
-							$network: String!
-							$addresses: [String]!
-							$snapshot: Any
-						) {
-							scores(
-								space: $spaceKey
-								strategies: $strategies
-								network: $network
-								addresses: $addresses
-								snapshot: $snapshot
-							) {
-								scores
-							}
-						}
-					`,
-					{
-						spaceKey,
-						strategies: space.strategies,
-						network: space.network,
-						addresses: [getAddress(walletAddress ?? '')],
-						snapshot: blockTag,
-					}
+				const scores = await snapshot.utils.getScores(
+					SPACE_KEY.COUNCIL,
+					space.strategies,
+					space.network,
+					provider,
+					[getAddress(walletAddress ?? '')],
+					block
 				);
 
-				let arrayOfScores: number[];
-				if (scores.length > 0) {
-					arrayOfScores = space.strategies.map(
-						(_: SpaceStrategy, key: number) => scores[key][getAddress(walletAddress)]
-					);
-				} else {
-					arrayOfScores = [0, 0];
-				}
+				const totalScore = space.strategies.map(
+					(_: SpaceStrategy, key: number) => scores[key][getAddress(walletAddress ?? '')] ?? 0
+				);
 
-				return arrayOfScores;
+				return totalScore;
 			} else {
 				return [0, 0];
 			}
@@ -110,4 +80,4 @@ const useVotingWeight = (
 	);
 };
 
-export default useVotingWeight;
+export default useVotingWeightQuery;

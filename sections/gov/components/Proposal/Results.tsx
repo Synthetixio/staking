@@ -4,15 +4,16 @@ import { Svg } from 'react-optimized-image';
 import Spinner from 'assets/svg/app/loader.svg';
 import useActiveTab from '../../hooks/useActiveTab';
 import { FlexDivRowCentered } from 'styles/common';
-import { ProposalResults } from 'queries/gov/useProposal';
 import { formatNumber, formatPercent } from 'utils/formatters/number';
 import ProgressBar from 'components/ProgressBar';
 import { MaxHeightColumn, StyledTooltip } from 'sections/gov/components/common';
 import { SPACE_KEY } from 'constants/snapshot';
 import CouncilNominations from 'constants/nominations.json';
 import { useRecoilValue } from 'recoil';
-import { councilElectionCountState, numOfCouncilSeatsState } from 'store/gov';
+import { numOfCouncilSeatsState } from 'store/gov';
 import { QueryResult } from 'react-query';
+import { ProposalResults } from 'queries/gov/types';
+import { numOfAmbassadorMembers, numOfGrantMembers } from 'queries/gov/constants';
 
 type ResultsProps = {
 	proposalResults: QueryResult<ProposalResults, unknown>;
@@ -22,7 +23,6 @@ type ResultsProps = {
 const Results: React.FC<ResultsProps> = ({ proposalResults, hash }) => {
 	const activeTab = useActiveTab();
 	const [choices, setChoices] = useState<any>(null);
-	const electionCount = useRecoilValue(councilElectionCountState);
 	const numOfCouncilSeats = useRecoilValue(numOfCouncilSeatsState);
 
 	useEffect(() => {
@@ -43,7 +43,7 @@ const Results: React.FC<ResultsProps> = ({ proposalResults, hash }) => {
 			};
 			loadDiscordNames();
 		}
-	}, [activeTab, electionCount, hash]);
+	}, [activeTab, hash]);
 
 	useEffect(() => {
 		if (proposalResults && activeTab !== SPACE_KEY.COUNCIL) {
@@ -76,7 +76,14 @@ const Results: React.FC<ResultsProps> = ({ proposalResults, hash }) => {
 			<MaxHeightColumn>
 				{mappedResults.map((choice: any, i: number) => {
 					return (
-						<Row key={i} highlight={activeTab === SPACE_KEY.COUNCIL && i < numOfCouncilSeats}>
+						<Row
+							key={i}
+							highlight={
+								(activeTab === SPACE_KEY.COUNCIL && i < numOfCouncilSeats) ||
+								(activeTab === SPACE_KEY.GRANTS && i < numOfGrantMembers) ||
+								(activeTab === SPACE_KEY.AMBASSADOR && i < numOfAmbassadorMembers)
+							}
+						>
 							<StyledTooltip
 								arrow={true}
 								placement="bottom"

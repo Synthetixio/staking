@@ -8,7 +8,7 @@ import Question from './Question';
 import Connector from 'containers/Connector';
 import useSignMessage, { SignatureType } from 'mutations/gov/useSignMessage';
 import useActiveTab from 'sections/gov/hooks/useActiveTab';
-import useSnapshotSpace from 'queries/gov/useSnapshotSpace';
+import useSnapshotSpaceQuery from 'queries/gov/useSnapshotSpaceQuery';
 import { Transaction } from 'constants/network';
 import { SPACE_KEY } from 'constants/snapshot';
 import { ethers } from 'ethers';
@@ -46,7 +46,7 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 	const [signError, setSignError] = useState<string | null>(null);
 	const [txError, setTxError] = useState<string | null>(null);
 	const [txHash, setTxHash] = useState<string | null>(null);
-	const space = useSnapshotSpace(activeTab);
+	const space = useSnapshotSpaceQuery(activeTab);
 	const [createProposal, result] = useSignMessage();
 	const [hash, setHash] = useState<string | null>(null);
 	const { monitorTransaction } = TransactionNotifier.useContainer();

@@ -36,7 +36,6 @@ export type Proposal = {
 	end: number;
 	snapshot: string;
 	state: string;
-	votes: number;
 };
 
 export type Vote = {
@@ -47,4 +46,14 @@ export type Vote = {
 	proposal: string;
 	choice: any;
 	metadata: any;
+};
+
+export type ProposalResults = {
+	totalBalances: number[];
+	totalScores: any;
+	totalVotes: number[];
+	totalVotesBalances: number;
+	choices: string[];
+	spaceSymbol: string;
+	voteList: any[];
 };

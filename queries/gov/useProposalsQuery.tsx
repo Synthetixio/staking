@@ -5,7 +5,7 @@ import QUERY_KEYS from 'constants/queryKeys';
 import { SPACE_KEY, snapshotEndpoint } from 'constants/snapshot';
 
 import { appReadyState } from 'store/app';
-import { Proposal, SpaceData, Vote } from './types';
+import { Proposal } from './types';
 import { networkState, walletAddressState } from 'store/wallet';
 import Connector from 'containers/Connector';
 import { ethers } from 'ethers';
@@ -13,7 +13,7 @@ import CouncilDilution from 'contracts/councilDilution.js';
 import CouncilNominations from 'constants/nominations.json';
 import request, { gql } from 'graphql-request';
 
-const useProposals = (spaceKey: SPACE_KEY, options?: QueryConfig<Proposal[]>) => {
+const useProposalsQuery = (spaceKey: SPACE_KEY, options?: QueryConfig<Proposal[]>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const network = useRecoilValue(networkState);
 	const walletAddress = useRecoilValue(walletAddressState);
@@ -30,30 +30,12 @@ const useProposals = (spaceKey: SPACE_KEY, options?: QueryConfig<Proposal[]>) =>
 	return useQuery<Proposal[]>(
 		QUERY_KEYS.Gov.Proposals(spaceKey, walletAddress ?? '', network?.id!),
 		async () => {
-			const { space, proposals }: { space: SpaceData; proposals: Proposal[] } = await request(
+			const { proposals }: { proposals: Proposal[] } = await request(
 				snapshotEndpoint,
 				gql`
 					query ProposalsForSpace($spaceKey: String) {
-						space(id: $spaceKey) {
-							domain
-							about
-							members
-							name
-							network
-							skin
-							symbol
-							strategies {
-								name
-								params
-							}
-							filters {
-								minScore
-								onlyMembers
-							}
-						}
 						proposals(
 							first: 10
-							skip: 0
 							where: { space: $spaceKey }
 							orderBy: "created"
 							orderDirection: desc
@@ -94,68 +76,8 @@ const useProposals = (spaceKey: SPACE_KEY, options?: QueryConfig<Proposal[]>) =>
 
 			const mappedProposals = proposals.map(async (proposal) => {
 				if (validHashes.includes(proposal.id)) {
-					const block = parseInt(proposal.snapshot);
-					const currentBlock = provider?.getBlockNumber() ?? 0;
-					const blockTag = block > currentBlock ? 'latest' : block;
-
-					const { votes }: { votes: Vote[] } = await request(
-						snapshotEndpoint,
-						gql`
-							query Votes($proposal: String) {
-								votes(first: 1000, where: { proposal: $proposal }) {
-									id
-									voter
-									choice
-								}
-							}
-						`,
-						{ proposal: proposal.id }
-					);
-
-					const voterAddresses = votes.map((e: Vote) => ethers.utils.getAddress(e.voter));
-
-					const {
-						scores: { scores },
-					} = await request(
-						snapshotEndpoint,
-						gql`
-							query Scores(
-								$spaceKey: String
-								$strategies: [Any]!
-								$network: String!
-								$addresses: [String]!
-								$snapshot: Any
-							) {
-								scores(
-									space: $spaceKey
-									strategies: $strategies
-									network: $network
-									addresses: $addresses
-									snapshot: $snapshot
-								) {
-									scores
-								}
-							}
-						`,
-						{
-							spaceKey,
-							strategies: space.strategies,
-							network: space.network,
-							addresses: voterAddresses,
-							snapshot: blockTag,
-						}
-					);
-
-					let voteCount = 0;
-
-					space.strategies.forEach((_, i: number) => {
-						let arrayOfVotes = Object.values(scores[i]) as number[];
-						voteCount = voteCount + arrayOfVotes.filter((score: number) => score > 0).length;
-					});
-
 					return {
 						...proposal,
-						votes: voteCount,
 					};
 				} else {
 					return null;
@@ -174,4 +96,4 @@ const useProposals = (spaceKey: SPACE_KEY, options?: QueryConfig<Proposal[]>) =>
 	);
 };
 
-export default useProposals;
+export default useProposalsQuery;
