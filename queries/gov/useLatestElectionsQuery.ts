@@ -7,22 +7,39 @@ import { isL2State, networkState, walletAddressState } from 'store/wallet';
 import request, { gql } from 'graphql-request';
 import { Proposal } from './types';
 
-const useLatestCouncilElectionQuery = (options?: QueryConfig<Proposal>) => {
+enum ProposalStates {
+	ACTIVE = 'active',
+	CLOSED = 'closed',
+}
+
+const useLatestElectionsQuery = (options?: QueryConfig<Proposal[]>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const network = useRecoilValue(networkState);
 	const isL2 = useRecoilValue(isL2State);
 
-	return useQuery<Proposal>(
-		QUERY_KEYS.Gov.LatestCouncilElection(walletAddress ?? '', network?.id!),
+	return useQuery<Proposal[]>(
+		QUERY_KEYS.Gov.LatestElections(walletAddress ?? '', network?.id!),
 		async () => {
+			const author = '0xAFe05574a3653cdE39c8Fb842f761F5326Aa424A';
+
 			const { proposals }: { proposals: Proposal[] } = await request(
 				snapshotEndpoint,
 				gql`
-					query LatestElectionProposal($space: String) {
+					query LatestElections(
+						$councilKey: String
+						$ambassadorKey: String
+						$grantKey: String
+						$state: String
+						$author: String
+					) {
 						proposals(
-							first: 1
-							where: { space: $space }
+							first: 3
+							where: {
+								space_in: [$councilKey, $ambassadorKey, $grantKey]
+								author: $author
+								state: $state
+							}
 							orderBy: "created"
 							orderDirection: desc
 						) {
@@ -43,10 +60,14 @@ const useLatestCouncilElectionQuery = (options?: QueryConfig<Proposal>) => {
 					}
 				`,
 				{
-					space: SPACE_KEY.COUNCIL,
+					councilKey: SPACE_KEY.COUNCIL,
+					ambassadorKey: SPACE_KEY.AMBASSADOR,
+					grantKey: SPACE_KEY.GRANTS,
+					state: ProposalStates.ACTIVE,
+					author: author,
 				}
 			);
-			return proposals[0];
+			return proposals;
 		},
 		{
 			enabled: isAppReady && !isL2,
@@ -58,4 +79,4 @@ const useLatestCouncilElectionQuery = (options?: QueryConfig<Proposal>) => {
 	);
 };
 
-export default useLatestCouncilElectionQuery;
+export default useLatestElectionsQuery;

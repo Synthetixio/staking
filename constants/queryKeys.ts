@@ -281,9 +281,9 @@ export const QUERY_KEYS = {
 			walletAddress,
 			networkId,
 		],
-		LatestCouncilElection: (walletAddress: string, networkId: NetworkId) => [
+		LatestElections: (walletAddress: string, networkId: NetworkId) => [
 			'gov',
-			'latestCouncilElection',
+			'latestElections',
 			walletAddress,
 			networkId,
 		],
@@ -293,6 +293,12 @@ export const QUERY_KEYS = {
 			'votingWeight',
 			spaceKey,
 			block,
+		],
+		HasVotedForElections: (electionHashes: string[], walletAddress: string) => [
+			'gov',
+			'hasVotedForElections',
+			electionHashes,
+			walletAddress,
 		],
 	},
 	TokenLists: {
