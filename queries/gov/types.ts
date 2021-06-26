@@ -48,3 +48,13 @@ export type Vote = {
 	choice: any;
 	metadata: any;
 };
+
+export type ProposalResults = {
+	totalBalances: number[];
+	totalScores: any;
+	totalVotes: number[];
+	totalVotesBalances: number;
+	choices: string[];
+	spaceSymbol: string;
+	voteList: any[];
+};

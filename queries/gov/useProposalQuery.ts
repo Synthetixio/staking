@@ -12,18 +12,8 @@ import Connector from 'containers/Connector';
 import CouncilDilution from 'contracts/councilDilution.js';
 import { ethers } from 'ethers';
 import { uniqBy } from 'lodash';
-import { SpaceData, Vote, SpaceStrategy, Proposal } from './types';
+import { SpaceData, Vote, SpaceStrategy, Proposal, ProposalResults } from './types';
 import request, { gql } from 'graphql-request';
-
-export type ProposalResults = {
-	totalBalances: number[];
-	totalScores: any;
-	totalVotes: number[];
-	totalVotesBalances: number;
-	choices: string[];
-	spaceSymbol: string;
-	voteList: any[];
-};
 
 const useProposalQuery = (
 	spaceKey: SPACE_KEY,

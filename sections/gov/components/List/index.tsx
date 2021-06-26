@@ -112,16 +112,6 @@ const ResponsiveTable: React.FC<ResponsiveTableProps> = ({ mobile, spaceKey }) =
 				),
 				sortable: false,
 			},
-			{
-				Header: <>{t('gov.table.votes')}</>,
-				accessor: 'votes',
-				Cell: (cellProps: CellProps<ProposalType>) => (
-					<CellContainer>
-						<Title isNumeric={true}>{cellProps.row.original.votes}</Title>
-					</CellContainer>
-				),
-				sortable: false,
-			},
 		].map((c, i) => ({ ...c, width: widths[i] }));
 	}, [t, mobile]);
 

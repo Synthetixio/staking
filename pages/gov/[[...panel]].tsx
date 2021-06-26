@@ -23,7 +23,7 @@ const Gov: React.FC = () => {
 	const { t } = useTranslation();
 	const { provider } = Connector.useContainer();
 	const { setTitle } = UIContainer.useContainer();
-	const activeProposals = useActiveProposalsQuery();
+	// const activeProposals = useActiveProposalsQuery();
 	const latestSnapshot = useLatestSnapshotQuery();
 	const walletVotingWeight = useVotingWeightQuery(
 		SPACE_KEY.COUNCIL,
@@ -71,10 +71,10 @@ const Gov: React.FC = () => {
 							: 0,
 					})}
 				/>
-				<ActiveProposals
+				{/* <ActiveProposals
 					title={t('common.stat-box.active-proposals')}
 					value={activeProposals.data ?? 0}
-				/>
+				/> */}
 				<TotalVotingPower
 					title={t('common.stat-box.delegated-voting-power.title')}
 					value={formatNumber(walletVotingWeight.data ? walletVotingWeight.data[1] : 0)}
