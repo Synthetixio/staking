@@ -52,8 +52,7 @@ const useProposalsQuery = (spaceKey: SPACE_KEY, options?: QueryConfig<Proposal[]
 							}
 						}
 						proposals(
-							first: 10
-							skip: 0
+							first: 8
 							where: { space: $spaceKey }
 							orderBy: "created"
 							orderDirection: desc

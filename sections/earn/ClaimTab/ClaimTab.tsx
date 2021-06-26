@@ -71,6 +71,7 @@ import {
 	HeaderLabel,
 } from '../common';
 import { MobileOnlyView } from 'components/Media';
+import useHasVotedForElectionsQuery from 'queries/gov/useHasVotedForElectionsQuery';
 
 type ClaimTabProps = {
 	tradingRewards: BigNumber;
@@ -100,6 +101,8 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 	const [transactionState, setTransactionState] = useState<Transaction>(Transaction.PRESUBMIT);
 	const [txHash, setTxHash] = useState<string | null>(null);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
+
+	const hasVotedForElections = useHasVotedForElectionsQuery();
 
 	const link =
 		blockExplorerInstance != null && txHash != null
@@ -407,7 +410,11 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 						disabled={!canClaim || !lowCRatio}
 					>
 						<PaddedButtonContainer>
-							{lowCRatio ? (
+							{hasVotedForElections.data && !hasVotedForElections.data.hasVoted ? (
+								<PaddedButton variant="primary" onClick={() => router.push(ROUTES.Gov.Home)}>
+									{t('earn.actions.claim.not-voted')}
+								</PaddedButton>
+							) : lowCRatio ? (
 								<PaddedButton variant="primary" onClick={goToBurn}>
 									{t('earn.actions.claim.low-ratio')}
 								</PaddedButton>

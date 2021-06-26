@@ -153,10 +153,10 @@ const useHasVotedForElectionsQuery = (options?: QueryConfig<HasVotedResult>) => 
 						userAddress: walletAddress,
 					}
 				);
-				if (votes.length === 0) {
-					return { hasVoted: false };
-				} else {
+				if (votes.length === 3) {
 					return { hasVoted: true };
+				} else {
+					return { hasVoted: false };
 				}
 			} catch (error) {
 				console.log(error);
