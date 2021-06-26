@@ -99,14 +99,14 @@ const TotalVotingPower = styled(StatBox)`
 	}
 `;
 
-const ActiveProposals = styled(StatBox)`
-	.title {
-		color: ${(props) => props.theme.colors.green};
-	}
-	.value {
-		text-shadow: ${(props) => props.theme.colors.greenTextShadow};
-		color: #073124;
-	}
-`;
+// const ActiveProposals = styled(StatBox)`
+// 	.title {
+// 		color: ${(props) => props.theme.colors.green};
+// 	}
+// 	.value {
+// 		text-shadow: ${(props) => props.theme.colors.greenTextShadow};
+// 		color: #073124;
+// 	}
+// `;
 
 export default Gov;

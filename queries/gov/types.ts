@@ -36,7 +36,6 @@ export type Proposal = {
 	end: number;
 	snapshot: string;
 	state: string;
-	votes: number;
 };
 
 export type Vote = {

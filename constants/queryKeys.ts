@@ -281,7 +281,7 @@ export const QUERY_KEYS = {
 			walletAddress,
 			networkId,
 		],
-		LatestSnapshot: () => ['gov', 'latestSnapshot'],
+		LatestSnapshot: ['gov', 'latestSnapshot'],
 		Proposal: (spaceKey: SPACE_KEY, hash: string) => ['gov', 'proposal', spaceKey, hash],
 		VotingWeight: (spaceKey: SPACE_KEY, block: number | null) => [
 			'gov',

@@ -13,6 +13,7 @@ import { useRecoilValue } from 'recoil';
 import { numOfCouncilSeatsState } from 'store/gov';
 import { QueryResult } from 'react-query';
 import { ProposalResults } from 'queries/gov/types';
+import { numOfAmbassadorMembers, numOfGrantMembers } from 'queries/gov/constants';
 
 type ResultsProps = {
 	proposalResults: QueryResult<ProposalResults, unknown>;
@@ -79,8 +80,8 @@ const Results: React.FC<ResultsProps> = ({ proposalResults, hash }) => {
 							key={i}
 							highlight={
 								(activeTab === SPACE_KEY.COUNCIL && i < numOfCouncilSeats) ||
-								(activeTab === SPACE_KEY.GRANTS && i < 5) ||
-								(activeTab === SPACE_KEY.AMBASSADOR && i < 3)
+								(activeTab === SPACE_KEY.GRANTS && i < numOfGrantMembers) ||
+								(activeTab === SPACE_KEY.AMBASSADOR && i < numOfAmbassadorMembers)
 							}
 						>
 							<StyledTooltip

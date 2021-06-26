@@ -11,6 +11,7 @@ import request, { gql } from 'graphql-request';
 import { Proposal, SpaceData, SpaceStrategy } from './types';
 import Connector from 'containers/Connector';
 import { getAddress } from 'ethers/lib/utils';
+import { electionAuthor } from './constants';
 
 enum ProposalStates {
 	ACTIVE = 'active',
@@ -30,8 +31,6 @@ const useHasVotedForElectionsQuery = (options?: QueryConfig<HasVotedResult>) => 
 		QUERY_KEYS.Gov.HasVotedForElections(walletAddress ?? ''),
 		async () => {
 			try {
-				const author = '0xAFe05574a3653cdE39c8Fb842f761F5326Aa424A';
-
 				const { proposals }: { proposals: Proposal[] } = await request(
 					snapshotEndpoint,
 					gql`
@@ -62,12 +61,12 @@ const useHasVotedForElectionsQuery = (options?: QueryConfig<HasVotedResult>) => 
 						ambassadorKey: SPACE_KEY.AMBASSADOR,
 						grantKey: SPACE_KEY.GRANTS,
 						state: ProposalStates.ACTIVE,
-						author: author,
+						author: electionAuthor,
 					}
 				);
 
-				// @notice No elections currenlty active
-				if (proposals.length === 0) {
+				// @notice Three DAO elections not currently active
+				if (proposals.length < 3 || !proposals[0]) {
 					return { hasVoted: true };
 				}
 

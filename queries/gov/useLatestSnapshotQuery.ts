@@ -6,6 +6,7 @@ import { appReadyState } from 'store/app';
 import { isL2State } from 'store/wallet';
 import request, { gql } from 'graphql-request';
 import { Proposal } from './types';
+import { electionAuthor } from './constants';
 
 type LatestSnapshotResult = {
 	latestSnapshot: string;
@@ -16,10 +17,8 @@ const useLatestSnapshotQuery = (options?: QueryConfig<LatestSnapshotResult>) => 
 	const isL2 = useRecoilValue(isL2State);
 
 	return useQuery<LatestSnapshotResult>(
-		QUERY_KEYS.Gov.LatestSnapshot(),
+		QUERY_KEYS.Gov.LatestSnapshot,
 		async () => {
-			const author = '0xAFe05574a3653cdE39c8Fb842f761F5326Aa424A';
-
 			const { proposals }: { proposals: Proposal[] } = await request(
 				snapshotEndpoint,
 				gql`
@@ -36,7 +35,7 @@ const useLatestSnapshotQuery = (options?: QueryConfig<LatestSnapshotResult>) => 
 				`,
 				{
 					councilKey: SPACE_KEY.COUNCIL,
-					author: author,
+					author: electionAuthor,
 				}
 			);
 
