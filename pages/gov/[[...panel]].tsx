@@ -12,13 +12,14 @@ import MainContent from 'sections/gov';
 import { SPACE_KEY } from 'constants/snapshot';
 import { Proposal } from 'queries/gov/types';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { councilElectionCountState, numOfCouncilSeatsState } from 'store/gov';
+import { numOfCouncilSeatsState } from 'store/gov';
 import { ethers } from 'ethers';
 import Connector from 'containers/Connector';
 import councilDilution from 'contracts/councilDilution';
 import { appReadyState } from 'store/app';
 import useActiveProposalsQuery from 'queries/gov/useActiveProposalsQuery';
 import useVotingWeight from 'queries/gov/useVotingWeight';
+import useLatestElectionsQuery from 'queries/gov/useLatestElectionsQuery';
 
 const Gov: React.FC = () => {
 	const { t } = useTranslation();
@@ -27,8 +28,11 @@ const Gov: React.FC = () => {
 	const { setTitle } = UIContainer.useContainer();
 	const [latestElectionBlock, setLatestElectionBlock] = useState<number | null>(null);
 	const activeProposals = useActiveProposalsQuery();
-	const walletVotingWeight = useVotingWeight(SPACE_KEY.COUNCIL, latestElectionBlock);
-	const setCouncilElectionCount = useSetRecoilState(councilElectionCountState);
+	const latestElectionsQuery = useLatestElectionsQuery();
+	const walletVotingWeight = useVotingWeight(
+		SPACE_KEY.COUNCIL,
+		latestElectionsQuery.data ? parseInt(latestElectionsQuery.data.latestElectionBlock) : 0
+	);
 	const setNumOfCouncilSeats = useSetRecoilState(numOfCouncilSeatsState);
 	const isAppReady = useRecoilValue(appReadyState);
 
@@ -57,8 +61,6 @@ const Gov: React.FC = () => {
 				snapshot: '0',
 			} as Partial<Proposal>;
 
-			setCouncilElectionCount(councilProposals.data.length);
-
 			councilProposals.data.forEach((proposal) => {
 				if (parseInt(proposal.snapshot) > parseInt(latestProposal.snapshot ?? '0')) {
 					latestProposal = proposal;
@@ -67,7 +69,7 @@ const Gov: React.FC = () => {
 
 			setLatestElectionBlock(parseInt(latestProposal.snapshot ?? '0'));
 		}
-	}, [councilProposals, setCouncilElectionCount, isAppReady]);
+	}, [councilProposals, isAppReady]);
 
 	// header title
 	useEffect(() => {

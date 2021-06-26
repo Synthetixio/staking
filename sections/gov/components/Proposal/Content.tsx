@@ -38,7 +38,6 @@ import { useTranslation } from 'react-i18next';
 import useSignMessage, { SignatureType } from 'mutations/gov/useSignMessage';
 import useActiveTab from 'sections/gov/hooks/useActiveTab';
 import { useRecoilValue } from 'recoil';
-import { councilElectionCountState } from 'store/gov';
 import Button from 'components/Button';
 
 import { Transaction } from 'constants/network';
@@ -70,7 +69,6 @@ const Content: React.FC<ContentProps> = ({ proposal, onBack }) => {
 
 	const [choices, setChoices] = useState<any>(null);
 
-	const electionCount = useRecoilValue(councilElectionCountState);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 
 	useEffect(() => {
@@ -92,7 +90,7 @@ const Content: React.FC<ContentProps> = ({ proposal, onBack }) => {
 			};
 			loadDiscordNames();
 		}
-	}, [proposal, activeTab, electionCount]);
+	}, [proposal, activeTab]);
 
 	useEffect(() => {
 		if (proposal && activeTab !== SPACE_KEY.COUNCIL) {

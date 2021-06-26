@@ -11,7 +11,7 @@ import { MaxHeightColumn, StyledTooltip } from 'sections/gov/components/common';
 import { SPACE_KEY } from 'constants/snapshot';
 import CouncilNominations from 'constants/nominations.json';
 import { useRecoilValue } from 'recoil';
-import { councilElectionCountState, numOfCouncilSeatsState } from 'store/gov';
+import { numOfCouncilSeatsState } from 'store/gov';
 import { QueryResult } from 'react-query';
 
 type ResultsProps = {
@@ -22,7 +22,6 @@ type ResultsProps = {
 const Results: React.FC<ResultsProps> = ({ proposalResults, hash }) => {
 	const activeTab = useActiveTab();
 	const [choices, setChoices] = useState<any>(null);
-	const electionCount = useRecoilValue(councilElectionCountState);
 	const numOfCouncilSeats = useRecoilValue(numOfCouncilSeatsState);
 
 	useEffect(() => {
@@ -43,7 +42,7 @@ const Results: React.FC<ResultsProps> = ({ proposalResults, hash }) => {
 			};
 			loadDiscordNames();
 		}
-	}, [activeTab, electionCount, hash]);
+	}, [activeTab, hash]);
 
 	useEffect(() => {
 		if (proposalResults && activeTab !== SPACE_KEY.COUNCIL) {
