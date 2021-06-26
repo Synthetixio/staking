@@ -15,7 +15,7 @@ import { ethers } from 'ethers';
 import Connector from 'containers/Connector';
 import councilDilution from 'contracts/councilDilution';
 import { appReadyState } from 'store/app';
-import useActiveProposalsQuery from 'queries/gov/useActiveProposalsQuery';
+// import useActiveProposalsQuery from 'queries/gov/useActiveProposalsQuery';
 import useVotingWeightQuery from 'queries/gov/useVotingWeightQuery';
 import useLatestSnapshotQuery from 'queries/gov/useLatestSnapshotQuery';
 
