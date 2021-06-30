@@ -818,6 +818,7 @@
 			},
 			"withdraw": {
 				"title": "Withdraw SNX",
+				"bridge-inactive": "Withdrawal bridge is currently inactive",
 				"action": {
 					"withdraw-button": "Withdraw {{withdrawAmount}}",
 					"disabled": "No SNX to withdraw"
@@ -826,6 +827,7 @@
 			"deposit": {
 				"title": "Deposit SNX",
 				"subtitle": "Deposit and Transfer SNX from L1 to L2",
+				"bridge-inactive": "Deposit bridge is currently inactive",
 				"action": {
 					"in-progress": {
 						"title": "Deposit in progress",

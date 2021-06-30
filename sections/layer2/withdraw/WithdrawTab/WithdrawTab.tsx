@@ -16,6 +16,7 @@ import TabContent from './TabContent';
 import { normalizedGasPrice } from 'utils/network';
 import BigNumber from 'bignumber.js';
 import { toBigNumber } from 'utils/formatters/number';
+import useGetWithdrawalsIsActiveQuery from 'queries/withdrawals/useGetWithdrawalsIsActiveQuery';
 
 const WithdrawTab = () => {
 	const { transferableCollateral } = useStakingCalculations();
@@ -23,6 +24,7 @@ const WithdrawTab = () => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const depositsDataQuery = useGetWithdrawalsDataQuery();
+	const withdrawalsInactive = !useGetWithdrawalsIsActiveQuery().data;
 
 	const [gasLimitEstimate, setGasLimitEstimate] = useState<GasLimitEstimate>(null);
 	const [depositTxError, setDepositTxError] = useState<string | null>(null);
@@ -109,6 +111,7 @@ const WithdrawTab = () => {
 				txHash={txHash}
 				transactionState={transactionState}
 				setTransactionState={setTransactionState}
+				bridgeInactive={withdrawalsInactive}
 			/>
 		</StyledTabContainer>
 	);

@@ -53,7 +53,7 @@ const useGetDepositsDataQuery = (options?: QueryConfig<DepositHistory>) => {
 	}, [network, provider]);
 
 	return useQuery<DepositHistory>(
-		QUERY_KEYS.Deposits(walletAddress ?? '', network?.id!),
+		QUERY_KEYS.Deposits.Data(walletAddress ?? '', network?.id!),
 		async () => {
 			const {
 				contracts: { SynthetixBridgeToOptimism },
