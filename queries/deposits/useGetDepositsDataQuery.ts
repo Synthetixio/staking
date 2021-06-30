@@ -42,7 +42,9 @@ const useGetDepositsDataQuery = (options?: QueryConfig<DepositHistory>) => {
 		if (network && !network.useOvm && provider) {
 			setWatcher(
 				optimismMessengerWatcher({
+					// @ts-ignore
 					layerOneProvider: provider as providers.Web3Provider,
+					// @ts-ignore
 					layerTwoProvider: getOptimismProvider({
 						layerOneNetworkId: network.id,
 					}) as providers.Web3Provider,

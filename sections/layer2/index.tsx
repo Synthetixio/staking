@@ -36,6 +36,7 @@ const Index: FC = () => {
 				const {
 					contracts: { Synthetix, FeePool },
 				} = initSynthetixJS({
+					// @ts-ignore
 					provider,
 					networkId: L1_TO_L2_NETWORK_MAPPER[network?.id ?? DEFAULT_NETWORK_ID],
 				});
