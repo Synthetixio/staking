@@ -56,7 +56,7 @@ const useGetWithdrawalsDataQuery = (options?: QueryConfig<WithdrawalHistory>) =>
 	}, [network, provider, isL2]);
 
 	return useQuery<WithdrawalHistory>(
-		QUERY_KEYS.Withdrawals(walletAddress ?? '', network?.id!),
+		QUERY_KEYS.Withdrawals.Data(walletAddress ?? '', network?.id!),
 		async () => {
 			const {
 				contracts: { SynthetixBridgeToBase },

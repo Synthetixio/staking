@@ -41,6 +41,7 @@ type TabContentProps = {
 	txHash: string | null;
 	transactionState: Transaction;
 	setTransactionState: (tx: Transaction) => void;
+	bridgeInactive?: boolean;
 };
 
 const TabContent: FC<TabContentProps> = ({
@@ -57,6 +58,7 @@ const TabContent: FC<TabContentProps> = ({
 	txHash,
 	transactionState,
 	setTransactionState,
+	bridgeInactive,
 }) => {
 	const { t } = useTranslation();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
@@ -76,7 +78,9 @@ const TabContent: FC<TabContentProps> = ({
 					onClick={onSubmit}
 					variant="primary"
 					size="lg"
-					disabled={transactionState !== Transaction.PRESUBMIT || !!gasEstimateError}
+					disabled={
+						bridgeInactive || transactionState !== Transaction.PRESUBMIT || !!gasEstimateError
+					}
 				>
 					{t('layer2.actions.withdraw.action.withdraw-button', {
 						withdrawAmount: formatCurrency(currencyKey, inputValue, {
@@ -147,6 +151,7 @@ const TabContent: FC<TabContentProps> = ({
 				</SettingsContainer>
 			</InputContainer>
 			{renderButton()}
+			<ErrorMessage>{bridgeInactive && t('layer2.actions.withdraw.bridge-inactive')}</ErrorMessage>
 			<ErrorMessage>{transactionError || gasEstimateError}</ErrorMessage>
 			{txModalOpen && (
 				<TxConfirmationModal

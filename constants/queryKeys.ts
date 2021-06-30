@@ -232,18 +232,34 @@ export const QUERY_KEYS = {
 			networkId,
 		],
 	},
-	Deposits: (walletAddress: string, networkId: NetworkId) => [
-		'deposits',
-		'depositsData',
-		walletAddress,
-		networkId,
-	],
-	Withdrawals: (walletAddress: string, networkId: NetworkId) => [
-		'withdrawals',
-		'withdrawalsData',
-		walletAddress,
-		networkId,
-	],
+	Deposits: {
+		Data: (walletAddress: string, networkId: NetworkId) => [
+			'deposits',
+			'depositsData',
+			walletAddress,
+			networkId,
+		],
+		IsActive: (walletAddress: string, networkId: NetworkId) => [
+			'deposits',
+			'depositsIsActive',
+			walletAddress,
+			networkId,
+		],
+	},
+	Withdrawals: {
+		Data: (walletAddress: string, networkId: NetworkId) => [
+			'withdrawals',
+			'withdrawalsData',
+			walletAddress,
+			networkId,
+		],
+		IsActive: (walletAddress: string, networkId: NetworkId) => [
+			'withdrawals',
+			'withdrawalsIsActive',
+			walletAddress,
+			networkId,
+		],
+	},
 	Swap: {
 		quote1Inch: (walletAddress: string, networkId: NetworkId, amount: NumericValue) => [
 			'quote',
