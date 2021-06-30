@@ -120,7 +120,14 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ proposal, onBack }) =
 
 	useEffect(() => {
 		const getGasLimitEstimate = async () => {
-			if (isAppReady && proposal && !isCouncilMember && canDilute) {
+			if (
+				isAppReady &&
+				proposal &&
+				proposal.end < Date.now() / 1000 &&
+				!isCouncilMember &&
+				canDilute &&
+				proposal.end > Date.now()
+			) {
 				try {
 					setTxError(null);
 					const contract = new ethers.Contract(
