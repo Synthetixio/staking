@@ -6,7 +6,7 @@ import synthetix from 'lib/synthetix';
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
 
-import { isWalletConnectedState, networkState, walletAddressState } from 'store/wallet';
+import { isWalletConnectedState, networkState, walletAddressState, isL2State } from 'store/wallet';
 import { appReadyState } from 'store/app';
 
 const useGetDepositsIsActive = (options?: QueryConfig<boolean>) => {
@@ -15,6 +15,7 @@ const useGetDepositsIsActive = (options?: QueryConfig<boolean>) => {
 	const walletAddress = useRecoilValue(walletAddressState);
 	const network = useRecoilValue(networkState);
 	const { provider } = Connector.useContainer();
+	const isL2 = useRecoilValue(isL2State);
 
 	return useQuery<boolean>(
 		QUERY_KEYS.Deposits.IsActive(walletAddress ?? '', network?.id!),
@@ -26,7 +27,7 @@ const useGetDepositsIsActive = (options?: QueryConfig<boolean>) => {
 			return SynthetixBridgeToOptimism.initiationActive();
 		},
 		{
-			enabled: isAppReady && isWalletConnected && provider,
+			enabled: isAppReady && isWalletConnected && provider && !isL2,
 			...options,
 		}
 	);
