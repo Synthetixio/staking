@@ -47,6 +47,7 @@ const useGetWithdrawalsDataQuery = (options?: QueryConfig<WithdrawalHistory>) =>
 						networkId: L2_TO_L1_NETWORK_MAPPER[network.id],
 						infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
 					}),
+					// @ts-ignore
 					layerTwoProvider: provider as providers.Web3Provider,
 					layerTwoNetworkId: network.id,
 				})
@@ -55,7 +56,7 @@ const useGetWithdrawalsDataQuery = (options?: QueryConfig<WithdrawalHistory>) =>
 	}, [network, provider, isL2]);
 
 	return useQuery<WithdrawalHistory>(
-		QUERY_KEYS.Withdrawals(walletAddress ?? '', network?.id!),
+		QUERY_KEYS.Withdrawals.Data(walletAddress ?? '', network?.id!),
 		async () => {
 			const {
 				contracts: { SynthetixBridgeToBase },

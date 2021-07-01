@@ -42,7 +42,9 @@ const useGetDepositsDataQuery = (options?: QueryConfig<DepositHistory>) => {
 		if (network && !network.useOvm && provider) {
 			setWatcher(
 				optimismMessengerWatcher({
+					// @ts-ignore
 					layerOneProvider: provider as providers.Web3Provider,
+					// @ts-ignore
 					layerTwoProvider: getOptimismProvider({
 						layerOneNetworkId: network.id,
 					}) as providers.Web3Provider,
@@ -53,7 +55,7 @@ const useGetDepositsDataQuery = (options?: QueryConfig<DepositHistory>) => {
 	}, [network, provider]);
 
 	return useQuery<DepositHistory>(
-		QUERY_KEYS.Deposits(walletAddress ?? '', network?.id!),
+		QUERY_KEYS.Deposits.Data(walletAddress ?? '', network?.id!),
 		async () => {
 			const {
 				contracts: { SynthetixBridgeToOptimism },

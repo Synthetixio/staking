@@ -19,6 +19,7 @@ import useStakingCalculations from 'sections/staking/hooks/useStakingCalculation
 import { CryptoCurrency } from 'constants/currency';
 import { DEFAULT_NETWORK_ID } from 'constants/defaults';
 import { L1_TO_L2_NETWORK_MAPPER } from '@synthetixio/optimism-networks';
+import useGetDepositsIsActiveQuery from 'queries/deposits/useGetDepositsIsActiveQuery';
 
 const Index: FC = () => {
 	const [l2AmountSNX, setL2AmountSNX] = useState<number>(0);
@@ -26,6 +27,7 @@ const Index: FC = () => {
 	const { t } = useTranslation();
 	const { debtBalance, transferableCollateral, stakingEscrow } = useStakingCalculations();
 	const network = useRecoilValue(networkState);
+	const depositsInactive = !useGetDepositsIsActiveQuery().data;
 
 	useEffect(() => {
 		async function getData() {
@@ -36,6 +38,7 @@ const Index: FC = () => {
 				const {
 					contracts: { Synthetix, FeePool },
 				} = initSynthetixJS({
+					// @ts-ignore
 					provider,
 					networkId: L1_TO_L2_NETWORK_MAPPER[network?.id ?? DEFAULT_NETWORK_ID],
 				});
@@ -64,7 +67,9 @@ const Index: FC = () => {
 		() => ({
 			deposit: {
 				title: t('layer2.actions.deposit.title'),
-				copy: t('layer2.actions.deposit.subtitle'),
+				copy: depositsInactive
+					? t('layer2.actions.deposit.bridge-inactive')
+					: t('layer2.actions.deposit.subtitle'),
 				link: ROUTES.L2.Deposit,
 			},
 			migrate: {
@@ -89,7 +94,7 @@ const Index: FC = () => {
 				externalLink: EXTERNAL_LINKS.Synthetix.OEBlog,
 			},
 		}),
-		[t, l2AmountSNX, l2APR]
+		[t, l2AmountSNX, l2APR, depositsInactive]
 	);
 
 	const gridItems = useMemo(
@@ -101,7 +106,7 @@ const Index: FC = () => {
 						},
 						{
 							...ACTIONS.deposit,
-							isDisabled: transferableCollateral.isZero(),
+							isDisabled: transferableCollateral.isZero() || depositsInactive,
 						},
 						{
 							...ACTIONS.migrate,
@@ -124,7 +129,7 @@ const Index: FC = () => {
 						},
 				  ],
 		// eslint-disable-next-line
-		[ACTIONS, debtBalance, stakingEscrow, transferableCollateral]
+		[ACTIONS, debtBalance, stakingEscrow, transferableCollateral, depositsInactive]
 	) as GridBoxProps[];
 
 	return (

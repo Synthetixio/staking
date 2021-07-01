@@ -11,6 +11,7 @@ import media from 'styles/media';
 import { isL2State, isMainnetState } from 'store/wallet';
 import Header from './Header';
 import SideNav from './SideNav';
+import useGetDepositsIsActiveQuery from 'queries/deposits/useGetDepositsIsActiveQuery';
 
 type AppLayoutProps = {
 	children: ReactNode;
@@ -19,12 +20,13 @@ type AppLayoutProps = {
 const AppLayout: FC<AppLayoutProps> = ({ children }) => {
 	const isL2 = useRecoilValue(isL2State);
 	const isMainnet = useRecoilValue(isMainnetState);
+	const depositsInactive = !(useGetDepositsIsActiveQuery().data ?? true); // Deposits are active by default to prevent redirects when status unknown
 
 	useEffect(() => {
 		if (!isL2 && router.pathname === ROUTES.Withdraw.Home) {
 			router.push(ROUTES.Home);
 		}
-		if (isL2 && router.pathname === ROUTES.L2.Deposit) {
+		if ((isL2 || depositsInactive) && router.pathname === ROUTES.L2.Deposit) {
 			router.push(ROUTES.Home);
 		}
 		if (isL2 && router.pathname.includes(ROUTES.Gov.Home)) {
@@ -33,7 +35,7 @@ const AppLayout: FC<AppLayoutProps> = ({ children }) => {
 		if (!isMainnet && router.pathname.includes(ROUTES.Debt.Home)) {
 			router.push(ROUTES.Home);
 		}
-	}, [isL2, isMainnet]);
+	}, [isL2, isMainnet, depositsInactive]);
 
 	return (
 		<>
