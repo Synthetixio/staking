@@ -1,5 +1,5 @@
 export default {
-	address: '0x30Ba359FE295E311D24BcCb1502c7a6e89Fb2100',
+	address: '0xff4e21298e5dce1398d6fc9857098eae3caf1e72',
 	abi: [
 		{
 			inputs: [{ internalType: 'uint256', name: '_numOfSeats', type: 'uint256' }],
@@ -90,6 +90,7 @@ export default {
 			anonymous: false,
 			inputs: [
 				{ indexed: false, internalType: 'string', name: 'proposalHash', type: 'string' },
+				{ indexed: false, internalType: 'string', name: 'electionHash', type: 'string' },
 				{ indexed: false, internalType: 'uint256', name: 'start', type: 'uint256' },
 				{ indexed: false, internalType: 'uint256', name: 'end', type: 'uint256' },
 			],
@@ -348,6 +349,7 @@ export default {
 			name: 'proposalHashToLog',
 			outputs: [
 				{ internalType: 'string', name: 'proposalHash', type: 'string' },
+				{ internalType: 'string', name: 'electionHash', type: 'string' },
 				{ internalType: 'uint256', name: 'start', type: 'uint256' },
 				{ internalType: 'uint256', name: 'end', type: 'uint256' },
 				{ internalType: 'bool', name: 'exist', type: 'bool' },

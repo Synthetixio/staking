@@ -146,17 +146,11 @@ const useProposalQuery = (
 				);
 				mappedVotes = await Promise.all(
 					mappedVotes.map(async (vote) => {
-						let diluteValueNumber: number;
-
-						try {
-							const dilutedValueBN = await contract.getDilutedWeightForProposal(
-								hash,
-								getAddress(vote.voter)
-							);
-							diluteValueNumber = Number(ethers.utils.formatEther(dilutedValueBN));
-						} catch (error) {
-							diluteValueNumber = 1;
-						}
+						const dilutedValueBN = await contract.getDilutedWeightForProposal(
+							hash,
+							getAddress(vote.voter)
+						);
+						const diluteValueNumber = Number(ethers.utils.formatEther(dilutedValueBN));
 
 						const dilutedResult = vote.balance * diluteValueNumber;
 						return {
