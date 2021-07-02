@@ -27,6 +27,7 @@ import {
 	balancersNFLXPoolToken,
 	balancersMSFTPoolToken,
 	balancersCOINPoolToken,
+	yearnSNXVault,
 } from 'contracts';
 import Connector from 'containers/Connector';
 import { EXTERNAL_LINKS } from 'constants/links';
@@ -40,7 +41,7 @@ import {
 } from 'styles/common';
 import { Transaction, TokenAllowanceLimit, GasLimitEstimate } from 'constants/network';
 import { normalizedGasPrice } from 'utils/network';
-import { CurrencyKey, Synths } from 'constants/currency';
+import { CryptoCurrency, CurrencyKey, Synths } from 'constants/currency';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import TxState from 'sections/earn/TxState';
 
@@ -158,6 +159,11 @@ export const getApprovalContractData = (stakedAsset: CurrencyKey, signer: any) =
 		return {
 			contract: new ethers.Contract(DHTsUSDLPToken.address, DHTsUSDLPToken.abi, signer as any),
 			poolAddress: dualStakingRewards.address,
+		};
+	} else if (stakedAsset === CryptoCurrency.SNX) {
+		return {
+			contract: contracts.Synthetix,
+			poolAddress: yearnSNXVault.address,
 		};
 	} else {
 		throw new Error('unrecognizable asset');

@@ -265,7 +265,7 @@ const Incentives: FC<IncentivesProps> = ({
 						tvl: lpData[LP.YEARN_SNX_VAULT].TVL,
 						staked: {
 							balance: lpData[LP.YEARN_SNX_VAULT].data?.userBalance ?? 0,
-							asset: CryptoCurrency.YVSNX,
+							asset: CryptoCurrency.SNX,
 							ticker: CryptoCurrency.SNX,
 							type: CurrencyIconType.TOKEN,
 						},

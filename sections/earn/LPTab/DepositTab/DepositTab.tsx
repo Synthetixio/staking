@@ -153,8 +153,8 @@ const DepositTab: FC<DepositTabProps> = ({
 		stakedBalanceDisplay,
 	]);
 
-	const handleStake = useCallback(() => {
-		async function stake() {
+	const handleDeposit = useCallback(() => {
+		async function deposit() {
 			if (isAppReady && Number(amount) > 0) {
 				try {
 					setError(null);
@@ -207,7 +207,7 @@ const DepositTab: FC<DepositTabProps> = ({
 				}
 			}
 		}
-		stake();
+		deposit();
 	}, [
 		isAppReady,
 		amount,
@@ -319,7 +319,9 @@ const DepositTab: FC<DepositTabProps> = ({
 					<StyledNumericInput
 						value={amount}
 						placeholder="0.00"
-						onChange={(e) => setAmount(e.target.value)}
+						onChange={(e) => {
+							setAmount(e.target.value);
+						}}
 					/>
 					<MaxButton
 						variant="primary"
@@ -341,7 +343,7 @@ const DepositTab: FC<DepositTabProps> = ({
 				</TotalValueWrapper>
 				<PaddedButton
 					variant="primary"
-					onClick={handleStake}
+					onClick={handleDeposit}
 					disabled={
 						// TODO: refactor a bit
 						isAppReady && Number(amount) > 0
@@ -365,7 +367,7 @@ const DepositTab: FC<DepositTabProps> = ({
 				<TxConfirmationModal
 					onDismiss={() => setTxModalOpen(false)}
 					txError={error}
-					attemptRetry={handleStake}
+					attemptRetry={handleDeposit}
 					content={
 						<ModalContent>
 							<ModalItem>

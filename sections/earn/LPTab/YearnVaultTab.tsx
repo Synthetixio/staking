@@ -1,25 +1,14 @@
 import { FC, useState, useMemo, useEffect, useCallback } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
-import { ethers } from 'ethers';
 import { Svg } from 'react-optimized-image';
-import { useRecoilValue } from 'recoil';
 import BigNumber from 'bignumber.js';
 import { useRouter } from 'next/router';
 
-import { appReadyState } from 'store/app';
 import StructuredTab from 'components/StructuredTab';
 import ROUTES from 'constants/routes';
-import {
-	FlexDivColCentered,
-	ExternalLink,
-	FlexDiv,
-	IconButton,
-	FlexDivJustifyEnd,
-} from 'styles/common';
+import { FlexDivColCentered, IconButton, FlexDivJustifyEnd } from 'styles/common';
 import media from 'styles/media';
-import { CurrencyKey } from 'constants/currency';
-import Etherscan from 'containers/BlockExplorer';
-import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
+import { CurrencyKey, Synths } from 'constants/currency';
 import PendingConfirmation from 'assets/svg/app/pending-confirmation.svg';
 import Success from 'assets/svg/app/success.svg';
 import ExpandIcon from 'assets/svg/app/expand.svg';
@@ -28,32 +17,25 @@ import { Transaction } from 'constants/network';
 import { CryptoCurrency } from 'constants/currency';
 import { formatNumber } from 'utils/formatters/number';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
-
-import Connector from 'containers/Connector';
-import TransactionNotifier from 'containers/TransactionNotifier';
 import TxState from 'sections/earn/TxState';
 import { EXTERNAL_LINKS } from 'constants/links';
 
 import Approve from './Approve';
 import Settle from './Settle';
-import RewardsBox from './RewardsBox';
 
 import {
 	StyledLink,
 	GreyHeader,
 	WhiteSubheader,
 	Divider,
-	VerifyButton,
 	DismissButton,
 	ButtonSpacer,
 	GreyText,
-	LinkText,
 	TabContainer,
 	Label,
 	HeaderLabel,
 } from '../common';
 
-import { LP, lpToSynthTranslationKey } from 'sections/earn/types';
 import styled from 'styled-components';
 import { CurrencyIconType } from 'components/Currency/CurrencyIcon/CurrencyIcon';
 import { MobileOnlyView } from 'components/Media';
@@ -94,28 +76,12 @@ const YearnVaultTab: FC<LPTabProps> = ({
 	secondTokenRate,
 }) => {
 	const { t } = useTranslation();
-	const { signer } = Connector.useContainer();
-	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const [showApproveOverlayModal, setShowApproveOverlayModal] = useState<boolean>(false);
 	const [showSettleOverlayModal, setShowSettleOverlayModal] = useState<boolean>(false);
-
-	const isAppReady = useRecoilValue(appReadyState);
 
 	const [claimTransactionState, setClaimTransactionState] = useState<Transaction>(
 		Transaction.PRESUBMIT
 	);
-	const [claimTxHash, setClaimTxHash] = useState<string | null>(null);
-	const [claimError, setClaimError] = useState<string | null>(null);
-	const [claimTxModalOpen, setClaimTxModalOpen] = useState<boolean>(false);
-
-	const { blockExplorerInstance } = Etherscan.useContainer();
-	const claimLink =
-		blockExplorerInstance != null && claimTxHash != null
-			? blockExplorerInstance.txLink(claimTxHash)
-			: undefined;
-
-	const exchangeRatesQuery = useExchangeRatesQuery();
-	const SNXRate = exchangeRatesQuery.data?.SNX ?? 0;
 
 	const router = useRouter();
 	const goToEarn = useCallback(() => router.push(ROUTES.Earn.Home), [router]);
@@ -163,33 +129,6 @@ const YearnVaultTab: FC<LPTabProps> = ({
 
 	const translationKey = 'earn.incentives.options.yvsnx.description';
 
-	const DualRewardsClaimInfo = (
-		<StyledFlexDiv>
-			<StyledFlexDivColCentered>
-				<GreyHeader>{t('earn.actions.claim.claiming')}</GreyHeader>
-				<WhiteSubheader>
-					{t('earn.actions.claim.amount', {
-						amount: formatNumber((tokenRewards as DualRewards).a, {
-							decimals: DEFAULT_CRYPTO_DECIMALS,
-						}),
-						asset: CryptoCurrency.SNX,
-					})}
-				</WhiteSubheader>
-			</StyledFlexDivColCentered>
-			<StyledFlexDivColCentered>
-				<GreyHeader>{t('earn.actions.claim.claiming')}</GreyHeader>
-				<WhiteSubheader>
-					{t('earn.actions.claim.amount', {
-						amount: formatNumber((tokenRewards as DualRewards).b, {
-							decimals: DEFAULT_CRYPTO_DECIMALS,
-						}),
-						asset: CryptoCurrency.DHT,
-					})}
-				</WhiteSubheader>
-			</StyledFlexDivColCentered>
-		</StyledFlexDiv>
-	);
-
 	if (claimTransactionState === Transaction.WAITING) {
 		return (
 			<TxState
@@ -205,26 +144,19 @@ const YearnVaultTab: FC<LPTabProps> = ({
 				content={
 					<FlexDivColCentered>
 						<Svg src={PendingConfirmation} />
-						{stakedAsset === LP.UNISWAP_DHT ? (
-							DualRewardsClaimInfo
-						) : (
-							<>
-								<GreyHeader>{t('earn.actions.claim.claiming')}</GreyHeader>
-								<WhiteSubheader>
-									{t('earn.actions.claim.amount', {
-										amount: formatNumber(tokenRewards as number, {
-											decimals: DEFAULT_CRYPTO_DECIMALS,
-										}),
-										asset: CryptoCurrency.SNX,
-									})}
-								</WhiteSubheader>
-							</>
-						)}
+						<>
+							<GreyHeader>{t('earn.actions.claim.claiming')}</GreyHeader>
+							<WhiteSubheader>
+								{t('earn.actions.claim.amount', {
+									amount: formatNumber(tokenRewards as number, {
+										decimals: DEFAULT_CRYPTO_DECIMALS,
+									}),
+									asset: CryptoCurrency.SNX,
+								})}
+							</WhiteSubheader>
+						</>
 						<Divider />
 						<GreyText>{t('earn.actions.tx.notice')}</GreyText>
-						<ExternalLink href={claimLink}>
-							<LinkText>{t('earn.actions.tx.link')}</LinkText>
-						</ExternalLink>
 					</FlexDivColCentered>
 				}
 			/>
@@ -246,28 +178,19 @@ const YearnVaultTab: FC<LPTabProps> = ({
 				content={
 					<FlexDivColCentered>
 						<Svg src={Success} />
-						{stakedAsset === LP.UNISWAP_DHT ? (
-							DualRewardsClaimInfo
-						) : (
-							<>
-								<GreyHeader>{t('earn.actions.claim.claiming')}</GreyHeader>
-								<WhiteSubheader>
-									{t('earn.actions.claim.amount', {
-										amount: formatNumber(tokenRewards as number, {
-											decimals: DEFAULT_CRYPTO_DECIMALS,
-										}),
-										asset: CryptoCurrency.SNX,
-									})}
-								</WhiteSubheader>
-							</>
-						)}
+						<>
+							<GreyHeader>{t('earn.actions.claim.claiming')}</GreyHeader>
+							<WhiteSubheader>
+								{t('earn.actions.claim.amount', {
+									amount: formatNumber(tokenRewards as number, {
+										decimals: DEFAULT_CRYPTO_DECIMALS,
+									}),
+									asset: CryptoCurrency.SNX,
+								})}
+							</WhiteSubheader>
+						</>
 						<Divider />
 						<ButtonSpacer>
-							{claimLink ? (
-								<ExternalLink href={claimLink}>
-									<VerifyButton>{t('earn.actions.tx.verify')}</VerifyButton>
-								</ExternalLink>
-							) : null}
 							<DismissButton
 								variant="secondary"
 								onClick={() => setClaimTransactionState(Transaction.PRESUBMIT)}
@@ -308,7 +231,7 @@ const YearnVaultTab: FC<LPTabProps> = ({
 			{showApproveOverlayModal && (
 				<Approve
 					setShowApproveOverlayModal={setShowApproveOverlayModal}
-					stakedAsset={stakedAsset}
+					stakedAsset={CryptoCurrency.SNX}
 				/>
 			)}
 			{showSettleOverlayModal && (
@@ -320,17 +243,6 @@ const YearnVaultTab: FC<LPTabProps> = ({
 
 const StyledTabContainer = styled(TabContainer)`
 	height: inherit;
-`;
-
-const StyledFlexDivColCentered = styled(FlexDivColCentered)`
-	padding: 20px 30px;
-	&:first-child {
-		border-right: 1px solid ${(props) => props.theme.colors.grayBlue};
-	}
-`;
-
-const StyledFlexDiv = styled(FlexDiv)`
-	margin-bottom: -20px;
 `;
 
 const GridContainer = styled.div`

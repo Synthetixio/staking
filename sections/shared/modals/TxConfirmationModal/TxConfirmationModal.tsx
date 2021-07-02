@@ -26,7 +26,6 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 	isSignature,
 }) => {
 	const { t } = useTranslation();
-	console.log(txError);
 
 	return (
 		<StyledBaseModal
