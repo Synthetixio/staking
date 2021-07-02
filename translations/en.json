@@ -1009,8 +1009,8 @@
 			},
 			"action": {
 				"vote": "Vote",
-				"withdraw": "Withdraw",
-				"support": "Support"
+				"withdraw": "Dilute",
+				"support": "Revert Dilution"
 			},
 			"info": {
 				"author": "Author",
@@ -1045,18 +1045,18 @@
 				"success": "Your vote is in!"
 			},
 			"withdraw": {
-				"waiting": "Withdrawal in progress",
-				"signing": "Withdrawing from",
-				"signed": "Withdrew votes from",
+				"waiting": "Dilution in progress",
+				"signing": "Diluting votes for",
+				"signed": "Diluted votes for",
 				"address": "{{address}}",
 				"success": "Dilution successful"
 			},
 			"support": {
-				"waiting": "Reassigning vote weight",
+				"waiting": "Revert dilution in progress",
 				"signing": "Reverting dilution for",
 				"signed": "Reverted dilution for",
 				"address": "{{address}}",
-				"success": "Dilution removed successfully"
+				"success": "Reverted dilution successfully"
 			},
 			"propose": {
 				"waiting": "Submitting proposal",
