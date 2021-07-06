@@ -53,13 +53,7 @@ const useEthGasPriceQuery = (options?: QueryConfig<GasPrices>) => {
 		QUERY_KEYS.Network.EthGasPrice,
 		async () => {
 			if (isL2) {
-				const network = await provider!?.getNetwork();
-				let gasPrice: number;
-				if (network.chainId === 10) {
-					gasPrice = 0;
-				} else {
-					gasPrice = (await provider!?.getGasPrice()).toNumber() / 1e9 ?? 0;
-				}
+				const gasPrice = (await provider!?.getGasPrice()).toNumber() / 1e9 ?? 0;
 				return {
 					fastest: gasPrice,
 					fast: gasPrice,
