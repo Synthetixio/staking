@@ -16,15 +16,25 @@ import synthetix from 'lib/synthetix';
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
 
-import { isWalletConnectedState, networkState, walletAddressState, isL2State } from 'store/wallet';
+import {
+	isWalletConnectedState,
+	networkState,
+	walletAddressState,
+	isL2State,
+	isL2MainnetState,
+} from 'store/wallet';
 import { appReadyState } from 'store/app';
+import {
+	MAINNET_FRAUD_PROOF_WINDOW_IN_MILLISECONDS,
+	TESTNET_FRAUD_PROOF_WINDOW_IN_MILLISECONDS,
+} from 'constants/optimism';
 
 const NUM_BLOCKS_TO_FETCH = 1000000;
 
 export type WithdrawRecord = {
 	timestamp: number;
 	amount: number;
-	isConfirmed: boolean;
+	status: 'pending' | 'relay' | 'confirmed';
 	transactionHash: string;
 };
 
@@ -38,6 +48,7 @@ const useGetWithdrawalsDataQuery = (options?: QueryConfig<WithdrawalHistory>) =>
 	const { provider } = Connector.useContainer();
 	const [watcher, setWatcher] = useState<OptimismWatcher | null>(null);
 	const isL2 = useRecoilValue(isL2State);
+	const isL2Mainnet = useRecoilValue(isL2MainnetState);
 
 	useEffect(() => {
 		if (network && provider && isL2) {
@@ -82,9 +93,16 @@ const useGetWithdrawalsDataQuery = (options?: QueryConfig<WithdrawalHistory>) =>
 				events.map(async (event) => {
 					const msgHashes = await watcher.getMessageHashesFromL2Tx(event.transactionHash);
 					const receipt = await watcher.getL1TransactionReceipt(msgHashes[0], false);
+					const readyToRelay = isL2Mainnet
+						? Date.now() - event.timestamp > MAINNET_FRAUD_PROOF_WINDOW_IN_MILLISECONDS
+						: Date.now() - event.timestamp > TESTNET_FRAUD_PROOF_WINDOW_IN_MILLISECONDS;
 					return {
 						...event,
-						isConfirmed: !!receipt,
+						status: !!receipt
+							? ('confirmed' as const)
+							: readyToRelay
+							? ('relay' as const)
+							: ('pending' as const),
 					};
 				})
 			);

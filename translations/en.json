@@ -795,7 +795,8 @@
 					"status": "Status",
 					"view": "View",
 					"pending": "Pending",
-					"confirmed": "Confirmed"
+					"confirmed": "Confirmed",
+					"relay": "<0>Ready to Relay</0>"
 				}
 			}
 		},
