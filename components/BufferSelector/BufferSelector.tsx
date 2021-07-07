@@ -54,7 +54,10 @@ const BufferSelector: React.FC<BufferSelectorProps> = ({ buffer, setBuffer, ...r
 			<div>
 				<CustomSlippage
 					value={customBuffer}
-					onChange={(_, value) => setCustomBuffer(value)}
+					onChange={(_, value) => {
+						setBuffer(value);
+						setCustomBuffer(value);
+					}}
 					placeholder={t('common.custom')}
 				/>
 			</div>
