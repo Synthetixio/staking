@@ -43,7 +43,7 @@ import { getStakingAmount } from '../helper';
 import { CryptoCurrency, Synths } from 'constants/currency';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 import BigNumber from 'bignumber.js';
-import { isWalletConnectedState } from 'store/wallet';
+import { isWalletConnectedState, delegateWalletState } from 'store/wallet';
 import Connector from 'containers/Connector';
 import { BurnActionType, burnTypeState } from 'store/staking';
 import Button from 'components/Button';
@@ -102,6 +102,7 @@ const StakingInput: React.FC<StakingInputProps> = ({
 	} = useStakingCalculations();
 	const { connectWallet } = Connector.useContainer();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
+	const delegateWallet = useRecoilValue(delegateWalletState);
 	const burnType = useRecoilValue(burnTypeState);
 	const { t } = useTranslation();
 

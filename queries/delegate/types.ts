@@ -68,3 +68,9 @@ export class Account {
 		return this.mint && this.burn && this.claim && this.exchange;
 	}
 }
+export type AuthoriserWallet = {
+	address: string;
+	canMint: boolean;
+	canBurn: boolean;
+	canClaim: boolean;
+};

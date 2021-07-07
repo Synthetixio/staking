@@ -9,7 +9,12 @@ import synthetix from 'lib/synthetix';
 import QUERY_KEYS from 'constants/queryKeys';
 import { CurrencyKey } from 'constants/currency';
 
-import { walletAddressState, isWalletConnectedState, networkState } from 'store/wallet';
+import {
+	walletAddressState,
+	isWalletConnectedState,
+	networkState,
+	delegateWalletState,
+} from 'store/wallet';
 import { appReadyState } from 'store/app';
 
 import { toBigNumber } from 'utils/formatters/number';
@@ -30,18 +35,19 @@ const useSynthsBalancesQuery = (options?: QueryConfig<Balances>) => {
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const network = useRecoilValue(networkState);
+	const delegateWallet = useRecoilValue(delegateWalletState);
+
+	const wallet = delegateWallet?.address ?? walletAddress;
 
 	return useQuery<Balances>(
-		QUERY_KEYS.WalletBalances.Synths(walletAddress ?? '', network?.id!),
+		QUERY_KEYS.WalletBalances.Synths(wallet ?? '', network?.id!),
 		async () => {
 			const balancesMap: SynthBalancesMap = {};
 			const [
 				currencyKeys,
 				synthsBalances,
 				synthsUSDBalances,
-			] = (await synthetix.js?.contracts.SynthUtil!.synthsBalances(
-				walletAddress
-			)) as SynthBalancesTuple;
+			] = (await synthetix.js?.contracts.SynthUtil!.synthsBalances(wallet)) as SynthBalancesTuple;
 
 			let totalUSDBalance = toBigNumber(0);
 

@@ -8,7 +8,7 @@ import { normalizedGasPrice } from 'utils/network';
 import { CryptoCurrency, Synths } from 'constants/currency';
 import { TabContainer } from '../common';
 
-import { isWalletConnectedState, walletAddressState } from 'store/wallet';
+import { isWalletConnectedState, walletAddressState, delegateWalletState } from 'store/wallet';
 import synthetix from 'lib/synthetix';
 import BurnTiles from '../BurnTiles';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
@@ -28,6 +28,22 @@ import { useTranslation } from 'react-i18next';
 import { toFutureDate } from 'utils/formatters/date';
 import useETHBalanceQuery from 'queries/walletBalances/useETHBalanceQuery';
 
+const burnFunction = ({
+	isDelegate,
+	isToTarget = false,
+}: {
+	isDelegate: boolean;
+	isToTarget?: boolean;
+}) => {
+	return isDelegate
+		? isToTarget
+			? 'burnSynthsToTargetOnBehalf'
+			: 'burnSynthsOnBehalf'
+		: isToTarget
+		? 'burnSynthsToTarget'
+		: 'burnSynths';
+};
+
 const BurnTab: React.FC = () => {
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const [amountToBurn, onBurnChange] = useRecoilState(amountToBurnState);
@@ -35,6 +51,7 @@ const BurnTab: React.FC = () => {
 	const { percentageTargetCRatio, debtBalance, issuableSynths } = useStakingCalculations();
 	const walletAddress = useRecoilValue(walletAddressState);
 	const isAppReady = useRecoilValue(appReadyState);
+	const delegateWallet = useRecoilValue(delegateWalletState);
 	const { signer } = Connector.useContainer();
 	const { t } = useTranslation();
 
@@ -129,6 +146,9 @@ const BurnTab: React.FC = () => {
 			if (isAppReady && amountToBurn.length > 0 && isWalletConnected) {
 				try {
 					setError(null);
+					if (delegateWallet && !delegateWallet.canBurn) {
+						throw new Error(t('staking.actions.mint.action.error.delegate-cannot-burn'));
+					}
 					const {
 						contracts: { Synthetix },
 						utils: { parseEther },
@@ -176,8 +196,10 @@ const BurnTab: React.FC = () => {
 						setGasLimitEstimate(gasEstimate);
 					} else {
 						const gasEstimate = await synthetix.getGasEstimateForTransaction({
-							txArgs: [parseEther(amountToBurn.toString())],
-							method: Synthetix.estimateGas.burnSynths,
+							txArgs: delegateWallet
+								? [delegateWallet.address, parseEther(amountToBurn.toString())]
+								: [parseEther(amountToBurn.toString())],
+							method: Synthetix.estimateGas[burnFunction({ isDelegate: !!delegateWallet })],
 						});
 						setGasLimitEstimate(gasEstimate);
 					}
@@ -201,6 +223,7 @@ const BurnTab: React.FC = () => {
 		burnType,
 		ethBalance,
 		quoteAmount,
+		delegateWallet,
 	]);
 
 	const handleBurn = useCallback(
@@ -217,24 +240,36 @@ const BurnTab: React.FC = () => {
 					let transaction: ethers.ContractTransaction;
 
 					if (burnToTarget) {
+						const burnFunc = burnFunction({ isDelegate: !!delegateWallet, isToTarget: true });
 						const gasLimit = await synthetix.getGasEstimateForTransaction({
-							txArgs: [],
-							method: Synthetix.estimateGas.burnSynthsToTarget,
+							txArgs: delegateWallet ? [delegateWallet] : [],
+							method: Synthetix.estimateGas[burnFunc],
 						});
-						transaction = await Synthetix.burnSynthsToTarget({
-							gasPrice: normalizedGasPrice(gasPrice),
-							gasLimit: gasLimit,
-						});
+						transaction = delegateWallet
+							? await Synthetix[burnFunc](delegateWallet.address, {
+									gasPrice: normalizedGasPrice(gasPrice),
+									gasLimit: gasLimit,
+							  })
+							: await Synthetix[burnFunc]({
+									gasPrice: normalizedGasPrice(gasPrice),
+									gasLimit: gasLimit,
+							  });
 					} else {
+						const burnFunc = burnFunction({ isDelegate: !!delegateWallet });
 						const amountToBurnBN = parseEther(amountToBurn.toString());
 						const gasLimit = await synthetix.getGasEstimateForTransaction({
-							txArgs: [amountToBurnBN],
-							method: Synthetix.estimateGas.burnSynths,
+							txArgs: delegateWallet ? [delegateWallet.address, amountToBurnBN] : [amountToBurnBN],
+							method: Synthetix.estimateGas[burnFunc],
 						});
-						transaction = await Synthetix.burnSynths(amountToBurnBN, {
-							gasPrice: normalizedGasPrice(gasPrice),
-							gasLimit,
-						});
+						transaction = delegateWallet
+							? await Synthetix[burnFunc](delegateWallet.address, amountToBurnBN, {
+									gasPrice: normalizedGasPrice(gasPrice),
+									gasLimit,
+							  })
+							: await Synthetix[burnFunc](amountToBurnBN, {
+									gasPrice: normalizedGasPrice(gasPrice),
+									gasLimit,
+							  });
 					}
 					if (transaction) {
 						setTxHash(transaction.hash);

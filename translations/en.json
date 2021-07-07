@@ -98,9 +98,16 @@
 			"etherscan": "View on Etherscan",
 			"disconnect-wallet": "disconnect",
 			"stop-watching": "Stop watching",
+			"stop-delegation": "Stop delegation",
 			"change-wallet": "change wallet",
 			"switch-account": "switch account",
 			"available-on-hardware-wallet": "Available on hardware wallets",
+			"delegate-mode": {
+				"menu-title": "Delegate mode",
+				"modal-title": "Switch to Delegate mode",
+				"subtitle": "Choose a wallet to interact with",
+				"no-delegate": "No wallets found"
+			},
 			"watch-wallet": {
 				"title": "watch a wallet",
 				"subtitle": "Enter a valid ETH address or ENS domain to view this dApp as that wallet",
@@ -247,7 +254,10 @@
 					"error": {
 						"bad-input": "Please enter a valid number",
 						"insufficient": "Insufficient collateral to mint",
-						"exception": "Contract error"
+						"exception": "Contract error",
+						"delegate-cannot-mint": "Delegate wallet not allowed to mint",
+						"delegate-cannot-burn": "Delegate wallet not allowed to burn",
+						"delegate-cannot-claim": "Delegate wallet not allowed to claim"
 					}
 				},
 				"in-progress": {
@@ -1122,6 +1132,9 @@
 		}
 	},
 	"common": {
+		"delegate": {
+			"not-available": "Not available with wallet delegation"
+		},
 		"form": {
 			"to-address": "To address",
 			"address-input-placeholder": "e.g. 0x3b18a4..."
