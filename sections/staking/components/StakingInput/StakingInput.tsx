@@ -48,6 +48,7 @@ import Connector from 'containers/Connector';
 import { BurnActionType, burnTypeState } from 'store/staking';
 import Button from 'components/Button';
 import Currency from 'components/Currency';
+import BufferSelector from 'components/BufferSelector';
 
 type StakingInputProps = {
 	onSubmit: () => void;
@@ -69,6 +70,8 @@ type StakingInputProps = {
 	etherNeededToBuy?: string;
 	sUSDNeededToBuy?: string;
 	sUSDNeededToBurn?: string;
+	setDebtBuffer?: (num: string) => void;
+	debtBuffer?: string;
 };
 
 const StakingInput: React.FC<StakingInputProps> = ({
@@ -91,6 +94,8 @@ const StakingInput: React.FC<StakingInputProps> = ({
 	etherNeededToBuy,
 	sUSDNeededToBuy,
 	sUSDNeededToBurn,
+	setDebtBuffer,
+	debtBuffer,
 }) => {
 	const {
 		targetCRatio,
@@ -107,6 +112,7 @@ const StakingInput: React.FC<StakingInputProps> = ({
 
 	const [stakingCurrencyKey] = useState<string>(CryptoCurrency.SNX);
 	const [synthCurrencyKey] = useState<string>(Synths.sUSD);
+
 	/**
 	 * Given the amount to mint, returns the equivalent collateral needed for stake.
 	 * @param mintInput Amount to mint
@@ -327,6 +333,11 @@ const StakingInput: React.FC<StakingInputProps> = ({
 						</RowTitle>
 						<RowValue>{equivalentSNXAmount}</RowValue>
 					</DataRow>
+					{burnType === BurnActionType.MAX && debtBuffer && setDebtBuffer && (
+						<DataRow>
+							<BufferSelector buffer={debtBuffer} setBuffer={setDebtBuffer} />
+						</DataRow>
+					)}
 					<DataRow>
 						<GasSelector gasLimitEstimate={gasLimitEstimate} setGasPrice={setGasPrice} />
 					</DataRow>

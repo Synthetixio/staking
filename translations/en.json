@@ -1195,6 +1195,7 @@
 		},
 		"buffer": {
 			"title": "Debt Buffer",
+			"helper": "Add a buffer to combat the debt moving while the tx is processing",
 			"low": "Low",
 			"medium": "Avg",
 			"high": "High"
