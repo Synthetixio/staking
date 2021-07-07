@@ -81,14 +81,13 @@ const useGetWithdrawalsDataQuery = (options?: QueryConfig<WithdrawalHistory>) =>
 			const eventsWithReceipt = await Promise.all(
 				events.map(async (event) => {
 					const msgHashes = await watcher.getMessageHashesFromL2Tx(event.transactionHash);
-					const receipt = await watcher.getL2TransactionReceipt(msgHashes[0], false);
+					const receipt = await watcher.getL1TransactionReceipt(msgHashes[0], false);
 					return {
 						...event,
 						isConfirmed: !!receipt,
 					};
 				})
 			);
-
 			return orderBy(eventsWithReceipt, ['timestamp'], ['desc']);
 		},
 		{
