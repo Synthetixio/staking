@@ -432,7 +432,8 @@
 					"claimable": "Claimable"
 				},
 				"time-left": {
-					"title": "TIME LEFT"
+					"title": "TIME LEFT",
+					"does-not-expire": "Does not expire"
 				},
 				"snx": {
 					"title": "Synthetix",

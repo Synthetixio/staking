@@ -146,6 +146,7 @@ const Incentives: FC<IncentivesProps> = ({
 						now,
 						route: ROUTES.Earn.yearn_SNX_VAULT,
 						tab: Tab.yearn_SNX_VAULT,
+						neverExpires: true,
 					},
 					{
 						title: t('earn.incentives.options.ieth.title'),
