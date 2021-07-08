@@ -5,8 +5,9 @@ import BigNumber from 'bignumber.js';
 import { useRouter } from 'next/router';
 
 import StructuredTab from 'components/StructuredTab';
+import ApproveModal from 'components/ApproveModal';
 import ROUTES from 'constants/routes';
-import { FlexDivColCentered, IconButton, FlexDivJustifyEnd } from 'styles/common';
+import { FlexDivColCentered, IconButton, FlexDivJustifyEnd, FlexDivCentered } from 'styles/common';
 import media from 'styles/media';
 import { CurrencyKey } from 'constants/currency';
 import PendingConfirmation from 'assets/svg/app/pending-confirmation.svg';
@@ -19,9 +20,6 @@ import { formatNumber } from 'utils/formatters/number';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import TxState from 'sections/earn/TxState';
 import { EXTERNAL_LINKS } from 'constants/links';
-
-import Approve from './Approve';
-import Settle from './Settle';
 
 import {
 	StyledLink,
@@ -57,7 +55,6 @@ type LPTabProps = {
 	staked: number;
 	stakedBN: BigNumber;
 	pricePerShare: number;
-	needsToSettle?: boolean;
 	secondTokenRate?: number;
 };
 
@@ -71,13 +68,11 @@ const YearnVaultTab: FC<LPTabProps> = ({
 	userBalanceBN,
 	staked,
 	stakedBN,
-	needsToSettle,
 	pricePerShare,
 	secondTokenRate,
 }) => {
 	const { t } = useTranslation();
 	const [showApproveOverlayModal, setShowApproveOverlayModal] = useState<boolean>(false);
-	const [showSettleOverlayModal, setShowSettleOverlayModal] = useState<boolean>(false);
 
 	const [claimTransactionState, setClaimTransactionState] = useState<Transaction>(
 		Transaction.PRESUBMIT
@@ -120,12 +115,6 @@ const YearnVaultTab: FC<LPTabProps> = ({
 			setShowApproveOverlayModal(true);
 		}
 	}, [allowance, userBalance]);
-
-	useEffect(() => {
-		if (needsToSettle) {
-			setShowSettleOverlayModal(true);
-		}
-	}, [needsToSettle]);
 
 	const translationKey = 'earn.incentives.options.yvsnx.description';
 
@@ -229,13 +218,14 @@ const YearnVaultTab: FC<LPTabProps> = ({
 				/>
 			</GridContainer>
 			{showApproveOverlayModal && (
-				<Approve
-					setShowApproveOverlayModal={setShowApproveOverlayModal}
-					stakedAsset={CryptoCurrency.SNX}
-				/>
-			)}
-			{showSettleOverlayModal && (
-				<Settle setShowSettleOverlayModal={setShowSettleOverlayModal} stakedAsset={stakedAsset} />
+				<ApproveModalWrapper>
+					<ApproveModal
+						description={t('layer2.actions.deposit.action.approve.description')}
+						tokenContract="Synthetix"
+						contractToApprove="YearnSNXVault"
+						onApproved={() => {}}
+					/>
+				</ApproveModalWrapper>
 			)}
 		</StyledTabContainer>
 	);
@@ -270,6 +260,13 @@ const StyledIconButton = styled(IconButton)`
 
 const GoToEarnButtonContainer = styled(FlexDivJustifyEnd)`
 	width: 100%;
+`;
+
+const ApproveModalWrapper = styled(FlexDivCentered)`
+	position: absolute;
+	width: calc(100% - 24px);
+	height: calc(100% + 24px);
+	top: 0;
 `;
 
 export default YearnVaultTab;

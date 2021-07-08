@@ -455,7 +455,6 @@ const Incentives: FC<IncentivesProps> = ({
 						tokenRewards={lpData[LP.YEARN_SNX_VAULT].data?.rewards ?? 0}
 						staked={lpData[LP.YEARN_SNX_VAULT].data?.staked ?? 0}
 						stakedBN={lpData[LP.YEARN_SNX_VAULT].data?.stakedBN ?? zeroBN}
-						needsToSettle={lpData[LP.YEARN_SNX_VAULT].data?.needsToSettle}
 						pricePerShare={
 							(lpData[LP.YEARN_SNX_VAULT].data as YearnVaultData)?.pricePerShare ?? zeroBN
 						}
