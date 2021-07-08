@@ -1194,6 +1194,13 @@
 			"buy-currency": "Buy <0>{{currencyKey}}</0>",
 			"synthetic-currency-name": "Synthetic {{currencyName}}"
 		},
+		"buffer": {
+			"title": "Debt Buffer",
+			"helper": "Add a buffer to combat the debt moving while the tx is processing",
+			"low": "Low",
+			"medium": "Avg",
+			"high": "High"
+		},
 		"gas-prices": {
 			"est": "Est Fees: {{amount}}",
 			"average": "Average",
@@ -1203,6 +1210,7 @@
 		"custom": "Custom",
 		"edit": "Edit",
 		"convert": "Convert",
+		"debt-buffer-header": "Debt Buffer Percent",
 		"gas-header": "Gas Price (GWEI)",
 		"explorers": {
 			"etherscan": "etherscan"
