@@ -40,7 +40,7 @@ type RowData = {
 	title: string;
 	value: BigNumber;
 	changedValue: BigNumber;
-	currencyKey: CryptoCurrency | string;
+	currencyKey?: CryptoCurrency | string;
 };
 
 type StakingInfo = {
