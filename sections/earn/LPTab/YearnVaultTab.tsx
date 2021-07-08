@@ -217,13 +217,13 @@ const YearnVaultTab: FC<LPTabProps> = ({
 					tabData={tabData}
 				/>
 			</GridContainer>
-			{showApproveOverlayModal && (
+			{!showApproveOverlayModal && (
 				<ApproveModalWrapper>
 					<ApproveModal
-						description={t('layer2.actions.deposit.action.approve.description')}
+						description={t('earn.incentives.options.yvsnx.approve-message')}
 						tokenContract="Synthetix"
 						contractToApprove="YearnSNXVault"
-						onApproved={() => {}}
+						onApproved={() => setShowApproveOverlayModal(false)}
 					/>
 				</ApproveModalWrapper>
 			)}

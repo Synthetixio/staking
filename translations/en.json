@@ -522,7 +522,8 @@
 				"yvsnx": {
 					"title": "Yearn SNX Vault",
 					"description": "Deposit SNX into Yearn Finance's SNX Vault to earn SNX rewards. <0>Learn more<0>.",
-					"subtitle": ""
+					"subtitle": "",
+					"approve-message": "Before depositing your SNX, please approve the Yearn SNX Vault contract."
 				}
 			},
 			"weekly-rewards": "Weekly rewards {{weeklyRewards}} {{asset}}"
