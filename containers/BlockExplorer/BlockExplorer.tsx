@@ -13,6 +13,7 @@ type BlockExplorerInstance = {
 	addressLink: (address: string) => string;
 	tokenLink: (address: string) => string;
 	blockLink: (blockNumber: string) => string;
+	messageRelayer: (txId: string) => string;
 };
 
 const getBaseUrl = (network: Network) => {
@@ -30,6 +31,7 @@ const generateExplorerFunctions = (baseUrl: string) => {
 		addressLink: (address: string) => `${baseUrl}/address/${address}`,
 		tokenLink: (address: string) => `${baseUrl}/token/${address}`,
 		blockLink: (blockNumber: string) => `${baseUrl}/block/${blockNumber}`,
+		messageRelayer: (txId: string) => `${baseUrl}/messagerelayer?search=${txId}`,
 	};
 };
 
