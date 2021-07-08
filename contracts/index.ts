@@ -29,6 +29,8 @@ import dualStakingRewards from './dualStakingRewards';
 
 import DHTsUSDLPToken from './DHTsUSDLPToken';
 
+import yearnSNXVault from './yearnSNXVault';
+
 export {
 	curveSusdRewards,
 	curveSeuroRewards,
@@ -52,4 +54,5 @@ export {
 	renBTCToken,
 	dualStakingRewards,
 	DHTsUSDLPToken,
+	yearnSNXVault,
 };

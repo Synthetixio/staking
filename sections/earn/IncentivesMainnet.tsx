@@ -30,6 +30,8 @@ import {
 	lpToSynthIcon,
 	lpToRoute,
 } from './types';
+import YearnVaultTab from './LPTab/YearnVaultTab';
+import { YearnVaultData } from 'queries/liquidityPools/useYearnSNXVaultQuery';
 
 enum View {
 	ACTIVE = 'active',
@@ -125,6 +127,26 @@ const Incentives: FC<IncentivesProps> = ({
 						now,
 						tab: Tab.Claim,
 						route: ROUTES.Earn.Claim,
+					},
+					{
+						title: t('earn.incentives.options.yvsnx.title'),
+						subtitle: t('earn.incentives.options.yvsnx.subtitle'),
+						apr: lpData[LP.YEARN_SNX_VAULT].APR,
+						tvl: lpData[LP.YEARN_SNX_VAULT].TVL,
+						staked: {
+							balance: lpData[LP.YEARN_SNX_VAULT].data?.userBalance ?? 0,
+							asset: CryptoCurrency.SNX,
+							ticker: CryptoCurrency.SNX,
+							type: CurrencyIconType.TOKEN,
+						},
+						rewards: lpData[LP.YEARN_SNX_VAULT].data?.rewards ?? 0,
+						periodStarted: now - (lpData[LP.YEARN_SNX_VAULT].data?.duration ?? 0),
+						periodFinish: lpData[LP.YEARN_SNX_VAULT].data?.periodFinish ?? 0,
+						claimed: NOT_APPLICABLE,
+						now,
+						route: ROUTES.Earn.yearn_SNX_VAULT,
+						tab: Tab.yearn_SNX_VAULT,
+						neverExpires: true,
 					},
 					{
 						title: t('earn.incentives.options.ieth.title'),
@@ -422,6 +444,20 @@ const Incentives: FC<IncentivesProps> = ({
 						staked={lpData[Synths.iBTC].data?.staked ?? 0}
 						stakedBN={lpData[Synths.iBTC].data?.stakedBN ?? zeroBN}
 						needsToSettle={lpData[Synths.iBTC].data?.needsToSettle}
+					/>
+				)}
+				{activeTab === Tab.yearn_SNX_VAULT && (
+					<YearnVaultTab
+						userBalance={lpData[LP.YEARN_SNX_VAULT].data?.userBalance ?? 0}
+						userBalanceBN={lpData[LP.YEARN_SNX_VAULT].data?.userBalanceBN ?? zeroBN}
+						stakedAsset={CryptoCurrency.SNX}
+						allowance={lpData[LP.YEARN_SNX_VAULT].data?.allowance ?? null}
+						tokenRewards={lpData[LP.YEARN_SNX_VAULT].data?.rewards ?? 0}
+						staked={lpData[LP.YEARN_SNX_VAULT].data?.staked ?? 0}
+						stakedBN={lpData[LP.YEARN_SNX_VAULT].data?.stakedBN ?? zeroBN}
+						pricePerShare={
+							(lpData[LP.YEARN_SNX_VAULT].data as YearnVaultData)?.pricePerShare ?? zeroBN
+						}
 					/>
 				)}
 			</TabContainer>
