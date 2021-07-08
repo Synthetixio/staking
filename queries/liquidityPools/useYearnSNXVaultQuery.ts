@@ -59,7 +59,7 @@ const useYearnSNXVaultQuery = (options?: QueryConfig<YearnVaultData>) => {
 				YearnSNXVault.pricePerShare({ gasLimit: 1e5 }),
 				axios.get('https://vaults.finance/all'),
 				Synthetix.allowance(walletAddress, yearnSNXVault.address),
-				Synthetix.balanceOf(walletAddress),
+				Synthetix.transferableSynthetix(walletAddress),
 			]);
 
 			const [pricePerShare, allowance, balance, userBalance] = [
