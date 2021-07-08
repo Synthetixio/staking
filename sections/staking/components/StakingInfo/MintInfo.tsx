@@ -101,7 +101,6 @@ const StakingInfo: FC = () => {
 					title: t('staking.info.table.susd-balance'),
 					value: sanitiseValue(sUSDBalance),
 					changedValue: sanitiseValue(changedSUSDBalance),
-					currencyKey: Synths.sUSD,
 				},
 				{
 					title: t('staking.info.table.debt'),

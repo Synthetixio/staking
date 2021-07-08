@@ -3,6 +3,9 @@ import useIBTCPoolQuery_1 from 'queries/liquidityPools/useIBTCPoolQuery_1';
 import useCurveSusdPoolQuery from 'queries/liquidityPools/useCurveSusdPoolQuery';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import useCurveSeuroPoolQuery from 'queries/liquidityPools/useCurveSeuroPoolQuery';
+import useYearnSNXVaultQuery, {
+	YearnVaultData,
+} from 'queries/liquidityPools/useYearnSNXVaultQuery';
 
 import { Synths } from 'constants/currency';
 import { WEEKS_IN_YEAR } from 'constants/date';
@@ -25,7 +28,7 @@ type LPData = {
 	[name: string]: {
 		APR: number;
 		TVL: number;
-		data: LiquidityPoolData | DualRewardsLiquidityPoolData | undefined;
+		data: LiquidityPoolData | DualRewardsLiquidityPoolData | YearnVaultData | undefined;
 	};
 };
 
@@ -77,6 +80,7 @@ const useLPData = (): LPData => {
 		balancersCOINPoolToken
 	);
 	const usesDHTPool = useDHTsUSDPoolQuery();
+	const usesYearnSNXVault = useYearnSNXVaultQuery();
 
 	const iETHTVL = (useiETHPool.data?.balance ?? 0) * (useiETHPool.data?.price ?? 0);
 	const iETHAPR =
@@ -131,6 +135,9 @@ const useLPData = (): LPData => {
 		data?.distribution && SNXRate && balancerPoolTVL(data)
 			? ((data?.distribution * SNXRate) / balancerPoolTVL(data)) * WEEKS_IN_YEAR
 			: 0;
+
+	const yearnSNXVaultAPY = usesYearnSNXVault.data?.apy ?? 0;
+	const yearnSNXVaultTVL = usesYearnSNXVault.data?.tvl ?? 0;
 
 	return {
 		[Synths.iETH]: {
@@ -197,6 +204,11 @@ const useLPData = (): LPData => {
 			APR: DHTAPR,
 			TVL: DHTTVL,
 			data: usesDHTPool.data,
+		},
+		[LP.YEARN_SNX_VAULT]: {
+			APR: yearnSNXVaultAPY,
+			TVL: yearnSNXVaultTVL,
+			data: usesYearnSNXVault.data,
 		},
 	};
 };

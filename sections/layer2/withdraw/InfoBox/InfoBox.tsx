@@ -85,13 +85,21 @@ const InfoBox = () => {
 										{t('layer2.withdraw.info.table.status')}
 									</Header>
 								),
-								accessor: 'isConfirmed',
+								accessor: 'status',
 								Cell: (cellProps: CellProps<WithdrawRecord, boolean>) => (
 									<Data>
-										{t(`layer2.withdraw.info.table.${cellProps.value ? 'confirmed' : 'pending'}`)}
+										<Trans
+											i18nKey={`layer2.withdraw.info.table.${cellProps.value}`}
+											components={[
+												<ExternalLink
+													relay
+													transactionHash={cellProps.row.original.transactionHash}
+												></ExternalLink>,
+											]}
+										/>
 									</Data>
 								),
-								width: 100,
+								width: 120,
 								sortable: false,
 							},
 							{
@@ -104,7 +112,7 @@ const InfoBox = () => {
 								Cell: (cellProps: CellProps<WithdrawRecord, string>) => (
 									<ExternalLink transactionHash={cellProps.value} />
 								),
-								width: 80,
+								width: 60,
 								sortable: false,
 							},
 						]}

@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { ethers } from 'ethers';
 
 import synthetix from 'lib/synthetix';
+import Connector from 'containers/Connector';
 import TransactionNotifier from 'containers/TransactionNotifier';
 
 import { Svg } from 'react-optimized-image';
@@ -27,11 +28,26 @@ import {
 } from 'styles/common';
 import { normalizedGasPrice } from 'utils/network';
 
+import { yearnSNXVault } from 'contracts';
+
 type ApproveModalProps = {
 	description: string;
 	onApproved: () => void;
 	tokenContract: string;
 	contractToApprove: string;
+};
+
+const getContractByName = (name: string, signer: any) => {
+	const { contracts } = synthetix.js!;
+	if (name === 'YearnSNXVault') {
+		return new ethers.Contract(
+			yearnSNXVault.address,
+			// @ts-ignore
+			yearnSNXVault.abi,
+			signer as ethers.Signer
+		);
+	}
+	return contracts[name];
 };
 
 const ApproveModal: FC<ApproveModalProps> = ({
@@ -43,6 +59,7 @@ const ApproveModal: FC<ApproveModalProps> = ({
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const isAppReady = useRecoilValue(appReadyState);
 	const { monitorTransaction } = TransactionNotifier.useContainer();
+	const { signer } = Connector.useContainer();
 
 	const [gasLimitEstimate, setGasLimitEstimate] = useState<GasLimitEstimate>(null);
 	const [error, setError] = useState<string | null>(null);
@@ -60,8 +77,9 @@ const ApproveModal: FC<ApproveModalProps> = ({
 					} = synthetix.js!;
 					setError(null);
 					const allowance = parseEther(TokenAllowanceLimit.toString());
+					const approvedContract = getContractByName(contractToApprove, signer);
 					const gasEstimate = await synthetix.getGasEstimateForTransaction({
-						txArgs: [contracts[contractToApprove].address, allowance],
+						txArgs: [approvedContract.address, allowance],
 						method: contracts[tokenContract].estimateGas.approve,
 					});
 					setGasLimitEstimate(gasEstimate);
@@ -87,8 +105,9 @@ const ApproveModal: FC<ApproveModalProps> = ({
 				setError(null);
 				setTxModalOpen(true);
 				const allowance = parseEther(TokenAllowanceLimit.toString());
+				const approvedContract = getContractByName(contractToApprove, signer);
 				const transaction: ethers.ContractTransaction = await contracts[tokenContract].approve(
-					contracts[contractToApprove].address,
+					approvedContract.address,
 					allowance,
 					{
 						gasPrice: normalizedGasPrice(gasPrice),

@@ -21,12 +21,12 @@ import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuer
 import { appReadyState } from 'store/app';
 import { GasLimitEstimate } from 'constants/network';
 
-// @TODO: Add for the countdown of waiting period and issuance delay
 import Connector from 'containers/Connector';
 import useClearDebtCalculations from 'sections/staking/hooks/useClearDebtCalculations';
 import { useTranslation } from 'react-i18next';
 import { toFutureDate } from 'utils/formatters/date';
 import useETHBalanceQuery from 'queries/walletBalances/useETHBalanceQuery';
+import { DEFAULT_DEBT_BUFFER } from 'constants/defaults';
 
 const BurnTab: React.FC = () => {
 	const { monitorTransaction } = TransactionNotifier.useContainer();
@@ -46,6 +46,7 @@ const BurnTab: React.FC = () => {
 	const [gasPrice, setGasPrice] = useState<number>(0);
 	const [waitingPeriod, setWaitingPeriod] = useState(0);
 	const [issuanceDelay, setIssuanceDelay] = useState(0);
+	const [debtBuffer, setDebtBuffer] = useState<string>(DEFAULT_DEBT_BUFFER);
 
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 
@@ -333,11 +334,17 @@ const BurnTab: React.FC = () => {
 
 		switch (burnType) {
 			case BurnActionType.MAX:
-				onBurnChange(maxBurnAmount.toString());
+				const maxBurnAmountWithBuffer =
+					Number(debtBuffer) > 0
+						? maxBurnAmount
+								.plus(maxBurnAmount.multipliedBy(toBigNumber(debtBuffer)))
+								.decimalPlaces(4)
+						: maxBurnAmount;
+				onBurnChange(maxBurnAmountWithBuffer.toString());
 				handleSubmit = () => {
 					handleBurn(false);
 				};
-				inputValue = maxBurnAmount;
+				inputValue = maxBurnAmountWithBuffer;
 				isLocked = true;
 				break;
 			case BurnActionType.TARGET:
@@ -405,6 +412,8 @@ const BurnTab: React.FC = () => {
 				etherNeededToBuy={etherNeededToBuy}
 				sUSDNeededToBuy={sUSDNeededToBuy}
 				sUSDNeededToBurn={sUSDNeededToBurn}
+				setDebtBuffer={setDebtBuffer}
+				debtBuffer={debtBuffer}
 			/>
 		);
 	}, [
@@ -427,6 +436,8 @@ const BurnTab: React.FC = () => {
 		missingSUSDWithBuffer,
 		needToBuy,
 		quoteAmount,
+		setDebtBuffer,
+		debtBuffer,
 	]);
 
 	return <TabContainer>{returnPanel}</TabContainer>;
