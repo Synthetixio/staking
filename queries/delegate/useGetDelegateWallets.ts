@@ -5,7 +5,7 @@ import request, { gql } from 'graphql-request';
 import QUERY_KEYS from 'constants/queryKeys';
 
 import { appReadyState } from 'store/app';
-import { isL2State, networkState, walletAddressState } from 'store/wallet';
+import { isMainnetState, networkState, walletAddressState } from 'store/wallet';
 import { AuthoriserWallet } from './types';
 
 const ENDPOINT = 'https://api.thegraph.com/subgraphs/name/synthetixio-team/synthetix-delegation';
@@ -14,7 +14,7 @@ const useGetDelegateWallets = (options?: QueryConfig<[AuthoriserWallet]>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const network = useRecoilValue(networkState);
 	const walletAddress = useRecoilValue(walletAddressState);
-	const isL2 = useRecoilValue(isL2State);
+	const isMainnet = useRecoilValue(isMainnetState);
 
 	return useQuery<[AuthoriserWallet]>(
 		QUERY_KEYS.Delegate.AuthorisedWallets(walletAddress ?? '', network?.id!),
@@ -55,7 +55,7 @@ const useGetDelegateWallets = (options?: QueryConfig<[AuthoriserWallet]>) => {
 			);
 		},
 		{
-			enabled: isAppReady && !isL2,
+			enabled: isAppReady && isMainnet && walletAddress,
 			...options,
 			refetchInterval: false,
 			refetchIntervalInBackground: false,

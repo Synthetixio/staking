@@ -98,7 +98,7 @@
 			"etherscan": "View on Etherscan",
 			"disconnect-wallet": "disconnect",
 			"stop-watching": "Stop watching",
-			"stop-delegation": "Stop delegation",
+			"stop-delegation": "Stop delegate mode",
 			"change-wallet": "change wallet",
 			"switch-account": "switch account",
 			"available-on-hardware-wallet": "Available on hardware wallets",

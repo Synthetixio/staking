@@ -288,7 +288,7 @@ const BurnTab: React.FC = () => {
 				}
 			}
 		},
-		[amountToBurn, gasPrice, monitorTransaction, isAppReady]
+		[amountToBurn, gasPrice, monitorTransaction, isAppReady, delegateWallet]
 	);
 
 	const handleClear = useCallback(async () => {

@@ -317,8 +317,9 @@ const StyledTextButton = styled(Button).attrs({
 })`
 	font-family: ${(props) => props.theme.fonts.condensedMedium};
 	padding: 0 20px;
-	display: inline-grid;
-	grid-template-columns: auto 1fr;
+	width: 100%;
+	display: flex;
+	justify-content: flex-start;
 	align-items: center;
 	justify-items: center;
 	text-transform: uppercase;
