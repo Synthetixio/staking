@@ -123,7 +123,7 @@ const BufferHelperTooltip = styled(Tippy)`
 	border-radius: 4px;
 	width: 120px;
 	.tippy-content {
-		padding: 0;
+		padding: 10px;
 	}
 `;
 
