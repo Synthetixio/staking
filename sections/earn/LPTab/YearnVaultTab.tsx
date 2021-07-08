@@ -217,7 +217,7 @@ const YearnVaultTab: FC<LPTabProps> = ({
 					tabData={tabData}
 				/>
 			</GridContainer>
-			{!showApproveOverlayModal && (
+			{showApproveOverlayModal && (
 				<ApproveModalWrapper>
 					<ApproveModal
 						description={t('earn.incentives.options.yvsnx.approve-message')}
