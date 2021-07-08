@@ -32,7 +32,7 @@ const NumericInput: FC<NumericInputProps> = ({
 }) => {
 	const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
 		const { value } = e.target;
-		if (!isValidNumber(value)) return onChange(e, '0.00');
+		if (!isValidNumber(value)) return;
 		onChange(e, value.replace(/,/g, '.').replace(/[e+-]/gi, ''));
 	};
 

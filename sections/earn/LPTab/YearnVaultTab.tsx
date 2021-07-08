@@ -8,7 +8,7 @@ import StructuredTab from 'components/StructuredTab';
 import ROUTES from 'constants/routes';
 import { FlexDivColCentered, IconButton, FlexDivJustifyEnd } from 'styles/common';
 import media from 'styles/media';
-import { CurrencyKey, Synths } from 'constants/currency';
+import { CurrencyKey } from 'constants/currency';
 import PendingConfirmation from 'assets/svg/app/pending-confirmation.svg';
 import Success from 'assets/svg/app/success.svg';
 import ExpandIcon from 'assets/svg/app/expand.svg';
