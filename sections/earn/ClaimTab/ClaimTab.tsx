@@ -214,7 +214,11 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 					}
 				} catch (e) {
 					setTransactionState(Transaction.PRESUBMIT);
-					setError(e.message);
+					if (isL2) {
+						setError(e.data.message);
+					} else {
+						setError(e.message);
+					}
 				}
 			}
 		}
