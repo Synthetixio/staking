@@ -35,3 +35,8 @@ export const getTransactionPrice = (
 export const normalizeGasLimit = (gasLimit: number) => gasLimit + DEFAULT_GAS_BUFFER;
 
 export const normalizedGasPrice = (gasPrice: number) => gasPrice * GWEI_UNIT;
+
+export const matchesNetworkErrorString = (error: string) =>
+	error.includes('unsupported network or network id passed');
+
+export const networkErrorMessage = 'Wrong network detected';

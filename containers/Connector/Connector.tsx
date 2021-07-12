@@ -11,7 +11,7 @@ import { ethers } from 'ethers';
 
 import synthetix from 'lib/synthetix';
 
-import { getDefaultNetworkId } from 'utils/network';
+import { getDefaultNetworkId, matchesNetworkErrorString, networkErrorMessage } from 'utils/network';
 
 import { appReadyState } from 'store/app';
 import {
@@ -27,6 +27,7 @@ import useLocalStorage from 'hooks/useLocalStorage';
 
 import { initOnboard } from './config';
 import { LOCAL_STORAGE_KEYS } from 'constants/storage';
+import UI from 'containers/UI';
 
 const useConnector = () => {
 	const [network, setNetwork] = useRecoilState(networkState);
@@ -45,26 +46,35 @@ const useConnector = () => {
 		LOCAL_STORAGE_KEYS.SELECTED_WALLET,
 		''
 	);
+	const { setNetworkError } = UI.useContainer();
 
 	useEffect(() => {
 		const init = async () => {
-			const networkId = await getDefaultNetworkId();
-			const provider = loadProvider({
-				networkId,
-				infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
-				provider: window.ethereum,
-			});
+			try {
+				const networkId = await getDefaultNetworkId();
+				const provider = loadProvider({
+					networkId,
+					infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
+					provider: window.ethereum,
+				});
 
-			synthetix.setContractSettings({
-				networkId,
-				provider,
-			});
+				synthetix.setContractSettings({
+					networkId,
+					provider,
+				});
 
-			setNetwork(synthetix.js ? { ...synthetix.js.network } : null);
-			setProvider(provider);
-			setAppReady(true);
+				setNetwork(synthetix.js ? { ...synthetix.js.network } : null);
+				setProvider(provider);
+				setAppReady(true);
+			} catch (error) {
+				if (matchesNetworkErrorString(error.message)) {
+					setNetworkError(networkErrorMessage);
+					window.ethereum.on('chainChanged', (_: string) => {
+						window.location.reload();
+					});
+				}
+			}
 		};
-
 		init();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
@@ -78,7 +88,9 @@ const useConnector = () => {
 						synthetix.chainIdToNetwork != null && synthetix.chainIdToNetwork[networkId as NetworkId]
 							? true
 							: false;
-					if (!isSupportedNetwork) return;
+					if (!isSupportedNetwork) {
+						window.location.reload();
+					}
 					let provider;
 					if (onboard.getState().address) {
 						provider = loadProvider({
@@ -148,15 +160,20 @@ const useConnector = () => {
 						setSelectedWallet(wallet.name);
 						setTransactionNotifier(new TransactionNotifier(provider));
 					} else {
-						// TODO: setting provider to null might cause issues, perhaps use a default provider?
-						// setProvider(null);
+						const networkId = await getDefaultNetworkId();
+						const provider = loadProvider({
+							networkId,
+							infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
+							provider: window.ethereum,
+						});
+
+						setProvider(provider);
 						setSigner(null);
 						setWalletAddress(null);
 						setSelectedWallet(null);
 					}
 				},
 			});
-
 			setOnboard(onboard);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
