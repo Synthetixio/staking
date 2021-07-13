@@ -8,9 +8,13 @@ export const ROUTES = {
 		Home: '/staking',
 		Burn: '/staking/burn',
 		Mint: '/staking/mint',
+		Wrap: '/staking/wrap',
 	},
 	Debt: {
 		Home: '/debt',
+	},
+	Wrap: {
+		Home: '/wrap',
 	},
 	Escrow: {
 		Home: '/escrow',

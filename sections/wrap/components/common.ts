@@ -81,13 +81,6 @@ export const DataRow = styled(FlexDivRowCentered)`
 	margin: 8px 24px;
 	border-bottom: ${(props) => `1px solid ${props.theme.colors.grayBlue}`};
 `;
-export const DataWrapRow = styled(FlexDivRowCentered)`
-	justify-content: space-between;
-	margin: 8px 24px;
-	padding: 8px;
-	border-radius: 4px;
-	border: ${(props) => `3px solid ${props.theme.colors.mutedBlue}`};
-`;
 export const RowTitle = styled.p`
 	font-family: ${(props) => props.theme.fonts.interBold};
 	font-size: 12px;

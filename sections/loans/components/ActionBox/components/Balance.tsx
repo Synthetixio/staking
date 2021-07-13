@@ -34,9 +34,9 @@ const ETH: React.FC<ETHProps> = ({ onSetMaxAmount }) => {
 	const { t } = useTranslation();
 	const { provider, signer } = Connector.useContainer();
 	const [balance, setBalance] = React.useState(ethers.BigNumber.from('0'));
-
 	const handleSetMaxAmount = () => {
 		if (onSetMaxAmount && balance) {
+			// console.log('handleMaxSetAmount', ethers.utils.formatUnits(balance, 18));
 			onSetMaxAmount(ethers.utils.formatUnits(balance, 18));
 		}
 	};
@@ -50,6 +50,7 @@ const ETH: React.FC<ETHProps> = ({ onSetMaxAmount }) => {
 		const onSetBalance = async () => {
 			const balance = await signer.getBalance();
 			if (isMounted) setBalance(balance);
+			console.log('ETH Balance', balance);
 		};
 
 		const subscribe = () => {
