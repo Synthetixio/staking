@@ -42,7 +42,6 @@ const WrapETHTab: React.FC = () => {
 	useEffect(() => {
 		console.log('useEffec2t signer', signer);
 		if (!signer) return;
-		// console.log('useEffec2t signer', signer);
 		const onSetBalance = async () => {
 			const balance = await signer.getBalance();
 			setCurrentSwapAmount(balance);
@@ -53,21 +52,7 @@ const WrapETHTab: React.FC = () => {
 	}, [signer]);
 
 	const returnPanelTwo = () => {
-		return (
-			<div>
-				<h1>test</h1>
-				<input
-					style={{
-						height: 50,
-						width: '80%',
-						border: '1px solid red',
-						background: 'transparent',
-						color: 'white',
-					}}
-				></input>
-				{/* <Balance {...{ asset, onSetMaxAmount }} /> */}
-			</div>
-		);
+		return <div />;
 	};
 
 	return <TabContainer>{returnPanelTwo()}</TabContainer>;
