@@ -1,8 +1,10 @@
 import { FC, useMemo } from 'react';
 import styled from 'styled-components';
 
-import { SynthTotalSupply, SynthsTotalSupplyData } from 'queries/synths/useSynthsTotalSupplyQuery';
-import useSynthsTotalSupplyQuery from 'queries/synths/useSynthsTotalSupplyQuery';
+import useSynthsTotalSupplyQuery, {
+	SynthTotalSupply,
+	SynthsTotalSupplyData,
+} from 'queries/synths/useSynthsTotalSupplyQuery';
 
 import PieChart from 'components/PieChart';
 import DebtPoolTable from '../DebtPoolTable';

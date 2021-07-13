@@ -8,6 +8,8 @@ import { CryptoCurrency, CurrencyKey } from 'constants/currency';
 
 import useSynthetixTokenList from 'queries/tokenLists/useSynthetixTokenList';
 import useZapperTokenList from 'queries/tokenLists/useZapperTokenList';
+import useOneInchTokenList from 'queries/tokenLists/useOneInchTokenList';
+
 import { FlexDivCentered } from 'styles/common';
 
 export enum CurrencyIconType {
@@ -31,7 +33,9 @@ export const getSynthIcon = (currencyKey: CurrencyKey) =>
 	`https://raw.githubusercontent.com/Synthetixio/synthetix-assets/master/synths/${currencyKey}.svg`;
 
 export const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, type, ...rest }) => {
-	const [isError, setIsError] = useState<boolean>(false);
+	const [error, setError] = useState<boolean>(false);
+	const [firstFallbackError, setFirstFallbackError] = useState<boolean>(false);
+	const [secondFallbackError, setSecondFallbackError] = useState<boolean>(false);
 
 	const synthetixTokenListQuery = useSynthetixTokenList();
 	const synthetixTokenListMap = synthetixTokenListQuery.isSuccess
@@ -43,9 +47,14 @@ export const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, type, ...rest
 		? ZapperTokenListQuery.data?.tokensMap ?? null
 		: null;
 
+	const OneInchTokenListQuery = useOneInchTokenList();
+	const OneInchTokenListMap = OneInchTokenListQuery.isSuccess
+		? OneInchTokenListQuery.data?.tokensMap ?? null
+		: null;
+
 	const props = {
-		width: '24px',
-		height: '24px',
+		width: '36px',
+		height: '36px',
 		alt: currencyKey,
 		...rest,
 	};
@@ -54,21 +63,36 @@ export const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, type, ...rest
 		<Placeholder style={{ width: props.width, height: props.height }}>{currencyKey}</Placeholder>
 	);
 
-	if (isError) {
-		return defaultIcon;
-	}
-
 	if (type === 'token') {
-		return ZapperTokenListMap != null && ZapperTokenListMap[currencyKey] != null ? (
-			<ZapperTokenIcon
-				src={ZapperTokenListMap[currencyKey].logoURI}
-				onError={() => setIsError(true)}
-				{...props}
-			/>
-		) : (
-			defaultIcon
-		);
+		if (
+			ZapperTokenListMap != null &&
+			ZapperTokenListMap[currencyKey] != null &&
+			!firstFallbackError
+		) {
+			return (
+				<TokenIcon
+					src={ZapperTokenListMap[currencyKey].logoURI}
+					onError={() => setFirstFallbackError(true)}
+					{...props}
+				/>
+			);
+		} else if (
+			OneInchTokenListMap != null &&
+			OneInchTokenListMap[currencyKey] != null &&
+			!secondFallbackError
+		) {
+			return (
+				<TokenIcon
+					src={OneInchTokenListMap[currencyKey].logoURI}
+					onError={() => setSecondFallbackError(true)}
+					{...props}
+				/>
+			);
+		} else {
+			return defaultIcon;
+		}
 	} else {
+		if (error) return defaultIcon;
 		switch (currencyKey) {
 			case CryptoCurrency.ETH: {
 				return <Img src={ETHIcon} {...props} />;
@@ -84,7 +108,7 @@ export const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, type, ...rest
 								? synthetixTokenListMap[currencyKey].logoURI
 								: getSynthIcon(currencyKey)
 						}
-						onError={() => setIsError(true)}
+						onError={() => setError(true)}
 						{...props}
 						alt={currencyKey}
 					/>
@@ -92,38 +116,6 @@ export const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, type, ...rest
 		}
 	}
 };
-
-// 		case LP.BALANCER_sTSLA: {
-// 			return <Img src={sTSLAIcon} {...props} />;
-// 		}
-// 		case LP.BALANCER_sFB: {
-// 			return <Img src={sFBIcon} {...props} />;
-// 		}
-// 		case LP.BALANCER_sAAPL: {
-// 			return <Img src={sAAPLIcon} {...props} />;
-// 		}
-// 		case LP.BALANCER_sAMZN: {
-// 			return <Img src={sAMZNIcon} {...props} />;
-// 		}
-// 		case LP.BALANCER_sNFLX: {
-// 			return <Img src={sNFLXIcon} {...props} />;
-// 		}
-// 		case LP.BALANCER_sGOOG: {
-// 			return <Img src={sGOOGIcon} {...props} />;
-// 		}
-// 		case LP.CURVE_sUSD: {
-// 			return <Img src={sUSDIcon} {...props} />;
-// 		}
-// 		case LP.CURVE_sEURO: {
-// 			return <Img src={sEURIcon} {...props} />;
-// 		}
-// 		case LP.UNISWAP_DHT: {
-// 			return <Img src={DHTIcon} {...props} />;
-// 		}
-// 		default:
-// 			return null;
-// 	}
-// };
 
 const Placeholder = styled(FlexDivCentered)`
 	border-radius: 100%;
@@ -135,7 +127,7 @@ const Placeholder = styled(FlexDivCentered)`
 	margin: 0 auto;
 `;
 
-const ZapperTokenIcon = styled.img`
+const TokenIcon = styled.img`
 	border-radius: 100%;
 `;
 

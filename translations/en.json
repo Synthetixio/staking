@@ -1017,7 +1017,7 @@
 				"title": "Current results"
 			},
 			"history": {
-				"title": "Voting history",
+				"title": "Voting history {{count}}",
 				"currentUser": "You",
 				"empty": "There are no votes yet",
 				"total": "{{totalVotes}} votes",

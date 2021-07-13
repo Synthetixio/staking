@@ -120,9 +120,11 @@ const StyledSpinner = styled.div`
 const Row = styled(FlexDivRowCentered)<{ highlight: boolean }>`
 	border-bottom: 0.5px solid ${(props) => props.theme.colors.grayBlue};
 	justify-content: space-between;
-	padding: 8px;
-	margin: 8px 8px;
 	background: ${(props) => props.highlight && props.theme.colors.mediumBlue};
+	width: 350px;
+	min-height: 65px;
+	padding: 0px 8px;
+	margin: 4px 0px;
 `;
 
 const Title = styled.div`
@@ -135,9 +137,7 @@ const Title = styled.div`
 	align-items: center;
 	margin-left: 16px;
 
-	width: 250px;
-
-	padding: 16px 0px;
+	width: 60%;
 `;
 
 const Label = styled.span`
@@ -145,21 +145,20 @@ const Label = styled.span`
 	text-overflow: ellipsis;
 	overflow: hidden;
 	white-space: nowrap;
-	width: 100px;
+	width: 75px;
 `;
 
 const Value = styled(FlexDivRowCentered)`
 	color: ${(props) => props.theme.colors.white};
 	font-family: ${(props) => props.theme.fonts.interBold};
 	font-size: 12px;
-	width: 100px;
 	margin-left: 8px;
 `;
 const BarContainer = styled.div`
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	width: 200px;
+	width: 40%;
 `;
 
 const StyledProgressBar = styled(ProgressBar)`

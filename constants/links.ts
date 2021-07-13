@@ -23,6 +23,7 @@ export const EXTERNAL_LINKS = {
 	},
 	TokenLists: {
 		Synthetix: 'https://synths.snx.eth.link',
+		OneInch: 'https://gateway.ipfs.io/ipns/tokens.1inch.eth',
 		Zapper: 'https://zapper.fi/api/token-list',
 	},
 };
