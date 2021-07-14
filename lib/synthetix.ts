@@ -67,7 +67,7 @@ const synthetix: Synthetix = {
 			// @ts-ignore
 			this.chainIdToNetwork = invert(this.js.networkToChainId);
 		} catch (error) {
-			throw new Error(error);
+			throw error;
 		}
 	},
 	getGasEstimateForTransaction({

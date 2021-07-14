@@ -51,6 +51,7 @@ const useConnector = () => {
 	useEffect(() => {
 		const init = async () => {
 			try {
+				setNetworkError(null);
 				const networkId = await getDefaultNetworkId();
 				const provider = loadProvider({
 					networkId,
@@ -83,73 +84,53 @@ const useConnector = () => {
 		if (isAppReady && network) {
 			const onboard = initOnboard(network, {
 				address: setWalletAddress,
-				network: (networkId: number) => {
-					const isSupportedNetwork =
-						synthetix.chainIdToNetwork != null && synthetix.chainIdToNetwork[networkId as NetworkId]
-							? true
-							: false;
-					if (!isSupportedNetwork) {
-						window.location.reload();
-					}
-					let provider;
-					if (onboard.getState().address) {
-						provider = loadProvider({
-							provider: onboard.getState().wallet.provider,
-							networkId,
-							infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
-						});
+				network: async (networkId: number) => {
+					try {
+						const isSupportedNetwork =
+							synthetix.chainIdToNetwork != null &&
+							synthetix.chainIdToNetwork[networkId as NetworkId]
+								? true
+								: false;
+						if (!isSupportedNetwork) {
+							await onboard.walletCheck();
+						}
+						let provider;
+						if (onboard.getState().address) {
+							provider = loadProvider({
+								provider: onboard.getState().wallet.provider,
+								networkId,
+								infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
+							});
 
-						const signer = provider.getSigner();
-						synthetix.setContractSettings({
-							networkId,
-							provider,
-							signer,
-						});
+							const signer = provider.getSigner();
+							synthetix.setContractSettings({
+								networkId,
+								provider,
+								signer,
+							});
 
-						if (transactionNotifier) {
-							transactionNotifier.setProvider(provider);
+							if (transactionNotifier) {
+								transactionNotifier.setProvider(provider);
+							} else {
+								setTransactionNotifier(new TransactionNotifier(provider));
+							}
+
+							setSigner(signer);
 						} else {
-							setTransactionNotifier(new TransactionNotifier(provider));
+							provider = loadProvider({
+								provider: window.ethereum,
+								networkId,
+								infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
+							});
+
+							synthetix.setContractSettings({
+								networkId,
+								provider,
+							});
 						}
 
-						setSigner(signer);
-					} else {
-						provider = loadProvider({
-							provider: window.ethereum,
-							networkId,
-							infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
-						});
-
-						synthetix.setContractSettings({
-							networkId,
-							provider,
-						});
-					}
-
-					onboard.config({ networkId });
-					setProvider(provider);
-					setNetwork(
-						synthetix.js
-							? {
-									...synthetix.js.network,
-							  }
-							: null
-					);
-				},
-				wallet: async (wallet: OnboardWallet) => {
-					if (wallet.provider) {
-						const provider = loadProvider({ provider: wallet.provider });
-						const signer = provider.getSigner();
-						const network = await provider.getNetwork();
-						const networkId = network.chainId as NetworkId;
-
-						synthetix.setContractSettings({
-							networkId,
-							provider,
-							signer,
-						});
+						onboard.config({ networkId });
 						setProvider(provider);
-						setSigner(provider.getSigner());
 						setNetwork(
 							synthetix.js
 								? {
@@ -157,20 +138,49 @@ const useConnector = () => {
 								  }
 								: null
 						);
-						setSelectedWallet(wallet.name);
-						setTransactionNotifier(new TransactionNotifier(provider));
-					} else {
-						const networkId = await getDefaultNetworkId();
-						const provider = loadProvider({
-							networkId,
-							infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
-							provider: window.ethereum,
-						});
+					} catch (error) {
+						console.log(error);
+					}
+				},
+				wallet: async (wallet: OnboardWallet) => {
+					try {
+						if (wallet.provider) {
+							const provider = loadProvider({ provider: wallet.provider });
+							const signer = provider.getSigner();
+							const network = await provider.getNetwork();
+							const networkId = network.chainId as NetworkId;
 
-						setProvider(provider);
-						setSigner(null);
-						setWalletAddress(null);
-						setSelectedWallet(null);
+							synthetix.setContractSettings({
+								networkId,
+								provider,
+								signer,
+							});
+							setProvider(provider);
+							setSigner(provider.getSigner());
+							setNetwork(
+								synthetix.js
+									? {
+											...synthetix.js.network,
+									  }
+									: null
+							);
+							setSelectedWallet(wallet.name);
+							setTransactionNotifier(new TransactionNotifier(provider));
+						} else {
+							const networkId = await getDefaultNetworkId();
+							const provider = loadProvider({
+								networkId,
+								infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
+								provider: window.ethereum,
+							});
+
+							setProvider(provider);
+							setSigner(null);
+							setWalletAddress(null);
+							setSelectedWallet(null);
+						}
+					} catch (error) {
+						console.log(error);
 					}
 				},
 			});
