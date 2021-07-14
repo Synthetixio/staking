@@ -20,7 +20,6 @@ export const DEFAULT_NETWORK_ID = NetworkId.Mainnet;
 
 export const DEFAULT_GAS_LIMIT = 500000;
 export const DEFAULT_GAS_BUFFER = 15000;
-export const DEFAULT_DEBT_BUFFER = '0.0025';
 
 // ui defaults
 export const DEFAULT_SEARCH_DEBOUNCE_MS = 300;

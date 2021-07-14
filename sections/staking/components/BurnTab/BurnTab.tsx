@@ -26,7 +26,6 @@ import useClearDebtCalculations from 'sections/staking/hooks/useClearDebtCalcula
 import { useTranslation } from 'react-i18next';
 import { toFutureDate } from 'utils/formatters/date';
 import useETHBalanceQuery from 'queries/walletBalances/useETHBalanceQuery';
-import { DEFAULT_DEBT_BUFFER } from 'constants/defaults';
 
 const BurnTab: React.FC = () => {
 	const { monitorTransaction } = TransactionNotifier.useContainer();
@@ -46,7 +45,6 @@ const BurnTab: React.FC = () => {
 	const [gasPrice, setGasPrice] = useState<number>(0);
 	const [waitingPeriod, setWaitingPeriod] = useState(0);
 	const [issuanceDelay, setIssuanceDelay] = useState(0);
-	const [debtBuffer, setDebtBuffer] = useState<string>(DEFAULT_DEBT_BUFFER);
 
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 
@@ -334,17 +332,11 @@ const BurnTab: React.FC = () => {
 
 		switch (burnType) {
 			case BurnActionType.MAX:
-				const maxBurnAmountWithBuffer =
-					Number(debtBuffer) > 0
-						? maxBurnAmount
-								.plus(maxBurnAmount.multipliedBy(toBigNumber(debtBuffer)))
-								.decimalPlaces(4)
-						: maxBurnAmount;
-				onBurnChange(maxBurnAmountWithBuffer.toString());
+				onBurnChange(maxBurnAmount.toString());
 				handleSubmit = () => {
 					handleBurn(false);
 				};
-				inputValue = maxBurnAmountWithBuffer;
+				inputValue = maxBurnAmount;
 				isLocked = true;
 				break;
 			case BurnActionType.TARGET:
@@ -412,8 +404,6 @@ const BurnTab: React.FC = () => {
 				etherNeededToBuy={etherNeededToBuy}
 				sUSDNeededToBuy={sUSDNeededToBuy}
 				sUSDNeededToBurn={sUSDNeededToBurn}
-				setDebtBuffer={setDebtBuffer}
-				debtBuffer={debtBuffer}
 			/>
 		);
 	}, [
@@ -436,8 +426,6 @@ const BurnTab: React.FC = () => {
 		missingSUSDWithBuffer,
 		needToBuy,
 		quoteAmount,
-		setDebtBuffer,
-		debtBuffer,
 	]);
 
 	return <TabContainer>{returnPanel}</TabContainer>;
