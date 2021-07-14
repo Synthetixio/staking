@@ -155,10 +155,18 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 
 					setGasLimitEstimate(gasEstimate);
 				} catch (error) {
-					if (error.message.includes('below penalty threshold')) {
-						setLowCRatio(true);
-					} else if (!error.message.includes('already claimed')) {
-						setError(error.message);
+					if (isL2 && error.data) {
+						if (error.data.message.includes('below penalty threshold')) {
+							setLowCRatio(true);
+						} else if (!error.data.message.includes('already claimed')) {
+							setError(error.data.message);
+						}
+					} else {
+						if (error.message.includes('below penalty threshold')) {
+							setLowCRatio(true);
+						} else if (!error.message.includes('already claimed')) {
+							setError(error.message);
+						}
 					}
 					setGasLimitEstimate(null);
 				}
@@ -201,7 +209,11 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 					}
 				} catch (e) {
 					setTransactionState(Transaction.PRESUBMIT);
-					setError(e.message);
+					if (isL2) {
+						setError(e?.data?.message ?? e.message);
+					} else {
+						setError(e.message);
+					}
 				}
 			}
 		}
