@@ -155,12 +155,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 
 					setGasLimitEstimate(gasEstimate);
 				} catch (error) {
-					/* L2 errors are different to L1
-						data: {
-							message: "error message"
-						}
-					*/
-					if (isL2) {
+					if (isL2 && error.data) {
 						if (error.data.message.includes('below penalty threshold')) {
 							setLowCRatio(true);
 						} else if (!error.data.message.includes('already claimed')) {
@@ -215,7 +210,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 				} catch (e) {
 					setTransactionState(Transaction.PRESUBMIT);
 					if (isL2) {
-						setError(e.data.message);
+						setError(e?.data?.message ?? e.message);
 					} else {
 						setError(e.message);
 					}
