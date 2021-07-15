@@ -5,7 +5,7 @@ import { atom, selector } from 'recoil';
 import { truncateAddress } from 'utils/formatters/string';
 import { getWalletKey } from '../utils';
 
-import { AuthoriserWallet } from 'queries/delegate/types';
+import { DelegationWallet } from 'queries/delegate/types';
 
 export type Network = {
 	id: NetworkId;
@@ -76,7 +76,7 @@ export const isEOAWalletState = atom<boolean>({
 	default: false,
 });
 
-export const delegateWalletState = atom<AuthoriserWallet | null>({
+export const delegateWalletState = atom<DelegationWallet | null>({
 	key: getWalletKey('delegateWallet'),
 	default: null,
 });

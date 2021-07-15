@@ -303,7 +303,7 @@ const BurnTab: React.FC = () => {
 				}
 			}
 		},
-		[amountToBurn, gasPrice, monitorTransaction, isAppReady, delegateWallet]
+		[amountToBurn, gasPrice, monitorTransaction, isAppReady, delegateWallet, sUSDBalance, burnType]
 	);
 
 	const handleClear = useCallback(async () => {

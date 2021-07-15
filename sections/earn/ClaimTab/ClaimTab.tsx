@@ -179,7 +179,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 			}
 		};
 		getGasLimitEstimate();
-	}, [isAppReady, isWalletConnected, isBelowCRatio, delegateWallet, t]);
+	}, [isAppReady, isWalletConnected, isBelowCRatio, delegateWallet, t, isL2]);
 
 	const handleClaim = useCallback(() => {
 		async function claim() {
@@ -231,7 +231,15 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 			}
 		}
 		claim();
-	}, [gasPrice, monitorTransaction, tradingRewards, stakingRewards, isAppReady, delegateWallet]);
+	}, [
+		gasPrice,
+		monitorTransaction,
+		tradingRewards,
+		stakingRewards,
+		isAppReady,
+		delegateWallet,
+		isL2,
+	]);
 
 	const goToBurn = useCallback(() => router.push(ROUTES.Staking.Burn), [router]);
 	const goToEarn = useCallback(() => router.push(ROUTES.Earn.Home), [router]);

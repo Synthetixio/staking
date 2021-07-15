@@ -7,7 +7,7 @@ import { Svg } from 'react-optimized-image';
 import { delegateWalletState } from 'store/wallet';
 import useGetAuthoriserWallets from 'queries/delegate/useGetAuthoriserWallets';
 import { truncateAddress } from 'utils/formatters/string';
-import { AuthoriserWallet } from 'queries/delegate/types';
+import { DelegationWallet } from 'queries/delegate/types';
 
 import { MenuModal } from '../common';
 import Spinner from 'assets/svg/app/loader.svg';
@@ -23,7 +23,7 @@ const DelegateModal: FC<DelegateModalProps> = ({ onDismiss }) => {
 
 	const authoriserWallets = delegateWalletsQuery?.data ?? null;
 
-	const handleWalletSelect = (wallet: AuthoriserWallet) => {
+	const handleWalletSelect = (wallet: DelegationWallet) => {
 		setDelegateWallet(wallet);
 		onDismiss();
 	};
