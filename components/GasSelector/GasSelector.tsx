@@ -91,14 +91,14 @@ const GasSelector: React.FC<GasSelectorProps> = ({
 
 	const content = (
 		<GasSelectContainer>
-			<CustomGasPriceContainer>
+			<div>
 				<CustomGasPrice
 					value={customGasPrice}
 					onChange={(_, value) => setCustomGasPrice(value)}
 					placeholder={t('common.custom')}
 					data-testid="edit-gas-price-input"
 				/>
-			</CustomGasPriceContainer>
+			</div>
 			{GAS_SPEEDS.map((speed) => (
 				<StyedGasButton
 					key={speed}
@@ -208,8 +208,6 @@ const GasPriceTooltip = styled(Tippy)`
 const GasSelectContainer = styled.div`
 	padding: 16px 0 8px 0;
 `;
-
-const CustomGasPriceContainer = styled.div``;
 
 const CustomGasPrice = styled(NumericInput)`
 	width: 100%;

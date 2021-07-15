@@ -24,7 +24,8 @@ import {
 	InfoContainer,
 	InfoHeader,
 } from '../common';
-import { StakingPanelType } from 'store/staking';
+import { BurnActionType, burnTypeState, StakingPanelType } from 'store/staking';
+import { useRecoilValue } from 'recoil';
 
 type BarChartData = {
 	title: string;
@@ -39,7 +40,7 @@ type RowData = {
 	title: string;
 	value: BigNumber;
 	changedValue: BigNumber;
-	currencyKey: CryptoCurrency | string;
+	currencyKey?: CryptoCurrency | string;
 };
 
 type StakingInfo = {
@@ -56,6 +57,7 @@ type InfoLayoutProps = {
 
 const InfoLayout: FC<InfoLayoutProps> = ({ stakingInfo, collateral, isInputEmpty, infoType }) => {
 	const { t } = useTranslation();
+	const burnType = useRecoilValue(burnTypeState);
 
 	const title = useMemo(() => {
 		switch (infoType) {

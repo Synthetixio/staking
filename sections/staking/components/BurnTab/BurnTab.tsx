@@ -21,7 +21,6 @@ import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuer
 import { appReadyState } from 'store/app';
 import { GasLimitEstimate } from 'constants/network';
 
-// @TODO: Add for the countdown of waiting period and issuance delay
 import Connector from 'containers/Connector';
 import useClearDebtCalculations from 'sections/staking/hooks/useClearDebtCalculations';
 import { useTranslation } from 'react-i18next';
@@ -266,7 +265,13 @@ const BurnTab: React.FC = () => {
 							  });
 					} else {
 						const burnFunc = burnFunction({ isDelegate: !!delegateWallet });
-						const amountToBurnBN = parseEther(amountToBurn.toString());
+						let amountToBurnBN;
+
+						if (burnType === BurnActionType.MAX) {
+							amountToBurnBN = parseEther(sUSDBalance.toString());
+						} else {
+							amountToBurnBN = parseEther(amountToBurn.toString());
+						}
 						const gasLimit = await synthetix.getGasEstimateForTransaction({
 							txArgs: delegateWallet ? [delegateWallet.address, amountToBurnBN] : [amountToBurnBN],
 							method: Synthetix.estimateGas[burnFunc],

@@ -217,6 +217,12 @@ export const QUERY_KEYS = {
 			walletAddress,
 			networkId,
 		],
+		yearnSNX: (walletAddress: string, networkId: NetworkId) => [
+			'liquidityPools',
+			'yearn-SNX',
+			walletAddress,
+			networkId,
+		],
 	},
 	Delegate: {
 		AuthoriserWallets: (walletAddress: string, networkId: NetworkId) => [
