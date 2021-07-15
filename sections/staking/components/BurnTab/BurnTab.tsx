@@ -225,7 +225,12 @@ const BurnTab: React.FC = () => {
 							gasLimit: gasLimit,
 						});
 					} else {
-						const amountToBurnBN = parseEther(amountToBurn.toString());
+						let amountToBurnBN;
+						if (burnType === BurnActionType.MAX) {
+							amountToBurnBN = parseEther(sUSDBalance.toString());
+						} else {
+							amountToBurnBN = parseEther(amountToBurn.toString());
+						}
 						const gasLimit = await synthetix.getGasEstimateForTransaction({
 							txArgs: [amountToBurnBN],
 							method: Synthetix.estimateGas.burnSynths,
@@ -322,23 +327,21 @@ const BurnTab: React.FC = () => {
 		let sUSDNeededToBurn;
 
 		/* If a user has more sUSD than the debt balance, the max burn amount is their debt balance, else it is just the balance they have */
-		// const maxBurnAmount = debtBalance.isGreaterThan(sUSDBalance)
-		// 	? toBigNumber(sUSDBalance)
-		// 	: debtBalance;
+		const maxBurnAmount = debtBalance.isGreaterThan(sUSDBalance)
+			? toBigNumber(sUSDBalance)
+			: debtBalance;
 
 		const burnAmountToFixCRatio = toBigNumber(
 			Math.max(debtBalance.minus(issuableSynths).toNumber(), 0)
 		);
 
-		const sUSDBalanceBN = toBigNumber(sUSDBalance);
-
 		switch (burnType) {
 			case BurnActionType.MAX:
-				onBurnChange(sUSDBalanceBN.toString());
+				onBurnChange(maxBurnAmount.toString());
 				handleSubmit = () => {
 					handleBurn(false);
 				};
-				inputValue = sUSDBalanceBN;
+				inputValue = maxBurnAmount;
 				isLocked = true;
 				break;
 			case BurnActionType.TARGET:
@@ -361,7 +364,7 @@ const BurnTab: React.FC = () => {
 					handleSubmit = () => {
 						handleBurn(false);
 					};
-					inputValue = sUSDBalanceBN;
+					inputValue = maxBurnAmount;
 					isLocked = true;
 					break;
 				}
@@ -401,7 +404,7 @@ const BurnTab: React.FC = () => {
 				txHash={txHash}
 				transactionState={transactionState}
 				setTransactionState={setTransactionState}
-				sUSDBalanceBN={sUSDBalanceBN}
+				maxBurnAmount={maxBurnAmount}
 				burnAmountToFixCRatio={burnAmountToFixCRatio}
 				etherNeededToBuy={etherNeededToBuy}
 				sUSDNeededToBuy={sUSDNeededToBuy}

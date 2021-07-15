@@ -64,7 +64,7 @@ type StakingInputProps = {
 	txHash: string | null;
 	transactionState: Transaction;
 	setTransactionState: (tx: Transaction) => void;
-	sUSDBalanceBN?: BigNumber;
+	maxBurnAmount?: BigNumber;
 	burnAmountToFixCRatio?: BigNumber;
 	etherNeededToBuy?: string;
 	sUSDNeededToBuy?: string;
@@ -86,7 +86,7 @@ const StakingInput: React.FC<StakingInputProps> = ({
 	txHash,
 	transactionState,
 	setTransactionState,
-	sUSDBalanceBN,
+	maxBurnAmount,
 	burnAmountToFixCRatio,
 	etherNeededToBuy,
 	sUSDNeededToBuy,
@@ -153,9 +153,9 @@ const StakingInput: React.FC<StakingInputProps> = ({
 			);
 		} else if (
 			burnType === BurnActionType.TARGET &&
-			sUSDBalanceBN != null &&
+			maxBurnAmount != null &&
 			burnAmountToFixCRatio != null &&
-			burnAmountToFixCRatio.isGreaterThan(sUSDBalanceBN)
+			burnAmountToFixCRatio.isGreaterThan(maxBurnAmount)
 		) {
 			return (
 				<StyledCTA variant="primary" size="lg" disabled={true} style={{ padding: 0 }}>
@@ -202,7 +202,7 @@ const StakingInput: React.FC<StakingInputProps> = ({
 		t,
 		isWalletConnected,
 		connectWallet,
-		sUSDBalanceBN,
+		maxBurnAmount,
 		burnType,
 		burnAmountToFixCRatio,
 	]);
@@ -215,6 +215,8 @@ const StakingInput: React.FC<StakingInputProps> = ({
 			inputValue.isLessThanOrEqualTo(calculatedTargetBurn)
 		) {
 			return stakeInfo(zeroBN);
+		} else if (burnType === BurnActionType.MAX && maxBurnAmount) {
+			return stakeInfo(maxBurnAmount);
 		} else {
 			return stakeInfo(inputValue);
 		}
@@ -290,9 +292,9 @@ const StakingInput: React.FC<StakingInputProps> = ({
 						<Svg src={NavigationBack} />
 					</IconButton>
 					{!isMint && burnType != null && [BurnActionType.CUSTOM].includes(burnType) && (
-						<BalanceButton variant="text" onClick={() => onInputChange(sUSDBalanceBN)}>
+						<BalanceButton variant="text" onClick={() => onInputChange(maxBurnAmount)}>
 							<span>{t('common.wallet.balance')}</span>
-							{formatNumber(sUSDBalanceBN ?? zeroBN)}
+							{formatNumber(maxBurnAmount ?? zeroBN)}
 						</BalanceButton>
 					)}
 				</HeaderRow>
