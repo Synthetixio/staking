@@ -30,7 +30,7 @@ import { LOCAL_STORAGE_KEYS } from 'constants/storage';
 import UI from 'containers/UI';
 
 const useConnector = () => {
-	const [network, setNetwork] = useRecoilState(networkState);
+	const setNetwork = useSetRecoilState(networkState);
 	const [provider, setProvider] = useState<ethers.providers.Provider | null>(null);
 	const [signer, setSigner] = useState<ethers.Signer | null>(null);
 	const [onboard, setOnboard] = useState<ReturnType<typeof initOnboard> | null>(null);
@@ -38,7 +38,7 @@ const useConnector = () => {
 		transactionNotifier,
 		setTransactionNotifier,
 	] = useState<TransactionNotifierInterface | null>(null);
-	const [isAppReady, setAppReady] = useRecoilState(appReadyState);
+	const setAppReady = useSetRecoilState(appReadyState);
 	const [walletAddress, setWalletAddress] = useRecoilState(walletAddressState);
 	const [walletWatched, setWalletWatched] = useRecoilState(walletWatchedState);
 	const setIsEOAWallet = useSetRecoilState(isEOAWalletState);
@@ -46,12 +46,11 @@ const useConnector = () => {
 		LOCAL_STORAGE_KEYS.SELECTED_WALLET,
 		''
 	);
-	const { setNetworkError } = UI.useContainer();
+	const { networkError, setNetworkError } = UI.useContainer();
 
 	useEffect(() => {
 		const init = async () => {
 			try {
-				setNetworkError(null);
 				const networkId = await getDefaultNetworkId();
 				const provider = loadProvider({
 					networkId,
@@ -64,8 +63,118 @@ const useConnector = () => {
 					provider,
 				});
 
-				setNetwork(synthetix.js ? { ...synthetix.js.network } : null);
-				setProvider(provider);
+				const onboard = initOnboard(networkId, {
+					address: setWalletAddress,
+					network: async (networkId: number) => {
+						if (networkId) {
+							try {
+								setNetworkError(null);
+
+								const isSupportedNetwork =
+									synthetix.chainIdToNetwork != null &&
+									synthetix.chainIdToNetwork[networkId as NetworkId]
+										? true
+										: false;
+								if (!isSupportedNetwork) {
+									onboard.walletReset();
+									setSelectedWallet(null);
+									setWalletAddress(null);
+									setNetworkError(networkErrorMessage);
+								} else {
+									let provider;
+									if (onboard.getState().address) {
+										provider = loadProvider({
+											provider: onboard.getState().wallet.provider,
+											networkId,
+											infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
+										});
+
+										const signer = provider.getSigner();
+
+										synthetix.setContractSettings({
+											networkId,
+											provider,
+											signer,
+										});
+
+										if (transactionNotifier) {
+											transactionNotifier.setProvider(provider);
+										} else {
+											setTransactionNotifier(new TransactionNotifier(provider));
+										}
+
+										setSigner(signer);
+									} else {
+										provider = loadProvider({
+											provider: window.ethereum,
+											networkId,
+											infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
+										});
+
+										synthetix.setContractSettings({
+											networkId,
+											provider,
+										});
+									}
+
+									onboard.config({ networkId });
+									setProvider(provider);
+									setNetwork(
+										synthetix.js
+											? {
+													...synthetix.js.network,
+											  }
+											: null
+									);
+								}
+							} catch (error) {
+								console.log(error);
+							}
+						}
+					},
+					wallet: async (wallet: OnboardWallet) => {
+						try {
+							if (wallet.provider) {
+								const provider = loadProvider({ provider: wallet.provider });
+								const signer = provider.getSigner();
+								const network = await provider.getNetwork();
+								const networkId = network.chainId as NetworkId;
+
+								synthetix.setContractSettings({
+									networkId,
+									provider,
+									signer,
+								});
+								setProvider(provider);
+								setSigner(provider.getSigner());
+								setNetwork(
+									synthetix.js
+										? {
+												...synthetix.js.network,
+										  }
+										: null
+								);
+								setSelectedWallet(wallet.name);
+								setTransactionNotifier(new TransactionNotifier(provider));
+							} else {
+								const networkId = await getDefaultNetworkId();
+								const provider = loadProvider({
+									networkId,
+									infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
+									provider: window.ethereum,
+								});
+
+								setSigner(null);
+								setProvider(provider);
+								setWalletAddress(null);
+								setSelectedWallet(null);
+							}
+						} catch (error) {
+							console.log(error);
+						}
+					},
+				});
+				setOnboard(onboard);
 				setAppReady(true);
 			} catch (error) {
 				if (matchesNetworkErrorString(error.message)) {
@@ -77,117 +186,9 @@ const useConnector = () => {
 			}
 		};
 		init();
+		// @notice we only want to initiate once on load
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
-
-	useEffect(() => {
-		if (isAppReady && network) {
-			const onboard = initOnboard(network, {
-				address: setWalletAddress,
-				network: async (networkId: number) => {
-					try {
-						const isSupportedNetwork =
-							synthetix.chainIdToNetwork != null &&
-							synthetix.chainIdToNetwork[networkId as NetworkId]
-								? true
-								: false;
-						if (!isSupportedNetwork) {
-							await onboard.walletCheck();
-						}
-						let provider;
-						if (onboard.getState().address) {
-							provider = loadProvider({
-								provider: onboard.getState().wallet.provider,
-								networkId,
-								infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
-							});
-
-							const signer = provider.getSigner();
-							synthetix.setContractSettings({
-								networkId,
-								provider,
-								signer,
-							});
-
-							if (transactionNotifier) {
-								transactionNotifier.setProvider(provider);
-							} else {
-								setTransactionNotifier(new TransactionNotifier(provider));
-							}
-
-							setSigner(signer);
-						} else {
-							provider = loadProvider({
-								provider: window.ethereum,
-								networkId,
-								infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
-							});
-
-							synthetix.setContractSettings({
-								networkId,
-								provider,
-							});
-						}
-
-						onboard.config({ networkId });
-						setProvider(provider);
-						setNetwork(
-							synthetix.js
-								? {
-										...synthetix.js.network,
-								  }
-								: null
-						);
-					} catch (error) {
-						console.log(error);
-					}
-				},
-				wallet: async (wallet: OnboardWallet) => {
-					try {
-						if (wallet.provider) {
-							const provider = loadProvider({ provider: wallet.provider });
-							const signer = provider.getSigner();
-							const network = await provider.getNetwork();
-							const networkId = network.chainId as NetworkId;
-
-							synthetix.setContractSettings({
-								networkId,
-								provider,
-								signer,
-							});
-							setProvider(provider);
-							setSigner(provider.getSigner());
-							setNetwork(
-								synthetix.js
-									? {
-											...synthetix.js.network,
-									  }
-									: null
-							);
-							setSelectedWallet(wallet.name);
-							setTransactionNotifier(new TransactionNotifier(provider));
-						} else {
-							const networkId = await getDefaultNetworkId();
-							const provider = loadProvider({
-								networkId,
-								infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
-								provider: window.ethereum,
-							});
-
-							setProvider(provider);
-							setSigner(null);
-							setWalletAddress(null);
-							setSelectedWallet(null);
-						}
-					} catch (error) {
-						console.log(error);
-					}
-				},
-			});
-			setOnboard(onboard);
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [isAppReady]);
 
 	useEffect(() => {
 		setWalletAddress(walletWatched);
@@ -212,9 +213,16 @@ const useConnector = () => {
 
 	const connectWallet = async () => {
 		try {
-			if (onboard) {
+			if (onboard && !networkError) {
 				onboard.walletReset();
-				const success = await onboard.walletSelect();
+				const networkId = await getDefaultNetworkId();
+				let success;
+				if (networkId === NetworkId['Mainnet-Ovm'] || networkId === NetworkId['Kovan-Ovm']) {
+					success = await onboard.walletSelect('Browser Wallet');
+				} else {
+					success = await onboard.walletSelect();
+				}
+
 				if (success) {
 					await onboard.walletCheck();
 					setWalletWatched(null);
@@ -225,13 +233,11 @@ const useConnector = () => {
 		}
 	};
 
-	const disconnectWallet = async () => {
-		try {
-			if (onboard) {
-				onboard.walletReset();
-			}
-		} catch (e) {
-			console.log(e);
+	const disconnectWallet = () => {
+		if (onboard) {
+			onboard.walletReset();
+			setSelectedWallet(null);
+			setWalletAddress(null);
 		}
 	};
 
@@ -258,7 +264,6 @@ const useConnector = () => {
 	return {
 		provider,
 		signer,
-		onboard,
 		connectWallet,
 		disconnectWallet,
 		switchAccounts,

@@ -83,6 +83,7 @@ const UserMenu: FC = () => {
 										variant="solid"
 										onClick={() => setWalletOptionsModalOpened(!walletOptionsModalOpened)}
 										data-testid="user-menu"
+										disabled={!!networkError}
 									>
 										<FlexDivCentered>
 											<StyledConnectionDot />
