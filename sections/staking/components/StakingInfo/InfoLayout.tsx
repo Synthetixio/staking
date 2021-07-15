@@ -128,10 +128,6 @@ const InfoLayout: FC<InfoLayoutProps> = ({ stakingInfo, collateral, isInputEmpty
 							{!isInputEmpty && (
 								<>
 									<StyledArrowRight src={ArrowRightIcon} />
-									{title === t('staking.info.table.susd-balance') &&
-										infoType === StakingPanelType.BURN &&
-										burnType === BurnActionType.MAX &&
-										`~`}
 									<RowValue>
 										{formatCurrency(currencyKey, !changedValue.isNaN() ? changedValue : 0, {
 											currencyKey: currencyKey,
