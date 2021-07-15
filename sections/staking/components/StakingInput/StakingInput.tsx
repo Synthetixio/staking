@@ -215,8 +215,6 @@ const StakingInput: React.FC<StakingInputProps> = ({
 			inputValue.isLessThanOrEqualTo(calculatedTargetBurn)
 		) {
 			return stakeInfo(zeroBN);
-		} else if (burnType === BurnActionType.MAX && maxBurnAmount) {
-			return stakeInfo(maxBurnAmount);
 		} else {
 			return stakeInfo(inputValue);
 		}
