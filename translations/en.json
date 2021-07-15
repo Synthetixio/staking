@@ -1294,11 +1294,11 @@
 			"empty": "No addresses to show",
 			"cols": {
 				"address": "Address",
-				"all": "all",
-				"burn": "burn",
-				"mint": "mint",
-				"claim": "claim",
-				"exchange": "trade"
+				"canAll": "all",
+				"canBurn": "burn",
+				"canMint": "mint",
+				"canClaim": "claim",
+				"canExchange": "trade"
 			}
 		},
 		"tx-confirmation-title": "Updating approval"

@@ -97,24 +97,23 @@ const BurnTab: React.FC = () => {
 
 		try {
 			const maxSecsLeftInWaitingPeriod = await Exchanger.maxSecsLeftInWaitingPeriod(
-				walletAddress,
+				delegateWallet?.address ?? walletAddress,
 				formatBytes32String('sUSD')
 			);
 			setWaitingPeriod(Number(maxSecsLeftInWaitingPeriod));
 		} catch (e) {
 			console.log(e);
 		}
-	}, [walletAddress]);
+	}, [walletAddress, delegateWallet]);
 
 	const getIssuanceDelay = useCallback(async () => {
 		const {
 			contracts: { Issuer },
 		} = synthetix.js!;
-
 		try {
 			const [canBurnSynths, lastIssueEvent, minimumStakeTime] = await Promise.all([
-				Issuer.canBurnSynths(walletAddress),
-				Issuer.lastIssueEvent(walletAddress),
+				Issuer.canBurnSynths(delegateWallet?.address ?? walletAddress),
+				Issuer.lastIssueEvent(delegateWallet?.address ?? walletAddress),
 				Issuer.minimumStakeTime(),
 			]);
 
@@ -129,7 +128,7 @@ const BurnTab: React.FC = () => {
 			console.log(e);
 		}
 		// eslint-disable-next-line
-	}, [walletAddress, debtBalance]);
+	}, [walletAddress, debtBalance, delegateWallet]);
 
 	// header title
 	useEffect(() => {
@@ -194,6 +193,17 @@ const BurnTab: React.FC = () => {
 							method: Synthetix.estimateGas.burnSynths,
 						});
 						setGasLimitEstimate(gasEstimate);
+					}
+
+					if (burnType === BurnActionType.TARGET) {
+						const gasEstimate = await synthetix.getGasEstimateForTransaction({
+							txArgs: delegateWallet ? [delegateWallet.address] : [],
+							method:
+								Synthetix.estimateGas[
+									burnFunction({ isDelegate: !!delegateWallet, isToTarget: true })
+								],
+						});
+						setGasLimitEstimate(gasEstimate);
 					} else {
 						const gasEstimate = await synthetix.getGasEstimateForTransaction({
 							txArgs: delegateWallet
@@ -214,7 +224,6 @@ const BurnTab: React.FC = () => {
 		isWalletConnected,
 		t,
 		isAppReady,
-		error,
 		amountToBurn,
 		debtBalance,
 		issuanceDelay,
@@ -242,9 +251,10 @@ const BurnTab: React.FC = () => {
 					if (burnToTarget) {
 						const burnFunc = burnFunction({ isDelegate: !!delegateWallet, isToTarget: true });
 						const gasLimit = await synthetix.getGasEstimateForTransaction({
-							txArgs: delegateWallet ? [delegateWallet] : [],
+							txArgs: delegateWallet ? [delegateWallet.address] : [],
 							method: Synthetix.estimateGas[burnFunc],
 						});
+
 						transaction = delegateWallet
 							? await Synthetix[burnFunc](delegateWallet.address, {
 									gasPrice: normalizedGasPrice(gasPrice),

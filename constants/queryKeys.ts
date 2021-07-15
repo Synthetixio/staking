@@ -219,9 +219,15 @@ export const QUERY_KEYS = {
 		],
 	},
 	Delegate: {
-		AuthorisedWallets: (walletAddress: string, networkId: NetworkId) => [
+		AuthoriserWallets: (walletAddress: string, networkId: NetworkId) => [
 			'delegate',
-			'authorisedWallets',
+			'authoriserWallets',
+			walletAddress,
+			networkId,
+		],
+		DelegateWallets: (walletAddress: string, networkId: NetworkId) => [
+			'delegate',
+			'delegateWallets',
 			walletAddress,
 			networkId,
 		],

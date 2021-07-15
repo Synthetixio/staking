@@ -5,7 +5,7 @@ import { useRecoilState } from 'recoil';
 import { Svg } from 'react-optimized-image';
 
 import { delegateWalletState } from 'store/wallet';
-import useGetDelegateWallets from 'queries/delegate/useGetDelegateWallets';
+import useGetAuthoriserWallets from 'queries/delegate/useGetAuthoriserWallets';
 import { truncateAddress } from 'utils/formatters/string';
 import { AuthoriserWallet } from 'queries/delegate/types';
 
@@ -18,7 +18,7 @@ type DelegateModalProps = {
 
 const DelegateModal: FC<DelegateModalProps> = ({ onDismiss }) => {
 	const { t } = useTranslation();
-	const delegateWalletsQuery = useGetDelegateWallets();
+	const delegateWalletsQuery = useGetAuthoriserWallets();
 	const [delegateWallet, setDelegateWallet] = useRecoilState(delegateWalletState);
 
 	const authoriserWallets = delegateWalletsQuery?.data ?? null;

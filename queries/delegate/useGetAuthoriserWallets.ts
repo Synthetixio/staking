@@ -9,30 +9,29 @@ import { isMainnetState, networkState, walletAddressState } from 'store/wallet';
 import { DelegationWallet } from './types';
 import { DELEGATE_GRAPH_ENDPOINT } from './constants';
 
-const useGetDelegateWallets = (options?: QueryConfig<[DelegationWallet]>) => {
+const useGetAuthoriserWallets = (options?: QueryConfig<[DelegationWallet]>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const network = useRecoilValue(networkState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const isMainnet = useRecoilValue(isMainnetState);
 
 	return useQuery<[DelegationWallet]>(
-		QUERY_KEYS.Delegate.DelegateWallets(walletAddress ?? '', network?.id!),
+		QUERY_KEYS.Delegate.AuthoriserWallets(walletAddress ?? '', network?.id!),
 		async () => {
 			const { delegatedWallets } = await request(
 				DELEGATE_GRAPH_ENDPOINT,
 				gql`
-					query getDelegateWallets($authoriser: String) {
-						delegatedWallets(first: 100, where: { authoriser: $authoriser }) {
-							delegate
+					query getAuthoriserWallets($delegate: String) {
+						delegatedWallets(first: 100, where: { delegate: $delegate }) {
+							authoriser
 							canMint
 							canBurn
 							canClaim
-							canExchange
 						}
 					}
 				`,
 				{
-					authoriser: walletAddress,
+					delegate: walletAddress,
 				}
 			);
 
@@ -42,34 +41,28 @@ const useGetDelegateWallets = (options?: QueryConfig<[DelegationWallet]>) => {
 						canMint,
 						canBurn,
 						canClaim,
-						canExchange,
 					}: {
 						canMint: boolean;
 						canBurn: boolean;
 						canClaim: boolean;
-						canExchange: boolean;
-					}) => canMint || canBurn || canClaim || canExchange
+					}) => canMint || canBurn || canClaim
 				)
 				.map(
 					({
-						delegate,
+						authoriser,
 						canMint,
 						canBurn,
 						canClaim,
-						canExchange,
 					}: {
-						delegate: string;
+						authoriser: string;
 						canMint: boolean;
 						canBurn: boolean;
 						canClaim: boolean;
-						canExchange: boolean;
 					}) => ({
-						address: delegate,
-						canAll: canMint && canBurn && canClaim && canExchange,
+						address: authoriser,
 						canMint,
 						canBurn,
 						canClaim,
-						canExchange,
 					})
 				);
 		},
@@ -82,4 +75,4 @@ const useGetDelegateWallets = (options?: QueryConfig<[DelegationWallet]>) => {
 	);
 };
 
-export default useGetDelegateWallets;
+export default useGetAuthoriserWallets;
