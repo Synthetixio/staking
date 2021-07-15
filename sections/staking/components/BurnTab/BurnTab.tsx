@@ -322,21 +322,23 @@ const BurnTab: React.FC = () => {
 		let sUSDNeededToBurn;
 
 		/* If a user has more sUSD than the debt balance, the max burn amount is their debt balance, else it is just the balance they have */
-		const maxBurnAmount = debtBalance.isGreaterThan(sUSDBalance)
-			? toBigNumber(sUSDBalance)
-			: debtBalance;
+		// const maxBurnAmount = debtBalance.isGreaterThan(sUSDBalance)
+		// 	? toBigNumber(sUSDBalance)
+		// 	: debtBalance;
 
 		const burnAmountToFixCRatio = toBigNumber(
 			Math.max(debtBalance.minus(issuableSynths).toNumber(), 0)
 		);
 
+		const sUSDBalanceBN = toBigNumber(sUSDBalance);
+
 		switch (burnType) {
 			case BurnActionType.MAX:
-				onBurnChange(maxBurnAmount.toString());
+				onBurnChange(sUSDBalanceBN.toString());
 				handleSubmit = () => {
 					handleBurn(false);
 				};
-				inputValue = maxBurnAmount;
+				inputValue = sUSDBalanceBN;
 				isLocked = true;
 				break;
 			case BurnActionType.TARGET:
@@ -359,7 +361,7 @@ const BurnTab: React.FC = () => {
 					handleSubmit = () => {
 						handleBurn(false);
 					};
-					inputValue = maxBurnAmount;
+					inputValue = sUSDBalanceBN;
 					isLocked = true;
 					break;
 				}
@@ -399,7 +401,7 @@ const BurnTab: React.FC = () => {
 				txHash={txHash}
 				transactionState={transactionState}
 				setTransactionState={setTransactionState}
-				maxBurnAmount={maxBurnAmount}
+				sUSDBalanceBN={sUSDBalanceBN}
 				burnAmountToFixCRatio={burnAmountToFixCRatio}
 				etherNeededToBuy={etherNeededToBuy}
 				sUSDNeededToBuy={sUSDNeededToBuy}

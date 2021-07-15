@@ -64,7 +64,7 @@ type StakingInputProps = {
 	txHash: string | null;
 	transactionState: Transaction;
 	setTransactionState: (tx: Transaction) => void;
-	maxBurnAmount?: BigNumber;
+	sUSDBalanceBN?: BigNumber;
 	burnAmountToFixCRatio?: BigNumber;
 	etherNeededToBuy?: string;
 	sUSDNeededToBuy?: string;
@@ -86,7 +86,7 @@ const StakingInput: React.FC<StakingInputProps> = ({
 	txHash,
 	transactionState,
 	setTransactionState,
-	maxBurnAmount,
+	sUSDBalanceBN,
 	burnAmountToFixCRatio,
 	etherNeededToBuy,
 	sUSDNeededToBuy,
@@ -153,9 +153,9 @@ const StakingInput: React.FC<StakingInputProps> = ({
 			);
 		} else if (
 			burnType === BurnActionType.TARGET &&
-			maxBurnAmount != null &&
+			sUSDBalanceBN != null &&
 			burnAmountToFixCRatio != null &&
-			burnAmountToFixCRatio.isGreaterThan(maxBurnAmount)
+			burnAmountToFixCRatio.isGreaterThan(sUSDBalanceBN)
 		) {
 			return (
 				<StyledCTA variant="primary" size="lg" disabled={true} style={{ padding: 0 }}>
@@ -202,7 +202,7 @@ const StakingInput: React.FC<StakingInputProps> = ({
 		t,
 		isWalletConnected,
 		connectWallet,
-		maxBurnAmount,
+		sUSDBalanceBN,
 		burnType,
 		burnAmountToFixCRatio,
 	]);
@@ -290,9 +290,9 @@ const StakingInput: React.FC<StakingInputProps> = ({
 						<Svg src={NavigationBack} />
 					</IconButton>
 					{!isMint && burnType != null && [BurnActionType.CUSTOM].includes(burnType) && (
-						<BalanceButton variant="text" onClick={() => onInputChange(maxBurnAmount)}>
+						<BalanceButton variant="text" onClick={() => onInputChange(sUSDBalanceBN)}>
 							<span>{t('common.wallet.balance')}</span>
-							{formatNumber(maxBurnAmount ?? zeroBN)}
+							{formatNumber(sUSDBalanceBN ?? zeroBN)}
 						</BalanceButton>
 					)}
 				</HeaderRow>
