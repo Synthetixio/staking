@@ -4,10 +4,7 @@ import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
 import { Svg } from 'react-optimized-image';
 import { useRecoilValue } from 'recoil';
-import {
-	getOptimismNetwork,
-	// addOptimismNetworkToMetamask
-} from '@synthetixio/optimism-networks';
+import { getOptimismNetwork } from '@synthetixio/optimism-networks';
 
 import UIContainer from 'containers/UI';
 import { linkCSS } from 'styles/common';
@@ -16,8 +13,8 @@ import CaretRightIcon from 'assets/svg/app/caret-right-small.svg';
 import ROUTES from 'constants/routes';
 import SettingsModal from 'sections/shared/modals/SettingsModal';
 import { isWalletConnectedState } from 'store/wallet';
-import { isL2State, isMainnetState } from 'store/wallet';
-import { MENU_LINKS, MENU_LINKS_L2 } from '../constants';
+import { isL2State, isMainnetState, delegateWalletState } from 'store/wallet';
+import { MENU_LINKS, MENU_LINKS_L2, MENU_LINKS_DELEGATE } from '../constants';
 
 const getKeyValue = <T extends object, U extends keyof T>(obj: T) => (key: U) => obj[key];
 
@@ -31,6 +28,7 @@ const SideNav: FC<SideNavProps> = ({ isDesktop }) => {
 	const menuLinkItemRefs = useRef({});
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const isL2 = useRecoilValue(isL2State);
+	const delegateWallet = useRecoilValue(delegateWalletState);
 	const {
 		closeMobileSideNav,
 		setSubMenuConfiguration,
@@ -40,7 +38,7 @@ const SideNav: FC<SideNavProps> = ({ isDesktop }) => {
 	const isMainnet = useRecoilValue(isMainnetState);
 	const [settingsModalOpened, setSettingsModalOpened] = useState<boolean>(false);
 
-	const menuLinks = isL2 ? MENU_LINKS_L2 : MENU_LINKS;
+	const menuLinks = delegateWallet ? MENU_LINKS_DELEGATE : isL2 ? MENU_LINKS_L2 : MENU_LINKS;
 
 	const addOptimismNetwork = async () => {
 		try {
@@ -48,7 +46,6 @@ const SideNav: FC<SideNavProps> = ({ isDesktop }) => {
 			if (!(window.ethereum && window.ethereum.isMetaMask)) {
 				return setNetworkError(t('user-menu.error.please-install-metamask'));
 			}
-			// await addOptimismNetworkToMetamask({ ethereum: window.ethereum });
 
 			// metamask mobile throws if iconUrls is included
 			const { chainId, chainName, rpcUrls, blockExplorerUrls } = getOptimismNetwork({
@@ -132,7 +129,7 @@ const SideNav: FC<SideNavProps> = ({ isDesktop }) => {
 				);
 			})}
 
-			{!isL2 && isWalletConnected ? (
+			{!isL2 && isWalletConnected && !delegateWallet ? (
 				<MenuLinkItem
 					onClick={() => {
 						addOptimismNetwork();

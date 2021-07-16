@@ -1,12 +1,10 @@
-import {
-	FC,
-	useCallback,
-	// useEffect,
-	useState,
-	useMemo,
-} from 'react';
+import { FC, useCallback, useState, useMemo } from 'react';
 import styled from 'styled-components';
+import { useRecoilValue } from 'recoil';
 import { useTranslation } from 'react-i18next';
+
+import synthetix from 'lib/synthetix';
+
 import TransactionNotifier from 'containers/TransactionNotifier';
 import {
 	ModalItemTitle as TxModalItemTitle,
@@ -14,21 +12,16 @@ import {
 } from 'styles/common';
 import { truncateAddress } from 'utils/formatters/string';
 import { TxModalItem } from 'sections/delegate/common';
-import {
-	tx,
-	// getGasEstimateForTransaction
-} from 'utils/transactions';
-// import {
-// 	normalizeGasLimit as getNormalizedGasLimit,
-// 	normalizedGasPrice as getNormalizedGasPrice,
-// } from 'utils/network';
+import { tx } from 'utils/transactions';
+
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
-import { Account, Action } from 'queries/delegate/types';
-import Delegates from 'containers/Delegates';
+
+import { appReadyState } from 'store/app';
+import { DelegationWallet, Action } from 'queries/delegate/types';
 import { APPROVE_CONTRACT_METHODS, WITHDRAW_CONTRACT_METHODS } from 'queries/delegate/types';
 
 type ToggleDelegateApprovalProps = {
-	account: Account;
+	account: DelegationWallet;
 	action: string;
 	value: boolean;
 };
@@ -40,34 +33,31 @@ const ToggleDelegateApproval: FC<ToggleDelegateApprovalProps> = ({
 }) => {
 	const { t } = useTranslation();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
-	const { delegateApprovalsContract } = Delegates.useContainer();
+	const isAppReady = useRecoilValue(appReadyState);
 
 	const [, setError] = useState<string | null>(null);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 
-	// const [gasPrice, setGasPrice] = useState<number>(0);
-	// const [gasLimit, setGasLimitEstimate] = useState<number | null>(null);
-
-	const shortenedDelegateAddress = useMemo(() => truncateAddress(account.delegate, 8, 6), [
-		account.delegate,
+	const shortenedDelegateAddress = useMemo(() => truncateAddress(account.address, 8, 6), [
+		account.address,
 	]);
 
 	const getTxData = useCallback(
 		(gas: Record<string, number>) => {
-			if (!delegateApprovalsContract) return null;
+			if (!isAppReady) return null;
+			const {
+				contracts: { DelegateApprovals },
+			} = synthetix.js!;
 			const meths = checked ? WITHDRAW_CONTRACT_METHODS : APPROVE_CONTRACT_METHODS;
-			return [delegateApprovalsContract, meths.get(action), [account.delegate, gas]];
+			return [DelegateApprovals, meths.get(action), [account.address, gas]];
 		},
-		[delegateApprovalsContract, account.delegate, action, checked]
+		[isAppReady, account.address, action, checked]
 	);
 
 	const onChange = async () => {
 		setTxModalOpen(true);
 		try {
-			const gas: Record<string, number> = {
-				// gasPrice: getNormalizedGasPrice(gasPrice),
-				// gasLimit: gasLimit!,
-			};
+			const gas: Record<string, number> = {};
 			await tx(() => getTxData(gas), {
 				showErrorNotification: (e: string) => setError(e),
 				showProgressNotification: (hash: string) =>
@@ -83,37 +73,19 @@ const ToggleDelegateApproval: FC<ToggleDelegateApprovalProps> = ({
 		}
 	};
 
-	// // gas
-	// useEffect(() => {
-	// 	let isMounted = true;
-	// 	(async () => {
-	// 		try {
-	// 			setError(null);
-	// 			const data: any[] | null = getTxData({});
-	// 			if (!data) return;
-	// 			const [contract, method, args] = data;
-	// 			const gasEstimate = await getGasEstimateForTransaction(args, contract.estimateGas[method]);
-	// 			if (isMounted) setGasLimitEstimate(getNormalizedGasLimit(Number(gasEstimate)));
-	// 		} catch (error) {
-	// 			// console.error(error);
-	// 			if (isMounted) setGasLimitEstimate(null);
-	// 		}
-	// 	})();
-	// 	return () => {
-	// 		isMounted = false;
-	// 	};
-	// }, [getTxData]);
+	const canAll = (account: DelegationWallet) =>
+		account.canBurn && account.canMint && account.canClaim && account.canExchange;
 
 	return (
 		<>
 			<Container>
 				<input
 					name={action}
-					data-testid={`checkbox-${account.delegate}-${t(
+					data-testid={`checkbox-${account.address}-${t(
 						`common.delegate-actions.actions.${action}`
 					)}`}
 					type="checkbox"
-					disabled={account.all && action !== Action.APPROVE_ALL}
+					disabled={canAll(account) && action !== Action.APPROVE_ALL}
 					{...{ onChange, checked }}
 				/>
 				<span className="checkmark"></span>

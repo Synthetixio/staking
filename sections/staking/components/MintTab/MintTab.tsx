@@ -15,13 +15,24 @@ import StakingInput from '../StakingInput';
 import { getMintAmount } from '../helper';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { amountToMintState, MintActionType, mintTypeState } from 'store/staking';
-import { isWalletConnectedState } from 'store/wallet';
+import { isWalletConnectedState, delegateWalletState } from 'store/wallet';
 import { appReadyState } from 'store/app';
 import TransactionNotifier from 'containers/TransactionNotifier';
+
+const mintFunction = ({ isDelegate, isMax = false }: { isDelegate: boolean; isMax?: boolean }) => {
+	return isDelegate
+		? isMax
+			? 'issueMaxSynthsOnBehalf'
+			: 'issueSynthsOnBehalf'
+		: isMax
+		? 'issueMaxSynths'
+		: 'issueSynths';
+};
 
 const MintTab: React.FC = () => {
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
+	const delegateWallet = useRecoilValue(delegateWalletState);
 	const isAppReady = useRecoilValue(appReadyState);
 
 	const [mintType, onMintTypeChange] = useRecoilState(mintTypeState);
@@ -53,6 +64,9 @@ const MintTab: React.FC = () => {
 			if (isAppReady && isWalletConnected) {
 				try {
 					setError(null);
+					if (delegateWallet && !delegateWallet.canMint) {
+						throw new Error(t('staking.actions.mint.action.error.delegate-cannot-mint'));
+					}
 					const {
 						contracts: { Synthetix },
 						utils: { parseEther },
@@ -64,13 +78,26 @@ const MintTab: React.FC = () => {
 
 					if (amountToMint.length > 0 && !mintMax) {
 						gasEstimate = await synthetix.getGasEstimateForTransaction({
-							txArgs: [parseEther(amountToMint)],
-							method: Synthetix.estimateGas.issueSynths,
+							txArgs: delegateWallet
+								? [delegateWallet.address, parseEther(amountToMint)]
+								: [parseEther(amountToMint)],
+							method:
+								Synthetix.estimateGas[
+									mintFunction({
+										isDelegate: !!delegateWallet,
+									})
+								],
 						});
 					} else {
 						gasEstimate = await synthetix.getGasEstimateForTransaction({
-							txArgs: [],
-							method: Synthetix.estimateGas.issueMaxSynths,
+							txArgs: delegateWallet ? [delegateWallet.address] : [],
+							method:
+								Synthetix.estimateGas[
+									mintFunction({
+										isDelegate: !!delegateWallet,
+										isMax: true,
+									})
+								],
 						});
 					}
 					setGasLimitEstimate(gasEstimate);
@@ -88,7 +115,7 @@ const MintTab: React.FC = () => {
 			}
 		};
 		getGasLimitEstimate();
-	}, [amountToMint, mintMax, isWalletConnected, unstakedCollateral, isAppReady, t]);
+	}, [amountToMint, mintMax, isWalletConnected, unstakedCollateral, isAppReady, t, delegateWallet]);
 
 	const handleStake = useCallback(
 		async (mintMax: boolean) => {
@@ -96,6 +123,9 @@ const MintTab: React.FC = () => {
 				try {
 					setError(null);
 					setTxModalOpen(true);
+					if (delegateWallet && !delegateWallet.canMint) {
+						throw new Error(t('staking.actions.mint.action.error.delegate-cannot-mint'));
+					}
 					const {
 						contracts: { Synthetix },
 						utils: { parseEther },
@@ -104,24 +134,42 @@ const MintTab: React.FC = () => {
 					let transaction: ethers.ContractTransaction;
 
 					if (mintMax) {
+						const mintFunc = mintFunction({
+							isDelegate: !!delegateWallet,
+							isMax: true,
+						});
 						const gasLimit = await synthetix.getGasEstimateForTransaction({
-							txArgs: [],
-							method: Synthetix.estimateGas.issueMaxSynths,
+							txArgs: delegateWallet ? [delegateWallet.address] : [],
+							method: Synthetix.estimateGas[mintFunc],
 						});
-						transaction = await Synthetix.issueMaxSynths({
-							gasPrice: normalizedGasPrice(gasPrice),
-							gasLimit,
-						});
+						transaction = delegateWallet
+							? await Synthetix[mintFunc](delegateWallet.address, {
+									gasPrice: normalizedGasPrice(gasPrice),
+									gasLimit,
+							  })
+							: await Synthetix[mintFunc]({
+									gasPrice: normalizedGasPrice(gasPrice),
+									gasLimit,
+							  });
 					} else {
+						const mintFunc = mintFunction({
+							isDelegate: !!delegateWallet,
+							isMax: false,
+						});
 						const amountToMintBN = parseEther(amountToMint);
 						const gasLimit = await synthetix.getGasEstimateForTransaction({
-							txArgs: [amountToMintBN],
-							method: Synthetix.estimateGas.issueSynths,
+							txArgs: delegateWallet ? [delegateWallet.address, amountToMintBN] : [amountToMintBN],
+							method: Synthetix.estimateGas[mintFunc],
 						});
-						transaction = await Synthetix.issueSynths(amountToMintBN, {
-							gasPrice: normalizedGasPrice(gasPrice),
-							gasLimit,
-						});
+						transaction = delegateWallet
+							? await Synthetix[mintFunc](delegateWallet.address, amountToMintBN, {
+									gasPrice: normalizedGasPrice(gasPrice),
+									gasLimit,
+							  })
+							: await Synthetix.issueSynths(amountToMintBN, {
+									gasPrice: normalizedGasPrice(gasPrice),
+									gasLimit,
+							  });
 					}
 					if (transaction) {
 						setTxHash(transaction.hash);
@@ -144,7 +192,7 @@ const MintTab: React.FC = () => {
 				}
 			}
 		},
-		[amountToMint, gasPrice, monitorTransaction, isAppReady]
+		[amountToMint, gasPrice, monitorTransaction, isAppReady, delegateWallet, t]
 	);
 
 	const returnPanel = useMemo(() => {

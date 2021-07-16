@@ -15,7 +15,7 @@ import { FlexDivCol } from 'styles/common';
 import { formatPercent } from 'utils/formatters/number';
 
 import { amountToBurnState, BurnActionType, burnTypeState } from 'store/staking';
-import { isL2State } from 'store/wallet';
+import { isL2State, delegateWalletState } from 'store/wallet';
 
 import ButtonTile from '../ButtonTile';
 
@@ -33,6 +33,9 @@ const BurnTiles: React.FC<BurnTilesProps> = ({ percentageTargetCRatio, burnAmoun
 	const [burnType, onBurnTypeChange] = useRecoilState(burnTypeState);
 	const onBurnChange = useSetRecoilState(amountToBurnState);
 	const isL2 = useRecoilValue(isL2State);
+	const delegateWallet = useRecoilValue(delegateWalletState);
+
+	const clearDebtIsDisabled = !!(delegateWallet || isL2);
 
 	useEffect(() => {
 		onBurnChange('');
@@ -66,11 +69,13 @@ const BurnTiles: React.FC<BurnTilesProps> = ({ percentageTargetCRatio, burnAmoun
 				subtext={
 					isL2
 						? t('common.layer-2.not-available')
+						: delegateWallet
+						? t('common.delegate.not-available')
 						: t('staking.actions.burn.tiles.clear-debt.subtext')
 				}
 				icon={burnIcon}
 				onAction={() => onBurnTypeChange(BurnActionType.CLEAR)}
-				disabled={isL2}
+				disabled={clearDebtIsDisabled}
 			/>
 		</Container>
 	);

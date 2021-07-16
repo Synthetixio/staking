@@ -31,11 +31,11 @@ export const GET_IS_APPROVED_CONTRACT_METHODS: Map<string, string> = new Map([
 ]);
 
 export const ENTITY_ATTRS: Map<string, string> = new Map([
-	[Action.APPROVE_ALL, 'all'],
-	[Action.ISSUE_FOR_ADDRESS, 'mint'],
-	[Action.BURN_FOR_ADDRESS, 'burn'],
-	[Action.CLAIM_FOR_ADDRESS, 'claim'],
-	[Action.EXCHANGE_FOR_ADDRESS, 'exchange'],
+	[Action.APPROVE_ALL, 'canAll'],
+	[Action.ISSUE_FOR_ADDRESS, 'canMint'],
+	[Action.BURN_FOR_ADDRESS, 'canBurn'],
+	[Action.CLAIM_FOR_ADDRESS, 'canClaim'],
+	[Action.EXCHANGE_FOR_ADDRESS, 'canExchange'],
 ]);
 
 export const ACTIONS: string[] = Object.values(Action);
@@ -68,3 +68,11 @@ export class Account {
 		return this.mint && this.burn && this.claim && this.exchange;
 	}
 }
+export type DelegationWallet = {
+	address: string;
+	canMint: boolean;
+	canBurn: boolean;
+	canClaim: boolean;
+	canAll?: boolean;
+	canExchange?: boolean;
+};

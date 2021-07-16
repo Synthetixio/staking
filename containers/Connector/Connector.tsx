@@ -19,6 +19,7 @@ import {
 	networkState,
 	walletWatchedState,
 	isEOAWalletState,
+	delegateWalletState,
 } from 'store/wallet';
 
 import { Wallet as OnboardWallet } from 'bnc-onboard/dist/src/interfaces';
@@ -41,6 +42,7 @@ const useConnector = () => {
 	const [walletAddress, setWalletAddress] = useRecoilState(walletAddressState);
 	const [walletWatched, setWalletWatched] = useRecoilState(walletWatchedState);
 	const setIsEOAWallet = useSetRecoilState(isEOAWalletState);
+	const setDelegateWallet = useSetRecoilState(delegateWalletState);
 	const [selectedWallet, setSelectedWallet] = useLocalStorage<string | null>(
 		LOCAL_STORAGE_KEYS.SELECTED_WALLET,
 		''
@@ -183,6 +185,10 @@ const useConnector = () => {
 		getAddressCode();
 	}, [walletAddress, provider, setIsEOAWallet]);
 
+	useEffect(() => {
+		setDelegateWallet(null);
+	}, [network, walletAddress, setDelegateWallet]);
+
 	const connectWallet = async () => {
 		try {
 			if (onboard) {
@@ -200,6 +206,7 @@ const useConnector = () => {
 
 	const disconnectWallet = async () => {
 		try {
+			setDelegateWallet(null);
 			if (onboard) {
 				onboard.walletReset();
 			}
