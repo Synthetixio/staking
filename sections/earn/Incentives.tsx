@@ -5,7 +5,7 @@ import BigNumber from 'bignumber.js';
 import IncentivesMainnet from './IncentivesMainnet';
 import IncentivesDefault from './IncentivesDefault';
 
-import { isMainnetState } from 'store/wallet';
+import { isMainnetState, delegateWalletState } from 'store/wallet';
 
 type IncentivesProps = {
 	tradingRewards: BigNumber;
@@ -18,7 +18,8 @@ type IncentivesProps = {
 
 const Incentives: FC<IncentivesProps> = (props) => {
 	const isMainnet = useRecoilValue(isMainnetState);
-	const Incentives = isMainnet ? IncentivesMainnet : IncentivesDefault;
+	const delegateWallet = useRecoilValue(delegateWalletState);
+	const Incentives = isMainnet && !delegateWallet ? IncentivesMainnet : IncentivesDefault;
 
 	return <Incentives {...props} />;
 };

@@ -3,8 +3,9 @@ import { GasSpeed } from 'queries/network/useEthGasPriceQuery';
 import { atom, selector } from 'recoil';
 
 import { truncateAddress } from 'utils/formatters/string';
-
 import { getWalletKey } from '../utils';
+
+import { DelegationWallet } from 'queries/delegate/types';
 
 export type Network = {
 	id: NetworkId;
@@ -73,4 +74,9 @@ export const customGasPriceState = atom<string>({
 export const isEOAWalletState = atom<boolean>({
 	key: getWalletKey('isEOAWallet'),
 	default: false,
+});
+
+export const delegateWalletState = atom<DelegationWallet | null>({
+	key: getWalletKey('delegateWallet'),
+	default: null,
 });

@@ -111,4 +111,23 @@ export const MENU_LINKS_L2: MenuLinks = [
 	},
 ];
 
-export const MENU_LINKS_WALLET_CONNECTED: MenuLinks = [];
+export const MENU_LINKS_DELEGATE: MenuLinks = [
+	{
+		i18nLabel: 'sidenav.dashboard',
+		link: ROUTES.Home,
+	},
+	{
+		i18nLabel: 'sidenav.staking',
+		link: ROUTES.Staking.Home,
+		subMenu: [
+			{
+				i18nLabel: 'sidenav.mint-and-burn',
+				subLink: ROUTES.Staking.Home,
+			},
+			{
+				i18nLabel: 'sidenav.earn',
+				subLink: ROUTES.Earn.Home,
+			},
+		],
+	},
+];

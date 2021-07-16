@@ -2,8 +2,11 @@ import { useState, useMemo, useEffect, FC, useCallback } from 'react';
 import { ethers } from 'ethers';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
-import { truncateAddress } from 'utils/formatters/string';
 import { Trans, useTranslation } from 'react-i18next';
+
+import synthetix from 'lib/synthetix';
+
+import { truncateAddress } from 'utils/formatters/string';
 import Button from 'components/Button';
 import StructuredTab from 'components/StructuredTab';
 import Connector from 'containers/Connector';
@@ -15,11 +18,13 @@ import {
 } from 'styles/common';
 import GasSelector from 'components/GasSelector';
 import { isWalletConnectedState, walletAddressState } from 'store/wallet';
+import { appReadyState } from 'store/app';
 import {
 	Action,
 	APPROVE_CONTRACT_METHODS,
 	GET_IS_APPROVED_CONTRACT_METHODS,
 } from 'queries/delegate/types';
+import useGetDelegateWallets from 'queries/delegate/useGetDelegateWallets';
 import {
 	FormContainer,
 	InputsContainer,
@@ -34,7 +39,6 @@ import {
 	normalizedGasPrice as getNormalizedGasPrice,
 } from 'utils/network';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
-import Delegates from 'containers/Delegates';
 import ActionSelector from './ActionSelector';
 
 const LeftCol: FC = () => {
@@ -61,8 +65,9 @@ const Tab: FC = () => {
 	const { t } = useTranslation();
 	const { connectWallet } = Connector.useContainer();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
+	const isAppReady = useRecoilValue(appReadyState);
 	const address = useRecoilValue(walletAddressState);
-	const { delegateApprovalsContract } = Delegates.useContainer();
+	const delegateWalletsQuery = useGetDelegateWallets();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 
 	const [action, setAction] = useState<string>(Action.APPROVE_ALL);
@@ -93,15 +98,17 @@ const Tab: FC = () => {
 
 	const getApproveTxData = useCallback(
 		(gas: Record<string, number>) => {
-			if (!(delegateApprovalsContract && properDelegateAddress && !delegateAddressIsSelf))
-				return null;
+			if (!(properDelegateAddress && !delegateAddressIsSelf && isAppReady)) return null;
+			const {
+				contracts: { DelegateApprovals },
+			} = synthetix.js!;
 			return [
-				delegateApprovalsContract,
+				DelegateApprovals,
 				APPROVE_CONTRACT_METHODS.get(action),
 				[properDelegateAddress, gas],
 			];
 		},
-		[delegateApprovalsContract, properDelegateAddress, action, delegateAddressIsSelf]
+		[isAppReady, properDelegateAddress, action, delegateAddressIsSelf]
 	);
 
 	const onEnterAddress = (e: any) => setDelegateAddress((e.target.value ?? '').trim());
@@ -125,7 +132,11 @@ const Tab: FC = () => {
 				showProgressNotification: (hash: string) =>
 					monitorTransaction({
 						txHash: hash,
-						onTxConfirmed: () => {},
+						onTxConfirmed: () => {
+							setTimeout(() => {
+								delegateWalletsQuery.refetch();
+							}, 10 * 1000);
+						},
 					}),
 				showSuccessNotification: (hash: string) => {},
 			});
@@ -161,19 +172,19 @@ const Tab: FC = () => {
 
 	// already delegated
 	useEffect(() => {
-		if (!delegateApprovalsContract) return;
-		let isMounted = true;
-		(async () => {
+		const getIsAlreadyDelegated = async () => {
+			if (!isAppReady) return;
+			const {
+				contracts: { DelegateApprovals },
+			} = synthetix.js!;
 			if (!(properDelegateAddress && action)) return setAlreadyDelegated(false);
-			const alreadyDelegated = await delegateApprovalsContract[
+			const alreadyDelegated = await DelegateApprovals[
 				GET_IS_APPROVED_CONTRACT_METHODS.get(action)!
 			](address, properDelegateAddress);
-			if (isMounted) setAlreadyDelegated(alreadyDelegated);
-		})();
-		return () => {
-			isMounted = false;
+			setAlreadyDelegated(alreadyDelegated);
 		};
-	}, [delegateApprovalsContract, properDelegateAddress, address, action]);
+		getIsAlreadyDelegated();
+	}, [isAppReady, properDelegateAddress, address, action]);
 
 	return (
 		<div data-testid="form">

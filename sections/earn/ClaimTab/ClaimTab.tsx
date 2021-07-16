@@ -8,7 +8,7 @@ import { useRouter } from 'next/router';
 import { useRecoilValue } from 'recoil';
 
 import { appReadyState } from 'store/app';
-import { isWalletConnectedState, isL2State } from 'store/wallet';
+import { isWalletConnectedState, isL2State, delegateWalletState } from 'store/wallet';
 import ROUTES from 'constants/routes';
 import { ExternalLink, FlexDiv, GlowingCircle, IconButton, FlexDivJustifyEnd } from 'styles/common';
 import media from 'styles/media';
@@ -88,6 +88,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
 	const isL2 = useRecoilValue(isL2State);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
+	const delegateWallet = useRecoilValue(delegateWalletState);
 	const isAppReady = useRecoilValue(appReadyState);
 	const router = useRouter();
 
@@ -144,13 +145,18 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 				}
 				try {
 					setError(null);
+					if (delegateWallet && !delegateWallet.canClaim) {
+						throw new Error(t('staking.actions.mint.action.error.delegate-cannot-claim'));
+					}
 					const {
 						contracts: { FeePool },
 					} = synthetix.js!;
 
 					let gasEstimate = await synthetix.getGasEstimateForTransaction({
-						txArgs: [],
-						method: FeePool.estimateGas.claimFees,
+						txArgs: delegateWallet ? [delegateWallet.address] : [],
+						method: delegateWallet
+							? FeePool.estimateGas.claimOnBehalf
+							: FeePool.estimateGas.claimFees,
 					});
 
 					setGasLimitEstimate(gasEstimate);
@@ -173,7 +179,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 			}
 		};
 		getGasLimitEstimate();
-	}, [isAppReady, isWalletConnected, isBelowCRatio]);
+	}, [isAppReady, isWalletConnected, isBelowCRatio, delegateWallet, t, isL2]);
 
 	const handleClaim = useCallback(() => {
 		async function claim() {
@@ -186,13 +192,20 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 					} = synthetix.js!;
 
 					const gasLimit = await synthetix.getGasEstimateForTransaction({
-						txArgs: [],
-						method: FeePool.estimateGas.claimFees,
+						txArgs: delegateWallet ? [delegateWallet.address] : [],
+						method: delegateWallet
+							? FeePool.estimateGas.claimOnBehalf
+							: FeePool.estimateGas.claimFees,
 					});
-					const transaction: ethers.ContractTransaction = await FeePool.claimFees({
-						gasPrice: normalizedGasPrice(gasPrice),
-						gasLimit,
-					});
+					const transaction: ethers.ContractTransaction = delegateWallet
+						? await FeePool.claimOnBehalf(delegateWallet.address, {
+								gasPrice: normalizedGasPrice(gasPrice),
+								gasLimit,
+						  })
+						: await FeePool.claimFees({
+								gasPrice: normalizedGasPrice(gasPrice),
+								gasLimit,
+						  });
 
 					if (transaction) {
 						setTxHash(transaction.hash);
@@ -218,7 +231,15 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 			}
 		}
 		claim();
-	}, [gasPrice, monitorTransaction, tradingRewards, stakingRewards, isAppReady]);
+	}, [
+		gasPrice,
+		monitorTransaction,
+		tradingRewards,
+		stakingRewards,
+		isAppReady,
+		delegateWallet,
+		isL2,
+	]);
 
 	const goToBurn = useCallback(() => router.push(ROUTES.Staking.Burn), [router]);
 	const goToEarn = useCallback(() => router.push(ROUTES.Earn.Home), [router]);
@@ -431,7 +452,11 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 									{t('earn.actions.claim.low-ratio')}
 								</PaddedButton>
 							) : (
-								<PaddedButton variant="primary" onClick={handleClaim} disabled={!canClaim}>
+								<PaddedButton
+									variant="primary"
+									onClick={handleClaim}
+									disabled={!canClaim || !!(delegateWallet && !delegateWallet.canClaim)}
+								>
 									{claimed
 										? t('earn.actions.claim.claimed-button')
 										: totalRewards.toNumber() > 0

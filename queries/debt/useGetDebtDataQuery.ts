@@ -6,7 +6,12 @@ import synthetix from 'lib/synthetix';
 
 import QUERY_KEYS from 'constants/queryKeys';
 
-import { isWalletConnectedState, networkState, walletAddressState } from 'store/wallet';
+import {
+	isWalletConnectedState,
+	networkState,
+	walletAddressState,
+	delegateWalletState,
+} from 'store/wallet';
 import { appReadyState } from 'store/app';
 import { toBigNumber } from 'utils/formatters/number';
 
@@ -27,9 +32,12 @@ const useGetDebtDataQuery = (options?: QueryConfig<WalletDebtData>) => {
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const network = useRecoilValue(networkState);
+	const delegateWallet = useRecoilValue(delegateWalletState);
+
+	const wallet = delegateWallet?.address ?? walletAddress;
 
 	return useQuery<WalletDebtData>(
-		QUERY_KEYS.Debt.WalletDebtData(walletAddress ?? '', network?.id!),
+		QUERY_KEYS.Debt.WalletDebtData(wallet ?? '', network?.id!),
 		async () => {
 			const {
 				contracts: { SystemSettings, Synthetix },
@@ -38,12 +46,12 @@ const useGetDebtDataQuery = (options?: QueryConfig<WalletDebtData>) => {
 			const sUSDBytes = utils.formatBytes32String('sUSD');
 			const result = await Promise.all([
 				SystemSettings.issuanceRatio(),
-				Synthetix.collateralisationRatio(walletAddress),
-				Synthetix.transferableSynthetix(walletAddress),
-				Synthetix.debtBalanceOf(walletAddress, sUSDBytes),
-				Synthetix.collateral(walletAddress),
-				Synthetix.maxIssuableSynths(walletAddress),
-				Synthetix.balanceOf(walletAddress),
+				Synthetix.collateralisationRatio(wallet),
+				Synthetix.transferableSynthetix(wallet),
+				Synthetix.debtBalanceOf(wallet, sUSDBytes),
+				Synthetix.collateral(wallet),
+				Synthetix.maxIssuableSynths(wallet),
+				Synthetix.balanceOf(wallet),
 				Synthetix.totalSupply(),
 				SystemSettings.targetThreshold(),
 			]);
