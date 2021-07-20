@@ -1,6 +1,9 @@
 {
 	"name": "Staking",
-	"iconPath": "/images/synthetix-logo.svg",
+	"iconPath": "images/synthetix-logo.svg",
 	"description": "A dApp for SNX holders to earn rewards through staking",
-	"providedBy": { "name": "Synthetix", "url": "https://staking.synthetix.io" }
+	"providedBy": {
+		"name": "Synthetix",
+		"url": "https://staking.synthetix.io"
+	}
 }
