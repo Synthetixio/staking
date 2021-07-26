@@ -57,7 +57,7 @@ const useYearnSNXVaultQuery = (options?: QueryConfig<YearnVaultData>) => {
 				YearnSNXVault.balanceOf(yearnSNXVault.address, { gasLimit: 1e6 }),
 				YearnSNXVault.balanceOf(walletAddress, { gasLimit: 1e6 }),
 				YearnSNXVault.pricePerShare({ gasLimit: 1e5 }),
-				axios.get('https://vaults.finance/all'),
+				axios.get('https://api.yearn.finance/v1/chains/1/vaults/all'),
 				Synthetix.allowance(walletAddress, yearnSNXVault.address),
 				Synthetix.transferableSynthetix(walletAddress),
 			]);
@@ -74,8 +74,8 @@ const useYearnSNXVaultQuery = (options?: QueryConfig<YearnVaultData>) => {
 			const yvSNXVaultData = allVaultsData?.data.find(
 				(vault: any) => vault.symbol === 'yvSNX' && vault.type === 'v2'
 			);
-			const apy = yvSNXVaultData?.apy.recommended ?? 0;
-			const tvl = Number(yvSNXVaultData?.tvl.value) ?? 0;
+			const apy = yvSNXVaultData?.apy?.net_apy ?? 0;
+			const tvl = Number(yvSNXVaultData?.tvl?.tvl) ?? 0;
 
 			return {
 				address: yearnSNXVault.address,
