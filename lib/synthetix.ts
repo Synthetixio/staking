@@ -75,7 +75,8 @@ const synthetix: Synthetix = {
 				.then((estimate: Number) => {
 					resolve(this.js?.network.useOvm ? Number(estimate) : normalizeGasLimit(Number(estimate)));
 				})
-				.catch((e: Error) => reject(e));
+				//@ts-ignore
+				.catch((e: Error) => reject(e?.error ?? e));
 		});
 	},
 };
