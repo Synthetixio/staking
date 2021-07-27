@@ -19,6 +19,7 @@ import {
 	networkState,
 	walletWatchedState,
 	isEOAWalletState,
+	delegateWalletState,
 } from 'store/wallet';
 
 import { Wallet as OnboardWallet } from 'bnc-onboard/dist/src/interfaces';
@@ -30,7 +31,7 @@ import { LOCAL_STORAGE_KEYS } from 'constants/storage';
 import UI from 'containers/UI';
 
 const useConnector = () => {
-	const setNetwork = useSetRecoilState(networkState);
+	const [network, setNetwork] = useRecoilState(networkState);
 	const [provider, setProvider] = useState<ethers.providers.Provider | null>(null);
 	const [signer, setSigner] = useState<ethers.Signer | null>(null);
 	const [onboard, setOnboard] = useState<ReturnType<typeof initOnboard> | null>(null);
@@ -42,6 +43,7 @@ const useConnector = () => {
 	const [walletAddress, setWalletAddress] = useRecoilState(walletAddressState);
 	const [walletWatched, setWalletWatched] = useRecoilState(walletWatchedState);
 	const setIsEOAWallet = useSetRecoilState(isEOAWalletState);
+	const setDelegateWallet = useSetRecoilState(delegateWalletState);
 	const [selectedWallet, setSelectedWallet] = useLocalStorage<string | null>(
 		LOCAL_STORAGE_KEYS.SELECTED_WALLET,
 		''
@@ -211,6 +213,10 @@ const useConnector = () => {
 		getAddressCode();
 	}, [walletAddress, provider, setIsEOAWallet]);
 
+	useEffect(() => {
+		setDelegateWallet(null);
+	}, [network, walletAddress, setDelegateWallet]);
+
 	const connectWallet = async () => {
 		try {
 			if (onboard && !networkError) {
@@ -234,10 +240,11 @@ const useConnector = () => {
 	};
 
 	const disconnectWallet = () => {
+		setSelectedWallet(null);
+		setWalletAddress(null);
+		setDelegateWallet(null);
 		if (onboard) {
 			onboard.walletReset();
-			setSelectedWallet(null);
-			setWalletAddress(null);
 		}
 	};
 

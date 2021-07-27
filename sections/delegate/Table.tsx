@@ -1,31 +1,34 @@
 import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
+import { Svg } from 'react-optimized-image';
+
 import { truncateAddress } from 'utils/formatters/string';
 import { CellProps } from 'react-table';
-import Delegates from 'containers/Delegates';
-import { Account, ENTITY_ATTRS } from 'queries/delegate/types';
 import Table from 'components/Table';
 import useMediaQuery from 'hooks/useMediaQuery';
 import { ExternalLink } from 'styles/common';
-import { Svg } from 'react-optimized-image';
 import WalletIcon from 'assets/svg/app/wallet-yellow.svg';
 import ToggleDelegateApproval from './ToggleDelegateApproval';
 
+import { DelegationWallet, ENTITY_ATTRS } from 'queries/delegate/types';
+import useGetDelegateWallets from 'queries/delegate/useGetDelegateWallets';
+
 const RightCol: FC = () => {
 	const { t } = useTranslation();
+	const delegateWalletsQuery = useGetDelegateWallets();
+	const delegateWallets = delegateWalletsQuery?.data ?? [];
 
-	const { isLoading, accounts } = Delegates.useContainer();
 	const isSM = useMediaQuery('sm');
 
 	const columns = useMemo(
 		() => [
 			{
 				Header: <>{t('delegate.list.cols.address')}</>,
-				accessor: 'delegate',
+				accessor: 'address',
 				width: isSM ? 70 : 100,
 				sortable: true,
-				Cell: (cellProps: CellProps<Account>) => {
+				Cell: (cellProps: CellProps<DelegationWallet>) => {
 					const delegateAddress = cellProps.value;
 					return truncateAddress(delegateAddress, isSM ? 4 : 5, isSM ? 2 : 3);
 				},
@@ -35,7 +38,7 @@ const RightCol: FC = () => {
 				accessor: attr,
 				width: isSM ? 40 : 50,
 				sortable: true,
-				Cell: (cellProps: CellProps<Account>) => {
+				Cell: (cellProps: CellProps<DelegationWallet>) => {
 					return (
 						<ToggleDelegateApproval
 							account={cellProps.row.original}
@@ -50,7 +53,7 @@ const RightCol: FC = () => {
 	);
 
 	const noResultsMessage =
-		!isLoading && accounts.length === 0 ? (
+		!delegateWalletsQuery.isFetching && delegateWallets.length === 0 ? (
 			<ListTableEmptyMessage>
 				<Svg src={WalletIcon} />
 				{t('delegate.list.empty')}
@@ -77,8 +80,9 @@ const RightCol: FC = () => {
 
 					<ListTable
 						palette="primary"
-						{...{ isLoading, columns }}
-						data={accounts}
+						isLoading={delegateWalletsQuery.isFetching}
+						{...{ columns }}
+						data={delegateWallets}
 						noResultsMessage={noResultsMessage}
 						showPagination={true}
 					/>

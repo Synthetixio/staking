@@ -224,6 +224,20 @@ export const QUERY_KEYS = {
 			networkId,
 		],
 	},
+	Delegate: {
+		AuthoriserWallets: (walletAddress: string, networkId: NetworkId) => [
+			'delegate',
+			'authoriserWallets',
+			walletAddress,
+			networkId,
+		],
+		DelegateWallets: (walletAddress: string, networkId: NetworkId) => [
+			'delegate',
+			'delegateWallets',
+			walletAddress,
+			networkId,
+		],
+	},
 	ShortRewards: {
 		sBTC: (walletAddress: string, networkId: NetworkId) => [
 			'shortRewards',

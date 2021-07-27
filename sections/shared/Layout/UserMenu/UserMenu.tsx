@@ -18,7 +18,12 @@ import UI from 'containers/UI';
 import Button from 'components/Button';
 import { DesktopOnlyView, DesktopOrTabletView, MobileOrTabletView } from 'components/Media';
 
-import { isWalletConnectedState, truncatedWalletAddressState, networkState } from 'store/wallet';
+import {
+	isWalletConnectedState,
+	truncatedWalletAddressState,
+	networkState,
+	delegateWalletState,
+} from 'store/wallet';
 
 import {
 	DesktopWalletOptionsModal,
@@ -32,7 +37,9 @@ import CogIcon from 'assets/svg/app/cog.svg';
 import CaretUp from 'assets/svg/app/caret-up.svg';
 import CaretDown from 'assets/svg/app/caret-down.svg';
 import Warning from 'assets/svg/app/warning.svg';
+import DelegateIcon from 'assets/svg/app/delegate.svg';
 import WatchWalletModal from 'sections/shared/modals/WatchWalletModal';
+import DelegateModal from 'sections/shared/modals/DelegateModal';
 
 const caretUp = <Svg src={CaretUp} viewBox={`0 0 ${CaretUp.width} ${CaretUp.height}`} />;
 const caretDown = <Svg src={CaretDown} viewBox={`0 0 ${CaretDown.width} ${CaretDown.height}`} />;
@@ -44,7 +51,9 @@ const UserMenu: FC = () => {
 	const [walletOptionsModalOpened, setWalletOptionsModalOpened] = useState<boolean>(false);
 	const [settingsModalOpened, setSettingsModalOpened] = useState<boolean>(false);
 	const [watchWalletModalOpened, setWatchWalletModalOpened] = useState<boolean>(false);
+	const [delegateModalOpened, setDelegateModalOpened] = useState<boolean>(false);
 	const truncatedWalletAddress = useRecoilValue(truncatedWalletAddressState);
+	const delegateWallet = useRecoilValue(delegateWalletState);
 	const network = useRecoilValue(networkState);
 
 	const getNetworkName = () => {
@@ -58,6 +67,11 @@ const UserMenu: FC = () => {
 			<FlexDivCentered>
 				<DesktopOnlyView>
 					<FlexDiv>
+						{isWalletConnected && delegateWallet && (
+							<DelegateIconWrapper>
+								<Svg src={DelegateIcon} />
+							</DelegateIconWrapper>
+						)}
 						<DropdownContainer>
 							<OutsideClickHandler onOutsideClick={() => setWalletOptionsModalOpened(false)}>
 								{isWalletConnected ? (
@@ -96,6 +110,7 @@ const UserMenu: FC = () => {
 									<DesktopWalletOptionsModal
 										onDismiss={() => setWalletOptionsModalOpened(false)}
 										setWatchWalletModalOpened={setWatchWalletModalOpened}
+										setDelegateModalOpened={setDelegateModalOpened}
 									/>
 								)}
 							</OutsideClickHandler>
@@ -104,20 +119,27 @@ const UserMenu: FC = () => {
 				</DesktopOnlyView>
 				<MobileOrTabletView>
 					{isWalletConnected ? (
-						<WalletButton
-							variant="solid"
-							onClick={() => {
-								setWalletOptionsModalOpened(!walletOptionsModalOpened);
-							}}
-							isActive={walletOptionsModalOpened}
-							data-testid="user-menu"
-						>
-							<FlexDivCentered data-testid="wallet-address">
-								<StyledConnectionDot />
-								{truncatedWalletAddress}
-							</FlexDivCentered>
-							{walletOptionsModalOpened ? caretUp : caretDown}
-						</WalletButton>
+						<FlexDiv>
+							{isWalletConnected && delegateWallet && (
+								<DelegateIconWrapper>
+									<Svg src={DelegateIcon} />
+								</DelegateIconWrapper>
+							)}
+							<WalletButton
+								variant="solid"
+								onClick={() => {
+									setWalletOptionsModalOpened(!walletOptionsModalOpened);
+								}}
+								isActive={walletOptionsModalOpened}
+								data-testid="user-menu"
+							>
+								<FlexDivCentered data-testid="wallet-address">
+									<StyledConnectionDot />
+									{truncatedWalletAddress}
+								</FlexDivCentered>
+								{walletOptionsModalOpened ? caretUp : caretDown}
+							</WalletButton>
+						</FlexDiv>
 					) : (
 						<MobileStyledGlowingButton
 							data-testid="connect-wallet"
@@ -130,6 +152,7 @@ const UserMenu: FC = () => {
 						<MobileWalletOptionsModal
 							onDismiss={() => setWalletOptionsModalOpened(false)}
 							setWatchWalletModalOpened={setWatchWalletModalOpened}
+							setDelegateModalOpened={setDelegateModalOpened}
 						/>
 					)}
 				</MobileOrTabletView>
@@ -148,6 +171,7 @@ const UserMenu: FC = () => {
 			{watchWalletModalOpened && (
 				<WatchWalletModal onDismiss={() => setWatchWalletModalOpened(false)} />
 			)}
+			{delegateModalOpened && <DelegateModal onDismiss={() => setDelegateModalOpened(false)} />}
 			{settingsModalOpened && <SettingsModal onDismiss={() => setSettingsModalOpened(false)} />}
 			{networkError && (
 				<Error>
@@ -165,6 +189,17 @@ const UserMenu: FC = () => {
 		</Container>
 	);
 };
+
+const DelegateIconWrapper = styled.div`
+	height: 32px;
+	display: flex;
+	align-items: center;
+	border: 1px solid ${(props) => props.theme.colors.mediumBlue};
+	background: ${(props) => props.theme.colors.navy};
+	border-radius: 4px;
+	padding: 0 8px;
+	margin-right: 16px;
+`;
 
 const Container = styled(GridDivCenteredCol)`
 	grid-gap: 15px;

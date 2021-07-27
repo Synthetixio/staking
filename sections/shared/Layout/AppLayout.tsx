@@ -8,7 +8,7 @@ import ROUTES from 'constants/routes';
 import NotificationContainer from 'constants/NotificationContainer';
 
 import media from 'styles/media';
-import { isL2State, isMainnetState } from 'store/wallet';
+import { isL2State, isMainnetState, delegateWalletState } from 'store/wallet';
 import Header from './Header';
 import SideNav from './SideNav';
 import useGetDepositsIsActiveQuery from 'queries/deposits/useGetDepositsIsActiveQuery';
@@ -21,6 +21,7 @@ const AppLayout: FC<AppLayoutProps> = ({ children }) => {
 	const isL2 = useRecoilValue(isL2State);
 	const isMainnet = useRecoilValue(isMainnetState);
 	const depositsInactive = !(useGetDepositsIsActiveQuery().data ?? true); // Deposits are active by default to prevent redirects when status unknown
+	const delegateWallet = useRecoilValue(delegateWalletState);
 
 	useEffect(() => {
 		if (!isL2 && router.pathname === ROUTES.Withdraw.Home) {
@@ -35,7 +36,10 @@ const AppLayout: FC<AppLayoutProps> = ({ children }) => {
 		if (!isMainnet && router.pathname.includes(ROUTES.Debt.Home)) {
 			router.push(ROUTES.Home);
 		}
-	}, [isL2, isMainnet, depositsInactive]);
+		if (delegateWallet && router.pathname !== ROUTES.Home) {
+			router.push(ROUTES.Home);
+		}
+	}, [isL2, isMainnet, depositsInactive, delegateWallet]);
 
 	return (
 		<>

@@ -8,9 +8,10 @@ export const ADDRESSES: Record<string, string> = {
 export function makeContract(
 	network: string,
 	signer: ethers.Signer | ethers.providers.Provider
-): ethers.Contract {
+): ethers.Contract | null {
 	const address = ADDRESSES[network];
-	return new ethers.Contract(address, ABI, signer);
+
+	return address ? new ethers.Contract(address, ABI, signer) : null;
 }
 
 export const ABI = [

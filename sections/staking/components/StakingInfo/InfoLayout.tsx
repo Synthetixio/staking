@@ -24,8 +24,7 @@ import {
 	InfoContainer,
 	InfoHeader,
 } from '../common';
-import { BurnActionType, burnTypeState, StakingPanelType } from 'store/staking';
-import { useRecoilValue } from 'recoil';
+import { StakingPanelType } from 'store/staking';
 
 type BarChartData = {
 	title: string;
@@ -57,7 +56,6 @@ type InfoLayoutProps = {
 
 const InfoLayout: FC<InfoLayoutProps> = ({ stakingInfo, collateral, isInputEmpty, infoType }) => {
 	const { t } = useTranslation();
-	const burnType = useRecoilValue(burnTypeState);
 
 	const title = useMemo(() => {
 		switch (infoType) {
@@ -128,10 +126,6 @@ const InfoLayout: FC<InfoLayoutProps> = ({ stakingInfo, collateral, isInputEmpty
 							{!isInputEmpty && (
 								<>
 									<StyledArrowRight src={ArrowRightIcon} />
-									{title === t('staking.info.table.susd-balance') &&
-										infoType === StakingPanelType.BURN &&
-										burnType === BurnActionType.MAX &&
-										`~`}
 									<RowValue>
 										{formatCurrency(currencyKey, !changedValue.isNaN() ? changedValue : 0, {
 											currencyKey: currencyKey,

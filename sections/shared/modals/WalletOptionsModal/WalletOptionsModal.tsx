@@ -8,6 +8,8 @@ import Img, { Svg } from 'react-optimized-image';
 
 import {
 	isWalletConnectedState,
+	delegateWalletState,
+	isMainnetState,
 	truncatedWalletAddressState,
 	walletAddressState,
 	walletWatchedState,
@@ -34,6 +36,7 @@ import ExitIcon from 'assets/svg/app/exit.svg';
 import CheckIcon from 'assets/svg/app/check.svg';
 import SearchIcon from 'assets/svg/app/search.svg';
 import Incognito from 'assets/svg/app/incognito.svg';
+import DelegateIcon from 'assets/svg/app/delegate.svg';
 
 import Connector from 'containers/Connector';
 import Etherscan from 'containers/BlockExplorer';
@@ -51,7 +54,8 @@ import {
 
 export type WalletOptionsProps = {
 	onDismiss: () => void;
-	setWatchWalletModalOpened: Dispatch<SetStateAction<any>>;
+	setWatchWalletModalOpened: Dispatch<SetStateAction<boolean>>;
+	setDelegateModalOpened: Dispatch<SetStateAction<boolean>>;
 };
 
 const getWalletIcon = (selectedWallet?: string | null) => {
@@ -90,8 +94,13 @@ const exitIcon = <Svg src={ExitIcon} />;
 const walletIcon = <Svg src={WalletIcon} />;
 const changeIcon = <Svg src={ArrowsChangeIcon} />;
 const searchIcon = <Svg src={SearchIcon} />;
+const delegateIcon = <Svg src={DelegateIcon} />;
 
-const WalletOptionsModal: FC<WalletOptionsProps> = ({ onDismiss, setWatchWalletModalOpened }) => {
+const WalletOptionsModal: FC<WalletOptionsProps> = ({
+	onDismiss,
+	setWatchWalletModalOpened,
+	setDelegateModalOpened,
+}) => {
 	const { t } = useTranslation();
 	const [copiedAddress, setCopiedAddress] = useState<boolean>(false);
 	const {
@@ -101,12 +110,13 @@ const WalletOptionsModal: FC<WalletOptionsProps> = ({ onDismiss, setWatchWalletM
 		isHardwareWallet,
 		selectedWallet,
 	} = Connector.useContainer();
-
 	const { blockExplorerInstance } = Etherscan.useContainer();
 
 	const [walletAddress, setWalletAddress] = useRecoilState(walletAddressState);
 	const truncatedWalletAddress = useRecoilValue(truncatedWalletAddressState);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
+	const isMainnet = useRecoilValue(isMainnetState);
+	const [delegateWallet, setDelegateWallet] = useRecoilState(delegateWalletState);
 	const [walletWatched, setWalletWatched] = useRecoilState(walletWatchedState);
 
 	useEffect(() => {
@@ -195,11 +205,32 @@ const WalletOptionsModal: FC<WalletOptionsProps> = ({ onDismiss, setWatchWalletM
 								onDismiss();
 								setWatchWalletModalOpened(true);
 							}}
+							data-testid="watch-wallet"
 						>
 							{searchIcon} {t('modals.wallet.watch-wallet.title')}
 						</StyledButton>
+						{isMainnet && (
+							<StyledButton
+								onClick={() => {
+									onDismiss();
+									setDelegateModalOpened(true);
+								}}
+							>
+								{delegateIcon} {t('modals.wallet.delegate-mode.menu-title')}
+							</StyledButton>
+						)}
 					</Buttons>
 					<StyledDivider />
+					{delegateWallet && (
+						<StyledTextButton
+							onClick={() => {
+								setDelegateWallet(null);
+								onDismiss();
+							}}
+						>
+							{exitIcon} {t('modals.wallet.stop-delegation')}
+						</StyledTextButton>
+					)}
 					{walletWatched ? (
 						<StyledTextButton
 							onClick={() => {
@@ -286,8 +317,9 @@ const StyledTextButton = styled(Button).attrs({
 })`
 	font-family: ${(props) => props.theme.fonts.condensedMedium};
 	padding: 0 20px;
-	display: inline-grid;
-	grid-template-columns: auto 1fr;
+	width: 100%;
+	display: flex;
+	justify-content: flex-start;
 	align-items: center;
 	justify-items: center;
 	text-transform: uppercase;
