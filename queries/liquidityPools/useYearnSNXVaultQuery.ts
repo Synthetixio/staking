@@ -18,11 +18,13 @@ import {
 
 import { LiquidityPoolData } from './types';
 import { toBigNumber } from 'utils/formatters/number';
+import BigNumber from 'bignumber.js';
 
-export type YearnVaultData = LiquidityPoolData & {
+export type YearnVaultData = Omit<LiquidityPoolData, 'balance'> & {
 	apy: number;
 	tvl: number;
 	pricePerShare: number;
+	stakedSNX: BigNumber;
 };
 
 const useYearnSNXVaultQuery = (options?: QueryConfig<YearnVaultData>) => {
@@ -47,14 +49,12 @@ const useYearnSNXVaultQuery = (options?: QueryConfig<YearnVaultData>) => {
 			);
 
 			const [
-				yvSNXBalance,
 				yvSNXUserBalance,
 				yvSNXPricePerShare,
 				allVaultsData,
 				snxAllowance,
 				snxBalance,
 			] = await Promise.all([
-				YearnSNXVault.balanceOf(yearnSNXVault.address, { gasLimit: 1e6 }),
 				YearnSNXVault.balanceOf(walletAddress, { gasLimit: 1e6 }),
 				YearnSNXVault.pricePerShare({ gasLimit: 1e5 }),
 				axios.get('https://api.yearn.finance/v1/chains/1/vaults/all'),
@@ -62,14 +62,13 @@ const useYearnSNXVaultQuery = (options?: QueryConfig<YearnVaultData>) => {
 				Synthetix.transferableSynthetix(walletAddress),
 			]);
 
-			const [pricePerShare, allowance, balance, userBalance] = [
+			const [pricePerShare, allowance, userBalance] = [
 				yvSNXPricePerShare,
 				snxAllowance,
-				yvSNXBalance,
 				snxBalance,
 			].map((data) => Number(synthetix.js?.utils.formatEther(data)));
 
-			const staked = toBigNumber(yvSNXUserBalance.toString()).div(1e18);
+			const stakedBN = toBigNumber(yvSNXUserBalance.toString()).div(1e18);
 
 			const yvSNXVaultData = allVaultsData?.data.find(
 				(vault: any) => vault.symbol === 'yvSNX' && vault.type === 'v2'
@@ -79,15 +78,15 @@ const useYearnSNXVaultQuery = (options?: QueryConfig<YearnVaultData>) => {
 
 			return {
 				address: yearnSNXVault.address,
-				balance,
 				userBalance: userBalance,
 				userBalanceBN: toBigNumber(userBalance),
 				distribution: 0,
 				duration: 0,
 				periodFinish: Date.now() * 2, // never expires
 				rewards: 0,
-				staked: staked.toNumber(),
-				stakedBN: staked,
+				staked: stakedBN.toNumber(),
+				stakedBN: stakedBN,
+				stakedSNX: stakedBN.times(pricePerShare),
 				allowance,
 				apy,
 				tvl,
