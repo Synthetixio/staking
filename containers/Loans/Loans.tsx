@@ -9,7 +9,6 @@ import Connector from 'containers/Connector';
 import { appReadyState } from 'store/app';
 import { walletAddressState, networkState } from 'store/wallet';
 import { LOAN_TYPE_ERC20, LOAN_TYPE_ETH, SYNTH_BY_CURRENCY_KEY } from 'sections/loans/constants';
-import { Loan } from 'queries/loans/types';
 import { sleep } from 'utils/promise';
 import Wei, { wei } from '@synthetixio/wei';
 
@@ -28,7 +27,8 @@ function Container() {
 	const isAppReady = useRecoilValue(appReadyState);
 
 	const [isLoadingLoans, setIsLoadingLoans] = useState(false);
-	const [loans, setLoans] = useState<Array<Loan>>([]);
+	// TODO types in this class are all around missing
+	const [loans, setLoans] = useState<Array<any>>([]);
 	const [minCRatios, setMinCRatios] = useState<Map<string, Wei>>(new Map());
 
 	const [
@@ -75,12 +75,12 @@ function Container() {
 		)
 			return;
 
-		const loanContracts: Record<string, ethers.Contract> = {
+		const loanContracts: Record<string, typeof erc20LoanContract> = {
 			[LOAN_TYPE_ERC20]: erc20LoanContract,
 			[LOAN_TYPE_ETH]: ethLoanContract,
 		};
 
-		const loanStateContracts: Record<string, ethers.Contract> = {
+		const loanStateContracts: Record<string, typeof erc20LoanContract> = {
 			[LOAN_TYPE_ERC20]: erc20LoanStateContract,
 			[LOAN_TYPE_ETH]: ethLoanStateContract,
 		};
@@ -375,12 +375,12 @@ function Container() {
 	const [pendingWithdrawals, setPendingWithdrawals] = useState(ethers.BigNumber.from('0'));
 
 	const loadPendingWithdrawals = async (
-		ethLoanContract: ethers.Contract,
+		ethLoanContract: typeof erc20LoanContract,
 		isMounted: boolean,
 		setPendingWithdrawals: (pw: ethers.BigNumber) => void,
 		address: string
 	) => {
-		const pw = await ethLoanContract.pendingWithdrawals(address);
+		const pw = await ethLoanContract!.pendingWithdrawals(address);
 		if (isMounted) {
 			setPendingWithdrawals(pw);
 		}

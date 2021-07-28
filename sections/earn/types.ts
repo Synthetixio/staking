@@ -1,4 +1,4 @@
-import { Synths } from 'constants/currency';
+import { CryptoCurrency, Synths } from 'constants/currency';
 import ROUTES from 'constants/routes';
 import { invert } from 'lodash';
 
@@ -19,6 +19,7 @@ export enum Tab {
 	sBTC_SHORT = 'sBTC Short',
 	sETH_SHORT = 'sETH Short',
 	iBTC_LP = 'iBTC-LP',
+	yearn_SNX_VAULT = 'yearn-SNX',
 }
 
 export enum LP {
@@ -33,6 +34,7 @@ export enum LP {
 	BALANCER_sMSFT = 'sMSFT BPT',
 	BALANCER_sCOIN = 'sCOIN BPT',
 	UNISWAP_DHT = 'DHT LPT',
+	YEARN_SNX_VAULT = 'yvSNX',
 }
 
 export const lpToTab: { [name: string]: Tab } = {
@@ -44,6 +46,7 @@ export const lpToTab: { [name: string]: Tab } = {
 	[LP.BALANCER_sGOOG]: Tab.sGOOG_LP,
 	[LP.BALANCER_sMSFT]: Tab.sMSFT_LP,
 	[LP.BALANCER_sCOIN]: Tab.sCOIN_LP,
+	[LP.YEARN_SNX_VAULT]: Tab.yearn_SNX_VAULT,
 };
 
 export const tabToLP = invert(lpToTab);
@@ -57,6 +60,7 @@ export const lpToSynthTranslationKey: { [name: string]: string } = {
 	[LP.BALANCER_sGOOG]: 'sgoog',
 	[LP.BALANCER_sMSFT]: 'smsft',
 	[LP.BALANCER_sCOIN]: 'scoin',
+	[LP.YEARN_SNX_VAULT]: 'yvsnx',
 };
 
 export const lpToSynthIcon: { [name: string]: string } = {
@@ -68,6 +72,7 @@ export const lpToSynthIcon: { [name: string]: string } = {
 	[LP.BALANCER_sGOOG]: Synths.sGOOG,
 	[LP.BALANCER_sMSFT]: Synths.sMSFT,
 	[LP.BALANCER_sCOIN]: Synths.sCOIN,
+	[LP.YEARN_SNX_VAULT]: CryptoCurrency.YVSNX,
 };
 
 export const lpToRoute: { [name: string]: string } = {
@@ -79,4 +84,5 @@ export const lpToRoute: { [name: string]: string } = {
 	[LP.BALANCER_sGOOG]: ROUTES.Earn.sGOOG_LP,
 	[LP.BALANCER_sMSFT]: ROUTES.Earn.sMSFT_LP,
 	[LP.BALANCER_sCOIN]: ROUTES.Earn.sCOIN_LP,
+	[LP.YEARN_SNX_VAULT]: ROUTES.Earn.yearn_SNX_VAULT,
 };

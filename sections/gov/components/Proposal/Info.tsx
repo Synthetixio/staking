@@ -4,7 +4,7 @@ import { ProposalInfoType } from 'store/gov';
 import StructuredTab from 'components/StructuredTab';
 import Results from './Results';
 import History from './History';
-import useProposal from 'queries/gov/useProposal';
+import useProposalQuery from 'queries/gov/useProposalQuery';
 import useActiveTab from 'sections/gov/hooks/useActiveTab';
 import { Proposal } from 'queries/gov/types';
 
@@ -15,7 +15,7 @@ type InfoProps = {
 const Info: React.FC<InfoProps> = ({ proposal }) => {
 	const { t } = useTranslation();
 	const activeTab = useActiveTab();
-	const proposalResults = useProposal(activeTab, proposal.id);
+	const proposalResults = useProposalQuery(activeTab, proposal.id);
 
 	const tabData = useMemo(
 		() => [

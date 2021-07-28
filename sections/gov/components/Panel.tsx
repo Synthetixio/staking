@@ -78,16 +78,16 @@ const Panel: React.FC<PanelProps> = ({ currentTab }) => {
 	const tabData = useMemo(
 		() => [
 			{
-				title: t('gov.panel.council.title'),
-				tabChildren: <List spaceKey={activeTab} />,
-				blue: true,
-				key: SPACE_KEY.COUNCIL,
-			},
-			{
 				title: t('gov.panel.proposals.title'),
 				tabChildren: <List spaceKey={activeTab} />,
 				blue: true,
 				key: SPACE_KEY.PROPOSAL,
+			},
+			{
+				title: t('gov.panel.council.title'),
+				tabChildren: <List spaceKey={activeTab} />,
+				blue: true,
+				key: SPACE_KEY.COUNCIL,
 			},
 			{
 				title: t('gov.panel.grants.title'),

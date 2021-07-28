@@ -3,7 +3,6 @@ import { FC, ReactNode } from 'react';
 import Connector from './Connector';
 import BlockExplorer from './BlockExplorer';
 import TransactionNotifier from './TransactionNotifier';
-import Delegates from './Delegates';
 import Loans from './Loans';
 import SideNav from './UI';
 
@@ -16,9 +15,7 @@ export const WithAppContainers: FC<WithAppContainersProps> = ({ children }) => (
 		<BlockExplorer.Provider>
 			<TransactionNotifier.Provider>
 				<Loans.Provider>
-					<Delegates.Provider>
-						<SideNav.Provider>{children}</SideNav.Provider>
-					</Delegates.Provider>
+					<SideNav.Provider>{children}</SideNav.Provider>
 				</Loans.Provider>
 			</TransactionNotifier.Provider>
 		</BlockExplorer.Provider>

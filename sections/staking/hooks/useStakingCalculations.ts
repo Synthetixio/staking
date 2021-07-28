@@ -4,11 +4,10 @@ import useGetDebtDataQuery from 'queries/debt/useGetDebtDataQuery';
 import useTokenSaleEscrowDateQuery from 'queries/escrow/useTokenSaleEscrowQuery';
 import useEscrowDataQuery from 'queries/escrow/useEscrowDataQuery';
 import useSynthetixQueries from '@synthetixio/queries';
-import { NetworkId } from '@synthetixio/contracts-interface';
 import Wei, { wei } from '@synthetixio/wei';
 
-const useStakingCalculations = (networkId: NetworkId) => {
-	const { useExchangeRatesQuery } = useSynthetixQueries({ networkId });
+const useStakingCalculations = () => {
+	const { useExchangeRatesQuery } = useSynthetixQueries();
 
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const debtDataQuery = useGetDebtDataQuery();
@@ -24,6 +23,7 @@ const useStakingCalculations = (networkId: NetworkId) => {
 		const SNXRate = wei(exchangeRates?.SNX ?? 0);
 		const collateral = wei(debtData?.collateral ?? 0);
 		const targetCRatio = wei(debtData?.targetCRatio ?? 0);
+		const targetThreshold = wei(debtData?.targetThreshold ?? 0);
 		const currentCRatio = wei(debtData?.currentCRatio ?? 0);
 		const transferableCollateral = wei(debtData?.transferable ?? 0);
 		const debtBalance = wei(debtData?.debtBalance ?? 0);
@@ -52,6 +52,7 @@ const useStakingCalculations = (networkId: NetworkId) => {
 		return {
 			collateral,
 			targetCRatio,
+			targetThreshold,
 			percentageTargetCRatio,
 			currentCRatio,
 			percentageCurrentCRatio,

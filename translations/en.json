@@ -98,9 +98,16 @@
 			"etherscan": "View on Etherscan",
 			"disconnect-wallet": "disconnect",
 			"stop-watching": "Stop watching",
+			"stop-delegation": "Stop delegate mode",
 			"change-wallet": "change wallet",
 			"switch-account": "switch account",
 			"available-on-hardware-wallet": "Available on hardware wallets",
+			"delegate-mode": {
+				"menu-title": "Delegate mode",
+				"modal-title": "Switch to Delegate mode",
+				"subtitle": "Choose a wallet to interact with",
+				"no-delegate": "No wallets found"
+			},
 			"watch-wallet": {
 				"title": "watch a wallet",
 				"subtitle": "Enter a valid ETH address or ENS domain to view this dApp as that wallet",
@@ -247,7 +254,10 @@
 					"error": {
 						"bad-input": "Please enter a valid number",
 						"insufficient": "Insufficient collateral to mint",
-						"exception": "Contract error"
+						"exception": "Contract error",
+						"delegate-cannot-mint": "Delegate wallet not allowed to mint",
+						"delegate-cannot-burn": "Delegate wallet not allowed to burn",
+						"delegate-cannot-claim": "Delegate wallet not allowed to claim"
 					}
 				},
 				"in-progress": {
@@ -432,7 +442,8 @@
 					"claimable": "Claimable"
 				},
 				"time-left": {
-					"title": "TIME LEFT"
+					"title": "TIME LEFT",
+					"does-not-expire": "Does not expire"
 				},
 				"snx": {
 					"title": "Synthetix",
@@ -517,6 +528,12 @@
 					"title": "Synthetix",
 					"description": "Staking iBTC tokens allows you to earn SNX rewards. <0>Learn more.<0>",
 					"subtitle": "iBTC Rewards"
+				},
+				"yvsnx": {
+					"title": "Yearn SNX Vault",
+					"description": "Deposit SNX into Yearn Finance's SNX Vault to earn SNX rewards. <0>Learn more<0>.",
+					"subtitle": "",
+					"approve-message": "Before depositing your SNX, please approve the Yearn SNX Vault contract."
 				}
 			},
 			"weekly-rewards": "Weekly rewards {{weeklyRewards}} {{asset}}"
@@ -551,6 +568,7 @@
 				"close-fee-period": "Close fee period",
 				"claimed-button": "ALREADY CLAIMED",
 				"low-ratio": "BURN sUSD TO CLAIM",
+				"not-voted": "VOTE IN THE ELECTIONS TO CLAIM",
 				"nothing-to-claim": "NOTHING TO CLAIM",
 				"claiming": "CLAIMING",
 				"claimed": "CLAIMED",
@@ -577,6 +595,24 @@
 				"title": "UNSTAKE",
 				"unstaking": "WITHDRAWING",
 				"unstake-button": "UNSTAKE {{stakedAsset}}",
+				"amount": "{{amount}} {{asset}}",
+				"in-progress": "Withdrawal in progress",
+				"success": "Withdrawal complete!",
+				"withdrew": "WITHDREW"
+			},
+			"deposit": {
+				"title": "DEPOSIT",
+				"depositing": "DEPOSITING",
+				"deposit-button": "DEPOSIT {{asset}}",
+				"amount": "{{amount}} {{asset}}",
+				"in-progress": "Deposit in progress",
+				"success": "Withdrawal complete!",
+				"deposited": "DEPOSITED"
+			},
+			"withdraw": {
+				"title": "WITHDRAW",
+				"withdrawing": "WITHDRAWING",
+				"withdraw-button": "WITHDRAW {{asset}}",
 				"amount": "{{amount}} {{asset}}",
 				"in-progress": "Withdrawal in progress",
 				"success": "Withdrawal complete!",
@@ -794,7 +830,8 @@
 					"status": "Status",
 					"view": "View",
 					"pending": "Pending",
-					"confirmed": "Confirmed"
+					"confirmed": "Confirmed",
+					"relay": "<0>Ready to Relay</0>"
 				}
 			}
 		},
@@ -817,6 +854,7 @@
 			},
 			"withdraw": {
 				"title": "Withdraw SNX",
+				"bridge-inactive": "Withdrawal bridge is currently inactive",
 				"action": {
 					"withdraw-button": "Withdraw {{withdrawAmount}}",
 					"disabled": "No SNX to withdraw"
@@ -825,6 +863,7 @@
 			"deposit": {
 				"title": "Deposit SNX",
 				"subtitle": "Deposit and Transfer SNX from L1 to L2",
+				"bridge-inactive": "Deposit bridge is currently inactive",
 				"action": {
 					"in-progress": {
 						"title": "Deposit in progress",
@@ -923,7 +962,8 @@
 						"title": "You have no Synths",
 						"desc": "Mint sUSD by staking your SNX"
 					}
-				}
+				},
+				"negative-skew-warning": "Negatives mean that short positions are required to hedge"
 			},
 			"non-synths": {
 				"title": "Non-Synth Balances"
@@ -949,16 +989,16 @@
 		"page-title": "Governance | Synthetix Staking",
 		"panel": {
 			"council": {
-				"title": "Elections"
+				"title": "Spartan Council"
 			},
 			"proposals": {
 				"title": "SIP/SCCP"
 			},
 			"grants": {
-				"title": "Grants"
+				"title": "grants DAO"
 			},
 			"ambassador": {
-				"title": "Ambassadors"
+				"title": "ambassador DAO"
 			}
 		},
 		"table": {
@@ -1005,8 +1045,8 @@
 			},
 			"action": {
 				"vote": "Vote",
-				"withdraw": "Withdraw",
-				"support": "Support"
+				"withdraw": "Dilute",
+				"support": "Revert Dilution"
 			},
 			"info": {
 				"author": "Author",
@@ -1041,18 +1081,18 @@
 				"success": "Your vote is in!"
 			},
 			"withdraw": {
-				"waiting": "Withdrawal in progress",
-				"signing": "Withdrawing from",
-				"signed": "Withdrew votes from",
+				"waiting": "Dilution in progress",
+				"signing": "Diluting votes for",
+				"signed": "Diluted votes for",
 				"address": "{{address}}",
 				"success": "Dilution successful"
 			},
 			"support": {
-				"waiting": "Reassigning vote weight",
+				"waiting": "Revert dilution in progress",
 				"signing": "Reverting dilution for",
 				"signed": "Reverted dilution for",
 				"address": "{{address}}",
-				"success": "Dilution removed successfully"
+				"success": "Reverted dilution successfully"
 			},
 			"propose": {
 				"waiting": "Submitting proposal",
@@ -1110,13 +1150,17 @@
 		},
 		"banner": {
 			"url-warning": "ATTENTION: Please make sure the URL is <0>staking.synthetix.io</0> (bookmark this page to be safe)",
-			"liquidation-warning": "WARNING: Your staked SNX may be liquidated if you don't bring your C-Ratio above <0>{{liquidationRatio}}%</0> before <1>{{liquidationDeadline}}</1>. Click <2>here</2> for more info."
+			"liquidation-warning": "WARNING: Your staked SNX may be liquidated if you don't bring your C-Ratio above <0>{{liquidationRatio}}%</0> before <1>{{liquidationDeadline}}</1>. Click <2>here</2> for more info.",
+			"election-info": "ATTENTION: Spartan Council, grantsDAO and ambassadorDAO need your votes! To claim SNX rewards, you will need to <0>vote for the elections.</0>"
 		},
 		"error": {
 			"please-install-metamask": "Please install Metamask or manually add the Optimism network to your browser wallet."
 		}
 	},
 	"common": {
+		"delegate": {
+			"not-available": "Not available with wallet delegation"
+		},
 		"form": {
 			"to-address": "To address",
 			"address-input-placeholder": "e.g. 0x3b18a4..."
@@ -1146,8 +1190,12 @@
 			"vested-snx": "Total SNX vested",
 			"escrowed-snx": "Total SNX escrowed",
 			"voting-power": {
-				"title": "Your voting power",
+				"title": "Your voting power (L1 + L2)",
 				"tooltip": "Your voting power was calculated based on block {{blocknumber}}"
+			},
+			"delegated-voting-power": {
+				"title": "Your delegated voting power",
+				"tooltip": "You can delegate to another wallet at https://snapshot.org/#/delegate"
 			},
 			"total-voting-power": {
 				"title": "Total voting power",
@@ -1168,7 +1216,8 @@
 			"default": "Something went wrong"
 		},
 		"layer-2": {
-			"not-available": "Not available on Layer 2"
+			"not-available": "Not available on Layer 2",
+			"gas-fee-info": "Gas on L2 fluctuates based on congestion on L1 and L2"
 		},
 		"transaction": {
 			"transaction-sent": "Your transaction has been sent to the network",
@@ -1245,7 +1294,7 @@
 		},
 		"gov-voting-election": {
 			"heading": "governance:",
-			"message": "Have your say on who will represent the SNX community, vote for your Spartan Council now! Voting costs zero-gas."
+			"message": "Have your say on who will represent the SNX community, vote on the DAO elections gas-free here."
 		}
 	},
 	"delegate": {
@@ -1271,11 +1320,11 @@
 			"empty": "No addresses to show",
 			"cols": {
 				"address": "Address",
-				"all": "all",
-				"burn": "burn",
-				"mint": "mint",
-				"claim": "claim",
-				"exchange": "trade"
+				"canAll": "all",
+				"canBurn": "burn",
+				"canMint": "mint",
+				"canClaim": "claim",
+				"canExchange": "trade"
 			}
 		},
 		"tx-confirmation-title": "Updating approval"

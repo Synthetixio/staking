@@ -107,6 +107,7 @@ const StakingInput: React.FC<StakingInputProps> = ({
 
 	const [stakingCurrencyKey] = useState<string>(CryptoCurrency.SNX);
 	const [synthCurrencyKey] = useState<string>(Synths.sUSD);
+
 	/**
 	 * Given the amount to mint, returns the equivalent collateral needed for stake.
 	 * @param mintInput Amount to mint

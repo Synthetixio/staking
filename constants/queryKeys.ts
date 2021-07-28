@@ -133,6 +133,26 @@ export const QUERY_KEYS = {
 			walletAddress,
 			networkId,
 		],
+		yearnSNX: (walletAddress: string, networkId: NetworkId) => [
+			'liquidityPools',
+			'yearn-SNX',
+			walletAddress,
+			networkId,
+		],
+	},
+	Delegate: {
+		AuthoriserWallets: (walletAddress: string, networkId: NetworkId) => [
+			'delegate',
+			'authoriserWallets',
+			walletAddress,
+			networkId,
+		],
+		DelegateWallets: (walletAddress: string, networkId: NetworkId) => [
+			'delegate',
+			'delegateWallets',
+			walletAddress,
+			networkId,
+		],
 	},
 	ShortRewards: {
 		sBTC: (walletAddress: string, networkId: NetworkId) => [
@@ -148,18 +168,34 @@ export const QUERY_KEYS = {
 			networkId,
 		],
 	},
-	Deposits: (walletAddress: string, networkId: NetworkId) => [
-		'deposits',
-		'depositsData',
-		walletAddress,
-		networkId,
-	],
-	Withdrawals: (walletAddress: string, networkId: NetworkId) => [
-		'withdrawals',
-		'withdrawalsData',
-		walletAddress,
-		networkId,
-	],
+	Deposits: {
+		Data: (walletAddress: string, networkId: NetworkId) => [
+			'deposits',
+			'depositsData',
+			walletAddress,
+			networkId,
+		],
+		IsActive: (walletAddress: string, networkId: NetworkId) => [
+			'deposits',
+			'depositsIsActive',
+			walletAddress,
+			networkId,
+		],
+	},
+	Withdrawals: {
+		Data: (walletAddress: string, networkId: NetworkId) => [
+			'withdrawals',
+			'withdrawalsData',
+			walletAddress,
+			networkId,
+		],
+		IsActive: (walletAddress: string, networkId: NetworkId) => [
+			'withdrawals',
+			'withdrawalsIsActive',
+			walletAddress,
+			networkId,
+		],
+	},
 	Swap: {
 		quote1Inch: (walletAddress: string, networkId: NetworkId, amount: WeiSource) => [
 			'quote',
@@ -197,13 +233,15 @@ export const QUERY_KEYS = {
 			walletAddress,
 			networkId,
 		],
-		LatestCouncilElection: (walletAddress: string, networkId: NetworkId) => [
-			'gov',
-			'latestCouncilElection',
-			walletAddress,
-			networkId,
-		],
+		LatestSnapshot: ['gov', 'latestSnapshot'],
 		Proposal: (spaceKey: SPACE_KEY, hash: string) => ['gov', 'proposal', spaceKey, hash],
+		VotingWeight: (spaceKey: SPACE_KEY, block: number | null) => [
+			'gov',
+			'votingWeight',
+			spaceKey,
+			block,
+		],
+		HasVotedForElections: (walletAddress: string) => ['gov', 'hasVotedForElections', walletAddress],
 	},
 	TokenLists: {
 		Synthetix: ['tokenLists', 'synthetix'],

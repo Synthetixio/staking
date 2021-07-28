@@ -5,7 +5,7 @@ import Wei from '@synthetixio/wei';
 import IncentivesMainnet from './IncentivesMainnet';
 import IncentivesDefault from './IncentivesDefault';
 
-import { isMainnetState } from 'store/wallet';
+import { isMainnetState, delegateWalletState } from 'store/wallet';
 
 type IncentivesProps = {
 	tradingRewards: Wei;
@@ -18,7 +18,8 @@ type IncentivesProps = {
 
 const Incentives: FC<IncentivesProps> = (props) => {
 	const isMainnet = useRecoilValue(isMainnetState);
-	const Incentives = isMainnet ? IncentivesMainnet : IncentivesDefault;
+	const delegateWallet = useRecoilValue(delegateWalletState);
+	const Incentives = isMainnet && !delegateWallet ? IncentivesMainnet : IncentivesDefault;
 
 	return <Incentives {...props} />;
 };

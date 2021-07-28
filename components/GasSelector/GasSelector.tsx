@@ -6,13 +6,12 @@ import Tippy from '@tippyjs/react';
 
 import { customGasPriceState, gasSpeedState, isL2State } from 'store/wallet';
 import { ESTIMATE_VALUE } from 'constants/placeholder';
-import { DEFAULT_GAS_PRICE, GasLimitEstimate } from 'constants/network';
+import { GasLimitEstimate } from 'constants/network';
 
-import useEthGasStationQuery, { GasPrices, GAS_SPEEDS } from 'queries/network/useEthGasPriceQuery';
+import useSynthetixQueries, { GasPrices, GAS_SPEEDS } from '@synthetixio/queries';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { getTransactionPrice } from 'utils/network';
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
-import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 
 import { Synths } from 'constants/currency';
 import { formatCurrency } from 'utils/formatters/number';
@@ -20,6 +19,8 @@ import NumericInput from 'components/Input/NumericInput';
 import Button from 'components/Button';
 import { useTranslation } from 'react-i18next';
 import { FlexDivRow, FlexDivRowCentered, NumericValue } from 'styles/common';
+import { Svg } from 'react-optimized-image';
+import Info from 'assets/svg/app/info.svg';
 
 type GasSelectorProps = {
 	gasLimitEstimate: GasLimitEstimate;
@@ -38,9 +39,11 @@ const GasSelector: React.FC<GasSelectorProps> = ({
 	const [customGasPrice, setCustomGasPrice] = useRecoilState(customGasPriceState);
 	const isL2 = useRecoilValue(isL2State);
 
-	const exchangeRatesQuery = useExchangeRatesQuery();
+	const { useExchangeRatesQuery, useEthGasPriceQuery } = useSynthetixQueries();
+
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
-	const ethGasStationQuery = useEthGasStationQuery();
+	const exchangeRatesQuery = useExchangeRatesQuery();
+	const ethGasStationQuery = useEthGasPriceQuery();
 
 	const gasPrices = ethGasStationQuery.data ?? ({} as GasPrices);
 	const exchangeRates = exchangeRatesQuery.data ?? null;
@@ -49,28 +52,24 @@ const GasSelector: React.FC<GasSelectorProps> = ({
 
 	const gasPrice = useMemo(
 		() =>
-			isL2
-				? DEFAULT_GAS_PRICE
-				: customGasPrice !== ''
+			customGasPrice !== ''
 				? Number(customGasPrice)
 				: ethGasStationQuery.data != null
 				? ethGasStationQuery.data[gasSpeed]
 				: null,
-		[customGasPrice, ethGasStationQuery.data, gasSpeed, isL2]
+		[customGasPrice, ethGasStationQuery.data, gasSpeed]
 	);
 
 	useEffect(() => {
 		setGasPrice(
-			isL2
-				? DEFAULT_GAS_PRICE
-				: customGasPrice !== ''
+			customGasPrice !== ''
 				? Number(customGasPrice)
 				: ethGasStationQuery.data != null
 				? ethGasStationQuery.data[gasSpeed]
 				: null
 		);
 		// eslint-disable-next-line
-	}, [gasPrice, customGasPrice, isL2]);
+	}, [gasPrice, customGasPrice]);
 
 	const ethPriceRate = getExchangeRatesForCurrencies(
 		exchangeRates,
@@ -93,14 +92,14 @@ const GasSelector: React.FC<GasSelectorProps> = ({
 
 	const content = (
 		<GasSelectContainer>
-			<CustomGasPriceContainer>
+			<div>
 				<CustomGasPrice
 					value={customGasPrice}
 					onChange={(_, value) => setCustomGasPrice(value)}
 					placeholder={t('common.custom')}
 					data-testid="edit-gas-price-input"
 				/>
-			</CustomGasPriceContainer>
+			</div>
 			{GAS_SPEEDS.map((speed) => (
 				<StyedGasButton
 					key={speed}
@@ -150,7 +149,17 @@ const GasSelector: React.FC<GasSelectorProps> = ({
 							})})`}
 					</GasPriceText>
 				</GasPriceItem>
-				{isL2 ? null : (
+				{isL2 ? (
+					<GasPriceTooltip
+						arrow={false}
+						content={t('common.layer-2.gas-fee-info')}
+						interactive={true}
+					>
+						<span>
+							<ResizedInfoIcon src={Info} />
+						</span>
+					</GasPriceTooltip>
+				) : (
 					<GasPriceTooltip trigger="click" arrow={false} content={content} interactive={true}>
 						<StyledGasEditButton role="button" data-testid="edit-gas-price-button">
 							{t('common.edit')}
@@ -195,17 +204,10 @@ const GasPriceTooltip = styled(Tippy)`
 	border: 0.5px solid ${(props) => props.theme.colors.navy};
 	border-radius: 4px;
 	width: 120px;
-	.tippy-content {
-		padding: 0;
-	}
 `;
 
 const GasSelectContainer = styled.div`
 	padding: 16px 0 8px 0;
-`;
-
-const CustomGasPriceContainer = styled.div`
-	margin: 0 10px 5px 10px;
 `;
 
 const CustomGasPrice = styled(NumericInput)`
@@ -230,7 +232,6 @@ const StyedGasButton = styled(Button)`
 const GasPriceItem = styled.span`
 	display: inline-flex;
 	align-items: center;
-	cursor: pointer;
 	svg {
 		margin-left: 5px;
 	}
@@ -243,6 +244,11 @@ const StyledGasEditButton = styled.span`
 	cursor: pointer;
 	color: ${(props) => props.theme.colors.blue};
 	text-transform: uppercase;
+`;
+
+const ResizedInfoIcon = styled(Svg)`
+	transform: translateX(2px);
+	cursor: pointer;
 `;
 
 export default GasSelector;

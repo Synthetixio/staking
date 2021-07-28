@@ -1,7 +1,3 @@
-/**
- * Remember to update `header.` in translations.
- */
-
 export const ROUTES = {
 	Home: '/',
 	Staking: {
@@ -45,6 +41,7 @@ export const ROUTES = {
 		sBTC_SHORT: '/earn/sBTC-SHORT',
 		sETH_EXTERNAL: 'https://kwenta.io/shorting',
 		sETH_SHORT: '/earn/sETH-SHORT',
+		yearn_SNX_VAULT: '/earn/yearn-SNX',
 	},
 	L2: {
 		Home: '/l2',

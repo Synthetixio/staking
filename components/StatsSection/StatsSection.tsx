@@ -2,8 +2,6 @@ import { FC, useMemo, useState } from 'react';
 import { Svg } from 'react-optimized-image';
 import styled from 'styled-components';
 
-import useCryptoBalances from 'hooks/useCryptoBalances';
-
 import { MOBILE_BODY_PADDING } from 'constants/ui';
 import { CryptoCurrency, Synths } from 'constants/currency';
 import { MobileOrTabletView } from 'components/Media';
@@ -19,22 +17,19 @@ import CRatioBarStats from 'sections/shared/Layout/Stats/CRatioBarStats';
 import CollapseIcon from 'assets/svg/app/chevron-collapse.svg';
 import ExpandIcon from 'assets/svg/app/chevron-expand.svg';
 import { useRecoilValue } from 'recoil';
-import { networkState } from 'store/wallet';
-import { NetworkId } from '@synthetixio/contracts-interface';
+import { walletAddressState } from 'store/wallet';
 import useSynthetixQueries from '@synthetixio/queries';
+import { wei } from '@synthetixio/wei';
+import useCryptoBalances from 'hooks/useCryptoBalances';
 
 const StatsSection: FC = ({ children }) => {
-	const networkId = useRecoilValue(networkState)?.id ?? NetworkId.Mainnet;
-	const {
-		useSynthsBalancesQuery,
-		useSNX24hrPricesQuery,
-		useCryptoBalances,
-		useSynthsBalancesQuery,
-	} = useSynthetixQueries({ networkId });
+	const walletAddress = useRecoilValue(walletAddressState);
+
+	const { useSynthsBalancesQuery, useSNX24hrPricesQuery } = useSynthetixQueries();
 
 	const SNX24hrPricesQuery = useSNX24hrPricesQuery();
-	const cryptoBalances = useCryptoBalances();
-	const synthsBalancesQuery = useSynthsBalancesQuery();
+	const cryptoBalances = useCryptoBalances(walletAddress);
+	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
 	const [mobileStatsSectionIsOpen, setMobileStatsSectionIsOpen] = useState(false);
 
 	const snxBalance =

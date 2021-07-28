@@ -365,7 +365,7 @@ const OverlayContainer = styled(FlexDivColCentered)`
 	z-index: ${zIndex.DIALOG_OVERLAY};
 	justify-content: space-around;
 	position: absolute;
-	width: calc(100% - 24px);
+	width: calc(100% - 48px);
 	height: calc(100% - 24px);
 	background: ${(props) => Color(props.theme.colors.black).alpha(0.9).rgb().string()};
 `;

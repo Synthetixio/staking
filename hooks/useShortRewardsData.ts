@@ -1,10 +1,7 @@
 import { Synths } from 'constants/currency';
 import { WEEKS_IN_YEAR } from 'constants/date';
-import { ShortRewardsData } from 'queries/shorts/types';
-import useSBTCShortsQuery from 'queries/shorts/useSBTCShortsQuery';
-import useSETHShortsQuery from 'queries/shorts/useSETHShortsQuery';
 import useSynthetixQueries from '@synthetixio/queries';
-import { NetworkId } from '@synthetixio/contracts-interface';
+import { ShortRewardsData } from '@synthetixio/queries/build/node/src/queries/shorts/types';
 
 type SRData = {
 	[name: string]: {
@@ -14,12 +11,12 @@ type SRData = {
 	};
 };
 
-const useShortRewardsData = (networkId: NetworkId): SRData => {
-	const { useExchangeRatesQuery } = useSynthetixQueries({ networkId });
+const useShortRewardsData = (walletAddress: string | null): SRData => {
+	const { useExchangeRatesQuery, useShortsQuery } = useSynthetixQueries();
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const SNXRate = exchangeRatesQuery.data?.SNX ?? 0;
-	const usesBTCRewards = useSBTCShortsQuery();
-	const usesETHRewards = useSETHShortsQuery();
+	const usesBTCRewards = useShortsQuery('sBTC', walletAddress);
+	const usesETHRewards = useShortsQuery('sETH', walletAddress);
 
 	const sBTCOpenInterestUSD = usesBTCRewards.data?.openInterestUSD ?? 0;
 

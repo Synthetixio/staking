@@ -6,11 +6,9 @@ import ETHIcon from 'assets/svg/currencies/crypto/ETH.svg';
 
 import { CryptoCurrency, CurrencyKey } from 'constants/currency';
 
-import useSynthetixTokenList from 'queries/tokenLists/useSynthetixTokenList';
-import useZapperTokenList from 'queries/tokenLists/useZapperTokenList';
-import useOneInchTokenList from 'queries/tokenLists/useOneInchTokenList';
-
 import { FlexDivCentered } from 'styles/common';
+import useSynthetixQueries from '@synthetixio/queries';
+import { EXTERNAL_LINKS } from 'constants/links';
 
 export enum CurrencyIconType {
 	SYNTH = 'synth',
@@ -33,66 +31,59 @@ export const getSynthIcon = (currencyKey: CurrencyKey) =>
 	`https://raw.githubusercontent.com/Synthetixio/synthetix-assets/master/synths/${currencyKey}.svg`;
 
 export const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, type, ...rest }) => {
-	const [error, setError] = useState<boolean>(false);
 	const [firstFallbackError, setFirstFallbackError] = useState<boolean>(false);
 	const [secondFallbackError, setSecondFallbackError] = useState<boolean>(false);
+	const [thirdFallbackError, setThirdFallbackError] = useState<boolean>(false);
 
-	const synthetixTokenListQuery = useSynthetixTokenList();
+	const { useTokenListQuery } = useSynthetixQueries();
+
+	const synthetixTokenListQuery = useTokenListQuery(EXTERNAL_LINKS.TokenLists.Synthetix);
 	const synthetixTokenListMap = synthetixTokenListQuery.isSuccess
 		? synthetixTokenListQuery.data?.tokensMap ?? null
 		: null;
 
-	const ZapperTokenListQuery = useZapperTokenList();
+	const ZapperTokenListQuery = useTokenListQuery(EXTERNAL_LINKS.TokenLists.Zapper);
 	const ZapperTokenListMap = ZapperTokenListQuery.isSuccess
 		? ZapperTokenListQuery.data?.tokensMap ?? null
 		: null;
 
-	const OneInchTokenListQuery = useOneInchTokenList();
+	const OneInchTokenListQuery = useTokenListQuery(EXTERNAL_LINKS.TokenLists.OneInch);
 	const OneInchTokenListMap = OneInchTokenListQuery.isSuccess
 		? OneInchTokenListQuery.data?.tokensMap ?? null
 		: null;
 
 	const props = {
-		width: '36px',
-		height: '36px',
+		width: '24px',
+		height: '24px',
 		alt: currencyKey,
 		...rest,
 	};
 
-	const defaultIcon = (
-		<Placeholder style={{ width: props.width, height: props.height }}>{currencyKey}</Placeholder>
-	);
-
-	if (type === 'token') {
-		if (
-			ZapperTokenListMap != null &&
-			ZapperTokenListMap[currencyKey] != null &&
-			!firstFallbackError
-		) {
-			return (
-				<TokenIcon
-					src={ZapperTokenListMap[currencyKey].logoURI}
-					onError={() => setFirstFallbackError(true)}
-					{...props}
-				/>
-			);
-		} else if (
-			OneInchTokenListMap != null &&
-			OneInchTokenListMap[currencyKey] != null &&
-			!secondFallbackError
-		) {
-			return (
-				<TokenIcon
-					src={OneInchTokenListMap[currencyKey].logoURI}
-					onError={() => setSecondFallbackError(true)}
-					{...props}
-				/>
-			);
-		} else {
-			return defaultIcon;
-		}
-	} else {
-		if (error) return defaultIcon;
+	if (
+		ZapperTokenListMap != null &&
+		ZapperTokenListMap[currencyKey] != null &&
+		!firstFallbackError
+	) {
+		return (
+			<TokenIcon
+				src={ZapperTokenListMap[currencyKey].logoURI}
+				onError={() => setFirstFallbackError(true)}
+				{...props}
+			/>
+		);
+	} else if (
+		OneInchTokenListMap != null &&
+		OneInchTokenListMap[currencyKey] != null &&
+		!secondFallbackError
+	) {
+		return (
+			<TokenIcon
+				src={OneInchTokenListMap[currencyKey].logoURI}
+				onError={() => setSecondFallbackError(true)}
+				{...props}
+			/>
+		);
+	} else if (thirdFallbackError) {
 		switch (currencyKey) {
 			case CryptoCurrency.ETH: {
 				return <Img src={ETHIcon} {...props} />;
@@ -108,12 +99,16 @@ export const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, type, ...rest
 								? synthetixTokenListMap[currencyKey].logoURI
 								: getSynthIcon(currencyKey)
 						}
-						onError={() => setError(true)}
+						onError={() => setThirdFallbackError(true)}
 						{...props}
 						alt={currencyKey}
 					/>
 				);
 		}
+	} else {
+		return (
+			<Placeholder style={{ width: props.width, height: props.height }}>{currencyKey}</Placeholder>
+		);
 	}
 };
 

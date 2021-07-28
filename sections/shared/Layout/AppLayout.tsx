@@ -1,19 +1,17 @@
 import { FC, ReactNode, useEffect } from 'react';
 import router from 'next/router';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import { DESKTOP_SIDE_NAV_WIDTH, DESKTOP_BODY_PADDING } from 'constants/ui';
 import ROUTES from 'constants/routes';
 import NotificationContainer from 'constants/NotificationContainer';
-import { NotificationTemplate, userNotificationState } from 'store/ui';
-import media from 'styles/media';
-import { isL2State, isMainnetState } from 'store/wallet';
-import useLatestCouncilElectionQuery from 'queries/gov/useLatestCouncilElectionQuery';
 
+import media from 'styles/media';
+import { isL2State, isMainnetState, delegateWalletState } from 'store/wallet';
 import Header from './Header';
 import SideNav from './SideNav';
-import UserNotifications from './UserNotifications';
+import useGetDepositsIsActiveQuery from 'queries/deposits/useGetDepositsIsActiveQuery';
 
 type AppLayoutProps = {
 	children: ReactNode;
@@ -22,14 +20,14 @@ type AppLayoutProps = {
 const AppLayout: FC<AppLayoutProps> = ({ children }) => {
 	const isL2 = useRecoilValue(isL2State);
 	const isMainnet = useRecoilValue(isMainnetState);
-	const latestCouncilElection = useLatestCouncilElectionQuery();
-	const setNotificationState = useSetRecoilState(userNotificationState);
+	const depositsInactive = !(useGetDepositsIsActiveQuery().data ?? true); // Deposits are active by default to prevent redirects when status unknown
+	const delegateWallet = useRecoilValue(delegateWalletState);
 
 	useEffect(() => {
 		if (!isL2 && router.pathname === ROUTES.Withdraw.Home) {
 			router.push(ROUTES.Home);
 		}
-		if (isL2 && router.pathname === ROUTES.L2.Deposit) {
+		if ((isL2 || depositsInactive) && router.pathname === ROUTES.L2.Deposit) {
 			router.push(ROUTES.Home);
 		}
 		if (isL2 && router.pathname.includes(ROUTES.Gov.Home)) {
@@ -38,23 +36,10 @@ const AppLayout: FC<AppLayoutProps> = ({ children }) => {
 		if (!isMainnet && router.pathname.includes(ROUTES.Debt.Home)) {
 			router.push(ROUTES.Home);
 		}
-	}, [isL2, isMainnet]);
-
-	useEffect(() => {
-		if (latestCouncilElection.data && !isL2) {
-			let latestProposal = latestCouncilElection.data;
-			if (new Date().getTime() / 1000 < (latestProposal.end ?? 0)) {
-				setNotificationState({
-					type: 'info',
-					template: NotificationTemplate.ELECTION,
-					props: {
-						proposal: latestProposal.title,
-						link: `${latestProposal.space}/${latestProposal.id}`,
-					},
-				});
-			}
+		if (delegateWallet && router.pathname !== ROUTES.Home) {
+			router.push(ROUTES.Home);
 		}
-	}, [latestCouncilElection, setNotificationState, isL2]);
+	}, [isL2, isMainnet, depositsInactive, delegateWallet]);
 
 	return (
 		<>
@@ -62,7 +47,6 @@ const AppLayout: FC<AppLayoutProps> = ({ children }) => {
 			<Header />
 			<Content>{children}</Content>
 			<NotificationContainer />
-			{!isL2 && <UserNotifications />}
 		</>
 	);
 };

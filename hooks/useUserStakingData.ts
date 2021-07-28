@@ -1,36 +1,44 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 
-import useFeeClaimHistoryQuery from 'queries/staking/useFeeClaimHistoryQuery';
-import useGetFeePoolDataQuery from 'queries/staking/useGetFeePoolDataQuery';
-import useGetDebtDataQuery from 'queries/debt/useGetDebtDataQuery';
-import useClaimableRewards from 'queries/staking/useClaimableRewardsQuery';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 import { Synths } from 'constants/currency';
 import { WEEKS_IN_YEAR } from 'constants/date';
 
-import useSNXLockedValueQuery from 'queries/staking/useSNXLockedValueQuery';
 import { isL2State } from 'store/wallet';
 import { wei } from '@synthetixio/wei';
 import useSynthetixQueries from '@synthetixio/queries';
-import { NetworkId } from '@synthetixio/contracts-interface';
 
-export const useUserStakingData = (networkId: NetworkId) => {
+export const useUserStakingData = (walletAddress: string | null) => {
 	const [hasClaimed, setHasClaimed] = useState<boolean>(false);
 	const isL2 = useRecoilValue(isL2State);
-	const history = useFeeClaimHistoryQuery();
+
+	const {
+		useFeeClaimHistoryQuery,
+		useGetFeePoolDataQuery,
+		useGetDebtDataQuery,
+		useClaimableRewardsQuery,
+	} = useSynthetixQueries();
+
+	const history = useFeeClaimHistoryQuery(walletAddress || undefined);
 	const currentFeePeriod = useGetFeePoolDataQuery('0');
-	const { useTotalIssuedSynthsExcludingEtherQuery, useExchangeRatesQuery } = useSynthetixQueries({
-		networkId,
-	});
+	const {
+		useTotalIssuedSynthsExcludingEtherQuery,
+		useExchangeRatesQuery,
+		useGlobalStakingInfoQuery,
+	} = useSynthetixQueries();
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const totalIssuedSynthsExclEth = useTotalIssuedSynthsExcludingEtherQuery(Synths.sUSD);
 	const previousFeePeriod = useGetFeePoolDataQuery('1');
-	const { currentCRatio, targetCRatio, debtBalance, collateral } = useStakingCalculations(
-		networkId
-	);
-	const useSNXLockedValue = useSNXLockedValueQuery();
-	const debtData = useGetDebtDataQuery();
+	const {
+		currentCRatio,
+		targetCRatio,
+		debtBalance,
+		collateral,
+		targetThreshold,
+	} = useStakingCalculations();
+	const globalStakingInfo = useGlobalStakingInfoQuery();
+	const debtData = useGetDebtDataQuery(walletAddress);
 	const feesToDistribute = previousFeePeriod?.data?.feesToDistribute ?? 0;
 	const rewardsToDistribute = previousFeePeriod?.data?.rewardsToDistribute ?? 0;
 	const rewardsToDistributeBN = previousFeePeriod?.data?.rewardsToDistributeBN ?? wei(0);
@@ -39,6 +47,7 @@ export const useUserStakingData = (networkId: NetworkId) => {
 	const sUSDRate = wei(exchangeRatesQuery.data?.sUSD ?? 0);
 	const SNXRate = wei(exchangeRatesQuery.data?.SNX ?? 0);
 
+	const isBelowCRatio = currentCRatio.gt(targetCRatio.mul(wei(1).add(targetThreshold)));
 	const stakedValue =
 		collateral.gt(0) && currentCRatio.gt(0)
 			? collateral.mul(Math.min(1, currentCRatio.div(targetCRatio).toNumber())).mul(SNXRate)
@@ -59,7 +68,7 @@ export const useUserStakingData = (networkId: NetworkId) => {
 		sUSDRate != null &&
 		previousFeePeriod.data != null &&
 		currentFeePeriod.data != null &&
-		useSNXLockedValue.data != null &&
+		globalStakingInfo.data != null &&
 		debtData.data != null
 	) {
 		// compute APR based using useSNXLockedValueQuery (top 1000 holders)
@@ -69,11 +78,11 @@ export const useUserStakingData = (networkId: NetworkId) => {
 					.mul(currentFeePeriod.data.feesToDistribute)
 					.add(SNXRate.mul(currentFeePeriod.data.rewardsToDistribute))
 					.mul(WEEKS_IN_YEAR)
-					.div(useSNXLockedValue.data)
+					.div(globalStakingInfo.data.lockedValue)
 					.toNumber();
 	}
 
-	const availableRewards = useClaimableRewards();
+	const availableRewards = useClaimableRewardsQuery(walletAddress);
 
 	const tradingRewards = availableRewards?.data?.tradingRewards ?? wei(0);
 	const stakingRewards = availableRewards?.data?.stakingRewards ?? wei(0);
@@ -111,6 +120,7 @@ export const useUserStakingData = (networkId: NetworkId) => {
 		tradingRewards,
 		stakingRewards,
 		debtBalance,
+		isBelowCRatio,
 	};
 };
 

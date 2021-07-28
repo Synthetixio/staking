@@ -39,7 +39,7 @@ type RowData = {
 	title: string;
 	value: Wei;
 	changedValue: Wei;
-	currencyKey: CryptoCurrency | string;
+	currencyKey?: CryptoCurrency | string;
 };
 
 type StakingInfo = {
@@ -127,7 +127,7 @@ const InfoLayout: FC<InfoLayoutProps> = ({ stakingInfo, collateral, isInputEmpty
 								<>
 									<StyledArrowRight src={ArrowRightIcon} />
 									<RowValue>
-										{formatCurrency(currencyKey, !changedValue.isNaN() ? changedValue : 0, {
+										{formatCurrency(currencyKey, !changedValue ? changedValue : 0, {
 											currencyKey: currencyKey,
 											decimals: 2,
 										})}

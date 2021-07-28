@@ -14,6 +14,7 @@ export const StyledGlowingButton = _StyledGlowingButton;
 export const DesktopWalletOptionsModal: FC<WalletOptionsProps> = ({
 	onDismiss,
 	setWatchWalletModalOpened,
+	setDelegateModalOpened,
 }) => {
 	const { t } = useTranslation();
 
@@ -23,6 +24,7 @@ export const DesktopWalletOptionsModal: FC<WalletOptionsProps> = ({
 				{...{
 					onDismiss,
 					setWatchWalletModalOpened,
+					setDelegateModalOpened,
 				}}
 			/>
 		</DesktopStyledMenuModal>
@@ -32,6 +34,7 @@ export const DesktopWalletOptionsModal: FC<WalletOptionsProps> = ({
 export const MobileWalletOptionsModal: FC<WalletOptionsProps> = ({
 	onDismiss,
 	setWatchWalletModalOpened,
+	setDelegateModalOpened,
 }) => {
 	const { t } = useTranslation();
 	return (
@@ -44,6 +47,7 @@ export const MobileWalletOptionsModal: FC<WalletOptionsProps> = ({
 				{...{
 					onDismiss,
 					setWatchWalletModalOpened,
+					setDelegateModalOpened,
 				}}
 			/>
 		</MobileStyledMenuModal>

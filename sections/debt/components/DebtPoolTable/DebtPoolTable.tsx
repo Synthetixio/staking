@@ -1,14 +1,16 @@
-import { FC, useMemo } from 'react';
+import { FC, ReactNode, useMemo } from 'react';
 import { CellProps } from 'react-table';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
+import BigNumber from 'bignumber.js';
 
 import { useRecoilValue } from 'recoil';
 
-import { TableNoResults, TableNoResultsTitle, FlexDiv } from 'styles/common';
+import { TableNoResults, TableNoResultsTitle, FlexDiv, Tooltip } from 'styles/common';
 
 import { appReadyState } from 'store/app';
 import { CryptoBalance } from 'queries/walletBalances/types';
+import { SynthTotalSupply } from 'queries/synths/useSynthsTotalSupplyQuery';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
@@ -55,13 +57,13 @@ const DebtPoolTable: FC<DebtPoolTableProps> = ({ synths, isLoading, isLoaded }) 
 			{
 				Header: <>{t('synths.assets.synths.table.total')}</>,
 				accessor: 'value',
-				Cell: (cellProps: CellProps<CryptoBalance>) => (
-					<Amount>
-						{formatFiatCurrency(cellProps.value, {
+				Cell: (cellProps: CellProps<SynthTotalSupply>) => (
+					<SkewValue skewValue={cellProps.row.original.skewValue}>
+						{formatFiatCurrency(cellProps.row.original.skewValue, {
 							sign: selectedPriceCurrency.sign,
 							decimals: 0,
 						})}
-					</Amount>
+					</SkewValue>
 				),
 				width: 100,
 				sortable: false,
@@ -98,9 +100,23 @@ const DebtPoolTable: FC<DebtPoolTableProps> = ({ synths, isLoading, isLoaded }) 
 	);
 };
 
-const Amount = styled.span`
-	color: ${(props) => props.theme.colors.white};
+const SkewValue: FC<{ children: ReactNode; skewValue: BigNumber }> = ({ children, skewValue }) => {
+	const { t } = useTranslation();
+	const isNeg = skewValue.isNegative();
+	const content = <Amount danger={isNeg}>{children}</Amount>;
+	return isNeg ? (
+		<SkewValueTooltip arrow={false} content={t('synths.assets.synths.negative-skew-warning')}>
+			{content}
+		</SkewValueTooltip>
+	) : (
+		content
+	);
+};
+
+const Amount = styled.span<{ danger?: boolean }>`
+	color: ${(props) => (props.danger ? props.theme.colors.red : props.theme.colors.white)};
 	font-family: ${(props) => props.theme.fonts.mono};
+	cursor: ${(props) => (props.danger ? 'pointer' : 'auto')};
 `;
 
 const Legend = styled(FlexDiv)`
@@ -125,6 +141,18 @@ const StyledTable = styled(Table)`
 		&:last-child {
 			justify-content: flex-end;
 		}
+	}
+`;
+
+const SkewValueTooltip = styled(Tooltip)`
+	background: ${(props) => props.theme.colors.grayBlue};
+	.tippy-arrow {
+		color: ${(props) => props.theme.colors.grayBlue};
+	}
+	.tippy-content {
+		font-size: 14px;
+		color: ${(props) => props.theme.colors.red};
+		text-align: center;
 	}
 `;
 

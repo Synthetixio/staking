@@ -6,10 +6,10 @@ import { useRecoilValue } from 'recoil';
 import { priceCurrencyState } from 'store/app';
 import useSynthetixQueries from '@synthetixio/queries';
 
-const useSelectedPriceCurrency = (networkId: NetworkId) => {
+const useSelectedPriceCurrency = () => {
 	const selectedPriceCurrency = useRecoilValue(priceCurrencyState);
 
-	const { useExchangeRatesQuery } = useSynthetixQueries({ networkId });
+	const { useExchangeRatesQuery } = useSynthetixQueries();
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const exchangeRates = exchangeRatesQuery.data ?? null;
 	const selectPriceCurrencyRate = exchangeRates && exchangeRates[selectedPriceCurrency.name];

@@ -1,19 +1,30 @@
 import { FC } from 'react';
 import { Trans } from 'react-i18next';
 import styled from 'styled-components';
-
-import useGetLiquidationData from 'queries/liquidations/useGetLiquidationDataQuery';
-import useGetDebtDataQuery from 'queries/debt/useGetDebtDataQuery';
+import { useRecoilValue } from 'recoil';
 
 import Banner, { BannerType } from 'sections/shared/Layout/Banner';
 import { LOCAL_STORAGE_KEYS } from 'constants/storage';
 import { ExternalLink } from 'styles/common';
 import { formatShortDateWithTime } from 'utils/formatters/date';
 import { wei } from '@synthetixio/wei';
+import { isL2State, walletAddressState } from 'store/wallet';
+import useSynthetixQueries from '@synthetixio/queries';
+import { snapshotEndpoint } from 'constants/snapshot';
 
 const BannerManager: FC = () => {
-	const liquidationData = useGetLiquidationData();
-	const debtData = useGetDebtDataQuery();
+	const {
+		useGetLiquidationDataQuery,
+		useGetDebtDataQuery,
+		useHasVotedForElectionsQuery,
+	} = useSynthetixQueries();
+
+	const walletAddress = useRecoilValue(walletAddressState);
+
+	const liquidationData = useGetLiquidationDataQuery(walletAddress);
+	const debtData = useGetDebtDataQuery(walletAddress);
+	const hasVotedForElectionsQuery = useHasVotedForElectionsQuery(snapshotEndpoint, walletAddress);
+	const isL2 = useRecoilValue(isL2State);
 
 	const issuanceRatio = debtData?.data?.targetCRatio ?? wei(0);
 	const cRatio = debtData?.data?.currentCRatio ?? wei(0);
@@ -40,6 +51,18 @@ const BannerManager: FC = () => {
 							<Strong />,
 							<StyledExternalLink href="https://blog.synthetix.io/liquidation-faqs" />,
 						]}
+					/>
+				}
+			/>
+		);
+	} else if (!isL2 && hasVotedForElectionsQuery.data && !hasVotedForElectionsQuery.data.hasVoted) {
+		return (
+			<Banner
+				type={BannerType.WARNING}
+				message={
+					<Trans
+						i18nKey={'user-menu.banner.election-info'}
+						components={[<StyledExternalLink href="https://staking.synthetix.io/gov" />]}
 					/>
 				}
 			/>

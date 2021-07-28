@@ -15,6 +15,7 @@ import { networkState, walletAddressState } from 'store/wallet';
 import TabContent from './TabContent';
 import { normalizedGasPrice } from 'utils/network';
 import Wei, { wei } from '@synthetixio/wei';
+import useGetWithdrawalsIsActiveQuery from 'queries/withdrawals/useGetWithdrawalsIsActiveQuery';
 
 const WithdrawTab = () => {
 	const networkId = useRecoilValue(networkState)!.id;
@@ -23,6 +24,7 @@ const WithdrawTab = () => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const depositsDataQuery = useGetWithdrawalsDataQuery();
+	const withdrawalsInactive = !useGetWithdrawalsIsActiveQuery().data;
 
 	const [gasLimitEstimate, setGasLimitEstimate] = useState<GasLimitEstimate>(null);
 	const [depositTxError, setDepositTxError] = useState<string | null>(null);
@@ -109,6 +111,7 @@ const WithdrawTab = () => {
 				txHash={txHash}
 				transactionState={transactionState}
 				setTransactionState={setTransactionState}
+				bridgeInactive={withdrawalsInactive}
 			/>
 		</StyledTabContainer>
 	);

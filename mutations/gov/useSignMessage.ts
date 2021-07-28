@@ -1,11 +1,10 @@
 import { useRecoilValue } from 'recoil';
-import { useMutation, useQueryCache } from 'react-query';
+import { useMutation } from 'react-query';
 import axios from 'axios';
 
 import { MESSAGE_URL, SPACE_KEY } from 'constants/snapshot';
 import { walletAddressState } from 'store/wallet';
 import Connector from 'containers/Connector';
-import QUERY_KEYS from 'constants/queryKeys';
 import { ethers } from 'ethers';
 
 type VotePayload = {
@@ -22,6 +21,8 @@ type ProposalPayload = {
 	end: number;
 	snapshot: number;
 	metadata: {
+		plugins: any;
+		network: string;
 		strategies: {
 			name: string;
 			params: {
@@ -31,6 +32,7 @@ type ProposalPayload = {
 			};
 		}[];
 	};
+	type: string;
 };
 
 export enum SignatureType {
@@ -47,7 +49,6 @@ type SignaturePayload = {
 const useSignMessage = () => {
 	const { signer } = Connector.useContainer();
 	const walletAddress = useRecoilValue(walletAddressState);
-	const queryCache = useQueryCache();
 
 	return useMutation(
 		async (payload: SignaturePayload) => {
@@ -75,7 +76,7 @@ const useSignMessage = () => {
 		},
 		{
 			onSuccess: () => {
-				queryCache.invalidateQueries(QUERY_KEYS.Gov.Proposal);
+				//queryCache.invalidateQueries(QUERY_KEYS.Gov.Proposal);
 			},
 			onError: (e: any) => {
 				return e;

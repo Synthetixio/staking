@@ -8,7 +8,7 @@ import { useRouter } from 'next/router';
 import { useRecoilValue } from 'recoil';
 
 import { appReadyState } from 'store/app';
-import { isWalletConnectedState, isL2State, networkState } from 'store/wallet';
+import { isWalletConnectedState, isL2State, delegateWalletState } from 'store/wallet';
 import ROUTES from 'constants/routes';
 import { ExternalLink, FlexDiv, GlowingCircle, IconButton, FlexDivJustifyEnd } from 'styles/common';
 import media from 'styles/media';
@@ -23,6 +23,7 @@ import TransactionNotifier from 'containers/TransactionNotifier';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import useClaimedStatus from 'sections/hooks/useClaimedStatus';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
+import useUserStakingData from 'hooks/useUserStakingData';
 
 import { DEFAULT_CRYPTO_DECIMALS, DEFAULT_FIAT_DECIMALS } from 'constants/defaults';
 import { formatCurrency, formatFiatCurrency, formatNumber } from 'utils/formatters/number';
@@ -70,6 +71,7 @@ import {
 	HeaderLabel,
 } from '../common';
 import { MobileOnlyView } from 'components/Media';
+import useHasVotedForElectionsQuery from 'queries/gov/useHasVotedForElectionsQuery';
 
 type ClaimTabProps = {
 	tradingRewards: Wei;
@@ -79,26 +81,30 @@ type ClaimTabProps = {
 
 const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, totalRewards }) => {
 	const { t } = useTranslation();
-	const networkId = useRecoilValue(networkState)!.id;
 	const claimed = useClaimedStatus();
+	const { isBelowCRatio } = useUserStakingData();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const { blockExplorerInstance } = Etherscan.useContainer();
-	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency(networkId);
+	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
+	const isL2 = useRecoilValue(isL2State);
+	const isWalletConnected = useRecoilValue(isWalletConnectedState);
+	const delegateWallet = useRecoilValue(delegateWalletState);
+	const isAppReady = useRecoilValue(appReadyState);
+	const router = useRouter();
+
 	const [gasLimitEstimate, setGasLimitEstimate] = useState<GasLimitEstimate>(null);
 	const [gasPrice, setGasPrice] = useState<number>(0);
 	const [error, setError] = useState<string | null>(null);
-	const [lowCRatio, setLowCRatio] = useState(false);
+	const [lowCRatio, setLowCRatio] = useState<boolean>(false);
 	const [claimedTradingRewards, setClaimedTradingRewards] = useState<number | null>(null);
 	const [claimedStakingRewards, setClaimedStakingRewards] = useState<number | null>(null);
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	const isL2 = useRecoilValue(isL2State);
-	const router = useRouter();
-	const isAppReady = useRecoilValue(appReadyState);
-
 	const [isCloseFeePeriodEnabled, setIsCloseFeePeriodEnabled] = useState<boolean>(false);
 	const [transactionState, setTransactionState] = useState<Transaction>(Transaction.PRESUBMIT);
 	const [txHash, setTxHash] = useState<string | null>(null);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
+
+	const hasVotedForElections = useHasVotedForElectionsQuery();
+
 	const link =
 		blockExplorerInstance != null && txHash != null
 			? blockExplorerInstance.txLink(txHash)
@@ -133,30 +139,47 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 	useEffect(() => {
 		const getGasLimitEstimate = async () => {
 			if (isAppReady && isWalletConnected) {
+				if (isBelowCRatio) {
+					setLowCRatio(true);
+					return;
+				}
 				try {
 					setError(null);
+					if (delegateWallet && !delegateWallet.canClaim) {
+						throw new Error(t('staking.actions.mint.action.error.delegate-cannot-claim'));
+					}
 					const {
 						contracts: { FeePool },
 					} = synthetix.js!;
 
 					let gasEstimate = await synthetix.getGasEstimateForTransaction({
-						txArgs: [],
-						method: FeePool.estimateGas.claimFees,
+						txArgs: delegateWallet ? [delegateWallet.address] : [],
+						method: delegateWallet
+							? FeePool.estimateGas.claimOnBehalf
+							: FeePool.estimateGas.claimFees,
 					});
 
 					setGasLimitEstimate(gasEstimate);
 				} catch (error) {
-					if (error.message.includes('below penalty threshold')) {
-						setLowCRatio(true);
-					} else if (!error.message.includes('already claimed')) {
-						setError(error.message);
+					if (isL2 && error.data) {
+						if (error.data.message.includes('below penalty threshold')) {
+							setLowCRatio(true);
+						} else if (!error.data.message.includes('already claimed')) {
+							setError(error.data.message);
+						}
+					} else {
+						if (error.message.includes('below penalty threshold')) {
+							setLowCRatio(true);
+						} else if (!error.message.includes('already claimed')) {
+							setError(error.message);
+						}
 					}
 					setGasLimitEstimate(null);
 				}
 			}
 		};
 		getGasLimitEstimate();
-	}, [isAppReady, isWalletConnected]);
+	}, [isAppReady, isWalletConnected, isBelowCRatio, delegateWallet, t, isL2]);
 
 	const handleClaim = useCallback(() => {
 		async function claim() {
@@ -169,13 +192,20 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 					} = synthetix.js!;
 
 					const gasLimit = await synthetix.getGasEstimateForTransaction({
-						txArgs: [],
-						method: FeePool.estimateGas.claimFees,
+						txArgs: delegateWallet ? [delegateWallet.address] : [],
+						method: delegateWallet
+							? FeePool.estimateGas.claimOnBehalf
+							: FeePool.estimateGas.claimFees,
 					});
-					const transaction: ethers.ContractTransaction = await FeePool.claimFees({
-						gasPrice: normalizedGasPrice(gasPrice),
-						gasLimit,
-					});
+					const transaction: ethers.ContractTransaction = delegateWallet
+						? await FeePool.claimOnBehalf(delegateWallet.address, {
+								gasPrice: normalizedGasPrice(gasPrice),
+								gasLimit,
+						  })
+						: await FeePool.claimFees({
+								gasPrice: normalizedGasPrice(gasPrice),
+								gasLimit,
+						  });
 
 					if (transaction) {
 						setTxHash(transaction.hash);
@@ -192,12 +222,24 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 					}
 				} catch (e) {
 					setTransactionState(Transaction.PRESUBMIT);
-					setError(e.message);
+					if (isL2) {
+						setError(e?.data?.message ?? e.message);
+					} else {
+						setError(e.message);
+					}
 				}
 			}
 		}
 		claim();
-	}, [gasPrice, monitorTransaction, tradingRewards, stakingRewards, isAppReady]);
+	}, [
+		gasPrice,
+		monitorTransaction,
+		tradingRewards,
+		stakingRewards,
+		isAppReady,
+		delegateWallet,
+		isL2,
+	]);
 
 	const goToBurn = useCallback(() => router.push(ROUTES.Staking.Burn), [router]);
 	const goToEarn = useCallback(() => router.push(ROUTES.Earn.Home), [router]);
@@ -401,19 +443,27 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 						disabled={!canClaim || !lowCRatio}
 					>
 						<PaddedButtonContainer>
-							<PaddedButton
-								variant="primary"
-								onClick={canClaim && lowCRatio ? goToBurn : handleClaim}
-								disabled={!canClaim || lowCRatio}
-							>
-								{claimed
-									? t('earn.actions.claim.claimed-button')
-									: lowCRatio && totalRewards.toNumber() > 0
-									? t('earn.actions.claim.low-ratio')
-									: totalRewards.toNumber() > 0
-									? t('earn.actions.claim.claim-button')
-									: t('earn.actions.claim.nothing-to-claim')}
-							</PaddedButton>
+							{hasVotedForElections.data && !hasVotedForElections.data.hasVoted ? (
+								<PaddedButton variant="primary" onClick={() => router.push(ROUTES.Gov.Home)}>
+									{t('earn.actions.claim.not-voted')}
+								</PaddedButton>
+							) : lowCRatio ? (
+								<PaddedButton variant="primary" onClick={goToBurn}>
+									{t('earn.actions.claim.low-ratio')}
+								</PaddedButton>
+							) : (
+								<PaddedButton
+									variant="primary"
+									onClick={handleClaim}
+									disabled={!canClaim || !!(delegateWallet && !delegateWallet.canClaim)}
+								>
+									{claimed
+										? t('earn.actions.claim.claimed-button')
+										: totalRewards.toNumber() > 0
+										? t('earn.actions.claim.claim-button')
+										: t('earn.actions.claim.nothing-to-claim')}
+								</PaddedButton>
+							)}
 							{isCloseFeePeriodEnabled ? (
 								<PaddedButton variant="primary" onClick={handleCloseFeePeriod}>
 									{t('earn.actions.claim.close-fee-period')}

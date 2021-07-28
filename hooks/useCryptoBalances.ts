@@ -4,11 +4,12 @@ import { orderBy } from 'lodash';
 import { CryptoCurrency, Synths } from 'constants/currency';
 import { assetToSynth } from 'utils/currencies';
 
-import useGetDebtDataQuery from 'queries/debt/useGetDebtDataQuery';
 import useSynthetixQueries from '@synthetixio/queries';
 import { NetworkId } from '@synthetixio/contracts-interface';
 import Wei, { wei } from '@synthetixio/wei';
 import { renBTCToken, wBTCToken, wETHToken } from 'contracts';
+import { useRecoilValue } from 'recoil';
+import { networkState } from 'store/wallet';
 
 const { ETH, WETH, SNX, BTC, WBTC, RENBTC } = CryptoCurrency;
 
@@ -20,8 +21,14 @@ export type CryptoBalance = {
 	transferrable?: Wei;
 };
 
-const useCryptoBalances = (networkId: NetworkId, walletAddress: string) => {
-	const { useTokensBalancesQuery, useExchangeRatesQuery } = useSynthetixQueries({ networkId });
+const useCryptoBalances = (walletAddress: string | null) => {
+	const {
+		useTokensBalancesQuery,
+		useExchangeRatesQuery,
+		useGetDebtDataQuery,
+	} = useSynthetixQueries();
+
+	const networkId = useRecoilValue(networkState);
 
 	const balancesQuery = useTokensBalancesQuery(
 		[
@@ -29,14 +36,17 @@ const useCryptoBalances = (networkId: NetworkId, walletAddress: string) => {
 			{ symbol: 'SNX', address: '' },
 			{ symbol: 'WBTC', address: wBTCToken.address },
 			{ symbol: 'WETH', address: wETHToken.address },
-			{ symbol: 'renBTC', address: renBTCToken.ADDRESSES[networkId] },
+			{
+				symbol: 'renBTC',
+				address: renBTCToken.ADDRESSES[networkId?.name || NetworkId.Mainnet.toString()],
+			},
 		],
 		walletAddress
 	);
 
 	const exchangeRatesQuery = useExchangeRatesQuery();
 
-	const debtQuery = useGetDebtDataQuery();
+	const debtQuery = useGetDebtDataQuery(walletAddress);
 
 	const exchangeRates = exchangeRatesQuery.data ?? null;
 

@@ -67,6 +67,7 @@ export type EarnItem = {
 	route: string;
 	externalLink?: string;
 	dualRewards?: boolean;
+	neverExpires?: boolean;
 };
 
 type IncentivesTableProps = {
@@ -229,32 +230,37 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab }
 			{
 				Header: <>{t('earn.incentives.options.time-left.title')}</>,
 				accessor: 'periodFinish',
-				Cell: (cellProps: CellProps<EarnItem, EarnItem['periodFinish']>) => (
-					<CellContainer style={{ width: '100%' }}>
-						<StyledProgressBar
-							percentage={
-								(cellProps.row.original.now - cellProps.row.original.periodStarted) /
-								(cellProps.row.original.periodFinish - cellProps.row.original.periodStarted)
-							}
-							variant="rainbow"
-						/>
-						<Subtitle>
-							<Countdown
-								date={cellProps.value}
-								renderer={({ days, hours, minutes, seconds }) => {
-									const duration = [
-										`${days}${t('common.time.days')}`,
-										`${hours}${t('common.time.hours')}`,
-										`${minutes}${t('common.time.minutes')}`,
-										`${seconds}${t('common.time.seconds')}`,
-									];
-
-									return <span>{duration.join(DURATION_SEPARATOR)}</span>;
-								}}
+				Cell: (cellProps: CellProps<EarnItem, EarnItem['periodFinish']>) => {
+					if (cellProps.row.original.neverExpires) {
+						return <Subtitle>{t('earn.incentives.options.time-left.does-not-expire')}</Subtitle>;
+					}
+					return (
+						<CellContainer style={{ width: '100%' }}>
+							<StyledProgressBar
+								percentage={
+									(cellProps.row.original.now - cellProps.row.original.periodStarted) /
+									(cellProps.row.original.periodFinish - cellProps.row.original.periodStarted)
+								}
+								variant="rainbow"
 							/>
-						</Subtitle>
-					</CellContainer>
-				),
+							<Subtitle>
+								<Countdown
+									date={cellProps.value}
+									renderer={({ days, hours, minutes, seconds }) => {
+										const duration = [
+											`${days}${t('common.time.days')}`,
+											`${hours}${t('common.time.hours')}`,
+											`${minutes}${t('common.time.minutes')}`,
+											`${seconds}${t('common.time.seconds')}`,
+										];
+
+										return <span>{duration.join(DURATION_SEPARATOR)}</span>;
+									}}
+								/>
+							</Subtitle>
+						</CellContainer>
+					);
+				},
 				width: 120,
 				sortable: true,
 			},

@@ -9,14 +9,14 @@ import { formatCurrency } from 'utils/formatters/number';
 
 import { ContainerRow } from '../common';
 import { DEFAULT_FIAT_DECIMALS } from 'constants/defaults';
-import { wei, WeiSource } from '@synthetixio/wei';
+import Wei, { wei } from '@synthetixio/wei';
 
 type CurrencyPriceProps = {
 	currencyKey: CurrencyKey;
-	price: WeiSource;
+	price: Wei | string | number;
 	sign?: string;
 	change?: number;
-	conversionRate?: WeiSource | null;
+	conversionRate?: Wei | string | number | null;
 };
 
 export const CurrencyPrice: FC<CurrencyPriceProps> = ({

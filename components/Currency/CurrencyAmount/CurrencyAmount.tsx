@@ -6,15 +6,15 @@ import { formatCurrency } from 'utils/formatters/number';
 import { CurrencyKey } from 'constants/currency';
 
 import { ContainerRow } from '../common';
-import { wei, WeiSource } from '@synthetixio/wei';
+import Wei, { wei } from '@synthetixio/wei';
 
 type CurrencyAmountProps = {
 	amountCurrencyKey: CurrencyKey;
-	amount: WeiSource;
+	amount: Wei | number | string;
 	valueCurrencyKey: CurrencyKey;
-	totalValue: WeiSource;
+	totalValue: Wei | number | string;
 	sign?: string;
-	conversionRate?: WeiSource | null;
+	conversionRate?: Wei | number | string | null;
 	showTotalValue?: boolean;
 };
 
