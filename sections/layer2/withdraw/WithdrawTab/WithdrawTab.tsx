@@ -6,7 +6,6 @@ import { TabContainer } from '../../components/common';
 import { Transaction, GasLimitEstimate } from 'constants/network';
 
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
-import useGetWithdrawalsDataQuery from 'queries/withdrawals/useGetWithdrawalsDataQuery';
 import synthetix from 'lib/synthetix';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import { appReadyState } from 'store/app';
@@ -15,16 +14,19 @@ import { networkState, walletAddressState } from 'store/wallet';
 import TabContent from './TabContent';
 import { normalizedGasPrice } from 'utils/network';
 import Wei, { wei } from '@synthetixio/wei';
-import useGetWithdrawalsIsActiveQuery from 'queries/withdrawals/useGetWithdrawalsIsActiveQuery';
+import useSynthetixQueries from '@synthetixio/queries';
 
 const WithdrawTab = () => {
 	const networkId = useRecoilValue(networkState)!.id;
-	const { transferableCollateral } = useStakingCalculations(networkId);
+	const { transferableCollateral } = useStakingCalculations();
 	const walletAddress = useRecoilValue(walletAddressState);
 	const isAppReady = useRecoilValue(appReadyState);
 	const { monitorTransaction } = TransactionNotifier.useContainer();
-	const depositsDataQuery = useGetWithdrawalsDataQuery();
-	const withdrawalsInactive = !useGetWithdrawalsIsActiveQuery().data;
+
+	const { useGetBridgeDataQuery, useIsActiveQuery } = useSynthetixQueries();
+
+	const depositsDataQuery = useGetBridgeDataQuery(walletAddress);
+	const withdrawalsInactive = !useIsActiveQuery().data;
 
 	const [gasLimitEstimate, setGasLimitEstimate] = useState<GasLimitEstimate>(null);
 	const [depositTxError, setDepositTxError] = useState<string | null>(null);

@@ -23,12 +23,7 @@ const CRatioBarStats: FC = () => {
 				<BarTitle>{t('sidenav.bars.c-ratio')}</BarTitle>
 				<BarValue>{formatPercent(percentageCurrentCRatio)}</BarValue>
 			</BarHeaderSection>
-			<StyledProgressBar
-				percentage={
-					percentCurrentCRatioOfTarget.isNaN() ? 0 : percentCurrentCRatioOfTarget.toNumber()
-				}
-				variant="blue-pink"
-			/>
+			<StyledProgressBar percentage={percentCurrentCRatioOfTarget.toNumber()} variant="blue-pink" />
 			<BarHeaderSection>
 				<BarTitle>{t('sidenav.bars.t-ratio')}</BarTitle>
 				<StyledBarValue>{formatPercent(percentageTargetCRatio)}</StyledBarValue>

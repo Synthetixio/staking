@@ -4,22 +4,22 @@ import { useTranslation, Trans } from 'react-i18next';
 
 import BaseModal from 'components/BaseModal';
 import { InputsDivider, ButtonTransaction } from 'components/Form/common';
-import AssetInput from 'components/Form/AssetInput';
+import AssetInput, { Asset } from 'components/Form/AssetInput';
 import TextInput from 'components/Form/TextInput';
 import { FlexDivColCentered, FlexDivCentered } from 'styles/common';
 
-import { Asset } from 'queries/walletBalances/types';
 import { GasLimitEstimate } from 'constants/network';
 import GasSelector from 'components/GasSelector';
 import { isSynth, synthToContractName } from 'utils/currencies';
 import synthetix from 'lib/synthetix';
 import { CryptoCurrency } from 'constants/currency';
-import { toBigNumber, formatNumber } from 'utils/formatters/number';
+import { formatNumber } from 'utils/formatters/number';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import { ModalContent, ModalItem, ModalItemTitle, ModalItemText } from 'styles/common';
 
 import { truncateAddress } from 'utils/formatters/string';
 import { normalizedGasPrice } from 'utils/network';
+import { wei } from '@synthetixio/wei';
 
 type TransferModalProps = {
 	onDismiss: () => void;
@@ -79,7 +79,7 @@ const TransferModal: FC<TransferModalProps> = ({
 			try {
 				setGasEstimateError(null);
 				if (!isAddress(walletAddress)) throw new Error(t('synths.transfer.error.invalid-address'));
-				if (wei(amount).isGreaterThan(currentAsset.balance))
+				if (wei(amount).gt(currentAsset.balance))
 					throw new Error(t('synths.transfer.error.insufficient-balance'));
 
 				const transferFunction = getTransferFunctionForAsset({ isEstimate: true });

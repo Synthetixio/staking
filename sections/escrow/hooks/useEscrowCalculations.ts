@@ -1,7 +1,8 @@
 import { useMemo } from 'react';
-import useEscrowDataQuery from 'queries/escrow/useEscrowDataQuery';
-import useTokenSaleEscrowDateQuery from 'queries/escrow/useTokenSaleEscrowQuery';
 import Wei, { wei } from '@synthetixio/wei';
+import { useRecoilValue } from 'recoil';
+import { walletAddressState } from 'store/wallet';
+import useSynthetixQueries from '@synthetixio/queries';
 
 type EscrowCalculations = {
 	totalEscrowBalance: Wei;
@@ -9,8 +10,12 @@ type EscrowCalculations = {
 	totalVestedBalance: Wei;
 };
 const useStakingCalculations = (): EscrowCalculations => {
-	const rewardEscrowQuery = useEscrowDataQuery();
-	const tokenSaleEscrowQuery = useTokenSaleEscrowDateQuery();
+	const walletAddress = useRecoilValue(walletAddressState);
+
+	const { useTokenSaleEscrowQuery, useEscrowDataQuery } = useSynthetixQueries();
+
+	const rewardEscrowQuery = useEscrowDataQuery(walletAddress);
+	const tokenSaleEscrowQuery = useTokenSaleEscrowQuery(walletAddress);
 
 	const rewardsEscrow = rewardEscrowQuery.data ?? null;
 	const tokenSaleEscrow = tokenSaleEscrowQuery.data ?? null;

@@ -9,24 +9,28 @@ import { TabContainer } from '../../components/common';
 import { Transaction, GasLimitEstimate } from 'constants/network';
 import { normalizedGasPrice } from 'utils/network';
 
-import useEscrowDataQuery from 'queries/escrow/useEscrowDataQuery';
 import { appReadyState } from 'store/app';
 import { walletAddressState, isEOAWalletState } from 'store/wallet';
 
 import TabContent from './TabContent';
+import useSynthetixQueries from '@synthetixio/queries';
+import { wei } from '@synthetixio/wei';
 
 const MigrateTab = () => {
 	const { t } = useTranslation();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
-	const escrowDataQuery = useEscrowDataQuery();
-	const claimableAmount = escrowDataQuery?.data?.claimableAmount ?? 0;
-	const escrowData = escrowDataQuery?.data ?? null;
-	const totalEscrowed = escrowData?.totalEscrowed ?? 0;
-	const entryIds = useMemo(() => escrowData?.claimableEntryIdsInChunk ?? [], [escrowData]);
 
 	const walletAddress = useRecoilValue(walletAddressState);
 	const isAppReady = useRecoilValue(appReadyState);
 	const isEOAWallet = useRecoilValue(isEOAWalletState);
+
+	const { useEscrowDataQuery } = useSynthetixQueries();
+
+	const escrowDataQuery = useEscrowDataQuery(walletAddress);
+	const claimableAmount = escrowDataQuery?.data?.claimableAmount ?? wei(0);
+	const escrowData = escrowDataQuery?.data ?? null;
+	const totalEscrowed = escrowData?.totalEscrowed ?? wei(0);
+	const entryIds = useMemo(() => escrowData?.claimableEntryIdsInChunk ?? [], [escrowData]);
 
 	const [gasLimitEstimate, setGasLimitEstimate] = useState<GasLimitEstimate>(null);
 	const [depositTxError, setMigrationTxError] = useState<string | null>(null);

@@ -12,7 +12,7 @@ import { isWalletConnectedState } from 'store/wallet';
 import StatsSection from 'components/StatsSection';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import { formatFiatCurrency, formatPercent, toBigNumber } from 'utils/formatters/number';
+import { formatFiatCurrency, formatPercent } from 'utils/formatters/number';
 import ProgressBar from 'components/ProgressBar';
 import StakedValue from 'sections/shared/modals/StakedValueModal/StakedValueBox';
 import ActiveDebt from 'sections/shared/modals/DebtValueModal/DebtValueBox';
@@ -43,12 +43,9 @@ const L2Page: FC = () => {
 			<StatsSection>
 				<StakedValue
 					title={t('common.stat-box.staked-value')}
-					value={formatFiatCurrency(
-						getPriceAtCurrentRate(stakedCollateralValue.isNaN() ? wei(0) : stakedCollateralValue),
-						{
-							sign: selectedPriceCurrency.sign,
-						}
-					)}
+					value={formatFiatCurrency(getPriceAtCurrentRate(stakedCollateralValue), {
+						sign: selectedPriceCurrency.sign,
+					})}
 				/>
 				<CRatio
 					title={t('common.stat-box.c-ratio')}
@@ -57,19 +54,14 @@ const L2Page: FC = () => {
 				>
 					<CRatioProgressBar
 						variant="blue-pink"
-						percentage={
-							percentCurrentCRatioOfTarget.isNaN() ? 0 : percentCurrentCRatioOfTarget.toNumber()
-						}
+						percentage={percentCurrentCRatioOfTarget.toNumber()}
 					/>
 				</CRatio>
 				<ActiveDebt
 					title={t('common.stat-box.active-debt')}
-					value={formatFiatCurrency(
-						getPriceAtCurrentRate(debtBalance.isNaN() ? wei(0) : debtBalance),
-						{
-							sign: selectedPriceCurrency.sign,
-						}
-					)}
+					value={formatFiatCurrency(getPriceAtCurrentRate(debtBalance), {
+						sign: selectedPriceCurrency.sign,
+					})}
 					isPink
 				/>
 			</StatsSection>

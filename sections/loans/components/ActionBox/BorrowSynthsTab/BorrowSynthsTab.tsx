@@ -106,7 +106,7 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 
 	const [cratio, setCRatio] = useState(wei(0));
 
-	const { useExchangeRatesQuery } = useSynthetixQueries({ networkId });
+	const { useExchangeRatesQuery } = useSynthetixQueries();
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const exchangeRates = exchangeRatesQuery.data ?? null;
 

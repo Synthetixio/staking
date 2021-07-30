@@ -9,9 +9,9 @@ import Currency from 'components/Currency';
 import UIContainer from 'containers/UI';
 import { Loan } from 'queries/loans/types';
 import Loans from 'containers/Loans';
-import { formatUnits } from 'utils/formatters/number';
 import ModifyLoanMenu from './ModifyLoanMenu';
 import { DesktopOrTabletView, MobileOnlyView } from 'components/Media';
+import { formatNumber, formatPercent } from 'utils/formatters/number';
 
 const SMALL_COL_WIDTH = 80;
 
@@ -35,7 +35,7 @@ const LoanList: FC<LoanListProps> = ({ actions }) => {
 					return (
 						<CurrencyIconContainer>
 							<Currency.Name currencyKey={loan.debtAsset} showIcon={true} />
-							{formatUnits(loan.amount, 18, 2)}
+							{formatNumber(loan.amount, { decimals: 2 })}
 						</CurrencyIconContainer>
 					);
 				},
@@ -49,7 +49,7 @@ const LoanList: FC<LoanListProps> = ({ actions }) => {
 					return (
 						<CurrencyIconContainer>
 							<Currency.Name currencyKey={loan.collateralAsset} showIcon={true} />
-							{formatUnits(loan.collateral, 18, 2)}
+							{formatNumber(loan.collateral, { decimals: 2 })}
 						</CurrencyIconContainer>
 					);
 				},
@@ -61,7 +61,7 @@ const LoanList: FC<LoanListProps> = ({ actions }) => {
 				width: SMALL_COL_WIDTH,
 				Cell: (cellProps: CellProps<Loan>) => {
 					const loan = cellProps.row.original;
-					return <div>{formatUnits(loan.cratio.toString(), 18 - 2, 0)}%</div>;
+					return <div>{formatPercent(loan.cratio)}%</div>;
 				},
 			},
 			{
@@ -87,7 +87,7 @@ const LoanList: FC<LoanListProps> = ({ actions }) => {
 					const loan = cellProps.row.original;
 					return (
 						<CurrencyIconContainer>
-							{formatUnits(loan.amount, 18, 2)} {loan.debtAsset}
+							{formatNumber(loan.amount, { decimals: 2 })} {loan.debtAsset}
 						</CurrencyIconContainer>
 					);
 				},
@@ -100,7 +100,7 @@ const LoanList: FC<LoanListProps> = ({ actions }) => {
 					const loan = cellProps.row.original;
 					return (
 						<CurrencyIconContainer>
-							{formatUnits(loan.collateral, 18, 2)} {loan.collateralAsset}
+							{formatNumber(loan.collateral, { decimals: 2 })} {loan.collateralAsset}
 						</CurrencyIconContainer>
 					);
 				},

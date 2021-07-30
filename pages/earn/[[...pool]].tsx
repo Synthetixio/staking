@@ -4,7 +4,6 @@ import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { LineSpacer } from 'styles/common';
-import sumBy from 'lodash/sumBy';
 
 import UIContainer from 'containers/UI';
 import { Incentives } from 'sections/earn';
@@ -12,16 +11,20 @@ import StatBox from 'components/StatBox';
 import StatsSection from 'components/StatsSection';
 import useUserStakingData from 'hooks/useUserStakingData';
 
-import { formatFiatCurrency, formatPercent, toBigNumber } from 'utils/formatters/number';
-
-import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
-import useFeeClaimHistoryQuery from 'queries/staking/useFeeClaimHistoryQuery';
+import { formatFiatCurrency, formatPercent } from 'utils/formatters/number';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import useSynthetixQueries from '@synthetixio/queries';
+import { useRecoilValue } from 'recoil';
+import { walletAddressState } from 'store/wallet';
+import { wei } from '@synthetixio/wei';
 
 const Earn: FC = () => {
 	const { t } = useTranslation();
 	const { setTitle } = UIContainer.useContainer();
+
+	const walletAddress = useRecoilValue(walletAddressState);
+	const { useExchangeRatesQuery, useFeeClaimHistoryQuery } = useSynthetixQueries();
 
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
@@ -31,30 +34,31 @@ const Earn: FC = () => {
 		tradingRewards,
 		stakingRewards,
 		hasClaimed,
-	} = useUserStakingData();
+	} = useUserStakingData(walletAddress);
 
-	const SNXRate = exchangeRatesQuery.data?.SNX ?? 0;
+	const SNXRate = exchangeRatesQuery.data?.SNX ?? wei(0);
 
 	const totalRewards = tradingRewards.add(stakingRewards.mul(SNXRate));
 
-	const feeClaimHistoryQuery = useFeeClaimHistoryQuery();
+	const feeClaimHistoryQuery = useFeeClaimHistoryQuery(walletAddress);
 
 	const feeClaimHistory = useMemo(() => feeClaimHistoryQuery.data ?? [], [
 		feeClaimHistoryQuery.data,
 	]);
 
-	const totalFees = useMemo(
-		() =>
-			wei(
-				sumBy(feeClaimHistory, (claim) => {
-					const usdAmount = claim.value;
-					const snxAmount = claim.rewards ?? 0;
-					const snxUsdValue = snxAmount * SNXRate;
-					return usdAmount + snxUsdValue;
-				})
-			),
-		[feeClaimHistory, SNXRate]
-	);
+	const totalFees = useMemo(() => {
+		let total = wei(0);
+
+		feeClaimHistory.forEach((claim) => {
+			const usdAmount = claim.value;
+			const snxAmount = claim.rewards ?? wei(0);
+			const snxUsdValue = snxAmount.mul(SNXRate);
+
+			total = total.add(usdAmount.mul(snxUsdValue));
+		});
+
+		return total;
+	}, [feeClaimHistory, SNXRate]);
 
 	// header title
 	useEffect(() => {
@@ -91,7 +95,7 @@ const Earn: FC = () => {
 				stakingRewards={stakingRewards}
 				totalRewards={totalRewards}
 				stakingAPR={stakingAPR}
-				stakedAmount={stakedValue.div(SNXRate).toNumber()}
+				stakedAmount={stakedValue.div(SNXRate)}
 				hasClaimed={hasClaimed}
 			/>
 		</>

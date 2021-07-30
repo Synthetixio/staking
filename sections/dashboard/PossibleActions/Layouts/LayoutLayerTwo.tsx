@@ -23,16 +23,17 @@ import useUserStakingData from 'hooks/useUserStakingData';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 
 import { ActionsContainer as Container } from './common-styles';
-import { NetworkId } from '../../../../../js-monorepo/packages/queries/node_modules/@synthetixio/contracts-interface/build/node';
 import { wei } from '@synthetixio/wei';
+import { useRecoilValue } from 'recoil';
+import { walletAddressState } from 'store/wallet';
 
 const LayoutLayerTwo: FC = () => {
 	const { t } = useTranslation();
 
-	const networkId = NetworkId['Mainnet-Ovm'];
+	const walletAddress = useRecoilValue(walletAddressState);
 
-	const { stakingRewards, tradingRewards } = useUserStakingData(networkId);
-	const { currentCRatio, targetCRatio } = useStakingCalculations(networkId);
+	const { stakingRewards, tradingRewards } = useUserStakingData(walletAddress);
+	const { currentCRatio, targetCRatio } = useStakingCalculations();
 
 	const gridItems: GridBoxProps[] = useMemo(() => {
 		const aboveTargetCRatio = currentCRatio.lte(targetCRatio);

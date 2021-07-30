@@ -1,18 +1,23 @@
 import { useMemo } from 'react';
 
-import useGetDebtDataQuery from 'queries/debt/useGetDebtDataQuery';
-import useTokenSaleEscrowDateQuery from 'queries/escrow/useTokenSaleEscrowQuery';
-import useEscrowDataQuery from 'queries/escrow/useEscrowDataQuery';
 import useSynthetixQueries from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
+import { useRecoilValue } from 'recoil';
+import { walletAddressState } from 'store/wallet';
 
 const useStakingCalculations = () => {
-	const { useExchangeRatesQuery } = useSynthetixQueries();
+	const walletAddress = useRecoilValue(walletAddressState);
+	const {
+		useExchangeRatesQuery,
+		useGetDebtDataQuery,
+		useEscrowDataQuery,
+		useTokenSaleEscrowQuery,
+	} = useSynthetixQueries();
 
 	const exchangeRatesQuery = useExchangeRatesQuery();
-	const debtDataQuery = useGetDebtDataQuery();
-	const rewardEscrowQuery = useEscrowDataQuery();
-	const tokenSaleEscrowQuery = useTokenSaleEscrowDateQuery();
+	const debtDataQuery = useGetDebtDataQuery(walletAddress);
+	const rewardEscrowQuery = useEscrowDataQuery(walletAddress);
+	const tokenSaleEscrowQuery = useTokenSaleEscrowQuery(walletAddress);
 
 	const debtData = debtDataQuery?.data ?? null;
 	const exchangeRates = exchangeRatesQuery.data ?? null;
@@ -23,7 +28,7 @@ const useStakingCalculations = () => {
 		const SNXRate = wei(exchangeRates?.SNX ?? 0);
 		const collateral = wei(debtData?.collateral ?? 0);
 		const targetCRatio = wei(debtData?.targetCRatio ?? 0);
-		const targetThreshold = wei(debtData?.targetThreshold ?? 0);
+		const targetThreshold = wei(debtData?.targetCRatio ?? 0);
 		const currentCRatio = wei(debtData?.currentCRatio ?? 0);
 		const transferableCollateral = wei(debtData?.transferable ?? 0);
 		const debtBalance = wei(debtData?.debtBalance ?? 0);

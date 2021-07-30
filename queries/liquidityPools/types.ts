@@ -1,23 +1,21 @@
 import Wei from '@synthetixio/wei';
 
 export type LiquidityPoolData = {
-	distribution: number;
+	distribution: Wei;
 	address: string;
-	price?: number;
-	balance: number;
+	price?: Wei;
+	balance: Wei;
 	periodFinish: number;
-	rewards: number;
-	staked: number;
-	stakedBN: Wei;
-	allowance: number;
+	rewards: Wei;
+	staked: Wei;
+	allowance: Wei;
 	duration: number;
-	userBalance: number;
-	userBalanceBN: Wei;
+	userBalance: Wei;
 	needsToSettle?: boolean;
-	liquidity?: number;
+	liquidity?: Wei;
 };
 
 export type DualRewardsLiquidityPoolData = Omit<LiquidityPoolData, 'distribution' | 'rewards'> & {
-	distribution: { a: number; b: number };
-	rewards: { a: number; b: number };
+	distribution: { a: Wei; b: Wei };
+	rewards: { a: Wei; b: Wei };
 };

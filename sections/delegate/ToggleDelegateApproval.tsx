@@ -17,8 +17,12 @@ import { tx } from 'utils/transactions';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 
 import { appReadyState } from 'store/app';
-import { DelegationWallet, Action } from 'queries/delegate/types';
-import { APPROVE_CONTRACT_METHODS, WITHDRAW_CONTRACT_METHODS } from 'queries/delegate/types';
+import {
+	Action,
+	APPROVE_CONTRACT_METHODS,
+	DelegationWallet,
+	WITHDRAW_CONTRACT_METHODS,
+} from '@synthetixio/queries';
 
 type ToggleDelegateApprovalProps = {
 	account: DelegationWallet;

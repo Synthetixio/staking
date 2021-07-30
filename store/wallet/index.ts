@@ -5,7 +5,7 @@ import { atom, selector } from 'recoil';
 import { truncateAddress } from 'utils/formatters/string';
 import { getWalletKey } from '../utils';
 
-import { DelegationWallet } from 'queries/delegate/types';
+import { DelegationWallet } from '@synthetixio/queries';
 
 export type Network = {
 	id: NetworkId;

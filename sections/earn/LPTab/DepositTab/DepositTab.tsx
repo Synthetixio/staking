@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { ethers } from 'ethers';
 import { Svg } from 'react-optimized-image';
-import BigNumber from 'bignumber.js';
 
 import PendingConfirmation from 'assets/svg/app/pending-confirmation.svg';
 import Success from 'assets/svg/app/success.svg';
@@ -51,6 +50,7 @@ import {
 import { useRecoilValue } from 'recoil';
 import { appReadyState } from 'store/app';
 import { CurrencyIconType } from 'components/Currency/CurrencyIcon/CurrencyIcon';
+import Wei, { wei } from '@synthetixio/wei';
 
 export const getContract = (asset: CurrencyKey, signer: ethers.Signer | null) => {
 	if (asset === CryptoCurrency.SNX) {
@@ -70,11 +70,9 @@ type DepositTabProps = {
 	asset: CurrencyKey;
 	icon: CurrencyKey;
 	type?: CurrencyIconType;
-	userBalance: number;
-	userBalanceBN: BigNumber;
-	staked: number;
-	stakedBN: BigNumber;
-	pricePerShare: number;
+	userBalance: Wei;
+	staked: Wei;
+	pricePerShare: Wei;
 };
 
 const DepositTab: FC<DepositTabProps> = ({
@@ -83,9 +81,7 @@ const DepositTab: FC<DepositTabProps> = ({
 	type,
 	isDeposit,
 	userBalance,
-	userBalanceBN,
 	staked,
-	stakedBN,
 	pricePerShare,
 }) => {
 	const { t } = useTranslation();
@@ -106,7 +102,12 @@ const DepositTab: FC<DepositTabProps> = ({
 			? blockExplorerInstance.txLink(txHash)
 			: undefined;
 
-	const stakedBalanceDisplay = staked * pricePerShare;
+	const stakedBalanceDisplay = staked.mul(pricePerShare);
+
+	let parsedAmount = wei(0);
+	try {
+		parsedAmount = wei(amount);
+	} catch {}
 
 	useEffect(() => {
 		const getGasLimitEstimate = async () => {
@@ -114,18 +115,8 @@ const DepositTab: FC<DepositTabProps> = ({
 				try {
 					setError(null);
 					const contract = getContract(asset, signer);
-					let stakeAmount;
-					if (isDeposit) {
-						stakeAmount =
-							Number(amount) === userBalance
-								? synthetix.js!.utils.parseEther(userBalanceBN.toString())
-								: synthetix.js!.utils.parseEther(amount);
-					} else {
-						const withdrawMax = Number(amount) === stakedBalanceDisplay;
-						stakeAmount = withdrawMax
-							? synthetix.js!.utils.parseEther(stakedBN.toString())
-							: synthetix.js!.utils.parseEther(amount);
-					}
+					let stakeAmount = parsedAmount;
+
 					let gasEstimate = await synthetix.getGasEstimateForTransaction({
 						txArgs: [stakeAmount],
 						method: isDeposit
@@ -140,18 +131,7 @@ const DepositTab: FC<DepositTabProps> = ({
 			}
 		};
 		getGasLimitEstimate();
-	}, [
-		amount,
-		isDeposit,
-		asset,
-		signer,
-		isAppReady,
-		userBalance,
-		userBalanceBN,
-		staked,
-		stakedBN,
-		stakedBalanceDisplay,
-	]);
+	}, [amount, isDeposit, asset, signer, isAppReady, userBalance, staked, stakedBalanceDisplay]);
 
 	const handleDeposit = useCallback(() => {
 		async function deposit() {
@@ -161,18 +141,8 @@ const DepositTab: FC<DepositTabProps> = ({
 					setTxModalOpen(true);
 					const contract = getContract(asset, signer);
 
-					let formattedStakeAmount;
-					if (isDeposit) {
-						formattedStakeAmount =
-							Number(amount) === userBalance
-								? synthetix.js!.utils.parseEther(userBalanceBN.toString())
-								: synthetix.js!.utils.parseEther(amount);
-					} else {
-						const withdrawMax = Number(amount) === stakedBalanceDisplay;
-						formattedStakeAmount = withdrawMax
-							? synthetix.js!.utils.parseEther(stakedBN.toString())
-							: synthetix.js!.utils.parseEther(amount);
-					}
+					let formattedStakeAmount = parsedAmount;
+
 					const gasLimit = await synthetix.getGasEstimateForTransaction({
 						txArgs: [formattedStakeAmount],
 						method: isDeposit
@@ -215,9 +185,7 @@ const DepositTab: FC<DepositTabProps> = ({
 		signer,
 		isDeposit,
 		userBalance,
-		userBalanceBN,
 		stakedBalanceDisplay,
-		stakedBN,
 		gasPrice,
 		monitorTransaction,
 	]);
@@ -325,7 +293,7 @@ const DepositTab: FC<DepositTabProps> = ({
 					/>
 					<MaxButton
 						variant="primary"
-						disabled={isDeposit ? userBalance === 0 : staked === 0}
+						disabled={isDeposit ? userBalance.eq(0) : staked.eq(0)}
 						onClick={() => {
 							setAmount(isDeposit ? `${userBalance}` : `${stakedBalanceDisplay}`);
 						}}
@@ -345,12 +313,9 @@ const DepositTab: FC<DepositTabProps> = ({
 					variant="primary"
 					onClick={handleDeposit}
 					disabled={
-						// TODO: refactor a bit
-						isAppReady && Number(amount) > 0
-							? (Number(amount) ?? 0) > (isDeposit ? userBalance : stakedBalanceDisplay)
-								? true
-								: false
-							: true
+						!isAppReady ||
+						parsedAmount.lte(0) ||
+						parsedAmount.gt(isDeposit ? userBalance : stakedBalanceDisplay)
 					}
 				>
 					{isDeposit

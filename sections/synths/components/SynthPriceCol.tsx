@@ -2,21 +2,22 @@ import { FC } from 'react';
 import styled from 'styled-components';
 
 import media from 'styles/media';
-import useHistoricalRatesQuery from 'queries/rates/useHistoricalRatesQuery';
-import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 
 import { Period } from 'constants/period';
 
 import CurrencyPrice from 'components/Currency/CurrencyPrice';
-import { CurrencyKey } from 'constants/currency';
+import { CurrencyKey } from '@synthetixio/contracts-interface';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { NO_VALUE } from 'constants/placeholder';
+import useSynthetixQueries from '@synthetixio/queries';
 
 type SynthPriceColProps = {
 	currencyKey: CurrencyKey;
 };
 
 const SynthPriceCol: FC<SynthPriceColProps> = ({ currencyKey }) => {
+	const { useExchangeRatesQuery, useHistoricalRatesQuery } = useSynthetixQueries();
+
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const historicalRates = useHistoricalRatesQuery(currencyKey, Period.ONE_DAY);
 	const { selectedPriceCurrency, selectPriceCurrencyRate } = useSelectedPriceCurrency();

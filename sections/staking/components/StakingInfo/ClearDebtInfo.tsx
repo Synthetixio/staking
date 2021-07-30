@@ -6,15 +6,15 @@ import { useRecoilValue } from 'recoil';
 import { amountToBurnState, StakingPanelType } from 'store/staking';
 
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
-import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
-
-import { toBigNumber, zeroBN } from 'utils/formatters/number';
 
 import { CryptoCurrency, Synths } from 'constants/currency';
 
 import { getStakingAmount, getTransferableAmountFromBurn, sanitiseValue } from '../helper';
 
 import InfoLayout from './InfoLayout';
+import useSynthetixQueries from '@synthetixio/queries';
+import { walletAddressState } from 'store/wallet';
+import { wei } from '@synthetixio/wei';
 
 const StakingInfo: FC = () => {
 	const { t } = useTranslation();
@@ -29,7 +29,11 @@ const StakingInfo: FC = () => {
 		debtEscrowBalance,
 		collateral,
 	} = useStakingCalculations();
-	const synthsBalancesQuery = useSynthsBalancesQuery();
+
+	const walletAddress = useRecoilValue(walletAddressState);
+	const { useSynthsBalancesQuery } = useSynthetixQueries();
+
+	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
 
 	const amountToBurn = useRecoilValue(amountToBurnState);
 
@@ -42,17 +46,14 @@ const StakingInfo: FC = () => {
 
 		let unlockedStakeAmount;
 
-		if (
-			currentCRatio.isGreaterThan(targetCRatio) &&
-			amountToBurnBN.isLessThanOrEqualTo(calculatedTargetBurn)
-		) {
-			unlockedStakeAmount = zeroBN;
+		if (currentCRatio.gt(targetCRatio) && amountToBurnBN.lte(calculatedTargetBurn)) {
+			unlockedStakeAmount = wei(0);
 		} else {
 			unlockedStakeAmount = getStakingAmount(targetCRatio, amountToBurnBN, SNXRate);
 		}
 
 		const changedStakedValue = stakedCollateral.eq(0)
-			? zeroBN
+			? wei(0)
 			: stakedCollateral.sub(unlockedStakeAmount);
 
 		const changedTransferable = getTransferableAmountFromBurn(
@@ -63,7 +64,7 @@ const StakingInfo: FC = () => {
 			transferableCollateral
 		);
 
-		const changedDebt = debtBalance.eq(0) ? zeroBN : debtBalance.sub(amountToBurnBN);
+		const changedDebt = debtBalance.eq(0) ? wei(0) : debtBalance.sub(amountToBurnBN);
 
 		const changedSUSDBalance = sUSDBalance.sub(amountToBurnBN);
 

@@ -21,6 +21,7 @@ import { useTranslation } from 'react-i18next';
 import { FlexDivRow, FlexDivRowCentered, NumericValue } from 'styles/common';
 import { Svg } from 'react-optimized-image';
 import Info from 'assets/svg/app/info.svg';
+import { wei } from '@synthetixio/wei';
 
 type GasSelectorProps = {
 	gasLimitEstimate: GasLimitEstimate;
@@ -50,24 +51,22 @@ const GasSelector: React.FC<GasSelectorProps> = ({
 
 	const hasCustomGasPrice = customGasPrice !== '';
 
-	const gasPrice = useMemo(
-		() =>
-			customGasPrice !== ''
-				? Number(customGasPrice)
-				: ethGasStationQuery.data != null
-				? ethGasStationQuery.data[gasSpeed]
-				: null,
-		[customGasPrice, ethGasStationQuery.data, gasSpeed]
-	);
+	const gasPrice = useMemo(() => {
+		try {
+			return wei(customGasPrice, 9);
+		} catch (_) {
+			return ethGasStationQuery.data != null ? wei(ethGasStationQuery.data[gasSpeed], 9) : null;
+		}
+	}, [customGasPrice, ethGasStationQuery.data, gasSpeed]);
 
 	useEffect(() => {
-		setGasPrice(
-			customGasPrice !== ''
-				? Number(customGasPrice)
-				: ethGasStationQuery.data != null
-				? ethGasStationQuery.data[gasSpeed]
-				: null
-		);
+		try {
+			setGasPrice(wei(customGasPrice, 9));
+		} catch (_) {
+			setGasPrice(
+				ethGasStationQuery.data != null ? wei(ethGasStationQuery.data[gasSpeed], 9) : null
+			);
+		}
 		// eslint-disable-next-line
 	}, [gasPrice, customGasPrice]);
 

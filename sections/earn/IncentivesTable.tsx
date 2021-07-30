@@ -38,11 +38,11 @@ import ROUTES from 'constants/routes';
 import { LP, Tab } from './types';
 import { CurrencyIconType } from 'components/Currency/CurrencyIcon/CurrencyIcon';
 import { DesktopOrTabletView, MobileOnlyView } from 'components/Media';
-import { wei } from '@synthetixio/wei';
+import Wei, { wei } from '@synthetixio/wei';
 
 export type DualRewards = {
-	a: number;
-	b: number;
+	a: Wei;
+	b: Wei;
 };
 
 export const NOT_APPLICABLE = 'n/a';
@@ -50,15 +50,15 @@ export const NOT_APPLICABLE = 'n/a';
 export type EarnItem = {
 	title: string;
 	subtitle: string;
-	apr: number;
-	tvl: number;
+	apr: Wei;
+	tvl: Wei;
 	staked: {
-		balance: number;
+		balance: Wei;
 		asset: CurrencyKey;
 		ticker: CurrencyKey;
 		type?: CurrencyIconType;
 	};
-	rewards: number | DualRewards;
+	rewards: Wei | DualRewards;
 	periodStarted: number;
 	periodFinish: number;
 	claimed: boolean | string;
@@ -78,8 +78,7 @@ type IncentivesTableProps = {
 
 const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab }) => {
 	const { t } = useTranslation();
-	const networkId = useRecoilValue(networkState)!.id;
-	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency(networkId);
+	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
 	const router = useRouter();
 	const goToEarn = useCallback(() => router.push(ROUTES.Earn.Home), [router]);
 
@@ -193,9 +192,7 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab }
 								<Title isNumeric={true}>
 									{formatCurrency(
 										CryptoCurrency.SNX,
-										isDualRewards
-											? (cellProps.value as DualRewards).a
-											: (cellProps.value as number),
+										isDualRewards ? (cellProps.value as DualRewards).a : cellProps.value,
 										{
 											currencyKey: CryptoCurrency.SNX,
 										}
@@ -210,7 +207,9 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab }
 								)}
 								<Subtitle>
 									{cellProps.row.original.claimed === NOT_APPLICABLE ||
-									(!cellProps.row.original.claimed && cellProps.row.original.rewards === 0) ? (
+									(!cellProps.row.original.claimed &&
+										!isDualRewards &&
+										(cellProps.row.original.rewards as Wei).eq(0)) ? (
 										''
 									) : cellProps.row.original.claimed ? (
 										t('earn.incentives.options.rewards.claimed')

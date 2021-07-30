@@ -19,16 +19,18 @@ import useStakingCalculations from 'sections/staking/hooks/useStakingCalculation
 import { CryptoCurrency } from 'constants/currency';
 import { DEFAULT_NETWORK_ID } from 'constants/defaults';
 import { L1_TO_L2_NETWORK_MAPPER } from '@synthetixio/optimism-networks';
-import useGetDepositsIsActiveQuery from 'queries/deposits/useGetDepositsIsActiveQuery';
+import useSynthetixQueries from '@synthetixio/queries';
 
 const Index: FC = () => {
 	const [l2AmountSNX, setL2AmountSNX] = useState<number>(0);
 	const [l2APR, setL2APR] = useState<number>(0);
 	const { t } = useTranslation();
-	const networkId = useRecoilValue(networkState)!.id;
-	const { debtBalance, transferableCollateral, stakingEscrow } = useStakingCalculations(networkId);
+	const { debtBalance, transferableCollateral, stakingEscrow } = useStakingCalculations();
 	const network = useRecoilValue(networkState);
-	const depositsInactive = !useGetDepositsIsActiveQuery().data;
+
+	const { useIsActiveQuery } = useSynthetixQueries();
+
+	const depositsInactive = !useIsActiveQuery().data;
 
 	useEffect(() => {
 		async function getData() {

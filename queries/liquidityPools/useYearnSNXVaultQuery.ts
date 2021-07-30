@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { useQuery, QueryConfig } from 'react-query';
+import { useQuery, UseQueryOptions } from 'react-query';
 import { ethers } from 'ethers';
 import { useRecoilValue } from 'recoil';
 
@@ -17,15 +17,15 @@ import {
 } from 'store/wallet';
 
 import { LiquidityPoolData } from './types';
-import { toBigNumber } from 'utils/formatters/number';
+import Wei, { wei } from '@synthetixio/wei';
 
 export type YearnVaultData = LiquidityPoolData & {
-	apy: number;
-	tvl: number;
-	pricePerShare: number;
+	apy: Wei;
+	tvl: Wei;
+	pricePerShare: Wei;
 };
 
-const useYearnSNXVaultQuery = (options?: QueryConfig<YearnVaultData>) => {
+const useYearnSNXVaultQuery = (options?: UseQueryOptions<YearnVaultData>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
@@ -67,27 +67,25 @@ const useYearnSNXVaultQuery = (options?: QueryConfig<YearnVaultData>) => {
 				snxAllowance,
 				yvSNXBalance,
 				snxBalance,
-			].map((data) => Number(synthetix.js?.utils.formatEther(data)));
+			].map((data) => wei(data));
 
-			const staked = toBigNumber(yvSNXUserBalance.toString()).div(1e18);
+			const staked = wei(yvSNXUserBalance);
 
 			const yvSNXVaultData = allVaultsData?.data.find(
 				(vault: any) => vault.symbol === 'yvSNX' && vault.type === 'v2'
 			);
-			const apy = yvSNXVaultData?.apy.recommended ?? 0;
-			const tvl = Number(yvSNXVaultData?.tvl.value) ?? 0;
+			const apy = wei(yvSNXVaultData?.apy.recommended) ?? wei(0);
+			const tvl = wei(yvSNXVaultData?.tvl.value) ?? wei(0);
 
 			return {
 				address: yearnSNXVault.address,
 				balance,
 				userBalance: userBalance,
-				userBalanceBN: toBigNumber(userBalance),
-				distribution: 0,
+				distribution: wei(0),
 				duration: 0,
 				periodFinish: Date.now() * 2, // never expires
-				rewards: 0,
-				staked: staked.toNumber(),
-				stakedBN: staked,
+				rewards: wei(0),
+				staked,
 				allowance,
 				apy,
 				tvl,

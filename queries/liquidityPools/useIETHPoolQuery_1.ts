@@ -13,6 +13,7 @@ import {
 import { Synths } from 'constants/currency';
 
 import { LiquidityPoolData } from './types';
+import { wei } from '@synthetixio/wei';
 
 const useIETHPoolQuery_1 = (options?: UseQueryOptions<LiquidityPoolData>) => {
 	const isAppReady = useRecoilValue(appReadyState);
@@ -56,9 +57,7 @@ const useIETHPoolQuery_1 = (options?: UseQueryOptions<LiquidityPoolData>) => {
 			]);
 			const durationInWeeks = Number(duration) / 3600 / 24 / 7;
 			const isPeriodFinished = new Date().getTime() > Number(periodFinish) * 1000;
-			const distribution = isPeriodFinished
-				? 0
-				: Math.trunc(Number(duration) * (rate / 1e18)) / durationInWeeks;
+			const distribution = isPeriodFinished ? wei(0) : rate.mul(duration).div(durationInWeeks);
 
 			const reclaimAmount = Number(settlementOwing.reclaimAmount);
 			const rebateAmount = Number(settlementOwing.rebateAmount);
@@ -70,7 +69,7 @@ const useIETHPoolQuery_1 = (options?: UseQueryOptions<LiquidityPoolData>) => {
 				iEthSNXRewards,
 				iEthStaked,
 				iETHAllowance,
-			].map((data) => Number(synthetix.js?.utils.formatEther(data)));
+			].map((data) => wei(data));
 
 			return {
 				distribution,
@@ -80,11 +79,9 @@ const useIETHPoolQuery_1 = (options?: UseQueryOptions<LiquidityPoolData>) => {
 				periodFinish: Number(periodFinish) * 1000,
 				rewards,
 				staked,
-				stakedBN: iEthStaked,
 				duration: Number(duration) * 1000,
 				allowance,
 				userBalance,
-				userBalanceBN: iEthUserBalance,
 				needsToSettle: reclaimAmount || rebateAmount ? true : false,
 			};
 		},

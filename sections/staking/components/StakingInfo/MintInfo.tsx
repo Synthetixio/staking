@@ -6,14 +6,14 @@ import { useRecoilValue } from 'recoil';
 import { amountToMintState, StakingPanelType } from 'store/staking';
 
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
-import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
-
-import { toBigNumber, zeroBN } from 'utils/formatters/number';
 
 import { CryptoCurrency, Synths } from 'constants/currency';
 
 import { getStakingAmount, getTransferableAmountFromMint, sanitiseValue } from '../helper';
 import InfoLayout from './InfoLayout';
+import useSynthetixQueries from '@synthetixio/queries';
+import { wei } from '@synthetixio/wei';
+import { walletAddressState } from 'store/wallet';
 
 const StakingInfo: FC = () => {
 	const { t } = useTranslation();
@@ -28,7 +28,10 @@ const StakingInfo: FC = () => {
 		collateral,
 		balance,
 	} = useStakingCalculations();
-	const synthsBalancesQuery = useSynthsBalancesQuery();
+
+	const walletAddress = useRecoilValue(walletAddressState);
+	const { useSynthsBalancesQuery } = useSynthetixQueries();
+	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
 
 	const amountToMint = useRecoilValue(amountToMintState);
 
@@ -44,14 +47,14 @@ const StakingInfo: FC = () => {
 		const changedStakedValue = stakedCollateral.add(stakingAmount);
 
 		const changedTransferable = transferableCollateral.eq(0)
-			? zeroBN
+			? wei(0)
 			: getTransferableAmountFromMint(balance, changedStakedValue);
 
 		const changedDebt = mintAdditionalDebt;
 
 		const changedSUSDBalance = sUSDBalance.add(amountToMintBN);
 
-		const changeCRatio = currentCRatio.isLessThan(targetCRatio)
+		const changeCRatio = currentCRatio.lt(targetCRatio)
 			? unstakedCollateral.add(stakedCollateral).mul(SNXRate).div(mintAdditionalDebt).mul(100)
 			: changedStakedValue.mul(SNXRate).div(mintAdditionalDebt).mul(100);
 

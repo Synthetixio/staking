@@ -10,7 +10,7 @@ import { Transaction } from 'constants/network';
 import { InfoContainer, InfoData, InfoTitle, SectionHeader, Container } from './common';
 import { formatCurrency } from 'utils/formatters/number';
 import Etherscan from 'containers/BlockExplorer';
-import { NumericValue } from 'utils/formatters/number';
+import { WeiSource } from '@synthetixio/wei';
 
 type ActionCompletedProps = {
 	setTransactionState: (tx: Transaction) => void;
@@ -48,7 +48,7 @@ const ActionCompleted: FC<ActionCompletedProps> = ({
 					<InfoData>
 						{isMigration
 							? t('escrow.actions.migration.completed.escrow-schedule')
-							: formatCurrency(currencyKey as string, vestingAmount as NumericValue, {
+							: formatCurrency(currencyKey as string, vestingAmount as WeiSource, {
 									currencyKey: currencyKey,
 							  })}
 					</InfoData>

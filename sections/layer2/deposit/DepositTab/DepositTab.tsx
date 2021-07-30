@@ -7,7 +7,6 @@ import { TabContainer } from '../../components/common';
 import { Transaction, GasLimitEstimate } from 'constants/network';
 
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
-import useGetDepositsDataQuery from 'queries/deposits/useGetDepositsDataQuery';
 import synthetix from 'lib/synthetix';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import { appReadyState } from 'store/app';
@@ -16,6 +15,7 @@ import { walletAddressState, isEOAWalletState } from 'store/wallet';
 import ApproveModal from 'components/ApproveModal';
 import TabContent from './TabContent';
 import { normalizedGasPrice } from 'utils/network';
+import useSynthetixQueries from '@synthetixio/queries';
 
 const DepositTab = () => {
 	const { t } = useTranslation();
@@ -24,7 +24,10 @@ const DepositTab = () => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isEOAWallet = useRecoilValue(isEOAWalletState);
 	const { monitorTransaction } = TransactionNotifier.useContainer();
-	const depositsDataQuery = useGetDepositsDataQuery();
+
+	const { useGetBridgeDataQuery } = useSynthetixQueries();
+
+	const depositsDataQuery = useGetBridgeDataQuery(walletAddress);
 
 	const [gasLimitEstimate, setGasLimitEstimate] = useState<GasLimitEstimate>(null);
 	const [depositTxError, setDepositTxError] = useState<string | null>(null);

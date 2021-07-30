@@ -1,5 +1,4 @@
-import Wei from '@synthetixio/wei';
-import { NumericValue, toBigNumber, zeroBN, maxBN } from 'utils/formatters/number';
+import Wei, { wei, WeiSource } from '@synthetixio/wei';
 
 export function getMintAmount(targetCRatio: Wei, stakeAmount: WeiSource, SNXPrice: Wei): Wei {
 	if (!stakeAmount || !targetCRatio || !SNXPrice) return wei(0);
@@ -13,7 +12,7 @@ export function getStakingAmount(targetCRatio: Wei, mintAmount: WeiSource, SNXPr
 
 export function getTransferableAmountFromMint(balance: Wei, stakedValue: Wei): Wei {
 	if (!balance || !stakedValue) return wei(0);
-	return maxBN(balance.sub(stakedValue), zeroBN);
+	return Wei.max(balance.sub(stakedValue), wei(0));
 }
 
 export function getTransferableAmountFromBurn(
@@ -25,13 +24,13 @@ export function getTransferableAmountFromBurn(
 ): Wei {
 	if (!amountToBurn) return wei(0);
 	return transferable.add(
-		maxBN(wei(amountToBurn).sub(debtEscrowBalance).div(targetCRatio).div(SNXPrice), zeroBN)
+		Wei.max(wei(amountToBurn).sub(debtEscrowBalance).div(targetCRatio).div(SNXPrice), wei(0))
 	);
 }
 
 export function sanitiseValue(value: Wei) {
-	if (value.isNegative() || value.isNaN() || !value.isFinite()) {
-		return zeroBN;
+	if (value.lt(0)) {
+		return wei(0);
 	} else {
 		return value;
 	}

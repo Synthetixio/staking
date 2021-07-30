@@ -11,8 +11,8 @@ type IncentivesProps = {
 	tradingRewards: Wei;
 	stakingRewards: Wei;
 	totalRewards: Wei;
-	stakingAPR: number;
-	stakedAmount: number;
+	stakingAPR: Wei;
+	stakedAmount: Wei;
 	hasClaimed: boolean;
 };
 

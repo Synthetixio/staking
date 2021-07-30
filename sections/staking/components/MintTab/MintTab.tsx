@@ -17,6 +17,7 @@ import { amountToMintState, MintActionType, mintTypeState } from 'store/staking'
 import { isWalletConnectedState, delegateWalletState } from 'store/wallet';
 import { appReadyState } from 'store/app';
 import TransactionNotifier from 'containers/TransactionNotifier';
+import { wei } from '@synthetixio/wei';
 
 const mintFunction = ({ isDelegate, isMax = false }: { isDelegate: boolean; isMax?: boolean }) => {
 	return isDelegate

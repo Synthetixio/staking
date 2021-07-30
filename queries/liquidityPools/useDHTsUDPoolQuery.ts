@@ -16,6 +16,7 @@ import { DualRewardsLiquidityPoolData } from './types';
 import { ethers } from 'ethers';
 import Connector from 'containers/Connector';
 import { getDHTPrice, getUniswapPairLiquidity } from './helper';
+import { wei } from '@synthetixio/wei';
 
 const useDHTsUSDPoolQuery = (options?: UseQueryOptions<DualRewardsLiquidityPoolData>) => {
 	const isAppReady = useRecoilValue(appReadyState);
@@ -75,13 +76,13 @@ const useDHTsUSDPoolQuery = (options?: UseQueryOptions<DualRewardsLiquidityPoolD
 			const durationInWeeks = Number(duration) / 3600 / 24 / 7;
 			const isPeriodFinished = new Date().getTime() > Number(periodFinish) * 1000;
 			const distribution = {
-				a: isPeriodFinished ? 0 : Math.trunc(Number(duration) * (rateA / 1e18)) / durationInWeeks,
-				b: isPeriodFinished ? 0 : Math.trunc(Number(duration) * (rateB / 1e18)) / durationInWeeks,
+				a: isPeriodFinished ? wei(0) : wei(rateA).mul(duration).div(durationInWeeks),
+				b: isPeriodFinished ? wei(0) : wei(rateB).mul(duration).div(durationInWeeks),
 			};
 
 			const rewards = {
-				a: Number(formatEther(SNXRewards)),
-				b: Number(formatEther(DHTRewards)),
+				a: wei(SNXRewards),
+				b: wei(DHTRewards),
 			};
 
 			const [balance, userBalance, staked, allowance] = [
@@ -89,7 +90,7 @@ const useDHTsUSDPoolQuery = (options?: UseQueryOptions<DualRewardsLiquidityPoolD
 				DHTsUSDLPUserBalance,
 				DHTsUSDLPStaked,
 				DHTsUSDLPAllowance,
-			].map((data) => Number(synthetix.js?.utils.formatEther(data)));
+			].map((data) => wei(data));
 
 			return {
 				distribution,
@@ -98,11 +99,9 @@ const useDHTsUSDPoolQuery = (options?: UseQueryOptions<DualRewardsLiquidityPoolD
 				periodFinish: Number(periodFinish) * 1000,
 				rewards,
 				staked,
-				stakedBN: DHTsUSDLPStaked,
 				duration: Number(duration) * 1000,
 				allowance,
 				userBalance,
-				userBalanceBN: DHTsUSDLPUserBalance,
 				price: DHTprice,
 				liquidity,
 			};

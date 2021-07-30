@@ -13,6 +13,7 @@ import {
 import { Synths } from 'constants/currency';
 
 import { LiquidityPoolData } from './types';
+import { wei } from '@synthetixio/wei';
 
 const useIBTCPoolQuery_1 = (options?: UseQueryOptions<LiquidityPoolData>) => {
 	const isAppReady = useRecoilValue(appReadyState);
@@ -57,9 +58,7 @@ const useIBTCPoolQuery_1 = (options?: UseQueryOptions<LiquidityPoolData>) => {
 			]);
 			const durationInWeeks = Number(duration) / 3600 / 24 / 7;
 			const isPeriodFinished = new Date().getTime() > Number(periodFinish) * 1000;
-			const distribution = isPeriodFinished
-				? 0
-				: Math.trunc(Number(duration) * (rate / 1e18)) / durationInWeeks;
+			const distribution = isPeriodFinished ? wei(0) : rate.mul(duration).div(durationInWeeks);
 
 			const reclaimAmount = Number(settlementOwing.reclaimAmount);
 			const rebateAmount = Number(settlementOwing.rebateAmount);
@@ -71,7 +70,7 @@ const useIBTCPoolQuery_1 = (options?: UseQueryOptions<LiquidityPoolData>) => {
 				iBtcSNXRewards,
 				iBtcStaked,
 				iBtcAllowance,
-			].map((data) => Number(synthetix.js?.utils.formatEther(data)));
+			].map((data) => wei(data));
 
 			return {
 				distribution,
@@ -82,10 +81,8 @@ const useIBTCPoolQuery_1 = (options?: UseQueryOptions<LiquidityPoolData>) => {
 				duration: Number(duration) * 1000,
 				rewards,
 				staked,
-				stakedBN: iBtcStaked,
 				allowance,
 				userBalance,
-				userBalanceBN: iBtcUserBalance,
 				needsToSettle: reclaimAmount || rebateAmount ? true : false,
 			};
 		},

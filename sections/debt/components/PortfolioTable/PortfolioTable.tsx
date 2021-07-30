@@ -34,6 +34,7 @@ import { DesktopOrTabletView, MobileOnlyView } from 'components/Media';
 
 import Info from 'assets/svg/app/info.svg';
 import { CryptoBalance } from 'hooks/useCryptoBalances';
+import { SynthsTotalSupplyData } from '@synthetixio/queries';
 
 const SHOW_HEDGING_INDICATOR_THRESHOLD = wei(0.1);
 
@@ -80,9 +81,7 @@ const ResponsiveDebtPoolTable: FC<ResponsiveDebtPoolTableProps> = ({
 }) => {
 	const { t } = useTranslation();
 
-	const networkId = useRecoilValue(networkState)!.id;
-
-	const { selectedPriceCurrency, selectPriceCurrencyRate } = useSelectedPriceCurrency(networkId);
+	const { selectedPriceCurrency, selectPriceCurrencyRate } = useSelectedPriceCurrency();
 	const { connectWallet } = Connector.useContainer();
 	const isAppReady = useRecoilValue(appReadyState);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);

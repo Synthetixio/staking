@@ -8,9 +8,8 @@ import Question from './Question';
 import Connector from 'containers/Connector';
 import useSignMessage, { SignatureType } from 'mutations/gov/useSignMessage';
 import useActiveTab from 'sections/gov/hooks/useActiveTab';
-import useSnapshotSpaceQuery from 'queries/gov/useSnapshotSpaceQuery';
 import { Transaction } from 'constants/network';
-import { SPACE_KEY } from 'constants/snapshot';
+import { snapshotEndpoint, SPACE_KEY } from 'constants/snapshot';
 import { ethers } from 'ethers';
 
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
@@ -22,6 +21,8 @@ import CouncilDilution from 'contracts/councilDilution.js';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import { truncateAddress } from 'utils/formatters/string';
 import { useTranslation } from 'react-i18next';
+import useSynthetixQueries from '@synthetixio/queries';
+import { AxiosResponse } from 'axios';
 
 type IndexProps = {
 	onBack: Function;
@@ -30,12 +31,15 @@ type IndexProps = {
 const Index: React.FC<IndexProps> = ({ onBack }) => {
 	const { t } = useTranslation();
 	const { provider } = Connector.useContainer();
+	const { useSnapshotSpaceQuery } = useSynthetixQueries();
+
 	const [startDate, setStartDate] = useState<Date>(new Date());
 	const [endDate, setEndDate] = useState<Date>(new Date(startDate.getTime() + 86400000));
 	const [block, setBlock] = useState<number | null>(null);
 	const [name, setName] = useState<string>('');
 	const [body, setBody] = useState<string>('');
 	const [choices, setChoices] = useState<string[]>([]);
+	const [result, setResult] = useState<AxiosResponse<any> | null>(null);
 	const activeTab = useActiveTab();
 	const [signTransactionState, setSignTransactionState] = useState<Transaction>(
 		Transaction.PRESUBMIT
@@ -46,12 +50,16 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 	const [signError, setSignError] = useState<string | null>(null);
 	const [txError, setTxError] = useState<string | null>(null);
 	const [txHash, setTxHash] = useState<string | null>(null);
-	const space = useSnapshotSpaceQuery(activeTab);
-	const [createProposal, result] = useSignMessage();
+	const space = useSnapshotSpaceQuery(snapshotEndpoint, activeTab);
 	const [hash, setHash] = useState<string | null>(null);
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 
 	const { signer } = Connector.useContainer();
+
+	const contract = useMemo(
+		() => new ethers.Contract(CouncilDilution.address, CouncilDilution.abi, signer as any),
+		[]
+	);
 
 	const sanitiseTimestamp = (timestamp: number) => {
 		return Math.round(timestamp / 1e3);
@@ -72,6 +80,53 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 		}
 	}, [name, body, block, endDate, startDate, choices]);
 
+	const createProposal = useSignMessage({
+		onSuccess: async (response) => {
+			setSignModalOpen(false);
+			setResult(response);
+
+			let ipfsHash = response?.data.ipfsHash;
+
+			setHash(ipfsHash);
+
+			if (activeTab === SPACE_KEY.PROPOSAL) {
+				try {
+					setSignTransactionState(Transaction.PRESUBMIT);
+					setTxTransactionState(Transaction.PRESUBMIT);
+					setTxModalOpen(true);
+
+					const gasLimit = await synthetix.getGasEstimateForTransaction({
+						txArgs: [ipfsHash],
+						method: contract.estimateGas.logProposal,
+					});
+
+					const transaction = await contract.logProposal(ipfsHash, { gasLimit });
+
+					if (transaction) {
+						setTxHash(transaction.hash);
+						setTxTransactionState(Transaction.WAITING);
+						monitorTransaction({
+							txHash: transaction.hash,
+							onTxConfirmed: () => setTxTransactionState(Transaction.SUCCESS),
+						});
+						setTxModalOpen(false);
+					}
+				} catch (error) {
+					console.log(error);
+					setTxTransactionState(Transaction.PRESUBMIT);
+					setTxError(error);
+				}
+			} else {
+				setSignTransactionState(Transaction.SUCCESS);
+			}
+		},
+		onError: async (error) => {
+			console.log(error);
+			setSignTransactionState(Transaction.PRESUBMIT);
+			setSignError(error.message);
+		},
+	});
+
 	const handleCreate = async () => {
 		try {
 			if (space.data && block) {
@@ -82,12 +137,6 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 
 				setSignModalOpen(true);
 				setSignTransactionState(Transaction.WAITING);
-
-				const contract = new ethers.Contract(
-					CouncilDilution.address,
-					CouncilDilution.abi,
-					signer as any
-				);
 
 				let proposalStartDate;
 				let proposalEndDate;
@@ -101,7 +150,7 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 					proposalEndDate = sanitiseTimestamp(endDate.getTime());
 				}
 
-				createProposal({
+				createProposal.mutate({
 					spaceKey: activeTab,
 					type: SignatureType.PROPOSAL,
 					payload: {
@@ -118,50 +167,7 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 						},
 						type: 'single-choice',
 					},
-				})
-					.then(async (response) => {
-						setSignModalOpen(false);
-
-						let ipfsHash = response?.data.ipfsHash;
-
-						setHash(ipfsHash);
-
-						if (activeTab === SPACE_KEY.PROPOSAL) {
-							try {
-								setSignTransactionState(Transaction.PRESUBMIT);
-								setTxTransactionState(Transaction.PRESUBMIT);
-								setTxModalOpen(true);
-
-								const gasLimit = await synthetix.getGasEstimateForTransaction({
-									txArgs: [ipfsHash],
-									method: contract.estimateGas.logProposal,
-								});
-
-								const transaction = await contract.logProposal(ipfsHash, { gasLimit });
-
-								if (transaction) {
-									setTxHash(transaction.hash);
-									setTxTransactionState(Transaction.WAITING);
-									monitorTransaction({
-										txHash: transaction.hash,
-										onTxConfirmed: () => setTxTransactionState(Transaction.SUCCESS),
-									});
-									setTxModalOpen(false);
-								}
-							} catch (error) {
-								console.log(error);
-								setTxTransactionState(Transaction.PRESUBMIT);
-								setTxError(error);
-							}
-						} else {
-							setSignTransactionState(Transaction.SUCCESS);
-						}
-					})
-					.catch((error) => {
-						console.log(error);
-						setSignTransactionState(Transaction.PRESUBMIT);
-						setSignError(error.message);
-					});
+				});
 			}
 		} catch (error) {
 			console.log(error);

@@ -36,7 +36,10 @@ export const getCurrencyKeyUSDBalance = (balances: Balances, currencyKey: Curren
 		? get(balances, getSynthBalancePath(currencyKey, 'usdBalance'))
 		: get(balances, getCryptoCurrencyBalancePath(currencyKey, 'usdBalance'));
 
-export const getCurrencyKeyUSDBalanceBN = (balances: Balances, currencyKey: CurrencyKey): Weiish =>
+export const getCurrencyKeyUSDBalanceBN = (
+	balances: Balances,
+	currencyKey: CurrencyKey
+): BigNumberish =>
 	isSynth(currencyKey)
 		? get(balances, getSynthBalancePath(currencyKey, 'balanceBN'))
 		: get(balances, getCryptoCurrencyBalancePath(currencyKey, 'balanceBN'));

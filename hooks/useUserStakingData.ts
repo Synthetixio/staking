@@ -6,7 +6,7 @@ import { Synths } from 'constants/currency';
 import { WEEKS_IN_YEAR } from 'constants/date';
 
 import { isL2State } from 'store/wallet';
-import { wei } from '@synthetixio/wei';
+import Wei, { wei } from '@synthetixio/wei';
 import useSynthetixQueries from '@synthetixio/queries';
 
 export const useUserStakingData = (walletAddress: string | null) => {
@@ -20,7 +20,7 @@ export const useUserStakingData = (walletAddress: string | null) => {
 		useClaimableRewardsQuery,
 	} = useSynthetixQueries();
 
-	const history = useFeeClaimHistoryQuery(walletAddress || undefined);
+	const history = useFeeClaimHistoryQuery(walletAddress);
 	const currentFeePeriod = useGetFeePoolDataQuery('0');
 	const {
 		useTotalIssuedSynthsExcludingEtherQuery,
@@ -39,9 +39,8 @@ export const useUserStakingData = (walletAddress: string | null) => {
 	} = useStakingCalculations();
 	const globalStakingInfo = useGlobalStakingInfoQuery();
 	const debtData = useGetDebtDataQuery(walletAddress);
-	const feesToDistribute = previousFeePeriod?.data?.feesToDistribute ?? 0;
-	const rewardsToDistribute = previousFeePeriod?.data?.rewardsToDistribute ?? 0;
-	const rewardsToDistributeBN = previousFeePeriod?.data?.rewardsToDistributeBN ?? wei(0);
+	const feesToDistribute = previousFeePeriod?.data?.feesToDistribute ?? wei(0);
+	const rewardsToDistribute = previousFeePeriod?.data?.rewardsToDistribute ?? wei(0);
 
 	const totalsUSDDebt = totalIssuedSynthsExclEth?.data ?? 0;
 	const sUSDRate = wei(exchangeRatesQuery.data?.sUSD ?? 0);
@@ -50,19 +49,18 @@ export const useUserStakingData = (walletAddress: string | null) => {
 	const isBelowCRatio = currentCRatio.gt(targetCRatio.mul(wei(1).add(targetThreshold)));
 	const stakedValue =
 		collateral.gt(0) && currentCRatio.gt(0)
-			? collateral.mul(Math.min(1, currentCRatio.div(targetCRatio).toNumber())).mul(SNXRate)
+			? collateral.mul(Wei.min(wei(1), currentCRatio.div(targetCRatio))).mul(SNXRate)
 			: wei(0);
 
 	const weeklyRewards = sUSDRate.mul(feesToDistribute).add(SNXRate.mul(rewardsToDistribute));
 
-	let stakingAPR = 0;
+	let stakingAPR = wei(0);
 
 	// compute APR based on the user staked SNX
 	if (stakedValue.gt(0) && debtBalance.gt(0)) {
 		stakingAPR = weeklyRewards
 			.mul(debtBalance.div(totalsUSDDebt).mul(WEEKS_IN_YEAR))
-			.div(stakedValue)
-			.toNumber();
+			.div(stakedValue);
 	} else if (
 		SNXRate != null &&
 		sUSDRate != null &&
@@ -73,13 +71,12 @@ export const useUserStakingData = (walletAddress: string | null) => {
 	) {
 		// compute APR based using useSNXLockedValueQuery (top 1000 holders)
 		stakingAPR = isL2
-			? wei(WEEKS_IN_YEAR).mul(rewardsToDistributeBN).div(debtData.data.totalSupply).toNumber()
+			? wei(WEEKS_IN_YEAR).mul(rewardsToDistribute).div(debtData.data.totalSupply)
 			: sUSDRate
 					.mul(currentFeePeriod.data.feesToDistribute)
 					.add(SNXRate.mul(currentFeePeriod.data.rewardsToDistribute))
 					.mul(WEEKS_IN_YEAR)
-					.div(globalStakingInfo.data.lockedValue)
-					.toNumber();
+					.div(globalStakingInfo.data.lockedValue);
 	}
 
 	const availableRewards = useClaimableRewardsQuery(walletAddress);

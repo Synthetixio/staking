@@ -19,12 +19,11 @@ import {
 import GasSelector from 'components/GasSelector';
 import { isWalletConnectedState, walletAddressState } from 'store/wallet';
 import { appReadyState } from 'store/app';
-import {
+import useSynthetixQueries, {
 	Action,
 	APPROVE_CONTRACT_METHODS,
 	GET_IS_APPROVED_CONTRACT_METHODS,
-} from 'queries/delegate/types';
-import useGetDelegateWallets from 'queries/delegate/useGetDelegateWallets';
+} from '@synthetixio/queries';
 import {
 	FormContainer,
 	InputsContainer,
@@ -67,7 +66,10 @@ const Tab: FC = () => {
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const isAppReady = useRecoilValue(appReadyState);
 	const address = useRecoilValue(walletAddressState);
-	const delegateWalletsQuery = useGetDelegateWallets();
+
+	const { useGetDelegateWallets } = useSynthetixQueries();
+
+	const delegateWalletsQuery = useGetDelegateWallets(address);
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 
 	const [action, setAction] = useState<string>(Action.APPROVE_ALL);

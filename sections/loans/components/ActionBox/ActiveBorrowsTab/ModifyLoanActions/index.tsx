@@ -43,7 +43,7 @@ const Actions: FC<ActionsProps> = ({ loanId, loanAction, loanTypeIsETH }) => {
 		const {
 			contracts: { ProxysBTC: sBTC, ProxysETH: sETH, ProxyERC20sUSD: sUSD },
 		} = synthetix.js!;
-		const tokens: Record<string, ethers.Contract> = { sBTC, sETH, sUSD };
+		const tokens: Record<string, typeof sBTC> = { sBTC, sETH, sUSD };
 		const collateralAsset = loanTypeIsETH ? 'ETH' : 'renBTC';
 		return tokens[collateralAsset];
 	}, [loanTypeIsETH]);

@@ -2,7 +2,7 @@ import { FC, useMemo } from 'react';
 import { CellProps } from 'react-table';
 import styled from 'styled-components';
 import { Trans, useTranslation } from 'react-i18next';
-import Wei from '@synthetixio/wei';
+import Wei, { wei } from '@synthetixio/wei';
 import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
@@ -23,7 +23,7 @@ import {
 	NoTextTransform,
 	FlexDiv,
 } from 'styles/common';
-import { CryptoBalance } from 'queries/walletBalances/types';
+import { CryptoBalance } from 'hooks/useCryptoBalances';
 
 import { EXTERNAL_LINKS } from 'constants/links';
 import { CryptoCurrency } from 'constants/currency';
@@ -36,11 +36,11 @@ import Currency from 'components/Currency';
 import Button from 'components/Button';
 import SynthHolding from 'components/SynthHolding';
 
-import { zeroBN } from 'utils/formatters/number';
 import { isSynth } from 'utils/currencies';
 
 import SynthPriceCol from './SynthPriceCol';
 import { StyledButtonBlue, StyledButtonPink } from './common';
+import { CurrencyKey } from '@synthetixio/contracts-interface';
 
 type AssetsTableProps = {
 	assets: CryptoBalance[];
@@ -106,7 +106,7 @@ const AssetsTable: FC<AssetsTableProps> = ({
 				sortType: 'basic',
 				Cell: (cellProps: CellProps<CryptoBalance, CryptoBalance['balance']>) => (
 					<Currency.Amount
-						amountCurrencyKey={cellProps.row.original.currencyKey}
+						amountCurrencyKey={cellProps.row.original.currencyKey as CurrencyKey}
 						amount={cellProps.value}
 						valueCurrencyKey={selectedPriceCurrency.name}
 						totalValue={cellProps.row.original.usdBalance}
@@ -122,7 +122,7 @@ const AssetsTable: FC<AssetsTableProps> = ({
 				id: 'price',
 				sortType: 'basic',
 				Cell: (cellProps: CellProps<CryptoBalance>) => (
-					<SynthPriceCol currencyKey={cellProps.row.original.currencyKey} />
+					<SynthPriceCol currencyKey={cellProps.row.original.currencyKey as CurrencyKey} />
 				),
 				width: 180,
 				sortable: false,
@@ -138,7 +138,7 @@ const AssetsTable: FC<AssetsTableProps> = ({
 					<FlexDiv style={{ width: '50%' }}>
 						<SynthHolding
 							usdBalance={cellProps.row.original.usdBalance}
-							totalUSDBalance={totalValue ?? zeroBN}
+							totalUSDBalance={totalValue ?? wei(0)}
 						/>
 					</FlexDiv>
 				),

@@ -12,15 +12,20 @@ import StatBox from 'components/StatBox';
 import StatsSection from 'components/StatsSection';
 import useUserStakingData from 'hooks/useUserStakingData';
 
-import { formatFiatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
+import { formatFiatCurrency, formatPercent } from 'utils/formatters/number';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import StakedValue from 'sections/shared/modals/StakedValueModal/StakedValueBox';
 import ActiveDebt from 'sections/shared/modals/DebtValueModal/DebtValueBox';
+import { useRecoilValue } from 'recoil';
+import { walletAddressState } from 'store/wallet';
 
 const DashboardPage: FC = () => {
 	const { t } = useTranslation();
+
+	const walletAddress = useRecoilValue(walletAddressState);
+
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
-	const { stakedValue, stakingAPR, debtBalance } = useUserStakingData();
+	const { stakedValue, stakingAPR, debtBalance } = useUserStakingData(walletAddress);
 	const { setTitle } = UIContainer.useContainer();
 
 	// header title
@@ -37,12 +42,9 @@ const DashboardPage: FC = () => {
 				<StatsSection>
 					<StakedValue
 						title={t('common.stat-box.staked-value')}
-						value={formatFiatCurrency(
-							getPriceAtCurrentRate(stakedValue.isNaN() ? zeroBN : stakedValue),
-							{
-								sign: selectedPriceCurrency.sign,
-							}
-						)}
+						value={formatFiatCurrency(getPriceAtCurrentRate(stakedValue), {
+							sign: selectedPriceCurrency.sign,
+						})}
 					/>
 					<APR
 						title={t('common.stat-box.earning')}

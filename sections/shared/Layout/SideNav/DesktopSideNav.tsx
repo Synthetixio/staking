@@ -31,20 +31,17 @@ const DesktopSideNav: FC = () => {
 
 	const walletAddress = useRecoilValue(walletAddressState);
 
-	const { useSNX24hrPricesQuery, useCryptoBalances, useSynthsBalancesQuery } = useSynthetixQueries({
-		networkId,
-	});
+	const { useSNX24hrPricesQuery, useSynthsBalancesQuery } = useSynthetixQueries();
 
 	const SNX24hrPricesQuery = useSNX24hrPricesQuery();
-	const cryptoBalances = useCryptoBalances();
+	const cryptoBalances = useCryptoBalances(walletAddress);
 	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
 	const isL2 = useRecoilValue(isL2State);
 	const { clearSubMenuConfiguration } = UIContainer.useContainer();
 
 	const snxBalance =
-		cryptoBalances?.balances?.find(
-			(balance: { currencyKey: CryptoCurrency }) => balance.currencyKey === CryptoCurrency.SNX
-		)?.balance ?? wei(0);
+		cryptoBalances?.balances?.find((balance) => balance.currencyKey === CryptoCurrency.SNX)
+			?.balance ?? wei(0);
 
 	const sUSDBalance = synthsBalancesQuery?.data?.balancesMap[Synths.sUSD]?.balance ?? wei(0);
 

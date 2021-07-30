@@ -1,12 +1,12 @@
 import React, { useMemo } from 'react';
 import styled from 'styled-components';
 import { CellProps, Row } from 'react-table';
-import { isWalletConnectedState } from 'store/wallet';
+import { isWalletConnectedState, walletAddressState } from 'store/wallet';
 import { FlexDivCol } from 'styles/common';
 import media from 'styles/media';
 import Button from 'components/Button';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { Proposal as ProposalType } from 'queries/gov/types';
+import useSynthetixQueries, { Proposal as ProposalType } from '@synthetixio/queries';
 import Table from 'components/Table';
 import { useTranslation } from 'react-i18next';
 import Countdown from 'react-countdown';
@@ -16,8 +16,7 @@ import { panelState, PanelType, proposalState } from 'store/gov';
 import { DURATION_SEPARATOR } from 'constants/date';
 import { getCurrentTimestampSeconds } from 'utils/formatters/date';
 import { DesktopOrTabletView, MobileOnlyView } from 'components/Media';
-import useProposalsQuery from 'queries/gov/useProposalsQuery';
-import { SPACE_KEY } from 'constants/snapshot';
+import { snapshotEndpoint, SPACE_KEY } from 'constants/snapshot';
 
 type IndexProps = {
 	spaceKey: SPACE_KEY;
@@ -45,9 +44,13 @@ const ResponsiveTable: React.FC<ResponsiveTableProps> = ({ mobile, spaceKey }) =
 	const { t } = useTranslation();
 	const router = useRouter();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
+	const walletAddress = useRecoilValue(walletAddressState);
 	const setProposal = useSetRecoilState(proposalState);
 	const setPanelType = useSetRecoilState(panelState);
-	const proposals = useProposalsQuery(spaceKey);
+
+	const { useProposalsQuery } = useSynthetixQueries();
+
+	const proposals = useProposalsQuery(snapshotEndpoint, spaceKey);
 
 	const columns = useMemo(() => {
 		const widths = mobile ? ['auto', 70, 70, 50] : [200, 75, 100, 75];

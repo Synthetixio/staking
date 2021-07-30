@@ -57,10 +57,10 @@ import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 
 import TransactionNotifier from 'containers/TransactionNotifier';
 import TxState from 'sections/gov/components/TxState';
-import useProposalQuery from 'queries/gov/useProposalQuery';
 import { expired, pending } from '../helper';
 import synthetix from 'lib/synthetix';
-import { Proposal } from 'queries/gov/types';
+import useSynthetixQueries, { Proposal } from '@synthetixio/queries';
+import { snapshotEndpoint } from 'constants/snapshot';
 
 type DilutionContentProps = {
 	proposal: Proposal;
@@ -70,7 +70,6 @@ type DilutionContentProps = {
 const DilutionContent: React.FC<DilutionContentProps> = ({ proposal, onBack }) => {
 	const { t } = useTranslation();
 
-	const [voteMutate] = useSignMessage();
 	const activeTab = useActiveTab();
 	const [selected, setSelected] = useState<number | null>(null);
 
@@ -102,14 +101,32 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ proposal, onBack }) =
 
 	const isAppReady = useRecoilValue(appReadyState);
 	const walletAddress = useRecoilValue(walletAddressState);
+	const { useProposalQuery } = useSynthetixQueries();
 
-	const proposalQuery = useProposalQuery(activeTab, proposal?.id ?? '');
+	const proposalQuery = useProposalQuery(
+		snapshotEndpoint,
+		activeTab,
+		proposal?.id ?? '',
+		walletAddress
+	);
 
 	const { signer } = Connector.useContainer();
 
 	const councilMembers = useCouncilMembers();
 
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
+
+	const voteMutate = useSignMessage({
+		onSuccess: (_) => {
+			setTxModalOpen(false);
+			setSignTransactionState(Transaction.SUCCESS);
+		},
+		onError: (error) => {
+			console.log(error);
+			setSignError(error);
+			setSignTransactionState(Transaction.PRESUBMIT);
+		},
+	});
 
 	useEffect(() => {
 		if (isAppReady && walletAddress && councilMembers) {
@@ -216,20 +233,11 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ proposal, onBack }) =
 		if (proposal && selected !== null) {
 			setTxModalOpen(true);
 			setSignTransactionState(Transaction.WAITING);
-			voteMutate({
+			voteMutate.mutate({
 				spaceKey: activeTab,
 				type: SignatureType.VOTE,
 				payload: { proposal: proposal.id, choice: selected + 1, metadata: {} },
-			})
-				.then((_) => {
-					setTxModalOpen(false);
-					setSignTransactionState(Transaction.SUCCESS);
-				})
-				.catch((error) => {
-					console.log(error);
-					setSignError(error);
-					setSignTransactionState(Transaction.PRESUBMIT);
-				});
+			});
 		}
 	};
 

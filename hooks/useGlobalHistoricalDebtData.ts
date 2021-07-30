@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { orderBy } from 'lodash';
 import useSynthetixQueries from '@synthetixio/queries';
-import { StakingTransactionType } from '@synthetixio/queries/build/node/src/queries/staking/types';
+import { StakingTransactionType } from '@synthetixio/queries';
 
 type HistoricalGlobalDebtAndIssuanceData = {
 	issuance: number;

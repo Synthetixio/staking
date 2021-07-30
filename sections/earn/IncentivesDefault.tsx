@@ -1,5 +1,5 @@
 import { FC, useMemo } from 'react';
-import Wei from '@synthetixio/wei';
+import Wei, { wei } from '@synthetixio/wei';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
@@ -9,20 +9,20 @@ import ROUTES from 'constants/routes';
 import { CryptoCurrency } from 'constants/currency';
 import media from 'styles/media';
 import { isWalletConnectedState } from 'store/wallet';
-import useSNXLockedValueQuery from 'queries/staking/useSNXLockedValueQuery';
 import useFeePeriodTimeAndProgress from 'hooks/useFeePeriodTimeAndProgress';
 
 import IncentivesTable from './IncentivesTable';
 import ClaimTab from './ClaimTab';
 import { Tab } from './types';
 import { DesktopOrTabletView } from 'components/Media';
+import useSynthetixQueries from '@synthetixio/queries';
 
 type IncentivesProps = {
 	tradingRewards: Wei;
 	stakingRewards: Wei;
 	totalRewards: Wei;
-	stakingAPR: number;
-	stakedAmount: number;
+	stakingAPR: Wei;
+	stakedAmount: Wei;
 	hasClaimed: boolean;
 };
 
@@ -40,7 +40,9 @@ const Incentives: FC<IncentivesProps> = ({
 	const router = useRouter();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 
-	const useSNXLockedValue = useSNXLockedValueQuery();
+	const { useGlobalStakingInfoQuery } = useSynthetixQueries();
+
+	const globalStakingInfoQuery = useGlobalStakingInfoQuery();
 
 	const { nextFeePeriodStarts, currentFeePeriodStarted } = useFeePeriodTimeAndProgress();
 
@@ -65,13 +67,13 @@ const Incentives: FC<IncentivesProps> = ({
 							title: t('earn.incentives.options.snx.title'),
 							subtitle: t('earn.incentives.options.snx.subtitle'),
 							apr: stakingAPR,
-							tvl: useSNXLockedValue.data ?? 0,
+							tvl: globalStakingInfoQuery.data?.lockedValue ?? wei(0),
 							staked: {
 								balance: stakedAmount,
 								asset: CryptoCurrency.SNX,
 								ticker: CryptoCurrency.SNX,
 							},
-							rewards: stakingRewards.toNumber(),
+							rewards: stakingRewards,
 							periodStarted: currentFeePeriodStarted.getTime(),
 							periodFinish: nextFeePeriodStarts.getTime(),
 							claimed: hasClaimed,
@@ -84,7 +86,7 @@ const Incentives: FC<IncentivesProps> = ({
 		[
 			stakingAPR,
 			stakedAmount,
-			useSNXLockedValue.data,
+			globalStakingInfoQuery.data?.lockedValue,
 			nextFeePeriodStarts,
 			stakingRewards,
 			hasClaimed,

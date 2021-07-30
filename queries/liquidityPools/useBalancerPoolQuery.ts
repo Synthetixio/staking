@@ -16,6 +16,7 @@ import Connector from 'containers/Connector';
 import { LiquidityPoolData } from './types';
 import { getBalancerPool } from './helper';
 import { Synths } from 'constants/currency';
+import { wei } from '@synthetixio/wei';
 
 type BalancerPoolTokenContract = {
 	address: string;
@@ -54,53 +55,47 @@ const useBalancerPoolQuery = (
 			const getDuration = StakingRewardsContract.DURATION || StakingRewardsContract.rewardsDuration;
 
 			const [
-				duration,
+				rawDuration,
 				rate,
-				periodFinish,
-				LPBalance,
-				LPUserBalance,
+				rawPeriodFinish,
+				balance,
+				userBalance,
 				price,
-				SNXRewards,
-				LPStaked,
-				LPAllowance,
-			] = await Promise.all([
-				getDuration(),
-				StakingRewardsContract.rewardRate(),
-				StakingRewardsContract.periodFinish(),
-				BalancerContract.balanceOf(address),
-				BalancerContract.balanceOf(walletAddress),
-				BPTokenPrice,
-				StakingRewardsContract.earned(walletAddress),
-				StakingRewardsContract.balanceOf(walletAddress),
-				BalancerContract.allowance(walletAddress, address),
-			]);
-			const durationInWeeks = Number(duration) / 3600 / 24 / 7;
-			const isPeriodFinished = new Date().getTime() > Number(periodFinish) * 1000;
-			const distribution = isPeriodFinished
-				? 0
-				: Math.trunc(Number(duration) * (rate / 1e18)) / durationInWeeks;
+				rewards,
+				staked,
+				allowance,
+			] = (
+				await Promise.all([
+					getDuration(),
+					StakingRewardsContract.rewardRate(),
+					StakingRewardsContract.periodFinish(),
+					BalancerContract.balanceOf(address),
+					BalancerContract.balanceOf(walletAddress),
+					BPTokenPrice,
+					StakingRewardsContract.earned(walletAddress),
+					StakingRewardsContract.balanceOf(walletAddress),
+					BalancerContract.allowance(walletAddress, address),
+				])
+			).map((data) => wei(data));
 
-			const [balance, userBalance, rewards, staked, allowance] = [
-				LPBalance,
-				LPUserBalance,
-				SNXRewards,
-				LPStaked,
-				LPAllowance,
-			].map((data) => Number(synthetix.js?.utils.formatEther(data)));
+			const duration = rawDuration.toNumber(true);
+			const periodFinish = rawPeriodFinish.toNumber(true);
+
+			const durationInWeeks = duration / (3600 * 24 * 7);
+			const isPeriodFinished = new Date().getTime() > periodFinish * 1000;
+			const distribution = isPeriodFinished ? wei(0) : rate.mul(duration).div(durationInWeeks);
 
 			return {
 				distribution,
 				address,
 				price,
 				balance,
-				periodFinish: Number(periodFinish) * 1000,
-				duration: Number(duration) * 1000,
+				periodFinish: periodFinish * 1000,
+				duration: duration * 1000,
 				rewards,
 				staked,
-				stakedBN: LPStaked,
 				allowance,
 				userBalance,
-				userBalanceBN: LPUserBalance,
 				needsToSettle: false,
 			};
 		},

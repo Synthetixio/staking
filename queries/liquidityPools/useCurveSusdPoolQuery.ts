@@ -22,10 +22,11 @@ import {
 
 import { LiquidityPoolData } from './types';
 import { getCurveTokenPrice } from './helper';
+import Wei, { wei } from '@synthetixio/wei';
 
 export type CurveData = LiquidityPoolData & {
-	swapAPR: number;
-	rewardsAPR: number;
+	swapAPR: Wei;
+	rewardsAPR: Wei;
 };
 
 const useCurveSusdPoolQuery = (options?: UseQueryOptions<CurveData>) => {
@@ -108,9 +109,7 @@ const useCurveSusdPoolQuery = (options?: UseQueryOptions<CurveData>) => {
 
 			const durationInWeeks = Number(duration) / 3600 / 24 / 7;
 			const isPeriodFinished = new Date().getTime() > Number(periodFinish) * 1000;
-			const distribution = isPeriodFinished
-				? 0
-				: Math.trunc(Number(duration) * (rate / 1e18)) / durationInWeeks;
+			const distribution = isPeriodFinished ? wei(0) : rate.mul(duration).div(durationInWeeks);
 
 			const [
 				balance,
@@ -132,12 +131,17 @@ const useCurveSusdPoolQuery = (options?: UseQueryOptions<CurveData>) => {
 				curveRewards,
 				curveStaked,
 				curveAllowance,
-			].map((data) => Number(wei(data.toString()).div(1e18)));
+			].map((data) => wei(data));
 
-			const curveRate =
-				(((inflationRate * relativeWeight * 31536000) / workingSupply) * 0.4) / curveSusdTokenPrice;
-			const rewardsAPR = curveRate * curvePrice * 1e18;
-			const swapAPR = swapData?.data?.apy?.day?.susd ?? 0;
+			const curveRate = inflationRate
+				.mul(relativeWeight)
+				.mul(31536000)
+				.div(workingSupply)
+				.mul(0.4)
+				.div(curveSusdTokenPrice);
+
+			const rewardsAPR = curveRate.mul(curvePrice);
+			const swapAPR = swapData?.data?.apy?.day?.susd ?? wei(0);
 
 			return {
 				periodFinish: Number(periodFinish) * 1000,
@@ -149,11 +153,9 @@ const useCurveSusdPoolQuery = (options?: UseQueryOptions<CurveData>) => {
 				rewardsAPR,
 				rewards,
 				staked,
-				stakedBN: curveStaked,
 				duration: Number(duration) * 1000,
 				allowance,
 				userBalance,
-				userBalanceBN: curveSusdUserBalance,
 			};
 		},
 		{

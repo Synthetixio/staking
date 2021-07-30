@@ -6,10 +6,7 @@ import DebtPoolTable from '../DebtPoolTable';
 import colors from 'styles/theme/colors';
 import useSynthetixQueries from '@synthetixio/queries';
 import { formatCurrency } from 'utils/formatters/number';
-import {
-	SynthsTotalSupplyData,
-	SynthTotalSupply,
-} from '@synthetixio/queries/build/node/queries/synths/useSynthsTotalSupplyQuery';
+import { SynthsTotalSupplyData, SynthTotalSupply } from '@synthetixio/queries';
 
 const MIN_PERCENT_FOR_PIE_CHART = 0.03;
 
@@ -78,7 +75,6 @@ const SynthsPieChart: FC<DebtPieChartProps> = () => {
 			.map((supply, index) => ({
 				...supply,
 				value: supply.value.toNumber(),
-				skewValue: supply.skewValue,
 				fillColor: MUTED_COLORS[index % MUTED_COLORS.length],
 				strokeColor: BRIGHT_COLORS[index % BRIGHT_COLORS.length],
 			}));

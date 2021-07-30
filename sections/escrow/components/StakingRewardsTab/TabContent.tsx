@@ -21,9 +21,10 @@ import {
 	ModalItemText,
 	ErrorMessage,
 } from 'styles/common';
+import Wei from '@synthetixio/wei';
 
 type TabContentProps = {
-	claimableAmount: number;
+	claimableAmount: Wei;
 	onSubmit: any;
 	transactionError: string | null;
 	gasEstimateError: string | null;

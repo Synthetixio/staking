@@ -6,7 +6,6 @@ import synthetix from 'lib/synthetix';
 
 import { normalizedGasPrice } from 'utils/network';
 import { Transaction, GasLimitEstimate } from 'constants/network';
-import useEscrowDataQuery from 'queries/escrow/useEscrowDataQuery';
 import { useRecoilValue } from 'recoil';
 import { isWalletConnectedState, walletAddressState } from 'store/wallet';
 import { appReadyState } from 'store/app';
@@ -14,12 +13,17 @@ import { appReadyState } from 'store/app';
 import { TabContainer } from '../common';
 import TabContent from './TabContent';
 import MigrateTabContent from './MigrateTabContent';
+import useSynthetixQueries from '@synthetixio/queries';
+import { wei } from '@synthetixio/wei';
 
 const StakingRewardsTab: React.FC = () => {
-	const escrowDataQuery = useEscrowDataQuery();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const isAppReady = useRecoilValue(appReadyState);
+
+	const { useEscrowDataQuery } = useSynthetixQueries();
+
+	const escrowDataQuery = useEscrowDataQuery(walletAddress);
 
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const [gasLimitEstimate, setGasLimitEstimate] = useState<GasLimitEstimate>(null);
@@ -30,9 +34,10 @@ const StakingRewardsTab: React.FC = () => {
 	const [vestTxError, setVestTxError] = useState<string | null>(null);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 
-	const canVestAmount = escrowDataQuery?.data?.claimableAmount ?? 0;
+	const canVestAmount = escrowDataQuery?.data?.claimableAmount ?? wei(0);
 	const claimableEntryIds = escrowDataQuery?.data?.claimableEntryIds ?? null;
-	const totalBalancePendingMigration = escrowDataQuery?.data?.totalBalancePendingMigration ?? 0;
+	const totalBalancePendingMigration =
+		escrowDataQuery?.data?.totalBalancePendingMigration ?? wei(0);
 
 	useEffect(() => {
 		const getGasLimitEstimate = async () => {

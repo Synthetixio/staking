@@ -30,16 +30,18 @@ import { CurrencyIconType } from 'components/Currency/CurrencyIcon/CurrencyIcon'
 import { ActionsContainer as Container } from './common-styles';
 import { NetworkId } from '../../../../../js-monorepo/packages/queries/node_modules/@synthetixio/contracts-interface/build/node';
 import { wei } from '@synthetixio/wei';
+import { useRecoilValue } from 'recoil';
+import { walletAddressState } from 'store/wallet';
 
 const LayoutLayerOne: FC = () => {
 	const { t } = useTranslation();
 
-	const networkId = NetworkId.Mainnet;
+	const walletAddress = useRecoilValue(walletAddressState);
 
-	const lpData = useLPData(networkId);
-	const shortData = useShortRewardsData(networkId);
-	const { stakingRewards, tradingRewards } = useUserStakingData(networkId);
-	const { currentCRatio, targetCRatio } = useStakingCalculations(networkId);
+	const lpData = useLPData();
+	const shortData = useShortRewardsData(walletAddress);
+	const { stakingRewards, tradingRewards } = useUserStakingData(walletAddress);
+	const { currentCRatio, targetCRatio } = useStakingCalculations();
 
 	const gridItems: GridBoxProps[] = useMemo(() => {
 		const aboveTargetCRatio = currentCRatio.lte(targetCRatio);
@@ -113,7 +115,7 @@ const LayoutLayerOne: FC = () => {
 					supplier: 'Synthetix',
 				}),
 				externalLink: ROUTES.Earn.sBTC_EXTERNAL,
-				isDisabled: shortData[Synths.sBTC].APR === 0,
+				isDisabled: shortData[Synths.sBTC].APR.eq(0),
 			},
 			{
 				icon: (
@@ -126,7 +128,7 @@ const LayoutLayerOne: FC = () => {
 				}),
 				copy: t('dashboard.actions.loans.copy', { asset: Synths.sETH, supplier: 'Synthetix' }),
 				externalLink: ROUTES.Earn.sETH_EXTERNAL,
-				isDisabled: shortData[Synths.sETH].APR === 0,
+				isDisabled: shortData[Synths.sETH].APR.eq(0),
 			},
 			{
 				icon: (
@@ -148,7 +150,7 @@ const LayoutLayerOne: FC = () => {
 				}),
 				tooltip: t('common.tooltip.external', { link: 'Curve Finance' }),
 				externalLink: ROUTES.Earn.sUSD_EXTERNAL,
-				isDisabled: lpData[LP.CURVE_sUSD].APR === 0,
+				isDisabled: lpData[LP.CURVE_sUSD].APR.eq(0),
 			},
 			{
 				icon: (
@@ -169,7 +171,7 @@ const LayoutLayerOne: FC = () => {
 					supplier: 'Uniswap',
 				}),
 				link: ROUTES.Earn.DHT_LP,
-				isDisabled: lpData[LP.UNISWAP_DHT].APR === 0,
+				isDisabled: lpData[LP.UNISWAP_DHT].APR.eq(0),
 			},
 			{
 				icon: (
@@ -185,7 +187,7 @@ const LayoutLayerOne: FC = () => {
 					supplier: 'Synthetix',
 				}),
 				link: ROUTES.Earn.sAAPL_LP,
-				isDisabled: lpData[LP.BALANCER_sAAPL].APR === 0,
+				isDisabled: lpData[LP.BALANCER_sAAPL].APR.eq(0),
 			},
 			{
 				gridLocations: ['col-4', 'col-5', 'row-3', 'row-4'],
@@ -202,7 +204,7 @@ const LayoutLayerOne: FC = () => {
 					supplier: 'Synthetix',
 				}),
 				link: ROUTES.Earn.sAMZN_LP,
-				isDisabled: lpData[LP.BALANCER_sAMZN].APR === 0,
+				isDisabled: lpData[LP.BALANCER_sAMZN].APR.eq(0),
 			},
 			{
 				gridLocations: ['col-1', 'col-2', 'row-4', 'row-5'],
@@ -219,7 +221,7 @@ const LayoutLayerOne: FC = () => {
 					supplier: 'Synthetix',
 				}),
 				link: ROUTES.Earn.sFB_LP,
-				isDisabled: lpData[LP.BALANCER_sFB].APR === 0,
+				isDisabled: lpData[LP.BALANCER_sFB].APR.eq(0),
 			},
 			{
 				gridLocations: ['col-2', 'col-3', 'row-4', 'row-5'],
@@ -236,7 +238,7 @@ const LayoutLayerOne: FC = () => {
 					supplier: 'Synthetix',
 				}),
 				link: ROUTES.Earn.sGOOG_LP,
-				isDisabled: lpData[LP.BALANCER_sGOOG].APR === 0,
+				isDisabled: lpData[LP.BALANCER_sGOOG].APR.eq(0),
 			},
 			{
 				gridLocations: ['col-3', 'col-4', 'row-4', 'row-5'],
@@ -253,7 +255,7 @@ const LayoutLayerOne: FC = () => {
 					supplier: 'Synthetix',
 				}),
 				link: ROUTES.Earn.sNFLX_LP,
-				isDisabled: lpData[LP.BALANCER_sNFLX].APR === 0,
+				isDisabled: lpData[LP.BALANCER_sNFLX].APR.eq(0),
 			},
 			{
 				gridLocations: ['col-4', 'col-5', 'row-4', 'row-5'],
@@ -270,7 +272,7 @@ const LayoutLayerOne: FC = () => {
 					supplier: 'Synthetix',
 				}),
 				link: ROUTES.Earn.sMSFT_LP,
-				isDisabled: lpData[LP.BALANCER_sMSFT].APR === 0,
+				isDisabled: lpData[LP.BALANCER_sMSFT].APR.eq(0),
 			},
 			{
 				gridLocations: ['col-1', 'col-2', 'row-5', 'row-6'],
@@ -287,7 +289,7 @@ const LayoutLayerOne: FC = () => {
 					supplier: 'Synthetix',
 				}),
 				link: ROUTES.Earn.sCOIN_LP,
-				isDisabled: lpData[LP.BALANCER_sCOIN].APR === 0,
+				isDisabled: lpData[LP.BALANCER_sCOIN].APR.eq(0),
 			},
 		].map((cell, i) => ({ ...cell, gridArea: `tile-${i + 1}` }));
 	}, [t, lpData, currentCRatio, targetCRatio, stakingRewards, tradingRewards, shortData]);

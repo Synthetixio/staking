@@ -10,13 +10,19 @@ import useMediaQuery from 'hooks/useMediaQuery';
 import { ExternalLink } from 'styles/common';
 import WalletIcon from 'assets/svg/app/wallet-yellow.svg';
 import ToggleDelegateApproval from './ToggleDelegateApproval';
-
-import { DelegationWallet, ENTITY_ATTRS } from 'queries/delegate/types';
-import useGetDelegateWallets from 'queries/delegate/useGetDelegateWallets';
+import useSynthetixQueries from '@synthetixio/queries';
+import { DelegationWallet } from '@synthetixio/queries';
+import { useRecoilValue } from 'recoil';
+import { walletAddressState } from 'store/wallet';
 
 const RightCol: FC = () => {
 	const { t } = useTranslation();
-	const delegateWalletsQuery = useGetDelegateWallets();
+
+	const { useGetDelegateWallets } = useSynthetixQueries();
+
+	const walletAddress = useRecoilValue(walletAddressState);
+
+	const delegateWalletsQuery = useGetDelegateWallets(walletAddress as string);
 	const delegateWallets = delegateWalletsQuery?.data ?? [];
 
 	const isSM = useMediaQuery('sm');
@@ -33,7 +39,7 @@ const RightCol: FC = () => {
 					return truncateAddress(delegateAddress, isSM ? 4 : 5, isSM ? 2 : 3);
 				},
 			},
-			...Array.from(ENTITY_ATTRS.entries()).map(([action, attr]) => ({
+			/*...Array.from(ENTITY_ATTRS.entries()).map(([action, attr]) => ({
 				Header: <>{t(`delegate.list.cols.${attr}`)}</>,
 				accessor: attr,
 				width: isSM ? 40 : 50,
@@ -47,7 +53,7 @@ const RightCol: FC = () => {
 						/>
 					);
 				},
-			})),
+			})),*/
 		],
 		[t, isSM]
 	);

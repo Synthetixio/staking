@@ -38,11 +38,11 @@ import {
 } from 'styles/common';
 import { InputContainer, InputLocked } from '../common';
 import { Transaction, GasLimitEstimate } from 'constants/network';
-import { formatCurrency, formatNumber, zeroBN } from 'utils/formatters/number';
+import { formatCurrency, formatNumber } from 'utils/formatters/number';
 import { getStakingAmount } from '../helper';
 import { CryptoCurrency, Synths } from 'constants/currency';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
-import Wei from '@synthetixio/wei';
+import Wei, { wei } from '@synthetixio/wei';
 import { isWalletConnectedState } from 'store/wallet';
 import Connector from 'containers/Connector';
 import { BurnActionType, burnTypeState } from 'store/staking';
@@ -114,23 +114,15 @@ const StakingInput: React.FC<StakingInputProps> = ({
 	 */
 	const stakeInfo = useCallback(
 		(mintInput: Wei) =>
-			formatCurrency(
-				stakingCurrencyKey,
-				getStakingAmount(targetCRatio, mintInput.isNaN() ? 0 : mintInput, SNXRate),
-				{
-					currencyKey: stakingCurrencyKey,
-				}
-			),
+			formatCurrency(stakingCurrencyKey, getStakingAmount(targetCRatio, mintInput, SNXRate), {
+				currencyKey: stakingCurrencyKey,
+			}),
 		[SNXRate, stakingCurrencyKey, targetCRatio]
 	);
 
-	const formattedInput = formatCurrency(
-		synthCurrencyKey,
-		inputValue.isNaN() ? zeroBN : inputValue,
-		{
-			currencyKey: synthCurrencyKey,
-		}
-	);
+	const formattedInput = formatCurrency(synthCurrencyKey, inputValue, {
+		currencyKey: synthCurrencyKey,
+	});
 
 	const returnButtonStates = useMemo(() => {
 		if (!isWalletConnected) {
@@ -155,7 +147,7 @@ const StakingInput: React.FC<StakingInputProps> = ({
 			burnType === BurnActionType.TARGET &&
 			maxBurnAmount != null &&
 			burnAmountToFixCRatio != null &&
-			burnAmountToFixCRatio.isGreaterThan(maxBurnAmount)
+			burnAmountToFixCRatio.gt(maxBurnAmount)
 		) {
 			return (
 				<StyledCTA variant="primary" size="lg" disabled={true} style={{ padding: 0 }}>
@@ -209,12 +201,8 @@ const StakingInput: React.FC<StakingInputProps> = ({
 
 	const equivalentSNXAmount = useMemo(() => {
 		const calculatedTargetBurn = Math.max(debtBalance.sub(issuableSynths).toNumber(), 0);
-		if (
-			!isMint &&
-			currentCRatio.isGreaterThan(targetCRatio) &&
-			inputValue.isLessThanOrEqualTo(calculatedTargetBurn)
-		) {
-			return stakeInfo(zeroBN);
+		if (!isMint && currentCRatio.gt(targetCRatio) && inputValue.lte(calculatedTargetBurn)) {
+			return stakeInfo(wei(0));
 		} else {
 			return stakeInfo(inputValue);
 		}
@@ -292,7 +280,7 @@ const StakingInput: React.FC<StakingInputProps> = ({
 					{!isMint && burnType != null && [BurnActionType.CUSTOM].includes(burnType) && (
 						<BalanceButton variant="text" onClick={() => onInputChange(maxBurnAmount)}>
 							<span>{t('common.wallet.balance')}</span>
-							{formatNumber(maxBurnAmount ?? zeroBN)}
+							{formatNumber(maxBurnAmount ?? wei(0))}
 						</BalanceButton>
 					)}
 				</HeaderRow>
@@ -307,7 +295,7 @@ const StakingInput: React.FC<StakingInputProps> = ({
 							<StyledInput
 								type="number"
 								maxLength={12}
-								value={inputValue.isNaN() ? '0' : inputValue.toString()}
+								value={inputValue.toString()}
 								placeholder="0"
 								onChange={(e) => onInputChange(e.target.value)}
 								disabled={

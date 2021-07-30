@@ -23,9 +23,8 @@ type PriceItemProps = {
 };
 
 const PriceItem: FC<PriceItemProps> = ({ currencyKey, data }) => {
-	const networkId = useRecoilValue(networkState)?.id || NetworkId.Mainnet;
-	const { selectedPriceCurrency, selectPriceCurrencyRate } = useSelectedPriceCurrency(networkId);
-	const { useExchangeRatesQuery } = useSynthetixQueries({ networkId });
+	const { selectedPriceCurrency, selectPriceCurrencyRate } = useSelectedPriceCurrency();
+	const { useExchangeRatesQuery } = useSynthetixQueries();
 	const exchangeRatesQuery = useExchangeRatesQuery();
 
 	const exchangeRates = exchangeRatesQuery.data ?? null;

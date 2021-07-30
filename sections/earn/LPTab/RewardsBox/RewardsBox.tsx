@@ -31,23 +31,23 @@ import { getContract } from '../StakeTab/StakeTab';
 import { StyledButton } from '../../common';
 import { CurrencyIconType } from 'components/Currency/CurrencyIcon/CurrencyIcon';
 import { networkState } from 'store/wallet';
-import { wei } from '@synthetixio/wei';
+import Wei, { wei } from '@synthetixio/wei';
 
 type RewardsBoxProps = {
-	tokenRewards: number;
-	SNXRate: number;
+	tokenRewards: Wei;
+	SNXRate: Wei;
 	stakedAsset: CurrencyKey;
 	icon: CurrencyKey;
 	type?: CurrencyIconType;
 	handleClaim: () => void;
-	setClaimGasPrice: (num: number) => void;
+	setClaimGasPrice: (num: Wei) => void;
 	claimTxModalOpen: boolean;
 	setClaimTxModalOpen: (open: boolean) => void;
 	claimError: string | null;
 	setClaimError: (err: string | null) => void;
-	secondTokenReward?: number;
+	secondTokenReward?: Wei;
 	secondTokenKey?: CryptoCurrency;
-	secondTokenRate?: number;
+	secondTokenRate?: Wei;
 };
 
 const RewardsBox: FC<RewardsBoxProps> = ({
@@ -69,7 +69,7 @@ const RewardsBox: FC<RewardsBoxProps> = ({
 	const { t } = useTranslation();
 	const { signer } = Connector.useContainer();
 	const networkId = useRecoilValue(networkState)!.id;
-	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency(networkId);
+	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
 	const [gasLimitEstimate, setGasLimitEstimate] = useState<GasLimitEstimate>(null);
 	const isAppReady = useRecoilValue(appReadyState);
 
@@ -110,7 +110,7 @@ const RewardsBox: FC<RewardsBoxProps> = ({
 						</RewardsAmountSNX>
 						<RewardsAmountUSD>
 							{ESTIMATE_VALUE}{' '}
-							{formatFiatCurrency(getPriceAtCurrentRate(wei(tokenRewards * SNXRate)), {
+							{formatFiatCurrency(getPriceAtCurrentRate(tokenRewards.mul(SNXRate)), {
 								sign: selectedPriceCurrency.sign,
 							})}
 						</RewardsAmountUSD>
@@ -132,7 +132,7 @@ const RewardsBox: FC<RewardsBoxProps> = ({
 							<RewardsAmountUSD>
 								{ESTIMATE_VALUE}{' '}
 								{formatFiatCurrency(
-									getPriceAtCurrentRate(wei(secondTokenReward! * secondTokenRate!)),
+									getPriceAtCurrentRate(wei(secondTokenReward!.mul(secondTokenRate!))),
 									{
 										sign: selectedPriceCurrency.sign,
 									}
@@ -141,7 +141,7 @@ const RewardsBox: FC<RewardsBoxProps> = ({
 						</FlexDivColCentered>
 					)}
 				</RewardsRow>
-				<StyledButton variant="primary" onClick={handleClaim} disabled={tokenRewards === 0}>
+				<StyledButton variant="primary" onClick={handleClaim} disabled={tokenRewards.eq(0)}>
 					{isDualRewards
 						? t('earn.actions.claim.claim-button')
 						: t('earn.actions.claim.claim-snx-button')}

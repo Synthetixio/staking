@@ -7,8 +7,8 @@ import { useTranslation } from 'react-i18next';
 import synthetix from 'lib/synthetix';
 import { walletAddressState } from 'store/wallet';
 import Connector from 'containers/Connector';
-import { formatUnits } from 'utils/formatters/number';
 import Loans from 'containers/Loans';
+import { wei } from '@synthetixio/wei';
 
 type BalanceProps = {
 	asset: string;
@@ -70,7 +70,7 @@ const ETH: React.FC<ETHProps> = ({ onSetMaxAmount }) => {
 	return (
 		balance && (
 			<Container>
-				{t('balance.input-label')} {formatUnits(balance, 18, 2)}{' '}
+				{t('balance.input-label')} {wei(balance).toString(2)}{' '}
 				{!onSetMaxAmount ? null : <MaxButton onClick={handleSetMaxAmount} />}
 			</Container>
 		)
@@ -99,7 +99,12 @@ const ERC20: React.FC<ERC20Props> = ({ asset, onSetMaxAmount }) => {
 		const {
 			contracts: { ProxysBTC: sBTC, ProxysETH: sETH, ProxyERC20sUSD: sUSD },
 		} = synthetix.js!;
-		const tokens: Record<string, ethers.Contract> = { sBTC, sETH, sUSD, renBTC: renBTCContract! };
+		const tokens: Record<string, typeof sBTC> = {
+			sBTC,
+			sETH,
+			sUSD,
+			renBTC: renBTCContract! as any,
+		};
 		return tokens[asset];
 	}, [asset, renBTCContract]);
 
@@ -141,7 +146,7 @@ const ERC20: React.FC<ERC20Props> = ({ asset, onSetMaxAmount }) => {
 
 	return !(decimals && balance) ? null : (
 		<Container>
-			{t('balance.input-label')} {formatUnits(balance, decimals, 2)}{' '}
+			{t('balance.input-label')} {wei(balance, decimals).toString(2)}{' '}
 			{!onSetMaxAmount ? null : <MaxButton onClick={handleSetMaxAmount} />}
 		</Container>
 	);

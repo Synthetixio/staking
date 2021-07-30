@@ -1,3 +1,4 @@
+import Wei, { wei } from '@synthetixio/wei';
 import { pageResults } from 'synthetix-data';
 
 const uniswapV2SubgraphURL = 'https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v2';
@@ -7,7 +8,7 @@ const sTSLAPoolTokenAddress = '0x055db9aff4311788264798356bbf3a733ae181c6';
 const DHedgeTokenAddress = '0xca1207647ff814039530d7d35df0e1dd2e91fa84';
 const DHTLPTokenAddress = '0x303ffcd201831db88422b76f633458e94e05c33e';
 
-export async function getCurveTokenPrice(): Promise<number> {
+export async function getCurveTokenPrice(): Promise<Wei> {
 	return pageResults({
 		api: uniswapV2SubgraphURL,
 		query: {
@@ -24,14 +25,14 @@ export async function getCurveTokenPrice(): Promise<number> {
 		max: 1,
 	})
 		.then((result: any) => {
-			return Number(result[0].priceUSD);
+			return wei(result[0].priceUSD);
 		})
 		.catch((e: any) => {
 			throw Error(e);
 		});
 }
 
-export async function getsTSLABalancerPool(): Promise<number> {
+export async function getsTSLABalancerPool(): Promise<Wei> {
 	return pageResults({
 		api: balancerSubgraphURL,
 		query: {
@@ -49,14 +50,14 @@ export async function getsTSLABalancerPool(): Promise<number> {
 		// @ts-ignore
 	})
 		.then((result: any) => {
-			return Number(result[0].liquidity) / Number(result[0].totalShares);
+			return wei(result[0].liquidity).div(result[0].totalShares);
 		})
 		.catch((e: any) => {
 			throw Error(e);
 		});
 }
 
-export async function getBalancerPool(poolTokenAddress: string): Promise<number> {
+export async function getBalancerPool(poolTokenAddress: string): Promise<Wei> {
 	return pageResults({
 		api: balancerSubgraphURL,
 		query: {
@@ -74,14 +75,14 @@ export async function getBalancerPool(poolTokenAddress: string): Promise<number>
 		// @ts-ignore
 	})
 		.then((result: any) => {
-			return Number(result[0].liquidity) / Number(result[0].totalShares);
+			return wei(result[0].liquidity).div(result[0].totalShares);
 		})
 		.catch((e: any) => {
 			throw Error(e);
 		});
 }
 
-export async function getDHTPrice(): Promise<number> {
+export async function getDHTPrice(): Promise<Wei> {
 	return pageResults({
 		api: uniswapV2SubgraphURL,
 		query: {
@@ -98,14 +99,14 @@ export async function getDHTPrice(): Promise<number> {
 		max: 1,
 	})
 		.then((result: any) => {
-			return Number(result[0].priceUSD);
+			return wei(result[0].priceUSD);
 		})
 		.catch((e: any) => {
 			throw Error(e);
 		});
 }
 
-export async function getUniswapPairLiquidity(): Promise<number> {
+export async function getUniswapPairLiquidity(): Promise<Wei> {
 	return pageResults({
 		api: uniswapV2SubgraphURL,
 		query: {
@@ -122,7 +123,7 @@ export async function getUniswapPairLiquidity(): Promise<number> {
 		max: 1,
 	})
 		.then((result: any) => {
-			return Number(result[0].reserveUSD);
+			return wei(result[0].reserveUSD);
 		})
 		.catch((e: any) => {
 			throw Error(e);

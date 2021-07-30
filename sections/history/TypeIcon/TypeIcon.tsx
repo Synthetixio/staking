@@ -5,7 +5,7 @@ import ClaimIcon from 'assets/svg/app/claim.svg';
 import BurnIcon from 'assets/svg/app/burn.svg';
 import MintIcon from 'assets/svg/app/mint.svg';
 
-import { StakingTransactionType } from 'queries/staking/types';
+import { StakingTransactionType } from '@synthetixio/queries';
 
 type TypeIconProps = {
 	size?: 'sm' | 'md';

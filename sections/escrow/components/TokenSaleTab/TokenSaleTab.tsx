@@ -5,19 +5,23 @@ import { ethers } from 'ethers';
 import synthetix from 'lib/synthetix';
 
 import { useRecoilValue } from 'recoil';
-import { isWalletConnectedState } from 'store/wallet';
+import { isWalletConnectedState, walletAddressState } from 'store/wallet';
 import { appReadyState } from 'store/app';
 
 import TabContent from './TabContent';
 import { TabContainer } from '../common';
 import { normalizedGasPrice } from 'utils/network';
 import { Transaction, GasLimitEstimate } from 'constants/network';
-
-import useTokenSaleEscrowQuery from 'queries/escrow/useTokenSaleEscrowQuery';
+import useSynthetixQueries from '@synthetixio/queries';
+import { wei } from '@synthetixio/wei';
 
 const TokenSaleTab: React.FC = () => {
-	const tokenSaleEscrowQuery = useTokenSaleEscrowQuery();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
+	const walletAddress = useRecoilValue(walletAddressState);
+
+	const { useTokenSaleEscrowQuery } = useSynthetixQueries();
+
+	const tokenSaleEscrowQuery = useTokenSaleEscrowQuery(walletAddress);
 	const isAppReady = useRecoilValue(appReadyState);
 
 	const { monitorTransaction } = TransactionNotifier.useContainer();
@@ -30,7 +34,7 @@ const TokenSaleTab: React.FC = () => {
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 
 	const tokenSaleData = tokenSaleEscrowQuery?.data;
-	const canVestAmount = tokenSaleData?.claimableAmount ?? 0;
+	const canVestAmount = tokenSaleData?.claimableAmount ?? wei(0);
 
 	useEffect(() => {
 		const getGasLimitEstimate = async () => {

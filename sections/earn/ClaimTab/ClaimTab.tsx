@@ -8,7 +8,12 @@ import { useRouter } from 'next/router';
 import { useRecoilValue } from 'recoil';
 
 import { appReadyState } from 'store/app';
-import { isWalletConnectedState, isL2State, delegateWalletState } from 'store/wallet';
+import {
+	isWalletConnectedState,
+	isL2State,
+	delegateWalletState,
+	walletAddressState,
+} from 'store/wallet';
 import ROUTES from 'constants/routes';
 import { ExternalLink, FlexDiv, GlowingCircle, IconButton, FlexDivJustifyEnd } from 'styles/common';
 import media from 'styles/media';
@@ -71,7 +76,8 @@ import {
 	HeaderLabel,
 } from '../common';
 import { MobileOnlyView } from 'components/Media';
-import useHasVotedForElectionsQuery from 'queries/gov/useHasVotedForElectionsQuery';
+import useSynthetixQueries from '@synthetixio/queries';
+import { snapshotEndpoint } from 'constants/snapshot';
 
 type ClaimTabProps = {
 	tradingRewards: Wei;
@@ -81,8 +87,12 @@ type ClaimTabProps = {
 
 const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, totalRewards }) => {
 	const { t } = useTranslation();
+
+	const walletAddress = useRecoilValue(walletAddressState);
+	const { useHasVotedForElectionsQuery } = useSynthetixQueries();
+
 	const claimed = useClaimedStatus();
-	const { isBelowCRatio } = useUserStakingData();
+	const { isBelowCRatio } = useUserStakingData(walletAddress);
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const { blockExplorerInstance } = Etherscan.useContainer();
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
@@ -103,7 +113,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 	const [txHash, setTxHash] = useState<string | null>(null);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 
-	const hasVotedForElections = useHasVotedForElectionsQuery();
+	const hasVotedForElections = useHasVotedForElectionsQuery(snapshotEndpoint, walletAddress);
 
 	const link =
 		blockExplorerInstance != null && txHash != null
