@@ -35,13 +35,15 @@ const LayoutLayerTwo: FC = () => {
 		return [
 			{
 				icon: (
-					<GlowingCircle variant="green" size="md">
-						<Svg
-							src={ClaimIcon}
-							width="32"
-							viewBox={`0 0 ${ClaimIcon.width} ${ClaimIcon.height}`}
-						/>
-					</GlowingCircle>
+					<>
+					</>
+					// <GlowingCircle variant="green" size="md">
+					// 	<Svg
+					// 		src={ClaimIcon}
+					// 		width="32"
+					// 		viewBox={`0 0 ${ClaimIcon.width} ${ClaimIcon.height}`}
+					// 	/>
+					// </GlowingCircle>
 				),
 				title: t('dashboard.actions.claim.title'),
 				copy: t('dashboard.actions.claim.copy'),
