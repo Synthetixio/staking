@@ -77,7 +77,7 @@ const LayoutLayerTwo: FC = () => {
 				title: t('dashboard.actions.trade.title'),
 				copy: t('dashboard.actions.trade.copy'),
 				externalLink: EXTERNAL_LINKS.Trading.Kwenta,
-				isDisabled: true,
+				isDisabled: false,
 			},
 		].map((cell, i) => ({ ...cell, gridArea: `tile-${i + 1}` }));
 	}, [t, currentCRatio, targetCRatio, stakingRewards, tradingRewards]);
@@ -97,7 +97,7 @@ const StyledContainer = styled(Container)`
 	gap: 1rem;
 
 	${media.lessThan('md')`
-		grid-template-areas: 
+		grid-template-areas:
 			'tile-1 tile-2'
 			'tile-3 tile-4';
 		grid-template-columns: 1fr 1fr;
