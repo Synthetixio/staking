@@ -23,6 +23,7 @@ export type YearnVaultData = LiquidityPoolData & {
 	apy: Wei;
 	tvl: Wei;
 	pricePerShare: Wei;
+	stakedSNX: Wei;
 };
 
 const useYearnSNXVaultQuery = (options?: UseQueryOptions<YearnVaultData>) => {
@@ -47,25 +48,22 @@ const useYearnSNXVaultQuery = (options?: UseQueryOptions<YearnVaultData>) => {
 			);
 
 			const [
-				yvSNXBalance,
 				yvSNXUserBalance,
 				yvSNXPricePerShare,
 				allVaultsData,
 				snxAllowance,
 				snxBalance,
 			] = await Promise.all([
-				YearnSNXVault.balanceOf(yearnSNXVault.address, { gasLimit: 1e6 }),
 				YearnSNXVault.balanceOf(walletAddress, { gasLimit: 1e6 }),
 				YearnSNXVault.pricePerShare({ gasLimit: 1e5 }),
-				axios.get('https://vaults.finance/all'),
+				axios.get('https://api.yearn.finance/v1/chains/1/vaults/all'),
 				Synthetix.allowance(walletAddress, yearnSNXVault.address),
 				Synthetix.transferableSynthetix(walletAddress),
 			]);
 
-			const [pricePerShare, allowance, balance, userBalance] = [
+			const [pricePerShare, allowance, userBalance] = [
 				yvSNXPricePerShare,
 				snxAllowance,
-				yvSNXBalance,
 				snxBalance,
 			].map((data) => wei(data));
 
@@ -74,18 +72,19 @@ const useYearnSNXVaultQuery = (options?: UseQueryOptions<YearnVaultData>) => {
 			const yvSNXVaultData = allVaultsData?.data.find(
 				(vault: any) => vault.symbol === 'yvSNX' && vault.type === 'v2'
 			);
-			const apy = wei(yvSNXVaultData?.apy.recommended) ?? wei(0);
-			const tvl = wei(yvSNXVaultData?.tvl.value) ?? wei(0);
+			const apy = wei(yvSNXVaultData?.apy?.net_apy ?? 0);
+			const tvl = wei(yvSNXVaultData?.tvl?.tvl ?? 0);
 
 			return {
 				address: yearnSNXVault.address,
-				balance,
 				userBalance: userBalance,
+				balance: wei(0),
 				distribution: wei(0),
 				duration: 0,
 				periodFinish: Date.now() * 2, // never expires
 				rewards: wei(0),
-				staked,
+				staked: staked,
+				stakedSNX: staked.mul(pricePerShare),
 				allowance,
 				apy,
 				tvl,
