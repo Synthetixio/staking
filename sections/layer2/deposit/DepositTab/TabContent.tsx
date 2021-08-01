@@ -129,12 +129,6 @@ const TabContent: FC<TabContentProps> = ({
 				<InputBox>
 					<Svg src={SNXLogo} />
 					{returnPanel}
-					{/* <Data>
-						{formatCurrency(currencyKey, depositAmount, {
-							currencyKey: currencyKey,
-							decimals: 2,
-						})}
-					</Data> */}
 				</InputBox>
 				<SettingsContainer>
 					<GasSelector gasLimitEstimate={gasLimitEstimate} setGasPrice={setGasPrice} />
@@ -165,12 +159,6 @@ const TabContent: FC<TabContentProps> = ({
 		</>
 	);
 };
-
-// const Data = styled.p`
-// 	color: ${(props) => props.theme.colors.white};
-// 	font-family: ${(props) => props.theme.fonts.extended};
-// 	font-size: 24px;
-// `;
 
 const SettingsContainer = styled.div`
 	width: 100%;

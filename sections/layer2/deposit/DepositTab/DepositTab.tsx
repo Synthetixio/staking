@@ -99,7 +99,7 @@ const DepositTab = () => {
 				const amountToDepositBN = toBigNumber(amountToDeposit);
 
 				if (amountToDepositBN.gt(transferableCollateral)) {
-					throw new Error(t('layer2.error.insufficient-funds'));
+					throw new Error(t('layer2.error.insufficient-balance'));
 				}
 
 				const transaction = await SynthetixBridgeToOptimism.deposit(parseEther(amountToDeposit), {
