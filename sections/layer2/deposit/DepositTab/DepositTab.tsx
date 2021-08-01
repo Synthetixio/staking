@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import { TabContainer } from '../../components/common';
@@ -17,7 +17,7 @@ import ApproveModal from 'components/ApproveModal';
 import TabContent from './TabContent';
 import { normalizedGasPrice } from 'utils/network';
 import { amountToDepositState } from 'store/layer2';
-import { formatNumber, toBigNumber } from 'utils/formatters/number';
+import { toBigNumber } from 'utils/formatters/number';
 
 const DepositTab = () => {
 	const { t } = useTranslation();
@@ -25,6 +25,7 @@ const DepositTab = () => {
 	const walletAddress = useRecoilValue(walletAddressState);
 	const isAppReady = useRecoilValue(appReadyState);
 	const isEOAWallet = useRecoilValue(isEOAWalletState);
+	const amountToDeposit = useRecoilValue(amountToDepositState);
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const depositsDataQuery = useGetDepositsDataQuery();
 
@@ -36,7 +37,6 @@ const DepositTab = () => {
 	const [transactionState, setTransactionState] = useState<Transaction>(Transaction.PRESUBMIT);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 	const [txHash, setTxHash] = useState<string | null>(null);
-	const [amountToDeposit, onDepositChange] = useRecoilState(amountToDepositState);
 
 	useEffect(() => {
 		const getGasLimitEstimate = async () => {
@@ -142,8 +142,6 @@ const DepositTab = () => {
 			) : null}
 			<TabContent
 				transferableCollateral={transferableCollateral}
-				depositAmount={amountToDeposit}
-				setDepositAmount={onDepositChange}
 				onSubmit={handleDeposit}
 				transactionError={depositTxError}
 				gasEstimateError={gasEstimateError}

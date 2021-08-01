@@ -3,7 +3,9 @@ import { Svg } from 'react-optimized-image';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import BigNumber from 'bignumber.js';
+import { useRecoilState } from 'recoil';
 
+import { amountToDepositState } from 'store/layer2';
 import { formatCurrency, toBigNumber } from 'utils/formatters/number';
 import { CryptoCurrency } from 'constants/currency';
 import { InputContainer, InputBox } from '../../components/common';
@@ -25,8 +27,6 @@ import {
 
 type TabContentProps = {
 	transferableCollateral: BigNumber;
-	depositAmount: string;
-	setDepositAmount: (depositAmount: string) => void;
 	onSubmit: any;
 	transactionError: string | null;
 	gasEstimateError: string | null;
@@ -41,8 +41,6 @@ type TabContentProps = {
 
 const TabContent: FC<TabContentProps> = ({
 	transferableCollateral,
-	depositAmount,
-	setDepositAmount,
 	onSubmit,
 	transactionError,
 	txModalOpen,
@@ -56,6 +54,7 @@ const TabContent: FC<TabContentProps> = ({
 }) => {
 	const { t } = useTranslation();
 	const currencyKey = CryptoCurrency['SNX'];
+	const [depositAmount, setDepositAmount] = useRecoilState(amountToDepositState);
 	const [isDefault, setDefault] = useState(true);
 
 	const returnPanel = useMemo(() => {
@@ -74,12 +73,7 @@ const TabContent: FC<TabContentProps> = ({
 	}, [depositAmount, transferableCollateral, setDepositAmount, isDefault]);
 
 	const renderButton = () => {
-		let inputValue: BigNumber;
-		if (isDefault) {
-			inputValue = transferableCollateral;
-		} else {
-			inputValue = toBigNumber(depositAmount);
-		}
+		const inputValue = isDefault ? transferableCollateral : toBigNumber(depositAmount);
 
 		if (inputValue && !inputValue.isZero() && !inputValue.isNaN()) {
 			return (
