@@ -33,9 +33,6 @@ const AppLayout: FC<AppLayoutProps> = ({ children }) => {
 		if (isL2 && router.pathname.includes(ROUTES.Gov.Home)) {
 			router.push(ROUTES.Home);
 		}
-		if (!isMainnet && router.pathname.includes(ROUTES.Debt.Home)) {
-			router.push(ROUTES.Home);
-		}
 		if (delegateWallet && router.pathname !== ROUTES.Home) {
 			router.push(ROUTES.Home);
 		}

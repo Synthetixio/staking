@@ -89,6 +89,10 @@ export const MENU_LINKS_L2: MenuLinks = [
 				i18nLabel: 'sidenav.earn',
 				subLink: ROUTES.Earn.Home,
 			},
+			{
+				i18nLabel: 'sidenav.debt',
+				subLink: ROUTES.Debt.Home,
+			},
 		],
 	},
 	{

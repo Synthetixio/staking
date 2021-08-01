@@ -1,4 +1,5 @@
 import { useQuery, QueryConfig } from 'react-query';
+import { Contract } from 'ethers';
 import { useRecoilValue } from 'recoil';
 import BigNumber from 'bignumber.js';
 
@@ -8,6 +9,7 @@ import QUERY_KEYS from 'constants/queryKeys';
 import { CurrencyKey, Synths } from 'constants/currency';
 
 import { appReadyState } from 'store/app';
+import { isL2State } from 'store/wallet';
 
 import { toBigNumber, zeroBN } from 'utils/formatters/number';
 
@@ -24,8 +26,29 @@ export type SynthsTotalSupplyData = {
 	totalValue: BigNumber;
 };
 
+// Some contracts on L2 do not exist yet, or have missing methods
+// In such cases, we can default to returning zero (or some other value).
+const handleMissingL2Impl = async (
+	contract: Contract,
+	methodName: string,
+	args: any[],
+	isL2: boolean,
+	defaultReturn: any = 0
+) => {
+	try {
+		return contract[methodName](...args);
+	} catch (e) {
+		if (isL2) {
+			return defaultReturn;
+		}
+
+		throw e;
+	}
+};
+
 const useSynthsTotalSupplyQuery = (options?: QueryConfig<SynthsTotalSupplyData>) => {
 	const isAppReady = useRecoilValue(appReadyState);
+	const isL2 = useRecoilValue(isL2State);
 
 	return useQuery<SynthsTotalSupplyData>(
 		QUERY_KEYS.Synths.TotalSupply,
@@ -63,11 +86,13 @@ const useSynthsTotalSupplyQuery = (options?: QueryConfig<SynthsTotalSupplyData>)
 				SynthUtil.synthsTotalSupplies(),
 				ExchangeRates.rateForCurrency(sETHKey),
 				ExchangeRates.rateForCurrency(sBTCKey),
-				CollateralManagerState.totalIssuedSynths(sETHKey),
-				CollateralManagerState.totalIssuedSynths(sBTCKey),
-				CollateralManagerState.totalIssuedSynths(sUSDKey),
-				EtherWrapper.sETHIssued(),
-				EtherWrapper.sUSDIssued(),
+				handleMissingL2Impl(CollateralManagerState, 'totalIssuedSynths', [sETHKey], isL2, [0, 0]),
+				handleMissingL2Impl(CollateralManagerState, 'totalIssuedSynths', [sBTCKey], isL2, [0, 0]),
+				handleMissingL2Impl(CollateralManagerState, 'totalIssuedSynths', [sUSDKey], isL2, [0, 0]),
+
+				handleMissingL2Impl(EtherWrapper, 'sETHIssued', [], isL2),
+				handleMissingL2Impl(EtherWrapper, 'sETHIssued', [], isL2),
+
 				EtherCollateral.totalIssuedSynths(),
 				EtherCollateralsUSD.totalIssuedSynths(),
 			]);

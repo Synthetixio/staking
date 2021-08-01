@@ -13,7 +13,7 @@ import CaretRightIcon from 'assets/svg/app/caret-right-small.svg';
 import ROUTES from 'constants/routes';
 import SettingsModal from 'sections/shared/modals/SettingsModal';
 import { isWalletConnectedState } from 'store/wallet';
-import { isL2State, isMainnetState, delegateWalletState } from 'store/wallet';
+import { isL2State, delegateWalletState } from 'store/wallet';
 import { MENU_LINKS, MENU_LINKS_L2, MENU_LINKS_DELEGATE } from '../constants';
 
 const getKeyValue = <T extends object, U extends keyof T>(obj: T) => (key: U) => obj[key];
@@ -35,7 +35,6 @@ const SideNav: FC<SideNavProps> = ({ isDesktop }) => {
 		clearSubMenuConfiguration,
 		setNetworkError,
 	} = UIContainer.useContainer();
-	const isMainnet = useRecoilValue(isMainnetState);
 	const [settingsModalOpened, setSettingsModalOpened] = useState<boolean>(false);
 
 	const menuLinks = delegateWallet ? MENU_LINKS_DELEGATE : isL2 ? MENU_LINKS_L2 : MENU_LINKS;
@@ -72,10 +71,7 @@ const SideNav: FC<SideNavProps> = ({ isDesktop }) => {
 			{menuLinks.map(({ i18nLabel, link, subMenu }, i) => {
 				const onSetSubMenuConfiguration = () => {
 					setSubMenuConfiguration({
-						// Debt data only exists on mainnet for now, need to hide otherwise
-						routes: (isMainnet
-							? subMenu
-							: subMenu!.filter(({ subLink }) => subLink !== ROUTES.Debt.Home)) as any,
+						routes: subMenu as any,
 						topPosition: (getKeyValue(menuLinkItemRefs.current) as any)(i).getBoundingClientRect()
 							.y as number,
 					});
