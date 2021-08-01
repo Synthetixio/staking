@@ -10,7 +10,6 @@ import ROUTES from 'constants/routes';
 import { EXTERNAL_LINKS } from 'constants/links';
 
 import GridBox, { GridBoxProps } from 'components/GridBox/Gridbox';
-// import GlowingCircle from 'components/GlowingCircle';
 import { GridDiv } from 'styles/common';
 import media from 'styles/media';
 
@@ -98,36 +97,17 @@ const Index: FC = () => {
 	);
 
 	const gridItems = useMemo(
-		() =>
-			debtBalance.isZero()
-				? [
-						{
-							...ACTIONS.apr,
-						},
-						{
-							...ACTIONS.deposit,
-							isDisabled: transferableCollateral.isZero(),
-						},
-						{
-							...ACTIONS.migrate,
-							isDisabled: stakingEscrow.isZero(),
-						},
-				  ]
-				: [
-						{
-							...ACTIONS.apr,
-						},
-						// {
-						// 	...ACTIONS.burn,
-						// },
-						{
-							isDisabled: true,
-							...ACTIONS.deposit,
-						},
-						{
-							...ACTIONS.migrate,
-						},
-				  ],
+		() => [
+			{ ...ACTIONS.apr },
+			{
+				...ACTIONS.deposit,
+				isDisabled: transferableCollateral.isZero(),
+			},
+			{
+				...ACTIONS.migrate,
+				isDisabled: stakingEscrow.isZero(),
+			},
+		],
 		// eslint-disable-next-line
 		[ACTIONS, debtBalance, stakingEscrow, transferableCollateral, depositsInactive]
 	) as GridBoxProps[];
@@ -135,21 +115,11 @@ const Index: FC = () => {
 	return (
 		<Container>
 			{gridItems.map((props, index) => (
-				<GridBox
-					key={`${props.title}-${index}`}
-					{...props}
-					// icon={<GlowingCircle content={<IconHeading>{index + 1}</IconHeading>} />}
-				/>
+				<GridBox key={`${props.title}-${index}`} {...props} />
 			))}
 		</Container>
 	);
 };
-
-// const IconHeading = styled.h2`
-// 	color: ${(props) => props.theme.colors.blue};
-// 	font-size: 24px;
-// 	font-family: ${(props) => props.theme.fonts.interSemiBold};
-// `;
 
 const Container = styled(GridDiv)`
 	margin-top: 30px;
