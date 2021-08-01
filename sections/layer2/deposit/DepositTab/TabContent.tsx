@@ -1,10 +1,10 @@
-import { FC } from 'react';
+import { FC, useState, useMemo } from 'react';
 import { Svg } from 'react-optimized-image';
-import BigNumber from 'bignumber.js';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
+import BigNumber from 'bignumber.js';
 
-import { formatCurrency } from 'utils/formatters/number';
+import { formatCurrency, toBigNumber } from 'utils/formatters/number';
 import { CryptoCurrency } from 'constants/currency';
 import { InputContainer, InputBox } from '../../components/common';
 import { Transaction, GasLimitEstimate } from 'constants/network';
@@ -14,7 +14,7 @@ import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import { ActionCompleted, ActionInProgress } from '../../components/TxSent';
 
 import SNXLogo from 'assets/svg/currencies/crypto/SNX.svg';
-import { StyledCTA } from '../../components/common';
+import { StyledCTA, StyledInput } from '../../components/common';
 import {
 	ModalContent,
 	ModalItem,
@@ -24,7 +24,9 @@ import {
 } from 'styles/common';
 
 type TabContentProps = {
-	depositAmount: BigNumber;
+	transferableCollateral: BigNumber;
+	depositAmount: string;
+	setDepositAmount: (depositAmount: string) => void;
 	onSubmit: any;
 	transactionError: string | null;
 	gasEstimateError: string | null;
@@ -38,7 +40,9 @@ type TabContentProps = {
 };
 
 const TabContent: FC<TabContentProps> = ({
+	transferableCollateral,
 	depositAmount,
+	setDepositAmount,
 	onSubmit,
 	transactionError,
 	txModalOpen,
@@ -52,9 +56,32 @@ const TabContent: FC<TabContentProps> = ({
 }) => {
 	const { t } = useTranslation();
 	const currencyKey = CryptoCurrency['SNX'];
+	const [isDefault, setDefault] = useState(true);
+
+	const returnPanel = useMemo(() => {
+		return (
+			<StyledInput
+				type="number"
+				maxLength={12}
+				value={isDefault ? transferableCollateral.toString() : depositAmount}
+				placeholder="0"
+				onChange={(e) => {
+					setDepositAmount(e.target.value);
+					setDefault(false);
+				}}
+			/>
+		);
+	}, [depositAmount, transferableCollateral, setDepositAmount, isDefault]);
 
 	const renderButton = () => {
-		if (depositAmount && !depositAmount.isZero()) {
+		let inputValue: BigNumber;
+		if (isDefault) {
+			inputValue = transferableCollateral;
+		} else {
+			inputValue = toBigNumber(depositAmount);
+		}
+
+		if (inputValue && !inputValue.isZero() && !inputValue.isNaN()) {
 			return (
 				<StyledCTA
 					blue={true}
@@ -64,7 +91,7 @@ const TabContent: FC<TabContentProps> = ({
 					disabled={transactionState !== Transaction.PRESUBMIT || !!gasEstimateError}
 				>
 					{t('layer2.actions.deposit.action.deposit-button', {
-						depositAmount: formatCurrency(currencyKey, depositAmount, {
+						depositAmount: formatCurrency(currencyKey, inputValue, {
 							currencyKey: currencyKey,
 						}),
 					})}
@@ -82,7 +109,7 @@ const TabContent: FC<TabContentProps> = ({
 	if (transactionState === Transaction.WAITING) {
 		return (
 			<ActionInProgress
-				amount={depositAmount.toString()}
+				amount={depositAmount}
 				currencyKey={currencyKey}
 				hash={txHash as string}
 				action="deposit"
@@ -95,7 +122,7 @@ const TabContent: FC<TabContentProps> = ({
 			<ActionCompleted
 				currencyKey={currencyKey}
 				hash={txHash as string}
-				amount={depositAmount.toString()}
+				amount={depositAmount}
 				setTransactionState={setTransactionState}
 				action="deposit"
 			/>
@@ -107,12 +134,13 @@ const TabContent: FC<TabContentProps> = ({
 			<InputContainer>
 				<InputBox>
 					<Svg src={SNXLogo} />
-					<Data>
+					{returnPanel}
+					{/* <Data>
 						{formatCurrency(currencyKey, depositAmount, {
 							currencyKey: currencyKey,
 							decimals: 2,
 						})}
-					</Data>
+					</Data> */}
 				</InputBox>
 				<SettingsContainer>
 					<GasSelector gasLimitEstimate={gasLimitEstimate} setGasPrice={setGasPrice} />
@@ -144,11 +172,11 @@ const TabContent: FC<TabContentProps> = ({
 	);
 };
 
-const Data = styled.p`
-	color: ${(props) => props.theme.colors.white};
-	font-family: ${(props) => props.theme.fonts.extended};
-	font-size: 24px;
-`;
+// const Data = styled.p`
+// 	color: ${(props) => props.theme.colors.white};
+// 	font-family: ${(props) => props.theme.fonts.extended};
+// 	font-size: 24px;
+// `;
 
 const SettingsContainer = styled.div`
 	width: 100%;

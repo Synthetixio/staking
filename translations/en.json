@@ -796,7 +796,8 @@
 	"layer2": {
 		"page-title": "Layer 2 | Synthetix Staking",
 		"error": {
-			"non-eoa-wallet": "Smart contract wallets are not compatible with Layer 2"
+			"non-eoa-wallet": "Smart contract wallets are not compatible with Layer 2",
+			"insufficient-balance": "Insufficient transferrable balance for deposit."
 		},
 		"deposit": {
 			"info": {
