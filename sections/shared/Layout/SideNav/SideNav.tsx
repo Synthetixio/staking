@@ -12,7 +12,7 @@ import media from 'styles/media';
 import CaretRightIcon from 'assets/svg/app/caret-right-small.svg';
 import ROUTES from 'constants/routes';
 import SettingsModal from 'sections/shared/modals/SettingsModal';
-import { isWalletConnectedState } from 'store/wallet';
+import { isWalletConnectedState, networkState } from 'store/wallet';
 import { isL2State, isMainnetState, delegateWalletState } from 'store/wallet';
 import { MENU_LINKS, MENU_LINKS_L2, MENU_LINKS_DELEGATE } from '../constants';
 
@@ -29,6 +29,7 @@ const SideNav: FC<SideNavProps> = ({ isDesktop }) => {
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const isL2 = useRecoilValue(isL2State);
 	const delegateWallet = useRecoilValue(delegateWalletState);
+	const network = useRecoilValue(networkState);
 	const {
 		closeMobileSideNav,
 		setSubMenuConfiguration,
@@ -43,15 +44,15 @@ const SideNav: FC<SideNavProps> = ({ isDesktop }) => {
 	const addOptimismNetwork = async () => {
 		try {
 			setNetworkError(null);
-			if (!(window.ethereum && window.ethereum.isMetaMask)) {
+			if (process.browser && !(window.ethereum && window.ethereum.isMetaMask)) {
 				return setNetworkError(t('user-menu.error.please-install-metamask'));
 			}
 
 			// metamask mobile throws if iconUrls is included
 			const { chainId, chainName, rpcUrls, blockExplorerUrls } = getOptimismNetwork({
-				layerOneNetworkId: Number(window.ethereum.chainId),
+				layerOneNetworkId: network?.id.valueOf() || 1,
 			});
-			await window.ethereum.request({
+			await (window.ethereum as any).request({
 				method: 'wallet_addEthereumChain',
 				params: [
 					{

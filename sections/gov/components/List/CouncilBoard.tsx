@@ -11,7 +11,6 @@ import Spinner from 'assets/svg/app/loader.svg';
 import Etherscan from 'containers/BlockExplorer';
 import { truncateAddress } from 'utils/formatters/string';
 
-import SpartanCouncilNFT from 'assets/gifs/SC-NFT.gif';
 import Link from 'assets/svg/app/link.svg';
 import useCouncilMembers from '../../hooks/useCouncilMembers';
 import { Blockie, StyledTooltip } from '../common';
@@ -25,7 +24,6 @@ const CouncilBoard: React.FC = () => {
 
 	return (
 		<StyledCard>
-			<Img width={'100%'} src={SpartanCouncilNFT} />
 			<Title>{t('gov.council.title')}</Title>
 
 			{councilMembers ? (

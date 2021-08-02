@@ -50,21 +50,24 @@ const useConnector = () => {
 
 	useEffect(() => {
 		const init = async () => {
-			const networkId = await getDefaultNetworkId();
-			const provider = loadProvider({
-				networkId,
-				infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
-				provider: window.ethereum,
-			});
+			if (process.browser) {
+				const networkId = await getDefaultNetworkId();
 
-			synthetix.setContractSettings({
-				networkId,
-				provider,
-			});
+				const provider = loadProvider({
+					networkId,
+					infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
+					provider: window.ethereum,
+				});
 
-			setNetwork(synthetix.js ? { ...synthetix.js.network } : null);
-			setProvider(provider);
-			setAppReady(true);
+				synthetix.setContractSettings({
+					networkId,
+					provider,
+				});
+
+				setNetwork(synthetix.js ? { ...synthetix.js.network } : null);
+				setProvider(provider);
+				setAppReady(true);
+			}
 		};
 
 		init();
@@ -103,7 +106,7 @@ const useConnector = () => {
 						}
 
 						setSigner(signer);
-					} else {
+					} else if (process.browser) {
 						provider = loadProvider({
 							provider: window.ethereum,
 							networkId,

@@ -22,10 +22,10 @@ import WalletConnectIcon from 'assets/wallet-icons/walletConnect.svg';
 import CoinbaseIcon from 'assets/wallet-icons/coinbase.svg';
 import PortisIcon from 'assets/wallet-icons/portis.svg';
 import TrustIcon from 'assets/wallet-icons/trust.svg';
-import DapperIcon from 'assets/wallet-icons/dapper.png';
+//import DapperIcon from 'assets/wallet-icons/dapper.png';
 import TorusIcon from 'assets/wallet-icons/torus.svg';
 import StatusIcon from 'assets/wallet-icons/status.svg';
-import AuthereumIcon from 'assets/wallet-icons/authereum.png';
+//import AuthereumIcon from 'assets/wallet-icons/authereum.png';
 import ImTokenIcon from 'assets/wallet-icons/imtoken.svg';
 
 import CopyIcon from 'assets/svg/app/copy.svg';
@@ -76,13 +76,13 @@ const getWalletIcon = (selectedWallet?: string | null) => {
 		case 'trust':
 			return <Img src={TrustIcon} />;
 		case 'dapper':
-			return <Img src={DapperIcon} />;
+		//return <Img src={DapperIcon} />;
 		case 'torus':
 			return <Img src={TorusIcon} />;
 		case 'status':
 			return <Img src={StatusIcon} />;
 		case 'authereum':
-			return <Img src={AuthereumIcon} />;
+		//return <Img src={AuthereumIcon} />;
 		case 'imtoken':
 			return <Img src={ImTokenIcon} />;
 		default:

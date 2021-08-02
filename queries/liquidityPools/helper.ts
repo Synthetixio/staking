@@ -1,5 +1,6 @@
 import Wei, { wei } from '@synthetixio/wei';
-import { pageResults } from 'synthetix-data';
+
+import pageResults from 'lib/pageResults';
 
 const uniswapV2SubgraphURL = 'https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v2';
 const CRVTokenAddress = '0xd533a949740bb3306d119cc777fa900ba034cd52';
