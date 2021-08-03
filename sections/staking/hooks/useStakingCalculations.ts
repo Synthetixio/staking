@@ -37,9 +37,9 @@ const useStakingCalculations = () => {
 		const issuableSynths = wei(debtData?.issuableSynths ?? 0);
 		const balance = wei(debtData?.balance ?? 0);
 
-		const stakedCollateral = collateral.mul(
-			Math.min(1, currentCRatio.div(targetCRatio).toNumber())
-		);
+		const stakedCollateral = targetCRatio.gt(0)
+			? collateral.mul(Wei.min(wei(1), currentCRatio.div(targetCRatio)))
+			: wei(0);
 		const stakedCollateralValue = stakedCollateral.mul(SNXRate);
 		const lockedCollateral = collateral.sub(transferableCollateral);
 		const unstakedCollateral = collateral.sub(stakedCollateral);
@@ -52,7 +52,9 @@ const useStakingCalculations = () => {
 
 		const percentageCurrentCRatio = currentCRatio.eq(0) ? wei(0) : wei(1).div(currentCRatio);
 		const percentageTargetCRatio = targetCRatio.eq(0) ? wei(0) : wei(1).div(targetCRatio);
-		const percentCurrentCRatioOfTarget = percentageCurrentCRatio.div(percentageTargetCRatio);
+		const percentCurrentCRatioOfTarget = percentageTargetCRatio.eq(0)
+			? wei(0)
+			: percentageCurrentCRatio.div(percentageTargetCRatio);
 
 		return {
 			collateral,

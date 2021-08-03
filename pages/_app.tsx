@@ -41,20 +41,22 @@ const InnerApp: FC<AppProps> = ({ Component, pageProps }) => {
 						: createQueryContext({ networkId: null })
 				}
 			>
-				<Layout>
-					<SystemStatus>
-						<AppLayout>
-							<Component {...pageProps} />
-						</AppLayout>
-					</SystemStatus>
-				</Layout>
-				<ReactQueryDevtools />
+				<QueryClientProvider client={new QueryClient()}>
+					<Layout>
+						<SystemStatus>
+							<AppLayout>
+								<Component {...pageProps} />
+							</AppLayout>
+						</SystemStatus>
+					</Layout>
+					<ReactQueryDevtools />
+				</QueryClientProvider>
 			</SynthetixQueryContextProvider>
 		</>
 	);
 };
 
-const App: FC<AppProps> = ({ Component, pageProps }) => {
+const App: FC<AppProps> = (props) => {
 	const { t } = useTranslation();
 
 	return (
@@ -81,15 +83,11 @@ const App: FC<AppProps> = ({ Component, pageProps }) => {
 			</Head>
 			<ThemeProvider theme={theme}>
 				<RecoilRoot>
-					<QueryClientProvider
-						client={
-							new QueryClient({
-								defaultOptions: { queries: { refetchInterval: DEFAULT_REQUEST_REFRESH_INTERVAL } },
-							})
-						}
-					>
+					<QueryClientProvider client={new QueryClient()} contextSharing={true}>
 						<WithAppContainers>
-							<MediaContextProvider></MediaContextProvider>
+							<MediaContextProvider>
+								<InnerApp {...props} />
+							</MediaContextProvider>
 						</WithAppContainers>
 					</QueryClientProvider>
 				</RecoilRoot>
