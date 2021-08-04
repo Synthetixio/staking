@@ -4,6 +4,7 @@ import synthetix from 'lib/synthetix';
 
 import { Subscriptions, WalletType } from 'bnc-onboard/dist/src/interfaces';
 import { getInfuraRpcURL } from 'utils/infura';
+import { Network } from '@synthetixio/contracts-interface';
 
 export const initOnboard = (networkId: number, subscriptions: Subscriptions) => {
 	const network = synthetix.js?.network;
@@ -53,7 +54,7 @@ export const initOnboard = (networkId: number, subscriptions: Subscriptions) => 
 				},
 				{
 					walletName: 'walletConnect',
-					rpc: { [network ? network.id : 1]: infuraRpc },
+					rpc: { [network ? network.id : Network.Mainnet]: infuraRpc },
 					preferred: true,
 				},
 				{ walletName: 'imToken', rpcUrl: infuraRpc, preferred: true },
