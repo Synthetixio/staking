@@ -8,6 +8,7 @@ import OutsideClickHandler from 'react-outside-click-handler';
 import {
 	FlexDiv,
 	FlexDivCentered,
+	FlexDivRow,
 	GridDivCenteredCol,
 	IconButton,
 	UpperCased,
@@ -35,6 +36,7 @@ import ConnectionDot from 'sections/shared/ConnectionDot';
 import CogIcon from 'assets/svg/app/cog.svg';
 import CaretUp from 'assets/svg/app/caret-up.svg';
 import CaretDown from 'assets/svg/app/caret-down.svg';
+import Warning from 'assets/svg/app/warning.svg';
 import DelegateIcon from 'assets/svg/app/delegate.svg';
 import WatchWalletModal from 'sections/shared/modals/WatchWalletModal';
 import DelegateModal from 'sections/shared/modals/DelegateModal';
@@ -95,6 +97,7 @@ const UserMenu: FC = () => {
 										variant="solid"
 										onClick={() => setWalletOptionsModalOpened(!walletOptionsModalOpened)}
 										data-testid="user-menu"
+										disabled={!!networkError}
 									>
 										<FlexDivCentered>
 											<StyledConnectionDot />
@@ -170,7 +173,19 @@ const UserMenu: FC = () => {
 			)}
 			{delegateModalOpened && <DelegateModal onDismiss={() => setDelegateModalOpened(false)} />}
 			{settingsModalOpened && <SettingsModal onDismiss={() => setSettingsModalOpened(false)} />}
-			<Error>{networkError}</Error>
+			{networkError && (
+				<Error>
+					<ErrorContainer>
+						<Svg
+							width="24"
+							height="24"
+							viewBox={`0 0 ${Warning.width} ${Warning.height}`}
+							src={Warning}
+						/>
+						{networkError}
+					</ErrorContainer>
+				</Error>
+			)}
 		</Container>
 	);
 };
@@ -268,9 +283,17 @@ const DropdownContainer = styled.div`
 const Error = styled.div`
 	position: absolute;
 	top: calc(100% + 10px);
-	right: 0;
+	left: 0;
 	font-size: 12px;
 	color: ${(props) => props.theme.colors.pink};
+`;
+
+const ErrorContainer = styled(FlexDivRow)`
+	align-items: center;
+
+	svg {
+		margin-right: 4px;
+	}
 `;
 
 const MobileStyledGlowingButton = styled(StyledGlowingButton)`

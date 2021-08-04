@@ -11,15 +11,15 @@ type WithAppContainersProps = {
 };
 
 export const WithAppContainers: FC<WithAppContainersProps> = ({ children }) => (
-	<Connector.Provider>
-		<BlockExplorer.Provider>
-			<TransactionNotifier.Provider>
-				<Loans.Provider>
-					<SideNav.Provider>{children}</SideNav.Provider>
-				</Loans.Provider>
-			</TransactionNotifier.Provider>
-		</BlockExplorer.Provider>
-	</Connector.Provider>
+	<SideNav.Provider>
+		<Connector.Provider>
+			<BlockExplorer.Provider>
+				<TransactionNotifier.Provider>
+					<Loans.Provider>{children}</Loans.Provider>
+				</TransactionNotifier.Provider>
+			</BlockExplorer.Provider>
+		</Connector.Provider>
+	</SideNav.Provider>
 );
 
 export default WithAppContainers;
