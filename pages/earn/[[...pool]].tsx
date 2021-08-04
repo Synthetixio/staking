@@ -95,7 +95,7 @@ const Earn: FC = () => {
 				stakingRewards={stakingRewards}
 				totalRewards={totalRewards}
 				stakingAPR={stakingAPR}
-				stakedAmount={stakedValue.div(SNXRate)}
+				stakedAmount={SNXRate.eq(0) ? wei(0) : stakedValue.div(SNXRate)}
 				hasClaimed={hasClaimed}
 			/>
 		</>

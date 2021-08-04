@@ -67,27 +67,27 @@ const TransactionsContainer: FC<TransactionsContainerProps> = ({ history, isLoad
 			{ label: t('history.table.filters.amount.no-selection'), value: null },
 			{
 				label: t('history.table.filters.amount.less-than-num', {
-					num: formatNumber(1000, { decimals: 0 }),
+					num: '1,000',
 				}),
 				value: AmountFilterType.LESS_THAN_1K,
 			},
 			{
 				label: t('history.table.filters.amount.between-num1-and-num2', {
-					num1: formatNumber(1000, { decimals: 0 }),
-					num2: formatNumber(10000, { decimals: 0 }),
+					num1: '1,000',
+					num2: '10,000',
 				}),
 				value: AmountFilterType.BETWEEN_1K_AND_10K,
 			},
 			{
 				label: t('history.table.filters.amount.between-num1-and-num2', {
-					num1: formatNumber(10000, { decimals: 0 }),
-					num2: formatNumber(100000, { decimals: 0 }),
+					num1: '10,000',
+					num2: '100,000',
 				}),
 				value: AmountFilterType.BETWEEN_10K_AND_100K,
 			},
 			{
 				label: t('history.table.filters.amount.greater-than-num', {
-					num: formatNumber(100000, { decimals: 0 }),
+					num: '100,000',
 				}),
 				value: AmountFilterType.GREATER_THAN_100K,
 			},

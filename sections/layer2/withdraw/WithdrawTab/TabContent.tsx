@@ -162,7 +162,8 @@ const TabContent: FC<TabContentProps> = ({
 								<ModalItemText>
 									{formatCurrency(currencyKey, inputValue, {
 										currencyKey: currencyKey,
-										decimals: 4,
+										minDecimals: 4,
+										maxDecimals: 4,
 									})}
 								</ModalItemText>
 							</ModalItem>

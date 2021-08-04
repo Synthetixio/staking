@@ -71,7 +71,7 @@ const Gov: React.FC = () => {
 					value={formatNumber(walletVotingWeight.data ? walletVotingWeight.data[0] : 0)}
 					tooltipContent={t('common.stat-box.voting-power.tooltip', {
 						blocknumber: latestSnapshot.data
-							? formatNumber(latestSnapshot.data.latestSnapshot, { decimals: 0 })
+							? formatNumber(latestSnapshot.data.latestSnapshot, { maxDecimals: 0 })
 							: 0,
 					})}
 				/>

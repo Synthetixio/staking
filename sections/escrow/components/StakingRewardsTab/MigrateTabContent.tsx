@@ -88,7 +88,6 @@ const MigrateTabContent: FC<MigrateTabContentProps> = ({
 					<Data>
 						{formatCurrency(vestingCurrencyKey, totalEscrowed, {
 							currencyKey: vestingCurrencyKey,
-							decimals: 2,
 						})}
 					</Data>
 				</InputBox>

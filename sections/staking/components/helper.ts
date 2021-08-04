@@ -1,12 +1,12 @@
 import Wei, { wei, WeiSource } from '@synthetixio/wei';
 
 export function getMintAmount(targetCRatio: Wei, stakeAmount: WeiSource, SNXPrice: Wei): Wei {
-	if (!stakeAmount || !targetCRatio || !SNXPrice) return wei(0);
+	if (!stakeAmount || targetCRatio.eq(0) || SNXPrice.eq(0)) return wei(0);
 	return wei(stakeAmount).mul(targetCRatio).mul(SNXPrice);
 }
 
 export function getStakingAmount(targetCRatio: Wei, mintAmount: WeiSource, SNXPrice: Wei): Wei {
-	if (!mintAmount || !targetCRatio || !SNXPrice) return wei(0);
+	if (!mintAmount || targetCRatio.eq(0) || SNXPrice.eq(0)) return wei(0);
 	return wei(mintAmount).div(targetCRatio).div(SNXPrice);
 }
 
@@ -22,7 +22,7 @@ export function getTransferableAmountFromBurn(
 	SNXPrice: Wei,
 	transferable: Wei
 ): Wei {
-	if (!amountToBurn) return wei(0);
+	if (!amountToBurn || targetCRatio.eq(0) || SNXPrice.eq(0)) return wei(0);
 	return transferable.add(
 		Wei.max(wei(amountToBurn).sub(debtEscrowBalance).div(targetCRatio).div(SNXPrice), wei(0))
 	);

@@ -88,7 +88,7 @@ const Index: FC = () => {
 			apr: {
 				title: t('layer2.actions.apr.title', {
 					amountSNX: formatCryptoCurrency(l2AmountSNX, {
-						decimals: 0,
+						maxDecimals: 0,
 						currencyKey: CryptoCurrency.SNX,
 					}),
 					apr: formatPercent(l2APR),

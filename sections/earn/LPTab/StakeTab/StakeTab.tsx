@@ -226,11 +226,11 @@ const StakeTab: FC<StakeTabProps> = ({ stakedAsset, icon, type, isStake, userBal
 						<WhiteSubheader>
 							{isStake
 								? t('earn.actions.stake.amount', {
-										amount: formatNumber(amount, { decimals: DEFAULT_CRYPTO_DECIMALS }),
+										amount: wei(amount).toString(DEFAULT_CRYPTO_DECIMALS),
 										asset: stakedAsset,
 								  })
 								: t('earn.actions.unstake.amount', {
-										amount: formatNumber(amount, { decimals: DEFAULT_CRYPTO_DECIMALS }),
+										amount: wei(amount).toString(DEFAULT_CRYPTO_DECIMALS),
 										asset: stakedAsset,
 								  })}
 						</WhiteSubheader>
@@ -260,11 +260,11 @@ const StakeTab: FC<StakeTabProps> = ({ stakedAsset, icon, type, isStake, userBal
 						<WhiteSubheader>
 							{isStake
 								? t('earn.actions.stake.amount', {
-										amount: formatNumber(amount, { decimals: DEFAULT_CRYPTO_DECIMALS }),
+										amount: wei(amount).toString(DEFAULT_CRYPTO_DECIMALS),
 										asset: stakedAsset,
 								  })
 								: t('earn.actions.unstake.amount', {
-										amount: formatNumber(amount, { decimals: DEFAULT_CRYPTO_DECIMALS }),
+										amount: wei(amount).toString(DEFAULT_CRYPTO_DECIMALS),
 										asset: stakedAsset,
 								  })}
 						</WhiteSubheader>
@@ -354,11 +354,11 @@ const StakeTab: FC<StakeTabProps> = ({ stakedAsset, icon, type, isStake, userBal
 								<ModalItemText>
 									{isStake
 										? t('earn.actions.stake.amount', {
-												amount: formatNumber(amount, { decimals: DEFAULT_CRYPTO_DECIMALS }),
+												amount: wei(amount).toString(DEFAULT_CRYPTO_DECIMALS),
 												asset: stakedAsset,
 										  })
 										: t('earn.actions.unstake.amount', {
-												amount: formatNumber(amount, { decimals: DEFAULT_CRYPTO_DECIMALS }),
+												amount: wei(amount).toString(DEFAULT_CRYPTO_DECIMALS),
 												asset: stakedAsset,
 										  })}
 								</ModalItemText>

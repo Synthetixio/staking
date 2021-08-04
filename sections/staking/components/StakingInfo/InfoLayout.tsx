@@ -95,7 +95,6 @@ const InfoLayout: FC<InfoLayoutProps> = ({ stakingInfo, collateral, isInputEmpty
 				<RowValue>
 					{formatCurrency(CryptoCurrency.SNX, collateral, {
 						currencyKey: CryptoCurrency.SNX,
-						decimals: 2,
 					})}
 				</RowValue>
 			</TotalBalanceContainer>
@@ -107,7 +106,6 @@ const InfoLayout: FC<InfoLayoutProps> = ({ stakingInfo, collateral, isInputEmpty
 							title={title}
 							value={formatCurrency(currencyKey, isInputEmpty ? value : changedValue, {
 								currencyKey: currencyKey,
-								decimals: 2,
 							})}
 							percentage={isInputEmpty ? percentage.toNumber() : changedPercentage.toNumber()}
 						/>
@@ -120,7 +118,6 @@ const InfoLayout: FC<InfoLayoutProps> = ({ stakingInfo, collateral, isInputEmpty
 							<RowValue>
 								{formatCurrency(currencyKey, value.toString(), {
 									currencyKey: currencyKey,
-									decimals: 2,
 								})}
 							</RowValue>
 							{!isInputEmpty && (
@@ -129,7 +126,6 @@ const InfoLayout: FC<InfoLayoutProps> = ({ stakingInfo, collateral, isInputEmpty
 									<RowValue>
 										{formatCurrency(currencyKey, !changedValue ? changedValue : 0, {
 											currencyKey: currencyKey,
-											decimals: 2,
 										})}
 									</RowValue>
 								</>

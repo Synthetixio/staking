@@ -302,7 +302,10 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 								<GreyHeader>{t('earn.actions.claim.claiming')}</GreyHeader>
 								<WhiteSubheader>
 									{t('earn.actions.claim.amount', {
-										amount: formatNumber(tradingRewards, { decimals: DEFAULT_FIAT_DECIMALS }),
+										amount: formatNumber(tradingRewards, {
+											minDecimals: DEFAULT_FIAT_DECIMALS,
+											maxDecimals: DEFAULT_FIAT_DECIMALS,
+										}),
 										asset: Synths.sUSD,
 									})}
 								</WhiteSubheader>
@@ -311,7 +314,10 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 								<GreyHeader>{t('earn.actions.claim.claiming')}</GreyHeader>
 								<WhiteSubheader>
 									{t('earn.actions.claim.amount', {
-										amount: formatNumber(stakingRewards, { decimals: DEFAULT_CRYPTO_DECIMALS }),
+										amount: formatNumber(stakingRewards, {
+											minDecimals: DEFAULT_FIAT_DECIMALS,
+											maxDecimals: DEFAULT_FIAT_DECIMALS,
+										}),
 										asset: CryptoCurrency.SNX,
 									})}
 								</WhiteSubheader>
@@ -349,7 +355,8 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 								<WhiteSubheader>
 									{t('earn.actions.claim.amount', {
 										amount: formatNumber(claimedTradingRewards as number, {
-											decimals: DEFAULT_FIAT_DECIMALS,
+											minDecimals: DEFAULT_FIAT_DECIMALS,
+											maxDecimals: DEFAULT_FIAT_DECIMALS,
 										}),
 										asset: Synths.sUSD,
 									})}
@@ -360,7 +367,8 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 								<WhiteSubheader>
 									{t('earn.actions.claim.amount', {
 										amount: formatNumber(claimedStakingRewards as number, {
-											decimals: DEFAULT_CRYPTO_DECIMALS,
+											minDecimals: DEFAULT_FIAT_DECIMALS,
+											maxDecimals: DEFAULT_FIAT_DECIMALS,
 										}),
 										asset: CryptoCurrency.SNX,
 									})}
@@ -418,7 +426,8 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 							<Value>
 								{formatCurrency(Synths.sUSD, tradingRewards, {
 									currencyKey: Synths.sUSD,
-									decimals: DEFAULT_FIAT_DECIMALS,
+									minDecimals: DEFAULT_FIAT_DECIMALS,
+									maxDecimals: DEFAULT_FIAT_DECIMALS,
 								})}
 							</Value>
 							<Subtext>{t('earn.incentives.options.snx.trading-rewards')}</Subtext>
@@ -430,7 +439,6 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 							<Value>
 								{formatCurrency(CryptoCurrency.SNX, stakingRewards, {
 									currencyKey: CryptoCurrency.SNX,
-									decimals: DEFAULT_CRYPTO_DECIMALS,
 								})}
 							</Value>
 							<Subtext>{t('earn.incentives.options.snx.staking-rewards')}</Subtext>
@@ -501,7 +509,10 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 										<GreyHeader>{t('earn.actions.claim.claiming')}</GreyHeader>
 										<WhiteSubheader>
 											{t('earn.actions.claim.amount', {
-												amount: formatNumber(tradingRewards, { decimals: DEFAULT_FIAT_DECIMALS }),
+												amount: formatNumber(tradingRewards, {
+													minDecimals: DEFAULT_FIAT_DECIMALS,
+													maxDecimals: DEFAULT_FIAT_DECIMALS,
+												}),
 												asset: Synths.sUSD,
 											})}
 										</WhiteSubheader>
@@ -510,7 +521,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 										<GreyHeader>{t('earn.actions.claim.claiming')}</GreyHeader>
 										<WhiteSubheader>
 											{t('earn.actions.claim.amount', {
-												amount: formatNumber(stakingRewards, { decimals: DEFAULT_CRYPTO_DECIMALS }),
+												amount: formatNumber(stakingRewards, {}),
 												asset: CryptoCurrency.SNX,
 											})}
 										</WhiteSubheader>

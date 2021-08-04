@@ -89,7 +89,7 @@ const useLPData = (): LPData => {
 		? useiETHPool.data!.balance.mul(useiETHPool.data!.price)
 		: wei(0);
 	const iETHAPR =
-		useiETHPool.data?.distribution && SNXRate && iETHTVL
+		useiETHPool.data?.distribution && SNXRate && iETHTVL.gt(0)
 			? useiETHPool.data.distribution.mul(SNXRate).div(iETHTVL).mul(WEEKS_IN_YEAR)
 			: wei(0);
 
@@ -97,7 +97,7 @@ const useLPData = (): LPData => {
 		? useiBTCPool.data!.balance.mul(useiBTCPool.data!.price)
 		: wei(0);
 	const iBTCAPR =
-		useiBTCPool.data?.distribution && SNXRate && iBTCTVL
+		useiBTCPool.data?.distribution && SNXRate && iBTCTVL.gt(0)
 			? useiBTCPool.data.distribution.mul(SNXRate).div(iBTCTVL).mul(WEEKS_IN_YEAR)
 			: wei(0);
 

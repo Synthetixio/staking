@@ -127,7 +127,8 @@ const TabContent: FC<TabContentProps> = ({
 					<Data>
 						{formatCurrency(vestingCurrencyKey, escrowedAmount, {
 							currencyKey: vestingCurrencyKey,
-							decimals: 2,
+							minDecimals: 2,
+							maxDecimals: 2,
 						})}
 					</Data>
 				</InputBox>
@@ -154,7 +155,8 @@ const TabContent: FC<TabContentProps> = ({
 								<ModalItemText>
 									{formatCurrency(vestingCurrencyKey, escrowedAmount, {
 										currencyKey: vestingCurrencyKey,
-										decimals: 4,
+										minDecimals: 4,
+										maxDecimals: 4,
 									})}
 								</ModalItemText>
 							</ModalItem>

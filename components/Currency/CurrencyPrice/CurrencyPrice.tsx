@@ -35,7 +35,6 @@ export const CurrencyPrice: FC<CurrencyPriceProps> = ({
 					conversionRate != null ? wei(price).div(conversionRate) : price,
 					{
 						sign,
-						decimals: DEFAULT_FIAT_DECIMALS,
 					}
 				)}
 			</Price>

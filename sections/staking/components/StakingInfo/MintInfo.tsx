@@ -14,6 +14,7 @@ import InfoLayout from './InfoLayout';
 import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
 import { walletAddressState } from 'store/wallet';
+import { parseSafeWei } from 'utils/parse';
 
 const StakingInfo: FC = () => {
 	const { t } = useTranslation();
@@ -38,7 +39,7 @@ const StakingInfo: FC = () => {
 	const sUSDBalance = synthsBalancesQuery?.data?.balancesMap[Synths.sUSD]?.balance ?? wei(0);
 
 	const Rows = useMemo(() => {
-		const amountToMintBN = wei(amountToMint);
+		const amountToMintBN = parseSafeWei(amountToMint, 0);
 
 		const stakingAmount = getStakingAmount(targetCRatio, amountToMintBN, SNXRate);
 
@@ -54,9 +55,11 @@ const StakingInfo: FC = () => {
 
 		const changedSUSDBalance = sUSDBalance.add(amountToMintBN);
 
-		const changeCRatio = currentCRatio.lt(targetCRatio)
-			? unstakedCollateral.add(stakedCollateral).mul(SNXRate).div(mintAdditionalDebt).mul(100)
-			: changedStakedValue.mul(SNXRate).div(mintAdditionalDebt).mul(100);
+		const changeCRatio = mintAdditionalDebt.gt(0)
+			? currentCRatio.lt(targetCRatio)
+				? unstakedCollateral.add(stakedCollateral).mul(SNXRate).div(mintAdditionalDebt).mul(100)
+				: changedStakedValue.mul(SNXRate).div(mintAdditionalDebt).mul(100)
+			: wei(0);
 
 		return {
 			barRows: [
@@ -86,7 +89,7 @@ const StakingInfo: FC = () => {
 			dataRows: [
 				{
 					title: t('staking.info.table.c-ratio'),
-					value: sanitiseValue(wei(100).div(currentCRatio)),
+					value: currentCRatio.eq(0) ? wei(0) : sanitiseValue(wei(100).div(currentCRatio)),
 					changedValue: sanitiseValue(changeCRatio),
 					currencyKey: '%',
 				},

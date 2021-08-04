@@ -105,7 +105,6 @@ const RewardsBox: FC<RewardsBoxProps> = ({
 						<RewardsAmountSNX>
 							{formatCurrency(CryptoCurrency.SNX, tokenRewards, {
 								currencyKey: CryptoCurrency.SNX,
-								decimals: 2,
 							})}
 						</RewardsAmountSNX>
 						<RewardsAmountUSD>
@@ -126,7 +125,6 @@ const RewardsBox: FC<RewardsBoxProps> = ({
 							<RewardsAmountSNX>
 								{formatCurrency(secondTokenKey, secondTokenReward!, {
 									currencyKey: secondTokenKey,
-									decimals: 2,
 								})}
 							</RewardsAmountSNX>
 							<RewardsAmountUSD>
@@ -163,7 +161,7 @@ const RewardsBox: FC<RewardsBoxProps> = ({
 								<ModalItemTitle>{t('earn.actions.claim.claiming')}</ModalItemTitle>
 								<ModalItemText>
 									{t('earn.actions.claim.amount', {
-										amount: formatNumber(tokenRewards, { decimals: DEFAULT_CRYPTO_DECIMALS }),
+										amount: tokenRewards.toString(DEFAULT_CRYPTO_DECIMALS),
 										asset: CryptoCurrency.SNX,
 									})}
 								</ModalItemText>

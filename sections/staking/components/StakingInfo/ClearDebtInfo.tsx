@@ -15,6 +15,7 @@ import InfoLayout from './InfoLayout';
 import useSynthetixQueries from '@synthetixio/queries';
 import { walletAddressState } from 'store/wallet';
 import { wei } from '@synthetixio/wei';
+import { parseSafeWei } from 'utils/parse';
 
 const StakingInfo: FC = () => {
 	const { t } = useTranslation();
@@ -42,7 +43,7 @@ const StakingInfo: FC = () => {
 	const Rows = useMemo(() => {
 		const calculatedTargetBurn = Math.max(debtBalance.sub(issuableSynths).toNumber(), 0);
 
-		const amountToBurnBN = wei(amountToBurn);
+		const amountToBurnBN = parseSafeWei(amountToBurn, 0);
 
 		let unlockedStakeAmount;
 
@@ -68,7 +69,7 @@ const StakingInfo: FC = () => {
 
 		const changedSUSDBalance = sUSDBalance.sub(amountToBurnBN);
 
-		const changeCRatio = wei(100).div(changedDebt.div(SNXRate).div(collateral));
+		const changeCRatio = currentCRatio.neg(); // wei(100).div(changedDebt.div(SNXRate).div(collateral));
 
 		return {
 			barRows: [
@@ -98,7 +99,7 @@ const StakingInfo: FC = () => {
 			dataRows: [
 				{
 					title: t('staking.info.table.c-ratio'),
-					value: sanitiseValue(wei(100).div(currentCRatio)),
+					value: currentCRatio.eq(0) ? wei(0) : sanitiseValue(wei(100).div(currentCRatio)),
 					changedValue: sanitiseValue(changeCRatio),
 					currencyKey: '%',
 				},

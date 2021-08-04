@@ -2,10 +2,11 @@ import { FC } from 'react';
 import styled from 'styled-components';
 import { Trans, useTranslation } from 'react-i18next';
 import { FlexDivRow, FlexDivRowCentered } from 'styles/common';
-import { formatNumber } from 'utils/formatters/number';
+import { formatPercent } from 'utils/formatters/number';
 import InfoSVG from 'sections/loans/components/ActionBox/components/InfoSVG';
 import { SAFE_MIN_CRATIO } from 'sections/loans/constants';
 import Wei from '@synthetixio/wei';
+import { CRatioProgressBar } from 'pages/staking/[[...action]]';
 
 type CRatioProps = {
 	hasLowCRatio: boolean;
@@ -26,7 +27,7 @@ const CRatio: FC<CRatioProps> = ({ cratio, hasLowCRatio, minCRatio }) => {
 							'-'
 						) : (
 							<>
-								{formatNumber(cratio, { decimals: 0 })}%{' '}
+								{formatPercent(cratio)}{' '}
 								<InfoSVG
 									tip={
 										<Trans

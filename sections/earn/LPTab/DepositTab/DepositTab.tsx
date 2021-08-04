@@ -208,11 +208,11 @@ const DepositTab: FC<DepositTabProps> = ({
 						<WhiteSubheader>
 							{isDeposit
 								? t('earn.actions.stake.amount', {
-										amount: formatNumber(amount, { decimals: DEFAULT_CRYPTO_DECIMALS }),
+										amount: formatNumber(amount),
 										asset: asset,
 								  })
 								: t('earn.actions.unstake.amount', {
-										amount: formatNumber(amount, { decimals: DEFAULT_CRYPTO_DECIMALS }),
+										amount: formatNumber(amount),
 										asset: asset,
 								  })}
 						</WhiteSubheader>
@@ -242,11 +242,11 @@ const DepositTab: FC<DepositTabProps> = ({
 						<WhiteSubheader>
 							{isDeposit
 								? t('earn.actions.stake.amount', {
-										amount: formatNumber(amount, { decimals: DEFAULT_CRYPTO_DECIMALS }),
+										amount: formatNumber(amount),
 										asset: asset,
 								  })
 								: t('earn.actions.unstake.amount', {
-										amount: formatNumber(amount, { decimals: DEFAULT_CRYPTO_DECIMALS }),
+										amount: formatNumber(amount),
 										asset: asset,
 								  })}
 						</WhiteSubheader>
@@ -344,11 +344,11 @@ const DepositTab: FC<DepositTabProps> = ({
 								<ModalItemText>
 									{isDeposit
 										? t('earn.actions.deposit.amount', {
-												amount: formatNumber(amount, { decimals: DEFAULT_CRYPTO_DECIMALS }),
+												amount: formatNumber(amount),
 												asset: asset,
 										  })
 										: t('earn.actions.withdraw.amount', {
-												amount: formatNumber(amount, { decimals: DEFAULT_CRYPTO_DECIMALS }),
+												amount: formatNumber(amount),
 												asset: asset,
 										  })}
 								</ModalItemText>

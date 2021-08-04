@@ -33,13 +33,14 @@ const useYearnSNXVaultQuery = (options?: UseQueryOptions<YearnVaultData>) => {
 	const network = useRecoilValue(networkState);
 	const isMainnet = useRecoilValue(isMainnetState);
 	const { provider } = Connector.useContainer();
-	const {
-		contracts: { Synthetix },
-	} = synthetix.js!;
 
 	return useQuery<YearnVaultData>(
 		QUERY_KEYS.LiquidityPools.yearnSNX(walletAddress ?? '', network?.id!),
 		async () => {
+			const {
+				contracts: { Synthetix },
+			} = synthetix.js!;
+
 			const YearnSNXVault = new ethers.Contract(
 				yearnSNXVault.address,
 				// @ts-ignore

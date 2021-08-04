@@ -37,20 +37,23 @@ const EscrowPage: FC = () => {
 				<Available
 					title={t('common.stat-box.available-snx')}
 					value={formatCryptoCurrency(totalClaimable ?? 0, {
-						decimals: SNX_HEADER_DECIMALS,
+						minDecimals: SNX_HEADER_DECIMALS,
+						maxDecimals: SNX_HEADER_DECIMALS,
 					})}
 				/>
 				<Escrowed
 					title={t('common.stat-box.escrowed-snx')}
 					value={formatCryptoCurrency(totalEscrowed ?? 0, {
-						decimals: SNX_HEADER_DECIMALS,
+						minDecimals: SNX_HEADER_DECIMALS,
+						maxDecimals: SNX_HEADER_DECIMALS,
 					})}
 					size="lg"
 				/>
 				<Vested
 					title={t('common.stat-box.vested-snx')}
 					value={formatCryptoCurrency(totalVested ?? 0, {
-						decimals: SNX_HEADER_DECIMALS,
+						minDecimals: SNX_HEADER_DECIMALS,
+						maxDecimals: SNX_HEADER_DECIMALS,
 					})}
 				/>
 			</StatsSection>

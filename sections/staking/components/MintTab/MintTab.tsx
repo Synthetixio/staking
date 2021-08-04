@@ -18,6 +18,7 @@ import { isWalletConnectedState, delegateWalletState } from 'store/wallet';
 import { appReadyState } from 'store/app';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import { wei } from '@synthetixio/wei';
+import { parseSafeWei } from 'utils/parse';
 
 const mintFunction = ({ isDelegate, isMax = false }: { isDelegate: boolean; isMax?: boolean }) => {
 	return isDelegate
@@ -46,7 +47,6 @@ const MintTab: React.FC = () => {
 	const [error, setError] = useState<string | null>(null);
 
 	const [gasLimitEstimate, setGasLimitEstimate] = useState<GasLimitEstimate>(null);
-	const [mintMax, setMintMax] = useState<boolean>(false);
 
 	const [gasPrice, setGasPrice] = useState<number>(0);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
@@ -76,7 +76,7 @@ const MintTab: React.FC = () => {
 					if (unstakedCollateral.eq(0))
 						throw new Error(t('staking.actions.mint.action.error.insufficient'));
 
-					if (amountToMint.length > 0 && !mintMax) {
+					if (amountToMint.length > 0 && mintType == MintActionType.CUSTOM) {
 						gasEstimate = await synthetix.getGasEstimateForTransaction({
 							txArgs: delegateWallet
 								? [delegateWallet.address, parseEther(amountToMint)]
@@ -115,7 +115,7 @@ const MintTab: React.FC = () => {
 			}
 		};
 		getGasLimitEstimate();
-	}, [amountToMint, mintMax, isWalletConnected, unstakedCollateral, isAppReady, t, delegateWallet]);
+	}, [amountToMint, isWalletConnected, unstakedCollateral, isAppReady, t, delegateWallet]);
 
 	const handleStake = useCallback(
 		async (mintMax: boolean) => {
@@ -206,13 +206,11 @@ const MintTab: React.FC = () => {
 				inputValue = mintAmount;
 				onMintChange(inputValue.toString());
 				isLocked = true;
-				setMintMax(true);
 				break;
 			case MintActionType.CUSTOM:
 				onSubmit = () => handleStake(false);
-				inputValue = wei(amountToMint);
+				inputValue = parseSafeWei(amountToMint, 0);
 				isLocked = false;
-				setMintMax(false);
 				break;
 			default:
 				return <MintTiles />;

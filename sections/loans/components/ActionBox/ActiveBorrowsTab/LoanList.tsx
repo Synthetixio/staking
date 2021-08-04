@@ -11,7 +11,8 @@ import { Loan } from 'queries/loans/types';
 import Loans from 'containers/Loans';
 import ModifyLoanMenu from './ModifyLoanMenu';
 import { DesktopOrTabletView, MobileOnlyView } from 'components/Media';
-import { formatNumber, formatPercent } from 'utils/formatters/number';
+import { formatPercent } from 'utils/formatters/number';
+import { wei } from '@synthetixio/wei';
 
 const SMALL_COL_WIDTH = 80;
 
@@ -35,7 +36,7 @@ const LoanList: FC<LoanListProps> = ({ actions }) => {
 					return (
 						<CurrencyIconContainer>
 							<Currency.Name currencyKey={loan.debtAsset} showIcon={true} />
-							{formatNumber(loan.amount, { decimals: 2 })}
+							{wei(loan.amount).toString(2)}
 						</CurrencyIconContainer>
 					);
 				},
@@ -49,7 +50,7 @@ const LoanList: FC<LoanListProps> = ({ actions }) => {
 					return (
 						<CurrencyIconContainer>
 							<Currency.Name currencyKey={loan.collateralAsset} showIcon={true} />
-							{formatNumber(loan.collateral, { decimals: 2 })}
+							{wei(loan.collateral).toString(2)}
 						</CurrencyIconContainer>
 					);
 				},
@@ -87,7 +88,7 @@ const LoanList: FC<LoanListProps> = ({ actions }) => {
 					const loan = cellProps.row.original;
 					return (
 						<CurrencyIconContainer>
-							{formatNumber(loan.amount, { decimals: 2 })} {loan.debtAsset}
+							{wei(loan.amount).toString(2)} {loan.debtAsset}
 						</CurrencyIconContainer>
 					);
 				},
@@ -100,7 +101,7 @@ const LoanList: FC<LoanListProps> = ({ actions }) => {
 					const loan = cellProps.row.original;
 					return (
 						<CurrencyIconContainer>
-							{formatNumber(loan.collateral, { decimals: 2 })} {loan.collateralAsset}
+							{wei(loan.collateral).toString(2)} {loan.collateralAsset}
 						</CurrencyIconContainer>
 					);
 				},

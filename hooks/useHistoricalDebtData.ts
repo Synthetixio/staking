@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { last, orderBy } from 'lodash';
+import last from 'lodash/last';
 import useSynthetixQueries from '@synthetixio/queries';
 import { StakingTransactionType } from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
@@ -53,7 +53,7 @@ const useHistoricalDebtData = (walletAddress: string | null) => {
 				const aggregation =
 					historicalIssuanceAggregation.length === 0
 						? event.value.mul(multiplier)
-						: event.value.mul(multiplier).add(historicalIssuanceAggregation[i - 1]);
+						: event.value.mul(multiplier).add(last(historicalIssuanceAggregation)!);
 
 				historicalIssuanceAggregation.push(aggregation);
 			});

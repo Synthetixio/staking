@@ -27,7 +27,7 @@ import { Transaction } from 'constants/network';
 import { normalizedGasPrice } from 'utils/network';
 import { CryptoCurrency, Synths } from 'constants/currency';
 import { formatNumber } from 'utils/formatters/number';
-import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
+import { DEFAULT_CRYPTO_DECIMALS, DEFAULT_FIAT_DECIMALS } from 'constants/defaults';
 import synthetix from 'lib/synthetix';
 
 import Connector from 'containers/Connector';
@@ -219,9 +219,7 @@ const LPTab: FC<LPTabProps> = ({
 				<GreyHeader>{t('earn.actions.claim.claiming')}</GreyHeader>
 				<WhiteSubheader>
 					{t('earn.actions.claim.amount', {
-						amount: formatNumber((tokenRewards as DualRewards).a, {
-							decimals: DEFAULT_CRYPTO_DECIMALS,
-						}),
+						amount: (tokenRewards as DualRewards).a.toString(DEFAULT_CRYPTO_DECIMALS),
 						asset: CryptoCurrency.SNX,
 					})}
 				</WhiteSubheader>
@@ -230,9 +228,7 @@ const LPTab: FC<LPTabProps> = ({
 				<GreyHeader>{t('earn.actions.claim.claiming')}</GreyHeader>
 				<WhiteSubheader>
 					{t('earn.actions.claim.amount', {
-						amount: formatNumber((tokenRewards as DualRewards).b, {
-							decimals: DEFAULT_CRYPTO_DECIMALS,
-						}),
+						amount: (tokenRewards as DualRewards).b.toString(DEFAULT_CRYPTO_DECIMALS),
 						asset: CryptoCurrency.DHT,
 					})}
 				</WhiteSubheader>
@@ -262,9 +258,7 @@ const LPTab: FC<LPTabProps> = ({
 								<GreyHeader>{t('earn.actions.claim.claiming')}</GreyHeader>
 								<WhiteSubheader>
 									{t('earn.actions.claim.amount', {
-										amount: formatNumber(tokenRewards as Wei, {
-											decimals: DEFAULT_CRYPTO_DECIMALS,
-										}),
+										amount: tokenRewards.toString(DEFAULT_CRYPTO_DECIMALS),
 										asset: CryptoCurrency.SNX,
 									})}
 								</WhiteSubheader>
@@ -303,10 +297,7 @@ const LPTab: FC<LPTabProps> = ({
 								<GreyHeader>{t('earn.actions.claim.claiming')}</GreyHeader>
 								<WhiteSubheader>
 									{t('earn.actions.claim.amount', {
-										amount: formatNumber(tokenRewards as Wei, {
-											decimals: DEFAULT_CRYPTO_DECIMALS,
-										}),
-										asset: CryptoCurrency.SNX,
+										amount: (tokenRewards as Wei).toString(DEFAULT_CRYPTO_DECIMALS),
 									})}
 								</WhiteSubheader>
 							</>

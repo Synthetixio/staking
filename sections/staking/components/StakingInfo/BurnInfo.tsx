@@ -72,7 +72,10 @@ const StakingInfo: FC = () => {
 
 		const changedSUSDBalance = sUSDBalance.sub(amountToBurnBN);
 
-		const changeCRatio = wei(100).div(changedDebt.div(SNXRate).div(collateral));
+		const changeCRatio =
+			SNXRate.eq(0) || collateral.eq(0) || changedDebt.eq(0)
+				? wei(0)
+				: wei(100).div(changedDebt.div(SNXRate).div(collateral));
 
 		return {
 			barRows: [
@@ -102,7 +105,7 @@ const StakingInfo: FC = () => {
 			dataRows: [
 				{
 					title: t('staking.info.table.c-ratio'),
-					value: sanitiseValue(wei(100).div(currentCRatio)),
+					value: currentCRatio.eq(0) ? wei(0) : sanitiseValue(wei(100).div(currentCRatio)),
 					changedValue: sanitiseValue(changeCRatio),
 					currencyKey: '%',
 				},

@@ -28,7 +28,6 @@ import useShortRewardsData from 'hooks/useShortRewardsData';
 import { CurrencyIconType } from 'components/Currency/CurrencyIcon/CurrencyIcon';
 
 import { ActionsContainer as Container } from './common-styles';
-import { NetworkId } from '../../../../../js-monorepo/packages/queries/node_modules/@synthetixio/contracts-interface/build/node';
 import { wei } from '@synthetixio/wei';
 import { useRecoilValue } from 'recoil';
 import { walletAddressState } from 'store/wallet';

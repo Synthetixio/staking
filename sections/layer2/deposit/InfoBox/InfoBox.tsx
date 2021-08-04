@@ -53,7 +53,8 @@ const InfoBox = () => {
 									<Data>
 										{formatCurrency(CryptoCurrency.SNX, cellProps.value, {
 											currencyKey: CryptoCurrency.SNX,
-											decimals: 2,
+											minDecimals: 2,
+											maxDecimals: 2,
 										})}
 									</Data>
 								),

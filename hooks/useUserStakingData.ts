@@ -71,7 +71,11 @@ export const useUserStakingData = (walletAddress: string | null) => {
 	) {
 		// compute APR based using useSNXLockedValueQuery (top 1000 holders)
 		stakingAPR = isL2
-			? wei(WEEKS_IN_YEAR).mul(rewardsToDistribute).div(debtData.data.totalSupply)
+			? debtData.data.totalSupply.eq(0)
+				? wei(0)
+				: wei(WEEKS_IN_YEAR).mul(rewardsToDistribute).div(debtData.data.totalSupply)
+			: globalStakingInfo.data.lockedValue.eq(0)
+			? wei(0)
 			: sUSDRate
 					.mul(currentFeePeriod.data.feesToDistribute)
 					.add(SNXRate.mul(currentFeePeriod.data.rewardsToDistribute))

@@ -90,7 +90,7 @@ const Incentives: FC<IncentivesProps> = ({
 			const route = lpToRoute[balancerLP];
 			const currencyKey = lpToSynthIcon[balancerLP];
 
-			const isDual = (lpData[balancerLP].data?.rewards as { a: Wei; b: Wei }).a != null;
+			const isDual = !!(lpData[balancerLP].data?.rewards as { a: Wei; b: Wei })?.a;
 
 			return {
 				title: t(`earn.incentives.options.${synthTransKey}.title`),
@@ -108,7 +108,7 @@ const Incentives: FC<IncentivesProps> = ({
 				claimed: (
 					isDual
 						? (lpData[balancerLP].data?.rewards as { a: Wei; b: Wei }).a.gt(0)
-						: (lpData[balancerLP].data?.rewards as Wei).gt(0)
+						: (lpData[balancerLP].data?.rewards as Wei)?.gt(0)
 				)
 					? false
 					: NOT_APPLICABLE,
@@ -124,7 +124,7 @@ const Incentives: FC<IncentivesProps> = ({
 						title: t('earn.incentives.options.snx.title'),
 						subtitle: t('earn.incentives.options.snx.subtitle'),
 						apr: stakingAPR,
-						tvl: globalStakingQuery.data!.lockedValue ?? 0,
+						tvl: globalStakingQuery.data?.lockedValue ?? wei(0),
 						staked: {
 							balance: stakedAmount,
 							asset: CryptoCurrency.SNX,
@@ -144,7 +144,7 @@ const Incentives: FC<IncentivesProps> = ({
 						apr: lpData[LP.YEARN_SNX_VAULT].APR,
 						tvl: lpData[LP.YEARN_SNX_VAULT].TVL,
 						staked: {
-							balance: (lpData[LP.YEARN_SNX_VAULT].data as YearnVaultData).stakedSNX ?? wei(0),
+							balance: (lpData[LP.YEARN_SNX_VAULT].data as YearnVaultData)?.stakedSNX ?? wei(0),
 							asset: CryptoCurrency.SNX,
 							ticker: CryptoCurrency.SNX,
 							type: CurrencyIconType.TOKEN,

@@ -192,7 +192,7 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab }
 								<Title isNumeric={true}>
 									{formatCurrency(
 										CryptoCurrency.SNX,
-										isDualRewards ? (cellProps.value as DualRewards).a : cellProps.value,
+										(isDualRewards ? (cellProps.value as DualRewards).a : cellProps.value) as Wei,
 										{
 											currencyKey: CryptoCurrency.SNX,
 										}

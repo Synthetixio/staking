@@ -131,9 +131,7 @@ const YearnVaultTab: FC<LPTabProps> = ({
 							<GreyHeader>{t('earn.actions.claim.claiming')}</GreyHeader>
 							<WhiteSubheader>
 								{t('earn.actions.claim.amount', {
-									amount: formatNumber(tokenRewards as Wei, {
-										decimals: DEFAULT_CRYPTO_DECIMALS,
-									}),
+									amount: (tokenRewards as Wei).toString(DEFAULT_CRYPTO_DECIMALS),
 									asset: CryptoCurrency.SNX,
 								})}
 							</WhiteSubheader>
@@ -165,9 +163,7 @@ const YearnVaultTab: FC<LPTabProps> = ({
 							<GreyHeader>{t('earn.actions.claim.claiming')}</GreyHeader>
 							<WhiteSubheader>
 								{t('earn.actions.claim.amount', {
-									amount: formatNumber(tokenRewards as Wei, {
-										decimals: DEFAULT_CRYPTO_DECIMALS,
-									}),
+									amount: (tokenRewards as Wei).toString(DEFAULT_CRYPTO_DECIMALS),
 									asset: CryptoCurrency.SNX,
 								})}
 							</WhiteSubheader>
