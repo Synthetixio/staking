@@ -16,8 +16,6 @@ import { walletAddressState, isEOAWalletState } from 'store/wallet';
 import ApproveModal from 'components/ApproveModal';
 import TabContent from './TabContent';
 import { normalizedGasPrice } from 'utils/network';
-import { amountToDepositState } from 'store/layer2';
-import { toBigNumber } from 'utils/formatters/number';
 
 const DepositTab = () => {
 	const { t } = useTranslation();
@@ -25,7 +23,6 @@ const DepositTab = () => {
 	const walletAddress = useRecoilValue(walletAddressState);
 	const isAppReady = useRecoilValue(appReadyState);
 	const isEOAWallet = useRecoilValue(isEOAWalletState);
-	const amountToDeposit = useRecoilValue(amountToDepositState);
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const depositsDataQuery = useGetDepositsDataQuery();
 
@@ -40,7 +37,7 @@ const DepositTab = () => {
 
 	useEffect(() => {
 		const getGasLimitEstimate = async () => {
-			if (isAppReady && walletAddress && isApproved && amountToDeposit) {
+			if (isAppReady && walletAddress && isApproved && transferableCollateral) {
 				try {
 					if (isEOAWallet === false) throw new Error(t('layer2.error.non-eoa-wallet'));
 					setGasEstimateError(null);
@@ -49,7 +46,7 @@ const DepositTab = () => {
 						utils: { parseEther },
 					} = synthetix.js!;
 					const gasEstimate = await synthetix.getGasEstimateForTransaction({
-						txArgs: [parseEther(amountToDeposit)],
+						txArgs: [parseEther(transferableCollateral.toString())],
 						method: SynthetixBridgeToOptimism.estimateGas.deposit,
 					});
 					setGasLimitEstimate(gasEstimate);
@@ -96,16 +93,10 @@ const DepositTab = () => {
 				setDepositTxError(null);
 				setTxModalOpen(true);
 
-				const amountToDepositBN = toBigNumber(amountToDeposit);
-
-				if (amountToDepositBN.gt(transferableCollateral)) {
-					throw new Error(t('layer2.error.insufficient-balance'));
-				}
-
-				const transaction = await SynthetixBridgeToOptimism.deposit(parseEther(amountToDeposit), {
-					gasLimit: gasLimitEstimate,
-					gasPrice: normalizedGasPrice(gasPrice),
-				});
+				const transaction = await SynthetixBridgeToOptimism.deposit(
+					parseEther(transferableCollateral.toString()),
+					{ gasLimit: gasLimitEstimate, gasPrice: normalizedGasPrice(gasPrice) }
+				);
 
 				if (transaction) {
 					setTxHash(transaction.hash);
@@ -141,7 +132,7 @@ const DepositTab = () => {
 				/>
 			) : null}
 			<TabContent
-				transferableCollateral={transferableCollateral}
+				depositAmount={transferableCollateral}
 				onSubmit={handleDeposit}
 				transactionError={depositTxError}
 				gasEstimateError={gasEstimateError}

@@ -1,12 +1,10 @@
-import { FC, useState, useMemo } from 'react';
+import { FC } from 'react';
 import { Svg } from 'react-optimized-image';
+import BigNumber from 'bignumber.js';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import BigNumber from 'bignumber.js';
-import { useRecoilState } from 'recoil';
 
-import { amountToDepositState } from 'store/layer2';
-import { formatCurrency, toBigNumber } from 'utils/formatters/number';
+import { formatCurrency } from 'utils/formatters/number';
 import { CryptoCurrency } from 'constants/currency';
 import { InputContainer, InputBox } from '../../components/common';
 import { Transaction, GasLimitEstimate } from 'constants/network';
@@ -16,7 +14,7 @@ import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import { ActionCompleted, ActionInProgress } from '../../components/TxSent';
 
 import SNXLogo from 'assets/svg/currencies/crypto/SNX.svg';
-import { StyledCTA, StyledInput } from '../../components/common';
+import { StyledCTA } from '../../components/common';
 import {
 	ModalContent,
 	ModalItem,
@@ -26,7 +24,7 @@ import {
 } from 'styles/common';
 
 type TabContentProps = {
-	transferableCollateral: BigNumber;
+	depositAmount: BigNumber;
 	onSubmit: any;
 	transactionError: string | null;
 	gasEstimateError: string | null;
@@ -40,7 +38,7 @@ type TabContentProps = {
 };
 
 const TabContent: FC<TabContentProps> = ({
-	transferableCollateral,
+	depositAmount,
 	onSubmit,
 	transactionError,
 	txModalOpen,
@@ -54,28 +52,9 @@ const TabContent: FC<TabContentProps> = ({
 }) => {
 	const { t } = useTranslation();
 	const currencyKey = CryptoCurrency['SNX'];
-	const [depositAmount, setDepositAmount] = useRecoilState(amountToDepositState);
-	const [isDefault, setDefault] = useState(true);
-
-	const returnPanel = useMemo(() => {
-		return (
-			<StyledInput
-				type="number"
-				maxLength={12}
-				value={isDefault ? transferableCollateral.toString() : depositAmount}
-				placeholder="0"
-				onChange={(e) => {
-					setDepositAmount(e.target.value);
-					setDefault(false);
-				}}
-			/>
-		);
-	}, [depositAmount, transferableCollateral, setDepositAmount, isDefault]);
 
 	const renderButton = () => {
-		const inputValue = isDefault ? transferableCollateral : toBigNumber(depositAmount);
-
-		if (inputValue && !inputValue.isZero() && !inputValue.isNaN()) {
+		if (depositAmount && !depositAmount.isZero()) {
 			return (
 				<StyledCTA
 					blue={true}
@@ -85,7 +64,7 @@ const TabContent: FC<TabContentProps> = ({
 					disabled={transactionState !== Transaction.PRESUBMIT || !!gasEstimateError}
 				>
 					{t('layer2.actions.deposit.action.deposit-button', {
-						depositAmount: formatCurrency(currencyKey, inputValue, {
+						depositAmount: formatCurrency(currencyKey, depositAmount, {
 							currencyKey: currencyKey,
 						}),
 					})}
@@ -103,7 +82,7 @@ const TabContent: FC<TabContentProps> = ({
 	if (transactionState === Transaction.WAITING) {
 		return (
 			<ActionInProgress
-				amount={depositAmount}
+				amount={depositAmount.toString()}
 				currencyKey={currencyKey}
 				hash={txHash as string}
 				action="deposit"
@@ -116,7 +95,7 @@ const TabContent: FC<TabContentProps> = ({
 			<ActionCompleted
 				currencyKey={currencyKey}
 				hash={txHash as string}
-				amount={depositAmount}
+				amount={depositAmount.toString()}
 				setTransactionState={setTransactionState}
 				action="deposit"
 			/>
@@ -128,7 +107,12 @@ const TabContent: FC<TabContentProps> = ({
 			<InputContainer>
 				<InputBox>
 					<Svg src={SNXLogo} />
-					{returnPanel}
+					<Data>
+						{formatCurrency(currencyKey, depositAmount, {
+							currencyKey: currencyKey,
+							decimals: 2,
+						})}
+					</Data>
 				</InputBox>
 				<SettingsContainer>
 					<GasSelector gasLimitEstimate={gasLimitEstimate} setGasPrice={setGasPrice} />
@@ -159,6 +143,12 @@ const TabContent: FC<TabContentProps> = ({
 		</>
 	);
 };
+
+const Data = styled.p`
+	color: ${(props) => props.theme.colors.white};
+	font-family: ${(props) => props.theme.fonts.extended};
+	font-size: 24px;
+`;
 
 const SettingsContainer = styled.div`
 	width: 100%;

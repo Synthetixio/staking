@@ -2,7 +2,6 @@ import styled from 'styled-components';
 
 import { FlexDivColCentered, FlexDivCol } from 'styles/common';
 import Button from 'components/Button';
-import Input from 'components/Input/Input';
 
 export const TabContainer = styled(FlexDivColCentered)`
 	min-height: 400px;
@@ -41,18 +40,6 @@ export const InputContainer = styled(FlexDivColCentered)`
 export const InputBox = styled(FlexDivColCentered)`
 	margin: 24px auto;
 	justify-content: center;
-`;
-
-export const StyledInput = styled(Input)`
-	font-size: 24px;
-	background: transparent;
-	font-family: ${(props) => props.theme.fonts.extended};
-	text-align: center;
-	margin-top: 16px;
-
-	&:disabled {
-		color: ${(props) => props.theme.colors.gray};
-	}
 `;
 
 export const StyledCTA = styled(Button)<{ blue: boolean; disabled: boolean }>`
