@@ -16,9 +16,7 @@ import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 
 import { ModalContent, ModalItem, ModalItemText, ModalItemTitle } from 'styles/common';
 
-import synthetix from 'lib/synthetix';
 import CouncilDilution from 'contracts/councilDilution.js';
-import TransactionNotifier from 'containers/TransactionNotifier';
 import { truncateAddress } from 'utils/formatters/string';
 import { useTranslation } from 'react-i18next';
 import useSynthetixQueries from '@synthetixio/queries';
@@ -31,7 +29,7 @@ type IndexProps = {
 const Index: React.FC<IndexProps> = ({ onBack }) => {
 	const { t } = useTranslation();
 	const { provider } = Connector.useContainer();
-	const { useSnapshotSpaceQuery } = useSynthetixQueries();
+	const { useSnapshotSpaceQuery, useContractTxn } = useSynthetixQueries();
 
 	const [startDate, setStartDate] = useState<Date>(new Date());
 	const [endDate, setEndDate] = useState<Date>(new Date(startDate.getTime() + 86400000));
@@ -48,11 +46,8 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 	const [signModalOpen, setSignModalOpen] = useState<boolean>(false);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 	const [signError, setSignError] = useState<string | null>(null);
-	const [txError, setTxError] = useState<string | null>(null);
-	const [txHash, setTxHash] = useState<string | null>(null);
 	const space = useSnapshotSpaceQuery(snapshotEndpoint, activeTab);
-	const [hash, setHash] = useState<string | null>(null);
-	const { monitorTransaction } = TransactionNotifier.useContainer();
+	const [ipfsHash, setIpfsHash] = useState<string | null>(null);
 
 	const { signer } = Connector.useContainer();
 
@@ -60,6 +55,8 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 		() => new ethers.Contract(CouncilDilution.address, CouncilDilution.abi, signer as any),
 		[]
 	);
+
+	const txn = useContractTxn(contract, 'logProposal', [ipfsHash], {});
 
 	const sanitiseTimestamp = (timestamp: number) => {
 		return Math.round(timestamp / 1e3);
@@ -87,35 +84,12 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 
 			let ipfsHash = response?.data.ipfsHash;
 
-			setHash(ipfsHash);
+			setIpfsHash(ipfsHash);
 
 			if (activeTab === SPACE_KEY.PROPOSAL) {
-				try {
-					setSignTransactionState(Transaction.PRESUBMIT);
-					setTxTransactionState(Transaction.PRESUBMIT);
-					setTxModalOpen(true);
-
-					const gasLimit = await synthetix.getGasEstimateForTransaction({
-						txArgs: [ipfsHash],
-						method: contract.estimateGas.logProposal,
-					});
-
-					const transaction = await contract.logProposal(ipfsHash, { gasLimit });
-
-					if (transaction) {
-						setTxHash(transaction.hash);
-						setTxTransactionState(Transaction.WAITING);
-						monitorTransaction({
-							txHash: transaction.hash,
-							onTxConfirmed: () => setTxTransactionState(Transaction.SUCCESS),
-						});
-						setTxModalOpen(false);
-					}
-				} catch (error) {
-					console.log(error);
-					setTxTransactionState(Transaction.PRESUBMIT);
-					setTxError(error);
-				}
+				txn.mutate();
+				setTxModalOpen(true);
+				setSignTransactionState(Transaction.PRESUBMIT);
 			} else {
 				setSignTransactionState(Transaction.SUCCESS);
 			}
@@ -131,8 +105,6 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 		try {
 			if (space.data && block) {
 				const isFixed = activeTab === SPACE_KEY.PROPOSAL;
-
-				setTxError(null);
 				setSignError(null);
 
 				setSignModalOpen(true);
@@ -174,7 +146,6 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 			setSignTransactionState(Transaction.PRESUBMIT);
 			setTxTransactionState(Transaction.PRESUBMIT);
 			setSignError(error.message);
-			setTxError(error.message);
 		}
 	};
 
@@ -208,8 +179,8 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 						setSignTransactionState={setSignTransactionState}
 						setTxTransactionState={setTxTransactionState}
 						txTransactionState={txTransactionState}
-						hash={hash}
-						txHash={txHash}
+						hash={ipfsHash}
+						txHash={txn.hash}
 					/>
 				</Col>
 				<Col>
@@ -227,7 +198,7 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 			{txModalOpen && (
 				<TxConfirmationModal
 					onDismiss={() => setTxModalOpen(false)}
-					txError={txError}
+					txError={txn.errorMessage}
 					attemptRetry={handleCreate}
 					content={
 						<ModalContent>
@@ -235,7 +206,7 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 								<ModalItemTitle>{t('modals.confirm-transaction.propose.title')}</ModalItemTitle>
 								<ModalItemText>
 									{t('modals.confirm-transaction.propose.hash', {
-										hash: truncateAddress(hash ?? ''),
+										hash: truncateAddress(ipfsHash ?? ''),
 									})}
 								</ModalItemText>
 							</ModalItem>

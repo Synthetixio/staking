@@ -6,7 +6,6 @@ import { TabContainer } from '../../components/common';
 import { Transaction, GasLimitEstimate } from 'constants/network';
 
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
-import synthetix from 'lib/synthetix';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import { appReadyState } from 'store/app';
 import { networkState, walletAddressState } from 'store/wallet';
@@ -17,85 +16,27 @@ import Wei, { wei } from '@synthetixio/wei';
 import useSynthetixQueries from '@synthetixio/queries';
 
 const WithdrawTab = () => {
-	const networkId = useRecoilValue(networkState)!.id;
 	const { transferableCollateral } = useStakingCalculations();
 	const walletAddress = useRecoilValue(walletAddressState);
 	const isAppReady = useRecoilValue(appReadyState);
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 
-	const { useGetBridgeDataQuery, useIsActiveQuery } = useSynthetixQueries();
+	const { useGetBridgeDataQuery, useIsActiveQuery, useSynthetixTxn } = useSynthetixQueries();
 
 	const depositsDataQuery = useGetBridgeDataQuery(walletAddress);
 	const withdrawalsInactive = !useIsActiveQuery().data;
 
-	const [gasLimitEstimate, setGasLimitEstimate] = useState<GasLimitEstimate>(null);
-	const [depositTxError, setDepositTxError] = useState<string | null>(null);
-	const [gasEstimateError, setGasEstimateError] = useState<string | null>(null);
 	const [gasPrice, setGasPrice] = useState<number>(0);
-	const [transactionState, setTransactionState] = useState<Transaction>(Transaction.PRESUBMIT);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
-	const [txHash, setTxHash] = useState<string | null>(null);
 	const [amountToWithdraw, setAmountToWithdraw] = useState<Wei>(wei(0));
 
+	const txn = useSynthetixTxn('SynthetixBridgeToBase', 'withdraw', [amountToWithdraw.toBN()]);
+
 	useEffect(() => {
-		const getGasLimitEstimate = async () => {
-			if (isAppReady && walletAddress && !amountToWithdraw.eq(0)) {
-				try {
-					setGasEstimateError(null);
-					const {
-						contracts: { SynthetixBridgeToBase },
-						utils: { parseEther },
-					} = synthetix.js!;
-					const gasEstimate = await synthetix.getGasEstimateForTransaction({
-						txArgs: [parseEther(amountToWithdraw.toString())],
-						method: SynthetixBridgeToBase.estimateGas.withdraw,
-					});
-					setGasLimitEstimate(gasEstimate);
-				} catch (e) {
-					console.log(e);
-					setGasEstimateError(e.message);
-				}
-			}
-		};
-		getGasLimitEstimate();
-	}, [walletAddress, isAppReady, amountToWithdraw, transferableCollateral]);
-
-	const handleDeposit = async () => {
-		if (isAppReady && !gasEstimateError) {
-			const {
-				contracts: { SynthetixBridgeToBase },
-				utils: { parseEther },
-			} = synthetix.js!;
-			try {
-				setDepositTxError(null);
-				setTxModalOpen(true);
-				const transaction = await SynthetixBridgeToBase.withdraw(
-					parseEther(amountToWithdraw.toString()),
-					{ gasLimit: gasLimitEstimate, gasPrice: normalizedGasPrice(gasPrice) }
-				);
-
-				if (transaction) {
-					setTxHash(transaction.hash);
-					setTransactionState(Transaction.WAITING);
-					monitorTransaction({
-						txHash: transaction.hash,
-						onTxConfirmed: () => {
-							setTransactionState(Transaction.SUCCESS);
-							depositsDataQuery.refetch();
-						},
-						onTxFailed: (txData) => {
-							setTransactionState(Transaction.PRESUBMIT);
-							setDepositTxError(txData?.failureReason ?? null);
-						},
-					});
-					setTxModalOpen(false);
-				}
-			} catch (e) {
-				console.log(e);
-				setDepositTxError(e.message);
-			}
+		if (txn.txnStatus == 'confirmed') {
+			depositsDataQuery.refetch();
 		}
-	};
+	}, [txn.txnStatus]);
 
 	return (
 		<StyledTabContainer>
@@ -103,16 +44,16 @@ const WithdrawTab = () => {
 				inputValue={amountToWithdraw}
 				onInputChange={(value: number) => setAmountToWithdraw(wei(value.toString()))}
 				transferableCollateral={transferableCollateral}
-				onSubmit={handleDeposit}
-				transactionError={depositTxError}
-				gasEstimateError={gasEstimateError}
+				onSubmit={txn.mutate}
+				transactionError={txn.errorMessage}
+				gasEstimateError={txn.errorMessage}
 				txModalOpen={txModalOpen}
 				setTxModalOpen={setTxModalOpen}
-				gasLimitEstimate={gasLimitEstimate}
+				gasLimitEstimate={txn.gasLimit}
 				setGasPrice={setGasPrice}
-				txHash={txHash}
-				transactionState={transactionState}
-				setTransactionState={setTransactionState}
+				txHash={txn.hash}
+				transactionState={txn.txnStatus}
+				resetTransaction={txn.refresh}
 				bridgeInactive={withdrawalsInactive}
 			/>
 		</StyledTabContainer>

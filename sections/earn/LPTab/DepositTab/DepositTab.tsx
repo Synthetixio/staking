@@ -7,7 +7,6 @@ import { Svg } from 'react-optimized-image';
 import PendingConfirmation from 'assets/svg/app/pending-confirmation.svg';
 import Success from 'assets/svg/app/success.svg';
 import GasSelector from 'components/GasSelector';
-import synthetix from 'lib/synthetix';
 import NumericInput from 'components/Input/NumericInput';
 import { formatCryptoCurrency, formatNumber } from 'utils/formatters/number';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
@@ -117,12 +116,13 @@ const DepositTab: FC<DepositTabProps> = ({
 					const contract = getContract(asset, signer);
 					let stakeAmount = parsedAmount;
 
-					let gasEstimate = await synthetix.getGasEstimateForTransaction({
-						txArgs: [stakeAmount],
-						method: isDeposit
-							? contract.estimateGas['deposit(uint256)']
-							: contract.estimateGas['withdraw(uint256)'],
-					});
+					let gasEstimate = wei(
+						isDeposit
+							? await contract.estimateGas['deposit(uint256)'](stakeAmount)
+							: await contract.estimateGas['withdraw(uint256)'](stakeAmount),
+						0
+					);
+
 					setGasLimitEstimate(gasEstimate);
 				} catch (error) {
 					setError(error.message);
@@ -143,12 +143,13 @@ const DepositTab: FC<DepositTabProps> = ({
 
 					let formattedStakeAmount = parsedAmount;
 
-					const gasLimit = await synthetix.getGasEstimateForTransaction({
-						txArgs: [formattedStakeAmount],
-						method: isDeposit
-							? contract.estimateGas['deposit(uint256)']
-							: contract.estimateGas['withdraw(uint256)'],
-					});
+					let gasLimit = wei(
+						isDeposit
+							? await contract.estimateGas['deposit(uint256)'](formattedStakeAmount)
+							: await contract.estimateGas['withdraw(uint256)'](formattedStakeAmount),
+						0
+					);
+
 					let transaction: ethers.ContractTransaction;
 					if (isDeposit) {
 						transaction = await contract['deposit(uint256)'](formattedStakeAmount, {

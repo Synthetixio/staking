@@ -10,7 +10,7 @@ export const useClaimedStatus = () => {
 	const { useFeeClaimHistoryQuery, useGetFeePoolDataQuery } = useSynthetixQueries();
 
 	const history = useFeeClaimHistoryQuery(walletAddress);
-	const currentFeePeriod = useGetFeePoolDataQuery('0');
+	const currentFeePeriod = useGetFeePoolDataQuery(0);
 
 	const { currentFeePeriodStarts, nextFeePeriodStarts } = useMemo(() => {
 		return {

@@ -21,7 +21,7 @@ export const useUserStakingData = (walletAddress: string | null) => {
 	} = useSynthetixQueries();
 
 	const history = useFeeClaimHistoryQuery(walletAddress);
-	const currentFeePeriod = useGetFeePoolDataQuery('0');
+	const currentFeePeriod = useGetFeePoolDataQuery(0);
 	const {
 		useTotalIssuedSynthsExcludingEtherQuery,
 		useExchangeRatesQuery,
@@ -29,7 +29,7 @@ export const useUserStakingData = (walletAddress: string | null) => {
 	} = useSynthetixQueries();
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const totalIssuedSynthsExclEth = useTotalIssuedSynthsExcludingEtherQuery(Synths.sUSD);
-	const previousFeePeriod = useGetFeePoolDataQuery('1');
+	const previousFeePeriod = useGetFeePoolDataQuery(1);
 	const {
 		currentCRatio,
 		targetCRatio,

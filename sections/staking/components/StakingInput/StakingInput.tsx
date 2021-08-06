@@ -62,8 +62,8 @@ type StakingInputProps = {
 	setGasPrice: Function;
 	onInputChange: Function;
 	txHash: string | null;
-	transactionState: Transaction;
-	setTransactionState: (tx: Transaction) => void;
+	transactionState: string;
+	resetTransaction: () => void;
 	maxBurnAmount?: Wei;
 	burnAmountToFixCRatio?: Wei;
 	etherNeededToBuy?: string;
@@ -85,7 +85,7 @@ const StakingInput: React.FC<StakingInputProps> = ({
 	onInputChange,
 	txHash,
 	transactionState,
-	setTransactionState,
+	resetTransaction,
 	maxBurnAmount,
 	burnAmountToFixCRatio,
 	etherNeededToBuy,
@@ -163,7 +163,7 @@ const StakingInput: React.FC<StakingInputProps> = ({
 					onClick={onSubmit}
 					variant="primary"
 					size="lg"
-					disabled={transactionState !== Transaction.PRESUBMIT}
+					disabled={transactionState !== 'unsent'}
 				>
 					{t('staking.actions.burn.action.clear-debt')}
 				</StyledCTA>
@@ -174,7 +174,7 @@ const StakingInput: React.FC<StakingInputProps> = ({
 					onClick={onSubmit}
 					variant="primary"
 					size="lg"
-					disabled={transactionState !== Transaction.PRESUBMIT}
+					disabled={transactionState !== 'unsent'}
 				>
 					<Trans
 						i18nKey={
@@ -208,7 +208,7 @@ const StakingInput: React.FC<StakingInputProps> = ({
 		}
 	}, [inputValue, isMint, debtBalance, issuableSynths, targetCRatio, currentCRatio, stakeInfo]);
 
-	if (transactionState === Transaction.WAITING) {
+	if (transactionState === 'pending') {
 		return (
 			<ActionInProgress
 				isMint={isMint}
@@ -219,11 +219,11 @@ const StakingInput: React.FC<StakingInputProps> = ({
 		);
 	}
 
-	if (transactionState === Transaction.SUCCESS) {
+	if (transactionState === 'confirmed') {
 		return (
 			<ActionCompleted
 				isMint={isMint}
-				setTransactionState={setTransactionState}
+				resetTransaction={resetTransaction}
 				from={stakeInfo(inputValue)}
 				to={formattedInput}
 				hash={txHash as string}

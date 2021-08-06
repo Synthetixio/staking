@@ -14,7 +14,7 @@ import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import Table from 'components/Table';
 import Currency from 'components/Currency';
 
-import { formatPercent } from 'utils/formatters/number';
+import { formatFiatCurrency, formatPercent } from 'utils/formatters/number';
 import { SynthTotalSupply } from '@synthetixio/queries';
 import { CryptoBalance } from 'hooks/useCryptoBalances';
 import Wei, { wei } from '@synthetixio/wei';
@@ -58,15 +58,11 @@ const DebtPoolTable: FC<DebtPoolTableProps> = ({ synths, isLoading, isLoaded }) 
 				Header: <>{t('synths.assets.synths.table.total')}</>,
 				accessor: 'value',
 				Cell: (cellProps: CellProps<SynthTotalSupply>) => (
-					<SkewValue skewValue={wei(0) /*cellProps.row.original.skewValue*/}>
-						{
-							wei(
-								0
-							) /*formatFiatCurrency(cellProps.row.original.skewValue, {
+					<SkewValue skewValue={wei(cellProps.row.original.value)}>
+						{formatFiatCurrency(cellProps.row.original.value, {
 							sign: selectedPriceCurrency.sign,
-							decimals: 0,
-						})*/
-						}
+							maxDecimals: 0,
+						})}
 					</SkewValue>
 				),
 				width: 100,

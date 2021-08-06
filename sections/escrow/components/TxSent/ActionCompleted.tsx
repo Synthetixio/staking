@@ -5,7 +5,6 @@ import styled from 'styled-components';
 
 import { FlexDivRowCentered, FlexDivCentered, ExternalLink, boxShadowBlue } from 'styles/common';
 import Success from 'assets/svg/app/circle-tick.svg';
-import { Transaction } from 'constants/network';
 
 import { InfoContainer, InfoData, InfoTitle, SectionHeader, Container } from './common';
 import { formatCurrency } from 'utils/formatters/number';
@@ -13,7 +12,7 @@ import Etherscan from 'containers/BlockExplorer';
 import { WeiSource } from '@synthetixio/wei';
 
 type ActionCompletedProps = {
-	setTransactionState: (tx: Transaction) => void;
+	resetTransaction: () => void;
 	vestingAmount?: string;
 	currencyKey?: string;
 	hash: string;
@@ -21,7 +20,7 @@ type ActionCompletedProps = {
 };
 
 const ActionCompleted: FC<ActionCompletedProps> = ({
-	setTransactionState,
+	resetTransaction,
 	vestingAmount,
 	currencyKey,
 	hash,
@@ -62,7 +61,7 @@ const ActionCompleted: FC<ActionCompletedProps> = ({
 				) : null}
 				<RightButton
 					onClick={() => {
-						setTransactionState(Transaction.PRESUBMIT);
+						resetTransaction();
 					}}
 				>
 					{t('staking.actions.mint.completed.dismiss')}

@@ -36,9 +36,9 @@ type TabContentProps = {
 	gasLimitEstimate: GasLimitEstimate;
 	setGasPrice: Function;
 	txHash: string | null;
-	transactionState: Transaction;
+	transactionState: 'unsent' | string;
 	isVestNeeded: boolean;
-	setTransactionState: (tx: Transaction) => void;
+	resetTransaction: () => void;
 };
 
 const TabContent: FC<TabContentProps> = ({
@@ -52,7 +52,7 @@ const TabContent: FC<TabContentProps> = ({
 	setGasPrice,
 	txHash,
 	transactionState,
-	setTransactionState,
+	resetTransaction,
 	isVestNeeded,
 }) => {
 	const { t } = useTranslation();
@@ -78,7 +78,7 @@ const TabContent: FC<TabContentProps> = ({
 					onClick={onSubmit}
 					variant="primary"
 					size="lg"
-					disabled={transactionState !== Transaction.PRESUBMIT || !!gasEstimateError}
+					disabled={transactionState !== 'unsent' || !!gasEstimateError}
 				>
 					{t('layer2.actions.migrate.action.migrate-button', {
 						escrowedAmount: formatCurrency(vestingCurrencyKey, escrowedAmount, {
@@ -96,7 +96,7 @@ const TabContent: FC<TabContentProps> = ({
 		}
 	};
 
-	if (transactionState === Transaction.WAITING) {
+	if (transactionState === 'pending') {
 		return (
 			<ActionInProgress
 				action="migrate"
@@ -107,14 +107,14 @@ const TabContent: FC<TabContentProps> = ({
 		);
 	}
 
-	if (transactionState === Transaction.SUCCESS) {
+	if (transactionState === 'confirmed') {
 		return (
 			<ActionCompleted
 				action="migrate"
 				currencyKey={vestingCurrencyKey}
 				hash={txHash as string}
 				amount={escrowedAmount.toString()}
-				setTransactionState={setTransactionState}
+				resetTransaction={resetTransaction}
 			/>
 		);
 	}

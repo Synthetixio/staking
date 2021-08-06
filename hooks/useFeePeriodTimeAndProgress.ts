@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 function useFeePeriodTimeAndProgress() {
 	const { useGetFeePoolDataQuery } = useSynthetixQueries();
 
-	const currentFeePeriod = useGetFeePoolDataQuery('0');
+	const currentFeePeriod = useGetFeePoolDataQuery(0);
 
 	const [nextFeePeriodStarts, currentFeePeriodProgress, currentFeePeriodStarted] = useMemo(
 		() => [

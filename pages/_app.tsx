@@ -25,9 +25,18 @@ import 'slick-carousel/slick/slick-theme.css';
 import 'tippy.js/dist/tippy.css';
 import '../i18n';
 import Connector from 'containers/Connector';
+import { Signer } from 'crypto';
+
+const queryClient = new QueryClient({
+	defaultOptions: {
+		queries: {
+			refetchInterval: DEFAULT_REQUEST_REFRESH_INTERVAL,
+		},
+	},
+});
 
 const InnerApp: FC<AppProps> = ({ Component, pageProps }) => {
-	const { provider, network } = Connector.useContainer();
+	const { provider, signer, network } = Connector.useContainer();
 
 	return (
 		<>
@@ -36,21 +45,20 @@ const InnerApp: FC<AppProps> = ({ Component, pageProps }) => {
 					provider && network
 						? createQueryContext({
 								provider: provider,
+								signer: signer || undefined,
 								networkId: network!.id,
 						  })
 						: createQueryContext({ networkId: null })
 				}
 			>
-				<QueryClientProvider client={new QueryClient()}>
-					<Layout>
-						<SystemStatus>
-							<AppLayout>
-								<Component {...pageProps} />
-							</AppLayout>
-						</SystemStatus>
-					</Layout>
-					<ReactQueryDevtools />
-				</QueryClientProvider>
+				<Layout>
+					<SystemStatus>
+						<AppLayout>
+							<Component {...pageProps} />
+						</AppLayout>
+					</SystemStatus>
+				</Layout>
+				<ReactQueryDevtools />
 			</SynthetixQueryContextProvider>
 		</>
 	);
@@ -83,7 +91,7 @@ const App: FC<AppProps> = (props) => {
 			</Head>
 			<ThemeProvider theme={theme}>
 				<RecoilRoot>
-					<QueryClientProvider client={new QueryClient()} contextSharing={true}>
+					<QueryClientProvider client={queryClient} contextSharing={true}>
 						<WithAppContainers>
 							<MediaContextProvider>
 								<InnerApp {...props} />

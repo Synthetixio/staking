@@ -3,7 +3,6 @@ import { useQuery, UseQueryOptions } from 'react-query';
 import { ethers } from 'ethers';
 import { useRecoilValue } from 'recoil';
 
-import synthetix from 'lib/synthetix';
 import QUERY_KEYS from 'constants/queryKeys';
 import { appReadyState } from 'store/app';
 
@@ -32,14 +31,14 @@ const useYearnSNXVaultQuery = (options?: UseQueryOptions<YearnVaultData>) => {
 	const walletAddress = useRecoilValue(walletAddressState);
 	const network = useRecoilValue(networkState);
 	const isMainnet = useRecoilValue(isMainnetState);
-	const { provider } = Connector.useContainer();
+	const { provider, synthetixjs } = Connector.useContainer();
 
 	return useQuery<YearnVaultData>(
 		QUERY_KEYS.LiquidityPools.yearnSNX(walletAddress ?? '', network?.id!),
 		async () => {
 			const {
 				contracts: { Synthetix },
-			} = synthetix.js!;
+			} = synthetixjs!;
 
 			const YearnSNXVault = new ethers.Contract(
 				yearnSNXVault.address,

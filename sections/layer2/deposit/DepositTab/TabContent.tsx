@@ -96,7 +96,7 @@ const TabContent: FC<TabContentProps> = ({
 				currencyKey={currencyKey}
 				hash={txHash as string}
 				amount={depositAmount.toString()}
-				setTransactionState={setTransactionState}
+				resetTransaction={() => setTransactionState(Transaction.PRESUBMIT)}
 				action="deposit"
 			/>
 		);

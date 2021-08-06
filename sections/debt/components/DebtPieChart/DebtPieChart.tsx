@@ -73,7 +73,8 @@ const SynthsPieChart: FC<DebtPieChartProps> = () => {
 		return topNSynths
 			.sort((a, b) => (a.value.lt(b.value) ? 1 : -1))
 			.map((supply, index) => ({
-				...supply,
+				totalSupply: supply.totalSupply.toNumber(),
+				poolProportion: supply.poolProportion.toNumber(),
 				value: supply.value.toNumber(),
 				fillColor: MUTED_COLORS[index % MUTED_COLORS.length],
 				strokeColor: BRIGHT_COLORS[index % BRIGHT_COLORS.length],

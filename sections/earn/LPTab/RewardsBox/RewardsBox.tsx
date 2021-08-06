@@ -15,7 +15,6 @@ import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { ESTIMATE_VALUE } from 'constants/placeholder';
 import { GasLimitEstimate } from 'constants/network';
 import GasSelector from 'components/GasSelector';
-import synthetix from 'lib/synthetix';
 
 import {
 	FlexDivColCentered,
@@ -67,7 +66,7 @@ const RewardsBox: FC<RewardsBoxProps> = ({
 	secondTokenRate,
 }) => {
 	const { t } = useTranslation();
-	const { signer } = Connector.useContainer();
+	const { synthetixjs, signer } = Connector.useContainer();
 	const networkId = useRecoilValue(networkState)!.id;
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
 	const [gasLimitEstimate, setGasLimitEstimate] = useState<GasLimitEstimate>(null);
@@ -78,11 +77,8 @@ const RewardsBox: FC<RewardsBoxProps> = ({
 			if (isAppReady) {
 				try {
 					setClaimError(null);
-					const contract = getContract(stakedAsset, signer);
-					let gasEstimate = await synthetix.getGasEstimateForTransaction({
-						txArgs: [],
-						method: contract.estimateGas.getReward,
-					});
+					const contract = getContract(synthetixjs!, stakedAsset, signer);
+					const gasEstimate = wei(await contract.estimateGas.getReward(), 0);
 					setGasLimitEstimate(gasEstimate);
 				} catch (error) {
 					setClaimError(error.message);

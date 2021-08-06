@@ -2,7 +2,6 @@ import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
 import { ethers } from 'ethers';
 
-import synthetix from 'lib/synthetix';
 import QUERY_KEYS from 'constants/queryKeys';
 import { appReadyState } from 'store/app';
 import {
@@ -33,7 +32,7 @@ const useBalancerPoolQuery = (
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const network = useRecoilValue(networkState);
-	const { provider } = Connector.useContainer();
+	const { provider, synthetixjs } = Connector.useContainer();
 	const isMainnet = useRecoilValue(isMainnetState);
 
 	return useQuery<LiquidityPoolData>(
@@ -41,7 +40,7 @@ const useBalancerPoolQuery = (
 		async () => {
 			const {
 				contracts: { [rewardsContractName]: StakingRewardsContract },
-			} = synthetix.js!;
+			} = synthetixjs!;
 
 			const BPTokenPrice = getBalancerPool(balancerPoolTokenContract.address);
 

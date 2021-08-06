@@ -2,7 +2,7 @@ import { CurrencyKey, Synths, CryptoCurrency, FIAT_SYNTHS } from 'constants/curr
 import { Rates } from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
 
-export const isSynth = (currencyKey: CurrencyKey) => currencyKey in Synths;
+export const isSynth = (currencyKey?: CurrencyKey) => (currencyKey || '') in Synths;
 export const isCryptoCurrency = (currencyKey: CurrencyKey) => currencyKey in CryptoCurrency;
 // @ts-ignore
 export const isFiatCurrency = (currencyKey: CurrencyKey) => FIAT_SYNTHS.has(currencyKey);

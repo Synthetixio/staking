@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import { useRecoilValue } from 'recoil';
 import { useTranslation } from 'react-i18next';
 
-import synthetix from 'lib/synthetix';
 import { walletAddressState } from 'store/wallet';
 import Connector from 'containers/Connector';
 import Loans from 'containers/Loans';
@@ -84,6 +83,7 @@ type ERC20Props = {
 
 const ERC20: React.FC<ERC20Props> = ({ asset, onSetMaxAmount }) => {
 	const { t } = useTranslation();
+	const { synthetixjs } = Connector.useContainer();
 	const address = useRecoilValue(walletAddressState);
 	const [balance, setBalance] = React.useState<ethers.BigNumber>(ethers.BigNumber.from('0'));
 	const [decimals, setDecimals] = React.useState<number>(0);
@@ -98,7 +98,7 @@ const ERC20: React.FC<ERC20Props> = ({ asset, onSetMaxAmount }) => {
 	const contract = React.useMemo(() => {
 		const {
 			contracts: { ProxysBTC: sBTC, ProxysETH: sETH, ProxyERC20sUSD: sUSD },
-		} = synthetix.js!;
+		} = synthetixjs!;
 		const tokens: Record<string, typeof sBTC> = {
 			sBTC,
 			sETH,

@@ -39,8 +39,8 @@ type TabContentProps = {
 	gasLimitEstimate: GasLimitEstimate;
 	setGasPrice: Function;
 	txHash: string | null;
-	transactionState: Transaction;
-	setTransactionState: (tx: Transaction) => void;
+	transactionState: string;
+	resetTransaction: () => void;
 	bridgeInactive?: boolean;
 };
 
@@ -57,7 +57,7 @@ const TabContent: FC<TabContentProps> = ({
 	setGasPrice,
 	txHash,
 	transactionState,
-	setTransactionState,
+	resetTransaction,
 	bridgeInactive,
 }) => {
 	const { t } = useTranslation();
@@ -77,9 +77,7 @@ const TabContent: FC<TabContentProps> = ({
 					onClick={onSubmit}
 					variant="primary"
 					size="lg"
-					disabled={
-						bridgeInactive || transactionState !== Transaction.PRESUBMIT || !!gasEstimateError
-					}
+					disabled={bridgeInactive || transactionState !== 'unsent' || !!gasEstimateError}
 				>
 					{t('layer2.actions.withdraw.action.withdraw-button', {
 						withdrawAmount: formatCurrency(currencyKey, inputValue, {
@@ -97,7 +95,7 @@ const TabContent: FC<TabContentProps> = ({
 		}
 	};
 
-	if (transactionState === Transaction.WAITING) {
+	if (transactionState === 'pending') {
 		return (
 			<ActionInProgress
 				amount={inputValue.toString()}
@@ -108,13 +106,13 @@ const TabContent: FC<TabContentProps> = ({
 		);
 	}
 
-	if (transactionState === Transaction.SUCCESS) {
+	if (transactionState === 'confirmed') {
 		return (
 			<ActionCompleted
 				currencyKey={currencyKey}
 				hash={txHash as string}
 				amount={inputValue.toString()}
-				setTransactionState={setTransactionState}
+				resetTransaction={resetTransaction}
 				action="deposit"
 			/>
 		);

@@ -8,7 +8,6 @@ import Wei, { wei } from '@synthetixio/wei';
 import PendingConfirmation from 'assets/svg/app/pending-confirmation.svg';
 import Success from 'assets/svg/app/success.svg';
 import GasSelector from 'components/GasSelector';
-import synthetix from 'lib/synthetix';
 import NumericInput from 'components/Input/NumericInput';
 import { formatCryptoCurrency, formatNumber } from 'utils/formatters/number';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
@@ -53,9 +52,14 @@ import { appReadyState } from 'store/app';
 import curveSeuroRewards from 'contracts/curveSeuroRewards';
 import { LP } from 'sections/earn/types';
 import { CurrencyIconType } from 'components/Currency/CurrencyIcon/CurrencyIcon';
+import { SynthetixJS } from '@synthetixio/contracts-interface';
 
-export const getContract = (stakedAsset: CurrencyKey, signer: ethers.Signer | null) => {
-	const { contracts } = synthetix.js!;
+export const getContract = (
+	synthetixjs: SynthetixJS,
+	stakedAsset: CurrencyKey,
+	signer: ethers.Signer | null
+) => {
+	const { contracts } = synthetixjs!;
 	if (stakedAsset === Synths.iBTC) {
 		return contracts.StakingRewardsiBTC;
 	} else if (stakedAsset === Synths.iETH) {
@@ -113,7 +117,7 @@ const StakeTab: FC<StakeTabProps> = ({ stakedAsset, icon, type, isStake, userBal
 	const [amount, setAmount] = useState<string>('');
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const { blockExplorerInstance } = Etherscan.useContainer();
-	const { signer } = Connector.useContainer();
+	const { signer, synthetixjs } = Connector.useContainer();
 	const [gasLimitEstimate, setGasLimitEstimate] = useState<GasLimitEstimate>(null);
 	const [gasPrice, setGasPrice] = useState<number>(0);
 	const [error, setError] = useState<string | null>(null);
@@ -137,12 +141,15 @@ const StakeTab: FC<StakeTabProps> = ({ stakedAsset, icon, type, isStake, userBal
 			if (isAppReady && Number(amount) > 0) {
 				try {
 					setError(null);
-					const contract = getContract(stakedAsset, signer);
+					const contract = getContract(synthetixjs!, stakedAsset, signer);
 					const stakeAmount = parsedAmount;
-					let gasEstimate = await synthetix.getGasEstimateForTransaction({
-						txArgs: [stakeAmount],
-						method: isStake ? contract.estimateGas.stake : contract.estimateGas.withdraw,
-					});
+
+					let gasEstimate = wei(
+						isStake
+							? await contract.estimateGas.stake(stakeAmount)
+							: await contract.estimateGas.withdraw(stakeAmount),
+						0
+					);
 					setGasLimitEstimate(gasEstimate);
 				} catch (error) {
 					setError(error.message);
@@ -159,14 +166,14 @@ const StakeTab: FC<StakeTabProps> = ({ stakedAsset, icon, type, isStake, userBal
 				try {
 					setError(null);
 					setTxModalOpen(true);
-					const contract = getContract(stakedAsset, signer);
+					const contract = getContract(synthetixjs!, stakedAsset, signer);
 
-					let formattedStakeAmount = parsedAmount;
+					let formattedStakeAmount = parsedAmount.toBN();
 
-					const gasLimit = await synthetix.getGasEstimateForTransaction({
-						txArgs: [formattedStakeAmount],
-						method: isStake ? contract.estimateGas.stake : contract.estimateGas.withdraw,
-					});
+					const gasLimit = isStake
+						? await contract.estimateGas.stake(formattedStakeAmount)
+						: await contract.estimateGas.withdraw(formattedStakeAmount);
+
 					let transaction: ethers.ContractTransaction;
 					if (isStake) {
 						transaction = await contract.stake(formattedStakeAmount, {

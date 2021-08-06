@@ -33,7 +33,7 @@ type TabContentProps = {
 	gasLimitEstimate: GasLimitEstimate;
 	setGasPrice: Function;
 	txHash: string | null;
-	transactionState: Transaction;
+	transactionState: string;
 	setTransactionState: (tx: Transaction) => void;
 };
 
@@ -61,7 +61,7 @@ const TabContent: FC<TabContentProps> = ({
 					onClick={onSubmit}
 					variant="primary"
 					size="lg"
-					disabled={transactionState !== Transaction.PRESUBMIT || !!gasEstimateError}
+					disabled={transactionState !== 'unsent' || !!gasEstimateError}
 				>
 					{t('escrow.actions.vest-button', {
 						canVestAmount: formatCurrency(vestingCurrencyKey, claimableAmount, {
@@ -95,7 +95,7 @@ const TabContent: FC<TabContentProps> = ({
 				currencyKey={vestingCurrencyKey}
 				hash={txHash as string}
 				vestingAmount={claimableAmount.toString()}
-				setTransactionState={setTransactionState}
+				resetTransaction={() => setTransactionState(Transaction.PRESUBMIT)}
 			/>
 		);
 	}

@@ -33,8 +33,8 @@ type TabContentProps = {
 	gasLimitEstimate: GasLimitEstimate;
 	setGasPrice: Function;
 	txHash: string | null;
-	transactionState: Transaction;
-	setTransactionState: (tx: Transaction) => void;
+	transactionState: 'unsent' | string;
+	onResetTransaction: () => void;
 };
 
 const TabContent: FC<TabContentProps> = ({
@@ -48,7 +48,7 @@ const TabContent: FC<TabContentProps> = ({
 	setGasPrice,
 	txHash,
 	transactionState,
-	setTransactionState,
+	onResetTransaction,
 }) => {
 	const { t } = useTranslation();
 	const vestingCurrencyKey = CryptoCurrency['SNX'];
@@ -61,7 +61,7 @@ const TabContent: FC<TabContentProps> = ({
 					onClick={onSubmit}
 					variant="primary"
 					size="lg"
-					disabled={transactionState !== Transaction.PRESUBMIT || !!gasEstimateError}
+					disabled={transactionState !== 'unsent' || !!gasEstimateError}
 				>
 					{t('escrow.actions.vest-button', {
 						canVestAmount: formatCurrency(vestingCurrencyKey, claimableAmount, {
@@ -79,7 +79,7 @@ const TabContent: FC<TabContentProps> = ({
 		}
 	};
 
-	if (transactionState === Transaction.WAITING) {
+	if (transactionState === 'pending') {
 		return (
 			<ActionInProgress
 				vestingAmount={claimableAmount.toString()}
@@ -89,13 +89,13 @@ const TabContent: FC<TabContentProps> = ({
 		);
 	}
 
-	if (transactionState === Transaction.SUCCESS) {
+	if (transactionState === 'confirmed') {
 		return (
 			<ActionCompleted
 				currencyKey={vestingCurrencyKey}
 				hash={txHash as string}
 				vestingAmount={claimableAmount.toString()}
-				setTransactionState={setTransactionState}
+				resetTransaction={onResetTransaction}
 			/>
 		);
 	}

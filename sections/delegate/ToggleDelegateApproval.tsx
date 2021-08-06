@@ -3,8 +3,6 @@ import styled from 'styled-components';
 import { useRecoilValue } from 'recoil';
 import { useTranslation } from 'react-i18next';
 
-import synthetix from 'lib/synthetix';
-
 import TransactionNotifier from 'containers/TransactionNotifier';
 import {
 	ModalItemTitle as TxModalItemTitle,
@@ -23,6 +21,7 @@ import {
 	DelegationWallet,
 	WITHDRAW_CONTRACT_METHODS,
 } from '@synthetixio/queries';
+import Connector from 'containers/Connector';
 
 type ToggleDelegateApprovalProps = {
 	account: DelegationWallet;
@@ -38,6 +37,7 @@ const ToggleDelegateApproval: FC<ToggleDelegateApprovalProps> = ({
 	const { t } = useTranslation();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const isAppReady = useRecoilValue(appReadyState);
+	const { synthetixjs } = Connector.useContainer();
 
 	const [, setError] = useState<string | null>(null);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
@@ -51,7 +51,7 @@ const ToggleDelegateApproval: FC<ToggleDelegateApprovalProps> = ({
 			if (!isAppReady) return null;
 			const {
 				contracts: { DelegateApprovals },
-			} = synthetix.js!;
+			} = synthetixjs!;
 			const meths = checked ? WITHDRAW_CONTRACT_METHODS : APPROVE_CONTRACT_METHODS;
 			return [DelegateApprovals, meths.get(action), [account.address, gas]];
 		},

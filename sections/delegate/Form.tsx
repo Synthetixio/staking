@@ -4,8 +4,6 @@ import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 import { Trans, useTranslation } from 'react-i18next';
 
-import synthetix from 'lib/synthetix';
-
 import { truncateAddress } from 'utils/formatters/string';
 import Button from 'components/Button';
 import StructuredTab from 'components/StructuredTab';
@@ -39,6 +37,8 @@ import {
 } from 'utils/network';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import ActionSelector from './ActionSelector';
+import { GWEI_UNIT } from 'utils/infura';
+import { wei } from '@synthetixio/wei';
 
 const LeftCol: FC = () => {
 	const { t } = useTranslation();
@@ -62,7 +62,7 @@ const LeftCol: FC = () => {
 
 const Tab: FC = () => {
 	const { t } = useTranslation();
-	const { connectWallet } = Connector.useContainer();
+	const { connectWallet, synthetixjs } = Connector.useContainer();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const isAppReady = useRecoilValue(appReadyState);
 	const address = useRecoilValue(walletAddressState);
@@ -103,7 +103,7 @@ const Tab: FC = () => {
 			if (!(properDelegateAddress && !delegateAddressIsSelf && isAppReady)) return null;
 			const {
 				contracts: { DelegateApprovals },
-			} = synthetix.js!;
+			} = synthetixjs!;
 			return [
 				DelegateApprovals,
 				APPROVE_CONTRACT_METHODS.get(action),
@@ -178,7 +178,7 @@ const Tab: FC = () => {
 			if (!isAppReady) return;
 			const {
 				contracts: { DelegateApprovals },
-			} = synthetix.js!;
+			} = synthetixjs!;
 			if (!(properDelegateAddress && action)) return setAlreadyDelegated(false);
 			const alreadyDelegated = await DelegateApprovals[
 				GET_IS_APPROVED_CONTRACT_METHODS.get(action)!
@@ -208,7 +208,7 @@ const Tab: FC = () => {
 					<ActionSelector {...{ action, setAction }} />
 
 					<SettingContainer>
-						<GasSelector gasLimitEstimate={gasLimit} setGasPrice={setGasPrice} />
+						<GasSelector gasLimitEstimate={wei(gasLimit, GWEI_UNIT)} setGasPrice={setGasPrice} />
 					</SettingContainer>
 				</SettingsContainer>
 			</FormContainer>

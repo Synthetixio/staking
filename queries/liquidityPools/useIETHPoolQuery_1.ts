@@ -1,7 +1,6 @@
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
 
-import synthetix from 'lib/synthetix';
 import QUERY_KEYS from 'constants/queryKeys';
 import { appReadyState } from 'store/app';
 import {
@@ -14,8 +13,10 @@ import { Synths } from 'constants/currency';
 
 import { LiquidityPoolData } from './types';
 import { wei } from '@synthetixio/wei';
+import Connector from 'containers/Connector';
 
 const useIETHPoolQuery_1 = (options?: UseQueryOptions<LiquidityPoolData>) => {
+	const { synthetixjs } = Connector.useContainer();
 	const isAppReady = useRecoilValue(appReadyState);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
@@ -28,7 +29,7 @@ const useIETHPoolQuery_1 = (options?: UseQueryOptions<LiquidityPoolData>) => {
 			const {
 				contracts: { StakingRewardsiETH, Exchanger, ProxyiETH, ExchangeRates },
 				utils: { formatBytes32String },
-			} = synthetix.js!;
+			} = synthetixjs!;
 
 			const address = StakingRewardsiETH.address;
 			const getDuration = StakingRewardsiETH.DURATION || StakingRewardsiETH.rewardsDuration;
@@ -49,7 +50,7 @@ const useIETHPoolQuery_1 = (options?: UseQueryOptions<LiquidityPoolData>) => {
 				StakingRewardsiETH.periodFinish(),
 				ProxyiETH.balanceOf(address),
 				ProxyiETH.balanceOf(walletAddress),
-				ExchangeRates.rateForCurrency(synthetix.js?.toBytes32(Synths.iETH)),
+				ExchangeRates.rateForCurrency(synthetixjs?.toBytes32(Synths.iETH)),
 				StakingRewardsiETH.earned(walletAddress),
 				StakingRewardsiETH.balanceOf(walletAddress),
 				ProxyiETH.allowance(walletAddress, address),

@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { ethers } from 'ethers';
-import Wei from '@synthetixio/wei';
+import Wei, { wei } from '@synthetixio/wei';
 import { Svg } from 'react-optimized-image';
 import { useRouter } from 'next/router';
 import { useRecoilValue } from 'recoil';
@@ -17,7 +17,6 @@ import {
 import ROUTES from 'constants/routes';
 import { ExternalLink, FlexDiv, GlowingCircle, IconButton, FlexDivJustifyEnd } from 'styles/common';
 import media from 'styles/media';
-import synthetix from 'lib/synthetix';
 import PendingConfirmation from 'assets/svg/app/pending-confirmation.svg';
 import Success from 'assets/svg/app/success.svg';
 import ExpandIcon from 'assets/svg/app/expand.svg';
@@ -78,6 +77,7 @@ import {
 import { MobileOnlyView } from 'components/Media';
 import useSynthetixQueries from '@synthetixio/queries';
 import { snapshotEndpoint } from 'constants/snapshot';
+import Connector from 'containers/Connector';
 
 type ClaimTabProps = {
 	tradingRewards: Wei;
@@ -87,6 +87,8 @@ type ClaimTabProps = {
 
 const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, totalRewards }) => {
 	const { t } = useTranslation();
+
+	const { synthetixjs } = Connector.useContainer();
 
 	const walletAddress = useRecoilValue(walletAddressState);
 	const { useHasVotedForElectionsQuery } = useSynthetixQueries();
@@ -125,7 +127,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 		try {
 			const {
 				contracts: { FeePool },
-			} = synthetix.js!;
+			} = synthetixjs!;
 			const [feePeriodDuration, recentFeePeriods] = await Promise.all([
 				FeePool.feePeriodDuration(),
 				FeePool.recentFeePeriods(0),
@@ -160,14 +162,14 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 					}
 					const {
 						contracts: { FeePool },
-					} = synthetix.js!;
+					} = synthetixjs!;
 
-					let gasEstimate = await synthetix.getGasEstimateForTransaction({
-						txArgs: delegateWallet ? [delegateWallet.address] : [],
-						method: delegateWallet
-							? FeePool.estimateGas.claimOnBehalf
-							: FeePool.estimateGas.claimFees,
-					});
+					let gasEstimate = wei(
+						delegateWallet
+							? await FeePool.estimateGas.claimOnBehalf(delegateWallet)
+							: await FeePool.estimateGas.claimFees(),
+						0
+					);
 
 					setGasLimitEstimate(gasEstimate);
 				} catch (error) {
@@ -199,14 +201,15 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 					setTxModalOpen(true);
 					const {
 						contracts: { FeePool },
-					} = synthetix.js!;
+					} = synthetixjs!;
 
-					const gasLimit = await synthetix.getGasEstimateForTransaction({
-						txArgs: delegateWallet ? [delegateWallet.address] : [],
-						method: delegateWallet
-							? FeePool.estimateGas.claimOnBehalf
-							: FeePool.estimateGas.claimFees,
-					});
+					let gasLimit = wei(
+						delegateWallet
+							? await FeePool.estimateGas.claimOnBehalf(delegateWallet)
+							: await FeePool.estimateGas.claimFees(),
+						0
+					);
+
 					const transaction: ethers.ContractTransaction = delegateWallet
 						? await FeePool.claimOnBehalf(delegateWallet.address, {
 								gasPrice: normalizedGasPrice(gasPrice),
@@ -257,12 +260,10 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 	const handleCloseFeePeriod = async () => {
 		const {
 			contracts: { FeePool },
-		} = synthetix.js!;
+		} = synthetixjs!;
 		try {
-			const gasLimit = await synthetix.getGasEstimateForTransaction({
-				txArgs: [],
-				method: FeePool.estimateGas.closeCurrentFeePeriod,
-			});
+			const gasLimit = FeePool.estimateGas.closeCurrentFeePeriod();
+
 			const transaction: ethers.ContractTransaction = await FeePool.closeCurrentFeePeriod({
 				gasPrice: normalizedGasPrice(gasPrice),
 				gasLimit,

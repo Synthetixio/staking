@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import last from 'lodash/last';
+import { last } from 'lodash';
 import useSynthetixQueries from '@synthetixio/queries';
 import { StakingTransactionType } from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
@@ -67,7 +67,7 @@ const useHistoricalDebtData = (walletAddress: string | null) => {
 					historicalDebtAndIssuance.push({
 						timestamp: debtSnapshot.timestamp,
 						issuanceDebt: historicalIssuanceAggregation[i],
-						actualDebt: debtSnapshot.debtBalanceOf,
+						actualDebt: wei(debtSnapshot.debtBalanceOf),
 						index: i,
 					});
 				});

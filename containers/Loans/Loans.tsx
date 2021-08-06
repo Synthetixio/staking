@@ -4,7 +4,6 @@ import { useRecoilValue } from 'recoil';
 import { ethers } from 'ethers';
 
 import { renBTCToken } from 'contracts';
-import synthetix from 'lib/synthetix';
 import Connector from 'containers/Connector';
 import { appReadyState } from 'store/app';
 import { walletAddressState, networkState } from 'store/wallet';
@@ -21,7 +20,7 @@ const COLLATERAL_ASSETS: Record<string, string> = {
 export default createContainer(Container);
 
 function Container() {
-	const { provider, signer } = Connector.useContainer();
+	const { provider, signer, synthetixjs } = Connector.useContainer();
 	const address = useRecoilValue(walletAddressState);
 	const network = useRecoilValue(networkState);
 	const isAppReady = useRecoilValue(appReadyState);
@@ -39,7 +38,7 @@ function Container() {
 		collateralManagerContract,
 		exchangeRatesContract,
 	] = useMemo(() => {
-		if (!(isAppReady && synthetix.js && signer)) return [null, null, null, null, null, null];
+		if (!(isAppReady && synthetixjs && signer)) return [null, null, null, null, null, null];
 		const {
 			contracts: {
 				CollateralEth: ethLoanContract,
@@ -49,7 +48,7 @@ function Container() {
 				CollateralManager: collateralManagerContract,
 				ExchangeRates: exchangeRatesContract,
 			},
-		} = synthetix.js;
+		} = synthetixjs;
 		return [
 			ethLoanContract,
 			erc20LoanContract,

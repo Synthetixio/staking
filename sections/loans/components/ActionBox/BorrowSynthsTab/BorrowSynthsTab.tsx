@@ -8,7 +8,6 @@ import { isWalletConnectedState, networkState, walletAddressState } from 'store/
 import Connector from 'containers/Connector';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import UIContainer from 'containers/UI';
-import synthetix from 'lib/synthetix';
 import GasSelector from 'components/GasSelector';
 import { tx } from 'utils/transactions';
 import {
@@ -47,13 +46,14 @@ import FormButton from './FormButton';
 import AssetInput from './AssetInput';
 import Wei, { wei } from '@synthetixio/wei';
 import useSynthetixQueries from '@synthetixio/queries';
+import { parseSafeWei } from 'utils/parse';
 
 type BorrowSynthsTabProps = {};
 
 const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 	const { t } = useTranslation();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
-	const { connectWallet, signer } = Connector.useContainer();
+	const { connectWallet, signer, synthetixjs } = Connector.useContainer();
 	const router = useRouter();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const address = useRecoilValue(walletAddressState);
@@ -69,7 +69,7 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 	const [debtAmountNumber, setDebtAmount] = useState<string>('');
 	const [debtAsset, setDebtAsset] = useState<string>('');
 
-	const debtAmount = wei(debtAmountNumber);
+	const debtAmount = parseSafeWei(debtAmountNumber, wei(0));
 
 	const [collateralAmountNumber, setCollateralAmount] = useState<string>('');
 	const [minCollateralAmount, setMinCollateralAmount] = useState<Wei>(wei(0));
@@ -78,7 +78,7 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 	const [collateralBalance, setCollateralBalance] = useState<Wei>(wei(0));
 
 	const collateralDecimals = collateralAsset === 'renBTC' ? 8 : 18; // todo
-	const collateralAmount = wei(collateralAmountNumber, collateralDecimals);
+	const collateralAmount = parseSafeWei(collateralAmountNumber, wei(0)).scale(collateralDecimals);
 
 	const collateralIsETH = collateralAsset === 'ETH';
 	const collateralContract = useMemo(
@@ -95,10 +95,10 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 	const minCollateralAmountString = minCollateralAmount.scale(collateralDecimals).toString(2);
 
 	const loanContract = useMemo(() => {
-		if (!signer) return;
+		if (!signer || !synthetixjs) return;
 		const {
 			contracts: { CollateralEth: ethLoanContract, CollateralErc20: erc20LoanContract },
-		} = synthetix.js!;
+		} = synthetixjs!;
 		return collateralIsETH ? ethLoanContract : erc20LoanContract;
 	}, [collateralIsETH, signer]);
 
@@ -342,10 +342,7 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 				const data: any[] | null = getTxData({});
 				if (!data) return;
 				const [contract, method, args] = data;
-				const gasEstimate = await synthetix.getGasEstimateForTransaction({
-					txArgs: args,
-					method: contract.estimateGas[method],
-				});
+				const gasEstimate = await contract.estimateGas[method]();
 				if (isMounted) setGasLimitEstimate(getNormalizedGasLimit(Number(gasEstimate)));
 			} catch (error) {
 				// console.error(error);
@@ -419,7 +416,7 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 						<IssuanceFee {...{ collateralIsETH }} />
 					</SettingContainer>
 					<SettingContainer>
-						<GasSelector gasLimitEstimate={gasLimit} setGasPrice={setGasPrice} />
+						<GasSelector gasLimitEstimate={wei(gasLimit)} setGasPrice={setGasPrice} />
 					</SettingContainer>
 				</SettingsContainer>
 			</FormContainer>

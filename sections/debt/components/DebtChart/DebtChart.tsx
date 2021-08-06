@@ -67,6 +67,7 @@ const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
 };
 
 type Data = {
+	timestamp: number;
 	issuanceDebt: Wei;
 	actualDebt: Wei;
 };
@@ -76,6 +77,8 @@ const DebtChart = ({ data, isLoading }: { data: Data[]; isLoading: boolean }) =>
 	const { colors, fonts } = useTheme();
 	const { connectWallet } = Connector.useContainer();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
+
+	console.log('debt', data, isLoading);
 
 	if (!isWalletConnected) {
 		return (
@@ -97,6 +100,7 @@ const DebtChart = ({ data, isLoading }: { data: Data[]; isLoading: boolean }) =>
 		return <DefaultContainer>{t('debt.actions.track.no-data')}</DefaultContainer>;
 
 	const parsedData = data.map((p) => ({
+		timestamp: p.timestamp,
 		issuanceDebt: p.issuanceDebt.toNumber(),
 		actualDebt: p.actualDebt.toNumber(),
 	}));

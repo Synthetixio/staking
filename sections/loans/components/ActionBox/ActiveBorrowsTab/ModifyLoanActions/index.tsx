@@ -3,7 +3,6 @@ import { ethers } from 'ethers';
 import styled from 'styled-components';
 import { Svg } from 'react-optimized-image';
 
-import synthetix from 'lib/synthetix';
 import Spinner from 'assets/svg/app/loader.svg';
 import Loans from 'containers/Loans';
 import UIContainer from 'containers/UI';
@@ -13,6 +12,7 @@ import Withdraw from './Withdraw';
 import Repay from './Repay';
 import Draw from './Draw';
 import Close from './Close';
+import Connector from 'containers/Connector';
 
 export const ACTIONS: Record<string, any> = {
 	deposit: Deposit,
@@ -31,8 +31,8 @@ type ActionsProps = {
 };
 
 const Actions: FC<ActionsProps> = ({ loanId, loanAction, loanTypeIsETH }) => {
-	const { renBTCContract } = Loans.useContainer();
-	const { isLoadingLoans, loans } = Loans.useContainer();
+	const { synthetixjs } = Connector.useContainer();
+	const { renBTCContract, isLoadingLoans, loans } = Loans.useContainer();
 	const { setTitle } = UIContainer.useContainer();
 
 	const Action = ACTIONS[loanAction];
@@ -42,7 +42,7 @@ const Actions: FC<ActionsProps> = ({ loanId, loanAction, loanTypeIsETH }) => {
 	const collateralAssetContract = useMemo(() => {
 		const {
 			contracts: { ProxysBTC: sBTC, ProxysETH: sETH, ProxyERC20sUSD: sUSD },
-		} = synthetix.js!;
+		} = synthetixjs!;
 		const tokens: Record<string, typeof sBTC> = { sBTC, sETH, sUSD };
 		const collateralAsset = loanTypeIsETH ? 'ETH' : 'renBTC';
 		return tokens[collateralAsset];
@@ -51,7 +51,7 @@ const Actions: FC<ActionsProps> = ({ loanId, loanAction, loanTypeIsETH }) => {
 	const loanContract = useMemo(() => {
 		const {
 			contracts: { CollateralEth: ethLoanContract, CollateralErc20: erc20LoanContract },
-		} = synthetix.js!;
+		} = synthetixjs!;
 		return loanTypeIsETH ? ethLoanContract : erc20LoanContract;
 	}, [loanTypeIsETH]);
 
@@ -61,7 +61,7 @@ const Actions: FC<ActionsProps> = ({ loanId, loanAction, loanTypeIsETH }) => {
 				CollateralStateEth: ethLoanStateContract,
 				CollateralStateErc20: erc20LoanStateContract,
 			},
-		} = synthetix.js!;
+		} = synthetixjs!;
 		return loanTypeIsETH ? ethLoanStateContract : erc20LoanStateContract;
 	}, [loanTypeIsETH]);
 

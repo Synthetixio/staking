@@ -1,4 +1,3 @@
-import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ethers } from 'ethers';
 import { useRecoilValue } from 'recoil';
@@ -11,16 +10,17 @@ import Connector from 'containers/Connector';
 import Button from 'components/Button';
 import Currency from 'components/Currency';
 import { Synths } from 'constants/currency';
-import synthetix from 'lib/synthetix';
 import { tx } from 'utils/transactions';
 import Loans from 'containers/Loans';
 import InfoSVG from 'sections/loans/components/ActionBox/components/InfoSVG';
 import { wei } from '@synthetixio/wei';
+import { useEffect } from 'react';
+import React from 'react';
 
 const InfoBox: React.FC = () => {
 	const { t } = useTranslation();
 	const address = useRecoilValue(walletAddressState);
-	const { provider } = Connector.useContainer();
+	const { provider, synthetixjs } = Connector.useContainer();
 	const { pendingWithdrawals, reloadPendingWithdrawals, ethLoanContract } = Loans.useContainer();
 	const [isClaimingPendingWithdrawals, setIsClaimingPendingWithdrawals] = React.useState(false);
 
@@ -43,56 +43,55 @@ const InfoBox: React.FC = () => {
 		}
 	};
 
-	React.useEffect(() => {
-		if (!provider) {
-			return;
-		}
-
-		const {
-			contracts: {
-				ExchangeRates: exchangeRatesContract,
-				CollateralManager: collateralManagerContract,
-			},
-		} = synthetix.js!;
-
+	useEffect(() => {
 		let isMounted = true;
 		const unsubs: Array<Function> = [() => (isMounted = false)];
 
-		const getBorrowStats = async (currency: string) => {
-			const [openInterest, [assetUSDPrice]] = await Promise.all([
-				collateralManagerContract.long(ethers.utils.formatBytes32String(currency)),
-				exchangeRatesContract.rateAndInvalid(ethers.utils.formatBytes32String(currency)),
-			]);
-			const openInterestUSD = wei(openInterest).mul(wei(assetUSDPrice));
+		if (provider && synthetixjs) {
+			const {
+				contracts: {
+					ExchangeRates: exchangeRatesContract,
+					CollateralManager: collateralManagerContract,
+				},
+			} = synthetixjs!;
 
-			return {
-				currency,
-				openInterest: openInterestUSD,
+			const getBorrowStats = async (currency: string) => {
+				const [openInterest, [assetUSDPrice]] = await Promise.all([
+					collateralManagerContract.long(ethers.utils.formatBytes32String(currency)),
+					exchangeRatesContract.rateAndInvalid(ethers.utils.formatBytes32String(currency)),
+				]);
+				const openInterestUSD = wei(openInterest).mul(wei(assetUSDPrice));
+
+				return {
+					currency,
+					openInterest: openInterestUSD,
+				};
 			};
-		};
 
-		const loadBorrowsStats = () =>
-			Promise.all([Synths.sBTC, Synths.sETH, Synths.sUSD].map(getBorrowStats));
+			const loadBorrowsStats = () =>
+				Promise.all([Synths.sBTC, Synths.sETH, Synths.sUSD].map(getBorrowStats));
 
-		const load = async () => {
-			try {
-				const borrows = await loadBorrowsStats();
-				if (isMounted) {
-					setBorrows(borrows);
+			const load = async () => {
+				try {
+					const borrows = await loadBorrowsStats();
+					if (isMounted) {
+						setBorrows(borrows);
+					}
+				} catch (e) {
+					console.error(e);
 				}
-			} catch (e) {
-				console.error(e);
-			}
-		};
+			};
 
-		const subscribe = () => {
-			const newBlockEvent = 'block';
-			provider!.on(newBlockEvent, load);
-			unsubs.push(() => provider!.off(newBlockEvent, load));
-		};
+			const subscribe = () => {
+				const newBlockEvent = 'block';
+				provider!.on(newBlockEvent, load);
+				unsubs.push(() => provider!.off(newBlockEvent, load));
+			};
 
-		load();
-		subscribe();
+			load();
+			subscribe();
+		}
+
 		return () => {
 			unsubs.forEach((unsub) => unsub());
 		};

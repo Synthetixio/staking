@@ -9,8 +9,6 @@ import Link from 'next/link';
 
 import Connector from 'containers/Connector';
 
-import synthetix from 'lib/synthetix';
-
 import { appReadyState } from 'store/app';
 import { isWalletConnectedState, isL2State } from 'store/wallet';
 
@@ -61,7 +59,7 @@ const AssetsTable: FC<AssetsTableProps> = ({
 	onTransferClick,
 }) => {
 	const { t } = useTranslation();
-	const { connectWallet } = Connector.useContainer();
+	const { connectWallet, synthsMap } = Connector.useContainer();
 	const isAppReady = useRecoilValue(appReadyState);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const isL2 = useRecoilValue(isL2State);
@@ -89,8 +87,7 @@ const AssetsTable: FC<AssetsTableProps> = ({
 				id: 'right',
 				Cell: (cellProps: CellProps<CryptoBalance>) => {
 					const asset = cellProps.row.original;
-					const synthDesc =
-						synthetix.synthsMap != null ? synthetix.synthsMap[asset.currencyKey]?.description : '';
+					const synthDesc = synthsMap != null ? synthsMap[asset.currencyKey]?.description : '';
 
 					const currencyIsSynth = useMemo(() => isSynth(asset.currencyKey), [asset.currencyKey]);
 

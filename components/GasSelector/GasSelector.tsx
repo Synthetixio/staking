@@ -21,7 +21,7 @@ import { useTranslation } from 'react-i18next';
 import { FlexDivRow, FlexDivRowCentered, NumericValue } from 'styles/common';
 import { Svg } from 'react-optimized-image';
 import Info from 'assets/svg/app/info.svg';
-import { wei } from '@synthetixio/wei';
+import Wei, { wei } from '@synthetixio/wei';
 
 type GasSelectorProps = {
 	gasLimitEstimate: GasLimitEstimate;
@@ -49,9 +49,11 @@ const GasSelector: React.FC<GasSelectorProps> = ({
 	const gasPrices = ethGasStationQuery.data ?? ({} as GasPrices);
 	const exchangeRates = exchangeRatesQuery.data ?? null;
 
+	console.log('gas prices', gasPrices);
+
 	const hasCustomGasPrice = customGasPrice !== '';
 
-	const gasPrice = useMemo(() => {
+	const gasPrice: Wei | null = useMemo(() => {
 		try {
 			return wei(customGasPrice, 9);
 		} catch (_) {
@@ -85,7 +87,7 @@ const GasSelector: React.FC<GasSelectorProps> = ({
 		<span>{Number(customGasPrice)}</span>
 	) : (
 		<span>
-			{ESTIMATE_VALUE} {gasPrice}
+			{ESTIMATE_VALUE} {gasPrice?.toNumber() || 0}
 		</span>
 	);
 

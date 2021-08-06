@@ -24,11 +24,8 @@ import Success from 'assets/svg/app/success.svg';
 import ExpandIcon from 'assets/svg/app/expand.svg';
 
 import { Transaction } from 'constants/network';
-import { normalizedGasPrice } from 'utils/network';
 import { CryptoCurrency, Synths } from 'constants/currency';
-import { formatNumber } from 'utils/formatters/number';
-import { DEFAULT_CRYPTO_DECIMALS, DEFAULT_FIAT_DECIMALS } from 'constants/defaults';
-import synthetix from 'lib/synthetix';
+import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 
 import Connector from 'containers/Connector';
 import TransactionNotifier from 'containers/TransactionNotifier';
@@ -91,7 +88,7 @@ const LPTab: FC<LPTabProps> = ({
 	secondTokenRate,
 }) => {
 	const { t } = useTranslation();
-	const { signer } = Connector.useContainer();
+	const { synthetixjs, signer } = Connector.useContainer();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const [showApproveOverlayModal, setShowApproveOverlayModal] = useState<boolean>(false);
 	const [showSettleOverlayModal, setShowSettleOverlayModal] = useState<boolean>(false);
@@ -164,12 +161,10 @@ const LPTab: FC<LPTabProps> = ({
 				try {
 					setClaimError(null);
 					setClaimTxModalOpen(true);
-					const contract = getContract(stakedAsset, signer);
+					const contract = getContract(synthetixjs!, stakedAsset, signer);
 
-					const gasLimit = await synthetix.getGasEstimateForTransaction({
-						txArgs: [],
-						method: contract.estimateGas.getReward,
-					});
+					const gasLimit = wei(await contract.estimateGas.getReward());
+
 					const transaction: ethers.ContractTransaction = await contract.getReward({
 						gasPrice: claimGasPrice.toBN(),
 						gasLimit,

@@ -16,7 +16,7 @@ const OverviewTab = () => {
 	const walletAddress = useRecoilValue(walletAddressState);
 
 	const historicalDebt = useHistoricalDebtData(walletAddress);
-	const dataIsLoading = historicalDebt?.isLoading ?? false;
+	const dataIsLoading = historicalDebt?.isLoading ?? true;
 
 	return (
 		<>

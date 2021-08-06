@@ -36,8 +36,9 @@ import { Loan } from 'queries/loans/types';
 import AccruedInterest from 'sections/loans/components/ActionBox/components/AccruedInterest';
 import CRatio from 'sections/loans/components/ActionBox/components/LoanCRatio';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
-import synthetix from 'lib/synthetix';
 import Wei, { wei } from '@synthetixio/wei';
+import useSynthetixQueries from '@synthetixio/queries';
+import { GWEI_UNIT } from 'utils/infura';
 
 type WrapperProps = {
 	getTxData: (gas: Record<string, number>) => any[] | null;
@@ -109,12 +110,19 @@ const Wrapper: FC<WrapperProps> = ({
 	const [waitETA, setWaitETA] = useState<string>('');
 
 	const [gasPrice, setGasPrice] = useState<number>(0);
-	const [gasLimit, setGasLimitEstimate] = useState<number | null>(null);
 
 	const minCRatio = useMemo(
 		() => minCRatios.get(loanTypeIsETH ? LOAN_TYPE_ETH : LOAN_TYPE_ERC20) || wei(0),
 		[minCRatios, loanTypeIsETH]
 	);
+
+	const { useContractTxn } = useSynthetixQueries();
+
+	const data = getTxData({});
+
+	const txn = useContractTxn(data?.[0], data?.[1], data?.[2], {
+		gasPrice: wei(gasPrice, GWEI_UNIT).toBN(),
+	});
 
 	const onGoBack = () => router.back();
 	const onSetleftColAssetName = () => {};
@@ -129,7 +137,10 @@ const Wrapper: FC<WrapperProps> = ({
 	}, [loanTypeIsETH, loan.lastInteraction, interactionDelays]);
 
 	const handleButtonClick = () =>
-		onButtonClick({ gasPrice: getNormalizedGasPrice(gasPrice), gasLimit: gasLimit! });
+		onButtonClick({
+			gasPrice: getNormalizedGasPrice(gasPrice),
+			gasLimit: txn.gasLimit!.toNumber(),
+		});
 
 	useEffect(() => {
 		if (!nextInteractionDate) return;
@@ -164,30 +175,6 @@ const Wrapper: FC<WrapperProps> = ({
 			unsubs.forEach((unsub) => unsub());
 		};
 	}, [nextInteractionDate]);
-
-	// gas
-	useEffect(() => {
-		let isMounted = true;
-		(async () => {
-			try {
-				setError(null);
-				const data: any[] | null = getTxData({});
-				if (!data) return;
-				const [contract, method, args] = data;
-				const gasEstimate = await synthetix.getGasEstimateForTransaction({
-					txArgs: args,
-					method: contract.estimateGas[method],
-				});
-				if (isMounted) setGasLimitEstimate(getNormalizedGasLimit(Number(gasEstimate)));
-			} catch (error) {
-				// console.error(error);
-				if (isMounted) setGasLimitEstimate(null);
-			}
-		})();
-		return () => {
-			isMounted = false;
-		};
-	}, [getTxData, setError]);
 
 	return (
 		<>
@@ -236,7 +223,7 @@ const Wrapper: FC<WrapperProps> = ({
 						</SettingContainer>
 					)}
 					<SettingContainer>
-						<GasSelector gasLimitEstimate={gasLimit} setGasPrice={setGasPrice} />
+						<GasSelector gasLimitEstimate={txn.gasLimit} setGasPrice={setGasPrice} />
 					</SettingContainer>
 				</SettingsContainer>
 			</FormContainer>

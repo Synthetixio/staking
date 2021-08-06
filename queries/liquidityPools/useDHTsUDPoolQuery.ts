@@ -1,7 +1,6 @@
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
 
-import synthetix from 'lib/synthetix';
 import QUERY_KEYS from 'constants/queryKeys';
 import { appReadyState } from 'store/app';
 import {
@@ -39,9 +38,6 @@ const useDHTsUSDPoolQuery = (options?: UseQueryOptions<DualRewardsLiquidityPoolD
 				lpToken.abi,
 				provider as ethers.providers.Provider
 			);
-			const {
-				utils: { formatEther },
-			} = synthetix.js!;
 
 			const address = StakingDualRewards.address;
 

@@ -1,7 +1,6 @@
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
 
-import synthetix from 'lib/synthetix';
 import QUERY_KEYS from 'constants/queryKeys';
 import { appReadyState } from 'store/app';
 import {
@@ -14,6 +13,7 @@ import { Synths } from 'constants/currency';
 
 import { LiquidityPoolData } from './types';
 import { wei } from '@synthetixio/wei';
+import Connector from 'containers/Connector';
 
 const useIBTCPoolQuery_1 = (options?: UseQueryOptions<LiquidityPoolData>) => {
 	const isAppReady = useRecoilValue(appReadyState);
@@ -22,13 +22,15 @@ const useIBTCPoolQuery_1 = (options?: UseQueryOptions<LiquidityPoolData>) => {
 	const network = useRecoilValue(networkState);
 	const isMainnet = useRecoilValue(isMainnetState);
 
+	const { provider, synthetixjs } = Connector.useContainer();
+
 	return useQuery<LiquidityPoolData>(
 		QUERY_KEYS.LiquidityPools.iBTC(walletAddress ?? '', network?.id!),
 		async () => {
 			const {
 				contracts: { StakingRewardsiBTC, Exchanger, ProxyiBTC, ExchangeRates },
 				utils: { formatBytes32String },
-			} = synthetix.js!;
+			} = synthetixjs!;
 
 			const address = StakingRewardsiBTC.address;
 
@@ -50,7 +52,7 @@ const useIBTCPoolQuery_1 = (options?: UseQueryOptions<LiquidityPoolData>) => {
 				StakingRewardsiBTC.periodFinish(),
 				ProxyiBTC.balanceOf(address),
 				ProxyiBTC.balanceOf(walletAddress),
-				ExchangeRates.rateForCurrency(synthetix.js?.toBytes32(Synths.iBTC)),
+				ExchangeRates.rateForCurrency(synthetixjs?.toBytes32(Synths.iBTC)),
 				StakingRewardsiBTC.earned(walletAddress),
 				StakingRewardsiBTC.balanceOf(walletAddress),
 				ProxyiBTC.allowance(walletAddress, address),
