@@ -59,7 +59,7 @@ import {
 	LinkText,
 } from '../../common';
 import Color from 'color';
-import { wei } from '@synthetixio/wei';
+import Wei, { wei } from '@synthetixio/wei';
 import { SynthetixJS } from '@synthetixio/contracts-interface';
 
 export const getApprovalContractData = (
@@ -182,7 +182,7 @@ const Approve: FC<ApproveProps> = ({ stakedAsset, setShowApproveOverlayModal }) 
 	const [error, setError] = useState<string | null>(null);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 	const [gasLimitEstimate, setGasLimitEstimate] = useState<GasLimitEstimate>(null);
-	const [gasPrice, setGasPrice] = useState<number>(0);
+	const [gasPrice, setGasPrice] = useState<Wei>(wei(0));
 	const [transactionState, setTransactionState] = useState<Transaction>(Transaction.PRESUBMIT);
 	const [txHash, setTxHash] = useState<string | null>(null);
 	const link =
@@ -228,7 +228,7 @@ const Approve: FC<ApproveProps> = ({ stakedAsset, setShowApproveOverlayModal }) 
 						poolAddress,
 						allowance,
 						{
-							gasPrice: normalizedGasPrice(gasPrice),
+							gasPrice: normalizedGasPrice(gasPrice.toNumber()),
 							gasLimit,
 						}
 					);

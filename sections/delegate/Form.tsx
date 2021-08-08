@@ -37,8 +37,7 @@ import {
 } from 'utils/network';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import ActionSelector from './ActionSelector';
-import { GWEI_UNIT } from 'utils/infura';
-import { wei } from '@synthetixio/wei';
+import Wei, { wei } from '@synthetixio/wei';
 
 const LeftCol: FC = () => {
 	const { t } = useTranslation();
@@ -74,8 +73,8 @@ const Tab: FC = () => {
 
 	const [action, setAction] = useState<string>(Action.APPROVE_ALL);
 
-	const [gasPrice, setGasPrice] = useState<number>(0);
-	const [gasLimit, setGasLimitEstimate] = useState<number | null>(null);
+	const [gasPrice, setGasPrice] = useState<Wei>(wei(0));
+	const [gasLimit, setGasLimitEstimate] = useState<number>(0);
 	const [delegateAddress, setDelegateAddress] = useState<string>('');
 
 	const [error, setError] = useState<string | null>(null);
@@ -126,7 +125,7 @@ const Tab: FC = () => {
 		setTxModalOpen(true);
 		try {
 			const gas: Record<string, number> = {
-				gasPrice: getNormalizedGasPrice(gasPrice),
+				gasPrice: getNormalizedGasPrice(gasPrice.toNumber()),
 				gasLimit: gasLimit!,
 			};
 			await tx(() => getApproveTxData(gas), {
@@ -164,7 +163,7 @@ const Tab: FC = () => {
 				if (isMounted) setGasLimitEstimate(getNormalizedGasLimit(Number(gasEstimate)));
 			} catch (error) {
 				// console.error(error);
-				if (isMounted) setGasLimitEstimate(null);
+				if (isMounted) setGasLimitEstimate(0);
 			}
 		})();
 		return () => {
@@ -208,7 +207,7 @@ const Tab: FC = () => {
 					<ActionSelector {...{ action, setAction }} />
 
 					<SettingContainer>
-						<GasSelector gasLimitEstimate={wei(gasLimit, GWEI_UNIT)} setGasPrice={setGasPrice} />
+						<GasSelector gasLimitEstimate={wei(gasLimit, 0)} setGasPrice={setGasPrice} />
 					</SettingContainer>
 				</SettingsContainer>
 			</FormContainer>

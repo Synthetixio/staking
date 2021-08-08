@@ -26,7 +26,7 @@ const WithdrawTab = () => {
 	const depositsDataQuery = useGetBridgeDataQuery(walletAddress);
 	const withdrawalsInactive = !useIsActiveQuery().data;
 
-	const [gasPrice, setGasPrice] = useState<number>(0);
+	const [gasPrice, setGasPrice] = useState<Wei>(wei(0));
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 	const [amountToWithdraw, setAmountToWithdraw] = useState<Wei>(wei(0));
 

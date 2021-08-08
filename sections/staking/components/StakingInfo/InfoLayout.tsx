@@ -120,11 +120,11 @@ const InfoLayout: FC<InfoLayoutProps> = ({ stakingInfo, collateral, isInputEmpty
 									currencyKey: currencyKey,
 								})}
 							</RowValue>
-							{!isInputEmpty && (
+							{!isInputEmpty && changedValue && (
 								<>
 									<StyledArrowRight src={ArrowRightIcon} />
 									<RowValue>
-										{formatCurrency(currencyKey, !changedValue ? changedValue : 0, {
+										{formatCurrency(currencyKey, changedValue, {
 											currencyKey: currencyKey,
 										})}
 									</RowValue>

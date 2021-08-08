@@ -61,8 +61,8 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 	const { renBTCContract, minCRatios } = Loans.useContainer();
 	const { setTitle } = UIContainer.useContainer();
 
-	const [gasPrice, setGasPrice] = useState<number>(0);
-	const [gasLimit, setGasLimitEstimate] = useState<number | null>(null);
+	const [gasPrice, setGasPrice] = useState<Wei>(wei(0));
+	const [gasLimit, setGasLimitEstimate] = useState<number>(0);
 
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 
@@ -146,7 +146,7 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 			return connectWallet();
 		}
 		const gas: Record<string, number> = {
-			gasPrice: getNormalizedGasPrice(gasPrice),
+			gasPrice: getNormalizedGasPrice(gasPrice.toNumber()),
 			gasLimit: gasLimit!,
 		};
 		!isApproved ? approve(gas) : borrow(gas);
@@ -346,7 +346,7 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 				if (isMounted) setGasLimitEstimate(getNormalizedGasLimit(Number(gasEstimate)));
 			} catch (error) {
 				// console.error(error);
-				if (isMounted) setGasLimitEstimate(null);
+				if (isMounted) setGasLimitEstimate(0);
 			}
 		})();
 		return () => {
@@ -416,7 +416,7 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 						<IssuanceFee {...{ collateralIsETH }} />
 					</SettingContainer>
 					<SettingContainer>
-						<GasSelector gasLimitEstimate={wei(gasLimit)} setGasPrice={setGasPrice} />
+						<GasSelector gasLimitEstimate={wei(gasLimit, 0)} setGasPrice={setGasPrice} />
 					</SettingContainer>
 				</SettingsContainer>
 			</FormContainer>

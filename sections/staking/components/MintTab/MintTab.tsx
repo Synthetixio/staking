@@ -13,9 +13,8 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { amountToMintState, MintActionType, mintTypeState } from 'store/staking';
 import { delegateWalletState } from 'store/wallet';
 import { parseSafeWei } from 'utils/parse';
-import { wei } from '@synthetixio/wei';
+import Wei, { wei } from '@synthetixio/wei';
 import useSynthetixQueries from '@synthetixio/queries';
-import { GWEI_UNIT } from 'utils/infura';
 
 const MintTab: React.FC = () => {
 	const delegateWallet = useRecoilValue(delegateWalletState);
@@ -29,24 +28,24 @@ const MintTab: React.FC = () => {
 
 	const { targetCRatio, SNXRate, unstakedCollateral } = useStakingCalculations();
 
-	const [gasPrice, setGasPrice] = useState<number>(0);
+	const [gasPrice, setGasPrice] = useState<Wei>(wei(0));
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 	const { t } = useTranslation();
 
 	const { setTitle } = UIContainer.useContainer();
 
-	const amountToMintBN = wei(amountToMint);
+	const amountToMintBN = Wei.min(wei(0), parseSafeWei(amountToMint, wei(0)));
 
 	const mintCall: [string, any[]] = !!delegateWallet
 		? isMax
 			? ['issueMaxSynthsOnBehalf', [delegateWallet]]
-			: ['issueSynthsOnBehalf', [delegateWallet, amountToMintBN]]
+			: ['issueSynthsOnBehalf', [delegateWallet, amountToMintBN.toBN()]]
 		: isMax
 		? ['issueMaxSynths', []]
-		: ['issueSynths', [amountToMintBN]];
+		: ['issueSynths', [amountToMintBN.toBN()]];
 
 	const txn = useSynthetixTxn('Synthetix', mintCall[0], mintCall[1], {
-		gasPrice: wei(gasPrice, GWEI_UNIT).toBN(),
+		gasPrice: gasPrice.toBN(),
 	});
 
 	let error: string | null = null;
@@ -56,13 +55,17 @@ const MintTab: React.FC = () => {
 		setTitle('staking', 'mint');
 	}, [setTitle]);
 
+	useEffect(() => {
+		return () => {};
+	}, []);
+
 	const returnPanel = useMemo(() => {
 		let onSubmit;
-		let inputValue = wei(0);
+		let inputValue = '0';
 		let isLocked;
 		switch (mintType) {
 			case MintActionType.MAX:
-				const mintAmount = getMintAmount(targetCRatio, unstakedCollateral, SNXRate);
+				inputValue = getMintAmount(targetCRatio, unstakedCollateral, SNXRate).toString();
 				onSubmit = () => txn.mutate();
 				setIsMax(true);
 				isLocked = true;
@@ -70,7 +73,7 @@ const MintTab: React.FC = () => {
 			case MintActionType.CUSTOM:
 				onSubmit = () => txn.mutate();
 				setIsMax(false);
-				inputValue = parseSafeWei(amountToMint, 0);
+				inputValue = amountToMint;
 				isLocked = false;
 				break;
 			default:
@@ -110,14 +113,3 @@ const MintTab: React.FC = () => {
 };
 
 export default MintTab;
-function useSynthetixTxn(
-	arg0: string,
-	mintFunction: ({
-		isMax,
-	}: {
-		isMax?: boolean | undefined;
-	}) => 'issueMaxSynthsOnBehalf' | 'issueSynthsOnBehalf' | 'issueMaxSynths' | 'issueSynths',
-	arg2: ethers.BigNumber[]
-) {
-	throw new Error('Function not implemented.');
-}

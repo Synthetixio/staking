@@ -51,7 +51,7 @@ import Currency from 'components/Currency';
 
 type StakingInputProps = {
 	onSubmit: () => void;
-	inputValue: Wei;
+	inputValue: string;
 	isLocked: boolean;
 	isMint: boolean;
 	onBack: Function;
@@ -92,6 +92,8 @@ const StakingInput: React.FC<StakingInputProps> = ({
 	sUSDNeededToBuy,
 	sUSDNeededToBurn,
 }) => {
+	console.log('input value is', inputValue);
+
 	const {
 		targetCRatio,
 		SNXRate,
@@ -113,7 +115,7 @@ const StakingInput: React.FC<StakingInputProps> = ({
 	 * @param mintInput Amount to mint
 	 */
 	const stakeInfo = useCallback(
-		(mintInput: Wei) =>
+		(mintInput: string) =>
 			formatCurrency(stakingCurrencyKey, getStakingAmount(targetCRatio, mintInput, SNXRate), {
 				currencyKey: stakingCurrencyKey,
 			}),
@@ -122,6 +124,7 @@ const StakingInput: React.FC<StakingInputProps> = ({
 
 	const formattedInput = formatCurrency(synthCurrencyKey, inputValue, {
 		currencyKey: synthCurrencyKey,
+		maxDecimals: 2,
 	});
 
 	const returnButtonStates = useMemo(() => {
@@ -201,8 +204,8 @@ const StakingInput: React.FC<StakingInputProps> = ({
 
 	const equivalentSNXAmount = useMemo(() => {
 		const calculatedTargetBurn = Math.max(debtBalance.sub(issuableSynths).toNumber(), 0);
-		if (!isMint && currentCRatio.gt(targetCRatio) && inputValue.lte(calculatedTargetBurn)) {
-			return stakeInfo(wei(0));
+		if (!isMint && currentCRatio.gt(targetCRatio) && wei(inputValue).lte(calculatedTargetBurn)) {
+			return stakeInfo('0');
 		} else {
 			return stakeInfo(inputValue);
 		}
@@ -295,7 +298,7 @@ const StakingInput: React.FC<StakingInputProps> = ({
 							<StyledInput
 								type="number"
 								maxLength={12}
-								value={inputValue.toString()}
+								value={inputValue}
 								placeholder="0"
 								onChange={(e) => onInputChange(e.target.value)}
 								disabled={

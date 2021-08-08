@@ -9,7 +9,6 @@ import Success from 'assets/svg/app/success.svg';
 import GasSelector from 'components/GasSelector';
 import NumericInput from 'components/Input/NumericInput';
 import { formatCryptoCurrency, formatNumber } from 'utils/formatters/number';
-import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import { normalizedGasPrice } from 'utils/network';
 import Etherscan from 'containers/BlockExplorer';
@@ -89,7 +88,7 @@ const DepositTab: FC<DepositTabProps> = ({
 	const { blockExplorerInstance } = Etherscan.useContainer();
 	const { signer } = Connector.useContainer();
 	const [gasLimitEstimate, setGasLimitEstimate] = useState<GasLimitEstimate>(null);
-	const [gasPrice, setGasPrice] = useState<number>(0);
+	const [gasPrice, setGasPrice] = useState<Wei>(wei(0));
 	const [error, setError] = useState<string | null>(null);
 	const isAppReady = useRecoilValue(appReadyState);
 
@@ -153,12 +152,12 @@ const DepositTab: FC<DepositTabProps> = ({
 					let transaction: ethers.ContractTransaction;
 					if (isDeposit) {
 						transaction = await contract['deposit(uint256)'](formattedStakeAmount, {
-							gasPrice: normalizedGasPrice(gasPrice),
+							gasPrice: normalizedGasPrice(gasPrice.toNumber()),
 							gasLimit,
 						});
 					} else {
 						transaction = await contract['withdraw(uint256)'](formattedStakeAmount, {
-							gasPrice: normalizedGasPrice(gasPrice),
+							gasPrice: normalizedGasPrice(gasPrice.toNumber()),
 							gasLimit,
 						});
 					}

@@ -12,33 +12,28 @@ import { TabContainer } from '../common';
 import TabContent from './TabContent';
 import MigrateTabContent from './MigrateTabContent';
 import useSynthetixQueries from '@synthetixio/queries';
-import { wei } from '@synthetixio/wei';
-import Connector from 'containers/Connector';
+import Wei, { wei } from '@synthetixio/wei';
 
 const StakingRewardsTab: React.FC = () => {
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
-	const isAppReady = useRecoilValue(appReadyState);
-
-	const { synthetixjs } = Connector.useContainer();
 
 	const { useEscrowDataQuery, useSynthetixTxn } = useSynthetixQueries();
 
 	const escrowDataQuery = useEscrowDataQuery(walletAddress);
 
-	const { monitorTransaction } = TransactionNotifier.useContainer();
-	const [gasPrice, setGasPrice] = useState<number>(0);
+	const [gasPrice, setGasPrice] = useState<Wei>(wei(0));
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 
 	const canVestAmount = escrowDataQuery?.data?.claimableAmount ?? wei(0);
-	const claimableEntryIds = escrowDataQuery?.data?.claimableEntryIds ?? null;
+	const claimableEntryIds = escrowDataQuery?.data?.claimableEntryIds ?? [];
 	const totalBalancePendingMigration =
 		escrowDataQuery?.data?.totalBalancePendingMigration ?? wei(0);
 
 	const txn = useSynthetixTxn(
 		'RewardEscrowV2',
 		totalBalancePendingMigration.gt(0) ? 'migrateVestingSchedule' : 'vest',
-		totalBalancePendingMigration.gt(0) ? [walletAddress] : [claimableEntryIds]
+		totalBalancePendingMigration.gt(0) ? [walletAddress] : [claimableEntryIds.map((v) => v.toBN())],
+		{ gasPrice: gasPrice.toBN() }
 	);
 
 	useEffect(() => {

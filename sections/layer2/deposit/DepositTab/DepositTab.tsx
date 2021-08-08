@@ -14,8 +14,7 @@ import ApproveModal from 'components/ApproveModal';
 import TabContent from './TabContent';
 import useSynthetixQueries from '@synthetixio/queries';
 import Connector from 'containers/Connector';
-import { wei } from '@synthetixio/wei';
-import { GWEI_UNIT } from 'utils/infura';
+import Wei, { wei } from '@synthetixio/wei';
 
 const DepositTab = () => {
 	const { t } = useTranslation();
@@ -29,12 +28,12 @@ const DepositTab = () => {
 	const depositsDataQuery = useGetBridgeDataQuery(walletAddress);
 
 	const [isApproved, setIsApproved] = useState<boolean>(false);
-	const [gasPrice, setGasPrice] = useState<number>(0);
+	const [gasPrice, setGasPrice] = useState<Wei>(wei(0));
 	const [transactionState, setTransactionState] = useState<Transaction>(Transaction.PRESUBMIT);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 
 	const txn = useSynthetixTxn('SynthetixBridgeToOptimism', 'deposit', [], {
-		gasPrice: wei(gasPrice, GWEI_UNIT).toBN(),
+		gasPrice: gasPrice.toBN(),
 	});
 
 	const getAllowance = useCallback(async () => {

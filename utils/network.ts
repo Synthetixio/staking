@@ -31,7 +31,7 @@ export const getTransactionPrice = (
 ) => {
 	if (!gasPrice || !gasLimit || !ethPrice) return null;
 
-	return gasPrice.mul(ethPrice).mul(gasLimit);
+	return gasPrice.mul(ethPrice).mul(gasLimit).div(GWEI_UNIT);
 };
 
 export const normalizeGasLimit = (gasLimit: number) => gasLimit + DEFAULT_GAS_BUFFER;

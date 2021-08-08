@@ -119,7 +119,7 @@ const StakeTab: FC<StakeTabProps> = ({ stakedAsset, icon, type, isStake, userBal
 	const { blockExplorerInstance } = Etherscan.useContainer();
 	const { signer, synthetixjs } = Connector.useContainer();
 	const [gasLimitEstimate, setGasLimitEstimate] = useState<GasLimitEstimate>(null);
-	const [gasPrice, setGasPrice] = useState<number>(0);
+	const [gasPrice, setGasPrice] = useState<Wei>(wei(0));
 	const [error, setError] = useState<string | null>(null);
 	const isAppReady = useRecoilValue(appReadyState);
 
@@ -177,12 +177,12 @@ const StakeTab: FC<StakeTabProps> = ({ stakedAsset, icon, type, isStake, userBal
 					let transaction: ethers.ContractTransaction;
 					if (isStake) {
 						transaction = await contract.stake(formattedStakeAmount, {
-							gasPrice: normalizedGasPrice(gasPrice),
+							gasPrice: normalizedGasPrice(gasPrice.toNumber()),
 							gasLimit,
 						});
 					} else {
 						transaction = await contract.withdraw(formattedStakeAmount, {
-							gasPrice: normalizedGasPrice(gasPrice),
+							gasPrice: normalizedGasPrice(gasPrice.toNumber()),
 							gasLimit,
 						});
 					}

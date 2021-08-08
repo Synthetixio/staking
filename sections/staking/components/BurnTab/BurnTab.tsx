@@ -19,16 +19,13 @@ import Connector from 'containers/Connector';
 import useClearDebtCalculations from 'sections/staking/hooks/useClearDebtCalculations';
 import { useTranslation } from 'react-i18next';
 import { toFutureDate } from 'utils/formatters/date';
-import { wei } from '@synthetixio/wei';
+import Wei, { wei } from '@synthetixio/wei';
 import useSynthetixQueries from '@synthetixio/queries';
 import { parseSafeWei } from 'utils/parse';
-import { GWEI_UNIT } from 'utils/infura';
 
 const BurnTab: React.FC = () => {
 	const [amountToBurn, onBurnChange] = useRecoilState(amountToBurnState);
 	const [burnType, onBurnTypeChange] = useRecoilState(burnTypeState);
-
-	const [isToTarget, setIsToTarget] = useState<boolean>(false);
 
 	const { useSynthsBalancesQuery, useETHBalanceQuery, useSynthetixTxn } = useSynthetixQueries();
 
@@ -39,7 +36,7 @@ const BurnTab: React.FC = () => {
 	const { t } = useTranslation();
 
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
-	const [gasPrice, setGasPrice] = useState<number>(0);
+	const [gasPrice, setGasPrice] = useState<Wei>(wei(0));
 	const [waitingPeriod, setWaitingPeriod] = useState(0);
 	const [issuanceDelay, setIssuanceDelay] = useState(0);
 
@@ -58,13 +55,14 @@ const BurnTab: React.FC = () => {
 		debtBalanceWithBuffer,
 		missingSUSDWithBuffer,
 		quoteAmount,
-		swapData,
 	} = useClearDebtCalculations(debtBalance, sUSDBalance, walletAddress!);
 
 	const ethBalanceQuery = useETHBalanceQuery(walletAddress);
 	const ethBalance = ethBalanceQuery.data ?? wei(0);
 
 	const amountToBurnBN = parseSafeWei(amountToBurn, wei(0));
+
+	const isToTarget = burnType == BurnActionType.TARGET;
 
 	const { setTitle } = UIContainer.useContainer();
 
@@ -117,8 +115,9 @@ const BurnTab: React.FC = () => {
 		? ['burnSynthsToTarget', []]
 		: ['burnSynths', [amountToBurnBN.toBN()]];
 
+	console.log('thegasprice', gasPrice);
 	const txn = useSynthetixTxn('Synthetix', burnCall[0], burnCall[1], {
-		gasPrice: wei(gasPrice, GWEI_UNIT).toBN(),
+		gasPrice: gasPrice.toBN(),
 	});
 
 	// header title
@@ -155,7 +154,7 @@ const BurnTab: React.FC = () => {
 
 	const returnPanel = useMemo(() => {
 		let handleSubmit;
-		let inputValue;
+		let inputValue: string = '0';
 		let isLocked;
 		let etherNeededToBuy;
 		let sUSDNeededToBuy;
@@ -169,27 +168,24 @@ const BurnTab: React.FC = () => {
 		switch (burnType) {
 			case BurnActionType.MAX:
 				onBurnChange(maxBurnAmount.toString());
-				setIsToTarget(false);
 				handleSubmit = () => {
 					txn.mutate();
 				};
-				inputValue = maxBurnAmount;
+				inputValue = maxBurnAmount.toString();
 				isLocked = true;
 				break;
 			case BurnActionType.TARGET:
-				const calculatedTargetBurn = Math.max(debtBalance.sub(issuableSynths).toNumber(), 0);
+				const calculatedTargetBurn = Wei.max(debtBalance.sub(issuableSynths), wei(0));
 				onBurnChange(calculatedTargetBurn.toString());
-				setIsToTarget(true);
 				handleSubmit = () => {
 					txn.mutate();
 				};
-				inputValue = wei(calculatedTargetBurn);
+				inputValue = calculatedTargetBurn.toString();
 				isLocked = true;
 				break;
 			case BurnActionType.CUSTOM:
 				handleSubmit = () => txn.mutate();
-				setIsToTarget(false);
-				inputValue = wei(amountToBurn);
+				inputValue = amountToBurn;
 				isLocked = false;
 				break;
 			case BurnActionType.CLEAR:
@@ -198,14 +194,13 @@ const BurnTab: React.FC = () => {
 					handleSubmit = () => {
 						txn.mutate();
 					};
-					inputValue = maxBurnAmount;
+					inputValue = maxBurnAmount.toString();
 					isLocked = true;
 					break;
 				}
 				onBurnChange(debtBalanceWithBuffer.toString());
-				setIsToTarget(false);
 				handleSubmit = () => txn.mutate();
-				inputValue = wei(debtBalanceWithBuffer);
+				inputValue = debtBalanceWithBuffer.toString();
 				isLocked = true;
 				if (quoteAmount) {
 					etherNeededToBuy = formatCurrency(CryptoCurrency.ETH, quoteAmount, {

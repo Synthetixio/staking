@@ -105,7 +105,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 	const router = useRouter();
 
 	const [gasLimitEstimate, setGasLimitEstimate] = useState<GasLimitEstimate>(null);
-	const [gasPrice, setGasPrice] = useState<number>(0);
+	const [gasPrice, setGasPrice] = useState<Wei>(wei(0));
 	const [error, setError] = useState<string | null>(null);
 	const [lowCRatio, setLowCRatio] = useState<boolean>(false);
 	const [claimedTradingRewards, setClaimedTradingRewards] = useState<number | null>(null);
@@ -212,11 +212,11 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 
 					const transaction: ethers.ContractTransaction = delegateWallet
 						? await FeePool.claimOnBehalf(delegateWallet.address, {
-								gasPrice: normalizedGasPrice(gasPrice),
+								gasPrice: normalizedGasPrice(gasPrice.toNumber()),
 								gasLimit,
 						  })
 						: await FeePool.claimFees({
-								gasPrice: normalizedGasPrice(gasPrice),
+								gasPrice: normalizedGasPrice(gasPrice.toNumber()),
 								gasLimit,
 						  });
 
@@ -265,7 +265,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 			const gasLimit = FeePool.estimateGas.closeCurrentFeePeriod();
 
 			const transaction: ethers.ContractTransaction = await FeePool.closeCurrentFeePeriod({
-				gasPrice: normalizedGasPrice(gasPrice),
+				gasPrice: normalizedGasPrice(gasPrice.toNumber()),
 				gasLimit,
 			});
 			if (transaction) {

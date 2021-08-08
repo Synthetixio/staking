@@ -1,21 +1,17 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
-import TransactionNotifier from 'containers/TransactionNotifier';
 import { useTranslation } from 'react-i18next';
 
 import { TabContainer } from '../../components/common';
-import { GasLimitEstimate } from 'constants/network';
 
 import { walletAddressState } from 'store/wallet';
 
 import TabContent from './TabContent';
 import useSynthetixQueries from '@synthetixio/queries';
-import { wei } from '@synthetixio/wei';
-import { GWEI_UNIT } from 'utils/infura';
+import Wei, { wei } from '@synthetixio/wei';
 
 const MigrateTab = () => {
 	const { t } = useTranslation();
-	const { monitorTransaction } = TransactionNotifier.useContainer();
 
 	const walletAddress = useRecoilValue(walletAddressState);
 
@@ -27,13 +23,12 @@ const MigrateTab = () => {
 	const totalEscrowed = escrowData?.totalEscrowed ?? wei(0);
 	const entryIds = useMemo(() => escrowData?.claimableEntryIdsInChunk ?? [], [escrowData]);
 
-	const [gasLimitEstimate, setGasLimitEstimate] = useState<GasLimitEstimate>(null);
 	const [isVestNeeded, setIsVestNeeded] = useState<boolean>(false);
-	const [gasPrice, setGasPrice] = useState<number>(0);
+	const [gasPrice, setGasPrice] = useState<Wei>(wei(0));
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 
 	const txn = useSynthetixTxn('SynthetixBridgeToOptimism', 'migrateEscrow', [entryIds], {
-		gasPrice: wei(gasPrice, GWEI_UNIT).toBN(),
+		gasPrice: gasPrice.toBN(),
 	});
 
 	useEffect(() => {
@@ -58,7 +53,7 @@ const MigrateTab = () => {
 				gasEstimateError={txn.errorMessage}
 				txModalOpen={txModalOpen}
 				setTxModalOpen={setTxModalOpen}
-				gasLimitEstimate={gasLimitEstimate}
+				gasLimitEstimate={txn.gasLimit}
 				setGasPrice={setGasPrice}
 				txHash={txn.hash}
 				transactionState={txn.txnStatus}

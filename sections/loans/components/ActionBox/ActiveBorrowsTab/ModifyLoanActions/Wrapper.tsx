@@ -38,7 +38,6 @@ import CRatio from 'sections/loans/components/ActionBox/components/LoanCRatio';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import Wei, { wei } from '@synthetixio/wei';
 import useSynthetixQueries from '@synthetixio/queries';
-import { GWEI_UNIT } from 'utils/infura';
 
 type WrapperProps = {
 	getTxData: (gas: Record<string, number>) => any[] | null;
@@ -109,7 +108,7 @@ const Wrapper: FC<WrapperProps> = ({
 
 	const [waitETA, setWaitETA] = useState<string>('');
 
-	const [gasPrice, setGasPrice] = useState<number>(0);
+	const [gasPrice, setGasPrice] = useState<Wei>(wei(0));
 
 	const minCRatio = useMemo(
 		() => minCRatios.get(loanTypeIsETH ? LOAN_TYPE_ETH : LOAN_TYPE_ERC20) || wei(0),
@@ -121,7 +120,7 @@ const Wrapper: FC<WrapperProps> = ({
 	const data = getTxData({});
 
 	const txn = useContractTxn(data?.[0], data?.[1], data?.[2], {
-		gasPrice: wei(gasPrice, GWEI_UNIT).toBN(),
+		gasPrice: gasPrice.toBN(),
 	});
 
 	const onGoBack = () => router.back();
@@ -138,7 +137,7 @@ const Wrapper: FC<WrapperProps> = ({
 
 	const handleButtonClick = () =>
 		onButtonClick({
-			gasPrice: getNormalizedGasPrice(gasPrice),
+			gasPrice: getNormalizedGasPrice(gasPrice.toNumber()),
 			gasLimit: txn.gasLimit!.toNumber(),
 		});
 

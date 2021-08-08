@@ -8,17 +8,14 @@ import AssetInput, { Asset } from 'components/Form/AssetInput';
 import TextInput from 'components/Form/TextInput';
 import { FlexDivColCentered, FlexDivCentered } from 'styles/common';
 
-import { GasLimitEstimate } from 'constants/network';
 import GasSelector from 'components/GasSelector';
 import { isSynth, synthToContractName } from 'utils/currencies';
-import { CryptoCurrency } from 'constants/currency';
 import { formatNumber } from 'utils/formatters/number';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import { ModalContent, ModalItem, ModalItemTitle, ModalItemText } from 'styles/common';
 
 import { truncateAddress } from 'utils/formatters/string';
-import { normalizedGasPrice } from 'utils/network';
-import { wei } from '@synthetixio/wei';
+import Wei, { wei } from '@synthetixio/wei';
 import Connector from 'containers/Connector';
 import useSynthetixQueries from '@synthetixio/queries';
 import { ethers } from 'ethers';
@@ -46,31 +43,10 @@ const TransferModal: FC<TransferModalProps> = ({
 
 	const [amount, setAmount] = useState<string>('');
 	const [walletAddress, setWalletAddress] = useState('');
-	const [gasPrice, setGasPrice] = useState<number>(0);
+	const [gasPrice, setGasPrice] = useState<Wei>(wei(0));
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 	const onEnterAddress = (e: React.ChangeEvent<HTMLTextAreaElement>) =>
 		setWalletAddress((e.target.value ?? '').trim());
-
-	const getTransferFunctionForAsset = useCallback(
-		({ isEstimate }: { isEstimate: boolean }) => {
-			if (!currentAsset) return;
-			if (!isSynth(currentAsset.currencyKey) && currentAsset.currencyKey !== CryptoCurrency.SNX)
-				return;
-			const { contracts } = synthetixjs!;
-			let contract, transferFunction;
-			if (isSynth(currentAsset.currencyKey)) {
-				contract = contracts[synthToContractName(currentAsset.currencyKey)];
-				transferFunction = 'transferAndSettle';
-			}
-			if (currentAsset.currencyKey === CryptoCurrency.SNX) {
-				contract = contracts.Synthetix;
-				transferFunction = 'transfer';
-			}
-			if (!contract || !transferFunction) return;
-			return isEstimate ? contract.estimateGas[transferFunction] : contract[transferFunction];
-		},
-		[currentAsset]
-	);
 
 	const contract = synthetixjs!.contracts[
 		isSynth(currentAsset?.currencyKey)

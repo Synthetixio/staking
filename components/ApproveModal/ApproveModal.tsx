@@ -29,6 +29,7 @@ import { normalizedGasPrice } from 'utils/network';
 
 import { yearnSNXVault } from 'contracts';
 import { SynthetixJS } from '@synthetixio/contracts-interface';
+import Wei, { wei } from '@synthetixio/wei';
 
 type ApproveModalProps = {
 	description: string;
@@ -63,7 +64,7 @@ const ApproveModal: FC<ApproveModalProps> = ({
 
 	const [gasLimitEstimate, setGasLimitEstimate] = useState<GasLimitEstimate>(null);
 	const [error, setError] = useState<string | null>(null);
-	const [gasPrice, setGasPrice] = useState<number>(0);
+	const [gasPrice, setGasPrice] = useState<Wei>(wei(0));
 	const [isApproving, setIsApproving] = useState<boolean>(false);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 
@@ -107,7 +108,7 @@ const ApproveModal: FC<ApproveModalProps> = ({
 					approvedContract.address,
 					allowance,
 					{
-						gasPrice: normalizedGasPrice(gasPrice),
+						gasPrice: normalizedGasPrice(gasPrice.toNumber()),
 						gasLimit: gasLimitEstimate,
 					}
 				);

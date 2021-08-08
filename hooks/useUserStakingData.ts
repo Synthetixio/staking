@@ -42,7 +42,7 @@ export const useUserStakingData = (walletAddress: string | null) => {
 	const feesToDistribute = previousFeePeriod?.data?.feesToDistribute ?? wei(0);
 	const rewardsToDistribute = previousFeePeriod?.data?.rewardsToDistribute ?? wei(0);
 
-	const totalsUSDDebt = totalIssuedSynthsExclEth?.data ?? 0;
+	const totalsUSDDebt = wei(totalIssuedSynthsExclEth?.data ?? 0);
 	const sUSDRate = wei(exchangeRatesQuery.data?.sUSD ?? 0);
 	const SNXRate = wei(exchangeRatesQuery.data?.SNX ?? 0);
 
@@ -57,7 +57,7 @@ export const useUserStakingData = (walletAddress: string | null) => {
 	let stakingAPR = wei(0);
 
 	// compute APR based on the user staked SNX
-	if (stakedValue.gt(0) && debtBalance.gt(0)) {
+	if (stakedValue.gt(0) && debtBalance.gt(0) && totalsUSDDebt.gt(0)) {
 		stakingAPR = weeklyRewards
 			.mul(debtBalance.div(totalsUSDDebt).mul(WEEKS_IN_YEAR))
 			.div(stakedValue);

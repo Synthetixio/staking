@@ -1,15 +1,12 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import TransactionNotifier from 'containers/TransactionNotifier';
+import React, { useState, useEffect } from 'react';
 
 import { useRecoilValue } from 'recoil';
-import { isWalletConnectedState, walletAddressState } from 'store/wallet';
-import { appReadyState } from 'store/app';
+import { walletAddressState } from 'store/wallet';
 
 import TabContent from './TabContent';
 import { TabContainer } from '../common';
 import useSynthetixQueries from '@synthetixio/queries';
-import { wei } from '@synthetixio/wei';
-import { GWEI_UNIT } from 'utils/infura';
+import Wei, { wei } from '@synthetixio/wei';
 
 const TokenSaleTab: React.FC = () => {
 	const walletAddress = useRecoilValue(walletAddressState);
@@ -19,10 +16,10 @@ const TokenSaleTab: React.FC = () => {
 	const tokenSaleEscrowQuery = useTokenSaleEscrowQuery(walletAddress);
 
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
-	const [gasPrice, setGasPrice] = useState<number>(0);
+	const [gasPrice, setGasPrice] = useState<Wei>(wei(0));
 
 	const synthetixTxn = useSynthetixTxn('SynthetixEscrow', 'vest', [], {
-		gasPrice: wei(gasPrice, GWEI_UNIT).toBN(),
+		gasPrice: gasPrice.toBN(),
 	});
 
 	const tokenSaleData = tokenSaleEscrowQuery?.data;

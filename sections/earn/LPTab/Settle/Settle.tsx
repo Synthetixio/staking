@@ -44,7 +44,7 @@ import {
 } from '../../common';
 import Color from 'color';
 import { walletAddressState } from 'store/wallet';
-import { wei } from '@synthetixio/wei';
+import Wei, { wei } from '@synthetixio/wei';
 import { SynthetixJS } from '@synthetixio/contracts-interface';
 
 export const getSettleSynthType = (synthetixjs: SynthetixJS, stakedAsset: CurrencyKey) => {
@@ -78,7 +78,7 @@ const Settle: FC<SettleProps> = ({ stakedAsset, setShowSettleOverlayModal }) => 
 	const [error, setError] = useState<string | null>(null);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 	const [gasLimitEstimate, setGasLimitEstimate] = useState<GasLimitEstimate>(null);
-	const [gasPrice, setGasPrice] = useState<number>(0);
+	const [gasPrice, setGasPrice] = useState<Wei>(wei(0));
 	const [transactionState, setTransactionState] = useState<Transaction>(Transaction.PRESUBMIT);
 	const [txHash, setTxHash] = useState<string | null>(null);
 	const link =
@@ -119,7 +119,7 @@ const Settle: FC<SettleProps> = ({ stakedAsset, setShowSettleOverlayModal }) => 
 						walletAddress,
 						synth,
 						{
-							gasPrice: normalizedGasPrice(gasPrice),
+							gasPrice: normalizedGasPrice(gasPrice.toNumber()),
 							gasLimit,
 						}
 					);
