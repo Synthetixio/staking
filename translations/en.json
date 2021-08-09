@@ -801,7 +801,7 @@
 		"deposit": {
 			"info": {
 				"title": "Deposit SNX",
-				"subtitle": "Deposit your SNX to complete the process of migrating your SNX from L1 to L2. You may experience a delay during the migration process before your SNX is available on L2",
+				"subtitle": "Deposit your SNX to complete the process of migrating your SNX from L1 to L2. You may experience a delay during the migration process before your SNX is available on L2. Your SNX deposit to L2 may take a few minutes to show up even after Etherscan shows the transaction was successful.",
 				"no-deposit": "No deposit history",
 				"warning": "Warning",
 				"metamask-only": "You are about to migrate funds to L2. Only Metamask is supported on L2, so make sure you are depositing from a Metamask wallet or a wallet that allows you to export your private key to Metamask.",
@@ -1361,3 +1361,4 @@
 		"loan/close": "close"
 	}
 }
+
