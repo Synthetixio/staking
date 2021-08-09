@@ -17,9 +17,9 @@ import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import { appReadyState } from 'store/app';
 import {
 	Action,
-	APPROVE_CONTRACT_METHODS,
+	DELEGATE_APPROVE_CONTRACT_METHODS,
 	DelegationWallet,
-	WITHDRAW_CONTRACT_METHODS,
+	DELEGATE_WITHDRAW_CONTRACT_METHODS,
 } from '@synthetixio/queries';
 import Connector from 'containers/Connector';
 
@@ -52,7 +52,9 @@ const ToggleDelegateApproval: FC<ToggleDelegateApprovalProps> = ({
 			const {
 				contracts: { DelegateApprovals },
 			} = synthetixjs!;
-			const meths = checked ? WITHDRAW_CONTRACT_METHODS : APPROVE_CONTRACT_METHODS;
+			const meths = checked
+				? DELEGATE_WITHDRAW_CONTRACT_METHODS
+				: DELEGATE_APPROVE_CONTRACT_METHODS;
 			return [DelegateApprovals, meths.get(action), [account.address, gas]];
 		},
 		[isAppReady, account.address, action, checked]

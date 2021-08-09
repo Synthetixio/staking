@@ -109,7 +109,7 @@ const useCurveSusdPoolQuery = (options?: UseQueryOptions<CurveData>) => {
 
 			const durationInWeeks = Number(duration) / 3600 / 24 / 7;
 			const isPeriodFinished = new Date().getTime() > Number(periodFinish) * 1000;
-			const distribution = isPeriodFinished ? wei(0) : rate.mul(duration).div(durationInWeeks);
+			const distribution = isPeriodFinished ? wei(0) : wei(rate).mul(duration).div(durationInWeeks);
 
 			const [
 				balance,

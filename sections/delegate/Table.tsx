@@ -10,7 +10,7 @@ import useMediaQuery from 'hooks/useMediaQuery';
 import { ExternalLink } from 'styles/common';
 import WalletIcon from 'assets/svg/app/wallet-yellow.svg';
 import ToggleDelegateApproval from './ToggleDelegateApproval';
-import useSynthetixQueries from '@synthetixio/queries';
+import useSynthetixQueries, { DELEGATE_ENTITY_ATTRS } from '@synthetixio/queries';
 import { DelegationWallet } from '@synthetixio/queries';
 import { useRecoilValue } from 'recoil';
 import { walletAddressState } from 'store/wallet';
@@ -39,7 +39,7 @@ const RightCol: FC = () => {
 					return truncateAddress(delegateAddress, isSM ? 4 : 5, isSM ? 2 : 3);
 				},
 			},
-			/*...Array.from(ENTITY_ATTRS.entries()).map(([action, attr]) => ({
+			...Array.from(DELEGATE_ENTITY_ATTRS.entries()).map(([action, attr]) => ({
 				Header: <>{t(`delegate.list.cols.${attr}`)}</>,
 				accessor: attr,
 				width: isSM ? 40 : 50,
@@ -53,7 +53,7 @@ const RightCol: FC = () => {
 						/>
 					);
 				},
-			})),*/
+			})),
 		],
 		[t, isSM]
 	);

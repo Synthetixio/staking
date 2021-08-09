@@ -127,7 +127,7 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ proposal, onBack }) =
 	const contract = new ethers.Contract(CouncilDilution.address, CouncilDilution.abi, signer as any);
 	const txn = useContractTxn(contract, hasDiluted ? 'invalidateDilution' : 'dilute', [
 		proposal.id,
-		memberVotedFor,
+		memberVotedFor || ethers.constants.AddressZero,
 	]);
 
 	useEffect(() => {

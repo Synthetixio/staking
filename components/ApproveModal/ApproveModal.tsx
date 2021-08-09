@@ -78,7 +78,10 @@ const ApproveModal: FC<ApproveModalProps> = ({
 					setError(null);
 					const allowance = parseEther(TokenAllowanceLimit.toString());
 					const approvedContract = getContractByName(synthetixjs!, contractToApprove, signer);
-					const gasEstimate = await approvedContract.estimateGas.approve(allowance);
+					const gasLimitEstimate = wei(
+						await approvedContract.estimateGas.approve(approvedContract.address, allowance),
+						0
+					);
 
 					setGasLimitEstimate(gasLimitEstimate);
 				} catch (e) {
@@ -109,7 +112,7 @@ const ApproveModal: FC<ApproveModalProps> = ({
 					allowance,
 					{
 						gasPrice: normalizedGasPrice(gasPrice.toNumber()),
-						gasLimit: gasLimitEstimate,
+						gasLimit: gasLimitEstimate.toBN(),
 					}
 				);
 				if (transaction) {

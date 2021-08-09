@@ -45,7 +45,7 @@ const TransactionsContainer: FC<TransactionsContainerProps> = ({ history, isLoad
 		startDate: Date | null;
 		endDate: Date | null;
 	}>({
-		startDate: new Date(),
+		startDate: null,
 		endDate: null,
 	});
 	const [amountFilter, setAmountFilter] = useState<ValueType<AmountFilterOptionType>>();
@@ -98,6 +98,8 @@ const TransactionsContainer: FC<TransactionsContainerProps> = ({ history, isLoad
 	const filteredTransactions = useMemo(() => {
 		return (
 			history?.filter((transaction) => {
+				console.log(typeFilter, amountFilter, dateFilter);
+
 				if (typeFilter != null) {
 					const filters = Object.keys(keyBy(typeFilter, 'value')) as StakingTransactionType[];
 
@@ -126,6 +128,8 @@ const TransactionsContainer: FC<TransactionsContainerProps> = ({ history, isLoad
 				) {
 					return false;
 				}
+
+				return true;
 			}) ?? []
 		);
 	}, [history, isLoaded, typeFilter, dateFilter, amountFilter]);

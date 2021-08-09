@@ -68,7 +68,7 @@ const pageResults = ({
 			data,
 			timeout,
 		})
-			.then((response: any) => response.json())
+			.then((response: any) => response.data)
 			.then((json: any) => {
 				if (json.errors) {
 					throw Error(JSON.stringify(json.errors));

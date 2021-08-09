@@ -107,7 +107,7 @@ const useLPData = (): LPData => {
 		usesDHTPool.data?.distribution.a &&
 		usesDHTPool.data?.distribution.b &&
 		SNXRate &&
-		DHTRate &&
+		DHTRate?.gt(0) &&
 		DHTTVL
 			? usesDHTPool.data.distribution.a
 					.mul(SNXRate)
@@ -122,7 +122,7 @@ const useLPData = (): LPData => {
 	const sUsdAPR =
 		usesUSDPool.data?.distribution &&
 		SNXRate &&
-		sUsdTVL &&
+		sUsdTVL.gt(0) &&
 		usesUSDPool.data?.swapAPR &&
 		usesUSDPool.data?.rewardsAPR
 			? usesUSDPool.data.distribution
@@ -139,7 +139,7 @@ const useLPData = (): LPData => {
 	const sEuroAPR =
 		usesEuroPool.data?.distribution &&
 		SNXRate &&
-		sEuroTVL &&
+		sEuroTVL.gt(0) &&
 		usesEuroPool.data?.swapAPR &&
 		usesEuroPool.data?.rewardsAPR
 			? usesEuroPool.data.distribution
@@ -153,7 +153,7 @@ const useLPData = (): LPData => {
 	const balancerPoolTVL = (data?: LiquidityPoolData) =>
 		data != null ? data.balance.mul(data.price) : wei(0);
 	const balancerPoolAPR = (data?: LiquidityPoolData) =>
-		data?.distribution && SNXRate && balancerPoolTVL(data)
+		data?.distribution && SNXRate && balancerPoolTVL(data).gt(0)
 			? data!.distribution.mul(SNXRate).div(balancerPoolTVL(data)).mul(WEEKS_IN_YEAR)
 			: wei(0);
 

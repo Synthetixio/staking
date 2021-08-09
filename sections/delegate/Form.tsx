@@ -19,8 +19,8 @@ import { isWalletConnectedState, walletAddressState } from 'store/wallet';
 import { appReadyState } from 'store/app';
 import useSynthetixQueries, {
 	Action,
-	APPROVE_CONTRACT_METHODS,
-	GET_IS_APPROVED_CONTRACT_METHODS,
+	DELEGATE_APPROVE_CONTRACT_METHODS,
+	DELEGATE_GET_IS_APPROVED_CONTRACT_METHODS,
 } from '@synthetixio/queries';
 import {
 	FormContainer,
@@ -105,7 +105,7 @@ const Tab: FC = () => {
 			} = synthetixjs!;
 			return [
 				DelegateApprovals,
-				APPROVE_CONTRACT_METHODS.get(action),
+				DELEGATE_APPROVE_CONTRACT_METHODS.get(action),
 				[properDelegateAddress, gas],
 			];
 		},
@@ -180,7 +180,7 @@ const Tab: FC = () => {
 			} = synthetixjs!;
 			if (!(properDelegateAddress && action)) return setAlreadyDelegated(false);
 			const alreadyDelegated = await DelegateApprovals[
-				GET_IS_APPROVED_CONTRACT_METHODS.get(action)!
+				DELEGATE_GET_IS_APPROVED_CONTRACT_METHODS.get(action)!
 			](address, properDelegateAddress);
 			setAlreadyDelegated(alreadyDelegated);
 		};
