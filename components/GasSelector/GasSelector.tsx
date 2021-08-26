@@ -63,9 +63,7 @@ const GasSelector: React.FC<GasSelectorProps> = ({
 		try {
 			setGasPrice(wei(customGasPrice));
 		} catch (_) {
-			setGasPrice(
-				ethGasStationQuery.data != null ? wei(ethGasStationQuery.data[gasSpeed], 9) : wei(0)
-			);
+			setGasPrice(gasPrice || wei(0));
 		}
 		// eslint-disable-next-line
 	}, [gasPrice, customGasPrice]);

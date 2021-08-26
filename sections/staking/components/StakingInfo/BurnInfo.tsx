@@ -15,6 +15,7 @@ import InfoLayout from './InfoLayout';
 import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
 import { walletAddressState } from 'store/wallet';
+import { parseSafeWei } from 'utils/parse';
 
 const StakingInfo: FC = () => {
 	const { t } = useTranslation();
@@ -42,11 +43,7 @@ const StakingInfo: FC = () => {
 	const Rows = useMemo(() => {
 		const calculatedTargetBurn = Math.max(debtBalance.sub(issuableSynths).toNumber(), 0);
 
-		let amountToBurnBN = wei(0);
-
-		try {
-			amountToBurnBN = wei(amountToBurn);
-		} catch (_) {}
+		let amountToBurnBN = parseSafeWei(amountToBurn, 0);
 
 		let unlockedStakeAmount;
 

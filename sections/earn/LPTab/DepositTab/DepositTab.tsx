@@ -49,6 +49,7 @@ import { useRecoilValue } from 'recoil';
 import { appReadyState } from 'store/app';
 import { CurrencyIconType } from 'components/Currency/CurrencyIcon/CurrencyIcon';
 import Wei, { wei } from '@synthetixio/wei';
+import { parseSafeWei } from 'utils/parse';
 
 export const getContract = (asset: CurrencyKey, signer: ethers.Signer | null) => {
 	if (asset === CryptoCurrency.SNX) {
@@ -102,10 +103,7 @@ const DepositTab: FC<DepositTabProps> = ({
 
 	const stakedBalanceDisplay = staked.mul(pricePerShare);
 
-	let parsedAmount = wei(0);
-	try {
-		parsedAmount = wei(amount);
-	} catch {}
+	let parsedAmount = parseSafeWei(amount, 0);
 
 	useEffect(() => {
 		const getGasLimitEstimate = async () => {

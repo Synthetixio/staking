@@ -12,6 +12,10 @@ type ClearDebtCalculations = {
 	swapData: SwapTxData | null;
 };
 
+// used to make sure more than enough is provided to repay the debt,
+// even if it fluctuates while the transaction is being filled
+const DEBT_CLEAR_BALANCE_BUFFER = 1.0005;
+
 const useClearDebtCalculations = (
 	debtBalance: Wei,
 	sUSDBalance: Wei,
@@ -20,7 +24,7 @@ const useClearDebtCalculations = (
 	const { synthetixjs } = Connector.useContainer();
 
 	const needToBuy = debtBalance.sub(sUSDBalance).gt(0);
-	const debtBalanceWithBuffer = debtBalance.add(debtBalance.mul(0.0005));
+	const debtBalanceWithBuffer = debtBalance.mul(DEBT_CLEAR_BALANCE_BUFFER);
 	const missingSUSDWithBuffer = debtBalanceWithBuffer.sub(sUSDBalance);
 
 	const sUSDAddress = synthetixjs!.contracts!.SynthsUSD.address;

@@ -8,14 +8,14 @@ import { CurrencyKey } from 'constants/currency';
 import { formatCurrency } from 'utils/formatters/number';
 
 import { ContainerRow } from '../common';
-import Wei, { wei } from '@synthetixio/wei';
+import { wei, WeiSource } from '@synthetixio/wei';
 
 type CurrencyPriceProps = {
 	currencyKey: CurrencyKey;
-	price: Wei | string | number;
+	price: WeiSource;
 	sign?: string;
 	change?: number;
-	conversionRate?: Wei | string | number | null;
+	conversionRate?: WeiSource;
 };
 
 export const CurrencyPrice: FC<CurrencyPriceProps> = ({

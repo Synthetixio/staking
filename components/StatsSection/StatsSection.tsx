@@ -40,7 +40,7 @@ const StatsSection: FC = ({ children }) => {
 
 	const snxPriceChartData = useMemo(() => {
 		return (SNX24hrPricesQuery?.data ?? [])
-			.map((dataPoint: { averagePrice: any }) => ({ value: dataPoint.averagePrice }))
+			.map((dataPoint: { averagePrice: number }) => ({ value: dataPoint.averagePrice }))
 			.slice()
 			.reverse();
 	}, [SNX24hrPricesQuery?.data]);
