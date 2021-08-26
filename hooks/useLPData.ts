@@ -144,7 +144,7 @@ const useLPData = (): LPData => {
 		usesEuroPool.data?.rewardsAPR
 			? usesEuroPool.data.distribution
 					.mul(SNXRate)
-					.div(sUsdTVL)
+					.div(sEuroTVL)
 					.mul(WEEKS_IN_YEAR)
 					.add(usesEuroPool.data?.swapAPR)
 					.add(usesEuroPool.data?.rewardsAPR)

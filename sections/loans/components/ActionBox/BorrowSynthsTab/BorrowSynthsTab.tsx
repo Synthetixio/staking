@@ -104,8 +104,6 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 
 	const loanContractAddress = loanContract?.address;
 
-	const [cratio, setCRatio] = useState(wei(0));
-
 	const { useExchangeRatesQuery } = useSynthetixQueries();
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const exchangeRates = exchangeRatesQuery.data ?? null;
@@ -115,9 +113,25 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 	const [isApproved, setIsApproved] = useState<boolean>(false);
 	const [error, setError] = useState<string | null>(null);
 
+	// cratio start
+	let cratio = wei(0);
+
+	if (exchangeRates && !collateralAmount.eq(0) && !debtAmount.eq(0)) {
+		const collateralUSDPrice = getExchangeRatesForCurrencies(
+			exchangeRates,
+			collateralAsset === 'renBTC' ? Synths.sBTC : Synths.sETH,
+			Synths.sUSD
+		);
+
+		const debtUSDPrice = getExchangeRatesForCurrencies(exchangeRates, debtAsset, Synths.sUSD);
+
+		cratio = collateralAmount.mul(collateralUSDPrice).div(debtUSDPrice.mul(debtAmount));
+	}
+	// cratio end
+
 	const hasLowCRatio = useMemo(
 		() => !collateralAmount.eq(0) && !debtAmount.eq(0) && cratio.lt(SAFE_MIN_CRATIO),
-		[collateralAmount, debtAmount, cratio]
+		[collateralAmount, debtAmount /*cratio*/]
 	);
 
 	const hasInsufficientCollateral = useMemo(() => collateralBalance.lt(minCollateralAmount), [
@@ -291,9 +305,7 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 			if (!loanContract) {
 				return setMinCollateralAmount(wei(0));
 			}
-			const minCollateralAmount = wei((await loanContract.minCollateral()).toString()).div(
-				Math.pow(10, 18 - collateralDecimals)
-			);
+			const minCollateralAmount = wei(await loanContract.minCollateral());
 			if (isMounted) setMinCollateralAmount(minCollateralAmount);
 		};
 		load();
@@ -303,34 +315,25 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 	}, [collateralIsETH, loanContract, collateralDecimals]);
 
 	// cratio
-	useEffect(() => {
-		let isMounted = true;
-		const load = async () => {
-			if (!(exchangeRates && !collateralAmount.eq(0) && !debtAmount.eq(0))) {
-				return setCRatio(wei('0'));
-			}
+	/*useEffect(() => {
+		if (!(exchangeRates && !collateralAmount.eq(0) && !debtAmount.eq(0))) {
+			return setCRatio(wei(0));
+		}
 
-			const collateralUSDPrice = wei(
-				getExchangeRatesForCurrencies(
-					exchangeRates,
-					collateralAsset === 'renBTC' ? Synths.sBTC : Synths.sETH,
-					Synths.sUSD
-				)
+		/*const collateralUSDPrice = getExchangeRatesForCurrencies(
+				exchangeRates,
+				collateralAsset === 'renBTC' ? Synths.sBTC : Synths.sETH,
+				Synths.sUSD
 			);
-			const debtUSDPrice = wei(
-				getExchangeRatesForCurrencies(exchangeRates, debtAsset, Synths.sUSD)
-			);
-			const cratio = collateralAmount
-				.mul(collateralUSDPrice)
-				.mul(100)
-				.div(debtUSDPrice.mul(debtAmount));
-			if (isMounted) setCRatio(cratio);
-		};
-		load();
-		return () => {
-			isMounted = false;
-		};
-	}, [collateralAmount, collateralAsset, debtAmount, debtAsset, exchangeRates, collateralDecimals]);
+
+		const debtUSDPrice = getExchangeRatesForCurrencies(exchangeRates, debtAsset, Synths.sUSD);
+
+		const cratio = collateralAmount
+			.mul(collateralUSDPrice)
+			.mul(100)
+			.div(debtUSDPrice.mul(debtAmount));
+		setCRatio(cratio);
+	}, [collateralAmount, collateralAsset, debtAmount, debtAsset, exchangeRates, collateralDecimals]);*/
 
 	// gas
 	useEffect(() => {

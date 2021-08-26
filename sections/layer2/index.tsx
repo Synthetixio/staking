@@ -28,15 +28,15 @@ const Index: FC = () => {
 	const { debtBalance, transferableCollateral, stakingEscrow } = useStakingCalculations();
 	const network = useRecoilValue(networkState);
 
-	const { useIsActiveQuery } = useSynthetixQueries();
+	const { useIsBridgeActiveQuery } = useSynthetixQueries();
 
-	const depositsInactive = !useIsActiveQuery().data;
+	const depositsInactive = !useIsBridgeActiveQuery().data;
 
 	useEffect(() => {
 		async function getData() {
 			try {
 				const provider = getOptimismProvider({
-					layerOneNetworkId: network?.id ?? DEFAULT_NETWORK_ID,
+					networkId: network?.id ?? DEFAULT_NETWORK_ID,
 				});
 				const {
 					contracts: { Synthetix, FeePool },

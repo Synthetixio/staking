@@ -21,9 +21,9 @@ const AppLayout: FC<AppLayoutProps> = ({ children }) => {
 	const isL2 = useRecoilValue(isL2State);
 	const isMainnet = useRecoilValue(isMainnetState);
 
-	const { useIsActiveQuery } = useSynthetixQueries();
+	const { useIsBridgeActiveQuery } = useSynthetixQueries();
 
-	const depositsInactive = !(useIsActiveQuery().data ?? true); // Deposits are active by default to prevent redirects when status unknown
+	const depositsInactive = !(useIsBridgeActiveQuery().data ?? true); // Deposits are active by default to prevent redirects when status unknown
 	const delegateWallet = useRecoilValue(delegateWalletState);
 
 	useEffect(() => {

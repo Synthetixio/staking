@@ -25,7 +25,10 @@ const DepositTab = () => {
 
 	const { useGetBridgeDataQuery, useSynthetixTxn } = useSynthetixQueries();
 
-	const depositsDataQuery = useGetBridgeDataQuery(walletAddress);
+	const depositsDataQuery = useGetBridgeDataQuery(
+		process.env.NEXT_PUBLIC_INFURA_PROJECT_ID!,
+		walletAddress
+	);
 
 	const [isApproved, setIsApproved] = useState<boolean>(false);
 	const [gasPrice, setGasPrice] = useState<Wei>(wei(0));

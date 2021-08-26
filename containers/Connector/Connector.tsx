@@ -66,7 +66,7 @@ const useConnector = () => {
 
 			const provider = loadProvider({
 				networkId,
-				infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
+				//infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
 				provider: window.ethereum,
 			});
 			const useOvm = getIsOVM(networkId);

@@ -1,3 +1,5 @@
+import { NetworkId } from '@synthetixio/contracts-interface';
+import { createQueryContext, SynthetixQueryContextProvider } from '@synthetixio/queries';
 import React from 'react';
 import styled from 'styled-components';
 

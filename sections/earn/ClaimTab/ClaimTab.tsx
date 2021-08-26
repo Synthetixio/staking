@@ -32,7 +32,7 @@ import useUserStakingData from 'hooks/useUserStakingData';
 import { DEFAULT_CRYPTO_DECIMALS, DEFAULT_FIAT_DECIMALS } from 'constants/defaults';
 import { formatCurrency, formatFiatCurrency, formatNumber } from 'utils/formatters/number';
 import { getCurrentTimestampSeconds } from 'utils/formatters/date';
-import { normalizedGasPrice } from 'utils/network';
+import { normalizedGasPrice, normalizeGasLimit } from 'utils/network';
 
 import { Transaction, GasLimitEstimate } from 'constants/network';
 import { CryptoCurrency, Synths } from 'constants/currency';
@@ -203,11 +203,10 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 						contracts: { FeePool },
 					} = synthetixjs!;
 
-					let gasLimit = wei(
+					let gasLimit = normalizeGasLimit(
 						delegateWallet
-							? await FeePool.estimateGas.claimOnBehalf(delegateWallet)
-							: await FeePool.estimateGas.claimFees(),
-						0
+							? (await FeePool.estimateGas.claimOnBehalf(delegateWallet)).toNumber()
+							: (await FeePool.estimateGas.claimFees()).toNumber()
 					);
 
 					const transaction: ethers.ContractTransaction = delegateWallet

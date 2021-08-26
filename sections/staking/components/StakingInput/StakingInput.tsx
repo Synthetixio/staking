@@ -92,8 +92,6 @@ const StakingInput: React.FC<StakingInputProps> = ({
 	sUSDNeededToBuy,
 	sUSDNeededToBurn,
 }) => {
-	console.log('input value is', inputValue);
-
 	const {
 		targetCRatio,
 		SNXRate,

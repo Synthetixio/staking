@@ -98,8 +98,6 @@ const TransactionsContainer: FC<TransactionsContainerProps> = ({ history, isLoad
 	const filteredTransactions = useMemo(() => {
 		return (
 			history?.filter((transaction) => {
-				console.log(typeFilter, amountFilter, dateFilter);
-
 				if (typeFilter != null) {
 					const filters = Object.keys(keyBy(typeFilter, 'value')) as StakingTransactionType[];
 

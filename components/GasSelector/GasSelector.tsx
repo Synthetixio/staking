@@ -49,8 +49,6 @@ const GasSelector: React.FC<GasSelectorProps> = ({
 	const gasPrices = ethGasStationQuery.data ?? ({} as GasPrices);
 	const exchangeRates = exchangeRatesQuery.data ?? null;
 
-	console.log('gas prices', gasPrices);
-
 	const hasCustomGasPrice = customGasPrice !== '';
 
 	const gasPrice: Wei | null = useMemo(() => {

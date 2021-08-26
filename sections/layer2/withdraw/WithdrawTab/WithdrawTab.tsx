@@ -14,6 +14,7 @@ import TabContent from './TabContent';
 import { normalizedGasPrice } from 'utils/network';
 import Wei, { wei } from '@synthetixio/wei';
 import useSynthetixQueries from '@synthetixio/queries';
+import { parseSafeWei } from 'utils/parse';
 
 const WithdrawTab = () => {
 	const { transferableCollateral } = useStakingCalculations();
@@ -21,16 +22,23 @@ const WithdrawTab = () => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 
-	const { useGetBridgeDataQuery, useIsActiveQuery, useSynthetixTxn } = useSynthetixQueries();
+	const { useGetBridgeDataQuery, useIsBridgeActiveQuery, useSynthetixTxn } = useSynthetixQueries();
 
-	const depositsDataQuery = useGetBridgeDataQuery(walletAddress);
-	const withdrawalsInactive = !useIsActiveQuery().data;
+	const depositsDataQuery = useGetBridgeDataQuery(
+		process.env.NEXT_PUBLIC_INFURA_PROJECT_ID!,
+		walletAddress
+	);
+	const withdrawalsInactive = !useIsBridgeActiveQuery().data;
 
 	const [gasPrice, setGasPrice] = useState<Wei>(wei(0));
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
-	const [amountToWithdraw, setAmountToWithdraw] = useState<Wei>(wei(0));
+	const [amountToWithdraw, setAmountToWithdraw] = useState<string>('0');
 
-	const txn = useSynthetixTxn('SynthetixBridgeToBase', 'withdraw', [amountToWithdraw.toBN()]);
+	console.log('txn data', [parseSafeWei(amountToWithdraw, 0).toBN()]);
+
+	const txn = useSynthetixTxn('SynthetixBridgeToBase', 'withdraw', [
+		parseSafeWei(amountToWithdraw, 0).toBN(),
+	]);
 
 	useEffect(() => {
 		if (txn.txnStatus == 'confirmed') {
@@ -42,7 +50,7 @@ const WithdrawTab = () => {
 		<StyledTabContainer>
 			<TabContent
 				inputValue={amountToWithdraw}
-				onInputChange={(value: number) => setAmountToWithdraw(wei(value.toString()))}
+				onInputChange={(value: string) => setAmountToWithdraw(value)}
 				transferableCollateral={transferableCollateral}
 				onSubmit={txn.mutate}
 				transactionError={txn.errorMessage}

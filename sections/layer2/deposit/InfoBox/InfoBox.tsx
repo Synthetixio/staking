@@ -31,7 +31,10 @@ const InfoBox = () => {
 
 	const { useGetBridgeDataQuery } = useSynthetixQueries();
 
-	const depositsDataQuery = useGetBridgeDataQuery(walletAddress);
+	const depositsDataQuery = useGetBridgeDataQuery(
+		process.env.NEXT_PUBLIC_INFURA_PROJECT_ID!,
+		walletAddress
+	);
 
 	const depositHistory = depositsDataQuery?.data ?? null;
 

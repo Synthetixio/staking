@@ -115,7 +115,6 @@ const BurnTab: React.FC = () => {
 		? ['burnSynthsToTarget', []]
 		: ['burnSynths', [amountToBurnBN.toBN()]];
 
-	console.log('thegasprice', gasPrice);
 	const txn = useSynthetixTxn('Synthetix', burnCall[0], burnCall[1], {
 		gasPrice: gasPrice.toBN(),
 	});

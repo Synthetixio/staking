@@ -1,3 +1,5 @@
+import { NetworkId } from '@synthetixio/contracts-interface';
+import { createQueryContext, SynthetixQueryContextProvider } from '@synthetixio/queries';
 import React from 'react';
 import styled from 'styled-components';
 
@@ -8,6 +10,7 @@ import ActionBox from './ActionBox';
 import InfoBox from './InfoBox';
 
 const Index: React.FC = () => {
+	// here we override the query context provider because deposits/withdrawals are always from perspective of the mainnet
 	return (
 		<Container>
 			<Col>

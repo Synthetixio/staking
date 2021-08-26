@@ -26,9 +26,10 @@ import {
 	ErrorMessage,
 	FlexDivRowCentered,
 } from 'styles/common';
+import { parseSafeWei } from 'utils/parse';
 
 type TabContentProps = {
-	inputValue: Wei;
+	inputValue: string;
 	onInputChange: Function;
 	transferableCollateral: Wei;
 	onSubmit: any;
@@ -64,12 +65,14 @@ const TabContent: FC<TabContentProps> = ({
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const currencyKey = CryptoCurrency['SNX'];
 
+	const inputValueWei = parseSafeWei(inputValue, wei(0));
+
 	const renderButton = () => {
 		if (
 			isWalletConnected &&
-			inputValue &&
-			inputValue.gt(0) &&
-			inputValue.lte(transferableCollateral)
+			inputValueWei &&
+			inputValueWei.gt(0) &&
+			inputValueWei.lte(transferableCollateral)
 		) {
 			return (
 				<StyledCTA

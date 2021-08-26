@@ -7,7 +7,7 @@ import { assetToSynth } from 'utils/currencies';
 import useSynthetixQueries from '@synthetixio/queries';
 import { NetworkId } from '@synthetixio/contracts-interface';
 import Wei, { wei } from '@synthetixio/wei';
-import { renBTCToken, wBTCToken, wETHToken } from 'contracts';
+import { renBTCToken, wBTCToken, wETHToken, snxToken } from 'contracts';
 import { useRecoilValue } from 'recoil';
 import { networkState } from 'store/wallet';
 
@@ -32,13 +32,50 @@ const useCryptoBalances = (walletAddress: string | null) => {
 
 	const balancesQuery = useTokensBalancesQuery(
 		[
-			{ symbol: 'ETH' },
-			{ symbol: 'SNX', address: '' },
-			{ symbol: 'WBTC', address: wBTCToken.address },
-			{ symbol: 'WETH', address: wETHToken.address },
+			{
+				symbol: 'ETH',
+				address: '',
+				decimals: 18,
+				logoURI: '',
+				name: 'Ethereum',
+				chainId: 1,
+				tags: [],
+			},
+			{
+				symbol: 'SNX',
+				address: snxToken.address,
+				decimals: 18,
+				logoURI: '',
+				name: 'Wrapped Bitcoin',
+				chainId: 1,
+				tags: [],
+			},
+			{
+				symbol: 'WBTC',
+				address: wBTCToken.address,
+				decimals: 18,
+				logoURI: '',
+				name: 'Wrapped Bitcoin',
+				chainId: 1,
+				tags: [],
+			},
+			{
+				symbol: 'WETH',
+				address: wETHToken.address,
+				decimals: 18,
+				logoURI: '',
+				name: 'Wrapped Ethereum',
+				chainId: 1,
+				tags: [],
+			},
 			{
 				symbol: 'renBTC',
 				address: renBTCToken.ADDRESSES[networkId?.name || NetworkId.Mainnet.toString()],
+				decimals: 18,
+				logoURI: '',
+				name: 'renBTC',
+				chainId: 1,
+				tags: [],
 			},
 		],
 		walletAddress

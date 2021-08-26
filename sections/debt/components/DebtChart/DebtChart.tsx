@@ -78,8 +78,6 @@ const DebtChart = ({ data, isLoading }: { data: Data[]; isLoading: boolean }) =>
 	const { connectWallet } = Connector.useContainer();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 
-	console.log('debt', data, isLoading);
-
 	if (!isWalletConnected) {
 		return (
 			<DefaultContainer>
