@@ -29,7 +29,7 @@ import useClaimedStatus from 'sections/hooks/useClaimedStatus';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import useUserStakingData from 'hooks/useUserStakingData';
 
-import { DEFAULT_CRYPTO_DECIMALS, DEFAULT_FIAT_DECIMALS } from 'constants/defaults';
+import { DEFAULT_FIAT_DECIMALS } from 'constants/defaults';
 import { formatCurrency, formatFiatCurrency, formatNumber } from 'utils/formatters/number';
 import { getCurrentTimestampSeconds } from 'utils/formatters/date';
 import { normalizedGasPrice, normalizeGasLimit } from 'utils/network';
@@ -142,7 +142,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 			console.log(e);
 			setIsCloseFeePeriodEnabled(false);
 		}
-	}, [isL2]);
+	}, [isL2, synthetixjs]);
 
 	useEffect(() => {
 		fetchFeePeriodData();
@@ -191,7 +191,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 			}
 		};
 		getGasLimitEstimate();
-	}, [isAppReady, isWalletConnected, isBelowCRatio, delegateWallet, t, isL2]);
+	}, [isAppReady, isWalletConnected, isBelowCRatio, delegateWallet, t, isL2, synthetixjs]);
 
 	const handleClaim = useCallback(() => {
 		async function claim() {
@@ -251,6 +251,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 		isAppReady,
 		delegateWallet,
 		isL2,
+		synthetixjs,
 	]);
 
 	const goToBurn = useCallback(() => router.push(ROUTES.Staking.Burn), [router]);

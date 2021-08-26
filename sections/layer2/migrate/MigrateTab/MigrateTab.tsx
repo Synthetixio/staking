@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
-import { useTranslation } from 'react-i18next';
 
 import { TabContainer } from '../../components/common';
 
@@ -11,8 +10,6 @@ import useSynthetixQueries from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
 
 const MigrateTab = () => {
-	const { t } = useTranslation();
-
 	const walletAddress = useRecoilValue(walletAddressState);
 
 	const { useEscrowDataQuery, useSynthetixTxn } = useSynthetixQueries();
@@ -38,10 +35,10 @@ const MigrateTab = () => {
 	}, [claimableAmount]);
 
 	useEffect(() => {
-		if (txn.txnStatus == 'confirmed') {
+		if (txn.txnStatus === 'confirmed') {
 			escrowDataQuery.refetch();
 		}
-	}, [txn.txnStatus]);
+	}, [txn.txnStatus, escrowDataQuery]);
 
 	return (
 		<TabContainer>

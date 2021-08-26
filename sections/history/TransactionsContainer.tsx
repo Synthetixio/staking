@@ -14,7 +14,6 @@ import Select from 'components/Select';
 import Button from 'components/Button';
 
 import { formatShortDate } from 'utils/formatters/date';
-import { formatNumber } from 'utils/formatters/number';
 
 import {
 	CapitalizedText,
@@ -130,7 +129,7 @@ const TransactionsContainer: FC<TransactionsContainerProps> = ({ history, isLoad
 				return true;
 			}) ?? []
 		);
-	}, [history, isLoaded, typeFilter, dateFilter, amountFilter]);
+	}, [history, typeFilter, dateFilter, amountFilter]);
 
 	const dateFilterSelectedDates = useMemo(
 		() => dateFilter.startDate != null && dateFilter.endDate != null,

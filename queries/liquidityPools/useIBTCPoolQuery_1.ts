@@ -22,7 +22,7 @@ const useIBTCPoolQuery_1 = (options?: UseQueryOptions<LiquidityPoolData>) => {
 	const network = useRecoilValue(networkState);
 	const isMainnet = useRecoilValue(isMainnetState);
 
-	const { provider, synthetixjs } = Connector.useContainer();
+	const { synthetixjs } = Connector.useContainer();
 
 	return useQuery<LiquidityPoolData>(
 		QUERY_KEYS.LiquidityPools.iBTC(walletAddress ?? '', network?.id!),

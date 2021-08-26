@@ -8,7 +8,6 @@ import { formatCurrency } from 'utils/formatters/number';
 import { CryptoCurrency } from 'constants/currency';
 import { GasLimitEstimate } from 'constants/network';
 import { InputContainer, InputBox } from '../../components/common';
-import { Transaction } from 'constants/network';
 import ROUTES from 'constants/routes';
 
 import GasSelector from 'components/GasSelector';

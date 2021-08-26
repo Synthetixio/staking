@@ -8,7 +8,6 @@ import { CurrencyKey } from 'constants/currency';
 import { formatCurrency } from 'utils/formatters/number';
 
 import { ContainerRow } from '../common';
-import { DEFAULT_FIAT_DECIMALS } from 'constants/defaults';
 import Wei, { wei } from '@synthetixio/wei';
 
 type CurrencyPriceProps = {

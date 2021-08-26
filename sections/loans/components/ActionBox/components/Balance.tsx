@@ -106,7 +106,7 @@ const ERC20: React.FC<ERC20Props> = ({ asset, onSetMaxAmount }) => {
 			renBTC: renBTCContract! as any,
 		};
 		return tokens[asset];
-	}, [asset, renBTCContract]);
+	}, [asset, renBTCContract, synthetixjs]);
 
 	React.useEffect(() => {
 		if (!(contract && address)) return;

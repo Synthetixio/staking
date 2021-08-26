@@ -15,7 +15,6 @@ import ExpandIcon from 'assets/svg/app/expand.svg';
 
 import { Transaction } from 'constants/network';
 import { CryptoCurrency } from 'constants/currency';
-import { formatNumber } from 'utils/formatters/number';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import TxState from 'sections/earn/TxState';
 import { EXTERNAL_LINKS } from 'constants/links';

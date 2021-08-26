@@ -34,7 +34,7 @@ const TokenSaleTab: React.FC = () => {
 				tokenSaleEscrowQuery.refetch();
 				break;
 		}
-	}, [synthetixTxn.txnStatus]);
+	}, [synthetixTxn.txnStatus, tokenSaleEscrowQuery]);
 
 	return (
 		<TabContainer>

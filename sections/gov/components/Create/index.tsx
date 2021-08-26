@@ -53,7 +53,7 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 
 	const contract = useMemo(
 		() => new ethers.Contract(CouncilDilution.address, CouncilDilution.abi, signer as any),
-		[]
+		[signer]
 	);
 
 	const txn = useContractTxn(contract, 'logProposal', [ipfsHash], {});

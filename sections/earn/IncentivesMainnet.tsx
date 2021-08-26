@@ -10,7 +10,7 @@ import ROUTES from 'constants/routes';
 import { CryptoCurrency, Synths } from 'constants/currency';
 import media from 'styles/media';
 import useFeePeriodTimeAndProgress from 'hooks/useFeePeriodTimeAndProgress';
-import { isWalletConnectedState, networkState, walletAddressState } from 'store/wallet';
+import { isWalletConnectedState, walletAddressState } from 'store/wallet';
 import useShortRewardsData from 'hooks/useShortRewardsData';
 import { TabButton, TabList } from 'components/Tab';
 import { CurrencyIconType } from 'components/Currency/CurrencyIcon/CurrencyIcon';

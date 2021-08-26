@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import styled from 'styled-components';
 import { CellProps, Row } from 'react-table';
-import { isWalletConnectedState, walletAddressState } from 'store/wallet';
+import { isWalletConnectedState } from 'store/wallet';
 import { FlexDivCol } from 'styles/common';
 import media from 'styles/media';
 import Button from 'components/Button';
@@ -44,7 +44,6 @@ const ResponsiveTable: React.FC<ResponsiveTableProps> = ({ mobile, spaceKey }) =
 	const { t } = useTranslation();
 	const router = useRouter();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	const walletAddress = useRecoilValue(walletAddressState);
 	const setProposal = useSetRecoilState(proposalState);
 	const setPanelType = useSetRecoilState(panelState);
 

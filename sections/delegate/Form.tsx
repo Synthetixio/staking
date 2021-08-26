@@ -109,7 +109,7 @@ const Tab: FC = () => {
 				[properDelegateAddress, gas],
 			];
 		},
-		[isAppReady, properDelegateAddress, action, delegateAddressIsSelf]
+		[isAppReady, properDelegateAddress, action, delegateAddressIsSelf, synthetixjs]
 	);
 
 	const onEnterAddress = (e: any) => setDelegateAddress((e.target.value ?? '').trim());
@@ -185,7 +185,7 @@ const Tab: FC = () => {
 			setAlreadyDelegated(alreadyDelegated);
 		};
 		getIsAlreadyDelegated();
-	}, [isAppReady, properDelegateAddress, address, action]);
+	}, [isAppReady, properDelegateAddress, address, action, synthetixjs]);
 
 	return (
 		<div data-testid="form">

@@ -25,7 +25,6 @@ import 'slick-carousel/slick/slick-theme.css';
 import 'tippy.js/dist/tippy.css';
 import '../i18n';
 import Connector from 'containers/Connector';
-import { Signer } from 'crypto';
 
 const queryClient = new QueryClient({
 	defaultOptions: {

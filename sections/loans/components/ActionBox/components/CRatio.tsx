@@ -6,7 +6,6 @@ import { formatPercent } from 'utils/formatters/number';
 import InfoSVG from 'sections/loans/components/ActionBox/components/InfoSVG';
 import { SAFE_MIN_CRATIO } from 'sections/loans/constants';
 import Wei from '@synthetixio/wei';
-import { CRatioProgressBar } from 'pages/staking/[[...action]]';
 
 type CRatioProps = {
 	hasLowCRatio: boolean;

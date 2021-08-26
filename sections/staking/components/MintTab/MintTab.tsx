@@ -1,6 +1,4 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { ethers } from 'ethers';
-import { useTranslation } from 'react-i18next';
 
 import UIContainer from 'containers/UI';
 
@@ -30,7 +28,6 @@ const MintTab: React.FC = () => {
 
 	const [gasPrice, setGasPrice] = useState<Wei>(wei(0));
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
-	const { t } = useTranslation();
 
 	const { setTitle } = UIContainer.useContainer();
 
@@ -107,6 +104,7 @@ const MintTab: React.FC = () => {
 		onMintTypeChange,
 		targetCRatio,
 		unstakedCollateral,
+		txn,
 	]);
 
 	return <TabContainer>{returnPanel}</TabContainer>;

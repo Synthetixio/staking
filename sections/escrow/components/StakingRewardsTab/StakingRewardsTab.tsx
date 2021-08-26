@@ -1,12 +1,7 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { ethers } from 'ethers';
-import TransactionNotifier from 'containers/TransactionNotifier';
+import React, { useState, useEffect } from 'react';
 
-import { normalizedGasPrice } from 'utils/network';
-import { Transaction, GasLimitEstimate } from 'constants/network';
 import { useRecoilValue } from 'recoil';
-import { isWalletConnectedState, walletAddressState } from 'store/wallet';
-import { appReadyState } from 'store/app';
+import { walletAddressState } from 'store/wallet';
 
 import { TabContainer } from '../common';
 import TabContent from './TabContent';
@@ -37,12 +32,12 @@ const StakingRewardsTab: React.FC = () => {
 	);
 
 	useEffect(() => {
-		if (txn.txnStatus == 'pending') {
+		if (txn.txnStatus === 'pending') {
 			setTxModalOpen(true);
-		} else if (txn.txnStatus == 'confirmed') {
+		} else if (txn.txnStatus === 'confirmed') {
 			escrowDataQuery.refetch();
 		}
-	}, [txn.txnStatus]);
+	}, [txn.txnStatus, escrowDataQuery]);
 
 	return (
 		<TabContainer>

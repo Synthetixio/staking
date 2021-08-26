@@ -17,7 +17,7 @@ import {
 import media from 'styles/media';
 
 import { appReadyState } from 'store/app';
-import { isWalletConnectedState, networkState } from 'store/wallet';
+import { isWalletConnectedState } from 'store/wallet';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 

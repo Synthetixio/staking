@@ -5,7 +5,6 @@ import styled from 'styled-components';
 
 import { FlexDivRowCentered, FlexDivCentered, ExternalLink, boxShadowBlue } from 'styles/common';
 import Success from 'assets/svg/app/circle-tick.svg';
-import { Transaction } from 'constants/network';
 
 import { InfoContainer, InfoData, InfoTitle, SectionHeader, Container } from './common';
 import { formatCurrency } from 'utils/formatters/number';

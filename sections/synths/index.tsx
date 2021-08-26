@@ -26,7 +26,7 @@ const Index: FC = () => {
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 
 	const walletAddress = useRecoilValue(walletAddressState);
-	const { useSynthsBalancesQuery, useTokensBalancesQuery } = useSynthetixQueries();
+	const { useSynthsBalancesQuery } = useSynthetixQueries();
 
 	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
 	const cryptoBalances = useCryptoBalances(walletAddress);

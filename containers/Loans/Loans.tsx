@@ -57,7 +57,7 @@ function Container() {
 			collateralManagerContract,
 			exchangeRatesContract,
 		];
-	}, [isAppReady, signer]);
+	}, [isAppReady, signer, synthetixjs]);
 
 	useEffect(() => {
 		if (
@@ -401,6 +401,7 @@ function Container() {
 		return () => {
 			isMounted = false;
 		};
+		// eslint-disable-next-line
 	}, [ethLoanContract, address]);
 
 	return {

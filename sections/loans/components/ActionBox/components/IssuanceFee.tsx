@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { FlexDivRow, FlexDivRowCentered } from 'styles/common';
-import { formatNumber, formatPercent } from 'utils/formatters/number';
+import { formatPercent } from 'utils/formatters/number';
 import { LOAN_TYPE_ERC20, LOAN_TYPE_ETH } from 'sections/loans/constants';
 import Loans from 'containers/Loans';
 

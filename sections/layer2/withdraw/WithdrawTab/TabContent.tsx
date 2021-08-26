@@ -6,7 +6,7 @@ import { useRecoilValue } from 'recoil';
 
 import { formatCurrency, formatNumber } from 'utils/formatters/number';
 import { CryptoCurrency } from 'constants/currency';
-import { Transaction, GasLimitEstimate } from 'constants/network';
+import { GasLimitEstimate } from 'constants/network';
 
 import { StyledInput } from 'sections/staking/components/common';
 import { InputContainer, InputBox, StyledCTA } from '../../components/common';

@@ -11,9 +11,6 @@ import CurrencyPrice from 'components/Currency/CurrencyPrice';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
 import LineChart, { LineChartData } from './LineChart';
-import { useRecoilValue } from 'recoil';
-import { networkState } from 'store/wallet';
-import { NetworkId } from '@synthetixio/contracts-interface';
 import useSynthetixQueries from '@synthetixio/queries';
 import { formatPercent } from 'utils/formatters/number';
 

@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { ethers } from 'ethers';
 import { useRouter } from 'next/router';
 
-import { isWalletConnectedState, networkState, walletAddressState } from 'store/wallet';
+import { isWalletConnectedState, walletAddressState } from 'store/wallet';
 import Connector from 'containers/Connector';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import UIContainer from 'containers/UI';
@@ -57,7 +57,6 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 	const router = useRouter();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const address = useRecoilValue(walletAddressState);
-	const networkId = useRecoilValue(networkState)!.id;
 	const { renBTCContract, minCRatios } = Loans.useContainer();
 	const { setTitle } = UIContainer.useContainer();
 
@@ -100,7 +99,7 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 			contracts: { CollateralEth: ethLoanContract, CollateralErc20: erc20LoanContract },
 		} = synthetixjs!;
 		return collateralIsETH ? ethLoanContract : erc20LoanContract;
-	}, [collateralIsETH, signer]);
+	}, [collateralIsETH, signer, synthetixjs]);
 
 	const loanContractAddress = loanContract?.address;
 
@@ -131,7 +130,7 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 
 	const hasLowCRatio = useMemo(
 		() => !collateralAmount.eq(0) && !debtAmount.eq(0) && cratio.lt(SAFE_MIN_CRATIO),
-		[collateralAmount, debtAmount /*cratio*/]
+		[collateralAmount, debtAmount, cratio]
 	);
 
 	const hasInsufficientCollateral = useMemo(() => collateralBalance.lt(minCollateralAmount), [
@@ -218,7 +217,6 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 			debtAmount,
 			debtAsset,
 			collateralAmount,
-			collateralDecimals,
 			collateralIsETH,
 			hasInsufficientCollateral,
 			hasLowCRatio,
@@ -344,7 +342,7 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 				setError(null);
 				const data: any[] | null = getTxData({});
 				if (!data) return;
-				const [contract, method, args] = data;
+				const [contract, method] = data;
 				const gasEstimate = await contract.estimateGas[method]();
 				if (isMounted) setGasLimitEstimate(getNormalizedGasLimit(Number(gasEstimate)));
 			} catch (error) {

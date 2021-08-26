@@ -130,7 +130,17 @@ const DepositTab: FC<DepositTabProps> = ({
 			}
 		};
 		getGasLimitEstimate();
-	}, [amount, isDeposit, asset, signer, isAppReady, userBalance, staked, stakedBalanceDisplay]);
+	}, [
+		amount,
+		isDeposit,
+		asset,
+		signer,
+		isAppReady,
+		userBalance,
+		staked,
+		stakedBalanceDisplay,
+		parsedAmount,
+	]);
 
 	const handleDeposit = useCallback(() => {
 		async function deposit() {
@@ -178,17 +188,7 @@ const DepositTab: FC<DepositTabProps> = ({
 			}
 		}
 		deposit();
-	}, [
-		isAppReady,
-		amount,
-		asset,
-		signer,
-		isDeposit,
-		userBalance,
-		stakedBalanceDisplay,
-		gasPrice,
-		monitorTransaction,
-	]);
+	}, [isAppReady, amount, asset, signer, isDeposit, gasPrice, monitorTransaction, parsedAmount]);
 
 	if (transactionState === Transaction.WAITING) {
 		return (

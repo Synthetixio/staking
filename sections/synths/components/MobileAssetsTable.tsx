@@ -185,6 +185,7 @@ const AssetsTable: FC<AssetsTableProps> = ({
 		isAppReady,
 		onTransferClick,
 		isL2,
+		synthsMap,
 	]);
 
 	return (

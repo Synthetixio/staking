@@ -27,10 +27,7 @@ import {
 	TxModalItemSeperator,
 } from 'sections/loans/components/common';
 import { LOAN_TYPE_ERC20, LOAN_TYPE_ETH } from 'sections/loans/constants';
-import {
-	normalizeGasLimit as getNormalizedGasLimit,
-	normalizedGasPrice as getNormalizedGasPrice,
-} from 'utils/network';
+import { normalizedGasPrice as getNormalizedGasPrice } from 'utils/network';
 import AssetInput from 'sections/loans/components/ActionBox/BorrowSynthsTab/AssetInput';
 import { Loan } from 'queries/loans/types';
 import AccruedInterest from 'sections/loans/components/ActionBox/components/AccruedInterest';

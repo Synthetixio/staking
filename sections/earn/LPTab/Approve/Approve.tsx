@@ -207,7 +207,7 @@ const Approve: FC<ApproveProps> = ({ stakedAsset, setShowApproveOverlayModal }) 
 			}
 		};
 		getGasLimitEstimate();
-	}, [stakedAsset, provider, isAppReady]);
+	}, [stakedAsset, provider, isAppReady, synthetixjs]);
 
 	const handleApprove = useCallback(() => {
 		async function approve() {
@@ -249,7 +249,7 @@ const Approve: FC<ApproveProps> = ({ stakedAsset, setShowApproveOverlayModal }) 
 			}
 		}
 		approve();
-	}, [stakedAsset, signer, gasPrice, monitorTransaction, isAppReady]);
+	}, [stakedAsset, signer, gasPrice, monitorTransaction, isAppReady, synthetixjs]);
 
 	if (transactionState === Transaction.WAITING) {
 		return (

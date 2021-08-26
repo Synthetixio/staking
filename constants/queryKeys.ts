@@ -1,8 +1,7 @@
 import { NetworkId } from '@synthetixio/contracts-interface';
 import { WeiSource } from '@synthetixio/wei';
 import { SPACE_KEY } from 'constants/snapshot';
-import { CurrencyKey, Synths } from './currency';
-import { Period } from './period';
+import { Synths } from './currency';
 
 export const QUERY_KEYS = {
 	Debt: {

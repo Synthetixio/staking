@@ -14,7 +14,7 @@ import { CryptoCurrency, Synths } from 'constants/currency';
 import { DESKTOP_SIDE_NAV_WIDTH, zIndex } from 'constants/ui';
 import UIContainer from 'containers/UI';
 
-import { isL2State, networkState, walletAddressState } from 'store/wallet';
+import { isL2State, walletAddressState } from 'store/wallet';
 
 import PriceItem from 'sections/shared/Layout/Stats/PriceItem';
 import PeriodBarStats from 'sections/shared/Layout/Stats/PeriodBarStats';
@@ -27,8 +27,6 @@ import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
 
 const DesktopSideNav: FC = () => {
-	const networkId = useRecoilValue(networkState)!.id;
-
 	const walletAddress = useRecoilValue(walletAddressState);
 
 	const { useSNX24hrPricesQuery, useSynthsBalancesQuery } = useSynthetixQueries();

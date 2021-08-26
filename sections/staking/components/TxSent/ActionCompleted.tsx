@@ -15,7 +15,6 @@ import {
 
 import Success from 'assets/svg/app/success.svg';
 
-import { Transaction } from 'constants/network';
 import ROUTES from 'constants/routes';
 import { CryptoCurrency, Synths } from 'constants/currency';
 

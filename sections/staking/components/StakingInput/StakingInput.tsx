@@ -37,7 +37,7 @@ import {
 	FlexDiv,
 } from 'styles/common';
 import { InputContainer, InputLocked } from '../common';
-import { Transaction, GasLimitEstimate } from 'constants/network';
+import { GasLimitEstimate } from 'constants/network';
 import { formatCurrency, formatNumber } from 'utils/formatters/number';
 import { getStakingAmount } from '../helper';
 import { CryptoCurrency, Synths } from 'constants/currency';

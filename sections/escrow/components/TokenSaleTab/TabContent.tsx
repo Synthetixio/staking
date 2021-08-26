@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { formatCurrency } from 'utils/formatters/number';
 import { CryptoCurrency } from 'constants/currency';
 import { InputContainer, InputBox } from '../common';
-import { Transaction, GasLimitEstimate } from 'constants/network';
+import { GasLimitEstimate } from 'constants/network';
 
 import GasSelector from 'components/GasSelector';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';

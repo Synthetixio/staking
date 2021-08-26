@@ -1,5 +1,4 @@
 import { FC, useMemo, useEffect } from 'react';
-import { ethers } from 'ethers';
 import styled from 'styled-components';
 import { Svg } from 'react-optimized-image';
 
@@ -46,14 +45,14 @@ const Actions: FC<ActionsProps> = ({ loanId, loanAction, loanTypeIsETH }) => {
 		const tokens: Record<string, typeof sBTC> = { sBTC, sETH, sUSD };
 		const collateralAsset = loanTypeIsETH ? 'ETH' : 'renBTC';
 		return tokens[collateralAsset];
-	}, [loanTypeIsETH]);
+	}, [loanTypeIsETH, synthetixjs]);
 
 	const loanContract = useMemo(() => {
 		const {
 			contracts: { CollateralEth: ethLoanContract, CollateralErc20: erc20LoanContract },
 		} = synthetixjs!;
 		return loanTypeIsETH ? ethLoanContract : erc20LoanContract;
-	}, [loanTypeIsETH]);
+	}, [loanTypeIsETH, synthetixjs]);
 
 	const loanStateContract = useMemo(() => {
 		const {
@@ -63,7 +62,7 @@ const Actions: FC<ActionsProps> = ({ loanId, loanAction, loanTypeIsETH }) => {
 			},
 		} = synthetixjs!;
 		return loanTypeIsETH ? ethLoanStateContract : erc20LoanStateContract;
-	}, [loanTypeIsETH]);
+	}, [loanTypeIsETH, synthetixjs]);
 
 	const debtAssetContract = useMemo(() => {
 		return loanTypeIsETH ? null : renBTCContract;

@@ -56,17 +56,17 @@ const DepositTab = () => {
 				setIsApproved(false);
 			}
 		}
-	}, [walletAddress, isAppReady]);
+	}, [walletAddress, isAppReady, synthetixjs]);
 
 	useEffect(() => {
 		getAllowance();
 	}, [getAllowance]);
 
 	useEffect(() => {
-		if (txn.txnStatus == 'confirmed') {
+		if (txn.txnStatus === 'confirmed') {
 			depositsDataQuery.refetch();
 		}
-	}, [txn.txnStatus]);
+	}, [txn.txnStatus, depositsDataQuery]);
 
 	return (
 		<StyledTabContainer>

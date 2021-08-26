@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
-import TransactionNotifier from 'containers/TransactionNotifier';
 import UIContainer from 'containers/UI';
 import { CryptoCurrency, Synths } from 'constants/currency';
 import { TabContainer } from '../common';
@@ -13,7 +12,6 @@ import StakingInput from '../StakingInput';
 import { formatCurrency } from 'utils/formatters/number';
 import { amountToBurnState, BurnActionType, burnTypeState } from 'store/staking';
 import { addSeconds, differenceInSeconds } from 'date-fns';
-import { appReadyState } from 'store/app';
 
 import Connector from 'containers/Connector';
 import useClearDebtCalculations from 'sections/staking/hooks/useClearDebtCalculations';
@@ -62,7 +60,7 @@ const BurnTab: React.FC = () => {
 
 	const amountToBurnBN = parseSafeWei(amountToBurn, wei(0));
 
-	const isToTarget = burnType == BurnActionType.TARGET;
+	const isToTarget = burnType === BurnActionType.TARGET;
 
 	const { setTitle } = UIContainer.useContainer();
 
@@ -81,7 +79,7 @@ const BurnTab: React.FC = () => {
 		} catch (e) {
 			console.log(e);
 		}
-	}, [walletAddress, delegateWallet]);
+	}, [walletAddress, delegateWallet, synthetixjs]);
 
 	const getIssuanceDelay = useCallback(async () => {
 		const {
@@ -105,7 +103,7 @@ const BurnTab: React.FC = () => {
 			console.log(e);
 		}
 		// eslint-disable-next-line
-	}, [walletAddress, debtBalance, delegateWallet]);
+	}, [walletAddress, debtBalance, delegateWallet, synthetixjs]);
 
 	const burnCall: [string, any[]] = !!delegateWallet
 		? isToTarget
@@ -254,6 +252,8 @@ const BurnTab: React.FC = () => {
 		missingSUSDWithBuffer,
 		needToBuy,
 		quoteAmount,
+		error,
+		txn,
 	]);
 
 	return <TabContainer>{returnPanel}</TabContainer>;

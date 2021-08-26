@@ -3,15 +3,11 @@ import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import { TabContainer } from '../../components/common';
-import { Transaction, GasLimitEstimate } from 'constants/network';
 
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
-import TransactionNotifier from 'containers/TransactionNotifier';
-import { appReadyState } from 'store/app';
-import { networkState, walletAddressState } from 'store/wallet';
+import { walletAddressState } from 'store/wallet';
 
 import TabContent from './TabContent';
-import { normalizedGasPrice } from 'utils/network';
 import Wei, { wei } from '@synthetixio/wei';
 import useSynthetixQueries from '@synthetixio/queries';
 import { parseSafeWei } from 'utils/parse';
@@ -19,8 +15,6 @@ import { parseSafeWei } from 'utils/parse';
 const WithdrawTab = () => {
 	const { transferableCollateral } = useStakingCalculations();
 	const walletAddress = useRecoilValue(walletAddressState);
-	const isAppReady = useRecoilValue(appReadyState);
-	const { monitorTransaction } = TransactionNotifier.useContainer();
 
 	const { useGetBridgeDataQuery, useIsBridgeActiveQuery, useSynthetixTxn } = useSynthetixQueries();
 
@@ -34,17 +28,18 @@ const WithdrawTab = () => {
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 	const [amountToWithdraw, setAmountToWithdraw] = useState<string>('0');
 
-	console.log('txn data', [parseSafeWei(amountToWithdraw, 0).toBN()]);
-
-	const txn = useSynthetixTxn('SynthetixBridgeToBase', 'withdraw', [
-		parseSafeWei(amountToWithdraw, 0).toBN(),
-	]);
+	const txn = useSynthetixTxn(
+		'SynthetixBridgeToBase',
+		'withdraw',
+		[parseSafeWei(amountToWithdraw, 0).toBN()],
+		{ gasPrice: gasPrice.toBN() }
+	);
 
 	useEffect(() => {
-		if (txn.txnStatus == 'confirmed') {
+		if (txn.txnStatus === 'confirmed') {
 			depositsDataQuery.refetch();
 		}
-	}, [txn.txnStatus]);
+	}, [txn.txnStatus, depositsDataQuery]);
 
 	return (
 		<StyledTabContainer>

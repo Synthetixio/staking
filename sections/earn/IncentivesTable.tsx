@@ -20,7 +20,7 @@ import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
 import { formatPercent, formatFiatCurrency, formatCurrency } from 'utils/formatters/number';
 
-import { isWalletConnectedState, networkState } from 'store/wallet';
+import { isWalletConnectedState } from 'store/wallet';
 
 import {
 	FlexDivCol,

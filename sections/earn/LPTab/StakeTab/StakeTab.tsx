@@ -9,7 +9,7 @@ import PendingConfirmation from 'assets/svg/app/pending-confirmation.svg';
 import Success from 'assets/svg/app/success.svg';
 import GasSelector from 'components/GasSelector';
 import NumericInput from 'components/Input/NumericInput';
-import { formatCryptoCurrency, formatNumber } from 'utils/formatters/number';
+import { formatCryptoCurrency } from 'utils/formatters/number';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import { normalizedGasPrice } from 'utils/network';
@@ -158,7 +158,17 @@ const StakeTab: FC<StakeTabProps> = ({ stakedAsset, icon, type, isStake, userBal
 			}
 		};
 		getGasLimitEstimate();
-	}, [amount, isStake, stakedAsset, signer, isAppReady, userBalance, staked]);
+	}, [
+		amount,
+		isStake,
+		stakedAsset,
+		signer,
+		isAppReady,
+		userBalance,
+		staked,
+		parsedAmount,
+		synthetixjs,
+	]);
 
 	const handleStake = useCallback(() => {
 		async function stake() {
@@ -211,8 +221,8 @@ const StakeTab: FC<StakeTabProps> = ({ stakedAsset, icon, type, isStake, userBal
 		signer,
 		stakedAsset,
 		isAppReady,
-		userBalance,
-		staked,
+		parsedAmount,
+		synthetixjs,
 	]);
 
 	if (transactionState === Transaction.WAITING) {

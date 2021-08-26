@@ -186,7 +186,7 @@ const LPTab: FC<LPTabProps> = ({
 			}
 		}
 		claim();
-	}, [stakedAsset, signer, claimGasPrice, monitorTransaction, isAppReady]);
+	}, [stakedAsset, signer, claimGasPrice, monitorTransaction, isAppReady, synthetixjs]);
 
 	const translationKey = useMemo(() => {
 		if (stakedAsset === Synths.iETH) {

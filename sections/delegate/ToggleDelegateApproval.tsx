@@ -57,7 +57,7 @@ const ToggleDelegateApproval: FC<ToggleDelegateApprovalProps> = ({
 				: DELEGATE_APPROVE_CONTRACT_METHODS;
 			return [DelegateApprovals, meths.get(action), [account.address, gas]];
 		},
-		[isAppReady, account.address, action, checked]
+		[isAppReady, account.address, action, checked, synthetixjs]
 	);
 
 	const onChange = async () => {

@@ -9,7 +9,7 @@ import Connector from 'containers/Connector';
 import Currency from 'components/Currency';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import { formatCurrency, formatFiatCurrency, formatNumber } from 'utils/formatters/number';
+import { formatCurrency, formatFiatCurrency } from 'utils/formatters/number';
 import { CryptoCurrency, CurrencyKey } from 'constants/currency';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { ESTIMATE_VALUE } from 'constants/placeholder';
@@ -29,7 +29,6 @@ import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import { getContract } from '../StakeTab/StakeTab';
 import { StyledButton } from '../../common';
 import { CurrencyIconType } from 'components/Currency/CurrencyIcon/CurrencyIcon';
-import { networkState } from 'store/wallet';
 import Wei, { wei } from '@synthetixio/wei';
 
 type RewardsBoxProps = {
@@ -67,7 +66,6 @@ const RewardsBox: FC<RewardsBoxProps> = ({
 }) => {
 	const { t } = useTranslation();
 	const { synthetixjs, signer } = Connector.useContainer();
-	const networkId = useRecoilValue(networkState)!.id;
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
 	const [gasLimitEstimate, setGasLimitEstimate] = useState<GasLimitEstimate>(null);
 	const isAppReady = useRecoilValue(appReadyState);
@@ -87,7 +85,7 @@ const RewardsBox: FC<RewardsBoxProps> = ({
 			}
 		};
 		getGasLimitEstimate();
-	}, [stakedAsset, signer, setClaimError, isAppReady]);
+	}, [stakedAsset, signer, setClaimError, isAppReady, synthetixjs]);
 
 	const isDualRewards = secondTokenReward !== undefined;
 

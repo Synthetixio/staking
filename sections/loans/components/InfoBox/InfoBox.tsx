@@ -95,7 +95,7 @@ const InfoBox: React.FC = () => {
 		return () => {
 			unsubs.forEach((unsub) => unsub());
 		};
-	}, [provider]);
+	}, [provider, synthetixjs]);
 
 	return (
 		<Root>

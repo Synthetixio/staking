@@ -45,7 +45,7 @@ const useHistoricalDebtData = (walletAddress: string | null) => {
 			// values of every mint and burns
 			const historicalIssuanceAggregation: Wei[] = [];
 			claimHistory.forEach((event, i) => {
-				if (event.type == StakingTransactionType.FeesClaimed) {
+				if (event.type === StakingTransactionType.FeesClaimed) {
 					return; // skip
 				}
 

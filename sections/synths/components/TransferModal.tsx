@@ -1,4 +1,4 @@
-import { FC, useState, useEffect, useCallback } from 'react';
+import { FC, useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useTranslation, Trans } from 'react-i18next';
 
@@ -57,12 +57,13 @@ const TransferModal: FC<TransferModalProps> = ({
 	const txn = useContractTxn(
 		contract,
 		isSynth(currentAsset?.currencyKey) ? 'transferAndSettle' : 'transfer',
-		[wei(amount).toBN()]
+		[wei(amount).toBN()],
+		{ gasPrice: gasPrice.toBN() }
 	);
 
 	useEffect(() => {
-		if (txn.txnStatus == 'confirmed') onTransferConfirmation(txn.hash!);
-	}, [txn.txnStatus]);
+		if (txn.txnStatus === 'confirmed') onTransferConfirmation(txn.hash!);
+	}, [txn.txnStatus, txn.hash, onTransferConfirmation]);
 
 	let error: string | null = null;
 	if (!ethers.utils.isAddress(walletAddress)) error = t('synths.transfer.error.invalid-address');
