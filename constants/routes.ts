@@ -65,6 +65,10 @@ export const ROUTES = {
 	Delegate: {
 		Home: '/delegate',
 	},
+	MergeAccounts: {
+		Nominate: '/merge-accounts/nominate',
+		Merge: '/merge-accounts/merge',
+	},
 };
 
 export default ROUTES;

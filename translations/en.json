@@ -1141,7 +1141,8 @@
 		},
 		"delegate": "Delegate",
 		"switch-to-l2": "Switch to L2",
-		"settings": "Settings"
+		"settings": "Settings",
+		"merge-accounts": "Merge"
 	},
 	"user-menu": {
 		"layer-2": {
@@ -1329,6 +1330,24 @@
 		},
 		"tx-confirmation-title": "Updating approval"
 	},
+	"merge-accounts": {
+		"page-title": "Merge Accounts | Synthetix Staking",
+		"tabs": {
+			"nominate": {
+				"title": "Nominate",
+				"input-placeholder": "Destination address e.g. 0x3b18a4..."
+			},
+			"merge": {
+				"title": "Merge",
+				"input-placeholder": "Source address e.g. 0x3b18a4..."
+			}
+		},
+		"info": {
+			"title": "Consolidate accounts",
+			"subtitle": "Merge accounts including their vesting entries.",
+			"learn-more": "Learn more."
+		}
+	},
 	"balance": {
 		"input-label": "Balance:",
 		"max": "Max"
@@ -1358,7 +1377,9 @@
 		"loan/withdraw": "withdraw",
 		"loan/repay": "repay",
 		"loan/draw": "draw",
-		"loan/close": "close"
+		"loan/close": "close",
+		"merge-accounts": "merge-accounts",
+		"merge-accounts/nominate": "nominate",
+		"merge-accounts/merge": "merge"
 	}
 }
-

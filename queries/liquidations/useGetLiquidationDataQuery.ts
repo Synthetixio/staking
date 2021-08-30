@@ -42,7 +42,7 @@ const useGetLiquidationDataQuery = (options?: QueryConfig<LiquidationData>) => {
 			};
 		},
 		{
-			enabled: isAppReady && isWalletConnected && !isL2,
+			enabled: isAppReady && isWalletConnected && walletAddress && !isL2,
 			...options,
 		}
 	);
