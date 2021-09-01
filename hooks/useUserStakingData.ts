@@ -20,6 +20,7 @@ export const useUserStakingData = () => {
 	const isL2 = useRecoilValue(isL2State);
 	const history = useFeeClaimHistoryQuery();
 	const currentFeePeriod = useGetFeePoolDataQuery('0');
+	const sampleFeePeriod = useGetFeePoolDataQuery('1');
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const totalIssuedSynthsExclEth = useTotalIssuedSynthsExcludingEtherQuery(Synths.sUSD);
 	const previousFeePeriod = useGetFeePoolDataQuery('1');
@@ -66,7 +67,7 @@ export const useUserStakingData = () => {
 		SNXRate != null &&
 		sUSDRate != null &&
 		previousFeePeriod.data != null &&
-		currentFeePeriod.data != null &&
+		sampleFeePeriod.data != null &&
 		useSNXLockedValue.data != null &&
 		debtData.data != null
 	) {
@@ -77,8 +78,8 @@ export const useUserStakingData = () => {
 					.dividedBy(debtData.data.totalSupply)
 					.toNumber()
 			: sUSDRate
-					.multipliedBy(currentFeePeriod.data.feesToDistribute)
-					.plus(SNXRate.multipliedBy(currentFeePeriod.data.rewardsToDistribute))
+					.multipliedBy(sampleFeePeriod.data.feesToDistribute)
+					.plus(SNXRate.multipliedBy(sampleFeePeriod.data.rewardsToDistribute))
 					.multipliedBy(WEEKS_IN_YEAR)
 					.dividedBy(useSNXLockedValue.data)
 					.toNumber();
@@ -100,7 +101,7 @@ export const useUserStakingData = () => {
 					: 0
 			),
 		};
-	}, [currentFeePeriod]);
+	}, [sampleFeePeriod]);
 
 	useEffect(() => {
 		const checkClaimedStatus = () =>
