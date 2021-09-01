@@ -19,12 +19,6 @@ import GasSelector from 'components/GasSelector';
 import { isWalletConnectedState, walletAddressState } from 'store/wallet';
 import { appReadyState } from 'store/app';
 import {
-	Action,
-	APPROVE_CONTRACT_METHODS,
-	GET_IS_APPROVED_CONTRACT_METHODS,
-} from 'queries/delegate/types';
-import useGetDelegateWallets from 'queries/delegate/useGetDelegateWallets';
-import {
 	FormContainer,
 	InputsContainer,
 	SettingsContainer,
@@ -39,93 +33,60 @@ import {
 } from 'utils/network';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 
-const MergeTab: FC = () => {
+const NominateTab: FC = () => {
 	const { t } = useTranslation();
 	const { connectWallet } = Connector.useContainer();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const isAppReady = useRecoilValue(appReadyState);
-	const address = useRecoilValue(walletAddressState);
-	const delegateWalletsQuery = useGetDelegateWallets();
+	const destinationAccountAddress = useRecoilValue(walletAddressState);
 	const { monitorTransaction } = TransactionNotifier.useContainer();
-
-	const [action, setAction] = useState<string>(Action.APPROVE_ALL);
 
 	const [gasPrice, setGasPrice] = useState<number>(0);
 	const [gasLimit, setGasLimitEstimate] = useState<number | null>(null);
-	const [delegateAddress, setDelegateAddress] = useState<string>('');
 
 	const [error, setError] = useState<string | null>(null);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 	const [buttonState, setButtonState] = useState<string | null>(null);
-	const [alreadyDelegated, setAlreadyDelegated] = useState<boolean>(false);
 
-	const properDelegateAddress = useMemo(
-		() => (delegateAddress && ethers.utils.isAddress(delegateAddress) ? delegateAddress : null),
-		[delegateAddress]
-	);
-	const delegateAddressIsSelf = useMemo(
+	const [sourceAccountAddress, setSourceAccountAddress] = useState('');
+	const [nominatedAccountAddress, setNominatedAccountAddress] = useState('');
+	const [entryIDs, setEntryIDs] = useState([]);
+
+	const properSourceAccountAddress = useMemo(
 		() =>
-			properDelegateAddress && address
-				? properDelegateAddress === ethers.utils.getAddress(address)
+			sourceAccountAddress && ethers.utils.isAddress(sourceAccountAddress)
+				? sourceAccountAddress
 				: null,
-		[properDelegateAddress, address]
+		[sourceAccountAddress]
 	);
-	const shortenedDelegateAddress = useMemo(() => truncateAddress(delegateAddress, 8, 6), [
-		delegateAddress,
+	const shortenedSourceAccountAddress = useMemo(() => truncateAddress(sourceAccountAddress, 8, 6), [
+		sourceAccountAddress,
 	]);
 
-	const getApproveTxData = useCallback(
+	const sourceAccountAddressInputError = useMemo(() => {
+		return sourceAccountAddress && !properSourceAccountAddress
+			? 'invalid-dest-address'
+			: ethers.constants.AddressZero === properSourceAccountAddress
+			? 'source-is-a-burn-address'
+			: properSourceAccountAddress &&
+			  destinationAccountAddress &&
+			  properSourceAccountAddress === ethers.utils.getAddress(destinationAccountAddress)
+			? 'source-account-is-self'
+			: null;
+	}, [properSourceAccountAddress, destinationAccountAddress]);
+
+	const getMergeTxData = useCallback(
 		(gas: Record<string, number>) => {
-			if (!(properDelegateAddress && !delegateAddressIsSelf && isAppReady)) return null;
+			if (!(properSourceAccountAddress && !sourceAccountAddressInputError && isAppReady))
+				return null;
+
 			const {
-				contracts: { DelegateApprovals },
+				contracts: { RewardEscrowV2 },
 			} = synthetix.js!;
-			return [
-				DelegateApprovals,
-				APPROVE_CONTRACT_METHODS.get(action),
-				[properDelegateAddress, gas],
-			];
+			return [RewardEscrowV2, 'mergeAccount', [properSourceAccountAddress, entryIDs, gas]];
 		},
-		[isAppReady, properDelegateAddress, action, delegateAddressIsSelf]
+		[isAppReady, properSourceAccountAddress, entryIDs, sourceAccountAddressInputError]
 	);
-
-	const onEnterAddress = (e: any) => setDelegateAddress((e.target.value ?? '').trim());
-	const onButtonClick = async () => {
-		if (!isWalletConnected) {
-			return connectWallet();
-		}
-		delegate();
-	};
-
-	const delegate = async () => {
-		setButtonState('delegating');
-		setTxModalOpen(true);
-		try {
-			const gas: Record<string, number> = {
-				gasPrice: getNormalizedGasPrice(gasPrice),
-				gasLimit: gasLimit!,
-			};
-			await tx(() => getApproveTxData(gas), {
-				showErrorNotification: (e: string) => setError(e),
-				showProgressNotification: (hash: string) =>
-					monitorTransaction({
-						txHash: hash,
-						onTxConfirmed: () => {
-							setTimeout(() => {
-								delegateWalletsQuery.refetch();
-							}, 10 * 1000);
-						},
-					}),
-				showSuccessNotification: (hash: string) => {},
-			});
-			setDelegateAddress('');
-			setAction(Action.APPROVE_ALL);
-		} catch {
-		} finally {
-			setButtonState(null);
-			setTxModalOpen(false);
-		}
-	};
 
 	// gas
 	useEffect(() => {
@@ -133,7 +94,7 @@ const MergeTab: FC = () => {
 		(async () => {
 			try {
 				setError(null);
-				const data: any[] | null = getApproveTxData({});
+				const data: any[] | null = getMergeTxData({});
 				if (!data) return;
 				const [contract, method, args] = data;
 				const gasEstimate = await getGasEstimateForTransaction(args, contract.estimateGas[method]);
@@ -146,30 +107,134 @@ const MergeTab: FC = () => {
 		return () => {
 			isMounted = false;
 		};
-	}, [getApproveTxData]);
+	}, [getMergeTxData]);
 
-	// already delegated
+	// load any nominated account address
 	useEffect(() => {
-		const getIsAlreadyDelegated = async () => {
-			if (!isAppReady) return;
-			const {
-				contracts: { DelegateApprovals },
-			} = synthetix.js!;
-			if (!(properDelegateAddress && action)) return setAlreadyDelegated(false);
-			const alreadyDelegated = await DelegateApprovals[
-				GET_IS_APPROVED_CONTRACT_METHODS.get(action)!
-			](address, properDelegateAddress);
-			setAlreadyDelegated(alreadyDelegated);
+		if (!isAppReady) return;
+		const {
+			contracts: { RewardEscrowV2 },
+		} = synthetix.js!;
+		if (!properSourceAccountAddress) return;
+
+		let isMounted = true;
+		const unsubs = [
+			() => {
+				isMounted = false;
+			},
+		];
+
+		const load = async () => {
+			const nominatedAccountAddress = await RewardEscrowV2.nominatedReceiver(
+				properSourceAccountAddress
+			);
+			if (isMounted) {
+				if (ethers.constants.AddressZero !== nominatedAccountAddress) {
+					setSourceAccountAddress(nominatedAccountAddress);
+					setNominatedAccountAddress(nominatedAccountAddress);
+				}
+				setEntryIDs(entryIDs);
+			}
 		};
-		getIsAlreadyDelegated();
-	}, [isAppReady, properDelegateAddress, address, action]);
+
+		const subscribe = () => {
+			const contractEvent = RewardEscrowV2.filters.NominateAccountToMerge(
+				properSourceAccountAddress
+			);
+			const onContractEvent = async (src: string, dest: string) => {
+				if (src === destinationAccountAddress) {
+					setNominatedAccountAddress(dest);
+				}
+			};
+			RewardEscrowV2.on(contractEvent, onContractEvent);
+			unsubs.push(() => {
+				RewardEscrowV2.off(contractEvent, onContractEvent);
+			});
+		};
+
+		load();
+		subscribe();
+		return () => {
+			unsubs.forEach((unsub) => unsub());
+		};
+	}, [destinationAccountAddress, properSourceAccountAddress]);
+
+	// load nominated account address
+	useEffect(() => {
+		if (!isAppReady) return;
+		const {
+			contracts: { RewardEscrowV2 },
+		} = synthetix.js!;
+		if (!properSourceAccountAddress) return;
+
+		let isMounted = true;
+		const unsubs = [
+			() => {
+				isMounted = false;
+			},
+		];
+
+		const load = async () => {
+			const numVestingEntries = await RewardEscrowV2.numVestingEntries(properSourceAccountAddress);
+			const entryIDs = numVestingEntries.isZero()
+				? []
+				: await RewardEscrowV2.getAccountVestingEntryIDs(
+						properSourceAccountAddress,
+						0,
+						numVestingEntries
+				  );
+
+			if (isMounted) {
+				setEntryIDs(entryIDs);
+			}
+		};
+
+		load();
+
+		return () => {
+			unsubs.forEach((unsub) => unsub());
+		};
+	}, [properSourceAccountAddress]);
+
+	// funcs
+
+	const onEnterAddress = (e: any) => setSourceAccountAddress((e.target.value ?? '').trim());
+
+	const connectOrMerge = async () => {
+		if (!isWalletConnected) {
+			return connectWallet();
+		}
+
+		setButtonState('merging');
+		setTxModalOpen(true);
+		try {
+			const gas: Record<string, number> = {
+				gasPrice: getNormalizedGasPrice(gasPrice),
+				gasLimit: gasLimit!,
+			};
+			await tx(() => getMergeTxData(gas), {
+				showErrorNotification: (e: string) => setError(e),
+				showProgressNotification: (hash: string) =>
+					monitorTransaction({
+						txHash: hash,
+						onTxConfirmed: () => {},
+					}),
+				showSuccessNotification: (hash: string) => {},
+			});
+			setSourceAccountAddress('');
+		} catch {
+		} finally {
+			setButtonState(null);
+			setTxModalOpen(false);
+		}
+	};
 
 	return (
 		<div data-testid="form">
 			<FormContainer>
 				<InputsContainer>
 					<AmountInput
-						value={delegateAddress}
+						value={sourceAccountAddress}
 						placeholder={t('merge-accounts.tabs.merge.input-placeholder')}
 						onChange={onEnterAddress}
 						disabled={false}
@@ -188,33 +253,33 @@ const MergeTab: FC = () => {
 			</FormContainer>
 
 			<FormButton
-				onClick={onButtonClick}
+				onClick={connectOrMerge}
 				variant="primary"
 				size="lg"
 				data-testid="form-button"
 				disabled={
 					isWalletConnected &&
-					(!properDelegateAddress || !!buttonState || delegateAddressIsSelf || alreadyDelegated)
+					(!properSourceAccountAddress || !!buttonState || sourceAccountAddressInputError)
 				}
 			>
 				{!isWalletConnected ? (
 					t('common.wallet.connect-wallet')
 				) : (
 					<Trans
-						i18nKey={`delegate.form.button-labels.${
+						i18nKey={`merge-accounts.form.button-labels.${
 							buttonState ||
-							(!delegateAddress
+							(!sourceAccountAddress
 								? 'enter-address'
-								: delegateAddressIsSelf
-								? 'cannot-delegate-to-self'
-								: alreadyDelegated
-								? 'already-delegated'
-								: 'delegate')
+								: sourceAccountAddressInputError
+								? sourceAccountAddressInputError
+								: 'merge')
 						}`}
 						components={[<NoTextTransform />]}
 					/>
 				)}
 			</FormButton>
+
+			{!sourceAccountAddressInputError ? null : <div>{sourceAccountAddressInputError}</div>}
 
 			{!error ? null : <ErrorMessage>{error}</ErrorMessage>}
 
@@ -222,11 +287,11 @@ const MergeTab: FC = () => {
 				<TxConfirmationModal
 					onDismiss={() => setTxModalOpen(false)}
 					txError={null}
-					attemptRetry={onButtonClick}
+					attemptRetry={connectOrMerge}
 					content={
 						<TxModalItem>
 							<TxModalItemTitle>{t('delegate.form.tx-confirmation-title')}</TxModalItemTitle>
-							<TxModalItemText>{shortenedDelegateAddress}</TxModalItemText>
+							<TxModalItemText>{shortenedSourceAccountAddress}</TxModalItemText>
 						</TxModalItem>
 					}
 				/>
@@ -262,4 +327,4 @@ const FormButton = styled(Button)`
 	text-transform: uppercase;
 `;
 
-export default MergeTab;
+export default NominateTab;

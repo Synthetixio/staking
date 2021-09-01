@@ -46,8 +46,8 @@ export async function tx(makeTx: Function, options?: TxOptions): Promise<void> {
 		await wait();
 		options?.showSuccessNotification?.(hash);
 	} catch (e) {
-		console.log(e.message);
-		options?.showErrorNotification?.(e.message);
+		console.log(e);
+		options?.showErrorNotification?.(e);
 		throw e;
 	}
 }

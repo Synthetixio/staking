@@ -91,7 +91,7 @@ const NominateTab: FC = () => {
 		return destinationAccountAddress && !properDestinationAccountAddress
 			? 'invalid-dest-address'
 			: ethers.constants.AddressZero === properDestinationAccountAddress
-			? 'dest-a-burn-address'
+			? 'dest-is-a-burn-address'
 			: properDestinationAccountAddress &&
 			  sourceAccountAddress &&
 			  properDestinationAccountAddress === ethers.utils.getAddress(sourceAccountAddress)
@@ -167,7 +167,7 @@ const NominateTab: FC = () => {
 			if (!sourceAccountAddress) return;
 			const sUSDDebtBalance = await Issuer.debtBalanceOf(sourceAccountAddress, sUSDCurrencyKey);
 			// if (isMounted) setSourceAccountSUSDDebtBalance(sUSDDebtBalance);
-			if (isMounted) setSourceAccountSUSDDebtBalance(ethers.utils.parseEther('1219'));
+			if (isMounted) setSourceAccountSUSDDebtBalance(ethers.BigNumber.from(1219));
 		};
 
 		// const subscribe = () => {
