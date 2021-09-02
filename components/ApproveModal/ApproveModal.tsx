@@ -25,7 +25,7 @@ import {
 	ModalItemTitle,
 	ModalItemText,
 } from 'styles/common';
-import { normalizedGasPrice } from 'utils/network';
+import { normalizedGasPrice, normalizeGasLimit } from 'utils/network';
 
 import { yearnSNXVault } from 'contracts';
 import { SynthetixJS } from '@synthetixio/contracts-interface';
@@ -112,7 +112,7 @@ const ApproveModal: FC<ApproveModalProps> = ({
 					allowance,
 					{
 						gasPrice: normalizedGasPrice(gasPrice.toNumber()),
-						gasLimit: gasLimitEstimate.toBN(),
+						gasLimit: normalizeGasLimit(gasLimitEstimate.toNumber()),
 					}
 				);
 				if (transaction) {

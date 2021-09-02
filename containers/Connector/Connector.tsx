@@ -73,8 +73,10 @@ const useConnector = () => {
 
 			const snxjs = synthetix({ provider, networkId, useOvm });
 
-			// @ts-ignore
-			setNetwork(snxjs.network, useOvm);
+			const newNetwork = snxjs.network;
+			newNetwork.name = chainIdToNetwork[newNetwork.id] as NetworkName;
+
+			setNetwork(newNetwork);
 			setSynthetixjs(snxjs);
 			setProvider(provider);
 			setAppReady(true);
@@ -132,7 +134,7 @@ const useConnector = () => {
 						setSynthetixjs(snxjs);
 						setNetwork({
 							id: networkId,
-							name: network.name as NetworkName,
+							name: chainIdToNetwork[networkId] as NetworkName,
 							useOvm,
 						});
 						setSelectedWallet(wallet.name);

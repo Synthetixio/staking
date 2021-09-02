@@ -5,11 +5,12 @@ import { CryptoCurrency, Synths } from 'constants/currency';
 import { assetToSynth } from 'utils/currencies';
 
 import useSynthetixQueries from '@synthetixio/queries';
-import { NetworkId } from '@synthetixio/contracts-interface';
+import { Network, NetworkId } from '@synthetixio/contracts-interface';
 import Wei, { wei } from '@synthetixio/wei';
 import { renBTCToken, wBTCToken, wETHToken, snxToken } from 'contracts';
 import { useRecoilValue } from 'recoil';
 import { networkState } from 'store/wallet';
+import { ethers } from 'ethers';
 
 const { ETH, WETH, SNX, BTC, WBTC, RENBTC } = CryptoCurrency;
 
@@ -30,56 +31,64 @@ const useCryptoBalances = (walletAddress: string | null) => {
 
 	const networkId = useRecoilValue(networkState);
 
-	const balancesQuery = useTokensBalancesQuery(
-		[
-			{
-				symbol: 'ETH',
-				address: '',
-				decimals: 18,
-				logoURI: '',
-				name: 'Ethereum',
-				chainId: 1,
-				tags: [],
-			},
-			{
-				symbol: 'SNX',
-				address: snxToken.address,
-				decimals: 18,
-				logoURI: '',
-				name: 'Wrapped Bitcoin',
-				chainId: 1,
-				tags: [],
-			},
-			{
-				symbol: 'WBTC',
-				address: wBTCToken.address,
-				decimals: 18,
-				logoURI: '',
-				name: 'Wrapped Bitcoin',
-				chainId: 1,
-				tags: [],
-			},
-			{
-				symbol: 'WETH',
-				address: wETHToken.address,
-				decimals: 18,
-				logoURI: '',
-				name: 'Wrapped Ethereum',
-				chainId: 1,
-				tags: [],
-			},
-			{
-				symbol: 'renBTC',
-				address: renBTCToken.ADDRESSES[networkId?.name || NetworkId.Mainnet.toString()],
-				decimals: 18,
-				logoURI: '',
-				name: 'renBTC',
-				chainId: 1,
-				tags: [],
-			},
-		],
-		walletAddress
-	);
+	const tokenDefs = [
+		{
+			symbol: 'ETH',
+			address: ethers.constants.AddressZero,
+			decimals: 18,
+			logoURI: '',
+			name: 'Ethereum',
+			chainId: 1,
+			tags: [],
+		},
+		{
+			symbol: 'SNX',
+			address:
+				(snxToken.address as any)[networkId?.name?.valueOf() || 'mainnet'] ||
+				ethers.constants.AddressZero,
+			decimals: 18,
+			logoURI: '',
+			name: 'Wrapped Bitcoin',
+			chainId: 1,
+			tags: [],
+		},
+	];
+
+	if (networkId?.id === NetworkId.Mainnet) {
+		tokenDefs.push(
+			...[
+				{
+					symbol: 'WBTC',
+					address: wBTCToken.address,
+					decimals: 18,
+					logoURI: '',
+					name: 'Wrapped Bitcoin',
+					chainId: 1,
+					tags: [],
+				},
+				{
+					symbol: 'WETH',
+					address: wETHToken.address,
+					decimals: 18,
+					logoURI: '',
+					name: 'Wrapped Ethereum',
+					chainId: 1,
+					tags: [],
+				},
+				{
+					symbol: 'renBTC',
+					address: renBTCToken.ADDRESSES['mainnet'],
+					decimals: 18,
+					logoURI: '',
+					name: 'renBTC',
+					chainId: 1,
+					tags: [],
+				},
+			]
+		);
+	}
+
+	const balancesQuery = useTokensBalancesQuery(tokenDefs, walletAddress);
 
 	const exchangeRatesQuery = useExchangeRatesQuery();
 
@@ -90,6 +99,7 @@ const useCryptoBalances = (walletAddress: string | null) => {
 	const isLoaded = balancesQuery.isSuccess && exchangeRatesQuery.isSuccess;
 
 	const balancesData = balancesQuery.data!;
+
 	const ETHBalance = (balancesQuery.isSuccess && balancesData['ETH']?.balance) || wei(0);
 	const SNXBalance = (balancesQuery.isSuccess && balancesData['SNX']?.balance) || wei(0);
 	const wETHBalance = (balancesQuery.isSuccess && balancesData['WETH']?.balance) || wei(0);

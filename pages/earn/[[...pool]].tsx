@@ -14,7 +14,7 @@ import useUserStakingData from 'hooks/useUserStakingData';
 import { formatFiatCurrency, formatPercent } from 'utils/formatters/number';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import useSynthetixQueries from '@synthetixio/queries';
+import useSynthetixQueries, { StakingTransactionType } from '@synthetixio/queries';
 import { useRecoilValue } from 'recoil';
 import { walletAddressState } from 'store/wallet';
 import { wei } from '@synthetixio/wei';
@@ -50,11 +50,13 @@ const Earn: FC = () => {
 		let total = wei(0);
 
 		feeClaimHistory.forEach((claim) => {
+			if (claim.type != StakingTransactionType.FeesClaimed) return;
+
 			const usdAmount = claim.value;
 			const snxAmount = claim.rewards ?? wei(0);
 			const snxUsdValue = snxAmount.mul(SNXRate);
 
-			total = total.add(usdAmount.mul(snxUsdValue));
+			total = total.add(usdAmount).add(snxUsdValue);
 		});
 
 		return total;

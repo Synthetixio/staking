@@ -22,14 +22,14 @@ const MintTab: React.FC = () => {
 	const [mintType, onMintTypeChange] = useRecoilState(mintTypeState);
 	const [amountToMint, onMintChange] = useRecoilState(amountToMintState);
 
-	const [isMax, setIsMax] = useState<boolean>(false);
-
 	const { targetCRatio, SNXRate, unstakedCollateral } = useStakingCalculations();
 
 	const [gasPrice, setGasPrice] = useState<Wei>(wei(0));
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 
 	const { setTitle } = UIContainer.useContainer();
+
+	const isMax = mintType == MintActionType.MAX;
 
 	const amountToMintBN = Wei.min(wei(0), parseSafeWei(amountToMint, wei(0)));
 
@@ -52,10 +52,6 @@ const MintTab: React.FC = () => {
 		setTitle('staking', 'mint');
 	}, [setTitle]);
 
-	useEffect(() => {
-		return () => {};
-	}, []);
-
 	const returnPanel = useMemo(() => {
 		let onSubmit;
 		let inputValue = '0';
@@ -64,12 +60,10 @@ const MintTab: React.FC = () => {
 			case MintActionType.MAX:
 				inputValue = getMintAmount(targetCRatio, unstakedCollateral, SNXRate).toString();
 				onSubmit = () => txn.mutate();
-				setIsMax(true);
 				isLocked = true;
 				break;
 			case MintActionType.CUSTOM:
 				onSubmit = () => txn.mutate();
-				setIsMax(false);
 				inputValue = amountToMint;
 				isLocked = false;
 				break;
