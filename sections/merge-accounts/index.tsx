@@ -1,42 +1,28 @@
-import { FC } from 'react';
+import { FC, useMemo } from 'react';
+import { useRouter } from 'next/router';
 import { useRecoilValue } from 'recoil';
-import styled from 'styled-components';
 
 import { appReadyState } from 'store/app';
-import { FlexDivCol } from 'styles/common';
-import media from 'styles/media';
 
-import ActionBox from './components/ActionBox/ActionBox';
-import InfoBox from './components/InfoBox/InfoBox';
+import Landing from './landing';
+import Nominate from './nominate';
+import Merge from './merge';
 
 const Index: FC = () => {
 	const isAppReady = useRecoilValue(appReadyState);
+	const router = useRouter();
+
+	const activeTab = useMemo(
+		() =>
+			Array.isArray(router.query.action) && router.query.action.length
+				? router.query.action[0]
+				: null,
+		[router.query.action]
+	);
 
 	return !isAppReady ? null : (
-		<Container>
-			<Col>
-				<ActionBox />
-			</Col>
-			<Col>
-				<InfoBox />
-			</Col>
-		</Container>
+		<>{activeTab === 'nominate' ? <Nominate /> : activeTab === 'merge' ? <Merge /> : <Landing />}</>
 	);
 };
-
-const Container = styled.div`
-	${media.greaterThan('mdUp')`
-		display: grid;
-		grid-template-columns: 2fr 1fr;
-		grid-gap: 1rem;
-	`}
-
-	${media.lessThan('mdUp')`
-		display: flex;
-		flex-direction: column;
-	`}
-`;
-
-const Col = styled(FlexDivCol)``;
 
 export default Index;

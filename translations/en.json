@@ -1332,20 +1332,25 @@
 	},
 	"merge-accounts": {
 		"page-title": "Merge Accounts | Synthetix Staking",
-		"tabs": {
-			"nominate": {
-				"title": "Nominate",
-				"input-placeholder": "Destination address e.g. 0x3b18a4..."
-			},
-			"merge": {
-				"title": "Merge",
-				"input-placeholder": "Source address e.g. 0x3b18a4..."
+		"landing": {
+			"steps": {
+				"1": {
+					"title": "BURN DEBT & NOMINATE ACCOUNT",
+					"description": "In order to merge accounts, first you need Burn any outstanding debt from the address you want to merge from in order to transfer the vested SNX."
+				},
+				"2": {
+					"title": "MERGE FROM DESTINATION ACCOUNT",
+					"description": "Only when you have completed step 1 and logged into the destination account should you proceed with this step."
+				}
 			}
 		},
-		"info": {
-			"title": "Consolidate accounts",
-			"subtitle": "Merge accounts including their vesting entries.",
-			"learn-more": "Learn more."
+		"nominate": {
+			"title": "Nominate",
+			"input-placeholder": "Destination address e.g. 0x3b18a4..."
+		},
+		"merge": {
+			"title": "Merge",
+			"input-placeholder": "Source address e.g. 0x3b18a4..."
 		}
 	},
 	"balance": {

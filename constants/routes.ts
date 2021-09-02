@@ -66,6 +66,7 @@ export const ROUTES = {
 		Home: '/delegate',
 	},
 	MergeAccounts: {
+		Home: '/merge-accounts',
 		Nominate: '/merge-accounts/nominate',
 		Merge: '/merge-accounts/merge',
 	},

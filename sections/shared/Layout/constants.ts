@@ -70,7 +70,7 @@ export const MENU_LINKS: MenuLinks = [
 			},
 			{
 				i18nLabel: 'sidenav.merge-accounts',
-				subLink: ROUTES.MergeAccounts.Nominate,
+				subLink: ROUTES.MergeAccounts.Home,
 			},
 		],
 	},

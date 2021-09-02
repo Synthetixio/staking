@@ -1,8 +1,7 @@
-import { useEffect, FC } from 'react';
+import { FC } from 'react';
 import Head from 'next/head';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import { useRouter } from 'next/router';
 
 import StatBox from 'components/StatBox';
 import { LineSpacer } from 'styles/common';
@@ -14,23 +13,14 @@ import { formatFiatCurrency, formatPercent, toBigNumber } from 'utils/formatters
 import StakedValue from 'sections/shared/modals/StakedValueModal/StakedValueBox';
 import ActiveDebt from 'sections/shared/modals/DebtValueModal/DebtValueBox';
 
-import Main from 'sections/merge-accounts/index';
+import Main from 'sections/merge-accounts';
 
-type MergeAccountsPageProps = {};
-
-const MergeAccountsPage: FC<MergeAccountsPageProps> = () => {
+const MergeAccountsPage: FC = () => {
 	const { t } = useTranslation();
-	const router = useRouter();
 
 	const { stakedCollateralValue, debtBalance } = useStakingCalculations();
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
 	const { stakingAPR } = useUserStakingData();
-
-	useEffect(() => {
-		if (router.asPath === '/merge-accounts') {
-			router.push('/merge-accounts/nominate');
-		}
-	}, [router, router.asPath, router.push]);
 
 	return (
 		<>
