@@ -1,116 +1,102 @@
 import { FC } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslation, Trans } from 'react-i18next';
+import { CellProps } from 'react-table';
 import styled from 'styled-components';
+import { useRouter } from 'next/router';
 
-import media from 'styles/media';
+import { EXTERNAL_LINKS } from 'constants/links';
+import useEscrowDataQuery, { EscrowData } from 'queries/escrow/useEscrowDataQuery';
+import { CryptoCurrency } from 'constants/currency';
+import { formatShortDate } from 'utils/formatters/date';
+import { formatCurrency } from 'utils/formatters/number';
 
-const InfoBox: FC = () => {
+import {
+	Container,
+	ContainerHeader,
+	ContainerBody,
+	Data,
+	Header,
+	StyledTable,
+	Subtitle,
+	Title,
+} from 'sections/escrow/components/common';
+import Button from 'components/Button';
+import { FlexDivCentered, FlexDivColCentered, ExternalLink } from 'styles/common';
+
+const NominateInfoBox: FC = () => {
 	const { t } = useTranslation();
-
+	const escrowDataQuery = useEscrowDataQuery();
+	const schedule = escrowDataQuery?.data?.schedule;
+	const totalBalancePendingMigration = escrowDataQuery?.data?.totalBalancePendingMigration ?? 0;
+	const router = useRouter();
 	return (
-		<Root>
-			<Container>
-				<ContainerHeader>
-					<Title>{t('merge-accounts.info.title')}</Title>
-				</ContainerHeader>
-				<StatsGrid>
-					<StatsHeader>
-						<div>{t('merge-accounts.info.description')}</div>
-					</StatsHeader>
-				</StatsGrid>
-			</Container>
-		</Root>
+		<Container>
+			<ContainerHeader>
+				<Title>
+					{totalBalancePendingMigration > 0
+						? t('escrow.staking.info.title-migrate-l1')
+						: t('escrow.staking.info.title')}
+				</Title>
+				<Subtitle>
+					{totalBalancePendingMigration > 0 ? (
+						<Trans
+							i18nKey="escrow.staking.info.subtitle-migrate-l1"
+							components={[<StyledLink href={EXTERNAL_LINKS.Synthetix.SIP60} />]}
+						/>
+					) : (
+						t('escrow.staking.info.subtitle')
+					)}
+				</Subtitle>
+			</ContainerHeader>
+			<ContainerBody>
+				<StyledTable
+					palette="primary"
+					columns={[
+						{
+							Header: <Header>{t('escrow.table.vesting-date')}</Header>,
+							accessor: 'date',
+							Cell: (cellProps: CellProps<EscrowData['schedule'], Date>) => (
+								<Data>{formatShortDate(cellProps.value)}</Data>
+							),
+							sortable: false,
+						},
+						{
+							Header: (
+								<Header style={{ textAlign: 'right' }}>{t('escrow.table.snx-amount')}</Header>
+							),
+							accessor: 'quantity',
+							Cell: (cellProps: CellProps<EscrowData['schedule'], number>) => (
+								<Data style={{ textAlign: 'right' }}>
+									{formatCurrency(CryptoCurrency.SNX, cellProps.value)}
+								</Data>
+							),
+							sortable: false,
+						},
+					]}
+					data={schedule ?? []}
+					isLoading={escrowDataQuery.isLoading}
+					showPagination={true}
+				/>
+			</ContainerBody>
+		</Container>
 	);
 };
 
-export default InfoBox;
-
-//
-
-export const Root = styled.div`
-	& > div {
-		${media.greaterThan('mdUp')`
-			margin: 0 0 16px;
-		`}
-
-		${media.lessThan('mdUp')`
-			margin: 16px 0;
-		`}
-	}
-
-	a,
-	a:visited {
-		color: ${(props) => props.theme.colors.blue};
-		text-decoration: none;
-	}
+const CallToActionContainer = styled(FlexDivCentered)`
+	justify-content: center;
+	padding: 16px 0 32px 0;
 `;
 
-export const Container = styled.div`
-	background: ${(props) => props.theme.colors.navy};
+const CallToActionInfo = styled(Subtitle)`
+	margin-top: 0;
 `;
 
-export const ContainerHeader = styled.div`
-	padding: 16px;
+const StyledButton = styled(Button)`
+	width: 100%;
 `;
 
-export const Title = styled.div`
-	font-family: ${(props) => props.theme.fonts.extended};
-	color: ${(props) => props.theme.colors.white};
-	font-size: 14px;
-`;
-export const Subtitle = styled.div`
-	font-family: ${(props) => props.theme.fonts.regular};
-	color: ${(props) => props.theme.colors.gray};
-	font-size: 14px;
-	margin-top: 12px;
+export const StyledLink = styled(ExternalLink)`
+	color: ${(props) => props.theme.colors.blue};
 `;
 
-export const StatsGrid = styled.div`
-	display: grid;
-	grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
-	grid-template-columns: 2fr 1fr;
-	font-size: 14px;
-	padding: 0 0 16px 0;
-`;
-
-export const StatsRow = styled.div``;
-
-export const StatsHeader = styled.div`
-	color: ${(props) => props.theme.colors.gray};
-	border-top: 1px solid ${(props) => props.theme.colors.grayBlue};
-	border-bottom: 1px solid ${(props) => props.theme.colors.grayBlue};
-	font-family: ${(props) => props.theme.fonts.interBold};
-
-	&:nth-child(even) {
-		text-align: right;
-	}
-
-	& > div {
-		padding: 8px 16px;
-		white-space: nowrap;
-		display: flex;
-		align-items: center;
-	}
-`;
-
-export const StatsCol = styled.div`
-	&:nth-child(odd) {
-		margin-left: 16px;
-	}
-
-	&:nth-child(even) {
-		margin-right: 16px;
-
-		& div {
-			justify-content: flex-end;
-		}
-	}
-
-	& > div {
-		padding: 8px 0;
-		height: 100%;
-		display: flex;
-		align-items: center;
-		border-bottom: 1px solid ${(props) => props.theme.colors.grayBlue};
-	}
-`;
+export default NominateInfoBox;

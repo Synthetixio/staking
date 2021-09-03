@@ -1,41 +1,37 @@
-import { FC } from 'react';
+import { FC, useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import { appReadyState } from 'store/app';
-import { FlexDivCol } from 'styles/common';
 import media from 'styles/media';
+import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 
+import { Cols as BaseCols, Col } from 'sections/merge-accounts/common';
 import GridBox from './GridBox';
 
 const Index: FC = () => {
 	const isAppReady = useRecoilValue(appReadyState);
 
+	const { debtBalance } = useStakingCalculations();
+
+	const hasDebt = useMemo(() => !debtBalance.isZero(), [debtBalance]);
+
 	return !isAppReady ? null : (
-		<Container>
+		<Cols>
 			<Col>
-				<GridBox step={1} name={'nominate'} />
+				<GridBox step={1} name={hasDebt ? 'burn' : 'nominate'} />
 			</Col>
 			<Col>
 				<GridBox step={2} name={'merge'} />
 			</Col>
-		</Container>
+		</Cols>
 	);
 };
 
-const Container = styled.div`
+const Cols = styled(BaseCols)`
 	${media.greaterThan('mdUp')`
-		display: grid;
 		grid-template-columns: 1fr 1fr;
-		grid-gap: 24px;
-	`}
-
-	${media.lessThan('mdUp')`
-		display: flex;
-		flex-direction: column;
 	`}
 `;
-
-const Col = styled(FlexDivCol)``;
 
 export default Index;

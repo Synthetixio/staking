@@ -1344,13 +1344,40 @@
 				}
 			}
 		},
+		"burn": {
+			"title": "BURN DEBT & NOMINATE ACCOUNT",
+			"input-placeholder": "Destination address e.g. 0x3b18a4...",
+			"button-labels": {
+				"burn": "Burn <0>sUSD</0>"
+			},
+			"info": {
+				"title": "Burn sUSD Debt",
+				"description": "Connect to the dApp with the wallet you wish to merge from, first make sure that you have burned all your sUSD debt. <0>Learn more.</0>"
+			}
+		},
 		"nominate": {
-			"title": "Nominate",
-			"input-placeholder": "Destination address e.g. 0x3b18a4..."
+			"title": "MERGE TO DESTINATION ADDRESS",
+			"input-placeholder": "e.g. 0x3b18a4...",
+			"button-labels": {
+				"enter-address": "Enter address",
+				"merge": "MERGE VESTED SNX"
+			},
+			"info": {
+				"title": "Burn sUSD Debt",
+				"description": "Connect to the dApp with the wallet you wish to merge from, first make sure that you have burned all your sUSD debt. <0>Learn more.</0>"
+			}
 		},
 		"merge": {
-			"title": "Merge",
-			"input-placeholder": "Source address e.g. 0x3b18a4..."
+			"title": "ENTER SOURCE ACCOUT",
+			"input-placeholder": "e.g. 0x3b18a4...",
+			"button-labels": {
+				"enter-address": "Enter address",
+				"merge": "MERGE VESTED SNX"
+			},
+			"info": {
+				"title": "Merge Your Source Account To This One",
+				"description": "Finally, please input the source address of where your balances have been sent from <0>Learn more.</0>"
+			}
 		}
 	},
 	"balance": {

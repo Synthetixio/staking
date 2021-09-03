@@ -4,10 +4,10 @@ import { useRecoilValue } from 'recoil';
 import { appReadyState } from 'store/app';
 
 import { Cols, Col } from 'sections/merge-accounts/common';
-import ActionBox from './MergeActionBox';
-import InfoBox from './MergeInfoBox';
+import ActionBox from './BurnActionBox';
+import InfoBox from './BurnInfoBox';
 
-const Merge: FC = () => {
+const Burn: FC = () => {
 	const isAppReady = useRecoilValue(appReadyState);
 
 	return !isAppReady ? null : (
@@ -22,4 +22,4 @@ const Merge: FC = () => {
 	);
 };
 
-export default Merge;
+export default Burn;

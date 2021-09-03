@@ -5,6 +5,7 @@ import { useRecoilValue } from 'recoil';
 import { appReadyState } from 'store/app';
 
 import Landing from './landing';
+import Burn from './burn';
 import Nominate from './nominate';
 import Merge from './merge';
 
@@ -21,7 +22,17 @@ const Index: FC = () => {
 	);
 
 	return !isAppReady ? null : (
-		<>{activeTab === 'nominate' ? <Nominate /> : activeTab === 'merge' ? <Merge /> : <Landing />}</>
+		<>
+			{activeTab === 'burn' ? (
+				<Burn />
+			) : activeTab === 'nominate' ? (
+				<Nominate />
+			) : activeTab === 'merge' ? (
+				<Merge />
+			) : (
+				<Landing />
+			)}
+		</>
 	);
 };
 

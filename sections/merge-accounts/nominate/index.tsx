@@ -1,11 +1,9 @@
 import { FC } from 'react';
 import { useRecoilValue } from 'recoil';
-import styled from 'styled-components';
 
 import { appReadyState } from 'store/app';
-import { FlexDivCol } from 'styles/common';
-import media from 'styles/media';
 
+import { Cols, Col } from 'sections/merge-accounts/common';
 import ActionBox from './NominateActionBox';
 import InfoBox from './NominateInfoBox';
 
@@ -13,30 +11,15 @@ const Nominate: FC = () => {
 	const isAppReady = useRecoilValue(appReadyState);
 
 	return !isAppReady ? null : (
-		<Container>
+		<Cols>
 			<Col>
 				<ActionBox />
 			</Col>
 			<Col>
 				<InfoBox />
 			</Col>
-		</Container>
+		</Cols>
 	);
 };
-
-const Container = styled.div`
-	${media.greaterThan('mdUp')`
-		display: grid;
-		grid-template-columns: 1fr 1fr;
-		grid-gap: 24px;
-	`}
-
-	${media.lessThan('mdUp')`
-		display: flex;
-		flex-direction: column;
-	`}
-`;
-
-const Col = styled(FlexDivCol)``;
 
 export default Nominate;

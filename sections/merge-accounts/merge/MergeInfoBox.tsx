@@ -1,8 +1,10 @@
 import { FC } from 'react';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
+import { StyledLink } from 'sections/earn/common';
 import media from 'styles/media';
+import { EXTERNAL_LINKS } from 'constants/links';
 
 const InfoBox: FC = () => {
 	const { t } = useTranslation();
@@ -11,13 +13,16 @@ const InfoBox: FC = () => {
 		<Root>
 			<Container>
 				<ContainerHeader>
-					<Title>{t('merge-accounts.info.title')}</Title>
+					<Title>{t('merge-accounts.merge.info.title')}</Title>
 				</ContainerHeader>
-				<StatsGrid>
-					<StatsHeader>
-						<div>{t('merge-accounts.info.description')}</div>
-					</StatsHeader>
-				</StatsGrid>
+				<ContainerBody>
+					<Subtitle>
+						<Trans
+							i18nKey="merge-accounts.merge.info.description"
+							components={[<StyledLink href={EXTERNAL_LINKS.Synthetix.Incentives} />]}
+						/>
+					</Subtitle>
+				</ContainerBody>
 			</Container>
 		</Root>
 	);
@@ -65,52 +70,6 @@ export const Subtitle = styled.div`
 	margin-top: 12px;
 `;
 
-export const StatsGrid = styled.div`
-	display: grid;
-	grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
-	grid-template-columns: 2fr 1fr;
-	font-size: 14px;
-	padding: 0 0 16px 0;
-`;
-
-export const StatsRow = styled.div``;
-
-export const StatsHeader = styled.div`
-	color: ${(props) => props.theme.colors.gray};
-	border-top: 1px solid ${(props) => props.theme.colors.grayBlue};
-	border-bottom: 1px solid ${(props) => props.theme.colors.grayBlue};
-	font-family: ${(props) => props.theme.fonts.interBold};
-
-	&:nth-child(even) {
-		text-align: right;
-	}
-
-	& > div {
-		padding: 8px 16px;
-		white-space: nowrap;
-		display: flex;
-		align-items: center;
-	}
-`;
-
-export const StatsCol = styled.div`
-	&:nth-child(odd) {
-		margin-left: 16px;
-	}
-
-	&:nth-child(even) {
-		margin-right: 16px;
-
-		& div {
-			justify-content: flex-end;
-		}
-	}
-
-	& > div {
-		padding: 8px 0;
-		height: 100%;
-		display: flex;
-		align-items: center;
-		border-bottom: 1px solid ${(props) => props.theme.colors.grayBlue};
-	}
+export const ContainerBody = styled.div`
+	padding: 16px;
 `;

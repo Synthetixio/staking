@@ -7,7 +7,6 @@ import { Svg } from 'react-optimized-image';
 import { useRouter } from 'next/router';
 
 import synthetix from 'lib/synthetix';
-import { truncateAddress } from 'utils/formatters/string';
 import Button from 'components/Button';
 import Connector from 'containers/Connector';
 import StructuredTab from 'components/StructuredTab';
@@ -17,6 +16,7 @@ import {
 	ModalItemTitle as TxModalItemTitle,
 	ModalItemText as TxModalItemText,
 	NoTextTransform,
+	GlowingCircle,
 	IconButton,
 } from 'styles/common';
 import GasSelector from 'components/GasSelector';
@@ -39,20 +39,22 @@ import {
 } from 'utils/network';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
+import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
 import { formatCryptoCurrency } from 'utils/formatters/number';
-import walletIcon from 'assets/svg/app/wallet-purple.svg';
+import SNXLogo from 'assets/svg/currencies/crypto/SNX.svg';
 import ROUTES from 'constants/routes';
+import { formatCurrency, toBigNumber, zeroBN } from 'utils/formatters/number';
+import { Synths } from '@synthetixio/contracts-interface';
+import Currency from 'components/Currency';
 
-const sUSDCurrencyKey = ethers.utils.formatBytes32String('sUSD');
-
-const NominateTab: FC = () => {
+const BurnTab: FC = () => {
 	const { t } = useTranslation();
 
 	const tabData = useMemo(
 		() => [
 			{
-				title: t('merge-accounts.nominate.title'),
-				tabChildren: <NominateTabInner />,
+				title: t('merge-accounts.burn.title'),
+				tabChildren: <BurnTabInner />,
 				key: 'main',
 				blue: true,
 			},
@@ -65,13 +67,14 @@ const NominateTab: FC = () => {
 	);
 };
 
-const NominateTabInner: FC = () => {
+const BurnTabInner: FC = () => {
 	const { t } = useTranslation();
 	const { connectWallet } = Connector.useContainer();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const isAppReady = useRecoilValue(appReadyState);
 	const sourceAccountAddress = useRecoilValue(walletAddressState);
 	const { monitorTransaction } = TransactionNotifier.useContainer();
+	const router = useRouter();
 
 	const [gasPrice, setGasPrice] = useState<number>(0);
 	const [gasLimit, setGasLimitEstimate] = useState<number | null>(null);
@@ -80,63 +83,38 @@ const NominateTabInner: FC = () => {
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 	const [buttonState, setButtonState] = useState<string | null>(null);
 
-	const router = useRouter();
 	const onGoBack = () => router.replace(ROUTES.MergeAccounts.Home);
 
-	const [destinationAccountAddress, setDestinationAccountAddress] = useState('');
-	const [nominatedAccountAddress, setNominatedAccountAddress] = useState('');
-
 	const { debtBalance } = useStakingCalculations();
-	const readyForMerge = false;
-
-	const hasNominatedDestinationAccount = useMemo(
-		() => nominatedAccountAddress && nominatedAccountAddress === destinationAccountAddress,
-		[nominatedAccountAddress, destinationAccountAddress]
-	);
-
-	const properDestinationAccountAddress = useMemo(
-		() =>
-			destinationAccountAddress && ethers.utils.isAddress(destinationAccountAddress)
-				? destinationAccountAddress
-				: null,
-		[destinationAccountAddress]
-	);
-	const shortenedDestinationAccountAddress = useMemo(
-		() => truncateAddress(destinationAccountAddress, 8, 6),
-		[destinationAccountAddress]
-	);
-
-	const destinationAccountAddressInputError = useMemo(() => {
-		return destinationAccountAddress && !properDestinationAccountAddress
-			? 'invalid-dest-address'
-			: ethers.constants.AddressZero === properDestinationAccountAddress
-			? 'dest-is-a-burn-address'
-			: properDestinationAccountAddress &&
-			  sourceAccountAddress &&
-			  properDestinationAccountAddress === ethers.utils.getAddress(sourceAccountAddress)
-			? 'dest-account-is-self'
+	const synthsBalancesQuery = useSynthsBalancesQuery();
+	const synthBalances =
+		synthsBalancesQuery.isSuccess && synthsBalancesQuery.data != null
+			? synthsBalancesQuery.data
 			: null;
-	}, [properDestinationAccountAddress, sourceAccountAddress]);
 
-	const getNominateTxData = useCallback(
+	const sUSDBalance = synthBalances?.balancesMap.sUSD
+		? synthBalances.balancesMap.sUSD.balance
+		: toBigNumber(0);
+
+	const getBurnTxData = useCallback(
 		(gas: Record<string, number>) => {
-			if (!(properDestinationAccountAddress && !destinationAccountAddressInputError && isAppReady))
-				return null;
+			if (!(isAppReady && sourceAccountAddress)) return null;
 			const {
-				contracts: { RewardEscrowV2 },
+				contracts: { Synthetix },
 			} = synthetix.js!;
-			return [RewardEscrowV2, 'nominateAccountToMerge', [properDestinationAccountAddress, gas]];
+			return [Synthetix, 'burnSynths', [sourceAccountAddress, gas]];
 		},
-		[isAppReady, properDestinationAccountAddress, destinationAccountAddressInputError]
+		[isAppReady, sourceAccountAddress]
 	);
 
 	// gas
+
 	useEffect(() => {
 		let isMounted = true;
 		(async () => {
 			try {
 				setError(null);
-				const data: any[] | null = getNominateTxData({});
+				const data: any[] | null = getBurnTxData({});
 				if (!data) return;
 				const [contract, method, args] = data;
 				const gasEstimate = await getGasEstimateForTransaction(args, contract.estimateGas[method]);
@@ -149,82 +127,45 @@ const NominateTabInner: FC = () => {
 		return () => {
 			isMounted = false;
 		};
-	}, [getNominateTxData]);
-
-	// load any previously nominated account address
-	useEffect(() => {
-		if (!isAppReady) return;
-		const {
-			contracts: { RewardEscrowV2 },
-		} = synthetix.js!;
-		if (!sourceAccountAddress) return;
-
-		let isMounted = true;
-		const unsubs = [
-			() => {
-				isMounted = false;
-			},
-		];
-
-		const load = async () => {
-			const nominatedAccountAddress = await RewardEscrowV2.nominatedReceiver(sourceAccountAddress);
-			if (isMounted) {
-				if (ethers.constants.AddressZero !== nominatedAccountAddress) {
-					setDestinationAccountAddress(nominatedAccountAddress);
-					setNominatedAccountAddress(nominatedAccountAddress);
-				}
-			}
-		};
-
-		const subscribe = () => {
-			const contractEvent = RewardEscrowV2.filters.NominateAccountToMerge(sourceAccountAddress);
-			const onContractEvent = async (src: string, dest: string) => {
-				if (src === sourceAccountAddress) {
-					setNominatedAccountAddress(dest);
-				}
-			};
-			RewardEscrowV2.on(contractEvent, onContractEvent);
-			unsubs.push(() => {
-				RewardEscrowV2.off(contractEvent, onContractEvent);
-			});
-		};
-
-		load();
-		subscribe();
-		return () => {
-			unsubs.forEach((unsub) => unsub());
-		};
-	}, [sourceAccountAddress]);
+	}, [getBurnTxData]);
 
 	// funcs
 
-	const onEnterAddress = (e: any) => setDestinationAccountAddress((e.target.value ?? '').trim());
-
-	const connectOrBurnOrNominate = async () => {
+	const connectOrBurn = async () => {
 		if (!isWalletConnected) {
 			return connectWallet();
 		}
-		nominate();
+		burn();
 	};
 
-	const nominate = async () => {
-		setButtonState('nominating');
+	const burn = async () => {
+		if (sUSDBalance.lt(debtBalance)) {
+			const requiredSUSDTopUp = debtBalance.sub(sUSDBalance);
+			return setError(
+				`You need to acquire an additional ${formatCryptoCurrency(
+					requiredSUSDTopUp.toString()
+				)} sUSD in order to fully burn your debt.`
+			);
+		}
+
+		setButtonState('burning-debt');
 		setTxModalOpen(true);
 		try {
 			const gas: Record<string, number> = {
 				gasPrice: getNormalizedGasPrice(gasPrice),
 				gasLimit: gasLimit!,
 			};
-			await tx(() => getNominateTxData(gas), {
+			await tx(() => getBurnTxData(gas), {
 				showErrorNotification: (e: string) => setError(e),
 				showProgressNotification: (hash: string) =>
 					monitorTransaction({
 						txHash: hash,
-						onTxConfirmed: () => {},
+						onTxConfirmed: async () => {
+							router.push(ROUTES.MergeAccounts.Nominate);
+						},
 					}),
 				showSuccessNotification: (hash: string) => {},
 			});
-			setDestinationAccountAddress('');
 		} catch {
 		} finally {
 			setButtonState(null);
@@ -242,26 +183,10 @@ const NominateTabInner: FC = () => {
 				</FormHeader>
 
 				<InputsContainer>
-					{readyForMerge ? (
-						<div>
-							On the Merge tab, switch to the nominated account in your wallet and proceed with the
-							merge.
-						</div>
-					) : (
-						<>
-							<Svg src={walletIcon} />
-							<AmountInput
-								value={destinationAccountAddress}
-								placeholder={t('merge-accounts.nominate.input-placeholder')}
-								onChange={onEnterAddress}
-								disabled={false}
-								rows={3}
-								autoComplete={'off'}
-								spellCheck={false}
-								data-testid="form-input"
-							/>
-						</>
-					)}
+					<GlowingCircle variant="blue" size="md">
+						<Currency.Icon currencyKey={Synths.sUSD} width="52" height="52" />
+					</GlowingCircle>
+					<AmountLabel>{formatCryptoCurrency(debtBalance.toString())}</AmountLabel>
 				</InputsContainer>
 
 				<SettingsContainer>
@@ -272,29 +197,17 @@ const NominateTabInner: FC = () => {
 			</FormContainer>
 
 			<FormButton
-				onClick={connectOrBurnOrNominate}
+				onClick={connectOrBurn}
 				variant="primary"
 				size="lg"
 				data-testid="form-button"
-				disabled={
-					isWalletConnected &&
-					(!properDestinationAccountAddress || !!buttonState || destinationAccountAddressInputError)
-				}
+				disabled={isWalletConnected && !!buttonState}
 			>
 				{!isWalletConnected ? (
 					t('common.wallet.connect-wallet')
 				) : (
 					<Trans
-						i18nKey={`merge-accounts.nominate.button-labels.${
-							buttonState ||
-							(!destinationAccountAddress
-								? 'enter-address'
-								: destinationAccountAddressInputError
-								? destinationAccountAddressInputError
-								: !hasNominatedDestinationAccount
-								? 'nominate'
-								: 'ready-for-merge')
-						}`}
+						i18nKey={`merge-accounts.burn.button-labels.${buttonState || 'burn'}`}
 						components={[<NoTextTransform />]}
 					/>
 				)}
@@ -306,11 +219,11 @@ const NominateTabInner: FC = () => {
 				<TxConfirmationModal
 					onDismiss={() => setTxModalOpen(false)}
 					txError={null}
-					attemptRetry={connectOrBurnOrNominate}
+					attemptRetry={connectOrBurn}
 					content={
 						<TxModalItem>
 							<TxModalItemTitle>{t('delegate.form.tx-confirmation-title')}</TxModalItemTitle>
-							<TxModalItemText>{shortenedDestinationAccountAddress}</TxModalItemText>
+							<TxModalItemText>-</TxModalItemText>
 						</TxModalItem>
 					}
 				/>
@@ -352,4 +265,4 @@ const FormButton = styled(Button)`
 	text-transform: uppercase;
 `;
 
-export default NominateTab;
+export default BurnTab;

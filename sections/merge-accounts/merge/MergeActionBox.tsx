@@ -3,18 +3,24 @@ import { ethers } from 'ethers';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 import { Trans, useTranslation } from 'react-i18next';
+import { Svg } from 'react-optimized-image';
+import { useRouter } from 'next/router';
 
 import synthetix from 'lib/synthetix';
 
+import ROUTES from 'constants/routes';
 import { truncateAddress } from 'utils/formatters/string';
 import Button from 'components/Button';
 import Connector from 'containers/Connector';
 import TransactionNotifier from 'containers/TransactionNotifier';
+import NavigationBack from 'assets/svg/app/navigation-back.svg';
 import {
 	ModalItemTitle as TxModalItemTitle,
 	ModalItemText as TxModalItemText,
 	NoTextTransform,
+	IconButton,
 } from 'styles/common';
+import StructuredTab from 'components/StructuredTab';
 import GasSelector from 'components/GasSelector';
 import { isWalletConnectedState, walletAddressState } from 'store/wallet';
 import { appReadyState } from 'store/app';
@@ -25,15 +31,38 @@ import {
 	SettingContainer,
 	ErrorMessage,
 	TxModalItem,
-} from 'sections/delegate/common';
+	FormHeader,
+	FormHeaderButton,
+} from 'sections/merge-accounts/common';
 import { tx, getGasEstimateForTransaction } from 'utils/transactions';
 import {
 	normalizeGasLimit as getNormalizedGasLimit,
 	normalizedGasPrice as getNormalizedGasPrice,
 } from 'utils/network';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
+import walletIcon from 'assets/svg/app/wallet-purple.svg';
 
-const NominateTab: FC = () => {
+const MergeTab: FC = () => {
+	const { t } = useTranslation();
+
+	const tabData = useMemo(
+		() => [
+			{
+				title: t('merge-accounts.merge.title'),
+				tabChildren: <MergeTabInner />,
+				key: 'main',
+				blue: true,
+			},
+		],
+		[t]
+	);
+
+	return (
+		<StructuredTab singleTab={true} boxPadding={20} tabData={tabData} setPanelType={() => null} />
+	);
+};
+
+const MergeTabInner: FC = () => {
 	const { t } = useTranslation();
 	const { connectWallet } = Connector.useContainer();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
@@ -47,6 +76,9 @@ const NominateTab: FC = () => {
 	const [error, setError] = useState<string | null>(null);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 	const [buttonState, setButtonState] = useState<string | null>(null);
+
+	const router = useRouter();
+	const onGoBack = () => router.replace(ROUTES.MergeAccounts.Home);
 
 	const [sourceAccountAddress, setSourceAccountAddress] = useState('');
 	const [nominatedAccountAddress, setNominatedAccountAddress] = useState('');
@@ -232,10 +264,17 @@ const NominateTab: FC = () => {
 	return (
 		<div data-testid="form">
 			<FormContainer>
+				<FormHeader>
+					<IconButton onClick={onGoBack}>
+						<Svg src={NavigationBack} />
+					</IconButton>
+				</FormHeader>
+
 				<InputsContainer>
+					<Svg src={walletIcon} />
 					<AmountInput
 						value={sourceAccountAddress}
-						placeholder={t('merge-accounts.tabs.merge.input-placeholder')}
+						placeholder={t('merge-accounts.merge.input-placeholder')}
 						onChange={onEnterAddress}
 						disabled={false}
 						rows={3}
@@ -266,7 +305,7 @@ const NominateTab: FC = () => {
 					t('common.wallet.connect-wallet')
 				) : (
 					<Trans
-						i18nKey={`merge-accounts.form.button-labels.${
+						i18nKey={`merge-accounts.merge.button-labels.${
 							buttonState ||
 							(!sourceAccountAddress
 								? 'enter-address'
@@ -327,4 +366,4 @@ const FormButton = styled(Button)`
 	text-transform: uppercase;
 `;
 
-export default NominateTab;
+export default MergeTab;
