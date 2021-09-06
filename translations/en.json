@@ -967,10 +967,6 @@
 			},
 			"non-synths": {
 				"title": "Non-Synth Balances"
-			},
-			"redeemable-deprecated-synths": {
-				"title": "Redeemable Deprecated Synths",
-				"redeem": "REDEEM <0>{{amount}}</0> <1>sUSD</1>"
 			}
 		},
 		"transfer": {
@@ -987,6 +983,15 @@
 				"insufficient-balance": "Insufficient balance",
 				"unsupported-asset": "Asset is not supported"
 			}
+		},
+		"redeemable-deprecated-synths": {
+			"title": "Redeemable Deprecated Synths",
+			"redeem": "REDEEM ALL",
+			"modal-title": "REDEEM",
+			"modal-redeeming": "Redeeming <0>{{amount}}</0> <1>sUSD</1>",
+			"button-label": "Redeem",
+			"tx-modal-title": "Redeeming",
+			"tx-modal-redeeming": "Redeeming <0>{{amount}}</0> <1>sUSD</1>"
 		}
 	},
 	"gov": {

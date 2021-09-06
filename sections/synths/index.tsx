@@ -119,7 +119,7 @@ const Index: FC = () => {
 				<AssetsTable
 					title={
 						<FlexDivRow>
-							{t('synths.assets.redeemable-deprecated-synths.title')}
+							{t('synths.redeemable-deprecated-synths.title')}
 
 							<RedeemableDeprecatedSynthsButton {...{ redeemableDeprecatedSynthsQuery }} />
 						</FlexDivRow>

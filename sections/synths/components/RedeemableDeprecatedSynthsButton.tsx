@@ -35,13 +35,7 @@ const RedeemableDeprecatedSynthsButton: FC<{ redeemableDeprecatedSynthsQuery: an
 	return (
 		<>
 			<StyledButtonBlue onClick={() => setIsRedeemingDeprecatedSynths(true)}>
-				<Trans
-					i18nKey="synths.assets.redeemable-deprecated-synths.redeem"
-					values={{
-						amount: formatCryptoCurrency(redeemAmount),
-					}}
-					components={[<NoTextTransform />, <NoTextTransform />]}
-				/>
+				<Trans i18nKey="synths.redeemable-deprecated-synths.redeem" values={{}} components={[]} />
 			</StyledButtonBlue>
 
 			{isRedeemingDeprecatedSynths ? (

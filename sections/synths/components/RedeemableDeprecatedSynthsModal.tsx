@@ -12,10 +12,10 @@ import { GasLimitEstimate } from 'constants/network';
 import GasSelector from 'components/GasSelector';
 import synthetix from 'lib/synthetix';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
-import { ModalContent, ModalItem, ModalItemTitle, ModalItemText } from 'styles/common';
+import { ModalContent, ModalItemTitle, ModalItemText, NoTextTransform } from 'styles/common';
 
 import { normalizedGasPrice } from 'utils/network';
-import { formatNumber } from 'utils/formatters/number';
+import { formatCryptoCurrency, formatNumber } from 'utils/formatters/number';
 
 const RedeemDeprecatedSynthsModal: FC<{
 	redeemAmount: BigNumber;
@@ -31,67 +31,74 @@ const RedeemDeprecatedSynthsModal: FC<{
 	const [gasPrice, setGasPrice] = useState<number>(0);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 
-	useEffect(() => {
-		const getGasEstimate = async () => {
-			if (!redeemableDeprecatedSynths) return;
-			const {
-				contracts: { Redeemer },
-			} = synthetix.js!;
+	// useEffect(() => {
+	// 	const getGasEstimate = async () => {
+	// 		if (!redeemableDeprecatedSynths) return;
+	// 		const {
+	// 			contracts: { Redeemer },
+	// 		} = synthetix.js!;
 
-			try {
-				setGasEstimateError(null);
-				const gasEstimate = await synthetix.getGasEstimateForTransaction({
-					txArgs: [redeemableDeprecatedSynths],
-					method: Redeemer.redeemAll,
-				});
-				setGasLimit(gasEstimate);
-			} catch (e) {
-				console.log(e.message);
-				setGasEstimateError(e.message);
-			}
-		};
-		getGasEstimate();
-	}, [t, redeemableDeprecatedSynths]);
+	// 		try {
+	// 			setGasEstimateError(null);
+	// 			const gasEstimate = await synthetix.getGasEstimateForTransaction({
+	// 				txArgs: [redeemableDeprecatedSynths],
+	// 				method: Redeemer.redeemAll,
+	// 			});
+	// 			setGasLimit(gasEstimate);
+	// 		} catch (e) {
+	// 			console.log(e.message);
+	// 			setGasEstimateError(e.message);
+	// 		}
+	// 	};
+	// 	getGasEstimate();
+	// }, [t, redeemableDeprecatedSynths]);
 
 	const handleRedeem = async () => {
-		try {
-			const {
-				contracts: { Redeemer },
-			} = synthetix.js!;
-			setTxError(null);
-			setTxModalOpen(true);
-			const transaction = await Redeemer.redeemAll(redeemableDeprecatedSynths, {
-				gasLimit,
-				gasPrice: normalizedGasPrice(gasPrice),
-			});
-			if (transaction) {
-				setTxModalOpen(false);
-				onTransferConfirmation(transaction.hash);
-			}
-		} catch (e) {
-			console.log(e);
-			setTxError(e.message);
-		}
+		// try {
+		// 	const {
+		// 		contracts: { Redeemer },
+		// 	} = synthetix.js!;
+		// 	setTxError(null);
+		setTxModalOpen(true);
+		// 	const transaction = await Redeemer.redeemAll(redeemableDeprecatedSynths, {
+		// 		gasLimit,
+		// 		gasPrice: normalizedGasPrice(gasPrice),
+		// 	});
+		// 	if (transaction) {
+		// 		setTxModalOpen(false);
+		// 		onTransferConfirmation(transaction.hash);
+		// 	}
+		// } catch (e) {
+		// 	console.log(e);
+		// 	setTxError(e.message);
+		// }
 	};
 
 	return (
-		<StyledModal onDismiss={onDismiss} isOpen={true} title={t('synths.transfer.modal-title')}>
+		<StyledModal
+			onDismiss={onDismiss}
+			isOpen={true}
+			title={t('synths.redeemable-deprecated-synths.modal-title')}
+		>
 			<Inner>
 				<FormContainer>
-					<InputsContainer>Redeeming...</InputsContainer>
+					<InputsContainer>
+						<Trans
+							i18nKey="synths.redeemable-deprecated-synths.modal-redeeming"
+							values={{
+								amount: formatCryptoCurrency(redeemAmount),
+							}}
+							components={[<NoTextTransform />, <NoTextTransform />]}
+						/>
+					</InputsContainer>
 					<SettingsContainer>
 						<GasSelector gasLimitEstimate={gasLimit} setGasPrice={setGasPrice} />
 					</SettingsContainer>
 				</FormContainer>
 
-				<StyledButtonTransaction
-					size="lg"
-					variant="primary"
-					onClick={handleRedeem}
-					disabled={!gasLimit || !!gasEstimateError}
-				>
+				<StyledButtonTransaction size="lg" variant="primary" onClick={handleRedeem}>
 					<Trans
-						i18nKey="synths.transfer.button.transfer"
+						i18nKey="synths.redeemable-deprecated-synths.button-label"
 						values={{}}
 						components={[<CurrencyKeyStyle />]}
 					/>
@@ -107,20 +114,15 @@ const RedeemDeprecatedSynthsModal: FC<{
 					attemptRetry={handleRedeem}
 					content={
 						<ModalContent>
-							<ModalItem>
-								<ModalItemTitle>
-									{t('modals.confirm-transaction.transfer.transferring')}
-								</ModalItemTitle>
-								<ModalItemText>
-									{formatNumber(redeemAmount, {
-										suffix: Synths.sUSD,
-									})}
-								</ModalItemText>
-							</ModalItem>
-							<ModalItem>
-								<ModalItemTitle>{t('modals.confirm-transaction.transfer.to')}</ModalItemTitle>
-								<ModalItemText>x</ModalItemText>
-							</ModalItem>
+							<ModalItemTitle>
+								<Trans
+									i18nKey="synths.redeemable-deprecated-synths.tx-modal-redeeming"
+									values={{
+										amount: formatCryptoCurrency(redeemAmount),
+									}}
+									components={[<NoTextTransform />, <NoTextTransform />]}
+								/>
+							</ModalItemTitle>
 						</ModalContent>
 					}
 				/>
@@ -143,9 +145,7 @@ const FormContainer = styled(FlexDivColCentered)`
 `;
 
 const InputsContainer = styled.div`
-	display: grid;
-	grid-template-columns: 1fr 1px 1fr;
-	align-items: center;
+	display: block;
 `;
 
 const StyledModal = styled(BaseModal)`
