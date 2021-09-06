@@ -1,10 +1,12 @@
 import { FC, useState, useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { VerticalSpacer } from 'styles/common';
 import { useRecoilValue } from 'recoil';
+
+import { FlexDivRow, VerticalSpacer } from 'styles/common';
 
 import AssetsTable from 'sections/synths/components/AssetsTable';
 import TransferModal from 'sections/synths/components/TransferModal';
+import RedeemableDeprecatedSynthsButton from 'sections/synths/components/RedeemableDeprecatedSynthsButton';
 
 import KwentaBanner from 'components/KwentaBanner';
 import TransactionNotifier from 'containers/TransactionNotifier';
@@ -14,10 +16,12 @@ import { isWalletConnectedState } from 'store/wallet';
 import useCryptoBalances from 'hooks/useCryptoBalances';
 import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
 import useSNXBalanceQuery from 'queries/walletBalances/useSNXBalanceQuery';
+import useRedeemableDeprecatedSynths from 'queries/walletBalances/useRedeemableDeprecatedSynths';
+import { Asset } from 'queries/walletBalances/types';
 
 import { zeroBN } from 'utils/formatters/number';
-import { Asset } from 'queries/walletBalances/types';
 import { isSynth } from 'utils/currencies';
+
 import { CryptoCurrency } from 'constants/currency';
 
 const Index: FC = () => {
@@ -28,6 +32,7 @@ const Index: FC = () => {
 	const synthsBalancesQuery = useSynthsBalancesQuery();
 	const SNXBalanceQuery = useSNXBalanceQuery();
 	const cryptoBalances = useCryptoBalances();
+	const redeemableDeprecatedSynthsQuery = useRedeemableDeprecatedSynths();
 
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 
@@ -90,8 +95,11 @@ const Index: FC = () => {
 				showConvert={false}
 				onTransferClick={handleOnTransferClick}
 			/>
+
 			{!totalSynthValue.isZero() ? <KwentaBanner /> : null}
+
 			<VerticalSpacer />
+
 			{isWalletConnected && cryptoBalances.balances.length > 0 && (
 				<AssetsTable
 					title={t('synths.assets.non-synths.title')}
@@ -104,6 +112,27 @@ const Index: FC = () => {
 					onTransferClick={handleOnTransferClick}
 				/>
 			)}
+
+			<VerticalSpacer />
+
+			{isWalletConnected && redeemableDeprecatedSynthsQuery.data?.totalUsdBalance?.gt(0) && (
+				<AssetsTable
+					title={
+						<FlexDivRow>
+							{t('synths.assets.redeemable-deprecated-synths.title')}
+
+							<RedeemableDeprecatedSynthsButton {...{ redeemableDeprecatedSynthsQuery }} />
+						</FlexDivRow>
+					}
+					assets={redeemableDeprecatedSynthsQuery.data?.balances ?? []}
+					totalValue={zeroBN}
+					isLoading={redeemableDeprecatedSynthsQuery.isLoading}
+					isLoaded={!redeemableDeprecatedSynthsQuery.isLoading}
+					showHoldings={false}
+					showConvert={false}
+				/>
+			)}
+
 			{assetToTransfer ? (
 				<TransferModal
 					onDismiss={() => setAssetToTransfer(null)}

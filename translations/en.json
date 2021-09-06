@@ -967,6 +967,10 @@
 			},
 			"non-synths": {
 				"title": "Non-Synth Balances"
+			},
+			"redeemable-deprecated-synths": {
+				"title": "Redeemable Deprecated Synths",
+				"redeem": "REDEEM <0>{{amount}}</0> <1>sUSD</1>"
 			}
 		},
 		"transfer": {
@@ -1361,4 +1365,3 @@
 		"loan/close": "close"
 	}
 }
-

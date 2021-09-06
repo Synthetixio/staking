@@ -49,7 +49,7 @@ type AssetsTableProps = {
 	isLoaded: boolean;
 	showConvert: boolean;
 	showHoldings: boolean;
-	onTransferClick: (currencyKey: string) => void;
+	onTransferClick?: (currencyKey: string) => void;
 };
 
 const AssetsTable: FC<AssetsTableProps> = ({
@@ -183,7 +183,7 @@ const AssetsTable: FC<AssetsTableProps> = ({
 				sortable: false,
 			});
 		}
-		if (!isL2) {
+		if (!isL2 && onTransferClick) {
 			columns.push({
 				Header: <></>,
 				id: 'transfer',

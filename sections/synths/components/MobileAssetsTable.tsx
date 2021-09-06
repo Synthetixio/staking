@@ -48,7 +48,7 @@ type AssetsTableProps = {
 	isLoaded: boolean;
 	showConvert: boolean;
 	showHoldings: boolean;
-	onTransferClick: (currencyKey: string) => void;
+	onTransferClick?: (currencyKey: string) => void;
 };
 
 const AssetsTable: FC<AssetsTableProps> = ({
@@ -159,7 +159,7 @@ const AssetsTable: FC<AssetsTableProps> = ({
 										</>
 									)}
 
-									{isL2 ? null : (
+									{!(!isL2 && onTransferClick) ? null : (
 										<>
 											{!(
 												isSynth(asset.currencyKey) || asset.currencyKey === CryptoCurrency.SNX

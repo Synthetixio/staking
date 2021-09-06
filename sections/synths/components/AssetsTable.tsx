@@ -20,7 +20,7 @@ type AssetsTableProps = {
 	isLoaded: boolean;
 	showConvert: boolean;
 	showHoldings: boolean;
-	onTransferClick: (currencyKey: string) => void;
+	onTransferClick?: (currencyKey: string) => void;
 };
 
 const AssetsTable: FC<AssetsTableProps> = ({
