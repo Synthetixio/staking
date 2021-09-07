@@ -48,6 +48,7 @@ import Connector from 'containers/Connector';
 import { BurnActionType, burnTypeState } from 'store/staking';
 import Button from 'components/Button';
 import Currency from 'components/Currency';
+import { parseSafeWei } from 'utils/parse';
 
 type StakingInputProps = {
 	onSubmit: () => void;
@@ -202,7 +203,11 @@ const StakingInput: React.FC<StakingInputProps> = ({
 
 	const equivalentSNXAmount = useMemo(() => {
 		const calculatedTargetBurn = Math.max(debtBalance.sub(issuableSynths).toNumber(), 0);
-		if (!isMint && currentCRatio.gt(targetCRatio) && wei(inputValue).lte(calculatedTargetBurn)) {
+		if (
+			!isMint &&
+			currentCRatio.gt(targetCRatio) &&
+			parseSafeWei(inputValue, 0).lte(calculatedTargetBurn)
+		) {
 			return stakeInfo('0');
 		} else {
 			return stakeInfo(inputValue);

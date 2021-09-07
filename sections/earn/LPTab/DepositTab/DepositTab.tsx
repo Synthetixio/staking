@@ -1,4 +1,4 @@
-import { FC, useState, useEffect, useCallback } from 'react';
+import { FC, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { ethers } from 'ethers';
@@ -10,7 +10,6 @@ import GasSelector from 'components/GasSelector';
 import NumericInput from 'components/Input/NumericInput';
 import { formatCryptoCurrency, formatNumber } from 'utils/formatters/number';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
-import { normalizedGasPrice } from 'utils/network';
 import Etherscan from 'containers/BlockExplorer';
 import Connector from 'containers/Connector';
 import { yearnSNXVault } from 'contracts';
@@ -26,8 +25,6 @@ import {
 } from 'styles/common';
 import Currency from 'components/Currency';
 import { CryptoCurrency, CurrencyKey } from 'constants/currency';
-import { Transaction, GasLimitEstimate } from 'constants/network';
-import TransactionNotifier from 'containers/TransactionNotifier';
 import TxState from 'sections/earn/TxState';
 
 import {
@@ -50,6 +47,7 @@ import { appReadyState } from 'store/app';
 import { CurrencyIconType } from 'components/Currency/CurrencyIcon/CurrencyIcon';
 import Wei, { wei } from '@synthetixio/wei';
 import { parseSafeWei } from 'utils/parse';
+import useSynthetixQueries from '@synthetixio/queries';
 
 export const getContract = (asset: CurrencyKey, signer: ethers.Signer | null) => {
 	if (asset === CryptoCurrency.SNX) {
@@ -85,110 +83,39 @@ const DepositTab: FC<DepositTabProps> = ({
 }) => {
 	const { t } = useTranslation();
 	const [amount, setAmount] = useState<string>('');
-	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const { blockExplorerInstance } = Etherscan.useContainer();
 	const { signer } = Connector.useContainer();
-	const [gasLimitEstimate, setGasLimitEstimate] = useState<GasLimitEstimate>(null);
 	const [gasPrice, setGasPrice] = useState<Wei>(wei(0));
-	const [error, setError] = useState<string | null>(null);
 	const isAppReady = useRecoilValue(appReadyState);
+	const { useContractTxn } = useSynthetixQueries();
 
-	const [transactionState, setTransactionState] = useState<Transaction>(Transaction.PRESUBMIT);
-	const [txHash, setTxHash] = useState<string | null>(null);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
-	const link =
-		blockExplorerInstance != null && txHash != null
-			? blockExplorerInstance.txLink(txHash)
-			: undefined;
 
 	const stakedBalanceDisplay = staked.mul(pricePerShare);
 
 	let parsedAmount = parseSafeWei(amount, 0);
 
+	const txn = useContractTxn(
+		getContract(asset, signer),
+		isDeposit ? 'deposit(uint256)' : 'withdraw(uint256)',
+		[parsedAmount.toBN()],
+		{ gasPrice: gasPrice.toBN() }
+	);
+
+	const link =
+		blockExplorerInstance != null && txn.hash != null
+			? blockExplorerInstance.txLink(txn.hash)
+			: undefined;
+
 	useEffect(() => {
-		const getGasLimitEstimate = async () => {
-			if (isAppReady && Number(amount) > 0) {
-				try {
-					setError(null);
-					const contract = getContract(asset, signer);
-					let stakeAmount = parsedAmount;
-
-					let gasEstimate = wei(
-						isDeposit
-							? await contract.estimateGas['deposit(uint256)'](stakeAmount)
-							: await contract.estimateGas['withdraw(uint256)'](stakeAmount),
-						0
-					);
-
-					setGasLimitEstimate(gasEstimate);
-				} catch (error) {
-					setError(error.message);
-					setGasLimitEstimate(null);
-				}
-			}
-		};
-		getGasLimitEstimate();
-	}, [
-		amount,
-		isDeposit,
-		asset,
-		signer,
-		isAppReady,
-		userBalance,
-		staked,
-		stakedBalanceDisplay,
-		parsedAmount,
-	]);
-
-	const handleDeposit = useCallback(() => {
-		async function deposit() {
-			if (isAppReady && Number(amount) > 0) {
-				try {
-					setError(null);
-					setTxModalOpen(true);
-					const contract = getContract(asset, signer);
-
-					let formattedStakeAmount = parsedAmount;
-
-					let gasLimit = wei(
-						isDeposit
-							? await contract.estimateGas['deposit(uint256)'](formattedStakeAmount)
-							: await contract.estimateGas['withdraw(uint256)'](formattedStakeAmount),
-						0
-					);
-
-					let transaction: ethers.ContractTransaction;
-					if (isDeposit) {
-						transaction = await contract['deposit(uint256)'](formattedStakeAmount, {
-							gasPrice: normalizedGasPrice(gasPrice.toNumber()),
-							gasLimit,
-						});
-					} else {
-						transaction = await contract['withdraw(uint256)'](formattedStakeAmount, {
-							gasPrice: normalizedGasPrice(gasPrice.toNumber()),
-							gasLimit,
-						});
-					}
-
-					if (transaction) {
-						setTxHash(transaction.hash);
-						setTransactionState(Transaction.WAITING);
-						monitorTransaction({
-							txHash: transaction.hash,
-							onTxConfirmed: () => setTransactionState(Transaction.SUCCESS),
-						});
-						setTxModalOpen(false);
-					}
-				} catch (e) {
-					setTransactionState(Transaction.PRESUBMIT);
-					setError(e.message);
-				}
-			}
+		if (txn.txnStatus === 'prompting') {
+			setTxModalOpen(true);
+		} else if (txn.txnStatus === 'confirmed') {
+			setTxModalOpen(false);
 		}
-		deposit();
-	}, [isAppReady, amount, asset, signer, isDeposit, gasPrice, monitorTransaction, parsedAmount]);
+	}, [txn.txnStatus]);
 
-	if (transactionState === Transaction.WAITING) {
+	if (txn.txnStatus === 'pending') {
 		return (
 			<TxState
 				isStakingPanel={true}
@@ -225,7 +152,7 @@ const DepositTab: FC<DepositTabProps> = ({
 		);
 	}
 
-	if (transactionState === Transaction.SUCCESS) {
+	if (txn.txnStatus === 'confirmed') {
 		return (
 			<TxState
 				isStakingPanel={true}
@@ -255,11 +182,7 @@ const DepositTab: FC<DepositTabProps> = ({
 									<VerifyButton isStakingPanel={true}>{t('earn.actions.tx.verify')}</VerifyButton>
 								</ExternalLink>
 							) : null}
-							<DismissButton
-								isStakingPanel={true}
-								variant="secondary"
-								onClick={() => setTransactionState(Transaction.PRESUBMIT)}
-							>
+							<DismissButton isStakingPanel={true} variant="secondary" onClick={txn.refresh}>
 								{t('earn.actions.tx.dismiss')}
 							</DismissButton>
 						</ButtonSpacer>
@@ -309,7 +232,7 @@ const DepositTab: FC<DepositTabProps> = ({
 				</TotalValueWrapper>
 				<PaddedButton
 					variant="primary"
-					onClick={handleDeposit}
+					onClick={() => txn.mutate()}
 					disabled={
 						!isAppReady ||
 						parsedAmount.lte(0) ||
@@ -320,17 +243,13 @@ const DepositTab: FC<DepositTabProps> = ({
 						? t('earn.actions.deposit.deposit-button', { asset })
 						: t('earn.actions.withdraw.withdraw-button', { asset })}
 				</PaddedButton>
-				<GasSelector
-					altVersion={true}
-					gasLimitEstimate={gasLimitEstimate}
-					setGasPrice={setGasPrice}
-				/>
+				<GasSelector altVersion={true} gasLimitEstimate={txn.gasLimit} setGasPrice={setGasPrice} />
 			</Container>
 			{txModalOpen && (
 				<TxConfirmationModal
 					onDismiss={() => setTxModalOpen(false)}
-					txError={error}
-					attemptRetry={handleDeposit}
+					txError={txn.errorMessage}
+					attemptRetry={txn.mutate}
 					content={
 						<ModalContent>
 							<ModalItem>
