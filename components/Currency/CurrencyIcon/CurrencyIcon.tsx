@@ -59,31 +59,7 @@ export const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, type, ...rest
 		...rest,
 	};
 
-	if (
-		ZapperTokenListMap != null &&
-		ZapperTokenListMap[currencyKey] != null &&
-		!firstFallbackError
-	) {
-		return (
-			<TokenIcon
-				src={ZapperTokenListMap[currencyKey].logoURI}
-				onError={() => setFirstFallbackError(true)}
-				{...props}
-			/>
-		);
-	} else if (
-		OneInchTokenListMap != null &&
-		OneInchTokenListMap[currencyKey] != null &&
-		!secondFallbackError
-	) {
-		return (
-			<TokenIcon
-				src={OneInchTokenListMap[currencyKey].logoURI}
-				onError={() => setSecondFallbackError(true)}
-				{...props}
-			/>
-		);
-	} else if (thirdFallbackError) {
+	if (!firstFallbackError) {
 		switch (currencyKey) {
 			case CryptoCurrency.ETH: {
 				return <Img src={ETHIcon} {...props} />;
@@ -99,12 +75,36 @@ export const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, type, ...rest
 								? synthetixTokenListMap[currencyKey].logoURI
 								: getSynthIcon(currencyKey)
 						}
-						onError={() => setThirdFallbackError(true)}
+						onError={() => setFirstFallbackError(true)}
 						{...props}
 						alt={currencyKey}
 					/>
 				);
 		}
+	} else if (
+		OneInchTokenListMap != null &&
+		OneInchTokenListMap[currencyKey] != null &&
+		!secondFallbackError
+	) {
+		return (
+			<TokenIcon
+				src={OneInchTokenListMap[currencyKey].logoURI}
+				onError={() => setSecondFallbackError(true)}
+				{...props}
+			/>
+		);
+	} else if (
+		ZapperTokenListMap != null &&
+		ZapperTokenListMap[currencyKey] != null &&
+		!thirdFallbackError
+	) {
+		return (
+			<TokenIcon
+				src={ZapperTokenListMap[currencyKey].logoURI}
+				onError={() => setThirdFallbackError(true)}
+				{...props}
+			/>
+		);
 	} else {
 		return (
 			<Placeholder style={{ width: props.width, height: props.height }}>{currencyKey}</Placeholder>
