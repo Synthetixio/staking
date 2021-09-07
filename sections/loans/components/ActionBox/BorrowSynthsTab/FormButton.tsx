@@ -12,7 +12,6 @@ type FormButtonProps = {
 	hasLowCollateralAmount: boolean;
 	hasLowCRatio: boolean;
 	minCollateralAmountString: string;
-	isApproving: boolean;
 	isBorrowing: boolean;
 	hasInsufficientCollateral: boolean;
 	onClick: () => Promise<void>;
@@ -27,7 +26,6 @@ const FormButton: React.FC<FormButtonProps> = ({
 	hasLowCollateralAmount,
 	hasLowCRatio,
 	minCollateralAmountString,
-	isApproving,
 	isBorrowing,
 	hasInsufficientCollateral,
 	onClick,
@@ -43,7 +41,6 @@ const FormButton: React.FC<FormButtonProps> = ({
 				!hasBothInputsSet ||
 				hasLowCollateralAmount ||
 				hasLowCRatio ||
-				isApproving ||
 				isBorrowing ||
 				hasInsufficientCollateral
 			}
@@ -52,14 +49,6 @@ const FormButton: React.FC<FormButtonProps> = ({
 		>
 			{!isWalletConnected ? (
 				t('common.wallet.connect-wallet')
-			) : isApproving ? (
-				<Trans
-					i18nKey="loans.tabs.new.button.approving-label"
-					values={{
-						collateralAsset,
-					}}
-					components={[<NoTextTransform />]}
-				/>
 			) : isBorrowing ? (
 				<Trans
 					i18nKey="loans.tabs.new.button.borrowing-label"

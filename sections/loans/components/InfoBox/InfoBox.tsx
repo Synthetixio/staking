@@ -16,6 +16,7 @@ import InfoSVG from 'sections/loans/components/ActionBox/components/InfoSVG';
 import { wei } from '@synthetixio/wei';
 import { useEffect } from 'react';
 import React from 'react';
+import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 
 const InfoBox: React.FC = () => {
 	const { t } = useTranslation();
@@ -122,7 +123,7 @@ const InfoBox: React.FC = () => {
 							<>{t('loans.pending-withdrawals.empty')}</>
 						) : (
 							<>
-								{pendingWithdrawals.toString()}ETH{' '}
+								{wei(pendingWithdrawals).toString(DEFAULT_CRYPTO_DECIMALS)}ETH{' '}
 								<ClaimButton
 									variant="secondary"
 									size="sm"

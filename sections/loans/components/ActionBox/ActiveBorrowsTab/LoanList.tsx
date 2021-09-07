@@ -62,7 +62,7 @@ const LoanList: FC<LoanListProps> = ({ actions }) => {
 				width: SMALL_COL_WIDTH,
 				Cell: (cellProps: CellProps<Loan>) => {
 					const loan = cellProps.row.original;
-					return <div>{formatPercent(loan.cratio)}%</div>;
+					return <div>{formatPercent(loan.cratio)}</div>;
 				},
 			},
 			{

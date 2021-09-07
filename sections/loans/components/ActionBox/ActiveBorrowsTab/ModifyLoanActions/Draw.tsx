@@ -46,20 +46,17 @@ const Repay: React.FC<RepayProps> = ({ loan, loanId, loanTypeIsETH, loanContract
 			: setRepayAmount(amount);
 	const onSetLeftColMaxAmount = () => setRepayAmount(ethers.utils.formatUnits(loan.amount));
 
-	const getTxData = useCallback(
-		(gas: Record<string, number>) => {
-			if (!(loanContract && !drawAmount.eq(0))) return null;
+	const getTxData = useCallback(() => {
+		if (!(loanContract && !drawAmount.eq(0))) return null;
 
-			return [loanContract, 'draw', [loanId, drawAmount, gas]];
-		},
-		[loanContract, loanId, drawAmount]
-	);
+		return [loanContract, 'draw', [loanId, drawAmount]];
+	}, [loanContract, loanId, drawAmount]);
 
-	const draw = async (gas: Record<string, number>) => {
+	const draw = async () => {
 		try {
 			setIsWorking('drawing');
 			setTxModalOpen(true);
-			await tx(() => getTxData(gas), {
+			await tx(() => getTxData(), {
 				showErrorNotification: (e: string) => setError(e),
 				showProgressNotification: (hash: string) =>
 					monitorTransaction({

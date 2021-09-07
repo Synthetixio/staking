@@ -11,8 +11,8 @@ type LoanCRatioProps = {
 };
 
 const LoanCRatio: FC<LoanCRatioProps> = ({ loan, minCRatio }) => {
-	const cratio = useMemo(() => wei(loan.cratio).mul(100), [loan.cratio]);
-	const hasLowCRatio = useMemo(() => cratio.lt(minCRatio), [cratio, minCRatio]);
+	const cratio = useMemo(() => wei(loan.cratio), [loan.cratio]);
+	const hasLowCRatio = useMemo(() => cratio.mul(100).lt(minCRatio), [cratio, minCRatio]);
 	return <CRatio {...{ cratio, hasLowCRatio, minCRatio }} />;
 };
 
