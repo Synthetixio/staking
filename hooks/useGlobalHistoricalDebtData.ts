@@ -31,7 +31,7 @@ const useGlobalHistoricalDebtData = () => {
 			const activity = activityQuery.data ?? [[], []];
 
 			// We concat both the events and order them (asc)
-			const eventBlocks = orderBy(activity[0].concat(activity[1]), 'timestamp', 'asc');
+			const eventBlocks = orderBy((activity[0] as any).concat(activity[1]), 'timestamp', 'asc');
 
 			const data: HistoricalGlobalDebtAndIssuanceData[] = [];
 

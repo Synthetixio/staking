@@ -108,8 +108,6 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 
 	const isApproved: boolean = collateralIsETH || allowance?.gt(collateralAmount) || false;
 
-	console.log(debtAsset, debtAmount.toNumber(), collateralAmount.toNumber());
-
 	const getAllowance = useCallback(async () => {
 		if (collateralIsETH) {
 			return ethers.constants.MaxUint256;
@@ -130,8 +128,7 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 		collateralContract,
 		'approve',
 		[loanContract?.address || ethers.constants.AddressZero, ethers.constants.MaxUint256],
-		{ gasPrice: gasPrice.toBN() },
-		{ onSuccess: getAllowance }
+		{ gasPrice: gasPrice.toBN() }
 	);
 
 	const openTxn = useSynthetixTxn(
@@ -206,6 +203,7 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 	}, [collateralIsETH, collateralContract, address, signer]);
 
 	useEffect(() => {
+		console.log('txn status change', openTxn.txnStatus);
 		switch (openTxn.txnStatus) {
 			case 'unsent':
 				setTxModalOpen(false);
@@ -223,12 +221,20 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 		}
 	}, [openTxn.txnStatus]);
 
+	useEffect(() => {
+		console.log('approve status change', openTxn.txnStatus);
+		switch (openTxn.txnStatus) {
+			case 'unsent':
+			case 'confirmed':
+				getAllowance();
+				break;
+		}
+	}, [approveTxn.txnStatus]);
+
 	// header title
 	useEffect(() => {
 		setTitle('loans', 'new');
 	}, [setTitle]);
-
-	console.log('THE ERROR', openTxn.error, openTxn.errorMessage);
 
 	return (
 		<>
