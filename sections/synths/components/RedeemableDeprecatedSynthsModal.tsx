@@ -4,18 +4,21 @@ import { useTranslation, Trans } from 'react-i18next';
 import BigNumber from 'bignumber.js';
 import { Synths } from '@synthetixio/contracts-interface';
 
+import synthetix from 'lib/synthetix';
+
 import BaseModal from 'components/BaseModal';
 import { ButtonTransaction } from 'components/Form/common';
+
 import { FlexDivColCentered, FlexDivCentered } from 'styles/common';
+import media from 'styles/media';
 
 import { GasLimitEstimate } from 'constants/network';
 import GasSelector from 'components/GasSelector';
-import synthetix from 'lib/synthetix';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import { ModalContent, ModalItemTitle, ModalItemText, NoTextTransform } from 'styles/common';
 
 import { normalizedGasPrice } from 'utils/network';
-import { formatCryptoCurrency, formatNumber } from 'utils/formatters/number';
+import { formatCryptoCurrency, formatNumber, toBigNumber } from 'utils/formatters/number';
 
 const RedeemDeprecatedSynthsModal: FC<{
 	redeemAmount: BigNumber;
@@ -81,20 +84,22 @@ const RedeemDeprecatedSynthsModal: FC<{
 			title={t('synths.redeemable-deprecated-synths.modal-title')}
 		>
 			<Inner>
-				<FormContainer>
-					<InputsContainer>
-						<Trans
-							i18nKey="synths.redeemable-deprecated-synths.modal-redeeming"
-							values={{
-								amount: formatCryptoCurrency(redeemAmount),
-							}}
-							components={[<NoTextTransform />, <NoTextTransform />]}
+				<ModalContainer>
+					<ValuesContainer>
+						<BurnValueContainer
+							redeemAmount={toBigNumber('150')}
+							sUSDBalance={toBigNumber('100')}
 						/>
-					</InputsContainer>
+						<ValuesDivider />
+						<ReceiveValueContainer
+							redeemAmount={toBigNumber('150')}
+							sUSDBalance={toBigNumber('100')}
+						/>
+					</ValuesContainer>
 					<SettingsContainer>
 						<GasSelector gasLimitEstimate={gasLimit} setGasPrice={setGasPrice} />
 					</SettingsContainer>
-				</FormContainer>
+				</ModalContainer>
 
 				<StyledButtonTransaction size="lg" variant="primary" onClick={handleRedeem}>
 					<Trans
@@ -131,11 +136,68 @@ const RedeemDeprecatedSynthsModal: FC<{
 	);
 };
 
+const BurnValueContainer: FC<{ redeemAmount: BigNumber; sUSDBalance: BigNumber }> = ({
+	redeemAmount,
+	sUSDBalance,
+}) => {
+	const { t } = useTranslation();
+
+	const titleLabel = (
+		<ValueSelectLabel>{t('synths.redeemable-deprecated-synths.modal-burn-title')}</ValueSelectLabel>
+	);
+
+	const amountInput = <ValueAmountInput>{formatCryptoCurrency(redeemAmount)}</ValueAmountInput>;
+
+	const balanceLabel = (
+		<ValueBalanceLabel>
+			{t('balance.input-label')} {formatCryptoCurrency(sUSDBalance)}
+		</ValueBalanceLabel>
+	);
+
+	return (
+		<ValueContainer>
+			{titleLabel}
+			{amountInput}
+			{balanceLabel}
+		</ValueContainer>
+	);
+};
+
+const ReceiveValueContainer: FC<{ redeemAmount: BigNumber; sUSDBalance: BigNumber }> = ({
+	redeemAmount,
+	sUSDBalance,
+}) => {
+	const { t } = useTranslation();
+
+	const titleLabel = (
+		<ValueSelectLabel>
+			{t('synths.redeemable-deprecated-synths.modal-receive-title')}
+		</ValueSelectLabel>
+	);
+
+	const amountInput = <ValueAmountInput>{formatCryptoCurrency(redeemAmount)}</ValueAmountInput>;
+
+	const balanceLabel = (
+		<ValueBalanceLabel>
+			{t('balance.input-label')}
+			{formatCryptoCurrency(sUSDBalance)}
+		</ValueBalanceLabel>
+	);
+
+	return (
+		<ValueContainer>
+			{titleLabel}
+			{amountInput}
+			{balanceLabel}
+		</ValueContainer>
+	);
+};
+
 const Inner = styled.div`
 	position: relative;
 `;
 
-const FormContainer = styled(FlexDivColCentered)`
+const ModalContainer = styled(FlexDivColCentered)`
 	justify-content: space-between;
 	background: ${(props) => props.theme.colors.black};
 	position: relative;
@@ -144,8 +206,59 @@ const FormContainer = styled(FlexDivColCentered)`
 	margin-top: 8px;
 `;
 
-const InputsContainer = styled.div`
-	display: block;
+const ValuesContainer = styled.div`
+	display: grid;
+	grid-template-columns: 1fr 1px 1fr;
+	align-items: center;
+	width: 100%;
+
+	${media.lessThan('mdUp')`
+		display: flex;
+		flex-direction: column;
+	`}
+`;
+
+const ValuesDivider = styled.div`
+	background: #161b44;
+	height: 92px;
+	width: 1px;
+
+	${media.lessThan('mdUp')`
+		display: none;
+	`}
+`;
+
+const ValueContainer = styled.div`
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+`;
+
+const ValueSelectLabel = styled.div`
+	font-family: ${(props) => props.theme.fonts.condensedBold};
+	font-style: normal;
+	font-weight: 500;
+	font-size: 12px;
+	line-height: 120%;
+	text-transform: uppercase;
+	color: #828295;
+	margin-right: 10px;
+`;
+
+const ValueAmountInput = styled.div`
+	padding: 0;
+	font-size: 24px;
+	background: transparent;
+	font-family: ${(props) => props.theme.fonts.extended};
+	text-align: center;
+	margin-top: 15px;
+`;
+
+const ValueBalanceLabel = styled.div`
+	font-size: 12px;
+	color: ${(props) => props.theme.colors.gray};
+	margin-top: 8px;
 `;
 
 const StyledModal = styled(BaseModal)`

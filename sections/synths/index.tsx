@@ -1,12 +1,22 @@
 import { FC, useState, useMemo, useCallback } from 'react';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
+import { Svg } from 'react-optimized-image';
+import styled from 'styled-components';
 
-import { FlexDivRow, VerticalSpacer } from 'styles/common';
+import {
+	FlexDiv,
+	FlexDivRow,
+	VerticalSpacer,
+	Tooltip,
+	FlexDivRowCentered,
+	StyledExternalLink,
+} from 'styles/common';
 
 import AssetsTable from 'sections/synths/components/AssetsTable';
 import TransferModal from 'sections/synths/components/TransferModal';
 import RedeemableDeprecatedSynthsButton from 'sections/synths/components/RedeemableDeprecatedSynthsButton';
+import Info from 'assets/svg/app/info.svg';
 
 import KwentaBanner from 'components/KwentaBanner';
 import TransactionNotifier from 'containers/TransactionNotifier';
@@ -119,7 +129,25 @@ const Index: FC = () => {
 				<AssetsTable
 					title={
 						<FlexDivRow>
-							{t('synths.redeemable-deprecated-synths.title')}
+							<FlexDivRowCentered>
+								{t('synths.redeemable-deprecated-synths.title')}
+								&nbsp;
+								<Tooltip
+									arrow={false}
+									content={
+										<Trans
+											i18nKey={'synths.redeemable-deprecated-synths.tooltip'}
+											components={[
+												<StyledExternalLink href="https://sips.synthetix.io/sips/sip-174" />,
+											]}
+										/>
+									}
+								>
+									<TooltipIconContainer>
+										<Svg src={Info} />
+									</TooltipIconContainer>
+								</Tooltip>
+							</FlexDivRowCentered>
 
 							<RedeemableDeprecatedSynthsButton {...{ redeemableDeprecatedSynthsQuery }} />
 						</FlexDivRow>
@@ -130,6 +158,7 @@ const Index: FC = () => {
 					isLoaded={!redeemableDeprecatedSynthsQuery.isLoading}
 					showHoldings={false}
 					showConvert={false}
+					showDeprecated
 				/>
 			)}
 
@@ -145,5 +174,9 @@ const Index: FC = () => {
 		</>
 	);
 };
+
+const TooltipIconContainer = styled(FlexDiv)`
+	align-items: center;
+`;
 
 export default Index;
