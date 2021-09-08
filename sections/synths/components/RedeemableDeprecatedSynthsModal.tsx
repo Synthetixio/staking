@@ -20,12 +20,23 @@ import { ModalContent, ModalItemTitle, ModalItemText, NoTextTransform } from 'st
 import { normalizedGasPrice } from 'utils/network';
 import { formatCryptoCurrency, formatNumber, toBigNumber } from 'utils/formatters/number';
 
+import { CryptoBalance } from 'queries/walletBalances/types';
+import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
+import Currency from 'components/Currency';
+
 const RedeemDeprecatedSynthsModal: FC<{
 	redeemAmount: BigNumber;
 	redeemableDeprecatedSynths: string[];
+	redeemBalances: CryptoBalance[];
 	onDismiss: () => void;
 	onTransferConfirmation: (txHash: string) => void;
-}> = ({ onDismiss, onTransferConfirmation, redeemAmount, redeemableDeprecatedSynths }) => {
+}> = ({
+	onDismiss,
+	onTransferConfirmation,
+	redeemAmount,
+	redeemableDeprecatedSynths,
+	redeemBalances,
+}) => {
 	const { t } = useTranslation();
 
 	const [gasEstimateError, setGasEstimateError] = useState<string | null>(null);
@@ -33,6 +44,10 @@ const RedeemDeprecatedSynthsModal: FC<{
 	const [gasLimit, setGasLimit] = useState<GasLimitEstimate>(null);
 	const [gasPrice, setGasPrice] = useState<number>(0);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
+	const synthsBalancesQuery = useSynthsBalancesQuery();
+
+	const sUSDBalance =
+		synthsBalancesQuery?.data?.balancesMap[Synths.sUSD]?.balance ?? toBigNumber(0);
 
 	// useEffect(() => {
 	// 	const getGasEstimate = async () => {
@@ -86,15 +101,9 @@ const RedeemDeprecatedSynthsModal: FC<{
 			<Inner>
 				<ModalContainer>
 					<ValuesContainer>
-						<BurnValueContainer
-							redeemAmount={toBigNumber('150')}
-							sUSDBalance={toBigNumber('100')}
-						/>
+						<BurnValueContainer balances={redeemBalances} />
 						<ValuesDivider />
-						<ReceiveValueContainer
-							redeemAmount={toBigNumber('150')}
-							sUSDBalance={toBigNumber('100')}
-						/>
+						<ReceiveValueContainer redeemAmount={redeemAmount} {...{ sUSDBalance }} />
 					</ValuesContainer>
 					<SettingsContainer>
 						<GasSelector gasLimitEstimate={gasLimit} setGasPrice={setGasPrice} />
@@ -136,29 +145,28 @@ const RedeemDeprecatedSynthsModal: FC<{
 	);
 };
 
-const BurnValueContainer: FC<{ redeemAmount: BigNumber; sUSDBalance: BigNumber }> = ({
-	redeemAmount,
-	sUSDBalance,
-}) => {
+const BurnValueContainer: FC<{ balances: CryptoBalance[] }> = ({ balances }) => {
 	const { t } = useTranslation();
 
 	const titleLabel = (
 		<ValueSelectLabel>{t('synths.redeemable-deprecated-synths.modal-burn-title')}</ValueSelectLabel>
 	);
 
-	const amountInput = <ValueAmountInput>{formatCryptoCurrency(redeemAmount)}</ValueAmountInput>;
-
-	const balanceLabel = (
-		<ValueBalanceLabel>
-			{t('balance.input-label')} {formatCryptoCurrency(sUSDBalance)}
-		</ValueBalanceLabel>
+	const balancesLabel = (
+		<ValueBalanceTable>
+			{balances.map((balance) => (
+				<ValueBalanceTableRow key={balance.currencyKey}>
+					<div>{balance.currencyKey}</div>
+					<div>{formatCryptoCurrency(balance.balance)}</div>
+				</ValueBalanceTableRow>
+			))}
+		</ValueBalanceTable>
 	);
 
 	return (
 		<ValueContainer>
 			{titleLabel}
-			{amountInput}
-			{balanceLabel}
+			{balancesLabel}
 		</ValueContainer>
 	);
 };
@@ -172,10 +180,17 @@ const ReceiveValueContainer: FC<{ redeemAmount: BigNumber; sUSDBalance: BigNumbe
 	const titleLabel = (
 		<ValueSelectLabel>
 			{t('synths.redeemable-deprecated-synths.modal-receive-title')}
+
+			<ValueSelectLabelCurrenciesBlock>
+				<Currency.Icon currencyKey={Synths.sUSD} height={'16px'} width={'16px'} />
+				{Synths.sUSD}
+			</ValueSelectLabelCurrenciesBlock>
 		</ValueSelectLabel>
 	);
 
-	const amountInput = <ValueAmountInput>{formatCryptoCurrency(redeemAmount)}</ValueAmountInput>;
+	const amountInput = (
+		<ValueAmountInput>{formatCryptoCurrency(redeemAmount, { decimals: 2 })}</ValueAmountInput>
+	);
 
 	const balanceLabel = (
 		<ValueBalanceLabel>
@@ -231,7 +246,6 @@ const ValuesDivider = styled.div`
 const ValueContainer = styled.div`
 	display: flex;
 	flex-direction: column;
-	justify-content: center;
 	align-items: center;
 `;
 
@@ -240,10 +254,12 @@ const ValueSelectLabel = styled.div`
 	font-style: normal;
 	font-weight: 500;
 	font-size: 12px;
-	line-height: 120%;
 	text-transform: uppercase;
 	color: #828295;
 	margin-right: 10px;
+	display: flex;
+	align-items: center;
+	height: 24px;
 `;
 
 const ValueAmountInput = styled.div`
@@ -259,6 +275,43 @@ const ValueBalanceLabel = styled.div`
 	font-size: 12px;
 	color: ${(props) => props.theme.colors.gray};
 	margin-top: 8px;
+`;
+
+const ValueBalanceTable = styled.div`
+	width: 100%;
+	margin-top: 8px;
+	padding-right: 12px;
+`;
+
+const ValueBalanceTableRow = styled.div`
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	border-bottom: 1px solid ${(props) => props.theme.colors.grayBlue};
+	width: 100%;
+	font-family: ${(props) => props.theme.fonts.interBold};
+	font-size: 12px;
+	padding: 8px 0;
+
+	& > div:first-child {
+		color: ${(props) => props.theme.colors.gray};
+	}
+
+	& > div:last-child {
+		text-align: right;
+	}
+`;
+
+const ValueSelectLabelCurrenciesBlock = styled.div`
+	margin-left: 4px;
+	padding: 0 4px;
+	border: 1px solid ${(props) => props.theme.colors.grayBlue};
+	border-radius: 2px;
+	display: flex;
+	align-items: center;
+
+	& > div {
+		display: flex;
+	}
 `;
 
 const StyledModal = styled(BaseModal)`

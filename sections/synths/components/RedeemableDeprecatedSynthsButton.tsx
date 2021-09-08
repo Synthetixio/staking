@@ -17,8 +17,9 @@ const RedeemableDeprecatedSynthsButton: FC<{ redeemableDeprecatedSynthsQuery: an
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 
 	const redeemAmount = redeemableDeprecatedSynthsQuery?.data.totalUsdBalance ?? toBigNumber(0);
-	const redeemableDeprecatedSynths: string[] = redeemableDeprecatedSynthsQuery?.data?.balances?.map(
-		(s: CryptoBalance) => ethers.utils.formatBytes32String(s.currencyKey)
+	const redeemBalances = redeemableDeprecatedSynthsQuery?.data?.balances ?? [];
+	const redeemableDeprecatedSynths: string[] = redeemBalances.map((s: CryptoBalance) =>
+		ethers.utils.formatBytes32String(s.currencyKey)
 	);
 
 	const handleTransferConfirmation = (txHash: string) => {
@@ -44,7 +45,7 @@ const RedeemableDeprecatedSynthsButton: FC<{ redeemableDeprecatedSynthsQuery: an
 
 			{isRedeemingDeprecatedSynths ? (
 				<RedeemableDeprecatedSynthsModal
-					{...{ redeemAmount, redeemableDeprecatedSynths }}
+					{...{ redeemAmount, redeemableDeprecatedSynths, redeemBalances }}
 					onDismiss={() => setIsRedeemingDeprecatedSynths(false)}
 					onTransferConfirmation={handleTransferConfirmation}
 				/>
