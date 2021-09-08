@@ -44,8 +44,7 @@ type QuestionProps = {
 	validSubmission: boolean;
 	signTransactionState: Transaction;
 	setSignTransactionState: Function;
-	txTransactionState: Transaction;
-	setTxTransactionState: Function;
+	txTransactionState: 'pending' | 'confirmed' | string;
 	hash: string | null;
 	txHash: string | null;
 };
@@ -61,7 +60,6 @@ const Question: React.FC<QuestionProps> = ({
 	signTransactionState,
 	setSignTransactionState,
 	txTransactionState,
-	setTxTransactionState,
 	txHash,
 	hash,
 }) => {
@@ -152,7 +150,7 @@ const Question: React.FC<QuestionProps> = ({
 		);
 	}
 
-	if (txTransactionState === Transaction.WAITING) {
+	if (txTransactionState === 'pending') {
 		return (
 			<TxState
 				title={t('gov.actions.log-proposal.waiting')}
@@ -176,7 +174,7 @@ const Question: React.FC<QuestionProps> = ({
 		);
 	}
 
-	if (txTransactionState === Transaction.SUCCESS) {
+	if (txTransactionState === 'confirmed') {
 		return (
 			<TxState
 				title={t('gov.actions.log-proposal.success')}
@@ -199,7 +197,6 @@ const Question: React.FC<QuestionProps> = ({
 							<DismissButton
 								variant="secondary"
 								onClick={() => {
-									setTxTransactionState(Transaction.PRESUBMIT);
 									onBack();
 								}}
 							>

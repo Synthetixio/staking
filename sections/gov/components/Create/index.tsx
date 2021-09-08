@@ -42,12 +42,13 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 	const [signTransactionState, setSignTransactionState] = useState<Transaction>(
 		Transaction.PRESUBMIT
 	);
-	const [txTransactionState, setTxTransactionState] = useState<Transaction>(Transaction.PRESUBMIT);
 	const [signModalOpen, setSignModalOpen] = useState<boolean>(false);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 	const [signError, setSignError] = useState<string | null>(null);
 	const space = useSnapshotSpaceQuery(snapshotEndpoint, activeTab);
 	const [ipfsHash, setIpfsHash] = useState<string | null>(null);
+
+	console.log('propsal space error', space.status, space.error);
 
 	const { signer } = Connector.useContainer();
 
@@ -56,7 +57,7 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 		[signer]
 	);
 
-	const txn = useContractTxn(contract, 'logProposal', [ipfsHash], {});
+	const txn = useContractTxn(contract, 'logProposal', [ipfsHash || ''], {});
 
 	const sanitiseTimestamp = (timestamp: number) => {
 		return Math.round(timestamp / 1e3);
@@ -79,6 +80,7 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 
 	const createProposal = useSignMessage({
 		onSuccess: async (response) => {
+			console.log('propsal created');
 			setSignModalOpen(false);
 			setResult(response);
 
@@ -95,7 +97,7 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 			}
 		},
 		onError: async (error) => {
-			console.log(error);
+			console.log('proposal failed create', error);
 			setSignTransactionState(Transaction.PRESUBMIT);
 			setSignError(error.message);
 		},
@@ -103,6 +105,7 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 
 	const handleCreate = async () => {
 		try {
+			console.log('proposal data', space.data, block);
 			if (space.data && block) {
 				const isFixed = activeTab === SPACE_KEY.PROPOSAL;
 				setSignError(null);
@@ -121,6 +124,8 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 					proposalStartDate = sanitiseTimestamp(startDate.getTime());
 					proposalEndDate = sanitiseTimestamp(endDate.getTime());
 				}
+
+				console.log('creating proposal');
 
 				createProposal.mutate({
 					spaceKey: activeTab,
@@ -144,7 +149,7 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 		} catch (error) {
 			console.log(error);
 			setSignTransactionState(Transaction.PRESUBMIT);
-			setTxTransactionState(Transaction.PRESUBMIT);
+			txn.refresh();
 			setSignError(error.message);
 		}
 	};
@@ -177,8 +182,7 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 						validSubmission={validSubmission}
 						signTransactionState={signTransactionState}
 						setSignTransactionState={setSignTransactionState}
-						setTxTransactionState={setTxTransactionState}
-						txTransactionState={txTransactionState}
+						txTransactionState={txn.txnStatus}
 						hash={ipfsHash}
 						txHash={txn.hash}
 					/>
