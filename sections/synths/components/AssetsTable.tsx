@@ -20,7 +20,7 @@ type AssetsTableProps = {
 	isLoaded: boolean;
 	showConvert: boolean;
 	showHoldings: boolean;
-	showDeprecated?: boolean;
+	isDeprecated?: boolean;
 	onTransferClick?: (currencyKey: string) => void;
 };
 
@@ -32,7 +32,7 @@ const AssetsTable: FC<AssetsTableProps> = ({
 	title,
 	showHoldings,
 	showConvert,
-	showDeprecated,
+	isDeprecated,
 	onTransferClick,
 }) => {
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
@@ -50,7 +50,7 @@ const AssetsTable: FC<AssetsTableProps> = ({
 						isLoaded,
 						showHoldings,
 						showConvert,
-						showDeprecated,
+						isDeprecated,
 						onTransferClick,
 					}}
 				/>
@@ -65,7 +65,7 @@ const AssetsTable: FC<AssetsTableProps> = ({
 						isLoaded,
 						showHoldings,
 						showConvert,
-						showDeprecated,
+						isDeprecated,
 						onTransferClick,
 					}}
 				/>

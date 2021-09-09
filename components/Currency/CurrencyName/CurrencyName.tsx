@@ -13,7 +13,7 @@ type CurrencyNameProps = {
 	symbol?: string;
 	name?: string | null;
 	showIcon?: boolean;
-	showDeprecated?: boolean;
+	isDeprecated?: boolean;
 	iconProps?: object;
 };
 
@@ -22,20 +22,20 @@ export const CurrencyName: FC<CurrencyNameProps> = ({
 	symbol,
 	name = null,
 	showIcon = false,
-	showDeprecated = false,
+	isDeprecated = false,
 	iconProps = {},
 	...rest
 }) => {
 	const { t } = useTranslation();
 	return (
-		<Container {...{ showIcon, showDeprecated }} {...rest}>
+		<Container {...{ showIcon }} {...rest}>
 			{showIcon && (
-				<CurrencyIcon className="icon" {...{ currencyKey, showDeprecated }} {...iconProps} />
+				<CurrencyIcon className="icon" {...{ currencyKey, isDeprecated }} {...iconProps} />
 			)}
 			<NameAndSymbol>
 				<Symbol className="symbol">
 					{symbol || currencyKey}
-					{!showDeprecated ? null : (
+					{!isDeprecated ? null : (
 						<Deprecated>
 							<DeprecatedDot></DeprecatedDot> {t('common.currency.deprecated')}
 						</Deprecated>

@@ -25,7 +25,7 @@ type CurrencyIconProps = {
 	className?: string;
 	width?: string;
 	height?: string;
-	showDeprecated?: boolean;
+	isDeprecated?: boolean;
 };
 
 export const SNXIcon =
@@ -37,7 +37,7 @@ export const getSynthIcon = (currencyKey: CurrencyKey) =>
 export const CurrencyIconContainer: FC<CurrencyIconProps> = (props) => (
 	<Container>
 		<CurrencyIcon {...props} />
-		{!props.showDeprecated ? null : (
+		{!props.isDeprecated ? null : (
 			<DeprecatedXIconContainer>
 				<Svg src={DeprecatedXIcon} />
 			</DeprecatedXIconContainer>
@@ -48,7 +48,7 @@ export const CurrencyIconContainer: FC<CurrencyIconProps> = (props) => (
 export const CurrencyIcon: FC<CurrencyIconProps> = ({
 	currencyKey,
 	type,
-	showDeprecated,
+	isDeprecated,
 	...rest
 }) => {
 	const [firstFallbackError, setFirstFallbackError] = useState<boolean>(false);
@@ -84,7 +84,7 @@ export const CurrencyIcon: FC<CurrencyIconProps> = ({
 	) {
 		return (
 			<TokenIcon
-				{...{ showDeprecated }}
+				{...{ isDeprecated }}
 				src={ZapperTokenListMap[currencyKey].logoURI}
 				onError={() => setFirstFallbackError(true)}
 				{...props}
@@ -97,7 +97,7 @@ export const CurrencyIcon: FC<CurrencyIconProps> = ({
 	) {
 		return (
 			<TokenIcon
-				{...{ showDeprecated }}
+				{...{ isDeprecated }}
 				src={OneInchTokenListMap[currencyKey].logoURI}
 				onError={() => setSecondFallbackError(true)}
 				{...props}
@@ -114,7 +114,7 @@ export const CurrencyIcon: FC<CurrencyIconProps> = ({
 			default:
 				return (
 					<TokenIcon
-						{...{ showDeprecated }}
+						{...{ isDeprecated }}
 						src={
 							synthetixTokenListMap != null && synthetixTokenListMap[currencyKey] != null
 								? synthetixTokenListMap[currencyKey].logoURI
@@ -128,7 +128,7 @@ export const CurrencyIcon: FC<CurrencyIconProps> = ({
 		}
 	} else {
 		return (
-			<Placeholder {...{ showDeprecated }} style={{ width: props.width, height: props.height }}>
+			<Placeholder {...{ isDeprecated }} style={{ width: props.width, height: props.height }}>
 				{currencyKey}
 			</Placeholder>
 		);
@@ -145,20 +145,20 @@ const DeprecatedXIconContainer = styled.div`
 	bottom: -3px;
 `;
 
-const Placeholder = styled(FlexDivCentered)<{ showDeprecated?: boolean }>`
+const Placeholder = styled(FlexDivCentered)<{ isDeprecated?: boolean }>`
 	border-radius: 100%;
 	color: ${(props) => props.theme.colors.white};
 	border: 2px solid
-		${(props) => (props.showDeprecated ? props.theme.colors.red : props.theme.colors.white)};
+		${(props) => (props.isDeprecated ? props.theme.colors.red : props.theme.colors.white)};
 	font-size: 7px;
 	font-family: ${(props) => props.theme.fonts.interBold};
 	justify-content: center;
 	margin: 0 auto;
 `;
 
-const TokenIcon = styled.img<{ showDeprecated?: boolean }>`
+const TokenIcon = styled.img<{ isDeprecated?: boolean }>`
 	border-radius: 100%;
-	border: 2px solid ${(props) => (props.showDeprecated ? props.theme.colors.red : 'transparent')};
+	border: 2px solid ${(props) => (props.isDeprecated ? props.theme.colors.red : 'transparent')};
 `;
 
 export default CurrencyIconContainer;

@@ -26,7 +26,7 @@ import { isWalletConnectedState } from 'store/wallet';
 import useCryptoBalances from 'hooks/useCryptoBalances';
 import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
 import useSNXBalanceQuery from 'queries/walletBalances/useSNXBalanceQuery';
-import useRedeemableDeprecatedSynths from 'queries/walletBalances/useRedeemableDeprecatedSynths';
+import useRedeemableDeprecatedSynthsQuery from 'queries/walletBalances/useRedeemableDeprecatedSynthsQuery';
 import { Asset } from 'queries/walletBalances/types';
 
 import { zeroBN } from 'utils/formatters/number';
@@ -42,7 +42,7 @@ const Index: FC = () => {
 	const synthsBalancesQuery = useSynthsBalancesQuery();
 	const SNXBalanceQuery = useSNXBalanceQuery();
 	const cryptoBalances = useCryptoBalances();
-	const redeemableDeprecatedSynthsQuery = useRedeemableDeprecatedSynths();
+	const redeemableDeprecatedSynthsQuery = useRedeemableDeprecatedSynthsQuery();
 
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 
@@ -125,7 +125,7 @@ const Index: FC = () => {
 
 			<VerticalSpacer />
 
-			{isWalletConnected && redeemableDeprecatedSynthsQuery.data?.totalUsdBalance?.gt(0) && (
+			{isWalletConnected && redeemableDeprecatedSynthsQuery.data?.totalUSDBalance?.gt(0) && (
 				<AssetsTable
 					title={
 						<FlexDivRow>
@@ -158,7 +158,7 @@ const Index: FC = () => {
 					isLoaded={!redeemableDeprecatedSynthsQuery.isLoading}
 					showHoldings={false}
 					showConvert={false}
-					showDeprecated
+					isDeprecated
 				/>
 			)}
 

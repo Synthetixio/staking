@@ -16,7 +16,7 @@ const RedeemableDeprecatedSynthsButton: FC<{ redeemableDeprecatedSynthsQuery: an
 	const [isRedeemingDeprecatedSynths, setIsRedeemingDeprecatedSynths] = useState(false);
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 
-	const redeemAmount = redeemableDeprecatedSynthsQuery?.data.totalUsdBalance ?? toBigNumber(0);
+	const redeemAmount = redeemableDeprecatedSynthsQuery?.data.totalUSDBalance ?? toBigNumber(0);
 	const redeemBalances = redeemableDeprecatedSynthsQuery?.data?.balances ?? [];
 	const redeemableDeprecatedSynths: string[] = redeemBalances.map((s: CryptoBalance) =>
 		ethers.utils.formatBytes32String(s.currencyKey)

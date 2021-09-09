@@ -49,7 +49,7 @@ type AssetsTableProps = {
 	isLoaded: boolean;
 	showConvert: boolean;
 	showHoldings: boolean;
-	showDeprecated?: boolean;
+	isDeprecated?: boolean;
 	onTransferClick?: (currencyKey: string) => void;
 };
 
@@ -60,7 +60,7 @@ const AssetsTable: FC<AssetsTableProps> = ({
 	isLoaded,
 	showHoldings,
 	showConvert,
-	showDeprecated,
+	isDeprecated,
 	onTransferClick,
 }) => {
 	const { t } = useTranslation();
@@ -94,7 +94,7 @@ const AssetsTable: FC<AssetsTableProps> = ({
 									: undefined
 							}
 							showIcon={true}
-							{...{ showDeprecated }}
+							{...{ isDeprecated }}
 						/>
 					);
 				},
