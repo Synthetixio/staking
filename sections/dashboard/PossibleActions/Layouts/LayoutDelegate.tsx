@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { useRecoilValue } from 'recoil';
 
 import ROUTES from 'constants/routes';
-import { formatPercent, toBigNumber } from 'utils/formatters/number';
+import { formatPercent } from 'utils/formatters/number';
 
 import MintIcon from 'assets/svg/app/mint.svg';
 import ClaimIcon from 'assets/svg/app/claim.svg';
@@ -16,21 +16,24 @@ import media from 'styles/media';
 
 import GridBox, { GridBoxProps } from 'components/GridBox/Gridbox';
 
-import { delegateWalletState } from 'store/wallet';
+import { delegateWalletState, walletAddressState } from 'store/wallet';
 import useUserStakingData from 'hooks/useUserStakingData';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 
 import { ActionsContainer as Container } from './common-styles';
+import { wei } from '@synthetixio/wei';
 
 const LayoutLayerOne: FC = () => {
 	const { t } = useTranslation();
 
-	const { stakingRewards, tradingRewards } = useUserStakingData();
+	const walletAddress = useRecoilValue(walletAddressState);
+
+	const { stakingRewards, tradingRewards } = useUserStakingData(walletAddress);
 	const { currentCRatio, targetCRatio } = useStakingCalculations();
 	const delegateWallet = useRecoilValue(delegateWalletState);
 
 	const gridItems: GridBoxProps[] = useMemo(() => {
-		const aboveTargetCRatio = currentCRatio.isLessThanOrEqualTo(targetCRatio);
+		const aboveTargetCRatio = currentCRatio.lte(targetCRatio);
 		return [
 			{
 				icon: (
@@ -45,12 +48,11 @@ const LayoutLayerOne: FC = () => {
 				title: t('dashboard.actions.claim.title'),
 				copy: t('dashboard.actions.claim.copy'),
 				tooltip:
-					stakingRewards.isZero() && tradingRewards.isZero()
+					stakingRewards.eq(0) && tradingRewards.eq(0)
 						? t('dashboard.actions.claim.tooltip')
 						: undefined,
 				link: ROUTES.Earn.Claim,
-				isDisabled:
-					(stakingRewards.isZero() && tradingRewards.isZero()) || !delegateWallet?.canClaim,
+				isDisabled: (stakingRewards.eq(0) && tradingRewards.eq(0)) || !delegateWallet?.canClaim,
 			},
 			{
 				icon: (
@@ -60,7 +62,7 @@ const LayoutLayerOne: FC = () => {
 				),
 				title: !aboveTargetCRatio
 					? t('dashboard.actions.burn.title', {
-							targetCRatio: formatPercent(toBigNumber(1).div(targetCRatio), { minDecimals: 0 }),
+							targetCRatio: formatPercent(wei(1).div(targetCRatio), { minDecimals: 0 }),
 					  })
 					: t('dashboard.actions.mint.title'),
 				copy: !aboveTargetCRatio

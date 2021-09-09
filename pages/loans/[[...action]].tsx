@@ -10,11 +10,13 @@ import StatsSection from 'components/StatsSection';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import useUserStakingData from 'hooks/useUserStakingData';
-import { formatFiatCurrency, formatPercent, toBigNumber } from 'utils/formatters/number';
+import { formatFiatCurrency, formatPercent } from 'utils/formatters/number';
 import StakedValue from 'sections/shared/modals/StakedValueModal/StakedValueBox';
 import ActiveDebt from 'sections/shared/modals/DebtValueModal/DebtValueBox';
 
 import Main from 'sections/loans/index';
+import { useRecoilValue } from 'recoil';
+import { walletAddressState } from 'store/wallet';
 
 type LoansPageProps = {};
 
@@ -22,9 +24,11 @@ const LoansPage: FC<LoansPageProps> = () => {
 	const { t } = useTranslation();
 	const router = useRouter();
 
+	const walletAddress = useRecoilValue(walletAddressState);
+
 	const { stakedCollateralValue, debtBalance } = useStakingCalculations();
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
-	const { stakingAPR } = useUserStakingData();
+	const { stakingAPR } = useUserStakingData(walletAddress);
 
 	useEffect(() => {
 		if (router.asPath === '/loans') {
@@ -40,14 +44,9 @@ const LoansPage: FC<LoansPageProps> = () => {
 			<StatsSection>
 				<StakedValue
 					title={t('common.stat-box.staked-value')}
-					value={formatFiatCurrency(
-						getPriceAtCurrentRate(
-							stakedCollateralValue.isNaN() ? toBigNumber(0) : stakedCollateralValue
-						),
-						{
-							sign: selectedPriceCurrency.sign,
-						}
-					)}
+					value={formatFiatCurrency(getPriceAtCurrentRate(stakedCollateralValue), {
+						sign: selectedPriceCurrency.sign,
+					})}
 					isGreen
 				/>
 				<Earning
@@ -57,12 +56,9 @@ const LoansPage: FC<LoansPageProps> = () => {
 				/>
 				<ActiveDebt
 					title={t('common.stat-box.active-debt')}
-					value={formatFiatCurrency(
-						getPriceAtCurrentRate(debtBalance.isNaN() ? toBigNumber(0) : debtBalance),
-						{
-							sign: selectedPriceCurrency.sign,
-						}
-					)}
+					value={formatFiatCurrency(getPriceAtCurrentRate(debtBalance), {
+						sign: selectedPriceCurrency.sign,
+					})}
 					isGreen
 				/>
 			</StatsSection>

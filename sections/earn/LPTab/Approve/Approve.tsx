@@ -9,7 +9,6 @@ import { appReadyState } from 'store/app';
 import GasSelector from 'components/GasSelector';
 import PendingConfirmation from 'assets/svg/app/pending-confirmation.svg';
 import Success from 'assets/svg/app/success.svg';
-import synthetix from 'lib/synthetix';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import Etherscan from 'containers/BlockExplorer';
 import { zIndex } from 'constants/ui';
@@ -60,9 +59,15 @@ import {
 	LinkText,
 } from '../../common';
 import Color from 'color';
+import Wei, { wei } from '@synthetixio/wei';
+import { SynthetixJS } from '@synthetixio/contracts-interface';
 
-export const getApprovalContractData = (stakedAsset: CurrencyKey, signer: any) => {
-	const { contracts } = synthetix.js!;
+export const getApprovalContractData = (
+	synthetixjs: SynthetixJS,
+	stakedAsset: CurrencyKey,
+	signer: any
+) => {
+	const { contracts } = synthetixjs!;
 	if (stakedAsset === Synths.iBTC) {
 		return {
 			contract: contracts.SynthiBTC,
@@ -172,12 +177,12 @@ type ApproveProps = {
 const Approve: FC<ApproveProps> = ({ stakedAsset, setShowApproveOverlayModal }) => {
 	const { t } = useTranslation();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
-	const { provider, signer } = Connector.useContainer();
+	const { provider, signer, synthetixjs } = Connector.useContainer();
 	const { blockExplorerInstance } = Etherscan.useContainer();
 	const [error, setError] = useState<string | null>(null);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 	const [gasLimitEstimate, setGasLimitEstimate] = useState<GasLimitEstimate>(null);
-	const [gasPrice, setGasPrice] = useState<number>(0);
+	const [gasPrice, setGasPrice] = useState<Wei>(wei(0));
 	const [transactionState, setTransactionState] = useState<Transaction>(Transaction.PRESUBMIT);
 	const [txHash, setTxHash] = useState<string | null>(null);
 	const link =
@@ -191,11 +196,9 @@ const Approve: FC<ApproveProps> = ({ stakedAsset, setShowApproveOverlayModal }) 
 			if (isAppReady) {
 				try {
 					setError(null);
-					const { contract, poolAddress } = getApprovalContractData(stakedAsset, provider);
-					let gasEstimate = await synthetix.getGasEstimateForTransaction({
-						txArgs: [poolAddress, synthetix.js!.utils.parseEther(TokenAllowanceLimit.toString())],
-						method: contract.estimateGas.approve,
-					});
+					const { contract } = getApprovalContractData(synthetixjs!, stakedAsset, provider);
+					let gasEstimate = wei(contract.estimateGas.approve(), 0);
+
 					setGasLimitEstimate(gasEstimate);
 				} catch (error) {
 					setError(error.message);
@@ -204,7 +207,7 @@ const Approve: FC<ApproveProps> = ({ stakedAsset, setShowApproveOverlayModal }) 
 			}
 		};
 		getGasLimitEstimate();
-	}, [stakedAsset, provider, isAppReady]);
+	}, [stakedAsset, provider, isAppReady, synthetixjs]);
 
 	const handleApprove = useCallback(() => {
 		async function approve() {
@@ -212,18 +215,20 @@ const Approve: FC<ApproveProps> = ({ stakedAsset, setShowApproveOverlayModal }) 
 				try {
 					setError(null);
 					setTxModalOpen(true);
-					const { contract, poolAddress } = getApprovalContractData(stakedAsset, signer);
+					const { contract, poolAddress } = getApprovalContractData(
+						synthetixjs!,
+						stakedAsset,
+						signer
+					);
 
-					const allowance = synthetix.js!.utils.parseEther(TokenAllowanceLimit.toString());
-					const gasLimit = await synthetix.getGasEstimateForTransaction({
-						txArgs: [poolAddress, allowance],
-						method: contract.estimateGas.approve,
-					});
+					const allowance = TokenAllowanceLimit;
+					const gasLimit = wei(contract.estimateGas.approve(allowance.toBN()));
+
 					const transaction: ethers.ContractTransaction = await contract.approve(
 						poolAddress,
 						allowance,
 						{
-							gasPrice: normalizedGasPrice(gasPrice),
+							gasPrice: normalizedGasPrice(gasPrice.toNumber()),
 							gasLimit,
 						}
 					);
@@ -244,7 +249,7 @@ const Approve: FC<ApproveProps> = ({ stakedAsset, setShowApproveOverlayModal }) 
 			}
 		}
 		approve();
-	}, [stakedAsset, signer, gasPrice, monitorTransaction, isAppReady]);
+	}, [stakedAsset, signer, gasPrice, monitorTransaction, isAppReady, synthetixjs]);
 
 	if (transactionState === Transaction.WAITING) {
 		return (

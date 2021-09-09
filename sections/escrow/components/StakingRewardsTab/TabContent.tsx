@@ -21,9 +21,10 @@ import {
 	ModalItemText,
 	ErrorMessage,
 } from 'styles/common';
+import Wei from '@synthetixio/wei';
 
 type TabContentProps = {
-	claimableAmount: number;
+	claimableAmount: Wei;
 	onSubmit: any;
 	transactionError: string | null;
 	gasEstimateError: string | null;
@@ -32,7 +33,7 @@ type TabContentProps = {
 	gasLimitEstimate: GasLimitEstimate;
 	setGasPrice: Function;
 	txHash: string | null;
-	transactionState: Transaction;
+	transactionState: string;
 	setTransactionState: (tx: Transaction) => void;
 };
 
@@ -60,7 +61,7 @@ const TabContent: FC<TabContentProps> = ({
 					onClick={onSubmit}
 					variant="primary"
 					size="lg"
-					disabled={transactionState !== Transaction.PRESUBMIT || !!gasEstimateError}
+					disabled={transactionState !== 'unsent' || !!gasEstimateError}
 				>
 					{t('escrow.actions.vest-button', {
 						canVestAmount: formatCurrency(vestingCurrencyKey, claimableAmount, {
@@ -94,7 +95,7 @@ const TabContent: FC<TabContentProps> = ({
 				currencyKey={vestingCurrencyKey}
 				hash={txHash as string}
 				vestingAmount={claimableAmount.toString()}
-				setTransactionState={setTransactionState}
+				resetTransaction={() => setTransactionState(Transaction.PRESUBMIT)}
 			/>
 		);
 	}
@@ -107,7 +108,8 @@ const TabContent: FC<TabContentProps> = ({
 					<Data>
 						{formatCurrency(vestingCurrencyKey, claimableAmount, {
 							currencyKey: vestingCurrencyKey,
-							decimals: 2,
+							minDecimals: 2,
+							maxDecimals: 2,
 						})}
 					</Data>
 				</InputBox>
@@ -129,7 +131,8 @@ const TabContent: FC<TabContentProps> = ({
 								<ModalItemText>
 									{formatCurrency(vestingCurrencyKey, claimableAmount, {
 										currencyKey: vestingCurrencyKey,
-										decimals: 4,
+										minDecimals: 4,
+										maxDecimals: 4,
 									})}
 								</ModalItemText>
 							</ModalItem>

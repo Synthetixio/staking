@@ -7,28 +7,29 @@ import { LineSpacer } from 'styles/common';
 import UIContainer from 'containers/UI';
 import TransactionsContainer from 'sections/history/TransactionsContainer';
 import StatsSection from 'components/StatsSection';
-import useFeeClaimHistoryQuery from 'queries/staking/useFeeClaimHistoryQuery';
-import useSynthBurnedQuery from 'queries/staking/useSynthBurnedQuery';
-import useSynthIssuedQuery from 'queries/staking/useSynthIssuedQuery';
 
 import StatBox from 'components/StatBox';
+import useSynthetixQueries from '@synthetixio/queries';
+import { useRecoilValue } from 'recoil';
+import { walletAddressState } from 'store/wallet';
 
 const HistoryPage: FC = () => {
 	const { t } = useTranslation();
-	const issuedQuery = useSynthIssuedQuery();
-	const burnedQuery = useSynthBurnedQuery();
-	const feesClaimedQuery = useFeeClaimHistoryQuery();
+
+	const walletAddress = useRecoilValue(walletAddressState);
+
+	const { useFeeClaimHistoryQuery } = useSynthetixQueries();
+
+	const feesClaimedQuery = useFeeClaimHistoryQuery(walletAddress);
 	const { setTitle } = UIContainer.useContainer();
 
-	const isLoaded = issuedQuery.isSuccess && burnedQuery.isSuccess && feesClaimedQuery.isSuccess;
-	const issued = issuedQuery.data ?? [];
-	const burned = burnedQuery.data ?? [];
+	const isLoaded = feesClaimedQuery.isSuccess;
 	const feesClaimed = feesClaimedQuery.data ?? [];
 
-	const txCount = useMemo(
-		() => (isLoaded ? issued.length + burned.length + feesClaimed.length : 0),
-		[isLoaded, issued.length, burned.length, feesClaimed.length]
-	);
+	const txCount = useMemo(() => (isLoaded ? feesClaimed.length : 0), [
+		isLoaded,
+		feesClaimed.length,
+	]);
 
 	// header title
 	useEffect(() => {
@@ -46,12 +47,7 @@ const HistoryPage: FC = () => {
 				<div />
 			</StatsSection>
 			<LineSpacer />
-			<TransactionsContainer
-				burned={burned}
-				issued={issued}
-				feesClaimed={feesClaimed}
-				isLoaded={isLoaded}
-			/>
+			<TransactionsContainer history={feesClaimed} isLoaded={isLoaded} />
 		</>
 	);
 };

@@ -19,7 +19,7 @@ import useStakingCalculations from 'sections/staking/hooks/useStakingCalculation
 import { CryptoCurrency } from 'constants/currency';
 import { DEFAULT_NETWORK_ID } from 'constants/defaults';
 import { L1_TO_L2_NETWORK_MAPPER } from '@synthetixio/optimism-networks';
-import useGetDepositsIsActiveQuery from 'queries/deposits/useGetDepositsIsActiveQuery';
+import useSynthetixQueries from '@synthetixio/queries';
 
 const Index: FC = () => {
 	const [l2AmountSNX, setL2AmountSNX] = useState<number>(0);
@@ -27,13 +27,16 @@ const Index: FC = () => {
 	const { t } = useTranslation();
 	const { debtBalance, transferableCollateral, stakingEscrow } = useStakingCalculations();
 	const network = useRecoilValue(networkState);
-	const depositsInactive = !useGetDepositsIsActiveQuery().data;
+
+	const { useIsBridgeActiveQuery } = useSynthetixQueries();
+
+	const depositsInactive = !useIsBridgeActiveQuery().data;
 
 	useEffect(() => {
 		async function getData() {
 			try {
 				const provider = getOptimismProvider({
-					layerOneNetworkId: network?.id ?? DEFAULT_NETWORK_ID,
+					networkId: network?.id ?? DEFAULT_NETWORK_ID,
 				});
 				const {
 					contracts: { Synthetix, FeePool },
@@ -85,7 +88,7 @@ const Index: FC = () => {
 			apr: {
 				title: t('layer2.actions.apr.title', {
 					amountSNX: formatCryptoCurrency(l2AmountSNX, {
-						decimals: 0,
+						maxDecimals: 0,
 						currencyKey: CryptoCurrency.SNX,
 					}),
 					apr: formatPercent(l2APR),
@@ -99,18 +102,18 @@ const Index: FC = () => {
 
 	const gridItems = useMemo(
 		() =>
-			debtBalance.isZero()
+			debtBalance.eq(0)
 				? [
 						{
 							...ACTIONS.apr,
 						},
 						{
 							...ACTIONS.deposit,
-							isDisabled: transferableCollateral.isZero() || depositsInactive,
+							isDisabled: transferableCollateral.eq(0) || depositsInactive,
 						},
 						{
 							...ACTIONS.migrate,
-							isDisabled: stakingEscrow.isZero(),
+							isDisabled: stakingEscrow.eq(0),
 						},
 				  ]
 				: [

@@ -9,18 +9,12 @@ import Connector from 'containers/Connector';
 import Currency from 'components/Currency';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import {
-	formatCurrency,
-	formatFiatCurrency,
-	toBigNumber,
-	formatNumber,
-} from 'utils/formatters/number';
+import { formatCurrency, formatFiatCurrency } from 'utils/formatters/number';
 import { CryptoCurrency, CurrencyKey } from 'constants/currency';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { ESTIMATE_VALUE } from 'constants/placeholder';
 import { GasLimitEstimate } from 'constants/network';
 import GasSelector from 'components/GasSelector';
-import synthetix from 'lib/synthetix';
 
 import {
 	FlexDivColCentered,
@@ -35,22 +29,23 @@ import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import { getContract } from '../StakeTab/StakeTab';
 import { StyledButton } from '../../common';
 import { CurrencyIconType } from 'components/Currency/CurrencyIcon/CurrencyIcon';
+import Wei, { wei } from '@synthetixio/wei';
 
 type RewardsBoxProps = {
-	tokenRewards: number;
-	SNXRate: number;
+	tokenRewards: Wei;
+	SNXRate: Wei;
 	stakedAsset: CurrencyKey;
 	icon: CurrencyKey;
 	type?: CurrencyIconType;
 	handleClaim: () => void;
-	setClaimGasPrice: (num: number) => void;
+	setClaimGasPrice: (num: Wei) => void;
 	claimTxModalOpen: boolean;
 	setClaimTxModalOpen: (open: boolean) => void;
 	claimError: string | null;
 	setClaimError: (err: string | null) => void;
-	secondTokenReward?: number;
+	secondTokenReward?: Wei;
 	secondTokenKey?: CryptoCurrency;
-	secondTokenRate?: number;
+	secondTokenRate?: Wei;
 };
 
 const RewardsBox: FC<RewardsBoxProps> = ({
@@ -70,7 +65,7 @@ const RewardsBox: FC<RewardsBoxProps> = ({
 	secondTokenRate,
 }) => {
 	const { t } = useTranslation();
-	const { signer } = Connector.useContainer();
+	const { synthetixjs, signer } = Connector.useContainer();
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
 	const [gasLimitEstimate, setGasLimitEstimate] = useState<GasLimitEstimate>(null);
 	const isAppReady = useRecoilValue(appReadyState);
@@ -80,11 +75,8 @@ const RewardsBox: FC<RewardsBoxProps> = ({
 			if (isAppReady) {
 				try {
 					setClaimError(null);
-					const contract = getContract(stakedAsset, signer);
-					let gasEstimate = await synthetix.getGasEstimateForTransaction({
-						txArgs: [],
-						method: contract.estimateGas.getReward,
-					});
+					const contract = getContract(synthetixjs!, stakedAsset, signer);
+					const gasEstimate = wei(await contract.estimateGas.getReward(), 0);
 					setGasLimitEstimate(gasEstimate);
 				} catch (error) {
 					setClaimError(error.message);
@@ -93,7 +85,7 @@ const RewardsBox: FC<RewardsBoxProps> = ({
 			}
 		};
 		getGasLimitEstimate();
-	}, [stakedAsset, signer, setClaimError, isAppReady]);
+	}, [stakedAsset, signer, setClaimError, isAppReady, synthetixjs]);
 
 	const isDualRewards = secondTokenReward !== undefined;
 
@@ -107,12 +99,11 @@ const RewardsBox: FC<RewardsBoxProps> = ({
 						<RewardsAmountSNX>
 							{formatCurrency(CryptoCurrency.SNX, tokenRewards, {
 								currencyKey: CryptoCurrency.SNX,
-								decimals: 2,
 							})}
 						</RewardsAmountSNX>
 						<RewardsAmountUSD>
 							{ESTIMATE_VALUE}{' '}
-							{formatFiatCurrency(getPriceAtCurrentRate(toBigNumber(tokenRewards * SNXRate)), {
+							{formatFiatCurrency(getPriceAtCurrentRate(tokenRewards.mul(SNXRate)), {
 								sign: selectedPriceCurrency.sign,
 							})}
 						</RewardsAmountUSD>
@@ -128,13 +119,12 @@ const RewardsBox: FC<RewardsBoxProps> = ({
 							<RewardsAmountSNX>
 								{formatCurrency(secondTokenKey, secondTokenReward!, {
 									currencyKey: secondTokenKey,
-									decimals: 2,
 								})}
 							</RewardsAmountSNX>
 							<RewardsAmountUSD>
 								{ESTIMATE_VALUE}{' '}
 								{formatFiatCurrency(
-									getPriceAtCurrentRate(toBigNumber(secondTokenReward! * secondTokenRate!)),
+									getPriceAtCurrentRate(wei(secondTokenReward!.mul(secondTokenRate!))),
 									{
 										sign: selectedPriceCurrency.sign,
 									}
@@ -143,7 +133,7 @@ const RewardsBox: FC<RewardsBoxProps> = ({
 						</FlexDivColCentered>
 					)}
 				</RewardsRow>
-				<StyledButton variant="primary" onClick={handleClaim} disabled={tokenRewards === 0}>
+				<StyledButton variant="primary" onClick={handleClaim} disabled={tokenRewards.eq(0)}>
 					{isDualRewards
 						? t('earn.actions.claim.claim-button')
 						: t('earn.actions.claim.claim-snx-button')}
@@ -165,7 +155,7 @@ const RewardsBox: FC<RewardsBoxProps> = ({
 								<ModalItemTitle>{t('earn.actions.claim.claiming')}</ModalItemTitle>
 								<ModalItemText>
 									{t('earn.actions.claim.amount', {
-										amount: formatNumber(tokenRewards, { decimals: DEFAULT_CRYPTO_DECIMALS }),
+										amount: tokenRewards.toString(DEFAULT_CRYPTO_DECIMALS),
 										asset: CryptoCurrency.SNX,
 									})}
 								</ModalItemText>

@@ -9,7 +9,6 @@ import { appReadyState } from 'store/app';
 import GasSelector from 'components/GasSelector';
 import PendingConfirmation from 'assets/svg/app/pending-confirmation.svg';
 import Success from 'assets/svg/app/success.svg';
-import synthetix from 'lib/synthetix';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import Etherscan from 'containers/BlockExplorer';
 import { zIndex } from 'constants/ui';
@@ -45,9 +44,11 @@ import {
 } from '../../common';
 import Color from 'color';
 import { walletAddressState } from 'store/wallet';
+import Wei, { wei } from '@synthetixio/wei';
+import { SynthetixJS } from '@synthetixio/contracts-interface';
 
-export const getSettleSynthType = (stakedAsset: CurrencyKey) => {
-	const { contracts, utils } = synthetix.js!;
+export const getSettleSynthType = (synthetixjs: SynthetixJS, stakedAsset: CurrencyKey) => {
+	const { contracts, utils } = synthetixjs!;
 	if (stakedAsset === Synths.iBTC) {
 		return {
 			contract: contracts.Exchanger,
@@ -71,13 +72,13 @@ type SettleProps = {
 const Settle: FC<SettleProps> = ({ stakedAsset, setShowSettleOverlayModal }) => {
 	const { t } = useTranslation();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
-	const { provider } = Connector.useContainer();
+	const { provider, synthetixjs } = Connector.useContainer();
 	const { blockExplorerInstance } = Etherscan.useContainer();
 	const walletAddress = useRecoilValue(walletAddressState);
 	const [error, setError] = useState<string | null>(null);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 	const [gasLimitEstimate, setGasLimitEstimate] = useState<GasLimitEstimate>(null);
-	const [gasPrice, setGasPrice] = useState<number>(0);
+	const [gasPrice, setGasPrice] = useState<Wei>(wei(0));
 	const [transactionState, setTransactionState] = useState<Transaction>(Transaction.PRESUBMIT);
 	const [txHash, setTxHash] = useState<string | null>(null);
 	const link =
@@ -91,11 +92,8 @@ const Settle: FC<SettleProps> = ({ stakedAsset, setShowSettleOverlayModal }) => 
 			if (isAppReady) {
 				try {
 					setError(null);
-					const { contract, synth } = getSettleSynthType(stakedAsset);
-					let gasEstimate = await synthetix.getGasEstimateForTransaction({
-						txArgs: [walletAddress, synth],
-						method: contract.estimateGas.settle,
-					});
+					const { contract, synth } = getSettleSynthType(synthetixjs!, stakedAsset);
+					let gasEstimate = wei(await contract.estimateGas.settle(walletAddress, synth));
 					setGasLimitEstimate(gasEstimate);
 				} catch (error) {
 					setError(error.message);
@@ -104,7 +102,7 @@ const Settle: FC<SettleProps> = ({ stakedAsset, setShowSettleOverlayModal }) => 
 			}
 		};
 		getGasLimitEstimate();
-	}, [stakedAsset, provider, isAppReady, walletAddress]);
+	}, [stakedAsset, provider, synthetixjs, isAppReady, walletAddress]);
 
 	const handleSettle = useCallback(() => {
 		async function approve() {
@@ -113,17 +111,15 @@ const Settle: FC<SettleProps> = ({ stakedAsset, setShowSettleOverlayModal }) => 
 					setError(null);
 					setTxModalOpen(true);
 
-					const { contract, synth } = getSettleSynthType(stakedAsset);
+					const { contract, synth } = getSettleSynthType(synthetixjs!, stakedAsset);
 
-					const gasLimit = await synthetix.getGasEstimateForTransaction({
-						txArgs: [walletAddress, synth],
-						method: contract?.estimateGas.settle,
-					});
+					const gasLimit = await contract.estimateGas.settle(walletAddress, synth);
+
 					const transaction: ethers.ContractTransaction = await contract.settle(
 						walletAddress,
 						synth,
 						{
-							gasPrice: normalizedGasPrice(gasPrice),
+							gasPrice: normalizedGasPrice(gasPrice.toNumber()),
 							gasLimit,
 						}
 					);
@@ -144,7 +140,7 @@ const Settle: FC<SettleProps> = ({ stakedAsset, setShowSettleOverlayModal }) => 
 			}
 		}
 		approve();
-	}, [stakedAsset, gasPrice, monitorTransaction, isAppReady, walletAddress]);
+	}, [stakedAsset, gasPrice, monitorTransaction, isAppReady, walletAddress, synthetixjs]);
 
 	if (transactionState === Transaction.WAITING) {
 		return (

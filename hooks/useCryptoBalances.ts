@@ -1,41 +1,111 @@
 import { useMemo } from 'react';
 import { orderBy } from 'lodash';
 
-import useETHBalanceQuery from 'queries/walletBalances/useETHBalanceQuery';
-import useSNXBalanceQuery from 'queries/walletBalances/useSNXBalanceQuery';
-import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
-
 import { CryptoCurrency, Synths } from 'constants/currency';
 import { assetToSynth } from 'utils/currencies';
-import useWETHBalanceQuery from 'queries/walletBalances/useWETHBalanceQuery';
-import useWBTCBalanceQuery from 'queries/walletBalances/useWBTCBalanceQuery';
-import useRenBTCBalanceQuery from 'queries/walletBalances/useRenBTCBalanceQuery';
-import useGetDebtDataQuery from 'queries/debt/useGetDebtDataQuery';
-import { CryptoBalance } from 'queries/walletBalances/types';
-import { zeroBN } from 'utils/formatters/number';
+
+import useSynthetixQueries from '@synthetixio/queries';
+import { NetworkId } from '@synthetixio/contracts-interface';
+import Wei, { wei } from '@synthetixio/wei';
+import { renBTCToken, wBTCToken, wETHToken, snxToken } from 'contracts';
+import { useRecoilValue } from 'recoil';
+import { networkState } from 'store/wallet';
+import { ethers } from 'ethers';
 
 const { ETH, WETH, SNX, BTC, WBTC, RENBTC } = CryptoCurrency;
 
-const useCryptoBalances = () => {
-	const ETHBalanceQuery = useETHBalanceQuery();
-	const wETHBalanceQuery = useWETHBalanceQuery();
-	const wBTCBalanceQuery = useWBTCBalanceQuery();
-	const renBTCBalanceQuery = useRenBTCBalanceQuery();
-	const SNXBalanceQuery = useSNXBalanceQuery();
+export type CryptoBalance = {
+	currencyKey: string;
+	balance: Wei;
+	usdBalance: Wei;
+	synth?: string;
+	transferrable?: Wei;
+};
+
+const useCryptoBalances = (walletAddress: string | null) => {
+	const {
+		useTokensBalancesQuery,
+		useExchangeRatesQuery,
+		useGetDebtDataQuery,
+	} = useSynthetixQueries();
+
+	const networkId = useRecoilValue(networkState);
+
+	const tokenDefs = [
+		{
+			symbol: 'ETH',
+			address: ethers.constants.AddressZero,
+			decimals: 18,
+			logoURI: '',
+			name: 'Ethereum',
+			chainId: 1,
+			tags: [],
+		},
+		{
+			symbol: 'SNX',
+			address:
+				(snxToken.address as any)[networkId?.name?.valueOf() || 'mainnet'] ||
+				ethers.constants.AddressZero,
+			decimals: 18,
+			logoURI: '',
+			name: 'Wrapped Bitcoin',
+			chainId: 1,
+			tags: [],
+		},
+	];
+
+	if (networkId?.id === NetworkId.Mainnet) {
+		tokenDefs.push(
+			...[
+				{
+					symbol: 'WBTC',
+					address: wBTCToken.address,
+					decimals: 18,
+					logoURI: '',
+					name: 'Wrapped Bitcoin',
+					chainId: 1,
+					tags: [],
+				},
+				{
+					symbol: 'WETH',
+					address: wETHToken.address,
+					decimals: 18,
+					logoURI: '',
+					name: 'Wrapped Ethereum',
+					chainId: 1,
+					tags: [],
+				},
+				{
+					symbol: 'renBTC',
+					address: renBTCToken.ADDRESSES['mainnet'],
+					decimals: 18,
+					logoURI: '',
+					name: 'renBTC',
+					chainId: 1,
+					tags: [],
+				},
+			]
+		);
+	}
+
+	const balancesQuery = useTokensBalancesQuery(tokenDefs, walletAddress);
+
 	const exchangeRatesQuery = useExchangeRatesQuery();
-	const debtQuery = useGetDebtDataQuery();
+
+	const debtQuery = useGetDebtDataQuery(walletAddress);
 
 	const exchangeRates = exchangeRatesQuery.data ?? null;
 
-	const isLoaded =
-		ETHBalanceQuery.isSuccess && SNXBalanceQuery.isSuccess && exchangeRatesQuery.isSuccess;
+	const isLoaded = balancesQuery.isSuccess && exchangeRatesQuery.isSuccess;
 
-	const ETHBalance = ETHBalanceQuery.data ?? zeroBN;
-	const SNXBalance = SNXBalanceQuery.data ?? zeroBN;
-	const wETHBalance = wETHBalanceQuery.data ?? zeroBN;
-	const wBTCBalance = wBTCBalanceQuery.data ?? zeroBN;
-	const renBTCBalance = renBTCBalanceQuery.data ?? zeroBN;
-	const transferrableSNX = debtQuery?.data?.transferable ?? zeroBN;
+	const balancesData = balancesQuery.data!;
+
+	const ETHBalance = (balancesQuery.isSuccess && balancesData['ETH']?.balance) || wei(0);
+	const SNXBalance = (balancesQuery.isSuccess && balancesData['SNX']?.balance) || wei(0);
+	const wETHBalance = (balancesQuery.isSuccess && balancesData['WETH']?.balance) || wei(0);
+	const wBTCBalance = (balancesQuery.isSuccess && balancesData['WBTC']?.balance) || wei(0);
+	const renBTCBalance = (balancesQuery.isSuccess && balancesData['renBTC']?.balance) || wei(0);
+	const transferrableSNX = debtQuery?.data?.transferable ?? wei(0);
 
 	const balances = useMemo<CryptoBalance[]>(() => {
 		if (isLoaded && exchangeRates != null) {
@@ -44,34 +114,32 @@ const useCryptoBalances = () => {
 					{
 						currencyKey: ETH,
 						balance: ETHBalance,
-						usdBalance: ETHBalance ? ETHBalance.multipliedBy(exchangeRates[ETH]) : zeroBN,
+						usdBalance: ETHBalance.mul(exchangeRates[ETH]),
 						synth: assetToSynth(ETH),
 					},
 					{
 						currencyKey: WETH,
 						balance: wETHBalance,
-						usdBalance: wETHBalance ? wETHBalance.multipliedBy(exchangeRates[ETH]) : zeroBN,
+						usdBalance: wETHBalance.mul(exchangeRates[ETH]),
 						synth: assetToSynth(ETH),
 					},
 					{
 						currencyKey: SNX,
 						balance: SNXBalance,
-						usdBalance: SNXBalance ? SNXBalance.multipliedBy(exchangeRates[SNX]) : zeroBN,
+						usdBalance: SNXBalance.mul(exchangeRates[SNX]),
 						synth: assetToSynth(ETH),
 						transferrable: transferrableSNX,
 					},
 					{
 						currencyKey: WBTC,
 						balance: wBTCBalance,
-						usdBalance: wBTCBalance ? wBTCBalance.multipliedBy(exchangeRates[Synths.sBTC]) : zeroBN,
+						usdBalance: wBTCBalance.mul(exchangeRates[Synths.sBTC]),
 						synth: assetToSynth(BTC),
 					},
 					{
 						currencyKey: RENBTC,
 						balance: renBTCBalance,
-						usdBalance: renBTCBalance
-							? renBTCBalance.multipliedBy(exchangeRates[Synths.sBTC])
-							: zeroBN,
+						usdBalance: renBTCBalance.mul(exchangeRates[Synths.sBTC]),
 						synth: assetToSynth(BTC),
 					},
 				].filter((cryptoBalance) => cryptoBalance.balance.gt(0)),

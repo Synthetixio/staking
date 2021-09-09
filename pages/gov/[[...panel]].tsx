@@ -8,26 +8,30 @@ import { formatNumber } from 'utils/formatters/number';
 import UIContainer from 'containers/UI';
 import StatsSection from 'components/StatsSection';
 import MainContent from 'sections/gov';
-import { SPACE_KEY } from 'constants/snapshot';
+import { snapshotEndpoint, SPACE_KEY } from 'constants/snapshot';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { numOfCouncilSeatsState } from 'store/gov';
 import { ethers } from 'ethers';
 import Connector from 'containers/Connector';
 import councilDilution from 'contracts/councilDilution';
 import { appReadyState } from 'store/app';
-// import useActiveProposalsQuery from 'queries/gov/useActiveProposalsQuery';
-import useVotingWeightQuery from 'queries/gov/useVotingWeightQuery';
-import useLatestSnapshotQuery from 'queries/gov/useLatestSnapshotQuery';
+import useSynthetixQueries from '@synthetixio/queries';
+import { walletAddressState } from 'store/wallet';
 
 const Gov: React.FC = () => {
 	const { t } = useTranslation();
 	const { provider } = Connector.useContainer();
 	const { setTitle } = UIContainer.useContainer();
-	// const activeProposals = useActiveProposalsQuery();
-	const latestSnapshot = useLatestSnapshotQuery();
+
+	const walletAddress = useRecoilValue(walletAddressState);
+	const { useLatestSnapshotQuery, useVotingWeightQuery } = useSynthetixQueries();
+
+	const latestSnapshot = useLatestSnapshotQuery(snapshotEndpoint);
 	const walletVotingWeight = useVotingWeightQuery(
+		snapshotEndpoint,
 		SPACE_KEY.COUNCIL,
-		latestSnapshot.data ? parseInt(latestSnapshot.data.latestSnapshot) : 0
+		latestSnapshot.data ? parseInt(latestSnapshot.data.latestSnapshot) : 0,
+		walletAddress
 	);
 	const setNumOfCouncilSeats = useSetRecoilState(numOfCouncilSeatsState);
 	const isAppReady = useRecoilValue(appReadyState);
@@ -67,7 +71,7 @@ const Gov: React.FC = () => {
 					value={formatNumber(walletVotingWeight.data ? walletVotingWeight.data[0] : 0)}
 					tooltipContent={t('common.stat-box.voting-power.tooltip', {
 						blocknumber: latestSnapshot.data
-							? formatNumber(latestSnapshot.data.latestSnapshot, { decimals: 0 })
+							? formatNumber(latestSnapshot.data.latestSnapshot, { maxDecimals: 0 })
 							: 0,
 					})}
 				/>

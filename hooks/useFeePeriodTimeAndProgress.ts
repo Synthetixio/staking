@@ -1,8 +1,10 @@
+import useSynthetixQueries from '@synthetixio/queries';
 import { useMemo } from 'react';
-import useGetFeePoolDataQuery from 'queries/staking/useGetFeePoolDataQuery';
 
 function useFeePeriodTimeAndProgress() {
-	const currentFeePeriod = useGetFeePoolDataQuery('0');
+	const { useGetFeePoolDataQuery } = useSynthetixQueries();
+
+	const currentFeePeriod = useGetFeePoolDataQuery(0);
 
 	const [nextFeePeriodStarts, currentFeePeriodProgress, currentFeePeriodStarted] = useMemo(
 		() => [

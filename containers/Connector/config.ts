@@ -1,13 +1,15 @@
 import onboard from '@gnosis.pm/safe-apps-onboard';
 
-import synthetix from 'lib/synthetix';
-
 import { Subscriptions, WalletType } from 'bnc-onboard/dist/src/interfaces';
 import { getInfuraRpcURL } from 'utils/infura';
-import { Network } from '@synthetixio/contracts-interface';
+import { Network, SynthetixJS } from '@synthetixio/contracts-interface';
 
-export const initOnboard = (networkId: number, subscriptions: Subscriptions) => {
-	const network = synthetix.js?.network;
+export const initOnboard = (
+	synthetixjs: SynthetixJS,
+	networkId: number,
+	subscriptions: Subscriptions
+) => {
+	const network = synthetixjs?.network;
 	const infuraRpc = getInfuraRpcURL(network);
 
 	return onboard({

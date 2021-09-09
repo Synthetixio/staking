@@ -3,31 +3,37 @@ import { Trans } from 'react-i18next';
 import styled from 'styled-components';
 import { useRecoilValue } from 'recoil';
 
-import useGetLiquidationData from 'queries/liquidations/useGetLiquidationDataQuery';
-import useGetDebtDataQuery from 'queries/debt/useGetDebtDataQuery';
-import useHasVotedForElectionsQuery from 'queries/gov/useHasVotedForElectionsQuery';
-
 import Banner, { BannerType } from 'sections/shared/Layout/Banner';
 import { LOCAL_STORAGE_KEYS } from 'constants/storage';
 import { ExternalLink } from 'styles/common';
-import { zeroBN } from 'utils/formatters/number';
 import { formatShortDateWithTime } from 'utils/formatters/date';
-import { isL2State } from 'store/wallet';
+import { wei } from '@synthetixio/wei';
+import { isL2State, walletAddressState } from 'store/wallet';
+import useSynthetixQueries from '@synthetixio/queries';
+import { snapshotEndpoint } from 'constants/snapshot';
 
 const BannerManager: FC = () => {
-	const liquidationData = useGetLiquidationData();
-	const debtData = useGetDebtDataQuery();
-	const hasVotedForElectionsQuery = useHasVotedForElectionsQuery();
+	const {
+		useGetLiquidationDataQuery,
+		useGetDebtDataQuery,
+		useHasVotedForElectionsQuery,
+	} = useSynthetixQueries();
+
+	const walletAddress = useRecoilValue(walletAddressState);
+
+	const liquidationData = useGetLiquidationDataQuery(walletAddress);
+	const debtData = useGetDebtDataQuery(walletAddress);
+	const hasVotedForElectionsQuery = useHasVotedForElectionsQuery(snapshotEndpoint, walletAddress);
 	const isL2 = useRecoilValue(isL2State);
 
-	const issuanceRatio = debtData?.data?.targetCRatio ?? zeroBN;
-	const cRatio = debtData?.data?.currentCRatio ?? zeroBN;
+	const issuanceRatio = debtData?.data?.targetCRatio ?? wei(0);
+	const cRatio = debtData?.data?.currentCRatio ?? wei(0);
 	const liquidationDeadlineForAccount =
-		liquidationData?.data?.liquidationDeadlineForAccount ?? zeroBN;
+		liquidationData?.data?.liquidationDeadlineForAccount ?? wei(0);
 
-	const issuanceRatioPercentage = issuanceRatio.isZero() ? 0 : 100 / Number(issuanceRatio);
+	const issuanceRatioPercentage = issuanceRatio.eq(0) ? 0 : 100 / Number(issuanceRatio);
 
-	if (!liquidationDeadlineForAccount.isZero() && cRatio.isGreaterThan(issuanceRatio)) {
+	if (!liquidationDeadlineForAccount.eq(0) && cRatio.gt(issuanceRatio)) {
 		return (
 			<Banner
 				type={BannerType.WARNING}

@@ -1,7 +1,6 @@
-import { useQuery, QueryConfig } from 'react-query';
+import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
 
-import synthetix from 'lib/synthetix';
 import QUERY_KEYS from 'constants/queryKeys';
 import { appReadyState } from 'store/app';
 import {
@@ -13,8 +12,11 @@ import {
 import { Synths } from 'constants/currency';
 
 import { LiquidityPoolData } from './types';
+import { wei } from '@synthetixio/wei';
+import Connector from 'containers/Connector';
 
-const useIETHPoolQuery_1 = (options?: QueryConfig<LiquidityPoolData>) => {
+const useIETHPoolQuery_1 = (options?: UseQueryOptions<LiquidityPoolData>) => {
+	const { synthetixjs } = Connector.useContainer();
 	const isAppReady = useRecoilValue(appReadyState);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
@@ -27,7 +29,7 @@ const useIETHPoolQuery_1 = (options?: QueryConfig<LiquidityPoolData>) => {
 			const {
 				contracts: { StakingRewardsiETH, Exchanger, ProxyiETH, ExchangeRates },
 				utils: { formatBytes32String },
-			} = synthetix.js!;
+			} = synthetixjs!;
 
 			const address = StakingRewardsiETH.address;
 			const getDuration = StakingRewardsiETH.DURATION || StakingRewardsiETH.rewardsDuration;
@@ -48,7 +50,7 @@ const useIETHPoolQuery_1 = (options?: QueryConfig<LiquidityPoolData>) => {
 				StakingRewardsiETH.periodFinish(),
 				ProxyiETH.balanceOf(address),
 				ProxyiETH.balanceOf(walletAddress),
-				ExchangeRates.rateForCurrency(synthetix.js?.toBytes32(Synths.iETH)),
+				ExchangeRates.rateForCurrency(synthetixjs?.toBytes32(Synths.iETH)),
 				StakingRewardsiETH.earned(walletAddress),
 				StakingRewardsiETH.balanceOf(walletAddress),
 				ProxyiETH.allowance(walletAddress, address),
@@ -56,9 +58,7 @@ const useIETHPoolQuery_1 = (options?: QueryConfig<LiquidityPoolData>) => {
 			]);
 			const durationInWeeks = Number(duration) / 3600 / 24 / 7;
 			const isPeriodFinished = new Date().getTime() > Number(periodFinish) * 1000;
-			const distribution = isPeriodFinished
-				? 0
-				: Math.trunc(Number(duration) * (rate / 1e18)) / durationInWeeks;
+			const distribution = isPeriodFinished ? wei(0) : rate.mul(duration).div(durationInWeeks);
 
 			const reclaimAmount = Number(settlementOwing.reclaimAmount);
 			const rebateAmount = Number(settlementOwing.rebateAmount);
@@ -70,7 +70,7 @@ const useIETHPoolQuery_1 = (options?: QueryConfig<LiquidityPoolData>) => {
 				iEthSNXRewards,
 				iEthStaked,
 				iETHAllowance,
-			].map((data) => Number(synthetix.js?.utils.formatEther(data)));
+			].map((data) => wei(data));
 
 			return {
 				distribution,
@@ -80,11 +80,9 @@ const useIETHPoolQuery_1 = (options?: QueryConfig<LiquidityPoolData>) => {
 				periodFinish: Number(periodFinish) * 1000,
 				rewards,
 				staked,
-				stakedBN: iEthStaked,
 				duration: Number(duration) * 1000,
 				allowance,
 				userBalance,
-				userBalanceBN: iEthUserBalance,
 				needsToSettle: reclaimAmount || rebateAmount ? true : false,
 			};
 		},

@@ -48,7 +48,7 @@ import { SPACE_KEY } from 'constants/snapshot';
 import CouncilNominations from 'constants/nominations.json';
 import { isWalletConnectedState } from 'store/wallet';
 import { shuffle } from 'lodash';
-import { Proposal } from 'queries/gov/types';
+import { Proposal } from '@synthetixio/queries';
 
 type ContentProps = {
 	proposal: Proposal;
@@ -58,7 +58,6 @@ type ContentProps = {
 const Content: React.FC<ContentProps> = ({ proposal, onBack }) => {
 	const { t } = useTranslation();
 
-	const [voteMutate] = useSignMessage();
 	const activeTab = useActiveTab();
 	const [selected, setSelected] = useState<number | null>(null);
 
@@ -70,6 +69,17 @@ const Content: React.FC<ContentProps> = ({ proposal, onBack }) => {
 	const [choices, setChoices] = useState<any>(null);
 
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
+
+	const voteMutate = useSignMessage({
+		onSuccess: (response) => {
+			setTransactionState(Transaction.SUCCESS);
+			setSignModalOpen(false);
+		},
+		onError: (error) => {
+			setTransactionState(Transaction.PRESUBMIT);
+			setError(error);
+		},
+	});
 
 	useEffect(() => {
 		if (proposal && proposal.choices && activeTab === SPACE_KEY.COUNCIL) {
@@ -102,19 +112,11 @@ const Content: React.FC<ContentProps> = ({ proposal, onBack }) => {
 		if (hash && selected !== null) {
 			setSignModalOpen(true);
 			setTransactionState(Transaction.WAITING);
-			voteMutate({
+			voteMutate.mutate({
 				spaceKey: activeTab,
 				type: SignatureType.VOTE,
 				payload: { proposal: hash, choice: selected + 1, metadata: {} },
-			})
-				.then((response) => {
-					setTransactionState(Transaction.SUCCESS);
-					setSignModalOpen(false);
-				})
-				.catch((error) => {
-					setTransactionState(Transaction.PRESUBMIT);
-					setError(error);
-				});
+			});
 		}
 	};
 

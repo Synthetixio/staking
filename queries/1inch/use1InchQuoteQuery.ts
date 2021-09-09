@@ -1,24 +1,24 @@
-import { useQuery, QueryConfig } from 'react-query';
+import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
 
 import QUERY_KEYS from 'constants/queryKeys';
 
 import { isL2State, isWalletConnectedState, networkState, walletAddressState } from 'store/wallet';
 import { appReadyState } from 'store/app';
-import { NumericValue, toBigNumber } from 'utils/formatters/number';
 import { formatEther, parseEther } from 'ethers/lib/utils';
 import axios from 'axios';
 import { quoteEndpoint } from 'constants/1inch';
+import { wei, WeiSource } from '@synthetixio/wei';
 
 type QuoteData = {
-	toTokenAmount: NumericValue;
+	toTokenAmount: WeiSource;
 };
 
 const use1InchQuoteQuery = (
 	fromTokenAddress: string,
 	toTokenAddress: string,
-	amount: NumericValue,
-	options?: QueryConfig<QuoteData>
+	amount: WeiSource,
+	options?: UseQueryOptions<QuoteData>
 ) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
@@ -36,18 +36,13 @@ const use1InchQuoteQuery = (
 					amount: parseEther(amount.toString()).toString(),
 				},
 			});
-			const toTokenAmount: NumericValue = formatEther(response.data.toTokenAmount);
+			const toTokenAmount: WeiSource = formatEther(response.data.toTokenAmount);
 			return {
 				toTokenAmount,
 			};
 		},
 		{
-			enabled:
-				isAppReady &&
-				isWalletConnected &&
-				!isL2 &&
-				!toBigNumber(amount).isZero() &&
-				toBigNumber(amount).isPositive(),
+			enabled: isAppReady && isWalletConnected && !isL2 && !wei(amount).eq(0) && wei(amount).gt(0),
 			...options,
 		}
 	);

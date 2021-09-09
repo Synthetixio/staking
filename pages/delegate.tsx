@@ -11,17 +11,21 @@ import Main from 'sections/delegate/index';
 import StatsSection from 'components/StatsSection';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import { formatFiatCurrency, formatPercent, toBigNumber } from 'utils/formatters/number';
+import { formatFiatCurrency, formatPercent } from 'utils/formatters/number';
 import StakedValue from 'sections/shared/modals/StakedValueModal/StakedValueBox';
 import ActiveDebt from 'sections/shared/modals/DebtValueModal/DebtValueBox';
+import { useRecoilValue } from 'recoil';
+import { walletAddressState } from 'store/wallet';
 
 const DelegatePage: FC = () => {
 	const { t } = useTranslation();
 	const { setTitle } = UIContainer.useContainer();
 
+	const walletAddress = useRecoilValue(walletAddressState);
+
 	const { stakedCollateralValue, debtBalance } = useStakingCalculations();
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
-	const { stakingAPR } = useUserStakingData();
+	const { stakingAPR } = useUserStakingData(walletAddress);
 
 	// header title
 	useEffect(() => {
@@ -36,14 +40,9 @@ const DelegatePage: FC = () => {
 			<StatsSection>
 				<StakedValue
 					title={t('common.stat-box.staked-value')}
-					value={formatFiatCurrency(
-						getPriceAtCurrentRate(
-							stakedCollateralValue.isNaN() ? toBigNumber(0) : stakedCollateralValue
-						),
-						{
-							sign: selectedPriceCurrency.sign,
-						}
-					)}
+					value={formatFiatCurrency(getPriceAtCurrentRate(stakedCollateralValue), {
+						sign: selectedPriceCurrency.sign,
+					})}
 					isGreen
 				/>
 				<Earning
@@ -53,12 +52,9 @@ const DelegatePage: FC = () => {
 				/>
 				<ActiveDebt
 					title={t('common.stat-box.active-debt')}
-					value={formatFiatCurrency(
-						getPriceAtCurrentRate(debtBalance.isNaN() ? toBigNumber(0) : debtBalance),
-						{
-							sign: selectedPriceCurrency.sign,
-						}
-					)}
+					value={formatFiatCurrency(getPriceAtCurrentRate(debtBalance), {
+						sign: selectedPriceCurrency.sign,
+					})}
 					isGreen
 				/>
 			</StatsSection>

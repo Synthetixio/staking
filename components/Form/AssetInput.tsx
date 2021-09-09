@@ -1,19 +1,23 @@
 import { FC, useMemo } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import BigNumber from 'bignumber.js';
+import Wei, { wei } from '@synthetixio/wei';
 
-import { formatNumber, zeroBN } from 'utils/formatters/number';
+import { formatNumber } from 'utils/formatters/number';
 import { FlexDivCentered, FlexDivColCentered, TextButton } from 'styles/common';
 
 import NumericInput from 'components/Input/NumericInput';
 import Select from 'components/Select';
 import Currency from 'components/Currency';
-import { Asset } from 'queries/walletBalances/types';
 import { FormLabel } from './common';
 
+export type Asset = {
+	currencyKey: string;
+	balance: Wei;
+};
+
 type MaxBalanceProps = {
-	balance: BigNumber;
+	balance: Wei;
 	onSetMaxAmount: () => void;
 	label?: string;
 };
@@ -69,7 +73,7 @@ const AssetInput: FC<AssetInputProps> = ({
 		[options, asset]
 	);
 
-	const balance = useMemo(() => asset?.balance ?? zeroBN, [asset]);
+	const balance = useMemo(() => asset?.balance ?? wei(0), [asset]);
 
 	return (
 		<Container>
