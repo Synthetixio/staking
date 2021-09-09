@@ -88,7 +88,7 @@ const useConnector = () => {
 
 	useEffect(() => {
 		if (isAppReady && network) {
-			const onboard = initOnboard(network, {
+			const onboard = initOnboard(synthetixjs!, network.id, {
 				address: setWalletAddress,
 				network: (networkId: number) => {
 					const isSupportedNetwork =

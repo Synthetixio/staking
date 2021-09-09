@@ -39,3 +39,7 @@ export const normalizeGasLimit = (gasLimit: number) => gasLimit + DEFAULT_GAS_BU
 export const normalizedGasPrice = (gasPrice: number) => gasPrice * GWEI_UNIT;
 
 export const getIsOVM = (networkId: number): boolean => !!~[10, 69].indexOf(networkId);
+export const matchesNetworkErrorString = (error: string) =>
+	error.includes('unsupported network or network id passed');
+
+export const networkErrorMessage = 'Wrong network detected';
