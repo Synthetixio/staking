@@ -48,6 +48,11 @@ jobs:
             ${{ runner.os }}-build-
         continue-on-error: true
 
+      - name: Building on Node.js ${{ matrix.node-version }} 🛠️
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14.17.6'
+
       - name: Install dependencies
         run: npm install --no-audit
 
