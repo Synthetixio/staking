@@ -1,4 +1,4 @@
-import { useQuery, QueryConfig } from 'react-query';
+import { useQuery, UseQueryOptions } from 'react-query';
 import { ethers } from 'ethers';
 import { useRecoilValue } from 'recoil';
 import axios from 'axios';
@@ -22,14 +22,14 @@ import {
 
 import { LiquidityPoolData } from './types';
 import { getCurveTokenPrice } from './helper';
-import { toBigNumber } from 'utils/formatters/number';
+import Wei, { wei } from '@synthetixio/wei';
 
 export type CurveData = LiquidityPoolData & {
-	swapAPR: number;
-	rewardsAPR: number;
+	swapAPR: Wei;
+	rewardsAPR: Wei;
 };
 
-const useCurveSusdPoolQuery = (options?: QueryConfig<CurveData>) => {
+const useCurveSusdPoolQuery = (options?: UseQueryOptions<CurveData>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
@@ -109,9 +109,7 @@ const useCurveSusdPoolQuery = (options?: QueryConfig<CurveData>) => {
 
 			const durationInWeeks = Number(duration) / 3600 / 24 / 7;
 			const isPeriodFinished = new Date().getTime() > Number(periodFinish) * 1000;
-			const distribution = isPeriodFinished
-				? 0
-				: Math.trunc(Number(duration) * (rate / 1e18)) / durationInWeeks;
+			const distribution = isPeriodFinished ? wei(0) : wei(rate).mul(duration).div(durationInWeeks);
 
 			const [
 				balance,
@@ -133,12 +131,17 @@ const useCurveSusdPoolQuery = (options?: QueryConfig<CurveData>) => {
 				curveRewards,
 				curveStaked,
 				curveAllowance,
-			].map((data) => Number(toBigNumber(data.toString()).div(1e18)));
+			].map((data) => wei(data));
 
-			const curveRate =
-				(((inflationRate * relativeWeight * 31536000) / workingSupply) * 0.4) / curveSusdTokenPrice;
-			const rewardsAPR = curveRate * curvePrice * 1e18;
-			const swapAPR = swapData?.data?.apy?.day?.susd ?? 0;
+			const curveRate = inflationRate
+				.mul(relativeWeight)
+				.mul(31536000)
+				.div(workingSupply)
+				.mul(0.4)
+				.div(curveSusdTokenPrice);
+
+			const rewardsAPR = curveRate.mul(curvePrice);
+			const swapAPR = swapData?.data?.apy?.day?.susd ?? wei(0);
 
 			return {
 				periodFinish: Number(periodFinish) * 1000,
@@ -150,11 +153,9 @@ const useCurveSusdPoolQuery = (options?: QueryConfig<CurveData>) => {
 				rewardsAPR,
 				rewards,
 				staked,
-				stakedBN: curveStaked,
 				duration: Number(duration) * 1000,
 				allowance,
 				userBalance,
-				userBalanceBN: curveSusdUserBalance,
 			};
 		},
 		{

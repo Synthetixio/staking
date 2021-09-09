@@ -2,17 +2,21 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { ethers } from 'ethers';
-import BigNumber from 'bignumber.js';
+import Wei, { wei } from '@synthetixio/wei';
 import { Svg } from 'react-optimized-image';
 import { useRouter } from 'next/router';
 import { useRecoilValue } from 'recoil';
 
 import { appReadyState } from 'store/app';
-import { isWalletConnectedState, isL2State, delegateWalletState } from 'store/wallet';
+import {
+	isWalletConnectedState,
+	isL2State,
+	delegateWalletState,
+	walletAddressState,
+} from 'store/wallet';
 import ROUTES from 'constants/routes';
 import { ExternalLink, FlexDiv, GlowingCircle, IconButton, FlexDivJustifyEnd } from 'styles/common';
 import media from 'styles/media';
-import synthetix from 'lib/synthetix';
 import PendingConfirmation from 'assets/svg/app/pending-confirmation.svg';
 import Success from 'assets/svg/app/success.svg';
 import ExpandIcon from 'assets/svg/app/expand.svg';
@@ -25,10 +29,10 @@ import useClaimedStatus from 'sections/hooks/useClaimedStatus';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import useUserStakingData from 'hooks/useUserStakingData';
 
-import { DEFAULT_CRYPTO_DECIMALS, DEFAULT_FIAT_DECIMALS } from 'constants/defaults';
+import { DEFAULT_FIAT_DECIMALS } from 'constants/defaults';
 import { formatCurrency, formatFiatCurrency, formatNumber } from 'utils/formatters/number';
 import { getCurrentTimestampSeconds } from 'utils/formatters/date';
-import { normalizedGasPrice } from 'utils/network';
+import { normalizedGasPrice, normalizeGasLimit } from 'utils/network';
 
 import { Transaction, GasLimitEstimate } from 'constants/network';
 import { CryptoCurrency, Synths } from 'constants/currency';
@@ -71,18 +75,26 @@ import {
 	HeaderLabel,
 } from '../common';
 import { MobileOnlyView } from 'components/Media';
-import useHasVotedForElectionsQuery from 'queries/gov/useHasVotedForElectionsQuery';
+import useSynthetixQueries from '@synthetixio/queries';
+import { snapshotEndpoint } from 'constants/snapshot';
+import Connector from 'containers/Connector';
 
 type ClaimTabProps = {
-	tradingRewards: BigNumber;
-	stakingRewards: BigNumber;
-	totalRewards: BigNumber;
+	tradingRewards: Wei;
+	stakingRewards: Wei;
+	totalRewards: Wei;
 };
 
 const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, totalRewards }) => {
 	const { t } = useTranslation();
+
+	const { synthetixjs } = Connector.useContainer();
+
+	const walletAddress = useRecoilValue(walletAddressState);
+	const { useHasVotedForElectionsQuery } = useSynthetixQueries();
+
 	const claimed = useClaimedStatus();
-	const { isBelowCRatio } = useUserStakingData();
+	const { isBelowCRatio } = useUserStakingData(walletAddress);
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const { blockExplorerInstance } = Etherscan.useContainer();
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
@@ -93,7 +105,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 	const router = useRouter();
 
 	const [gasLimitEstimate, setGasLimitEstimate] = useState<GasLimitEstimate>(null);
-	const [gasPrice, setGasPrice] = useState<number>(0);
+	const [gasPrice, setGasPrice] = useState<Wei>(wei(0));
 	const [error, setError] = useState<string | null>(null);
 	const [lowCRatio, setLowCRatio] = useState<boolean>(false);
 	const [claimedTradingRewards, setClaimedTradingRewards] = useState<number | null>(null);
@@ -103,7 +115,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 	const [txHash, setTxHash] = useState<string | null>(null);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 
-	const hasVotedForElections = useHasVotedForElectionsQuery();
+	const hasVotedForElections = useHasVotedForElectionsQuery(snapshotEndpoint, walletAddress);
 
 	const link =
 		blockExplorerInstance != null && txHash != null
@@ -115,7 +127,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 		try {
 			const {
 				contracts: { FeePool },
-			} = synthetix.js!;
+			} = synthetixjs!;
 			const [feePeriodDuration, recentFeePeriods] = await Promise.all([
 				FeePool.feePeriodDuration(),
 				FeePool.recentFeePeriods(0),
@@ -130,7 +142,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 			console.log(e);
 			setIsCloseFeePeriodEnabled(false);
 		}
-	}, [isL2]);
+	}, [isL2, synthetixjs]);
 
 	useEffect(() => {
 		fetchFeePeriodData();
@@ -150,14 +162,14 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 					}
 					const {
 						contracts: { FeePool },
-					} = synthetix.js!;
+					} = synthetixjs!;
 
-					let gasEstimate = await synthetix.getGasEstimateForTransaction({
-						txArgs: delegateWallet ? [delegateWallet.address] : [],
-						method: delegateWallet
-							? FeePool.estimateGas.claimOnBehalf
-							: FeePool.estimateGas.claimFees,
-					});
+					let gasEstimate = wei(
+						delegateWallet
+							? await FeePool.estimateGas.claimOnBehalf(delegateWallet)
+							: await FeePool.estimateGas.claimFees(),
+						0
+					);
 
 					setGasLimitEstimate(gasEstimate);
 				} catch (error) {
@@ -179,7 +191,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 			}
 		};
 		getGasLimitEstimate();
-	}, [isAppReady, isWalletConnected, isBelowCRatio, delegateWallet, t, isL2]);
+	}, [isAppReady, isWalletConnected, isBelowCRatio, delegateWallet, t, isL2, synthetixjs]);
 
 	const handleClaim = useCallback(() => {
 		async function claim() {
@@ -189,21 +201,21 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 					setTxModalOpen(true);
 					const {
 						contracts: { FeePool },
-					} = synthetix.js!;
+					} = synthetixjs!;
 
-					const gasLimit = await synthetix.getGasEstimateForTransaction({
-						txArgs: delegateWallet ? [delegateWallet.address] : [],
-						method: delegateWallet
-							? FeePool.estimateGas.claimOnBehalf
-							: FeePool.estimateGas.claimFees,
-					});
+					let gasLimit = normalizeGasLimit(
+						delegateWallet
+							? (await FeePool.estimateGas.claimOnBehalf(delegateWallet)).toNumber()
+							: (await FeePool.estimateGas.claimFees()).toNumber()
+					);
+
 					const transaction: ethers.ContractTransaction = delegateWallet
 						? await FeePool.claimOnBehalf(delegateWallet.address, {
-								gasPrice: normalizedGasPrice(gasPrice),
+								gasPrice: normalizedGasPrice(gasPrice.toNumber()),
 								gasLimit,
 						  })
 						: await FeePool.claimFees({
-								gasPrice: normalizedGasPrice(gasPrice),
+								gasPrice: normalizedGasPrice(gasPrice.toNumber()),
 								gasLimit,
 						  });
 
@@ -239,6 +251,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 		isAppReady,
 		delegateWallet,
 		isL2,
+		synthetixjs,
 	]);
 
 	const goToBurn = useCallback(() => router.push(ROUTES.Staking.Burn), [router]);
@@ -247,14 +260,12 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 	const handleCloseFeePeriod = async () => {
 		const {
 			contracts: { FeePool },
-		} = synthetix.js!;
+		} = synthetixjs!;
 		try {
-			const gasLimit = await synthetix.getGasEstimateForTransaction({
-				txArgs: [],
-				method: FeePool.estimateGas.closeCurrentFeePeriod,
-			});
+			const gasLimit = FeePool.estimateGas.closeCurrentFeePeriod();
+
 			const transaction: ethers.ContractTransaction = await FeePool.closeCurrentFeePeriod({
-				gasPrice: normalizedGasPrice(gasPrice),
+				gasPrice: normalizedGasPrice(gasPrice.toNumber()),
 				gasLimit,
 			});
 			if (transaction) {
@@ -292,7 +303,10 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 								<GreyHeader>{t('earn.actions.claim.claiming')}</GreyHeader>
 								<WhiteSubheader>
 									{t('earn.actions.claim.amount', {
-										amount: formatNumber(tradingRewards, { decimals: DEFAULT_FIAT_DECIMALS }),
+										amount: formatNumber(tradingRewards, {
+											minDecimals: DEFAULT_FIAT_DECIMALS,
+											maxDecimals: DEFAULT_FIAT_DECIMALS,
+										}),
 										asset: Synths.sUSD,
 									})}
 								</WhiteSubheader>
@@ -301,7 +315,10 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 								<GreyHeader>{t('earn.actions.claim.claiming')}</GreyHeader>
 								<WhiteSubheader>
 									{t('earn.actions.claim.amount', {
-										amount: formatNumber(stakingRewards, { decimals: DEFAULT_CRYPTO_DECIMALS }),
+										amount: formatNumber(stakingRewards, {
+											minDecimals: DEFAULT_FIAT_DECIMALS,
+											maxDecimals: DEFAULT_FIAT_DECIMALS,
+										}),
 										asset: CryptoCurrency.SNX,
 									})}
 								</WhiteSubheader>
@@ -339,7 +356,8 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 								<WhiteSubheader>
 									{t('earn.actions.claim.amount', {
 										amount: formatNumber(claimedTradingRewards as number, {
-											decimals: DEFAULT_FIAT_DECIMALS,
+											minDecimals: DEFAULT_FIAT_DECIMALS,
+											maxDecimals: DEFAULT_FIAT_DECIMALS,
 										}),
 										asset: Synths.sUSD,
 									})}
@@ -350,7 +368,8 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 								<WhiteSubheader>
 									{t('earn.actions.claim.amount', {
 										amount: formatNumber(claimedStakingRewards as number, {
-											decimals: DEFAULT_CRYPTO_DECIMALS,
+											minDecimals: DEFAULT_FIAT_DECIMALS,
+											maxDecimals: DEFAULT_FIAT_DECIMALS,
 										}),
 										asset: CryptoCurrency.SNX,
 									})}
@@ -408,7 +427,8 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 							<Value>
 								{formatCurrency(Synths.sUSD, tradingRewards, {
 									currencyKey: Synths.sUSD,
-									decimals: DEFAULT_FIAT_DECIMALS,
+									minDecimals: DEFAULT_FIAT_DECIMALS,
+									maxDecimals: DEFAULT_FIAT_DECIMALS,
 								})}
 							</Value>
 							<Subtext>{t('earn.incentives.options.snx.trading-rewards')}</Subtext>
@@ -420,7 +440,6 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 							<Value>
 								{formatCurrency(CryptoCurrency.SNX, stakingRewards, {
 									currencyKey: CryptoCurrency.SNX,
-									decimals: DEFAULT_CRYPTO_DECIMALS,
 								})}
 							</Value>
 							<Subtext>{t('earn.incentives.options.snx.staking-rewards')}</Subtext>
@@ -491,7 +510,10 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 										<GreyHeader>{t('earn.actions.claim.claiming')}</GreyHeader>
 										<WhiteSubheader>
 											{t('earn.actions.claim.amount', {
-												amount: formatNumber(tradingRewards, { decimals: DEFAULT_FIAT_DECIMALS }),
+												amount: formatNumber(tradingRewards, {
+													minDecimals: DEFAULT_FIAT_DECIMALS,
+													maxDecimals: DEFAULT_FIAT_DECIMALS,
+												}),
 												asset: Synths.sUSD,
 											})}
 										</WhiteSubheader>
@@ -500,7 +522,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 										<GreyHeader>{t('earn.actions.claim.claiming')}</GreyHeader>
 										<WhiteSubheader>
 											{t('earn.actions.claim.amount', {
-												amount: formatNumber(stakingRewards, { decimals: DEFAULT_CRYPTO_DECIMALS }),
+												amount: formatNumber(stakingRewards, {}),
 												asset: CryptoCurrency.SNX,
 											})}
 										</WhiteSubheader>

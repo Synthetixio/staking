@@ -1,33 +1,37 @@
 import { useMemo } from 'react';
-import useEscrowDataQuery from 'queries/escrow/useEscrowDataQuery';
-import useTokenSaleEscrowDateQuery from 'queries/escrow/useTokenSaleEscrowQuery';
-import { BigNumber } from 'bignumber.js';
-import { toBigNumber } from 'utils/formatters/number';
+import Wei, { wei } from '@synthetixio/wei';
+import { useRecoilValue } from 'recoil';
+import { walletAddressState } from 'store/wallet';
+import useSynthetixQueries from '@synthetixio/queries';
 
 type EscrowCalculations = {
-	totalEscrowBalance: BigNumber;
-	totalClaimableBalance: BigNumber;
-	totalVestedBalance: BigNumber;
+	totalEscrowBalance: Wei;
+	totalClaimableBalance: Wei;
+	totalVestedBalance: Wei;
 };
 const useStakingCalculations = (): EscrowCalculations => {
-	const rewardEscrowQuery = useEscrowDataQuery();
-	const tokenSaleEscrowQuery = useTokenSaleEscrowDateQuery();
+	const walletAddress = useRecoilValue(walletAddressState);
+
+	const { useTokenSaleEscrowQuery, useEscrowDataQuery } = useSynthetixQueries();
+
+	const rewardEscrowQuery = useEscrowDataQuery(walletAddress);
+	const tokenSaleEscrowQuery = useTokenSaleEscrowQuery(walletAddress);
 
 	const rewardsEscrow = rewardEscrowQuery.data ?? null;
 	const tokenSaleEscrow = tokenSaleEscrowQuery.data ?? null;
 
 	const results = useMemo(() => {
-		const stakingEscrowBalance = toBigNumber(rewardsEscrow?.totalEscrowed ?? 0);
-		const stakingClaimableBalance = toBigNumber(rewardsEscrow?.claimableAmount ?? 0);
-		const stakingVestedBalance = toBigNumber(rewardsEscrow?.totalVested ?? 0);
+		const stakingEscrowBalance = wei(rewardsEscrow?.totalEscrowed ?? 0);
+		const stakingClaimableBalance = wei(rewardsEscrow?.claimableAmount ?? 0);
+		const stakingVestedBalance = wei(rewardsEscrow?.totalVested ?? 0);
 
-		const tokenSaleEscrowBalance = toBigNumber(tokenSaleEscrow?.totalEscrowed ?? 0);
-		const tokenSaleClaimableBalance = toBigNumber(tokenSaleEscrow?.claimableAmount ?? 0);
-		const tokenSaleVestedBalance = toBigNumber(tokenSaleEscrow?.totalVested ?? 0);
+		const tokenSaleEscrowBalance = wei(tokenSaleEscrow?.totalEscrowed ?? 0);
+		const tokenSaleClaimableBalance = wei(tokenSaleEscrow?.claimableAmount ?? 0);
+		const tokenSaleVestedBalance = wei(tokenSaleEscrow?.totalVested ?? 0);
 
-		const totalEscrowBalance = stakingEscrowBalance.plus(tokenSaleEscrowBalance);
-		const totalClaimableBalance = stakingClaimableBalance.plus(tokenSaleClaimableBalance);
-		const totalVestedBalance = stakingVestedBalance.plus(tokenSaleVestedBalance);
+		const totalEscrowBalance = stakingEscrowBalance.add(tokenSaleEscrowBalance);
+		const totalClaimableBalance = stakingClaimableBalance.add(tokenSaleClaimableBalance);
+		const totalVestedBalance = stakingVestedBalance.add(tokenSaleVestedBalance);
 
 		return {
 			totalEscrowBalance,

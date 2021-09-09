@@ -25,19 +25,16 @@ const Close: React.FC<CloseProps> = ({ loan, loanId, loanTypeIsETH, loanContract
 	const [error, setError] = useState<string | null>(null);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 
-	const getTxData = useCallback(
-		(gas: Record<string, number>) => {
-			if (!loanContract) return null;
-			return [loanContract, 'close', [loanId, gas]];
-		},
-		[loanContract, loanId]
-	);
+	const getTxData = useCallback(() => {
+		if (!loanContract) return null;
+		return [loanContract, 'close', [loanId]];
+	}, [loanContract, loanId]);
 
-	const close = async (gas: Record<string, number>) => {
+	const close = async () => {
 		try {
 			setIsWorking('closing');
 			setTxModalOpen(true);
-			await tx(() => getTxData(gas), {
+			await tx(() => getTxData(), {
 				showErrorNotification: (e: string) => setError(e),
 				showProgressNotification: (hash: string) =>
 					monitorTransaction({

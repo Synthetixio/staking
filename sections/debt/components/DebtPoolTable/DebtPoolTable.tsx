@@ -2,15 +2,12 @@ import { FC, ReactNode, useMemo } from 'react';
 import { CellProps } from 'react-table';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import BigNumber from 'bignumber.js';
 
 import { useRecoilValue } from 'recoil';
 
 import { TableNoResults, TableNoResultsTitle, FlexDiv, Tooltip } from 'styles/common';
 
 import { appReadyState } from 'store/app';
-import { CryptoBalance } from 'queries/walletBalances/types';
-import { SynthTotalSupply } from 'queries/synths/useSynthsTotalSupplyQuery';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
@@ -18,6 +15,9 @@ import Table from 'components/Table';
 import Currency from 'components/Currency';
 
 import { formatFiatCurrency, formatPercent } from 'utils/formatters/number';
+import { SynthTotalSupply } from '@synthetixio/queries';
+import { CryptoBalance } from 'hooks/useCryptoBalances';
+import Wei, { wei } from '@synthetixio/wei';
 
 type DebtPoolTableProps = {
 	synths: any;
@@ -58,10 +58,10 @@ const DebtPoolTable: FC<DebtPoolTableProps> = ({ synths, isLoading, isLoaded }) 
 				Header: <>{t('synths.assets.synths.table.total')}</>,
 				accessor: 'value',
 				Cell: (cellProps: CellProps<SynthTotalSupply>) => (
-					<SkewValue skewValue={cellProps.row.original.skewValue}>
-						{formatFiatCurrency(cellProps.row.original.skewValue, {
+					<SkewValue skewValue={wei(cellProps.row.original.value)}>
+						{formatFiatCurrency(cellProps.row.original.value, {
 							sign: selectedPriceCurrency.sign,
-							decimals: 0,
+							maxDecimals: 0,
 						})}
 					</SkewValue>
 				),
@@ -100,9 +100,9 @@ const DebtPoolTable: FC<DebtPoolTableProps> = ({ synths, isLoading, isLoaded }) 
 	);
 };
 
-const SkewValue: FC<{ children: ReactNode; skewValue: BigNumber }> = ({ children, skewValue }) => {
+const SkewValue: FC<{ children: ReactNode; skewValue: Wei }> = ({ children, skewValue }) => {
 	const { t } = useTranslation();
-	const isNeg = skewValue.isNegative();
+	const isNeg = skewValue.lt(0);
 	const content = <Amount danger={isNeg}>{children}</Amount>;
 	return isNeg ? (
 		<SkewValueTooltip arrow={false} content={t('synths.assets.synths.negative-skew-warning')}>

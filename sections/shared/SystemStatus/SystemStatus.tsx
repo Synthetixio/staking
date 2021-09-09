@@ -14,9 +14,8 @@ import {
 
 import StakingLogo from 'assets/svg/app/staking-logo.svg';
 
-import useIsSystemOnMaintenance from 'queries/systemStatus/useIsSystemOnMaintenance';
-
 import SocialLinks from '../components/SocialLinks';
+import useSynthetixQueries from '@synthetixio/queries';
 
 type SystemStatusProps = {
 	children: React.ReactNode;
@@ -26,6 +25,8 @@ export const REFRESH_INTERVAL = 2 * 60 * 1000; // 2 min
 
 const SystemStatus: FC<SystemStatusProps> = ({ children }) => {
 	const { t } = useTranslation();
+
+	const { useIsSystemOnMaintenance } = useSynthetixQueries();
 
 	// current onchain state ( no interval for now, should be added when we are close to a release to save requests )
 	const isSystemOnMaintenanceQuery = useIsSystemOnMaintenance({

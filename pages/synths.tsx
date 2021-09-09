@@ -8,20 +8,24 @@ import StatBox from 'components/StatBox';
 import StatsSection from 'components/StatsSection';
 import { LineSpacer } from 'styles/common';
 import Main from 'sections/synths';
-import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
-import { formatCurrency, zeroBN } from 'utils/formatters/number';
+import { formatCurrency } from 'utils/formatters/number';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import { useRecoilValue } from 'recoil';
+import { walletAddressState } from 'store/wallet';
+import useSynthetixQueries from '@synthetixio/queries';
+import { wei } from '@synthetixio/wei';
 
 const SynthsPage: FC = () => {
 	const { t } = useTranslation();
 	const { setTitle } = UIContainer.useContainer();
 
-	const synthsBalancesQuery = useSynthsBalancesQuery();
+	const walletAddress = useRecoilValue(walletAddressState);
+	const { useSynthsBalancesQuery } = useSynthetixQueries();
+
+	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
 
-	const totalSynthValue = synthsBalancesQuery.isSuccess
-		? synthsBalancesQuery.data?.totalUSDBalance ?? zeroBN
-		: zeroBN;
+	const totalSynthValue = synthsBalancesQuery.data?.totalUSDBalance || wei(0);
 
 	// header title
 	useEffect(() => {

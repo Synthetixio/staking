@@ -1,7 +1,6 @@
-import { useQuery, QueryConfig } from 'react-query';
+import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
 
-import synthetix from 'lib/synthetix';
 import QUERY_KEYS from 'constants/queryKeys';
 import { appReadyState } from 'store/app';
 import {
@@ -13,13 +12,17 @@ import {
 import { Synths } from 'constants/currency';
 
 import { LiquidityPoolData } from './types';
+import { wei } from '@synthetixio/wei';
+import Connector from 'containers/Connector';
 
-const useIBTCPoolQuery_1 = (options?: QueryConfig<LiquidityPoolData>) => {
+const useIBTCPoolQuery_1 = (options?: UseQueryOptions<LiquidityPoolData>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const network = useRecoilValue(networkState);
 	const isMainnet = useRecoilValue(isMainnetState);
+
+	const { synthetixjs } = Connector.useContainer();
 
 	return useQuery<LiquidityPoolData>(
 		QUERY_KEYS.LiquidityPools.iBTC(walletAddress ?? '', network?.id!),
@@ -27,7 +30,7 @@ const useIBTCPoolQuery_1 = (options?: QueryConfig<LiquidityPoolData>) => {
 			const {
 				contracts: { StakingRewardsiBTC, Exchanger, ProxyiBTC, ExchangeRates },
 				utils: { formatBytes32String },
-			} = synthetix.js!;
+			} = synthetixjs!;
 
 			const address = StakingRewardsiBTC.address;
 
@@ -49,7 +52,7 @@ const useIBTCPoolQuery_1 = (options?: QueryConfig<LiquidityPoolData>) => {
 				StakingRewardsiBTC.periodFinish(),
 				ProxyiBTC.balanceOf(address),
 				ProxyiBTC.balanceOf(walletAddress),
-				ExchangeRates.rateForCurrency(synthetix.js?.toBytes32(Synths.iBTC)),
+				ExchangeRates.rateForCurrency(synthetixjs?.toBytes32(Synths.iBTC)),
 				StakingRewardsiBTC.earned(walletAddress),
 				StakingRewardsiBTC.balanceOf(walletAddress),
 				ProxyiBTC.allowance(walletAddress, address),
@@ -57,9 +60,7 @@ const useIBTCPoolQuery_1 = (options?: QueryConfig<LiquidityPoolData>) => {
 			]);
 			const durationInWeeks = Number(duration) / 3600 / 24 / 7;
 			const isPeriodFinished = new Date().getTime() > Number(periodFinish) * 1000;
-			const distribution = isPeriodFinished
-				? 0
-				: Math.trunc(Number(duration) * (rate / 1e18)) / durationInWeeks;
+			const distribution = isPeriodFinished ? wei(0) : rate.mul(duration).div(durationInWeeks);
 
 			const reclaimAmount = Number(settlementOwing.reclaimAmount);
 			const rebateAmount = Number(settlementOwing.rebateAmount);
@@ -71,7 +72,7 @@ const useIBTCPoolQuery_1 = (options?: QueryConfig<LiquidityPoolData>) => {
 				iBtcSNXRewards,
 				iBtcStaked,
 				iBtcAllowance,
-			].map((data) => Number(synthetix.js?.utils.formatEther(data)));
+			].map((data) => wei(data));
 
 			return {
 				distribution,
@@ -82,10 +83,8 @@ const useIBTCPoolQuery_1 = (options?: QueryConfig<LiquidityPoolData>) => {
 				duration: Number(duration) * 1000,
 				rewards,
 				staked,
-				stakedBN: iBtcStaked,
 				allowance,
 				userBalance,
-				userBalanceBN: iBtcUserBalance,
 				needsToSettle: reclaimAmount || rebateAmount ? true : false,
 			};
 		},

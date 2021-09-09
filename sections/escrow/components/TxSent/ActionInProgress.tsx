@@ -15,7 +15,8 @@ import {
 	InfoData,
 	Container,
 } from './common';
-import { formatCurrency, NumericValue } from 'utils/formatters/number';
+import { formatCurrency } from 'utils/formatters/number';
+import { WeiSource } from '@synthetixio/wei';
 
 type ActionInProgressProps = {
 	vestingAmount?: string;
@@ -51,7 +52,7 @@ const ActionInProgress: FC<ActionInProgressProps> = ({
 					<InfoData>
 						{isMigration
 							? t('escrow.actions.migration.in-progress.escrow-schedule')
-							: formatCurrency(currencyKey as string, vestingAmount as NumericValue, {
+							: formatCurrency(currencyKey as string, vestingAmount as WeiSource, {
 									currencyKey: currencyKey,
 							  })}
 					</InfoData>

@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { Svg } from 'react-optimized-image';
-import BigNumber from 'bignumber.js';
+import Wei from '@synthetixio/wei';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 
@@ -24,7 +24,7 @@ import {
 } from 'styles/common';
 
 type TabContentProps = {
-	depositAmount: BigNumber;
+	depositAmount: Wei;
 	onSubmit: any;
 	transactionError: string | null;
 	gasEstimateError: string | null;
@@ -54,7 +54,7 @@ const TabContent: FC<TabContentProps> = ({
 	const currencyKey = CryptoCurrency['SNX'];
 
 	const renderButton = () => {
-		if (depositAmount && !depositAmount.isZero()) {
+		if (depositAmount && !depositAmount.eq(0)) {
 			return (
 				<StyledCTA
 					blue={true}
@@ -96,7 +96,7 @@ const TabContent: FC<TabContentProps> = ({
 				currencyKey={currencyKey}
 				hash={txHash as string}
 				amount={depositAmount.toString()}
-				setTransactionState={setTransactionState}
+				resetTransaction={() => setTransactionState(Transaction.PRESUBMIT)}
 				action="deposit"
 			/>
 		);
@@ -110,7 +110,8 @@ const TabContent: FC<TabContentProps> = ({
 					<Data>
 						{formatCurrency(currencyKey, depositAmount, {
 							currencyKey: currencyKey,
-							decimals: 2,
+							minDecimals: 2,
+							maxDecimals: 2,
 						})}
 					</Data>
 				</InputBox>
@@ -132,7 +133,8 @@ const TabContent: FC<TabContentProps> = ({
 								<ModalItemText>
 									{formatCurrency(currencyKey, depositAmount, {
 										currencyKey: currencyKey,
-										decimals: 4,
+										minDecimals: 4,
+										maxDecimals: 4,
 									})}
 								</ModalItemText>
 							</ModalItem>

@@ -1,15 +1,12 @@
 import { FC, useMemo } from 'react';
 import styled from 'styled-components';
 
-import useSynthsTotalSupplyQuery, {
-	SynthTotalSupply,
-	SynthsTotalSupplyData,
-} from 'queries/synths/useSynthsTotalSupplyQuery';
-
 import PieChart from 'components/PieChart';
 import DebtPoolTable from '../DebtPoolTable';
 import colors from 'styles/theme/colors';
+import useSynthetixQueries from '@synthetixio/queries';
 import { formatCurrency } from 'utils/formatters/number';
+import { SynthsTotalSupplyData, SynthTotalSupply } from '@synthetixio/queries';
 
 const MIN_PERCENT_FOR_PIE_CHART = 0.03;
 
@@ -41,13 +38,15 @@ const BRIGHT_COLORS = [
 ];
 
 const synthDataSortFn = (a: SynthTotalSupply, b: SynthTotalSupply) =>
-	a.value.isLessThan(b.value) ? 1 : -1;
+	a.value.lt(b.value) ? 1 : -1;
 
 type DebtPieChartProps = {
 	data: SynthsTotalSupplyData;
 };
 
 const SynthsPieChart: FC<DebtPieChartProps> = () => {
+	const { useSynthsTotalSupplyQuery } = useSynthetixQueries();
+
 	const synthsTotalSupplyQuery = useSynthsTotalSupplyQuery();
 	const totalSupply = synthsTotalSupplyQuery.isSuccess ? synthsTotalSupplyQuery.data : undefined;
 
@@ -56,7 +55,7 @@ const SynthsPieChart: FC<DebtPieChartProps> = () => {
 		const sortedData = Object.values(supplyData).sort(synthDataSortFn);
 
 		const cutoffIndex = sortedData.findIndex((synth) =>
-			synth.poolProportion.isLessThan(MIN_PERCENT_FOR_PIE_CHART)
+			synth.poolProportion.lt(MIN_PERCENT_FOR_PIE_CHART)
 		);
 
 		const topNSynths = sortedData.slice(0, cutoffIndex);
@@ -66,17 +65,17 @@ const SynthsPieChart: FC<DebtPieChartProps> = () => {
 			const remainingSupply = { ...remaining[0] };
 			remainingSupply.name = 'Other';
 			for (const data of remaining.slice(1)) {
-				remainingSupply.value = remainingSupply.value.plus(data.value);
+				remainingSupply.value = remainingSupply.value.add(data.value);
 			}
 			remainingSupply.poolProportion = remainingSupply.value.div(totalSupply?.totalValue ?? 0);
 			topNSynths.push(remainingSupply);
 		}
 		return topNSynths
-			.sort((a, b) => (a.value.isLessThan(b.value) ? 1 : -1))
+			.sort((a, b) => (a.value.lt(b.value) ? 1 : -1))
 			.map((supply, index) => ({
-				...supply,
+				totalSupply: supply.totalSupply.toNumber(),
+				poolProportion: supply.poolProportion.toNumber(),
 				value: supply.value.toNumber(),
-				skewValue: supply.skewValue,
 				fillColor: MUTED_COLORS[index % MUTED_COLORS.length],
 				strokeColor: BRIGHT_COLORS[index % BRIGHT_COLORS.length],
 			}));

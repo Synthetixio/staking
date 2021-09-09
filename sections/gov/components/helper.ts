@@ -1,11 +1,11 @@
-import BigNumber from 'bignumber.js';
+import Wei, { wei } from '@synthetixio/wei';
 import snapshot from '@snapshot-labs/snapshot.js';
 import { getCurrentTimestampSeconds } from 'utils/formatters/date';
 import { ethers } from 'ethers';
 
-export const quadraticWeighting = (value: BigNumber) => {
-	const scaledValue = value.multipliedBy(1e5);
-	return scaledValue.sqrt();
+export const quadraticWeighting = (value: Wei) => {
+	const scaledValue = value.mul(1e5);
+	return wei(scaledValue.toBig().sqrt());
 };
 
 export function getENSForAddresses(addresses: any[]) {

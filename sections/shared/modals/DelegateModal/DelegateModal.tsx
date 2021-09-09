@@ -1,13 +1,12 @@
 import { FC } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { Svg } from 'react-optimized-image';
 
-import { delegateWalletState } from 'store/wallet';
-import useGetAuthoriserWallets from 'queries/delegate/useGetAuthoriserWallets';
+import { delegateWalletState, walletAddressState } from 'store/wallet';
 import { truncateAddress } from 'utils/formatters/string';
-import { DelegationWallet } from 'queries/delegate/types';
+import useSynthetixQueries, { DelegationWallet } from '@synthetixio/queries';
 
 import { MenuModal } from '../common';
 import Spinner from 'assets/svg/app/loader.svg';
@@ -18,7 +17,12 @@ type DelegateModalProps = {
 
 const DelegateModal: FC<DelegateModalProps> = ({ onDismiss }) => {
 	const { t } = useTranslation();
-	const delegateWalletsQuery = useGetAuthoriserWallets();
+
+	const walletAddress = useRecoilValue(walletAddressState);
+
+	const { useGetAuthoriserWallets } = useSynthetixQueries();
+	const delegateWalletsQuery = useGetAuthoriserWallets(walletAddress);
+
 	const [delegateWallet, setDelegateWallet] = useRecoilState(delegateWalletState);
 
 	const authoriserWallets = delegateWalletsQuery?.data ?? null;

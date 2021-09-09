@@ -12,14 +12,13 @@ import PortfolioTable from '../PortfolioTable';
 
 import { DebtPanelType } from 'store/debt';
 import useCryptoBalances from 'hooks/useCryptoBalances';
-import useSynthsTotalSupplyQuery, {
-	SynthsTotalSupplyData,
-} from 'queries/synths/useSynthsTotalSupplyQuery';
-import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
-
-import { zeroBN } from 'utils/formatters/number';
 
 import Info from 'assets/svg/app/info.svg';
+import { wei } from '@synthetixio/wei';
+import { SynthsTotalSupplyData } from '@synthetixio/queries';
+import useSynthetixQueries from '@synthetixio/queries';
+import { useRecoilValue } from 'recoil';
+import { walletAddressState } from 'store/wallet';
 
 export type TabInfo = {
 	title: string;
@@ -57,17 +56,20 @@ const DebtTabs: FC<DebtTabsProps> = ({
 		}
 	}, [currentPanel]);
 
-	const synthsBalancesQuery = useSynthsBalancesQuery();
+	const walletAddress = useRecoilValue(walletAddressState);
+	const { useSynthsBalancesQuery, useSynthsTotalSupplyQuery } = useSynthetixQueries();
+
+	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
 	const synthBalances =
 		synthsBalancesQuery.isSuccess && synthsBalancesQuery.data != null
 			? synthsBalancesQuery.data
 			: null;
 	const synthAssets = synthBalances?.balances ?? [];
-	const cryptoBalances = useCryptoBalances();
+	const cryptoBalances = useCryptoBalances(walletAddress);
 
 	const totalSynthValue = synthsBalancesQuery.isSuccess
-		? synthsBalancesQuery.data?.totalUSDBalance ?? zeroBN
-		: zeroBN;
+		? synthsBalancesQuery.data?.totalUSDBalance ?? wei(0)
+		: wei(0);
 
 	const synthsTotalSupplyQuery = useSynthsTotalSupplyQuery();
 	const totalSupply = synthsTotalSupplyQuery?.data ?? [];
@@ -155,7 +157,7 @@ const DebtTabs: FC<DebtTabsProps> = ({
 								synthsTotalSupply={totalSupply as SynthsTotalSupplyData}
 								isLoading={synthsBalancesQuery.isLoading}
 								isLoaded={synthsBalancesQuery.isSuccess}
-								synthsTotalValue={totalSynthValue ?? zeroBN}
+								synthsTotalValue={totalSynthValue ?? wei(0)}
 							/>
 						</ContainerBody>
 					</PortfolioContainer>

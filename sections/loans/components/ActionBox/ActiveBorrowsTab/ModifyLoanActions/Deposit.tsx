@@ -65,7 +65,7 @@ const Deposit: React.FC<DepositProps> = ({
 
 	const getApproveTxData = useCallback(
 		(gas: Record<string, number>) => {
-			if (!(collateralAssetContract && !depositAmount.isZero())) return null;
+			if (!(collateralAssetContract && !depositAmount.eq(0))) return null;
 			return [collateralAssetContract, 'approve', [loanContractAddress, depositAmount, gas]];
 		},
 		[collateralAssetContract, loanContractAddress, depositAmount]
@@ -73,7 +73,7 @@ const Deposit: React.FC<DepositProps> = ({
 
 	const getDepositTxData = useCallback(
 		(gas: Record<string, number>) => {
-			if (!(loanContract && !depositAmount.isZero())) return null;
+			if (!(loanContract && !depositAmount.eq(0))) return null;
 			return [
 				loanContract,
 				'deposit',

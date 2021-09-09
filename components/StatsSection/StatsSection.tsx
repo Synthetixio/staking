@@ -2,12 +2,6 @@ import { FC, useMemo, useState } from 'react';
 import { Svg } from 'react-optimized-image';
 import styled from 'styled-components';
 
-import { toBigNumber } from 'utils/formatters/number';
-
-import useSNX24hrPricesQuery from 'queries/rates/useSNX24hrPricesQuery';
-import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
-import useCryptoBalances from 'hooks/useCryptoBalances';
-
 import { MOBILE_BODY_PADDING } from 'constants/ui';
 import { CryptoCurrency, Synths } from 'constants/currency';
 import { MobileOrTabletView } from 'components/Media';
@@ -22,23 +16,31 @@ import CRatioBarStats from 'sections/shared/Layout/Stats/CRatioBarStats';
 
 import CollapseIcon from 'assets/svg/app/chevron-collapse.svg';
 import ExpandIcon from 'assets/svg/app/chevron-expand.svg';
+import { useRecoilValue } from 'recoil';
+import { walletAddressState } from 'store/wallet';
+import useSynthetixQueries from '@synthetixio/queries';
+import { wei } from '@synthetixio/wei';
+import useCryptoBalances from 'hooks/useCryptoBalances';
 
 const StatsSection: FC = ({ children }) => {
+	const walletAddress = useRecoilValue(walletAddressState);
+
+	const { useSynthsBalancesQuery, useSNX24hrPricesQuery } = useSynthetixQueries();
+
 	const SNX24hrPricesQuery = useSNX24hrPricesQuery();
-	const cryptoBalances = useCryptoBalances();
-	const synthsBalancesQuery = useSynthsBalancesQuery();
+	const cryptoBalances = useCryptoBalances(walletAddress);
+	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
 	const [mobileStatsSectionIsOpen, setMobileStatsSectionIsOpen] = useState(false);
 
 	const snxBalance =
 		cryptoBalances?.balances?.find((balance) => balance.currencyKey === CryptoCurrency.SNX)
-			?.balance ?? toBigNumber(0);
+			?.balance ?? wei(0);
 
-	const sUSDBalance =
-		synthsBalancesQuery?.data?.balancesMap[Synths.sUSD]?.balance ?? toBigNumber(0);
+	const sUSDBalance = synthsBalancesQuery?.data?.balancesMap[Synths.sUSD]?.balance ?? wei(0);
 
 	const snxPriceChartData = useMemo(() => {
 		return (SNX24hrPricesQuery?.data ?? [])
-			.map((dataPoint) => ({ value: dataPoint.averagePrice }))
+			.map((dataPoint: { averagePrice: number }) => ({ value: dataPoint.averagePrice }))
 			.slice()
 			.reverse();
 	}, [SNX24hrPricesQuery?.data]);

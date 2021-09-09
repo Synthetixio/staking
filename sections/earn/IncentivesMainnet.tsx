@@ -1,5 +1,5 @@
 import { FC, useMemo, useState } from 'react';
-import BigNumber from 'bignumber.js';
+import Wei, { wei } from '@synthetixio/wei';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
@@ -9,10 +9,8 @@ import useLPData from 'hooks/useLPData';
 import ROUTES from 'constants/routes';
 import { CryptoCurrency, Synths } from 'constants/currency';
 import media from 'styles/media';
-import useSNXLockedValueQuery from 'queries/staking/useSNXLockedValueQuery';
 import useFeePeriodTimeAndProgress from 'hooks/useFeePeriodTimeAndProgress';
-import { isWalletConnectedState } from 'store/wallet';
-import { zeroBN } from 'utils/formatters/number';
+import { isWalletConnectedState, walletAddressState } from 'store/wallet';
 import useShortRewardsData from 'hooks/useShortRewardsData';
 import { TabButton, TabList } from 'components/Tab';
 import { CurrencyIconType } from 'components/Currency/CurrencyIcon/CurrencyIcon';
@@ -32,6 +30,7 @@ import {
 } from './types';
 import YearnVaultTab from './LPTab/YearnVaultTab';
 import { YearnVaultData } from 'queries/liquidityPools/useYearnSNXVaultQuery';
+import useSynthetixQueries from '@synthetixio/queries';
 
 enum View {
 	ACTIVE = 'active',
@@ -39,11 +38,11 @@ enum View {
 }
 
 type IncentivesProps = {
-	tradingRewards: BigNumber;
-	stakingRewards: BigNumber;
-	totalRewards: BigNumber;
-	stakingAPR: number;
-	stakedAmount: number;
+	tradingRewards: Wei;
+	stakingRewards: Wei;
+	totalRewards: Wei;
+	stakingAPR: Wei;
+	stakedAmount: Wei;
 	hasClaimed: boolean;
 };
 
@@ -62,9 +61,12 @@ const Incentives: FC<IncentivesProps> = ({
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const [view, setView] = useState<View>(View.ACTIVE);
 
+	const walletAddress = useRecoilValue(walletAddressState);
+	const { useGlobalStakingInfoQuery } = useSynthetixQueries();
+
 	const lpData = useLPData();
-	const shortData = useShortRewardsData();
-	const useSNXLockedValue = useSNXLockedValueQuery();
+	const shortData = useShortRewardsData(walletAddress);
+	const globalStakingQuery = useGlobalStakingInfoQuery();
 
 	const { nextFeePeriodStarts, currentFeePeriodStarted } = useFeePeriodTimeAndProgress();
 
@@ -88,20 +90,28 @@ const Incentives: FC<IncentivesProps> = ({
 			const route = lpToRoute[balancerLP];
 			const currencyKey = lpToSynthIcon[balancerLP];
 
+			const isDual = !!(lpData[balancerLP].data?.rewards as { a: Wei; b: Wei })?.a;
+
 			return {
 				title: t(`earn.incentives.options.${synthTransKey}.title`),
 				subtitle: t(`earn.incentives.options.${synthTransKey}.subtitle`),
 				apr: lpData[balancerLP].APR,
 				tvl: lpData[balancerLP].TVL,
 				staked: {
-					balance: lpData[balancerLP].data?.staked ?? 0,
+					balance: lpData[balancerLP].data?.staked ?? wei(0),
 					asset: currencyKey,
 					ticker: balancerLP,
 				},
-				rewards: lpData[balancerLP].data?.rewards ?? 0,
+				rewards: lpData[balancerLP].data?.rewards ?? wei(0),
 				periodStarted: now - (lpData[balancerLP].data?.duration ?? 0),
 				periodFinish: lpData[balancerLP].data?.periodFinish ?? 0,
-				claimed: (lpData[balancerLP].data?.rewards ?? 0) > 0 ? false : NOT_APPLICABLE,
+				claimed: (
+					isDual
+						? (lpData[balancerLP].data?.rewards as { a: Wei; b: Wei }).a.gt(0)
+						: (lpData[balancerLP].data?.rewards as Wei)?.gt(0)
+				)
+					? false
+					: NOT_APPLICABLE,
 				now,
 				route: route,
 				tab: tab,
@@ -114,13 +124,13 @@ const Incentives: FC<IncentivesProps> = ({
 						title: t('earn.incentives.options.snx.title'),
 						subtitle: t('earn.incentives.options.snx.subtitle'),
 						apr: stakingAPR,
-						tvl: useSNXLockedValue.data ?? 0,
+						tvl: globalStakingQuery.data?.lockedValue ?? wei(0),
 						staked: {
 							balance: stakedAmount,
 							asset: CryptoCurrency.SNX,
 							ticker: CryptoCurrency.SNX,
 						},
-						rewards: stakingRewards.toNumber(),
+						rewards: stakingRewards,
 						periodStarted: currentFeePeriodStarted.getTime(),
 						periodFinish: nextFeePeriodStarts.getTime(),
 						claimed: hasClaimed,
@@ -134,13 +144,12 @@ const Incentives: FC<IncentivesProps> = ({
 						apr: lpData[LP.YEARN_SNX_VAULT].APR,
 						tvl: lpData[LP.YEARN_SNX_VAULT].TVL,
 						staked: {
-							balance:
-								(lpData[LP.YEARN_SNX_VAULT].data as YearnVaultData)?.stakedSNX.toNumber() ?? 0,
+							balance: (lpData[LP.YEARN_SNX_VAULT].data as YearnVaultData)?.stakedSNX ?? wei(0),
 							asset: CryptoCurrency.SNX,
 							ticker: CryptoCurrency.SNX,
 							type: CurrencyIconType.TOKEN,
 						},
-						rewards: lpData[LP.YEARN_SNX_VAULT].data?.rewards ?? 0,
+						rewards: lpData[LP.YEARN_SNX_VAULT].data?.rewards ?? wei(0),
 						periodStarted: now - (lpData[LP.YEARN_SNX_VAULT].data?.duration ?? 0),
 						periodFinish: lpData[LP.YEARN_SNX_VAULT].data?.periodFinish ?? 0,
 						claimed: NOT_APPLICABLE,
@@ -155,11 +164,11 @@ const Incentives: FC<IncentivesProps> = ({
 						apr: lpData[Synths.iETH].APR,
 						tvl: lpData[Synths.iETH].TVL,
 						staked: {
-							balance: lpData[Synths.iETH].data?.staked ?? 0,
+							balance: lpData[Synths.iETH].data?.staked ?? wei(0),
 							asset: Synths.iETH,
 							ticker: Synths.iETH,
 						},
-						rewards: lpData[Synths.iETH].data?.rewards ?? 0,
+						rewards: lpData[Synths.iETH].data?.rewards ?? wei(0),
 						periodStarted: now - (lpData[Synths.iETH].data?.duration ?? 0),
 						periodFinish: lpData[Synths.iETH].data?.periodFinish ?? 0,
 						claimed: (lpData[Synths.iETH].data?.rewards ?? 0) > 0 ? false : NOT_APPLICABLE,
@@ -174,11 +183,11 @@ const Incentives: FC<IncentivesProps> = ({
 						apr: lpData[Synths.iBTC].APR,
 						tvl: lpData[Synths.iBTC].TVL,
 						staked: {
-							balance: lpData[Synths.iBTC].data?.staked ?? 0,
+							balance: lpData[Synths.iBTC].data?.staked ?? wei(0),
 							asset: Synths.iBTC,
 							ticker: Synths.iBTC,
 						},
-						rewards: lpData[Synths.iBTC].data?.rewards ?? 0,
+						rewards: lpData[Synths.iBTC].data?.rewards ?? wei(0),
 						periodStarted: now - (lpData[Synths.iBTC].data?.duration ?? 0),
 						periodFinish: lpData[Synths.iBTC].data?.periodFinish ?? 0,
 						claimed: (lpData[Synths.iBTC].data?.rewards ?? 0) > 0 ? false : NOT_APPLICABLE,
@@ -193,11 +202,11 @@ const Incentives: FC<IncentivesProps> = ({
 						apr: shortData[Synths.sBTC].APR,
 						tvl: shortData[Synths.sBTC].OI,
 						staked: {
-							balance: shortData[Synths.sBTC].data?.staked ?? 0,
+							balance: shortData[Synths.sBTC].data?.staked ?? wei(0),
 							asset: Synths.sBTC,
 							ticker: Synths.sBTC,
 						},
-						rewards: shortData[Synths.sBTC].data?.rewards ?? 0,
+						rewards: shortData[Synths.sBTC].data?.rewards ?? wei(0),
 						periodStarted: now - (shortData[Synths.sBTC].data?.duration ?? 0),
 						periodFinish: shortData[Synths.sBTC].data?.periodFinish ?? 0,
 						claimed: (shortData[Synths.sBTC].data?.rewards ?? 0) > 0 ? false : NOT_APPLICABLE,
@@ -212,11 +221,11 @@ const Incentives: FC<IncentivesProps> = ({
 						apr: shortData[Synths.sETH].APR,
 						tvl: shortData[Synths.sETH].OI,
 						staked: {
-							balance: shortData[Synths.sETH].data?.staked ?? 0,
+							balance: shortData[Synths.sETH].data?.staked ?? wei(0),
 							asset: Synths.sETH,
 							ticker: Synths.sETH,
 						},
-						rewards: shortData[Synths.sETH].data?.rewards ?? 0,
+						rewards: shortData[Synths.sETH].data?.rewards ?? wei(0),
 						periodStarted: now - (shortData[Synths.sETH].data?.duration ?? 0),
 						periodFinish: shortData[Synths.sETH].data?.periodFinish ?? 0,
 						claimed: (shortData[Synths.sETH].data?.rewards ?? 0) > 0 ? false : NOT_APPLICABLE,
@@ -241,12 +250,12 @@ const Incentives: FC<IncentivesProps> = ({
 						apr: lpData[LP.CURVE_sUSD].APR,
 						tvl: lpData[LP.CURVE_sUSD].TVL,
 						staked: {
-							balance: lpData[LP.CURVE_sUSD].data?.staked ?? 0,
+							balance: lpData[LP.CURVE_sUSD].data?.staked ?? wei(0),
 							asset: CryptoCurrency.CRV,
 							ticker: LP.CURVE_sUSD,
 							type: CurrencyIconType.TOKEN,
 						},
-						rewards: lpData[LP.CURVE_sUSD].data?.rewards ?? 0,
+						rewards: lpData[LP.CURVE_sUSD].data?.rewards ?? wei(0),
 						periodStarted: now - (lpData[LP.CURVE_sUSD].data?.duration ?? 0),
 						periodFinish: lpData[LP.CURVE_sUSD].data?.periodFinish ?? 0,
 						claimed: (lpData[LP.CURVE_sUSD].data?.rewards ?? 0) > 0 ? false : NOT_APPLICABLE,
@@ -261,18 +270,18 @@ const Incentives: FC<IncentivesProps> = ({
 						apr: lpData[LP.UNISWAP_DHT].APR,
 						tvl: lpData[LP.UNISWAP_DHT].TVL,
 						staked: {
-							balance: lpData[LP.UNISWAP_DHT].data?.staked ?? 0,
+							balance: lpData[LP.UNISWAP_DHT].data?.staked ?? wei(0),
 							asset: CryptoCurrency.DHT,
 							ticker: LP.UNISWAP_DHT,
 							type: CurrencyIconType.TOKEN,
 						},
-						rewards: lpData[LP.UNISWAP_DHT].data?.rewards ?? 0,
+						rewards: lpData[LP.UNISWAP_DHT].data?.rewards ?? wei(0),
 						dualRewards: true,
 						periodStarted: now - (lpData[LP.UNISWAP_DHT].data?.duration ?? 0),
 						periodFinish: lpData[LP.UNISWAP_DHT].data?.periodFinish ?? 0,
 						claimed:
-							((lpData[LP.UNISWAP_DHT].data?.rewards as DualRewards)?.a ?? 0) > 0 &&
-							((lpData[LP.UNISWAP_DHT].data?.rewards as DualRewards)?.b ?? 0) > 0
+							((lpData[LP.UNISWAP_DHT].data?.rewards as DualRewards)?.a ?? wei(0)).gt(0) &&
+							((lpData[LP.UNISWAP_DHT].data?.rewards as DualRewards)?.b ?? wei(0)).gt(0)
 								? false
 								: NOT_APPLICABLE,
 						now,
@@ -284,7 +293,7 @@ const Incentives: FC<IncentivesProps> = ({
 	}, [
 		stakingAPR,
 		stakedAmount,
-		useSNXLockedValue.data,
+		globalStakingQuery.data,
 		nextFeePeriodStarts,
 		stakingRewards,
 		hasClaimed,
@@ -326,14 +335,12 @@ const Incentives: FC<IncentivesProps> = ({
 			activeTab === selectedTab && (
 				<LPTab
 					key={selectedTab}
-					userBalance={lpData[lp].data?.userBalance ?? 0}
-					userBalanceBN={lpData[lp].data?.userBalanceBN ?? zeroBN}
+					userBalance={lpData[lp].data?.userBalance ?? wei(0)}
 					stakedAsset={lp}
 					icon={currencyKey}
 					allowance={lpData[lp].data?.allowance ?? null}
-					tokenRewards={lpData[lp].data?.rewards ?? 0}
-					staked={lpData[lp].data?.staked ?? 0}
-					stakedBN={lpData[lp].data?.stakedBN ?? zeroBN}
+					tokenRewards={lpData[lp].data?.rewards ?? wei(0)}
+					staked={lpData[lp].data?.staked ?? wei(0)}
 					needsToSettle={lpData[lp].data?.needsToSettle}
 				/>
 			)
@@ -387,13 +394,11 @@ const Incentives: FC<IncentivesProps> = ({
 				)}
 				{activeTab === Tab.iETH_LP && (
 					<LPTab
-						userBalance={lpData[Synths.iETH].data?.userBalance ?? 0}
-						userBalanceBN={lpData[Synths.iETH].data?.userBalanceBN ?? zeroBN}
+						userBalance={lpData[Synths.iETH].data?.userBalance ?? wei(0)}
 						stakedAsset={Synths.iETH}
 						allowance={lpData[Synths.iETH].data?.allowance ?? null}
-						tokenRewards={lpData[Synths.iETH].data?.rewards ?? 0}
-						staked={lpData[Synths.iETH].data?.staked ?? 0}
-						stakedBN={lpData[Synths.iETH].data?.stakedBN ?? zeroBN}
+						tokenRewards={lpData[Synths.iETH].data?.rewards ?? wei(0)}
+						staked={lpData[Synths.iETH].data?.staked ?? wei(0)}
 						needsToSettle={lpData[Synths.iETH].data?.needsToSettle}
 					/>
 				)}
@@ -422,42 +427,36 @@ const Incentives: FC<IncentivesProps> = ({
 				].map(balancerTab)}
 				{activeTab === Tab.DHT_LP && (
 					<LPTab
-						userBalance={lpData[LP.UNISWAP_DHT].data?.userBalance ?? 0}
-						userBalanceBN={lpData[LP.UNISWAP_DHT].data?.userBalanceBN ?? zeroBN}
+						userBalance={lpData[LP.UNISWAP_DHT].data?.userBalance ?? wei(0)}
 						stakedAsset={LP.UNISWAP_DHT}
 						icon={CryptoCurrency.DHT}
 						type={CurrencyIconType.TOKEN}
 						allowance={lpData[LP.UNISWAP_DHT].data?.allowance ?? null}
-						tokenRewards={lpData[LP.UNISWAP_DHT].data?.rewards ?? 0}
-						staked={lpData[LP.UNISWAP_DHT].data?.staked ?? 0}
-						stakedBN={lpData[LP.UNISWAP_DHT].data?.stakedBN ?? zeroBN}
+						tokenRewards={lpData[LP.UNISWAP_DHT].data?.rewards ?? wei(0)}
+						staked={lpData[LP.UNISWAP_DHT].data?.staked ?? wei(0)}
 						needsToSettle={lpData[LP.UNISWAP_DHT].data?.needsToSettle}
-						secondTokenRate={lpData[LP.UNISWAP_DHT].data?.price ?? 0}
+						secondTokenRate={lpData[LP.UNISWAP_DHT].data?.price ?? wei(0)}
 					/>
 				)}
 				{activeTab === Tab.iBTC_LP && (
 					<LPTab
-						userBalance={lpData[Synths.iBTC].data?.userBalance ?? 0}
-						userBalanceBN={lpData[Synths.iBTC].data?.userBalanceBN ?? zeroBN}
+						userBalance={lpData[Synths.iBTC].data?.userBalance ?? wei(0)}
 						stakedAsset={Synths.iBTC}
 						allowance={lpData[Synths.iBTC].data?.allowance ?? null}
-						tokenRewards={lpData[Synths.iBTC].data?.rewards ?? 0}
-						staked={lpData[Synths.iBTC].data?.staked ?? 0}
-						stakedBN={lpData[Synths.iBTC].data?.stakedBN ?? zeroBN}
+						tokenRewards={lpData[Synths.iBTC].data?.rewards ?? wei(0)}
+						staked={lpData[Synths.iBTC].data?.staked ?? wei(0)}
 						needsToSettle={lpData[Synths.iBTC].data?.needsToSettle}
 					/>
 				)}
 				{activeTab === Tab.yearn_SNX_VAULT && (
 					<YearnVaultTab
-						userBalance={lpData[LP.YEARN_SNX_VAULT].data?.userBalance ?? 0}
-						userBalanceBN={lpData[LP.YEARN_SNX_VAULT].data?.userBalanceBN ?? zeroBN}
+						userBalance={lpData[LP.YEARN_SNX_VAULT].data?.userBalance ?? wei(0)}
 						stakedAsset={CryptoCurrency.SNX}
 						allowance={lpData[LP.YEARN_SNX_VAULT].data?.allowance ?? null}
-						tokenRewards={lpData[LP.YEARN_SNX_VAULT].data?.rewards ?? 0}
-						staked={lpData[LP.YEARN_SNX_VAULT].data?.staked ?? 0}
-						stakedBN={lpData[LP.YEARN_SNX_VAULT].data?.stakedBN ?? zeroBN}
+						tokenRewards={lpData[LP.YEARN_SNX_VAULT].data?.rewards ?? wei(0)}
+						staked={lpData[LP.YEARN_SNX_VAULT].data?.staked ?? wei(0)}
 						pricePerShare={
-							(lpData[LP.YEARN_SNX_VAULT].data as YearnVaultData)?.pricePerShare ?? zeroBN
+							(lpData[LP.YEARN_SNX_VAULT].data as YearnVaultData)?.pricePerShare ?? wei(0)
 						}
 					/>
 				)}

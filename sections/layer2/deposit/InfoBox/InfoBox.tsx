@@ -5,7 +5,6 @@ import { Svg } from 'react-optimized-image';
 
 import { InfoContainer, Title, Subtitle } from '../../components/common';
 import ExternalLink from '../../components/ExternalLink';
-import useGetDepositsDataQuery, { DepositHistory } from 'queries/deposits/useGetDepositsDataQuery';
 import { FlexDivColCentered } from 'styles/common';
 
 import { formatShortDate } from 'utils/formatters/date';
@@ -21,10 +20,22 @@ import {
 	Header,
 	StyledTable,
 } from 'sections/escrow/components/common';
+import { useRecoilValue } from 'recoil';
+import { walletAddressState } from 'store/wallet';
+import useSynthetixQueries, { DepositHistory } from '@synthetixio/queries';
 
 const InfoBox = () => {
 	const { t } = useTranslation();
-	const depositsDataQuery = useGetDepositsDataQuery();
+
+	const walletAddress = useRecoilValue(walletAddressState);
+
+	const { useGetBridgeDataQuery } = useSynthetixQueries();
+
+	const depositsDataQuery = useGetBridgeDataQuery(
+		process.env.NEXT_PUBLIC_INFURA_PROJECT_ID!,
+		walletAddress
+	);
+
 	const depositHistory = depositsDataQuery?.data ?? null;
 
 	return (
@@ -45,7 +56,8 @@ const InfoBox = () => {
 									<Data>
 										{formatCurrency(CryptoCurrency.SNX, cellProps.value, {
 											currencyKey: CryptoCurrency.SNX,
-											decimals: 2,
+											minDecimals: 2,
+											maxDecimals: 2,
 										})}
 									</Data>
 								),

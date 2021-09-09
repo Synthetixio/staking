@@ -1,21 +1,21 @@
 import { FC, ReactNode } from 'react';
 import styled from 'styled-components';
-import BigNumber from 'bignumber.js';
+import Wei from '@synthetixio/wei';
 import { useRecoilValue } from 'recoil';
 
 import media from 'styles/media';
 import { isWalletConnectedState } from 'store/wallet';
-import { CryptoBalance } from 'queries/walletBalances/types';
 import { DesktopOrTabletView, MobileOnlyView } from 'components/Media';
 import { MOBILE_BODY_PADDING } from 'constants/ui';
 
 import DesktopAssetsTable from './DesktopAssetsTable';
 import MobileAssetsTable from './MobileAssetsTable';
+import { CryptoBalance } from 'hooks/useCryptoBalances';
 
 type AssetsTableProps = {
 	title: ReactNode;
 	assets: CryptoBalance[];
-	totalValue: BigNumber;
+	totalValue: Wei;
 	isLoading: boolean;
 	isLoaded: boolean;
 	showConvert: boolean;

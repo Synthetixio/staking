@@ -4,8 +4,6 @@ import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 import { Trans, useTranslation } from 'react-i18next';
 
-import synthetix from 'lib/synthetix';
-
 import { truncateAddress } from 'utils/formatters/string';
 import Button from 'components/Button';
 import StructuredTab from 'components/StructuredTab';
@@ -19,12 +17,11 @@ import {
 import GasSelector from 'components/GasSelector';
 import { isWalletConnectedState, walletAddressState } from 'store/wallet';
 import { appReadyState } from 'store/app';
-import {
+import useSynthetixQueries, {
 	Action,
-	APPROVE_CONTRACT_METHODS,
-	GET_IS_APPROVED_CONTRACT_METHODS,
-} from 'queries/delegate/types';
-import useGetDelegateWallets from 'queries/delegate/useGetDelegateWallets';
+	DELEGATE_APPROVE_CONTRACT_METHODS,
+	DELEGATE_GET_IS_APPROVED_CONTRACT_METHODS,
+} from '@synthetixio/queries';
 import {
 	FormContainer,
 	InputsContainer,
@@ -40,6 +37,7 @@ import {
 } from 'utils/network';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import ActionSelector from './ActionSelector';
+import Wei, { wei } from '@synthetixio/wei';
 
 const LeftCol: FC = () => {
 	const { t } = useTranslation();
@@ -63,17 +61,20 @@ const LeftCol: FC = () => {
 
 const Tab: FC = () => {
 	const { t } = useTranslation();
-	const { connectWallet } = Connector.useContainer();
+	const { connectWallet, synthetixjs } = Connector.useContainer();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const isAppReady = useRecoilValue(appReadyState);
 	const address = useRecoilValue(walletAddressState);
-	const delegateWalletsQuery = useGetDelegateWallets();
+
+	const { useGetDelegateWallets } = useSynthetixQueries();
+
+	const delegateWalletsQuery = useGetDelegateWallets(address);
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 
 	const [action, setAction] = useState<string>(Action.APPROVE_ALL);
 
-	const [gasPrice, setGasPrice] = useState<number>(0);
-	const [gasLimit, setGasLimitEstimate] = useState<number | null>(null);
+	const [gasPrice, setGasPrice] = useState<Wei>(wei(0));
+	const [gasLimit, setGasLimitEstimate] = useState<number>(0);
 	const [delegateAddress, setDelegateAddress] = useState<string>('');
 
 	const [error, setError] = useState<string | null>(null);
@@ -101,14 +102,14 @@ const Tab: FC = () => {
 			if (!(properDelegateAddress && !delegateAddressIsSelf && isAppReady)) return null;
 			const {
 				contracts: { DelegateApprovals },
-			} = synthetix.js!;
+			} = synthetixjs!;
 			return [
 				DelegateApprovals,
-				APPROVE_CONTRACT_METHODS.get(action),
+				DELEGATE_APPROVE_CONTRACT_METHODS.get(action),
 				[properDelegateAddress, gas],
 			];
 		},
-		[isAppReady, properDelegateAddress, action, delegateAddressIsSelf]
+		[isAppReady, properDelegateAddress, action, delegateAddressIsSelf, synthetixjs]
 	);
 
 	const onEnterAddress = (e: any) => setDelegateAddress((e.target.value ?? '').trim());
@@ -124,7 +125,7 @@ const Tab: FC = () => {
 		setTxModalOpen(true);
 		try {
 			const gas: Record<string, number> = {
-				gasPrice: getNormalizedGasPrice(gasPrice),
+				gasPrice: getNormalizedGasPrice(gasPrice.toNumber()),
 				gasLimit: gasLimit!,
 			};
 			await tx(() => getApproveTxData(gas), {
@@ -162,7 +163,7 @@ const Tab: FC = () => {
 				if (isMounted) setGasLimitEstimate(getNormalizedGasLimit(Number(gasEstimate)));
 			} catch (error) {
 				// console.error(error);
-				if (isMounted) setGasLimitEstimate(null);
+				if (isMounted) setGasLimitEstimate(0);
 			}
 		})();
 		return () => {
@@ -176,15 +177,15 @@ const Tab: FC = () => {
 			if (!isAppReady) return;
 			const {
 				contracts: { DelegateApprovals },
-			} = synthetix.js!;
+			} = synthetixjs!;
 			if (!(properDelegateAddress && action)) return setAlreadyDelegated(false);
 			const alreadyDelegated = await DelegateApprovals[
-				GET_IS_APPROVED_CONTRACT_METHODS.get(action)!
+				DELEGATE_GET_IS_APPROVED_CONTRACT_METHODS.get(action)!
 			](address, properDelegateAddress);
 			setAlreadyDelegated(alreadyDelegated);
 		};
 		getIsAlreadyDelegated();
-	}, [isAppReady, properDelegateAddress, address, action]);
+	}, [isAppReady, properDelegateAddress, address, action, synthetixjs]);
 
 	return (
 		<div data-testid="form">
@@ -206,7 +207,7 @@ const Tab: FC = () => {
 					<ActionSelector {...{ action, setAction }} />
 
 					<SettingContainer>
-						<GasSelector gasLimitEstimate={gasLimit} setGasPrice={setGasPrice} />
+						<GasSelector gasLimitEstimate={wei(gasLimit, 0)} setGasPrice={setGasPrice} />
 					</SettingContainer>
 				</SettingsContainer>
 			</FormContainer>

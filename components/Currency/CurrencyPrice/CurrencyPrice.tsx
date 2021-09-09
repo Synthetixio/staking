@@ -5,17 +5,17 @@ import ChangePercent from 'components/ChangePercent';
 
 import { CurrencyKey } from 'constants/currency';
 
-import { formatCurrency, NumericValue, toBigNumber } from 'utils/formatters/number';
+import { formatCurrency } from 'utils/formatters/number';
 
 import { ContainerRow } from '../common';
-import { DEFAULT_FIAT_DECIMALS } from 'constants/defaults';
+import { wei, WeiSource } from '@synthetixio/wei';
 
 type CurrencyPriceProps = {
 	currencyKey: CurrencyKey;
-	price: NumericValue;
+	price: WeiSource;
 	sign?: string;
 	change?: number;
-	conversionRate?: NumericValue | null;
+	conversionRate?: WeiSource;
 };
 
 export const CurrencyPrice: FC<CurrencyPriceProps> = ({
@@ -31,10 +31,9 @@ export const CurrencyPrice: FC<CurrencyPriceProps> = ({
 			<Price className="price">
 				{formatCurrency(
 					currencyKey,
-					conversionRate != null ? toBigNumber(price).dividedBy(conversionRate) : price,
+					conversionRate != null ? wei(price).div(conversionRate) : price,
 					{
 						sign,
-						decimals: DEFAULT_FIAT_DECIMALS,
 					}
 				)}
 			</Price>
