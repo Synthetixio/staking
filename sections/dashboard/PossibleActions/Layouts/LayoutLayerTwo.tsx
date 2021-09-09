@@ -102,7 +102,7 @@ const StyledContainer = styled(Container)`
 	gap: 1rem;
 
 	${media.lessThan('md')`
-		grid-template-areas: 
+		grid-template-areas:
 			'tile-1 tile-2'
 			'tile-3 tile-4';
 		grid-template-columns: 1fr 1fr;

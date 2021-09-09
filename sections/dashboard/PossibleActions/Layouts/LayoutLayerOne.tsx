@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import ROUTES from 'constants/routes';
 import { EXTERNAL_LINKS } from 'constants/links';
 import useLPData from 'hooks/useLPData';
-import { CryptoCurrency, Synths } from 'constants/currency';
+import { CryptoCurrency } from 'constants/currency';
 import { formatPercent } from 'utils/formatters/number';
 
 import KwentaIcon from 'assets/svg/app/kwenta.svg';
@@ -24,7 +24,6 @@ import useUserStakingData from 'hooks/useUserStakingData';
 
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 import { LP } from 'sections/earn/types';
-import useShortRewardsData from 'hooks/useShortRewardsData';
 import { CurrencyIconType } from 'components/Currency/CurrencyIcon/CurrencyIcon';
 
 import { ActionsContainer as Container } from './common-styles';
@@ -38,7 +37,6 @@ const LayoutLayerOne: FC = () => {
 	const walletAddress = useRecoilValue(walletAddressState);
 
 	const lpData = useLPData();
-	const shortData = useShortRewardsData(walletAddress);
 	const { stakingRewards, tradingRewards } = useUserStakingData(walletAddress);
 	const { currentCRatio, targetCRatio } = useStakingCalculations();
 
@@ -103,35 +101,6 @@ const LayoutLayerOne: FC = () => {
 			{
 				icon: (
 					<GlowingCircle variant="green" size="md">
-						<Currency.Icon currencyKey={Synths.sBTC} width="32" height="32" />
-					</GlowingCircle>
-				),
-				title: t('dashboard.actions.loans.title', {
-					percent: formatPercent(shortData[Synths.sBTC].APR, { minDecimals: 0 }),
-				}),
-				copy: t('dashboard.actions.loans.copy', {
-					asset: Synths.sBTC,
-					supplier: 'Synthetix',
-				}),
-				externalLink: ROUTES.Earn.sBTC_EXTERNAL,
-				isDisabled: shortData[Synths.sBTC].APR.eq(0),
-			},
-			{
-				icon: (
-					<GlowingCircle variant="green" size="md">
-						<Currency.Icon currencyKey={Synths.sETH} width="32" height="32" />
-					</GlowingCircle>
-				),
-				title: t('dashboard.actions.earn.title', {
-					percent: formatPercent(shortData[Synths.sETH].APR, { minDecimals: 0 }),
-				}),
-				copy: t('dashboard.actions.loans.copy', { asset: Synths.sETH, supplier: 'Synthetix' }),
-				externalLink: ROUTES.Earn.sETH_EXTERNAL,
-				isDisabled: shortData[Synths.sETH].APR.eq(0),
-			},
-			{
-				icon: (
-					<GlowingCircle variant="green" size="md">
 						<Currency.Icon
 							currencyKey={CryptoCurrency.CRV}
 							type={CurrencyIconType.TOKEN}
@@ -151,147 +120,8 @@ const LayoutLayerOne: FC = () => {
 				externalLink: ROUTES.Earn.sUSD_EXTERNAL,
 				isDisabled: lpData[LP.CURVE_sUSD].APR.eq(0),
 			},
-			{
-				icon: (
-					<GlowingCircle variant="green" size="md">
-						<Currency.Icon
-							currencyKey={CryptoCurrency.DHT}
-							type={CurrencyIconType.TOKEN}
-							width="28"
-							height="28"
-						/>
-					</GlowingCircle>
-				),
-				title: t('dashboard.actions.earn.title', {
-					percent: formatPercent(lpData[LP.UNISWAP_DHT].APR, { minDecimals: 0 }),
-				}),
-				copy: t('dashboard.actions.earn.copy', {
-					asset: 'Uniswap DHT Pool Token',
-					supplier: 'Uniswap',
-				}),
-				link: ROUTES.Earn.DHT_LP,
-				isDisabled: lpData[LP.UNISWAP_DHT].APR.eq(0),
-			},
-			{
-				icon: (
-					<GlowingCircle variant="green" size="md">
-						<Currency.Icon currencyKey={Synths.sAAPL} width="28" height="28" />
-					</GlowingCircle>
-				),
-				title: t('dashboard.actions.earn.title', {
-					percent: formatPercent(lpData[LP.BALANCER_sAAPL].APR, { minDecimals: 0 }),
-				}),
-				copy: t('dashboard.actions.earn.copy', {
-					asset: 'Balancer sAAPL Pool Token',
-					supplier: 'Synthetix',
-				}),
-				link: ROUTES.Earn.sAAPL_LP,
-				isDisabled: lpData[LP.BALANCER_sAAPL].APR.eq(0),
-			},
-			{
-				gridLocations: ['col-4', 'col-5', 'row-3', 'row-4'],
-				icon: (
-					<GlowingCircle variant="green" size="md">
-						<Currency.Icon currencyKey={Synths.sAMZN} width="28" height="28" />
-					</GlowingCircle>
-				),
-				title: t('dashboard.actions.earn.title', {
-					percent: formatPercent(lpData[LP.BALANCER_sAMZN].APR, { minDecimals: 0 }),
-				}),
-				copy: t('dashboard.actions.earn.copy', {
-					asset: 'Balancer sAMZN Pool Token',
-					supplier: 'Synthetix',
-				}),
-				link: ROUTES.Earn.sAMZN_LP,
-				isDisabled: lpData[LP.BALANCER_sAMZN].APR.eq(0),
-			},
-			{
-				gridLocations: ['col-1', 'col-2', 'row-4', 'row-5'],
-				icon: (
-					<GlowingCircle variant="green" size="md">
-						<Currency.Icon currencyKey={Synths.sFB} width="28" height="28" />
-					</GlowingCircle>
-				),
-				title: t('dashboard.actions.earn.title', {
-					percent: formatPercent(lpData[LP.BALANCER_sFB].APR, { minDecimals: 0 }),
-				}),
-				copy: t('dashboard.actions.earn.copy', {
-					asset: 'Balancer sFB Pool Token',
-					supplier: 'Synthetix',
-				}),
-				link: ROUTES.Earn.sFB_LP,
-				isDisabled: lpData[LP.BALANCER_sFB].APR.eq(0),
-			},
-			{
-				gridLocations: ['col-2', 'col-3', 'row-4', 'row-5'],
-				icon: (
-					<GlowingCircle variant="green" size="md">
-						<Currency.Icon currencyKey={Synths.sGOOG} width="28" height="28" />
-					</GlowingCircle>
-				),
-				title: t('dashboard.actions.earn.title', {
-					percent: formatPercent(lpData[LP.BALANCER_sGOOG].APR, { minDecimals: 0 }),
-				}),
-				copy: t('dashboard.actions.earn.copy', {
-					asset: 'Balancer sGOOG Pool Token',
-					supplier: 'Synthetix',
-				}),
-				link: ROUTES.Earn.sGOOG_LP,
-				isDisabled: lpData[LP.BALANCER_sGOOG].APR.eq(0),
-			},
-			{
-				gridLocations: ['col-3', 'col-4', 'row-4', 'row-5'],
-				icon: (
-					<GlowingCircle variant="green" size="md">
-						<Currency.Icon currencyKey={Synths.sNFLX} width="28" height="28" />
-					</GlowingCircle>
-				),
-				title: t('dashboard.actions.earn.title', {
-					percent: formatPercent(lpData[LP.BALANCER_sNFLX].APR, { minDecimals: 0 }),
-				}),
-				copy: t('dashboard.actions.earn.copy', {
-					asset: 'Balancer sNFLX Pool Token',
-					supplier: 'Synthetix',
-				}),
-				link: ROUTES.Earn.sNFLX_LP,
-				isDisabled: lpData[LP.BALANCER_sNFLX].APR.eq(0),
-			},
-			{
-				gridLocations: ['col-4', 'col-5', 'row-4', 'row-5'],
-				icon: (
-					<GlowingCircle variant="green" size="md">
-						<Currency.Icon currencyKey={Synths.sMSFT} width="28" height="28" />
-					</GlowingCircle>
-				),
-				title: t('dashboard.actions.earn.title', {
-					percent: formatPercent(lpData[LP.BALANCER_sMSFT].APR, { minDecimals: 0 }),
-				}),
-				copy: t('dashboard.actions.earn.copy', {
-					asset: 'Balancer sMSFT Pool Token',
-					supplier: 'Synthetix',
-				}),
-				link: ROUTES.Earn.sMSFT_LP,
-				isDisabled: lpData[LP.BALANCER_sMSFT].APR.eq(0),
-			},
-			{
-				gridLocations: ['col-1', 'col-2', 'row-5', 'row-6'],
-				icon: (
-					<GlowingCircle variant="green" size="md">
-						<Currency.Icon currencyKey={Synths.sCOIN} width="28" height="28" />
-					</GlowingCircle>
-				),
-				title: t('dashboard.actions.earn.title', {
-					percent: formatPercent(lpData[LP.BALANCER_sCOIN].APR, { minDecimals: 0 }),
-				}),
-				copy: t('dashboard.actions.earn.copy', {
-					asset: 'Balancer sCOIN Pool Token',
-					supplier: 'Synthetix',
-				}),
-				link: ROUTES.Earn.sCOIN_LP,
-				isDisabled: lpData[LP.BALANCER_sCOIN].APR.eq(0),
-			},
 		].map((cell, i) => ({ ...cell, gridArea: `tile-${i + 1}` }));
-	}, [t, lpData, currentCRatio, targetCRatio, stakingRewards, tradingRewards, shortData]);
+	}, [t, lpData, currentCRatio, targetCRatio, stakingRewards, tradingRewards]);
 
 	return (
 		<StyledContainer>
@@ -314,7 +144,7 @@ const StyledContainer = styled(Container)`
 	gap: 1rem;
 
 	${media.lessThan('md')`
-		grid-template-areas: 
+		grid-template-areas:
 			'tile-1 tile-2'
 			'tile-3 tile-4'
 			'tile-5 tile-6'
