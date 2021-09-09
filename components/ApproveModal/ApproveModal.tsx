@@ -74,12 +74,13 @@ const ApproveModal: FC<ApproveModalProps> = ({
 				try {
 					const {
 						utils: { parseEther },
+						contracts,
 					} = synthetixjs!;
 					setError(null);
 					const allowance = parseEther(TokenAllowanceLimit.toString());
 					const approvedContract = getContractByName(synthetixjs!, contractToApprove, signer);
 					const gasLimitEstimate = wei(
-						await approvedContract.estimateGas.approve(approvedContract.address, allowance),
+						await contracts[tokenContract].estimateGas.approve(approvedContract.address, allowance),
 						0
 					);
 

@@ -5,7 +5,7 @@ import { CryptoCurrency, Synths } from 'constants/currency';
 import { assetToSynth } from 'utils/currencies';
 
 import useSynthetixQueries from '@synthetixio/queries';
-import { Network, NetworkId } from '@synthetixio/contracts-interface';
+import { NetworkId } from '@synthetixio/contracts-interface';
 import Wei, { wei } from '@synthetixio/wei';
 import { renBTCToken, wBTCToken, wETHToken, snxToken } from 'contracts';
 import { useRecoilValue } from 'recoil';

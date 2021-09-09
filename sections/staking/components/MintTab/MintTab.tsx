@@ -29,7 +29,7 @@ const MintTab: React.FC = () => {
 
 	const { setTitle } = UIContainer.useContainer();
 
-	const isMax = mintType == MintActionType.MAX;
+	const isMax = mintType === MintActionType.MAX;
 
 	const amountToMintBN = Wei.min(wei(0), parseSafeWei(amountToMint, wei(0)));
 

@@ -57,7 +57,13 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 		[signer]
 	);
 
-	const txn = useContractTxn(contract, 'logProposal', [ipfsHash || ''], {});
+	const txn = useContractTxn(
+		contract,
+		'logProposal',
+		[ipfsHash || ''],
+		{},
+		{ gasLimitBuffer: 0.5 }
+	);
 
 	const sanitiseTimestamp = (timestamp: number) => {
 		return Math.round(timestamp / 1e3);

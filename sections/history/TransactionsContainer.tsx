@@ -97,7 +97,7 @@ const TransactionsContainer: FC<TransactionsContainerProps> = ({ history, isLoad
 	const filteredTransactions = useMemo(() => {
 		return (
 			history?.filter((transaction) => {
-				if (typeFilter != null) {
+				if (typeFilter != null && (typeFilter as any).length) {
 					const filters = Object.keys(keyBy(typeFilter, 'value')) as StakingTransactionType[];
 
 					if (!filters.includes(transaction.type)) {
@@ -144,7 +144,10 @@ const TransactionsContainer: FC<TransactionsContainerProps> = ({ history, isLoad
 	}, [dateFilter.startDate, dateFilter.endDate, t]);
 
 	const filtersEnabled = useMemo(
-		() => dateFilterSelectedDates || amountFilter != null || typeFilter != null,
+		() =>
+			dateFilterSelectedDates ||
+			amountFilter != null ||
+			(typeFilter != null && (typeFilter as any).length),
 		[dateFilterSelectedDates, amountFilter, typeFilter]
 	);
 
@@ -152,7 +155,7 @@ const TransactionsContainer: FC<TransactionsContainerProps> = ({ history, isLoad
 		setAmountFilter(null);
 		setTypeFilter(null);
 		setDateFilter({
-			startDate: new Date(),
+			startDate: null,
 			endDate: null,
 		});
 	};

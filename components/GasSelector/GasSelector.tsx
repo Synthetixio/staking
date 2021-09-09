@@ -61,7 +61,7 @@ const GasSelector: React.FC<GasSelectorProps> = ({
 
 	useEffect(() => {
 		try {
-			setGasPrice(wei(customGasPrice));
+			setGasPrice(wei(customGasPrice, 9));
 		} catch (_) {
 			setGasPrice(gasPrice || wei(0));
 		}

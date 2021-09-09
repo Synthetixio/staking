@@ -35,9 +35,14 @@ const DepositTab = () => {
 	const [transactionState, setTransactionState] = useState<Transaction>(Transaction.PRESUBMIT);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 
-	const txn = useSynthetixTxn('SynthetixBridgeToOptimism', 'deposit', [], {
-		gasPrice: gasPrice.toBN(),
-	});
+	const txn = useSynthetixTxn(
+		'SynthetixBridgeToOptimism',
+		'deposit',
+		[transferableCollateral.toBN()],
+		{
+			gasPrice: gasPrice.toBN(),
+		}
+	);
 
 	const getAllowance = useCallback(async () => {
 		if (walletAddress && isAppReady) {
@@ -63,7 +68,9 @@ const DepositTab = () => {
 	}, [getAllowance]);
 
 	useEffect(() => {
-		if (txn.txnStatus === 'confirmed') {
+		if (txn.txnStatus === 'prompting') {
+			setTxModalOpen(true);
+		} else if (txn.txnStatus === 'confirmed') {
 			depositsDataQuery.refetch();
 		}
 	}, [txn.txnStatus, depositsDataQuery]);

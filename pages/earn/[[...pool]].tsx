@@ -50,7 +50,7 @@ const Earn: FC = () => {
 		let total = wei(0);
 
 		feeClaimHistory.forEach((claim) => {
-			if (claim.type != StakingTransactionType.FeesClaimed) return;
+			if (claim.type !== StakingTransactionType.FeesClaimed) return;
 
 			const usdAmount = claim.value;
 			const snxAmount = claim.rewards ?? wei(0);

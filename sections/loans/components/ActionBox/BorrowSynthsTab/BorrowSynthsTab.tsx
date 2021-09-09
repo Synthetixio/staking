@@ -31,7 +31,6 @@ import {
 	TxModalItem,
 	TxModalItemSeperator,
 } from 'sections/loans/components/common';
-import ApproveModal from 'components/ApproveModal';
 import Loans from 'containers/Loans';
 import CRatio from 'sections/loans/components/ActionBox/components/CRatio';
 import InterestRate from 'sections/loans/components/ActionBox/components/InterestRate';
@@ -122,7 +121,7 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 		}
 
 		return null;
-	}, [address, collateralContract, loanContract, synthetixjs]);
+	}, [address, collateralContract, collateralIsETH, loanContract]);
 
 	const approveTxn = useContractTxn(
 		collateralContract,
@@ -219,7 +218,7 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 				router.push('/loans/list');
 				break;
 		}
-	}, [openTxn.txnStatus]);
+	}, [openTxn.txnStatus, router]);
 
 	useEffect(() => {
 		console.log('approve status change', openTxn.txnStatus);
@@ -229,7 +228,7 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 				getAllowance();
 				break;
 		}
-	}, [approveTxn.txnStatus]);
+	}, [approveTxn.txnStatus, openTxn.txnStatus, getAllowance]);
 
 	// header title
 	useEffect(() => {

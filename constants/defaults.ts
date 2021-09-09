@@ -19,7 +19,7 @@ export const DEFAULT_PRICE_CURRENCY: Synth = localStore.get(priceCurrencyStateKe
 export const DEFAULT_NETWORK_ID = NetworkId.Mainnet;
 
 export const DEFAULT_GAS_LIMIT = 500000;
-export const DEFAULT_GAS_BUFFER = 30000;
+export const DEFAULT_GAS_BUFFER = 15000;
 
 // ui defaults
 export const DEFAULT_SEARCH_DEBOUNCE_MS = 300;
