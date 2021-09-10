@@ -26,7 +26,7 @@ import TransactionNotifier from 'containers/TransactionNotifier';
 import { isWalletConnectedState, walletAddressState } from 'store/wallet';
 
 import useCryptoBalances, { CryptoBalance } from 'hooks/useCryptoBalances';
-import useRedeemableDeprecatedSynthsQuery from 'queries/walletBalances/useRedeemableDeprecatedSynths';
+import useRedeemableDeprecatedSynthsQuery from './useRedeemableDeprecatedSynthsQuery';
 
 import { isSynth } from 'utils/currencies';
 
@@ -108,21 +108,8 @@ const Index: FC = () => {
 				showConvert={false}
 				onTransferClick={handleOnTransferClick}
 			/>
-			{!totalSynthValue.eq(0) ? <KwentaBanner /> : null}
-			<VerticalSpacer />
 
-			{isWalletConnected && cryptoBalances.balances.length > 0 && (
-				<AssetsTable
-					title={t('synths.assets.non-synths.title')}
-					assets={cryptoBalances.balances}
-					totalValue={wei(0)}
-					isLoading={!cryptoBalances.isLoaded}
-					isLoaded={cryptoBalances.isLoaded}
-					showHoldings={false}
-					showConvert={true}
-					onTransferClick={handleOnTransferClick}
-				/>
-			)}
+			{!totalSynthValue.eq(0) ? <KwentaBanner /> : null}
 
 			<VerticalSpacer />
 
@@ -150,7 +137,9 @@ const Index: FC = () => {
 								</Tooltip>
 							</FlexDivRowCentered>
 
-							<RedeemableDeprecatedSynthsButton {...{ redeemableDeprecatedSynthsQuery }} />
+							<RedeemableDeprecatedSynthsButton
+								{...{ redeemableDeprecatedSynthsQuery, synthBalances }}
+							/>
 						</FlexDivRow>
 					}
 					assets={redeemableDeprecatedSynthsQuery.data?.balances ?? []}
@@ -160,6 +149,21 @@ const Index: FC = () => {
 					showHoldings={true}
 					showConvert={false}
 					isDeprecated
+				/>
+			)}
+
+			<VerticalSpacer />
+
+			{isWalletConnected && cryptoBalances.balances.length > 0 && (
+				<AssetsTable
+					title={t('synths.assets.non-synths.title')}
+					assets={cryptoBalances.balances}
+					totalValue={wei(0)}
+					isLoading={!cryptoBalances.isLoaded}
+					isLoaded={cryptoBalances.isLoaded}
+					showHoldings={false}
+					showConvert={true}
+					onTransferClick={handleOnTransferClick}
 				/>
 			)}
 

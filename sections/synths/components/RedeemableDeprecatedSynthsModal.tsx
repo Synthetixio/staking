@@ -1,10 +1,9 @@
 import { FC, useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useTranslation, Trans } from 'react-i18next';
-import BigNumber from 'bignumber.js';
 import { Synths } from '@synthetixio/contracts-interface';
-
-import synthetix from 'lib/synthetix';
+import Wei, { wei } from '@synthetixio/wei';
+import { Balances, SynthBalance } from '@synthetixio/queries';
 
 import BaseModal from 'components/BaseModal';
 import { ButtonTransaction } from 'components/Form/common';
@@ -18,16 +17,15 @@ import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import { ModalContent, ModalItemTitle, ModalItemText, NoTextTransform } from 'styles/common';
 
 import { normalizedGasPrice } from 'utils/network';
-import { formatCryptoCurrency, formatNumber, toBigNumber } from 'utils/formatters/number';
+import { formatCryptoCurrency } from 'utils/formatters/number';
 
-import { CryptoBalance } from 'queries/walletBalances/types';
-import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
 import Currency from 'components/Currency';
 
 const RedeemDeprecatedSynthsModal: FC<{
-	redeemAmount: BigNumber;
+	redeemAmount: Wei;
 	redeemableDeprecatedSynths: string[];
-	redeemBalances: CryptoBalance[];
+	redeemBalances: SynthBalance[];
+	synthBalances: Balances | null;
 	onDismiss: () => void;
 	onTransferConfirmation: (txHash: string) => void;
 }> = ({
@@ -36,6 +34,7 @@ const RedeemDeprecatedSynthsModal: FC<{
 	redeemAmount,
 	redeemableDeprecatedSynths,
 	redeemBalances,
+	synthBalances,
 }) => {
 	const { t } = useTranslation();
 
@@ -44,10 +43,8 @@ const RedeemDeprecatedSynthsModal: FC<{
 	const [gasLimit, setGasLimit] = useState<GasLimitEstimate>(null);
 	const [gasPrice, setGasPrice] = useState<number>(0);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
-	const synthsBalancesQuery = useSynthsBalancesQuery();
 
-	const sUSDBalance =
-		synthsBalancesQuery?.data?.balancesMap[Synths.sUSD]?.balance ?? toBigNumber(0);
+	const sUSDBalance = synthBalances?.balancesMap[Synths.sUSD]?.balance ?? wei(0);
 
 	// useEffect(() => {
 	// 	const getGasEstimate = async () => {
@@ -145,7 +142,7 @@ const RedeemDeprecatedSynthsModal: FC<{
 	);
 };
 
-const BurnValueContainer: FC<{ balances: CryptoBalance[] }> = ({ balances }) => {
+const BurnValueContainer: FC<{ balances: SynthBalance[] }> = ({ balances }) => {
 	const { t } = useTranslation();
 
 	const titleLabel = (
@@ -171,7 +168,7 @@ const BurnValueContainer: FC<{ balances: CryptoBalance[] }> = ({ balances }) => 
 	);
 };
 
-const ReceiveValueContainer: FC<{ redeemAmount: BigNumber; sUSDBalance: BigNumber }> = ({
+const ReceiveValueContainer: FC<{ redeemAmount: Wei; sUSDBalance: Wei }> = ({
 	redeemAmount,
 	sUSDBalance,
 }) => {
@@ -189,7 +186,7 @@ const ReceiveValueContainer: FC<{ redeemAmount: BigNumber; sUSDBalance: BigNumbe
 	);
 
 	const amountInput = (
-		<ValueAmountInput>{formatCryptoCurrency(redeemAmount, { decimals: 2 })}</ValueAmountInput>
+		<ValueAmountInput>{formatCryptoCurrency(redeemAmount, { maxDecimals: 2 })}</ValueAmountInput>
 	);
 
 	const balanceLabel = (
