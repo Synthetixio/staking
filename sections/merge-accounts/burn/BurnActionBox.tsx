@@ -5,8 +5,8 @@ import styled from 'styled-components';
 import { Trans, useTranslation } from 'react-i18next';
 import { Svg } from 'react-optimized-image';
 import { useRouter } from 'next/router';
+import { wei } from '@synthetixio/wei';
 
-import synthetix from 'lib/synthetix';
 import Button from 'components/Button';
 import Connector from 'containers/Connector';
 import StructuredTab from 'components/StructuredTab';
@@ -39,13 +39,11 @@ import {
 } from 'utils/network';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
-import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
 import { formatCryptoCurrency } from 'utils/formatters/number';
-import SNXLogo from 'assets/svg/currencies/crypto/SNX.svg';
 import ROUTES from 'constants/routes';
-import { formatCurrency, toBigNumber, zeroBN } from 'utils/formatters/number';
 import { Synths } from '@synthetixio/contracts-interface';
 import Currency from 'components/Currency';
+import useSynthetixQueries from '@synthetixio/queries';
 
 const BurnTab: FC = () => {
 	const { t } = useTranslation();
@@ -69,12 +67,14 @@ const BurnTab: FC = () => {
 
 const BurnTabInner: FC = () => {
 	const { t } = useTranslation();
-	const { connectWallet } = Connector.useContainer();
+	const { connectWallet, synthetixjs } = Connector.useContainer();
+	const walletAddress = useRecoilValue(walletAddressState);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const isAppReady = useRecoilValue(appReadyState);
 	const sourceAccountAddress = useRecoilValue(walletAddressState);
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const router = useRouter();
+	const { useSynthsBalancesQuery } = useSynthetixQueries();
 
 	const [gasPrice, setGasPrice] = useState<number>(0);
 	const [gasLimit, setGasLimitEstimate] = useState<number | null>(null);
@@ -86,7 +86,7 @@ const BurnTabInner: FC = () => {
 	const onGoBack = () => router.replace(ROUTES.MergeAccounts.Home);
 
 	const { debtBalance } = useStakingCalculations();
-	const synthsBalancesQuery = useSynthsBalancesQuery();
+	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
 	const synthBalances =
 		synthsBalancesQuery.isSuccess && synthsBalancesQuery.data != null
 			? synthsBalancesQuery.data
@@ -94,14 +94,14 @@ const BurnTabInner: FC = () => {
 
 	const sUSDBalance = synthBalances?.balancesMap.sUSD
 		? synthBalances.balancesMap.sUSD.balance
-		: toBigNumber(0);
+		: wei(0);
 
 	const getBurnTxData = useCallback(
 		(gas: Record<string, number>) => {
 			if (!(isAppReady && sourceAccountAddress)) return null;
 			const {
 				contracts: { Synthetix },
-			} = synthetix.js!;
+			} = synthetixjs!;
 			return [Synthetix, 'burnSynths', [sourceAccountAddress, gas]];
 		},
 		[isAppReady, sourceAccountAddress]
@@ -191,7 +191,7 @@ const BurnTabInner: FC = () => {
 
 				<SettingsContainer>
 					<SettingContainer>
-						<GasSelector gasLimitEstimate={gasLimit} setGasPrice={setGasPrice} />
+						<GasSelector gasLimitEstimate={wei(gasLimit ?? 0)} setGasPrice={setGasPrice} />
 					</SettingContainer>
 				</SettingsContainer>
 			</FormContainer>

@@ -5,8 +5,7 @@ import styled from 'styled-components';
 import { Trans, useTranslation } from 'react-i18next';
 import { Svg } from 'react-optimized-image';
 import { useRouter } from 'next/router';
-
-import synthetix from 'lib/synthetix';
+import { wei } from '@synthetixio/wei';
 
 import ROUTES from 'constants/routes';
 import { truncateAddress } from 'utils/formatters/string';
@@ -64,7 +63,7 @@ const MergeTab: FC = () => {
 
 const MergeTabInner: FC = () => {
 	const { t } = useTranslation();
-	const { connectWallet } = Connector.useContainer();
+	const { connectWallet, synthetixjs } = Connector.useContainer();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const isAppReady = useRecoilValue(appReadyState);
 	const destinationAccountAddress = useRecoilValue(walletAddressState);
@@ -114,7 +113,7 @@ const MergeTabInner: FC = () => {
 
 			const {
 				contracts: { RewardEscrowV2 },
-			} = synthetix.js!;
+			} = synthetixjs!;
 			return [RewardEscrowV2, 'mergeAccount', [properSourceAccountAddress, entryIDs, gas]];
 		},
 		[isAppReady, properSourceAccountAddress, entryIDs, sourceAccountAddressInputError]
@@ -146,7 +145,7 @@ const MergeTabInner: FC = () => {
 		if (!isAppReady) return;
 		const {
 			contracts: { RewardEscrowV2 },
-		} = synthetix.js!;
+		} = synthetixjs!;
 		if (!properSourceAccountAddress) return;
 
 		let isMounted = true;
@@ -196,7 +195,7 @@ const MergeTabInner: FC = () => {
 		if (!isAppReady) return;
 		const {
 			contracts: { RewardEscrowV2 },
-		} = synthetix.js!;
+		} = synthetixjs!;
 		if (!properSourceAccountAddress) return;
 
 		let isMounted = true;
@@ -208,7 +207,7 @@ const MergeTabInner: FC = () => {
 
 		const load = async () => {
 			const numVestingEntries = await RewardEscrowV2.numVestingEntries(properSourceAccountAddress);
-			const entryIDs = numVestingEntries.isZero()
+			const entryIDs = numVestingEntries.eq(0)
 				? []
 				: await RewardEscrowV2.getAccountVestingEntryIDs(
 						properSourceAccountAddress,
@@ -286,7 +285,7 @@ const MergeTabInner: FC = () => {
 
 				<SettingsContainer>
 					<SettingContainer>
-						<GasSelector gasLimitEstimate={gasLimit} setGasPrice={setGasPrice} />
+						<GasSelector gasLimitEstimate={wei(gasLimit ?? 0)} setGasPrice={setGasPrice} />
 					</SettingContainer>
 				</SettingsContainer>
 			</FormContainer>
@@ -298,7 +297,7 @@ const MergeTabInner: FC = () => {
 				data-testid="form-button"
 				disabled={
 					isWalletConnected &&
-					(!properSourceAccountAddress || !!buttonState || sourceAccountAddressInputError)
+					(!properSourceAccountAddress || !!buttonState || !!sourceAccountAddressInputError)
 				}
 			>
 				{!isWalletConnected ? (

@@ -5,11 +5,10 @@ import { Language } from 'translations/constants';
 import { DEFAULT_LANGUAGE, DEFAULT_PRICE_CURRENCY } from 'constants/defaults';
 import { Synths } from 'constants/currency';
 
-import { Synth } from 'lib/synthetix';
-
 import { getAppKey } from '../utils';
 
 import { languageStateKey, priceCurrencyStateKey } from './constants';
+import { Synth } from '@synthetixio/contracts-interface';
 
 export const PRICE_CURRENCIES = [
 	Synths.sUSD,

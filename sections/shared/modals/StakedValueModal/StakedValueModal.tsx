@@ -10,11 +10,14 @@ import { formatCurrency } from 'utils/formatters/number';
 import ArrowForwardBlue from 'assets/svg/app/arrow-forward-blue.svg';
 import useHistoricalDebtData, { HistoricalDebtAndIssuanceData } from 'hooks/useHistoricalDebtData';
 import { CenteredModal } from '../common';
+import { wei } from '@synthetixio/wei';
+import { useRecoilValue } from 'recoil';
+import { walletAddressState } from 'store/wallet';
 
 const INITIAL_SNAPSHOT: HistoricalDebtAndIssuanceData = {
 	timestamp: 0,
-	actualDebt: 0,
-	issuanceDebt: 0,
+	actualDebt: wei(0),
+	issuanceDebt: wei(0),
 	index: 0,
 };
 
@@ -29,7 +32,9 @@ export const StakedValueModal: FC<{ value: string; isOpened: boolean; onDismiss:
 	const chartColor = colors.blue;
 	const linearGradientId = '#colorBlue';
 
-	const historicalDebt = useHistoricalDebtData();
+	const walletAddress = useRecoilValue(walletAddressState);
+
+	const historicalDebt = useHistoricalDebtData(walletAddress);
 	const data = useMemo(() => historicalDebt.data ?? [], [historicalDebt]);
 
 	const [currentSnapshot, setCurrentSnapshot] = useState<HistoricalDebtAndIssuanceData | null>(

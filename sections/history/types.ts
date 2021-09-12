@@ -1,9 +1,7 @@
-import { HistoricalStakingTransaction, StakingTransactionType } from 'queries/staking/types';
+import { HistoricalStakingTransaction, StakingTransactionType } from '@synthetixio/queries';
 
 export type TransactionsContainerProps = {
-	issued: HistoricalStakingTransaction[];
-	burned: HistoricalStakingTransaction[];
-	feesClaimed: HistoricalStakingTransaction[];
+	history: HistoricalStakingTransaction[];
 	isLoaded: boolean;
 };
 

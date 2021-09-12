@@ -56,19 +56,16 @@ const Withdraw: React.FC<WithdrawProps> = ({ loan, loanId, loanTypeIsETH, loanCo
 	const onSetLeftColMaxAmount = () =>
 		setWithdrawalAmount(ethers.utils.formatUnits(collateralAmount, collateralDecimals));
 
-	const getTxData = useCallback(
-		(gas: Record<string, number>) => {
-			if (!(loanContract && !withdrawalAmount.isZero())) return null;
-			return [loanContract, 'withdraw', [loanId, withdrawalAmount, gas]];
-		},
-		[loanContract, loanId, withdrawalAmount]
-	);
+	const getTxData = useCallback(() => {
+		if (!(loanContract && !withdrawalAmount.eq(0))) return null;
+		return [loanContract, 'withdraw', [loanId, withdrawalAmount]];
+	}, [loanContract, loanId, withdrawalAmount]);
 
-	const withdraw = async (gas: Record<string, number>) => {
+	const withdraw = async () => {
 		try {
 			setIsWorking('withdrawing');
 			setTxModalOpen(true);
-			await tx(() => getTxData(gas), {
+			await tx(() => getTxData(), {
 				showErrorNotification: (e: string) => setError(e),
 				showProgressNotification: (hash: string) =>
 					monitorTransaction({

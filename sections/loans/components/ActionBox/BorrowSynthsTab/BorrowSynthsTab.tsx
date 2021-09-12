@@ -3,23 +3,13 @@ import { useRecoilValue } from 'recoil';
 import { useTranslation } from 'react-i18next';
 import { ethers } from 'ethers';
 import { useRouter } from 'next/router';
-import Big from 'bignumber.js';
 
 import { isWalletConnectedState, walletAddressState } from 'store/wallet';
 import Connector from 'containers/Connector';
-import TransactionNotifier from 'containers/TransactionNotifier';
 import UIContainer from 'containers/UI';
-import synthetix from 'lib/synthetix';
 import GasSelector from 'components/GasSelector';
-import { toBigNumber, formatUnits, toEthersBig } from 'utils/formatters/number';
-import { tx } from 'utils/transactions';
-import {
-	normalizeGasLimit as getNormalizedGasLimit,
-	normalizedGasPrice as getNormalizedGasPrice,
-} from 'utils/network';
 import { Synths } from 'constants/currency';
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
-import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import {
 	ModalItemTitle as TxModalItemTitle,
 	ModalItemText as TxModalItemText,
@@ -48,90 +38,125 @@ import IssuanceFee from 'sections/loans/components/ActionBox/components/Issuance
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import FormButton from './FormButton';
 import AssetInput from './AssetInput';
+import Wei, { wei } from '@synthetixio/wei';
+import useSynthetixQueries from '@synthetixio/queries';
+import { parseSafeWei } from 'utils/parse';
 
 type BorrowSynthsTabProps = {};
 
+const COLLATERAL_ASSETS: { [asset: string]: string[] } = {
+	sETH: ['ETH'],
+	sBTC: ['renBTC'],
+	sUSD: ['ETH', 'renBTC'],
+};
+
 const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 	const { t } = useTranslation();
-	const { monitorTransaction } = TransactionNotifier.useContainer();
-	const { connectWallet, signer } = Connector.useContainer();
+	const { signer, synthetixjs } = Connector.useContainer();
 	const router = useRouter();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const address = useRecoilValue(walletAddressState);
 	const { renBTCContract, minCRatios } = Loans.useContainer();
 	const { setTitle } = UIContainer.useContainer();
 
-	const [gasPrice, setGasPrice] = useState<number>(0);
-	const [gasLimit, setGasLimitEstimate] = useState<number | null>(null);
+	const [gasPrice, setGasPrice] = useState<Wei>(wei(0));
 
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 
 	const [debtAmountNumber, setDebtAmount] = useState<string>('');
-	const [debtAsset, setDebtAsset] = useState<string>('');
-	const debtDecimals = 18; // todo
-	const debtAmount = useMemo(() => {
-		try {
-			return toBigNumber(
-				ethers.utils.parseUnits(debtAmountNumber.toString(), debtDecimals).toString()
-			);
-		} catch {
-			return toBigNumber(0);
-		}
-	}, [debtAmountNumber, debtDecimals]);
+	const [debtAsset, setDebtAsset] = useState<string>('sUSD');
+
+	const debtAmount = parseSafeWei(debtAmountNumber, wei(0));
 
 	const [collateralAmountNumber, setCollateralAmount] = useState<string>('');
-	const [minCollateralAmount, setMinCollateralAmount] = useState<Big>(toBigNumber(0));
+	const [minCollateralAmount, setMinCollateralAmount] = useState<Wei>(wei(0));
 	const [collateralAsset, setCollateralAsset] = useState<string>('');
-	const [collateralAssets, setCollateralAssets] = useState<Array<string>>([]);
-	const [collateralBalance, setCollateralBalance] = useState<Big>(toBigNumber(0));
+	const [collateralBalance, setCollateralBalance] = useState<Wei>(wei(0));
 
 	const collateralDecimals = collateralAsset === 'renBTC' ? 8 : 18; // todo
-	const collateralAmount = useMemo(() => {
-		try {
-			return toBigNumber(
-				ethers.utils.parseUnits(collateralAmountNumber.toString(), collateralDecimals).toString()
-			);
-		} catch {
-			return toBigNumber(0);
-		}
-	}, [collateralAmountNumber, collateralDecimals]);
+	const collateralAmount = parseSafeWei(collateralAmountNumber, wei(0)).scale(collateralDecimals);
+
 	const collateralIsETH = collateralAsset === 'ETH';
 	const collateralContract = useMemo(
 		(): ethers.Contract | null => (!collateralIsETH ? null : renBTCContract),
 		[collateralIsETH, renBTCContract]
 	);
 
-	const minCRatio =
-		minCRatios.get(collateralIsETH ? LOAN_TYPE_ETH : LOAN_TYPE_ERC20) || toBigNumber(0);
+	const minCRatio = minCRatios.get(collateralIsETH ? LOAN_TYPE_ETH : LOAN_TYPE_ERC20) || wei(0);
 
 	const hasLowCollateralAmount = useMemo(
-		() => !collateralAmount.isZero() && collateralAmount.lt(minCollateralAmount),
+		() => !collateralAmount.eq(0) && collateralAmount.lt(minCollateralAmount),
 		[collateralAmount, minCollateralAmount]
 	);
-	const minCollateralAmountString = formatUnits(minCollateralAmount, collateralDecimals, 2);
+	const minCollateralAmountString = minCollateralAmount.scale(collateralDecimals).toString(2);
 
 	const loanContract = useMemo(() => {
-		if (!signer) return;
+		if (!signer || !synthetixjs) return;
 		const {
 			contracts: { CollateralEth: ethLoanContract, CollateralErc20: erc20LoanContract },
-		} = synthetix.js!;
+		} = synthetixjs!;
 		return collateralIsETH ? ethLoanContract : erc20LoanContract;
-	}, [collateralIsETH, signer]);
+	}, [collateralIsETH, signer, synthetixjs]);
 
-	const loanContractAddress = loanContract?.address;
-
-	const [cratio, setCRatio] = useState(toBigNumber(0));
-
+	const { useExchangeRatesQuery, useSynthetixTxn, useContractTxn } = useSynthetixQueries();
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const exchangeRates = exchangeRatesQuery.data ?? null;
 
-	const [isApproving, setIsApproving] = useState<boolean>(false);
+	const [allowance, setAllowance] = useState<Wei | null>(null);
 	const [isBorrowing, setIsBorrowing] = useState<boolean>(false);
-	const [isApproved, setIsApproved] = useState<boolean>(false);
-	const [error, setError] = useState<string | null>(null);
+
+	const isApproved: boolean = collateralIsETH || allowance?.gt(collateralAmount) || false;
+
+	const getAllowance = useCallback(async () => {
+		if (collateralIsETH) {
+			return ethers.constants.MaxUint256;
+		}
+
+		if (address && collateralContract && loanContract) {
+			const allowance = wei(await collateralContract.allowance(address, loanContract?.address));
+
+			setAllowance(allowance);
+
+			return allowance;
+		}
+
+		return null;
+	}, [address, collateralContract, collateralIsETH, loanContract]);
+
+	const approveTxn = useContractTxn(
+		collateralContract,
+		'approve',
+		[loanContract?.address || ethers.constants.AddressZero, ethers.constants.MaxUint256],
+		{ gasPrice: gasPrice.toBN() }
+	);
+
+	const openTxn = useSynthetixTxn(
+		collateralIsETH ? 'CollateralEth' : 'CollateralErc20',
+		'open',
+		collateralIsETH
+			? [debtAmount.toBN(), ethers.utils.formatBytes32String(debtAsset)]
+			: [collateralAmount.toBN(), debtAmount.toBN(), ethers.utils.formatBytes32String(debtAsset)],
+		{ gasPrice: gasPrice.toBN(), value: collateralIsETH ? collateralAmount.toBN() : 0 }
+	);
+
+	// cratio start
+	let cratio = wei(0);
+
+	if (exchangeRates && !collateralAmount.eq(0) && !debtAmount.eq(0)) {
+		const collateralUSDPrice = getExchangeRatesForCurrencies(
+			exchangeRates,
+			collateralAsset === 'renBTC' ? Synths.sBTC : Synths.sETH,
+			Synths.sUSD
+		);
+
+		const debtUSDPrice = getExchangeRatesForCurrencies(exchangeRates, debtAsset, Synths.sUSD);
+
+		cratio = collateralAmount.mul(collateralUSDPrice).div(debtUSDPrice.mul(debtAmount));
+	}
+	// cratio end
 
 	const hasLowCRatio = useMemo(
-		() => !collateralAmount.isZero() && !debtAmount.isZero() && cratio.lt(SAFE_MIN_CRATIO),
+		() => !collateralAmount.eq(0) && !debtAmount.eq(0) && cratio.lt(SAFE_MIN_CRATIO),
 		[collateralAmount, debtAmount, cratio]
 	);
 
@@ -140,185 +165,14 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 		minCollateralAmount,
 	]);
 
-	const onSetDebtAsset = useCallback(
-		(debtAsset: string): void => {
-			const collateralAssets =
-				debtAsset === 'sETH' ? ['ETH'] : debtAsset === 'sBTC' ? ['renBTC'] : ['ETH', 'renBTC'];
-			setCollateralAssets(collateralAssets);
-			setCollateralAsset(collateralAssets[0]);
-			setDebtAsset(debtAsset);
-		},
-		[setCollateralAssets, setCollateralAsset, setDebtAsset]
-	);
-
-	useEffect(() => {
-		const debtAsset = DEBT_ASSETS[0];
-		onSetDebtAsset(debtAsset);
-	}, [onSetDebtAsset]);
-
-	const connectOrApproveOrTrade = async () => {
-		if (!isWalletConnected) {
-			return connectWallet();
-		}
-		const gas: Record<string, number> = {
-			gasPrice: getNormalizedGasPrice(gasPrice),
-			gasLimit: gasLimit!,
-		};
-		!isApproved ? approve(gas) : borrow(gas);
-	};
-
-	const getApproveTxData = useCallback(
-		(gas: Record<string, number>) => {
-			if (
-				!(
-					collateralContract &&
-					!collateralAmount.isZero() &&
-					!hasLowCRatio &&
-					!hasInsufficientCollateral
-				)
-			)
-				return null;
-			return [
-				collateralContract,
-				'approve',
-				[loanContractAddress, collateralAmount.toString(), gas],
-			];
-		},
-		[
-			collateralContract,
-			loanContractAddress,
-			collateralAmount,
-			hasInsufficientCollateral,
-			hasLowCRatio,
-		]
-	);
-
-	const getBorrowTxData = useCallback(
-		(gas: Record<string, number>) => {
-			if (!(loanContract && !debtAmount.isZero() && !hasLowCRatio && !hasInsufficientCollateral))
-				return null;
-
-			const debtAssetCurrencyKey = ethers.utils.formatBytes32String(debtAsset);
-			return [
-				loanContract,
-				'open',
-				collateralIsETH
-					? [
-							toEthersBig(debtAmount, debtDecimals),
-							debtAssetCurrencyKey,
-							{
-								value: toEthersBig(collateralAmount, collateralDecimals),
-								...gas,
-							},
-					  ]
-					: [
-							toEthersBig(collateralAmount, collateralDecimals),
-							toEthersBig(debtAmount, debtDecimals),
-							debtAssetCurrencyKey,
-							gas,
-					  ],
-			];
-		},
-		[
-			loanContract,
-			debtAmount,
-			debtDecimals,
-			debtAsset,
-			collateralAmount,
-			collateralDecimals,
-			collateralIsETH,
-			hasInsufficientCollateral,
-			hasLowCRatio,
-		]
-	);
-
-	const getTxData = useMemo(() => (!isApproved ? getApproveTxData : getBorrowTxData), [
-		isApproved,
-		getApproveTxData,
-		getBorrowTxData,
-	]);
-
-	const approve = async (gas: Record<string, number>) => {
-		setIsApproving(true);
-		setTxModalOpen(true);
-		try {
-			await tx(() => getApproveTxData(gas), {
-				showErrorNotification: (e: string) => setError(e),
-				showProgressNotification: (hash: string) =>
-					monitorTransaction({
-						txHash: hash,
-						onTxConfirmed: () => {},
-					}),
-				showSuccessNotification: (hash: string) => {},
-			});
-			if (collateralIsETH || !(collateralContract && loanContractAddress && address))
-				return setIsApproved(true);
-			// update isApproved
-			const allowance = toBigNumber(
-				await collateralContract.allowance(address, loanContractAddress)
-			);
-			setIsApproved(allowance.gte(collateralAmount.toString()));
-		} catch {
-		} finally {
-			setTxModalOpen(false);
-			setIsApproving(false);
-		}
-	};
-
-	const borrow = async (gas: Record<string, number>) => {
-		if (debtAmount.isZero()) {
-			return setError(`Enter ${debtAsset} amount..`);
-		}
-		setIsBorrowing(true);
-		setTxModalOpen(true);
-		try {
-			await tx(() => getBorrowTxData(gas), {
-				showErrorNotification: (e: string) => setError(e),
-				showProgressNotification: (hash: string) =>
-					monitorTransaction({
-						txHash: hash,
-						onTxConfirmed: () => {},
-					}),
-				showSuccessNotification: (hash: string) => {},
-			});
-			setDebtAmount('0');
-			setCollateralAmount('0');
-			router.push('/loans/list');
-		} catch {
-		} finally {
-			setTxModalOpen(false);
-			setIsBorrowing(false);
-		}
-	};
-
-	// approved
-	useEffect(() => {
-		let isMounted = true;
-		const load = async () => {
-			if (collateralIsETH || !(collateralContract && loanContractAddress && address)) {
-				return setIsApproved(true);
-			}
-			const allowance = toBigNumber(
-				await collateralContract.allowance(address, loanContractAddress)
-			);
-			if (isMounted) setIsApproved(allowance.gte(collateralAmount));
-		};
-		load();
-		return () => {
-			isMounted = false;
-		};
-	}, [collateralIsETH, collateralContract, address, loanContractAddress, collateralAmount]);
-
 	// min collateral amount
 	useEffect(() => {
 		let isMounted = true;
 		const load = async () => {
 			if (!loanContract) {
-				return setMinCollateralAmount(toBigNumber(0));
+				return setMinCollateralAmount(wei(0));
 			}
-			const minCollateralAmount = toBigNumber(
-				(await loanContract.minCollateral()).toString()
-			).dividedBy(Math.pow(10, 18 - collateralDecimals));
+			const minCollateralAmount = wei(await loanContract.minCollateral());
 			if (isMounted) setMinCollateralAmount(minCollateralAmount);
 		};
 		load();
@@ -326,62 +180,6 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 			isMounted = false;
 		};
 	}, [collateralIsETH, loanContract, collateralDecimals]);
-
-	// cratio
-	useEffect(() => {
-		let isMounted = true;
-		const load = async () => {
-			if (!(exchangeRates && !collateralAmount.isZero() && !debtAmount.isZero())) {
-				return setCRatio(toBigNumber('0'));
-			}
-
-			const collateralUSDPrice = toBigNumber(
-				getExchangeRatesForCurrencies(
-					exchangeRates,
-					collateralAsset === 'renBTC' ? Synths.sBTC : Synths.sETH,
-					Synths.sUSD
-				)
-			);
-			const debtUSDPrice = toBigNumber(
-				getExchangeRatesForCurrencies(exchangeRates, debtAsset, Synths.sUSD)
-			);
-			const cratio = collateralAmount
-				.multipliedBy(collateralUSDPrice)
-				.dividedBy(Math.pow(10, collateralDecimals))
-				.multipliedBy(100)
-				.dividedBy(debtUSDPrice.multipliedBy(debtAmount).dividedBy(Math.pow(10, debtDecimals)));
-			if (isMounted) setCRatio(cratio);
-		};
-		load();
-		return () => {
-			isMounted = false;
-		};
-	}, [collateralAmount, collateralAsset, debtAmount, debtAsset, exchangeRates, collateralDecimals]);
-
-	// gas
-	useEffect(() => {
-		if (!(!debtAmount.isZero() && !collateralAmount.isZero())) return;
-		let isMounted = true;
-		(async () => {
-			try {
-				setError(null);
-				const data: any[] | null = getTxData({});
-				if (!data) return;
-				const [contract, method, args] = data;
-				const gasEstimate = await synthetix.getGasEstimateForTransaction({
-					txArgs: args,
-					method: contract.estimateGas[method],
-				});
-				if (isMounted) setGasLimitEstimate(getNormalizedGasLimit(Number(gasEstimate)));
-			} catch (error) {
-				// console.error(error);
-				if (isMounted) setGasLimitEstimate(null);
-			}
-		})();
-		return () => {
-			isMounted = false;
-		};
-	}, [getTxData, collateralAmount, debtAmount]);
 
 	// balance
 	useEffect(() => {
@@ -395,13 +193,42 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 			} else if (collateralContract && address) {
 				balance = await collateralContract.balanceOf(address);
 			}
-			if (isMounted) setCollateralBalance(toBigNumber(balance.toString()));
+			if (isMounted) setCollateralBalance(wei(balance.toString()));
 		};
 		load();
 		return () => {
 			isMounted = false;
 		};
 	}, [collateralIsETH, collateralContract, address, signer]);
+
+	useEffect(() => {
+		console.log('txn status change', openTxn.txnStatus);
+		switch (openTxn.txnStatus) {
+			case 'unsent':
+				setTxModalOpen(false);
+				break;
+			case 'pending':
+				setTxModalOpen(true);
+				break;
+			case 'confirmed':
+				setDebtAmount('0');
+				setCollateralAmount('0');
+				setTxModalOpen(false);
+				setIsBorrowing(false);
+				router.push('/loans/list');
+				break;
+		}
+	}, [openTxn.txnStatus, router]);
+
+	useEffect(() => {
+		console.log('approve status change', openTxn.txnStatus);
+		switch (openTxn.txnStatus) {
+			case 'unsent':
+			case 'confirmed':
+				getAllowance();
+				break;
+		}
+	}, [approveTxn.txnStatus, openTxn.txnStatus, getAllowance]);
 
 	// header title
 	useEffect(() => {
@@ -415,7 +242,7 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 					<AssetInput
 						label="loans.tabs.new.debt.label"
 						asset={debtAsset}
-						setAsset={onSetDebtAsset}
+						setAsset={setDebtAsset}
 						amount={debtAmountNumber}
 						setAmount={setDebtAmount}
 						assets={DEBT_ASSETS}
@@ -428,7 +255,7 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 						setAsset={setCollateralAsset}
 						amount={collateralAmountNumber}
 						setAmount={setCollateralAmount}
-						assets={collateralAssets}
+						assets={COLLATERAL_ASSETS[debtAsset]}
 						onSetMaxAmount={setCollateralAmount}
 						testId="loans-form-right-input"
 					/>
@@ -445,13 +272,16 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 						<IssuanceFee {...{ collateralIsETH }} />
 					</SettingContainer>
 					<SettingContainer>
-						<GasSelector gasLimitEstimate={gasLimit} setGasPrice={setGasPrice} />
+						<GasSelector gasLimitEstimate={openTxn.gasLimit} setGasPrice={setGasPrice} />
 					</SettingContainer>
 				</SettingsContainer>
 			</FormContainer>
 
 			<FormButton
-				onClick={connectOrApproveOrTrade}
+				onClick={async () => {
+					!isApproved ? approveTxn.mutate() : openTxn.mutate();
+					setTxModalOpen(true);
+				}}
 				{...{
 					isWalletConnected,
 					isApproved,
@@ -460,20 +290,19 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 					minCollateralAmountString,
 					hasLowCollateralAmount,
 					hasLowCRatio,
-					isApproving,
 					isBorrowing,
-					hasInsufficientCollateral: !collateralAmount.isZero() && hasInsufficientCollateral,
-					hasBothInputsSet: !debtAmount.isZero() && !collateralAmount.isZero(),
+					hasInsufficientCollateral: !collateralAmount.eq(0) && hasInsufficientCollateral,
+					hasBothInputsSet: !debtAmount.eq(0) && !collateralAmount.eq(0),
 				}}
 			/>
 
-			{!error ? null : <ErrorMessage>{error}</ErrorMessage>}
+			{openTxn.isError && <ErrorMessage>{openTxn.errorMessage}</ErrorMessage>}
 
 			{txModalOpen && (
 				<TxConfirmationModal
 					onDismiss={() => setTxModalOpen(false)}
-					txError={null}
-					attemptRetry={connectOrApproveOrTrade}
+					txError={openTxn.errorMessage}
+					attemptRetry={openTxn.mutate}
 					content={
 						<TxModalContent>
 							<TxModalItem>
@@ -481,7 +310,7 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 									{t('loans.tabs.new.confirm-transaction.left-panel-label')}
 								</TxModalItemTitle>
 								<TxModalItemText>
-									{formatUnits(debtAmount, debtDecimals, 2)} {debtAsset}
+									{debtAmount.toString(2)} {debtAsset}
 								</TxModalItemText>
 							</TxModalItem>
 							<TxModalItemSeperator />
@@ -490,7 +319,7 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 									{t('loans.tabs.new.confirm-transaction.right-panel-label')}
 								</TxModalItemTitle>
 								<TxModalItemText>
-									{formatUnits(collateralAmount, collateralDecimals, 2)} {collateralAsset}
+									{collateralAmount.toString(2)} {collateralAsset}
 								</TxModalItemText>
 							</TxModalItem>
 						</TxModalContent>

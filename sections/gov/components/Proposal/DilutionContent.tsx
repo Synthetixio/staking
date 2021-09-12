@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { Svg } from 'react-optimized-image';
 import { Remarkable } from 'remarkable';
@@ -51,16 +51,15 @@ import { appReadyState } from 'store/app';
 import { isWalletConnectedState, walletAddressState } from 'store/wallet';
 import { useCouncilMembers } from 'sections/gov/hooks/useCouncilMembers';
 
-import { Transaction, GasLimitEstimate } from 'constants/network';
+import { Transaction } from 'constants/network';
 import Etherscan from 'containers/BlockExplorer';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 
-import TransactionNotifier from 'containers/TransactionNotifier';
 import TxState from 'sections/gov/components/TxState';
-import useProposalQuery from 'queries/gov/useProposalQuery';
 import { expired, pending } from '../helper';
-import synthetix from 'lib/synthetix';
-import { Proposal } from 'queries/gov/types';
+import useSynthetixQueries, { Proposal } from '@synthetixio/queries';
+import { snapshotEndpoint } from 'constants/snapshot';
+import { useMemo } from 'react';
 
 type DilutionContentProps = {
 	proposal: Proposal;
@@ -70,46 +69,76 @@ type DilutionContentProps = {
 const DilutionContent: React.FC<DilutionContentProps> = ({ proposal, onBack }) => {
 	const { t } = useTranslation();
 
-	const [voteMutate] = useSignMessage();
 	const activeTab = useActiveTab();
 	const [selected, setSelected] = useState<number | null>(null);
 
 	const [signError, setSignError] = useState<string | null>(null);
 
-	const [txError, setTxError] = useState<string | null>(null);
-
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
-	const [gasLimitEstimate, setGasLimitEstimate] = useState<GasLimitEstimate>(null);
 
-	const [transactionState, setTransactionState] = useState<Transaction>(Transaction.PRESUBMIT);
 	const [signTransactionState, setSignTransactionState] = useState<Transaction>(
 		Transaction.PRESUBMIT
 	);
 
-	const [txHash, setTxHash] = useState<string | null>(null);
-
 	const [hasDiluted, setHasDiluted] = useState<boolean>(false);
 	const [canDilute, setCanDilute] = useState<boolean>(false);
 	const [isCouncilMember, setIsCouncilMember] = useState<boolean>(false);
+	const [memberVotedFor, setMemberVotedFor] = useState<string | null>(null);
 	const [targetDilutionAddress, setTargetDilutionAddress] = useState<string | null>(null);
 
-	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const { blockExplorerInstance } = Etherscan.useContainer();
-	const link =
-		blockExplorerInstance != null && txHash != null
-			? blockExplorerInstance.txLink(txHash)
-			: undefined;
 
 	const isAppReady = useRecoilValue(appReadyState);
 	const walletAddress = useRecoilValue(walletAddressState);
+	const { useProposalQuery, useContractTxn } = useSynthetixQueries();
 
-	const proposalQuery = useProposalQuery(activeTab, proposal?.id ?? '');
+	const proposalQuery = useProposalQuery(
+		snapshotEndpoint,
+		activeTab,
+		proposal?.id ?? '',
+		walletAddress
+	);
 
 	const { signer } = Connector.useContainer();
 
 	const councilMembers = useCouncilMembers();
 
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
+
+	const voteMutate = useSignMessage({
+		onSuccess: (_) => {
+			setTxModalOpen(false);
+			setSignTransactionState(Transaction.SUCCESS);
+			proposalQuery.refetch();
+		},
+		onError: (error) => {
+			console.log(error);
+			setSignError(error);
+			setSignTransactionState(Transaction.PRESUBMIT);
+		},
+	});
+
+	const contract = useMemo(
+		() => new ethers.Contract(CouncilDilution.address, CouncilDilution.abi, signer as any),
+		[signer]
+	);
+	const txn = useContractTxn(contract, hasDiluted ? 'invalidateDilution' : 'dilute', [
+		proposal.id,
+		memberVotedFor || ethers.constants.AddressZero,
+	]);
+
+	const link =
+		blockExplorerInstance != null && txn.hash != null
+			? blockExplorerInstance.txLink(txn.hash)
+			: undefined;
+
+	useEffect(() => {
+		(async () => {
+			const latestElectionHash = await contract.latestElectionHash();
+
+			setMemberVotedFor(await contract.electionMemberVotedFor(latestElectionHash, walletAddress));
+		})();
+	}, [contract, walletAddress]);
 
 	useEffect(() => {
 		if (isAppReady && walletAddress && councilMembers) {
@@ -128,41 +157,6 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ proposal, onBack }) =
 				canDilute &&
 				proposal.end > Date.now()
 			) {
-				try {
-					setTxError(null);
-					const contract = new ethers.Contract(
-						CouncilDilution.address,
-						CouncilDilution.abi,
-						signer as any
-					);
-					const hash = proposal.id;
-
-					let gasEstimate;
-
-					const latestElectionHash = await contract.latestElectionHash();
-
-					const memberVotedFor = await contract.electionMemberVotedFor(
-						latestElectionHash,
-						walletAddress
-					);
-
-					if (hasDiluted) {
-						gasEstimate = await synthetix.getGasEstimateForTransaction({
-							txArgs: [hash, memberVotedFor],
-							method: contract.estimateGas.invalidateDilution,
-						});
-					} else {
-						gasEstimate = await synthetix.getGasEstimateForTransaction({
-							txArgs: [hash, memberVotedFor],
-							method: contract.estimateGas.dilute,
-						});
-					}
-
-					setGasLimitEstimate(gasEstimate);
-				} catch (error) {
-					setTxError(error.message);
-					setGasLimitEstimate(null);
-				}
 			}
 		};
 		getGasLimitEstimate();
@@ -216,135 +210,13 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ proposal, onBack }) =
 		if (proposal && selected !== null) {
 			setTxModalOpen(true);
 			setSignTransactionState(Transaction.WAITING);
-			voteMutate({
+			voteMutate.mutate({
 				spaceKey: activeTab,
 				type: SignatureType.VOTE,
 				payload: { proposal: proposal.id, choice: selected + 1, metadata: {} },
-			})
-				.then((_) => {
-					setTxModalOpen(false);
-					setSignTransactionState(Transaction.SUCCESS);
-				})
-				.catch((error) => {
-					console.log(error);
-					setSignError(error);
-					setSignTransactionState(Transaction.PRESUBMIT);
-				});
+			});
 		}
 	};
-
-	const handleUndoDilute = useCallback(() => {
-		async function undoDilute() {
-			if (isAppReady && proposal) {
-				try {
-					setTxError(null);
-					setTxModalOpen(true);
-
-					const contract = new ethers.Contract(
-						CouncilDilution.address,
-						CouncilDilution.abi,
-						signer as any
-					);
-
-					const hash = proposal.id;
-
-					const latestElectionHash = await contract.latestElectionHash();
-
-					const memberVotedFor = contract.electionMemberVotedFor(latestElectionHash, walletAddress);
-
-					const transaction: ethers.ContractTransaction = await contract.invalidateDilution(
-						hash,
-						memberVotedFor,
-						{
-							gasLimit: gasLimitEstimate,
-						}
-					);
-
-					if (transaction) {
-						setTxHash(transaction.hash);
-						setTransactionState(Transaction.WAITING);
-						monitorTransaction({
-							txHash: transaction.hash,
-							onTxConfirmed: () => {
-								setTransactionState(Transaction.SUCCESS);
-								proposalQuery.refetch();
-							},
-						});
-
-						setTxModalOpen(false);
-					}
-				} catch (e) {
-					setTransactionState(Transaction.PRESUBMIT);
-					setTxError(e.message);
-				}
-			}
-		}
-		undoDilute();
-	}, [
-		gasLimitEstimate,
-		isAppReady,
-		monitorTransaction,
-		proposal,
-		proposalQuery,
-		signer,
-		walletAddress,
-	]);
-
-	const handleDilute = useCallback(() => {
-		async function dilute() {
-			if (isAppReady && proposal) {
-				try {
-					setTxError(null);
-					setTxModalOpen(true);
-
-					const contract = new ethers.Contract(
-						CouncilDilution.address,
-						CouncilDilution.abi,
-						signer as any
-					);
-
-					const hash = proposal.id;
-
-					const latestElectionHash = await contract.latestElectionHash();
-
-					const memberVotedFor = contract.electionMemberVotedFor(latestElectionHash, walletAddress);
-
-					const transaction: ethers.ContractTransaction = await contract.dilute(
-						hash,
-						memberVotedFor,
-						{
-							gasLimit: gasLimitEstimate,
-						}
-					);
-
-					if (transaction) {
-						setTxHash(transaction.hash);
-						setTransactionState(Transaction.WAITING);
-						monitorTransaction({
-							txHash: transaction.hash,
-							onTxConfirmed: () => {
-								setTransactionState(Transaction.SUCCESS);
-								proposalQuery.refetch();
-							},
-						});
-						setTxModalOpen(false);
-					}
-				} catch (e) {
-					setTransactionState(Transaction.PRESUBMIT);
-					setTxError(e.message);
-				}
-			}
-		}
-		dilute();
-	}, [
-		signer,
-		monitorTransaction,
-		isAppReady,
-		proposal,
-		walletAddress,
-		gasLimitEstimate,
-		proposalQuery,
-	]);
 
 	const getRawMarkup = (value?: string | null) => {
 		const remarkable = new Remarkable({
@@ -361,7 +233,7 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ proposal, onBack }) =
 	};
 
 	const returnInnerContent = () => {
-		if (transactionState === Transaction.WAITING) {
+		if (txn.txnStatus === 'pending') {
 			return (
 				<TxState
 					title={hasDiluted ? t('gov.actions.support.waiting') : t('gov.actions.withdraw.waiting')}
@@ -391,7 +263,7 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ proposal, onBack }) =
 			);
 		}
 
-		if (transactionState === Transaction.SUCCESS) {
+		if (txn.txnStatus === 'confirmed') {
 			return (
 				<TxState
 					title={hasDiluted ? t('gov.actions.support.success') : t('gov.actions.withdraw.success')}
@@ -420,7 +292,7 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ proposal, onBack }) =
 								<DismissButton
 									variant="secondary"
 									onClick={() => {
-										setTransactionState(Transaction.PRESUBMIT);
+										txn.refresh();
 										onBack();
 									}}
 								>
@@ -539,15 +411,11 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ proposal, onBack }) =
 					) : (
 						<>
 							{hasDiluted ? (
-								<StyledCTA
-									disabled={!canDilute}
-									onClick={() => handleUndoDilute()}
-									variant="primary"
-								>
+								<StyledCTA disabled={!canDilute} onClick={() => txn.mutate()} variant="primary">
 									{t('gov.proposal.action.support')}
 								</StyledCTA>
 							) : (
-								<StyledCTA disabled={!canDilute} onClick={() => handleDilute()} variant="primary">
+								<StyledCTA disabled={!canDilute} onClick={() => txn.mutate()} variant="primary">
 									{t('gov.proposal.action.withdraw')}
 								</StyledCTA>
 							)}
@@ -564,8 +432,8 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ proposal, onBack }) =
 				<TxConfirmationModal
 					isSignature={isCouncilMember ? true : false}
 					onDismiss={() => setTxModalOpen(false)}
-					txError={isCouncilMember ? signError : txError}
-					attemptRetry={() => (isCouncilMember ? handleVote() : handleDilute())}
+					txError={isCouncilMember ? signError : txn.errorMessage}
+					attemptRetry={() => (isCouncilMember ? handleVote() : txn.mutate())}
 					content={
 						<ModalContent>
 							<ModalItem>

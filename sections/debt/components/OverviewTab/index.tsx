@@ -7,11 +7,16 @@ import useHistoricalDebtData from 'hooks/useHistoricalDebtData';
 import { FlexDivCol, FlexDiv, Tooltip } from 'styles/common';
 
 import Info from 'assets/svg/app/info.svg';
+import { useRecoilValue } from 'recoil';
+import { walletAddressState } from 'store/wallet';
 
 const OverviewTab = () => {
 	const { t } = useTranslation();
-	const historicalDebt = useHistoricalDebtData();
-	const dataIsLoading = historicalDebt?.isLoading ?? false;
+
+	const walletAddress = useRecoilValue(walletAddressState);
+
+	const historicalDebt = useHistoricalDebtData(walletAddress);
+	const dataIsLoading = historicalDebt?.isLoading ?? true;
 
 	return (
 		<>

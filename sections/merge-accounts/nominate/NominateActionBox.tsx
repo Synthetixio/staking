@@ -5,8 +5,8 @@ import styled from 'styled-components';
 import { Trans, useTranslation } from 'react-i18next';
 import { Svg } from 'react-optimized-image';
 import { useRouter } from 'next/router';
+import { wei } from '@synthetixio/wei';
 
-import synthetix from 'lib/synthetix';
 import { truncateAddress } from 'utils/formatters/string';
 import Button from 'components/Button';
 import Connector from 'containers/Connector';
@@ -67,7 +67,7 @@ const NominateTab: FC = () => {
 
 const NominateTabInner: FC = () => {
 	const { t } = useTranslation();
-	const { connectWallet } = Connector.useContainer();
+	const { connectWallet, synthetixjs } = Connector.useContainer();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const isAppReady = useRecoilValue(appReadyState);
 	const sourceAccountAddress = useRecoilValue(walletAddressState);
@@ -124,7 +124,7 @@ const NominateTabInner: FC = () => {
 				return null;
 			const {
 				contracts: { RewardEscrowV2 },
-			} = synthetix.js!;
+			} = synthetixjs!;
 			return [RewardEscrowV2, 'nominateAccountToMerge', [properDestinationAccountAddress, gas]];
 		},
 		[isAppReady, properDestinationAccountAddress, destinationAccountAddressInputError]
@@ -156,7 +156,7 @@ const NominateTabInner: FC = () => {
 		if (!isAppReady) return;
 		const {
 			contracts: { RewardEscrowV2 },
-		} = synthetix.js!;
+		} = synthetixjs!;
 		if (!sourceAccountAddress) return;
 
 		let isMounted = true;
@@ -266,7 +266,7 @@ const NominateTabInner: FC = () => {
 
 				<SettingsContainer>
 					<SettingContainer>
-						<GasSelector gasLimitEstimate={gasLimit} setGasPrice={setGasPrice} />
+						<GasSelector gasLimitEstimate={wei(gasLimit ?? 0)} setGasPrice={setGasPrice} />
 					</SettingContainer>
 				</SettingsContainer>
 			</FormContainer>
@@ -278,7 +278,9 @@ const NominateTabInner: FC = () => {
 				data-testid="form-button"
 				disabled={
 					isWalletConnected &&
-					(!properDestinationAccountAddress || !!buttonState || destinationAccountAddressInputError)
+					(!properDestinationAccountAddress ||
+						!!buttonState ||
+						!!destinationAccountAddressInputError)
 				}
 			>
 				{!isWalletConnected ? (

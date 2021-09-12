@@ -3,14 +3,13 @@ import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { ethers } from 'ethers';
 import { Svg } from 'react-optimized-image';
-import BigNumber from 'bignumber.js';
+import Wei, { wei } from '@synthetixio/wei';
 
 import PendingConfirmation from 'assets/svg/app/pending-confirmation.svg';
 import Success from 'assets/svg/app/success.svg';
 import GasSelector from 'components/GasSelector';
-import synthetix from 'lib/synthetix';
 import NumericInput from 'components/Input/NumericInput';
-import { formatCryptoCurrency, formatNumber } from 'utils/formatters/number';
+import { formatCryptoCurrency } from 'utils/formatters/number';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import { normalizedGasPrice } from 'utils/network';
@@ -53,9 +52,14 @@ import { appReadyState } from 'store/app';
 import curveSeuroRewards from 'contracts/curveSeuroRewards';
 import { LP } from 'sections/earn/types';
 import { CurrencyIconType } from 'components/Currency/CurrencyIcon/CurrencyIcon';
+import { SynthetixJS } from '@synthetixio/contracts-interface';
 
-export const getContract = (stakedAsset: CurrencyKey, signer: ethers.Signer | null) => {
-	const { contracts } = synthetix.js!;
+export const getContract = (
+	synthetixjs: SynthetixJS,
+	stakedAsset: CurrencyKey,
+	signer: ethers.Signer | null
+) => {
+	const { contracts } = synthetixjs!;
 	if (stakedAsset === Synths.iBTC) {
 		return contracts.StakingRewardsiBTC;
 	} else if (stakedAsset === Synths.iETH) {
@@ -104,29 +108,18 @@ type StakeTabProps = {
 	stakedAsset: CurrencyKey;
 	icon: CurrencyKey;
 	type?: CurrencyIconType;
-	userBalance: number;
-	userBalanceBN: BigNumber;
-	staked: number;
-	stakedBN: BigNumber;
+	userBalance: Wei;
+	staked: Wei;
 };
 
-const StakeTab: FC<StakeTabProps> = ({
-	stakedAsset,
-	icon,
-	type,
-	isStake,
-	userBalance,
-	userBalanceBN,
-	staked,
-	stakedBN,
-}) => {
+const StakeTab: FC<StakeTabProps> = ({ stakedAsset, icon, type, isStake, userBalance, staked }) => {
 	const { t } = useTranslation();
 	const [amount, setAmount] = useState<string>('');
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const { blockExplorerInstance } = Etherscan.useContainer();
-	const { signer } = Connector.useContainer();
+	const { signer, synthetixjs } = Connector.useContainer();
 	const [gasLimitEstimate, setGasLimitEstimate] = useState<GasLimitEstimate>(null);
-	const [gasPrice, setGasPrice] = useState<number>(0);
+	const [gasPrice, setGasPrice] = useState<Wei>(wei(0));
 	const [error, setError] = useState<string | null>(null);
 	const isAppReady = useRecoilValue(appReadyState);
 
@@ -138,26 +131,25 @@ const StakeTab: FC<StakeTabProps> = ({
 			? blockExplorerInstance.txLink(txHash)
 			: undefined;
 
+	let parsedAmount = wei(0);
+	try {
+		parsedAmount = wei(amount);
+	} catch (_) {}
+
 	useEffect(() => {
 		const getGasLimitEstimate = async () => {
 			if (isAppReady && Number(amount) > 0) {
 				try {
 					setError(null);
-					const contract = getContract(stakedAsset, signer);
-					let stakeAmount;
-					if (isStake) {
-						stakeAmount =
-							Number(amount) === userBalance
-								? userBalanceBN
-								: synthetix.js!.utils.parseEther(amount);
-					} else {
-						stakeAmount =
-							Number(amount) === staked ? stakedBN : synthetix.js!.utils.parseEther(amount);
-					}
-					let gasEstimate = await synthetix.getGasEstimateForTransaction({
-						txArgs: [stakeAmount],
-						method: isStake ? contract.estimateGas.stake : contract.estimateGas.withdraw,
-					});
+					const contract = getContract(synthetixjs!, stakedAsset, signer);
+					const stakeAmount = parsedAmount;
+
+					let gasEstimate = wei(
+						isStake
+							? await contract.estimateGas.stake(stakeAmount)
+							: await contract.estimateGas.withdraw(stakeAmount),
+						0
+					);
 					setGasLimitEstimate(gasEstimate);
 				} catch (error) {
 					setError(error.message);
@@ -173,9 +165,9 @@ const StakeTab: FC<StakeTabProps> = ({
 		signer,
 		isAppReady,
 		userBalance,
-		userBalanceBN,
 		staked,
-		stakedBN,
+		parsedAmount,
+		synthetixjs,
 	]);
 
 	const handleStake = useCallback(() => {
@@ -184,32 +176,23 @@ const StakeTab: FC<StakeTabProps> = ({
 				try {
 					setError(null);
 					setTxModalOpen(true);
-					const contract = getContract(stakedAsset, signer);
+					const contract = getContract(synthetixjs!, stakedAsset, signer);
 
-					let formattedStakeAmount;
+					let formattedStakeAmount = parsedAmount.toBN();
 
-					if (isStake) {
-						formattedStakeAmount =
-							Number(amount) === userBalance
-								? userBalanceBN
-								: synthetix.js!.utils.parseEther(amount);
-					} else {
-						formattedStakeAmount =
-							Number(amount) === staked ? stakedBN : synthetix.js!.utils.parseEther(amount);
-					}
-					const gasLimit = await synthetix.getGasEstimateForTransaction({
-						txArgs: [formattedStakeAmount],
-						method: isStake ? contract.estimateGas.stake : contract.estimateGas.withdraw,
-					});
+					const gasLimit = isStake
+						? await contract.estimateGas.stake(formattedStakeAmount)
+						: await contract.estimateGas.withdraw(formattedStakeAmount);
+
 					let transaction: ethers.ContractTransaction;
 					if (isStake) {
 						transaction = await contract.stake(formattedStakeAmount, {
-							gasPrice: normalizedGasPrice(gasPrice),
+							gasPrice: normalizedGasPrice(gasPrice.toNumber()),
 							gasLimit,
 						});
 					} else {
 						transaction = await contract.withdraw(formattedStakeAmount, {
-							gasPrice: normalizedGasPrice(gasPrice),
+							gasPrice: normalizedGasPrice(gasPrice.toNumber()),
 							gasLimit,
 						});
 					}
@@ -238,10 +221,8 @@ const StakeTab: FC<StakeTabProps> = ({
 		signer,
 		stakedAsset,
 		isAppReady,
-		userBalanceBN,
-		userBalance,
-		staked,
-		stakedBN,
+		parsedAmount,
+		synthetixjs,
 	]);
 
 	if (transactionState === Transaction.WAITING) {
@@ -262,11 +243,11 @@ const StakeTab: FC<StakeTabProps> = ({
 						<WhiteSubheader>
 							{isStake
 								? t('earn.actions.stake.amount', {
-										amount: formatNumber(amount, { decimals: DEFAULT_CRYPTO_DECIMALS }),
+										amount: wei(amount).toString(DEFAULT_CRYPTO_DECIMALS),
 										asset: stakedAsset,
 								  })
 								: t('earn.actions.unstake.amount', {
-										amount: formatNumber(amount, { decimals: DEFAULT_CRYPTO_DECIMALS }),
+										amount: wei(amount).toString(DEFAULT_CRYPTO_DECIMALS),
 										asset: stakedAsset,
 								  })}
 						</WhiteSubheader>
@@ -296,11 +277,11 @@ const StakeTab: FC<StakeTabProps> = ({
 						<WhiteSubheader>
 							{isStake
 								? t('earn.actions.stake.amount', {
-										amount: formatNumber(amount, { decimals: DEFAULT_CRYPTO_DECIMALS }),
+										amount: wei(amount).toString(DEFAULT_CRYPTO_DECIMALS),
 										asset: stakedAsset,
 								  })
 								: t('earn.actions.unstake.amount', {
-										amount: formatNumber(amount, { decimals: DEFAULT_CRYPTO_DECIMALS }),
+										amount: wei(amount).toString(DEFAULT_CRYPTO_DECIMALS),
 										asset: stakedAsset,
 								  })}
 						</WhiteSubheader>
@@ -345,7 +326,7 @@ const StakeTab: FC<StakeTabProps> = ({
 					/>
 					<MaxButton
 						variant="primary"
-						disabled={isStake ? userBalance === 0 : staked === 0}
+						disabled={isStake ? userBalance.eq(0) : staked.eq(0)}
 						onClick={() => {
 							setAmount(isStake ? `${userBalance}` : `${staked}`);
 						}}
@@ -363,12 +344,7 @@ const StakeTab: FC<StakeTabProps> = ({
 					variant="primary"
 					onClick={handleStake}
 					disabled={
-						// TODO: refactor a bit
-						isAppReady && Number(amount) > 0
-							? (Number(amount) ?? 0) > (isStake ? userBalance : staked)
-								? true
-								: false
-							: true
+						isAppReady && parsedAmount.lte(0) && parsedAmount.gt(isStake ? userBalance : staked)
 					}
 				>
 					{isStake
@@ -395,11 +371,11 @@ const StakeTab: FC<StakeTabProps> = ({
 								<ModalItemText>
 									{isStake
 										? t('earn.actions.stake.amount', {
-												amount: formatNumber(amount, { decimals: DEFAULT_CRYPTO_DECIMALS }),
+												amount: wei(amount).toString(DEFAULT_CRYPTO_DECIMALS),
 												asset: stakedAsset,
 										  })
 										: t('earn.actions.unstake.amount', {
-												amount: formatNumber(amount, { decimals: DEFAULT_CRYPTO_DECIMALS }),
+												amount: wei(amount).toString(DEFAULT_CRYPTO_DECIMALS),
 												asset: stakedAsset,
 										  })}
 								</ModalItemText>

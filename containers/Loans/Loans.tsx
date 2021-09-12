@@ -2,17 +2,14 @@ import { createContainer } from 'unstated-next';
 import { useMemo, useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { ethers } from 'ethers';
-import Big from 'bignumber.js';
 
 import { renBTCToken } from 'contracts';
-import synthetix from 'lib/synthetix';
 import Connector from 'containers/Connector';
 import { appReadyState } from 'store/app';
 import { walletAddressState, networkState } from 'store/wallet';
-import { toBigNumber } from 'utils/formatters/number';
 import { LOAN_TYPE_ERC20, LOAN_TYPE_ETH, SYNTH_BY_CURRENCY_KEY } from 'sections/loans/constants';
-import { Loan } from 'queries/loans/types';
 import { sleep } from 'utils/promise';
+import Wei, { wei } from '@synthetixio/wei';
 
 const SECONDS_IN_A_YR = 365 * 24 * 60 * 60;
 const COLLATERAL_ASSETS: Record<string, string> = {
@@ -23,14 +20,15 @@ const COLLATERAL_ASSETS: Record<string, string> = {
 export default createContainer(Container);
 
 function Container() {
-	const { provider, signer } = Connector.useContainer();
+	const { provider, signer, synthetixjs } = Connector.useContainer();
 	const address = useRecoilValue(walletAddressState);
 	const network = useRecoilValue(networkState);
 	const isAppReady = useRecoilValue(appReadyState);
 
 	const [isLoadingLoans, setIsLoadingLoans] = useState(false);
-	const [loans, setLoans] = useState<Array<Loan>>([]);
-	const [minCRatios, setMinCRatios] = useState<Map<string, Big>>(new Map());
+	// TODO types in this class are all around missing
+	const [loans, setLoans] = useState<Array<any>>([]);
+	const [minCRatios, setMinCRatios] = useState<Map<string, Wei>>(new Map());
 
 	const [
 		ethLoanContract,
@@ -40,7 +38,7 @@ function Container() {
 		collateralManagerContract,
 		exchangeRatesContract,
 	] = useMemo(() => {
-		if (!(isAppReady && synthetix.js && signer)) return [null, null, null, null, null, null];
+		if (!(isAppReady && synthetixjs && signer)) return [null, null, null, null, null, null];
 		const {
 			contracts: {
 				CollateralEth: ethLoanContract,
@@ -50,7 +48,7 @@ function Container() {
 				CollateralManager: collateralManagerContract,
 				ExchangeRates: exchangeRatesContract,
 			},
-		} = synthetix.js;
+		} = synthetixjs;
 		return [
 			ethLoanContract,
 			erc20LoanContract,
@@ -59,7 +57,7 @@ function Container() {
 			collateralManagerContract,
 			exchangeRatesContract,
 		];
-	}, [isAppReady, signer]);
+	}, [isAppReady, signer, synthetixjs]);
 
 	useEffect(() => {
 		if (
@@ -76,12 +74,12 @@ function Container() {
 		)
 			return;
 
-		const loanContracts: Record<string, ethers.Contract> = {
+		const loanContracts: Record<string, typeof erc20LoanContract> = {
 			[LOAN_TYPE_ERC20]: erc20LoanContract,
 			[LOAN_TYPE_ETH]: ethLoanContract,
 		};
 
-		const loanStateContracts: Record<string, ethers.Contract> = {
+		const loanStateContracts: Record<string, typeof erc20LoanContract> = {
 			[LOAN_TYPE_ERC20]: erc20LoanStateContract,
 			[LOAN_TYPE_ETH]: ethLoanStateContract,
 		};
@@ -94,9 +92,7 @@ function Container() {
 			const loanIndices = await Promise.all(Object.keys(loanStateContracts).map(getLoanIndices));
 			if (isMounted) {
 				loanIndices.forEach(({ type, minCRatio }) => {
-					setMinCRatios((cratios) =>
-						cratios.set(type, toBigNumber(minCRatio.toString()).div(1e18).times(1e2))
-					);
+					setMinCRatios((cratios) => cratios.set(type, minCRatio.mul(1e2)));
 				});
 			}
 
@@ -105,7 +101,7 @@ function Container() {
 
 			loans.forEach((a) => {
 				a.forEach(({ type, minCRatio, loan }: any) => {
-					if (!loan.amount.isZero()) {
+					if (!loan.amount.eq(0)) {
 						activeLoans.push({
 							loan,
 							type,
@@ -139,14 +135,14 @@ function Container() {
 			for (let i = 0; i < n; i++) {
 				loanIndices.push(i);
 			}
-			return { type, minCRatio, loanIndices };
+			return { type, minCRatio: wei(minCRatio), loanIndices };
 		};
 
 		const getLoans = async ({ type, minCRatio, loanIndices }: Record<any, any>) => {
 			return Promise.all(loanIndices.map(getLoan.bind(null, type, minCRatio)));
 		};
 
-		const getLoan = async (type: string, minCRatio: Big, loanIndex: number) => {
+		const getLoan = async (type: string, minCRatio: Wei, loanIndex: number) => {
 			const loanStateContract = loanStateContracts[type];
 			return {
 				type,
@@ -305,14 +301,14 @@ function Container() {
 		erc20LoanStateContract,
 	]);
 
-	const [interestRate, setInterestRate] = useState(toBigNumber(0));
-	const [issueFeeRates, setIssueFeeRates] = useState<Record<string, Big>>({
-		[LOAN_TYPE_ERC20]: toBigNumber(0),
-		[LOAN_TYPE_ETH]: toBigNumber(0),
+	const [interestRate, setInterestRate] = useState(wei(0));
+	const [issueFeeRates, setIssueFeeRates] = useState<Record<string, Wei>>({
+		[LOAN_TYPE_ERC20]: wei(0),
+		[LOAN_TYPE_ETH]: wei(0),
 	});
-	const [interactionDelays, setInteractionDelays] = useState<Record<string, Big>>({
-		[LOAN_TYPE_ERC20]: toBigNumber(0),
-		[LOAN_TYPE_ETH]: toBigNumber(0),
+	const [interactionDelays, setInteractionDelays] = useState<Record<string, Wei>>({
+		[LOAN_TYPE_ERC20]: wei(0),
+		[LOAN_TYPE_ETH]: wei(0),
 	});
 
 	const renBTCContract = useMemo(
@@ -355,12 +351,10 @@ function Container() {
 			]);
 			if (isMounted) {
 				const perYr = SECONDS_IN_A_YR * 1e2 * (1 / 1e18);
-				setInterestRate(toBigNumber(borrowRate.toString()).multipliedBy(perYr));
+				setInterestRate(wei(borrowRate.toString()).mul(perYr));
 				setIssueFeeRates({
-					[LOAN_TYPE_ERC20]: toBigNumber(erc20BorrowIssueFeeRate.toString()).multipliedBy(
-						1e2 / 1e18
-					),
-					[LOAN_TYPE_ETH]: toBigNumber(ethBorrowIssueFeeRate.toString()).multipliedBy(1e2 / 1e18),
+					[LOAN_TYPE_ERC20]: wei(erc20BorrowIssueFeeRate.toString()).mul(1e2 / 1e18),
+					[LOAN_TYPE_ETH]: wei(ethBorrowIssueFeeRate.toString()).mul(1e2 / 1e18),
 				});
 				setInteractionDelays({
 					[LOAN_TYPE_ERC20]: erc20InteractionDelay,
@@ -380,12 +374,12 @@ function Container() {
 	const [pendingWithdrawals, setPendingWithdrawals] = useState(ethers.BigNumber.from('0'));
 
 	const loadPendingWithdrawals = async (
-		ethLoanContract: ethers.Contract,
+		ethLoanContract: typeof erc20LoanContract,
 		isMounted: boolean,
 		setPendingWithdrawals: (pw: ethers.BigNumber) => void,
 		address: string
 	) => {
-		const pw = await ethLoanContract.pendingWithdrawals(address);
+		const pw = await ethLoanContract!.pendingWithdrawals(address);
 		if (isMounted) {
 			setPendingWithdrawals(pw);
 		}
@@ -407,6 +401,7 @@ function Container() {
 		return () => {
 			isMounted = false;
 		};
+		// eslint-disable-next-line
 	}, [ethLoanContract, address]);
 
 	return {

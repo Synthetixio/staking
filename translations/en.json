@@ -1360,7 +1360,9 @@
 			"input-placeholder": "e.g. 0x3b18a4...",
 			"button-labels": {
 				"enter-address": "Enter address",
-				"merge": "MERGE VESTED SNX"
+				"nominate": "nominate",
+				"merge": "merge vested snx",
+				"dest-account-is-self": "Cannot nominate self"
 			},
 			"info": {
 				"title": "Burn sUSD Debt",
@@ -1371,8 +1373,8 @@
 			"title": "ENTER SOURCE ACCOUT",
 			"input-placeholder": "e.g. 0x3b18a4...",
 			"button-labels": {
-				"enter-address": "Enter address",
-				"merge": "MERGE VESTED SNX"
+				"enter-address": "enter address",
+				"merge": "merge vested snx"
 			},
 			"info": {
 				"title": "Merge Your Source Account To This One",

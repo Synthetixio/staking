@@ -1,7 +1,6 @@
 import useIETHPoolQuery_1 from 'queries/liquidityPools/useIETHPoolQuery_1';
 import useIBTCPoolQuery_1 from 'queries/liquidityPools/useIBTCPoolQuery_1';
 import useCurveSusdPoolQuery from 'queries/liquidityPools/useCurveSusdPoolQuery';
-import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import useCurveSeuroPoolQuery from 'queries/liquidityPools/useCurveSeuroPoolQuery';
 import useYearnSNXVaultQuery, {
 	YearnVaultData,
@@ -23,16 +22,20 @@ import {
 	balancersMSFTPoolToken,
 	balancersCOINPoolToken,
 } from 'contracts';
+import useSynthetixQueries from '@synthetixio/queries';
+import Wei, { wei } from '@synthetixio/wei';
 
 type LPData = {
 	[name: string]: {
-		APR: number;
-		TVL: number;
+		APR: Wei;
+		TVL: Wei;
 		data: LiquidityPoolData | DualRewardsLiquidityPoolData | YearnVaultData | undefined;
 	};
 };
 
 const useLPData = (): LPData => {
+	const { useExchangeRatesQuery } = useSynthetixQueries();
+
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const SNXRate = exchangeRatesQuery.data?.SNX ?? 0;
 	const useiETHPool = useIETHPoolQuery_1();
@@ -82,62 +85,80 @@ const useLPData = (): LPData => {
 	const usesDHTPool = useDHTsUSDPoolQuery();
 	const usesYearnSNXVault = useYearnSNXVaultQuery();
 
-	const iETHTVL = (useiETHPool.data?.balance ?? 0) * (useiETHPool.data?.price ?? 0);
+	const iETHTVL = useiETHPool.isSuccess
+		? useiETHPool.data!.balance.mul(useiETHPool.data!.price)
+		: wei(0);
 	const iETHAPR =
-		useiETHPool.data?.distribution && SNXRate && iETHTVL
-			? ((useiETHPool.data.distribution * SNXRate) / iETHTVL) * WEEKS_IN_YEAR
-			: 0;
+		useiETHPool.data?.distribution && SNXRate && iETHTVL.gt(0)
+			? useiETHPool.data.distribution.mul(SNXRate).div(iETHTVL).mul(WEEKS_IN_YEAR)
+			: wei(0);
 
-	const iBTCTVL = (useiBTCPool.data?.balance ?? 0) * (useiBTCPool.data?.price ?? 0);
+	const iBTCTVL = useiBTCPool.isSuccess
+		? useiBTCPool.data!.balance.mul(useiBTCPool.data!.price)
+		: wei(0);
 	const iBTCAPR =
-		useiBTCPool.data?.distribution && SNXRate && iBTCTVL
-			? ((useiBTCPool.data.distribution * SNXRate) / iBTCTVL) * WEEKS_IN_YEAR
-			: 0;
+		useiBTCPool.data?.distribution && SNXRate && iBTCTVL.gt(0)
+			? useiBTCPool.data.distribution.mul(SNXRate).div(iBTCTVL).mul(WEEKS_IN_YEAR)
+			: wei(0);
 
 	const DHTRate = usesDHTPool.data?.price;
-	const DHTTVL = usesDHTPool.data?.liquidity ?? 0;
+	const DHTTVL = usesDHTPool.data?.liquidity ?? wei(0);
 	const DHTAPR =
 		usesDHTPool.data?.distribution.a &&
 		usesDHTPool.data?.distribution.b &&
 		SNXRate &&
-		DHTRate &&
+		DHTRate?.gt(0) &&
 		DHTTVL
-			? ((usesDHTPool.data.distribution.a * SNXRate) / DHTTVL) * WEEKS_IN_YEAR +
-			  ((usesDHTPool.data.distribution.b * DHTRate) / DHTTVL) * WEEKS_IN_YEAR
-			: 0;
+			? usesDHTPool.data.distribution.a
+					.mul(SNXRate)
+					.add(usesDHTPool.data.distribution.b.mul(DHTRate))
+					.div(DHTTVL)
+					.mul(WEEKS_IN_YEAR)
+			: wei(0);
 
-	const sUsdTVL = (usesUSDPool.data?.balance ?? 0) * (usesUSDPool.data?.price ?? 0);
+	const sUsdTVL = usesUSDPool.isSuccess
+		? usesUSDPool.data!.balance.mul(usesUSDPool.data!.price)
+		: wei(0);
 	const sUsdAPR =
 		usesUSDPool.data?.distribution &&
 		SNXRate &&
-		sUsdTVL &&
+		sUsdTVL.gt(0) &&
 		usesUSDPool.data?.swapAPR &&
 		usesUSDPool.data?.rewardsAPR
-			? ((usesUSDPool.data.distribution * SNXRate) / sUsdTVL) * WEEKS_IN_YEAR +
-			  usesUSDPool.data?.swapAPR +
-			  usesUSDPool.data?.rewardsAPR
-			: 0;
+			? usesUSDPool.data.distribution
+					.mul(SNXRate)
+					.div(sUsdTVL)
+					.mul(WEEKS_IN_YEAR)
+					.add(usesUSDPool.data?.swapAPR)
+					.add(usesUSDPool.data?.rewardsAPR)
+			: wei(0);
 
-	const sEuroTVL = (usesEuroPool.data?.balance ?? 0) * (usesEuroPool.data?.price ?? 0);
+	const sEuroTVL = usesEuroPool.isSuccess
+		? usesEuroPool.data!.balance.mul(usesEuroPool.data!.price)
+		: wei(0);
 	const sEuroAPR =
 		usesEuroPool.data?.distribution &&
 		SNXRate &&
-		sEuroTVL &&
+		sEuroTVL.gt(0) &&
 		usesEuroPool.data?.swapAPR &&
 		usesEuroPool.data?.rewardsAPR
-			? ((usesEuroPool.data.distribution * SNXRate) / sUsdTVL) * WEEKS_IN_YEAR +
-			  usesEuroPool.data?.swapAPR +
-			  usesEuroPool.data?.rewardsAPR
-			: 0;
+			? usesEuroPool.data.distribution
+					.mul(SNXRate)
+					.div(sEuroTVL)
+					.mul(WEEKS_IN_YEAR)
+					.add(usesEuroPool.data?.swapAPR)
+					.add(usesEuroPool.data?.rewardsAPR)
+			: wei(0);
 
-	const balancerPoolTVL = (data?: LiquidityPoolData) => (data?.balance ?? 0) * (data?.price ?? 0);
+	const balancerPoolTVL = (data?: LiquidityPoolData) =>
+		data != null ? data.balance.mul(data.price) : wei(0);
 	const balancerPoolAPR = (data?: LiquidityPoolData) =>
-		data?.distribution && SNXRate && balancerPoolTVL(data)
-			? ((data?.distribution * SNXRate) / balancerPoolTVL(data)) * WEEKS_IN_YEAR
-			: 0;
+		data?.distribution && SNXRate && balancerPoolTVL(data).gt(0)
+			? data!.distribution.mul(SNXRate).div(balancerPoolTVL(data)).mul(WEEKS_IN_YEAR)
+			: wei(0);
 
-	const yearnSNXVaultAPY = usesYearnSNXVault.data?.apy ?? 0;
-	const yearnSNXVaultTVL = usesYearnSNXVault.data?.tvl ?? 0;
+	const yearnSNXVaultAPY = usesYearnSNXVault.data?.apy ?? wei(0);
+	const yearnSNXVaultTVL = usesYearnSNXVault.data?.tvl ?? wei(0);
 
 	return {
 		[Synths.iETH]: {

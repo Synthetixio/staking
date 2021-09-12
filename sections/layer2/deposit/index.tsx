@@ -8,6 +8,7 @@ import ActionBox from './ActionBox';
 import InfoBox from './InfoBox';
 
 const Index: React.FC = () => {
+	// here we override the query context provider because deposits/withdrawals are always from perspective of the mainnet
 	return (
 		<Container>
 			<Col>

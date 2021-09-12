@@ -23,6 +23,7 @@ import { Synths } from 'constants/currency';
 import { isWalletConnectedState } from 'store/wallet';
 
 import SpinnerIcon from 'assets/svg/app/loader.svg';
+import Wei from '@synthetixio/wei';
 
 const LEGEND_LABELS = {
 	actualDebt: 'debt.actions.track.chart.tooltip.actualDebt',
@@ -32,7 +33,7 @@ const LEGEND_LABELS = {
 type Payload = {
 	color: string;
 	name: keyof typeof LEGEND_LABELS;
-	value: number;
+	value: Wei;
 };
 
 interface CustomTooltipProps {
@@ -66,8 +67,9 @@ const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
 };
 
 type Data = {
-	issuanceDebt: number;
-	actualDebt: number;
+	timestamp: number;
+	issuanceDebt: Wei;
+	actualDebt: Wei;
 };
 
 const DebtChart = ({ data, isLoading }: { data: Data[]; isLoading: boolean }) => {
@@ -94,9 +96,16 @@ const DebtChart = ({ data, isLoading }: { data: Data[]; isLoading: boolean }) =>
 		);
 	if (!data || data.length === 0)
 		return <DefaultContainer>{t('debt.actions.track.no-data')}</DefaultContainer>;
+
+	const parsedData = data.map((p) => ({
+		timestamp: p.timestamp,
+		issuanceDebt: p.issuanceDebt.toNumber(),
+		actualDebt: p.actualDebt.toNumber(),
+	}));
+
 	return (
 		<ResponsiveContainer width="100%" height={270}>
-			<LineChart margin={{ left: 10, top: 20, bottom: 0, right: 5 }} data={data}>
+			<LineChart margin={{ left: 10, top: 20, bottom: 0, right: 5 }} data={parsedData}>
 				<XAxis
 					height={20}
 					dataKey="timestamp"

@@ -11,7 +11,7 @@ import media from 'styles/media';
 import { isL2State, isMainnetState, delegateWalletState } from 'store/wallet';
 import Header from './Header';
 import SideNav from './SideNav';
-import useGetDepositsIsActiveQuery from 'queries/deposits/useGetDepositsIsActiveQuery';
+import useSynthetixQueries from '@synthetixio/queries';
 
 type AppLayoutProps = {
 	children: ReactNode;
@@ -20,7 +20,10 @@ type AppLayoutProps = {
 const AppLayout: FC<AppLayoutProps> = ({ children }) => {
 	const isL2 = useRecoilValue(isL2State);
 	const isMainnet = useRecoilValue(isMainnetState);
-	const depositsInactive = !(useGetDepositsIsActiveQuery().data ?? true); // Deposits are active by default to prevent redirects when status unknown
+
+	const { useIsBridgeActiveQuery } = useSynthetixQueries();
+
+	const depositsInactive = !(useIsBridgeActiveQuery().data ?? true); // Deposits are active by default to prevent redirects when status unknown
 	const delegateWallet = useRecoilValue(delegateWalletState);
 
 	useEffect(() => {

@@ -1,9 +1,8 @@
 import axios from 'axios';
-import { useQuery, QueryConfig } from 'react-query';
+import { useQuery, UseQueryOptions } from 'react-query';
 import { ethers } from 'ethers';
 import { useRecoilValue } from 'recoil';
 
-import synthetix from 'lib/synthetix';
 import QUERY_KEYS from 'constants/queryKeys';
 import { appReadyState } from 'store/app';
 
@@ -17,30 +16,30 @@ import {
 } from 'store/wallet';
 
 import { LiquidityPoolData } from './types';
-import { toBigNumber } from 'utils/formatters/number';
-import BigNumber from 'bignumber.js';
+import Wei, { wei } from '@synthetixio/wei';
 
-export type YearnVaultData = Omit<LiquidityPoolData, 'balance'> & {
-	apy: number;
-	tvl: number;
-	pricePerShare: number;
-	stakedSNX: BigNumber;
+export type YearnVaultData = LiquidityPoolData & {
+	apy: Wei;
+	tvl: Wei;
+	pricePerShare: Wei;
+	stakedSNX: Wei;
 };
 
-const useYearnSNXVaultQuery = (options?: QueryConfig<YearnVaultData>) => {
+const useYearnSNXVaultQuery = (options?: UseQueryOptions<YearnVaultData>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const network = useRecoilValue(networkState);
 	const isMainnet = useRecoilValue(isMainnetState);
-	const { provider } = Connector.useContainer();
-	const {
-		contracts: { Synthetix },
-	} = synthetix.js!;
+	const { provider, synthetixjs } = Connector.useContainer();
 
 	return useQuery<YearnVaultData>(
 		QUERY_KEYS.LiquidityPools.yearnSNX(walletAddress ?? '', network?.id!),
 		async () => {
+			const {
+				contracts: { Synthetix },
+			} = synthetixjs!;
+
 			const YearnSNXVault = new ethers.Contract(
 				yearnSNXVault.address,
 				// @ts-ignore
@@ -66,27 +65,26 @@ const useYearnSNXVaultQuery = (options?: QueryConfig<YearnVaultData>) => {
 				yvSNXPricePerShare,
 				snxAllowance,
 				snxBalance,
-			].map((data) => Number(synthetix.js?.utils.formatEther(data)));
+			].map((data) => wei(data));
 
-			const stakedBN = toBigNumber(yvSNXUserBalance.toString()).div(1e18);
+			const staked = wei(yvSNXUserBalance);
 
 			const yvSNXVaultData = allVaultsData?.data.find(
 				(vault: any) => vault.symbol === 'yvSNX' && vault.type === 'v2'
 			);
-			const apy = yvSNXVaultData?.apy?.net_apy ?? 0;
-			const tvl = Number(yvSNXVaultData?.tvl?.tvl) ?? 0;
+			const apy = wei(yvSNXVaultData?.apy?.net_apy ?? 0);
+			const tvl = wei(yvSNXVaultData?.tvl?.tvl ?? 0);
 
 			return {
 				address: yearnSNXVault.address,
 				userBalance: userBalance,
-				userBalanceBN: toBigNumber(userBalance),
-				distribution: 0,
+				balance: wei(0),
+				distribution: wei(0),
 				duration: 0,
 				periodFinish: Date.now() * 2, // never expires
-				rewards: 0,
-				staked: stakedBN.toNumber(),
-				stakedBN: stakedBN,
-				stakedSNX: stakedBN.times(pricePerShare),
+				rewards: wei(0),
+				staked: staked,
+				stakedSNX: staked.mul(pricePerShare),
 				allowance,
 				apy,
 				tvl,

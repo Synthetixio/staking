@@ -3,9 +3,6 @@ import { CellProps } from 'react-table';
 import styled from 'styled-components';
 import ExternalLink from '../../components/ExternalLink';
 import { InfoContainer, Title, Subtitle } from '../../components/common';
-import useGetWithdrawalsDataQuery, {
-	WithdrawRecord,
-} from 'queries/withdrawals/useGetWithdrawalsDataQuery';
 import { FlexDivColCentered, ExternalLink as Link } from 'styles/common';
 
 import { formatShortDate } from 'utils/formatters/date';
@@ -19,10 +16,22 @@ import {
 	Header,
 	StyledTable,
 } from 'sections/escrow/components/common';
+import { useRecoilValue } from 'recoil';
+import { walletAddressState } from 'store/wallet';
+import useSynthetixQueries, { DepositRecord } from '@synthetixio/queries';
 
 const InfoBox = () => {
 	const { t } = useTranslation();
-	const withdrawalsDataQuery = useGetWithdrawalsDataQuery();
+
+	const walletAddress = useRecoilValue(walletAddressState);
+
+	const { useGetBridgeDataQuery } = useSynthetixQueries();
+
+	const withdrawalsDataQuery = useGetBridgeDataQuery(
+		process.env.NEXT_PUBLIC_INFURA_PROJECT_ID!,
+		walletAddress
+	);
+
 	const withdrawalHistory = withdrawalsDataQuery?.data ?? null;
 
 	return (
@@ -55,11 +64,12 @@ const InfoBox = () => {
 							{
 								Header: <Header>{t('layer2.withdraw.info.table.withdrawal')}</Header>,
 								accessor: 'amount',
-								Cell: (cellProps: CellProps<WithdrawRecord, number>) => (
+								Cell: (cellProps: CellProps<DepositRecord, number>) => (
 									<Data>
 										{formatCurrency(CryptoCurrency.SNX, cellProps.value, {
 											currencyKey: CryptoCurrency.SNX,
-											decimals: 2,
+											minDecimals: 2,
+											maxDecimals: 2,
 										})}
 									</Data>
 								),
@@ -73,7 +83,7 @@ const InfoBox = () => {
 									</Header>
 								),
 								accessor: 'timestamp',
-								Cell: (cellProps: CellProps<WithdrawRecord, Date>) => (
+								Cell: (cellProps: CellProps<DepositRecord, Date>) => (
 									<Data>{formatShortDate(cellProps.value)}</Data>
 								),
 								width: 100,
@@ -86,7 +96,7 @@ const InfoBox = () => {
 									</Header>
 								),
 								accessor: 'status',
-								Cell: (cellProps: CellProps<WithdrawRecord, boolean>) => (
+								Cell: (cellProps: CellProps<DepositRecord, boolean>) => (
 									<Data>
 										<Trans
 											i18nKey={`layer2.withdraw.info.table.${cellProps.value}`}
@@ -109,7 +119,7 @@ const InfoBox = () => {
 									</Header>
 								),
 								accessor: 'transactionHash',
-								Cell: (cellProps: CellProps<WithdrawRecord, string>) => (
+								Cell: (cellProps: CellProps<DepositRecord, string>) => (
 									<ExternalLink transactionHash={cellProps.value} />
 								),
 								width: 60,

@@ -40,7 +40,7 @@ const Repay: React.FC<RepayProps> = ({ loan, loanId, loanTypeIsETH, loanContract
 		() => ethers.utils.formatUnits(remainingAmount, debtAssetDecimals),
 		[remainingAmount]
 	);
-	const isRepayingFully = useMemo(() => remainingAmount.isZero(), [remainingAmount]);
+	const isRepayingFully = useMemo(() => remainingAmount.eq(0), [remainingAmount]);
 
 	const onSetLeftColAmount = (amount: string) =>
 		!amount
@@ -50,19 +50,16 @@ const Repay: React.FC<RepayProps> = ({ loan, loanId, loanTypeIsETH, loanContract
 			: setRepayAmount(amount);
 	const onSetLeftColMaxAmount = () => setRepayAmount(ethers.utils.formatUnits(loan.amount));
 
-	const getTxData = useCallback(
-		(gas: Record<string, number>) => {
-			if (!(loanContract && !repayAmount.isZero())) return null;
-			return [loanContract, 'repay', [address, loanId, repayAmount, gas]];
-		},
-		[loanContract, address, loanId, repayAmount]
-	);
+	const getTxData = useCallback(() => {
+		if (!(loanContract && !repayAmount.eq(0))) return null;
+		return [loanContract, 'repay', [address, loanId, repayAmount]];
+	}, [loanContract, address, loanId, repayAmount]);
 
-	const repay = async (gas: Record<string, number>) => {
+	const repay = async () => {
 		try {
 			setIsWorking('repaying');
 			setTxModalOpen(true);
-			await tx(() => getTxData(gas), {
+			await tx(() => getTxData(), {
 				showErrorNotification: (e: string) => setError(e),
 				showProgressNotification: (hash: string) =>
 					monitorTransaction({

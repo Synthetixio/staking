@@ -5,8 +5,6 @@ import { Svg } from 'react-optimized-image';
 
 import NoNotificationIcon from 'assets/svg/app/no-notifications.svg';
 import { CryptoCurrency } from 'constants/currency';
-import { EscrowData } from 'queries/escrow/useEscrowDataQuery';
-import useTokenSaleEscrowQuery from 'queries/escrow/useTokenSaleEscrowQuery';
 import { formatShortDate } from 'utils/formatters/date';
 import { formatCurrency } from 'utils/formatters/number';
 import {
@@ -20,10 +18,18 @@ import {
 	Subtitle,
 	Title,
 } from 'sections/escrow/components/common';
+import useSynthetixQueries, { EscrowData } from '@synthetixio/queries';
+import { useRecoilValue } from 'recoil';
+import { walletAddressState } from 'store/wallet';
 
 const TokenSaleEscrowSchedule: React.FC = () => {
 	const { t } = useTranslation();
-	const tokenSaleEscrowQuery = useTokenSaleEscrowQuery();
+
+	const walletAddress = useRecoilValue(walletAddressState);
+
+	const { useTokenSaleEscrowQuery } = useSynthetixQueries();
+
+	const tokenSaleEscrowQuery = useTokenSaleEscrowQuery(walletAddress);
 	const tokenSaleEscrow = tokenSaleEscrowQuery.data;
 
 	const schedule = useMemo(() => tokenSaleEscrow?.schedule ?? [], [tokenSaleEscrow]);

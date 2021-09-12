@@ -1,16 +1,16 @@
 import { FC } from 'react';
 import styled from 'styled-components';
-import Big from 'bignumber.js';
 import { Trans, useTranslation } from 'react-i18next';
 import { FlexDivRow, FlexDivRowCentered } from 'styles/common';
-import { formatNumber } from 'utils/formatters/number';
+import { formatPercent } from 'utils/formatters/number';
 import InfoSVG from 'sections/loans/components/ActionBox/components/InfoSVG';
 import { SAFE_MIN_CRATIO } from 'sections/loans/constants';
+import Wei from '@synthetixio/wei';
 
 type CRatioProps = {
 	hasLowCRatio: boolean;
-	cratio: Big;
-	minCRatio: Big;
+	cratio: Wei;
+	minCRatio: Wei;
 };
 
 const CRatio: FC<CRatioProps> = ({ cratio, hasLowCRatio, minCRatio }) => {
@@ -22,11 +22,11 @@ const CRatio: FC<CRatioProps> = ({ cratio, hasLowCRatio, minCRatio }) => {
 			<FlexDivRowCentered>
 				<Item>
 					<Text {...{ hasLowCRatio }}>
-						{cratio.isZero() ? (
+						{cratio.eq(0) ? (
 							'-'
 						) : (
 							<>
-								{formatNumber(cratio, { decimals: 0 })}%{' '}
+								{formatPercent(cratio)}{' '}
 								<InfoSVG
 									tip={
 										<Trans

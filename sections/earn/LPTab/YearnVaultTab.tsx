@@ -1,7 +1,6 @@
 import { FC, useState, useMemo, useEffect, useCallback } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import { Svg } from 'react-optimized-image';
-import BigNumber from 'bignumber.js';
 import { useRouter } from 'next/router';
 
 import StructuredTab from 'components/StructuredTab';
@@ -16,7 +15,6 @@ import ExpandIcon from 'assets/svg/app/expand.svg';
 
 import { Transaction } from 'constants/network';
 import { CryptoCurrency } from 'constants/currency';
-import { formatNumber } from 'utils/formatters/number';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import TxState from 'sections/earn/TxState';
 import { EXTERNAL_LINKS } from 'constants/links';
@@ -38,24 +36,23 @@ import styled from 'styled-components';
 import { CurrencyIconType } from 'components/Currency/CurrencyIcon/CurrencyIcon';
 import { MobileOnlyView } from 'components/Media';
 import DepositTab from './DepositTab/DepositTab';
+import Wei from '@synthetixio/wei';
 
 type DualRewards = {
-	a: number;
-	b: number;
+	a: Wei;
+	b: Wei;
 };
 
 type LPTabProps = {
 	stakedAsset: CurrencyKey;
 	icon?: CurrencyKey;
 	type?: CurrencyIconType;
-	tokenRewards: number | DualRewards;
-	allowance: number | null;
-	userBalance: number;
-	userBalanceBN: BigNumber;
-	staked: number;
-	stakedBN: BigNumber;
-	pricePerShare: number;
-	secondTokenRate?: number;
+	tokenRewards: Wei | DualRewards;
+	allowance: Wei | null;
+	userBalance: Wei;
+	staked: Wei;
+	pricePerShare: Wei;
+	secondTokenRate?: Wei;
 };
 
 const YearnVaultTab: FC<LPTabProps> = ({
@@ -65,9 +62,7 @@ const YearnVaultTab: FC<LPTabProps> = ({
 	tokenRewards,
 	allowance,
 	userBalance,
-	userBalanceBN,
 	staked,
-	stakedBN,
 	pricePerShare,
 	secondTokenRate,
 }) => {
@@ -85,9 +80,7 @@ const YearnVaultTab: FC<LPTabProps> = ({
 		const commonDepositTabProps = {
 			asset: stakedAsset,
 			userBalance,
-			userBalanceBN,
 			staked,
-			stakedBN,
 			icon,
 			type,
 			pricePerShare,
@@ -111,7 +104,7 @@ const YearnVaultTab: FC<LPTabProps> = ({
 	}, [t, stakedAsset, userBalance, staked]);
 
 	useEffect(() => {
-		if (allowance === 0 && userBalance > 0) {
+		if (allowance?.eq(0) && userBalance.gt(0)) {
 			setShowApproveOverlayModal(true);
 		}
 	}, [allowance, userBalance]);
@@ -137,9 +130,7 @@ const YearnVaultTab: FC<LPTabProps> = ({
 							<GreyHeader>{t('earn.actions.claim.claiming')}</GreyHeader>
 							<WhiteSubheader>
 								{t('earn.actions.claim.amount', {
-									amount: formatNumber(tokenRewards as number, {
-										decimals: DEFAULT_CRYPTO_DECIMALS,
-									}),
+									amount: (tokenRewards as Wei).toString(DEFAULT_CRYPTO_DECIMALS),
 									asset: CryptoCurrency.SNX,
 								})}
 							</WhiteSubheader>
@@ -171,9 +162,7 @@ const YearnVaultTab: FC<LPTabProps> = ({
 							<GreyHeader>{t('earn.actions.claim.claiming')}</GreyHeader>
 							<WhiteSubheader>
 								{t('earn.actions.claim.amount', {
-									amount: formatNumber(tokenRewards as number, {
-										decimals: DEFAULT_CRYPTO_DECIMALS,
-									}),
+									amount: (tokenRewards as Wei).toString(DEFAULT_CRYPTO_DECIMALS),
 									asset: CryptoCurrency.SNX,
 								})}
 							</WhiteSubheader>

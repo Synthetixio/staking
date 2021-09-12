@@ -14,7 +14,7 @@ const Index: FC = () => {
 
 	const { debtBalance } = useStakingCalculations();
 
-	const hasDebt = useMemo(() => !debtBalance.isZero(), [debtBalance]);
+	const hasDebt = useMemo(() => !debtBalance.eq(0), [debtBalance]);
 
 	return !isAppReady ? null : (
 		<Cols>

@@ -3,12 +3,16 @@ import styled from 'styled-components';
 import { Trans, useTranslation } from 'react-i18next';
 import { Svg } from 'react-optimized-image';
 import { useRecoilValue } from 'recoil';
+import useSynthetixQueries from '@synthetixio/queries';
+import { wei } from '@synthetixio/wei';
 
 import ArrowRightIcon from 'assets/svg/app/arrow-right.svg';
 import { formatCurrency } from 'utils/formatters/number';
 import { EXTERNAL_LINKS } from 'constants/links';
 import { FlexDivCentered } from 'styles/common';
 import { CryptoCurrency, Synths } from 'constants/currency';
+import { walletAddressState } from 'store/wallet';
+import { parseSafeWei } from 'utils/parse';
 
 import BarStatsRow from 'sections/staking/components/StakingInfo/BarStatsRow';
 
@@ -28,9 +32,6 @@ import {
 import { amountToBurnState } from 'store/staking';
 
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
-import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
-
-import { toBigNumber, zeroBN } from 'utils/formatters/number';
 
 import {
 	getStakingAmount,
@@ -54,32 +55,32 @@ const InfoLayout: FC<InfoLayoutProps> = () => {
 		debtEscrowBalance,
 		collateral,
 	} = useStakingCalculations();
-	const synthsBalancesQuery = useSynthsBalancesQuery();
+
+	const walletAddress = useRecoilValue(walletAddressState);
+	const { useSynthsBalancesQuery } = useSynthetixQueries();
+
+	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
 
 	const amountToBurn = useRecoilValue(amountToBurnState);
 
-	const sUSDBalance =
-		synthsBalancesQuery?.data?.balancesMap[Synths.sUSD]?.balance ?? toBigNumber(0);
+	const sUSDBalance = synthsBalancesQuery?.data?.balancesMap[Synths.sUSD]?.balance ?? wei(0);
 
 	const stakingInfo = useMemo(() => {
-		const calculatedTargetBurn = Math.max(debtBalance.minus(issuableSynths).toNumber(), 0);
+		const calculatedTargetBurn = Math.max(debtBalance.sub(issuableSynths).toNumber(), 0);
 
-		const amountToBurnBN = toBigNumber(amountToBurn);
+		let amountToBurnBN = parseSafeWei(amountToBurn, 0);
 
 		let unlockedStakeAmount;
 
-		if (
-			currentCRatio.isGreaterThan(targetCRatio) &&
-			amountToBurnBN.isLessThanOrEqualTo(calculatedTargetBurn)
-		) {
-			unlockedStakeAmount = zeroBN;
+		if (currentCRatio.gt(targetCRatio) && amountToBurnBN.lte(calculatedTargetBurn)) {
+			unlockedStakeAmount = wei(0);
 		} else {
 			unlockedStakeAmount = getStakingAmount(targetCRatio, amountToBurnBN, SNXRate);
 		}
 
-		const changedStakedValue = stakedCollateral.isZero()
-			? zeroBN
-			: stakedCollateral.minus(unlockedStakeAmount);
+		const changedStakedValue = stakedCollateral.eq(0)
+			? wei(0)
+			: stakedCollateral.sub(unlockedStakeAmount);
 
 		const changedTransferable = getTransferableAmountFromBurn(
 			amountToBurn,
@@ -89,13 +90,14 @@ const InfoLayout: FC<InfoLayoutProps> = () => {
 			transferableCollateral
 		);
 
-		const changedDebt = debtBalance.isZero() ? zeroBN : debtBalance.minus(amountToBurnBN);
+		const changedDebt = debtBalance.eq(0) ? wei(0) : debtBalance.sub(amountToBurnBN);
 
-		const changedSUSDBalance = sUSDBalance.minus(amountToBurnBN);
+		const changedSUSDBalance = sUSDBalance.sub(amountToBurnBN);
 
-		const changeCRatio = toBigNumber(100).dividedBy(
-			changedDebt.dividedBy(SNXRate).dividedBy(collateral)
-		);
+		const changeCRatio =
+			SNXRate.eq(0) || collateral.eq(0) || changedDebt.eq(0)
+				? wei(0)
+				: wei(100).div(changedDebt.div(SNXRate).div(collateral));
 
 		return {
 			barRows: [
@@ -103,31 +105,29 @@ const InfoLayout: FC<InfoLayoutProps> = () => {
 					title: t('staking.info.table.staked'),
 					value: sanitiseValue(stakedCollateral),
 					changedValue: sanitiseValue(changedStakedValue),
-					percentage: collateral.isZero()
-						? toBigNumber(0)
-						: sanitiseValue(stakedCollateral).dividedBy(collateral),
-					changedPercentage: collateral.isZero()
-						? toBigNumber(0)
-						: sanitiseValue(changedStakedValue).dividedBy(collateral),
+					percentage: collateral.eq(0) ? wei(0) : sanitiseValue(stakedCollateral).div(collateral),
+					changedPercentage: collateral.eq(0)
+						? wei(0)
+						: sanitiseValue(changedStakedValue).div(collateral),
 					currencyKey: CryptoCurrency.SNX,
 				},
 				{
 					title: t('staking.info.table.transferable'),
 					value: sanitiseValue(transferableCollateral),
 					changedValue: sanitiseValue(changedTransferable),
-					percentage: collateral.isZero()
-						? toBigNumber(0)
-						: sanitiseValue(transferableCollateral).dividedBy(sanitiseValue(collateral)),
-					changedPercentage: collateral.isZero()
-						? toBigNumber(0)
-						: sanitiseValue(changedTransferable).dividedBy(sanitiseValue(collateral)),
+					percentage: collateral.eq(0)
+						? wei(0)
+						: sanitiseValue(transferableCollateral).div(sanitiseValue(collateral)),
+					changedPercentage: collateral.eq(0)
+						? wei(0)
+						: sanitiseValue(changedTransferable).div(sanitiseValue(collateral)),
 					currencyKey: CryptoCurrency.SNX,
 				},
 			],
 			dataRows: [
 				{
 					title: t('staking.info.table.c-ratio'),
-					value: sanitiseValue(toBigNumber(100).dividedBy(currentCRatio)),
+					value: currentCRatio.eq(0) ? wei(0) : sanitiseValue(wei(100).div(currentCRatio)),
 					changedValue: sanitiseValue(changeCRatio),
 					currencyKey: '%',
 				},
@@ -177,7 +177,8 @@ const InfoLayout: FC<InfoLayoutProps> = () => {
 				<RowValue>
 					{formatCurrency(CryptoCurrency.SNX, collateral, {
 						currencyKey: CryptoCurrency.SNX,
-						decimals: 2,
+						minDecimals: 2,
+						maxDecimals: 2,
 					})}
 				</RowValue>
 			</TotalBalanceContainer>
@@ -189,7 +190,8 @@ const InfoLayout: FC<InfoLayoutProps> = () => {
 							title={title}
 							value={formatCurrency(currencyKey, isInputEmpty ? value : changedValue, {
 								currencyKey: currencyKey,
-								decimals: 2,
+								minDecimals: 2,
+								maxDecimals: 2,
 							})}
 							percentage={isInputEmpty ? percentage.toNumber() : changedPercentage.toNumber()}
 						/>
@@ -202,16 +204,18 @@ const InfoLayout: FC<InfoLayoutProps> = () => {
 							<RowValue>
 								{formatCurrency(currencyKey, value.toString(), {
 									currencyKey: currencyKey,
-									decimals: 2,
+									minDecimals: 2,
+									maxDecimals: 2,
 								})}
 							</RowValue>
 							{!isInputEmpty && (
 								<>
 									<StyledArrowRight src={ArrowRightIcon} />
 									<RowValue>
-										{formatCurrency(currencyKey, !changedValue.isNaN() ? changedValue : 0, {
+										{formatCurrency(currencyKey, changedValue, {
 											currencyKey: currencyKey,
-											decimals: 2,
+											minDecimals: 2,
+											maxDecimals: 2,
 										})}
 									</RowValue>
 								</>

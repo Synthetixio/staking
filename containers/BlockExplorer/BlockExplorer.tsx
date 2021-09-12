@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
 import { createContainer } from 'unstated-next';
-import { OPTIMISM_NETWORKS, MAINNET_OPTIMISM_EXPLORER } from '@synthetixio/optimism-networks';
+import { OPTIMISM_NETWORKS } from '@synthetixio/optimism-networks';
 import { useRecoilValue } from 'recoil';
 
 import { NetworkId } from '@synthetixio/contracts-interface';
 import { Network } from 'store/wallet';
 
 import { networkState } from 'store/wallet';
+import _ from 'lodash';
 
 type BlockExplorerInstance = {
 	txLink: (txId: string) => string;
@@ -18,7 +19,10 @@ type BlockExplorerInstance = {
 
 const getBaseUrl = (network: Network) => {
 	if (network.useOvm) {
-		return OPTIMISM_NETWORKS[network.id]?.blockExplorerUrls[0] ?? MAINNET_OPTIMISM_EXPLORER;
+		return (
+			OPTIMISM_NETWORKS[network.id]?.blockExplorerUrls[0] ??
+			OPTIMISM_NETWORKS[_.keys(OPTIMISM_NETWORKS)[0] as any].blockExplorerUrls[0]
+		);
 	} else if (network.id === NetworkId.Mainnet) {
 		return 'https://etherscan.io';
 	}

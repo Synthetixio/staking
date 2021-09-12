@@ -8,11 +8,10 @@ import { customGasPriceState, gasSpeedState, isL2State } from 'store/wallet';
 import { ESTIMATE_VALUE } from 'constants/placeholder';
 import { GasLimitEstimate } from 'constants/network';
 
-import useEthGasStationQuery, { GasPrices, GAS_SPEEDS } from 'queries/network/useEthGasPriceQuery';
+import useSynthetixQueries, { GasPrices, GAS_SPEEDS } from '@synthetixio/queries';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { getTransactionPrice } from 'utils/network';
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
-import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 
 import { Synths } from 'constants/currency';
 import { formatCurrency } from 'utils/formatters/number';
@@ -22,6 +21,7 @@ import { useTranslation } from 'react-i18next';
 import { FlexDivRow, FlexDivRowCentered, NumericValue } from 'styles/common';
 import { Svg } from 'react-optimized-image';
 import Info from 'assets/svg/app/info.svg';
+import Wei, { wei } from '@synthetixio/wei';
 
 type GasSelectorProps = {
 	gasLimitEstimate: GasLimitEstimate;
@@ -40,33 +40,31 @@ const GasSelector: React.FC<GasSelectorProps> = ({
 	const [customGasPrice, setCustomGasPrice] = useRecoilState(customGasPriceState);
 	const isL2 = useRecoilValue(isL2State);
 
-	const exchangeRatesQuery = useExchangeRatesQuery();
+	const { useExchangeRatesQuery, useEthGasPriceQuery } = useSynthetixQueries();
+
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
-	const ethGasStationQuery = useEthGasStationQuery();
+	const exchangeRatesQuery = useExchangeRatesQuery();
+	const ethGasStationQuery = useEthGasPriceQuery();
 
 	const gasPrices = ethGasStationQuery.data ?? ({} as GasPrices);
 	const exchangeRates = exchangeRatesQuery.data ?? null;
 
 	const hasCustomGasPrice = customGasPrice !== '';
 
-	const gasPrice = useMemo(
-		() =>
-			customGasPrice !== ''
-				? Number(customGasPrice)
-				: ethGasStationQuery.data != null
-				? ethGasStationQuery.data[gasSpeed]
-				: null,
-		[customGasPrice, ethGasStationQuery.data, gasSpeed]
-	);
+	const gasPrice: Wei | null = useMemo(() => {
+		try {
+			return wei(customGasPrice, 9);
+		} catch (_) {
+			return ethGasStationQuery.data != null ? wei(ethGasStationQuery.data[gasSpeed], 9) : null;
+		}
+	}, [customGasPrice, ethGasStationQuery.data, gasSpeed]);
 
 	useEffect(() => {
-		setGasPrice(
-			customGasPrice !== ''
-				? Number(customGasPrice)
-				: ethGasStationQuery.data != null
-				? ethGasStationQuery.data[gasSpeed]
-				: null
-		);
+		try {
+			setGasPrice(wei(customGasPrice, 9));
+		} catch (_) {
+			setGasPrice(gasPrice || wei(0));
+		}
 		// eslint-disable-next-line
 	}, [gasPrice, customGasPrice]);
 
@@ -85,7 +83,7 @@ const GasSelector: React.FC<GasSelectorProps> = ({
 		<span>{Number(customGasPrice)}</span>
 	) : (
 		<span>
-			{ESTIMATE_VALUE} {gasPrice}
+			{ESTIMATE_VALUE} {gasPrice?.toNumber() || 0}
 		</span>
 	);
 

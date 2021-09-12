@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import ROUTES from 'constants/routes';
 import { EXTERNAL_LINKS } from 'constants/links';
 
-import { formatPercent, toBigNumber } from 'utils/formatters/number';
+import { formatPercent } from 'utils/formatters/number';
 
 import KwentaIcon from 'assets/svg/app/kwenta.svg';
 import MintIcon from 'assets/svg/app/mint.svg';
@@ -23,15 +23,20 @@ import useUserStakingData from 'hooks/useUserStakingData';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 
 import { ActionsContainer as Container } from './common-styles';
+import { wei } from '@synthetixio/wei';
+import { useRecoilValue } from 'recoil';
+import { walletAddressState } from 'store/wallet';
 
 const LayoutLayerTwo: FC = () => {
 	const { t } = useTranslation();
 
-	const { stakingRewards, tradingRewards } = useUserStakingData();
+	const walletAddress = useRecoilValue(walletAddressState);
+
+	const { stakingRewards, tradingRewards } = useUserStakingData(walletAddress);
 	const { currentCRatio, targetCRatio } = useStakingCalculations();
 
 	const gridItems: GridBoxProps[] = useMemo(() => {
-		const aboveTargetCRatio = currentCRatio.isLessThanOrEqualTo(targetCRatio);
+		const aboveTargetCRatio = currentCRatio.lte(targetCRatio);
 		return [
 			{
 				icon: (
@@ -46,11 +51,11 @@ const LayoutLayerTwo: FC = () => {
 				title: t('dashboard.actions.claim.title'),
 				copy: t('dashboard.actions.claim.copy'),
 				tooltip:
-					stakingRewards.isZero() && tradingRewards.isZero()
+					stakingRewards.eq(0) && tradingRewards.eq(0)
 						? t('dashboard.actions.claim.tooltip')
 						: undefined,
 				link: ROUTES.Earn.Claim,
-				isDisabled: stakingRewards.isZero() && tradingRewards.isZero(),
+				isDisabled: stakingRewards.eq(0) && tradingRewards.eq(0),
 			},
 			{
 				icon: (
@@ -60,7 +65,7 @@ const LayoutLayerTwo: FC = () => {
 				),
 				title: !aboveTargetCRatio
 					? t('dashboard.actions.burn.title', {
-							targetCRatio: formatPercent(toBigNumber(1).div(targetCRatio), { minDecimals: 0 }),
+							targetCRatio: formatPercent(wei(1).div(targetCRatio), { minDecimals: 0 }),
 					  })
 					: t('dashboard.actions.mint.title'),
 				copy: !aboveTargetCRatio
@@ -97,7 +102,7 @@ const StyledContainer = styled(Container)`
 	gap: 1rem;
 
 	${media.lessThan('md')`
-		grid-template-areas: 
+		grid-template-areas:
 			'tile-1 tile-2'
 			'tile-3 tile-4';
 		grid-template-columns: 1fr 1fr;

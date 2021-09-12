@@ -1,25 +1,24 @@
-import { FC, useState, useEffect, useCallback } from 'react';
+import { FC, useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useTranslation, Trans } from 'react-i18next';
 
 import BaseModal from 'components/BaseModal';
 import { InputsDivider, ButtonTransaction } from 'components/Form/common';
-import AssetInput from 'components/Form/AssetInput';
+import AssetInput, { Asset } from 'components/Form/AssetInput';
 import TextInput from 'components/Form/TextInput';
 import { FlexDivColCentered, FlexDivCentered } from 'styles/common';
 
-import { Asset } from 'queries/walletBalances/types';
-import { GasLimitEstimate } from 'constants/network';
 import GasSelector from 'components/GasSelector';
 import { isSynth, synthToContractName } from 'utils/currencies';
-import synthetix from 'lib/synthetix';
-import { CryptoCurrency } from 'constants/currency';
-import { toBigNumber, formatNumber } from 'utils/formatters/number';
+import { formatNumber } from 'utils/formatters/number';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import { ModalContent, ModalItem, ModalItemTitle, ModalItemText } from 'styles/common';
 
 import { truncateAddress } from 'utils/formatters/string';
-import { normalizedGasPrice } from 'utils/network';
+import Wei, { wei } from '@synthetixio/wei';
+import Connector from 'containers/Connector';
+import useSynthetixQueries from '@synthetixio/queries';
+import { ethers } from 'ethers';
 
 type TransferModalProps = {
 	onDismiss: () => void;
@@ -38,87 +37,38 @@ const TransferModal: FC<TransferModalProps> = ({
 }) => {
 	const { t } = useTranslation();
 
+	const { synthetixjs } = Connector.useContainer();
+
+	const { useContractTxn } = useSynthetixQueries();
+
 	const [amount, setAmount] = useState<string>('');
 	const [walletAddress, setWalletAddress] = useState('');
-	const [gasEstimateError, setGasEstimateError] = useState<string | null>(null);
-	const [txError, setTxError] = useState<string | null>(null);
-	const [gasLimit, setGasLimit] = useState<GasLimitEstimate>(null);
-	const [gasPrice, setGasPrice] = useState<number>(0);
+	const [gasPrice, setGasPrice] = useState<Wei>(wei(0));
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 	const onEnterAddress = (e: React.ChangeEvent<HTMLTextAreaElement>) =>
 		setWalletAddress((e.target.value ?? '').trim());
 
-	const getTransferFunctionForAsset = useCallback(
-		({ isEstimate }: { isEstimate: boolean }) => {
-			if (!currentAsset) return;
-			if (!isSynth(currentAsset.currencyKey) && currentAsset.currencyKey !== CryptoCurrency.SNX)
-				return;
-			const { contracts } = synthetix.js!;
-			let contract, transferFunction;
-			if (isSynth(currentAsset.currencyKey)) {
-				contract = contracts[synthToContractName(currentAsset.currencyKey)];
-				transferFunction = 'transferAndSettle';
-			}
-			if (currentAsset.currencyKey === CryptoCurrency.SNX) {
-				contract = contracts.Synthetix;
-				transferFunction = 'transfer';
-			}
-			if (!contract || !transferFunction) return;
-			return isEstimate ? contract.estimateGas[transferFunction] : contract[transferFunction];
-		},
-		[currentAsset]
+	const contract = synthetixjs!.contracts[
+		isSynth(currentAsset?.currencyKey)
+			? synthToContractName(currentAsset?.currencyKey || '')
+			: 'Synthetix'
+	];
+
+	const txn = useContractTxn(
+		contract,
+		isSynth(currentAsset?.currencyKey) ? 'transferAndSettle' : 'transfer',
+		[wei(amount).toBN()],
+		{ gasPrice: gasPrice.toBN() }
 	);
 
 	useEffect(() => {
-		const getGasEstimate = async () => {
-			if (!amount || !walletAddress || !currentAsset) return;
-			const {
-				utils: { parseEther, isAddress, getAddress },
-			} = synthetix.js!;
+		if (txn.txnStatus === 'confirmed') onTransferConfirmation(txn.hash!);
+	}, [txn.txnStatus, txn.hash, onTransferConfirmation]);
 
-			try {
-				setGasEstimateError(null);
-				if (!isAddress(walletAddress)) throw new Error(t('synths.transfer.error.invalid-address'));
-				if (toBigNumber(amount).isGreaterThan(currentAsset.balance))
-					throw new Error(t('synths.transfer.error.insufficient-balance'));
-
-				const transferFunction = getTransferFunctionForAsset({ isEstimate: true });
-				if (!transferFunction) throw new Error(t('synths.transfer.error.unsupported-asset'));
-				const gasEstimate = await synthetix.getGasEstimateForTransaction({
-					txArgs: [getAddress(walletAddress), parseEther(amount)],
-					method: transferFunction,
-				});
-				setGasLimit(gasEstimate);
-			} catch (e) {
-				console.log(e.message);
-				setGasEstimateError(e.message);
-			}
-		};
-		getGasEstimate();
-	}, [amount, walletAddress, currentAsset, t, getTransferFunctionForAsset]);
-
-	const handleTransfer = async () => {
-		try {
-			const {
-				utils: { parseEther },
-			} = synthetix.js!;
-			setTxError(null);
-			setTxModalOpen(true);
-			const transferFunction = getTransferFunctionForAsset({ isEstimate: false });
-			if (!transferFunction) throw new Error(t('synths.transfer.error.unsupported-asset'));
-			const transaction = await transferFunction(walletAddress, parseEther(amount), {
-				gasLimit,
-				gasPrice: normalizedGasPrice(gasPrice),
-			});
-			if (transaction) {
-				setTxModalOpen(false);
-				onTransferConfirmation(transaction.hash);
-			}
-		} catch (e) {
-			console.log(e);
-			setTxError(e.message);
-		}
-	};
+	let error: string | null = null;
+	if (!ethers.utils.isAddress(walletAddress)) error = t('synths.transfer.error.invalid-address');
+	if (wei(amount).gt(currentAsset?.balance))
+		error = t('synths.transfer.error.insufficient-balance');
 
 	const renderButton = () => {
 		if (!amount || !Number(amount)) {
@@ -139,8 +89,8 @@ const TransferModal: FC<TransferModalProps> = ({
 			<StyledButtonTransaction
 				size="lg"
 				variant="primary"
-				onClick={handleTransfer}
-				disabled={!gasLimit || !!gasEstimateError}
+				onClick={() => txn.mutate()}
+				disabled={!txn.gasLimit || !!txn.errorMessage}
 			>
 				<Trans
 					i18nKey="synths.transfer.button.transfer"
@@ -177,17 +127,19 @@ const TransferModal: FC<TransferModalProps> = ({
 						/>
 					</InputsContainer>
 					<SettingsContainer>
-						<GasSelector gasLimitEstimate={gasLimit} setGasPrice={setGasPrice} />
+						<GasSelector gasLimitEstimate={txn.gasLimit} setGasPrice={setGasPrice} />
 					</SettingsContainer>
 				</FormContainer>
 				{renderButton()}
-				{gasEstimateError ? <ErrorMessage>{gasEstimateError}</ErrorMessage> : null}
+				{error || txn.errorMessage ? (
+					<ErrorMessage>{error || txn.errorMessage}</ErrorMessage>
+				) : null}
 			</Inner>
 			{txModalOpen && (
 				<TxConfirmationModal
 					onDismiss={() => setTxModalOpen(false)}
-					txError={txError}
-					attemptRetry={handleTransfer}
+					txError={error || txn.errorMessage}
+					attemptRetry={txn.mutate}
 					content={
 						<ModalContent>
 							<ModalItem>

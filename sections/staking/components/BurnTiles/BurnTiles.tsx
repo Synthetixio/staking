@@ -2,7 +2,7 @@ import { useRecoilState, useSetRecoilState, useRecoilValue } from 'recoil';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import BigNumber from 'bignumber.js';
+import Wei from '@synthetixio/wei';
 
 import Img, { Svg } from 'react-optimized-image';
 
@@ -20,8 +20,8 @@ import { isL2State, delegateWalletState } from 'store/wallet';
 import ButtonTile from '../ButtonTile';
 
 type BurnTilesProps = {
-	percentageTargetCRatio: BigNumber;
-	burnAmountToFixCRatio: BigNumber;
+	percentageTargetCRatio: Wei;
+	burnAmountToFixCRatio: Wei;
 };
 
 const burnIcon = <Svg src={BurnCircle} />;
@@ -50,7 +50,7 @@ const BurnTiles: React.FC<BurnTilesProps> = ({ percentageTargetCRatio, burnAmoun
 				onAction={() => onBurnTypeChange(BurnActionType.MAX)}
 			/>
 			<ButtonTile
-				disabled={burnAmountToFixCRatio.isZero()}
+				disabled={burnAmountToFixCRatio.eq(0)}
 				title={t('staking.actions.burn.tiles.target.title', {
 					targetCRatio: formatPercent(percentageTargetCRatio),
 				})}

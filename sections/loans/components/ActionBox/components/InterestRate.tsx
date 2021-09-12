@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { FlexDivRow, FlexDivRowCentered } from 'styles/common';
-import { formatNumber } from 'utils/formatters/number';
+import { formatPercent } from 'utils/formatters/number';
 import Loans from 'containers/Loans';
 
 type InterestRateProps = {};
@@ -16,7 +16,7 @@ const InterestRate: React.FC<InterestRateProps> = () => {
 			<Header>{t('loans.interest-rate')}</Header>
 			<FlexDivRowCentered>
 				<Item>
-					<Text>{formatNumber(interestRate, { decimals: 2 })}%</Text>
+					<Text>{formatPercent(interestRate)}</Text>
 				</Item>
 			</FlexDivRowCentered>
 		</Container>
