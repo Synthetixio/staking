@@ -12,6 +12,7 @@ import { truncateAddress } from 'utils/formatters/string';
 import Button from 'components/Button';
 import Connector from 'containers/Connector';
 import TransactionNotifier from 'containers/TransactionNotifier';
+import Etherscan from 'containers/BlockExplorer';
 import NavigationBack from 'assets/svg/app/navigation-back.svg';
 import {
 	ModalItemTitle as TxModalItemTitle,
@@ -40,6 +41,8 @@ import {
 } from 'utils/network';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import walletIcon from 'assets/svg/app/wallet-purple.svg';
+import { Transaction } from 'constants/network';
+import { TxWaiting, TxSuccess } from './Tx';
 
 const MergeTab: FC = () => {
 	const { t } = useTranslation();
@@ -68,12 +71,19 @@ const MergeTabInner: FC = () => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const destinationAccountAddress = useRecoilValue(walletAddressState);
 	const { monitorTransaction } = TransactionNotifier.useContainer();
+	const { blockExplorerInstance } = Etherscan.useContainer();
 
 	const [gasPrice, setGasPrice] = useState<number>(0);
 	const [gasLimit, setGasLimitEstimate] = useState<number | null>(null);
 
 	const [error, setError] = useState<string | null>(null);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
+	const [transactionState, setTransactionState] = useState<Transaction>(Transaction.PRESUBMIT);
+	const [txHash, setTxHash] = useState<string | null>(null);
+	const txLink = useMemo(
+		() => (blockExplorerInstance && txHash ? blockExplorerInstance.txLink(txHash) : ''),
+		[blockExplorerInstance, txHash]
+	);
 	const [buttonState, setButtonState] = useState<string | null>(null);
 
 	const router = useRouter();
@@ -104,7 +114,8 @@ const MergeTabInner: FC = () => {
 			  destinationAccountAddress &&
 			  properSourceAccountAddress === ethers.utils.getAddress(destinationAccountAddress)
 			? 'source-account-is-self'
-			: nominatedAccountAddress !== properSourceAccountAddress
+			: nominatedAccountAddress &&
+			  nominatedAccountAddress !== ethers.utils.getAddress(destinationAccountAddress)
 			? 'not-nominated'
 			: null;
 	}, [properSourceAccountAddress, destinationAccountAddress]);
@@ -164,6 +175,7 @@ const MergeTabInner: FC = () => {
 			);
 			if (isMounted) {
 				if (ethers.constants.AddressZero !== nominatedAccountAddress) {
+					console.log(nominatedAccountAddress, destinationAccountAddress);
 					setNominatedAccountAddress(nominatedAccountAddress);
 				}
 				setEntryIDs(entryIDs);
@@ -247,11 +259,16 @@ const MergeTabInner: FC = () => {
 			};
 			await tx(() => getMergeTxData(gas), {
 				showErrorNotification: (e: string) => setError(e),
-				showProgressNotification: (hash: string) =>
+				showProgressNotification: (hash: string) => {
+					setTransactionState(Transaction.WAITING);
+					setTxHash(hash);
 					monitorTransaction({
 						txHash: hash,
-						onTxConfirmed: () => {},
-					}),
+						onTxConfirmed: () => {
+							setTransactionState(Transaction.SUCCESS);
+						},
+					});
+				},
 				showSuccessNotification: (hash: string) => {},
 			});
 			setSourceAccountAddress('');
@@ -259,8 +276,25 @@ const MergeTabInner: FC = () => {
 		} finally {
 			setButtonState(null);
 			setTxModalOpen(false);
+			setTransactionState(Transaction.PRESUBMIT);
 		}
 	};
+
+	if (transactionState === Transaction.WAITING) {
+		return <TxWaiting {...{ txLink }} />;
+	}
+
+	if (transactionState === Transaction.SUCCESS) {
+		return (
+			<TxSuccess
+				{...{ txLink }}
+				onDismiss={() => {
+					setTransactionState(Transaction.PRESUBMIT);
+					router.push(ROUTES.MergeAccounts.Nominate);
+				}}
+			/>
+		);
+	}
 
 	return (
 		<div data-testid="form">

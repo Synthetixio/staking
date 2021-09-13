@@ -132,11 +132,9 @@ export const TxSuccess: FC<{
 					</StyledFlexDiv>
 					<Divider />
 					<ButtonSpacer>
-						{txLink ? (
-							<ExternalLink href={txLink}>
-								<VerifyButton>{t('earn.actions.tx.verify')}</VerifyButton>
-							</ExternalLink>
-						) : null}
+						<ExternalLink href={txLink}>
+							<VerifyButton>{t('earn.actions.tx.verify')}</VerifyButton>
+						</ExternalLink>
 						<DismissButton variant="secondary" onClick={onDismiss}>
 							{t('earn.actions.tx.dismiss')}
 						</DismissButton>

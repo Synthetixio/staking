@@ -37,7 +37,7 @@ const NominateInfoBox: FC = () => {
 				<Title>
 					{totalBalancePendingMigration > 0
 						? t('escrow.staking.info.title-migrate-l1')
-						: t('escrow.staking.info.title')}
+						: t('merge-accounts.nominate.info.title')}
 				</Title>
 				<Subtitle>
 					{totalBalancePendingMigration > 0 ? (
@@ -46,7 +46,10 @@ const NominateInfoBox: FC = () => {
 							components={[<StyledLink href={EXTERNAL_LINKS.Synthetix.SIP60} />]}
 						/>
 					) : (
-						t('escrow.staking.info.subtitle')
+						<Trans
+							i18nKey="merge-accounts.nominate.info.subtitle"
+							components={[<StyledLink href={EXTERNAL_LINKS.Synthetix.SIP60} />]}
+						/>
 					)}
 				</Subtitle>
 			</ContainerHeader>

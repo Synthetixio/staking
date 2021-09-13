@@ -121,11 +121,16 @@ export const VerifyButton = styled.div<{ isStakingPanel?: boolean }>`
 	text-align: center;
 `;
 
-export const DismissButton = styled(Button)<{ isStakingPanel?: boolean }>`
-	width: ${(props) => (props.isStakingPanel ? '75px' : '125px')};
+export const DismissButton = styled(Button)<{ isStakingPanel?: boolean; autoWidth?: boolean }>`
 	box-shadow: none;
 `;
-export const ButtonSpacer = styled(FlexDiv)<{ isStakingPanel?: boolean }>`
-	width: ${(props) => (props.isStakingPanel ? '180px' : '300px')};
+export const ButtonSpacer = styled(FlexDiv)<{ isStakingPanel?: boolean; autoWidth?: boolean }>`
 	justify-content: space-between;
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	grid-gap: 8px;
+
+	& > *:first-child {
+		justify-self: right;
+	}
 `;

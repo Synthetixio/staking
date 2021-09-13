@@ -10,6 +10,7 @@ import { wei } from '@synthetixio/wei';
 import { truncateAddress } from 'utils/formatters/string';
 import Button from 'components/Button';
 import Connector from 'containers/Connector';
+import Etherscan from 'containers/BlockExplorer';
 import StructuredTab from 'components/StructuredTab';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import NavigationBack from 'assets/svg/app/navigation-back.svg';
@@ -40,7 +41,7 @@ import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 import walletIcon from 'assets/svg/app/wallet-purple.svg';
 import ROUTES from 'constants/routes';
-import { Transaction, GasLimitEstimate } from 'constants/network';
+import { Transaction } from 'constants/network';
 import { TxWaiting, TxSuccess } from './Tx';
 
 const NominateTab: FC = () => {
@@ -70,6 +71,7 @@ const NominateTabInner: FC = () => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const sourceAccountAddress = useRecoilValue(walletAddressState);
 	const { monitorTransaction } = TransactionNotifier.useContainer();
+	const { blockExplorerInstance } = Etherscan.useContainer();
 
 	const [gasPrice, setGasPrice] = useState<number>(0);
 	const [gasLimit, setGasLimitEstimate] = useState<number | null>(null);
@@ -78,25 +80,21 @@ const NominateTabInner: FC = () => {
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 	const [transactionState, setTransactionState] = useState<Transaction>(Transaction.PRESUBMIT);
 	const [buttonState, setButtonState] = useState<string | null>(null);
+	const [txHash, setTxHash] = useState<string | null>(null);
+	const txLink = useMemo(
+		() => (blockExplorerInstance && txHash ? blockExplorerInstance.txLink(txHash) : ''),
+		[blockExplorerInstance, txHash]
+	);
 
 	const router = useRouter();
 	const onGoBack = () => router.replace(ROUTES.MergeAccounts.Home);
 
 	const [destinationAccountAddress, setDestinationAccountAddress] = useState('');
-	const [nominatedAccountAddress, setNominatedAccountAddress] = useState('');
-
-	const { debtBalance } = useStakingCalculations();
-	const readyForMerge = false;
-
-	const hasNominatedDestinationAccount = useMemo(
-		() => nominatedAccountAddress && nominatedAccountAddress === destinationAccountAddress,
-		[nominatedAccountAddress, destinationAccountAddress]
-	);
 
 	const properDestinationAccountAddress = useMemo(
 		() =>
 			destinationAccountAddress && ethers.utils.isAddress(destinationAccountAddress)
-				? destinationAccountAddress
+				? ethers.utils.getAddress(destinationAccountAddress)
 				: null,
 		[destinationAccountAddress]
 	);
@@ -170,7 +168,6 @@ const NominateTabInner: FC = () => {
 			if (isMounted) {
 				if (ethers.constants.AddressZero !== nominatedAccountAddress) {
 					setDestinationAccountAddress(nominatedAccountAddress);
-					setNominatedAccountAddress(nominatedAccountAddress);
 				}
 			}
 		};
@@ -179,7 +176,7 @@ const NominateTabInner: FC = () => {
 			const contractEvent = RewardEscrowV2.filters.NominateAccountToMerge(sourceAccountAddress);
 			const onContractEvent = async (src: string, dest: string) => {
 				if (src === sourceAccountAddress) {
-					setNominatedAccountAddress(dest);
+					setDestinationAccountAddress(dest);
 				}
 			};
 			RewardEscrowV2.on(contractEvent, onContractEvent);
@@ -218,6 +215,7 @@ const NominateTabInner: FC = () => {
 				showErrorNotification: (e: string) => setError(e),
 				showProgressNotification: (hash: string) => {
 					setTransactionState(Transaction.WAITING);
+					setTxHash(hash);
 					monitorTransaction({
 						txHash: hash,
 						onTxConfirmed: () => {
@@ -227,22 +225,30 @@ const NominateTabInner: FC = () => {
 				},
 				showSuccessNotification: (hash: string) => {},
 			});
-			setDestinationAccountAddress('');
 		} catch {
-			setTransactionState(Transaction.PRESUBMIT);
 		} finally {
 			setButtonState(null);
 			setTxModalOpen(false);
+			setTransactionState(Transaction.PRESUBMIT);
 		}
 	};
 
 	if (transactionState === Transaction.WAITING) {
-		return <TxWaiting />;
+		return (
+			<TxWaiting
+				{...{ txLink }}
+				fromAddress={sourceAccountAddress}
+				toAddress={properDestinationAccountAddress}
+			/>
+		);
 	}
 
 	if (transactionState === Transaction.SUCCESS) {
 		return (
 			<TxSuccess
+				{...{ txLink }}
+				fromAddress={sourceAccountAddress}
+				toAddress={properDestinationAccountAddress}
 				onDismiss={() => {
 					setTransactionState(Transaction.PRESUBMIT);
 					router.push(ROUTES.MergeAccounts.Merge);
@@ -261,26 +267,17 @@ const NominateTabInner: FC = () => {
 				</FormHeader>
 
 				<InputsContainer>
-					{readyForMerge ? (
-						<div>
-							On the Merge tab, switch to the nominated account in your wallet and proceed with the
-							merge.
-						</div>
-					) : (
-						<>
-							<Svg src={walletIcon} />
-							<AmountInput
-								value={destinationAccountAddress}
-								placeholder={t('merge-accounts.nominate.input-placeholder')}
-								onChange={onEnterAddress}
-								disabled={false}
-								rows={3}
-								autoComplete={'off'}
-								spellCheck={false}
-								data-testid="form-input"
-							/>
-						</>
-					)}
+					<Svg src={walletIcon} />
+					<AmountInput
+						value={destinationAccountAddress}
+						placeholder={t('merge-accounts.nominate.input-placeholder')}
+						onChange={onEnterAddress}
+						disabled={false}
+						rows={3}
+						autoComplete={'off'}
+						spellCheck={false}
+						data-testid="form-input"
+					/>
 				</InputsContainer>
 
 				<SettingsContainer>
@@ -312,9 +309,7 @@ const NominateTabInner: FC = () => {
 								? 'enter-address'
 								: destinationAccountAddressInputError
 								? destinationAccountAddressInputError
-								: !hasNominatedDestinationAccount
-								? 'nominate'
-								: 'ready-for-merge')
+								: 'nominate')
 						}`}
 						components={[<NoTextTransform />]}
 					/>

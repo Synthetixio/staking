@@ -11,6 +11,7 @@ import Button from 'components/Button';
 import Connector from 'containers/Connector';
 import StructuredTab from 'components/StructuredTab';
 import TransactionNotifier from 'containers/TransactionNotifier';
+import Etherscan from 'containers/BlockExplorer';
 import NavigationBack from 'assets/svg/app/navigation-back.svg';
 import {
 	ModalItemTitle as TxModalItemTitle,
@@ -44,6 +45,8 @@ import ROUTES from 'constants/routes';
 import { Synths } from '@synthetixio/contracts-interface';
 import Currency from 'components/Currency';
 import useSynthetixQueries from '@synthetixio/queries';
+import { Transaction } from 'constants/network';
+import { TxWaiting, TxSuccess } from './Tx';
 
 const BurnTab: FC = () => {
 	const { t } = useTranslation();
@@ -75,13 +78,23 @@ const BurnTabInner: FC = () => {
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const router = useRouter();
 	const { useSynthsBalancesQuery } = useSynthetixQueries();
+	const { blockExplorerInstance } = Etherscan.useContainer();
 
 	const [gasPrice, setGasPrice] = useState<number>(0);
 	const [gasLimit, setGasLimitEstimate] = useState<number | null>(null);
 
 	const [error, setError] = useState<string | null>(null);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
+	const [transactionState, setTransactionState] = useState<Transaction>(Transaction.PRESUBMIT);
 	const [buttonState, setButtonState] = useState<string | null>(null);
+	const [txHash, setTxHash] = useState<string | null>(null);
+	const txLink = useMemo(
+		() => (blockExplorerInstance && txHash ? blockExplorerInstance.txLink(txHash) : ''),
+		[blockExplorerInstance, txHash]
+	);
+
+	const unstakeAmount = wei(99);
+	const burnAmount = wei(100);
 
 	const onGoBack = () => router.replace(ROUTES.MergeAccounts.Home);
 
@@ -157,21 +170,42 @@ const BurnTabInner: FC = () => {
 			};
 			await tx(() => getBurnTxData(gas), {
 				showErrorNotification: (e: string) => setError(e),
-				showProgressNotification: (hash: string) =>
+				showProgressNotification: (hash: string) => {
+					setTransactionState(Transaction.WAITING);
+					setTxHash(hash);
 					monitorTransaction({
 						txHash: hash,
 						onTxConfirmed: async () => {
+							setTransactionState(Transaction.SUCCESS);
 							router.push(ROUTES.MergeAccounts.Nominate);
 						},
-					}),
+					});
+				},
 				showSuccessNotification: (hash: string) => {},
 			});
 		} catch {
 		} finally {
 			setButtonState(null);
 			setTxModalOpen(false);
+			setTransactionState(Transaction.PRESUBMIT);
 		}
 	};
+
+	if (transactionState === Transaction.WAITING) {
+		return <TxWaiting {...{ unstakeAmount, burnAmount, txLink }} />;
+	}
+
+	if (transactionState === Transaction.SUCCESS) {
+		return (
+			<TxSuccess
+				{...{ unstakeAmount, burnAmount, txLink }}
+				onDismiss={() => {
+					setTransactionState(Transaction.PRESUBMIT);
+					router.push(ROUTES.MergeAccounts.Nominate);
+				}}
+			/>
+		);
+	}
 
 	return (
 		<div data-testid="form">

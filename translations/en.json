@@ -1366,8 +1366,20 @@
 				"nominating": "Nominating"
 			},
 			"info": {
-				"title": "Burn sUSD Debt",
-				"description": "Connect to the dApp with the wallet you wish to merge from, first make sure that you have burned all your sUSD debt. <0>Learn more.</0>"
+				"title": "Merge Escrowed SNX To Nominated Account",
+				"subtitle": "Merge your vested SNX balance by inputing the new destination address in the 'DESTINATION ADDRESS' field, this address is where you want your balances to be sent to. <0>Learn more.</0>"
+			},
+			"tx-waiting": {
+				"title": "In progress",
+				"from": "From",
+				"to": "To"
+			},
+			"tx-success": {
+				"title": "Nominated!",
+				"from": "From",
+				"to": "To",
+				"verify": "VERIFY",
+				"dismiss": "SWITCH TO DESTINATION ACCOUNT"
 			}
 		},
 		"merge": {
@@ -1377,11 +1389,30 @@
 				"enter-address": "enter address",
 				"merge": "merge vested snx",
 				"source-account-is-self": "Cannot merge into self",
-				"not-nominated": "Adress is not nominated"
+				"not-nominated": "Adress is not nominated",
+				"invalid-dest-address": "Address is invalid"
 			},
 			"info": {
 				"title": "Merge Your Source Account To This One",
 				"description": "Finally, please input the source address of where your balances have been sent from. <0>Learn more.</0>"
+			},
+			"tx": {
+				"notice": "Waiting for the blockchain to confirm your transaction.",
+				"link": "View on Etherscan",
+				"verify": "VERIFY TX",
+				"dismiss": "DISMISS"
+			},
+			"tx-waiting": {
+				"title": "Account Merge in progress",
+				"merging": "MERGING",
+				"escrowed-schedule": "ESCROWED SCHEDULE"
+			},
+			"tx-success": {
+				"title": "Account Merge complete!",
+				"merged": "MERGED",
+				"escrowed-schedule": "ESCROWED SCHEDULE",
+				"verify": "VERIFY",
+				"dismiss": "FINISHED"
 			}
 		}
 	},

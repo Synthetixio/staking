@@ -164,10 +164,10 @@ const InfoLayout: FC<InfoLayoutProps> = () => {
 	return (
 		<InfoContainer>
 			<InfoHeader>
-				<Title>{t('merge-accounts.nominate.info.title')}</Title>
+				<Title>{t('merge-accounts.burn.info.title')}</Title>
 				<Subtitle>
 					<Trans
-						i18nKey={t('merge-accounts.nominate.info.description')}
+						i18nKey={t('merge-accounts.burn.info.description')}
 						components={[<StyledLink href={EXTERNAL_LINKS.Synthetix.Litepaper} />]}
 					/>
 				</Subtitle>
