@@ -26,21 +26,15 @@ const useRedeemableDeprecatedSynthsQuery = (options?: UseQueryOptions<Balances>)
 	return useQuery<Balances>(
 		['WalletBalances', 'RedeemableDeprecatedSynths', network?.id!, walletAddress],
 		async () => {
-			const {
-				// SynthRedeemer: Redeemer,
-				Synthetix,
-				ProxysBTC,
-				ProxysETH,
-			} = synthetixjs!.contracts;
-
-			// const synthDeprecatedFilter = Redeemer.filter.SynthDeprecated();
-			// const deprecatedSynthsEvents = await Redeemer.queryFilter(synthDeprecatedFilter);
-			// const deprecatedSynthsAddresses: string[] = deprecatedSynthsEvents.map(
-			// 	(e) => e.args?.synth ?? ''
-			// );
-
-			const deprecatedProxySynthsAddresses = [ProxysBTC, ProxysETH].map((c) => c.address);
-			// console.log(deprecatedProxySynthsAddresses);
+			const { SynthRedeemer: Redeemer, Synthetix } = synthetixjs!.contracts;
+			console.log('b', Redeemer);
+			const synthDeprecatedFilter = Redeemer.filter.SynthDeprecated();
+			const deprecatedSynthsEvents = await Redeemer.queryFilter(synthDeprecatedFilter);
+			console.log('c');
+			const deprecatedProxySynthsAddresses: string[] = deprecatedSynthsEvents.map(
+				(e) => e.args?.synth ?? ''
+			);
+			console.log({ deprecatedProxySynthsAddresses });
 
 			const getProxySynthTarget = (address: string) => {
 				const c = new ethers.Contract(
@@ -61,14 +55,14 @@ const useRedeemableDeprecatedSynthsQuery = (options?: UseQueryOptions<Balances>)
 				return c.target();
 			};
 			const deprecatedSynthsAddresses = deprecatedProxySynthsAddresses.map(getProxySynthTarget);
-			// console.log(deprecatedSynthsAddresses);
+			console.log({ deprecatedSynthsAddresses });
 
 			const getSynthCurrentyKeyFromAddress = (address: string) =>
 				Synthetix.synthsByAddress(address);
 			const deprecatedSynths = await Promise.all(
 				deprecatedSynthsAddresses.map(getSynthCurrentyKeyFromAddress)
 			);
-			// console.log(deprecatedSynths);
+			console.log({ deprecatedSynths });
 
 			// const getRedeemableSynthBalance = async (currencyKey: string) =>
 			// 	Redeemer.balanceOf(currencyKey, walletAddress);
