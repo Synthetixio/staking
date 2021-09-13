@@ -30,7 +30,6 @@ import {
 	ErrorMessage,
 	TxModalItem,
 	FormHeader,
-	FormHeaderButton,
 } from 'sections/merge-accounts/common';
 import { tx, getGasEstimateForTransaction } from 'utils/transactions';
 import {
@@ -39,11 +38,10 @@ import {
 } from 'utils/network';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
-import { formatCryptoCurrency } from 'utils/formatters/number';
 import walletIcon from 'assets/svg/app/wallet-purple.svg';
 import ROUTES from 'constants/routes';
-
-const sUSDCurrencyKey = ethers.utils.formatBytes32String('sUSD');
+import { Transaction, GasLimitEstimate } from 'constants/network';
+import { TxWaiting, TxSuccess } from './Tx';
 
 const NominateTab: FC = () => {
 	const { t } = useTranslation();
@@ -78,6 +76,7 @@ const NominateTabInner: FC = () => {
 
 	const [error, setError] = useState<string | null>(null);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
+	const [transactionState, setTransactionState] = useState<Transaction>(Transaction.PRESUBMIT);
 	const [buttonState, setButtonState] = useState<string | null>(null);
 
 	const router = useRouter();
@@ -217,20 +216,40 @@ const NominateTabInner: FC = () => {
 			};
 			await tx(() => getNominateTxData(gas), {
 				showErrorNotification: (e: string) => setError(e),
-				showProgressNotification: (hash: string) =>
+				showProgressNotification: (hash: string) => {
+					setTransactionState(Transaction.WAITING);
 					monitorTransaction({
 						txHash: hash,
-						onTxConfirmed: () => {},
-					}),
+						onTxConfirmed: () => {
+							setTransactionState(Transaction.SUCCESS);
+						},
+					});
+				},
 				showSuccessNotification: (hash: string) => {},
 			});
 			setDestinationAccountAddress('');
 		} catch {
+			setTransactionState(Transaction.PRESUBMIT);
 		} finally {
 			setButtonState(null);
 			setTxModalOpen(false);
 		}
 	};
+
+	if (transactionState === Transaction.WAITING) {
+		return <TxWaiting />;
+	}
+
+	if (transactionState === Transaction.SUCCESS) {
+		return (
+			<TxSuccess
+				onDismiss={() => {
+					setTransactionState(Transaction.PRESUBMIT);
+					router.push(ROUTES.MergeAccounts.Merge);
+				}}
+			/>
+		);
+	}
 
 	return (
 		<div data-testid="form">
@@ -337,12 +356,6 @@ const AmountInput = styled.textarea`
 	&:disabled {
 		color: ${(props) => props.theme.colors.gray};
 	}
-`;
-
-const AmountLabel = styled.p`
-	color: ${(props) => props.theme.colors.white};
-	font-family: ${(props) => props.theme.fonts.extended};
-	font-size: 24px;
 `;
 
 const FormButton = styled(Button)`

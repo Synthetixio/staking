@@ -1362,7 +1362,8 @@
 				"enter-address": "Enter address",
 				"nominate": "nominate",
 				"merge": "merge vested snx",
-				"dest-account-is-self": "Cannot nominate self"
+				"dest-account-is-self": "Cannot nominate self",
+				"nominating": "Nominating"
 			},
 			"info": {
 				"title": "Burn sUSD Debt",
@@ -1374,11 +1375,13 @@
 			"input-placeholder": "e.g. 0x3b18a4...",
 			"button-labels": {
 				"enter-address": "enter address",
-				"merge": "merge vested snx"
+				"merge": "merge vested snx",
+				"source-account-is-self": "Cannot merge into self",
+				"not-nominated": "Adress is not nominated"
 			},
 			"info": {
 				"title": "Merge Your Source Account To This One",
-				"description": "Finally, please input the source address of where your balances have been sent from <0>Learn more.</0>"
+				"description": "Finally, please input the source address of where your balances have been sent from. <0>Learn more.</0>"
 			}
 		}
 	},

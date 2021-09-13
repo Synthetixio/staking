@@ -86,13 +86,14 @@ const MergeTabInner: FC = () => {
 	const properSourceAccountAddress = useMemo(
 		() =>
 			sourceAccountAddress && ethers.utils.isAddress(sourceAccountAddress)
-				? sourceAccountAddress
+				? ethers.utils.getAddress(sourceAccountAddress)
 				: null,
 		[sourceAccountAddress]
 	);
-	const shortenedSourceAccountAddress = useMemo(() => truncateAddress(sourceAccountAddress, 8, 6), [
-		sourceAccountAddress,
-	]);
+	const shortenedSourceAccountAddress = useMemo(
+		() => properSourceAccountAddress && truncateAddress(properSourceAccountAddress, 8, 6),
+		[properSourceAccountAddress]
+	);
 
 	const sourceAccountAddressInputError = useMemo(() => {
 		return sourceAccountAddress && !properSourceAccountAddress
@@ -103,6 +104,8 @@ const MergeTabInner: FC = () => {
 			  destinationAccountAddress &&
 			  properSourceAccountAddress === ethers.utils.getAddress(destinationAccountAddress)
 			? 'source-account-is-self'
+			: nominatedAccountAddress !== properSourceAccountAddress
+			? 'not-nominated'
 			: null;
 	}, [properSourceAccountAddress, destinationAccountAddress]);
 
@@ -161,7 +164,6 @@ const MergeTabInner: FC = () => {
 			);
 			if (isMounted) {
 				if (ethers.constants.AddressZero !== nominatedAccountAddress) {
-					setSourceAccountAddress(nominatedAccountAddress);
 					setNominatedAccountAddress(nominatedAccountAddress);
 				}
 				setEntryIDs(entryIDs);
@@ -316,8 +318,6 @@ const MergeTabInner: FC = () => {
 					/>
 				)}
 			</FormButton>
-
-			{!sourceAccountAddressInputError ? null : <div>{sourceAccountAddressInputError}</div>}
 
 			{!error ? null : <ErrorMessage>{error}</ErrorMessage>}
 
