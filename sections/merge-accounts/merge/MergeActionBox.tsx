@@ -15,8 +15,10 @@ import TransactionNotifier from 'containers/TransactionNotifier';
 import Etherscan from 'containers/BlockExplorer';
 import NavigationBack from 'assets/svg/app/navigation-back.svg';
 import {
+	ModalContent as TxModalContent,
 	ModalItemTitle as TxModalItemTitle,
 	ModalItemText as TxModalItemText,
+	ModalItemSeperator as TxModalItemSeperator,
 	NoTextTransform,
 	IconButton,
 } from 'styles/common';
@@ -362,8 +364,17 @@ const MergeTabInner: FC = () => {
 					attemptRetry={connectOrMerge}
 					content={
 						<TxModalItem>
-							<TxModalItemTitle>{t('delegate.form.tx-confirmation-title')}</TxModalItemTitle>
-							<TxModalItemText>{shortenedSourceAccountAddress}</TxModalItemText>
+							<TxModalItemTitle>{t('merge-accounts.merge.tx-waiting.title')}</TxModalItemTitle>
+							<TxModalContent>
+								<TxModalItem>
+									<TxModalItemTitle>
+										{t('merge-accounts.merge.tx-waiting.merging')}
+									</TxModalItemTitle>
+									<TxModalItemText>
+										{t('merge-accounts.merge.tx-waiting.escrowed-schedule')}
+									</TxModalItemText>
+								</TxModalItem>
+							</TxModalContent>
 						</TxModalItem>
 					}
 				/>

@@ -22,7 +22,9 @@ import {
 	LinkText,
 	Label,
 	StyledLink,
-} from 'sections/earn/common';
+	ActionsGrid,
+	ActionsGridBox,
+} from 'sections/merge-accounts/common';
 import { FlexDivColCentered } from 'styles/common';
 import { EXTERNAL_LINKS } from 'constants/links';
 import { formatNumber } from 'utils/formatters/number';
@@ -36,20 +38,15 @@ export const TxWaiting: FC<{ unstakeAmount: Wei; burnAmount: Wei; txLink: string
 
 	return (
 		<TxState
-			description={
-				<Label>
-					<Trans i18nKey="earn.incentives.options.snx.description" components={[]} />
-				</Label>
-			}
-			title={t('earn.actions.claim.in-progress')}
+			title={t('merge-accounts.burn.tx-waiting.title')}
 			content={
 				<FlexDivColCentered>
 					<Svg src={PendingConfirmation} />
-					<StyledFlexDiv>
-						<StyledFlexDivColCentered>
-							<GreyHeader>{t('earn.actions.claim.claiming')}</GreyHeader>
+					<ActionsGrid>
+						<ActionsGridBox>
+							<GreyHeader>{t('merge-accounts.burn.tx-waiting.unstaking')}</GreyHeader>
 							<WhiteSubheader>
-								{t('earn.actions.claim.amount', {
+								{t('merge-accounts.burn.tx-waiting.unstake-amount', {
 									amount: formatNumber(unstakeAmount, {
 										minDecimals: DEFAULT_FIAT_DECIMALS,
 										maxDecimals: DEFAULT_FIAT_DECIMALS,
@@ -57,11 +54,11 @@ export const TxWaiting: FC<{ unstakeAmount: Wei; burnAmount: Wei; txLink: string
 									asset: Synths.sUSD,
 								})}
 							</WhiteSubheader>
-						</StyledFlexDivColCentered>
-						<StyledFlexDivColCentered>
-							<GreyHeader>{t('earn.actions.claim.claiming')}</GreyHeader>
+						</ActionsGridBox>
+						<ActionsGridBox>
+							<GreyHeader>{t('merge-accounts.burn.tx-waiting.burning')}</GreyHeader>
 							<WhiteSubheader>
-								{t('earn.actions.claim.amount', {
+								{t('merge-accounts.burn.tx-waiting.burn-amount', {
 									amount: formatNumber(burnAmount, {
 										minDecimals: DEFAULT_FIAT_DECIMALS,
 										maxDecimals: DEFAULT_FIAT_DECIMALS,
@@ -69,8 +66,8 @@ export const TxWaiting: FC<{ unstakeAmount: Wei; burnAmount: Wei; txLink: string
 									asset: CryptoCurrency.SNX,
 								})}
 							</WhiteSubheader>
-						</StyledFlexDivColCentered>
-					</StyledFlexDiv>
+						</ActionsGridBox>
+					</ActionsGrid>
 					<Divider />
 					<GreyText>{t('earn.actions.tx.notice')}</GreyText>
 					<ExternalLink href={txLink}>
@@ -92,23 +89,15 @@ export const TxSuccess: FC<{
 
 	return (
 		<TxState
-			description={
-				<Label>
-					<Trans
-						i18nKey="earn.incentives.options.snx.description"
-						components={[<StyledLink href={EXTERNAL_LINKS.Synthetix.Incentives} />]}
-					/>
-				</Label>
-			}
-			title={t('earn.actions.claim.success')}
+			title={t('merge-accounts.burn.tx-success.title')}
 			content={
 				<FlexDivColCentered>
 					<Svg src={Success} />
-					<StyledFlexDiv>
-						<StyledFlexDivColCentered>
-							<GreyHeader>{t('earn.actions.claim.claimed')}</GreyHeader>
+					<ActionsGrid>
+						<ActionsGridBox>
+							<GreyHeader>{t('merge-accounts.burn.tx-success.unstaked')}</GreyHeader>
 							<WhiteSubheader>
-								{t('earn.actions.claim.amount', {
+								{t('merge-accounts.burn.tx-success.unstaked-amount', {
 									amount: formatNumber(unstakeAmount, {
 										minDecimals: DEFAULT_FIAT_DECIMALS,
 										maxDecimals: DEFAULT_FIAT_DECIMALS,
@@ -116,11 +105,11 @@ export const TxSuccess: FC<{
 									asset: Synths.sUSD,
 								})}
 							</WhiteSubheader>
-						</StyledFlexDivColCentered>
-						<StyledFlexDivColCentered>
-							<GreyHeader>{t('earn.actions.claim.claimed')}</GreyHeader>
+						</ActionsGridBox>
+						<ActionsGridBox>
+							<GreyHeader>{t('merge-accounts.burn.tx-success.burnt')}</GreyHeader>
 							<WhiteSubheader>
-								{t('earn.actions.claim.amount', {
+								{t('merge-accounts.burn.tx-success.burnt-amount', {
 									amount: formatNumber(burnAmount, {
 										minDecimals: DEFAULT_FIAT_DECIMALS,
 										maxDecimals: DEFAULT_FIAT_DECIMALS,
@@ -128,15 +117,15 @@ export const TxSuccess: FC<{
 									asset: CryptoCurrency.SNX,
 								})}
 							</WhiteSubheader>
-						</StyledFlexDivColCentered>
-					</StyledFlexDiv>
+						</ActionsGridBox>
+					</ActionsGrid>
 					<Divider />
 					<ButtonSpacer>
 						<ExternalLink href={txLink}>
 							<VerifyButton>{t('earn.actions.tx.verify')}</VerifyButton>
 						</ExternalLink>
 						<DismissButton variant="secondary" onClick={onDismiss}>
-							{t('earn.actions.tx.dismiss')}
+							{t('merge-accounts.burn.tx-success.dismiss')}
 						</DismissButton>
 					</ButtonSpacer>
 				</FlexDivColCentered>
@@ -144,14 +133,3 @@ export const TxSuccess: FC<{
 		/>
 	);
 };
-
-const StyledFlexDivColCentered = styled(FlexDivColCentered)`
-	padding: 20px 30px;
-	&:first-child {
-		border-right: 1px solid ${(props) => props.theme.colors.grayBlue};
-	}
-`;
-
-const StyledFlexDiv = styled(FlexDiv)`
-	margin-bottom: -20px;
-`;

@@ -20,7 +20,9 @@ import {
 	ButtonSpacer,
 	GreyText,
 	LinkText,
-} from 'sections/earn/common';
+	ActionsGrid,
+	ActionsGridBox,
+} from 'sections/merge-accounts/common';
 import { FlexDivColCentered } from 'styles/common';
 import { formatNumber } from 'utils/formatters/number';
 import { truncateAddress } from 'utils/formatters/string';
@@ -38,16 +40,16 @@ export const TxWaiting: FC<{
 			content={
 				<FlexDivColCentered>
 					<Svg src={PendingConfirmation} />
-					<StyledFlexDiv>
-						<StyledFlexDivColCentered>
+					<ActionsGrid>
+						<ActionsGridBox>
 							<GreyHeader>{t('merge-accounts.nominate.tx-waiting.from')}</GreyHeader>
 							<WhiteSubheader>{truncateAddress(fromAddress ?? '')}</WhiteSubheader>
-						</StyledFlexDivColCentered>
-						<StyledFlexDivColCentered>
+						</ActionsGridBox>
+						<ActionsGridBox>
 							<GreyHeader>{t('merge-accounts.nominate.tx-waiting.to')}</GreyHeader>
 							<WhiteSubheader>{truncateAddress(toAddress ?? '')}</WhiteSubheader>
-						</StyledFlexDivColCentered>
-					</StyledFlexDiv>
+						</ActionsGridBox>
+					</ActionsGrid>
 					<Divider />
 					<GreyText>{t('earn.actions.tx.notice')}</GreyText>
 					<ExternalLink href={txLink}>
@@ -73,16 +75,16 @@ export const TxSuccess: FC<{
 			content={
 				<FlexDivColCentered>
 					<Svg src={Success} />
-					<StyledFlexDiv>
-						<StyledFlexDivColCentered>
+					<ActionsGrid>
+						<ActionsGridBox>
 							<GreyHeader>{t('merge-accounts.nominate.tx-success.from')}</GreyHeader>
 							<WhiteSubheader>{truncateAddress(fromAddress ?? '')}</WhiteSubheader>
-						</StyledFlexDivColCentered>
-						<StyledFlexDivColCentered>
+						</ActionsGridBox>
+						<ActionsGridBox>
 							<GreyHeader>{t('merge-accounts.nominate.tx-success.to')}</GreyHeader>
 							<WhiteSubheader>{truncateAddress(toAddress ?? '')}</WhiteSubheader>
-						</StyledFlexDivColCentered>
-					</StyledFlexDiv>
+						</ActionsGridBox>
+					</ActionsGrid>
 					<Divider />
 					<ButtonSpacer>
 						<ExternalLink href={txLink}>
@@ -97,11 +99,3 @@ export const TxSuccess: FC<{
 		/>
 	);
 };
-
-const StyledFlexDivColCentered = styled(FlexDivColCentered)`
-	padding: 20px 30px;
-`;
-
-const StyledFlexDiv = styled(FlexDiv)`
-	margin-bottom: -20px;
-`;

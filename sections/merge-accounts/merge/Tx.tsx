@@ -20,7 +20,9 @@ import {
 	ButtonSpacer,
 	GreyText,
 	LinkText,
-} from 'sections/earn/common';
+	ActionsGrid,
+	ActionsGridBox,
+} from 'sections/merge-accounts/common';
 import { FlexDivColCentered } from 'styles/common';
 
 export const TxWaiting: FC<{ txLink: string }> = ({ txLink }) => {
@@ -32,14 +34,14 @@ export const TxWaiting: FC<{ txLink: string }> = ({ txLink }) => {
 			content={
 				<FlexDivColCentered>
 					<Svg src={PendingConfirmation} />
-					<StyledFlexDiv>
-						<StyledFlexDivColCentered>
+					<ActionsGrid single>
+						<ActionsGridBox>
 							<GreyHeader>{t('merge-accounts.merge.tx-waiting.merging')}</GreyHeader>
 							<WhiteSubheader>
 								{t('merge-accounts.merge.tx-waiting.escrowed-schedule')}
 							</WhiteSubheader>
-						</StyledFlexDivColCentered>
-					</StyledFlexDiv>
+						</ActionsGridBox>
+					</ActionsGrid>
 					<Divider />
 					<GreyText>{t('earn.actions.tx.notice')}</GreyText>
 					<ExternalLink href={txLink}>
@@ -63,14 +65,14 @@ export const TxSuccess: FC<{
 			content={
 				<FlexDivColCentered>
 					<Svg src={Success} />
-					<StyledFlexDiv>
-						<StyledFlexDivColCentered>
+					<ActionsGrid single>
+						<ActionsGridBox>
 							<GreyHeader>{t('merge-accounts.merge.tx-success.merged')}</GreyHeader>
 							<WhiteSubheader>
 								{t('merge-accounts.merge.tx-success.escrowed-schedule')}
 							</WhiteSubheader>
-						</StyledFlexDivColCentered>
-					</StyledFlexDiv>
+						</ActionsGridBox>
+					</ActionsGrid>
 					<Divider />
 					<ButtonSpacer>
 						<ExternalLink href={txLink}>
@@ -85,11 +87,3 @@ export const TxSuccess: FC<{
 		/>
 	);
 };
-
-const StyledFlexDivColCentered = styled(FlexDivColCentered)`
-	padding: 20px 30px;
-`;
-
-const StyledFlexDiv = styled(FlexDiv)`
-	margin-bottom: -20px;
-`;

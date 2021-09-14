@@ -1353,6 +1353,22 @@
 			"info": {
 				"title": "Burn sUSD Debt",
 				"description": "Connect to the dApp with the wallet you wish to merge from, first make sure that you have burned all your sUSD debt. <0>Learn more.</0>"
+			},
+			"tx-waiting": {
+				"title": "In progress",
+				"unstaking": "UNSTAKING",
+				"unstake-amount": "{{amount}} {{asset}}",
+				"burning": "BURNING",
+				"burn-amount": "{{amount}} {{asset}}"
+			},
+			"tx-success": {
+				"title": "Burnt!",
+				"unstaked": "UNSTAKED",
+				"unstaked-amount": "{{amount}} {{asset}}",
+				"burnt": "BURNT",
+				"burnt-amount": "{{amount}} {{asset}}",
+				"verify": "VERIFY",
+				"dismiss": "NEXT"
 			}
 		},
 		"nominate": {
@@ -1371,13 +1387,13 @@
 			},
 			"tx-waiting": {
 				"title": "In progress",
-				"from": "From",
-				"to": "To"
+				"from": "MERGING",
+				"to": "TO"
 			},
 			"tx-success": {
 				"title": "Nominated!",
-				"from": "From",
-				"to": "To",
+				"from": "MERGED",
+				"to": "TO",
 				"verify": "VERIFY",
 				"dismiss": "SWITCH TO DESTINATION ACCOUNT"
 			}

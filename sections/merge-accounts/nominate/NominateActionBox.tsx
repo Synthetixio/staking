@@ -15,8 +15,10 @@ import StructuredTab from 'components/StructuredTab';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import NavigationBack from 'assets/svg/app/navigation-back.svg';
 import {
+	ModalContent as TxModalContent,
 	ModalItemTitle as TxModalItemTitle,
 	ModalItemText as TxModalItemText,
+	ModalItemSeperator as TxModalItemSeperator,
 	NoTextTransform,
 	IconButton,
 } from 'styles/common';
@@ -325,8 +327,23 @@ const NominateTabInner: FC = () => {
 					attemptRetry={connectOrBurnOrNominate}
 					content={
 						<TxModalItem>
-							<TxModalItemTitle>{t('delegate.form.tx-confirmation-title')}</TxModalItemTitle>
-							<TxModalItemText>{shortenedDestinationAccountAddress}</TxModalItemText>
+							<TxModalItemTitle>{t('merge-accounts.nominate.tx-waiting.title')}</TxModalItemTitle>
+
+							<TxModalContent>
+								<TxModalItem>
+									<TxModalItemTitle>
+										{t('merge-accounts.nominate.tx-waiting.from')}
+									</TxModalItemTitle>
+									<TxModalItemText>{truncateAddress(sourceAccountAddress ?? '')}</TxModalItemText>
+								</TxModalItem>
+								<TxModalItemSeperator />
+								<TxModalItem>
+									<TxModalItemTitle>{t('merge-accounts.nominate.tx-waiting.to')}</TxModalItemTitle>
+									<TxModalItemText>
+										{truncateAddress(properDestinationAccountAddress ?? '')}
+									</TxModalItemText>
+								</TxModalItem>
+							</TxModalContent>
 						</TxModalItem>
 					}
 				/>

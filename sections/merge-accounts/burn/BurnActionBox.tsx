@@ -5,7 +5,8 @@ import styled from 'styled-components';
 import { Trans, useTranslation } from 'react-i18next';
 import { Svg } from 'react-optimized-image';
 import { useRouter } from 'next/router';
-import { wei } from '@synthetixio/wei';
+import Wei, { wei } from '@synthetixio/wei';
+import useSynthetixQueries from '@synthetixio/queries';
 
 import Button from 'components/Button';
 import Connector from 'containers/Connector';
@@ -14,8 +15,10 @@ import TransactionNotifier from 'containers/TransactionNotifier';
 import Etherscan from 'containers/BlockExplorer';
 import NavigationBack from 'assets/svg/app/navigation-back.svg';
 import {
+	ModalContent as TxModalContent,
 	ModalItemTitle as TxModalItemTitle,
 	ModalItemText as TxModalItemText,
+	ModalItemSeperator as TxModalItemSeperator,
 	NoTextTransform,
 	GlowingCircle,
 	IconButton,
@@ -40,12 +43,15 @@ import {
 } from 'utils/network';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
-import { formatCryptoCurrency } from 'utils/formatters/number';
+import { formatCryptoCurrency, formatNumber } from 'utils/formatters/number';
+import { DEFAULT_FIAT_DECIMALS } from 'constants/defaults';
 import ROUTES from 'constants/routes';
-import { Synths } from '@synthetixio/contracts-interface';
 import Currency from 'components/Currency';
-import useSynthetixQueries from '@synthetixio/queries';
 import { Transaction } from 'constants/network';
+import { CryptoCurrency, Synths } from 'constants/currency';
+import { parseSafeWei } from 'utils/parse';
+import { getStakingAmount } from 'sections/staking/components/helper';
+
 import { TxWaiting, TxSuccess } from './Tx';
 
 const BurnTab: FC = () => {
@@ -93,12 +99,16 @@ const BurnTabInner: FC = () => {
 		[blockExplorerInstance, txHash]
 	);
 
-	const unstakeAmount = wei(99);
-	const burnAmount = wei(100);
-
 	const onGoBack = () => router.replace(ROUTES.MergeAccounts.Home);
 
-	const { debtBalance } = useStakingCalculations();
+	const {
+		targetCRatio,
+		SNXRate,
+		debtBalance,
+		issuableSynths,
+		collateral,
+		currentCRatio,
+	} = useStakingCalculations();
 	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
 	const synthBalances =
 		synthsBalancesQuery.isSuccess && synthsBalancesQuery.data != null
@@ -108,6 +118,26 @@ const BurnTabInner: FC = () => {
 	const sUSDBalance = synthBalances?.balancesMap.sUSD
 		? synthBalances.balancesMap.sUSD.balance
 		: wei(0);
+
+	/**
+	 * Given the amount to mint, returns the equivalent collateral needed for stake.
+	 * @param mintInput Amount to mint
+	 */
+	const stakingCurrencyKey = CryptoCurrency.SNX;
+	const stakeInfo = useCallback(
+		(burnAmount: Wei): Wei => wei(getStakingAmount(targetCRatio, burnAmount, SNXRate)),
+		[SNXRate, stakingCurrencyKey, targetCRatio]
+	);
+
+	const burnAmount = debtBalance.gt(sUSDBalance) ? wei(sUSDBalance) : debtBalance;
+	const unstakeAmount = useMemo(() => {
+		const calculatedTargetBurn = Math.max(debtBalance.sub(issuableSynths).toNumber(), 0);
+		if (currentCRatio.gt(targetCRatio) && parseSafeWei(burnAmount, 0).lte(calculatedTargetBurn)) {
+			return stakeInfo(wei(0));
+		} else {
+			return stakeInfo(burnAmount);
+		}
+	}, [burnAmount, debtBalance, issuableSynths, targetCRatio, currentCRatio, stakeInfo]);
 
 	const getBurnTxData = useCallback(
 		(gas: Record<string, number>) => {
@@ -177,7 +207,6 @@ const BurnTabInner: FC = () => {
 						txHash: hash,
 						onTxConfirmed: async () => {
 							setTransactionState(Transaction.SUCCESS);
-							router.push(ROUTES.MergeAccounts.Nominate);
 						},
 					});
 				},
@@ -256,8 +285,36 @@ const BurnTabInner: FC = () => {
 					attemptRetry={connectOrBurn}
 					content={
 						<TxModalItem>
-							<TxModalItemTitle>{t('delegate.form.tx-confirmation-title')}</TxModalItemTitle>
-							<TxModalItemText>-</TxModalItemText>
+							<TxModalItemTitle>{t('merge-accounts.burn.tx-waiting.title')}</TxModalItemTitle>
+							<TxModalContent>
+								<TxModalItem>
+									<TxModalItemTitle>
+										{t('merge-accounts.burn.tx-waiting.unstaking')}
+									</TxModalItemTitle>
+									<TxModalItemText>
+										{t('merge-accounts.burn.tx-waiting.unstake-amount', {
+											amount: formatNumber(unstakeAmount, {
+												minDecimals: DEFAULT_FIAT_DECIMALS,
+												maxDecimals: DEFAULT_FIAT_DECIMALS,
+											}),
+											asset: Synths.sUSD,
+										})}
+									</TxModalItemText>
+								</TxModalItem>
+								<TxModalItemSeperator />
+								<TxModalItem>
+									<TxModalItemTitle>{t('merge-accounts.burn.tx-waiting.burning')}</TxModalItemTitle>
+									<TxModalItemText>
+										{t('merge-accounts.burn.tx-waiting.burn-amount', {
+											amount: formatNumber(burnAmount, {
+												minDecimals: DEFAULT_FIAT_DECIMALS,
+												maxDecimals: DEFAULT_FIAT_DECIMALS,
+											}),
+											asset: CryptoCurrency.SNX,
+										})}
+									</TxModalItemText>
+								</TxModalItem>
+							</TxModalContent>
 						</TxModalItem>
 					}
 				/>
