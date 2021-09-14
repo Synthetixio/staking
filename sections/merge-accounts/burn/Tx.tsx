@@ -1,10 +1,9 @@
 import { FC } from 'react';
-import { Trans, useTranslation } from 'react-i18next';
-import styled from 'styled-components';
+import { useTranslation } from 'react-i18next';
 import Wei from '@synthetixio/wei';
 import { Svg } from 'react-optimized-image';
 
-import { ExternalLink, FlexDiv } from 'styles/common';
+import { ExternalLink } from 'styles/common';
 import PendingConfirmation from 'assets/svg/app/pending-confirmation.svg';
 import Success from 'assets/svg/app/success.svg';
 import { DEFAULT_FIAT_DECIMALS } from 'constants/defaults';
@@ -20,13 +19,10 @@ import {
 	ButtonSpacer,
 	GreyText,
 	LinkText,
-	Label,
-	StyledLink,
 	ActionsGrid,
 	ActionsGridBox,
 } from 'sections/merge-accounts/common';
 import { FlexDivColCentered } from 'styles/common';
-import { EXTERNAL_LINKS } from 'constants/links';
 import { formatNumber } from 'utils/formatters/number';
 
 export const TxWaiting: FC<{ unstakeAmount: Wei; burnAmount: Wei; txLink: string }> = ({

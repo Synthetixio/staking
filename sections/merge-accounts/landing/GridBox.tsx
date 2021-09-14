@@ -1,10 +1,8 @@
-import { FC, ReactNode } from 'react';
+import { FC } from 'react';
 import Link from 'next/link';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import media from 'styles/media';
 import { useTranslation } from 'react-i18next';
-
-import { FlexDivColCentered, ExternalLink, Tooltip } from 'styles/common';
 
 const GridBox: FC<{
 	step: number;

@@ -40,7 +40,6 @@ import {
 	normalizedGasPrice as getNormalizedGasPrice,
 } from 'utils/network';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
-import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 import walletIcon from 'assets/svg/app/wallet-purple.svg';
 import ROUTES from 'constants/routes';
 import { Transaction } from 'constants/network';
@@ -100,10 +99,6 @@ const NominateTabInner: FC = () => {
 				: null,
 		[destinationAccountAddress]
 	);
-	const shortenedDestinationAccountAddress = useMemo(
-		() => truncateAddress(destinationAccountAddress, 8, 6),
-		[destinationAccountAddress]
-	);
 
 	const destinationAccountAddressInputError = useMemo(() => {
 		return destinationAccountAddress && !properDestinationAccountAddress
@@ -126,7 +121,12 @@ const NominateTabInner: FC = () => {
 			} = synthetixjs!;
 			return [RewardEscrowV2, 'nominateAccountToMerge', [properDestinationAccountAddress, gas]];
 		},
-		[isAppReady, properDestinationAccountAddress, destinationAccountAddressInputError]
+		[
+			isAppReady,
+			properDestinationAccountAddress,
+			destinationAccountAddressInputError,
+			destinationAccountAddress,
+		]
 	);
 
 	// gas
@@ -148,7 +148,7 @@ const NominateTabInner: FC = () => {
 		return () => {
 			isMounted = false;
 		};
-	}, [getNominateTxData]);
+	}, [getNominateTxData, synthetixjs]);
 
 	// load any previously nominated account address
 	useEffect(() => {
@@ -192,7 +192,7 @@ const NominateTabInner: FC = () => {
 		return () => {
 			unsubs.forEach((unsub) => unsub());
 		};
-	}, [sourceAccountAddress]);
+	}, [sourceAccountAddress, isAppReady, synthetixjs]);
 
 	// funcs
 

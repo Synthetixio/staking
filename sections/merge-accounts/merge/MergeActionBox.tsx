@@ -18,7 +18,6 @@ import {
 	ModalContent as TxModalContent,
 	ModalItemTitle as TxModalItemTitle,
 	ModalItemText as TxModalItemText,
-	ModalItemSeperator as TxModalItemSeperator,
 	NoTextTransform,
 	IconButton,
 } from 'styles/common';
@@ -34,7 +33,6 @@ import {
 	ErrorMessage,
 	TxModalItem,
 	FormHeader,
-	FormHeaderButton,
 } from 'sections/merge-accounts/common';
 import { tx, getGasEstimateForTransaction } from 'utils/transactions';
 import {
@@ -117,10 +115,16 @@ const MergeTabInner: FC = () => {
 			  properSourceAccountAddress === ethers.utils.getAddress(destinationAccountAddress)
 			? 'source-account-is-self'
 			: nominatedAccountAddress &&
+			  destinationAccountAddress &&
 			  nominatedAccountAddress !== ethers.utils.getAddress(destinationAccountAddress)
 			? 'not-nominated'
 			: null;
-	}, [properSourceAccountAddress, destinationAccountAddress]);
+	}, [
+		properSourceAccountAddress,
+		destinationAccountAddress,
+		nominatedAccountAddress,
+		sourceAccountAddress,
+	]);
 
 	const getMergeTxData = useCallback(
 		(gas: Record<string, number>) => {
@@ -154,7 +158,7 @@ const MergeTabInner: FC = () => {
 		return () => {
 			isMounted = false;
 		};
-	}, [getMergeTxData]);
+	}, [getMergeTxData, synthetixjs]);
 
 	// load any nominated account address
 	useEffect(() => {

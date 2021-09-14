@@ -1,5 +1,4 @@
 import { useState, useMemo, useEffect, FC, useCallback } from 'react';
-import { ethers } from 'ethers';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 import { Trans, useTranslation } from 'react-i18next';
@@ -34,7 +33,6 @@ import {
 	ErrorMessage,
 	TxModalItem,
 	FormHeader,
-	FormHeaderButton,
 } from 'sections/merge-accounts/common';
 import { tx, getGasEstimateForTransaction } from 'utils/transactions';
 import {
@@ -106,7 +104,6 @@ const BurnTabInner: FC = () => {
 		SNXRate,
 		debtBalance,
 		issuableSynths,
-		collateral,
 		currentCRatio,
 	} = useStakingCalculations();
 	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
@@ -119,14 +116,9 @@ const BurnTabInner: FC = () => {
 		? synthBalances.balancesMap.sUSD.balance
 		: wei(0);
 
-	/**
-	 * Given the amount to mint, returns the equivalent collateral needed for stake.
-	 * @param mintInput Amount to mint
-	 */
-	const stakingCurrencyKey = CryptoCurrency.SNX;
 	const stakeInfo = useCallback(
 		(burnAmount: Wei): Wei => wei(getStakingAmount(targetCRatio, burnAmount, SNXRate)),
-		[SNXRate, stakingCurrencyKey, targetCRatio]
+		[SNXRate, targetCRatio]
 	);
 
 	const burnAmount = debtBalance.gt(sUSDBalance) ? wei(sUSDBalance) : debtBalance;
@@ -170,7 +162,7 @@ const BurnTabInner: FC = () => {
 		return () => {
 			isMounted = false;
 		};
-	}, [getBurnTxData]);
+	}, [getBurnTxData, synthetixjs]);
 
 	// funcs
 
@@ -322,24 +314,6 @@ const BurnTabInner: FC = () => {
 		</div>
 	);
 };
-
-const AmountInput = styled.textarea`
-	padding: 0;
-	font-size: 24px;
-	background: transparent;
-	font-family: ${(props) => props.theme.fonts.extended};
-	text-align: center;
-	margin-top: 15px;
-	overflow: hidden;
-	resize: none;
-	color: white;
-	border: none;
-	outline: none;
-
-	&:disabled {
-		color: ${(props) => props.theme.colors.gray};
-	}
-`;
 
 const AmountLabel = styled.p`
 	color: ${(props) => props.theme.colors.white};
