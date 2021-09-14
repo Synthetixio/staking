@@ -27,7 +27,7 @@
 		"@synthetixio/contracts-interface": "2.48.0",
 		"@synthetixio/optimism-networks": "0.0.0-22a3c11",
 		"@synthetixio/providers": "0.0.0-22a3c11",
-		"@synthetixio/queries": "0.0.0-22a3c11",
+		"@synthetixio/queries": "2.48.0",
 		"@synthetixio/transaction-notifier": "0.0.0-22a3c11",
 		"@synthetixio/wei": "0.0.0-22a3c11",
 		"@tippyjs/react": "4.1.0",
