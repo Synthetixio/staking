@@ -176,7 +176,6 @@ const MergeTabInner: FC = () => {
 			);
 			if (isMounted) {
 				if (ethers.constants.AddressZero !== nominatedAccountAddress) {
-					console.log(nominatedAccountAddress, destinationAccountAddress);
 					setNominatedAccountAddress(nominatedAccountAddress);
 				}
 				setEntryIDs(entryIDs);
