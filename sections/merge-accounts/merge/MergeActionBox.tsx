@@ -291,7 +291,7 @@ const MergeTabInner: FC = () => {
 				{...{ txLink }}
 				onDismiss={() => {
 					setTransactionState(Transaction.PRESUBMIT);
-					router.push(ROUTES.MergeAccounts.Nominate);
+					router.push(ROUTES.Escrow.Home);
 				}}
 			/>
 		);
