@@ -8,7 +8,6 @@ import { useRouter } from 'next/router';
 import { wei } from '@synthetixio/wei';
 
 import ROUTES from 'constants/routes';
-import { truncateAddress } from 'utils/formatters/string';
 import Button from 'components/Button';
 import Connector from 'containers/Connector';
 import TransactionNotifier from 'containers/TransactionNotifier';
@@ -100,10 +99,6 @@ const MergeTabInner: FC = () => {
 				: null,
 		[sourceAccountAddress]
 	);
-	const shortenedSourceAccountAddress = useMemo(
-		() => properSourceAccountAddress && truncateAddress(properSourceAccountAddress, 8, 6),
-		[properSourceAccountAddress]
-	);
 
 	const sourceAccountAddressInputError = useMemo(() => {
 		return sourceAccountAddress && !properSourceAccountAddress
@@ -136,7 +131,7 @@ const MergeTabInner: FC = () => {
 			} = synthetixjs!;
 			return [RewardEscrowV2, 'mergeAccount', [properSourceAccountAddress, entryIDs, gas]];
 		},
-		[isAppReady, properSourceAccountAddress, entryIDs, sourceAccountAddressInputError]
+		[isAppReady, properSourceAccountAddress, entryIDs, sourceAccountAddressInputError, synthetixjs]
 	);
 
 	// gas
@@ -208,7 +203,7 @@ const MergeTabInner: FC = () => {
 		return () => {
 			unsubs.forEach((unsub) => unsub());
 		};
-	}, [destinationAccountAddress, properSourceAccountAddress]);
+	}, [destinationAccountAddress, properSourceAccountAddress, entryIDs, isAppReady, synthetixjs]);
 
 	// load nominated account address
 	useEffect(() => {
@@ -245,7 +240,7 @@ const MergeTabInner: FC = () => {
 		return () => {
 			unsubs.forEach((unsub) => unsub());
 		};
-	}, [properSourceAccountAddress]);
+	}, [properSourceAccountAddress, isAppReady, synthetixjs]);
 
 	// funcs
 

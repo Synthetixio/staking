@@ -2,7 +2,7 @@ import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Svg } from 'react-optimized-image';
 
-import { ExternalLink, FlexDiv } from 'styles/common';
+import { ExternalLink } from 'styles/common';
 import PendingConfirmation from 'assets/svg/app/pending-confirmation.svg';
 import Success from 'assets/svg/app/success.svg';
 import TxState from 'sections/earn/TxState';

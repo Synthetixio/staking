@@ -139,7 +139,7 @@ const BurnTabInner: FC = () => {
 			} = synthetixjs!;
 			return [Synthetix, 'burnSynths', [sourceAccountAddress, gas]];
 		},
-		[isAppReady, sourceAccountAddress]
+		[isAppReady, sourceAccountAddress, synthetixjs]
 	);
 
 	// gas

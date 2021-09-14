@@ -110,7 +110,7 @@ const NominateTabInner: FC = () => {
 			  properDestinationAccountAddress === ethers.utils.getAddress(sourceAccountAddress)
 			? 'dest-account-is-self'
 			: null;
-	}, [properDestinationAccountAddress, sourceAccountAddress]);
+	}, [properDestinationAccountAddress, sourceAccountAddress, destinationAccountAddress]);
 
 	const getNominateTxData = useCallback(
 		(gas: Record<string, number>) => {
@@ -121,12 +121,7 @@ const NominateTabInner: FC = () => {
 			} = synthetixjs!;
 			return [RewardEscrowV2, 'nominateAccountToMerge', [properDestinationAccountAddress, gas]];
 		},
-		[
-			isAppReady,
-			properDestinationAccountAddress,
-			destinationAccountAddressInputError,
-			destinationAccountAddress,
-		]
+		[isAppReady, properDestinationAccountAddress, destinationAccountAddressInputError, synthetixjs]
 	);
 
 	// gas
