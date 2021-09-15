@@ -4,6 +4,7 @@ import { useTranslation, Trans } from 'react-i18next';
 import { Synths } from '@synthetixio/contracts-interface';
 import Wei, { wei } from '@synthetixio/wei';
 import useSynthetixQueries, { Balances, DeprecatedSynthBalance } from '@synthetixio/queries';
+import { Svg } from 'react-optimized-image';
 
 import BaseModal from 'components/BaseModal';
 import { ButtonTransaction } from 'components/Form/common';
@@ -15,10 +16,11 @@ import Connector from 'containers/Connector';
 import GasSelector from 'components/GasSelector';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import { ModalContent, ModalItemTitle, NoTextTransform } from 'styles/common';
-
+import PendingConfirmation from 'assets/svg/app/pending-confirmation.svg';
 import { formatCryptoCurrency, formatCurrency } from 'utils/formatters/number';
-
+import TxState from 'sections/gov/components/TxState';
 import Currency from 'components/Currency';
+import { GreyHeader } from 'sections/gov/components/common';
 
 const RedeemDeprecatedSynthsModal: FC<{
 	redeemAmount: Wei;
@@ -55,6 +57,10 @@ const RedeemDeprecatedSynthsModal: FC<{
 			// 	setTxModalOpen(true);
 			// 	break;
 
+			case 'pending':
+				setTxModalOpen(false);
+				break;
+
 			// case 'unsent':
 			case 'confirmed':
 				setTxModalOpen(false);
@@ -75,26 +81,53 @@ const RedeemDeprecatedSynthsModal: FC<{
 			title={t('synths.redeemable-deprecated-synths.modal-title')}
 		>
 			<Inner>
-				<ModalContainer>
-					<ValuesContainer>
-						<BurnValueContainer balances={redeemBalances} />
-						<ValuesDivider />
-						<ReceiveValueContainer redeemAmount={redeemAmount} {...{ sUSDBalance }} />
-					</ValuesContainer>
-					<SettingsContainer>
-						<GasSelector gasLimitEstimate={txn.gasLimit} setGasPrice={setGasPrice} />
-					</SettingsContainer>
-				</ModalContainer>
-
-				<StyledButtonTransaction size="lg" variant="primary" onClick={handleRedeem}>
-					<Trans
-						i18nKey="synths.redeemable-deprecated-synths.button-label"
-						values={{}}
-						components={[<CurrencyKeyStyle />]}
+				{txn.txnStatus === 'pending' ? (
+					<TxState
+						title={''}
+						content={
+							<FlexDivColCentered>
+								<Svg src={PendingConfirmation} />
+								<GreyHeader>
+									<Trans
+										i18nKey="synths.redeemable-deprecated-synths.tx-modal-redeeming"
+										values={{
+											amount: formatCryptoCurrency(redeemAmount),
+										}}
+										components={[<NoTextTransform />, <NoTextTransform />]}
+									/>
+								</GreyHeader>
+							</FlexDivColCentered>
+						}
 					/>
-				</StyledButtonTransaction>
-
-				{txn.error ? <ErrorMessage>{txn.errorMessage}</ErrorMessage> : null}
+				) : (
+					<>
+						<ModalContainer>
+							<ValuesContainer>
+								<BurnValueContainer balances={redeemBalances} />
+								<ValuesDivider />
+								<ReceiveValueContainer redeemAmount={redeemAmount} {...{ sUSDBalance }} />
+							</ValuesContainer>
+							<SettingsContainer>
+								<GasSelector gasLimitEstimate={txn.gasLimit} setGasPrice={setGasPrice} />
+							</SettingsContainer>
+						</ModalContainer>
+						<StyledButtonTransaction
+							size="lg"
+							variant="primary"
+							onClick={handleRedeem}
+							disabled={txn.txnStatus === 'pending'}
+						>
+							<Trans
+								i18nKey={`synths.redeemable-deprecated-synths.button.${
+									txn.txnStatus === 'pending' ? 'pending' : 'default'
+								}`}
+								values={{}}
+								components={[<CurrencyKeyStyle />]}
+							/>
+						</StyledButtonTransaction>
+						{txn.error ? <ErrorMessage>{txn.errorMessage}</ErrorMessage> : null}
+					</>
+				)}
 			</Inner>
 
 			{txModalOpen && (

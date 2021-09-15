@@ -118,7 +118,7 @@ const Index: FC = () => {
 
 			<VerticalSpacer />
 
-			{isWalletConnected && redeemBalances.length && (
+			{!(isWalletConnected && redeemAmount?.gt(0)) ? null : (
 				<AssetsTable
 					title={
 						<FlexDivRow>

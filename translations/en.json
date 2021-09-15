@@ -991,7 +991,10 @@
 			"modal-title": "REDEEM",
 			"modal-burn-title": "Redeem",
 			"modal-receive-title": "Receive",
-			"button-label": "Redeem All",
+			"button": {
+				"default": "Redeem All",
+				"pending": "Redeeming..."
+			},
 			"tx-modal-title": "Redeeming",
 			"tx-modal-redeeming": "Redeeming <0>{{amount}}</0> <1>sUSD</1>",
 			"tooltip": "Deprecated Synths can now be redeemed for sUSD. <0>Learn more</0>."
