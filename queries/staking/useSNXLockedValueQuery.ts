@@ -26,7 +26,7 @@ const useSNXLockedValueQuery = (options?: QueryConfig<number>) => {
 				synthetix.js?.contracts.ExchangeRates.rateForCurrency(synthetix.js?.toBytes32('SNX')),
 				synthetix.js?.contracts.Synthetix.totalSupply(),
 				synthetix.js?.contracts.SynthetixState.lastDebtLedgerEntry(),
-				synthetix.js?.contracts.Synthetix.totalIssuedSynthsExcludeEtherCollateral(
+				synthetix.js?.contracts.Synthetix.totalIssuedSynthsExcludeOtherCollateral(
 					synthetix.js?.toBytes32('sUSD')
 				),
 				synthetix.js?.contracts.SystemSettings.issuanceRatio(),

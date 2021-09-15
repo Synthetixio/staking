@@ -7,7 +7,7 @@ import synthetix from 'lib/synthetix';
 
 import { appReadyState } from 'store/app';
 
-const useTotalIssuedSynthsExcludingEtherQuery = (
+const useTotalIssuedSynthsExcludeOtherCollateralQuery = (
 	currencyKey: string,
 	block?: number | null,
 	options?: QueryConfig<number>
@@ -22,14 +22,14 @@ const useTotalIssuedSynthsExcludingEtherQuery = (
 				utils,
 			} = synthetix.js!;
 
-			const totalIssuedSynthsExclEther = await Synthetix.totalIssuedSynthsExcludeEtherCollateral(
+			const totalIssuedSynthsExcludeOtherCollateral = await Synthetix.totalIssuedSynthsExcludeOtherCollateral(
 				utils.formatBytes32String(currencyKey),
 				{
 					blockTag: block ? block : 'latest',
 				}
 			);
 
-			return Number(utils.formatEther(totalIssuedSynthsExclEther));
+			return Number(utils.formatEther(totalIssuedSynthsExcludeOtherCollateral));
 		},
 		{
 			enabled: isAppReady,
@@ -38,4 +38,4 @@ const useTotalIssuedSynthsExcludingEtherQuery = (
 	);
 };
 
-export default useTotalIssuedSynthsExcludingEtherQuery;
+export default useTotalIssuedSynthsExcludeOtherCollateralQuery;

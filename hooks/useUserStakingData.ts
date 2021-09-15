@@ -4,7 +4,7 @@ import { useRecoilValue } from 'recoil';
 import useFeeClaimHistoryQuery from 'queries/staking/useFeeClaimHistoryQuery';
 import useGetFeePoolDataQuery from 'queries/staking/useGetFeePoolDataQuery';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
-import useTotalIssuedSynthsExcludingEtherQuery from 'queries/synths/useTotalIssuedSynthsExcludingEtherQuery';
+import useTotalIssuedSynthsExcludeOtherCollateralQuery from 'queries/synths/useTotalIssuedSynthsExcludeOtherCollateralQuery';
 import useGetDebtDataQuery from 'queries/debt/useGetDebtDataQuery';
 import useClaimableRewards from 'queries/staking/useClaimableRewardsQuery';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
@@ -21,7 +21,9 @@ export const useUserStakingData = () => {
 	const history = useFeeClaimHistoryQuery();
 	const currentFeePeriod = useGetFeePoolDataQuery('0');
 	const exchangeRatesQuery = useExchangeRatesQuery();
-	const totalIssuedSynthsExclEth = useTotalIssuedSynthsExcludingEtherQuery(Synths.sUSD);
+	const useTotalIssuedSynthsExcludeOtherCollateral = useTotalIssuedSynthsExcludeOtherCollateralQuery(
+		Synths.sUSD
+	);
 	const previousFeePeriod = useGetFeePoolDataQuery('1');
 	const {
 		currentCRatio,
@@ -36,7 +38,7 @@ export const useUserStakingData = () => {
 	const rewardsToDistribute = previousFeePeriod?.data?.rewardsToDistribute ?? 0;
 	const rewardsToDistributeBN = previousFeePeriod?.data?.rewardsToDistributeBN ?? toBigNumber(0);
 
-	const totalsUSDDebt = totalIssuedSynthsExclEth?.data ?? 0;
+	const totalsUSDDebt = useTotalIssuedSynthsExcludeOtherCollateral?.data ?? 0;
 	const sUSDRate = toBigNumber(exchangeRatesQuery.data?.sUSD ?? 0);
 	const SNXRate = toBigNumber(exchangeRatesQuery.data?.SNX ?? 0);
 
