@@ -1,42 +1,42 @@
-import { FC, useState } from 'react';
+import { FC, useState, useMemo } from 'react';
 import styled from 'styled-components';
 import { Trans } from 'react-i18next';
-import { ethers } from 'ethers';
-import { wei } from '@synthetixio/wei';
-import { SynthBalance, Balances } from '@synthetixio/queries';
+import Wei from '@synthetixio/wei';
+import { Balances, DeprecatedSynthBalance } from '@synthetixio/queries';
 
-import { NoTextTransform } from 'styles/common';
 import Button from 'components/Button';
-import { formatCryptoCurrency } from 'utils/formatters/number';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import RedeemableDeprecatedSynthsModal from 'sections/synths/components/RedeemableDeprecatedSynthsModal';
 
 const RedeemableDeprecatedSynthsButton: FC<{
 	redeemableDeprecatedSynthsQuery: any;
 	synthBalances: Balances | null;
-}> = ({ redeemableDeprecatedSynthsQuery, synthBalances }) => {
+	redeemAmount: Wei;
+	redeemBalances: DeprecatedSynthBalance[];
+}> = ({ redeemableDeprecatedSynthsQuery, synthBalances, redeemAmount, redeemBalances }) => {
 	const [isRedeemingDeprecatedSynths, setIsRedeemingDeprecatedSynths] = useState(false);
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 
-	const redeemAmount = redeemableDeprecatedSynthsQuery?.data.totalUSDBalance ?? wei(0);
-	const redeemBalances = redeemableDeprecatedSynthsQuery?.data?.balances ?? [];
-	const redeemableDeprecatedSynths: string[] = redeemBalances.map((s: SynthBalance) =>
-		ethers.utils.formatBytes32String(s.currencyKey)
+	const redeemableDeprecatedSynthsAddresses: string[] = useMemo(
+		() => redeemBalances.map((s: DeprecatedSynthBalance) => s.proxyAddress),
+		[redeemBalances]
 	);
 
-	const handleTransferConfirmation = (txHash: string) => {
+	const handleRedeemConfirmation = (txHash: string | null) => {
 		setIsRedeemingDeprecatedSynths(false);
-		monitorTransaction({
-			txHash,
-			onTxConfirmed: () => {
-				setTimeout(() => {
-					redeemableDeprecatedSynthsQuery.refetch();
-				}, 1000 * 5);
-			},
-			onTxFailed: (error) => {
-				console.log(`Transaction failed: ${error}`);
-			},
-		});
+		if (txHash) {
+			monitorTransaction({
+				txHash,
+				onTxConfirmed: () => {
+					setTimeout(() => {
+						redeemableDeprecatedSynthsQuery.refetch();
+					}, 1000 * 5);
+				},
+				onTxFailed: (error) => {
+					console.log(`Transaction failed: ${error}`);
+				},
+			});
+		}
 	};
 
 	return (
@@ -45,11 +45,11 @@ const RedeemableDeprecatedSynthsButton: FC<{
 				<Trans i18nKey="synths.redeemable-deprecated-synths.redeem" values={{}} components={[]} />
 			</StyledButtonBlue>
 
-			{isRedeemingDeprecatedSynths ? (
+			{isRedeemingDeprecatedSynths && redeemableDeprecatedSynthsAddresses.length ? (
 				<RedeemableDeprecatedSynthsModal
-					{...{ redeemAmount, redeemableDeprecatedSynths, redeemBalances, synthBalances }}
+					{...{ redeemAmount, redeemableDeprecatedSynthsAddresses, redeemBalances, synthBalances }}
 					onDismiss={() => setIsRedeemingDeprecatedSynths(false)}
-					onTransferConfirmation={handleTransferConfirmation}
+					onRedeemConfirmation={handleRedeemConfirmation}
 				/>
 			) : null}
 		</>

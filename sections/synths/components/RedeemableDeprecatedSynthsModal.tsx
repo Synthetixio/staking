@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { useTranslation, Trans } from 'react-i18next';
 import { Synths } from '@synthetixio/contracts-interface';
 import Wei, { wei } from '@synthetixio/wei';
-import { Balances, SynthBalance } from '@synthetixio/queries';
+import useSynthetixQueries, { Balances, DeprecatedSynthBalance } from '@synthetixio/queries';
 
 import BaseModal from 'components/BaseModal';
 import { ButtonTransaction } from 'components/Form/common';
@@ -11,82 +11,61 @@ import { ButtonTransaction } from 'components/Form/common';
 import { FlexDivColCentered, FlexDivCentered } from 'styles/common';
 import media from 'styles/media';
 
-import { GasLimitEstimate } from 'constants/network';
+import Connector from 'containers/Connector';
 import GasSelector from 'components/GasSelector';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
-import { ModalContent, ModalItemTitle, ModalItemText, NoTextTransform } from 'styles/common';
+import { ModalContent, ModalItemTitle, NoTextTransform } from 'styles/common';
 
-import { normalizedGasPrice } from 'utils/network';
-import { formatCryptoCurrency } from 'utils/formatters/number';
+import { formatCryptoCurrency, formatCurrency } from 'utils/formatters/number';
 
 import Currency from 'components/Currency';
 
 const RedeemDeprecatedSynthsModal: FC<{
 	redeemAmount: Wei;
-	redeemableDeprecatedSynths: string[];
-	redeemBalances: SynthBalance[];
+	redeemableDeprecatedSynthsAddresses: string[];
+	redeemBalances: DeprecatedSynthBalance[];
 	synthBalances: Balances | null;
 	onDismiss: () => void;
-	onTransferConfirmation: (txHash: string) => void;
+	onRedeemConfirmation: (txHash: string | null) => void;
 }> = ({
 	onDismiss,
-	onTransferConfirmation,
+	onRedeemConfirmation,
 	redeemAmount,
-	redeemableDeprecatedSynths,
+	redeemableDeprecatedSynthsAddresses,
 	redeemBalances,
 	synthBalances,
 }) => {
 	const { t } = useTranslation();
+	const { synthetixjs } = Connector.useContainer();
 
-	const [gasEstimateError, setGasEstimateError] = useState<string | null>(null);
-	const [txError, setTxError] = useState<string | null>(null);
-	const [gasLimit, setGasLimit] = useState<GasLimitEstimate>(null);
-	const [gasPrice, setGasPrice] = useState<number>(0);
+	const [gasPrice, setGasPrice] = useState<Wei>(wei(0));
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 
 	const sUSDBalance = synthBalances?.balancesMap[Synths.sUSD]?.balance ?? wei(0);
+	const Redeemer = synthetixjs!.contracts.SynthRedeemer;
 
-	// useEffect(() => {
-	// 	const getGasEstimate = async () => {
-	// 		if (!redeemableDeprecatedSynths) return;
-	// 		const {
-	// 			contracts: { Redeemer },
-	// 		} = synthetix.js!;
+	const { useContractTxn } = useSynthetixQueries();
+	const txn = useContractTxn(Redeemer, 'redeemAll', [redeemableDeprecatedSynthsAddresses], {
+		gasPrice: gasPrice.toBN(),
+	});
 
-	// 		try {
-	// 			setGasEstimateError(null);
-	// 			const gasEstimate = await synthetix.getGasEstimateForTransaction({
-	// 				txArgs: [redeemableDeprecatedSynths],
-	// 				method: Redeemer.redeemAll,
-	// 			});
-	// 			setGasLimit(gasEstimate);
-	// 		} catch (e) {
-	// 			console.log(e.message);
-	// 			setGasEstimateError(e.message);
-	// 		}
-	// 	};
-	// 	getGasEstimate();
-	// }, [t, redeemableDeprecatedSynths]);
+	useEffect(() => {
+		switch (txn.txnStatus) {
+			// case 'prompting':
+			// 	setTxModalOpen(true);
+			// 	break;
+
+			// case 'unsent':
+			case 'confirmed':
+				setTxModalOpen(false);
+				onRedeemConfirmation(txn.hash);
+				break;
+		}
+	}, [txn.txnStatus, txn.hash, onRedeemConfirmation]);
 
 	const handleRedeem = async () => {
-		// try {
-		// 	const {
-		// 		contracts: { Redeemer },
-		// 	} = synthetix.js!;
-		// 	setTxError(null);
 		setTxModalOpen(true);
-		// 	const transaction = await Redeemer.redeemAll(redeemableDeprecatedSynths, {
-		// 		gasLimit,
-		// 		gasPrice: normalizedGasPrice(gasPrice),
-		// 	});
-		// 	if (transaction) {
-		// 		setTxModalOpen(false);
-		// 		onTransferConfirmation(transaction.hash);
-		// 	}
-		// } catch (e) {
-		// 	console.log(e);
-		// 	setTxError(e.message);
-		// }
+		txn.mutate();
 	};
 
 	return (
@@ -103,7 +82,7 @@ const RedeemDeprecatedSynthsModal: FC<{
 						<ReceiveValueContainer redeemAmount={redeemAmount} {...{ sUSDBalance }} />
 					</ValuesContainer>
 					<SettingsContainer>
-						<GasSelector gasLimitEstimate={gasLimit} setGasPrice={setGasPrice} />
+						<GasSelector gasLimitEstimate={txn.gasLimit} setGasPrice={setGasPrice} />
 					</SettingsContainer>
 				</ModalContainer>
 
@@ -115,13 +94,13 @@ const RedeemDeprecatedSynthsModal: FC<{
 					/>
 				</StyledButtonTransaction>
 
-				{gasEstimateError ? <ErrorMessage>{gasEstimateError}</ErrorMessage> : null}
+				{txn.error ? <ErrorMessage>{txn.errorMessage}</ErrorMessage> : null}
 			</Inner>
 
 			{txModalOpen && (
 				<TxConfirmationModal
 					onDismiss={() => setTxModalOpen(false)}
-					txError={txError}
+					txError={txn.errorMessage}
 					attemptRetry={handleRedeem}
 					content={
 						<ModalContent>
@@ -142,7 +121,7 @@ const RedeemDeprecatedSynthsModal: FC<{
 	);
 };
 
-const BurnValueContainer: FC<{ balances: SynthBalance[] }> = ({ balances }) => {
+const BurnValueContainer: FC<{ balances: DeprecatedSynthBalance[] }> = ({ balances }) => {
 	const { t } = useTranslation();
 
 	const titleLabel = (
@@ -154,7 +133,9 @@ const BurnValueContainer: FC<{ balances: SynthBalance[] }> = ({ balances }) => {
 			{balances.map((balance) => (
 				<ValueBalanceTableRow key={balance.currencyKey}>
 					<div>{balance.currencyKey}</div>
-					<div>{formatCryptoCurrency(balance.balance)}</div>
+					<div>
+						{formatCurrency(Synths.sUSD, balance.usdBalance)} {Synths.sUSD}
+					</div>
 				</ValueBalanceTableRow>
 			))}
 		</ValueBalanceTable>
@@ -244,6 +225,7 @@ const ValueContainer = styled.div`
 	display: flex;
 	flex-direction: column;
 	align-items: center;
+	margin-bottom: 12px;
 `;
 
 const ValueSelectLabel = styled.div`

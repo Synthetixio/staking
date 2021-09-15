@@ -15,6 +15,7 @@ type CurrencyAmountProps = {
 	totalValue: WeiSource;
 	sign?: string;
 	conversionRate?: WeiSource;
+	showValue?: boolean;
 	showTotalValue?: boolean;
 };
 
@@ -25,11 +26,14 @@ export const CurrencyAmount: FC<CurrencyAmountProps> = ({
 	totalValue,
 	sign,
 	conversionRate,
+	showValue = true,
 	showTotalValue = true,
 	...rest
 }) => (
 	<Container {...rest}>
-		<Amount className="amount">{formatCurrency(amountCurrencyKey, amount)}</Amount>
+		{!showValue ? null : (
+			<Amount className="amount">{formatCurrency(amountCurrencyKey, amount)}</Amount>
+		)}
 		{!showTotalValue ? null : (
 			<TotalValue className="total-value">
 				{formatCurrency(

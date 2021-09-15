@@ -1,4 +1,4 @@
-import React, { FC, ReactNode, useState } from 'react';
+import React, { FC, useState } from 'react';
 import Img, { Svg } from 'react-optimized-image';
 import styled from 'styled-components';
 

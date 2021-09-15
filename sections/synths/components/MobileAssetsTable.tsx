@@ -48,6 +48,9 @@ type AssetsTableProps = {
 	showHoldings: boolean;
 	isDeprecated?: boolean;
 	onTransferClick?: (currencyKey: string) => void;
+	showValue?: boolean;
+	showTotalValue?: boolean;
+	showPrice?: boolean;
 };
 
 const AssetsTable: FC<AssetsTableProps> = ({
@@ -59,6 +62,9 @@ const AssetsTable: FC<AssetsTableProps> = ({
 	showConvert,
 	isDeprecated,
 	onTransferClick,
+	showValue = true,
+	showTotalValue = true,
+	showPrice = true,
 }) => {
 	const { t } = useTranslation();
 	const { connectWallet, synthsMap } = Connector.useContainer();
@@ -69,7 +75,7 @@ const AssetsTable: FC<AssetsTableProps> = ({
 
 	const { selectedPriceCurrency, selectPriceCurrencyRate } = useSelectedPriceCurrency();
 
-	const assetColumns = useMemo(() => {
+	const assetColumns: any[] = useMemo(() => {
 		if (!isAppReady) {
 			return [];
 		}
@@ -108,13 +114,17 @@ const AssetsTable: FC<AssetsTableProps> = ({
 									totalValue={asset.usdBalance}
 									sign={selectedPriceCurrency.sign}
 									conversionRate={selectPriceCurrencyRate}
+									{...{ showValue, showTotalValue }}
 								/>
 							</div>
 
 							<div>{currencyIsSynth ? asset.currencyKey : null}</div>
-							<div>
-								<SynthPriceCol currencyKey={asset.currencyKey as CurrencyKey} />
-							</div>
+
+							{!showPrice ? null : (
+								<div>
+									<SynthPriceCol currencyKey={asset.currencyKey as CurrencyKey} />
+								</div>
+							)}
 
 							{!showHoldings ? null : (
 								<>
@@ -188,6 +198,9 @@ const AssetsTable: FC<AssetsTableProps> = ({
 		onTransferClick,
 		isL2,
 		synthsMap,
+		showValue,
+		showTotalValue,
+		showPrice,
 	]);
 
 	return (

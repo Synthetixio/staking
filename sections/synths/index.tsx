@@ -23,10 +23,9 @@ import Info from 'assets/svg/app/info.svg';
 import KwentaBanner from 'components/KwentaBanner';
 import TransactionNotifier from 'containers/TransactionNotifier';
 
-import { isWalletConnectedState, walletAddressState } from 'store/wallet';
+import { walletAddressState, isWalletConnectedState } from 'store/wallet';
 
 import useCryptoBalances, { CryptoBalance } from 'hooks/useCryptoBalances';
-import useRedeemableDeprecatedSynthsQuery from './useRedeemableDeprecatedSynthsQuery';
 
 import { isSynth } from 'utils/currencies';
 
@@ -34,34 +33,30 @@ import { CryptoCurrency } from 'constants/currency';
 import { Asset } from 'components/Form/AssetInput';
 
 const Index: FC = () => {
-	const [assetToTransfer, setAssetToTransfer] = useState<Asset | null>(null);
-
 	const { t } = useTranslation();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
-
+	const { useSynthsBalancesQuery, useRedeemableDeprecatedSynthsQuery } = useSynthetixQueries();
 	const walletAddress = useRecoilValue(walletAddressState);
-	const { useSynthsBalancesQuery } = useSynthetixQueries();
+	const [assetToTransfer, setAssetToTransfer] = useState<Asset | null>(null);
 
+	const redeemableDeprecatedSynthsQuery = useRedeemableDeprecatedSynthsQuery(walletAddress);
 	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
 	const cryptoBalances = useCryptoBalances(walletAddress);
-	const redeemableDeprecatedSynthsQuery = useRedeemableDeprecatedSynthsQuery();
 
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 
-	const totalSynthValue = synthsBalancesQuery.isSuccess
-		? synthsBalancesQuery.data?.totalUSDBalance ?? wei(0)
-		: wei(0);
-
-	const synthBalances =
-		synthsBalancesQuery.isSuccess && synthsBalancesQuery.data != null
-			? synthsBalancesQuery.data
-			: null;
-
+	const synthBalances = useMemo(
+		() =>
+			synthsBalancesQuery.isSuccess && synthsBalancesQuery.data != null
+				? synthsBalancesQuery.data
+				: null,
+		[synthsBalancesQuery.isSuccess, synthsBalancesQuery.data]
+	);
+	const totalSynthValue = useMemo(() => synthBalances?.totalUSDBalance ?? wei(0), [synthBalances]);
 	const synthAssets = useMemo(() => synthBalances?.balances ?? [], [
 		synthBalances,
 	]) as CryptoBalance[];
 	const cryptoAssets = useMemo(() => cryptoBalances?.balances ?? [], [cryptoBalances]);
-
 	const transferableAssets = useMemo(
 		() =>
 			synthAssets
@@ -73,6 +68,16 @@ const Index: FC = () => {
 				.filter(({ currencyKey }) => isSynth(currencyKey) || currencyKey === CryptoCurrency.SNX),
 		[synthAssets, cryptoAssets]
 	);
+	const redeemableDeprecatedSynths = useMemo(() => redeemableDeprecatedSynthsQuery?.data, [
+		redeemableDeprecatedSynthsQuery?.data,
+	]);
+	const redeemAmount = useMemo(() => redeemableDeprecatedSynths?.totalUSDBalance ?? wei(0), [
+		redeemableDeprecatedSynths,
+	]);
+	const redeemBalances = useMemo(() => redeemableDeprecatedSynths?.balances ?? [], [
+		redeemableDeprecatedSynths,
+	]);
+
 	const handleOnTransferClick = useCallback(
 		(key) => {
 			const selectedAsset = transferableAssets.find(({ currencyKey }) => key === currencyKey);
@@ -113,7 +118,7 @@ const Index: FC = () => {
 
 			<VerticalSpacer />
 
-			{isWalletConnected && redeemableDeprecatedSynthsQuery.data?.totalUSDBalance?.gt(0) && (
+			{isWalletConnected && redeemBalances.length && (
 				<AssetsTable
 					title={
 						<FlexDivRow>
@@ -138,17 +143,24 @@ const Index: FC = () => {
 							</FlexDivRowCentered>
 
 							<RedeemableDeprecatedSynthsButton
-								{...{ redeemableDeprecatedSynthsQuery, synthBalances }}
+								{...{
+									redeemableDeprecatedSynthsQuery,
+									synthBalances,
+									redeemAmount,
+									redeemBalances,
+								}}
 							/>
 						</FlexDivRow>
 					}
-					assets={redeemableDeprecatedSynthsQuery.data?.balances ?? []}
-					totalValue={redeemableDeprecatedSynthsQuery.data?.totalUSDBalance ?? wei(0)}
+					assets={redeemBalances}
+					totalValue={redeemAmount}
 					isLoading={redeemableDeprecatedSynthsQuery.isLoading}
 					isLoaded={!redeemableDeprecatedSynthsQuery.isLoading}
-					showHoldings={true}
+					showHoldings={false}
 					showConvert={false}
 					isDeprecated
+					showValue={false}
+					showPrice={false}
 				/>
 			)}
 
