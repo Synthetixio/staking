@@ -116,7 +116,7 @@ const InfoBox = () => {
 						<WarningHeading>{t('layer2.deposit.info.warning')}</WarningHeading>
 						<WarningBody>{t('layer2.deposit.info.metamask-only')}</WarningBody>
 						<WarningBody>{t('layer2.deposit.info.layer2-withdraw-delay')}</WarningBody>
-						<WarningBody>{t('layer2.deposit.info.layer2-rewards')}</WarningBody>
+						<WarningBody>{t('layer2.deposit.info.layer2-limited-synths')}</WarningBody>
 					</StyledFlexDivColCentered>
 				)}
 			</ContainerBody>
