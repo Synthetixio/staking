@@ -115,6 +115,7 @@ const InfoBox = () => {
 					<StyledFlexDivColCentered>
 						<Svg src={Warning} />
 						<WarningHeading>{t('layer2.deposit.info.warning')}</WarningHeading>
+						<WarningBody>{t('layer2.deposit.info.layer2-migrate-intro')}</WarningBody>
 						<WarningBody>{t('layer2.deposit.info.metamask-only')}</WarningBody>
 						<WarningBody>{t('layer2.deposit.info.layer2-withdraw-delay')}</WarningBody>
 						<WarningBody>
@@ -144,6 +145,10 @@ const StyledSubtitle = styled(Subtitle)`
 
 const StyledFlexDivColCentered = styled(FlexDivColCentered)`
 	padding: 0 20px;
+
+	& > * {
+		padding: 4px 0;
+	}
 `;
 
 const Bold = css`
