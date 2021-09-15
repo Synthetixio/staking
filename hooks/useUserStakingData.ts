@@ -23,12 +23,14 @@ export const useUserStakingData = (walletAddress: string | null) => {
 	const history = useFeeClaimHistoryQuery(walletAddress);
 	const currentFeePeriod = useGetFeePoolDataQuery(0);
 	const {
-		useTotalIssuedSynthsExcludingEtherQuery,
+		useTotalIssuedSynthsExcludeOtherCollateralQuery,
 		useExchangeRatesQuery,
 		useGlobalStakingInfoQuery,
 	} = useSynthetixQueries();
 	const exchangeRatesQuery = useExchangeRatesQuery();
-	const totalIssuedSynthsExclEth = useTotalIssuedSynthsExcludingEtherQuery(Synths.sUSD);
+	const totalIssuedSynthsExclOtherCollateral = useTotalIssuedSynthsExcludeOtherCollateralQuery(
+		Synths.sUSD
+	);
 	const previousFeePeriod = useGetFeePoolDataQuery(1);
 	const {
 		currentCRatio,
@@ -42,7 +44,7 @@ export const useUserStakingData = (walletAddress: string | null) => {
 	const feesToDistribute = previousFeePeriod?.data?.feesToDistribute ?? wei(0);
 	const rewardsToDistribute = previousFeePeriod?.data?.rewardsToDistribute ?? wei(0);
 
-	const totalsUSDDebt = wei(totalIssuedSynthsExclEth?.data ?? 0);
+	const totalsUSDDebt = wei(totalIssuedSynthsExclOtherCollateral?.data ?? 0);
 	const sUSDRate = wei(exchangeRatesQuery.data?.sUSD ?? 0);
 	const SNXRate = wei(exchangeRatesQuery.data?.SNX ?? 0);
 
