@@ -32,7 +32,7 @@ const useClearDebtCalculations = (
 	const quoteData = quoteQuery.isSuccess && quoteQuery.data != null ? quoteQuery.data : null;
 	const quoteAmount = quoteData?.toTokenAmount ?? zeroBN;
 
-	const swapQuery = use1InchSwapQuery(ethAddress, sUSDAddress, quoteAmount, walletAddress!, 50);
+	const swapQuery = use1InchSwapQuery(ethAddress, sUSDAddress, quoteAmount, walletAddress!, 1);
 	const swapData = swapQuery.isSuccess && swapQuery.data != null ? swapQuery.data : null;
 
 	return {
