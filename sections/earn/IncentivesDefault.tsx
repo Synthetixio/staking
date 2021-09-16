@@ -97,6 +97,8 @@ const Incentives: FC<IncentivesProps> = ({
 		]
 	);
 
+	console.log('GLOBAL STAKING INFO', globalStakingInfoQuery.status, globalStakingInfoQuery.error);
+
 	const incentivesTable = (
 		<IncentivesTable activeTab={activeTab} data={incentives} isLoaded={true} />
 	);

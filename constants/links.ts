@@ -5,7 +5,8 @@ export const EXTERNAL_LINKS = {
 		Kwenta: 'https://kwenta.io',
 		DexAG: 'https://dex.ag/',
 		Uniswap: 'https://uniswap.exchange/',
-		OneInchLink: (from: CurrencyKey, to: CurrencyKey) => `https://1inch.exchange/#/${from}/${to}`,
+		OneInchLink: (from: CurrencyKey, to: CurrencyKey) =>
+			`https://1inch.exchange/#/1/swap/${from}/${to}`,
 	},
 	Synthetix: {
 		Home: 'https://www.synthetix.io',
