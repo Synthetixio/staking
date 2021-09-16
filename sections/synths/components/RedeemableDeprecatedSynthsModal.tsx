@@ -9,7 +9,7 @@ import { Svg } from 'react-optimized-image';
 import BaseModal from 'components/BaseModal';
 import { ButtonTransaction } from 'components/Form/common';
 
-import { FlexDivColCentered, FlexDivCentered } from 'styles/common';
+import { FlexDivColCentered, FlexDivCentered, StyledExternalLink } from 'styles/common';
 import media from 'styles/media';
 
 import Connector from 'containers/Connector';
@@ -96,6 +96,11 @@ const RedeemDeprecatedSynthsModal: FC<{
 										components={[<NoTextTransform />, <NoTextTransform />]}
 									/>
 								</GreyHeader>
+								{txn.hash ? (
+									<StyledExternalLink href={txn.hash}>
+										{t('synths.redeemable-deprecated-synths.tx.etherscan')}
+									</StyledExternalLink>
+								) : null}
 							</FlexDivColCentered>
 						}
 					/>
@@ -111,16 +116,9 @@ const RedeemDeprecatedSynthsModal: FC<{
 								<GasSelector gasLimitEstimate={txn.gasLimit} setGasPrice={setGasPrice} />
 							</SettingsContainer>
 						</ModalContainer>
-						<StyledButtonTransaction
-							size="lg"
-							variant="primary"
-							onClick={handleRedeem}
-							disabled={txn.txnStatus === 'pending'}
-						>
+						<StyledButtonTransaction size="lg" variant="primary" onClick={handleRedeem}>
 							<Trans
-								i18nKey={`synths.redeemable-deprecated-synths.button.${
-									txn.txnStatus === 'pending' ? 'pending' : 'default'
-								}`}
+								i18nKey={'synths.redeemable-deprecated-synths.button-label'}
 								values={{}}
 								components={[<CurrencyKeyStyle />]}
 							/>
