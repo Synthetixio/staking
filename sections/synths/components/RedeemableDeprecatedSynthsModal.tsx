@@ -9,7 +9,7 @@ import { Svg } from 'react-optimized-image';
 import BaseModal from 'components/BaseModal';
 import { ButtonTransaction } from 'components/Form/common';
 
-import { FlexDivColCentered, FlexDivCentered, StyledExternalLink } from 'styles/common';
+import { FlexDivColCentered, FlexDivCentered, BlueStyledExternalLink } from 'styles/common';
 import media from 'styles/media';
 
 import Connector from 'containers/Connector';
@@ -97,9 +97,9 @@ const RedeemDeprecatedSynthsModal: FC<{
 									/>
 								</GreyHeader>
 								{txn.hash ? (
-									<StyledExternalLink href={txn.hash}>
+									<BlueStyledExternalLink href={txn.hash}>
 										{t('synths.redeemable-deprecated-synths.tx.etherscan')}
-									</StyledExternalLink>
+									</BlueStyledExternalLink>
 								) : null}
 							</FlexDivColCentered>
 						}

@@ -12,7 +12,7 @@ import {
 	VerticalSpacer,
 	Tooltip,
 	FlexDivRowCentered,
-	StyledExternalLink,
+	BlueStyledExternalLink,
 } from 'styles/common';
 
 import AssetsTable from 'sections/synths/components/AssetsTable';
@@ -131,7 +131,7 @@ const Index: FC = () => {
 										<Trans
 											i18nKey={'synths.redeemable-deprecated-synths.tooltip'}
 											components={[
-												<StyledExternalLink href="https://sips.synthetix.io/sips/sip-174" />,
+												<BlueStyledExternalLink href="https://sips.synthetix.io/sips/sip-174" />,
 											]}
 										/>
 									}
