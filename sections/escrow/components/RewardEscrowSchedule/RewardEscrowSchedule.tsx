@@ -85,7 +85,7 @@ const RewardEscrowSchedule: React.FC = () => {
 								sortable: false,
 							},
 						]}
-						data={schedule ?? []}
+						data={schedule ? schedule.filter((e) => e.quantity.gt(0)) : []}
 						isLoading={escrowDataQuery.isLoading}
 						showPagination={true}
 					/>
