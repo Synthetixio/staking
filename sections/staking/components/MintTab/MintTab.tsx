@@ -47,6 +47,10 @@ const MintTab: React.FC = () => {
 
 	let error: string | null = null;
 
+	useEffect(() => {
+		if (txn.txnStatus === 'prompting') setTxModalOpen(true);
+	}, [txn.txnStatus]);
+
 	// header title
 	useEffect(() => {
 		setTitle('staking', 'mint');
@@ -59,6 +63,7 @@ const MintTab: React.FC = () => {
 		switch (mintType) {
 			case MintActionType.MAX:
 				inputValue = getMintAmount(targetCRatio, unstakedCollateral, SNXRate).toString();
+				onMintChange(inputValue);
 				onSubmit = () => txn.mutate();
 				isLocked = true;
 				break;

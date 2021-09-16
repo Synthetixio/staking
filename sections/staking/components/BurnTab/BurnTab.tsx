@@ -117,6 +117,10 @@ const BurnTab: React.FC = () => {
 		gasPrice: gasPrice.toBN(),
 	});
 
+	useEffect(() => {
+		if (txn.txnStatus === 'prompting') setTxModalOpen(true);
+	}, [txn.txnStatus]);
+
 	// header title
 	useEffect(() => {
 		setTitle('staking', 'burn');

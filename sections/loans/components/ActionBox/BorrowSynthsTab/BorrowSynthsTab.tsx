@@ -202,7 +202,6 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 	}, [collateralIsETH, collateralContract, address, signer]);
 
 	useEffect(() => {
-		console.log('txn status change', openTxn.txnStatus);
 		switch (openTxn.txnStatus) {
 			case 'unsent':
 				setTxModalOpen(false);
@@ -221,7 +220,6 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 	}, [openTxn.txnStatus, router]);
 
 	useEffect(() => {
-		console.log('approve status change', openTxn.txnStatus);
 		switch (openTxn.txnStatus) {
 			case 'unsent':
 			case 'confirmed':

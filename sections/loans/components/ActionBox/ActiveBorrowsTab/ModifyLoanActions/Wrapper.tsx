@@ -116,7 +116,6 @@ const Wrapper: FC<WrapperProps> = ({
 
 	const data = getTxData({});
 
-	console.log('tx data', data);
 	const txn = useContractTxn(data?.[0], data?.[1], data?.[2], {
 		gasPrice: gasPrice.toBN(),
 	});
