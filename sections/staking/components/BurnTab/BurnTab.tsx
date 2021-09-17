@@ -25,7 +25,12 @@ const BurnTab: React.FC = () => {
 	const [amountToBurn, onBurnChange] = useRecoilState(amountToBurnState);
 	const [burnType, onBurnTypeChange] = useRecoilState(burnTypeState);
 
-	const { useSynthsBalancesQuery, useETHBalanceQuery, useSynthetixTxn } = useSynthetixQueries();
+	const {
+		useSynthsBalancesQuery,
+		useETHBalanceQuery,
+		useSynthetixTxn,
+		useEVMTxn,
+	} = useSynthetixQueries();
 
 	const { percentageTargetCRatio, debtBalance, issuableSynths } = useStakingCalculations();
 	const walletAddress = useRecoilValue(walletAddressState);
@@ -53,6 +58,7 @@ const BurnTab: React.FC = () => {
 		debtBalanceWithBuffer,
 		missingSUSDWithBuffer,
 		quoteAmount,
+		swapData,
 	} = useClearDebtCalculations(debtBalance, sUSDBalance, walletAddress!);
 
 	const ethBalanceQuery = useETHBalanceQuery(walletAddress);
@@ -113,13 +119,15 @@ const BurnTab: React.FC = () => {
 		? ['burnSynthsToTarget', []]
 		: ['burnSynths', [amountToBurnBN.toBN()]];
 
+	const swapTxn = useEVMTxn(swapData);
+
 	const txn = useSynthetixTxn('Synthetix', burnCall[0], burnCall[1], {
 		gasPrice: gasPrice.toBN(),
 	});
 
 	useEffect(() => {
-		if (txn.txnStatus === 'prompting') setTxModalOpen(true);
-	}, [txn.txnStatus]);
+		if (swapTxn.txnStatus === 'prompting' || txn.txnStatus === 'prompting') setTxModalOpen(true);
+	}, [txn.txnStatus, swapTxn.txnStatus]);
 
 	// header title
 	useEffect(() => {
@@ -193,7 +201,11 @@ const BurnTab: React.FC = () => {
 				if (!needToBuy) {
 					onBurnTypeChange(BurnActionType.MAX);
 					handleSubmit = () => {
-						txn.mutate();
+						if (needToBuy) {
+							swapTxn.mutate();
+						} else {
+							txn.mutate();
+						}
 					};
 					inputValue = maxBurnAmount.toString();
 					isLocked = true;
@@ -258,6 +270,7 @@ const BurnTab: React.FC = () => {
 		quoteAmount,
 		error,
 		txn,
+		swapTxn,
 	]);
 
 	return <TabContainer>{returnPanel}</TabContainer>;
