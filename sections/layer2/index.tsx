@@ -85,17 +85,17 @@ const Index: FC = () => {
 				copy: t('layer2.actions.burn.subtitle'),
 				link: ROUTES.Staking.Burn,
 			},
-			apr: {
-				title: t('layer2.actions.apr.title', {
-					amountSNX: formatCryptoCurrency(l2AmountSNX, {
-						maxDecimals: 0,
-						currencyKey: CryptoCurrency.SNX,
-					}),
-					apr: formatPercent(l2APR),
-				}),
-				copy: t('layer2.actions.apr.subtitle'),
-				externalLink: EXTERNAL_LINKS.Synthetix.OEBlog,
-			},
+			// apr: {
+			// 	title: t('layer2.actions.apr.title', {
+			// 		amountSNX: formatCryptoCurrency(l2AmountSNX, {
+			// 			maxDecimals: 0,
+			// 			currencyKey: CryptoCurrency.SNX,
+			// 		}),
+			// 		apr: formatPercent(l2APR),
+			// 	}),
+			// 	copy: t('layer2.actions.apr.subtitle'),
+			// 	externalLink: EXTERNAL_LINKS.Synthetix.OEBlog,
+			// },
 		}),
 		[t, l2AmountSNX, l2APR, depositsInactive]
 	);
@@ -104,9 +104,9 @@ const Index: FC = () => {
 		() =>
 			debtBalance.eq(0)
 				? [
-						{
-							...ACTIONS.apr,
-						},
+						// {
+						// 	...ACTIONS.apr,
+						// },
 						{
 							...ACTIONS.deposit,
 							isDisabled: transferableCollateral.eq(0) || depositsInactive,
@@ -117,9 +117,9 @@ const Index: FC = () => {
 						},
 				  ]
 				: [
-						{
-							...ACTIONS.apr,
-						},
+						// {
+						// 	...ACTIONS.apr,
+						// },
 						{
 							...ACTIONS.burn,
 						},

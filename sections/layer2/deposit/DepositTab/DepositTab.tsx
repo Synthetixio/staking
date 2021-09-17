@@ -41,7 +41,8 @@ const DepositTab = () => {
 		[transferableCollateral.toBN()],
 		{
 			gasPrice: gasPrice.toBN(),
-		}
+		},
+		{ gasLimitBuffer: 0.15, enabled: isApproved }
 	);
 
 	const getAllowance = useCallback(async () => {
