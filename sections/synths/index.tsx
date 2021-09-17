@@ -33,11 +33,13 @@ import { CryptoCurrency } from 'constants/currency';
 import { Asset } from 'components/Form/AssetInput';
 
 const Index: FC = () => {
+	const [assetToTransfer, setAssetToTransfer] = useState<Asset | null>(null);
+	const [transferModalOpen, setTransferModalOpen] = useState<boolean>(false);
+
 	const { t } = useTranslation();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const { useSynthsBalancesQuery, useRedeemableDeprecatedSynthsQuery } = useSynthetixQueries();
 	const walletAddress = useRecoilValue(walletAddressState);
-	const [assetToTransfer, setAssetToTransfer] = useState<Asset | null>(null);
 
 	const redeemableDeprecatedSynthsQuery = useRedeemableDeprecatedSynthsQuery(walletAddress);
 	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
@@ -79,9 +81,10 @@ const Index: FC = () => {
 	]);
 
 	const handleOnTransferClick = useCallback(
-		(key) => {
+		(key: string) => {
 			const selectedAsset = transferableAssets.find(({ currencyKey }) => key === currencyKey);
 			setAssetToTransfer(selectedAsset || null);
+			setTransferModalOpen(true);
 		},
 		[transferableAssets]
 	);
@@ -178,16 +181,15 @@ const Index: FC = () => {
 					onTransferClick={handleOnTransferClick}
 				/>
 			)}
-
-			{assetToTransfer ? (
+			{transferModalOpen && (
 				<TransferModal
-					onDismiss={() => setAssetToTransfer(null)}
+					onDismiss={() => setTransferModalOpen(false)}
 					assets={transferableAssets}
 					currentAsset={assetToTransfer}
 					setAsset={(asset) => setAssetToTransfer(asset)}
 					onTransferConfirmation={handleTransferConfirmation}
 				/>
-			) : null}
+			)}
 		</>
 	);
 };

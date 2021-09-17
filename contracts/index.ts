@@ -23,7 +23,6 @@ import balancersCOINPoolToken from './balancersCOINPoolToken';
 
 import wETHToken from './wETHToken';
 import wBTCToken from './wBTCToken';
-import snxToken from './snxToken';
 
 import * as renBTCToken from './renBTCToken';
 
@@ -54,7 +53,6 @@ export {
 	wETHToken,
 	wBTCToken,
 	renBTCToken,
-	snxToken,
 	dualStakingRewards,
 	DHTsUSDLPToken,
 	yearnSNXVault,

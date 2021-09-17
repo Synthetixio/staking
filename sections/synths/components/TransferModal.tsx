@@ -19,6 +19,7 @@ import Wei, { wei } from '@synthetixio/wei';
 import Connector from 'containers/Connector';
 import useSynthetixQueries from '@synthetixio/queries';
 import { ethers } from 'ethers';
+import { parseSafeWei } from 'utils/parse';
 
 type TransferModalProps = {
 	onDismiss: () => void;
@@ -42,11 +43,11 @@ const TransferModal: FC<TransferModalProps> = ({
 	const { useContractTxn } = useSynthetixQueries();
 
 	const [amount, setAmount] = useState<string>('');
-	const [walletAddress, setWalletAddress] = useState('');
+	const [destinationAddress, setDestinationAddress] = useState('');
 	const [gasPrice, setGasPrice] = useState<Wei>(wei(0));
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 	const onEnterAddress = (e: React.ChangeEvent<HTMLTextAreaElement>) =>
-		setWalletAddress((e.target.value ?? '').trim());
+		setDestinationAddress((e.target.value ?? '').trim());
 
 	const contract = synthetixjs!.contracts[
 		isSynth(currentAsset?.currencyKey)
@@ -54,20 +55,29 @@ const TransferModal: FC<TransferModalProps> = ({
 			: 'Synthetix'
 	];
 
+	const transferAmountWei = parseSafeWei(amount, 0);
+
 	const txn = useContractTxn(
 		contract,
 		isSynth(currentAsset?.currencyKey) ? 'transferAndSettle' : 'transfer',
-		[wei(amount).toBN()],
+		[
+			ethers.utils.isAddress(destinationAddress)
+				? destinationAddress
+				: ethers.constants.AddressZero,
+			transferAmountWei.toBN(),
+		],
 		{ gasPrice: gasPrice.toBN() }
 	);
 
 	useEffect(() => {
+		if (txn.txnStatus === 'prompting') setTxModalOpen(true);
 		if (txn.txnStatus === 'confirmed') onTransferConfirmation(txn.hash!);
 	}, [txn.txnStatus, txn.hash, onTransferConfirmation]);
 
 	let error: string | null = null;
-	if (!ethers.utils.isAddress(walletAddress)) error = t('synths.transfer.error.invalid-address');
-	if (wei(amount).gt(currentAsset?.balance))
+	if (!ethers.utils.isAddress(destinationAddress))
+		error = t('synths.transfer.error.invalid-address');
+	if (transferAmountWei.gt(currentAsset?.balance))
 		error = t('synths.transfer.error.insufficient-balance');
 
 	const renderButton = () => {
@@ -78,7 +88,7 @@ const TransferModal: FC<TransferModalProps> = ({
 				</StyledButtonTransaction>
 			);
 		}
-		if (!walletAddress) {
+		if (!destinationAddress) {
 			return (
 				<StyledButtonTransaction size="lg" variant="primary" disabled={true}>
 					{t('synths.transfer.button.no-address')}
@@ -122,7 +132,7 @@ const TransferModal: FC<TransferModalProps> = ({
 						<TextInput
 							label={t('common.form.to-address')}
 							placeholder={t('common.form.address-input-placeholder')}
-							value={walletAddress}
+							value={destinationAddress}
 							onChange={onEnterAddress}
 						/>
 					</InputsContainer>
@@ -154,7 +164,7 @@ const TransferModal: FC<TransferModalProps> = ({
 							</ModalItem>
 							<ModalItem>
 								<ModalItemTitle>{t('modals.confirm-transaction.transfer.to')}</ModalItemTitle>
-								<ModalItemText>{truncateAddress(walletAddress)}</ModalItemText>
+								<ModalItemText>{truncateAddress(destinationAddress)}</ModalItemText>
 							</ModalItem>
 						</ModalContent>
 					}

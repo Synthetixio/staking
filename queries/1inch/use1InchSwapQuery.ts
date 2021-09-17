@@ -48,10 +48,11 @@ const use1InchSwapQuery = (
 			});
 
 			const transaction = response.data.tx;
+			delete transaction.gas;
 			return {
 				...transaction,
-				value: wei(transaction.value).toBN(),
-				gasPrice: wei(transaction.gasPrice).toBN(),
+				value: wei(transaction.value, 0).toBN(),
+				gasPrice: wei(transaction.gasPrice, 0).toBN(),
 			};
 		},
 		{

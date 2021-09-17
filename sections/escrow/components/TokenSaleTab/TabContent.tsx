@@ -54,7 +54,7 @@ const TabContent: FC<TabContentProps> = ({
 	const vestingCurrencyKey = CryptoCurrency['SNX'];
 
 	const renderButton = () => {
-		if (claimableAmount) {
+		if (claimableAmount.gt(0)) {
 			return (
 				<StyledCTA
 					blue={true}

@@ -31,7 +31,7 @@ const MintTab: React.FC = () => {
 
 	const isMax = mintType === MintActionType.MAX;
 
-	const amountToMintBN = Wei.min(wei(0), parseSafeWei(amountToMint, wei(0)));
+	const amountToMintBN = Wei.max(wei(0), parseSafeWei(amountToMint, wei(0)));
 
 	const mintCall: [string, any[]] = !!delegateWallet
 		? isMax
@@ -47,6 +47,10 @@ const MintTab: React.FC = () => {
 
 	let error: string | null = null;
 
+	useEffect(() => {
+		if (txn.txnStatus === 'prompting') setTxModalOpen(true);
+	}, [txn.txnStatus]);
+
 	// header title
 	useEffect(() => {
 		setTitle('staking', 'mint');
@@ -59,12 +63,12 @@ const MintTab: React.FC = () => {
 		switch (mintType) {
 			case MintActionType.MAX:
 				inputValue = getMintAmount(targetCRatio, unstakedCollateral, SNXRate).toString();
+				onMintChange(inputValue);
 				onSubmit = () => txn.mutate();
 				isLocked = true;
 				break;
 			case MintActionType.CUSTOM:
 				onSubmit = () => txn.mutate();
-				inputValue = amountToMint;
 				isLocked = false;
 				break;
 			default:
@@ -93,7 +97,6 @@ const MintTab: React.FC = () => {
 		error,
 		txModalOpen,
 		SNXRate,
-		amountToMint,
 		onMintChange,
 		onMintTypeChange,
 		targetCRatio,

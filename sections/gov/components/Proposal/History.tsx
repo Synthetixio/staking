@@ -43,9 +43,9 @@ const History: React.FC<HistoryProps> = ({ proposalResults }) => {
 						<Title>{t('gov.proposal.history.header.choice')}</Title>
 						<Title>{t('gov.proposal.history.header.weight')}</Title>
 					</HeaderRow>
-					{voteList.length > 0 ? (
+					{voteList.length === 0 ? (
 						<Row>
-							<Title>{t('gov.proposal.history.empty')}</Title>
+							<EmptyTitle>{t('gov.proposal.history.empty')}</EmptyTitle>
 						</Row>
 					) : (
 						<List
@@ -158,6 +158,10 @@ const Title = styled.div`
 	color: ${(props) => props.theme.colors.white};
 	margin-left: 8px;
 	text-align: left;
+`;
+
+const EmptyTitle = styled(Title)`
+	margin-bottom: 16px;
 `;
 
 const Value = styled(FlexDivRowCentered)`

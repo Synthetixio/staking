@@ -108,7 +108,6 @@ const ApproveModal: FC<ApproveModalProps> = ({
 				setTxModalOpen(true);
 				const allowance = parseEther(TokenAllowanceLimit.toString());
 				const approvedContract = getContractByName(synthetixjs!, contractToApprove, signer);
-				console.log('approval submitted', normalizeGasLimit(gasLimitEstimate.toNumber()));
 				const transaction: ethers.ContractTransaction = await contracts[tokenContract].approve(
 					approvedContract.address,
 					allowance,
