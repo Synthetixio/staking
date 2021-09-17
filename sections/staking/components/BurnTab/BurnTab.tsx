@@ -127,6 +127,7 @@ const BurnTab: React.FC = () => {
 
 	useEffect(() => {
 		if (swapTxn.txnStatus === 'prompting' || txn.txnStatus === 'prompting') setTxModalOpen(true);
+		if (swapTxn.txnStatus === 'confirmed' && swapTxn.txnStatus === 'unsent') txn.mutate();
 	}, [txn.txnStatus, swapTxn.txnStatus]);
 
 	// header title
