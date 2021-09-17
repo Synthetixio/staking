@@ -128,7 +128,10 @@ const BurnTab: React.FC = () => {
 		{
 			gasPrice: gasPrice.toBN(),
 		},
-		{ gasLimitBuffer: 0.15, enabled: burnType !== BurnActionType.CLEAR || !needToBuy }
+		{
+			gasLimitBuffer: 0.15,
+			enabled: burnType !== BurnActionType.CLEAR || !needToBuy || swapTxn.txnStatus === 'confirmed',
+		}
 	);
 
 	useEffect(() => {
