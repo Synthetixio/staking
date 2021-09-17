@@ -18,7 +18,10 @@ const MigrateTab = () => {
 	const claimableAmount = escrowDataQuery?.data?.claimableAmount ?? wei(0);
 	const escrowData = escrowDataQuery?.data ?? null;
 	const totalEscrowed = escrowData?.totalEscrowed ?? wei(0);
-	const entryIds = useMemo(() => escrowData?.claimableEntryIdsInChunk ?? [], [escrowData]);
+	const entryIds = useMemo(
+		() => escrowData?.claimableEntryIdsInChunk?.map((v) => v.map((eid) => eid.toBN())) ?? [],
+		[escrowData]
+	);
 
 	const [isVestNeeded, setIsVestNeeded] = useState<boolean>(false);
 	const [gasPrice, setGasPrice] = useState<Wei>(wei(0));
@@ -29,7 +32,7 @@ const MigrateTab = () => {
 	});
 
 	useEffect(() => {
-		if (claimableAmount) {
+		if (claimableAmount.gt(0)) {
 			setIsVestNeeded(true);
 		}
 	}, [claimableAmount]);
