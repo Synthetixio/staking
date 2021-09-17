@@ -301,7 +301,6 @@ const StakingInput: React.FC<StakingInputProps> = ({
 							<StyledInput
 								type="number"
 								maxLength={12}
-								value={inputValue}
 								placeholder="0"
 								onChange={(e) => onInputChange(e.target.value)}
 								disabled={
