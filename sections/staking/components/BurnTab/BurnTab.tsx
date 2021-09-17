@@ -58,7 +58,7 @@ const BurnTab: React.FC = () => {
 	const ethBalanceQuery = useETHBalanceQuery(walletAddress);
 	const ethBalance = ethBalanceQuery.data ?? wei(0);
 
-	const amountToBurnBN = parseSafeWei(amountToBurn, wei(0));
+	const amountToBurnBN = Wei.max(wei(0), parseSafeWei(amountToBurn, wei(0)));
 
 	const isToTarget = burnType === BurnActionType.TARGET;
 

@@ -31,7 +31,7 @@ const MintTab: React.FC = () => {
 
 	const isMax = mintType === MintActionType.MAX;
 
-	const amountToMintBN = Wei.min(wei(0), parseSafeWei(amountToMint, wei(0)));
+	const amountToMintBN = Wei.max(wei(0), parseSafeWei(amountToMint, wei(0)));
 
 	const mintCall: [string, any[]] = !!delegateWallet
 		? isMax
@@ -69,7 +69,6 @@ const MintTab: React.FC = () => {
 				break;
 			case MintActionType.CUSTOM:
 				onSubmit = () => txn.mutate();
-				inputValue = amountToMint;
 				isLocked = false;
 				break;
 			default:
@@ -98,7 +97,6 @@ const MintTab: React.FC = () => {
 		error,
 		txModalOpen,
 		SNXRate,
-		amountToMint,
 		onMintChange,
 		onMintTypeChange,
 		targetCRatio,
