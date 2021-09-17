@@ -121,7 +121,6 @@ const BurnTab: React.FC = () => {
 
 	const swapTxn = useEVMTxn(swapData, {
 		onSuccess: () => txn.mutate(),
-		gasLimitBuffer: 0.15,
 		enabled: true,
 	});
 
@@ -133,7 +132,6 @@ const BurnTab: React.FC = () => {
 			gasPrice: gasPrice.toBN(),
 		},
 		{
-			gasLimitBuffer: 0.15,
 			enabled: burnType !== BurnActionType.CLEAR || !needToBuy || swapTxn.txnStatus === 'confirmed',
 		}
 	);

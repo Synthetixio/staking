@@ -42,7 +42,7 @@ const DepositTab = () => {
 		{
 			gasPrice: gasPrice.toBN(),
 		},
-		{ gasLimitBuffer: 0.15, enabled: isApproved }
+		{ enabled: isApproved }
 	);
 
 	const getAllowance = useCallback(async () => {
