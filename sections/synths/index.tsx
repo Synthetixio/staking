@@ -21,6 +21,7 @@ import { Asset } from 'components/Form/AssetInput';
 
 const Index: FC = () => {
 	const [assetToTransfer, setAssetToTransfer] = useState<Asset | null>(null);
+	const [transferModalOpen, setTransferModalOpen] = useState<boolean>(false);
 
 	const { t } = useTranslation();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
@@ -58,10 +59,12 @@ const Index: FC = () => {
 				.filter(({ currencyKey }) => isSynth(currencyKey) || currencyKey === CryptoCurrency.SNX),
 		[synthAssets, cryptoAssets]
 	);
+
 	const handleOnTransferClick = useCallback(
-		(key) => {
+		(key: string) => {
 			const selectedAsset = transferableAssets.find(({ currencyKey }) => key === currencyKey);
 			setAssetToTransfer(selectedAsset || null);
+			setTransferModalOpen(true);
 		},
 		[transferableAssets]
 	);
@@ -107,15 +110,15 @@ const Index: FC = () => {
 					onTransferClick={handleOnTransferClick}
 				/>
 			)}
-			{assetToTransfer ? (
+			{transferModalOpen && (
 				<TransferModal
-					onDismiss={() => setAssetToTransfer(null)}
+					onDismiss={() => setTransferModalOpen(false)}
 					assets={transferableAssets}
 					currentAsset={assetToTransfer}
 					setAsset={(asset) => setAssetToTransfer(asset)}
 					onTransferConfirmation={handleTransferConfirmation}
 				/>
-			) : null}
+			)}
 		</>
 	);
 };
