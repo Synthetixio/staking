@@ -6,7 +6,7 @@ import useSynthetixQueries, { DepositHistory } from '@synthetixio/queries';
 
 import { InfoContainer, Title, Subtitle } from '../../components/common';
 import ExternalLink from '../../components/ExternalLink';
-import { FlexDivColCentered, BlueStyledLink } from 'styles/common';
+import { FlexDivColCentered, BlueStyledExternalLink } from 'styles/common';
 
 import { formatShortDate } from 'utils/formatters/date';
 import { formatCurrency } from 'utils/formatters/number';
@@ -122,7 +122,7 @@ const InfoBox = () => {
 							{
 								<Trans
 									i18nKey={'layer2.deposit.info.layer2-gas'}
-									components={[<BlueStyledLink href={EXTERNAL_LINKS.L2.Optimism} />]}
+									components={[<BlueStyledExternalLink href={EXTERNAL_LINKS.L2.Optimism} />]}
 								/>
 							}
 						</WarningBody>

@@ -1,8 +1,9 @@
 import React, { FC, useState } from 'react';
-import Img from 'react-optimized-image';
+import Img, { Svg } from 'react-optimized-image';
 import styled from 'styled-components';
 
 import ETHIcon from 'assets/svg/currencies/crypto/ETH.svg';
+import DeprecatedXIcon from 'assets/svg/app/deprecated-x.svg';
 
 import { CryptoCurrency, CurrencyKey } from 'constants/currency';
 
@@ -22,6 +23,7 @@ type CurrencyIconProps = {
 	className?: string;
 	width?: string;
 	height?: string;
+	isDeprecated?: boolean;
 };
 
 export const SNXIcon =
@@ -30,7 +32,23 @@ export const SNXIcon =
 export const getSynthIcon = (currencyKey: CurrencyKey) =>
 	`https://raw.githubusercontent.com/Synthetixio/synthetix-assets/master/synths/${currencyKey}.svg`;
 
-export const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, type, ...rest }) => {
+export const CurrencyIconContainer: FC<CurrencyIconProps> = (props) => (
+	<Container>
+		<CurrencyIcon {...props} />
+		{props.isDeprecated && (
+			<DeprecatedXIconContainer>
+				<Svg src={DeprecatedXIcon} />
+			</DeprecatedXIconContainer>
+		)}
+	</Container>
+);
+
+export const CurrencyIcon: FC<CurrencyIconProps> = ({
+	currencyKey,
+	type,
+	isDeprecated,
+	...rest
+}) => {
 	const [firstFallbackError, setFirstFallbackError] = useState<boolean>(false);
 	const [secondFallbackError, setSecondFallbackError] = useState<boolean>(false);
 	const [thirdFallbackError, setThirdFallbackError] = useState<boolean>(false);
@@ -69,7 +87,8 @@ export const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, type, ...rest
 			}
 			default:
 				return (
-					<img
+					<TokenIcon
+						{...{ isDeprecated }}
 						src={
 							synthetixTokenListMap != null && synthetixTokenListMap[currencyKey] != null
 								? synthetixTokenListMap[currencyKey].logoURI
@@ -107,23 +126,37 @@ export const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, type, ...rest
 		);
 	} else {
 		return (
-			<Placeholder style={{ width: props.width, height: props.height }}>{currencyKey}</Placeholder>
+			<Placeholder {...{ isDeprecated }} style={{ width: props.width, height: props.height }}>
+				{currencyKey}
+			</Placeholder>
 		);
 	}
 };
 
-const Placeholder = styled(FlexDivCentered)`
+const Container = styled.div`
+	position: relative;
+`;
+
+const DeprecatedXIconContainer = styled.div`
+	position: absolute;
+	right: -3px;
+	bottom: -3px;
+`;
+
+const Placeholder = styled(FlexDivCentered)<{ isDeprecated?: boolean }>`
 	border-radius: 100%;
 	color: ${(props) => props.theme.colors.white};
-	border: 1px solid ${(props) => props.theme.colors.white};
+	border: 2px solid
+		${(props) => (props.isDeprecated ? props.theme.colors.red : props.theme.colors.white)};
 	font-size: 7px;
 	font-family: ${(props) => props.theme.fonts.interBold};
 	justify-content: center;
 	margin: 0 auto;
 `;
 
-const TokenIcon = styled.img`
+const TokenIcon = styled.img<{ isDeprecated?: boolean }>`
 	border-radius: 100%;
+	border: 2px solid ${(props) => (props.isDeprecated ? props.theme.colors.red : 'transparent')};
 `;
 
-export default CurrencyIcon;
+export default CurrencyIconContainer;

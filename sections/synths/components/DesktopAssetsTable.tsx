@@ -47,7 +47,11 @@ type AssetsTableProps = {
 	isLoaded: boolean;
 	showConvert: boolean;
 	showHoldings: boolean;
-	onTransferClick: (currencyKey: string) => void;
+	isDeprecated?: boolean;
+	onTransferClick?: (currencyKey: string) => void;
+	showValue?: boolean;
+	showTotalValue?: boolean;
+	showPrice?: boolean;
 };
 
 const AssetsTable: FC<AssetsTableProps> = ({
@@ -57,7 +61,11 @@ const AssetsTable: FC<AssetsTableProps> = ({
 	isLoaded,
 	showHoldings,
 	showConvert,
+	isDeprecated,
 	onTransferClick,
+	showValue = true,
+	showTotalValue = true,
+	showPrice = true,
 }) => {
 	const { t } = useTranslation();
 	const { connectWallet, synthsMap } = Connector.useContainer();
@@ -73,7 +81,7 @@ const AssetsTable: FC<AssetsTableProps> = ({
 			return [];
 		}
 
-		const columns = [
+		const columns: any[] = [
 			{
 				Header: <>{t('synths.assets.synths.table.asset')}</>,
 				accessor: 'currencyKey',
@@ -89,6 +97,7 @@ const AssetsTable: FC<AssetsTableProps> = ({
 									: undefined
 							}
 							showIcon={true}
+							{...{ isDeprecated }}
 						/>
 					);
 				},
@@ -109,12 +118,15 @@ const AssetsTable: FC<AssetsTableProps> = ({
 						totalValue={cellProps.row.original.usdBalance}
 						sign={selectedPriceCurrency.sign}
 						conversionRate={selectPriceCurrencyRate}
+						{...{ showValue, showTotalValue }}
 					/>
 				),
 				width: 180,
 				sortable: true,
 			},
-			{
+		];
+		if (showPrice) {
+			columns.push({
 				Header: <>{t('synths.assets.synths.table.price')}</>,
 				id: 'price',
 				sortType: 'basic',
@@ -123,8 +135,8 @@ const AssetsTable: FC<AssetsTableProps> = ({
 				),
 				width: 180,
 				sortable: false,
-			},
-		];
+			});
+		}
 		if (showHoldings) {
 			columns.push({
 				Header: <>{t('synths.assets.synths.table.holdings')}</>,
@@ -180,7 +192,7 @@ const AssetsTable: FC<AssetsTableProps> = ({
 				sortable: false,
 			});
 		}
-		if (!isL2) {
+		if (!isL2 && onTransferClick) {
 			columns.push({
 				Header: <></>,
 				id: 'transfer',
@@ -215,6 +227,10 @@ const AssetsTable: FC<AssetsTableProps> = ({
 		onTransferClick,
 		isL2,
 		synthsMap,
+		showValue,
+		showTotalValue,
+		showPrice,
+		isDeprecated,
 	]);
 
 	return (

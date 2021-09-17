@@ -46,7 +46,11 @@ type AssetsTableProps = {
 	isLoaded: boolean;
 	showConvert: boolean;
 	showHoldings: boolean;
-	onTransferClick: (currencyKey: string) => void;
+	isDeprecated?: boolean;
+	onTransferClick?: (currencyKey: string) => void;
+	showValue?: boolean;
+	showTotalValue?: boolean;
+	showPrice?: boolean;
 };
 
 const AssetsTable: FC<AssetsTableProps> = ({
@@ -56,7 +60,11 @@ const AssetsTable: FC<AssetsTableProps> = ({
 	isLoaded,
 	showHoldings,
 	showConvert,
+	isDeprecated,
 	onTransferClick,
+	showValue = true,
+	showTotalValue = true,
+	showPrice = true,
 }) => {
 	const { t } = useTranslation();
 	const { connectWallet, synthsMap } = Connector.useContainer();
@@ -67,7 +75,7 @@ const AssetsTable: FC<AssetsTableProps> = ({
 
 	const { selectedPriceCurrency, selectPriceCurrencyRate } = useSelectedPriceCurrency();
 
-	const assetColumns = useMemo(() => {
+	const assetColumns: any[] = useMemo(() => {
 		if (!isAppReady) {
 			return [];
 		}
@@ -106,13 +114,17 @@ const AssetsTable: FC<AssetsTableProps> = ({
 									totalValue={asset.usdBalance}
 									sign={selectedPriceCurrency.sign}
 									conversionRate={selectPriceCurrencyRate}
+									{...{ showValue, showTotalValue }}
 								/>
 							</div>
 
 							<div>{currencyIsSynth ? asset.currencyKey : null}</div>
-							<div>
-								<SynthPriceCol currencyKey={asset.currencyKey as CurrencyKey} />
-							</div>
+
+							{showPrice && (
+								<div>
+									<SynthPriceCol currencyKey={asset.currencyKey as CurrencyKey} />
+								</div>
+							)}
 
 							{!showHoldings ? null : (
 								<>
@@ -156,7 +168,7 @@ const AssetsTable: FC<AssetsTableProps> = ({
 										</>
 									)}
 
-									{isL2 ? null : (
+									{!(!isL2 && onTransferClick) ? null : (
 										<>
 											{!(
 												isSynth(asset.currencyKey) || asset.currencyKey === CryptoCurrency.SNX
@@ -186,6 +198,9 @@ const AssetsTable: FC<AssetsTableProps> = ({
 		onTransferClick,
 		isL2,
 		synthsMap,
+		showValue,
+		showTotalValue,
+		showPrice,
 	]);
 
 	return (
