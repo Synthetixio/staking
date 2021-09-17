@@ -7,7 +7,7 @@ import { assetToSynth } from 'utils/currencies';
 import useSynthetixQueries from '@synthetixio/queries';
 import { NetworkId } from '@synthetixio/contracts-interface';
 import Wei, { wei } from '@synthetixio/wei';
-import { renBTCToken, wBTCToken, wETHToken, snxToken } from 'contracts';
+import { renBTCToken, wBTCToken, wETHToken } from 'contracts';
 import { useRecoilValue } from 'recoil';
 import { networkState } from 'store/wallet';
 import { ethers } from 'ethers';
@@ -38,17 +38,6 @@ const useCryptoBalances = (walletAddress: string | null) => {
 			decimals: 18,
 			logoURI: '',
 			name: 'Ethereum',
-			chainId: 1,
-			tags: [],
-		},
-		{
-			symbol: 'SNX',
-			address:
-				(snxToken.address as any)[networkId?.name?.valueOf() || 'mainnet'] ||
-				ethers.constants.AddressZero,
-			decimals: 18,
-			logoURI: '',
-			name: 'Synthetix Network Token',
 			chainId: 1,
 			tags: [],
 		},
@@ -101,7 +90,7 @@ const useCryptoBalances = (walletAddress: string | null) => {
 	const balancesData = balancesQuery.data!;
 
 	const ETHBalance = (balancesQuery.isSuccess && balancesData['ETH']?.balance) || wei(0);
-	const SNXBalance = (balancesQuery.isSuccess && balancesData['SNX']?.balance) || wei(0);
+	const SNXBalance = debtQuery?.data?.collateral || wei(0);
 	const wETHBalance = (balancesQuery.isSuccess && balancesData['WETH']?.balance) || wei(0);
 	const wBTCBalance = (balancesQuery.isSuccess && balancesData['WBTC']?.balance) || wei(0);
 	const renBTCBalance = (balancesQuery.isSuccess && balancesData['renBTC']?.balance) || wei(0);
