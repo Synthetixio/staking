@@ -60,7 +60,7 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 		'logProposal',
 		[ipfsHash || ''],
 		{},
-		{ gasLimitBuffer: 0.5 }
+		{ enabled: true, gasLimitBuffer: 0.5 }
 	);
 
 	const sanitiseTimestamp = (timestamp: number) => {

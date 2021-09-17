@@ -121,9 +121,15 @@ const BurnTab: React.FC = () => {
 
 	const swapTxn = useEVMTxn(swapData);
 
-	const txn = useSynthetixTxn('Synthetix', burnCall[0], burnCall[1], {
-		gasPrice: gasPrice.toBN(),
-	});
+	const txn = useSynthetixTxn(
+		'Synthetix',
+		burnCall[0],
+		burnCall[1],
+		{
+			gasPrice: gasPrice.toBN(),
+		},
+		{ gasLimitBuffer: 0.15, enabled: burnType !== BurnActionType.CLEAR || !needToBuy }
+	);
 
 	useEffect(() => {
 		if (swapTxn.txnStatus === 'prompting' || txn.txnStatus === 'prompting') setTxModalOpen(true);
