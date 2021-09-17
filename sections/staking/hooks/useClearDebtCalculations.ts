@@ -14,7 +14,7 @@ type ClearDebtCalculations = {
 
 // used to make sure more than enough is provided to repay the debt,
 // even if it fluctuates while the transaction is being filled
-const DEBT_CLEAR_BALANCE_BUFFER = 1.0005;
+const DEBT_CLEAR_BALANCE_BUFFER = 1.05;
 
 const useClearDebtCalculations = (
 	debtBalance: Wei,

@@ -119,7 +119,11 @@ const BurnTab: React.FC = () => {
 		? ['burnSynthsToTarget', []]
 		: ['burnSynths', [amountToBurnBN.toBN()]];
 
-	const swapTxn = useEVMTxn(swapData);
+	const swapTxn = useEVMTxn(swapData, {
+		onSuccess: () => txn.mutate(),
+		gasLimitBuffer: 0.15,
+		enabled: true,
+	});
 
 	const txn = useSynthetixTxn(
 		'Synthetix',
@@ -136,7 +140,6 @@ const BurnTab: React.FC = () => {
 
 	useEffect(() => {
 		if (swapTxn.txnStatus === 'prompting' || txn.txnStatus === 'prompting') setTxModalOpen(true);
-		if (swapTxn.txnStatus === 'confirmed' && txn.txnStatus === 'unsent') txn.mutate();
 	}, [txn, swapTxn.txnStatus]);
 
 	// header title
@@ -156,6 +159,7 @@ const BurnTab: React.FC = () => {
 	if (debtBalance.eq(0)) error = t('staking.actions.burn.action.error.no-debt');
 	else if (
 		(Number(amountToBurn) > sUSDBalance.toNumber() || maxBurnAmount.eq(0)) &&
+		burnType !== BurnActionType.MAX &&
 		burnType !== BurnActionType.CLEAR
 	)
 		error = t('staking.actions.burn.action.error.insufficient');
