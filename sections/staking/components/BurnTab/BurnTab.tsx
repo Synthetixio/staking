@@ -159,7 +159,6 @@ const BurnTab: React.FC = () => {
 	if (debtBalance.eq(0)) error = t('staking.actions.burn.action.error.no-debt');
 	else if (
 		(Number(amountToBurn) > sUSDBalance.toNumber() || maxBurnAmount.eq(0)) &&
-		burnType !== BurnActionType.MAX &&
 		burnType !== BurnActionType.CLEAR
 	)
 		error = t('staking.actions.burn.action.error.insufficient');
