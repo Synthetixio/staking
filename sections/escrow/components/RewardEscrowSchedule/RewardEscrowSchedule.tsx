@@ -6,7 +6,6 @@ import styled from 'styled-components';
 import { useRouter } from 'next/router';
 
 import { EXTERNAL_LINKS } from 'constants/links';
-import useEscrowDataQuery, { EscrowData } from 'queries/escrow/useEscrowDataQuery';
 import { CryptoCurrency } from 'constants/currency';
 import { formatShortDate } from 'utils/formatters/date';
 import { formatCurrency } from 'utils/formatters/number';
@@ -26,10 +25,18 @@ import {
 } from 'sections/escrow/components/common';
 import Button from 'components/Button';
 import { FlexDivCentered, FlexDivColCentered, ExternalLink } from 'styles/common';
+import useSynthetixQueries, { EscrowData } from '@synthetixio/queries';
+import { useRecoilValue } from 'recoil';
+import { walletAddressState } from 'store/wallet';
 
 const RewardEscrowSchedule: React.FC = () => {
 	const { t } = useTranslation();
-	const escrowDataQuery = useEscrowDataQuery();
+
+	const walletAddress = useRecoilValue(walletAddressState);
+
+	const { useEscrowDataQuery } = useSynthetixQueries();
+
+	const escrowDataQuery = useEscrowDataQuery(walletAddress);
 	const schedule = escrowDataQuery?.data?.schedule;
 	const totalBalancePendingMigration = escrowDataQuery?.data?.totalBalancePendingMigration ?? 0;
 	const router = useRouter();
@@ -78,7 +85,7 @@ const RewardEscrowSchedule: React.FC = () => {
 								sortable: false,
 							},
 						]}
-						data={schedule ?? []}
+						data={schedule ? schedule.filter((e: any) => e.quantity.gt(0)) : []}
 						isLoading={escrowDataQuery.isLoading}
 						showPagination={true}
 					/>

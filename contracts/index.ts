@@ -23,6 +23,7 @@ import balancersCOINPoolToken from './balancersCOINPoolToken';
 
 import wETHToken from './wETHToken';
 import wBTCToken from './wBTCToken';
+
 import * as renBTCToken from './renBTCToken';
 
 import dualStakingRewards from './dualStakingRewards';

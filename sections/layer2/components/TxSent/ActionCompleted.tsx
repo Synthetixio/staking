@@ -5,14 +5,13 @@ import styled from 'styled-components';
 
 import { FlexDivRowCentered, FlexDivCentered, ExternalLink, boxShadowBlue } from 'styles/common';
 import Success from 'assets/svg/app/circle-tick.svg';
-import { Transaction } from 'constants/network';
 
 import { InfoContainer, InfoData, InfoTitle, SectionHeader, Container } from './common';
 import { formatCurrency } from 'utils/formatters/number';
 import Etherscan from 'containers/BlockExplorer';
 
 type ActionCompletedProps = {
-	setTransactionState: (tx: Transaction) => void;
+	resetTransaction: () => void;
 	amount: string;
 	action: string;
 	currencyKey: string;
@@ -20,7 +19,7 @@ type ActionCompletedProps = {
 };
 
 const ActionCompleted: FC<ActionCompletedProps> = ({
-	setTransactionState,
+	resetTransaction,
 	amount,
 	currencyKey,
 	hash,
@@ -45,7 +44,7 @@ const ActionCompleted: FC<ActionCompletedProps> = ({
 						<LeftButton>{t(`layer2.actions.${action}.action.completed.verify`)}</LeftButton>
 					</ExternalLink>
 				) : null}
-				<RightButton onClick={() => setTransactionState(Transaction.PRESUBMIT)}>
+				<RightButton onClick={() => resetTransaction()}>
 					{t('staking.actions.mint.completed.dismiss')}
 				</RightButton>
 			</ButtonWrap>

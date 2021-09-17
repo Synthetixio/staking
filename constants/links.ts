@@ -5,7 +5,8 @@ export const EXTERNAL_LINKS = {
 		Kwenta: 'https://kwenta.io',
 		DexAG: 'https://dex.ag/',
 		Uniswap: 'https://uniswap.exchange/',
-		OneInchLink: (from: CurrencyKey, to: CurrencyKey) => `https://1inch.exchange/#/${from}/${to}`,
+		OneInchLink: (from: CurrencyKey, to: CurrencyKey) =>
+			`https://1inch.exchange/#/1/swap/${from}/${to}`,
 	},
 	Synthetix: {
 		Home: 'https://www.synthetix.io',
@@ -25,5 +26,8 @@ export const EXTERNAL_LINKS = {
 		Synthetix: 'https://synths.snx.eth.link',
 		OneInch: 'https://gateway.ipfs.io/ipns/tokens.1inch.eth',
 		Zapper: 'https://zapper.fi/api/token-list',
+	},
+	L2: {
+		Optimism: 'https://gateway.optimism.io/welcome',
 	},
 };

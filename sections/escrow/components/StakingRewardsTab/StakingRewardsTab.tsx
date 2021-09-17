@@ -1,165 +1,72 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { ethers } from 'ethers';
-import TransactionNotifier from 'containers/TransactionNotifier';
+import React, { useState, useEffect } from 'react';
 
-import synthetix from 'lib/synthetix';
-
-import { normalizedGasPrice } from 'utils/network';
-import { Transaction, GasLimitEstimate } from 'constants/network';
-import useEscrowDataQuery from 'queries/escrow/useEscrowDataQuery';
 import { useRecoilValue } from 'recoil';
-import { isWalletConnectedState, walletAddressState } from 'store/wallet';
-import { appReadyState } from 'store/app';
+import { walletAddressState } from 'store/wallet';
 
 import { TabContainer } from '../common';
 import TabContent from './TabContent';
 import MigrateTabContent from './MigrateTabContent';
+import useSynthetixQueries from '@synthetixio/queries';
+import Wei, { wei } from '@synthetixio/wei';
 
 const StakingRewardsTab: React.FC = () => {
-	const escrowDataQuery = useEscrowDataQuery();
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
-	const isAppReady = useRecoilValue(appReadyState);
 
-	const { monitorTransaction } = TransactionNotifier.useContainer();
-	const [gasLimitEstimate, setGasLimitEstimate] = useState<GasLimitEstimate>(null);
-	const [gasPrice, setGasPrice] = useState<number>(0);
-	const [gasEstimateError, setGasEstimateError] = useState<string | null>(null);
-	const [transactionState, setTransactionState] = useState<Transaction>(Transaction.PRESUBMIT);
-	const [txHash, setTxHash] = useState<string | null>(null);
-	const [vestTxError, setVestTxError] = useState<string | null>(null);
+	const { useEscrowDataQuery, useSynthetixTxn } = useSynthetixQueries();
+
+	const escrowDataQuery = useEscrowDataQuery(walletAddress);
+
+	const [gasPrice, setGasPrice] = useState<Wei>(wei(0));
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 
-	const canVestAmount = escrowDataQuery?.data?.claimableAmount ?? 0;
-	const claimableEntryIds = escrowDataQuery?.data?.claimableEntryIds ?? null;
-	const totalBalancePendingMigration = escrowDataQuery?.data?.totalBalancePendingMigration ?? 0;
+	const canVestAmount = escrowDataQuery?.data?.claimableAmount ?? wei(0);
+	const claimableEntryIds = escrowDataQuery?.data?.claimableEntryIds ?? [];
+	const totalBalancePendingMigration =
+		escrowDataQuery?.data?.totalBalancePendingMigration ?? wei(0);
+
+	const txn = useSynthetixTxn(
+		'RewardEscrowV2',
+		totalBalancePendingMigration.gt(0) ? 'migrateVestingSchedule' : 'vest',
+		totalBalancePendingMigration.gt(0) ? [walletAddress] : [claimableEntryIds.map((v) => v.toBN())],
+		{ gasPrice: gasPrice.toBN() }
+	);
 
 	useEffect(() => {
-		const getGasLimitEstimate = async () => {
-			if (isAppReady) {
-				const {
-					contracts: { RewardEscrowV2 },
-				} = synthetix.js!;
-				try {
-					setGasEstimateError(null);
-					let gasEstimate;
-					if (totalBalancePendingMigration) {
-						gasEstimate = await synthetix.getGasEstimateForTransaction({
-							txArgs: [walletAddress],
-							method: RewardEscrowV2.estimateGas.migrateVestingSchedule,
-						});
-					} else if (!totalBalancePendingMigration && claimableEntryIds != null) {
-						gasEstimate = await synthetix.getGasEstimateForTransaction({
-							txArgs: [claimableEntryIds],
-							method: RewardEscrowV2.estimateGas.vest,
-						});
-					} else {
-						return;
-					}
-					setGasLimitEstimate(gasEstimate);
-				} catch (error) {
-					setGasEstimateError(error.message);
-					setGasLimitEstimate(null);
-				}
-			}
-		};
-		getGasLimitEstimate();
-	}, [
-		gasEstimateError,
-		isWalletConnected,
-		isAppReady,
-		totalBalancePendingMigration,
-		claimableEntryIds,
-		walletAddress,
-	]);
-
-	const handleSubmit = useCallback(async () => {
-		if (isAppReady) {
-			try {
-				setVestTxError(null);
-				setTxModalOpen(true);
-				const {
-					contracts: { RewardEscrowV2 },
-				} = synthetix.js!;
-
-				let transaction: ethers.ContractTransaction;
-				if (totalBalancePendingMigration) {
-					const gasLimit = await synthetix.getGasEstimateForTransaction({
-						txArgs: [walletAddress],
-						method: RewardEscrowV2.estimateGas.migrateVestingSchedule,
-					});
-					transaction = await RewardEscrowV2.migrateVestingSchedule(walletAddress, {
-						gasPrice: normalizedGasPrice(gasPrice),
-						gasLimit,
-					});
-				} else {
-					const gasLimit = await synthetix.getGasEstimateForTransaction({
-						txArgs: [claimableEntryIds],
-						method: RewardEscrowV2.estimateGas.vest,
-					});
-					transaction = await RewardEscrowV2.vest(claimableEntryIds, {
-						gasPrice: normalizedGasPrice(gasPrice),
-						gasLimit,
-					});
-				}
-
-				if (transaction) {
-					setTxHash(transaction.hash);
-					setTransactionState(Transaction.WAITING);
-					monitorTransaction({
-						txHash: transaction.hash,
-						onTxConfirmed: () => {
-							setTransactionState(Transaction.SUCCESS);
-							setTimeout(() => {
-								escrowDataQuery.refetch();
-							}, 5 * 1000);
-						},
-					});
-					setTxModalOpen(false);
-				}
-			} catch (e) {
-				setTransactionState(Transaction.PRESUBMIT);
-				setVestTxError(e.message);
-			}
+		if (txn.txnStatus === 'pending') {
+			setTxModalOpen(true);
+		} else if (txn.txnStatus === 'confirmed') {
+			escrowDataQuery.refetch();
 		}
-	}, [
-		isAppReady,
-		claimableEntryIds,
-		gasPrice,
-		escrowDataQuery,
-		monitorTransaction,
-		totalBalancePendingMigration,
-		walletAddress,
-	]);
+	}, [txn.txnStatus, escrowDataQuery]);
 
 	return (
 		<TabContainer>
-			{totalBalancePendingMigration ? (
+			{totalBalancePendingMigration.gt(0) ? (
 				<MigrateTabContent
-					onSubmit={handleSubmit}
-					transactionError={vestTxError}
-					gasEstimateError={gasEstimateError}
+					onSubmit={txn.mutate}
+					transactionError={txn.errorMessage}
+					gasEstimateError={txn.errorMessage}
 					txModalOpen={txModalOpen}
 					setTxModalOpen={setTxModalOpen}
-					gasLimitEstimate={gasLimitEstimate}
+					gasLimitEstimate={txn.gasLimit}
 					setGasPrice={setGasPrice}
-					txHash={txHash}
-					transactionState={transactionState}
-					setTransactionState={setTransactionState}
+					txHash={txn.hash}
+					transactionState={txn.txnStatus}
+					setTransactionState={() => txn.refresh()}
 				/>
 			) : (
 				<TabContent
 					claimableAmount={canVestAmount}
-					onSubmit={handleSubmit}
-					transactionError={vestTxError}
-					gasEstimateError={gasEstimateError}
+					onSubmit={txn.mutate}
+					transactionError={txn.errorMessage}
+					gasEstimateError={txn.errorMessage}
 					txModalOpen={txModalOpen}
 					setTxModalOpen={setTxModalOpen}
-					gasLimitEstimate={gasLimitEstimate}
+					gasLimitEstimate={txn.gasLimit}
 					setGasPrice={setGasPrice}
-					txHash={txHash}
-					transactionState={transactionState}
-					setTransactionState={setTransactionState}
+					txHash={txn.hash}
+					transactionState={txn.txnStatus}
+					setTransactionState={() => txn.refresh()}
 				/>
 			)}
 		</TabContainer>

@@ -3,7 +3,7 @@ import { useTranslation, Trans } from 'react-i18next';
 import { ethers } from 'ethers';
 import { Svg } from 'react-optimized-image';
 import { useRecoilValue } from 'recoil';
-import BigNumber from 'bignumber.js';
+import Wei, { wei } from '@synthetixio/wei';
 import { useRouter } from 'next/router';
 
 import { appReadyState } from 'store/app';
@@ -19,17 +19,13 @@ import {
 import media from 'styles/media';
 import { CurrencyKey } from 'constants/currency';
 import Etherscan from 'containers/BlockExplorer';
-import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import PendingConfirmation from 'assets/svg/app/pending-confirmation.svg';
 import Success from 'assets/svg/app/success.svg';
 import ExpandIcon from 'assets/svg/app/expand.svg';
 
 import { Transaction } from 'constants/network';
-import { normalizedGasPrice } from 'utils/network';
 import { CryptoCurrency, Synths } from 'constants/currency';
-import { formatNumber } from 'utils/formatters/number';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
-import synthetix from 'lib/synthetix';
 
 import Connector from 'containers/Connector';
 import TransactionNotifier from 'containers/TransactionNotifier';
@@ -61,24 +57,23 @@ import { LP, lpToSynthTranslationKey } from 'sections/earn/types';
 import styled from 'styled-components';
 import { CurrencyIconType } from 'components/Currency/CurrencyIcon/CurrencyIcon';
 import { MobileOnlyView } from 'components/Media';
+import useSynthetixQueries from '@synthetixio/queries';
 
 type DualRewards = {
-	a: number;
-	b: number;
+	a: Wei;
+	b: Wei;
 };
 
 type LPTabProps = {
 	stakedAsset: CurrencyKey;
 	icon?: CurrencyKey;
 	type?: CurrencyIconType;
-	tokenRewards: number | DualRewards;
-	allowance: number | null;
-	userBalance: number;
-	userBalanceBN: BigNumber;
-	staked: number;
-	stakedBN: BigNumber;
+	tokenRewards: Wei | DualRewards;
+	allowance: Wei | null;
+	userBalance: Wei;
+	staked: Wei;
 	needsToSettle?: boolean;
-	secondTokenRate?: number;
+	secondTokenRate?: Wei;
 };
 
 const LPTab: FC<LPTabProps> = ({
@@ -88,21 +83,19 @@ const LPTab: FC<LPTabProps> = ({
 	tokenRewards,
 	allowance,
 	userBalance,
-	userBalanceBN,
 	staked,
-	stakedBN,
 	needsToSettle,
 	secondTokenRate,
 }) => {
 	const { t } = useTranslation();
-	const { signer } = Connector.useContainer();
+	const { synthetixjs, signer } = Connector.useContainer();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const [showApproveOverlayModal, setShowApproveOverlayModal] = useState<boolean>(false);
 	const [showSettleOverlayModal, setShowSettleOverlayModal] = useState<boolean>(false);
 
 	const isAppReady = useRecoilValue(appReadyState);
 
-	const [claimGasPrice, setClaimGasPrice] = useState<number>(0);
+	const [claimGasPrice, setClaimGasPrice] = useState<Wei>(wei(0));
 	const [claimTransactionState, setClaimTransactionState] = useState<Transaction>(
 		Transaction.PRESUBMIT
 	);
@@ -116,8 +109,10 @@ const LPTab: FC<LPTabProps> = ({
 			? blockExplorerInstance.txLink(claimTxHash)
 			: undefined;
 
+	const { useExchangeRatesQuery } = useSynthetixQueries();
+
 	const exchangeRatesQuery = useExchangeRatesQuery();
-	const SNXRate = exchangeRatesQuery.data?.SNX ?? 0;
+	const SNXRate = exchangeRatesQuery.data?.SNX ?? wei(0);
 
 	const router = useRouter();
 	const goToEarn = useCallback(() => router.push(ROUTES.Earn.Home), [router]);
@@ -126,9 +121,7 @@ const LPTab: FC<LPTabProps> = ({
 		const commonStakeTabProps = {
 			stakedAsset,
 			userBalance,
-			userBalanceBN,
 			staked,
-			stakedBN,
 			icon,
 			type,
 		};
@@ -151,7 +144,7 @@ const LPTab: FC<LPTabProps> = ({
 	}, [t, stakedAsset, userBalance, staked]);
 
 	useEffect(() => {
-		if (allowance === 0 && userBalance > 0) {
+		if (allowance != null && allowance.gt(0) && userBalance.gt(0)) {
 			setShowApproveOverlayModal(true);
 		}
 	}, [allowance, userBalance]);
@@ -168,14 +161,12 @@ const LPTab: FC<LPTabProps> = ({
 				try {
 					setClaimError(null);
 					setClaimTxModalOpen(true);
-					const contract = getContract(stakedAsset, signer);
+					const contract = getContract(synthetixjs!, stakedAsset, signer);
 
-					const gasLimit = await synthetix.getGasEstimateForTransaction({
-						txArgs: [],
-						method: contract.estimateGas.getReward,
-					});
+					const gasLimit = wei(await contract.estimateGas.getReward());
+
 					const transaction: ethers.ContractTransaction = await contract.getReward({
-						gasPrice: normalizedGasPrice(claimGasPrice),
+						gasPrice: claimGasPrice.toBN(),
 						gasLimit,
 					});
 
@@ -195,7 +186,7 @@ const LPTab: FC<LPTabProps> = ({
 			}
 		}
 		claim();
-	}, [stakedAsset, signer, claimGasPrice, monitorTransaction, isAppReady]);
+	}, [stakedAsset, signer, claimGasPrice, monitorTransaction, isAppReady, synthetixjs]);
 
 	const translationKey = useMemo(() => {
 		if (stakedAsset === Synths.iETH) {
@@ -217,32 +208,30 @@ const LPTab: FC<LPTabProps> = ({
 		}
 	}, [stakedAsset]);
 
-	const DualRewardsClaimInfo = (
-		<StyledFlexDiv>
-			<StyledFlexDivColCentered>
-				<GreyHeader>{t('earn.actions.claim.claiming')}</GreyHeader>
-				<WhiteSubheader>
-					{t('earn.actions.claim.amount', {
-						amount: formatNumber((tokenRewards as DualRewards).a, {
-							decimals: DEFAULT_CRYPTO_DECIMALS,
-						}),
-						asset: CryptoCurrency.SNX,
-					})}
-				</WhiteSubheader>
-			</StyledFlexDivColCentered>
-			<StyledFlexDivColCentered>
-				<GreyHeader>{t('earn.actions.claim.claiming')}</GreyHeader>
-				<WhiteSubheader>
-					{t('earn.actions.claim.amount', {
-						amount: formatNumber((tokenRewards as DualRewards).b, {
-							decimals: DEFAULT_CRYPTO_DECIMALS,
-						}),
-						asset: CryptoCurrency.DHT,
-					})}
-				</WhiteSubheader>
-			</StyledFlexDivColCentered>
-		</StyledFlexDiv>
-	);
+	const DualRewardsClaimInfo = () => {
+		return (
+			<StyledFlexDiv>
+				<StyledFlexDivColCentered>
+					<GreyHeader>{t('earn.actions.claim.claiming')}</GreyHeader>
+					<WhiteSubheader>
+						{t('earn.actions.claim.amount', {
+							amount: (tokenRewards as DualRewards).a.toString(DEFAULT_CRYPTO_DECIMALS),
+							asset: CryptoCurrency.SNX,
+						})}
+					</WhiteSubheader>
+				</StyledFlexDivColCentered>
+				<StyledFlexDivColCentered>
+					<GreyHeader>{t('earn.actions.claim.claiming')}</GreyHeader>
+					<WhiteSubheader>
+						{t('earn.actions.claim.amount', {
+							amount: (tokenRewards as DualRewards).b.toString(DEFAULT_CRYPTO_DECIMALS),
+							asset: CryptoCurrency.DHT,
+						})}
+					</WhiteSubheader>
+				</StyledFlexDivColCentered>
+			</StyledFlexDiv>
+		);
+	};
 
 	if (claimTransactionState === Transaction.WAITING) {
 		return (
@@ -260,15 +249,13 @@ const LPTab: FC<LPTabProps> = ({
 					<FlexDivColCentered>
 						<Svg src={PendingConfirmation} />
 						{stakedAsset === LP.UNISWAP_DHT ? (
-							DualRewardsClaimInfo
+							DualRewardsClaimInfo()
 						) : (
 							<>
 								<GreyHeader>{t('earn.actions.claim.claiming')}</GreyHeader>
 								<WhiteSubheader>
 									{t('earn.actions.claim.amount', {
-										amount: formatNumber(tokenRewards as number, {
-											decimals: DEFAULT_CRYPTO_DECIMALS,
-										}),
+										amount: tokenRewards.toString(DEFAULT_CRYPTO_DECIMALS),
 										asset: CryptoCurrency.SNX,
 									})}
 								</WhiteSubheader>
@@ -301,16 +288,13 @@ const LPTab: FC<LPTabProps> = ({
 					<FlexDivColCentered>
 						<Svg src={Success} />
 						{stakedAsset === LP.UNISWAP_DHT ? (
-							DualRewardsClaimInfo
+							DualRewardsClaimInfo()
 						) : (
 							<>
 								<GreyHeader>{t('earn.actions.claim.claiming')}</GreyHeader>
 								<WhiteSubheader>
 									{t('earn.actions.claim.amount', {
-										amount: formatNumber(tokenRewards as number, {
-											decimals: DEFAULT_CRYPTO_DECIMALS,
-										}),
-										asset: CryptoCurrency.SNX,
+										amount: (tokenRewards as Wei).toString(DEFAULT_CRYPTO_DECIMALS),
 									})}
 								</WhiteSubheader>
 							</>
@@ -418,7 +402,7 @@ const LPTab: FC<LPTabProps> = ({
 						stakedAsset={stakedAsset}
 						icon={icon}
 						type={type}
-						tokenRewards={tokenRewards as number}
+						tokenRewards={tokenRewards as Wei}
 						SNXRate={SNXRate}
 					/>
 				</GridContainer>

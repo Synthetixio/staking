@@ -3,7 +3,7 @@ import { CellProps } from 'react-table';
 import styled from 'styled-components';
 import { useTranslation, Trans } from 'react-i18next';
 import { Svg } from 'react-optimized-image';
-import BigNumber from 'bignumber.js';
+import Wei, { wei } from '@synthetixio/wei';
 
 import { useRecoilValue } from 'recoil';
 
@@ -18,7 +18,6 @@ import media from 'styles/media';
 
 import { appReadyState } from 'store/app';
 import { isWalletConnectedState } from 'store/wallet';
-import { CryptoBalance } from 'queries/walletBalances/types';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
@@ -30,20 +29,20 @@ import Button from 'components/Button';
 import { ProgressBarType } from 'components/ProgressBar/ProgressBar';
 
 import Connector from 'containers/Connector';
-import { SynthsTotalSupplyData } from 'queries/synths/useSynthsTotalSupplyQuery';
-import { zeroBN } from 'utils/formatters/number';
 import { CryptoCurrency, Synths } from 'constants/currency';
 import { DesktopOrTabletView, MobileOnlyView } from 'components/Media';
 
 import Info from 'assets/svg/app/info.svg';
+import { CryptoBalance } from 'hooks/useCryptoBalances';
+import { SynthsTotalSupplyData } from '@synthetixio/queries';
 
-const SHOW_HEDGING_INDICATOR_THRESHOLD = new BigNumber(0.1);
+const SHOW_HEDGING_INDICATOR_THRESHOLD = wei(0.1);
 
 type DebtPoolTableProps = {
 	synthBalances: CryptoBalance[];
 	cryptoBalances: CryptoBalance[];
 	synthsTotalSupply: SynthsTotalSupplyData;
-	synthsTotalValue: BigNumber;
+	synthsTotalValue: Wei;
 	isLoading: boolean;
 	isLoaded: boolean;
 };
@@ -65,7 +64,7 @@ type ResponsiveDebtPoolTableProps = {
 	synthBalances: CryptoBalance[];
 	cryptoBalances: CryptoBalance[];
 	synthsTotalSupply: SynthsTotalSupplyData;
-	synthsTotalValue: BigNumber;
+	synthsTotalValue: Wei;
 	isLoading: boolean;
 	isLoaded: boolean;
 	mobile?: boolean;
@@ -81,6 +80,7 @@ const ResponsiveDebtPoolTable: FC<ResponsiveDebtPoolTableProps> = ({
 	mobile,
 }) => {
 	const { t } = useTranslation();
+
 	const { selectedPriceCurrency, selectPriceCurrencyRate } = useSelectedPriceCurrency();
 	const { connectWallet } = Connector.useContainer();
 	const isAppReady = useRecoilValue(appReadyState);
@@ -99,8 +99,8 @@ const ResponsiveDebtPoolTable: FC<ResponsiveDebtPoolTableProps> = ({
 	const mergedTotalValue = useMemo(
 		() =>
 			[renBTCBalance, wBTCBalance, wETHBalance, ETHBalance].reduce((total, current) => {
-				const usdValue = current?.usdBalance ?? zeroBN;
-				return total.plus(usdValue);
+				const usdValue = current?.usdBalance ?? wei(0);
+				return total.add(usdValue);
 			}, synthsTotalValue),
 		[ETHBalance, renBTCBalance, wBTCBalance, wETHBalance, synthsTotalValue]
 	);
@@ -110,17 +110,17 @@ const ResponsiveDebtPoolTable: FC<ResponsiveDebtPoolTableProps> = ({
 			(synthBalance) => synthBalance.currencyKey === Synths.sBTC
 		);
 
-		const sBTCAmount = sBTCBalance?.balance ?? zeroBN;
-		const sBTCUSDAmount = sBTCBalance?.usdBalance ?? zeroBN;
-		const renBTCAmount = renBTCBalance?.balance ?? zeroBN;
-		const renBTCUSDAmount = renBTCBalance?.usdBalance ?? zeroBN;
-		const wBTCAmount = wBTCBalance?.balance ?? zeroBN;
-		const wBTCUSDAmount = wBTCBalance?.usdBalance ?? zeroBN;
+		const sBTCAmount = sBTCBalance?.balance ?? wei(0);
+		const sBTCUSDAmount = sBTCBalance?.usdBalance ?? wei(0);
+		const renBTCAmount = renBTCBalance?.balance ?? wei(0);
+		const renBTCUSDAmount = renBTCBalance?.usdBalance ?? wei(0);
+		const wBTCAmount = wBTCBalance?.balance ?? wei(0);
+		const wBTCUSDAmount = wBTCBalance?.usdBalance ?? wei(0);
 
 		return {
 			currencyKey: Synths.sBTC,
-			balance: sBTCAmount.plus(renBTCAmount).plus(wBTCAmount),
-			usdBalance: sBTCUSDAmount.plus(renBTCUSDAmount).plus(wBTCUSDAmount),
+			balance: sBTCAmount.add(renBTCAmount).add(wBTCAmount),
+			usdBalance: sBTCUSDAmount.add(renBTCUSDAmount).add(wBTCUSDAmount),
 		};
 	}, [synthBalances, renBTCBalance, wBTCBalance]);
 
@@ -129,17 +129,17 @@ const ResponsiveDebtPoolTable: FC<ResponsiveDebtPoolTableProps> = ({
 			(synthBalance) => synthBalance.currencyKey === Synths.sETH
 		);
 
-		const sETHAmount = sETHBalance?.balance ?? zeroBN;
-		const sETHUSDAmount = sETHBalance?.usdBalance ?? zeroBN;
-		const ETHAmount = ETHBalance?.balance ?? zeroBN;
-		const ETHUSDAmount = ETHBalance?.usdBalance ?? zeroBN;
-		const wETHAmount = wETHBalance?.balance ?? zeroBN;
-		const wETHUSDAmount = wETHBalance?.usdBalance ?? zeroBN;
+		const sETHAmount = sETHBalance?.balance ?? wei(0);
+		const sETHUSDAmount = sETHBalance?.usdBalance ?? wei(0);
+		const ETHAmount = ETHBalance?.balance ?? wei(0);
+		const ETHUSDAmount = ETHBalance?.usdBalance ?? wei(0);
+		const wETHAmount = wETHBalance?.balance ?? wei(0);
+		const wETHUSDAmount = wETHBalance?.usdBalance ?? wei(0);
 
 		return {
 			currencyKey: Synths.sETH,
-			balance: sETHAmount.plus(ETHAmount).plus(wETHAmount),
-			usdBalance: sETHUSDAmount.plus(ETHUSDAmount).plus(wETHUSDAmount),
+			balance: sETHAmount.add(ETHAmount).add(wETHAmount),
+			usdBalance: sETHUSDAmount.add(ETHUSDAmount).add(wETHUSDAmount),
 		};
 	}, [synthBalances, ETHBalance, wETHBalance]);
 
@@ -149,7 +149,7 @@ const ResponsiveDebtPoolTable: FC<ResponsiveDebtPoolTableProps> = ({
 			synthBalances
 				.filter(({ currencyKey }) => currencyKey !== Synths.sETH && currencyKey !== Synths.sBTC)
 				.concat([mergedETHBalances, mergedBTCBalances])
-				.filter(({ balance }) => balance.gt(zeroBN)),
+				.filter(({ balance }) => balance.gt(wei(0))),
 		[synthBalances, mergedBTCBalances, mergedETHBalances]
 	);
 
@@ -213,14 +213,12 @@ const ResponsiveDebtPoolTable: FC<ResponsiveDebtPoolTableProps> = ({
 						const poolCurrencyPercent = synthsTotalSupply.supplyData[currencyKey].poolProportion;
 
 						if (poolCurrencyPercent) {
-							const holdingPercent = mergedTotalValue.isZero()
-								? zeroBN
-								: cellProps.row.original.usdBalance.dividedBy(mergedTotalValue);
-							const deviationFromPool = holdingPercent.minus(poolCurrencyPercent);
+							const holdingPercent = mergedTotalValue.eq(0)
+								? wei(0)
+								: cellProps.row.original.usdBalance.div(mergedTotalValue);
+							const deviationFromPool = holdingPercent.sub(poolCurrencyPercent);
 
-							if (
-								deviationFromPool.abs().isGreaterThanOrEqualTo(SHOW_HEDGING_INDICATOR_THRESHOLD)
-							) {
+							if (deviationFromPool.abs().gte(SHOW_HEDGING_INDICATOR_THRESHOLD)) {
 								variant = 'red-simple';
 							} else {
 								variant = 'green-simple';
@@ -232,7 +230,7 @@ const ResponsiveDebtPoolTable: FC<ResponsiveDebtPoolTableProps> = ({
 						<SynthHoldingWrapper>
 							<SynthHolding
 								usdBalance={cellProps.row.original.usdBalance}
-								totalUSDBalance={mergedTotalValue ?? zeroBN}
+								totalUSDBalance={mergedTotalValue ?? wei(0)}
 								progressBarVariant={variant}
 								showProgressBar={!mobile}
 							/>
@@ -250,8 +248,8 @@ const ResponsiveDebtPoolTable: FC<ResponsiveDebtPoolTableProps> = ({
 				Cell: (cellProps: CellProps<CryptoBalance>) => {
 					const { currencyKey } = cellProps.row.original;
 					if (!synthsTotalSupply || !synthsTotalSupply.supplyData) return null;
-					const totalPoolValue = synthsTotalSupply?.totalValue ?? zeroBN;
-					const currencyValue = synthsTotalSupply.supplyData[currencyKey]?.value ?? zeroBN;
+					const totalPoolValue = synthsTotalSupply?.totalValue ?? wei(0);
+					const currencyValue = synthsTotalSupply.supplyData[currencyKey]?.value ?? wei(0);
 
 					return (
 						<SynthHoldingWrapper>

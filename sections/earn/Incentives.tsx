@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { useRecoilValue } from 'recoil';
-import BigNumber from 'bignumber.js';
+import Wei from '@synthetixio/wei';
 
 import IncentivesMainnet from './IncentivesMainnet';
 import IncentivesDefault from './IncentivesDefault';
@@ -8,11 +8,11 @@ import IncentivesDefault from './IncentivesDefault';
 import { isMainnetState, delegateWalletState } from 'store/wallet';
 
 type IncentivesProps = {
-	tradingRewards: BigNumber;
-	stakingRewards: BigNumber;
-	totalRewards: BigNumber;
-	stakingAPR: number;
-	stakedAmount: number;
+	tradingRewards: Wei;
+	stakingRewards: Wei;
+	totalRewards: Wei;
+	stakingAPR: Wei;
+	stakedAmount: Wei;
 	hasClaimed: boolean;
 };
 

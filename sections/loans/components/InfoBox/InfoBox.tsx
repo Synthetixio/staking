@@ -1,4 +1,3 @@
-import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ethers } from 'ethers';
 import { useRecoilValue } from 'recoil';
@@ -11,22 +10,24 @@ import Connector from 'containers/Connector';
 import Button from 'components/Button';
 import Currency from 'components/Currency';
 import { Synths } from 'constants/currency';
-import synthetix from 'lib/synthetix';
 import { tx } from 'utils/transactions';
-import { formatNumber, toBigNumber, formatUnits } from 'utils/formatters/number';
 import Loans from 'containers/Loans';
 import InfoSVG from 'sections/loans/components/ActionBox/components/InfoSVG';
+import { wei } from '@synthetixio/wei';
+import { useEffect } from 'react';
+import React from 'react';
+import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 
 const InfoBox: React.FC = () => {
 	const { t } = useTranslation();
 	const address = useRecoilValue(walletAddressState);
-	const { provider } = Connector.useContainer();
+	const { provider, synthetixjs } = Connector.useContainer();
 	const { pendingWithdrawals, reloadPendingWithdrawals, ethLoanContract } = Loans.useContainer();
 	const [isClaimingPendingWithdrawals, setIsClaimingPendingWithdrawals] = React.useState(false);
 
 	const [borrows, setBorrows] = React.useState<Array<any>>([]);
 	const borrowsOpenInterest = React.useMemo(
-		() => borrows.reduce((sum, stat) => sum.plus(stat.openInterest), toBigNumber(0)),
+		() => borrows.reduce((sum, stat) => sum.add(stat.openInterest), wei(0)),
 		[borrows]
 	);
 
@@ -43,61 +44,59 @@ const InfoBox: React.FC = () => {
 		}
 	};
 
-	React.useEffect(() => {
-		if (!provider) {
-			return;
-		}
-
-		const {
-			contracts: {
-				ExchangeRates: exchangeRatesContract,
-				CollateralManager: collateralManagerContract,
-			},
-		} = synthetix.js!;
-
+	useEffect(() => {
 		let isMounted = true;
 		const unsubs: Array<Function> = [() => (isMounted = false)];
 
-		const getBorrowStats = async (currency: string) => {
-			const [openInterest, [assetUSDPrice]] = await Promise.all([
-				collateralManagerContract.long(ethers.utils.formatBytes32String(currency)),
-				exchangeRatesContract.rateAndInvalid(ethers.utils.formatBytes32String(currency)),
-			]);
-			const openInterestUSD = toBigNumber(openInterest.toString())
-				.dividedBy(1e18)
-				.multipliedBy(toBigNumber(assetUSDPrice.toString()).dividedBy(1e18));
-			return {
-				currency,
-				openInterest: openInterestUSD,
+		if (provider && synthetixjs) {
+			const {
+				contracts: {
+					ExchangeRates: exchangeRatesContract,
+					CollateralManager: collateralManagerContract,
+				},
+			} = synthetixjs!;
+
+			const getBorrowStats = async (currency: string) => {
+				const [openInterest, [assetUSDPrice]] = await Promise.all([
+					collateralManagerContract.long(ethers.utils.formatBytes32String(currency)),
+					exchangeRatesContract.rateAndInvalid(ethers.utils.formatBytes32String(currency)),
+				]);
+				const openInterestUSD = wei(openInterest).mul(wei(assetUSDPrice));
+
+				return {
+					currency,
+					openInterest: openInterestUSD,
+				};
 			};
-		};
 
-		const loadBorrowsStats = () =>
-			Promise.all([Synths.sBTC, Synths.sETH, Synths.sUSD].map(getBorrowStats));
+			const loadBorrowsStats = () =>
+				Promise.all([Synths.sBTC, Synths.sETH, Synths.sUSD].map(getBorrowStats));
 
-		const load = async () => {
-			try {
-				const borrows = await loadBorrowsStats();
-				if (isMounted) {
-					setBorrows(borrows);
+			const load = async () => {
+				try {
+					const borrows = await loadBorrowsStats();
+					if (isMounted) {
+						setBorrows(borrows);
+					}
+				} catch (e) {
+					console.error(e);
 				}
-			} catch (e) {
-				console.error(e);
-			}
-		};
+			};
 
-		const subscribe = () => {
-			const newBlockEvent = 'block';
-			provider!.on(newBlockEvent, load);
-			unsubs.push(() => provider!.off(newBlockEvent, load));
-		};
+			const subscribe = () => {
+				const newBlockEvent = 'block';
+				provider!.on(newBlockEvent, load);
+				unsubs.push(() => provider!.off(newBlockEvent, load));
+			};
 
-		load();
-		subscribe();
+			load();
+			subscribe();
+		}
+
 		return () => {
 			unsubs.forEach((unsub) => unsub());
 		};
-	}, [provider]);
+	}, [provider, synthetixjs]);
 
 	return (
 		<Root>
@@ -119,12 +118,12 @@ const InfoBox: React.FC = () => {
 						{t('loans.pending-withdrawals.title')}{' '}
 						<InfoSVG tip={t('loans.pending-withdrawals.title-tip')} />
 					</PendingWithdrawalsTitle>
-					<PendingWithdrawalsSubtitle empty={pendingWithdrawals.isZero()}>
-						{pendingWithdrawals.isZero() ? (
+					<PendingWithdrawalsSubtitle empty={pendingWithdrawals.eq(0)}>
+						{pendingWithdrawals.eq(0) ? (
 							<>{t('loans.pending-withdrawals.empty')}</>
 						) : (
 							<>
-								{formatUnits(pendingWithdrawals, 18)}ETH{' '}
+								{wei(pendingWithdrawals).toString(DEFAULT_CRYPTO_DECIMALS)}ETH{' '}
 								<ClaimButton
 									variant="secondary"
 									size="sm"
@@ -162,7 +161,7 @@ const InfoBox: React.FC = () => {
 								</div>
 							</StatsCol>
 							<StatsCol>
-								<div>${formatNumber(stat.openInterest, { decimals: 2 })}</div>
+								<div>${stat.openInterest.toString(2)}</div>
 							</StatsCol>
 						</React.Fragment>
 					))}
@@ -170,7 +169,7 @@ const InfoBox: React.FC = () => {
 						<div>{t('loans.stats.total')}</div>
 					</TotalColHeading>
 					<StatsCol>
-						<div>${formatNumber(borrowsOpenInterest, { decimals: 2 })}</div>
+						<div>${borrowsOpenInterest.toString(2)}</div>
 					</StatsCol>
 				</StatsGrid>
 			</Container>

@@ -1,4 +1,4 @@
-import { useQuery, QueryConfig } from 'react-query';
+import { useQuery, UseQueryOptions } from 'react-query';
 import { ethers } from 'ethers';
 import { useRecoilValue } from 'recoil';
 import axios from 'axios';
@@ -19,17 +19,17 @@ import {
 	networkState,
 	isMainnetState,
 } from 'store/wallet';
-import { toBigNumber } from 'utils/formatters/number';
 
 import { LiquidityPoolData } from './types';
 import { getCurveTokenPrice } from './helper';
+import Wei, { wei } from '@synthetixio/wei';
 
 export type CurveData = LiquidityPoolData & {
-	swapAPR: number;
-	rewardsAPR: number;
+	swapAPR: Wei;
+	rewardsAPR: Wei;
 };
 
-const useCurveSeuroPoolQuery = (options?: QueryConfig<CurveData>) => {
+const useCurveSeuroPoolQuery = (options?: UseQueryOptions<CurveData>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
@@ -108,9 +108,7 @@ const useCurveSeuroPoolQuery = (options?: QueryConfig<CurveData>) => {
 			]);
 			const durationInWeeks = Number(duration) / 3600 / 24 / 7;
 			const isPeriodFinished = new Date().getTime() > Number(periodFinish) * 1000;
-			const distribution = isPeriodFinished
-				? 0
-				: Math.trunc(Number(duration) * (rate / 1e18)) / durationInWeeks;
+			const distribution = isPeriodFinished ? wei(0) : rate.mul(duration).div(durationInWeeks);
 
 			const [
 				balance,
@@ -132,12 +130,16 @@ const useCurveSeuroPoolQuery = (options?: QueryConfig<CurveData>) => {
 				curveRewards,
 				curveStaked,
 				curveAllowance,
-			].map((data) => Number(toBigNumber(data.toString()).div(1e18)));
+			].map((data) => wei(data));
 
-			const curveRate =
-				(((inflationRate * relativeWeight * 31536000) / workingSupply) * 0.4) /
-				curveSeuroTokenPrice;
-			const rewardsAPR = curveRate * curvePrice * 1e18;
+			const curveRate = inflationRate
+				.mul(relativeWeight)
+				.mul(31536000)
+				.div(workingSupply)
+				.mul(0.4)
+				.div(curveSeuroTokenPrice);
+
+			const rewardsAPR = curveRate.mul(curvePrice);
 			const swapAPR = swapData?.data?.apy?.day?.susd ?? 0;
 
 			return {

@@ -2,7 +2,6 @@ import { FC, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { ethers } from 'ethers';
 
-import synthetix from 'lib/synthetix';
 import Connector from 'containers/Connector';
 import TransactionNotifier from 'containers/TransactionNotifier';
 
@@ -26,9 +25,11 @@ import {
 	ModalItemTitle,
 	ModalItemText,
 } from 'styles/common';
-import { normalizedGasPrice } from 'utils/network';
+import { normalizedGasPrice, normalizeGasLimit } from 'utils/network';
 
 import { yearnSNXVault } from 'contracts';
+import { SynthetixJS } from '@synthetixio/contracts-interface';
+import Wei, { wei } from '@synthetixio/wei';
 
 type ApproveModalProps = {
 	description: string;
@@ -37,8 +38,8 @@ type ApproveModalProps = {
 	contractToApprove: string;
 };
 
-const getContractByName = (name: string, signer: any) => {
-	const { contracts } = synthetix.js!;
+const getContractByName = (synthetixjs: SynthetixJS, name: string, signer: any) => {
+	const { contracts } = synthetixjs;
 	if (name === 'YearnSNXVault') {
 		return new ethers.Contract(
 			yearnSNXVault.address,
@@ -59,11 +60,11 @@ const ApproveModal: FC<ApproveModalProps> = ({
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const isAppReady = useRecoilValue(appReadyState);
 	const { monitorTransaction } = TransactionNotifier.useContainer();
-	const { signer } = Connector.useContainer();
+	const { signer, synthetixjs } = Connector.useContainer();
 
 	const [gasLimitEstimate, setGasLimitEstimate] = useState<GasLimitEstimate>(null);
 	const [error, setError] = useState<string | null>(null);
-	const [gasPrice, setGasPrice] = useState<number>(0);
+	const [gasPrice, setGasPrice] = useState<Wei>(wei(0));
 	const [isApproving, setIsApproving] = useState<boolean>(false);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 
@@ -72,17 +73,18 @@ const ApproveModal: FC<ApproveModalProps> = ({
 			if (isAppReady && isWalletConnected && tokenContract && contractToApprove) {
 				try {
 					const {
-						contracts,
 						utils: { parseEther },
-					} = synthetix.js!;
+						contracts,
+					} = synthetixjs!;
 					setError(null);
 					const allowance = parseEther(TokenAllowanceLimit.toString());
-					const approvedContract = getContractByName(contractToApprove, signer);
-					const gasEstimate = await synthetix.getGasEstimateForTransaction({
-						txArgs: [approvedContract.address, allowance],
-						method: contracts[tokenContract].estimateGas.approve,
-					});
-					setGasLimitEstimate(gasEstimate);
+					const approvedContract = getContractByName(synthetixjs!, contractToApprove, signer);
+					const gasLimitEstimate = wei(
+						await contracts[tokenContract].estimateGas.approve(approvedContract.address, allowance),
+						0
+					);
+
+					setGasLimitEstimate(gasLimitEstimate);
 				} catch (e) {
 					console.log(e);
 					setError(e.message);
@@ -100,18 +102,18 @@ const ApproveModal: FC<ApproveModalProps> = ({
 				const {
 					contracts,
 					utils: { parseEther },
-				} = synthetix.js!;
+				} = synthetixjs!;
 				setIsApproving(true);
 				setError(null);
 				setTxModalOpen(true);
 				const allowance = parseEther(TokenAllowanceLimit.toString());
-				const approvedContract = getContractByName(contractToApprove, signer);
+				const approvedContract = getContractByName(synthetixjs!, contractToApprove, signer);
 				const transaction: ethers.ContractTransaction = await contracts[tokenContract].approve(
 					approvedContract.address,
 					allowance,
 					{
-						gasPrice: normalizedGasPrice(gasPrice),
-						gasLimit: gasLimitEstimate,
+						gasPrice: normalizedGasPrice(gasPrice.toNumber()),
+						gasLimit: normalizeGasLimit(gasLimitEstimate.toNumber()),
 					}
 				);
 				if (transaction) {

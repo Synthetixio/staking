@@ -801,12 +801,14 @@
 		"deposit": {
 			"info": {
 				"title": "Deposit SNX",
-				"subtitle": "Deposit your SNX to complete the process of migrating your SNX from L1 to L2. You may experience a delay during the migration process before your SNX is available on L2",
+				"subtitle": "Deposit your SNX to complete the process of migrating your SNX from L1 to L2. You may experience a delay during the migration process before your SNX is available on L2. Your SNX deposit to L2 may take a few minutes to show up even after Etherscan shows the transaction was successful.",
 				"no-deposit": "No deposit history",
 				"warning": "Warning",
-				"metamask-only": "You are about to migrate funds to L2. Only Metamask is supported on L2, so make sure you are depositing from a Metamask wallet or a wallet that allows you to export your private key to Metamask.",
-				"layer2-withdraw-delay": "Once on L2, if you wish to withdraw your funds back to L1 it will take 7-10 days. On L2 there is currently limited functionality, including disabled transfers, and no usage for sUSD.",
-				"layer2-rewards": "SNX rewards for the first few weeks are low: Rewards will be 25k SNX a week for the 2 weeks between 2/1 and 2/15. Then, the synthetixDAO will assess the option of increasing the SNX rewards to incentivise further migration.",
+				"layer2-migrate-intro": "You are about to migrate funds to Optimistic Ethereum \"L2\".",
+				"metamask-only": "Only Metamask is fully supported on L2, so make sure that you are depositing from a Metamask wallet or a wallet that allows you to export your private key to Metamask.",
+				"layer2-withdraw-delay": "Once on L2, if you wish to withdraw your funds back to L1, it will take 7-10 days on average.",
+				"layer2-limited-synths": "We do not yet have the full collection of synths available on L2 and trading on Kwenta is currently limited to sETH, sBTC, and sLINK. We will announce when more synths are made available.",
+				"layer2-gas": "Make sure you migrate some ETH to cover the minimal gas fees on L2. Please use the Optimism Bridge <0>here</0>.",
 				"table": {
 					"deposit": "Deposit",
 					"date": "Date",

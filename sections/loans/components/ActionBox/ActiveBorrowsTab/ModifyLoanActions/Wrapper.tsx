@@ -1,8 +1,6 @@
 import { useState, useMemo, useEffect, FC } from 'react';
-import { ethers } from 'ethers';
 import { isAfter, addSeconds, fromUnixTime, differenceInSeconds } from 'date-fns';
 import { useRouter } from 'next/router';
-import Big from 'bignumber.js';
 import styled from 'styled-components';
 import { Trans, useTranslation } from 'react-i18next';
 import Button from 'components/Button';
@@ -17,7 +15,6 @@ import { Svg } from 'react-optimized-image';
 import NavigationBack from 'assets/svg/app/navigation-back.svg';
 import GasSelector from 'components/GasSelector';
 import Loans from 'containers/Loans';
-import { toBigNumber, formatUnits } from 'utils/formatters/number';
 import {
 	FormContainer,
 	InputsContainer,
@@ -30,16 +27,14 @@ import {
 	TxModalItemSeperator,
 } from 'sections/loans/components/common';
 import { LOAN_TYPE_ERC20, LOAN_TYPE_ETH } from 'sections/loans/constants';
-import {
-	normalizeGasLimit as getNormalizedGasLimit,
-	normalizedGasPrice as getNormalizedGasPrice,
-} from 'utils/network';
+import { normalizedGasPrice as getNormalizedGasPrice } from 'utils/network';
 import AssetInput from 'sections/loans/components/ActionBox/BorrowSynthsTab/AssetInput';
 import { Loan } from 'queries/loans/types';
 import AccruedInterest from 'sections/loans/components/ActionBox/components/AccruedInterest';
 import CRatio from 'sections/loans/components/ActionBox/components/LoanCRatio';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
-import synthetix from 'lib/synthetix';
+import Wei, { wei } from '@synthetixio/wei';
+import useSynthetixQueries from '@synthetixio/queries';
 
 type WrapperProps = {
 	getTxData: (gas: Record<string, number>) => any[] | null;
@@ -110,13 +105,20 @@ const Wrapper: FC<WrapperProps> = ({
 
 	const [waitETA, setWaitETA] = useState<string>('');
 
-	const [gasPrice, setGasPrice] = useState<number>(0);
-	const [gasLimit, setGasLimitEstimate] = useState<number | null>(null);
+	const [gasPrice, setGasPrice] = useState<Wei>(wei(0));
 
 	const minCRatio = useMemo(
-		() => minCRatios.get(loanTypeIsETH ? LOAN_TYPE_ETH : LOAN_TYPE_ERC20) || toBigNumber(0),
+		() => minCRatios.get(loanTypeIsETH ? LOAN_TYPE_ETH : LOAN_TYPE_ERC20) || wei(0),
 		[minCRatios, loanTypeIsETH]
 	);
+
+	const { useContractTxn } = useSynthetixQueries();
+
+	const data = getTxData({});
+
+	const txn = useContractTxn(data?.[0], data?.[1], data?.[2], {
+		gasPrice: gasPrice.toBN(),
+	});
 
 	const onGoBack = () => router.back();
 	const onSetleftColAssetName = () => {};
@@ -131,7 +133,10 @@ const Wrapper: FC<WrapperProps> = ({
 	}, [loanTypeIsETH, loan.lastInteraction, interactionDelays]);
 
 	const handleButtonClick = () =>
-		onButtonClick({ gasPrice: getNormalizedGasPrice(gasPrice), gasLimit: gasLimit! });
+		onButtonClick({
+			gasPrice: getNormalizedGasPrice(gasPrice.toNumber()),
+			gasLimit: txn.gasLimit!.toNumber(),
+		});
 
 	useEffect(() => {
 		if (!nextInteractionDate) return;
@@ -146,9 +151,7 @@ const Wrapper: FC<WrapperProps> = ({
 					return stopTimer();
 				}
 				if (isMounted) {
-					setWaitETA(
-						toHumanizedDuration(toBigNumber(differenceInSeconds(nextInteractionDate, now)))
-					);
+					setWaitETA(toHumanizedDuration(wei(differenceInSeconds(nextInteractionDate, now))));
 				}
 			}, 1000);
 
@@ -168,30 +171,6 @@ const Wrapper: FC<WrapperProps> = ({
 			unsubs.forEach((unsub) => unsub());
 		};
 	}, [nextInteractionDate]);
-
-	// gas
-	useEffect(() => {
-		let isMounted = true;
-		(async () => {
-			try {
-				setError(null);
-				const data: any[] | null = getTxData({});
-				if (!data) return;
-				const [contract, method, args] = data;
-				const gasEstimate = await synthetix.getGasEstimateForTransaction({
-					txArgs: args,
-					method: contract.estimateGas[method],
-				});
-				if (isMounted) setGasLimitEstimate(getNormalizedGasLimit(Number(gasEstimate)));
-			} catch (error) {
-				// console.error(error);
-				if (isMounted) setGasLimitEstimate(null);
-			}
-		})();
-		return () => {
-			isMounted = false;
-		};
-	}, [getTxData, setError]);
 
 	return (
 		<>
@@ -240,7 +219,7 @@ const Wrapper: FC<WrapperProps> = ({
 						</SettingContainer>
 					)}
 					<SettingContainer>
-						<GasSelector gasLimitEstimate={gasLimit} setGasPrice={setGasPrice} />
+						<GasSelector gasLimitEstimate={txn.gasLimit} setGasPrice={setGasPrice} />
 					</SettingContainer>
 				</SettingsContainer>
 			</FormContainer>
@@ -270,26 +249,14 @@ const Wrapper: FC<WrapperProps> = ({
 							<TxModalItem>
 								<TxModalItemTitle>{t(leftColLabel)}</TxModalItemTitle>
 								<TxModalItemText>
-									{!leftColAmount
-										? null
-										: formatUnits(
-												toBigNumber(ethers.utils.parseEther(leftColAmount).toString()),
-												18,
-												2
-										  )}{' '}
-									{leftColAssetName}
+									{wei(leftColAmount || 0).toString(2)} {leftColAssetName}
 								</TxModalItemText>
 							</TxModalItem>
 							<TxModalItemSeperator />
 							<TxModalItem>
 								<TxModalItemTitle>{t(rightColLabel)}</TxModalItemTitle>
 								<TxModalItemText>
-									{formatUnits(
-										toBigNumber(ethers.utils.parseEther(rightColAmount).toString()),
-										18,
-										2
-									)}{' '}
-									{rightColAssetName}
+									{wei(rightColAmount).toString(2)} {rightColAssetName}
 								</TxModalItemText>
 							</TxModalItem>
 						</TxModalContent>
@@ -302,8 +269,8 @@ const Wrapper: FC<WrapperProps> = ({
 
 function noop() {}
 
-function toHumanizedDuration(ms: Big) {
-	const dur: Record<string, Big> = {};
+function toHumanizedDuration(ms: Wei) {
+	const dur: Record<string, Wei> = {};
 	const units: Array<any> = [
 		{ label: 's', mod: 60 },
 		{ label: 'm', mod: 60 },
@@ -312,8 +279,8 @@ function toHumanizedDuration(ms: Big) {
 		// {label: "w", mod: 7},
 	];
 	units.forEach((u) => {
-		const z = (dur[u.label] = ms.mod(u.mod));
-		ms = ms.minus(z).dividedBy(u.mod);
+		const z = (dur[u.label] = wei(ms.toBig().mod(u.mod)));
+		ms = ms.sub(z).div(u.mod);
 	});
 	return units
 		.slice()

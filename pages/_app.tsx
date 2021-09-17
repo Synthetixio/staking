@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import React, { FC } from 'react';
 import { AppProps } from 'next/app';
 import Head from 'next/head';
 import { RecoilRoot } from 'recoil';
@@ -10,9 +10,11 @@ import theme from 'styles/theme';
 import Layout from 'sections/shared/Layout';
 import AppLayout from 'sections/shared/Layout/AppLayout';
 import { MediaContextProvider } from 'styles/media';
-import { QueryCache, ReactQueryCacheProvider } from 'react-query';
+import { QueryClient, QueryClientProvider } from 'react-query';
+import { ReactQueryDevtools } from 'react-query/devtools';
 import { DEFAULT_REQUEST_REFRESH_INTERVAL } from 'constants/defaults';
-import { ReactQueryDevtools } from 'react-query-devtools';
+
+import { SynthetixQueryContextProvider, createQueryContext } from '@synthetixio/queries';
 
 import SystemStatus from 'sections/shared/SystemStatus';
 
@@ -21,23 +23,47 @@ import '@reach/dialog/styles.css';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import 'tippy.js/dist/tippy.css';
-import 'react-virtualized/styles.css';
 import '../i18n';
+import Connector from 'containers/Connector';
 
-const queryCache = new QueryCache({
-	defaultConfig: {
+const queryClient = new QueryClient({
+	defaultOptions: {
 		queries: {
 			refetchInterval: DEFAULT_REQUEST_REFRESH_INTERVAL,
-		},
-		mutations: {
-			throwOnError: true,
 		},
 	},
 });
 
-// trigger deploy - going live 22 Dec 2020
+const InnerApp: FC<AppProps> = ({ Component, pageProps }) => {
+	const { provider, signer, network } = Connector.useContainer();
 
-const App: FC<AppProps> = ({ Component, pageProps }) => {
+	return (
+		<>
+			<SynthetixQueryContextProvider
+				value={
+					provider && network
+						? createQueryContext({
+								provider: provider,
+								signer: signer || undefined,
+								networkId: network!.id,
+						  })
+						: createQueryContext({ networkId: null })
+				}
+			>
+				<Layout>
+					<SystemStatus>
+						<AppLayout>
+							<Component {...pageProps} />
+						</AppLayout>
+					</SystemStatus>
+				</Layout>
+				<ReactQueryDevtools />
+			</SynthetixQueryContextProvider>
+		</>
+	);
+};
+
+const App: FC<AppProps> = (props) => {
 	const { t } = useTranslation();
 
 	return (
@@ -61,9 +87,11 @@ const App: FC<AppProps> = ({ Component, pageProps }) => {
 				<meta name="twitter:image" content="/images/staking-twitter.jpg" />
 				<meta name="twitter:url" content="https://staking.synthetix.io" />
 				<link rel="icon" href="/images/favicon.ico" />
-				
+
 				{/* matomo */}
-				<script dangerouslySetInnerHTML={{__html: `
+				<script
+					dangerouslySetInnerHTML={{
+						__html: `
 					  var _paq = window._paq = window._paq || [];
 					  /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
 					  _paq.push(['trackPageView']);
@@ -75,24 +103,19 @@ const App: FC<AppProps> = ({ Component, pageProps }) => {
 					    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
 					    g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
 					  })();
-				`}} />
+				`,
+					}}
+				/>
 			</Head>
 			<ThemeProvider theme={theme}>
 				<RecoilRoot>
-					<WithAppContainers>
-						<MediaContextProvider>
-							<ReactQueryCacheProvider queryCache={queryCache}>
-								<Layout>
-									<SystemStatus>
-										<AppLayout>
-											<Component {...pageProps} />
-										</AppLayout>
-									</SystemStatus>
-								</Layout>
-								<ReactQueryDevtools />
-							</ReactQueryCacheProvider>
-						</MediaContextProvider>
-					</WithAppContainers>
+					<QueryClientProvider client={queryClient} contextSharing={true}>
+						<WithAppContainers>
+							<MediaContextProvider>
+								<InnerApp {...props} />
+							</MediaContextProvider>
+						</WithAppContainers>
+					</QueryClientProvider>
 				</RecoilRoot>
 			</ThemeProvider>
 		</>

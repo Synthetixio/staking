@@ -1,32 +1,32 @@
-import { useQuery, QueryConfig } from 'react-query';
+import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
 
 import QUERY_KEYS from 'constants/queryKeys';
 
 import { isL2State, isWalletConnectedState, networkState, walletAddressState } from 'store/wallet';
 import { appReadyState } from 'store/app';
-import { NumericValue, toBigNumber } from 'utils/formatters/number';
 import { parseEther } from 'ethers/lib/utils';
 import axios from 'axios';
 import { swapEndpoint } from 'constants/1inch';
-import { BigNumber as EthersBigNumber } from 'ethers';
+import { ethers } from 'ethers';
+import { wei, WeiSource } from '@synthetixio/wei';
 
 export type SwapTxData = {
 	from: string;
 	to: string;
 	data: string;
-	value: EthersBigNumber;
-	gasPrice: EthersBigNumber;
+	value: ethers.BigNumber;
+	gasPrice: ethers.BigNumber;
 	gas: number;
 };
 
 const use1InchSwapQuery = (
 	fromTokenAddress: string,
 	toTokenAddress: string,
-	amount: NumericValue,
+	amount: WeiSource,
 	fromAddress: string,
 	slippage: number,
-	options?: QueryConfig<SwapTxData>
+	options?: UseQueryOptions<SwapTxData>
 ) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
@@ -48,14 +48,15 @@ const use1InchSwapQuery = (
 			});
 
 			const transaction = response.data.tx;
+			delete transaction.gas;
 			return {
 				...transaction,
-				value: EthersBigNumber.from(transaction.value),
-				gasPrice: EthersBigNumber.from(transaction.gasPrice),
+				value: wei(transaction.value, 0).toBN(),
+				gasPrice: wei(transaction.gasPrice, 0).toBN(),
 			};
 		},
 		{
-			enabled: isAppReady && isWalletConnected && !isL2 && !toBigNumber(amount).isZero(),
+			enabled: isAppReady && isWalletConnected && !isL2 && !wei(amount).eq(0),
 			...options,
 		}
 	);

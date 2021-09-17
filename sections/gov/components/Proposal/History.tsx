@@ -12,19 +12,18 @@ import { StyledTooltip } from 'sections/gov/components/common';
 import { Blockie } from '../common';
 import makeBlockie from 'ethereum-blockies-base64';
 import { ethers } from 'ethers';
-import { QueryResult } from 'react-query';
-import { List } from 'react-virtualized';
-import { ProposalResults } from 'queries/gov/types';
+import { UseQueryResult } from 'react-query';
+import { FixedSizeList as List } from 'react-window';
+import { ProposalResults } from '@synthetixio/queries';
 
 type HistoryProps = {
-	proposalResults: QueryResult<ProposalResults, unknown>;
+	proposalResults: UseQueryResult<ProposalResults>;
 	hash: string;
 };
 
 const History: React.FC<HistoryProps> = ({ proposalResults }) => {
 	const { t } = useTranslation();
 	const walletAddress = useRecoilValue(walletAddressState);
-	const { getAddress } = ethers.utils;
 
 	const history = useMemo(() => {
 		if (proposalResults.isLoading) {
@@ -44,42 +43,42 @@ const History: React.FC<HistoryProps> = ({ proposalResults }) => {
 						<Title>{t('gov.proposal.history.header.choice')}</Title>
 						<Title>{t('gov.proposal.history.header.weight')}</Title>
 					</HeaderRow>
-					<List
-						height={400}
-						width={350}
-						rowCount={voteList.length}
-						rowHeight={65}
-						overscanRowCount={20}
-						noRowsRenderer={() => {
-							return (
-								<Row>
-									<Title>{t('gov.proposal.history.empty')}</Title>
-								</Row>
-							);
-						}}
-						rowRenderer={({ key, index, style }) => {
-							return (
-								<Row key={key} style={style}>
+					{voteList.length === 0 ? (
+						<Row>
+							<EmptyTitle>{t('gov.proposal.history.empty')}</EmptyTitle>
+						</Row>
+					) : (
+						<List
+							height={400}
+							width={350}
+							itemCount={voteList.length}
+							itemSize={65}
+							overscanCount={20}
+						>
+							{({ index, style }) => (
+								<Row key={index} style={style}>
 									<LeftSide>
 										<Blockie src={makeBlockie(voteList[index].voter)} />
 										<StyledTooltip
 											arrow={true}
 											placement="bottom"
 											content={
-												getAddress(voteList[index].voter) === getAddress(walletAddress ?? '')
+												ethers.utils.getAddress(voteList[index].voter) ===
+												ethers.utils.getAddress(walletAddress ?? '')
 													? t('gov.proposal.history.currentUser')
 													: voteList[index].profile.ens
 													? voteList[index].profile.ens
-													: getAddress(voteList[index].voter)
+													: ethers.utils.getAddress(voteList[index].voter)
 											}
 											hideOnClick={false}
 										>
 											<Title>
-												{getAddress(voteList[index].voter) === getAddress(walletAddress ?? '')
+												{ethers.utils.getAddress(voteList[index].voter) ===
+												ethers.utils.getAddress(walletAddress ?? '')
 													? t('gov.proposal.history.currentUser')
 													: voteList[index].profile.ens
 													? truncateString(voteList[index].profile.ens, 13)
-													: truncateAddress(getAddress(voteList[index].voter))}
+													: truncateAddress(ethers.utils.getAddress(voteList[index].voter))}
 											</Title>
 										</StyledTooltip>
 									</LeftSide>
@@ -104,15 +103,15 @@ const History: React.FC<HistoryProps> = ({ proposalResults }) => {
 										</StyledTooltip>
 									</RightSide>
 								</Row>
-							);
-						}}
-					/>
+							)}
+						</List>
+					)}
 				</Column>
 			);
 		} else {
 			return null;
 		}
-	}, [proposalResults, t, getAddress, walletAddress]);
+	}, [proposalResults, t, walletAddress]);
 
 	return history;
 };
@@ -159,6 +158,10 @@ const Title = styled.div`
 	color: ${(props) => props.theme.colors.white};
 	margin-left: 8px;
 	text-align: left;
+`;
+
+const EmptyTitle = styled(Title)`
+	margin-bottom: 16px;
 `;
 
 const Value = styled(FlexDivRowCentered)`

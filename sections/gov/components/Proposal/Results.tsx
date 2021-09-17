@@ -11,12 +11,15 @@ import { SPACE_KEY } from 'constants/snapshot';
 import CouncilNominations from 'constants/nominations.json';
 import { useRecoilValue } from 'recoil';
 import { numOfCouncilSeatsState } from 'store/gov';
-import { QueryResult } from 'react-query';
-import { ProposalResults } from 'queries/gov/types';
-import { numOfAmbassadorMembers, numOfGrantMembers } from 'queries/gov/constants';
+import { UseQueryResult } from 'react-query';
+import { ProposalResults } from '@synthetixio/queries';
+import {
+	numOfGrantMembers,
+	numOfAmbassadorMembers,
+} from '@synthetixio/queries/build/node/src/queries/gov/constants';
 
 type ResultsProps = {
-	proposalResults: QueryResult<ProposalResults, unknown>;
+	proposalResults: UseQueryResult<ProposalResults, unknown>;
 	hash: string;
 };
 

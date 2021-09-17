@@ -1,54 +1,36 @@
-import BigNumber from 'bignumber.js';
-import { NumericValue, toBigNumber, zeroBN, maxBN } from 'utils/formatters/number';
+import Wei, { wei, WeiSource } from '@synthetixio/wei';
 
-export function getMintAmount(
-	targetCRatio: BigNumber,
-	stakeAmount: NumericValue,
-	SNXPrice: BigNumber
-): BigNumber {
-	if (!stakeAmount || !targetCRatio || !SNXPrice) return toBigNumber(0);
-	return toBigNumber(stakeAmount).multipliedBy(targetCRatio).multipliedBy(SNXPrice);
+export function getMintAmount(targetCRatio: Wei, stakeAmount: WeiSource, SNXPrice: Wei): Wei {
+	if (!stakeAmount || targetCRatio.eq(0) || SNXPrice.eq(0)) return wei(0);
+	return wei(stakeAmount).mul(targetCRatio).mul(SNXPrice);
 }
 
-export function getStakingAmount(
-	targetCRatio: BigNumber,
-	mintAmount: NumericValue,
-	SNXPrice: BigNumber
-): BigNumber {
-	if (!mintAmount || !targetCRatio || !SNXPrice) return toBigNumber(0);
-	return toBigNumber(mintAmount).dividedBy(targetCRatio).dividedBy(SNXPrice);
+export function getStakingAmount(targetCRatio: Wei, mintAmount: WeiSource, SNXPrice: Wei): Wei {
+	if (!mintAmount || targetCRatio.eq(0) || SNXPrice.eq(0)) return wei(0);
+	return wei(mintAmount).div(targetCRatio).div(SNXPrice);
 }
 
-export function getTransferableAmountFromMint(
-	balance: BigNumber,
-	stakedValue: BigNumber
-): BigNumber {
-	if (!balance || !stakedValue) return toBigNumber(0);
-	return maxBN(balance.minus(stakedValue), zeroBN);
+export function getTransferableAmountFromMint(balance: Wei, stakedValue: Wei): Wei {
+	if (!balance || !stakedValue) return wei(0);
+	return Wei.max(balance.sub(stakedValue), wei(0));
 }
 
 export function getTransferableAmountFromBurn(
-	amountToBurn: NumericValue,
-	debtEscrowBalance: BigNumber,
-	targetCRatio: BigNumber,
-	SNXPrice: BigNumber,
-	transferable: BigNumber
-): BigNumber {
-	if (!amountToBurn) return toBigNumber(0);
-	return transferable.plus(
-		maxBN(
-			toBigNumber(amountToBurn)
-				.minus(debtEscrowBalance)
-				.dividedBy(targetCRatio)
-				.dividedBy(SNXPrice),
-			zeroBN
-		)
+	amountToBurn: WeiSource,
+	debtEscrowBalance: Wei,
+	targetCRatio: Wei,
+	SNXPrice: Wei,
+	transferable: Wei
+): Wei {
+	if (!amountToBurn || targetCRatio.eq(0) || SNXPrice.eq(0)) return wei(0);
+	return transferable.add(
+		Wei.max(wei(amountToBurn).sub(debtEscrowBalance).div(targetCRatio).div(SNXPrice), wei(0))
 	);
 }
 
-export function sanitiseValue(value: BigNumber) {
-	if (value.isNegative() || value.isNaN() || !value.isFinite()) {
-		return zeroBN;
+export function sanitiseValue(value: Wei) {
+	if (value.lt(0)) {
+		return wei(0);
 	} else {
 		return value;
 	}

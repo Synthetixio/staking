@@ -1,12 +1,12 @@
-import { useTranslation } from 'react-i18next';
+import { useTranslation, Trans } from 'react-i18next';
 import { CellProps } from 'react-table';
 import styled, { css } from 'styled-components';
 import { Svg } from 'react-optimized-image';
+import useSynthetixQueries, { DepositHistory } from '@synthetixio/queries';
 
 import { InfoContainer, Title, Subtitle } from '../../components/common';
 import ExternalLink from '../../components/ExternalLink';
-import useGetDepositsDataQuery, { DepositHistory } from 'queries/deposits/useGetDepositsDataQuery';
-import { FlexDivColCentered } from 'styles/common';
+import { FlexDivColCentered, BlueStyledLink } from 'styles/common';
 
 import { formatShortDate } from 'utils/formatters/date';
 import { formatCurrency } from 'utils/formatters/number';
@@ -21,10 +21,22 @@ import {
 	Header,
 	StyledTable,
 } from 'sections/escrow/components/common';
+import { useRecoilValue } from 'recoil';
+import { walletAddressState } from 'store/wallet';
+import { EXTERNAL_LINKS } from 'constants/links';
 
 const InfoBox = () => {
 	const { t } = useTranslation();
-	const depositsDataQuery = useGetDepositsDataQuery();
+
+	const walletAddress = useRecoilValue(walletAddressState);
+
+	const { useGetBridgeDataQuery } = useSynthetixQueries();
+
+	const depositsDataQuery = useGetBridgeDataQuery(
+		process.env.NEXT_PUBLIC_INFURA_PROJECT_ID!,
+		walletAddress
+	);
+
 	const depositHistory = depositsDataQuery?.data ?? null;
 
 	return (
@@ -45,7 +57,8 @@ const InfoBox = () => {
 									<Data>
 										{formatCurrency(CryptoCurrency.SNX, cellProps.value, {
 											currencyKey: CryptoCurrency.SNX,
-											decimals: 2,
+											minDecimals: 2,
+											maxDecimals: 2,
 										})}
 									</Data>
 								),
@@ -102,9 +115,17 @@ const InfoBox = () => {
 					<StyledFlexDivColCentered>
 						<Svg src={Warning} />
 						<WarningHeading>{t('layer2.deposit.info.warning')}</WarningHeading>
+						<WarningBody>{t('layer2.deposit.info.layer2-migrate-intro')}</WarningBody>
 						<WarningBody>{t('layer2.deposit.info.metamask-only')}</WarningBody>
 						<WarningBody>{t('layer2.deposit.info.layer2-withdraw-delay')}</WarningBody>
-						<WarningBody>{t('layer2.deposit.info.layer2-rewards')}</WarningBody>
+						<WarningBody>
+							{
+								<Trans
+									i18nKey={'layer2.deposit.info.layer2-gas'}
+									components={[<BlueStyledLink href={EXTERNAL_LINKS.L2.Optimism} />]}
+								/>
+							}
+						</WarningBody>
 					</StyledFlexDivColCentered>
 				)}
 			</ContainerBody>
@@ -124,6 +145,10 @@ const StyledSubtitle = styled(Subtitle)`
 
 const StyledFlexDivColCentered = styled(FlexDivColCentered)`
 	padding: 0 20px;
+
+	& > * {
+		padding: 4px 0;
+	}
 `;
 
 const Bold = css`

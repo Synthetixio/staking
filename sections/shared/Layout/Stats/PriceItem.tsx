@@ -9,9 +9,9 @@ import { NO_VALUE } from 'constants/placeholder';
 import CurrencyPrice from 'components/Currency/CurrencyPrice';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 
 import LineChart, { LineChartData } from './LineChart';
+import useSynthetixQueries from '@synthetixio/queries';
 import { formatPercent } from 'utils/formatters/number';
 
 type PriceItemProps = {
@@ -21,6 +21,7 @@ type PriceItemProps = {
 
 const PriceItem: FC<PriceItemProps> = ({ currencyKey, data }) => {
 	const { selectedPriceCurrency, selectPriceCurrencyRate } = useSelectedPriceCurrency();
+	const { useExchangeRatesQuery } = useSynthetixQueries();
 	const exchangeRatesQuery = useExchangeRatesQuery();
 
 	const exchangeRates = exchangeRatesQuery.data ?? null;

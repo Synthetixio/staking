@@ -4,67 +4,52 @@ import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import { TabContainer } from '../../components/common';
-import { Transaction, GasLimitEstimate } from 'constants/network';
+import { Transaction } from 'constants/network';
 
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
-import useGetDepositsDataQuery from 'queries/deposits/useGetDepositsDataQuery';
-import synthetix from 'lib/synthetix';
-import TransactionNotifier from 'containers/TransactionNotifier';
 import { appReadyState } from 'store/app';
-import { walletAddressState, isEOAWalletState } from 'store/wallet';
+import { walletAddressState } from 'store/wallet';
 
 import ApproveModal from 'components/ApproveModal';
 import TabContent from './TabContent';
-import { normalizedGasPrice } from 'utils/network';
+import useSynthetixQueries from '@synthetixio/queries';
+import Connector from 'containers/Connector';
+import Wei, { wei } from '@synthetixio/wei';
 
 const DepositTab = () => {
 	const { t } = useTranslation();
 	const { transferableCollateral } = useStakingCalculations();
 	const walletAddress = useRecoilValue(walletAddressState);
 	const isAppReady = useRecoilValue(appReadyState);
-	const isEOAWallet = useRecoilValue(isEOAWalletState);
-	const { monitorTransaction } = TransactionNotifier.useContainer();
-	const depositsDataQuery = useGetDepositsDataQuery();
+	const { synthetixjs } = Connector.useContainer();
 
-	const [gasLimitEstimate, setGasLimitEstimate] = useState<GasLimitEstimate>(null);
-	const [depositTxError, setDepositTxError] = useState<string | null>(null);
-	const [gasEstimateError, setGasEstimateError] = useState<string | null>(null);
+	const { useGetBridgeDataQuery, useSynthetixTxn } = useSynthetixQueries();
+
+	const depositsDataQuery = useGetBridgeDataQuery(
+		process.env.NEXT_PUBLIC_INFURA_PROJECT_ID!,
+		walletAddress
+	);
+
 	const [isApproved, setIsApproved] = useState<boolean>(false);
-	const [gasPrice, setGasPrice] = useState<number>(0);
+	const [gasPrice, setGasPrice] = useState<Wei>(wei(0));
 	const [transactionState, setTransactionState] = useState<Transaction>(Transaction.PRESUBMIT);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
-	const [txHash, setTxHash] = useState<string | null>(null);
 
-	useEffect(() => {
-		const getGasLimitEstimate = async () => {
-			if (isAppReady && walletAddress && isApproved && transferableCollateral) {
-				try {
-					if (isEOAWallet === false) throw new Error(t('layer2.error.non-eoa-wallet'));
-					setGasEstimateError(null);
-					const {
-						contracts: { SynthetixBridgeToOptimism },
-						utils: { parseEther },
-					} = synthetix.js!;
-					const gasEstimate = await synthetix.getGasEstimateForTransaction({
-						txArgs: [parseEther(transferableCollateral.toString())],
-						method: SynthetixBridgeToOptimism.estimateGas.deposit,
-					});
-					setGasLimitEstimate(gasEstimate);
-				} catch (e) {
-					console.log(e);
-					setGasEstimateError(e.message);
-				}
-			}
-		};
-		getGasLimitEstimate();
-		// eslint-disable-next-line
-	}, [walletAddress, isAppReady, isApproved, transferableCollateral]);
+	const txn = useSynthetixTxn(
+		'SynthetixBridgeToOptimism',
+		'deposit',
+		[transferableCollateral.toBN()],
+		{
+			gasPrice: gasPrice.toBN(),
+		},
+		{ gasLimitBuffer: 0.15, enabled: isApproved }
+	);
 
 	const getAllowance = useCallback(async () => {
 		if (walletAddress && isAppReady) {
 			const {
 				contracts: { Synthetix, SynthetixBridgeToOptimism },
-			} = synthetix.js!;
+			} = synthetixjs!;
 			try {
 				const allowance = await Synthetix.allowance(
 					walletAddress,
@@ -77,49 +62,19 @@ const DepositTab = () => {
 				setIsApproved(false);
 			}
 		}
-	}, [walletAddress, isAppReady]);
+	}, [walletAddress, isAppReady, synthetixjs]);
 
 	useEffect(() => {
 		getAllowance();
 	}, [getAllowance]);
 
-	const handleDeposit = async () => {
-		if (isAppReady && !gasEstimateError) {
-			const {
-				contracts: { SynthetixBridgeToOptimism },
-				utils: { parseEther },
-			} = synthetix.js!;
-			try {
-				setDepositTxError(null);
-				setTxModalOpen(true);
-
-				const transaction = await SynthetixBridgeToOptimism.deposit(
-					parseEther(transferableCollateral.toString()),
-					{ gasLimit: gasLimitEstimate, gasPrice: normalizedGasPrice(gasPrice) }
-				);
-
-				if (transaction) {
-					setTxHash(transaction.hash);
-					setTransactionState(Transaction.WAITING);
-					monitorTransaction({
-						txHash: transaction.hash,
-						onTxConfirmed: () => {
-							setTransactionState(Transaction.SUCCESS);
-							depositsDataQuery.refetch();
-						},
-						onTxFailed: (txData) => {
-							setTransactionState(Transaction.PRESUBMIT);
-							setDepositTxError(txData?.failureReason ?? null);
-						},
-					});
-					setTxModalOpen(false);
-				}
-			} catch (e) {
-				console.log(e);
-				setDepositTxError(e.message);
-			}
+	useEffect(() => {
+		if (txn.txnStatus === 'prompting') {
+			setTxModalOpen(true);
+		} else if (txn.txnStatus === 'confirmed') {
+			depositsDataQuery.refetch();
 		}
-	};
+	}, [txn.txnStatus, depositsDataQuery]);
 
 	return (
 		<StyledTabContainer>
@@ -133,14 +88,14 @@ const DepositTab = () => {
 			) : null}
 			<TabContent
 				depositAmount={transferableCollateral}
-				onSubmit={handleDeposit}
-				transactionError={depositTxError}
-				gasEstimateError={gasEstimateError}
+				onSubmit={txn.mutate}
+				transactionError={txn.errorMessage}
+				gasEstimateError={txn.errorMessage}
 				txModalOpen={txModalOpen}
 				setTxModalOpen={setTxModalOpen}
-				gasLimitEstimate={gasLimitEstimate}
+				gasLimitEstimate={txn.gasLimit}
 				setGasPrice={setGasPrice}
-				txHash={txHash}
+				txHash={txn.hash}
 				transactionState={transactionState}
 				setTransactionState={setTransactionState}
 			/>

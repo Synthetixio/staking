@@ -1,71 +1,49 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { ethers } from 'ethers';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
-import TransactionNotifier from 'containers/TransactionNotifier';
 import UIContainer from 'containers/UI';
-import { normalizedGasPrice } from 'utils/network';
 import { CryptoCurrency, Synths } from 'constants/currency';
 import { TabContainer } from '../common';
 
-import { isWalletConnectedState, walletAddressState, delegateWalletState } from 'store/wallet';
-import synthetix from 'lib/synthetix';
+import { walletAddressState, delegateWalletState } from 'store/wallet';
 import BurnTiles from '../BurnTiles';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 import StakingInput from '../StakingInput';
-import { Transaction } from 'constants/network';
-import { formatCurrency, toBigNumber, zeroBN } from 'utils/formatters/number';
+import { formatCurrency } from 'utils/formatters/number';
 import { amountToBurnState, BurnActionType, burnTypeState } from 'store/staking';
 import { addSeconds, differenceInSeconds } from 'date-fns';
-import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
-import { appReadyState } from 'store/app';
-import { GasLimitEstimate } from 'constants/network';
 
 import Connector from 'containers/Connector';
 import useClearDebtCalculations from 'sections/staking/hooks/useClearDebtCalculations';
 import { useTranslation } from 'react-i18next';
 import { toFutureDate } from 'utils/formatters/date';
-import useETHBalanceQuery from 'queries/walletBalances/useETHBalanceQuery';
-
-const burnFunction = ({
-	isDelegate,
-	isToTarget = false,
-}: {
-	isDelegate: boolean;
-	isToTarget?: boolean;
-}) => {
-	return isDelegate
-		? isToTarget
-			? 'burnSynthsToTargetOnBehalf'
-			: 'burnSynthsOnBehalf'
-		: isToTarget
-		? 'burnSynthsToTarget'
-		: 'burnSynths';
-};
+import Wei, { wei } from '@synthetixio/wei';
+import useSynthetixQueries from '@synthetixio/queries';
+import { parseSafeWei } from 'utils/parse';
 
 const BurnTab: React.FC = () => {
-	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const [amountToBurn, onBurnChange] = useRecoilState(amountToBurnState);
 	const [burnType, onBurnTypeChange] = useRecoilState(burnTypeState);
+
+	const {
+		useSynthsBalancesQuery,
+		useETHBalanceQuery,
+		useSynthetixTxn,
+		useEVMTxn,
+	} = useSynthetixQueries();
+
 	const { percentageTargetCRatio, debtBalance, issuableSynths } = useStakingCalculations();
 	const walletAddress = useRecoilValue(walletAddressState);
-	const isAppReady = useRecoilValue(appReadyState);
 	const delegateWallet = useRecoilValue(delegateWalletState);
-	const { signer } = Connector.useContainer();
+	const { synthetixjs } = Connector.useContainer();
 	const { t } = useTranslation();
 
-	const [transactionState, setTransactionState] = useState<Transaction>(Transaction.PRESUBMIT);
-	const [txHash, setTxHash] = useState<string | null>(null);
-	const [error, setError] = useState<string | null>(null);
-	const [gasLimitEstimate, setGasLimitEstimate] = useState<GasLimitEstimate>(null);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
-	const [gasPrice, setGasPrice] = useState<number>(0);
+	const [gasPrice, setGasPrice] = useState<Wei>(wei(0));
 	const [waitingPeriod, setWaitingPeriod] = useState(0);
 	const [issuanceDelay, setIssuanceDelay] = useState(0);
 
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-
-	const synthsBalancesQuery = useSynthsBalancesQuery();
+	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
 	const synthBalances =
 		synthsBalancesQuery.isSuccess && synthsBalancesQuery.data != null
 			? synthsBalancesQuery.data
@@ -73,7 +51,7 @@ const BurnTab: React.FC = () => {
 
 	const sUSDBalance = synthBalances?.balancesMap.sUSD
 		? synthBalances.balancesMap.sUSD.balance
-		: toBigNumber(0);
+		: wei(0);
 
 	const {
 		needToBuy,
@@ -83,8 +61,12 @@ const BurnTab: React.FC = () => {
 		swapData,
 	} = useClearDebtCalculations(debtBalance, sUSDBalance, walletAddress!);
 
-	const ethBalanceQuery = useETHBalanceQuery();
-	const ethBalance = ethBalanceQuery.data ?? zeroBN;
+	const ethBalanceQuery = useETHBalanceQuery(walletAddress);
+	const ethBalance = ethBalanceQuery.data ?? wei(0);
+
+	const amountToBurnBN = Wei.max(wei(0), parseSafeWei(amountToBurn, wei(0)));
+
+	const isToTarget = burnType === BurnActionType.TARGET;
 
 	const { setTitle } = UIContainer.useContainer();
 
@@ -92,7 +74,7 @@ const BurnTab: React.FC = () => {
 		const {
 			contracts: { Exchanger },
 			utils: { formatBytes32String },
-		} = synthetix.js!;
+		} = synthetixjs!;
 
 		try {
 			const maxSecsLeftInWaitingPeriod = await Exchanger.maxSecsLeftInWaitingPeriod(
@@ -103,12 +85,12 @@ const BurnTab: React.FC = () => {
 		} catch (e) {
 			console.log(e);
 		}
-	}, [walletAddress, delegateWallet]);
+	}, [walletAddress, delegateWallet, synthetixjs]);
 
 	const getIssuanceDelay = useCallback(async () => {
 		const {
 			contracts: { Issuer },
-		} = synthetix.js!;
+		} = synthetixjs!;
 		try {
 			const [canBurnSynths, lastIssueEvent, minimumStakeTime] = await Promise.all([
 				Issuer.canBurnSynths(delegateWallet?.address ?? walletAddress),
@@ -127,7 +109,38 @@ const BurnTab: React.FC = () => {
 			console.log(e);
 		}
 		// eslint-disable-next-line
-	}, [walletAddress, debtBalance, delegateWallet]);
+	}, [walletAddress, debtBalance, delegateWallet, synthetixjs]);
+
+	const burnCall: [string, any[]] = !!delegateWallet
+		? isToTarget
+			? ['burnSynthsToTargetOnBehalf', [delegateWallet]]
+			: ['burnSynthsOnBehalf', [delegateWallet, amountToBurnBN.toBN()]]
+		: isToTarget
+		? ['burnSynthsToTarget', []]
+		: ['burnSynths', [amountToBurnBN.toBN()]];
+
+	const swapTxn = useEVMTxn(swapData, {
+		onSuccess: () => txn.mutate(),
+		gasLimitBuffer: 0.15,
+		enabled: true,
+	});
+
+	const txn = useSynthetixTxn(
+		'Synthetix',
+		burnCall[0],
+		burnCall[1],
+		{
+			gasPrice: gasPrice.toBN(),
+		},
+		{
+			gasLimitBuffer: 0.15,
+			enabled: burnType !== BurnActionType.CLEAR || !needToBuy || swapTxn.txnStatus === 'confirmed',
+		}
+	);
+
+	useEffect(() => {
+		if (swapTxn.txnStatus === 'prompting' || txn.txnStatus === 'prompting') setTxModalOpen(true);
+	}, [txn, swapTxn.txnStatus]);
 
 	// header title
 	useEffect(() => {
@@ -139,284 +152,77 @@ const BurnTab: React.FC = () => {
 		getIssuanceDelay();
 	}, [getMaxSecsLeftInWaitingPeriod, getIssuanceDelay]);
 
-	useEffect(() => {
-		const getGasLimitEstimate = async () => {
-			if (isAppReady && amountToBurn.length > 0 && isWalletConnected) {
-				try {
-					setError(null);
-					if (delegateWallet && !delegateWallet.canBurn) {
-						throw new Error(t('staking.actions.mint.action.error.delegate-cannot-burn'));
-					}
-					const {
-						contracts: { Synthetix },
-						utils: { parseEther },
-					} = synthetix.js!;
+	const maxBurnAmount = debtBalance.gt(sUSDBalance) ? wei(sUSDBalance) : debtBalance;
 
-					const maxBurnAmount = debtBalance.isGreaterThan(sUSDBalance)
-						? toBigNumber(sUSDBalance)
-						: debtBalance;
+	let error: string | null = null;
 
-					if (debtBalance.isZero()) throw new Error(t('staking.actions.burn.action.error.no-debt'));
-					if (
-						(Number(amountToBurn) > sUSDBalance.toNumber() || maxBurnAmount.isZero()) &&
-						burnType !== BurnActionType.CLEAR
-					)
-						throw new Error(t('staking.actions.burn.action.error.insufficient'));
-
-					if (
-						burnType === BurnActionType.CLEAR &&
-						toBigNumber(quoteAmount).isGreaterThan(ethBalance)
-					) {
-						throw new Error(t('staking.actions.burn.action.error.insufficient-eth-1inch'));
-					}
-
-					if (waitingPeriod) {
-						throw new Error(
-							t('staking.actions.burn.action.error.waiting-period', {
-								date: toFutureDate(waitingPeriod),
-							})
-						);
-					}
-
-					if (issuanceDelay && burnType !== BurnActionType.TARGET) {
-						throw new Error(
-							t('staking.actions.burn.action.error.issuance-period', {
-								date: toFutureDate(issuanceDelay),
-							})
-						);
-					}
-
-					if (burnType === BurnActionType.CLEAR) {
-						const gasEstimate = await synthetix.getGasEstimateForTransaction({
-							txArgs: [parseEther(sUSDBalance.toString())],
-							method: Synthetix.estimateGas.burnSynths,
-						});
-						setGasLimitEstimate(gasEstimate);
-					}
-
-					if (burnType === BurnActionType.TARGET) {
-						const gasEstimate = await synthetix.getGasEstimateForTransaction({
-							txArgs: delegateWallet ? [delegateWallet.address] : [],
-							method:
-								Synthetix.estimateGas[
-									burnFunction({ isDelegate: !!delegateWallet, isToTarget: true })
-								],
-						});
-						setGasLimitEstimate(gasEstimate);
-					} else {
-						const gasEstimate = await synthetix.getGasEstimateForTransaction({
-							txArgs: delegateWallet
-								? [delegateWallet.address, parseEther(amountToBurn.toString())]
-								: [parseEther(amountToBurn.toString())],
-							method: Synthetix.estimateGas[burnFunction({ isDelegate: !!delegateWallet })],
-						});
-						setGasLimitEstimate(gasEstimate);
-					}
-				} catch (error) {
-					setError(error.message);
-					setGasLimitEstimate(null);
-				}
-			}
-		};
-		getGasLimitEstimate();
-	}, [
-		isWalletConnected,
-		t,
-		isAppReady,
-		amountToBurn,
-		debtBalance,
-		issuanceDelay,
-		sUSDBalance,
-		waitingPeriod,
-		burnType,
-		ethBalance,
-		quoteAmount,
-		delegateWallet,
-	]);
-
-	const handleBurn = useCallback(
-		async (burnToTarget: boolean) => {
-			if (isAppReady) {
-				try {
-					setError(null);
-					setTxModalOpen(true);
-					const {
-						contracts: { Synthetix },
-						utils: { parseEther },
-					} = synthetix.js!;
-
-					let transaction: ethers.ContractTransaction;
-
-					if (burnToTarget) {
-						const burnFunc = burnFunction({ isDelegate: !!delegateWallet, isToTarget: true });
-						const gasLimit = await synthetix.getGasEstimateForTransaction({
-							txArgs: delegateWallet ? [delegateWallet.address] : [],
-							method: Synthetix.estimateGas[burnFunc],
-						});
-
-						transaction = delegateWallet
-							? await Synthetix[burnFunc](delegateWallet.address, {
-									gasPrice: normalizedGasPrice(gasPrice),
-									gasLimit: gasLimit,
-							  })
-							: await Synthetix[burnFunc]({
-									gasPrice: normalizedGasPrice(gasPrice),
-									gasLimit: gasLimit,
-							  });
-					} else {
-						const burnFunc = burnFunction({ isDelegate: !!delegateWallet });
-						let amountToBurnBN;
-
-						if (burnType === BurnActionType.MAX) {
-							amountToBurnBN = parseEther(sUSDBalance.toString());
-						} else {
-							amountToBurnBN = parseEther(amountToBurn.toString());
-						}
-						const gasLimit = await synthetix.getGasEstimateForTransaction({
-							txArgs: delegateWallet ? [delegateWallet.address, amountToBurnBN] : [amountToBurnBN],
-							method: Synthetix.estimateGas[burnFunc],
-						});
-						transaction = delegateWallet
-							? await Synthetix[burnFunc](delegateWallet.address, amountToBurnBN, {
-									gasPrice: normalizedGasPrice(gasPrice),
-									gasLimit,
-							  })
-							: await Synthetix[burnFunc](amountToBurnBN, {
-									gasPrice: normalizedGasPrice(gasPrice),
-									gasLimit,
-							  });
-					}
-					if (transaction) {
-						setTxHash(transaction.hash);
-						setTransactionState(Transaction.WAITING);
-						monitorTransaction({
-							txHash: transaction.hash,
-							onTxConfirmed: () => {
-								setTransactionState(Transaction.SUCCESS);
-							},
-						});
-						setTxModalOpen(false);
-					}
-				} catch (e) {
-					setTransactionState(Transaction.PRESUBMIT);
-					setError(e.message);
-				}
-			}
-		},
-		[amountToBurn, gasPrice, monitorTransaction, isAppReady, delegateWallet, sUSDBalance, burnType]
-	);
-
-	const handleClear = useCallback(async () => {
-		if (!swapData || !signer) {
-			return;
-		}
-
-		try {
-			setError(null);
-			setTxModalOpen(true);
-
-			const swapTransaction = await signer?.sendTransaction({
-				from: swapData.from,
-				to: swapData.to,
-				value: swapData.value,
-				gasPrice: swapData.gasPrice,
-				data: swapData.data,
-			});
-
-			if (swapTransaction) {
-				setTxHash(swapTransaction.hash);
-				setTransactionState(Transaction.WAITING);
-				monitorTransaction({
-					txHash: swapTransaction.hash,
-					onTxConfirmed: async () => {
-						const {
-							contracts: { Synthetix },
-							utils: { parseEther },
-						} = synthetix.js!;
-
-						let burnTransaction: ethers.ContractTransaction;
-
-						const amountToBurnBN = parseEther(amountToBurn.toString());
-						const gasLimit = await synthetix.getGasEstimateForTransaction({
-							txArgs: [amountToBurnBN],
-							method: Synthetix.estimateGas.burnSynths,
-						});
-						burnTransaction = await Synthetix.burnSynths(amountToBurnBN, {
-							gasPrice: normalizedGasPrice(gasPrice),
-							gasLimit,
-						});
-
-						setTxHash(burnTransaction.hash);
-						setTransactionState(Transaction.WAITING);
-						monitorTransaction({
-							txHash: burnTransaction.hash,
-							onTxConfirmed: () => {
-								setTransactionState(Transaction.SUCCESS);
-							},
-						});
-						setTxModalOpen(false);
-					},
-				});
-			}
-		} catch (e) {
-			setTransactionState(Transaction.PRESUBMIT);
-			setError(e.message);
-		}
-	}, [amountToBurn, gasPrice, monitorTransaction, signer, swapData]);
+	if (debtBalance.eq(0)) error = t('staking.actions.burn.action.error.no-debt');
+	else if (
+		(Number(amountToBurn) > sUSDBalance.toNumber() || maxBurnAmount.eq(0)) &&
+		burnType !== BurnActionType.CLEAR
+	)
+		error = t('staking.actions.burn.action.error.insufficient');
+	else if (burnType === BurnActionType.CLEAR && wei(quoteAmount).gt(ethBalance)) {
+		error = t('staking.actions.burn.action.error.insufficient-eth-1inch');
+	} else if (waitingPeriod) {
+		error = t('staking.actions.burn.action.error.waiting-period', {
+			date: toFutureDate(waitingPeriod),
+		});
+	} else if (issuanceDelay && burnType !== BurnActionType.TARGET) {
+		error = t('staking.actions.burn.action.error.issuance-period', {
+			date: toFutureDate(issuanceDelay),
+		});
+	}
 
 	const returnPanel = useMemo(() => {
 		let handleSubmit;
-		let inputValue;
+		let inputValue: string = '0';
 		let isLocked;
 		let etherNeededToBuy;
 		let sUSDNeededToBuy;
 		let sUSDNeededToBurn;
 
 		/* If a user has more sUSD than the debt balance, the max burn amount is their debt balance, else it is just the balance they have */
-		const maxBurnAmount = debtBalance.isGreaterThan(sUSDBalance)
-			? toBigNumber(sUSDBalance)
-			: debtBalance;
+		const maxBurnAmount = debtBalance.gt(sUSDBalance) ? wei(sUSDBalance) : debtBalance;
 
-		const burnAmountToFixCRatio = toBigNumber(
-			Math.max(debtBalance.minus(issuableSynths).toNumber(), 0)
-		);
+		const burnAmountToFixCRatio = wei(Math.max(debtBalance.sub(issuableSynths).toNumber(), 0));
 
 		switch (burnType) {
 			case BurnActionType.MAX:
 				onBurnChange(maxBurnAmount.toString());
 				handleSubmit = () => {
-					handleBurn(false);
+					txn.mutate();
 				};
-				inputValue = maxBurnAmount;
+				inputValue = maxBurnAmount.toString();
 				isLocked = true;
 				break;
 			case BurnActionType.TARGET:
-				const calculatedTargetBurn = Math.max(debtBalance.minus(issuableSynths).toNumber(), 0);
+				const calculatedTargetBurn = Wei.max(debtBalance.sub(issuableSynths), wei(0));
 				onBurnChange(calculatedTargetBurn.toString());
 				handleSubmit = () => {
-					handleBurn(true);
+					txn.mutate();
 				};
-				inputValue = toBigNumber(calculatedTargetBurn);
+				inputValue = calculatedTargetBurn.toString();
 				isLocked = true;
 				break;
 			case BurnActionType.CUSTOM:
-				handleSubmit = () => handleBurn(false);
-				inputValue = toBigNumber(amountToBurn);
+				handleSubmit = () => txn.mutate();
+				inputValue = amountToBurn;
 				isLocked = false;
 				break;
 			case BurnActionType.CLEAR:
 				if (!needToBuy) {
 					onBurnTypeChange(BurnActionType.MAX);
 					handleSubmit = () => {
-						handleBurn(false);
+						txn.mutate();
 					};
-					inputValue = maxBurnAmount;
+					inputValue = maxBurnAmount.toString();
 					isLocked = true;
 					break;
 				}
 				onBurnChange(debtBalanceWithBuffer.toString());
-				handleSubmit = () => handleClear();
-				inputValue = toBigNumber(debtBalanceWithBuffer);
+				handleSubmit = () => swapTxn.mutate();
+				inputValue = debtBalanceWithBuffer.toString();
 				isLocked = true;
 				if (quoteAmount) {
 					etherNeededToBuy = formatCurrency(CryptoCurrency.ETH, quoteAmount, {
@@ -441,15 +247,15 @@ const BurnTab: React.FC = () => {
 				isLocked={isLocked}
 				isMint={false}
 				onBack={onBurnTypeChange}
-				error={error}
+				error={error || swapTxn.errorMessage || txn.errorMessage}
 				txModalOpen={txModalOpen}
 				setTxModalOpen={setTxModalOpen}
-				gasLimitEstimate={gasLimitEstimate}
+				gasLimitEstimate={txn.gasLimit}
 				setGasPrice={setGasPrice}
 				onInputChange={onBurnChange}
-				txHash={txHash}
-				transactionState={transactionState}
-				setTransactionState={setTransactionState}
+				txHash={txn.hash}
+				transactionState={txn.txnStatus}
+				resetTransaction={txn.refresh}
 				maxBurnAmount={maxBurnAmount}
 				burnAmountToFixCRatio={burnAmountToFixCRatio}
 				etherNeededToBuy={etherNeededToBuy}
@@ -459,24 +265,21 @@ const BurnTab: React.FC = () => {
 		);
 	}, [
 		burnType,
-		error,
-		gasLimitEstimate,
 		txModalOpen,
-		txHash,
-		transactionState,
 		amountToBurn,
 		debtBalance,
-		handleBurn,
 		issuableSynths,
 		onBurnChange,
 		onBurnTypeChange,
 		percentageTargetCRatio,
 		sUSDBalance,
 		debtBalanceWithBuffer,
-		handleClear,
 		missingSUSDWithBuffer,
 		needToBuy,
 		quoteAmount,
+		error,
+		txn,
+		swapTxn,
 	]);
 
 	return <TabContainer>{returnPanel}</TabContainer>;

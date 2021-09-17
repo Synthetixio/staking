@@ -1,15 +1,13 @@
 import { useEffect, useState } from 'react';
-import useSynthIssuedQuery from 'queries/staking/useSynthIssuedQuery';
-import useSynthBurnedQuery from 'queries/staking/useSynthBurnedQuery';
-import useGetDebtSnapshotQuery from 'queries/debt/useGetDebtSnapshotQuery';
-import useGetDebtDataQuery from 'queries/debt/useGetDebtDataQuery';
-import { last, orderBy } from 'lodash';
-import { toBigNumber } from 'utils/formatters/number';
+import { last } from 'lodash';
+import useSynthetixQueries from '@synthetixio/queries';
+import { StakingTransactionType } from '@synthetixio/queries';
+import Wei, { wei } from '@synthetixio/wei';
 
 export type HistoricalDebtAndIssuanceData = {
 	timestamp: number;
-	actualDebt: number;
-	issuanceDebt: number;
+	actualDebt: Wei;
+	issuanceDebt: Wei;
 	index: number;
 };
 
@@ -18,49 +16,44 @@ type HistoricalDebtAndIssuance = {
 	data: HistoricalDebtAndIssuanceData[] | [];
 };
 
-const useHistoricalDebtData = () => {
+const useHistoricalDebtData = (walletAddress: string | null) => {
 	const [historicalDebt, setHistoricalDebt] = useState<HistoricalDebtAndIssuance>({
 		isLoading: true,
 		data: [],
 	});
 
-	const issuedQuery = useSynthIssuedQuery();
-	const burnedQuery = useSynthBurnedQuery();
-	const debtSnapshotQuery = useGetDebtSnapshotQuery();
-	const debtDataQuery = useGetDebtDataQuery();
+	const {
+		useFeeClaimHistoryQuery,
+		useGetDebtSnapshotQuery,
+		useGetDebtDataQuery,
+	} = useSynthetixQueries();
+
+	const feeClaimHistoryQuery = useFeeClaimHistoryQuery(walletAddress);
+
+	const debtSnapshotQuery = useGetDebtSnapshotQuery(walletAddress);
+	const debtDataQuery = useGetDebtDataQuery(walletAddress);
 
 	const isLoaded =
-		issuedQuery.isSuccess &&
-		burnedQuery.isSuccess &&
-		debtSnapshotQuery.isSuccess &&
-		debtDataQuery.isSuccess;
+		feeClaimHistoryQuery.isSuccess && debtSnapshotQuery.isSuccess && debtDataQuery.isSuccess;
 
 	useEffect(() => {
 		if (isLoaded) {
-			const issued = issuedQuery.data ?? [];
-			const burned = burnedQuery.data ?? [];
+			const claimHistory = feeClaimHistoryQuery.data ?? [];
 			const debtHistory = debtSnapshotQuery.data ?? [];
-
-			const burnEventsMap = burned.map((event) => {
-				return { ...event, type: 'burn' };
-			});
-
-			const issueEventsMap = issued.map((event) => {
-				return { ...event, type: 'mint' };
-			});
-
-			// We concat both the events and order them (asc)
-			const eventBlocks = orderBy(burnEventsMap.concat(issueEventsMap), 'block', 'asc');
 
 			// We set historicalIssuanceAggregation array, to store all the cumulative
 			// values of every mint and burns
-			const historicalIssuanceAggregation: number[] = [];
-			eventBlocks.forEach((event, i) => {
-				const multiplier = event.type === 'burn' ? -1 : 1;
+			const historicalIssuanceAggregation: Wei[] = [];
+			claimHistory.forEach((event, i) => {
+				if (event.type === StakingTransactionType.FeesClaimed) {
+					return; // skip
+				}
+
+				const multiplier = event.type === StakingTransactionType.Burned ? -1 : 1;
 				const aggregation =
 					historicalIssuanceAggregation.length === 0
-						? multiplier * event.value
-						: multiplier * event.value + historicalIssuanceAggregation[i - 1];
+						? event.value.mul(multiplier)
+						: event.value.mul(multiplier).add(last(historicalIssuanceAggregation)!);
 
 				historicalIssuanceAggregation.push(aggregation);
 			});
@@ -74,7 +67,7 @@ const useHistoricalDebtData = () => {
 					historicalDebtAndIssuance.push({
 						timestamp: debtSnapshot.timestamp,
 						issuanceDebt: historicalIssuanceAggregation[i],
-						actualDebt: debtSnapshot.debtBalanceOf,
+						actualDebt: wei(debtSnapshot.debtBalanceOf),
 						index: i,
 					});
 				});
@@ -83,8 +76,8 @@ const useHistoricalDebtData = () => {
 			// Issuance debt = last occurrence of the historicalDebtAndIssuance array
 			historicalDebtAndIssuance.push({
 				timestamp: new Date().getTime(),
-				actualDebt: toBigNumber(debtDataQuery.data?.debtBalance ?? 0).toNumber(),
-				issuanceDebt: last(historicalIssuanceAggregation) ?? 0,
+				actualDebt: debtDataQuery.data?.debtBalance || wei(0),
+				issuanceDebt: last(historicalIssuanceAggregation) ?? wei(0),
 				index: historicalDebtAndIssuance.length,
 			});
 

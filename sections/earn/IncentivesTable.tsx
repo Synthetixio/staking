@@ -18,12 +18,7 @@ import ExpandIcon from 'assets/svg/app/expand.svg';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
-import {
-	formatPercent,
-	formatFiatCurrency,
-	formatCurrency,
-	toBigNumber,
-} from 'utils/formatters/number';
+import { formatPercent, formatFiatCurrency, formatCurrency } from 'utils/formatters/number';
 
 import { isWalletConnectedState } from 'store/wallet';
 
@@ -43,10 +38,11 @@ import ROUTES from 'constants/routes';
 import { LP, Tab } from './types';
 import { CurrencyIconType } from 'components/Currency/CurrencyIcon/CurrencyIcon';
 import { DesktopOrTabletView, MobileOnlyView } from 'components/Media';
+import Wei, { wei } from '@synthetixio/wei';
 
 export type DualRewards = {
-	a: number;
-	b: number;
+	a: Wei;
+	b: Wei;
 };
 
 export const NOT_APPLICABLE = 'n/a';
@@ -54,15 +50,15 @@ export const NOT_APPLICABLE = 'n/a';
 export type EarnItem = {
 	title: string;
 	subtitle: string;
-	apr: number;
-	tvl: number;
+	apr: Wei;
+	tvl: Wei;
 	staked: {
-		balance: number;
+		balance: Wei;
 		asset: CurrencyKey;
 		ticker: CurrencyKey;
 		type?: CurrencyIconType;
 	};
-	rewards: number | DualRewards;
+	rewards: Wei | DualRewards;
 	periodStarted: number;
 	periodFinish: number;
 	claimed: boolean | string;
@@ -172,12 +168,9 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab }
 				Cell: (cellProps: CellProps<EarnItem, EarnItem['tvl']>) => (
 					<CellContainer>
 						<Title isNumeric={true}>
-							{formatFiatCurrency(
-								getPriceAtCurrentRate(toBigNumber(cellProps.value != null ? cellProps.value : 0)),
-								{
-									sign: selectedPriceCurrency.sign,
-								}
-							)}
+							{formatFiatCurrency(getPriceAtCurrentRate(wei(cellProps.value || 0)), {
+								sign: selectedPriceCurrency.sign,
+							})}
 						</Title>
 					</CellContainer>
 				),
@@ -199,9 +192,7 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab }
 								<Title isNumeric={true}>
 									{formatCurrency(
 										CryptoCurrency.SNX,
-										isDualRewards
-											? (cellProps.value as DualRewards).a
-											: (cellProps.value as number),
+										(isDualRewards ? (cellProps.value as DualRewards).a : cellProps.value) as Wei,
 										{
 											currencyKey: CryptoCurrency.SNX,
 										}
@@ -216,7 +207,9 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab }
 								)}
 								<Subtitle>
 									{cellProps.row.original.claimed === NOT_APPLICABLE ||
-									(!cellProps.row.original.claimed && cellProps.row.original.rewards === 0) ? (
+									(!cellProps.row.original.claimed &&
+										!isDualRewards &&
+										(cellProps.row.original.rewards as Wei).eq(0)) ? (
 										''
 									) : cellProps.row.original.claimed ? (
 										t('earn.incentives.options.rewards.claimed')

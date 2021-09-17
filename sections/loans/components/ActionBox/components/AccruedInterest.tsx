@@ -2,9 +2,9 @@ import React from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { FlexDivRow, FlexDivRowCentered } from 'styles/common';
-import { formatNumber, toBigNumber } from 'utils/formatters/number';
 import { SYNTH_BY_CURRENCY_KEY } from 'sections/loans/constants';
 import { Loan } from 'queries/loans/types';
+import { wei } from '@synthetixio/wei';
 
 type AccruedInterestProps = {
 	loan: Loan;
@@ -20,10 +20,7 @@ const AccruedInterest: React.FC<AccruedInterestProps> = ({ loan }) => {
 			<FlexDivRowCentered>
 				<Item>
 					<Text>
-						{formatNumber(toBigNumber(loan.accruedInterest.toString()).dividedBy(1e18), {
-							decimals: 4,
-						})}{' '}
-						{debtAsset}
+						{wei(loan.accruedInterest).toString(4)} {debtAsset}
 					</Text>
 				</Item>
 			</FlexDivRowCentered>

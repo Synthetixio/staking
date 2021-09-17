@@ -1,12 +1,12 @@
 import { FC } from 'react';
 import styled from 'styled-components';
-import BigNumber from 'bignumber.js';
+import Wei from '@synthetixio/wei';
 import { Trans } from 'react-i18next';
 import { FlexDivCol, NoTextTransform } from 'styles/common';
 import { formatFiatCurrency } from 'utils/formatters/number';
 
 type BalanceItemProps = {
-	amount: BigNumber;
+	amount: Wei;
 	currencyKey: string;
 };
 

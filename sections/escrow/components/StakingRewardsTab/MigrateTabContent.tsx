@@ -32,7 +32,7 @@ type MigrateTabContentProps = {
 	gasLimitEstimate: GasLimitEstimate;
 	setGasPrice: Function;
 	txHash: string | null;
-	transactionState: Transaction;
+	transactionState: string;
 	setTransactionState: (tx: Transaction) => void;
 };
 
@@ -60,22 +60,22 @@ const MigrateTabContent: FC<MigrateTabContentProps> = ({
 			onClick={onSubmit}
 			variant="primary"
 			size="lg"
-			disabled={transactionState !== Transaction.PRESUBMIT || !!gasEstimateError}
+			disabled={transactionState !== 'unsent' || !!gasEstimateError}
 		>
 			{t('escrow.actions.migrate-button')}
 		</StyledCTA>
 	);
 
-	if (transactionState === Transaction.WAITING) {
+	if (transactionState === 'pending') {
 		return <ActionInProgress isMigration={true} hash={txHash as string} />;
 	}
 
-	if (transactionState === Transaction.SUCCESS) {
+	if (transactionState === 'confirmed') {
 		return (
 			<ActionCompleted
 				isMigration={true}
 				hash={txHash as string}
-				setTransactionState={setTransactionState}
+				resetTransaction={() => setTransactionState(Transaction.PRESUBMIT)}
 			/>
 		);
 	}
@@ -88,7 +88,6 @@ const MigrateTabContent: FC<MigrateTabContentProps> = ({
 					<Data>
 						{formatCurrency(vestingCurrencyKey, totalEscrowed, {
 							currencyKey: vestingCurrencyKey,
-							decimals: 2,
 						})}
 					</Data>
 				</InputBox>

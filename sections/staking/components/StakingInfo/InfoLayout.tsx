@@ -1,6 +1,6 @@
 import { FC, useMemo } from 'react';
 import styled from 'styled-components';
-import BigNumber from 'bignumber.js';
+import Wei from '@synthetixio/wei';
 import { Trans, useTranslation } from 'react-i18next';
 import { Svg } from 'react-optimized-image';
 
@@ -28,17 +28,17 @@ import { StakingPanelType } from 'store/staking';
 
 type BarChartData = {
 	title: string;
-	value: BigNumber;
-	changedValue: BigNumber;
-	percentage: BigNumber;
-	changedPercentage: BigNumber;
+	value: Wei;
+	changedValue: Wei;
+	percentage: Wei;
+	changedPercentage: Wei;
 	currencyKey: CryptoCurrency;
 };
 
 type RowData = {
 	title: string;
-	value: BigNumber;
-	changedValue: BigNumber;
+	value: Wei;
+	changedValue: Wei;
 	currencyKey?: CryptoCurrency | string;
 };
 
@@ -49,7 +49,7 @@ type StakingInfo = {
 
 type InfoLayoutProps = {
 	stakingInfo: StakingInfo;
-	collateral: BigNumber;
+	collateral: Wei;
 	isInputEmpty: boolean;
 	infoType: StakingPanelType;
 };
@@ -95,7 +95,6 @@ const InfoLayout: FC<InfoLayoutProps> = ({ stakingInfo, collateral, isInputEmpty
 				<RowValue>
 					{formatCurrency(CryptoCurrency.SNX, collateral, {
 						currencyKey: CryptoCurrency.SNX,
-						decimals: 2,
 					})}
 				</RowValue>
 			</TotalBalanceContainer>
@@ -107,7 +106,6 @@ const InfoLayout: FC<InfoLayoutProps> = ({ stakingInfo, collateral, isInputEmpty
 							title={title}
 							value={formatCurrency(currencyKey, isInputEmpty ? value : changedValue, {
 								currencyKey: currencyKey,
-								decimals: 2,
 							})}
 							percentage={isInputEmpty ? percentage.toNumber() : changedPercentage.toNumber()}
 						/>
@@ -120,16 +118,14 @@ const InfoLayout: FC<InfoLayoutProps> = ({ stakingInfo, collateral, isInputEmpty
 							<RowValue>
 								{formatCurrency(currencyKey, value.toString(), {
 									currencyKey: currencyKey,
-									decimals: 2,
 								})}
 							</RowValue>
-							{!isInputEmpty && (
+							{!isInputEmpty && changedValue && (
 								<>
 									<StyledArrowRight src={ArrowRightIcon} />
 									<RowValue>
-										{formatCurrency(currencyKey, !changedValue.isNaN() ? changedValue : 0, {
+										{formatCurrency(currencyKey, changedValue, {
 											currencyKey: currencyKey,
-											decimals: 2,
 										})}
 									</RowValue>
 								</>

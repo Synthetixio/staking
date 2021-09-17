@@ -36,7 +36,8 @@ const WidthdrawPage: FC = () => {
 				<TransferableValue
 					title={t('common.stat-box.available-snx')}
 					value={formatCryptoCurrency(transferableCollateral ?? 0, {
-						decimals: SNX_HEADER_DECIMALS,
+						minDecimals: SNX_HEADER_DECIMALS,
+						maxDecimals: SNX_HEADER_DECIMALS,
 					})}
 				/>
 				<CRatio

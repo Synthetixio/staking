@@ -7,7 +7,7 @@ import ROUTES from 'constants/routes';
 import { EXTERNAL_LINKS } from 'constants/links';
 import useLPData from 'hooks/useLPData';
 import { CryptoCurrency } from 'constants/currency';
-import { formatPercent, toBigNumber } from 'utils/formatters/number';
+import { formatPercent } from 'utils/formatters/number';
 
 import KwentaIcon from 'assets/svg/app/kwenta.svg';
 import MintIcon from 'assets/svg/app/mint.svg';
@@ -27,16 +27,21 @@ import { LP } from 'sections/earn/types';
 import { CurrencyIconType } from 'components/Currency/CurrencyIcon/CurrencyIcon';
 
 import { ActionsContainer as Container } from './common-styles';
+import { wei } from '@synthetixio/wei';
+import { useRecoilValue } from 'recoil';
+import { walletAddressState } from 'store/wallet';
 
 const LayoutLayerOne: FC = () => {
 	const { t } = useTranslation();
 
+	const walletAddress = useRecoilValue(walletAddressState);
+
 	const lpData = useLPData();
-	const { stakingRewards, tradingRewards } = useUserStakingData();
+	const { stakingRewards, tradingRewards } = useUserStakingData(walletAddress);
 	const { currentCRatio, targetCRatio } = useStakingCalculations();
 
 	const gridItems: GridBoxProps[] = useMemo(() => {
-		const aboveTargetCRatio = currentCRatio.isLessThanOrEqualTo(targetCRatio);
+		const aboveTargetCRatio = currentCRatio.lte(targetCRatio);
 		return [
 			{
 				icon: (
@@ -51,11 +56,11 @@ const LayoutLayerOne: FC = () => {
 				title: t('dashboard.actions.claim.title'),
 				copy: t('dashboard.actions.claim.copy'),
 				tooltip:
-					stakingRewards.isZero() && tradingRewards.isZero()
+					stakingRewards.eq(0) && tradingRewards.eq(0)
 						? t('dashboard.actions.claim.tooltip')
 						: undefined,
 				link: ROUTES.Earn.Claim,
-				isDisabled: stakingRewards.isZero() && tradingRewards.isZero(),
+				isDisabled: stakingRewards.eq(0) && tradingRewards.eq(0),
 			},
 			{
 				icon: (
@@ -65,7 +70,7 @@ const LayoutLayerOne: FC = () => {
 				),
 				title: !aboveTargetCRatio
 					? t('dashboard.actions.burn.title', {
-							targetCRatio: formatPercent(toBigNumber(1).div(targetCRatio), { minDecimals: 0 }),
+							targetCRatio: formatPercent(wei(1).div(targetCRatio), { minDecimals: 0 }),
 					  })
 					: t('dashboard.actions.mint.title'),
 				copy: !aboveTargetCRatio
@@ -113,7 +118,7 @@ const LayoutLayerOne: FC = () => {
 				}),
 				tooltip: t('common.tooltip.external', { link: 'Curve Finance' }),
 				externalLink: ROUTES.Earn.sUSD_EXTERNAL,
-				isDisabled: lpData[LP.CURVE_sUSD].APR === 0,
+				isDisabled: lpData[LP.CURVE_sUSD].APR.eq(0),
 			},
 		].map((cell, i) => ({ ...cell, gridArea: `tile-${i + 1}` }));
 	}, [t, lpData, currentCRatio, targetCRatio, stakingRewards, tradingRewards]);

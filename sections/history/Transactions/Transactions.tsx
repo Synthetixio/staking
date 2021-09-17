@@ -14,7 +14,7 @@ import ExternalLinkIcon from 'assets/svg/app/open-external.svg';
 import { formatShortDate } from 'utils/formatters/date';
 import { formatCurrency } from 'utils/formatters/number';
 
-import { HistoricalStakingTransaction, StakingTransactionType } from 'queries/staking/types';
+import { HistoricalStakingTransaction, StakingTransactionType } from '@synthetixio/queries';
 
 import { ExternalLink, FlexDivCentered, FlexDivJustifyEnd } from 'styles/common';
 import { NO_VALUE } from 'constants/placeholder';

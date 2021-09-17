@@ -1,11 +1,16 @@
+import useSynthetixQueries from '@synthetixio/queries';
 import { useEffect, useMemo, useState } from 'react';
-import useFeeClaimHistoryQuery from 'queries/staking/useFeeClaimHistoryQuery';
-import useGetFeePoolDataQuery from 'queries/staking/useGetFeePoolDataQuery';
+import { useRecoilValue } from 'recoil';
+import { walletAddressState } from 'store/wallet';
 
 export const useClaimedStatus = () => {
 	const [claimed, setClaimed] = useState<boolean>(false);
-	const history = useFeeClaimHistoryQuery();
-	const currentFeePeriod = useGetFeePoolDataQuery('0');
+
+	const walletAddress = useRecoilValue(walletAddressState);
+	const { useFeeClaimHistoryQuery, useGetFeePoolDataQuery } = useSynthetixQueries();
+
+	const history = useFeeClaimHistoryQuery(walletAddress);
+	const currentFeePeriod = useGetFeePoolDataQuery(0);
 
 	const { currentFeePeriodStarts, nextFeePeriodStarts } = useMemo(() => {
 		return {

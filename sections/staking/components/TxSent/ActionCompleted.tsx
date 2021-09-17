@@ -15,7 +15,6 @@ import {
 
 import Success from 'assets/svg/app/success.svg';
 
-import { Transaction } from 'constants/network';
 import ROUTES from 'constants/routes';
 import { CryptoCurrency, Synths } from 'constants/currency';
 
@@ -44,7 +43,7 @@ import {
 } from './common';
 
 type ActionCompletedProps = {
-	setTransactionState: (tx: Transaction) => void;
+	resetTransaction: () => void;
 	isMint: boolean;
 	hash?: string;
 	from?: string;
@@ -52,7 +51,7 @@ type ActionCompletedProps = {
 };
 
 const ActionCompleted: React.FC<ActionCompletedProps> = ({
-	setTransactionState,
+	resetTransaction,
 	isMint,
 	hash,
 	from,
@@ -91,14 +90,14 @@ const ActionCompleted: React.FC<ActionCompletedProps> = ({
 				<ButtonWrap>
 					{link ? (
 						<ExternalLink href={link}>
-							<LeftButton onClick={() => setTransactionState(Transaction.PRESUBMIT)}>
+							<LeftButton onClick={() => resetTransaction()}>
 								{t('staking.actions.burn.completed.verify')}
 							</LeftButton>
 						</ExternalLink>
 					) : null}
 					<RightButton
 						onClick={() => {
-							setTransactionState(Transaction.PRESUBMIT);
+							resetTransaction();
 							onBurnTypeChange(null);
 							onBurnChange('');
 						}}
@@ -130,14 +129,14 @@ const ActionCompleted: React.FC<ActionCompletedProps> = ({
 				<ButtonWrap>
 					{link ? (
 						<ExternalLink href={link}>
-							<LeftButton onClick={() => setTransactionState(Transaction.PRESUBMIT)}>
+							<LeftButton onClick={() => resetTransaction()}>
 								{t('staking.actions.mint.completed-default.verify')}
 							</LeftButton>
 						</ExternalLink>
 					) : null}
 					<RightButton
 						onClick={() => {
-							setTransactionState(Transaction.PRESUBMIT);
+							resetTransaction();
 							onMintTypeChange(null);
 							onMintChange('');
 						}}
@@ -171,7 +170,7 @@ const ActionCompleted: React.FC<ActionCompletedProps> = ({
 			<ButtonWrap>
 				<LeftButton
 					onClick={() => {
-						setTransactionState(Transaction.PRESUBMIT);
+						resetTransaction();
 						onMintTypeChange(null);
 						onMintChange('');
 					}}

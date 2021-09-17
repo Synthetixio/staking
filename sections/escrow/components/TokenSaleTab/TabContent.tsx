@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { formatCurrency } from 'utils/formatters/number';
 import { CryptoCurrency } from 'constants/currency';
 import { InputContainer, InputBox } from '../common';
-import { Transaction, GasLimitEstimate } from 'constants/network';
+import { GasLimitEstimate } from 'constants/network';
 
 import GasSelector from 'components/GasSelector';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
@@ -21,9 +21,10 @@ import {
 	ModalItemText,
 	ErrorMessage,
 } from 'styles/common';
+import Wei from '@synthetixio/wei';
 
 type TabContentProps = {
-	claimableAmount: number;
+	claimableAmount: Wei;
 	onSubmit: any;
 	transactionError: string | null;
 	gasEstimateError: string | null;
@@ -32,8 +33,8 @@ type TabContentProps = {
 	gasLimitEstimate: GasLimitEstimate;
 	setGasPrice: Function;
 	txHash: string | null;
-	transactionState: Transaction;
-	setTransactionState: (tx: Transaction) => void;
+	transactionState: 'unsent' | string;
+	onResetTransaction: () => void;
 };
 
 const TabContent: FC<TabContentProps> = ({
@@ -47,20 +48,20 @@ const TabContent: FC<TabContentProps> = ({
 	setGasPrice,
 	txHash,
 	transactionState,
-	setTransactionState,
+	onResetTransaction,
 }) => {
 	const { t } = useTranslation();
 	const vestingCurrencyKey = CryptoCurrency['SNX'];
 
 	const renderButton = () => {
-		if (claimableAmount) {
+		if (claimableAmount.gt(0)) {
 			return (
 				<StyledCTA
 					blue={true}
 					onClick={onSubmit}
 					variant="primary"
 					size="lg"
-					disabled={transactionState !== Transaction.PRESUBMIT || !!gasEstimateError}
+					disabled={transactionState !== 'unsent' || !!gasEstimateError}
 				>
 					{t('escrow.actions.vest-button', {
 						canVestAmount: formatCurrency(vestingCurrencyKey, claimableAmount, {
@@ -78,7 +79,7 @@ const TabContent: FC<TabContentProps> = ({
 		}
 	};
 
-	if (transactionState === Transaction.WAITING) {
+	if (transactionState === 'pending') {
 		return (
 			<ActionInProgress
 				vestingAmount={claimableAmount.toString()}
@@ -88,13 +89,13 @@ const TabContent: FC<TabContentProps> = ({
 		);
 	}
 
-	if (transactionState === Transaction.SUCCESS) {
+	if (transactionState === 'confirmed') {
 		return (
 			<ActionCompleted
 				currencyKey={vestingCurrencyKey}
 				hash={txHash as string}
 				vestingAmount={claimableAmount.toString()}
-				setTransactionState={setTransactionState}
+				resetTransaction={onResetTransaction}
 			/>
 		);
 	}
@@ -107,7 +108,8 @@ const TabContent: FC<TabContentProps> = ({
 					<Data>
 						{formatCurrency(vestingCurrencyKey, claimableAmount, {
 							currencyKey: vestingCurrencyKey,
-							decimals: 2,
+							minDecimals: 2,
+							maxDecimals: 2,
 						})}
 					</Data>
 				</InputBox>
@@ -129,7 +131,8 @@ const TabContent: FC<TabContentProps> = ({
 								<ModalItemText>
 									{formatCurrency(vestingCurrencyKey, claimableAmount, {
 										currencyKey: vestingCurrencyKey,
-										decimals: 4,
+										minDecimals: 4,
+										maxDecimals: 4,
 									})}
 								</ModalItemText>
 							</ModalItem>

@@ -1,12 +1,12 @@
 import { FC } from 'react';
-import BigNumber from 'bignumber.js';
+import Wei, { wei } from '@synthetixio/wei';
 import styled from 'styled-components';
 import { useTranslation, Trans } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 
-import { formatCurrency, formatNumber, zeroBN } from 'utils/formatters/number';
+import { formatCurrency, formatNumber } from 'utils/formatters/number';
 import { CryptoCurrency } from 'constants/currency';
-import { Transaction, GasLimitEstimate } from 'constants/network';
+import { GasLimitEstimate } from 'constants/network';
 
 import { StyledInput } from 'sections/staking/components/common';
 import { InputContainer, InputBox, StyledCTA } from '../../components/common';
@@ -26,11 +26,12 @@ import {
 	ErrorMessage,
 	FlexDivRowCentered,
 } from 'styles/common';
+import { parseSafeWei } from 'utils/parse';
 
 type TabContentProps = {
-	inputValue: BigNumber;
+	inputValue: string;
 	onInputChange: Function;
-	transferableCollateral: BigNumber;
+	transferableCollateral: Wei;
 	onSubmit: any;
 	transactionError: string | null;
 	gasEstimateError: string | null;
@@ -39,8 +40,8 @@ type TabContentProps = {
 	gasLimitEstimate: GasLimitEstimate;
 	setGasPrice: Function;
 	txHash: string | null;
-	transactionState: Transaction;
-	setTransactionState: (tx: Transaction) => void;
+	transactionState: string;
+	resetTransaction: () => void;
 	bridgeInactive?: boolean;
 };
 
@@ -57,20 +58,21 @@ const TabContent: FC<TabContentProps> = ({
 	setGasPrice,
 	txHash,
 	transactionState,
-	setTransactionState,
+	resetTransaction,
 	bridgeInactive,
 }) => {
 	const { t } = useTranslation();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const currencyKey = CryptoCurrency['SNX'];
 
+	const inputValueWei = parseSafeWei(inputValue, wei(0));
+
 	const renderButton = () => {
 		if (
 			isWalletConnected &&
-			inputValue &&
-			!inputValue.isZero() &&
-			inputValue.isFinite() &&
-			inputValue.isLessThanOrEqualTo(transferableCollateral)
+			inputValueWei &&
+			inputValueWei.gt(0) &&
+			inputValueWei.lte(transferableCollateral)
 		) {
 			return (
 				<StyledCTA
@@ -78,9 +80,7 @@ const TabContent: FC<TabContentProps> = ({
 					onClick={onSubmit}
 					variant="primary"
 					size="lg"
-					disabled={
-						bridgeInactive || transactionState !== Transaction.PRESUBMIT || !!gasEstimateError
-					}
+					disabled={bridgeInactive || transactionState !== 'unsent' || !!gasEstimateError}
 				>
 					{t('layer2.actions.withdraw.action.withdraw-button', {
 						withdrawAmount: formatCurrency(currencyKey, inputValue, {
@@ -98,7 +98,7 @@ const TabContent: FC<TabContentProps> = ({
 		}
 	};
 
-	if (transactionState === Transaction.WAITING) {
+	if (transactionState === 'pending') {
 		return (
 			<ActionInProgress
 				amount={inputValue.toString()}
@@ -109,13 +109,13 @@ const TabContent: FC<TabContentProps> = ({
 		);
 	}
 
-	if (transactionState === Transaction.SUCCESS) {
+	if (transactionState === 'confirmed') {
 		return (
 			<ActionCompleted
 				currencyKey={currencyKey}
 				hash={txHash as string}
 				amount={inputValue.toString()}
-				setTransactionState={setTransactionState}
+				resetTransaction={resetTransaction}
 				action="deposit"
 			/>
 		);
@@ -128,7 +128,7 @@ const TabContent: FC<TabContentProps> = ({
 					<BalanceButton variant="text" onClick={() => onInputChange(transferableCollateral)}>
 						<Trans
 							i18nKey="common.wallet.transferable"
-							values={{ transferable: formatNumber(transferableCollateral ?? zeroBN) }}
+							values={{ transferable: formatNumber(transferableCollateral ?? wei(0)) }}
 							components={[<BalanceButtonHeading />]}
 						/>
 					</BalanceButton>
@@ -138,12 +138,10 @@ const TabContent: FC<TabContentProps> = ({
 					<StyledInput
 						type="number"
 						maxLength={12}
-						value={inputValue.isNaN() ? '0' : inputValue.toString()}
+						value={inputValue.toString()}
 						placeholder="0"
 						onChange={(e) => onInputChange(e.target.value)}
-						disabled={
-							!isWalletConnected || !transferableCollateral || transferableCollateral.isZero()
-						}
+						disabled={!isWalletConnected || !transferableCollateral || transferableCollateral.eq(0)}
 					/>
 				</InputBox>
 				<SettingsContainer>
@@ -165,7 +163,8 @@ const TabContent: FC<TabContentProps> = ({
 								<ModalItemText>
 									{formatCurrency(currencyKey, inputValue, {
 										currencyKey: currencyKey,
-										decimals: 4,
+										minDecimals: 4,
+										maxDecimals: 4,
 									})}
 								</ModalItemText>
 							</ModalItem>

@@ -11,7 +11,7 @@ import { formatTxTimestamp } from 'utils/formatters/date';
 import Link from 'assets/svg/app/link.svg';
 import { Blockie } from '../common';
 import { Card } from 'sections/gov/components/common';
-import { Proposal } from 'queries/gov/types';
+import { Proposal } from '@synthetixio/queries';
 import { useTranslation } from 'react-i18next';
 
 type DetailsProps = {
