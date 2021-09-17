@@ -208,28 +208,30 @@ const LPTab: FC<LPTabProps> = ({
 		}
 	}, [stakedAsset]);
 
-	const DualRewardsClaimInfo = (
-		<StyledFlexDiv>
-			<StyledFlexDivColCentered>
-				<GreyHeader>{t('earn.actions.claim.claiming')}</GreyHeader>
-				<WhiteSubheader>
-					{t('earn.actions.claim.amount', {
-						amount: (tokenRewards as DualRewards).a.toString(DEFAULT_CRYPTO_DECIMALS),
-						asset: CryptoCurrency.SNX,
-					})}
-				</WhiteSubheader>
-			</StyledFlexDivColCentered>
-			<StyledFlexDivColCentered>
-				<GreyHeader>{t('earn.actions.claim.claiming')}</GreyHeader>
-				<WhiteSubheader>
-					{t('earn.actions.claim.amount', {
-						amount: (tokenRewards as DualRewards).b.toString(DEFAULT_CRYPTO_DECIMALS),
-						asset: CryptoCurrency.DHT,
-					})}
-				</WhiteSubheader>
-			</StyledFlexDivColCentered>
-		</StyledFlexDiv>
-	);
+	const DualRewardsClaimInfo = () => {
+		return (
+			<StyledFlexDiv>
+				<StyledFlexDivColCentered>
+					<GreyHeader>{t('earn.actions.claim.claiming')}</GreyHeader>
+					<WhiteSubheader>
+						{t('earn.actions.claim.amount', {
+							amount: (tokenRewards as DualRewards).a.toString(DEFAULT_CRYPTO_DECIMALS),
+							asset: CryptoCurrency.SNX,
+						})}
+					</WhiteSubheader>
+				</StyledFlexDivColCentered>
+				<StyledFlexDivColCentered>
+					<GreyHeader>{t('earn.actions.claim.claiming')}</GreyHeader>
+					<WhiteSubheader>
+						{t('earn.actions.claim.amount', {
+							amount: (tokenRewards as DualRewards).b.toString(DEFAULT_CRYPTO_DECIMALS),
+							asset: CryptoCurrency.DHT,
+						})}
+					</WhiteSubheader>
+				</StyledFlexDivColCentered>
+			</StyledFlexDiv>
+		);
+	};
 
 	if (claimTransactionState === Transaction.WAITING) {
 		return (
@@ -247,7 +249,7 @@ const LPTab: FC<LPTabProps> = ({
 					<FlexDivColCentered>
 						<Svg src={PendingConfirmation} />
 						{stakedAsset === LP.UNISWAP_DHT ? (
-							DualRewardsClaimInfo
+							DualRewardsClaimInfo()
 						) : (
 							<>
 								<GreyHeader>{t('earn.actions.claim.claiming')}</GreyHeader>
@@ -286,7 +288,7 @@ const LPTab: FC<LPTabProps> = ({
 					<FlexDivColCentered>
 						<Svg src={Success} />
 						{stakedAsset === LP.UNISWAP_DHT ? (
-							DualRewardsClaimInfo
+							DualRewardsClaimInfo()
 						) : (
 							<>
 								<GreyHeader>{t('earn.actions.claim.claiming')}</GreyHeader>
