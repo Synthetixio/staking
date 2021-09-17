@@ -201,18 +201,14 @@ const BurnTab: React.FC = () => {
 				if (!needToBuy) {
 					onBurnTypeChange(BurnActionType.MAX);
 					handleSubmit = () => {
-						if (needToBuy) {
-							swapTxn.mutate();
-						} else {
-							txn.mutate();
-						}
+						txn.mutate();
 					};
 					inputValue = maxBurnAmount.toString();
 					isLocked = true;
 					break;
 				}
 				onBurnChange(debtBalanceWithBuffer.toString());
-				handleSubmit = () => txn.mutate();
+				handleSubmit = () => swapTxn.mutate();
 				inputValue = debtBalanceWithBuffer.toString();
 				isLocked = true;
 				if (quoteAmount) {
@@ -238,7 +234,8 @@ const BurnTab: React.FC = () => {
 				isLocked={isLocked}
 				isMint={false}
 				onBack={onBurnTypeChange}
-				error={error || txn.errorMessage}
+				// error={error || txn.errorMessage}
+				error={null}
 				txModalOpen={txModalOpen}
 				setTxModalOpen={setTxModalOpen}
 				gasLimitEstimate={txn.gasLimit}
