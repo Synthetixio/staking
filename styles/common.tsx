@@ -396,6 +396,8 @@ export const UpperCased = styled.span`
 	text-transform: uppercase;
 `;
 
-export const BlueStyledLink = styled(ExternalLink)`
+export const BlueStyledExternalLink = styled(ExternalLink)`
+	font-family: ${(props) => props.theme.fonts.regular};
 	color: ${(props) => props.theme.colors.blue};
+	font-size: 12px;
 `;

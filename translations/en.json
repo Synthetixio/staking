@@ -985,6 +985,21 @@
 				"insufficient-balance": "Insufficient balance",
 				"unsupported-asset": "Asset is not supported"
 			}
+		},
+		"redeemable-deprecated-synths": {
+			"title": "Redeemable Deprecated Synths",
+			"redeem": "REDEEM ALL",
+			"deprecated": "DEPRECATED",
+			"modal-title": "REDEEM",
+			"modal-burn-title": "Redeem",
+			"modal-receive-title": "Receive",
+			"button-label": "Redeem All",
+			"tx-modal-title": "Redeeming",
+			"tx-modal-redeeming": "Redeeming <0>{{amount}}</0> <1>sUSD</1>",
+			"tooltip": "Deprecated Synths can now be redeemed for sUSD. <0>Learn more</0>.",
+			"tx": {
+				"etherscan": "View on Etherscan"
+			}
 		}
 	},
 	"gov": {
@@ -1232,7 +1247,8 @@
 			"currency-price": "<0>{{currencyKey}}</0> Price",
 			"currency-balance": "<0>{{currencyKey}}</0> Balance",
 			"buy-currency": "Buy <0>{{currencyKey}}</0>",
-			"synthetic-currency-name": "Synthetic {{currencyName}}"
+			"synthetic-currency-name": "Synthetic {{currencyName}}",
+			"deprecated": "deprecated"
 		},
 		"gas-prices": {
 			"est": "Est Fees: {{amount}}",
