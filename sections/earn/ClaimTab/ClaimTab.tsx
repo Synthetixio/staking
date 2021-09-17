@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { ethers } from 'ethers';
@@ -117,10 +117,15 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 
 	const hasVotedForElections = useHasVotedForElectionsQuery(snapshotEndpoint, walletAddress);
 
-	const link =
-		blockExplorerInstance != null && txHash != null
-			? blockExplorerInstance.txLink(txHash)
-			: undefined;
+	const link = useMemo(
+		() =>
+			blockExplorerInstance != null && txHash != null
+				? blockExplorerInstance.txLink(txHash)
+				: undefined,
+		[blockExplorerInstance, txHash]
+	);
+
+	const canClaim = useMemo(() => !claimed && totalRewards.gt(0), [claimed, totalRewards]);
 
 	const fetchFeePeriodData = useCallback(async () => {
 		if (!isL2) return;
@@ -150,7 +155,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 
 	useEffect(() => {
 		const getGasLimitEstimate = async () => {
-			if (isAppReady && isWalletConnected) {
+			if (isAppReady && isWalletConnected && canClaim) {
 				if (isBelowCRatio) {
 					setLowCRatio(true);
 					return;
@@ -191,7 +196,16 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 			}
 		};
 		getGasLimitEstimate();
-	}, [isAppReady, isWalletConnected, isBelowCRatio, delegateWallet, t, isL2, synthetixjs]);
+	}, [
+		isAppReady,
+		isWalletConnected,
+		isBelowCRatio,
+		delegateWallet,
+		t,
+		isL2,
+		synthetixjs,
+		canClaim,
+	]);
 
 	const handleClaim = useCallback(() => {
 		async function claim() {
@@ -203,11 +217,13 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 						contracts: { FeePool },
 					} = synthetixjs!;
 
-					let gasLimit = normalizeGasLimit(
-						delegateWallet
-							? (await FeePool.estimateGas.claimOnBehalf(delegateWallet)).toNumber()
-							: (await FeePool.estimateGas.claimFees()).toNumber()
-					);
+					let gasLimit = delegateWallet
+						? (await FeePool.estimateGas.claimOnBehalf(delegateWallet)).toNumber()
+						: (await FeePool.estimateGas.claimFees()).toNumber();
+
+					if (!isL2) {
+						gasLimit = normalizeGasLimit(gasLimit);
+					}
 
 					const transaction: ethers.ContractTransaction = delegateWallet
 						? await FeePool.claimOnBehalf(delegateWallet.address, {
@@ -399,7 +415,6 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 			/>
 		);
 	}
-	const canClaim = !claimed && totalRewards.toNumber() > 0;
 
 	return (
 		<>
@@ -478,7 +493,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 								>
 									{claimed
 										? t('earn.actions.claim.claimed-button')
-										: totalRewards.toNumber() > 0
+										: totalRewards.gt(0)
 										? t('earn.actions.claim.claim-button')
 										: t('earn.actions.claim.nothing-to-claim')}
 								</PaddedButton>
