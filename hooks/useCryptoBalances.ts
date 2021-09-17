@@ -48,7 +48,7 @@ const useCryptoBalances = (walletAddress: string | null) => {
 				ethers.constants.AddressZero,
 			decimals: 18,
 			logoURI: '',
-			name: 'Wrapped Bitcoin',
+			name: 'Synthetix Network Token',
 			chainId: 1,
 			tags: [],
 		},

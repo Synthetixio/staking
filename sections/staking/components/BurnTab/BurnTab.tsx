@@ -128,7 +128,7 @@ const BurnTab: React.FC = () => {
 	useEffect(() => {
 		if (swapTxn.txnStatus === 'prompting' || txn.txnStatus === 'prompting') setTxModalOpen(true);
 		if (swapTxn.txnStatus === 'confirmed' && txn.txnStatus === 'unsent') txn.mutate();
-	}, [txn.txnStatus, swapTxn.txnStatus]);
+	}, [txn, swapTxn.txnStatus]);
 
 	// header title
 	useEffect(() => {
@@ -235,8 +235,7 @@ const BurnTab: React.FC = () => {
 				isLocked={isLocked}
 				isMint={false}
 				onBack={onBurnTypeChange}
-				// error={error || txn.errorMessage}
-				error={null}
+				error={error || txn.errorMessage}
 				txModalOpen={txModalOpen}
 				setTxModalOpen={setTxModalOpen}
 				gasLimitEstimate={txn.gasLimit}
