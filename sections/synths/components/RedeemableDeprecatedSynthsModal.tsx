@@ -53,9 +53,9 @@ const RedeemDeprecatedSynthsModal: FC<{
 
 	useEffect(() => {
 		switch (txn.txnStatus) {
-			// case 'prompting':
-			// 	setTxModalOpen(true);
-			// 	break;
+			case 'prompting':
+				setTxModalOpen(true);
+				break;
 
 			case 'pending':
 				setTxModalOpen(false);
@@ -70,7 +70,6 @@ const RedeemDeprecatedSynthsModal: FC<{
 	}, [txn.txnStatus, txn.hash, onRedeemConfirmation]);
 
 	const handleRedeem = async () => {
-		setTxModalOpen(true);
 		txn.mutate();
 	};
 

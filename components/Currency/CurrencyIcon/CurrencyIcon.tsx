@@ -35,7 +35,7 @@ export const getSynthIcon = (currencyKey: CurrencyKey) =>
 export const CurrencyIconContainer: FC<CurrencyIconProps> = (props) => (
 	<Container>
 		<CurrencyIcon {...props} />
-		{!props.isDeprecated ? null : (
+		{props.isDeprecated && (
 			<DeprecatedXIconContainer>
 				<Svg src={DeprecatedXIcon} />
 			</DeprecatedXIconContainer>

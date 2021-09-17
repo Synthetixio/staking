@@ -31,10 +31,8 @@ export const CurrencyAmount: FC<CurrencyAmountProps> = ({
 	...rest
 }) => (
 	<Container {...rest}>
-		{!showValue ? null : (
-			<Amount className="amount">{formatCurrency(amountCurrencyKey, amount)}</Amount>
-		)}
-		{!showTotalValue ? null : (
+		{showValue && <Amount className="amount">{formatCurrency(amountCurrencyKey, amount)}</Amount>}
+		{showTotalValue && (
 			<TotalValue className="total-value">
 				{formatCurrency(
 					valueCurrencyKey,

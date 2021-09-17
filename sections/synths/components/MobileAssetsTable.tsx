@@ -120,7 +120,7 @@ const AssetsTable: FC<AssetsTableProps> = ({
 
 							<div>{currencyIsSynth ? asset.currencyKey : null}</div>
 
-							{!showPrice ? null : (
+							{showPrice && (
 								<div>
 									<SynthPriceCol currencyKey={asset.currencyKey as CurrencyKey} />
 								</div>
