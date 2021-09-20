@@ -27,7 +27,7 @@ const useClearDebtCalculations = (
 	const debtBalanceWithBuffer = debtBalance.mul(DEBT_CLEAR_BALANCE_BUFFER);
 	const missingSUSDWithBuffer = debtBalanceWithBuffer.sub(sUSDBalance);
 
-	const sUSDAddress = synthetixjs!.contracts!.SynthsUSD.address;
+	const sUSDAddress = synthetixjs?.contracts?.SynthsUSD.address ?? null;
 
 	const quoteQuery = use1InchQuoteQuery(sUSDAddress, ethAddress, missingSUSDWithBuffer);
 	const quoteData = quoteQuery.isSuccess && quoteQuery.data != null ? quoteQuery.data : null;
