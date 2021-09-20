@@ -1,4 +1,4 @@
-import { FC, useState, useEffect } from 'react';
+import { FC, useState, useEffect, useMemo } from 'react';
 import styled from 'styled-components';
 import { useTranslation, Trans } from 'react-i18next';
 import { Synths } from '@synthetixio/contracts-interface';
@@ -13,6 +13,7 @@ import { FlexDivColCentered, FlexDivCentered, BlueStyledExternalLink } from 'sty
 import media from 'styles/media';
 
 import Connector from 'containers/Connector';
+import Etherscan from 'containers/BlockExplorer';
 import GasSelector from 'components/GasSelector';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import { ModalContent, ModalItemTitle, NoTextTransform } from 'styles/common';
@@ -39,6 +40,7 @@ const RedeemDeprecatedSynthsModal: FC<{
 }) => {
 	const { t } = useTranslation();
 	const { synthetixjs } = Connector.useContainer();
+	const { blockExplorerInstance } = Etherscan.useContainer();
 
 	const [gasPrice, setGasPrice] = useState<Wei>(wei(0));
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
@@ -50,6 +52,14 @@ const RedeemDeprecatedSynthsModal: FC<{
 	const txn = useContractTxn(Redeemer, 'redeemAll', [redeemableDeprecatedSynthsAddresses], {
 		gasPrice: gasPrice.toBN(),
 	});
+
+	const link = useMemo(
+		() =>
+			blockExplorerInstance != null && txn.hash != null
+				? blockExplorerInstance.txLink(txn.hash)
+				: undefined,
+		[blockExplorerInstance, txn.hash]
+	);
 
 	useEffect(() => {
 		switch (txn.txnStatus) {
@@ -95,8 +105,8 @@ const RedeemDeprecatedSynthsModal: FC<{
 										components={[<NoTextTransform />, <NoTextTransform />]}
 									/>
 								</GreyHeader>
-								{txn.hash ? (
-									<BlueStyledExternalLink href={txn.hash}>
+								{link ? (
+									<BlueStyledExternalLink href={link}>
 										{t('synths.redeemable-deprecated-synths.tx.etherscan')}
 									</BlueStyledExternalLink>
 								) : null}
