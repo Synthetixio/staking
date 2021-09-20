@@ -21,8 +21,8 @@ export type SwapTxData = {
 };
 
 const use1InchSwapQuery = (
-	fromTokenAddress: string,
-	toTokenAddress: string,
+	fromTokenAddress: string | null,
+	toTokenAddress: string | null,
 	amount: WeiSource,
 	fromAddress: string,
 	slippage: number,
@@ -56,7 +56,13 @@ const use1InchSwapQuery = (
 			};
 		},
 		{
-			enabled: isAppReady && isWalletConnected && !isL2 && !wei(amount).eq(0),
+			enabled:
+				isAppReady &&
+				isWalletConnected &&
+				!isL2 &&
+				!wei(amount).eq(0) &&
+				!!fromTokenAddress &&
+				!!toTokenAddress,
 			...options,
 		}
 	);
