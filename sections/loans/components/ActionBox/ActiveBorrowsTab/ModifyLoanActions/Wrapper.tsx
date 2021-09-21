@@ -124,8 +124,6 @@ const Wrapper: FC<WrapperProps> = ({
 		opts = { ...opts, ...data[3] };
 	}
 
-	console.log('FINAL TXN OPTIONS', data?.[0].address, data?.[0], data?.[1], data?.[2], opts);
-
 	const txn = useContractTxn(data?.[0], data?.[1], data?.[2], opts);
 
 	const onGoBack = () => router.back();
