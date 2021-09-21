@@ -58,7 +58,7 @@ const BurnTab: React.FC = () => {
 	const ethBalanceQuery = useETHBalanceQuery(walletAddress);
 	const ethBalance = ethBalanceQuery.data ?? wei(0);
 
-	const amountToBurnBN = parseSafeWei(amountToBurn, wei(0));
+	const amountToBurnWei = parseSafeWei(amountToBurn, wei(0));
 
 	const isToTarget = burnType === BurnActionType.TARGET;
 
@@ -108,10 +108,10 @@ const BurnTab: React.FC = () => {
 	const burnCall: [string, any[]] = !!delegateWallet
 		? isToTarget
 			? ['burnSynthsToTargetOnBehalf', [delegateWallet]]
-			: ['burnSynthsOnBehalf', [delegateWallet, amountToBurnBN.toBN()]]
+			: ['burnSynthsOnBehalf', [delegateWallet, amountToBurnWei.toBN()]]
 		: isToTarget
 		? ['burnSynthsToTarget', []]
-		: ['burnSynths', [amountToBurnBN.toBN()]];
+		: ['burnSynths', [amountToBurnWei.toBN()]];
 
 	const txn = useSynthetixTxn('Synthetix', burnCall[0], burnCall[1], {
 		gasPrice: gasPrice.toBN(),
