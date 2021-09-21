@@ -63,29 +63,20 @@ const Deposit: React.FC<DepositProps> = ({
 		!amount ? setDepositalAmount(null) : setDepositalAmount(amount);
 	const onSetLeftColMaxAmount = (amount: string) => setDepositalAmount(amount);
 
-	const getApproveTxData = useCallback(
-		(gas: Record<string, number>) => {
-			if (!(collateralAssetContract && !depositAmount.eq(0))) return null;
-			return [collateralAssetContract, 'approve', [loanContractAddress, depositAmount, gas]];
-		},
-		[collateralAssetContract, loanContractAddress, depositAmount]
-	);
+	const getApproveTxData = useCallback(() => {
+		if (!(collateralAssetContract && !depositAmount.eq(0))) return null;
+		return [collateralAssetContract, 'approve', [loanContractAddress, depositAmount]];
+	}, [collateralAssetContract, loanContractAddress, depositAmount]);
 
-	const getDepositTxData = useCallback(
-		(gas: Record<string, number>) => {
-			if (!(loanContract && !depositAmount.eq(0))) return null;
-			return [
-				loanContract,
-				'deposit',
-				[
-					address,
-					loanId,
-					...(loanTypeIsETH ? [{ value: depositAmount, ...gas }] : [depositAmount, gas]),
-				],
-			];
-		},
-		[loanContract, address, loanId, loanTypeIsETH, depositAmount]
-	);
+	const getDepositTxData = useCallback(() => {
+		if (!(loanContract && !depositAmount.eq(0))) return null;
+		return [
+			loanContract,
+			'deposit',
+			[address, loanId, ...(loanTypeIsETH ? [] : [depositAmount])],
+			{ value: loanTypeIsETH ? depositAmount : 0 },
+		];
+	}, [loanContract, address, loanId, loanTypeIsETH, depositAmount]);
 
 	const getTxData = useMemo(() => (!isApproved ? getApproveTxData : getDepositTxData), [
 		isApproved,
@@ -93,15 +84,15 @@ const Deposit: React.FC<DepositProps> = ({
 		getDepositTxData,
 	]);
 
-	const onApproveOrDeposit = async (gas: Record<string, number>) => {
-		!isApproved ? approve(gas) : deposit(gas);
+	const onApproveOrDeposit = async () => {
+		!isApproved ? approve() : deposit();
 	};
 
-	const approve = async (gas: Record<string, number>) => {
+	const approve = async () => {
 		try {
 			setIsWorking('approving');
 			setTxModalOpen(true);
-			await tx(() => getApproveTxData(gas), {
+			await tx(() => getApproveTxData(), {
 				showProgressNotification: (hash: string) =>
 					monitorTransaction({
 						txHash: hash,
@@ -119,11 +110,11 @@ const Deposit: React.FC<DepositProps> = ({
 		}
 	};
 
-	const deposit = async (gas: Record<string, number>) => {
+	const deposit = async () => {
 		try {
 			setIsWorking('depositing');
 			setTxModalOpen(true);
-			await tx(() => getDepositTxData(gas), {
+			await tx(() => getDepositTxData(), {
 				showErrorNotification: (e: string) => setError(e),
 				showProgressNotification: (hash: string) =>
 					monitorTransaction({
