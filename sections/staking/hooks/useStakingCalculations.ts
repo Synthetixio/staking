@@ -50,6 +50,8 @@ const useStakingCalculations = () => {
 			wei(0)
 		);
 
+		console.log('current cratio', currentCRatio.toString(5));
+
 		const percentageCurrentCRatio = currentCRatio.eq(0) ? wei(0) : wei(1).div(currentCRatio);
 		const percentageTargetCRatio = targetCRatio.eq(0) ? wei(0) : wei(1).div(targetCRatio);
 		const percentCurrentCRatioOfTarget = percentageTargetCRatio.eq(0)

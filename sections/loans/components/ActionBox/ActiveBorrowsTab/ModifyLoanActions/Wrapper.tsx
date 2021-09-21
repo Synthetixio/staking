@@ -116,9 +116,17 @@ const Wrapper: FC<WrapperProps> = ({
 
 	const data = getTxData({});
 
-	const txn = useContractTxn(data?.[0], data?.[1], data?.[2], {
+	let opts = {
 		gasPrice: gasPrice.toBN(),
-	});
+	};
+
+	if (data && data.length > 3) {
+		opts = { ...opts, ...data[3] };
+	}
+
+	console.log('FINAL TXN OPTIONS', data?.[0].address, data?.[0], data?.[1], data?.[2], opts);
+
+	const txn = useContractTxn(data?.[0], data?.[1], data?.[2], opts);
 
 	const onGoBack = () => router.back();
 	const onSetleftColAssetName = () => {};
@@ -135,7 +143,6 @@ const Wrapper: FC<WrapperProps> = ({
 	const handleButtonClick = () =>
 		onButtonClick({
 			gasPrice: getNormalizedGasPrice(gasPrice.toNumber()),
-			gasLimit: txn.gasLimit!.toNumber(),
 		});
 
 	useEffect(() => {
