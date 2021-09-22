@@ -1,11 +1,12 @@
-import { useTranslation } from 'react-i18next';
+import { useTranslation, Trans } from 'react-i18next';
 import { CellProps } from 'react-table';
 import styled, { css } from 'styled-components';
 import { Svg } from 'react-optimized-image';
+import useSynthetixQueries, { DepositHistory } from '@synthetixio/queries';
 
 import { InfoContainer, Title, Subtitle } from '../../components/common';
 import ExternalLink from '../../components/ExternalLink';
-import { FlexDivColCentered } from 'styles/common';
+import { FlexDivColCentered, BlueStyledExternalLink } from 'styles/common';
 
 import { formatShortDate } from 'utils/formatters/date';
 import { formatCurrency } from 'utils/formatters/number';
@@ -22,7 +23,7 @@ import {
 } from 'sections/escrow/components/common';
 import { useRecoilValue } from 'recoil';
 import { walletAddressState } from 'store/wallet';
-import useSynthetixQueries, { DepositHistory } from '@synthetixio/queries';
+import { EXTERNAL_LINKS } from 'constants/links';
 
 const InfoBox = () => {
 	const { t } = useTranslation();
@@ -114,9 +115,17 @@ const InfoBox = () => {
 					<StyledFlexDivColCentered>
 						<Svg src={Warning} />
 						<WarningHeading>{t('layer2.deposit.info.warning')}</WarningHeading>
+						<WarningBody>{t('layer2.deposit.info.layer2-migrate-intro')}</WarningBody>
 						<WarningBody>{t('layer2.deposit.info.metamask-only')}</WarningBody>
 						<WarningBody>{t('layer2.deposit.info.layer2-withdraw-delay')}</WarningBody>
-						<WarningBody>{t('layer2.deposit.info.layer2-rewards')}</WarningBody>
+						<WarningBody>
+							{
+								<Trans
+									i18nKey={'layer2.deposit.info.layer2-gas'}
+									components={[<BlueStyledExternalLink href={EXTERNAL_LINKS.L2.Optimism} />]}
+								/>
+							}
+						</WarningBody>
 					</StyledFlexDivColCentered>
 				)}
 			</ContainerBody>
@@ -136,6 +145,10 @@ const StyledSubtitle = styled(Subtitle)`
 
 const StyledFlexDivColCentered = styled(FlexDivColCentered)`
 	padding: 0 20px;
+
+	& > * {
+		padding: 4px 0;
+	}
 `;
 
 const Bold = css`

@@ -1,52 +1,64 @@
 import { FC, useState, useMemo, useCallback } from 'react';
-import { useTranslation } from 'react-i18next';
-import { VerticalSpacer } from 'styles/common';
+import { Trans, useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
+import { Svg } from 'react-optimized-image';
+import styled from 'styled-components';
+import { wei } from '@synthetixio/wei';
+import useSynthetixQueries from '@synthetixio/queries';
+
+import {
+	FlexDiv,
+	FlexDivRow,
+	VerticalSpacer,
+	Tooltip,
+	FlexDivRowCentered,
+	BlueStyledExternalLink,
+} from 'styles/common';
 
 import AssetsTable from 'sections/synths/components/AssetsTable';
 import TransferModal from 'sections/synths/components/TransferModal';
+import RedeemableDeprecatedSynthsButton from 'sections/synths/components/RedeemableDeprecatedSynthsButton';
+import Info from 'assets/svg/app/info.svg';
 
 import KwentaBanner from 'components/KwentaBanner';
 import TransactionNotifier from 'containers/TransactionNotifier';
 
-import { isWalletConnectedState, walletAddressState } from 'store/wallet';
+import { walletAddressState, isWalletConnectedState } from 'store/wallet';
 
 import useCryptoBalances, { CryptoBalance } from 'hooks/useCryptoBalances';
 
 import { isSynth } from 'utils/currencies';
+
 import { CryptoCurrency } from 'constants/currency';
-import { wei } from '@synthetixio/wei';
-import useSynthetixQueries from '@synthetixio/queries';
 import { Asset } from 'components/Form/AssetInput';
 
 const Index: FC = () => {
 	const [assetToTransfer, setAssetToTransfer] = useState<Asset | null>(null);
+	const [transferModalOpen, setTransferModalOpen] = useState<boolean>(false);
 
 	const { t } = useTranslation();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
-
+	const { useSynthsBalancesQuery, useRedeemableDeprecatedSynthsQuery } = useSynthetixQueries();
 	const walletAddress = useRecoilValue(walletAddressState);
-	const { useSynthsBalancesQuery } = useSynthetixQueries();
 
+	const redeemableDeprecatedSynthsQuery = useRedeemableDeprecatedSynthsQuery(walletAddress);
 	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
 	const cryptoBalances = useCryptoBalances(walletAddress);
 
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 
-	const totalSynthValue = synthsBalancesQuery.isSuccess
-		? synthsBalancesQuery.data?.totalUSDBalance ?? wei(0)
-		: wei(0);
-
-	const synthBalances =
-		synthsBalancesQuery.isSuccess && synthsBalancesQuery.data != null
-			? synthsBalancesQuery.data
-			: null;
-
+	const synthBalances = useMemo(
+		() =>
+			synthsBalancesQuery.isSuccess && synthsBalancesQuery.data != null
+				? synthsBalancesQuery.data
+				: null,
+		[synthsBalancesQuery.isSuccess, synthsBalancesQuery.data]
+	);
+	const totalSynthValue = useMemo(() => synthBalances?.totalUSDBalance ?? wei(0), [synthBalances]);
 	const synthAssets = useMemo(() => synthBalances?.balances ?? [], [
 		synthBalances,
 	]) as CryptoBalance[];
 	const cryptoAssets = useMemo(() => cryptoBalances?.balances ?? [], [cryptoBalances]);
-
 	const transferableAssets = useMemo(
 		() =>
 			synthAssets
@@ -58,10 +70,21 @@ const Index: FC = () => {
 				.filter(({ currencyKey }) => isSynth(currencyKey) || currencyKey === CryptoCurrency.SNX),
 		[synthAssets, cryptoAssets]
 	);
+	const redeemableDeprecatedSynths = useMemo(() => redeemableDeprecatedSynthsQuery?.data, [
+		redeemableDeprecatedSynthsQuery?.data,
+	]);
+	const redeemAmount = useMemo(() => redeemableDeprecatedSynths?.totalUSDBalance ?? wei(0), [
+		redeemableDeprecatedSynths,
+	]);
+	const redeemBalances = useMemo(() => redeemableDeprecatedSynths?.balances ?? [], [
+		redeemableDeprecatedSynths,
+	]);
+
 	const handleOnTransferClick = useCallback(
-		(key) => {
+		(key: string) => {
 			const selectedAsset = transferableAssets.find(({ currencyKey }) => key === currencyKey);
 			setAssetToTransfer(selectedAsset || null);
+			setTransferModalOpen(true);
 		},
 		[transferableAssets]
 	);
@@ -93,8 +116,59 @@ const Index: FC = () => {
 				showConvert={false}
 				onTransferClick={handleOnTransferClick}
 			/>
+
 			{!totalSynthValue.eq(0) ? <KwentaBanner /> : null}
+
 			<VerticalSpacer />
+
+			{!(isWalletConnected && redeemAmount?.gt(0)) ? null : (
+				<AssetsTable
+					title={
+						<FlexDivRow>
+							<FlexDivRowCentered>
+								{t('synths.redeemable-deprecated-synths.title')}
+								&nbsp;
+								<Tooltip
+									arrow={false}
+									content={
+										<Trans
+											i18nKey={'synths.redeemable-deprecated-synths.tooltip'}
+											components={[
+												<BlueStyledExternalLink href="https://sips.synthetix.io/sips/sip-174" />,
+											]}
+										/>
+									}
+								>
+									<TooltipIconContainer>
+										<Svg src={Info} />
+									</TooltipIconContainer>
+								</Tooltip>
+							</FlexDivRowCentered>
+
+							<RedeemableDeprecatedSynthsButton
+								{...{
+									redeemableDeprecatedSynthsQuery,
+									synthBalances,
+									redeemAmount,
+									redeemBalances,
+								}}
+							/>
+						</FlexDivRow>
+					}
+					assets={redeemBalances}
+					totalValue={redeemAmount}
+					isLoading={redeemableDeprecatedSynthsQuery.isLoading}
+					isLoaded={!redeemableDeprecatedSynthsQuery.isLoading}
+					showHoldings={false}
+					showConvert={false}
+					isDeprecated
+					showValue={false}
+					showPrice={false}
+				/>
+			)}
+
+			<VerticalSpacer />
+
 			{isWalletConnected && cryptoBalances.balances.length > 0 && (
 				<AssetsTable
 					title={t('synths.assets.non-synths.title')}
@@ -107,17 +181,21 @@ const Index: FC = () => {
 					onTransferClick={handleOnTransferClick}
 				/>
 			)}
-			{assetToTransfer ? (
+			{transferModalOpen && (
 				<TransferModal
-					onDismiss={() => setAssetToTransfer(null)}
+					onDismiss={() => setTransferModalOpen(false)}
 					assets={transferableAssets}
 					currentAsset={assetToTransfer}
 					setAsset={(asset) => setAssetToTransfer(asset)}
 					onTransferConfirmation={handleTransferConfirmation}
 				/>
-			) : null}
+			)}
 		</>
 	);
 };
+
+const TooltipIconContainer = styled(FlexDiv)`
+	align-items: center;
+`;
 
 export default Index;

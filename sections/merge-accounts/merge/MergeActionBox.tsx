@@ -1,16 +1,16 @@
-import { useState, useMemo, useEffect, FC, useCallback } from 'react';
+import { useState, useMemo, useEffect, FC } from 'react';
 import { ethers } from 'ethers';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 import { Trans, useTranslation } from 'react-i18next';
 import { Svg } from 'react-optimized-image';
 import { useRouter } from 'next/router';
-import { wei } from '@synthetixio/wei';
+import Wei, { wei } from '@synthetixio/wei';
+import useSynthetixQueries from '@synthetixio/queries';
 
 import ROUTES from 'constants/routes';
 import Button from 'components/Button';
 import Connector from 'containers/Connector';
-import TransactionNotifier from 'containers/TransactionNotifier';
 import Etherscan from 'containers/BlockExplorer';
 import NavigationBack from 'assets/svg/app/navigation-back.svg';
 import {
@@ -33,14 +33,8 @@ import {
 	TxModalItem,
 	FormHeader,
 } from 'sections/merge-accounts/common';
-import { tx, getGasEstimateForTransaction } from 'utils/transactions';
-import {
-	normalizeGasLimit as getNormalizedGasLimit,
-	normalizedGasPrice as getNormalizedGasPrice,
-} from 'utils/network';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import walletIcon from 'assets/svg/app/wallet-purple.svg';
-import { Transaction } from 'constants/network';
 import { TxWaiting, TxSuccess } from './Tx';
 
 const MergeTab: FC = () => {
@@ -69,20 +63,11 @@ const MergeTabInner: FC = () => {
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const isAppReady = useRecoilValue(appReadyState);
 	const destinationAccountAddress = useRecoilValue(walletAddressState);
-	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const { blockExplorerInstance } = Etherscan.useContainer();
+	const { useSynthetixTxn } = useSynthetixQueries();
 
-	const [gasPrice, setGasPrice] = useState<number>(0);
-	const [gasLimit, setGasLimitEstimate] = useState<number | null>(null);
-
-	const [error, setError] = useState<string | null>(null);
+	const [gasPrice, setGasPrice] = useState<Wei>(wei(0));
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
-	const [transactionState, setTransactionState] = useState<Transaction>(Transaction.PRESUBMIT);
-	const [txHash, setTxHash] = useState<string | null>(null);
-	const txLink = useMemo(
-		() => (blockExplorerInstance && txHash ? blockExplorerInstance.txLink(txHash) : ''),
-		[blockExplorerInstance, txHash]
-	);
 	const [buttonState, setButtonState] = useState<string | null>(null);
 
 	const router = useRouter();
@@ -121,39 +106,40 @@ const MergeTabInner: FC = () => {
 		sourceAccountAddress,
 	]);
 
-	const getMergeTxData = useCallback(
-		(gas: Record<string, number>) => {
-			if (!(properSourceAccountAddress && !sourceAccountAddressInputError && isAppReady))
-				return null;
-
-			const {
-				contracts: { RewardEscrowV2 },
-			} = synthetixjs!;
-			return [RewardEscrowV2, 'mergeAccount', [properSourceAccountAddress, entryIDs, gas]];
+	const txn = useSynthetixTxn(
+		'RewardEscrowV2',
+		'mergeAccount',
+		[properSourceAccountAddress, entryIDs],
+		{
+			gasPrice: gasPrice.toBN(),
 		},
-		[isAppReady, properSourceAccountAddress, entryIDs, sourceAccountAddressInputError, synthetixjs]
+		{ enabled: !!properSourceAccountAddress && !!entryIDs.length }
 	);
 
-	// gas
+	const txLink = useMemo(
+		() => (blockExplorerInstance && txn.hash ? blockExplorerInstance.txLink(txn.hash) : ''),
+		[blockExplorerInstance, txn.hash]
+	);
+
+	// effects
+
 	useEffect(() => {
-		let isMounted = true;
-		(async () => {
-			try {
-				setError(null);
-				const data: any[] | null = getMergeTxData({});
-				if (!data) return;
-				const [contract, method, args] = data;
-				const gasEstimate = await getGasEstimateForTransaction(args, contract.estimateGas[method]);
-				if (isMounted) setGasLimitEstimate(getNormalizedGasLimit(Number(gasEstimate)));
-			} catch (error) {
-				// console.error(error);
-				if (isMounted) setGasLimitEstimate(null);
-			}
-		})();
-		return () => {
-			isMounted = false;
-		};
-	}, [getMergeTxData, synthetixjs]);
+		switch (txn.txnStatus) {
+			case 'prompting':
+				setTxModalOpen(true);
+				break;
+
+			case 'pending':
+				setButtonState('merging');
+				setTxModalOpen(true);
+				break;
+
+			// case 'unsent':
+			case 'confirmed':
+				setTxModalOpen(false);
+				break;
+		}
+	}, [txn.txnStatus]);
 
 	// load any nominated account address
 	useEffect(() => {
@@ -250,46 +236,18 @@ const MergeTabInner: FC = () => {
 			return connectWallet();
 		}
 
-		setButtonState('merging');
-		setTxModalOpen(true);
-		try {
-			const gas: Record<string, number> = {
-				gasPrice: getNormalizedGasPrice(gasPrice),
-				gasLimit: gasLimit!,
-			};
-			await tx(() => getMergeTxData(gas), {
-				showErrorNotification: (e: string) => setError(e),
-				showProgressNotification: (hash: string) => {
-					setTransactionState(Transaction.WAITING);
-					setTxHash(hash);
-					monitorTransaction({
-						txHash: hash,
-						onTxConfirmed: () => {
-							setTransactionState(Transaction.SUCCESS);
-						},
-					});
-				},
-				showSuccessNotification: (hash: string) => {},
-			});
-			setSourceAccountAddress('');
-		} catch {
-		} finally {
-			setButtonState(null);
-			setTxModalOpen(false);
-			setTransactionState(Transaction.PRESUBMIT);
-		}
+		txn.mutate();
 	};
 
-	if (transactionState === Transaction.WAITING) {
+	if (txn.txnStatus === 'pending') {
 		return <TxWaiting {...{ txLink }} />;
 	}
 
-	if (transactionState === Transaction.SUCCESS) {
+	if (txn.txnStatus === 'confirmed') {
 		return (
 			<TxSuccess
 				{...{ txLink }}
 				onDismiss={() => {
-					setTransactionState(Transaction.PRESUBMIT);
 					router.push(ROUTES.Escrow.Home);
 				}}
 			/>
@@ -321,7 +279,7 @@ const MergeTabInner: FC = () => {
 
 				<SettingsContainer>
 					<SettingContainer>
-						<GasSelector gasLimitEstimate={wei(gasLimit ?? 0)} setGasPrice={setGasPrice} />
+						<GasSelector gasLimitEstimate={txn.gasLimit} setGasPrice={setGasPrice} />
 					</SettingContainer>
 				</SettingsContainer>
 			</FormContainer>
@@ -353,7 +311,7 @@ const MergeTabInner: FC = () => {
 				)}
 			</FormButton>
 
-			{!error ? null : <ErrorMessage>{error}</ErrorMessage>}
+			{!txn.error ? null : <ErrorMessage>{txn.errorMessage}</ErrorMessage>}
 
 			{txModalOpen && (
 				<TxConfirmationModal

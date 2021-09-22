@@ -41,7 +41,7 @@ const StakingRewardsTab: React.FC = () => {
 
 	return (
 		<TabContainer>
-			{totalBalancePendingMigration ? (
+			{totalBalancePendingMigration.gt(0) ? (
 				<MigrateTabContent
 					onSubmit={txn.mutate}
 					transactionError={txn.errorMessage}

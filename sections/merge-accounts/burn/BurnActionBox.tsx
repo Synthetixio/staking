@@ -10,7 +10,6 @@ import useSynthetixQueries from '@synthetixio/queries';
 import Button from 'components/Button';
 import Connector from 'containers/Connector';
 import StructuredTab from 'components/StructuredTab';
-import TransactionNotifier from 'containers/TransactionNotifier';
 import Etherscan from 'containers/BlockExplorer';
 import NavigationBack from 'assets/svg/app/navigation-back.svg';
 import {
@@ -24,7 +23,6 @@ import {
 } from 'styles/common';
 import GasSelector from 'components/GasSelector';
 import { isWalletConnectedState, walletAddressState } from 'store/wallet';
-import { appReadyState } from 'store/app';
 import {
 	FormContainer,
 	InputsContainer,
@@ -34,18 +32,12 @@ import {
 	TxModalItem,
 	FormHeader,
 } from 'sections/merge-accounts/common';
-import { tx, getGasEstimateForTransaction } from 'utils/transactions';
-import {
-	normalizeGasLimit as getNormalizedGasLimit,
-	normalizedGasPrice as getNormalizedGasPrice,
-} from 'utils/network';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 import { formatCryptoCurrency, formatNumber } from 'utils/formatters/number';
 import { DEFAULT_FIAT_DECIMALS } from 'constants/defaults';
 import ROUTES from 'constants/routes';
 import Currency from 'components/Currency';
-import { Transaction } from 'constants/network';
 import { CryptoCurrency, Synths } from 'constants/currency';
 import { parseSafeWei } from 'utils/parse';
 import { getStakingAmount } from 'sections/staking/components/helper';
@@ -74,30 +66,17 @@ const BurnTab: FC = () => {
 
 const BurnTabInner: FC = () => {
 	const { t } = useTranslation();
-	const { connectWallet, synthetixjs } = Connector.useContainer();
+	const { connectWallet } = Connector.useContainer();
 	const walletAddress = useRecoilValue(walletAddressState);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	const isAppReady = useRecoilValue(appReadyState);
 	const sourceAccountAddress = useRecoilValue(walletAddressState);
-	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const router = useRouter();
-	const { useSynthsBalancesQuery } = useSynthetixQueries();
+	const { useSynthsBalancesQuery, useSynthetixTxn } = useSynthetixQueries();
 	const { blockExplorerInstance } = Etherscan.useContainer();
 
-	const [gasPrice, setGasPrice] = useState<number>(0);
-	const [gasLimit, setGasLimitEstimate] = useState<number | null>(null);
-
-	const [error, setError] = useState<string | null>(null);
+	const [gasPrice, setGasPrice] = useState<Wei>(wei(0));
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
-	const [transactionState, setTransactionState] = useState<Transaction>(Transaction.PRESUBMIT);
 	const [buttonState, setButtonState] = useState<string | null>(null);
-	const [txHash, setTxHash] = useState<string | null>(null);
-	const txLink = useMemo(
-		() => (blockExplorerInstance && txHash ? blockExplorerInstance.txLink(txHash) : ''),
-		[blockExplorerInstance, txHash]
-	);
-
-	const onGoBack = () => router.replace(ROUTES.MergeAccounts.Home);
 
 	const {
 		targetCRatio,
@@ -107,14 +86,19 @@ const BurnTabInner: FC = () => {
 		currentCRatio,
 	} = useStakingCalculations();
 	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
-	const synthBalances =
-		synthsBalancesQuery.isSuccess && synthsBalancesQuery.data != null
-			? synthsBalancesQuery.data
-			: null;
 
-	const sUSDBalance = synthBalances?.balancesMap.sUSD
-		? synthBalances.balancesMap.sUSD.balance
-		: wei(0);
+	const synthBalances = useMemo(
+		() =>
+			synthsBalancesQuery.isSuccess && synthsBalancesQuery.data != null
+				? synthsBalancesQuery.data
+				: null,
+		[synthsBalancesQuery.isSuccess, synthsBalancesQuery.data]
+	);
+
+	const sUSDBalance = useMemo(
+		() => (synthBalances?.balancesMap.sUSD ? synthBalances.balancesMap.sUSD.balance : wei(0)),
+		[synthBalances]
+	);
 
 	const stakeInfo = useCallback(
 		(burnAmount: Wei): Wei => wei(getStakingAmount(targetCRatio, burnAmount, SNXRate)),
@@ -131,38 +115,42 @@ const BurnTabInner: FC = () => {
 		}
 	}, [burnAmount, debtBalance, issuableSynths, targetCRatio, currentCRatio, stakeInfo]);
 
-	const getBurnTxData = useCallback(
-		(gas: Record<string, number>) => {
-			if (!(isAppReady && sourceAccountAddress)) return null;
-			const {
-				contracts: { Synthetix },
-			} = synthetixjs!;
-			return [Synthetix, 'burnSynths', [sourceAccountAddress, gas]];
+	const txn = useSynthetixTxn(
+		'Synthetix',
+		'burnSynths',
+		[sourceAccountAddress],
+		{
+			gasPrice: gasPrice.toBN(),
 		},
-		[isAppReady, sourceAccountAddress, synthetixjs]
+		{ enabled: !!sourceAccountAddress }
 	);
 
-	// gas
+	const txLink = useMemo(
+		() => (blockExplorerInstance && txn.hash ? blockExplorerInstance.txLink(txn.hash) : ''),
+		[blockExplorerInstance, txn.hash]
+	);
+
+	const onGoBack = () => router.replace(ROUTES.MergeAccounts.Home);
+
+	// effects
 
 	useEffect(() => {
-		let isMounted = true;
-		(async () => {
-			try {
-				setError(null);
-				const data: any[] | null = getBurnTxData({});
-				if (!data) return;
-				const [contract, method, args] = data;
-				const gasEstimate = await getGasEstimateForTransaction(args, contract.estimateGas[method]);
-				if (isMounted) setGasLimitEstimate(getNormalizedGasLimit(Number(gasEstimate)));
-			} catch (error) {
-				// console.error(error);
-				if (isMounted) setGasLimitEstimate(null);
-			}
-		})();
-		return () => {
-			isMounted = false;
-		};
-	}, [getBurnTxData, synthetixjs]);
+		switch (txn.txnStatus) {
+			case 'prompting':
+				setTxModalOpen(true);
+				break;
+
+			case 'pending':
+				setButtonState('burning-debt');
+				setTxModalOpen(true);
+				break;
+
+			// case 'unsent':
+			case 'confirmed':
+				setTxModalOpen(false);
+				break;
+		}
+	}, [txn.txnStatus]);
 
 	// funcs
 
@@ -170,58 +158,28 @@ const BurnTabInner: FC = () => {
 		if (!isWalletConnected) {
 			return connectWallet();
 		}
-		burn();
+
+		// if (sUSDBalance.lt(debtBalance)) {
+		// 	const requiredSUSDTopUp = debtBalance.sub(sUSDBalance);
+		// 	return setError(
+		// 		`You need to acquire an additional ${formatCryptoCurrency(
+		// 			requiredSUSDTopUp.toString()
+		// 		)} sUSD in order to fully burn your debt.`
+		// 	);
+		// }
+
+		txn.mutate();
 	};
 
-	const burn = async () => {
-		if (sUSDBalance.lt(debtBalance)) {
-			const requiredSUSDTopUp = debtBalance.sub(sUSDBalance);
-			return setError(
-				`You need to acquire an additional ${formatCryptoCurrency(
-					requiredSUSDTopUp.toString()
-				)} sUSD in order to fully burn your debt.`
-			);
-		}
-
-		setButtonState('burning-debt');
-		setTxModalOpen(true);
-		try {
-			const gas: Record<string, number> = {
-				gasPrice: getNormalizedGasPrice(gasPrice),
-				gasLimit: gasLimit!,
-			};
-			await tx(() => getBurnTxData(gas), {
-				showErrorNotification: (e: string) => setError(e),
-				showProgressNotification: (hash: string) => {
-					setTransactionState(Transaction.WAITING);
-					setTxHash(hash);
-					monitorTransaction({
-						txHash: hash,
-						onTxConfirmed: async () => {
-							setTransactionState(Transaction.SUCCESS);
-						},
-					});
-				},
-				showSuccessNotification: (hash: string) => {},
-			});
-		} catch {
-		} finally {
-			setButtonState(null);
-			setTxModalOpen(false);
-			setTransactionState(Transaction.PRESUBMIT);
-		}
-	};
-
-	if (transactionState === Transaction.WAITING) {
+	if (txn.txnStatus === 'pending') {
 		return <TxWaiting {...{ unstakeAmount, burnAmount, txLink }} />;
 	}
 
-	if (transactionState === Transaction.SUCCESS) {
+	if (txn.txnStatus === 'confirmed') {
 		return (
 			<TxSuccess
 				{...{ unstakeAmount, burnAmount, txLink }}
 				onDismiss={() => {
-					setTransactionState(Transaction.PRESUBMIT);
 					router.push(ROUTES.MergeAccounts.Nominate);
 				}}
 			/>
@@ -246,7 +204,7 @@ const BurnTabInner: FC = () => {
 
 				<SettingsContainer>
 					<SettingContainer>
-						<GasSelector gasLimitEstimate={wei(gasLimit ?? 0)} setGasPrice={setGasPrice} />
+						<GasSelector gasLimitEstimate={txn.gasLimit} setGasPrice={setGasPrice} />
 					</SettingContainer>
 				</SettingsContainer>
 			</FormContainer>
@@ -268,7 +226,7 @@ const BurnTabInner: FC = () => {
 				)}
 			</FormButton>
 
-			{!error ? null : <ErrorMessage>{error}</ErrorMessage>}
+			{!txn.error ? null : <ErrorMessage>{txn.errorMessage}</ErrorMessage>}
 
 			{txModalOpen && (
 				<TxConfirmationModal

@@ -1,18 +1,18 @@
-import { useState, useMemo, useEffect, FC, useCallback } from 'react';
+import { useState, useMemo, useEffect, FC } from 'react';
 import { ethers } from 'ethers';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 import { Trans, useTranslation } from 'react-i18next';
 import { Svg } from 'react-optimized-image';
 import { useRouter } from 'next/router';
-import { wei } from '@synthetixio/wei';
+import Wei, { wei } from '@synthetixio/wei';
+import useSynthetixQueries from '@synthetixio/queries';
 
 import { truncateAddress } from 'utils/formatters/string';
 import Button from 'components/Button';
 import Connector from 'containers/Connector';
 import Etherscan from 'containers/BlockExplorer';
 import StructuredTab from 'components/StructuredTab';
-import TransactionNotifier from 'containers/TransactionNotifier';
 import NavigationBack from 'assets/svg/app/navigation-back.svg';
 import {
 	ModalContent as TxModalContent,
@@ -34,15 +34,9 @@ import {
 	TxModalItem,
 	FormHeader,
 } from 'sections/merge-accounts/common';
-import { tx, getGasEstimateForTransaction } from 'utils/transactions';
-import {
-	normalizeGasLimit as getNormalizedGasLimit,
-	normalizedGasPrice as getNormalizedGasPrice,
-} from 'utils/network';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import walletIcon from 'assets/svg/app/wallet-purple.svg';
 import ROUTES from 'constants/routes';
-import { Transaction } from 'constants/network';
 import { TxWaiting, TxSuccess } from './Tx';
 
 const NominateTab: FC = () => {
@@ -71,21 +65,12 @@ const NominateTabInner: FC = () => {
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const isAppReady = useRecoilValue(appReadyState);
 	const sourceAccountAddress = useRecoilValue(walletAddressState);
-	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const { blockExplorerInstance } = Etherscan.useContainer();
+	const { useSynthetixTxn } = useSynthetixQueries();
 
-	const [gasPrice, setGasPrice] = useState<number>(0);
-	const [gasLimit, setGasLimitEstimate] = useState<number | null>(null);
-
-	const [error, setError] = useState<string | null>(null);
+	const [gasPrice, setGasPrice] = useState<Wei>(wei(0));
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
-	const [transactionState, setTransactionState] = useState<Transaction>(Transaction.PRESUBMIT);
 	const [buttonState, setButtonState] = useState<string | null>(null);
-	const [txHash, setTxHash] = useState<string | null>(null);
-	const txLink = useMemo(
-		() => (blockExplorerInstance && txHash ? blockExplorerInstance.txLink(txHash) : ''),
-		[blockExplorerInstance, txHash]
-	);
 
 	const router = useRouter();
 	const onGoBack = () => router.replace(ROUTES.MergeAccounts.Home);
@@ -112,38 +97,20 @@ const NominateTabInner: FC = () => {
 			: null;
 	}, [properDestinationAccountAddress, sourceAccountAddress, destinationAccountAddress]);
 
-	const getNominateTxData = useCallback(
-		(gas: Record<string, number>) => {
-			if (!(properDestinationAccountAddress && !destinationAccountAddressInputError && isAppReady))
-				return null;
-			const {
-				contracts: { RewardEscrowV2 },
-			} = synthetixjs!;
-			return [RewardEscrowV2, 'nominateAccountToMerge', [properDestinationAccountAddress, gas]];
+	const txn = useSynthetixTxn(
+		'RewardEscrowV2',
+		'nominateAccountToMerge',
+		[properDestinationAccountAddress],
+		{
+			gasPrice: gasPrice.toBN(),
 		},
-		[isAppReady, properDestinationAccountAddress, destinationAccountAddressInputError, synthetixjs]
+		{ enabled: !!properDestinationAccountAddress }
 	);
 
-	// gas
-	useEffect(() => {
-		let isMounted = true;
-		(async () => {
-			try {
-				setError(null);
-				const data: any[] | null = getNominateTxData({});
-				if (!data) return;
-				const [contract, method, args] = data;
-				const gasEstimate = await getGasEstimateForTransaction(args, contract.estimateGas[method]);
-				if (isMounted) setGasLimitEstimate(getNormalizedGasLimit(Number(gasEstimate)));
-			} catch (error) {
-				// console.error(error);
-				if (isMounted) setGasLimitEstimate(null);
-			}
-		})();
-		return () => {
-			isMounted = false;
-		};
-	}, [getNominateTxData, synthetixjs]);
+	const txLink = useMemo(
+		() => (blockExplorerInstance && txn.hash ? blockExplorerInstance.txLink(txn.hash) : ''),
+		[blockExplorerInstance, txn.hash]
+	);
 
 	// load any previously nominated account address
 	useEffect(() => {
@@ -189,6 +156,26 @@ const NominateTabInner: FC = () => {
 		};
 	}, [sourceAccountAddress, isAppReady, synthetixjs]);
 
+	// effects
+
+	useEffect(() => {
+		switch (txn.txnStatus) {
+			case 'prompting':
+				setTxModalOpen(true);
+				break;
+
+			case 'pending':
+				setButtonState('nominating');
+				setTxModalOpen(true);
+				break;
+
+			// case 'unsent':
+			case 'confirmed':
+				setTxModalOpen(false);
+				break;
+		}
+	}, [txn.txnStatus]);
+
 	// funcs
 
 	const onEnterAddress = (e: any) => setDestinationAccountAddress((e.target.value ?? '').trim());
@@ -197,40 +184,11 @@ const NominateTabInner: FC = () => {
 		if (!isWalletConnected) {
 			return connectWallet();
 		}
-		nominate();
+
+		txn.mutate();
 	};
 
-	const nominate = async () => {
-		setButtonState('nominating');
-		setTxModalOpen(true);
-		try {
-			const gas: Record<string, number> = {
-				gasPrice: getNormalizedGasPrice(gasPrice),
-				gasLimit: gasLimit!,
-			};
-			await tx(() => getNominateTxData(gas), {
-				showErrorNotification: (e: string) => setError(e),
-				showProgressNotification: (hash: string) => {
-					setTransactionState(Transaction.WAITING);
-					setTxHash(hash);
-					monitorTransaction({
-						txHash: hash,
-						onTxConfirmed: () => {
-							setTransactionState(Transaction.SUCCESS);
-						},
-					});
-				},
-				showSuccessNotification: (hash: string) => {},
-			});
-		} catch {
-		} finally {
-			setButtonState(null);
-			setTxModalOpen(false);
-			setTransactionState(Transaction.PRESUBMIT);
-		}
-	};
-
-	if (transactionState === Transaction.WAITING) {
+	if (txn.txnStatus === 'pending') {
 		return (
 			<TxWaiting
 				{...{ txLink }}
@@ -240,14 +198,13 @@ const NominateTabInner: FC = () => {
 		);
 	}
 
-	if (transactionState === Transaction.SUCCESS) {
+	if (txn.txnStatus === 'confirmed') {
 		return (
 			<TxSuccess
 				{...{ txLink }}
 				fromAddress={sourceAccountAddress}
 				toAddress={properDestinationAccountAddress}
 				onDismiss={() => {
-					setTransactionState(Transaction.PRESUBMIT);
 					router.push(ROUTES.MergeAccounts.Merge);
 				}}
 			/>
@@ -279,7 +236,7 @@ const NominateTabInner: FC = () => {
 
 				<SettingsContainer>
 					<SettingContainer>
-						<GasSelector gasLimitEstimate={wei(gasLimit ?? 0)} setGasPrice={setGasPrice} />
+						<GasSelector gasLimitEstimate={txn.gasLimit} setGasPrice={setGasPrice} />
 					</SettingContainer>
 				</SettingsContainer>
 			</FormContainer>
@@ -313,7 +270,7 @@ const NominateTabInner: FC = () => {
 				)}
 			</FormButton>
 
-			{!error ? null : <ErrorMessage>{error}</ErrorMessage>}
+			{!txn.error ? null : <ErrorMessage>{txn.errorMessage}</ErrorMessage>}
 
 			{txModalOpen && (
 				<TxConfirmationModal

@@ -21,8 +21,8 @@ export type SwapTxData = {
 };
 
 const use1InchSwapQuery = (
-	fromTokenAddress: string,
-	toTokenAddress: string,
+	fromTokenAddress: string | null,
+	toTokenAddress: string | null,
 	amount: WeiSource,
 	fromAddress: string,
 	slippage: number,
@@ -48,14 +48,21 @@ const use1InchSwapQuery = (
 			});
 
 			const transaction = response.data.tx;
+			delete transaction.gas;
 			return {
 				...transaction,
-				value: wei(transaction.value).toBN(),
-				gasPrice: wei(transaction.gasPrice).toBN(),
+				value: wei(transaction.value, 0).toBN(),
+				gasPrice: wei(transaction.gasPrice, 0).toBN(),
 			};
 		},
 		{
-			enabled: isAppReady && isWalletConnected && !isL2 && !wei(amount).eq(0),
+			enabled:
+				isAppReady &&
+				isWalletConnected &&
+				!isL2 &&
+				!wei(amount).eq(0) &&
+				!!fromTokenAddress &&
+				!!toTokenAddress,
 			...options,
 		}
 	);

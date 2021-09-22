@@ -7,27 +7,17 @@ import { useRouter } from 'next/router';
 
 import useLPData from 'hooks/useLPData';
 import ROUTES from 'constants/routes';
-import { CryptoCurrency, Synths } from 'constants/currency';
+import { CryptoCurrency } from 'constants/currency';
 import media from 'styles/media';
 import useFeePeriodTimeAndProgress from 'hooks/useFeePeriodTimeAndProgress';
-import { isWalletConnectedState, walletAddressState } from 'store/wallet';
-import useShortRewardsData from 'hooks/useShortRewardsData';
+import { isWalletConnectedState } from 'store/wallet';
 import { TabButton, TabList } from 'components/Tab';
 import { CurrencyIconType } from 'components/Currency/CurrencyIcon/CurrencyIcon';
 import { DesktopOrTabletView } from 'components/Media';
 
-import IncentivesTable, { DualRewards, NOT_APPLICABLE } from './IncentivesTable';
+import IncentivesTable, { NOT_APPLICABLE } from './IncentivesTable';
 import ClaimTab from './ClaimTab';
-import LPTab from './LPTab';
-import {
-	Tab,
-	LP,
-	lpToTab,
-	tabToLP,
-	lpToSynthTranslationKey,
-	lpToSynthIcon,
-	lpToRoute,
-} from './types';
+import { Tab, LP } from './types';
 import YearnVaultTab from './LPTab/YearnVaultTab';
 import { YearnVaultData } from 'queries/liquidityPools/useYearnSNXVaultQuery';
 import useSynthetixQueries from '@synthetixio/queries';
@@ -61,11 +51,9 @@ const Incentives: FC<IncentivesProps> = ({
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const [view, setView] = useState<View>(View.ACTIVE);
 
-	const walletAddress = useRecoilValue(walletAddressState);
 	const { useGlobalStakingInfoQuery } = useSynthetixQueries();
 
 	const lpData = useLPData();
-	const shortData = useShortRewardsData(walletAddress);
 	const globalStakingQuery = useGlobalStakingInfoQuery();
 
 	const { nextFeePeriodStarts, currentFeePeriodStarted } = useFeePeriodTimeAndProgress();
@@ -84,40 +72,6 @@ const Incentives: FC<IncentivesProps> = ({
 	);
 
 	const incentives = useMemo(() => {
-		const balancerIncentives = (balancerLP: LP) => {
-			const tab = lpToTab[balancerLP];
-			const synthTransKey = lpToSynthTranslationKey[balancerLP];
-			const route = lpToRoute[balancerLP];
-			const currencyKey = lpToSynthIcon[balancerLP];
-
-			const isDual = !!(lpData[balancerLP].data?.rewards as { a: Wei; b: Wei })?.a;
-
-			return {
-				title: t(`earn.incentives.options.${synthTransKey}.title`),
-				subtitle: t(`earn.incentives.options.${synthTransKey}.subtitle`),
-				apr: lpData[balancerLP].APR,
-				tvl: lpData[balancerLP].TVL,
-				staked: {
-					balance: lpData[balancerLP].data?.staked ?? wei(0),
-					asset: currencyKey,
-					ticker: balancerLP,
-				},
-				rewards: lpData[balancerLP].data?.rewards ?? wei(0),
-				periodStarted: now - (lpData[balancerLP].data?.duration ?? 0),
-				periodFinish: lpData[balancerLP].data?.periodFinish ?? 0,
-				claimed: (
-					isDual
-						? (lpData[balancerLP].data?.rewards as { a: Wei; b: Wei }).a.gt(0)
-						: (lpData[balancerLP].data?.rewards as Wei)?.gt(0)
-				)
-					? false
-					: NOT_APPLICABLE,
-				now,
-				route: route,
-				tab: tab,
-			};
-		};
-
 		return isWalletConnected
 			? [
 					{
@@ -158,92 +112,7 @@ const Incentives: FC<IncentivesProps> = ({
 						tab: Tab.yearn_SNX_VAULT,
 						neverExpires: true,
 					},
-					{
-						title: t('earn.incentives.options.ieth.title'),
-						subtitle: t('earn.incentives.options.ieth.subtitle'),
-						apr: lpData[Synths.iETH].APR,
-						tvl: lpData[Synths.iETH].TVL,
-						staked: {
-							balance: lpData[Synths.iETH].data?.staked ?? wei(0),
-							asset: Synths.iETH,
-							ticker: Synths.iETH,
-						},
-						rewards: lpData[Synths.iETH].data?.rewards ?? wei(0),
-						periodStarted: now - (lpData[Synths.iETH].data?.duration ?? 0),
-						periodFinish: lpData[Synths.iETH].data?.periodFinish ?? 0,
-						claimed: (lpData[Synths.iETH].data?.rewards ?? 0) > 0 ? false : NOT_APPLICABLE,
-						now,
-						tab: Tab.iETH_LP,
-						route: ROUTES.Earn.iETH_LP,
-						needsToSettle: lpData[Synths.iETH].data?.needsToSettle,
-					},
-					{
-						title: t('earn.incentives.options.ibtc.title'),
-						subtitle: t('earn.incentives.options.ibtc.subtitle'),
-						apr: lpData[Synths.iBTC].APR,
-						tvl: lpData[Synths.iBTC].TVL,
-						staked: {
-							balance: lpData[Synths.iBTC].data?.staked ?? wei(0),
-							asset: Synths.iBTC,
-							ticker: Synths.iBTC,
-						},
-						rewards: lpData[Synths.iBTC].data?.rewards ?? wei(0),
-						periodStarted: now - (lpData[Synths.iBTC].data?.duration ?? 0),
-						periodFinish: lpData[Synths.iBTC].data?.periodFinish ?? 0,
-						claimed: (lpData[Synths.iBTC].data?.rewards ?? 0) > 0 ? false : NOT_APPLICABLE,
-						now,
-						tab: Tab.iBTC_LP,
-						route: ROUTES.Earn.iBTC_LP,
-						needsToSettle: lpData[Synths.iBTC].data?.needsToSettle,
-					},
-					{
-						title: t('earn.incentives.options.sbtc.title'),
-						subtitle: t('earn.incentives.options.sbtc.subtitle'),
-						apr: shortData[Synths.sBTC].APR,
-						tvl: shortData[Synths.sBTC].OI,
-						staked: {
-							balance: shortData[Synths.sBTC].data?.staked ?? wei(0),
-							asset: Synths.sBTC,
-							ticker: Synths.sBTC,
-						},
-						rewards: shortData[Synths.sBTC].data?.rewards ?? wei(0),
-						periodStarted: now - (shortData[Synths.sBTC].data?.duration ?? 0),
-						periodFinish: shortData[Synths.sBTC].data?.periodFinish ?? 0,
-						claimed: (shortData[Synths.sBTC].data?.rewards ?? 0) > 0 ? false : NOT_APPLICABLE,
-						now,
-						tab: Tab.sBTC_SHORT,
-						route: ROUTES.Earn.sBTC_SHORT,
-						externalLink: ROUTES.Earn.sBTC_EXTERNAL,
-					},
-					{
-						title: t('earn.incentives.options.seth.title'),
-						subtitle: t('earn.incentives.options.seth.subtitle'),
-						apr: shortData[Synths.sETH].APR,
-						tvl: shortData[Synths.sETH].OI,
-						staked: {
-							balance: shortData[Synths.sETH].data?.staked ?? wei(0),
-							asset: Synths.sETH,
-							ticker: Synths.sETH,
-						},
-						rewards: shortData[Synths.sETH].data?.rewards ?? wei(0),
-						periodStarted: now - (shortData[Synths.sETH].data?.duration ?? 0),
-						periodFinish: shortData[Synths.sETH].data?.periodFinish ?? 0,
-						claimed: (shortData[Synths.sETH].data?.rewards ?? 0) > 0 ? false : NOT_APPLICABLE,
-						now,
-						tab: Tab.sETH_SHORT,
-						route: ROUTES.Earn.sETH_SHORT,
-						externalLink: ROUTES.Earn.sETH_EXTERNAL,
-					},
-					...[
-						LP.BALANCER_sFB,
-						LP.BALANCER_sAAPL,
-						LP.BALANCER_sAMZN,
-						LP.BALANCER_sNFLX,
-						LP.BALANCER_sGOOG,
-						LP.BALANCER_sTSLA,
-						LP.BALANCER_sMSFT,
-						LP.BALANCER_sCOIN,
-					].map(balancerIncentives),
+
 					{
 						title: t('earn.incentives.options.curve.title'),
 						subtitle: t('earn.incentives.options.curve.subtitle'),
@@ -264,30 +133,6 @@ const Incentives: FC<IncentivesProps> = ({
 						tab: Tab.sUSD_LP,
 						externalLink: ROUTES.Earn.sUSD_EXTERNAL,
 					},
-					{
-						title: t('earn.incentives.options.dht.title'),
-						subtitle: t('earn.incentives.options.dht.subtitle'),
-						apr: lpData[LP.UNISWAP_DHT].APR,
-						tvl: lpData[LP.UNISWAP_DHT].TVL,
-						staked: {
-							balance: lpData[LP.UNISWAP_DHT].data?.staked ?? wei(0),
-							asset: CryptoCurrency.DHT,
-							ticker: LP.UNISWAP_DHT,
-							type: CurrencyIconType.TOKEN,
-						},
-						rewards: lpData[LP.UNISWAP_DHT].data?.rewards ?? wei(0),
-						dualRewards: true,
-						periodStarted: now - (lpData[LP.UNISWAP_DHT].data?.duration ?? 0),
-						periodFinish: lpData[LP.UNISWAP_DHT].data?.periodFinish ?? 0,
-						claimed:
-							((lpData[LP.UNISWAP_DHT].data?.rewards as DualRewards)?.a ?? wei(0)).gt(0) &&
-							((lpData[LP.UNISWAP_DHT].data?.rewards as DualRewards)?.b ?? wei(0)).gt(0)
-								? false
-								: NOT_APPLICABLE,
-						now,
-						route: ROUTES.Earn.DHT_LP,
-						tab: Tab.DHT_LP,
-					},
 			  ]
 			: [];
 	}, [
@@ -302,7 +147,6 @@ const Incentives: FC<IncentivesProps> = ({
 		now,
 		t,
 		isWalletConnected,
-		shortData,
 	]);
 
 	const incentivesTable = (
@@ -313,39 +157,9 @@ const Incentives: FC<IncentivesProps> = ({
 					? incentives.filter((e) => e.periodFinish > Date.now())
 					: incentives.filter((e) => e.periodFinish <= Date.now())
 			}
-			isLoaded={
-				lpData[LP.CURVE_sUSD].data &&
-				lpData[LP.CURVE_sEURO].data &&
-				shortData[Synths.sBTC].data &&
-				shortData[Synths.sETH].data &&
-				lpData[Synths.iETH].data &&
-				lpData[Synths.iBTC].data &&
-				lpData[LP.BALANCER_sTSLA].data
-					? true
-					: false
-			}
+			isLoaded={!!lpData[LP.CURVE_sUSD].data}
 		/>
 	);
-
-	const balancerTab = (selectedTab: Tab) => {
-		const lp = tabToLP[selectedTab];
-		const currencyKey = lpToSynthIcon[lp];
-
-		return (
-			activeTab === selectedTab && (
-				<LPTab
-					key={selectedTab}
-					userBalance={lpData[lp].data?.userBalance ?? wei(0)}
-					stakedAsset={lp}
-					icon={currencyKey}
-					allowance={lpData[lp].data?.allowance ?? null}
-					tokenRewards={lpData[lp].data?.rewards ?? wei(0)}
-					staked={lpData[lp].data?.staked ?? wei(0)}
-					needsToSettle={lpData[lp].data?.needsToSettle}
-				/>
-			)
-		);
-	};
 
 	return activeTab == null ? (
 		<>
@@ -390,62 +204,6 @@ const Incentives: FC<IncentivesProps> = ({
 						tradingRewards={tradingRewards}
 						stakingRewards={stakingRewards}
 						totalRewards={totalRewards}
-					/>
-				)}
-				{activeTab === Tab.iETH_LP && (
-					<LPTab
-						userBalance={lpData[Synths.iETH].data?.userBalance ?? wei(0)}
-						stakedAsset={Synths.iETH}
-						allowance={lpData[Synths.iETH].data?.allowance ?? null}
-						tokenRewards={lpData[Synths.iETH].data?.rewards ?? wei(0)}
-						staked={lpData[Synths.iETH].data?.staked ?? wei(0)}
-						needsToSettle={lpData[Synths.iETH].data?.needsToSettle}
-					/>
-				)}
-				{/* {activeTab === Tab.sTLSA_LP && (
-					<LPTab
-						userBalance={lpData[LP.BALANCER_sTSLA].data?.userBalance ?? 0}
-						userBalanceBN={lpData[LP.BALANCER_sTSLA].data?.userBalanceBN ?? zeroBN}
-						stakedAsset={LP.BALANCER_sTSLA}
-						icon={Synths.sTSLA}
-						allowance={lpData[LP.BALANCER_sTSLA].data?.allowance ?? null}
-						tokenRewards={lpData[LP.BALANCER_sTSLA].data?.rewards ?? 0}
-						staked={lpData[LP.BALANCER_sTSLA].data?.staked ?? 0}
-						stakedBN={lpData[LP.BALANCER_sTSLA].data?.stakedBN ?? zeroBN}
-						needsToSettle={lpData[LP.BALANCER_sTSLA].data?.needsToSettle}
-					/>
-				)} */}
-				{[
-					Tab.sTLSA_LP,
-					Tab.sFB_LP,
-					Tab.sAAPL_LP,
-					Tab.sAMZN_LP,
-					Tab.sNFLX_LP,
-					Tab.sGOOG_LP,
-					Tab.sMSFT_LP,
-					Tab.sCOIN_LP,
-				].map(balancerTab)}
-				{activeTab === Tab.DHT_LP && (
-					<LPTab
-						userBalance={lpData[LP.UNISWAP_DHT].data?.userBalance ?? wei(0)}
-						stakedAsset={LP.UNISWAP_DHT}
-						icon={CryptoCurrency.DHT}
-						type={CurrencyIconType.TOKEN}
-						allowance={lpData[LP.UNISWAP_DHT].data?.allowance ?? null}
-						tokenRewards={lpData[LP.UNISWAP_DHT].data?.rewards ?? wei(0)}
-						staked={lpData[LP.UNISWAP_DHT].data?.staked ?? wei(0)}
-						needsToSettle={lpData[LP.UNISWAP_DHT].data?.needsToSettle}
-						secondTokenRate={lpData[LP.UNISWAP_DHT].data?.price ?? wei(0)}
-					/>
-				)}
-				{activeTab === Tab.iBTC_LP && (
-					<LPTab
-						userBalance={lpData[Synths.iBTC].data?.userBalance ?? wei(0)}
-						stakedAsset={Synths.iBTC}
-						allowance={lpData[Synths.iBTC].data?.allowance ?? null}
-						tokenRewards={lpData[Synths.iBTC].data?.rewards ?? wei(0)}
-						staked={lpData[Synths.iBTC].data?.staked ?? wei(0)}
-						needsToSettle={lpData[Synths.iBTC].data?.needsToSettle}
 					/>
 				)}
 				{activeTab === Tab.yearn_SNX_VAULT && (

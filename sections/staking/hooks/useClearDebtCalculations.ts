@@ -14,7 +14,7 @@ type ClearDebtCalculations = {
 
 // used to make sure more than enough is provided to repay the debt,
 // even if it fluctuates while the transaction is being filled
-const DEBT_CLEAR_BALANCE_BUFFER = 1.0005;
+const DEBT_CLEAR_BALANCE_BUFFER = 1.05;
 
 const useClearDebtCalculations = (
 	debtBalance: Wei,
@@ -27,13 +27,13 @@ const useClearDebtCalculations = (
 	const debtBalanceWithBuffer = debtBalance.mul(DEBT_CLEAR_BALANCE_BUFFER);
 	const missingSUSDWithBuffer = debtBalanceWithBuffer.sub(sUSDBalance);
 
-	const sUSDAddress = synthetixjs!.contracts!.SynthsUSD.address;
+	const sUSDAddress = synthetixjs?.contracts?.SynthsUSD.address ?? null;
 
 	const quoteQuery = use1InchQuoteQuery(sUSDAddress, ethAddress, missingSUSDWithBuffer);
 	const quoteData = quoteQuery.isSuccess && quoteQuery.data != null ? quoteQuery.data : null;
 	const quoteAmount = wei(quoteData?.toTokenAmount ?? 0);
 
-	const swapQuery = use1InchSwapQuery(ethAddress, sUSDAddress, quoteAmount, walletAddress!, 50);
+	const swapQuery = use1InchSwapQuery(ethAddress, sUSDAddress, quoteAmount, walletAddress!, 1);
 	const swapData = swapQuery.isSuccess && swapQuery.data != null ? swapQuery.data : null;
 
 	return {

@@ -48,8 +48,6 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 	const space = useSnapshotSpaceQuery(snapshotEndpoint, activeTab);
 	const [ipfsHash, setIpfsHash] = useState<string | null>(null);
 
-	console.log('propsal space error', space.status, space.error);
-
 	const { signer } = Connector.useContainer();
 
 	const contract = useMemo(
@@ -57,13 +55,7 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 		[signer]
 	);
 
-	const txn = useContractTxn(
-		contract,
-		'logProposal',
-		[ipfsHash || ''],
-		{},
-		{ gasLimitBuffer: 0.5 }
-	);
+	const txn = useContractTxn(contract, 'logProposal', [ipfsHash || ''], {}, { enabled: true });
 
 	const sanitiseTimestamp = (timestamp: number) => {
 		return Math.round(timestamp / 1e3);
@@ -86,7 +78,6 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 
 	const createProposal = useSignMessage({
 		onSuccess: async (response) => {
-			console.log('propsal created');
 			setSignModalOpen(false);
 			setResult(response);
 
@@ -103,7 +94,6 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 			}
 		},
 		onError: async (error) => {
-			console.log('proposal failed create', error);
 			setSignTransactionState(Transaction.PRESUBMIT);
 			setSignError(error.message);
 		},
@@ -111,7 +101,6 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 
 	const handleCreate = async () => {
 		try {
-			console.log('proposal data', space.data, block);
 			if (space.data && block) {
 				const isFixed = activeTab === SPACE_KEY.PROPOSAL;
 				setSignError(null);
@@ -130,8 +119,6 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 					proposalStartDate = sanitiseTimestamp(startDate.getTime());
 					proposalEndDate = sanitiseTimestamp(endDate.getTime());
 				}
-
-				console.log('creating proposal');
 
 				createProposal.mutate({
 					spaceKey: activeTab,

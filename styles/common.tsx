@@ -401,3 +401,9 @@ export const Tooltip = styled(Tippy)`
 export const UpperCased = styled.span`
 	text-transform: uppercase;
 `;
+
+export const BlueStyledExternalLink = styled(ExternalLink)`
+	font-family: ${(props) => props.theme.fonts.regular};
+	color: ${(props) => props.theme.colors.blue};
+	font-size: 12px;
+`;

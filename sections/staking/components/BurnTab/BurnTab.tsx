@@ -25,7 +25,12 @@ const BurnTab: React.FC = () => {
 	const [amountToBurn, onBurnChange] = useRecoilState(amountToBurnState);
 	const [burnType, onBurnTypeChange] = useRecoilState(burnTypeState);
 
-	const { useSynthsBalancesQuery, useETHBalanceQuery, useSynthetixTxn } = useSynthetixQueries();
+	const {
+		useSynthsBalancesQuery,
+		useETHBalanceQuery,
+		useSynthetixTxn,
+		useEVMTxn,
+	} = useSynthetixQueries();
 
 	const { percentageTargetCRatio, debtBalance, issuableSynths } = useStakingCalculations();
 	const walletAddress = useRecoilValue(walletAddressState);
@@ -53,12 +58,13 @@ const BurnTab: React.FC = () => {
 		debtBalanceWithBuffer,
 		missingSUSDWithBuffer,
 		quoteAmount,
+		swapData,
 	} = useClearDebtCalculations(debtBalance, sUSDBalance, walletAddress!);
 
 	const ethBalanceQuery = useETHBalanceQuery(walletAddress);
 	const ethBalance = ethBalanceQuery.data ?? wei(0);
 
-	const amountToBurnWei = parseSafeWei(amountToBurn, wei(0));
+	const amountToBurnWei = Wei.max(wei(0), parseSafeWei(amountToBurn, wei(0)));
 
 	const isToTarget = burnType === BurnActionType.TARGET;
 
@@ -113,9 +119,26 @@ const BurnTab: React.FC = () => {
 		? ['burnSynthsToTarget', []]
 		: ['burnSynths', [amountToBurnWei.toBN()]];
 
-	const txn = useSynthetixTxn('Synthetix', burnCall[0], burnCall[1], {
-		gasPrice: gasPrice.toBN(),
+	const swapTxn = useEVMTxn(swapData, {
+		onSuccess: () => txn.mutate(),
+		enabled: true,
 	});
+
+	const txn = useSynthetixTxn(
+		'Synthetix',
+		burnCall[0],
+		burnCall[1],
+		{
+			gasPrice: gasPrice.toBN(),
+		},
+		{
+			enabled: burnType !== BurnActionType.CLEAR || !needToBuy || swapTxn.txnStatus === 'confirmed',
+		}
+	);
+
+	useEffect(() => {
+		if (swapTxn.txnStatus === 'prompting' || txn.txnStatus === 'prompting') setTxModalOpen(true);
+	}, [txn, swapTxn.txnStatus]);
 
 	// header title
 	useEffect(() => {
@@ -196,7 +219,7 @@ const BurnTab: React.FC = () => {
 					break;
 				}
 				onBurnChange(debtBalanceWithBuffer.toString());
-				handleSubmit = () => txn.mutate();
+				handleSubmit = () => swapTxn.mutate();
 				inputValue = debtBalanceWithBuffer.toString();
 				isLocked = true;
 				if (quoteAmount) {
@@ -222,7 +245,7 @@ const BurnTab: React.FC = () => {
 				isLocked={isLocked}
 				isMint={false}
 				onBack={onBurnTypeChange}
-				error={error || txn.errorMessage}
+				error={error || swapTxn.errorMessage || txn.errorMessage}
 				txModalOpen={txModalOpen}
 				setTxModalOpen={setTxModalOpen}
 				gasLimitEstimate={txn.gasLimit}
@@ -254,6 +277,7 @@ const BurnTab: React.FC = () => {
 		quoteAmount,
 		error,
 		txn,
+		swapTxn,
 	]);
 
 	return <TabContainer>{returnPanel}</TabContainer>;
