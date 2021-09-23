@@ -13,20 +13,7 @@ import TransactionNotifier from 'containers/TransactionNotifier';
 import Etherscan from 'containers/BlockExplorer';
 import { zIndex } from 'constants/ui';
 import LockedIcon from 'assets/svg/app/locked.svg';
-import {
-	curveSusdRewards,
-	curveSusdPoolToken,
-	balancersTSLAPoolToken,
-	dualStakingRewards,
-	DHTsUSDLPToken,
-	balancersFBPoolToken,
-	balancersAAPLPoolToken,
-	balancersAMZNPoolToken,
-	balancersGOOGPoolToken,
-	balancersNFLXPoolToken,
-	balancersMSFTPoolToken,
-	balancersCOINPoolToken,
-} from 'contracts';
+import { curveSusdRewards, curveSusdPoolToken } from 'contracts';
 import Connector from 'containers/Connector';
 import { EXTERNAL_LINKS } from 'constants/links';
 import {
@@ -39,7 +26,7 @@ import {
 } from 'styles/common';
 import { Transaction, TokenAllowanceLimit, GasLimitEstimate } from 'constants/network';
 import { normalizedGasPrice } from 'utils/network';
-import { CurrencyKey, Synths } from 'constants/currency';
+import { CurrencyKey } from 'constants/currency';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import TxState from 'sections/earn/TxState';
 
@@ -67,18 +54,7 @@ export const getApprovalContractData = (
 	stakedAsset: CurrencyKey,
 	signer: any
 ) => {
-	const { contracts } = synthetixjs!;
-	if (stakedAsset === Synths.iBTC) {
-		return {
-			contract: contracts.SynthiBTC,
-			poolAddress: contracts.StakingRewardsiBTC.address,
-		};
-	} else if (stakedAsset === Synths.iETH) {
-		return {
-			contract: contracts.SynthiETH,
-			poolAddress: contracts.StakingRewardsiETH.address,
-		};
-	} else if (stakedAsset === LP.CURVE_sUSD) {
+	if (stakedAsset === LP.CURVE_sUSD) {
 		return {
 			contract: new ethers.Contract(
 				curveSusdPoolToken.address,
@@ -86,83 +62,6 @@ export const getApprovalContractData = (
 				signer as ethers.Signer
 			),
 			poolAddress: curveSusdRewards.address,
-		};
-	} else if (stakedAsset === LP.BALANCER_sTSLA) {
-		return {
-			contract: new ethers.Contract(
-				balancersTSLAPoolToken.address,
-				balancersTSLAPoolToken.abi,
-				signer as ethers.Signer
-			),
-			poolAddress: contracts.StakingRewardssTSLABalancer.address,
-		};
-	} else if (stakedAsset === LP.BALANCER_sFB) {
-		return {
-			contract: new ethers.Contract(
-				balancersFBPoolToken.address,
-				balancersFBPoolToken.abi,
-				signer as ethers.Signer
-			),
-			poolAddress: contracts.StakingRewardssFBBalancer.address,
-		};
-	} else if (stakedAsset === LP.BALANCER_sAAPL) {
-		return {
-			contract: new ethers.Contract(
-				balancersAAPLPoolToken.address,
-				balancersAAPLPoolToken.abi,
-				signer as ethers.Signer
-			),
-			poolAddress: contracts.StakingRewardssAAPLBalancer.address,
-		};
-	} else if (stakedAsset === LP.BALANCER_sAMZN) {
-		return {
-			contract: new ethers.Contract(
-				balancersAMZNPoolToken.address,
-				balancersAMZNPoolToken.abi,
-				signer as ethers.Signer
-			),
-			poolAddress: contracts.StakingRewardssAMZNBalancer.address,
-		};
-	} else if (stakedAsset === LP.BALANCER_sNFLX) {
-		return {
-			contract: new ethers.Contract(
-				balancersNFLXPoolToken.address,
-				balancersNFLXPoolToken.abi,
-				signer as ethers.Signer
-			),
-			poolAddress: contracts.StakingRewardssNFLXBalancer.address,
-		};
-	} else if (stakedAsset === LP.BALANCER_sGOOG) {
-		return {
-			contract: new ethers.Contract(
-				balancersGOOGPoolToken.address,
-				balancersGOOGPoolToken.abi,
-				signer as ethers.Signer
-			),
-			poolAddress: contracts.StakingRewardssGOOGBalancer.address,
-		};
-	} else if (stakedAsset === LP.BALANCER_sMSFT) {
-		return {
-			contract: new ethers.Contract(
-				balancersMSFTPoolToken.address,
-				balancersMSFTPoolToken.abi,
-				signer as ethers.Signer
-			),
-			poolAddress: contracts.StakingRewardssMSFTBalancer.address,
-		};
-	} else if (stakedAsset === LP.BALANCER_sCOIN) {
-		return {
-			contract: new ethers.Contract(
-				balancersCOINPoolToken.address,
-				balancersCOINPoolToken.abi,
-				signer as ethers.Signer
-			),
-			poolAddress: contracts.StakingRewardssCOINBalancer.address,
-		};
-	} else if (stakedAsset === LP.UNISWAP_DHT) {
-		return {
-			contract: new ethers.Contract(DHTsUSDLPToken.address, DHTsUSDLPToken.abi, signer as any),
-			poolAddress: dualStakingRewards.address,
 		};
 	} else {
 		throw new Error('unrecognizable asset');

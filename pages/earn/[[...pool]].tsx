@@ -16,7 +16,7 @@ import { formatFiatCurrency, formatPercent } from 'utils/formatters/number';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import useSynthetixQueries, { StakingTransactionType } from '@synthetixio/queries';
 import { useRecoilValue } from 'recoil';
-import { walletAddressState } from 'store/wallet';
+import { walletAddressState, delegateWalletState } from 'store/wallet';
 import { wei } from '@synthetixio/wei';
 
 const Earn: FC = () => {
@@ -24,6 +24,7 @@ const Earn: FC = () => {
 	const { setTitle } = UIContainer.useContainer();
 
 	const walletAddress = useRecoilValue(walletAddressState);
+	const delegateWallet = useRecoilValue(delegateWalletState);
 	const { useExchangeRatesQuery, useFeeClaimHistoryQuery } = useSynthetixQueries();
 
 	const exchangeRatesQuery = useExchangeRatesQuery();
@@ -34,13 +35,13 @@ const Earn: FC = () => {
 		tradingRewards,
 		stakingRewards,
 		hasClaimed,
-	} = useUserStakingData(walletAddress);
+	} = useUserStakingData(delegateWallet?.address ?? walletAddress);
 
 	const SNXRate = exchangeRatesQuery.data?.SNX ?? wei(0);
 
 	const totalRewards = tradingRewards.add(stakingRewards.mul(SNXRate));
 
-	const feeClaimHistoryQuery = useFeeClaimHistoryQuery(walletAddress);
+	const feeClaimHistoryQuery = useFeeClaimHistoryQuery(delegateWallet?.address ?? walletAddress);
 
 	const feeClaimHistory = useMemo(() => feeClaimHistoryQuery.data ?? [], [
 		feeClaimHistoryQuery.data,

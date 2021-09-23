@@ -90,6 +90,12 @@ const Panel: React.FC<PanelProps> = ({ currentTab }) => {
 				key: SPACE_KEY.COUNCIL,
 			},
 			{
+				title: t('gov.panel.treasury-council.title'),
+				tabChildren: <List spaceKey={activeTab} />,
+				blue: true,
+				key: SPACE_KEY.TREASURY,
+			},
+			{
 				title: t('gov.panel.grants.title'),
 				tabChildren: <List spaceKey={activeTab} />,
 				blue: true,

@@ -17,19 +17,20 @@ import CRatioBarStats from 'sections/shared/Layout/Stats/CRatioBarStats';
 import CollapseIcon from 'assets/svg/app/chevron-collapse.svg';
 import ExpandIcon from 'assets/svg/app/chevron-expand.svg';
 import { useRecoilValue } from 'recoil';
-import { walletAddressState } from 'store/wallet';
+import { walletAddressState, delegateWalletState } from 'store/wallet';
 import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
 import useCryptoBalances from 'hooks/useCryptoBalances';
 
 const StatsSection: FC = ({ children }) => {
 	const walletAddress = useRecoilValue(walletAddressState);
+	const delegateWallet = useRecoilValue(delegateWalletState);
 
 	const { useSynthsBalancesQuery, useSNX24hrPricesQuery } = useSynthetixQueries();
 
 	const SNX24hrPricesQuery = useSNX24hrPricesQuery();
-	const cryptoBalances = useCryptoBalances(walletAddress);
-	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
+	const cryptoBalances = useCryptoBalances(delegateWallet?.address ?? walletAddress);
+	const synthsBalancesQuery = useSynthsBalancesQuery(delegateWallet?.address ?? walletAddress);
 	const [mobileStatsSectionIsOpen, setMobileStatsSectionIsOpen] = useState(false);
 
 	const snxBalance =

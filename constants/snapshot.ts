@@ -1,5 +1,6 @@
 export enum SPACE_KEY {
 	COUNCIL = 'spartancouncil.eth',
+	TREASURY = 'treasurycouncil.eth',
 	PROPOSAL = 'snxgov.eth',
 	GRANTS = 'snxgrants.eth',
 	AMBASSADOR = 'snxambassador.eth',

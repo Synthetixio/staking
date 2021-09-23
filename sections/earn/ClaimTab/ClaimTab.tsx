@@ -91,16 +91,16 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 	const { synthetixjs } = Connector.useContainer();
 
 	const walletAddress = useRecoilValue(walletAddressState);
+	const delegateWallet = useRecoilValue(delegateWalletState);
 	const { useHasVotedForElectionsQuery } = useSynthetixQueries();
 
 	const claimed = useClaimedStatus();
-	const { isBelowCRatio } = useUserStakingData(walletAddress);
+	const { isBelowCRatio } = useUserStakingData(delegateWallet?.address ?? walletAddress);
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const { blockExplorerInstance } = Etherscan.useContainer();
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
 	const isL2 = useRecoilValue(isL2State);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	const delegateWallet = useRecoilValue(delegateWalletState);
 	const isAppReady = useRecoilValue(appReadyState);
 	const router = useRouter();
 
@@ -171,7 +171,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 
 					let gasEstimate = wei(
 						delegateWallet
-							? await FeePool.estimateGas.claimOnBehalf(delegateWallet)
+							? await FeePool.estimateGas.claimOnBehalf(delegateWallet.address)
 							: await FeePool.estimateGas.claimFees(),
 						0
 					);
@@ -218,7 +218,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 					} = synthetixjs!;
 
 					let gasLimit = delegateWallet
-						? (await FeePool.estimateGas.claimOnBehalf(delegateWallet)).toNumber()
+						? (await FeePool.estimateGas.claimOnBehalf(delegateWallet.address)).toNumber()
 						: (await FeePool.estimateGas.claimFees()).toNumber();
 
 					if (!isL2) {

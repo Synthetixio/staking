@@ -24,13 +24,20 @@ type TxOptions = {
  * @returns Promise
  */
 export async function tx(makeTx: Function, options?: TxOptions): Promise<void> {
-	const [contract, method, args] = makeTx();
+	const [contract, method, args, ...txnOptions] = makeTx();
+
+	const fullArgs = args;
+
+	if (txnOptions) {
+		fullArgs.push(...txnOptions);
+	}
+
 	let hash, wait;
 	try {
-		({ hash, wait } = await contract[method](...args));
+		({ hash, wait } = await contract[method](...fullArgs));
 	} catch (e) {
 		try {
-			await contract.callStatic[method](...args);
+			await contract.callStatic[method](...fullArgs);
 			throw e;
 		} catch (e) {
 			const errorMessage = e.data ? hexToASCII(e.data.substr(147).toString()) : e.message;

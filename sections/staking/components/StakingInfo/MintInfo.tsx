@@ -13,7 +13,7 @@ import { getStakingAmount, getTransferableAmountFromMint, sanitiseValue } from '
 import InfoLayout from './InfoLayout';
 import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
-import { walletAddressState } from 'store/wallet';
+import { walletAddressState, delegateWalletState } from 'store/wallet';
 import { parseSafeWei } from 'utils/parse';
 
 const StakingInfo: FC = () => {
@@ -31,8 +31,9 @@ const StakingInfo: FC = () => {
 	} = useStakingCalculations();
 
 	const walletAddress = useRecoilValue(walletAddressState);
+	const delegateWallet = useRecoilValue(delegateWalletState);
 	const { useSynthsBalancesQuery } = useSynthetixQueries();
-	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
+	const synthsBalancesQuery = useSynthsBalancesQuery(delegateWallet?.address ?? walletAddress);
 
 	const amountToMint = useRecoilValue(amountToMintState);
 
