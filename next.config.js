@@ -27,27 +27,9 @@ const earnPages = [
 }, {});
 
 module.exports = withPlugins([[optimizedImages]], {
-	
 	webpack: (config) => {
 		config.resolve.mainFields = ['module', 'browser', 'main'];
 		return config;
-	},
-
-	async headers() {
-		return [
-			{
-				source: '/',
-				headers: [
-					{ key: 'Access-Control-Allow-Origin', value: '*' },
-					{ key: 'Access-Control-Allow-Methods', value: 'GET' },
-					{
-						key: 'Access-Control-Allow-Headers',
-						value: 'X-Requested-With, content-type, Authorization',
-					},
-					{ key: 'Content-Security-Policy', value: 'frame-ancestors https://gnosis-safe.io' },
-				],
-			},
-		];
 	},
 	trailingSlash: !!process.env.NEXT_PUBLIC_TRAILING_SLASH_ENABLED,
 	exportPathMap: function (defaultPathMap) {
