@@ -129,7 +129,7 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 						choices,
 						start: proposalStartDate,
 						end: proposalEndDate,
-						snapshot: block,
+						snapshot: Number(block),
 						metadata: {
 							plugins: {},
 							network: '1',
