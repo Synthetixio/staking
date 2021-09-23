@@ -73,6 +73,7 @@ const BurnTabInner: FC = () => {
 		sUSDBalance,
 		issuableSynths,
 		txn,
+		onBurnChange,
 		onBurnTypeChange,
 		error,
 		txModalOpen,
@@ -104,13 +105,19 @@ const BurnTabInner: FC = () => {
 		[blockExplorerInstance, txn.hash]
 	);
 
+	const maxBurnAmount = useMemo(
+		() => (debtBalance.gt(sUSDBalance) ? wei(sUSDBalance) : debtBalance),
+		[debtBalance, sUSDBalance]
+	);
+
 	const onGoBack = () => router.replace(ROUTES.MergeAccounts.Home);
 
 	const onBurn = useCallback(() => txn.mutate(), [txn]);
 
 	useEffect(() => {
+		onBurnChange(maxBurnAmount.toString());
 		onBurnTypeChange(BurnActionType.MAX);
-	}, [onBurnTypeChange]);
+	}, [onBurnChange, onBurnTypeChange, maxBurnAmount]);
 
 	const returnButtonStates = useMemo(() => {
 		if (!isWalletConnected) {

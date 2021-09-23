@@ -215,13 +215,14 @@ export const ActionsGrid = styled.div<{ single?: boolean }>`
 			: `
 			display: grid;
 			grid-template-columns: 1fr 1fr;
+
+			& > div:first-child {
+				border-right: 1px solid ${props.theme.colors.grayBlue};
+			}
 	`}
 	margin-bottom: -20px;
 `;
 
 export const ActionsGridBox = styled(FlexDivColCentered)`
 	padding: 20px 30px;
-	&:first-child {
-		border-right: 1px solid ${(props) => props.theme.colors.grayBlue};
-	}
 `;
