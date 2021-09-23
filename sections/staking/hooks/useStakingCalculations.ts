@@ -24,6 +24,12 @@ const useStakingCalculations = () => {
 	const rewardEscrowBalance = rewardEscrowQuery.data ?? null;
 	const tokenSaleEscrowBalance = tokenSaleEscrowQuery.data ?? null;
 
+	const isLoading =
+		debtDataQuery.isLoading ||
+		exchangeRatesQuery.isLoading ||
+		rewardEscrowQuery.isLoading ||
+		tokenSaleEscrowQuery.isLoading;
+
 	const results = useMemo(() => {
 		const SNXRate = wei(exchangeRates?.SNX ?? 0);
 		const collateral = wei(debtData?.collateral ?? 0);
@@ -76,8 +82,9 @@ const useStakingCalculations = () => {
 			stakingEscrow,
 			debtEscrowBalance,
 			balance,
+			isLoading,
 		};
-	}, [debtData, exchangeRates, rewardEscrowBalance, tokenSaleEscrowBalance]);
+	}, [debtData, exchangeRates, rewardEscrowBalance, tokenSaleEscrowBalance, isLoading]);
 
 	return results;
 };

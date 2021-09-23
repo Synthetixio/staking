@@ -12,11 +12,11 @@ import GridBox from './GridBox';
 const Index: FC = () => {
 	const isAppReady = useRecoilValue(appReadyState);
 
-	const { debtBalance } = useStakingCalculations();
+	const { debtBalance, isLoading } = useStakingCalculations();
 
-	const hasDebt = useMemo(() => !debtBalance.eq(0), [debtBalance]);
+	const hasDebt = useMemo(() => debtBalance.gt(0), [debtBalance]);
 
-	return !isAppReady ? null : (
+	return !(isAppReady && !isLoading) ? null : (
 		<Cols>
 			<Col>
 				<GridBox step={1} name={hasDebt ? 'burn' : 'nominate'} />

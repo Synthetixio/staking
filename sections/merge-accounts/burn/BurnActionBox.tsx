@@ -1,17 +1,16 @@
-import { useState, useMemo, useEffect, FC, useCallback } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useMemo, useEffect, FC, useCallback } from 'react';
 import styled from 'styled-components';
 import { Trans, useTranslation } from 'react-i18next';
 import { Svg } from 'react-optimized-image';
 import { useRouter } from 'next/router';
 import Wei, { wei } from '@synthetixio/wei';
-import useSynthetixQueries from '@synthetixio/queries';
 
-import Button from 'components/Button';
 import Connector from 'containers/Connector';
 import StructuredTab from 'components/StructuredTab';
 import Etherscan from 'containers/BlockExplorer';
 import NavigationBack from 'assets/svg/app/navigation-back.svg';
+import GasSelector from 'components/GasSelector';
+import { BurnActionType } from 'store/staking';
 import {
 	ModalContent as TxModalContent,
 	ModalItemTitle as TxModalItemTitle,
@@ -21,19 +20,16 @@ import {
 	GlowingCircle,
 	IconButton,
 } from 'styles/common';
-import GasSelector from 'components/GasSelector';
-import { isWalletConnectedState, walletAddressState } from 'store/wallet';
+import { StyledCTA } from 'sections/staking/components/common';
 import {
 	FormContainer,
 	InputsContainer,
 	SettingsContainer,
 	SettingContainer,
-	ErrorMessage,
 	TxModalItem,
 	FormHeader,
 } from 'sections/merge-accounts/common';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
-import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 import { formatCryptoCurrency, formatNumber } from 'utils/formatters/number';
 import { DEFAULT_FIAT_DECIMALS } from 'constants/defaults';
 import ROUTES from 'constants/routes';
@@ -41,6 +37,7 @@ import Currency from 'components/Currency';
 import { CryptoCurrency, Synths } from 'constants/currency';
 import { parseSafeWei } from 'utils/parse';
 import { getStakingAmount } from 'sections/staking/components/helper';
+import useBurnTx from 'sections/staking/components/BurnTab/useBurnTx';
 
 import { TxWaiting, TxSuccess } from './Tx';
 
@@ -67,38 +64,25 @@ const BurnTab: FC = () => {
 const BurnTabInner: FC = () => {
 	const { t } = useTranslation();
 	const { connectWallet } = Connector.useContainer();
-	const walletAddress = useRecoilValue(walletAddressState);
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	const sourceAccountAddress = useRecoilValue(walletAddressState);
+
 	const router = useRouter();
-	const { useSynthsBalancesQuery, useSynthetixTxn } = useSynthetixQueries();
 	const { blockExplorerInstance } = Etherscan.useContainer();
 
-	const [gasPrice, setGasPrice] = useState<Wei>(wei(0));
-	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
-	const [buttonState, setButtonState] = useState<string | null>(null);
-
 	const {
+		debtBalance,
+		sUSDBalance,
+		issuableSynths,
+		txn,
+		onBurnTypeChange,
+		error,
+		txModalOpen,
+		setTxModalOpen,
+		setGasPrice,
+		isWalletConnected,
 		targetCRatio,
 		SNXRate,
-		debtBalance,
-		issuableSynths,
 		currentCRatio,
-	} = useStakingCalculations();
-	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
-
-	const synthBalances = useMemo(
-		() =>
-			synthsBalancesQuery.isSuccess && synthsBalancesQuery.data != null
-				? synthsBalancesQuery.data
-				: null,
-		[synthsBalancesQuery.isSuccess, synthsBalancesQuery.data]
-	);
-
-	const sUSDBalance = useMemo(
-		() => (synthBalances?.balancesMap.sUSD ? synthBalances.balancesMap.sUSD.balance : wei(0)),
-		[synthBalances]
-	);
+	} = useBurnTx();
 
 	const stakeInfo = useCallback(
 		(burnAmount: Wei): Wei => wei(getStakingAmount(targetCRatio, burnAmount, SNXRate)),
@@ -115,16 +99,6 @@ const BurnTabInner: FC = () => {
 		}
 	}, [burnAmount, debtBalance, issuableSynths, targetCRatio, currentCRatio, stakeInfo]);
 
-	const txn = useSynthetixTxn(
-		'Synthetix',
-		'burnSynths',
-		[sourceAccountAddress],
-		{
-			gasPrice: gasPrice.toBN(),
-		},
-		{ enabled: !!sourceAccountAddress }
-	);
-
 	const txLink = useMemo(
 		() => (blockExplorerInstance && txn.hash ? blockExplorerInstance.txLink(txn.hash) : ''),
 		[blockExplorerInstance, txn.hash]
@@ -132,44 +106,38 @@ const BurnTabInner: FC = () => {
 
 	const onGoBack = () => router.replace(ROUTES.MergeAccounts.Home);
 
-	// effects
+	const onBurn = useCallback(() => txn.mutate(), [txn]);
 
 	useEffect(() => {
-		switch (txn.txnStatus) {
-			case 'prompting':
-				setTxModalOpen(true);
-				break;
+		onBurnTypeChange(BurnActionType.MAX);
+	}, [onBurnTypeChange]);
 
-			case 'pending':
-				setButtonState('burning-debt');
-				setTxModalOpen(true);
-				break;
-
-			// case 'unsent':
-			case 'confirmed':
-				setTxModalOpen(false);
-				break;
-		}
-	}, [txn.txnStatus]);
-
-	// funcs
-
-	const connectOrBurn = async () => {
+	const returnButtonStates = useMemo(() => {
 		if (!isWalletConnected) {
-			return connectWallet();
+			return (
+				<StyledCTA variant="primary" size="lg" onClick={connectWallet}>
+					{t('common.wallet.connect-wallet')}
+				</StyledCTA>
+			);
+		} else if (error) {
+			return (
+				<StyledCTA variant="primary" size="lg" disabled={true}>
+					{error}
+				</StyledCTA>
+			);
+		} else {
+			return (
+				<StyledCTA
+					onClick={onBurn}
+					variant="primary"
+					size="lg"
+					disabled={txn.txnStatus !== 'unsent'}
+				>
+					<Trans i18nKey={'staking.actions.burn.action.burn'} components={[<NoTextTransform />]} />
+				</StyledCTA>
+			);
 		}
-
-		// if (sUSDBalance.lt(debtBalance)) {
-		// 	const requiredSUSDTopUp = debtBalance.sub(sUSDBalance);
-		// 	return setError(
-		// 		`You need to acquire an additional ${formatCryptoCurrency(
-		// 			requiredSUSDTopUp.toString()
-		// 		)} sUSD in order to fully burn your debt.`
-		// 	);
-		// }
-
-		txn.mutate();
-	};
+	}, [error, txn.txnStatus, t, isWalletConnected, connectWallet, onBurn]);
 
 	if (txn.txnStatus === 'pending') {
 		return <TxWaiting {...{ unstakeAmount, burnAmount, txLink }} />;
@@ -209,30 +177,13 @@ const BurnTabInner: FC = () => {
 				</SettingsContainer>
 			</FormContainer>
 
-			<FormButton
-				onClick={connectOrBurn}
-				variant="primary"
-				size="lg"
-				data-testid="form-button"
-				disabled={isWalletConnected && !!buttonState}
-			>
-				{!isWalletConnected ? (
-					t('common.wallet.connect-wallet')
-				) : (
-					<Trans
-						i18nKey={`merge-accounts.burn.button-labels.${buttonState || 'burn'}`}
-						components={[<NoTextTransform />]}
-					/>
-				)}
-			</FormButton>
-
-			{!txn.error ? null : <ErrorMessage>{txn.errorMessage}</ErrorMessage>}
+			{returnButtonStates}
 
 			{txModalOpen && (
 				<TxConfirmationModal
 					onDismiss={() => setTxModalOpen(false)}
 					txError={null}
-					attemptRetry={connectOrBurn}
+					attemptRetry={onBurn}
 					content={
 						<TxModalItem>
 							<TxModalItemTitle>{t('merge-accounts.burn.tx-waiting.title')}</TxModalItemTitle>
@@ -277,15 +228,6 @@ const AmountLabel = styled.p`
 	color: ${(props) => props.theme.colors.white};
 	font-family: ${(props) => props.theme.fonts.extended};
 	font-size: 24px;
-`;
-
-const FormButton = styled(Button)`
-	font-size: 14px;
-	font-family: ${(props) => props.theme.fonts.condensedMedium};
-	box-shadow: 0px 0px 10px rgba(0, 209, 255, 0.9);
-	border-radius: 4px;
-	width: 100%;
-	text-transform: uppercase;
 `;
 
 export default BurnTab;
