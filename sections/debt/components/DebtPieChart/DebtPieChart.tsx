@@ -1,5 +1,6 @@
 import { FC, useMemo } from 'react';
 import styled from 'styled-components';
+import Wei from '@synthetixio/wei';
 
 import PieChart from 'components/PieChart';
 import DebtPoolTable from '../DebtPoolTable';
@@ -73,11 +74,13 @@ const SynthsPieChart: FC<DebtPieChartProps> = () => {
 		return topNSynths
 			.sort((a, b) => (a.value.lt(b.value) ? 1 : -1))
 			.map((supply, index) => ({
+				name: supply.name,
 				totalSupply: supply.totalSupply.toNumber(),
 				poolProportion: supply.poolProportion.toNumber(),
 				value: supply.value.toNumber(),
 				fillColor: MUTED_COLORS[index % MUTED_COLORS.length],
 				strokeColor: BRIGHT_COLORS[index % BRIGHT_COLORS.length],
+				skewValue: supply.skewValue,
 			}));
 	}, [totalSupply?.supplyData, totalSupply?.totalValue]);
 
@@ -95,9 +98,13 @@ const SynthsPieChart: FC<DebtPieChartProps> = () => {
 	);
 };
 
-const Tooltip: FC<{ name: string; value: number; payload: any }> = ({ name, value, payload }) => {
+const Tooltip: FC<{ name: string; value: number; payload: { skewValue: Wei } }> = ({
+	name,
+	value,
+	payload,
+}) => {
 	return (
-		<StyledTooltip isNeg={payload.skewValue.isNegative()}>
+		<StyledTooltip isNeg={payload.skewValue.lt(0)}>
 			{name}: {formatCurrency(name, payload.skewValue, { sign: '$' })}
 		</StyledTooltip>
 	);

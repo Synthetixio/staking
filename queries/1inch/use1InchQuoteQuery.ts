@@ -15,8 +15,8 @@ type QuoteData = {
 };
 
 const use1InchQuoteQuery = (
-	fromTokenAddress: string,
-	toTokenAddress: string,
+	fromTokenAddress: string | null,
+	toTokenAddress: string | null,
 	amount: WeiSource,
 	options?: UseQueryOptions<QuoteData>
 ) => {
@@ -42,7 +42,14 @@ const use1InchQuoteQuery = (
 			};
 		},
 		{
-			enabled: isAppReady && isWalletConnected && !isL2 && !wei(amount).eq(0) && wei(amount).gt(0),
+			enabled:
+				isAppReady &&
+				isWalletConnected &&
+				!isL2 &&
+				!wei(amount).eq(0) &&
+				wei(amount).gt(0) &&
+				!!fromTokenAddress &&
+				!!toTokenAddress,
 			...options,
 		}
 	);
