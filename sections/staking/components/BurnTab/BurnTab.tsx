@@ -113,8 +113,8 @@ const BurnTab: React.FC = () => {
 
 	const burnCall: [string, any[]] = !!delegateWallet
 		? isToTarget
-			? ['burnSynthsToTargetOnBehalf', [delegateWallet]]
-			: ['burnSynthsOnBehalf', [delegateWallet, amountToBurnBN.toBN()]]
+			? ['burnSynthsToTargetOnBehalf', [delegateWallet.address]]
+			: ['burnSynthsOnBehalf', [delegateWallet.address, amountToBurnBN.toBN()]]
 		: isToTarget
 		? ['burnSynthsToTarget', []]
 		: ['burnSynths', [amountToBurnBN.toBN()]];
