@@ -43,7 +43,7 @@ const BurnTab: React.FC = () => {
 	const [waitingPeriod, setWaitingPeriod] = useState(0);
 	const [issuanceDelay, setIssuanceDelay] = useState(0);
 
-	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
+	const synthsBalancesQuery = useSynthsBalancesQuery(delegateWallet?.address ?? walletAddress);
 	const synthBalances =
 		synthsBalancesQuery.isSuccess && synthsBalancesQuery.data != null
 			? synthsBalancesQuery.data
@@ -61,7 +61,7 @@ const BurnTab: React.FC = () => {
 		swapData,
 	} = useClearDebtCalculations(debtBalance, sUSDBalance, walletAddress!);
 
-	const ethBalanceQuery = useETHBalanceQuery(walletAddress);
+	const ethBalanceQuery = useETHBalanceQuery(delegateWallet?.address ?? walletAddress);
 	const ethBalance = ethBalanceQuery.data ?? wei(0);
 
 	const amountToBurnBN = Wei.max(wei(0), parseSafeWei(amountToBurn, wei(0)));
