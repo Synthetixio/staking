@@ -8,12 +8,11 @@ on:
 jobs:
   audit:
     # run only on master/dev branch and pull requests
-    #if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'
-    if: false
+    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'
     runs-on: ubuntu-latest
 
     container:
-      image: ghcr.io/synthetixio/docker-sec-tools/base:12.21-npm6
+      image: ghcr.io/synthetixio/docker-sec-tools/alpine:14.17
       credentials:
         username: synthetixio
         password: ${{ secrets.GH_PACKAGES_READ_ONLY }}
@@ -48,14 +47,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-build-
         continue-on-error: true
-
-      - name: Building on Node.js ${{ matrix.node-version }} 🛠️
-        uses: actions/setup-node@v2
-        with:
-          node-version: '14.17.6'
-          
-      - name: npm update
-        run: npm install -g npm@7.18.1
 
       - name: Install dependencies
         run: npm install --no-audit
@@ -102,11 +93,10 @@ jobs:
     runs-on: ubuntu-latest
 
     container:
-      image: ghcr.io/synthetixio/docker-e2e/base:12.21-npm6
+      image: ghcr.io/synthetixio/docker-e2e/ubuntu:14.17
       credentials:
         username: synthetixio
         password: ${{ secrets.GH_PACKAGES_READ_ONLY }}
-      options: --shm-size=7gb
 
     steps:
       - name: Checkout
