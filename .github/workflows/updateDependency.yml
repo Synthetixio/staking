@@ -8,17 +8,38 @@ jobs:
   update_version:
     name: Update contracts-interface version
     runs-on: ubuntu-latest
+
+    container:
+      image: ghcr.io/synthetixio/docker-node/alpine:14.17
+      credentials:
+        username: synthetixio
+        password: ${{ secrets.GH_PACKAGES_READ_ONLY }}
+
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - name: Checkout
+        uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f # pin@v2
+
+      - name: Set npm cache directory
+        run: npm config set cache .npm-cache --global 
+        continue-on-error: true
+
+      - name: Cache node modules
+        uses: actions/cache@c64c572235d810460d0d6876e9c705ad5002b353 # pin@v2
         with:
-          node-version: '14.17.1'
-      - name: npm update
-        run: npm install -g npm@7.19.0
+          path: |
+            .npm-cache
+            node_modules
+          key: ${{ runner.os }}-alpine-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-alpine-node-
+        continue-on-error: true
+
+      - name: Install dependencies
+        run: npm install --prefer-offline --no-audit
+
       - name: Update @synthetixio/contracts-interface dependency
-        run: |
-          npm install --legacy-peer-deps
-          npm install @synthetixio/contracts-interface@${{ github.event.client_payload.version }} --save-exact
+        run: npm install @synthetixio/contracts-interface@${{ github.event.client_payload.version }}
+
       - name: Commit changes
         run: |
           git config --global user.email "team@synthetix.io" && git config --global user.name "Synthetix Team"
