@@ -23,7 +23,7 @@ customHeaders:
     headers:
       - key: 'Cache-Control'
         value: 'public, max-age=31536000, immutable'
-  - pattern: '**/*.(eot|otf|ttf|ttc|woff|woff2|font|css)'
+  - pattern: '**/*.@(eot|otf|ttf|ttc|woff|woff2|font|css)'
     headers:
       - key: 'Cache-Control'
         value: 'public, max-age=31536000, immutable'
