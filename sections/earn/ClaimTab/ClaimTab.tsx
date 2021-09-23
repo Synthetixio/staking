@@ -91,16 +91,16 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 	const { synthetixjs } = Connector.useContainer();
 
 	const walletAddress = useRecoilValue(walletAddressState);
+	const delegateWallet = useRecoilValue(delegateWalletState);
 	const { useHasVotedForElectionsQuery } = useSynthetixQueries();
 
 	const claimed = useClaimedStatus();
-	const { isBelowCRatio } = useUserStakingData(walletAddress);
+	const { isBelowCRatio } = useUserStakingData(delegateWallet?.address ?? walletAddress);
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const { blockExplorerInstance } = Etherscan.useContainer();
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
 	const isL2 = useRecoilValue(isL2State);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	const delegateWallet = useRecoilValue(delegateWalletState);
 	const isAppReady = useRecoilValue(appReadyState);
 	const router = useRouter();
 
