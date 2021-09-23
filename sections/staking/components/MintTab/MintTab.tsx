@@ -35,8 +35,8 @@ const MintTab: React.FC = () => {
 
 	const mintCall: [string, any[]] = !!delegateWallet
 		? isMax
-			? ['issueMaxSynthsOnBehalf', [delegateWallet]]
-			: ['issueSynthsOnBehalf', [delegateWallet, amountToMintBN.toBN()]]
+			? ['issueMaxSynthsOnBehalf', [delegateWallet.address]]
+			: ['issueSynthsOnBehalf', [delegateWallet.address, amountToMintBN.toBN()]]
 		: isMax
 		? ['issueMaxSynths', []]
 		: ['issueSynths', [amountToMintBN.toBN()]];

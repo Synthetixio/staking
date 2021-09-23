@@ -171,7 +171,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 
 					let gasEstimate = wei(
 						delegateWallet
-							? await FeePool.estimateGas.claimOnBehalf(delegateWallet)
+							? await FeePool.estimateGas.claimOnBehalf(delegateWallet.address)
 							: await FeePool.estimateGas.claimFees(),
 						0
 					);
@@ -218,7 +218,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 					} = synthetixjs!;
 
 					let gasLimit = delegateWallet
-						? (await FeePool.estimateGas.claimOnBehalf(delegateWallet)).toNumber()
+						? (await FeePool.estimateGas.claimOnBehalf(delegateWallet.address)).toNumber()
 						: (await FeePool.estimateGas.claimFees()).toNumber();
 
 					if (!isL2) {
