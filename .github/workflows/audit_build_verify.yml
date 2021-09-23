@@ -43,19 +43,23 @@ jobs:
       - name: Checkout
         uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f # pin@v2
 
+      - name: Set npm cache directory
+        run: npm config set cache .npm-cache --global 
+        continue-on-error: true
+
       - name: Cache node modules
         uses: actions/cache@c64c572235d810460d0d6876e9c705ad5002b353 # pin@v2
         with:
           path: |
-            .npm
+            .npm-cache
             node_modules
-          key: ${{ runner.os }}-build-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-alpine-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-build-
+            ${{ runner.os }}-alpine-node-
         continue-on-error: true
 
       - name: Install dependencies
-        run: npm install --no-audit
+        run: npm install --prefer-offline --no-audit
 
       - name: Lint
         # run only on master/dev branch and pull requests
@@ -74,14 +78,15 @@ jobs:
         uses: actions/cache@c64c572235d810460d0d6876e9c705ad5002b353 # pin@v2
         with:
           path: .next/cache
-          key: ${{ runner.os }}-next.js-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-alpine-next-cache-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-next.js-
+            ${{ runner.os }}-alpine-next-cache-
         continue-on-error: true
 
       - name: Build
         run: npm run build
 
+      # todo: compress out folder instead and serve it for e2e tests (dynamic routes are not working with serve/express out-of-the-box)
       - name: Compress build
         run: tar -zcvf build.tar.gz .next
 
@@ -108,19 +113,23 @@ jobs:
       - name: Checkout
         uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f # pin@v2
 
+      - name: Set npm cache directory
+        run: npm config set cache .npm-cache --global 
+        continue-on-error: true
+
       - name: Cache node modules
         uses: actions/cache@c64c572235d810460d0d6876e9c705ad5002b353 # pin@v2
         with:
           path: |
-            .npm
+            .npm-cache
             node_modules
-          key: ${{ runner.os }}-e2e_tests-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-ubuntu-e2e-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-e2e_tests-
+            ${{ runner.os }}-ubuntu-e2e-
         continue-on-error: true
 
       - name: Install dependencies
-        run: npm install --no-audit
+        run: npm install --prefer-offline --no-audit
         env:
           CYPRESS_CACHE_FOLDER: ${{ github.workspace }}/node_modules/.cache/Cypress
 
