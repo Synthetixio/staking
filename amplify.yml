@@ -3,6 +3,7 @@ frontend:
   phases:
     preBuild:
       commands:
+        - npm config set cache .npm-cache --global
         - npm install --prefer-offline
     build:
       commands:
@@ -15,3 +16,4 @@ frontend:
     paths:
       - node_modules/**/*
       - .next/cache/**/*
+      - .npm-cache/**/*
