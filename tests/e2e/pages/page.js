@@ -24,14 +24,6 @@ export default class Page {
 		cy.confirmMetamaskTransaction();
 	}
 
-	snxExchangerSettle(asset) {
-		return cy.snxExchangerSettle(asset);
-	}
-
-	snxCheckWaitingPeriod(asset) {
-		cy.snxCheckWaitingPeriod(asset);
-	}
-
 	etherscanWaitForTxSuccess(txid) {
 		return cy.etherscanWaitForTxSuccess(txid);
 	}
