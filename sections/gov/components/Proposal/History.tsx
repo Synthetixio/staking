@@ -94,8 +94,8 @@ const History: React.FC<HistoryProps> = ({ proposalResults }) => {
 										<StyledTooltip
 											arrow={true}
 											placement="bottom"
-											content={`${formatNumber(voteList[index].scores[0])} WD + ${formatNumber(
-												voteList[index].scores[1]
+											content={`${formatNumber(voteList[index].scores[1])} WD + ${formatNumber(
+												voteList[index].scores[0]
 											)} WD (delegated)`}
 											hideOnClick={false}
 										>

@@ -68,7 +68,7 @@ const Gov: React.FC = () => {
 			<StatsSection>
 				<WalletVotingPower
 					title={t('common.stat-box.voting-power.title')}
-					value={formatNumber(walletVotingWeight.data ? walletVotingWeight.data[0] : 0)}
+					value={formatNumber(walletVotingWeight.data ? walletVotingWeight.data[1] : 0)}
 					tooltipContent={t('common.stat-box.voting-power.tooltip', {
 						blocknumber: latestSnapshot.data
 							? formatNumber(latestSnapshot.data.latestSnapshot, { maxDecimals: 0 })
@@ -81,7 +81,7 @@ const Gov: React.FC = () => {
 				/> */}
 				<TotalVotingPower
 					title={t('common.stat-box.delegated-voting-power.title')}
-					value={formatNumber(walletVotingWeight.data ? walletVotingWeight.data[1] : 0)}
+					value={formatNumber(walletVotingWeight.data ? walletVotingWeight.data[0] : 0)}
 					tooltipContent={t('common.stat-box.delegated-voting-power.tooltip')}
 				/>
 			</StatsSection>
