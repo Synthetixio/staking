@@ -1,8 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
-import UIContainer from 'containers/UI';
-
 import { walletAddressState, delegateWalletState } from 'store/wallet';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 import { amountToBurnState, BurnActionType, burnTypeState } from 'store/staking';
@@ -54,6 +52,7 @@ const useBurnTx = () => {
 	const sUSDBalance = synthBalances?.balancesMap.sUSD
 		? synthBalances.balancesMap.sUSD.balance
 		: wei(0);
+
 	const {
 		needToBuy,
 		debtBalanceWithBuffer,
@@ -68,8 +67,6 @@ const useBurnTx = () => {
 	const amountToBurnBN = Wei.max(wei(0), parseSafeWei(amountToBurn, wei(0)));
 
 	const isToTarget = burnType === BurnActionType.TARGET;
-
-	const { setTitle } = UIContainer.useContainer();
 
 	const getMaxSecsLeftInWaitingPeriod = useCallback(async () => {
 		const {
@@ -140,11 +137,6 @@ const useBurnTx = () => {
 	useEffect(() => {
 		if (swapTxn.txnStatus === 'prompting' || txn.txnStatus === 'prompting') setTxModalOpen(true);
 	}, [txn, swapTxn.txnStatus]);
-
-	// header title
-	useEffect(() => {
-		setTitle('staking', 'burn');
-	}, [setTitle]);
 
 	useEffect(() => {
 		getMaxSecsLeftInWaitingPeriod();

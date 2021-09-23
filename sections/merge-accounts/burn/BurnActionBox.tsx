@@ -37,7 +37,7 @@ import Currency from 'components/Currency';
 import { CryptoCurrency, Synths } from 'constants/currency';
 import { parseSafeWei } from 'utils/parse';
 import { getStakingAmount } from 'sections/staking/components/helper';
-import useBurnTx from 'sections/staking/components/BurnTab/useBurnTx';
+import useBurnTx from 'sections/staking/hooks/useBurnTx';
 
 import { TxWaiting, TxSuccess } from './Tx';
 
