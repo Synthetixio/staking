@@ -12,7 +12,7 @@
 		"lint:fix": "eslint . --ext ts,.tsx --fix",
 		"test:synpress:open": "env-cmd -f .env.local synpress open",
 		"test:synpress:run": "env-cmd -f .env.local synpress run",
-		"test:e2e": "start-server-and-test 'npm run build && npm run start' http-get://localhost:3000 test:synpress:run",
+		"test:e2e": "start-server-and-test 'npm run build && npm run start' http-get://localhost:3000 'synpress run'",
 		"test:e2e:ci": "synpress run --group smoke-tests --record --parallel"
 	},
 	"dependencies": {
@@ -73,7 +73,7 @@
 		"@babel/preset-env": "^7.14.9",
 		"@babel/preset-react": "^7.14.5",
 		"@microsoft/eslint-formatter-sarif": "2.1.5",
-		"@synthetixio/synpress": "0.7.17",
+		"@synthetixio/synpress": "0.9.25-beta.12",
 		"@types/color": "3.0.1",
 		"@types/date-fns": "2.6.0",
 		"@types/lodash": "4.14.159",
