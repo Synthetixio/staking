@@ -3,10 +3,11 @@ import { useMemo } from 'react';
 import useSynthetixQueries from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
 import { useRecoilValue } from 'recoil';
-import { walletAddressState } from 'store/wallet';
+import { walletAddressState, delegateWalletState } from 'store/wallet';
 
 const useStakingCalculations = () => {
 	const walletAddress = useRecoilValue(walletAddressState);
+	const delegateWallet = useRecoilValue(delegateWalletState);
 	const {
 		useExchangeRatesQuery,
 		useGetDebtDataQuery,
@@ -15,9 +16,9 @@ const useStakingCalculations = () => {
 	} = useSynthetixQueries();
 
 	const exchangeRatesQuery = useExchangeRatesQuery();
-	const debtDataQuery = useGetDebtDataQuery(walletAddress);
-	const rewardEscrowQuery = useEscrowDataQuery(walletAddress);
-	const tokenSaleEscrowQuery = useTokenSaleEscrowQuery(walletAddress);
+	const debtDataQuery = useGetDebtDataQuery(delegateWallet?.address ?? walletAddress);
+	const rewardEscrowQuery = useEscrowDataQuery(delegateWallet?.address ?? walletAddress);
+	const tokenSaleEscrowQuery = useTokenSaleEscrowQuery(delegateWallet?.address ?? walletAddress);
 
 	const debtData = debtDataQuery?.data ?? null;
 	const exchangeRates = exchangeRatesQuery.data ?? null;

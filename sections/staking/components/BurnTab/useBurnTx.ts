@@ -45,7 +45,7 @@ const useBurnTx = () => {
 	const [waitingPeriod, setWaitingPeriod] = useState(0);
 	const [issuanceDelay, setIssuanceDelay] = useState(0);
 
-	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
+	const synthsBalancesQuery = useSynthsBalancesQuery(delegateWallet?.address ?? walletAddress);
 	const synthBalances =
 		synthsBalancesQuery.isSuccess && synthsBalancesQuery.data != null
 			? synthsBalancesQuery.data
@@ -54,7 +54,6 @@ const useBurnTx = () => {
 	const sUSDBalance = synthBalances?.balancesMap.sUSD
 		? synthBalances.balancesMap.sUSD.balance
 		: wei(0);
-
 	const {
 		needToBuy,
 		debtBalanceWithBuffer,
@@ -63,10 +62,10 @@ const useBurnTx = () => {
 		swapData,
 	} = useClearDebtCalculations(debtBalance, sUSDBalance, walletAddress!);
 
-	const ethBalanceQuery = useETHBalanceQuery(walletAddress);
+	const ethBalanceQuery = useETHBalanceQuery(delegateWallet?.address ?? walletAddress);
 	const ethBalance = ethBalanceQuery.data ?? wei(0);
 
-	const amountToBurnWei = Wei.max(wei(0), parseSafeWei(amountToBurn, wei(0)));
+	const amountToBurnBN = Wei.max(wei(0), parseSafeWei(amountToBurn, wei(0)));
 
 	const isToTarget = burnType === BurnActionType.TARGET;
 
@@ -115,11 +114,11 @@ const useBurnTx = () => {
 
 	const burnCall: [string, any[]] = !!delegateWallet
 		? isToTarget
-			? ['burnSynthsToTargetOnBehalf', [delegateWallet]]
-			: ['burnSynthsOnBehalf', [delegateWallet, amountToBurnWei.toBN()]]
+			? ['burnSynthsToTargetOnBehalf', [delegateWallet.address]]
+			: ['burnSynthsOnBehalf', [delegateWallet.address, amountToBurnBN.toBN()]]
 		: isToTarget
 		? ['burnSynthsToTarget', []]
-		: ['burnSynths', [amountToBurnWei.toBN()]];
+		: ['burnSynths', [amountToBurnBN.toBN()]];
 
 	const swapTxn = useEVMTxn(swapData, {
 		onSuccess: () => txn.mutate(),
@@ -155,6 +154,7 @@ const useBurnTx = () => {
 	const maxBurnAmount = debtBalance.gt(sUSDBalance) ? wei(sUSDBalance) : debtBalance;
 
 	let error: string | null = null;
+
 	if (debtBalance.eq(0)) error = t('staking.actions.burn.action.error.no-debt');
 	else if (
 		(Number(amountToBurn) > sUSDBalance.toNumber() || maxBurnAmount.eq(0)) &&

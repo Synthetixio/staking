@@ -14,7 +14,7 @@ import { CryptoCurrency, Synths } from 'constants/currency';
 import { DESKTOP_SIDE_NAV_WIDTH, zIndex } from 'constants/ui';
 import UIContainer from 'containers/UI';
 
-import { isL2State, walletAddressState } from 'store/wallet';
+import { isL2State, walletAddressState, delegateWalletState } from 'store/wallet';
 
 import PriceItem from 'sections/shared/Layout/Stats/PriceItem';
 import PeriodBarStats from 'sections/shared/Layout/Stats/PeriodBarStats';
@@ -28,12 +28,13 @@ import { wei } from '@synthetixio/wei';
 
 const DesktopSideNav: FC = () => {
 	const walletAddress = useRecoilValue(walletAddressState);
+	const delegateWallet = useRecoilValue(delegateWalletState);
 
 	const { useSNX24hrPricesQuery, useSynthsBalancesQuery } = useSynthetixQueries();
 
 	const SNX24hrPricesQuery = useSNX24hrPricesQuery();
-	const cryptoBalances = useCryptoBalances(walletAddress);
-	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
+	const cryptoBalances = useCryptoBalances(delegateWallet?.address ?? walletAddress);
+	const synthsBalancesQuery = useSynthsBalancesQuery(delegateWallet?.address ?? walletAddress);
 	const isL2 = useRecoilValue(isL2State);
 	const { clearSubMenuConfiguration } = UIContainer.useContainer();
 
