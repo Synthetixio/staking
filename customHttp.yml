@@ -11,18 +11,22 @@ customHeaders:
         value: 'nosniff'
       - key: 'Content-Security-Policy'
         value: "default-src 'self'; script-src 'self' https://analytics.synthetix.io 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://zapper.fi https://raw.githubusercontent.com https://tokens.1inch.exchange; font-src 'self'; frame-ancestors 'self'; form-action 'self'; base-uri 'self'; connect-src 'self' https://*.infura.io https://api.thegraph.com https://api.yearn.finance https://stats.curve.fi https://analytics.synthetix.io wss://api.blocknative.com https://*.snapshot.org https://synths.snx.eth.link https://gateway.ipfs.io https://ethgasstation.info https://*.gasnow.org https://zapper.fi;"
+
   - pattern: '/_next/static/**/*'
     headers:
       - key: 'Cache-Control'
         value: 'public, max-age=31536000, immutable'
+
   - pattern: '**/*.ico'
     headers:
       - key: 'Cache-Control'
         value: 'public, max-age=31536000, immutable'
+
   - pattern: '**/*.{png,jpg,webp,svg,gif}'
     headers:
       - key: 'Cache-Control'
         value: 'public, max-age=31536000, immutable'
+
   - pattern: '**/*.{eot|otf|ttf|ttc|woff|woff2|font|css}'
     headers:
       - key: 'Cache-Control'
