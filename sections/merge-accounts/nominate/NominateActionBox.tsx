@@ -70,7 +70,6 @@ const NominateTabInner: FC = () => {
 
 	const [gasPrice, setGasPrice] = useState<Wei>(wei(0));
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
-	const [buttonState, setButtonState] = useState<string | null>(null);
 
 	const router = useRouter();
 	const onGoBack = () => router.replace(ROUTES.MergeAccounts.Home);
@@ -165,7 +164,6 @@ const NominateTabInner: FC = () => {
 				break;
 
 			case 'pending':
-				setButtonState('nominating');
 				setTxModalOpen(true);
 				break;
 
@@ -248,9 +246,7 @@ const NominateTabInner: FC = () => {
 				data-testid="form-button"
 				disabled={
 					isWalletConnected &&
-					(!properDestinationAccountAddress ||
-						!!buttonState ||
-						!!destinationAccountAddressInputError)
+					(!properDestinationAccountAddress || !!destinationAccountAddressInputError)
 				}
 			>
 				{!isWalletConnected ? (
@@ -258,12 +254,13 @@ const NominateTabInner: FC = () => {
 				) : (
 					<Trans
 						i18nKey={`merge-accounts.nominate.button-labels.${
-							buttonState ||
-							(!destinationAccountAddress
+							txModalOpen
+								? 'nominating'
+								: !destinationAccountAddress
 								? 'enter-address'
 								: destinationAccountAddressInputError
 								? destinationAccountAddressInputError
-								: 'nominate')
+								: 'nominate'
 						}`}
 						components={[<NoTextTransform />]}
 					/>

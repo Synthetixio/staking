@@ -68,7 +68,6 @@ const MergeTabInner: FC = () => {
 
 	const [gasPrice, setGasPrice] = useState<Wei>(wei(0));
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
-	const [buttonState, setButtonState] = useState<string | null>(null);
 
 	const router = useRouter();
 	const onGoBack = () => router.replace(ROUTES.MergeAccounts.Home);
@@ -113,7 +112,9 @@ const MergeTabInner: FC = () => {
 		{
 			gasPrice: gasPrice.toBN(),
 		},
-		{ enabled: !!properSourceAccountAddress && !!entryIDs.length }
+		{
+			enabled: !!properSourceAccountAddress, // && !!entryIDs.length
+		}
 	);
 
 	const txLink = useMemo(
@@ -130,7 +131,6 @@ const MergeTabInner: FC = () => {
 				break;
 
 			case 'pending':
-				setButtonState('merging');
 				setTxModalOpen(true);
 				break;
 
@@ -290,8 +290,7 @@ const MergeTabInner: FC = () => {
 				size="lg"
 				data-testid="form-button"
 				disabled={
-					isWalletConnected &&
-					(!properSourceAccountAddress || !!buttonState || !!sourceAccountAddressInputError)
+					isWalletConnected && (!properSourceAccountAddress || !!sourceAccountAddressInputError)
 				}
 			>
 				{!isWalletConnected ? (
@@ -299,12 +298,13 @@ const MergeTabInner: FC = () => {
 				) : (
 					<Trans
 						i18nKey={`merge-accounts.merge.button-labels.${
-							buttonState ||
-							(!sourceAccountAddress
+							txModalOpen
+								? 'merging'
+								: !sourceAccountAddress
 								? 'enter-address'
 								: sourceAccountAddressInputError
 								? sourceAccountAddressInputError
-								: 'merge')
+								: 'merge'
 						}`}
 						components={[<NoTextTransform />]}
 					/>
