@@ -8,6 +8,10 @@
 					"value": "max-age=31536000; includeSubDomains"
 				},
 				{
+					"key": "Content-Security-Policy",
+					"value": "frame-ancestors https://gnosis-safe.io"
+				},
+				{
 					"key": "X-Content-Type-Options",
 					"value": "nosniff"
 				},
