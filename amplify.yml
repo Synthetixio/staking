@@ -3,7 +3,6 @@ frontend:
   phases:
     preBuild:
       commands:
-        - npm install -g npm@7
         - npm config set cache .npm-cache --global
         - npm install --prefer-offline
     build:
