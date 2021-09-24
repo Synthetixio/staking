@@ -18,11 +18,6 @@ customHeaders:
       - key: 'Access-Control-Allow-Methods'
         value: 'GET,POST,OPTIONS'
 
-  - pattern: '/'
-    headers:
-      - key: 'Cache-Control'
-        value: 'public, max-age=0, must-revalidate'
-
   - pattern: '/_next/static/**/*'
     headers:
       - key: 'Cache-Control'
