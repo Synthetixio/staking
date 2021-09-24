@@ -2,7 +2,7 @@ customHeaders:
   - pattern: '**/*'
     headers:
       - key: 'Strict-Transport-Security'
-        value: 'max-age=31536000; includeSubDomains'
+        value: 'max-age=31536000; includeSubDomains; preload'
       - key: 'X-Frame-Options'
         value: 'SAMEORIGIN'
       - key: 'X-XSS-Protection'
@@ -10,7 +10,7 @@ customHeaders:
       - key: 'X-Content-Type-Options'
         value: 'nosniff'
       - key: 'Content-Security-Policy'
-        value: "default-src 'self'; script-src 'self' https://analytics.synthetix.io 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://zapper.fi https://raw.githubusercontent.com https://tokens.1inch.exchange; font-src 'self'; frame-ancestors 'self' https://gnosis-safe.io; form-action 'self'; base-uri 'self'; connect-src 'self' https://*.infura.io https://*.optimism.io https://api.thegraph.com https://api.yearn.finance https://stats.curve.fi https://analytics.synthetix.io wss://api.blocknative.com https://*.snapshot.org https://synths.snx.eth.link https://gateway.ipfs.io https://ethgasstation.info https://*.gasnow.org https://zapper.fi https://api.1inch.exchange;"
+        value: "frame-ancestors https://gnosis-safe.io"
       - key: 'Access-Control-Allow-Origin'
         value: '*'
       - key: 'Access-Control-Allow-Headers'
@@ -18,27 +18,22 @@ customHeaders:
       - key: 'Access-Control-Allow-Methods'
         value: 'GET,POST,OPTIONS'
 
-  - pattern: '/'
+  - pattern: '/_next/static/**/*'
     headers:
       - key: 'Cache-Control'
-        value: 'public, max-age=0, must-revalidate'
+        value: 'public, max-age=31536000, immutable'
 
   - pattern: '/_next/static/**/*'
     headers:
       - key: 'Cache-Control'
         value: 'public, max-age=31536000, immutable'
 
-  - pattern: '**/*.ico'
+  - pattern: '/images/*.{ico,png,jpg,webp,svg,gif}'
     headers:
       - key: 'Cache-Control'
-        value: 'public, max-age=31536000, immutable'
+        value: 'public, max-age=2592000, immutable'
 
-  - pattern: '**/*.{png,jpg,webp,svg,gif}'
+  - pattern: '/fonts/*.{eot,otf,ttf,ttc,woff,woff2,font}'
     headers:
       - key: 'Cache-Control'
-        value: 'public, max-age=31536000, immutable'
-
-  - pattern: '**/*.{eot|otf|ttf|ttc|woff|woff2|font|css}'
-    headers:
-      - key: 'Cache-Control'
-        value: 'public, max-age=31536000, immutable'
+        value: 'public, max-age=2592000, immutable'

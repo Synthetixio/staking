@@ -4,6 +4,14 @@
 			"source": "/(.*)",
 			"headers": [
 				{
+					"key": "Strict-Transport-Security",
+					"value": "max-age=31536000; includeSubDomains; preload"
+				},
+				{
+					"key": "Content-Security-Policy",
+					"value": "frame-ancestors https://gnosis-safe.io"
+				},
+				{
 					"key": "X-Content-Type-Options",
 					"value": "nosniff"
 				},
@@ -14,10 +22,6 @@
 				{
 					"key": "X-XSS-Protection",
 					"value": "1; mode=block"
-				},
-				{
-					"key": "Access-Control-Allow-Credentials",
-					"value": "false"
 				},
 				{
 					"key": "Access-Control-Allow-Origin",
@@ -56,7 +60,7 @@
 			]
 		},
 		{
-			"source": "/(.*).(png|jpg|webp|svg)",
+			"source": "/(.*).(png|jpg|webp|svg|gif)",
 			"headers": [
 				{
 					"key": "Cache-Control",
