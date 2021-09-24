@@ -68,6 +68,10 @@ export const MENU_LINKS: MenuLinks = [
 				i18nLabel: 'sidenav.delegate',
 				subLink: ROUTES.Delegate.Home,
 			},
+			{
+				i18nLabel: 'sidenav.merge-accounts',
+				subLink: ROUTES.MergeAccounts.Home,
+			},
 		],
 	},
 ];
@@ -106,6 +110,10 @@ export const MENU_LINKS_L2: MenuLinks = [
 			{
 				i18nLabel: 'sidenav.synths',
 				subLink: ROUTES.Synths.Home,
+			},
+			{
+				i18nLabel: 'sidenav.merge-accounts',
+				subLink: ROUTES.MergeAccounts.Home,
 			},
 		],
 	},

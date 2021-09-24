@@ -1161,7 +1161,8 @@
 		},
 		"delegate": "Delegate",
 		"switch-to-l2": "Switch to L2",
-		"settings": "Settings"
+		"settings": "Settings",
+		"merge-accounts": "Merge"
 	},
 	"user-menu": {
 		"layer-2": {
@@ -1350,6 +1351,108 @@
 		},
 		"tx-confirmation-title": "Updating approval"
 	},
+	"merge-accounts": {
+		"page-title": "Merge Accounts | Synthetix Staking",
+		"landing": {
+			"steps": {
+				"1": {
+					"title": "BURN DEBT & NOMINATE ACCOUNT",
+					"description": "In order to merge accounts, first you need Burn any outstanding debt from the address you want to merge from in order to transfer the vested SNX."
+				},
+				"2": {
+					"title": "MERGE FROM DESTINATION ACCOUNT",
+					"description": "Only when you have completed step 1 and logged into the destination account should you proceed with this step."
+				}
+			}
+		},
+		"burn": {
+			"title": "BURN DEBT & NOMINATE ACCOUNT",
+			"input-placeholder": "Destination address e.g. 0x3b18a4...",
+			"button-labels": {
+				"burn": "Burn <0>sUSD</0>"
+			},
+			"info": {
+				"title": "Burn sUSD Debt",
+				"description": "Connect to the dApp with the wallet you wish to merge from, first make sure that you have burned all your sUSD debt. <0>Learn more.</0>"
+			},
+			"tx-waiting": {
+				"title": "In progress",
+				"unstaking": "UNSTAKING",
+				"unstake-amount": "{{amount}} {{asset}}",
+				"burning": "BURNING",
+				"burn-amount": "{{amount}} {{asset}}"
+			},
+			"tx-success": {
+				"title": "Burnt!",
+				"unstaked": "UNSTAKED",
+				"unstaked-amount": "{{amount}} {{asset}}",
+				"burnt": "BURNT",
+				"burnt-amount": "{{amount}} {{asset}}",
+				"verify": "VERIFY",
+				"dismiss": "NEXT"
+			}
+		},
+		"nominate": {
+			"title": "MERGE TO DESTINATION ADDRESS",
+			"input-placeholder": "e.g. 0x3b18a4...",
+			"button-labels": {
+				"enter-address": "Enter address",
+				"nominate": "nominate",
+				"merge": "merge vested snx",
+				"dest-account-is-self": "Cannot nominate self",
+				"nominating": "Nominating"
+			},
+			"info": {
+				"title": "Merge Escrowed SNX To Nominated Account",
+				"subtitle": "Merge your vested SNX balance by inputing the new destination address in the 'DESTINATION ADDRESS' field, this address is where you want your balances to be sent to. <0>Learn more.</0>"
+			},
+			"tx-waiting": {
+				"title": "In progress",
+				"from": "MERGING",
+				"to": "TO"
+			},
+			"tx-success": {
+				"title": "Nominated!",
+				"from": "MERGED",
+				"to": "TO",
+				"verify": "VERIFY",
+				"dismiss": "SWITCH TO DESTINATION ACCOUNT"
+			}
+		},
+		"merge": {
+			"title": "ENTER SOURCE ACCOUT",
+			"input-placeholder": "e.g. 0x3b18a4...",
+			"button-labels": {
+				"enter-address": "enter address",
+				"merge": "merge vested snx",
+				"source-account-is-self": "Cannot merge into self",
+				"not-nominated": "Adress is not nominated",
+				"invalid-dest-address": "Address is invalid"
+			},
+			"info": {
+				"title": "Merge Your Source Account To This One",
+				"description": "Finally, please input the source address of where your balances have been sent from. <0>Learn more.</0>"
+			},
+			"tx": {
+				"notice": "Waiting for the blockchain to confirm your transaction.",
+				"link": "View on Etherscan",
+				"verify": "VERIFY TX",
+				"dismiss": "DISMISS"
+			},
+			"tx-waiting": {
+				"title": "Account Merge in progress",
+				"merging": "MERGING",
+				"escrowed-schedule": "ESCROWED SCHEDULE"
+			},
+			"tx-success": {
+				"title": "Account Merge complete!",
+				"merged": "MERGED",
+				"escrowed-schedule": "ESCROWED SCHEDULE",
+				"verify": "VERIFY",
+				"dismiss": "FINISHED"
+			}
+		}
+	},
 	"balance": {
 		"input-label": "Balance:",
 		"max": "Max"
@@ -1379,6 +1482,9 @@
 		"loan/withdraw": "withdraw",
 		"loan/repay": "repay",
 		"loan/draw": "draw",
-		"loan/close": "close"
+		"loan/close": "close",
+		"merge-accounts": "merge-accounts",
+		"merge-accounts/nominate": "nominate",
+		"merge-accounts/merge": "merge"
 	}
 }

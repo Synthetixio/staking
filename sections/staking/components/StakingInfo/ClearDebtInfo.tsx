@@ -43,14 +43,14 @@ const StakingInfo: FC = () => {
 	const Rows = useMemo(() => {
 		const calculatedTargetBurn = Math.max(debtBalance.sub(issuableSynths).toNumber(), 0);
 
-		const amountToBurnBN = parseSafeWei(amountToBurn, 0);
+		const amountToBurnWei = parseSafeWei(amountToBurn, 0);
 
 		let unlockedStakeAmount;
 
-		if (currentCRatio.gt(targetCRatio) && amountToBurnBN.lte(calculatedTargetBurn)) {
+		if (currentCRatio.gt(targetCRatio) && amountToBurnWei.lte(calculatedTargetBurn)) {
 			unlockedStakeAmount = wei(0);
 		} else {
-			unlockedStakeAmount = getStakingAmount(targetCRatio, amountToBurnBN, SNXRate);
+			unlockedStakeAmount = getStakingAmount(targetCRatio, amountToBurnWei, SNXRate);
 		}
 
 		const changedStakedValue = stakedCollateral.eq(0)
@@ -65,9 +65,9 @@ const StakingInfo: FC = () => {
 			transferableCollateral
 		);
 
-		const changedDebt = debtBalance.eq(0) ? wei(0) : debtBalance.sub(amountToBurnBN);
+		const changedDebt = debtBalance.eq(0) ? wei(0) : debtBalance.sub(amountToBurnWei);
 
-		const changedSUSDBalance = sUSDBalance.sub(amountToBurnBN);
+		const changedSUSDBalance = sUSDBalance.sub(amountToBurnWei);
 
 		const changeCRatio = currentCRatio.neg(); // wei(100).div(changedDebt.div(SNXRate).div(collateral));
 
