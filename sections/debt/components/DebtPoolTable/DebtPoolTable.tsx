@@ -55,11 +55,11 @@ const DebtPoolTable: FC<DebtPoolTableProps> = ({ synths, isLoading, isLoaded }) 
 				width: 100,
 			},
 			{
-				Header: <>{t('synths.assets.synths.table.total')}</>,
-				accessor: 'value',
+				Header: <>{t('synths.assets.synths.table.skewValue')}</>,
+				accessor: 'skewValue',
 				Cell: (cellProps: CellProps<SynthTotalSupply>) => (
-					<SkewValue skewValue={wei(cellProps.row.original.value)}>
-						{formatFiatCurrency(cellProps.row.original.value, {
+					<SkewValue skewValue={wei(cellProps.value)}>
+						{formatFiatCurrency(cellProps.value, {
 							sign: selectedPriceCurrency.sign,
 							maxDecimals: 0,
 						})}
@@ -146,6 +146,7 @@ const StyledTable = styled(Table)`
 
 const SkewValueTooltip = styled(Tooltip)`
 	background: ${(props) => props.theme.colors.grayBlue};
+	font-family: ${(props) => props.theme.fonts.extended};
 	.tippy-arrow {
 		color: ${(props) => props.theme.colors.grayBlue};
 	}
