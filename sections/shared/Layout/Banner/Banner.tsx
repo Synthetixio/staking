@@ -58,7 +58,7 @@ const Banner: FC<BannerProps> = ({ message, localStorageKey, type = BannerType.I
 };
 
 const Container = styled(FlexDivCentered)`
-	width: 568px;
+	width: 800px;
 	height: 44px;
 	background-color: ${(props) => props.theme.colors.mediumBlue};
 	border-radius: 4px;

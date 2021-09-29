@@ -17,6 +17,7 @@ const BannerManager: FC = () => {
 		useGetLiquidationDataQuery,
 		useGetDebtDataQuery,
 		useHasVotedForElectionsQuery,
+		useFeeClaimHistoryQuery,
 	} = useSynthetixQueries();
 
 	const walletAddress = useRecoilValue(walletAddressState);
@@ -24,6 +25,7 @@ const BannerManager: FC = () => {
 	const liquidationData = useGetLiquidationDataQuery(walletAddress);
 	const debtData = useGetDebtDataQuery(walletAddress);
 	const hasVotedForElectionsQuery = useHasVotedForElectionsQuery(snapshotEndpoint, walletAddress);
+	const feeClaimHistory = useFeeClaimHistoryQuery(walletAddress);
 	const isL2 = useRecoilValue(isL2State);
 
 	const issuanceRatio = debtData?.data?.targetCRatio ?? wei(0);
@@ -32,6 +34,8 @@ const BannerManager: FC = () => {
 		liquidationData?.data?.liquidationDeadlineForAccount ?? wei(0);
 
 	const issuanceRatioPercentage = issuanceRatio.eq(0) ? 0 : 100 / Number(issuanceRatio);
+
+	const hasClaimHistory = !!feeClaimHistory.data?.length;
 
 	if (!liquidationDeadlineForAccount.eq(0) && cRatio.gt(issuanceRatio)) {
 		return (
@@ -63,6 +67,19 @@ const BannerManager: FC = () => {
 					<Trans
 						i18nKey={'user-menu.banner.election-info'}
 						components={[<StyledExternalLink href="https://staking.synthetix.io/gov" />]}
+					/>
+				}
+			/>
+		);
+	} else if (!isL2 && hasClaimHistory) {
+		return (
+			<Banner
+				type={BannerType.INFORMATION}
+				localStorageKey={LOCAL_STORAGE_KEYS.THALES_STAKING_INFO_VISIBLE}
+				message={
+					<Trans
+						i18nKey={'user-menu.banner.thales-staking-info'}
+						components={[<StyledExternalLink href="https://thales.market/token?tab=staking" />]}
 					/>
 				}
 			/>
