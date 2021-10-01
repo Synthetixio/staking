@@ -267,6 +267,12 @@ export const ModalItemText = styled.div`
 	font-family: ${(props) => props.theme.fonts.interBold};
 `;
 
+export const ModalItemSeperator = styled.div`
+	background: ${(props) => props.theme.colors.grayBlue};
+	width: 1px;
+	height: 100px;
+`;
+
 export const TableNoResults = styled.div`
 	padding: 50px 0;
 	text-align: center;
