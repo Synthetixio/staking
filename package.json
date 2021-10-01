@@ -24,7 +24,7 @@
 		"@snapshot-labs/snapshot.js": "0.1.10",
 		"@synthetixio/assets": "2.0.10",
 		"@synthetixio/contracts-interface": "2.50.1-ovm-alpha",
-		"@synthetixio/optimism-networks": "2.48.4",
+		"@synthetixio/optimism-networks": "2.49.0",
 		"@synthetixio/providers": "2.48.4",
 		"@synthetixio/queries": "2.51.0",
 		"@synthetixio/transaction-notifier": "2.48.4",
