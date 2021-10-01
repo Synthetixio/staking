@@ -29,7 +29,6 @@ const useHistoricalDebtData = (walletAddress: string | null) => {
 	} = useSynthetixQueries();
 
 	const feeClaimHistoryQuery = useFeeClaimHistoryQuery(walletAddress);
-
 	const debtSnapshotQuery = useGetDebtSnapshotQuery(walletAddress);
 	const debtDataQuery = useGetDebtDataQuery(walletAddress);
 
@@ -44,19 +43,21 @@ const useHistoricalDebtData = (walletAddress: string | null) => {
 			// We set historicalIssuanceAggregation array, to store all the cumulative
 			// values of every mint and burns
 			const historicalIssuanceAggregation: Wei[] = [];
-			claimHistory.forEach((event, i) => {
-				if (event.type === StakingTransactionType.FeesClaimed) {
-					return; // skip
-				}
+			claimHistory
+				.slice()
+				.reverse()
+				.forEach((event, i) => {
+					if (event.type === StakingTransactionType.FeesClaimed) {
+						return; // skip
+					}
 
-				const multiplier = event.type === StakingTransactionType.Burned ? -1 : 1;
-				const aggregation =
-					historicalIssuanceAggregation.length === 0
-						? event.value.mul(multiplier)
-						: event.value.mul(multiplier).add(last(historicalIssuanceAggregation)!);
+					const multiplier = event.type === StakingTransactionType.Burned ? -1 : 1;
+					const aggregation = event.value
+						.mul(multiplier)
+						.add(last(historicalIssuanceAggregation) ?? wei(0));
 
-				historicalIssuanceAggregation.push(aggregation);
-			});
+					historicalIssuanceAggregation.push(aggregation);
+				});
 
 			// We merge both actual & issuance debt into an array
 			let historicalDebtAndIssuance: HistoricalDebtAndIssuanceData[] = [];
