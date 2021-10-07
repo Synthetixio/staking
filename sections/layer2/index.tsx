@@ -18,7 +18,7 @@ const Index: FC = () => {
 
 	const { useIsBridgeActiveQuery } = useSynthetixQueries();
 
-	const depositsInactive = !useIsBridgeActiveQuery().data;
+	const depositsInactive = !useIsBridgeActiveQuery()?.data?.deposit;
 
 	const ACTIONS = useMemo(
 		() => ({
@@ -53,7 +53,7 @@ const Index: FC = () => {
 						},
 						{
 							...ACTIONS.migrate,
-							isDisabled: stakingEscrow.eq(0),
+							isDisabled: stakingEscrow.eq(0) || depositsInactive,
 						},
 				  ]
 				: [

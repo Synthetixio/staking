@@ -1,4 +1,4 @@
-import onboard from '@gnosis.pm/safe-apps-onboard';
+import onboard from 'bnc-onboard';
 
 import { Subscriptions, WalletType } from 'bnc-onboard/dist/src/interfaces';
 import { getInfuraRpcURL } from 'utils/infura';
