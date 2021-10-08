@@ -2,6 +2,7 @@ import useSynthetixQueries from '@synthetixio/queries';
 import { useEffect, useMemo, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { walletAddressState } from 'store/wallet';
+import { isAfter, isBefore } from 'date-fns';
 
 export const useClaimedStatus = () => {
 	const [claimed, setClaimed] = useState<boolean>(false);
@@ -31,13 +32,17 @@ export const useClaimedStatus = () => {
 				history.data
 					? history.data?.some((tx) => {
 							const claimedDate = new Date(tx.timestamp);
-							return claimedDate > currentFeePeriodStarts && claimedDate < nextFeePeriodStarts;
+							return (
+								tx.type === 'feesClaimed' &&
+								isAfter(claimedDate, currentFeePeriodStarts) &&
+								isBefore(claimedDate, nextFeePeriodStarts)
+							);
 					  })
 					: false
 			);
 		checkClaimedStatus();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [history]);
 
 	return claimed;
 };
