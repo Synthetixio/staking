@@ -58,7 +58,7 @@ jobs:
             ${{ runner.os }}-alpine-node-
         continue-on-error: true
 
-      # fixes permission issues on docker+npm@7
+      # fix: permission issues on ghactions+docker+npm@7
       - name: Chown workspace
         run: chown -R $(whoami) .
 
@@ -90,7 +90,6 @@ jobs:
       - name: Build
         run: npm run build
 
-      # todo: compress out folder instead and serve it for e2e tests (dynamic routes are not working with serve/express out-of-the-box)
       - name: Compress build
         run: tar -zcvf build.tar.gz .next
 
@@ -132,7 +131,7 @@ jobs:
             ${{ runner.os }}-ubuntu-e2e-
         continue-on-error: true
 
-      # fixes permission issues on docker+npm@7
+      # fix: permission issues on ghactions+docker+npm@7
       - name: Chown workspace
         run: chown -R $(whoami) .
 
