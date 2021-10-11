@@ -1,17 +1,22 @@
 import useSynthetixQueries from '@synthetixio/queries';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 import { walletAddressState } from 'store/wallet';
+import { isAfter, isBefore } from 'date-fns';
+import { Transaction } from 'constants/network';
 
-export const useClaimedStatus = () => {
-	const [claimed, setClaimed] = useState<boolean>(false);
-
+export const useClaimedStatus = (transactionState?: Transaction) => {
 	const walletAddress = useRecoilValue(walletAddressState);
 	const { useFeeClaimHistoryQuery, useGetFeePoolDataQuery } = useSynthetixQueries();
 
-	const history = useFeeClaimHistoryQuery(walletAddress);
+	const { data: historyData, refetch } = useFeeClaimHistoryQuery(walletAddress);
 	const currentFeePeriod = useGetFeePoolDataQuery(0);
-
+	useEffect(() => {
+		// If a transactionState was passed and it just changed to Success, refetch
+		if (transactionState === Transaction.SUCCESS) {
+			refetch();
+		}
+	}, [refetch, transactionState]);
 	const { currentFeePeriodStarts, nextFeePeriodStarts } = useMemo(() => {
 		return {
 			currentFeePeriodStarts: new Date(
@@ -25,21 +30,16 @@ export const useClaimedStatus = () => {
 		};
 	}, [currentFeePeriod]);
 
-	useEffect(() => {
-		const checkClaimedStatus = () =>
-			setClaimed(
-				history.data
-					? history.data?.some((tx) => {
-							const claimedDate = new Date(tx.timestamp);
-							return claimedDate > currentFeePeriodStarts && claimedDate < nextFeePeriodStarts;
-					  })
-					: false
-			);
-		checkClaimedStatus();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
-
-	return claimed;
+	return historyData
+		? historyData?.some((tx) => {
+				const claimedDate = new Date(tx.timestamp);
+				return (
+					tx.type === 'feesClaimed' &&
+					isAfter(claimedDate, currentFeePeriodStarts) &&
+					isBefore(claimedDate, nextFeePeriodStarts)
+				);
+		  })
+		: false;
 };
 
 export default useClaimedStatus;
