@@ -10,9 +10,10 @@
 		"lint": "eslint . --ext ts,.tsx && tsc",
 		"lint:sarif": "node tests/lint.js . --ext ts,.tsx && tsc",
 		"lint:fix": "eslint . --ext ts,.tsx --fix",
+		"test:unit": "jest",
 		"test:synpress:open": "env-cmd -f .env.local synpress open",
 		"test:synpress:run": "env-cmd -f .env.local synpress run",
-		"test:e2e": "start-server-and-test 'npm run build && npm run start' http-get://localhost:3000 'synpress run'",
+		"test:e2e": "start-server-and-test 'npm run build && npm run start' http-get://localhost:3000 test:synpress:run",
 		"test:e2e:ci": "synpress run --group smoke-tests --record --parallel"
 	},
 	"dependencies": {
@@ -71,9 +72,11 @@
 		"@babel/preset-env": "7.14.9",
 		"@babel/preset-react": "7.14.5",
 		"@microsoft/eslint-formatter-sarif": "2.1.5",
-		"@synthetixio/synpress": "0.9.25-beta.12",
+		"@synthetixio/synpress": "0.7.17",
+		"@testing-library/react-hooks": "^7.0.2",
 		"@types/color": "3.0.1",
 		"@types/date-fns": "2.6.0",
+		"@types/jest": "^27.0.2",
 		"@types/lodash": "4.14.159",
 		"@types/node": "14.0.13",
 		"@types/react": "16.9.46",
@@ -92,7 +95,7 @@
 		"babel-eslint": "10.1.0",
 		"babel-plugin-styled-components": "1.11.1",
 		"env-cmd": "10.1.0",
-		"eslint": "7.32.0",
+		"eslint": "7.12.0",
 		"eslint-config-prettier": "6.10.1",
 		"eslint-config-react-app": "6.0.0",
 		"eslint-plugin-flowtype": "5.2.0",
@@ -109,8 +112,10 @@
 		"imagemin-mozjpeg": "9.0.0",
 		"imagemin-optipng": "8.0.0",
 		"imagemin-svgo": "8.0.0",
+		"jest": "^27.2.5",
 		"lint-staged": "10.5.1",
 		"prettier": "2.0.5",
+		"react-test-renderer": "^17.0.2",
 		"remarkable-external-link": "1.1.0",
 		"typescript": "4.3.2",
 		"url-loader": "4.1.1",
@@ -123,5 +128,17 @@
 		"hooks": {
 			"pre-commit": "npm run lint"
 		}
+	},
+	"jest": {
+		"roots": [
+			"<rootDir>"
+		],
+		"modulePaths": [
+			"<rootDir>"
+		],
+		"moduleDirectories": [
+			"node_modules"
+		],
+		"globalSetup": "./test-setup/global.js"
 	}
 }
