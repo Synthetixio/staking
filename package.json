@@ -10,6 +10,7 @@
 		"lint": "eslint . --ext ts,.tsx && tsc",
 		"lint:sarif": "node tests/lint.js . --ext ts,.tsx && tsc",
 		"lint:fix": "eslint . --ext ts,.tsx --fix",
+		"test:unit": "jest",
 		"test:synpress:open": "env-cmd -f .env.local synpress open",
 		"test:synpress:run": "env-cmd -f .env.local synpress run",
 		"test:e2e": "start-server-and-test 'npm run build && npm run start' http-get://localhost:3000 test:synpress:run",
