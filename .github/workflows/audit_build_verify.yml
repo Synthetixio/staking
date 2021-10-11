@@ -8,12 +8,11 @@ on:
 jobs:
   audit:
     # run only on master/dev branch and pull requests
-    #if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'
-    if: false
+    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'
     runs-on: ubuntu-latest
 
     container:
-      image: ghcr.io/synthetixio/docker-sec-tools/base:12.21-npm6
+      image: ghcr.io/synthetixio/docker-sec-tools/alpine:14.17
       credentials:
         username: synthetixio
         password: ${{ secrets.GH_PACKAGES_READ_ONLY }}
@@ -26,7 +25,7 @@ jobs:
         run: npm audit --audit-level=critical
 
       - name: Lockfile lint
-        run: lockfile-lint -p package-lock.json --type npm --allowed-hosts npm github.com --allowed-schemes "https:" "git+https:" "git+ssh:"
+        run: lockfile-lint -p package-lock.json --type npm --allowed-hosts npm github.com --allowed-schemes "https:" "git+ssh:" "git+https:" "npm:"
 
   build:
     needs: audit
@@ -34,31 +33,37 @@ jobs:
     if: always() && needs.audit.result == 'success' || always() && needs.audit.result == 'skipped'
     runs-on: ubuntu-latest
 
+    container:
+      image: ghcr.io/synthetixio/docker-node/alpine:14.17
+      credentials:
+        username: synthetixio
+        password: ${{ secrets.GH_PACKAGES_READ_ONLY }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f # pin@v2
+
+      - name: Set npm cache directory
+        run: npm config set cache .npm-cache --global 
+        continue-on-error: true
 
       - name: Cache node modules
         uses: actions/cache@c64c572235d810460d0d6876e9c705ad5002b353 # pin@v2
         with:
           path: |
-            .npm
+            .npm-cache
             node_modules
-          key: ${{ runner.os }}-build-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-alpine-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-build-
+            ${{ runner.os }}-alpine-node-
         continue-on-error: true
 
-      - name: Building on Node.js ${{ matrix.node-version }} 🛠️
-        uses: actions/setup-node@v2
-        with:
-          node-version: '14.17.6'
-          
-      - name: npm update
-        run: npm install -g npm@7.18.1
+      # fix: permission issues on ghactions+docker+npm@7
+      - name: Chown workspace
+        run: chown -R $(whoami) .
 
       - name: Install dependencies
-        run: npm install --no-audit
+        run: npm install --prefer-offline --no-audit
 
       - name: Lint
         # run only on master/dev branch and pull requests
@@ -82,9 +87,9 @@ jobs:
         uses: actions/cache@c64c572235d810460d0d6876e9c705ad5002b353 # pin@v2
         with:
           path: .next/cache
-          key: ${{ runner.os }}-next.js-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-alpine-next-cache-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-next.js-
+            ${{ runner.os }}-alpine-next-cache-
         continue-on-error: true
 
       - name: Build
@@ -107,29 +112,36 @@ jobs:
     runs-on: ubuntu-latest
 
     container:
-      image: ghcr.io/synthetixio/docker-e2e/base:12.21-npm6
+      image: ghcr.io/synthetixio/docker-e2e/ubuntu:14.17
       credentials:
         username: synthetixio
         password: ${{ secrets.GH_PACKAGES_READ_ONLY }}
-      options: --shm-size=7gb
 
     steps:
       - name: Checkout
         uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f # pin@v2
 
+      - name: Set npm cache directory
+        run: npm config set cache .npm-cache --global 
+        continue-on-error: true
+
       - name: Cache node modules
         uses: actions/cache@c64c572235d810460d0d6876e9c705ad5002b353 # pin@v2
         with:
           path: |
-            .npm
+            .npm-cache
             node_modules
-          key: ${{ runner.os }}-e2e_tests-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-ubuntu-e2e-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-e2e_tests-
+            ${{ runner.os }}-ubuntu-e2e-
         continue-on-error: true
 
+      # fix: permission issues on ghactions+docker+npm@7
+      - name: Chown workspace
+        run: chown -R $(whoami) .
+
       - name: Install dependencies
-        run: npm install --no-audit
+        run: npm install --prefer-offline --no-audit
         env:
           CYPRESS_CACHE_FOLDER: ${{ github.workspace }}/node_modules/.cache/Cypress
 
@@ -158,6 +170,7 @@ jobs:
         env:
           SECRET_WORDS: ${{ secrets.SECRET_WORDS }}
           PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+          ETHERSCAN_KEY: ${{ secrets.ETHERSCAN_KEY }}
           CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_PROJECT_ID }}
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
