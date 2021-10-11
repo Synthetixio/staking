@@ -94,7 +94,6 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 	const delegateWallet = useRecoilValue(delegateWalletState);
 	const { useHasVotedForElectionsQuery } = useSynthetixQueries();
 
-	const claimed = useClaimedStatus();
 	const { isBelowCRatio } = useUserStakingData(delegateWallet?.address ?? walletAddress);
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const { blockExplorerInstance } = Etherscan.useContainer();
@@ -114,6 +113,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 	const [transactionState, setTransactionState] = useState<Transaction>(Transaction.PRESUBMIT);
 	const [txHash, setTxHash] = useState<string | null>(null);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
+	const claimed = useClaimedStatus(transactionState);
 
 	const hasVotedForElections = useHasVotedForElectionsQuery(snapshotEndpoint, walletAddress);
 
