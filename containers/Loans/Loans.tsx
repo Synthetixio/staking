@@ -349,12 +349,13 @@ function Container() {
 				erc20LoanContract.interactionDelay(),
 				ethLoanContract.interactionDelay(),
 			]);
+
 			if (isMounted) {
 				const perYr = SECONDS_IN_A_YR / 1e18;
 				setInterestRate(wei(borrowRate.toString()).mul(wei(perYr.toString())));
 				setIssueFeeRates({
-					[LOAN_TYPE_ERC20]: wei(erc20BorrowIssueFeeRate.toString()).mul(1e2 / 1e18),
-					[LOAN_TYPE_ETH]: wei(ethBorrowIssueFeeRate.toString()).mul(1e2 / 1e18),
+					[LOAN_TYPE_ERC20]: wei(erc20BorrowIssueFeeRate.toString()).mul(1 / 1e18),
+					[LOAN_TYPE_ETH]: wei(ethBorrowIssueFeeRate.toString()).mul(1 / 1e18),
 				});
 				setInteractionDelays({
 					[LOAN_TYPE_ERC20]: erc20InteractionDelay,
