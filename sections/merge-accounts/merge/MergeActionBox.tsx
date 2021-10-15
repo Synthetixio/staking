@@ -113,7 +113,8 @@ const MergeTabInner: FC = () => {
 			gasPrice: gasPrice.toBN(),
 		},
 		{
-			enabled: !!properSourceAccountAddress, // && !!entryIDs.length
+			enabled: !!properSourceAccountAddress,
+			gasLimitBuffer: 0.15, // && !!entryIDs.length
 		}
 	);
 

@@ -103,7 +103,7 @@ const NominateTabInner: FC = () => {
 		{
 			gasPrice: gasPrice.toBN(),
 		},
-		{ enabled: !!properDestinationAccountAddress }
+		{ enabled: !!properDestinationAccountAddress, gasLimitBuffer: 0.15 }
 	);
 
 	const txLink = useMemo(

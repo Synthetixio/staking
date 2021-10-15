@@ -120,6 +120,7 @@ const useBurnTx = () => {
 	const swapTxn = useEVMTxn(swapData, {
 		onSuccess: () => txn.mutate(),
 		enabled: true,
+		gasLimitBuffer: 0.15,
 	});
 
 	const txn = useSynthetixTxn(
@@ -131,6 +132,7 @@ const useBurnTx = () => {
 		},
 		{
 			enabled: burnType !== BurnActionType.CLEAR || !needToBuy || swapTxn.txnStatus === 'confirmed',
+			gasLimitBuffer: 0.15,
 		}
 	);
 
