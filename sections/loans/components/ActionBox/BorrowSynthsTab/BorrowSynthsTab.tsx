@@ -217,6 +217,10 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 
 			<FormButton
 				onClick={async () => {
+					if (!isWalletConnected) {
+						connectWallet();
+						return;
+					}
 					if (!openTxn) return;
 					!isApproved ? approveTxn.mutate() : openTxn.mutate();
 					setTxModalOpen(true);
