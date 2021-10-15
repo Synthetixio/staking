@@ -1,15 +1,13 @@
 import { FC, useState, useMemo, useCallback, useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 import { useTranslation } from 'react-i18next';
-import { ethers } from 'ethers';
 import { useRouter } from 'next/router';
 
 import { isWalletConnectedState, walletAddressState } from 'store/wallet';
 import Connector from 'containers/Connector';
 import UIContainer from 'containers/UI';
 import GasSelector from 'components/GasSelector';
-import { Synths } from 'constants/currency';
-import { getExchangeRatesForCurrencies } from 'utils/currencies';
+
 import {
 	ModalItemTitle as TxModalItemTitle,
 	ModalItemText as TxModalItemText,
@@ -41,6 +39,11 @@ import AssetInput from './AssetInput';
 import Wei, { wei } from '@synthetixio/wei';
 import useSynthetixQueries from '@synthetixio/queries';
 import { parseSafeWei } from 'utils/parse';
+import { useCollateralBalance } from './useCollateralBalance';
+import { ethers } from 'ethers';
+import { getLoanCRatio } from './getLoanCRatio';
+import OpenCollateralTransaction, { OpenTransactionType } from './OpenCollateralTransaction';
+import { useMinCollateralAmount } from './useMinCollateralAmount';
 
 type BorrowSynthsTabProps = {};
 
@@ -52,16 +55,19 @@ const COLLATERAL_ASSETS: { [asset: string]: string[] } = {
 
 const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 	const { t } = useTranslation();
-	const { signer, synthetixjs } = Connector.useContainer();
+	const { signer, synthetixjs, connectWallet } = Connector.useContainer();
+	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 	const router = useRouter();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
+
 	const address = useRecoilValue(walletAddressState);
 	const { renBTCContract, minCRatios } = Loans.useContainer();
+	const { useExchangeRatesQuery, useContractTxn } = useSynthetixQueries();
+	const [openTxn, setOpenTransaction] = useState<OpenTransactionType | null>(null);
+
 	const { setTitle } = UIContainer.useContainer();
 
 	const [gasPrice, setGasPrice] = useState<Wei>(wei(0));
-
-	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 
 	const [debtAmountNumber, setDebtAmount] = useState<string>('');
 	const [debtAsset, setDebtAsset] = useState<string>('sUSD');
@@ -69,36 +75,30 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 	const debtAmount = parseSafeWei(debtAmountNumber, wei(0));
 
 	const [collateralAmountNumber, setCollateralAmount] = useState<string>('');
-	const [minCollateralAmount, setMinCollateralAmount] = useState<Wei>(wei(0));
 	const [collateralAsset, setCollateralAsset] = useState<string>('');
-	const [collateralBalance, setCollateralBalance] = useState<Wei>(wei(0));
 
 	const collateralDecimals = collateralAsset === 'renBTC' ? 8 : 18; // todo
 	const collateralAmount = parseSafeWei(collateralAmountNumber, wei(0)).scale(collateralDecimals);
 
 	const collateralIsETH = collateralAsset === 'ETH';
-	const collateralContract = useMemo(
-		(): ethers.Contract | null => (!collateralIsETH ? null : renBTCContract),
-		[collateralIsETH, renBTCContract]
-	);
+	const collateralContract = collateralIsETH ? null : renBTCContract;
 
 	const minCRatio = minCRatios.get(collateralIsETH ? LOAN_TYPE_ETH : LOAN_TYPE_ERC20) || wei(0);
+
+	const loanContract = useMemo(() => {
+		if (!signer || !synthetixjs) return null;
+		const {
+			contracts: { CollateralEth: ethLoanContract, CollateralErc20: erc20LoanContract },
+		} = synthetixjs;
+		return collateralIsETH ? ethLoanContract : erc20LoanContract;
+	}, [collateralIsETH, signer, synthetixjs]);
+	const minCollateralAmount = useMinCollateralAmount(loanContract);
 
 	const hasLowCollateralAmount = useMemo(
 		() => !collateralAmount.eq(0) && collateralAmount.lt(minCollateralAmount),
 		[collateralAmount, minCollateralAmount]
 	);
 	const minCollateralAmountString = minCollateralAmount.scale(collateralDecimals).toString(2);
-
-	const loanContract = useMemo(() => {
-		if (!signer || !synthetixjs) return;
-		const {
-			contracts: { CollateralEth: ethLoanContract, CollateralErc20: erc20LoanContract },
-		} = synthetixjs!;
-		return collateralIsETH ? ethLoanContract : erc20LoanContract;
-	}, [collateralIsETH, signer, synthetixjs]);
-
-	const { useExchangeRatesQuery, useSynthetixTxn, useContractTxn } = useSynthetixQueries();
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const exchangeRates = exchangeRatesQuery.data ?? null;
 
@@ -123,93 +123,39 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 		return null;
 	}, [address, collateralContract, collateralIsETH, loanContract]);
 
+	const collateralBalance = useCollateralBalance(
+		signer,
+		address,
+		collateralContract,
+		collateralIsETH
+	);
 	const approveTxn = useContractTxn(
 		collateralContract,
 		'approve',
 		[loanContract?.address || ethers.constants.AddressZero, ethers.constants.MaxUint256],
 		{ gasPrice: gasPrice.toBN() }
 	);
+	const shouldOpenTransaction =
+		debtAmount.gt(0) && collateralAmount.gt(0) && collateralAsset && debtAsset;
 
-	const openTxn = useSynthetixTxn(
-		collateralIsETH ? 'CollateralEth' : 'CollateralErc20',
-		'open',
-		collateralIsETH
-			? [debtAmount.toBN(), ethers.utils.formatBytes32String(debtAsset)]
-			: [collateralAmount.toBN(), debtAmount.toBN(), ethers.utils.formatBytes32String(debtAsset)],
-		{ gasPrice: gasPrice.toBN(), value: collateralIsETH ? collateralAmount.toBN() : 0 }
-	);
+	const debt = { amount: debtAmount, asset: debtAsset };
+	const collateral = { amount: collateralAmount, asset: collateralAsset };
+	const cratio = getLoanCRatio(exchangeRates, collateral, debt);
+	const hasLowCRatio = !collateralAmount.eq(0) && !debtAmount.eq(0) && cratio.lt(SAFE_MIN_CRATIO);
+	const hasInsufficientCollateral = collateralBalance.lt(minCollateralAmount);
 
-	// cratio start
-	let cratio = wei(0);
-
-	if (exchangeRates && !collateralAmount.eq(0) && !debtAmount.eq(0)) {
-		const collateralUSDPrice = getExchangeRatesForCurrencies(
-			exchangeRates,
-			collateralAsset === 'renBTC' ? Synths.sBTC : Synths.sETH,
-			Synths.sUSD
-		);
-
-		const debtUSDPrice = getExchangeRatesForCurrencies(exchangeRates, debtAsset, Synths.sUSD);
-
-		cratio = collateralAmount.mul(collateralUSDPrice).div(debtUSDPrice.mul(debtAmount));
-	}
-	// cratio end
-
-	const hasLowCRatio = useMemo(
-		() => !collateralAmount.eq(0) && !debtAmount.eq(0) && cratio.lt(SAFE_MIN_CRATIO),
-		[collateralAmount, debtAmount, cratio]
-	);
-
-	const hasInsufficientCollateral = useMemo(() => collateralBalance.lt(minCollateralAmount), [
-		collateralBalance,
-		minCollateralAmount,
-	]);
-
-	// min collateral amount
+	const openTransactionStatus = openTxn ? openTxn.txnStatus : null;
 	useEffect(() => {
-		let isMounted = true;
-		const load = async () => {
-			if (!loanContract) {
-				return setMinCollateralAmount(wei(0));
-			}
-			const minCollateralAmount = wei(await loanContract.minCollateral());
-			if (isMounted) setMinCollateralAmount(minCollateralAmount);
-		};
-		load();
-		return () => {
-			isMounted = false;
-		};
-	}, [collateralIsETH, loanContract, collateralDecimals]);
-
-	// balance
-	useEffect(() => {
-		let isMounted = true;
-		const load = async () => {
-			let balance = ethers.BigNumber.from(0);
-			if (collateralIsETH) {
-				if (signer) {
-					balance = await signer.getBalance();
-				}
-			} else if (collateralContract && address) {
-				balance = await collateralContract.balanceOf(address);
-			}
-			if (isMounted) setCollateralBalance(wei(balance.toString()));
-		};
-		load();
-		return () => {
-			isMounted = false;
-		};
-	}, [collateralIsETH, collateralContract, address, signer]);
-
-	useEffect(() => {
-		switch (openTxn.txnStatus) {
+		switch (openTransactionStatus) {
 			case 'unsent':
 				setTxModalOpen(false);
+				getAllowance();
 				break;
 			case 'pending':
 				setTxModalOpen(true);
 				break;
 			case 'confirmed':
+				getAllowance();
 				setDebtAmount('0');
 				setCollateralAmount('0');
 				setTxModalOpen(false);
@@ -217,18 +163,7 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 				router.push('/loans/list');
 				break;
 		}
-	}, [openTxn.txnStatus, router]);
-
-	useEffect(() => {
-		switch (openTxn.txnStatus) {
-			case 'unsent':
-			case 'confirmed':
-				getAllowance();
-				break;
-		}
-	}, [approveTxn.txnStatus, openTxn.txnStatus, getAllowance]);
-
-	// header title
+	}, [getAllowance, openTransactionStatus, router]); // header title
 	useEffect(() => {
 		setTitle('loans', 'new');
 	}, [setTitle]);
@@ -270,13 +205,19 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 						<IssuanceFee {...{ collateralIsETH }} />
 					</SettingContainer>
 					<SettingContainer>
-						<GasSelector gasLimitEstimate={openTxn.gasLimit} setGasPrice={setGasPrice} />
+						<GasSelector
+							gasLimitEstimate={openTxn ? openTxn.gasLimit : null}
+							setGasPrice={(x: Wei) => {
+								setGasPrice(x);
+							}}
+						/>
 					</SettingContainer>
 				</SettingsContainer>
 			</FormContainer>
 
 			<FormButton
 				onClick={async () => {
+					if (!openTxn) return;
 					!isApproved ? approveTxn.mutate() : openTxn.mutate();
 					setTxModalOpen(true);
 				}}
@@ -293,10 +234,8 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 					hasBothInputsSet: !debtAmount.eq(0) && !collateralAmount.eq(0),
 				}}
 			/>
-
-			{openTxn.isError && <ErrorMessage>{openTxn.errorMessage}</ErrorMessage>}
-
-			{txModalOpen && (
+			{openTxn && openTxn.isError && <ErrorMessage>{openTxn.errorMessage}</ErrorMessage>}
+			{openTxn && txModalOpen && (
 				<TxConfirmationModal
 					onDismiss={() => setTxModalOpen(false)}
 					txError={openTxn.errorMessage}
@@ -308,7 +247,7 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 									{t('loans.tabs.new.confirm-transaction.left-panel-label')}
 								</TxModalItemTitle>
 								<TxModalItemText>
-									{debtAmount.toString(2)} {debtAsset}
+									{debt.amount.toString(2)} {debt.asset}
 								</TxModalItemText>
 							</TxModalItem>
 							<TxModalItemSeperator />
@@ -317,11 +256,25 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 									{t('loans.tabs.new.confirm-transaction.right-panel-label')}
 								</TxModalItemTitle>
 								<TxModalItemText>
-									{collateralAmount.toString(2)} {collateralAsset}
+									{collateral.amount.toString(2)} {collateral.asset}
 								</TxModalItemText>
 							</TxModalItem>
 						</TxModalContent>
 					}
+				/>
+			)}
+			{shouldOpenTransaction && (
+				<OpenCollateralTransaction
+					debt={debt}
+					collateral={collateral}
+					collateralIsETH={collateralIsETH}
+					gasPrice={gasPrice}
+					setOpenTransaction={(x) => {
+						setOpenTransaction(x);
+					}}
+					setTxModalOpen={setTxModalOpen}
+					txModalOpen={txModalOpen}
+					openTxn={openTxn}
 				/>
 			)}
 		</>
