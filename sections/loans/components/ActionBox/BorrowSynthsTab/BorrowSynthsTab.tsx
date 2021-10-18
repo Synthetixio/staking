@@ -40,7 +40,7 @@ import Wei, { wei } from '@synthetixio/wei';
 import useSynthetixQueries from '@synthetixio/queries';
 import { parseSafeWei } from 'utils/parse';
 import { ethers } from 'ethers';
-import { getLoanCRatio } from './getLoanCRatio';
+import { calculateLoanCRatio } from './calculateLoanCRatio';
 import { useMinCollateralAmount } from './useMinCollateralAmount';
 import { getToken } from 'contracts/renBTCToken';
 
@@ -138,7 +138,7 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 
 	const debt = { amount: debtAmount, asset: debtAsset };
 	const collateral = { amount: collateralAmount, asset: collateralAsset };
-	const cratio = getLoanCRatio(exchangeRates, collateral, debt);
+	const cratio = calculateLoanCRatio(exchangeRates, collateral, debt);
 	const hasLowCRatio = !collateralAmount.eq(0) && !debtAmount.eq(0) && cratio.lt(SAFE_MIN_CRATIO);
 	const hasInsufficientCollateral = collateralBalance.lt(minCollateralAmount);
 

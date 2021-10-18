@@ -3,7 +3,7 @@ import { getExchangeRatesForCurrencies } from 'utils/currencies';
 import { Rates } from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
 
-export const getLoanCRatio = (
+export const calculateLoanCRatio = (
 	exchangeRates: Rates | null,
 	collateral: { amount: Wei; asset: string },
 	debt: { amount: Wei; asset: string }
