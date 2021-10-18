@@ -1,4 +1,5 @@
 import { ethers } from 'ethers';
+import { Network } from 'store/wallet';
 
 export const ADDRESSES: Record<string, string> = {
 	mainnet: '0xEB4C2781e4ebA804CE9a9803C67d0893436bB27D',
@@ -13,6 +14,20 @@ export function makeContract(
 
 	return address ? new ethers.Contract(address, ABI, signer) : null;
 }
+
+export const getToken = (network?: Network | null) => {
+	const name = network?.name || 'mainnet';
+	const chainId = network?.id || 1;
+	return {
+		symbol: 'renBTC',
+		address: ADDRESSES[name],
+		decimals: 18,
+		logoURI: '',
+		name: 'renBTC',
+		chainId,
+		tags: [],
+	};
+};
 
 export const ABI = [
 	{

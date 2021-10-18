@@ -39,10 +39,10 @@ import AssetInput from './AssetInput';
 import Wei, { wei } from '@synthetixio/wei';
 import useSynthetixQueries from '@synthetixio/queries';
 import { parseSafeWei } from 'utils/parse';
-import { useCollateralBalance } from './useCollateralBalance';
 import { ethers } from 'ethers';
 import { getLoanCRatio } from './getLoanCRatio';
 import { useMinCollateralAmount } from './useMinCollateralAmount';
+import { getToken } from 'contracts/renBTCToken';
 
 type BorrowSynthsTabProps = {};
 
@@ -54,14 +54,20 @@ const COLLATERAL_ASSETS: { [asset: string]: string[] } = {
 
 const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 	const { t } = useTranslation();
-	const { signer, synthetixjs, connectWallet } = Connector.useContainer();
+	const { signer, synthetixjs, connectWallet, network } = Connector.useContainer();
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 	const router = useRouter();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 
 	const address = useRecoilValue(walletAddressState);
 	const { renBTCContract, minCRatios } = Loans.useContainer();
-	const { useExchangeRatesQuery, useContractTxn, useSynthetixTxn } = useSynthetixQueries();
+	const {
+		useExchangeRatesQuery,
+		useContractTxn,
+		useSynthetixTxn,
+		useTokensBalancesQuery,
+		useETHBalanceQuery,
+	} = useSynthetixQueries();
 	const { setTitle } = UIContainer.useContainer();
 
 	const [gasPrice, setGasPrice] = useState<Wei>(wei(0));
@@ -73,13 +79,14 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 
 	const [collateralAmountNumber, setCollateralAmount] = useState<string>('');
 	const [collateralAsset, setCollateralAsset] = useState<string>('');
-
-	const collateralDecimals = collateralAsset === 'renBTC' ? 8 : 18; // todo
+	const renToken = getToken(network);
+	const collateralDecimals = collateralAsset === 'renBTC' ? renToken.decimals : 18; // todo
 	const collateralAmount = parseSafeWei(collateralAmountNumber, wei(0)).scale(collateralDecimals);
 
 	const collateralIsETH = collateralAsset === 'ETH';
 	const collateralContract = collateralIsETH ? null : renBTCContract;
-
+	const renBalance = useTokensBalancesQuery([renToken], address);
+	const ethBalance = useETHBalanceQuery(address);
 	const minCRatio = minCRatios.get(collateralIsETH ? LOAN_TYPE_ETH : LOAN_TYPE_ERC20) || wei(0);
 
 	const loanContract = useMemo(() => {
@@ -119,13 +126,9 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 
 		return null;
 	}, [address, collateralContract, collateralIsETH, loanContract]);
+	const rawCollateralBalance = collateralIsETH ? ethBalance.data : renBalance.data?.renBTC?.balance;
+	const collateralBalance = rawCollateralBalance || wei(0);
 
-	const collateralBalance = useCollateralBalance(
-		signer,
-		address,
-		collateralContract,
-		collateralIsETH
-	);
 	const approveTxn = useContractTxn(
 		collateralContract,
 		'approve',
