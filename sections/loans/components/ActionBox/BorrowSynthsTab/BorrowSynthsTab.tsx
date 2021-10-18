@@ -42,7 +42,6 @@ import { parseSafeWei } from 'utils/parse';
 import { useCollateralBalance } from './useCollateralBalance';
 import { ethers } from 'ethers';
 import { getLoanCRatio } from './getLoanCRatio';
-import OpenCollateralTransaction, { OpenTransactionType } from './OpenCollateralTransaction';
 import { useMinCollateralAmount } from './useMinCollateralAmount';
 
 type BorrowSynthsTabProps = {};
@@ -133,14 +132,22 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 		[loanContract?.address || ethers.constants.AddressZero, ethers.constants.MaxUint256],
 		{ gasPrice: gasPrice.toBN() }
 	);
-	const shouldOpenTransaction =
-		debtAmount.gt(0) && collateralAmount.gt(0) && collateralAsset && debtAsset;
 
 	const debt = { amount: debtAmount, asset: debtAsset };
 	const collateral = { amount: collateralAmount, asset: collateralAsset };
 	const cratio = getLoanCRatio(exchangeRates, collateral, debt);
 	const hasLowCRatio = !collateralAmount.eq(0) && !debtAmount.eq(0) && cratio.lt(SAFE_MIN_CRATIO);
 	const hasInsufficientCollateral = collateralBalance.lt(minCollateralAmount);
+
+	const shouldOpenTransaction = Boolean(
+		debtAmount.gt(0) &&
+			collateralAmount.gt(0) &&
+			collateralAsset &&
+			debtAsset &&
+			!hasLowCollateralAmount &&
+			!hasLowCRatio &&
+			!hasInsufficientCollateral
+	);
 
 	const openTxn = useSynthetixTxn(
 		collateralIsETH ? 'CollateralEth' : 'CollateralErc20',
@@ -279,20 +286,6 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 							</TxModalItem>
 						</TxModalContent>
 					}
-				/>
-			)}
-			{shouldOpenTransaction && (
-				<OpenCollateralTransaction
-					debt={debt}
-					collateral={collateral}
-					collateralIsETH={collateralIsETH}
-					gasPrice={gasPrice}
-					setOpenTransaction={(x) => {
-						setOpenTransaction(x);
-					}}
-					setTxModalOpen={setTxModalOpen}
-					txModalOpen={txModalOpen}
-					openTxn={openTxn}
 				/>
 			)}
 		</>
