@@ -62,9 +62,7 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 
 	const address = useRecoilValue(walletAddressState);
 	const { renBTCContract, minCRatios } = Loans.useContainer();
-	const { useExchangeRatesQuery, useContractTxn } = useSynthetixQueries();
-	const [openTxn, setOpenTransaction] = useState<OpenTransactionType | null>(null);
-
+	const { useExchangeRatesQuery, useContractTxn, useSynthetixTxn } = useSynthetixQueries();
 	const { setTitle } = UIContainer.useContainer();
 
 	const [gasPrice, setGasPrice] = useState<Wei>(wei(0));
@@ -144,6 +142,22 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 	const hasLowCRatio = !collateralAmount.eq(0) && !debtAmount.eq(0) && cratio.lt(SAFE_MIN_CRATIO);
 	const hasInsufficientCollateral = collateralBalance.lt(minCollateralAmount);
 
+	const openTxn = useSynthetixTxn(
+		collateralIsETH ? 'CollateralEth' : 'CollateralErc20',
+		'open',
+		collateralIsETH
+			? [debt.amount.toBN(), ethers.utils.formatBytes32String(debt.asset)]
+			: [
+					collateral.amount.toBN(),
+					debt.amount.toBN(),
+					ethers.utils.formatBytes32String(debt.asset),
+			  ],
+		{
+			gasPrice: gasPrice.toBN(),
+			value: collateralIsETH ? collateral.amount.toBN() : 0,
+		},
+		{ enabled: shouldOpenTransaction }
+	);
 	const openTransactionStatus = openTxn ? openTxn.txnStatus : null;
 	useEffect(() => {
 		switch (openTransactionStatus) {
