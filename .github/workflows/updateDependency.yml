@@ -1,8 +1,11 @@
 name: Update dependency
 
 on:
-  repository_dispatch:
-    types: update-dependency
+  workflow_dispatch:
+    inputs:
+      monorepo_version:
+        description: 'New Monorepo Version (ex. 2.50.0-alpha) (leave empty to "patch")'
+        required: false
 
 jobs:
   update_version:
@@ -41,11 +44,13 @@ jobs:
       - name: Install dependencies
         run: npm install --prefer-offline --no-audit
 
-      - name: Update @synthetixio/contracts-interface dependency
-        run: npm install @synthetixio/contracts-interface@${{ github.event.client_payload.version }}
+      - name: Update all @synthetixio/* dependency
+        run: "sed -i 's/\"@synthetixio\\/\\(.*\\)\": \".*\"/\"@synthetixio\\/\\1\": \"{{ github.event.inputs.monorepo_version }}\"' package.json"
+      
+      - run: npm install
 
       - name: Commit changes
         run: |
           git config --global user.email "team@synthetix.io" && git config --global user.name "Synthetix Team"
-          git commit -am 'contracts-interface@${{ github.event.client_payload.version }}'
+          git commit -am 'contracts-interface@${{ github.event.inputs.version }}'
           git push origin dev
