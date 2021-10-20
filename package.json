@@ -73,7 +73,10 @@
 		"@babel/preset-react": "7.14.5",
 		"@microsoft/eslint-formatter-sarif": "2.1.5",
 		"@synthetixio/synpress": "0.9.25-beta.12",
+		"@testing-library/jest-dom": "5.14.1",
+		"@testing-library/react": "12.1.2",
 		"@testing-library/react-hooks": "^7.0.2",
+		"@testing-library/user-event": "13.5.0",
 		"@types/color": "3.0.1",
 		"@types/date-fns": "2.6.0",
 		"@types/jest": "^27.0.2",
@@ -139,6 +142,10 @@
 		"moduleDirectories": [
 			"node_modules"
 		],
-		"globalSetup": "./test-setup/global.js"
+		"globalSetup": "./test-setup/global.js",
+		"setupFilesAfterEnv": [
+			"./test-setup/setup.js"
+		],
+		"testEnvironment": "jest-environment-jsdom"
 	}
 }
