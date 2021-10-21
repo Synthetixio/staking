@@ -45,7 +45,7 @@ jobs:
         run: npm install --prefer-offline --no-audit
 
       - name: Update all @synthetixio/* dependency
-        run: "sed -i 's/\"@synthetixio\\/\\(.*\\)\": \".*\"/\"@synthetixio\\/\\1\": \"{{ github.event.inputs.monorepo_version }}\"/' package.json"
+        run: "sed -i 's/\"@synthetixio\\/\\(.*\\)\": \".*\"/\"@synthetixio\\/\\1\": \"${{ github.event.inputs.monorepo_version }}\"/' package.json"
 
       - run: npm install
 
