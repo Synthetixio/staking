@@ -42,7 +42,7 @@ import { parseSafeWei } from 'utils/parse';
 import { ethers } from 'ethers';
 import { calculateLoanCRatio } from './calculateLoanCRatio';
 import { useMinCollateralAmount } from './useMinCollateralAmount';
-import { getToken } from 'contracts/renBTCToken';
+import { getRenBTCToken } from 'contracts/renBTCToken';
 
 type BorrowSynthsTabProps = {};
 
@@ -79,8 +79,7 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 
 	const [collateralAmountNumber, setCollateralAmount] = useState<string>('');
 	const [collateralAsset, setCollateralAsset] = useState<string>('');
-	const renToken = getToken(network);
-	const collateralDecimals = collateralAsset === 'renBTC' ? renToken.decimals : 18; // todo
+	const renToken = getRenBTCToken(network);
 	const collateralAmount = parseSafeWei(collateralAmountNumber, wei(0)).scale(collateralDecimals);
 
 	const collateralIsETH = collateralAsset === 'ETH';

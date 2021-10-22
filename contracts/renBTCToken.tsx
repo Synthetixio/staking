@@ -16,7 +16,7 @@ export function makeContract(
 	return address ? new ethers.Contract(address, ABI, signer) : null;
 }
 
-export const getToken = (network?: Network | null) => {
+export const getRenBTCToken = (network?: Network | null) => {
 	const name = network?.name || 'mainnet';
 	const chainId = network?.id || 1;
 	return {
