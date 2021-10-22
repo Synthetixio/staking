@@ -5,6 +5,7 @@ export const ADDRESSES: Record<string, string> = {
 	mainnet: '0xEB4C2781e4ebA804CE9a9803C67d0893436bB27D',
 	kovan: '0x9B2fE385cEDea62D839E4dE89B0A23EF4eacC717',
 };
+const DECIMALS = 8;
 
 export function makeContract(
 	network: string,
@@ -21,7 +22,7 @@ export const getToken = (network?: Network | null) => {
 	return {
 		symbol: 'renBTC',
 		address: ADDRESSES[name],
-		decimals: 18,
+		decimals: DECIMALS,
 		logoURI: '',
 		name: 'renBTC',
 		chainId,
