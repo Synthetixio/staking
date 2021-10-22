@@ -10,7 +10,7 @@ import Wei, { wei } from '@synthetixio/wei';
 import { renBTCToken, wBTCToken, wETHToken } from 'contracts';
 import { useRecoilValue } from 'recoil';
 import { networkState } from 'store/wallet';
-import { ethers } from 'ethers';
+import { getETHToken } from 'contracts/ethToken';
 
 const { ETH, WETH, SNX, BTC, WBTC, RENBTC } = CryptoCurrency;
 
@@ -29,21 +29,11 @@ const useCryptoBalances = (walletAddress: string | null) => {
 		useGetDebtDataQuery,
 	} = useSynthetixQueries();
 
-	const networkId = useRecoilValue(networkState);
+	const network = useRecoilValue(networkState);
 
-	const tokenDefs = [
-		{
-			symbol: 'ETH',
-			address: ethers.constants.AddressZero,
-			decimals: 18,
-			logoURI: '',
-			name: 'Ethereum',
-			chainId: 1,
-			tags: [],
-		},
-	];
+	const tokenDefs = [getETHToken(network)];
 
-	if (networkId?.id === NetworkId.Mainnet) {
+	if (network?.id === NetworkId.Mainnet) {
 		tokenDefs.push(
 			...[
 				{

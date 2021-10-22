@@ -43,6 +43,7 @@ import { ethers } from 'ethers';
 import { calculateLoanCRatio } from './calculateLoanCRatio';
 import { useMinCollateralAmount } from './useMinCollateralAmount';
 import { getRenBTCToken } from 'contracts/renBTCToken';
+import { getETHToken } from 'contracts/ethToken';
 
 type BorrowSynthsTabProps = {};
 
@@ -66,7 +67,6 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 		useContractTxn,
 		useSynthetixTxn,
 		useTokensBalancesQuery,
-		useETHBalanceQuery,
 	} = useSynthetixQueries();
 	const { setTitle } = UIContainer.useContainer();
 
@@ -80,12 +80,14 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 	const [collateralAmountNumber, setCollateralAmount] = useState<string>('');
 	const [collateralAsset, setCollateralAsset] = useState<string>('');
 	const renToken = getRenBTCToken(network);
+	const ethToken = getETHToken(network);
+	const collateralDecimals = collateralAsset === 'renBTC' ? renToken.decimals : ethToken.decimals;
 	const collateralAmount = parseSafeWei(collateralAmountNumber, wei(0)).scale(collateralDecimals);
 
 	const collateralIsETH = collateralAsset === 'ETH';
 	const collateralContract = collateralIsETH ? null : renBTCContract;
-	const renBalance = useTokensBalancesQuery([renToken], address);
-	const ethBalance = useETHBalanceQuery(address);
+	const ethAndRenBalance = useTokensBalancesQuery([renToken, ethToken], address);
+
 	const minCRatio = minCRatios.get(collateralIsETH ? LOAN_TYPE_ETH : LOAN_TYPE_ERC20) || wei(0);
 
 	const loanContract = useMemo(() => {
@@ -125,7 +127,9 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 
 		return null;
 	}, [address, collateralContract, collateralIsETH, loanContract]);
-	const rawCollateralBalance = collateralIsETH ? ethBalance.data : renBalance.data?.renBTC?.balance;
+	const rawCollateralBalance = collateralIsETH
+		? ethAndRenBalance.data?.ETH?.balance
+		: ethAndRenBalance.data?.renBTC?.balance;
 	const collateralBalance = rawCollateralBalance || wei(0);
 
 	const approveTxn = useContractTxn(
