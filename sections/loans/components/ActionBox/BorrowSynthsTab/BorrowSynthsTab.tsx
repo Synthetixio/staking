@@ -41,9 +41,9 @@ import useSynthetixQueries from '@synthetixio/queries';
 import { parseSafeWei } from 'utils/parse';
 import { ethers } from 'ethers';
 import { calculateLoanCRatio } from './calculateLoanCRatio';
-import { useMinCollateralAmount } from './useMinCollateralAmount';
 import { getRenBTCToken } from 'contracts/renBTCToken';
 import { getETHToken } from 'contracts/ethToken';
+import { useQuery } from 'react-query';
 
 type BorrowSynthsTabProps = {};
 
@@ -97,7 +97,13 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 		} = synthetixjs;
 		return collateralIsETH ? ethLoanContract : erc20LoanContract;
 	}, [collateralIsETH, signer, synthetixjs]);
-	const minCollateralAmount = useMinCollateralAmount(loanContract);
+
+	const loanMinCollateralResult = useQuery<Wei>([loanContract?.address], async () => {
+		if (!loanContract) return wei(0);
+		return wei(await loanContract.minCollateral());
+	});
+
+	const minCollateralAmount = loanMinCollateralResult.data || wei(0);
 
 	const hasLowCollateralAmount = useMemo(
 		() => !collateralAmount.eq(0) && collateralAmount.lt(minCollateralAmount),
