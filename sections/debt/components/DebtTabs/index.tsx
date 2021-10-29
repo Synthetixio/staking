@@ -18,7 +18,7 @@ import { wei } from '@synthetixio/wei';
 import { SynthsTotalSupplyData } from '@synthetixio/queries';
 import useSynthetixQueries from '@synthetixio/queries';
 import { useRecoilValue } from 'recoil';
-import { walletAddressState } from 'store/wallet';
+import { isMainnetState, walletAddressState } from 'store/wallet';
 
 export type TabInfo = {
 	title: string;
@@ -57,6 +57,8 @@ const DebtTabs: FC<DebtTabsProps> = ({
 	}, [currentPanel]);
 
 	const walletAddress = useRecoilValue(walletAddressState);
+	const isMainnet = useRecoilValue(isMainnetState);
+
 	const { useSynthsBalancesQuery, useSynthsTotalSupplyQuery } = useSynthetixQueries();
 
 	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
@@ -75,52 +77,53 @@ const DebtTabs: FC<DebtTabsProps> = ({
 	const totalSupply = synthsTotalSupplyQuery?.data ?? [];
 
 	const isManageTab = activeTab === DebtPanelType.MANAGE;
-
 	return (
 		<>
-			<TopContainer {...{ isManageTab }}>
-				<DebtTabsContainer>
-					<TabList noOfTabs={tabData.length}>
-						{tabData.map(({ title, icon, key, disabled = false }, index) => (
-							<TabButton
-								isSingle={false}
-								tabHeight={tabHeight}
-								blue={true}
-								key={`${key}-${index}-button`}
-								name={title}
-								active={activeTab === key}
-								isDisabled={disabled}
-								onClick={() => {
-									setActiveTab(key);
-									if (setPanelType != null) {
-										setPanelType(key);
-									}
-								}}
-							>
-								{icon != null && icon}
-								<TitleContainer>{title}</TitleContainer>
-							</TabButton>
-						))}
-					</TabList>
-					{tabData.map(
-						({ title, tabChildren, key, width }, index) =>
-							activeTab === key && (
-								<TabPanelContainer
-									id={`${title}-tabpanel`}
-									role="tabpanel"
-									aria-labelledby={`${title}-tab`}
-									tabIndex={-1}
-									padding={boxPadding}
-									height={boxHeight}
-									key={`${key}-${index}-panel`}
+			{isMainnet && (
+				<TopContainer {...{ isManageTab }}>
+					<DebtTabsContainer>
+						<TabList noOfTabs={tabData.length}>
+							{tabData.map(({ title, icon, key, disabled = false }, index) => (
+								<TabButton
+									isSingle={false}
+									tabHeight={tabHeight}
+									blue={true}
+									key={`${key}-${index}-button`}
+									name={title}
+									active={activeTab === key}
+									isDisabled={disabled}
+									onClick={() => {
+										setActiveTab(key);
+										if (setPanelType != null) {
+											setPanelType(key);
+										}
+									}}
 								>
-									{tabChildren}
-								</TabPanelContainer>
-							)
-					)}
-				</DebtTabsContainer>
-				<DebtHedgingInfoPanel hidden={!isManageTab} />
-			</TopContainer>
+									{icon != null && icon}
+									<TitleContainer>{title}</TitleContainer>
+								</TabButton>
+							))}
+						</TabList>
+						{tabData.map(
+							({ title, tabChildren, key, width }, index) =>
+								activeTab === key && (
+									<TabPanelContainer
+										id={`${title}-tabpanel`}
+										role="tabpanel"
+										aria-labelledby={`${title}-tab`}
+										tabIndex={-1}
+										padding={boxPadding}
+										height={boxHeight}
+										key={`${key}-${index}-panel`}
+									>
+										{tabChildren}
+									</TabPanelContainer>
+								)
+						)}
+					</DebtTabsContainer>
+					<DebtHedgingInfoPanel hidden={!isManageTab} />
+				</TopContainer>
+			)}
 			{activeTab === DebtPanelType.OVERVIEW && (
 				<BottomContainer>
 					<DebtPieChartContainer>
