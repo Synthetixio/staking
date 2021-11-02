@@ -10,6 +10,7 @@ import { NO_VALUE } from 'constants/placeholder';
 import useSynthetixQueries, { exchanges, SynthetixQueryContext } from '@synthetixio/queries';
 import { useContext } from 'react';
 import { calculatePercentChange } from 'utils/currencies';
+import { Period, PERIOD_IN_SECONDS } from 'constants/period';
 
 type SynthPriceColProps = {
 	currencyKey: CurrencyKey;
@@ -26,7 +27,7 @@ const SynthPriceCol: FC<SynthPriceColProps> = ({ currencyKey }) => {
 		{
 			orderBy: 'timestamp',
 			orderDirection: 'desc',
-			where: { timestamp_gt: Date.now() - 86400, currencyKey },
+			where: { timestamp_gt: Date.now() - PERIOD_IN_SECONDS[Period.ONE_DAY], currencyKey },
 		},
 		{ timestamp: true, rate: true }
 	);
