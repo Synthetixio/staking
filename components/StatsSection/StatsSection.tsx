@@ -18,17 +18,24 @@ import CollapseIcon from 'assets/svg/app/chevron-collapse.svg';
 import ExpandIcon from 'assets/svg/app/chevron-expand.svg';
 import { useRecoilValue } from 'recoil';
 import { walletAddressState, delegateWalletState } from 'store/wallet';
-import useSynthetixQueries from '@synthetixio/queries';
+import useSynthetixQueries, { exchanges, SynthetixQueryContext } from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
 import useCryptoBalances from 'hooks/useCryptoBalances';
+import React from 'react';
 
 const StatsSection: FC = ({ children }) => {
 	const walletAddress = useRecoilValue(walletAddressState);
 	const delegateWallet = useRecoilValue(delegateWalletState);
 
-	const { useSynthsBalancesQuery, useSNX24hrPricesQuery } = useSynthetixQueries();
+	const { useSynthsBalancesQuery } = useSynthetixQueries();
 
-	const SNX24hrPricesQuery = useSNX24hrPricesQuery();
+	const exchangesURL =
+		React.useContext(SynthetixQueryContext)?.context.subgraphEndpoints.exchanges || '';
+	const SNX24hrPricesQuery = exchanges.useGetDailySNXPrices(
+		exchangesURL,
+		{ first: 365 },
+		{ id: true, averagePrice: true }
+	);
 	const cryptoBalances = useCryptoBalances(delegateWallet?.address ?? walletAddress);
 	const synthsBalancesQuery = useSynthsBalancesQuery(delegateWallet?.address ?? walletAddress);
 	const [mobileStatsSectionIsOpen, setMobileStatsSectionIsOpen] = useState(false);
@@ -41,7 +48,7 @@ const StatsSection: FC = ({ children }) => {
 
 	const snxPriceChartData = useMemo(() => {
 		return (SNX24hrPricesQuery?.data ?? [])
-			.map((dataPoint: { averagePrice: number }) => ({ value: dataPoint.averagePrice }))
+			.map((dataPoint) => ({ value: dataPoint.averagePrice.toNumber() }))
 			.slice()
 			.reverse();
 	}, [SNX24hrPricesQuery?.data]);

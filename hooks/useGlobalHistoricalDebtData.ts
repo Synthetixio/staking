@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { orderBy } from 'lodash';
-import useSynthetixQueries from '@synthetixio/queries';
+import { issuance, SynthetixQueryContext } from '@synthetixio/queries';
 import { StakingTransactionType } from '@synthetixio/queries';
+import React from 'react';
 
 type HistoricalGlobalDebtAndIssuanceData = {
 	issuance: number;
@@ -20,18 +21,27 @@ const useGlobalHistoricalDebtData = () => {
 		data: [],
 	});
 
-	const { useDailyStakingActivityQuery } = useSynthetixQueries();
+	const issuanceURL =
+		React.useContext(SynthetixQueryContext)?.context.subgraphEndpoints.issuance || '';
+	const dailyIssued = issuance.useGetDailyIssueds(
+		issuanceURL,
+		{ orderBy: 'id', orderDirection: 'desc' },
+		{ id: true, totalDebt: true }
+	);
+	const dailyBurned = issuance.useGetDailyBurneds(
+		issuanceURL,
+		{ orderBy: 'id', orderDirection: 'desc' },
+		{ id: true, totalDebt: true }
+	);
 
-	const activityQuery = useDailyStakingActivityQuery();
-
-	const isLoaded = activityQuery.isSuccess;
+	const isLoaded = dailyIssued.isSuccess && dailyBurned.isSuccess;
 
 	useEffect(() => {
 		if (isLoaded) {
-			const activity = activityQuery.data ?? [[], []];
+			const activity = [dailyIssued.data ?? [], dailyBurned.data ?? []];
 
 			// We concat both the events and order them (asc)
-			const eventBlocks = orderBy((activity[0] as any).concat(activity[1]), 'timestamp', 'asc');
+			const eventBlocks = orderBy((activity[0] as any).concat(activity[1]), 'id', 'asc');
 
 			const data: HistoricalGlobalDebtAndIssuanceData[] = [];
 

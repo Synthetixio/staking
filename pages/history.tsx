@@ -1,4 +1,4 @@
-import { FC, useMemo, useEffect } from 'react';
+import { FC, useEffect } from 'react';
 import Head from 'next/head';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
@@ -9,27 +9,81 @@ import TransactionsContainer from 'sections/history/TransactionsContainer';
 import StatsSection from 'components/StatsSection';
 
 import StatBox from 'components/StatBox';
-import useSynthetixQueries from '@synthetixio/queries';
+import { issuance, SynthetixQueryContext } from '@synthetixio/queries';
 import { useRecoilValue } from 'recoil';
 import { walletAddressState } from 'store/wallet';
+import { StakingTransactionType } from 'sections/history/types';
+import _ from 'lodash';
+import React from 'react';
 
 const HistoryPage: FC = () => {
 	const { t } = useTranslation();
 
 	const walletAddress = useRecoilValue(walletAddressState);
 
-	const { useFeeClaimHistoryQuery } = useSynthetixQueries();
+	const issuanceURL =
+		React.useContext(SynthetixQueryContext)?.context.subgraphEndpoints.issuance || '';
+	const issues = issuance.useGetIssueds(
+		issuanceURL,
+		{
+			first: 1000,
+			orderBy: 'timestamp',
+			orderDirection: 'desc',
+			where: { account: walletAddress?.toLowerCase() },
+		},
+		{ id: true, timestamp: true, value: true }
+	);
+	const burns = issuance.useGetBurneds(
+		issuanceURL,
+		{
+			first: 1000,
+			orderBy: 'timestamp',
+			orderDirection: 'desc',
+			where: { account: walletAddress?.toLowerCase() },
+		},
+		{ id: true, timestamp: true, value: true }
+	);
+	const feeClaims = issuance.useGetFeesClaimeds(
+		issuanceURL,
+		{
+			first: 1000,
+			orderBy: 'timestamp',
+			orderDirection: 'desc',
+			where: { account: walletAddress?.toLowerCase() },
+		},
+		{ id: true, timestamp: true, rewards: true, value: true }
+	);
 
-	const feesClaimedQuery = useFeeClaimHistoryQuery(walletAddress);
+	console.log(feeClaims.data);
+
 	const { setTitle } = UIContainer.useContainer();
 
-	const isLoaded = feesClaimedQuery.isSuccess;
-	const feesClaimed = feesClaimedQuery.data ?? [];
+	const isLoaded = issues.isSuccess && burns.isSuccess && feeClaims.isSuccess;
 
-	const txCount = useMemo(() => (isLoaded ? feesClaimed.length : 0), [
-		isLoaded,
-		feesClaimed.length,
-	]);
+	const history = isLoaded
+		? _.sortBy(
+				_.flatten([
+					issues.data!.map((d) => ({
+						type: StakingTransactionType.Issued,
+						hash: d.id.split('-')[0],
+						...d,
+					})),
+					burns.data!.map((d) => ({
+						type: StakingTransactionType.Burned,
+						hash: d.id.split('-')[0],
+						...d,
+					})),
+					feeClaims.data!.map((d) => ({
+						type: StakingTransactionType.FeesClaimed,
+						hash: d.id.split('-')[0],
+						...d,
+					})),
+				]),
+				(d) => -d.timestamp.toNumber()
+		  )
+		: [];
+
+	const txCount = history.length;
 
 	// header title
 	useEffect(() => {
@@ -47,7 +101,7 @@ const HistoryPage: FC = () => {
 				<div />
 			</StatsSection>
 			<LineSpacer />
-			<TransactionsContainer history={feesClaimed} isLoaded={isLoaded} />
+			<TransactionsContainer history={history} isLoaded={isLoaded} />
 		</>
 	);
 };

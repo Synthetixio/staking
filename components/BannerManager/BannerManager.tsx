@@ -9,15 +9,15 @@ import { ExternalLink } from 'styles/common';
 import { formatShortDateWithTime } from 'utils/formatters/date';
 import { wei } from '@synthetixio/wei';
 import { isL2State, walletAddressState } from 'store/wallet';
-import useSynthetixQueries from '@synthetixio/queries';
+import useSynthetixQueries, { issuance, SynthetixQueryContext } from '@synthetixio/queries';
 import { snapshotEndpoint } from 'constants/snapshot';
+import React from 'react';
 
 const BannerManager: FC = () => {
 	const {
 		useGetLiquidationDataQuery,
 		useGetDebtDataQuery,
 		useHasVotedForElectionsQuery,
-		useFeeClaimHistoryQuery,
 	} = useSynthetixQueries();
 
 	const walletAddress = useRecoilValue(walletAddressState);
@@ -25,7 +25,15 @@ const BannerManager: FC = () => {
 	const liquidationData = useGetLiquidationDataQuery(walletAddress);
 	const debtData = useGetDebtDataQuery(walletAddress);
 	const hasVotedForElectionsQuery = useHasVotedForElectionsQuery(snapshotEndpoint, walletAddress);
-	const feeClaimHistory = useFeeClaimHistoryQuery(walletAddress);
+
+	const issuanceURL =
+		React.useContext(SynthetixQueryContext)?.context.subgraphEndpoints.issuance || '';
+	const feeClaims = issuance.useGetFeesClaimeds(
+		issuanceURL,
+		{ first: 1, where: { account: walletAddress?.toLowerCase() } },
+		{ timestamp: true, value: true, rewards: true }
+	);
+
 	const isL2 = useRecoilValue(isL2State);
 
 	const issuanceRatio = debtData?.data?.targetCRatio ?? wei(0);
@@ -35,7 +43,7 @@ const BannerManager: FC = () => {
 
 	const issuanceRatioPercentage = issuanceRatio.eq(0) ? 0 : 100 / Number(issuanceRatio);
 
-	const hasClaimHistory = !!feeClaimHistory.data?.length;
+	const hasClaimHistory = !!feeClaims.data?.length;
 
 	if (!liquidationDeadlineForAccount.eq(0) && cRatio.gt(issuanceRatio)) {
 		return (

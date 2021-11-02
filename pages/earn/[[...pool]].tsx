@@ -14,7 +14,7 @@ import useUserStakingData from 'hooks/useUserStakingData';
 import { formatFiatCurrency, formatPercent } from 'utils/formatters/number';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import useSynthetixQueries, { StakingTransactionType } from '@synthetixio/queries';
+import useSynthetixQueries, { issuance, SynthetixQueryContext } from '@synthetixio/queries';
 import { useRecoilValue } from 'recoil';
 import { walletAddressState, delegateWalletState } from 'store/wallet';
 import { wei } from '@synthetixio/wei';
@@ -25,7 +25,7 @@ const Earn: FC = () => {
 
 	const walletAddress = useRecoilValue(walletAddressState);
 	const delegateWallet = useRecoilValue(delegateWalletState);
-	const { useExchangeRatesQuery, useFeeClaimHistoryQuery } = useSynthetixQueries();
+	const { useExchangeRatesQuery } = useSynthetixQueries();
 
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
@@ -41,18 +41,23 @@ const Earn: FC = () => {
 
 	const totalRewards = tradingRewards.add(stakingRewards.mul(SNXRate));
 
-	const feeClaimHistoryQuery = useFeeClaimHistoryQuery(delegateWallet?.address ?? walletAddress);
-
-	const feeClaimHistory = useMemo(() => feeClaimHistoryQuery.data ?? [], [
-		feeClaimHistoryQuery.data,
-	]);
+	const issuanceURL =
+		React.useContext(SynthetixQueryContext)?.context.subgraphEndpoints.issuance || '';
+	const feeClaims = issuance.useGetFeesClaimeds(
+		issuanceURL,
+		{
+			first: 1000,
+			orderBy: 'timestamp',
+			orderDirection: 'desc',
+			where: { account: (delegateWallet?.address ?? walletAddress)?.toLowerCase() },
+		},
+		{ timestamp: true, rewards: true, value: true }
+	);
 
 	const totalFees = useMemo(() => {
 		let total = wei(0);
 
-		feeClaimHistory.forEach((claim) => {
-			if (claim.type !== StakingTransactionType.FeesClaimed) return;
-
+		feeClaims.data?.forEach((claim) => {
 			const usdAmount = claim.value;
 			const snxAmount = claim.rewards ?? wei(0);
 			const snxUsdValue = snxAmount.mul(SNXRate);
@@ -61,7 +66,7 @@ const Earn: FC = () => {
 		});
 
 		return total;
-	}, [feeClaimHistory, SNXRate]);
+	}, [feeClaims, SNXRate]);
 
 	// header title
 	useEffect(() => {
