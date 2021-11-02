@@ -1,6 +1,6 @@
 import { CurrencyKey, Synths, CryptoCurrency, FIAT_SYNTHS } from 'constants/currency';
 import { Rates } from '@synthetixio/queries';
-import { wei } from '@synthetixio/wei';
+import Wei, { wei, WeiSource } from '@synthetixio/wei';
 
 export const isSynth = (currencyKey?: CurrencyKey) => (currencyKey || '') in Synths;
 export const isCryptoCurrency = (currencyKey: CurrencyKey) => currencyKey in CryptoCurrency;
@@ -24,3 +24,7 @@ export const getExchangeRatesForCurrencies = (
 
 export const getCurrencyKeyURLPath = (currencyKey: CurrencyKey) =>
 	`https:///www.synthetix.io/assets/synths/svg/${currencyKey}.svg`;
+
+export function calculatePercentChange(oldVal: WeiSource, newVal: WeiSource) {
+	return wei(oldVal).div(Wei.min(wei(newVal), wei(0.01)));
+}

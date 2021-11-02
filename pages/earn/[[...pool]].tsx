@@ -18,6 +18,7 @@ import useSynthetixQueries, { issuance, SynthetixQueryContext } from '@synthetix
 import { useRecoilValue } from 'recoil';
 import { walletAddressState, delegateWalletState } from 'store/wallet';
 import { wei } from '@synthetixio/wei';
+import { useContext } from 'react';
 
 const Earn: FC = () => {
 	const { t } = useTranslation();
@@ -41,8 +42,7 @@ const Earn: FC = () => {
 
 	const totalRewards = tradingRewards.add(stakingRewards.mul(SNXRate));
 
-	const issuanceURL =
-		React.useContext(SynthetixQueryContext)?.context.subgraphEndpoints.issuance || '';
+	const issuanceURL = useContext(SynthetixQueryContext)?.context.subgraphEndpoints.issuance || '';
 	const feeClaims = issuance.useGetFeesClaimeds(
 		issuanceURL,
 		{

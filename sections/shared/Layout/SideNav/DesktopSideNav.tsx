@@ -25,7 +25,7 @@ import SideNav from './SideNav';
 import SubMenu from './DesktopSubMenu';
 import useSynthetixQueries, { exchanges, SynthetixQueryContext } from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
-import React from 'react';
+import { useContext } from 'react';
 
 const DesktopSideNav: FC = () => {
 	const walletAddress = useRecoilValue(walletAddressState);
@@ -33,8 +33,7 @@ const DesktopSideNav: FC = () => {
 
 	const { useSynthsBalancesQuery } = useSynthetixQueries();
 
-	const exchangesURL =
-		React.useContext(SynthetixQueryContext)?.context.subgraphEndpoints.exchanges || '';
+	const exchangesURL = useContext(SynthetixQueryContext)?.context.subgraphEndpoints.exchanges || '';
 	const SNX24hrPricesQuery = exchanges.useGetDailySNXPrices(
 		exchangesURL,
 		{ first: 30, orderBy: 'id', orderDirection: 'desc' },

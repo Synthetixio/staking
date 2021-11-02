@@ -21,7 +21,7 @@ import { walletAddressState, delegateWalletState } from 'store/wallet';
 import useSynthetixQueries, { exchanges, SynthetixQueryContext } from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
 import useCryptoBalances from 'hooks/useCryptoBalances';
-import React from 'react';
+import { useContext } from 'react';
 
 const StatsSection: FC = ({ children }) => {
 	const walletAddress = useRecoilValue(walletAddressState);
@@ -29,8 +29,7 @@ const StatsSection: FC = ({ children }) => {
 
 	const { useSynthsBalancesQuery } = useSynthetixQueries();
 
-	const exchangesURL =
-		React.useContext(SynthetixQueryContext)?.context.subgraphEndpoints.exchanges || '';
+	const exchangesURL = useContext(SynthetixQueryContext)?.context.subgraphEndpoints.exchanges || '';
 	const SNX24hrPricesQuery = exchanges.useGetDailySNXPrices(
 		exchangesURL,
 		{ first: 365 },

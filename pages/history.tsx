@@ -13,16 +13,16 @@ import { issuance, SynthetixQueryContext } from '@synthetixio/queries';
 import { useRecoilValue } from 'recoil';
 import { walletAddressState } from 'store/wallet';
 import { StakingTransactionType } from 'sections/history/types';
-import _ from 'lodash';
-import React from 'react';
+import sortBy from 'lodash/sortBy';
+
+import { useContext } from 'react';
 
 const HistoryPage: FC = () => {
 	const { t } = useTranslation();
 
 	const walletAddress = useRecoilValue(walletAddressState);
 
-	const issuanceURL =
-		React.useContext(SynthetixQueryContext)?.context.subgraphEndpoints.issuance || '';
+	const issuanceURL = useContext(SynthetixQueryContext)?.context.subgraphEndpoints.issuance || '';
 	const issues = issuance.useGetIssueds(
 		issuanceURL,
 		{
@@ -59,8 +59,8 @@ const HistoryPage: FC = () => {
 	const isLoaded = issues.isSuccess && burns.isSuccess && feeClaims.isSuccess;
 
 	const history = isLoaded
-		? _.sortBy(
-				_.flatten([
+		? sortBy(
+				[
 					issues.data!.map((d) => ({
 						type: StakingTransactionType.Issued,
 						hash: d.id.split('-')[0],
@@ -76,7 +76,7 @@ const HistoryPage: FC = () => {
 						hash: d.id.split('-')[0],
 						...d,
 					})),
-				]),
+				].flat(),
 				(d) => -d.timestamp.toNumber()
 		  )
 		: [];

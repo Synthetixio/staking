@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { orderBy } from 'lodash';
 import { issuance, SynthetixQueryContext } from '@synthetixio/queries';
 import { StakingTransactionType } from '@synthetixio/queries';
-import React from 'react';
+import { useContext } from 'react';
 
 type HistoricalGlobalDebtAndIssuanceData = {
 	issuance: number;
@@ -21,8 +21,7 @@ const useGlobalHistoricalDebtData = () => {
 		data: [],
 	});
 
-	const issuanceURL =
-		React.useContext(SynthetixQueryContext)?.context.subgraphEndpoints.issuance || '';
+	const issuanceURL = useContext(SynthetixQueryContext)?.context.subgraphEndpoints.issuance || '';
 	const dailyIssued = issuance.useGetDailyIssueds(
 		issuanceURL,
 		{ orderBy: 'id', orderDirection: 'desc' },

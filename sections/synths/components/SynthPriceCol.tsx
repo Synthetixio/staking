@@ -8,7 +8,8 @@ import { CurrencyKey } from '@synthetixio/contracts-interface';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { NO_VALUE } from 'constants/placeholder';
 import useSynthetixQueries, { exchanges, SynthetixQueryContext } from '@synthetixio/queries';
-import React from 'react';
+import { useContext } from 'react';
+import { calculatePercentChange } from 'utils/currencies';
 
 type SynthPriceColProps = {
 	currencyKey: CurrencyKey;
@@ -19,8 +20,7 @@ const SynthPriceCol: FC<SynthPriceColProps> = ({ currencyKey }) => {
 
 	const exchangeRatesQuery = useExchangeRatesQuery();
 
-	const exchangesURL =
-		React.useContext(SynthetixQueryContext)?.context.subgraphEndpoints.exchanges || '';
+	const exchangesURL = useContext(SynthetixQueryContext)?.context.subgraphEndpoints.exchanges || '';
 	const historicalRates = exchanges.useGetRateUpdates(
 		exchangesURL,
 		{
@@ -43,9 +43,10 @@ const SynthPriceCol: FC<SynthPriceColProps> = ({ currencyKey }) => {
 					currencyKey={currencyKey}
 					price={price}
 					sign={selectedPriceCurrency.sign}
-					change={historicalRates.data?.[0].rate
-						.div(historicalRates.data?.[historicalRates.data?.length - 1].rate)
-						.toNumber()}
+					change={calculatePercentChange(
+						historicalRates.data?.[historicalRates.data?.length - 1].rate,
+						historicalRates.data?.[0].rate
+					).toNumber()}
 					conversionRate={selectPriceCurrencyRate}
 				/>
 			) : (

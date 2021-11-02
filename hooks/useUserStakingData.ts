@@ -8,7 +8,7 @@ import { WEEKS_IN_YEAR } from 'constants/date';
 import { isL2State } from 'store/wallet';
 import Wei, { wei } from '@synthetixio/wei';
 import useSynthetixQueries, { issuance, SynthetixQueryContext } from '@synthetixio/queries';
-import React from 'react';
+import { useContext } from 'react';
 
 export const useUserStakingData = (walletAddress: string | null) => {
 	const isL2 = useRecoilValue(isL2State);
@@ -19,8 +19,7 @@ export const useUserStakingData = (walletAddress: string | null) => {
 		useClaimableRewardsQuery,
 	} = useSynthetixQueries();
 
-	const issuanceURL =
-		React.useContext(SynthetixQueryContext)?.context.subgraphEndpoints.issuance || '';
+	const issuanceURL = useContext(SynthetixQueryContext)?.context.subgraphEndpoints.issuance || '';
 	const feeClaims = issuance.useGetFeesClaimeds(
 		issuanceURL,
 		{
