@@ -72,8 +72,6 @@ const useHistoricalDebtData = (walletAddress: string | null) => {
 				(d) => d.timestamp.toNumber()
 			);
 
-			console.log('issuesburns leng', issuesAndBurns.length);
-
 			const debtHistory = debtSnapshot.data ?? [];
 
 			// We set historicalIssuanceAggregation array, to store all the cumulative

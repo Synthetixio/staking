@@ -54,8 +54,6 @@ const HistoryPage: FC = () => {
 		{ id: true, timestamp: true, rewards: true, value: true }
 	);
 
-	console.log(feeClaims.data);
-
 	const { setTitle } = UIContainer.useContainer();
 
 	const isLoaded = issues.isSuccess && burns.isSuccess && feeClaims.isSuccess;
