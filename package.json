@@ -24,7 +24,7 @@
 		"@synthetixio/assets": "2.0.10",
 		"@synthetixio/contracts-interface": "2.52.1-ovm",
 		"@synthetixio/optimism-networks": "2.52.1-ovm",
-		"@synthetixio/providers": "2.52.1-ovm",
+		"@synthetixio/providers": "2.52.2",
 		"@synthetixio/queries": "2.52.1-ovm",
 		"@synthetixio/transaction-notifier": "2.52.1-ovm",
 		"@synthetixio/wei": "2.51.0-next",
