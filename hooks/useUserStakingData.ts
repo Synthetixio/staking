@@ -16,7 +16,7 @@ export const useUserStakingData = (walletAddress: string | null) => {
 		useGetFeePoolDataQuery,
 		useGetDebtDataQuery,
 		useClaimableRewardsQuery,
-		issuance
+		issuance,
 	} = useSynthetixQueries();
 
 	const feeClaims = issuance.useGetFeesClaimeds(
