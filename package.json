@@ -26,7 +26,7 @@
 		"@synthetixio/optimism-networks": "2.52.1-ovm",
 		"@synthetixio/providers": "2.52.1-ovm",
 		"@synthetixio/queries": "2.52.1-ovm",
-		"@synthetixio/transaction-notifier": "2.52.1-ovm",
+		"@synthetixio/transaction-notifier": "2.52.2",
 		"@synthetixio/wei": "2.51.0-next",
 		"@tippyjs/react": "4.1.0",
 		"axios": "0.21.1",
