@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react';
 import { last } from 'lodash';
-import useSynthetixQueries, { issuance, SynthetixQueryContext } from '@synthetixio/queries';
+import useSynthetixQueries from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
 import sortBy from 'lodash/sortBy';
-import { useContext } from 'react';
 
 export type HistoricalDebtAndIssuanceData = {
 	timestamp: number;
@@ -23,11 +22,9 @@ const useHistoricalDebtData = (walletAddress: string | null) => {
 		data: [],
 	});
 
-	const { useGetDebtDataQuery } = useSynthetixQueries();
+	const { useGetDebtDataQuery, issuance } = useSynthetixQueries();
 
-	const issuanceURL = useContext(SynthetixQueryContext)?.context.subgraphEndpoints.issuance || '';
 	const issues = issuance.useGetIssueds(
-		issuanceURL,
 		{
 			first: 1000,
 			orderBy: 'timestamp',
@@ -37,7 +34,6 @@ const useHistoricalDebtData = (walletAddress: string | null) => {
 		{ timestamp: true, value: true }
 	);
 	const burns = issuance.useGetBurneds(
-		issuanceURL,
 		{
 			first: 1000,
 			orderBy: 'timestamp',
@@ -48,7 +44,6 @@ const useHistoricalDebtData = (walletAddress: string | null) => {
 	);
 
 	const debtSnapshot = issuance.useGetDebtSnapshots(
-		issuanceURL,
 		{
 			first: 1000,
 			orderBy: 'timestamp',

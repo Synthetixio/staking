@@ -9,12 +9,12 @@ import { ExternalLink } from 'styles/common';
 import { formatShortDateWithTime } from 'utils/formatters/date';
 import { wei } from '@synthetixio/wei';
 import { isL2State, walletAddressState } from 'store/wallet';
-import useSynthetixQueries, { issuance, SynthetixQueryContext } from '@synthetixio/queries';
+import useSynthetixQueries from '@synthetixio/queries';
 import { snapshotEndpoint } from 'constants/snapshot';
-import { useContext } from 'react';
 
 const BannerManager: FC = () => {
 	const {
+		issuance,
 		useGetLiquidationDataQuery,
 		useGetDebtDataQuery,
 		useHasVotedForElectionsQuery,
@@ -26,9 +26,7 @@ const BannerManager: FC = () => {
 	const debtData = useGetDebtDataQuery(walletAddress);
 	const hasVotedForElectionsQuery = useHasVotedForElectionsQuery(snapshotEndpoint, walletAddress);
 
-	const issuanceURL = useContext(SynthetixQueryContext)?.context.subgraphEndpoints.issuance || '';
 	const feeClaims = issuance.useGetFeesClaimeds(
-		issuanceURL,
 		{ first: 1, where: { account: walletAddress?.toLowerCase() } },
 		{ timestamp: true, value: true, rewards: true }
 	);

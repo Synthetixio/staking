@@ -18,20 +18,17 @@ import CollapseIcon from 'assets/svg/app/chevron-collapse.svg';
 import ExpandIcon from 'assets/svg/app/chevron-expand.svg';
 import { useRecoilValue } from 'recoil';
 import { walletAddressState, delegateWalletState } from 'store/wallet';
-import useSynthetixQueries, { exchanges, SynthetixQueryContext } from '@synthetixio/queries';
+import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
 import useCryptoBalances from 'hooks/useCryptoBalances';
-import { useContext } from 'react';
 
 const StatsSection: FC = ({ children }) => {
 	const walletAddress = useRecoilValue(walletAddressState);
 	const delegateWallet = useRecoilValue(delegateWalletState);
 
-	const { useSynthsBalancesQuery } = useSynthetixQueries();
+	const { useSynthsBalancesQuery, exchanges } = useSynthetixQueries();
 
-	const exchangesURL = useContext(SynthetixQueryContext)?.context.subgraphEndpoints.exchanges || '';
 	const SNX24hrPricesQuery = exchanges.useGetDailySNXPrices(
-		exchangesURL,
 		{ first: 365 },
 		{ id: true, averagePrice: true }
 	);

@@ -23,19 +23,16 @@ import CRatioBarStats from 'sections/shared/Layout/Stats/CRatioBarStats';
 
 import SideNav from './SideNav';
 import SubMenu from './DesktopSubMenu';
-import useSynthetixQueries, { exchanges, SynthetixQueryContext } from '@synthetixio/queries';
+import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
-import { useContext } from 'react';
 
 const DesktopSideNav: FC = () => {
 	const walletAddress = useRecoilValue(walletAddressState);
 	const delegateWallet = useRecoilValue(delegateWalletState);
 
-	const { useSynthsBalancesQuery } = useSynthetixQueries();
+	const { useSynthsBalancesQuery, exchanges } = useSynthetixQueries();
 
-	const exchangesURL = useContext(SynthetixQueryContext)?.context.subgraphEndpoints.exchanges || '';
 	const SNX24hrPricesQuery = exchanges.useGetDailySNXPrices(
-		exchangesURL,
 		{ first: 30, orderBy: 'id', orderDirection: 'desc' },
 		{ id: true, averagePrice: true }
 	);

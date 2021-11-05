@@ -14,11 +14,10 @@ import useUserStakingData from 'hooks/useUserStakingData';
 import { formatFiatCurrency, formatPercent } from 'utils/formatters/number';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import useSynthetixQueries, { issuance, SynthetixQueryContext } from '@synthetixio/queries';
+import useSynthetixQueries from '@synthetixio/queries';
 import { useRecoilValue } from 'recoil';
 import { walletAddressState, delegateWalletState } from 'store/wallet';
 import { wei } from '@synthetixio/wei';
-import { useContext } from 'react';
 
 const Earn: FC = () => {
 	const { t } = useTranslation();
@@ -26,7 +25,7 @@ const Earn: FC = () => {
 
 	const walletAddress = useRecoilValue(walletAddressState);
 	const delegateWallet = useRecoilValue(delegateWalletState);
-	const { useExchangeRatesQuery } = useSynthetixQueries();
+	const { useExchangeRatesQuery, issuance } = useSynthetixQueries();
 
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
@@ -42,9 +41,7 @@ const Earn: FC = () => {
 
 	const totalRewards = tradingRewards.add(stakingRewards.mul(SNXRate));
 
-	const issuanceURL = useContext(SynthetixQueryContext)?.context.subgraphEndpoints.issuance || '';
 	const feeClaims = issuance.useGetFeesClaimeds(
-		issuanceURL,
 		{
 			first: 1000,
 			orderBy: 'timestamp',

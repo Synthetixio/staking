@@ -9,22 +9,20 @@ import TransactionsContainer from 'sections/history/TransactionsContainer';
 import StatsSection from 'components/StatsSection';
 
 import StatBox from 'components/StatBox';
-import { issuance, SynthetixQueryContext } from '@synthetixio/queries';
 import { useRecoilValue } from 'recoil';
 import { walletAddressState } from 'store/wallet';
 import { StakingTransactionType } from 'sections/history/types';
 import sortBy from 'lodash/sortBy';
 
-import { useContext } from 'react';
+import useSynthetixQueries from '@synthetixio/queries';
 
 const HistoryPage: FC = () => {
 	const { t } = useTranslation();
 
 	const walletAddress = useRecoilValue(walletAddressState);
 
-	const issuanceURL = useContext(SynthetixQueryContext)?.context.subgraphEndpoints.issuance || '';
+	const { issuance } = useSynthetixQueries();
 	const issues = issuance.useGetIssueds(
-		issuanceURL,
 		{
 			first: 1000,
 			orderBy: 'timestamp',
@@ -34,7 +32,6 @@ const HistoryPage: FC = () => {
 		{ id: true, timestamp: true, value: true }
 	);
 	const burns = issuance.useGetBurneds(
-		issuanceURL,
 		{
 			first: 1000,
 			orderBy: 'timestamp',
@@ -44,7 +41,6 @@ const HistoryPage: FC = () => {
 		{ id: true, timestamp: true, value: true }
 	);
 	const feeClaims = issuance.useGetFeesClaimeds(
-		issuanceURL,
 		{
 			first: 1000,
 			orderBy: 'timestamp',
