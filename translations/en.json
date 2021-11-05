@@ -1071,6 +1071,7 @@
 			"info": {
 				"author": "Author",
 				"time": "Start - End",
+				"proposalLink": "View Proposal",
 				"snapshot": "Snapshot"
 			},
 			"votes": {
