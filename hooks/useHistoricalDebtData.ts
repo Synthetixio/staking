@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { last } from 'lodash';
 import useSynthetixQueries from '@synthetixio/queries';
-import { StakingTransactionType } from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
+import sortBy from 'lodash/sortBy';
 
 export type HistoricalDebtAndIssuanceData = {
 	timestamp: number;
@@ -22,42 +22,64 @@ const useHistoricalDebtData = (walletAddress: string | null) => {
 		data: [],
 	});
 
-	const {
-		useFeeClaimHistoryQuery,
-		useGetDebtSnapshotQuery,
-		useGetDebtDataQuery,
-	} = useSynthetixQueries();
+	const { useGetDebtDataQuery, issuance } = useSynthetixQueries();
 
-	const feeClaimHistoryQuery = useFeeClaimHistoryQuery(walletAddress);
-	const debtSnapshotQuery = useGetDebtSnapshotQuery(walletAddress);
+	const issues = issuance.useGetIssueds(
+		{
+			first: 1000,
+			orderBy: 'timestamp',
+			orderDirection: 'desc',
+			where: { account: walletAddress?.toLowerCase() },
+		},
+		{ timestamp: true, value: true }
+	);
+	const burns = issuance.useGetBurneds(
+		{
+			first: 1000,
+			orderBy: 'timestamp',
+			orderDirection: 'desc',
+			where: { account: walletAddress?.toLowerCase() },
+		},
+		{ timestamp: true, value: true }
+	);
+
+	const debtSnapshot = issuance.useGetDebtSnapshots(
+		{
+			first: 1000,
+			orderBy: 'timestamp',
+			orderDirection: 'desc',
+			where: { account: walletAddress?.toLowerCase() },
+		},
+		{ timestamp: true, debtBalanceOf: true }
+	);
+
 	const debtDataQuery = useGetDebtDataQuery(walletAddress);
 
 	const isLoaded =
-		feeClaimHistoryQuery.isSuccess && debtSnapshotQuery.isSuccess && debtDataQuery.isSuccess;
+		issues.isSuccess && burns.isSuccess && debtSnapshot.isSuccess && debtDataQuery.isSuccess;
 
 	useEffect(() => {
 		if (isLoaded) {
-			const claimHistory = feeClaimHistoryQuery.data ?? [];
-			const debtHistory = debtSnapshotQuery.data ?? [];
+			let issuesAndBurns = issues.data!.map((b) => ({ isBurn: false, ...b }));
+			issuesAndBurns = sortBy(
+				issuesAndBurns.concat(burns.data!.map((b) => ({ isBurn: true, ...b }))),
+				(d) => d.timestamp.toNumber()
+			);
+
+			const debtHistory = debtSnapshot.data ?? [];
 
 			// We set historicalIssuanceAggregation array, to store all the cumulative
 			// values of every mint and burns
 			const historicalIssuanceAggregation: Wei[] = [];
-			claimHistory
-				.slice()
-				.reverse()
-				.forEach((event, i) => {
-					if (event.type === StakingTransactionType.FeesClaimed) {
-						return; // skip
-					}
 
-					const multiplier = event.type === StakingTransactionType.Burned ? -1 : 1;
-					const aggregation = event.value
-						.mul(multiplier)
-						.add(last(historicalIssuanceAggregation) ?? wei(0));
+			issuesAndBurns.slice().forEach((event, i) => {
+				const multiplier = event.isBurn ? -1 : 1;
+				const aggregation = event.value
+					.mul(multiplier)
+					.add(last(historicalIssuanceAggregation) ?? wei(0));
 
-					historicalIssuanceAggregation.push(aggregation);
-				});
+				historicalIssuanceAggregation.push(aggregation);
+			});
 
 			// We merge both actual & issuance debt into an array
 			let historicalDebtAndIssuance: HistoricalDebtAndIssuanceData[] = [];
@@ -66,7 +88,7 @@ const useHistoricalDebtData = (walletAddress: string | null) => {
 				.reverse()
 				.forEach((debtSnapshot, i) => {
 					historicalDebtAndIssuance.push({
-						timestamp: debtSnapshot.timestamp,
+						timestamp: debtSnapshot.timestamp.toNumber() * 1000,
 						issuanceDebt: historicalIssuanceAggregation[i],
 						actualDebt: wei(debtSnapshot.debtBalanceOf),
 						index: i,

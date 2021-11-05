@@ -6,6 +6,14 @@ export enum Period {
 	ONE_MONTH = 'ONE_MONTH',
 }
 
+export const PERIOD_IN_SECONDS: Record<Period, number> = {
+	ONE_HOUR: 3600,
+	FOUR_HOURS: 3600 * 4,
+	ONE_DAY: 86400,
+	ONE_MONTH: 86400 * 30,
+	ONE_WEEK: 86400 * 7,
+};
+
 export const PERIOD_IN_HOURS: Record<Period, number> = {
 	ONE_HOUR: 1,
 	FOUR_HOURS: 4,
