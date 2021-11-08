@@ -32,7 +32,13 @@ const FormButton: React.FC<FormButtonProps> = ({
 	hasBothInputsSet,
 }) => {
 	const { t } = useTranslation();
-
+	if (!isWalletConnected) {
+		return (
+			<StyledCTA variant="primary" size="lg" onClick={onClick}>
+				{t('common.wallet.connect-wallet')}
+			</StyledCTA>
+		);
+	}
 	return (
 		<StyledCTA
 			variant="primary"
@@ -47,9 +53,7 @@ const FormButton: React.FC<FormButtonProps> = ({
 			data-testid="loans-form-button"
 			{...{ onClick }}
 		>
-			{!isWalletConnected ? (
-				t('common.wallet.connect-wallet')
-			) : isBorrowing ? (
+			{isBorrowing ? (
 				<Trans
 					i18nKey="loans.tabs.new.button.borrowing-label"
 					values={{

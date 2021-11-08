@@ -294,7 +294,7 @@ function toHumanizedDuration(ms: Wei) {
 			return u.label !== 'ms'; // && dur[u.label]
 		})
 		.map((u) => {
-			let val = dur[u.label].toString();
+			let val = dur[u.label].toString(0);
 			if (u.label === 'm' || u.label === 's') {
 				val = val.padStart(2, '0');
 			}

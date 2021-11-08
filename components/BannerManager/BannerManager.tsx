@@ -14,10 +14,10 @@ import { snapshotEndpoint } from 'constants/snapshot';
 
 const BannerManager: FC = () => {
 	const {
+		issuance,
 		useGetLiquidationDataQuery,
 		useGetDebtDataQuery,
 		useHasVotedForElectionsQuery,
-		useFeeClaimHistoryQuery,
 	} = useSynthetixQueries();
 
 	const walletAddress = useRecoilValue(walletAddressState);
@@ -25,7 +25,12 @@ const BannerManager: FC = () => {
 	const liquidationData = useGetLiquidationDataQuery(walletAddress);
 	const debtData = useGetDebtDataQuery(walletAddress);
 	const hasVotedForElectionsQuery = useHasVotedForElectionsQuery(snapshotEndpoint, walletAddress);
-	const feeClaimHistory = useFeeClaimHistoryQuery(walletAddress);
+
+	const feeClaims = issuance.useGetFeesClaimeds(
+		{ first: 1, where: { account: walletAddress?.toLowerCase() } },
+		{ timestamp: true, value: true, rewards: true }
+	);
+
 	const isL2 = useRecoilValue(isL2State);
 
 	const issuanceRatio = debtData?.data?.targetCRatio ?? wei(0);
@@ -35,7 +40,7 @@ const BannerManager: FC = () => {
 
 	const issuanceRatioPercentage = issuanceRatio.eq(0) ? 0 : 100 / Number(issuanceRatio);
 
-	const hasClaimHistory = !!feeClaimHistory.data?.length;
+	const hasClaimHistory = !!feeClaims.data?.length;
 
 	if (!liquidationDeadlineForAccount.eq(0) && cRatio.gt(issuanceRatio)) {
 		return (

@@ -25,6 +25,7 @@ import 'slick-carousel/slick/slick-theme.css';
 import 'tippy.js/dist/tippy.css';
 import '../i18n';
 import Connector from 'containers/Connector';
+import { DEFAULT_SUBGRAPH_ENDPOINTS } from '@synthetixio/queries/build/node/src/constants';
 
 const queryClient = new QueryClient({
 	defaultOptions: {
@@ -46,8 +47,12 @@ const InnerApp: FC<AppProps> = ({ Component, pageProps }) => {
 								provider: provider,
 								signer: signer || undefined,
 								networkId: network!.id,
+								subgraphEndpoints: DEFAULT_SUBGRAPH_ENDPOINTS[network!.id],
 						  })
-						: createQueryContext({ networkId: null })
+						: createQueryContext({
+								networkId: null,
+								subgraphEndpoints: DEFAULT_SUBGRAPH_ENDPOINTS[1],
+						  })
 				}
 			>
 				<Layout>
