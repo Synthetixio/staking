@@ -1,14 +1,18 @@
+import useUserStakingData from 'hooks/useUserStakingData';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import useClaimedStatus from 'sections/hooks/useClaimedStatus';
+import { useRecoilValue } from 'recoil';
+import { walletAddressState } from 'store/wallet';
 import styled from 'styled-components';
 
 const ClaimedTag: React.FC = ({ ...rest }) => {
 	const { t } = useTranslation();
-	const claimed = useClaimedStatus();
+
+	const walletAddress = useRecoilValue(walletAddressState);
+	const userStakingInfo = useUserStakingData(walletAddress);
 	return (
-		<Tag className="tag" isClaimed={claimed} {...rest}>
-			{claimed ? t('common.status.claimed') : t('common.status.unclaimed')}
+		<Tag className="tag" isClaimed={userStakingInfo.hasClaimed} {...rest}>
+			{userStakingInfo.hasClaimed ? t('common.status.claimed') : t('common.status.unclaimed')}
 		</Tag>
 	);
 };
