@@ -38,7 +38,8 @@ function Container() {
 		collateralManagerContract,
 		exchangeRatesContract,
 	] = useMemo(() => {
-		if (!(isAppReady && synthetixjs && signer)) return [null, null, null, null, null, null];
+		if (!(isAppReady && synthetixjs && signer && address))
+			return [null, null, null, null, null, null];
 		const {
 			contracts: {
 				CollateralEth: ethLoanContract,
@@ -130,7 +131,10 @@ function Container() {
 			const [n, minCRatio] = await Promise.all([
 				loanStateContract.getNumLoans(address),
 				loanContract.minCratio(),
-			]);
+			]).catch((err) => {
+				console.log('getLoanIndices', err);
+				throw err;
+			});
 			const loanIndices = [];
 			for (let i = 0; i < n; i++) {
 				loanIndices.push(i);
