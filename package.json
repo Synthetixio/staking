@@ -18,7 +18,6 @@
 	},
 	"dependencies": {
 		"@artsy/fresnel": "1.8.0",
-		"@metamask/detect-provider": "1.2.0",
 		"@reach/dialog": "0.15.3",
 		"@snapshot-labs/snapshot.js": "0.1.10",
 		"@synthetixio/assets": "2.0.10",
