@@ -56,7 +56,7 @@ export const initOnboard = (
 				},
 				{
 					walletName: 'walletConnect',
-					rpc: { [network ? network.id : Network.Mainnet]: infuraRpc },
+					rpc: { [network ? network.id : networkId]: infuraRpc },
 					preferred: true,
 				},
 				{ walletName: 'imToken', rpcUrl: infuraRpc, preferred: true },
