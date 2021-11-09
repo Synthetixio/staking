@@ -70,6 +70,7 @@
 	"devDependencies": {
 		"@babel/preset-env": "7.14.9",
 		"@babel/preset-react": "7.14.5",
+		"@metamask/providers": "8.1.1",
 		"@microsoft/eslint-formatter-sarif": "2.1.5",
 		"@synthetixio/synpress": "0.9.25-beta.12",
 		"@testing-library/jest-dom": "5.14.1",
