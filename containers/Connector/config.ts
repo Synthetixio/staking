@@ -2,7 +2,7 @@ import onboard from 'bnc-onboard';
 
 import { Subscriptions, WalletType } from 'bnc-onboard/dist/src/interfaces';
 import { getInfuraRpcURL } from 'utils/infura';
-import { Network, SynthetixJS } from '@synthetixio/contracts-interface';
+import { SynthetixJS } from '@synthetixio/contracts-interface';
 
 export const initOnboard = (
 	synthetixjs: SynthetixJS,

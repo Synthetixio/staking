@@ -58,7 +58,7 @@ function Container() {
 			collateralManagerContract,
 			exchangeRatesContract,
 		];
-	}, [isAppReady, signer, synthetixjs]);
+	}, [isAppReady, signer, synthetixjs, address]);
 
 	useEffect(() => {
 		if (
