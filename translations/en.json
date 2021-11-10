@@ -1422,7 +1422,7 @@
 			}
 		},
 		"merge": {
-			"title": "ENTER SOURCE ACCOUT",
+			"title": "ENTER SOURCE ACCOUNT",
 			"input-placeholder": "e.g. 0x3b18a4...",
 			"button-labels": {
 				"enter-address": "enter address",
