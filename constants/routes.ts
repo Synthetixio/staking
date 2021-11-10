@@ -45,11 +45,7 @@ export const ROUTES = {
 	},
 	L2: {
 		Home: '/l2',
-		Deposit: '/l2/deposit',
 		Migrate: '/l2/migrate',
-	},
-	Withdraw: {
-		Home: '/withdraw',
 	},
 	Gov: {
 		Home: '/gov',
