@@ -11,6 +11,7 @@ import media from 'styles/media';
 
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 import useSynthetixQueries from '@synthetixio/queries';
+import { EXTERNAL_LINKS } from 'constants/links';
 
 const Index: FC = () => {
 	const { t } = useTranslation();
@@ -27,7 +28,7 @@ const Index: FC = () => {
 				copy: depositsInactive
 					? t('layer2.actions.deposit.bridge-inactive')
 					: t('layer2.actions.deposit.subtitle'),
-				link: ROUTES.L2.Deposit,
+				link: EXTERNAL_LINKS.L2.SynthetixDeposit,
 			},
 			migrate: {
 				title: t('layer2.actions.migrate.title'),

@@ -27,12 +27,6 @@ const AppLayout: FC<AppLayoutProps> = ({ children }) => {
 	const delegateWallet = useRecoilValue(delegateWalletState);
 
 	useEffect(() => {
-		if (!isL2 && router.pathname === ROUTES.Withdraw.Home) {
-			router.push(ROUTES.Home);
-		}
-		if ((isL2 || depositsInactive) && router.pathname === ROUTES.L2.Deposit) {
-			router.push(ROUTES.Home);
-		}
 		if (isL2 && router.pathname.includes(ROUTES.Gov.Home)) {
 			router.push(ROUTES.Home);
 		}
