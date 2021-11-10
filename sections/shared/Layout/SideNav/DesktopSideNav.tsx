@@ -30,9 +30,12 @@ const DesktopSideNav: FC = () => {
 	const walletAddress = useRecoilValue(walletAddressState);
 	const delegateWallet = useRecoilValue(delegateWalletState);
 
-	const { useSNX24hrPricesQuery, useSynthsBalancesQuery } = useSynthetixQueries();
+	const { useSynthsBalancesQuery, exchanges } = useSynthetixQueries();
 
-	const SNX24hrPricesQuery = useSNX24hrPricesQuery();
+	const SNX24hrPricesQuery = exchanges.useGetDailySNXPrices(
+		{ first: 30, orderBy: 'id', orderDirection: 'desc' },
+		{ id: true, averagePrice: true }
+	);
 	const cryptoBalances = useCryptoBalances(delegateWallet?.address ?? walletAddress);
 	const synthsBalancesQuery = useSynthsBalancesQuery(delegateWallet?.address ?? walletAddress);
 	const isL2 = useRecoilValue(isL2State);
@@ -46,7 +49,7 @@ const DesktopSideNav: FC = () => {
 
 	const snxPriceChartData = useMemo(() => {
 		return (SNX24hrPricesQuery?.data ?? [])
-			.map((dataPoint: { averagePrice: number }) => ({ value: dataPoint.averagePrice }))
+			.map((dataPoint) => ({ value: dataPoint.averagePrice.toNumber() }))
 			.slice()
 			.reverse();
 	}, [SNX24hrPricesQuery?.data]);

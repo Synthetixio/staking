@@ -61,9 +61,16 @@ const useConnector = () => {
 
 	useEffect(() => {
 		const init = async () => {
-			// TODO: need to verify we support the network
 			const networkId = await getDefaultNetworkId();
 
+			if (!window.ethereum) {
+				setAppReady(true);
+				setNetwork({ name: NetworkName.Mainnet, id: networkId, useOvm: false });
+				setSynthetixjs(synthetix({ networkId, useOvm: false }));
+				return;
+			}
+
+			// TODO: need to verify we support the network
 			const provider = loadProvider({
 				networkId,
 				//infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
@@ -73,10 +80,7 @@ const useConnector = () => {
 
 			const snxjs = synthetix({ provider, networkId, useOvm });
 
-			const newNetwork = snxjs.network;
-			newNetwork.name = chainIdToNetwork[newNetwork.id] as NetworkName;
-
-			setNetwork(newNetwork);
+			setNetwork(snxjs.network);
 			setSynthetixjs(snxjs);
 			setProvider(provider);
 			setAppReady(true);
@@ -132,11 +136,7 @@ const useConnector = () => {
 						setProvider(provider);
 						setSigner(provider.getSigner());
 						setSynthetixjs(snxjs);
-						setNetwork({
-							id: networkId,
-							name: chainIdToNetwork[networkId] as NetworkName,
-							useOvm,
-						});
+						setNetwork(snxjs.network);
 						setSelectedWallet(wallet.name);
 						setTransactionNotifier(new TransactionNotifier(provider));
 					} else {
