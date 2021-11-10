@@ -1,5 +1,7 @@
 import { CurrencyKey } from './currency';
 
+export const PROD_HOSTNAME = 'staking.synthetix.io';
+
 export const EXTERNAL_LINKS = {
 	Trading: {
 		Kwenta: 'https://kwenta.io',
