@@ -26,5 +26,7 @@ export const getCurrencyKeyURLPath = (currencyKey: CurrencyKey) =>
 	`https:///www.synthetix.io/assets/synths/svg/${currencyKey}.svg`;
 
 export function calculatePercentChange(oldVal: WeiSource, newVal: WeiSource) {
+	if (!oldVal) return wei(0);
+	if (!newVal) return wei(0);
 	return wei(oldVal).div(Wei.min(wei(newVal), wei(0.01)));
 }
