@@ -44,8 +44,8 @@ const SynthPriceCol: FC<SynthPriceColProps> = ({ currencyKey }) => {
 					price={price}
 					sign={selectedPriceCurrency.sign}
 					change={calculatePercentChange(
-						historicalRates.data?.[historicalRates.data?.length - 1].rate,
-						historicalRates.data?.[0].rate
+						historicalRates.data?.[historicalRates.data?.length - 1]?.rate,
+						historicalRates.data?.[0]?.rate
 					).toNumber()}
 					conversionRate={selectPriceCurrencyRate}
 				/>
