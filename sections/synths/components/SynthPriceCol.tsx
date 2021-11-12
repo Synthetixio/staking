@@ -26,7 +26,7 @@ const SynthPriceCol: FC<SynthPriceColProps> = ({ currencyKey }) => {
 		{
 			orderBy: 'timestamp',
 			orderDirection: 'desc',
-			where: { timestamp_gt: oneDayAgoSeconds, currencyKey },
+			where: { timestamp_gt: oneDayAgoSeconds, synth: currencyKey },
 		},
 		{ timestamp: true, rate: true }
 	);
