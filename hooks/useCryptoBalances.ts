@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useMemo } from 'react';
 import { orderBy } from 'lodash';
 
@@ -129,19 +130,15 @@ const useCryptoBalances = (walletAddress: string | null) => {
 		return [];
 	}, [
 		isLoaded,
-		ETHBalance,
-		SNXBalance,
-		wETHBalance,
-		wBTCBalance,
-		renBTCBalance,
-		exchangeRates,
-		transferrableSNX,
+		ETHBalance.toString(),
+		SNXBalance.toString(),
+		wETHBalance.toString(),
+		wBTCBalance.toString(),
+		renBTCBalance.toString(),
+		JSON.stringify(exchangeRates),
+		transferrableSNX.toString(),
 	]);
-
-	return {
-		balances,
-		isLoaded,
-	};
+	return useMemo(() => ({ balances, isLoaded }), [balances, isLoaded]);
 };
 
 export default useCryptoBalances;
