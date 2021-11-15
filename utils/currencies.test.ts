@@ -13,7 +13,7 @@ describe('currencies', () => {
 		expect(calculatePercentChange(wei(10), wei(5)).toString()).toBe(wei(-0.5).toString());
 	});
 	test('calculatePercentChange handles old price 0', () => {
-		expect(calculatePercentChange(wei(0), wei(5)).toString()).toBe(wei(499).toString());
+		expect(calculatePercentChange(wei(0), wei(5)).toString()).toBe(wei(500).toString());
 	});
 	test('calculatePercentChange handles new price 0', () => {
 		expect(calculatePercentChange(wei(5), wei(0)).toString()).toBe(wei(-1).toString());

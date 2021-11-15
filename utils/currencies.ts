@@ -29,6 +29,6 @@ export function calculatePercentChange(oldVal: WeiSource, newVal: WeiSource) {
 	if (!oldVal) return wei(0);
 	if (!newVal) return wei(0);
 	return wei(newVal)
-		.div(Wei.max(wei(oldVal), wei(0.01)))
-		.sub(1);
+		.sub(oldVal)
+		.div(Wei.max(oldVal, wei(0.01)));
 }
