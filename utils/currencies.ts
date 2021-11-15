@@ -28,5 +28,7 @@ export const getCurrencyKeyURLPath = (currencyKey: CurrencyKey) =>
 export function calculatePercentChange(oldVal: WeiSource, newVal: WeiSource) {
 	if (!oldVal) return wei(0);
 	if (!newVal) return wei(0);
-	return wei(oldVal).div(Wei.min(wei(newVal), wei(0.01)));
+	return wei(newVal)
+		.sub(oldVal)
+		.div(Wei.max(oldVal, wei(0.01)));
 }

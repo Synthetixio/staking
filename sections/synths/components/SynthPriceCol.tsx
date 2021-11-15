@@ -20,11 +20,13 @@ const SynthPriceCol: FC<SynthPriceColProps> = ({ currencyKey }) => {
 
 	const exchangeRatesQuery = useExchangeRatesQuery();
 
+	const oneDayAgoSeconds = Math.floor(Date.now() / 1000) - PERIOD_IN_SECONDS[Period.ONE_DAY];
+
 	const historicalRates = exchanges.useGetRateUpdates(
 		{
 			orderBy: 'timestamp',
 			orderDirection: 'desc',
-			where: { timestamp_gt: Date.now() - PERIOD_IN_SECONDS[Period.ONE_DAY], currencyKey },
+			where: { timestamp_gt: oneDayAgoSeconds, synth: currencyKey },
 		},
 		{ timestamp: true, rate: true }
 	);
@@ -42,8 +44,8 @@ const SynthPriceCol: FC<SynthPriceColProps> = ({ currencyKey }) => {
 					price={price}
 					sign={selectedPriceCurrency.sign}
 					change={calculatePercentChange(
-						historicalRates.data?.[historicalRates.data?.length - 1].rate,
-						historicalRates.data?.[0].rate
+						historicalRates.data?.[historicalRates.data?.length - 1]?.rate,
+						historicalRates.data?.[0]?.rate
 					).toNumber()}
 					conversionRate={selectPriceCurrencyRate}
 				/>

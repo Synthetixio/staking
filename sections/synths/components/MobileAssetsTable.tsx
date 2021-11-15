@@ -74,7 +74,8 @@ const AssetsTable: FC<AssetsTableProps> = ({
 	const router = useRouter();
 
 	const { selectedPriceCurrency, selectPriceCurrencyRate } = useSelectedPriceCurrency();
-
+	const totalValueString = totalValue.toString();
+	const selectPriceCurrencyRateString = selectPriceCurrencyRate?.toString();
 	const assetColumns: any[] = useMemo(() => {
 		if (!isAppReady) {
 			return [];
@@ -113,7 +114,7 @@ const AssetsTable: FC<AssetsTableProps> = ({
 									valueCurrencyKey={selectedPriceCurrency.name}
 									totalValue={asset.usdBalance}
 									sign={selectedPriceCurrency.sign}
-									conversionRate={selectPriceCurrencyRate}
+									conversionRate={wei(selectPriceCurrencyRateString)}
 									{...{ showValue, showTotalValue }}
 								/>
 							</div>
@@ -132,7 +133,7 @@ const AssetsTable: FC<AssetsTableProps> = ({
 									<div>
 										<SynthHolding
 											usdBalance={asset.usdBalance}
-											totalUSDBalance={totalValue ?? wei(0)}
+											totalUSDBalance={wei(totalValueString || 0)}
 										/>
 									</div>
 								</>
@@ -190,8 +191,8 @@ const AssetsTable: FC<AssetsTableProps> = ({
 		showHoldings,
 		showConvert,
 		t,
-		totalValue,
-		selectPriceCurrencyRate,
+		totalValueString,
+		selectPriceCurrencyRateString,
 		selectedPriceCurrency.sign,
 		selectedPriceCurrency.name,
 		isAppReady,
