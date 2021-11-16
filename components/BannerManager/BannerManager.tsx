@@ -84,7 +84,7 @@ const BannerManager: FC = () => {
 				message={
 					<Trans
 						i18nKey={'user-menu.banner.thales-staking-info'}
-						components={[<StyledExternalLink href="https://thales.market/token?tab=staking" />]}
+						components={[<StyledExternalLink href="https://thalesmarket.io/token?tab=staking" />]}
 					/>
 				}
 			/>
