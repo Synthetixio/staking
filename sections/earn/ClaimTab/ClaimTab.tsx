@@ -223,17 +223,16 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 						? (await FeePool.estimateGas.claimOnBehalf(delegateWallet.address)).toNumber()
 						: (await FeePool.estimateGas.claimFees()).toNumber();
 
-					if (!isL2) {
-						gasLimit = normalizeGasLimit(gasLimit);
-					}
+					gasLimit = normalizeGasLimit(gasLimit);
 
+					const normalizedGasPriceValue = Math.round(normalizedGasPrice(gasPrice.toNumber()));
 					const transaction: ethers.ContractTransaction = delegateWallet
 						? await FeePool.claimOnBehalf(delegateWallet.address, {
-								gasPrice: normalizedGasPrice(gasPrice.toNumber()),
+								gasPrice: normalizedGasPriceValue,
 								gasLimit,
 						  })
 						: await FeePool.claimFees({
-								gasPrice: normalizedGasPrice(gasPrice.toNumber()),
+								gasPrice: normalizedGasPriceValue,
 								gasLimit,
 						  });
 
