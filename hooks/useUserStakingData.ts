@@ -9,6 +9,10 @@ import { isL2State } from 'store/wallet';
 import Wei, { wei } from '@synthetixio/wei';
 import useSynthetixQueries from '@synthetixio/queries';
 
+// exported for test
+export const calculateIsBelowCRatio = (currentCRatio: Wei, targetCRatio: Wei) =>
+	currentCRatio.gte(targetCRatio);
+
 export const useUserStakingData = (walletAddress: string | null) => {
 	const isL2 = useRecoilValue(isL2State);
 
@@ -40,13 +44,7 @@ export const useUserStakingData = (walletAddress: string | null) => {
 		Synths.sUSD
 	);
 	const previousFeePeriod = useGetFeePoolDataQuery(1);
-	const {
-		currentCRatio,
-		targetCRatio,
-		debtBalance,
-		collateral,
-		targetThreshold,
-	} = useStakingCalculations();
+	const { currentCRatio, targetCRatio, debtBalance, collateral } = useStakingCalculations();
 	const globalStakingInfo = useGlobalStakingInfoQuery();
 	const debtData = useGetDebtDataQuery(walletAddress);
 	const feesToDistribute = previousFeePeriod?.data?.feesToDistribute ?? wei(0);
@@ -56,7 +54,8 @@ export const useUserStakingData = (walletAddress: string | null) => {
 	const sUSDRate = wei(exchangeRatesQuery.data?.sUSD ?? 0);
 	const SNXRate = wei(exchangeRatesQuery.data?.SNX ?? 0);
 
-	const isBelowCRatio = currentCRatio.gt(targetCRatio.mul(wei(1).add(targetThreshold)));
+	const isBelowCRatio = calculateIsBelowCRatio(currentCRatio, targetCRatio);
+
 	const stakedValue =
 		collateral.gt(0) && currentCRatio.gt(0)
 			? collateral.mul(Wei.min(wei(1), currentCRatio.div(targetCRatio))).mul(SNXRate)

@@ -35,7 +35,6 @@ const useStakingCalculations = () => {
 		const SNXRate = wei(exchangeRates?.SNX ?? 0);
 		const collateral = wei(debtData?.collateral ?? 0);
 		const targetCRatio = wei(debtData?.targetCRatio ?? 0);
-		const targetThreshold = wei(debtData?.targetCRatio ?? 0);
 		const currentCRatio = wei(debtData?.currentCRatio ?? 0);
 		const transferableCollateral = wei(debtData?.transferable ?? 0);
 		const debtBalance = wei(debtData?.debtBalance ?? 0);
@@ -66,7 +65,6 @@ const useStakingCalculations = () => {
 		return {
 			collateral,
 			targetCRatio,
-			targetThreshold,
 			percentageTargetCRatio,
 			currentCRatio,
 			percentageCurrentCRatio,
