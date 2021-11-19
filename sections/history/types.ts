@@ -1,4 +1,17 @@
-import { HistoricalStakingTransaction, StakingTransactionType } from '@synthetixio/queries';
+import Wei from '@synthetixio/wei';
+
+export enum StakingTransactionType {
+	Issued = 'issued',
+	Burned = 'burned',
+	FeesClaimed = 'feesClaimed',
+}
+export type HistoricalStakingTransaction = {
+	type: StakingTransactionType;
+	timestamp: Wei;
+	value: Wei;
+	rewards?: Wei;
+	hash: string;
+};
 
 export type TransactionsContainerProps = {
 	history: HistoricalStakingTransaction[];

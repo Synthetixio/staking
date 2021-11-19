@@ -3,23 +3,34 @@ import styled from 'styled-components';
 
 import media from 'styles/media';
 
-import { Period } from 'constants/period';
-
 import CurrencyPrice from 'components/Currency/CurrencyPrice';
 import { CurrencyKey } from '@synthetixio/contracts-interface';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { NO_VALUE } from 'constants/placeholder';
 import useSynthetixQueries from '@synthetixio/queries';
+import { calculatePercentChange } from 'utils/currencies';
+import { Period, PERIOD_IN_SECONDS } from 'constants/period';
 
 type SynthPriceColProps = {
 	currencyKey: CurrencyKey;
 };
 
 const SynthPriceCol: FC<SynthPriceColProps> = ({ currencyKey }) => {
-	const { useExchangeRatesQuery, useHistoricalRatesQuery } = useSynthetixQueries();
+	const { useExchangeRatesQuery, exchanges } = useSynthetixQueries();
 
 	const exchangeRatesQuery = useExchangeRatesQuery();
-	const historicalRates = useHistoricalRatesQuery(currencyKey, Period.ONE_DAY);
+
+	const oneDayAgoSeconds = Math.floor(Date.now() / 1000) - PERIOD_IN_SECONDS[Period.ONE_DAY];
+
+	const historicalRates = exchanges.useGetRateUpdates(
+		{
+			orderBy: 'timestamp',
+			orderDirection: 'desc',
+			where: { timestamp_gt: oneDayAgoSeconds, synth: currencyKey },
+		},
+		{ timestamp: true, rate: true }
+	);
+
 	const { selectedPriceCurrency, selectPriceCurrencyRate } = useSelectedPriceCurrency();
 
 	const exchangeRates = exchangeRatesQuery.data ?? null;
@@ -32,7 +43,10 @@ const SynthPriceCol: FC<SynthPriceColProps> = ({ currencyKey }) => {
 					currencyKey={currencyKey}
 					price={price}
 					sign={selectedPriceCurrency.sign}
-					change={historicalRates.data?.change}
+					change={calculatePercentChange(
+						historicalRates.data?.[historicalRates.data?.length - 1]?.rate,
+						historicalRates.data?.[0]?.rate
+					).toNumber()}
 					conversionRate={selectPriceCurrencyRate}
 				/>
 			) : (

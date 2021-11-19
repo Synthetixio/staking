@@ -47,7 +47,9 @@ const InnerApp: FC<AppProps> = ({ Component, pageProps }) => {
 								signer: signer || undefined,
 								networkId: network!.id,
 						  })
-						: createQueryContext({ networkId: null })
+						: createQueryContext({
+								networkId: null,
+						  })
 				}
 			>
 				<Layout>

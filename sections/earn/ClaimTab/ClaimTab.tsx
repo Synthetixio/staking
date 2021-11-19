@@ -25,7 +25,6 @@ import Etherscan from 'containers/BlockExplorer';
 import TransactionNotifier from 'containers/TransactionNotifier';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import useClaimedStatus from 'sections/hooks/useClaimedStatus';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import useUserStakingData from 'hooks/useUserStakingData';
 
@@ -113,7 +112,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 	const [transactionState, setTransactionState] = useState<Transaction>(Transaction.PRESUBMIT);
 	const [txHash, setTxHash] = useState<string | null>(null);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
-	const claimed = useClaimedStatus(transactionState);
+	const userStakingData = useUserStakingData(walletAddress);
 
 	const hasVotedForElections = useHasVotedForElectionsQuery(snapshotEndpoint, walletAddress);
 
@@ -125,7 +124,10 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 		[blockExplorerInstance, txHash]
 	);
 
-	const canClaim = useMemo(() => !claimed && totalRewards.gt(0), [claimed, totalRewards]);
+	const canClaim = useMemo(() => !userStakingData.hasClaimed && totalRewards.gt(0), [
+		userStakingData.hasClaimed,
+		totalRewards,
+	]);
 
 	const fetchFeePeriodData = useCallback(async () => {
 		if (!isL2) return;
@@ -243,6 +245,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 								setClaimedTradingRewards(tradingRewards.toNumber());
 								setClaimedStakingRewards(stakingRewards.toNumber());
 								setTransactionState(Transaction.SUCCESS);
+								userStakingData.refetch();
 							},
 						});
 						setTxModalOpen(false);
@@ -267,6 +270,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 		delegateWallet,
 		isL2,
 		synthetixjs,
+		userStakingData,
 	]);
 
 	const goToBurn = useCallback(() => router.push(ROUTES.Staking.Burn), [router]);
@@ -490,7 +494,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 									onClick={handleClaim}
 									disabled={!canClaim || !!(delegateWallet && !delegateWallet.canClaim)}
 								>
-									{claimed
+									{userStakingData.hasClaimed
 										? t('earn.actions.claim.claimed-button')
 										: totalRewards.gt(0)
 										? t('earn.actions.claim.claim-button')

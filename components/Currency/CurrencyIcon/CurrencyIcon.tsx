@@ -3,6 +3,7 @@ import Img, { Svg } from 'react-optimized-image';
 import styled from 'styled-components';
 
 import ETHIcon from 'assets/svg/currencies/crypto/ETH.svg';
+import BTCIcon from 'assets/webp/currencies/crypto/BTC.webp';
 import DeprecatedXIcon from 'assets/svg/app/deprecated-x.svg';
 
 import { CryptoCurrency, CurrencyKey } from 'constants/currency';
@@ -79,6 +80,9 @@ export const CurrencyIcon: FC<CurrencyIconProps> = ({
 
 	if (!firstFallbackError) {
 		switch (currencyKey) {
+			case CryptoCurrency.BTC: {
+				return <Img src={BTCIcon} {...props} />;
+			}
 			case CryptoCurrency.ETH: {
 				return <Img src={ETHIcon} {...props} />;
 			}

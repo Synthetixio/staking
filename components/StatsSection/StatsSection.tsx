@@ -26,9 +26,12 @@ const StatsSection: FC = ({ children }) => {
 	const walletAddress = useRecoilValue(walletAddressState);
 	const delegateWallet = useRecoilValue(delegateWalletState);
 
-	const { useSynthsBalancesQuery, useSNX24hrPricesQuery } = useSynthetixQueries();
+	const { useSynthsBalancesQuery, exchanges } = useSynthetixQueries();
 
-	const SNX24hrPricesQuery = useSNX24hrPricesQuery();
+	const SNX24hrPricesQuery = exchanges.useGetDailySNXPrices(
+		{ first: 365 },
+		{ id: true, averagePrice: true }
+	);
 	const cryptoBalances = useCryptoBalances(delegateWallet?.address ?? walletAddress);
 	const synthsBalancesQuery = useSynthsBalancesQuery(delegateWallet?.address ?? walletAddress);
 	const [mobileStatsSectionIsOpen, setMobileStatsSectionIsOpen] = useState(false);
@@ -41,7 +44,7 @@ const StatsSection: FC = ({ children }) => {
 
 	const snxPriceChartData = useMemo(() => {
 		return (SNX24hrPricesQuery?.data ?? [])
-			.map((dataPoint: { averagePrice: number }) => ({ value: dataPoint.averagePrice }))
+			.map((dataPoint) => ({ value: dataPoint.averagePrice.toNumber() }))
 			.slice()
 			.reverse();
 	}, [SNX24hrPricesQuery?.data]);

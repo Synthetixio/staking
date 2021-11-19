@@ -22,12 +22,12 @@
 		"@reach/dialog": "0.15.3",
 		"@snapshot-labs/snapshot.js": "0.1.10",
 		"@synthetixio/assets": "2.0.10",
-		"@synthetixio/contracts-interface": "^2.51.0-next",
-		"@synthetixio/optimism-networks": "2.51.0-next",
-		"@synthetixio/providers": "2.51.0-next",
-		"@synthetixio/queries": "^2.51.0-next",
-		"@synthetixio/transaction-notifier": "2.51.0-next",
-		"@synthetixio/wei": "2.51.0-next",
+		"@synthetixio/contracts-interface": "2.52.2",
+		"@synthetixio/optimism-networks": "2.52.2",
+		"@synthetixio/providers": "2.52.2",
+		"@synthetixio/queries": "2.52.2",
+		"@synthetixio/transaction-notifier": "2.52.2",
+		"@synthetixio/wei": "2.52.2",
 		"@tippyjs/react": "4.1.0",
 		"axios": "0.21.1",
 		"bignumber.js": "9.0.0",
@@ -73,7 +73,10 @@
 		"@babel/preset-react": "7.14.5",
 		"@microsoft/eslint-formatter-sarif": "2.1.5",
 		"@synthetixio/synpress": "0.9.25-beta.12",
+		"@testing-library/jest-dom": "5.14.1",
+		"@testing-library/react": "12.1.2",
 		"@testing-library/react-hooks": "^7.0.2",
+		"@testing-library/user-event": "13.5.0",
 		"@types/color": "3.0.1",
 		"@types/date-fns": "2.6.0",
 		"@types/jest": "^27.0.2",
@@ -103,7 +106,7 @@
 		"eslint-plugin-jsx-a11y": "6.4.1",
 		"eslint-plugin-prettier": "3.1.4",
 		"eslint-plugin-react": "7.21.5",
-		"eslint-plugin-react-hooks": "4.2.0",
+		"eslint-plugin-react-hooks": "4.3.0",
 		"ethereum-blockies-base64": "1.0.2",
 		"file-loader": "6.2.0",
 		"graph-results-pager": "1.0.3",
@@ -139,6 +142,10 @@
 		"moduleDirectories": [
 			"node_modules"
 		],
-		"globalSetup": "./test-setup/global.js"
+		"globalSetup": "./test-setup/global.js",
+		"setupFilesAfterEnv": [
+			"./test-setup/setup.js"
+		],
+		"testEnvironment": "jest-environment-jsdom"
 	}
 }

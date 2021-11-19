@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
@@ -10,17 +10,25 @@ import Wei, { wei } from '@synthetixio/wei';
 import useSynthetixQueries from '@synthetixio/queries';
 
 export const useUserStakingData = (walletAddress: string | null) => {
-	const [hasClaimed, setHasClaimed] = useState<boolean>(false);
 	const isL2 = useRecoilValue(isL2State);
 
 	const {
-		useFeeClaimHistoryQuery,
 		useGetFeePoolDataQuery,
 		useGetDebtDataQuery,
 		useClaimableRewardsQuery,
+		issuance,
 	} = useSynthetixQueries();
 
-	const history = useFeeClaimHistoryQuery(walletAddress);
+	const feeClaims = issuance.useGetFeesClaimeds(
+		{
+			first: 1,
+			orderBy: 'timestamp',
+			orderDirection: 'desc',
+			where: { account: walletAddress?.toLowerCase() },
+		},
+		{ timestamp: true, rewards: true, value: true }
+	);
+
 	const currentFeePeriod = useGetFeePoolDataQuery(0);
 	const {
 		useTotalIssuedSynthsExcludeOtherCollateralQuery,
@@ -103,18 +111,18 @@ export const useUserStakingData = (walletAddress: string | null) => {
 		};
 	}, [currentFeePeriod]);
 
-	useEffect(() => {
-		const checkClaimedStatus = () =>
-			setHasClaimed(
-				history.data
-					? history.data?.some((tx) => {
-							const claimedDate = new Date(tx.timestamp);
-							return claimedDate > currentFeePeriodStarts && claimedDate < nextFeePeriodStarts;
-					  })
-					: false
-			);
-		checkClaimedStatus();
-	}, [history, currentFeePeriodStarts, nextFeePeriodStarts]);
+	const lastClaimDate = new Date(
+		feeClaims.isSuccess && feeClaims.data.length ? feeClaims.data[0].timestamp.toNumber() : 0
+	);
+
+	const hasClaimed = lastClaimDate > currentFeePeriodStarts && lastClaimDate < nextFeePeriodStarts;
+
+	function refetch() {
+		feeClaims.refetch();
+		exchangeRatesQuery.refetch();
+		globalStakingInfo.refetch();
+		debtData.refetch();
+	}
 
 	return {
 		hasClaimed,
@@ -124,6 +132,7 @@ export const useUserStakingData = (walletAddress: string | null) => {
 		stakingRewards,
 		debtBalance,
 		isBelowCRatio,
+		refetch,
 	};
 };
 

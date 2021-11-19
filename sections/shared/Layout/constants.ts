@@ -1,3 +1,4 @@
+import { EXTERNAL_LINKS } from 'constants/links';
 import ROUTES from 'constants/routes';
 
 export type SubMenuLink = {
@@ -93,11 +94,15 @@ export const MENU_LINKS_L2: MenuLinks = [
 				i18nLabel: 'sidenav.earn',
 				subLink: ROUTES.Earn.Home,
 			},
+			{
+				i18nLabel: 'sidenav.debt',
+				subLink: ROUTES.Debt.Home,
+			},
 		],
 	},
 	{
 		i18nLabel: 'sidenav.withdraw',
-		link: ROUTES.Withdraw.Home,
+		link: EXTERNAL_LINKS.L2.SynthetixWithdrawal,
 	},
 	{
 		i18nLabel: 'sidenav.wallet',

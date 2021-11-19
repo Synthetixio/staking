@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useMemo } from 'react';
 import { orderBy } from 'lodash';
 
@@ -10,7 +11,7 @@ import Wei, { wei } from '@synthetixio/wei';
 import { renBTCToken, wBTCToken, wETHToken } from 'contracts';
 import { useRecoilValue } from 'recoil';
 import { networkState } from 'store/wallet';
-import { ethers } from 'ethers';
+import { getETHToken } from 'contracts/ethToken';
 
 const { ETH, WETH, SNX, BTC, WBTC, RENBTC } = CryptoCurrency;
 
@@ -29,21 +30,11 @@ const useCryptoBalances = (walletAddress: string | null) => {
 		useGetDebtDataQuery,
 	} = useSynthetixQueries();
 
-	const networkId = useRecoilValue(networkState);
+	const network = useRecoilValue(networkState);
 
-	const tokenDefs = [
-		{
-			symbol: 'ETH',
-			address: ethers.constants.AddressZero,
-			decimals: 18,
-			logoURI: '',
-			name: 'Ethereum',
-			chainId: 1,
-			tags: [],
-		},
-	];
+	const tokenDefs = [getETHToken(network)];
 
-	if (networkId?.id === NetworkId.Mainnet) {
+	if (network?.id === NetworkId.Mainnet) {
 		tokenDefs.push(
 			...[
 				{
@@ -139,19 +130,15 @@ const useCryptoBalances = (walletAddress: string | null) => {
 		return [];
 	}, [
 		isLoaded,
-		ETHBalance,
-		SNXBalance,
-		wETHBalance,
-		wBTCBalance,
-		renBTCBalance,
-		exchangeRates,
-		transferrableSNX,
+		ETHBalance.toString(),
+		SNXBalance.toString(),
+		wETHBalance.toString(),
+		wBTCBalance.toString(),
+		renBTCBalance.toString(),
+		JSON.stringify(exchangeRates),
+		transferrableSNX.toString(),
 	]);
-
-	return {
-		balances,
-		isLoaded,
-	};
+	return useMemo(() => ({ balances, isLoaded }), [balances, isLoaded]);
 };
 
 export default useCryptoBalances;

@@ -16,6 +16,7 @@ import StakingLogo from 'assets/svg/app/staking-logo.svg';
 
 import SocialLinks from '../components/SocialLinks';
 import useSynthetixQueries from '@synthetixio/queries';
+import { PROD_HOSTNAME } from 'constants/links';
 
 type SystemStatusProps = {
 	children: React.ReactNode;
@@ -33,9 +34,10 @@ const SystemStatus: FC<SystemStatusProps> = ({ children }) => {
 		refetchInterval: REFRESH_INTERVAL,
 	});
 
-	const appOnMaintenance = isSystemOnMaintenanceQuery.isSuccess
-		? isSystemOnMaintenanceQuery.data
-		: false;
+	const appOnMaintenance =
+		typeof window !== 'undefined' &&
+		window.location.hostname === PROD_HOSTNAME &&
+		(isSystemOnMaintenanceQuery.isSuccess ? isSystemOnMaintenanceQuery.data : false);
 
 	return appOnMaintenance ? (
 		<>

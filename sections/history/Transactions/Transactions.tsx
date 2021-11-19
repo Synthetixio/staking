@@ -14,14 +14,13 @@ import ExternalLinkIcon from 'assets/svg/app/open-external.svg';
 import { formatShortDate } from 'utils/formatters/date';
 import { formatCurrency } from 'utils/formatters/number';
 
-import { HistoricalStakingTransaction, StakingTransactionType } from '@synthetixio/queries';
-
 import { ExternalLink, FlexDivCentered, FlexDivJustifyEnd } from 'styles/common';
 import { NO_VALUE } from 'constants/placeholder';
 import { CryptoCurrency, Synths } from 'constants/currency';
 
 import TypeIcon from '../TypeIcon';
 import { DesktopOrTabletView, MobileOnlyView } from 'components/Media';
+import { HistoricalStakingTransaction, StakingTransactionType } from '../types';
 
 type TransactionsProps = {
 	transactions: HistoricalStakingTransaction[];
@@ -81,7 +80,7 @@ const Transactions: FC<TransactionsProps> = ({ transactions, isLoaded, noResults
 						HistoricalStakingTransaction,
 						HistoricalStakingTransaction['timestamp']
 					>
-				) => <div>{formatShortDate(cellProps.value)}</div>,
+				) => <div>{formatShortDate(cellProps.value.toNumber() * 1000)}</div>,
 				sortable: true,
 				width: 200,
 			},
@@ -158,7 +157,7 @@ const Transactions: FC<TransactionsProps> = ({ transactions, isLoaded, noResults
 							</StyledExternalLink>
 						)}
 
-						<div>{formatShortDate(cellProps.value)}</div>
+						<div>{formatShortDate(cellProps.value.toNumber() * 1000)}</div>
 					</DateContainer>
 				),
 				sortable: true,

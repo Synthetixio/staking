@@ -120,8 +120,9 @@ const TransactionsContainer: FC<TransactionsContainerProps> = ({ history, isLoad
 
 				if (
 					(dateFilter?.startDate != null &&
-						transaction.timestamp < dateFilter.startDate.getTime()) ||
-					(dateFilter?.endDate != null && transaction.timestamp >= dateFilter.endDate.getTime())
+						transaction.timestamp.toNumber() * 1000 < dateFilter.startDate.getTime()) ||
+					(dateFilter?.endDate != null &&
+						transaction.timestamp.toNumber() * 1000 >= dateFilter.endDate.getTime())
 				) {
 					return false;
 				}
