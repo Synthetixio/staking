@@ -21,7 +21,7 @@
 		"@reach/dialog": "0.15.3",
 		"@snapshot-labs/snapshot.js": "0.1.10",
 		"@synthetixio/assets": "2.0.10",
-		"@synthetixio/contracts-interface": "0.0.0-104b514",
+		"@synthetixio/contracts-interface": "2.53.0",
 		"@synthetixio/optimism-networks": "0.0.0-104b514",
 		"@synthetixio/providers": "0.0.0-104b514",
 		"@synthetixio/queries": "0.0.0-104b514",
