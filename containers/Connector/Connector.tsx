@@ -13,8 +13,10 @@ import {
 	Network as NetworkName,
 	SynthetixJS,
 	synthetix,
+	getNetworkFromId,
 } from '@synthetixio/contracts-interface';
 import { ethers } from 'ethers';
+import { switchToL1 } from '@synthetixio/optimism-networks';
 
 import { appReadyState } from 'store/app';
 import { walletAddressState, networkState } from 'store/wallet';
@@ -27,7 +29,7 @@ import { initOnboard } from './config';
 import { LOCAL_STORAGE_KEYS } from 'constants/storage';
 import { CurrencyKey, ETH_ADDRESS } from 'constants/currency';
 import { synthToContractName } from 'utils/currencies';
-import { invert, keyBy } from 'lodash';
+import { keyBy } from 'lodash';
 import { useMemo } from 'react';
 
 const useConnector = () => {
@@ -47,20 +49,16 @@ const useConnector = () => {
 		setTransactionNotifier,
 	] = useState<TransactionNotifierInterface | null>(null);
 
-	const [synthsMap, tokensMap, chainIdToNetwork] = useMemo(() => {
+	const [synthsMap, tokensMap] = useMemo(() => {
 		if (synthetixjs == null) {
-			return [{}, {}, {}];
+			return [{}, {}];
 		}
 
-		return [
-			keyBy(synthetixjs.synths, 'name'),
-			keyBy(synthetixjs.tokens, 'symbol'),
-			invert(synthetixjs.networkToChainId),
-		];
+		return [keyBy(synthetixjs.synths, 'name'), keyBy(synthetixjs.tokens, 'symbol')];
 	}, [synthetixjs]);
 
 	useEffect(() => {
-		const init = async () => {
+		const init: () => void = async () => {
 			const networkId = await getDefaultNetworkId();
 
 			if (!window.ethereum) {
@@ -69,12 +67,19 @@ const useConnector = () => {
 				setSynthetixjs(synthetix({ networkId, useOvm: false }));
 				return;
 			}
+			const resolvedNetwork = getNetworkFromId({ id: networkId });
+			const isSupportedNetwork = Boolean(resolvedNetwork);
+			if (!isSupportedNetwork) {
+				// When not on supported network: Switch to l1 and try again
+				await switchToL1({ ethereum: window.ethereum });
+				return init();
+			}
 
 			// TODO: need to verify we support the network
 			const provider = loadProvider({
 				networkId,
 				//infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
-				provider: window.ethereum,
+				provider: window.ethereum as any, // loadProvider as incorrect types for provider
 			});
 			const useOvm = getIsOVM(networkId);
 
@@ -95,40 +100,45 @@ const useConnector = () => {
 			const onboard = initOnboard(synthetixjs!, network.id, {
 				address: setWalletAddress,
 				network: (networkId: number) => {
-					const isSupportedNetwork =
-						chainIdToNetwork != null && chainIdToNetwork[networkId as NetworkId] ? true : false;
-
-					if (isSupportedNetwork) {
-						const provider = loadProvider({
-							provider: onboard.getState().wallet.provider,
-						});
-						const signer = provider.getSigner();
-						const useOvm = getIsOVM(networkId);
-
-						const snxjs = synthetix({ provider, networkId, signer, useOvm });
-
-						onboard.config({ networkId });
-						if (transactionNotifier) {
-							transactionNotifier.setProvider(provider);
-						} else {
-							setTransactionNotifier(new TransactionNotifier(provider));
-						}
-						setProvider(provider);
-						setSynthetixjs(snxjs);
-						setSigner(signer);
-						setNetwork({
-							id: networkId as NetworkId,
-							// @ts-ignore
-							name: chainIdToNetwork[networkId] as NetworkName,
-							useOvm,
-						});
+					const isSupportedNetwork = Boolean(getNetworkFromId({ id: networkId }));
+					if (!isSupportedNetwork && window.ethereum) {
+						// This should only happen when a user is connected and changes to an unsupported network
+						switchToL1({ ethereum: window.ethereum });
+						// We can return here since the network change will trigger this callback again
+						return;
 					}
+
+					const provider = loadProvider({
+						provider: onboard.getState().wallet.provider,
+					});
+					const signer = provider.getSigner();
+					const useOvm = getIsOVM(networkId);
+
+					const snxjs = synthetix({ provider, networkId, signer, useOvm });
+
+					onboard.config({ networkId });
+					if (transactionNotifier) {
+						transactionNotifier.setProvider(provider);
+					} else {
+						setTransactionNotifier(new TransactionNotifier(provider));
+					}
+					setProvider(provider);
+					setSynthetixjs(snxjs);
+					setSigner(signer);
+					setNetwork(snxjs.network);
 				},
 				wallet: async (wallet: OnboardWallet) => {
 					if (wallet.provider) {
 						const provider = loadProvider({ provider: wallet.provider });
 						const network = await provider.getNetwork();
 						const networkId = network.chainId as NetworkId;
+						const resolvedNetwork = getNetworkFromId({ id: networkId });
+						const isSupportedNetwork = Boolean(resolvedNetwork);
+						if (!isSupportedNetwork && window.ethereum) {
+							await switchToL1({ ethereum: window.ethereum });
+							// We return here and expect the network change to trigger onboard's network callback
+							return;
+						}
 						const useOvm = getIsOVM(networkId);
 
 						const snxjs = synthetix({ provider, networkId, signer: provider.getSigner(), useOvm });

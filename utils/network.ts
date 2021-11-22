@@ -1,19 +1,13 @@
-import detectEthereumProvider from '@metamask/detect-provider';
-
+import { detectEthereumProvider } from './metamask-detect-provider';
 import { DEFAULT_GAS_BUFFER, DEFAULT_NETWORK_ID } from 'constants/defaults';
 import { NetworkId } from '@synthetixio/contracts-interface';
 import { GasLimitEstimate } from 'constants/network';
 import Wei from '@synthetixio/wei';
 import { GWEI_UNIT } from './infura';
 
-type EthereumProvider = {
-	isMetaMask: boolean;
-	chainId: string;
-};
-
 export async function getDefaultNetworkId(): Promise<NetworkId> {
 	try {
-		const provider = (await detectEthereumProvider()) as EthereumProvider;
+		const provider = await detectEthereumProvider();
 		if (provider && provider.chainId) {
 			return Number(provider.chainId);
 		}
