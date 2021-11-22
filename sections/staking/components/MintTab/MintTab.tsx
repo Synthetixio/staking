@@ -90,7 +90,10 @@ const MintTab: React.FC = () => {
 				onInputChange={onMintChange}
 				txHash={txn.hash}
 				transactionState={txn.txnStatus}
-				resetTransaction={txn.refresh}
+				resetTransaction={() => {
+					txn.refresh();
+					setTxModalOpen(false);
+				}}
 			/>
 		);
 	}, [
