@@ -26,7 +26,7 @@
 		"@synthetixio/providers": "0.0.0-104b514",
 		"@synthetixio/queries": "0.0.0-104b514",
 		"@synthetixio/transaction-notifier": "0.0.0-104b514",
-		"@synthetixio/wei": "0.0.0-104b514",
+		"@synthetixio/wei": "2.53.0",
 		"@tippyjs/react": "4.1.0",
 		"axios": "0.21.1",
 		"bignumber.js": "9.0.0",
