@@ -70,6 +70,7 @@ const MintTab: React.FC = () => {
 			case MintActionType.CUSTOM:
 				onSubmit = () => txn.mutate();
 				isLocked = false;
+				inputValue = amountToMint;
 				break;
 			default:
 				return <MintTiles />;
@@ -102,6 +103,7 @@ const MintTab: React.FC = () => {
 		targetCRatio,
 		unstakedCollateral,
 		txn,
+		amountToMint,
 	]);
 
 	return <TabContainer>{returnPanel}</TabContainer>;
