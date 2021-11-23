@@ -46,7 +46,7 @@ const BurnTab: FC = () => {
 		let etherNeededToBuy;
 		let sUSDNeededToBuy;
 		let sUSDNeededToBurn;
-		
+
 		// actualDebtToBurn gets displayed to the user when using max or clear
 		const actualDebtToBurn = debtBalance.gt(sUSDBalance) ? wei(sUSDBalance) : debtBalance;
 		// maxBurnAmount is whats gets passed to the smart contract, we do this to avoid dust when debt pool flucuates, burnSynths() will never burn more than the debt either way
