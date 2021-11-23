@@ -90,7 +90,7 @@ const useHistoricalDebtData = (walletAddress: string | null) => {
 					historicalDebtAndIssuance.push({
 						timestamp: debtSnapshot.timestamp.toNumber() * 1000,
 						issuanceDebt: historicalIssuanceAggregation[i],
-						actualDebt: wei(debtSnapshot.debtBalanceOf),
+						actualDebt: wei(debtSnapshot.debtBalanceOf || 0),
 						index: i,
 					});
 				});
