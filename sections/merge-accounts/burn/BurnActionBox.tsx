@@ -89,7 +89,7 @@ const BurnTabInner: FC = () => {
 		(burnAmount: Wei): Wei => wei(getStakingAmount(targetCRatio, burnAmount, SNXRate)),
 		[SNXRate, targetCRatio]
 	);
-	// This is the amount we send along with the transaction, burnSynths() will only burn the debtbalance wither way
+	// This is the amount we send along with the transaction, burnSynths() will only burn the debtbalance either way
 	// This protects us from dust when debtBalance fluctuates
 	const burnAmount = sUSDBalance;
 	// This is what gets displayed in the ui
