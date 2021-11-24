@@ -89,25 +89,24 @@ const BurnTabInner: FC = () => {
 		(burnAmount: Wei): Wei => wei(getStakingAmount(targetCRatio, burnAmount, SNXRate)),
 		[SNXRate, targetCRatio]
 	);
+	// This is the amount we send along with the transaction, burnSynths() will only burn the debtbalance wither way
+	// This protects us from dust when debtBalance fluctuates
+	const burnAmount = sUSDBalance;
+	// This is what gets displayed in the ui
+	const burnAmountUi = debtBalance.gt(sUSDBalance) ? wei(sUSDBalance) : debtBalance;
 
-	const burnAmount = debtBalance.gt(sUSDBalance) ? wei(sUSDBalance) : debtBalance;
 	const unstakeAmount = useMemo(() => {
 		const calculatedTargetBurn = Math.max(debtBalance.sub(issuableSynths).toNumber(), 0);
-		if (currentCRatio.gt(targetCRatio) && parseSafeWei(burnAmount, 0).lte(calculatedTargetBurn)) {
+		if (currentCRatio.gt(targetCRatio) && parseSafeWei(burnAmountUi, 0).lte(calculatedTargetBurn)) {
 			return stakeInfo(wei(0));
 		} else {
-			return stakeInfo(burnAmount);
+			return stakeInfo(burnAmountUi);
 		}
-	}, [burnAmount, debtBalance, issuableSynths, targetCRatio, currentCRatio, stakeInfo]);
+	}, [burnAmountUi, debtBalance, issuableSynths, targetCRatio, currentCRatio, stakeInfo]);
 
 	const txLink = useMemo(
 		() => (blockExplorerInstance && txn.hash ? blockExplorerInstance.txLink(txn.hash) : ''),
 		[blockExplorerInstance, txn.hash]
-	);
-
-	const maxBurnAmount = useMemo(
-		() => (debtBalance.gt(sUSDBalance) ? wei(sUSDBalance) : debtBalance),
-		[debtBalance, sUSDBalance]
 	);
 
 	const onGoBack = () => router.replace(ROUTES.MergeAccounts.Home);
@@ -115,9 +114,9 @@ const BurnTabInner: FC = () => {
 	const onBurn = useCallback(() => txn.mutate(), [txn]);
 
 	useEffect(() => {
-		onBurnChange(maxBurnAmount.toString());
+		onBurnChange(burnAmount.toString());
 		onBurnTypeChange(BurnActionType.MAX);
-	}, [onBurnChange, onBurnTypeChange, maxBurnAmount]);
+	}, [onBurnChange, onBurnTypeChange, burnAmount]);
 
 	const returnButtonStates = useMemo(() => {
 		if (!isWalletConnected) {
@@ -147,13 +146,13 @@ const BurnTabInner: FC = () => {
 	}, [error, txn.txnStatus, t, isWalletConnected, connectWallet, onBurn]);
 
 	if (txn.txnStatus === 'pending') {
-		return <TxWaiting {...{ unstakeAmount, burnAmount, txLink }} />;
+		return <TxWaiting {...{ unstakeAmount, burnAmount: burnAmountUi, txLink }} />;
 	}
 
 	if (txn.txnStatus === 'confirmed') {
 		return (
 			<TxSuccess
-				{...{ unstakeAmount, burnAmount, txLink }}
+				{...{ unstakeAmount, burnAmount: burnAmountUi, txLink }}
 				onDismiss={() => {
 					router.push(ROUTES.MergeAccounts.Nominate);
 				}}
@@ -214,7 +213,7 @@ const BurnTabInner: FC = () => {
 									<TxModalItemTitle>{t('merge-accounts.burn.tx-waiting.burning')}</TxModalItemTitle>
 									<TxModalItemText>
 										{t('merge-accounts.burn.tx-waiting.burn-amount', {
-											amount: formatNumber(burnAmount, {
+											amount: formatNumber(burnAmountUi, {
 												minDecimals: DEFAULT_FIAT_DECIMALS,
 												maxDecimals: DEFAULT_FIAT_DECIMALS,
 											}),
