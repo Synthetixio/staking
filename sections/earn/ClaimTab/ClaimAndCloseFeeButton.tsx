@@ -6,12 +6,12 @@ import styled from 'styled-components';
 import Wei from '@synthetixio/wei';
 import ROUTES from 'constants/routes';
 
-const ClaimOrCloseFeeButton: React.FC<{
+const ClaimAndCloseFeeButton: React.FC<{
 	handleClaim: () => void;
 	handleCloseFeePeriod: () => void;
 	canClaim: boolean;
 	isBelowCRatio: boolean;
-	hasVoted: boolean;
+	hasNotVoted: boolean;
 	hasClaimed: boolean;
 	totalRewards: Wei;
 	isCloseFeePeriodEnabled: boolean;
@@ -23,27 +23,21 @@ const ClaimOrCloseFeeButton: React.FC<{
 	hasClaimed,
 	isCloseFeePeriodEnabled,
 	totalRewards,
-	hasVoted,
+	hasNotVoted,
 }) => {
 	const { t } = useTranslation();
 	const router = useRouter();
-	if (isCloseFeePeriodEnabled) {
-		return (
-			<PaddedButton variant="primary" onClick={handleCloseFeePeriod}>
-				{t('earn.actions.claim.close-fee-period')}
-			</PaddedButton>
-		);
-	}
+
 	return (
-		<Tooltip
-			hideOnClick={true}
-			arrow={true}
-			placement="bottom"
-			content={t('earn.actions.claim.ratio-notice')}
-			disabled={!canClaim || !isBelowCRatio}
-		>
-			<PaddedButtonContainer>
-				{hasVoted ? (
+		<PaddedButtonContainer>
+			<Tooltip
+				hideOnClick={true}
+				arrow={true}
+				placement="bottom"
+				content={t('earn.actions.claim.ratio-notice')}
+				disabled={!canClaim || !isBelowCRatio}
+			>
+				{hasNotVoted ? (
 					<PaddedButton variant="primary" onClick={() => router.push(ROUTES.Gov.Home)}>
 						{t('earn.actions.claim.not-voted')}
 					</PaddedButton>
@@ -60,8 +54,13 @@ const ClaimOrCloseFeeButton: React.FC<{
 							: t('earn.actions.claim.nothing-to-claim')}
 					</PaddedButton>
 				)}
-			</PaddedButtonContainer>
-		</Tooltip>
+			</Tooltip>
+			{isCloseFeePeriodEnabled && (
+				<PaddedButton variant="primary" onClick={handleCloseFeePeriod}>
+					{t('earn.actions.claim.close-fee-period')}
+				</PaddedButton>
+			)}
+		</PaddedButtonContainer>
 	);
 };
 
@@ -75,4 +74,4 @@ const PaddedButton = styled(StyledButton)`
 	text-transform: uppercase;
 `;
 
-export default ClaimOrCloseFeeButton;
+export default ClaimAndCloseFeeButton;

@@ -70,7 +70,7 @@ import {
 import { MobileOnlyView } from 'components/Media';
 import useSynthetixQueries from '@synthetixio/queries';
 import { snapshotEndpoint } from 'constants/snapshot';
-import ClaimOrCloseFeeButton from './ClaimOrCloseFeeButton';
+import ClaimOrCloseFeeButton from './ClaimAndCloseFeeButton';
 
 type ClaimTabProps = {
 	tradingRewards: Wei;
@@ -104,7 +104,15 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 	const isL2 = useRecoilValue(isL2State);
 	const feePoolDataQuery = useGetFeePoolDataQuery(0, { enabled: isL2 });
 	const hasVotedForElections = useHasVotedForElectionsQuery(snapshotEndpoint, walletAddress);
-
+	console.log({ hasVotedForElections });
+	console.log(
+		'Boolean(hasVotedForElections.data && !hasVotedForElections.data.hasVoted',
+		Boolean(hasVotedForElections.data && !hasVotedForElections.data.hasVoted)
+	);
+	console.log(
+		'hasVotedForElections.data && !hasVotedForElections.data.hasVoted',
+		hasVotedForElections.data && !hasVotedForElections.data.hasVoted
+	);
 	const claimCall: [string, string[]] = delegateWallet
 		? ['claimOnBehalf', [delegateWallet.address]]
 		: ['claimFees', []];
@@ -354,7 +362,9 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 					/>
 					<GasSelector
 						altVersion={true}
-						gasLimitEstimate={isCloseFeePeriodEnabled ? closeFeesTxn.gasLimit : txn.gasLimit}
+						// We are aware that if the close fee button is clicked this gas estimate will be slightly less expensive
+						// Given that this is only on L2 and that the gas used is very similar we're fine with just showing the price for claiming
+						gasLimitEstimate={txn.gasLimit}
 						setGasPrice={setGasPrice}
 					/>
 				</InnerContainer>
