@@ -45,7 +45,9 @@ const DebtHedgingChart: React.FC = () => {
 						interval="preserveEnd"
 						tick={{ fontSize: 10, fill: colors.white, fontFamily: fonts.mono }}
 						tickLine={false}
-						tickFormatter={(tick) => format(new Date(tick * 1000), 'd MMM yy').toUpperCase()}
+						tickFormatter={(tick) =>
+							format(new Date(tick * 1000 || new Date().getTime()), 'd MMM yy').toUpperCase()
+						}
 					/>
 					<YAxis width={0} domain={['auto', 'auto']} tickLine={false} />
 					<Line

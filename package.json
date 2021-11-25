@@ -64,7 +64,6 @@
 		"styled-media-query": "2.1.2",
 		"svg-react-loader": "0.4.6",
 		"unstated-next": "1.1.0",
-		"use-immer": "0.6.0",
 		"webpack": "5.47.1"
 	},
 	"devDependencies": {
