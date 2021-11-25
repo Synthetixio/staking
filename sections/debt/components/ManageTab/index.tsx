@@ -3,28 +3,32 @@ import useUserStakingData from 'hooks/useUserStakingData';
 import { useRecoilValue } from 'recoil';
 import { walletAddressState } from 'store/wallet';
 import styled from 'styled-components';
-
 import { FlexDivColCentered } from 'styles/common';
 
 const ManageTab = () => {
 	const walletAddress = useRecoilValue(walletAddressState);
 	const { debtBalance: actualDebt } = useUserStakingData(walletAddress);
+
 	const uniswapURLWithQueryParams = (debt: Wei) =>
 		`https://app.uniswap.org/#/swap?inputCurrency=0x57ab1ec28d129707052df4df418d58a2d46d5f51&exactAmount=${debt.toNumber()}&exactField=input`;
 	return (
 		<ManageContainer>
-			<iframe
-				style={{
-					width: '100%',
-					height: 'auto',
-					minHeight: '550px',
-					border: 'none',
-					borderRadius: '5px',
-					overflow: 'hidden',
-				}}
-				scrolling="no"
-				src={uniswapURLWithQueryParams(actualDebt)}
-			></iframe>
+			{!walletAddress ? (
+				<span>Please connect a wallet</span>
+			) : (
+				<iframe
+					style={{
+						width: '100%',
+						height: 'auto',
+						minHeight: '550px',
+						border: 'none',
+						borderRadius: '5px',
+						overflow: 'hidden',
+					}}
+					scrolling="no"
+					src={uniswapURLWithQueryParams(actualDebt)}
+				></iframe>
+			)}
 		</ManageContainer>
 	);
 };
