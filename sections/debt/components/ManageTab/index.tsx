@@ -1,12 +1,30 @@
+import Wei from '@synthetixio/wei';
+import useUserStakingData from 'hooks/useUserStakingData';
+import { useRecoilValue } from 'recoil';
+import { walletAddressState } from 'store/wallet';
 import styled from 'styled-components';
 
 import { FlexDivColCentered } from 'styles/common';
 
 const ManageTab = () => {
+	const walletAddress = useRecoilValue(walletAddressState);
+	const { debtBalance: actualDebt } = useUserStakingData(walletAddress);
+	const uniswapURLWithQueryParams = (debt: Wei) =>
+		`https://app.uniswap.org/#/swap?inputCurrency=0x57ab1ec28d129707052df4df418d58a2d46d5f51&exactAmount=${debt.toNumber()}&exactField=input`;
 	return (
 		<ManageContainer>
-			Debt mirror
-			<ManageSubtitle>Coming soon</ManageSubtitle>
+			<iframe
+				style={{
+					width: '100%',
+					height: 'auto',
+					minHeight: '550px',
+					border: 'none',
+					borderRadius: '5px',
+					overflow: 'hidden',
+				}}
+				scrolling="no"
+				src={uniswapURLWithQueryParams(actualDebt)}
+			></iframe>
 		</ManageContainer>
 	);
 };
@@ -19,11 +37,6 @@ const ManageContainer = styled(FlexDivColCentered)`
 	font-family: ${(props) => props.theme.fonts.extended};
 	text-transform: uppercase;
 	color: ${(props) => props.theme.colors.mutedGray};
-`;
-
-const ManageSubtitle = styled.p`
-	text-transform: none;
-	font-family: ${(props) => props.theme.fonts.regular};
 `;
 
 export default ManageTab;
