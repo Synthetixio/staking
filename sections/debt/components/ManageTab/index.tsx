@@ -5,18 +5,20 @@ import { walletAddressState } from 'store/wallet';
 import styled from 'styled-components';
 import { FlexDivColCentered } from 'styles/common';
 
+const getDehedgeUniswapUrl = (debt: Wei) =>
+	`https://app.uniswap.org/#/swap?inputCurrency=0x57ab1ec28d129707052df4df418d58a2d46d5f51&exactAmount=${debt.toNumber()}&exactField=input`;
+
 const ManageTab = () => {
 	const walletAddress = useRecoilValue(walletAddressState);
 	const { debtBalance: actualDebt } = useUserStakingData(walletAddress);
 
-	const uniswapURLWithQueryParams = (debt: Wei) =>
-		`https://app.uniswap.org/#/swap?inputCurrency=0x57ab1ec28d129707052df4df418d58a2d46d5f51&exactAmount=${debt.toNumber()}&exactField=input`;
 	return (
 		<ManageContainer>
 			{!walletAddress ? (
 				<span>Please connect a wallet</span>
 			) : (
 				<iframe
+					title="uniswap-dhedge"
 					style={{
 						width: '100%',
 						height: 'auto',
@@ -26,7 +28,7 @@ const ManageTab = () => {
 						overflow: 'hidden',
 					}}
 					scrolling="no"
-					src={uniswapURLWithQueryParams(actualDebt)}
+					src={getDehedgeUniswapUrl(actualDebt)}
 				></iframe>
 			)}
 		</ManageContainer>
