@@ -1,7 +1,6 @@
-import React, { useEffect, useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { ethers } from 'ethers';
 import Wei, { wei } from '@synthetixio/wei';
 import { Svg } from 'react-optimized-image';
 import { useRouter } from 'next/router';
@@ -10,9 +9,9 @@ import { useRecoilValue } from 'recoil';
 import { appReadyState } from 'store/app';
 import {
 	isWalletConnectedState,
-	isL2State,
 	delegateWalletState,
 	walletAddressState,
+	isL2State,
 } from 'store/wallet';
 import ROUTES from 'constants/routes';
 import { ExternalLink, FlexDiv, GlowingCircle, IconButton, FlexDivJustifyEnd } from 'styles/common';
@@ -22,7 +21,6 @@ import Success from 'assets/svg/app/success.svg';
 import ExpandIcon from 'assets/svg/app/expand.svg';
 
 import Etherscan from 'containers/BlockExplorer';
-import TransactionNotifier from 'containers/TransactionNotifier';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
@@ -31,9 +29,7 @@ import useUserStakingData from 'hooks/useUserStakingData';
 import { DEFAULT_FIAT_DECIMALS } from 'constants/defaults';
 import { formatCurrency, formatFiatCurrency, formatNumber } from 'utils/formatters/number';
 import { getCurrentTimestampSeconds } from 'utils/formatters/date';
-import { normalizedGasPrice, normalizeGasLimit } from 'utils/network';
 
-import { Transaction, GasLimitEstimate } from 'constants/network';
 import { CryptoCurrency, Synths } from 'constants/currency';
 import TxState from 'sections/earn/TxState';
 
@@ -58,7 +54,6 @@ import {
 	FlexDivColCentered,
 	ModalContent,
 	ModalItem,
-	Tooltip,
 } from 'styles/common';
 import { EXTERNAL_LINKS } from 'constants/links';
 import Currency from 'components/Currency';
@@ -67,7 +62,6 @@ import {
 	TotalValueWrapper,
 	Subtext,
 	Value,
-	StyledButton,
 	Label,
 	StyledLink,
 	TabContainer,
@@ -76,7 +70,7 @@ import {
 import { MobileOnlyView } from 'components/Media';
 import useSynthetixQueries from '@synthetixio/queries';
 import { snapshotEndpoint } from 'constants/snapshot';
-import Connector from 'containers/Connector';
+import ClaimOrCloseFeeButton from './ClaimAndCloseFeeButton';
 
 type ClaimTabProps = {
 	tradingRewards: Wei;
@@ -87,41 +81,85 @@ type ClaimTabProps = {
 const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, totalRewards }) => {
 	const { t } = useTranslation();
 
-	const { synthetixjs } = Connector.useContainer();
-
 	const walletAddress = useRecoilValue(walletAddressState);
 	const delegateWallet = useRecoilValue(delegateWalletState);
-	const { useHasVotedForElectionsQuery } = useSynthetixQueries();
+	const {
+		useHasVotedForElectionsQuery,
+		useSynthetixTxn,
+		useGetFeePoolDataQuery,
+	} = useSynthetixQueries();
 
 	const { isBelowCRatio } = useUserStakingData(delegateWallet?.address ?? walletAddress);
-	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const { blockExplorerInstance } = Etherscan.useContainer();
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
-	const isL2 = useRecoilValue(isL2State);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const isAppReady = useRecoilValue(appReadyState);
 	const router = useRouter();
-
-	const [gasLimitEstimate, setGasLimitEstimate] = useState<GasLimitEstimate>(null);
 	const [gasPrice, setGasPrice] = useState<Wei>(wei(0));
 	const [error, setError] = useState<string | null>(null);
-	const [lowCRatio, setLowCRatio] = useState<boolean>(false);
 	const [claimedTradingRewards, setClaimedTradingRewards] = useState<number | null>(null);
 	const [claimedStakingRewards, setClaimedStakingRewards] = useState<number | null>(null);
-	const [isCloseFeePeriodEnabled, setIsCloseFeePeriodEnabled] = useState<boolean>(false);
-	const [transactionState, setTransactionState] = useState<Transaction>(Transaction.PRESUBMIT);
-	const [txHash, setTxHash] = useState<string | null>(null);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 	const userStakingData = useUserStakingData(walletAddress);
-
+	const isL2 = useRecoilValue(isL2State);
+	const feePoolDataQuery = useGetFeePoolDataQuery(0, { enabled: isL2 });
 	const hasVotedForElections = useHasVotedForElectionsQuery(snapshotEndpoint, walletAddress);
+	console.log({ hasVotedForElections });
+	console.log(
+		'Boolean(hasVotedForElections.data && !hasVotedForElections.data.hasVoted',
+		Boolean(hasVotedForElections.data && !hasVotedForElections.data.hasVoted)
+	);
+	console.log(
+		'hasVotedForElections.data && !hasVotedForElections.data.hasVoted',
+		hasVotedForElections.data && !hasVotedForElections.data.hasVoted
+	);
+	const claimCall: [string, string[]] = delegateWallet
+		? ['claimOnBehalf', [delegateWallet.address]]
+		: ['claimFees', []];
+	const txn = useSynthetixTxn(
+		'FeePool',
+		claimCall[0],
+		claimCall[1],
+		{ gasPrice: gasPrice.toBN() },
+		{
+			enabled: true,
+			onSuccess: () => {
+				setClaimedTradingRewards(tradingRewards.toNumber());
+				setClaimedStakingRewards(stakingRewards.toNumber());
+				userStakingData.refetch();
+				setTxModalOpen(false);
+			},
+		}
+	);
+
+	const now = Math.ceil(getCurrentTimestampSeconds());
+	const isCloseFeePeriodEnabled =
+		isL2 &&
+		feePoolDataQuery.data &&
+		now > feePoolDataQuery.data.feePeriodDuration + feePoolDataQuery.data.startTime;
+
+	const closeFeesTxn = useSynthetixTxn(
+		'FeePool',
+		'closeCurrentFeePeriod',
+		[],
+		{ gasPrice: gasPrice.toBN() },
+		{
+			enabled: isCloseFeePeriodEnabled,
+			onSuccess: () => {
+				feePoolDataQuery.refetch();
+			},
+		}
+	);
+	const handleCloseFeePeriod = async () => {
+		closeFeesTxn.mutate();
+	};
 
 	const link = useMemo(
 		() =>
-			blockExplorerInstance != null && txHash != null
-				? blockExplorerInstance.txLink(txHash)
+			blockExplorerInstance != null && txn.hash != null
+				? blockExplorerInstance.txLink(txn.hash)
 				: undefined,
-		[blockExplorerInstance, txHash]
+		[blockExplorerInstance, txn.hash]
 	);
 
 	const canClaim = useMemo(() => !userStakingData.hasClaimed && totalRewards.gt(0), [
@@ -129,180 +167,20 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 		totalRewards,
 	]);
 
-	const fetchFeePeriodData = useCallback(async () => {
-		if (!isL2) return;
-		try {
-			const {
-				contracts: { FeePool },
-			} = synthetixjs!;
-			const [feePeriodDuration, recentFeePeriods] = await Promise.all([
-				FeePool.feePeriodDuration(),
-				FeePool.recentFeePeriods(0),
-			]);
-
-			const now = Math.ceil(getCurrentTimestampSeconds());
-			const startTime = Number(recentFeePeriods.startTime);
-			const duration = Number(feePeriodDuration);
-
-			setIsCloseFeePeriodEnabled(now > duration + startTime);
-		} catch (e) {
-			console.log(e);
-			setIsCloseFeePeriodEnabled(false);
+	const handleClaim = () => {
+		if (!isAppReady || !isWalletConnected || !canClaim) return;
+		if (delegateWallet && !delegateWallet.canClaim) {
+			setError(t('staking.actions.mint.action.error.delegate-cannot-claim'));
+			return;
 		}
-	}, [isL2, synthetixjs]);
+		setTxModalOpen(true);
 
-	useEffect(() => {
-		fetchFeePeriodData();
-	}, [fetchFeePeriodData]);
-
-	useEffect(() => {
-		const getGasLimitEstimate = async () => {
-			if (isAppReady && isWalletConnected && canClaim) {
-				if (isBelowCRatio) {
-					setLowCRatio(true);
-					return;
-				}
-				try {
-					setError(null);
-					if (delegateWallet && !delegateWallet.canClaim) {
-						throw new Error(t('staking.actions.mint.action.error.delegate-cannot-claim'));
-					}
-					const {
-						contracts: { FeePool },
-					} = synthetixjs!;
-
-					let gasEstimate = wei(
-						delegateWallet
-							? await FeePool.estimateGas.claimOnBehalf(delegateWallet.address)
-							: await FeePool.estimateGas.claimFees(),
-						0
-					);
-
-					setGasLimitEstimate(gasEstimate);
-				} catch (error) {
-					if (isL2 && error.data) {
-						if (error.data.message.includes('below penalty threshold')) {
-							setLowCRatio(true);
-						} else if (!error.data.message.includes('already claimed')) {
-							setError(error.data.message);
-						}
-					} else {
-						if (error.message.includes('below penalty threshold')) {
-							setLowCRatio(true);
-						} else if (!error.message.includes('already claimed')) {
-							setError(error.message);
-						}
-					}
-					setGasLimitEstimate(null);
-				}
-			}
-		};
-		getGasLimitEstimate();
-	}, [
-		isAppReady,
-		isWalletConnected,
-		isBelowCRatio,
-		delegateWallet,
-		t,
-		isL2,
-		synthetixjs,
-		canClaim,
-	]);
-
-	const handleClaim = useCallback(() => {
-		async function claim() {
-			if (isAppReady) {
-				try {
-					setError(null);
-					setTxModalOpen(true);
-					const {
-						contracts: { FeePool },
-					} = synthetixjs!;
-
-					let gasLimit = delegateWallet
-						? (await FeePool.estimateGas.claimOnBehalf(delegateWallet.address)).toNumber()
-						: (await FeePool.estimateGas.claimFees()).toNumber();
-
-					gasLimit = normalizeGasLimit(gasLimit);
-
-					const normalizedGasPriceValue = Math.round(normalizedGasPrice(gasPrice.toNumber()));
-					const transaction: ethers.ContractTransaction = delegateWallet
-						? await FeePool.claimOnBehalf(delegateWallet.address, {
-								gasPrice: normalizedGasPriceValue,
-								gasLimit,
-						  })
-						: await FeePool.claimFees({
-								gasPrice: normalizedGasPriceValue,
-								gasLimit,
-						  });
-
-					if (transaction) {
-						setTxHash(transaction.hash);
-						setTransactionState(Transaction.WAITING);
-						monitorTransaction({
-							txHash: transaction.hash,
-							onTxConfirmed: () => {
-								setClaimedTradingRewards(tradingRewards.toNumber());
-								setClaimedStakingRewards(stakingRewards.toNumber());
-								setTransactionState(Transaction.SUCCESS);
-								userStakingData.refetch();
-							},
-						});
-						setTxModalOpen(false);
-					}
-				} catch (e) {
-					setTransactionState(Transaction.PRESUBMIT);
-					if (isL2) {
-						setError(e?.data?.message ?? e.message);
-					} else {
-						setError(e.message);
-					}
-				}
-			}
-		}
-		claim();
-	}, [
-		gasPrice,
-		monitorTransaction,
-		tradingRewards,
-		stakingRewards,
-		isAppReady,
-		delegateWallet,
-		isL2,
-		synthetixjs,
-		userStakingData,
-	]);
-
-	const goToBurn = useCallback(() => router.push(ROUTES.Staking.Burn), [router]);
-	const goToEarn = useCallback(() => router.push(ROUTES.Earn.Home), [router]);
-
-	const handleCloseFeePeriod = async () => {
-		const {
-			contracts: { FeePool },
-		} = synthetixjs!;
-		try {
-			const gasLimit = FeePool.estimateGas.closeCurrentFeePeriod();
-
-			const transaction: ethers.ContractTransaction = await FeePool.closeCurrentFeePeriod({
-				gasPrice: normalizedGasPrice(gasPrice.toNumber()),
-				gasLimit,
-			});
-			if (transaction) {
-				setTxHash(transaction.hash);
-				monitorTransaction({
-					txHash: transaction.hash,
-					onTxConfirmed: () => {
-						fetchFeePeriodData();
-					},
-				});
-				setTxModalOpen(false);
-			}
-		} catch (e) {
-			console.log(e);
-		}
+		txn.mutate();
 	};
 
-	if (transactionState === Transaction.WAITING) {
+	const goToEarn = useCallback(() => router.push(ROUTES.Earn.Home), [router]);
+
+	if (txn.txnStatus === 'pending') {
 		return (
 			<TxState
 				description={
@@ -354,7 +232,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 		);
 	}
 
-	if (transactionState === Transaction.SUCCESS) {
+	if (txn.txnStatus === 'confirmed') {
 		return (
 			<TxState
 				description={
@@ -407,7 +285,6 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 								onClick={() => {
 									setClaimedTradingRewards(null);
 									setClaimedStakingRewards(null);
-									setTransactionState(Transaction.PRESUBMIT);
 								}}
 							>
 								{t('earn.actions.tx.dismiss')}
@@ -472,45 +349,22 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 						</Value>
 					</TotalValueWrapper>
 					{error && <ErrorMessage>{error}</ErrorMessage>}
-					<Tooltip
-						hideOnClick={true}
-						arrow={true}
-						placement="bottom"
-						content={t('earn.actions.claim.ratio-notice')}
-						disabled={!canClaim || !lowCRatio}
-					>
-						<PaddedButtonContainer>
-							{hasVotedForElections.data && !hasVotedForElections.data.hasVoted ? (
-								<PaddedButton variant="primary" onClick={() => router.push(ROUTES.Gov.Home)}>
-									{t('earn.actions.claim.not-voted')}
-								</PaddedButton>
-							) : lowCRatio ? (
-								<PaddedButton variant="primary" onClick={goToBurn}>
-									{t('earn.actions.claim.low-ratio')}
-								</PaddedButton>
-							) : (
-								<PaddedButton
-									variant="primary"
-									onClick={handleClaim}
-									disabled={!canClaim || !!(delegateWallet && !delegateWallet.canClaim)}
-								>
-									{userStakingData.hasClaimed
-										? t('earn.actions.claim.claimed-button')
-										: totalRewards.gt(0)
-										? t('earn.actions.claim.claim-button')
-										: t('earn.actions.claim.nothing-to-claim')}
-								</PaddedButton>
-							)}
-							{isCloseFeePeriodEnabled ? (
-								<PaddedButton variant="primary" onClick={handleCloseFeePeriod}>
-									{t('earn.actions.claim.close-fee-period')}
-								</PaddedButton>
-							) : null}
-						</PaddedButtonContainer>
-					</Tooltip>
+					{txn.isError && <ErrorMessage>{txn.errorMessage}</ErrorMessage>}
+					<ClaimOrCloseFeeButton
+						hasNotVoted={Boolean(hasVotedForElections.data && !hasVotedForElections.data.hasVoted)}
+						canClaim={delegateWallet ? delegateWallet.canClaim : canClaim}
+						hasClaimed={userStakingData.hasClaimed}
+						totalRewards={totalRewards}
+						isCloseFeePeriodEnabled={Boolean(isCloseFeePeriodEnabled)}
+						isBelowCRatio={isBelowCRatio}
+						handleClaim={handleClaim}
+						handleCloseFeePeriod={handleCloseFeePeriod}
+					/>
 					<GasSelector
 						altVersion={true}
-						gasLimitEstimate={gasLimitEstimate}
+						// We are aware that if the close fee button is clicked this gas estimate will be slightly less expensive
+						// Given that this is only on L2 and that the gas used is very similar we're fine with just showing the price for claiming
+						gasLimitEstimate={txn.gasLimit}
 						setGasPrice={setGasPrice}
 					/>
 				</InnerContainer>
@@ -518,7 +372,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 			{txModalOpen && (
 				<TxConfirmationModal
 					onDismiss={() => setTxModalOpen(false)}
-					txError={error}
+					txError={txn.errorMessage}
 					attemptRetry={handleClaim}
 					content={
 						<ModalContent>
@@ -577,16 +431,6 @@ const ValueBox = styled(FlexDivColCentered)`
 	${media.greaterThan('mdUp')`
 		width: 175px;
 	`}
-`;
-
-const PaddedButtonContainer = styled.div`
-	width: 100%;
-	text-align: center;
-`;
-
-const PaddedButton = styled(StyledButton)`
-	margin-top: 20px;
-	text-transform: uppercase;
 `;
 
 const StyledFlexDivColCentered = styled(FlexDivColCentered)`
