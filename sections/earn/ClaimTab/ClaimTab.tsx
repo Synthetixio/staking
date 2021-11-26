@@ -104,15 +104,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 	const isL2 = useRecoilValue(isL2State);
 	const feePoolDataQuery = useGetFeePoolDataQuery(0, { enabled: isL2 });
 	const hasVotedForElections = useHasVotedForElectionsQuery(snapshotEndpoint, walletAddress);
-	console.log({ hasVotedForElections });
-	console.log(
-		'Boolean(hasVotedForElections.data && !hasVotedForElections.data.hasVoted',
-		Boolean(hasVotedForElections.data && !hasVotedForElections.data.hasVoted)
-	);
-	console.log(
-		'hasVotedForElections.data && !hasVotedForElections.data.hasVoted',
-		hasVotedForElections.data && !hasVotedForElections.data.hasVoted
-	);
+
 	const claimCall: [string, string[]] = delegateWallet
 		? ['claimOnBehalf', [delegateWallet.address]]
 		: ['claimFees', []];
