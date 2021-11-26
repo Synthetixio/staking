@@ -6,7 +6,6 @@ import { StakingTransactionType } from '@synthetixio/queries';
 type HistoricalGlobalDebtAndIssuanceData = {
 	issuance: number;
 	debtPool: number;
-	timestamp: number;
 };
 
 type HistoricalGlobalDebtAndIssuance = {
@@ -49,7 +48,6 @@ const useGlobalHistoricalDebtData = () => {
 				data.push({
 					issuance: aggregation,
 					debtPool: event.totalDebt,
-					timestamp: event.timestamp,
 				});
 			});
 
