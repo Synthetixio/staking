@@ -47,8 +47,10 @@ const BurnTab: FC = () => {
 		let sUSDNeededToBuy;
 		let sUSDNeededToBurn;
 
-		/* If a user has more sUSD than the debt balance, the max burn amount is their debt balance, else it is just the balance they have */
-		const maxBurnAmount = debtBalance.gt(sUSDBalance) ? wei(sUSDBalance) : debtBalance;
+		// actualDebtToBurn gets displayed to the user when using max or clear
+		const actualDebtToBurn = debtBalance.gt(sUSDBalance) ? wei(sUSDBalance) : debtBalance;
+		// maxBurnAmount is whats gets passed to the smart contract, we do this to avoid dust when debt pool flucuates, burnSynths() will never burn more than the debt either way
+		const maxBurnAmount = wei(sUSDBalance);
 
 		const burnAmountToFixCRatio = wei(Math.max(debtBalance.sub(issuableSynths).toNumber(), 0));
 
@@ -58,7 +60,7 @@ const BurnTab: FC = () => {
 				handleSubmit = () => {
 					txn.mutate();
 				};
-				inputValue = maxBurnAmount.toString();
+				inputValue = actualDebtToBurn.toString();
 				isLocked = true;
 				break;
 			case BurnActionType.TARGET:
@@ -81,7 +83,7 @@ const BurnTab: FC = () => {
 					handleSubmit = () => {
 						txn.mutate();
 					};
-					inputValue = maxBurnAmount.toString();
+					inputValue = actualDebtToBurn.toString();
 					isLocked = true;
 					break;
 				}
