@@ -1,15 +1,13 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Svg } from 'react-optimized-image';
-import { ResponsiveContainer, XAxis, YAxis, Line, LineChart } from 'recharts';
+import { ResponsiveContainer, YAxis, Line, LineChart } from 'recharts';
 import { useTranslation } from 'react-i18next';
-import { format } from 'date-fns';
 
 import { FlexDivColCentered, FlexDivRow } from 'styles/common';
 
 import useGlobalHistoricalDebtData from 'hooks/useGlobalHistoricalDebtData';
 import colors from 'styles/theme/colors';
-import fonts from 'styles/theme/fonts';
 
 import SpinnerIcon from 'assets/svg/app/loader.svg';
 import ChartLabel from './ChartLabel';
@@ -39,14 +37,6 @@ const DebtHedgingChart: React.FC = () => {
 			</ChartTitleContainer>
 			<ResponsiveContainer width="100%" height={270}>
 				<LineChart margin={{ left: 0, top: 20, bottom: 0, right: 0 }} data={data}>
-					<XAxis
-						height={30}
-						dataKey="issuance"
-						interval="preserveEnd"
-						tick={{ fontSize: 10, fill: colors.white, fontFamily: fonts.mono }}
-						tickLine={false}
-						tickFormatter={() => format(new Date().getTime(), 'd MMM yy').toUpperCase()}
-					/>
 					<YAxis width={0} domain={['auto', 'auto']} tickLine={false} />
 					<Line
 						type="monotone"
