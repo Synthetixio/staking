@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { FlexDivRowCentered } from 'styles/common';
+import { FlexDivCentered } from 'styles/common';
 
 type ChartLabelProps = {
 	labelColor: string;
@@ -14,10 +14,10 @@ type ChartLabelIconProps = {
 
 const ChartLabel: React.FC<ChartLabelProps> = ({ labelColor, labelBorderColor, children }) => {
 	return (
-		<FlexDivRowCentered>
+		<FlexDivCentered>
 			<ChartLabelIcon color={labelColor} borderColor={labelBorderColor} />
 			<ChartLabelText>{children}</ChartLabelText>
-		</FlexDivRowCentered>
+		</FlexDivCentered>
 	);
 };
 
