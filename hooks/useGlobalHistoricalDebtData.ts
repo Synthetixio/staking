@@ -87,8 +87,8 @@ const useGlobalHistoricalDebtData = () => {
 
 	useEffect(() => {
 		if (isLoaded) {
-			const dhedgeHistory = dhedgeData.data.data.performanceHistory.history
-				.map((history) => ({
+			const dhedgeHistory = dhedgeData
+				.data!.data.performanceHistory.history.map((history) => ({
 					...history,
 					performance: Number(history.performance) * 100,
 					// we are getting the timestamps in milliseconds while our data is in seconds

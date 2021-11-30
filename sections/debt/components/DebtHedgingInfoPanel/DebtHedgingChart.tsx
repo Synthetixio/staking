@@ -4,7 +4,7 @@ import { Svg } from 'react-optimized-image';
 import { ResponsiveContainer, YAxis, Line, LineChart, XAxis } from 'recharts';
 import { useTranslation } from 'react-i18next';
 
-import { FlexDivCol, FlexDivColCentered, FlexDivRow } from 'styles/common';
+import { FlexDivCol, FlexDivColCentered } from 'styles/common';
 
 import useGlobalHistoricalDebtData from 'hooks/useGlobalHistoricalDebtData';
 import colors from 'styles/theme/colors';
