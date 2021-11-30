@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react';
 import { orderBy } from 'lodash';
 import useSynthetixQueries from '@synthetixio/queries';
-import { StakingTransactionType } from '@synthetixio/queries';
 import { useQuery } from 'react-query';
 import axios from 'axios';
-import Wei from '@synthetixio/wei';
+import Wei, { wei } from '@synthetixio/wei';
 
 type HistoricalGlobalDebtAndIssuanceData = {
 	mirrorPool: {
@@ -33,6 +32,15 @@ interface DHedgePerformanceResponse {
 	};
 	errors: any[];
 }
+enum EvenBlockType {
+	STAKING_TRANSACTION = 'STAKING_TRANSACTION',
+	DHEDGE_ITEM = 'DHEDGE_ITEM',
+}
+type EventBlocks = Array<{
+	type: EvenBlockType;
+	timestamp: number;
+	value: Wei;
+}>;
 
 const useGlobalHistoricalDebtData = () => {
 	const [historicalDebt, setHistoricalDebt] = useState<HistoricalGlobalDebtAndIssuance>({
@@ -87,36 +95,33 @@ const useGlobalHistoricalDebtData = () => {
 
 	useEffect(() => {
 		if (isLoaded) {
-			const dhedgeHistory = dhedgeData
-				.data!.data.performanceHistory.history.map((history) => ({
-					...history,
-					performance: Number(history.performance) * 100,
-					// we are getting the timestamps in milliseconds while our data is in seconds
-					id: String(Number(history.timestamp) / 1000),
-				}))
-				.filter((history) => history.performance);
-			const dailyIssuedData = dailyIssued.data ?? [];
-			const dailyBurnedData = dailyBurned.data ?? [];
+			const dhedgeHistory =
+				dhedgeData.data?.data.performanceHistory.history
+					.map((history) => ({
+						type: EvenBlockType.DHEDGE_ITEM,
+						value: wei(Number(history.performance) * 100),
+						// we are getting the timestamps in milliseconds while our data is in seconds
+						timestamp: Math.floor(Number(history.timestamp) / 1000),
+					}))
+					.filter((history) => !history.value.eq(0)) ?? [];
+
+			const dailyIssuedData =
+				dailyIssued.data?.map((x) => ({
+					timestamp: Number(x.id),
+					type: EvenBlockType.STAKING_TRANSACTION,
+					value: x.totalDebt,
+				})) ?? [];
+			const dailyBurnedData =
+				dailyBurned.data?.map((x) => ({
+					timestamp: Number(x.id),
+					type: EvenBlockType.STAKING_TRANSACTION,
+					value: x.totalDebt,
+				})) ?? [];
+
 			// We concat both the events and order them (asc)
-			const eventBlocks: Array<
-				| {
-						type: StakingTransactionType;
-						id: string;
-						value: Wei;
-						totalDebt: Wei;
-				  }
-				| {
-						performance: number;
-						id: string;
-				  }
-			> = orderBy(
-				dailyIssuedData
-					.map((x) => ({ ...x, type: StakingTransactionType.Issued }))
-					.concat(dailyBurnedData.map((x) => ({ ...x, type: StakingTransactionType.Burned })))
-					// merge the dhedgeHistory with our data
-					// @ts-ignore
-					.concat(dhedgeHistory),
-				'id',
+			const eventBlocks: EventBlocks = orderBy(
+				dailyIssuedData.concat(dailyBurnedData).concat(dhedgeHistory),
+				'timestamp',
 				'asc'
 			);
 			const firstIndexOfDHedgeInformation =
@@ -130,24 +135,24 @@ const useGlobalHistoricalDebtData = () => {
 			let lastKnownDebtPoolPrice = new Wei(0);
 			let lastKnownPerformance = new Wei(0);
 			trimmedEventBlocks.forEach((event) => {
-				if ('totalDebt' in event) {
-					lastKnownDebtPoolPrice = event.totalDebt;
+				if (event.type === EvenBlockType.STAKING_TRANSACTION) {
+					lastKnownDebtPoolPrice = event.value;
 					data.push({
 						mirrorPool: {
-							value: event.totalDebt.add(lastKnownPerformance).toNumber(),
-							timestamp: Number(event.id),
+							value: event.value.add(lastKnownPerformance).toNumber(),
+							timestamp: event.timestamp,
 						},
-						debtPool: { timestamp: Number(event.id), value: event.totalDebt.toNumber() },
+						debtPool: { timestamp: event.timestamp, value: event.value.toNumber() },
 					});
-				} else if ('performance' in event) {
-					const percentageOf = lastKnownDebtPoolPrice.mul(event.performance).div(100);
+				} else if (event.type === EvenBlockType.DHEDGE_ITEM) {
+					const percentageOf = lastKnownDebtPoolPrice.mul(event.value).div(100);
 					lastKnownPerformance = percentageOf;
 					data.push({
 						mirrorPool: {
 							value: lastKnownDebtPoolPrice.add(percentageOf).toNumber(),
-							timestamp: Number(event.id),
+							timestamp: event.timestamp,
 						},
-						debtPool: { timestamp: Number(event.id), value: lastKnownDebtPoolPrice.toNumber() },
+						debtPool: { timestamp: event.timestamp, value: lastKnownDebtPoolPrice.toNumber() },
 					});
 				}
 			});
