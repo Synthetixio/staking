@@ -119,14 +119,8 @@ const useGlobalHistoricalDebtData = () => {
 				'id',
 				'asc'
 			);
-			let firstIndexOfDHedgeInformation: number = 0;
-			for (let index = 0; index < eventBlocks.length; index++) {
-				if (!firstIndexOfDHedgeInformation && 'performance' in eventBlocks[index]) {
-					// We want to begin the graph with the debt pool line, that is why we do -1
-					firstIndexOfDHedgeInformation = index - 1;
-					break;
-				}
-			}
+			const firstIndexOfDHedgeInformation =
+				eventBlocks.findIndex((x) => EvenBlockType.DHEDGE_ITEM === x.type) - 1;
 
 			const trimmedEventBlocks = eventBlocks.slice(
 				firstIndexOfDHedgeInformation - 1,
