@@ -1,5 +1,5 @@
-import Wei, { wei } from '@synthetixio/wei';
-import { ethers } from 'ethers';
+import { wei } from '@synthetixio/wei';
+import { BigNumber, ethers } from 'ethers';
 
 export const GWEI_PRECISION = 9;
 
@@ -10,4 +10,4 @@ export enum Transaction {
 	FAILED = 'FAILED',
 	SUCCESS = 'SUCCESS',
 }
-export type GasLimitEstimate = Wei | null;
+export type GasLimitEstimate = BigNumber | null;
