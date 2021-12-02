@@ -23,7 +23,7 @@ describe('network', () => {
 		const gasPrice = { maxFeePerGas: BigNumber.from(204715396048) };
 		const gasLimit = wei(549278, GWEI_DECIMALS).toBN();
 		const ethPrice = wei(4500);
-		const result = getTransactionPrice(gasPrice, gasLimit, ethPrice);
+		const result = getTransactionPrice(gasPrice, gasLimit, ethPrice, null);
 
 		expect(result?.toString(2)).toBe('506.01');
 	});
