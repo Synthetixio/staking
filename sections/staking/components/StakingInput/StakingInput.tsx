@@ -49,6 +49,7 @@ import { BurnActionType, burnTypeState } from 'store/staking';
 import Button from 'components/Button';
 import Currency from 'components/Currency';
 import { parseSafeWei } from 'utils/parse';
+import { GasPrice } from '@synthetixio/queries';
 
 type StakingInputProps = {
 	onSubmit: () => void;
@@ -60,7 +61,8 @@ type StakingInputProps = {
 	txModalOpen: boolean;
 	setTxModalOpen: Function;
 	gasLimitEstimate: GasLimitEstimate;
-	setGasPrice: Function;
+	optimismLayerOneFee: Wei | null;
+	setGasPrice: (gasPrice: GasPrice) => void;
 	onInputChange: Function;
 	txHash: string | null;
 	transactionState: string;
@@ -92,6 +94,7 @@ const StakingInput: React.FC<StakingInputProps> = ({
 	etherNeededToBuy,
 	sUSDNeededToBuy,
 	sUSDNeededToBurn,
+	optimismLayerOneFee,
 }) => {
 	const {
 		targetCRatio,
@@ -322,7 +325,11 @@ const StakingInput: React.FC<StakingInputProps> = ({
 						<RowValue>{equivalentSNXAmount}</RowValue>
 					</DataRow>
 					<DataRow>
-						<GasSelector gasLimitEstimate={gasLimitEstimate} setGasPrice={setGasPrice} />
+						<GasSelector
+							gasLimitEstimate={gasLimitEstimate}
+							onGasPriceChange={setGasPrice}
+							optimismLayerOneFee={optimismLayerOneFee}
+						/>
 					</DataRow>
 				</DataContainer>
 			</InputContainer>

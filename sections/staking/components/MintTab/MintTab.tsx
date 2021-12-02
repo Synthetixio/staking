@@ -12,7 +12,7 @@ import { amountToMintState, MintActionType, mintTypeState } from 'store/staking'
 import { delegateWalletState } from 'store/wallet';
 import { parseSafeWei } from 'utils/parse';
 import Wei, { wei } from '@synthetixio/wei';
-import useSynthetixQueries from '@synthetixio/queries';
+import useSynthetixQueries, { GasPrice } from '@synthetixio/queries';
 
 const MintTab: React.FC = () => {
 	const delegateWallet = useRecoilValue(delegateWalletState);
@@ -24,7 +24,7 @@ const MintTab: React.FC = () => {
 
 	const { targetCRatio, SNXRate, unstakedCollateral } = useStakingCalculations();
 
-	const [gasPrice, setGasPrice] = useState<Wei>(wei(0));
+	const [gasPrice, setGasPrice] = useState<GasPrice | undefined>(undefined);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 
 	const { setTitle } = UIContainer.useContainer();
@@ -41,9 +41,7 @@ const MintTab: React.FC = () => {
 		? ['issueMaxSynths', []]
 		: ['issueSynths', [amountToMintBN.toBN()]];
 
-	const txn = useSynthetixTxn('Synthetix', mintCall[0], mintCall[1], {
-		gasPrice: gasPrice.toBN(),
-	});
+	const txn = useSynthetixTxn('Synthetix', mintCall[0], mintCall[1], gasPrice);
 
 	let error: string | null = null;
 
@@ -86,6 +84,7 @@ const MintTab: React.FC = () => {
 				txModalOpen={txModalOpen}
 				setTxModalOpen={setTxModalOpen}
 				gasLimitEstimate={txn.gasLimit}
+				optimismLayerOneFee={txn.optimismLayerOneFee}
 				setGasPrice={setGasPrice}
 				onInputChange={onMintChange}
 				txHash={txn.hash}
