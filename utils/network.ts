@@ -32,12 +32,12 @@ export const getTransactionPrice = (
 	gasPrice: GasPrice | null,
 	gasLimit: GasLimitEstimate,
 	ethPrice: Wei | null,
-	optimismL1Fees?: Wei
+	optimismLayerOneFee: Wei | null
 ) => {
 	if (!gasPrice || !gasLimit || !ethPrice) return null;
 	const totalGasPrice = getGweiGasPriceOrMaxFee(gasPrice);
 
-	const extraLayer1Fees = optimismL1Fees?.mul(GWEI_UNIT); // optimismL1Fees comes in ETH
+	const extraLayer1Fees = optimismLayerOneFee?.mul(GWEI_UNIT); // optimismL1Fees comes in ETH
 	const txPrice = totalGasPrice
 		.mul(gasLimit)
 		.add(extraLayer1Fees || 0)
