@@ -37,12 +37,11 @@ export const getTransactionPrice = (
 	if (!gasPrice || !gasLimit || !ethPrice) return null;
 	const totalGasPrice = getGweiGasPriceOrMaxFee(gasPrice);
 
-	const extraLayer1Fees = optimismLayerOneFee?.mul(GWEI_UNIT); // optimismL1Fees comes in ETH
-	const txPrice = totalGasPrice
-		.mul(gasLimit)
-		.add(extraLayer1Fees || 0)
-		.mul(ethPrice)
-		.div(GWEI_UNIT);
+	const extraLayer1Fees = optimismLayerOneFee;
+	const gasPriceCost = totalGasPrice.mul(wei(gasLimit, GWEI_DECIMALS)).mul(ethPrice);
+	const l1Cost = ethPrice.mul(extraLayer1Fees || 0);
+
+	const txPrice = gasPriceCost.add(l1Cost);
 
 	return txPrice;
 };
