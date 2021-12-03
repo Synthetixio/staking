@@ -4,6 +4,7 @@ import useSynthetixQueries from '@synthetixio/queries';
 import { useQuery } from 'react-query';
 import axios from 'axios';
 import Wei, { wei } from '@synthetixio/wei';
+import { dHedgeAPIUrl } from 'constants/dhedge';
 
 type HistoricalGlobalDebtAndIssuanceData = {
 	mirrorPool: {
@@ -49,10 +50,10 @@ const useGlobalHistoricalDebtData = () => {
 	});
 
 	const dhedgeData = useQuery<DHedgePerformanceResponse>(
-		['dhedge', 'https://api-v2.dhedge.org/graphql'],
+		['dhedge', dHedgeAPIUrl],
 		async () => {
 			const response = await axios({
-				url: 'https://api-v2.dhedge.org/graphql',
+				url: dHedgeAPIUrl,
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
@@ -126,14 +127,13 @@ const useGlobalHistoricalDebtData = () => {
 			);
 			const firstIndexOfDHedgeInformation =
 				eventBlocks.findIndex((x) => EvenBlockType.DHEDGE_ITEM === x.type) - 1;
-
 			const trimmedEventBlocks = eventBlocks.slice(
 				firstIndexOfDHedgeInformation - 1,
 				eventBlocks.length - 1
 			);
 			const data: HistoricalGlobalDebtAndIssuanceData[] = [];
-			let lastKnownDebtPoolPrice = new Wei(0);
-			let lastKnownPerformance = new Wei(0);
+			let lastKnownDebtPoolPrice = wei(0);
+			let lastKnownPerformance = wei(0);
 			trimmedEventBlocks.forEach((event) => {
 				if (event.type === EvenBlockType.STAKING_TRANSACTION) {
 					lastKnownDebtPoolPrice = event.value;
