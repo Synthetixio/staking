@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import useEscrowCalculations from 'sections/escrow/hooks/useEscrowCalculations';
 import { formatCurrency } from 'utils/formatters/number';
 import { CryptoCurrency } from 'constants/currency';
-import { InputContainer, InputBox } from '../common';
+import { InputContainer, InputBox, StyledCTA } from '../common';
 import { Transaction, GasLimitEstimate } from 'constants/network';
 
 import GasSelector from 'components/GasSelector';
@@ -14,7 +14,6 @@ import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import { ActionCompleted, ActionInProgress } from '../TxSent';
 
 import SNXLogo from 'assets/svg/currencies/crypto/SNX.svg';
-import { StyledCTA } from '../common';
 import {
 	ModalContent,
 	ModalItem,
@@ -22,6 +21,8 @@ import {
 	ModalItemText,
 	ErrorMessage,
 } from 'styles/common';
+import { GasPrice } from '@synthetixio/queries';
+import Wei from '@synthetixio/wei';
 
 type MigrateTabContentProps = {
 	onSubmit: any;
@@ -30,10 +31,11 @@ type MigrateTabContentProps = {
 	txModalOpen: boolean;
 	setTxModalOpen: Function;
 	gasLimitEstimate: GasLimitEstimate;
-	setGasPrice: Function;
+	setGasPrice: (gasPrice: GasPrice) => void;
 	txHash: string | null;
 	transactionState: string;
 	setTransactionState: (tx: Transaction) => void;
+	optimismLayerOneFee: Wei | null;
 };
 
 const MigrateTabContent: FC<MigrateTabContentProps> = ({
@@ -47,6 +49,7 @@ const MigrateTabContent: FC<MigrateTabContentProps> = ({
 	txHash,
 	transactionState,
 	setTransactionState,
+	optimismLayerOneFee,
 }) => {
 	const { t } = useTranslation();
 	const vestingCurrencyKey = CryptoCurrency['SNX'];
@@ -92,7 +95,11 @@ const MigrateTabContent: FC<MigrateTabContentProps> = ({
 					</Data>
 				</InputBox>
 				<SettingsContainer>
-					<GasSelector gasLimitEstimate={gasLimitEstimate} setGasPrice={setGasPrice} />
+					<GasSelector
+						gasLimitEstimate={gasLimitEstimate}
+						onGasPriceChange={setGasPrice}
+						optimismLayerOneFee={optimismLayerOneFee}
+					/>
 				</SettingsContainer>
 			</InputContainer>
 			{renderButton()}
