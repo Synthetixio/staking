@@ -15,9 +15,8 @@ import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import { ModalContent, ModalItem, ModalItemTitle, ModalItemText } from 'styles/common';
 
 import { truncateAddress } from 'utils/formatters/string';
-import Wei, { wei } from '@synthetixio/wei';
 import Connector from 'containers/Connector';
-import useSynthetixQueries from '@synthetixio/queries';
+import useSynthetixQueries, { GasPrice } from '@synthetixio/queries';
 import { ethers } from 'ethers';
 import { parseSafeWei } from 'utils/parse';
 
@@ -44,7 +43,7 @@ const TransferModal: FC<TransferModalProps> = ({
 
 	const [amount, setAmount] = useState<string>('');
 	const [destinationAddress, setDestinationAddress] = useState('');
-	const [gasPrice, setGasPrice] = useState<Wei>(wei(0));
+	const [gasPrice, setGasPrice] = useState<GasPrice | undefined>(undefined);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 	const onEnterAddress = (e: React.ChangeEvent<HTMLTextAreaElement>) =>
 		setDestinationAddress((e.target.value ?? '').trim());
@@ -66,7 +65,7 @@ const TransferModal: FC<TransferModalProps> = ({
 				: ethers.constants.AddressZero,
 			transferAmountWei.toBN(),
 		],
-		{ gasPrice: gasPrice.toBN() }
+		gasPrice
 	);
 
 	useEffect(() => {
@@ -137,7 +136,11 @@ const TransferModal: FC<TransferModalProps> = ({
 						/>
 					</InputsContainer>
 					<SettingsContainer>
-						<GasSelector gasLimitEstimate={txn.gasLimit} setGasPrice={setGasPrice} />
+						<GasSelector
+							gasLimitEstimate={txn.gasLimit}
+							onGasPriceChange={setGasPrice}
+							optimismLayerOneFee={txn.optimismLayerOneFee}
+						/>
 					</SettingsContainer>
 				</FormContainer>
 				{renderButton()}
