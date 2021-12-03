@@ -11,7 +11,7 @@ import useClearDebtCalculations from 'sections/staking/hooks/useClearDebtCalcula
 import { useTranslation } from 'react-i18next';
 import { toFutureDate } from 'utils/formatters/date';
 import Wei, { wei } from '@synthetixio/wei';
-import useSynthetixQueries from '@synthetixio/queries';
+import useSynthetixQueries, { GasPrice } from '@synthetixio/queries';
 import { parseSafeWei } from 'utils/parse';
 
 const useBurnTx = () => {
@@ -39,7 +39,7 @@ const useBurnTx = () => {
 	const { t } = useTranslation();
 
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
-	const [gasPrice, setGasPrice] = useState<Wei>(wei(0));
+	const [gasPrice, setGasPrice] = useState<GasPrice | undefined>(undefined);
 	const [waitingPeriod, setWaitingPeriod] = useState(0);
 	const [issuanceDelay, setIssuanceDelay] = useState(0);
 
@@ -122,17 +122,9 @@ const useBurnTx = () => {
 		enabled: true,
 	});
 
-	const txn = useSynthetixTxn(
-		'Synthetix',
-		burnCall[0],
-		burnCall[1],
-		{
-			gasPrice: gasPrice.toBN(),
-		},
-		{
-			enabled: burnType !== BurnActionType.CLEAR || !needToBuy || swapTxn.txnStatus === 'confirmed',
-		}
-	);
+	const txn = useSynthetixTxn('Synthetix', burnCall[0], burnCall[1], gasPrice, {
+		enabled: burnType !== BurnActionType.CLEAR || !needToBuy || swapTxn.txnStatus === 'confirmed',
+	});
 
 	useEffect(() => {
 		if (swapTxn.txnStatus === 'prompting' || txn.txnStatus === 'prompting') setTxModalOpen(true);
