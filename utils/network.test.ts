@@ -11,7 +11,7 @@ describe('network', () => {
 		expect(l1.toNumber()).toEqual(100 / GWEI_UNIT);
 	});
 	test('getTransactionPrice OVM', () => {
-		const gasPrice = { gasPrice: BigNumber.from(1000000) };
+		const gasPrice = { gasPrice: wei(0.001 / GWEI_UNIT, GWEI_DECIMALS).toBN() };
 		const gasLimit = wei(678031, GWEI_DECIMALS).toBN();
 		const ethPrice = wei(4500);
 		const layerOneFees = wei(0.001);
@@ -20,11 +20,11 @@ describe('network', () => {
 		expect(result?.toString(1)).toBe('4.5');
 	});
 	test('getTransactionPrice EIP1559', () => {
-		const gasPrice = { maxFeePerGas: BigNumber.from(204715396048) };
+		const gasPrice = { maxFeePerGas: wei(204 / GWEI_UNIT, GWEI_DECIMALS).toBN() };
 		const gasLimit = wei(549278, GWEI_DECIMALS).toBN();
 		const ethPrice = wei(4500);
 		const result = getTransactionPrice(gasPrice, gasLimit, ethPrice, null);
 
-		expect(result?.toString(2)).toBe('506.01');
+		expect(result?.toString(2)).toBe('504.24');
 	});
 });
