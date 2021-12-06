@@ -41,12 +41,7 @@ type ApproveModalProps = {
 const getContractByName = (synthetixjs: SynthetixJS, name: string, signer: any) => {
 	const { contracts } = synthetixjs;
 	if (name === 'YearnSNXVault') {
-		return new ethers.Contract(
-			yearnSNXVault.address,
-			// @ts-ignore
-			yearnSNXVault.abi,
-			signer as ethers.Signer
-		);
+		return new ethers.Contract(yearnSNXVault.address, yearnSNXVault.abi, signer);
 	}
 	return contracts[name];
 };
