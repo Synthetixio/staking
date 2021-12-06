@@ -28,6 +28,8 @@
 		"@synthetixio/transaction-notifier": "2.53.0",
 		"@synthetixio/wei": "2.53.0",
 		"@tippyjs/react": "4.1.0",
+		"@uniswap/sdk-core": "^3.0.1",
+		"@uniswap/v3-sdk": "^3.6.3",
 		"axios": "0.21.1",
 		"bignumber.js": "9.0.0",
 		"bnc-onboard": "^1.32.0",

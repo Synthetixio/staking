@@ -392,13 +392,14 @@
 			"manage": {
 				"title": "Manage",
 				"info-panel": {
-					"title": "Debt mirror pool overperforms against debt pool",
-					"body": "Your debt will fluctuate over time with the debt pool. We recommend that you hedge your debt to reduce risk owning more debt than you hold.",
+					"title": "Debt Mirror Index",
+					"body": "The Debt Mirror Index token is a tool that replicates the payoff of the synthetix debt index, enabling users to hedge their active debt exposure. 1 sUSD worth of Debt Mirror pool token hedges 1 USD worth of active debt. Learn how it works here.",
 					"link": "Find out more about debt hedging <0>here</0>",
 					"chart": {
-						"title": "DEBT MIRROR vs DEBT POOL",
-						"debt-mirror-label": "DEBT MIRROR",
-						"debtPool-label": "DEBT POOL"
+						"title": "DEBT MIRROR INDEX vs DEBT POOL",
+						"debt-mirror-label": "DEBT MIRROR INDEX",
+						"debtPool-label": "DEBT POOL",
+						"hedged-balance": "Your hedged balance:"
 					}
 				}
 			},

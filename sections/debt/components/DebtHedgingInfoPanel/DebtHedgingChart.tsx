@@ -13,6 +13,7 @@ import SpinnerIcon from 'assets/svg/app/loader.svg';
 import ChartLabel from './ChartLabel';
 import { format } from 'date-fns';
 import fonts from 'styles/theme/fonts';
+import DebtHedgedBalance from './DebtHedgedBalance';
 
 const DebtHedgingChart: React.FC = () => {
 	const { t } = useTranslation();
@@ -30,14 +31,15 @@ const DebtHedgingChart: React.FC = () => {
 		<ChartContainer>
 			<ChartTitleContainer>
 				<p>{t('debt.actions.manage.info-panel.chart.title')}</p>
-				<div>
+				<StyledChartLabelsWrapper>
 					<ChartLabel labelColor={colors.mutedBlue} labelBorderColor={colors.blue}>
 						{t('debt.actions.manage.info-panel.chart.debt-mirror-label')}
 					</ChartLabel>
 					<ChartLabel labelColor={colors.mutedPink} labelBorderColor={colors.pink}>
 						{t('debt.actions.manage.info-panel.chart.debtPool-label')}
 					</ChartLabel>
-				</div>
+					<DebtHedgedBalance userBalance={0} />
+				</StyledChartLabelsWrapper>
 			</ChartTitleContainer>
 			<ResponsiveContainer width="100%" height={270}>
 				<LineChart margin={{ left: 0, top: 20, bottom: 0, right: 0 }} data={data}>
@@ -93,6 +95,10 @@ const SpinnerContainer = styled(FlexDivColCentered)`
 const Spinner = styled(Svg)`
 	display: block;
 	margin: 30px auto;
+`;
+
+const StyledChartLabelsWrapper = styled.div`
+	margin-bottom: 8px;
 `;
 
 export default DebtHedgingChart;
