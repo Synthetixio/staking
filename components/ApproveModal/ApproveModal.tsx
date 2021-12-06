@@ -1,17 +1,13 @@
-import { FC, useEffect, useState } from 'react';
+import { FC, useState } from 'react';
 import styled from 'styled-components';
 import { ethers } from 'ethers';
-
-import Connector from 'containers/Connector';
-import TransactionNotifier from 'containers/TransactionNotifier';
-
 import { Svg } from 'react-optimized-image';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 
 import LockedIcon from 'assets/svg/app/locked.svg';
 
-import { TokenAllowanceLimit, GasLimitEstimate } from 'constants/network';
+import { TokenAllowanceLimit } from 'constants/network';
 import { appReadyState } from 'store/app';
 import { isWalletConnectedState } from 'store/wallet';
 import GasSelector from 'components/GasSelector';
@@ -25,20 +21,21 @@ import {
 	ModalItemTitle,
 	ModalItemText,
 } from 'styles/common';
-import { normalizedGasPrice, normalizeGasLimit } from 'utils/network';
 
 import { yearnSNXVault } from 'contracts';
 import { SynthetixJS } from '@synthetixio/contracts-interface';
-import Wei, { wei } from '@synthetixio/wei';
+import useSynthetixQueries, { GasPrice } from '@synthetixio/queries';
+import { isObjectOrErrorWithMessage } from 'utils/ts-helpers';
+import { SynthetixJsAndSignerProps, withSynthetixJsAndSigner } from 'hoc/withSynthetixJsAndSigner';
 
 type ApproveModalProps = {
 	description: string;
 	onApproved: () => void;
-	tokenContract: string;
-	contractToApprove: string;
+	tokenContractName: string;
+	contractToApproveName: string;
 };
 
-const getContractByName = (synthetixjs: SynthetixJS, name: string, signer: any) => {
+const getContractByName = (synthetixjs: SynthetixJS, name: string, signer: ethers.Signer) => {
 	const { contracts } = synthetixjs;
 	if (name === 'YearnSNXVault') {
 		return new ethers.Contract(yearnSNXVault.address, yearnSNXVault.abi, signer);
@@ -46,87 +43,53 @@ const getContractByName = (synthetixjs: SynthetixJS, name: string, signer: any) 
 	return contracts[name];
 };
 
-const ApproveModal: FC<ApproveModalProps> = ({
+const ApproveModal: FC<ApproveModalProps & SynthetixJsAndSignerProps> = ({
 	description,
 	onApproved,
-	tokenContract,
-	contractToApprove,
+	tokenContractName,
+	contractToApproveName,
+	signer,
+	synthetixjs,
 }) => {
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const isAppReady = useRecoilValue(appReadyState);
-	const { monitorTransaction } = TransactionNotifier.useContainer();
-	const { signer, synthetixjs } = Connector.useContainer();
+	const { useContractTxn } = useSynthetixQueries();
 
-	const [gasLimitEstimate, setGasLimitEstimate] = useState<GasLimitEstimate>(null);
 	const [error, setError] = useState<string | null>(null);
-	const [gasPrice, setGasPrice] = useState<Wei>(wei(0));
+	const [gasPrice, setGasPrice] = useState<GasPrice | undefined>(undefined);
 	const [isApproving, setIsApproving] = useState<boolean>(false);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
-
-	useEffect(() => {
-		const getGasLimitEstimate = async () => {
-			if (isAppReady && isWalletConnected && tokenContract && contractToApprove) {
-				try {
-					const {
-						utils: { parseEther },
-						contracts,
-					} = synthetixjs!;
-					setError(null);
-					const allowance = parseEther(TokenAllowanceLimit.toString());
-					const approvedContract = getContractByName(synthetixjs!, contractToApprove, signer);
-					const gasLimitEstimate = wei(
-						await contracts[tokenContract].estimateGas.approve(approvedContract.address, allowance),
-						0
-					);
-
-					setGasLimitEstimate(gasLimitEstimate);
-				} catch (e) {
-					console.log(e);
+	const tokenContract = getContractByName(synthetixjs!, tokenContractName, signer);
+	const contractToApprove = getContractByName(synthetixjs!, contractToApproveName, signer);
+	const allowance = synthetixjs?.utils.parseEther(TokenAllowanceLimit.toString());
+	const txn = useContractTxn(
+		tokenContract,
+		'approve',
+		[contractToApprove.address, allowance],
+		gasPrice,
+		{
+			enabled: Boolean(synthetixjs && isWalletConnected && isAppReady),
+			onSuccess: () => {
+				setTxModalOpen(false);
+				setIsApproving(false);
+				onApproved();
+			},
+			onError: (e) => {
+				if (isObjectOrErrorWithMessage(e)) {
 					setError(e.message);
-					setGasLimitEstimate(null);
+				} else {
+					setError(String(e));
 				}
-			}
-		};
-		getGasLimitEstimate();
-		// eslint-disable-next-line
-	}, [isAppReady, isWalletConnected, tokenContract, contractToApprove]);
+				setIsApproving(false);
+			},
+		}
+	);
 
 	const handleApprove = async () => {
-		if (gasLimitEstimate) {
-			try {
-				const {
-					contracts,
-					utils: { parseEther },
-				} = synthetixjs!;
-				setIsApproving(true);
-				setError(null);
-				setTxModalOpen(true);
-				const allowance = parseEther(TokenAllowanceLimit.toString());
-				const approvedContract = getContractByName(synthetixjs!, contractToApprove, signer);
-				const transaction: ethers.ContractTransaction = await contracts[tokenContract].approve(
-					approvedContract.address,
-					allowance,
-					{
-						gasPrice: normalizedGasPrice(gasPrice.toNumber()),
-						gasLimit: normalizeGasLimit(gasLimitEstimate.toNumber()),
-					}
-				);
-				if (transaction) {
-					monitorTransaction({
-						txHash: transaction.hash,
-						onTxConfirmed: () =>
-							setTimeout(() => {
-								onApproved();
-							}, 15 * 1000),
-					});
-					setTxModalOpen(false);
-				}
-			} catch (e) {
-				console.log(e);
-				setError(e.message);
-				setIsApproving(false);
-			}
-		}
+		setIsApproving(true);
+		setError(null);
+		setTxModalOpen(true);
+		txn.mutate();
 	};
 
 	const { t } = useTranslation();
@@ -136,9 +99,13 @@ const ApproveModal: FC<ApproveModalProps> = ({
 				<Layer>
 					<Svg src={LockedIcon} />
 					<ModalInfo>{description}</ModalInfo>
-					<GasSelector gasLimitEstimate={gasLimitEstimate} setGasPrice={setGasPrice} />
+					<GasSelector
+						gasLimitEstimate={txn.gasLimit}
+						onGasPriceChange={setGasPrice}
+						optimismLayerOneFee={txn.optimismLayerOneFee}
+					/>
 					<StyledButton
-						disabled={isApproving || !gasLimitEstimate}
+						disabled={isApproving || !txn.gasLimit}
 						onClick={handleApprove}
 						size="lg"
 						variant="primary"
@@ -159,7 +126,7 @@ const ApproveModal: FC<ApproveModalProps> = ({
 								<ModalItemTitle>{t('modals.confirm-transaction.approve.approving')}</ModalItemTitle>
 								<ModalItemText>
 									{t('modals.confirm-transaction.approve.contract', {
-										stakedAsset: contractToApprove,
+										stakedAsset: contractToApproveName,
 									})}
 								</ModalItemText>
 							</ModalItem>
@@ -205,4 +172,4 @@ const StyledButton = styled(Button)`
 	width: 100%;
 `;
 
-export default ApproveModal;
+export default withSynthetixJsAndSigner<ApproveModalProps>(ApproveModal);

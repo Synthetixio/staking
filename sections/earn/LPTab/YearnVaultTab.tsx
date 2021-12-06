@@ -210,8 +210,8 @@ const YearnVaultTab: FC<LPTabProps> = ({
 				<ApproveModalWrapper>
 					<ApproveModal
 						description={t('earn.incentives.options.yvsnx.approve-message')}
-						tokenContract="Synthetix"
-						contractToApprove="YearnSNXVault"
+						tokenContractName="Synthetix"
+						contractToApproveName="YearnSNXVault"
 						onApproved={() => setShowApproveOverlayModal(false)}
 					/>
 				</ApproveModalWrapper>

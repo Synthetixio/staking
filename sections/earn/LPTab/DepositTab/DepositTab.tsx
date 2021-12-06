@@ -45,9 +45,9 @@ import {
 import { useRecoilValue } from 'recoil';
 import { appReadyState } from 'store/app';
 import { CurrencyIconType } from 'components/Currency/CurrencyIcon/CurrencyIcon';
-import Wei, { wei } from '@synthetixio/wei';
+import Wei from '@synthetixio/wei';
 import { parseSafeWei } from 'utils/parse';
-import useSynthetixQueries from '@synthetixio/queries';
+import useSynthetixQueries, { GasPrice } from '@synthetixio/queries';
 
 export const getContract = (asset: CurrencyKey, signer: ethers.Signer | null) => {
 	if (asset === CryptoCurrency.SNX) {
@@ -85,7 +85,7 @@ const DepositTab: FC<DepositTabProps> = ({
 	const [amount, setAmount] = useState<string>('');
 	const { blockExplorerInstance } = Etherscan.useContainer();
 	const { signer } = Connector.useContainer();
-	const [gasPrice, setGasPrice] = useState<Wei>(wei(0));
+	const [gasPrice, setGasPrice] = useState<GasPrice | undefined>(undefined);
 	const isAppReady = useRecoilValue(appReadyState);
 	const { useContractTxn } = useSynthetixQueries();
 
@@ -99,7 +99,7 @@ const DepositTab: FC<DepositTabProps> = ({
 		getContract(asset, signer),
 		isDeposit ? 'deposit(uint256)' : 'withdraw(uint256)',
 		[parsedAmount.toBN()],
-		{ gasPrice: gasPrice.toBN() }
+		gasPrice
 	);
 
 	const link =
@@ -243,7 +243,12 @@ const DepositTab: FC<DepositTabProps> = ({
 						? t('earn.actions.deposit.deposit-button', { asset })
 						: t('earn.actions.withdraw.withdraw-button', { asset })}
 				</PaddedButton>
-				<GasSelector altVersion={true} gasLimitEstimate={txn.gasLimit} setGasPrice={setGasPrice} />
+				<GasSelector
+					altVersion={true}
+					gasLimitEstimate={txn.gasLimit}
+					onGasPriceChange={setGasPrice}
+					optimismLayerOneFee={txn.optimismLayerOneFee}
+				/>
 			</Container>
 			{txModalOpen && (
 				<TxConfirmationModal
