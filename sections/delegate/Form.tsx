@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, FC, useCallback } from 'react';
+import { useState, useMemo, useEffect, FC, useCallback, ChangeEventHandler } from 'react';
 import { ethers } from 'ethers';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
@@ -112,7 +112,8 @@ const Tab: FC = () => {
 		[isAppReady, properDelegateAddress, action, delegateAddressIsSelf, synthetixjs]
 	);
 
-	const onEnterAddress = (e: any) => setDelegateAddress((e.target.value ?? '').trim());
+	const onEnterAddress: ChangeEventHandler<HTMLTextAreaElement> = (e) =>
+		setDelegateAddress((e.target.value ?? '').trim());
 	const onButtonClick = async () => {
 		if (!isWalletConnected) {
 			return connectWallet();
