@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, FC, useCallback, ChangeEventHandler } from 'react';
+import { useState, useMemo, useEffect, FC, ChangeEventHandler } from 'react';
 import { ethers } from 'ethers';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
@@ -8,7 +8,6 @@ import { truncateAddress } from 'utils/formatters/string';
 import Button from 'components/Button';
 import StructuredTab from 'components/StructuredTab';
 import Connector from 'containers/Connector';
-import TransactionNotifier from 'containers/TransactionNotifier';
 import {
 	ModalItemTitle as TxModalItemTitle,
 	ModalItemText as TxModalItemText,
@@ -21,6 +20,7 @@ import useSynthetixQueries, {
 	Action,
 	DELEGATE_APPROVE_CONTRACT_METHODS,
 	DELEGATE_GET_IS_APPROVED_CONTRACT_METHODS,
+	GasPrice,
 } from '@synthetixio/queries';
 import {
 	FormContainer,
@@ -30,14 +30,9 @@ import {
 	ErrorMessage,
 	TxModalItem,
 } from 'sections/delegate/common';
-import { tx, getGasEstimateForTransaction } from 'utils/transactions';
-import {
-	normalizeGasLimit as getNormalizedGasLimit,
-	normalizedGasPrice as getNormalizedGasPrice,
-} from 'utils/network';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import ActionSelector from './ActionSelector';
-import Wei, { wei } from '@synthetixio/wei';
+import { isObjectOrErrorWithMessage } from 'utils/ts-helpers';
 
 const LeftCol: FC = () => {
 	const { t } = useTranslation();
@@ -66,15 +61,12 @@ const Tab: FC = () => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const address = useRecoilValue(walletAddressState);
 
-	const { useGetDelegateWallets } = useSynthetixQueries();
+	const { useGetDelegateWallets, useSynthetixTxn } = useSynthetixQueries();
 
 	const delegateWalletsQuery = useGetDelegateWallets(address);
-	const { monitorTransaction } = TransactionNotifier.useContainer();
-
 	const [action, setAction] = useState<string>(Action.APPROVE_ALL);
 
-	const [gasPrice, setGasPrice] = useState<Wei>(wei(0));
-	const [gasLimit, setGasLimitEstimate] = useState<number>(0);
+	const [gasPrice, setGasPrice] = useState<GasPrice | undefined>(undefined);
 	const [delegateAddress, setDelegateAddress] = useState<string>('');
 
 	const [error, setError] = useState<string | null>(null);
@@ -86,91 +78,51 @@ const Tab: FC = () => {
 		() => (delegateAddress && ethers.utils.isAddress(delegateAddress) ? delegateAddress : null),
 		[delegateAddress]
 	);
-	const delegateAddressIsSelf = useMemo(
-		() =>
-			properDelegateAddress && address
-				? properDelegateAddress === ethers.utils.getAddress(address)
-				: null,
-		[properDelegateAddress, address]
-	);
+	const delegateAddressIsSelf =
+		properDelegateAddress && address
+			? properDelegateAddress === ethers.utils.getAddress(address)
+			: false;
+
 	const shortenedDelegateAddress = useMemo(() => truncateAddress(delegateAddress, 8, 6), [
 		delegateAddress,
 	]);
 
-	const getApproveTxData = useCallback(
-		(gas: Record<string, number>) => {
-			if (!(properDelegateAddress && !delegateAddressIsSelf && isAppReady)) return null;
-			const {
-				contracts: { DelegateApprovals },
-			} = synthetixjs!;
-			return [
-				DelegateApprovals,
-				DELEGATE_APPROVE_CONTRACT_METHODS.get(action),
-				[properDelegateAddress, gas],
-			];
-		},
-		[isAppReady, properDelegateAddress, action, delegateAddressIsSelf, synthetixjs]
-	);
-
 	const onEnterAddress: ChangeEventHandler<HTMLTextAreaElement> = (e) =>
 		setDelegateAddress((e.target.value ?? '').trim());
+
+	const txn = useSynthetixTxn(
+		'DelegateApprovals',
+		DELEGATE_APPROVE_CONTRACT_METHODS.get(action) as string,
+		[properDelegateAddress],
+		gasPrice,
+		{
+			enabled: Boolean(properDelegateAddress),
+			onSuccess: () => {
+				delegateWalletsQuery.refetch();
+				setDelegateAddress('');
+				setAction(Action.APPROVE_ALL);
+			},
+			onError: (e) => {
+				if (isObjectOrErrorWithMessage(e)) {
+					setError(e.message);
+				} else {
+					setError(String(e));
+				}
+			},
+			onSettled: () => {
+				setButtonState(null);
+				setTxModalOpen(false);
+			},
+		}
+	);
 	const onButtonClick = async () => {
 		if (!isWalletConnected) {
 			return connectWallet();
 		}
-		delegate();
-	};
-
-	const delegate = async () => {
+		txn.mutate();
 		setButtonState('delegating');
 		setTxModalOpen(true);
-		try {
-			const gas: Record<string, number> = {
-				gasPrice: getNormalizedGasPrice(gasPrice.toNumber()),
-				gasLimit: gasLimit!,
-			};
-			await tx(() => getApproveTxData(gas), {
-				showErrorNotification: (e: string) => setError(e),
-				showProgressNotification: (hash: string) =>
-					monitorTransaction({
-						txHash: hash,
-						onTxConfirmed: () => {
-							setTimeout(() => {
-								delegateWalletsQuery.refetch();
-							}, 10 * 1000);
-						},
-					}),
-				showSuccessNotification: (hash: string) => {},
-			});
-			setDelegateAddress('');
-			setAction(Action.APPROVE_ALL);
-		} catch {
-		} finally {
-			setButtonState(null);
-			setTxModalOpen(false);
-		}
 	};
-
-	// gas
-	useEffect(() => {
-		let isMounted = true;
-		(async () => {
-			try {
-				setError(null);
-				const data: any[] | null = getApproveTxData({});
-				if (!data) return;
-				const [contract, method, args] = data;
-				const gasEstimate = await getGasEstimateForTransaction(args, contract.estimateGas[method]);
-				if (isMounted) setGasLimitEstimate(getNormalizedGasLimit(Number(gasEstimate)));
-			} catch (error) {
-				// console.error(error);
-				if (isMounted) setGasLimitEstimate(0);
-			}
-		})();
-		return () => {
-			isMounted = false;
-		};
-	}, [getApproveTxData]);
 
 	// already delegated
 	useEffect(() => {
@@ -183,6 +135,7 @@ const Tab: FC = () => {
 			const alreadyDelegated = await DelegateApprovals[
 				DELEGATE_GET_IS_APPROVED_CONTRACT_METHODS.get(action)!
 			](address, properDelegateAddress);
+
 			setAlreadyDelegated(alreadyDelegated);
 		};
 		getIsAlreadyDelegated();
@@ -208,7 +161,11 @@ const Tab: FC = () => {
 					<ActionSelector {...{ action, setAction }} />
 
 					<SettingContainer>
-						<GasSelector gasLimitEstimate={wei(gasLimit, 0)} setGasPrice={setGasPrice} />
+						<GasSelector
+							gasLimitEstimate={txn.gasLimit}
+							onGasPriceChange={setGasPrice}
+							optimismLayerOneFee={txn.optimismLayerOneFee}
+						/>
 					</SettingContainer>
 				</SettingsContainer>
 			</FormContainer>
