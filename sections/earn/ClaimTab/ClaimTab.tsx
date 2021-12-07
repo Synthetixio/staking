@@ -224,7 +224,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 		);
 	}
 
-	if (txn.txnStatus === 'confirmed') {
+	if (txn.txnStatus === 'confirmed' && claimedTradingRewards !== null) {
 		return (
 			<TxState
 				description={
