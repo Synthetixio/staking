@@ -6,5 +6,5 @@ export default function DebtHedgedBalance({ userBalance }: Record<'userBalance',
 	const uniswapPool = useUniswapSUSDdSNXPool();
 	// multiply the userBalance with the token Balance to get the value in USD?
 
-	return <span>{t('debt.actions.manage.info-panel.chart.hedged-balance')} 1234$</span>;
+	return <span>{t('debt.actions.manage.info-panel.chart.hedged-balance')} ~1234$</span>;
 }
