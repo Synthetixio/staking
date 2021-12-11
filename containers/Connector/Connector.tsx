@@ -7,7 +7,7 @@ import {
 import { loadProvider } from '@synthetixio/providers';
 
 import { getDefaultNetworkId, getIsOVM } from 'utils/network';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import {
 	NetworkId,
 	Network as NetworkName,
@@ -19,7 +19,7 @@ import { ethers } from 'ethers';
 import { switchToL1 } from '@synthetixio/optimism-networks';
 
 import { appReadyState } from 'store/app';
-import { walletAddressState, networkState } from 'store/wallet';
+import { walletAddressState, networkState, ensNameState } from 'store/wallet';
 
 import { Wallet as OnboardWallet } from 'bnc-onboard/dist/src/interfaces';
 
@@ -48,6 +48,7 @@ const useConnector = () => {
 		transactionNotifier,
 		setTransactionNotifier,
 	] = useState<TransactionNotifierInterface | null>(null);
+	const setEnsName = useSetRecoilState(ensNameState);
 
 	const [synthsMap, tokensMap] = useMemo(() => {
 		if (synthetixjs == null) {
@@ -95,10 +96,24 @@ const useConnector = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
+	const setUserAddress = async (address: string) => {
+		setWalletAddress(address);
+		const networkId = await getDefaultNetworkId();
+		const provider = loadProvider({
+			networkId,
+			//infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
+			provider: window.ethereum as any, // loadProvider as incorrect types for provider
+		});
+		if (provider && address) {
+			const ensName: string = await provider.lookupAddress(address);
+			setEnsName(ensName);
+		}
+	};
+
 	useEffect(() => {
 		if (isAppReady && network) {
 			const onboard = initOnboard(synthetixjs!, network.id, {
-				address: setWalletAddress,
+				address: setUserAddress,
 				network: (networkId: number) => {
 					const isSupportedNetwork = Boolean(getNetworkFromId({ id: networkId }));
 					if (!isSupportedNetwork && window.ethereum) {
