@@ -70,6 +70,7 @@ export const initOnboard = (
 				{ walletName: 'torus' },
 				{ walletName: 'status' },
 				{ walletName: 'authereum' },
+				{ walletName: 'tally', preferred: true },
 			],
 		},
 		walletCheck: [
