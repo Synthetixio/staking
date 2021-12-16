@@ -66,8 +66,6 @@ const History: React.FC<HistoryProps> = ({ proposalResults }) => {
 												ethers.utils.getAddress(voteList[index].voter) ===
 												ethers.utils.getAddress(walletAddress ?? '')
 													? t('gov.proposal.history.currentUser')
-													: voteList[index].profile.ens
-													? voteList[index].profile.ens
 													: ethers.utils.getAddress(voteList[index].voter)
 											}
 											hideOnClick={false}
@@ -76,8 +74,6 @@ const History: React.FC<HistoryProps> = ({ proposalResults }) => {
 												{ethers.utils.getAddress(voteList[index].voter) ===
 												ethers.utils.getAddress(walletAddress ?? '')
 													? t('gov.proposal.history.currentUser')
-													: voteList[index].profile.ens
-													? truncateString(voteList[index].profile.ens, 13)
 													: truncateAddress(ethers.utils.getAddress(voteList[index].voter))}
 											</Title>
 										</StyledTooltip>
