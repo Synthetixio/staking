@@ -138,8 +138,8 @@ const StakingInput: React.FC<StakingInputProps> = ({
 			);
 		} else if (error) {
 			return (
-				<StyledCTA variant="primary" size="lg" disabled={true}>
-					{error}
+				<StyledCTA variant="primary" size="lg" onClick={() => resetTransaction()}>
+					{t('common.error.clear')}
 				</StyledCTA>
 			);
 		} else if (inputValue.toString().length === 0) {
@@ -191,17 +191,18 @@ const StakingInput: React.FC<StakingInputProps> = ({
 			);
 		}
 	}, [
-		inputValue,
+		isWalletConnected,
 		error,
-		transactionState,
+		inputValue,
+		burnType,
+		maxBurnAmount,
+		burnAmountToFixCRatio,
+		connectWallet,
+		t,
+		resetTransaction,
 		isMint,
 		onSubmit,
-		t,
-		isWalletConnected,
-		connectWallet,
-		maxBurnAmount,
-		burnType,
-		burnAmountToFixCRatio,
+		transactionState,
 	]);
 
 	const equivalentSNXAmount = useMemo(() => {
@@ -333,6 +334,7 @@ const StakingInput: React.FC<StakingInputProps> = ({
 					</DataRow>
 				</DataContainer>
 			</InputContainer>
+			<ErrorParagraph>{error}</ErrorParagraph>
 			{returnButtonStates}
 			{txModalOpen && (
 				<TxConfirmationModal
@@ -395,6 +397,10 @@ const BalanceButton = styled(Button)`
 
 const InputGroup = styled.div`
 	width: 100%;
+`;
+
+const ErrorParagraph = styled.p`
+	margin-top: 0;
 `;
 
 const InputBoxInGroup = styled(InputBox)`
