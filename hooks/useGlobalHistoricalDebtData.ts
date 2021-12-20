@@ -20,12 +20,12 @@ const useGlobalHistoricalDebtData = () => {
 		data: [],
 	});
 
-	const { issuance } = useSynthetixQueries();
-	const dailyIssued = issuance.useGetDailyIssueds(
+	const { subgraph } = useSynthetixQueries();
+	const dailyIssued = subgraph.useGetDailyIssueds(
 		{ orderBy: 'id', orderDirection: 'desc' },
 		{ id: true, totalDebt: true }
 	);
-	const dailyBurned = issuance.useGetDailyBurneds(
+	const dailyBurned = subgraph.useGetDailyBurneds(
 		{ orderBy: 'id', orderDirection: 'desc' },
 		{ id: true, totalDebt: true }
 	);

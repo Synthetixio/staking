@@ -25,7 +25,7 @@ const Earn: FC = () => {
 
 	const walletAddress = useRecoilValue(walletAddressState);
 	const delegateWallet = useRecoilValue(delegateWalletState);
-	const { useExchangeRatesQuery, issuance } = useSynthetixQueries();
+	const { useExchangeRatesQuery, subgraph } = useSynthetixQueries();
 
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
@@ -41,7 +41,7 @@ const Earn: FC = () => {
 
 	const totalRewards = tradingRewards.add(stakingRewards.mul(SNXRate));
 
-	const feeClaims = issuance.useGetFeesClaimeds(
+	const feeClaims = subgraph.useGetFeesClaimeds(
 		{
 			first: 1000,
 			orderBy: 'timestamp',

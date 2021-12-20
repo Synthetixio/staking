@@ -21,8 +21,8 @@ const HistoryPage: FC = () => {
 
 	const walletAddress = useRecoilValue(walletAddressState);
 
-	const { issuance } = useSynthetixQueries();
-	const issues = issuance.useGetIssueds(
+	const { subgraph } = useSynthetixQueries();
+	const issues = subgraph.useGetIssueds(
 		{
 			first: 1000,
 			orderBy: 'timestamp',
@@ -31,7 +31,7 @@ const HistoryPage: FC = () => {
 		},
 		{ id: true, timestamp: true, value: true }
 	);
-	const burns = issuance.useGetBurneds(
+	const burns = subgraph.useGetBurneds(
 		{
 			first: 1000,
 			orderBy: 'timestamp',
@@ -40,7 +40,7 @@ const HistoryPage: FC = () => {
 		},
 		{ id: true, timestamp: true, value: true }
 	);
-	const feeClaims = issuance.useGetFeesClaimeds(
+	const feeClaims = subgraph.useGetFeesClaimeds(
 		{
 			first: 1000,
 			orderBy: 'timestamp',
