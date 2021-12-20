@@ -12,12 +12,16 @@ const GasPriceDisplay: FC<{
 }> = ({ isL2, gasPrice, optimismLayerOneFee }) => {
 	const { t } = useTranslation();
 
-	if (!gasPrice) return <>0</>;
+	if (!gasPrice) return <>-</>;
+
 	if (!gasPrice.gasPrice) {
 		// mainnet
 		return (
 			<>
-				{t('common.gas-prices.max-fee-per-gas')}: {wei(gasPrice.maxFeePerGas || 0, 9).toString(2)}
+				{ESTIMATE_VALUE}
+				{wei(gasPrice.baseFeePerGas || 0, 9)
+					.add(gasPrice.maxPriorityFeePerGas || 0)
+					.toString(2)}
 			</>
 		);
 	}

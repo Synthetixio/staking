@@ -9,7 +9,7 @@ import { GasLimitEstimate } from 'constants/network';
 
 import useSynthetixQueries, { GasPrice, GAS_SPEEDS } from '@synthetixio/queries';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import { getGweiGasPriceOrMaxFee, getTransactionPrice } from 'utils/network';
+import { getTotalGasPrice, getTransactionPrice } from 'utils/network';
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
 
 import { Synths } from 'constants/currency';
@@ -52,7 +52,14 @@ const GasSelector: React.FC<GasSelectorProps> = ({
 	const gasPrice = gasPriceQuery.data != null ? gasPriceQuery.data[gasSpeed] : null;
 	useEffect(() => {
 		if (gasPrice) {
-			onGasPriceChange(gasPrice);
+			const gasPriceForTransaction =
+				'gasPrice' in gasPrice
+					? { gasPrice: gasPrice.gasPrice }
+					: {
+							maxPriorityFeePerGas: gasPrice.maxPriorityFeePerGas,
+							maxFeePerGas: gasPrice.maxFeePerGas,
+					  };
+			onGasPriceChange(gasPriceForTransaction);
 		}
 
 		// eslint-disable-next-line
@@ -83,7 +90,7 @@ const GasSelector: React.FC<GasSelectorProps> = ({
 				>
 					<GasPriceTextDropDown>{t(`common.gas-prices.${speed}`) + ' '} </GasPriceTextDropDown>
 					<NumericValue>
-						{getGweiGasPriceOrMaxFee(gasPrices ? gasPrices[speed] : null).toNumber()}
+						{getTotalGasPrice(gasPrices ? gasPrices[speed] : null).toNumber()}
 					</NumericValue>
 				</StyedGasButton>
 			))}

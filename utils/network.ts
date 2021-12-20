@@ -19,13 +19,13 @@ export async function getDefaultNetworkId(): Promise<NetworkId> {
 	}
 }
 
-export const getGweiGasPriceOrMaxFee = (gasPriceObj?: GasPrice | null) => {
+export const getTotalGasPrice = (gasPriceObj?: GasPrice | null) => {
 	if (!gasPriceObj) return wei(0);
-	const { maxFeePerGas, gasPrice } = gasPriceObj;
+	const { gasPrice, baseFeePerGas, maxPriorityFeePerGas } = gasPriceObj;
 	if (gasPrice) {
 		return wei(gasPrice, GWEI_DECIMALS);
 	}
-	return wei(maxFeePerGas || 0, GWEI_DECIMALS);
+	return wei(baseFeePerGas || 0, GWEI_DECIMALS).add(wei(maxPriorityFeePerGas || 0, GWEI_DECIMALS));
 };
 
 export const getTransactionPrice = (
@@ -35,7 +35,7 @@ export const getTransactionPrice = (
 	optimismLayerOneFee: Wei | null
 ) => {
 	if (!gasPrice || !gasLimit || !ethPrice) return null;
-	const totalGasPrice = getGweiGasPriceOrMaxFee(gasPrice);
+	const totalGasPrice = getTotalGasPrice(gasPrice);
 
 	const extraLayer1Fees = optimismLayerOneFee;
 	const gasPriceCost = totalGasPrice.mul(wei(gasLimit, GWEI_DECIMALS)).mul(ethPrice);
