@@ -22,6 +22,7 @@ import {
 	ErrorMessage,
 } from 'styles/common';
 import Wei from '@synthetixio/wei';
+import { GasPrice } from '@synthetixio/queries';
 
 type TabContentProps = {
 	claimableAmount: Wei;
@@ -31,10 +32,11 @@ type TabContentProps = {
 	txModalOpen: boolean;
 	setTxModalOpen: Function;
 	gasLimitEstimate: GasLimitEstimate;
-	setGasPrice: Function;
+	setGasPrice: (gasPrice: GasPrice) => void;
 	txHash: string | null;
 	transactionState: 'unsent' | string;
 	onResetTransaction: () => void;
+	optimismLayerOneFee: Wei | null;
 };
 
 const TabContent: FC<TabContentProps> = ({
@@ -49,6 +51,7 @@ const TabContent: FC<TabContentProps> = ({
 	txHash,
 	transactionState,
 	onResetTransaction,
+	optimismLayerOneFee,
 }) => {
 	const { t } = useTranslation();
 	const vestingCurrencyKey = CryptoCurrency['SNX'];
@@ -114,7 +117,11 @@ const TabContent: FC<TabContentProps> = ({
 					</Data>
 				</InputBox>
 				<SettingsContainer>
-					<GasSelector gasLimitEstimate={gasLimitEstimate} setGasPrice={setGasPrice} />
+					<GasSelector
+						gasLimitEstimate={gasLimitEstimate}
+						onGasPriceChange={setGasPrice}
+						optimismLayerOneFee={optimismLayerOneFee}
+					/>
 				</SettingsContainer>
 			</InputContainer>
 			{renderButton()}

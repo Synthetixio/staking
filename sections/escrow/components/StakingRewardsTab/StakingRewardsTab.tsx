@@ -6,8 +6,8 @@ import { walletAddressState } from 'store/wallet';
 import { TabContainer } from '../common';
 import TabContent from './TabContent';
 import MigrateTabContent from './MigrateTabContent';
-import useSynthetixQueries from '@synthetixio/queries';
-import Wei, { wei } from '@synthetixio/wei';
+import useSynthetixQueries, { GasPrice } from '@synthetixio/queries';
+import { wei } from '@synthetixio/wei';
 
 const StakingRewardsTab: React.FC = () => {
 	const walletAddress = useRecoilValue(walletAddressState);
@@ -16,7 +16,7 @@ const StakingRewardsTab: React.FC = () => {
 
 	const escrowDataQuery = useEscrowDataQuery(walletAddress);
 
-	const [gasPrice, setGasPrice] = useState<Wei>(wei(0));
+	const [gasPrice, setGasPrice] = useState<GasPrice | undefined>(undefined);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 
 	const canVestAmount = escrowDataQuery?.data?.claimableAmount ?? wei(0);
@@ -28,7 +28,7 @@ const StakingRewardsTab: React.FC = () => {
 		'RewardEscrowV2',
 		totalBalancePendingMigration.gt(0) ? 'migrateVestingSchedule' : 'vest',
 		totalBalancePendingMigration.gt(0) ? [walletAddress] : [claimableEntryIds.map((v) => v.toBN())],
-		{ gasPrice: gasPrice.toBN() }
+		gasPrice
 	);
 
 	useEffect(() => {
@@ -53,6 +53,7 @@ const StakingRewardsTab: React.FC = () => {
 					txHash={txn.hash}
 					transactionState={txn.txnStatus}
 					setTransactionState={() => txn.refresh()}
+					optimismLayerOneFee={txn.optimismLayerOneFee}
 				/>
 			) : (
 				<TabContent
@@ -67,6 +68,7 @@ const StakingRewardsTab: React.FC = () => {
 					txHash={txn.hash}
 					transactionState={txn.txnStatus}
 					setTransactionState={() => txn.refresh()}
+					optimismLayerOneFee={txn.optimismLayerOneFee}
 				/>
 			)}
 		</TabContainer>
