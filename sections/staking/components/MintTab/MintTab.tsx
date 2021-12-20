@@ -43,8 +43,6 @@ const MintTab: React.FC = () => {
 
 	const txn = useSynthetixTxn('Synthetix', mintCall[0], mintCall[1], gasPrice);
 
-	let error: string | null = null;
-
 	useEffect(() => {
 		if (txn.txnStatus === 'prompting') setTxModalOpen(true);
 	}, [txn.txnStatus]);
@@ -80,7 +78,7 @@ const MintTab: React.FC = () => {
 				isLocked={isLocked}
 				isMint={true}
 				onBack={onMintTypeChange}
-				error={error || txn.errorMessage}
+				error={txn.errorMessage}
 				txModalOpen={txModalOpen}
 				setTxModalOpen={setTxModalOpen}
 				gasLimitEstimate={txn.gasLimit}
@@ -97,7 +95,6 @@ const MintTab: React.FC = () => {
 		);
 	}, [
 		mintType,
-		error,
 		txModalOpen,
 		SNXRate,
 		onMintChange,
