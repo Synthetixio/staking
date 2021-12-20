@@ -22,7 +22,7 @@
 		"@snapshot-labs/snapshot.js": "0.3.22",
 		"@synthetixio/assets": "2.0.12",
 		"@synthetixio/contracts-interface": "2.56.2",
-		"@synthetixio/optimism-networks": "2.56.2",
+		"@synthetixio/optimism-networks": "2.56.3",
 		"@synthetixio/providers": "2.56.2",
 		"@synthetixio/queries": "2.56.2",
 		"@synthetixio/transaction-notifier": "2.56.2",
