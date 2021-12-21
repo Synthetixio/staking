@@ -26,9 +26,9 @@ const StatsSection: FC = ({ children }) => {
 	const walletAddress = useRecoilValue(walletAddressState);
 	const delegateWallet = useRecoilValue(delegateWalletState);
 
-	const { useSynthsBalancesQuery, exchanges } = useSynthetixQueries();
+	const { useSynthsBalancesQuery, subgraph } = useSynthetixQueries();
 
-	const SNX24hrPricesQuery = exchanges.useGetDailySNXPrices(
+	const SNX24hrPricesQuery = subgraph.useGetDailySNXPrices(
 		{ first: 365 },
 		{ id: true, averagePrice: true }
 	);

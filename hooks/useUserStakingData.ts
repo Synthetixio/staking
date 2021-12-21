@@ -23,10 +23,10 @@ export const useUserStakingData = (walletAddress: string | null) => {
 		useGetFeePoolDataQuery,
 		useGetDebtDataQuery,
 		useClaimableRewardsQuery,
-		issuance,
+		subgraph,
 	} = useSynthetixQueries();
 
-	const feeClaims = issuance.useGetFeesClaimeds(
+	const feeClaims = subgraph.useGetFeesClaimeds(
 		{
 			first: 1,
 			orderBy: 'timestamp',

@@ -14,7 +14,7 @@ import { snapshotEndpoint } from 'constants/snapshot';
 
 const BannerManager: FC = () => {
 	const {
-		issuance,
+		subgraph,
 		useGetLiquidationDataQuery,
 		useGetDebtDataQuery,
 		useHasVotedForElectionsQuery,
@@ -26,7 +26,7 @@ const BannerManager: FC = () => {
 	const debtData = useGetDebtDataQuery(walletAddress);
 	const hasVotedForElectionsQuery = useHasVotedForElectionsQuery(snapshotEndpoint, walletAddress);
 
-	const feeClaims = issuance.useGetFeesClaimeds(
+	const feeClaims = subgraph.useGetFeesClaimeds(
 		{ first: 1, where: { account: walletAddress?.toLowerCase() } },
 		{ timestamp: true, value: true, rewards: true }
 	);

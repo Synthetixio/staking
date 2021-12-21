@@ -30,9 +30,9 @@ const DesktopSideNav: FC = () => {
 	const walletAddress = useRecoilValue(walletAddressState);
 	const delegateWallet = useRecoilValue(delegateWalletState);
 
-	const { useSynthsBalancesQuery, exchanges } = useSynthetixQueries();
+	const { useSynthsBalancesQuery, subgraph } = useSynthetixQueries();
 
-	const SNX24hrPricesQuery = exchanges.useGetDailySNXPrices(
+	const SNX24hrPricesQuery = subgraph.useGetDailySNXPrices(
 		{ first: 30, orderBy: 'id', orderDirection: 'desc' },
 		{ id: true, averagePrice: true }
 	);
