@@ -31,10 +31,16 @@ const DesktopSideNav: FC = () => {
 	const delegateWallet = useRecoilValue(delegateWalletState);
 
 	const { useSynthsBalancesQuery, subgraph } = useSynthetixQueries();
-
-	const SNX24hrPricesQuery = subgraph.useGetDailySNXPrices(
-		{ first: 30, orderBy: 'id', orderDirection: 'desc' },
-		{ id: true, averagePrice: true }
+	// last 7 days
+	const priorDate = Math.floor(new Date().setDate(new Date().getDate() - 7) / 1000);
+	const latestSNXPrice = subgraph.useGetRateUpdates(
+		{
+			first: 1000,
+			where: { synth: 'SNX', timestamp_gte: priorDate },
+			orderBy: 'timestamp',
+			orderDirection: 'asc',
+		},
+		{ rate: true }
 	);
 	const cryptoBalances = useCryptoBalances(delegateWallet?.address ?? walletAddress);
 	const synthsBalancesQuery = useSynthsBalancesQuery(delegateWallet?.address ?? walletAddress);
@@ -48,11 +54,11 @@ const DesktopSideNav: FC = () => {
 	const sUSDBalance = synthsBalancesQuery?.data?.balancesMap[Synths.sUSD]?.balance ?? wei(0);
 
 	const snxPriceChartData = useMemo(() => {
-		return (SNX24hrPricesQuery?.data ?? [])
-			.map((dataPoint) => ({ value: dataPoint.averagePrice.toNumber() }))
+		return (latestSNXPrice?.data ?? [])
+			.map((dataPoint) => ({ value: dataPoint.rate.toNumber() }))
 			.slice()
 			.reverse();
-	}, [SNX24hrPricesQuery?.data]);
+	}, [latestSNXPrice?.data]);
 
 	return (
 		<Container onMouseLeave={clearSubMenuConfiguration} data-testid="sidenav">
