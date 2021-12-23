@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { FC, useMemo } from 'react';
+import { FC } from 'react';
 import Link from 'next/link';
 import { Svg } from 'react-optimized-image';
 import { useRecoilValue } from 'recoil';
@@ -31,14 +31,13 @@ const DesktopSideNav: FC = () => {
 	const delegateWallet = useRecoilValue(delegateWalletState);
 
 	const { useSynthsBalancesQuery, subgraph } = useSynthetixQueries();
-	// last 7 days
-	const priorDate = Math.floor(new Date().setDate(new Date().getDate() - 7) / 1000);
+	const sevenDaysAgoSeconds = Math.floor(new Date().setDate(new Date().getDate() - 7) / 1000);
 	const latestSNXPrice = subgraph.useGetRateUpdates(
 		{
 			first: 1000,
-			where: { synth: 'SNX', timestamp_gte: priorDate },
+			where: { synth: 'SNX', timestamp_gte: sevenDaysAgoSeconds },
 			orderBy: 'timestamp',
-			orderDirection: 'asc',
+			orderDirection: 'desc',
 		},
 		{ rate: true }
 	);
@@ -53,12 +52,9 @@ const DesktopSideNav: FC = () => {
 
 	const sUSDBalance = synthsBalancesQuery?.data?.balancesMap[Synths.sUSD]?.balance ?? wei(0);
 
-	const snxPriceChartData = useMemo(() => {
-		return (latestSNXPrice?.data ?? [])
-			.map((dataPoint) => ({ value: dataPoint.rate.toNumber() }))
-			.slice()
-			.reverse();
-	}, [latestSNXPrice?.data]);
+	const snxPriceChartData = latestSNXPrice.data?.map((dataPoint) => ({
+		value: dataPoint.rate.toNumber(),
+	}));
 
 	return (
 		<Container onMouseLeave={clearSubMenuConfiguration} data-testid="sidenav">
@@ -76,7 +72,7 @@ const DesktopSideNav: FC = () => {
 					<CRatioBarStats />
 					<BalanceItem amount={snxBalance} currencyKey={CryptoCurrency.SNX} />
 					<BalanceItem amount={sUSDBalance} currencyKey={Synths.sUSD} />
-					<PriceItem currencyKey={CryptoCurrency.SNX} data={snxPriceChartData} />
+					<PriceItem currencyKey={CryptoCurrency.SNX} data={snxPriceChartData ?? []} />
 					<PeriodBarStats />
 				</MenuCharts>
 			</>
