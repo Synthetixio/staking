@@ -34,7 +34,7 @@ const StatsSection: FC = ({ children }) => {
 			first: 1000,
 			where: { synth: 'SNX', timestamp_gte: sevenDaysAgoSeconds },
 			orderBy: 'timestamp',
-			orderDirection: 'desc',
+			orderDirection: 'asc',
 		},
 		{ rate: true },
 		{ keepPreviousData: true }
