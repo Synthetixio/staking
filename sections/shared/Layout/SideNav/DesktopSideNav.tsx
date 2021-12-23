@@ -20,6 +20,8 @@ import PriceItem from 'sections/shared/Layout/Stats/PriceItem';
 import PeriodBarStats from 'sections/shared/Layout/Stats/PeriodBarStats';
 import BalanceItem from 'sections/shared/Layout/Stats/BalanceItem';
 import CRatioBarStats from 'sections/shared/Layout/Stats/CRatioBarStats';
+import { Tooltip } from 'styles/common';
+import { useTranslation } from 'react-i18next';
 
 import SideNav from './SideNav';
 import SubMenu from './DesktopSubMenu';
@@ -29,6 +31,7 @@ import { wei } from '@synthetixio/wei';
 const DesktopSideNav: FC = () => {
 	const walletAddress = useRecoilValue(walletAddressState);
 	const delegateWallet = useRecoilValue(delegateWalletState);
+	const { t } = useTranslation();
 
 	const { useSynthsBalancesQuery, subgraph } = useSynthetixQueries();
 	const sevenDaysAgoSeconds = Math.floor(new Date().setDate(new Date().getDate() - 7) / 1000);
@@ -73,7 +76,12 @@ const DesktopSideNav: FC = () => {
 					<CRatioBarStats />
 					<BalanceItem amount={snxBalance} currencyKey={CryptoCurrency.SNX} />
 					<BalanceItem amount={sUSDBalance} currencyKey={Synths.sUSD} />
-					<PriceItem currencyKey={CryptoCurrency.SNX} data={snxPriceChartData ?? []} />
+					<Tooltip content={t('common.price-change.seven-days')}>
+						<div>
+							<PriceItem currencyKey={CryptoCurrency.SNX} data={snxPriceChartData ?? []} />
+						</div>
+					</Tooltip>
+
 					<PeriodBarStats />
 				</MenuCharts>
 			</>
