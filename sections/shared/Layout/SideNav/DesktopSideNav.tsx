@@ -39,7 +39,8 @@ const DesktopSideNav: FC = () => {
 			orderBy: 'timestamp',
 			orderDirection: 'desc',
 		},
-		{ rate: true }
+		{ rate: true },
+		{ keepPreviousData: true }
 	);
 	const cryptoBalances = useCryptoBalances(delegateWallet?.address ?? walletAddress);
 	const synthsBalancesQuery = useSynthsBalancesQuery(delegateWallet?.address ?? walletAddress);
