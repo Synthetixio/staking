@@ -27,16 +27,17 @@ const StatsSection: FC = ({ children }) => {
 	const delegateWallet = useRecoilValue(delegateWalletState);
 
 	const { useSynthsBalancesQuery, subgraph } = useSynthetixQueries();
-	// last year
-	const priorDate = Math.floor(new Date().setFullYear(new Date().getFullYear() - 1) / 1000);
+
+	const sevenDaysAgoSeconds = Math.floor(new Date().setDate(new Date().getDate() - 7) / 1000);
 	const latestSNXPrice = subgraph.useGetRateUpdates(
 		{
 			first: 1000,
-			where: { synth: 'SNX', timestamp_gte: priorDate },
+			where: { synth: 'SNX', timestamp_gte: sevenDaysAgoSeconds },
 			orderBy: 'timestamp',
 			orderDirection: 'desc',
 		},
-		{ rate: true }
+		{ rate: true },
+		{ keepPreviousData: true }
 	);
 	const cryptoBalances = useCryptoBalances(delegateWallet?.address ?? walletAddress);
 	const synthsBalancesQuery = useSynthsBalancesQuery(delegateWallet?.address ?? walletAddress);
@@ -48,12 +49,9 @@ const StatsSection: FC = ({ children }) => {
 
 	const sUSDBalance = synthsBalancesQuery?.data?.balancesMap[Synths.sUSD]?.balance ?? wei(0);
 
-	const snxPriceChartData = useMemo(() => {
-		return (latestSNXPrice?.data ?? [])
-			.map((dataPoint) => ({ value: dataPoint.rate.toNumber() }))
-			.slice()
-			.reverse();
-	}, [latestSNXPrice?.data]);
+	const snxPriceChartData = latestSNXPrice.data?.map((dataPoint) => ({
+		value: dataPoint.rate.toNumber(),
+	}));
 
 	const toggleMobileStatsSection = () =>
 		setMobileStatsSectionIsOpen((mobileStatsSectionIsOpen) => !mobileStatsSectionIsOpen);
@@ -73,7 +71,7 @@ const StatsSection: FC = ({ children }) => {
 						<PeriodBarStats />
 					</TopContainer>
 					<BottomContainer>
-						<PriceItem currencyKey={CryptoCurrency.SNX} data={snxPriceChartData} />
+						<PriceItem currencyKey={CryptoCurrency.SNX} data={snxPriceChartData ?? []} />
 						<BalanceItem amount={snxBalance} currencyKey={CryptoCurrency.SNX} />
 						<BalanceItem amount={sUSDBalance} currencyKey={Synths.sUSD} />
 					</BottomContainer>
