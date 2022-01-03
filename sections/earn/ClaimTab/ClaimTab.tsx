@@ -331,7 +331,11 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 					{error && <ErrorMessage>{error}</ErrorMessage>}
 					{txn.isError && <ErrorMessage>{txn.errorMessage}</ErrorMessage>}
 					<ClaimOrCloseFeeButton
-						hasNotVoted={Boolean(hasVotedForElections.data && !hasVotedForElections.data.hasVoted)}
+						hasVoted={
+							isL2
+								? true // If it's L2 we dont require voting.
+								: Boolean(hasVotedForElections.data && hasVotedForElections.data.hasVoted)
+						}
 						canClaim={delegateWallet ? delegateWallet.canClaim : canClaim}
 						hasClaimed={userStakingData.hasClaimed}
 						totalRewards={totalRewards}

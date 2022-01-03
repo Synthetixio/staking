@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { FC, useMemo } from 'react';
+import { FC } from 'react';
 import Link from 'next/link';
 import { Svg } from 'react-optimized-image';
 import { useRecoilValue } from 'recoil';
@@ -20,6 +20,8 @@ import PriceItem from 'sections/shared/Layout/Stats/PriceItem';
 import PeriodBarStats from 'sections/shared/Layout/Stats/PeriodBarStats';
 import BalanceItem from 'sections/shared/Layout/Stats/BalanceItem';
 import CRatioBarStats from 'sections/shared/Layout/Stats/CRatioBarStats';
+import { Tooltip } from 'styles/common';
+import { useTranslation } from 'react-i18next';
 
 import SideNav from './SideNav';
 import SubMenu from './DesktopSubMenu';
@@ -29,12 +31,19 @@ import { wei } from '@synthetixio/wei';
 const DesktopSideNav: FC = () => {
 	const walletAddress = useRecoilValue(walletAddressState);
 	const delegateWallet = useRecoilValue(delegateWalletState);
+	const { t } = useTranslation();
 
-	const { useSynthsBalancesQuery, exchanges } = useSynthetixQueries();
-
-	const SNX24hrPricesQuery = exchanges.useGetDailySNXPrices(
-		{ first: 30, orderBy: 'id', orderDirection: 'desc' },
-		{ id: true, averagePrice: true }
+	const { useSynthsBalancesQuery, subgraph } = useSynthetixQueries();
+	const sevenDaysAgoSeconds = Math.floor(new Date().setDate(new Date().getDate() - 7) / 1000);
+	const latestSNXPrice = subgraph.useGetRateUpdates(
+		{
+			first: 1000,
+			where: { synth: 'SNX', timestamp_gte: sevenDaysAgoSeconds },
+			orderBy: 'timestamp',
+			orderDirection: 'asc',
+		},
+		{ rate: true },
+		{ keepPreviousData: true }
 	);
 	const cryptoBalances = useCryptoBalances(delegateWallet?.address ?? walletAddress);
 	const synthsBalancesQuery = useSynthsBalancesQuery(delegateWallet?.address ?? walletAddress);
@@ -47,12 +56,9 @@ const DesktopSideNav: FC = () => {
 
 	const sUSDBalance = synthsBalancesQuery?.data?.balancesMap[Synths.sUSD]?.balance ?? wei(0);
 
-	const snxPriceChartData = useMemo(() => {
-		return (SNX24hrPricesQuery?.data ?? [])
-			.map((dataPoint) => ({ value: dataPoint.averagePrice.toNumber() }))
-			.slice()
-			.reverse();
-	}, [SNX24hrPricesQuery?.data]);
+	const snxPriceChartData = latestSNXPrice.data?.map((dataPoint) => ({
+		value: dataPoint.rate.toNumber(),
+	}));
 
 	return (
 		<Container onMouseLeave={clearSubMenuConfiguration} data-testid="sidenav">
@@ -70,7 +76,12 @@ const DesktopSideNav: FC = () => {
 					<CRatioBarStats />
 					<BalanceItem amount={snxBalance} currencyKey={CryptoCurrency.SNX} />
 					<BalanceItem amount={sUSDBalance} currencyKey={Synths.sUSD} />
-					<PriceItem currencyKey={CryptoCurrency.SNX} data={snxPriceChartData} />
+					<Tooltip content={t('common.price-change.seven-days')}>
+						<div>
+							<PriceItem currencyKey={CryptoCurrency.SNX} data={snxPriceChartData ?? []} />
+						</div>
+					</Tooltip>
+
 					<PeriodBarStats />
 				</MenuCharts>
 			</>

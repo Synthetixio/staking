@@ -16,13 +16,13 @@ type SynthPriceColProps = {
 };
 
 const SynthPriceCol: FC<SynthPriceColProps> = ({ currencyKey }) => {
-	const { useExchangeRatesQuery, exchanges } = useSynthetixQueries();
+	const { useExchangeRatesQuery, subgraph } = useSynthetixQueries();
 
 	const exchangeRatesQuery = useExchangeRatesQuery();
 
 	const oneDayAgoSeconds = Math.floor(Date.now() / 1000) - PERIOD_IN_SECONDS[Period.ONE_DAY];
 
-	const historicalRates = exchanges.useGetRateUpdates(
+	const historicalRates = subgraph.useGetRateUpdates(
 		{
 			orderBy: 'timestamp',
 			orderDirection: 'desc',
