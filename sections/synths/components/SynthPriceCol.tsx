@@ -8,28 +8,20 @@ import { CurrencyKey } from '@synthetixio/contracts-interface';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { NO_VALUE } from 'constants/placeholder';
 import useSynthetixQueries from '@synthetixio/queries';
-import { calculatePercentChange } from 'utils/currencies';
 import { Period, PERIOD_IN_SECONDS } from 'constants/period';
+import useGetCurrencyRateChangeTuple from 'hooks/useGetCurrencyRateChange';
 
 type SynthPriceColProps = {
 	currencyKey: CurrencyKey;
 };
 
 const SynthPriceCol: FC<SynthPriceColProps> = ({ currencyKey }) => {
-	const { useExchangeRatesQuery, subgraph } = useSynthetixQueries();
+	const { useExchangeRatesQuery } = useSynthetixQueries();
 
 	const exchangeRatesQuery = useExchangeRatesQuery();
 
 	const oneDayAgoSeconds = Math.floor(Date.now() / 1000) - PERIOD_IN_SECONDS[Period.ONE_DAY];
-
-	const historicalRates = subgraph.useGetRateUpdates(
-		{
-			orderBy: 'timestamp',
-			orderDirection: 'desc',
-			where: { timestamp_gt: oneDayAgoSeconds, synth: currencyKey },
-		},
-		{ timestamp: true, rate: true }
-	);
+	const rateChange = useGetCurrencyRateChangeTuple(oneDayAgoSeconds, currencyKey);
 
 	const { selectedPriceCurrency, selectPriceCurrencyRate } = useSelectedPriceCurrency();
 
@@ -43,10 +35,7 @@ const SynthPriceCol: FC<SynthPriceColProps> = ({ currencyKey }) => {
 					currencyKey={currencyKey}
 					price={price}
 					sign={selectedPriceCurrency.sign}
-					change={calculatePercentChange(
-						historicalRates.data?.[historicalRates.data?.length - 1]?.rate,
-						historicalRates.data?.[0]?.rate
-					).toNumber()}
+					change={rateChange}
 					conversionRate={selectPriceCurrencyRate}
 				/>
 			) : (
