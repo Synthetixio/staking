@@ -15,17 +15,17 @@ import { formatPercent } from 'utils/formatters/number';
 
 type PriceItemProps = {
 	currencyKey: CurrencyKey;
-	data: { rate: number }[];
+	currencyRateChange: number | undefined;
 };
 
-const PriceItem: FC<PriceItemProps> = ({ currencyKey, data }) => {
+const PriceItem: FC<PriceItemProps> = ({ currencyKey, currencyRateChange }) => {
 	const { selectedPriceCurrency, selectPriceCurrencyRate } = useSelectedPriceCurrency();
 	const { useExchangeRatesQuery } = useSynthetixQueries();
 	const exchangeRatesQuery = useExchangeRatesQuery();
 
 	const exchangeRates = exchangeRatesQuery.data ?? null;
 	const price = exchangeRates && exchangeRates[currencyKey];
-	const trendLinePositive = data.length > 0 ? data[data.length - 1].rate >= data[0].rate : false;
+	const trendLinePositive = currencyRateChange !== undefined && currencyRateChange > 0;
 
 	return (
 		<Container>
@@ -37,11 +37,11 @@ const PriceItem: FC<PriceItemProps> = ({ currencyKey, data }) => {
 						components={[<NoTextTransform />]}
 					/>
 				</span>
-				{data.length > 0 ? (
+				{currencyRateChange !== undefined ? (
 					<FlexDivCentered>
 						{trendLinePositive ? <TriangleUp /> : <TriangleDown />}
 						<PercentChange trendLinePositive={trendLinePositive}>
-							{formatPercent(data[data.length - 1].rate / data[0].rate - 1)}
+							{formatPercent(currencyRateChange)}
 						</PercentChange>
 					</FlexDivCentered>
 				) : (
