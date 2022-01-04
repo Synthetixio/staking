@@ -27,24 +27,16 @@ import SideNav from './SideNav';
 import SubMenu from './DesktopSubMenu';
 import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
+import useGetCurrencyRateChange from 'hooks/useGetCurrencyRateChange';
 
 const DesktopSideNav: FC = () => {
 	const walletAddress = useRecoilValue(walletAddressState);
 	const delegateWallet = useRecoilValue(delegateWalletState);
 	const { t } = useTranslation();
 
-	const { useSynthsBalancesQuery, subgraph } = useSynthetixQueries();
+	const { useSynthsBalancesQuery } = useSynthetixQueries();
 	const sevenDaysAgoSeconds = Math.floor(new Date().setDate(new Date().getDate() - 7) / 1000);
-	const latestSNXPrice = subgraph.useGetRateUpdates(
-		{
-			first: 1000,
-			where: { synth: 'SNX', timestamp_gte: sevenDaysAgoSeconds },
-			orderBy: 'timestamp',
-			orderDirection: 'asc',
-		},
-		{ rate: true },
-		{ keepPreviousData: true }
-	);
+	const currencyRateChange = useGetCurrencyRateChange(sevenDaysAgoSeconds, 'SNX');
 	const cryptoBalances = useCryptoBalances(delegateWallet?.address ?? walletAddress);
 	const synthsBalancesQuery = useSynthsBalancesQuery(delegateWallet?.address ?? walletAddress);
 	const isL2 = useRecoilValue(isL2State);
@@ -55,10 +47,6 @@ const DesktopSideNav: FC = () => {
 			?.balance ?? wei(0);
 
 	const sUSDBalance = synthsBalancesQuery?.data?.balancesMap[Synths.sUSD]?.balance ?? wei(0);
-
-	const snxPriceChartData = latestSNXPrice.data?.map((dataPoint) => ({
-		value: dataPoint.rate.toNumber(),
-	}));
 
 	return (
 		<Container onMouseLeave={clearSubMenuConfiguration} data-testid="sidenav">
@@ -77,9 +65,9 @@ const DesktopSideNav: FC = () => {
 					<BalanceItem amount={snxBalance} currencyKey={CryptoCurrency.SNX} />
 					<BalanceItem amount={sUSDBalance} currencyKey={Synths.sUSD} />
 					<Tooltip content={t('common.price-change.seven-days')}>
-						<div>
-							<PriceItem currencyKey={CryptoCurrency.SNX} data={snxPriceChartData ?? []} />
-						</div>
+						<PriceItemContainer>
+							<PriceItem currencyKey={CryptoCurrency.SNX} currencyRateChange={currencyRateChange} />
+						</PriceItemContainer>
 					</Tooltip>
 
 					<PeriodBarStats />
@@ -108,6 +96,9 @@ const Container = styled.div`
 	overflow-x: visible;
 	transition: left 0.3s ease-out;
 `;
+const PriceItemContainer = styled.div`
+	margin-bottom: 18px;
+`;
 
 const StakingLogoWrap = styled.div`
 	padding: 30px 0 44px 24px;
@@ -122,4 +113,7 @@ const LineSeparator = styled.div`
 
 const MenuCharts = styled.div`
 	margin: 0 auto;
+	width: 100%;
+	padding-left: 20px;
+	padding-right: 20px;
 `;
