@@ -77,9 +77,9 @@ const DesktopSideNav: FC = () => {
 					<BalanceItem amount={snxBalance} currencyKey={CryptoCurrency.SNX} />
 					<BalanceItem amount={sUSDBalance} currencyKey={Synths.sUSD} />
 					<Tooltip content={t('common.price-change.seven-days')}>
-						<div>
-							<PriceItem currencyKey={CryptoCurrency.SNX} data={snxPriceChartData ?? []} />
-						</div>
+						<PriceItemContainer>
+							<PriceItem currencyKey={CryptoCurrency.SNX} data={currencyRateChangeTuple ?? []} />
+						</PriceItemContainer>
 					</Tooltip>
 
 					<PeriodBarStats />
@@ -107,6 +107,9 @@ const Container = styled.div`
 	overflow-y: hidden;
 	overflow-x: visible;
 	transition: left 0.3s ease-out;
+`;
+const PriceItemContainer = styled.div`
+	margin-bottom: 18px;
 `;
 
 const StakingLogoWrap = styled.div`
