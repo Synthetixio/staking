@@ -118,7 +118,7 @@ const AssetsTable: FC<AssetsTableProps> = ({
 						valueCurrencyKey={selectedPriceCurrency.name}
 						totalValue={cellProps.row.original.usdBalance}
 						sign={selectedPriceCurrency.sign}
-						conversionRate={wei(selectPriceCurrencyRateString)}
+						conversionRate={wei(selectPriceCurrencyRateString || 0)}
 						{...{ showValue, showTotalValue }}
 					/>
 				),

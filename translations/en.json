@@ -1236,7 +1236,8 @@
 			"page-of-total-pages": "{{page}} of {{totalPages}}"
 		},
 		"error": {
-			"default": "Something went wrong"
+			"default": "Something went wrong",
+			"clear": "Clear Error"
 		},
 		"layer-2": {
 			"not-available": "Not available on Layer 2",
@@ -1263,7 +1264,9 @@
 			"est": "Est Fees: {{amount}}",
 			"average": "Average",
 			"fast": "Fast",
-			"fastest": "Fastest"
+			"fastest": "Fastest",
+			"l2-fees": "L2 Fees",
+			"l1-fees": "L1 Fees"
 		},
 		"custom": "Custom",
 		"edit": "Edit",

@@ -2,8 +2,9 @@ import { detectEthereumProvider } from './metamask-detect-provider';
 import { DEFAULT_GAS_BUFFER, DEFAULT_NETWORK_ID } from 'constants/defaults';
 import { NetworkId } from '@synthetixio/contracts-interface';
 import { GasLimitEstimate } from 'constants/network';
-import Wei from '@synthetixio/wei';
-import { GWEI_UNIT } from './infura';
+import Wei, { wei } from '@synthetixio/wei';
+import { GWEI_DECIMALS, GWEI_UNIT } from './infura';
+import { GasPrice } from '@synthetixio/queries';
 
 export async function getDefaultNetworkId(): Promise<NetworkId> {
 	try {
@@ -18,14 +19,31 @@ export async function getDefaultNetworkId(): Promise<NetworkId> {
 	}
 }
 
+export const getTotalGasPrice = (gasPriceObj?: GasPrice | null) => {
+	if (!gasPriceObj) return wei(0);
+	const { gasPrice, baseFeePerGas, maxPriorityFeePerGas } = gasPriceObj;
+	if (gasPrice) {
+		return wei(gasPrice, GWEI_DECIMALS);
+	}
+	return wei(baseFeePerGas || 0, GWEI_DECIMALS).add(wei(maxPriorityFeePerGas || 0, GWEI_DECIMALS));
+};
+
 export const getTransactionPrice = (
-	gasPrice: Wei | null,
+	gasPrice: GasPrice | null,
 	gasLimit: GasLimitEstimate,
-	ethPrice: Wei | null
+	ethPrice: Wei | null,
+	optimismLayerOneFee: Wei | null
 ) => {
 	if (!gasPrice || !gasLimit || !ethPrice) return null;
+	const totalGasPrice = getTotalGasPrice(gasPrice);
 
-	return gasPrice.mul(ethPrice).mul(gasLimit).div(GWEI_UNIT);
+	const extraLayer1Fees = optimismLayerOneFee;
+	const gasPriceCost = totalGasPrice.mul(wei(gasLimit, GWEI_DECIMALS)).mul(ethPrice);
+	const l1Cost = ethPrice.mul(extraLayer1Fees || 0);
+
+	const txPrice = gasPriceCost.add(l1Cost);
+
+	return txPrice;
 };
 
 export const normalizeGasLimit = (gasLimit: number) => gasLimit + DEFAULT_GAS_BUFFER;

@@ -1,72 +1,69 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect } from 'react';
 
 import styled from 'styled-components';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import Tippy from '@tippyjs/react';
 
-import { customGasPriceState, gasSpeedState, isL2State } from 'store/wallet';
-import { ESTIMATE_VALUE } from 'constants/placeholder';
+import { gasSpeedState, isL2State } from 'store/wallet';
 import { GasLimitEstimate } from 'constants/network';
 
-import useSynthetixQueries, { GasPrices, GAS_SPEEDS } from '@synthetixio/queries';
+import useSynthetixQueries, { GasPrice, GAS_SPEEDS } from '@synthetixio/queries';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import { getTransactionPrice } from 'utils/network';
+import { getTotalGasPrice, getTransactionPrice } from 'utils/network';
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
 
 import { Synths } from 'constants/currency';
 import { formatCurrency } from 'utils/formatters/number';
-import NumericInput from 'components/Input/NumericInput';
 import Button from 'components/Button';
 import { useTranslation } from 'react-i18next';
 import { FlexDivRow, FlexDivRowCentered, NumericValue } from 'styles/common';
 import { Svg } from 'react-optimized-image';
 import Info from 'assets/svg/app/info.svg';
-import Wei, { wei } from '@synthetixio/wei';
+import Wei from '@synthetixio/wei';
+import GasPriceDisplay from './GasPriceDisplay';
 
 type GasSelectorProps = {
 	gasLimitEstimate: GasLimitEstimate;
-	setGasPrice: Function;
+	optimismLayerOneFee: Wei | null;
+	onGasPriceChange: (gasPrice: GasPrice) => void;
 	altVersion?: boolean;
 };
 
 const GasSelector: React.FC<GasSelectorProps> = ({
 	gasLimitEstimate,
-	setGasPrice,
+	onGasPriceChange,
+	optimismLayerOneFee,
 	altVersion = false,
 	...rest
 }) => {
 	const { t } = useTranslation();
 	const [gasSpeed, setGasSpeed] = useRecoilState(gasSpeedState);
-	const [customGasPrice, setCustomGasPrice] = useRecoilState(customGasPriceState);
 	const isL2 = useRecoilValue(isL2State);
 
 	const { useExchangeRatesQuery, useEthGasPriceQuery } = useSynthetixQueries();
 
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const exchangeRatesQuery = useExchangeRatesQuery();
-	const ethGasStationQuery = useEthGasPriceQuery();
+	const gasPriceQuery = useEthGasPriceQuery();
 
-	const gasPrices = ethGasStationQuery.data ?? ({} as GasPrices);
+	const gasPrices = gasPriceQuery.data;
 	const exchangeRates = exchangeRatesQuery.data ?? null;
 
-	const hasCustomGasPrice = customGasPrice !== '';
-
-	const gasPrice: Wei | null = useMemo(() => {
-		try {
-			return wei(customGasPrice, 9);
-		} catch (_) {
-			return ethGasStationQuery.data != null ? wei(ethGasStationQuery.data[gasSpeed], 9) : null;
-		}
-	}, [customGasPrice, ethGasStationQuery.data, gasSpeed]);
-
+	const gasPrice = gasPriceQuery.data != null ? gasPriceQuery.data[gasSpeed] : null;
 	useEffect(() => {
-		try {
-			setGasPrice(wei(customGasPrice, 9));
-		} catch (_) {
-			setGasPrice(gasPrice || wei(0));
+		if (gasPrice) {
+			const gasPriceForTransaction =
+				'gasPrice' in gasPrice
+					? { gasPrice: gasPrice.gasPrice }
+					: {
+							maxPriorityFeePerGas: gasPrice.maxPriorityFeePerGas,
+							maxFeePerGas: gasPrice.maxFeePerGas,
+					  };
+			onGasPriceChange(gasPriceForTransaction);
 		}
+
 		// eslint-disable-next-line
-	}, [gasPrice, customGasPrice]);
+	}, [gasPrice]);
 
 	const ethPriceRate = getExchangeRatesForCurrencies(
 		exchangeRates,
@@ -74,41 +71,27 @@ const GasSelector: React.FC<GasSelectorProps> = ({
 		selectedPriceCurrency.name
 	);
 
-	const transactionFee = useMemo(
-		() => getTransactionPrice(gasPrice, gasLimitEstimate, ethPriceRate),
-		[gasPrice, gasLimitEstimate, ethPriceRate]
+	const transactionFee = getTransactionPrice(
+		gasPrice,
+		gasLimitEstimate,
+		ethPriceRate,
+		optimismLayerOneFee
 	);
-
-	const gasPriceItem = hasCustomGasPrice ? (
-		<span>{Number(customGasPrice)}</span>
-	) : (
-		<span>
-			{ESTIMATE_VALUE} {gasPrice?.toNumber() || 0}
-		</span>
-	);
-
 	const content = (
 		<GasSelectContainer>
-			<div>
-				<CustomGasPrice
-					value={customGasPrice}
-					onChange={(_, value) => setCustomGasPrice(value)}
-					placeholder={t('common.custom')}
-					data-testid="edit-gas-price-input"
-				/>
-			</div>
 			{GAS_SPEEDS.map((speed) => (
 				<StyedGasButton
 					key={speed}
 					variant="solid"
 					onClick={() => {
-						setCustomGasPrice('');
 						setGasSpeed(speed);
 					}}
-					isActive={hasCustomGasPrice ? false : gasSpeed === speed}
+					isActive={gasSpeed === speed}
 				>
-					<GasPriceText>{t(`common.gas-prices.${speed}`)}</GasPriceText>
-					<NumericValue>{gasPrices![speed]}</NumericValue>
+					<GasPriceTextDropDown>{t(`common.gas-prices.${speed}`) + ' '} </GasPriceTextDropDown>
+					<NumericValue>
+						{getTotalGasPrice(gasPrices ? gasPrices[speed] : null).toNumber()}
+					</NumericValue>
 				</StyedGasButton>
 			))}
 		</GasSelectContainer>
@@ -139,7 +122,11 @@ const GasSelector: React.FC<GasSelectorProps> = ({
 			<FlexDivRowCentered>
 				<GasPriceItem>
 					<GasPriceText>
-						{gasPriceItem}{' '}
+						<GasPriceDisplay
+							isL2={isL2}
+							gasPrice={gasPrice}
+							optimismLayerOneFee={optimismLayerOneFee}
+						/>{' '}
 						{transactionFee != null &&
 							`(${formatCurrency(selectedPriceCurrency.name, transactionFee, {
 								sign: selectedPriceCurrency.sign,
@@ -195,25 +182,18 @@ const GasPriceText = styled.span`
 	font-size: 12px;
 	color: ${(props) => props.theme.colors.white};
 `;
+const GasPriceTextDropDown = styled(GasPriceText)`
+	margin-right: 5px;
+`;
 
 const GasPriceTooltip = styled(Tippy)`
 	background: ${(props) => props.theme.colors.navy};
 	border: 0.5px solid ${(props) => props.theme.colors.navy};
 	border-radius: 4px;
-	width: 120px;
 `;
 
 const GasSelectContainer = styled.div`
 	padding: 16px 0 8px 0;
-`;
-
-const CustomGasPrice = styled(NumericInput)`
-	width: 100%;
-	border: 0;
-	font-size: 12px;
-	::placeholder {
-		font-family: ${(props) => props.theme.fonts.mono};
-	}
 `;
 
 const StyedGasButton = styled(Button)`

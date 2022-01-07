@@ -178,7 +178,11 @@ const BurnTabInner: FC = () => {
 
 				<SettingsContainer>
 					<SettingContainer>
-						<GasSelector gasLimitEstimate={txn.gasLimit} setGasPrice={setGasPrice} />
+						<GasSelector
+							gasLimitEstimate={txn.gasLimit}
+							onGasPriceChange={setGasPrice}
+							optimismLayerOneFee={txn.optimismLayerOneFee}
+						/>
 					</SettingContainer>
 				</SettingsContainer>
 			</FormContainer>

@@ -23,24 +23,17 @@ import { wei } from '@synthetixio/wei';
 import useCryptoBalances from 'hooks/useCryptoBalances';
 import { Tooltip } from 'styles/common';
 import { useTranslation } from 'react-i18next';
+import useGetCurrencyRateChange from 'hooks/useGetCurrencyRateChange';
 
 const StatsSection: FC = ({ children }) => {
 	const walletAddress = useRecoilValue(walletAddressState);
 	const delegateWallet = useRecoilValue(delegateWalletState);
 	const { t } = useTranslation();
-	const { useSynthsBalancesQuery, subgraph } = useSynthetixQueries();
+	const { useSynthsBalancesQuery } = useSynthetixQueries();
 
 	const sevenDaysAgoSeconds = Math.floor(new Date().setDate(new Date().getDate() - 7) / 1000);
-	const latestSNXPrice = subgraph.useGetRateUpdates(
-		{
-			first: 1000,
-			where: { synth: 'SNX', timestamp_gte: sevenDaysAgoSeconds },
-			orderBy: 'timestamp',
-			orderDirection: 'asc',
-		},
-		{ rate: true },
-		{ keepPreviousData: true }
-	);
+	const currencyRateChange = useGetCurrencyRateChange(sevenDaysAgoSeconds, 'SNX');
+
 	const cryptoBalances = useCryptoBalances(delegateWallet?.address ?? walletAddress);
 	const synthsBalancesQuery = useSynthsBalancesQuery(delegateWallet?.address ?? walletAddress);
 	const [mobileStatsSectionIsOpen, setMobileStatsSectionIsOpen] = useState(false);
@@ -50,10 +43,6 @@ const StatsSection: FC = ({ children }) => {
 			?.balance ?? wei(0);
 
 	const sUSDBalance = synthsBalancesQuery?.data?.balancesMap[Synths.sUSD]?.balance ?? wei(0);
-
-	const snxPriceChartData = latestSNXPrice.data?.map((dataPoint) => ({
-		value: dataPoint.rate.toNumber(),
-	}));
 
 	const toggleMobileStatsSection = () =>
 		setMobileStatsSectionIsOpen((mobileStatsSectionIsOpen) => !mobileStatsSectionIsOpen);
@@ -75,7 +64,10 @@ const StatsSection: FC = ({ children }) => {
 					<BottomContainer>
 						<Tooltip content={t('common.price-change.seven-days')}>
 							<div>
-								<PriceItem currencyKey={CryptoCurrency.SNX} data={snxPriceChartData ?? []} />
+								<PriceItem
+									currencyKey={CryptoCurrency.SNX}
+									currencyRateChange={currencyRateChange}
+								/>
 							</div>
 						</Tooltip>
 						<BalanceItem amount={snxBalance} currencyKey={CryptoCurrency.SNX} />

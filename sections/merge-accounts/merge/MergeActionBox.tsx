@@ -5,8 +5,7 @@ import styled from 'styled-components';
 import { Trans, useTranslation } from 'react-i18next';
 import { Svg } from 'react-optimized-image';
 import { useRouter } from 'next/router';
-import Wei, { wei } from '@synthetixio/wei';
-import useSynthetixQueries from '@synthetixio/queries';
+import useSynthetixQueries, { GasPrice } from '@synthetixio/queries';
 
 import ROUTES from 'constants/routes';
 import Button from 'components/Button';
@@ -66,7 +65,7 @@ const MergeTabInner: FC = () => {
 	const { blockExplorerInstance } = Etherscan.useContainer();
 	const { useSynthetixTxn } = useSynthetixQueries();
 
-	const [gasPrice, setGasPrice] = useState<Wei>(wei(0));
+	const [gasPrice, setGasPrice] = useState<GasPrice | undefined>(undefined);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 
 	const router = useRouter();
@@ -109,9 +108,7 @@ const MergeTabInner: FC = () => {
 		'RewardEscrowV2',
 		'mergeAccount',
 		[properSourceAccountAddress, entryIDs],
-		{
-			gasPrice: gasPrice.toBN(),
-		},
+		gasPrice,
 		{
 			enabled: !!properSourceAccountAddress, // && !!entryIDs.length
 		}
@@ -279,7 +276,11 @@ const MergeTabInner: FC = () => {
 
 				<SettingsContainer>
 					<SettingContainer>
-						<GasSelector gasLimitEstimate={txn.gasLimit} setGasPrice={setGasPrice} />
+						<GasSelector
+							gasLimitEstimate={txn.gasLimit}
+							onGasPriceChange={setGasPrice}
+							optimismLayerOneFee={txn.optimismLayerOneFee}
+						/>
 					</SettingContainer>
 				</SettingsContainer>
 			</FormContainer>

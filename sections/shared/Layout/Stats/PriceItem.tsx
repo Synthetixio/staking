@@ -10,23 +10,22 @@ import CurrencyPrice from 'components/Currency/CurrencyPrice';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
-import LineChart, { LineChartData } from './LineChart';
 import useSynthetixQueries from '@synthetixio/queries';
 import { formatPercent } from 'utils/formatters/number';
 
 type PriceItemProps = {
 	currencyKey: CurrencyKey;
-	data: LineChartData;
+	currencyRateChange: number | undefined;
 };
 
-const PriceItem: FC<PriceItemProps> = ({ currencyKey, data }) => {
+const PriceItem: FC<PriceItemProps> = ({ currencyKey, currencyRateChange }) => {
 	const { selectedPriceCurrency, selectPriceCurrencyRate } = useSelectedPriceCurrency();
 	const { useExchangeRatesQuery } = useSynthetixQueries();
 	const exchangeRatesQuery = useExchangeRatesQuery();
 
 	const exchangeRates = exchangeRatesQuery.data ?? null;
 	const price = exchangeRates && exchangeRates[currencyKey];
-	const trendLinePositive = data.length > 0 ? data[data.length - 1].value >= data[0].value : false;
+	const trendLinePositive = currencyRateChange !== undefined && currencyRateChange > 0;
 
 	return (
 		<Container>
@@ -38,11 +37,11 @@ const PriceItem: FC<PriceItemProps> = ({ currencyKey, data }) => {
 						components={[<NoTextTransform />]}
 					/>
 				</span>
-				{data.length > 0 ? (
+				{currencyRateChange !== undefined ? (
 					<FlexDivCentered>
 						{trendLinePositive ? <TriangleUp /> : <TriangleDown />}
 						<PercentChange trendLinePositive={trendLinePositive}>
-							{formatPercent(data[data.length - 1].value / data[0].value - 1)}
+							{formatPercent(currencyRateChange)}
 						</PercentChange>
 					</FlexDivCentered>
 				) : (
@@ -61,7 +60,6 @@ const PriceItem: FC<PriceItemProps> = ({ currencyKey, data }) => {
 					<div>{NO_VALUE}</div>
 				)}
 			</PriceInfo>
-			<LineChart data={data} trendLinePositive={trendLinePositive} currencyKey={currencyKey} />
 		</Container>
 	);
 };

@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import Wei, { wei } from '@synthetixio/wei';
+import Wei from '@synthetixio/wei';
 import { Svg } from 'react-optimized-image';
 import { useRouter } from 'next/router';
 import { useRecoilValue } from 'recoil';
@@ -68,7 +68,7 @@ import {
 	HeaderLabel,
 } from '../common';
 import { MobileOnlyView } from 'components/Media';
-import useSynthetixQueries from '@synthetixio/queries';
+import useSynthetixQueries, { GasPrice } from '@synthetixio/queries';
 import { snapshotEndpoint } from 'constants/snapshot';
 import ClaimOrCloseFeeButton from './ClaimAndCloseFeeButton';
 
@@ -95,7 +95,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const isAppReady = useRecoilValue(appReadyState);
 	const router = useRouter();
-	const [gasPrice, setGasPrice] = useState<Wei>(wei(0));
+	const [gasPrice, setGasPrice] = useState<GasPrice | undefined>(undefined);
 	const [error, setError] = useState<string | null>(null);
 	const [claimedTradingRewards, setClaimedTradingRewards] = useState<number | null>(null);
 	const [claimedStakingRewards, setClaimedStakingRewards] = useState<number | null>(null);
@@ -108,21 +108,15 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 	const claimCall: [string, string[]] = delegateWallet
 		? ['claimOnBehalf', [delegateWallet.address]]
 		: ['claimFees', []];
-	const txn = useSynthetixTxn(
-		'FeePool',
-		claimCall[0],
-		claimCall[1],
-		{ gasPrice: gasPrice.toBN() },
-		{
-			enabled: true,
-			onSuccess: () => {
-				setClaimedTradingRewards(tradingRewards.toNumber());
-				setClaimedStakingRewards(stakingRewards.toNumber());
-				userStakingData.refetch();
-				setTxModalOpen(false);
-			},
-		}
-	);
+	const txn = useSynthetixTxn('FeePool', claimCall[0], claimCall[1], gasPrice, {
+		enabled: true,
+		onSuccess: () => {
+			setClaimedTradingRewards(tradingRewards.toNumber());
+			setClaimedStakingRewards(stakingRewards.toNumber());
+			userStakingData.refetch();
+			setTxModalOpen(false);
+		},
+	});
 
 	const now = Math.ceil(getCurrentTimestampSeconds());
 	const isCloseFeePeriodEnabled =
@@ -130,18 +124,12 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 		feePoolDataQuery.data &&
 		now > feePoolDataQuery.data.feePeriodDuration + feePoolDataQuery.data.startTime;
 
-	const closeFeesTxn = useSynthetixTxn(
-		'FeePool',
-		'closeCurrentFeePeriod',
-		[],
-		{ gasPrice: gasPrice.toBN() },
-		{
-			enabled: isCloseFeePeriodEnabled,
-			onSuccess: () => {
-				feePoolDataQuery.refetch();
-			},
-		}
-	);
+	const closeFeesTxn = useSynthetixTxn('FeePool', 'closeCurrentFeePeriod', [], gasPrice, {
+		enabled: isCloseFeePeriodEnabled,
+		onSuccess: () => {
+			feePoolDataQuery.refetch();
+		},
+	});
 	const handleCloseFeePeriod = async () => {
 		closeFeesTxn.mutate();
 	};
@@ -358,10 +346,11 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 					/>
 					<GasSelector
 						altVersion={true}
+						optimismLayerOneFee={txn.optimismLayerOneFee}
 						// We are aware that if the close fee button is clicked this gas estimate will be slightly less expensive
 						// Given that this is only on L2 and that the gas used is very similar we're fine with just showing the price for claiming
 						gasLimitEstimate={txn.gasLimit}
-						setGasPrice={setGasPrice}
+						onGasPriceChange={setGasPrice}
 					/>
 				</InnerContainer>
 			</StyledTabContainer>
