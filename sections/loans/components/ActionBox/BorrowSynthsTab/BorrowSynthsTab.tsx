@@ -3,7 +3,7 @@ import { useRecoilValue } from 'recoil';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
 
-import { isWalletConnectedState, walletAddressState } from 'store/wallet';
+import { isL2State, isWalletConnectedState, walletAddressState } from 'store/wallet';
 import Connector from 'containers/Connector';
 import UIContainer from 'containers/UI';
 import GasSelector from 'components/GasSelector';
@@ -59,6 +59,7 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 	const router = useRouter();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
+	const isL2 = useRecoilValue(isL2State);
 
 	const address = useRecoilValue(walletAddressState);
 	const { renBTCContract, minCRatios } = Loans.useContainer();
@@ -78,7 +79,8 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 	const debtAmount = parseSafeWei(debtAmountNumber, wei(0));
 
 	const [collateralAmountNumber, setCollateralAmount] = useState<string>('');
-	const [collateralAsset, setCollateralAsset] = useState<string>('');
+	const [collateralAsset, setCollateralAsset] = useState<string>('ETH');
+
 	const renToken = getRenBTCToken(network);
 	const ethToken = getETHToken(network);
 	const collateralDecimals = collateralAsset === 'renBTC' ? renToken.decimals : ethToken.decimals;
@@ -86,7 +88,8 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 
 	const collateralIsETH = collateralAsset === 'ETH';
 	const collateralContract = collateralIsETH ? null : renBTCContract;
-	const ethAndRenBalance = useTokensBalancesQuery([renToken, ethToken], address);
+	const balancesToFetch = isL2 ? [ethToken] : [renToken, ethToken];
+	const balances = useTokensBalancesQuery(balancesToFetch, address);
 
 	const minCRatio = minCRatios.get(collateralIsETH ? LOAN_TYPE_ETH : LOAN_TYPE_ERC20) || wei(0);
 
@@ -133,9 +136,10 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 
 		return null;
 	}, [address, collateralContract, collateralIsETH, loanContract]);
+
 	const rawCollateralBalance = collateralIsETH
-		? ethAndRenBalance.data?.ETH?.balance
-		: ethAndRenBalance.data?.renBTC?.balance;
+		? balances.data?.ETH?.balance
+		: balances.data?.renBTC?.balance;
 	const collateralBalance = rawCollateralBalance || wei(0);
 
 	const approveTxn = useContractTxn(
