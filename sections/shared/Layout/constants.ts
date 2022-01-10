@@ -101,6 +101,10 @@ export const MENU_LINKS_L2: MenuLinks = [
 		],
 	},
 	{
+		i18nLabel: 'sidenav.loans',
+		link: ROUTES.Loans.Home,
+	},
+	{
 		i18nLabel: 'sidenav.withdraw',
 		link: EXTERNAL_LINKS.L2.SynthetixWithdrawal,
 	},
