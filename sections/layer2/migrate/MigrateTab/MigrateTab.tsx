@@ -6,8 +6,8 @@ import { TabContainer } from '../../components/common';
 import { walletAddressState } from 'store/wallet';
 
 import TabContent from './TabContent';
-import useSynthetixQueries from '@synthetixio/queries';
-import Wei, { wei } from '@synthetixio/wei';
+import useSynthetixQueries, { GasPrice } from '@synthetixio/queries';
+import { wei } from '@synthetixio/wei';
 
 const MigrateTab = () => {
 	const walletAddress = useRecoilValue(walletAddressState);
@@ -24,12 +24,10 @@ const MigrateTab = () => {
 	);
 
 	const [isVestNeeded, setIsVestNeeded] = useState<boolean>(false);
-	const [gasPrice, setGasPrice] = useState<Wei>(wei(0));
+	const [gasPrice, setGasPrice] = useState<GasPrice | undefined>(undefined);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 
-	const txn = useSynthetixTxn('SynthetixBridgeToOptimism', 'migrateEscrow', [entryIds], {
-		gasPrice: gasPrice.toBN(),
-	});
+	const txn = useSynthetixTxn('SynthetixBridgeToOptimism', 'migrateEscrow', [entryIds], gasPrice);
 
 	useEffect(() => {
 		if (claimableAmount.gt(0)) {
@@ -58,6 +56,7 @@ const MigrateTab = () => {
 				txHash={txn.hash}
 				transactionState={txn.txnStatus}
 				resetTransaction={txn.refresh}
+				optimismLayerOneFee={txn.optimismLayerOneFee}
 			/>
 		</TabContainer>
 	);

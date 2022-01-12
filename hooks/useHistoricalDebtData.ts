@@ -22,9 +22,9 @@ const useHistoricalDebtData = (walletAddress: string | null) => {
 		data: [],
 	});
 
-	const { useGetDebtDataQuery, issuance } = useSynthetixQueries();
+	const { useGetDebtDataQuery, subgraph } = useSynthetixQueries();
 
-	const issues = issuance.useGetIssueds(
+	const issues = subgraph.useGetIssueds(
 		{
 			first: 1000,
 			orderBy: 'timestamp',
@@ -33,7 +33,7 @@ const useHistoricalDebtData = (walletAddress: string | null) => {
 		},
 		{ timestamp: true, value: true }
 	);
-	const burns = issuance.useGetBurneds(
+	const burns = subgraph.useGetBurneds(
 		{
 			first: 1000,
 			orderBy: 'timestamp',
@@ -43,7 +43,7 @@ const useHistoricalDebtData = (walletAddress: string | null) => {
 		{ timestamp: true, value: true }
 	);
 
-	const debtSnapshot = issuance.useGetDebtSnapshots(
+	const debtSnapshot = subgraph.useGetDebtSnapshots(
 		{
 			first: 1000,
 			orderBy: 'timestamp',
@@ -90,7 +90,7 @@ const useHistoricalDebtData = (walletAddress: string | null) => {
 					historicalDebtAndIssuance.push({
 						timestamp: debtSnapshot.timestamp.toNumber() * 1000,
 						issuanceDebt: historicalIssuanceAggregation[i],
-						actualDebt: wei(debtSnapshot.debtBalanceOf),
+						actualDebt: wei(debtSnapshot.debtBalanceOf || 0),
 						index: i,
 					});
 				});

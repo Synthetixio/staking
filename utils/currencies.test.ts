@@ -3,8 +3,8 @@ import { calculatePercentChange } from './currencies';
 
 describe('currencies', () => {
 	test('calculatePercentChange returns 0 is new or old price missing', () => {
-		expect(calculatePercentChange(wei(0), null).toString()).toBe(wei(0).toString());
-		expect(calculatePercentChange(null, wei(0)).toString()).toBe(wei(0).toString());
+		expect(calculatePercentChange(wei(0), undefined).toString()).toBe(wei(0).toString());
+		expect(calculatePercentChange(undefined, wei(0)).toString()).toBe(wei(0).toString());
 	});
 	test('calculatePercentChange handles 50% increase', () => {
 		expect(calculatePercentChange(wei(5), wei(10)).toString()).toBe(wei(1).toString());

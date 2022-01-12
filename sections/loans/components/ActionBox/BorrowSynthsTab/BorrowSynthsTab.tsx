@@ -37,7 +37,7 @@ import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import FormButton from './FormButton';
 import AssetInput from './AssetInput';
 import Wei, { wei } from '@synthetixio/wei';
-import useSynthetixQueries from '@synthetixio/queries';
+import useSynthetixQueries, { GasPrice } from '@synthetixio/queries';
 import { parseSafeWei } from 'utils/parse';
 import { ethers } from 'ethers';
 import { calculateLoanCRatio } from './calculateLoanCRatio';
@@ -70,7 +70,7 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 	} = useSynthetixQueries();
 	const { setTitle } = UIContainer.useContainer();
 
-	const [gasPrice, setGasPrice] = useState<Wei>(wei(0));
+	const [gasPrice, setGasPrice] = useState<GasPrice | undefined>(undefined);
 
 	const [debtAmountNumber, setDebtAmount] = useState<string>('');
 	const [debtAsset, setDebtAsset] = useState<string>('sUSD');
@@ -142,7 +142,7 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 		collateralContract,
 		'approve',
 		[loanContract?.address || ethers.constants.AddressZero, ethers.constants.MaxUint256],
-		{ gasPrice: gasPrice.toBN() }
+		gasPrice
 	);
 
 	const debt = { amount: debtAmount, asset: debtAsset };
@@ -172,7 +172,7 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 					ethers.utils.formatBytes32String(debt.asset),
 			  ],
 		{
-			gasPrice: gasPrice.toBN(),
+			...gasPrice,
 			value: collateralIsETH ? collateral.amount.toBN() : 0,
 		},
 		{ enabled: shouldOpenTransaction }
@@ -239,10 +239,9 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 					</SettingContainer>
 					<SettingContainer>
 						<GasSelector
+							optimismLayerOneFee={openTxn.optimismLayerOneFee}
 							gasLimitEstimate={openTxn ? openTxn.gasLimit : null}
-							setGasPrice={(x: Wei) => {
-								setGasPrice(x);
-							}}
+							onGasPriceChange={setGasPrice}
 						/>
 					</SettingContainer>
 				</SettingsContainer>

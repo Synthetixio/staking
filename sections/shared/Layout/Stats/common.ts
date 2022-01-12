@@ -8,7 +8,6 @@ export const BarStatBox = styled(FlexDivCol)`
 	margin-bottom: 35px;
 	&:last-child {
 		margin-bottom: 45px;
-		margin-top: -10px;
 	}
 `;
 
