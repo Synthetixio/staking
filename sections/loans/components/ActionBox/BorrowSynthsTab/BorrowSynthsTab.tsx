@@ -12,12 +12,7 @@ import {
 	ModalItemTitle as TxModalItemTitle,
 	ModalItemText as TxModalItemText,
 } from 'styles/common';
-import {
-	DEBT_ASSETS,
-	LOAN_TYPE_ERC20,
-	LOAN_TYPE_ETH,
-	SAFE_MIN_CRATIO,
-} from 'sections/loans/constants';
+import { DEBT_ASSETS, DEBT_ASSETS_L2, SAFE_MIN_CRATIO } from 'sections/loans/constants';
 import {
 	FormContainer,
 	InputsContainer,
@@ -46,11 +41,16 @@ import { getETHToken } from 'contracts/ethToken';
 import { useQuery } from 'react-query';
 
 type BorrowSynthsTabProps = {};
-
-const COLLATERAL_ASSETS: { [asset: string]: string[] } = {
+const L1_COLLATERAL_ASSETS: { [asset: string]: string[] } = {
 	sETH: ['ETH'],
 	sBTC: ['renBTC'],
 	sUSD: ['ETH', 'renBTC'],
+};
+const getCollateralAsset = (debtAsset: string, isL2: boolean) => {
+	if (isL2) {
+		return ['ETH'];
+	}
+	return L1_COLLATERAL_ASSETS[debtAsset];
 };
 
 const BorrowSynthsTab: FC<BorrowSynthsTabProps> = () => {
@@ -200,7 +200,13 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = () => {
 	useEffect(() => {
 		setTitle('loans', 'new');
 	}, [setTitle]);
-
+	useEffect(() => {
+		const newCollateralAssets = getCollateralAsset(debtAsset, isL2);
+		const currentCollateralValid = newCollateralAssets.includes(collateralAsset);
+		if (!currentCollateralValid) {
+			setCollateralAsset(newCollateralAssets[0]);
+		}
+	}, [collateralAsset, debtAsset, isL2]);
 	return (
 		<>
 			<FormContainer data-testid="loans-form">
@@ -211,7 +217,7 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = () => {
 						setAsset={setDebtAsset}
 						amount={debtAmountNumber}
 						setAmount={setDebtAmount}
-						assets={DEBT_ASSETS}
+						assets={isL2 ? DEBT_ASSETS_L2 : DEBT_ASSETS}
 						testId="loans-form-left-input"
 					/>
 					<InputsDivider />
@@ -221,7 +227,7 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = () => {
 						setAsset={setCollateralAsset}
 						amount={collateralAmountNumber}
 						setAmount={setCollateralAmount}
-						assets={COLLATERAL_ASSETS[debtAsset]}
+						assets={getCollateralAsset(debtAsset, isL2)}
 						onSetMaxAmount={setCollateralAmount}
 						testId="loans-form-right-input"
 					/>
