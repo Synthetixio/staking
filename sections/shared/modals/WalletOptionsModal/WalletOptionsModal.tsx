@@ -103,13 +103,8 @@ const WalletOptionsModal: FC<WalletOptionsProps> = ({
 }) => {
 	const { t } = useTranslation();
 	const [copiedAddress, setCopiedAddress] = useState<boolean>(false);
-	const {
-		connectWallet,
-		disconnectWallet,
-		switchAccounts,
-		isHardwareWallet,
-		selectedWallet,
-	} = Connector.useContainer();
+	const { connectWallet, disconnectWallet, switchAccounts, isHardwareWallet, selectedWallet } =
+		Connector.useContainer();
 	const { blockExplorerInstance } = Etherscan.useContainer();
 
 	const [walletAddress, setWalletAddress] = useRecoilState(walletAddressState);

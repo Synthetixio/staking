@@ -119,14 +119,14 @@ const StyledTabButton = styled.button<TabButtonProps>`
 		`}
 
 		${(props) =>
-			props.isDisabled &&
-			css`
-				pointer-events: none;
-				opacity: 0.3;
-			`}
+		props.isDisabled &&
+		css`
+			pointer-events: none;
+			opacity: 0.3;
+		`}
 
 
-	&:hover{
+	&:hover {
 		color: ${(props) =>
 			props.active
 				? props.theme.colors.white

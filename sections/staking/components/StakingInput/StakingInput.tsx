@@ -96,14 +96,8 @@ const StakingInput: React.FC<StakingInputProps> = ({
 	sUSDNeededToBurn,
 	optimismLayerOneFee,
 }) => {
-	const {
-		targetCRatio,
-		SNXRate,
-		debtBalance,
-		issuableSynths,
-		collateral,
-		currentCRatio,
-	} = useStakingCalculations();
+	const { targetCRatio, SNXRate, debtBalance, issuableSynths, collateral, currentCRatio } =
+		useStakingCalculations();
 	const { connectWallet } = Connector.useContainer();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const burnType = useRecoilValue(burnTypeState);

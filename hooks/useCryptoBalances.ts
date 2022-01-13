@@ -24,11 +24,8 @@ export type CryptoBalance = {
 };
 
 const useCryptoBalances = (walletAddress: string | null) => {
-	const {
-		useTokensBalancesQuery,
-		useExchangeRatesQuery,
-		useGetDebtDataQuery,
-	} = useSynthetixQueries();
+	const { useTokensBalancesQuery, useExchangeRatesQuery, useGetDebtDataQuery } =
+		useSynthetixQueries();
 
 	const network = useRecoilValue(networkState);
 

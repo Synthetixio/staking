@@ -16,7 +16,10 @@ import { isWalletConnectedState, networkState } from 'store/wallet';
 import { isL2State, delegateWalletState } from 'store/wallet';
 import { MENU_LINKS, MENU_LINKS_L2, MENU_LINKS_DELEGATE } from '../constants';
 
-const getKeyValue = <T extends object, U extends keyof T>(obj: T) => (key: U) => obj[key];
+const getKeyValue =
+	<T extends object, U extends keyof T>(obj: T) =>
+	(key: U) =>
+		obj[key];
 
 export type SideNavProps = {
 	isDesktop?: boolean;

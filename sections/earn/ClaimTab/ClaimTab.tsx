@@ -83,11 +83,8 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 
 	const walletAddress = useRecoilValue(walletAddressState);
 	const delegateWallet = useRecoilValue(delegateWalletState);
-	const {
-		useHasVotedForElectionsQuery,
-		useSynthetixTxn,
-		useGetFeePoolDataQuery,
-	} = useSynthetixQueries();
+	const { useHasVotedForElectionsQuery, useSynthetixTxn, useGetFeePoolDataQuery } =
+		useSynthetixQueries();
 
 	const { isBelowCRatio } = useUserStakingData(delegateWallet?.address ?? walletAddress);
 	const { blockExplorerInstance } = Etherscan.useContainer();
@@ -142,10 +139,10 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 		[blockExplorerInstance, txn.hash]
 	);
 
-	const canClaim = useMemo(() => !userStakingData.hasClaimed && totalRewards.gt(0), [
-		userStakingData.hasClaimed,
-		totalRewards,
-	]);
+	const canClaim = useMemo(
+		() => !userStakingData.hasClaimed && totalRewards.gt(0),
+		[userStakingData.hasClaimed, totalRewards]
+	);
 
 	const handleClaim = () => {
 		if (!isAppReady || !isWalletConnected || !canClaim) return;

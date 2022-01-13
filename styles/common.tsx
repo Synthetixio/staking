@@ -379,11 +379,11 @@ export const GlowingCircle = styled(FlexDivCentered)<{
 		`}
 
 ${(props) =>
-	props.variant === 'yellow' &&
-	css`
-		border: 1.5px solid ${(props) => props.theme.colors.yellow};
-		box-shadow: 0px 0px 15px ${(props) => props.theme.colors.yellow};
-	`}
+		props.variant === 'yellow' &&
+		css`
+			border: 1.5px solid ${(props) => props.theme.colors.yellow};
+			box-shadow: 0px 0px 15px ${(props) => props.theme.colors.yellow};
+		`}
 `;
 
 export const Tooltip = styled(Tippy)`

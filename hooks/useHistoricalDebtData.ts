@@ -72,7 +72,7 @@ const useHistoricalDebtData = (walletAddress: string | null) => {
 			// values of every mint and burns
 			const historicalIssuanceAggregation: Wei[] = [];
 
-			issuesAndBurns.slice().forEach((event, i) => {
+			issuesAndBurns.slice().forEach((event) => {
 				const multiplier = event.isBurn ? -1 : 1;
 				const aggregation = event.value
 					.mul(multiplier)
