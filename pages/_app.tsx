@@ -25,6 +25,7 @@ import 'slick-carousel/slick/slick-theme.css';
 import 'tippy.js/dist/tippy.css';
 import '../i18n';
 import Connector from 'containers/Connector';
+import Loans from 'containers/Loans';
 
 const queryClient = new QueryClient({
 	defaultOptions: {
@@ -52,13 +53,15 @@ const InnerApp: FC<AppProps> = ({ Component, pageProps }) => {
 						  })
 				}
 			>
-				<Layout>
-					<SystemStatus>
-						<AppLayout>
-							<Component {...pageProps} />
-						</AppLayout>
-					</SystemStatus>
-				</Layout>
+				<Loans.Provider>
+					<Layout>
+						<SystemStatus>
+							<AppLayout>
+								<Component {...pageProps} />
+							</AppLayout>
+						</SystemStatus>
+					</Layout>
+				</Loans.Provider>
 				<ReactQueryDevtools />
 			</SynthetixQueryContextProvider>
 		</>
