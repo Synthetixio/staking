@@ -86,8 +86,11 @@ function Container() {
 		};
 
 		let isMounted = true;
-		const unsubs: Array<any> = [() => (isMounted = false)];
-
+		const unsubs: Array<Function> = [
+			() => {
+				isMounted = false;
+			},
+		];
 		const loadLoans = async () => {
 			setIsLoadingLoans(true);
 			const loanIndices = await Promise.all(Object.keys(loanStateContracts).map(getLoanIndices));
@@ -195,24 +198,20 @@ function Container() {
 					});
 				};
 
-				const onLoanCreated = async (owner: string, id: string) => {
+				const onLoanCreated = async (_address: string, id: BigNumber) => {
 					const loan = await fetchLoan(owner, id);
 					setLoans((loans) => [loan, ...loans]);
 				};
 
-				const onLoanClosed = (owner: string, id: string) => {
+				const onLoanClosed = (_owner: string, id: BigNumber) => {
 					setLoans((loans) => loans.filter((loan) => !loan.id.eq(id)));
 				};
 
-				const onCollateralDeposited = async (
-					owner: string,
-					id: string,
-					amount: ethers.BigNumber
-				) => {
+				const onCollateralDeposited = async (owner: string, id: BigNumber, amount: BigNumber) => {
 					setLoans((loans) =>
 						loans.map((loan) => {
 							if (loan.id.eq(id)) {
-								loan.collateral = loan.collateral.add(amount);
+								return { ...loan, collateral: loan.collateral.add(amount) };
 							}
 							return loan;
 						})
@@ -220,11 +219,7 @@ function Container() {
 					await updateLoan(owner, id);
 				};
 
-				const onCollateralWithdrawn = async (
-					owner: string,
-					id: string,
-					amount: ethers.BigNumber
-				) => {
+				const onCollateralWithdrawn = async (owner: string, id: BigNumber, amount: BigNumber) => {
 					setLoans((loans) =>
 						loans.map((loan) => {
 							if (loan.id.eq(id)) {
@@ -238,14 +233,14 @@ function Container() {
 
 				const onLoanRepaymentMade = async (
 					borrower: string,
-					repayer: string,
-					id: string,
-					payment: ethers.BigNumber
+					_repayer: string,
+					id: BigNumber,
+					payment: BigNumber
 				) => {
 					setLoans((loans) =>
 						loans.map((loan) => {
 							if (loan.id.eq(id)) {
-								loan.amount = loan.amount.sub(payment);
+								return { ...loan, amount: loan.amount.sub(payment) };
 							}
 							return loan;
 						})
@@ -253,11 +248,11 @@ function Container() {
 					await updateLoan(borrower, id);
 				};
 
-				const onLoanDrawnDown = async (owner: string, id: string, amount: ethers.BigNumber) => {
+				const onLoanDrawnDown = async (owner: string, id: BigNumber, amount: BigNumber) => {
 					setLoans((loans) =>
 						loans.map((loan) => {
 							if (loan.id.eq(id)) {
-								loan.amount = loan.amount.add(amount);
+								return { ...loan, amount: loan.amount.add(amount) };
 							}
 							return loan;
 						})
