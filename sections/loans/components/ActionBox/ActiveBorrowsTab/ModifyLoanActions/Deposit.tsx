@@ -3,7 +3,7 @@ import { ethers } from 'ethers';
 import { useRecoilValue } from 'recoil';
 
 import { walletAddressState } from 'store/wallet';
-import { Loan } from 'queries/loans/types';
+import { Loan } from 'containers/Loans/types';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import { tx } from 'utils/transactions';
 import Wrapper from './Wrapper';
@@ -48,10 +48,10 @@ const Deposit: React.FC<DepositProps> = ({
 		[depositAmountString, collateralDecimals]
 	);
 
-	const totalAmount = useMemo(() => collateralAmount.add(depositAmount), [
-		collateralAmount,
-		depositAmount,
-	]);
+	const totalAmount = useMemo(
+		() => collateralAmount.add(depositAmount),
+		[collateralAmount, depositAmount]
+	);
 	const totalAmountString = useMemo(
 		() => ethers.utils.formatUnits(totalAmount, collateralDecimals),
 		[totalAmount, collateralDecimals]
@@ -78,11 +78,10 @@ const Deposit: React.FC<DepositProps> = ({
 		];
 	}, [loanContract, address, loanId, loanTypeIsETH, depositAmount]);
 
-	const getTxData = useMemo(() => (!isApproved ? getApproveTxData : getDepositTxData), [
-		isApproved,
-		getApproveTxData,
-		getDepositTxData,
-	]);
+	const getTxData = useMemo(
+		() => (!isApproved ? getApproveTxData : getDepositTxData),
+		[isApproved, getApproveTxData, getDepositTxData]
+	);
 
 	const onApproveOrDeposit = async () => {
 		!isApproved ? approve() : deposit();

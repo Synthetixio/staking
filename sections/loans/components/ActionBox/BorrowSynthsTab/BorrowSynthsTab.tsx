@@ -53,7 +53,7 @@ const COLLATERAL_ASSETS: { [asset: string]: string[] } = {
 	sUSD: ['ETH', 'renBTC'],
 };
 
-const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
+const BorrowSynthsTab: FC<BorrowSynthsTabProps> = () => {
 	const { t } = useTranslation();
 	const { signer, synthetixjs, connectWallet, network } = Connector.useContainer();
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
@@ -63,12 +63,8 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 
 	const address = useRecoilValue(walletAddressState);
 	const { renBTCContract, minCRatios } = Loans.useContainer();
-	const {
-		useExchangeRatesQuery,
-		useContractTxn,
-		useSynthetixTxn,
-		useTokensBalancesQuery,
-	} = useSynthetixQueries();
+	const { useExchangeRatesQuery, useContractTxn, useSynthetixTxn, useTokensBalancesQuery } =
+		useSynthetixQueries();
 	const { setTitle } = UIContainer.useContainer();
 
 	const [gasPrice, setGasPrice] = useState<GasPrice | undefined>(undefined);
@@ -91,7 +87,7 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 	const balancesToFetch = isL2 ? [ethToken] : [renToken, ethToken];
 	const balances = useTokensBalancesQuery(balancesToFetch, address);
 
-	const minCRatio = minCRatios.get(collateralIsETH ? LOAN_TYPE_ETH : LOAN_TYPE_ERC20) || wei(0);
+	const minCRatio = collateralIsETH ? minCRatios.ethMinCratio : minCRatios.erc20MinCratio;
 
 	const loanContract = useMemo(() => {
 		if (!signer || !synthetixjs) return null;
@@ -233,7 +229,7 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 
 				<SettingsContainer>
 					<SettingContainer>
-						<CRatio {...{ cratio, hasLowCRatio, minCRatio }} />
+						<CRatio cratio={cratio} hasLowCRatio={hasLowCRatio} minCRatio={minCRatio || wei(0)} />
 					</SettingContainer>
 					<SettingContainer>
 						<InterestRate />

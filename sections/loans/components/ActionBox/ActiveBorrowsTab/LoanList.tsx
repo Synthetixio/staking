@@ -7,7 +7,7 @@ import media from 'styles/media';
 import Table from 'components/Table';
 import Currency from 'components/Currency';
 import UIContainer from 'containers/UI';
-import { Loan } from 'queries/loans/types';
+import { Loan } from 'containers/Loans/types';
 import Loans from 'containers/Loans';
 import ModifyLoanMenu from './ModifyLoanMenu';
 import { DesktopOrTabletView, MobileOnlyView } from 'components/Media';
@@ -35,7 +35,7 @@ const LoanList: FC<LoanListProps> = ({ actions }) => {
 					const loan = cellProps.row.original;
 					return (
 						<CurrencyIconContainer>
-							<Currency.Name currencyKey={loan.debtAsset} showIcon={true} />
+							<Currency.Name currencyKey={loan.currency} showIcon={true} />
 							{wei(loan.amount).toString(2)}
 						</CurrencyIconContainer>
 					);
@@ -88,7 +88,7 @@ const LoanList: FC<LoanListProps> = ({ actions }) => {
 					const loan = cellProps.row.original;
 					return (
 						<CurrencyIconContainer>
-							{wei(loan.amount).toString(2)} {loan.debtAsset}
+							{wei(loan.amount).toString(2)} {loan.currency}
 						</CurrencyIconContainer>
 					);
 				},

@@ -2,9 +2,8 @@ import { useState, useCallback } from 'react';
 import { ethers } from 'ethers';
 import { useRouter } from 'next/router';
 
-import { Loan } from 'queries/loans/types';
+import { Loan } from 'containers/Loans/types';
 import TransactionNotifier from 'containers/TransactionNotifier';
-import { SYNTH_BY_CURRENCY_KEY } from 'sections/loans/constants';
 import { tx } from 'utils/transactions';
 import Loans from 'containers/Loans';
 import Wrapper from './Wrapper';
@@ -35,7 +34,9 @@ const Close: React.FC<CloseProps> = ({ loan, loanId, loanTypeIsETH, loanContract
 			setIsWorking('closing');
 			setTxModalOpen(true);
 			await tx(() => getTxData(), {
-				showErrorNotification: (e: string) => setError(e),
+				showErrorNotification: (e: string) => {
+					setError(e);
+				},
 				showProgressNotification: (hash: string) =>
 					monitorTransaction({
 						txHash: hash,
@@ -43,9 +44,10 @@ const Close: React.FC<CloseProps> = ({ loan, loanId, loanTypeIsETH, loanContract
 					}),
 			});
 			await reloadPendingWithdrawals();
+			setIsWorking('');
+			setTxModalOpen(false);
 			router.push('/loans/list');
 		} catch {
-		} finally {
 			setIsWorking('');
 			setTxModalOpen(false);
 		}
@@ -61,7 +63,7 @@ const Close: React.FC<CloseProps> = ({ loan, loanId, loanTypeIsETH, loanContract
 				showInterestAccrued: true,
 
 				leftColLabel: 'loans.modify-loan.close.left-col-label',
-				leftColAssetName: SYNTH_BY_CURRENCY_KEY[loan.currency],
+				leftColAssetName: loan.currency,
 				leftColAmount: ethers.utils.formatUnits(loan.amount, 18),
 
 				rightColLabel: 'loans.modify-loan.close.right-col-label',

@@ -3,9 +3,8 @@ import { ethers } from 'ethers';
 import { useRecoilValue } from 'recoil';
 
 import { walletAddressState } from 'store/wallet';
-import { Loan } from 'queries/loans/types';
+import { Loan } from 'containers/Loans/types';
 import TransactionNotifier from 'containers/TransactionNotifier';
-import { SYNTH_BY_CURRENCY_KEY } from 'sections/loans/constants';
 import { tx } from 'utils/transactions';
 import Wrapper from './Wrapper';
 
@@ -25,7 +24,7 @@ const Repay: React.FC<RepayProps> = ({ loan, loanId, loanTypeIsETH, loanContract
 	const [error, setError] = useState<string | null>(null);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 
-	const debtAsset = SYNTH_BY_CURRENCY_KEY[loan.currency];
+	const debtAsset = loan.currency;
 	const debtAssetDecimals = 18;
 
 	const repayAmount = useMemo(
