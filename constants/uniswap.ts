@@ -14,8 +14,7 @@ const sUSDMainnetToken = new Token(
 
 const SNXDebtMirrorToken = new Token(
 	1,
-	// TODO @MF update address when known
-	'0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
+	'0x5f7f94a1dd7b15594d17543beb8b30b111dd464c',
 	18,
 	'dSNX',
 	'SNX Debt Mirror'
@@ -23,7 +22,7 @@ const SNXDebtMirrorToken = new Token(
 
 export async function getSUSDdSNXPool(provider: providers.Provider): Promise<Pool> {
 	const poolContract = new Contract(
-		'0x60594a405d53811d3bc4766596efd80fd545a270',
+		'0x9957c4795ab663622db54fc48fda874da59150ff',
 		IUniswapV3PoolABI,
 		provider || ethers.getDefaultProvider('homestead')
 	);

@@ -5,7 +5,7 @@ import { walletAddressState } from 'store/wallet';
 import styled from 'styled-components';
 import { FlexDivColCentered } from 'styles/common';
 
-const getDehedgeUniswapUrl = (debt: Wei) =>
+const getDHedgeUniswapUrl = (debt: Wei) =>
 	`https://app.uniswap.org/#/swap?inputCurrency=0x57ab1ec28d129707052df4df418d58a2d46d5f51&exactAmount=${debt.toNumber()}&exactField=input&outputCurrency=0x5f7f94a1dd7b15594d17543beb8b30b111dd464c`;
 
 const ManageTab = () => {
@@ -28,7 +28,7 @@ const ManageTab = () => {
 						overflow: 'hidden',
 					}}
 					scrolling="no"
-					src={getDehedgeUniswapUrl(actualDebt)}
+					src={getDHedgeUniswapUrl(actualDebt)}
 				></iframe>
 			)}
 		</ManageContainer>

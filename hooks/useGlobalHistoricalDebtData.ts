@@ -49,7 +49,7 @@ const useGlobalHistoricalDebtData = () => {
 		data: [],
 	});
 
-	const dhedgeData = useQuery<DHedgePerformanceResponse>(
+	const dHedgeData = useQuery<DHedgePerformanceResponse>(
 		['dhedge', dHedgeAPIUrl],
 		async () => {
 			const response = await axios({
@@ -89,14 +89,14 @@ const useGlobalHistoricalDebtData = () => {
 	const isLoaded =
 		dailyIssued.isSuccess &&
 		dailyBurned.isSuccess &&
-		dhedgeData.isSuccess &&
-		!dhedgeData.data.errors?.length &&
-		dhedgeData.data;
+		dHedgeData.isSuccess &&
+		!dHedgeData.data.errors?.length &&
+		dHedgeData.data;
 
 	useEffect(() => {
 		if (isLoaded) {
 			const dhedgeHistory =
-				dhedgeData.data?.data.performanceHistory.history
+				dHedgeData.data?.data.performanceHistory.history
 					.map((history) => ({
 						type: EvenBlockType.DHEDGE_ITEM,
 						value: wei(Number(history.performance) * 100),

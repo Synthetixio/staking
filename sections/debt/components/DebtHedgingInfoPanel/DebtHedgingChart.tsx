@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Svg } from 'react-optimized-image';
 import { ResponsiveContainer, YAxis, Line, LineChart, XAxis } from 'recharts';
@@ -14,10 +14,30 @@ import ChartLabel from './ChartLabel';
 import { format } from 'date-fns';
 import fonts from 'styles/theme/fonts';
 import DebtHedgedBalance from './DebtHedgedBalance';
+import { useRecoilValue } from 'recoil';
+import { walletAddressState } from 'store/wallet';
+import { BigNumber, Contract, utils } from 'ethers';
+import Connector from 'containers/Connector';
 
 const DebtHedgingChart: React.FC = () => {
 	const { t } = useTranslation();
 	const { data, isLoading } = useGlobalHistoricalDebtData();
+	const address = useRecoilValue(walletAddressState);
+	const { provider } = Connector.useContainer();
+	const [dSNXUserBalance, setdSNXUserBalance] = useState('0');
+
+	useEffect(() => {
+		if (address && provider) {
+			const dSNXContract = new Contract(
+				'0x5f7f94a1dd7b15594d17543beb8b30b111dd464c',
+				['function balanceOf(address account) external view returns (uint256)'],
+				provider
+			);
+			dSNXContract
+				.balanceOf(address)
+				.then((balance: BigNumber) => setdSNXUserBalance(utils.formatUnits(balance, 18)));
+		}
+	}, [provider]);
 
 	if (isLoading) {
 		return (
@@ -38,7 +58,7 @@ const DebtHedgingChart: React.FC = () => {
 					<ChartLabel labelColor={colors.mutedPink} labelBorderColor={colors.pink}>
 						{t('debt.actions.manage.info-panel.chart.debtPool-label')}
 					</ChartLabel>
-					<DebtHedgedBalance userBalance={0} />
+					<DebtHedgedBalance userBalance={dSNXUserBalance} />
 				</StyledChartLabelsWrapper>
 			</ChartTitleContainer>
 			<ResponsiveContainer width="100%" height={270}>
