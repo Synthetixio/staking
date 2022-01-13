@@ -100,7 +100,6 @@ const SynthsPieChart: FC<DebtPieChartProps> = () => {
 
 const Tooltip: FC<{ name: string; value: number; payload: { skewValue: Wei } }> = ({
 	name,
-	value,
 	payload,
 }) => {
 	return (

@@ -11,11 +11,8 @@ import { BarStatBox, BarHeaderSection, BarTitle, BarValue, StyledProgressBar } f
 const CRatioBarStats: FC = () => {
 	const { t } = useTranslation();
 
-	const {
-		percentageCurrentCRatio,
-		percentageTargetCRatio,
-		percentCurrentCRatioOfTarget,
-	} = useStakingCalculations();
+	const { percentageCurrentCRatio, percentageTargetCRatio, percentCurrentCRatioOfTarget } =
+		useStakingCalculations();
 
 	return (
 		<StyledBarStatBox>

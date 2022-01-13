@@ -47,19 +47,14 @@ const useYearnSNXVaultQuery = (options?: UseQueryOptions<YearnVaultData>) => {
 				provider as ethers.providers.Provider
 			);
 
-			const [
-				yvSNXUserBalance,
-				yvSNXPricePerShare,
-				allVaultsData,
-				snxAllowance,
-				snxBalance,
-			] = await Promise.all([
-				YearnSNXVault.balanceOf(walletAddress, { gasLimit: 1e6 }),
-				YearnSNXVault.pricePerShare({ gasLimit: 1e5 }),
-				axios.get('https://api.yearn.finance/v1/chains/1/vaults/all'),
-				Synthetix.allowance(walletAddress, yearnSNXVault.address),
-				Synthetix.transferableSynthetix(walletAddress),
-			]);
+			const [yvSNXUserBalance, yvSNXPricePerShare, allVaultsData, snxAllowance, snxBalance] =
+				await Promise.all([
+					YearnSNXVault.balanceOf(walletAddress, { gasLimit: 1e6 }),
+					YearnSNXVault.pricePerShare({ gasLimit: 1e5 }),
+					axios.get('https://api.yearn.finance/v1/chains/1/vaults/all'),
+					Synthetix.allowance(walletAddress, yearnSNXVault.address),
+					Synthetix.transferableSynthetix(walletAddress),
+				]);
 
 			const [pricePerShare, allowance, userBalance] = [
 				yvSNXPricePerShare,

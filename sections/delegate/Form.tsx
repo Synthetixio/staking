@@ -83,9 +83,10 @@ const Tab: FC = () => {
 			? properDelegateAddress === ethers.utils.getAddress(address)
 			: false;
 
-	const shortenedDelegateAddress = useMemo(() => truncateAddress(delegateAddress, 8, 6), [
-		delegateAddress,
-	]);
+	const shortenedDelegateAddress = useMemo(
+		() => truncateAddress(delegateAddress, 8, 6),
+		[delegateAddress]
+	);
 
 	const onEnterAddress: ChangeEventHandler<HTMLTextAreaElement> = (e) =>
 		setDelegateAddress((e.target.value ?? '').trim());

@@ -48,11 +48,12 @@ const TransferModal: FC<TransferModalProps> = ({
 	const onEnterAddress = (e: React.ChangeEvent<HTMLTextAreaElement>) =>
 		setDestinationAddress((e.target.value ?? '').trim());
 
-	const contract = synthetixjs!.contracts[
-		isSynth(currentAsset?.currencyKey)
-			? synthToContractName(currentAsset?.currencyKey || '')
-			: 'Synthetix'
-	];
+	const contract =
+		synthetixjs!.contracts[
+			isSynth(currentAsset?.currencyKey)
+				? synthToContractName(currentAsset?.currencyKey || '')
+				: 'Synthetix'
+		];
 
 	const transferAmountWei = parseSafeWei(amount, 0);
 

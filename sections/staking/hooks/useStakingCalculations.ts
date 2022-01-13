@@ -37,7 +37,7 @@ const useStakingCalculations = () => {
 		const targetCRatio = wei(debtData?.targetCRatio ?? 0);
 		const targetThreshold = wei(
 			// targetThreshold missing in types but is return, TODO remove once fixed in js-monorepo
-			((debtData as unknown) as { targetThreshold?: Wei })?.targetThreshold ?? 0
+			(debtData as unknown as { targetThreshold?: Wei })?.targetThreshold ?? 0
 		);
 		const currentCRatio = wei(debtData?.currentCRatio ?? 0);
 		const transferableCollateral = wei(debtData?.transferable ?? 0);

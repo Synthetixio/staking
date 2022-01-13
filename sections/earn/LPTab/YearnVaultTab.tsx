@@ -64,7 +64,6 @@ const YearnVaultTab: FC<LPTabProps> = ({
 	userBalance,
 	staked,
 	pricePerShare,
-	secondTokenRate,
 }) => {
 	const { t } = useTranslation();
 	const [showApproveOverlayModal, setShowApproveOverlayModal] = useState<boolean>(false);

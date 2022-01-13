@@ -98,7 +98,6 @@ const RightButton = styled(BaseButton)`
 	background-color: ${(props) => props.theme.colors.grayBlue};
 	color: ${(props) => props.theme.colors.blue};
 	text-transform: uppercase;
-
 `;
 
 export default ActionCompleted;

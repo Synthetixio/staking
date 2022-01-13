@@ -44,10 +44,8 @@ const useConnector = () => {
 		LOCAL_STORAGE_KEYS.SELECTED_WALLET,
 		''
 	);
-	const [
-		transactionNotifier,
-		setTransactionNotifier,
-	] = useState<TransactionNotifierInterface | null>(null);
+	const [transactionNotifier, setTransactionNotifier] =
+		useState<TransactionNotifierInterface | null>(null);
 
 	const [synthsMap, tokensMap] = useMemo(() => {
 		if (synthetixjs == null) {
