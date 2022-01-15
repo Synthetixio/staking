@@ -15,16 +15,20 @@ export const useCouncilMembers = () => {
 	useEffect(() => {
 		const getCouncilMembers = async () => {
 			if (provider && isAppReady) {
+				const L1Provider = new ethers.providers.InfuraProvider(1, process.env.INFURA_ARCHIVE_KEY);
+
 				let spartanCouncilContract = new ethers.Contract(
 					spartanCouncil.address,
 					spartanCouncil.abi,
-					provider as ethers.providers.Provider
+					L1Provider as ethers.providers.Provider
 				);
+
+				const ovmProvider = new ethers.providers.JsonRpcProvider('https://mainnet.optimism.io');
 
 				let councilDilutionContract = new ethers.Contract(
 					councilDilution.address,
 					councilDilution.abi,
-					provider as ethers.providers.Provider
+					ovmProvider as ethers.providers.Provider
 				);
 
 				let councilMembers = [] as any;
