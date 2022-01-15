@@ -4,7 +4,7 @@ import { Svg } from 'react-optimized-image';
 import Spinner from 'assets/svg/app/loader.svg';
 import { FlexDivCol, FlexDivRow, FlexDivRowCentered } from 'styles/common';
 import { useRecoilValue } from 'recoil';
-import { walletAddressState } from 'store/wallet';
+import { isWalletConnectedState, walletAddressState } from 'store/wallet';
 import { useTranslation } from 'react-i18next';
 import { truncateAddress, truncateString } from 'utils/formatters/string';
 import { formatNumber } from 'utils/formatters/number';
@@ -24,6 +24,7 @@ type HistoryProps = {
 const History: React.FC<HistoryProps> = ({ proposalResults }) => {
 	const { t } = useTranslation();
 	const walletAddress = useRecoilValue(walletAddressState);
+	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 
 	const history = useMemo(() => {
 		if (proposalResults.isLoading) {
@@ -63,16 +64,18 @@ const History: React.FC<HistoryProps> = ({ proposalResults }) => {
 											arrow={true}
 											placement="bottom"
 											content={
+												isWalletConnected &&
 												ethers.utils.getAddress(voteList[index].voter) ===
-												ethers.utils.getAddress(walletAddress ?? '')
+													ethers.utils.getAddress(walletAddress ?? '')
 													? t('gov.proposal.history.currentUser')
 													: ethers.utils.getAddress(voteList[index].voter)
 											}
 											hideOnClick={false}
 										>
 											<Title>
-												{ethers.utils.getAddress(voteList[index].voter) ===
-												ethers.utils.getAddress(walletAddress ?? '')
+												{isWalletConnected &&
+												ethers.utils.getAddress(voteList[index].voter) ===
+													ethers.utils.getAddress(walletAddress ?? '')
 													? t('gov.proposal.history.currentUser')
 													: truncateAddress(ethers.utils.getAddress(voteList[index].voter))}
 											</Title>
