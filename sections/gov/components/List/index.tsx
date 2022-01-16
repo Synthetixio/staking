@@ -148,7 +148,7 @@ const ResponsiveTable: React.FC<ResponsiveTableProps> = ({ mobile, spaceKey }) =
 					) : (
 						<AbsoluteContainer>
 							<CreateButton disabled variant="secondary">
-								Switch to L2 to create SIP/SCCPs
+								{t('gov.table.switch')}
 							</CreateButton>
 						</AbsoluteContainer>
 					)

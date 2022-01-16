@@ -110,7 +110,7 @@ const History: React.FC<HistoryProps> = ({ proposalResults }) => {
 		} else {
 			return null;
 		}
-	}, [proposalResults, t, walletAddress]);
+	}, [proposalResults, t, walletAddress, isWalletConnected]);
 
 	return history;
 };

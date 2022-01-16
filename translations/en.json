@@ -1031,7 +1031,8 @@
 			},
 			"time": "Time left",
 			"votes": "Votes",
-			"create": "Create new proposal"
+			"create": "Create new proposal",
+			"switch": "Switch to L2 to create SIP/SCCPs"
 		},
 		"create": {
 			"title": "Create new proposal",

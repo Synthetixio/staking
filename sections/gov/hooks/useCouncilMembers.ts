@@ -20,7 +20,7 @@ export const useCouncilMembers = () => {
 				let spartanCouncilContract = new ethers.Contract(
 					spartanCouncil.address,
 					spartanCouncil.abi,
-					L1Provider as ethers.providers.Provider
+					L1Provider
 				);
 
 				const ovmProvider = new ethers.providers.JsonRpcProvider('https://mainnet.optimism.io');
@@ -28,7 +28,7 @@ export const useCouncilMembers = () => {
 				let councilDilutionContract = new ethers.Contract(
 					councilDilution.address,
 					councilDilution.abi,
-					ovmProvider as ethers.providers.Provider
+					ovmProvider
 				);
 
 				let councilMembers = [] as any;
