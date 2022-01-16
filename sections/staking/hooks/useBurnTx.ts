@@ -18,12 +18,8 @@ const useBurnTx = () => {
 	const [amountToBurn, onBurnChange] = useRecoilState(amountToBurnState);
 	const [burnType, onBurnTypeChange] = useRecoilState(burnTypeState);
 
-	const {
-		useSynthsBalancesQuery,
-		useETHBalanceQuery,
-		useSynthetixTxn,
-		useEVMTxn,
-	} = useSynthetixQueries();
+	const { useSynthsBalancesQuery, useETHBalanceQuery, useSynthetixTxn, useEVMTxn } =
+		useSynthetixQueries();
 
 	const {
 		percentageTargetCRatio,
@@ -53,13 +49,8 @@ const useBurnTx = () => {
 		? synthBalances.balancesMap.sUSD.balance
 		: wei(0);
 
-	const {
-		needToBuy,
-		debtBalanceWithBuffer,
-		missingSUSDWithBuffer,
-		quoteAmount,
-		swapData,
-	} = useClearDebtCalculations(debtBalance, sUSDBalance, walletAddress!);
+	const { needToBuy, debtBalanceWithBuffer, missingSUSDWithBuffer, quoteAmount, swapData } =
+		useClearDebtCalculations(debtBalance, sUSDBalance, walletAddress!);
 
 	const ethBalanceQuery = useETHBalanceQuery(delegateWallet?.address ?? walletAddress);
 	const ethBalance = ethBalanceQuery.data ?? wei(0);

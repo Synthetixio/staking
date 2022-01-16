@@ -20,15 +20,14 @@ const Button = styled.button<ButtonProps>`
 	white-space: nowrap;
 	cursor: pointer;
 	outline: none;
-    color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.white};
 	text-transform: capitalize;
 
-  	&:disabled {
+	&:disabled {
 		background: ${(props) => Color(props.theme.colors.blue).alpha(0.5).rgb().string()};
 		color: ${(props) => props.theme.colors.white};
 		box-shadow: none;
-	cursor: not-allowed;
-
+		cursor: not-allowed;
 	}
 
 	${(props) =>
@@ -78,81 +77,81 @@ const Button = styled.button<ButtonProps>`
 		`}
 
 		${(props) =>
-			props.variant === 'secondary' &&
-			css`
-				color: ${(props) => props.theme.colors.blue};
-				background: ${(props) => props.theme.colors.grayBlue};
-				box-shadow: 0px 0px 10px rgba(0, 209, 255, 0.9);
-				border: 1px solid ${(props) => props.theme.colors.blue};
-				&:hover {
-					&:not(:disabled) {
-						background: ${(props) => props.theme.colors.blueHover};
-						color: ${(props) => props.theme.colors.black};
-					}
+		props.variant === 'secondary' &&
+		css`
+			color: ${(props) => props.theme.colors.blue};
+			background: ${(props) => props.theme.colors.grayBlue};
+			box-shadow: 0px 0px 10px rgba(0, 209, 255, 0.9);
+			border: 1px solid ${(props) => props.theme.colors.blue};
+			&:hover {
+				&:not(:disabled) {
+					background: ${(props) => props.theme.colors.blueHover};
+					color: ${(props) => props.theme.colors.black};
 				}
-			`}
+			}
+		`}
 
 		${(props) =>
-			props.variant === 'tertiary' &&
-			css`
-				color: ${(props) => props.theme.colors.pink};
-				background: ${(props) => props.theme.colors.grayBlue};
-				box-shadow: 0px 0px 15px rgba(237, 30, 255, 0.6);
-				border: 1px solid ${(props) => props.theme.colors.pink};
-				&:hover {
-					&:not(:disabled) {
-						background: ${(props) => props.theme.colors.pink};
-						color: ${(props) => props.theme.colors.black};
-					}
+		props.variant === 'tertiary' &&
+		css`
+			color: ${(props) => props.theme.colors.pink};
+			background: ${(props) => props.theme.colors.grayBlue};
+			box-shadow: 0px 0px 15px rgba(237, 30, 255, 0.6);
+			border: 1px solid ${(props) => props.theme.colors.pink};
+			&:hover {
+				&:not(:disabled) {
+					background: ${(props) => props.theme.colors.pink};
+					color: ${(props) => props.theme.colors.black};
 				}
-			`}
-
-
-		${(props) =>
-			props.variant === 'solid' &&
-			css`
-				color: ${(props) => props.theme.colors.white};
-				background: ${(props) => props.theme.colors.navy};
-				&:hover {
-					&:not(:disabled) {
-						background: ${(props) => props.theme.colors.mediumBlue};
-					}
-				}
-				&:disabled {
-					background: ${(props) => Color(props.theme.colors.navy).alpha(0.2).rgb().string()};
-				}
-			`}
+			}
+		`}
 
 
 		${(props) =>
-			props.variant === 'outline' &&
-			css`
-				color: ${(props) => props.theme.colors.white};
-				background: ${(props) => props.theme.colors.navy};
-				border: 1px solid ${(props) => props.theme.colors.grayBlue};
-				&:hover {
-					&:not(:disabled) {
-						background: ${(props) => props.theme.colors.mediumBlue};
-					}
+		props.variant === 'solid' &&
+		css`
+			color: ${(props) => props.theme.colors.white};
+			background: ${(props) => props.theme.colors.navy};
+			&:hover {
+				&:not(:disabled) {
+					background: ${(props) => props.theme.colors.mediumBlue};
 				}
-				&:disabled {
-					background: ${(props) => Color(props.theme.colors.navy).alpha(0.2).rgb().string()};
-					opacity: 0.5;
-				}
-			`}
+			}
+			&:disabled {
+				background: ${(props) => Color(props.theme.colors.navy).alpha(0.2).rgb().string()};
+			}
+		`}
 
 
 		${(props) =>
-			props.variant === 'text' &&
-			css`
-				${resetButtonCSS};
-				color: ${(props) => props.theme.colors.white};
-				&:hover {
-					&:not(:disabled) {
-						color: ${(props) => props.theme.colors.blue};
-					}
+		props.variant === 'outline' &&
+		css`
+			color: ${(props) => props.theme.colors.white};
+			background: ${(props) => props.theme.colors.navy};
+			border: 1px solid ${(props) => props.theme.colors.grayBlue};
+			&:hover {
+				&:not(:disabled) {
+					background: ${(props) => props.theme.colors.mediumBlue};
 				}
-			`}
+			}
+			&:disabled {
+				background: ${(props) => Color(props.theme.colors.navy).alpha(0.2).rgb().string()};
+				opacity: 0.5;
+			}
+		`}
+
+
+		${(props) =>
+		props.variant === 'text' &&
+		css`
+			${resetButtonCSS};
+			color: ${(props) => props.theme.colors.white};
+			&:hover {
+				&:not(:disabled) {
+					color: ${(props) => props.theme.colors.blue};
+				}
+			}
+		`}
 `;
 
 export default Button;

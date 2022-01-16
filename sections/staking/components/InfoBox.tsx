@@ -13,10 +13,10 @@ const InfoBox: React.FC<InfoBoxProps> = ({ currentTab }) => {
 	const isMint = currentTab === StakingPanelType.MINT;
 	const isClearDebt = burnType === BurnActionType.CLEAR;
 
-	return useMemo(() => (isMint ? <MintInfo /> : isClearDebt ? <ClearDebtInfo /> : <BurnInfo />), [
-		isMint,
-		isClearDebt,
-	]);
+	return useMemo(
+		() => (isMint ? <MintInfo /> : isClearDebt ? <ClearDebtInfo /> : <BurnInfo />),
+		[isMint, isClearDebt]
+	);
 };
 
 export default InfoBox;

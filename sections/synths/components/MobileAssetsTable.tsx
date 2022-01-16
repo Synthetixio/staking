@@ -60,7 +60,6 @@ const AssetsTable: FC<AssetsTableProps> = ({
 	isLoaded,
 	showHoldings,
 	showConvert,
-	isDeprecated,
 	onTransferClick,
 	showValue = true,
 	showTotalValue = true,

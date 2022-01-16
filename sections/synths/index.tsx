@@ -55,9 +55,10 @@ const Index: FC = () => {
 		[synthsBalancesQuery.isSuccess, synthsBalancesQuery.data]
 	);
 	const totalSynthValue = useMemo(() => synthBalances?.totalUSDBalance ?? wei(0), [synthBalances]);
-	const synthAssets = useMemo(() => synthBalances?.balances ?? [], [
-		synthBalances,
-	]) as CryptoBalance[];
+	const synthAssets = useMemo(
+		() => synthBalances?.balances ?? [],
+		[synthBalances]
+	) as CryptoBalance[];
 	const cryptoAssets = useMemo(() => cryptoBalances?.balances ?? [], [cryptoBalances]);
 	const transferableAssets = useMemo(
 		() =>
@@ -70,15 +71,18 @@ const Index: FC = () => {
 				.filter(({ currencyKey }) => isSynth(currencyKey) || currencyKey === CryptoCurrency.SNX),
 		[synthAssets, cryptoAssets]
 	);
-	const redeemableDeprecatedSynths = useMemo(() => redeemableDeprecatedSynthsQuery?.data, [
-		redeemableDeprecatedSynthsQuery?.data,
-	]);
-	const redeemAmount = useMemo(() => redeemableDeprecatedSynths?.totalUSDBalance ?? wei(0), [
-		redeemableDeprecatedSynths,
-	]);
-	const redeemBalances = useMemo(() => redeemableDeprecatedSynths?.balances ?? [], [
-		redeemableDeprecatedSynths,
-	]);
+	const redeemableDeprecatedSynths = useMemo(
+		() => redeemableDeprecatedSynthsQuery?.data,
+		[redeemableDeprecatedSynthsQuery?.data]
+	);
+	const redeemAmount = useMemo(
+		() => redeemableDeprecatedSynths?.totalUSDBalance ?? wei(0),
+		[redeemableDeprecatedSynths]
+	);
+	const redeemBalances = useMemo(
+		() => redeemableDeprecatedSynths?.balances ?? [],
+		[redeemableDeprecatedSynths]
+	);
 
 	const handleOnTransferClick = useCallback(
 		(key: string) => {
