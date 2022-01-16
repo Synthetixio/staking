@@ -1,7 +1,6 @@
 import { useState, useCallback, useMemo } from 'react';
 import { ethers } from 'ethers';
-
-import { Loan } from 'queries/loans/types';
+import { Loan } from 'containers/Loans/types';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import { tx } from 'utils/transactions';
 import Loans from 'containers/Loans';
@@ -38,10 +37,10 @@ const Withdraw: React.FC<WithdrawProps> = ({ loan, loanId, loanTypeIsETH, loanCo
 				: ethers.BigNumber.from(0),
 		[withdrawalAmountString, collateralDecimals]
 	);
-	const remainingAmount = useMemo(() => collateralAmount.sub(withdrawalAmount), [
-		collateralAmount,
-		withdrawalAmount,
-	]);
+	const remainingAmount = useMemo(
+		() => collateralAmount.sub(withdrawalAmount),
+		[collateralAmount, withdrawalAmount]
+	);
 	const remainingAmountString = useMemo(
 		() => ethers.utils.formatUnits(remainingAmount, collateralDecimals),
 		[remainingAmount, collateralDecimals]

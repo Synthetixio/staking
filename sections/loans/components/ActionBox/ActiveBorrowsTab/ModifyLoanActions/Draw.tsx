@@ -1,10 +1,8 @@
 import { useState, useCallback, useMemo } from 'react';
 import { ethers } from 'ethers';
-
-import { Loan } from 'queries/loans/types';
+import { Loan } from 'containers/Loans/types';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import { tx } from 'utils/transactions';
-import { SYNTH_BY_CURRENCY_KEY } from 'sections/loans/constants';
 import Wrapper from './Wrapper';
 
 type RepayProps = {
@@ -22,7 +20,7 @@ const Repay: React.FC<RepayProps> = ({ loan, loanId, loanTypeIsETH, loanContract
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 	const [drawAmountString, setRepayAmount] = useState<string | null>(null);
 
-	const debtAsset = SYNTH_BY_CURRENCY_KEY[loan.currency];
+	const debtAsset = loan.currency;
 	const debtAssetDecimals = 18;
 
 	const drawAmount = useMemo(

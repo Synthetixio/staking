@@ -1,7 +1,5 @@
 import { FC, useMemo } from 'react';
-
-import { Loan } from 'queries/loans/types';
-
+import { Loan } from 'containers/Loans/types';
 import CRatio from './CRatio';
 import Wei, { wei } from '@synthetixio/wei';
 

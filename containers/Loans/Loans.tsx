@@ -1,34 +1,36 @@
 import { createContainer } from 'unstated-next';
 import { useMemo, useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { ethers } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 
 import { renBTCToken } from 'contracts';
 import Connector from 'containers/Connector';
 import { appReadyState } from 'store/app';
-import { walletAddressState, networkState } from 'store/wallet';
-import { LOAN_TYPE_ERC20, LOAN_TYPE_ETH, SYNTH_BY_CURRENCY_KEY } from 'sections/loans/constants';
+import { walletAddressState, networkState, isL2State } from 'store/wallet';
+import { LOAN_TYPE_ERC20, LOAN_TYPE_ETH } from 'sections/loans/constants';
 import { sleep } from 'utils/promise';
 import Wei, { wei } from '@synthetixio/wei';
+import getOpenLoans from './getOpenLoans';
+import { Loan } from './types';
+import getLoan from './getLoan';
+import getMinCRatios from './getMinCratios';
 
 const SECONDS_IN_A_YR = 365 * 24 * 60 * 60;
-const COLLATERAL_ASSETS: Record<string, string> = {
-	[LOAN_TYPE_ERC20]: 'renBTC',
-	[LOAN_TYPE_ETH]: 'ETH',
-};
-
-export default createContainer(Container);
 
 function Container() {
 	const { provider, signer, synthetixjs } = Connector.useContainer();
 	const address = useRecoilValue(walletAddressState);
 	const network = useRecoilValue(networkState);
 	const isAppReady = useRecoilValue(appReadyState);
+	const isL2 = useRecoilValue(isL2State);
 
 	const [isLoadingLoans, setIsLoadingLoans] = useState(false);
-	// TODO types in this class are all around missing
-	const [loans, setLoans] = useState<Array<any>>([]);
-	const [minCRatios, setMinCRatios] = useState<Map<string, Wei>>(new Map());
+	const [loans, setLoans] = useState<Loan[]>([]);
+	const [minCRatios, setMinCRatios] = useState<{
+		ethMinCratio: Wei | undefined;
+		erc20MinCratio: Wei | undefined;
+	}>({ ethMinCratio: undefined, erc20MinCratio: undefined });
+	const [pendingWithdrawals, setPendingWithdrawals] = useState(BigNumber.from('0'));
 
 	const [
 		ethLoanContract,
@@ -36,7 +38,6 @@ function Container() {
 		ethLoanStateContract,
 		erc20LoanStateContract,
 		collateralManagerContract,
-		exchangeRatesContract,
 	] = useMemo(() => {
 		if (!(isAppReady && synthetixjs && signer && address))
 			return [null, null, null, null, null, null];
@@ -47,7 +48,6 @@ function Container() {
 				CollateralStateEth: ethLoanStateContract,
 				CollateralStateErc20: erc20LoanStateContract,
 				CollateralManager: collateralManagerContract,
-				ExchangeRates: exchangeRatesContract,
 			},
 		} = synthetixjs;
 		return [
@@ -56,133 +56,67 @@ function Container() {
 			ethLoanStateContract,
 			erc20LoanStateContract,
 			collateralManagerContract,
-			exchangeRatesContract,
 		];
 	}, [isAppReady, signer, synthetixjs, address]);
 
 	useEffect(() => {
-		if (
-			!(
-				isAppReady &&
-				address &&
-				provider &&
-				exchangeRatesContract &&
-				ethLoanContract &&
-				erc20LoanContract &&
-				ethLoanStateContract &&
-				erc20LoanStateContract
-			)
-		)
-			return;
-
-		const loanContracts: Record<string, typeof erc20LoanContract> = {
-			[LOAN_TYPE_ERC20]: erc20LoanContract,
-			[LOAN_TYPE_ETH]: ethLoanContract,
-		};
-
-		const loanStateContracts: Record<string, typeof erc20LoanContract> = {
-			[LOAN_TYPE_ERC20]: erc20LoanStateContract,
-			[LOAN_TYPE_ETH]: ethLoanStateContract,
-		};
-
+		if (!ethLoanContract) return;
 		let isMounted = true;
-		const unsubs: Array<any> = [() => (isMounted = false)];
+		getMinCRatios({ ethLoanContract, erc20LoanContract }).then((minCRatios) => {
+			if (isMounted) {
+				setMinCRatios(minCRatios);
+			}
+		});
+		return () => {
+			isMounted = false;
+		};
+	}, [erc20LoanContract, ethLoanContract, isL2]);
 
+	useEffect(() => {
+		if (!(isAppReady && address && provider && ethLoanContract)) {
+			return;
+		}
+		if (!isL2 && !erc20LoanContract) return; // erc20LoanContract only exists on L1
+
+		const loanContracts = [erc20LoanContract, ethLoanContract];
+		const loanStateContracts: [ethers.Contract | null, ethers.Contract | null] = [
+			erc20LoanStateContract,
+			ethLoanStateContract,
+		];
+		let isMounted = true;
+		const unsubs: Array<Function> = [
+			() => {
+				isMounted = false;
+			},
+		];
 		const loadLoans = async () => {
 			setIsLoadingLoans(true);
-			const loanIndices = await Promise.all(Object.keys(loanStateContracts).map(getLoanIndices));
-			if (isMounted) {
-				loanIndices.forEach(({ type, minCRatio }) => {
-					setMinCRatios((cratios) => cratios.set(type, minCRatio.mul(1e2)));
-				});
-			}
-
-			const loans: Array<any> = await Promise.all(loanIndices.map(getLoans));
-			let activeLoans: Array<any> = [];
-
-			loans.forEach((a) => {
-				a.forEach(({ type, minCRatio, loan }: any) => {
-					if (!loan.amount.eq(0)) {
-						activeLoans.push({
-							loan,
-							type,
-							minCRatio,
-						});
-					}
-				});
+			const openLoans = await getOpenLoans({
+				loanContracts,
+				loanStateContracts,
+				address,
+				network,
+				isL2,
 			});
-
-			activeLoans = await Promise.all(activeLoans.map(makeLoan));
-			activeLoans.sort((a, b) => {
-				if (a.id.gt(b.id)) return -1;
-				if (a.id.lt(b.id)) return 1;
-				return 0;
-			});
-
 			if (isMounted) {
-				setLoans(activeLoans);
+				setLoans(openLoans);
 				setIsLoadingLoans(false);
 			}
 		};
 
-		const getLoanIndices = async (type: string) => {
-			const loanContract = loanContracts[type];
-			const loanStateContract = loanStateContracts[type];
-			const [n, minCRatio] = await Promise.all([
-				loanStateContract.getNumLoans(address),
-				loanContract.minCratio(),
-			]).catch((err) => {
-				console.log('getLoanIndices', err);
-				throw err;
-			});
-			const loanIndices = [];
-			for (let i = 0; i < n; i++) {
-				loanIndices.push(i);
-			}
-			return { type, minCRatio: wei(minCRatio), loanIndices };
-		};
-
-		const getLoans = async ({ type, minCRatio, loanIndices }: Record<any, any>) => {
-			return Promise.all(loanIndices.map(getLoan.bind(null, type, minCRatio)));
-		};
-
-		const getLoan = async (type: string, minCRatio: Wei, loanIndex: number) => {
-			const loanStateContract = loanStateContracts[type];
-			return {
-				type,
-				minCRatio,
-				loan: await loanStateContract.loans(address, loanIndex),
-			};
-		};
-
-		const makeLoan = async ({ loan, type, minCRatio }: Record<any, any>) => {
-			const loanContract = loanContracts[type];
-			return {
-				...loan,
-				type,
-				minCRatio,
-				cratio: await loanContract.collateralRatio(loan),
-				collateralAsset: COLLATERAL_ASSETS[type],
-				debtAsset: SYNTH_BY_CURRENCY_KEY[loan.currency],
-			};
-		};
-
 		// subscribe to loan open+close
 		const subscribe = () => {
-			for (const type in loanContracts) {
-				const loanContract = loanContracts[type];
-				const loanStateContract = loanStateContracts[type];
-
-				const fetchLoan = async (owner: string, id: string) => {
-					return makeLoan({
-						loan: await loanStateContract.getLoan(owner, id),
-						type,
-						minCRatio: await loanContract.minCratio(),
+			loanContracts.forEach((loanContract, i) => {
+				if (!loanContract) return;
+				const loanStateContract = loanStateContracts[i];
+				const updateLoan = async (owner: string, id: BigNumber) => {
+					const loan = await getLoan({
+						id: id.toNumber(),
+						loanContract,
+						loanStateContract,
+						isL2,
+						address,
 					});
-				};
-
-				const updateLoan = async (owner: string, id: string) => {
-					const loan = await fetchLoan(owner, id);
 					setLoans((originalLoans) => {
 						const loans = originalLoans.slice();
 						const idx = loans.findIndex((l) => l.id.eq(id));
@@ -195,24 +129,26 @@ function Container() {
 					});
 				};
 
-				const onLoanCreated = async (owner: string, id: string) => {
-					const loan = await fetchLoan(owner, id);
+				const onLoanCreated = async (_address: string, id: BigNumber) => {
+					const loan = await getLoan({
+						id: id.toNumber(),
+						loanContract,
+						loanStateContract,
+						isL2,
+						address,
+					});
 					setLoans((loans) => [loan, ...loans]);
 				};
 
-				const onLoanClosed = (owner: string, id: string) => {
+				const onLoanClosed = (_owner: string, id: BigNumber) => {
 					setLoans((loans) => loans.filter((loan) => !loan.id.eq(id)));
 				};
 
-				const onCollateralDeposited = async (
-					owner: string,
-					id: string,
-					amount: ethers.BigNumber
-				) => {
+				const onCollateralDeposited = async (owner: string, id: BigNumber, amount: BigNumber) => {
 					setLoans((loans) =>
 						loans.map((loan) => {
 							if (loan.id.eq(id)) {
-								loan.collateral = loan.collateral.add(amount);
+								return { ...loan, collateral: loan.collateral.add(amount) };
 							}
 							return loan;
 						})
@@ -220,11 +156,7 @@ function Container() {
 					await updateLoan(owner, id);
 				};
 
-				const onCollateralWithdrawn = async (
-					owner: string,
-					id: string,
-					amount: ethers.BigNumber
-				) => {
+				const onCollateralWithdrawn = async (owner: string, id: BigNumber, amount: BigNumber) => {
 					setLoans((loans) =>
 						loans.map((loan) => {
 							if (loan.id.eq(id)) {
@@ -238,14 +170,14 @@ function Container() {
 
 				const onLoanRepaymentMade = async (
 					borrower: string,
-					repayer: string,
-					id: string,
-					payment: ethers.BigNumber
+					_repayer: string,
+					id: BigNumber,
+					payment: BigNumber
 				) => {
 					setLoans((loans) =>
 						loans.map((loan) => {
 							if (loan.id.eq(id)) {
-								loan.amount = loan.amount.sub(payment);
+								return { ...loan, amount: loan.amount.sub(payment) };
 							}
 							return loan;
 						})
@@ -253,11 +185,11 @@ function Container() {
 					await updateLoan(borrower, id);
 				};
 
-				const onLoanDrawnDown = async (owner: string, id: string, amount: ethers.BigNumber) => {
+				const onLoanDrawnDown = async (owner: string, id: BigNumber, amount: BigNumber) => {
 					setLoans((loans) =>
 						loans.map((loan) => {
 							if (loan.id.eq(id)) {
-								loan.amount = loan.amount.add(amount);
+								return { ...loan, amount: loan.amount.add(amount) };
 							}
 							return loan;
 						})
@@ -285,7 +217,7 @@ function Container() {
 				unsubs.push(() => loanContract.off(collateralWithdrawnEvent, onCollateralWithdrawn));
 				unsubs.push(() => loanContract.off(loanDrawnDownEvent, onLoanDrawnDown));
 				unsubs.push(() => loanContract.off(loanRepaymentMadeEvent, onLoanRepaymentMade));
-			}
+			});
 		};
 
 		loadLoans();
@@ -298,11 +230,12 @@ function Container() {
 		isAppReady,
 		address,
 		provider,
-		exchangeRatesContract,
 		ethLoanContract,
 		erc20LoanContract,
 		ethLoanStateContract,
 		erc20LoanStateContract,
+		isL2,
+		network,
 	]);
 
 	const [interestRate, setInterestRate] = useState(wei(0));
@@ -375,13 +308,10 @@ function Container() {
 	}, [isAppReady, collateralManagerContract, erc20LoanContract, ethLoanContract]);
 
 	// pending withdrawals
-
-	const [pendingWithdrawals, setPendingWithdrawals] = useState(ethers.BigNumber.from('0'));
-
 	const loadPendingWithdrawals = async (
 		ethLoanContract: typeof erc20LoanContract,
 		isMounted: boolean,
-		setPendingWithdrawals: (pw: ethers.BigNumber) => void,
+		setPendingWithdrawals: (pw: BigNumber) => void,
 		address: string
 	) => {
 		const pw = await ethLoanContract!.pendingWithdrawals(address);
@@ -423,10 +353,7 @@ function Container() {
 
 		ethLoanContract,
 		erc20LoanContract,
-		ethLoanStateContract,
-		erc20LoanStateContract,
-		collateralManagerContract,
-		exchangeRatesContract,
 		renBTCContract,
 	};
 }
+export default createContainer(Container);

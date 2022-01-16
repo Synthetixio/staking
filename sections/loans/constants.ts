@@ -1,9 +1,11 @@
 import { ethers } from 'ethers';
 import { Synths } from 'constants/currency';
 
-export const DEBT_ASSETS: Array<string> = ['sUSD', 'sETH', 'sBTC'];
+export const DEBT_ASSETS = ['sUSD', 'sETH', 'sBTC'];
+export const DEBT_ASSETS_L2 = ['sUSD'];
 
-export const COLLATERAL_ASSETS: Array<string> = ['renBTC', 'ETH'];
+export const COLLATERAL_ASSETS = ['renBTC', 'ETH'];
+export const COLLATERAL_ASSETS_L2 = ['ETH'];
 
 export const LOAN_TYPE_ERC20 = 'erc20';
 export const LOAN_TYPE_ETH = 'eth';
