@@ -9,13 +9,13 @@ import ProgressBar from 'components/ProgressBar';
 import { MaxHeightColumn, StyledTooltip } from 'sections/gov/components/common';
 import { SPACE_KEY } from 'constants/snapshot';
 import CouncilNominations from 'constants/nominations.json';
-import { useRecoilValue } from 'recoil';
-import { numOfCouncilSeatsState } from 'store/gov';
 import { UseQueryResult } from 'react-query';
 import { ProposalResults } from '@synthetixio/queries';
 import {
 	numOfGrantMembers,
 	numOfAmbassadorMembers,
+	numOfTreasuryMembers,
+	numOfCouncilMembers,
 } from '@synthetixio/queries/build/node/src/queries/gov/constants';
 
 type ResultsProps = {
@@ -26,7 +26,6 @@ type ResultsProps = {
 const Results: React.FC<ResultsProps> = ({ proposalResults, hash }) => {
 	const activeTab = useActiveTab();
 	const [choices, setChoices] = useState<any>(null);
-	const numOfCouncilSeats = useRecoilValue(numOfCouncilSeatsState);
 
 	useEffect(() => {
 		if (activeTab === SPACE_KEY.COUNCIL) {
@@ -82,9 +81,10 @@ const Results: React.FC<ResultsProps> = ({ proposalResults, hash }) => {
 						<Row
 							key={i}
 							highlight={
-								(activeTab === SPACE_KEY.COUNCIL && i < numOfCouncilSeats) ||
+								(activeTab === SPACE_KEY.COUNCIL && i < numOfCouncilMembers) ||
 								(activeTab === SPACE_KEY.GRANTS && i < numOfGrantMembers) ||
-								(activeTab === SPACE_KEY.AMBASSADOR && i < numOfAmbassadorMembers)
+								(activeTab === SPACE_KEY.AMBASSADOR && i < numOfAmbassadorMembers) ||
+								(activeTab === SPACE_KEY.TREASURY && i < numOfTreasuryMembers)
 							}
 						>
 							<StyledTooltip

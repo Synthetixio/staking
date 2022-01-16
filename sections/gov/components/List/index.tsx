@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import styled from 'styled-components';
 import { CellProps, Row } from 'react-table';
-import { isWalletConnectedState } from 'store/wallet';
+import { isL2State, isWalletConnectedState } from 'store/wallet';
 import { FlexDivCol } from 'styles/common';
 import media from 'styles/media';
 import Button from 'components/Button';
@@ -46,6 +46,7 @@ const ResponsiveTable: React.FC<ResponsiveTableProps> = ({ mobile, spaceKey }) =
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const setProposal = useSetRecoilState(proposalState);
 	const setPanelType = useSetRecoilState(panelState);
+	const isL2 = useRecoilValue(isL2State);
 
 	const { useProposalsQuery } = useSynthetixQueries();
 
@@ -133,16 +134,34 @@ const ResponsiveTable: React.FC<ResponsiveTableProps> = ({ mobile, spaceKey }) =
 				}}
 				minHeight={isWalletConnected}
 			/>
-			{isWalletConnected && (
-				<AbsoluteContainer
-					onClick={() => {
-						setPanelType(PanelType.CREATE);
-						router.push(ROUTES.Gov.Create(spaceKey));
-					}}
-				>
-					<CreateButton variant="secondary">{t('gov.table.create')}</CreateButton>
-				</AbsoluteContainer>
-			)}
+			{isWalletConnected &&
+				(spaceKey === SPACE_KEY.PROPOSAL ? (
+					isL2 ? (
+						<AbsoluteContainer
+							onClick={() => {
+								setPanelType(PanelType.CREATE);
+								router.push(ROUTES.Gov.Create(spaceKey));
+							}}
+						>
+							<CreateButton variant="secondary">{t('gov.table.create')}</CreateButton>
+						</AbsoluteContainer>
+					) : (
+						<AbsoluteContainer>
+							<CreateButton disabled variant="secondary">
+								{t('gov.table.switch')}
+							</CreateButton>
+						</AbsoluteContainer>
+					)
+				) : (
+					<AbsoluteContainer
+						onClick={() => {
+							setPanelType(PanelType.CREATE);
+							router.push(ROUTES.Gov.Create(spaceKey));
+						}}
+					>
+						<CreateButton variant="secondary">{t('gov.table.create')}</CreateButton>
+					</AbsoluteContainer>
+				))}
 		</Container>
 	);
 };
