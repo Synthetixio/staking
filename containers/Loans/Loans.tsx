@@ -39,8 +39,7 @@ function Container() {
 		erc20LoanStateContract,
 		collateralManagerContract,
 	] = useMemo(() => {
-		if (!(isAppReady && synthetixjs && signer && address))
-			return [null, null, null, null, null, null];
+		if (!(isAppReady && synthetixjs && signer && address)) return [null, null, null, null, null];
 		const {
 			contracts: {
 				CollateralEth: ethLoanContract,
@@ -255,36 +254,26 @@ function Container() {
 	);
 
 	useEffect(() => {
-		if (
-			!(
-				isAppReady &&
-				collateralManagerContract &&
-				erc20LoanContract &&
-				ethLoanContract &&
-				erc20LoanContract &&
-				ethLoanContract
-			)
-		)
+		if (!(isAppReady && collateralManagerContract && ethLoanContract)) {
 			return;
+		}
 
 		let isMounted = true;
 		const load = async () => {
 			const [
 				[borrowRate],
-				//
 				erc20BorrowIssueFeeRate,
 				ethBorrowIssueFeeRate,
-				//
 				erc20InteractionDelay,
 				ethInteractionDelay,
 			] = await Promise.all([
 				collateralManagerContract.getBorrowRate(),
-				//
-				erc20LoanContract.issueFeeRate(),
+				// erc20LoanContract doesn't exists in L2
+				erc20LoanContract?.issueFeeRate ? erc20LoanContract.issueFeeRate() : wei(0),
 				ethLoanContract.issueFeeRate(),
-				//
-				erc20LoanContract.interactionDelay(),
-				ethLoanContract.interactionDelay(),
+				// Interaction delay doesn't exists in L2
+				erc20LoanContract?.interactionDelay ? erc20LoanContract.interactionDelay() : wei(0),
+				ethLoanContract.interactionDelay ? ethLoanContract.interactionDelay() : wei(0),
 			]);
 
 			if (isMounted) {
@@ -295,8 +284,8 @@ function Container() {
 					[LOAN_TYPE_ETH]: wei(ethBorrowIssueFeeRate.toString()).mul(1 / 1e18),
 				});
 				setInteractionDelays({
-					[LOAN_TYPE_ERC20]: erc20InteractionDelay,
-					[LOAN_TYPE_ETH]: ethInteractionDelay,
+					[LOAN_TYPE_ERC20]: wei(erc20InteractionDelay),
+					[LOAN_TYPE_ETH]: wei(ethInteractionDelay),
 				});
 			}
 		};
