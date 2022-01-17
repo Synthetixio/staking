@@ -10,11 +10,13 @@ type NumericInputProps = {
 	onChange: (e: ChangeEvent<HTMLInputElement>, value: string) => void;
 	className?: string;
 	disabled?: boolean;
+	allowEmpty?: boolean;
 };
 
 const INVALID_CHARS = ['-', '+', 'e'];
 
-const isValidNumber = (value: string) => {
+const isValidValue = (value: string, allowEmpty?: boolean) => {
+	if (allowEmpty && value === '') return true;
 	try {
 		FixedNumber.fromString(value);
 		return true;
@@ -28,11 +30,13 @@ const NumericInput: FC<NumericInputProps> = ({
 	onChange,
 	placeholder,
 	className,
+	allowEmpty,
 	...rest
 }) => {
 	const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
 		const { value } = e.target;
-		if (!isValidNumber(value)) return;
+		const valid = isValidValue(value, allowEmpty);
+		if (!valid) return;
 		onChange(e, value.replace(/,/g, '.').replace(/[e+-]/gi, ''));
 	};
 
