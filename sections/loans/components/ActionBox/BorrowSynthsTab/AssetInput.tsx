@@ -62,6 +62,7 @@ const AssetInput: React.FC<AssetInputProps> = ({
 	const amountInput = (
 		<AmountContainer>
 			<AmountInput
+				allowEmpty={true}
 				value={amount}
 				placeholder="0.00"
 				onChange={(e) => setAmount(e.target.value)}
