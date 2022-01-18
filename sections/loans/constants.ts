@@ -10,7 +10,7 @@ export const COLLATERAL_ASSETS_L2 = ['ETH'];
 export const LOAN_TYPE_ERC20 = 'erc20';
 export const LOAN_TYPE_ETH = 'eth';
 
-export const SAFE_MIN_CRATIO = 1.5;
+export const SAFE_MIN_CRATIO_BUFFER = 0.2;
 
 export const SYNTH_BY_CURRENCY_KEY = {
 	[ethers.utils.formatBytes32String(Synths.sUSD)]: Synths.sUSD,
