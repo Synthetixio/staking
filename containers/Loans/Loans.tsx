@@ -284,8 +284,8 @@ function Container() {
 					[LOAN_TYPE_ETH]: wei(ethBorrowIssueFeeRate.toString()).mul(1 / 1e18),
 				});
 				setInteractionDelays({
-					[LOAN_TYPE_ERC20]: wei(erc20InteractionDelay),
-					[LOAN_TYPE_ETH]: wei(ethInteractionDelay),
+					[LOAN_TYPE_ERC20]: wei(erc20InteractionDelay.toString()),
+					[LOAN_TYPE_ETH]: wei(ethInteractionDelay.toString()),
 				});
 			}
 		};
@@ -327,7 +327,7 @@ function Container() {
 		};
 		// eslint-disable-next-line
 	}, [ethLoanContract, address]);
-
+	console.log({ interactionDelays });
 	return {
 		loans,
 		isLoadingLoans,
