@@ -10,6 +10,7 @@ import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
 import { calculateMaxDraw, getSafeCratio } from './helpers';
 import { wei } from '@synthetixio/wei';
+import ROUTES from 'constants/routes';
 
 type DrawProps = {
 	loanId: number;
@@ -84,9 +85,10 @@ const Draw: React.FC<DrawProps> = ({ loan, loanId, loanTypeIsETH, loanContract }
 						onTxConfirmed: () => {},
 					}),
 			});
-			router.push('/loans/list');
+			setIsWorking('');
+			setTxModalOpen(false);
+			router.push(ROUTES.Loans.List);
 		} catch {
-		} finally {
 			setIsWorking('');
 			setTxModalOpen(false);
 		}

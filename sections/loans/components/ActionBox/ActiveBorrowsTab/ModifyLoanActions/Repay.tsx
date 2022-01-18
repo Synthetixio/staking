@@ -7,6 +7,8 @@ import { Loan } from 'containers/Loans/types';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import { tx } from 'utils/transactions';
 import Wrapper from './Wrapper';
+import { useRouter } from 'next/router';
+import ROUTES from 'constants/routes';
 
 type RepayProps = {
 	loanId: number;
@@ -16,6 +18,7 @@ type RepayProps = {
 };
 
 const Repay: React.FC<RepayProps> = ({ loan, loanId, loanTypeIsETH, loanContract }) => {
+	const router = useRouter();
 	const address = useRecoilValue(walletAddressState);
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 
@@ -66,8 +69,10 @@ const Repay: React.FC<RepayProps> = ({ loan, loanId, loanTypeIsETH, loanContract
 						onTxConfirmed: () => {},
 					}),
 			});
+			setIsWorking('');
+			setTxModalOpen(false);
+			router.push(ROUTES.Loans.List);
 		} catch {
-		} finally {
 			setIsWorking('');
 			setTxModalOpen(false);
 		}

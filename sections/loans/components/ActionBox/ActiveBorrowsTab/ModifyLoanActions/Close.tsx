@@ -7,6 +7,7 @@ import TransactionNotifier from 'containers/TransactionNotifier';
 import { tx } from 'utils/transactions';
 import Loans from 'containers/Loans';
 import Wrapper from './Wrapper';
+import ROUTES from 'constants/routes';
 
 type CloseProps = {
 	loanId: number;
@@ -46,7 +47,7 @@ const Close: React.FC<CloseProps> = ({ loan, loanId, loanTypeIsETH, loanContract
 			await reloadPendingWithdrawals();
 			setIsWorking('');
 			setTxModalOpen(false);
-			router.push('/loans/list');
+			router.push(ROUTES.Loans.List);
 		} catch {
 			setIsWorking('');
 			setTxModalOpen(false);

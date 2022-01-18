@@ -5,6 +5,8 @@ import TransactionNotifier from 'containers/TransactionNotifier';
 import { tx } from 'utils/transactions';
 import Loans from 'containers/Loans';
 import Wrapper from './Wrapper';
+import { useRouter } from 'next/router';
+import ROUTES from 'constants/routes';
 
 type WithdrawProps = {
 	loanId: number;
@@ -14,6 +16,7 @@ type WithdrawProps = {
 };
 
 const Withdraw: React.FC<WithdrawProps> = ({ loan, loanId, loanTypeIsETH, loanContract }) => {
+	const router = useRouter();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const { reloadPendingWithdrawals } = Loans.useContainer();
 
@@ -73,8 +76,10 @@ const Withdraw: React.FC<WithdrawProps> = ({ loan, loanId, loanTypeIsETH, loanCo
 					}),
 			});
 			await reloadPendingWithdrawals();
+			setIsWorking('');
+			setTxModalOpen(false);
+			router.push(ROUTES.Loans.List);
 		} catch {
-		} finally {
 			setIsWorking('');
 			setTxModalOpen(false);
 		}

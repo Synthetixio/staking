@@ -7,6 +7,8 @@ import { Loan } from 'containers/Loans/types';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import { tx } from 'utils/transactions';
 import Wrapper from './Wrapper';
+import { useRouter } from 'next/router';
+import ROUTES from 'constants/routes';
 
 type DepositProps = {
 	loanId: number;
@@ -23,6 +25,7 @@ const Deposit: React.FC<DepositProps> = ({
 	loanContract,
 	collateralAssetContract,
 }) => {
+	const router = useRouter();
 	const address = useRecoilValue(walletAddressState);
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 
@@ -121,6 +124,9 @@ const Deposit: React.FC<DepositProps> = ({
 						onTxConfirmed: () => {},
 					}),
 			});
+			setIsWorking('');
+			setTxModalOpen(false);
+			router.push(ROUTES.Loans.List);
 		} catch {
 		} finally {
 			setIsWorking('');
