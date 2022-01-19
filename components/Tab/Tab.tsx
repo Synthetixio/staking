@@ -63,7 +63,7 @@ export const TabPanelContainer = styled.div<{ height?: number; padding: number }
 	outline: none;
 	background: ${(props) => props.theme.colors.navy};
 	box-shadow: 0px 0px 20px ${(props) => props.theme.colors.backgroundBoxShadow};
-	${(props) => (props.height != null ? `min-height: ${props.height}px` : 'height: unset')};
+	${(props) => (props.height != null ? `height: ${props.height}px` : 'height: unset')};
 	padding: ${(props) => props.padding}px;
 `;
 
@@ -119,11 +119,11 @@ const StyledTabButton = styled.button<TabButtonProps>`
 		`}
 
 		${(props) =>
-		props.isDisabled &&
-		css`
-			pointer-events: none;
-			opacity: 0.3;
-		`}
+			props.isDisabled &&
+			css`
+				pointer-events: none;
+				opacity: 0.3;
+			`}
 
 
 	&:hover {

@@ -5,6 +5,10 @@ export const ROUTES = {
 		Burn: '/staking/burn',
 		Mint: '/staking/mint',
 	},
+	Pools: {
+		snx_weth: '/pools/pools/weth-snx',
+		susd_dai: '/pools/pools/susd-dai',
+	},
 	Debt: {
 		Home: '/debt',
 	},

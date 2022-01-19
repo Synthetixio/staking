@@ -15,12 +15,12 @@ const Index: FC = () => {
 
 	return (
 		<Container>
-			<Col>
+			<FlexDivCol>
 				<ActionBox currentTab={defaultTab} />
-			</Col>
-			<Col>
+			</FlexDivCol>
+			<FlexDivCol>
 				<InfoBox currentTab={defaultTab} />
-			</Col>
+			</FlexDivCol>
 		</Container>
 	);
 };
@@ -35,7 +35,5 @@ const Container = styled.div`
 		flex-direction: column;
 	`}
 `;
-
-const Col = styled(FlexDivCol)``;
 
 export default Index;

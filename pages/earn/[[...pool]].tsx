@@ -29,8 +29,13 @@ const Earn: FC = () => {
 
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
-	const { stakedValue, stakingAPR, tradingRewards, stakingRewards, hasClaimed } =
-		useUserStakingData(delegateWallet?.address ?? walletAddress);
+	const {
+		stakedValue,
+		stakingAPR,
+		tradingRewards,
+		stakingRewards,
+		hasClaimed,
+	} = useUserStakingData(delegateWallet?.address ?? walletAddress);
 
 	const SNXRate = exchangeRatesQuery.data?.SNX ?? wei(0);
 
@@ -63,7 +68,7 @@ const Earn: FC = () => {
 	// header title
 	useEffect(() => {
 		setTitle('staking', 'earn');
-	}, [setTitle]);
+	}, []);
 
 	return (
 		<>

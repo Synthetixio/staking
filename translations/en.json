@@ -1139,6 +1139,24 @@
 			}
 		}
 	},
+	"pool": {
+		"page-title": "{{pool}} Pool | Synthetix",
+		"tab": {
+			"add": "Add Liquidity",
+			"remove": "Remove Liquidity",
+			"approve": "Approve",
+			"stake": "Stake",
+			"claim": "Claim",
+			"reward-balance": "Your claimable rewards: {{rewards}}",
+			"unstake": "Unstake",
+			"max": "Max"
+		},
+		"stats": {
+			"balance": "Liquidity Token to stake",
+			"APR": "APR",
+			"rewards": "Rewards to claim"
+		}
+	},
 	"sidenav": {
 		"dashboard": "Home",
 		"loans": "Loans",

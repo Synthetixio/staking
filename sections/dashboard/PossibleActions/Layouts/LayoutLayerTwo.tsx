@@ -12,6 +12,7 @@ import KwentaIcon from 'assets/svg/app/kwenta.svg';
 import MintIcon from 'assets/svg/app/mint.svg';
 import ClaimIcon from 'assets/svg/app/claim.svg';
 import BurnIcon from 'assets/svg/app/burn.svg';
+import SorbetFinance from 'assets/svg/app/sorbet-finance.svg';
 
 import GridBox, { GridBoxProps } from 'components/GridBox/Gridbox';
 
@@ -39,6 +40,7 @@ const LayoutLayerTwo: FC = () => {
 		const aboveTargetCRatio = currentCRatio.lte(targetCRatio);
 		return [
 			{
+				gridArea: '1 / 1 / 1 / 2',
 				icon: (
 					<GlowingCircle variant="green" size="md">
 						<Svg
@@ -58,6 +60,7 @@ const LayoutLayerTwo: FC = () => {
 				isDisabled: stakingRewards.eq(0) && tradingRewards.eq(0),
 			},
 			{
+				gridArea: '1 / 2 / 1 / 3',
 				icon: (
 					<GlowingCircle variant={!aboveTargetCRatio ? 'orange' : 'blue'} size="md">
 						{!aboveTargetCRatio ? <Svg src={BurnIcon} /> : <Svg src={MintIcon} />}
@@ -74,6 +77,7 @@ const LayoutLayerTwo: FC = () => {
 				link: !aboveTargetCRatio ? ROUTES.Staking.Burn : ROUTES.Staking.Mint,
 			},
 			{
+				gridArea: '1 / 3 / 1 / 3',
 				icon: (
 					<GlowingCircle variant="orange" size="md">
 						<Svg src={KwentaIcon} width="32" />
@@ -84,7 +88,29 @@ const LayoutLayerTwo: FC = () => {
 				externalLink: EXTERNAL_LINKS.Trading.Kwenta,
 				isDisabled: false,
 			},
-		].map((cell, i) => ({ ...cell, gridArea: `tile-${i + 1}` }));
+			{
+				gridArea: '2 / 1 / 2 / 2',
+				title: t('dashboard.actions.earn.title', { percent: '20%' }),
+				copy: t('dashboard.actions.earn.copy', { asset: 'SNX-WETH', supplier: 'Sorbet Finance' }),
+				icon: (
+					<GlowingCircle variant="purple" size="md">
+						<Svg src={SorbetFinance} width="32" />
+					</GlowingCircle>
+				),
+				link: ROUTES.Pools.snx_weth,
+			},
+			{
+				gridArea: '2 / 2 / 2 / 3',
+				title: t('dashboard.actions.earn.title', { percent: '30%' }),
+				copy: t('dashboard.actions.earn.copy', { asset: 'sUSD-DAI', supplier: 'Sorbet Finance' }),
+				icon: (
+					<GlowingCircle variant="purple" size="md">
+						<Svg src={SorbetFinance} width="32" />
+					</GlowingCircle>
+				),
+				link: ROUTES.Pools.susd_dai,
+			},
+		];
 	}, [t, currentCRatio, targetCRatio, stakingRewards, tradingRewards]);
 
 	return (
