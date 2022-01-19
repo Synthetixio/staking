@@ -327,7 +327,6 @@ function Container() {
 		};
 		// eslint-disable-next-line
 	}, [ethLoanContract, address]);
-	console.log({ interactionDelays });
 	return {
 		loans,
 		isLoadingLoans,

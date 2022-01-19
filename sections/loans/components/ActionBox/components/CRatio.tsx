@@ -4,7 +4,7 @@ import { Trans, useTranslation } from 'react-i18next';
 import { FlexDivRow, FlexDivRowCentered } from 'styles/common';
 import { formatPercent } from 'utils/formatters/number';
 import InfoSVG from 'sections/loans/components/ActionBox/components/InfoSVG';
-import { SAFE_MIN_CRATIO } from 'sections/loans/constants';
+import { SAFE_MIN_CRATIO_BUFFER } from 'sections/loans/constants';
 import Wei from '@synthetixio/wei';
 
 type CRatioProps = {
@@ -36,8 +36,8 @@ const CRatio: FC<CRatioProps> = ({ cratio, hasLowCRatio, minCRatio }) => {
 													: 'loans.tabs.new.healthy-cratio-tip'
 											}
 											values={{
-												minCRatio: minCRatio.toString(),
-												safeMinCRatio: SAFE_MIN_CRATIO,
+												minCRatio: formatPercent(minCRatio),
+												safeMinCRatio: formatPercent(minCRatio.add(SAFE_MIN_CRATIO_BUFFER)),
 											}}
 										/>
 									}

@@ -74,7 +74,7 @@ const AssetInput: React.FC<AssetInputProps> = ({
 
 	const balanceLabel = (
 		<BalanceContainer>
-			<Balance {...{ asset, onSetMaxAmount }} />
+			<Balance asset={asset} onSetMaxAmount={onSetMaxAmount} />
 		</BalanceContainer>
 	);
 
@@ -190,6 +190,7 @@ const AmountInput = styled(NumericInput)`
 `;
 
 const BalanceContainer = styled.div`
+	min-height: 30px;
 	& > div {
 		${media.greaterThan('mdUp')`
 			margin-top: 14px;
