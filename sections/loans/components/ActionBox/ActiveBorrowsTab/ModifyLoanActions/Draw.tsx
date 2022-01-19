@@ -11,6 +11,7 @@ import { useRouter } from 'next/router';
 import { calculateMaxDraw, getSafeCratio } from './helpers';
 import { wei } from '@synthetixio/wei';
 import ROUTES from 'constants/routes';
+import { SYNTH_DECIMALS } from 'constants/defaults';
 
 type DrawProps = {
 	loanId: number;
@@ -32,17 +33,16 @@ const Draw: React.FC<DrawProps> = ({ loan, loanId, loanTypeIsETH, loanContract }
 	const exchangeRates = exchangeRatesQuery.data ?? null;
 
 	const debtAsset = loan.currency;
-	const debtAssetDecimals = 18;
 	const drawAmount = useMemo(
 		() =>
 			drawAmountString
-				? ethers.utils.parseUnits(drawAmountString, debtAssetDecimals)
+				? ethers.utils.parseUnits(drawAmountString, SYNTH_DECIMALS)
 				: ethers.BigNumber.from(0),
 		[drawAmountString]
 	);
 	const newTotalAmount = useMemo(() => loan.amount.add(drawAmount), [loan.amount, drawAmount]);
 	const newTotalAmountString = useMemo(
-		() => ethers.utils.formatUnits(newTotalAmount, debtAssetDecimals),
+		() => ethers.utils.formatUnits(newTotalAmount, SYNTH_DECIMALS),
 		[newTotalAmount]
 	);
 	const safeCratio = getSafeCratio(loan);

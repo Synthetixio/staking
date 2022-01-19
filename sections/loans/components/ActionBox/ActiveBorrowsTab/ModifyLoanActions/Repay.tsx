@@ -9,6 +9,7 @@ import { tx } from 'utils/transactions';
 import Wrapper from './Wrapper';
 import { useRouter } from 'next/router';
 import ROUTES from 'constants/routes';
+import { SYNTH_DECIMALS } from 'constants/defaults';
 
 type RepayProps = {
 	loanId: number;
@@ -28,18 +29,17 @@ const Repay: React.FC<RepayProps> = ({ loan, loanId, loanTypeIsETH, loanContract
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 
 	const debtAsset = loan.currency;
-	const debtAssetDecimals = 18;
 
 	const repayAmount = useMemo(
 		() =>
 			repayAmountString
-				? ethers.utils.parseUnits(repayAmountString, debtAssetDecimals)
+				? ethers.utils.parseUnits(repayAmountString, SYNTH_DECIMALS)
 				: ethers.BigNumber.from(0),
 		[repayAmountString]
 	);
 	const remainingAmount = useMemo(() => loan.amount.sub(repayAmount), [loan.amount, repayAmount]);
 	const remainingAmountString = useMemo(
-		() => ethers.utils.formatUnits(remainingAmount, debtAssetDecimals),
+		() => ethers.utils.formatUnits(remainingAmount, SYNTH_DECIMALS),
 		[remainingAmount]
 	);
 	const isRepayingFully = useMemo(() => remainingAmount.eq(0), [remainingAmount]);
@@ -47,7 +47,7 @@ const Repay: React.FC<RepayProps> = ({ loan, loanId, loanTypeIsETH, loanContract
 	const onSetLeftColAmount = (amount: string) =>
 		!amount
 			? setRepayAmount(null)
-			: ethers.utils.parseUnits(amount, debtAssetDecimals).gt(loan.amount)
+			: ethers.utils.parseUnits(amount, SYNTH_DECIMALS).gt(loan.amount)
 			? onSetLeftColMaxAmount()
 			: setRepayAmount(amount);
 	const onSetLeftColMaxAmount = () => setRepayAmount(ethers.utils.formatUnits(loan.amount));
