@@ -12,9 +12,9 @@ import { isL2State, walletAddressState } from 'store/wallet';
 import styled from 'styled-components';
 import media from 'styled-media-query';
 import { FlexDivCol, LineSpacer, StatsSection } from 'styles/common';
+import ERC20ABI from '@synthetixio/queries/build/node/src/abis/ERC20.json';
 // TODO @MF delete when Jacko merged his PR
 import abi from './abi.json';
-import ERC20ABI from '@synthetixio/queries/build/node/src/abis/ERC20.json';
 
 const stakingRewardsContractWETHSNX = new Contract(
 	'0xfD49C7EE330fE060ca66feE33d49206eB96F146D',

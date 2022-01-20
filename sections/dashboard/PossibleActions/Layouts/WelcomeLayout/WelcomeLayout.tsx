@@ -12,7 +12,6 @@ import { GlowingCircle } from 'styles/common';
 import KwentaIcon from 'assets/svg/app/kwenta.svg';
 import MintIcon from 'assets/svg/app/mint.svg';
 import LearnIcon from 'assets/svg/app/learn.svg';
-import SorbetFinance from 'assets/svg/app/sorbet-finance.svg';
 
 import GridBox, { GridBoxProps } from 'components/GridBox/Gridbox';
 
@@ -56,28 +55,6 @@ const WelcomeLayout: FC = () => {
 				title: t('dashboard.actions.trade.title'),
 				copy: t('dashboard.actions.trade.copy'),
 				externalLink: EXTERNAL_LINKS.Trading.Kwenta,
-			},
-			{
-				gridArea: '3 / 1 / 3 / 3',
-				title: t('dashboard.actions.earn.title', { percent: '20%' }),
-				copy: t('dashboard.actions.earn.copy', { asset: 'SNX-WETH', supplier: 'Sorbet Finance' }),
-				icon: (
-					<GlowingCircle variant="purple" size="md">
-						<Svg src={SorbetFinance} width="32" />
-					</GlowingCircle>
-				),
-				link: ROUTES.Pools.snx_weth,
-			},
-			{
-				gridArea: '3 / 2 / 3 / 4',
-				title: t('dashboard.actions.earn.title', { percent: '30%' }),
-				copy: t('dashboard.actions.earn.copy', { asset: 'sUSD-DAI', supplier: 'Sorbet Finance' }),
-				icon: (
-					<GlowingCircle variant="purple" size="md">
-						<Svg src={SorbetFinance} width="32" />
-					</GlowingCircle>
-				),
-				link: ROUTES.Pools.susd_dai,
 			},
 		],
 		[t]
