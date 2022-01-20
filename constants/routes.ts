@@ -6,8 +6,8 @@ export const ROUTES = {
 		Mint: '/staking/mint',
 	},
 	Pools: {
-		snx_weth: '/pools/pools/weth-snx',
-		susd_dai: '/pools/pools/susd-dai',
+		snx_weth: '/pools/weth-snx',
+		susd_dai: '/pools/susd-dai',
 	},
 	Debt: {
 		Home: '/debt',

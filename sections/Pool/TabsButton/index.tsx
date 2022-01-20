@@ -11,6 +11,8 @@ export default function PoolTabs({
 	rewardsToClaim,
 	allowanceAmount,
 	approveFunc,
+	fetchBalances,
+	stakedTokens,
 }: PoolTabsProps) {
 	const { t } = useTranslation();
 	const tabData = useMemo(
@@ -24,6 +26,8 @@ export default function PoolTabs({
 						rewardsToClaim={rewardsToClaim}
 						allowanceAmount={allowanceAmount}
 						approveFunc={approveFunc}
+						stakedTokens={stakedTokens}
+						fetchBalances={fetchBalances}
 					/>
 				),
 				blue: true,
@@ -37,6 +41,8 @@ export default function PoolTabs({
 						balance={balance}
 						rewardsToClaim={rewardsToClaim}
 						allowanceAmount={allowanceAmount}
+						stakedTokens={stakedTokens}
+						fetchBalances={fetchBalances}
 					/>
 				),
 				blue: false,

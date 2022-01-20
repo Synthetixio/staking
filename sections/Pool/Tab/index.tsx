@@ -13,7 +13,9 @@ export interface PoolTabProps {
 	balance: BigNumber;
 	rewardsToClaim: BigNumber;
 	allowanceAmount: BigNumber;
+	stakedTokens: BigNumber;
 	approveFunc?: (amount: BigNumber) => Promise<boolean | undefined>;
+	fetchBalances: () => void;
 }
 export default function PoolTab({
 	action,
@@ -21,10 +23,13 @@ export default function PoolTab({
 	rewardsToClaim,
 	allowanceAmount,
 	approveFunc,
+	stakedTokens,
+	// TODO @MF fetch balance when tx is mined
+	fetchBalances,
 }: PoolTabProps) {
 	const { t } = useTranslation();
 	const [gasPrice, setGasPrice] = useState<GasPrice | undefined>(undefined);
-	const [amountToSend, setAmountToSend] = useState(utils.formatUnits(balance, 18));
+	const [amountToSend, setAmountToSend] = useState('');
 	const { useSynthetixTxn } = useSynthetixQueries();
 
 	// TODO @MF wait for PR to be merged and update the logic https://github.com/Synthetixio/synthetix/pull/1653/files
@@ -37,23 +42,42 @@ export default function PoolTab({
 		}
 	};
 
+	const needToApprove = () => {
+		// prevents error when user types in a too big number
+		const hasComma = amountToSend.includes(',');
+		const indexOfComma = amountToSend.indexOf(',');
+		const indexOfPoint = amountToSend.indexOf('.');
+		if (
+			amountToSend.slice(indexOfComma).length > 18 ||
+			amountToSend.slice(indexOfPoint).length > 18
+		) {
+			return allowanceAmount.gt(
+				utils.parseUnits(
+					amountToSend.slice(0, hasComma ? indexOfComma : indexOfPoint + 18) || '0',
+					18
+				)
+			);
+		}
+		return allowanceAmount.gt(utils.parseUnits(amountToSend || '0', 18));
+	};
+
 	return (
 		<StyledPoolTabWrapper>
 			<StyledInputWrapper>
 				<StyledInput
-					placeholder={utils.formatUnits(balance, 18)}
+					placeholder={utils.formatUnits(action === 'add' ? balance : stakedTokens, 18)}
 					type="number"
-					maxLength={12}
 					onChange={(e) => {
-						setAmountToSend(e.target.value);
+						setAmountToSend(e.target.value || '');
 					}}
 					value={amountToSend}
 				/>
 				<Button
+					style={{ marginTop: '16px' }}
 					variant="secondary"
 					size="sm"
 					onClick={() => {
-						setAmountToSend(utils.formatUnits(balance, 18));
+						setAmountToSend(utils.formatUnits(action === 'add' ? balance : stakedTokens, 18));
 					}}
 				>
 					{t('pool.tab.max')}
@@ -77,9 +101,7 @@ export default function PoolTab({
 					disabled={balance.toString() === '0'}
 					onClick={handleLiquidityButton}
 				>
-					{allowanceAmount.gt(utils.parseUnits(amountToSend, 18))
-						? t('pool.tab.stake')
-						: t('pool.tab.approve')}
+					{needToApprove() ? t('pool.tab.stake') : t('pool.tab.approve')}
 				</Button>
 			)}
 

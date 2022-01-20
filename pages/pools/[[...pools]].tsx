@@ -5,41 +5,35 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
-import PoolTabs from 'sections/Pool/TabsButton';
-import useGetUniswapStakingRewardsAPY from 'sections/Pool/useGetUniswapStakingRewardsAPY';
-import useGUNILPToken, { GUNILPTokenProps } from 'sections/Pool/useGUNILPToken';
+import PoolTabs from 'sections/pool/TabsButton';
+import useGetUniswapStakingRewardsAPY from 'sections/pool/hooks/useGetUniswapStakingRewardsAPY';
+import useGUNILPToken, { GUNILPTokenProps } from 'sections/pool/hooks/useGUNILPToken';
 import { isL2State, walletAddressState } from 'store/wallet';
 import styled from 'styled-components';
 import media from 'styled-media-query';
 import { FlexDivCol, LineSpacer, StatsSection } from 'styles/common';
 // TODO @MF delete when Jacko merged his PR
 import abi from './abi.json';
+import ERC20ABI from '@synthetixio/queries/build/node/src/abis/ERC20.json';
 
 const stakingRewardsContractWETHSNX = new Contract(
 	'0xfD49C7EE330fE060ca66feE33d49206eB96F146D',
 	abi
 );
-const ERC20HumanReadableABI = [
-	'function balanceOf(address _owner) public view returns (uint256 balance)',
-	'function approve(address _spender, uint256 _value) public returns (bool success)',
-	'function allowance(address _owner, address _spender) public view returns (uint256 remaining)',
-];
-const SUSDDAILPTokenContract = new Contract(
-	'0x83bEeFB4cA39af649D03969B442c0E9F4E1732D8',
-	ERC20HumanReadableABI
-);
+const SUSDDAILPTokenContract = new Contract('0x83bEeFB4cA39af649D03969B442c0E9F4E1732D8', ERC20ABI);
 
 export default function Pool() {
 	const [LPBalance, setLPBalance] = useState(BigNumber.from(0));
 	const [rewardsToClaim, setRewardsToClaim] = useState(BigNumber.from(0));
 	const [allowanceAmount, setAllowanceAmount] = useState(BigNumber.from(0));
+	const [stakedTokens, setStakedTokens] = useState(BigNumber.from(0));
 	const { t } = useTranslation();
 	const router = useRouter();
 	const walletAddress = useRecoilValue(walletAddressState);
 	const isL2 = useRecoilValue(isL2State);
 	const splitRoute = router.asPath.split('/');
 	const pool = splitRoute[splitRoute.length - 1] as GUNILPTokenProps['pool'];
-	const { balanceOf, rewards, allowance, approve } = useGUNILPToken({
+	const { balanceOf, rewards, allowance, approve, stakedTokensBalance } = useGUNILPToken({
 		pool,
 		userAddress: walletAddress,
 	});
@@ -49,6 +43,10 @@ export default function Pool() {
 	});
 
 	useEffect(() => {
+		fetchBalances();
+	}, [walletAddress]);
+
+	const fetchBalances = () => {
 		if (walletAddress) {
 			balanceOf().then((balance) => {
 				if (balance) setLPBalance(balance);
@@ -59,8 +57,11 @@ export default function Pool() {
 			allowance().then((amount) => {
 				if (amount) setAllowanceAmount(amount);
 			});
+			stakedTokensBalance().then((amount) => {
+				if (amount) setStakedTokens(amount);
+			});
 		}
-	}, [walletAddress]);
+	};
 
 	return (
 		<>
@@ -88,7 +89,9 @@ export default function Pool() {
 							balance={LPBalance}
 							rewardsToClaim={rewardsToClaim}
 							allowanceAmount={allowanceAmount}
+							stakedTokens={stakedTokens}
 							approveFunc={approve}
+							fetchBalances={fetchBalances}
 						/>
 					) : (
 						<h3>Please change to Layer 2</h3>
