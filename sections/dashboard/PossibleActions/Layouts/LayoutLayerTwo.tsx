@@ -27,6 +27,8 @@ import { ActionsContainer as Container } from './common-styles';
 import { wei } from '@synthetixio/wei';
 import { useRecoilValue } from 'recoil';
 import { walletAddressState } from 'store/wallet';
+import useGetUniswapStakingRewardsAPY from 'sections/pool/hooks/useGetUniswapStakingRewardsAPY';
+import { stakingRewardsContractWETHSNX, SUSDDAILPTokenContract } from 'constants/gelato';
 
 const LayoutLayerTwo: FC = () => {
 	const { t } = useTranslation();
@@ -35,6 +37,10 @@ const LayoutLayerTwo: FC = () => {
 
 	const { stakingRewards, tradingRewards } = useUserStakingData(walletAddress);
 	const { currentCRatio, targetCRatio } = useStakingCalculations();
+	const res = useGetUniswapStakingRewardsAPY({
+		stakingRewardsContract: stakingRewardsContractWETHSNX,
+		tokenContract: SUSDDAILPTokenContract,
+	});
 
 	const gridItems: GridBoxProps[] = useMemo(() => {
 		const aboveTargetCRatio = currentCRatio.lte(targetCRatio);

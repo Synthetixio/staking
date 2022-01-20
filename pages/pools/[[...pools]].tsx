@@ -12,15 +12,7 @@ import { isL2State, walletAddressState } from 'store/wallet';
 import styled from 'styled-components';
 import media from 'styled-media-query';
 import { FlexDivCol, LineSpacer, StatsSection } from 'styles/common';
-import ERC20ABI from '@synthetixio/queries/build/node/src/abis/ERC20.json';
-// TODO @MF delete when Jacko merged his PR
-import abi from './abi.json';
-
-const stakingRewardsContractWETHSNX = new Contract(
-	'0xfD49C7EE330fE060ca66feE33d49206eB96F146D',
-	abi
-);
-const SUSDDAILPTokenContract = new Contract('0x83bEeFB4cA39af649D03969B442c0E9F4E1732D8', ERC20ABI);
+import { stakingRewardsContractWETHSNX, SUSDDAILPTokenContract } from 'constants/gelato';
 
 export default function Pool() {
 	const [LPBalance, setLPBalance] = useState(BigNumber.from(0));
