@@ -5,6 +5,7 @@ import { languageStateKey, priceCurrencyStateKey } from 'store/app/constants';
 
 import { CurrencyCategory, NetworkId, Synth } from '@synthetixio/contracts-interface';
 
+export const SYNTH_DECIMALS = 18;
 // app defaults
 export const DEFAULT_LANGUAGE: Language = localStore.get(languageStateKey) ?? Language.EN;
 export const DEFAULT_PRICE_CURRENCY: Synth = localStore.get(priceCurrencyStateKey) ?? {
