@@ -2,7 +2,7 @@ import {
 	StakingRewardsSUSDDAIAddress,
 	StakingRewardsSUSDDAIPContract,
 	StakingRewardsWETHSNXAddress,
-	StakingRewardsWETHSNXContract,
+	stakingRewardsContractWETHSNX,
 	SUSDDAILPTokenContract,
 	WETHSNXLPTokenContract,
 } from 'constants/gelato';
@@ -32,7 +32,7 @@ function useGUNILPToken({ pool, userAddress }: GUNILPTokenProps) {
 	const stakedTokensBalance = async () => {
 		if (provider && userAddress) {
 			const stakedBalance: BigNumber = await (pool === 'weth-snx'
-				? StakingRewardsWETHSNXContract
+				? stakingRewardsContractWETHSNX
 				: StakingRewardsSUSDDAIPContract
 			)
 				.connect(provider)
@@ -72,7 +72,7 @@ function useGUNILPToken({ pool, userAddress }: GUNILPTokenProps) {
 	const rewards = async () => {
 		if (provider && userAddress) {
 			const rewards: BigNumber = await (pool === 'weth-snx'
-				? StakingRewardsWETHSNXContract
+				? stakingRewardsContractWETHSNX
 				: StakingRewardsSUSDDAIPContract
 			)
 				.connect(provider)
