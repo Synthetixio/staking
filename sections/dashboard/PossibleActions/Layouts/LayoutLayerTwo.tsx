@@ -12,6 +12,7 @@ import KwentaIcon from 'assets/svg/app/kwenta.svg';
 import MintIcon from 'assets/svg/app/mint.svg';
 import ClaimIcon from 'assets/svg/app/claim.svg';
 import BurnIcon from 'assets/svg/app/burn.svg';
+import SorbetFinance from 'assets/svg/app/sorbet-finance.svg';
 
 import GridBox, { GridBoxProps } from 'components/GridBox/Gridbox';
 
@@ -25,7 +26,9 @@ import useStakingCalculations from 'sections/staking/hooks/useStakingCalculation
 import { ActionsContainer as Container } from './common-styles';
 import { wei } from '@synthetixio/wei';
 import { useRecoilValue } from 'recoil';
+import { useGetUniswapStakingRewardsAPY } from 'sections/pool/useGetUniswapStakingRewardsAPY';
 import { walletAddressState } from 'store/wallet';
+import { stakingRewardsContractWETHSNX, SUSDDAILPTokenContract } from 'constants/gelato';
 
 const LayoutLayerTwo: FC = () => {
 	const { t } = useTranslation();
@@ -34,6 +37,10 @@ const LayoutLayerTwo: FC = () => {
 
 	const { stakingRewards, tradingRewards } = useUserStakingData(walletAddress);
 	const { currentCRatio, targetCRatio } = useStakingCalculations();
+	const res = useGetUniswapStakingRewardsAPY({
+		stakingRewardsContract: stakingRewardsContractWETHSNX,
+		tokenContract: SUSDDAILPTokenContract,
+	});
 
 	const gridItems: GridBoxProps[] = useMemo(() => {
 		const aboveTargetCRatio = currentCRatio.lte(targetCRatio);
@@ -84,6 +91,16 @@ const LayoutLayerTwo: FC = () => {
 				externalLink: EXTERNAL_LINKS.Trading.Kwenta,
 				isDisabled: false,
 			},
+			{
+				title: t('dashboard.actions.earn.title', { percent: '20%' }),
+				copy: t('dashboard.actions.earn.copy', { asset: 'SNX-WETH', supplier: 'Sorbet Finance' }),
+				icon: (
+					<GlowingCircle variant="purple" size="md">
+						<Svg src={SorbetFinance} width="32" />
+					</GlowingCircle>
+				),
+				link: ROUTES.Pools.snx_weth,
+			},
 		].map((cell, i) => ({ ...cell, gridArea: `tile-${i + 1}` }));
 	}, [t, currentCRatio, targetCRatio, stakingRewards, tradingRewards]);
 
@@ -97,8 +114,8 @@ const LayoutLayerTwo: FC = () => {
 };
 
 const StyledContainer = styled(Container)`
-	grid-template-areas: 'tile-1 tile-2 tile-3';
-	grid-template-columns: 1fr 1fr 1fr;
+	grid-template-areas: 'tile-1 tile-2 tile-3 tile-4';
+	grid-template-columns: 1fr 1fr 1fr 1fr;
 	gap: 1rem;
 
 	${media.lessThan('md')`
