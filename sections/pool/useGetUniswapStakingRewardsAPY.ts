@@ -31,6 +31,9 @@ const GELTAO_POOL_ABI = [
 	},
 ];
 
+// TODO @MF implement that rewards
+// const rewards = 60000e18 - SNX decimal 18
+
 type StakingRewardsData = {
 	apy: string;
 	snx: string;
@@ -126,7 +129,7 @@ export const useGetUniswapStakingRewardsAPY = ({
 					apy: '0',
 				};
 			} catch (e) {
-				console.log(e);
+				console.error(e);
 				return {
 					eth: '0',
 					snx: '0',
