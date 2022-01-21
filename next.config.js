@@ -26,6 +26,13 @@ const earnPages = [
 	return pages;
 }, {});
 
+const poolPages = ['/pools/weth-snx'].reduce((pages, page) => {
+	pages[page] = {
+		page: '/pools/[[...pool]]',
+	};
+
+	return pages;
+}, {});
 module.exports = withPlugins([[optimizedImages]], {
 	webpack: (config) => {
 		config.resolve.mainFields = ['module', 'browser', 'main'];
@@ -37,6 +44,7 @@ module.exports = withPlugins([[optimizedImages]], {
 			...defaultPathMap,
 			...stakingPages,
 			...earnPages,
+			...poolPages,
 		};
 	},
 });
