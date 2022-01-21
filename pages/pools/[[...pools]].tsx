@@ -5,9 +5,9 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
-import useGetUniswapStakingRewardsAPY from 'sections/pool/hooks/useGetUniswapStakingRewardsAPY';
+import useGetUniswapStakingRewardsAPY from 'sections/pool/useGetUniswapStakingRewardsAPY';
 import PoolTabs from 'sections/pool/TabsButton';
-import useGUNILPToken, { GUNILPTokenProps } from 'sections/pool/hooks/useGUNILPToken';
+import useGUNILPToken, { GUNILPTokenProps } from 'sections/pool/useGUNILPToken';
 import { isL2State, walletAddressState } from 'store/wallet';
 import styled from 'styled-components';
 import media from 'styled-media-query';
@@ -81,7 +81,7 @@ export default function Pool() {
 			</StatsSection>
 			<LineSpacer />
 			<Container>
-				{isL2 || walletAddress ? (
+				{isL2 ? (
 					<>
 						<FlexDivCol>
 							<PoolTabs

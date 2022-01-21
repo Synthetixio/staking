@@ -8,7 +8,6 @@ import {
 } from 'constants/gelato';
 import Connector from 'containers/Connector';
 import { BigNumber } from 'ethers';
-import { useContainer } from 'unstated-next';
 
 export interface GUNILPTokenProps {
 	pool: 'weth-snx' | 'susd-dai';
@@ -16,7 +15,7 @@ export interface GUNILPTokenProps {
 }
 
 function useGUNILPToken({ pool, userAddress }: GUNILPTokenProps) {
-	const { provider, signer } = useContainer(Connector);
+	const { provider, signer } = Connector.useContainer();
 
 	const balanceOf = async () => {
 		if (provider && userAddress) {

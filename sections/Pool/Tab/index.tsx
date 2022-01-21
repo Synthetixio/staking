@@ -33,8 +33,8 @@ export default function PoolTab({
 	const { useSynthetixTxn } = useSynthetixQueries();
 
 	// TODO @MF wait for PR to be merged and update the logic https://github.com/Synthetixio/synthetix/pull/1653/files
-	const tx = useSynthetixTxn('StakingRewards', 'stake', [0]);
-
+	const tx = useSynthetixTxn('FeePool', 'claimFees');
+	console.log(tx);
 	const handleLiquidityButton = async () => {
 		const amountToSendInBigNumber = utils.parseUnits(amountToSend, 18);
 		if (approveFunc && allowanceAmount.lt(amountToSendInBigNumber)) {
