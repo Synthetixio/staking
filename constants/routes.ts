@@ -7,7 +7,6 @@ export const ROUTES = {
 	},
 	Pools: {
 		snx_weth: '/pools/weth-snx',
-		susd_dai: '/pools/susd-dai',
 	},
 	Debt: {
 		Home: '/debt',

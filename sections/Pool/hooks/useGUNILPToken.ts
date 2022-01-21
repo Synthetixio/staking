@@ -76,6 +76,7 @@ function useGUNILPToken({ pool, userAddress }: GUNILPTokenProps) {
 				: StakingRewardsSUSDDAIPContract
 			)
 				.connect(provider)
+				// TODO @MF or should we call the `earn` function
 				.rewards(userAddress);
 			return rewards;
 		}

@@ -1141,6 +1141,8 @@
 	},
 	"pool": {
 		"page-title": "{{pool}} Pool | Synthetix",
+		"info-headline": "G-UNI WETH/SNX LP Tokens",
+		"info": "To obtain G-UNI WETH/SNX LP tokens, first provide liquidity into the WETH/SNX pool via Sorbet.Finance. A full tutorial can be found on our blog here: ",
 		"tab": {
 			"add": "Add Liquidity",
 			"remove": "Remove Liquidity",

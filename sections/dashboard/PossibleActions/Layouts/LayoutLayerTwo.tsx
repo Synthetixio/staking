@@ -46,7 +46,6 @@ const LayoutLayerTwo: FC = () => {
 		const aboveTargetCRatio = currentCRatio.lte(targetCRatio);
 		return [
 			{
-				gridArea: '1 / 1 / 1 / 2',
 				icon: (
 					<GlowingCircle variant="green" size="md">
 						<Svg
@@ -66,7 +65,6 @@ const LayoutLayerTwo: FC = () => {
 				isDisabled: stakingRewards.eq(0) && tradingRewards.eq(0),
 			},
 			{
-				gridArea: '1 / 2 / 1 / 3',
 				icon: (
 					<GlowingCircle variant={!aboveTargetCRatio ? 'orange' : 'blue'} size="md">
 						{!aboveTargetCRatio ? <Svg src={BurnIcon} /> : <Svg src={MintIcon} />}
@@ -83,7 +81,6 @@ const LayoutLayerTwo: FC = () => {
 				link: !aboveTargetCRatio ? ROUTES.Staking.Burn : ROUTES.Staking.Mint,
 			},
 			{
-				gridArea: '1 / 3 / 1 / 3',
 				icon: (
 					<GlowingCircle variant="orange" size="md">
 						<Svg src={KwentaIcon} width="32" />
@@ -95,7 +92,7 @@ const LayoutLayerTwo: FC = () => {
 				isDisabled: false,
 			},
 			{
-				gridArea: '2 / 1 / 2 / 2',
+				// gridArea: '2 / 1 / 2 / 2',
 				title: t('dashboard.actions.earn.title', { percent: '20%' }),
 				copy: t('dashboard.actions.earn.copy', { asset: 'SNX-WETH', supplier: 'Sorbet Finance' }),
 				icon: (
@@ -105,18 +102,7 @@ const LayoutLayerTwo: FC = () => {
 				),
 				link: ROUTES.Pools.snx_weth,
 			},
-			{
-				gridArea: '2 / 2 / 2 / 3',
-				title: t('dashboard.actions.earn.title', { percent: '30%' }),
-				copy: t('dashboard.actions.earn.copy', { asset: 'sUSD-DAI', supplier: 'Sorbet Finance' }),
-				icon: (
-					<GlowingCircle variant="purple" size="md">
-						<Svg src={SorbetFinance} width="32" />
-					</GlowingCircle>
-				),
-				link: ROUTES.Pools.susd_dai,
-			},
-		];
+		].map((cell, i) => ({ ...cell, gridArea: `tile-${i + 1}` }));
 	}, [t, currentCRatio, targetCRatio, stakingRewards, tradingRewards]);
 
 	return (
@@ -129,7 +115,7 @@ const LayoutLayerTwo: FC = () => {
 };
 
 const StyledContainer = styled(Container)`
-	grid-template-areas: 'tile-1 tile-2 tile-3';
+	grid-template-areas: 'tile-1 tile-2 tile-3 tile-4';
 	grid-template-columns: 1fr 1fr 1fr;
 	gap: 1rem;
 

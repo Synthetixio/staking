@@ -91,15 +91,15 @@ export default function PoolTab({
 				/>
 			</DataRow>
 			{action === 'remove' ? (
-				<Button variant="primary" size="lg" disabled={balance.toString() === '0'}>
+				<Button variant="primary" size="lg" disabled={!amountToSend}>
 					{t('pool.tab.unstake')}
 				</Button>
 			) : (
 				<Button
 					variant="primary"
 					size="lg"
-					disabled={balance.toString() === '0'}
 					onClick={handleLiquidityButton}
+					disabled={!amountToSend}
 				>
 					{needToApprove() ? t('pool.tab.stake') : t('pool.tab.approve')}
 				</Button>
@@ -125,7 +125,7 @@ const StyledPoolTabWrapper = styled.section`
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
-	height: 100%;
+	height: 450px;
 `;
 
 const StyledButtonWrapper = styled.div`

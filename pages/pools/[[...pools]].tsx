@@ -11,8 +11,9 @@ import useGUNILPToken, { GUNILPTokenProps } from 'sections/pool/hooks/useGUNILPT
 import { isL2State, walletAddressState } from 'store/wallet';
 import styled from 'styled-components';
 import media from 'styled-media-query';
-import { FlexDivCol, LineSpacer, StatsSection } from 'styles/common';
-import { stakingRewardsContractWETHSNX, SUSDDAILPTokenContract } from 'constants/gelato';
+import { ExternalLink, FlexDivCol, LineSpacer, StatsSection } from 'styles/common';
+import { stakingRewardsContractWETHSNX, WETHSNXLPTokenContract } from 'constants/gelato';
+import { InfoContainer, Subtitle } from 'sections/layer2/components/common';
 
 export default function Pool() {
 	const [LPBalance, setLPBalance] = useState(BigNumber.from(0));
@@ -31,7 +32,7 @@ export default function Pool() {
 	});
 	const res = useGetUniswapStakingRewardsAPY({
 		stakingRewardsContract: stakingRewardsContractWETHSNX,
-		tokenContract: SUSDDAILPTokenContract,
+		tokenContract: WETHSNXLPTokenContract,
 	});
 
 	useEffect(() => {
@@ -66,7 +67,12 @@ export default function Pool() {
 					value={utils.formatUnits(LPBalance, 18).slice(0, 8)}
 					size="md"
 				/>
-				<StyledLPBalance title={t('pool.stats.APR')} value={res.data?.apy || 0} size="lg" main />
+				<StyledLPBalance
+					title={t('pool.stats.APR')}
+					value={res.data?.apy.toString() || 0}
+					size="lg"
+					main
+				/>
 				<StyledLPBalance
 					title={t('pool.stats.rewards')}
 					value={utils.formatUnits(rewardsToClaim, 18).slice(0, 8)}
@@ -75,23 +81,33 @@ export default function Pool() {
 			</StatsSection>
 			<LineSpacer />
 			<Container>
-				<FlexDivCol>
-					{isL2 ? (
-						<PoolTabs
-							balance={LPBalance}
-							rewardsToClaim={rewardsToClaim}
-							allowanceAmount={allowanceAmount}
-							stakedTokens={stakedTokens}
-							approveFunc={approve}
-							fetchBalances={fetchBalances}
-						/>
-					) : (
-						<h3>Please change to Layer 2</h3>
-					)}
-				</FlexDivCol>
-				<FlexDivCol>
-					<div>some info</div>
-				</FlexDivCol>
+				{isL2 || walletAddress ? (
+					<>
+						<FlexDivCol>
+							<PoolTabs
+								balance={LPBalance}
+								rewardsToClaim={rewardsToClaim}
+								allowanceAmount={allowanceAmount}
+								stakedTokens={stakedTokens}
+								approveFunc={approve}
+								fetchBalances={fetchBalances}
+							/>
+						</FlexDivCol>
+						<FlexDivCol>
+							<StyledInfoContainer>
+								{t('pool.info-headline')}
+								<Subtitle>
+									{t('pool.info')}
+									<ExternalLink href="https://www.sorbet.finance/#/pools/0x83bEeFB4cA39af649D03969B442c0E9F4E1732D8">
+										LINK
+									</ExternalLink>
+								</Subtitle>
+							</StyledInfoContainer>
+						</FlexDivCol>
+					</>
+				) : (
+					<h3 style={{ textAlign: 'end' }}>Please change to Layer 2 and connect a wallet</h3>
+				)}
 			</Container>
 		</>
 	);
@@ -112,4 +128,9 @@ const StyledLPBalance = styled(StatBox)<{ main?: boolean }>`
 	.title {
 		color: ${({ theme, main }) => (main ? theme.colors.pink : theme.colors.green)};
 	}
+`;
+
+const StyledInfoContainer = styled(InfoContainer)`
+	max-width: 300px;
+	padding: 16px;
 `;
