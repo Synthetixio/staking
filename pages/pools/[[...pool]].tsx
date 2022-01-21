@@ -1,13 +1,12 @@
 import StatBox from 'components/StatBox';
-import { BigNumber, utils, Contract } from 'ethers';
+import { BigNumber, utils } from 'ethers';
 import Head from 'next/head';
-import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import { useGetUniswapStakingRewardsAPY } from 'sections/pool/useGetUniswapStakingRewardsAPY';
 import PoolTabs from 'sections/pool/TabsButton';
-import { useGUNILPToken, GUNILPTokenProps } from 'sections/pool/useGUNILPToken';
+import { useGUNILPToken } from 'sections/pool/useGUNILPToken';
 import { isL2State, walletAddressState } from 'store/wallet';
 import styled from 'styled-components';
 import media from 'styled-media-query';
@@ -15,19 +14,16 @@ import { ExternalLink, FlexDivCol, LineSpacer, StatsSection } from 'styles/commo
 import { stakingRewardsContractWETHSNX, WETHSNXLPTokenContract } from 'constants/gelato';
 import { InfoContainer, Subtitle } from 'sections/layer2/components/common';
 
-export default function Pool() {
+function Pool() {
 	const [LPBalance, setLPBalance] = useState(BigNumber.from(0));
 	const [rewardsToClaim, setRewardsToClaim] = useState(BigNumber.from(0));
 	const [allowanceAmount, setAllowanceAmount] = useState(BigNumber.from(0));
 	const [stakedTokens, setStakedTokens] = useState(BigNumber.from(0));
 	const { t } = useTranslation();
-	const router = useRouter();
 	const walletAddress = useRecoilValue(walletAddressState);
 	const isL2 = useRecoilValue(isL2State);
-	const splitRoute = router.asPath.split('/');
-	const pool = splitRoute[splitRoute.length - 1] as GUNILPTokenProps['pool'];
 	const { balanceOf, rewards, allowance, approve, stakedTokensBalance } = useGUNILPToken({
-		pool,
+		pool: 'weth-snx',
 		userAddress: walletAddress,
 	});
 	const res = useGetUniswapStakingRewardsAPY({
@@ -59,7 +55,7 @@ export default function Pool() {
 	return (
 		<>
 			<Head>
-				<title>{t('pool.page-title', { pool: pool.toUpperCase() })}</title>
+				<title>{t('pool.page-title', { pool: 'WETH/SNX' })}</title>
 			</Head>
 			<StatsSection>
 				<StyledLPBalance
@@ -134,3 +130,5 @@ const StyledInfoContainer = styled(InfoContainer)`
 	max-width: 300px;
 	padding: 16px;
 `;
+
+export default Pool;
