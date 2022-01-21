@@ -14,7 +14,7 @@ export interface GUNILPTokenProps {
 	userAddress: string | null;
 }
 
-function useGUNILPToken({ pool, userAddress }: GUNILPTokenProps) {
+export function useGUNILPToken({ pool, userAddress }: GUNILPTokenProps) {
 	const { provider, signer } = Connector.useContainer();
 
 	const balanceOf = async () => {
@@ -75,12 +75,9 @@ function useGUNILPToken({ pool, userAddress }: GUNILPTokenProps) {
 				: StakingRewardsSUSDDAIPContract
 			)
 				.connect(provider)
-				// TODO @MF or should we call the `earn` function
-				.rewards(userAddress);
+				.earned(userAddress);
 			return rewards;
 		}
 	};
 	return { balanceOf, approve, allowance, rewards, stakedTokensBalance };
 }
-
-export default useGUNILPToken;

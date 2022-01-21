@@ -26,7 +26,7 @@ import useStakingCalculations from 'sections/staking/hooks/useStakingCalculation
 import { ActionsContainer as Container } from './common-styles';
 import { wei } from '@synthetixio/wei';
 import { useRecoilValue } from 'recoil';
-import useGetUniswapStakingRewardsAPY from 'sections/pool/useGetUniswapStakingRewardsAPY';
+import { useGetUniswapStakingRewardsAPY } from 'sections/pool/useGetUniswapStakingRewardsAPY';
 import { walletAddressState } from 'store/wallet';
 import { stakingRewardsContractWETHSNX, SUSDDAILPTokenContract } from 'constants/gelato';
 

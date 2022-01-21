@@ -32,12 +32,12 @@ const GELTAO_POOL_ABI = [
 ];
 
 type StakingRewardsData = {
-	apy: number;
-	snx: number;
-	eth: number;
+	apy: string;
+	snx: string;
+	eth: string;
 };
 
-const useGetUniswapStakingRewardsAPY = ({
+export const useGetUniswapStakingRewardsAPY = ({
 	stakingRewardsContract,
 	tokenContract,
 }: {
@@ -81,7 +81,10 @@ const useGetUniswapStakingRewardsAPY = ({
 						havven: { usd: snxRate },
 						ethereum: { usd: ethRate },
 					} = await ratesResults.json();
-					const { amount0Current, amount1Current } = balances;
+					const { amount0Current, amount1Current } = balances as Record<
+						'amount0Current' | 'amount1Current',
+						BigNumber
+					>;
 					const ethRateBigNumber = utils.parseEther(ethRate.toString());
 					const snxRateBigNumber = utils.parseUnits(snxRate.toString(), 18);
 					const decimal = utils.parseEther('1');
@@ -109,24 +112,25 @@ const useGetUniswapStakingRewardsAPY = ({
 						.mul(snxRateBigNumber);
 					//console.log(rewardForDuration.toString());
 					return {
-						eth: amount0Current /*.div(decimal)*/,
-						snx: amount1Current /*.div(decimal)*/,
+						eth: amount0Current.toString() /*.div(decimal)*/,
+						snx: amount1Current.toString() /*.div(decimal)*/,
 						apy: rewardsValuePerYear
 							//.mul(BigNumber.from('100'))
-							.div(gUNIValueInContract),
+							.div(gUNIValueInContract)
+							.toString(),
 					};
 				}
 				return {
-					eth: 0,
-					snx: 0,
-					apy: 0,
+					eth: '0',
+					snx: '0',
+					apy: '0',
 				};
 			} catch (e) {
 				console.log(e);
 				return {
-					eth: 0,
-					snx: 0,
-					apy: 0,
+					eth: '0',
+					snx: '0',
+					apy: '0',
 				};
 			}
 		},
@@ -137,5 +141,3 @@ const useGetUniswapStakingRewardsAPY = ({
 		}
 	);
 };
-
-export default useGetUniswapStakingRewardsAPY;
