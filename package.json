@@ -129,6 +129,9 @@
 		"url-loader": "4.1.1",
 		"webp-loader": "0.6.0"
 	},
+	"resolutions": {
+		"sharp": "0.29.3"
+	},
 	"husky": {
 		"hooks": {
 			"pre-commit": "npm run lint"
