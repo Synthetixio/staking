@@ -6,31 +6,31 @@ on:
     branches: [master, dev]
 
 jobs:
-  audit:
-    # run only on master/dev branch and pull requests
-    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'
-    runs-on: ubuntu-latest
+  # audit:
+  #   # run only on master/dev branch and pull requests
+  #   if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'
+  #   runs-on: ubuntu-latest
 
-    container:
-      image: ghcr.io/synthetixio/docker-sec-tools/alpine:14.17
-      credentials:
-        username: synthetixio
-        password: ${{ secrets.GH_PACKAGES_READ_ONLY }}
+  #   container:
+  #     image: ghcr.io/synthetixio/docker-sec-tools/alpine:14.17
+  #     credentials:
+  #       username: synthetixio
+  #       password: ${{ secrets.GH_PACKAGES_READ_ONLY }}
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # pin@v2
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # pin@v2
 
-      - name: Audit dependencies
-        run: npm audit --audit-level=critical
+  #     - name: Audit dependencies
+  #       run: npm audit --audit-level=critical
 
-      - name: Lockfile lint
-        run: lockfile-lint -p package-lock.json --type npm --allowed-hosts npm github.com --allowed-schemes "https:" "git+ssh:" "git+https:" "npm:"
+  #     - name: Lockfile lint
+  #       run: lockfile-lint -p package-lock.json --type npm --allowed-hosts npm github.com --allowed-schemes "https:" "git+ssh:" "git+https:" "npm:"
 
   build:
-    needs: audit
+    # needs: audit
     # run only on audit success or audit skipped
-    if: always() && needs.audit.result == 'success' || always() && needs.audit.result == 'skipped'
+    # if: always() && needs.audit.result == 'success' || always() && needs.audit.result == 'skipped'
     runs-on: ubuntu-latest
 
     container:
@@ -63,7 +63,7 @@ jobs:
         run: chown -R $(whoami) .
 
       - name: Install dependencies
-        run: npm install --prefer-offline --no-audit
+        run: yarn
 
       - name: Lint
         # run only on master/dev branch and pull requests
