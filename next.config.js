@@ -33,7 +33,7 @@ const poolPages = ['/pools/weth-snx'].reduce((pages, page) => {
 
 	return pages;
 }, {});
-module.exports = withPlugins([[optimizedImages]], {
+module.exports = withPlugins([[optimizedImages, { images: { optimize: false } }]], {
 	webpack: (config) => {
 		config.resolve.mainFields = ['module', 'browser', 'main'];
 		return config;

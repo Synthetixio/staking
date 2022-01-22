@@ -127,12 +127,7 @@
 		"webp-loader": "0.6.0"
 	},
 	"resolutions": {
-		"webpack": "5.0.0-beta.30"
-	},
-	"husky": {
-		"hooks": {
-			"pre-commit": "npm run lint"
-		}
+		"sharp": "0.29.3"
 	},
 	"jest": {
 		"roots": [
