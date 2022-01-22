@@ -21,16 +21,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # pin@v2
 
-      - name: Audit dependencies
-        run: npm audit --audit-level=critical
+      # - name: Audit dependencies
+      #   run: npm audit --audit-level=critical
 
-      - name: Lockfile lint
-        run: lockfile-lint -p package-lock.json --type npm --allowed-hosts npm github.com --allowed-schemes "https:" "git+ssh:" "git+https:" "npm:"
+      # - name: Lockfile lint
+      #   run: lockfile-lint -p package-lock.json --type npm --allowed-hosts npm github.com --allowed-schemes "https:" "git+ssh:" "git+https:" "npm:"
 
   build:
-    needs: audit
-    # run only on audit success or audit skipped
-    if: always() && needs.audit.result == 'success' || always() && needs.audit.result == 'skipped'
+    # needs: audit
+    # # run only on audit success or audit skipped
+    # if: always() && needs.audit.result == 'success' || always() && needs.audit.result == 'skipped'
     runs-on: ubuntu-latest
 
     container:
@@ -63,17 +63,16 @@ jobs:
         run: chown -R $(whoami) .
 
       - name: Install dependencies
-        run: npm install --prefer-offline --no-audit
-
+        run: yarn
       - name: Lint
         # run only on master/dev branch and pull requests
         if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'
-        run: npm run lint:sarif
+        run: yarn lint:sarif
       
       - name: Unit
         # run only on master/dev branch and pull requests
         if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'
-        run: npm run test:unit
+        run: yarn test:unit
 
       - name: Upload lint results
         # run if lint failed and only on master/dev branch and pull requests
@@ -93,7 +92,7 @@ jobs:
         continue-on-error: true
 
       - name: Build
-        run: npm run build
+        run: yarn build
 
       - name: Compress build
         run: tar -zcvf build.tar.gz .next
@@ -141,7 +140,7 @@ jobs:
         run: chown -R $(whoami) .
 
       - name: Install dependencies
-        run: npm install --prefer-offline --no-audit
+        run: yarn
         env:
           CYPRESS_CACHE_FOLDER: ${{ github.workspace }}/node_modules/.cache/Cypress
 
@@ -166,7 +165,7 @@ jobs:
         run: tar -xf build.tar.gz
 
       - name: Run e2e tests
-        run: npm run test:e2e:ci
+        run: yarn test:e2e:ci
         env:
           SECRET_WORDS: ${{ secrets.SECRET_WORDS }}
           PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
