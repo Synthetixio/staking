@@ -26,7 +26,7 @@ const earnPages = [
 	return pages;
 }, {});
 
-module.exports = withPlugins([[optimizedImages, { optimizeImages: false }]], {
+module.exports = withPlugins([[optimizedImages, { images: { optimize: false } }]], {
 	webpack: (config) => {
 		config.resolve.mainFields = ['module', 'browser', 'main'];
 		return config;
