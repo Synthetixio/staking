@@ -15,7 +15,8 @@
 		"test:synpress:run": "env-cmd -f .env.local synpress run",
 		"test:e2e": "start-server-and-test 'npm run build && npm run start' http-get://localhost:3000 'synpress run'",
 		"test:e2e:ci": "synpress run --group smoke-tests --record --parallel",
-		"upgrade-synthetix": "npm i @synthetixio/assets@latest @synthetixio/contracts-interface@latest @synthetixio/optimism-networks@latest @synthetixio/providers@latest @synthetixio/queries@latest @synthetixio/transaction-notifier@latest @synthetixio/wei@latest"
+		"upgrade-synthetix": "npm i @synthetixio/assets@latest @synthetixio/contracts-interface@latest @synthetixio/optimism-networks@latest @synthetixio/providers@latest @synthetixio/queries@latest @synthetixio/transaction-notifier@latest @synthetixio/wei@latest",
+		"preinstall": "npx npm-force-resolutions"
 	},
 	"dependencies": {
 		"@artsy/fresnel": "1.8.0",
@@ -43,6 +44,7 @@
 		"next": "10.2.3",
 		"next-compose-plugins": "2.2.1",
 		"next-optimized-images": "3.0.0-canary.10",
+		"npm-force-resolutions": "0.0.10",
 		"react": "17.0.2",
 		"react-copy-to-clipboard": "5.0.3",
 		"react-countdown": "2.3.0",
@@ -126,7 +128,7 @@
 		"webp-loader": "0.6.0"
 	},
 	"resolutions": {
-		"webpack": "5.0.0-beta.30"
+		"sharp": "0.29.3"
 	},
 	"husky": {
 		"hooks": {
