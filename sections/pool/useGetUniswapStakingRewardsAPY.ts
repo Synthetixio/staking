@@ -31,13 +31,10 @@ const GELTAO_POOL_ABI = [
 	},
 ];
 
-// TODO @MF implement that rewards
-// const rewards = 60000e18 - SNX decimal 18
-
 type StakingRewardsData = {
-	apy: string;
-	snx: string;
-	eth: string;
+	apy: number;
+	snx: number;
+	eth: number;
 };
 
 export const useGetUniswapStakingRewardsAPY = ({
@@ -84,56 +81,31 @@ export const useGetUniswapStakingRewardsAPY = ({
 						havven: { usd: snxRate },
 						ethereum: { usd: ethRate },
 					} = await ratesResults.json();
-					const { amount0Current, amount1Current } = balances as Record<
-						'amount0Current' | 'amount1Current',
-						BigNumber
-					>;
-					const ethRateBigNumber = utils.parseEther(ethRate.toString());
-					const snxRateBigNumber = utils.parseUnits(snxRate.toString(), 18);
-					const decimal = utils.parseEther('1');
-					const totalValueInPool: BigNumber = amount0Current
-						// .div(decimal)
-						.mul(ethRateBigNumber)
-						.add(
-							amount1Current
-								//.div(decimal)
-								.mul(snxRateBigNumber)
-						);
-					const gUNIPrice = totalValueInPool.div(
-						gUNITotalSupply
-						//.div(decimal)
-					);
-					// console.log('G UNI PRICE', gUNIPrice.toString());
-					const yearProRata = ONE_YEAR / duration.toNumber();
-					// console.log('YEAR PRO RATA', yearProRata);
-					const gUNIValueInContract = contractBalance
-						//.div(decimal)
-						.mul(gUNIPrice);
-					const rewardsValuePerYear = rewardForDuration
-						// .div(decimal)
-						.mul(BigNumber.from(yearProRata.toFixed()))
-						.mul(snxRateBigNumber);
-					//console.log(rewardForDuration.toString());
+					const { amount0Current, amount1Current } = balances;
+					const totalValueInPool =
+						(amount0Current / 1e18) * ethRate + (amount1Current / 1e18) * snxRate;
+					const gUNIPrice = totalValueInPool / (gUNITotalSupply / 1e18);
+					const yearProRata = ONE_YEAR / Number(duration);
+					const gUNIValueInContract = (contractBalance / 1e18) * gUNIPrice;
+					const rewardsValuePerYear = (rewardForDuration / 1e18) * yearProRata * snxRate;
+
 					return {
-						eth: amount0Current.toString() /*.div(decimal)*/,
-						snx: amount1Current.toString() /*.div(decimal)*/,
-						apy: rewardsValuePerYear
-							//.mul(BigNumber.from('100'))
-							.div(gUNIValueInContract)
-							.toString(),
+						eth: amount0Current / 1e18,
+						snx: amount1Current / 1e18,
+						apy: (100 * rewardsValuePerYear) / gUNIValueInContract,
 					};
 				}
 				return {
-					eth: '0',
-					snx: '0',
-					apy: '0',
+					eth: 0,
+					snx: 0,
+					apy: 0,
 				};
 			} catch (e) {
 				console.error(e);
 				return {
-					eth: '0',
-					snx: '0',
-					apy: '0',
+					eth: 0,
+					snx: 0,
+					apy: 0,
 				};
 			}
 		},

@@ -11,8 +11,9 @@ import { isL2State, walletAddressState } from 'store/wallet';
 import styled from 'styled-components';
 import media from 'styled-media-query';
 import { ExternalLink, FlexDivCol, LineSpacer, StatsSection } from 'styles/common';
-import { stakingRewardsContractWETHSNX, WETHSNXLPTokenContract } from 'constants/gelato';
+import { WETHSNXLPTokenContract } from 'constants/gelato';
 import { InfoContainer, Subtitle } from 'sections/layer2/components/common';
+import synthetix, { NetworkId } from '@synthetixio/contracts-interface';
 
 function Pool() {
 	const [LPBalance, setLPBalance] = useState(BigNumber.from(0));
@@ -22,12 +23,13 @@ function Pool() {
 	const { t } = useTranslation();
 	const walletAddress = useRecoilValue(walletAddressState);
 	const isL2 = useRecoilValue(isL2State);
+	const snx = synthetix({ networkId: NetworkId['Mainnet-Ovm'], useOvm: true });
 	const { balanceOf, rewards, allowance, approve, stakedTokensBalance } = useGUNILPToken({
 		pool: 'weth-snx',
 		userAddress: walletAddress,
 	});
 	const res = useGetUniswapStakingRewardsAPY({
-		stakingRewardsContract: stakingRewardsContractWETHSNX,
+		stakingRewardsContract: snx.contracts.StakingRewardsSNXWETHUniswapV3,
 		tokenContract: WETHSNXLPTokenContract,
 	});
 
@@ -55,7 +57,7 @@ function Pool() {
 	return (
 		<>
 			<Head>
-				<title>{t('pool.page-title', { pool: 'WETH/SNX' })}</title>
+				<title>{t('pool.page-title', { pool: 'WETH-SNX' })}</title>
 			</Head>
 			<StatsSection>
 				<StyledLPBalance
@@ -65,7 +67,7 @@ function Pool() {
 				/>
 				<StyledLPBalance
 					title={t('pool.stats.APR')}
-					value={res.data?.apy.toString() || 0}
+					value={res.data?.apy.toFixed(2) || 20}
 					size="lg"
 					main
 				/>

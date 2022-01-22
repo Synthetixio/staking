@@ -12,6 +12,7 @@ import KwentaIcon from 'assets/svg/app/kwenta.svg';
 import MintIcon from 'assets/svg/app/mint.svg';
 import ClaimIcon from 'assets/svg/app/claim.svg';
 import BurnIcon from 'assets/svg/app/burn.svg';
+import SorbetFinance from 'assets/svg/app/sorbet-finance.svg';
 
 import GridBox, { GridBoxProps } from 'components/GridBox/Gridbox';
 
@@ -26,8 +27,9 @@ import { ActionsContainer as Container } from './common-styles';
 import { wei } from '@synthetixio/wei';
 import { useRecoilValue } from 'recoil';
 import { useGetUniswapStakingRewardsAPY } from 'sections/pool/useGetUniswapStakingRewardsAPY';
-import { stakingRewardsContractWETHSNX, SUSDDAILPTokenContract } from 'constants/gelato';
+import { WETHSNXLPTokenContract } from 'constants/gelato';
 import { walletAddressState } from 'store/wallet';
+import synthetix, { NetworkId } from '@synthetixio/contracts-interface';
 
 const LayoutLayerTwo: FC = () => {
 	const { t } = useTranslation();
@@ -36,10 +38,11 @@ const LayoutLayerTwo: FC = () => {
 
 	const { stakingRewards, tradingRewards } = useUserStakingData(walletAddress);
 	const { currentCRatio, targetCRatio } = useStakingCalculations();
-	/* 	const res = useGetUniswapStakingRewardsAPY({
-		stakingRewardsContract: stakingRewardsContractWETHSNX,
-		tokenContract: SUSDDAILPTokenContract,
-	}); */
+	const snx = synthetix({ networkId: NetworkId['Mainnet-Ovm'], useOvm: true });
+	const res = useGetUniswapStakingRewardsAPY({
+		stakingRewardsContract: snx.contracts.StakingRewardsSNXWETHUniswapV3,
+		tokenContract: WETHSNXLPTokenContract,
+	});
 
 	const gridItems: GridBoxProps[] = useMemo(() => {
 		const aboveTargetCRatio = currentCRatio.lte(targetCRatio);
@@ -91,11 +94,11 @@ const LayoutLayerTwo: FC = () => {
 				isDisabled: false,
 			},
 			{
-				title: t('dashboard.actions.earn.title', { percent: '20%' }),
+				title: t('dashboard.actions.earn.title', { percent: `${res.data?.apy.toFixed(2) || 20}%` }),
 				copy: t('dashboard.actions.earn.copy', { asset: 'SNX-WETH', supplier: 'Sorbet Finance' }),
 				icon: (
 					<GlowingCircle variant="purple" size="md">
-						<Svg src={KwentaIcon} width="32" />
+						<Svg src={SorbetFinance} width="32" />
 					</GlowingCircle>
 				),
 				link: ROUTES.Pools.snx_weth,
