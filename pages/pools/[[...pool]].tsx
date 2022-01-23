@@ -101,7 +101,7 @@ function Pool() {
 											<ExternalLink href="https://www.sorbet.finance/#/pools/0x83bEeFB4cA39af649D03969B442c0E9F4E1732D8">
 												here
 											</ExternalLink>,
-											<ExternalLink href="https://www.sorbet.finance/#/pools/0x83bEeFB4cA39af649D03969B442c0E9F4E1732D8">
+											<ExternalLink href="https://blog.synthetix.io/weth-snx-incentives-on-l2/">
 												here
 											</ExternalLink>,
 										]}
