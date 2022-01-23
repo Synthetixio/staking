@@ -100,7 +100,7 @@ const LayoutLayerTwo: FC = () => {
 				copy: t('dashboard.actions.earn.copy', { asset: 'WETH-SNX', supplier: 'Sorbet Finance' }),
 				icon: (
 					<GlowingCircle variant="purple" size="md">
-						<Svg src={SorbetFinance} />
+						<Svg src={SorbetFinance} width="32" />
 					</GlowingCircle>
 				),
 				link: ROUTES.Pools.snx_weth,

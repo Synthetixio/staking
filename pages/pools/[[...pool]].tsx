@@ -2,7 +2,7 @@ import StatBox from 'components/StatBox';
 import { BigNumber, utils } from 'ethers';
 import Head from 'next/head';
 import { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import { useGetUniswapStakingRewardsAPY } from 'sections/pool/useGetUniswapStakingRewardsAPY';
 import PoolTabs from 'sections/pool/TabsButton';
@@ -95,10 +95,17 @@ function Pool() {
 							<StyledInfoContainer>
 								{t('pool.info-headline')}
 								<Subtitle>
-									{t('pool.info')}
-									<ExternalLink href="https://www.sorbet.finance/#/pools/0x83bEeFB4cA39af649D03969B442c0E9F4E1732D8">
-										LINK
-									</ExternalLink>
+									<Trans
+										i18nKey={'pool.info'}
+										components={[
+											<ExternalLink href="https://www.sorbet.finance/#/pools/0x83bEeFB4cA39af649D03969B442c0E9F4E1732D8">
+												here
+											</ExternalLink>,
+											<ExternalLink href="https://www.sorbet.finance/#/pools/0x83bEeFB4cA39af649D03969B442c0E9F4E1732D8">
+												here
+											</ExternalLink>,
+										]}
+									/>
 								</Subtitle>
 							</StyledInfoContainer>
 						</FlexDivCol>
