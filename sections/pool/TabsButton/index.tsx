@@ -49,7 +49,7 @@ export default function PoolTabs({
 				key: 'Remove Liquidity',
 			},
 		],
-		[t, balance, rewardsToClaim, allowanceAmount]
+		[t, balance, rewardsToClaim, allowanceAmount, stakedTokens]
 	);
 	return <StructuredTab boxPadding={40} boxHeight={450} tabData={tabData} />;
 }

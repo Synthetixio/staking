@@ -28,7 +28,7 @@ function Pool() {
 		pool: 'weth-snx',
 		userAddress: walletAddress,
 	});
-	const res = useGetUniswapStakingRewardsAPY({
+	const rates = useGetUniswapStakingRewardsAPY({
 		stakingRewardsContract: snx.contracts.StakingRewardsSNXWETHUniswapV3,
 		tokenContract: WETHSNXLPTokenContract,
 	});
@@ -67,7 +67,7 @@ function Pool() {
 				/>
 				<StyledLPBalance
 					title={t('pool.stats.APR')}
-					value={res.data?.apy.toFixed(2) || 20}
+					value={rates.data?.apy.toFixed(2) || 20}
 					size="lg"
 					main
 				/>
@@ -79,7 +79,7 @@ function Pool() {
 			</StatsSection>
 			<LineSpacer />
 			<Container>
-				{isL2 ? (
+				{isL2 && walletAddress ? (
 					<>
 						<FlexDivCol>
 							<PoolTabs

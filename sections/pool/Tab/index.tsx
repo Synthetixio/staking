@@ -1,8 +1,6 @@
-import { NetworkId, synthetix } from '@synthetixio/contracts-interface';
 import useSynthetixQueries, { GasPrice } from '@synthetixio/queries';
 import Button from 'components/Button';
 import GasSelector from 'components/GasSelector';
-import Connector from 'containers/Connector';
 import { BigNumber, utils } from 'ethers';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -19,6 +17,7 @@ export interface PoolTabProps {
 	approveFunc?: (amount: BigNumber) => Promise<boolean | undefined>;
 	fetchBalances: () => void;
 }
+
 export default function PoolTab({
 	action,
 	balance,
@@ -34,30 +33,27 @@ export default function PoolTab({
 	const [error, setError] = useState('');
 	const [amountToSend, setAmountToSend] = useState('');
 	const { useSynthetixTxn } = useSynthetixQueries();
-	const { signer } = Connector.useContainer();
-	const snxjs = synthetix({ networkId: NetworkId['Mainnet-Ovm'], useOvm: true, signer: signer! });
-	const tx = useSynthetixTxn('StakingRewards', action === 'add' ? 'mint' : 'withdraw');
+	const txn = useSynthetixTxn(
+		'StakingRewardsSNXWETHUniswapV3',
+		action === 'add' ? 'stake' : 'withdraw',
+		[utils.parseUnits(amountToSend ? amountToSend : '0', 18)],
+		gasPrice,
+		{
+			enabled: utils.parseUnits(amountToSend ? amountToSend : '0', 18).gt(BigNumber.from(0)),
+			onSettled: () => {
+				fetchBalances();
+			},
+		}
+	);
 
-	const handleLiquidityButton = async () => {
+	const handleTxButton = async () => {
 		if (!error) {
 			if (needToApprove && approveFunc) {
 				approveFunc(utils.parseUnits(amountToSend, 18));
 			} else {
-				const tx = await snxjs.contracts.StakingRewardsSNXWETHUniswapV3.stake(
-					utils.parseUnits(amountToSend, 18)
-				);
-				await tx.wait(1);
+				txn.mutate();
 			}
-			fetchBalances();
 		}
-	};
-
-	const handleUnStake = async () => {
-		const tx = await snxjs.contracts.StakingRewardsSNXWETHUniswapV3.withdraw(
-			utils.parseUnits(amountToSend, 18)
-		);
-		await tx.wait(1);
-		fetchBalances();
 	};
 
 	useEffect(() => {
@@ -82,8 +78,7 @@ export default function PoolTab({
 					}}
 					value={amountToSend}
 				/>
-				<Button
-					style={{ marginTop: '16px' }}
+				<StyledMaxButton
 					variant="secondary"
 					size="sm"
 					onClick={() => {
@@ -91,24 +86,24 @@ export default function PoolTab({
 					}}
 				>
 					{t('pool.tab.max')}
-				</Button>
+				</StyledMaxButton>
 			</StyledInputWrapper>
 			<DataRow>
 				<GasSelector
-					gasLimitEstimate={tx.gasLimit}
+					gasLimitEstimate={txn.gasLimit}
 					onGasPriceChange={setGasPrice}
-					optimismLayerOneFee={tx.optimismLayerOneFee}
+					optimismLayerOneFee={txn.optimismLayerOneFee}
 				/>
 			</DataRow>
 			{action === 'remove' ? (
-				<Button variant="primary" size="lg" disabled={!amountToSend} onClick={handleUnStake}>
+				<Button variant="primary" size="lg" disabled={!amountToSend} onClick={handleTxButton}>
 					{t('pool.tab.unstake')}
 				</Button>
 			) : (
 				<Button
 					variant="primary"
 					size="lg"
-					onClick={handleLiquidityButton}
+					onClick={handleTxButton}
 					disabled={!amountToSend || !!error}
 				>
 					{!!error ? error : needToApprove ? t('pool.tab.approve') : t('pool.tab.stake')}
@@ -151,4 +146,8 @@ const StyledButtonWrapper = styled.div`
 
 const StyledInputWrapper = styled(FlexDivCentered)`
 	align-items: center;
+`;
+
+const StyledMaxButton = styled(Button)`
+	margin-top: 16px;
 `;

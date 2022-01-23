@@ -39,7 +39,7 @@ const LayoutLayerTwo: FC = () => {
 	const { stakingRewards, tradingRewards } = useUserStakingData(walletAddress);
 	const { currentCRatio, targetCRatio } = useStakingCalculations();
 	const snx = synthetix({ networkId: NetworkId['Mainnet-Ovm'], useOvm: true });
-	const res = useGetUniswapStakingRewardsAPY({
+	const rates = useGetUniswapStakingRewardsAPY({
 		stakingRewardsContract: snx.contracts.StakingRewardsSNXWETHUniswapV3,
 		tokenContract: WETHSNXLPTokenContract,
 	});
@@ -94,8 +94,10 @@ const LayoutLayerTwo: FC = () => {
 				isDisabled: false,
 			},
 			{
-				title: t('dashboard.actions.earn.title', { percent: `${res.data?.apy.toFixed(2) || 20}%` }),
-				copy: t('dashboard.actions.earn.copy', { asset: 'SNX-WETH', supplier: 'Sorbet Finance' }),
+				title: t('dashboard.actions.earn.title', {
+					percent: `${rates.data?.apy.toFixed(2) || 20}%`,
+				}),
+				copy: t('dashboard.actions.earn.copy', { asset: 'WETH-SNX', supplier: 'Sorbet Finance' }),
 				icon: (
 					<GlowingCircle variant="purple" size="md">
 						<Svg src={SorbetFinance} />
