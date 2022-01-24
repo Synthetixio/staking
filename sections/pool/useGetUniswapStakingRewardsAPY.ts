@@ -1,7 +1,7 @@
 import { useQuery } from 'react-query';
-import { BigNumber, ethers } from 'ethers';
+import { BigNumber, ethers, utils } from 'ethers';
 import Connector from 'containers/Connector';
-import { wei } from '@synthetixio/wei';
+import Wei, { wei } from '@synthetixio/wei';
 
 const ONE_YEAR_SECONDS = 365 * 24 * 3600;
 const GELATO_POOL_ADDRESS = '0x83bEeFB4cA39af649D03969B442c0E9F4E1732D8'; // WETH/SNX

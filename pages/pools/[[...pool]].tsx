@@ -63,7 +63,7 @@ function Pool() {
 			<StatsSection>
 				<StyledLPBalance
 					title={t('pool.stats.balance')}
-					value={utils.formatUnits(LPBalance, 18).slice(0, 8)}
+					value={`${utils.formatUnits(LPBalance, 18).slice(0, 10)}$`}
 					size="md"
 				/>
 				<StyledLPBalance
@@ -74,7 +74,7 @@ function Pool() {
 				/>
 				<StyledLPBalance
 					title={t('pool.stats.rewards')}
-					value={utils.formatUnits(rewardsToClaim, 18).slice(0, 8)}
+					value={utils.formatUnits(rewardsToClaim, 18).slice(0, 10)}
 					size="md"
 				/>
 			</StatsSection>
@@ -96,12 +96,39 @@ function Pool() {
 							<Trans
 								i18nKey={'pool.info'}
 								components={[
-									<ExternalLink href="https://www.sorbet.finance/#/pools/0x83bEeFB4cA39af649D03969B442c0E9F4E1732D8">
-										here
-									</ExternalLink>,
-									<ExternalLink href="https://blog.synthetix.io/weth-snx-incentives-on-l2/">
-										here
-									</ExternalLink>,
+									<ol>
+										<li>
+											<Trans
+												i18nKey="pool.instruction-one"
+												components={[
+													<ExternalLink href="https://app.uniswap.org/#/swap?inputCurrency=ETH&outputCurrency=0x4200000000000000000000000000000000000006">
+														here
+													</ExternalLink>,
+												]}
+											/>
+										</li>
+										<li>
+											<Trans
+												i18nKey="pool.instruction-two"
+												components={[
+													<ExternalLink href="https://www.sorbet.finance/#/pools/0x83bEeFB4cA39af649D03969B442c0E9F4E1732D8">
+														here
+													</ExternalLink>,
+												]}
+											/>
+										</li>
+										<li>
+											<Trans i18nKey="pool.instruction-three" />
+										</li>
+									</ol>,
+									<Trans
+										i18nKey="pool.instruction-detail"
+										components={[
+											<ExternalLink href="https://blog.synthetix.io/weth-snx-incentives-on-l2/">
+												here
+											</ExternalLink>,
+										]}
+									/>,
 								]}
 							/>
 						</Subtitle>

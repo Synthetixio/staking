@@ -35,7 +35,6 @@ export default function PoolTab({
 	const [gasPrice, setGasPrice] = useState<GasPrice | undefined>(undefined);
 	const [gasPriceClaimRewards, setGasPriceClaimRewards] = useState<GasPrice | undefined>(undefined);
 	const [gasPriceApprove, setGasPriceApprove] = useState<GasPrice | undefined>(undefined);
-	const [gasPriceExit, setGasPriceExit] = useState<GasPrice | undefined>(undefined);
 	const [needToApprove, setNeedToApprove] = useState(false);
 	const [error, setError] = useState('');
 	const [amountToSend, setAmountToSend] = useState('');
@@ -69,13 +68,6 @@ export default function PoolTab({
 		}
 	);
 
-	const exitTxn = useSynthetixTxn(stakingRewardsContractName, 'exit', [], gasPriceExit, {
-		enabled: Boolean(synthetixjs),
-		onSettled: () => {
-			fetchBalances();
-		},
-	});
-
 	const claimRewardsTx = useSynthetixTxn(
 		stakingRewardsContractName,
 		'getReward',
@@ -85,19 +77,23 @@ export default function PoolTab({
 			enabled: true,
 			onSettled: () => {
 				fetchBalances();
+				setAmountToSend('');
 			},
 		}
 	);
 
-	const handleTxButton = () => {
+	const handleTxButton = (unstake?: boolean) => {
 		if (!error) {
-			if (needToApprove) {
+			if (unstake) {
+				txn.mutate();
+			} else if (needToApprove) {
 				approveTxn.mutate();
 			} else {
 				txn.mutate();
 			}
 		}
 	};
+
 	const allowanceAmountString = allowanceAmount.toString();
 	useEffect(() => {
 		if (amountToSend) {
@@ -113,84 +109,67 @@ export default function PoolTab({
 
 	return (
 		<StyledPoolTabWrapper>
-			<StyledInputWrapper>
-				<StyledInput
-					placeholder={utils.formatUnits(action === 'add' ? balance : stakedTokens, 18)}
-					type="number"
-					onChange={(e) => {
-						setAmountToSend(e.target.value || '');
-					}}
-					value={amountToSend}
-				/>
-				<StyledMaxButton
-					variant="secondary"
-					size="sm"
-					disabled={action === 'add' ? balance.lte(0) : stakedTokens.lte(0)}
-					onClick={() => {
-						setAmountToSend(utils.formatUnits(action === 'add' ? balance : stakedTokens, 18));
-					}}
-				>
-					{t('pool.tab.max')}
-				</StyledMaxButton>
-			</StyledInputWrapper>
-			<DataRow>
-				<GasSelector
-					gasLimitEstimate={needToApprove ? approveTxn.gasLimit : txn.gasLimit}
-					onGasPriceChange={needToApprove ? setGasPriceApprove : setGasPrice}
-					optimismLayerOneFee={
-						needToApprove ? approveTxn.optimismLayerOneFee : txn.optimismLayerOneFee
-					}
-					altVersion
-				/>
-			</DataRow>
-			{action === 'remove' ? (
-				<Button
-					variant="primary"
-					size="lg"
-					disabled={Number(amountToSend || 0) <= 0 || txn.isLoading || approveTxn.isLoading}
-					onClick={handleTxButton}
-				>
-					{t(txn.isLoading ? 'pool.tab.unstaking' : 'pool.tab.unstake')}
-				</Button>
-			) : (
-				<Button
-					variant="primary"
-					size="lg"
-					onClick={handleTxButton}
-					disabled={
-						Number(amountToSend || '0') <= 0 || !!error || txn.isLoading || approveTxn.isLoading
-					}
-				>
-					{!!error
-						? error
-						: needToApprove
-						? t(approveTxn.isLoading ? 'pool.tab.approving' : 'pool.tab.approve')
-						: t(txn.isLoading ? 'pool.tab.staking' : 'pool.tab.stake')}
-				</Button>
-			)}
-			{action === 'remove' && (
-				<StyledButtonWrapper>
-					<span>
-						{t('pool.tab.reward-exit', {
-							rewards: utils.formatUnits(stakedTokens, 18).slice(0, 10),
-						})}
-					</span>
+			<div>
+				<StyledInputWrapper>
+					<StyledInput
+						placeholder={utils.formatUnits(action === 'add' ? balance : stakedTokens, 18)}
+						type="number"
+						onChange={(e) => {
+							setAmountToSend(e.target.value || '');
+						}}
+						value={amountToSend}
+					/>
+					<StyledMaxButton
+						variant="secondary"
+						size="sm"
+						disabled={action === 'add' ? balance.lte(0) : stakedTokens.lte(0)}
+						onClick={() => {
+							setAmountToSend(utils.formatUnits(action === 'add' ? balance : stakedTokens, 18));
+						}}
+					>
+						{t('pool.tab.max')}
+					</StyledMaxButton>
+				</StyledInputWrapper>
+				<DataRow>
 					<GasSelector
-						gasLimitEstimate={exitTxn.gasLimit}
-						onGasPriceChange={setGasPriceExit}
-						optimismLayerOneFee={exitTxn.optimismLayerOneFee}
+						gasLimitEstimate={needToApprove ? approveTxn.gasLimit : txn.gasLimit}
+						onGasPriceChange={needToApprove ? setGasPriceApprove : setGasPrice}
+						optimismLayerOneFee={
+							needToApprove ? approveTxn.optimismLayerOneFee : txn.optimismLayerOneFee
+						}
 						altVersion
 					/>
-					<Button
+				</DataRow>
+				{action === 'remove' ? (
+					<StyledActionButton
 						variant="primary"
 						size="lg"
-						onClick={() => exitTxn.mutate()}
-						disabled={utils.formatUnits(stakedTokens, 18) === '0.0' || exitTxn.isLoading}
+						disabled={Number(amountToSend || 0) <= 0 || txn.isLoading || approveTxn.isLoading}
+						onClick={() => handleTxButton(true)}
 					>
-						{t('pool.tab.exit')}
-					</Button>
-				</StyledButtonWrapper>
-			)}
+						{t(txn.isLoading ? 'pool.tab.unstaking' : 'pool.tab.unstake')}
+					</StyledActionButton>
+				) : (
+					<StyledActionButton
+						variant="primary"
+						size="lg"
+						onClick={() => handleTxButton()}
+						disabled={
+							Number(amountToSend || '0') <= 0 || !!error || txn.isLoading || approveTxn.isLoading
+						}
+					>
+						{!!error
+							? error
+							: needToApprove
+							? t(approveTxn.isLoading ? 'pool.tab.approving' : 'pool.tab.approve')
+							: t(txn.isLoading ? 'pool.tab.staking' : 'pool.tab.stake')}
+					</StyledActionButton>
+				)}
+			</div>
+
+			<StyledStakedTokenBalance>
+				{t('pool.tab.staked-tokens', { staked: utils.formatUnits(stakedTokens, 18).slice(0, 10) })}
+			</StyledStakedTokenBalance>
 
 			<StyledButtonWrapper>
 				<span>
@@ -225,7 +204,6 @@ const StyledPoolTabWrapper = styled.section`
 `;
 
 const StyledButtonWrapper = styled.div`
-	margin-top: auto;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -241,4 +219,13 @@ const StyledInputWrapper = styled(FlexDivCentered)`
 
 const StyledMaxButton = styled(Button)`
 	margin-top: 16px;
+`;
+
+const StyledStakedTokenBalance = styled.div`
+	display: flex;
+	justify-content: center;
+`;
+
+const StyledActionButton = styled(Button)`
+	width: 100%;
 `;
