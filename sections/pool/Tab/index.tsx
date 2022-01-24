@@ -50,6 +50,7 @@ export default function PoolTab({
 		{
 			onSettled: () => {
 				fetchBalances();
+				setNeedToApprove(false);
 			},
 			enabled: Boolean(synthetixjs),
 		}
