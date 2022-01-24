@@ -29,18 +29,18 @@ import { useRecoilValue } from 'recoil';
 import { useGetUniswapStakingRewardsAPY } from 'sections/pool/useGetUniswapStakingRewardsAPY';
 import { WETHSNXLPTokenContract } from 'constants/gelato';
 import { walletAddressState } from 'store/wallet';
-import synthetix, { NetworkId } from '@synthetixio/contracts-interface';
+import Connector from 'containers/Connector';
 
 const LayoutLayerTwo: FC = () => {
 	const { t } = useTranslation();
 
 	const walletAddress = useRecoilValue(walletAddressState);
-
+	const { synthetixjs } = Connector.useContainer();
 	const { stakingRewards, tradingRewards } = useUserStakingData(walletAddress);
 	const { currentCRatio, targetCRatio } = useStakingCalculations();
-	const snx = synthetix({ networkId: NetworkId['Mainnet-Ovm'], useOvm: true });
+
 	const rates = useGetUniswapStakingRewardsAPY({
-		stakingRewardsContract: snx.contracts.StakingRewardsSNXWETHUniswapV3,
+		stakingRewardsContract: synthetixjs?.contracts.StakingRewardsSNXWETHUniswapV3 ?? null,
 		tokenContract: WETHSNXLPTokenContract,
 	});
 
