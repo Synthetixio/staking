@@ -105,7 +105,7 @@ export const useGetUniswapStakingRewardsAPY = ({
 						.add(amount1CurrentWei.mul(snxRate));
 
 					const gUNIPrice = wei(totalValueInPool).div(wei(gUNITotalSupply));
-					const yearProRata = wei(ONE_YEAR_SECONDS).div(wei(duration));
+					const yearProRata = ONE_YEAR_SECONDS / duration.toNumber();
 					const gUNIValueInContract = wei(contractBalance).mul(gUNIPrice);
 					const rewardsValuePerYear = wei(rewardForDuration).mul(yearProRata).mul(snxRate);
 
