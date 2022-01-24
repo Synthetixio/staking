@@ -3129,7 +3129,7 @@
     synthetix "2.56.1"
     web3-utils "1.2.11"
 
-"@synthetixio/contracts-interface@2.57.1", "@synthetixio/contracts-interface@^2.57.1":
+"@synthetixio/contracts-interface@2.57.1":
   version "2.57.1"
   resolved "https://registry.yarnpkg.com/@synthetixio/contracts-interface/-/contracts-interface-2.57.1.tgz#46e60ea8f6af5c8a8f73fe94e848e3c6ea9d3f2a"
   integrity sha512-iJs1YmlvwvU7pyUU2H2eqV3/kPp9X/upX+iuRQzdaxZGl6ZQEizAidcadXxPY6k45T7xc2aO4zVRIQJDileQtQ==
@@ -3185,7 +3185,7 @@
     "@synthetixio/optimism-networks" "2.57.1"
     ethers "5.4.6"
 
-"@synthetixio/queries@^2.57.1":
+"@synthetixio/queries@2.57.1":
   version "2.57.1"
   resolved "https://registry.yarnpkg.com/@synthetixio/queries/-/queries-2.57.1.tgz#68d7cf50b99c2745bdecd9b009374ca12dbe33af"
   integrity sha512-CC2xXVs/HKMYN3xYNbJEAbeX9H2miCmO4rXEpIOX8eCySBKimoB9ayfNgHhWevW2dA4NveNJWzyfSyp58BnVKg==
