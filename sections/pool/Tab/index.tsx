@@ -156,7 +156,7 @@ export default function PoolTab({
 					{!!error
 						? error
 						: needToApprove
-						? t(txn.isLoading ? 'pool.tab.approving' : 'pool.tab.approve')
+						? t(approveTxn.isLoading ? 'pool.tab.approving' : 'pool.tab.approve')
 						: t(txn.isLoading ? 'pool.tab.staking' : 'pool.tab.stake')}
 				</Button>
 			)}
