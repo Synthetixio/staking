@@ -97,6 +97,7 @@ export default function PoolTab({
 				<StyledMaxButton
 					variant="secondary"
 					size="sm"
+					disabled={action === 'add' ? balance.lte(0) : stakedTokens.lte(0)}
 					onClick={() => {
 						setAmountToSend(utils.formatUnits(action === 'add' ? balance : stakedTokens, 18));
 					}}
@@ -113,7 +114,12 @@ export default function PoolTab({
 				/>
 			</DataRow>
 			{action === 'remove' ? (
-				<Button variant="primary" size="lg" disabled={!amountToSend} onClick={handleTxButton}>
+				<Button
+					variant="primary"
+					size="lg"
+					disabled={Number(amountToSend || 0) <= 0}
+					onClick={handleTxButton}
+				>
 					{t('pool.tab.unstake')}
 				</Button>
 			) : (
@@ -121,7 +127,7 @@ export default function PoolTab({
 					variant="primary"
 					size="lg"
 					onClick={handleTxButton}
-					disabled={!amountToSend || !!error}
+					disabled={Number(amountToSend || 0) <= 0 || !!error}
 				>
 					{!!error ? error : needToApprove ? t('pool.tab.approve') : t('pool.tab.stake')}
 				</Button>
