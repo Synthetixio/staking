@@ -389,9 +389,11 @@
 			"claim": "Claim",
 			"claiming": "Claiming...",
 			"reward-balance": "Your claimable rewards: {{rewards}}",
+			"reward-exit": "Claim rewards ({{rewards}}) and unstake all tokens",
 			"unstake": "Unstake",
 			"unstaking": "Unstaking...",
-			"max": "Max"
+			"max": "Max",
+			"exit": "Exit"
 		},
 		"stats": {
 			"balance": "Liquidity Token to stake",

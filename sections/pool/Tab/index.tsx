@@ -35,6 +35,7 @@ export default function PoolTab({
 	const [gasPrice, setGasPrice] = useState<GasPrice | undefined>(undefined);
 	const [gasPriceClaimRewards, setGasPriceClaimRewards] = useState<GasPrice | undefined>(undefined);
 	const [gasPriceApprove, setGasPriceApprove] = useState<GasPrice | undefined>(undefined);
+	const [gasPriceExit, setGasPriceExit] = useState<GasPrice | undefined>(undefined);
 	const [needToApprove, setNeedToApprove] = useState(false);
 	const [error, setError] = useState('');
 	const [amountToSend, setAmountToSend] = useState('');
@@ -67,6 +68,13 @@ export default function PoolTab({
 			},
 		}
 	);
+
+	const exitTxn = useSynthetixTxn(stakingRewardsContractName, 'exit', [], gasPrice, {
+		enabled: true,
+		onSettled: () => {
+			fetchBalances();
+		},
+	});
 
 	const claimRewardsTx = useSynthetixTxn(
 		stakingRewardsContractName,
@@ -160,10 +168,35 @@ export default function PoolTab({
 						: t(txn.isLoading ? 'pool.tab.staking' : 'pool.tab.stake')}
 				</Button>
 			)}
+			{action === 'remove' && (
+				<StyledButtonWrapper>
+					<span>
+						{t('pool.tab.reward-exit', {
+							rewards: utils.formatUnits(stakedTokens, 18).slice(0, 10),
+						})}
+					</span>
+					<GasSelector
+						gasLimitEstimate={exitTxn.gasLimit}
+						onGasPriceChange={setGasPriceExit}
+						optimismLayerOneFee={exitTxn.optimismLayerOneFee}
+						altVersion
+					/>
+					<Button
+						variant="primary"
+						size="lg"
+						onClick={() => exitTxn.mutate()}
+						disabled={utils.formatUnits(stakedTokens, 18) === '0.0' || exitTxn.isLoading}
+					>
+						{t('pool.tab.exit')}
+					</Button>
+				</StyledButtonWrapper>
+			)}
 
 			<StyledButtonWrapper>
 				<span>
-					{t('pool.tab.reward-balance', { rewards: utils.formatUnits(rewardsToClaim, 18) })}
+					{t('pool.tab.reward-balance', {
+						rewards: utils.formatUnits(rewardsToClaim, 18).slice(0, 10),
+					})}
 				</span>
 				<GasSelector
 					gasLimitEstimate={claimRewardsTx.gasLimit}
