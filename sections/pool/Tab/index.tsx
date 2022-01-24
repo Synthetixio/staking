@@ -35,6 +35,7 @@ export default function PoolTab({
 	const [gasPrice, setGasPrice] = useState<GasPrice | undefined>(undefined);
 	const [gasPriceClaimRewards, setGasPriceClaimRewards] = useState<GasPrice | undefined>(undefined);
 	const [gasPriceApprove, setGasPriceApprove] = useState<GasPrice | undefined>(undefined);
+	const [needToApprove, setNeedToApprove] = useState(false);
 	const [error, setError] = useState('');
 	const [amountToSend, setAmountToSend] = useState('');
 	const { useSynthetixTxn, useContractTxn } = useSynthetixQueries();
