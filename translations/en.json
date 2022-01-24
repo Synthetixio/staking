@@ -376,6 +376,9 @@
 		"page-title": "{{pool}} Pool | Synthetix",
 		"info-headline": "Instructions.",
 		"info": "Obtain G-UNI LP tokens to stake by adding liquidity to the WETH/SNX pool <0>here</0>. Find a detailed guide <1>here</1>.",
+		"switch-to-l2-btn": "Switch to L2",
+		"switch-to-l2-text": "Please change to L2 Optimism",
+		"connect-wallet-text": "To stake your LP token you need to connect your wallet",
 		"tab": {
 			"add": "Add Liquidity",
 			"remove": "Remove Liquidity",

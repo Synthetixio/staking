@@ -7,13 +7,16 @@ import { useRecoilValue } from 'recoil';
 import { useGetUniswapStakingRewardsAPY } from 'sections/pool/useGetUniswapStakingRewardsAPY';
 import PoolTabs from 'sections/pool/TabsButton';
 import { useGUNILPToken } from 'sections/pool/useGUNILPToken';
-import { isL2State, walletAddressState } from 'store/wallet';
+import { isL2State, isWalletConnectedState, walletAddressState } from 'store/wallet';
 import styled from 'styled-components';
 import media from 'styled-media-query';
 import { ExternalLink, FlexDivCol, LineSpacer, StatsSection } from 'styles/common';
 import { WETHSNXLPTokenContract } from 'constants/gelato';
 import { InfoContainer, Subtitle } from 'sections/layer2/components/common';
 import synthetix, { NetworkId } from '@synthetixio/contracts-interface';
+import Connector from 'containers/Connector';
+import Button from 'components/Button';
+import { switchToL2 } from '@synthetixio/optimism-networks';
 
 function Pool() {
 	const [LPBalance, setLPBalance] = useState(BigNumber.from(0));
@@ -22,7 +25,6 @@ function Pool() {
 	const [stakedTokens, setStakedTokens] = useState(BigNumber.from(0));
 	const { t } = useTranslation();
 	const walletAddress = useRecoilValue(walletAddressState);
-	const isL2 = useRecoilValue(isL2State);
 	const snx = synthetix({ networkId: NetworkId['Mainnet-Ovm'], useOvm: true });
 	const { balanceOf, rewards, allowance, stakedTokensBalance } = useGUNILPToken({
 		pool: 'weth-snx',
@@ -78,43 +80,69 @@ function Pool() {
 			</StatsSection>
 			<LineSpacer />
 			<Container>
-				{isL2 && walletAddress ? (
-					<>
-						<FlexDivCol>
-							<PoolTabs
-								balance={LPBalance}
-								rewardsToClaim={rewardsToClaim}
-								allowanceAmount={allowanceAmount}
-								stakedTokens={stakedTokens}
-								fetchBalances={fetchBalances}
+				<FlexDivCol>
+					<PoolTabs
+						balance={LPBalance}
+						rewardsToClaim={rewardsToClaim}
+						allowanceAmount={allowanceAmount}
+						stakedTokens={stakedTokens}
+						fetchBalances={fetchBalances}
+					/>
+				</FlexDivCol>
+				<FlexDivCol>
+					<StyledInfoContainer>
+						{t('pool.info-headline')}
+						<Subtitle>
+							<Trans
+								i18nKey={'pool.info'}
+								components={[
+									<ExternalLink href="https://www.sorbet.finance/#/pools/0x83bEeFB4cA39af649D03969B442c0E9F4E1732D8">
+										here
+									</ExternalLink>,
+									<ExternalLink href="https://blog.synthetix.io/weth-snx-incentives-on-l2/">
+										here
+									</ExternalLink>,
+								]}
 							/>
-						</FlexDivCol>
-						<FlexDivCol>
-							<StyledInfoContainer>
-								{t('pool.info-headline')}
-								<Subtitle>
-									<Trans
-										i18nKey={'pool.info'}
-										components={[
-											<ExternalLink href="https://www.sorbet.finance/#/pools/0x83bEeFB4cA39af649D03969B442c0E9F4E1732D8">
-												here
-											</ExternalLink>,
-											<ExternalLink href="https://blog.synthetix.io/weth-snx-incentives-on-l2/">
-												here
-											</ExternalLink>,
-										]}
-									/>
-								</Subtitle>
-							</StyledInfoContainer>
-						</FlexDivCol>
-					</>
-				) : (
-					<h3 style={{ textAlign: 'end' }}>Please change to Layer 2 and connect a wallet</h3>
-				)}
+						</Subtitle>
+					</StyledInfoContainer>
+				</FlexDivCol>
 			</Container>
 		</>
 	);
 }
+
+const PoolWrapper = () => {
+	const isL2 = useRecoilValue(isL2State);
+	const isWalletConnected = useRecoilValue(isWalletConnectedState);
+	const { t } = useTranslation();
+	const walletAddress = useRecoilValue(walletAddressState);
+	const { connectWallet } = Connector.useContainer();
+	if (!isWalletConnected || !walletAddress) {
+		return (
+			<WrapperContainer>
+				<h3>{t('pool.connect-wallet-text')}</h3>
+				<Button variant="primary" onClick={connectWallet}>
+					{t('common.wallet.connect-wallet')}
+				</Button>
+			</WrapperContainer>
+		);
+	}
+	if (!isL2) {
+		const ethereum = window.ethereum;
+		return (
+			<WrapperContainer>
+				<h3>{t('pool.switch-to-l2-text')}</h3>
+				{ethereum && ethereum.isMetaMask && (
+					<SwitchToL2Btn variant="primary" onClick={() => switchToL2({ ethereum })}>
+						{t('pool.switch-to-l2-btn')}
+					</SwitchToL2Btn>
+				)}
+			</WrapperContainer>
+		);
+	}
+	return <Pool />;
+};
 
 const Container = styled.div`
 	display: grid;
@@ -138,4 +166,15 @@ const StyledInfoContainer = styled(InfoContainer)`
 	padding: 16px;
 `;
 
-export default Pool;
+const WrapperContainer = styled.div`
+	margin-top: 200px;
+	display: flex;
+	height: 100%;
+	align-items: center;
+	flex-direction: column;
+`;
+const SwitchToL2Btn = styled(Button)`
+	width: 100px;
+`;
+
+export default PoolWrapper;
