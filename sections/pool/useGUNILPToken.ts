@@ -1,7 +1,7 @@
-import synthetix, { NetworkId } from '@synthetixio/contracts-interface';
 import { WETHSNXLPTokenContract } from 'constants/gelato';
 import Connector from 'containers/Connector';
 import { BigNumber } from 'ethers';
+import { useCallback } from 'react';
 
 export interface GUNILPTokenProps {
 	pool: 'weth-snx' | 'susd-dai';
@@ -9,51 +9,54 @@ export interface GUNILPTokenProps {
 }
 
 export function useGUNILPToken({ userAddress }: GUNILPTokenProps) {
-	const { provider, signer } = Connector.useContainer();
-	const snxjs = synthetix({ networkId: NetworkId['Mainnet-Ovm'], useOvm: true });
+	const { provider, signer, synthetixjs } = Connector.useContainer();
 
-	const balanceOf = async () => {
+	const balanceOf = useCallback(async () => {
 		if (provider && userAddress) {
 			const balance: BigNumber = await WETHSNXLPTokenContract.connect(provider).balanceOf(
 				userAddress
 			);
 			return balance;
 		}
-	};
-	const stakedTokensBalance = async () => {
-		if (provider && userAddress) {
-			const stakedBalance: BigNumber = await snxjs.contracts.StakingRewardsSNXWETHUniswapV3.connect(
-				provider
-			).balanceOf(userAddress);
+	}, [provider, userAddress]);
+	const stakedTokensBalance = useCallback(async () => {
+		if (provider && userAddress && synthetixjs) {
+			const stakedBalance: BigNumber =
+				await synthetixjs.contracts.StakingRewardsSNXWETHUniswapV3.connect(provider).balanceOf(
+					userAddress
+				);
 			return stakedBalance;
 		}
-	};
-	const approve = async (amount: BigNumber) => {
-		if (signer) {
-			const approved: boolean = await WETHSNXLPTokenContract.connect(signer).approve(
-				snxjs.contracts.StakingRewardsSNXWETHUniswapV3.address,
-				amount
-			);
-			return approved;
-		}
-	};
-	const allowance = async () => {
-		if (provider && userAddress) {
+	}, [provider, synthetixjs, userAddress]);
+	const approve = useCallback(
+		async (amount: BigNumber) => {
+			if (signer && synthetixjs) {
+				const approved: boolean = await WETHSNXLPTokenContract.connect(signer).approve(
+					synthetixjs.contracts.StakingRewardsSNXWETHUniswapV3.address,
+					amount
+				);
+				return approved;
+			}
+		},
+		[signer, synthetixjs]
+	);
+	const allowance = useCallback(async () => {
+		if (provider && userAddress && synthetixjs) {
 			const result: BigNumber = await WETHSNXLPTokenContract.connect(provider).allowance(
 				userAddress,
-				snxjs.contracts.StakingRewardsSNXWETHUniswapV3.address
+				synthetixjs.contracts.StakingRewardsSNXWETHUniswapV3.address
 			);
 			return result;
 		}
-	};
+	}, [provider, synthetixjs, userAddress]);
 
-	const rewards = async () => {
-		if (provider && userAddress) {
-			const rewards: BigNumber = await snxjs.contracts.StakingRewardsSNXWETHUniswapV3.connect(
+	const rewards = useCallback(async () => {
+		if (provider && userAddress && synthetixjs) {
+			const rewards: BigNumber = await synthetixjs.contracts.StakingRewardsSNXWETHUniswapV3.connect(
 				provider
 			).earned(userAddress);
 			return rewards;
 		}
-	};
+	}, [provider, synthetixjs, userAddress]);
 	return { balanceOf, approve, allowance, rewards, stakedTokensBalance };
 }

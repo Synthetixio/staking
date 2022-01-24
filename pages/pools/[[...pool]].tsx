@@ -1,7 +1,7 @@
 import StatBox from 'components/StatBox';
 import { BigNumber, utils } from 'ethers';
 import Head from 'next/head';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import { useGetUniswapStakingRewardsAPY } from 'sections/pool/useGetUniswapStakingRewardsAPY';
@@ -32,12 +32,7 @@ function Pool() {
 		stakingRewardsContract: snx.contracts.StakingRewardsSNXWETHUniswapV3,
 		tokenContract: WETHSNXLPTokenContract,
 	});
-
-	useEffect(() => {
-		fetchBalances();
-	}, [walletAddress]);
-
-	const fetchBalances = () => {
+	const fetchBalances = useCallback(() => {
 		if (walletAddress) {
 			balanceOf().then((balance) => {
 				if (balance) setLPBalance(balance);
@@ -52,7 +47,11 @@ function Pool() {
 				if (amount) setStakedTokens(amount);
 			});
 		}
-	};
+	}, [allowance, balanceOf, rewards, stakedTokensBalance, walletAddress]);
+
+	useEffect(() => {
+		fetchBalances();
+	}, [fetchBalances]);
 
 	return (
 		<>
