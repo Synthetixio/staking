@@ -63,6 +63,7 @@ export default function PoolTab({
 			enabled: utils.parseUnits(amountToSend ? amountToSend : '0', 18).gt(BigNumber.from(0)),
 			onSettled: () => {
 				fetchBalances();
+				setAmountToSend('');
 			},
 		}
 	);
