@@ -69,7 +69,7 @@ export default function PoolTab({
 		}
 	);
 
-	const exitTxn = useSynthetixTxn(stakingRewardsContractName, 'exit', [], gasPrice, {
+	const exitTxn = useSynthetixTxn(stakingRewardsContractName, 'exit', [], gasPriceExit, {
 		enabled: true,
 		onSettled: () => {
 			fetchBalances();
