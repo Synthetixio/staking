@@ -106,7 +106,7 @@ const LayoutLayerTwo: FC = () => {
 				link: ROUTES.Pools.snx_weth,
 			},
 		].map((cell, i) => ({ ...cell, gridArea: `tile-${i + 1}` }));
-	}, [t, currentCRatio, targetCRatio, stakingRewards, tradingRewards]);
+	}, [t, currentCRatio, targetCRatio, stakingRewards, tradingRewards, rates.data?.apy]);
 
 	return (
 		<StyledContainer>
