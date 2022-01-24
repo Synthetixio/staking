@@ -10,7 +10,6 @@ export default function PoolTabs({
 	balance,
 	rewardsToClaim,
 	allowanceAmount,
-	approveFunc,
 	fetchBalances,
 	stakedTokens,
 }: PoolTabsProps) {
@@ -25,7 +24,6 @@ export default function PoolTabs({
 						balance={balance}
 						rewardsToClaim={rewardsToClaim}
 						allowanceAmount={allowanceAmount}
-						approveFunc={approveFunc}
 						stakedTokens={stakedTokens}
 						fetchBalances={fetchBalances}
 					/>
@@ -49,7 +47,7 @@ export default function PoolTabs({
 				key: 'Remove Liquidity',
 			},
 		],
-		[t, balance, rewardsToClaim, allowanceAmount, stakedTokens]
+		[t, balance, rewardsToClaim, allowanceAmount, stakedTokens, fetchBalances]
 	);
 	return <StructuredTab boxPadding={40} boxHeight={450} tabData={tabData} />;
 }

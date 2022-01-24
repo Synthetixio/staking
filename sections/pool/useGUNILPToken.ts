@@ -9,7 +9,7 @@ export interface GUNILPTokenProps {
 }
 
 export function useGUNILPToken({ userAddress }: GUNILPTokenProps) {
-	const { provider, signer, synthetixjs } = Connector.useContainer();
+	const { provider, synthetixjs } = Connector.useContainer();
 
 	const balanceOf = useCallback(async () => {
 		if (provider && userAddress) {
@@ -28,18 +28,7 @@ export function useGUNILPToken({ userAddress }: GUNILPTokenProps) {
 			return stakedBalance;
 		}
 	}, [provider, synthetixjs, userAddress]);
-	const approve = useCallback(
-		async (amount: BigNumber) => {
-			if (signer && synthetixjs) {
-				const approved: boolean = await WETHSNXLPTokenContract.connect(signer).approve(
-					synthetixjs.contracts.StakingRewardsSNXWETHUniswapV3.address,
-					amount
-				);
-				return approved;
-			}
-		},
-		[signer, synthetixjs]
-	);
+
 	const allowance = useCallback(async () => {
 		if (provider && userAddress && synthetixjs) {
 			const result: BigNumber = await WETHSNXLPTokenContract.connect(provider).allowance(
@@ -58,5 +47,5 @@ export function useGUNILPToken({ userAddress }: GUNILPTokenProps) {
 			return rewards;
 		}
 	}, [provider, synthetixjs, userAddress]);
-	return { balanceOf, approve, allowance, rewards, stakedTokensBalance };
+	return { balanceOf, allowance, rewards, stakedTokensBalance };
 }

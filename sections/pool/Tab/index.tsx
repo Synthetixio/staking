@@ -7,6 +7,8 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { FlexDivCentered } from 'styles/common';
 import { DataRow, StyledInput } from '../../staking/components/common';
+import { WETHSNXLPTokenContract } from 'constants/gelato';
+import Connector from 'containers/Connector';
 
 export interface PoolTabProps {
 	action: 'add' | 'remove';
@@ -14,7 +16,6 @@ export interface PoolTabProps {
 	rewardsToClaim: BigNumber;
 	allowanceAmount: BigNumber;
 	stakedTokens: BigNumber;
-	approveFunc?: (amount: BigNumber) => Promise<boolean | undefined>;
 	fetchBalances: () => void;
 }
 
@@ -23,17 +24,33 @@ export default function PoolTab({
 	balance,
 	rewardsToClaim,
 	allowanceAmount,
-	approveFunc,
 	stakedTokens,
 	fetchBalances,
 }: PoolTabProps) {
 	const { t } = useTranslation();
+	const { synthetixjs } = Connector.useContainer();
+
 	const [gasPrice, setGasPrice] = useState<GasPrice | undefined>(undefined);
 	const [gasPriceClaimRewards, setGasPriceClaimRewards] = useState<GasPrice | undefined>(undefined);
-	const [needToApprove, setNeedToApprove] = useState(true);
+	const [gasPriceApprove, setGasPriceApprove] = useState<GasPrice | undefined>(undefined);
 	const [error, setError] = useState('');
 	const [amountToSend, setAmountToSend] = useState('');
-	const { useSynthetixTxn } = useSynthetixQueries();
+	const { useSynthetixTxn, useContractTxn } = useSynthetixQueries();
+	const approveTxn = useContractTxn(
+		WETHSNXLPTokenContract,
+		'approve',
+		[
+			synthetixjs?.contracts.StakingRewardsSNXWETHUniswapV3.address,
+			utils.parseUnits(amountToSend ? amountToSend : '0', 18),
+		],
+		gasPriceApprove,
+		{
+			onSettled: () => {
+				fetchBalances();
+			},
+			enabled: Boolean(synthetixjs),
+		}
+	);
 	const txn = useSynthetixTxn(
 		'StakingRewardsSNXWETHUniswapV3',
 		action === 'add' ? 'stake' : 'withdraw',
@@ -60,11 +77,10 @@ export default function PoolTab({
 		}
 	);
 
-	const handleTxButton = async () => {
+	const handleTxButton = () => {
 		if (!error) {
-			if (needToApprove && approveFunc) {
-				await approveFunc(utils.parseUnits(amountToSend, 18));
-				fetchBalances();
+			if (needToApprove) {
+				approveTxn.mutate();
 			} else {
 				txn.mutate();
 			}
@@ -107,9 +123,11 @@ export default function PoolTab({
 			</StyledInputWrapper>
 			<DataRow>
 				<GasSelector
-					gasLimitEstimate={txn.gasLimit}
-					onGasPriceChange={setGasPrice}
-					optimismLayerOneFee={txn.optimismLayerOneFee}
+					gasLimitEstimate={needToApprove ? approveTxn.gasLimit : txn.gasLimit}
+					onGasPriceChange={needToApprove ? setGasPriceApprove : setGasPrice}
+					optimismLayerOneFee={
+						needToApprove ? approveTxn.optimismLayerOneFee : txn.optimismLayerOneFee
+					}
 					altVersion
 				/>
 			</DataRow>

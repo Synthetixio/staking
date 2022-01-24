@@ -24,7 +24,7 @@ function Pool() {
 	const walletAddress = useRecoilValue(walletAddressState);
 	const isL2 = useRecoilValue(isL2State);
 	const snx = synthetix({ networkId: NetworkId['Mainnet-Ovm'], useOvm: true });
-	const { balanceOf, rewards, allowance, approve, stakedTokensBalance } = useGUNILPToken({
+	const { balanceOf, rewards, allowance, stakedTokensBalance } = useGUNILPToken({
 		pool: 'weth-snx',
 		userAddress: walletAddress,
 	});
@@ -86,7 +86,6 @@ function Pool() {
 								rewardsToClaim={rewardsToClaim}
 								allowanceAmount={allowanceAmount}
 								stakedTokens={stakedTokens}
-								approveFunc={approve}
 								fetchBalances={fetchBalances}
 							/>
 						</FlexDivCol>
