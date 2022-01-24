@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import PoolTab, { PoolTabProps } from '../Tab';
 
-type PoolTabsProps = Omit<PoolTabProps, 'action'>;
+type PoolTabsProps = Omit<PoolTabProps, 'action' | 'stakingRewardsContractName'>;
 
 export default function PoolTabs({
 	balance,
