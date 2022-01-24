@@ -53,7 +53,7 @@ function Pool() {
 
 	useEffect(() => {
 		fetchBalances();
-	}, [fetchBalances]);
+	}, []);
 
 	return (
 		<>
@@ -63,7 +63,9 @@ function Pool() {
 			<StatsSection>
 				<StyledLPBalance
 					title={t('pool.stats.balance')}
-					value={`${utils.formatUnits(LPBalance, 18).slice(0, 10)}$`}
+					value={`${
+						rates.data?.gUniPrice ? rates.data.gUniPrice.mul(LPBalance).toNumber().toFixed(2) : 0
+					}$`}
 					size="md"
 				/>
 				<StyledLPBalance
