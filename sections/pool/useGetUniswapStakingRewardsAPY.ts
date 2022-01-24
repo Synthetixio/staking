@@ -36,7 +36,7 @@ type StakingRewardsData = {
 	apy: number;
 	snx: number;
 	eth: number;
-	gUniPrice: Wei;
+	gUNIPrice: Wei;
 };
 
 type CoinGeckoSnxRates = { havven: { usd: number }; ethereum: { usd: number } };
@@ -114,14 +114,14 @@ export const useGetUniswapStakingRewardsAPY = ({
 						eth: amount0CurrentWei.toNumber(),
 						snx: amount1CurrentWei.toNumber(),
 						apy: wei(100).mul(rewardsValuePerYear).div(gUNIValueInContract).toNumber(),
-						gUniPrice: gUNIPrice,
+						gUNIPrice,
 					};
 				}
 				return {
 					eth: 0,
 					snx: 0,
 					apy: 0,
-					gUniPrice: wei(0),
+					gUNIPrice: wei(0),
 				};
 			} catch (e) {
 				console.error(e);
@@ -129,7 +129,7 @@ export const useGetUniswapStakingRewardsAPY = ({
 					eth: 0,
 					snx: 0,
 					apy: 0,
-					gUniPrice: wei(0),
+					gUNIPrice: wei(0),
 				};
 			}
 		},

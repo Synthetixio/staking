@@ -63,9 +63,9 @@ function Pool() {
 			<StatsSection>
 				<StyledLPBalance
 					title={t('pool.stats.balance')}
-					value={`${
-						rates.data?.gUniPrice ? rates.data.gUniPrice.mul(LPBalance).toNumber().toFixed(2) : 0
-					}$`}
+					value={`$${
+						rates.data?.gUNIPrice ? rates.data.gUNIPrice.mul(stakedTokens).toNumber().toFixed(2) : 0
+					}`}
 					size="md"
 				/>
 				<StyledLPBalance
