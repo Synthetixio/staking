@@ -139,19 +139,25 @@ export default function PoolTab({
 				<Button
 					variant="primary"
 					size="lg"
-					disabled={Number(amountToSend || 0) <= 0}
+					disabled={Number(amountToSend || 0) <= 0 || txn.isLoading || approveTxn.isLoading}
 					onClick={handleTxButton}
 				>
-					{t('pool.tab.unstake')}
+					{t(txn.isLoading ? 'pool.tab.unstaking' : 'pool.tab.unstake')}
 				</Button>
 			) : (
 				<Button
 					variant="primary"
 					size="lg"
 					onClick={handleTxButton}
-					disabled={Number(amountToSend || 0) <= 0 || !!error}
+					disabled={
+						Number(amountToSend || '0') <= 0 || !!error || txn.isLoading || approveTxn.isLoading
+					}
 				>
-					{!!error ? error : needToApprove ? t('pool.tab.approve') : t('pool.tab.stake')}
+					{!!error
+						? error
+						: needToApprove
+						? t(txn.isLoading ? 'pool.tab.approving' : 'pool.tab.approve')
+						: t(txn.isLoading ? 'pool.tab.staking' : 'pool.tab.stake')}
 				</Button>
 			)}
 
@@ -168,7 +174,7 @@ export default function PoolTab({
 				<Button
 					variant="primary"
 					size="lg"
-					disabled={utils.formatUnits(rewardsToClaim, 18) === '0.0'}
+					disabled={utils.formatUnits(rewardsToClaim, 18) === '0.0' || claimRewardsTx.isLoading}
 					onClick={() => claimRewardsTx.mutate()}
 				>
 					{t('pool.tab.claim')}

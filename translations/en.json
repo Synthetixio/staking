@@ -380,10 +380,14 @@
 			"add": "Add Liquidity",
 			"remove": "Remove Liquidity",
 			"approve": "Approve",
+			"approving": "Approving...",
 			"stake": "Stake",
+			"staking": "Staking...",
 			"claim": "Claim",
+			"claiming": "Claiming...",
 			"reward-balance": "Your claimable rewards: {{rewards}}",
 			"unstake": "Unstake",
+			"unstaking": "Unstaking...",
 			"max": "Max"
 		},
 		"stats": {
