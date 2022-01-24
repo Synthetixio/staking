@@ -26,6 +26,7 @@ export default function PoolTabs({
 						allowanceAmount={allowanceAmount}
 						stakedTokens={stakedTokens}
 						fetchBalances={fetchBalances}
+						stakingRewardsContractName={'StakingRewardsSNXWETHUniswapV3'}
 					/>
 				),
 				blue: true,
@@ -41,6 +42,7 @@ export default function PoolTabs({
 						allowanceAmount={allowanceAmount}
 						stakedTokens={stakedTokens}
 						fetchBalances={fetchBalances}
+						stakingRewardsContractName={'StakingRewardsSNXWETHUniswapV3'}
 					/>
 				),
 				blue: false,

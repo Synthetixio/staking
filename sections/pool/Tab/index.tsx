@@ -17,6 +17,7 @@ export interface PoolTabProps {
 	allowanceAmount: BigNumber;
 	stakedTokens: BigNumber;
 	fetchBalances: () => void;
+	stakingRewardsContractName: 'StakingRewardsSNXWETHUniswapV3'; // can add more string when we have support for more
 }
 
 export default function PoolTab({
@@ -26,6 +27,7 @@ export default function PoolTab({
 	allowanceAmount,
 	stakedTokens,
 	fetchBalances,
+	stakingRewardsContractName,
 }: PoolTabProps) {
 	const { t } = useTranslation();
 	const { synthetixjs } = Connector.useContainer();
@@ -40,7 +42,7 @@ export default function PoolTab({
 		WETHSNXLPTokenContract,
 		'approve',
 		[
-			synthetixjs?.contracts.StakingRewardsSNXWETHUniswapV3.address,
+			synthetixjs?.contracts[stakingRewardsContractName].address,
 			utils.parseUnits(amountToSend ? amountToSend : '0', 18),
 		],
 		gasPriceApprove,
@@ -52,7 +54,7 @@ export default function PoolTab({
 		}
 	);
 	const txn = useSynthetixTxn(
-		'StakingRewardsSNXWETHUniswapV3',
+		stakingRewardsContractName,
 		action === 'add' ? 'stake' : 'withdraw',
 		[utils.parseUnits(amountToSend ? amountToSend : '0', 18)],
 		gasPrice,
@@ -65,7 +67,7 @@ export default function PoolTab({
 	);
 
 	const claimRewardsTx = useSynthetixTxn(
-		'StakingRewardsSNXWETHUniswapV3',
+		stakingRewardsContractName,
 		'getReward',
 		[],
 		gasPriceClaimRewards,
