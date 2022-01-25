@@ -1,5 +1,5 @@
 import { useQuery } from 'react-query';
-import { BigNumber, ethers, utils } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 import Connector from 'containers/Connector';
 import Wei, { wei } from '@synthetixio/wei';
 

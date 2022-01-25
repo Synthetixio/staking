@@ -53,7 +53,7 @@ function Pool() {
 
 	useEffect(() => {
 		fetchBalances();
-	}, []);
+	}, [fetchBalances]);
 
 	return (
 		<>
