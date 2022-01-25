@@ -21,8 +21,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # pin@v2
 
-      # - name: Audit dependencies
-      #   run: npm audit --audit-level=critical
+      - name: Audit dependencies
+        run: yarn audit --level=critical
 
       # - name: Lockfile lint
       #   run: lockfile-lint -p package-lock.json --type npm --allowed-hosts npm github.com --allowed-schemes "https:" "git+ssh:" "git+https:" "npm:"
