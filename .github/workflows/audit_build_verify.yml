@@ -22,7 +22,7 @@ jobs:
         uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # pin@v2
 
       - name: Audit dependencies
-        run: yarn audit --level=critical
+        run: audit-ci --critical
 
       - name: Lockfile lint
         run: lockfile-lint -p yarn.lock --type yarn --allowed-hosts yarn github.com --allowed-schemes "https:" "yarn:" "git+https:"
