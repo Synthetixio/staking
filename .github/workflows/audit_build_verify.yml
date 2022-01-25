@@ -58,10 +58,6 @@ jobs:
             ${{ runner.os }}-alpine-node-
         continue-on-error: true
 
-      # fix: permission issues on ghactions+docker+npm@7
-      - name: Chown workspace
-        run: chown -R $(whoami) .
-
       - name: Install dependencies
         run: yarn
       - name: Lint
@@ -134,10 +130,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-ubuntu-e2e-
         continue-on-error: true
-
-      # fix: permission issues on ghactions+docker+npm@7
-      - name: Chown workspace
-        run: chown -R $(whoami) .
 
       - name: Install dependencies
         run: yarn
