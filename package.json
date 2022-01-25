@@ -132,6 +132,11 @@
 	"resolutions": {
 		"sharp": "0.29.3"
 	},
+	"husky": {
+		"hooks": {
+			"pre-commit": "yarn lint"
+		}
+	},
 	"jest": {
 		"roots": [
 			"<rootDir>"
