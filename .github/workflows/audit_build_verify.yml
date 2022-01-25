@@ -28,9 +28,9 @@ jobs:
         run: lockfile-lint -p yarn.lock --type yarn --allowed-hosts yarn github.com --allowed-schemes "https:" "yarn:" "git+https:"
 
   build:
-    # needs: audit
-    # # run only on audit success or audit skipped
-    # if: always() && needs.audit.result == 'success' || always() && needs.audit.result == 'skipped'
+    needs: audit
+    # run only on audit success or audit skipped
+    if: always() && needs.audit.result == 'success' || always() && needs.audit.result == 'skipped'
     runs-on: ubuntu-latest
 
     container:
