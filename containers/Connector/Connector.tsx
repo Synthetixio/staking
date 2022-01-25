@@ -97,7 +97,8 @@ const useConnector = () => {
 		if (isAppReady && network) {
 			const onboard = initOnboard(synthetixjs!, network.id, {
 				address: setWalletAddress,
-				network: (networkId: number) => {
+				network: (networkId?: number) => {
+					if (!networkId) return; // user disconnected the wallet
 					const isSupportedNetwork = Boolean(getNetworkFromId({ id: networkId }));
 					if (!isSupportedNetwork && window.ethereum) {
 						// This should only happen when a user is connected and changes to an unsupported network
