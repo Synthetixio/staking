@@ -22,10 +22,10 @@ jobs:
         uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # pin@v2
 
       - name: Audit dependencies
-        run: npm audit --audit-level=critical
+        run: audit-ci --critical
 
       - name: Lockfile lint
-        run: lockfile-lint -p package-lock.json --type npm --allowed-hosts npm github.com --allowed-schemes "https:" "git+ssh:" "git+https:" "npm:"
+        run: lockfile-lint -p yarn.lock --type yarn --allowed-hosts yarn github.com --allowed-schemes "https:" "yarn:" "git+https:"
 
   build:
     needs: audit
@@ -43,37 +43,33 @@ jobs:
       - name: Checkout
         uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # pin@v2
 
-      - name: Set npm cache directory
-        run: npm config set cache .npm-cache --global 
+      - name: Set yarn cache directory
+        run: yarn config set cache-folder .yarn-cache
         continue-on-error: true
 
-      - name: Cache node modules
+      - name: Cache yarn modules
         uses: actions/cache@937d24475381cd9c75ae6db12cb4e79714b926ed # pin@v2
         with:
           path: |
-            .npm-cache
+            .yarn-cache
             node_modules
-          key: ${{ runner.os }}-alpine-node-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-alpine-node-
+            ${{ runner.os }}-yarn-
         continue-on-error: true
 
-      # fix: permission issues on ghactions+docker+npm@7
-      - name: Chown workspace
-        run: chown -R $(whoami) .
-
       - name: Install dependencies
-        run: npm install --prefer-offline --no-audit
+        run: yarn install
 
       - name: Lint
         # run only on master/dev branch and pull requests
         if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'
-        run: npm run lint:sarif
-      
+        run: yarn lint:sarif
+
       - name: Unit
         # run only on master/dev branch and pull requests
         if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'
-        run: npm run test:unit
+        run: yarn test:unit
 
       - name: Upload lint results
         # run if lint failed and only on master/dev branch and pull requests
@@ -87,13 +83,13 @@ jobs:
         uses: actions/cache@937d24475381cd9c75ae6db12cb4e79714b926ed # pin@v2
         with:
           path: .next/cache
-          key: ${{ runner.os }}-alpine-next-cache-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-next-cache-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-alpine-next-cache-
+            ${{ runner.os }}-next-cache-
         continue-on-error: true
 
       - name: Build
-        run: npm run build
+        run: yarn build
 
       - name: Compress build
         run: tar -zcvf build.tar.gz .next
@@ -121,27 +117,23 @@ jobs:
       - name: Checkout
         uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # pin@v2
 
-      - name: Set npm cache directory
-        run: npm config set cache .npm-cache --global 
+      - name: Set yarn cache directory
+        run: yarn config set cache-folder .yarn-cache
         continue-on-error: true
 
-      - name: Cache node modules
+      - name: Cache yarn modules
         uses: actions/cache@937d24475381cd9c75ae6db12cb4e79714b926ed # pin@v2
         with:
           path: |
-            .npm-cache
+            .yarn-cache
             node_modules
-          key: ${{ runner.os }}-ubuntu-e2e-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-e2e-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-ubuntu-e2e-
+            ${{ runner.os }}-e2e-
         continue-on-error: true
 
-      # fix: permission issues on ghactions+docker+npm@7
-      - name: Chown workspace
-        run: chown -R $(whoami) .
-
       - name: Install dependencies
-        run: npm install --prefer-offline --no-audit
+        run: yarn install
         env:
           CYPRESS_CACHE_FOLDER: ${{ github.workspace }}/node_modules/.cache/Cypress
 
@@ -166,7 +158,7 @@ jobs:
         run: tar -xf build.tar.gz
 
       - name: Run e2e tests
-        run: npm run test:e2e:ci
+        run: yarn test:e2e:ci
         env:
           SECRET_WORDS: ${{ secrets.SECRET_WORDS }}
           PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}

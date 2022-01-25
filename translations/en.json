@@ -372,6 +372,39 @@
 			}
 		}
 	},
+	"pool": {
+		"page-title": "{{pool}} Pool | Synthetix",
+		"info-headline": "Instructions:",
+		"info": "Obtain G-UNI LP tokens to stake by adding liquidity to the WETH/SNX pool. <0></0> <1></1>",
+		"instruction-one": "Wrap your ETH <0>here</0>.",
+		"instruction-two": "Deposit WETH and SNX to the G-UNI pool <0>here</0>.",
+		"instruction-three": "Stake LP tokens in this page.",
+		"instruction-detail": "Find a detailed guide <0>here</0>.",
+		"switch-to-l2-btn": "Switch to L2",
+		"switch-to-l2-text": "Please change to L2 Optimism",
+		"connect-wallet-text": "To stake your LP token you need to connect your wallet",
+		"tab": {
+			"add": "Deposit",
+			"remove": "Withdraw",
+			"approve": "Approve",
+			"approving": "Approving...",
+			"stake": "Stake",
+			"staking": "Staking...",
+			"claim": "Claim",
+			"claiming": "Claiming...",
+			"reward-balance": "Your claimable rewards: {{rewards}}",
+			"staked-tokens": "Your staked tokens: {{staked}}",
+			"unstake": "Unstake",
+			"unstaking": "Unstaking...",
+			"max": "Max",
+			"exit": "Exit"
+		},
+		"stats": {
+			"balance": "Staked Value",
+			"APR": "APR",
+			"rewards": "Rewards to claim"
+		}
+	},
 	"debt": {
 		"page-title": "Debt | Synthetix Staking",
 		"actions": {
