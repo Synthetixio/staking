@@ -712,8 +712,8 @@
 				"collateral": {
 					"label": "Using"
 				},
-				"low-cratio-tip": "You can only borrow at {{safeMinCRatio}}% or higher. Your position will be eligible for liquidation if it falls below {{minCRatio}}%.",
-				"healthy-cratio-tip": "Ensure your position stays above {{minCRatio}}% to prevent liquidation.",
+				"low-cratio-tip": "You can only borrow at {{safeMinCRatio}} or higher. Your position will be eligible for liquidation if it falls below {{minCRatio}}.",
+				"healthy-cratio-tip": "Ensure your position stays above {{minCRatio}} to prevent liquidation.",
 				"confirm-transaction": {
 					"left-panel-label": "BORROWING",
 					"right-panel-label": "POSTING"
@@ -788,6 +788,7 @@
 			"draw": {
 				"left-col-label": "INCREASE",
 				"right-col-label": "NEW TOTAL",
+				"low-collateral": "Collateral too low for adding more debt",
 				"button-labels": {
 					"default": "INCREASE DEBT",
 					"drawing": "INCREASING DEBT..."
@@ -1033,7 +1034,8 @@
 			},
 			"time": "Time left",
 			"votes": "Votes",
-			"create": "Create new proposal"
+			"create": "Create new proposal",
+			"switch": "Switch to L2 to create SIP/SCCPs"
 		},
 		"create": {
 			"title": "Create new proposal",

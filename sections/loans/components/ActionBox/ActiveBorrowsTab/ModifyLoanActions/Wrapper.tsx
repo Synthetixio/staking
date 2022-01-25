@@ -26,9 +26,8 @@ import {
 	TxModalItem,
 	TxModalItemSeperator,
 } from 'sections/loans/components/common';
-import { LOAN_TYPE_ERC20, LOAN_TYPE_ETH } from 'sections/loans/constants';
 import AssetInput from 'sections/loans/components/ActionBox/BorrowSynthsTab/AssetInput';
-import { Loan } from 'queries/loans/types';
+import { Loan } from 'containers/Loans/types';
 import AccruedInterest from 'sections/loans/components/ActionBox/components/AccruedInterest';
 import CRatio from 'sections/loans/components/ActionBox/components/LoanCRatio';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
@@ -93,7 +92,6 @@ const Wrapper: FC<WrapperProps> = ({
 	showInterestAccrued,
 
 	error,
-	setError,
 
 	txModalOpen,
 	setTxModalOpen,
@@ -106,10 +104,7 @@ const Wrapper: FC<WrapperProps> = ({
 
 	const [gasPrice, setGasPrice] = useState<GasPrice | undefined>(undefined);
 
-	const minCRatio = useMemo(
-		() => minCRatios.get(loanTypeIsETH ? LOAN_TYPE_ETH : LOAN_TYPE_ERC20) || wei(0),
-		[minCRatios, loanTypeIsETH]
-	);
+	const minCRatio = loanTypeIsETH ? minCRatios.ethMinCratio : minCRatios.erc20MinCratio;
 
 	const { useContractTxn } = useSynthetixQueries();
 
@@ -141,7 +136,7 @@ const Wrapper: FC<WrapperProps> = ({
 		if (!nextInteractionDate) return;
 
 		let isMounted = true;
-		const unsubs: Array<any> = [() => (isMounted = false)];
+		const unsubs: Array<Function> = [() => (isMounted = false)];
 
 		const timer = () => {
 			const intervalId = setInterval(() => {
@@ -209,12 +204,12 @@ const Wrapper: FC<WrapperProps> = ({
 				<SettingsContainer>
 					{!showCRatio ? null : (
 						<SettingContainer>
-							<CRatio {...{ loan, loanTypeIsETH, minCRatio }} />
+							<CRatio loan={loan} minCRatio={minCRatio || wei(0)} />
 						</SettingContainer>
 					)}
 					{!showInterestAccrued ? null : (
 						<SettingContainer>
-							<AccruedInterest {...{ loan }} />
+							<AccruedInterest loan={loan} />
 						</SettingContainer>
 					)}
 					<SettingContainer>

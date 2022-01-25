@@ -24,8 +24,3 @@ export const panelState = atom<PanelType>({
 	key: getGovKey('panel'),
 	default: PanelType.LIST,
 });
-
-export const numOfCouncilSeatsState = atom<number>({
-	key: getGovKey('numOfCouncilSeats'),
-	default: 0,
-});

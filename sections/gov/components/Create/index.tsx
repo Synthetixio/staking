@@ -21,6 +21,8 @@ import { truncateAddress } from 'utils/formatters/string';
 import { useTranslation } from 'react-i18next';
 import useSynthetixQueries from '@synthetixio/queries';
 import { AxiosResponse } from 'axios';
+import { isL2State } from 'store/wallet';
+import { useRecoilValue } from 'recoil';
 
 type IndexProps = {
 	onBack: Function;
@@ -48,6 +50,7 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 	const space = useSnapshotSpaceQuery(snapshotEndpoint, activeTab);
 	const [ipfsHash, setIpfsHash] = useState<string | null>(null);
 
+	const isL2 = useRecoilValue(isL2State);
 	const { signer } = Connector.useContainer();
 
 	const contract = useMemo(
@@ -55,7 +58,13 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 		[signer]
 	);
 
-	const txn = useContractTxn(contract, 'logProposal', [ipfsHash || ''], {}, { enabled: true });
+	const txn = useContractTxn(
+		contract,
+		'logProposal',
+		[ipfsHash || ''],
+		{},
+		{ enabled: true, gasLimitBuffer: 0.5 }
+	);
 
 	const sanitiseTimestamp = (timestamp: number) => {
 		return Math.round(timestamp / 1e3);
@@ -85,7 +94,7 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 
 			setIpfsHash(ipfsHash);
 
-			if (activeTab === SPACE_KEY.PROPOSAL) {
+			if (activeTab === SPACE_KEY.PROPOSAL && isL2) {
 				txn.mutate();
 				setTxModalOpen(true);
 				setSignTransactionState(Transaction.PRESUBMIT);
@@ -150,7 +159,8 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 	useEffect(() => {
 		const getCurrentBlock = async () => {
 			if (provider) {
-				let blockNumber = await provider?.getBlockNumber();
+				const L1Provider = new ethers.providers.InfuraProvider(1, process.env.INFURA_ARCHIVE_KEY);
+				let blockNumber = await L1Provider?.getBlockNumber();
 				if (blockNumber) {
 					setBlock(blockNumber);
 				}

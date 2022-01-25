@@ -15,19 +15,19 @@
 		"test:synpress:run": "env-cmd -f .env.local synpress run",
 		"test:e2e": "start-server-and-test 'npm run build && npm run start' http-get://localhost:3000 'synpress run'",
 		"test:e2e:ci": "synpress run --group smoke-tests --record --parallel",
-		"upgrade-synthetix": "npm i @synthetixio/assets@latest @synthetixio/contracts-interface@latest @synthetixio/optimism-networks@latest @synthetixio/providers@latest @synthetixio/queries@latest @synthetixio/transaction-notifier@latest"
+		"upgrade-synthetix": "npm i @synthetixio/assets@latest @synthetixio/contracts-interface@latest @synthetixio/optimism-networks@latest @synthetixio/providers@latest @synthetixio/queries@latest @synthetixio/transaction-notifier@latest @synthetixio/wei@latest"
 	},
 	"dependencies": {
 		"@artsy/fresnel": "1.8.0",
 		"@reach/dialog": "0.15.3",
 		"@snapshot-labs/snapshot.js": "0.3.22",
 		"@synthetixio/assets": "2.0.12",
-		"@synthetixio/contracts-interface": "2.56.3-1",
-		"@synthetixio/optimism-networks": "2.56.3-1",
-		"@synthetixio/providers": "2.56.3-1",
-		"@synthetixio/queries": "2.56.3-1",
-		"@synthetixio/transaction-notifier": "2.56.3-1",
-		"@synthetixio/wei": "2.56.3",
+		"@synthetixio/contracts-interface": "2.56.3-2",
+		"@synthetixio/optimism-networks": "2.56.3-2",
+		"@synthetixio/providers": "2.57.0",
+		"@synthetixio/queries": "2.57.0",
+		"@synthetixio/transaction-notifier": "2.56.3-2",
+		"@synthetixio/wei": "2.56.3-2",
 		"@tippyjs/react": "4.1.0",
 		"@uniswap/sdk-core": "^3.0.1",
 		"@uniswap/v3-sdk": "^3.6.3",
@@ -100,15 +100,18 @@
 		"babel-eslint": "10.1.0",
 		"babel-plugin-styled-components": "1.11.1",
 		"env-cmd": "10.1.0",
-		"eslint": "7.12.0",
+		"eslint": "^7.12.0",
 		"eslint-config-prettier": "6.10.1",
 		"eslint-config-react-app": "6.0.0",
+		"eslint-plugin-cypress": "^2.12.1",
 		"eslint-plugin-flowtype": "5.2.0",
 		"eslint-plugin-import": "2.22.0",
 		"eslint-plugin-jsx-a11y": "6.4.1",
 		"eslint-plugin-prettier": "3.1.4",
 		"eslint-plugin-react": "7.21.5",
 		"eslint-plugin-react-hooks": "4.3.0",
+		"eslint-plugin-testing-library": "^5.0.4",
+		"eslint-plugin-ui-testing": "^2.0.0",
 		"ethereum-blockies-base64": "1.0.2",
 		"file-loader": "6.2.0",
 		"graph-results-pager": "1.0.3",
@@ -131,7 +134,7 @@
 	},
 	"husky": {
 		"hooks": {
-			"pre-commit": "npm run lint"
+			"pre-commit": "yarn lint"
 		}
 	},
 	"jest": {

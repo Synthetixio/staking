@@ -1,11 +1,14 @@
 import { useState, useCallback, useMemo } from 'react';
 import { ethers } from 'ethers';
-
-import { Loan } from 'queries/loans/types';
+import { Loan } from 'containers/Loans/types';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import { tx } from 'utils/transactions';
 import Loans from 'containers/Loans';
 import Wrapper from './Wrapper';
+import { useRouter } from 'next/router';
+import ROUTES from 'constants/routes';
+import { getETHToken } from 'contracts/ethToken';
+import { getRenBTCToken } from 'contracts/renBTCToken';
 
 type WithdrawProps = {
 	loanId: number;
@@ -15,6 +18,7 @@ type WithdrawProps = {
 };
 
 const Withdraw: React.FC<WithdrawProps> = ({ loan, loanId, loanTypeIsETH, loanContract }) => {
+	const router = useRouter();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const { reloadPendingWithdrawals } = Loans.useContainer();
 
@@ -24,11 +28,14 @@ const Withdraw: React.FC<WithdrawProps> = ({ loan, loanId, loanTypeIsETH, loanCo
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 
 	const collateralAsset = loanTypeIsETH ? 'ETH' : 'renBTC';
-	const collateralDecimals = loanTypeIsETH ? 18 : 8; // todo
+	const collateralDecimals = loanTypeIsETH ? getETHToken().decimals : getRenBTCToken().decimals;
 
 	const collateralAmount = useMemo(
 		() =>
-			ethers.utils.parseUnits(ethers.utils.formatUnits(loan.collateral, 18), collateralDecimals), // normalize collateral decimals
+			ethers.utils.parseUnits(
+				ethers.utils.formatUnits(loan.collateral, collateralDecimals),
+				collateralDecimals
+			), // normalize collateral decimals
 		[loan.collateral, collateralDecimals]
 	);
 	const withdrawalAmount = useMemo(
@@ -38,10 +45,10 @@ const Withdraw: React.FC<WithdrawProps> = ({ loan, loanId, loanTypeIsETH, loanCo
 				: ethers.BigNumber.from(0),
 		[withdrawalAmountString, collateralDecimals]
 	);
-	const remainingAmount = useMemo(() => collateralAmount.sub(withdrawalAmount), [
-		collateralAmount,
-		withdrawalAmount,
-	]);
+	const remainingAmount = useMemo(
+		() => collateralAmount.sub(withdrawalAmount),
+		[collateralAmount, withdrawalAmount]
+	);
 	const remainingAmountString = useMemo(
 		() => ethers.utils.formatUnits(remainingAmount, collateralDecimals),
 		[remainingAmount, collateralDecimals]
@@ -74,8 +81,10 @@ const Withdraw: React.FC<WithdrawProps> = ({ loan, loanId, loanTypeIsETH, loanCo
 					}),
 			});
 			await reloadPendingWithdrawals();
+			setIsWorking('');
+			setTxModalOpen(false);
+			router.push(ROUTES.Loans.List);
 		} catch {
-		} finally {
 			setIsWorking('');
 			setTxModalOpen(false);
 		}
