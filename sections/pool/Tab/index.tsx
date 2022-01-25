@@ -97,14 +97,12 @@ export default function PoolTab({
 
 	const allowanceAmountString = allowanceAmount.toString();
 	useEffect(() => {
-		if (amountToSend) {
-			setError('');
-			try {
-				const allowanceAmountBigNumber = BigNumber.from(allowanceAmountString);
-				setNeedToApprove(utils.parseUnits(amountToSend, 18).gt(allowanceAmountBigNumber));
-			} catch (error) {
-				setError('Number is too big');
-			}
+		setError('');
+		try {
+			const allowanceAmountBigNumber = BigNumber.from(allowanceAmountString);
+			setNeedToApprove(utils.parseUnits(amountToSend || '0', 18).gt(allowanceAmountBigNumber));
+		} catch (error) {
+			setError('Number is too big');
 		}
 	}, [amountToSend, allowanceAmountString]);
 
