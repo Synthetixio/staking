@@ -43,8 +43,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # pin@v2
 
-      - name: Set npm cache directory
-        run: npm config set cache .npm-cache --global
+      - name: Set yarn cache directory
+        run: yarn config set cache-folder .yarn-cache
         continue-on-error: true
 
       - name: Cache node modules
@@ -120,8 +120,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # pin@v2
 
-      - name: Set npm cache directory
-        run: npm config set cache .npm-cache --global
+      - name: Set yarn cache directory
+        run: yarn config set cache-folder .yarn-cache
         continue-on-error: true
 
       - name: Cache node modules
