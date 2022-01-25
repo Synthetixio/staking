@@ -24,8 +24,8 @@ jobs:
       - name: Audit dependencies
         run: yarn audit --level=critical
 
-      # - name: Lockfile lint
-      #   run: lockfile-lint -p package-lock.json --type npm --allowed-hosts npm github.com --allowed-schemes "https:" "git+ssh:" "git+https:" "npm:"
+      - name: Lockfile lint
+        run: lockfile-lint -p yarn.lock --type yarn --allowed-hosts yarn github.com --allowed-schemes "https:" "yarn:" "git+https:"
 
   build:
     # needs: audit
