@@ -1,7 +1,7 @@
 import useSynthetixQueries, { GasPrice } from '@synthetixio/queries';
 import Button from 'components/Button';
 import GasSelector from 'components/GasSelector';
-import { BigNumber, utils } from 'ethers';
+import { BigNumber, constants, utils } from 'ethers';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
@@ -119,7 +119,8 @@ export default function PoolTab({
 							let hasError: boolean = false;
 							try {
 								hasError = false;
-								utils.parseUnits(e.target.value || '0', 18);
+								const val = utils.parseUnits(e.target.value || '0', 18);
+								if (val.gte(constants.MaxUint256)) hasError = true;
 							} catch {
 								hasError = true;
 							}
