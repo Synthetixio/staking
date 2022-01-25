@@ -5,32 +5,13 @@ import { walletAddressState } from 'store/wallet';
 import styled from 'styled-components';
 import { FlexDivColCentered } from 'styles/common';
 
-const getDHedgeUniswapUrl = (debt: Wei) =>
-	`https://app.uniswap.org/#/swap?inputCurrency=0x57ab1ec28d129707052df4df418d58a2d46d5f51&exactAmount=${debt.toNumber()}&exactField=input&outputCurrency=0x5f7f94a1dd7b15594d17543beb8b30b111dd464c`;
-
 const ManageTab = () => {
 	const walletAddress = useRecoilValue(walletAddressState);
 	const { debtBalance: actualDebt } = useUserStakingData(walletAddress);
 
 	return (
 		<ManageContainer>
-			{!walletAddress ? (
-				<span>Please connect a wallet</span>
-			) : (
-				<iframe
-					title="uniswap-dhedge"
-					style={{
-						width: '100%',
-						height: 'auto',
-						minHeight: '550px',
-						border: 'none',
-						borderRadius: '5px',
-						overflow: 'hidden',
-					}}
-					scrolling="no"
-					src={getDHedgeUniswapUrl(actualDebt)}
-				></iframe>
-			)}
+			{!walletAddress ? <span>Please connect a wallet</span> : <div>Input here</div>}
 		</ManageContainer>
 	);
 };
@@ -39,7 +20,6 @@ const ManageContainer = styled(FlexDivColCentered)`
 	height: 100%;
 	justify-content: center;
 	background: ${(props) => props.theme.colors.navy};
-
 	font-family: ${(props) => props.theme.fonts.extended};
 	text-transform: uppercase;
 	color: ${(props) => props.theme.colors.mutedGray};

@@ -20,7 +20,7 @@ const SNXDebtMirrorToken = new Token(
 	'SNX Debt Mirror'
 );
 
-export async function getSUSDdSNXPool(provider: providers.Provider): Promise<Pool> {
+export async function getdSNXSUSDPool(provider: providers.Provider): Promise<Pool> {
 	const poolContract = new Contract(
 		'0x9957c4795ab663622db54fc48fda874da59150ff',
 		IUniswapV3PoolABI,
