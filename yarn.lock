@@ -3251,14 +3251,6 @@
     start-server-and-test "1.13.1"
     synthetix-js "2.49.0"
 
-"@synthetixio/transaction-notifier@2.56.3-2":
-  version "2.56.3-2"
-  resolved "https://registry.yarnpkg.com/@synthetixio/transaction-notifier/-/transaction-notifier-2.56.3-2.tgz#de9cf169df414743fca8fa8ee60b721a6d810db8"
-  integrity sha512-ZL+1o04XtIzOP/I+BzIFfr8yz9S/vOCURXejXUQ5zpATlupa4vskUhJvxF+ETrNBCOWwXTob77RKAjkDMsktHw==
-  dependencies:
-    ethers "5.4.6"
-    lodash "4.17.19"
-
 "@synthetixio/transaction-notifier@2.57.1":
   version "2.57.1"
   resolved "https://registry.yarnpkg.com/@synthetixio/transaction-notifier/-/transaction-notifier-2.57.1.tgz#280bf9ee5dfffe8a2cdd0afd64d348b0583affc6"
