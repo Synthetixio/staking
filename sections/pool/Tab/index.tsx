@@ -116,7 +116,16 @@ export default function PoolTab({
 						placeholder={utils.formatUnits(action === 'add' ? balance : stakedTokens, 18)}
 						type="number"
 						onChange={(e) => {
-							setAmountToSend(e.target.value || '');
+							let hasError: boolean = false;
+							try {
+								hasError = false;
+								utils.parseUnits(e.target.value || '0', 18);
+							} catch {
+								hasError = true;
+							}
+							if (!hasError) {
+								setAmountToSend(e.target.value || '');
+							}
 						}}
 						value={amountToSend}
 					/>
