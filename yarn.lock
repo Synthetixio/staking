@@ -3139,14 +3139,6 @@
     synthetix "2.41.0"
     web3-utils "1.2.11"
 
-"@synthetixio/optimism-networks@2.56.3-2":
-  version "2.56.3-2"
-  resolved "https://registry.yarnpkg.com/@synthetixio/optimism-networks/-/optimism-networks-2.56.3-2.tgz#5f648764dfcd5419aef355abd0f79146cfd23399"
-  integrity sha512-nSXpcPHYPIRzX4WbSGu52WtlCSfxlui0Ytt8E209XLMz5HGjItoaipttkSWOgg6pGq6Cpg6EuGcFVzIb8rHcng==
-  dependencies:
-    "@eth-optimism/watcher" "^0.0.1-alpha.9"
-    "@metamask/providers" "8.1.1"
-
 "@synthetixio/optimism-networks@2.57.1":
   version "2.57.1"
   resolved "https://registry.yarnpkg.com/@synthetixio/optimism-networks/-/optimism-networks-2.57.1.tgz#a25944d883ec2aeb7afd78f47f593734200c7106"
