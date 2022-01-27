@@ -83,7 +83,7 @@ const SynthsPieChart: FC<DebtPieChartProps> = () => {
 			skewValue: supply.skewValue,
 			skewValueChart: Math.abs(supply.skewValue.toNumber()),
 		}));
-	}, [totalSupply?.supplyData, totalSupply?.totalValue]);
+	}, [totalSupply?.supplyData]);
 
 	return (
 		<SynthsPieChartContainer>
