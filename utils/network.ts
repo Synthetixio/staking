@@ -10,7 +10,7 @@ export async function getDefaultNetworkId(): Promise<NetworkId> {
 	try {
 		const provider = await detectEthereumProvider();
 		if (provider && provider.chainId) {
-			return Number(provider.chainId);
+			return Number(provider.chainId) as NetworkId;
 		}
 		return DEFAULT_NETWORK_ID;
 	} catch (e) {

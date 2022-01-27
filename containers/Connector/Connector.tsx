@@ -10,10 +10,10 @@ import { getDefaultNetworkId, getIsOVM } from 'utils/network';
 import { useRecoilState } from 'recoil';
 import {
 	NetworkId,
-	Network as NetworkName,
 	SynthetixJS,
 	synthetix,
 	getNetworkFromId,
+	NetworkNameById,
 } from '@synthetixio/contracts-interface';
 import { ethers } from 'ethers';
 import { switchToL1 } from '@synthetixio/optimism-networks';
@@ -61,7 +61,7 @@ const useConnector = () => {
 
 			if (!window.ethereum) {
 				setAppReady(true);
-				setNetwork({ name: NetworkName.Mainnet, id: networkId, useOvm: false });
+				setNetwork({ name: NetworkNameById[1], id: networkId, useOvm: false });
 				setSynthetixjs(synthetix({ networkId, useOvm: false }));
 				return;
 			}
@@ -79,7 +79,7 @@ const useConnector = () => {
 				//infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
 				provider: window.ethereum as any, // loadProvider as incorrect types for provider
 			});
-			const useOvm = getIsOVM(networkId);
+			const useOvm = getIsOVM(Number(networkId));
 
 			const snxjs = synthetix({ provider, networkId, useOvm });
 
@@ -95,7 +95,7 @@ const useConnector = () => {
 
 	useEffect(() => {
 		if (isAppReady && network) {
-			const onboard = initOnboard(synthetixjs!, network.id, {
+			const onboard = initOnboard(synthetixjs!, Number(network.id), {
 				address: setWalletAddress,
 				network: (networkId?: number) => {
 					if (!networkId) return; // user disconnected the wallet
@@ -113,7 +113,7 @@ const useConnector = () => {
 					const signer = provider.getSigner();
 					const useOvm = getIsOVM(networkId);
 
-					const snxjs = synthetix({ provider, networkId, signer, useOvm });
+					const snxjs = synthetix({ provider, networkId: networkId as NetworkId, signer, useOvm });
 
 					onboard.config({ networkId });
 					if (transactionNotifier) {
@@ -138,7 +138,7 @@ const useConnector = () => {
 							// We return here and expect the network change to trigger onboard's network callback
 							return;
 						}
-						const useOvm = getIsOVM(networkId);
+						const useOvm = getIsOVM(Number(networkId));
 
 						const snxjs = synthetix({ provider, networkId, signer: provider.getSigner(), useOvm });
 

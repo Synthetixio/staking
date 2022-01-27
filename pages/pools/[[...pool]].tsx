@@ -13,7 +13,7 @@ import media from 'styled-media-query';
 import { ExternalLink, FlexDivCol, LineSpacer, StatsSection } from 'styles/common';
 import { WETHSNXLPTokenContract } from 'constants/gelato';
 import { InfoContainer, Subtitle } from 'sections/layer2/components/common';
-import synthetix, { NetworkId } from '@synthetixio/contracts-interface';
+import synthetix, { NetworkIdByName } from '@synthetixio/contracts-interface';
 import Connector from 'containers/Connector';
 import Button from 'components/Button';
 import { switchToL2 } from '@synthetixio/optimism-networks';
@@ -25,7 +25,7 @@ function Pool() {
 	const [stakedTokens, setStakedTokens] = useState(BigNumber.from(0));
 	const { t } = useTranslation();
 	const walletAddress = useRecoilValue(walletAddressState);
-	const snx = synthetix({ networkId: NetworkId['Mainnet-Ovm'], useOvm: true });
+	const snx = synthetix({ networkId: NetworkIdByName['mainnet-ovm'], useOvm: true });
 	const { balanceOf, rewards, allowance, stakedTokensBalance } = useGUNILPToken({
 		pool: 'weth-snx',
 		userAddress: walletAddress,
