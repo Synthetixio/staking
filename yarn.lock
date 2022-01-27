@@ -3231,13 +3231,21 @@
     ethers "5.4.6"
     lodash "4.17.19"
 
-"@synthetixio/wei@2.57.1", "@synthetixio/wei@^2.47.0-ovm.5":
+"@synthetixio/wei@2.57.1":
   version "2.57.1"
   resolved "https://registry.yarnpkg.com/@synthetixio/wei/-/wei-2.57.1.tgz#21318408c47d78d6c77a93a9b1b67144fa5947b6"
   integrity sha512-3uXOgw4JjWOrIigChips5dHYLh0pr9z+uuOYFLj5KJm5M8Pf4Ei8Hb8bG6vK6avTajb+LA8g1iXBVGOdPBVXwg==
   dependencies:
     big.js "6.1.1"
     ethers "5.4.6"
+
+"@synthetixio/wei@2.57.3", "@synthetixio/wei@^2.47.0-ovm.5":
+  version "2.57.3"
+  resolved "https://registry.yarnpkg.com/@synthetixio/wei/-/wei-2.57.3.tgz#9f0d760e45605e2105a7d5b0a915ed6812d8fbb4"
+  integrity sha512-RG+Om1fGIW48Spcq/n6zt42/32JnGEQewhpbtduL7i9fXir2W81+YLqraqztlMLE8RJwX+sDa+ngx5V/M72tsg==
+  dependencies:
+    big.js "6.1.1"
+    ethers "5.5.3"
 
 "@szmarczak/http-timer@^1.1.2":
   version "1.1.2"
@@ -10435,7 +10443,7 @@ ethers@5.4.6:
     "@ethersproject/web" "5.4.0"
     "@ethersproject/wordlists" "5.4.0"
 
-ethers@^5.0.13, ethers@^5.0.24, ethers@^5.0.31, ethers@^5.4.7:
+ethers@5.5.3, ethers@^5.0.13, ethers@^5.0.24, ethers@^5.0.31, ethers@^5.4.7:
   version "5.5.3"
   resolved "https://registry.yarnpkg.com/ethers/-/ethers-5.5.3.tgz#1e361516711c0c3244b6210e7e3ecabf0c75fca0"
   integrity sha512-fTT4WT8/hTe/BLwRUtl7I5zlpF3XC3P/Xwqxc5AIP2HGlH15qpmjs0Ou78az93b1rLITzXLFxoNX63B8ZbUd7g==
