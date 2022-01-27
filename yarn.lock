@@ -3231,6 +3231,14 @@
     ethers "5.4.6"
     lodash "4.17.19"
 
+"@synthetixio/transaction-notifier@2.57.3":
+  version "2.57.3"
+  resolved "https://registry.yarnpkg.com/@synthetixio/transaction-notifier/-/transaction-notifier-2.57.3.tgz#d968703eb84002519256a069dbd8e8f090d746f9"
+  integrity sha512-EXi7tz4LtHB+gYxPmNOASKkJDed6IdYpr6EQ9qBFRon88NFPEnsV5EKOp88PbXDaWrTrwyXTRmolXAHNMU2nVQ==
+  dependencies:
+    ethers "5.5.3"
+    lodash "4.17.19"
+
 "@synthetixio/wei@2.57.1", "@synthetixio/wei@^2.47.0-ovm.5":
   version "2.57.1"
   resolved "https://registry.yarnpkg.com/@synthetixio/wei/-/wei-2.57.1.tgz#21318408c47d78d6c77a93a9b1b67144fa5947b6"
@@ -10435,7 +10443,7 @@ ethers@5.4.6:
     "@ethersproject/web" "5.4.0"
     "@ethersproject/wordlists" "5.4.0"
 
-ethers@^5.0.13, ethers@^5.0.24, ethers@^5.0.31, ethers@^5.4.7:
+ethers@5.5.3, ethers@^5.0.13, ethers@^5.0.24, ethers@^5.0.31, ethers@^5.4.7:
   version "5.5.3"
   resolved "https://registry.yarnpkg.com/ethers/-/ethers-5.5.3.tgz#1e361516711c0c3244b6210e7e3ecabf0c75fca0"
   integrity sha512-fTT4WT8/hTe/BLwRUtl7I5zlpF3XC3P/Xwqxc5AIP2HGlH15qpmjs0Ou78az93b1rLITzXLFxoNX63B8ZbUd7g==
