@@ -6,7 +6,7 @@ import { CryptoCurrency, Synths } from 'constants/currency';
 import { assetToSynth } from 'utils/currencies';
 
 import useSynthetixQueries from '@synthetixio/queries';
-import { NetworkId } from '@synthetixio/contracts-interface';
+import { NetworkIdByName } from '@synthetixio/contracts-interface';
 import Wei, { wei } from '@synthetixio/wei';
 import { renBTCToken, wBTCToken, wETHToken } from 'contracts';
 import { useRecoilValue } from 'recoil';
@@ -31,7 +31,7 @@ const useCryptoBalances = (walletAddress: string | null) => {
 
 	const tokenDefs = [getETHToken(network)];
 
-	if (network?.id === NetworkId.Mainnet) {
+	if (network?.id === NetworkIdByName.mainnet) {
 		tokenDefs.push(
 			...[
 				{
@@ -40,7 +40,7 @@ const useCryptoBalances = (walletAddress: string | null) => {
 					decimals: 18,
 					logoURI: '',
 					name: 'Wrapped Bitcoin',
-					chainId: 1,
+					chainId: NetworkIdByName.mainnet,
 					tags: [],
 				},
 				{
@@ -49,7 +49,7 @@ const useCryptoBalances = (walletAddress: string | null) => {
 					decimals: 18,
 					logoURI: '',
 					name: 'Wrapped Ethereum',
-					chainId: 1,
+					chainId: NetworkIdByName.mainnet,
 					tags: [],
 				},
 				{
@@ -58,13 +58,12 @@ const useCryptoBalances = (walletAddress: string | null) => {
 					decimals: 18,
 					logoURI: '',
 					name: 'renBTC',
-					chainId: 1,
+					chainId: NetworkIdByName.mainnet,
 					tags: [],
 				},
 			]
 		);
 	}
-
 	const balancesQuery = useTokensBalancesQuery(tokenDefs, walletAddress);
 
 	const exchangeRatesQuery = useExchangeRatesQuery();

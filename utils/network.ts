@@ -1,18 +1,21 @@
 import { detectEthereumProvider } from './metamask-detect-provider';
 import { DEFAULT_GAS_BUFFER, DEFAULT_NETWORK_ID } from 'constants/defaults';
-import { NetworkId } from '@synthetixio/contracts-interface';
+import { NetworkId, NetworkNameById } from '@synthetixio/contracts-interface';
+
 import { GasLimitEstimate } from 'constants/network';
 import Wei, { wei } from '@synthetixio/wei';
 import { GWEI_DECIMALS, GWEI_UNIT } from './infura';
 import { GasPrice } from '@synthetixio/queries';
 
+export function isSupportedNetworkId(id: number | string): id is NetworkId {
+	return id in NetworkNameById;
+}
+
 export async function getDefaultNetworkId(): Promise<NetworkId> {
 	try {
 		const provider = await detectEthereumProvider();
-		if (provider && provider.chainId) {
-			return Number(provider.chainId);
-		}
-		return DEFAULT_NETWORK_ID;
+		const id = Number(provider?.chainId || 0);
+		return isSupportedNetworkId(id) ? id : DEFAULT_NETWORK_ID;
 	} catch (e) {
 		console.log(e);
 		return DEFAULT_NETWORK_ID;
