@@ -1,12 +1,11 @@
-import { getNetworkFromId } from '@synthetixio/contracts-interface';
+import { Network } from 'store/wallet';
 
 export const GWEI_DECIMALS = 9;
 
 export const GWEI_UNIT = 1000000000;
 
-export const getInfuraRpcURL = (networkId?: number) => {
-	const network: { name: string; useOvm: boolean } | undefined = getNetworkFromId(networkId);
-	const networkName = network ? network.name : `mainnet`;
+export const getInfuraRpcURL = (network?: Network | null) => {
+	const networkName = (network?.name ? network.name : `mainnet`).replace('-ovm', '');
 	const optimismPrefix = network?.useOvm ? 'optimism-' : '';
 	const url = `https://${optimismPrefix + networkName}.infura.io/v3/${
 		process.env.NEXT_PUBLIC_INFURA_PROJECT_ID

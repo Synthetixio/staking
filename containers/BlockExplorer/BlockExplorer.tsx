@@ -3,7 +3,7 @@ import { createContainer } from 'unstated-next';
 import { OPTIMISM_NETWORKS } from '@synthetixio/optimism-networks';
 import { useRecoilValue } from 'recoil';
 
-import { NetworkId } from '@synthetixio/contracts-interface';
+import { NetworkIdByName } from '@synthetixio/contracts-interface';
 import { Network } from 'store/wallet';
 
 import { networkState } from 'store/wallet';
@@ -20,10 +20,10 @@ type BlockExplorerInstance = {
 const getBaseUrl = (network: Network) => {
 	if (network.useOvm) {
 		return (
-			OPTIMISM_NETWORKS[network.id]?.blockExplorerUrls[0] ??
+			OPTIMISM_NETWORKS[Number(network.id)]?.blockExplorerUrls[0] ??
 			OPTIMISM_NETWORKS[_.keys(OPTIMISM_NETWORKS)[0] as any].blockExplorerUrls[0]
 		);
-	} else if (network.id === NetworkId.Mainnet) {
+	} else if (network.id === NetworkIdByName.mainnet) {
 		return 'https://etherscan.io';
 	}
 	return `https://${network.name}.etherscan.io`;
