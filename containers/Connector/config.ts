@@ -2,19 +2,15 @@ import onboard from 'bnc-onboard';
 
 import { Subscriptions, WalletType } from 'bnc-onboard/dist/src/interfaces';
 import { getInfuraRpcURL } from 'utils/infura';
-import { NetworkId, SynthetixJS } from '@synthetixio/contracts-interface';
+import { NetworkId, NetworkIdByName } from '@synthetixio/contracts-interface';
 
-export const initOnboard = (
-	synthetixjs: SynthetixJS,
-	networkId: number,
-	subscriptions: Subscriptions
-) => {
+export const initOnboard = (networkId: NetworkId, subscriptions: Subscriptions) => {
 	const infuraRpc = getInfuraRpcURL(networkId);
 
 	return onboard({
 		dappId: process.env.NEXT_PUBLIC_BN_ONBOARD_API_KEY,
 		hideBranding: true,
-		networkId: networkId,
+		networkId: Number(networkId),
 		subscriptions,
 		darkMode: true,
 		walletSelect: {
@@ -56,8 +52,8 @@ export const initOnboard = (
 				{
 					walletName: 'walletConnect',
 					rpc: {
-						[NetworkId['Mainnet']]: getInfuraRpcURL(NetworkId['Mainnet']),
-						[NetworkId['Mainnet-Ovm']]: getInfuraRpcURL(NetworkId['Mainnet-Ovm']),
+						[NetworkIdByName.mainnet]: getInfuraRpcURL(NetworkIdByName.mainnet),
+						[NetworkIdByName['mainnet-ovm']]: getInfuraRpcURL(NetworkIdByName['mainnet-ovm']),
 					},
 					preferred: true,
 				},
