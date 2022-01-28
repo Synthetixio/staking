@@ -23,7 +23,7 @@ const loadOpenLoanIds = async (
 	address: string,
 	network: Network | null
 ) => {
-	const infuraUrl = getInfuraRpcURL(network);
+	const infuraUrl = getInfuraRpcURL(network?.id);
 	const newContract = loanContract.connect(new providers.JsonRpcProvider(infuraUrl));
 
 	const [loanCreatedEvents, loanClosedEvents] = await Promise.all([

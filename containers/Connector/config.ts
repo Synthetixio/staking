@@ -2,20 +2,15 @@ import onboard from 'bnc-onboard';
 
 import { Subscriptions, WalletType } from 'bnc-onboard/dist/src/interfaces';
 import { getInfuraRpcURL } from 'utils/infura';
-import { SynthetixJS } from '@synthetixio/contracts-interface';
+import { NetworkId, NetworkIdByName } from '@synthetixio/contracts-interface';
 
-export const initOnboard = (
-	synthetixjs: SynthetixJS,
-	networkId: number,
-	subscriptions: Subscriptions
-) => {
-	const network = synthetixjs?.network;
-	const infuraRpc = getInfuraRpcURL(network);
+export const initOnboard = (networkId: NetworkId, subscriptions: Subscriptions) => {
+	const infuraRpc = getInfuraRpcURL(networkId);
 
 	return onboard({
 		dappId: process.env.NEXT_PUBLIC_BN_ONBOARD_API_KEY,
 		hideBranding: true,
-		networkId: networkId,
+		networkId: Number(networkId),
 		subscriptions,
 		darkMode: true,
 		walletSelect: {
@@ -25,7 +20,7 @@ export const initOnboard = (
 					iconSrc: '/images/browserWallet.svg',
 					type: 'injected' as WalletType,
 					link: 'https://metamask.io',
-					wallet: async (helpers: any) => {
+					wallet: async (helpers) => {
 						const { createModernProviderInterface } = helpers;
 						const provider = window.ethereum;
 						return {
@@ -56,7 +51,10 @@ export const initOnboard = (
 				},
 				{
 					walletName: 'walletConnect',
-					rpc: { [network ? network.id : networkId]: infuraRpc },
+					rpc: {
+						[NetworkIdByName.mainnet]: getInfuraRpcURL(NetworkIdByName.mainnet),
+						[NetworkIdByName['mainnet-ovm']]: getInfuraRpcURL(NetworkIdByName['mainnet-ovm']),
+					},
 					preferred: true,
 				},
 				{ walletName: 'imToken', rpcUrl: infuraRpc, preferred: true },

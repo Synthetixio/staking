@@ -95,7 +95,7 @@ const useConnector = () => {
 
 	useEffect(() => {
 		if (isAppReady && network) {
-			const onboard = initOnboard(synthetixjs!, Number(network.id), {
+			const onboard = initOnboard(network.id, {
 				address: setWalletAddress,
 				network: (networkId) => {
 					if (!networkId) return; // user disconnected the wallet
