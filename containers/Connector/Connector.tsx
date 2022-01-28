@@ -13,6 +13,7 @@ import {
 	SynthetixJS,
 	synthetix,
 	NetworkNameById,
+	NetworkIdByName,
 } from '@synthetixio/contracts-interface';
 import { ethers } from 'ethers';
 import { switchToL1 } from '@synthetixio/optimism-networks';
@@ -56,14 +57,18 @@ const useConnector = () => {
 
 	useEffect(() => {
 		const init: () => void = async () => {
-			const networkId = await getDefaultNetworkId();
-
-			if (!window.ethereum) {
+			if (!window.ethereum || selectedWallet !== 'Browser Wallet') {
 				setAppReady(true);
-				setNetwork({ name: NetworkNameById[networkId], id: networkId, useOvm: false });
-				setSynthetixjs(synthetix({ networkId, useOvm: false }));
+				// For non browser wallets we use mainnet by default. And the app/wallet will trigger wallet change events if needed
+				setNetwork({
+					name: NetworkNameById[NetworkIdByName.mainnet],
+					id: NetworkIdByName.mainnet,
+					useOvm: false,
+				});
+				setSynthetixjs(synthetix({ networkId: NetworkIdByName.mainnet, useOvm: false }));
 				return;
 			}
+			const networkId = await getDefaultNetworkId();
 			if (!isSupportedNetworkId(networkId)) {
 				// When not on supported network: Switch to l1 and try again
 				await switchToL1({ ethereum: window.ethereum });
