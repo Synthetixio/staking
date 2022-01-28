@@ -3119,7 +3119,7 @@
   resolved "https://registry.yarnpkg.com/@synthetixio/assets/-/assets-2.0.12.tgz#641a7383a8d00ad6a9709f9b9f0323d9084ed379"
   integrity sha512-yUtd9cvpohmPtajsb4Cinntx6wt8XuG+W1o3PwsrLYKhSEiCR4Psuslel2QCntnsY38yqLPmPDjpPYdyezeaHQ==
 
-"@synthetixio/contracts-interface@2.57.3", "@synthetixio/contracts-interface@^2.57.3":
+"@synthetixio/contracts-interface@2.57.3":
   version "2.57.3"
   resolved "https://registry.yarnpkg.com/@synthetixio/contracts-interface/-/contracts-interface-2.57.3.tgz#5cffb2819ef5479558d9599f57bf198b1e64050a"
   integrity sha512-bbAwkTc9n6F4VIoESyLndeFcdDyxUJw40WoRfwjn/FAMPGmAELnjMJmTxygRD0u8MYHDcXHRQeUxyJqU1p3OnA==
@@ -3139,7 +3139,7 @@
     synthetix "2.41.0"
     web3-utils "1.2.11"
 
-"@synthetixio/optimism-networks@2.57.3", "@synthetixio/optimism-networks@^2.57.3":
+"@synthetixio/optimism-networks@2.57.3":
   version "2.57.3"
   resolved "https://registry.yarnpkg.com/@synthetixio/optimism-networks/-/optimism-networks-2.57.3.tgz#e1d3494927dcdead0440acff0c88b53486cea423"
   integrity sha512-dfS5dLIdMSQw9hN3WtyLycON1oCfaPb/1n++P6swJi8ihHn8Y7L9GIEjyZiLiG+mR3xtB6DYBJ9iplQvhDrE7g==
@@ -3147,7 +3147,7 @@
     "@eth-optimism/watcher" "^0.0.1-alpha.9"
     "@metamask/providers" "8.1.1"
 
-"@synthetixio/providers@2.57.3", "@synthetixio/providers@^2.57.3":
+"@synthetixio/providers@2.57.3":
   version "2.57.3"
   resolved "https://registry.yarnpkg.com/@synthetixio/providers/-/providers-2.57.3.tgz#acd01f7fd821fe3eedfde3767f7d257879482706"
   integrity sha512-0aFMgZHfVthiuKe1ge3DxWf+ODdyXClVB8XpjXBo3pFP8pD0amkTk4i4wpgf0BA3AGUKYOZhE92myYc/AGzKlg==
@@ -3157,7 +3157,7 @@
     "@synthetixio/optimism-networks" "2.57.3"
     ethers "5.5.3"
 
-"@synthetixio/queries@^2.57.3":
+"@synthetixio/queries@2.57.3":
   version "2.57.3"
   resolved "https://registry.yarnpkg.com/@synthetixio/queries/-/queries-2.57.3.tgz#08abe88ce3ea2b31e0f4d01d3e304af76a6340b0"
   integrity sha512-Es/H4uTRtxzbQygdBdz5wJtq4EMAQBwtYqyOhaFpdZXLLc40FQBhoonvGs9L5Gi/L7nwCJ1a4Pbf+MtXmVBrnQ==
@@ -3223,7 +3223,7 @@
     start-server-and-test "1.13.1"
     synthetix-js "2.49.0"
 
-"@synthetixio/transaction-notifier@2.57.3", "@synthetixio/transaction-notifier@^2.57.3":
+"@synthetixio/transaction-notifier@2.57.3":
   version "2.57.3"
   resolved "https://registry.yarnpkg.com/@synthetixio/transaction-notifier/-/transaction-notifier-2.57.3.tgz#d968703eb84002519256a069dbd8e8f090d746f9"
   integrity sha512-EXi7tz4LtHB+gYxPmNOASKkJDed6IdYpr6EQ9qBFRon88NFPEnsV5EKOp88PbXDaWrTrwyXTRmolXAHNMU2nVQ==
@@ -3231,7 +3231,7 @@
     ethers "5.5.3"
     lodash "4.17.19"
 
-"@synthetixio/wei@2.57.3", "@synthetixio/wei@^2.57.3":
+"@synthetixio/wei@2.57.3":
   version "2.57.3"
   resolved "https://registry.yarnpkg.com/@synthetixio/wei/-/wei-2.57.3.tgz#9f0d760e45605e2105a7d5b0a915ed6812d8fbb4"
   integrity sha512-RG+Om1fGIW48Spcq/n6zt42/32JnGEQewhpbtduL7i9fXir2W81+YLqraqztlMLE8RJwX+sDa+ngx5V/M72tsg==
