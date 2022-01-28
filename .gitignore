@@ -38,3 +38,6 @@ tests/e2e/videos
 .vscode
 
 .vercel
+
+.npm-cache
+.yarn-cache
