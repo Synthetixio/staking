@@ -11,7 +11,6 @@ import { useRouter } from 'next/router';
 import ROUTES from 'constants/routes';
 import { getRenBTCToken } from 'contracts/renBTCToken';
 import { getETHToken } from 'contracts/ethToken';
-import { SYNTH_DECIMALS } from 'constants/defaults';
 
 type DepositProps = {
 	loanId: number;
@@ -52,9 +51,9 @@ const Deposit: React.FC<DepositProps> = ({
 	const depositAmount = useMemo(
 		() =>
 			depositAmountString
-				? ethers.utils.parseUnits(depositAmountString, SYNTH_DECIMALS)
+				? ethers.utils.parseUnits(depositAmountString, collateralDecimals)
 				: ethers.BigNumber.from(0),
-		[depositAmountString]
+		[collateralDecimals, depositAmountString]
 	);
 
 	const totalAmount = useMemo(
