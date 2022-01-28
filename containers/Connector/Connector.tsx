@@ -6,13 +6,12 @@ import {
 } from '@synthetixio/transaction-notifier';
 import { loadProvider } from '@synthetixio/providers';
 
-import { getDefaultNetworkId, getIsOVM } from 'utils/network';
+import { getDefaultNetworkId, getIsOVM, isSupportedNetworkId } from 'utils/network';
 import { useRecoilState } from 'recoil';
 import {
 	NetworkId,
 	SynthetixJS,
 	synthetix,
-	getNetworkFromId,
 	NetworkNameById,
 } from '@synthetixio/contracts-interface';
 import { ethers } from 'ethers';
@@ -61,19 +60,15 @@ const useConnector = () => {
 
 			if (!window.ethereum) {
 				setAppReady(true);
-				setNetwork({ name: NetworkNameById[1], id: networkId, useOvm: false });
+				setNetwork({ name: NetworkNameById[networkId], id: networkId, useOvm: false });
 				setSynthetixjs(synthetix({ networkId, useOvm: false }));
 				return;
 			}
-			const resolvedNetwork = getNetworkFromId({ id: networkId });
-			const isSupportedNetwork = Boolean(resolvedNetwork);
-			if (!isSupportedNetwork) {
+			if (!isSupportedNetworkId(networkId)) {
 				// When not on supported network: Switch to l1 and try again
 				await switchToL1({ ethereum: window.ethereum });
 				return init();
 			}
-
-			// TODO: need to verify we support the network
 			const provider = loadProvider({
 				networkId,
 				//infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
@@ -97,12 +92,14 @@ const useConnector = () => {
 		if (isAppReady && network) {
 			const onboard = initOnboard(synthetixjs!, Number(network.id), {
 				address: setWalletAddress,
-				network: (networkId?: number) => {
+				network: (networkId) => {
 					if (!networkId) return; // user disconnected the wallet
-					const isSupportedNetwork = Boolean(getNetworkFromId({ id: networkId }));
-					if (!isSupportedNetwork && window.ethereum) {
+
+					if (!isSupportedNetworkId(networkId)) {
 						// This should only happen when a user is connected and changes to an unsupported network
-						switchToL1({ ethereum: window.ethereum });
+						if (window.ethereum) {
+							switchToL1({ ethereum: window.ethereum });
+						}
 						// We can return here since the network change will trigger this callback again
 						return;
 					}
@@ -130,11 +127,11 @@ const useConnector = () => {
 					if (wallet.provider) {
 						const provider = loadProvider({ provider: wallet.provider });
 						const network = await provider.getNetwork();
-						const networkId = network.chainId as NetworkId;
-						const resolvedNetwork = getNetworkFromId({ id: networkId });
-						const isSupportedNetwork = Boolean(resolvedNetwork);
-						if (!isSupportedNetwork && window.ethereum) {
-							await switchToL1({ ethereum: window.ethereum });
+						const networkId = Number(network.chainId);
+						if (!isSupportedNetworkId(networkId)) {
+							if (window.ethereum) {
+								await switchToL1({ ethereum: window.ethereum });
+							}
 							// We return here and expect the network change to trigger onboard's network callback
 							return;
 						}
