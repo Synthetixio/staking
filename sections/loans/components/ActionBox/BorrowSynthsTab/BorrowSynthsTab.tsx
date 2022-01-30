@@ -108,7 +108,7 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = () => {
 		() => !collateralAmount.eq(0) && collateralAmount.lt(minCollateralAmount),
 		[collateralAmount, minCollateralAmount]
 	);
-	const minCollateralAmountString = minCollateralAmount.scale(collateralDecimals).toString(2);
+	const minCollateralAmountString = minCollateralAmount.toString(2);
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const exchangeRates = exchangeRatesQuery.data ?? null;
 
@@ -148,7 +148,7 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = () => {
 	const debt = { amount: debtAmount, asset: debtAsset };
 	const collateral = { amount: collateralAmount, asset: collateralAsset };
 	const cratio = calculateLoanCRatio(exchangeRates, collateral, debt);
-	const safeMinCratio = minCRatio ? minCRatio.add(SAFE_MIN_CRATIO_BUFFER) : null;
+	const safeMinCratio = minCRatio ? minCRatio.add(SAFE_MIN_CRATIO_BUFFER) : wei(0);
 	const hasLowCRatio = !collateralAmount.eq(0) && !debtAmount.eq(0) && cratio.lt(safeMinCratio);
 	const hasInsufficientCollateral = collateralBalance.lt(minCollateralAmount);
 
