@@ -15,6 +15,9 @@ import SettingsModal from 'sections/shared/modals/SettingsModal';
 import { isWalletConnectedState, networkState } from 'store/wallet';
 import { isL2State, delegateWalletState } from 'store/wallet';
 import { MENU_LINKS, MENU_LINKS_L2, MENU_LINKS_DELEGATE } from '../constants';
+import { handleSwitchChain } from '@synthetixio/providers';
+import Connector from 'containers/Connector';
+import { providers } from 'ethers';
 
 const getKeyValue =
 	<T extends object, U extends keyof T>(obj: T) =>
@@ -40,33 +43,39 @@ const SideNav: FC<SideNavProps> = ({ isDesktop }) => {
 		setNetworkError,
 	} = UIContainer.useContainer();
 	const [settingsModalOpened, setSettingsModalOpened] = useState<boolean>(false);
-
+	const { provider } = Connector.useContainer();
 	const menuLinks = delegateWallet ? MENU_LINKS_DELEGATE : isL2 ? MENU_LINKS_L2 : MENU_LINKS;
 
 	const addOptimismNetwork = async () => {
-		try {
-			setNetworkError(null);
-			if (process.browser && !(window.ethereum && window.ethereum.isMetaMask)) {
-				return setNetworkError(t('user-menu.error.please-install-metamask'));
-			}
+		setNetworkError(null);
+		if (process.browser && !(window.ethereum && window.ethereum.isMetaMask)) {
+			return setNetworkError(t('user-menu.error.please-install-metamask'));
+		}
 
-			// metamask mobile throws if iconUrls is included
-			const { chainId, chainName, rpcUrls, blockExplorerUrls } = getOptimismNetwork({
-				layerOneNetworkId: network?.id.valueOf() || 1,
-			});
-			await (window.ethereum as any).request({
-				method: 'wallet_addEthereumChain',
-				params: [
-					{
-						chainId,
-						chainName,
-						rpcUrls,
-						blockExplorerUrls,
-					},
-				],
-			});
+		try {
+			if (provider) {
+				await handleSwitchChain(provider as providers.Web3Provider, false);
+			}
 		} catch (e) {
-			setNetworkError(e.message);
+			try {
+				// metamask mobile throws if iconUrls is included
+				const { chainId, chainName, rpcUrls, blockExplorerUrls } = getOptimismNetwork({
+					layerOneNetworkId: Number(network?.id) || 1,
+				});
+				await (window.ethereum as any).request({
+					method: 'wallet_addEthereumChain',
+					params: [
+						{
+							chainId,
+							chainName,
+							rpcUrls,
+							blockExplorerUrls,
+						},
+					],
+				});
+			} catch (e) {
+				setNetworkError((e as Record<'message', string>).message);
+			}
 		}
 	};
 
