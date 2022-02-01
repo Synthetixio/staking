@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect, useCallback } from 'react';
 import { ethers } from 'ethers';
 import { useRecoilValue } from 'recoil';
+import { wei } from '@synthetixio/wei';
 
 import { walletAddressState } from 'store/wallet';
 import { Loan } from 'containers/Loans/types';
@@ -37,33 +38,15 @@ const Deposit: React.FC<DepositProps> = ({
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 
 	const collateralAsset = loanTypeIsETH ? 'ETH' : 'renBTC';
-	const collateralDecimals = loanTypeIsETH ? getETHToken().decimals : getRenBTCToken().decimals; // todo
+	const collateralDecimals = loanTypeIsETH ? getETHToken().decimals : getRenBTCToken().decimals;
 
 	const [depositAmountString, setDepositalAmount] = useState<string | null>(null);
-	const collateralAmount = useMemo(
-		() =>
-			ethers.utils.parseUnits(
-				ethers.utils.formatUnits(loan.collateral, collateralDecimals),
-				collateralDecimals
-			), // normalize collateral decimals
-		[loan.collateral, collateralDecimals]
-	);
-	const depositAmount = useMemo(
-		() =>
-			depositAmountString
-				? ethers.utils.parseUnits(depositAmountString, collateralDecimals)
-				: ethers.BigNumber.from(0),
-		[collateralDecimals, depositAmountString]
-	);
 
-	const totalAmount = useMemo(
-		() => collateralAmount.add(depositAmount),
-		[collateralAmount, depositAmount]
-	);
-	const totalAmountString = useMemo(
-		() => ethers.utils.formatUnits(totalAmount, collateralDecimals),
-		[totalAmount, collateralDecimals]
-	);
+	const collateralAmount = wei(wei(loan.collateral), collateralDecimals);
+	const depositAmount = depositAmountString ? wei(depositAmountString, collateralDecimals) : wei(0);
+
+	const totalAmount = collateralAmount.add(depositAmount);
+	const totalAmountString = ethers.utils.formatUnits(totalAmount.toBN(), collateralDecimals);
 
 	const loanContractAddress = loanContract?.address;
 
@@ -73,7 +56,7 @@ const Deposit: React.FC<DepositProps> = ({
 
 	const getApproveTxData = useCallback(() => {
 		if (!(collateralAssetContract && !depositAmount.eq(0))) return null;
-		return [collateralAssetContract, 'approve', [loanContractAddress, depositAmount]];
+		return [collateralAssetContract, 'approve', [loanContractAddress, depositAmount.toBN()]];
 	}, [collateralAssetContract, loanContractAddress, depositAmount]);
 
 	const getDepositTxData = useCallback(() => {
@@ -81,7 +64,7 @@ const Deposit: React.FC<DepositProps> = ({
 		return [
 			loanContract,
 			'deposit',
-			[address, loanId, ...(loanTypeIsETH ? [] : [depositAmount])],
+			[address, loanId, ...(loanTypeIsETH ? [] : [depositAmount.toBN()])],
 			{ value: loanTypeIsETH ? depositAmount : 0 },
 		];
 	}, [loanContract, address, loanId, loanTypeIsETH, depositAmount]);
@@ -92,6 +75,7 @@ const Deposit: React.FC<DepositProps> = ({
 	);
 
 	const onApproveOrDeposit = async () => {
+		setError(null);
 		!isApproved ? approve() : deposit();
 	};
 
