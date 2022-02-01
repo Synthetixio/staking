@@ -437,6 +437,7 @@
 				}
 			},
 			"hedge": {
+				"connect": "To hedge your position, connect your wallet",
 				"info": {
 					"debt-pool-pie-chart": {
 						"title": "Global Debt Pool"

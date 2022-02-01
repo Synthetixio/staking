@@ -3,12 +3,9 @@ import styled from 'styled-components';
 import { Svg } from 'react-optimized-image';
 import { ResponsiveContainer, YAxis, Line, LineChart, XAxis } from 'recharts';
 import { useTranslation } from 'react-i18next';
-
 import { FlexDivCol, FlexDivColCentered } from 'styles/common';
-
 import useGlobalHistoricalDebtData from 'hooks/useGlobalHistoricalDebtData';
 import colors from 'styles/theme/colors';
-
 import SpinnerIcon from 'assets/svg/app/loader.svg';
 import ChartLabel from './ChartLabel';
 import { format } from 'date-fns';
@@ -18,6 +15,9 @@ import { useRecoilValue } from 'recoil';
 import { walletAddressState } from 'store/wallet';
 import { BigNumber, Contract, utils } from 'ethers';
 import Connector from 'containers/Connector';
+import { abi } from 'contracts/erc20';
+
+const dSNXContract = new Contract('0x5f7f94a1dd7b15594d17543beb8b30b111dd464c', abi);
 
 const DebtHedgingChart: React.FC = () => {
 	const { t } = useTranslation();
@@ -28,12 +28,8 @@ const DebtHedgingChart: React.FC = () => {
 
 	useEffect(() => {
 		if (address && provider) {
-			const dSNXContract = new Contract(
-				'0x5f7f94a1dd7b15594d17543beb8b30b111dd464c',
-				['function balanceOf(address account) external view returns (uint256)'],
-				provider
-			);
 			dSNXContract
+				.connect(provider)
 				.balanceOf(address)
 				.then((balance: BigNumber) => setdSNXUserBalance(utils.formatUnits(balance, 18)));
 		}

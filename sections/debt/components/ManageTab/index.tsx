@@ -1,17 +1,18 @@
-import Wei from '@synthetixio/wei';
-import useUserStakingData from 'hooks/useUserStakingData';
+import Button from 'components/Button';
+import Connector from 'containers/Connector';
+import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
-import { walletAddressState } from 'store/wallet';
+import { isWalletConnectedState, walletAddressState } from 'store/wallet';
 import styled from 'styled-components';
 import { FlexDivColCentered } from 'styles/common';
+import HedgeInput from './HedgeInput';
 
 const ManageTab = () => {
 	const walletAddress = useRecoilValue(walletAddressState);
-	const { debtBalance: actualDebt } = useUserStakingData(walletAddress);
-
+	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	return (
 		<ManageContainer>
-			{!walletAddress ? <span>Please connect a wallet</span> : <div>Input here</div>}
+			{!walletAddress || !isWalletConnected ? <ConnectWallet /> : <HedgeInput />}
 		</ManageContainer>
 	);
 };
@@ -26,3 +27,24 @@ const ManageContainer = styled(FlexDivColCentered)`
 `;
 
 export default ManageTab;
+
+const ConnectWallet = () => {
+	const { t } = useTranslation();
+	const { connectWallet } = Connector.useContainer();
+	return (
+		<WrapperContainer>
+			<h3>{t('debt.actions.hedge.connect')}</h3>
+			<Button variant="primary" onClick={connectWallet}>
+				{t('common.wallet.connect-wallet')}
+			</Button>
+		</WrapperContainer>
+	);
+};
+
+const WrapperContainer = styled.div`
+	margin-top: 200px;
+	display: flex;
+	height: 100%;
+	align-items: center;
+	flex-direction: column;
+`;
