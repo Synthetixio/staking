@@ -104,10 +104,8 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = () => {
 
 	const minCollateralAmount = loanMinCollateralResult.data || wei(0);
 
-	const hasLowCollateralAmount = useMemo(
-		() => !collateralAmount.eq(0) && collateralAmount.lt(minCollateralAmount),
-		[collateralAmount, minCollateralAmount]
-	);
+	const hasLowCollateralAmount =
+		!collateralAmount.eq(0) && collateralAmount.lt(minCollateralAmount);
 	const minCollateralAmountString = minCollateralAmount.toString(2);
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const exchangeRates = exchangeRatesQuery.data ?? null;
@@ -115,7 +113,7 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = () => {
 	const [allowance, setAllowance] = useState<Wei | null>(null);
 	const [isBorrowing, setIsBorrowing] = useState<boolean>(false);
 
-	const isApproved: boolean = collateralIsETH || allowance?.gt(collateralAmount) || false;
+	const isApproved = collateralIsETH || allowance?.gt(collateralAmount) || false;
 
 	const getAllowance = useCallback(async () => {
 		if (collateralIsETH) {
