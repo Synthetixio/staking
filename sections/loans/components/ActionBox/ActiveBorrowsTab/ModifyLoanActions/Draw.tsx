@@ -33,35 +33,23 @@ const Draw: React.FC<DrawProps> = ({ loan, loanId, loanTypeIsETH, loanContract }
 	const exchangeRates = exchangeRatesQuery.data ?? null;
 
 	const debtAsset = loan.currency;
-	const drawAmount = useMemo(
-		() =>
-			drawAmountString
-				? ethers.utils.parseUnits(drawAmountString, SYNTH_DECIMALS)
-				: ethers.BigNumber.from(0),
-		[drawAmountString]
-	);
-	const newTotalAmount = useMemo(() => loan.amount.add(drawAmount), [loan.amount, drawAmount]);
-	const newTotalAmountString = useMemo(
-		() => ethers.utils.formatUnits(newTotalAmount, SYNTH_DECIMALS),
-		[newTotalAmount]
-	);
-	const safeCratio = getSafeCratio(loan);
+	const drawAmount = drawAmountString ? wei(drawAmountString) : wei(0);
+	const loanAmountWei = wei(loan.amount);
+	const newTotalAmount = loanAmountWei.add(drawAmount);
+	const newTotalAmountString = ethers.utils.formatUnits(newTotalAmount.toBN(), SYNTH_DECIMALS);
 	const maxDrawUsd = calculateMaxDraw(loan, exchangeRates);
+
 	const onSetLeftColAmount = (amount: string) => {
 		if (!amount) {
 			setDrawAmount(null);
 			return;
 		}
-		const collateral = {
-			amount: wei(loan.collateral),
-			asset: loan.collateralAsset,
-		};
-		const newDebt = {
-			amount: wei(loan.amount).add(amount),
-			asset: loan.currency,
-		};
-		const newCratio = calculateLoanCRatio(exchangeRates, collateral, newDebt);
-		return newCratio.lt(safeCratio) ? onSetLeftColMaxAmount() : setDrawAmount(amount);
+
+		if (wei(amount).gte(maxDrawUsd)) {
+			onSetLeftColMaxAmount();
+			return;
+		}
+		return setDrawAmount(amount);
 	};
 	const onSetLeftColMaxAmount = () => {
 		setDrawAmount(maxDrawUsd.toString(2));
@@ -70,7 +58,7 @@ const Draw: React.FC<DrawProps> = ({ loan, loanId, loanTypeIsETH, loanContract }
 	const getTxData = useCallback(() => {
 		if (!(loanContract && !drawAmount.eq(0))) return null;
 
-		return [loanContract, 'draw', [loanId, drawAmount]];
+		return [loanContract, 'draw', [loanId, drawAmount.toBN()]];
 	}, [loanContract, loanId, drawAmount]);
 
 	const draw = async () => {
