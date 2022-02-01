@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback } from 'react';
 import { ethers } from 'ethers';
 import { Loan } from 'containers/Loans/types';
 import TransactionNotifier from 'containers/TransactionNotifier';
@@ -9,6 +9,7 @@ import { useRouter } from 'next/router';
 import ROUTES from 'constants/routes';
 import { getETHToken } from 'contracts/ethToken';
 import { getRenBTCToken } from 'contracts/renBTCToken';
+import { wei } from '@synthetixio/wei';
 
 type WithdrawProps = {
 	loanId: number;
@@ -30,42 +31,30 @@ const Withdraw: React.FC<WithdrawProps> = ({ loan, loanId, loanTypeIsETH, loanCo
 	const collateralAsset = loanTypeIsETH ? 'ETH' : 'renBTC';
 	const collateralDecimals = loanTypeIsETH ? getETHToken().decimals : getRenBTCToken().decimals;
 
-	const collateralAmount = useMemo(
-		() =>
-			ethers.utils.parseUnits(
-				ethers.utils.formatUnits(loan.collateral, collateralDecimals),
-				collateralDecimals
-			), // normalize collateral decimals
-		[loan.collateral, collateralDecimals]
-	);
-	const withdrawalAmount = useMemo(
-		() =>
-			withdrawalAmountString
-				? ethers.utils.parseUnits(withdrawalAmountString, collateralDecimals)
-				: ethers.BigNumber.from(0),
-		[withdrawalAmountString, collateralDecimals]
-	);
-	const remainingAmount = useMemo(
-		() => collateralAmount.sub(withdrawalAmount),
-		[collateralAmount, withdrawalAmount]
-	);
-	const remainingAmountString = useMemo(
-		() => ethers.utils.formatUnits(remainingAmount, collateralDecimals),
-		[remainingAmount, collateralDecimals]
+	const collateralAmount = wei(wei(loan.collateral), collateralDecimals);
+	const withdrawalAmount = withdrawalAmountString
+		? wei(withdrawalAmountString, collateralDecimals)
+		: wei(0);
+
+	const remainingAmount = collateralAmount.sub(withdrawalAmount);
+	const remainingAmountString = ethers.utils.formatUnits(
+		remainingAmount.toBN(),
+		collateralDecimals
 	);
 
-	const onSetLeftColAmount = (amount: string) =>
+	const onSetLeftColAmount = (amount: string) => {
 		!amount
 			? setWithdrawalAmount(null)
-			: ethers.utils.parseUnits(amount, collateralDecimals).gt(collateralAmount)
+			: wei(amount, collateralDecimals).gt(collateralAmount)
 			? onSetLeftColMaxAmount()
 			: setWithdrawalAmount(amount);
+	};
 	const onSetLeftColMaxAmount = () =>
-		setWithdrawalAmount(ethers.utils.formatUnits(collateralAmount, collateralDecimals));
+		setWithdrawalAmount(ethers.utils.formatUnits(collateralAmount.toBN(), collateralDecimals));
 
 	const getTxData = useCallback(() => {
 		if (!(loanContract && !withdrawalAmount.eq(0))) return null;
-		return [loanContract, 'withdraw', [loanId, withdrawalAmount]];
+		return [loanContract, 'withdraw', [loanId, withdrawalAmount.toBN()]];
 	}, [loanContract, loanId, withdrawalAmount]);
 
 	const withdraw = async () => {
