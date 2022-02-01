@@ -159,7 +159,8 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = () => {
 			debtAsset &&
 			!hasLowCollateralAmount &&
 			!hasLowCRatio &&
-			!hasInsufficientCollateral
+			!hasInsufficientCollateral &&
+			isApproved
 	);
 
 	const openTxn = useSynthetixTxn(
