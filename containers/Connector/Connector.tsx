@@ -6,7 +6,7 @@ import {
 } from '@synthetixio/transaction-notifier';
 import { loadProvider } from '@synthetixio/providers';
 
-import { getDefaultNetworkId, getIsOVM } from 'utils/network';
+import { getDefaultNetworkId, getIsOVM, isSupportedNetworkId } from 'utils/network';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import {
 	NetworkId,
@@ -44,10 +44,8 @@ const useConnector = () => {
 		LOCAL_STORAGE_KEYS.SELECTED_WALLET,
 		''
 	);
-	const [
-		transactionNotifier,
-		setTransactionNotifier,
-	] = useState<TransactionNotifierInterface | null>(null);
+	const [transactionNotifier, setTransactionNotifier] =
+		useState<TransactionNotifierInterface | null>(null);
 	const setEnsName = useSetRecoilState(ensNameState);
 
 	const [synthsMap, tokensMap] = useMemo(() => {
