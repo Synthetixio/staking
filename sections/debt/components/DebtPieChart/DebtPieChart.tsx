@@ -39,7 +39,7 @@ const BRIGHT_COLORS = [
 ];
 
 const synthDataSortFn = (a: SynthTotalSupply, b: SynthTotalSupply) =>
-	a.value.lt(b.value) ? 1 : -1;
+	a.poolProportion.lt(b.poolProportion) ? 1 : -1;
 
 type DebtPieChartProps = {
 	data: SynthsTotalSupplyData;
@@ -59,7 +59,7 @@ const SynthsPieChart: FC<DebtPieChartProps> = () => {
 			synth.poolProportion.lt(MIN_PERCENT_FOR_PIE_CHART)
 		);
 
-		const topNSynths = sortedData.slice(0, cutoffIndex);
+		const topSynths = sortedData.slice(0, cutoffIndex);
 		const remaining = sortedData.slice(cutoffIndex);
 
 		if (remaining.length) {
@@ -67,26 +67,27 @@ const SynthsPieChart: FC<DebtPieChartProps> = () => {
 			remainingSupply.name = 'Other';
 			for (const data of remaining.slice(1)) {
 				remainingSupply.value = remainingSupply.value.add(data.value);
+				remainingSupply.poolProportion = remainingSupply.poolProportion.add(data.poolProportion);
+				remainingSupply.skewValue = remainingSupply.skewValue.add(data.skewValue);
+				remainingSupply.totalSupply = remainingSupply.totalSupply.add(data.totalSupply);
 			}
-			remainingSupply.poolProportion = remainingSupply.value.div(totalSupply?.totalValue ?? 0);
-			topNSynths.push(remainingSupply);
+			topSynths.push(remainingSupply);
 		}
-		return topNSynths
-			.sort((a, b) => (a.value.lt(b.value) ? 1 : -1))
-			.map((supply, index) => ({
-				name: supply.name,
-				totalSupply: supply.totalSupply.toNumber(),
-				poolProportion: supply.poolProportion.toNumber(),
-				value: supply.value.toNumber(),
-				fillColor: MUTED_COLORS[index % MUTED_COLORS.length],
-				strokeColor: BRIGHT_COLORS[index % BRIGHT_COLORS.length],
-				skewValue: supply.skewValue,
-			}));
-	}, [totalSupply?.supplyData, totalSupply?.totalValue]);
+		return topSynths.sort(synthDataSortFn).map((supply, index) => ({
+			name: supply.name,
+			totalSupply: supply.totalSupply.toNumber(),
+			poolProportion: supply.poolProportion.toNumber(),
+			value: supply.value.toNumber(),
+			fillColor: MUTED_COLORS[index % MUTED_COLORS.length],
+			strokeColor: BRIGHT_COLORS[index % BRIGHT_COLORS.length],
+			skewValue: supply.skewValue,
+			skewValueChart: Math.abs(supply.skewValue.toNumber()),
+		}));
+	}, [totalSupply?.supplyData]);
 
 	return (
 		<SynthsPieChartContainer>
-			<PieChart data={pieData} dataKey={'value'} tooltipFormatter={Tooltip} />
+			<PieChart data={pieData} dataKey={'skewValueChart'} tooltipFormatter={Tooltip} />
 			<TableWrapper>
 				<DebtPoolTable
 					synths={pieData}
@@ -100,7 +101,6 @@ const SynthsPieChart: FC<DebtPieChartProps> = () => {
 
 const Tooltip: FC<{ name: string; value: number; payload: { skewValue: Wei } }> = ({
 	name,
-	value,
 	payload,
 }) => {
 	return (

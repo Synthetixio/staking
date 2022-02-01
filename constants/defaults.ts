@@ -3,8 +3,9 @@ import { Language } from 'translations/constants';
 import localStore from 'utils/localStore';
 import { languageStateKey, priceCurrencyStateKey } from 'store/app/constants';
 
-import { CurrencyCategory, NetworkId, Synth } from '@synthetixio/contracts-interface';
+import { CurrencyCategory, NetworkIdByName, Synth } from '@synthetixio/contracts-interface';
 
+export const SYNTH_DECIMALS = 18;
 // app defaults
 export const DEFAULT_LANGUAGE: Language = localStore.get(languageStateKey) ?? Language.EN;
 export const DEFAULT_PRICE_CURRENCY: Synth = localStore.get(priceCurrencyStateKey) ?? {
@@ -16,7 +17,7 @@ export const DEFAULT_PRICE_CURRENCY: Synth = localStore.get(priceCurrencyStateKe
 };
 
 // network defaults
-export const DEFAULT_NETWORK_ID = NetworkId.Mainnet;
+export const DEFAULT_NETWORK_ID = NetworkIdByName.mainnet;
 
 export const DEFAULT_GAS_LIMIT = 500000;
 export const DEFAULT_GAS_BUFFER = 15000;

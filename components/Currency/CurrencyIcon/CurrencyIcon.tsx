@@ -44,12 +44,7 @@ export const CurrencyIconContainer: FC<CurrencyIconProps> = (props) => (
 	</Container>
 );
 
-export const CurrencyIcon: FC<CurrencyIconProps> = ({
-	currencyKey,
-	type,
-	isDeprecated,
-	...rest
-}) => {
+export const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, isDeprecated, ...rest }) => {
 	const [firstFallbackError, setFirstFallbackError] = useState<boolean>(false);
 	const [secondFallbackError, setSecondFallbackError] = useState<boolean>(false);
 	const [thirdFallbackError, setThirdFallbackError] = useState<boolean>(false);

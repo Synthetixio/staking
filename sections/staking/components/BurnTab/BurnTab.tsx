@@ -128,6 +128,7 @@ const BurnTab: FC = () => {
 				etherNeededToBuy={etherNeededToBuy}
 				sUSDNeededToBuy={sUSDNeededToBuy}
 				sUSDNeededToBurn={sUSDNeededToBurn}
+				optimismLayerOneFee={txn.optimismLayerOneFee}
 			/>
 		);
 	}, [

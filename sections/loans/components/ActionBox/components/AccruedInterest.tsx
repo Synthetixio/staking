@@ -2,8 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { FlexDivRow, FlexDivRowCentered } from 'styles/common';
-import { SYNTH_BY_CURRENCY_KEY } from 'sections/loans/constants';
-import { Loan } from 'queries/loans/types';
+import { Loan } from 'containers/Loans/types';
 import { wei } from '@synthetixio/wei';
 
 type AccruedInterestProps = {
@@ -12,7 +11,6 @@ type AccruedInterestProps = {
 
 const AccruedInterest: React.FC<AccruedInterestProps> = ({ loan }) => {
 	const { t } = useTranslation();
-	const debtAsset = SYNTH_BY_CURRENCY_KEY[loan.currency];
 
 	return (
 		<Container>
@@ -20,7 +18,7 @@ const AccruedInterest: React.FC<AccruedInterestProps> = ({ loan }) => {
 			<FlexDivRowCentered>
 				<Item>
 					<Text>
-						{wei(loan.accruedInterest).toString(4)} {debtAsset}
+						{wei(loan.accruedInterest).toString(4)} {loan.currency}
 					</Text>
 				</Item>
 			</FlexDivRowCentered>

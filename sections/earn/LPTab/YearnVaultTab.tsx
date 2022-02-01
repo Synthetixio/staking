@@ -64,7 +64,6 @@ const YearnVaultTab: FC<LPTabProps> = ({
 	userBalance,
 	staked,
 	pricePerShare,
-	secondTokenRate,
 }) => {
 	const { t } = useTranslation();
 	const [showApproveOverlayModal, setShowApproveOverlayModal] = useState<boolean>(false);
@@ -210,8 +209,8 @@ const YearnVaultTab: FC<LPTabProps> = ({
 				<ApproveModalWrapper>
 					<ApproveModal
 						description={t('earn.incentives.options.yvsnx.approve-message')}
-						tokenContract="Synthetix"
-						contractToApprove="YearnSNXVault"
+						tokenContractName="Synthetix"
+						contractToApproveName="YearnSNXVault"
 						onApproved={() => setShowApproveOverlayModal(false)}
 					/>
 				</ApproveModalWrapper>

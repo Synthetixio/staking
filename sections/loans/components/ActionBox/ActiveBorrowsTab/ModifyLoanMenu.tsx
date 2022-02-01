@@ -3,8 +3,7 @@ import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { Tooltip } from 'styles/common';
-import { Loan } from 'queries/loans/types';
-import { LOAN_TYPE_ETH } from 'sections/loans/constants';
+import { Loan } from 'containers/Loans/types';
 
 const MODAL_WIDTH: number = 105;
 
@@ -26,7 +25,7 @@ const BorrowModifyModal: FC<BorrowModifyModalProps> = ({ actions, loan }) => {
 	};
 	const onStartModify = (action: string) => {
 		closeMenu();
-		router.push(`/loans/${loan.type === LOAN_TYPE_ETH ? 'eth' : 'erc20'}/${loan.id}/${action}`);
+		router.push(`/loans/${loan.collateralAsset === 'sETH' ? 'eth' : 'erc20'}/${loan.id}/${action}`);
 	};
 
 	return (

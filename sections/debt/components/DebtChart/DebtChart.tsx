@@ -99,8 +99,8 @@ const DebtChart = ({ data, isLoading }: { data: Data[]; isLoading: boolean }) =>
 
 	const parsedData = data.map((p) => ({
 		timestamp: p.timestamp,
-		issuanceDebt: p.issuanceDebt.toNumber(),
-		actualDebt: p.actualDebt.toNumber(),
+		issuanceDebt: p.issuanceDebt ? p.issuanceDebt.toNumber() : 0,
+		actualDebt: p.actualDebt ? p.actualDebt.toNumber() : 0,
 	}));
 
 	return (

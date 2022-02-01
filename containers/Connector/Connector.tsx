@@ -10,10 +10,10 @@ import { getDefaultNetworkId, getIsOVM } from 'utils/network';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import {
 	NetworkId,
-	Network as NetworkName,
 	SynthetixJS,
 	synthetix,
-	getNetworkFromId,
+	NetworkNameById,
+	NetworkIdByName,
 } from '@synthetixio/contracts-interface';
 import { ethers } from 'ethers';
 import { switchToL1 } from '@synthetixio/optimism-networks';
@@ -60,29 +60,29 @@ const useConnector = () => {
 
 	useEffect(() => {
 		const init: () => void = async () => {
-			const networkId = await getDefaultNetworkId();
-
-			if (!window.ethereum) {
+			if (!window.ethereum || selectedWallet !== 'Browser Wallet') {
 				setAppReady(true);
-				setNetwork({ name: NetworkName.Mainnet, id: networkId, useOvm: false });
-				setSynthetixjs(synthetix({ networkId, useOvm: false }));
+				// For non browser wallets we use mainnet by default. And the app/wallet will trigger wallet change events if needed
+				setNetwork({
+					name: NetworkNameById[NetworkIdByName.mainnet],
+					id: NetworkIdByName.mainnet,
+					useOvm: false,
+				});
+				setSynthetixjs(synthetix({ networkId: NetworkIdByName.mainnet, useOvm: false }));
 				return;
 			}
-			const resolvedNetwork = getNetworkFromId({ id: networkId });
-			const isSupportedNetwork = Boolean(resolvedNetwork);
-			if (!isSupportedNetwork) {
+			const networkId = await getDefaultNetworkId();
+			if (!isSupportedNetworkId(networkId)) {
 				// When not on supported network: Switch to l1 and try again
 				await switchToL1({ ethereum: window.ethereum });
 				return init();
 			}
-
-			// TODO: need to verify we support the network
 			const provider = loadProvider({
 				networkId,
 				//infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
 				provider: window.ethereum as any, // loadProvider as incorrect types for provider
 			});
-			const useOvm = getIsOVM(networkId);
+			const useOvm = getIsOVM(Number(networkId));
 
 			const snxjs = synthetix({ provider, networkId, useOvm });
 
@@ -112,13 +112,16 @@ const useConnector = () => {
 
 	useEffect(() => {
 		if (isAppReady && network) {
-			const onboard = initOnboard(synthetixjs!, network.id, {
+			const onboard = initOnboard(network.id, {
 				address: setUserAddress,
-				network: (networkId: number) => {
-					const isSupportedNetwork = Boolean(getNetworkFromId({ id: networkId }));
-					if (!isSupportedNetwork && window.ethereum) {
+				network: (networkId) => {
+					if (!networkId) return; // user disconnected the wallet
+
+					if (!isSupportedNetworkId(networkId)) {
 						// This should only happen when a user is connected and changes to an unsupported network
-						switchToL1({ ethereum: window.ethereum });
+						if (window.ethereum) {
+							switchToL1({ ethereum: window.ethereum });
+						}
 						// We can return here since the network change will trigger this callback again
 						return;
 					}
@@ -129,7 +132,7 @@ const useConnector = () => {
 					const signer = provider.getSigner();
 					const useOvm = getIsOVM(networkId);
 
-					const snxjs = synthetix({ provider, networkId, signer, useOvm });
+					const snxjs = synthetix({ provider, networkId: networkId as NetworkId, signer, useOvm });
 
 					onboard.config({ networkId });
 					if (transactionNotifier) {
@@ -146,15 +149,15 @@ const useConnector = () => {
 					if (wallet.provider) {
 						const provider = loadProvider({ provider: wallet.provider });
 						const network = await provider.getNetwork();
-						const networkId = network.chainId as NetworkId;
-						const resolvedNetwork = getNetworkFromId({ id: networkId });
-						const isSupportedNetwork = Boolean(resolvedNetwork);
-						if (!isSupportedNetwork && window.ethereum) {
-							await switchToL1({ ethereum: window.ethereum });
+						const networkId = Number(network.chainId);
+						if (!isSupportedNetworkId(networkId)) {
+							if (window.ethereum) {
+								await switchToL1({ ethereum: window.ethereum });
+							}
 							// We return here and expect the network change to trigger onboard's network callback
 							return;
 						}
-						const useOvm = getIsOVM(networkId);
+						const useOvm = getIsOVM(Number(networkId));
 
 						const snxjs = synthetix({ provider, networkId, signer: provider.getSigner(), useOvm });
 

@@ -42,7 +42,6 @@ type DebtTabsProps = {
 const DebtTabs: FC<DebtTabsProps> = ({
 	tabData,
 	boxHeight,
-	boxWidth,
 	boxPadding,
 	tabHeight,
 	currentPanel,
@@ -105,7 +104,7 @@ const DebtTabs: FC<DebtTabsProps> = ({
 							))}
 						</TabList>
 						{tabData.map(
-							({ title, tabChildren, key, width }, index) =>
+							({ title, tabChildren, key }, index) =>
 								activeTab === key && (
 									<TabPanelContainer
 										id={`${title}-tabpanel`}

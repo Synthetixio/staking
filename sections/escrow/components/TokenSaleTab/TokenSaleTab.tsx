@@ -5,8 +5,8 @@ import { walletAddressState } from 'store/wallet';
 
 import TabContent from './TabContent';
 import { TabContainer } from '../common';
-import useSynthetixQueries from '@synthetixio/queries';
-import Wei, { wei } from '@synthetixio/wei';
+import useSynthetixQueries, { GasPrice } from '@synthetixio/queries';
+import { wei } from '@synthetixio/wei';
 
 const TokenSaleTab: React.FC = () => {
 	const walletAddress = useRecoilValue(walletAddressState);
@@ -16,11 +16,9 @@ const TokenSaleTab: React.FC = () => {
 	const tokenSaleEscrowQuery = useTokenSaleEscrowQuery(walletAddress);
 
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
-	const [gasPrice, setGasPrice] = useState<Wei>(wei(0));
+	const [gasPrice, setGasPrice] = useState<GasPrice | undefined>(undefined);
 
-	const synthetixTxn = useSynthetixTxn('SynthetixEscrow', 'vest', [], {
-		gasPrice: gasPrice.toBN(),
-	});
+	const synthetixTxn = useSynthetixTxn('SynthetixEscrow', 'vest', [], gasPrice);
 
 	const tokenSaleData = tokenSaleEscrowQuery?.data;
 	const canVestAmount = tokenSaleData?.claimableAmount ?? wei(0);
@@ -50,6 +48,7 @@ const TokenSaleTab: React.FC = () => {
 				txHash={synthetixTxn.hash}
 				transactionState={synthetixTxn.txnStatus}
 				onResetTransaction={synthetixTxn.refresh}
+				optimismLayerOneFee={synthetixTxn.optimismLayerOneFee}
 			/>
 		</TabContainer>
 	);

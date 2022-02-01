@@ -3,7 +3,11 @@ import styled from 'styled-components';
 import { useTranslation, Trans } from 'react-i18next';
 import { Synths } from '@synthetixio/contracts-interface';
 import Wei, { wei } from '@synthetixio/wei';
-import useSynthetixQueries, { Balances, DeprecatedSynthBalance } from '@synthetixio/queries';
+import useSynthetixQueries, {
+	Balances,
+	DeprecatedSynthBalance,
+	GasPrice,
+} from '@synthetixio/queries';
 import { Svg } from 'react-optimized-image';
 
 import BaseModal from 'components/BaseModal';
@@ -42,16 +46,19 @@ const RedeemDeprecatedSynthsModal: FC<{
 	const { synthetixjs } = Connector.useContainer();
 	const { blockExplorerInstance } = Etherscan.useContainer();
 
-	const [gasPrice, setGasPrice] = useState<Wei>(wei(0));
+	const [gasPrice, setGasPrice] = useState<GasPrice | undefined>(undefined);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 
 	const sUSDBalance = synthBalances?.balancesMap[Synths.sUSD]?.balance ?? wei(0);
 	const Redeemer = synthetixjs!.contracts.SynthRedeemer;
 
 	const { useContractTxn } = useSynthetixQueries();
-	const txn = useContractTxn(Redeemer, 'redeemAll', [redeemableDeprecatedSynthsAddresses], {
-		gasPrice: gasPrice.toBN(),
-	});
+	const txn = useContractTxn(
+		Redeemer,
+		'redeemAll',
+		[redeemableDeprecatedSynthsAddresses],
+		gasPrice
+	);
 
 	const link = useMemo(
 		() =>
@@ -122,7 +129,11 @@ const RedeemDeprecatedSynthsModal: FC<{
 								<ReceiveValueContainer redeemAmount={redeemAmount} {...{ sUSDBalance }} />
 							</ValuesContainer>
 							<SettingsContainer>
-								<GasSelector gasLimitEstimate={txn.gasLimit} setGasPrice={setGasPrice} />
+								<GasSelector
+									gasLimitEstimate={txn.gasLimit}
+									onGasPriceChange={setGasPrice}
+									optimismLayerOneFee={txn.optimismLayerOneFee}
+								/>
 							</SettingsContainer>
 						</ModalContainer>
 						<StyledButtonTransaction size="lg" variant="primary" onClick={handleRedeem}>

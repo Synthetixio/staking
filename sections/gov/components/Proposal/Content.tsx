@@ -71,7 +71,7 @@ const Content: React.FC<ContentProps> = ({ proposal, onBack }) => {
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 
 	const voteMutate = useSignMessage({
-		onSuccess: (response) => {
+		onSuccess: () => {
 			setTransactionState(Transaction.SUCCESS);
 			setSignModalOpen(false);
 		},

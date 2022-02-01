@@ -42,9 +42,10 @@ const ToggleDelegateApproval: FC<ToggleDelegateApprovalProps> = ({
 	const [, setError] = useState<string | null>(null);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 
-	const shortenedDelegateAddress = useMemo(() => truncateAddress(account.address, 8, 6), [
-		account.address,
-	]);
+	const shortenedDelegateAddress = useMemo(
+		() => truncateAddress(account.address, 8, 6),
+		[account.address]
+	);
 
 	const getTxData = useCallback(
 		(gas: Record<string, number>) => {
@@ -71,7 +72,7 @@ const ToggleDelegateApproval: FC<ToggleDelegateApprovalProps> = ({
 						txHash: hash,
 						onTxConfirmed: () => {},
 					}),
-				showSuccessNotification: (hash: string) => {},
+				showSuccessNotification: () => {},
 			});
 		} catch {
 		} finally {

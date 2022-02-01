@@ -48,7 +48,7 @@ import CouncilDilution from 'contracts/councilDilution.js';
 import { ethers } from 'ethers';
 import Connector from 'containers/Connector';
 import { appReadyState } from 'store/app';
-import { isWalletConnectedState, walletAddressState } from 'store/wallet';
+import { isL2State, isWalletConnectedState, walletAddressState } from 'store/wallet';
 import { useCouncilMembers } from 'sections/gov/hooks/useCouncilMembers';
 
 import { Transaction } from 'constants/network';
@@ -90,6 +90,10 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ proposal, onBack }) =
 
 	const isAppReady = useRecoilValue(appReadyState);
 	const walletAddress = useRecoilValue(walletAddressState);
+	const isL2 = useRecoilValue(isL2State);
+
+	const ovmProvider = new ethers.providers.JsonRpcProvider('https://mainnet.optimism.io');
+
 	const { useProposalQuery, useContractTxn } = useSynthetixQueries();
 
 	const proposalQuery = useProposalQuery(
@@ -119,9 +123,13 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ proposal, onBack }) =
 	});
 
 	const contract = useMemo(
-		() => new ethers.Contract(CouncilDilution.address, CouncilDilution.abi, signer as any),
-		[signer]
+		() =>
+			isL2
+				? new ethers.Contract(CouncilDilution.address, CouncilDilution.abi, signer as any)
+				: new ethers.Contract(CouncilDilution.address, CouncilDilution.abi, ovmProvider as any),
+		[signer, isL2, ovmProvider]
 	);
+
 	const txn = useContractTxn(contract, hasDiluted ? 'invalidateDilution' : 'dilute', [
 		proposal.id,
 		memberVotedFor || ethers.constants.AddressZero,
@@ -165,12 +173,6 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ proposal, onBack }) =
 	useEffect(() => {
 		const hasUserDiluted = async () => {
 			if (isAppReady && proposal && !isCouncilMember) {
-				const contract = new ethers.Contract(
-					CouncilDilution.address,
-					CouncilDilution.abi,
-					signer as any
-				);
-
 				const hasDiluted = await contract.hasAddressDilutedForProposal(proposal.id, walletAddress);
 
 				setHasDiluted(hasDiluted);
@@ -181,7 +183,7 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ proposal, onBack }) =
 
 	useEffect(() => {
 		const checkCanDilute = async () => {
-			if (isAppReady && proposal && !isCouncilMember) {
+			if (isAppReady && isL2 && proposal && !isCouncilMember) {
 				const contract = new ethers.Contract(
 					CouncilDilution.address,
 					CouncilDilution.abi,
@@ -204,7 +206,7 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ proposal, onBack }) =
 			}
 		};
 		checkCanDilute();
-	}, [proposal, isCouncilMember, isAppReady, signer, walletAddress]);
+	}, [proposal, isCouncilMember, isAppReady, signer, walletAddress, isL2]);
 
 	const handleVote = () => {
 		if (proposal && selected !== null) {
@@ -411,11 +413,19 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ proposal, onBack }) =
 					) : (
 						<>
 							{hasDiluted ? (
-								<StyledCTA disabled={!canDilute} onClick={() => txn.mutate()} variant="primary">
+								<StyledCTA
+									disabled={!isL2 || !canDilute}
+									onClick={() => txn.mutate()}
+									variant="primary"
+								>
 									{t('gov.proposal.action.support')}
 								</StyledCTA>
 							) : (
-								<StyledCTA disabled={!canDilute} onClick={() => txn.mutate()} variant="primary">
+								<StyledCTA
+									disabled={!isL2 || !canDilute}
+									onClick={() => txn.mutate()}
+									variant="primary"
+								>
 									{t('gov.proposal.action.withdraw')}
 								</StyledCTA>
 							)}

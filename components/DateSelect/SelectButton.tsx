@@ -15,7 +15,7 @@ type SelectButtonProps = HTMLProps<HTMLInputElement> & {
 
 const SelectButton = (
 	{ onClick, value, isOpen, onClear, showClear }: SelectButtonProps,
-	ref: React.Ref<HTMLInputElement>
+	_ref: React.Ref<HTMLInputElement>
 ) => (
 	<Button
 		className="select-button"

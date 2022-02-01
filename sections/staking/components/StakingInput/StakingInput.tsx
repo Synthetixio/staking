@@ -49,6 +49,7 @@ import { BurnActionType, burnTypeState } from 'store/staking';
 import Button from 'components/Button';
 import Currency from 'components/Currency';
 import { parseSafeWei } from 'utils/parse';
+import { GasPrice } from '@synthetixio/queries';
 
 type StakingInputProps = {
 	onSubmit: () => void;
@@ -60,7 +61,8 @@ type StakingInputProps = {
 	txModalOpen: boolean;
 	setTxModalOpen: Function;
 	gasLimitEstimate: GasLimitEstimate;
-	setGasPrice: Function;
+	optimismLayerOneFee: Wei | null;
+	setGasPrice: (gasPrice: GasPrice) => void;
 	onInputChange: Function;
 	txHash: string | null;
 	transactionState: string;
@@ -92,15 +94,10 @@ const StakingInput: React.FC<StakingInputProps> = ({
 	etherNeededToBuy,
 	sUSDNeededToBuy,
 	sUSDNeededToBurn,
+	optimismLayerOneFee,
 }) => {
-	const {
-		targetCRatio,
-		SNXRate,
-		debtBalance,
-		issuableSynths,
-		collateral,
-		currentCRatio,
-	} = useStakingCalculations();
+	const { targetCRatio, SNXRate, debtBalance, issuableSynths, collateral, currentCRatio } =
+		useStakingCalculations();
 	const { connectWallet } = Connector.useContainer();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const burnType = useRecoilValue(burnTypeState);
@@ -135,8 +132,8 @@ const StakingInput: React.FC<StakingInputProps> = ({
 			);
 		} else if (error) {
 			return (
-				<StyledCTA variant="primary" size="lg" disabled={true}>
-					{error}
+				<StyledCTA variant="primary" size="lg" onClick={() => resetTransaction()}>
+					{t('common.error.clear')}
 				</StyledCTA>
 			);
 		} else if (inputValue.toString().length === 0) {
@@ -188,17 +185,18 @@ const StakingInput: React.FC<StakingInputProps> = ({
 			);
 		}
 	}, [
-		inputValue,
+		isWalletConnected,
 		error,
-		transactionState,
+		inputValue,
+		burnType,
+		maxBurnAmount,
+		burnAmountToFixCRatio,
+		connectWallet,
+		t,
+		resetTransaction,
 		isMint,
 		onSubmit,
-		t,
-		isWalletConnected,
-		connectWallet,
-		maxBurnAmount,
-		burnType,
-		burnAmountToFixCRatio,
+		transactionState,
 	]);
 
 	const equivalentSNXAmount = useMemo(() => {
@@ -322,10 +320,15 @@ const StakingInput: React.FC<StakingInputProps> = ({
 						<RowValue>{equivalentSNXAmount}</RowValue>
 					</DataRow>
 					<DataRow>
-						<GasSelector gasLimitEstimate={gasLimitEstimate} setGasPrice={setGasPrice} />
+						<GasSelector
+							gasLimitEstimate={gasLimitEstimate}
+							onGasPriceChange={setGasPrice}
+							optimismLayerOneFee={optimismLayerOneFee}
+						/>
 					</DataRow>
 				</DataContainer>
 			</InputContainer>
+			<ErrorParagraph>{error}</ErrorParagraph>
 			{returnButtonStates}
 			{txModalOpen && (
 				<TxConfirmationModal
@@ -388,6 +391,10 @@ const BalanceButton = styled(Button)`
 
 const InputGroup = styled.div`
 	width: 100%;
+`;
+
+const ErrorParagraph = styled.p`
+	margin-top: 0;
 `;
 
 const InputBoxInGroup = styled(InputBox)`

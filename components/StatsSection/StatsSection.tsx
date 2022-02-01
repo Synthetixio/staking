@@ -1,4 +1,4 @@
-import { FC, useMemo, useState } from 'react';
+import { FC, useState } from 'react';
 import { Svg } from 'react-optimized-image';
 import styled from 'styled-components';
 
@@ -21,17 +21,19 @@ import { walletAddressState, delegateWalletState } from 'store/wallet';
 import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
 import useCryptoBalances from 'hooks/useCryptoBalances';
+import { Tooltip } from 'styles/common';
+import { useTranslation } from 'react-i18next';
+import useGetCurrencyRateChange from 'hooks/useGetCurrencyRateChange';
 
 const StatsSection: FC = ({ children }) => {
 	const walletAddress = useRecoilValue(walletAddressState);
 	const delegateWallet = useRecoilValue(delegateWalletState);
+	const { t } = useTranslation();
+	const { useSynthsBalancesQuery } = useSynthetixQueries();
 
-	const { useSynthsBalancesQuery, exchanges } = useSynthetixQueries();
+	const sevenDaysAgoSeconds = Math.floor(new Date().setDate(new Date().getDate() - 7) / 1000);
+	const currencyRateChange = useGetCurrencyRateChange(sevenDaysAgoSeconds, 'SNX');
 
-	const SNX24hrPricesQuery = exchanges.useGetDailySNXPrices(
-		{ first: 365 },
-		{ id: true, averagePrice: true }
-	);
 	const cryptoBalances = useCryptoBalances(delegateWallet?.address ?? walletAddress);
 	const synthsBalancesQuery = useSynthsBalancesQuery(delegateWallet?.address ?? walletAddress);
 	const [mobileStatsSectionIsOpen, setMobileStatsSectionIsOpen] = useState(false);
@@ -41,13 +43,6 @@ const StatsSection: FC = ({ children }) => {
 			?.balance ?? wei(0);
 
 	const sUSDBalance = synthsBalancesQuery?.data?.balancesMap[Synths.sUSD]?.balance ?? wei(0);
-
-	const snxPriceChartData = useMemo(() => {
-		return (SNX24hrPricesQuery?.data ?? [])
-			.map((dataPoint) => ({ value: dataPoint.averagePrice.toNumber() }))
-			.slice()
-			.reverse();
-	}, [SNX24hrPricesQuery?.data]);
 
 	const toggleMobileStatsSection = () =>
 		setMobileStatsSectionIsOpen((mobileStatsSectionIsOpen) => !mobileStatsSectionIsOpen);
@@ -67,7 +62,14 @@ const StatsSection: FC = ({ children }) => {
 						<PeriodBarStats />
 					</TopContainer>
 					<BottomContainer>
-						<PriceItem currencyKey={CryptoCurrency.SNX} data={snxPriceChartData} />
+						<Tooltip content={t('common.price-change.seven-days')}>
+							<div>
+								<PriceItem
+									currencyKey={CryptoCurrency.SNX}
+									currencyRateChange={currencyRateChange}
+								/>
+							</div>
+						</Tooltip>
 						<BalanceItem amount={snxBalance} currencyKey={CryptoCurrency.SNX} />
 						<BalanceItem amount={sUSDBalance} currencyKey={Synths.sUSD} />
 					</BottomContainer>

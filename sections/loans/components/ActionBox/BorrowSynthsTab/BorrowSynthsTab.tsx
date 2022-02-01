@@ -3,7 +3,7 @@ import { useRecoilValue } from 'recoil';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
 
-import { isWalletConnectedState, walletAddressState } from 'store/wallet';
+import { isL2State, isWalletConnectedState, walletAddressState } from 'store/wallet';
 import Connector from 'containers/Connector';
 import UIContainer from 'containers/UI';
 import GasSelector from 'components/GasSelector';
@@ -12,12 +12,7 @@ import {
 	ModalItemTitle as TxModalItemTitle,
 	ModalItemText as TxModalItemText,
 } from 'styles/common';
-import {
-	DEBT_ASSETS,
-	LOAN_TYPE_ERC20,
-	LOAN_TYPE_ETH,
-	SAFE_MIN_CRATIO,
-} from 'sections/loans/constants';
+import { DEBT_ASSETS, DEBT_ASSETS_L2, SAFE_MIN_CRATIO_BUFFER } from 'sections/loans/constants';
 import {
 	FormContainer,
 	InputsContainer,
@@ -37,7 +32,7 @@ import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import FormButton from './FormButton';
 import AssetInput from './AssetInput';
 import Wei, { wei } from '@synthetixio/wei';
-import useSynthetixQueries from '@synthetixio/queries';
+import useSynthetixQueries, { GasPrice } from '@synthetixio/queries';
 import { parseSafeWei } from 'utils/parse';
 import { ethers } from 'ethers';
 import { calculateLoanCRatio } from './calculateLoanCRatio';
@@ -46,31 +41,33 @@ import { getETHToken } from 'contracts/ethToken';
 import { useQuery } from 'react-query';
 
 type BorrowSynthsTabProps = {};
-
-const COLLATERAL_ASSETS: { [asset: string]: string[] } = {
+const L1_COLLATERAL_ASSETS: { [asset: string]: string[] } = {
 	sETH: ['ETH'],
 	sBTC: ['renBTC'],
 	sUSD: ['ETH', 'renBTC'],
 };
+const getCollateralAsset = (debtAsset: string, isL2: boolean) => {
+	if (isL2) {
+		return ['ETH'];
+	}
+	return L1_COLLATERAL_ASSETS[debtAsset];
+};
 
-const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
+const BorrowSynthsTab: FC<BorrowSynthsTabProps> = () => {
 	const { t } = useTranslation();
 	const { signer, synthetixjs, connectWallet, network } = Connector.useContainer();
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 	const router = useRouter();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
+	const isL2 = useRecoilValue(isL2State);
 
 	const address = useRecoilValue(walletAddressState);
 	const { renBTCContract, minCRatios } = Loans.useContainer();
-	const {
-		useExchangeRatesQuery,
-		useContractTxn,
-		useSynthetixTxn,
-		useTokensBalancesQuery,
-	} = useSynthetixQueries();
+	const { useExchangeRatesQuery, useContractTxn, useSynthetixTxn, useTokensBalancesQuery } =
+		useSynthetixQueries();
 	const { setTitle } = UIContainer.useContainer();
 
-	const [gasPrice, setGasPrice] = useState<Wei>(wei(0));
+	const [gasPrice, setGasPrice] = useState<GasPrice | undefined>(undefined);
 
 	const [debtAmountNumber, setDebtAmount] = useState<string>('');
 	const [debtAsset, setDebtAsset] = useState<string>('sUSD');
@@ -78,7 +75,8 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 	const debtAmount = parseSafeWei(debtAmountNumber, wei(0));
 
 	const [collateralAmountNumber, setCollateralAmount] = useState<string>('');
-	const [collateralAsset, setCollateralAsset] = useState<string>('');
+	const [collateralAsset, setCollateralAsset] = useState<string>('ETH');
+
 	const renToken = getRenBTCToken(network);
 	const ethToken = getETHToken(network);
 	const collateralDecimals = collateralAsset === 'renBTC' ? renToken.decimals : ethToken.decimals;
@@ -86,9 +84,10 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 
 	const collateralIsETH = collateralAsset === 'ETH';
 	const collateralContract = collateralIsETH ? null : renBTCContract;
-	const ethAndRenBalance = useTokensBalancesQuery([renToken, ethToken], address);
+	const balancesToFetch = isL2 ? [ethToken] : [renToken, ethToken];
+	const balances = useTokensBalancesQuery(balancesToFetch, address);
 
-	const minCRatio = minCRatios.get(collateralIsETH ? LOAN_TYPE_ETH : LOAN_TYPE_ERC20) || wei(0);
+	const minCRatio = collateralIsETH ? minCRatios.ethMinCratio : minCRatios.erc20MinCratio;
 
 	const loanContract = useMemo(() => {
 		if (!signer || !synthetixjs) return null;
@@ -109,7 +108,7 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 		() => !collateralAmount.eq(0) && collateralAmount.lt(minCollateralAmount),
 		[collateralAmount, minCollateralAmount]
 	);
-	const minCollateralAmountString = minCollateralAmount.scale(collateralDecimals).toString(2);
+	const minCollateralAmountString = minCollateralAmount.toString(2);
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const exchangeRates = exchangeRatesQuery.data ?? null;
 
@@ -133,22 +132,24 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 
 		return null;
 	}, [address, collateralContract, collateralIsETH, loanContract]);
+
 	const rawCollateralBalance = collateralIsETH
-		? ethAndRenBalance.data?.ETH?.balance
-		: ethAndRenBalance.data?.renBTC?.balance;
+		? balances.data?.ETH?.balance
+		: balances.data?.renBTC?.balance;
 	const collateralBalance = rawCollateralBalance || wei(0);
 
 	const approveTxn = useContractTxn(
 		collateralContract,
 		'approve',
 		[loanContract?.address || ethers.constants.AddressZero, ethers.constants.MaxUint256],
-		{ gasPrice: gasPrice.toBN() }
+		gasPrice
 	);
 
 	const debt = { amount: debtAmount, asset: debtAsset };
 	const collateral = { amount: collateralAmount, asset: collateralAsset };
 	const cratio = calculateLoanCRatio(exchangeRates, collateral, debt);
-	const hasLowCRatio = !collateralAmount.eq(0) && !debtAmount.eq(0) && cratio.lt(SAFE_MIN_CRATIO);
+	const safeMinCratio = minCRatio ? minCRatio.add(SAFE_MIN_CRATIO_BUFFER) : wei(0);
+	const hasLowCRatio = !collateralAmount.eq(0) && !debtAmount.eq(0) && cratio.lt(safeMinCratio);
 	const hasInsufficientCollateral = collateralBalance.lt(minCollateralAmount);
 
 	const shouldOpenTransaction = Boolean(
@@ -172,7 +173,7 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 					ethers.utils.formatBytes32String(debt.asset),
 			  ],
 		{
-			gasPrice: gasPrice.toBN(),
+			...gasPrice,
 			value: collateralIsETH ? collateral.amount.toBN() : 0,
 		},
 		{ enabled: shouldOpenTransaction }
@@ -200,7 +201,13 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 	useEffect(() => {
 		setTitle('loans', 'new');
 	}, [setTitle]);
-
+	useEffect(() => {
+		const newCollateralAssets = getCollateralAsset(debtAsset, isL2);
+		const currentCollateralValid = newCollateralAssets.includes(collateralAsset);
+		if (!currentCollateralValid) {
+			setCollateralAsset(newCollateralAssets[0]);
+		}
+	}, [collateralAsset, debtAsset, isL2]);
 	return (
 		<>
 			<FormContainer data-testid="loans-form">
@@ -211,7 +218,7 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 						setAsset={setDebtAsset}
 						amount={debtAmountNumber}
 						setAmount={setDebtAmount}
-						assets={DEBT_ASSETS}
+						assets={isL2 ? DEBT_ASSETS_L2 : DEBT_ASSETS}
 						testId="loans-form-left-input"
 					/>
 					<InputsDivider />
@@ -221,7 +228,7 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 						setAsset={setCollateralAsset}
 						amount={collateralAmountNumber}
 						setAmount={setCollateralAmount}
-						assets={COLLATERAL_ASSETS[debtAsset]}
+						assets={getCollateralAsset(debtAsset, isL2)}
 						onSetMaxAmount={setCollateralAmount}
 						testId="loans-form-right-input"
 					/>
@@ -229,7 +236,7 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 
 				<SettingsContainer>
 					<SettingContainer>
-						<CRatio {...{ cratio, hasLowCRatio, minCRatio }} />
+						<CRatio cratio={cratio} hasLowCRatio={hasLowCRatio} minCRatio={minCRatio || wei(0)} />
 					</SettingContainer>
 					<SettingContainer>
 						<InterestRate />
@@ -239,10 +246,9 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = (props) => {
 					</SettingContainer>
 					<SettingContainer>
 						<GasSelector
+							optimismLayerOneFee={openTxn.optimismLayerOneFee}
 							gasLimitEstimate={openTxn ? openTxn.gasLimit : null}
-							setGasPrice={(x: Wei) => {
-								setGasPrice(x);
-							}}
+							onGasPriceChange={setGasPrice}
 						/>
 					</SettingContainer>
 				</SettingsContainer>

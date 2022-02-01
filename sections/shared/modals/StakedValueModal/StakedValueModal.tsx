@@ -72,7 +72,7 @@ export const StakedValueModal: FC<{ value: string; isOpened: boolean; onDismiss:
 							setCurrentSnapshot(null);
 						}
 					}}
-					onMouseLeave={(e: any) => {
+					onMouseLeave={() => {
 						setCurrentSnapshot(null);
 					}}
 				>
@@ -201,7 +201,6 @@ export const StakedValueModal: FC<{ value: string; isOpened: boolean; onDismiss:
 
 const CustomTooltip = ({
 	active,
-	label,
 	payload,
 }: {
 	active: boolean;

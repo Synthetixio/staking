@@ -19,14 +19,10 @@ export const calculateIsBelowCRatio = (
 export const useUserStakingData = (walletAddress: string | null) => {
 	const isL2 = useRecoilValue(isL2State);
 
-	const {
-		useGetFeePoolDataQuery,
-		useGetDebtDataQuery,
-		useClaimableRewardsQuery,
-		issuance,
-	} = useSynthetixQueries();
+	const { useGetFeePoolDataQuery, useGetDebtDataQuery, useClaimableRewardsQuery, subgraph } =
+		useSynthetixQueries();
 
-	const feeClaims = issuance.useGetFeesClaimeds(
+	const feeClaims = subgraph.useGetFeesClaimeds(
 		{
 			first: 1,
 			orderBy: 'timestamp',
@@ -47,13 +43,8 @@ export const useUserStakingData = (walletAddress: string | null) => {
 		Synths.sUSD
 	);
 	const previousFeePeriod = useGetFeePoolDataQuery(1);
-	const {
-		currentCRatio,
-		targetCRatio,
-		debtBalance,
-		collateral,
-		targetThreshold,
-	} = useStakingCalculations();
+	const { currentCRatio, targetCRatio, debtBalance, collateral, targetThreshold } =
+		useStakingCalculations();
 	const globalStakingInfo = useGlobalStakingInfoQuery();
 
 	const debtData = useGetDebtDataQuery(walletAddress);

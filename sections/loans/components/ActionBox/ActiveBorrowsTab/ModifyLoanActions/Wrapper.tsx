@@ -26,15 +26,13 @@ import {
 	TxModalItem,
 	TxModalItemSeperator,
 } from 'sections/loans/components/common';
-import { LOAN_TYPE_ERC20, LOAN_TYPE_ETH } from 'sections/loans/constants';
-import { normalizedGasPrice as getNormalizedGasPrice } from 'utils/network';
 import AssetInput from 'sections/loans/components/ActionBox/BorrowSynthsTab/AssetInput';
-import { Loan } from 'queries/loans/types';
+import { Loan } from 'containers/Loans/types';
 import AccruedInterest from 'sections/loans/components/ActionBox/components/AccruedInterest';
 import CRatio from 'sections/loans/components/ActionBox/components/LoanCRatio';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import Wei, { wei } from '@synthetixio/wei';
-import useSynthetixQueries from '@synthetixio/queries';
+import useSynthetixQueries, { GasPrice } from '@synthetixio/queries';
 
 type WrapperProps = {
 	getTxData: (gas: Record<string, number>) => any[] | null;
@@ -53,7 +51,7 @@ type WrapperProps = {
 
 	buttonLabel: string;
 	buttonIsDisabled: boolean;
-	onButtonClick: (gas: Record<string, number>) => void;
+	onButtonClick: () => void;
 
 	loan: Loan;
 	loanTypeIsETH: boolean;
@@ -94,7 +92,6 @@ const Wrapper: FC<WrapperProps> = ({
 	showInterestAccrued,
 
 	error,
-	setError,
 
 	txModalOpen,
 	setTxModalOpen,
@@ -105,19 +102,16 @@ const Wrapper: FC<WrapperProps> = ({
 
 	const [waitETA, setWaitETA] = useState<string>('');
 
-	const [gasPrice, setGasPrice] = useState<Wei>(wei(0));
+	const [gasPrice, setGasPrice] = useState<GasPrice | undefined>(undefined);
 
-	const minCRatio = useMemo(
-		() => minCRatios.get(loanTypeIsETH ? LOAN_TYPE_ETH : LOAN_TYPE_ERC20) || wei(0),
-		[minCRatios, loanTypeIsETH]
-	);
+	const minCRatio = loanTypeIsETH ? minCRatios.ethMinCratio : minCRatios.erc20MinCratio;
 
 	const { useContractTxn } = useSynthetixQueries();
 
 	const data = getTxData({});
 
 	let opts = {
-		gasPrice: gasPrice.toBN(),
+		...gasPrice,
 	};
 
 	if (data && data.length > 3) {
@@ -138,16 +132,11 @@ const Wrapper: FC<WrapperProps> = ({
 		return addSeconds(lastInteractionTime, parseInt(interactionDelay.toString()));
 	}, [loanTypeIsETH, loan.lastInteraction, interactionDelays]);
 
-	const handleButtonClick = () =>
-		onButtonClick({
-			gasPrice: getNormalizedGasPrice(gasPrice.toNumber()),
-		});
-
 	useEffect(() => {
 		if (!nextInteractionDate) return;
 
 		let isMounted = true;
-		const unsubs: Array<any> = [() => (isMounted = false)];
+		const unsubs: Array<Function> = [() => (isMounted = false)];
 
 		const timer = () => {
 			const intervalId = setInterval(() => {
@@ -215,22 +204,26 @@ const Wrapper: FC<WrapperProps> = ({
 				<SettingsContainer>
 					{!showCRatio ? null : (
 						<SettingContainer>
-							<CRatio {...{ loan, loanTypeIsETH, minCRatio }} />
+							<CRatio loan={loan} minCRatio={minCRatio || wei(0)} />
 						</SettingContainer>
 					)}
 					{!showInterestAccrued ? null : (
 						<SettingContainer>
-							<AccruedInterest {...{ loan }} />
+							<AccruedInterest loan={loan} />
 						</SettingContainer>
 					)}
 					<SettingContainer>
-						<GasSelector gasLimitEstimate={txn.gasLimit} setGasPrice={setGasPrice} />
+						<GasSelector
+							gasLimitEstimate={txn.gasLimit}
+							onGasPriceChange={setGasPrice}
+							optimismLayerOneFee={txn.optimismLayerOneFee}
+						/>
 					</SettingContainer>
 				</SettingsContainer>
 			</FormContainer>
 
 			<FormButton
-				onClick={handleButtonClick}
+				onClick={onButtonClick}
 				variant="primary"
 				size="lg"
 				disabled={!!waitETA || buttonIsDisabled}
@@ -248,7 +241,7 @@ const Wrapper: FC<WrapperProps> = ({
 				<TxConfirmationModal
 					onDismiss={() => setTxModalOpen(false)}
 					txError={null}
-					attemptRetry={handleButtonClick}
+					attemptRetry={onButtonClick}
 					content={
 						<TxModalContent>
 							<TxModalItem>

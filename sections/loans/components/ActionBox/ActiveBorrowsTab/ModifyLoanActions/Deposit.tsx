@@ -3,10 +3,14 @@ import { ethers } from 'ethers';
 import { useRecoilValue } from 'recoil';
 
 import { walletAddressState } from 'store/wallet';
-import { Loan } from 'queries/loans/types';
+import { Loan } from 'containers/Loans/types';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import { tx } from 'utils/transactions';
 import Wrapper from './Wrapper';
+import { useRouter } from 'next/router';
+import ROUTES from 'constants/routes';
+import { getRenBTCToken } from 'contracts/renBTCToken';
+import { getETHToken } from 'contracts/ethToken';
 
 type DepositProps = {
 	loanId: number;
@@ -23,6 +27,7 @@ const Deposit: React.FC<DepositProps> = ({
 	loanContract,
 	collateralAssetContract,
 }) => {
+	const router = useRouter();
 	const address = useRecoilValue(walletAddressState);
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 
@@ -32,12 +37,15 @@ const Deposit: React.FC<DepositProps> = ({
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 
 	const collateralAsset = loanTypeIsETH ? 'ETH' : 'renBTC';
-	const collateralDecimals = loanTypeIsETH ? 18 : 8; // todo
+	const collateralDecimals = loanTypeIsETH ? getETHToken().decimals : getRenBTCToken().decimals; // todo
 
 	const [depositAmountString, setDepositalAmount] = useState<string | null>(null);
 	const collateralAmount = useMemo(
 		() =>
-			ethers.utils.parseUnits(ethers.utils.formatUnits(loan.collateral, 18), collateralDecimals), // normalize collateral decimals
+			ethers.utils.parseUnits(
+				ethers.utils.formatUnits(loan.collateral, collateralDecimals),
+				collateralDecimals
+			), // normalize collateral decimals
 		[loan.collateral, collateralDecimals]
 	);
 	const depositAmount = useMemo(
@@ -45,13 +53,13 @@ const Deposit: React.FC<DepositProps> = ({
 			depositAmountString
 				? ethers.utils.parseUnits(depositAmountString, collateralDecimals)
 				: ethers.BigNumber.from(0),
-		[depositAmountString, collateralDecimals]
+		[collateralDecimals, depositAmountString]
 	);
 
-	const totalAmount = useMemo(() => collateralAmount.add(depositAmount), [
-		collateralAmount,
-		depositAmount,
-	]);
+	const totalAmount = useMemo(
+		() => collateralAmount.add(depositAmount),
+		[collateralAmount, depositAmount]
+	);
 	const totalAmountString = useMemo(
 		() => ethers.utils.formatUnits(totalAmount, collateralDecimals),
 		[totalAmount, collateralDecimals]
@@ -78,11 +86,10 @@ const Deposit: React.FC<DepositProps> = ({
 		];
 	}, [loanContract, address, loanId, loanTypeIsETH, depositAmount]);
 
-	const getTxData = useMemo(() => (!isApproved ? getApproveTxData : getDepositTxData), [
-		isApproved,
-		getApproveTxData,
-		getDepositTxData,
-	]);
+	const getTxData = useMemo(
+		() => (!isApproved ? getApproveTxData : getDepositTxData),
+		[isApproved, getApproveTxData, getDepositTxData]
+	);
 
 	const onApproveOrDeposit = async () => {
 		!isApproved ? approve() : deposit();
@@ -122,6 +129,9 @@ const Deposit: React.FC<DepositProps> = ({
 						onTxConfirmed: () => {},
 					}),
 			});
+			setIsWorking('');
+			setTxModalOpen(false);
+			router.push(ROUTES.Loans.List);
 		} catch {
 		} finally {
 			setIsWorking('');

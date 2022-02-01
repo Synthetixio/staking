@@ -372,6 +372,39 @@
 			}
 		}
 	},
+	"pool": {
+		"page-title": "{{pool}} Pool | Synthetix",
+		"info-headline": "Instructions:",
+		"info": "Obtain G-UNI LP tokens to stake by adding liquidity to the WETH/SNX pool. <0></0> <1></1>",
+		"instruction-one": "Wrap your ETH <0>here</0>.",
+		"instruction-two": "Deposit WETH and SNX to the G-UNI pool <0>here</0>.",
+		"instruction-three": "Stake LP tokens in this page.",
+		"instruction-detail": "Find a detailed guide <0>here</0>.",
+		"switch-to-l2-btn": "Switch to L2",
+		"switch-to-l2-text": "Please change to L2 Optimism",
+		"connect-wallet-text": "To stake your LP token you need to connect your wallet",
+		"tab": {
+			"add": "Deposit",
+			"remove": "Withdraw",
+			"approve": "Approve",
+			"approving": "Approving...",
+			"stake": "Stake",
+			"staking": "Staking...",
+			"claim": "Claim",
+			"claiming": "Claiming...",
+			"reward-balance": "Your claimable rewards: {{rewards}}",
+			"staked-tokens": "Your staked tokens: {{staked}}",
+			"unstake": "Unstake",
+			"unstaking": "Unstaking...",
+			"max": "Max",
+			"exit": "Exit"
+		},
+		"stats": {
+			"balance": "Staked Value",
+			"APR": "APR",
+			"rewards": "Rewards to claim"
+		}
+	},
 	"debt": {
 		"page-title": "Debt | Synthetix Staking",
 		"actions": {
@@ -710,8 +743,8 @@
 				"collateral": {
 					"label": "Using"
 				},
-				"low-cratio-tip": "You can only borrow at {{safeMinCRatio}}% or higher. Your position will be eligible for liquidation if it falls below {{minCRatio}}%.",
-				"healthy-cratio-tip": "Ensure your position stays above {{minCRatio}}% to prevent liquidation.",
+				"low-cratio-tip": "You can only borrow at {{safeMinCRatio}} or higher. Your position will be eligible for liquidation if it falls below {{minCRatio}}.",
+				"healthy-cratio-tip": "Ensure your position stays above {{minCRatio}} to prevent liquidation.",
 				"confirm-transaction": {
 					"left-panel-label": "BORROWING",
 					"right-panel-label": "POSTING"
@@ -786,6 +819,7 @@
 			"draw": {
 				"left-col-label": "INCREASE",
 				"right-col-label": "NEW TOTAL",
+				"low-collateral": "Collateral too low for adding more debt",
 				"button-labels": {
 					"default": "INCREASE DEBT",
 					"drawing": "INCREASING DEBT..."
@@ -960,6 +994,7 @@
 					"percentage-of-portfolio": "% of portfolio",
 					"debt-pool-proportion": "% of global debt",
 					"transfer": "Transfer",
+					"skewValue": "Skew",
 					"no-synths": {
 						"title": "You have no Synths",
 						"desc": "Mint sUSD by staking your SNX"
@@ -1031,7 +1066,8 @@
 			},
 			"time": "Time left",
 			"votes": "Votes",
-			"create": "Create new proposal"
+			"create": "Create new proposal",
+			"switch": "Switch to L2 to create SIP/SCCPs"
 		},
 		"create": {
 			"title": "Create new proposal",
@@ -1236,7 +1272,8 @@
 			"page-of-total-pages": "{{page}} of {{totalPages}}"
 		},
 		"error": {
-			"default": "Something went wrong"
+			"default": "Something went wrong",
+			"clear": "Clear Error"
 		},
 		"layer-2": {
 			"not-available": "Not available on Layer 2",
@@ -1256,11 +1293,16 @@
 			"synthetic-currency-name": "Synthetic {{currencyName}}",
 			"deprecated": "deprecated"
 		},
+		"price-change": {
+			"seven-days": "7 days change"
+		},
 		"gas-prices": {
 			"est": "Est Fees: {{amount}}",
 			"average": "Average",
 			"fast": "Fast",
-			"fastest": "Fastest"
+			"fastest": "Fastest",
+			"l2-fees": "L2 Fees",
+			"l1-fees": "L1 Fees"
 		},
 		"custom": "Custom",
 		"edit": "Edit",
