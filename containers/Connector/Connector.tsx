@@ -77,7 +77,7 @@ const useConnector = () => {
 			}
 			const provider = loadProvider({
 				networkId,
-				//infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
+				infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
 				provider: window.ethereum as any, // loadProvider as incorrect types for provider
 			});
 			const useOvm = getIsOVM(Number(networkId));
@@ -99,7 +99,7 @@ const useConnector = () => {
 		const networkId = await getDefaultNetworkId();
 		const provider = loadProvider({
 			networkId,
-			//infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
+			infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
 			provider: window.ethereum as any, // loadProvider as incorrect types for provider
 		});
 		if (provider && address) {
