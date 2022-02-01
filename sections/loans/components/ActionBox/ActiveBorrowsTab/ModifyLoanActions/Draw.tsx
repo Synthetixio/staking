@@ -1,14 +1,13 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback } from 'react';
 import { ethers } from 'ethers';
 import { Loan } from 'containers/Loans/types';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import { tx } from 'utils/transactions';
 import Wrapper from './Wrapper';
 import useSynthetixQueries from '@synthetixio/queries';
-import { calculateLoanCRatio } from '../../BorrowSynthsTab/calculateLoanCRatio';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
-import { calculateMaxDraw, getSafeCratio } from './helpers';
+import { calculateMaxDraw } from './helpers';
 import { wei } from '@synthetixio/wei';
 import ROUTES from 'constants/routes';
 import { SYNTH_DECIMALS } from 'constants/defaults';
