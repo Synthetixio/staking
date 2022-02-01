@@ -1,10 +1,10 @@
 import { Token } from '@uniswap/sdk-core';
 import { Pool } from '@uniswap/v3-sdk';
-import { ethers, providers, BigNumber, Contract } from 'ethers';
+import { providers, BigNumber, Contract } from 'ethers';
 import { abi as IUniswapV3PoolABI } from '@uniswap/v3-core/artifacts/contracts/interfaces/IUniswapV3Pool.sol/IUniswapV3Pool.json';
+import { abi as UniswapRouterV3 } from 'contracts/uniswapRouterV3';
+import { abi as erc20ABI } from 'contracts/erc20';
 import { abi as QuoterABI } from '@uniswap/v3-periphery/artifacts/contracts/lens/Quoter.sol/Quoter.json';
-
-export const quoterContract = new Contract('0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6', QuoterABI);
 
 const sUSDMainnetToken = new Token(
 	1,
@@ -21,6 +21,19 @@ const SNXDebtMirrorToken = new Token(
 	'dSNX',
 	'SNX Debt Mirror'
 );
+
+export const routerContract = new Contract(
+	'0xE592427A0AEce92De3Edee1F18E0157C05861564',
+	UniswapRouterV3
+);
+
+export const sUSDContract = new Contract('0x57ab1ec28d129707052df4df418d58a2d46d5f51', erc20ABI);
+
+export const dSNXContract = new Contract('0x5f7F94a1dd7b15594d17543BEB8B30b111DD464c', erc20ABI);
+
+export const quoterContract = new Contract('0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6', QuoterABI);
+
+const poolContract = new Contract('0x9957c4795ab663622db54fc48fda874da59150ff', IUniswapV3PoolABI);
 
 interface State {
 	liquidity: BigNumber;
@@ -42,23 +55,17 @@ export interface Immutables {
 	maxLiquidityPerTick: BigNumber;
 }
 
-export async function getdSNXSUSDImmutablesAndPool(
+export async function getSUSDdSNXPool(
 	provider: providers.Provider
-): Promise<[Immutables, Pool, Contract]> {
-	const poolContract = new Contract(
-		'0x9957c4795ab663622db54fc48fda874da59150ff',
-		IUniswapV3PoolABI,
-		provider
-	);
-
+): Promise<[Pool, (amountIn: BigNumber) => Promise<BigNumber>]> {
 	async function getPoolImmutables() {
 		const [factory, token0, token1, fee, tickSpacing, maxLiquidityPerTick] = await Promise.all([
-			poolContract.factory(),
-			poolContract.token0(),
-			poolContract.token1(),
-			poolContract.fee(),
-			poolContract.tickSpacing(),
-			poolContract.maxLiquidityPerTick(),
+			poolContract.connect(provider).factory(),
+			poolContract.connect(provider).token0(),
+			poolContract.connect(provider).token1(),
+			poolContract.connect(provider).fee(),
+			poolContract.connect(provider).tickSpacing(),
+			poolContract.connect(provider).maxLiquidityPerTick(),
 		]);
 
 		const immutables: Immutables = {
@@ -73,7 +80,10 @@ export async function getdSNXSUSDImmutablesAndPool(
 	}
 
 	async function getPoolState() {
-		const [liquidity, slot] = await Promise.all([poolContract.liquidity(), poolContract.slot0()]);
+		const [liquidity, slot] = await Promise.all([
+			poolContract.connect(provider).liquidity(),
+			poolContract.connect(provider).slot0(),
+		]);
 
 		const PoolState: State = {
 			liquidity,
@@ -89,8 +99,17 @@ export async function getdSNXSUSDImmutablesAndPool(
 		return PoolState;
 	}
 	const [immutables, state] = await Promise.all([getPoolImmutables(), getPoolState()]);
+	const amountOut = async (amountIn: BigNumber) =>
+		quoterContract
+			.connect(provider)
+			.callStatic.quoteExactInputSingle(
+				immutables.token0,
+				immutables.token1,
+				immutables.fee,
+				amountIn,
+				0
+			);
 	return [
-		immutables,
 		new Pool(
 			sUSDMainnetToken,
 			SNXDebtMirrorToken,
@@ -99,6 +118,6 @@ export async function getdSNXSUSDImmutablesAndPool(
 			state.liquidity.toString(),
 			state.tick
 		),
-		poolContract,
+		amountOut,
 	];
 }

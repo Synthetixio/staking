@@ -5,14 +5,14 @@ import { useRecoilValue } from 'recoil';
 import { isWalletConnectedState, walletAddressState } from 'store/wallet';
 import styled from 'styled-components';
 import { FlexDivColCentered } from 'styles/common';
-import HedgeInput from './HedgeInput';
+import HedgeTap from './HedgeTab';
 
 const ManageTab = () => {
 	const walletAddress = useRecoilValue(walletAddressState);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	return (
 		<ManageContainer>
-			{!walletAddress || !isWalletConnected ? <ConnectWallet /> : <HedgeInput />}
+			{!walletAddress || !isWalletConnected ? <ConnectWallet /> : <HedgeTap />}
 		</ManageContainer>
 	);
 };
