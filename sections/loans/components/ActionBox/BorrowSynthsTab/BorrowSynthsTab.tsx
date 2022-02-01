@@ -80,7 +80,9 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = () => {
 	const renToken = getRenBTCToken(network);
 	const ethToken = getETHToken(network);
 	const collateralDecimals = collateralAsset === 'renBTC' ? renToken.decimals : ethToken.decimals;
-	const collateralAmount = parseSafeWei(collateralAmountNumber, wei(0)).scale(collateralDecimals);
+	const collateralAmount = collateralAmountNumber
+		? wei(collateralAmountNumber, collateralDecimals)
+		: wei(0);
 
 	const collateralIsETH = collateralAsset === 'ETH';
 	const collateralContract = collateralIsETH ? null : renBTCContract;
@@ -140,7 +142,14 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = () => {
 		collateralContract,
 		'approve',
 		[loanContract?.address || ethers.constants.AddressZero, ethers.constants.MaxUint256],
-		gasPrice
+		gasPrice,
+		{
+			enabled: true,
+			onSettled: () => {
+				setTxModalOpen(false);
+				getAllowance();
+			},
+		}
 	);
 
 	const debt = { amount: debtAmount, asset: debtAsset };
