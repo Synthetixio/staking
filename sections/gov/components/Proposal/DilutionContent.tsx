@@ -65,6 +65,7 @@ type DilutionContentProps = {
 	proposal: Proposal;
 	onBack: Function;
 };
+const ovmProvider = new ethers.providers.JsonRpcProvider('https://mainnet.optimism.io');
 
 const DilutionContent: React.FC<DilutionContentProps> = ({ proposal, onBack }) => {
 	const { t } = useTranslation();
@@ -91,8 +92,6 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ proposal, onBack }) =
 	const isAppReady = useRecoilValue(appReadyState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const isL2 = useRecoilValue(isL2State);
-
-	const ovmProvider = new ethers.providers.JsonRpcProvider('https://mainnet.optimism.io');
 
 	const { useProposalQuery, useContractTxn } = useSynthetixQueries();
 
@@ -124,10 +123,10 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ proposal, onBack }) =
 
 	const contract = useMemo(
 		() =>
-			isL2
-				? new ethers.Contract(CouncilDilution.address, CouncilDilution.abi, signer as any)
-				: new ethers.Contract(CouncilDilution.address, CouncilDilution.abi, ovmProvider as any),
-		[signer, isL2, ovmProvider]
+			isL2 && signer
+				? new ethers.Contract(CouncilDilution.address, CouncilDilution.abi, signer)
+				: new ethers.Contract(CouncilDilution.address, CouncilDilution.abi, ovmProvider),
+		[signer, isL2]
 	);
 
 	const txn = useContractTxn(contract, hasDiluted ? 'invalidateDilution' : 'dilute', [
@@ -179,7 +178,7 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ proposal, onBack }) =
 			}
 		};
 		hasUserDiluted();
-	}, [proposal, isAppReady, isCouncilMember, signer, walletAddress]);
+	}, [proposal, isAppReady, isCouncilMember, signer, walletAddress, contract]);
 
 	useEffect(() => {
 		const checkCanDilute = async () => {

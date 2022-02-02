@@ -45,6 +45,7 @@ const AssetInput: React.FC<AssetInputProps> = ({
 	const selectInput = (
 		<SelectInput data-testid="select">
 			<Select
+				hideArrow={true}
 				inputId={`${label}-asset-options`}
 				formatOptionLabel={(option) => <Currency.Name currencyKey={option.label} showIcon={true} />}
 				{...{ options, value }}
