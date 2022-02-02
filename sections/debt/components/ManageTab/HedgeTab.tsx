@@ -76,7 +76,6 @@ export default function HedgeTap() {
 					.connect(provider!)
 					.balanceOf(walletAddress)
 					.then((balance: BigNumber) => {
-						// * by sUSDPrice from Pool
 						setdSNXBalance(balance.mul(utils.parseUnits(pool!.token0Price.toSignificant(2), 18)));
 					});
 			},
