@@ -55,9 +55,7 @@ export interface Immutables {
 	maxLiquidityPerTick: BigNumber;
 }
 
-export async function getSUSDdSNXPool(
-	provider: providers.Provider
-): Promise<[Pool, (amountIn: BigNumber) => Promise<BigNumber>]> {
+export async function getSUSDdSNXPool(provider: providers.Provider): Promise<[Pool, Immutables]> {
 	async function getPoolImmutables() {
 		const [factory, token0, token1, fee, tickSpacing, maxLiquidityPerTick] = await Promise.all([
 			poolContract.connect(provider).factory(),
@@ -99,16 +97,6 @@ export async function getSUSDdSNXPool(
 		return PoolState;
 	}
 	const [immutables, state] = await Promise.all([getPoolImmutables(), getPoolState()]);
-	const amountOut = async (amountIn: BigNumber) =>
-		quoterContract
-			.connect(provider)
-			.callStatic.quoteExactInputSingle(
-				immutables.token0,
-				immutables.token1,
-				immutables.fee,
-				amountIn,
-				0
-			);
 	return [
 		new Pool(
 			sUSDMainnetToken,
@@ -118,6 +106,6 @@ export async function getSUSDdSNXPool(
 			state.liquidity.toString(),
 			state.tick
 		),
-		amountOut,
+		immutables,
 	];
 }

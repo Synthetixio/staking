@@ -2,7 +2,13 @@ import Connector from 'containers/Connector';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Button from 'components/Button';
-import { getSUSDdSNXPool, routerContract, sUSDContract } from 'constants/uniswap';
+import {
+	getSUSDdSNXPool,
+	Immutables,
+	quoterContract,
+	routerContract,
+	sUSDContract,
+} from 'constants/uniswap';
 import { useRecoilValue } from 'recoil';
 import { walletAddressState } from 'store/wallet';
 import { StyledInput } from '../../../staking/components/common';
@@ -12,16 +18,16 @@ import { useTranslation } from 'react-i18next';
 import useSynthetixQueries, { GasPrice } from '@synthetixio/queries';
 import GasSelector from 'components/GasSelector';
 import { Pool } from '@uniswap/v3-sdk';
-
-type AmountOutFuncType = (amountIn: BigNumber) => Promise<BigNumber>;
+import { FlexDiv } from 'styles/common';
 
 export default function HedgeTap() {
 	const { t } = useTranslation();
-	const [loading, setLoading] = useState(true);
+	const [buttonLoading, setButtonLoading] = useState(true);
+	const [outputLoading, setOutputLoading] = useState(false);
 	const [currentBlockNumber, setCurrentBlockNumber] = useState(0);
 	const [amountToSend, setAmountToSend] = useState('');
 	const [pool, setPool] = useState<Pool | undefined>(undefined);
-	const [amountOutFunc, setAmountOutFunc] = useState<undefined | AmountOutFuncType>(undefined);
+	const [immutables, setImmutables] = useState<Immutables | undefined>(undefined);
 	const [sUSDBalance, setSUSDBalance] = useState(BigNumber.from(0));
 	const [approved, setApproved] = useState(false);
 	const [approveGasCost, setApproveGasCost] = useState<GasPrice | undefined>(undefined);
@@ -38,7 +44,7 @@ export default function HedgeTap() {
 		{
 			onSettled: () => {
 				needsToApprove();
-				setLoading(false);
+				setButtonLoading(false);
 			},
 			enabled: !!amountToSend,
 		}
@@ -55,74 +61,96 @@ export default function HedgeTap() {
 				currentBlockNumber + 100,
 				utils.parseUnits(amountToSend ? amountToSend : '0', 18),
 				expectedAmountOut,
-				BigNumber.from(0),
+				0,
 			],
 		],
 		swapGasCost,
 		{
 			onSettled: () => {
 				setAmountToSend('');
-				setLoading(false);
+				setButtonLoading(false);
 			},
-			enabled: !!amountToSend && !!pool?.fee && !!pool?.token0.address && !!pool?.token1.address,
+			enabled: approved,
 		}
 	);
+
 	useEffect(() => {
 		if (provider && walletAddress) {
-			setLoading(true);
-			sUSDContract
-				.connect(provider)
-				.balanceOf(walletAddress)
-				.then((balance: BigNumber) => {
-					setSUSDBalance(balance);
-				});
-			getSUSDdSNXPool(provider).then(([pool, amountOutFunc]) => {
-				setPool(pool);
-				setAmountOutFunc(amountOutFunc);
-			});
-			provider.getBlockNumber().then((blockNumber) => setCurrentBlockNumber(blockNumber * 1000));
-			setLoading(false);
+			setButtonLoading(true);
+			const promises = [];
+			promises.push(sUSDContract.connect(provider).balanceOf(walletAddress));
+			promises.push(getSUSDdSNXPool(provider));
+			promises.push(provider.getBlockNumber());
+			Promise.all(promises)
+				.then((value) => {
+					setPool(value[1][0]);
+					setImmutables(value[1][1]);
+					setSUSDBalance(value[0]);
+					setCurrentBlockNumber(value[2] * 1000);
+					setButtonLoading(false);
+				})
+				.catch(() => setButtonLoading(false));
 		}
 	}, [provider, walletAddress]);
 
 	useEffect(() => {
-		if (!!amountToSend && !!amountOutFunc) {
+		if (!!amountToSend && provider && immutables) {
+			setOutputLoading(true);
 			needsToApprove();
-			amountOutFunc(utils.parseUnits(amountToSend ? amountToSend : '0', 18)).then(
-				(amountOutBalance: BigNumber) => {
+			quoterContract
+				.connect(provider)
+				.callStatic.quoteExactInputSingle(
+					immutables.token0,
+					immutables.token1,
+					immutables.fee,
+					utils.parseUnits(amountToSend ? amountToSend : '0', 18),
+					0
+				)
+				.then((amountOutBalance: BigNumber) => {
 					setExpectedAmountOut(amountOutBalance);
-				}
-			);
+					setOutputLoading(false);
+				})
+				.catch(() => {
+					setOutputLoading(false);
+				});
 		}
 	}, [amountToSend]);
 
 	const needsToApprove = async () => {
 		if (provider) {
-			setLoading(true);
+			setButtonLoading(true);
 			const amount: BigNumber = await sUSDContract
 				.connect(provider)
 				.allowance(walletAddress, routerContract.address);
 			setApproved(amount.gte(utils.parseUnits(amountToSend ? amountToSend : '0', 18)));
-			setLoading(false);
+			setButtonLoading(false);
 		}
 	};
 
-	const approveRouter = () => {
-		setLoading(true);
+	const approveRouter = async () => {
+		setButtonLoading(true);
+		await approveTx.refresh();
 		approveTx.mutate();
 	};
 
 	const swapTokens = async () => {
-		setLoading(true);
-		const [, amountOut] = await getSUSDdSNXPool(provider!);
-		const amountOutBalance = await amountOut(
-			utils.parseUnits(amountToSend ? amountToSend : '0', 18)
-		);
-		setExpectedAmountOut(amountOutBalance);
-		const blockNumber = await provider!.getBlockNumber();
-		setCurrentBlockNumber(blockNumber * 1000);
-		await swapTx.refresh();
-		swapTx.mutate();
+		if (provider && immutables) {
+			setButtonLoading(true);
+			const balanceOut: BigNumber = await quoterContract
+				.connect(provider)
+				.callStatic.quoteExactInputSingle(
+					immutables.token0,
+					immutables.token1,
+					immutables.fee,
+					utils.parseUnits(amountToSend ? amountToSend : '0', 18),
+					0
+				);
+			setExpectedAmountOut(balanceOut);
+			const blockNumber = await provider!.getBlockNumber();
+			setCurrentBlockNumber(blockNumber * 1000);
+			await swapTx.refresh();
+			swapTx.mutate();
+		}
 	};
 	return (
 		<StyledInputWrapper>
@@ -140,14 +168,31 @@ export default function HedgeTap() {
 				optimismLayerOneFee={null}
 				altVersion
 			/>
-			{loading ? (
+			{buttonLoading ? (
 				<Loader inline />
 			) : (
-				<StyledButton onClick={approved ? swapTokens : approveRouter} variant="primary">
-					{approved ? t('debt.actions.manage.swap') : t('debt.actions.manage.approve')}
-				</StyledButton>
+				<ButtonContainer>
+					<StyledButton onClick={approved ? swapTokens : approveRouter} variant="primary">
+						{approved ? t('debt.actions.manage.swap') : t('debt.actions.manage.approve')}
+					</StyledButton>
+					<Button
+						variant="secondary"
+						onClick={() => {
+							setAmountToSend(sUSDBalance.toString());
+						}}
+					>
+						{t('debt.actions.manage.max')}
+					</Button>
+				</ButtonContainer>
 			)}
-			<span>{utils.formatUnits(expectedAmountOut, 18)}</span>
+			{outputLoading ? (
+				<Loader inline />
+			) : (
+				<>
+					<span>{t('debt.actions.manage.output')}</span>
+					<span>{utils.formatUnits(expectedAmountOut, 18).slice(0, 12)} dSNX</span>
+				</>
+			)}
 		</StyledInputWrapper>
 	);
 }
@@ -166,4 +211,14 @@ const StyledHedgeInput = styled(StyledInput)``;
 
 const StyledButton = styled(Button)`
 	width: 100%;
+	margin-right: 16px;
+`;
+
+const ButtonContainer = styled(FlexDiv)`
+	align-items: center;
+	width: 100%;
+	margin: 16px;
+	:first-child {
+		margin-right: auto;
+	}
 `;
