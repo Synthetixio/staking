@@ -1,23 +1,16 @@
-import { getSUSDdSNXPool } from 'constants/uniswap';
 import Connector from 'containers/Connector';
-import { useEffect, useState } from 'react';
+import { utils } from 'ethers';
 import { useTranslation } from 'react-i18next';
+import { useRecoilValue } from 'recoil';
+import { dSNXBalance } from 'store/debt';
 
-export default function DebtHedgedBalance({ userBalance }: Record<'userBalance', string>) {
+export default function DebtHedgedBalance() {
 	const { t } = useTranslation();
-	const [sUSDPrice, setSUSDPrice] = useState('');
-	const { provider } = Connector.useContainer();
-	const dSNXUserBalance = (Number(userBalance) * Number(sUSDPrice)).toFixed(2);
-	useEffect(() => {
-		if (provider) {
-			getSUSDdSNXPool(provider).then(([pool]) => {
-				// setSUSDPrice(pool.priceOf(pool.token1).toSignificant());
-			});
-		}
-	}, [provider]);
+	const balance = useRecoilValue(dSNXBalance);
 	return (
 		<span>
-			{t('debt.actions.manage.info-panel.chart.hedged-balance')} ~{dSNXUserBalance}$
+			{t('debt.actions.manage.info-panel.chart.hedged-balance')} ~
+			{utils.formatUnits(balance, 18).slice(0, 12)}$
 		</span>
 	);
 }

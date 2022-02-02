@@ -3,13 +3,14 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Button from 'components/Button';
 import {
+	dSNXContract,
 	getSUSDdSNXPool,
 	Immutables,
 	quoterContract,
 	routerContract,
 	sUSDContract,
 } from 'constants/uniswap';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { walletAddressState } from 'store/wallet';
 import { StyledInput } from '../../../staking/components/common';
 import { BigNumber, utils } from 'ethers';
@@ -19,6 +20,7 @@ import useSynthetixQueries, { GasPrice } from '@synthetixio/queries';
 import GasSelector from 'components/GasSelector';
 import { Pool } from '@uniswap/v3-sdk';
 import { FlexDiv } from 'styles/common';
+import { dSNXBalance } from 'store/debt';
 
 export default function HedgeTap() {
 	const { t } = useTranslation();
@@ -36,6 +38,7 @@ export default function HedgeTap() {
 	const { provider } = Connector.useContainer();
 	const walletAddress = useRecoilValue(walletAddressState);
 	const { useContractTxn } = useSynthetixQueries();
+	const setdSNXBalance = useSetRecoilState(dSNXBalance);
 	const approveTx = useContractTxn(
 		sUSDContract,
 		'approve',
@@ -69,6 +72,13 @@ export default function HedgeTap() {
 			onSettled: () => {
 				setAmountToSend('');
 				setButtonLoading(false);
+				dSNXContract
+					.connect(provider!)
+					.balanceOf(walletAddress)
+					.then((balance: BigNumber) => {
+						// * by sUSDPrice from Pool
+						setdSNXBalance(balance.mul(utils.parseUnits(pool!.token0Price.toSignificant(2), 18)));
+					});
 			},
 			enabled: approved,
 		}
@@ -117,12 +127,14 @@ export default function HedgeTap() {
 	}, [amountToSend]);
 
 	const needsToApprove = async () => {
-		if (provider) {
+		if (provider && amountToSend !== '0') {
 			setButtonLoading(true);
 			const amount: BigNumber = await sUSDContract
 				.connect(provider)
 				.allowance(walletAddress, routerContract.address);
-			setApproved(amount.gte(utils.parseUnits(amountToSend ? amountToSend : '0', 18)));
+			if (amount.gt(0)) {
+				setApproved(amount.gte(utils.parseUnits(amountToSend ? amountToSend : '0', 18)));
+			}
 			setButtonLoading(false);
 		}
 	};
@@ -158,7 +170,7 @@ export default function HedgeTap() {
 				type="number"
 				placeholder={utils.formatUnits(sUSDBalance, 18)}
 				onChange={(e) => {
-					setAmountToSend(e.target.value ? e.target.value : '0');
+					setAmountToSend(e.target.value);
 				}}
 				value={amountToSend}
 			/>
@@ -172,7 +184,11 @@ export default function HedgeTap() {
 				<Loader inline />
 			) : (
 				<ButtonContainer>
-					<StyledButton onClick={approved ? swapTokens : approveRouter} variant="primary">
+					<StyledButton
+						onClick={approved ? swapTokens : approveRouter}
+						variant="primary"
+						disabled={amountToSend === '0' || !amountToSend}
+					>
 						{approved ? t('debt.actions.manage.swap') : t('debt.actions.manage.approve')}
 					</StyledButton>
 					<Button
