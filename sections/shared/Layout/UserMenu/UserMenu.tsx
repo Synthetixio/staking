@@ -23,6 +23,7 @@ import {
 	truncatedWalletAddressState,
 	networkState,
 	delegateWalletState,
+	ensNameState,
 } from 'store/wallet';
 
 import {
@@ -53,6 +54,7 @@ const UserMenu: FC = () => {
 	const [watchWalletModalOpened, setWatchWalletModalOpened] = useState<boolean>(false);
 	const [delegateModalOpened, setDelegateModalOpened] = useState<boolean>(false);
 	const truncatedWalletAddress = useRecoilValue(truncatedWalletAddressState);
+	const ensName = useRecoilValue(ensNameState);
 	const delegateWallet = useRecoilValue(delegateWalletState);
 	const network = useRecoilValue(networkState);
 
@@ -85,7 +87,7 @@ const UserMenu: FC = () => {
 									>
 										<FlexDivCentered data-testid="wallet-address">
 											<StyledConnectionDot />
-											{truncatedWalletAddress}
+											{ensName ? <EnsName>{ensName}</EnsName> : truncatedWalletAddress}
 										</FlexDivCentered>
 										<NetworkTag className="network-tag" data-testid="network-tag">
 											{getNetworkName()}
@@ -135,7 +137,7 @@ const UserMenu: FC = () => {
 							>
 								<FlexDivCentered data-testid="wallet-address">
 									<StyledConnectionDot />
-									{truncatedWalletAddress}
+									{ensName ? <EnsName>{ensName}</EnsName> : truncatedWalletAddress}
 								</FlexDivCentered>
 								{walletOptionsModalOpened ? caretUp : caretDown}
 							</WalletButton>
@@ -215,6 +217,10 @@ const Menu = styled.div`
 	display: grid;
 	grid-gap: 10px;
 	grid-auto-flow: column;
+`;
+
+const EnsName = styled.span`
+	text-transform: lowercase;
 `;
 
 const NetworkTag = styled(FlexDivCentered)`

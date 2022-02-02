@@ -1,0 +1,13 @@
+diff --git a/node_modules/@synthetixio/queries/build/node/generated/mainSubgraphQueries.js b/node_modules/@synthetixio/queries/build/node/generated/mainSubgraphQueries.js
+index 90e2c54..524653d 100644
+--- a/node_modules/@synthetixio/queries/build/node/generated/mainSubgraphQueries.js
++++ b/node_modules/@synthetixio/queries/build/node/generated/mainSubgraphQueries.js
+@@ -3185,7 +3185,7 @@ const useGetSNXHolders = (url, options, args, queryOptions = {}) => {
+                 if (paginationKey && paginationValue)
+                     paginatedOptions.where[paginationKey] = paginationValue;
+                 const res = yield axios_1.default.post(url, {
+-                    query: (0, gql_1.default)("sNXHolders", paginatedOptions, args)
++                    query: (0, gql_1.default)("snxholders", paginatedOptions, args)
+                 });
+                 const r = res.data;
+                 if (r.errors && r.errors.length) {
