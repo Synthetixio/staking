@@ -2863,10 +2863,10 @@
     "@synthetixio/optimism-networks" "2.57.3"
     ethers "5.5.3"
 
-"@synthetixio/queries@0.0.0-43902a8":
-  version "0.0.0-43902a8"
-  resolved "https://registry.yarnpkg.com/@synthetixio/queries/-/queries-0.0.0-43902a8.tgz#36bf851942c6d76b511a5901bb62f08f08b15c22"
-  integrity sha512-D5MbGqrScxMcCngbinwfRjY1kJ/lrZKFiKPBTcw4d2o9kKMJJRfu54+sGo43+SRm5Fq9/rS5LFZFs9eCJk5dgA==
+"@synthetixio/queries@0.0.0-b64ea26":
+  version "0.0.0-b64ea26"
+  resolved "https://registry.yarnpkg.com/@synthetixio/queries/-/queries-0.0.0-b64ea26.tgz#bf92e315e8994b3911160acbf07ea6be21b58124"
+  integrity sha512-DAoORk58wWiLhi/Uf2k1bb9pM41KfTt36sGfo5m0YYVyfTk0mi7DS/OvnthzNxLQRz7+LMfqlV9+YjM26oFN7g==
   dependencies:
     "@snapshot-labs/snapshot.js" "0.3.22"
     "@synthetixio/contracts-interface" "2.58.0-alpha"
