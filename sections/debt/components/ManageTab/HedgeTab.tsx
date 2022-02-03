@@ -25,6 +25,8 @@ import { ExternalLink, FlexDivColCentered } from 'styles/common';
 import { Route, Trade, Pool } from '@uniswap/v3-sdk';
 import { CurrencyAmount, Percent, Token, TradeType } from '@uniswap/sdk-core';
 import colors from 'styles/theme/colors';
+import { Svg } from 'react-optimized-image';
+import dhedge from 'assets/svg/app/dhedge.svg';
 
 export default function HedgeTap() {
 	const { t } = useTranslation();
@@ -201,7 +203,7 @@ export default function HedgeTap() {
 						<StyledInputLabel>
 							{t('debt.actions.manage.buying')}
 							<StyledCryptoCurrencyBox>
-								<StyledCryptoCurrencyImage src="https://raw.githubusercontent.com/Synthetixio/synthetix-assets/v2.0.10/synths/sUSD.svg" />{' '}
+								<Svg src={dhedge} width={24} height={24} />
 								dSNX
 							</StyledCryptoCurrencyBox>
 						</StyledInputLabel>
