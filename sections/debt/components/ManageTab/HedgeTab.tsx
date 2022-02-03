@@ -18,29 +18,34 @@ import Loader from 'components/Loader';
 import { useTranslation } from 'react-i18next';
 import useSynthetixQueries, { GasPrice } from '@synthetixio/queries';
 import GasSelector from 'components/GasSelector';
-import { Pool } from '@uniswap/v3-sdk';
 import { dSNXBalance } from 'store/debt';
 import { formatCryptoCurrency } from 'utils/formatters/number';
 import { wei } from '@synthetixio/wei';
-import { ExternalLink } from 'styles/common';
+import { ExternalLink, FlexDivColCentered } from 'styles/common';
+import { Route, Trade, Pool } from '@uniswap/v3-sdk';
+import { CurrencyAmount, Percent, Token, TradeType } from '@uniswap/sdk-core';
+import colors from 'styles/theme/colors';
 
 export default function HedgeTap() {
 	const { t } = useTranslation();
 	const [buttonLoading, setButtonLoading] = useState(true);
-	const [outputLoading, setOutputLoading] = useState(false);
 	const [currentBlockNumber, setCurrentBlockNumber] = useState(0);
-	const [amountToSend, setAmountToSend] = useState(BigNumber.from(0));
+	const [amountToSend, setAmountToSend] = useState('');
+	const [priceInfo, setPriceInfo] = useState<
+		undefined | Trade<Token, Token, TradeType.EXACT_INPUT>
+	>(undefined);
 	const [pool, setPool] = useState<Pool | undefined>(undefined);
 	const [immutables, setImmutables] = useState<Immutables | undefined>(undefined);
 	const [sUSDBalance, setSUSDBalance] = useState(BigNumber.from(0));
 	const [approved, setApproved] = useState(false);
 	const [approveGasCost, setApproveGasCost] = useState<GasPrice | undefined>(undefined);
 	const [swapGasCost, setSwapGasCost] = useState<GasPrice | undefined>(undefined);
-	const [expectedAmountOut, setExpectedAmountOut] = useState(BigNumber.from(0));
+	const [expectedAmountOut, setExpectedAmountOut] = useState('');
 	const { provider } = Connector.useContainer();
 	const walletAddress = useRecoilValue(walletAddressState);
 	const { useContractTxn } = useSynthetixQueries();
-	const setdSNXBalance = useSetRecoilState(dSNXBalance);
+	const balanceOfdSNX = useRecoilValue(dSNXBalance);
+	const setBalanceOfdSNX = useSetRecoilState(dSNXBalance);
 	const approveTx = useContractTxn(
 		sUSDContract,
 		'approve',
@@ -64,26 +69,36 @@ export default function HedgeTap() {
 				pool?.fee || 300,
 				walletAddress || '',
 				currentBlockNumber + 100,
-				amountToSend,
-				expectedAmountOut,
+				utils.parseUnits(amountToSend || '0', 18),
+				utils.parseUnits(expectedAmountOut || '0', 18),
 				0,
 			],
 		],
 		swapGasCost,
 		{
 			onSettled: () => {
-				setAmountToSend(BigNumber.from(0));
+				setAmountToSend('');
 				setButtonLoading(false);
 				dSNXContract
 					.connect(provider!)
 					.balanceOf(walletAddress)
 					.then((balance: BigNumber) => {
-						setdSNXBalance(balance.mul(utils.parseUnits(pool!.token0Price.toSignificant(2), 18)));
+						setBalanceOfdSNX(balance);
 					});
 			},
 			enabled: approved,
 		}
 	);
+
+	useEffect(() => {
+		dSNXContract
+			.connect(provider!)
+			.balanceOf(walletAddress)
+			.then((balance: BigNumber) => {
+				console.log(balance.toString());
+				setBalanceOfdSNX(balance);
+			});
+	}, []);
 
 	useEffect(() => {
 		if (provider && walletAddress) {
@@ -105,26 +120,39 @@ export default function HedgeTap() {
 	}, [provider, walletAddress]);
 
 	useEffect(() => {
-		if (amountToSend.gt(0) && provider && immutables) {
-			setOutputLoading(true);
-			needsToApprove();
-			quoterContract
-				.connect(provider)
-				.callStatic.quoteExactInputSingle(
-					immutables.token0,
-					immutables.token1,
-					immutables.fee,
-					amountToSend,
-					0
-				)
-				.then((amountOutBalance: BigNumber) => {
-					setExpectedAmountOut(amountOutBalance);
-					setOutputLoading(false);
-				})
-				.catch(() => {
-					setExpectedAmountOut(BigNumber.from(0));
-					setOutputLoading(false);
-				});
+		if (utils.parseUnits(amountToSend || '0', 18).gt(0) && provider && immutables) {
+			const calc = async () => {
+				needsToApprove();
+				const amountOutBalance = await quoterContract
+					.connect(provider)
+					.callStatic.quoteExactInputSingle(
+						immutables.token0,
+						immutables.token1,
+						immutables.fee,
+						utils.parseUnits(amountToSend, 18),
+						0
+					);
+				setExpectedAmountOut(amountOutBalance.toString());
+				setPriceInfo(
+					Trade.createUncheckedTrade({
+						route: new Route([pool!], pool!.token0, pool!.token1),
+						inputAmount: CurrencyAmount.fromRawAmount(
+							pool!.token0,
+							utils.parseUnits(amountToSend || '0', 18).toString()
+						),
+						outputAmount: CurrencyAmount.fromRawAmount(pool!.token1, amountOutBalance.toString()),
+						tradeType: TradeType.EXACT_INPUT,
+					})
+				);
+			};
+			try {
+				calc();
+			} catch (e) {
+				setExpectedAmountOut('');
+			}
+		} else {
+			setExpectedAmountOut('');
+			setPriceInfo(undefined);
 		}
 	}, [amountToSend]);
 
@@ -134,7 +162,7 @@ export default function HedgeTap() {
 			const amount: BigNumber = await sUSDContract
 				.connect(provider)
 				.allowance(walletAddress, routerContract.address);
-			setApproved(amount.gte(amountToSend));
+			setApproved(amount.gte(utils.parseUnits(amountToSend || '0', 18)));
 			setButtonLoading(false);
 		}
 	};
@@ -154,132 +182,239 @@ export default function HedgeTap() {
 					immutables.token0,
 					immutables.token1,
 					immutables.fee,
-					amountToSend,
+					utils.parseUnits(amountToSend || '0', 18),
 					0
 				);
-			setExpectedAmountOut(balanceOut);
+			setExpectedAmountOut(balanceOut.toString());
 			const blockNumber = await provider!.getBlockNumber();
 			setCurrentBlockNumber(blockNumber * 1000);
 			await swapTx.refresh();
 			swapTx.mutate();
 		}
 	};
+
 	return (
 		<StyledHedgeWrapper>
-			<StyledHedgeInputWrapper>
-				<StyledInput
-					type="number"
-					placeholder={utils.formatUnits(sUSDBalance, 18).concat(' sUSD')}
-					onChange={(e) => {
-						let hasError: boolean = false;
-						try {
-							hasError = false;
-							const val = utils.parseUnits(e.target.value || '0', 18);
-							if (val.gte(constants.MaxUint256)) hasError = true;
-						} catch {
-							hasError = true;
-						}
-						if (!hasError) {
-							setAmountToSend(utils.parseUnits(e.target.value ? e.target.value : '0', 18));
-						}
-					}}
-					// todo @mf found a way to dont get fucked by the comma
-					value={amountToSend.eq(0) ? '' : utils.formatUnits(amountToSend, 18)}
-				/>
-				<StyledMaxButton
-					variant="solid"
-					onClick={() => {
-						setAmountToSend(sUSDBalance);
-					}}
-				>
-					{t('debt.actions.manage.max')}
-				</StyledMaxButton>
-				<StyledSUSDBalance>
-					{t('debt.actions.manage.sUSD-balance')}
-					{formatCryptoCurrency(wei(sUSDBalance), { maxDecimals: 1, minDecimals: 2 })}
-				</StyledSUSDBalance>
-				<StyledImg src="https://raw.githubusercontent.com/Synthetixio/synthetix-assets/v2.0.12/synths/sUSD.svg" />
-			</StyledHedgeInputWrapper>
-			<GasSelector
-				gasLimitEstimate={approved ? swapTx.gasLimit : approveTx.gasLimit}
-				onGasPriceChange={approved ? setSwapGasCost : setApproveGasCost}
-				optimismLayerOneFee={null}
-				altVersion
-			/>
+			<StyledBackgroundTab>
+				<StyledInputsWrapper>
+					<StyledInputWrapper>
+						<StyledInputLabel>
+							{t('debt.actions.manage.buying')}
+							<StyledCryptoCurrencyBox>
+								<StyledCryptoCurrencyImage src="https://raw.githubusercontent.com/Synthetixio/synthetix-assets/v2.0.10/synths/sUSD.svg" />{' '}
+								dSNX
+							</StyledCryptoCurrencyBox>
+						</StyledInputLabel>
+						<StyledHedgeInput
+							type="number"
+							placeholder={utils.formatUnits(expectedAmountOut || '0', 18)}
+							value={expectedAmountOut ? utils.formatUnits(expectedAmountOut || '0', 18) : ''}
+						/>
+						<StyledBalance>
+							{t('debt.actions.manage.balance')}
+							{formatCryptoCurrency(wei(balanceOfdSNX), {
+								maxDecimals: 1,
+								minDecimals: 2,
+							})}
+						</StyledBalance>
+					</StyledInputWrapper>
+					<StyledSpacer />
+					<StyledInputWrapper>
+						<StyledInputLabel>
+							{t('debt.actions.manage.using')}
+							<StyledCryptoCurrencyBox>
+								<StyledCryptoCurrencyImage src="https://raw.githubusercontent.com/Synthetixio/synthetix-assets/v2.0.10/synths/sUSD.svg" />
+								sUSD
+							</StyledCryptoCurrencyBox>
+						</StyledInputLabel>
+						<StyledHedgeInput
+							type="number"
+							placeholder={formatCryptoCurrency(wei(sUSDBalance), {
+								maxDecimals: 1,
+								minDecimals: 2,
+							})}
+							onChange={(e) => {
+								let hasError: boolean = false;
+								try {
+									hasError = false;
+									const val = utils.parseUnits(e.target.value || '0', 18);
+									if (val.gte(constants.MaxUint256)) hasError = true;
+								} catch {
+									hasError = true;
+								}
+								if (!hasError) {
+									setAmountToSend(e.target.value ? e.target.value : '');
+								}
+							}}
+							value={amountToSend}
+							// @ts-ignore
+							autoFocus="autofocus"
+						/>
+						<StyledBalance>
+							{t('debt.actions.manage.balance-usd')}
+							{formatCryptoCurrency(wei(sUSDBalance), {
+								maxDecimals: 1,
+								minDecimals: 2,
+							})}
+							<StyledMaxButton
+								variant="text"
+								onClick={() => {
+									setAmountToSend(utils.formatUnits(sUSDBalance, 18));
+								}}
+							>
+								{t('debt.actions.manage.max')}
+							</StyledMaxButton>
+						</StyledBalance>
+					</StyledInputWrapper>
+				</StyledInputsWrapper>
+
+				<SublineWrapper>
+					<StyledGasSelector
+						gasLimitEstimate={approved ? swapTx.gasLimit : approveTx.gasLimit}
+						onGasPriceChange={approved ? setSwapGasCost : setApproveGasCost}
+						optimismLayerOneFee={null}
+						altVersion
+					/>
+					<StyledUniswapLink href="https://info.uniswap.org/#/pools/0x9957c4795ab663622db54fc48fda874da59150ff">
+						Uniswap pool
+					</StyledUniswapLink>
+				</SublineWrapper>
+			</StyledBackgroundTab>
 			{buttonLoading ? (
 				<Loader inline />
 			) : (
-				<StyledButton
-					onClick={approved ? swapTokens : approveRouter}
-					variant="primary"
-					disabled={amountToSend.eq(0)}
-				>
-					{approved ? t('debt.actions.manage.swap') : t('debt.actions.manage.approve')}
-				</StyledButton>
-			)}
-			{outputLoading ? (
-				<Loader inline />
-			) : (
 				<>
-					<span>{t('debt.actions.manage.output')}</span>
-					<StyledOutput>{utils.formatUnits(expectedAmountOut, 18).slice(0, 12)} dSNX</StyledOutput>
+					{priceInfo && (
+						<StyledPriceImpact danger={priceInfo.priceImpact.greaterThan(new Percent(5, 100))}>
+							{t('debt.actions.manage.price-impact')}&nbsp;
+							{priceInfo.priceImpact.toSignificant(2)}%
+						</StyledPriceImpact>
+					)}
+					<StyledButton
+						size="lg"
+						onClick={approved ? swapTokens : approveRouter}
+						variant="primary"
+						disabled={
+							utils.parseUnits(amountToSend || '0', 18).eq(0) &&
+							utils.parseUnits(expectedAmountOut || '0', 18).eq(0)
+						}
+					>
+						{approved ? t('debt.actions.manage.swap') : t('debt.actions.manage.approve')}
+					</StyledButton>
 				</>
 			)}
-			<StyledUniswapLink href="https://info.uniswap.org/#/pools/0x9957c4795ab663622db54fc48fda874da59150ff">
-				Uniswap pool
-			</StyledUniswapLink>
 		</StyledHedgeWrapper>
 	);
 }
 
 const StyledHedgeWrapper = styled.div`
 	width: 100%;
+	height: 100%;
+	margin: 16px;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	> * {
-		margin: 8px;
-	}
 `;
 
-const StyledHedgeInputWrapper = styled.div`
-	position: relative;
+const StyledInputsWrapper = styled.div`
 	display: flex;
 	justify-content: center;
+	align-items: center;
 	width: 100%;
-	height: 50px;
+	height: 100px;
+	margin-top: 80px;
+`;
+
+const StyledInputWrapper = styled(FlexDivColCentered)`
+	width: 100%;
+`;
+
+const StyledBackgroundTab = styled.div`
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	width: 100%;
+	height: 100%;
+	background-color: ${colors.black};
+	padding: 16px;
+`;
+
+const StyledInputLabel = styled.div`
+	display: flex;
+	justify-content: center;
+	align-items: baseline;
+`;
+
+const StyledHedgeInput = styled(StyledInput)`
+	width: 250px;
+`;
+
+const StyledBalance = styled.div`
+	text-transform: none;
+	text-align: center;
+	margin-top: 16px;
+`;
+
+const StyledCryptoCurrencyBox = styled.div`
+	display: flex;
+	align-items: center;
+	justify-content: space-evenly;
+	font-size: 12px;
+	margin-top: 14px;
+	color: ${colors.white};
+	background-color: ${colors.navy};
+	border: 1px solid ${colors.grayBlue};
+	padding: 4px;
+	text-transform: none;
+	margin-left: 8px;
+	width: 85px;
+`;
+
+const StyledCryptoCurrencyImage = styled.img`
+	width: 24px;
+	height: 24px;
 `;
 
 const StyledButton = styled(Button)`
 	width: 100%;
-	margin-right: 16px;
+	margin-top: 16px;
+	align-self: flex-end;
+	text-transform: none;
+`;
+
+const StyledSpacer = styled.div`
+	border-left: 1px solid ${colors.mutedBlue};
+	height: 150px;
 `;
 
 const StyledMaxButton = styled(Button)`
-	position: absolute;
-	right: 0px;
-	bottom: 0px;
-`;
-
-const StyledImg = styled.img`
-	position: absolute;
-	top: -30px;
-	width: 32px;
-	height: 32px;
+	margin-left: 16px;
+	line-height: 0px;
+	height: 20px;
 `;
 
 const StyledOutput = styled.span`
 	text-transform: none;
+	color: white;
 `;
 
-const StyledSUSDBalance = styled.span`
-	position: absolute;
-	bottom: -15px;
-	right: 0px;
-	font-size: 10px;
+const StyledGasSelector = styled(GasSelector)`
+	width: 100px;
+	display: inline;
 `;
 
 const StyledUniswapLink = styled(ExternalLink)`
 	font-size: 10px;
 	align-self: flex-end;
+`;
+
+const SublineWrapper = styled.div`
+	display: flex;
+	justify-content: space-evenly;
+`;
+
+const StyledPriceImpact = styled(StyledOutput)<{ danger?: boolean }>`
+	color: ${({ danger }) => (danger ? colors.red : '')};
+	font-size: 12px;
 `;
