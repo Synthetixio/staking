@@ -2,7 +2,6 @@ import { Trans, useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import DebtHedgingChart from './DebtHedgingChart';
 import { ExternalLink, FlexDivCol } from 'styles/common';
-import { dHedgePoolUrl } from 'constants/dhedge';
 
 type DebtHedgingInfoPanelProps = {
 	hidden: boolean;
@@ -16,11 +15,11 @@ const DebtHedgingInfoPanel: React.FC<DebtHedgingInfoPanelProps> = ({ hidden }) =
 		<InfoPanelContainer>
 			<InfoPanelTitle>{t('debt.actions.manage.info-panel.title')}</InfoPanelTitle>
 			<InfoPanelBody>
-				{t('debt.actions.manage.info-panel.body')}
-				<br />
 				<Trans
-					i18nKey="debt.actions.manage.info-panel.link"
-					components={[<ExternalLink href={dHedgePoolUrl} />]}
+					i18nKey="debt.actions.manage.info-panel.body"
+					components={[
+						<ExternalLink href="https://docs.dhedge.org/dhedge-original-pools/v2-snx-debt-mirror" />,
+					]}
 				/>
 			</InfoPanelBody>
 			<DebtHedgingChart />

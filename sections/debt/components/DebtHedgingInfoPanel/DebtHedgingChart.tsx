@@ -27,14 +27,16 @@ const DebtHedgingChart: React.FC = () => {
 	return (
 		<ChartContainer>
 			<ChartTitleContainer>
-				<p>{t('debt.actions.manage.info-panel.chart.title')}</p>
+				<StyledTitle>{t('debt.actions.manage.info-panel.chart.title')}</StyledTitle>
 				<StyledChartLabelsWrapper>
 					<ChartLabel labelColor={colors.mutedBlue} labelBorderColor={colors.blue}>
 						{t('debt.actions.manage.info-panel.chart.debt-mirror-label')}
 					</ChartLabel>
+
 					<ChartLabel labelColor={colors.mutedPink} labelBorderColor={colors.pink}>
 						{t('debt.actions.manage.info-panel.chart.debtPool-label')}
 					</ChartLabel>
+					<br />
 					<DebtHedgedBalance />
 				</StyledChartLabelsWrapper>
 			</ChartTitleContainer>
@@ -96,6 +98,10 @@ const Spinner = styled(Svg)`
 
 const StyledChartLabelsWrapper = styled.div`
 	margin-bottom: 8px;
+`;
+
+const StyledTitle = styled.p`
+	font-size: 13px;
 `;
 
 export default DebtHedgingChart;

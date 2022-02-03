@@ -30,7 +30,7 @@ const ChartLabelIcon = styled.div<ChartLabelIconProps>`
 `;
 
 const ChartLabelText = styled.span`
-	font-size: 13px;
+	font-size: 12px;
 	font-family: ${(props) => props.theme.fonts.extended};
 `;
 

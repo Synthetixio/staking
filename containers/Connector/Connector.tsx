@@ -7,7 +7,7 @@ import {
 import { loadProvider } from '@synthetixio/providers';
 
 import { getDefaultNetworkId, getIsOVM, isSupportedNetworkId } from 'utils/network';
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import {
 	NetworkId,
 	SynthetixJS,
@@ -19,7 +19,7 @@ import { ethers } from 'ethers';
 import { switchToL1 } from '@synthetixio/optimism-networks';
 
 import { appReadyState } from 'store/app';
-import { walletAddressState, networkState, ensNameState } from 'store/wallet';
+import { walletAddressState, networkState, ensNameState, walletWatchedState } from 'store/wallet';
 
 import { Wallet as OnboardWallet } from 'bnc-onboard/dist/src/interfaces';
 
@@ -47,6 +47,7 @@ const useConnector = () => {
 	const [transactionNotifier, setTransactionNotifier] =
 		useState<TransactionNotifierInterface | null>(null);
 	const setEnsName = useSetRecoilState(ensNameState);
+	const watchedWallet = useRecoilValue(walletWatchedState);
 
 	const [synthsMap, tokensMap] = useMemo(() => {
 		if (synthetixjs == null) {
@@ -80,6 +81,7 @@ const useConnector = () => {
 				infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
 				provider: window.ethereum as any, // loadProvider as incorrect types for provider
 			});
+
 			const useOvm = getIsOVM(Number(networkId));
 
 			const snxjs = synthetix({ provider, networkId, useOvm });
@@ -186,6 +188,15 @@ const useConnector = () => {
 			onboard.walletSelect(selectedWallet);
 		}
 	}, [onboard, selectedWallet, walletAddress]);
+
+	useEffect(() => {
+		if (watchedWallet) {
+			const provider = loadProvider({ infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID });
+			if (provider) {
+				setProvider(provider);
+			}
+		}
+	}, [watchedWallet]);
 
 	const connectWallet = async () => {
 		try {
