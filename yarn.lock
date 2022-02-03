@@ -2843,16 +2843,6 @@
     "@eth-optimism/watcher" "^0.0.1-alpha.9"
     "@metamask/providers" "8.1.1"
 
-"@synthetixio/providers@2.57.3":
-  version "2.57.3"
-  resolved "https://registry.yarnpkg.com/@synthetixio/providers/-/providers-2.57.3.tgz#acd01f7fd821fe3eedfde3767f7d257879482706"
-  integrity sha512-0aFMgZHfVthiuKe1ge3DxWf+ODdyXClVB8XpjXBo3pFP8pD0amkTk4i4wpgf0BA3AGUKYOZhE92myYc/AGzKlg==
-  dependencies:
-    "@eth-optimism/provider" "0.0.1-alpha.14"
-    "@synthetixio/contracts-interface" "2.57.3"
-    "@synthetixio/optimism-networks" "2.57.3"
-    ethers "5.5.3"
-
 "@synthetixio/providers@2.58.0":
   version "2.58.0"
   resolved "https://registry.yarnpkg.com/@synthetixio/providers/-/providers-2.58.0.tgz#30de4c8641861930f9ae36bf2b43e945bbeb236d"
