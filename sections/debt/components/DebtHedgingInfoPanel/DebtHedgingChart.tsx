@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { Svg } from 'react-optimized-image';
 import { ResponsiveContainer, YAxis, Line, LineChart, XAxis } from 'recharts';

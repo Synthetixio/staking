@@ -1,6 +1,4 @@
 import { wei } from '@synthetixio/wei';
-import Connector from 'containers/Connector';
-import { utils } from 'ethers';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import { dSNXBalance } from 'store/debt';
