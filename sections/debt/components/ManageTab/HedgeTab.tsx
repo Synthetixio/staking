@@ -40,7 +40,7 @@ export default function HedgeTap() {
 	const [approved, setApproved] = useState(false);
 	const [approveGasCost, setApproveGasCost] = useState<GasPrice | undefined>(undefined);
 	const [swapGasCost, setSwapGasCost] = useState<GasPrice | undefined>(undefined);
-	const [expectedAmountOut, setExpectedAmountOut] = useState('');
+	const [expectedAmountOut, setExpectedAmountOut] = useState(BigNumber.from(0));
 	const { provider } = Connector.useContainer();
 	const walletAddress = useRecoilValue(walletAddressState);
 	const { useContractTxn } = useSynthetixQueries();
@@ -70,7 +70,7 @@ export default function HedgeTap() {
 				walletAddress || '',
 				currentBlockNumber + 100,
 				utils.parseUnits(amountToSend || '0', 18),
-				utils.parseUnits(expectedAmountOut || '0', 18),
+				expectedAmountOut,
 				0,
 			],
 		],
@@ -79,25 +79,23 @@ export default function HedgeTap() {
 			onSettled: () => {
 				setAmountToSend('');
 				setButtonLoading(false);
-				dSNXContract
-					.connect(provider!)
-					.balanceOf(walletAddress)
-					.then((balance: BigNumber) => {
-						setBalanceOfdSNX(balance);
-					});
+				fetchdSNXContract();
 			},
 			enabled: approved,
 		}
 	);
 
-	useEffect(() => {
+	const fetchdSNXContract = () => {
 		dSNXContract
 			.connect(provider!)
 			.balanceOf(walletAddress)
 			.then((balance: BigNumber) => {
-				console.log(balance.toString());
 				setBalanceOfdSNX(balance);
 			});
+	};
+
+	useEffect(() => {
+		fetchdSNXContract();
 	}, []);
 
 	useEffect(() => {
@@ -122,8 +120,7 @@ export default function HedgeTap() {
 	useEffect(() => {
 		if (utils.parseUnits(amountToSend || '0', 18).gt(0) && provider && immutables) {
 			const calc = async () => {
-				needsToApprove();
-				const amountOutBalance = await quoterContract
+				const amountOutBalance: BigNumber = await quoterContract
 					.connect(provider)
 					.callStatic.quoteExactInputSingle(
 						immutables.token0,
@@ -132,7 +129,7 @@ export default function HedgeTap() {
 						utils.parseUnits(amountToSend, 18),
 						0
 					);
-				setExpectedAmountOut(amountOutBalance.toString());
+				setExpectedAmountOut(amountOutBalance);
 				setPriceInfo(
 					Trade.createUncheckedTrade({
 						route: new Route([pool!], pool!.token0, pool!.token1),
@@ -144,14 +141,15 @@ export default function HedgeTap() {
 						tradeType: TradeType.EXACT_INPUT,
 					})
 				);
+				needsToApprove();
 			};
 			try {
 				calc();
 			} catch (e) {
-				setExpectedAmountOut('');
+				setExpectedAmountOut(BigNumber.from(0));
 			}
 		} else {
-			setExpectedAmountOut('');
+			setExpectedAmountOut(BigNumber.from(0));
 			setPriceInfo(undefined);
 		}
 	}, [amountToSend]);
@@ -162,7 +160,9 @@ export default function HedgeTap() {
 			const amount: BigNumber = await sUSDContract
 				.connect(provider)
 				.allowance(walletAddress, routerContract.address);
-			setApproved(amount.gte(utils.parseUnits(amountToSend || '0', 18)));
+			if (!amount.eq(0)) {
+				setApproved(amount.gte(utils.parseUnits(amountToSend || '0', 18)));
+			}
 			setButtonLoading(false);
 		}
 	};
@@ -185,7 +185,7 @@ export default function HedgeTap() {
 					utils.parseUnits(amountToSend || '0', 18),
 					0
 				);
-			setExpectedAmountOut(balanceOut.toString());
+			setExpectedAmountOut(balanceOut);
 			const blockNumber = await provider!.getBlockNumber();
 			setCurrentBlockNumber(blockNumber * 1000);
 			await swapTx.refresh();
@@ -205,11 +205,7 @@ export default function HedgeTap() {
 								dSNX
 							</StyledCryptoCurrencyBox>
 						</StyledInputLabel>
-						<StyledHedgeInput
-							type="number"
-							placeholder={utils.formatUnits(expectedAmountOut || '0', 18)}
-							value={expectedAmountOut ? utils.formatUnits(expectedAmountOut || '0', 18) : ''}
-						/>
+						<StyledHedgeInput type="number" value={utils.formatUnits(expectedAmountOut, 18)} />
 						<StyledBalance>
 							{t('debt.actions.manage.balance')}
 							{formatCryptoCurrency(wei(balanceOfdSNX), {
@@ -294,10 +290,7 @@ export default function HedgeTap() {
 						size="lg"
 						onClick={approved ? swapTokens : approveRouter}
 						variant="primary"
-						disabled={
-							utils.parseUnits(amountToSend || '0', 18).eq(0) &&
-							utils.parseUnits(expectedAmountOut || '0', 18).eq(0)
-						}
+						disabled={utils.parseUnits(amountToSend || '0', 18).eq(0) && expectedAmountOut.eq(0)}
 					>
 						{approved ? t('debt.actions.manage.swap') : t('debt.actions.manage.approve')}
 					</StyledButton>

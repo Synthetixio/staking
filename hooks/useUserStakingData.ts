@@ -36,7 +36,7 @@ export const useUserStakingData = (walletAddress: string | null) => {
 	const {
 		useTotalIssuedSynthsExcludeOtherCollateralQuery,
 		useExchangeRatesQuery,
-		useGlobalStakingInfoQuery,
+		useLockedSnxQuery,
 	} = useSynthetixQueries();
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const totalIssuedSynthsExclOtherCollateral = useTotalIssuedSynthsExcludeOtherCollateralQuery(
@@ -45,7 +45,7 @@ export const useUserStakingData = (walletAddress: string | null) => {
 	const previousFeePeriod = useGetFeePoolDataQuery(1);
 	const { currentCRatio, targetCRatio, debtBalance, collateral, targetThreshold } =
 		useStakingCalculations();
-	const globalStakingInfo = useGlobalStakingInfoQuery();
+	const lockedSnxQuery = useLockedSnxQuery();
 
 	const debtData = useGetDebtDataQuery(walletAddress);
 	const feesToDistribute = previousFeePeriod?.data?.feesToDistribute ?? wei(0);
@@ -76,7 +76,7 @@ export const useUserStakingData = (walletAddress: string | null) => {
 		sUSDRate != null &&
 		previousFeePeriod.data != null &&
 		currentFeePeriod.data != null &&
-		globalStakingInfo.data != null &&
+		lockedSnxQuery.data != null &&
 		debtData.data != null
 	) {
 		// compute APR based using useSNXLockedValueQuery (top 1000 holders)
@@ -84,13 +84,13 @@ export const useUserStakingData = (walletAddress: string | null) => {
 			? debtData.data.totalSupply.eq(0)
 				? wei(0)
 				: wei(WEEKS_IN_YEAR).mul(rewardsToDistribute).div(debtData.data.totalSupply)
-			: globalStakingInfo.data.lockedValue.eq(0)
+			: lockedSnxQuery.data.lockedValue.eq(0)
 			? wei(0)
 			: sUSDRate
 					.mul(currentFeePeriod.data.feesToDistribute)
 					.add(SNXRate.mul(currentFeePeriod.data.rewardsToDistribute))
 					.mul(WEEKS_IN_YEAR)
-					.div(globalStakingInfo.data.lockedValue);
+					.div(lockedSnxQuery.data.lockedValue);
 	}
 
 	const availableRewards = useClaimableRewardsQuery(walletAddress);
@@ -120,7 +120,7 @@ export const useUserStakingData = (walletAddress: string | null) => {
 	function refetch() {
 		feeClaims.refetch();
 		exchangeRatesQuery.refetch();
-		globalStakingInfo.refetch();
+		lockedSnxQuery.refetch();
 		debtData.refetch();
 	}
 
