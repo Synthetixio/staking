@@ -51,10 +51,10 @@ const Incentives: FC<IncentivesProps> = ({
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const [view, setView] = useState<View>(View.ACTIVE);
 
-	const { useGlobalStakingInfoQuery } = useSynthetixQueries();
+	const { useLockedSnxQuery } = useSynthetixQueries();
 
 	const lpData = useLPData();
-	const globalStakingQuery = useGlobalStakingInfoQuery();
+	const lockedSnxQuery = useLockedSnxQuery();
 
 	const { nextFeePeriodStarts, currentFeePeriodStarted } = useFeePeriodTimeAndProgress();
 
@@ -78,7 +78,7 @@ const Incentives: FC<IncentivesProps> = ({
 						title: t('earn.incentives.options.snx.title'),
 						subtitle: t('earn.incentives.options.snx.subtitle'),
 						apr: stakingAPR,
-						tvl: globalStakingQuery.data?.lockedValue ?? wei(0),
+						tvl: lockedSnxQuery.data?.lockedValue ?? wei(0),
 						staked: {
 							balance: stakedAmount,
 							asset: CryptoCurrency.SNX,
@@ -138,7 +138,7 @@ const Incentives: FC<IncentivesProps> = ({
 	}, [
 		stakingAPR,
 		stakedAmount,
-		globalStakingQuery.data,
+		lockedSnxQuery.data?.lockedValue,
 		nextFeePeriodStarts,
 		stakingRewards,
 		hasClaimed,
