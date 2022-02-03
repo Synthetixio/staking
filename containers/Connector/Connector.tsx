@@ -56,7 +56,6 @@ const useConnector = () => {
 
 		return [keyBy(synthetixjs.synths, 'name'), keyBy(synthetixjs.tokens, 'symbol')];
 	}, [synthetixjs]);
-
 	useEffect(() => {
 		const init: () => void = async () => {
 			if (!window.ethereum || selectedWallet !== 'Browser Wallet') {
@@ -67,7 +66,13 @@ const useConnector = () => {
 					id: NetworkIdByName.mainnet,
 					useOvm: false,
 				});
-				setSynthetixjs(synthetix({ networkId: NetworkIdByName.mainnet, useOvm: false }));
+
+				const provider = loadProvider({
+					networkId: NetworkIdByName.mainnet,
+					infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
+				});
+				setProvider(provider);
+				setSynthetixjs(synthetix({ networkId: NetworkIdByName.mainnet, useOvm: false, provider }));
 				return;
 			}
 			const networkId = await getDefaultNetworkId();
@@ -76,6 +81,7 @@ const useConnector = () => {
 				await switchToL1({ ethereum: window.ethereum });
 				return init();
 			}
+
 			const provider = loadProvider({
 				networkId,
 				infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
