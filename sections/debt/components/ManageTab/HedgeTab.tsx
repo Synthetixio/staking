@@ -113,7 +113,7 @@ export default function HedgeTap() {
 				.catch(() => setButtonLoading(false));
 		}
 	}, [provider, walletAddress]);
-	const needsToApprove = useCallback(async () => {
+	const needsToApprove = async () => {
 		if (provider) {
 			setButtonLoading(true);
 			const amount: BigNumber = await sUSDContract
@@ -124,7 +124,7 @@ export default function HedgeTap() {
 			}
 			setButtonLoading(false);
 		}
-	}, [amountToSend, provider, walletAddress]);
+	};
 
 	useEffect(() => {
 		if (utils.parseUnits(amountToSend || '0', 18).gt(0) && provider && immutables) {

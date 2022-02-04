@@ -1,7 +1,7 @@
 import { Trans, useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import DebtHedgingChart from './DebtHedgingChart';
-import { ExternalLink, FlexDiv, FlexDivCol } from 'styles/common';
+import { ExternalLink, FlexDivCol } from 'styles/common';
 import media from 'styled-media-query';
 
 type DebtHedgingInfoPanelProps = {
@@ -24,9 +24,12 @@ const DebtHedgingInfoPanel: React.FC<DebtHedgingInfoPanelProps> = ({ hidden }) =
 				/>
 				<br />
 				<StyledUniswapLinkWrapper>
+					Warning: dSNX approximately hedges debt, users can incur losses. Be mindful of price
+					impact and use&nbsp;
 					<StyledUniswapLink href="https://info.uniswap.org/#/pools/0x9957c4795ab663622db54fc48fda874da59150ff">
-						Uniswap pool
+						this uniswap pool&nbsp;
 					</StyledUniswapLink>
+					to close dSNX positions.
 				</StyledUniswapLinkWrapper>
 			</InfoPanelBody>
 			<DebtHedgingChart />
@@ -58,13 +61,12 @@ const InfoPanelBody = styled.p`
 	font-size: 14px;
 `;
 
-const StyledUniswapLinkWrapper = styled(FlexDiv)`
+const StyledUniswapLinkWrapper = styled.div`
 	margin-top: 8px;
-	justify-content: flex-end;
 `;
 
 const StyledUniswapLink = styled(ExternalLink)`
-	font-size: 12px;
+	font-size: 14px;
 	align-self: flex-end;
 `;
 
