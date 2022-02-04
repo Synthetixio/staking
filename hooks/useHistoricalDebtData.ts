@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { last } from 'lodash';
 import useSynthetixQueries from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
@@ -16,12 +15,7 @@ type HistoricalDebtAndIssuance = {
 	data: HistoricalDebtAndIssuanceData[] | [];
 };
 
-const useHistoricalDebtData = (walletAddress: string | null) => {
-	const [historicalDebt, setHistoricalDebt] = useState<HistoricalDebtAndIssuance>({
-		isLoading: true,
-		data: [],
-	});
-
+const useHistoricalDebtData = (walletAddress: string | null): HistoricalDebtAndIssuance => {
 	const { useGetDebtDataQuery, subgraph } = useSynthetixQueries();
 
 	const issues = subgraph.useGetIssueds(
@@ -58,58 +52,54 @@ const useHistoricalDebtData = (walletAddress: string | null) => {
 	const isLoaded =
 		issues.isSuccess && burns.isSuccess && debtSnapshot.isSuccess && debtDataQuery.isSuccess;
 
-	useEffect(() => {
-		if (isLoaded) {
-			let issuesAndBurns = issues.data!.map((b) => ({ isBurn: false, ...b }));
-			issuesAndBurns = sortBy(
-				issuesAndBurns.concat(burns.data!.map((b) => ({ isBurn: true, ...b }))),
-				(d) => d.timestamp.toNumber()
-			);
+	if (!isLoaded) {
+		return { isLoading: false, data: [] };
+	}
+	let issuesAndBurns = issues.data!.map((b) => ({ isBurn: false, ...b }));
+	issuesAndBurns = sortBy(
+		issuesAndBurns.concat(burns.data!.map((b) => ({ isBurn: true, ...b }))),
+		(d) => d.timestamp.toNumber()
+	);
 
-			const debtHistory = debtSnapshot.data ?? [];
+	const debtHistory = debtSnapshot.data ?? [];
 
-			// We set historicalIssuanceAggregation array, to store all the cumulative
-			// values of every mint and burns
-			const historicalIssuanceAggregation: Wei[] = [];
+	// We set historicalIssuanceAggregation array, to store all the cumulative
+	// values of every mint and burns
+	const historicalIssuanceAggregation: Wei[] = [];
 
-			issuesAndBurns.slice().forEach((event) => {
-				const multiplier = event.isBurn ? -1 : 1;
-				const aggregation = event.value
-					.mul(multiplier)
-					.add(last(historicalIssuanceAggregation) ?? wei(0));
+	issuesAndBurns.slice().forEach((event) => {
+		const multiplier = event.isBurn ? -1 : 1;
+		const aggregation = event.value
+			.mul(multiplier)
+			.add(last(historicalIssuanceAggregation) ?? wei(0));
 
-				historicalIssuanceAggregation.push(aggregation);
-			});
+		historicalIssuanceAggregation.push(aggregation);
+	});
 
-			// We merge both actual & issuance debt into an array
-			let historicalDebtAndIssuance: HistoricalDebtAndIssuanceData[] = [];
-			debtHistory
-				.slice()
-				.reverse()
-				.forEach((debtSnapshot, i) => {
-					historicalDebtAndIssuance.push({
-						timestamp: debtSnapshot.timestamp.toNumber() * 1000,
-						issuanceDebt: historicalIssuanceAggregation[i],
-						actualDebt: wei(debtSnapshot.debtBalanceOf || 0),
-						index: i,
-					});
-				});
-
-			// Last occurrence is the current state of the debt
-			// Issuance debt = last occurrence of the historicalDebtAndIssuance array
+	// We merge both actual & issuance debt into an array
+	let historicalDebtAndIssuance: HistoricalDebtAndIssuanceData[] = [];
+	debtHistory
+		.slice()
+		.reverse()
+		.forEach((debtSnapshot, i) => {
 			historicalDebtAndIssuance.push({
-				timestamp: new Date().getTime(),
-				actualDebt: debtDataQuery.data?.debtBalance || wei(0),
-				issuanceDebt: last(historicalIssuanceAggregation) ?? wei(0),
-				index: historicalDebtAndIssuance.length,
+				timestamp: debtSnapshot.timestamp.toNumber() * 1000,
+				issuanceDebt: historicalIssuanceAggregation[i],
+				actualDebt: wei(debtSnapshot.debtBalanceOf || 0),
+				index: i,
 			});
+		});
 
-			setHistoricalDebt({ isLoading: false, data: historicalDebtAndIssuance });
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [isLoaded]);
+	// Last occurrence is the current state of the debt
+	// Issuance debt = last occurrence of the historicalDebtAndIssuance array
+	historicalDebtAndIssuance.push({
+		timestamp: new Date().getTime(),
+		actualDebt: debtDataQuery.data?.debtBalance || wei(0),
+		issuanceDebt: last(historicalIssuanceAggregation) ?? wei(0),
+		index: historicalDebtAndIssuance.length,
+	});
 
-	return historicalDebt;
+	return { isLoading: false, data: historicalDebtAndIssuance };
 };
 
 export default useHistoricalDebtData;

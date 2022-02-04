@@ -6,6 +6,7 @@ import { IndicatorSeparator, DropdownIndicator, MultiValueRemove } from './compo
 
 type SelectProps<T> = Props<T> & {
 	variant?: 'solid' | 'outline';
+	hideArrow?: boolean;
 };
 
 function Select<T>(props: SelectProps<T>) {
@@ -134,13 +135,14 @@ function Select<T>(props: SelectProps<T>) {
 			}),
 			dropdownIndicator: (style, state) => ({
 				...style,
+				display: props.hideArrow ? 'none' : 'flex',
 				color: state.selectProps.menuIsOpen ? colors.white : colors.gray,
 				transition: 'transform 0.2s ease-in-out',
 				transform: state.selectProps.menuIsOpen && 'rotate(180deg)',
 			}),
 		};
 		return styles;
-	}, [colors, fonts, props.variant]);
+	}, [colors, fonts, props.variant, props.hideArrow]);
 
 	const { components, ...rest } = props;
 

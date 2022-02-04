@@ -424,17 +424,28 @@
 			},
 			"manage": {
 				"title": "Manage",
+				"approve": "APPROVE",
+				"swap": "BUY DEBT MIRROR (dSNX)",
+				"output": "Receive:",
+				"balance-usd": "Balance: $",
+				"balance": "Balance: ",
+				"max": "MAX",
+				"price-impact": "Price impact:",
+				"buying": "Buying",
+				"using": "using",
 				"info-panel": {
-					"title": "sUSD underperforms against debt pool",
-					"body": "Your debt will fluctuate over time with the debt pool. We recommend that you hedge your debt to reduce your risk owning more debt than you hold.",
+					"title": "dSNX",
+					"body": "The Debt Mirror Index (dSNX) token is a tool that replicates the payoff of the synthetix debt index, enabling users to hedge their active debt exposure. 1 sUSD worth of dSNX pool token hedges approximately 1 USD worth of active debt. Learn how it works <0>here</0>.",
 					"chart": {
-						"title": "sUSD vs DEBT POOL",
-						"sUSD-label": "sUSD",
-						"debtPool-label": "DEBT POOL"
+						"title": "dSNX vs DEBT POOL",
+						"debt-mirror-label": "dSNX",
+						"debtPool-label": "DEBT POOL",
+						"hedged-balance": "Your hedged balance:"
 					}
 				}
 			},
 			"hedge": {
+				"connect": "To hedge your position, connect your wallet",
 				"info": {
 					"debt-pool-pie-chart": {
 						"title": "Global Debt Pool"

@@ -54,6 +54,8 @@ export const initOnboard = (networkId: NetworkId, subscriptions: Subscriptions) 
 					rpc: {
 						[NetworkIdByName.mainnet]: getInfuraRpcURL(NetworkIdByName.mainnet),
 						[NetworkIdByName['mainnet-ovm']]: getInfuraRpcURL(NetworkIdByName['mainnet-ovm']),
+						[NetworkIdByName['kovan']]: getInfuraRpcURL(NetworkIdByName['kovan']),
+						[NetworkIdByName['kovan-ovm']]: getInfuraRpcURL(NetworkIdByName['kovan-ovm']),
 					},
 					preferred: true,
 				},
