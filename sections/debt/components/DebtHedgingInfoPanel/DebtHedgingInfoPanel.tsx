@@ -1,7 +1,7 @@
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import DebtHedgingChart from './DebtHedgingChart';
-import { FlexDivCol } from 'styles/common';
+import { ExternalLink, FlexDivCol } from 'styles/common';
 
 type DebtHedgingInfoPanelProps = {
 	hidden: boolean;
@@ -14,7 +14,14 @@ const DebtHedgingInfoPanel: React.FC<DebtHedgingInfoPanelProps> = ({ hidden }) =
 	return (
 		<InfoPanelContainer>
 			<InfoPanelTitle>{t('debt.actions.manage.info-panel.title')}</InfoPanelTitle>
-			<InfoPanelBody>{t('debt.actions.manage.info-panel.body')}</InfoPanelBody>
+			<InfoPanelBody>
+				<Trans
+					i18nKey="debt.actions.manage.info-panel.body"
+					components={[
+						<ExternalLink href="https://docs.dhedge.org/dhedge-original-pools/v2-snx-debt-mirror" />,
+					]}
+				/>
+			</InfoPanelBody>
 			<DebtHedgingChart />
 		</InfoPanelContainer>
 	);
@@ -35,14 +42,9 @@ const InfoPanelTitle = styled.p`
 const InfoPanelBody = styled.p`
 	padding: 0px 30px 30px 30px;
 	margin: 0;
-	font-family: ${(props) => props.theme.fonts.regular};
-	color: ${(props) => props.theme.colors.gray};
+	font-family: ${({ theme }) => theme.fonts.regular};
+	color: ${({ theme }) => theme.colors.gray};
 	font-size: 14px;
-
-	a {
-		color: ${(props) => props.theme.colors.blue};
-		text-decoration: none;
-	}
 `;
 
 export default DebtHedgingInfoPanel;

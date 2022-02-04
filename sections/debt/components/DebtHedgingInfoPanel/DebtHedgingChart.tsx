@@ -1,18 +1,16 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Svg } from 'react-optimized-image';
-import { ResponsiveContainer, XAxis, YAxis, Line, LineChart } from 'recharts';
+import { ResponsiveContainer, YAxis, Line, LineChart, XAxis } from 'recharts';
 import { useTranslation } from 'react-i18next';
-import { format } from 'date-fns';
-
-import { FlexDivColCentered, FlexDivRow } from 'styles/common';
-
+import { FlexDivCol, FlexDivColCentered } from 'styles/common';
 import useGlobalHistoricalDebtData from 'hooks/useGlobalHistoricalDebtData';
 import colors from 'styles/theme/colors';
-import fonts from 'styles/theme/fonts';
-
 import SpinnerIcon from 'assets/svg/app/loader.svg';
 import ChartLabel from './ChartLabel';
+import { format } from 'date-fns';
+import fonts from 'styles/theme/fonts';
+import DebtHedgedBalance from './DebtHedgedBalance';
 
 const DebtHedgingChart: React.FC = () => {
 	const { t } = useTranslation();
@@ -29,35 +27,40 @@ const DebtHedgingChart: React.FC = () => {
 	return (
 		<ChartContainer>
 			<ChartTitleContainer>
-				<p>{t('debt.actions.manage.info-panel.chart.title')}</p>
-				<ChartLabel labelColor={colors.mutedBlue} labelBorderColor={colors.blue}>
-					{t('debt.actions.manage.info-panel.chart.sUSD-label')}
-				</ChartLabel>
-				<ChartLabel labelColor={colors.mutedPink} labelBorderColor={colors.pink}>
-					{t('debt.actions.manage.info-panel.chart.debtPool-label')}
-				</ChartLabel>
+				<StyledTitle>{t('debt.actions.manage.info-panel.chart.title')}</StyledTitle>
+				<StyledChartLabelsWrapper>
+					<ChartLabel labelColor={colors.mutedBlue} labelBorderColor={colors.blue}>
+						{t('debt.actions.manage.info-panel.chart.debt-mirror-label')}
+					</ChartLabel>
+
+					<ChartLabel labelColor={colors.mutedPink} labelBorderColor={colors.pink}>
+						{t('debt.actions.manage.info-panel.chart.debtPool-label')}
+					</ChartLabel>
+					<br />
+					<DebtHedgedBalance />
+				</StyledChartLabelsWrapper>
 			</ChartTitleContainer>
 			<ResponsiveContainer width="100%" height={270}>
 				<LineChart margin={{ left: 0, top: 20, bottom: 0, right: 0 }} data={data}>
+					<YAxis width={0} domain={['auto', 'auto']} tickLine={false} />
 					<XAxis
 						height={30}
-						dataKey="timestamp"
+						dataKey="debtPool.timestamp"
 						interval="preserveEnd"
 						tick={{ fontSize: 10, fill: colors.white, fontFamily: fonts.mono }}
 						tickLine={false}
 						tickFormatter={(tick) => format(new Date(tick * 1000), 'd MMM yy').toUpperCase()}
 					/>
-					<YAxis width={0} domain={['auto', 'auto']} tickLine={false} />
 					<Line
 						type="monotone"
-						dataKey="issuance"
+						dataKey="mirrorPool.value"
 						stroke={colors.blue}
 						strokeWidth={2}
 						dot={false}
 					/>
 					<Line
 						type="monotone"
-						dataKey="debtPool"
+						dataKey="debtPool.value"
 						stroke={colors.pink}
 						strokeWidth={2}
 						dot={false}
@@ -73,7 +76,7 @@ const ChartContainer = styled(FlexDivColCentered)`
 	width: 100%;
 `;
 
-const ChartTitleContainer = styled(FlexDivRow)`
+const ChartTitleContainer = styled(FlexDivCol)`
 	border-top: 1px solid ${(props) => props.theme.colors.mediumBlue};
 	border-bottom: 1px solid ${(props) => props.theme.colors.mediumBlue};
 	font-family: ${(props) => props.theme.fonts.extended};
@@ -91,6 +94,14 @@ const SpinnerContainer = styled(FlexDivColCentered)`
 const Spinner = styled(Svg)`
 	display: block;
 	margin: 30px auto;
+`;
+
+const StyledChartLabelsWrapper = styled.div`
+	margin-bottom: 8px;
+`;
+
+const StyledTitle = styled.p`
+	font-size: 13px;
 `;
 
 export default DebtHedgingChart;
