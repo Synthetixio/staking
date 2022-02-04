@@ -43,12 +43,7 @@ type EventBlocks = Array<{
 	value: Wei;
 }>;
 
-const useGlobalHistoricalDebtData = () => {
-	const [historicalDebt, setHistoricalDebt] = useState<HistoricalGlobalDebtAndIssuance>({
-		isLoading: true,
-		data: [],
-	});
-
+const useGlobalHistoricalDebtData = (): HistoricalGlobalDebtAndIssuance => {
 	const dHedgeData = useQuery<DHedgePerformanceResponse>(
 		['dhedge', dHedgeAPIUrl],
 		async () => {
@@ -92,78 +87,74 @@ const useGlobalHistoricalDebtData = () => {
 		dHedgeData.isSuccess &&
 		!dHedgeData.data.errors?.length &&
 		dHedgeData.data;
+	if (!isLoaded) {
+		return { isLoading: true, data: [] };
+	}
 
-	useEffect(() => {
-		if (isLoaded) {
-			const dhedgeHistory =
-				dHedgeData.data?.data.performanceHistory.history
-					.map((history) => ({
-						type: EvenBlockType.DHEDGE_ITEM,
-						value: wei(Number(history.performance) * 100),
-						// we are getting the timestamps in milliseconds while our data is in seconds
-						timestamp: Math.floor(Number(history.timestamp) / 1000),
-					}))
-					.filter((history) => !history.value.eq(0)) ?? [];
+	const dhedgeHistory =
+		dHedgeData.data?.data.performanceHistory.history
+			.map((history) => ({
+				type: EvenBlockType.DHEDGE_ITEM,
+				value: wei(Number(history.performance) * 100),
+				// we are getting the timestamps in milliseconds while our data is in seconds
+				timestamp: Math.floor(Number(history.timestamp) / 1000),
+			}))
+			.filter((history) => !history.value.eq(0)) ?? [];
 
-			const dailyIssuedData =
-				dailyIssued.data?.map((x) => ({
-					timestamp: Number(x.id),
-					type: EvenBlockType.STAKING_TRANSACTION,
-					value: x.totalDebt,
-				})) ?? [];
-			const dailyBurnedData =
-				dailyBurned.data?.map((x) => ({
-					timestamp: Number(x.id),
-					type: EvenBlockType.STAKING_TRANSACTION,
-					value: x.totalDebt,
-				})) ?? [];
+	const dailyIssuedData =
+		dailyIssued.data?.map((x) => ({
+			timestamp: Number(x.id),
+			type: EvenBlockType.STAKING_TRANSACTION,
+			value: x.totalDebt,
+		})) ?? [];
+	const dailyBurnedData =
+		dailyBurned.data?.map((x) => ({
+			timestamp: Number(x.id),
+			type: EvenBlockType.STAKING_TRANSACTION,
+			value: x.totalDebt,
+		})) ?? [];
 
-			// We concat both the events and order them (asc)
-			const eventBlocks: EventBlocks = orderBy(
-				dailyIssuedData.concat(dailyBurnedData).concat(dhedgeHistory),
-				'timestamp',
-				'asc'
-			);
-			const firstIndexOfDHedgeInformation =
-				eventBlocks.findIndex((x) => EvenBlockType.DHEDGE_ITEM === x.type) - 1;
-			const trimmedEventBlocks = eventBlocks.slice(
-				firstIndexOfDHedgeInformation - 1,
-				eventBlocks.length - 1
-			);
-			const data: HistoricalGlobalDebtAndIssuanceData[] = [];
-			let lastKnownDebtPoolPrice = wei(0);
-			let lastKnownPerformance = wei(0);
-			trimmedEventBlocks.forEach((event) => {
-				if (event.type === EvenBlockType.STAKING_TRANSACTION) {
-					lastKnownDebtPoolPrice = event.value;
-					data.push({
-						mirrorPool: {
-							value: event.value.add(lastKnownPerformance).toNumber(),
-							timestamp: event.timestamp,
-						},
-						debtPool: { timestamp: event.timestamp, value: event.value.toNumber() },
-					});
-				} else if (event.type === EvenBlockType.DHEDGE_ITEM) {
-					const percentageOf = lastKnownDebtPoolPrice.mul(event.value).div(100);
-					lastKnownPerformance = percentageOf;
-					data.push({
-						mirrorPool: {
-							value: lastKnownDebtPoolPrice.add(percentageOf).toNumber(),
-							timestamp: event.timestamp,
-						},
-						debtPool: { timestamp: event.timestamp, value: lastKnownDebtPoolPrice.toNumber() },
-					});
-				}
+	// We concat both the events and order them (asc)
+	const eventBlocks: EventBlocks = orderBy(
+		dailyIssuedData.concat(dailyBurnedData).concat(dhedgeHistory),
+		'timestamp',
+		'asc'
+	);
+	const firstIndexOfDHedgeInformation =
+		eventBlocks.findIndex((x) => EvenBlockType.DHEDGE_ITEM === x.type) - 1;
+	const trimmedEventBlocks = eventBlocks.slice(
+		firstIndexOfDHedgeInformation - 1,
+		eventBlocks.length - 1
+	);
+	const data: HistoricalGlobalDebtAndIssuanceData[] = [];
+	let lastKnownDebtPoolPrice = wei(0);
+	let lastKnownPerformance = wei(0);
+	trimmedEventBlocks.forEach((event) => {
+		if (event.type === EvenBlockType.STAKING_TRANSACTION) {
+			lastKnownDebtPoolPrice = event.value;
+			data.push({
+				mirrorPool: {
+					value: event.value.add(lastKnownPerformance).toNumber(),
+					timestamp: event.timestamp,
+				},
+				debtPool: { timestamp: event.timestamp, value: event.value.toNumber() },
 			});
-			setHistoricalDebt({
-				isLoading: false,
-				data,
+		} else if (event.type === EvenBlockType.DHEDGE_ITEM) {
+			const percentageOf = lastKnownDebtPoolPrice.mul(event.value).div(100);
+			lastKnownPerformance = percentageOf;
+			data.push({
+				mirrorPool: {
+					value: lastKnownDebtPoolPrice.add(percentageOf).toNumber(),
+					timestamp: event.timestamp,
+				},
+				debtPool: { timestamp: event.timestamp, value: lastKnownDebtPoolPrice.toNumber() },
 			});
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [isLoaded]);
-
-	return historicalDebt;
+	});
+	return {
+		isLoading: false,
+		data,
+	};
 };
 
 export default useGlobalHistoricalDebtData;
