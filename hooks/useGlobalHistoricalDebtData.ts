@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { orderBy } from 'lodash';
 import useSynthetixQueries from '@synthetixio/queries';
 import { useQuery } from 'react-query';
