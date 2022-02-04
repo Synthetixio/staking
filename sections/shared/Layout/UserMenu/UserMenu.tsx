@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import { Svg } from 'react-optimized-image';
 import OutsideClickHandler from 'react-outside-click-handler';
+import Davatar from '@davatar/react';
 
 import {
 	FlexDiv,
@@ -24,6 +25,7 @@ import {
 	networkState,
 	delegateWalletState,
 	ensNameState,
+	walletAddressState,
 } from 'store/wallet';
 
 import {
@@ -54,6 +56,7 @@ const UserMenu: FC = () => {
 	const [watchWalletModalOpened, setWatchWalletModalOpened] = useState<boolean>(false);
 	const [delegateModalOpened, setDelegateModalOpened] = useState<boolean>(false);
 	const truncatedWalletAddress = useRecoilValue(truncatedWalletAddressState);
+	const walletAddress = useRecoilValue(walletAddressState);
 	const ensName = useRecoilValue(ensNameState);
 	const delegateWallet = useRecoilValue(delegateWalletState);
 	const network = useRecoilValue(networkState);
@@ -87,7 +90,16 @@ const UserMenu: FC = () => {
 									>
 										<FlexDivCentered data-testid="wallet-address">
 											<StyledConnectionDot />
-											{ensName ? <EnsName>{ensName}</EnsName> : truncatedWalletAddress}
+											<Ens>
+												{walletAddress && (
+													<Davatar
+														size={15}
+														address={walletAddress}
+														generatedAvatarType="jazzicon"
+													/>
+												)}
+												{ensName || truncatedWalletAddress}
+											</Ens>
 										</FlexDivCentered>
 										<NetworkTag className="network-tag" data-testid="network-tag">
 											{getNetworkName()}
@@ -137,7 +149,12 @@ const UserMenu: FC = () => {
 							>
 								<FlexDivCentered data-testid="wallet-address">
 									<StyledConnectionDot />
-									{ensName ? <EnsName>{ensName}</EnsName> : truncatedWalletAddress}
+									<Ens>
+										{walletAddress && (
+											<Davatar size={15} address={walletAddress} generatedAvatarType="jazzicon" />
+										)}
+										{ensName || truncatedWalletAddress}
+									</Ens>
 								</FlexDivCentered>
 								{walletOptionsModalOpened ? caretUp : caretDown}
 							</WalletButton>
@@ -219,8 +236,11 @@ const Menu = styled.div`
 	grid-auto-flow: column;
 `;
 
-const EnsName = styled.span`
+const Ens = styled.span`
+	display: flex;
+	align-items: center;
 	text-transform: lowercase;
+	gap: 5px;
 `;
 
 const NetworkTag = styled(FlexDivCentered)`
