@@ -13,7 +13,8 @@ const DebtHedgingInfoPanel: React.FC<DebtHedgingInfoPanelProps> = ({ hidden }) =
 
 	if (hidden) return null;
 	return (
-		<InfoPanelContainer>
+		<span></span>
+		/* 	<InfoPanelContainer>
 			<InfoPanelTitle>{t('debt.actions.manage.info-panel.title')}</InfoPanelTitle>
 			<InfoPanelBody>
 				<Trans
@@ -33,7 +34,7 @@ const DebtHedgingInfoPanel: React.FC<DebtHedgingInfoPanelProps> = ({ hidden }) =
 				</StyledUniswapLinkWrapper>
 			</InfoPanelBody>
 			<DebtHedgingChart />
-		</InfoPanelContainer>
+		</InfoPanelContainer> */
 	);
 };
 
