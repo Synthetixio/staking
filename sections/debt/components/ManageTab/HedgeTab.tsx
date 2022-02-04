@@ -1,5 +1,5 @@
 import Connector from 'containers/Connector';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Button from 'components/Button';
 import {
@@ -87,18 +87,14 @@ export default function HedgeTap() {
 		}
 	);
 
-	const fetchdSNXContract = () => {
-		dSNXContract
-			.connect(provider!)
-			.balanceOf(walletAddress)
-			.then((balance: BigNumber) => {
-				setBalanceOfdSNX(balance);
-			});
-	};
+	const fetchdSNXContract = useCallback(async () => {
+		const balance = await dSNXContract.connect(provider!).balanceOf(walletAddress);
+		setBalanceOfdSNX(balance);
+	}, [provider, setBalanceOfdSNX, walletAddress]);
 
 	useEffect(() => {
 		fetchdSNXContract();
-	}, []);
+	}, [fetchdSNXContract]);
 
 	useEffect(() => {
 		if (provider && walletAddress) {
@@ -118,6 +114,18 @@ export default function HedgeTap() {
 				.catch(() => setButtonLoading(false));
 		}
 	}, [provider, walletAddress]);
+	const needsToApprove = useCallback(async () => {
+		if (provider) {
+			setButtonLoading(true);
+			const amount: BigNumber = await sUSDContract
+				.connect(provider)
+				.allowance(walletAddress, routerContract.address);
+			if (!amount.eq(0)) {
+				setApproved(amount.gte(utils.parseUnits(amountToSend || '0', 18)));
+			}
+			setButtonLoading(false);
+		}
+	}, [amountToSend, provider, walletAddress]);
 
 	useEffect(() => {
 		if (utils.parseUnits(amountToSend || '0', 18).gt(0) && provider && immutables) {
@@ -154,20 +162,7 @@ export default function HedgeTap() {
 			setExpectedAmountOut(BigNumber.from(0));
 			setPriceInfo(undefined);
 		}
-	}, [amountToSend]);
-
-	const needsToApprove = async () => {
-		if (provider) {
-			setButtonLoading(true);
-			const amount: BigNumber = await sUSDContract
-				.connect(provider)
-				.allowance(walletAddress, routerContract.address);
-			if (!amount.eq(0)) {
-				setApproved(amount.gte(utils.parseUnits(amountToSend || '0', 18)));
-			}
-			setButtonLoading(false);
-		}
-	};
+	}, [amountToSend, immutables, needsToApprove, pool, provider]);
 
 	const approveRouter = async () => {
 		setButtonLoading(true);
@@ -245,8 +240,7 @@ export default function HedgeTap() {
 								}
 							}}
 							value={amountToSend}
-							// @ts-ignore
-							autoFocus="autofocus"
+							autoFocus={true}
 						/>
 						<StyledBalance>
 							{t('debt.actions.manage.balance-usd')}
