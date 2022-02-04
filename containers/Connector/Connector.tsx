@@ -19,7 +19,13 @@ import { ethers } from 'ethers';
 import { switchToL1 } from '@synthetixio/optimism-networks';
 
 import { appReadyState } from 'store/app';
-import { walletAddressState, networkState, ensNameState, walletWatchedState } from 'store/wallet';
+import {
+	walletAddressState,
+	networkState,
+	ensNameState,
+	walletWatchedState,
+	ensAvatarState,
+} from 'store/wallet';
 
 import { Wallet as OnboardWallet } from 'bnc-onboard/dist/src/interfaces';
 
@@ -47,6 +53,7 @@ const useConnector = () => {
 	const [transactionNotifier, setTransactionNotifier] =
 		useState<TransactionNotifierInterface | null>(null);
 	const setEnsName = useSetRecoilState(ensNameState);
+	const setEnsAvatar = useSetRecoilState(ensAvatarState);
 	const watchedWallet = useRecoilValue(walletWatchedState);
 
 	const [synthsMap, tokensMap] = useMemo(() => {
@@ -112,7 +119,9 @@ const useConnector = () => {
 		});
 		if (provider && address) {
 			const ensName: string = await provider.lookupAddress(address);
+			let avatar = ensName ? await provider.getAvatar(ensName) : null;
 			setEnsName(ensName);
+			setEnsAvatar(avatar);
 		}
 	};
 

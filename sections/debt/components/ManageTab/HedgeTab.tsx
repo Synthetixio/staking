@@ -21,7 +21,6 @@ import GasSelector from 'components/GasSelector';
 import { dSNXBalance } from 'store/debt';
 import { formatCryptoCurrency } from 'utils/formatters/number';
 import { wei } from '@synthetixio/wei';
-import { ExternalLink, FlexDivColCentered } from 'styles/common';
 import { Route, Trade, Pool } from '@uniswap/v3-sdk';
 import { CurrencyAmount, Percent, Token, TradeType } from '@uniswap/sdk-core';
 import colors from 'styles/theme/colors';
@@ -114,6 +113,7 @@ export default function HedgeTap() {
 				.catch(() => setButtonLoading(false));
 		}
 	}, [provider, walletAddress]);
+
 	const needsToApprove = useCallback(async () => {
 		if (provider) {
 			setButtonLoading(true);
@@ -125,7 +125,7 @@ export default function HedgeTap() {
 			}
 			setButtonLoading(false);
 		}
-	}, [amountToSend, provider, walletAddress]);
+	}, [provider, walletAddress, amountToSend]);
 
 	useEffect(() => {
 		if (utils.parseUnits(amountToSend || '0', 18).gt(0) && provider && immutables) {
@@ -194,72 +194,68 @@ export default function HedgeTap() {
 		<StyledHedgeWrapper>
 			<StyledBackgroundTab>
 				<StyledInputsWrapper>
-					<StyledInputWrapper>
-						<StyledInputLabel>
-							{t('debt.actions.manage.buying')}
-							<StyledCryptoCurrencyBox>
-								<Svg src={dhedge} width={24} height={24} />
-								dSNX
-							</StyledCryptoCurrencyBox>
-						</StyledInputLabel>
-						<StyledHedgeInput type="number" value={utils.formatUnits(expectedAmountOut, 18)} />
-						<StyledBalance>
-							{t('debt.actions.manage.balance')}
-							{formatCryptoCurrency(wei(balanceOfdSNX), {
-								maxDecimals: 1,
-								minDecimals: 2,
-							})}
-						</StyledBalance>
-					</StyledInputWrapper>
-					<StyledSpacer />
-					<StyledInputWrapper>
-						<StyledInputLabel>
-							{t('debt.actions.manage.using')}
-							<StyledCryptoCurrencyBox>
-								<StyledCryptoCurrencyImage src="https://raw.githubusercontent.com/Synthetixio/synthetix-assets/v2.0.10/synths/sUSD.svg" />
-								sUSD
-							</StyledCryptoCurrencyBox>
-						</StyledInputLabel>
-						<StyledHedgeInput
-							type="number"
-							placeholder={formatCryptoCurrency(wei(sUSDBalance), {
-								maxDecimals: 1,
-								minDecimals: 2,
-							})}
-							onChange={(e) => {
-								let hasError: boolean = false;
-								try {
-									hasError = false;
-									const val = utils.parseUnits(e.target.value || '0', 18);
-									if (val.gte(constants.MaxUint256)) hasError = true;
-								} catch {
-									hasError = true;
-								}
-								if (!hasError) {
-									setAmountToSend(e.target.value ? e.target.value : '');
-								}
+					<StyledInputLabel>
+						{t('debt.actions.manage.using')}
+						<StyledCryptoCurrencyBox>
+							<StyledCryptoCurrencyImage src="https://raw.githubusercontent.com/Synthetixio/synthetix-assets/v2.0.10/synths/sUSD.svg" />
+							sUSD
+						</StyledCryptoCurrencyBox>
+					</StyledInputLabel>
+					<StyledHedgeInput
+						type="number"
+						placeholder={formatCryptoCurrency(wei(sUSDBalance), {
+							maxDecimals: 1,
+							minDecimals: 2,
+						})}
+						onChange={(e) => {
+							let hasError: boolean = false;
+							try {
+								hasError = false;
+								const val = utils.parseUnits(e.target.value || '0', 18);
+								if (val.gte(constants.MaxUint256)) hasError = true;
+							} catch {
+								hasError = true;
+							}
+							if (!hasError) {
+								setAmountToSend(e.target.value ? e.target.value : '');
+							}
+						}}
+						value={amountToSend}
+						autoFocus={true}
+					/>
+					<StyledBalance>
+						{t('debt.actions.manage.balance-usd')}
+						{formatCryptoCurrency(wei(sUSDBalance), {
+							maxDecimals: 1,
+							minDecimals: 2,
+						})}
+						<StyledMaxButton
+							variant="text"
+							isActive={true}
+							onClick={() => {
+								setAmountToSend(utils.formatUnits(sUSDBalance, 18));
 							}}
-							value={amountToSend}
-							autoFocus={true}
-						/>
-						<StyledBalance>
-							{t('debt.actions.manage.balance-usd')}
-							{formatCryptoCurrency(wei(sUSDBalance), {
-								maxDecimals: 1,
-								minDecimals: 2,
-							})}
-							<StyledMaxButton
-								variant="text"
-								onClick={() => {
-									setAmountToSend(utils.formatUnits(sUSDBalance, 18));
-								}}
-							>
-								{t('debt.actions.manage.max')}
-							</StyledMaxButton>
-						</StyledBalance>
-					</StyledInputWrapper>
+						>
+							{t('debt.actions.manage.max')}
+						</StyledMaxButton>
+					</StyledBalance>
+					<StyledSpacer />
+					<StyledInputLabel>
+						{t('debt.actions.manage.buying')}
+						<StyledCryptoCurrencyBox>
+							<Svg src={dhedge} width={24} height={24} />
+							dSNX
+						</StyledCryptoCurrencyBox>
+					</StyledInputLabel>
+					<StyledHedgeInput type="number" value={utils.formatUnits(expectedAmountOut, 18)} />
+					<StyledBalance>
+						{t('debt.actions.manage.balance')}
+						{formatCryptoCurrency(wei(balanceOfdSNX), {
+							maxDecimals: 1,
+							minDecimals: 2,
+						})}
+					</StyledBalance>
 				</StyledInputsWrapper>
-
 				<SublineWrapper>
 					<StyledGasSelector
 						gasLimitEstimate={approved ? swapTx.gasLimit : approveTx.gasLimit}
@@ -267,9 +263,6 @@ export default function HedgeTap() {
 						optimismLayerOneFee={null}
 						altVersion
 					/>
-					<StyledUniswapLink href="https://info.uniswap.org/#/pools/0x9957c4795ab663622db54fc48fda874da59150ff">
-						Uniswap pool
-					</StyledUniswapLink>
 				</SublineWrapper>
 			</StyledBackgroundTab>
 			{buttonLoading ? (
@@ -309,13 +302,10 @@ const StyledInputsWrapper = styled.div`
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	flex-direction: column;
 	width: 100%;
-	height: 100px;
+	height: 100%
 	margin-top: 80px;
-`;
-
-const StyledInputWrapper = styled(FlexDivColCentered)`
-	width: 100%;
 `;
 
 const StyledBackgroundTab = styled.div`
@@ -324,25 +314,30 @@ const StyledBackgroundTab = styled.div`
 	flex-direction: column;
 	justify-content: space-between;
 	width: 100%;
-	height: 100%;
+	height: 400px;
 	background-color: ${colors.black};
 	padding: 16px;
 `;
 
 const StyledInputLabel = styled.div`
 	display: flex;
-	justify-content: center;
+	justify-content: space-evenly;
 	align-items: baseline;
+	font-size: 14px;
+	width: 180px;
+	font-family: Inter;
 `;
 
 const StyledHedgeInput = styled(StyledInput)`
-	width: 250px;
+	width: 350px;
 `;
 
 const StyledBalance = styled.div`
 	text-transform: none;
 	text-align: center;
 	margin-top: 16px;
+	font-size: 14px;
+	font-family: ${(props) => props.theme.fonts.condensedMedium};
 `;
 
 const StyledCryptoCurrencyBox = styled.div`
@@ -373,8 +368,9 @@ const StyledButton = styled(Button)`
 `;
 
 const StyledSpacer = styled.div`
-	border-left: 1px solid ${colors.mutedBlue};
-	height: 150px;
+	border-bottom: 1px solid ${colors.mutedBlue};
+	width: 300px;
+	margin: 16px;
 `;
 
 const StyledMaxButton = styled(Button)`
@@ -391,11 +387,6 @@ const StyledOutput = styled.span`
 const StyledGasSelector = styled(GasSelector)`
 	width: 100px;
 	display: inline;
-`;
-
-const StyledUniswapLink = styled(ExternalLink)`
-	font-size: 10px;
-	align-self: flex-end;
 `;
 
 const SublineWrapper = styled.div`
