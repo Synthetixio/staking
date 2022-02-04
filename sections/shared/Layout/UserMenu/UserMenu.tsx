@@ -231,12 +231,12 @@ const Ens = styled.span`
 	display: flex;
 	align-items: center;
 	text-transform: lowercase;
-	gap: 5px;
 `;
 
 const EnsAvatar = styled.img`
 	height: 15px;
 	border-radius: 100px;
+	margin-right: 5px;
 `;
 
 const NetworkTag = styled(FlexDivCentered)`
