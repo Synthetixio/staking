@@ -24,6 +24,7 @@ import {
 	networkState,
 	delegateWalletState,
 	ensNameState,
+	ensAvatarState,
 } from 'store/wallet';
 
 import {
@@ -55,6 +56,7 @@ const UserMenu: FC = () => {
 	const [delegateModalOpened, setDelegateModalOpened] = useState<boolean>(false);
 	const truncatedWalletAddress = useRecoilValue(truncatedWalletAddressState);
 	const ensName = useRecoilValue(ensNameState);
+	const ensAvatar = useRecoilValue(ensAvatarState);
 	const delegateWallet = useRecoilValue(delegateWalletState);
 	const network = useRecoilValue(networkState);
 
@@ -87,7 +89,10 @@ const UserMenu: FC = () => {
 									>
 										<FlexDivCentered data-testid="wallet-address">
 											<StyledConnectionDot />
-											{ensName ? <EnsName>{ensName}</EnsName> : truncatedWalletAddress}
+											<Ens>
+												{ensAvatar && <EnsAvatar alt="" src={ensAvatar} />}
+												{ensName || truncatedWalletAddress}
+											</Ens>
 										</FlexDivCentered>
 										<NetworkTag className="network-tag" data-testid="network-tag">
 											{getNetworkName()}
@@ -137,7 +142,10 @@ const UserMenu: FC = () => {
 							>
 								<FlexDivCentered data-testid="wallet-address">
 									<StyledConnectionDot />
-									{ensName ? <EnsName>{ensName}</EnsName> : truncatedWalletAddress}
+									<Ens>
+										{ensAvatar && <EnsAvatar alt="ensAvatar" src={ensAvatar} />}
+										{ensName || truncatedWalletAddress}
+									</Ens>
 								</FlexDivCentered>
 								{walletOptionsModalOpened ? caretUp : caretDown}
 							</WalletButton>
@@ -219,8 +227,16 @@ const Menu = styled.div`
 	grid-auto-flow: column;
 `;
 
-const EnsName = styled.span`
+const Ens = styled.span`
+	display: flex;
+	align-items: center;
 	text-transform: lowercase;
+`;
+
+const EnsAvatar = styled.img`
+	height: 15px;
+	border-radius: 100px;
+	margin-right: 5px;
 `;
 
 const NetworkTag = styled(FlexDivCentered)`

@@ -50,6 +50,11 @@ export const ensNameState = atom<string | null>({
 	default: null,
 });
 
+export const ensAvatarState = atom<string | null>({
+	key: getWalletKey('ensAvatar'),
+	default: null,
+});
+
 export const walletWatchedState = atom<string | null>({
 	key: getWalletKey('walletWatched'),
 	default: null,
