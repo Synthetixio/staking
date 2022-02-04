@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import { Svg } from 'react-optimized-image';
 import OutsideClickHandler from 'react-outside-click-handler';
-import Davatar from '@davatar/react';
 
 import {
 	FlexDiv,
@@ -25,7 +24,7 @@ import {
 	networkState,
 	delegateWalletState,
 	ensNameState,
-	walletAddressState,
+	ensAvatarState,
 } from 'store/wallet';
 
 import {
@@ -56,8 +55,8 @@ const UserMenu: FC = () => {
 	const [watchWalletModalOpened, setWatchWalletModalOpened] = useState<boolean>(false);
 	const [delegateModalOpened, setDelegateModalOpened] = useState<boolean>(false);
 	const truncatedWalletAddress = useRecoilValue(truncatedWalletAddressState);
-	const walletAddress = useRecoilValue(walletAddressState);
 	const ensName = useRecoilValue(ensNameState);
+	const ensAvatar = useRecoilValue(ensAvatarState);
 	const delegateWallet = useRecoilValue(delegateWalletState);
 	const network = useRecoilValue(networkState);
 
@@ -91,13 +90,7 @@ const UserMenu: FC = () => {
 										<FlexDivCentered data-testid="wallet-address">
 											<StyledConnectionDot />
 											<Ens>
-												{walletAddress && (
-													<Davatar
-														size={15}
-														address={walletAddress}
-														generatedAvatarType="jazzicon"
-													/>
-												)}
+												{ensAvatar && <EnsAvatar alt="" src={ensAvatar} />}
 												{ensName || truncatedWalletAddress}
 											</Ens>
 										</FlexDivCentered>
@@ -150,9 +143,7 @@ const UserMenu: FC = () => {
 								<FlexDivCentered data-testid="wallet-address">
 									<StyledConnectionDot />
 									<Ens>
-										{walletAddress && (
-											<Davatar size={15} address={walletAddress} generatedAvatarType="jazzicon" />
-										)}
+										{ensAvatar && <EnsAvatar alt="ensAvatar" src={ensAvatar} />}
 										{ensName || truncatedWalletAddress}
 									</Ens>
 								</FlexDivCentered>
@@ -241,6 +232,11 @@ const Ens = styled.span`
 	align-items: center;
 	text-transform: lowercase;
 	gap: 5px;
+`;
+
+const EnsAvatar = styled.img`
+	height: 15px;
+	border-radius: 100px;
 `;
 
 const NetworkTag = styled(FlexDivCentered)`
