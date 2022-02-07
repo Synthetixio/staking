@@ -130,7 +130,11 @@ const DebtTabs: FC<DebtTabsProps> = ({
 							{t('debt.actions.hedge.info.debt-pool-pie-chart.title')}
 						</ContainerHeader>
 						<ContainerBody style={{ padding: '24px 0' }}>
-							<DebtPieChart data={totalSupply as SynthsTotalSupplyData} />
+							<DebtPieChart
+								data={totalSupply as SynthsTotalSupplyData}
+								isLoaded={synthsTotalSupplyQuery.isSuccess}
+								isLoading={synthsTotalSupplyQuery.isLoading}
+							/>
 						</ContainerBody>
 					</DebtPieChartContainer>
 					<PortfolioContainer>

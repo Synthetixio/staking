@@ -5,7 +5,6 @@ import Wei from '@synthetixio/wei';
 import PieChart from 'components/PieChart';
 import DebtPoolTable from '../DebtPoolTable';
 import colors from 'styles/theme/colors';
-import useSynthetixQueries from '@synthetixio/queries';
 import { formatCurrency } from 'utils/formatters/number';
 import { SynthsTotalSupplyData, SynthTotalSupply } from '@synthetixio/queries';
 
@@ -43,13 +42,12 @@ const synthDataSortFn = (a: SynthTotalSupply, b: SynthTotalSupply) =>
 
 type DebtPieChartProps = {
 	data: SynthsTotalSupplyData;
+	isLoading: boolean;
+	isLoaded: boolean;
 };
 
-const SynthsPieChart: FC<DebtPieChartProps> = () => {
-	const { useSynthsTotalSupplyQuery } = useSynthetixQueries();
-
-	const synthsTotalSupplyQuery = useSynthsTotalSupplyQuery();
-	const totalSupply = synthsTotalSupplyQuery.isSuccess ? synthsTotalSupplyQuery.data : undefined;
+const SynthsPieChart: FC<DebtPieChartProps> = ({ data, isLoaded, isLoading }) => {
+	const totalSupply = data ? data : undefined;
 
 	const pieData = useMemo(() => {
 		const supplyData = totalSupply?.supplyData ?? [];
@@ -89,11 +87,7 @@ const SynthsPieChart: FC<DebtPieChartProps> = () => {
 		<SynthsPieChartContainer>
 			<PieChart data={pieData} dataKey={'skewValueChart'} tooltipFormatter={Tooltip} />
 			<TableWrapper>
-				<DebtPoolTable
-					synths={pieData}
-					isLoading={synthsTotalSupplyQuery.isLoading}
-					isLoaded={synthsTotalSupplyQuery.isSuccess}
-				/>
+				<DebtPoolTable synths={pieData} isLoading={isLoading} isLoaded={isLoaded} />
 			</TableWrapper>
 		</SynthsPieChartContainer>
 	);
