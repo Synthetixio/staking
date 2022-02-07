@@ -12,7 +12,7 @@ const ManageTab = () => {
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	return (
 		<ManageContainer>
-			{!walletAddress || !isWalletConnected ? <ConnectWallet /> : <span>Coming soon</span>}
+			{!walletAddress || !isWalletConnected ? <ConnectWallet /> : <HedgeTap />}
 		</ManageContainer>
 	);
 };
