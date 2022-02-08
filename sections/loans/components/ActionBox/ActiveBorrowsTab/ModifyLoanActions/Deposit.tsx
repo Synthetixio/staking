@@ -65,7 +65,7 @@ const Deposit: React.FC<DepositProps> = ({
 			loanContract,
 			'deposit',
 			[address, loanId, ...(loanTypeIsETH ? [] : [depositAmount.toBN()])],
-			{ value: loanTypeIsETH ? depositAmount : 0 },
+			{ value: loanTypeIsETH ? depositAmount.toBN() : 0 },
 		];
 	}, [loanContract, address, loanId, loanTypeIsETH, depositAmount]);
 
