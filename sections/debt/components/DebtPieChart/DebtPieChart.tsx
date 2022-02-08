@@ -41,7 +41,7 @@ const synthDataSortFn = (a: SynthTotalSupply, b: SynthTotalSupply) =>
 	a.poolProportion.lt(b.poolProportion) ? 1 : -1;
 
 type DebtPieChartProps = {
-	data: SynthsTotalSupplyData;
+	data?: SynthsTotalSupplyData;
 	isLoading: boolean;
 	isLoaded: boolean;
 };
