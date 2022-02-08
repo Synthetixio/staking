@@ -2914,6 +2914,16 @@
     synthetix "2.58.0"
     web3-utils "1.2.11"
 
+"@synthetixio/contracts-interface@2.59.0":
+  version "2.59.0"
+  resolved "https://registry.yarnpkg.com/@synthetixio/contracts-interface/-/contracts-interface-2.59.0.tgz#4bc920dd0d3ba7dc490f0f44d07a5bbc8f19485d"
+  integrity sha512-bFdwB3ZRtuZU1JEclqQGDca/njMPdNTPqg4ZI6XIft1Q0fuJEGLv4eWjiTzWMfC3DZiIT1Uv/7ztc18BtL7RMg==
+  dependencies:
+    ethers "5.5.3"
+    lodash "4.17.19"
+    synthetix "2.59.0"
+    web3-utils "1.2.11"
+
 "@synthetixio/js@2.41.0":
   version "2.41.0"
   resolved "https://registry.yarnpkg.com/@synthetixio/js/-/js-2.41.0.tgz#55e106868972e80e981a3354e520c2468dbc37fd"
@@ -2939,6 +2949,16 @@
   dependencies:
     "@eth-optimism/provider" "0.0.1-alpha.14"
     "@synthetixio/contracts-interface" "2.58.1"
+    "@synthetixio/optimism-networks" "2.58.1"
+    ethers "5.5.3"
+
+"@synthetixio/providers@2.59.0":
+  version "2.59.0"
+  resolved "https://registry.yarnpkg.com/@synthetixio/providers/-/providers-2.59.0.tgz#45b807d498f7f7d009bafb8316c31389559f313e"
+  integrity sha512-ZlVL4y125Rx1Aut5zhX++an9t99zOzcOT69Im98LA2b3vzGbOPdceiVMzHEciLT/K4n57lgDNPLYcz7nJjKLLQ==
+  dependencies:
+    "@eth-optimism/provider" "0.0.1-alpha.14"
+    "@synthetixio/contracts-interface" "2.59.0"
     "@synthetixio/optimism-networks" "2.58.1"
     ethers "5.5.3"
 
@@ -19317,6 +19337,20 @@ synthetix@2.58.0:
   version "2.58.0"
   resolved "https://registry.yarnpkg.com/synthetix/-/synthetix-2.58.0.tgz#a22261afe688eb223386cd6faf477ed80aadec27"
   integrity sha512-tG0UVM6Mg1I+BaCm3rIc9vGmlFAmDNnBHceYI4kNKTvjoHwLYQNFRBEpAdgp4yVwWK+WpDbAcMuYccV+n7EORQ==
+  dependencies:
+    abi-decoder "2.3.0"
+    commander "8.1.0"
+    inquirer "^6.5.2"
+    inquirer-list-search-prompt "^1.0.2"
+    js-levenshtein "^1.1.6"
+    pretty-error "^2.1.1"
+    solidity-parser-antlr "^0.4.11"
+    web3-utils "1.2.2"
+
+synthetix@2.59.0:
+  version "2.59.0"
+  resolved "https://registry.yarnpkg.com/synthetix/-/synthetix-2.59.0.tgz#c95b332e91bc1f5cefd3a00c6a50f57a1ccd8b93"
+  integrity sha512-/xW/dJ/jSfMJCba94gLsc6ytHMchmsJ5JahrXwNCUvMrbqeYyEjwMY8Gf7RdUGVX+AJBzV7iUq465ljfLK91eQ==
   dependencies:
     abi-decoder "2.3.0"
     commander "8.1.0"
