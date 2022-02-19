@@ -1,4 +1,4 @@
-import React, { useMemo, FC } from 'react';
+import React, { useMemo, FC, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { useRecoilValue } from 'recoil';
@@ -15,8 +15,10 @@ import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
 import { walletAddressState, delegateWalletState } from 'store/wallet';
 import { parseSafeWei } from 'utils/parse';
+import Connector from 'containers/Connector';
+import { BigNumber } from 'ethers';
 
-const StakingInfo: FC = () => {
+const MintInfo: FC = () => {
 	const { t } = useTranslation();
 	const {
 		unstakedCollateral,
@@ -29,6 +31,8 @@ const StakingInfo: FC = () => {
 		collateral,
 		balance,
 	} = useStakingCalculations();
+	const { synthetixjs } = Connector.useContainer();
+	const [minStakeTimeSec, setMinStakeTimeSec] = useState(0);
 
 	const walletAddress = useRecoilValue(walletAddressState);
 	const delegateWallet = useRecoilValue(delegateWalletState);
@@ -38,6 +42,13 @@ const StakingInfo: FC = () => {
 	const amountToMint = useRecoilValue(amountToMintState);
 
 	const sUSDBalance = synthsBalancesQuery?.data?.balancesMap[Synths.sUSD]?.balance ?? wei(0);
+
+	useEffect(() => {
+		if (!synthetixjs) return;
+		synthetixjs.contracts.Issuer.minimumStakeTime().then((x: BigNumber) => {
+			setMinStakeTimeSec(x.toNumber());
+		});
+	}, [synthetixjs, synthetixjs?.contracts.Issuer]);
 
 	const Rows = useMemo(() => {
 		const amountToMintBN = parseSafeWei(amountToMint, 0);
@@ -130,8 +141,9 @@ const StakingInfo: FC = () => {
 			isInputEmpty={isInputEmpty}
 			collateral={collateral}
 			infoType={StakingPanelType.MINT}
+			minStakeTimeSec={minStakeTimeSec}
 		/>
 	);
 };
 
-export default StakingInfo;
+export default MintInfo;
