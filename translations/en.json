@@ -350,7 +350,9 @@
 		"info": {
 			"mint": {
 				"title": "Mint sUSD by staking SNX",
-				"subtitle": "Mint sUSD by staking your SNX. SNX stakers earn weekly staking rewards in exchange for managing their Collateralization Ratio and debt. <0>Learn more.</0>"
+				"subtitle": "Mint sUSD by staking your SNX. SNX stakers earn weekly staking rewards in exchange for managing their Collateralization Ratio and debt. <0>Learn more.</0>",
+				"read-more": "Read more",
+				"min-stake-time": "Your staked SNX will be locked for {{duration}} days"
 			},
 			"burn": {
 				"title": "Burn sUSD to unstake SNX",

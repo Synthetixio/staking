@@ -25,6 +25,7 @@ import {
 	InfoHeader,
 } from '../common';
 import { StakingPanelType } from 'store/staking';
+import { intervalToDuration } from 'date-fns';
 
 type BarChartData = {
 	title: string;
@@ -52,9 +53,16 @@ type InfoLayoutProps = {
 	collateral: Wei;
 	isInputEmpty: boolean;
 	infoType: StakingPanelType;
+	minStakeTimeSec?: number;
 };
 
-const InfoLayout: FC<InfoLayoutProps> = ({ stakingInfo, collateral, isInputEmpty, infoType }) => {
+const InfoLayout: FC<InfoLayoutProps> = ({
+	stakingInfo,
+	minStakeTimeSec,
+	collateral,
+	isInputEmpty,
+	infoType,
+}) => {
 	const { t } = useTranslation();
 
 	const title = useMemo(() => {
@@ -89,6 +97,19 @@ const InfoLayout: FC<InfoLayoutProps> = ({ stakingInfo, collateral, isInputEmpty
 						components={[<StyledLink href={EXTERNAL_LINKS.Synthetix.Litepaper} />]}
 					/>
 				</Subtitle>
+				{minStakeTimeSec && (
+					<Subtitle>
+						{t('staking.info.mint.min-stake-time', {
+							duration: intervalToDuration({
+								start: 0,
+								end: minStakeTimeSec * 1000,
+							}).days,
+						})}{' '}
+						<StyledLink href={EXTERNAL_LINKS.Synthetix.HamalRelease}>
+							{t('staking.info.mint.read-more')}
+						</StyledLink>
+					</Subtitle>
+				)}
 			</InfoHeader>
 			<TotalBalanceContainer>
 				<TotalBalanceHeading>{t('staking.info.table.total-snx')}</TotalBalanceHeading>
