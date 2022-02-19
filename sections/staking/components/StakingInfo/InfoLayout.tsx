@@ -9,7 +9,6 @@ import { formatCurrency } from 'utils/formatters/number';
 import { EXTERNAL_LINKS } from 'constants/links';
 import { FlexDivCentered } from 'styles/common';
 import { CryptoCurrency } from 'constants/currency';
-import formatDuration from 'date-fns/formatDuration';
 
 import BarStatsRow from './BarStatsRow';
 
