@@ -41,7 +41,7 @@ const SHOW_HEDGING_INDICATOR_THRESHOLD = wei(0.1);
 type DebtPoolTableProps = {
 	synthBalances: CryptoBalance[];
 	cryptoBalances: CryptoBalance[];
-	synthsTotalSupply: SynthsTotalSupplyData;
+	synthsTotalSupply?: SynthsTotalSupplyData;
 	synthsTotalValue: Wei;
 	isLoading: boolean;
 	isLoaded: boolean;
@@ -63,7 +63,7 @@ const DebtPoolTable: React.FC<DebtPoolTableProps> = (props) => {
 type ResponsiveDebtPoolTableProps = {
 	synthBalances: CryptoBalance[];
 	cryptoBalances: CryptoBalance[];
-	synthsTotalSupply: SynthsTotalSupplyData;
+	synthsTotalSupply?: SynthsTotalSupplyData;
 	synthsTotalValue: Wei;
 	isLoading: boolean;
 	isLoaded: boolean;

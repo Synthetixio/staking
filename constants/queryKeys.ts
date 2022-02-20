@@ -27,6 +27,7 @@ export const QUERY_KEYS = {
 		],
 	},
 	Staking: {
+		MinimumStakeTime: ['minimumStakeTime'],
 		FeePoolData: (period: string) => ['staking', 'feePoolData', period],
 		FeeClaimHistory: (walletAddress: string, networkId: NetworkId) => [
 			'staking',

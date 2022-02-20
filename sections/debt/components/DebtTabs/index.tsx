@@ -15,7 +15,6 @@ import useCryptoBalances from 'hooks/useCryptoBalances';
 
 import Info from 'assets/svg/app/info.svg';
 import { wei } from '@synthetixio/wei';
-import { SynthsTotalSupplyData } from '@synthetixio/queries';
 import useSynthetixQueries from '@synthetixio/queries';
 import { useRecoilValue } from 'recoil';
 import { isMainnetState, walletAddressState } from 'store/wallet';
@@ -73,8 +72,7 @@ const DebtTabs: FC<DebtTabsProps> = ({
 		: wei(0);
 
 	const synthsTotalSupplyQuery = useSynthsTotalSupplyQuery();
-	const totalSupply = synthsTotalSupplyQuery?.data ?? [];
-
+	const totalSupply = synthsTotalSupplyQuery?.data;
 	const isManageTab = activeTab === DebtPanelType.MANAGE;
 	return (
 		<>
@@ -130,7 +128,11 @@ const DebtTabs: FC<DebtTabsProps> = ({
 							{t('debt.actions.hedge.info.debt-pool-pie-chart.title')}
 						</ContainerHeader>
 						<ContainerBody style={{ padding: '24px 0' }}>
-							<DebtPieChart data={totalSupply as SynthsTotalSupplyData} />
+							<DebtPieChart
+								data={totalSupply}
+								isLoaded={synthsTotalSupplyQuery.isSuccess}
+								isLoading={synthsTotalSupplyQuery.isLoading}
+							/>
 						</ContainerBody>
 					</DebtPieChartContainer>
 					<PortfolioContainer>
@@ -156,7 +158,7 @@ const DebtTabs: FC<DebtTabsProps> = ({
 							<PortfolioTable
 								synthBalances={synthAssets}
 								cryptoBalances={cryptoBalances.balances}
-								synthsTotalSupply={totalSupply as SynthsTotalSupplyData}
+								synthsTotalSupply={totalSupply}
 								isLoading={synthsBalancesQuery.isLoading}
 								isLoaded={synthsBalancesQuery.isSuccess}
 								synthsTotalValue={totalSynthValue ?? wei(0)}

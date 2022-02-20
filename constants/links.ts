@@ -17,6 +17,7 @@ export const EXTERNAL_LINKS = {
 		SIP60: 'https://sips.synthetix.io/sips/sip-60',
 		OEBlog: 'https://blog.synthetix.io/l2-mainnet-launch/',
 		MintrL2: 'https://l2.mintr.synthetix.io',
+		HamalRelease: 'https://blog.synthetix.io/the-hamal-release/',
 	},
 	Social: {
 		Twitter: 'https://twitter.com/synthetix_io',
