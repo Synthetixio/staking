@@ -2914,6 +2914,16 @@
     synthetix "2.58.0"
     web3-utils "1.2.11"
 
+"@synthetixio/contracts-interface@2.63.0":
+  version "2.63.0"
+  resolved "https://registry.yarnpkg.com/@synthetixio/contracts-interface/-/contracts-interface-2.63.0.tgz#b6b95dd7dad2cb460a13c3d864aef68d4a1a0126"
+  integrity sha512-RfdNANlM1/ckhJtftwChD9Pu7kqmIqdWFI5ACnHRVGxLIi6D8spQpoDGk/DK0SPhMuDRcBdHCKERI7ys6Hij0g==
+  dependencies:
+    ethers "5.5.3"
+    lodash "4.17.19"
+    synthetix "2.63.0"
+    web3-utils "1.2.11"
+
 "@synthetixio/js@2.41.0":
   version "2.41.0"
   resolved "https://registry.yarnpkg.com/@synthetixio/js/-/js-2.41.0.tgz#55e106868972e80e981a3354e520c2468dbc37fd"
@@ -19317,6 +19327,20 @@ synthetix@2.58.0:
   version "2.58.0"
   resolved "https://registry.yarnpkg.com/synthetix/-/synthetix-2.58.0.tgz#a22261afe688eb223386cd6faf477ed80aadec27"
   integrity sha512-tG0UVM6Mg1I+BaCm3rIc9vGmlFAmDNnBHceYI4kNKTvjoHwLYQNFRBEpAdgp4yVwWK+WpDbAcMuYccV+n7EORQ==
+  dependencies:
+    abi-decoder "2.3.0"
+    commander "8.1.0"
+    inquirer "^6.5.2"
+    inquirer-list-search-prompt "^1.0.2"
+    js-levenshtein "^1.1.6"
+    pretty-error "^2.1.1"
+    solidity-parser-antlr "^0.4.11"
+    web3-utils "1.2.2"
+
+synthetix@2.63.0:
+  version "2.63.0"
+  resolved "https://registry.yarnpkg.com/synthetix/-/synthetix-2.63.0.tgz#2fd232f6b9f8b919d6baf1413bfe8bda500bc6c8"
+  integrity sha512-2qRqIMVk0tdQyIqYw5kUVZ8GR/VnuSO6OZnrF0/lYcxzwGCVzb1iaCsTbazY+o6AsWQgtz6F5Fyvgnt89wqlGg==
   dependencies:
     abi-decoder "2.3.0"
     commander "8.1.0"
