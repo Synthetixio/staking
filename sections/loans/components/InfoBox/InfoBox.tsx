@@ -105,7 +105,7 @@ const InfoBox: React.FC = () => {
 					<Title>{t('loans.info.title')}</Title>
 					<Subtitle>
 						{t('loans.info.subtitle')}{' '}
-						<ExternalLink href="https://sips.synthetix.io/sips/sip-97">
+						<ExternalLink href="https://sips.synthetix.io/sips/sip-195/">
 							{t('loans.info.learn-more')}
 						</ExternalLink>
 					</Subtitle>
