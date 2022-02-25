@@ -40,7 +40,10 @@ export async function tx(makeTx: Function, options?: TxOptions): Promise<void> {
 			await contract.callStatic[method](...fullArgs);
 			throw e;
 		} catch (e) {
-			const errorMessage = e.data ? hexToASCII(e.data.substr(147).toString()) : e.message;
+			const errorMessage =
+				e.data && typeof e.data === 'string'
+					? hexToASCII(e.data.substr(147).toString())
+					: e.data.message;
 			console.log(errorMessage);
 			options?.showErrorNotification?.(errorMessage);
 			throw e;
