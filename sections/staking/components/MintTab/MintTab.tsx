@@ -41,7 +41,9 @@ const MintTab: React.FC = () => {
 		? ['issueMaxSynths', []]
 		: ['issueSynths', [amountToMintBN.toBN()]];
 
-	const txn = useSynthetixTxn('Synthetix', mintCall[0], mintCall[1], gasPrice);
+	const txn = useSynthetixTxn('Synthetix', mintCall[0], mintCall[1], gasPrice, {
+		enabled: amountToMintBN.gt(0),
+	});
 
 	useEffect(() => {
 		if (txn.txnStatus === 'prompting') setTxModalOpen(true);
