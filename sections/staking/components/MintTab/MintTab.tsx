@@ -42,7 +42,7 @@ const MintTab: React.FC = () => {
 		: ['issueSynths', [amountToMintBN.toBN()]];
 
 	const txn = useSynthetixTxn('Synthetix', mintCall[0], mintCall[1], gasPrice, {
-		enabled: Boolean(amountToMint),
+		enabled: amountToMintBN.gt(0),
 	});
 
 	useEffect(() => {
