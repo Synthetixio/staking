@@ -1,11 +1,12 @@
 import { useQuery } from 'react-query';
-import { BigNumber, ethers } from 'ethers';
+import { BigNumber, ethers, providers } from 'ethers';
 import Connector from 'containers/Connector';
 import Wei, { wei } from '@synthetixio/wei';
+import { fetchAPRs } from './GUniAPRCalcualation';
 
 const ONE_YEAR_SECONDS = 365 * 24 * 3600;
 const GELATO_POOL_ADDRESS = '0x83bEeFB4cA39af649D03969B442c0E9F4E1732D8'; // WETH/SNX
-const GELATO_POOL_ABI = [
+export const GELATO_POOL_ABI = [
 	{
 		inputs: [],
 		name: 'getUnderlyingBalances',
@@ -13,6 +14,13 @@ const GELATO_POOL_ABI = [
 			{ internalType: 'uint256', name: 'amount0Current', type: 'uint256' },
 			{ internalType: 'uint256', name: 'amount1Current', type: 'uint256' },
 		],
+		stateMutability: 'view',
+		type: 'function',
+	},
+	{
+		inputs: [],
+		name: 'getPositionID',
+		outputs: [{ internalType: 'bytes32', name: 'id', type: 'bytes32' }],
 		stateMutability: 'view',
 		type: 'function',
 	},
@@ -76,10 +84,12 @@ export const useGetUniswapStakingRewardsAPY = ({
 						rewardForDuration,
 						duration,
 						contractBalance,
+						periodFinish,
 					]: [
 						{ amount0Current: BigNumber; amount1Current: BigNumber },
 						BigNumber,
 						CoinGeckoSnxRates,
+						BigNumber,
 						BigNumber,
 						BigNumber,
 						BigNumber
@@ -93,7 +103,15 @@ export const useGetUniswapStakingRewardsAPY = ({
 							Promise.resolve(BigNumber.from(0)),
 						tokenContract?.connect(provider).balanceOf(stakingRewardsContract?.address) ??
 							Promise.resolve(BigNumber.from(0)),
+						stakingRewardsContract?.connect(provider).periodFinish() ??
+							Promise.resolve(BigNumber.from(0)),
 					]);
+
+					if (periodFinish.toNumber() < new Date().getTime() / 1000) {
+						const gUNIPoolAddress = '0x83bEeFB4cA39af649D03969B442c0E9F4E1732D8'.toLowerCase();
+						const result = await fetchAPRs(provider as providers.Web3Provider, gUNIPoolAddress);
+						console.log(result);
+					}
 					const {
 						havven: { usd: snxRate },
 						ethereum: { usd: ethRate },
