@@ -68,12 +68,7 @@ function Pool() {
 					}`}
 					size="md"
 				/>
-				<StyledLPBalance
-					title={t('pool.stats.APR')}
-					value={`${rates.data?.apy.toFixed(2) || 20}%`}
-					size="lg"
-					main
-				/>
+				<StyledLPBalance title={t('pool.stats.APR')} value={`0.0%`} size="lg" main />
 				<StyledLPBalance
 					title={t('pool.stats.rewards')}
 					value={utils.formatUnits(rewardsToClaim, 18).slice(0, 10)}
