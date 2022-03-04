@@ -177,10 +177,12 @@ const Transactions: FC<TransactionsProps> = ({ transactions, isLoaded, noResults
 					isLoading={!isLoaded}
 					noResultsMessage={noResultsMessage}
 					showPagination={true}
+					options={{ autoResetPage: false }}
 				/>
 			</DesktopOrTabletView>
 			<MobileOnlyView>
 				<StyledTable
+					options={{ autoResetPage: false }}
 					palette="primary"
 					columns={mobileColumns}
 					data={transactions}
