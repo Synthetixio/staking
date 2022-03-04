@@ -1,6 +1,6 @@
 import { wei } from '@synthetixio/wei';
 import { Synths } from 'constants/currency';
-import { calculateMaxDraw, getSafeCratio } from './helpers';
+import { calculateMaxDraw } from './helpers';
 
 describe('calculateMaxDraw', () => {
 	test('eth works', () => {
@@ -47,13 +47,5 @@ describe('calculateMaxDraw', () => {
 		};
 		const result = calculateMaxDraw(loan, exchangeRates);
 		expect(result.toString(0)).toBe('0'); // 3000 / (1.3 + 0.1) - 2500 would be negative
-	});
-});
-
-describe('getSafeCratio', () => {
-	test('works', () => {
-		const loan = { minCratio: wei(1.3) } as any;
-		const result = getSafeCratio(loan);
-		expect(result.toString(1)).toBe('1.4');
 	});
 });

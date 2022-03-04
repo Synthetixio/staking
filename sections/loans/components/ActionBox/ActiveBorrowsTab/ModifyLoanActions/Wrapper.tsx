@@ -33,6 +33,7 @@ import CRatio from 'sections/loans/components/ActionBox/components/LoanCRatio';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import Wei, { wei } from '@synthetixio/wei';
 import useSynthetixQueries, { GasPrice } from '@synthetixio/queries';
+import { getSafeMinCRatioBuffer } from 'sections/loans/constants';
 
 type WrapperProps = {
 	getTxData: (gas: Record<string, number>) => any[] | null;
@@ -105,7 +106,9 @@ const Wrapper: FC<WrapperProps> = ({
 	const [gasPrice, setGasPrice] = useState<GasPrice | undefined>(undefined);
 
 	const minCRatio = loanTypeIsETH ? minCRatios.ethMinCratio : minCRatios.erc20MinCratio;
-
+	const safeMinCRatio = minCRatio
+		? minCRatio.add(getSafeMinCRatioBuffer(loan.currency, loan.collateralAsset))
+		: wei(0);
 	const { useContractTxn } = useSynthetixQueries();
 
 	const data = getTxData({});
@@ -204,7 +207,7 @@ const Wrapper: FC<WrapperProps> = ({
 				<SettingsContainer>
 					{!showCRatio ? null : (
 						<SettingContainer>
-							<CRatio loan={loan} minCRatio={minCRatio || wei(0)} />
+							<CRatio loan={loan} minCRatio={minCRatio || wei(0)} safeMinCRatio={safeMinCRatio} />
 						</SettingContainer>
 					)}
 					{!showInterestAccrued ? null : (
