@@ -4,16 +4,16 @@ import { Trans, useTranslation } from 'react-i18next';
 import { FlexDivRow, FlexDivRowCentered } from 'styles/common';
 import { formatPercent } from 'utils/formatters/number';
 import InfoSVG from 'sections/loans/components/ActionBox/components/InfoSVG';
-import { SAFE_MIN_CRATIO_BUFFER } from 'sections/loans/constants';
 import Wei from '@synthetixio/wei';
 
 type CRatioProps = {
 	hasLowCRatio: boolean;
 	cratio: Wei;
 	minCRatio: Wei;
+	safeMinCRatio: Wei;
 };
 
-const CRatio: FC<CRatioProps> = ({ cratio, hasLowCRatio, minCRatio }) => {
+const CRatio: FC<CRatioProps> = ({ cratio, hasLowCRatio, minCRatio, safeMinCRatio }) => {
 	const { t } = useTranslation();
 
 	return (
@@ -37,7 +37,7 @@ const CRatio: FC<CRatioProps> = ({ cratio, hasLowCRatio, minCRatio }) => {
 											}
 											values={{
 												minCRatio: formatPercent(minCRatio),
-												safeMinCRatio: formatPercent(minCRatio.add(SAFE_MIN_CRATIO_BUFFER)),
+												safeMinCRatio: formatPercent(safeMinCRatio),
 											}}
 										/>
 									}

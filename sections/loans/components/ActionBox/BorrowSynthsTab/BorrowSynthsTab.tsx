@@ -12,7 +12,7 @@ import {
 	ModalItemTitle as TxModalItemTitle,
 	ModalItemText as TxModalItemText,
 } from 'styles/common';
-import { DEBT_ASSETS, DEBT_ASSETS_L2, SAFE_MIN_CRATIO_BUFFER } from 'sections/loans/constants';
+import { DEBT_ASSETS, DEBT_ASSETS_L2, getSafeMinCRatioBuffer } from 'sections/loans/constants';
 import {
 	FormContainer,
 	InputsContainer,
@@ -155,7 +155,9 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = () => {
 	const debt = { amount: debtAmount, asset: debtAsset };
 	const collateral = { amount: collateralAmount, asset: collateralAsset };
 	const cratio = calculateLoanCRatio(exchangeRates, collateral, debt);
-	const safeMinCratio = minCRatio ? minCRatio.add(SAFE_MIN_CRATIO_BUFFER) : wei(0);
+	const safeMinCratio = minCRatio
+		? minCRatio.add(getSafeMinCRatioBuffer(debtAsset, collateralAsset))
+		: wei(0);
 	const hasLowCRatio = !collateralAmount.eq(0) && !debtAmount.eq(0) && cratio.lt(safeMinCratio);
 	const hasInsufficientCollateral = collateralBalance.lt(minCollateralAmount);
 
@@ -244,7 +246,12 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = () => {
 
 				<SettingsContainer>
 					<SettingContainer>
-						<CRatio cratio={cratio} hasLowCRatio={hasLowCRatio} minCRatio={minCRatio || wei(0)} />
+						<CRatio
+							cratio={cratio}
+							hasLowCRatio={hasLowCRatio}
+							safeMinCRatio={safeMinCratio}
+							minCRatio={minCRatio || wei(0)}
+						/>
 					</SettingContainer>
 					<SettingContainer>
 						<InterestRate />
