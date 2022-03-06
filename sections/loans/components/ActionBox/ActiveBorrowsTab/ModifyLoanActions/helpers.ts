@@ -1,13 +1,11 @@
 import { wei } from '@synthetixio/wei';
-import { SAFE_MIN_CRATIO_BUFFER } from 'sections/loans/constants';
+import { getSafeMinCRatioBuffer } from 'sections/loans/constants';
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
 import { Synths } from 'constants/currency';
 import { Rates } from '@synthetixio/queries';
 import { Loan } from 'containers/Loans/types';
 import { getETHToken } from 'contracts/ethToken';
 import { getRenBTCToken } from 'contracts/renBTCToken';
-
-export const getSafeCratio = (loan: Loan) => wei(loan.minCratio).add(SAFE_MIN_CRATIO_BUFFER);
 
 export const calculateMaxDraw = (loan: Loan, exchangeRates: Rates | null) => {
 	const loanTypeIsETH = loan.collateralAsset === 'sETH';
@@ -17,11 +15,11 @@ export const calculateMaxDraw = (loan: Loan, exchangeRates: Rates | null) => {
 		Synths.sUSD
 	);
 	const collateralDecimals = loanTypeIsETH ? getETHToken().decimals : getRenBTCToken().decimals;
-
-	const safeCratio = getSafeCratio(loan);
+	const cRatioBuffer = getSafeMinCRatioBuffer(loan.currency, loan.collateralAsset);
+	const safeCRatio = wei(loan.minCratio).add(cRatioBuffer);
 	const maxUSDBasedOnLoan = wei(wei(loan.collateral), collateralDecimals)
 		.mul(collateralUSDPrice)
-		.div(safeCratio);
+		.div(safeCRatio);
 	const currentDebtUSDPrice = getExchangeRatesForCurrencies(
 		exchangeRates,
 		loan.currency,
