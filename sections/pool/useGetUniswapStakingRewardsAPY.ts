@@ -119,11 +119,7 @@ export const useGetUniswapStakingRewardsAPY = ({
 						.mul(ethRate)
 						.add(amount1CurrentWei.mul(snxRate));
 					const gUNIPrice = wei(totalValueInPool).div(wei(gUNITotalSupply));
-					if (
-						(periodFinish.toNumber() < new Date().getTime() / 1000,
-						periodFinish.toNumber(),
-						new Date().getTime() / 1000)
-					) {
+					if (periodFinish.toNumber() < new Date().getTime()) {
 						const gUNIPoolAddress = '0x83bEeFB4cA39af649D03969B442c0E9F4E1732D8'.toLowerCase();
 						const result = await fetchAPRs(provider as providers.Web3Provider, gUNIPoolAddress);
 						return {
