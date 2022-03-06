@@ -6,7 +6,38 @@ import { GELATO_POOL_ABI } from './useGetUniswapStakingRewardsAPY';
 const X96 = BigNumber.from(2).pow(BigNumber.from(96));
 const BLOCKS_PER_YEAR = 2102400;
 
-const computeAverageReserves = (snapshots: any, sqrtPriceX96: BigNumber, firstBlock: number) => {
+interface GUNIPoolToken {
+	address: string;
+	name: string;
+	symbol: string;
+}
+interface GUNIPoolGraphQLResponse {
+	id: string;
+	uniswapPool: string;
+	token0: GUNIPoolToken;
+	token1: GUNIPoolToken;
+	lowerTick: string;
+	upperTick: string;
+	lastTouchWithoutFees: string;
+	supplySnapshots: {
+		id: string;
+		block: string;
+		reserves0: string;
+		reserves1: string;
+	}[];
+	feeSnapshots: {
+		id?: string;
+		block: string;
+		feesEarned0: string;
+		feesEarned1: string;
+	}[];
+}
+
+const computeAverageReserves = (
+	snapshots: GUNIPoolGraphQLResponse['supplySnapshots'],
+	sqrtPriceX96: BigNumber,
+	firstBlock: number
+) => {
 	let cumulativeBlocks = BigNumber.from(0);
 	let cumulativeReserves = BigNumber.from(0);
 	const priceX96X96 = sqrtPriceX96.mul(sqrtPriceX96);
@@ -37,7 +68,10 @@ const computeAverageReserves = (snapshots: any, sqrtPriceX96: BigNumber, firstBl
 	return cumulativeReserves.div(cumulativeBlocks);
 };
 
-const computeTotalFeesEarned = (snapshots: any, sqrtPriceX96: BigNumber): BigNumber => {
+const computeTotalFeesEarned = (
+	snapshots: GUNIPoolGraphQLResponse['feeSnapshots'],
+	sqrtPriceX96: BigNumber
+): BigNumber => {
 	let feesEarned0 = BigNumber.from(0);
 	let feesEarned1 = BigNumber.from(0);
 	for (let i = 0; i < snapshots.length; i++) {
@@ -51,7 +85,7 @@ const computeTotalFeesEarned = (snapshots: any, sqrtPriceX96: BigNumber): BigNum
 };
 
 const getAPR = async (
-	poolData: any,
+	poolData: GUNIPoolGraphQLResponse,
 	guniPoolContract: Contract,
 	uniswapPoolContract: Contract,
 	helpersContract: Contract,
@@ -79,8 +113,8 @@ const getAPR = async (
 		poolData.upperTick,
 		_liquidity
 	);
-	let feesEarned0 = amount0Current.sub(amount0).sub(balance0);
-	let feesEarned1 = amount1Current.sub(amount1).sub(balance1);
+	let feesEarned0: BigNumber = amount0Current.sub(amount0).sub(balance0);
+	let feesEarned1: BigNumber = amount1Current.sub(amount1).sub(balance1);
 	if (feesEarned0.lt(ethers.constants.Zero)) {
 		feesEarned0 = ethers.constants.Zero;
 	}
@@ -118,12 +152,9 @@ export const fetchAPRs = async (provider: providers.Web3Provider, gUniPoolAddres
 		method: 'POST',
 		data: {
 			query: `{
-                pools {
+                pools(where:{address: "${gUniPoolAddress}"}) {
                     id
-                    blockCreated
-                    manager
-                    address
-                    uniswapPool
+					uniswapPool
                     token0 {
                         address
                         name
@@ -134,11 +165,8 @@ export const fetchAPRs = async (provider: providers.Web3Provider, gUniPoolAddres
                         name
                         symbol
                       }
-                    feeTier
-                    liquidity
                     lowerTick
                     upperTick
-                    totalSupply
                     lastTouchWithoutFees
                     supplySnapshots {
                       id
@@ -157,9 +185,7 @@ export const fetchAPRs = async (provider: providers.Web3Provider, gUniPoolAddres
 		},
 	});
 
-	const [pool] = data.data.pools.filter(
-		(pool: Record<'id', string>) => pool.id.toLowerCase() === gUniPoolAddress
-	);
+	const [pool]: [GUNIPoolGraphQLResponse] = data.data.pools;
 
 	const helpersContract = new ethers.Contract(
 		UNISWAP_HELPERS_ADDRESS,
