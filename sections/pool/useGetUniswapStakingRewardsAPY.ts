@@ -107,11 +107,6 @@ export const useGetUniswapStakingRewardsAPY = ({
 							Promise.resolve(BigNumber.from(0)),
 					]);
 
-					if (periodFinish.toNumber() < new Date().getTime() / 1000) {
-						const gUNIPoolAddress = '0x83bEeFB4cA39af649D03969B442c0E9F4E1732D8'.toLowerCase();
-						const result = await fetchAPRs(provider as providers.Web3Provider, gUNIPoolAddress);
-						console.log(result);
-					}
 					const {
 						havven: { usd: snxRate },
 						ethereum: { usd: ethRate },
@@ -124,6 +119,16 @@ export const useGetUniswapStakingRewardsAPY = ({
 						.mul(ethRate)
 						.add(amount1CurrentWei.mul(snxRate));
 					const gUNIPrice = wei(totalValueInPool).div(wei(gUNITotalSupply));
+					if (periodFinish.toNumber() < new Date().getTime() / 1000) {
+						const gUNIPoolAddress = '0x83bEeFB4cA39af649D03969B442c0E9F4E1732D8'.toLowerCase();
+						const result = await fetchAPRs(provider as providers.Web3Provider, gUNIPoolAddress);
+						return {
+							eth: amount0CurrentWei.toNumber(),
+							snx: amount1CurrentWei.toNumber(),
+							apy: result,
+							gUNIPrice,
+						};
+					}
 					const yearProRata = ONE_YEAR_SECONDS / duration.toNumber();
 					const gUNIValueInContract = wei(contractBalance).mul(gUNIPrice);
 					const rewardsValuePerYear = wei(rewardForDuration).mul(yearProRata).mul(snxRate);

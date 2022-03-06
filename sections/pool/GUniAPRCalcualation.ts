@@ -111,7 +111,7 @@ const getAPR = async (
 
 export const fetchAPRs = async (provider: providers.Web3Provider, gUniPoolAddress: string) => {
 	const APIURL = 'https://api.thegraph.com/subgraphs/name/gelatodigital/g-uni-optimism';
-	const UNISWAP_HELPERS_ADDRESS = '0xFbd0B8D8016b9f908fC9652895c26C5a4994fE36';
+	const UNISWAP_HELPERS_ADDRESS = '0x7D4a0231377a6CA320FF5f084b633a2e6B688107';
 
 	const { data } = await axios({
 		url: APIURL,
