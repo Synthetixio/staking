@@ -18,7 +18,7 @@ const computeAverageReserves = (snapshots: any, sqrtPriceX96: BigNumber, firstBl
 			const reserves0As1 = reserves0As1X96.div(X96);
 			const reserves = reserves1.add(reserves0As1);
 			let blockDifferential: BigNumber;
-			if (i == 0) {
+			if (i === 0) {
 				blockDifferential = BigNumber.from(snapshots[i].block).sub(
 					BigNumber.from(firstBlock.toString())
 				);
@@ -58,10 +58,10 @@ const getAPR = async (
 	balance0: BigNumber,
 	balance1: BigNumber
 ): Promise<number> => {
-	if (poolData.supplySnapshots.length == 0) {
+	if (poolData.supplySnapshots.length === 0) {
 		return 0;
 	}
-	if (poolData.feeSnapshots.length == 0) {
+	if (poolData.feeSnapshots.length === 0) {
 		return 0;
 	}
 	let snapshots = [...poolData.feeSnapshots].sort((a: any, b: any) => (a.block > b.block ? 1 : -1));
