@@ -34,6 +34,7 @@ function Pool() {
 		stakingRewardsContract: snx.contracts.StakingRewardsSNXWETHUniswapV3,
 		tokenContract: WETHSNXLPTokenContract,
 	});
+
 	const fetchBalances = useCallback(() => {
 		if (walletAddress) {
 			balanceOf().then((balance) => {

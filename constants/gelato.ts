@@ -9,3 +9,7 @@ export const SUSDDAILPTokenContract = new Contract(
 	'0x88ccDBbA89E073C5DC08B9c84dfc1fDc152c0dAc',
 	ERC20ABI
 );
+
+export const gelatoGraphURL =
+	'https://api.thegraph.com/subgraphs/name/gelatodigital/g-uni-optimism';
+export const UNISWAP_HELPERS_ADDRESS = '0x7D4a0231377a6CA320FF5f084b633a2e6B688107';

@@ -2,6 +2,7 @@ import axios from 'axios';
 import { ethers, BigNumber, providers, Contract } from 'ethers';
 import { abi as IUniswapV3PoolABI } from '@uniswap/v3-core/artifacts/contracts/interfaces/IUniswapV3Pool.sol/IUniswapV3Pool.json';
 import { GELATO_POOL_ABI } from './useGetUniswapStakingRewardsAPY';
+import { gelatoGraphURL, UNISWAP_HELPERS_ADDRESS } from 'constants/gelato';
 
 const X96 = BigNumber.from(2).pow(BigNumber.from(96));
 const BLOCKS_PER_YEAR = 2102400;
@@ -18,7 +19,6 @@ interface GUNIPoolGraphQLResponse {
 	token1: GUNIPoolToken;
 	lowerTick: string;
 	upperTick: string;
-	lastTouchWithoutFees: string;
 	supplySnapshots: {
 		id: string;
 		block: string;
@@ -126,17 +126,15 @@ const getAPR = async (
 		feesEarned0: feesEarned0.toString(),
 		feesEarned1: feesEarned1.toString(),
 	});
+	let firstBlock = currentBlock - 40320 * 4;
+	const totalBlocks = currentBlock - firstBlock;
 	const totalFeeValue = computeTotalFeesEarned(snapshots, sqrtPriceX96);
-	const averageReserves = computeAverageReserves(
-		supplySnaps,
-		sqrtPriceX96,
-		Number(poolData.lastTouchWithoutFees)
-	);
+	const averageReserves = computeAverageReserves(supplySnaps, sqrtPriceX96, firstBlock);
 	let averagePrincipal = averageReserves.sub(totalFeeValue);
 	if (averagePrincipal.lt(ethers.constants.Zero)) {
 		averagePrincipal = averageReserves;
 	}
-	const totalBlocks = Number(currentBlock.toString()) - Number(poolData.lastTouchWithoutFees);
+
 	const apr =
 		(Number(ethers.utils.formatEther(totalFeeValue)) * BLOCKS_PER_YEAR) /
 		(Number(ethers.utils.formatEther(averagePrincipal)) * totalBlocks);
@@ -144,11 +142,8 @@ const getAPR = async (
 };
 
 export const fetchAPRs = async (provider: providers.Web3Provider, gUniPoolAddress: string) => {
-	const APIURL = 'https://api.thegraph.com/subgraphs/name/gelatodigital/g-uni-optimism';
-	const UNISWAP_HELPERS_ADDRESS = '0x7D4a0231377a6CA320FF5f084b633a2e6B688107';
-
 	const { data } = await axios({
-		url: APIURL,
+		url: gelatoGraphURL,
 		method: 'POST',
 		data: {
 			query: `{
@@ -167,7 +162,6 @@ export const fetchAPRs = async (provider: providers.Web3Provider, gUniPoolAddres
                       }
                     lowerTick
                     upperTick
-                    lastTouchWithoutFees
                     supplySnapshots {
                       id
                       block
