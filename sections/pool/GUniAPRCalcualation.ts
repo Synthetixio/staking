@@ -5,7 +5,7 @@ import { GELATO_POOL_ABI } from './useGetUniswapStakingRewardsAPY';
 import { gelatoGraphURL, UNISWAP_HELPERS_ADDRESS } from 'constants/gelato';
 
 const X96 = BigNumber.from(2).pow(BigNumber.from(96));
-const BLOCKS_PER_YEAR = 2102400;
+const BLOCKS_PER_YEAR = 8902400;
 
 interface GUNIPoolToken {
 	address: string;
