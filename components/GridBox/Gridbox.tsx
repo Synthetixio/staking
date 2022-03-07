@@ -14,7 +14,6 @@ export type GridBoxProps = {
 	tooltip?: string;
 	isDisabled?: boolean;
 	gridArea?: string;
-	greyedOut?: boolean;
 };
 
 export const GridBox: FC<GridBoxProps> = ({
@@ -27,14 +26,13 @@ export const GridBox: FC<GridBoxProps> = ({
 	tooltip,
 	isDisabled,
 	gridArea,
-	greyedOut,
 }) => {
 	if (visible != null && !visible) return <></>;
 
 	const components = (
 		<InnerGridContainer>
 			<GridBoxIcon>{icon}</GridBoxIcon>
-			<GridBoxTitle greyedOut={greyedOut}>{title}</GridBoxTitle>
+			<GridBoxTitle>{title}</GridBoxTitle>
 			<GridBoxCopy>{copy}</GridBoxCopy>
 		</InnerGridContainer>
 	);
@@ -71,10 +69,10 @@ const InnerGridContainer = styled(FlexDivColCentered)`
 	`}
 `;
 
-const GridBoxTitle = styled.div<{ greyedOut?: boolean }>`
+const GridBoxTitle = styled.div`
 	font-size: 20px;
 	font-family: ${(props) => props.theme.fonts.extended};
-	color: ${(props) => (props.greyedOut ? props.theme.colors.gray : props.theme.colors.white)};
+	color: ${(props) => props.theme.colors.white};
 	margin-top: 20px;
 	text-align: center;
 `;
