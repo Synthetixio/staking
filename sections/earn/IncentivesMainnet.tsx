@@ -51,10 +51,10 @@ const Incentives: FC<IncentivesProps> = ({
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const [view, setView] = useState<View>(View.ACTIVE);
 
-	const { useLockedSnxQuery } = useSynthetixQueries();
+	const { useLockedSnxQueryL1 } = useSynthetixQueries();
 
 	const lpData = useLPData();
-	const lockedSnxQuery = useLockedSnxQuery();
+	const lockedSnxQuery = useLockedSnxQueryL1();
 
 	const { nextFeePeriodStarts, currentFeePeriodStarted } = useFeePeriodTimeAndProgress();
 

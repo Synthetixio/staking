@@ -40,9 +40,9 @@ const Incentives: FC<IncentivesProps> = ({
 	const router = useRouter();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 
-	const { useLockedSnxQuery } = useSynthetixQueries();
+	const { useLockedSnxQueryL1 } = useSynthetixQueries();
 
-	const lockedSnxQuery = useLockedSnxQuery();
+	const lockedSnxQuery = useLockedSnxQueryL1();
 
 	const { nextFeePeriodStarts, currentFeePeriodStarted } = useFeePeriodTimeAndProgress();
 

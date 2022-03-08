@@ -34,7 +34,7 @@ const queryClient = new QueryClient({
 });
 
 const InnerApp: FC<AppProps> = ({ Component, pageProps }) => {
-	const { provider, signer, network } = Connector.useContainer();
+	const { provider, signer, network, L1DefaultProvider } = Connector.useContainer();
 
 	return (
 		<>
@@ -47,7 +47,8 @@ const InnerApp: FC<AppProps> = ({ Component, pageProps }) => {
 								networkId: network!.id,
 						  })
 						: createQueryContext({
-								networkId: null,
+								networkId: 1,
+								provider: L1DefaultProvider,
 						  })
 				}
 			>

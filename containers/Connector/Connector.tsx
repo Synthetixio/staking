@@ -41,6 +41,18 @@ import { useMemo } from 'react';
 const useConnector = () => {
 	const [network, setNetwork] = useRecoilState(networkState);
 	const [provider, setProvider] = useState<ethers.providers.Provider | null>(null);
+	const [L1DefaultProvider, _] = useState<ethers.providers.Provider>(
+		loadProvider({
+			infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
+			networkId: NetworkIdByName.mainnet,
+		})
+	);
+	const [L2DefaultProvider, __] = useState<ethers.providers.Provider>(
+		loadProvider({
+			infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
+			networkId: NetworkIdByName['mainnet-ovm'],
+		})
+	);
 	const [signer, setSigner] = useState<ethers.Signer | null>(null);
 	const [synthetixjs, setSynthetixjs] = useState<SynthetixJS | null>(null);
 	const [onboard, setOnboard] = useState<ReturnType<typeof initOnboard> | null>(null);
@@ -282,6 +294,8 @@ const useConnector = () => {
 		transactionNotifier,
 		selectedWallet,
 		getTokenAddress,
+		L1DefaultProvider,
+		L2DefaultProvider,
 	};
 };
 
