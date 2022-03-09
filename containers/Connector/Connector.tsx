@@ -41,19 +41,11 @@ import { useMemo } from 'react';
 const useConnector = () => {
 	const [network, setNetwork] = useRecoilState(networkState);
 	const [provider, setProvider] = useState<ethers.providers.Provider | null>(null);
-	console.log(process.env.NEXT_PUBLIC_INFURA_PROJECT_ID);
-	const [L1DefaultProvider, _] = useState<ethers.providers.BaseProvider>(
-		loadProvider({
-			infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
-			networkId: NetworkIdByName.mainnet,
-		})
+	const [L1DefaultProvider, setL1DefaultProvider] = useState<ethers.providers.BaseProvider | null>(
+		null
 	);
-	const [L2DefaultProvider, __] = useState<ethers.providers.BaseProvider>(
-		loadProvider({
-			infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
-			networkId: NetworkIdByName['mainnet-ovm'],
-		})
-	);
+	const [L2DefaultProvider, setL2DefaultProvider] =
+		useState<ethers.providers.BaseProvider | null>();
 	const [signer, setSigner] = useState<ethers.Signer | null>(null);
 	const [synthetixjs, setSynthetixjs] = useState<SynthetixJS | null>(null);
 	const [onboard, setOnboard] = useState<ReturnType<typeof initOnboard> | null>(null);
@@ -78,6 +70,18 @@ const useConnector = () => {
 	}, [synthetixjs]);
 	useEffect(() => {
 		const init: () => void = async () => {
+			setL1DefaultProvider(
+				loadProvider({
+					infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
+					networkId: NetworkIdByName.mainnet,
+				})
+			);
+			setL2DefaultProvider(
+				loadProvider({
+					infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
+					networkId: NetworkIdByName['mainnet-ovm'],
+				})
+			);
 			if (!window.ethereum || selectedWallet !== 'Browser Wallet') {
 				setAppReady(true);
 				// For non browser wallets we use mainnet by default. And the app/wallet will trigger wallet change events if needed

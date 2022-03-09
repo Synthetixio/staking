@@ -44,7 +44,7 @@ const DesktopSideNav: FC = () => {
 	const { clearSubMenuConfiguration } = UIContainer.useContainer();
 	const { useSNXData } = useSynthetixQueries();
 	const { L1DefaultProvider } = Connector.useContainer();
-	const lockedSNXQuery = useSNXData(L1DefaultProvider);
+	const lockedSNXQuery = useSNXData(L1DefaultProvider!);
 
 	useEffect(() => {
 		if (lockedSNXQuery.data?.lockedSupply?.gt(1) && lockedSNXQuery.data?.totalSNXSupply) {

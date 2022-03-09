@@ -44,7 +44,7 @@ export const useUserStakingData = (walletAddress: string | null) => {
 	const previousFeePeriod = useGetFeePoolDataQuery(1);
 	const { currentCRatio, targetCRatio, debtBalance, collateral, targetThreshold } =
 		useStakingCalculations();
-	const lockedSnxQuery = useSNXData(L1DefaultProvider);
+	const lockedSnxQuery = useSNXData(L1DefaultProvider!);
 
 	const debtData = useGetDebtDataQuery(walletAddress);
 	const feesToDistribute = previousFeePeriod?.data?.feesToDistribute ?? wei(0);

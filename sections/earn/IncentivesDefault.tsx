@@ -43,7 +43,7 @@ const Incentives: FC<IncentivesProps> = ({
 	const { L1DefaultProvider } = Connector.useContainer();
 	const { useSNXData } = useSynthetixQueries();
 
-	const lockedSnxQuery = useSNXData(L1DefaultProvider);
+	const lockedSnxQuery = useSNXData(L1DefaultProvider!);
 
 	const { nextFeePeriodStarts, currentFeePeriodStarted } = useFeePeriodTimeAndProgress();
 
