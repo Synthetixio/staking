@@ -53,11 +53,7 @@ const DesktopSideNav: FC = () => {
 				.toNumber()
 				.toFixed(2);
 		}
-	}, [
-		lockedSNXQuery.isSuccess,
-		lockedSNXQuery.data?.lockedSupply,
-		lockedSNXQuery.data?.totalSNXSupply,
-	]);
+	}, [lockedSNXQuery.data?.lockedSupply, lockedSNXQuery.data?.totalSNXSupply]);
 
 	const snxBalance =
 		cryptoBalances?.balances?.find((balance) => balance.currencyKey === CryptoCurrency.SNX)
