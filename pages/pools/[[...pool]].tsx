@@ -34,6 +34,7 @@ function Pool() {
 		stakingRewardsContract: snx.contracts.StakingRewardsSNXWETHUniswapV3,
 		tokenContract: WETHSNXLPTokenContract,
 	});
+
 	const fetchBalances = useCallback(() => {
 		if (walletAddress) {
 			balanceOf().then((balance) => {
@@ -68,7 +69,12 @@ function Pool() {
 					}`}
 					size="md"
 				/>
-				<StyledLPBalance title={t('pool.stats.APR')} value={`0.0%`} size="lg" main />
+				<StyledLPBalance
+					title={t('pool.stats.APR')}
+					value={`${rates.data?.apy.toFixed(2) || 2}%`}
+					size="lg"
+					main
+				/>
 				<StyledLPBalance
 					title={t('pool.stats.rewards')}
 					value={utils.formatUnits(rewardsToClaim, 18).slice(0, 10)}
