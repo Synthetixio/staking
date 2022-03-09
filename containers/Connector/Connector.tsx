@@ -41,6 +41,7 @@ import { useMemo } from 'react';
 const useConnector = () => {
 	const [network, setNetwork] = useRecoilState(networkState);
 	const [provider, setProvider] = useState<ethers.providers.Provider | null>(null);
+	console.log(process.env.NEXT_PUBLIC_INFURA_PROJECT_ID);
 	const [L1DefaultProvider, _] = useState<ethers.providers.BaseProvider>(
 		loadProvider({
 			infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
