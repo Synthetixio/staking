@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { FC, useEffect, useState } from 'react';
+import { FC, useMemo } from 'react';
 import Link from 'next/link';
 import { Svg } from 'react-optimized-image';
 import { useRecoilValue } from 'recoil';
@@ -34,7 +34,6 @@ const DesktopSideNav: FC = () => {
 	const walletAddress = useRecoilValue(walletAddressState);
 	const delegateWallet = useRecoilValue(delegateWalletState);
 	const { t } = useTranslation();
-	const [tRatio, setTRation] = useState('');
 	const { useSynthsBalancesQuery } = useSynthetixQueries();
 	const sevenDaysAgoSeconds = Math.floor(new Date().setDate(new Date().getDate() - 7) / 1000);
 	const currencyRateChange = useGetCurrencyRateChange(sevenDaysAgoSeconds, 'SNX');
@@ -46,15 +45,13 @@ const DesktopSideNav: FC = () => {
 	const { L1DefaultProvider } = Connector.useContainer();
 	const lockedSNXQuery = useSNXData(L1DefaultProvider!);
 
-	useEffect(() => {
+	const tRatio = useMemo(() => {
 		if (lockedSNXQuery.data?.lockedSupply?.gt(1) && lockedSNXQuery.data?.totalSNXSupply) {
-			setTRation(
-				lockedSNXQuery.data.lockedSupply
-					.div(lockedSNXQuery.data.totalSNXSupply)
-					.mul(100)
-					.toNumber()
-					.toFixed(2)
-			);
+			return lockedSNXQuery.data.lockedSupply
+				.div(lockedSNXQuery.data.totalSNXSupply)
+				.mul(100)
+				.toNumber()
+				.toFixed(2);
 		}
 	}, [
 		lockedSNXQuery.isSuccess,
