@@ -43,17 +43,17 @@ const DesktopSideNav: FC = () => {
 	const { clearSubMenuConfiguration } = UIContainer.useContainer();
 	const { useSNXData } = useSynthetixQueries();
 	const { L1DefaultProvider } = Connector.useContainer();
-	const lockedSNXQuery = useSNXData(L1DefaultProvider!);
+	const lockedSNXQuery = useSNXData(L1DefaultProvider);
 
 	const tRatio = useMemo(() => {
-		if (lockedSNXQuery.data?.lockedSupply?.gt(1) && lockedSNXQuery.data?.totalSNXSupply) {
+		if (lockedSNXQuery?.data?.lockedSupply?.gt(1) && lockedSNXQuery?.data?.totalSNXSupply) {
 			return lockedSNXQuery.data.lockedSupply
 				.div(lockedSNXQuery.data.totalSNXSupply)
 				.mul(100)
 				.toNumber()
 				.toFixed(2);
 		}
-	}, [lockedSNXQuery.data?.lockedSupply, lockedSNXQuery.data?.totalSNXSupply]);
+	}, [lockedSNXQuery?.data?.lockedSupply, lockedSNXQuery?.data?.totalSNXSupply]);
 
 	const snxBalance =
 		cryptoBalances?.balances?.find((balance) => balance.currencyKey === CryptoCurrency.SNX)
@@ -79,7 +79,7 @@ const DesktopSideNav: FC = () => {
 					<BalanceItem amount={sUSDBalance} currencyKey={Synths.sUSD} />
 					<StyledTargetStakingRatio>
 						<StyledTargetStakingRatioTitle>Staking Ratio</StyledTargetStakingRatioTitle>
-						{tRatio}%
+						{tRatio ? tRatio : '0.00'}%
 					</StyledTargetStakingRatio>
 					<Tooltip content={t('common.price-change.seven-days')}>
 						<PriceItemContainer>

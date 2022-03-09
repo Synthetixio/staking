@@ -40,14 +40,15 @@ const InnerApp: FC<AppProps> = ({ Component, pageProps }) => {
 		<>
 			<SynthetixQueryContextProvider
 				value={
-					provider && network
+					provider && network?.id
 						? createQueryContext({
 								provider: provider,
 								signer: signer || undefined,
-								networkId: network!.id,
+								networkId: network.id,
 						  })
 						: createQueryContext({
 								networkId: 1,
+								provider: L1DefaultProvider,
 						  })
 				}
 			>
