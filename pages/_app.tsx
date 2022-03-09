@@ -48,7 +48,6 @@ const InnerApp: FC<AppProps> = ({ Component, pageProps }) => {
 						  })
 						: createQueryContext({
 								networkId: 1,
-								provider: L1DefaultProvider!,
 						  })
 				}
 			>
