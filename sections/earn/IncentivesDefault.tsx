@@ -16,6 +16,7 @@ import ClaimTab from './ClaimTab';
 import { Tab } from './types';
 import { DesktopOrTabletView } from 'components/Media';
 import useSynthetixQueries from '@synthetixio/queries';
+import Connector from 'containers/Connector';
 
 type IncentivesProps = {
 	tradingRewards: Wei;
@@ -39,10 +40,10 @@ const Incentives: FC<IncentivesProps> = ({
 	const { t } = useTranslation();
 	const router = useRouter();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
+	const { L1DefaultProvider } = Connector.useContainer();
+	const { useSNXData } = useSynthetixQueries();
 
-	const { useLockedSnxQueryL1 } = useSynthetixQueries();
-
-	const lockedSnxQuery = useLockedSnxQueryL1();
+	const lockedSnxQuery = useSNXData(L1DefaultProvider);
 
 	const { nextFeePeriodStarts, currentFeePeriodStarted } = useFeePeriodTimeAndProgress();
 

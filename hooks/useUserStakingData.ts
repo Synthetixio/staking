@@ -8,7 +8,7 @@ import { WEEKS_IN_YEAR } from 'constants/date';
 import { isL2State } from 'store/wallet';
 import Wei, { wei } from '@synthetixio/wei';
 import useSynthetixQueries from '@synthetixio/queries';
-import { providers } from 'ethers';
+import Connector from 'containers/Connector';
 
 // exported for test
 export const calculateIsBelowCRatio = (
@@ -19,6 +19,7 @@ export const calculateIsBelowCRatio = (
 
 export const useUserStakingData = (walletAddress: string | null) => {
 	const isL2 = useRecoilValue(isL2State);
+	const { L1DefaultProvider } = Connector.useContainer();
 
 	const { useGetFeePoolDataQuery, useGetDebtDataQuery, useClaimableRewardsQuery, subgraph } =
 		useSynthetixQueries();
@@ -34,11 +35,8 @@ export const useUserStakingData = (walletAddress: string | null) => {
 	);
 
 	const currentFeePeriod = useGetFeePoolDataQuery(0);
-	const {
-		useTotalIssuedSynthsExcludeOtherCollateralQuery,
-		useExchangeRatesQuery,
-		useLockedSnxQueryL1,
-	} = useSynthetixQueries();
+	const { useTotalIssuedSynthsExcludeOtherCollateralQuery, useExchangeRatesQuery, useSNXData } =
+		useSynthetixQueries();
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const totalIssuedSynthsExclOtherCollateral = useTotalIssuedSynthsExcludeOtherCollateralQuery(
 		Synths.sUSD
@@ -46,7 +44,7 @@ export const useUserStakingData = (walletAddress: string | null) => {
 	const previousFeePeriod = useGetFeePoolDataQuery(1);
 	const { currentCRatio, targetCRatio, debtBalance, collateral, targetThreshold } =
 		useStakingCalculations();
-	const lockedSnxQuery = useLockedSnxQueryL1(providers.getDefaultProvider());
+	const lockedSnxQuery = useSNXData(L1DefaultProvider);
 
 	const debtData = useGetDebtDataQuery(walletAddress);
 	const feesToDistribute = previousFeePeriod?.data?.feesToDistribute ?? wei(0);

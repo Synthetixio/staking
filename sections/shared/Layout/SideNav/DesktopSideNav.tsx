@@ -42,9 +42,9 @@ const DesktopSideNav: FC = () => {
 	const synthsBalancesQuery = useSynthsBalancesQuery(delegateWallet?.address ?? walletAddress);
 	const isL2 = useRecoilValue(isL2State);
 	const { clearSubMenuConfiguration } = UIContainer.useContainer();
-	const { useLockedSnxQueryL1 } = useSynthetixQueries();
+	const { useSNXData } = useSynthetixQueries();
 	const { L1DefaultProvider } = Connector.useContainer();
-	const lockedSNXQuery = useLockedSnxQueryL1(L1DefaultProvider as any);
+	const lockedSNXQuery = useSNXData(L1DefaultProvider);
 
 	useEffect(() => {
 		if (lockedSNXQuery.data?.lockedSupply?.gt(1) && lockedSNXQuery.data?.totalSNXSupply) {
