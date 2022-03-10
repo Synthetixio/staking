@@ -2918,10 +2918,10 @@
   resolved "https://registry.yarnpkg.com/@synthetixio/assets/-/assets-2.0.12.tgz#641a7383a8d00ad6a9709f9b9f0323d9084ed379"
   integrity sha512-yUtd9cvpohmPtajsb4Cinntx6wt8XuG+W1o3PwsrLYKhSEiCR4Psuslel2QCntnsY38yqLPmPDjpPYdyezeaHQ==
 
-"@synthetixio/contracts-interface@2.63.1-alpha":
-  version "2.63.1-alpha"
-  resolved "https://registry.yarnpkg.com/@synthetixio/contracts-interface/-/contracts-interface-2.63.1-alpha.tgz#db0c1c3efe30300bfb4a29d1520499a87a35d4e4"
-  integrity sha512-uzuANasJnkdlhFmXaz7GqmGFFbnVzbjIAHijsqZkyrbFtVlC274q+FegOdj/MEQyI2PxcYIAPyoXQuvfurYyBg==
+"@synthetixio/contracts-interface@2.63.1":
+  version "2.63.1"
+  resolved "https://registry.yarnpkg.com/@synthetixio/contracts-interface/-/contracts-interface-2.63.1.tgz#3c48e86a2ed623d4c2f0a849978f1bbaaffb4838"
+  integrity sha512-9dKZIMenfg83nN8U8IyPNArza0Rx0ghRWWubC3gKZPnnSnVVPPcdrPaqMahRc0ipfmwKwNYsR2xkTrycEbNl5g==
   dependencies:
     ethers "5.5.3"
     lodash "4.17.19"
@@ -2938,45 +2938,44 @@
     synthetix "2.41.0"
     web3-utils "1.2.11"
 
-"@synthetixio/optimism-networks@2.61.2":
-  version "2.61.2"
-  resolved "https://registry.yarnpkg.com/@synthetixio/optimism-networks/-/optimism-networks-2.61.2.tgz#2f42ae27c27b0f595bfe699484246016c59cce6b"
-  integrity sha512-V/GvCxGYsimmCCIVrCTEllvzFD483zRMDWm5pwuDqrVr49t8d+NoP0lmaNUSBaJmakYiUd2os0BeeRPmwIu/tg==
+"@synthetixio/optimism-networks@2.63.1":
+  version "2.63.1"
+  resolved "https://registry.yarnpkg.com/@synthetixio/optimism-networks/-/optimism-networks-2.63.1.tgz#33ed3eb3bb34b9be4f010b05677a5faec75bde86"
+  integrity sha512-Na3RPbP9Udm86uvr2awNnN7GqZ+IaFewoQGLHEUKw43a1fn1LBIQDbHt8UdqTCWCrrXNEwIASNO1IOVYpbdIKQ==
   dependencies:
     "@eth-optimism/watcher" "^0.0.1-alpha.9"
     "@metamask/providers" "8.1.1"
 
-"@synthetixio/providers@2.63.1-alpha":
-  version "2.63.1-alpha"
-  resolved "https://registry.yarnpkg.com/@synthetixio/providers/-/providers-2.63.1-alpha.tgz#1407f488ce2711bcc683a12c3d196867a4fcf82d"
-  integrity sha512-hvoo/H3+xNoq2qnfdfV1wHFZIa2/lUU5d8nqtHbtymmZz7PcosAu3D7DjOKVkZl9bmeQ53UGYoaFuPt1XQZAnA==
+"@synthetixio/providers@2.63.1":
+  version "2.63.1"
+  resolved "https://registry.yarnpkg.com/@synthetixio/providers/-/providers-2.63.1.tgz#567502251d633c789e3eb15956b17ac2f96ac895"
+  integrity sha512-8NRMCoh+L04jMgZI8hvmsieetnFFLyhjS/OEtKbkB5jISg3iT5CgzB2QbytSJ+96ZXjSdb/b3TbgjdBmWvuU/Q==
   dependencies:
     "@eth-optimism/provider" "0.0.1-alpha.14"
-    "@synthetixio/contracts-interface" "2.63.1-alpha"
-    "@synthetixio/optimism-networks" "2.61.2"
+    "@synthetixio/contracts-interface" "2.63.1"
+    "@synthetixio/optimism-networks" "2.63.1"
     ethers "5.5.3"
 
-"@synthetixio/queries@0.0.0-e8bd2ec":
-  version "0.0.0-e8bd2ec"
-  resolved "https://registry.yarnpkg.com/@synthetixio/queries/-/queries-0.0.0-e8bd2ec.tgz#2ddb7728912f846ae022944f193ed1a53e029e28"
-  integrity sha512-knRBWM1dUkTo+gM6toGPRgmGU+tgz73RU8C2L7326Ns5WPxON1KQHrp+wcVd8neMLrvTWNUmb2j9ceO6CElJtQ==
+"@synthetixio/queries@2.63.1":
+  version "2.63.1"
+  resolved "https://registry.yarnpkg.com/@synthetixio/queries/-/queries-2.63.1.tgz#af0c636f20cbd29a810ab750992b584689912ebc"
+  integrity sha512-5EluJQn/OmARsY1fa28Mv+TeT1BSAtOa+HmccDbHHXicVeRPk2kjmpFV/9h98/O3nu5J5BdaCR/WM+iXQhveLQ==
   dependencies:
     "@snapshot-labs/snapshot.js" "0.3.22"
-    "@synthetixio/contracts-interface" "2.63.1-alpha"
-    "@synthetixio/optimism-networks" "2.61.2"
-    "@synthetixio/providers" "2.63.1-alpha"
-    "@synthetixio/transaction-notifier" "2.61.2"
-    "@synthetixio/wei" "2.61.2"
+    "@synthetixio/contracts-interface" "2.63.1"
+    "@synthetixio/optimism-networks" "2.63.1"
+    "@synthetixio/providers" "2.63.1"
+    "@synthetixio/transaction-notifier" "2.63.1"
+    "@synthetixio/wei" "2.63.1"
     axios "0.21.1"
     bignumber.js "9.0.1"
-    codegen-graph-ts "0.1.4"
     date-fns "2.19.0"
     ethcall "3.3.0"
     ethers "5.5.3"
     graphql "15.5.0"
     graphql-request "3.4.0"
     lodash "4.17.19"
-    patch-package "^6.4.7"
+    maxibon-codegen-graph-ts "0.1.8"
 
 "@synthetixio/synpress@0.9.25-beta.12":
   version "0.9.25-beta.12"
@@ -3023,18 +3022,18 @@
     start-server-and-test "1.13.1"
     synthetix-js "2.49.0"
 
-"@synthetixio/transaction-notifier@2.61.2":
-  version "2.61.2"
-  resolved "https://registry.yarnpkg.com/@synthetixio/transaction-notifier/-/transaction-notifier-2.61.2.tgz#0b1b0dd158845716cd43f1e61d5d2ff0bb00de71"
-  integrity sha512-SqWEc+wDBdX+x8ipXRXRjFyYbQGsKfbDILHazEDoHX0WxNON7N5i4o6f+vHIlZQXXWeo0EaOy1S7FOkd8bZxQA==
+"@synthetixio/transaction-notifier@2.63.1":
+  version "2.63.1"
+  resolved "https://registry.yarnpkg.com/@synthetixio/transaction-notifier/-/transaction-notifier-2.63.1.tgz#0f8f3899fe1ec4c0967dff2fc67220d58eff6f89"
+  integrity sha512-pDnBl7zSjO1/DxahuuaeBXtkcy5TYIMdboJdrpAAbwsoeq3GxTE/89aycW2zOkjwIE6VQNrMu4CDUW1BvaOQZA==
   dependencies:
     ethers "5.5.3"
     lodash "4.17.19"
 
-"@synthetixio/wei@2.61.2":
-  version "2.61.2"
-  resolved "https://registry.yarnpkg.com/@synthetixio/wei/-/wei-2.61.2.tgz#74f75e7dc3a70f1ef2364a95c3b41cfc17362f93"
-  integrity sha512-NvvM2uo2wq/N0iAbPVM8qObAbAhBmetHcexdfaMFsLgQBqkOzaU1ogFtUyRPG5yAdb/33dKFVLj6sQ7d2fj84g==
+"@synthetixio/wei@2.63.1":
+  version "2.63.1"
+  resolved "https://registry.yarnpkg.com/@synthetixio/wei/-/wei-2.63.1.tgz#24b1c84d0f0d33bf1ad20b86c2fd3f2b9bc4c40b"
+  integrity sha512-Muk/bpsCdaQIxlCgGXvXh067VNrPc4FBzb3B8OY0c36rs5G2fFjRCrzKjgabDoODEv6EET53HnhmrK0d21ftrQ==
   dependencies:
     big.js "6.1.1"
     ethers "5.5.3"
@@ -4587,11 +4586,6 @@
   version "4.2.2"
   resolved "https://registry.yarnpkg.com/@xtuc/long/-/long-4.2.2.tgz#d291c6a4e97989b5c61d9acf396ae4fe133a718d"
   integrity sha512-NuHqBY1PB/D8xU6s/thBgOAiAP7HOYDQ32+BFZILJ8ivkUkAHQnWfn6WhL79Owj1qmUnoN/YPhktdIoucipkAQ==
-
-"@yarnpkg/lockfile@^1.1.0":
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/@yarnpkg/lockfile/-/lockfile-1.1.0.tgz#e77a97fbd345b76d83245edcd17d393b1b41fb31"
-  integrity sha512-GpSwvyXOcOOlV70vbnzjj4fW5xW/FdUF6nQEt1ENy7m4ZCczi1+/buVUPAqmGfqznsORNFzUMjctTIp8a9tuCQ==
 
 "@zeit/schemas@2.6.0":
   version "2.6.0"
@@ -7539,18 +7533,6 @@ code-point-at@^1.0.0:
   resolved "https://registry.yarnpkg.com/code-point-at/-/code-point-at-1.1.0.tgz#0d070b4d043a5bea33a2f1a40e2edb3d9a4ccf77"
   integrity sha1-DQcLTQQ6W+ozovGkDi7bPZpMz3c=
 
-codegen-graph-ts@0.1.4:
-  version "0.1.4"
-  resolved "https://registry.yarnpkg.com/codegen-graph-ts/-/codegen-graph-ts-0.1.4.tgz#79ac1b72c9bf21b4fbfc0b10a8009b0600272981"
-  integrity sha512-/O5B9CTzIhCLp+gj3njgtvkFq1CqMMWIX9W3aeg3U41ZwZ8vjkPYKbmxCoHspmMHYgWOgmyK9R/kPrMU/MKLRA==
-  dependencies:
-    "@synthetixio/wei" "^2.47.0-ovm.5"
-    axios "^0.24.0"
-    commander "^8.1.0"
-    graphql "^15.5.1"
-    graphql-request "^3.5.0"
-    lodash "^4.17.21"
-
 coffeeify@3.0.1:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/coffeeify/-/coffeeify-3.0.1.tgz#5e2753000c50bd24c693115f33864248dd11136c"
@@ -8013,7 +7995,7 @@ cross-spawn@^5.0.1:
     shebang-command "^1.2.0"
     which "^1.2.9"
 
-cross-spawn@^6.0.0, cross-spawn@^6.0.5:
+cross-spawn@^6.0.0:
   version "6.0.5"
   resolved "https://registry.yarnpkg.com/cross-spawn/-/cross-spawn-6.0.5.tgz#4a5ec7c64dfae22c3a14124dbacdee846d80cbc4"
   integrity sha512-eTVLrBSt7fjbDygz805pMnstIs2VTBNkRm0qxZd+M7A5XDdxVRWO5MxGBXZhjY4cqLYLdtrGqRf8mBPmzwSpWQ==
@@ -11127,7 +11109,7 @@ find-yarn-workspace-root@1.2.1:
     fs-extra "^4.0.3"
     micromatch "^3.1.4"
 
-find-yarn-workspace-root@2.0.0, find-yarn-workspace-root@^2.0.0:
+find-yarn-workspace-root@2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/find-yarn-workspace-root/-/find-yarn-workspace-root-2.0.0.tgz#f47fb8d239c900eb78179aa81b66673eac88f7bd"
   integrity sha512-1IMnbjt4KzsQfnhnzNd8wUEgXZ44IzZaZmnLYx7D5FZlaHt2gW20Cri8Q+E/t5tIj4+epTBub+2Zxu/vNILzqQ==
@@ -11298,15 +11280,6 @@ fs-extra@^4.0.2, fs-extra@^4.0.3:
   version "4.0.3"
   resolved "https://registry.yarnpkg.com/fs-extra/-/fs-extra-4.0.3.tgz#0d852122e5bc5beb453fb028e9c0c9bf36340c94"
   integrity sha512-q6rbdDd1o2mAnQreO7YADIxf/Whx4AHBiRf6d+/cVT8h44ss+lHgxf1FemcqDnQt9X3ct4McHr+JMGlYSsK7Cg==
-  dependencies:
-    graceful-fs "^4.1.2"
-    jsonfile "^4.0.0"
-    universalify "^0.1.0"
-
-fs-extra@^7.0.1:
-  version "7.0.1"
-  resolved "https://registry.yarnpkg.com/fs-extra/-/fs-extra-7.0.1.tgz#4f189c44aa123b895f722804f55ea23eadc348e9"
-  integrity sha512-YJDaCJZEnBmcbw13fvdAM9AwNOJwOzrE4pqMqBq5nFiEqXUqHwlK4B+3pUw6JNvfSPtX05xFHtYy/1ni01eGCw==
   dependencies:
     graceful-fs "^4.1.2"
     jsonfile "^4.0.0"
@@ -12578,13 +12551,6 @@ is-callable@^1.1.3, is-callable@^1.1.4, is-callable@^1.2.4:
   version "1.2.4"
   resolved "https://registry.yarnpkg.com/is-callable/-/is-callable-1.2.4.tgz#47301d58dd0259407865547853df6d61fe471945"
   integrity sha512-nsuwtxZfMX67Oryl9LCQ+upnC0Z0BgpwntpS89m1H/TLF0zNfzfLMV/9Wa/6MZsj0acpEjAO0KF1xT6ZdLl95w==
-
-is-ci@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/is-ci/-/is-ci-2.0.0.tgz#6bc6334181810e04b5c22b3d589fdca55026404c"
-  integrity sha512-YfJT7rkpQB0updsdHLGWrvhBJfcfzNNawYDNIyQXJz0IViGf75O8EBPKSdvw2rF+LGCsX4FZ8tcr3b19LcZq4w==
-  dependencies:
-    ci-info "^2.0.0"
 
 is-ci@^3.0.0:
   version "3.0.1"
@@ -13888,13 +13854,6 @@ kind-of@^6.0.0, kind-of@^6.0.2:
   resolved "https://registry.yarnpkg.com/kind-of/-/kind-of-6.0.3.tgz#07c05034a6c349fa06e24fa35aa76db4580ce4dd"
   integrity sha512-dcS1ul+9tmeD95T+x28/ehLgd9mENa3LsvDTtzm3vyBEO7RPptvAD+t44WVXaUjTBRcrpFeFlC8WCruUR456hw==
 
-klaw-sync@^6.0.0:
-  version "6.0.0"
-  resolved "https://registry.yarnpkg.com/klaw-sync/-/klaw-sync-6.0.0.tgz#1fd2cfd56ebb6250181114f0a581167099c2b28c"
-  integrity sha512-nIeuVSzdCCs6TDPTqI8w1Yre34sSq7AkZ4B3sfOBbI2CgVSB4Du4aLQijFU2+lhAFCwt9+42Hel6lQNIv6AntQ==
-  dependencies:
-    graceful-fs "^4.1.11"
-
 klaw@^1.0.0:
   version "1.3.1"
   resolved "https://registry.yarnpkg.com/klaw/-/klaw-1.3.1.tgz#4088433b46b3b1ba259d78785d8e96f73ba02439"
@@ -14435,6 +14394,18 @@ matchmediaquery@^0.3.0:
   integrity sha512-Hlk20WQHRIm9EE9luN1kjRjYXAQToHOIAHPJn9buxBwuhfTHoKUcX+lXBbxc85DVQfXYbEQ4HcwQdd128E3qHQ==
   dependencies:
     css-mediaquery "^0.1.2"
+
+maxibon-codegen-graph-ts@0.1.8:
+  version "0.1.8"
+  resolved "https://registry.yarnpkg.com/maxibon-codegen-graph-ts/-/maxibon-codegen-graph-ts-0.1.8.tgz#62333f2a985a40e607c6b97d87a9207cd47e3040"
+  integrity sha512-5uwQMdhjslmcGeqc0n6KqSbPrJiMMRby6ONdxKKLv8Qf2TcDzl0a0BPCUuO3pFmRmZu9t5RHg0vJeRiPsCkVvw==
+  dependencies:
+    "@synthetixio/wei" "^2.47.0-ovm.5"
+    axios "^0.24.0"
+    commander "^8.1.0"
+    graphql "^15.5.1"
+    graphql-request "^3.5.0"
+    lodash "^4.17.21"
 
 md5.js@^1.3.4:
   version "1.3.5"
@@ -15501,14 +15472,6 @@ onetime@^5.1.0, onetime@^5.1.2:
   dependencies:
     mimic-fn "^2.1.0"
 
-open@^7.4.2:
-  version "7.4.2"
-  resolved "https://registry.yarnpkg.com/open/-/open-7.4.2.tgz#b8147e26dcf3e426316c730089fd71edd29c2321"
-  integrity sha512-MVHddDVweXZF3awtlAS+6pgKLlm/JgxZ90+/NBurBoQctVOOB/zDdVjcyPzQ+0laDGbsWgrRkflI65sQeOgT9Q==
-  dependencies:
-    is-docker "^2.0.0"
-    is-wsl "^2.1.1"
-
 opencollective-postinstall@^2.0.2:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/opencollective-postinstall/-/opencollective-postinstall-2.0.3.tgz#7a0fff978f6dbfa4d006238fbac98ed4198c3259"
@@ -15855,25 +15818,6 @@ pascalcase@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/pascalcase/-/pascalcase-1.0.0.tgz#d2fd7d73f2969606d2b56e17f5261be41c43c381"
   integrity sha512-BSExi0rRnCHReJys6NocaK+cfTXNinAegfWBvr0JD3hiaEG7Nuc7r0CIdOJunXrs8gU/sbHQ9dxVAtiVQisjmg==
-
-patch-package@^6.4.7:
-  version "6.4.7"
-  resolved "https://registry.yarnpkg.com/patch-package/-/patch-package-6.4.7.tgz#2282d53c397909a0d9ef92dae3fdeb558382b148"
-  integrity sha512-S0vh/ZEafZ17hbhgqdnpunKDfzHQibQizx9g8yEf5dcVk3KOflOfdufRXQX8CSEkyOQwuM/bNz1GwKvFj54kaQ==
-  dependencies:
-    "@yarnpkg/lockfile" "^1.1.0"
-    chalk "^2.4.2"
-    cross-spawn "^6.0.5"
-    find-yarn-workspace-root "^2.0.0"
-    fs-extra "^7.0.1"
-    is-ci "^2.0.0"
-    klaw-sync "^6.0.0"
-    minimist "^1.2.0"
-    open "^7.4.2"
-    rimraf "^2.6.3"
-    semver "^5.6.0"
-    slash "^2.0.0"
-    tmp "^0.0.33"
 
 path-browserify@0.0.1, path-browserify@~0.0.0:
   version "0.0.1"
@@ -17588,7 +17532,7 @@ rimraf@3.0.2, rimraf@^3.0.0, rimraf@^3.0.2:
   dependencies:
     glob "^7.1.3"
 
-rimraf@^2.2.8, rimraf@^2.5.4, rimraf@^2.6.3:
+rimraf@^2.2.8, rimraf@^2.5.4:
   version "2.7.1"
   resolved "https://registry.yarnpkg.com/rimraf/-/rimraf-2.7.1.tgz#35797f13a7fdadc566142c29d4f07ccad483e3ec"
   integrity sha512-uWjbaKIK3T1OSVptzX7Nl6PvQ3qAGtKEtVRjRuazjfL3Bx5eI409VZSqgND+4UNnmzLVdPj9FqFJNPqBZFve4w==
@@ -18146,11 +18090,6 @@ slash@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/slash/-/slash-1.0.0.tgz#c41f2f6c39fc16d1cd17ad4b5d896114ae470d55"
   integrity sha1-xB8vbDn8FtHNF61LXYlhFK5HDVU=
-
-slash@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/slash/-/slash-2.0.0.tgz#de552851a1759df3a8f206535442f5ec4ddeab44"
-  integrity sha512-ZYKh3Wh2z1PpEXWr0MpSBZ0V6mZHAQfYevttO11c51CaWjGTaadiKZ+wVt1PbMlDV5qhMFslpZCemhwOK7C89A==
 
 slash@^3.0.0:
   version "3.0.0"
