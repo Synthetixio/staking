@@ -21,6 +21,7 @@ import { Tab, LP } from './types';
 import YearnVaultTab from './LPTab/YearnVaultTab';
 import { YearnVaultData } from 'queries/liquidityPools/useYearnSNXVaultQuery';
 import useSynthetixQueries from '@synthetixio/queries';
+import Connector from 'containers/Connector';
 
 enum View {
 	ACTIVE = 'active',
@@ -50,11 +51,11 @@ const Incentives: FC<IncentivesProps> = ({
 	const router = useRouter();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const [view, setView] = useState<View>(View.ACTIVE);
-
-	const { useLockedSnxQuery } = useSynthetixQueries();
+	const { L1DefaultProvider } = Connector.useContainer();
+	const { useSNXData } = useSynthetixQueries();
 
 	const lpData = useLPData();
-	const lockedSnxQuery = useLockedSnxQuery();
+	const lockedSnxQuery = useSNXData(L1DefaultProvider!);
 
 	const { nextFeePeriodStarts, currentFeePeriodStarted } = useFeePeriodTimeAndProgress();
 

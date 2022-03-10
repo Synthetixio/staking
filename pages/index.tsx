@@ -21,13 +21,10 @@ import { walletAddressState } from 'store/wallet';
 
 const DashboardPage: FC = () => {
 	const { t } = useTranslation();
-
 	const walletAddress = useRecoilValue(walletAddressState);
-
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
 	const { stakedValue, stakingAPR, debtBalance } = useUserStakingData(walletAddress);
 	const { setTitle } = UIContainer.useContainer();
-
 	// header title
 	useEffect(() => {
 		setTitle('home');

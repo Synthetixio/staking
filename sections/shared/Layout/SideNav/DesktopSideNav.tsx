@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { FC } from 'react';
+import { FC, useMemo } from 'react';
 import Link from 'next/link';
 import { Svg } from 'react-optimized-image';
 import { useRecoilValue } from 'recoil';
@@ -28,12 +28,12 @@ import SubMenu from './DesktopSubMenu';
 import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
 import useGetCurrencyRateChange from 'hooks/useGetCurrencyRateChange';
+import Connector from 'containers/Connector';
 
 const DesktopSideNav: FC = () => {
 	const walletAddress = useRecoilValue(walletAddressState);
 	const delegateWallet = useRecoilValue(delegateWalletState);
 	const { t } = useTranslation();
-
 	const { useSynthsBalancesQuery } = useSynthetixQueries();
 	const sevenDaysAgoSeconds = Math.floor(new Date().setDate(new Date().getDate() - 7) / 1000);
 	const currencyRateChange = useGetCurrencyRateChange(sevenDaysAgoSeconds, 'SNX');
@@ -41,6 +41,19 @@ const DesktopSideNav: FC = () => {
 	const synthsBalancesQuery = useSynthsBalancesQuery(delegateWallet?.address ?? walletAddress);
 	const isL2 = useRecoilValue(isL2State);
 	const { clearSubMenuConfiguration } = UIContainer.useContainer();
+	const { useSNXData } = useSynthetixQueries();
+	const { L1DefaultProvider } = Connector.useContainer();
+	const lockedSNXQuery = useSNXData(L1DefaultProvider);
+
+	const tRatio = useMemo(() => {
+		if (lockedSNXQuery?.data?.lockedSupply?.gt(1) && lockedSNXQuery?.data?.totalSNXSupply) {
+			return lockedSNXQuery.data.lockedSupply
+				.div(lockedSNXQuery.data.totalSNXSupply)
+				.mul(100)
+				.toNumber()
+				.toFixed(2);
+		}
+	}, [lockedSNXQuery?.data?.lockedSupply, lockedSNXQuery?.data?.totalSNXSupply]);
 
 	const snxBalance =
 		cryptoBalances?.balances?.find((balance) => balance.currencyKey === CryptoCurrency.SNX)
@@ -64,6 +77,10 @@ const DesktopSideNav: FC = () => {
 					<CRatioBarStats />
 					<BalanceItem amount={snxBalance} currencyKey={CryptoCurrency.SNX} />
 					<BalanceItem amount={sUSDBalance} currencyKey={Synths.sUSD} />
+					<StyledTargetStakingRatio>
+						<StyledTargetStakingRatioTitle>Staking Ratio</StyledTargetStakingRatioTitle>
+						{tRatio ? tRatio : '0.00'}%
+					</StyledTargetStakingRatio>
 					<Tooltip content={t('common.price-change.seven-days')}>
 						<PriceItemContainer>
 							<PriceItem currencyKey={CryptoCurrency.SNX} currencyRateChange={currencyRateChange} />
@@ -116,4 +133,20 @@ const MenuCharts = styled.div`
 	width: 100%;
 	padding-left: 20px;
 	padding-right: 20px;
+`;
+
+const StyledTargetStakingRatio = styled.div`
+	font-family: ${(props) => props.theme.fonts.mono};
+	color: ${(props) => props.theme.colors.white};
+	font-size: 12px;
+	margin-bottom: 18px;
+`;
+
+const StyledTargetStakingRatioTitle = styled.h3`
+	font-family: ${(props) => props.theme.fonts.interBold};
+	color: ${(props) => props.theme.colors.gray};
+	text-transform: uppercase;
+	padding-bottom: 5px;
+	font-size: 12px;
+	margin: 0;
 `;

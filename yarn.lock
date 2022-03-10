@@ -2918,14 +2918,14 @@
   resolved "https://registry.yarnpkg.com/@synthetixio/assets/-/assets-2.0.12.tgz#641a7383a8d00ad6a9709f9b9f0323d9084ed379"
   integrity sha512-yUtd9cvpohmPtajsb4Cinntx6wt8XuG+W1o3PwsrLYKhSEiCR4Psuslel2QCntnsY38yqLPmPDjpPYdyezeaHQ==
 
-"@synthetixio/contracts-interface@2.63.0":
-  version "2.63.0"
-  resolved "https://registry.yarnpkg.com/@synthetixio/contracts-interface/-/contracts-interface-2.63.0.tgz#b6b95dd7dad2cb460a13c3d864aef68d4a1a0126"
-  integrity sha512-RfdNANlM1/ckhJtftwChD9Pu7kqmIqdWFI5ACnHRVGxLIi6D8spQpoDGk/DK0SPhMuDRcBdHCKERI7ys6Hij0g==
+"@synthetixio/contracts-interface@2.63.1-alpha":
+  version "2.63.1-alpha"
+  resolved "https://registry.yarnpkg.com/@synthetixio/contracts-interface/-/contracts-interface-2.63.1-alpha.tgz#db0c1c3efe30300bfb4a29d1520499a87a35d4e4"
+  integrity sha512-uzuANasJnkdlhFmXaz7GqmGFFbnVzbjIAHijsqZkyrbFtVlC274q+FegOdj/MEQyI2PxcYIAPyoXQuvfurYyBg==
   dependencies:
     ethers "5.5.3"
     lodash "4.17.19"
-    synthetix "2.63.0"
+    synthetix "2.63.1-alpha"
     web3-utils "1.2.11"
 
 "@synthetixio/js@2.41.0":
@@ -2946,36 +2946,37 @@
     "@eth-optimism/watcher" "^0.0.1-alpha.9"
     "@metamask/providers" "8.1.1"
 
-"@synthetixio/providers@2.63.0":
-  version "2.63.0"
-  resolved "https://registry.yarnpkg.com/@synthetixio/providers/-/providers-2.63.0.tgz#1f395565ac5a9967a27466bffa4c732b1ecfcf9a"
-  integrity sha512-AuVQgP7F8mKJzJyo8X3qk43j6BK2h5Vzl/OAm5T4vibhZFJH/ER4iw8x7uKb0dyuWUS7I1OpG66/NZqzpavg7g==
+"@synthetixio/providers@2.63.1-alpha":
+  version "2.63.1-alpha"
+  resolved "https://registry.yarnpkg.com/@synthetixio/providers/-/providers-2.63.1-alpha.tgz#1407f488ce2711bcc683a12c3d196867a4fcf82d"
+  integrity sha512-hvoo/H3+xNoq2qnfdfV1wHFZIa2/lUU5d8nqtHbtymmZz7PcosAu3D7DjOKVkZl9bmeQ53UGYoaFuPt1XQZAnA==
   dependencies:
     "@eth-optimism/provider" "0.0.1-alpha.14"
-    "@synthetixio/contracts-interface" "2.63.0"
+    "@synthetixio/contracts-interface" "2.63.1-alpha"
     "@synthetixio/optimism-networks" "2.61.2"
     ethers "5.5.3"
 
-"@synthetixio/queries@2.63.0":
-  version "2.63.0"
-  resolved "https://registry.yarnpkg.com/@synthetixio/queries/-/queries-2.63.0.tgz#92a4fe86ae179b182368f65a045b0db88f11d519"
-  integrity sha512-PZ4RBxhZp7+cQic6C+lzbmsLAxSVYAaLuUD+1U8hCopmhwAQfDb0ihSQletafEdDcRc806sSbZd7o2JLuIcZow==
+"@synthetixio/queries@0.0.0-e8bd2ec":
+  version "0.0.0-e8bd2ec"
+  resolved "https://registry.yarnpkg.com/@synthetixio/queries/-/queries-0.0.0-e8bd2ec.tgz#2ddb7728912f846ae022944f193ed1a53e029e28"
+  integrity sha512-knRBWM1dUkTo+gM6toGPRgmGU+tgz73RU8C2L7326Ns5WPxON1KQHrp+wcVd8neMLrvTWNUmb2j9ceO6CElJtQ==
   dependencies:
     "@snapshot-labs/snapshot.js" "0.3.22"
-    "@synthetixio/contracts-interface" "2.63.0"
+    "@synthetixio/contracts-interface" "2.63.1-alpha"
     "@synthetixio/optimism-networks" "2.61.2"
-    "@synthetixio/providers" "2.63.0"
+    "@synthetixio/providers" "2.63.1-alpha"
     "@synthetixio/transaction-notifier" "2.61.2"
     "@synthetixio/wei" "2.61.2"
     axios "0.21.1"
     bignumber.js "9.0.1"
-    codegen-graph-ts "0.1.2"
+    codegen-graph-ts "0.1.4"
     date-fns "2.19.0"
     ethcall "3.3.0"
     ethers "5.5.3"
     graphql "15.5.0"
     graphql-request "3.4.0"
     lodash "4.17.19"
+    patch-package "^6.4.7"
 
 "@synthetixio/synpress@0.9.25-beta.12":
   version "0.9.25-beta.12"
@@ -3030,10 +3031,18 @@
     ethers "5.5.3"
     lodash "4.17.19"
 
-"@synthetixio/wei@2.61.2", "@synthetixio/wei@^2.47.0-ovm.5":
+"@synthetixio/wei@2.61.2":
   version "2.61.2"
   resolved "https://registry.yarnpkg.com/@synthetixio/wei/-/wei-2.61.2.tgz#74f75e7dc3a70f1ef2364a95c3b41cfc17362f93"
   integrity sha512-NvvM2uo2wq/N0iAbPVM8qObAbAhBmetHcexdfaMFsLgQBqkOzaU1ogFtUyRPG5yAdb/33dKFVLj6sQ7d2fj84g==
+  dependencies:
+    big.js "6.1.1"
+    ethers "5.5.3"
+
+"@synthetixio/wei@^2.47.0-ovm.5":
+  version "2.57.3"
+  resolved "https://registry.yarnpkg.com/@synthetixio/wei/-/wei-2.57.3.tgz#9f0d760e45605e2105a7d5b0a915ed6812d8fbb4"
+  integrity sha512-RG+Om1fGIW48Spcq/n6zt42/32JnGEQewhpbtduL7i9fXir2W81+YLqraqztlMLE8RJwX+sDa+ngx5V/M72tsg==
   dependencies:
     big.js "6.1.1"
     ethers "5.5.3"
@@ -7530,10 +7539,10 @@ code-point-at@^1.0.0:
   resolved "https://registry.yarnpkg.com/code-point-at/-/code-point-at-1.1.0.tgz#0d070b4d043a5bea33a2f1a40e2edb3d9a4ccf77"
   integrity sha1-DQcLTQQ6W+ozovGkDi7bPZpMz3c=
 
-codegen-graph-ts@0.1.2:
-  version "0.1.2"
-  resolved "https://registry.yarnpkg.com/codegen-graph-ts/-/codegen-graph-ts-0.1.2.tgz#e71b9800b010429de481c57a2a0d5b6a12e53a8f"
-  integrity sha512-eAppxHX1Ovnb8TQEP2DgQPQR7diSa8D7Fknxe+ehAGpqi3CZZSdZRBY5VXMzN5DapIPOpl8MyEeHp5RpDfvtJA==
+codegen-graph-ts@0.1.4:
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/codegen-graph-ts/-/codegen-graph-ts-0.1.4.tgz#79ac1b72c9bf21b4fbfc0b10a8009b0600272981"
+  integrity sha512-/O5B9CTzIhCLp+gj3njgtvkFq1CqMMWIX9W3aeg3U41ZwZ8vjkPYKbmxCoHspmMHYgWOgmyK9R/kPrMU/MKLRA==
   dependencies:
     "@synthetixio/wei" "^2.47.0-ovm.5"
     axios "^0.24.0"
@@ -15847,7 +15856,7 @@ pascalcase@^1.0.0:
   resolved "https://registry.yarnpkg.com/pascalcase/-/pascalcase-1.0.0.tgz#d2fd7d73f2969606d2b56e17f5261be41c43c381"
   integrity sha512-BSExi0rRnCHReJys6NocaK+cfTXNinAegfWBvr0JD3hiaEG7Nuc7r0CIdOJunXrs8gU/sbHQ9dxVAtiVQisjmg==
 
-patch-package@6.4.7:
+patch-package@^6.4.7:
   version "6.4.7"
   resolved "https://registry.yarnpkg.com/patch-package/-/patch-package-6.4.7.tgz#2282d53c397909a0d9ef92dae3fdeb558382b148"
   integrity sha512-S0vh/ZEafZ17hbhgqdnpunKDfzHQibQizx9g8yEf5dcVk3KOflOfdufRXQX8CSEkyOQwuM/bNz1GwKvFj54kaQ==
@@ -19052,10 +19061,10 @@ synthetix@2.49.0:
     solidity-parser-antlr "^0.4.11"
     web3-utils "1.2.2"
 
-synthetix@2.63.0:
-  version "2.63.0"
-  resolved "https://registry.yarnpkg.com/synthetix/-/synthetix-2.63.0.tgz#2fd232f6b9f8b919d6baf1413bfe8bda500bc6c8"
-  integrity sha512-2qRqIMVk0tdQyIqYw5kUVZ8GR/VnuSO6OZnrF0/lYcxzwGCVzb1iaCsTbazY+o6AsWQgtz6F5Fyvgnt89wqlGg==
+synthetix@2.63.1-alpha:
+  version "2.63.1-alpha"
+  resolved "https://registry.yarnpkg.com/synthetix/-/synthetix-2.63.1-alpha.tgz#85fbaa3cfe82aaa64898480c8acd5e92f18ab9c1"
+  integrity sha512-+HR8sA66ouOUCexaRcVtOX1DGt9ogFw/8dG44gTBlGK/FePnu9MYA2VvcyzKTSYpcUh48sO5gdNWXLoA84GcVQ==
   dependencies:
     abi-decoder "2.3.0"
     commander "8.1.0"
