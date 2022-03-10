@@ -71,7 +71,7 @@ function Pool() {
 				/>
 				<StyledLPBalance
 					title={t('pool.stats.APR')}
-					value={`${rates.data?.apy.toFixed(2) || 2}%`}
+					value={`${rates.data?.apy.toFixed(2) || '-'}%`}
 					size="lg"
 					main
 				/>

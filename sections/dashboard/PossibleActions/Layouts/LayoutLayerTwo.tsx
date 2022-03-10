@@ -95,7 +95,7 @@ const LayoutLayerTwo: FC = () => {
 			},
 			{
 				title: t('dashboard.actions.earn.title', {
-					percent: `${rates.data?.apy.toFixed(2) || 2}%`,
+					percent: `${rates.data?.apy.toFixed(2) || '-'}%`,
 				}),
 				copy: t('dashboard.actions.earn.copy', { asset: 'WETH-SNX', supplier: 'Sorbet Finance' }),
 				icon: (

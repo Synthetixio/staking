@@ -3,9 +3,9 @@ import { BigNumber, ethers, providers } from 'ethers';
 import Connector from 'containers/Connector';
 import Wei, { wei } from '@synthetixio/wei';
 import { fetchAPRs } from './GUniAPRCalcualation';
+import { WETHSNXLPTokenContract } from 'constants/gelato';
 
 const ONE_YEAR_SECONDS = 365 * 24 * 3600;
-const GELATO_POOL_ADDRESS = '0x83bEeFB4cA39af649D03969B442c0E9F4E1732D8'; // WETH/SNX
 export const GELATO_POOL_ABI = [
 	{
 		inputs: [],
@@ -73,7 +73,7 @@ export const useGetUniswapStakingRewardsAPY = ({
 			try {
 				if (provider) {
 					const GelatoPoolContract = new ethers.Contract(
-						GELATO_POOL_ADDRESS,
+						'0x83bEeFB4cA39af649D03969B442c0E9F4E1732D8',
 						GELATO_POOL_ABI,
 						provider
 					);
@@ -120,8 +120,10 @@ export const useGetUniswapStakingRewardsAPY = ({
 						.add(amount1CurrentWei.mul(snxRate));
 					const gUNIPrice = wei(totalValueInPool).div(wei(gUNITotalSupply));
 					if (periodFinish.toNumber() < new Date().getTime()) {
-						const gUNIPoolAddress = '0x83bEeFB4cA39af649D03969B442c0E9F4E1732D8'.toLowerCase();
-						const result = await fetchAPRs(provider as providers.Web3Provider, gUNIPoolAddress);
+						const result = await fetchAPRs(
+							provider as providers.Web3Provider,
+							WETHSNXLPTokenContract.address.toLowerCase()
+						);
 						return {
 							eth: amount0CurrentWei.toNumber(),
 							snx: amount1CurrentWei.toNumber(),
