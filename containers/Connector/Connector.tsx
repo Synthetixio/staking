@@ -130,9 +130,9 @@ const useConnector = () => {
 			infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
 			provider: window.ethereum as any, // loadProvider as incorrect types for provider
 		});
-		if (provider && address && networkId === 1) {
-			const ensName: string = await provider.lookupAddress(address);
-			let avatar = ensName ? await provider.getAvatar(ensName) : null;
+		if (address) {
+			const ensName: string | null = await L1DefaultProvider.lookupAddress(address);
+			let avatar = ensName ? await L1DefaultProvider.getAvatar(ensName) : null;
 			setEnsName(ensName);
 			setEnsAvatar(avatar);
 		}
