@@ -34,20 +34,21 @@ const queryClient = new QueryClient({
 });
 
 const InnerApp: FC<AppProps> = ({ Component, pageProps }) => {
-	const { provider, signer, network } = Connector.useContainer();
+	const { provider, signer, network, L1DefaultProvider } = Connector.useContainer();
 
 	return (
 		<>
 			<SynthetixQueryContextProvider
 				value={
-					provider && network
+					provider && network?.id
 						? createQueryContext({
 								provider: provider,
 								signer: signer || undefined,
-								networkId: network!.id,
+								networkId: network.id,
 						  })
 						: createQueryContext({
-								networkId: null,
+								networkId: 1,
+								provider: L1DefaultProvider,
 						  })
 				}
 			>

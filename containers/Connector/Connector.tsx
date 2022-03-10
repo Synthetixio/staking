@@ -15,7 +15,7 @@ import {
 	NetworkNameById,
 	NetworkIdByName,
 } from '@synthetixio/contracts-interface';
-import { ethers } from 'ethers';
+import { ethers, providers } from 'ethers';
 import { switchToL1 } from '@synthetixio/optimism-networks';
 
 import { appReadyState } from 'store/app';
@@ -41,6 +41,18 @@ import { useMemo } from 'react';
 const useConnector = () => {
 	const [network, setNetwork] = useRecoilState(networkState);
 	const [provider, setProvider] = useState<ethers.providers.Provider | null>(null);
+	const L1DefaultProvider: providers.InfuraProvider = loadProvider({
+		infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID
+			? process.env.NEXT_PUBLIC_INFURA_PROJECT_ID
+			: '0',
+		networkId: NetworkIdByName.mainnet,
+	});
+	const L2DefaultProvider: providers.InfuraProvider = loadProvider({
+		infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID
+			? process.env.NEXT_PUBLIC_INFURA_PROJECT_ID
+			: '0',
+		networkId: NetworkIdByName['mainnet-ovm'],
+	});
 	const [signer, setSigner] = useState<ethers.Signer | null>(null);
 	const [synthetixjs, setSynthetixjs] = useState<SynthetixJS | null>(null);
 	const [onboard, setOnboard] = useState<ReturnType<typeof initOnboard> | null>(null);
@@ -63,6 +75,7 @@ const useConnector = () => {
 
 		return [keyBy(synthetixjs.synths, 'name'), keyBy(synthetixjs.tokens, 'symbol')];
 	}, [synthetixjs]);
+
 	useEffect(() => {
 		const init: () => void = async () => {
 			if (!window.ethereum || selectedWallet !== 'Browser Wallet') {
@@ -111,15 +124,9 @@ const useConnector = () => {
 
 	const setUserAddress = async (address: string) => {
 		setWalletAddress(address);
-		const networkId = await getDefaultNetworkId();
-		const provider = loadProvider({
-			networkId,
-			infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
-			provider: window.ethereum as any, // loadProvider as incorrect types for provider
-		});
-		if (provider && address) {
-			const ensName: string = await provider.lookupAddress(address);
-			let avatar = ensName ? await provider.getAvatar(ensName) : null;
+		if (address) {
+			const ensName: string | null = await L1DefaultProvider.lookupAddress(address);
+			let avatar = ensName ? await L1DefaultProvider.getAvatar(ensName) : null;
 			setEnsName(ensName);
 			setEnsAvatar(avatar);
 		}
@@ -282,6 +289,8 @@ const useConnector = () => {
 		transactionNotifier,
 		selectedWallet,
 		getTokenAddress,
+		L1DefaultProvider,
+		L2DefaultProvider,
 	};
 };
 
