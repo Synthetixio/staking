@@ -114,7 +114,9 @@ const useBurnTx = () => {
 	});
 
 	const txn = useSynthetixTxn('Synthetix', burnCall[0], burnCall[1], gasPrice, {
-		enabled: burnType !== BurnActionType.CLEAR || !needToBuy || swapTxn.txnStatus === 'confirmed',
+		enabled:
+			(burnType !== BurnActionType.CLEAR || !needToBuy || swapTxn.txnStatus === 'confirmed') &&
+			Boolean(amountToBurnBN),
 	});
 
 	useEffect(() => {
