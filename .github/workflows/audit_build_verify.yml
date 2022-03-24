@@ -100,6 +100,15 @@ jobs:
         with:
           name: build
           path: build.tar.gz
+      
+      - name: Build dispersed 
+        run: npx dispersed bundle synthetix-dispersed-staking ./out
+
+      - name: Archive dispersed binary
+        uses: actions/upload-artifact@v3
+        with:
+          name: synthetix-dispersed-staking
+          path: synthetix-dispersed-staking
 
   e2e:
     needs: build
