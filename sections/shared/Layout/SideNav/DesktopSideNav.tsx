@@ -44,7 +44,6 @@ const DesktopSideNav: FC = () => {
 	const { useSNXData } = useSynthetixQueries();
 	const { L1DefaultProvider } = Connector.useContainer();
 	const lockedSNXQuery = useSNXData(L1DefaultProvider);
-
 	const tRatio = useMemo(() => {
 		if (lockedSNXQuery?.data?.lockedSupply?.gt(1) && lockedSNXQuery?.data?.totalSNXSupply) {
 			return lockedSNXQuery.data.lockedSupply
@@ -78,7 +77,7 @@ const DesktopSideNav: FC = () => {
 					<BalanceItem amount={snxBalance} currencyKey={CryptoCurrency.SNX} />
 					<BalanceItem amount={sUSDBalance} currencyKey={Synths.sUSD} />
 					<StyledTargetStakingRatio>
-						<StyledTargetStakingRatioTitle>Staking Ratio</StyledTargetStakingRatioTitle>
+						<StyledTargetStakingRatioTitle>Staking %</StyledTargetStakingRatioTitle>
 						{tRatio ? tRatio : '0.00'}%
 					</StyledTargetStakingRatio>
 					<Tooltip content={t('common.price-change.seven-days')}>
