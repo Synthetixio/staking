@@ -18,6 +18,7 @@ export const EXTERNAL_LINKS = {
 		OEBlog: 'https://blog.synthetix.io/l2-mainnet-launch/',
 		MintrL2: 'https://l2.mintr.synthetix.io',
 		HamalRelease: 'https://blog.synthetix.io/the-hamal-release/',
+		DebtPoolSynthesis: 'https://blog.synthetix.io/debt-pool-synthesis-2/',
 	},
 	Social: {
 		Twitter: 'https://twitter.com/synthetix_io',

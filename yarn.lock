@@ -2918,16 +2918,6 @@
   resolved "https://registry.yarnpkg.com/@synthetixio/assets/-/assets-2.0.12.tgz#641a7383a8d00ad6a9709f9b9f0323d9084ed379"
   integrity sha512-yUtd9cvpohmPtajsb4Cinntx6wt8XuG+W1o3PwsrLYKhSEiCR4Psuslel2QCntnsY38yqLPmPDjpPYdyezeaHQ==
 
-"@synthetixio/contracts-interface@2.64.2":
-  version "2.64.2"
-  resolved "https://registry.yarnpkg.com/@synthetixio/contracts-interface/-/contracts-interface-2.64.2.tgz#b33b4edb408ec6b3d5af70f2ee42e27c70fd6cc5"
-  integrity sha512-tKf1uJcUMHn0URV2LB6eKE5Bb5BoX46F07cR7qy2zgHtKPMEapvfea/gvTIewPKZIqHaOdC4BRvnjDIPUFBXqg==
-  dependencies:
-    ethers "5.5.3"
-    lodash "4.17.19"
-    synthetix "2.64.2"
-    web3-utils "1.2.11"
-
 "@synthetixio/contracts-interface@2.64.3":
   version "2.64.3"
   resolved "https://registry.yarnpkg.com/@synthetixio/contracts-interface/-/contracts-interface-2.64.3.tgz#29125f8144b85e5ec3ab3a061963b50b819f432a"
@@ -2948,14 +2938,6 @@
     synthetix "2.41.0"
     web3-utils "1.2.11"
 
-"@synthetixio/optimism-networks@2.63.1":
-  version "2.63.1"
-  resolved "https://registry.yarnpkg.com/@synthetixio/optimism-networks/-/optimism-networks-2.63.1.tgz#33ed3eb3bb34b9be4f010b05677a5faec75bde86"
-  integrity sha512-Na3RPbP9Udm86uvr2awNnN7GqZ+IaFewoQGLHEUKw43a1fn1LBIQDbHt8UdqTCWCrrXNEwIASNO1IOVYpbdIKQ==
-  dependencies:
-    "@eth-optimism/watcher" "^0.0.1-alpha.9"
-    "@metamask/providers" "8.1.1"
-
 "@synthetixio/optimism-networks@2.64.3":
   version "2.64.3"
   resolved "https://registry.yarnpkg.com/@synthetixio/optimism-networks/-/optimism-networks-2.64.3.tgz#0dddbf070699bb0cfd4ccd93dff4fbc2a1f1d085"
@@ -2963,16 +2945,6 @@
   dependencies:
     "@eth-optimism/watcher" "^0.0.1-alpha.9"
     "@metamask/providers" "8.1.1"
-
-"@synthetixio/providers@2.64.2":
-  version "2.64.2"
-  resolved "https://registry.yarnpkg.com/@synthetixio/providers/-/providers-2.64.2.tgz#b7cff49094f36a03e4428fe7fa327007e5ee384d"
-  integrity sha512-X3NL5lH8E5WhItVMmGa+4n8yw4jBIhdgjh97SJrVpyr5dsibFlYEiNz3/SM0L0euaA3GjnXHqZ40EFOck8MtVA==
-  dependencies:
-    "@eth-optimism/provider" "0.0.1-alpha.14"
-    "@synthetixio/contracts-interface" "2.64.2"
-    "@synthetixio/optimism-networks" "2.63.1"
-    ethers "5.5.3"
 
 "@synthetixio/providers@2.64.3":
   version "2.64.3"
@@ -3050,14 +3022,6 @@
     start-server-and-test "1.13.1"
     synthetix-js "2.49.0"
 
-"@synthetixio/transaction-notifier@2.63.1":
-  version "2.63.1"
-  resolved "https://registry.yarnpkg.com/@synthetixio/transaction-notifier/-/transaction-notifier-2.63.1.tgz#0f8f3899fe1ec4c0967dff2fc67220d58eff6f89"
-  integrity sha512-pDnBl7zSjO1/DxahuuaeBXtkcy5TYIMdboJdrpAAbwsoeq3GxTE/89aycW2zOkjwIE6VQNrMu4CDUW1BvaOQZA==
-  dependencies:
-    ethers "5.5.3"
-    lodash "4.17.19"
-
 "@synthetixio/transaction-notifier@2.64.3":
   version "2.64.3"
   resolved "https://registry.yarnpkg.com/@synthetixio/transaction-notifier/-/transaction-notifier-2.64.3.tgz#6c1fe76066d628661f7585af68246b3a93f09f16"
@@ -3065,14 +3029,6 @@
   dependencies:
     ethers "5.5.3"
     lodash "4.17.19"
-
-"@synthetixio/wei@2.63.1":
-  version "2.63.1"
-  resolved "https://registry.yarnpkg.com/@synthetixio/wei/-/wei-2.63.1.tgz#24b1c84d0f0d33bf1ad20b86c2fd3f2b9bc4c40b"
-  integrity sha512-Muk/bpsCdaQIxlCgGXvXh067VNrPc4FBzb3B8OY0c36rs5G2fFjRCrzKjgabDoODEv6EET53HnhmrK0d21ftrQ==
-  dependencies:
-    big.js "6.1.1"
-    ethers "5.5.3"
 
 "@synthetixio/wei@2.64.3":
   version "2.64.3"
