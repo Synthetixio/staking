@@ -147,7 +147,9 @@ const DebtTabs: FC<DebtTabsProps> = ({
 					<BottomContainer>
 						<DebtPieChartContainer>
 							<ContainerHeader>
-								{t('debt.actions.hedge.info.debt-pool-pie-chart.title')}
+								{t('debt.actions.hedge.info.debt-pool-pie-chart.title', {
+									network: isL2 ? 'L2' : 'L1',
+								})}
 							</ContainerHeader>
 							<ContainerBody style={{ padding: '24px 0' }}>
 								<DebtPieChart

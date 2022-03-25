@@ -455,7 +455,7 @@
 				"connect": "To hedge your position, connect your wallet",
 				"info": {
 					"debt-pool-pie-chart": {
-						"title": "Global Debt Pool"
+						"title": "{{network}} Debt Pool"
 					},
 					"portfolio-table": {
 						"title": "Your Portfolio",
