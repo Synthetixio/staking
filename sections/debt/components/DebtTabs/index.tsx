@@ -3,7 +3,7 @@ import React, { FC, ReactNode, useState, useEffect, Dispatch, SetStateAction } f
 import { Svg } from 'react-optimized-image';
 import { Trans, useTranslation } from 'react-i18next';
 
-import { FlexDiv, FlexDivCol, Tooltip } from 'styles/common';
+import { FlexDiv, FlexDivCol, Tooltip, FlexDivCentered } from 'styles/common';
 import media from 'styles/media';
 import { TabButton, TabList, TabPanelContainer } from '../../../../components/Tab';
 import DebtHedgingInfoPanel from '../DebtHedgingInfoPanel';
@@ -17,7 +17,10 @@ import Info from 'assets/svg/app/info.svg';
 import { wei } from '@synthetixio/wei';
 import useSynthetixQueries from '@synthetixio/queries';
 import { useRecoilValue } from 'recoil';
-import { isMainnetState, walletAddressState } from 'store/wallet';
+import { isL2State, isMainnetState, walletAddressState } from 'store/wallet';
+import { Title, Subtitle, StyledLink, InfoContainer } from 'sections/staking/components/common';
+import { EXTERNAL_LINKS } from 'constants/links';
+import Warning from 'assets/svg/app/warning.svg';
 
 export type TabInfo = {
 	title: string;
@@ -48,6 +51,8 @@ const DebtTabs: FC<DebtTabsProps> = ({
 }) => {
 	const { t } = useTranslation();
 	const [activeTab, setActiveTab] = useState<string>(currentPanel ? currentPanel : tabData[0].key);
+	const isL2 = useRecoilValue(isL2State);
+
 	useEffect(() => {
 		if (currentPanel) {
 			setActiveTab(currentPanel);
@@ -122,55 +127,76 @@ const DebtTabs: FC<DebtTabsProps> = ({
 				</TopContainer>
 			)}
 			{activeTab === DebtPanelType.OVERVIEW && (
-				<BottomContainer>
-					<DebtPieChartContainer>
-						<ContainerHeader>
-							{t('debt.actions.hedge.info.debt-pool-pie-chart.title')}
-						</ContainerHeader>
-						<ContainerBody style={{ padding: '24px 0' }}>
-							<DebtPieChart
-								data={totalSupply}
-								isLoaded={synthsTotalSupplyQuery.isSuccess}
-								isLoading={synthsTotalSupplyQuery.isLoading}
-							/>
-						</ContainerBody>
-					</DebtPieChartContainer>
-					<PortfolioContainer>
-						<ContainerHeader>
-							<ContainerHeaderSection>
-								<span>{t('debt.actions.hedge.info.portfolio-table.title')}</span>
-								<DebtInfoTooltip
-									arrow={false}
-									content={
-										<Trans
-											i18nKey="debt.actions.hedge.info.tooltip"
-											components={[<Strong />]}
-										></Trans>
-									}
-								>
-									<TooltipIconContainer>
-										<ResizedInfoIcon src={Info} />
-									</TooltipIconContainer>
-								</DebtInfoTooltip>
-							</ContainerHeaderSection>
-						</ContainerHeader>
-						<ContainerBody style={{ padding: '24px 14px' }}>
-							<PortfolioTable
-								synthBalances={synthAssets}
-								cryptoBalances={cryptoBalances.balances}
-								synthsTotalSupply={totalSupply}
-								isLoading={synthsBalancesQuery.isLoading}
-								isLoaded={synthsBalancesQuery.isSuccess}
-								synthsTotalValue={totalSynthValue ?? wei(0)}
-							/>
-						</ContainerBody>
-					</PortfolioContainer>
-				</BottomContainer>
+				<>
+					<StyledInfoConainer>
+						<Title>
+							<FlexDivCentered>
+								<Svg style={{ marginRight: '5px' }} width="26px" height="21px" src={Warning} />{' '}
+								{t('debt.debt-pool-synthesis.title')}
+							</FlexDivCentered>
+						</Title>
+						<Subtitle>
+							{t('debt.debt-pool-synthesis.body', { network: isL2 ? 'L2' : 'L1' })}
+						</Subtitle>
+						<Subtitle>
+							<StyledLink href={EXTERNAL_LINKS.Synthetix.DebtPoolSynthesis}>
+								{t('debt.debt-pool-synthesis.link-text')}
+							</StyledLink>
+						</Subtitle>
+					</StyledInfoConainer>
+					<BottomContainer>
+						<DebtPieChartContainer>
+							<ContainerHeader>
+								{t('debt.actions.hedge.info.debt-pool-pie-chart.title')}
+							</ContainerHeader>
+							<ContainerBody style={{ padding: '24px 0' }}>
+								<DebtPieChart
+									data={totalSupply}
+									isLoaded={synthsTotalSupplyQuery.isSuccess}
+									isLoading={synthsTotalSupplyQuery.isLoading}
+								/>
+							</ContainerBody>
+						</DebtPieChartContainer>
+						<PortfolioContainer>
+							<ContainerHeader>
+								<ContainerHeaderSection>
+									<span>{t('debt.actions.hedge.info.portfolio-table.title')}</span>
+									<DebtInfoTooltip
+										arrow={false}
+										content={
+											<Trans
+												i18nKey="debt.actions.hedge.info.tooltip"
+												components={[<Strong />]}
+											></Trans>
+										}
+									>
+										<TooltipIconContainer>
+											<ResizedInfoIcon src={Info} />
+										</TooltipIconContainer>
+									</DebtInfoTooltip>
+								</ContainerHeaderSection>
+							</ContainerHeader>
+							<ContainerBody style={{ padding: '24px 14px' }}>
+								<PortfolioTable
+									synthBalances={synthAssets}
+									cryptoBalances={cryptoBalances.balances}
+									synthsTotalSupply={totalSupply}
+									isLoading={synthsBalancesQuery.isLoading}
+									isLoaded={synthsBalancesQuery.isSuccess}
+									synthsTotalValue={totalSynthValue ?? wei(0)}
+								/>
+							</ContainerBody>
+						</PortfolioContainer>
+					</BottomContainer>
+				</>
 			)}
 		</>
 	);
 };
 
+const StyledInfoConainer = styled(InfoContainer)`
+	margin-bottom: 12px;
+`;
 export const TopContainer = styled.div<{ isManageTab: boolean }>`
 	${(props) =>
 		props.isManageTab
