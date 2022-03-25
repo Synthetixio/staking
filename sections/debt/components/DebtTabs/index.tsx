@@ -18,7 +18,7 @@ import { wei } from '@synthetixio/wei';
 import useSynthetixQueries from '@synthetixio/queries';
 import { useRecoilValue } from 'recoil';
 import { isL2State, isMainnetState, walletAddressState } from 'store/wallet';
-import { Title, Subtitle, StyledLink, InfoContainer } from 'sections/staking/components/common';
+import { Title, StyledLink, InfoContainer } from 'sections/staking/components/common';
 import { EXTERNAL_LINKS } from 'constants/links';
 import Warning from 'assets/svg/app/warning.svg';
 
@@ -287,6 +287,12 @@ const ResizedInfoIcon = styled(Svg)`
 
 const Strong = styled.strong`
 	font-family: ${(props) => props.theme.fonts.interBold};
+`;
+const Subtitle = styled.p`
+	font-family: ${(props) => props.theme.fonts.regular};
+	color: ${(props) => props.theme.colors.gray};
+	font-size: 14px;
+	margin: 8px 24px;
 `;
 
 export default DebtTabs;
