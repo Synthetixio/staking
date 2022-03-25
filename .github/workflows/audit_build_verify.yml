@@ -102,7 +102,7 @@ jobs:
           path: build.tar.gz
       
       - name: Build dispersed 
-        run: sudo yarn dispersed bundle synthetix-dispersed-staking ./out
+        run: yarn dispersed-bundle
 
       - name: Archive dispersed binary
         uses: actions/upload-artifact@v3
