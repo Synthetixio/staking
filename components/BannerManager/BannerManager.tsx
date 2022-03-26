@@ -64,7 +64,19 @@ const BannerManager: FC = () => {
 				}
 			/>
 		);
-	} else if (!isL2 && hasVotedForElectionsQuery.data && !hasVotedForElectionsQuery.data.hasVoted) {
+	}
+	if (new Date() < new Date('2022-04-02T00:00:00.000Z')) {
+		return (
+			<Banner
+				type={BannerType.ATTENTION}
+				localStorageKey={LOCAL_STORAGE_KEYS.RE_ELECTION_WARNING_VISIBLE}
+				message={
+					<Trans i18nKey={'user-menu.banner.re-election-warning'} components={[<Strong />]} />
+				}
+			/>
+		);
+	}
+	if (!isL2 && hasVotedForElectionsQuery.data && !hasVotedForElectionsQuery.data.hasVoted) {
 		return (
 			<Banner
 				type={BannerType.WARNING}
@@ -76,7 +88,8 @@ const BannerManager: FC = () => {
 				}
 			/>
 		);
-	} else if (!isL2 && hasClaimHistory) {
+	}
+	if (!isL2 && hasClaimHistory) {
 		return (
 			<Banner
 				type={BannerType.INFORMATION}
@@ -89,20 +102,19 @@ const BannerManager: FC = () => {
 				}
 			/>
 		);
-	} else {
-		return (
-			<Banner
-				type={BannerType.ATTENTION}
-				localStorageKey={LOCAL_STORAGE_KEYS.WARNING_URL_BANNER_VISIBLE}
-				message={
-					<Trans
-						i18nKey={'user-menu.banner.url-warning'}
-						components={[<StyledExternalLink href="https://staking.synthetix.io" />]}
-					/>
-				}
-			/>
-		);
 	}
+	return (
+		<Banner
+			type={BannerType.ATTENTION}
+			localStorageKey={LOCAL_STORAGE_KEYS.WARNING_URL_BANNER_VISIBLE}
+			message={
+				<Trans
+					i18nKey={'user-menu.banner.url-warning'}
+					components={[<StyledExternalLink href="https://staking.synthetix.io" />]}
+				/>
+			}
+		/>
+	);
 };
 
 const Strong = styled.strong`
