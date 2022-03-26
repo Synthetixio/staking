@@ -74,6 +74,19 @@ type StakingInputProps = {
 	sUSDNeededToBurn?: string;
 };
 
+const errorIsClearable = (errorMsg: string) => {
+	if (errorMsg.includes('Burning blocked until')) {
+		return false;
+	}
+	if (errorMsg.includes('Issuance is suspended')) {
+		return false;
+	}
+	if (errorMsg.includes('No debt to burn')) {
+		return false;
+	}
+	return true;
+};
+
 const StakingInput: React.FC<StakingInputProps> = ({
 	onSubmit,
 	inputValue,
@@ -131,6 +144,7 @@ const StakingInput: React.FC<StakingInputProps> = ({
 				</StyledCTA>
 			);
 		} else if (error) {
+			if (!errorIsClearable(error)) return null;
 			return (
 				<StyledCTA variant="primary" size="lg" onClick={() => resetTransaction()}>
 					{t('common.error.clear')}
