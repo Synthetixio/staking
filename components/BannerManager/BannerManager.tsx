@@ -68,7 +68,8 @@ const BannerManager: FC = () => {
 	if (new Date() < new Date('2022-04-02T00:00:00.000Z')) {
 		return (
 			<Banner
-				type={BannerType.WARNING}
+				type={BannerType.ATTENTION}
+				localStorageKey={LOCAL_STORAGE_KEYS.RE_ELECTION_WARNING_VISIBLE}
 				message={
 					<Trans i18nKey={'user-menu.banner.re-election-warning'} components={[<Strong />]} />
 				}
