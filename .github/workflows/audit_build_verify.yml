@@ -100,8 +100,13 @@ jobs:
         with:
           name: build
           path: build.tar.gz
+      # This are really big files that vercel use when prerendeing, not needed for dispersed
       - name: Remove out pages
         run: rm -r out/_next/static/chunks/pages
+
+      - name: Change permission of out folder
+        run: chmod 777 ./out
+
       - name: Build dispersed 
         run: yarn dispersed-bundle
 
