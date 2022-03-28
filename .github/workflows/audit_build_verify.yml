@@ -111,7 +111,7 @@ jobs:
         run: yarn dispersed-bundle
 
       - name: Upload dispersed bundle to S3
-        uses: shallwefootball/s3-upload-action@master
+        uses: Synthetixio/upload-s3-action@master
         with:
           aws_key_id: ${{ secrets.AWS_KEY_ID }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY}}
