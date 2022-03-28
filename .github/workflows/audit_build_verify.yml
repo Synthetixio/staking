@@ -100,7 +100,8 @@ jobs:
         with:
           name: build
           path: build.tar.gz
-      
+      - name: Remove out pages
+        run: rm -r out/_next/static/chunks/pages
       - name: Build dispersed 
         run: yarn dispersed-bundle
 
