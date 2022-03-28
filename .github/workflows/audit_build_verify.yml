@@ -116,7 +116,7 @@ jobs:
           aws_key_id: ${{ secrets.AWS_KEY_ID }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY}}
           aws_bucket: synthetix-staking-dispersed
-          source_dir: 'synthetix-staking-dispersed'
+          source_dir: 'dispersed-dist'
   
 
   e2e:
