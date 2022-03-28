@@ -110,11 +110,14 @@ jobs:
       - name: Build dispersed 
         run: yarn dispersed-bundle
 
-      - name: Archive dispersed binary
-        uses: actions/upload-artifact@v3
+      - name: Upload dispersed bundle to S3
+        uses: shallwefootball/s3-upload-action@master
         with:
-          name: synthetix-dispersed-staking
-          path: synthetix-dispersed-staking
+          aws_key_id: ${{ secrets.AWS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY}}
+          aws_bucket: synthetix-staking-dispersed
+          source_dir: 'synthetix-staking-dispersed'
+  
 
   e2e:
     needs: build
