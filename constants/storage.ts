@@ -3,5 +3,5 @@ export const LOCAL_STORAGE_KEYS = {
 	WATCHED_WALLETS: 'watchedWallets',
 	THALES_STAKING_INFO_VISIBLE: 'thalesStakingInfo',
 	WARNING_URL_BANNER_VISIBLE: 'isWarningUrlBannerVisible',
-	RE_ELECTION_WARNING_VISIBLE: 'reElectionWarningVisible',
+	RE_ELECTION_NEW_START_TIME: 'reElectionNewStartTimeVisible',
 };

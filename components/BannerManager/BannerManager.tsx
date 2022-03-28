@@ -69,9 +69,12 @@ const BannerManager: FC = () => {
 		return (
 			<Banner
 				type={BannerType.ATTENTION}
-				localStorageKey={LOCAL_STORAGE_KEYS.RE_ELECTION_WARNING_VISIBLE}
+				localStorageKey={LOCAL_STORAGE_KEYS.RE_ELECTION_NEW_START_TIME}
 				message={
-					<Trans i18nKey={'user-menu.banner.re-election-warning'} components={[<Strong />]} />
+					<Trans
+						i18nKey={'user-menu.banner.re-election-new-start-time'}
+						components={[<Strong />]}
+					/>
 				}
 			/>
 		);
