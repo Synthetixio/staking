@@ -3059,18 +3059,18 @@
     start-server-and-test "1.13.1"
     synthetix-js "2.56.1"
 
-"@synthetixio/transaction-notifier@2.64.3":
-  version "2.64.3"
-  resolved "https://registry.yarnpkg.com/@synthetixio/transaction-notifier/-/transaction-notifier-2.64.3.tgz#6c1fe76066d628661f7585af68246b3a93f09f16"
-  integrity sha512-D2kcDSFKcnS7mL0SnZlIHx97t6yMxPKE2YBhd2WULPJ24rz5IAt62RT5EUHq8hNzryBvRMJjfYG6WT2fwZSEjg==
-  dependencies:
-    ethers "5.5.3"
-    lodash "4.17.19"
-
 "@synthetixio/transaction-notifier@2.65.2":
   version "2.65.2"
   resolved "https://registry.yarnpkg.com/@synthetixio/transaction-notifier/-/transaction-notifier-2.65.2.tgz#7e1adbba81ec7fe412bb94aaac8737b34307e6e2"
   integrity sha512-KRNMWkRsmrQJ4oTFlbZz4w3EIpH80BaxnGwIj09X0py0LkHeoVmTSHKsVYtdGgPbPd/jeZecEvl9x+IvOsFPvA==
+  dependencies:
+    ethers "5.5.3"
+    lodash "4.17.19"
+
+"@synthetixio/transaction-notifier@2.66.0":
+  version "2.66.0"
+  resolved "https://registry.yarnpkg.com/@synthetixio/transaction-notifier/-/transaction-notifier-2.66.0.tgz#650cea9051e1ecd1a927f5a9d16936fc00659c66"
+  integrity sha512-NhXjqO9rvC+uHbV2K3ylO6UO5HObj9xy8Mjr/8BgQDOI0Gu9IKiaRPOfnNZfhYVJzCqnJoWIdrcFsSr42eQahQ==
   dependencies:
     ethers "5.5.3"
     lodash "4.17.19"

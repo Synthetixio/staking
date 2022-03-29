@@ -26,7 +26,7 @@
 		"@synthetixio/optimism-networks": "2.64.3",
 		"@synthetixio/providers": "2.65.0",
 		"@synthetixio/queries": "2.65.2",
-		"@synthetixio/transaction-notifier": "2.64.3",
+		"@synthetixio/transaction-notifier": "2.66.0",
 		"@synthetixio/wei": "2.64.3",
 		"@tippyjs/react": "4.1.0",
 		"@uniswap/router-sdk": "1.0.5",
