@@ -3075,14 +3075,6 @@
     ethers "5.5.3"
     lodash "4.17.19"
 
-"@synthetixio/wei@2.64.3":
-  version "2.64.3"
-  resolved "https://registry.yarnpkg.com/@synthetixio/wei/-/wei-2.64.3.tgz#f1e6dc8eb45b4aa8222f37edec968c388b2c53d0"
-  integrity sha512-7oFK1KaR4cwDONbR9GU46LmmK+7gf0qSLFrk1N2Ky49kfJ9U1PY0KkPsNlJm159KhwCh5oRd/i8OxABDbPielQ==
-  dependencies:
-    big.js "6.1.1"
-    ethers "5.5.3"
-
 "@synthetixio/wei@2.65.2":
   version "2.65.2"
   resolved "https://registry.yarnpkg.com/@synthetixio/wei/-/wei-2.65.2.tgz#5e5d9fec786c8c4e97acb212d4f82e24fd2c3a8a"
@@ -3091,10 +3083,10 @@
     big.js "6.1.1"
     ethers "5.5.3"
 
-"@synthetixio/wei@^2.47.0-ovm.5":
-  version "2.57.3"
-  resolved "https://registry.yarnpkg.com/@synthetixio/wei/-/wei-2.57.3.tgz#9f0d760e45605e2105a7d5b0a915ed6812d8fbb4"
-  integrity sha512-RG+Om1fGIW48Spcq/n6zt42/32JnGEQewhpbtduL7i9fXir2W81+YLqraqztlMLE8RJwX+sDa+ngx5V/M72tsg==
+"@synthetixio/wei@2.66.0", "@synthetixio/wei@^2.47.0-ovm.5":
+  version "2.66.0"
+  resolved "https://registry.yarnpkg.com/@synthetixio/wei/-/wei-2.66.0.tgz#cb4a5bae36623a89dcf976c1140f61e395f02e95"
+  integrity sha512-EqjVrMEwtlSZqHrssEgJb2If3he49XQA9cqKk2sBiFx7HQ2YqITHxZoSZa/uP26l55m63ydjBPfpNZWod+hlZw==
   dependencies:
     big.js "6.1.1"
     ethers "5.5.3"
