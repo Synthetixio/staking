@@ -18,6 +18,8 @@ import StakedValue from 'sections/shared/modals/StakedValueModal/StakedValueBox'
 import ActiveDebt from 'sections/shared/modals/DebtValueModal/DebtValueBox';
 import { useRecoilValue } from 'recoil';
 import { walletAddressState } from 'store/wallet';
+import useSynthetixQueries from '@synthetixio/queries';
+import Connector from 'containers/Connector';
 
 const DashboardPage: FC = () => {
 	const { t } = useTranslation();
@@ -25,6 +27,12 @@ const DashboardPage: FC = () => {
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
 	const { stakedValue, stakingAPR, debtBalance } = useUserStakingData(walletAddress);
 	const { setTitle } = UIContainer.useContainer();
+	const { useGetDebtL1, useGetDebtL2 } = useSynthetixQueries();
+	const { L1DefaultProvider, L2DefaultProvider } = Connector.useContainer();
+	const [l1, l2] = [useGetDebtL1(L1DefaultProvider), useGetDebtL2(L2DefaultProvider)];
+	useEffect(() => {
+		console.log(l1.data, l2.data);
+	}, [l1.isSuccess, l2.isSuccess]);
 	// header title
 	useEffect(() => {
 		setTitle('home');
