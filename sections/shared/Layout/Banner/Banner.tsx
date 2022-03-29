@@ -70,6 +70,8 @@ const Container = styled(FlexDivCentered)`
 const Inner = styled(FlexDivCentered)`
 	height: 100%;
 	position: relative;
+	justify-content: space-between;
+	width: 100%;
 `;
 
 const BarInfo = css`
@@ -96,17 +98,15 @@ const Message = styled.div`
 	padding: 0 28px 0 16px;
 	font-family: ${(props) => props.theme.fonts.condensedMedium};
 	font-size: 14px;
+	flex-grow: 1;
 `;
 
 const ButtonClose = styled.button`
-	position: absolute;
-	top: 50%;
-	transform: translateY(-50%);
-	right: 6px;
+	margin-right: 10px;
 	background: none;
 	border: none;
 	padding: 0;
-	height: 12px;
+	height: 16px;
 	outline: none;
 	cursor: pointer;
 `;
