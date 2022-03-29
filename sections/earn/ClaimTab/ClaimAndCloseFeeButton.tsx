@@ -23,7 +23,7 @@ const ClaimAndCloseFeeButton: React.FC<{
 	hasClaimed,
 	isCloseFeePeriodEnabled,
 	totalRewards,
-	// hasVoted,
+	hasVoted,
 }) => {
 	const { t } = useTranslation();
 	const router = useRouter();
@@ -37,7 +37,11 @@ const ClaimAndCloseFeeButton: React.FC<{
 				content={t('earn.actions.claim.ratio-notice')}
 				disabled={!canClaim || !isBelowCRatio}
 			>
-				{isBelowCRatio ? (
+				{!hasVoted ? (
+					<PaddedButton variant="primary" onClick={() => router.push(ROUTES.Gov.Home)}>
+						{t('earn.actions.claim.not-voted')}
+					</PaddedButton>
+				) : isBelowCRatio ? (
 					<PaddedButton variant="primary" onClick={() => router.push(ROUTES.Staking.Burn)}>
 						{t('earn.actions.claim.low-ratio')}
 					</PaddedButton>
