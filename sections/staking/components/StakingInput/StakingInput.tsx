@@ -84,6 +84,10 @@ const errorIsClearable = (errorMsg: string) => {
 	if (errorMsg.includes('No debt to burn')) {
 		return false;
 	}
+	if (errorMsg.includes('Amount to large')) {
+		// will be cleared when user changes the amount
+		return false;
+	}
 	return true;
 };
 
