@@ -2936,6 +2936,16 @@
     synthetix "2.66.0-alpha"
     web3-utils "1.2.11"
 
+"@synthetixio/contracts-interface@2.66.2":
+  version "2.66.2"
+  resolved "https://registry.yarnpkg.com/@synthetixio/contracts-interface/-/contracts-interface-2.66.2.tgz#7dc216f168fc6d9c71150c29522c454c1a611c94"
+  integrity sha512-cR6UAthASAAaRfu/+W4OM3ZoqTztdEXZVDbVl4crV2Sx/oI4Ia5wRHMQAj395ZXkIL+B2/AxkasT16hNUXizDQ==
+  dependencies:
+    ethers "5.5.3"
+    lodash "4.17.19"
+    synthetix "2.66.0-alpha"
+    web3-utils "1.2.11"
+
 "@synthetixio/js@2.41.0":
   version "2.41.0"
   resolved "https://registry.yarnpkg.com/@synthetixio/js/-/js-2.41.0.tgz#55e106868972e80e981a3354e520c2468dbc37fd"
@@ -2954,6 +2964,14 @@
     "@eth-optimism/watcher" "^0.0.1-alpha.9"
     "@metamask/providers" "8.1.1"
 
+"@synthetixio/optimism-networks@2.66.2":
+  version "2.66.2"
+  resolved "https://registry.yarnpkg.com/@synthetixio/optimism-networks/-/optimism-networks-2.66.2.tgz#d7100ce1085789a99da5dbec2f78b750302fbc39"
+  integrity sha512-L0cH2uZoX/vZt0ISQRVqP13E2kfKBqTfzMdV17ZtEZtm+Sj1prUA6QIaZ6vM1msqzTWF6Zyrv6lvP5FPU2hXnw==
+  dependencies:
+    "@eth-optimism/watcher" "^0.0.1-alpha.9"
+    "@metamask/providers" "8.1.1"
+
 "@synthetixio/providers@2.66.1-1":
   version "2.66.1-1"
   resolved "https://registry.yarnpkg.com/@synthetixio/providers/-/providers-2.66.1-1.tgz#17bf6fef8429969ced3f46e932a59ea5006e743c"
@@ -2962,6 +2980,16 @@
     "@eth-optimism/provider" "0.0.1-alpha.14"
     "@synthetixio/contracts-interface" "2.66.1-1"
     "@synthetixio/optimism-networks" "2.66.1-1"
+    ethers "5.5.3"
+
+"@synthetixio/providers@2.66.2":
+  version "2.66.2"
+  resolved "https://registry.yarnpkg.com/@synthetixio/providers/-/providers-2.66.2.tgz#115272888f8f5722a391ffb10eeb1d6b12b7195e"
+  integrity sha512-6k0cpbrxMXMrTBo8d5PFaHz61Q3g0G+s2+lYB1AmvrkXuDVWWdJ3L/0bTZub3jzU1TYdgjjOn7xW2eslrQlgxA==
+  dependencies:
+    "@eth-optimism/provider" "0.0.1-alpha.14"
+    "@synthetixio/contracts-interface" "2.66.2"
+    "@synthetixio/optimism-networks" "2.66.2"
     ethers "5.5.3"
 
 "@synthetixio/queries@2.66.1-1":
