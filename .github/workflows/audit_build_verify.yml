@@ -99,7 +99,7 @@ jobs:
         uses: actions/upload-artifact@6673cd052c4cd6fcf4b4e6e60ea986c889389535 # pin@v2
         with:
           name: build
-          path: build.tar.gz
+          path: build.tar.gz  
       # This are really big files that vercel use when prerendeing, not needed for dispersed
       - name: Remove out pages
         run: rm -r out/_next/static/chunks/pages
@@ -117,6 +117,7 @@ jobs:
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY}}
           aws_bucket: synthetix-staking-dispersed
           source_dir: 'dispersed-dist'
+          destination: '/'
   
 
   e2e:
