@@ -94,7 +94,10 @@ const InfoLayout: FC<InfoLayoutProps> = ({
 				<Subtitle>
 					<Trans
 						i18nKey={subtitle}
-						components={[<StyledLink href={EXTERNAL_LINKS.Synthetix.Litepaper} />]}
+						components={[
+							<StyledLink href={EXTERNAL_LINKS.Synthetix.StakingGuide} />,
+							<StyledLink href={EXTERNAL_LINKS.Synthetix.Litepaper} />,
+						]}
 					/>
 				</Subtitle>
 				{minStakeTimeSec && (
