@@ -40,7 +40,7 @@ const OverviewTab = () => {
 					</ContainerHeaderSection>
 				</ContainerHeader>
 				<ContainerBody>
-					<DebtChart data={historicalDebt.data} isLoading={dataIsLoading} />
+					<DebtChart data={historicalDebt.data} isLoading={false} />
 				</ContainerBody>
 			</Container>
 		</>

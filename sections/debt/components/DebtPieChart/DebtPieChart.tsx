@@ -48,9 +48,31 @@ type DebtPieChartProps = {
 
 const SynthsPieChart: FC<DebtPieChartProps> = ({ data, isLoaded, isLoading }) => {
 	const totalSupply = data ? data : undefined;
-
-	const pieData = useMemo(() => {
-		const supplyData = totalSupply?.supplyData ?? [];
+	console.log(data);
+	const pieData = [
+		{
+			name: 'sETH', // sETH
+			totalSupply: 50000, // number of the calculated synth,
+			poolProportion: 3, // for instance, sETH has 20% of the debt pool
+			value: 1231, // not sure yet @MF TODO
+			fillColor: MUTED_COLORS[0 % MUTED_COLORS.length], // increment the 0 with every entry by 1
+			strokeColor: BRIGHT_COLORS[0 % BRIGHT_COLORS.length], // increment the 0 with every entry by 1
+			skewValue: 0, //
+			skewValueChart: Math.abs(0), // absolute number
+		},
+		{
+			name: 'sBTC', // sETH
+			totalSupply: 50000, // number of the calculated synth,
+			poolProportion: 3, // for instance, sETH has 20% of the debt pool
+			value: 456, // not sure yet @MF TODO
+			fillColor: MUTED_COLORS[1 % MUTED_COLORS.length], // increment the 0 with every entry by 1
+			strokeColor: BRIGHT_COLORS[1 % BRIGHT_COLORS.length], // increment the 0 with every entry by 1
+			skewValue: 0, //
+			skewValueChart: Math.abs(0), // absolute number
+		},
+	];
+	/* useMemo(() => { 
+	const supplyData = totalSupply?.supplyData ?? [];
 		const sortedData = Object.values(supplyData).sort(synthDataSortFn);
 
 		const cutoffIndex = sortedData.findIndex((synth) =>
@@ -70,8 +92,7 @@ const SynthsPieChart: FC<DebtPieChartProps> = ({ data, isLoaded, isLoading }) =>
 				remainingSupply.totalSupply = remainingSupply.totalSupply.add(data.totalSupply);
 			}
 			topSynths.push(remainingSupply);
-		}
-		return topSynths.sort(synthDataSortFn).map((supply, index) => ({
+		} 	return  topSynths.sort(synthDataSortFn).map((supply, index) => ({
 			name: supply.name,
 			totalSupply: supply.totalSupply.toNumber(),
 			poolProportion: supply.poolProportion.toNumber(),
@@ -80,8 +101,9 @@ const SynthsPieChart: FC<DebtPieChartProps> = ({ data, isLoaded, isLoading }) =>
 			strokeColor: BRIGHT_COLORS[index % BRIGHT_COLORS.length],
 			skewValue: supply.skewValue,
 			skewValueChart: Math.abs(supply.skewValue.toNumber()),
-		}));
-	}, [totalSupply?.supplyData]);
+		}))
+	 	return  
+	 	}, []); */
 
 	return (
 		<SynthsPieChartContainer>
