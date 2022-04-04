@@ -15,7 +15,8 @@
 		"test:synpress:open": "env-cmd -f .env.local synpress open",
 		"test:e2e": "start-server-and-test 'yarn build && yarn start' http-get://localhost:3000 'synpress run'",
 		"test:e2e:ci": "synpress run --group smoke-tests --record --parallel",
-		"upgrade-synthetix": "yarn add @synthetixio/assets@latest @synthetixio/contracts-interface@latest @synthetixio/optimism-networks@latest @synthetixio/providers@latest @synthetixio/queries@latest @synthetixio/transaction-notifier@latest @synthetixio/wei@latest"
+		"upgrade-synthetix": "yarn add @synthetixio/assets@latest @synthetixio/contracts-interface@latest @synthetixio/optimism-networks@latest @synthetixio/providers@latest @synthetixio/queries@latest @synthetixio/transaction-notifier@latest @synthetixio/wei@latest",
+		"download-debt-data": "node download-debt-data.js"
 	},
 	"dependencies": {
 		"@artsy/fresnel": "1.8.0",

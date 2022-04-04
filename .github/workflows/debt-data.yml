@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download debt data
-        run: node download-debt-data.js
+        run: yarn download-debt-data
 
       - name: Upload dispersed bundle to S3
         uses: Synthetixio/upload-s3-action@master
