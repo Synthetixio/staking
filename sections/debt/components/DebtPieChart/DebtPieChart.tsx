@@ -1,12 +1,11 @@
-import { FC } from 'react';
+import { FC, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Wei from '@synthetixio/wei';
 
 import PieChart from 'components/PieChart';
 import DebtPoolTable from '../DebtPoolTable';
 import { SynthsTotalSupplyData } from '@synthetixio/queries';
-import { ExternalLink } from 'styles/common';
-import { pieData } from './state';
+import { createPieData } from './pie-data';
 import { formatCurrency } from 'utils/formatters/number';
 
 // const MIN_PERCENT_FOR_PIE_CHART = 0.03;
@@ -22,7 +21,15 @@ type DebtPieChartProps = {
 	isLoaded: boolean;
 };
 
-const SynthsPieChart: FC<DebtPieChartProps> = ({ data, isLoaded, isLoading }) => {
+const SynthsPieChart: FC<DebtPieChartProps> = () => {
+	const [data, setData] = useState<any>([]);
+	useEffect(() => {
+		fetch('https://synthetix-staking-dispersed.s3.amazonaws.com/debt-data/data.json')
+			.then((x) => x.json())
+			.then(createPieData)
+			.then((x) => x.filter((x) => x.name !== 'total_excluding_sUSD').sort(synthDataSortFn))
+			.then((x) => setData(x));
+	}, []);
 	//	const totalSupply = data ? data : undefined;
 	/* useMemo(() => { 
 	const supplyData = totalSupply?.supplyData ?? [];
@@ -60,25 +67,10 @@ const SynthsPieChart: FC<DebtPieChartProps> = ({ data, isLoaded, isLoading }) =>
 
 	return (
 		<SynthsPieChartContainer>
-			<PieChart
-				data={pieData.sort(synthDataSortFn)}
-				dataKey={'skewValueChart'}
-				tooltipFormatter={Tooltip}
-			/>
+			<PieChart data={data} dataKey={'skewValueChart'} tooltipFormatter={Tooltip} />
 			<TableWrapper>
-				<DebtPoolTable
-					synths={pieData.sort(synthDataSortFn)}
-					isLoading={isLoading}
-					isLoaded={isLoaded}
-				/>
+				<DebtPoolTable synths={data} isLoading={data.length === 0} isLoaded={data.length > 0} />
 			</TableWrapper>
-			<StyledLink>Last updated Friday, 1st of April 2022</StyledLink>
-			<StyledLink>
-				For more up to date data click{' '}
-				<ExternalLink href="https://www.dropbox.com/s/wuyt3qsm55hn7eo/data.csv?dl=0">
-					here
-				</ExternalLink>
-			</StyledLink>
 		</SynthsPieChartContainer>
 	);
 };
