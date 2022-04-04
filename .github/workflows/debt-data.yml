@@ -1,8 +1,8 @@
 name: Debt Data
 on:
+  workflow_dispatch:
   schedule:
-    # - cron: '0 */2 * * *' # every two hours
-    - cron: "*/5 * * * *" # every 5 min to test it
+    - cron: '0 */2 * * *' # every two hours
 
 jobs:
   job_schedule:
