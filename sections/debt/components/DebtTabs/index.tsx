@@ -58,7 +58,7 @@ const DebtTabs: FC<DebtTabsProps> = ({
 	const walletAddress = useRecoilValue(walletAddressState);
 	const isMainnet = useRecoilValue(isMainnetState);
 
-	const { useSynthsBalancesQuery, useSynthsTotalSupplyQuery } = useSynthetixQueries();
+	const { useSynthsBalancesQuery /*useSynthsTotalSupplyQuery*/ } = useSynthetixQueries();
 
 	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
 	const synthBalances =
@@ -72,8 +72,10 @@ const DebtTabs: FC<DebtTabsProps> = ({
 		? synthsBalancesQuery.data?.totalUSDBalance ?? wei(0)
 		: wei(0);
 
-	const synthsTotalSupplyQuery = useSynthsTotalSupplyQuery();
-	const totalSupply = synthsTotalSupplyQuery?.data;
+	// const synthsTotalSupplyQuery = useSynthsTotalSupplyQuery();
+	// const totalSupply = synthsTotalSupplyQuery?.data;
+	const totalSupply = undefined;
+
 	const isManageTab = activeTab === DebtPanelType.MANAGE;
 	return (
 		<>
@@ -130,11 +132,7 @@ const DebtTabs: FC<DebtTabsProps> = ({
 								{t('debt.actions.hedge.info.debt-pool-pie-chart.title')}
 							</ContainerHeader>
 							<ContainerBody style={{ padding: '24px 0' }}>
-								<DebtPieChart
-									data={totalSupply}
-									isLoaded={synthsTotalSupplyQuery.isSuccess}
-									isLoading={synthsTotalSupplyQuery.isLoading}
-								/>
+								<DebtPieChart data={totalSupply} isLoaded={true} isLoading={false} />
 							</ContainerBody>
 						</DebtPieChartContainer>
 						<PortfolioContainer>
