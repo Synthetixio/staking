@@ -1,0 +1,19 @@
+on:
+  schedule:
+    - cron: '0 */2 * * *' # every two hours
+
+jobs:
+  job_schedule:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download debt data
+        run: node download-debt-data.js
+
+      - name: Upload dispersed bundle to S3
+        uses: Synthetixio/upload-s3-action@master
+        with:
+          aws_key_id: ${{ secrets.AWS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY}}
+          aws_bucket: synthetix-staking-dispersed
+          source_dir: 'debt-data'
+          destination_dir: 'debt-data'
