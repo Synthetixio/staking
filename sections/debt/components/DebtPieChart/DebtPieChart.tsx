@@ -103,8 +103,4 @@ const StyledTooltip = styled.div<{ isNeg: boolean }>`
 	color: ${(props) => (props.isNeg ? props.theme.colors.red : props.theme.colors.white)};
 `;
 
-const StyledLink = styled.div`
-	text-align: center;
-`;
-
 export default SynthsPieChart;

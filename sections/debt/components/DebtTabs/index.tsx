@@ -263,11 +263,5 @@ const ResizedInfoIcon = styled(Svg)`
 const Strong = styled.strong`
 	font-family: ${(props) => props.theme.fonts.interBold};
 `;
-const Subtitle = styled.p`
-	font-family: ${(props) => props.theme.fonts.regular};
-	color: ${(props) => props.theme.colors.gray};
-	font-size: 14px;
-	margin: 8px 24px;
-`;
 
 export default DebtTabs;

@@ -18,8 +18,6 @@ import StakedValue from 'sections/shared/modals/StakedValueModal/StakedValueBox'
 import ActiveDebt from 'sections/shared/modals/DebtValueModal/DebtValueBox';
 import { useRecoilValue } from 'recoil';
 import { walletAddressState } from 'store/wallet';
-import Connector from 'containers/Connector';
-import useSynthetixQueries from '@synthetixio/queries';
 
 const DashboardPage: FC = () => {
 	const { t } = useTranslation();
