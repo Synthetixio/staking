@@ -409,11 +409,6 @@
 	},
 	"debt": {
 		"page-title": "Debt | Synthetix Staking",
-		"debt-pool-synthesis": {
-			"title": "Debt pool synthesis",
-			"body": "The debt pools are now merged, but the below values are only for {{network}} debt pool. To know how to hedge your debt, both Optimism and Mainnet need to be taken into account. A new version of this page will be released soon.",
-			"link-text": "Read more here"
-		},
 		"actions": {
 			"track": {
 				"title": "Overview",
@@ -455,7 +450,7 @@
 				"connect": "To hedge your position, connect your wallet",
 				"info": {
 					"debt-pool-pie-chart": {
-						"title": "{{network}} Debt Pool"
+						"title": "Global Debt Pool"
 					},
 					"portfolio-table": {
 						"title": "Your Portfolio",

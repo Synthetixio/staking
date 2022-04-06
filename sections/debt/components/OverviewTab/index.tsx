@@ -16,7 +16,6 @@ const OverviewTab = () => {
 	const walletAddress = useRecoilValue(walletAddressState);
 
 	const historicalDebt = useHistoricalDebtData(walletAddress);
-	const dataIsLoading = historicalDebt?.isLoading ?? true;
 
 	return (
 		<>
@@ -40,7 +39,7 @@ const OverviewTab = () => {
 					</ContainerHeaderSection>
 				</ContainerHeader>
 				<ContainerBody>
-					<DebtChart data={historicalDebt.data} isLoading={dataIsLoading} />
+					<DebtChart data={historicalDebt.data} isLoading={false} />
 				</ContainerBody>
 			</Container>
 		</>
