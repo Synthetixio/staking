@@ -55,7 +55,7 @@ export const createPieData = (spreadsheetData: SpreadsheetData) => {
 		poolProportion: parseFloat(x.debt_in_percent) / 100,
 		value: parseFloat(x.price),
 		skewValue: parseFloat(x.debt_in_usd),
-		skewValueChart: parseFloat(x.debt_in_usd),
+		skewValueChart: Math.abs(parseFloat(x.debt_in_usd)),
 		fillColor: MUTED_COLORS[i % MUTED_COLORS.length], // increment the 0 with every entry by 1
 		strokeColor: BRIGHT_COLORS[i % BRIGHT_COLORS.length], // increment the 0 with every entry by 1
 	}));
