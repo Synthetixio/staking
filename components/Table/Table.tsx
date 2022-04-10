@@ -98,19 +98,19 @@ export const Table: FC<TableProps> = ({
 									{column.render('Header')}
 									{column.sortable && (
 										<SortIconContainer>
-											{column.isSorted ? (
-												column.isSortedDesc ? (
-													<StyledSortIcon
-														src={SortDownIcon}
-														viewBox={`0 0 ${SortDownIcon.width} ${SortDownIcon.height}`}
-													/>
-												) : (
-													<StyledSortIcon
-														src={SortUpIcon}
-														viewBox={`0 0 ${SortUpIcon.width} ${SortUpIcon.height}`}
-													/>
-												)
-											) : (
+											{column.isSorted && column.isSortedDesc && (
+												<StyledSortIcon
+													src={SortDownIcon}
+													viewBox={`0 0 ${SortDownIcon.width} ${SortDownIcon.height}`}
+												/>
+											)}
+											{column.isSorted && !column.isSortedDesc && (
+												<StyledSortIcon
+													src={SortUpIcon}
+													viewBox={`0 0 ${SortUpIcon.width} ${SortUpIcon.height}`}
+												/>
+											)}
+											{!column.isSorted && (
 												<>
 													<StyledSortIcon
 														src={SortUpIcon}
