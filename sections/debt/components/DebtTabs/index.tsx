@@ -188,9 +188,8 @@ export const TopContainer = styled.div<{ isManageTab: boolean }>`
 `;
 
 export const BottomContainer = styled.div`
-	display: grid;
-	grid-template-columns: 1fr 3fr;
-	grid-gap: 1rem;
+	display: flex;
+	gap: 1rem;
 
 	${media.lessThan('mdUp')`
 		display: flex;
@@ -246,14 +245,19 @@ const TooltipIconContainer = styled(FlexDiv)`
 	align-items: center;
 `;
 
-const DebtPieChartContainer = styled(Container)``;
+const DebtPieChartContainer = styled(Container)`
+	width: 60%;
+	${media.lessThan('mdUp')`
+		width: 100%;
+	`};
+`;
 
 const PortfolioContainer = styled(Container)`
 	align-self: flex-start;
-
+	flex: 1;
 	${media.lessThan('mdUp')`
 		width: 100%;
-	`}
+	`};
 `;
 
 const ResizedInfoIcon = styled(Svg)`
