@@ -45,7 +45,7 @@ export type SpreadsheetData = {
 	timestamp: string;
 	user_debt_hedge_in_ccy: string;
 	user_debt_hedge_in_usd: string;
-	user_debt_hedge_in_usd_with_correlation: string;
+	user_debt_hedge_with_correlation_in_usd: string;
 	wrappers_ccy: string;
 }[];
 export const createPieData = (spreadsheetData: SpreadsheetData) => {
@@ -56,6 +56,7 @@ export const createPieData = (spreadsheetData: SpreadsheetData) => {
 		value: parseFloat(x.price),
 		skewValue: parseFloat(x.debt_in_usd),
 		skewValueChart: Math.abs(parseFloat(x.debt_in_usd)),
+		userDebtHedgeWithCorrelationInUsd: parseFloat(x.user_debt_hedge_with_correlation_in_usd),
 		fillColor: MUTED_COLORS[i % MUTED_COLORS.length], // increment the 0 with every entry by 1
 		strokeColor: BRIGHT_COLORS[i % BRIGHT_COLORS.length], // increment the 0 with every entry by 1
 	}));
