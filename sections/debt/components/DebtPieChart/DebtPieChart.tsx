@@ -21,7 +21,7 @@ type DebtPieChartProps = {
 	isLoaded: boolean;
 };
 
-const SynthsPieChart: FC<DebtPieChartProps> = () => {
+const DebtPieChart: FC<DebtPieChartProps> = () => {
 	const [data, setData] = useState<any>([]);
 	useEffect(() => {
 		fetch('https://synthetix-staking-dispersed.s3.amazonaws.com/debt-data/data.json')
@@ -103,4 +103,4 @@ const StyledTooltip = styled.div<{ isNeg: boolean }>`
 	color: ${(props) => (props.isNeg ? props.theme.colors.red : props.theme.colors.white)};
 `;
 
-export default SynthsPieChart;
+export default DebtPieChart;
