@@ -1,7 +1,7 @@
 import { ethers } from 'ethers';
 import { Synths } from 'constants/currency';
 
-export const DEBT_ASSETS = ['sUSD', 'sETH', 'sBTC'];
+export const DEBT_ASSETS = ['sUSD', 'sETH'];
 export const DEBT_ASSETS_L2 = ['sUSD', 'sETH'];
 
 export const COLLATERAL_ASSETS = ['renBTC', 'ETH'];
