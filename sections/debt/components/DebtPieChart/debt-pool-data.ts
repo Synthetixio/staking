@@ -1,3 +1,4 @@
+import { useQuery } from 'react-query';
 import colors from 'styles/theme/colors';
 
 const MUTED_COLORS = [
@@ -48,7 +49,7 @@ export type SpreadsheetData = {
 	user_debt_hedge_with_correlation_in_usd: string;
 	wrappers_ccy: string;
 }[];
-export const createPieData = (spreadsheetData: SpreadsheetData) => {
+const formatDebtPoolData = (spreadsheetData: SpreadsheetData) => {
 	return spreadsheetData.map((x, i) => ({
 		name: x.currencyKey,
 		totalSupply: parseFloat(x.supply),
@@ -57,7 +58,22 @@ export const createPieData = (spreadsheetData: SpreadsheetData) => {
 		skewValue: parseFloat(x.debt_in_usd),
 		skewValueChart: Math.abs(parseFloat(x.debt_in_usd)),
 		userDebtHedgeWithCorrelationInUsd: parseFloat(x.user_debt_hedge_with_correlation_in_usd),
-		fillColor: MUTED_COLORS[i % MUTED_COLORS.length], // increment the 0 with every entry by 1
-		strokeColor: BRIGHT_COLORS[i % BRIGHT_COLORS.length], // increment the 0 with every entry by 1
+		fillColor: MUTED_COLORS[i % MUTED_COLORS.length],
+		strokeColor: BRIGHT_COLORS[i % BRIGHT_COLORS.length],
 	}));
+};
+
+// This data is used as a workaround until our subgraphs issues are resoloved
+const DEBT_DATA_URL = 'https://synthetix-staking-dispersed.s3.amazonaws.com/debt-data/data.json';
+const synthDataSortFn = (a: any, b: any) => {
+	if (typeof a.poolProportion === 'number') return a.poolProportion < b.poolProportion ? 1 : -1;
+	return a.poolProportion.lt(b.poolProportion) ? 1 : -1;
+};
+export const useGetDebtPoolData = () => {
+	return useQuery('debt-pool-data', () => {
+		return fetch(DEBT_DATA_URL)
+			.then((x) => x.json())
+			.then(formatDebtPoolData)
+			.then((x) => x.filter((x) => x.name !== 'total_excluding_sUSD').sort(synthDataSortFn));
+	});
 };
