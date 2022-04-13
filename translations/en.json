@@ -1005,7 +1005,7 @@
 					"total": "Total",
 					"percentage-of-pool": "% of pool",
 					"percentage-to-hedge": "% to hedge debt",
-					"percentage-to-hedge-tooltip": "The proportions here represent the portfolio distribution that would hedge 100$ worth of active debt. This assume eth/btc correlation stability, advanced users are encouraged to look into the composition of the debt pool and the leverage it embeds",
+					"percentage-to-hedge-tooltip": "The proportions here represent the portfolio distribution that would hedge 100$ worth of active debt. This assume eth/btc correlation stability, advanced users are encouraged to look into the composition of the debt pool and the leverage it embeds.",
 					"percentage-of-portfolio": "% of portfolio",
 					"debt-pool-proportion": "% of global debt",
 					"transfer": "Transfer",
