@@ -48,7 +48,7 @@ jobs:
         continue-on-error: true
 
       - name: Cache yarn modules
-        uses: actions/cache@136d96b4aee02b1f0de3ba493b1d47135042d9c0 # pin@v2
+        uses: actions/cache@48af2dc4a9e8278b89d7fa154b955c30c6aaab09 # pin@v2
         with:
           path: |
             .yarn-cache
@@ -74,13 +74,13 @@ jobs:
       - name: Upload lint results
         # run if lint failed and only on master/dev branch and pull requests
         if: always() && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request')
-        uses: github/codeql-action/upload-sarif@28eead240834b314f7def40f6fcba65d100d99b1 # pin@codeql-bundle-20210517
+        uses: github/codeql-action/upload-sarif@1ed1437484560351c5be56cf73a48a279d116b78 # pin@codeql-bundle-20210517
         with:
           sarif_file: lint-results.sarif
         continue-on-error: true
 
       - name: Cache next.js build cache
-        uses: actions/cache@136d96b4aee02b1f0de3ba493b1d47135042d9c0 # pin@v2
+        uses: actions/cache@48af2dc4a9e8278b89d7fa154b955c30c6aaab09 # pin@v2
         with:
           path: .next/cache
           key: ${{ runner.os }}-next-cache-${{ hashFiles('**/package-lock.json') }}
@@ -122,7 +122,7 @@ jobs:
         continue-on-error: true
 
       - name: Cache yarn modules
-        uses: actions/cache@136d96b4aee02b1f0de3ba493b1d47135042d9c0 # pin@v2
+        uses: actions/cache@48af2dc4a9e8278b89d7fa154b955c30c6aaab09 # pin@v2
         with:
           path: |
             .yarn-cache

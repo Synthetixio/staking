@@ -1309,6 +1309,9 @@
 			"synthetic-currency-name": "Synthetic {{currencyName}}",
 			"deprecated": "deprecated"
 		},
+		"total-staking": {
+			"staking-percentage": "Total SNX staked"
+		},
 		"price-change": {
 			"seven-days": "7 days change"
 		},
