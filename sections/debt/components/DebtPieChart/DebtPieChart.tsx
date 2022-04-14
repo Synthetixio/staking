@@ -1,19 +1,14 @@
-import { FC, useEffect, useState } from 'react';
+import { FC } from 'react';
 import styled from 'styled-components';
 import Wei from '@synthetixio/wei';
 
 import PieChart from 'components/PieChart';
 import DebtPoolTable from '../DebtPoolTable';
 import { SynthsTotalSupplyData } from '@synthetixio/queries';
-import { createPieData } from './pie-data';
+import { useGetDebtPoolData } from './debt-pool-data';
 import { formatCurrency } from 'utils/formatters/number';
 
 // const MIN_PERCENT_FOR_PIE_CHART = 0.03;
-
-const synthDataSortFn = (a: any, b: any) => {
-	if (typeof a.poolProportion === 'number') return a.poolProportion < b.poolProportion ? 1 : -1;
-	return a.poolProportion.lt(b.poolProportion) ? 1 : -1;
-};
 
 type DebtPieChartProps = {
 	data?: SynthsTotalSupplyData;
@@ -21,15 +16,9 @@ type DebtPieChartProps = {
 	isLoaded: boolean;
 };
 
-const SynthsPieChart: FC<DebtPieChartProps> = () => {
-	const [data, setData] = useState<any>([]);
-	useEffect(() => {
-		fetch('https://synthetix-staking-dispersed.s3.amazonaws.com/debt-data/data.json')
-			.then((x) => x.json())
-			.then(createPieData)
-			.then((x) => x.filter((x) => x.name !== 'total_excluding_sUSD').sort(synthDataSortFn))
-			.then((x) => setData(x));
-	}, []);
+const DebtPieChart: FC<DebtPieChartProps> = () => {
+	const debtPoolQuery = useGetDebtPoolData();
+
 	//	const totalSupply = data ? data : undefined;
 	/* useMemo(() => { 
 	const supplyData = totalSupply?.supplyData ?? [];
@@ -67,9 +56,17 @@ const SynthsPieChart: FC<DebtPieChartProps> = () => {
 
 	return (
 		<SynthsPieChartContainer>
-			<PieChart data={data} dataKey={'skewValueChart'} tooltipFormatter={Tooltip} />
+			<PieChart
+				data={debtPoolQuery.data || []}
+				dataKey={'skewValueChart'}
+				tooltipFormatter={Tooltip}
+			/>
 			<TableWrapper>
-				<DebtPoolTable synths={data} isLoading={data.length === 0} isLoaded={data.length > 0} />
+				<DebtPoolTable
+					synths={debtPoolQuery.data}
+					isLoading={debtPoolQuery.isLoading}
+					isLoaded={debtPoolQuery.isFetched}
+				/>
 			</TableWrapper>
 		</SynthsPieChartContainer>
 	);
@@ -103,4 +100,4 @@ const StyledTooltip = styled.div<{ isNeg: boolean }>`
 	color: ${(props) => (props.isNeg ? props.theme.colors.red : props.theme.colors.white)};
 `;
 
-export default SynthsPieChart;
+export default DebtPieChart;
