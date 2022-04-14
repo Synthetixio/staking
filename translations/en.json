@@ -1310,7 +1310,8 @@
 			"deprecated": "deprecated"
 		},
 		"total-staking": {
-			"staking-percentage": "Total SNX staked"
+			"staking-percentage-tooltip": "Total SNX staked",
+			"staking-percentage-title": "Staking %"
 		},
 		"price-change": {
 			"seven-days": "7 days change"

@@ -76,10 +76,12 @@ const DesktopSideNav: FC = () => {
 					<CRatioBarStats />
 					<BalanceItem amount={snxBalance} currencyKey={CryptoCurrency.SNX} />
 					<BalanceItem amount={sUSDBalance} currencyKey={Synths.sUSD} />
-					<Tooltip content={t('common.total-staking.staking-percentage')}>
+					<Tooltip content={t('common.total-staking.staking-percentage-tooltip')}>
 						<StyledTargetStakingRatio>
-							<StyledTargetStakingRatioTitle>Staking %</StyledTargetStakingRatioTitle>
-							{tRatio ? tRatio : '0.00'}%
+							<StyledTargetStakingRatioTitle>
+								{t('common.total-staking.staking-percentage-title')}
+							</StyledTargetStakingRatioTitle>
+							{tRatio || '0.00'}%
 						</StyledTargetStakingRatio>
 					</Tooltip>
 					<Tooltip content={t('common.price-change.seven-days')}>
