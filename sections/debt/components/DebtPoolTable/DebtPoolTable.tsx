@@ -77,6 +77,27 @@ const DebtPoolTable: FC<DebtPoolTableProps> = ({ synths, isLoading, isLoaded }) 
 				width: 100,
 				sortable: false,
 			},
+			{
+				Header: (
+					<Tooltip
+						arrow={false}
+						content={t('synths.assets.synths.table.percentage-to-hedge-tooltip')}
+					>
+						<p>{t('synths.assets.synths.table.percentage-to-hedge')}</p>
+					</Tooltip>
+				),
+				accessor: 'userDebtHedgeWithCorrelationInUsd',
+				Cell: (cellProps: { value: number }) => (
+					<Amount>
+						{formatFiatCurrency(cellProps.value, {
+							sign: selectedPriceCurrency.sign,
+							maxDecimals: 0,
+						})}
+					</Amount>
+				),
+				width: 100,
+				sortable: false,
+			},
 		];
 
 		return columns;
