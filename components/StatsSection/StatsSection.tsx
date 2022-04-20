@@ -24,14 +24,14 @@ import useCryptoBalances from 'hooks/useCryptoBalances';
 import { Tooltip } from 'styles/common';
 import { useTranslation } from 'react-i18next';
 import useGetCurrencyRateChange from 'hooks/useGetCurrencyRateChange';
+import { subDays, endOfHour } from 'date-fns';
 
 const StatsSection: FC = ({ children }) => {
 	const walletAddress = useRecoilValue(walletAddressState);
 	const delegateWallet = useRecoilValue(delegateWalletState);
 	const { t } = useTranslation();
 	const { useSynthsBalancesQuery } = useSynthetixQueries();
-
-	const sevenDaysAgoSeconds = Math.floor(new Date().setDate(new Date().getDate() - 7) / 1000);
+	const sevenDaysAgoSeconds = Math.floor(endOfHour(subDays(new Date(), 7)).getTime() / 1000);
 	const currencyRateChange = useGetCurrencyRateChange(sevenDaysAgoSeconds, 'SNX');
 
 	const cryptoBalances = useCryptoBalances(delegateWallet?.address ?? walletAddress);
