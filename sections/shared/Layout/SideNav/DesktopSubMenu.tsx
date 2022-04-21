@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import styled, { css } from 'styled-components';
 import { FlexDivColCentered } from 'styles/common';
@@ -10,8 +10,11 @@ import SubMenu from './SubMenu';
 
 const DesktopSubMenu: FC = () => {
 	const { isShowingSubMenu, subMenuConfiguration } = UIContainer.useContainer();
-
-	return typeof document !== 'undefined'
+	const [mounted, setMounted] = useState(false);
+	useEffect(() => {
+		setMounted(true);
+	}, []);
+	return mounted
 		? createPortal(
 				<Container isVisible={isShowingSubMenu}>
 					<Inner>

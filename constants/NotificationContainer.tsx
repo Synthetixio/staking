@@ -2,9 +2,14 @@ import { createPortal } from 'react-dom';
 import styled from 'styled-components';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useState, useEffect } from 'react';
 
 const NotificationContainer = () => {
-	return typeof document !== 'undefined'
+	const [mounted, setMounted] = useState(false);
+	useEffect(() => {
+		setMounted(true);
+	}, []);
+	return mounted
 		? createPortal(
 				<StyledToastContainer autoClose={false} position="bottom-right" closeOnClick={false} />,
 				document.body
