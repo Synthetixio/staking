@@ -17,6 +17,7 @@ import ActiveDebt from 'sections/shared/modals/DebtValueModal/DebtValueBox';
 import Main from 'sections/loans/index';
 import { useRecoilValue } from 'recoil';
 import { walletAddressState } from 'store/wallet';
+import Loans from 'containers/Loans';
 
 type LoansPageProps = {};
 
@@ -68,6 +69,14 @@ const LoansPage: FC<LoansPageProps> = () => {
 	);
 };
 
+const LoansWithContainer: FC<LoansPageProps> = (props) => {
+	return (
+		<Loans.Provider>
+			<LoansPage {...props} />
+		</Loans.Provider>
+	);
+};
+
 const Earning = styled(StatBox)`
 	.title {
 		color: ${(props) => props.theme.colors.green};
@@ -78,4 +87,4 @@ const Earning = styled(StatBox)`
 	}
 `;
 
-export default LoansPage;
+export default LoansWithContainer;
