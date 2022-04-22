@@ -7,11 +7,12 @@ import { DESKTOP_SIDE_NAV_WIDTH, MOBILE_SIDE_NAV_WIDTH } from 'constants/ui';
 import UIContainer from 'containers/UI';
 
 import SubMenu from './SubMenu';
+import useIsMounted from 'hooks/isMounted';
 
 const DesktopSubMenu: FC = () => {
 	const { isShowingSubMenu, subMenuConfiguration } = UIContainer.useContainer();
-
-	return typeof document !== 'undefined'
+	const mounted = useIsMounted();
+	return mounted
 		? createPortal(
 				<Container isVisible={isShowingSubMenu}>
 					<Inner>
