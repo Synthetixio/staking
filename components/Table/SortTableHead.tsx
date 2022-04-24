@@ -6,11 +6,13 @@ import SortDownIcon from 'assets/svg/app/caret-down.svg';
 import SortUpIcon from 'assets/svg/app/caret-up.svg';
 
 type SortTableHeadProps = {
-	column: any;
+	sortable: boolean;
+	isSorted: boolean;
+	isSortedDesc: boolean;
 };
 
-export const SortTableHead: FC<SortTableHeadProps> = ({ column }) => {
-	if (column.sortable && !column.isSorted) {
+export const SortTableHead: FC<SortTableHeadProps> = ({ sortable, isSorted, isSortedDesc }) => {
+	if (sortable && isSorted) {
 		return (
 			<SortIconContainer>
 				<StyledSortIcon src={SortUpIcon} viewBox={`0 0 ${SortUpIcon.width} ${SortUpIcon.height}`} />
@@ -22,8 +24,8 @@ export const SortTableHead: FC<SortTableHeadProps> = ({ column }) => {
 		);
 	}
 
-	if (column.sortable && column.isSorted) {
-		if (column.isSortedDesc) {
+	if (sortable && isSorted) {
+		if (isSortedDesc) {
 			return (
 				<SortIconContainer>
 					<StyledSortIcon

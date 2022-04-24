@@ -85,7 +85,7 @@ export const Table: FC<TableProps> = ({
 									className="table-header-cell"
 								>
 									{column.render('Header')}
-									<SortTableHead column={column} />
+									<SortTableHead {...column} />
 								</TableCellHead>
 							))}
 						</TableRow>
