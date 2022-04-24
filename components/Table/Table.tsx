@@ -3,13 +3,11 @@ import styled, { css } from 'styled-components';
 import { useTable, useFlexLayout, useSortBy, Column, Row, usePagination, Cell } from 'react-table';
 import { Svg } from 'react-optimized-image';
 
-import SortDownIcon from 'assets/svg/app/caret-down.svg';
-import SortUpIcon from 'assets/svg/app/caret-up.svg';
-
 import { FlexDivCentered } from 'styles/common';
 
 import Spinner from 'assets/svg/app/loader.svg';
 import Pagination from './Pagination';
+import { SortTableHead } from './SortTableHead';
 
 export type TablePalette = 'primary';
 
@@ -87,34 +85,7 @@ export const Table: FC<TableProps> = ({
 									className="table-header-cell"
 								>
 									{column.render('Header')}
-									{column.sortable && (
-										<SortIconContainer>
-											{column.isSorted && column.isSortedDesc && (
-												<StyledSortIcon
-													src={SortDownIcon}
-													viewBox={`0 0 ${SortDownIcon.width} ${SortDownIcon.height}`}
-												/>
-											)}
-											{column.isSorted && !column.isSortedDesc && (
-												<StyledSortIcon
-													src={SortUpIcon}
-													viewBox={`0 0 ${SortUpIcon.width} ${SortUpIcon.height}`}
-												/>
-											)}
-											{!column.isSorted && (
-												<>
-													<StyledSortIcon
-														src={SortUpIcon}
-														viewBox={`0 0 ${SortUpIcon.width} ${SortUpIcon.height}`}
-													/>
-													<StyledSortIcon
-														src={SortDownIcon}
-														viewBox={`0 0 ${SortDownIcon.width} ${SortDownIcon.height}`}
-													/>
-												</>
-											)}
-										</SortIconContainer>
-									)}
+									<SortTableHead column={column} />
 								</TableCellHead>
 							))}
 						</TableRow>
@@ -202,12 +173,6 @@ const TableCellHead = styled(TableCell)`
 	user-select: none;
 `;
 
-const SortIconContainer = styled.span`
-	display: flex;
-	margin-left: 5px;
-	flex-direction: column;
-`;
-
 const ReactTable = styled.div<{ palette: TablePalette }>`
 	width: 100%;
 	height: 100%;
@@ -247,12 +212,6 @@ const ReactTable = styled.div<{ palette: TablePalette }>`
 				}
 			}
 		`}
-`;
-
-const StyledSortIcon = styled(Svg)`
-	width: 5px;
-	height: 5px;
-	color: ${(props) => props.theme.colors.gray};
 `;
 
 export default Table;
