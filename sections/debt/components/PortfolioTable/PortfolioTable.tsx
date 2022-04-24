@@ -240,30 +240,31 @@ const ResponsiveDebtPoolTable: FC<ResponsiveDebtPoolTableProps> = ({
 				width: mobile ? 50 : 100,
 				sortable: false,
 			},
-			{
-				Header: <>{t('synths.assets.synths.table.debt-pool-proportion')}</>,
-				id: 'debt-pool-proportion',
-				accessor: (originalRow: any) => originalRow.usdBalance.toNumber(),
-				sortType: 'basic',
-				Cell: (cellProps: CellProps<CryptoBalance>) => {
-					const { currencyKey } = cellProps.row.original;
-					if (!synthsTotalSupply || !synthsTotalSupply.supplyData) return null;
-					const totalPoolValue = synthsTotalSupply?.totalValue ?? wei(0);
-					const currencyValue = synthsTotalSupply.supplyData[currencyKey]?.value ?? wei(0);
+			// TODO, disable for now..
+			// {
+			// 	Header: <>{t('synths.assets.synths.table.debt-pool-proportion')}</>,
+			// 	id: 'debt-pool-proportion',
+			// 	accessor: (originalRow: any) => originalRow.usdBalance.toNumber(),
+			// 	sortType: 'basic',
+			// 	Cell: (cellProps: CellProps<CryptoBalance>) => {
+			// 		const { currencyKey } = cellProps.row.original;
+			// 		if (!synthsTotalSupply || !synthsTotalSupply.supplyData) return null;
+			// 		const totalPoolValue = synthsTotalSupply?.totalValue ?? wei(0);
+			// 		const currencyValue = synthsTotalSupply.supplyData[currencyKey]?.value ?? wei(0);
 
-					return (
-						<SynthHoldingWrapper>
-							<SynthHolding
-								usdBalance={currencyValue}
-								totalUSDBalance={totalPoolValue}
-								showProgressBar={!mobile}
-							/>
-						</SynthHoldingWrapper>
-					);
-				},
-				width: mobile ? 50 : 100,
-				sortable: false,
-			},
+			// 		return (
+			// 			<SynthHoldingWrapper>
+			// 				<SynthHolding
+			// 					usdBalance={currencyValue}
+			// 					totalUSDBalance={totalPoolValue}
+			// 					showProgressBar={!mobile}
+			// 				/>
+			// 			</SynthHoldingWrapper>
+			// 		);
+			// 	},
+			// 	width: mobile ? 50 : 100,
+			// 	sortable: false,
+			// },
 		];
 
 		return columns;

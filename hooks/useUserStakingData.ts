@@ -92,7 +92,9 @@ export const useUserStakingData = (walletAddress: string | null) => {
 					.div(lockedSnxQuery.data.lockedValue);
 	}
 
-	const availableRewards = useClaimableRewardsQuery(walletAddress);
+	const availableRewards = useClaimableRewardsQuery(walletAddress, {
+		enabled: Boolean(walletAddress),
+	});
 
 	const tradingRewards = availableRewards?.data?.tradingRewards ?? wei(0);
 	const stakingRewards = availableRewards?.data?.stakingRewards ?? wei(0);

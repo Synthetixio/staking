@@ -3,7 +3,7 @@ import React, { FC, ReactNode, useState, useEffect, Dispatch, SetStateAction } f
 import { Svg } from 'react-optimized-image';
 import { Trans, useTranslation } from 'react-i18next';
 
-import { FlexDiv, FlexDivCol, Tooltip, FlexDivCentered } from 'styles/common';
+import { FlexDiv, FlexDivCol, Tooltip } from 'styles/common';
 import media from 'styles/media';
 import { TabButton, TabList, TabPanelContainer } from '../../../../components/Tab';
 import DebtHedgingInfoPanel from '../DebtHedgingInfoPanel';
@@ -17,10 +17,7 @@ import Info from 'assets/svg/app/info.svg';
 import { wei } from '@synthetixio/wei';
 import useSynthetixQueries from '@synthetixio/queries';
 import { useRecoilValue } from 'recoil';
-import { isL2State, isMainnetState, walletAddressState } from 'store/wallet';
-import { Title, StyledLink, InfoContainer } from 'sections/staking/components/common';
-import { EXTERNAL_LINKS } from 'constants/links';
-import Warning from 'assets/svg/app/warning.svg';
+import { isMainnetState, walletAddressState } from 'store/wallet';
 
 export type TabInfo = {
 	title: string;
@@ -51,7 +48,6 @@ const DebtTabs: FC<DebtTabsProps> = ({
 }) => {
 	const { t } = useTranslation();
 	const [activeTab, setActiveTab] = useState<string>(currentPanel ? currentPanel : tabData[0].key);
-	const isL2 = useRecoilValue(isL2State);
 
 	useEffect(() => {
 		if (currentPanel) {
@@ -62,7 +58,7 @@ const DebtTabs: FC<DebtTabsProps> = ({
 	const walletAddress = useRecoilValue(walletAddressState);
 	const isMainnet = useRecoilValue(isMainnetState);
 
-	const { useSynthsBalancesQuery, useSynthsTotalSupplyQuery } = useSynthetixQueries();
+	const { useSynthsBalancesQuery /*useSynthsTotalSupplyQuery*/ } = useSynthetixQueries();
 
 	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
 	const synthBalances =
@@ -76,8 +72,10 @@ const DebtTabs: FC<DebtTabsProps> = ({
 		? synthsBalancesQuery.data?.totalUSDBalance ?? wei(0)
 		: wei(0);
 
-	const synthsTotalSupplyQuery = useSynthsTotalSupplyQuery();
-	const totalSupply = synthsTotalSupplyQuery?.data;
+	// const synthsTotalSupplyQuery = useSynthsTotalSupplyQuery();
+	// const totalSupply = synthsTotalSupplyQuery?.data;
+	const totalSupply = undefined;
+
 	const isManageTab = activeTab === DebtPanelType.MANAGE;
 	return (
 		<>
@@ -128,35 +126,13 @@ const DebtTabs: FC<DebtTabsProps> = ({
 			)}
 			{activeTab === DebtPanelType.OVERVIEW && (
 				<>
-					<StyledInfoConainer>
-						<Title>
-							<FlexDivCentered>
-								<Svg style={{ marginRight: '5px' }} width="26px" height="21px" src={Warning} />{' '}
-								{t('debt.debt-pool-synthesis.title')}
-							</FlexDivCentered>
-						</Title>
-						<Subtitle>
-							{t('debt.debt-pool-synthesis.body', { network: isL2 ? 'L2' : 'L1' })}
-						</Subtitle>
-						<Subtitle>
-							<StyledLink href={EXTERNAL_LINKS.Synthetix.DebtPoolSynthesis}>
-								{t('debt.debt-pool-synthesis.link-text')}
-							</StyledLink>
-						</Subtitle>
-					</StyledInfoConainer>
 					<BottomContainer>
 						<DebtPieChartContainer>
 							<ContainerHeader>
-								{t('debt.actions.hedge.info.debt-pool-pie-chart.title', {
-									network: isL2 ? 'L2' : 'L1',
-								})}
+								{t('debt.actions.hedge.info.debt-pool-pie-chart.title')}
 							</ContainerHeader>
 							<ContainerBody style={{ padding: '24px 0' }}>
-								<DebtPieChart
-									data={totalSupply}
-									isLoaded={synthsTotalSupplyQuery.isSuccess}
-									isLoading={synthsTotalSupplyQuery.isLoading}
-								/>
+								<DebtPieChart data={totalSupply} isLoaded={true} isLoading={false} />
 							</ContainerBody>
 						</DebtPieChartContainer>
 						<PortfolioContainer>
@@ -196,9 +172,6 @@ const DebtTabs: FC<DebtTabsProps> = ({
 	);
 };
 
-const StyledInfoConainer = styled(InfoContainer)`
-	margin-bottom: 12px;
-`;
 export const TopContainer = styled.div<{ isManageTab: boolean }>`
 	${(props) =>
 		props.isManageTab
@@ -215,9 +188,8 @@ export const TopContainer = styled.div<{ isManageTab: boolean }>`
 `;
 
 export const BottomContainer = styled.div`
-	display: grid;
-	grid-template-columns: 1fr 3fr;
-	grid-gap: 1rem;
+	display: flex;
+	gap: 1rem;
 
 	${media.lessThan('mdUp')`
 		display: flex;
@@ -273,14 +245,19 @@ const TooltipIconContainer = styled(FlexDiv)`
 	align-items: center;
 `;
 
-const DebtPieChartContainer = styled(Container)``;
+const DebtPieChartContainer = styled(Container)`
+	width: 60%;
+	${media.lessThan('mdUp')`
+		width: 100%;
+	`};
+`;
 
 const PortfolioContainer = styled(Container)`
 	align-self: flex-start;
-
+	flex: 1;
 	${media.lessThan('mdUp')`
 		width: 100%;
-	`}
+	`};
 `;
 
 const ResizedInfoIcon = styled(Svg)`
@@ -289,12 +266,6 @@ const ResizedInfoIcon = styled(Svg)`
 
 const Strong = styled.strong`
 	font-family: ${(props) => props.theme.fonts.interBold};
-`;
-const Subtitle = styled.p`
-	font-family: ${(props) => props.theme.fonts.regular};
-	color: ${(props) => props.theme.colors.gray};
-	font-size: 14px;
-	margin: 8px 24px;
 `;
 
 export default DebtTabs;

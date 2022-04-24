@@ -1,44 +1,14 @@
-import { FC, useMemo } from 'react';
+import { FC } from 'react';
 import styled from 'styled-components';
 import Wei from '@synthetixio/wei';
 
 import PieChart from 'components/PieChart';
 import DebtPoolTable from '../DebtPoolTable';
-import colors from 'styles/theme/colors';
+import { SynthsTotalSupplyData } from '@synthetixio/queries';
+import { useGetDebtPoolData } from './debt-pool-data';
 import { formatCurrency } from 'utils/formatters/number';
-import { SynthsTotalSupplyData, SynthTotalSupply } from '@synthetixio/queries';
 
-const MIN_PERCENT_FOR_PIE_CHART = 0.03;
-
-const MUTED_COLORS = [
-	colors.mutedBlue,
-	colors.mutedOrange,
-	colors.mutedGreen,
-	colors.mutedPink,
-	colors.mutedYellow,
-	colors.mutedPurple,
-	colors.mutedGray,
-	colors.mutedRed,
-	colors.mutedFoamGreen,
-	colors.mutedBurntOrange,
-	colors.mutedForestGreen,
-];
-const BRIGHT_COLORS = [
-	colors.blue,
-	colors.orange,
-	colors.green,
-	colors.pink,
-	colors.yellow,
-	colors.purple,
-	colors.gray,
-	colors.red,
-	colors.foamGreen,
-	colors.burntOrange,
-	colors.forestGreen,
-];
-
-const synthDataSortFn = (a: SynthTotalSupply, b: SynthTotalSupply) =>
-	a.poolProportion.lt(b.poolProportion) ? 1 : -1;
+// const MIN_PERCENT_FOR_PIE_CHART = 0.03;
 
 type DebtPieChartProps = {
 	data?: SynthsTotalSupplyData;
@@ -46,11 +16,12 @@ type DebtPieChartProps = {
 	isLoaded: boolean;
 };
 
-const SynthsPieChart: FC<DebtPieChartProps> = ({ data, isLoaded, isLoading }) => {
-	const totalSupply = data ? data : undefined;
+const DebtPieChart: FC<DebtPieChartProps> = () => {
+	const debtPoolQuery = useGetDebtPoolData();
 
-	const pieData = useMemo(() => {
-		const supplyData = totalSupply?.supplyData ?? [];
+	//	const totalSupply = data ? data : undefined;
+	/* useMemo(() => { 
+	const supplyData = totalSupply?.supplyData ?? [];
 		const sortedData = Object.values(supplyData).sort(synthDataSortFn);
 
 		const cutoffIndex = sortedData.findIndex((synth) =>
@@ -70,8 +41,7 @@ const SynthsPieChart: FC<DebtPieChartProps> = ({ data, isLoaded, isLoading }) =>
 				remainingSupply.totalSupply = remainingSupply.totalSupply.add(data.totalSupply);
 			}
 			topSynths.push(remainingSupply);
-		}
-		return topSynths.sort(synthDataSortFn).map((supply, index) => ({
+		} 	return  topSynths.sort(synthDataSortFn).map((supply, index) => ({
 			name: supply.name,
 			totalSupply: supply.totalSupply.toNumber(),
 			poolProportion: supply.poolProportion.toNumber(),
@@ -80,14 +50,23 @@ const SynthsPieChart: FC<DebtPieChartProps> = ({ data, isLoaded, isLoading }) =>
 			strokeColor: BRIGHT_COLORS[index % BRIGHT_COLORS.length],
 			skewValue: supply.skewValue,
 			skewValueChart: Math.abs(supply.skewValue.toNumber()),
-		}));
-	}, [totalSupply?.supplyData]);
+		}))
+	 	return  
+	 	}, []); */
 
 	return (
 		<SynthsPieChartContainer>
-			<PieChart data={pieData} dataKey={'skewValueChart'} tooltipFormatter={Tooltip} />
+			<PieChart
+				data={debtPoolQuery.data || []}
+				dataKey={'skewValueChart'}
+				tooltipFormatter={Tooltip}
+			/>
 			<TableWrapper>
-				<DebtPoolTable synths={pieData} isLoading={isLoading} isLoaded={isLoaded} />
+				<DebtPoolTable
+					synths={debtPoolQuery.data}
+					isLoading={debtPoolQuery.isLoading}
+					isLoaded={debtPoolQuery.isFetched}
+				/>
 			</TableWrapper>
 		</SynthsPieChartContainer>
 	);
@@ -98,7 +77,11 @@ const Tooltip: FC<{ name: string; value: number; payload: { skewValue: Wei } }> 
 	payload,
 }) => {
 	return (
-		<StyledTooltip isNeg={payload.skewValue.lt(0)}>
+		<StyledTooltip
+			isNeg={
+				typeof payload.skewValue !== 'number' ? payload.skewValue.lt(0) : payload.skewValue < 0
+			}
+		>
 			{name}: {formatCurrency(name, payload.skewValue, { sign: '$' })}
 		</StyledTooltip>
 	);
@@ -117,4 +100,4 @@ const StyledTooltip = styled.div<{ isNeg: boolean }>`
 	color: ${(props) => (props.isNeg ? props.theme.colors.red : props.theme.colors.white)};
 `;
 
-export default SynthsPieChart;
+export default DebtPieChart;

@@ -29,13 +29,14 @@ import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
 import useGetCurrencyRateChange from 'hooks/useGetCurrencyRateChange';
 import Connector from 'containers/Connector';
+import { endOfHour, subDays } from 'date-fns';
 
 const DesktopSideNav: FC = () => {
 	const walletAddress = useRecoilValue(walletAddressState);
 	const delegateWallet = useRecoilValue(delegateWalletState);
 	const { t } = useTranslation();
 	const { useSynthsBalancesQuery } = useSynthetixQueries();
-	const sevenDaysAgoSeconds = Math.floor(new Date().setDate(new Date().getDate() - 7) / 1000);
+	const sevenDaysAgoSeconds = Math.floor(endOfHour(subDays(new Date(), 7)).getTime() / 1000);
 	const currencyRateChange = useGetCurrencyRateChange(sevenDaysAgoSeconds, 'SNX');
 	const cryptoBalances = useCryptoBalances(delegateWallet?.address ?? walletAddress);
 	const synthsBalancesQuery = useSynthsBalancesQuery(delegateWallet?.address ?? walletAddress);
@@ -76,10 +77,14 @@ const DesktopSideNav: FC = () => {
 					<CRatioBarStats />
 					<BalanceItem amount={snxBalance} currencyKey={CryptoCurrency.SNX} />
 					<BalanceItem amount={sUSDBalance} currencyKey={Synths.sUSD} />
-					<StyledTargetStakingRatio>
-						<StyledTargetStakingRatioTitle>Staking %</StyledTargetStakingRatioTitle>
-						{tRatio ? tRatio : '0.00'}%
-					</StyledTargetStakingRatio>
+					<Tooltip content={t('common.total-staking.staking-percentage-tooltip')}>
+						<StyledTargetStakingRatio>
+							<StyledTargetStakingRatioTitle>
+								{t('common.total-staking.staking-percentage-title')}
+							</StyledTargetStakingRatioTitle>
+							{tRatio || '0.00'}%
+						</StyledTargetStakingRatio>
+					</Tooltip>
 					<Tooltip content={t('common.price-change.seven-days')}>
 						<PriceItemContainer>
 							<PriceItem currencyKey={CryptoCurrency.SNX} currencyRateChange={currencyRateChange} />
