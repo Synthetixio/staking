@@ -10,38 +10,38 @@ type SortTableHeadProps = {
 };
 
 export const SortTableHead: FC<SortTableHeadProps> = ({ column }) => {
-	return (
-		<>
-			{column.sortable && (
+	if (column.sortable && !column.isSorted) {
+		return (
+			<SortIconContainer>
+				<StyledSortIcon src={SortUpIcon} viewBox={`0 0 ${SortUpIcon.width} ${SortUpIcon.height}`} />
+				<StyledSortIcon
+					src={SortDownIcon}
+					viewBox={`0 0 ${SortDownIcon.width} ${SortDownIcon.height}`}
+				/>
+			</SortIconContainer>
+		);
+	}
+
+	if (column.sortable && column.isSorted) {
+		if (column.isSortedDesc) {
+			return (
 				<SortIconContainer>
-					{column.isSorted && column.isSortedDesc && (
-						<StyledSortIcon
-							src={SortDownIcon}
-							viewBox={`0 0 ${SortDownIcon.width} ${SortDownIcon.height}`}
-						/>
-					)}
-					{column.isSorted && !column.isSortedDesc && (
-						<StyledSortIcon
-							src={SortUpIcon}
-							viewBox={`0 0 ${SortUpIcon.width} ${SortUpIcon.height}`}
-						/>
-					)}
-					{!column.isSorted && (
-						<>
-							<StyledSortIcon
-								src={SortUpIcon}
-								viewBox={`0 0 ${SortUpIcon.width} ${SortUpIcon.height}`}
-							/>
-							<StyledSortIcon
-								src={SortDownIcon}
-								viewBox={`0 0 ${SortDownIcon.width} ${SortDownIcon.height}`}
-							/>
-						</>
-					)}
+					<StyledSortIcon
+						src={SortDownIcon}
+						viewBox={`0 0 ${SortDownIcon.width} ${SortDownIcon.height}`}
+					/>
 				</SortIconContainer>
-			)}
-		</>
-	);
+			);
+		}
+
+		return (
+			<SortIconContainer>
+				<StyledSortIcon src={SortUpIcon} viewBox={`0 0 ${SortUpIcon.width} ${SortUpIcon.height}`} />
+			</SortIconContainer>
+		);
+	}
+
+	return null;
 };
 
 const SortIconContainer = styled.span`
