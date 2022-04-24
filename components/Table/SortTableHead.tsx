@@ -12,7 +12,9 @@ type SortTableHeadProps = {
 };
 
 export const SortTableHead: FC<SortTableHeadProps> = ({ sortable, isSorted, isSortedDesc }) => {
-	if (sortable && isSorted) {
+	if (!sortable) return null;
+
+	if (!isSorted) {
 		return (
 			<SortIconContainer>
 				<StyledSortIcon src={SortUpIcon} viewBox={`0 0 ${SortUpIcon.width} ${SortUpIcon.height}`} />
@@ -24,18 +26,16 @@ export const SortTableHead: FC<SortTableHeadProps> = ({ sortable, isSorted, isSo
 		);
 	}
 
-	if (sortable && isSorted) {
-		if (isSortedDesc) {
-			return (
-				<SortIconContainer>
-					<StyledSortIcon
-						src={SortDownIcon}
-						viewBox={`0 0 ${SortDownIcon.width} ${SortDownIcon.height}`}
-					/>
-				</SortIconContainer>
-			);
-		}
-
+	if (isSorted && isSortedDesc) {
+		return (
+			<SortIconContainer>
+				<StyledSortIcon
+					src={SortDownIcon}
+					viewBox={`0 0 ${SortDownIcon.width} ${SortDownIcon.height}`}
+				/>
+			</SortIconContainer>
+		);
+	} else if (isSorted && !isSortedDesc) {
 		return (
 			<SortIconContainer>
 				<StyledSortIcon src={SortUpIcon} viewBox={`0 0 ${SortUpIcon.width} ${SortUpIcon.height}`} />
