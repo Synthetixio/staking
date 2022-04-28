@@ -14,34 +14,31 @@ type SortTableHeadProps = {
 export const SortTableHead: FC<SortTableHeadProps> = ({ sortable, isSorted, isSortedDesc }) => {
 	if (!sortable) return null;
 
+	let sortIcon;
 	if (!isSorted) {
-		return (
-			<SortIconContainer>
+		sortIcon = (
+			<>
 				<StyledSortIcon src={SortUpIcon} viewBox={`0 0 ${SortUpIcon.width} ${SortUpIcon.height}`} />
 				<StyledSortIcon
 					src={SortDownIcon}
 					viewBox={`0 0 ${SortDownIcon.width} ${SortDownIcon.height}`}
 				/>
-			</SortIconContainer>
+			</>
+		);
+	} else if (isSortedDesc) {
+		sortIcon = (
+			<StyledSortIcon
+				src={SortDownIcon}
+				viewBox={`0 0 ${SortDownIcon.width} ${SortDownIcon.height}`}
+			/>
+		);
+	} else {
+		sortIcon = (
+			<StyledSortIcon src={SortUpIcon} viewBox={`0 0 ${SortUpIcon.width} ${SortUpIcon.height}`} />
 		);
 	}
 
-	if (isSortedDesc) {
-		return (
-			<SortIconContainer>
-				<StyledSortIcon
-					src={SortDownIcon}
-					viewBox={`0 0 ${SortDownIcon.width} ${SortDownIcon.height}`}
-				/>
-			</SortIconContainer>
-		);
-	} else {
-		return (
-			<SortIconContainer>
-				<StyledSortIcon src={SortUpIcon} viewBox={`0 0 ${SortUpIcon.width} ${SortUpIcon.height}`} />
-			</SortIconContainer>
-		);
-	}
+	return <SortIconContainer>{sortIcon}</SortIconContainer>;
 };
 
 const SortIconContainer = styled.span`
