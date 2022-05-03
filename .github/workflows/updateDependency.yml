@@ -22,17 +22,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # pin@v2
 
-      - name: Set npm cache directory
-        run: npm config set cache .npm-cache --global
+      - name: Set yarn cache directory
+        run: yarn config set cache-folder .yarn-cache
         continue-on-error: true
 
       - name: Cache node modules
         uses: actions/cache@48af2dc4a9e8278b89d7fa154b955c30c6aaab09 # pin@v2
         with:
           path: |
-            .npm-cache
+            .yarn-cache
             node_modules
-          key: ${{ runner.os }}-alpine-node-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-alpine-node-${{ hashFiles('**/yarn-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-alpine-node-
         continue-on-error: true
@@ -42,12 +42,12 @@ jobs:
         run: chown -R $(whoami) .
 
       - name: Install dependencies
-        run: npm install --prefer-offline --no-audit
+        run: yarn
 
       - name: Update all @synthetixio/* dependency
         run: "sed -i 's/\"@synthetixio\\/\\(.*\\)\": \".*\"/\"@synthetixio\\/\\1\": \"${{ github.event.inputs.monorepo_version }}\"/' package.json"
 
-      - run: npm install
+      - run: yarn
 
       - name: Commit changes
         run: |
