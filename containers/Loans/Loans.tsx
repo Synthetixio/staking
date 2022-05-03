@@ -14,6 +14,7 @@ import getOpenLoans from './getOpenLoans';
 import { Loan } from './types';
 import getLoan from './getLoan';
 import getMinCRatios from './getMinCratios';
+import useSynthetixQueries from '@synthetixio/queries';
 
 const SECONDS_IN_A_YR = 365 * 24 * 60 * 60;
 
@@ -31,7 +32,7 @@ function Container() {
 		erc20MinCratio: Wei | undefined;
 	}>({ ethMinCratio: undefined, erc20MinCratio: undefined });
 	const [pendingWithdrawals, setPendingWithdrawals] = useState(BigNumber.from('0'));
-
+	const { subgraph } = useSynthetixQueries();
 	const [
 		ethLoanContract,
 		erc20LoanContract,
@@ -71,6 +72,21 @@ function Container() {
 		};
 	}, [erc20LoanContract, ethLoanContract, isL2]);
 
+	const subgraphOpenLoansQuery = subgraph.useGetLoans(
+		{ where: { isOpen: true, account: address } },
+		{ id: true, collateralMinted: true },
+		{ queryKey: ['getLoans', isL2, address] }
+	);
+
+	const subgraphOpenLoansKey = subgraphOpenLoansQuery.data
+		? JSON.stringify(
+				subgraphOpenLoansQuery.data.map((x) => {
+					const id = x.id.replace(/-\w+/, ''); //remove -sETH from id
+					return { ...x, id };
+				})
+		  )
+		: '';
+
 	useEffect(() => {
 		if (!(isAppReady && address && provider && ethLoanContract)) {
 			return;
@@ -91,11 +107,13 @@ function Container() {
 		const loadLoans = async () => {
 			setIsLoadingLoans(true);
 			const openLoans = await getOpenLoans({
-				loanContracts,
-				loanStateContracts,
+				erc20LoanContract,
+				ethLoanContract,
+				erc20LoanStateContract,
+				ethLoanStateContract,
 				address,
-				network,
 				isL2,
+				subgraphOpenLoans: subgraphOpenLoansKey ? JSON.parse(subgraphOpenLoansKey) : [],
 			});
 			if (isMounted) {
 				setLoans(openLoans);
@@ -235,6 +253,7 @@ function Container() {
 		erc20LoanStateContract,
 		isL2,
 		network,
+		subgraphOpenLoansKey,
 	]);
 
 	const [interestRate, setInterestRate] = useState(wei(0));
