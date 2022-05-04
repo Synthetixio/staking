@@ -42,12 +42,12 @@ jobs:
         run: chown -R $(whoami) .
 
       - name: Install dependencies
-        run: yarn
+        run: yarn install --frozen-lockfile --prefer-offline
 
       - name: Update all @synthetixio/* dependency
         run: "sed -i 's/\"@synthetixio\\/\\(.*\\)\": \".*\"/\"@synthetixio\\/\\1\": \"${{ github.event.inputs.monorepo_version }}\"/' package.json"
 
-      - run: yarn
+      - run: yarn install --prefer-offline
 
       - name: Commit changes
         run: |
