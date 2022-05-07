@@ -33,10 +33,8 @@ export const EXTERNAL_LINKS = {
 		Zapper: 'https://zapper.fi/api/token-list',
 	},
 	L2: {
-		Optimism: 'https://gateway.optimism.io/welcome',
-		SynthetixDeposit:
-			'https://gateway.optimism.io/?l1Token=0xc011a73ee8576fb46f5e1c5751ca3b9fe0af2a6f&l2Token=0x8700daec35af8ff88c16bdf0418774cb3d7599b4',
-		SynthetixWithdrawal:
-			'https://gateway.optimism.io/?l1Token=0xc011a73ee8576fb46f5e1c5751ca3b9fe0af2a6f&l2Token=0x8700daec35af8ff88c16bdf0418774cb3d7599b4',
+		Optimism: 'https://app.optimism.io/',
+		SynthetixDeposit: 'https://app.optimism.io/bridge',
+		SynthetixWithdrawal: 'https://app.optimism.io/bridge/withdraw',
 	},
 };
