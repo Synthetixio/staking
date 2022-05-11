@@ -3384,10 +3384,10 @@
     big.js "6.1.1"
     ethers "5.5.3"
 
-"@synthetixio/wei@^2.47.0-ovm.5":
-  version "2.66.2"
-  resolved "https://registry.yarnpkg.com/@synthetixio/wei/-/wei-2.66.2.tgz#d9c40814ae9f91b7423a9a632fbc08f20ed2c43f"
-  integrity sha512-0VSukrURsVuv73pyXsR8E+e5DcZkeDdl6iS2xdO3iXOVJEJSlK1/iORPQ7b7lEAIiIW03ZdY9PzW5JA8hp99hA==
+"@synthetixio/wei@2.68.2", "@synthetixio/wei@^2.47.0-ovm.5":
+  version "2.68.2"
+  resolved "https://registry.yarnpkg.com/@synthetixio/wei/-/wei-2.68.2.tgz#6491d0777e85cdf1f7944bc2c2b9388384f0652c"
+  integrity sha512-GQDrtr6ADfXOerMJ/2abegUF1dMfpzPxp9N9umMud0rF/E2bNtY9nQXSvZH3Uz1/vQWiOFtAP/eJ2mVF82kpFA==
   dependencies:
     big.js "6.1.1"
     ethers "5.5.3"
