@@ -88,6 +88,9 @@ const errorIsClearable = (errorMsg: string) => {
 		// will be cleared when user changes the amount
 		return false;
 	}
+	if (errorMsg.includes('Insufficient sUSD to burn debt')) {
+		return false;
+	}
 	return true;
 };
 
