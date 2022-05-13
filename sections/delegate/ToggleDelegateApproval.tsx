@@ -7,6 +7,7 @@ import TransactionNotifier from 'containers/TransactionNotifier';
 import {
 	ModalItemTitle as TxModalItemTitle,
 	ModalItemText as TxModalItemText,
+	Tooltip,
 } from 'styles/common';
 import { truncateAddress } from 'utils/formatters/string';
 import { TxModalItem } from 'sections/delegate/common';
@@ -83,6 +84,7 @@ const ToggleDelegateApproval: FC<ToggleDelegateApprovalProps> = ({
 	const canAll = (account: DelegationWallet) =>
 		account.canBurn && account.canMint && account.canClaim && account.canExchange;
 
+	const disabled = canAll(account) && action !== Action.APPROVE_ALL;
 	return (
 		<>
 			<Container>
@@ -92,10 +94,20 @@ const ToggleDelegateApproval: FC<ToggleDelegateApprovalProps> = ({
 						`common.delegate-actions.actions.${action}`
 					)}`}
 					type="checkbox"
-					disabled={canAll(account) && action !== Action.APPROVE_ALL}
-					{...{ onChange, checked }}
+					disabled={disabled}
+					onChange={onChange}
+					checked={checked}
 				/>
-				<span className="checkmark"></span>
+				<Tooltip
+					content={t(
+						checked
+							? 'common.delegate-actions.tooltip.withdraw'
+							: 'common.delegate-actions.tooltip.enable'
+					)}
+					disabled={disabled}
+				>
+					<span className="checkmark"></span>
+				</Tooltip>
 			</Container>
 			{txModalOpen && (
 				<TxConfirmationModal

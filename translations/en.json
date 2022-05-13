@@ -1348,6 +1348,10 @@
 		},
 		"delegate-actions": {
 			"header": "Action",
+			"tooltip": {
+				"withdraw": "Click to withdraw delegation",
+				"enable": "Click to enable delegation"
+			},
 			"actions": {
 				"ApproveAll": "all",
 				"BurnForAddress": "burn",
