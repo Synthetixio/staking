@@ -6,7 +6,7 @@ import { appReadyState } from 'store/app';
 import { FlexDivCol } from 'styles/common';
 import media from 'styles/media';
 
-import Form from 'sections/delegate/Form';
+import DelegateForm from 'sections/delegate/DelegateForm';
 import DelegateTable from 'sections/delegate/DelegateTable';
 
 const Index: FC = () => {
@@ -15,7 +15,7 @@ const Index: FC = () => {
 	return !isAppReady ? null : (
 		<Container>
 			<Col>
-				<Form />
+				<DelegateForm />
 			</Col>
 			<Col>
 				<DelegateTable />

@@ -34,7 +34,7 @@ import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import ActionSelector from './ActionSelector';
 import { isObjectOrErrorWithMessage } from 'utils/ts-helpers';
 
-const LeftCol: FC = () => {
+const DelegateForm: FC = () => {
 	const { t } = useTranslation();
 
 	const tabData = useMemo(
@@ -63,7 +63,7 @@ const Tab: FC = () => {
 
 	const { useGetDelegateWallets, useSynthetixTxn } = useSynthetixQueries();
 
-	const delegateWalletsQuery = useGetDelegateWallets(address);
+	const delegateWalletsQuery = useGetDelegateWallets(address || '', { enabled: Boolean(address) });
 	const [action, setAction] = useState<string>(Action.APPROVE_ALL);
 
 	const [gasPrice, setGasPrice] = useState<GasPrice | undefined>(undefined);
@@ -246,4 +246,4 @@ const FormButton = styled(Button)`
 	text-transform: uppercase;
 `;
 
-export default LeftCol;
+export default DelegateForm;

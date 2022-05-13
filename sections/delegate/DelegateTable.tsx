@@ -23,7 +23,9 @@ const DelegateTable: FC = () => {
 
 	const walletAddress = useRecoilValue(walletAddressState);
 
-	const delegateWalletsQuery = useGetDelegateWallets(walletAddress as string);
+	const delegateWalletsQuery = useGetDelegateWallets(walletAddress || '', {
+		enabled: Boolean(walletAddress),
+	});
 	const delegateWallets = delegateWalletsQuery?.data ?? [];
 
 	const isSM = useMediaQuery('sm');
