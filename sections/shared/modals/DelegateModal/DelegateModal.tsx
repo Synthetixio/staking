@@ -9,6 +9,8 @@ import { truncateAddress } from 'utils/formatters/string';
 import useSynthetixQueries, { DelegationWallet } from '@synthetixio/queries';
 
 import { MenuModal } from '../common';
+import { Tooltip } from 'styles/common';
+
 import Spinner from 'assets/svg/app/loader.svg';
 
 type DelegateModalProps = {
@@ -21,7 +23,7 @@ const DelegateModal: FC<DelegateModalProps> = ({ onDismiss }) => {
 	const walletAddress = useRecoilValue(walletAddressState);
 
 	const { useGetAuthoriserWallets } = useSynthetixQueries();
-	const delegateWalletsQuery = useGetAuthoriserWallets(walletAddress);
+	const delegateWalletsQuery = useGetAuthoriserWallets(walletAddress!);
 
 	const [delegateWallet, setDelegateWallet] = useRecoilState(delegateWalletState);
 
@@ -45,9 +47,11 @@ const DelegateModal: FC<DelegateModalProps> = ({ onDismiss }) => {
 							{authoriserWallets.map((wallet) => {
 								return (
 									<WalletListElement isSelected={wallet.address === delegateWallet?.address}>
-										<StyledButton onClick={() => handleWalletSelect(wallet)}>
-											{truncateAddress(wallet.address)}
-										</StyledButton>
+										<Tooltip content={wallet.address}>
+											<StyledButton onClick={() => handleWalletSelect(wallet)}>
+												{truncateAddress(wallet.address)}
+											</StyledButton>
+										</Tooltip>
 									</WalletListElement>
 								);
 							})}
