@@ -7,15 +7,16 @@ import { truncateAddress } from 'utils/formatters/string';
 import { CellProps } from 'react-table';
 import Table from 'components/Table';
 import useMediaQuery from 'hooks/useMediaQuery';
-import { ExternalLink } from 'styles/common';
+import { ExternalLink, Tooltip } from 'styles/common';
 import WalletIcon from 'assets/svg/app/wallet-yellow.svg';
 import ToggleDelegateApproval from './ToggleDelegateApproval';
 import useSynthetixQueries, { DELEGATE_ENTITY_ATTRS } from '@synthetixio/queries';
 import { DelegationWallet } from '@synthetixio/queries';
 import { useRecoilValue } from 'recoil';
 import { walletAddressState } from 'store/wallet';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 
-const RightCol: FC = () => {
+const DelegateTable: FC = () => {
 	const { t } = useTranslation();
 
 	const { useGetDelegateWallets } = useSynthetixQueries();
@@ -36,7 +37,23 @@ const RightCol: FC = () => {
 				sortable: true,
 				Cell: (cellProps: CellProps<DelegationWallet>) => {
 					const delegateAddress = cellProps.value;
-					return truncateAddress(delegateAddress, isSM ? 4 : 5, isSM ? 2 : 3);
+					return (
+						<Tooltip
+							content={
+								<AddressToolTip>
+									<NoMarginP>{delegateAddress}</NoMarginP> ({t('delegate.list.click-to-copy')})
+								</AddressToolTip>
+							}
+						>
+							<NoMarginP>
+								<CopyToClipboard text={delegateAddress || ''}>
+									<NoMarginP>
+										{truncateAddress(delegateAddress, isSM ? 4 : 5, isSM ? 2 : 3)}
+									</NoMarginP>
+								</CopyToClipboard>
+							</NoMarginP>
+						</Tooltip>
+					);
 				},
 			},
 			...Array.from(DELEGATE_ENTITY_ATTRS.entries()).map(([action, attr]) => ({
@@ -98,9 +115,7 @@ const RightCol: FC = () => {
 	);
 };
 
-export default RightCol;
-
-//
+export default DelegateTable;
 
 export const Root = styled.div`
 	& > div {
@@ -132,6 +147,14 @@ export const Subtitle = styled.div`
 	color: ${(props) => props.theme.colors.gray};
 	font-size: 14px;
 	margin-top: 12px;
+`;
+
+const NoMarginP = styled.p`
+	margin: 0;
+	padding: 0;
+`;
+const AddressToolTip = styled(NoMarginP)`
+	text-align: center;
 `;
 
 const ListTable = styled(Table)`

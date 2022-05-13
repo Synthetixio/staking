@@ -1404,6 +1404,7 @@
 		"list": {
 			"title": "Manage addresses",
 			"empty": "No addresses to show",
+			"click-to-copy": "click to copy",
 			"cols": {
 				"address": "Address",
 				"canAll": "all",

@@ -7,7 +7,7 @@ import { FlexDivCol } from 'styles/common';
 import media from 'styles/media';
 
 import Form from 'sections/delegate/Form';
-import Table from 'sections/delegate/Table';
+import DelegateTable from 'sections/delegate/DelegateTable';
 
 const Index: FC = () => {
 	const isAppReady = useRecoilValue(appReadyState);
@@ -18,7 +18,7 @@ const Index: FC = () => {
 				<Form />
 			</Col>
 			<Col>
-				<Table />
+				<DelegateTable />
 			</Col>
 		</Container>
 	);
