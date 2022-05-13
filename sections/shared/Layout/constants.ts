@@ -125,6 +125,10 @@ export const MENU_LINKS_L2: MenuLinks = [
 				subLink: ROUTES.Synths.Home,
 			},
 			{
+				i18nLabel: 'sidenav.delegate',
+				subLink: ROUTES.Delegate.Home,
+			},
+			{
 				i18nLabel: 'sidenav.merge-accounts',
 				subLink: ROUTES.MergeAccounts.Home,
 			},
