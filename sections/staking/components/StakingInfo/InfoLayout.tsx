@@ -113,6 +113,14 @@ const InfoLayout: FC<InfoLayoutProps> = ({
 						</StyledLink>
 					</Subtitle>
 				)}
+
+				<Subtitle>
+					{/* TODO ideally we should fetch the liquidation percentage, it's now hard coded in translation to 150% */}
+					{t('staking.info.mint.liq-warning')}{' '}
+					<StyledLink href={EXTERNAL_LINKS.Synthetix.HamalRelease}>
+						{t('staking.info.mint.read-more')}
+					</StyledLink>
+				</Subtitle>
 			</InfoHeader>
 			<TotalBalanceContainer>
 				<TotalBalanceHeading>{t('staking.info.table.total-snx')}</TotalBalanceHeading>

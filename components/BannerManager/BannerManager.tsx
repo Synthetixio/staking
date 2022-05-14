@@ -11,6 +11,7 @@ import { wei } from '@synthetixio/wei';
 import { isL2State, walletAddressState } from 'store/wallet';
 import useSynthetixQueries from '@synthetixio/queries';
 import { snapshotEndpoint } from 'constants/snapshot';
+import { EXTERNAL_LINKS } from 'constants/links';
 
 const BannerManager: FC = () => {
 	const {
@@ -58,7 +59,7 @@ const BannerManager: FC = () => {
 						components={[
 							<Strong />,
 							<Strong />,
-							<StyledExternalLink href="https://blog.synthetix.io/liquidation-faqs" />,
+							<StyledExternalLink href={EXTERNAL_LINKS.Synthetix.SIP148Liquidations} />,
 						]}
 					/>
 				}
