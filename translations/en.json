@@ -352,7 +352,8 @@
 				"title": "Mint sUSD by staking SNX",
 				"subtitle": "Mint sUSD by staking your SNX. SNX stakers earn weekly staking rewards in exchange for managing their Collateralization Ratio and debt. Learn more from our <0>staking guide</0> and <1>litepaper</1>.",
 				"read-more": "Read more",
-				"min-stake-time": "Your staked SNX will be locked for {{duration}} days"
+				"min-stake-time": "Your staked SNX will be locked for {{duration}} days",
+				"liq-warning": "If your C-Ratio goes below 150% and you've been flagged, you must increase it or you will be penalized"
 			},
 			"burn": {
 				"title": "Burn sUSD to unstake SNX",
