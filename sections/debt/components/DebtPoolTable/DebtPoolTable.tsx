@@ -1,4 +1,4 @@
-import { FC, ReactNode, useMemo } from 'react';
+import { FC, useMemo } from 'react';
 import { CellProps } from 'react-table';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
@@ -17,7 +17,6 @@ import Currency from 'components/Currency';
 import { formatFiatCurrency, formatPercent } from 'utils/formatters/number';
 import { SynthTotalSupply } from '@synthetixio/queries';
 import { CryptoBalance } from 'hooks/useCryptoBalances';
-import Wei, { wei } from '@synthetixio/wei';
 
 type DebtPoolTableProps = {
 	synths: any;
@@ -58,12 +57,12 @@ const DebtPoolTable: FC<DebtPoolTableProps> = ({ synths, isLoading, isLoaded }) 
 				Header: <>{t('synths.assets.synths.table.skewValue')}</>,
 				accessor: 'skewValue',
 				Cell: (cellProps: CellProps<SynthTotalSupply>) => (
-					<SkewValue skewValue={wei(cellProps.value)}>
+					<Amount>
 						{formatFiatCurrency(cellProps.value, {
 							sign: selectedPriceCurrency.sign,
 							maxDecimals: 0,
 						})}
-					</SkewValue>
+					</Amount>
 				),
 				width: 100,
 				sortable: false,
@@ -87,14 +86,25 @@ const DebtPoolTable: FC<DebtPoolTableProps> = ({ synths, isLoading, isLoaded }) 
 					</Tooltip>
 				),
 				accessor: 'userDebtHedgeWithCorrelationInUsd',
-				Cell: (cellProps: { value: number }) => (
-					<Amount>
-						{formatFiatCurrency(cellProps.value, {
-							sign: selectedPriceCurrency.sign,
-							maxDecimals: 0,
-						})}
-					</Amount>
-				),
+				Cell: (cellProps: { value: number }) => {
+					const value = cellProps.value;
+					const absValue = Math.abs(value);
+					const getPrefix = () => {
+						if (value === 0) return '';
+						if (value > 0) return '+';
+						return '-';
+					};
+					return (
+						<Tooltip content={t('synths.assets.synths.table.percentage-to-hedge-value-tooltip')}>
+							<Amount>
+								{formatFiatCurrency(absValue, {
+									sign: `${getPrefix()}${selectedPriceCurrency.sign}`,
+									maxDecimals: 0,
+								})}
+							</Amount>
+						</Tooltip>
+					);
+				},
 				width: 100,
 				sortable: false,
 			},
@@ -118,19 +128,6 @@ const DebtPoolTable: FC<DebtPoolTableProps> = ({ synths, isLoading, isLoaded }) 
 			}
 			showPagination={true}
 		/>
-	);
-};
-
-const SkewValue: FC<{ children: ReactNode; skewValue: Wei }> = ({ children, skewValue }) => {
-	const { t } = useTranslation();
-	const isNeg = skewValue.lt(0);
-	const content = <Amount danger={isNeg}>{children}</Amount>;
-	return isNeg ? (
-		<SkewValueTooltip arrow={false} content={t('synths.assets.synths.negative-skew-warning')}>
-			{content}
-		</SkewValueTooltip>
-	) : (
-		content
 	);
 };
 
@@ -162,19 +159,6 @@ const StyledTable = styled(Table)`
 		&:last-child {
 			justify-content: flex-end;
 		}
-	}
-`;
-
-const SkewValueTooltip = styled(Tooltip)`
-	background: ${(props) => props.theme.colors.grayBlue};
-	font-family: ${(props) => props.theme.fonts.extended};
-	.tippy-arrow {
-		color: ${(props) => props.theme.colors.grayBlue};
-	}
-	.tippy-content {
-		font-size: 14px;
-		color: ${(props) => props.theme.colors.red};
-		text-align: center;
 	}
 `;
 
