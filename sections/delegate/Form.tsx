@@ -63,7 +63,7 @@ const Tab: FC = () => {
 
 	const { useGetDelegateWallets, useSynthetixTxn } = useSynthetixQueries();
 
-	const delegateWalletsQuery = useGetDelegateWallets(address);
+	const delegateWalletsQuery = useGetDelegateWallets(address || '');
 	const [action, setAction] = useState<string>(Action.APPROVE_ALL);
 
 	const [gasPrice, setGasPrice] = useState<GasPrice | undefined>(undefined);

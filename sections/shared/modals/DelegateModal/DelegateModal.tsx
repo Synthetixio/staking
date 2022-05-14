@@ -21,7 +21,7 @@ const DelegateModal: FC<DelegateModalProps> = ({ onDismiss }) => {
 	const walletAddress = useRecoilValue(walletAddressState);
 
 	const { useGetAuthoriserWallets } = useSynthetixQueries();
-	const delegateWalletsQuery = useGetAuthoriserWallets(walletAddress);
+	const delegateWalletsQuery = useGetAuthoriserWallets(walletAddress || '');
 
 	const [delegateWallet, setDelegateWallet] = useRecoilState(delegateWalletState);
 
