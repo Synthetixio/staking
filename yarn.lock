@@ -3291,6 +3291,14 @@
     "@eth-optimism/watcher" "^0.0.1-alpha.9"
     "@metamask/providers" "8.1.1"
 
+"@synthetixio/optimism-networks@2.69.0":
+  version "2.69.0"
+  resolved "https://registry.yarnpkg.com/@synthetixio/optimism-networks/-/optimism-networks-2.69.0.tgz#9294fc726927c6c8f0dad824ece3272eb02828af"
+  integrity sha512-q2UGVLrVvk4RuuytIF1q8BSGmJDlOr8njJ25kQO0ONMiQSb7s71t/O1EgfK610hn5LWhXsf3Lxy9rgEcZIyjzg==
+  dependencies:
+    "@eth-optimism/watcher" "^0.0.1-alpha.9"
+    "@metamask/providers" "8.1.1"
+
 "@synthetixio/providers@2.68.2":
   version "2.68.2"
   resolved "https://registry.yarnpkg.com/@synthetixio/providers/-/providers-2.68.2.tgz#180db082b5c5f9395134258e53501239d09ff8ae"
