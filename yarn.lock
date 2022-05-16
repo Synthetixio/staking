@@ -3273,6 +3273,16 @@
     synthetix "2.68.2"
     web3-utils "1.2.11"
 
+"@synthetixio/contracts-interface@2.69.0":
+  version "2.69.0"
+  resolved "https://registry.yarnpkg.com/@synthetixio/contracts-interface/-/contracts-interface-2.69.0.tgz#0482dd4429dfae52634db748eff327b2e83ab934"
+  integrity sha512-EddRf+aTIGCMSWMmd/ydKHhvTKPpXijPMZ+Llrkl+6giXBRvdCIg+uD++SecaZ1gHQK6NDEVJwdHyPlx6O2BGw==
+  dependencies:
+    ethers "5.5.3"
+    lodash "4.17.19"
+    synthetix "2.69.0"
+    web3-utils "1.2.11"
+
 "@synthetixio/js@2.41.0":
   version "2.41.0"
   resolved "https://registry.yarnpkg.com/@synthetixio/js/-/js-2.41.0.tgz#55e106868972e80e981a3354e520c2468dbc37fd"
@@ -3291,6 +3301,14 @@
     "@eth-optimism/watcher" "^0.0.1-alpha.9"
     "@metamask/providers" "8.1.1"
 
+"@synthetixio/optimism-networks@2.69.0":
+  version "2.69.0"
+  resolved "https://registry.yarnpkg.com/@synthetixio/optimism-networks/-/optimism-networks-2.69.0.tgz#9294fc726927c6c8f0dad824ece3272eb02828af"
+  integrity sha512-q2UGVLrVvk4RuuytIF1q8BSGmJDlOr8njJ25kQO0ONMiQSb7s71t/O1EgfK610hn5LWhXsf3Lxy9rgEcZIyjzg==
+  dependencies:
+    "@eth-optimism/watcher" "^0.0.1-alpha.9"
+    "@metamask/providers" "8.1.1"
+
 "@synthetixio/providers@2.68.2":
   version "2.68.2"
   resolved "https://registry.yarnpkg.com/@synthetixio/providers/-/providers-2.68.2.tgz#180db082b5c5f9395134258e53501239d09ff8ae"
@@ -3299,6 +3317,16 @@
     "@eth-optimism/provider" "0.0.1-alpha.14"
     "@synthetixio/contracts-interface" "2.68.2"
     "@synthetixio/optimism-networks" "2.68.2"
+    ethers "5.5.3"
+
+"@synthetixio/providers@2.69.0":
+  version "2.69.0"
+  resolved "https://registry.yarnpkg.com/@synthetixio/providers/-/providers-2.69.0.tgz#1da1aac142dd86263728bb3b2d4d72a479d3166a"
+  integrity sha512-Xdi+UxhRzZo9duP1oUJuRVhk2lcj/jM5A8mNLU5xvNCdL4b8q4ufi4vAxU9ovbRXyd1S3/7HwtJ8j3p4JbiGzg==
+  dependencies:
+    "@eth-optimism/provider" "0.0.1-alpha.14"
+    "@synthetixio/contracts-interface" "2.69.0"
+    "@synthetixio/optimism-networks" "2.69.0"
     ethers "5.5.3"
 
 "@synthetixio/queries@0.0.0-95f0adc":
@@ -19417,6 +19445,20 @@ synthetix@2.68.2:
   version "2.68.2"
   resolved "https://registry.yarnpkg.com/synthetix/-/synthetix-2.68.2.tgz#bac0fb6de8083c2a6599160ab8740b3c39263802"
   integrity sha512-wnKyuGsjyMz7VqRWvFE3kxMJbs9M6H30dmtbk0zU8VLsRe46A1qtVReTTXt6Nmj5qoNhHSwreTQNyugc5ySuLQ==
+  dependencies:
+    abi-decoder "2.3.0"
+    commander "8.1.0"
+    inquirer "^6.5.2"
+    inquirer-list-search-prompt "^1.0.2"
+    js-levenshtein "^1.1.6"
+    pretty-error "^2.1.1"
+    solidity-parser-antlr "^0.4.11"
+    web3-utils "1.2.2"
+
+synthetix@2.69.0:
+  version "2.69.0"
+  resolved "https://registry.yarnpkg.com/synthetix/-/synthetix-2.69.0.tgz#96bab895d9579cb6565b2ae4a8aacc3d30d8726c"
+  integrity sha512-FgoMGoxwMUKuqopZs7YbpEdyfjyFfAGsAG/ETzorkXj+c1FpaYv248bSLeTRuoRKgbbAhmRpJowYLosPL0UcDw==
   dependencies:
     abi-decoder "2.3.0"
     commander "8.1.0"
