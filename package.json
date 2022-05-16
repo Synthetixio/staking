@@ -29,7 +29,7 @@
 		"@synthetixio/providers": "2.68.2",
 		"@synthetixio/queries": "0.0.0-95f0adc",
 		"@synthetixio/transaction-notifier": "2.68.2",
-		"@synthetixio/wei": "2.68.2",
+		"@synthetixio/wei": "2.69.0",
 		"@tippyjs/react": "4.1.0",
 		"@uniswap/router-sdk": "1.0.5",
 		"@uniswap/sdk-core": "^3.0.1",
