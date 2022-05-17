@@ -64,7 +64,7 @@ const formatDebtPoolData = (spreadsheetData: SpreadsheetData) => {
 };
 
 // This data is used as a workaround until our subgraphs issues are resoloved
-const DEBT_DATA_URL = 'https://synthetix-staking-dispersed.s3.amazonaws.com/debt-data/data.json';
+const DEBT_DATA_URL = 'https://api.synthetix.io/debt-pool-comp';
 const synthDataSortFn = (a: any, b: any) => {
 	if (typeof a.poolProportion === 'number') return a.poolProportion < b.poolProportion ? 1 : -1;
 	return a.poolProportion.lt(b.poolProportion) ? 1 : -1;
