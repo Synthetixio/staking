@@ -500,6 +500,13 @@
 					"trading-rewards": "TRADING REWARDS",
 					"total-value": "TOTAL VALUE"
 				},
+				"liquidations": {
+					"title": "Synthetix",
+					"subtitle": "Liquidation Rewards",
+					"description": "Claim liquidation rewards.  <0>Learn more.<0>",
+					"liquidation-rewards": "Liquidation Rewards",
+					"total-value": "TOTAL VALUE"
+				},
 				"curve": {
 					"title": "Curve",
 					"description": "Staking Curve LP tokens from the sUSD pool allows you to earn CRV rewards, Curve swap fees, and SNX rewards. <0>Learn more.<0>",

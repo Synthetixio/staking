@@ -22,6 +22,7 @@ import YearnVaultTab from './LPTab/YearnVaultTab';
 import { YearnVaultData } from 'queries/liquidityPools/useYearnSNXVaultQuery';
 import useSynthetixQueries from '@synthetixio/queries';
 import Connector from 'containers/Connector';
+import LiquidationTab from './LiquidationTab';
 
 enum View {
 	ACTIVE = 'active',
@@ -96,6 +97,25 @@ const Incentives: FC<IncentivesProps> = ({
 						route: ROUTES.Earn.Claim,
 					},
 					{
+						title: t('earn.incentives.options.liquidations.title'),
+						subtitle: t('earn.incentives.options.liquidations.subtitle'),
+						apr: undefined,
+						tvl: lockedSnxQuery.data?.lockedValue ?? wei(0),
+						staked: {
+							balance: stakedAmount,
+							asset: CryptoCurrency.SNX,
+							ticker: CryptoCurrency.SNX,
+						},
+						rewards: liquidationRewards,
+						periodStarted: 0,
+						periodFinish: now + 1000000, // trick it to never expire
+						claimed: NOT_APPLICABLE,
+						now,
+						route: ROUTES.Earn.LIQUIDATION_REWARDS,
+						tab: Tab.LIQUIDATION_REWARDS,
+						neverExpires: true,
+					},
+					{
 						title: t('earn.incentives.options.yvsnx.title'),
 						subtitle: t('earn.incentives.options.yvsnx.subtitle'),
 						apr: lpData[LP.YEARN_SNX_VAULT].APR,
@@ -150,6 +170,7 @@ const Incentives: FC<IncentivesProps> = ({
 		now,
 		t,
 		isWalletConnected,
+		liquidationRewards,
 	]);
 
 	const incentivesTable = (
@@ -208,6 +229,9 @@ const Incentives: FC<IncentivesProps> = ({
 						stakingRewards={stakingRewards}
 						totalRewards={totalRewards}
 					/>
+				)}
+				{activeTab === Tab.LIQUIDATION_REWARDS && (
+					<LiquidationTab liquidationRewards={liquidationRewards} />
 				)}
 				{activeTab === Tab.yearn_SNX_VAULT && (
 					<YearnVaultTab
