@@ -106,12 +106,15 @@ const InfoLayout: FC<InfoLayoutProps> = ({
 				</Subtitle>
 				{minStakeTimeSec && (
 					<Subtitle>
-						{t('staking.info.mint.min-stake-time', {
-							duration: intervalToDuration({
-								start: 0,
-								end: minStakeTimeSec * 1000,
-							}).days,
-						})}{' '}
+						<NoMarginP>
+							{t('staking.info.mint.min-stake-time', {
+								duration: intervalToDuration({
+									start: 0,
+									end: minStakeTimeSec * 1000,
+								}).days,
+							})}
+							.
+						</NoMarginP>
 						<StyledLink href={EXTERNAL_LINKS.Synthetix.HamalRelease}>
 							{t('staking.info.mint.read-more')}
 						</StyledLink>
@@ -119,10 +122,13 @@ const InfoLayout: FC<InfoLayoutProps> = ({
 				)}
 				{liquidationRatioPercent && targetCratioPercent && (
 					<Subtitle>
-						{t('staking.info.mint.liq-warning', {
-							liquidationRatioPercent: formatPercent(liquidationRatioPercent),
-							targetCratioPercent: formatPercent(targetCratioPercent),
-						})}{' '}
+						<NoMarginP>
+							{t('staking.info.mint.liq-warning', {
+								liquidationRatioPercent: formatPercent(liquidationRatioPercent),
+								targetCratioPercent: formatPercent(targetCratioPercent),
+							})}
+							.
+						</NoMarginP>
 						<StyledLink href={EXTERNAL_LINKS.Synthetix.SIP148Liquidations}>
 							{t('staking.info.mint.read-more')}
 						</StyledLink>
@@ -191,6 +197,10 @@ const TotalBalanceContainer = styled(FlexDivCentered)`
 	padding: 0px 24px;
 	justify-content: space-between;
 	border-bottom: ${(props) => `1px solid ${props.theme.colors.grayBlue}`};
+`;
+const NoMarginP = styled.p`
+	margin: 0;
+	padding: 0;
 `;
 
 export default InfoLayout;

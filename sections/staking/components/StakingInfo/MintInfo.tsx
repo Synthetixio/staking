@@ -146,7 +146,7 @@ const MintInfo: FC = () => {
 			targetCratioPercent={percentageTargetCRatio}
 			liquidationRatioPercent={
 				liquidationDataQuery.data?.liquidationRatio
-					? wei(1).div(liquidationDataQuery.data?.liquidationRatio)
+					? wei(1).div(liquidationDataQuery.data.liquidationRatio)
 					: undefined
 			}
 			stakingInfo={Rows}
