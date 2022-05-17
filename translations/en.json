@@ -1411,6 +1411,7 @@
 			"title": "Manage addresses",
 			"empty": "No addresses to show",
 			"click-to-copy": "click to copy",
+			"refresh-tooltip": "This table is fetched from a subgraph, sometimes it takes a few seconds to sync after an action. Click the icon to refresh.",
 			"cols": {
 				"address": "Address",
 				"canAll": "all",
