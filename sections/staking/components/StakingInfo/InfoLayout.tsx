@@ -117,7 +117,7 @@ const InfoLayout: FC<InfoLayoutProps> = ({
 				<Subtitle>
 					{/* TODO ideally we should fetch the liquidation percentage, it's now hard coded in translation to 150% */}
 					{t('staking.info.mint.liq-warning')}{' '}
-					<StyledLink href={EXTERNAL_LINKS.Synthetix.HamalRelease}>
+					<StyledLink href={EXTERNAL_LINKS.Synthetix.SIP148Liquidations}>
 						{t('staking.info.mint.read-more')}
 					</StyledLink>
 				</Subtitle>
