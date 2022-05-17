@@ -20,6 +20,7 @@ export const EXTERNAL_LINKS = {
 		HamalRelease: 'https://blog.synthetix.io/the-hamal-release/',
 		DebtPoolSynthesis: 'https://blog.synthetix.io/debt-pool-synthesis-2/',
 		StakingGuide: 'https://blog.synthetix.io/basics-of-staking-snx-2022/',
+		SIP148Liquidations: 'https://blog.synthetix.io/new-liquidation-mechanism/',
 	},
 	Social: {
 		Twitter: 'https://twitter.com/synthetix_io',
