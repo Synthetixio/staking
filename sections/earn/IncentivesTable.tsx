@@ -50,7 +50,7 @@ export const NOT_APPLICABLE = 'n/a';
 export type EarnItem = {
 	title: string;
 	subtitle: string;
-	apr: Wei;
+	apr?: Wei;
 	tvl: Wei;
 	staked: {
 		balance: Wei;
@@ -128,12 +128,15 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab }
 					</CellContainer>
 				),
 				accessor: 'apr',
-				Cell: (cellProps: CellProps<EarnItem>) => (
-					<CellContainer>
-						<Title isNumeric={true}>{formatPercent(cellProps.row.original.apr)}</Title>
-						<Subtitle>{t('earn.incentives.est-apr')}</Subtitle>
-					</CellContainer>
-				),
+				Cell: (cellProps: CellProps<EarnItem>) => {
+					if (!cellProps.row.original.apr) return <CellContainer>-</CellContainer>;
+					return (
+						<CellContainer>
+							<Title isNumeric={true}>{formatPercent(cellProps.row.original.apr)}</Title>
+							<Subtitle>{t('earn.incentives.est-apr')}</Subtitle>
+						</CellContainer>
+					);
+				},
 				width: 100,
 				sortable: false,
 			},

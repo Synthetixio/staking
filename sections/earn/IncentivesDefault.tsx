@@ -11,8 +11,9 @@ import media from 'styles/media';
 import { isWalletConnectedState } from 'store/wallet';
 import useFeePeriodTimeAndProgress from 'hooks/useFeePeriodTimeAndProgress';
 
-import IncentivesTable from './IncentivesTable';
+import IncentivesTable, { NOT_APPLICABLE } from './IncentivesTable';
 import ClaimTab from './ClaimTab';
+import LiquidationTab from './LiquidationTab';
 import { Tab } from './types';
 import { DesktopOrTabletView } from 'components/Media';
 import useSynthetixQueries from '@synthetixio/queries';
@@ -22,6 +23,7 @@ type IncentivesProps = {
 	tradingRewards: Wei;
 	stakingRewards: Wei;
 	totalRewards: Wei;
+	liquidationRewards: Wei;
 	stakingAPR: Wei;
 	stakedAmount: Wei;
 	hasClaimed: boolean;
@@ -36,6 +38,7 @@ const Incentives: FC<IncentivesProps> = ({
 	stakingAPR,
 	stakedAmount,
 	hasClaimed,
+	liquidationRewards,
 }) => {
 	const { t } = useTranslation();
 	const router = useRouter();
@@ -82,6 +85,25 @@ const Incentives: FC<IncentivesProps> = ({
 							tab: Tab.Claim,
 							route: ROUTES.Earn.Claim,
 						},
+						{
+							title: t('earn.incentives.options.liquidations.title'),
+							subtitle: t('earn.incentives.options.liquidations.subtitle'),
+							apr: undefined,
+							tvl: lockedSnxQuery.data?.lockedValue ?? wei(0),
+							staked: {
+								balance: stakedAmount,
+								asset: CryptoCurrency.SNX,
+								ticker: CryptoCurrency.SNX,
+							},
+							rewards: liquidationRewards,
+							periodStarted: 0,
+							periodFinish: Number.MAX_SAFE_INTEGER, // trick it to never expire
+							claimed: NOT_APPLICABLE,
+							now,
+							route: ROUTES.Earn.LIQUIDATION_REWARDS,
+							tab: Tab.LIQUIDATION_REWARDS,
+							neverExpires: true,
+						},
 				  ]
 				: [],
 		[
@@ -95,6 +117,7 @@ const Incentives: FC<IncentivesProps> = ({
 			now,
 			t,
 			isWalletConnected,
+			liquidationRewards,
 		]
 	);
 
@@ -114,6 +137,9 @@ const Incentives: FC<IncentivesProps> = ({
 						stakingRewards={stakingRewards}
 						totalRewards={totalRewards}
 					/>
+				)}
+				{activeTab === Tab.LIQUIDATION_REWARDS && (
+					<LiquidationTab liquidationRewards={liquidationRewards} />
 				)}
 			</TabContainer>
 		</Container>

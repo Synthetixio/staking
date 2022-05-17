@@ -22,6 +22,7 @@ import YearnVaultTab from './LPTab/YearnVaultTab';
 import { YearnVaultData } from 'queries/liquidityPools/useYearnSNXVaultQuery';
 import useSynthetixQueries from '@synthetixio/queries';
 import Connector from 'containers/Connector';
+import LiquidationTab from './LiquidationTab';
 
 enum View {
 	ACTIVE = 'active',
@@ -32,6 +33,7 @@ type IncentivesProps = {
 	tradingRewards: Wei;
 	stakingRewards: Wei;
 	totalRewards: Wei;
+	liquidationRewards: Wei;
 	stakingAPR: Wei;
 	stakedAmount: Wei;
 	hasClaimed: boolean;
@@ -46,6 +48,7 @@ const Incentives: FC<IncentivesProps> = ({
 	stakingAPR,
 	stakedAmount,
 	hasClaimed,
+	liquidationRewards,
 }) => {
 	const { t } = useTranslation();
 	const router = useRouter();
@@ -92,6 +95,25 @@ const Incentives: FC<IncentivesProps> = ({
 						now,
 						tab: Tab.Claim,
 						route: ROUTES.Earn.Claim,
+					},
+					{
+						title: t('earn.incentives.options.liquidations.title'),
+						subtitle: t('earn.incentives.options.liquidations.subtitle'),
+						apr: undefined,
+						tvl: lockedSnxQuery.data?.lockedValue ?? wei(0),
+						staked: {
+							balance: stakedAmount,
+							asset: CryptoCurrency.SNX,
+							ticker: CryptoCurrency.SNX,
+						},
+						rewards: liquidationRewards,
+						periodStarted: 0,
+						periodFinish: Number.MAX_SAFE_INTEGER, // trick it to never expire
+						claimed: NOT_APPLICABLE,
+						now,
+						route: ROUTES.Earn.LIQUIDATION_REWARDS,
+						tab: Tab.LIQUIDATION_REWARDS,
+						neverExpires: true,
 					},
 					{
 						title: t('earn.incentives.options.yvsnx.title'),
@@ -148,6 +170,7 @@ const Incentives: FC<IncentivesProps> = ({
 		now,
 		t,
 		isWalletConnected,
+		liquidationRewards,
 	]);
 
 	const incentivesTable = (
@@ -206,6 +229,9 @@ const Incentives: FC<IncentivesProps> = ({
 						stakingRewards={stakingRewards}
 						totalRewards={totalRewards}
 					/>
+				)}
+				{activeTab === Tab.LIQUIDATION_REWARDS && (
+					<LiquidationTab liquidationRewards={liquidationRewards} />
 				)}
 				{activeTab === Tab.yearn_SNX_VAULT && (
 					<YearnVaultTab
