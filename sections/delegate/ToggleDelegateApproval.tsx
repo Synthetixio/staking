@@ -1,4 +1,4 @@
-import { FC, useCallback, useState, useMemo } from 'react';
+import { FC, useCallback, useState } from 'react';
 import styled from 'styled-components';
 import { useRecoilValue } from 'recoil';
 import { useTranslation } from 'react-i18next';
@@ -7,6 +7,7 @@ import TransactionNotifier from 'containers/TransactionNotifier';
 import {
 	ModalItemTitle as TxModalItemTitle,
 	ModalItemText as TxModalItemText,
+	Tooltip,
 } from 'styles/common';
 import { truncateAddress } from 'utils/formatters/string';
 import { TxModalItem } from 'sections/delegate/common';
@@ -22,17 +23,20 @@ import {
 	DELEGATE_WITHDRAW_CONTRACT_METHODS,
 } from '@synthetixio/queries';
 import Connector from 'containers/Connector';
+import { sleep } from 'utils/promise';
 
 type ToggleDelegateApprovalProps = {
 	account: DelegationWallet;
 	action: string;
 	value: boolean;
+	onDelegateToggleSuccess: () => void;
 };
 
 const ToggleDelegateApproval: FC<ToggleDelegateApprovalProps> = ({
 	account,
 	action,
 	value: checked,
+	onDelegateToggleSuccess,
 }) => {
 	const { t } = useTranslation();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
@@ -41,11 +45,7 @@ const ToggleDelegateApproval: FC<ToggleDelegateApprovalProps> = ({
 
 	const [, setError] = useState<string | null>(null);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
-
-	const shortenedDelegateAddress = useMemo(
-		() => truncateAddress(account.address, 8, 6),
-		[account.address]
-	);
+	const shortenedDelegateAddress = truncateAddress(account.address, 8, 6);
 
 	const getTxData = useCallback(
 		(gas: Record<string, number>) => {
@@ -72,7 +72,10 @@ const ToggleDelegateApproval: FC<ToggleDelegateApprovalProps> = ({
 						txHash: hash,
 						onTxConfirmed: () => {},
 					}),
-				showSuccessNotification: () => {},
+				showSuccessNotification: async () => {
+					await sleep(5000); // wait for the subgraph to sync
+					onDelegateToggleSuccess();
+				},
 			});
 		} catch {
 		} finally {
@@ -83,6 +86,7 @@ const ToggleDelegateApproval: FC<ToggleDelegateApprovalProps> = ({
 	const canAll = (account: DelegationWallet) =>
 		account.canBurn && account.canMint && account.canClaim && account.canExchange;
 
+	const disabled = canAll(account) && action !== Action.APPROVE_ALL;
 	return (
 		<>
 			<Container>
@@ -92,10 +96,20 @@ const ToggleDelegateApproval: FC<ToggleDelegateApprovalProps> = ({
 						`common.delegate-actions.actions.${action}`
 					)}`}
 					type="checkbox"
-					disabled={canAll(account) && action !== Action.APPROVE_ALL}
-					{...{ onChange, checked }}
+					disabled={disabled}
+					onChange={onChange}
+					checked={checked}
 				/>
-				<span className="checkmark"></span>
+				<Tooltip
+					content={t(
+						checked
+							? 'common.delegate-actions.tooltip.withdraw'
+							: 'common.delegate-actions.tooltip.enable'
+					)}
+					disabled={disabled}
+				>
+					<span className="checkmark"></span>
+				</Tooltip>
 			</Container>
 			{txModalOpen && (
 				<TxConfirmationModal

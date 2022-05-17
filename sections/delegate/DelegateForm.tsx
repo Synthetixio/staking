@@ -33,8 +33,9 @@ import {
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import ActionSelector from './ActionSelector';
 import { isObjectOrErrorWithMessage } from 'utils/ts-helpers';
+import { sleep } from 'utils/promise';
 
-const LeftCol: FC = () => {
+const DelegateForm: FC = () => {
 	const { t } = useTranslation();
 
 	const tabData = useMemo(
@@ -63,7 +64,7 @@ const Tab: FC = () => {
 
 	const { useGetDelegateWallets, useSynthetixTxn } = useSynthetixQueries();
 
-	const delegateWalletsQuery = useGetDelegateWallets(address || '');
+	const delegateWalletsQuery = useGetDelegateWallets(address || '', { enabled: Boolean(address) });
 	const [action, setAction] = useState<string>(Action.APPROVE_ALL);
 
 	const [gasPrice, setGasPrice] = useState<GasPrice | undefined>(undefined);
@@ -74,19 +75,14 @@ const Tab: FC = () => {
 	const [buttonState, setButtonState] = useState<string | null>(null);
 	const [alreadyDelegated, setAlreadyDelegated] = useState<boolean>(false);
 
-	const properDelegateAddress = useMemo(
-		() => (delegateAddress && ethers.utils.isAddress(delegateAddress) ? delegateAddress : null),
-		[delegateAddress]
-	);
+	const properDelegateAddress =
+		delegateAddress && ethers.utils.isAddress(delegateAddress) ? delegateAddress : null;
 	const delegateAddressIsSelf =
 		properDelegateAddress && address
 			? properDelegateAddress === ethers.utils.getAddress(address)
 			: false;
 
-	const shortenedDelegateAddress = useMemo(
-		() => truncateAddress(delegateAddress, 8, 6),
-		[delegateAddress]
-	);
+	const shortenedDelegateAddress = truncateAddress(delegateAddress, 8, 6);
 
 	const onEnterAddress: ChangeEventHandler<HTMLTextAreaElement> = (e) =>
 		setDelegateAddress((e.target.value ?? '').trim());
@@ -98,10 +94,11 @@ const Tab: FC = () => {
 		gasPrice,
 		{
 			enabled: Boolean(properDelegateAddress),
-			onSuccess: () => {
-				delegateWalletsQuery.refetch();
+			onSuccess: async () => {
 				setDelegateAddress('');
 				setAction(Action.APPROVE_ALL);
+				await sleep(5000); // wait for subgraph to sync
+				delegateWalletsQuery.refetch();
 			},
 			onError: (e) => {
 				if (isObjectOrErrorWithMessage(e)) {
@@ -246,4 +243,4 @@ const FormButton = styled(Button)`
 	text-transform: uppercase;
 `;
 
-export default LeftCol;
+export default DelegateForm;

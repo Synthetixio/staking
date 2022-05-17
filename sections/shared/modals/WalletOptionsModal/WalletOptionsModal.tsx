@@ -9,7 +9,6 @@ import Img, { Svg } from 'react-optimized-image';
 import {
 	isWalletConnectedState,
 	delegateWalletState,
-	isMainnetState,
 	truncatedWalletAddressState,
 	walletAddressState,
 	walletWatchedState,
@@ -110,7 +109,6 @@ const WalletOptionsModal: FC<WalletOptionsProps> = ({
 	const [walletAddress, setWalletAddress] = useRecoilState(walletAddressState);
 	const truncatedWalletAddress = useRecoilValue(truncatedWalletAddressState);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	const isMainnet = useRecoilValue(isMainnetState);
 	const [delegateWallet, setDelegateWallet] = useRecoilState(delegateWalletState);
 	const [walletWatched, setWalletWatched] = useRecoilState(walletWatchedState);
 
@@ -204,16 +202,15 @@ const WalletOptionsModal: FC<WalletOptionsProps> = ({
 						>
 							{searchIcon} {t('modals.wallet.watch-wallet.title')}
 						</StyledButton>
-						{isMainnet && (
-							<StyledButton
-								onClick={() => {
-									onDismiss();
-									setDelegateModalOpened(true);
-								}}
-							>
-								{delegateIcon} {t('modals.wallet.delegate-mode.menu-title')}
-							</StyledButton>
-						)}
+
+						<StyledButton
+							onClick={() => {
+								onDismiss();
+								setDelegateModalOpened(true);
+							}}
+						>
+							{delegateIcon} {t('modals.wallet.delegate-mode.menu-title')}
+						</StyledButton>
 					</Buttons>
 					<StyledDivider />
 					{delegateWallet && (
