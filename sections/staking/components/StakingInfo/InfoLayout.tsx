@@ -5,7 +5,7 @@ import { Trans, useTranslation } from 'react-i18next';
 import { Svg } from 'react-optimized-image';
 
 import ArrowRightIcon from 'assets/svg/app/arrow-right.svg';
-import { formatCurrency } from 'utils/formatters/number';
+import { formatCurrency, formatPercent } from 'utils/formatters/number';
 import { EXTERNAL_LINKS } from 'constants/links';
 import { FlexDivCentered } from 'styles/common';
 import { CryptoCurrency } from 'constants/currency';
@@ -54,6 +54,8 @@ type InfoLayoutProps = {
 	isInputEmpty: boolean;
 	infoType: StakingPanelType;
 	minStakeTimeSec?: number;
+	liquidationRatioPercent?: Wei;
+	targetCratioPercent?: Wei;
 };
 
 const InfoLayout: FC<InfoLayoutProps> = ({
@@ -62,6 +64,8 @@ const InfoLayout: FC<InfoLayoutProps> = ({
 	collateral,
 	isInputEmpty,
 	infoType,
+	liquidationRatioPercent,
+	targetCratioPercent,
 }) => {
 	const { t } = useTranslation();
 
@@ -113,14 +117,17 @@ const InfoLayout: FC<InfoLayoutProps> = ({
 						</StyledLink>
 					</Subtitle>
 				)}
-
-				<Subtitle>
-					{/* TODO ideally we should fetch the liquidation percentage, it's now hard coded in translation to 150% */}
-					{t('staking.info.mint.liq-warning')}{' '}
-					<StyledLink href={EXTERNAL_LINKS.Synthetix.SIP148Liquidations}>
-						{t('staking.info.mint.read-more')}
-					</StyledLink>
-				</Subtitle>
+				{liquidationRatioPercent && targetCratioPercent && (
+					<Subtitle>
+						{t('staking.info.mint.liq-warning', {
+							liquidationRatioPercent: formatPercent(liquidationRatioPercent),
+							targetCratioPercent: formatPercent(targetCratioPercent),
+						})}{' '}
+						<StyledLink href={EXTERNAL_LINKS.Synthetix.SIP148Liquidations}>
+							{t('staking.info.mint.read-more')}
+						</StyledLink>
+					</Subtitle>
+				)}
 			</InfoHeader>
 			<TotalBalanceContainer>
 				<TotalBalanceHeading>{t('staking.info.table.total-snx')}</TotalBalanceHeading>

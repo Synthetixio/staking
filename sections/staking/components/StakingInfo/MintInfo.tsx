@@ -32,13 +32,16 @@ const MintInfo: FC = () => {
 		SNXRate,
 		collateral,
 		balance,
+		percentageTargetCRatio,
 	} = useStakingCalculations();
 	const { synthetixjs } = Connector.useContainer();
 
 	const walletAddress = useRecoilValue(walletAddressState);
 	const delegateWallet = useRecoilValue(delegateWalletState);
-	const { useSynthsBalancesQuery } = useSynthetixQueries();
-	const synthsBalancesQuery = useSynthsBalancesQuery(delegateWallet?.address ?? walletAddress);
+	const walletToUse = delegateWallet?.address || walletAddress;
+	const { useSynthsBalancesQuery, useGetLiquidationDataQuery } = useSynthetixQueries();
+	const liquidationDataQuery = useGetLiquidationDataQuery(walletToUse);
+	const synthsBalancesQuery = useSynthsBalancesQuery(walletToUse);
 
 	const amountToMint = useRecoilValue(amountToMintState);
 
@@ -140,6 +143,12 @@ const MintInfo: FC = () => {
 
 	return (
 		<InfoLayout
+			targetCratioPercent={percentageTargetCRatio}
+			liquidationRatioPercent={
+				liquidationDataQuery.data?.liquidationRatio
+					? wei(1).div(liquidationDataQuery.data?.liquidationRatio)
+					: undefined
+			}
 			stakingInfo={Rows}
 			isInputEmpty={isInputEmpty}
 			collateral={collateral}
