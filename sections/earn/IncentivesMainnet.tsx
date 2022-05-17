@@ -32,6 +32,7 @@ type IncentivesProps = {
 	tradingRewards: Wei;
 	stakingRewards: Wei;
 	totalRewards: Wei;
+	liquidationRewards: Wei;
 	stakingAPR: Wei;
 	stakedAmount: Wei;
 	hasClaimed: boolean;
@@ -46,6 +47,7 @@ const Incentives: FC<IncentivesProps> = ({
 	stakingAPR,
 	stakedAmount,
 	hasClaimed,
+	liquidationRewards,
 }) => {
 	const { t } = useTranslation();
 	const router = useRouter();

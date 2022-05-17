@@ -18,6 +18,7 @@ import useSynthetixQueries from '@synthetixio/queries';
 import { useRecoilValue } from 'recoil';
 import { walletAddressState, delegateWalletState } from 'store/wallet';
 import { wei } from '@synthetixio/wei';
+import useLiquidationRewards from 'hooks/useLiquidationRewards';
 
 const Earn: FC = () => {
 	const { t } = useTranslation();
@@ -25,13 +26,15 @@ const Earn: FC = () => {
 
 	const walletAddress = useRecoilValue(walletAddressState);
 	const delegateWallet = useRecoilValue(delegateWalletState);
+	const addressToUse = delegateWallet?.address || walletAddress!;
+
 	const { useExchangeRatesQuery, subgraph } = useSynthetixQueries();
 
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
 	const { stakedValue, stakingAPR, tradingRewards, stakingRewards, hasClaimed } =
 		useUserStakingData(delegateWallet?.address ?? walletAddress);
-
+	const liquidationRewardQuery = useLiquidationRewards(addressToUse);
 	const SNXRate = exchangeRatesQuery.data?.SNX ?? wei(0);
 
 	const totalRewards = tradingRewards.add(stakingRewards.mul(SNXRate));
@@ -41,7 +44,7 @@ const Earn: FC = () => {
 			first: 1000,
 			orderBy: 'timestamp',
 			orderDirection: 'desc',
-			where: { account: (delegateWallet?.address ?? walletAddress)?.toLowerCase() },
+			where: { account: addressToUse?.toLowerCase() },
 		},
 		{ timestamp: true, rewards: true, value: true }
 	);
@@ -95,6 +98,7 @@ const Earn: FC = () => {
 				stakingRewards={stakingRewards}
 				totalRewards={totalRewards}
 				stakingAPR={stakingAPR}
+				liquidationRewards={liquidationRewardQuery.data || wei(0)}
 				stakedAmount={SNXRate.eq(0) ? wei(0) : stakedValue.div(SNXRate)}
 				hasClaimed={hasClaimed}
 			/>
