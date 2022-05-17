@@ -33,7 +33,7 @@ const Earn: FC = () => {
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
 	const { stakedValue, stakingAPR, tradingRewards, stakingRewards, hasClaimed } =
-		useUserStakingData(delegateWallet?.address ?? walletAddress);
+		useUserStakingData(addressToUse);
 	const liquidationRewardQuery = useLiquidationRewards(addressToUse);
 	const SNXRate = exchangeRatesQuery.data?.SNX ?? wei(0);
 

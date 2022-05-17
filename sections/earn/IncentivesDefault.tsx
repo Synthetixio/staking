@@ -97,7 +97,7 @@ const Incentives: FC<IncentivesProps> = ({
 							},
 							rewards: liquidationRewards,
 							periodStarted: 0,
-							periodFinish: now + 1000000, // trick it to never expire
+							periodFinish: Number.MAX_SAFE_INTEGER, // trick it to never expire
 							claimed: NOT_APPLICABLE,
 							now,
 							route: ROUTES.Earn.LIQUIDATION_REWARDS,
