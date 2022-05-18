@@ -60,8 +60,7 @@ const SelfLiquidation: React.FC<{ percentageTargetCRatio: Wei }> = ({ percentage
 						}}
 					/>
 				</InfoText>
-				<Button
-					style={{ marginBottom: 30 }}
+				<StyledButton
 					variant={'primary'}
 					onClick={() => {
 						setTxModalOpen(true);
@@ -69,7 +68,7 @@ const SelfLiquidation: React.FC<{ percentageTargetCRatio: Wei }> = ({ percentage
 					}}
 				>
 					{t('staking.flag-warning.self-liquidate')}
-				</Button>
+				</StyledButton>
 				<LineSpacer />
 			</Container>
 			{txModalOpen && (
@@ -90,6 +89,10 @@ const SelfLiquidation: React.FC<{ percentageTargetCRatio: Wei }> = ({ percentage
 		</>
 	);
 };
+
+const StyledButton = styled(Button)`
+	margin-bottom: 30px;
+`;
 
 const Strong = styled.strong`
 	font-family: ${(props) => props.theme.fonts.condensedBold};
