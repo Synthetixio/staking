@@ -373,6 +373,12 @@
 				"debt": "Total Debt",
 				"susd-balance": "sUSD Balance"
 			}
+		},
+		"flag-warning": {
+			"title": "Your account has been flagged for liquidation!",
+			"info": "After {{deadlineDate}} you can be liquidated, which incur penalities. To avoid this, burn your <0>C-RATIO back to {{percentageTargetCRatio}}</0> or self liquidate. <1>Read more about liquidation here</1>",
+			"self-liquidate": "Self Liquidate",
+			"self-liquidating": "Self Liquidating"
 		}
 	},
 	"pool": {
