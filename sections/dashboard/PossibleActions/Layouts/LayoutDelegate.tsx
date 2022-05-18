@@ -16,21 +16,20 @@ import media from 'styles/media';
 
 import GridBox, { GridBoxProps } from 'components/GridBox/Gridbox';
 
-import { delegateWalletState, walletAddressState } from 'store/wallet';
+import { delegateWalletState } from 'store/wallet';
 import useUserStakingData from 'hooks/useUserStakingData';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 
 import { ActionsContainer as Container } from './common-styles';
 import { wei } from '@synthetixio/wei';
 
-const LayoutLayerOne: FC = () => {
+const LayoutDelegate: FC = () => {
 	const { t } = useTranslation();
 
-	const walletAddress = useRecoilValue(walletAddressState);
-
-	const { stakingRewards, tradingRewards } = useUserStakingData(walletAddress);
 	const { currentCRatio, targetCRatio } = useStakingCalculations();
 	const delegateWallet = useRecoilValue(delegateWalletState);
+	const liquidationRewardsQuery = useLiquidationRewards(delegateWallet?.address ?? null);
+	const { stakingRewards, tradingRewards } = useUserStakingData(delegateWallet?.address ?? null);
 
 	const gridItems: GridBoxProps[] = useMemo(() => {
 		const aboveTargetCRatio = currentCRatio.lte(targetCRatio);
@@ -112,4 +111,4 @@ const StyledContainer = styled(Container)`
 	`}
 `;
 
-export default LayoutLayerOne;
+export default LayoutDelegate;
