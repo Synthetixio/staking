@@ -12,7 +12,6 @@ import KwentaIcon from 'assets/svg/app/kwenta.svg';
 import MintIcon from 'assets/svg/app/mint.svg';
 import ClaimIcon from 'assets/svg/app/claim.svg';
 import BurnIcon from 'assets/svg/app/burn.svg';
-import SorbetFinance from 'assets/svg/app/sorbet-finance.svg';
 
 import GridBox, { GridBoxProps } from 'components/GridBox/Gridbox';
 
@@ -26,23 +25,14 @@ import useStakingCalculations from 'sections/staking/hooks/useStakingCalculation
 import { ActionsContainer as Container } from './common-styles';
 import { wei } from '@synthetixio/wei';
 import { useRecoilValue } from 'recoil';
-import { useGetUniswapStakingRewardsAPY } from 'sections/pool/useGetUniswapStakingRewardsAPY';
-import { WETHSNXLPTokenContract } from 'constants/gelato';
 import { walletAddressState } from 'store/wallet';
-import Connector from 'containers/Connector';
 
 const LayoutLayerTwo: FC = () => {
 	const { t } = useTranslation();
 
 	const walletAddress = useRecoilValue(walletAddressState);
-	const { synthetixjs } = Connector.useContainer();
 	const { stakingRewards, tradingRewards } = useUserStakingData(walletAddress);
 	const { currentCRatio, targetCRatio } = useStakingCalculations();
-
-	const rates = useGetUniswapStakingRewardsAPY({
-		stakingRewardsContract: synthetixjs?.contracts.StakingRewardsSNXWETHUniswapV3 ?? null,
-		tokenContract: WETHSNXLPTokenContract,
-	});
 
 	const gridItems: GridBoxProps[] = useMemo(() => {
 		const aboveTargetCRatio = currentCRatio.lte(targetCRatio);
@@ -93,20 +83,8 @@ const LayoutLayerTwo: FC = () => {
 				externalLink: EXTERNAL_LINKS.Trading.Kwenta,
 				isDisabled: false,
 			},
-			{
-				title: t('dashboard.actions.earn.title', {
-					percent: `${rates.data?.apy.toFixed(2) || '-'}%`,
-				}),
-				copy: t('dashboard.actions.earn.copy', { asset: 'WETH-SNX', supplier: 'Sorbet Finance' }),
-				icon: (
-					<GlowingCircle variant="purple" size="md">
-						<Svg src={SorbetFinance} width="32" />
-					</GlowingCircle>
-				),
-				link: ROUTES.Pools.snx_weth,
-			},
 		].map((cell, i) => ({ ...cell, gridArea: `tile-${i + 1}` }));
-	}, [t, currentCRatio, targetCRatio, stakingRewards, tradingRewards, rates.data?.apy]);
+	}, [t, currentCRatio, targetCRatio, stakingRewards, tradingRewards]);
 
 	return (
 		<StyledContainer>
