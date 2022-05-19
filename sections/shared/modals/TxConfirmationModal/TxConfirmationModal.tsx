@@ -9,6 +9,7 @@ import BaseModal from 'components/BaseModal';
 
 import Button from 'components/Button';
 import PendingConfirmation from 'assets/svg/app/pending-confirmation.svg';
+import WarningIcon from 'assets/svg/app/warning.svg';
 
 type TxConfirmationModalProps = {
 	onDismiss: () => void;
@@ -46,7 +47,8 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 			</Subtitle>
 			{txError && (
 				<Actions>
-					<Message>{t('common.transaction.error')}</Message>
+					<Svg src={WarningIcon} />
+					<Message>{txError}</Message>
 					<MessageButton onClick={attemptRetry}>{t('common.transaction.reattempt')}</MessageButton>
 				</Actions>
 			)}
