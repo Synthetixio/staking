@@ -106,7 +106,7 @@ const LayoutLayerOne: FC = () => {
 				isDisabled: lpData[LP.CURVE_sUSD].APR.eq(0),
 			},
 		].map((cell, i) => ({ ...cell, gridArea: `tile-${i + 1}` }));
-	}, [t, lpData, currentCRatio, targetCRatio, stakingRewards, tradingRewards]);
+	}, [t, lpData, currentCRatio, targetCRatio, stakingAndTradingRewards, liquidationRewards]);
 
 	return (
 		<StyledContainer>

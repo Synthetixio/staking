@@ -97,8 +97,6 @@ const LayoutLayerTwo: FC = () => {
 		targetCRatio,
 		stakingAndTradingRewards,
 		liquidationRewards,
-		stakingRewards,
-		tradingRewards,
 		rates.data?.apy,
 	]);
 
