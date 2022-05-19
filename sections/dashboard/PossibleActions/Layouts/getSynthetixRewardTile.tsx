@@ -12,10 +12,13 @@ const getSynthetixRewardTile = (
 	liquidationRewards: Wei,
 	walletMissingPermissionToClaim = false
 ) => {
-	console.log(walletMissingPermissionToClaim);
-	// User have NO staking rewards and some liquidationRewards
-	// Link directly to Liquidation rewards
-	if (stakingAndTradingRewards.eq(0) && !liquidationRewards.eq(0)) {
+	const haveLiquidationRewards = !liquidationRewards.eq(0);
+	const noStakingRewardsAndHaveLiquidationRewards =
+		stakingAndTradingRewards.eq(0) && haveLiquidationRewards;
+	const missingPermissionAndHaveLiquidationRewards =
+		walletMissingPermissionToClaim && haveLiquidationRewards;
+
+	if (noStakingRewardsAndHaveLiquidationRewards || missingPermissionAndHaveLiquidationRewards) {
 		return {
 			icon: (
 				<GlowingCircle variant="green" size="md">
