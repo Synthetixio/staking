@@ -5,7 +5,7 @@ import { Trans, useTranslation } from 'react-i18next';
 import { Svg } from 'react-optimized-image';
 
 import ArrowRightIcon from 'assets/svg/app/arrow-right.svg';
-import { formatCurrency } from 'utils/formatters/number';
+import { formatCurrency, formatPercent } from 'utils/formatters/number';
 import { EXTERNAL_LINKS } from 'constants/links';
 import { FlexDivCentered } from 'styles/common';
 import { CryptoCurrency } from 'constants/currency';
@@ -54,6 +54,8 @@ type InfoLayoutProps = {
 	isInputEmpty: boolean;
 	infoType: StakingPanelType;
 	minStakeTimeSec?: number;
+	liquidationRatioPercent?: Wei;
+	targetCratioPercent?: Wei;
 };
 
 const InfoLayout: FC<InfoLayoutProps> = ({
@@ -62,6 +64,8 @@ const InfoLayout: FC<InfoLayoutProps> = ({
 	collateral,
 	isInputEmpty,
 	infoType,
+	liquidationRatioPercent,
+	targetCratioPercent,
 }) => {
 	const { t } = useTranslation();
 
@@ -102,25 +106,34 @@ const InfoLayout: FC<InfoLayoutProps> = ({
 				</Subtitle>
 				{minStakeTimeSec && (
 					<Subtitle>
-						{t('staking.info.mint.min-stake-time', {
-							duration: intervalToDuration({
-								start: 0,
-								end: minStakeTimeSec * 1000,
-							}).days,
-						})}{' '}
+						<NoMarginP>
+							{t('staking.info.mint.min-stake-time', {
+								duration: intervalToDuration({
+									start: 0,
+									end: minStakeTimeSec * 1000,
+								}).days,
+							})}
+							.
+						</NoMarginP>
 						<StyledLink href={EXTERNAL_LINKS.Synthetix.HamalRelease}>
 							{t('staking.info.mint.read-more')}
 						</StyledLink>
 					</Subtitle>
 				)}
-
-				<Subtitle>
-					{/* TODO ideally we should fetch the liquidation percentage, it's now hard coded in translation to 150% */}
-					{t('staking.info.mint.liq-warning')}{' '}
-					<StyledLink href={EXTERNAL_LINKS.Synthetix.SIP148Liquidations}>
-						{t('staking.info.mint.read-more')}
-					</StyledLink>
-				</Subtitle>
+				{liquidationRatioPercent && targetCratioPercent && (
+					<Subtitle>
+						<NoMarginP>
+							{t('staking.info.mint.liq-warning', {
+								liquidationRatioPercent: formatPercent(liquidationRatioPercent),
+								targetCratioPercent: formatPercent(targetCratioPercent),
+							})}
+							.
+						</NoMarginP>
+						<StyledLink href={EXTERNAL_LINKS.Synthetix.SIP148Liquidations}>
+							{t('staking.info.mint.read-more')}
+						</StyledLink>
+					</Subtitle>
+				)}
 			</InfoHeader>
 			<TotalBalanceContainer>
 				<TotalBalanceHeading>{t('staking.info.table.total-snx')}</TotalBalanceHeading>
@@ -184,6 +197,10 @@ const TotalBalanceContainer = styled(FlexDivCentered)`
 	padding: 0px 24px;
 	justify-content: space-between;
 	border-bottom: ${(props) => `1px solid ${props.theme.colors.grayBlue}`};
+`;
+const NoMarginP = styled.p`
+	margin: 0;
+	padding: 0;
 `;
 
 export default InfoLayout;
