@@ -139,7 +139,7 @@ const SelfLiquidation: React.FC<{
 	const liquidationData = liquidationQuery.data;
 	const liquidationAmountsToFixCollateralQuery = useLiquidationAmountToFixCollateral(
 		debtBalance,
-		totalSNXBalance.mul(SNXRate),
+		totalSNXBalance?.mul(SNXRate),
 		liquidationData?.selfLiquidationPenalty,
 		liquidationData?.liquidationPenalty
 	);

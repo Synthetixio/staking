@@ -4,7 +4,7 @@ import Wei, { wei } from '@synthetixio/wei';
 
 const useLiquidationAmountToFixCollateral = (
 	debtBalance: Wei,
-	collateralInUsd: Wei,
+	collateralInUsd?: Wei,
 	selfLiquidationPenalty?: Wei,
 	liquidationPenalty?: Wei
 ) => {
@@ -16,13 +16,13 @@ const useLiquidationAmountToFixCollateral = (
 			const amountToSelfLiquidateUsdP =
 				synthetixjs?.contracts.Liquidator.calculateAmountToFixCollateral(
 					debtBalance.toBN(),
-					collateralInUsd.toBN(),
+					collateralInUsd?.toBN(),
 					selfLiquidationPenalty?.toBN()
 				);
 			const amountToLiquidateUsdP =
 				synthetixjs?.contracts.Liquidator.calculateAmountToFixCollateral(
 					debtBalance.toBN(),
-					collateralInUsd.toBN(),
+					collateralInUsd?.toBN(),
 					liquidationPenalty?.toBN()
 				);
 
@@ -35,7 +35,11 @@ const useLiquidationAmountToFixCollateral = (
 		},
 		{
 			enabled: Boolean(
-				network?.id && synthetixjs?.contracts && selfLiquidationPenalty && liquidationPenalty
+				network?.id &&
+					synthetixjs?.contracts &&
+					selfLiquidationPenalty &&
+					liquidationPenalty &&
+					collateralInUsd
 			),
 		}
 	);
