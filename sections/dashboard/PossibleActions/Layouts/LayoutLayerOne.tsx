@@ -11,7 +11,6 @@ import { formatPercent } from 'utils/formatters/number';
 
 import KwentaIcon from 'assets/svg/app/kwenta.svg';
 import MintIcon from 'assets/svg/app/mint.svg';
-import ClaimIcon from 'assets/svg/app/claim.svg';
 import BurnIcon from 'assets/svg/app/burn.svg';
 
 import { GlowingCircle } from 'styles/common';
@@ -30,38 +29,24 @@ import { ActionsContainer as Container } from './common-styles';
 import { wei } from '@synthetixio/wei';
 import { useRecoilValue } from 'recoil';
 import { walletAddressState } from 'store/wallet';
+import getSynthetixRewardTile from './getSynthetixRewardTile';
+import useLiquidationRewards from 'hooks/useLiquidationRewards';
 
 const LayoutLayerOne: FC = () => {
 	const { t } = useTranslation();
 
 	const walletAddress = useRecoilValue(walletAddressState);
+	const liquidationRewardsQuery = useLiquidationRewards(walletAddress);
 
 	const lpData = useLPData();
 	const { stakingRewards, tradingRewards } = useUserStakingData(walletAddress);
 	const { currentCRatio, targetCRatio } = useStakingCalculations();
-
+	const liquidationRewards = liquidationRewardsQuery.data ?? wei(0);
+	const stakingAndTradingRewards = stakingRewards.add(tradingRewards);
 	const gridItems: GridBoxProps[] = useMemo(() => {
 		const aboveTargetCRatio = currentCRatio.lte(targetCRatio);
 		return [
-			{
-				icon: (
-					<GlowingCircle variant="green" size="md">
-						<Svg
-							src={ClaimIcon}
-							width="32"
-							viewBox={`0 0 ${ClaimIcon.width} ${ClaimIcon.height}`}
-						/>
-					</GlowingCircle>
-				),
-				title: t('dashboard.actions.claim.title'),
-				copy: t('dashboard.actions.claim.copy'),
-				tooltip:
-					stakingRewards.eq(0) && tradingRewards.eq(0)
-						? t('dashboard.actions.claim.tooltip')
-						: undefined,
-				link: ROUTES.Earn.Claim,
-				isDisabled: stakingRewards.eq(0) && tradingRewards.eq(0),
-			},
+			getSynthetixRewardTile(t, stakingAndTradingRewards, liquidationRewards),
 			{
 				icon: (
 					<GlowingCircle variant={!aboveTargetCRatio ? 'orange' : 'blue'} size="md">
@@ -121,7 +106,7 @@ const LayoutLayerOne: FC = () => {
 				isDisabled: lpData[LP.CURVE_sUSD].APR.eq(0),
 			},
 		].map((cell, i) => ({ ...cell, gridArea: `tile-${i + 1}` }));
-	}, [t, lpData, currentCRatio, targetCRatio, stakingRewards, tradingRewards]);
+	}, [t, lpData, currentCRatio, targetCRatio, stakingAndTradingRewards, liquidationRewards]);
 
 	return (
 		<StyledContainer>

@@ -183,6 +183,7 @@
 			"claim": {
 				"title": "CLAIM {{amount}} SNX",
 				"copy": "Claim your staking rewards before the end of this epoch",
+				"copy-liquidation": "Claim your liquidation rewards",
 				"tooltip": "No rewards to claim"
 			},
 			"mint": {
@@ -353,7 +354,7 @@
 				"subtitle": "Mint sUSD by staking your SNX. SNX stakers earn weekly staking rewards in exchange for managing their Collateralization Ratio and debt. Learn more from our <0>staking guide</0> and <1>litepaper</1>.",
 				"read-more": "Read more",
 				"min-stake-time": "Your staked SNX will be locked for {{duration}} days",
-				"liq-warning": "If your C-Ratio goes below 150% and you've been flagged, you must increase it or you will be penalized"
+				"liq-warning": "If your C-Ratio goes below {{liquidationRatioPercent}} and you've been flagged, you must increase it to {{targetCratioPercent}} or you will be penalized"
 			},
 			"burn": {
 				"title": "Burn sUSD to unstake SNX",
@@ -373,6 +374,12 @@
 				"debt": "Total Debt",
 				"susd-balance": "sUSD Balance"
 			}
+		},
+		"flag-warning": {
+			"title": "Your account has been flagged for liquidation!",
+			"info": "After {{deadlineDate}} you can be liquidated, which incur penalities. To avoid this, burn your <0>C-RATIO back to {{percentageTargetCRatio}}</0> or self liquidate. <1>Read more about liquidation here</1>",
+			"self-liquidate": "Self Liquidate",
+			"self-liquidating": "Self Liquidating"
 		}
 	},
 	"pool": {
@@ -498,6 +505,13 @@
 					"description": "Staking SNX tokens offers weekly rewards in both inflationary SNX and sUSD from trading fees. <0>Learn more.<0>",
 					"staking-rewards": "STAKING REWARDS",
 					"trading-rewards": "TRADING REWARDS",
+					"total-value": "TOTAL VALUE"
+				},
+				"liquidations": {
+					"title": "Synthetix",
+					"subtitle": "Liquidation Rewards",
+					"description": "Claim liquidation rewards.  <0>Learn more.<0>",
+					"liquidation-rewards": "Liquidation Rewards",
 					"total-value": "TOTAL VALUE"
 				},
 				"curve": {

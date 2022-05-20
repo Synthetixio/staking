@@ -45,6 +45,7 @@ export const ROUTES = {
 		sETH_EXTERNAL: 'https://kwenta.io/shorting',
 		sETH_SHORT: '/earn/sETH-SHORT',
 		yearn_SNX_VAULT: '/earn/yearn-SNX',
+		LIQUIDATION_REWARDS: '/earn/liquidation',
 	},
 	L2: {
 		Home: '/l2',
