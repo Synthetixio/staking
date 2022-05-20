@@ -130,6 +130,7 @@
 		"prettier": "2.5.1",
 		"react-test-renderer": "^17.0.2",
 		"remarkable-external-link": "1.1.0",
+		"svg-jest": "1.0.1",
 		"typescript": "4.3.2",
 		"url-loader": "4.1.1",
 		"webp-loader": "0.6.0"
@@ -156,6 +157,13 @@
 		"setupFilesAfterEnv": [
 			"./test-setup/setup.js"
 		],
-		"testEnvironment": "jest-environment-jsdom"
+		"testEnvironment": "jest-environment-jsdom",
+		"transform": {
+			"\\.svg$": "svg-jest",
+			"\\.[jt]sx?$": "babel-jest"
+		},
+		"moduleNameMapper": {
+			"^.+\\.svg\\?(sprite|include)(.+)?$": "<rootDir>/test-setup/svgMock.js"
+		}
 	}
 }

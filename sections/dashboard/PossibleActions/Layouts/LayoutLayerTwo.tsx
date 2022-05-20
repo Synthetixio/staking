@@ -10,7 +10,6 @@ import { formatPercent } from 'utils/formatters/number';
 
 import KwentaIcon from 'assets/svg/app/kwenta.svg';
 import MintIcon from 'assets/svg/app/mint.svg';
-import ClaimIcon from 'assets/svg/app/claim.svg';
 import BurnIcon from 'assets/svg/app/burn.svg';
 import SorbetFinance from 'assets/svg/app/sorbet-finance.svg';
 
@@ -30,11 +29,13 @@ import { useGetUniswapStakingRewardsAPY } from 'sections/pool/useGetUniswapStaki
 import { WETHSNXLPTokenContract } from 'constants/gelato';
 import { walletAddressState } from 'store/wallet';
 import Connector from 'containers/Connector';
-
+import useLiquidationRewards from 'hooks/useLiquidationRewards';
+import getSynthetixRewardTile from './getSynthetixRewardTile';
 const LayoutLayerTwo: FC = () => {
 	const { t } = useTranslation();
 
 	const walletAddress = useRecoilValue(walletAddressState);
+	const liquidationRewardsQuery = useLiquidationRewards(walletAddress);
 	const { synthetixjs } = Connector.useContainer();
 	const { stakingRewards, tradingRewards } = useUserStakingData(walletAddress);
 	const { currentCRatio, targetCRatio } = useStakingCalculations();
@@ -43,29 +44,13 @@ const LayoutLayerTwo: FC = () => {
 		stakingRewardsContract: synthetixjs?.contracts.StakingRewardsSNXWETHUniswapV3 ?? null,
 		tokenContract: WETHSNXLPTokenContract,
 	});
-
+	const liquidationRewards = liquidationRewardsQuery.data ?? wei(0);
+	const stakingAndTradingRewards = stakingRewards.add(tradingRewards);
 	const gridItems: GridBoxProps[] = useMemo(() => {
 		const aboveTargetCRatio = currentCRatio.lte(targetCRatio);
 		return [
-			{
-				icon: (
-					<GlowingCircle variant="green" size="md">
-						<Svg
-							src={ClaimIcon}
-							width="32"
-							viewBox={`0 0 ${ClaimIcon.width} ${ClaimIcon.height}`}
-						/>
-					</GlowingCircle>
-				),
-				title: t('dashboard.actions.claim.title'),
-				copy: t('dashboard.actions.claim.copy'),
-				tooltip:
-					stakingRewards.eq(0) && tradingRewards.eq(0)
-						? t('dashboard.actions.claim.tooltip')
-						: undefined,
-				link: ROUTES.Earn.Claim,
-				isDisabled: stakingRewards.eq(0) && tradingRewards.eq(0),
-			},
+			getSynthetixRewardTile(t, stakingAndTradingRewards, liquidationRewards),
+
 			{
 				icon: (
 					<GlowingCircle variant={!aboveTargetCRatio ? 'orange' : 'blue'} size="md">
@@ -106,7 +91,14 @@ const LayoutLayerTwo: FC = () => {
 				link: ROUTES.Pools.snx_weth,
 			},
 		].map((cell, i) => ({ ...cell, gridArea: `tile-${i + 1}` }));
-	}, [t, currentCRatio, targetCRatio, stakingRewards, tradingRewards, rates.data?.apy]);
+	}, [
+		t,
+		currentCRatio,
+		targetCRatio,
+		stakingAndTradingRewards,
+		liquidationRewards,
+		rates.data?.apy,
+	]);
 
 	return (
 		<StyledContainer>

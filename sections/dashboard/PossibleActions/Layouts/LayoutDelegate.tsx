@@ -8,7 +8,6 @@ import ROUTES from 'constants/routes';
 import { formatPercent } from 'utils/formatters/number';
 
 import MintIcon from 'assets/svg/app/mint.svg';
-import ClaimIcon from 'assets/svg/app/claim.svg';
 import BurnIcon from 'assets/svg/app/burn.svg';
 
 import { GlowingCircle } from 'styles/common';
@@ -16,44 +15,34 @@ import media from 'styles/media';
 
 import GridBox, { GridBoxProps } from 'components/GridBox/Gridbox';
 
-import { delegateWalletState, walletAddressState } from 'store/wallet';
+import { delegateWalletState } from 'store/wallet';
 import useUserStakingData from 'hooks/useUserStakingData';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 
 import { ActionsContainer as Container } from './common-styles';
 import { wei } from '@synthetixio/wei';
+import useLiquidationRewards from 'hooks/useLiquidationRewards';
+import getSynthetixRewardTile from './getSynthetixRewardTile';
 
-const LayoutLayerOne: FC = () => {
+const LayoutDelegate: FC = () => {
 	const { t } = useTranslation();
 
-	const walletAddress = useRecoilValue(walletAddressState);
-
-	const { stakingRewards, tradingRewards } = useUserStakingData(walletAddress);
 	const { currentCRatio, targetCRatio } = useStakingCalculations();
 	const delegateWallet = useRecoilValue(delegateWalletState);
+	const liquidationRewardsQuery = useLiquidationRewards(delegateWallet?.address ?? null);
+	const { stakingRewards, tradingRewards } = useUserStakingData(delegateWallet?.address ?? null);
 
+	const liquidationRewards = liquidationRewardsQuery.data ?? wei(0);
+	const stakingAndTradingRewards = stakingRewards.add(tradingRewards);
 	const gridItems: GridBoxProps[] = useMemo(() => {
 		const aboveTargetCRatio = currentCRatio.lte(targetCRatio);
 		return [
-			{
-				icon: (
-					<GlowingCircle variant="green" size="md">
-						<Svg
-							src={ClaimIcon}
-							width="32"
-							viewBox={`0 0 ${ClaimIcon.width} ${ClaimIcon.height}`}
-						/>
-					</GlowingCircle>
-				),
-				title: t('dashboard.actions.claim.title'),
-				copy: t('dashboard.actions.claim.copy'),
-				tooltip:
-					stakingRewards.eq(0) && tradingRewards.eq(0)
-						? t('dashboard.actions.claim.tooltip')
-						: undefined,
-				link: ROUTES.Earn.Claim,
-				isDisabled: (stakingRewards.eq(0) && tradingRewards.eq(0)) || !delegateWallet?.canClaim,
-			},
+			getSynthetixRewardTile(
+				t,
+				stakingAndTradingRewards,
+				liquidationRewards,
+				!delegateWallet?.canClaim
+			),
 			{
 				icon: (
 					<GlowingCircle variant={!aboveTargetCRatio ? 'orange' : 'blue'} size="md">
@@ -74,7 +63,16 @@ const LayoutLayerOne: FC = () => {
 					(aboveTargetCRatio && !delegateWallet?.canMint),
 			},
 		].map((cell, i) => ({ ...cell, gridArea: `tile-${i + 1}` }));
-	}, [t, currentCRatio, targetCRatio, stakingRewards, tradingRewards, delegateWallet]);
+	}, [
+		t,
+		currentCRatio,
+		targetCRatio,
+		stakingAndTradingRewards,
+		liquidationRewards,
+		delegateWallet?.canClaim,
+		delegateWallet?.canBurn,
+		delegateWallet?.canMint,
+	]);
 
 	return (
 		<StyledContainer>
@@ -112,4 +110,4 @@ const StyledContainer = styled(Container)`
 	`}
 `;
 
-export default LayoutLayerOne;
+export default LayoutDelegate;

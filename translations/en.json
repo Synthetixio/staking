@@ -183,6 +183,7 @@
 			"claim": {
 				"title": "CLAIM {{amount}} SNX",
 				"copy": "Claim your staking rewards before the end of this epoch",
+				"copy-liquidation": "Claim your liquidation rewards",
 				"tooltip": "No rewards to claim"
 			},
 			"mint": {
