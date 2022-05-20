@@ -30,6 +30,10 @@ const StakingPage = () => {
 		debtBalance,
 		percentCurrentCRatioOfTarget,
 		percentageTargetCRatio,
+		SNXRate,
+		totalEscrowBalance,
+		currentCRatio,
+		collateral,
 	} = useStakingCalculations();
 
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
@@ -66,7 +70,14 @@ const StakingPage = () => {
 				/>
 			</StatsSection>
 			<LineSpacer />
-			<SelfLiquidation percentageTargetCRatio={percentageTargetCRatio} />
+			<SelfLiquidation
+				percentageTargetCRatio={percentageTargetCRatio}
+				currentCRatio={currentCRatio}
+				totalSNXBalance={collateral}
+				debtBalance={debtBalance}
+				SNXRate={SNXRate}
+				escrowedSnx={totalEscrowBalance}
+			/>
 			<Main />
 		</>
 	);

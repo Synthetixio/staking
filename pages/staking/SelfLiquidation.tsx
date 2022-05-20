@@ -16,13 +16,117 @@ import {
 	ModalItemText,
 } from 'styles/common';
 import { formatShortDateWithTime } from 'utils/formatters/date';
-import { formatPercent } from 'utils/formatters/number';
+import { formatCryptoCurrency, formatPercent } from 'utils/formatters/number';
 import { Svg } from 'react-optimized-image';
 import WarningIcon from 'assets/svg/app/warning.svg';
 import { useTranslation } from 'react-i18next';
 import { Trans } from 'react-i18next';
+import useLiquidationAmountToFixCollateral from 'hooks/useLiquidationAmountToFixCollateral';
 
-const SelfLiquidation: React.FC<{ percentageTargetCRatio: Wei }> = ({ percentageTargetCRatio }) => {
+const SelfLiquidationText: React.FC<{
+	totalSNXBalance: Wei;
+	amountToBeSelfLiquidated: Wei;
+	amountOfNonSelfLiquidation: Wei;
+	escrowedSnx: Wei;
+	SNXRate: Wei;
+	selfLiquidationPenalty: Wei;
+	targetCRatio: Wei;
+}> = ({
+	totalSNXBalance,
+	amountToBeSelfLiquidated,
+	amountOfNonSelfLiquidation,
+	escrowedSnx,
+	SNXRate,
+	selfLiquidationPenalty,
+	targetCRatio,
+}) => {
+	const nonEscrowedSNX = totalSNXBalance.sub(escrowedSnx);
+	const snxToBeSelfLiquidated = amountToBeSelfLiquidated.div(SNXRate);
+	const snxToBeLiquidated = amountOfNonSelfLiquidation.div(SNXRate);
+	const formatSNX = (amount: Wei) =>
+		formatCryptoCurrency(amount, {
+			currencyKey: 'SNX',
+			maxDecimals: 2,
+			minDecimals: 2,
+		});
+
+	if (snxToBeSelfLiquidated.lt(nonEscrowedSNX)) {
+		return (
+			<InfoText>
+				Self liquidating will cause a loss of {formatSNX(snxToBeSelfLiquidated)}, if someone else
+				liquidates you, you would loose {formatSNX(snxToBeLiquidated)}
+			</InfoText>
+		);
+	}
+	return (
+		<InfoText>
+			Self liquidating would cause you to loose all your none escrowed SNX. With the self
+			liquidation penalty of {formatPercent(selfLiquidationPenalty)} you would need{' '}
+			{formatSNX(snxToBeSelfLiquidated)} to get back to {formatPercent(targetCRatio)}. Your non
+			escrowed balance is {formatSNX(nonEscrowedSNX)}
+		</InfoText>
+	);
+};
+
+const FlagWarningText: React.FC<{
+	liquidationDeadlineForAccount: Wei;
+	percentageTargetCRatio: Wei;
+}> = ({ liquidationDeadlineForAccount, percentageTargetCRatio }) => {
+	const { t } = useTranslation();
+	return (
+		<>
+			<Title>{t('staking.flag-warning.title')}</Title>
+			<InfoText>
+				<Trans
+					i18nKey={'staking.flag-warning.info'}
+					components={[
+						<Strong />,
+						<StyledExternalLink href={EXTERNAL_LINKS.Synthetix.SIP148Liquidations} />,
+					]}
+					values={{
+						deadlineDate: formatShortDateWithTime(liquidationDeadlineForAccount.toNumber() * 1000),
+						percentageTargetCRatio: formatPercent(percentageTargetCRatio),
+					}}
+				/>
+			</InfoText>
+		</>
+	);
+};
+const CratioUnderLiquidationRatioWarning: React.FC<{
+	currentCRatioPercent: Wei;
+	liquidationRatioPercent: Wei;
+	liquidationDelay: Wei;
+}> = ({ currentCRatioPercent, liquidationDelay, liquidationRatioPercent }) => {
+	return (
+		<>
+			<Title>Low C-Ratio</Title>
+			<InfoText>
+				{`Your C-Ratio (${formatPercent(
+					currentCRatioPercent
+				)}) is below the liquidation C-Ratio ${formatPercent(
+					liquidationRatioPercent
+				)}. This means you might get flagged. If you get flagged you have ${Math.round(
+					(liquidationDelay.toNumber() * 1e18) / 60 / 60
+				)} hours before someone can liquidate you.`}
+			</InfoText>
+		</>
+	);
+};
+const SelfLiquidation: React.FC<{
+	percentageTargetCRatio: Wei;
+	currentCRatio: Wei;
+	totalSNXBalance: Wei;
+	debtBalance: Wei;
+	escrowedSnx: Wei;
+	SNXRate: Wei;
+}> = ({
+	percentageTargetCRatio,
+	currentCRatio,
+	totalSNXBalance,
+	escrowedSnx,
+	SNXRate,
+	debtBalance,
+}) => {
 	const { t } = useTranslation();
 	const { useGetLiquidationDataQuery, useSynthetixTxn } = useSynthetixQueries();
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
@@ -31,35 +135,60 @@ const SelfLiquidation: React.FC<{ percentageTargetCRatio: Wei }> = ({ percentage
 	const delegateWallet = useRecoilValue(delegateWalletState);
 	const addressToUse = delegateWallet?.address || walletAddress!;
 
-	const liquidationData = useGetLiquidationDataQuery(addressToUse);
-	const liquidationDeadlineForAccount =
-		liquidationData?.data?.liquidationDeadlineForAccount ?? wei(0);
+	const liquidationQuery = useGetLiquidationDataQuery(addressToUse);
+	const liquidationData = liquidationQuery.data;
+	const liquidationAmountsToFixCollateralQuery = useLiquidationAmountToFixCollateral(
+		debtBalance,
+		totalSNXBalance?.mul(SNXRate),
+		liquidationData?.selfLiquidationPenalty,
+		liquidationData?.liquidationPenalty
+	);
+
+	const liquidationAmountsToFixCollateral = liquidationAmountsToFixCollateralQuery.data;
 
 	const txn = useSynthetixTxn('Synthetix', 'liquidateSelf');
+
 	// You cant self liquidate with delegation
 	if (delegateWallet?.address) return null;
-	// You have not been flagged
-	if (liquidationDeadlineForAccount.eq(0)) return null;
+	// Wait for data
+	if (liquidationData === undefined || liquidationAmountsToFixCollateral === undefined) return null;
+
+	const liquidationDeadlineForAccount = liquidationData.liquidationDeadlineForAccount;
+	const notBeenFlagged = liquidationDeadlineForAccount.eq(0);
+
+	const currentCratioPercent = wei(1).div(currentCRatio); //0.3333333 = 3
+	const liquidationRatioPercent = wei(1).div(liquidationData.liquidationRatio); //0.6666 = 1.50
+	const currentCRatioBelowLiquidationCRatio = currentCratioPercent.gt(liquidationRatioPercent);
+	// Only render if flagged or below LiquidationCratio
+	if (notBeenFlagged && currentCRatioBelowLiquidationCRatio) return null;
+
 	return (
 		<>
 			<Container>
 				<Svg src={WarningIcon} />
-				<Title>{t('staking.flag-warning.title')}</Title>
-				<InfoText>
-					<Trans
-						i18nKey={'staking.flag-warning.info'}
-						components={[
-							<Strong />,
-							<StyledExternalLink href={EXTERNAL_LINKS.Synthetix.SIP148Liquidations} />,
-						]}
-						values={{
-							deadlineDate: formatShortDateWithTime(
-								liquidationDeadlineForAccount.toNumber() * 1000
-							),
-							percentageTargetCRatio: formatPercent(percentageTargetCRatio),
-						}}
+				{notBeenFlagged ? (
+					<CratioUnderLiquidationRatioWarning
+						currentCRatioPercent={currentCratioPercent}
+						liquidationRatioPercent={liquidationRatioPercent}
+						liquidationDelay={liquidationData.liquidationDelay}
 					/>
-				</InfoText>
+				) : (
+					<FlagWarningText
+						liquidationDeadlineForAccount={liquidationDeadlineForAccount}
+						percentageTargetCRatio={percentageTargetCRatio}
+					/>
+				)}
+
+				<SelfLiquidationText
+					totalSNXBalance={totalSNXBalance}
+					amountToBeSelfLiquidated={liquidationAmountsToFixCollateral.amountToSelfLiquidateUsd}
+					amountOfNonSelfLiquidation={liquidationAmountsToFixCollateral.amountToLiquidateUsd}
+					escrowedSnx={escrowedSnx}
+					SNXRate={SNXRate}
+					selfLiquidationPenalty={liquidationData.selfLiquidationPenalty}
+					targetCRatio={percentageTargetCRatio}
+				/>
+
 				<StyledButton
 					variant={'primary'}
 					onClick={() => {
