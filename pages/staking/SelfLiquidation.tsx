@@ -54,14 +54,14 @@ const SelfLiquidationText: React.FC<{
 		return (
 			<InfoText>
 				Self liquidating will cause a loss of {formatSNX(snxToBeSelfLiquidated)}, if someone else
-				liquidates you, you would loose {formatSNX(snxToBeLiquidated)}
+				liquidates you, you would lose {formatSNX(snxToBeLiquidated)}
 			</InfoText>
 		);
 	}
 	return (
 		<InfoText>
-			Self liquidating would cause you to loose all your none escrowed SNX. With the self
-			liquidation penalty of {formatPercent(selfLiquidationPenalty)} you would need{' '}
+			Self liquidating would cause you to lose all your none escrowed SNX. With the self liquidation
+			penalty of {formatPercent(selfLiquidationPenalty)} you would need{' '}
 			{formatSNX(snxToBeSelfLiquidated)} to get back to {formatPercent(targetCRatio)}. Your non
 			escrowed balance is {formatSNX(nonEscrowedSNX)}
 		</InfoText>
