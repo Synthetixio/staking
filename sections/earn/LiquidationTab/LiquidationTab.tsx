@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import Wei from '@synthetixio/wei';
+import Wei, { wei } from '@synthetixio/wei';
 import { Svg } from 'react-optimized-image';
 import { useRouter } from 'next/router';
 import { useRecoilValue } from 'recoil';
@@ -92,7 +92,6 @@ const LiquidationTab: React.FC<LiquidationTabProps> = ({ liquidationRewards }) =
 		enabled: Boolean(addressToUse),
 		onSuccess: () => {
 			setTxModalOpen(false);
-			liquidationQuery.refetch();
 		},
 	});
 
@@ -195,6 +194,7 @@ const LiquidationTab: React.FC<LiquidationTabProps> = ({ liquidationRewards }) =
 							<DismissButton
 								variant="secondary"
 								onClick={() => {
+									liquidationQuery.refetch();
 									goToEarn();
 								}}
 							>
