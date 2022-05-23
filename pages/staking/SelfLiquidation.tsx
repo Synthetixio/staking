@@ -147,8 +147,13 @@ const SelfLiquidation: React.FC<{
 	);
 
 	const liquidationAmountsToFixCollateral = liquidationAmountsToFixCollateralQuery.data;
-
-	const txn = useSynthetixTxn('Synthetix', 'liquidateSelf');
+	const txn = useSynthetixTxn(
+		'Synthetix',
+		'liquidateSelf',
+		[],
+		{},
+		{ enabled: currentCRatio?.gt(0) }
+	);
 
 	// You cant self liquidate with delegation
 	if (delegateWallet?.address) return null;
