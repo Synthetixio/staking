@@ -41,8 +41,10 @@ const SelfLiquidationText: React.FC<{
 	targetCRatio,
 }) => {
 	const nonEscrowedSNX = totalSNXBalance.sub(escrowedSnx);
-	const snxToBeSelfLiquidated = amountToBeSelfLiquidated.div(isZero(SNXRate) ? 1 : SNXRate);
-	const snxToBeLiquidated = amountOfNonSelfLiquidation.div(isZero(SNXRate) ? 1 : SNXRate);
+	// If SNX rate is 0 we need to wait for data
+	if (isZero(SNXRate)) return null;
+	const snxToBeSelfLiquidated = amountToBeSelfLiquidated.div(SNXRate);
+	const snxToBeLiquidated = amountOfNonSelfLiquidation.div(SNXRate);
 	const formatSNX = (amount: Wei) =>
 		formatCryptoCurrency(amount, {
 			currencyKey: 'SNX',
