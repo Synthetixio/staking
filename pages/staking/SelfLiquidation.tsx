@@ -16,7 +16,7 @@ import {
 	ModalItemText,
 } from 'styles/common';
 import { formatShortDateWithTime } from 'utils/formatters/date';
-import { formatCryptoCurrency, formatPercent } from 'utils/formatters/number';
+import { formatCryptoCurrency, formatPercent, isZero } from 'utils/formatters/number';
 import { Svg } from 'react-optimized-image';
 import WarningIcon from 'assets/svg/app/warning.svg';
 import { useTranslation } from 'react-i18next';
@@ -41,8 +41,8 @@ const SelfLiquidationText: React.FC<{
 	targetCRatio,
 }) => {
 	const nonEscrowedSNX = totalSNXBalance.sub(escrowedSnx);
-	const snxToBeSelfLiquidated = amountToBeSelfLiquidated.div(SNXRate);
-	const snxToBeLiquidated = amountOfNonSelfLiquidation.div(SNXRate);
+	const snxToBeSelfLiquidated = amountToBeSelfLiquidated.div(isZero(SNXRate) ? 1 : SNXRate);
+	const snxToBeLiquidated = amountOfNonSelfLiquidation.div(isZero(SNXRate) ? 1 : SNXRate);
 	const formatSNX = (amount: Wei) =>
 		formatCryptoCurrency(amount, {
 			currencyKey: 'SNX',
@@ -156,8 +156,10 @@ const SelfLiquidation: React.FC<{
 	const liquidationDeadlineForAccount = liquidationData.liquidationDeadlineForAccount;
 	const notBeenFlagged = liquidationDeadlineForAccount.eq(0);
 
-	const currentCratioPercent = wei(1).div(currentCRatio); //0.3333333 = 3
-	const liquidationRatioPercent = wei(1).div(liquidationData.liquidationRatio); //0.6666 = 1.50
+	const currentCratioPercent = wei(1).div(isZero(currentCRatio) ? 1 : currentCRatio); //0.3333333 = 3
+	const liquidationRatioPercent = wei(1).div(
+		isZero(liquidationData.liquidationRatio) ? 1 : liquidationData.liquidationRatio
+	); //0.6666 = 1.50
 	const currentCRatioBelowLiquidationCRatio = currentCratioPercent.gt(liquidationRatioPercent);
 	// Only render if flagged or below LiquidationCratio
 	if (notBeenFlagged && currentCRatioBelowLiquidationCRatio) return null;
