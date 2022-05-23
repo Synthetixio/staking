@@ -74,8 +74,10 @@ const LiquidationTab: React.FC<LiquidationTabProps> = ({ liquidationRewards }) =
 	const walletAddress = useRecoilValue(walletAddressState);
 	const delegateWallet = useRecoilValue(delegateWalletState);
 	const addressToUse = delegateWallet?.address || walletAddress!;
-	const { useSynthetixTxn } = useSynthetixQueries();
+	const { useSynthetixTxn, useExchangeRatesQuery } = useSynthetixQueries();
 	const liquidationQuery = useLiquidationRewards(addressToUse);
+	const exchangeRatesQuery = useExchangeRatesQuery({ keepPreviousData: true });
+	const SNXRate = exchangeRatesQuery.data?.SNX ?? wei(0);
 
 	const { blockExplorerInstance } = Etherscan.useContainer();
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
@@ -239,7 +241,7 @@ const LiquidationTab: React.FC<LiquidationTabProps> = ({ liquidationRewards }) =
 					<TotalValueWrapper>
 						<Subtext>{t('earn.incentives.options.liquidations.total-value')}</Subtext>
 						<Value>
-							{formatFiatCurrency(getPriceAtCurrentRate(liquidationRewards), {
+							{formatFiatCurrency(getPriceAtCurrentRate(liquidationRewards.mul(SNXRate)), {
 								sign: selectedPriceCurrency.sign,
 							})}
 						</Value>
