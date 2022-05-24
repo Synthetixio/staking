@@ -262,6 +262,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 								onClick={() => {
 									setClaimedTradingRewards(null);
 									setClaimedStakingRewards(null);
+									userStakingData.refetch();
 								}}
 							>
 								{t('earn.actions.tx.dismiss')}
