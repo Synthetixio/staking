@@ -124,4 +124,4 @@ export function scale(input: Wei, decimalPlaces: number): Wei {
 	return input.mul(wei(10).pow(decimalPlaces));
 }
 
-export const isZero = (value: Wei) => value.toNumber() === 0;
+export const isZero = (value: Wei) => value.eq(0);

@@ -41,8 +41,10 @@ const SelfLiquidationText: React.FC<{
 	targetCRatio,
 }) => {
 	const nonEscrowedSNX = totalSNXBalance.sub(escrowedSnx);
-	const snxToBeSelfLiquidated = amountToBeSelfLiquidated.div(isZero(SNXRate) ? 1 : SNXRate);
-	const snxToBeLiquidated = amountOfNonSelfLiquidation.div(isZero(SNXRate) ? 1 : SNXRate);
+	// If SNX rate is 0 we need to wait for data
+	if (isZero(SNXRate)) return null;
+	const snxToBeSelfLiquidated = amountToBeSelfLiquidated.div(SNXRate);
+	const snxToBeLiquidated = amountOfNonSelfLiquidation.div(SNXRate);
 	const formatSNX = (amount: Wei) =>
 		formatCryptoCurrency(amount, {
 			currencyKey: 'SNX',
@@ -145,21 +147,28 @@ const SelfLiquidation: React.FC<{
 	);
 
 	const liquidationAmountsToFixCollateral = liquidationAmountsToFixCollateralQuery.data;
-
-	const txn = useSynthetixTxn('Synthetix', 'liquidateSelf');
+	const txn = useSynthetixTxn(
+		'Synthetix',
+		'liquidateSelf',
+		[],
+		{},
+		{ enabled: currentCRatio?.gt(0) }
+	);
 
 	// You cant self liquidate with delegation
 	if (delegateWallet?.address) return null;
 	// Wait for data
 	if (liquidationData === undefined || liquidationAmountsToFixCollateral === undefined) return null;
+	// If c-ratio is 0 (user not staking) dont render self liquidation
+	if (isZero(currentCRatio)) return null;
+	// If liquidationRatio is set to zero I guess liquidation must be turned off
+	if (isZero(liquidationData.liquidationRatio)) return null;
 
 	const liquidationDeadlineForAccount = liquidationData.liquidationDeadlineForAccount;
 	const notBeenFlagged = liquidationDeadlineForAccount.eq(0);
 
-	const currentCratioPercent = wei(1).div(isZero(currentCRatio) ? 1 : currentCRatio); //0.3333333 = 3
-	const liquidationRatioPercent = wei(1).div(
-		isZero(liquidationData.liquidationRatio) ? 1 : liquidationData.liquidationRatio
-	); //0.6666 = 1.50
+	const currentCratioPercent = wei(1).div(currentCRatio); //0.3333333 = 3
+	const liquidationRatioPercent = wei(1).div(liquidationData.liquidationRatio); //0.6666 = 1.50
 	const currentCRatioBelowLiquidationCRatio = currentCratioPercent.gt(liquidationRatioPercent);
 	// Only render if flagged or below LiquidationCratio
 	if (notBeenFlagged && currentCRatioBelowLiquidationCRatio) return null;
