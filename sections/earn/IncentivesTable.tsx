@@ -53,12 +53,12 @@ export type EarnItem = {
 	apr?: Wei;
 	tvl: Wei;
 	staked: {
-		balance: Wei;
+		balance?: Wei;
 		asset: CurrencyKey;
 		ticker: CurrencyKey;
 		type?: CurrencyIconType;
 	};
-	rewards: Wei | DualRewards;
+	rewards?: Wei | DualRewards;
 	periodStarted: number;
 	periodFinish: number;
 	claimed: boolean | string;
@@ -148,20 +148,23 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab }
 			{
 				Header: <>{t('earn.incentives.options.staked-balance.title')}</>,
 				accessor: 'staked.balance',
-				Cell: (cellProps: CellProps<EarnItem, EarnItem['staked']['balance']>) => (
-					<CellContainer>
-						<Title isNumeric={true}>
-							{formatCurrency(
-								cellProps.row.original.staked.ticker,
-								cellProps.row.original.staked.balance,
-								{
-									currencyKey: cellProps.row.original.staked.ticker,
-								}
-							)}
-						</Title>
-						<Subtitle />
-					</CellContainer>
-				),
+				Cell: (cellProps: CellProps<EarnItem, EarnItem['staked']['balance']>) => {
+					if (cellProps.row.original.staked.balance === undefined) return '-';
+					return (
+						<CellContainer>
+							<Title isNumeric={true}>
+								{formatCurrency(
+									cellProps.row.original.staked.ticker,
+									cellProps.row.original.staked.balance,
+									{
+										currencyKey: cellProps.row.original.staked.ticker,
+									}
+								)}
+							</Title>
+							<Subtitle />
+						</CellContainer>
+					);
+				},
 				width: 150,
 				sortable: true,
 			},
@@ -185,6 +188,9 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab }
 				Header: <>{t('earn.incentives.options.rewards.title')}</>,
 				accessor: 'rewards',
 				Cell: (cellProps: CellProps<EarnItem, EarnItem['rewards']>) => {
+					if (!cellProps.row.original.rewards) {
+						return '-';
+					}
 					const isDualRewards = cellProps.row.original.dualRewards;
 					if (
 						!cellProps.row.original.externalLink ||
