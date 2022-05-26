@@ -21,7 +21,7 @@ import { Svg } from 'react-optimized-image';
 import WarningIcon from 'assets/svg/app/warning.svg';
 import { useTranslation } from 'react-i18next';
 import { Trans } from 'react-i18next';
-import useLiquidationAmountToFixCollateral from 'hooks/useLiquidationAmountToFixCollateral';
+import useGetSnxAmountToBeLiquidatedUsd from 'hooks/useGetSnxAmountToBeLiquidatedUsd';
 
 const SelfLiquidationText: React.FC<{
 	totalSNXBalance: Wei;
@@ -139,26 +139,19 @@ const SelfLiquidation: React.FC<{
 
 	const liquidationQuery = useGetLiquidationDataQuery(addressToUse);
 	const liquidationData = liquidationQuery.data;
-	const liquidationAmountsToFixCollateralQuery = useLiquidationAmountToFixCollateral(
+	const snxAmountToBeLiquidatedUsdQuery = useGetSnxAmountToBeLiquidatedUsd(
 		debtBalance,
 		totalSNXBalance?.mul(SNXRate),
 		liquidationData?.selfLiquidationPenalty,
 		liquidationData?.liquidationPenalty
 	);
 
-	const liquidationAmountsToFixCollateral = liquidationAmountsToFixCollateralQuery.data;
-	const txn = useSynthetixTxn(
-		'Synthetix',
-		'liquidateSelf',
-		[],
-		{},
-		{ enabled: currentCRatio?.gt(0) }
-	);
+	const snxAmountToBeLiquidatedUsd = snxAmountToBeLiquidatedUsdQuery.data;
 
 	// You cant self liquidate with delegation
 	if (delegateWallet?.address) return null;
 	// Wait for data
-	if (liquidationData === undefined || liquidationAmountsToFixCollateral === undefined) return null;
+	if (liquidationData === undefined || snxAmountToBeLiquidatedUsd === undefined) return null;
 	// If c-ratio is 0 (user not staking) dont render self liquidation
 	if (isZero(currentCRatio)) return null;
 	// If liquidationRatio is set to zero I guess liquidation must be turned off
@@ -192,8 +185,8 @@ const SelfLiquidation: React.FC<{
 
 				<SelfLiquidationText
 					totalSNXBalance={totalSNXBalance}
-					amountToBeSelfLiquidated={liquidationAmountsToFixCollateral.amountToSelfLiquidateUsd}
-					amountOfNonSelfLiquidation={liquidationAmountsToFixCollateral.amountToLiquidateUsd}
+					amountToBeSelfLiquidated={snxAmountToBeLiquidatedUsd.amountToSelfLiquidateUsd}
+					amountOfNonSelfLiquidation={snxAmountToBeLiquidatedUsd.amountToLiquidateUsd}
 					escrowedSnx={escrowedSnx}
 					SNXRate={SNXRate}
 					selfLiquidationPenalty={liquidationData.selfLiquidationPenalty}
