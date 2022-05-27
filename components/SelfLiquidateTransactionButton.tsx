@@ -4,14 +4,14 @@ import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import { useTranslation } from 'react-i18next';
 import Button from 'components/Button';
 import useSynthetixQueries from '@synthetixio/queries';
+import { useState } from 'react';
 
 const SelfLiquidateTransactionButton: React.FC<{
-	txModalOpen: boolean;
-	setTxModalOpen: (open: boolean) => void;
 	walletAddress?: string | null;
 }> = ({ txModalOpen, setTxModalOpen, walletAddress }) => {
 	const { useSynthetixTxn } = useSynthetixQueries();
 	const { t } = useTranslation();
+	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 
 	const txn = useSynthetixTxn(
 		'Synthetix',

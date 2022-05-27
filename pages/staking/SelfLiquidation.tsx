@@ -1,7 +1,7 @@
 import useSynthetixQueries from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
 import { EXTERNAL_LINKS } from 'constants/links';
-import React, { useState } from 'react';
+import React from 'react';
 import { useRecoilValue } from 'recoil';
 import { delegateWalletState, walletAddressState } from 'store/wallet';
 import styled from 'styled-components';
@@ -123,7 +123,6 @@ const SelfLiquidation: React.FC<{
 	debtBalance,
 }) => {
 	const { useGetLiquidationDataQuery } = useSynthetixQueries();
-	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 
 	const walletAddress = useRecoilValue(walletAddressState);
 	const delegateWallet = useRecoilValue(delegateWalletState);
@@ -185,11 +184,7 @@ const SelfLiquidation: React.FC<{
 					targetCRatio={percentageTargetCRatio}
 				/>
 				<ButtonWrapper>
-					<SelfLiquidateTransactionButton
-						setTxModalOpen={setTxModalOpen}
-						txModalOpen={txModalOpen}
-						walletAddress={walletAddress}
-					/>
+					<SelfLiquidateTransactionButton walletAddress={walletAddress} />
 				</ButtonWrapper>
 				<LineSpacer />
 			</Container>
