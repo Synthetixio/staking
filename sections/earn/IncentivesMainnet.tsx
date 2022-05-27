@@ -23,6 +23,7 @@ import { YearnVaultData } from 'queries/liquidityPools/useYearnSNXVaultQuery';
 import useSynthetixQueries from '@synthetixio/queries';
 import Connector from 'containers/Connector';
 import LiquidationTab from './LiquidationTab';
+import { notNill } from 'utils/ts-helpers';
 
 enum View {
 	ACTIVE = 'active',
@@ -136,27 +137,29 @@ const Incentives: FC<IncentivesProps> = ({
 						neverExpires: true,
 					},
 
-					{
-						title: t('earn.incentives.options.curve.title'),
-						subtitle: t('earn.incentives.options.curve.subtitle'),
-						apr: lpData[LP.CURVE_sUSD].APR,
-						tvl: lpData[LP.CURVE_sUSD].TVL,
-						staked: {
-							balance: lpData[LP.CURVE_sUSD].data?.staked ?? wei(0),
-							asset: CryptoCurrency.CRV,
-							ticker: LP.CURVE_sUSD,
-							type: CurrencyIconType.TOKEN,
-						},
-						rewards: lpData[LP.CURVE_sUSD].data?.rewards ?? wei(0),
-						periodStarted: now - (lpData[LP.CURVE_sUSD].data?.duration ?? 0),
-						periodFinish: lpData[LP.CURVE_sUSD].data?.periodFinish ?? 0,
-						claimed: (lpData[LP.CURVE_sUSD].data?.rewards ?? 0) > 0 ? false : NOT_APPLICABLE,
-						now,
-						route: ROUTES.Earn.sUSD_LP,
-						tab: Tab.sUSD_LP,
-						externalLink: ROUTES.Earn.sUSD_EXTERNAL,
-					},
-			  ]
+					Boolean(lpData[LP.CURVE_sUSD].TVL && lpData[LP.CURVE_sUSD].APR)
+						? {
+								title: t('earn.incentives.options.curve.title'),
+								subtitle: t('earn.incentives.options.curve.subtitle'),
+								apr: lpData[LP.CURVE_sUSD].APR,
+								tvl: lpData[LP.CURVE_sUSD].TVL,
+								staked: {
+									balance: lpData[LP.CURVE_sUSD].data?.staked ?? wei(0),
+									asset: CryptoCurrency.CRV,
+									ticker: LP.CURVE_sUSD,
+									type: CurrencyIconType.TOKEN,
+								},
+								rewards: lpData[LP.CURVE_sUSD].data?.rewards ?? wei(0),
+								periodStarted: now - (lpData[LP.CURVE_sUSD].data?.duration ?? 0),
+								periodFinish: lpData[LP.CURVE_sUSD].data?.periodFinish ?? 0,
+								claimed: NOT_APPLICABLE,
+								now,
+								route: ROUTES.Earn.sUSD_LP,
+								tab: Tab.sUSD_LP,
+								externalLink: ROUTES.Earn.sUSD_EXTERNAL,
+						  }
+						: undefined,
+			  ].filter(notNill)
 			: [];
 	}, [
 		stakingAPR,
@@ -181,10 +184,10 @@ const Incentives: FC<IncentivesProps> = ({
 					? incentives.filter((e) => e.periodFinish > Date.now())
 					: incentives.filter((e) => e.periodFinish <= Date.now())
 			}
-			isLoaded={!!lpData[LP.CURVE_sUSD].data}
+			isLoaded={!!lpData[LP.CURVE_sUSD].APR}
 		/>
 	);
-
+	const yearnLpData = lpData[LP.YEARN_SNX_VAULT].data;
 	return activeTab == null ? (
 		<>
 			<TabList noOfTabs={2}>
@@ -235,9 +238,11 @@ const Incentives: FC<IncentivesProps> = ({
 				)}
 				{activeTab === Tab.yearn_SNX_VAULT && (
 					<YearnVaultTab
-						userBalance={lpData[LP.YEARN_SNX_VAULT].data?.userBalance ?? wei(0)}
+						userBalance={
+							yearnLpData && 'userBalance' in yearnLpData ? yearnLpData.userBalance : wei(0)
+						}
 						stakedAsset={CryptoCurrency.SNX}
-						allowance={lpData[LP.YEARN_SNX_VAULT].data?.allowance ?? null}
+						allowance={yearnLpData && 'allowance' in yearnLpData ? yearnLpData.allowance : null}
 						tokenRewards={lpData[LP.YEARN_SNX_VAULT].data?.rewards ?? wei(0)}
 						staked={lpData[LP.YEARN_SNX_VAULT].data?.staked ?? wei(0)}
 						pricePerShare={

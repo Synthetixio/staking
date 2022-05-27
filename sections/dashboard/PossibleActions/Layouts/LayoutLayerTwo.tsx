@@ -11,7 +11,6 @@ import { formatPercent } from 'utils/formatters/number';
 import KwentaIcon from 'assets/svg/app/kwenta.svg';
 import MintIcon from 'assets/svg/app/mint.svg';
 import BurnIcon from 'assets/svg/app/burn.svg';
-import SorbetFinance from 'assets/svg/app/sorbet-finance.svg';
 
 import GridBox, { GridBoxProps } from 'components/GridBox/Gridbox';
 
@@ -25,25 +24,26 @@ import useStakingCalculations from 'sections/staking/hooks/useStakingCalculation
 import { ActionsContainer as Container } from './common-styles';
 import { wei } from '@synthetixio/wei';
 import { useRecoilValue } from 'recoil';
-import { useGetUniswapStakingRewardsAPY } from 'sections/pool/useGetUniswapStakingRewardsAPY';
-import { WETHSNXLPTokenContract } from 'constants/gelato';
 import { walletAddressState } from 'store/wallet';
-import Connector from 'containers/Connector';
 import useLiquidationRewards from 'hooks/useLiquidationRewards';
 import getSynthetixRewardTile from './getSynthetixRewardTile';
+import Currency from 'components/Currency';
+import { CryptoCurrency } from 'constants/currency';
+import { LP } from 'sections/earn/types';
+import { CurrencyIconType } from 'components/Currency/CurrencyIcon/CurrencyIcon';
+import useLPData from 'hooks/useLPData';
+import { notNill } from 'utils/ts-helpers';
+
 const LayoutLayerTwo: FC = () => {
 	const { t } = useTranslation();
 
 	const walletAddress = useRecoilValue(walletAddressState);
 	const liquidationRewardsQuery = useLiquidationRewards(walletAddress);
-	const { synthetixjs } = Connector.useContainer();
 	const { stakingRewards, tradingRewards } = useUserStakingData(walletAddress);
 	const { currentCRatio, targetCRatio } = useStakingCalculations();
 
-	const rates = useGetUniswapStakingRewardsAPY({
-		stakingRewardsContract: synthetixjs?.contracts.StakingRewardsSNXWETHUniswapV3 ?? null,
-		tokenContract: WETHSNXLPTokenContract,
-	});
+	const lpData = useLPData();
+
 	const liquidationRewards = liquidationRewardsQuery.data ?? wei(0);
 	const stakingAndTradingRewards = stakingRewards.add(tradingRewards);
 	const gridItems: GridBoxProps[] = useMemo(() => {
@@ -78,27 +78,32 @@ const LayoutLayerTwo: FC = () => {
 				externalLink: EXTERNAL_LINKS.Trading.Kwenta,
 				isDisabled: false,
 			},
-			{
-				title: t('dashboard.actions.earn.title', {
-					percent: `${rates.data?.apy.toFixed(2) || '-'}%`,
-				}),
-				copy: t('dashboard.actions.earn.copy', { asset: 'WETH-SNX', supplier: 'Sorbet Finance' }),
+			lpData[LP.CURVE_sUSD].APR && {
 				icon: (
-					<GlowingCircle variant="purple" size="md">
-						<Svg src={SorbetFinance} width="32" />
+					<GlowingCircle variant="green" size="md">
+						<Currency.Icon
+							currencyKey={CryptoCurrency.CRV}
+							type={CurrencyIconType.TOKEN}
+							width="28"
+							height="28"
+						/>
 					</GlowingCircle>
 				),
-				link: ROUTES.Pools.snx_weth,
+				title: t('dashboard.actions.earn.title', {
+					percent: formatPercent(lpData[LP.CURVE_sUSD].APR, { minDecimals: 1 }),
+				}),
+				copy: t('dashboard.actions.earn.copy', {
+					asset: 'Curve sUSD Pool Token',
+					supplier: 'Curve Finance',
+				}),
+				tooltip: t('common.tooltip.external', { link: 'Curve Finance' }),
+				externalLink: ROUTES.Earn.sUSD_EXTERNAL_OPTIMISM,
+				isDisabled: lpData[LP.CURVE_sUSD].APR.eq(0),
 			},
-		].map((cell, i) => ({ ...cell, gridArea: `tile-${i + 1}` }));
-	}, [
-		t,
-		currentCRatio,
-		targetCRatio,
-		stakingAndTradingRewards,
-		liquidationRewards,
-		rates.data?.apy,
-	]);
+		]
+			.filter(notNill)
+			.map((cell, i) => ({ ...cell, gridArea: `tile-${i + 1}` }));
+	}, [currentCRatio, targetCRatio, t, stakingAndTradingRewards, liquidationRewards, lpData]);
 
 	return (
 		<StyledContainer>

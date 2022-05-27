@@ -31,6 +31,7 @@ import { useRecoilValue } from 'recoil';
 import { walletAddressState } from 'store/wallet';
 import getSynthetixRewardTile from './getSynthetixRewardTile';
 import useLiquidationRewards from 'hooks/useLiquidationRewards';
+import { notNill } from 'utils/ts-helpers';
 
 const LayoutLayerOne: FC = () => {
 	const { t } = useTranslation();
@@ -83,7 +84,7 @@ const LayoutLayerOne: FC = () => {
 				copy: t('dashboard.actions.migrate.copy'),
 				link: ROUTES.L2.Home,
 			},
-			{
+			lpData[LP.CURVE_sUSD].APR && {
 				icon: (
 					<GlowingCircle variant="green" size="md">
 						<Currency.Icon
@@ -95,7 +96,7 @@ const LayoutLayerOne: FC = () => {
 					</GlowingCircle>
 				),
 				title: t('dashboard.actions.earn.title', {
-					percent: formatPercent(lpData[LP.CURVE_sUSD].APR, { minDecimals: 0 }),
+					percent: formatPercent(lpData[LP.CURVE_sUSD].APR, { minDecimals: 1 }),
 				}),
 				copy: t('dashboard.actions.earn.copy', {
 					asset: 'Curve sUSD Pool Token',
@@ -105,7 +106,9 @@ const LayoutLayerOne: FC = () => {
 				externalLink: ROUTES.Earn.sUSD_EXTERNAL,
 				isDisabled: lpData[LP.CURVE_sUSD].APR.eq(0),
 			},
-		].map((cell, i) => ({ ...cell, gridArea: `tile-${i + 1}` }));
+		]
+			.filter(notNill)
+			.map((cell, i) => ({ ...cell, gridArea: `tile-${i + 1}` }));
 	}, [t, lpData, currentCRatio, targetCRatio, stakingAndTradingRewards, liquidationRewards]);
 
 	return (

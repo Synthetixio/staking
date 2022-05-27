@@ -38,6 +38,7 @@ export const ROUTES = {
 		sMSFT_LP: '/earn/sMSFT-LP',
 		sCOIN_LP: '/earn/sCOIN-LP',
 		sUSD_EXTERNAL: 'https://www.curve.fi/susdv2/',
+		sUSD_EXTERNAL_OPTIMISM: 'https://optimism.curve.fi/factory/0',
 		sEURO_EXTERNAL: 'https://www.curve.fi/eurs/',
 		DHT_LP: '/earn/DHT-LP',
 		sBTC_EXTERNAL: 'https://kwenta.io/shorting',
