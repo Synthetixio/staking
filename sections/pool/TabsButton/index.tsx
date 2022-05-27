@@ -2,6 +2,7 @@ import StructuredTab from 'components/StructuredTab';
 
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useTheme } from 'styled-components';
 import PoolTab, { PoolTabProps } from '../Tab';
 
 type PoolTabsProps = Omit<PoolTabProps, 'action' | 'stakingRewardsContractName'>;
@@ -14,6 +15,7 @@ export default function PoolTabs({
 	stakedTokens,
 }: PoolTabsProps) {
 	const { t } = useTranslation();
+	const theme = useTheme();
 	const tabData = useMemo(
 		() => [
 			{
@@ -29,7 +31,7 @@ export default function PoolTabs({
 						stakingRewardsContractName={'StakingRewardsSNXWETHUniswapV3'}
 					/>
 				),
-				blue: true,
+				color: theme.colors.blue,
 				key: 'Add Liquidity',
 			},
 			{
@@ -45,11 +47,20 @@ export default function PoolTabs({
 						stakingRewardsContractName={'StakingRewardsSNXWETHUniswapV3'}
 					/>
 				),
-				blue: false,
+				color: theme.colors.orange,
 				key: 'Remove Liquidity',
 			},
 		],
-		[t, balance, rewardsToClaim, allowanceAmount, stakedTokens, fetchBalances]
+		[
+			t,
+			balance,
+			rewardsToClaim,
+			allowanceAmount,
+			stakedTokens,
+			fetchBalances,
+			theme.colors.blue,
+			theme.colors.orange,
+		]
 	);
 	return <StructuredTab boxPadding={40} boxHeight={450} tabData={tabData} />;
 }

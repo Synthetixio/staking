@@ -27,7 +27,6 @@ const Info: React.FC<InfoProps> = ({ proposal }) => {
 			{
 				title: t('gov.proposal.votes.title'),
 				tabChildren: <Results proposalResults={proposalResults} hash={proposal.id} />,
-				blue: true,
 				key: ProposalInfoType.RESULTS,
 			},
 			{
@@ -35,7 +34,6 @@ const Info: React.FC<InfoProps> = ({ proposal }) => {
 					count: proposalResults.data?.voteList.length ?? undefined,
 				}),
 				tabChildren: <History proposalResults={proposalResults} hash={proposal.id} />,
-				blue: true,
 				key: ProposalInfoType.HISTORY,
 			},
 		],

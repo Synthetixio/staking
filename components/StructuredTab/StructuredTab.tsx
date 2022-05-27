@@ -11,7 +11,7 @@ export type TabInfo = {
 	icon?: ReactNode;
 	tabChildren: ReactNode;
 	key: string;
-	blue: boolean;
+	color?: string;
 	disabled?: boolean;
 };
 
@@ -46,12 +46,12 @@ const StructuredTab: FC<StructuredTabProps> = ({
 
 	const desktop = () => (
 		<TabList noOfTabs={tabData.length}>
-			{tabData.map(({ title, icon, key, blue, disabled = false }, index) => (
+			{tabData.map(({ title, icon, key, color, disabled = false }, index) => (
 				<TabButton
 					isSingle={singleTab}
 					tabHeight={tabHeight}
 					inverseTabColor={inverseTabColor}
-					blue={blue}
+					color={color}
 					key={`${key}-${index}-button`}
 					name={title}
 					active={activeTab === key}

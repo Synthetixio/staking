@@ -37,7 +37,6 @@ const ActionBox: React.FC<ActionBoxProps> = () => {
 				title: t('loans.tabs.new.title'),
 				tabChildren: <BorrowSynthsTab />,
 				key: 'new',
-				blue: true,
 			},
 			{
 				title: t('loans.tabs.list.title'),
@@ -48,7 +47,6 @@ const ActionBox: React.FC<ActionBoxProps> = () => {
 					/>
 				),
 				key: 'list',
-				blue: true,
 			},
 		],
 		[t, loanId, loanAction, loanType]
