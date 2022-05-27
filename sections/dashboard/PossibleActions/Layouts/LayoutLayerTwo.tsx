@@ -97,7 +97,7 @@ const LayoutLayerTwo: FC = () => {
 					supplier: 'Curve Finance',
 				}),
 				tooltip: t('common.tooltip.external', { link: 'Curve Finance' }),
-				externalLink: ROUTES.Earn.sUSD_EXTERNAL,
+				externalLink: ROUTES.Earn.sUSD_EXTERNAL_OPTIMISM,
 				isDisabled: lpData[LP.CURVE_sUSD].APR.eq(0),
 			},
 		]

@@ -129,7 +129,7 @@ const Incentives: FC<IncentivesProps> = ({
 									now,
 									route: ROUTES.Earn.sUSD_LP,
 									tab: Tab.sUSD_LP,
-									externalLink: ROUTES.Earn.sUSD_EXTERNAL,
+									externalLink: ROUTES.Earn.sUSD_EXTERNAL_OPTIMISM,
 									neverExpires: true,
 							  }
 							: undefined,
