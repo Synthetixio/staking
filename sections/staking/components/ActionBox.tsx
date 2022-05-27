@@ -103,7 +103,11 @@ const ActionBox: FC<ActionBoxProps> = ({ currentTab }) => {
 			boxHeight={450}
 			tabData={tabData}
 			setPanelType={(key) => router.push(`/staking/${key}`)}
-			currentPanel={currentTab}
+			currentPanel={
+				isLoading && currentTab === StakingPanelType.SELF_LIQUIDATE
+					? StakingPanelType.MINT
+					: currentTab
+			}
 		/>
 	);
 };
