@@ -19,6 +19,7 @@ import useSynthetixQueries from '@synthetixio/queries';
 import { delegateWalletState, walletAddressState } from 'store/wallet';
 import Wei, { wei } from '@synthetixio/wei';
 import { Synths } from 'constants/currency';
+import { getShowSelfLiquidationTab } from './helper';
 
 type ActionBoxProps = {
 	currentTab: string;
@@ -43,7 +44,13 @@ const ActionBox: FC<ActionBoxProps> = ({ currentTab }) => {
 	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress, { staleTime: 5000 });
 	const sUSDBalance = synthsBalancesQuery?.data?.balancesMap[Synths.sUSD]?.balance ?? wei(0);
 	const burnAmountToFixCRatio = wei(Wei.max(debtBalance.sub(issuableSynths), wei(0)));
-
+	const showSelfLiquidationTab = getShowSelfLiquidationTab({
+		sUSDBalance,
+		burnAmountToFixCRatio,
+		percentageCurrentCRatio,
+		percentageTargetCRatio,
+		isDelegateWallet: Boolean(delegateWallet?.address),
+	});
 	useEffect(() => {
 		if (currentTab === StakingPanelType.MINT) {
 			onBurnTypeChange(null);
@@ -51,12 +58,6 @@ const ActionBox: FC<ActionBoxProps> = ({ currentTab }) => {
 			onMintTypeChange(null);
 		}
 	}, [currentTab, onBurnTypeChange, onMintTypeChange]);
-
-	const showSelfLiquidationTab =
-		percentageCurrentCRatio.gt(0) &&
-		percentageCurrentCRatio.lt(percentageTargetCRatio) &&
-		sUSDBalance.lt(burnAmountToFixCRatio) &&
-		delegateWallet?.address === undefined;
 
 	useEffect(() => {
 		if (isLoading) return;
