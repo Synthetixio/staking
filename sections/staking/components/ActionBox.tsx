@@ -10,6 +10,7 @@ import BurnTab from './BurnTab';
 import MintTab from './MintTab';
 import Burn from 'assets/svg/app/burn.svg';
 import Mint from 'assets/svg/app/mint.svg';
+import Warning from 'assets/svg/app/warning.svg';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { burnTypeState, StakingPanelType, mintTypeState } from 'store/staking';
 import SelfLiquidateTab from './SelfLiquidateTab';
@@ -90,7 +91,7 @@ const ActionBox: FC<ActionBoxProps> = ({ currentTab }) => {
 				showSelfLiquidationTab
 					? {
 							title: 'Self Liquidate',
-							icon: <Svg src={Burn} />,
+							icon: <Svg width={38} height={49} src={Warning} />,
 							tabChildren: <SelfLiquidateTab />,
 							color: theme.colors.pink,
 							key: StakingPanelType.SELF_LIQUIDATE,
