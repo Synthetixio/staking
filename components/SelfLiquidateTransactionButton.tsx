@@ -8,7 +8,8 @@ import { useState } from 'react';
 
 const SelfLiquidateTransactionButton: React.FC<{
 	walletAddress?: string | null;
-}> = ({ txModalOpen, setTxModalOpen, walletAddress }) => {
+	disabled?: boolean;
+}> = ({ walletAddress, disabled }) => {
 	const { useSynthetixTxn } = useSynthetixQueries();
 	const { t } = useTranslation();
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
@@ -23,8 +24,10 @@ const SelfLiquidateTransactionButton: React.FC<{
 	return (
 		<>
 			<Button
+				disabled={disabled}
 				variant={'primary'}
 				onClick={() => {
+					if (disabled) return;
 					setTxModalOpen(true);
 					txn.mutate();
 				}}
