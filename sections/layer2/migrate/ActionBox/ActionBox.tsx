@@ -6,14 +6,12 @@ import MigrateTab from '../MigrateTab';
 
 const ActionBox: React.FC = () => {
 	const { t } = useTranslation();
-
 	const tabData = useMemo(
 		() => [
 			{
 				title: t('layer2.actions.migrate.title'),
 				tabChildren: <MigrateTab />,
 				key: 'migrate',
-				blue: true,
 			},
 		],
 		[t]

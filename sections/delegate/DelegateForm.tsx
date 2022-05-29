@@ -44,7 +44,6 @@ const DelegateForm: FC = () => {
 				title: t('delegate.form.title'),
 				tabChildren: <Tab />,
 				key: 'main',
-				blue: true,
 			},
 		],
 		[t]

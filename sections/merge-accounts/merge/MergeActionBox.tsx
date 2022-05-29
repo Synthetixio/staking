@@ -45,7 +45,6 @@ const MergeTab: FC = () => {
 				title: t('merge-accounts.merge.title'),
 				tabChildren: <MergeTabInner />,
 				key: 'main',
-				blue: true,
 			},
 		],
 		[t]

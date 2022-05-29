@@ -1,6 +1,6 @@
 import { FC, useMemo, useState } from 'react';
 import Wei, { wei } from '@synthetixio/wei';
-import styled from 'styled-components';
+import styled, { useTheme } from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
@@ -52,6 +52,7 @@ const Incentives: FC<IncentivesProps> = ({
 }) => {
 	const { t } = useTranslation();
 	const router = useRouter();
+	const theme = useTheme();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const [view, setView] = useState<View>(View.ACTIVE);
 	const { L1DefaultProvider } = Connector.useContainer();
@@ -192,7 +193,7 @@ const Incentives: FC<IncentivesProps> = ({
 					isSingle={false}
 					tabHeight={50}
 					inverseTabColor={true}
-					blue={true}
+					color={theme.colors.blue}
 					key={`active-button`}
 					name={t('earn.tab.active')}
 					active={view === View.ACTIVE}
@@ -206,7 +207,7 @@ const Incentives: FC<IncentivesProps> = ({
 					isSingle={false}
 					tabHeight={50}
 					inverseTabColor={true}
-					blue={false}
+					color={theme.colors.orange}
 					key={`inactive-button`}
 					name={t('earn.tab.inactive')}
 					active={view === View.INACTIVE}

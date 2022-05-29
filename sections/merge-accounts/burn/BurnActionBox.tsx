@@ -1,5 +1,5 @@
 import { useMemo, useEffect, FC, useCallback } from 'react';
-import styled from 'styled-components';
+import styled, { useTheme } from 'styled-components';
 import { Trans, useTranslation } from 'react-i18next';
 import { Svg } from 'react-optimized-image';
 import { useRouter } from 'next/router';
@@ -50,7 +50,6 @@ const BurnTab: FC = () => {
 				title: t('merge-accounts.burn.title'),
 				tabChildren: <BurnTabInner />,
 				key: 'main',
-				blue: true,
 			},
 		],
 		[t]

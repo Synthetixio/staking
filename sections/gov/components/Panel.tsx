@@ -80,31 +80,26 @@ const Panel: React.FC<PanelProps> = ({ currentTab }) => {
 			{
 				title: t('gov.panel.proposals.title'),
 				tabChildren: <List spaceKey={activeTab} />,
-				blue: true,
 				key: SPACE_KEY.PROPOSAL,
 			},
 			{
 				title: t('gov.panel.council.title'),
 				tabChildren: <List spaceKey={activeTab} />,
-				blue: true,
 				key: SPACE_KEY.COUNCIL,
 			},
 			{
 				title: t('gov.panel.treasury-council.title'),
 				tabChildren: <List spaceKey={activeTab} />,
-				blue: true,
 				key: SPACE_KEY.TREASURY,
 			},
 			{
 				title: t('gov.panel.grants.title'),
 				tabChildren: <List spaceKey={activeTab} />,
-				blue: true,
 				key: SPACE_KEY.GRANTS,
 			},
 			{
 				title: t('gov.panel.ambassador.title'),
 				tabChildren: <List spaceKey={activeTab} />,
-				blue: true,
 				key: SPACE_KEY.AMBASSADOR,
 			},
 		],

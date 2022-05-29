@@ -87,7 +87,6 @@ const DebtTabs: FC<DebtTabsProps> = ({
 								<TabButton
 									isSingle={false}
 									tabHeight={tabHeight}
-									blue={true}
 									key={`${key}-${index}-button`}
 									name={title}
 									active={activeTab === key}
