@@ -3404,6 +3404,14 @@
     ethers "5.5.3"
     lodash "4.17.19"
 
+"@synthetixio/transaction-notifier@2.70.1":
+  version "2.70.1"
+  resolved "https://registry.yarnpkg.com/@synthetixio/transaction-notifier/-/transaction-notifier-2.70.1.tgz#9bb4653e88d7a6eb7d7dd63308043b15227b54aa"
+  integrity sha512-fxZZXsixHStUT02AKO2njknXRDNcp0nu/SsM5WlWPB2lgIVyeHrftkRqJ/3BlwIRd6h8pnYBAI6rG75zMaNPYA==
+  dependencies:
+    ethers "5.5.3"
+    lodash "4.17.19"
+
 "@synthetixio/wei@2.69.0-3":
   version "2.69.0-3"
   resolved "https://registry.yarnpkg.com/@synthetixio/wei/-/wei-2.69.0-3.tgz#3fb9de7f58fbf6624941f76cd6761494fb4a65cd"
