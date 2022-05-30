@@ -45,7 +45,9 @@ const SelfLiquidationTabContent: React.FC<{
 	if (isDelegateWallet) {
 		return (
 			<Container>
-				<InfoText>{t('staking.self-liquidation.info.delegate-wallet')}</InfoText>
+				<InfoText data-testid="liq-delegated-wallet">
+					{t('staking.self-liquidation.info.delegate-wallet')}
+				</InfoText>
 				<Link href={EXTERNAL_LINKS.Synthetix.SIP148Liquidations}>
 					{t('staking.self-liquidation.info.liquidation-link-text')}
 				</Link>
@@ -55,7 +57,7 @@ const SelfLiquidationTabContent: React.FC<{
 	if (percentageCurrentCRatio.gt(percentageTargetCRatio)) {
 		return (
 			<Container>
-				<InfoText>
+				<InfoText data-testid="liq-c-ration-ok">
 					{t('staking.self-liquidation.info.c-ratio-ok', {
 						cRatio: formatPercent(percentageCurrentCRatio),
 						targetCRatio: formatPercent(percentageTargetCRatio),
@@ -68,10 +70,10 @@ const SelfLiquidationTabContent: React.FC<{
 		);
 	}
 
-	if (sUSDBalance.lt(burnAmountToFixCRatio)) {
+	if (sUSDBalance.gt(burnAmountToFixCRatio)) {
 		return (
 			<Container>
-				<InfoText>
+				<InfoText data-testid="liq-enough-susd-balance">
 					{t('staking.self-liquidation.info.enough-susd-balance', {
 						targetCRatio: formatPercent(percentageTargetCRatio),
 						burnAmountToFixCRatio: formatSUSD(burnAmountToFixCRatio),
@@ -87,19 +89,19 @@ const SelfLiquidationTabContent: React.FC<{
 
 	if (!selfLiquidationPenalty || !liquidationPenalty || !amountToSelfLiquidateUsd)
 		return (
-			<FlexDivJustifyCenter>
+			<FlexDivJustifyCenter data-testid="liq-loader">
 				<Loader inline />
 			</FlexDivJustifyCenter>
 		);
 	return (
 		<Container>
-			<InfoText>
+			<InfoText data-testid="liq-ratios">
 				{t('staking.self-liquidation.info.ratios', {
 					cRatio: formatPercent(percentageCurrentCRatio),
 					targetCRatio: formatPercent(percentageTargetCRatio),
 				})}
 			</InfoText>
-			<InfoText>
+			<InfoText data-testid="liq-burn-amount">
 				{t('staking.self-liquidation.info.burn-amount', {
 					targetCratio: formatPercent(percentageTargetCRatio),
 					burnAmountToFixCRatio: formatSUSD(burnAmountToFixCRatio),
@@ -111,14 +113,16 @@ const SelfLiquidationTabContent: React.FC<{
 			</Link>
 			{sUSDBalance.gt(0) ? (
 				<>
-					<InfoText>{t('staking.self-liquidation.info.balance-not-zero')}</InfoText>
+					<InfoText data-testid="liq-balance-not-zero">
+						{t('staking.self-liquidation.info.balance-not-zero')}
+					</InfoText>
 					<ButtonWrapper>
 						<BurnMaxButton amountToBurn={sUSDBalance} />
 					</ButtonWrapper>
 				</>
 			) : (
 				<>
-					<InfoText>
+					<InfoText data-testid="self-liquidate-info">
 						{t('staking.self-liquidation.info.self-liquidate-text', {
 							selfLiquidationPenalty: formatPercent(selfLiquidationPenalty),
 							amountToSelfLiquidate: formatCryptoCurrency(amountToSelfLiquidateUsd.div(SNXRate), {

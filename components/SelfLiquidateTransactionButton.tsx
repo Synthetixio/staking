@@ -24,6 +24,7 @@ const SelfLiquidateTransactionButton: React.FC<{
 	return (
 		<>
 			<Button
+				data-testid="self-liquidate-btn"
 				disabled={disabled}
 				variant={'primary'}
 				onClick={() => {
