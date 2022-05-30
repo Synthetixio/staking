@@ -11,6 +11,8 @@ import SelfLiquidationTabContent from './SelfLiquidationTabContent';
 import { StyledCTA } from 'sections/staking/components/common';
 import Connector from 'containers/Connector';
 import styled from 'styled-components';
+import { FlexDivJustifyCenter } from 'styles/common';
+import Loader from 'components/Loader';
 
 const SelfLiquidateTab = () => {
 	const walletAddress = useRecoilValue(walletAddressState);
@@ -53,6 +55,12 @@ const SelfLiquidateTab = () => {
 			</ConnectWalletButtonWrapper>
 		);
 	}
+	if (!liquidationDataQuery.data || synthsBalancesQuery.isLoading) {
+		return (
+			<FlexDivJustifyCenter>
+				<Loader inline />
+			</FlexDivJustifyCenter>
+		);
 	}
 
 	return (
