@@ -347,7 +347,8 @@
 					"unstaking": "Unstaking",
 					"burning": "Burning"
 				}
-			}
+			},
+			"self-liquidate": { "title": "Self Liquidate" }
 		},
 		"info": {
 			"mint": {

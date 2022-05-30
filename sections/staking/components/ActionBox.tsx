@@ -90,7 +90,7 @@ const ActionBox: FC<ActionBoxProps> = ({ currentTab }) => {
 				},
 				showSelfLiquidationTab
 					? {
-							title: 'Self Liquidate',
+				title: t('staking.actions.self-liquidate.title'),
 							icon: <Svg width={38} height={49} src={Warning} />,
 							tabChildren: <SelfLiquidateTab />,
 							color: theme.colors.pink,
