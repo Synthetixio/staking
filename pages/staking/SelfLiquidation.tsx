@@ -126,15 +126,21 @@ const SelfLiquidation: React.FC<{
 
 	const walletAddress = useRecoilValue(walletAddressState);
 	const delegateWallet = useRecoilValue(delegateWalletState);
-	const addressToUse = delegateWallet?.address || walletAddress!;
-
-	const liquidationQuery = useGetLiquidationDataQuery(addressToUse);
+	const isDelegateWallet = Boolean(delegateWallet?.address);
+	const liquidationQuery = useGetLiquidationDataQuery(walletAddress);
 	const liquidationData = liquidationQuery.data;
+
+	const canSelfLiquidate =
+		percentageCurrentCRatio.gt(0) &&
+		percentageCurrentCRatio.lt(percentageTargetCRatio) &&
+		!isDelegateWallet;
+
 	const snxAmountToBeLiquidatedUsdQuery = useGetSnxAmountToBeLiquidatedUsd(
 		debtBalance,
 		totalSNXBalance?.mul(SNXRate),
 		liquidationData?.selfLiquidationPenalty,
-		liquidationData?.liquidationPenalty
+		liquidationData?.liquidationPenalty,
+		canSelfLiquidate
 	);
 
 	const snxAmountToBeLiquidatedUsd = snxAmountToBeLiquidatedUsdQuery.data;

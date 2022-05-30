@@ -37,12 +37,19 @@ const SelfLiquidateTab = () => {
 	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
 	const sUSDBalance = synthsBalancesQuery?.data?.balancesMap[Synths.sUSD]?.balance ?? wei(0);
 	const liquidationDataQuery = useGetLiquidationDataQuery(walletAddress);
+	const delegateWallet = useRecoilValue(delegateWalletState);
 
+	const isDelegateWallet = Boolean(delegateWallet?.address);
+	const canSelfLiquidate =
+		percentageCurrentCRatio.gt(0) &&
+		percentageCurrentCRatio.lt(percentageTargetCRatio) &&
+		!isDelegateWallet;
 	const liquidationAmountsToFixCollateralQuery = useGetSnxAmountToBeLiquidatedUsd(
 		debtBalance,
 		collateral.mul(SNXRate),
 		liquidationDataQuery.data?.selfLiquidationPenalty,
-		liquidationDataQuery.data?.liquidationPenalty
+		liquidationDataQuery.data?.liquidationPenalty,
+		canSelfLiquidate
 	);
 
 	const burnAmountToFixCRatio = wei(Wei.max(debtBalance.sub(issuableSynths), wei(0)));
