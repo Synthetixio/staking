@@ -109,14 +109,14 @@ const CratioUnderLiquidationRatioWarning: React.FC<{
 
 const SelfLiquidation: React.FC<{
 	percentageTargetCRatio: Wei;
-	currentCRatio: Wei;
+	percentageCurrentCRatio: Wei;
 	totalSNXBalance: Wei;
 	debtBalance: Wei;
 	escrowedSnx: Wei;
 	SNXRate: Wei;
 }> = ({
 	percentageTargetCRatio,
-	currentCRatio,
+	percentageCurrentCRatio,
 	totalSNXBalance,
 	escrowedSnx,
 	SNXRate,
@@ -144,16 +144,15 @@ const SelfLiquidation: React.FC<{
 	// Wait for data
 	if (liquidationData === undefined || snxAmountToBeLiquidatedUsd === undefined) return null;
 	// If c-ratio is 0 (user not staking) dont render self liquidation
-	if (isZero(currentCRatio)) return null;
+	if (isZero(percentageCurrentCRatio)) return null;
 	// If liquidationRatio is set to zero I guess liquidation must be turned off
 	if (isZero(liquidationData.liquidationRatio)) return null;
 
 	const liquidationDeadlineForAccount = liquidationData.liquidationDeadlineForAccount;
 	const notBeenFlagged = liquidationDeadlineForAccount.eq(0);
 
-	const currentCratioPercent = wei(1).div(currentCRatio); //0.3333333 = 3
 	const liquidationRatioPercent = wei(1).div(liquidationData.liquidationRatio); //0.6666 = 1.50
-	const currentCRatioBelowLiquidationCRatio = currentCratioPercent.gt(liquidationRatioPercent);
+	const currentCRatioBelowLiquidationCRatio = percentageCurrentCRatio.gt(liquidationRatioPercent);
 	// Only render if flagged or below LiquidationCratio
 	if (notBeenFlagged && currentCRatioBelowLiquidationCRatio) return null;
 
@@ -163,7 +162,7 @@ const SelfLiquidation: React.FC<{
 				<Svg src={WarningIcon} />
 				{notBeenFlagged ? (
 					<CratioUnderLiquidationRatioWarning
-						currentCRatioPercent={currentCratioPercent}
+						currentCRatioPercent={percentageCurrentCRatio}
 						liquidationRatioPercent={liquidationRatioPercent}
 						liquidationDelay={liquidationData.liquidationDelay}
 					/>
