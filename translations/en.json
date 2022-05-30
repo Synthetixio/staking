@@ -384,10 +384,14 @@
 			"self-liquidating": "Self Liquidating"
 		},
 		"self-liquidation": {
+			"title": "Self Liquidate",
 			"info": {
 				"ratios": "Your C-Ratio {{cRatio}} is below the target C-Ratio of {{targetCRatio}}.",
 				"burn-amount": "To get your C-Ratio back to the target of {{targetCRatio}} you need to burn {{burnAmountToFixCRatio}}. Your current balance is {{balance}}.",
 				"liquidation-link-text": "Read more about liquidations",
+				"c-ratio-ok": "Your C-Ratio of {{cRatio}} is above the target C-Ratio of {{targetCRatio}} which means you can't and dont have to self liquidate.",
+				"enough-susd-balance": "To get your C-Ratio back to target C-Ratio of {{targetCRatio}} you need to burn {{burnAmountToFixCRatio}}. Your balance is {{balance}} so there's no need to self liquidate.",
+				"delegate-wallet": "As a delegated wallet you can't self liquidate.",
 				"balance-not-zero": "Since your balance is not zero you should burn all your sUSD before self liquidating",
 				"self-liquidate-text": "You can also opt to self liquidate and incur a {{selfLiquidationPenalty}} penalty on your staked SNX needed to bring you to the 300% target. This would cause you to incur a penalty of {{amountToSelfLiquidate}} ({{amountToSelfLiquidateUsd}})."
 			}
