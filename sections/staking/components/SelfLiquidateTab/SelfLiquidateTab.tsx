@@ -8,6 +8,9 @@ import useStakingCalculations from 'sections/staking/hooks/useStakingCalculation
 import { delegateWalletState, walletAddressState } from 'store/wallet';
 import { useTranslation } from 'react-i18next';
 import SelfLiquidationTabContent from './SelfLiquidationTabContent';
+import { StyledCTA } from 'sections/staking/components/common';
+import Connector from 'containers/Connector';
+import styled from 'styled-components';
 
 const SelfLiquidateTab = () => {
 	const walletAddress = useRecoilValue(walletAddressState);
@@ -20,6 +23,7 @@ const SelfLiquidateTab = () => {
 		SNXRate,
 		collateral,
 	} = useStakingCalculations();
+	const { connectWallet } = Connector.useContainer();
 	const { useSynthsBalancesQuery, useGetLiquidationDataQuery } = useSynthetixQueries();
 	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
 	const sUSDBalance = synthsBalancesQuery?.data?.balancesMap[Synths.sUSD]?.balance ?? wei(0);
@@ -40,9 +44,15 @@ const SelfLiquidateTab = () => {
 	);
 
 	const burnAmountToFixCRatio = wei(Wei.max(debtBalance.sub(issuableSynths), wei(0)));
-	const liquidationAmountsData = liquidationAmountsToFixCollateralQuery.data;
-	if (!liquidationDataQuery.data || !liquidationAmountsData || synthsBalancesQuery.isLoading) {
-		return null;
+	if (!walletAddress) {
+		return (
+			<ConnectWalletButtonWrapper>
+				<StyledCTA variant="primary" size="lg" onClick={connectWallet}>
+					{t('common.wallet.connect-wallet')}
+				</StyledCTA>
+			</ConnectWalletButtonWrapper>
+		);
+	}
 	}
 
 	return (
@@ -64,4 +74,8 @@ const SelfLiquidateTab = () => {
 		</TabContainer>
 	);
 };
+const ConnectWalletButtonWrapper = styled.div`
+	width: 200px;
+	margin: 0 auto;
+`;
 export default SelfLiquidateTab;
