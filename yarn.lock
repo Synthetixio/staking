@@ -3263,16 +3263,6 @@
   resolved "https://registry.yarnpkg.com/@synthetixio/assets/-/assets-2.0.13.tgz#beb6dbf7835bafeccb182bfce6cab96194392a68"
   integrity sha512-H/2tpCJxbVWdawXNfF/Kz92w5nGkvYLVfiMaM6wpttNvtzV2Ii7VNDYwgr0EQ0Kax5wU6bOwp1oeUQ1Oa2JEyA==
 
-"@synthetixio/contracts-interface@2.69.0-3":
-  version "2.69.0-3"
-  resolved "https://registry.yarnpkg.com/@synthetixio/contracts-interface/-/contracts-interface-2.69.0-3.tgz#eea83a33396fa4f4011e917abe06317db05c7cc1"
-  integrity sha512-F8vsq/5VYc/6hqpto4qigxhj4cCilgqY4q+RrWf5JpN8VK/bt5TTHSjNHVOiY2uQy55/0wBuqnJsbbYpOL3lsQ==
-  dependencies:
-    ethers "5.5.3"
-    lodash "4.17.19"
-    synthetix "2.69.0"
-    web3-utils "1.2.11"
-
 "@synthetixio/contracts-interface@2.71.0":
   version "2.71.0"
   resolved "https://registry.yarnpkg.com/@synthetixio/contracts-interface/-/contracts-interface-2.71.0.tgz#5ac22a310529e1abebbfd22477c4f2fa4a3ba66b"
@@ -3309,16 +3299,6 @@
     "@eth-optimism/watcher" "^0.0.1-alpha.9"
     "@metamask/providers" "8.1.1"
 
-"@synthetixio/providers@2.69.0-3":
-  version "2.69.0-3"
-  resolved "https://registry.yarnpkg.com/@synthetixio/providers/-/providers-2.69.0-3.tgz#2264fc0e08edfef7d919459f0148b079d5935843"
-  integrity sha512-NdZDClR1TU7U++n13eGTpn6IXdx/Y1NRfWUnx16HIIxntP5pwmems7r+JwNz41/JQ22fvFTSKFrg+WzHbKM4ig==
-  dependencies:
-    "@eth-optimism/provider" "0.0.1-alpha.14"
-    "@synthetixio/contracts-interface" "2.69.0-3"
-    "@synthetixio/optimism-networks" "2.69.0-3"
-    ethers "5.5.3"
-
 "@synthetixio/providers@2.71.0":
   version "2.71.0"
   resolved "https://registry.yarnpkg.com/@synthetixio/providers/-/providers-2.71.0.tgz#06525ceb938a34fd953a44d5ed2c90267c3e5ee7"
@@ -3329,17 +3309,17 @@
     "@synthetixio/optimism-networks" "2.70.1"
     ethers "5.5.3"
 
-"@synthetixio/queries@2.69.0-3":
-  version "2.69.0-3"
-  resolved "https://registry.yarnpkg.com/@synthetixio/queries/-/queries-2.69.0-3.tgz#e8e83d6068973aab68cec3897c88ccff8da4b644"
-  integrity sha512-IaqIgsTO5gp1o96QiXgKkex9BnnK1nHlMA2F0RsW+ZhrRuys3+2sgGTqQ4hhkqEcNcvxbw9XWPcp5MbzTqABKA==
+"@synthetixio/queries@2.71.0":
+  version "2.71.0"
+  resolved "https://registry.yarnpkg.com/@synthetixio/queries/-/queries-2.71.0.tgz#f22f206a9d67c0afc3cd75def983504b673543fb"
+  integrity sha512-ccopq6TxJlqSx5ffcLPIsKXv3A046wkp4dmURCKNCC+W3SYpGlRgLE5Cx01rNuTtxzUNRAxA7aTkY5NEUma88A==
   dependencies:
     "@snapshot-labs/snapshot.js" "0.3.22"
-    "@synthetixio/contracts-interface" "2.69.0-3"
-    "@synthetixio/optimism-networks" "2.69.0-3"
-    "@synthetixio/providers" "2.69.0-3"
-    "@synthetixio/transaction-notifier" "2.69.0-3"
-    "@synthetixio/wei" "2.69.0-3"
+    "@synthetixio/contracts-interface" "2.71.0"
+    "@synthetixio/optimism-networks" "2.70.1"
+    "@synthetixio/providers" "2.71.0"
+    "@synthetixio/transaction-notifier" "2.70.1"
+    "@synthetixio/wei" "2.70.1"
     axios "^0.21.4"
     bignumber.js "9.0.1"
     date-fns "2.19.0"
@@ -3404,6 +3384,14 @@
     ethers "5.5.3"
     lodash "4.17.19"
 
+"@synthetixio/transaction-notifier@2.70.1":
+  version "2.70.1"
+  resolved "https://registry.yarnpkg.com/@synthetixio/transaction-notifier/-/transaction-notifier-2.70.1.tgz#9bb4653e88d7a6eb7d7dd63308043b15227b54aa"
+  integrity sha512-fxZZXsixHStUT02AKO2njknXRDNcp0nu/SsM5WlWPB2lgIVyeHrftkRqJ/3BlwIRd6h8pnYBAI6rG75zMaNPYA==
+  dependencies:
+    ethers "5.5.3"
+    lodash "4.17.19"
+
 "@synthetixio/wei@2.69.0-3":
   version "2.69.0-3"
   resolved "https://registry.yarnpkg.com/@synthetixio/wei/-/wei-2.69.0-3.tgz#3fb9de7f58fbf6624941f76cd6761494fb4a65cd"
@@ -3412,10 +3400,10 @@
     big.js "6.1.1"
     ethers "5.5.3"
 
-"@synthetixio/wei@^2.47.0-ovm.5":
-  version "2.66.2"
-  resolved "https://registry.yarnpkg.com/@synthetixio/wei/-/wei-2.66.2.tgz#d9c40814ae9f91b7423a9a632fbc08f20ed2c43f"
-  integrity sha512-0VSukrURsVuv73pyXsR8E+e5DcZkeDdl6iS2xdO3iXOVJEJSlK1/iORPQ7b7lEAIiIW03ZdY9PzW5JA8hp99hA==
+"@synthetixio/wei@2.70.1", "@synthetixio/wei@^2.47.0-ovm.5":
+  version "2.70.1"
+  resolved "https://registry.yarnpkg.com/@synthetixio/wei/-/wei-2.70.1.tgz#2ea91584fcf781f3b97239c49af54aa5541a14d6"
+  integrity sha512-VqZEmusGi0sHYRzRZxVq3r7iOO9r3pp1nRzkZOEZu9MMMZWfqzHUVc6F6lQ/22SGP+CtquOBOjh8v4y3jFHfEA==
   dependencies:
     big.js "6.1.1"
     ethers "5.5.3"
@@ -19436,20 +19424,6 @@ synthetix@2.56.1:
   version "2.56.1"
   resolved "https://registry.yarnpkg.com/synthetix/-/synthetix-2.56.1.tgz#64f394cb681339eddffb3c05a995fee2b4b47365"
   integrity sha512-y1uehwG7IBLx2K13KEw5Ywc/H5ZPMGvKSEc0ZXYo/+afeAJodVYBZXcojogS2NacMY9vnk+GJYhfkepe4nHtYQ==
-  dependencies:
-    abi-decoder "2.3.0"
-    commander "8.1.0"
-    inquirer "^6.5.2"
-    inquirer-list-search-prompt "^1.0.2"
-    js-levenshtein "^1.1.6"
-    pretty-error "^2.1.1"
-    solidity-parser-antlr "^0.4.11"
-    web3-utils "1.2.2"
-
-synthetix@2.69.0:
-  version "2.69.0"
-  resolved "https://registry.yarnpkg.com/synthetix/-/synthetix-2.69.0.tgz#96bab895d9579cb6565b2ae4a8aacc3d30d8726c"
-  integrity sha512-FgoMGoxwMUKuqopZs7YbpEdyfjyFfAGsAG/ETzorkXj+c1FpaYv248bSLeTRuoRKgbbAhmRpJowYLosPL0UcDw==
   dependencies:
     abi-decoder "2.3.0"
     commander "8.1.0"
