@@ -40,14 +40,12 @@ import { TxWaiting, TxSuccess } from './Tx';
 
 const NominateTab: FC = () => {
 	const { t } = useTranslation();
-
 	const tabData = useMemo(
 		() => [
 			{
 				title: t('merge-accounts.nominate.title'),
 				tabChildren: <NominateTabInner />,
 				key: 'main',
-				blue: true,
 			},
 		],
 		[t]

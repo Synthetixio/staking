@@ -9,7 +9,7 @@ type EscrowCalculations = {
 	totalClaimableBalance: Wei;
 	totalVestedBalance: Wei;
 };
-const useStakingCalculations = (): EscrowCalculations => {
+const useEscrowCalculations = (): EscrowCalculations => {
 	const walletAddress = useRecoilValue(walletAddressState);
 
 	const { useTokenSaleEscrowQuery, useEscrowDataQuery } = useSynthetixQueries();
@@ -43,4 +43,4 @@ const useStakingCalculations = (): EscrowCalculations => {
 	return results;
 };
 
-export default useStakingCalculations;
+export default useEscrowCalculations;

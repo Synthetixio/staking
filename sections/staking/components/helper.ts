@@ -35,3 +35,24 @@ export function sanitiseValue(value: Wei) {
 		return value;
 	}
 }
+
+export function getShowSelfLiquidationTab({
+	percentageCurrentCRatio,
+	percentageTargetCRatio,
+	burnAmountToFixCRatio,
+	sUSDBalance,
+	isDelegateWallet,
+}: {
+	percentageCurrentCRatio: Wei;
+	percentageTargetCRatio: Wei;
+	burnAmountToFixCRatio: Wei;
+	sUSDBalance: Wei;
+	isDelegateWallet: boolean;
+}) {
+	return (
+		percentageCurrentCRatio.gt(0) &&
+		percentageCurrentCRatio.lt(percentageTargetCRatio) &&
+		sUSDBalance.lt(burnAmountToFixCRatio) &&
+		!isDelegateWallet
+	);
+}

@@ -1,27 +1,19 @@
 import useSynthetixQueries from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
-import Button from 'components/Button';
 import { EXTERNAL_LINKS } from 'constants/links';
-import React, { useState } from 'react';
+import React from 'react';
 import { useRecoilValue } from 'recoil';
-import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import { delegateWalletState, walletAddressState } from 'store/wallet';
 import styled from 'styled-components';
-import {
-	ExternalLink,
-	LineSpacer,
-	ModalContent,
-	ModalItem,
-	ModalItemTitle,
-	ModalItemText,
-} from 'styles/common';
+import { ExternalLink, LineSpacer } from 'styles/common';
 import { formatShortDateWithTime } from 'utils/formatters/date';
 import { formatCryptoCurrency, formatPercent, isZero } from 'utils/formatters/number';
 import { Svg } from 'react-optimized-image';
 import WarningIcon from 'assets/svg/app/warning.svg';
 import { useTranslation } from 'react-i18next';
 import { Trans } from 'react-i18next';
-import useLiquidationAmountToFixCollateral from 'hooks/useLiquidationAmountToFixCollateral';
+import useGetSnxAmountToBeLiquidatedUsd from 'hooks/useGetSnxAmountToBeLiquidatedUsd';
+import SelfLiquidateTransactionButton from 'components/SelfLiquidateTransactionButton';
 
 const SelfLiquidationText: React.FC<{
 	totalSNXBalance: Wei;
@@ -114,6 +106,7 @@ const CratioUnderLiquidationRatioWarning: React.FC<{
 		</>
 	);
 };
+
 const SelfLiquidation: React.FC<{
 	percentageTargetCRatio: Wei;
 	currentCRatio: Wei;
@@ -129,9 +122,7 @@ const SelfLiquidation: React.FC<{
 	SNXRate,
 	debtBalance,
 }) => {
-	const { t } = useTranslation();
-	const { useGetLiquidationDataQuery, useSynthetixTxn } = useSynthetixQueries();
-	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
+	const { useGetLiquidationDataQuery } = useSynthetixQueries();
 
 	const walletAddress = useRecoilValue(walletAddressState);
 	const delegateWallet = useRecoilValue(delegateWalletState);
@@ -139,26 +130,19 @@ const SelfLiquidation: React.FC<{
 
 	const liquidationQuery = useGetLiquidationDataQuery(addressToUse);
 	const liquidationData = liquidationQuery.data;
-	const liquidationAmountsToFixCollateralQuery = useLiquidationAmountToFixCollateral(
+	const snxAmountToBeLiquidatedUsdQuery = useGetSnxAmountToBeLiquidatedUsd(
 		debtBalance,
 		totalSNXBalance?.mul(SNXRate),
 		liquidationData?.selfLiquidationPenalty,
 		liquidationData?.liquidationPenalty
 	);
 
-	const liquidationAmountsToFixCollateral = liquidationAmountsToFixCollateralQuery.data;
-	const txn = useSynthetixTxn(
-		'Synthetix',
-		'liquidateSelf',
-		[],
-		{},
-		{ enabled: currentCRatio?.gt(0) }
-	);
+	const snxAmountToBeLiquidatedUsd = snxAmountToBeLiquidatedUsdQuery.data;
 
 	// You cant self liquidate with delegation
 	if (delegateWallet?.address) return null;
 	// Wait for data
-	if (liquidationData === undefined || liquidationAmountsToFixCollateral === undefined) return null;
+	if (liquidationData === undefined || snxAmountToBeLiquidatedUsd === undefined) return null;
 	// If c-ratio is 0 (user not staking) dont render self liquidation
 	if (isZero(currentCRatio)) return null;
 	// If liquidationRatio is set to zero I guess liquidation must be turned off
@@ -192,45 +176,23 @@ const SelfLiquidation: React.FC<{
 
 				<SelfLiquidationText
 					totalSNXBalance={totalSNXBalance}
-					amountToBeSelfLiquidated={liquidationAmountsToFixCollateral.amountToSelfLiquidateUsd}
-					amountOfNonSelfLiquidation={liquidationAmountsToFixCollateral.amountToLiquidateUsd}
+					amountToBeSelfLiquidated={snxAmountToBeLiquidatedUsd.amountToSelfLiquidateUsd}
+					amountOfNonSelfLiquidation={snxAmountToBeLiquidatedUsd.amountToLiquidateUsd}
 					escrowedSnx={escrowedSnx}
 					SNXRate={SNXRate}
 					selfLiquidationPenalty={liquidationData.selfLiquidationPenalty}
 					targetCRatio={percentageTargetCRatio}
 				/>
-
-				<StyledButton
-					variant={'primary'}
-					onClick={() => {
-						setTxModalOpen(true);
-						txn.mutate();
-					}}
-				>
-					{t('staking.flag-warning.self-liquidate')}
-				</StyledButton>
+				<ButtonWrapper>
+					<SelfLiquidateTransactionButton walletAddress={walletAddress} />
+				</ButtonWrapper>
 				<LineSpacer />
 			</Container>
-			{txModalOpen && (
-				<TxConfirmationModal
-					onDismiss={() => setTxModalOpen(false)}
-					txError={txn.errorMessage}
-					attemptRetry={txn.mutate}
-					content={
-						<ModalContent>
-							<ModalItem>
-								<ModalItemTitle> {t('staking.flag-warning.self-liquidating')}</ModalItemTitle>
-								<ModalItemText>{walletAddress}</ModalItemText>
-							</ModalItem>
-						</ModalContent>
-					}
-				/>
-			)}
 		</>
 	);
 };
 
-const StyledButton = styled(Button)`
+const ButtonWrapper = styled.div`
 	margin-bottom: 30px;
 `;
 

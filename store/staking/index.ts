@@ -6,6 +6,7 @@ export enum StakingPanelType {
 	BURN = 'burn',
 	MINT = 'mint',
 	CLEAR = 'clear',
+	SELF_LIQUIDATE = 'self-liquidate',
 }
 
 export enum MintActionType {

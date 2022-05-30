@@ -32,7 +32,7 @@ import {
 	HeaderLabel,
 } from '../common';
 
-import styled from 'styled-components';
+import styled, { useTheme } from 'styled-components';
 import { CurrencyIconType } from 'components/Currency/CurrencyIcon/CurrencyIcon';
 import { MobileOnlyView } from 'components/Media';
 import DepositTab from './DepositTab/DepositTab';
@@ -66,6 +66,7 @@ const YearnVaultTab: FC<LPTabProps> = ({
 	pricePerShare,
 }) => {
 	const { t } = useTranslation();
+	const theme = useTheme();
 	const [showApproveOverlayModal, setShowApproveOverlayModal] = useState<boolean>(false);
 
 	const [claimTransactionState, setClaimTransactionState] = useState<Transaction>(
@@ -89,13 +90,13 @@ const YearnVaultTab: FC<LPTabProps> = ({
 			{
 				title: t('earn.actions.deposit.title'),
 				tabChildren: <DepositTab {...commonDepositTabProps} isDeposit={true} />,
-				blue: true,
+				color: theme.colors.blue,
 				key: 'deposit',
 			},
 			{
 				title: t('earn.actions.withdraw.title'),
 				tabChildren: <DepositTab {...commonDepositTabProps} isDeposit={false} />,
-				blue: false,
+				color: theme.colors.orange,
 				key: 'withdraw',
 			},
 		];

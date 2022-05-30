@@ -319,6 +319,7 @@
 					"empty": "Enter an amount",
 					"burn": "Burn <0>sUSD</0>",
 					"max": "Max",
+					"burn-all": "Burn all sUSD",
 					"clear-debt": "Clear debt",
 					"insufficient-sUSD-to-clear-debt": "Insufficient <0>sUSD</0> to clear debt",
 					"insufficient-sUSD-to-fix-c-ratio": "Insufficient <0>sUSD</0> to fix c-ratio. mint or by <0>sUSD</0> to proceed",
@@ -380,6 +381,15 @@
 			"info": "After {{deadlineDate}} you can be liquidated, which incur penalities. To avoid this, burn your <0>C-RATIO back to {{percentageTargetCRatio}}</0> or self liquidate. <1>Read more about liquidation here</1>",
 			"self-liquidate": "Self Liquidate",
 			"self-liquidating": "Self Liquidating"
+		},
+		"self-liquidation": {
+			"info": {
+				"ratios": "Your C-Ratio {{cRatio}} is below the target C-Ratio of {{targetCRatio}}.",
+				"burn-amount": "To get your C-Ratio back to the target of {{targetCRatio}} you need to burn {{burnAmountToFixCRatio}}. Your current balance is {{balance}}.",
+				"liquidation-link-text": "Read more about liquidations",
+				"balance-not-zero": "Since your balance is not zero you should burn all your sUSD before self liquidating",
+				"self-liquidate-text": "You can also opt to self liquidate and incur a {{selfLiquidationPenalty}} penalty on your staked SNX needed to bring you to the 300% target. This would cause you to incur a penalty of {{amountToSelfLiquidate}} ({{amountToSelfLiquidateUsd}})."
+			}
 		}
 	},
 	"pool": {
