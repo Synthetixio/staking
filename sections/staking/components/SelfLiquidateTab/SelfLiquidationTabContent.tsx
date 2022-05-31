@@ -54,6 +54,15 @@ const SelfLiquidationTabContent: React.FC<{
 			</Container>
 		);
 	}
+	if (percentageCurrentCRatio.eq(0)) {
+		return (
+			<Container>
+				<InfoText data-testid="not-staking">
+					{t('staking.self-liquidation.info.not-staking')}
+				</InfoText>
+			</Container>
+		);
+	}
 	if (percentageCurrentCRatio.gt(percentageTargetCRatio)) {
 		return (
 			<Container>

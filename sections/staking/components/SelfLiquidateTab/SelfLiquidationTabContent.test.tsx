@@ -51,6 +51,21 @@ describe('SelfLiquidationTabContent', () => {
 		expect(link).toBeInTheDocument();
 		expect(text).toBeInTheDocument();
 	});
+	test('Not staking', () => {
+		const result = render(
+			<ContextProvider>
+				{/* @ts-ignore */}
+				<SelfLiquidationTabContent
+					percentageCurrentCRatio={wei(0)}
+					percentageTargetCRatio={wei(3)}
+					burnAmountToFixCRatio={wei(0)}
+					sUSDBalance={wei(0)}
+				/>
+			</ContextProvider>
+		);
+		const text = result.getByTestId('not-staking');
+		expect(text).toBeInTheDocument();
+	});
 	test('Show loader when waiting for penalty data', () => {
 		const result = render(
 			<ContextProvider>

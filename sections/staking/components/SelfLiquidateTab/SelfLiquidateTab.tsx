@@ -24,6 +24,7 @@ const SelfLiquidateTab = () => {
 		percentageTargetCRatio,
 		SNXRate,
 		collateral,
+		isLoading,
 	} = useStakingCalculations();
 	const { connectWallet } = Connector.useContainer();
 	const { useSynthsBalancesQuery, useGetLiquidationDataQuery } = useSynthetixQueries();
@@ -55,7 +56,7 @@ const SelfLiquidateTab = () => {
 			</ConnectWalletButtonWrapper>
 		);
 	}
-	if (!liquidationDataQuery.data || synthsBalancesQuery.isLoading) {
+	if (!liquidationDataQuery.data || synthsBalancesQuery.isLoading || isLoading) {
 		return (
 			<FlexDivJustifyCenter>
 				<Loader inline />

@@ -390,6 +390,7 @@
 				"burn-amount": "To get your C-Ratio back to the target of {{targetCRatio}} you need to burn {{burnAmountToFixCRatio}}. Your current balance is {{balance}}.",
 				"liquidation-link-text": "Read more about liquidations",
 				"c-ratio-ok": "Your C-Ratio of {{cRatio}} is above the target C-Ratio of {{targetCRatio}} which means you can't and dont have to self liquidate.",
+				"not-staking": "Currently you are not staking, so there's no debt to self liquidate. Head over to the Mint tab to start earning.",
 				"enough-susd-balance": "To get your C-Ratio back to target C-Ratio of {{targetCRatio}} you need to burn {{burnAmountToFixCRatio}}. Your balance is {{balance}} so there's no need to self liquidate.",
 				"delegate-wallet": "As a delegated wallet you can't self liquidate.",
 				"balance-not-zero": "Since your balance is not zero you should burn all your sUSD before self liquidating",
