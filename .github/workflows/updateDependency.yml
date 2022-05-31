@@ -27,7 +27,7 @@ jobs:
         continue-on-error: true
 
       - name: Cache node modules
-        uses: actions/cache@48af2dc4a9e8278b89d7fa154b955c30c6aaab09 # pin@v2
+        uses: actions/cache@30f413bfed0a2bc738fdfd409e5a9e96b24545fd # pin@v2
         with:
           path: |
             .yarn-cache
