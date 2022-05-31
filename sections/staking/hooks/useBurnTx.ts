@@ -38,8 +38,8 @@ const useBurnTx = () => {
 	const [gasPrice, setGasPrice] = useState<GasPrice | undefined>(undefined);
 	const [waitingPeriod, setWaitingPeriod] = useState(0);
 	const [issuanceDelay, setIssuanceDelay] = useState(0);
-
-	const synthsBalancesQuery = useSynthsBalancesQuery(delegateWallet?.address ?? walletAddress);
+	const walletAddressToUse = delegateWallet?.address ?? walletAddress;
+	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddressToUse);
 	const synthBalances =
 		synthsBalancesQuery.isSuccess && synthsBalancesQuery.data != null
 			? synthsBalancesQuery.data
@@ -52,7 +52,7 @@ const useBurnTx = () => {
 	const { needToBuy, debtBalanceWithBuffer, missingSUSDWithBuffer, quoteAmount, swapData } =
 		useClearDebtCalculations(debtBalance, sUSDBalance, walletAddress!);
 
-	const ethBalanceQuery = useETHBalanceQuery(delegateWallet?.address ?? walletAddress);
+	const ethBalanceQuery = useETHBalanceQuery(walletAddressToUse);
 	const ethBalance = ethBalanceQuery.data ?? wei(0);
 
 	const amountToBurnBN = Wei.max(wei(0), parseSafeWei(amountToBurn, wei(0)));
@@ -60,30 +60,34 @@ const useBurnTx = () => {
 	const isToTarget = burnType === BurnActionType.TARGET;
 
 	const getMaxSecsLeftInWaitingPeriod = useCallback(async () => {
+		if (!synthetixjs) return;
+		if (!walletAddressToUse) return;
 		const {
 			contracts: { Exchanger },
 			utils: { formatBytes32String },
-		} = synthetixjs!;
+		} = synthetixjs;
 
 		try {
 			const maxSecsLeftInWaitingPeriod = await Exchanger.maxSecsLeftInWaitingPeriod(
-				delegateWallet?.address ?? walletAddress,
+				walletAddressToUse,
 				formatBytes32String('sUSD')
 			);
 			setWaitingPeriod(Number(maxSecsLeftInWaitingPeriod));
 		} catch (e) {
 			console.log(e);
 		}
-	}, [walletAddress, delegateWallet, synthetixjs]);
+	}, [synthetixjs, walletAddressToUse]);
 
 	const getIssuanceDelay = useCallback(async () => {
+		if (!synthetixjs) return;
+		if (!walletAddressToUse) return;
 		const {
 			contracts: { Issuer },
-		} = synthetixjs!;
+		} = synthetixjs;
 		try {
 			const [canBurnSynths, lastIssueEvent, minimumStakeTime] = await Promise.all([
-				Issuer.canBurnSynths(delegateWallet?.address ?? walletAddress),
-				Issuer.lastIssueEvent(delegateWallet?.address ?? walletAddress),
+				Issuer.canBurnSynths(walletAddressToUse),
+				Issuer.lastIssueEvent(walletAddressToUse),
 				Issuer.minimumStakeTime(),
 			]);
 
