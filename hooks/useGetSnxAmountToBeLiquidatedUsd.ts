@@ -6,7 +6,8 @@ const useGetSnxAmountToBeLiquidatedUsd = (
 	debtBalance?: Wei,
 	collateralInUsd?: Wei,
 	selfLiquidationPenalty?: Wei,
-	liquidationPenalty?: Wei
+	liquidationPenalty?: Wei,
+	enabled?: boolean
 ) => {
 	const { network, synthetixjs } = Connector.useContainer();
 
@@ -38,7 +39,8 @@ const useGetSnxAmountToBeLiquidatedUsd = (
 		},
 		{
 			enabled: Boolean(
-				network?.id &&
+				enabled &&
+					network?.id &&
 					synthetixjs?.contracts &&
 					selfLiquidationPenalty &&
 					liquidationPenalty &&

@@ -24,6 +24,7 @@ const BurnMaxButton: React.FC<{ amountToBurn: Wei }> = ({ amountToBurn }) => {
 	return (
 		<>
 			<StyledButton
+				data-testid="burn-max-btn"
 				variant={'primary'}
 				onClick={() => {
 					setTxModalOpen(true);
