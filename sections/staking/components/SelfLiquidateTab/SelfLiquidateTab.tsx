@@ -35,8 +35,8 @@ const SelfLiquidateTab = () => {
 
 	const isDelegateWallet = Boolean(delegateWallet?.address);
 	const canSelfLiquidate =
-		percentageCurrentCRatio.gt(0) &&
-		percentageCurrentCRatio.lt(percentageTargetCRatio) &&
+		percentageCurrentCRatio?.gt(0) &&
+		percentageCurrentCRatio?.lt(percentageTargetCRatio) &&
 		!isDelegateWallet;
 	const liquidationAmountsToFixCollateralQuery = useGetSnxAmountToBeLiquidatedUsd(
 		debtBalance,

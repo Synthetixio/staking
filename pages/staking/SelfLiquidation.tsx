@@ -131,7 +131,7 @@ const SelfLiquidation: React.FC<{
 	const liquidationData = liquidationQuery.data;
 
 	const canSelfLiquidate =
-		percentageCurrentCRatio.gt(0) &&
+		percentageCurrentCRatio?.gt(0) &&
 		percentageCurrentCRatio.lt(percentageTargetCRatio) &&
 		!isDelegateWallet;
 
