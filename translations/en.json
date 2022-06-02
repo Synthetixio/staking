@@ -366,6 +366,10 @@
 				"title": "Clear debt by buying more sUSD via 1inch",
 				"subtitle": "Burn your sUSD to unlock your staked SNX and clear your debt. As you don’t have enough sUSD, buy more with ETH in the left form. <0>Learn more.</0>"
 			},
+			"self-liquidate": {
+				"title": "Self Liquidate",
+				"subtitle": ""
+			},
 			"table": {
 				"total-snx": "Total",
 				"not-staked": "Not Staked",
