@@ -77,6 +77,8 @@ const InfoLayout: FC<InfoLayoutProps> = ({
 				return t('staking.info.burn.title');
 			case StakingPanelType.CLEAR:
 				return t('staking.info.clear.title');
+			case StakingPanelType.SELF_LIQUIDATE:
+				return t('staking.info.self-liquidate.title');
 		}
 	}, [infoType, t]);
 
@@ -88,6 +90,8 @@ const InfoLayout: FC<InfoLayoutProps> = ({
 				return 'staking.info.burn.subtitle';
 			case StakingPanelType.CLEAR:
 				return 'staking.info.clear.subtitle';
+			case StakingPanelType.SELF_LIQUIDATE:
+				return 'staking.info.self-liquidate.subtitle';
 		}
 	}, [infoType]);
 
