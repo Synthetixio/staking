@@ -3263,13 +3263,13 @@
   resolved "https://registry.yarnpkg.com/@synthetixio/assets/-/assets-2.0.13.tgz#beb6dbf7835bafeccb182bfce6cab96194392a68"
   integrity sha512-H/2tpCJxbVWdawXNfF/Kz92w5nGkvYLVfiMaM6wpttNvtzV2Ii7VNDYwgr0EQ0Kax5wU6bOwp1oeUQ1Oa2JEyA==
 
-"@synthetixio/contracts-interface@2.71.1-alpha":
-  version "2.71.1-alpha"
-  resolved "https://registry.yarnpkg.com/@synthetixio/contracts-interface/-/contracts-interface-2.71.1-alpha.tgz#673c216d6590da2a766a30a5ac56f8ebbe0d7aef"
-  integrity sha512-Vneq/vtuFdJLKU2GHWSNkZIVyTsz3nt3dLdTIj9npRRiMNVIBGKOKRz+ka7Lq6657e4X4HLI2V83Dpg+3W6pbA==
+"@synthetixio/contracts-interface@2.71.2":
+  version "2.71.2"
+  resolved "https://registry.yarnpkg.com/@synthetixio/contracts-interface/-/contracts-interface-2.71.2.tgz#99b48c7726bb4c91a352b7abbb430937d75ca87d"
+  integrity sha512-9NU8QITXphxrEwtSMpjRdde3lxRswr5QaQedZo9ge8bMyyOFH+fL+M1K3gl2y9o8CUiEY66CaJwoiiP2U45HAg==
   dependencies:
     ethers "5.5.3"
-    synthetix v2.71.1-alpha
+    synthetix "2.71.2"
 
 "@synthetixio/js@2.41.0":
   version "2.41.0"
@@ -3281,35 +3281,35 @@
     synthetix "2.41.0"
     web3-utils "1.2.11"
 
-"@synthetixio/optimism-networks@2.71.1-alpha":
-  version "2.71.1-alpha"
-  resolved "https://registry.yarnpkg.com/@synthetixio/optimism-networks/-/optimism-networks-2.71.1-alpha.tgz#8057a74d5920f3cca7f0e2e4b4bb33b8842f3679"
-  integrity sha512-KYFtXFMA+FfAfUwVsU1+EOQa9rKN7XzXClzMAv/TJy7W6pzvZIw47zOvgXHJ0W0DYnw+zyn1nfSA0WTFjDAEVA==
+"@synthetixio/optimism-networks@2.71.2":
+  version "2.71.2"
+  resolved "https://registry.yarnpkg.com/@synthetixio/optimism-networks/-/optimism-networks-2.71.2.tgz#640febd92d64f381f924cff1d5a619c60b0e848d"
+  integrity sha512-Inf6fHu8OvAn4SSckmJzTtFZU0YBx5jC+5SEG9csCO6HTCsbmF9B4ucxtROQIeM9caZ+bpBR6GsYjAKsP6XAug==
   dependencies:
     "@eth-optimism/watcher" "^0.0.1-alpha.9"
     "@metamask/providers" "8.1.1"
     ethers "5.5.3"
 
-"@synthetixio/providers@2.71.1-alpha":
-  version "2.71.1-alpha"
-  resolved "https://registry.yarnpkg.com/@synthetixio/providers/-/providers-2.71.1-alpha.tgz#d5f4d2c96b7558221d8097162e1e02741bb1c46a"
-  integrity sha512-DJLHLJ53UJRfkpQr06Kyabr+99oUXuHbgNdxY3ZtVitkUOAQS4pHwrsgm580lRqjnBBvxNn7fBd+efAYGBpSsw==
+"@synthetixio/providers@2.71.2":
+  version "2.71.2"
+  resolved "https://registry.yarnpkg.com/@synthetixio/providers/-/providers-2.71.2.tgz#17cdd6abe7d0ba0ebcddd2989e03d1e296d4e7d0"
+  integrity sha512-QdLl/IkFuFiCBWIH1phRpU+9ytDoTpf+ptS4LMmvlGRqNcy/Dd9oY+R9DGzuBhwyVSCa4lKYRvi4eNAyDciTYA==
   dependencies:
     "@eth-optimism/provider" "0.0.1-alpha.14"
-    "@synthetixio/contracts-interface" "2.71.1-alpha"
-    "@synthetixio/optimism-networks" "2.71.1-alpha"
+    "@synthetixio/contracts-interface" "2.71.2"
+    "@synthetixio/optimism-networks" "2.71.2"
     ethers "5.5.3"
 
-"@synthetixio/queries@2.71.1-alpha":
-  version "2.71.1-alpha"
-  resolved "https://registry.yarnpkg.com/@synthetixio/queries/-/queries-2.71.1-alpha.tgz#86340ffe86726016fa7edb60369b3b073c59bf58"
-  integrity sha512-Zafl+REfTzYJQBeCH19B6nAiYvQgXA/hh6RdQTbF+0qWd+ehfsHwFjafT4Wi4S6+g08RrAr9cTbzU2BKJyWBJA==
+"@synthetixio/queries@2.71.2":
+  version "2.71.2"
+  resolved "https://registry.yarnpkg.com/@synthetixio/queries/-/queries-2.71.2.tgz#1ac7795d3e5123579ac66d8273d7d39df2929487"
+  integrity sha512-OZad69+R0imUDfWlQt/kZEWr/m0Q6fRViakwVVnYQsmwMtTV08fZr7b0ui35G3JVgUhKYm4Ho8O8PXXqnEt/BA==
   dependencies:
     "@snapshot-labs/snapshot.js" "0.3.22"
-    "@synthetixio/contracts-interface" "2.71.1-alpha"
-    "@synthetixio/optimism-networks" "2.71.1-alpha"
-    "@synthetixio/providers" "2.71.1-alpha"
-    "@synthetixio/wei" "2.71.1-alpha"
+    "@synthetixio/contracts-interface" "2.71.2"
+    "@synthetixio/optimism-networks" "2.71.2"
+    "@synthetixio/providers" "2.71.2"
+    "@synthetixio/wei" "2.71.2"
     axios "^0.21.4"
     date-fns "2.19.0"
     ethers "5.5.3"
@@ -3364,17 +3364,17 @@
     start-server-and-test "1.13.1"
     synthetix-js "2.56.1"
 
-"@synthetixio/transaction-notifier@2.71.1-alpha":
-  version "2.71.1-alpha"
-  resolved "https://registry.yarnpkg.com/@synthetixio/transaction-notifier/-/transaction-notifier-2.71.1-alpha.tgz#fc059682e7619831320e2a291711afa0c9bd5c83"
-  integrity sha512-LW5Vfo1Bf5jYijXEvRWcmTkRLBvfcRKfVK5KFcRgn/blgN2GWn6XxbSb9MmPGMDfSdfRZ44vZg6yzOb07MvVMw==
+"@synthetixio/transaction-notifier@2.71.2":
+  version "2.71.2"
+  resolved "https://registry.yarnpkg.com/@synthetixio/transaction-notifier/-/transaction-notifier-2.71.2.tgz#5ec34c8f33729be31bab012005edeeb53e013b56"
+  integrity sha512-CxaH+asK0v6wv6HhpmeuY0Py79G4neVJ1l0vkWcS3Tpfn1snNoUzJqzmvh8DgG8C9yNtS19/3JTXkszJyHSkdw==
   dependencies:
     ethers "5.5.3"
 
-"@synthetixio/wei@2.71.1-alpha":
-  version "2.71.1-alpha"
-  resolved "https://registry.yarnpkg.com/@synthetixio/wei/-/wei-2.71.1-alpha.tgz#222ae6d1eb797627eaced4589a037b707057364e"
-  integrity sha512-aiqZORvLHcIYoCzNLaU+U4AO+oXZaqk5ojBudecBplBLLZAQLP+cQ5Sb8Wh24Yiu9eoqs2ad7HflWk3Wlrnbow==
+"@synthetixio/wei@2.71.2":
+  version "2.71.2"
+  resolved "https://registry.yarnpkg.com/@synthetixio/wei/-/wei-2.71.2.tgz#ddcfb2301faf2e6e2449dfa951546ea95f7a2215"
+  integrity sha512-JNew+YVFDhOCL/xMr+6QueMyHrgy9NBkErV53kV7Pp/fGhW56+jZLolYwUeE7O+LBNwTueXr7nH1+XsZt6l7JA==
   dependencies:
     big.js "6.1.1"
     ethers "5.5.3"
@@ -19397,10 +19397,10 @@ synthetix@2.56.1:
     solidity-parser-antlr "^0.4.11"
     web3-utils "1.2.2"
 
-synthetix@v2.71.1-alpha:
-  version "2.71.1-alpha"
-  resolved "https://registry.yarnpkg.com/synthetix/-/synthetix-2.71.1-alpha.tgz#1aa4c1e4f0793a22dff1b3eca3585cc6e91f22db"
-  integrity sha512-c539yTEnRNR1dY+8RR2KSdEoOmHba67e39FRhuRzaZDFA993GrA1vEXh9x/b1E43qCwN1MKh1UEugBqiZp9TXg==
+synthetix@2.71.2:
+  version "2.71.2"
+  resolved "https://registry.yarnpkg.com/synthetix/-/synthetix-2.71.2.tgz#edabc11b397c4be1635fce3cc5c697b01ea2f63c"
+  integrity sha512-rl4JR2atAMsGS3Fa6hMoZBALVo2Mxb4JyR26chrmabTinN1omlCJRiwkgP1ivMPTcn5np8k/dxsDVm+w34KDHw==
   dependencies:
     abi-decoder "2.3.0"
     commander "8.1.0"
