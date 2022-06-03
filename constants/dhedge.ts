@@ -11,3 +11,5 @@ export const dSNXContractOptimism = new Contract(
 	erc20ABI
 );
 
+export const dSNXPoolAddressMainnet = '0x65bb99e80a863e0e27ee6d09c794ed8c0be47186';
+export const dSNXPoolAddressOptimism = '0x59babc14dd73761e38e5bda171b2298dc14da92d';

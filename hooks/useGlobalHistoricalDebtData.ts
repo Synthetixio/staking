@@ -4,7 +4,9 @@ import { useQuery } from 'react-query';
 import axios from 'axios';
 import Wei, { wei } from '@synthetixio/wei';
 import { dHedgeAPIUrl } from 'constants/dhedge';
-
+import { useRecoilValue } from 'recoil';
+import { isMainnetState } from 'store/wallet';
+import { dSNXPoolAddressMainnet, dSNXPoolAddressOptimism } from 'constants/dhedge';
 type HistoricalGlobalDebtAndIssuanceData = {
 	mirrorPool: {
 		value: number;
@@ -43,8 +45,10 @@ type EventBlocks = Array<{
 }>;
 
 const useGlobalHistoricalDebtData = (): HistoricalGlobalDebtAndIssuance => {
+	const isMainnet = useRecoilValue(isMainnetState);
+	const poolAddress = isMainnet ? dSNXPoolAddressMainnet : dSNXPoolAddressOptimism;
 	const dHedgeData = useQuery<DHedgePerformanceResponse>(
-		['dhedge', dHedgeAPIUrl],
+		['dhedge', dHedgeAPIUrl, poolAddress],
 		async () => {
 			const response = await axios({
 				url: dHedgeAPIUrl,
@@ -54,7 +58,7 @@ const useGlobalHistoricalDebtData = (): HistoricalGlobalDebtAndIssuance => {
 				},
 				data: {
 					query: `{
-							performanceHistory (address:"0x65bb99e80a863e0e27ee6d09c794ed8c0be47186", period:"1m") {
+							performanceHistory (address:"${poolAddress}", period:"1m") {
 								history {
 									performance,
 									timestamp
