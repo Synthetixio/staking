@@ -3,14 +3,13 @@ import { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Button from 'components/Button';
 import {
-	dSNXContract,
 	getSUSDdSNXPool,
 	Immutables,
 	quoterContract,
 	routerContract,
 	sUSDContract,
 } from 'constants/uniswap';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { walletAddressState } from 'store/wallet';
 import { StyledInput } from '../../../staking/components/common';
 import { BigNumber, constants, utils } from 'ethers';
@@ -18,7 +17,6 @@ import Loader from 'components/Loader';
 import { useTranslation } from 'react-i18next';
 import useSynthetixQueries, { GasPrice } from '@synthetixio/queries';
 import GasSelector from 'components/GasSelector';
-import { dSNXBalance } from 'store/debt';
 import { formatCryptoCurrency } from 'utils/formatters/number';
 import { wei } from '@synthetixio/wei';
 import { Route, Trade, Pool } from '@uniswap/v3-sdk';
@@ -26,6 +24,7 @@ import { CurrencyAmount, Percent, Token, TradeType } from '@uniswap/sdk-core';
 import colors from 'styles/theme/colors';
 import { Svg } from 'react-optimized-image';
 import dhedge from 'assets/svg/app/dhedge.svg';
+import useGetDSnxBalance from 'hooks/useGetDSnxBalance';
 
 export default function HedgeTap() {
 	const { t } = useTranslation();
@@ -45,8 +44,8 @@ export default function HedgeTap() {
 	const { provider } = Connector.useContainer();
 	const walletAddress = useRecoilValue(walletAddressState);
 	const { useContractTxn } = useSynthetixQueries();
-	const balanceOfdSNX = useRecoilValue(dSNXBalance);
-	const setBalanceOfdSNX = useSetRecoilState(dSNXBalance);
+
+	const dSNXBalanceQuery = useGetDSnxBalance();
 	const approveTx = useContractTxn(
 		sUSDContract,
 		'approve',
@@ -80,20 +79,11 @@ export default function HedgeTap() {
 			onSettled: () => {
 				setAmountToSend('');
 				setButtonLoading(false);
-				fetchdSNXContract();
+				dSNXBalanceQuery.refetch();
 			},
 			enabled: approved,
 		}
 	);
-
-	const fetchdSNXContract = useCallback(async () => {
-		const balance = await dSNXContract.connect(provider!).balanceOf(walletAddress);
-		setBalanceOfdSNX(balance);
-	}, [provider, setBalanceOfdSNX, walletAddress]);
-
-	useEffect(() => {
-		fetchdSNXContract();
-	}, [fetchdSNXContract]);
 
 	useEffect(() => {
 		if (provider && walletAddress) {
@@ -250,7 +240,7 @@ export default function HedgeTap() {
 					<StyledHedgeInput type="number" value={utils.formatUnits(expectedAmountOut, 18)} />
 					<StyledBalance>
 						{t('debt.actions.manage.balance')}
-						{formatCryptoCurrency(wei(balanceOfdSNX), {
+						{formatCryptoCurrency(dSNXBalanceQuery.data || wei(0), {
 							maxDecimals: 1,
 							minDecimals: 2,
 						})}
@@ -304,7 +294,7 @@ const StyledInputsWrapper = styled.div`
 	align-items: center;
 	flex-direction: column;
 	width: 100%;
-	height: 100%
+	height: 100%;
 	margin-top: 80px;
 `;
 
