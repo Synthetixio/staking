@@ -1063,7 +1063,8 @@
 				"title": "Treasury"
 			},
 			"proposals": {
-				"title": "SIP/SCCP"
+				"title": "SIP/SCCP",
+				"description": "ONLY ELECTED SPARTAN COUNCIL MEMBER CAN VOTE ON SIPS / SCCP"
 			},
 			"grants": {
 				"title": "Grants"
