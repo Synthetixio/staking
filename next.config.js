@@ -36,6 +36,16 @@ const poolPages = ['/pools/weth-snx'].reduce((pages, page) => {
 module.exports = withPlugins([[optimizedImages, { images: { optimize: false } }]], {
 	webpack: (config) => {
 		config.resolve.mainFields = ['module', 'browser', 'main'];
+		if (process.env.GENERATE_BUNDLE_REPORT === 'true') {
+			const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+			const plugin = new BundleAnalyzerPlugin({
+				analyzerMode: 'static',
+				reportFilename: 'reports/webpack.html',
+				openAnalyzer: false,
+				generateStatsFile: false,
+			});
+			config.plugins.push(plugin);
+		}
 		return config;
 	},
 	trailingSlash: !!process.env.NEXT_PUBLIC_TRAILING_SLASH_ENABLED,

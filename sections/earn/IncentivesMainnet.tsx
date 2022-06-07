@@ -1,6 +1,6 @@
 import { FC, useMemo, useState } from 'react';
 import Wei, { wei } from '@synthetixio/wei';
-import styled from 'styled-components';
+import styled, { useTheme } from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
@@ -22,6 +22,8 @@ import YearnVaultTab from './LPTab/YearnVaultTab';
 import { YearnVaultData } from 'queries/liquidityPools/useYearnSNXVaultQuery';
 import useSynthetixQueries from '@synthetixio/queries';
 import Connector from 'containers/Connector';
+import LiquidationTab from './LiquidationTab';
+import { notNill } from 'utils/ts-helpers';
 
 enum View {
 	ACTIVE = 'active',
@@ -32,6 +34,7 @@ type IncentivesProps = {
 	tradingRewards: Wei;
 	stakingRewards: Wei;
 	totalRewards: Wei;
+	liquidationRewards: Wei;
 	stakingAPR: Wei;
 	stakedAmount: Wei;
 	hasClaimed: boolean;
@@ -46,9 +49,11 @@ const Incentives: FC<IncentivesProps> = ({
 	stakingAPR,
 	stakedAmount,
 	hasClaimed,
+	liquidationRewards,
 }) => {
 	const { t } = useTranslation();
 	const router = useRouter();
+	const theme = useTheme();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const [view, setView] = useState<View>(View.ACTIVE);
 	const { L1DefaultProvider } = Connector.useContainer();
@@ -94,6 +99,25 @@ const Incentives: FC<IncentivesProps> = ({
 						route: ROUTES.Earn.Claim,
 					},
 					{
+						title: t('earn.incentives.options.liquidations.title'),
+						subtitle: t('earn.incentives.options.liquidations.subtitle'),
+						apr: undefined,
+						tvl: lockedSnxQuery.data?.lockedValue ?? wei(0),
+						staked: {
+							balance: stakedAmount,
+							asset: CryptoCurrency.SNX,
+							ticker: CryptoCurrency.SNX,
+						},
+						rewards: liquidationRewards,
+						periodStarted: 0,
+						periodFinish: Number.MAX_SAFE_INTEGER, // trick it to never expire
+						claimed: NOT_APPLICABLE,
+						now,
+						route: ROUTES.Earn.LIQUIDATION_REWARDS,
+						tab: Tab.LIQUIDATION_REWARDS,
+						neverExpires: true,
+					},
+					{
 						title: t('earn.incentives.options.yvsnx.title'),
 						subtitle: t('earn.incentives.options.yvsnx.subtitle'),
 						apr: lpData[LP.YEARN_SNX_VAULT].APR,
@@ -114,27 +138,29 @@ const Incentives: FC<IncentivesProps> = ({
 						neverExpires: true,
 					},
 
-					{
-						title: t('earn.incentives.options.curve.title'),
-						subtitle: t('earn.incentives.options.curve.subtitle'),
-						apr: lpData[LP.CURVE_sUSD].APR,
-						tvl: lpData[LP.CURVE_sUSD].TVL,
-						staked: {
-							balance: lpData[LP.CURVE_sUSD].data?.staked ?? wei(0),
-							asset: CryptoCurrency.CRV,
-							ticker: LP.CURVE_sUSD,
-							type: CurrencyIconType.TOKEN,
-						},
-						rewards: lpData[LP.CURVE_sUSD].data?.rewards ?? wei(0),
-						periodStarted: now - (lpData[LP.CURVE_sUSD].data?.duration ?? 0),
-						periodFinish: lpData[LP.CURVE_sUSD].data?.periodFinish ?? 0,
-						claimed: (lpData[LP.CURVE_sUSD].data?.rewards ?? 0) > 0 ? false : NOT_APPLICABLE,
-						now,
-						route: ROUTES.Earn.sUSD_LP,
-						tab: Tab.sUSD_LP,
-						externalLink: ROUTES.Earn.sUSD_EXTERNAL,
-					},
-			  ]
+					Boolean(lpData[LP.CURVE_sUSD].TVL && lpData[LP.CURVE_sUSD].APR)
+						? {
+								title: t('earn.incentives.options.curve.title'),
+								subtitle: t('earn.incentives.options.curve.subtitle'),
+								apr: lpData[LP.CURVE_sUSD].APR,
+								tvl: lpData[LP.CURVE_sUSD].TVL,
+								staked: {
+									balance: lpData[LP.CURVE_sUSD].data?.staked ?? wei(0),
+									asset: CryptoCurrency.CRV,
+									ticker: LP.CURVE_sUSD,
+									type: CurrencyIconType.TOKEN,
+								},
+								rewards: lpData[LP.CURVE_sUSD].data?.rewards ?? wei(0),
+								periodStarted: now - (lpData[LP.CURVE_sUSD].data?.duration ?? 0),
+								periodFinish: lpData[LP.CURVE_sUSD].data?.periodFinish ?? 0,
+								claimed: NOT_APPLICABLE,
+								now,
+								route: ROUTES.Earn.sUSD_LP,
+								tab: Tab.sUSD_LP,
+								externalLink: ROUTES.Earn.sUSD_EXTERNAL,
+						  }
+						: undefined,
+			  ].filter(notNill)
 			: [];
 	}, [
 		stakingAPR,
@@ -148,6 +174,7 @@ const Incentives: FC<IncentivesProps> = ({
 		now,
 		t,
 		isWalletConnected,
+		liquidationRewards,
 	]);
 
 	const incentivesTable = (
@@ -158,10 +185,10 @@ const Incentives: FC<IncentivesProps> = ({
 					? incentives.filter((e) => e.periodFinish > Date.now())
 					: incentives.filter((e) => e.periodFinish <= Date.now())
 			}
-			isLoaded={!!lpData[LP.CURVE_sUSD].data}
+			isLoaded={!!lpData[LP.CURVE_sUSD].APR}
 		/>
 	);
-
+	const yearnLpData = lpData[LP.YEARN_SNX_VAULT].data;
 	return activeTab == null ? (
 		<>
 			<TabList noOfTabs={2}>
@@ -169,7 +196,7 @@ const Incentives: FC<IncentivesProps> = ({
 					isSingle={false}
 					tabHeight={50}
 					inverseTabColor={true}
-					blue={true}
+					color={theme.colors.blue}
 					key={`active-button`}
 					name={t('earn.tab.active')}
 					active={view === View.ACTIVE}
@@ -183,7 +210,7 @@ const Incentives: FC<IncentivesProps> = ({
 					isSingle={false}
 					tabHeight={50}
 					inverseTabColor={true}
-					blue={false}
+					color={theme.colors.orange}
 					key={`inactive-button`}
 					name={t('earn.tab.inactive')}
 					active={view === View.INACTIVE}
@@ -207,11 +234,16 @@ const Incentives: FC<IncentivesProps> = ({
 						totalRewards={totalRewards}
 					/>
 				)}
+				{activeTab === Tab.LIQUIDATION_REWARDS && (
+					<LiquidationTab liquidationRewards={liquidationRewards} />
+				)}
 				{activeTab === Tab.yearn_SNX_VAULT && (
 					<YearnVaultTab
-						userBalance={lpData[LP.YEARN_SNX_VAULT].data?.userBalance ?? wei(0)}
+						userBalance={
+							yearnLpData && 'userBalance' in yearnLpData ? yearnLpData.userBalance : wei(0)
+						}
 						stakedAsset={CryptoCurrency.SNX}
-						allowance={lpData[LP.YEARN_SNX_VAULT].data?.allowance ?? null}
+						allowance={yearnLpData && 'allowance' in yearnLpData ? yearnLpData.allowance : null}
 						tokenRewards={lpData[LP.YEARN_SNX_VAULT].data?.rewards ?? wei(0)}
 						staked={lpData[LP.YEARN_SNX_VAULT].data?.staked ?? wei(0)}
 						pricePerShare={

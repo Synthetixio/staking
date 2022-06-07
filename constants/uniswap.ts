@@ -5,6 +5,7 @@ import { abi as IUniswapV3PoolABI } from '@uniswap/v3-core/artifacts/contracts/i
 import { abi as UniswapRouterV3 } from 'contracts/uniswapRouterV3';
 import { abi as erc20ABI } from 'contracts/erc20';
 import { abi as QuoterABI } from '@uniswap/v3-periphery/artifacts/contracts/lens/Quoter.sol/Quoter.json';
+import { dSNXContractMainnet } from './dhedge';
 
 const sUSDMainnetToken = new Token(
 	1,
@@ -14,9 +15,9 @@ const sUSDMainnetToken = new Token(
 	'Synth sUSD'
 );
 
-const SNXDebtMirrorToken = new Token(
+const SNXDebtMirrorTokenMainnet = new Token(
 	1,
-	'0x5f7f94a1dd7b15594d17543beb8b30b111dd464c',
+	dSNXContractMainnet.address,
 	18,
 	'dSNX',
 	'SNX Debt Mirror'
@@ -28,8 +29,6 @@ export const routerContract = new Contract(
 );
 
 export const sUSDContract = new Contract('0x57ab1ec28d129707052df4df418d58a2d46d5f51', erc20ABI);
-
-export const dSNXContract = new Contract('0x5f7F94a1dd7b15594d17543BEB8B30b111DD464c', erc20ABI);
 
 export const quoterContract = new Contract('0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6', QuoterABI);
 
@@ -100,7 +99,7 @@ export async function getSUSDdSNXPool(provider: providers.Provider): Promise<[Po
 	return [
 		new Pool(
 			sUSDMainnetToken,
-			SNXDebtMirrorToken,
+			SNXDebtMirrorTokenMainnet,
 			immutables.fee,
 			state.sqrtPriceX96.toString(),
 			state.liquidity.toString(),

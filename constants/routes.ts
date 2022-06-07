@@ -38,6 +38,7 @@ export const ROUTES = {
 		sMSFT_LP: '/earn/sMSFT-LP',
 		sCOIN_LP: '/earn/sCOIN-LP',
 		sUSD_EXTERNAL: 'https://www.curve.fi/susdv2/',
+		sUSD_EXTERNAL_OPTIMISM: 'https://optimism.curve.fi/factory/0',
 		sEURO_EXTERNAL: 'https://www.curve.fi/eurs/',
 		DHT_LP: '/earn/DHT-LP',
 		sBTC_EXTERNAL: 'https://kwenta.io/shorting',
@@ -45,6 +46,7 @@ export const ROUTES = {
 		sETH_EXTERNAL: 'https://kwenta.io/shorting',
 		sETH_SHORT: '/earn/sETH-SHORT',
 		yearn_SNX_VAULT: '/earn/yearn-SNX',
+		LIQUIDATION_REWARDS: '/earn/liquidation',
 	},
 	L2: {
 		Home: '/l2',

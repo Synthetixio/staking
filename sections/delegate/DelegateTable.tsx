@@ -7,7 +7,7 @@ import { truncateAddress } from 'utils/formatters/string';
 import { CellProps } from 'react-table';
 import Table from 'components/Table';
 import useMediaQuery from 'hooks/useMediaQuery';
-import { ExternalLink, Tooltip } from 'styles/common';
+import { ExternalLink, FlexDivRow, Tooltip } from 'styles/common';
 import WalletIcon from 'assets/svg/app/wallet-yellow.svg';
 import ToggleDelegateApproval from './ToggleDelegateApproval';
 import useSynthetixQueries, { DELEGATE_ENTITY_ATTRS } from '@synthetixio/queries';
@@ -15,6 +15,7 @@ import { DelegationWallet } from '@synthetixio/queries';
 import { useRecoilValue } from 'recoil';
 import { walletAddressState } from 'store/wallet';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
+import Refresh from 'assets/svg/app/arrows-change.svg';
 
 const DelegateTable: FC = () => {
 	const { t } = useTranslation();
@@ -66,6 +67,9 @@ const DelegateTable: FC = () => {
 				Cell: (cellProps: CellProps<DelegationWallet>) => {
 					return (
 						<ToggleDelegateApproval
+							onDelegateToggleSuccess={async () => {
+								delegateWalletsQuery.refetch();
+							}}
 							account={cellProps.row.original}
 							action={action}
 							value={cellProps.value}
@@ -74,6 +78,7 @@ const DelegateTable: FC = () => {
 				},
 			})),
 		],
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[t, isSM]
 	);
 
@@ -101,7 +106,22 @@ const DelegateTable: FC = () => {
 
 			<Container>
 				<ContainerHeader>
-					<ListTitle>{t('delegate.list.title')}</ListTitle>
+					<ListTitle>
+						<FlexDivRow>
+							{t('delegate.list.title')}{' '}
+							<Tooltip content={t('delegate.list.refresh-tooltip')}>
+								<NoMarginP>
+									<Svg
+										style={{ cursor: 'pointer' }}
+										src={Refresh}
+										onClick={() => {
+											delegateWalletsQuery.refetch();
+										}}
+									/>
+								</NoMarginP>
+							</Tooltip>
+						</FlexDivRow>
+					</ListTitle>
 
 					<ListTable
 						palette="primary"

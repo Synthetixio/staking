@@ -8,20 +8,25 @@ import { useRouter } from 'next/router';
 import ROUTES from 'constants/routes';
 import { CryptoCurrency } from 'constants/currency';
 import media from 'styles/media';
-import { isWalletConnectedState } from 'store/wallet';
+import { delegateWalletState, isWalletConnectedState } from 'store/wallet';
 import useFeePeriodTimeAndProgress from 'hooks/useFeePeriodTimeAndProgress';
 
-import IncentivesTable from './IncentivesTable';
+import IncentivesTable, { NOT_APPLICABLE } from './IncentivesTable';
 import ClaimTab from './ClaimTab';
-import { Tab } from './types';
+import LiquidationTab from './LiquidationTab';
+import { LP, Tab } from './types';
 import { DesktopOrTabletView } from 'components/Media';
 import useSynthetixQueries from '@synthetixio/queries';
 import Connector from 'containers/Connector';
+import useCurveSusdPoolQuery from 'queries/liquidityPools/useCurveSusdPoolQuery';
+import { notNill } from 'utils/ts-helpers';
+import { CurrencyIconType } from 'components/Currency/CurrencyIcon/CurrencyIcon';
 
 type IncentivesProps = {
 	tradingRewards: Wei;
 	stakingRewards: Wei;
 	totalRewards: Wei;
+	liquidationRewards: Wei;
 	stakingAPR: Wei;
 	stakedAmount: Wei;
 	hasClaimed: boolean;
@@ -36,12 +41,15 @@ const Incentives: FC<IncentivesProps> = ({
 	stakingAPR,
 	stakedAmount,
 	hasClaimed,
+	liquidationRewards,
 }) => {
 	const { t } = useTranslation();
 	const router = useRouter();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
+	const delegateWallet = useRecoilValue(delegateWalletState);
 	const { L1DefaultProvider } = Connector.useContainer();
 	const { useSNXData } = useSynthetixQueries();
+	const curvesUSDPoolQuery = useCurveSusdPoolQuery();
 
 	const lockedSnxQuery = useSNXData(L1DefaultProvider!);
 
@@ -59,7 +67,7 @@ const Incentives: FC<IncentivesProps> = ({
 				: null,
 		[router.query.pool, isWalletConnected]
 	);
-
+	const curveData = curvesUSDPoolQuery.data;
 	const incentives = useMemo(
 		() =>
 			isWalletConnected
@@ -82,19 +90,65 @@ const Incentives: FC<IncentivesProps> = ({
 							tab: Tab.Claim,
 							route: ROUTES.Earn.Claim,
 						},
-				  ]
+						{
+							title: t('earn.incentives.options.liquidations.title'),
+							subtitle: t('earn.incentives.options.liquidations.subtitle'),
+							apr: undefined,
+							tvl: lockedSnxQuery.data?.lockedValue ?? wei(0),
+							staked: {
+								balance: stakedAmount,
+								asset: CryptoCurrency.SNX,
+								ticker: CryptoCurrency.SNX,
+							},
+							rewards: liquidationRewards,
+							periodStarted: 0,
+							periodFinish: Number.MAX_SAFE_INTEGER, // trick it to never expire
+							claimed: NOT_APPLICABLE,
+							now,
+							route: ROUTES.Earn.LIQUIDATION_REWARDS,
+							tab: Tab.LIQUIDATION_REWARDS,
+							neverExpires: true,
+						},
+						// This component in used for both delegate wallets and optimism, we only want curve incentives to show up for non delegated wallets
+						!delegateWallet?.address && curveData !== undefined
+							? {
+									title: t('earn.incentives.options.curve.title'),
+									subtitle: t('earn.incentives.options.curve.subtitle'),
+									apr: curveData.APR,
+									tvl: curveData.TVL,
+									staked: {
+										balance: undefined,
+										asset: CryptoCurrency.CRV,
+										ticker: LP.CURVE_sUSD,
+										type: CurrencyIconType.TOKEN,
+									},
+									rewards: undefined,
+									periodStarted: 0,
+									periodFinish: Number.MAX_SAFE_INTEGER,
+									claimed: NOT_APPLICABLE,
+									now,
+									route: ROUTES.Earn.sUSD_LP,
+									tab: Tab.sUSD_LP,
+									externalLink: ROUTES.Earn.sUSD_EXTERNAL_OPTIMISM,
+									neverExpires: true,
+							  }
+							: undefined,
+				  ].filter(notNill)
 				: [],
 		[
-			stakingAPR,
-			stakedAmount,
-			lockedSnxQuery.data?.lockedValue,
-			nextFeePeriodStarts,
-			stakingRewards,
-			hasClaimed,
-			currentFeePeriodStarted,
-			now,
-			t,
 			isWalletConnected,
+			t,
+			stakingAPR,
+			lockedSnxQuery.data?.lockedValue,
+			stakedAmount,
+			stakingRewards,
+			currentFeePeriodStarted,
+			nextFeePeriodStarts,
+			hasClaimed,
+			now,
+			liquidationRewards,
+			delegateWallet?.address,
+			curveData,
 		]
 	);
 
@@ -114,6 +168,9 @@ const Incentives: FC<IncentivesProps> = ({
 						stakingRewards={stakingRewards}
 						totalRewards={totalRewards}
 					/>
+				)}
+				{activeTab === Tab.LIQUIDATION_REWARDS && (
+					<LiquidationTab liquidationRewards={liquidationRewards} />
 				)}
 			</TabContainer>
 		</Container>

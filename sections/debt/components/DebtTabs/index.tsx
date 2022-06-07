@@ -17,7 +17,7 @@ import Info from 'assets/svg/app/info.svg';
 import { wei } from '@synthetixio/wei';
 import useSynthetixQueries from '@synthetixio/queries';
 import { useRecoilValue } from 'recoil';
-import { isMainnetState, walletAddressState } from 'store/wallet';
+import { walletAddressState } from 'store/wallet';
 
 export type TabInfo = {
 	title: string;
@@ -56,7 +56,6 @@ const DebtTabs: FC<DebtTabsProps> = ({
 	}, [currentPanel]);
 
 	const walletAddress = useRecoilValue(walletAddressState);
-	const isMainnet = useRecoilValue(isMainnetState);
 
 	const { useSynthsBalancesQuery /*useSynthsTotalSupplyQuery*/ } = useSynthetixQueries();
 
@@ -79,15 +78,14 @@ const DebtTabs: FC<DebtTabsProps> = ({
 	const isManageTab = activeTab === DebtPanelType.MANAGE;
 	return (
 		<>
-			{isMainnet && (
-				<TopContainer {...{ isManageTab }}>
+			{
+				<TopContainer isManageTab={isManageTab}>
 					<DebtTabsContainer>
 						<TabList noOfTabs={tabData.length}>
 							{tabData.map(({ title, icon, key, disabled = false }, index) => (
 								<TabButton
 									isSingle={false}
 									tabHeight={tabHeight}
-									blue={true}
 									key={`${key}-${index}-button`}
 									name={title}
 									active={activeTab === key}
@@ -104,6 +102,7 @@ const DebtTabs: FC<DebtTabsProps> = ({
 								</TabButton>
 							))}
 						</TabList>
+
 						{tabData.map(
 							({ title, tabChildren, key }, index) =>
 								activeTab === key && (
@@ -123,7 +122,7 @@ const DebtTabs: FC<DebtTabsProps> = ({
 					</DebtTabsContainer>
 					<DebtHedgingInfoPanel hidden={!isManageTab} />
 				</TopContainer>
-			)}
+			}
 			{activeTab === DebtPanelType.OVERVIEW && (
 				<>
 					<BottomContainer>

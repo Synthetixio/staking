@@ -19,15 +19,22 @@ import { isWalletConnectedState } from 'store/wallet';
 
 import StatBox from 'components/StatBox';
 import ProgressBar from 'components/ProgressBar';
+import SelfLiquidation from './SelfLiquidation';
 
 const StakingPage = () => {
 	const { t } = useTranslation();
+
 	const {
 		stakedCollateralValue,
 		percentageCurrentCRatio,
 		debtBalance,
 		percentCurrentCRatioOfTarget,
+		percentageTargetCRatio,
+		SNXRate,
+		totalEscrowBalance,
+		collateral,
 	} = useStakingCalculations();
+
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 
@@ -62,6 +69,14 @@ const StakingPage = () => {
 				/>
 			</StatsSection>
 			<LineSpacer />
+			<SelfLiquidation
+				percentageTargetCRatio={percentageTargetCRatio}
+				percentageCurrentCRatio={percentageCurrentCRatio}
+				totalSNXBalance={collateral}
+				debtBalance={debtBalance}
+				SNXRate={SNXRate}
+				escrowedSnx={totalEscrowBalance}
+			/>
 			<Main />
 		</>
 	);

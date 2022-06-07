@@ -33,6 +33,7 @@ import {
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import ActionSelector from './ActionSelector';
 import { isObjectOrErrorWithMessage } from 'utils/ts-helpers';
+import { sleep } from 'utils/promise';
 
 const DelegateForm: FC = () => {
 	const { t } = useTranslation();
@@ -43,7 +44,6 @@ const DelegateForm: FC = () => {
 				title: t('delegate.form.title'),
 				tabChildren: <Tab />,
 				key: 'main',
-				blue: true,
 			},
 		],
 		[t]
@@ -74,19 +74,14 @@ const Tab: FC = () => {
 	const [buttonState, setButtonState] = useState<string | null>(null);
 	const [alreadyDelegated, setAlreadyDelegated] = useState<boolean>(false);
 
-	const properDelegateAddress = useMemo(
-		() => (delegateAddress && ethers.utils.isAddress(delegateAddress) ? delegateAddress : null),
-		[delegateAddress]
-	);
+	const properDelegateAddress =
+		delegateAddress && ethers.utils.isAddress(delegateAddress) ? delegateAddress : null;
 	const delegateAddressIsSelf =
 		properDelegateAddress && address
 			? properDelegateAddress === ethers.utils.getAddress(address)
 			: false;
 
-	const shortenedDelegateAddress = useMemo(
-		() => truncateAddress(delegateAddress, 8, 6),
-		[delegateAddress]
-	);
+	const shortenedDelegateAddress = truncateAddress(delegateAddress, 8, 6);
 
 	const onEnterAddress: ChangeEventHandler<HTMLTextAreaElement> = (e) =>
 		setDelegateAddress((e.target.value ?? '').trim());
@@ -98,10 +93,11 @@ const Tab: FC = () => {
 		gasPrice,
 		{
 			enabled: Boolean(properDelegateAddress),
-			onSuccess: () => {
-				delegateWalletsQuery.refetch();
+			onSuccess: async () => {
 				setDelegateAddress('');
 				setAction(Action.APPROVE_ALL);
+				await sleep(5000); // wait for subgraph to sync
+				delegateWalletsQuery.refetch();
 			},
 			onError: (e) => {
 				if (isObjectOrErrorWithMessage(e)) {

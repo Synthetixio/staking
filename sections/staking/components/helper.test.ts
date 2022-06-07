@@ -6,7 +6,7 @@ import {
 	getTransferableAmountFromMint,
 } from './helper';
 
-describe('stake helpers', () => {
+describe('staking helpers', () => {
 	test('getMintAmount', () => {
 		const targetCRatio = wei(0.25);
 		const stakeAmount = 100;

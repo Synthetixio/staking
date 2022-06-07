@@ -183,6 +183,7 @@
 			"claim": {
 				"title": "CLAIM {{amount}} SNX",
 				"copy": "Claim your staking rewards before the end of this epoch",
+				"copy-liquidation": "Claim your liquidation rewards",
 				"tooltip": "No rewards to claim"
 			},
 			"mint": {
@@ -318,6 +319,7 @@
 					"empty": "Enter an amount",
 					"burn": "Burn <0>sUSD</0>",
 					"max": "Max",
+					"burn-all": "Burn all sUSD",
 					"clear-debt": "Clear debt",
 					"insufficient-sUSD-to-clear-debt": "Insufficient <0>sUSD</0> to clear debt",
 					"insufficient-sUSD-to-fix-c-ratio": "Insufficient <0>sUSD</0> to fix c-ratio. mint or by <0>sUSD</0> to proceed",
@@ -345,14 +347,16 @@
 					"unstaking": "Unstaking",
 					"burning": "Burning"
 				}
-			}
+			},
+			"self-liquidate": { "title": "Self Liquidate" }
 		},
 		"info": {
 			"mint": {
 				"title": "Mint sUSD by staking SNX",
 				"subtitle": "Mint sUSD by staking your SNX. SNX stakers earn weekly staking rewards in exchange for managing their Collateralization Ratio and debt. Learn more from our <0>staking guide</0> and <1>litepaper</1>.",
 				"read-more": "Read more",
-				"min-stake-time": "Your staked SNX will be locked for {{duration}} days"
+				"min-stake-time": "Your staked SNX will be locked for {{duration}} days",
+				"liq-warning": "If your C-Ratio goes below {{liquidationRatioPercent}} and you've been flagged, you must increase it to {{targetCratioPercent}} or you will be penalized"
 			},
 			"burn": {
 				"title": "Burn sUSD to unstake SNX",
@@ -361,6 +365,10 @@
 			"clear": {
 				"title": "Clear debt by buying more sUSD via 1inch",
 				"subtitle": "Burn your sUSD to unlock your staked SNX and clear your debt. As you don’t have enough sUSD, buy more with ETH in the left form. <0>Learn more.</0>"
+			},
+			"self-liquidate": {
+				"title": "Self Liquidate",
+				"subtitle": ""
 			},
 			"table": {
 				"total-snx": "Total",
@@ -371,6 +379,26 @@
 				"c-ratio": "C-Ratio",
 				"debt": "Total Debt",
 				"susd-balance": "sUSD Balance"
+			}
+		},
+		"flag-warning": {
+			"title": "Your account has been flagged for liquidation!",
+			"info": "After {{deadlineDate}} you can be liquidated, which incur penalities. To avoid this, burn your <0>C-RATIO back to {{percentageTargetCRatio}}</0> or self liquidate. <1>Read more about liquidation here</1>",
+			"self-liquidate": "Self Liquidate",
+			"self-liquidating": "Self Liquidating"
+		},
+		"self-liquidation": {
+			"title": "Self Liquidate",
+			"info": {
+				"ratios": "Your C-Ratio {{cRatio}} is below the target C-Ratio of {{targetCRatio}}.",
+				"burn-amount": "To get your C-Ratio back to the target of {{targetCRatio}} you need to burn {{burnAmountToFixCRatio}}. Your current balance is {{balance}}.",
+				"liquidation-link-text": "Read more about liquidations",
+				"c-ratio-ok": "Your C-Ratio of {{cRatio}} is above the target C-Ratio of {{targetCRatio}} which means you can't and dont have to self liquidate.",
+				"not-staking": "Currently you are not staking, so there's no debt to self liquidate. Head over to the Mint tab to start earning.",
+				"enough-susd-balance": "To get your C-Ratio back to target C-Ratio of {{targetCRatio}} you need to burn {{burnAmountToFixCRatio}}. Your balance is {{balance}} so there's no need to self liquidate.",
+				"delegate-wallet": "As a delegated wallet you can't self liquidate.",
+				"balance-not-zero": "Since your balance is not zero you should burn all your sUSD before self liquidating",
+				"self-liquidate-text": "You can also opt to self liquidate and incur a {{selfLiquidationPenalty}} penalty on your staked SNX needed to bring you to the 300% target. This would cause you to incur a penalty of {{amountToSelfLiquidate}} ({{amountToSelfLiquidateUsd}})."
 			}
 		}
 	},
@@ -434,10 +462,16 @@
 				"max": "MAX",
 				"price-impact": "Price impact:",
 				"buying": "Buying",
+				"buying-dsnx": "Buying dSNX...",
+				"approving-dsnx": "Approving dSNX...",
 				"using": "using",
+				"powered-by": "Powered by",
 				"info-panel": {
 					"title": "dSNX",
 					"body": "The Debt Mirror Index (dSNX) token is a tool that replicates the payoff of the synthetix debt index, enabling users to hedge their active debt exposure. 1 sUSD worth of dSNX pool token hedges approximately 1 USD worth of active debt. Learn how it works <0>here</0>.",
+					"dsnx-warning": "Warning: dSNX approximately hedges debt, users can incur losses.",
+					"uniswap-link": "Be mindful of price impact and use <0>this uniswap pool</0> to close dSNX positions.",
+					"toros-link": "To close the position use the <0>Toros platform</0>",
 					"chart": {
 						"title": "dSNX vs DEBT POOL",
 						"debt-mirror-label": "dSNX",
@@ -497,6 +531,13 @@
 					"description": "Staking SNX tokens offers weekly rewards in both inflationary SNX and sUSD from trading fees. <0>Learn more.<0>",
 					"staking-rewards": "STAKING REWARDS",
 					"trading-rewards": "TRADING REWARDS",
+					"total-value": "TOTAL VALUE"
+				},
+				"liquidations": {
+					"title": "Synthetix",
+					"subtitle": "Liquidation Rewards",
+					"description": "Claim liquidation rewards.  <0>Learn more.<0>",
+					"liquidation-rewards": "Liquidation Rewards",
 					"total-value": "TOTAL VALUE"
 				},
 				"curve": {
@@ -1411,6 +1452,7 @@
 			"title": "Manage addresses",
 			"empty": "No addresses to show",
 			"click-to-copy": "click to copy",
+			"refresh-tooltip": "This table is fetched from a subgraph, sometimes it takes a few seconds to sync after an action. Click the icon to refresh.",
 			"cols": {
 				"address": "Address",
 				"canAll": "all",

@@ -1,17 +1,16 @@
 import { wei } from '@synthetixio/wei';
+import useGetDSnxBalance from 'hooks/useGetDSnxBalance';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
-import { dSNXBalance } from 'store/debt';
 import styled from 'styled-components';
 import { formatCryptoCurrency } from 'utils/formatters/number';
 
 export default function DebtHedgedBalance() {
 	const { t } = useTranslation();
-	const balance = useRecoilValue(dSNXBalance);
+	const dSNXBalanceQuery = useGetDSnxBalance({ keepPreviousData: true });
 	return (
 		<StyledBalance>
 			{t('debt.actions.manage.info-panel.chart.hedged-balance')}&nbsp;~ $
-			{formatCryptoCurrency(wei(balance), { maxDecimals: 1, minDecimals: 2 })}
+			{formatCryptoCurrency(dSNXBalanceQuery.data || wei(0), { maxDecimals: 1, minDecimals: 2 })}
 		</StyledBalance>
 	);
 }
