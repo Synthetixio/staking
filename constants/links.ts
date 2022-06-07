@@ -38,4 +38,13 @@ export const EXTERNAL_LINKS = {
 		SynthetixDeposit: 'https://app.optimism.io/bridge',
 		SynthetixWithdrawal: 'https://app.optimism.io/bridge/withdraw',
 	},
+	Uniswap: {
+		dSNXPool: 'https://info.uniswap.org/#/pools/0x9957c4795ab663622db54fc48fda874da59150ff',
+	},
+	Toros: {
+		dSNXPool: 'https://toros.finance/derivative/dsnx',
+	},
+	dHedge: {
+		snxDebtMirrorDocs: 'https://docs.dhedge.org/dhedge-original-pools/v2-snx-debt-mirror',
+	},
 };

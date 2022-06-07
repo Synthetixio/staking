@@ -5,6 +5,7 @@ import { ExternalLink, FlexDivCol } from 'styles/common';
 import media from 'styled-media-query';
 import { useRecoilValue } from 'recoil';
 import { isMainnetState } from 'store/wallet';
+import { EXTERNAL_LINKS } from 'constants/links';
 
 type DebtHedgingInfoPanelProps = {
 	hidden: boolean;
@@ -14,9 +15,7 @@ const UniswapNote = () => {
 	return (
 		<Trans
 			i18nKey="debt.actions.manage.info-panel.uniswap-link"
-			components={[
-				<StyledLink href="https://info.uniswap.org/#/pools/0x9957c4795ab663622db54fc48fda874da59150ff" />,
-			]}
+			components={[<StyledLink href={EXTERNAL_LINKS.Uniswap.dSNXPool} />]}
 		/>
 	);
 };
@@ -24,7 +23,7 @@ const TorosNote = () => {
 	return (
 		<Trans
 			i18nKey="debt.actions.manage.info-panel.toros-link"
-			components={[<StyledLink href="https://toros.finance/derivative/dsnx" />]}
+			components={[<StyledLink href={EXTERNAL_LINKS.Toros.dSNXPool} />]}
 		/>
 	);
 };
@@ -40,9 +39,7 @@ const DebtHedgingInfoPanel: React.FC<DebtHedgingInfoPanelProps> = ({ hidden }) =
 				<InfoPanelBody>
 					<Trans
 						i18nKey="debt.actions.manage.info-panel.body"
-						components={[
-							<StyledLink href="https://docs.dhedge.org/dhedge-original-pools/v2-snx-debt-mirror" />,
-						]}
+						components={[<StyledLink href={EXTERNAL_LINKS.dHedge.snxDebtMirrorDocs} />]}
 					/>
 					<br />
 					<TextContainer>
