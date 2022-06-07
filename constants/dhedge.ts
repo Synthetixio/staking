@@ -1,5 +1,6 @@
 import { Contract } from 'ethers';
 import { abi as erc20ABI } from 'contracts/erc20';
+import { abi as dHedgePoolLogicABI } from 'contracts/dHedgePoolLogic';
 
 export const dHedgeAPIUrl = 'https://api-v2.dhedge.org/graphql';
 export const dSNXContractMainnet = new Contract(
@@ -13,3 +14,4 @@ export const dSNXContractOptimism = new Contract(
 
 export const dSNXPoolAddressMainnet = '0x65bb99e80a863e0e27ee6d09c794ed8c0be47186';
 export const dSNXPoolAddressOptimism = '0x59babc14dd73761e38e5bda171b2298dc14da92d';
+export const dSNXPoolContractOptimism = new Contract(dSNXPoolAddressOptimism, dHedgePoolLogicABI);

@@ -1,7 +1,6 @@
 import Connector from 'containers/Connector';
 import { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
-import Button from 'components/Button';
 import {
 	getSUSDdSNXPool,
 	Immutables,
@@ -11,7 +10,6 @@ import {
 } from 'constants/uniswap';
 import { useRecoilValue } from 'recoil';
 import { walletAddressState } from 'store/wallet';
-import { StyledInput } from '../../../staking/components/common';
 import { BigNumber, constants, utils } from 'ethers';
 import Loader from 'components/Loader';
 import { useTranslation } from 'react-i18next';
@@ -25,6 +23,16 @@ import colors from 'styles/theme/colors';
 import { Svg } from 'react-optimized-image';
 import dhedge from 'assets/svg/app/dhedge.svg';
 import useGetDSnxBalance from 'hooks/useGetDSnxBalance';
+import {
+	StyledBalance,
+	StyledButton,
+	StyledCryptoCurrencyBox,
+	StyledCryptoCurrencyImage,
+	StyledHedgeInput,
+	StyledInputLabel,
+	StyledMaxButton,
+	StyledSpacer,
+} from './hedge-tab-ui-components';
 
 export default function HedgeTap() {
 	const { t } = useTranslation();
@@ -173,7 +181,7 @@ export default function HedgeTap() {
 					0
 				);
 			setExpectedAmountOut(balanceOut);
-			const blockNumber = await provider!.getBlockNumber();
+			const blockNumber = await provider.getBlockNumber();
 			setCurrentBlockNumber(blockNumber * 1000);
 			await swapTx.refresh();
 			swapTx.mutate();
@@ -305,68 +313,8 @@ const StyledBackgroundTab = styled.div`
 	justify-content: space-between;
 	width: 100%;
 	height: 400px;
-	background-color: ${colors.black};
+	background-color: ${(props) => props.theme.colors.black};
 	padding: 16px;
-`;
-
-const StyledInputLabel = styled.div`
-	display: flex;
-	justify-content: space-evenly;
-	align-items: baseline;
-	font-size: 14px;
-	width: 180px;
-	font-family: Inter;
-`;
-
-const StyledHedgeInput = styled(StyledInput)`
-	width: 350px;
-`;
-
-const StyledBalance = styled.div`
-	text-transform: none;
-	text-align: center;
-	margin-top: 16px;
-	font-size: 14px;
-	font-family: ${(props) => props.theme.fonts.condensedMedium};
-`;
-
-const StyledCryptoCurrencyBox = styled.div`
-	display: flex;
-	align-items: center;
-	justify-content: space-evenly;
-	font-size: 12px;
-	margin-top: 14px;
-	color: ${colors.white};
-	background-color: ${colors.navy};
-	border: 1px solid ${colors.grayBlue};
-	padding: 4px;
-	text-transform: none;
-	margin-left: 8px;
-	width: 85px;
-`;
-
-const StyledCryptoCurrencyImage = styled.img`
-	width: 24px;
-	height: 24px;
-`;
-
-const StyledButton = styled(Button)`
-	width: 100%;
-	margin-top: 16px;
-	align-self: flex-end;
-	text-transform: none;
-`;
-
-const StyledSpacer = styled.div`
-	border-bottom: 1px solid ${colors.mutedBlue};
-	width: 300px;
-	margin: 16px;
-`;
-
-const StyledMaxButton = styled(Button)`
-	margin-left: 16px;
-	line-height: 0px;
-	height: 20px;
 `;
 
 const StyledOutput = styled.span`
