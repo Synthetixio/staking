@@ -15,6 +15,11 @@ export const Container = styled.div`
 	padding: 20px;
 `;
 
+export const Spacer = styled.hr`
+	height: 20px;
+	border: none;
+`;
+
 export const InputContainer = styled(FlexDivColCentered)`
 	background: ${(props) => props.theme.colors.black};
 	position: relative;

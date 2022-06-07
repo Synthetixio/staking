@@ -72,7 +72,7 @@ const StyledTabList = styled.div.attrs({ role: 'tablist' })<{ noOfTabs: number }
 	display: grid;
 `;
 
-const StyledTabButton = styled.button<TabButtonProps>`
+export const StyledTabButton = styled.button<TabButtonProps>`
 	${resetButtonCSS};
 	font-family: ${(props) => props.theme.fonts.condensedBold};
 	padding: 0;

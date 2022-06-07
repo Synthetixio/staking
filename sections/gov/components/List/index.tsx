@@ -22,14 +22,14 @@ type IndexProps = {
 	spaceKey: SPACE_KEY;
 };
 
-const Index: React.FC<IndexProps> = (props) => {
+const Index: React.FC<IndexProps> = ({ spaceKey }) => {
 	return (
 		<>
 			<DesktopOrTabletView>
-				<ResponsiveTable {...props} />
+				<ResponsiveTable spaceKey={spaceKey} />
 			</DesktopOrTabletView>
 			<MobileOnlyView>
-				<ResponsiveTable {...props} mobile />
+				<ResponsiveTable spaceKey={spaceKey} mobile />
 			</MobileOnlyView>
 		</>
 	);

@@ -8,9 +8,10 @@ import { snapshotEndpoint, SPACE_KEY } from 'constants/snapshot';
 import { panelState, PanelType, proposalState } from 'store/gov';
 
 import useActiveTab from '../hooks/useActiveTab';
-import { Grid, Col } from 'sections/gov/components/common';
+import { Grid, Col, Spacer } from 'sections/gov/components/common';
 
 import StructuredTab from 'components/StructuredTab';
+import UnstructuredTab from 'components/UnstructuredTab';
 import CouncilBoard from './List/CouncilBoard';
 import Proposal from './Proposal';
 import List from './List';
@@ -29,6 +30,8 @@ const Panel: React.FC<PanelProps> = ({ currentTab }) => {
 	const [, setProposal] = useRecoilState(proposalState);
 	const [panelType, setPanelType] = useRecoilState(panelState);
 	const activeTab = useActiveTab();
+
+	console.log('render', panelState, panelType, 'active tab', activeTab, 'current tab', currentTab);
 
 	const fetchPreloadedProposal = useCallback(() => {
 		const fetch = async () => {
@@ -56,6 +59,7 @@ const Panel: React.FC<PanelProps> = ({ currentTab }) => {
 				`,
 				{ id: hash }
 			);
+
 			setProposal(proposal);
 			setPanelType(PanelType.PROPOSAL);
 		};
@@ -77,12 +81,6 @@ const Panel: React.FC<PanelProps> = ({ currentTab }) => {
 
 	const tabData = useMemo(
 		() => [
-			{
-				title: t('gov.panel.proposals.title'),
-				tabChildren: <List spaceKey={activeTab} />,
-				blue: true,
-				key: SPACE_KEY.PROPOSAL,
-			},
 			{
 				title: t('gov.panel.council.title'),
 				tabChildren: <List spaceKey={activeTab} />,
@@ -109,6 +107,17 @@ const Panel: React.FC<PanelProps> = ({ currentTab }) => {
 			},
 		],
 		[t, activeTab]
+	);
+
+	const proposalsData = useMemo(
+		() => ({
+			title: t('gov.panel.proposals.title'),
+			tabChildren: <List spaceKey={SPACE_KEY.PROPOSAL} />, // Static list now
+			blue: true,
+			key: SPACE_KEY.PROPOSAL,
+		}),
+
+		[t]
 	);
 
 	const returnContent = () => {
@@ -143,6 +152,8 @@ const Panel: React.FC<PanelProps> = ({ currentTab }) => {
 								setPanelType={(key) => router.push(`/gov/${key}`)}
 								currentPanel={currentTab}
 							/>
+							<Spacer />
+							<UnstructuredTab tabData={proposalsData} />
 						</Col>
 						<Col>
 							<CouncilBoard />
