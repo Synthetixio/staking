@@ -105,7 +105,7 @@ const HedgeTabOptimism = () => {
 							setAmountToSend(e.target.value);
 						} catch {}
 					}}
-					value={amountToSend?.toString()}
+					value={amountToSend}
 					autoFocus={true}
 				/>
 				<StyledBalance>
@@ -146,7 +146,7 @@ const HedgeTabOptimism = () => {
 					disabled
 					value={
 						amountToSend && dSNXPrice
-							? formatCryptoCurrency(wei(amountToSend).div(dSNXPrice), {
+							? formatCryptoCurrency(wei(amountToSend).mul(dSNXPrice), {
 									maxDecimals: 1,
 									minDecimals: 2,
 							  })
