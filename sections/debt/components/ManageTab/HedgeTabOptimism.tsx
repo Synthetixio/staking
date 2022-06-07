@@ -28,6 +28,8 @@ import useGetDSnxBalance from 'hooks/useGetDSnxBalance';
 import LoaderIcon from 'assets/svg/app/loader.svg';
 import useGetNeedsApproval from 'hooks/useGetNeedsApproval';
 import useGetDSNXPrice from 'hooks/useGetDSNXPrice';
+import { ExternalLink } from 'styles/common';
+import { EXTERNAL_LINKS } from 'constants/links';
 
 const HedgeTabOptimism = () => {
 	const { t } = useTranslation();
@@ -190,6 +192,12 @@ const HedgeTabOptimism = () => {
 					</StyledButton>
 				)}
 			</div>
+			<PoweredByContainer>
+				{t('debt.actions.manage.powered-by')}{' '}
+				<ExternalLink href={EXTERNAL_LINKS.Toros.dSNXPool}>
+					<TorosLogo alt="toros logo" src={'/images/toros-white.png'} />
+				</ExternalLink>
+			</PoweredByContainer>
 		</Container>
 	);
 };
@@ -208,4 +216,15 @@ const LoaderContainer = styled.div`
 const LoaderText = styled.p`
 	margin-left: 10px;
 	text-transform: none;
+`;
+
+const PoweredByContainer = styled.div`
+	margin-top: 20px;
+	display: flex;
+	align-items: center;
+	font-size: 9px;
+`;
+const TorosLogo = styled.img`
+	height: 12px;
+	margin-left: 10px;
 `;
