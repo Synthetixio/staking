@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Svg } from 'react-optimized-image';
 import { StyledTabButton } from 'components/Tab/Tab';
 import { Col } from 'sections/gov/components/common';
-import InfoIcon from 'assets/svg/app/info.svg';
+import InfoIcon from 'assets/svg/app/info-pink.svg';
 
 export type TabInfo = {
 	title: string;
@@ -24,12 +24,20 @@ const StyledTabButtonExtended = styled(StyledTabButton)`
 	padding: 0px 20px;
 `;
 
-const StyledText = styled.h2`
+const StyledTextWrapper = styled.div`
 	background: #2a0b21;
 	color: #df46fd;
 	font-size: 12px;
-	padding: 8px;
 	border-left: 3px solid #df46fd;
+	display: flex;
+	align-items: center;
+	padding-right: 8px;
+`;
+
+const StyledText = styled.h2`
+	color: #df46fd;
+	font-size: 12px;
+	padding: 0px 8px;
 `;
 
 export const UnstructuredTab = ({ tabData }: UnstructuredTabProps) => {
@@ -39,19 +47,10 @@ export const UnstructuredTab = ({ tabData }: UnstructuredTabProps) => {
 		<Col>
 			<StyledTabButtonExtended title={title} disabled={disabled} active blue={blue} name={key}>
 				{tabData.title}
-				<StyledText>
-					{t('gov.panel.proposals.description')}
-					<Svg
-						style={{
-							paddingTop: '3px',
-							stroke: '#df46fd',
-							fill: '#fff',
-							justifyContent: 'center',
-							alignItems: 'center',
-						}}
-						src={InfoIcon}
-					/>
-				</StyledText>
+				<StyledTextWrapper>
+					<StyledText>{t('gov.panel.proposals.description')}</StyledText>
+					<Svg height={14} width={14} src={InfoIcon} />
+				</StyledTextWrapper>
 			</StyledTabButtonExtended>
 			{tabChildren}
 		</Col>
