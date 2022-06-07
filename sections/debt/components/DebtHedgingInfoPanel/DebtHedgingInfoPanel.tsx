@@ -3,14 +3,35 @@ import styled from 'styled-components';
 import DebtHedgingChart from './DebtHedgingChart';
 import { ExternalLink, FlexDivCol } from 'styles/common';
 import media from 'styled-media-query';
+import { useRecoilValue } from 'recoil';
+import { isMainnetState } from 'store/wallet';
 
 type DebtHedgingInfoPanelProps = {
 	hidden: boolean;
 };
 
+const UniswapNote = () => {
+	return (
+		<Trans
+			i18nKey="debt.actions.manage.info-panel.uniswap-link"
+			components={[
+				<StyledLink href="https://info.uniswap.org/#/pools/0x9957c4795ab663622db54fc48fda874da59150ff" />,
+			]}
+		/>
+	);
+};
+const TorosNote = () => {
+	return (
+		<Trans
+			i18nKey="debt.actions.manage.info-panel.toros-link"
+			components={[<StyledLink href="https://toros.finance/derivative/dsnx" />]}
+		/>
+	);
+};
+
 const DebtHedgingInfoPanel: React.FC<DebtHedgingInfoPanelProps> = ({ hidden }) => {
 	const { t } = useTranslation();
-
+	const isMainnet = useRecoilValue(isMainnetState);
 	if (hidden) return null;
 	return (
 		<>
@@ -20,18 +41,14 @@ const DebtHedgingInfoPanel: React.FC<DebtHedgingInfoPanelProps> = ({ hidden }) =
 					<Trans
 						i18nKey="debt.actions.manage.info-panel.body"
 						components={[
-							<ExternalLink href="https://docs.dhedge.org/dhedge-original-pools/v2-snx-debt-mirror" />,
+							<StyledLink href="https://docs.dhedge.org/dhedge-original-pools/v2-snx-debt-mirror" />,
 						]}
 					/>
 					<br />
-					<StyledUniswapLinkWrapper>
-						Warning: dSNX approximately hedges debt, users can incur losses. Be mindful of price
-						impact and use&nbsp;
-						<StyledUniswapLink href="https://info.uniswap.org/#/pools/0x9957c4795ab663622db54fc48fda874da59150ff">
-							this uniswap pool&nbsp;
-						</StyledUniswapLink>
-						to close dSNX positions.
-					</StyledUniswapLinkWrapper>
+					<TextContainer>
+						{t('debt.actions.manage.info-panel.dsnx-warning')}{' '}
+						{isMainnet ? <UniswapNote /> : <TorosNote />}
+					</TextContainer>
 				</InfoPanelBody>
 				<DebtHedgingChart />
 			</InfoPanelContainer>
@@ -63,13 +80,14 @@ const InfoPanelBody = styled.p`
 	font-size: 14px;
 `;
 
-const StyledUniswapLinkWrapper = styled.div`
+const TextContainer = styled.div`
 	margin-top: 8px;
 `;
 
-const StyledUniswapLink = styled(ExternalLink)`
+const StyledLink = styled(ExternalLink)`
 	font-size: 14px;
 	align-self: flex-end;
+	color: ${(props) => props.theme.colors.blue};
 `;
 
 export default DebtHedgingInfoPanel;

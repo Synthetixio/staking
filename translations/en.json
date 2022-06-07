@@ -468,6 +468,9 @@
 				"info-panel": {
 					"title": "dSNX",
 					"body": "The Debt Mirror Index (dSNX) token is a tool that replicates the payoff of the synthetix debt index, enabling users to hedge their active debt exposure. 1 sUSD worth of dSNX pool token hedges approximately 1 USD worth of active debt. Learn how it works <0>here</0>.",
+					"dsnx-warning": "Warning: dSNX approximately hedges debt, users can incur losses.",
+					"uniswap-link": "Be mindful of price impact and use <0>this uniswap pool</0> to close dSNX positions.",
+					"toros-link": "To close the position use the <0>Toros platform</0>",
 					"chart": {
 						"title": "dSNX vs DEBT POOL",
 						"debt-mirror-label": "dSNX",
