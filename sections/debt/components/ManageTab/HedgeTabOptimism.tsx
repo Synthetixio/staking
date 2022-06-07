@@ -92,6 +92,7 @@ const HedgeTabOptimism = () => {
 				</StyledInputLabel>
 				<StyledHedgeInput
 					type="number"
+					min={0}
 					disabled={approveTx.isLoading || depositTx.isLoading}
 					placeholder={formatCryptoCurrency(sUSDBalance, {
 						maxDecimals: 1,
@@ -179,6 +180,8 @@ const HedgeTabOptimism = () => {
 						<LoaderText>{t('debt.actions.manage.buying-dsnx')}</LoaderText>
 					</LoaderContainer>
 				)}
+				{depositTx.error && <p>{depositTx.errorMessage}</p>}
+				{approveTx.error && <p>{approveTx.errorMessage}</p>}
 				{Boolean(!approveTx.isLoading && !depositTx.isLoading) && (
 					<StyledButton
 						size="lg"
