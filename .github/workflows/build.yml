@@ -6,95 +6,51 @@ on:
     branches: [master, dev]
 
 jobs:
-  audit:
-    # run only on master/dev branch and pull requests
-    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'
-    runs-on: ubuntu-latest
-
-    container:
-      image: ghcr.io/synthetixio/docker-sec-tools/alpine:16.15
-      credentials:
-        username: synthetixio
-        password: ${{ secrets.GH_PACKAGES_READ_ONLY }}
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # pin@v2
-
-      - name: Audit dependencies
-        run: audit-ci --critical
-
-      - name: Lockfile lint
-        run: lockfile-lint -p yarn.lock --type yarn --allowed-hosts yarn github.com --allowed-schemes "https:" "yarn:" "git+https:"
-
   build:
-    needs: audit
-    # run only on audit success or audit skipped
-    if: always() && needs.audit.result == 'success' || always() && needs.audit.result == 'skipped'
     runs-on: ubuntu-latest
-
-    container:
-      image: ghcr.io/synthetixio/docker-node/alpine:16.15
-      credentials:
-        username: synthetixio
-        password: ${{ secrets.GH_PACKAGES_READ_ONLY }}
 
     steps:
       - name: Checkout
         uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # pin@v2
 
-      - name: Cache yarn modules
-        uses: actions/cache@c3f1317a9e7b1ef106c153ac8c0f00fed3ddbc0d # pin@v2
+      # This was yarn v1 only and yarn v3 fails to run
+      - run: unset YARN_PRODUCTION
+
+      - uses: actions/setup-node@eeb10cff27034e7acf239c5d29f62154018672fd
         with:
-          path: |
-            .yarn/cache
-            node_modules
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
-        continue-on-error: true
+          node-version: 16
+          registry-url: 'https://registry.npmjs.org'
+          cache: 'yarn'
 
-      - name: Install dependencies
-        run: yarn install --immutable
+      - run: yarn npm audit --severity critical
+      # TODO: enable recursive audit after the next synthetix monorepo release
+      # - run: yarn npm audit --recursive --severity critical
 
-      - name: Lint
-        # run only on master/dev branch and pull requests
-        if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'
-        run: yarn lint:sarif
-
+      - run: yarn install --immutable
+      - run: yarn lint:sarif
       - run: yarn pretty:check
-
-      - name: Unit
-        # run only on master/dev branch and pull requests
-        if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'
-        run: yarn test:unit
+      - run: yarn test:unit
 
       - name: Upload lint results
-        # run if lint failed and only on master/dev branch and pull requests
-        if: always() && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request')
         uses: github/codeql-action/upload-sarif@3f62b754e23e0dd60f91b744033e1dc1654c0ec6 # pin@codeql-bundle-20210517
         with:
           sarif_file: lint-results.sarif
         continue-on-error: true
 
       - name: Cache next.js build cache
-        uses: actions/cache@c3f1317a9e7b1ef106c153ac8c0f00fed3ddbc0d # pin@v2
+        uses: actions/cache@30f413bfed0a2bc738fdfd409e5a9e96b24545fd
         with:
           path: .next/cache
-          key: ${{ runner.os }}-next-cache-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-next-cache-${{ hashFiles('yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-next-cache-
+            ${{ runner.os }}-next-cache-${{ hashFiles('yarn.lock') }}
         continue-on-error: true
 
-      - name: Build
-        run: yarn build
-
-      - name: Compress build
-        run: tar -zcvf build.tar.gz .next
+      - run: yarn build
+      - run: tar -zcvf build.tar.gz .next
 
       - name: Archive build
-        if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'
-        uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8 # pin@v2
+        uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8
         with:
           name: build
           path: build.tar.gz
@@ -114,6 +70,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # pin@v2
+
+      # This was yarn v1 only and yarn v3 fails to run
+      - run: unset YARN_PRODUCTION
 
       - name: Cache yarn modules
         uses: actions/cache@c3f1317a9e7b1ef106c153ac8c0f00fed3ddbc0d # pin@v2
