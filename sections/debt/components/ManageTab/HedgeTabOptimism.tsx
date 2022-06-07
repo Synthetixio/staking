@@ -73,7 +73,7 @@ const HedgeTabOptimism = () => {
 	);
 
 	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
-	const sUSDBalance = synthsBalancesQuery.data?.balancesMap.sUSD.balance || wei(0);
+	const sUSDBalance = synthsBalancesQuery.data?.balancesMap.sUSD?.balance || wei(0);
 	const dSNXBalanceQuery = useGetDSnxBalance();
 	const dSNXBalance = dSNXBalanceQuery.data;
 
