@@ -91,6 +91,13 @@ const HedgeTabOptimism = () => {
 			enabled: Boolean(approved && sUSDContract?.address),
 		}
 	);
+	const dSnxAmount =
+		amountToSend && dSNXPrice
+			? formatCryptoCurrency(wei(amountToSend).div(dSNXPrice), {
+					maxDecimals: 1,
+					minDecimals: 2,
+			  })
+			: '';
 	return (
 		<Container>
 			<div style={{ display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
@@ -152,17 +159,10 @@ const HedgeTabOptimism = () => {
 					</StyledCryptoCurrencyBox>
 				</StyledInputLabel>
 				<StyledHedgeInput
-					type="number"
+					type="text"
 					onChange={() => {}}
 					disabled
-					value={
-						amountToSend && dSNXPrice
-							? formatCryptoCurrency(wei(amountToSend).mul(dSNXPrice), {
-									maxDecimals: 1,
-									minDecimals: 2,
-							  })
-							: 0
-					}
+					value={dSnxAmount ? `~${dSnxAmount}` : ''}
 				/>
 				<StyledBalance>
 					{t('debt.actions.manage.balance')}
