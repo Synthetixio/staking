@@ -462,6 +462,8 @@
 				"max": "MAX",
 				"price-impact": "Price impact:",
 				"buying": "Buying",
+				"buying-dsnx": "Buying dSNX...",
+				"approving-dsnx": "Approving dSNX...",
 				"using": "using",
 				"info-panel": {
 					"title": "dSNX",
