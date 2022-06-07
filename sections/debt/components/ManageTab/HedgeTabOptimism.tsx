@@ -28,12 +28,21 @@ import useGetDSnxBalance from 'hooks/useGetDSnxBalance';
 import LoaderIcon from 'assets/svg/app/loader.svg';
 import useGetNeedsApproval from 'hooks/useGetNeedsApproval';
 import useGetDSNXPrice from 'hooks/useGetDSNXPrice';
-import { ExternalLink } from 'styles/common';
+import {
+	ExternalLink,
+	ModalContent,
+	ModalItem,
+	ModalItemText,
+	ModalItemTitle,
+} from 'styles/common';
 import { EXTERNAL_LINKS } from 'constants/links';
+import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 
 const HedgeTabOptimism = () => {
 	const { t } = useTranslation();
 	const { synthetixjs } = Connector.useContainer();
+	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
+
 	const sUSDContract = synthetixjs?.contracts.SynthsUSD;
 	const [amountToSend, setAmountToSend] = useState('');
 	const [approveGasCost, setApproveGasCost] = useState<GasPrice | undefined>(undefined);
@@ -56,7 +65,8 @@ const HedgeTabOptimism = () => {
 		approveGasCost,
 		{
 			enabled: Boolean(walletAddress && sUSDContract),
-			onSettled: () => {
+			onSuccess: () => {
+				setTxModalOpen(false);
 				approveQuery.refetch();
 			},
 		}
@@ -73,8 +83,9 @@ const HedgeTabOptimism = () => {
 		[sUSDContract?.address, wei(amountToSend || 0).toBN()],
 		depositGasCost,
 		{
-			onSettled: () => {
+			onSuccess: () => {
 				setAmountToSend('');
+				setTxModalOpen(false);
 				dSNXBalanceQuery.refetch();
 			},
 			enabled: Boolean(approved && sUSDContract?.address),
@@ -180,12 +191,11 @@ const HedgeTabOptimism = () => {
 						<LoaderText>{t('debt.actions.manage.buying-dsnx')}</LoaderText>
 					</LoaderContainer>
 				)}
-				{depositTx.error && <p>{depositTx.errorMessage}</p>}
-				{approveTx.error && <p>{approveTx.errorMessage}</p>}
 				{Boolean(!approveTx.isLoading && !depositTx.isLoading) && (
 					<StyledButton
 						size="lg"
 						onClick={() => {
+							setTxModalOpen(true);
 							approved ? depositTx.mutate() : approveTx.mutate();
 						}}
 						variant="primary"
@@ -201,6 +211,25 @@ const HedgeTabOptimism = () => {
 					<TorosLogo alt="toros logo" src={'/images/toros-white.png'} />
 				</ExternalLink>
 			</PoweredByContainer>
+			{txModalOpen && (
+				<TxConfirmationModal
+					onDismiss={() => setTxModalOpen(false)}
+					txError={approved ? depositTx.errorMessage : approveTx.errorMessage}
+					attemptRetry={approved ? depositTx.mutate : approveTx.mutate}
+					content={
+						<ModalContent>
+							<ModalItem>
+								<ModalItemTitle>
+									{approved
+										? t('debt.actions.manage.buying-dsnx')
+										: t('debt.actions.manage.approving-dsnx')}
+								</ModalItemTitle>
+								<ModalItemText>{dSNXPoolContractOptimism.address}</ModalItemText>
+							</ModalItem>
+						</ModalContent>
+					}
+				/>
+			)}
 		</Container>
 	);
 };
