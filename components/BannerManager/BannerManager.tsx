@@ -66,20 +66,6 @@ const BannerManager: FC = () => {
 			/>
 		);
 	}
-	if (new Date() < new Date('2022-04-02T00:00:00.000Z')) {
-		return (
-			<Banner
-				type={BannerType.ATTENTION}
-				localStorageKey={LOCAL_STORAGE_KEYS.RE_ELECTION_NEW_START_TIME}
-				message={
-					<Trans
-						i18nKey={'user-menu.banner.re-election-new-start-time'}
-						components={[<Strong />]}
-					/>
-				}
-			/>
-		);
-	}
 	if (!isL2 && hasVotedForElectionsQuery.data && !hasVotedForElectionsQuery.data.hasVoted) {
 		return (
 			<Banner
