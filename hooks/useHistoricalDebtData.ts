@@ -55,11 +55,11 @@ const useHistoricalDebtData = (walletAddress: string | null): HistoricalDebtAndI
 	if (!isLoaded) {
 		return { isLoading: true, data: [] };
 	}
-	let issuesAndBurns = issues.data!.map((b) => ({ isBurn: false, ...b }));
-	issuesAndBurns = sortBy(
-		issuesAndBurns.concat(burns.data!.map((b) => ({ isBurn: true, ...b }))),
-		(d) => d.timestamp.toNumber()
-	);
+	const issueData = issues.data || [];
+	const burnData = burns.data || [];
+	const issuesWithFlag = issueData.map((b) => ({ isBurn: false, ...b }));
+	const burnWithFlag = burnData.map((b) => ({ isBurn: true, ...b }));
+	const issuesAndBurns = sortBy(issuesWithFlag.concat(burnWithFlag), (d) => d.timestamp.toNumber());
 
 	const debtHistory = debtSnapshot.data ?? [];
 
