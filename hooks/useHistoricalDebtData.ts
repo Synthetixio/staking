@@ -88,14 +88,17 @@ const useHistoricalDebtData = (walletAddress: string | null): HistoricalDebtAndI
 		}
 	);
 
-	// Last occurrence is the current state of the debt
-	// Issuance debt = last occurrence of the historicalDebtAndIssuance array
-	historicalDebtAndIssuance.push({
-		timestamp: new Date().getTime(),
-		actualDebt: debtDataQuery.data?.debtBalance || wei(0),
-		issuanceDebt: last(historicalIssuanceAggregation) ?? wei(0),
-		index: historicalDebtAndIssuance.length,
-	});
+	if (historicalDebtAndIssuance.length > 0) {
+		// Last occurrence is the current state of the debt
+		// Issuance debt = last occurrence of the historicalDebtAndIssuance array
+		// We only want this to happen if we have some history, so that we can display no data for accounts that never have staked
+		historicalDebtAndIssuance.push({
+			timestamp: new Date().getTime(),
+			actualDebt: debtDataQuery.data?.debtBalance || wei(0),
+			issuanceDebt: last(historicalIssuanceAggregation) ?? wei(0),
+			index: historicalDebtAndIssuance.length,
+		});
+	}
 
 	return { isLoading: false, data: historicalDebtAndIssuance };
 };
