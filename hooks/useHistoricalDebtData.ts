@@ -55,8 +55,8 @@ const useHistoricalDebtData = (walletAddress: string | null): HistoricalDebtAndI
 	if (!isLoaded) {
 		return { isLoading: true, data: [] };
 	}
-	const issueData = issues.data || [];
-	const burnData = burns.data || [];
+	const issueData = issues.data ?? [];
+	const burnData = burns.data ?? [];
 	const issuesWithFlag = issueData.map((b) => ({ isBurn: false, ...b }));
 	const burnWithFlag = burnData.map((b) => ({ isBurn: true, ...b }));
 	const issuesAndBurns = sortBy(issuesWithFlag.concat(burnWithFlag), (d) => d.timestamp.toNumber());
@@ -82,7 +82,7 @@ const useHistoricalDebtData = (walletAddress: string | null): HistoricalDebtAndI
 			return {
 				timestamp: debtSnapshot.timestamp.toNumber() * 1000,
 				issuanceDebt: historicalIssuanceAggregation[i],
-				actualDebt: wei(debtSnapshot.debtBalanceOf || 0),
+				actualDebt: wei(debtSnapshot.debtBalanceOf ?? 0),
 				index: i,
 			};
 		}
@@ -94,7 +94,7 @@ const useHistoricalDebtData = (walletAddress: string | null): HistoricalDebtAndI
 		// We only want this to happen if we have some history, so that we can display no data for accounts that never have staked
 		historicalDebtAndIssuance.push({
 			timestamp: new Date().getTime(),
-			actualDebt: debtDataQuery.data?.debtBalance || wei(0),
+			actualDebt: debtDataQuery.data?.debtBalance ?? wei(0),
 			issuanceDebt: last(historicalIssuanceAggregation) ?? wei(0),
 			index: historicalDebtAndIssuance.length,
 		});
