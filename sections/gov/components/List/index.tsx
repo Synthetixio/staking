@@ -124,7 +124,7 @@ const ResponsiveTable: React.FC<ResponsiveTableProps> = ({ mobile, spaceKey }) =
 				palette="primary"
 				columns={columns}
 				data={proposals.data ?? []}
-				maxRows={5}
+				maxRows={3}
 				isLoading={proposals.isLoading}
 				showPagination={true}
 				onTableRowClick={(row: Row<ProposalType>) => {
@@ -132,7 +132,7 @@ const ResponsiveTable: React.FC<ResponsiveTableProps> = ({ mobile, spaceKey }) =
 					router.push(ROUTES.Gov.Proposal(spaceKey, row.original.id));
 					setPanelType(PanelType.PROPOSAL);
 				}}
-				minHeight={isWalletConnected}
+				minHeight={false}
 			/>
 			{isWalletConnected &&
 				(spaceKey === SPACE_KEY.PROPOSAL ? (
@@ -175,7 +175,7 @@ const Container = styled.div`
 const StyledTable = styled(Table)<{ minHeight: boolean }>`
 	min-height: ${(props) => (props.minHeight ? `400px` : `0px`)};
 	.table-body-row {
-		height: 70px;
+		height: 50px;
 		align-items: center;
 		&:hover {
 			background-color: ${(props) => props.theme.colors.mediumBlue};

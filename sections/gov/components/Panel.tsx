@@ -83,21 +83,25 @@ const Panel: React.FC<PanelProps> = ({ currentTab }) => {
 		() => [
 			{
 				title: t('gov.panel.council.title'),
+				description: t('gov.panel.council.description'),
 				tabChildren: <List spaceKey={activeTab} />,
 				key: SPACE_KEY.COUNCIL,
 			},
 			{
 				title: t('gov.panel.treasury-council.title'),
+				description: t('gov.panel.treasury-council.description'),
 				tabChildren: <List spaceKey={activeTab} />,
 				key: SPACE_KEY.TREASURY,
 			},
 			{
 				title: t('gov.panel.grants.title'),
+				description: t('gov.panel.grants.description'),
 				tabChildren: <List spaceKey={activeTab} />,
 				key: SPACE_KEY.GRANTS,
 			},
 			{
 				title: t('gov.panel.ambassador.title'),
+				description: t('gov.panel.ambassador.description'),
 				tabChildren: <List spaceKey={activeTab} />,
 				key: SPACE_KEY.AMBASSADOR,
 			},
@@ -108,6 +112,7 @@ const Panel: React.FC<PanelProps> = ({ currentTab }) => {
 	const proposalsData = useMemo(
 		() => ({
 			title: t('gov.panel.proposals.title'),
+			description: t('gov.panel.proposals.description'),
 			tabChildren: <List spaceKey={SPACE_KEY.PROPOSAL} />, // Static list now
 			blue: true,
 			key: SPACE_KEY.PROPOSAL,
@@ -142,8 +147,8 @@ const Panel: React.FC<PanelProps> = ({ currentTab }) => {
 					<Grid>
 						<Col>
 							<StructuredTab
-								boxPadding={20}
-								boxHeight={600}
+								boxPadding={5}
+								boxHeight={200}
 								tabData={tabData}
 								setPanelType={(key) => router.push(`/gov/${key}`)}
 								currentPanel={currentTab}
