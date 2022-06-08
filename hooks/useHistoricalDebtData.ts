@@ -53,7 +53,7 @@ const useHistoricalDebtData = (walletAddress: string | null): HistoricalDebtAndI
 		issues.isSuccess && burns.isSuccess && debtSnapshot.isSuccess && debtDataQuery.isSuccess;
 
 	if (!isLoaded) {
-		return { isLoading: false, data: [] };
+		return { isLoading: true, data: [] };
 	}
 	let issuesAndBurns = issues.data!.map((b) => ({ isBurn: false, ...b }));
 	issuesAndBurns = sortBy(
