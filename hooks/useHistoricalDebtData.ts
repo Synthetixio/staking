@@ -41,7 +41,7 @@ const useHistoricalDebtData = (walletAddress: string | null): HistoricalDebtAndI
 		{
 			first: 1000,
 			orderBy: 'timestamp',
-			orderDirection: 'desc',
+			orderDirection: 'asc',
 			where: { account: walletAddress?.toLowerCase() },
 		},
 		{ timestamp: true, debtBalanceOf: true }
@@ -67,7 +67,7 @@ const useHistoricalDebtData = (walletAddress: string | null): HistoricalDebtAndI
 	// values of every mint and burns
 	const historicalIssuanceAggregation: Wei[] = [];
 
-	issuesAndBurns.slice().forEach((event) => {
+	issuesAndBurns.forEach((event) => {
 		const multiplier = event.isBurn ? -1 : 1;
 		const aggregation = event.value
 			.mul(multiplier)
@@ -77,18 +77,16 @@ const useHistoricalDebtData = (walletAddress: string | null): HistoricalDebtAndI
 	});
 
 	// We merge both actual & issuance debt into an array
-	let historicalDebtAndIssuance: HistoricalDebtAndIssuanceData[] = [];
-	debtHistory
-		.slice()
-		.reverse()
-		.forEach((debtSnapshot, i) => {
-			historicalDebtAndIssuance.push({
+	const historicalDebtAndIssuance: HistoricalDebtAndIssuanceData[] = debtHistory.map(
+		(debtSnapshot, i) => {
+			return {
 				timestamp: debtSnapshot.timestamp.toNumber() * 1000,
 				issuanceDebt: historicalIssuanceAggregation[i],
 				actualDebt: wei(debtSnapshot.debtBalanceOf || 0),
 				index: i,
-			});
-		});
+			};
+		}
+	);
 
 	// Last occurrence is the current state of the debt
 	// Issuance debt = last occurrence of the historicalDebtAndIssuance array
