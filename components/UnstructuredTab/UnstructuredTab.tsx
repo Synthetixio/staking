@@ -23,20 +23,21 @@ const StyledTabButtonExtended = styled(StyledTabButton)`
 	flex-direction: row;
 	justify-content: space-between;
 	padding: 0px 20px;
+	cursor: default;
 `;
 
 const StyledTextWrapper = styled.div`
-	background: #2a0b21;
-	color: #df46fd;
+	background: ${(props) => props.theme.colors.mutedPink};
+	color: ${(props) => props.theme.colors.pink};
 	font-size: 12px;
-	border-left: 3px solid #df46fd;
+	border-left: 3px solid ${(props) => props.theme.colors.pink};
 	display: flex;
 	align-items: center;
 	padding-right: 8px;
 `;
 
 const StyledText = styled.h2`
-	color: #df46fd;
+	color: ${(props) => props.theme.colors.pink};
 	font-size: 8px;
 	padding: 3px 10px;
 	text-transform: uppercase;
@@ -52,7 +53,7 @@ const Title = styled.h4`
 
 const Description = styled.h6`
 	font-size: 8px;
-	color: #757688;
+	color: ${(props) => props.theme.colors.gray};
 	margin: 0;
 	text-align: left;
 	text-transform: uppercase;

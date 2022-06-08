@@ -123,9 +123,8 @@ const TitleContainer = styled.p`
 
 const Description = styled.h6`
 	font-size: 8px;
-	color: #757688;
+	color: ${(props) => props.theme.colors.gray};
 	margin: 0;
-	text-align: left;
 	text-transform: uppercase;
 	font-family: ${(props) => props.theme.fonts.extended};
 	text-align: center;

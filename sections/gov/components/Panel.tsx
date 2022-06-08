@@ -31,8 +31,6 @@ const Panel: React.FC<PanelProps> = ({ currentTab }) => {
 	const [panelType, setPanelType] = useRecoilState(panelState);
 	const activeTab = useActiveTab();
 
-	console.log('render', panelState, panelType, 'active tab', activeTab, 'current tab', currentTab);
-
 	const fetchPreloadedProposal = useCallback(() => {
 		const fetch = async () => {
 			const hash = router && router.query.panel ? router.query?.panel[1] : '';
