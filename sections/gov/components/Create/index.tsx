@@ -148,7 +148,7 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 					},
 				});
 			}
-		} catch (error) {
+		} catch (error: any) {
 			console.log(error);
 			setSignTransactionState(Transaction.PRESUBMIT);
 			txn.refresh();
