@@ -41,7 +41,7 @@ const useHistoricalDebtData = (walletAddress: string | null): HistoricalDebtAndI
 		{
 			first: 1000,
 			orderBy: 'timestamp',
-			orderDirection: 'desc',
+			orderDirection: 'asc',
 			where: { account: walletAddress?.toLowerCase() },
 		},
 		{ timestamp: true, debtBalanceOf: true }
@@ -53,13 +53,13 @@ const useHistoricalDebtData = (walletAddress: string | null): HistoricalDebtAndI
 		issues.isSuccess && burns.isSuccess && debtSnapshot.isSuccess && debtDataQuery.isSuccess;
 
 	if (!isLoaded) {
-		return { isLoading: false, data: [] };
+		return { isLoading: true, data: [] };
 	}
-	let issuesAndBurns = issues.data!.map((b) => ({ isBurn: false, ...b }));
-	issuesAndBurns = sortBy(
-		issuesAndBurns.concat(burns.data!.map((b) => ({ isBurn: true, ...b }))),
-		(d) => d.timestamp.toNumber()
-	);
+	const issueData = issues.data ?? [];
+	const burnData = burns.data ?? [];
+	const issuesWithFlag = issueData.map((b) => ({ isBurn: false, ...b }));
+	const burnWithFlag = burnData.map((b) => ({ isBurn: true, ...b }));
+	const issuesAndBurns = sortBy(issuesWithFlag.concat(burnWithFlag), (d) => d.timestamp.toNumber());
 
 	const debtHistory = debtSnapshot.data ?? [];
 
@@ -67,7 +67,7 @@ const useHistoricalDebtData = (walletAddress: string | null): HistoricalDebtAndI
 	// values of every mint and burns
 	const historicalIssuanceAggregation: Wei[] = [];
 
-	issuesAndBurns.slice().forEach((event) => {
+	issuesAndBurns.forEach((event) => {
 		const multiplier = event.isBurn ? -1 : 1;
 		const aggregation = event.value
 			.mul(multiplier)
@@ -77,27 +77,28 @@ const useHistoricalDebtData = (walletAddress: string | null): HistoricalDebtAndI
 	});
 
 	// We merge both actual & issuance debt into an array
-	let historicalDebtAndIssuance: HistoricalDebtAndIssuanceData[] = [];
-	debtHistory
-		.slice()
-		.reverse()
-		.forEach((debtSnapshot, i) => {
-			historicalDebtAndIssuance.push({
+	const historicalDebtAndIssuance: HistoricalDebtAndIssuanceData[] = debtHistory.map(
+		(debtSnapshot, i) => {
+			return {
 				timestamp: debtSnapshot.timestamp.toNumber() * 1000,
 				issuanceDebt: historicalIssuanceAggregation[i],
-				actualDebt: wei(debtSnapshot.debtBalanceOf || 0),
+				actualDebt: wei(debtSnapshot.debtBalanceOf ?? 0),
 				index: i,
-			});
-		});
+			};
+		}
+	);
 
-	// Last occurrence is the current state of the debt
-	// Issuance debt = last occurrence of the historicalDebtAndIssuance array
-	historicalDebtAndIssuance.push({
-		timestamp: new Date().getTime(),
-		actualDebt: debtDataQuery.data?.debtBalance || wei(0),
-		issuanceDebt: last(historicalIssuanceAggregation) ?? wei(0),
-		index: historicalDebtAndIssuance.length,
-	});
+	if (historicalDebtAndIssuance.length > 0) {
+		// Last occurrence is the current state of the debt
+		// Issuance debt = last occurrence of the historicalDebtAndIssuance array
+		// We only want this to happen if we have some history, so that we can display no data for accounts that never have staked
+		historicalDebtAndIssuance.push({
+			timestamp: new Date().getTime(),
+			actualDebt: debtDataQuery.data?.debtBalance ?? wei(0),
+			issuanceDebt: last(historicalIssuanceAggregation) ?? wei(0),
+			index: historicalDebtAndIssuance.length,
+		});
+	}
 
 	return { isLoading: false, data: historicalDebtAndIssuance };
 };
