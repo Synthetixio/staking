@@ -1,24 +1,14 @@
 import Connector from 'containers/Connector';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import Button from 'components/Button';
-import {
-	dSNXContract,
-	getSUSDdSNXPool,
-	Immutables,
-	quoterContract,
-	routerContract,
-	sUSDContract,
-} from 'constants/uniswap';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { getSUSDdSNXPool, Immutables, quoterContract, routerContract } from 'constants/uniswap';
+import { useRecoilValue } from 'recoil';
 import { walletAddressState } from 'store/wallet';
-import { StyledInput } from '../../../staking/components/common';
 import { BigNumber, constants, utils } from 'ethers';
 import Loader from 'components/Loader';
 import { useTranslation } from 'react-i18next';
 import useSynthetixQueries, { GasPrice } from '@synthetixio/queries';
 import GasSelector from 'components/GasSelector';
-import { dSNXBalance } from 'store/debt';
 import { formatCryptoCurrency } from 'utils/formatters/number';
 import { wei } from '@synthetixio/wei';
 import { Route, Trade, Pool } from '@uniswap/v3-sdk';
@@ -26,10 +16,25 @@ import { CurrencyAmount, Percent, Token, TradeType } from '@uniswap/sdk-core';
 import colors from 'styles/theme/colors';
 import { Svg } from 'react-optimized-image';
 import dhedge from 'assets/svg/app/dhedge.svg';
+import useGetDSnxBalance from 'hooks/useGetDSnxBalance';
+import {
+	StyledBalance,
+	StyledButton,
+	StyledCryptoCurrencyBox,
+	StyledCryptoCurrencyImage,
+	StyledHedgeInput,
+	StyledInputLabel,
+	StyledMaxButton,
+	StyledSpacer,
+	StyledBackgroundTab,
+} from './hedge-tab-ui-components';
+import useGetNeedsApproval from 'hooks/useGetNeedsApproval';
 
-export default function HedgeTap() {
+export default function HedgeTapMainnet() {
 	const { t } = useTranslation();
 	const [buttonLoading, setButtonLoading] = useState(true);
+	const { synthetixjs } = Connector.useContainer();
+
 	const [currentBlockNumber, setCurrentBlockNumber] = useState(0);
 	const [amountToSend, setAmountToSend] = useState('');
 	const [priceInfo, setPriceInfo] = useState<
@@ -37,27 +42,31 @@ export default function HedgeTap() {
 	>(undefined);
 	const [pool, setPool] = useState<Pool | undefined>(undefined);
 	const [immutables, setImmutables] = useState<Immutables | undefined>(undefined);
-	const [sUSDBalance, setSUSDBalance] = useState(BigNumber.from(0));
-	const [approved, setApproved] = useState(false);
 	const [approveGasCost, setApproveGasCost] = useState<GasPrice | undefined>(undefined);
 	const [swapGasCost, setSwapGasCost] = useState<GasPrice | undefined>(undefined);
 	const [expectedAmountOut, setExpectedAmountOut] = useState(BigNumber.from(0));
 	const { provider } = Connector.useContainer();
 	const walletAddress = useRecoilValue(walletAddressState);
-	const { useContractTxn } = useSynthetixQueries();
-	const balanceOfdSNX = useRecoilValue(dSNXBalance);
-	const setBalanceOfdSNX = useSetRecoilState(dSNXBalance);
+	const { useContractTxn, useSynthsBalancesQuery } = useSynthetixQueries();
+	const sUSDContract = synthetixjs?.contracts.SynthsUSD;
+
+	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
+	const sUSDBalance = synthsBalancesQuery.data?.balancesMap.sUSD?.balance || wei(0);
+	const approveQuery = useGetNeedsApproval(routerContract.address, sUSDContract, walletAddress);
+	const approved = approveQuery.data;
+
+	const dSNXBalanceQuery = useGetDSnxBalance();
 	const approveTx = useContractTxn(
-		sUSDContract,
+		sUSDContract!,
 		'approve',
 		[routerContract.address, constants.MaxUint256],
 		approveGasCost,
 		{
 			onSettled: () => {
-				needsToApprove();
+				approveQuery.refetch();
 				setButtonLoading(false);
 			},
-			enabled: !!amountToSend,
+			enabled: Boolean(sUSDContract),
 		}
 	);
 	const swapTx = useContractTxn(
@@ -80,52 +89,25 @@ export default function HedgeTap() {
 			onSettled: () => {
 				setAmountToSend('');
 				setButtonLoading(false);
-				fetchdSNXContract();
+				dSNXBalanceQuery.refetch();
 			},
 			enabled: approved,
 		}
 	);
 
-	const fetchdSNXContract = useCallback(async () => {
-		const balance = await dSNXContract.connect(provider!).balanceOf(walletAddress);
-		setBalanceOfdSNX(balance);
-	}, [provider, setBalanceOfdSNX, walletAddress]);
-
-	useEffect(() => {
-		fetchdSNXContract();
-	}, [fetchdSNXContract]);
-
 	useEffect(() => {
 		if (provider && walletAddress) {
 			setButtonLoading(true);
-			const promises = [];
-			promises.push(sUSDContract.connect(provider).balanceOf(walletAddress));
-			promises.push(getSUSDdSNXPool(provider));
-			promises.push(provider.getBlockNumber());
-			Promise.all(promises)
-				.then((value) => {
-					setPool(value[1][0]);
-					setImmutables(value[1][1]);
-					setSUSDBalance(value[0]);
-					setCurrentBlockNumber(value[2] * 1000);
+			Promise.all([getSUSDdSNXPool(provider), provider.getBlockNumber()])
+				.then(([pool, blockNumber]) => {
+					setPool(pool[0]);
+					setImmutables(pool[1]);
+					setCurrentBlockNumber(blockNumber * 1000);
 					setButtonLoading(false);
 				})
 				.catch(() => setButtonLoading(false));
 		}
 	}, [provider, walletAddress]);
-
-	const needsToApprove = useCallback(async () => {
-		if (provider) {
-			setButtonLoading(true);
-			const amount: BigNumber = await sUSDContract
-				.connect(provider)
-				.allowance(walletAddress, routerContract.address);
-			if (!amount.eq(0)) {
-				setApproved(amount.gte(utils.parseUnits(amountToSend || '0', 18)));
-			}
-			setButtonLoading(false);
-		}
-	}, [provider, walletAddress, amountToSend]);
 
 	useEffect(() => {
 		if (utils.parseUnits(amountToSend || '0', 18).gt(0) && provider && immutables) {
@@ -151,7 +133,6 @@ export default function HedgeTap() {
 						tradeType: TradeType.EXACT_INPUT,
 					})
 				);
-				needsToApprove();
 			};
 			try {
 				calc();
@@ -162,7 +143,7 @@ export default function HedgeTap() {
 			setExpectedAmountOut(BigNumber.from(0));
 			setPriceInfo(undefined);
 		}
-	}, [amountToSend, immutables, needsToApprove, pool, provider]);
+	}, [amountToSend, immutables, pool, provider]);
 
 	const approveRouter = async () => {
 		setButtonLoading(true);
@@ -183,7 +164,7 @@ export default function HedgeTap() {
 					0
 				);
 			setExpectedAmountOut(balanceOut);
-			const blockNumber = await provider!.getBlockNumber();
+			const blockNumber = await provider.getBlockNumber();
 			setCurrentBlockNumber(blockNumber * 1000);
 			await swapTx.refresh();
 			swapTx.mutate();
@@ -225,7 +206,7 @@ export default function HedgeTap() {
 					/>
 					<StyledBalance>
 						{t('debt.actions.manage.balance-usd')}
-						{formatCryptoCurrency(wei(sUSDBalance), {
+						{formatCryptoCurrency(sUSDBalance, {
 							maxDecimals: 1,
 							minDecimals: 2,
 						})}
@@ -233,7 +214,7 @@ export default function HedgeTap() {
 							variant="text"
 							isActive={true}
 							onClick={() => {
-								setAmountToSend(utils.formatUnits(sUSDBalance, 18));
+								setAmountToSend(sUSDBalance.toString());
 							}}
 						>
 							{t('debt.actions.manage.max')}
@@ -247,10 +228,16 @@ export default function HedgeTap() {
 							dSNX
 						</StyledCryptoCurrencyBox>
 					</StyledInputLabel>
-					<StyledHedgeInput type="number" value={utils.formatUnits(expectedAmountOut, 18)} />
+					<StyledHedgeInput
+						type="number"
+						value={formatCryptoCurrency(wei(expectedAmountOut), {
+							maxDecimals: 1,
+							minDecimals: 2,
+						})}
+					/>
 					<StyledBalance>
 						{t('debt.actions.manage.balance')}
-						{formatCryptoCurrency(wei(balanceOfdSNX), {
+						{formatCryptoCurrency(dSNXBalanceQuery.data || wei(0), {
 							maxDecimals: 1,
 							minDecimals: 2,
 						})}
@@ -264,17 +251,17 @@ export default function HedgeTap() {
 						altVersion
 					/>
 				</SublineWrapper>
+				{priceInfo && (
+					<StyledPriceImpact danger={priceInfo.priceImpact.greaterThan(new Percent(5, 100))}>
+						{t('debt.actions.manage.price-impact')}&nbsp;
+						{priceInfo.priceImpact.toSignificant(2)}%
+					</StyledPriceImpact>
+				)}
 			</StyledBackgroundTab>
 			{buttonLoading ? (
 				<Loader inline />
 			) : (
 				<>
-					{priceInfo && (
-						<StyledPriceImpact danger={priceInfo.priceImpact.greaterThan(new Percent(5, 100))}>
-							{t('debt.actions.manage.price-impact')}&nbsp;
-							{priceInfo.priceImpact.toSignificant(2)}%
-						</StyledPriceImpact>
-					)}
 					<StyledButton
 						size="lg"
 						onClick={approved ? swapTokens : approveRouter}
@@ -304,79 +291,7 @@ const StyledInputsWrapper = styled.div`
 	align-items: center;
 	flex-direction: column;
 	width: 100%;
-	height: 100%
-	margin-top: 80px;
-`;
-
-const StyledBackgroundTab = styled.div`
-	position: relative;
-	display: flex;
-	flex-direction: column;
-	justify-content: space-between;
-	width: 100%;
-	height: 400px;
-	background-color: ${colors.black};
-	padding: 16px;
-`;
-
-const StyledInputLabel = styled.div`
-	display: flex;
-	justify-content: space-evenly;
-	align-items: baseline;
-	font-size: 14px;
-	width: 180px;
-	font-family: Inter;
-`;
-
-const StyledHedgeInput = styled(StyledInput)`
-	width: 350px;
-`;
-
-const StyledBalance = styled.div`
-	text-transform: none;
-	text-align: center;
-	margin-top: 16px;
-	font-size: 14px;
-	font-family: ${(props) => props.theme.fonts.condensedMedium};
-`;
-
-const StyledCryptoCurrencyBox = styled.div`
-	display: flex;
-	align-items: center;
-	justify-content: space-evenly;
-	font-size: 12px;
-	margin-top: 14px;
-	color: ${colors.white};
-	background-color: ${colors.navy};
-	border: 1px solid ${colors.grayBlue};
-	padding: 4px;
-	text-transform: none;
-	margin-left: 8px;
-	width: 85px;
-`;
-
-const StyledCryptoCurrencyImage = styled.img`
-	width: 24px;
-	height: 24px;
-`;
-
-const StyledButton = styled(Button)`
-	width: 100%;
-	margin-top: 16px;
-	align-self: flex-end;
-	text-transform: none;
-`;
-
-const StyledSpacer = styled.div`
-	border-bottom: 1px solid ${colors.mutedBlue};
-	width: 300px;
-	margin: 16px;
-`;
-
-const StyledMaxButton = styled(Button)`
-	margin-left: 16px;
-	line-height: 0px;
-	height: 20px;
+	height: 100%;
 `;
 
 const StyledOutput = styled.span`
@@ -397,4 +312,6 @@ const SublineWrapper = styled.div`
 const StyledPriceImpact = styled(StyledOutput)<{ danger?: boolean }>`
 	color: ${({ danger }) => (danger ? colors.red : '')};
 	font-size: 12px;
+	text-align: center;
+	margin: 12px;
 `;

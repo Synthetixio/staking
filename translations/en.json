@@ -319,6 +319,7 @@
 					"empty": "Enter an amount",
 					"burn": "Burn <0>sUSD</0>",
 					"max": "Max",
+					"burn-all": "Burn all sUSD",
 					"clear-debt": "Clear debt",
 					"insufficient-sUSD-to-clear-debt": "Insufficient <0>sUSD</0> to clear debt",
 					"insufficient-sUSD-to-fix-c-ratio": "Insufficient <0>sUSD</0> to fix c-ratio. mint or by <0>sUSD</0> to proceed",
@@ -346,7 +347,8 @@
 					"unstaking": "Unstaking",
 					"burning": "Burning"
 				}
-			}
+			},
+			"self-liquidate": { "title": "Self Liquidate" }
 		},
 		"info": {
 			"mint": {
@@ -364,6 +366,10 @@
 				"title": "Clear debt by buying more sUSD via 1inch",
 				"subtitle": "Burn your sUSD to unlock your staked SNX and clear your debt. As you don’t have enough sUSD, buy more with ETH in the left form. <0>Learn more.</0>"
 			},
+			"self-liquidate": {
+				"title": "Self Liquidate",
+				"subtitle": ""
+			},
 			"table": {
 				"total-snx": "Total",
 				"not-staked": "Not Staked",
@@ -380,6 +386,20 @@
 			"info": "After {{deadlineDate}} you can be liquidated, which incur penalities. To avoid this, burn your <0>C-RATIO back to {{percentageTargetCRatio}}</0> or self liquidate. <1>Read more about liquidation here</1>",
 			"self-liquidate": "Self Liquidate",
 			"self-liquidating": "Self Liquidating"
+		},
+		"self-liquidation": {
+			"title": "Self Liquidate",
+			"info": {
+				"ratios": "Your C-Ratio {{cRatio}} is below the target C-Ratio of {{targetCRatio}}.",
+				"burn-amount": "To get your C-Ratio back to the target of {{targetCRatio}} you need to burn {{burnAmountToFixCRatio}}. Your current balance is {{balance}}.",
+				"liquidation-link-text": "Read more about liquidations",
+				"c-ratio-ok": "Your C-Ratio of {{cRatio}} is above the target C-Ratio of {{targetCRatio}} which means you can't and dont have to self liquidate.",
+				"not-staking": "Currently you are not staking, so there's no debt to self liquidate. Head over to the Mint tab to start earning.",
+				"enough-susd-balance": "To get your C-Ratio back to target C-Ratio of {{targetCRatio}} you need to burn {{burnAmountToFixCRatio}}. Your balance is {{balance}} so there's no need to self liquidate.",
+				"delegate-wallet": "As a delegated wallet you can't self liquidate.",
+				"balance-not-zero": "Since your balance is not zero you should burn all your sUSD before self liquidating",
+				"self-liquidate-text": "You can also opt to self liquidate and incur a {{selfLiquidationPenalty}} penalty on your staked SNX needed to bring you to the 300% target. This would cause you to incur a penalty of {{amountToSelfLiquidate}} ({{amountToSelfLiquidateUsd}})."
+			}
 		}
 	},
 	"pool": {
@@ -442,10 +462,16 @@
 				"max": "MAX",
 				"price-impact": "Price impact:",
 				"buying": "Buying",
+				"buying-dsnx": "Buying dSNX...",
+				"approving-dsnx": "Approving dSNX...",
 				"using": "using",
+				"powered-by": "Powered by",
 				"info-panel": {
 					"title": "dSNX",
 					"body": "The Debt Mirror Index (dSNX) token is a tool that replicates the payoff of the synthetix debt index, enabling users to hedge their active debt exposure. 1 sUSD worth of dSNX pool token hedges approximately 1 USD worth of active debt. Learn how it works <0>here</0>.",
+					"dsnx-warning": "Warning: dSNX approximately hedges debt, users can incur losses.",
+					"uniswap-link": "Be mindful of price impact and use <0>this uniswap pool</0> to close dSNX positions.",
+					"toros-link": "To close the position use the <0>Toros platform</0>",
 					"chart": {
 						"title": "dSNX vs DEBT POOL",
 						"debt-mirror-label": "dSNX",
@@ -455,7 +481,6 @@
 				}
 			},
 			"hedge": {
-				"connect": "To hedge your position, connect your wallet",
 				"info": {
 					"debt-pool-pie-chart": {
 						"title": "Global Debt Pool"
@@ -1071,20 +1096,10 @@
 	"gov": {
 		"page-title": "Governance | Synthetix Staking",
 		"panel": {
-			"council": {
-				"title": "SC"
-			},
-			"treasury-council": {
-				"title": "Treasury"
-			},
 			"proposals": {
-				"title": "SIP/SCCP"
-			},
-			"grants": {
-				"title": "Grants"
-			},
-			"ambassador": {
-				"title": "Ambassadors"
+				"title": "SIP / SCCP",
+				"description": "Proposals",
+				"info": "Only elected spartan council member can vote on sips / sccp"
 			}
 		},
 		"table": {

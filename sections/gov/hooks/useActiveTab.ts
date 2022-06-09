@@ -7,9 +7,11 @@ export const useActiveTab = () => {
 
 	const activeTab = useMemo(
 		() =>
-			Array.isArray(router.query.panel) && router.query.panel.length
+			Array.isArray(router.query.panel) &&
+			router.query.panel.length &&
+			router.query.panel[0] !== SPACE_KEY.PROPOSAL
 				? (router.query.panel[0] as SPACE_KEY)
-				: SPACE_KEY.PROPOSAL,
+				: SPACE_KEY.COUNCIL,
 		[router]
 	);
 

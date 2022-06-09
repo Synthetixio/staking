@@ -8,9 +8,10 @@ import { snapshotEndpoint, SPACE_KEY } from 'constants/snapshot';
 import { panelState, PanelType, proposalState } from 'store/gov';
 
 import useActiveTab from '../hooks/useActiveTab';
-import { Grid, Col } from 'sections/gov/components/common';
+import { Grid, Col, Spacer } from 'sections/gov/components/common';
 
 import StructuredTab from 'components/StructuredTab';
+import UnstructuredTab from 'components/UnstructuredTab';
 import CouncilBoard from './List/CouncilBoard';
 import Proposal from './Proposal';
 import List from './List';
@@ -56,6 +57,7 @@ const Panel: React.FC<PanelProps> = ({ currentTab }) => {
 				`,
 				{ id: hash }
 			);
+
 			setProposal(proposal);
 			setPanelType(PanelType.PROPOSAL);
 		};
@@ -78,37 +80,43 @@ const Panel: React.FC<PanelProps> = ({ currentTab }) => {
 	const tabData = useMemo(
 		() => [
 			{
-				title: t('gov.panel.proposals.title'),
-				tabChildren: <List spaceKey={activeTab} />,
-				blue: true,
-				key: SPACE_KEY.PROPOSAL,
-			},
-			{
 				title: t('gov.panel.council.title'),
+				description: t('gov.panel.council.description'),
 				tabChildren: <List spaceKey={activeTab} />,
-				blue: true,
 				key: SPACE_KEY.COUNCIL,
 			},
 			{
 				title: t('gov.panel.treasury-council.title'),
+				description: t('gov.panel.treasury-council.description'),
 				tabChildren: <List spaceKey={activeTab} />,
-				blue: true,
 				key: SPACE_KEY.TREASURY,
 			},
 			{
 				title: t('gov.panel.grants.title'),
+				description: t('gov.panel.grants.description'),
 				tabChildren: <List spaceKey={activeTab} />,
-				blue: true,
 				key: SPACE_KEY.GRANTS,
 			},
 			{
 				title: t('gov.panel.ambassador.title'),
+				description: t('gov.panel.ambassador.description'),
 				tabChildren: <List spaceKey={activeTab} />,
-				blue: true,
 				key: SPACE_KEY.AMBASSADOR,
 			},
 		],
 		[t, activeTab]
+	);
+
+	const proposalsData = useMemo(
+		() => ({
+			title: t('gov.panel.proposals.title'),
+			description: t('gov.panel.proposals.description'),
+			tabChildren: <List spaceKey={SPACE_KEY.PROPOSAL} />, // Static list now
+			blue: true,
+			key: SPACE_KEY.PROPOSAL,
+		}),
+
+		[t]
 	);
 
 	const returnContent = () => {
@@ -137,12 +145,14 @@ const Panel: React.FC<PanelProps> = ({ currentTab }) => {
 					<Grid>
 						<Col>
 							<StructuredTab
-								boxPadding={20}
-								boxHeight={600}
+								boxPadding={5}
+								boxHeight={200}
 								tabData={tabData}
 								setPanelType={(key) => router.push(`/gov/${key}`)}
 								currentPanel={currentTab}
 							/>
+							<Spacer />
+							<UnstructuredTab tabData={proposalsData} />
 						</Col>
 						<Col>
 							<CouncilBoard />

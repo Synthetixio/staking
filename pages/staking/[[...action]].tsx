@@ -32,7 +32,6 @@ const StakingPage = () => {
 		percentageTargetCRatio,
 		SNXRate,
 		totalEscrowBalance,
-		currentCRatio,
 		collateral,
 	} = useStakingCalculations();
 
@@ -72,7 +71,7 @@ const StakingPage = () => {
 			<LineSpacer />
 			<SelfLiquidation
 				percentageTargetCRatio={percentageTargetCRatio}
-				currentCRatio={currentCRatio}
+				percentageCurrentCRatio={percentageCurrentCRatio}
 				totalSNXBalance={collateral}
 				debtBalance={debtBalance}
 				SNXRate={SNXRate}

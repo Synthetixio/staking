@@ -88,12 +88,13 @@ const DebtChart = ({ data, isLoading }: { data: Data[]; isLoading: boolean }) =>
 		);
 	}
 
-	if (isLoading)
+	if (isLoading) {
 		return (
 			<DefaultContainer>
 				<Spinner src={SpinnerIcon} />
 			</DefaultContainer>
 		);
+	}
 	if (!data || data.length === 0)
 		return <DefaultContainer>{t('debt.actions.track.no-data')}</DefaultContainer>;
 

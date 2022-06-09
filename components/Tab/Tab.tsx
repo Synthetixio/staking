@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import styled, { css } from 'styled-components';
+import styled, { css, useTheme } from 'styled-components';
 
 import { resetButtonCSS } from 'styles/common';
 
@@ -8,24 +8,28 @@ type TabButtonProps = {
 	active: boolean;
 	onClick?: () => void;
 	children: ReactNode;
-	blue: boolean;
+	color?: string;
 	tabHeight?: number;
 	inverseTabColor?: boolean;
 	isSingle?: boolean;
 	isDisabled?: boolean;
 };
 
-export const TabButton = (props: TabButtonProps) => (
-	<StyledTabButton
-		id={`${props.name}-tab`}
-		role="tab"
-		aria-selected={props.active}
-		aria-controls={`${props.name}-tabpanel`}
-		tabIndex={-1}
-		isDisabled={props.isDisabled}
-		{...props}
-	/>
-);
+export const TabButton = (props: TabButtonProps) => {
+	const theme = useTheme();
+	return (
+		<StyledTabButton
+			id={`${props.name}-tab`}
+			role="tab"
+			aria-selected={props.active}
+			aria-controls={`${props.name}-tabpanel`}
+			tabIndex={-1}
+			isDisabled={props.isDisabled}
+			color={props.color || theme.colors.blue}
+			{...props}
+		/>
+	);
+};
 
 export const TabList = ({ children, ...props }: { children: ReactNode; noOfTabs: number }) => (
 	<StyledTabList {...props}>{children}</StyledTabList>
@@ -72,7 +76,7 @@ const StyledTabList = styled.div.attrs({ role: 'tablist' })<{ noOfTabs: number }
 	display: grid;
 `;
 
-const StyledTabButton = styled.button<TabButtonProps>`
+export const StyledTabButton = styled.button<TabButtonProps>`
 	${resetButtonCSS};
 	font-family: ${(props) => props.theme.fonts.condensedBold};
 	padding: 0;
@@ -88,23 +92,11 @@ const StyledTabButton = styled.button<TabButtonProps>`
 
 	${(props) =>
 		props.active
-			? props.blue
-				? css`
-						border-top: ${`2px solid ${props.theme.colors.blue}`};
-						border-right: ${`1px solid ${props.theme.colors.grayBlue}`};
-						border-left: ${`1px solid ${props.theme.colors.backgroundBlue}`};
-						border-bottom: ${`1px solid ${props.theme.colors.backgroundBlue}`};
-				  `
-				: css`
-						border-top: ${`2px solid ${props.theme.colors.orange}`};
-						border-left: ${`1px solid ${props.theme.colors.grayBlue}`};
-						border-right: ${`1px solid ${props.theme.colors.backgroundBlue}`};
-						border-bottom: ${`1px solid ${props.theme.colors.backgroundBlue}`};
-				  `
-			: props.blue
 			? css`
-					border-top: ${`2px solid ${props.theme.colors.black}`};
-					border-bottom: ${`1px solid ${props.theme.colors.grayBlue}`};
+					border-top: ${`2px solid ${props.color || props.theme.colors.blue}`};
+					border-right: ${`1px solid ${props.theme.colors.grayBlue}`};
+					border-left: ${`1px solid ${props.theme.colors.backgroundBlue}`};
+					border-bottom: ${`1px solid ${props.theme.colors.backgroundBlue}`};
 			  `
 			: css`
 					border-top: ${`2px solid ${props.theme.colors.black}`};
@@ -127,17 +119,10 @@ const StyledTabButton = styled.button<TabButtonProps>`
 
 
 	&:hover {
-		color: ${(props) =>
-			props.active
-				? props.theme.colors.white
-				: props.blue
-				? props.theme.colors.blue
-				: props.theme.colors.orange};
+		color: ${(props) => (props.active ? props.theme.colors.white : props.color)};
 		background: ${(props) =>
 			props.inverseTabColor ? props.theme.colors.black : props.theme.colors.backgroundBlue};
-		border-top: 2px solid
-			${(props) =>
-				props.active ? 'none' : props.blue ? props.theme.colors.blue : props.theme.colors.orange};
+		border-top: 2px solid ${(props) => (props.active ? 'none' : props.color)};
 	}
 
 	height: ${(props) => (props.tabHeight ? `${props.tabHeight}px` : '60px')};

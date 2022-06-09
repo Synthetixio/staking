@@ -2,18 +2,25 @@ import Button from 'components/Button';
 import Connector from 'containers/Connector';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
-import { isWalletConnectedState, walletAddressState } from 'store/wallet';
+import { isMainnetState, isWalletConnectedState, walletAddressState } from 'store/wallet';
 import styled from 'styled-components';
 import { FlexDivColCentered } from 'styles/common';
-import HedgeTap from './HedgeTab';
+import HedgeTapMainnet from './HedgeTabMainnet';
+import HedgeTabOptimism from './HedgeTabOptimism';
 
 const ManageTab = () => {
 	const walletAddress = useRecoilValue(walletAddressState);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
+	const isMainnet = useRecoilValue(isMainnetState);
+	if (!walletAddress || !isWalletConnected) {
+		return (
+			<ManageContainer>
+				<ConnectWallet />
+			</ManageContainer>
+		);
+	}
 	return (
-		<ManageContainer>
-			{!walletAddress || !isWalletConnected ? <ConnectWallet /> : <HedgeTap />}
-		</ManageContainer>
+		<ManageContainer>{isMainnet ? <HedgeTapMainnet /> : <HedgeTabOptimism />}</ManageContainer>
 	);
 };
 
@@ -33,7 +40,6 @@ const ConnectWallet = () => {
 	const { connectWallet } = Connector.useContainer();
 	return (
 		<WrapperContainer>
-			<h3>{t('debt.actions.hedge.connect')}</h3>
 			<Button variant="primary" onClick={connectWallet}>
 				{t('common.wallet.connect-wallet')}
 			</Button>
