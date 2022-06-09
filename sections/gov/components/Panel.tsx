@@ -23,7 +23,7 @@ type PanelProps = {
 	currentTab: string;
 };
 
-const Panel: React.FC<PanelProps> = ({ currentTab }) => {
+const Panel: React.FC<PanelProps> = () => {
 	const { t } = useTranslation();
 	const router = useRouter();
 
@@ -127,7 +127,11 @@ const Panel: React.FC<PanelProps> = ({ currentTab }) => {
 						onBack={() => {
 							setProposal(null);
 							setPanelType(PanelType.LIST);
-							router.push(ROUTES.Gov.Space(activeTab));
+							if (activeTab === SPACE_KEY.PROPOSAL) {
+								router.push(ROUTES.Gov.Home);
+							} else {
+								router.push(ROUTES.Gov.Space(activeTab));
+							}
 						}}
 					/>
 				);
@@ -136,7 +140,11 @@ const Panel: React.FC<PanelProps> = ({ currentTab }) => {
 					<Create
 						onBack={() => {
 							setPanelType(PanelType.LIST);
-							router.push(ROUTES.Gov.Space(activeTab));
+							if (activeTab === SPACE_KEY.PROPOSAL) {
+								router.push(ROUTES.Gov.Home);
+							} else {
+								router.push(ROUTES.Gov.Space(activeTab));
+							}
 						}}
 					/>
 				);
@@ -149,7 +157,6 @@ const Panel: React.FC<PanelProps> = ({ currentTab }) => {
 								boxHeight={200}
 								tabData={tabData}
 								setPanelType={(key) => router.push(`/gov/${key}`)}
-								currentPanel={currentTab}
 							/>
 							<Spacer />
 							<UnstructuredTab tabData={proposalsData} />
