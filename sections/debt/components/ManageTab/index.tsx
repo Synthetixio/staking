@@ -40,7 +40,6 @@ const ConnectWallet = () => {
 	const { connectWallet } = Connector.useContainer();
 	return (
 		<WrapperContainer>
-			<h3>{t('debt.actions.hedge.connect')}</h3>
 			<Button variant="primary" onClick={connectWallet}>
 				{t('common.wallet.connect-wallet')}
 			</Button>
