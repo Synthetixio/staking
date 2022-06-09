@@ -28,7 +28,7 @@ describe('staking helpers', () => {
 		expect(result.toString(0)).toBe('50');
 	});
 	test('getTransferableAmountFromBurn', () => {
-		const amountToBurn = 100;
+		const amountToBurn = wei(100);
 		const debtEscrowBalance = wei(50);
 		const targetCRatio = wei(0.25);
 		const SNXPrice = wei(10);

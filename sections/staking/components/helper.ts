@@ -16,7 +16,7 @@ export function getTransferableAmountFromMint(balance: Wei, stakedValue: Wei): W
 }
 
 export function getTransferableAmountFromBurn(
-	amountToBurn: WeiSource,
+	amountToBurn: Wei,
 	debtEscrowBalance: Wei,
 	targetCRatio: Wei,
 	SNXPrice: Wei,
