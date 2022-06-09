@@ -244,17 +244,17 @@ export default function HedgeTapMainnet() {
 						altVersion
 					/>
 				</SublineWrapper>
+				{priceInfo && (
+					<StyledPriceImpact danger={priceInfo.priceImpact.greaterThan(new Percent(5, 100))}>
+						{t('debt.actions.manage.price-impact')}&nbsp;
+						{priceInfo.priceImpact.toSignificant(2)}%
+					</StyledPriceImpact>
+				)}
 			</StyledBackgroundTab>
 			{buttonLoading ? (
 				<Loader inline />
 			) : (
 				<>
-					{priceInfo && (
-						<StyledPriceImpact danger={priceInfo.priceImpact.greaterThan(new Percent(5, 100))}>
-							{t('debt.actions.manage.price-impact')}&nbsp;
-							{priceInfo.priceImpact.toSignificant(2)}%
-						</StyledPriceImpact>
-					)}
 					<StyledButton
 						size="lg"
 						onClick={approved ? swapTokens : approveRouter}
@@ -285,7 +285,6 @@ const StyledInputsWrapper = styled.div`
 	flex-direction: column;
 	width: 100%;
 	height: 100%;
-	margin-top: 80px;
 `;
 
 const StyledBackgroundTab = styled.div`
@@ -294,7 +293,6 @@ const StyledBackgroundTab = styled.div`
 	flex-direction: column;
 	justify-content: space-between;
 	width: 100%;
-	height: 400px;
 	background-color: ${(props) => props.theme.colors.black};
 	padding: 16px;
 `;
@@ -317,4 +315,6 @@ const SublineWrapper = styled.div`
 const StyledPriceImpact = styled(StyledOutput)<{ danger?: boolean }>`
 	color: ${({ danger }) => (danger ? colors.red : '')};
 	font-size: 12px;
+	text-align: center;
+	margin: 12px;
 `;
