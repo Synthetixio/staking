@@ -1,13 +1,7 @@
 import Connector from 'containers/Connector';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import {
-	getSUSDdSNXPool,
-	Immutables,
-	quoterContract,
-	routerContract,
-	sUSDContract,
-} from 'constants/uniswap';
+import { getSUSDdSNXPool, Immutables, quoterContract, routerContract } from 'constants/uniswap';
 import { useRecoilValue } from 'recoil';
 import { walletAddressState } from 'store/wallet';
 import { BigNumber, constants, utils } from 'ethers';
@@ -33,10 +27,13 @@ import {
 	StyledMaxButton,
 	StyledSpacer,
 } from './hedge-tab-ui-components';
+import useGetNeedsApproval from 'hooks/useGetNeedsApproval';
 
-export default function HedgeTap() {
+export default function HedgeTapMainnet() {
 	const { t } = useTranslation();
 	const [buttonLoading, setButtonLoading] = useState(true);
+	const { synthetixjs } = Connector.useContainer();
+
 	const [currentBlockNumber, setCurrentBlockNumber] = useState(0);
 	const [amountToSend, setAmountToSend] = useState('');
 	const [priceInfo, setPriceInfo] = useState<
@@ -44,27 +41,31 @@ export default function HedgeTap() {
 	>(undefined);
 	const [pool, setPool] = useState<Pool | undefined>(undefined);
 	const [immutables, setImmutables] = useState<Immutables | undefined>(undefined);
-	const [sUSDBalance, setSUSDBalance] = useState(BigNumber.from(0));
-	const [approved, setApproved] = useState(false);
 	const [approveGasCost, setApproveGasCost] = useState<GasPrice | undefined>(undefined);
 	const [swapGasCost, setSwapGasCost] = useState<GasPrice | undefined>(undefined);
 	const [expectedAmountOut, setExpectedAmountOut] = useState(BigNumber.from(0));
 	const { provider } = Connector.useContainer();
 	const walletAddress = useRecoilValue(walletAddressState);
-	const { useContractTxn } = useSynthetixQueries();
+	const { useContractTxn, useSynthsBalancesQuery } = useSynthetixQueries();
+	const sUSDContract = synthetixjs?.contracts.SynthsUSD;
+
+	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
+	const sUSDBalance = synthsBalancesQuery.data?.balancesMap.sUSD?.balance || wei(0);
+	const approveQuery = useGetNeedsApproval(routerContract.address, sUSDContract, walletAddress);
+	const approved = approveQuery.data;
 
 	const dSNXBalanceQuery = useGetDSnxBalance();
 	const approveTx = useContractTxn(
-		sUSDContract,
+		sUSDContract!,
 		'approve',
 		[routerContract.address, constants.MaxUint256],
 		approveGasCost,
 		{
 			onSettled: () => {
-				needsToApprove();
+				approveQuery.refetch();
 				setButtonLoading(false);
 			},
-			enabled: !!amountToSend,
+			enabled: Boolean(sUSDContract),
 		}
 	);
 	const swapTx = useContractTxn(
@@ -96,34 +97,16 @@ export default function HedgeTap() {
 	useEffect(() => {
 		if (provider && walletAddress) {
 			setButtonLoading(true);
-			const promises = [];
-			promises.push(sUSDContract.connect(provider).balanceOf(walletAddress));
-			promises.push(getSUSDdSNXPool(provider));
-			promises.push(provider.getBlockNumber());
-			Promise.all(promises)
-				.then((value) => {
-					setPool(value[1][0]);
-					setImmutables(value[1][1]);
-					setSUSDBalance(value[0]);
-					setCurrentBlockNumber(value[2] * 1000);
+			Promise.all([getSUSDdSNXPool(provider), provider.getBlockNumber()])
+				.then(([pool, blockNumber]) => {
+					setPool(pool[0]);
+					setImmutables(pool[1]);
+					setCurrentBlockNumber(blockNumber * 1000);
 					setButtonLoading(false);
 				})
 				.catch(() => setButtonLoading(false));
 		}
 	}, [provider, walletAddress]);
-
-	const needsToApprove = useCallback(async () => {
-		if (provider) {
-			setButtonLoading(true);
-			const amount: BigNumber = await sUSDContract
-				.connect(provider)
-				.allowance(walletAddress, routerContract.address);
-			if (!amount.eq(0)) {
-				setApproved(amount.gte(utils.parseUnits(amountToSend || '0', 18)));
-			}
-			setButtonLoading(false);
-		}
-	}, [provider, walletAddress, amountToSend]);
 
 	useEffect(() => {
 		if (utils.parseUnits(amountToSend || '0', 18).gt(0) && provider && immutables) {
@@ -149,7 +132,6 @@ export default function HedgeTap() {
 						tradeType: TradeType.EXACT_INPUT,
 					})
 				);
-				needsToApprove();
 			};
 			try {
 				calc();
@@ -160,7 +142,7 @@ export default function HedgeTap() {
 			setExpectedAmountOut(BigNumber.from(0));
 			setPriceInfo(undefined);
 		}
-	}, [amountToSend, immutables, needsToApprove, pool, provider]);
+	}, [amountToSend, immutables, pool, provider]);
 
 	const approveRouter = async () => {
 		setButtonLoading(true);
@@ -223,7 +205,7 @@ export default function HedgeTap() {
 					/>
 					<StyledBalance>
 						{t('debt.actions.manage.balance-usd')}
-						{formatCryptoCurrency(wei(sUSDBalance), {
+						{formatCryptoCurrency(sUSDBalance, {
 							maxDecimals: 1,
 							minDecimals: 2,
 						})}
@@ -231,7 +213,7 @@ export default function HedgeTap() {
 							variant="text"
 							isActive={true}
 							onClick={() => {
-								setAmountToSend(utils.formatUnits(sUSDBalance, 18));
+								setAmountToSend(sUSDBalance.toString());
 							}}
 						>
 							{t('debt.actions.manage.max')}
