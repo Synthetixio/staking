@@ -10,6 +10,7 @@ import { walletAddressState } from 'store/wallet';
 import { GasPrice } from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
 import {
+	StyledBackgroundTab,
 	StyledBalance,
 	StyledButton,
 	StyledCryptoCurrencyBox,
@@ -100,7 +101,7 @@ const HedgeTabOptimism = () => {
 			: '';
 	return (
 		<Container>
-			<div style={{ display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
+			<StyledBackgroundTab>
 				<StyledInputLabel>
 					{t('debt.actions.manage.using')}
 					<StyledCryptoCurrencyBox>
@@ -179,32 +180,32 @@ const HedgeTabOptimism = () => {
 					}
 					altVersion
 				/>
-				{approveTx.isLoading && (
-					<LoaderContainer>
-						<Svg width={20} height={20} src={LoaderIcon} />
-						<LoaderText>{t('debt.actions.manage.approving-dsnx')}</LoaderText>
-					</LoaderContainer>
-				)}
-				{depositTx.isLoading && (
-					<LoaderContainer>
-						<Svg width={20} height={20} src={LoaderIcon} />
-						<LoaderText>{t('debt.actions.manage.buying-dsnx')}</LoaderText>
-					</LoaderContainer>
-				)}
-				{Boolean(!approveTx.isLoading && !depositTx.isLoading) && (
-					<StyledButton
-						size="lg"
-						onClick={() => {
-							setTxModalOpen(true);
-							approved ? depositTx.mutate() : approveTx.mutate();
-						}}
-						variant="primary"
-						disabled={wei(amountToSend || '0').eq(0)}
-					>
-						{approved ? t('debt.actions.manage.swap') : t('debt.actions.manage.approve')}
-					</StyledButton>
-				)}
-			</div>
+			</StyledBackgroundTab>
+			{approveTx.isLoading && (
+				<LoaderContainer>
+					<Svg width={20} height={20} src={LoaderIcon} />
+					<LoaderText>{t('debt.actions.manage.approving-dsnx')}</LoaderText>
+				</LoaderContainer>
+			)}
+			{depositTx.isLoading && (
+				<LoaderContainer>
+					<Svg width={20} height={20} src={LoaderIcon} />
+					<LoaderText>{t('debt.actions.manage.buying-dsnx')}</LoaderText>
+				</LoaderContainer>
+			)}
+			{Boolean(!approveTx.isLoading && !depositTx.isLoading) && (
+				<StyledButton
+					size="lg"
+					onClick={() => {
+						setTxModalOpen(true);
+						approved ? depositTx.mutate() : approveTx.mutate();
+					}}
+					variant="primary"
+					disabled={wei(amountToSend || '0').eq(0)}
+				>
+					{approved ? t('debt.actions.manage.swap') : t('debt.actions.manage.approve')}
+				</StyledButton>
+			)}
 			<PoweredByContainer>
 				{t('debt.actions.manage.powered-by')}{' '}
 				<ExternalLink href={EXTERNAL_LINKS.Toros.dSNXPool}>

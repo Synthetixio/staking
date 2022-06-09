@@ -2,6 +2,16 @@ import styled from 'styled-components';
 import Button from 'components/Button';
 import { StyledInput } from '../../../staking/components/common';
 
+export const StyledBackgroundTab = styled.div`
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	align-items: center;
+	width: 100%;
+	background-color: ${(props) => props.theme.colors.black};
+	padding: 16px;
+`;
 export const StyledBalance = styled.div`
 	text-transform: none;
 	text-align: center;

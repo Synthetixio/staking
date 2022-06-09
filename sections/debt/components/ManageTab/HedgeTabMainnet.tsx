@@ -26,6 +26,7 @@ import {
 	StyledInputLabel,
 	StyledMaxButton,
 	StyledSpacer,
+	StyledBackgroundTab,
 } from './hedge-tab-ui-components';
 import useGetNeedsApproval from 'hooks/useGetNeedsApproval';
 
@@ -291,16 +292,6 @@ const StyledInputsWrapper = styled.div`
 	flex-direction: column;
 	width: 100%;
 	height: 100%;
-`;
-
-const StyledBackgroundTab = styled.div`
-	position: relative;
-	display: flex;
-	flex-direction: column;
-	justify-content: space-between;
-	width: 100%;
-	background-color: ${(props) => props.theme.colors.black};
-	padding: 16px;
 `;
 
 const StyledOutput = styled.span`
