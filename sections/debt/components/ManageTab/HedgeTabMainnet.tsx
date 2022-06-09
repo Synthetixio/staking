@@ -227,7 +227,13 @@ export default function HedgeTapMainnet() {
 							dSNX
 						</StyledCryptoCurrencyBox>
 					</StyledInputLabel>
-					<StyledHedgeInput type="number" value={utils.formatUnits(expectedAmountOut, 18)} />
+					<StyledHedgeInput
+						type="number"
+						value={formatCryptoCurrency(wei(expectedAmountOut), {
+							maxDecimals: 1,
+							minDecimals: 2,
+						})}
+					/>
 					<StyledBalance>
 						{t('debt.actions.manage.balance')}
 						{formatCryptoCurrency(dSNXBalanceQuery.data || wei(0), {
