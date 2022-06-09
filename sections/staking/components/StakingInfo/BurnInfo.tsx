@@ -141,7 +141,6 @@ const BurnInfo: FC = () => {
 		debtEscrowBalance,
 		sUSDBalance,
 	]);
-	console.log('amountToBurn', amountToBurn);
 	const isInputEmpty = amountToBurn.length === 0;
 
 	return (
