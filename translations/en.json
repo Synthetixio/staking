@@ -481,7 +481,6 @@
 				}
 			},
 			"hedge": {
-				"connect": "To hedge your position, connect your wallet",
 				"info": {
 					"debt-pool-pie-chart": {
 						"title": "Global Debt Pool"
@@ -1097,26 +1096,10 @@
 	"gov": {
 		"page-title": "Governance | Synthetix Staking",
 		"panel": {
-			"council": {
-				"title": "Spartan",
-				"description": "Council"
-			},
-			"treasury-council": {
-				"title": "Treasury",
-				"description": "Council"
-			},
 			"proposals": {
 				"title": "SIP / SCCP",
 				"description": "Proposals",
 				"info": "Only elected spartan council member can vote on sips / sccp"
-			},
-			"grants": {
-				"title": "Grants",
-				"description": "Council"
-			},
-			"ambassador": {
-				"title": "Ambassadors",
-				"description": "Council"
 			}
 		},
 		"table": {

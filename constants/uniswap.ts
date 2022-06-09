@@ -3,7 +3,6 @@ import { Pool } from '@uniswap/v3-sdk';
 import { providers, BigNumber, Contract } from 'ethers';
 import { abi as IUniswapV3PoolABI } from '@uniswap/v3-core/artifacts/contracts/interfaces/IUniswapV3Pool.sol/IUniswapV3Pool.json';
 import { abi as UniswapRouterV3 } from 'contracts/uniswapRouterV3';
-import { abi as erc20ABI } from 'contracts/erc20';
 import { abi as QuoterABI } from '@uniswap/v3-periphery/artifacts/contracts/lens/Quoter.sol/Quoter.json';
 import { dSNXContractMainnet } from './dhedge';
 
@@ -27,8 +26,6 @@ export const routerContract = new Contract(
 	'0xE592427A0AEce92De3Edee1F18E0157C05861564',
 	UniswapRouterV3
 );
-
-export const sUSDContract = new Contract('0x57ab1ec28d129707052df4df418d58a2d46d5f51', erc20ABI);
 
 export const quoterContract = new Contract('0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6', QuoterABI);
 
