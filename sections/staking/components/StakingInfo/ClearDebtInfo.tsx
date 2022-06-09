@@ -44,13 +44,19 @@ const StakingInfo: FC = () => {
 		const calculatedTargetBurn = Math.max(debtBalance.sub(issuableSynths).toNumber(), 0);
 
 		const amountToBurnWei = parseSafeWei(amountToBurn, 0);
-
+		// When users use BURN MAX we send off the complete sUSD balance to the contract
+		// The contract will only burn whats needed. We do this to avoid sUSD dust in the wallet.
+		// When the sUSD balance is bigger than the debt balance these calculations will be wrong
+		// So, when that's the case, use the debt balance for the calculations
+		const amountToBurnForCalculation = amountToBurnWei.gt(debtBalance)
+			? debtBalance
+			: amountToBurnWei;
 		let unlockedStakeAmount;
 
-		if (currentCRatio.gt(targetCRatio) && amountToBurnWei.lte(calculatedTargetBurn)) {
+		if (currentCRatio.gt(targetCRatio) && amountToBurnForCalculation.lte(calculatedTargetBurn)) {
 			unlockedStakeAmount = wei(0);
 		} else {
-			unlockedStakeAmount = getStakingAmount(targetCRatio, amountToBurnWei, SNXRate);
+			unlockedStakeAmount = getStakingAmount(targetCRatio, amountToBurnForCalculation, SNXRate);
 		}
 
 		const changedStakedValue = stakedCollateral.eq(0)
@@ -58,16 +64,16 @@ const StakingInfo: FC = () => {
 			: stakedCollateral.sub(unlockedStakeAmount);
 
 		const changedTransferable = getTransferableAmountFromBurn(
-			amountToBurn,
+			amountToBurnForCalculation,
 			debtEscrowBalance,
 			targetCRatio,
 			SNXRate,
 			transferableCollateral
 		);
 
-		const changedDebt = debtBalance.eq(0) ? wei(0) : debtBalance.sub(amountToBurnWei);
+		const changedDebt = debtBalance.eq(0) ? wei(0) : debtBalance.sub(amountToBurnForCalculation);
 
-		const changedSUSDBalance = sUSDBalance.sub(amountToBurnWei);
+		const changedSUSDBalance = sUSDBalance.sub(amountToBurnForCalculation);
 
 		const changeCRatio = currentCRatio.neg(); // wei(100).div(changedDebt.div(SNXRate).div(collateral));
 
