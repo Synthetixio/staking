@@ -1095,6 +1095,11 @@
 	},
 	"gov": {
 		"page-title": "Governance | Synthetix Staking",
+		"new-governance-site": {
+			"title": "Elections has moved",
+			"subtitle": "A new DAPP using Synthetix v3 contracts has been created.",
+			"link-text": "Please visit <0>https://governance.synthetix.io</0> to nominate and vote on elections."
+		},
 		"panel": {
 			"council": {
 				"title": "Spartan",
