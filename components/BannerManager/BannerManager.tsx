@@ -12,6 +12,8 @@ import { isL2State, walletAddressState } from 'store/wallet';
 import useSynthetixQueries from '@synthetixio/queries';
 import { snapshotEndpoint } from 'constants/snapshot';
 import { EXTERNAL_LINKS } from 'constants/links';
+import Connector from 'containers/Connector';
+import { isAnyElectionInNomination } from 'utils/governance';
 
 const BannerManager: FC = () => {
 	const {
@@ -19,8 +21,12 @@ const BannerManager: FC = () => {
 		useGetLiquidationDataQuery,
 		useGetDebtDataQuery,
 		useHasVotedForElectionsQuery,
+		useGetElectionsPeriodStatus,
 	} = useSynthetixQueries();
+	const { L2DefaultProvider } = Connector.useContainer();
+	const periodStatusQuery = useGetElectionsPeriodStatus(L2DefaultProvider);
 
+	const electionIsInNomination = isAnyElectionInNomination(periodStatusQuery.data);
 	const walletAddress = useRecoilValue(walletAddressState);
 
 	const liquidationData = useGetLiquidationDataQuery(walletAddress);
@@ -61,6 +67,19 @@ const BannerManager: FC = () => {
 							<Strong />,
 							<StyledExternalLink href={EXTERNAL_LINKS.Synthetix.SIP148Liquidations} />,
 						]}
+					/>
+				}
+			/>
+		);
+	}
+	if (electionIsInNomination) {
+		return (
+			<Banner
+				type={BannerType.WARNING}
+				message={
+					<Trans
+						i18nKey={'user-menu.banner.election-in-nomination'}
+						components={[<StyledExternalLink href={EXTERNAL_LINKS.Synthetix.Governance} />]}
 					/>
 				}
 			/>
