@@ -14,7 +14,7 @@ type ProposalProps = {
 };
 
 const Index: React.FC<ProposalProps> = ({ onBack }) => {
-	const activeTab = useActiveTab();
+	const { activeTab } = useActiveTab();
 	const proposal = useRecoilValue(proposalState);
 
 	if (!proposal) return <></>;

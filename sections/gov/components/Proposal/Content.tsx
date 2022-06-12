@@ -58,7 +58,7 @@ type ContentProps = {
 const Content: React.FC<ContentProps> = ({ proposal, onBack }) => {
 	const { t } = useTranslation();
 
-	const activeTab = useActiveTab();
+	const { activeTab } = useActiveTab();
 	const [selected, setSelected] = useState<number | null>(null);
 
 	const [error, setError] = useState<string | null>(null);

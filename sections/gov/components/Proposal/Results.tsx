@@ -24,7 +24,7 @@ type ResultsProps = {
 };
 
 const Results: React.FC<ResultsProps> = ({ proposalResults, hash }) => {
-	const activeTab = useActiveTab();
+	const { activeTab } = useActiveTab();
 	const [choices, setChoices] = useState<any>(null);
 
 	useEffect(() => {

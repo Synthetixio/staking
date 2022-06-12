@@ -55,9 +55,7 @@ const BurnTab: FC = () => {
 		[t]
 	);
 
-	return (
-		<StructuredTab singleTab={true} boxPadding={20} tabData={tabData} setPanelType={() => null} />
-	);
+	return <StructuredTab singleTab={true} boxPadding={20} tabData={tabData} />;
 };
 
 const BurnTabInner: FC = () => {

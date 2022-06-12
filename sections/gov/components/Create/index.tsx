@@ -40,7 +40,7 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 	const [body, setBody] = useState<string>('');
 	const [choices, setChoices] = useState<string[]>([]);
 	const [result, setResult] = useState<AxiosResponse<any> | null>(null);
-	const activeTab = useActiveTab();
+	const { activeTab } = useActiveTab();
 	const [signTransactionState, setSignTransactionState] = useState<Transaction>(
 		Transaction.PRESUBMIT
 	);
