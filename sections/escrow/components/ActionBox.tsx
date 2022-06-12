@@ -42,8 +42,8 @@ const ActionBox: React.FC<ActionBoxProps> = ({ currentTab }) => {
 		<StructuredTab
 			boxPadding={20}
 			tabData={tabData}
-			setPanelType={(key) => router.push(`/escrow/${key}`)}
-			currentPanel={currentTab}
+			setActiveTab={(key) => router.push(`/escrow/${key}`)}
+			activeTab={currentTab}
 		/>
 	);
 };

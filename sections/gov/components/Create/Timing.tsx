@@ -25,7 +25,7 @@ const Timing: React.FC<TimingProps> = ({
 	block,
 }) => {
 	const { t } = useTranslation();
-	const activeTab = useActiveTab();
+	const { activeTab } = useActiveTab();
 	return (
 		<StyledCard hasHelper={activeTab === SPACE_KEY.PROPOSAL}>
 			{activeTab === SPACE_KEY.PROPOSAL ? null : (

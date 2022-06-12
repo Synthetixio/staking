@@ -3,7 +3,6 @@ import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
 import { useRecoilState } from 'recoil';
 
-import ROUTES from 'constants/routes';
 import { snapshotEndpoint, SPACE_KEY } from 'constants/snapshot';
 import { panelState, PanelType, proposalState } from 'store/gov';
 
@@ -29,7 +28,7 @@ const Panel: React.FC<PanelProps> = () => {
 
 	const [, setProposal] = useRecoilState(proposalState);
 	const [panelType, setPanelType] = useRecoilState(panelState);
-	const activeTab = useActiveTab();
+	const { activeTab } = useActiveTab();
 
 	const fetchPreloadedProposal = useCallback(() => {
 		const fetch = async () => {
@@ -128,9 +127,9 @@ const Panel: React.FC<PanelProps> = () => {
 							setProposal(null);
 							setPanelType(PanelType.LIST);
 							if (activeTab === SPACE_KEY.PROPOSAL) {
-								router.push(ROUTES.Gov.Home);
+								router.back();
 							} else {
-								router.push(ROUTES.Gov.Space(activeTab));
+								router.back();
 							}
 						}}
 					/>
@@ -141,9 +140,9 @@ const Panel: React.FC<PanelProps> = () => {
 						onBack={() => {
 							setPanelType(PanelType.LIST);
 							if (activeTab === SPACE_KEY.PROPOSAL) {
-								router.push(ROUTES.Gov.Home);
+								router.back();
 							} else {
-								router.push(ROUTES.Gov.Space(activeTab));
+								router.back();
 							}
 						}}
 					/>
@@ -156,7 +155,8 @@ const Panel: React.FC<PanelProps> = () => {
 								boxPadding={5}
 								boxHeight={200}
 								tabData={tabData}
-								setPanelType={(key) => router.push(`/gov/${key}`)}
+								setActiveTab={(key) => router.push(`/gov/${key}`)}
+								activeTab={activeTab}
 							/>
 							<Spacer />
 							<UnstructuredTab tabData={proposalsData} />

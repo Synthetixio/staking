@@ -70,7 +70,7 @@ const ovmProvider = new ethers.providers.JsonRpcProvider('https://mainnet.optimi
 const DilutionContent: React.FC<DilutionContentProps> = ({ proposal, onBack }) => {
 	const { t } = useTranslation();
 
-	const activeTab = useActiveTab();
+	const { activeTab } = useActiveTab();
 	const [selected, setSelected] = useState<number | null>(null);
 
 	const [signError, setSignError] = useState<string | null>(null);

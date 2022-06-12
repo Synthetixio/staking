@@ -67,8 +67,8 @@ const ActionBox: FC<ActionBoxProps> = ({ currentTab }) => {
 			boxPadding={20}
 			boxHeight={450}
 			tabData={tabData}
-			setPanelType={(key) => router.push(`/staking/${key}`)}
-			currentPanel={currentTab}
+			setActiveTab={(key) => router.push(`/staking/${key}`)}
+			activeTab={currentTab}
 		/>
 	);
 };

@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ProposalInfoType } from 'store/gov';
 import StructuredTab from 'components/StructuredTab';
@@ -16,11 +16,12 @@ type InfoProps = {
 
 const Info: React.FC<InfoProps> = ({ proposal }) => {
 	const { t } = useTranslation();
-	const activeTab = useActiveTab();
+	const { activeTab: govTab } = useActiveTab();
 
 	const walletAddress = useRecoilValue(walletAddressState);
 	const { useProposalQuery } = useSynthetixQueries();
-	const proposalResults = useProposalQuery(snapshotEndpoint, activeTab, proposal.id, walletAddress);
+	const proposalResults = useProposalQuery(snapshotEndpoint, govTab, proposal.id, walletAddress);
+	const [activeTab, setActiveTab] = useState(ProposalInfoType.RESULTS);
 
 	const tabData = useMemo(
 		() => [
@@ -40,6 +41,13 @@ const Info: React.FC<InfoProps> = ({ proposal }) => {
 		[proposalResults, proposal, t]
 	);
 
-	return <StructuredTab boxPadding={0} tabData={tabData} />;
+	return (
+		<StructuredTab
+			boxPadding={0}
+			tabData={tabData}
+			activeTab={activeTab}
+			setActiveTab={(key) => setActiveTab(key)}
+		/>
+	);
 };
 export default Info;
