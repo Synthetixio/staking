@@ -50,7 +50,7 @@ const Gov: React.FC = () => {
 					<p>{t('gov.new-governance-site.subtitle')}</p>
 					<Trans
 						i18nKey={'gov.new-governance-site.link-text'}
-						components={[<StyledExternalLink href={EXTERNAL_LINKS.Synthetix.SIP148Liquidations} />]}
+						components={[<StyledExternalLink href="https://governance.synthetix.io/" />]}
 					/>
 				</NewElectionsContainer>
 			) : (
