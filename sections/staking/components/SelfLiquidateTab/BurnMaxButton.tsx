@@ -9,18 +9,34 @@ import styled from 'styled-components';
 import { Synths } from 'constants/currency';
 import { useTranslation } from 'react-i18next';
 
-const BurnMaxButton: React.FC<{ amountToBurn: Wei }> = ({ amountToBurn }) => {
+/**
+ * This component is used to burn max, it should only be used when the users balance
+ * is less than what's required to fix the c-ratio.
+ * The reason we use `burnSynthsToTarget` instead of just burning max is that
+ * the Issuer contract "MinStakeTime" check will block the transaction if you not using `burnSynthsToTarget` and have recently minted
+ */
+const BurnMaxButton: React.FC<{ sUSDBalance: Wei; burnAmountToFixCRatio: Wei }> = ({
+	sUSDBalance,
+	burnAmountToFixCRatio,
+}) => {
 	const { useSynthetixTxn } = useSynthetixQueries();
 	const { t } = useTranslation();
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 
 	const txn = useSynthetixTxn(
 		'Synthetix',
-		'burnSynths',
-		[amountToBurn.toBN()],
+		'burnSynthsToTarget',
+		[],
 		{},
-		{ enabled: amountToBurn.gt(0) }
+		{ enabled: sUSDBalance.lt(burnAmountToFixCRatio) }
 	);
+	if (sUSDBalance.gt(burnAmountToFixCRatio)) {
+		// See comment above, this component should only be used if sUSDBalance is less than burnAmountToFixCRatio
+		console.error(
+			'Only render this BurnMaxButton when sUSDBalance is less than burnAmountToFixCRatio'
+		);
+		return null;
+	}
 	return (
 		<>
 			<StyledButton
@@ -43,7 +59,7 @@ const BurnMaxButton: React.FC<{ amountToBurn: Wei }> = ({ amountToBurn }) => {
 							<ModalItem>
 								<ModalItemTitle>{t('staking.actions.burn.in-progress.burning')}</ModalItemTitle>
 								<ModalItemText>
-									{formatCryptoCurrency(amountToBurn, {
+									{formatCryptoCurrency(sUSDBalance, {
 										sign: '$',
 										currencyKey: Synths.sUSD,
 										minDecimals: 2,

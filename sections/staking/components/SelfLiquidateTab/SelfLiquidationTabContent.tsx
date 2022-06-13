@@ -126,7 +126,10 @@ const SelfLiquidationTabContent: React.FC<{
 						{t('staking.self-liquidation.info.balance-not-zero')}
 					</InfoText>
 					<ButtonWrapper>
-						<BurnMaxButton amountToBurn={sUSDBalance} />
+						<BurnMaxButton
+							sUSDBalance={sUSDBalance}
+							burnAmountToFixCRatio={burnAmountToFixCRatio}
+						/>
 					</ButtonWrapper>
 				</>
 			) : (
