@@ -17,6 +17,7 @@ import List from './List';
 import Create from './Create';
 import { Proposal as ProposalType } from '@synthetixio/queries';
 import request, { gql } from 'graphql-request';
+import ROUTES from 'constants/routes';
 
 type PanelProps = {
 	currentTab: string;
@@ -126,8 +127,12 @@ const Panel: React.FC<PanelProps> = () => {
 						onBack={() => {
 							setProposal(null);
 							setPanelType(PanelType.LIST);
-							if (activeTab === SPACE_KEY.PROPOSAL) {
-								router.back();
+							if (window.history.length < 3) {
+								router.push(
+									ROUTES.Gov.Space(
+										activeTab === SPACE_KEY.AMBASSADOR ? SPACE_KEY.COUNCIL : activeTab
+									)
+								);
 							} else {
 								router.back();
 							}
@@ -139,8 +144,12 @@ const Panel: React.FC<PanelProps> = () => {
 					<Create
 						onBack={() => {
 							setPanelType(PanelType.LIST);
-							if (activeTab === SPACE_KEY.PROPOSAL) {
-								router.back();
+							if (window.history.length < 3) {
+								router.push(
+									ROUTES.Gov.Space(
+										activeTab === SPACE_KEY.AMBASSADOR ? SPACE_KEY.COUNCIL : activeTab
+									)
+								);
 							} else {
 								router.back();
 							}

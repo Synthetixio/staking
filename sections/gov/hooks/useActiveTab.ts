@@ -19,7 +19,8 @@ export const useActiveTab = () => {
 		} else if (
 			router.isReady &&
 			Array.isArray(router.query.panel) &&
-			activeTab !== router.query.panel[0]
+			activeTab !== router.query.panel[0] &&
+			router.query.panel[0] !== SPACE_KEY.PROPOSAL
 		) {
 			setActiveTab(router.query.panel[0] as SPACE_KEY);
 		}
