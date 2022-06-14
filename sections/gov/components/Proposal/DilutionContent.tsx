@@ -100,7 +100,8 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ proposal, onBack }) =
 
 	const { signer } = Connector.useContainer();
 
-	const councilMembers = useCouncilMembers();
+	const councilMembersQuery = useCouncilMembers();
+	const councilMembers = councilMembersQuery.data;
 
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 

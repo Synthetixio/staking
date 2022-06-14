@@ -21,7 +21,8 @@ const CouncilBoard: React.FC = () => {
 	const { t } = useTranslation();
 	const { blockExplorerInstance } = Etherscan.useContainer();
 	const theme = useTheme();
-	const councilMembers = useCouncilMembers();
+	const councilMembersQuery = useCouncilMembers();
+	const councilMembers = councilMembersQuery.data;
 
 	return (
 		<StyledCard>
