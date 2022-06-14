@@ -4,16 +4,16 @@ import { ProposalInfoType } from 'store/gov';
 import StructuredTab from 'components/StructuredTab';
 import Results from './Results';
 import History from './History';
-import useSynthetixQueries, { Proposal } from '@synthetixio/queries';
+import useSynthetixQueries from '@synthetixio/queries';
 import { snapshotEndpoint, SPACE_KEY } from 'constants/snapshot';
 import { useRecoilValue } from 'recoil';
 import { walletAddressState } from 'store/wallet';
 
 type InfoProps = {
-	proposal: Proposal;
+	proposalId: string;
 };
 
-const Info: React.FC<InfoProps> = ({ proposal }) => {
+const Info: React.FC<InfoProps> = ({ proposalId }) => {
 	const { t } = useTranslation();
 
 	const walletAddress = useRecoilValue(walletAddressState);
@@ -21,7 +21,7 @@ const Info: React.FC<InfoProps> = ({ proposal }) => {
 	const proposalResults = useProposalQuery(
 		snapshotEndpoint,
 		SPACE_KEY.PROPOSAL,
-		proposal.id,
+		proposalId,
 		walletAddress
 	);
 	const [activeTab, setActiveTab] = useState(ProposalInfoType.RESULTS);
@@ -37,11 +37,11 @@ const Info: React.FC<InfoProps> = ({ proposal }) => {
 				title: t('gov.proposal.history.title', {
 					count: proposalResults.data?.voteList.length ?? undefined,
 				}),
-				tabChildren: <History proposalResults={proposalResults} hash={proposal.id} />,
+				tabChildren: <History proposalResults={proposalResults} hash={proposalId} />,
 				key: ProposalInfoType.HISTORY,
 			},
 		],
-		[proposalResults, proposal, t]
+		[proposalResults, proposalId, t]
 	);
 
 	return (
