@@ -61,7 +61,7 @@ import { snapshotEndpoint, SPACE_KEY } from 'constants/snapshot';
 import { useMemo } from 'react';
 
 type DilutionContentProps = {
-	proposal: Proposal;
+	proposal?: Proposal;
 	onBack: Function;
 };
 
@@ -94,8 +94,9 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ proposal, onBack }) =
 	const proposalQuery = useProposalQuery(
 		snapshotEndpoint,
 		SPACE_KEY.PROPOSAL,
-		proposal?.id ?? '',
-		walletAddress
+		proposal?.id ?? null,
+		walletAddress,
+		{ enabled: Boolean(proposal?.id) }
 	);
 
 	const { signer } = Connector.useContainer();
@@ -129,9 +130,9 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ proposal, onBack }) =
 	const txn = useContractTxn(
 		contract,
 		hasDiluted ? 'invalidateDilution' : 'dilute',
-		[proposal.id, memberVotedFor || ethers.constants.AddressZero],
+		[proposal?.id, memberVotedFor || ethers.constants.AddressZero],
 		{},
-		{ enabled: Boolean(proposal.id && memberVotedFor && signer && isAppReady) }
+		{ enabled: Boolean(proposal?.id && memberVotedFor && signer && isAppReady) }
 	);
 
 	const link =

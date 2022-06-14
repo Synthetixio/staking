@@ -54,15 +54,12 @@ const Index: React.FC<ProposalProps> = ({ onBack }) => {
 	const hash = router && router.query.panel ? router.query?.panel[1] : undefined;
 	const proposalQuery = useGetProposal(hash);
 	const proposal = proposalQuery.data;
-	if (!proposal) return <></>;
 	return (
 		<Grid>
+			<Col>{hash && <DilutionContent proposal={proposal} onBack={onBack} />}</Col>
 			<Col>
-				<DilutionContent {...{ proposal }} onBack={onBack} />
-			</Col>
-			<Col>
-				<Details {...{ proposal }} />
-				<Info {...{ proposal }} />
+				<Details proposal={proposal} />
+				{hash && <Info proposalId={hash} />}
 			</Col>
 		</Grid>
 	);

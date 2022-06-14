@@ -16,7 +16,7 @@ import { useTranslation } from 'react-i18next';
 import { SPACE_KEY } from 'constants/snapshot';
 
 type DetailsProps = {
-	proposal: Proposal;
+	proposal?: Proposal;
 };
 
 const Details: React.FC<DetailsProps> = ({ proposal }) => {
@@ -28,47 +28,59 @@ const Details: React.FC<DetailsProps> = ({ proposal }) => {
 		<InfoCard>
 			<Row>
 				<Title>{t('gov.proposal.info.author')}</Title>
-				<Value>
-					<Blockie src={makeBlockie(proposal.author)} />
-					{truncateAddress(proposal.author)}
-					<ExternalLink
-						href={
-							blockExplorerInstance ? blockExplorerInstance.addressLink(proposal.author) : undefined
-						}
-					>
-						<Svg style={{ marginLeft: 4 }} color={theme.colors.blue} src={Link} />
-					</ExternalLink>
-				</Value>
+				{proposal && (
+					<Value>
+						<Blockie src={makeBlockie(proposal.author)} />
+						{truncateAddress(proposal.author)}{' '}
+						<ExternalLink
+							href={
+								blockExplorerInstance
+									? blockExplorerInstance.addressLink(proposal.author)
+									: undefined
+							}
+						>
+							<Svg style={{ marginLeft: 4 }} color={theme.colors.blue} src={Link} />
+						</ExternalLink>
+					</Value>
+				)}
 			</Row>
 			<Row>
 				<Title>{t('gov.proposal.info.time')}</Title>
-				<Value>
-					{formatTxTimestamp(proposal.start * 1000)} - {formatTxTimestamp(proposal.end * 1000)}
-				</Value>
+				{proposal && (
+					<Value>
+						{formatTxTimestamp(proposal.start * 1000)} - {formatTxTimestamp(proposal.end * 1000)}
+					</Value>
+				)}
 			</Row>
 			<Row>
 				<Title>{t('gov.proposal.info.proposalLink')}</Title>
-				<Value>
-					{truncateAddress(proposal.id)}
-					<ExternalLink
-						href={`https://snapshot.org/#/${SPACE_KEY.PROPOSAL}/proposal/${proposal.id}`}
-					>
-						<Svg style={{ marginLeft: 4 }} color={theme.colors.blue} src={Link} />
-					</ExternalLink>
-				</Value>
+				{proposal && (
+					<Value>
+						{truncateAddress(proposal.id)}
+						<ExternalLink
+							href={`https://snapshot.org/#/${SPACE_KEY.PROPOSAL}/proposal/${proposal.id}`}
+						>
+							<Svg style={{ marginLeft: 4 }} color={theme.colors.blue} src={Link} />
+						</ExternalLink>
+					</Value>
+				)}
 			</Row>
 			<Row>
 				<Title>{t('gov.proposal.info.snapshot')}</Title>
-				<Value>
-					{proposal.snapshot}
-					<ExternalLink
-						href={
-							blockExplorerInstance ? blockExplorerInstance.blockLink(proposal.snapshot) : undefined
-						}
-					>
-						<Svg style={{ marginLeft: 4 }} color={theme.colors.blue} src={Link} />
-					</ExternalLink>
-				</Value>
+				{proposal && (
+					<Value>
+						{proposal.snapshot}
+						<ExternalLink
+							href={
+								blockExplorerInstance
+									? blockExplorerInstance.blockLink(proposal.snapshot)
+									: undefined
+							}
+						>
+							<Svg style={{ marginLeft: 4 }} color={theme.colors.blue} src={Link} />
+						</ExternalLink>
+					</Value>
+				)}
 			</Row>
 		</InfoCard>
 	);
