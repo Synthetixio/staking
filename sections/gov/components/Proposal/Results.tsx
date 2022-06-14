@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { Svg } from 'react-optimized-image';
 import Spinner from 'assets/svg/app/loader.svg';
@@ -11,38 +11,10 @@ import { ProposalResults } from '@synthetixio/queries';
 
 type ResultsProps = {
 	proposalResults: UseQueryResult<ProposalResults, unknown>;
-	hash: string;
 };
 
-const Results: React.FC<ResultsProps> = ({ proposalResults, hash }) => {
-	const { activeTab } = useActiveTab();
-	const [choices, setChoices] = useState<any>(null);
-
-	useEffect(() => {
-		if (activeTab === SPACE_KEY.COUNCIL) {
-			const loadDiscordNames = async () => {
-				const currentElectionMembers = CouncilNominations as any;
-				const mappedProfiles = [] as any;
-
-				if (currentElectionMembers[hash]) {
-					currentElectionMembers[hash].forEach((member: any) => {
-						mappedProfiles.push({
-							address: member.address,
-							name: member.discord,
-						});
-					});
-				}
-				setChoices(mappedProfiles);
-			};
-			loadDiscordNames();
-		}
-	}, [activeTab, hash]);
-
-	useEffect(() => {
-		if (proposalResults && activeTab !== SPACE_KEY.COUNCIL) {
-			setChoices(proposalResults?.data?.choices);
-		}
-	}, [proposalResults, activeTab]);
+const Results: React.FC<ResultsProps> = ({ proposalResults }) => {
+	const choices = proposalResults?.data?.choices;
 
 	if (proposalResults.isSuccess && proposalResults.data && choices && choices.length > 0) {
 		const { data } = proposalResults;
