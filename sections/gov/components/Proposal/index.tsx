@@ -49,7 +49,6 @@ const useGetProposal = (hash?: string) => {
 	);
 };
 const Index: React.FC<ProposalProps> = ({ onBack }) => {
-	//
 	const router = useRouter();
 
 	const hash = router && router.query.panel ? router.query?.panel[1] : undefined;
