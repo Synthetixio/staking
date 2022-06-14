@@ -1,16 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Card, DataRow, Subtitle } from '../common';
-import DateSelect from 'components/DateSelect';
 import { useTranslation } from 'react-i18next';
 import { Input } from 'components/Input/Input';
 
 type TimingProps = {
-	setStartDate: Function;
-	setEndDate: Function;
 	setBlock: Function;
-	startDate: Date;
-	endDate: Date;
 	block: number | null;
 };
 
