@@ -40,14 +40,13 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 	const [body, setBody] = useState<string>('');
 	const [choices, setChoices] = useState<string[]>([]);
 	const [result, setResult] = useState<AxiosResponse<any> | null>(null);
-	const { activeTab } = useActiveTab();
 	const [signTransactionState, setSignTransactionState] = useState<Transaction>(
 		Transaction.PRESUBMIT
 	);
 	const [signModalOpen, setSignModalOpen] = useState<boolean>(false);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 	const [signError, setSignError] = useState<string | null>(null);
-	const space = useSnapshotSpaceQuery(snapshotEndpoint, activeTab);
+	const space = useSnapshotSpaceQuery(snapshotEndpoint, SPACE_KEY.PROPOSAL);
 	const [ipfsHash, setIpfsHash] = useState<string | null>(null);
 
 	const isL2 = useRecoilValue(isL2State);
@@ -94,7 +93,7 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 
 			setIpfsHash(ipfsHash);
 
-			if (activeTab === SPACE_KEY.PROPOSAL && isL2) {
+			if (isL2) {
 				txn.mutate();
 				setTxModalOpen(true);
 				setSignTransactionState(Transaction.PRESUBMIT);
@@ -111,7 +110,7 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 	const handleCreate = async () => {
 		try {
 			if (space.data && block) {
-				const isFixed = activeTab === SPACE_KEY.PROPOSAL;
+				const isFixed = true
 				setSignError(null);
 
 				setSignModalOpen(true);
@@ -233,7 +232,7 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 								<ModalItemTitle>{t('modals.confirm-signature.propose.title')}</ModalItemTitle>
 								<ModalItemText>
 									{t('modals.confirm-signature.propose.space', {
-										space: activeTab,
+										space: SPACE_KEY.PROPOSAL,
 									})}
 								</ModalItemText>
 							</ModalItem>

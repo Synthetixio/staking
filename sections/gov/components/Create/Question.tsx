@@ -29,9 +29,9 @@ import {
 import { useTranslation } from 'react-i18next';
 import { Transaction } from 'constants/network';
 import { truncateAddress } from 'utils/formatters/string';
-import useActiveTab from 'sections/gov/hooks/useActiveTab';
 import TxState from 'sections/gov/components/TxState';
 import Etherscan from 'containers/BlockExplorer';
+import { SPACE_KEY } from 'constants/snapshot';
 
 type QuestionProps = {
 	onBack: Function;
@@ -64,7 +64,6 @@ const Question: React.FC<QuestionProps> = ({
 	hash,
 }) => {
 	const { t } = useTranslation();
-	const activeTab = useActiveTab();
 	const { blockExplorerInstance } = Etherscan.useContainer();
 	const link =
 		blockExplorerInstance != null && txHash != null
@@ -110,7 +109,7 @@ const Question: React.FC<QuestionProps> = ({
 						<GreyHeader>{t('gov.actions.propose.signing')}</GreyHeader>
 						<WhiteSubheader>
 							{t('gov.actions.propose.space', {
-								space: activeTab,
+								space: SPACE_KEY.PROPOSAL,
 							})}
 						</WhiteSubheader>
 					</FlexDivColCentered>

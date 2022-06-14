@@ -40,7 +40,6 @@ import {
 import { truncateAddress } from 'utils/formatters/string';
 import { useTranslation } from 'react-i18next';
 import useSignMessage, { SignatureType } from 'mutations/gov/useSignMessage';
-import useActiveTab from 'sections/gov/hooks/useActiveTab';
 import { useRecoilValue } from 'recoil';
 import Button from 'components/Button';
 
@@ -97,7 +96,7 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ proposal, onBack }) =
 
 	const proposalQuery = useProposalQuery(
 		snapshotEndpoint,
-		activeTab,
+		SPACE_KEY.PROPOSAL,
 		proposal?.id ?? '',
 		walletAddress
 	);
@@ -212,7 +211,7 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ proposal, onBack }) =
 			setTxModalOpen(true);
 			setSignTransactionState(Transaction.WAITING);
 			voteMutate.mutate({
-				spaceKey: activeTab,
+				spaceKey: SPACE_KEY.PROPOSAL,
 				type: SignatureType.VOTE,
 				payload: { proposal: proposal.id, choice: selected + 1, metadata: {} },
 			});

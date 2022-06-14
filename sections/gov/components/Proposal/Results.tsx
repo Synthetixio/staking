@@ -2,21 +2,12 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Svg } from 'react-optimized-image';
 import Spinner from 'assets/svg/app/loader.svg';
-import useActiveTab from '../../hooks/useActiveTab';
 import { FlexDivRowCentered } from 'styles/common';
 import { formatNumber, formatPercent } from 'utils/formatters/number';
 import ProgressBar from 'components/ProgressBar';
 import { MaxHeightColumn, StyledTooltip } from 'sections/gov/components/common';
-import { SPACE_KEY } from 'constants/snapshot';
-import CouncilNominations from 'constants/nominations.json';
 import { UseQueryResult } from 'react-query';
 import { ProposalResults } from '@synthetixio/queries';
-import {
-	numOfGrantMembers,
-	numOfAmbassadorMembers,
-	numOfTreasuryMembers,
-	numOfCouncilMembers,
-} from '@synthetixio/queries/build/node/src/queries/gov/constants';
 
 type ResultsProps = {
 	proposalResults: UseQueryResult<ProposalResults, unknown>;
@@ -60,33 +51,18 @@ const Results: React.FC<ResultsProps> = ({ proposalResults, hash }) => {
 
 		const mappedResults = data.totalBalances
 			.map((balance, key) => {
-				if (activeTab === SPACE_KEY.COUNCIL) {
-					return {
-						label: choices[key].name ? choices[key].name : choices[key].address,
-						balance: balance,
-					};
-				} else {
-					return {
-						label: choices[key],
-						balance: balance,
-					};
-				}
+				return {
+					label: choices[key],
+					balance: balance,
+				};
 			})
-			.sort((a: any, b: any) => b.balance - a.balance);
+			.sort((a, b) => b.balance - a.balance);
 
 		return (
 			<MaxHeightColumn>
-				{mappedResults.map((choice: any, i: number) => {
+				{mappedResults.map((choice) => {
 					return (
-						<Row
-							key={i}
-							highlight={
-								(activeTab === SPACE_KEY.COUNCIL && i < numOfCouncilMembers) ||
-								(activeTab === SPACE_KEY.GRANTS && i < numOfGrantMembers) ||
-								(activeTab === SPACE_KEY.AMBASSADOR && i < numOfAmbassadorMembers) ||
-								(activeTab === SPACE_KEY.TREASURY && i < numOfTreasuryMembers)
-							}
-						>
+						<Row key={choice.label} highlight={false}>
 							<StyledTooltip
 								arrow={true}
 								placement="bottom"

@@ -4,9 +4,8 @@ import { ProposalInfoType } from 'store/gov';
 import StructuredTab from 'components/StructuredTab';
 import Results from './Results';
 import History from './History';
-import useActiveTab from 'sections/gov/hooks/useActiveTab';
 import useSynthetixQueries, { Proposal } from '@synthetixio/queries';
-import { snapshotEndpoint } from 'constants/snapshot';
+import { snapshotEndpoint, SPACE_KEY } from 'constants/snapshot';
 import { useRecoilValue } from 'recoil';
 import { walletAddressState } from 'store/wallet';
 
@@ -16,11 +15,15 @@ type InfoProps = {
 
 const Info: React.FC<InfoProps> = ({ proposal }) => {
 	const { t } = useTranslation();
-	const { activeTab: govTab } = useActiveTab();
 
 	const walletAddress = useRecoilValue(walletAddressState);
 	const { useProposalQuery } = useSynthetixQueries();
-	const proposalResults = useProposalQuery(snapshotEndpoint, govTab, proposal.id, walletAddress);
+	const proposalResults = useProposalQuery(
+		snapshotEndpoint,
+		SPACE_KEY.PROPOSAL,
+		proposal.id,
+		walletAddress
+	);
 	const [activeTab, setActiveTab] = useState(ProposalInfoType.RESULTS);
 
 	const tabData = useMemo(
