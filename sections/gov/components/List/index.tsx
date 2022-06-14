@@ -44,8 +44,8 @@ const ResponsiveTable: React.FC<ResponsiveTableProps> = ({ mobile, spaceKey }) =
 	const { t } = useTranslation();
 	const router = useRouter();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	const setProposal = useSetRecoilState(proposalState);
 	const setPanelType = useSetRecoilState(panelState);
+
 	const isL2 = useRecoilValue(isL2State);
 
 	const { useProposalsQuery } = useSynthetixQueries();
@@ -128,9 +128,7 @@ const ResponsiveTable: React.FC<ResponsiveTableProps> = ({ mobile, spaceKey }) =
 				isLoading={proposals.isLoading}
 				showPagination={true}
 				onTableRowClick={(row: Row<ProposalType>) => {
-					setProposal(row.original);
 					router.push(ROUTES.Gov.Proposal(spaceKey, row.original.id));
-					setPanelType(PanelType.PROPOSAL);
 				}}
 				minHeight={false}
 			/>
