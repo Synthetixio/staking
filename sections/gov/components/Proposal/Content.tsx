@@ -36,7 +36,7 @@ import {
 import { truncateAddress } from 'utils/formatters/string';
 import { useTranslation } from 'react-i18next';
 import useSignMessage, { SignatureType } from 'mutations/gov/useSignMessage';
-import useActiveTab from 'sections/gov/hooks/useActiveTab';
+
 import { useRecoilValue } from 'recoil';
 import Button from 'components/Button';
 
@@ -58,7 +58,6 @@ type ContentProps = {
 const Content: React.FC<ContentProps> = ({ proposal, onBack }) => {
 	const { t } = useTranslation();
 
-	const { activeTab } = useActiveTab();
 	const [selected, setSelected] = useState<number | null>(null);
 
 	const [error, setError] = useState<string | null>(null);
@@ -113,7 +112,7 @@ const Content: React.FC<ContentProps> = ({ proposal, onBack }) => {
 			setSignModalOpen(true);
 			setTransactionState(Transaction.WAITING);
 			voteMutate.mutate({
-				spaceKey: activeTab,
+				spaceKey: SPACE_KEY.PROPOSAL,
 				type: SignatureType.VOTE,
 				payload: { proposal: hash, choice: selected + 1, metadata: {} },
 			});
@@ -208,51 +207,21 @@ const Content: React.FC<ContentProps> = ({ proposal, onBack }) => {
 					<Divider />
 					{isWalletConnected && !expired(proposal?.end) && !pending(proposal?.start) && choices && (
 						<OptionsContainer>
-							{activeTab === SPACE_KEY.COUNCIL ? (
-								<>
-									{choices.map((choice: any, i: number) => {
-										return (
-											<StyledTooltip
-												key={i}
-												arrow={true}
-												placement="bottom"
-												content={choice.name ? choice.name : choice.address}
-												hideOnClick={false}
-											>
-												<Option
-													selected={selected === choice.key}
-													onClick={() => setSelected(choice.key)}
-													variant="text"
-												>
-													<p>{choice.name ? choice.name : choice.address}</p>
-												</Option>
-											</StyledTooltip>
-										);
-									})}
-								</>
-							) : (
-								<>
-									{choices.map((choice: any, i: number) => {
-										return (
-											<StyledTooltip
-												key={i}
-												arrow={true}
-												placement="bottom"
-												content={choice}
-												hideOnClick={false}
-											>
-												<Option
-													selected={selected === i}
-													onClick={() => setSelected(i)}
-													variant="text"
-												>
-													<p>{choice}</p>
-												</Option>
-											</StyledTooltip>
-										);
-									})}
-								</>
-							)}
+							{choices.map((choice, i) => {
+								return (
+									<StyledTooltip
+										key={i}
+										arrow={true}
+										placement="bottom"
+										content={choice}
+										hideOnClick={false}
+									>
+										<Option selected={selected === i} onClick={() => setSelected(i)} variant="text">
+											<p>{choice}</p>
+										</Option>
+									</StyledTooltip>
+								);
+							})}
 						</OptionsContainer>
 					)}
 				</InputContainer>

@@ -13,7 +13,7 @@ import { Blockie } from '../common';
 import { Card } from 'sections/gov/components/common';
 import { Proposal } from '@synthetixio/queries';
 import { useTranslation } from 'react-i18next';
-import useActiveTab from 'sections/gov/hooks/useActiveTab';
+import { SPACE_KEY } from 'constants/snapshot';
 
 type DetailsProps = {
 	proposal: Proposal;
@@ -23,7 +23,6 @@ const Details: React.FC<DetailsProps> = ({ proposal }) => {
 	const { t } = useTranslation();
 	const theme = useTheme();
 	const { blockExplorerInstance } = Etherscan.useContainer();
-	const activeTab = useActiveTab();
 
 	return (
 		<InfoCard>
@@ -51,7 +50,9 @@ const Details: React.FC<DetailsProps> = ({ proposal }) => {
 				<Title>{t('gov.proposal.info.proposalLink')}</Title>
 				<Value>
 					{truncateAddress(proposal.id)}
-					<ExternalLink href={`https://snapshot.org/#/${activeTab}/proposal/${proposal.id}`}>
+					<ExternalLink
+						href={`https://snapshot.org/#/${SPACE_KEY.PROPOSAL}/proposal/${proposal.id}`}
+					>
 						<Svg style={{ marginLeft: 4 }} color={theme.colors.blue} src={Link} />
 					</ExternalLink>
 				</Value>

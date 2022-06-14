@@ -1,11 +1,6 @@
 import React from 'react';
 import { Grid, Col } from 'sections/gov/components/common';
-import Content from './Content';
 import DilutionContent from './DilutionContent';
-import useActiveTab from 'sections/gov/hooks/useActiveTab';
-import { SPACE_KEY } from 'constants/snapshot';
-import { proposalState } from 'store/gov';
-import { useRecoilValue } from 'recoil';
 import Details from './Details';
 import Info from './Info';
 import { useQuery } from 'react-query';
@@ -54,7 +49,7 @@ const useGetProposal = (hash?: string) => {
 	);
 };
 const Index: React.FC<ProposalProps> = ({ onBack }) => {
-	const { activeTab } = useActiveTab();
+	//
 	const router = useRouter();
 
 	const hash = router && router.query.panel ? router.query?.panel[1] : undefined;
@@ -64,11 +59,7 @@ const Index: React.FC<ProposalProps> = ({ onBack }) => {
 	return (
 		<Grid>
 			<Col>
-				{activeTab === SPACE_KEY.PROPOSAL ? (
-					<DilutionContent {...{ proposal }} onBack={onBack} />
-				) : (
-					<Content {...{ proposal }} onBack={onBack} />
-				)}
+				<DilutionContent {...{ proposal }} onBack={onBack} />
 			</Col>
 			<Col>
 				<Details {...{ proposal }} />
