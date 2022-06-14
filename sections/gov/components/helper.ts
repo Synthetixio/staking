@@ -2,8 +2,6 @@ import Wei, { wei } from '@synthetixio/wei';
 import snapshot from '@snapshot-labs/snapshot.js';
 import { getCurrentTimestampSeconds } from 'utils/formatters/date';
 import { ethers } from 'ethers';
-import { SPACE_KEY } from 'constants/snapshot';
-import { NextRouter } from 'next/router';
 
 export const quadraticWeighting = (value: Wei) => {
 	const scaledValue = value.mul(1e5);
@@ -82,11 +80,4 @@ export const pending = (start?: number) => {
 	} else {
 		return false;
 	}
-};
-
-export const setDefaultTab = (router: NextRouter) => {
-	return router.query?.panel &&
-		Object.values(SPACE_KEY).includes(router.query.panel[0] as SPACE_KEY)
-		? (router.query.panel[0] as SPACE_KEY)
-		: SPACE_KEY.COUNCIL;
 };
