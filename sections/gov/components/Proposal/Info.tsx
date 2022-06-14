@@ -30,7 +30,7 @@ const Info: React.FC<InfoProps> = ({ proposal }) => {
 		() => [
 			{
 				title: t('gov.proposal.votes.title'),
-				tabChildren: <Results proposalResults={proposalResults} hash={proposal.id} />,
+				tabChildren: <Results proposalResults={proposalResults} />,
 				key: ProposalInfoType.RESULTS,
 			},
 			{
