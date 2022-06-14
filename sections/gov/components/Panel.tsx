@@ -1,10 +1,9 @@
-import React, { useMemo, useEffect, useCallback } from 'react';
+import React, { useMemo } from 'react';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
-import { useRecoilState } from 'recoil';
 
-import { snapshotEndpoint, SPACE_KEY } from 'constants/snapshot';
-import { panelState, PanelType, proposalState } from 'store/gov';
+import { SPACE_KEY } from 'constants/snapshot';
+import { PanelType } from 'store/gov';
 
 import { Grid, Col } from 'sections/gov/components/common';
 
@@ -14,15 +13,13 @@ import Proposal from './Proposal';
 import List from './List';
 import Create from './Create';
 import ROUTES from 'constants/routes';
-
-type PanelProps = {
-	currentTab: string;
-};
+import useGetPanelType from '../hooks/useGetPanelType';
 
 const Panel = () => {
 	const { t } = useTranslation();
 	const router = useRouter();
-	
+	const panelType = useGetPanelType();
+
 	const proposalsData = useMemo(
 		() => ({
 			title: t('gov.panel.proposals.title'),

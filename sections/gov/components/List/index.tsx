@@ -5,14 +5,13 @@ import { isL2State, isWalletConnectedState } from 'store/wallet';
 import { FlexDivCol } from 'styles/common';
 import media from 'styles/media';
 import Button from 'components/Button';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import useSynthetixQueries, { Proposal as ProposalType } from '@synthetixio/queries';
 import Table from 'components/Table';
 import { useTranslation } from 'react-i18next';
 import Countdown from 'react-countdown';
 import { useRouter } from 'next/router';
 import ROUTES from 'constants/routes';
-import { panelState, PanelType, proposalState } from 'store/gov';
 import { DURATION_SEPARATOR } from 'constants/date';
 import { getCurrentTimestampSeconds } from 'utils/formatters/date';
 import { DesktopOrTabletView, MobileOnlyView } from 'components/Media';
@@ -44,7 +43,6 @@ const ResponsiveTable: React.FC<ResponsiveTableProps> = ({ mobile, spaceKey }) =
 	const { t } = useTranslation();
 	const router = useRouter();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	const setPanelType = useSetRecoilState(panelState);
 
 	const isL2 = useRecoilValue(isL2State);
 
@@ -137,7 +135,6 @@ const ResponsiveTable: React.FC<ResponsiveTableProps> = ({ mobile, spaceKey }) =
 					isL2 ? (
 						<AbsoluteContainer
 							onClick={() => {
-								setPanelType(PanelType.CREATE);
 								router.push(ROUTES.Gov.Create(spaceKey));
 							}}
 						>
@@ -153,7 +150,6 @@ const ResponsiveTable: React.FC<ResponsiveTableProps> = ({ mobile, spaceKey }) =
 				) : (
 					<AbsoluteContainer
 						onClick={() => {
-							setPanelType(PanelType.CREATE);
 							router.push(ROUTES.Gov.Create(spaceKey));
 						}}
 					>
