@@ -122,7 +122,7 @@ const ResponsiveTable: React.FC<ResponsiveTableProps> = ({ mobile, spaceKey }) =
 				palette="primary"
 				columns={columns}
 				data={proposals.data ?? []}
-				maxRows={3}
+				maxRows={10}
 				isLoading={proposals.isLoading}
 				showPagination={true}
 				onTableRowClick={(row: Row<ProposalType>) => {
