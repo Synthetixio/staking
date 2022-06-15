@@ -48,12 +48,14 @@ const useGetProposal = (hash?: string) => {
 		}
 	);
 };
+
 const Index: React.FC<ProposalProps> = ({ onBack }) => {
 	const router = useRouter();
 
 	const hash = router && router.query.panel ? router.query?.panel[1] : undefined;
 	const proposalQuery = useGetProposal(hash);
 	const proposal = proposalQuery.data;
+
 	return (
 		<Grid>
 			<Col>{hash && <DilutionContent proposal={proposal} onBack={onBack} />}</Col>
@@ -64,4 +66,5 @@ const Index: React.FC<ProposalProps> = ({ onBack }) => {
 		</Grid>
 	);
 };
+
 export default Index;
