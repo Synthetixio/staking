@@ -39,7 +39,7 @@ export async function tx(makeTx: Function, options?: TxOptions): Promise<void> {
 		try {
 			await contract.callStatic[method](...fullArgs);
 			throw e;
-		} catch (e) {
+		} catch (e: any) {
 			const errorMessage =
 				e.data && typeof e.data === 'string'
 					? hexToASCII(e.data.substr(147).toString())
@@ -55,7 +55,7 @@ export async function tx(makeTx: Function, options?: TxOptions): Promise<void> {
 	try {
 		await wait();
 		options?.showSuccessNotification?.(hash);
-	} catch (e) {
+	} catch (e: any) {
 		console.log(e);
 		options?.showErrorNotification?.(e.message);
 		throw e;
