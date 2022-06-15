@@ -1,5 +1,5 @@
 import { useMemo, useEffect, FC, useCallback } from 'react';
-import styled, { useTheme } from 'styled-components';
+import styled from 'styled-components';
 import { Trans, useTranslation } from 'react-i18next';
 import { Svg } from 'react-optimized-image';
 import { useRouter } from 'next/router';
@@ -55,9 +55,7 @@ const BurnTab: FC = () => {
 		[t]
 	);
 
-	return (
-		<StructuredTab singleTab={true} boxPadding={20} tabData={tabData} setPanelType={() => null} />
-	);
+	return <StructuredTab singleTab={true} boxPadding={20} tabData={tabData} />;
 };
 
 const BurnTabInner: FC = () => {

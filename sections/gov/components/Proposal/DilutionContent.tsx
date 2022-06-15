@@ -40,7 +40,6 @@ import {
 import { truncateAddress } from 'utils/formatters/string';
 import { useTranslation } from 'react-i18next';
 import useSignMessage, { SignatureType } from 'mutations/gov/useSignMessage';
-import useActiveTab from 'sections/gov/hooks/useActiveTab';
 import { useRecoilValue } from 'recoil';
 import Button from 'components/Button';
 
@@ -58,19 +57,17 @@ import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import TxState from 'sections/gov/components/TxState';
 import { expired, pending } from '../helper';
 import useSynthetixQueries, { Proposal } from '@synthetixio/queries';
-import { snapshotEndpoint } from 'constants/snapshot';
+import { snapshotEndpoint, SPACE_KEY } from 'constants/snapshot';
 import { useMemo } from 'react';
 
 type DilutionContentProps = {
-	proposal: Proposal;
+	proposal?: Proposal;
 	onBack: Function;
 };
-const ovmProvider = new ethers.providers.JsonRpcProvider('https://mainnet.optimism.io');
 
 const DilutionContent: React.FC<DilutionContentProps> = ({ proposal, onBack }) => {
 	const { t } = useTranslation();
-
-	const activeTab = useActiveTab();
+	const { L2DefaultProvider } = Connector.useContainer();
 	const [selected, setSelected] = useState<number | null>(null);
 
 	const [signError, setSignError] = useState<string | null>(null);
@@ -83,7 +80,6 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ proposal, onBack }) =
 
 	const [hasDiluted, setHasDiluted] = useState<boolean>(false);
 	const [canDilute, setCanDilute] = useState<boolean>(false);
-	const [isCouncilMember, setIsCouncilMember] = useState<boolean>(false);
 	const [memberVotedFor, setMemberVotedFor] = useState<string | null>(null);
 	const [targetDilutionAddress, setTargetDilutionAddress] = useState<string | null>(null);
 
@@ -97,14 +93,16 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ proposal, onBack }) =
 
 	const proposalQuery = useProposalQuery(
 		snapshotEndpoint,
-		activeTab,
-		proposal?.id ?? '',
-		walletAddress
+		SPACE_KEY.PROPOSAL,
+		proposal?.id ?? null,
+		walletAddress,
+		{ enabled: Boolean(proposal?.id) }
 	);
 
 	const { signer } = Connector.useContainer();
 
-	const councilMembers = useCouncilMembers();
+	const councilMembersQuery = useCouncilMembers();
+	const councilMembers = councilMembersQuery.data;
 
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 
@@ -125,14 +123,17 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ proposal, onBack }) =
 		() =>
 			isL2 && signer
 				? new ethers.Contract(CouncilDilution.address, CouncilDilution.abi, signer)
-				: new ethers.Contract(CouncilDilution.address, CouncilDilution.abi, ovmProvider),
-		[signer, isL2]
+				: new ethers.Contract(CouncilDilution.address, CouncilDilution.abi, L2DefaultProvider),
+		[signer, isL2, L2DefaultProvider]
 	);
 
-	const txn = useContractTxn(contract, hasDiluted ? 'invalidateDilution' : 'dilute', [
-		proposal.id,
-		memberVotedFor || ethers.constants.AddressZero,
-	]);
+	const txn = useContractTxn(
+		contract,
+		hasDiluted ? 'invalidateDilution' : 'dilute',
+		[proposal?.id, memberVotedFor || ethers.constants.AddressZero],
+		{},
+		{ enabled: Boolean(proposal?.id && memberVotedFor && signer && isAppReady) }
+	);
 
 	const link =
 		blockExplorerInstance != null && txn.hash != null
@@ -141,18 +142,18 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ proposal, onBack }) =
 
 	useEffect(() => {
 		(async () => {
-			const latestElectionHash = await contract.latestElectionHash();
-
-			setMemberVotedFor(await contract.electionMemberVotedFor(latestElectionHash, walletAddress));
+			if (walletAddress && signer) {
+				const latestElectionHash = await contract.latestElectionHash();
+				if (!latestElectionHash) return;
+				const result = await contract.electionMemberVotedFor(latestElectionHash, walletAddress);
+				setMemberVotedFor(result);
+			}
 		})();
-	}, [contract, walletAddress]);
-
-	useEffect(() => {
-		if (isAppReady && walletAddress && councilMembers) {
-			const councilMemberAddresses = councilMembers.map((member) => member.address);
-			setIsCouncilMember(councilMemberAddresses.includes(ethers.utils.getAddress(walletAddress)));
-		}
-	}, [isAppReady, walletAddress, councilMembers]);
+	}, [contract, walletAddress, signer]);
+	const councilMemberAddresses = councilMembers?.map((member) => member.address) ?? [];
+	const isCouncilMember = councilMemberAddresses.includes(
+		walletAddress ? ethers.utils.getAddress(walletAddress) : ''
+	);
 
 	useEffect(() => {
 		const getGasLimitEstimate = async () => {
@@ -171,7 +172,7 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ proposal, onBack }) =
 
 	useEffect(() => {
 		const hasUserDiluted = async () => {
-			if (isAppReady && proposal && !isCouncilMember) {
+			if (isAppReady && proposal && !isCouncilMember && walletAddress && signer) {
 				const hasDiluted = await contract.hasAddressDilutedForProposal(proposal.id, walletAddress);
 
 				setHasDiluted(hasDiluted);
@@ -182,7 +183,7 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ proposal, onBack }) =
 
 	useEffect(() => {
 		const checkCanDilute = async () => {
-			if (isAppReady && isL2 && proposal && !isCouncilMember) {
+			if (isAppReady && isL2 && proposal && !isCouncilMember && walletAddress && signer) {
 				const contract = new ethers.Contract(
 					CouncilDilution.address,
 					CouncilDilution.abi,
@@ -212,7 +213,7 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ proposal, onBack }) =
 			setTxModalOpen(true);
 			setSignTransactionState(Transaction.WAITING);
 			voteMutate.mutate({
-				spaceKey: activeTab,
+				spaceKey: SPACE_KEY.PROPOSAL,
 				type: SignatureType.VOTE,
 				payload: { proposal: proposal.id, choice: selected + 1, metadata: {} },
 			});

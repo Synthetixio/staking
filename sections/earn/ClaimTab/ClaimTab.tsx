@@ -69,7 +69,6 @@ import {
 } from '../common';
 import { MobileOnlyView } from 'components/Media';
 import useSynthetixQueries, { GasPrice } from '@synthetixio/queries';
-import { snapshotEndpoint } from 'constants/snapshot';
 import ClaimOrCloseFeeButton from './ClaimAndCloseFeeButton';
 
 type ClaimTabProps = {
@@ -83,8 +82,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 
 	const walletAddress = useRecoilValue(walletAddressState);
 	const delegateWallet = useRecoilValue(delegateWalletState);
-	const { useHasVotedForElectionsQuery, useSynthetixTxn, useGetFeePoolDataQuery } =
-		useSynthetixQueries();
+	const { useSynthetixTxn, useGetFeePoolDataQuery } = useSynthetixQueries();
 
 	const { isBelowCRatio } = useUserStakingData(delegateWallet?.address ?? walletAddress);
 	const { blockExplorerInstance } = Etherscan.useContainer();
@@ -100,7 +98,6 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 	const userStakingData = useUserStakingData(walletAddress);
 	const isL2 = useRecoilValue(isL2State);
 	const feePoolDataQuery = useGetFeePoolDataQuery(0, { enabled: isL2 });
-	const hasVotedForElections = useHasVotedForElectionsQuery(snapshotEndpoint, walletAddress);
 
 	const claimCall: [string, string[]] = delegateWallet
 		? ['claimOnBehalf', [delegateWallet.address]]
@@ -329,11 +326,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 					{error && <ErrorMessage>{error}</ErrorMessage>}
 					{txn.isError && <ErrorMessage>{txn.errorMessage}</ErrorMessage>}
 					<ClaimOrCloseFeeButton
-						hasVoted={
-							isL2
-								? true // If it's L2 we dont require voting.
-								: Boolean(hasVotedForElections.data && hasVotedForElections.data.hasVoted)
-						}
+						hasVoted={true} // For the first election with the new election module we dont require voting
 						canClaim={delegateWallet ? delegateWallet.canClaim : canClaim}
 						hasClaimed={userStakingData.hasClaimed}
 						totalRewards={totalRewards}
