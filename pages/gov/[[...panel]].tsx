@@ -1,13 +1,19 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Head from 'next/head';
 import { useTranslation, Trans } from 'react-i18next';
 import styled from 'styled-components';
 import { ExternalLink, LineSpacer } from 'styles/common';
+import UIContainer from 'containers/UI';
 import MainContent from 'sections/gov';
 import { EXTERNAL_LINKS } from 'constants/links';
 
 const Gov: React.FC = () => {
 	const { t } = useTranslation();
+	const { setTitle } = UIContainer.useContainer();
+
+	useEffect(() => {
+		setTitle('gov');
+	}, [setTitle]);
 
 	return (
 		<>
