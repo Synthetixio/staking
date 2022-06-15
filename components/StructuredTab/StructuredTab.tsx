@@ -1,4 +1,4 @@
-import { Dispatch, FC, ReactNode, SetStateAction, useState, useEffect } from 'react';
+import { Dispatch, FC, ReactNode, SetStateAction } from 'react';
 import styled from 'styled-components';
 
 import Select from 'components/Select';
@@ -21,10 +21,10 @@ type StructuredTabProps = {
 	tabData: TabInfo[];
 	boxHeight?: number;
 	boxPadding: number;
-	setPanelType?: Dispatch<SetStateAction<any>>;
 	tabHeight?: number;
 	inverseTabColor?: boolean;
-	currentPanel?: string;
+	setActiveTab?: Dispatch<SetStateAction<any>>;
+	activeTab?: string;
 	singleTab?: boolean;
 };
 
@@ -32,20 +32,12 @@ const StructuredTab: FC<StructuredTabProps> = ({
 	tabData,
 	boxHeight,
 	boxPadding,
-	setPanelType,
 	tabHeight,
 	inverseTabColor,
-	currentPanel,
+	activeTab,
+	setActiveTab,
 	singleTab,
 }) => {
-	const [activeTab, setActiveTab] = useState<string>(currentPanel ? currentPanel : tabData[0].key);
-
-	useEffect(() => {
-		if (currentPanel) {
-			setActiveTab(currentPanel);
-		}
-	}, [currentPanel]);
-
 	const desktop = () => (
 		<TabList noOfTabs={tabData.length}>
 			{tabData.map(({ title, description, icon, key, color, disabled = false }, index) => (
@@ -59,9 +51,8 @@ const StructuredTab: FC<StructuredTabProps> = ({
 					active={activeTab === key}
 					isDisabled={disabled}
 					onClick={() => {
-						setActiveTab(key);
-						if (setPanelType != null) {
-							setPanelType(key);
+						if (setActiveTab != null) {
+							setActiveTab(key);
 						}
 					}}
 				>
@@ -83,9 +74,8 @@ const StructuredTab: FC<StructuredTabProps> = ({
 			value={tabData.find(({ key }) => key === activeTab)}
 			onChange={(option: any) => {
 				if (option) {
-					setActiveTab(option.key);
-					if (setPanelType != null) {
-						setPanelType(option.key);
+					if (setActiveTab != null) {
+						setActiveTab(option.key);
 					}
 				}
 			}}

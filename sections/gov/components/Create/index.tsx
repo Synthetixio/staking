@@ -7,7 +7,6 @@ import Timing from './Timing';
 import Question from './Question';
 import Connector from 'containers/Connector';
 import useSignMessage, { SignatureType } from 'mutations/gov/useSignMessage';
-import useActiveTab from 'sections/gov/hooks/useActiveTab';
 import { Transaction } from 'constants/network';
 import { snapshotEndpoint, SPACE_KEY } from 'constants/snapshot';
 import { ethers } from 'ethers';
@@ -33,57 +32,43 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 	const { provider } = Connector.useContainer();
 	const { useSnapshotSpaceQuery, useContractTxn } = useSynthetixQueries();
 
-	const [startDate, setStartDate] = useState<Date>(new Date());
-	const [endDate, setEndDate] = useState<Date>(new Date(startDate.getTime() + 86400000));
 	const [block, setBlock] = useState<number | null>(null);
 	const [name, setName] = useState<string>('');
 	const [body, setBody] = useState<string>('');
 	const [choices, setChoices] = useState<string[]>([]);
 	const [result, setResult] = useState<AxiosResponse<any> | null>(null);
-	const activeTab = useActiveTab();
 	const [signTransactionState, setSignTransactionState] = useState<Transaction>(
 		Transaction.PRESUBMIT
 	);
 	const [signModalOpen, setSignModalOpen] = useState<boolean>(false);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 	const [signError, setSignError] = useState<string | null>(null);
-	const space = useSnapshotSpaceQuery(snapshotEndpoint, activeTab);
+	const space = useSnapshotSpaceQuery(snapshotEndpoint, SPACE_KEY.PROPOSAL);
 	const [ipfsHash, setIpfsHash] = useState<string | null>(null);
 
 	const isL2 = useRecoilValue(isL2State);
 	const { signer } = Connector.useContainer();
 
 	const contract = useMemo(
-		() => new ethers.Contract(CouncilDilution.address, CouncilDilution.abi, signer as any),
+		() => new ethers.Contract(CouncilDilution.address, CouncilDilution.abi, signer ?? undefined),
 		[signer]
 	);
 
 	const txn = useContractTxn(
 		contract,
 		'logProposal',
-		[ipfsHash || ''],
+		[ipfsHash],
 		{},
-		{ enabled: true, gasLimitBuffer: 0.5 }
+		{ enabled: Boolean(ipfsHash), gasLimitBuffer: 0.5 }
 	);
 
-	const sanitiseTimestamp = (timestamp: number) => {
-		return Math.round(timestamp / 1e3);
-	};
-
 	const validSubmission = useMemo(() => {
-		if (
-			name.length > 0 &&
-			body.length > 0 &&
-			block &&
-			sanitiseTimestamp(endDate.getTime()) > 0 &&
-			sanitiseTimestamp(startDate.getTime()) > 0 &&
-			choices.length > 0
-		) {
+		if (name.length > 0 && body.length > 0 && block && choices.length > 0) {
 			return true;
 		} else {
 			return false;
 		}
-	}, [name, body, block, endDate, startDate, choices]);
+	}, [name, body, block, choices]);
 
 	const createProposal = useSignMessage({
 		onSuccess: async (response) => {
@@ -94,7 +79,7 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 
 			setIpfsHash(ipfsHash);
 
-			if (activeTab === SPACE_KEY.PROPOSAL && isL2) {
+			if (isL2) {
 				txn.mutate();
 				setTxModalOpen(true);
 				setSignTransactionState(Transaction.PRESUBMIT);
@@ -111,26 +96,17 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 	const handleCreate = async () => {
 		try {
 			if (space.data && block) {
-				const isFixed = activeTab === SPACE_KEY.PROPOSAL;
 				setSignError(null);
 
 				setSignModalOpen(true);
 				setSignTransactionState(Transaction.WAITING);
 
-				let proposalStartDate;
-				let proposalEndDate;
-
-				if (isFixed) {
-					const proposalPeriod = await contract.proposalPeriod();
-					proposalStartDate = Math.round(new Date().getTime() / 1000);
-					proposalEndDate = proposalStartDate + proposalPeriod.toNumber();
-				} else {
-					proposalStartDate = sanitiseTimestamp(startDate.getTime());
-					proposalEndDate = sanitiseTimestamp(endDate.getTime());
-				}
+				const proposalPeriod = await contract.proposalPeriod();
+				const proposalStartDate = Math.round(new Date().getTime() / 1000);
+				const proposalEndDate = proposalStartDate + proposalPeriod.toNumber();
 
 				createProposal.mutate({
-					spaceKey: activeTab,
+					spaceKey: SPACE_KEY.PROPOSAL,
 					type: SignatureType.PROPOSAL,
 					payload: {
 						name,
@@ -192,14 +168,7 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 				</Col>
 				<Col>
 					<Options choices={choices} setChoices={setChoices} />
-					<Timing
-						startDate={startDate}
-						endDate={endDate}
-						setStartDate={setStartDate}
-						setEndDate={setEndDate}
-						block={block}
-						setBlock={setBlock}
-					/>
+					<Timing block={block} setBlock={setBlock} />
 				</Col>
 			</Grid>
 			{txModalOpen && (
@@ -233,7 +202,7 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 								<ModalItemTitle>{t('modals.confirm-signature.propose.title')}</ModalItemTitle>
 								<ModalItemText>
 									{t('modals.confirm-signature.propose.space', {
-										space: activeTab,
+										space: SPACE_KEY.PROPOSAL,
 									})}
 								</ModalItemText>
 							</ModalItem>
