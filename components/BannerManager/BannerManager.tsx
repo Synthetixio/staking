@@ -10,28 +10,22 @@ import { formatShortDateWithTime } from 'utils/formatters/date';
 import { wei } from '@synthetixio/wei';
 import { isL2State, walletAddressState } from 'store/wallet';
 import useSynthetixQueries from '@synthetixio/queries';
-import { snapshotEndpoint } from 'constants/snapshot';
 import { EXTERNAL_LINKS } from 'constants/links';
 import Connector from 'containers/Connector';
-import { isAnyElectionInNomination } from 'utils/governance';
+import { isAnyElectionInNomination, isAnyElectionInVoting } from 'utils/governance';
 
 const BannerManager: FC = () => {
-	const {
-		subgraph,
-		useGetLiquidationDataQuery,
-		useGetDebtDataQuery,
-		useHasVotedForElectionsQuery,
-		useGetElectionsPeriodStatus,
-	} = useSynthetixQueries();
+	const { subgraph, useGetLiquidationDataQuery, useGetDebtDataQuery, useGetElectionsPeriodStatus } =
+		useSynthetixQueries();
 	const { L2DefaultProvider } = Connector.useContainer();
 	const periodStatusQuery = useGetElectionsPeriodStatus(L2DefaultProvider);
 
 	const electionIsInNomination = isAnyElectionInNomination(periodStatusQuery.data);
+	const electionIsInVoting = isAnyElectionInVoting(periodStatusQuery.data);
 	const walletAddress = useRecoilValue(walletAddressState);
 
 	const liquidationData = useGetLiquidationDataQuery(walletAddress);
 	const debtData = useGetDebtDataQuery(walletAddress);
-	const hasVotedForElectionsQuery = useHasVotedForElectionsQuery(snapshotEndpoint, walletAddress);
 
 	const feeClaims = subgraph.useGetFeesClaimeds(
 		{ first: 1, where: { account: walletAddress?.toLowerCase() } },
@@ -72,6 +66,19 @@ const BannerManager: FC = () => {
 			/>
 		);
 	}
+	if (electionIsInVoting) {
+		return (
+			<Banner
+				type={BannerType.WARNING}
+				message={
+					<Trans
+						i18nKey={'user-menu.banner.election-in-voting'}
+						components={[<StyledExternalLink href={EXTERNAL_LINKS.Synthetix.Governance} />]}
+					/>
+				}
+			/>
+		);
+	}
 	if (electionIsInNomination) {
 		return (
 			<Banner
@@ -85,19 +92,7 @@ const BannerManager: FC = () => {
 			/>
 		);
 	}
-	if (!isL2 && hasVotedForElectionsQuery.data && !hasVotedForElectionsQuery.data.hasVoted) {
-		return (
-			<Banner
-				type={BannerType.WARNING}
-				message={
-					<Trans
-						i18nKey={'user-menu.banner.election-info'}
-						components={[<StyledExternalLink href="https://staking.synthetix.io/gov" />]}
-					/>
-				}
-			/>
-		);
-	}
+
 	if (!isL2 && hasClaimHistory) {
 		return (
 			<Banner
