@@ -13,28 +13,7 @@ import Connector from 'containers/Connector';
 import styled from 'styled-components';
 import { FlexDivJustifyCenter } from 'styles/common';
 import Loader from 'components/Loader';
-import { useQuery } from 'react-query';
-
-/**
- * Ideally the Issuer should always let us burn when we're burning an amount that wont get the c-ration back to target
- * But since it doesn't support this, we need to check that we actually can burn
- */
-const useGetCanBurn = (walletAddress: string | null) => {
-	const { synthetixjs } = Connector.useContainer();
-	const Issuer = synthetixjs?.contracts.Issuer;
-	return useQuery(
-		['canBurn', Issuer?.address, walletAddress],
-		() => {
-			if (!Issuer) {
-				throw Error('Expected Issuer contract to be defined');
-			}
-			return Issuer.canBurnSynths(walletAddress);
-		},
-		{
-			enabled: Boolean(Issuer && walletAddress),
-		}
-	);
-};
+import useGetCanBurn from 'hooks/useGetCanBurn';
 
 const SelfLiquidateTab = () => {
 	const walletAddress = useRecoilValue(walletAddressState);
@@ -49,6 +28,10 @@ const SelfLiquidateTab = () => {
 		isLoading,
 	} = useStakingCalculations();
 	const { connectWallet } = Connector.useContainer();
+	/**
+	 * Ideally the Issuer should always let us burn when we're burning an amount that wont get the c-ration back to target
+	 * But since it doesn't support this, we need to check that we actually can burn
+	 */
 	const canBurnQuery = useGetCanBurn(walletAddress);
 	const { useSynthsBalancesQuery, useGetLiquidationDataQuery } = useSynthetixQueries();
 	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
