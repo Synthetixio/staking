@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
 import { AppProps } from 'next/app';
 import Head from 'next/head';
 import { RecoilRoot } from 'recoil';
@@ -35,6 +35,20 @@ const queryClient = new QueryClient({
 
 const InnerApp: FC<AppProps> = ({ Component, pageProps }) => {
 	const { provider, signer, network, L1DefaultProvider } = Connector.useContainer();
+	useEffect(() => {
+		if ('serviceWorker' in navigator) {
+			window.addEventListener('load', function () {
+				navigator.serviceWorker.register('/sw.js').then(
+					function (registration) {
+						console.log('Service Worker registration successful with scope: ', registration.scope);
+					},
+					function (err) {
+						console.log('Service Worker registration failed: ', err);
+					}
+				);
+			});
+		}
+	}, []);
 
 	return (
 		<>
