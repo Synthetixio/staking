@@ -42,9 +42,10 @@ const SelfLiquidationInfo = () => {
 	});
 	const selfLiquidationPenalty = liqData.data?.selfLiquidationPenalty || wei(0);
 
+	const collateralUSDValue = SNXRate.gt(0) ? collateral.mul(SNXRate) : undefined;
 	const liquidationAmount = useGetSnxAmountToBeLiquidatedUsd(
 		debtBalance,
-		SNXRate.gt(0) ? collateral.div(SNXRate) : undefined,
+		collateralUSDValue,
 		selfLiquidationPenalty,
 		liqData.data?.liquidationPenalty,
 		buttonDisplaying === 'SELF_LIQUIDATION_BUTTON'
