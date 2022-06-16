@@ -28,6 +28,7 @@ const SelfLiquidationTabContent: React.FC<{
 	isDelegateWallet: boolean;
 	SNXRate: Wei;
 	amountToSelfLiquidateUsd?: Wei;
+	canBurn: Boolean;
 }> = ({
 	isDelegateWallet,
 	percentageCurrentCRatio,
@@ -39,6 +40,7 @@ const SelfLiquidationTabContent: React.FC<{
 	sUSDBalance,
 	SNXRate,
 	amountToSelfLiquidateUsd,
+	canBurn,
 }) => {
 	const { t } = useTranslation();
 
@@ -120,7 +122,7 @@ const SelfLiquidationTabContent: React.FC<{
 			<Link href={EXTERNAL_LINKS.Synthetix.SIP148Liquidations}>
 				{t('staking.self-liquidation.info.liquidation-link-text')}
 			</Link>
-			{sUSDBalance.gt(0) ? (
+			{sUSDBalance.gt(0) && canBurn ? (
 				<>
 					<InfoText data-testid="liq-balance-not-zero">
 						{t('staking.self-liquidation.info.balance-not-zero')}
@@ -145,10 +147,7 @@ const SelfLiquidationTabContent: React.FC<{
 						})}
 					</InfoText>
 					<ButtonWrapper>
-						<SelfLiquidateTransactionButton
-							disabled={sUSDBalance.gt(0)}
-							walletAddress={walletAddress}
-						/>
+						<SelfLiquidateTransactionButton walletAddress={walletAddress} />
 					</ButtonWrapper>
 				</>
 			)}
