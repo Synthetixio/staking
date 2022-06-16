@@ -9,8 +9,29 @@ describe('selfLiquidationCalculations', () => {
 				percentageTargetCRatio: wei(3),
 				sUSDBalance: wei(100),
 				debtBalance: wei(150),
+				canBurn: true,
 			});
 			expect(result).toBe('BURN_MAX_BUTTON');
+		});
+		test('burn max button not displaying since can burn is undefined', () => {
+			const result = getButtonDisplaying({
+				percentageCurrentCRatio: wei(2),
+				percentageTargetCRatio: wei(3),
+				sUSDBalance: wei(100),
+				debtBalance: wei(150),
+				canBurn: undefined,
+			});
+			expect(result).toBe(undefined);
+		});
+		test('burn max button not displaying since can burn is false', () => {
+			const result = getButtonDisplaying({
+				percentageCurrentCRatio: wei(2),
+				percentageTargetCRatio: wei(3),
+				sUSDBalance: wei(100),
+				debtBalance: wei(150),
+				canBurn: false,
+			});
+			expect(result).toBe(undefined);
 		});
 		test('self liquidation button', () => {
 			const result = getButtonDisplaying({
