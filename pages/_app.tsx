@@ -23,6 +23,7 @@ import '@reach/dialog/styles.css';
 import 'tippy.js/dist/tippy.css';
 import '../i18n';
 import Connector from 'containers/Connector';
+import useServiceWorker from 'hooks/useServiceWorker';
 
 const queryClient = new QueryClient({
 	defaultOptions: {
@@ -35,20 +36,7 @@ const queryClient = new QueryClient({
 
 const InnerApp: FC<AppProps> = ({ Component, pageProps }) => {
 	const { provider, signer, network, L1DefaultProvider } = Connector.useContainer();
-	useEffect(() => {
-		if ('serviceWorker' in navigator) {
-			window.addEventListener('load', function () {
-				navigator.serviceWorker.register('/sw.js').then(
-					function (registration) {
-						console.log('Service Worker registration successful with scope: ', registration.scope);
-					},
-					function (err) {
-						console.log('Service Worker registration failed: ', err);
-					}
-				);
-			});
-		}
-	}, []);
+	useServiceWorker();
 
 	return (
 		<>

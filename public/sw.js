@@ -1,7 +1,6 @@
 /* eslint-disable no-restricted-globals */
 try {
-	const PRECACHE = 'precache-fonts';
-	const RUNTIME = 'runtime';
+	const PRECACHE = 'precache-v1';
 
 	// A list of local fonts we always want to cache.
 	const FONTS_CACHE = [
@@ -14,19 +13,29 @@ try {
 		'/fonts/GT-America-Condensed-Bold.woff2',
 	];
 
+	const IMAGES_CACHE = [
+		'/images/browserWallet.png',
+		'/images/browserWallet.svg',
+		'/images/favicon.ico',
+		'/images/staking-facebook.jpg',
+		'/images/staking-twitter.jpg',
+		'/images/synthetix-logo.svg',
+		'/images/toros-white.png',
+	];
+
 	// The install handler takes care of precaching the resources we always need.
 	self.addEventListener('install', (event) => {
 		event.waitUntil(
 			caches
 				.open(PRECACHE)
-				.then((cache) => cache.addAll(FONTS_CACHE))
+				.then((cache) => cache.addAll([...FONTS_CACHE, ...IMAGES_CACHE]))
 				.then(self.skipWaiting())
 		);
 	});
 
 	// The activate handler takes care of cleaning up old caches.
 	self.addEventListener('activate', (event) => {
-		const currentCaches = [PRECACHE, RUNTIME];
+		const currentCaches = [PRECACHE];
 		event.waitUntil(
 			caches
 				.keys()
@@ -50,18 +59,13 @@ try {
 		if (event.request.url.startsWith(self.location.origin)) {
 			event.respondWith(
 				caches.match(event.request).then((cachedResponse) => {
+					// Cache first (if exists)
 					if (cachedResponse) {
 						return cachedResponse;
 					}
 
-					return caches.open(RUNTIME).then((cache) => {
-						return fetch(event.request, {}).then((response) => {
-							// Put a copy of the response in the runtime cache.
-							return cache.put(event.request, response.clone()).then(() => {
-								return response;
-							});
-						});
-					});
+					// Fall back to network
+					return fetch(event.request).then((fetchResponse) => fetchResponse);
 				})
 			);
 		}
