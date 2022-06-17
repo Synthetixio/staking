@@ -1,6 +1,7 @@
 import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
 import { CryptoCurrency, Synths } from 'constants/currency';
+import useGetCanBurn from 'hooks/useGetCanBurn';
 import useGetSnxAmountToBeLiquidatedUsd from 'hooks/useGetSnxAmountToBeLiquidatedUsd';
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -26,6 +27,7 @@ const SelfLiquidationInfo = () => {
 	const { useSynthsBalancesQuery, useGetLiquidationDataQuery } = useSynthetixQueries();
 
 	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
+	const canBurnQuery = useGetCanBurn(walletAddress);
 
 	const sUSDBalance = synthsBalancesQuery?.data?.balancesMap[Synths.sUSD]?.balance ?? wei(0);
 	const buttonDisplaying = getButtonDisplaying({
@@ -33,15 +35,17 @@ const SelfLiquidationInfo = () => {
 		debtBalance,
 		percentageCurrentCRatio,
 		percentageTargetCRatio,
+		canBurn: canBurnQuery.data,
 	});
 	const liqData = useGetLiquidationDataQuery(walletAddress, {
 		enabled: buttonDisplaying === 'SELF_LIQUIDATION_BUTTON',
 	});
 	const selfLiquidationPenalty = liqData.data?.selfLiquidationPenalty || wei(0);
 
+	const collateralUSDValue = SNXRate.gt(0) ? collateral.mul(SNXRate) : undefined;
 	const liquidationAmount = useGetSnxAmountToBeLiquidatedUsd(
 		debtBalance,
-		SNXRate.gt(0) ? collateral.div(SNXRate) : undefined,
+		collateralUSDValue,
 		selfLiquidationPenalty,
 		liqData.data?.liquidationPenalty,
 		buttonDisplaying === 'SELF_LIQUIDATION_BUTTON'

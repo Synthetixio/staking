@@ -5,11 +5,13 @@ export const getButtonDisplaying = ({
 	percentageCurrentCRatio,
 	sUSDBalance,
 	debtBalance,
+	canBurn,
 }: {
 	percentageTargetCRatio: Wei;
 	percentageCurrentCRatio: Wei;
 	sUSDBalance: Wei;
 	debtBalance: Wei;
+	canBurn?: Boolean;
 }) => {
 	const notStaking = percentageCurrentCRatio.eq(0);
 	if (notStaking) return undefined;
@@ -18,7 +20,7 @@ export const getButtonDisplaying = ({
 	const selfLiquidateButtonDisplaying = sUSDBalance.eq(0);
 
 	if (selfLiquidateButtonDisplaying) return 'SELF_LIQUIDATION_BUTTON';
-	const burnMaxButtonIsDisplaying = sUSDBalance.gt(0) && sUSDBalance.lt(debtBalance);
+	const burnMaxButtonIsDisplaying = sUSDBalance.gt(0) && sUSDBalance.lt(debtBalance) && canBurn;
 	if (burnMaxButtonIsDisplaying) return 'BURN_MAX_BUTTON';
 	return undefined;
 };
