@@ -120,7 +120,7 @@ const DebtPoolTable: FC<DebtPoolTableProps> = ({ synths, isLoading, isLoaded }) 
 			data={synths && synths.length > 0 ? synths : []}
 			isLoading={isLoading}
 			noResultsMessage={
-				isLoaded && synths.length === 0 ? (
+				isLoaded && synths && synths?.length === 0 ? (
 					<TableNoResults>
 						<TableNoResultsTitle>{t('common.table.no-data')}</TableNoResultsTitle>
 					</TableNoResults>
