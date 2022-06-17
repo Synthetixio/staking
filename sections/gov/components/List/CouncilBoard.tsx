@@ -2,7 +2,7 @@ import React from 'react';
 import styled, { useTheme } from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import makeBlockie from 'ethereum-blockies-base64';
-import Img, { Svg } from 'react-optimized-image';
+import { Svg } from 'react-optimized-image';
 
 import { ExternalLink, FlexDivRowCentered } from 'styles/common';
 
@@ -11,7 +11,6 @@ import Spinner from 'assets/svg/app/loader.svg';
 import Etherscan from 'containers/BlockExplorer';
 import { truncateAddress } from 'utils/formatters/string';
 
-import SpartanCouncilNFT from 'assets/gifs/SC-NFT.gif';
 import Link from 'assets/svg/app/link.svg';
 import useCouncilMembers from '../../hooks/useCouncilMembers';
 import { Blockie, StyledTooltip } from '../common';
@@ -26,7 +25,7 @@ const CouncilBoard: React.FC = () => {
 
 	return (
 		<StyledCard>
-			<Img width={'100%'} src={SpartanCouncilNFT} />
+			<img width={'100%'} src="/gifs/SC-NFT.gif" alt="sc-nft" />
 			<Title>{t('gov.council.title')}</Title>
 
 			{councilMembers ? (

@@ -21,6 +21,7 @@ try {
 		'/images/staking-twitter.jpg',
 		'/images/synthetix-logo.svg',
 		'/images/toros-white.png',
+		'/gifs/SC-NFT.gif',
 	];
 
 	// The install handler takes care of precaching the resources we always need.
