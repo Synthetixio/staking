@@ -66,6 +66,8 @@ jobs:
         if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'
         run: yarn lint:sarif
 
+      - run: yarn pretty:check
+
       - name: Unit
         # run only on master/dev branch and pull requests
         if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'
