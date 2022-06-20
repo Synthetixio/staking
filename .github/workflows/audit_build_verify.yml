@@ -61,6 +61,12 @@ jobs:
       - name: Install dependencies
         run: yarn install --frozen-lockfile --prefer-offline
 
+      - name: Ensure BrowsersList database is up to date
+        run: |
+          yarn upgrade-browsers
+          # Fail on yarn.lock changes (means browserlist was updated)
+          git diff --color --exit-code yarn.lock
+
       - name: Lint
         # run only on master/dev branch and pull requests
         if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'
