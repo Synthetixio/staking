@@ -143,8 +143,17 @@
 	},
 	"husky": {
 		"hooks": {
-			"pre-commit": "yarn lint"
+			"pre-commit": "lint-staged"
 		}
+	},
+	"lint-staged": {
+		"**/*.{js,jsx,ts,tsx}": [
+			"prettier --check",
+			"eslint"
+		],
+		"**/*.{json,yml,yaml,md}": [
+			"prettier --check"
+		]
 	},
 	"jest": {
 		"roots": [
