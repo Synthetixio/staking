@@ -1,4 +1,4 @@
-import { ChangeEvent, FC } from 'react';
+import type { ChangeEvent, FC } from 'react';
 import styled from 'styled-components';
 import { FixedNumber } from 'ethers';
 

@@ -1,5 +1,5 @@
+import type { FC } from 'react';
 import { createQueryContext, SynthetixQueryContextProvider } from '@synthetixio/queries';
-import { FC } from 'react';
 import { ThemeProvider } from 'styled-components';
 import theme from 'styles/theme';
 import { QueryClient, QueryClientProvider } from 'react-query';

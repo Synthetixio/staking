@@ -1,6 +1,32 @@
 module.exports = function (api) {
 	api.cache.using(() => process.env.NODE_ENV);
 
+	if (api.env('test')) {
+		return {
+			presets: [
+				[
+					'@babel/preset-react',
+					{
+						runtime: 'automatic',
+					},
+				],
+				[
+					'@babel/preset-env',
+					{
+						modules: 'commonjs',
+						targets: { node: 'current' },
+						ignoreBrowserslistConfig: true,
+					},
+				],
+				'@babel/preset-typescript',
+			],
+			plugins: [
+				['styled-components', { ssr: true, displayName: true, preprocess: false }],
+				['react-optimized-image/plugin'],
+			],
+		};
+	}
+
 	return {
 		presets: [
 			[
