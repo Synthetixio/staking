@@ -1,5 +1,3 @@
-module.exports = () => null;
-
 module.exports = {
 	process() {
 		return {
