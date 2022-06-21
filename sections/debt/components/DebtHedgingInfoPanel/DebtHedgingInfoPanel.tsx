@@ -39,7 +39,7 @@ const DebtHedgingInfoPanel: React.FC<DebtHedgingInfoPanelProps> = ({ hidden }) =
 				<InfoPanelBody>
 					<Trans
 						i18nKey="debt.actions.manage.info-panel.body"
-						components={[<StyledLink href={EXTERNAL_LINKS.dHedge.snxDebtMirrorDocs} />]}
+						components={[<StyledLink href={EXTERNAL_LINKS.dHedge.blogPost} />]}
 					/>
 					<br />
 					<TextContainer>
