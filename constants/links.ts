@@ -43,9 +43,13 @@ export const EXTERNAL_LINKS = {
 		dSNXPool: 'https://info.uniswap.org/#/pools/0x9957c4795ab663622db54fc48fda874da59150ff',
 	},
 	Toros: {
-		dSNXPool: 'https://toros.finance/derivative/dsnx',
+		dSNXPool: 'https://toros.finance/pool/0x59babc14dd73761e38e5bda171b2298dc14da92d',
 	},
 	dHedge: {
 		snxDebtMirrorDocs: 'https://docs.dhedge.org/dhedge-original-pools/v2-snx-debt-mirror',
+		dSNXPool: 'https://app.dhedge.org/pool/0x65bb99e80a863e0e27ee6d09c794ed8c0be47186',
+	},
+	multichain: {
+		app: 'https://app.multichain.org/',
 	},
 };
