@@ -23,7 +23,6 @@ import '@reach/dialog/styles.css';
 import 'tippy.js/dist/tippy.css';
 import '../i18n';
 import Connector from 'containers/Connector';
-import useServiceWorker from 'hooks/useServiceWorker';
 
 const queryClient = new QueryClient({
 	defaultOptions: {
@@ -36,7 +35,6 @@ const queryClient = new QueryClient({
 
 const InnerApp: FC<AppProps> = ({ Component, pageProps }) => {
 	const { provider, signer, network, L1DefaultProvider } = Connector.useContainer();
-	useServiceWorker();
 
 	return (
 		<>
