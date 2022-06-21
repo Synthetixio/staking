@@ -47,5 +47,9 @@ export const EXTERNAL_LINKS = {
 	},
 	dHedge: {
 		snxDebtMirrorDocs: 'https://docs.dhedge.org/dhedge-original-pools/v2-snx-debt-mirror',
+		dSNXPool: 'https://app.dhedge.org/pool/0x65bb99e80a863e0e27ee6d09c794ed8c0be47186',
+	},
+	multichain: {
+		app: 'https://app.multichain.org/',
 	},
 };

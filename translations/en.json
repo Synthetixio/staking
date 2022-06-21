@@ -478,6 +478,15 @@
 						"debtPool-label": "DEBT POOL",
 						"hedged-balance": "Your hedged balance:"
 					}
+				},
+				"l1-deprecation": {
+					"headline": "L1 dSNX hedging is being sunset in favour of L2 hedging",
+					"remove-liquidity": "As a result we’re removing liquidity from the dSNX:sUSD Uniswap pool.",
+					"holding-text": "If you are still holding L1 dSNX, you can access swap liquidity via using Polygon.",
+					"step-1": "Step 1: Go to ",
+					"step-2": "Step 2: Bridge dSNX from Ethereum Mainnet to Polygon",
+					"step-3": "Step 3: Manage your position using the dSNX Pool",
+					"link-text": "here"
 				}
 			},
 			"hedge": {
