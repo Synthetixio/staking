@@ -139,7 +139,8 @@
 		"webpack-bundle-analyzer": "^4.5.0"
 	},
 	"resolutions": {
-		"sharp": "0.29.3"
+		"sharp": "0.29.3",
+		"shell-quote": ">=1.7.3"
 	},
 	"husky": {
 		"hooks": {
