@@ -42,7 +42,6 @@ import useSignMessage, { SignatureType } from 'mutations/gov/useSignMessage';
 import Button from 'components/Button';
 
 import { isWalletConnectedState, walletAddressState } from 'store/wallet';
-import { useCouncilMembers } from 'sections/gov/hooks/useCouncilMembers';
 
 import { Transaction } from 'constants/network';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
@@ -50,6 +49,7 @@ import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import TxState from 'sections/gov/components/TxState';
 import { expired, pending } from '../helper';
 import { snapshotEndpoint, SPACE_KEY } from 'constants/snapshot';
+import Connector from '../../../../containers/Connector';
 
 type DilutionContentProps = {
 	proposal?: Proposal;
@@ -58,6 +58,8 @@ type DilutionContentProps = {
 
 const DilutionContent: React.FC<DilutionContentProps> = ({ proposal, onBack }) => {
 	const { t } = useTranslation();
+	const { L2DefaultProvider } = Connector.useContainer();
+
 	const [selected, setSelected] = useState<number | null>(null);
 
 	const [signError, setSignError] = useState<string | null>(null);
@@ -70,7 +72,7 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ proposal, onBack }) =
 
 	const walletAddress = useRecoilValue(walletAddressState);
 
-	const { useProposalQuery } = useSynthetixQueries();
+	const { useProposalQuery, useGetSpartanCouncil } = useSynthetixQueries();
 
 	const proposalQuery = useProposalQuery(
 		snapshotEndpoint,
@@ -80,7 +82,7 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ proposal, onBack }) =
 		{ enabled: Boolean(proposal?.id) }
 	);
 
-	const councilMembersQuery = useCouncilMembers();
+	const councilMembersQuery = useGetSpartanCouncil(L2DefaultProvider);
 	const councilMembers = councilMembersQuery.data;
 
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
