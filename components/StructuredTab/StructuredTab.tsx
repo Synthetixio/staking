@@ -38,6 +38,8 @@ const StructuredTab: FC<StructuredTabProps> = ({
 	setActiveTab,
 	singleTab,
 }) => {
+	const activeTabOrFirstTab = activeTab ? activeTab : tabData[0].key;
+
 	const desktop = () => (
 		<TabList noOfTabs={tabData.length}>
 			{tabData.map(({ title, description, icon, key, color, disabled = false }, index) => (
@@ -48,7 +50,7 @@ const StructuredTab: FC<StructuredTabProps> = ({
 					color={color}
 					key={`${key}-${index}-button`}
 					name={title}
-					active={activeTab === key}
+					active={activeTabOrFirstTab === key}
 					isDisabled={disabled}
 					onClick={() => {
 						if (setActiveTab != null) {
@@ -71,7 +73,7 @@ const StructuredTab: FC<StructuredTabProps> = ({
 			inputId={'tabs'}
 			formatOptionLabel={(option) => option.title}
 			options={tabData}
-			value={tabData.find(({ key }) => key === activeTab)}
+			value={tabData.find(({ key }) => key === activeTabOrFirstTab)}
 			onChange={(option: any) => {
 				if (option) {
 					if (setActiveTab != null) {
@@ -82,7 +84,6 @@ const StructuredTab: FC<StructuredTabProps> = ({
 			variant="outline"
 		/>
 	);
-
 	return (
 		<div>
 			<DesktopOnlyView>{desktop()}</DesktopOnlyView>
@@ -93,7 +94,7 @@ const StructuredTab: FC<StructuredTabProps> = ({
 					height={boxHeight}
 					key={`${key}-${index}-panel`}
 					name={title}
-					active={activeTab === key}
+					active={activeTabOrFirstTab === key}
 				>
 					{tabChildren}
 				</TabPanel>

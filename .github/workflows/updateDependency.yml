@@ -1,11 +1,6 @@
 name: Update dependency
 
-on:
-  workflow_dispatch:
-    inputs:
-      monorepo_version:
-        description: 'New Monorepo Version (ex. 2.50.0-alpha) (leave empty to "patch")'
-        required: false
+on: workflow_dispatch
 
 jobs:
   update_version:
@@ -45,10 +40,11 @@ jobs:
         run: yarn install --frozen-lockfile --prefer-offline
 
       - name: Update all @synthetixio dependencies
-        run: "yarn run upgrade-synthetix"
+        run: 'yarn run upgrade-synthetix'
 
       - name: Commit changes
         run: |
+          export CONTRACT_VERSION="$(jq -r '.dependencies."@synthetixio/contracts-interface"' < package.json)"
           git config --global user.email "team@synthetix.io" && git config --global user.name "Synthetix Team"
-          git commit -am 'contracts-interface@${{ github.event.inputs.monorepo_version }}'
+          git commit -am "contracts-interface@$CONTRACT_VERSION"
           git push origin dev

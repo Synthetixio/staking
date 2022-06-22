@@ -13,6 +13,7 @@ import Connector from 'containers/Connector';
 import styled from 'styled-components';
 import { FlexDivJustifyCenter } from 'styles/common';
 import Loader from 'components/Loader';
+import useGetCanBurn from 'hooks/useGetCanBurn';
 
 const SelfLiquidateTab = () => {
 	const walletAddress = useRecoilValue(walletAddressState);
@@ -27,6 +28,11 @@ const SelfLiquidateTab = () => {
 		isLoading,
 	} = useStakingCalculations();
 	const { connectWallet } = Connector.useContainer();
+	/**
+	 * Ideally the Issuer should always let us burn when we're burning an amount that wont get the c-ration back to target
+	 * But since it doesn't support this, we need to check that we actually can burn
+	 */
+	const canBurnQuery = useGetCanBurn(walletAddress);
 	const { useSynthsBalancesQuery, useGetLiquidationDataQuery } = useSynthetixQueries();
 	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
 	const sUSDBalance = synthsBalancesQuery?.data?.balancesMap[Synths.sUSD]?.balance ?? wei(0);
@@ -56,7 +62,12 @@ const SelfLiquidateTab = () => {
 			</ConnectWalletButtonWrapper>
 		);
 	}
-	if (!liquidationDataQuery.data || synthsBalancesQuery.isLoading || isLoading) {
+	if (
+		canBurnQuery.isLoading ||
+		!liquidationDataQuery.data ||
+		synthsBalancesQuery.isLoading ||
+		isLoading
+	) {
 		return (
 			<FlexDivJustifyCenter>
 				<Loader inline />
@@ -76,6 +87,7 @@ const SelfLiquidateTab = () => {
 				walletAddress={walletAddress}
 				isDelegateWallet={isDelegateWallet}
 				SNXRate={SNXRate}
+				canBurn={Boolean(canBurnQuery.data)}
 				amountToSelfLiquidateUsd={
 					liquidationAmountsToFixCollateralQuery.data?.amountToSelfLiquidateUsd
 				}

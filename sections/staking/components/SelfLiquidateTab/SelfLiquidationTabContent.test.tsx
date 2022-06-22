@@ -81,7 +81,7 @@ describe('SelfLiquidationTabContent', () => {
 		const text = result.getByTestId('liq-loader');
 		expect(text).toBeInTheDocument();
 	});
-	test('sUSD balance not 0', () => {
+	test('sUSD balance not 0 and can burn', () => {
 		const result = render(
 			<ContextProvider>
 				<SelfLiquidationTabContent
@@ -95,6 +95,7 @@ describe('SelfLiquidationTabContent', () => {
 					amountToSelfLiquidateUsd={wei(120)}
 					SNXRate={wei(3)}
 					walletAddress={'123'}
+					canBurn={true}
 				/>
 			</ContextProvider>
 		);
@@ -102,6 +103,35 @@ describe('SelfLiquidationTabContent', () => {
 		const text1 = result.getByTestId('liq-burn-amount');
 		const text2 = result.getByTestId('liq-balance-not-zero');
 		const button = result.getByTestId('burn-max-btn');
+		const link = result.getByText('Read more about liquidations');
+		expect(link).toBeInTheDocument();
+		expect(text).toBeInTheDocument();
+		expect(text1).toBeInTheDocument();
+		expect(text2).toBeInTheDocument();
+		expect(button).toBeInTheDocument();
+	});
+	test('sUSD balance not 0 and can NOT burn', () => {
+		const result = render(
+			<ContextProvider>
+				<SelfLiquidationTabContent
+					isDelegateWallet={false}
+					percentageCurrentCRatio={wei(2.9)}
+					percentageTargetCRatio={wei(3)}
+					burnAmountToFixCRatio={wei(100)}
+					sUSDBalance={wei(1)}
+					selfLiquidationPenalty={wei(0.2)}
+					liquidationPenalty={wei(0.3)}
+					amountToSelfLiquidateUsd={wei(120)}
+					SNXRate={wei(3)}
+					walletAddress={'123'}
+					canBurn={false}
+				/>
+			</ContextProvider>
+		);
+		const text = result.getByTestId('liq-ratios');
+		const text1 = result.getByTestId('liq-burn-amount');
+		const text2 = result.getByTestId('self-liquidate-info');
+		const button = result.getByTestId('self-liquidate-btn');
 		const link = result.getByText('Read more about liquidations');
 		expect(link).toBeInTheDocument();
 		expect(text).toBeInTheDocument();
@@ -123,6 +153,7 @@ describe('SelfLiquidationTabContent', () => {
 					amountToSelfLiquidateUsd={wei(120)}
 					SNXRate={wei(3)}
 					walletAddress={'123'}
+					canBurn={true}
 				/>
 			</ContextProvider>
 		);
