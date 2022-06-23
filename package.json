@@ -12,14 +12,16 @@
 		"lint": "eslint . --ext ts,.tsx && tsc",
 		"lint:sarif": "node tests/lint.js . --ext ts,.tsx && tsc",
 		"lint:fix": "eslint . --ext ts,.tsx --fix",
-		"test:unit": "jest",
+		"test": "NODE_ENV=test jest",
+		"test:unit": "yarn test",
 		"test:synpress:run": "env-cmd -f .env.local synpress run",
 		"test:synpress:open": "env-cmd -f .env.local synpress open",
 		"test:e2e": "start-server-and-test 'yarn build && yarn start' http-get://localhost:3000 'synpress run'",
 		"test:e2e:ci": "synpress run --group smoke-tests --record --parallel",
 		"upgrade-synthetix": "yarn add @synthetixio/assets@latest @synthetixio/contracts-interface@latest @synthetixio/optimism-networks@latest @synthetixio/providers@latest @synthetixio/queries@latest @synthetixio/transaction-notifier@latest @synthetixio/wei@latest",
 		"upgrade-synthetix:dev": "yarn add @synthetixio/assets@latest @synthetixio/contracts-interface@dev @synthetixio/optimism-networks@dev @synthetixio/providers@dev @synthetixio/queries@dev @synthetixio/transaction-notifier@dev @synthetixio/wei@dev",
-		"download-debt-data": "node download-debt-data.js"
+		"download-debt-data": "node download-debt-data.js",
+		"upgrade-browsers": "yarn upgrade caniuse-lite"
 	},
 	"dependencies": {
 		"@artsy/fresnel": "^1.8.0",
@@ -40,7 +42,6 @@
 		"axios": "^0.21.1",
 		"bignumber.js": "^9.0.0",
 		"bnc-onboard": "^1.36.0",
-		"caniuse-lite": "^1.0.30001196",
 		"color": "^3.1.3",
 		"csvtojson": "^2.0.10",
 		"date-fns": "^2.15.0",
@@ -78,6 +79,7 @@
 	"devDependencies": {
 		"@babel/preset-env": "^7.14.9",
 		"@babel/preset-react": "^7.14.5",
+		"@babel/preset-typescript": "^7.17.12",
 		"@metamask/providers": "^8.1.1",
 		"@microsoft/eslint-formatter-sarif": "^2.1.7",
 		"@synthetixio/synpress": "^1.1.1",
@@ -91,9 +93,9 @@
 		"@types/lodash": "^4.14.159",
 		"@types/node": "^14.0.13",
 		"@types/react": "^17.0.2",
-		"@types/react-dom": "^17.0.2",
 		"@types/react-copy-to-clipboard": "^5.0.2",
 		"@types/react-datepicker": "^3.1.1",
+		"@types/react-dom": "^17.0.2",
 		"@types/react-outside-click-handler": "^1.3.0",
 		"@types/react-responsive": "^8.0.2",
 		"@types/react-select": "3.0.19",
@@ -105,7 +107,10 @@
 		"@typescript-eslint/eslint-plugin": "^4.29.3",
 		"@typescript-eslint/parser": "^4.29.3",
 		"babel-eslint": "^10.1.0",
+		"babel-jest": "^28.1.1",
 		"babel-plugin-styled-components": "^1.11.1",
+		"browserslist": "^4.20.4",
+		"caniuse-lite": "^1.0.30001355",
 		"env-cmd": "^10.1.0",
 		"eslint": "^7.12.0",
 		"eslint-config-prettier": "^6.10.1",
@@ -140,6 +145,8 @@
 	},
 	"resolutions": {
 		"sharp": "0.29.3",
+		"browserslist": "^4.20.4",
+		"caniuse-lite": "^1.0.30001355",
 		"shell-quote": ">=1.7.3"
 	},
 	"husky": {
@@ -165,6 +172,16 @@
 		],
 		"moduleDirectories": [
 			"node_modules"
+		],
+		"testMatch": [
+			"<rootDir>/**/*.test.{js,jsx,ts,tsx}"
+		],
+		"collectCoverageFrom": [
+			"<rootDir>/**/*.{js,jsx,ts,tsx}",
+			"!<rootDir>/*.{js,jsx,ts,tsx}",
+			"!<rootDir>/**/*.d.{ts,tsx}",
+			"!<rootDir>/out/**/*.{js,jsx,ts,tsx}",
+			"!<rootDir>/.next/**/*.{js,jsx,ts,tsx}"
 		],
 		"globalSetup": "./test-setup/global.js",
 		"setupFilesAfterEnv": [

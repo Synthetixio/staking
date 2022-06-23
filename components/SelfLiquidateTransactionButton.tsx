@@ -1,10 +1,10 @@
+import { useState } from 'react';
 import { ModalContent, ModalItem, ModalItemTitle, ModalItemText } from 'styles/common';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 
 import { useTranslation } from 'react-i18next';
 import Button from 'components/Button';
 import useSynthetixQueries from '@synthetixio/queries';
-import { useState } from 'react';
 
 const SelfLiquidateTransactionButton: React.FC<{
 	walletAddress?: string | null;
