@@ -36,8 +36,7 @@ input::-webkit-inner-spin-button {
 	font-style: normal;
 	font-weight: 400;
 	font-display: swap;
-	src: local('Inter'), url('../public/fonts/Inter-Regular.woff2') format('woff2'),
-		url('../public/fonts/Inter-Regular.woff') format('woff');
+	src: local('Inter'), url('/fonts/Inter-Regular.woff2') format('woff2');
 }
 
 @font-face {
@@ -45,8 +44,7 @@ input::-webkit-inner-spin-button {
 	font-style: normal;
 	font-weight: 600;
 	font-display: swap;
-	src: local('Inter Semi Bold'), url('../public/fonts/Inter-SemiBold.woff2') format('woff2'),
-		url('../public/fonts/Inter-SemiBold.woff') format('woff');
+	src: local('Inter Semi Bold'), url('/fonts/Inter-SemiBold.woff2') format('woff2');
 }
 
 @font-face {
@@ -54,8 +52,7 @@ input::-webkit-inner-spin-button {
 	font-style: normal;
 	font-weight: 700;
 	font-display: swap;
-	src: local('Inter Bold'), url('../public/fonts/Inter-Bold.woff2') format('woff2'),
-		url('../public/fonts/Inter-Bold.woff') format('woff');
+	src: local('Inter Bold'), url('/fonts/Inter-Bold.woff2') format('woff2');
 }
 
 /* GT America */
@@ -65,8 +62,7 @@ input::-webkit-inner-spin-button {
 	font-style: normal;
 	font-display: swap;
 	font-weight: 700;
-	src: local('GT America Mono'), url('../public/fonts/GT-America-Mono-Bold.woff') format('woff'),
-		url('../public/fonts/GT-America-Mono-Bold.woff2') format('woff2');
+	src: local('GT America Mono'), url('/fonts/GT-America-Mono-Bold.woff2') format('woff2');
 }
 
 @font-face {
@@ -75,8 +71,7 @@ input::-webkit-inner-spin-button {
 	font-display: swap;
 	font-weight: 500;
 	src: local('GT America Condensed-Medium'),
-		url('../public/fonts/GT-America-Condensed-Medium.woff2') format('woff2'),
-		url('../public/fonts/GT-America-Condensed-Medium.woff') format('woff');
+		url('/fonts/GT-America-Condensed-Medium.woff2') format('woff2');
 }
 
 @font-face {
@@ -86,8 +81,7 @@ input::-webkit-inner-spin-button {
 	font-weight: 700;
 	font-stretch: condensed;
 	src: local('GT America Condensed-Bold'),
-		url('../public/fonts/GT-America-Condensed-Bold.woff2') format('woff2'),
-		url('../public/fonts/GT-America-Condensed-Bold.woff') format('woff');
+		url('/fonts/GT-America-Condensed-Bold.woff2') format('woff2');
 }
 
 @font-face {
@@ -96,6 +90,5 @@ input::-webkit-inner-spin-button {
 	font-display: swap;
 	font-weight: 700;
 	src: local('GT America Extended Bold'),
-		url('../public/fonts/GT-America-Extended-Bold.woff2') format('woff2'),
-		url('../public/fonts/GT-America-Extended-Bold.woff') format('woff');
+		url('/fonts/GT-America-Extended-Bold.woff2') format('woff2');
 }
