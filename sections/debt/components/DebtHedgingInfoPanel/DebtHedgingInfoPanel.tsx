@@ -11,14 +11,6 @@ type DebtHedgingInfoPanelProps = {
 	hidden: boolean;
 };
 
-const UniswapNote = () => {
-	return (
-		<Trans
-			i18nKey="debt.actions.manage.info-panel.uniswap-link"
-			components={[<StyledLink href={EXTERNAL_LINKS.Uniswap.dSNXPool} />]}
-		/>
-	);
-};
 const TorosNote = () => {
 	return (
 		<Trans
@@ -31,7 +23,7 @@ const TorosNote = () => {
 const DebtHedgingInfoPanel: React.FC<DebtHedgingInfoPanelProps> = ({ hidden }) => {
 	const { t } = useTranslation();
 	const isMainnet = useRecoilValue(isMainnetState);
-	if (hidden) return null;
+	if (hidden || isMainnet) return null;
 	return (
 		<>
 			<InfoPanelContainer>
@@ -43,8 +35,7 @@ const DebtHedgingInfoPanel: React.FC<DebtHedgingInfoPanelProps> = ({ hidden }) =
 					/>
 					<br />
 					<TextContainer>
-						{t('debt.actions.manage.info-panel.dsnx-warning')}{' '}
-						{isMainnet ? <UniswapNote /> : <TorosNote />}
+						{t('debt.actions.manage.info-panel.dsnx-warning')} <TorosNote />
 					</TextContainer>
 				</InfoPanelBody>
 				<DebtHedgingChart />
