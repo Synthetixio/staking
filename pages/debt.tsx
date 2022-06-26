@@ -31,7 +31,7 @@ const DashboardPage: FC = () => {
 
 	const { debtBalance: actualDebt } = useUserStakingData(walletAddress);
 	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
-	const { setTitle } = UIContainer.useContainer();
+
 	const historicalDebt = useHistoricalDebtData(walletAddress);
 
 	const totalSynthValue = synthsBalancesQuery.isSuccess
@@ -40,11 +40,6 @@ const DashboardPage: FC = () => {
 
 	const dataIsLoading = historicalDebt?.isLoading ?? false;
 	const issuedDebt = dataIsLoading ? wei(0) : wei(last(historicalDebt.data)?.issuanceDebt ?? 0);
-
-	// header title
-	useEffect(() => {
-		setTitle('staking', 'debt');
-	}, [setTitle]);
 
 	return (
 		<>

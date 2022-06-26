@@ -1,7 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
-import UIContainer from 'containers/UI';
-
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 import { TabContainer } from '../common';
 import MintTiles from '../MintTiles';
@@ -27,8 +25,6 @@ const MintTab: React.FC = () => {
 	const [gasPrice, setGasPrice] = useState<GasPrice | undefined>(undefined);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 
-	const { setTitle } = UIContainer.useContainer();
-
 	const isMax = mintType === MintActionType.MAX;
 
 	const amountToMintBN = Wei.max(wei(0), parseSafeWei(amountToMint, wei(0)));
@@ -48,11 +44,6 @@ const MintTab: React.FC = () => {
 	useEffect(() => {
 		if (txn.txnStatus === 'prompting') setTxModalOpen(true);
 	}, [txn.txnStatus]);
-
-	// header title
-	useEffect(() => {
-		setTitle('staking', 'mint');
-	}, [setTitle]);
 
 	const returnPanel = useMemo(() => {
 		let onSubmit;

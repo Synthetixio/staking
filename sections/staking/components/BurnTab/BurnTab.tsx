@@ -1,7 +1,6 @@
-import { FC, useMemo, useEffect } from 'react';
+import { FC, useMemo } from 'react';
 import Wei, { wei } from '@synthetixio/wei';
 import { CryptoCurrency, Synths } from 'constants/currency';
-import UIContainer from 'containers/UI';
 
 import { formatCurrency } from 'utils/formatters/number';
 import { BurnActionType } from 'store/staking';
@@ -31,13 +30,6 @@ const BurnTab: FC = () => {
 		setTxModalOpen,
 		setGasPrice,
 	} = useBurnTx();
-
-	const { setTitle } = UIContainer.useContainer();
-
-	// header title
-	useEffect(() => {
-		setTitle('staking', 'burn');
-	}, [setTitle]);
 
 	const returnPanel = useMemo(() => {
 		let handleSubmit;

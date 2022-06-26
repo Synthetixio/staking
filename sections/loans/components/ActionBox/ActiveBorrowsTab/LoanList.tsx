@@ -1,4 +1,4 @@
-import { FC, useMemo, useEffect } from 'react';
+import { FC, useMemo } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
@@ -6,7 +6,6 @@ import { CellProps } from 'react-table';
 import media from 'styles/media';
 import Table from 'components/Table';
 import Currency from 'components/Currency';
-import UIContainer from 'containers/UI';
 import { Loan } from 'containers/Loans/types';
 import Loans from 'containers/Loans';
 import ModifyLoanMenu from './ModifyLoanMenu';
@@ -23,7 +22,6 @@ type LoanListProps = {
 const LoanList: FC<LoanListProps> = ({ actions }) => {
 	const { t } = useTranslation();
 	const { isLoadingLoans: isLoading, loans: data } = Loans.useContainer();
-	const { setTitle } = UIContainer.useContainer();
 
 	const desktopColumns = useMemo(
 		() => [
@@ -118,11 +116,6 @@ const LoanList: FC<LoanListProps> = ({ actions }) => {
 		],
 		[t, actions]
 	);
-
-	// header title
-	useEffect(() => {
-		setTitle('loans', 'list');
-	}, [setTitle]);
 
 	const noResultsMessage =
 		!isLoading && data.length === 0 ? (

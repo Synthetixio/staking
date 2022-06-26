@@ -16,12 +16,8 @@ import { headerInfo } from '../helpers';
 
 const Header: FC = () => {
 	const { t } = useTranslation();
-	const { setMobileNavOpen } = UIContainer.useContainer();
+	const { showMobileSideNav } = UIContainer.useContainer();
 	const router = useRouter();
-
-	const openMobileNav = () => {
-		setMobileNavOpen(true);
-	};
 
 	const { headerTitle, headerSubtitle } = useMemo(() => headerInfo(router.asPath), [router.asPath]);
 
@@ -33,7 +29,7 @@ const Header: FC = () => {
 			<Container>
 				<FlexDivCentered>
 					<MobileOrTabletView>
-						<Title onClick={openMobileNav}>
+						<Title onClick={showMobileSideNav}>
 							<Svg src={TitleIcon} />
 							{headerTitle && (
 								<TitleText hasSubTitle={!!headerSubtitle}>{t(`header.${headerTitle}`)}</TitleText>

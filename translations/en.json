@@ -1596,6 +1596,7 @@
 		"staking/burn": "burn",
 		"staking/earn": "earn",
 		"staking/debt": "debt",
+		"staking/self-liquidate": "self-liquidate",
 		"wallet": "wallet",
 		"wallet/escrow": "escrow",
 		"wallet/history": "history",
@@ -1617,6 +1618,8 @@
 		"loan/close": "close",
 		"merge-accounts": "merge-accounts",
 		"merge-accounts/nominate": "nominate",
-		"merge-accounts/merge": "merge"
+		"merge-accounts/merge": "merge",
+		"merge-accounts/burn": "burn",
+		"pools": "pools"
 	}
 }
