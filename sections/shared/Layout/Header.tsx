@@ -1,7 +1,8 @@
-import { FC } from 'react';
+import { FC, useMemo } from 'react';
 import styled from 'styled-components';
 import { Svg } from 'react-optimized-image';
 import { useTranslation } from 'react-i18next';
+import { useRouter } from 'next/router';
 
 import { MOBILE_BODY_PADDING } from 'constants/ui';
 import UIContainer from 'containers/UI';
@@ -11,10 +12,18 @@ import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import BannerManager from 'components/BannerManager';
 import TitleIcon from 'assets/svg/app/menu-hamburger-white.svg';
 import UserMenu from './UserMenu';
+import { headerInfo } from '../helpers';
 
 const Header: FC = () => {
 	const { t } = useTranslation();
-	const { showMobileSideNav, headerTitle, headerSubtitle } = UIContainer.useContainer();
+	const { setMobileNavOpen } = UIContainer.useContainer();
+	const router = useRouter();
+
+	const openMobileNav = () => {
+		setMobileNavOpen(true);
+	};
+
+	const { headerTitle, headerSubtitle } = useMemo(() => headerInfo(router.asPath), [router.asPath]);
 
 	return (
 		<HeaderWrapper>
@@ -24,12 +33,12 @@ const Header: FC = () => {
 			<Container>
 				<FlexDivCentered>
 					<MobileOrTabletView>
-						<Title onClick={showMobileSideNav}>
+						<Title onClick={openMobileNav}>
 							<Svg src={TitleIcon} />
-							{!headerTitle ? null : (
+							{headerTitle && (
 								<TitleText hasSubTitle={!!headerSubtitle}>{t(`header.${headerTitle}`)}</TitleText>
 							)}
-							{!headerSubtitle ? null : (
+							{headerSubtitle && (
 								<>
 									<TitleSep>|</TitleSep>
 									<SubtitleText>{t(`header.${headerTitle}/${headerSubtitle}`)}</SubtitleText>
