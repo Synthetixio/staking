@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import styled from 'styled-components';
 
-import SubMenu from './SubMenu';
+import SubMenu from '../SubMenu';
 
 const MobileSubMenu: FC = () => {
 	return (

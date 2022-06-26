@@ -12,7 +12,6 @@ import useCryptoBalances from 'hooks/useCryptoBalances';
 import ROUTES from 'constants/routes';
 import { CryptoCurrency, Synths } from 'constants/currency';
 import { DESKTOP_SIDE_NAV_WIDTH, zIndex } from 'constants/ui';
-import UIContainer from 'containers/UI';
 
 import { isL2State, walletAddressState, delegateWalletState } from 'store/wallet';
 
@@ -24,7 +23,7 @@ import { Tooltip } from 'styles/common';
 import { useTranslation } from 'react-i18next';
 
 import SideNav from './SideNav';
-import SubMenu from './DesktopSubMenu';
+import DesktopSubMenu from './DesktopSubMenu';
 import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
 import useGetCurrencyRateChange from 'hooks/useGetCurrencyRateChange';
@@ -34,14 +33,15 @@ import { endOfHour, subDays } from 'date-fns';
 const DesktopSideNav: FC = () => {
 	const walletAddress = useRecoilValue(walletAddressState);
 	const delegateWallet = useRecoilValue(delegateWalletState);
+	const isL2 = useRecoilValue(isL2State);
+
 	const { t } = useTranslation();
 	const { useSynthsBalancesQuery } = useSynthetixQueries();
 	const sevenDaysAgoSeconds = Math.floor(endOfHour(subDays(new Date(), 7)).getTime() / 1000);
 	const currencyRateChange = useGetCurrencyRateChange(sevenDaysAgoSeconds, 'SNX');
 	const cryptoBalances = useCryptoBalances(delegateWallet?.address ?? walletAddress);
 	const synthsBalancesQuery = useSynthsBalancesQuery(delegateWallet?.address ?? walletAddress);
-	const isL2 = useRecoilValue(isL2State);
-	const { clearSubMenuConfiguration } = UIContainer.useContainer();
+
 	const { useSNXData } = useSynthetixQueries();
 	const { L1DefaultProvider } = Connector.useContainer();
 	const lockedSNXQuery = useSNXData(L1DefaultProvider);
@@ -62,40 +62,35 @@ const DesktopSideNav: FC = () => {
 	const sUSDBalance = synthsBalancesQuery?.data?.balancesMap[Synths.sUSD]?.balance ?? wei(0);
 
 	return (
-		<Container onMouseLeave={clearSubMenuConfiguration} data-testid="sidenav">
+		<Container data-testid="sidenav">
 			<StakingLogoWrap>
 				<Link href={ROUTES.Home}>
 					<div>{isL2 ? <Svg src={StakingL2Logo} /> : <Svg src={StakingLogo} />}</div>
 				</Link>
 			</StakingLogoWrap>
 
-			<SideNav isDesktop={true} />
-
-			<>
-				<LineSeparator />
-				<MenuCharts>
-					<CRatioBarStats />
-					<BalanceItem amount={snxBalance} currencyKey={CryptoCurrency.SNX} />
-					<BalanceItem amount={sUSDBalance} currencyKey={Synths.sUSD} />
-					<Tooltip content={t('common.total-staking.staking-percentage-tooltip')}>
-						<StyledTargetStakingRatio>
-							<StyledTargetStakingRatioTitle>
-								{t('common.total-staking.staking-percentage-title')}
-							</StyledTargetStakingRatioTitle>
-							{tRatio || '0.00'}%
-						</StyledTargetStakingRatio>
-					</Tooltip>
-					<Tooltip content={t('common.price-change.seven-days')}>
-						<PriceItemContainer>
-							<PriceItem currencyKey={CryptoCurrency.SNX} currencyRateChange={currencyRateChange} />
-						</PriceItemContainer>
-					</Tooltip>
-
-					<PeriodBarStats />
-				</MenuCharts>
-			</>
-
-			<SubMenu />
+			<SideNav />
+			<DesktopSubMenu />
+			<LineSeparator />
+			<MenuCharts>
+				<CRatioBarStats />
+				<BalanceItem amount={snxBalance} currencyKey={CryptoCurrency.SNX} />
+				<BalanceItem amount={sUSDBalance} currencyKey={Synths.sUSD} />
+				<Tooltip content={t('common.total-staking.staking-percentage-tooltip')}>
+					<StyledTargetStakingRatio>
+						<StyledTargetStakingRatioTitle>
+							{t('common.total-staking.staking-percentage-title')}
+						</StyledTargetStakingRatioTitle>
+						{tRatio || '0.00'}%
+					</StyledTargetStakingRatio>
+				</Tooltip>
+				<Tooltip content={t('common.price-change.seven-days')}>
+					<PriceItemContainer>
+						<PriceItem currencyKey={CryptoCurrency.SNX} currencyRateChange={currencyRateChange} />
+					</PriceItemContainer>
+				</Tooltip>
+				<PeriodBarStats />
+			</MenuCharts>
 		</Container>
 	);
 };

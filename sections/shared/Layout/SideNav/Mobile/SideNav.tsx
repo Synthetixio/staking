@@ -1,5 +1,5 @@
+import { FC, useState } from 'react';
 import styled, { css } from 'styled-components';
-import { FC, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
 import { Svg } from 'react-optimized-image';
@@ -14,37 +14,26 @@ import ROUTES from 'constants/routes';
 import SettingsModal from 'sections/shared/modals/SettingsModal';
 import { isWalletConnectedState, networkState } from 'store/wallet';
 import { isL2State, delegateWalletState } from 'store/wallet';
-import { MENU_LINKS, MENU_LINKS_L2, MENU_LINKS_DELEGATE } from '../constants';
+import { MENU_LINKS, MENU_LINKS_L2, MENU_LINKS_DELEGATE } from '../../constants';
 import { handleSwitchChain } from '@synthetixio/providers';
 import Connector from 'containers/Connector';
 import { providers } from 'ethers';
 
-const getKeyValue =
-	<T extends object, U extends keyof T>(obj: T) =>
-	(key: U) =>
-		obj[key];
-
-export type SideNavProps = {
-	isDesktop?: boolean;
-};
-
-const SideNav: FC<SideNavProps> = ({ isDesktop }) => {
+const SideNav: FC = () => {
 	const { t } = useTranslation();
 	const router = useRouter();
-	const menuLinkItemRefs = useRef({});
+
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const isL2 = useRecoilValue(isL2State);
 	const delegateWallet = useRecoilValue(delegateWalletState);
 	const network = useRecoilValue(networkState);
-	const {
-		closeMobileSideNav,
-		setSubMenuConfiguration,
-		clearSubMenuConfiguration,
-		setNetworkError,
-	} = UIContainer.useContainer();
+
+	const { setNetworkError } = UIContainer.useContainer();
 	const [settingsModalOpened, setSettingsModalOpened] = useState<boolean>(false);
 	const { provider } = Connector.useContainer();
 	const menuLinks = delegateWallet ? MENU_LINKS_DELEGATE : isL2 ? MENU_LINKS_L2 : MENU_LINKS;
+
+	const showAddOptimism = !isL2 && isWalletConnected && !delegateWallet;
 
 	const addOptimismNetwork = async () => {
 		setNetworkError(null);
@@ -81,99 +70,44 @@ const SideNav: FC<SideNavProps> = ({ isDesktop }) => {
 
 	return (
 		<MenuLinks>
-			{menuLinks.map(({ i18nLabel, link, subMenu }, i) => {
-				const onSetSubMenuConfiguration = () => {
-					setSubMenuConfiguration({
-						routes: subMenu || null,
-						topPosition: (getKeyValue(menuLinkItemRefs.current) as any)(i).getBoundingClientRect()
-							.y as number,
-					});
-				};
-
-				return (
-					<MenuLinkItem
-						ref={(r) => {
-							if (subMenu) {
-								menuLinkItemRefs.current = { ...menuLinkItemRefs.current, [i]: r };
-							}
-						}}
-						{...(isDesktop
-							? {
-									onMouseEnter: () => {
-										if (subMenu) {
-											onSetSubMenuConfiguration();
-										}
-									},
-									onClick: () => {
-										if (!subMenu) {
-											router.push(link);
-											clearSubMenuConfiguration();
-										}
-									},
-							  }
-							: {
-									onClick: () => {
-										if (subMenu) {
-											onSetSubMenuConfiguration();
-										} else {
-											router.push(link);
-											closeMobileSideNav();
-											clearSubMenuConfiguration();
-										}
-									},
-							  })}
-						key={link}
-						data-testid={`sidenav-${link}`}
-						isActive={
-							subMenu
-								? !!subMenu.find(({ subLink }) => subLink === router.asPath)
-								: router.asPath === link || (link !== ROUTES.Home && router.asPath.includes(link))
-						}
-					>
-						<div className="link">
-							{t(i18nLabel)}
-							{subMenu && <Svg src={CaretRightIcon} />}
-						</div>
-					</MenuLinkItem>
-				);
-			})}
-
-			{!isL2 && isWalletConnected && !delegateWallet ? (
+			{menuLinks.map(({ i18nLabel, link, subMenu }, i) => (
 				<MenuLinkItem
-					onClick={() => {
-						addOptimismNetwork();
-						closeMobileSideNav();
-					}}
-					onMouseEnter={() => {
-						clearSubMenuConfiguration();
-					}}
-					data-testid="sidenav-switch-to-l2"
-					isL2Switcher
+					onClick={() => router.push(link)}
+					key={link}
+					data-testid={`sidenav-${link}`}
+					isActive={
+						subMenu
+							? !!subMenu.find(({ subLink }) => subLink === router.asPath)
+							: router.asPath === link || (link !== ROUTES.Home && router.asPath.includes(link))
+					}
 				>
+					<div className="link">
+						{t(i18nLabel)}
+						{subMenu && <Svg src={CaretRightIcon} />}
+					</div>
+				</MenuLinkItem>
+			))}
+			{showAddOptimism && (
+				<MenuLinkItem onClick={addOptimismNetwork} data-testid="sidenav-switch-to-l2" isL2Switcher>
 					<div className="link">{t('sidenav.switch-to-l2')}</div>
 				</MenuLinkItem>
-			) : null}
-
-			{!isDesktop ? (
-				<>
-					<MenuLinkItem
-						onClick={() => {
-							closeMobileSideNav();
-							setSettingsModalOpened(!settingsModalOpened);
-						}}
-						data-testid="sidenav-settings"
-					>
-						<div className="link">{t('sidenav.settings')}</div>
-					</MenuLinkItem>
-					{settingsModalOpened && <SettingsModal onDismiss={() => setSettingsModalOpened(false)} />}
-				</>
-			) : null}
+			)}
+			<>
+				<MenuLinkItem
+					onClick={() => {
+						setSettingsModalOpened(!settingsModalOpened);
+					}}
+					data-testid="sidenav-settings"
+				>
+					<div className="link">{t('sidenav.settings')}</div>
+				</MenuLinkItem>
+				{settingsModalOpened && <SettingsModal onDismiss={() => setSettingsModalOpened(false)} />}
+			</>
 		</MenuLinks>
 	);
 };
 
 const MenuLinks = styled.div`
-	padding-left: 24px;
 	position: relative;
 `;
 
@@ -187,6 +121,7 @@ const MenuLinkItem = styled.div<{ isActive?: boolean; isL2Switcher?: boolean }>`
 	}
 
 	.link {
+		padding-left: 24px;
 		display: flex;
 		align-items: center;
 		${linkCSS};

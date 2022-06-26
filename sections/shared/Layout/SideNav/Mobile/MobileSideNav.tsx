@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { FC } from 'react';
+import { FC, useState } from 'react';
 import Link from 'next/link';
 import { Svg } from 'react-optimized-image';
 
@@ -7,45 +7,39 @@ import StakingLogo from 'assets/svg/app/staking-logo-small.svg';
 import BackIcon from 'assets/svg/app/back.svg';
 import CloseIcon from 'assets/svg/app/close.svg';
 
-import UIContainer from 'containers/UI';
 import ROUTES from 'constants/routes';
 import { MOBILE_SIDE_NAV_WIDTH, zIndex } from 'constants/ui';
 
-import SideNav from './SideNav';
-import SubMenu from './MobileSubMenu';
+import SideNav from '../Desktop/SideNav';
+import MobileSubMenu from './MobileSubMenu';
 
-const DesktopSideNav: FC = () => {
-	const {
-		closeMobileSideNav,
-		clearSubMenuConfiguration,
-		isShowingSubMenu,
-		isShowingMobileSideNav,
-	} = UIContainer.useContainer();
+const MobileSideNav: FC = () => {
+	const [isSubMenuOpen, setSubMenuOpen] = useState(false);
+
+	const toggle = () => {
+		setSubMenuOpen(!!isSubMenuOpen);
+	};
 
 	return (
-		<Container data-testid="sidenav" isShowing={isShowingMobileSideNav}>
+		<Container data-testid="sidenav" isShowing={isSubMenuOpen}>
 			<StakingLogoWrap>
-				{isShowingSubMenu ? (
-					<Svg src={BackIcon} onClick={clearSubMenuConfiguration} />
+				{isSubMenuOpen ? (
+					<Svg src={BackIcon} onClick={toggle} />
 				) : (
 					<Link href={ROUTES.Home}>
-						<>
-							<Svg src={StakingLogo} />
-						</>
+						<Svg src={StakingLogo} />
 					</Link>
 				)}
-
-				<CloseContainer onClick={closeMobileSideNav}>
+				<CloseContainer onClick={toggle}>
 					<Svg src={CloseIcon} />
 				</CloseContainer>
 			</StakingLogoWrap>
-
-			{isShowingSubMenu ? <SubMenu /> : <SideNav />}
+			{isSubMenuOpen ? <MobileSubMenu /> : <SideNav />}
 		</Container>
 	);
 };
 
-export default DesktopSideNav;
+export default MobileSideNav;
 
 const Container = styled.div<{ isShowing: boolean }>`
 	z-index: ${zIndex.DIALOG_OVERLAY};

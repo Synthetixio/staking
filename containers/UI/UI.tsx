@@ -11,36 +11,15 @@ export type SubMenuConfiguration = {
 export default createContainer(Container);
 
 function Container() {
-	const [isShowingMobileSideNav, setIsShowingMobileSideNav] = useState(false);
-	const [subMenuConfiguration, setSubMenuConfiguration] = useState<SubMenuConfiguration>({
-		routes: null,
-		topPosition: 0,
-	});
+	const [isMobileNavOpen, setMobileNavOpen] = useState(false);
 
 	const [networkError, setNetworkError] = useState<string | null>(null);
 
-	const isShowingSubMenu = !!subMenuConfiguration?.routes;
-
-	const clearSubMenuConfiguration = () =>
-		setSubMenuConfiguration((subMenuConfiguration: SubMenuConfiguration) => ({
-			...subMenuConfiguration,
-			routes: null,
-		}));
-
-	const showMobileSideNav = () => {
-		setIsShowingMobileSideNav(true);
-		clearSubMenuConfiguration();
-	};
-	const closeMobileSideNav = () => setIsShowingMobileSideNav(false);
+	console.log('Container render');
 
 	return {
-		showMobileSideNav,
-		closeMobileSideNav,
-		isShowingMobileSideNav,
-		isShowingSubMenu,
-		subMenuConfiguration,
-		clearSubMenuConfiguration,
-		setSubMenuConfiguration,
+		isMobileNavOpen,
+		setMobileNavOpen,
 		networkError,
 		setNetworkError,
 	};

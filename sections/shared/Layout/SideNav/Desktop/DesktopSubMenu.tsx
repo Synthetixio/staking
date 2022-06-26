@@ -4,19 +4,17 @@ import styled, { css } from 'styled-components';
 import { FlexDivColCentered } from 'styles/common';
 import media from 'styles/media';
 import { DESKTOP_SIDE_NAV_WIDTH, MOBILE_SIDE_NAV_WIDTH } from 'constants/ui';
-import UIContainer from 'containers/UI';
 
-import SubMenu from './SubMenu';
+import SubMenu from '../SubMenu';
 import useIsMounted from 'hooks/isMounted';
 
 const DesktopSubMenu: FC = () => {
-	const { isShowingSubMenu, subMenuConfiguration } = UIContainer.useContainer();
 	const mounted = useIsMounted();
 	return mounted
 		? createPortal(
-				<Container isVisible={isShowingSubMenu}>
+				<Container isVisible={true}>
 					<Inner>
-						<FloatingContent topPosition={subMenuConfiguration?.topPosition ?? 0}>
+						<FloatingContent>
 							<SubMenu />
 						</FloatingContent>
 					</Inner>
@@ -54,9 +52,9 @@ const Inner = styled.div`
 	width: 100%;
 `;
 
-const FloatingContent = styled.div<{ topPosition: number }>`
+const FloatingContent = styled.div`
 	position: absolute;
-	top: ${(props) => props.topPosition}px;
+	top: 20px;
 	left: 50%;
 	transform: translateX(-50%);
 `;
