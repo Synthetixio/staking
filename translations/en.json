@@ -478,6 +478,17 @@
 						"debtPool-label": "DEBT POOL",
 						"hedged-balance": "Your hedged balance:"
 					}
+				},
+				"l1-deprecation": {
+					"headline": "L1 dSNX hedging is being sunset in favour of L2 hedging",
+					"sub-headline": "If you would like automated hedging via dSNX:",
+					"bridge-text": "Bridge assets to Optimism",
+					"second-sub-headline": "If you are still holding L1 dSNX, you can access swap liquidity using Polygon:",
+					"switch-link": "Switch to L2 and buy dSNX",
+					"step-1": "Go to ",
+					"step-2": "Bridge dSNX from Ethereum Mainnet to Polygon",
+					"step-3": "Manage your position using the",
+					"link-text": "dSNX Pool on Toros.Finance"
 				}
 			},
 			"hedge": {

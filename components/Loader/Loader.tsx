@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import type { FC } from 'react';
 import LoaderIcon from 'assets/svg/app/loader.svg';
 import { Svg } from 'react-optimized-image';
 

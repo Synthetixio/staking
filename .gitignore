@@ -41,3 +41,7 @@ tests/e2e/videos
 
 .npm-cache
 .yarn-cache
+
+coverage
+
+

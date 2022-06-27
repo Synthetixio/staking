@@ -17,7 +17,7 @@ import Info from 'assets/svg/app/info.svg';
 import { wei } from '@synthetixio/wei';
 import useSynthetixQueries from '@synthetixio/queries';
 import { useRecoilValue } from 'recoil';
-import { walletAddressState } from 'store/wallet';
+import { isMainnetState, walletAddressState } from 'store/wallet';
 
 export type TabInfo = {
 	title: string;
@@ -48,7 +48,7 @@ const DebtTabs: FC<DebtTabsProps> = ({
 }) => {
 	const { t } = useTranslation();
 	const [activeTab, setActiveTab] = useState<string>(currentPanel ? currentPanel : tabData[0].key);
-
+	const isMainnet = useRecoilValue(isMainnetState);
 	useEffect(() => {
 		if (currentPanel) {
 			setActiveTab(currentPanel);
@@ -79,7 +79,7 @@ const DebtTabs: FC<DebtTabsProps> = ({
 	return (
 		<>
 			{
-				<TopContainer isManageTab={isManageTab}>
+				<TopContainer isManageTab={isManageTab} isMainnet={isMainnet}>
 					<DebtTabsContainer>
 						<TabList noOfTabs={tabData.length}>
 							{tabData.map(({ title, icon, key, disabled = false }, index) => (
@@ -171,9 +171,9 @@ const DebtTabs: FC<DebtTabsProps> = ({
 	);
 };
 
-export const TopContainer = styled.div<{ isManageTab: boolean }>`
+export const TopContainer = styled.div<{ isManageTab: boolean; isMainnet: boolean }>`
 	${(props) =>
-		props.isManageTab
+		props.isManageTab && !props.isMainnet
 			? `display: grid;
 					grid-template-columns: 2fr 1fr;
 					grid-gap: 1rem;`
