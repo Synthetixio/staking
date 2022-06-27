@@ -61,6 +61,16 @@ export function headerInfo(path: string) {
 			headerSubtitle = 'earn';
 			break;
 
+		case mainPath === 'earn' && subPath === 'liquidation':
+			headerTitle = 'staking';
+			headerSubtitle = 'earn';
+			break;
+
+		case mainPath === 'earn' && subPath === 'claim':
+			headerTitle = 'staking';
+			headerSubtitle = 'earn';
+			break;
+
 		case mainPath === 'debt' && !subPath:
 			headerTitle = 'staking';
 			headerSubtitle = 'debt';
