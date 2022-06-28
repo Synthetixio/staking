@@ -12,7 +12,7 @@ const SubMenu: FC = () => {
 	const { t } = useTranslation();
 	const { setMobileNavOpen } = UIContainer.useContainer();
 	const subMenuConfiguration: never[] = [];
-	console.log(subMenuConfiguration);
+
 	return (
 		<div>
 			{/* {subMenuConfiguration?.routes?.map(({ i18nLabel, subLink }: SubMenuLink, i) => {

@@ -12,10 +12,7 @@ export default createContainer(Container);
 
 function Container() {
 	const [isMobileNavOpen, setMobileNavOpen] = useState(false);
-
 	const [networkError, setNetworkError] = useState<string | null>(null);
-
-	console.log('Container render');
 
 	return {
 		isMobileNavOpen,

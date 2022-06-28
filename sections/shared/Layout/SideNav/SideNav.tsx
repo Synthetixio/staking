@@ -1,72 +1,29 @@
-import { FC, useState } from 'react';
+import { FC } from 'react';
 import styled, { css } from 'styled-components';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
 import { Svg } from 'react-optimized-image';
 import { useRecoilValue } from 'recoil';
-import { getOptimismNetwork } from '@synthetixio/optimism-networks';
 
-import UIContainer from 'containers/UI';
 import { linkCSS } from 'styles/common';
 import media from 'styles/media';
 import CaretRightIcon from 'assets/svg/app/caret-right-small.svg';
 import ROUTES from 'constants/routes';
-import SettingsModal from 'sections/shared/modals/SettingsModal';
-import { isWalletConnectedState, networkState } from 'store/wallet';
+
 import { isL2State, delegateWalletState } from 'store/wallet';
-import { MENU_LINKS, MENU_LINKS_L2, MENU_LINKS_DELEGATE } from '../../constants';
-import { handleSwitchChain } from '@synthetixio/providers';
-import Connector from 'containers/Connector';
-import { providers } from 'ethers';
+import { MENU_LINKS, MENU_LINKS_L2, MENU_LINKS_DELEGATE } from '../constants';
+import { MobileOrTabletView } from 'components/Media';
+import Settings from '../Settings';
+import useAddOptimism from '../../hooks';
 
 const SideNav: FC = () => {
 	const { t } = useTranslation();
 	const router = useRouter();
-
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const isL2 = useRecoilValue(isL2State);
 	const delegateWallet = useRecoilValue(delegateWalletState);
-	const network = useRecoilValue(networkState);
+	const { showAddOptimism, addOptimismNetwork } = useAddOptimism();
 
-	const { setNetworkError } = UIContainer.useContainer();
-	const [settingsModalOpened, setSettingsModalOpened] = useState<boolean>(false);
-	const { provider } = Connector.useContainer();
 	const menuLinks = delegateWallet ? MENU_LINKS_DELEGATE : isL2 ? MENU_LINKS_L2 : MENU_LINKS;
-
-	const showAddOptimism = !isL2 && isWalletConnected && !delegateWallet;
-
-	const addOptimismNetwork = async () => {
-		setNetworkError(null);
-		if (process.browser && !(window.ethereum && window.ethereum.isMetaMask)) {
-			return setNetworkError(t('user-menu.error.please-install-metamask'));
-		}
-
-		try {
-			if (provider) {
-				await handleSwitchChain(provider as providers.Web3Provider, false);
-			}
-		} catch (e) {
-			try {
-				// metamask mobile throws if iconUrls is included
-				const { chainId, chainName, rpcUrls, blockExplorerUrls } = getOptimismNetwork({
-					layerOneNetworkId: Number(network?.id) || 1,
-				});
-				await (window.ethereum as any).request({
-					method: 'wallet_addEthereumChain',
-					params: [
-						{
-							chainId,
-							chainName,
-							rpcUrls,
-							blockExplorerUrls,
-						},
-					],
-				});
-			} catch (e) {
-				setNetworkError((e as Record<'message', string>).message);
-			}
-		}
-	};
 
 	return (
 		<MenuLinks>
@@ -93,15 +50,9 @@ const SideNav: FC = () => {
 				</MenuLinkItem>
 			)}
 			<>
-				<MenuLinkItem
-					onClick={() => {
-						setSettingsModalOpened(!settingsModalOpened);
-					}}
-					data-testid="sidenav-settings"
-				>
-					<div className="link">{t('sidenav.settings')}</div>
-				</MenuLinkItem>
-				{settingsModalOpened && <SettingsModal onDismiss={() => setSettingsModalOpened(false)} />}
+				<MobileOrTabletView>
+					<Settings />
+				</MobileOrTabletView>
 			</>
 		</MenuLinks>
 	);
@@ -111,7 +62,7 @@ const MenuLinks = styled.div`
 	position: relative;
 `;
 
-const MenuLinkItem = styled.div<{ isActive?: boolean; isL2Switcher?: boolean }>`
+export const MenuLinkItem = styled.div<{ isActive?: boolean; isL2Switcher?: boolean }>`
 	line-height: 40px;
 	padding-bottom: 10px;
 	position: relative;
