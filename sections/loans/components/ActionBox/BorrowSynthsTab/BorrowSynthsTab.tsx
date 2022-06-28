@@ -5,7 +5,6 @@ import { useRouter } from 'next/router';
 
 import { isL2State, isWalletConnectedState, walletAddressState } from 'store/wallet';
 import Connector from 'containers/Connector';
-import UIContainer from 'containers/UI';
 import GasSelector from 'components/GasSelector';
 
 import {
@@ -65,7 +64,6 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = () => {
 	const { renBTCContract, minCRatios } = Loans.useContainer();
 	const { useExchangeRatesQuery, useContractTxn, useSynthetixTxn, useTokensBalancesQuery } =
 		useSynthetixQueries();
-	const { setTitle } = UIContainer.useContainer();
 
 	const [gasPrice, setGasPrice] = useState<GasPrice | undefined>(undefined);
 
@@ -208,9 +206,7 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = () => {
 				break;
 		}
 	}, [getAllowance, openTransactionStatus, router]); // header title
-	useEffect(() => {
-		setTitle('loans', 'new');
-	}, [setTitle]);
+
 	useEffect(() => {
 		const newCollateralAssets = getCollateralAsset(debtAsset, isL2);
 		const currentCollateralValid = newCollateralAssets.includes(collateralAsset);

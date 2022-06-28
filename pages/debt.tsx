@@ -1,4 +1,4 @@
-import { FC, useEffect } from 'react';
+import { FC } from 'react';
 import Head from 'next/head';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
@@ -8,7 +8,6 @@ import { FlexDivCol, LineSpacer } from 'styles/common';
 import StatsSection from 'components/StatsSection';
 import StatBox from 'components/StatBox';
 import useUserStakingData from 'hooks/useUserStakingData';
-import UIContainer from 'containers/UI';
 
 import { formatFiatCurrency } from 'utils/formatters/number';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
@@ -31,7 +30,7 @@ const DashboardPage: FC = () => {
 
 	const { debtBalance: actualDebt } = useUserStakingData(walletAddress);
 	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
-	const { setTitle } = UIContainer.useContainer();
+
 	const historicalDebt = useHistoricalDebtData(walletAddress);
 
 	const totalSynthValue = synthsBalancesQuery.isSuccess
@@ -40,11 +39,6 @@ const DashboardPage: FC = () => {
 
 	const dataIsLoading = historicalDebt?.isLoading ?? false;
 	const issuedDebt = dataIsLoading ? wei(0) : wei(last(historicalDebt.data)?.issuanceDebt ?? 0);
-
-	// header title
-	useEffect(() => {
-		setTitle('staking', 'debt');
-	}, [setTitle]);
 
 	return (
 		<>

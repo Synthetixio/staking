@@ -16,8 +16,6 @@ function Container() {
 		routes: null,
 		topPosition: 0,
 	});
-	const [headerTitle, setHeaderTitle] = useState<string | null>(null);
-	const [headerSubtitle, setHeaderSubtitle] = useState<string | null>(null);
 
 	const [networkError, setNetworkError] = useState<string | null>(null);
 
@@ -35,26 +33,14 @@ function Container() {
 	};
 	const closeMobileSideNav = () => setIsShowingMobileSideNav(false);
 
-	const setTitle = (title: string, subtitle?: string | null) => {
-		setHeaderTitle(title);
-		setHeaderSubtitle(subtitle ?? null);
-	};
-
 	return {
 		showMobileSideNav,
 		closeMobileSideNav,
 		isShowingMobileSideNav,
-
 		isShowingSubMenu,
 		subMenuConfiguration,
 		clearSubMenuConfiguration,
 		setSubMenuConfiguration,
-
-		headerTitle,
-		headerSubtitle,
-
-		setTitle,
-
 		networkError,
 		setNetworkError,
 	};
