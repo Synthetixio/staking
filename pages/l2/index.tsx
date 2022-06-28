@@ -1,4 +1,4 @@
-import { FC, useEffect } from 'react';
+import { FC } from 'react';
 import Head from 'next/head';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
@@ -7,7 +7,6 @@ import { useRecoilValue } from 'recoil';
 import Main from 'sections/layer2';
 import StatBox from 'components/StatBox';
 import { LineSpacer } from 'styles/common';
-import UIContainer from 'containers/UI';
 import { isWalletConnectedState } from 'store/wallet';
 import StatsSection from 'components/StatsSection';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
@@ -19,7 +18,6 @@ import ActiveDebt from 'sections/shared/modals/DebtValueModal/DebtValueBox';
 
 const L2Page: FC = () => {
 	const { t } = useTranslation();
-	const { setTitle } = UIContainer.useContainer();
 
 	const {
 		stakedCollateralValue,
@@ -29,11 +27,6 @@ const L2Page: FC = () => {
 	} = useStakingCalculations();
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-
-	// header title
-	useEffect(() => {
-		setTitle('l2');
-	}, [setTitle]);
 
 	return (
 		<>

@@ -1,9 +1,8 @@
-import { FC, useEffect } from 'react';
+import { FC } from 'react';
 import Head from 'next/head';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-import UIContainer from 'containers/UI';
 import StatBox from 'components/StatBox';
 import StatsSection from 'components/StatsSection';
 import { LineSpacer } from 'styles/common';
@@ -17,7 +16,6 @@ import { wei } from '@synthetixio/wei';
 
 const SynthsPage: FC = () => {
 	const { t } = useTranslation();
-	const { setTitle } = UIContainer.useContainer();
 
 	const walletAddress = useRecoilValue(walletAddressState);
 	const { useSynthsBalancesQuery } = useSynthetixQueries();
@@ -26,11 +24,6 @@ const SynthsPage: FC = () => {
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
 
 	const totalSynthValue = synthsBalancesQuery.data?.totalUSDBalance || wei(0);
-
-	// header title
-	useEffect(() => {
-		setTitle('wallet', 'synths');
-	}, [setTitle]);
 
 	return (
 		<>

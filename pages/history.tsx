@@ -1,10 +1,9 @@
-import { FC, useEffect } from 'react';
+import { FC } from 'react';
 import Head from 'next/head';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import { LineSpacer } from 'styles/common';
-import UIContainer from 'containers/UI';
 import TransactionsContainer from 'sections/history/TransactionsContainer';
 import StatsSection from 'components/StatsSection';
 
@@ -50,8 +49,6 @@ const HistoryPage: FC = () => {
 		{ id: true, timestamp: true, rewards: true, value: true }
 	);
 
-	const { setTitle } = UIContainer.useContainer();
-
 	const isLoaded = issues.isSuccess && burns.isSuccess && feeClaims.isSuccess;
 
 	const history = isLoaded
@@ -78,11 +75,6 @@ const HistoryPage: FC = () => {
 		: [];
 
 	const txCount = history.length;
-
-	// header title
-	useEffect(() => {
-		setTitle('wallet', 'history');
-	}, [setTitle]);
 
 	return (
 		<>

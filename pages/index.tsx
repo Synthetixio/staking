@@ -1,4 +1,4 @@
-import { FC, useEffect } from 'react';
+import { FC } from 'react';
 import Head from 'next/head';
 import styled from 'styled-components';
 
@@ -7,7 +7,6 @@ import { useTranslation } from 'react-i18next';
 import { FlexDivCol, LineSpacer } from 'styles/common';
 import { PossibleActions } from 'sections/dashboard';
 
-import UIContainer from 'containers/UI';
 import StatBox from 'components/StatBox';
 import StatsSection from 'components/StatsSection';
 import useUserStakingData from 'hooks/useUserStakingData';
@@ -24,12 +23,6 @@ const DashboardPage: FC = () => {
 	const walletAddress = useRecoilValue(walletAddressState);
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
 	const { stakedValue, stakingAPR, debtBalance } = useUserStakingData(walletAddress);
-	const { setTitle } = UIContainer.useContainer();
-
-	// header title
-	useEffect(() => {
-		setTitle('home');
-	}, [setTitle]);
 
 	return (
 		<>
