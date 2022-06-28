@@ -18,9 +18,6 @@ import { SynthetixQueryContextProvider, createQueryContext } from '@synthetixio/
 
 import SystemStatus from 'sections/shared/SystemStatus';
 
-import 'styles/main.css';
-import '@reach/dialog/styles.css';
-import 'tippy.js/dist/tippy.css';
 import '../i18n';
 import Connector from 'containers/Connector';
 
