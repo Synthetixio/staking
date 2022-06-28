@@ -1,4 +1,4 @@
-import { FC, useEffect } from 'react';
+import { FC } from 'react';
 import Head from 'next/head';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
@@ -8,7 +8,6 @@ import { FlexDivCol, LineSpacer } from 'styles/common';
 import StatsSection from 'components/StatsSection';
 import StatBox from 'components/StatBox';
 import useUserStakingData from 'hooks/useUserStakingData';
-import UIContainer from 'containers/UI';
 
 import { formatFiatCurrency } from 'utils/formatters/number';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
