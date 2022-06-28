@@ -91,6 +91,9 @@ const errorIsClearable = (errorMsg: string) => {
 	if (errorMsg.includes('Insufficient sUSD to burn debt')) {
 		return false;
 	}
+	if (errorMsg.includes('Amount too large')) {
+		return false;
+	}
 	return true;
 };
 
