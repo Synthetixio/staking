@@ -2,37 +2,6 @@
 const withPlugins = require('next-compose-plugins');
 const optimizedImages = require('next-optimized-images');
 
-// all the dynamic pages need to be defined here (this needs to be imported from the routes)
-
-const stakingPages = ['/staking', '/staking/burn', '/staking/mint'].reduce((pages, page) => {
-	pages[page] = {
-		page: '/staking/[[...action]]',
-	};
-
-	return pages;
-}, {});
-
-const earnPages = [
-	'/earn',
-	'/earn/claim',
-	'/earn/curve-LP',
-	'/earn/iBTC-LP',
-	'/earn/iETH-LP',
-].reduce((pages, page) => {
-	pages[page] = {
-		page: '/earn/[[...pool]]',
-	};
-
-	return pages;
-}, {});
-
-const poolPages = ['/pools/weth-snx'].reduce((pages, page) => {
-	pages[page] = {
-		page: '/pools/[[...pool]]',
-	};
-
-	return pages;
-}, {});
 module.exports = withPlugins([[optimizedImages, { images: { optimize: false } }]], {
 	webpack: (config) => {
 		config.resolve.mainFields = ['module', 'browser', 'main'];
@@ -52,9 +21,19 @@ module.exports = withPlugins([[optimizedImages, { images: { optimize: false } }]
 	exportPathMap: function (defaultPathMap) {
 		return {
 			...defaultPathMap,
-			...stakingPages,
-			...earnPages,
-			...poolPages,
+
+			// all the dynamic pages need to be defined here (this needs to be imported from the routes)
+			'/staking': { page: '/staking/[[...action]]' },
+			'/staking/burn': { page: '/staking/[[...action]]' },
+			'/staking/mint': { page: '/staking/[[...action]]' },
+
+			'/earn': { page: '/earn/[[...pool]]' },
+			'/earn/claim': { page: '/earn/[[...pool]]' },
+			'/earn/curve-LP': { page: '/earn/[[...pool]]' },
+			'/earn/iBTC-LP': { page: '/earn/[[...pool]]' },
+			'/earn/iETH-LP': { page: '/earn/[[...pool]]' },
+
+			'/pools/weth-snx': { page: '/pools/[[...pool]]' },
 		};
 	},
 });
