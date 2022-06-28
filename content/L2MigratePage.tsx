@@ -12,7 +12,7 @@ import { formatCryptoCurrency } from 'utils/formatters/number';
 
 const SNX_HEADER_DECIMALS = 2;
 
-const L2Page: FC = () => {
+const L2MigratePage: FC = () => {
 	const { t } = useTranslation();
 
 	const escrowCalculations = useEscrowCalculations();
@@ -78,4 +78,4 @@ const Escrowed = styled(StatBox)`
 	}
 `;
 
-export default L2Page;
+export default L2MigratePage;

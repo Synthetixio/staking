@@ -5,7 +5,7 @@ import { ExternalLink, LineSpacer } from 'styles/common';
 import MainContent from 'sections/gov';
 import { EXTERNAL_LINKS } from 'constants/links';
 
-const Gov: React.FC = () => {
+const GovPage: React.FC = () => {
 	const { t } = useTranslation();
 
 	return (
@@ -35,4 +35,4 @@ const NewElectionsContainer = styled.div`
 	padding: 24px 0;
 `;
 
-export default Gov;
+export default GovPage;

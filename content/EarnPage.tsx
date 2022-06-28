@@ -19,7 +19,7 @@ import { walletAddressState, delegateWalletState } from 'store/wallet';
 import { wei } from '@synthetixio/wei';
 import useLiquidationRewards from 'hooks/useLiquidationRewards';
 
-const Earn: FC = () => {
+const EarnPage: FC = () => {
 	const { t } = useTranslation();
 
 	const walletAddress = useRecoilValue(walletAddressState);
@@ -119,4 +119,4 @@ const LifetimeRewards = styled(StatBox)`
 	}
 `;
 
-export default Earn;
+export default EarnPage;

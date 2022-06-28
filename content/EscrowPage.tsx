@@ -7,7 +7,7 @@ import StatBox from 'components/StatBox';
 import { LineSpacer } from 'styles/common';
 import StatsSection from 'components/StatsSection';
 import useEscrowCalculations from 'sections/escrow/hooks/useEscrowCalculations';
-import { formatCryptoCurrency } from '../../utils/formatters/number';
+import { formatCryptoCurrency } from 'utils/formatters/number';
 import Main from 'sections/escrow/index';
 
 const SNX_HEADER_DECIMALS = 2;

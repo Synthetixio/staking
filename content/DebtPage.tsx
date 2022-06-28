@@ -20,7 +20,7 @@ import { useRecoilValue } from 'recoil';
 import { walletAddressState } from 'store/wallet';
 import { wei } from '@synthetixio/wei';
 
-const DashboardPage: FC = () => {
+const DebtPage: FC = () => {
 	const { t } = useTranslation();
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
 
@@ -92,4 +92,4 @@ const TotalSynthValue = styled(StatBox)`
 	}
 `;
 
-export default DashboardPage;
+export default DebtPage;
