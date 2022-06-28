@@ -3,9 +3,7 @@ import { safeImport } from '@synthetixio/safe-import';
 
 const MergeAccountsPage = dynamic(
 	() =>
-		safeImport(
-			() => import(/* webpackChunkName: "merge-accounts" */ '../../content/MergeAccountsPage')
-		),
+		safeImport(() => import(/* webpackChunkName: "merge-accounts" */ 'content/MergeAccountsPage')),
 	{ ssr: true }
 );
 
