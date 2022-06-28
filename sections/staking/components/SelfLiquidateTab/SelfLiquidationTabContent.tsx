@@ -144,6 +144,7 @@ const SelfLiquidationTabContent: React.FC<{
 								prefix: '$',
 								minDecimals: 2,
 							}),
+							percentageTargetCRatio: formatPercent(percentageTargetCRatio),
 						})}
 					</InfoText>
 					<ButtonWrapper>
