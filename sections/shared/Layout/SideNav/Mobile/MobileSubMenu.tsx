@@ -1,14 +1,17 @@
-import { FC } from 'react';
+import { FC, Dispatch, SetStateAction } from 'react';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
 
-import UIContainer from 'containers/UI';
 import { SubMenuLink } from '../../constants';
 import { MenuLinkItem } from '../SideNav';
 
-const MobileSubMenu: FC = () => {
+type MobileSubMenuProps = {
+	setActiveSubMenu: Dispatch<SetStateAction<null>>;
+	activeSubMenu: null;
+};
+
+const MobileSubMenu: FC<MobileSubMenuProps> = () => {
 	const router = useRouter();
-	const { setMobileNavOpen } = UIContainer.useContainer();
 
 	return (
 		<Container>

@@ -11,41 +11,69 @@ import ROUTES from 'constants/routes';
 import { MOBILE_SIDE_NAV_WIDTH, zIndex } from 'constants/ui';
 import UIContainer from 'containers/UI';
 
-import SideNav from '../SideNav';
+import MobileMenu from './MobileMenu';
 import MobileSubMenu from './MobileSubMenu';
 
 const MobileSideNav: FC = () => {
-	const [isSubMenuOpen, setSubMenuOpen] = useState(true);
+	const [isSubMenuOpen, setSubMenuOpen] = useState(false);
 	const [activeSubMenu, setActiveSubMenu] = useState(null);
 
 	const { isMobileNavOpen, setMobileNavOpen } = UIContainer.useContainer();
 
 	const close = () => {
-		setMobileNavOpen(false);
 		setSubMenuOpen(false);
+		setMobileNavOpen(false);
 	};
 
 	return (
-		<Container data-testid="sidenav" isShowing={isMobileNavOpen}>
-			<StakingLogoWrap>
+		<ClickableWrapper isShowing={isMobileNavOpen} onClick={close}>
+			<Container
+				data-testid="sidenav"
+				isShowing={isMobileNavOpen}
+				onClick={(e) => {
+					e.stopPropagation();
+				}}
+			>
+				<StakingLogoWrap>
+					{isSubMenuOpen ? (
+						<Svg src={BackIcon} onClick={() => setSubMenuOpen(false)} />
+					) : (
+						<Link href={ROUTES.Home}>
+							<Svg src={StakingLogo} />
+						</Link>
+					)}
+					<CloseContainer onClick={close}>
+						<Svg src={CloseIcon} />
+					</CloseContainer>
+				</StakingLogoWrap>
 				{isSubMenuOpen ? (
-					<Svg src={BackIcon} onClick={() => setSubMenuOpen(false)} />
+					<MobileSubMenu setActiveSubMenu={setActiveSubMenu} activeSubMenu={activeSubMenu} />
 				) : (
-					<Link href={ROUTES.Home}>
-						<Svg src={StakingLogo} />
-					</Link>
+					<MobileMenu setSubMenuOpen={setSubMenuOpen} setActiveSubMenu={setActiveSubMenu} />
 				)}
-				<CloseContainer onClick={close}>
-					<Svg src={CloseIcon} />
-				</CloseContainer>
-			</StakingLogoWrap>
-			{isSubMenuOpen ? <MobileSubMenu /> : <SideNav />}
-		</Container>
+			</Container>
+		</ClickableWrapper>
 	);
 };
 
-const Container = styled.div<{ isShowing: boolean }>`
+const ClickableWrapper = styled.div<{ isShowing: boolean }>`
 	z-index: ${zIndex.DIALOG_OVERLAY};
+	height: 100%;
+	position: fixed;
+	top: 0;
+	width: 100%;
+	left: -${(props: any) => (props.isShowing ? '0px' : '100%')};
+	background: transparent;
+	border-right: 1px solid ${(props) => props.theme.colors.grayBlue};
+	display: grid;
+	grid-template-rows: auto 1fr auto auto;
+	overflow-y: hidden;
+	overflow-x: visible;
+	transition: left 0.3s ease-out;
+`;
+
+const Container = styled.div<{ isShowing: boolean }>`
+	z-index: ${zIndex.DIALOG_OVERLAY + 1};
 	height: 100%;
 	position: fixed;
 	top: 0;

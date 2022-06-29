@@ -9,7 +9,7 @@ import { delegateWalletState, isL2State, isWalletConnectedState, networkState } 
 import UIContainer from 'containers/UI';
 import { useCallback } from 'react';
 
-export default function useAddOptimism() {
+export function useAddOptimism() {
 	const network = useRecoilValue(networkState);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const isL2 = useRecoilValue(isL2State);

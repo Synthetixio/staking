@@ -14,7 +14,7 @@ import { isL2State, delegateWalletState } from 'store/wallet';
 import { MENU_LINKS, MENU_LINKS_L2, MENU_LINKS_DELEGATE } from '../constants';
 import { MobileOrTabletView } from 'components/Media';
 import Settings from '../Settings';
-import useAddOptimism from '../../hooks';
+import { useAddOptimism } from '../../hooks';
 
 const SideNav: FC = () => {
 	const { t } = useTranslation();
