@@ -14,18 +14,21 @@ import { ethers } from 'ethers';
 import { truncateAddress } from 'utils/formatters/string';
 import Trash from 'assets/svg/app/trash.svg';
 import { useSetRecoilState } from 'recoil';
-import { walletWatchedState, walletAddressState } from 'store/wallet';
+import { walletWatchedState, walletAddressState, ensNameState } from 'store/wallet';
+import Connector from 'containers/Connector';
 
 type WatchWalletModalProps = {
 	onDismiss: () => void;
 };
 
 const WatchWalletModal: React.FC<WatchWalletModalProps> = ({ onDismiss }) => {
+	const { L1DefaultProvider } = Connector.useContainer();
 	const { t } = useTranslation();
 	const [previouslyWatchedWallets, setPreviouslyWatchedWallets] = useLocalStorage<string[]>(
 		LOCAL_STORAGE_KEYS.WATCHED_WALLETS,
 		[]
 	);
+	const setEnsName = useSetRecoilState(ensNameState);
 	const [duplicatedWatchWallets, setDuplicatedWatchWallets] = useState<string[]>([]);
 	const [address, setAddress] = useState<string>('');
 	const [error, setError] = useState<boolean>(false);
@@ -36,14 +39,24 @@ const WatchWalletModal: React.FC<WatchWalletModalProps> = ({ onDismiss }) => {
 		setDuplicatedWatchWallets(previouslyWatchedWallets);
 	}, [previouslyWatchedWallets]);
 
-	const handleWatchWallet = (watchAddress: string) => {
+	const handleWatchWallet = async (watchAddressOrEns: string) => {
 		setError(false);
-		if (ethers.utils.isAddress(watchAddress)) {
-			if (!previouslyWatchedWallets.find((e) => e === watchAddress)) {
-				setPreviouslyWatchedWallets([watchAddress, ...previouslyWatchedWallets]);
+		const isEns = watchAddressOrEns.endsWith('.eth');
+		if (ethers.utils.isAddress(watchAddressOrEns) || isEns) {
+			let resolvedAddress = watchAddressOrEns;
+			if (isEns) {
+				const address = await L1DefaultProvider.resolveName(watchAddressOrEns);
+				if (address) {
+					resolvedAddress = address;
+					setEnsName(watchAddressOrEns);
+				}
 			}
-			setWalletAddress(watchAddress);
-			setWalletWatched(watchAddress);
+			if (!previouslyWatchedWallets.find((e) => e === resolvedAddress)) {
+				setPreviouslyWatchedWallets([resolvedAddress, ...previouslyWatchedWallets]);
+			}
+
+			setWalletAddress(resolvedAddress);
+			setWalletWatched(resolvedAddress);
 			onDismiss();
 		} else {
 			setError(true);
