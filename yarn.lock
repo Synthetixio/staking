@@ -4270,7 +4270,7 @@
     "@synthetixio/optimism-networks" "2.74.1"
     ethers "^5.5.3"
 
-"@synthetixio/queries@2.74.2":
+"@synthetixio/queries@^2.74.2":
   version "2.74.2"
   resolved "https://registry.yarnpkg.com/@synthetixio/queries/-/queries-2.74.2.tgz#d3113f7d08aa05011227946698252a67d2bddd57"
   integrity sha512-iVr5ifdGulJsSIe3jN2llzjycw5S+EjHkXXIIFB6p86ne8F4HSb/7nSiSJF+33X5s0zzY6YiFHiaNfdms7DkEg==
