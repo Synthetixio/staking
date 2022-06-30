@@ -4260,7 +4260,7 @@
     "@metamask/providers" "^8.1.1"
     ethers "^5.5.3"
 
-"@synthetixio/providers@2.74.1", "@synthetixio/providers@^2.74.1":
+"@synthetixio/providers@^2.74.1":
   version "2.74.1"
   resolved "https://registry.yarnpkg.com/@synthetixio/providers/-/providers-2.74.1.tgz#5133ad973b78d9d0631d38346a7e7c6e0b3f3d4c"
   integrity sha512-YxRhy98dTq1BbwU0i8JvZQNQDLwQ8ADaX6ZfTOQzWGJO0fMF9qo9kEMN9CcZhC5tq9Davc0JBtyQJkqL/F7TLQ==
@@ -4270,16 +4270,15 @@
     "@synthetixio/optimism-networks" "2.74.1"
     ethers "^5.5.3"
 
-"@synthetixio/queries@^2.74.1":
-  version "2.74.1"
-  resolved "https://registry.yarnpkg.com/@synthetixio/queries/-/queries-2.74.1.tgz#83c9a1e0f831333b4202cf03b0eedc6d93729220"
-  integrity sha512-zNtxZZ3TC25nSF+PlX4An8Urq8XijJ5Mh2DSedYz2xDYnrw6sO38E3L2DFuMt+m8rfCM1ZivxwESMmeSSMfqSg==
+"@synthetixio/queries@^2.74.2":
+  version "2.74.2"
+  resolved "https://registry.yarnpkg.com/@synthetixio/queries/-/queries-2.74.2.tgz#d3113f7d08aa05011227946698252a67d2bddd57"
+  integrity sha512-iVr5ifdGulJsSIe3jN2llzjycw5S+EjHkXXIIFB6p86ne8F4HSb/7nSiSJF+33X5s0zzY6YiFHiaNfdms7DkEg==
   dependencies:
     "@snapshot-labs/snapshot.js" "^0.3.22"
     "@synthetixio/codegen-graph-ts" "2.74.1"
     "@synthetixio/contracts-interface" "2.74.1"
     "@synthetixio/optimism-networks" "2.74.1"
-    "@synthetixio/providers" "2.74.1"
     "@synthetixio/wei" "2.74.1"
     axios "^0.21.4"
     date-fns "^2.19.0"

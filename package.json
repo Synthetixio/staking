@@ -34,7 +34,7 @@
 		"@synthetixio/contracts-interface": "^2.74.1",
 		"@synthetixio/optimism-networks": "^2.74.1",
 		"@synthetixio/providers": "^2.74.1",
-		"@synthetixio/queries": "^2.74.1",
+		"@synthetixio/queries": "^2.74.2",
 		"@synthetixio/safe-import": "latest",
 		"@synthetixio/transaction-notifier": "^2.74.1",
 		"@synthetixio/wei": "^2.74.1",
