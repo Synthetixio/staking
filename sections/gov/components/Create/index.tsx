@@ -15,13 +15,12 @@ import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 
 import { ModalContent, ModalItem, ModalItemText, ModalItemTitle } from 'styles/common';
 
-import CouncilDilution from 'contracts/councilDilution.js';
-import { truncateAddress } from 'utils/formatters/string';
 import { useTranslation } from 'react-i18next';
 import useSynthetixQueries from '@synthetixio/queries';
 import { AxiosResponse } from 'axios';
 import { isL2State } from 'store/wallet';
 import { useRecoilValue } from 'recoil';
+import { addDays } from 'date-fns';
 
 type IndexProps = {
 	onBack: Function;
@@ -30,7 +29,7 @@ type IndexProps = {
 const Index: React.FC<IndexProps> = ({ onBack }) => {
 	const { t } = useTranslation();
 	const { provider } = Connector.useContainer();
-	const { useSnapshotSpaceQuery, useContractTxn } = useSynthetixQueries();
+	const { useSnapshotSpaceQuery } = useSynthetixQueries();
 
 	const [block, setBlock] = useState<number | null>(null);
 	const [name, setName] = useState<string>('');
@@ -41,26 +40,11 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 		Transaction.PRESUBMIT
 	);
 	const [signModalOpen, setSignModalOpen] = useState<boolean>(false);
-	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 	const [signError, setSignError] = useState<string | null>(null);
 	const space = useSnapshotSpaceQuery(snapshotEndpoint, SPACE_KEY.PROPOSAL);
 	const [ipfsHash, setIpfsHash] = useState<string | null>(null);
 
 	const isL2 = useRecoilValue(isL2State);
-	const { signer } = Connector.useContainer();
-
-	const contract = useMemo(
-		() => new ethers.Contract(CouncilDilution.address, CouncilDilution.abi, signer ?? undefined),
-		[signer]
-	);
-
-	const txn = useContractTxn(
-		contract,
-		'logProposal',
-		[ipfsHash],
-		{},
-		{ enabled: Boolean(ipfsHash), gasLimitBuffer: 0.5 }
-	);
 
 	const validSubmission = useMemo(() => {
 		if (name.length > 0 && body.length > 0 && block && choices.length > 0) {
@@ -75,13 +59,11 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 			setSignModalOpen(false);
 			setResult(response);
 
-			let ipfsHash = response?.data.ipfsHash;
+			const ipfsHash = response?.data.ipfsHash;
 
 			setIpfsHash(ipfsHash);
 
 			if (isL2) {
-				txn.mutate();
-				setTxModalOpen(true);
 				setSignTransactionState(Transaction.PRESUBMIT);
 			} else {
 				setSignTransactionState(Transaction.SUCCESS);
@@ -100,10 +82,9 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 
 				setSignModalOpen(true);
 				setSignTransactionState(Transaction.WAITING);
-
-				const proposalPeriod = await contract.proposalPeriod();
-				const proposalStartDate = Math.round(new Date().getTime() / 1000);
-				const proposalEndDate = proposalStartDate + proposalPeriod.toNumber();
+				const now = new Date();
+				const proposalStartDate = Math.round(now.getTime() / 1000);
+				const proposalEndDate = Math.round(addDays(now, 3).getTime() / 1000);
 
 				createProposal.mutate({
 					spaceKey: SPACE_KEY.PROPOSAL,
@@ -127,7 +108,6 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 		} catch (error: any) {
 			console.log(error);
 			setSignTransactionState(Transaction.PRESUBMIT);
-			txn.refresh();
 			setSignError(error.message);
 		}
 	};
@@ -161,9 +141,7 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 						validSubmission={validSubmission}
 						signTransactionState={signTransactionState}
 						setSignTransactionState={setSignTransactionState}
-						txTransactionState={txn.txnStatus}
 						hash={ipfsHash}
-						txHash={txn.hash}
 					/>
 				</Col>
 				<Col>
@@ -171,25 +149,7 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 					<Timing block={block} setBlock={setBlock} />
 				</Col>
 			</Grid>
-			{txModalOpen && (
-				<TxConfirmationModal
-					onDismiss={() => setTxModalOpen(false)}
-					txError={txn.errorMessage}
-					attemptRetry={handleCreate}
-					content={
-						<ModalContent>
-							<ModalItem>
-								<ModalItemTitle>{t('modals.confirm-transaction.propose.title')}</ModalItemTitle>
-								<ModalItemText>
-									{t('modals.confirm-transaction.propose.hash', {
-										hash: truncateAddress(ipfsHash ?? ''),
-									})}
-								</ModalItemText>
-							</ModalItem>
-						</ModalContent>
-					}
-				/>
-			)}
+
 			{signModalOpen && (
 				<TxConfirmationModal
 					isSignature={true}
