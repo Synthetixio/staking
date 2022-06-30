@@ -1,6 +1,6 @@
 import React from 'react';
 import { Grid, Col } from 'sections/gov/components/common';
-import DilutionContent from './DilutionContent';
+import Content from './Content';
 import Details from './Details';
 import Info from './Info';
 import { useQuery } from 'react-query';
@@ -58,7 +58,7 @@ const Index: React.FC<ProposalProps> = ({ onBack }) => {
 
 	return (
 		<Grid>
-			<Col>{hash && <DilutionContent proposal={proposal} onBack={onBack} />}</Col>
+			<Col>{hash && <Content proposal={proposal} onBack={onBack} />}</Col>
 			<Col>
 				<Details proposal={proposal} />
 				{hash && <Info proposalId={hash} />}

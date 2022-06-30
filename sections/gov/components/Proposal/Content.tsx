@@ -51,12 +51,12 @@ import { expired, pending } from '../helper';
 import { snapshotEndpoint, SPACE_KEY } from 'constants/snapshot';
 import Connector from '../../../../containers/Connector';
 
-type DilutionContentProps = {
+type ContentProps = {
 	proposal?: Proposal;
 	onBack: Function;
 };
 
-const DilutionContent: React.FC<DilutionContentProps> = ({ proposal, onBack }) => {
+const Content: React.FC<ContentProps> = ({ proposal, onBack }) => {
 	const { t } = useTranslation();
 	const { L2DefaultProvider } = Connector.useContainer();
 
@@ -270,7 +270,7 @@ const DilutionContent: React.FC<DilutionContentProps> = ({ proposal, onBack }) =
 	);
 };
 
-export default DilutionContent;
+export default Content;
 
 const Status = styled.p<{ closed: boolean; pending: boolean }>`
 	color: ${(props) =>
