@@ -4288,9 +4288,9 @@
     lodash "^4.17.21"
 
 "@synthetixio/safe-import@latest":
-  version "0.0.0-e3b7eb2e"
-  resolved "https://registry.yarnpkg.com/@synthetixio/safe-import/-/safe-import-0.0.0-e3b7eb2e.tgz#5487b294945f885a341c602ec18ad68198138ccf"
-  integrity sha512-LzuNjc9R2r1kk7Ihnpyc8JQdUAeZjMOxYqgBCTQcLS1IXIvkhGhBzGczDBbhZu6Pi4xc6/8iMEJjU7ZqDFO7kg==
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@synthetixio/safe-import/-/safe-import-1.0.0.tgz#c11fae55418b72f05f9e036a75b05ae38e9fe30a"
+  integrity sha512-57zMROJ8HAiglfszEq0kiBUJh3YpnSDUuhbJfvKH/6YdCWv06l11ODlCotm/1Tp9m6yhC4O/4/Q/CT3tLu0yKQ==
   dependencies:
     react "^17.0.2"
 
