@@ -4,7 +4,7 @@ import NumericInput from './NumericInput';
 import userEvent from '@testing-library/user-event';
 
 describe('NumericInput', () => {
-	test('happy path', () => {
+	test('happy path', async () => {
 		const onChangeMock = jest.fn();
 
 		const result = render(
@@ -15,10 +15,10 @@ describe('NumericInput', () => {
 		const input = result.getByPlaceholderText('MyNumericInput');
 		expect(input).toBeInTheDocument();
 		expect(input).toHaveValue(null);
-		userEvent.type(input, '1');
+		await userEvent.type(input, '1');
 		expect(onChangeMock).toBeCalledWith(expect.any(Object), '1');
 	});
-	test('ignores non number', () => {
+	test('ignores non number', async () => {
 		const onChangeMock = jest.fn();
 
 		const result = render(
@@ -29,7 +29,7 @@ describe('NumericInput', () => {
 		const input = result.getByPlaceholderText('MyNumericInput');
 		expect(input).toBeInTheDocument();
 		expect(input).toHaveValue(null);
-		userEvent.type(input, 'abc');
+		await userEvent.type(input, 'abc');
 		expect(onChangeMock).not.toBeCalled();
 	});
 });
