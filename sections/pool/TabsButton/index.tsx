@@ -1,6 +1,6 @@
 import StructuredTab from 'components/StructuredTab';
 
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from 'styled-components';
 import PoolTab, { PoolTabProps } from '../Tab';
@@ -15,6 +15,7 @@ export default function PoolTabs({
 	stakedTokens,
 }: PoolTabsProps) {
 	const { t } = useTranslation();
+	const [activeTab, setActiveTab] = useState('Add Liquidity');
 	const theme = useTheme();
 	const tabData = useMemo(
 		() => [
@@ -62,5 +63,13 @@ export default function PoolTabs({
 			theme.colors.orange,
 		]
 	);
-	return <StructuredTab boxPadding={40} boxHeight={450} tabData={tabData} />;
+	return (
+		<StructuredTab
+			boxPadding={40}
+			boxHeight={450}
+			tabData={tabData}
+			setActiveTab={setActiveTab}
+			activeTab={activeTab}
+		/>
+	);
 }
