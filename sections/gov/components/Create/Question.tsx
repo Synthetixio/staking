@@ -10,7 +10,7 @@ import Success from 'assets/svg/app/success.svg';
 import PendingConfirmation from 'assets/svg/app/pending-confirmation.svg';
 
 import Input, { inputCSS } from 'components/Input/Input';
-import { Divider, FlexDivColCentered, IconButton, ExternalLink } from 'styles/common';
+import { Divider, FlexDivColCentered, IconButton } from 'styles/common';
 import media from 'styles/media';
 import {
 	InputContainer,
@@ -22,15 +22,11 @@ import {
 	ButtonSpacer,
 	DismissButton,
 	GreyHeader,
-	GreyText,
-	LinkText,
-	VerifyButton,
 } from '../common';
 import { useTranslation } from 'react-i18next';
 import { Transaction } from 'constants/network';
 import { truncateAddress } from 'utils/formatters/string';
 import TxState from 'sections/gov/components/TxState';
-import Etherscan from 'containers/BlockExplorer';
 import { SPACE_KEY } from 'constants/snapshot';
 
 type QuestionProps = {
@@ -44,9 +40,7 @@ type QuestionProps = {
 	validSubmission: boolean;
 	signTransactionState: Transaction;
 	setSignTransactionState: Function;
-	txTransactionState: 'pending' | 'confirmed' | string;
 	hash: string | null;
-	txHash: string | null;
 };
 
 const Question: React.FC<QuestionProps> = ({
@@ -59,16 +53,9 @@ const Question: React.FC<QuestionProps> = ({
 	validSubmission,
 	signTransactionState,
 	setSignTransactionState,
-	txTransactionState,
-	txHash,
 	hash,
 }) => {
 	const { t } = useTranslation();
-	const { blockExplorerInstance } = Etherscan.useContainer();
-	const link =
-		blockExplorerInstance != null && txHash != null
-			? blockExplorerInstance.txLink(txHash)
-			: undefined;
 
 	const getRawMarkup = (value?: string | null) => {
 		const remarkable = new Remarkable({
@@ -137,65 +124,6 @@ const Question: React.FC<QuestionProps> = ({
 								variant="secondary"
 								onClick={() => {
 									setSignTransactionState(Transaction.PRESUBMIT);
-									onBack();
-								}}
-							>
-								{t('gov.actions.tx.dismiss')}
-							</DismissButton>
-						</ButtonSpacer>
-					</FlexDivColCentered>
-				}
-			/>
-		);
-	}
-
-	if (txTransactionState === 'pending') {
-		return (
-			<TxState
-				title={t('gov.actions.log-proposal.waiting')}
-				content={
-					<FlexDivColCentered>
-						<Svg src={PendingConfirmation} />
-						<GreyHeader>{t('gov.actions.log-proposal.logging')}</GreyHeader>
-						<WhiteSubheader>
-							{t('gov.actions.log-proposal.hash', {
-								hash: truncateAddress(hash ?? ''),
-							})}
-						</WhiteSubheader>
-						<Divider />
-						<GreyText>{t('gov.actions.tx.notice')}</GreyText>
-						<ExternalLink href={link}>
-							<LinkText>{t('gov.actions.tx.link')}</LinkText>
-						</ExternalLink>
-					</FlexDivColCentered>
-				}
-			/>
-		);
-	}
-
-	if (txTransactionState === 'confirmed') {
-		return (
-			<TxState
-				title={t('gov.actions.log-proposal.success')}
-				content={
-					<FlexDivColCentered>
-						<Svg src={Success} />
-						<GreyHeader>{t('gov.actions.log-proposal.logged')}</GreyHeader>
-						<WhiteSubheader>
-							{t('gov.actions.log-proposal.hash', {
-								hash: truncateAddress(hash ?? ''),
-							})}
-						</WhiteSubheader>
-						<Divider />
-						<ButtonSpacer>
-							{link && (
-								<ExternalLink href={link}>
-									<VerifyButton>{t('gov.actions.tx.verify')}</VerifyButton>
-								</ExternalLink>
-							)}
-							<DismissButton
-								variant="secondary"
-								onClick={() => {
 									onBack();
 								}}
 							>

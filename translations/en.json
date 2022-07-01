@@ -63,10 +63,6 @@
 				"title": "Writing proposal to contract",
 				"hash": "{{hash}}"
 			},
-			"withdraw": {
-				"title": "Diluting Member",
-				"address": "{{address}}"
-			},
 			"support": {
 				"title": "Supporting Member",
 				"address": "{{address}}"
@@ -398,7 +394,7 @@
 				"enough-susd-balance": "To get your C-Ratio back to target C-Ratio of {{targetCRatio}} you need to burn {{burnAmountToFixCRatio}}. Your balance is {{balance}} so there's no need to self liquidate.",
 				"delegate-wallet": "As a delegated wallet you can't self liquidate.",
 				"balance-not-zero": "Since your balance is not zero you should burn all your sUSD before self liquidating",
-				"self-liquidate-text": "You can also opt to self liquidate and incur a {{selfLiquidationPenalty}} penalty on your staked SNX needed to bring you to the 300% target. This would cause you to incur a penalty of {{amountToSelfLiquidate}} ({{amountToSelfLiquidateUsd}})."
+				"self-liquidate-text": "You can also opt to self liquidate and incur a {{selfLiquidationPenalty}} penalty on your staked SNX needed to bring you to the {{percentageTargetCRatio}} target. This would cause you to incur a penalty of {{amountToSelfLiquidate}} ({{amountToSelfLiquidateUsd}})."
 			}
 		}
 	},
@@ -1178,9 +1174,7 @@
 				"pending": "Pending"
 			},
 			"action": {
-				"vote": "Vote",
-				"withdraw": "Dilute",
-				"support": "Revert Dilution"
+				"vote": "Vote"
 			},
 			"info": {
 				"author": "Author",
@@ -1215,20 +1209,6 @@
 				"hash": "{{hash}}",
 				"success": "Your vote is in!"
 			},
-			"withdraw": {
-				"waiting": "Dilution in progress",
-				"signing": "Diluting votes for",
-				"signed": "Diluted votes for",
-				"address": "{{address}}",
-				"success": "Dilution successful"
-			},
-			"support": {
-				"waiting": "Revert dilution in progress",
-				"signing": "Reverting dilution for",
-				"signed": "Reverted dilution for",
-				"address": "{{address}}",
-				"success": "Reverted dilution successfully"
-			},
 			"propose": {
 				"waiting": "Submitting proposal",
 				"signing": "Proposing on",
@@ -1236,13 +1216,6 @@
 				"space": "{{space}}",
 				"hash": "{{hash}}",
 				"success": "Your proposal is in!"
-			},
-			"log-proposal": {
-				"waiting": "Logging proposal",
-				"logging": "Saving proposal",
-				"hash": "{{hash}}",
-				"success": "Transaction Success",
-				"logged": "Saved proposal"
 			},
 			"tx": {
 				"link": "View on Etherscan",
