@@ -1,23 +1,22 @@
-import { useState } from 'react';
+import { useReducer, useState } from 'react';
 import { createContainer } from 'unstated-next';
 
-import { SubMenuLink } from 'sections/shared/Layout/constants';
-
-export type SubMenuConfiguration = {
-	routes: SubMenuLink[] | null;
-	topPosition: number;
-};
+import { reducer, initialState } from './reducer';
 
 export default createContainer(Container);
 
 function Container() {
-	const [isMobileNavOpen, setMobileNavOpen] = useState(false);
 	const [networkError, setNetworkError] = useState<string | null>(null);
+	const [state, dispatch] = useReducer(reducer, initialState);
+
+	const { isMobileNavOpen, isMobileSubNavOpen, activeMobileSubNav } = state;
 
 	return {
-		isMobileNavOpen,
-		setMobileNavOpen,
 		networkError,
 		setNetworkError,
+		isMobileNavOpen,
+		isMobileSubNavOpen,
+		activeMobileSubNav,
+		dispatch,
 	};
 }

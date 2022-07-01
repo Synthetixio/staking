@@ -14,15 +14,11 @@ const MobileTabletMenu: FC = () => {
 
 	const { headerTitle, headerSubtitle } = useMemo(() => headerInfo(router.asPath), [router.asPath]);
 
-	const { setMobileNavOpen } = UIContainer.useContainer();
-
-	const showMobileSideNav = () => {
-		setMobileNavOpen(true);
-	};
+	const { dispatch } = UIContainer.useContainer();
 
 	return (
 		<>
-			<Title onClick={showMobileSideNav}>
+			<Title onClick={() => dispatch({ type: 'open' })}>
 				<Svg src={TitleIcon} />
 				{headerTitle && (
 					<TitleText hasSubTitle={!!headerSubtitle}>{t(`header.${headerTitle}`)}</TitleText>

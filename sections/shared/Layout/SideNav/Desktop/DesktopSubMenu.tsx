@@ -1,62 +1,71 @@
 import { FC } from 'react';
-import { createPortal } from 'react-dom';
 import styled, { css } from 'styled-components';
 import { FlexDivColCentered } from 'styles/common';
+import { DESKTOP_SIDE_NAV_WIDTH } from 'constants/ui';
 import media from 'styles/media';
-import { DESKTOP_SIDE_NAV_WIDTH, MOBILE_SIDE_NAV_WIDTH } from 'constants/ui';
 
-import SubMenu from '../SubMenu';
-import useIsMounted from 'hooks/isMounted';
+const DesktopSubMenu: FC = ({ children }) => (
+	<SubContainer className="subLink">
+		<Inner>{children}</Inner>
+	</SubContainer>
+);
 
-const DesktopSubMenu: FC = () => {
-	const mounted = useIsMounted();
-	return mounted
-		? createPortal(
-				<Container isVisible={true}>
-					<Inner>
-						<FloatingContent>
-							<SubMenu />
-						</FloatingContent>
-					</Inner>
-				</Container>,
-				document.body
-		  )
-		: null;
-};
+console.log(DESKTOP_SIDE_NAV_WIDTH);
 
-const Container = styled(FlexDivColCentered)<{ isVisible: boolean }>`
+export const SubContainer = styled(FlexDivColCentered)`
 	justify-content: center;
 	height: 100%;
 	width: 128px;
 	background: ${(props) => props.theme.colors.darkGradient1};
 	position: fixed;
-	top: 0;
-	bottom: 0;
-	transform: translateX(-100%);
+	display: none;
+	top: 0px;
+	bottom: 0px;
+	transform: translateX(${DESKTOP_SIDE_NAV_WIDTH});
 	border-right: 1px solid ${(props) => props.theme.colors.grayBlue};
 	transition: all 0.15s ease-in-out;
-	${(props) =>
-		props.isVisible &&
-		css`
-			transform: translateX(calc(${MOBILE_SIDE_NAV_WIDTH}px));
+	zindex: 2000;
+`;
 
-			${media.greaterThan('mdUp')`
-				transform: translateX(calc(${DESKTOP_SIDE_NAV_WIDTH}px));
-			`}
+export const SubMenuLinkItem = styled.div<{ isActive: boolean }>`
+	line-height: 40px;
+	padding-bottom: 10px;
+	position: relative;
+	white-space: nowrap;
+	display: flex;
+	align-items: center;
+	text-decoration: none;
+	&:hover {
+		text-decoration: none;
+	}
+	font-family: ${(props) => props.theme.fonts.condensedMedium};
+	text-transform: uppercase;
+	opacity: 0.4;
+	font-size: 14px;
+	cursor: pointer;
+	color: ${(props) => props.theme.colors.white};
+	&:hover {
+		opacity: unset;
+		color: ${(props) => props.theme.colors.blue};
+	}
+	${(props) =>
+		props.isActive &&
+		css`
+			opacity: unset;
 		`}
+
+	${media.lessThan('md')`
+		font-family: ${(props) => props.theme.fonts.extended};
+		font-size: 20px;
+		opacity: 1;
+	`}
 `;
 
 const Inner = styled.div`
 	position: relative;
 	height: 100%;
 	width: 100%;
-`;
-
-const FloatingContent = styled.div`
-	position: absolute;
-	top: 20px;
-	left: 50%;
-	transform: translateX(-50%);
+	background: ${(props) => props.theme.colors.darkGradient1};
 `;
 
 export default DesktopSubMenu;

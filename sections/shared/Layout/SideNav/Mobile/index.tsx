@@ -1,7 +1,8 @@
-import { FC, useState } from 'react';
+import { FC } from 'react';
 import styled from 'styled-components';
 import Link from 'next/link';
 import { Svg } from 'react-optimized-image';
+import { useTranslation } from 'react-i18next';
 
 import StakingLogo from 'assets/svg/app/staking-logo-small.svg';
 import BackIcon from 'assets/svg/app/back.svg';
@@ -12,21 +13,19 @@ import { MOBILE_SIDE_NAV_WIDTH, zIndex } from 'constants/ui';
 import UIContainer from 'containers/UI';
 
 import MobileMenu from './MobileMenu';
-import MobileSubMenu from './MobileSubMenu';
+import { SubMenuLink } from '../../constants';
+import { useRouter } from 'next/router';
+import { MenuLinkItem } from './MobileMenu';
 
 const MobileSideNav: FC = () => {
-	const [isSubMenuOpen, setSubMenuOpen] = useState(false);
-	const [activeSubMenu, setActiveSubMenu] = useState(null);
+	const { isMobileNavOpen, isMobileSubNavOpen, activeMobileSubNav, dispatch } =
+		UIContainer.useContainer();
+	const router = useRouter();
 
-	const { isMobileNavOpen, setMobileNavOpen } = UIContainer.useContainer();
-
-	const close = () => {
-		setSubMenuOpen(false);
-		setMobileNavOpen(false);
-	};
+	const { t } = useTranslation();
 
 	return (
-		<ClickableWrapper isShowing={isMobileNavOpen} onClick={close}>
+		<ClickableWrapper isShowing={isMobileNavOpen} onClick={() => dispatch({ type: 'close' })}>
 			<Container
 				data-testid="sidenav"
 				isShowing={isMobileNavOpen}
@@ -35,21 +34,38 @@ const MobileSideNav: FC = () => {
 				}}
 			>
 				<StakingLogoWrap>
-					{isSubMenuOpen ? (
-						<Svg src={BackIcon} onClick={() => setSubMenuOpen(false)} />
+					{isMobileSubNavOpen ? (
+						<Svg src={BackIcon} onClick={() => dispatch({ type: 'clear_sub' })} />
 					) : (
 						<Link href={ROUTES.Home}>
 							<Svg src={StakingLogo} />
 						</Link>
 					)}
-					<CloseContainer onClick={close}>
+					<CloseContainer onClick={() => dispatch({ type: 'close' })}>
 						<Svg src={CloseIcon} />
 					</CloseContainer>
 				</StakingLogoWrap>
-				{isSubMenuOpen ? (
-					<MobileSubMenu setActiveSubMenu={setActiveSubMenu} activeSubMenu={activeSubMenu} />
+				{isMobileSubNavOpen ? (
+					<div>
+						{activeMobileSubNav?.map(({ i18nLabel, subLink }: SubMenuLink, i) => {
+							const onClick = () => {
+								router.push(subLink);
+								dispatch({ type: 'close' });
+							};
+							return (
+								<MenuLinkItem
+									key={`subMenuLinkItem-${i}`}
+									isActive={router.asPath === subLink}
+									data-testid={`sidenav-submenu-${subLink}`}
+									onClick={onClick}
+								>
+									<div className="link">{t(i18nLabel)}</div>
+								</MenuLinkItem>
+							);
+						})}
+					</div>
 				) : (
-					<MobileMenu setSubMenuOpen={setSubMenuOpen} setActiveSubMenu={setActiveSubMenu} />
+					<MobileMenu dispatch={dispatch} />
 				)}
 			</Container>
 		</ClickableWrapper>

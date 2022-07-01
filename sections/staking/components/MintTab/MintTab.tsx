@@ -42,8 +42,6 @@ const MintTab: React.FC = () => {
 		onSuccess: () => console.log('Successful tx'),
 	});
 
-	console.log('Txn', txn);
-
 	useEffect(() => {
 		if (txn.txnStatus === 'prompting') setTxModalOpen(true);
 	}, [txn.txnStatus]);

@@ -22,7 +22,7 @@ import CRatioBarStats from 'sections/shared/Layout/Stats/CRatioBarStats';
 import { Tooltip } from 'styles/common';
 import { useTranslation } from 'react-i18next';
 
-import SideNav from '../SideNav';
+import DesktopMenu from './DesktopMenu';
 import DesktopSubMenu from './DesktopSubMenu';
 import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
@@ -69,8 +69,7 @@ const DesktopSideNav: FC = () => {
 				</Link>
 			</StakingLogoWrap>
 
-			<SideNav />
-			<DesktopSubMenu />
+			<DesktopMenu />
 
 			<LineSeparator />
 			<MenuCharts>

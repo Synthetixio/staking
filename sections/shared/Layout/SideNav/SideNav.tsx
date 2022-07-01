@@ -49,11 +49,6 @@ const SideNav: FC = () => {
 					<div className="link">{t('sidenav.switch-to-l2')}</div>
 				</MenuLinkItem>
 			)}
-			<>
-				<MobileOrTabletView>
-					<Settings />
-				</MobileOrTabletView>
-			</>
 		</MenuLinks>
 	);
 };

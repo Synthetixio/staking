@@ -10,7 +10,7 @@ import { SubMenuLink } from '../constants';
 const SubMenu: FC = () => {
 	const router = useRouter();
 	const { t } = useTranslation();
-	const { setMobileNavOpen } = UIContainer.useContainer();
+	// const { setMobileNavOpen } = UIContainer.useContainer();
 	const subMenuConfiguration: never[] = [];
 
 	return (
@@ -34,37 +34,5 @@ const SubMenu: FC = () => {
 		</div>
 	);
 };
-
-const MenuLinkItem = styled.div<{ isActive: boolean }>`
-	line-height: 40px;
-	padding-bottom: 10px;
-	position: relative;
-
-	white-space: nowrap;
-	display: flex;
-	align-items: center;
-	${linkCSS};
-	font-family: ${(props) => props.theme.fonts.condensedMedium};
-	text-transform: uppercase;
-	opacity: 0.4;
-	font-size: 14px;
-	cursor: pointer;
-	color: ${(props) => props.theme.colors.white};
-	&:hover {
-		opacity: unset;
-		color: ${(props) => props.theme.colors.blue};
-	}
-	${(props) =>
-		props.isActive &&
-		css`
-			opacity: unset;
-		`}
-
-	${media.lessThan('md')`
-		font-family: ${(props) => props.theme.fonts.extended};
-		font-size: 20px;
-		opacity: 1;
-	`}
-`;
 
 export default SubMenu;

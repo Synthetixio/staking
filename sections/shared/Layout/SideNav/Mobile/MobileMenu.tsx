@@ -1,4 +1,4 @@
-import { FC, Dispatch, SetStateAction } from 'react';
+import { FC, Dispatch } from 'react';
 import styled, { css } from 'styled-components';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
@@ -11,16 +11,16 @@ import CaretRightIcon from 'assets/svg/app/caret-right-small.svg';
 import ROUTES from 'constants/routes';
 
 import { isL2State, delegateWalletState } from 'store/wallet';
-import { MENU_LINKS, MENU_LINKS_L2, MENU_LINKS_DELEGATE } from '../../constants';
+import { MENU_LINKS, MENU_LINKS_L2, MENU_LINKS_DELEGATE, SubMenuLink } from '../../constants';
 import Settings from '../../Settings';
 import { useAddOptimism } from '../../../hooks';
+import { Actions } from 'containers/UI/reducer';
 
-type MobileMenu = {
-	setSubMenuOpen: Dispatch<SetStateAction<boolean>>;
-	setActiveSubMenu: Dispatch<SetStateAction<null>>;
+type MobileMenuProps = {
+	dispatch: Dispatch<Actions>;
 };
 
-const MobileMenu: FC<MobileMenu> = () => {
+const MobileMenu: FC<MobileMenuProps> = ({ dispatch }) => {
 	const { t } = useTranslation();
 	const router = useRouter();
 	const isL2 = useRecoilValue(isL2State);
@@ -29,11 +29,20 @@ const MobileMenu: FC<MobileMenu> = () => {
 
 	const menuLinks = delegateWallet ? MENU_LINKS_DELEGATE : isL2 ? MENU_LINKS_L2 : MENU_LINKS;
 
+	const navigateTo = (subMenu: SubMenuLink[] | undefined, link: string) => {
+		if (subMenu) {
+			dispatch({ type: 'set_sub', subMenu });
+		} else {
+			dispatch({ type: 'close' });
+			router.push(link);
+		}
+	};
+
 	return (
 		<MenuLinks>
 			{menuLinks.map(({ i18nLabel, link, subMenu }) => (
 				<MenuLinkItem
-					onClick={() => router.push(link)}
+					onClick={() => navigateTo(subMenu, link)}
 					key={link}
 					data-testid={`sidenav-${link}`}
 					isActive={
@@ -53,9 +62,7 @@ const MobileMenu: FC<MobileMenu> = () => {
 					<div className="link">{t('sidenav.switch-to-l2')}</div>
 				</MenuLinkItem>
 			)}
-			<>
-				<Settings />
-			</>
+			<Settings />
 		</MenuLinks>
 	);
 };
