@@ -26,7 +26,7 @@ const DesktopSubMenu: FC<SubMenuProps> = ({ children, i, isActive }) => {
 };
 
 export const SubContainer = styled(FlexDivColCentered)<{ i: number; isActive: boolean }>`
-	padding-top: ${({ i }) => 111 + i * 50}px; // Logo + container + offset;
+	padding-top: ${({ i }) => 111 + i * 50}px; // (Logo + container) + index offset * link height;
 	background: ${(props) => props.theme.colors.darkGradient1};
 	top: 0px;
 	bottom: 0px;
