@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useState, MouseEvent } from 'react';
 import styled, { css } from 'styled-components';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
@@ -13,7 +13,7 @@ import ROUTES from 'constants/routes';
 import { isL2State, delegateWalletState } from 'store/wallet';
 import { MENU_LINKS, MENU_LINKS_L2, MENU_LINKS_DELEGATE } from '../../constants';
 import { useAddOptimism } from '../../../hooks';
-import DesktopSubMenu, { SubContainer, SubMenuLinkItem } from './DesktopSubMenu';
+import DesktopSubMenu, { SubMenuLinkItem } from './DesktopSubMenu';
 import { DESKTOP_SIDE_NAV_WIDTH } from 'constants/ui';
 
 const DesktopMenu: FC = () => {
@@ -22,52 +22,58 @@ const DesktopMenu: FC = () => {
 	const isL2 = useRecoilValue(isL2State);
 	const delegateWallet = useRecoilValue(delegateWalletState);
 	const { showAddOptimism, addOptimismNetwork } = useAddOptimism();
+	const [openMenu, setOpenMenu] = useState<string | null>(null);
 
 	const menuLinks = delegateWallet ? MENU_LINKS_DELEGATE : isL2 ? MENU_LINKS_L2 : MENU_LINKS;
 
+	const onMouseLeave = (e: MouseEvent) => {
+		if (openMenu && e.clientX > DESKTOP_SIDE_NAV_WIDTH + 10) return setOpenMenu(null);
+	};
+
 	return (
-		<MenuLinks>
+		<MenuLinks onMouseLeave={(e) => onMouseLeave(e)}>
 			{menuLinks.map(({ i18nLabel, link, subMenu }, i) => {
-				console.log(i, subMenu);
+				const onMouseEnter = (link: string) => {
+					if (!subMenu) return;
+					setOpenMenu(link);
+				};
 				return (
 					<>
-						<MenuWrapper>
-							<MenuLinkItem
-								onClick={() => router.push(link)}
-								key={link}
-								data-testid={`sidenav-${link}`}
-								isActive={
-									subMenu
-										? !!subMenu.find(({ subLink }) => subLink === router.asPath)
-										: router.asPath === link ||
-										  (link !== ROUTES.Home && router.asPath.includes(link))
-								}
-							>
-								<div className="link">
-									{t(i18nLabel)}
-									{subMenu && <Svg src={CaretRightIcon} />}
-								</div>
-							</MenuLinkItem>
-							{subMenu && (
-								<DesktopSubMenu>
-									{subMenu.map(({ i18nLabel, subLink }) => {
-										const onClick = () => {
-											router.push(subLink);
-										};
-										return (
-											<SubMenuLinkItem
-												key={`subMenuLinkItem-${i}`}
-												isActive={router.asPath === subLink}
-												data-testid={`sidenav-submenu-${subLink}`}
-												onClick={onClick}
-											>
-												{t(i18nLabel)}
-											</SubMenuLinkItem>
-										);
-									})}
-								</DesktopSubMenu>
-							)}
-						</MenuWrapper>
+						<MenuLinkItem
+							onClick={() => router.push(link)}
+							key={link}
+							onMouseEnter={() => onMouseEnter(link)}
+							data-testid={`sidenav-${link}`}
+							isActive={
+								subMenu
+									? !!subMenu.find(({ subLink }) => subLink === router.asPath)
+									: router.asPath === link || (link !== ROUTES.Home && router.asPath.includes(link))
+							}
+						>
+							<div className="link">
+								{t(i18nLabel)}
+								{subMenu && <Svg src={CaretRightIcon} />}
+							</div>
+						</MenuLinkItem>
+						{subMenu && (
+							<DesktopSubMenu i={i} isActive={openMenu === link}>
+								{subMenu.map(({ i18nLabel, subLink }, j) => {
+									const onClick = () => {
+										router.push(subLink);
+									};
+									return (
+										<SubMenuLinkItem
+											key={`subMenuLinkItem-${j}`}
+											isActive={router.asPath === subLink}
+											data-testid={`sidenav-submenu-${subLink}`}
+											onClick={onClick}
+										>
+											{t(i18nLabel)}
+										</SubMenuLinkItem>
+									);
+								})}
+							</DesktopSubMenu>
+						)}
 					</>
 				);
 			})}
@@ -88,7 +94,6 @@ export const MenuLinkItem = styled.div<{ isActive?: boolean; isL2Switcher?: bool
 	line-height: 40px;
 	padding-bottom: 10px;
 	position: relative;
-	background: tomato;
 
 	svg {
 		margin-left: 6px;
@@ -140,17 +145,6 @@ export const MenuLinkItem = styled.div<{ isActive?: boolean; isL2Switcher?: bool
 			css`
 				display: block;
 			`}
-	}
-`;
-
-const MenuWrapper = styled.div`
-	&:hover .subLink {
-		display: block;
-		position: fixed;
-		background: tomato;
-		width: 200px;
-		height: 100%;
-		zindex: 2000;
 	}
 `;
 

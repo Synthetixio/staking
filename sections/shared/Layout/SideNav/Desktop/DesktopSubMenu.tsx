@@ -1,33 +1,55 @@
-import { FC } from 'react';
+import { DESKTOP_SIDE_NAV_WIDTH, zIndex } from 'constants/ui';
+import useIsMounted from 'hooks/isMounted';
+import { FC, ReactNode } from 'react';
+import { createPortal } from 'react-dom';
 import styled, { css } from 'styled-components';
 import { FlexDivColCentered } from 'styles/common';
-import { DESKTOP_SIDE_NAV_WIDTH } from 'constants/ui';
 import media from 'styles/media';
 
-const DesktopSubMenu: FC = ({ children }) => (
-	<SubContainer className="subLink">
-		<Inner>{children}</Inner>
-	</SubContainer>
-);
+type SubMenuProps = {
+	children: ReactNode;
+	i: number;
+	isActive: boolean;
+};
 
-console.log(DESKTOP_SIDE_NAV_WIDTH);
+const DesktopSubMenu: FC<SubMenuProps> = ({ children, i, isActive }) => {
+	const mounted = useIsMounted();
 
-export const SubContainer = styled(FlexDivColCentered)`
-	justify-content: center;
+	return mounted
+		? createPortal(
+				<SubContainer i={i} isActive={isActive}>
+					<Inner>{children}</Inner>
+				</SubContainer>,
+				document.body
+		  )
+		: null;
+};
+
+export const SubContainer = styled(FlexDivColCentered)<{ i: number; isActive: boolean }>`
+	padding-top: ${({ i }) => 111 + i * 50}px; // Logo + container + offset;
+	background: ${(props) => props.theme.colors.darkGradient1};
+	top: 0px;
+	bottom: 0px;
+	transform: translateX(0px);
+	border-right: 1px solid ${(props) => props.theme.colors.grayBlue};
 	height: 100%;
 	width: 128px;
 	background: ${(props) => props.theme.colors.darkGradient1};
 	position: fixed;
-	display: none;
-	top: 0px;
-	bottom: 0px;
-	transform: translateX(${DESKTOP_SIDE_NAV_WIDTH});
-	border-right: 1px solid ${(props) => props.theme.colors.grayBlue};
-	transition: all 0.15s ease-in-out;
-	zindex: 2000;
+	transition: all 0.25s ease-in-out;
+	transform: translateX(-100%);
+	${(props) =>
+		props.isActive &&
+		css`
+			${media.greaterThan('mdUp')`
+				transform: translateX(calc(${DESKTOP_SIDE_NAV_WIDTH}px));
+			`}
+		`}
 `;
 
 export const SubMenuLinkItem = styled.div<{ isActive: boolean }>`
+	zindex: ${zIndex.BASE};
+	padding-left: 26px;
 	line-height: 40px;
 	padding-bottom: 10px;
 	position: relative;
@@ -65,7 +87,8 @@ const Inner = styled.div`
 	position: relative;
 	height: 100%;
 	width: 100%;
-	background: ${(props) => props.theme.colors.darkGradient1};
+	position: fixed;
+	zindex: -100;
 `;
 
 export default DesktopSubMenu;

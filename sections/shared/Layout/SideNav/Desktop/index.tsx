@@ -23,7 +23,6 @@ import { Tooltip } from 'styles/common';
 import { useTranslation } from 'react-i18next';
 
 import DesktopMenu from './DesktopMenu';
-import DesktopSubMenu from './DesktopSubMenu';
 import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
 import useGetCurrencyRateChange from 'hooks/useGetCurrencyRateChange';
