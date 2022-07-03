@@ -37,7 +37,7 @@ export const SubContainer = styled(FlexDivColCentered)<{ i: number; isActive: bo
 	background: ${(props) => props.theme.colors.darkGradient1};
 	position: fixed;
 	transition: all 0.25s ease-in-out;
-	transform: translateX(-100%);
+	transform: translateX(-100%); // Initial
 	${(props) =>
 		props.isActive &&
 		css`
