@@ -20,7 +20,7 @@ const MintTab: React.FC = () => {
 	const [mintType, onMintTypeChange] = useRecoilState(mintTypeState);
 	const [amountToMint, onMintChange] = useRecoilState(amountToMintState);
 
-	const { targetCRatio, SNXRate, unstakedCollateral, refetchAll } = useStakingCalculations();
+	const { targetCRatio, SNXRate, unstakedCollateral } = useStakingCalculations();
 
 	const [gasPrice, setGasPrice] = useState<GasPrice | undefined>(undefined);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import SettingsModal from 'sections/shared/modals/SettingsModal';
 import { useTranslation } from 'react-i18next';
-import { MenuLinkItem } from '../SideNav/SideNav';
+import { MenuLinkItem } from '../SideNav/Desktop/DesktopMenu';
 
 export default function Settings() {
 	const [settingsModalOpened, setSettingsModalOpened] = useState(false);

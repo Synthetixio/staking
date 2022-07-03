@@ -40,32 +40,6 @@ const Container = styled(FlexDivCol)`
 	`}
 `;
 
-const Title = styled.div`
-	display: flex;
-	align-items: center;
-	cursor: pointer;
-	font-family: ${(props) => props.theme.fonts.condensedMedium};
-	font-size: 12px;
-	text-transform: uppercase;
-	color: ${(props) => props.theme.colors.gray};
-
-	svg {
-		margin-right: 10px;
-	}
-`;
-
-const TitleText = styled.div<{ hasSubTitle: boolean }>`
-	color: ${(props) => (props.hasSubTitle ? props.theme.colors.gray : props.theme.colors.blue)};
-`;
-
-const TitleSep = styled.div`
-	padding: 0 5px;
-`;
-
-const SubtitleText = styled.div`
-	color: ${(props) => props.theme.colors.blue};
-`;
-
 const Sep = styled.div`
 	flex: 1;
 `;
