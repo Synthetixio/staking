@@ -15,13 +15,9 @@ import useSynthetixQueries from '@synthetixio/queries';
 
 type AppLayoutProps = {
 	children: ReactNode;
-	other?: string;
 };
 
-const AppLayout: FC<AppLayoutProps> = ({ children, other }) => {
-	if (other) {
-		console.log(other);
-	}
+const AppLayout: FC<AppLayoutProps> = ({ children }) => {
 	const isL2 = useRecoilValue(isL2State);
 	const isMainnet = useRecoilValue(isMainnetState);
 
