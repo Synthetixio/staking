@@ -34,7 +34,7 @@ const CouncilBoard: React.FC = () => {
 			{councilMembers ? (
 				councilMembers.length > 0 ? (
 					councilMembers.map((member, i) => {
-						const displayName = member.ens ? member.ens : member.address;
+						const displayName = member.username ? member.username : member.address;
 						const isAddress = Boolean(member.ens);
 						return (
 							<MemberRow key={i}>
