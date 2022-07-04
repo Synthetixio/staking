@@ -56,7 +56,7 @@ const DesktopMenu: FC = () => {
 							</div>
 						</MenuLinkItem>
 						{subMenu && (
-							<DesktopSubMenu i={i} isActive={openMenu === link}>
+							<DesktopSubMenu i={i} isActive={openMenu === link} key={link}>
 								{subMenu.map(({ i18nLabel, subLink }, j) => {
 									const onClick = () => {
 										router.push(subLink);
