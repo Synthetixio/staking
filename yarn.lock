@@ -3719,7 +3719,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@synthetixio/assets@npm:^2.0.13":
+"@synthetixio/assets@npm:2.0.13":
   version: 2.0.13
   resolution: "@synthetixio/assets@npm:2.0.13"
   checksum: ed9e9c8de23a5e4b94207ce9368ac9ce0011d25b469f95d083051f5e6715524c0c39ac50a54b1f54a19d833c9ba2d70ee3b1453db2ee5778fd999225ca1e802d
@@ -3742,7 +3742,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@synthetixio/contracts-interface@npm:2.74.1, @synthetixio/contracts-interface@npm:^2.74.1":
+"@synthetixio/contracts-interface@npm:2.74.1":
   version: 2.74.1
   resolution: "@synthetixio/contracts-interface@npm:2.74.1"
   dependencies:
@@ -3764,7 +3764,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@synthetixio/optimism-networks@npm:2.74.1, @synthetixio/optimism-networks@npm:^2.74.1":
+"@synthetixio/optimism-networks@npm:2.74.1":
   version: 2.74.1
   resolution: "@synthetixio/optimism-networks@npm:2.74.1"
   dependencies:
@@ -3775,7 +3775,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@synthetixio/providers@npm:^2.74.1":
+"@synthetixio/providers@npm:2.74.1":
   version: 2.74.1
   resolution: "@synthetixio/providers@npm:2.74.1"
   dependencies:
@@ -3787,7 +3787,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@synthetixio/queries@npm:^2.74.2":
+"@synthetixio/queries@npm:2.74.2":
   version: 2.74.2
   resolution: "@synthetixio/queries@npm:2.74.2"
   dependencies:
@@ -3810,12 +3810,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@synthetixio/safe-import@npm:latest":
-  version: 0.0.0-e3b7eb2e
-  resolution: "@synthetixio/safe-import@npm:0.0.0-e3b7eb2e"
+"@synthetixio/safe-import@npm:1.0.0":
+  version: 1.0.0
+  resolution: "@synthetixio/safe-import@npm:1.0.0"
   dependencies:
     react: ^17.0.2
-  checksum: b828071df9bcc119c490db8946b3451a26e00b28864dfd3c08b102784a04d219d70b6937d7e9e7d83364df8be6c7cab48bc269e708d33efce9ed043f1866c69a
+  checksum: 97f14cb6d291ec24c1b4551440d12b7765aba6ca306a94113ed30859285f5045c4b70ff468edcf34ec2e0515a9d60a48646166561da9ff5cc8405e451fab9ad5
   languageName: node
   linkType: hard
 
@@ -3869,7 +3869,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@synthetixio/transaction-notifier@npm:^2.74.1":
+"@synthetixio/transaction-notifier@npm:2.74.1":
   version: 2.74.1
   resolution: "@synthetixio/transaction-notifier@npm:2.74.1"
   dependencies:
@@ -3878,7 +3878,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@synthetixio/wei@npm:2.74.1, @synthetixio/wei@npm:^2.74.1":
+"@synthetixio/wei@npm:2.74.1":
   version: 2.74.1
   resolution: "@synthetixio/wei@npm:2.74.1"
   dependencies:
@@ -23505,15 +23505,15 @@ jschardet@latest:
     "@microsoft/eslint-formatter-sarif": ^3.0.0
     "@reach/dialog": ^0.15.3
     "@snapshot-labs/snapshot.js": ^0.3.22
-    "@synthetixio/assets": ^2.0.13
-    "@synthetixio/contracts-interface": ^2.74.1
-    "@synthetixio/optimism-networks": ^2.74.1
-    "@synthetixio/providers": ^2.74.1
-    "@synthetixio/queries": ^2.74.2
-    "@synthetixio/safe-import": latest
+    "@synthetixio/assets": 2.0.13
+    "@synthetixio/contracts-interface": 2.74.1
+    "@synthetixio/optimism-networks": 2.74.1
+    "@synthetixio/providers": 2.74.1
+    "@synthetixio/queries": 2.74.2
+    "@synthetixio/safe-import": 1.0.0
     "@synthetixio/synpress": ^1.1.1
-    "@synthetixio/transaction-notifier": ^2.74.1
-    "@synthetixio/wei": ^2.74.1
+    "@synthetixio/transaction-notifier": 2.74.1
+    "@synthetixio/wei": 2.74.1
     "@testing-library/jest-dom": ^5.16.4
     "@testing-library/react": ^12.1.5
     "@testing-library/react-hooks": ^8.0.1
