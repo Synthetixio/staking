@@ -14,10 +14,14 @@ import SideNav from './SideNav';
 import useSynthetixQueries from '@synthetixio/queries';
 
 type AppLayoutProps = {
-	children: ReactNode; //
+	children: ReactNode;
+	other?: string;
 };
 
-const AppLayout: FC<AppLayoutProps> = ({ children }) => {
+const AppLayout: FC<AppLayoutProps> = ({ children, other }) => {
+	if (other) {
+		console.log(other);
+	}
 	const isL2 = useRecoilValue(isL2State);
 	const isMainnet = useRecoilValue(isMainnetState);
 
