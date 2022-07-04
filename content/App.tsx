@@ -15,6 +15,9 @@ import { ReactQueryDevtools } from 'react-query/devtools';
 import { DEFAULT_REQUEST_REFRESH_INTERVAL } from 'constants/defaults';
 
 import { SynthetixQueryContextProvider, createQueryContext } from '@synthetixio/queries';
+import { DEFAULT_SUBGRAPH_ENDPOINTS } from 'queries/subgraphEndpoints';
+import { SynthetixQueryContext } from 'queries/context';
+import type { QueryContext } from 'queries/context';
 
 import SystemStatus from 'sections/shared/SystemStatus';
 
@@ -33,8 +36,24 @@ const queryClient = new QueryClient({
 const InnerApp: FC<AppProps> = ({ Component, pageProps }) => {
 	const { provider, signer, network, L1DefaultProvider } = Connector.useContainer();
 
+	const defaultQueryContext: QueryContext = {
+		provider: L1DefaultProvider,
+		signer: null,
+		networkId: 1,
+		subgraphEndpoints: DEFAULT_SUBGRAPH_ENDPOINTS[1],
+	};
+	const queryContext: QueryContext =
+		provider && network?.id
+			? {
+					provider: provider,
+					signer: signer ?? null,
+					networkId: network.id,
+					subgraphEndpoints: DEFAULT_SUBGRAPH_ENDPOINTS[1],
+			  }
+			: defaultQueryContext;
+
 	return (
-		<>
+		<SynthetixQueryContext.Provider value={queryContext}>
 			<SynthetixQueryContextProvider
 				value={
 					provider && network?.id
@@ -58,7 +77,7 @@ const InnerApp: FC<AppProps> = ({ Component, pageProps }) => {
 				</Layout>
 				<ReactQueryDevtools />
 			</SynthetixQueryContextProvider>
-		</>
+		</SynthetixQueryContext.Provider>
 	);
 };
 
