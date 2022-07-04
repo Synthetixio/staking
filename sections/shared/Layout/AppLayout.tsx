@@ -14,7 +14,7 @@ import SideNav from './SideNav';
 import useSynthetixQueries from '@synthetixio/queries';
 
 type AppLayoutProps = {
-	children: ReactNode;
+	children: ReactNode; //
 };
 
 const AppLayout: FC<AppLayoutProps> = ({ children }) => {
