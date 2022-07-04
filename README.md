@@ -28,7 +28,7 @@
 ### Install dependencies
 
 ```bash
-npm i
+yarn install
 ```
 
 ### Set up environment variables
@@ -48,7 +48,7 @@ Then, open `.env.local` and add the missing environment variables:
 ### Run
 
 ```bash
-npm run dev
+yarn dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
@@ -56,8 +56,8 @@ Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 ### Build
 
 ```bash
-npm run build
-npm start
+yarn build
+yarn start
 ```
 
 ### Test
@@ -65,5 +65,5 @@ npm start
 Before running e2e tests, you have to set environmental variable named `SECRET_WORDS` which can be imported as an account in metamask.
 
 ```bash
-SECRET_WORDS="word1, word2, ..." npm run test:e2e
+SECRET_WORDS="word1, word2, ..." yarn test:e2e
 ```
