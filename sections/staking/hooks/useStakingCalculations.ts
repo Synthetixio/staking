@@ -8,7 +8,6 @@ import { walletAddressState, delegateWalletState } from 'store/wallet';
 const useStakingCalculations = () => {
 	const walletAddress = useRecoilValue(walletAddressState);
 	const delegateWallet = useRecoilValue(delegateWalletState);
-
 	const {
 		useExchangeRatesQuery,
 		useGetDebtDataQuery,
@@ -88,7 +87,7 @@ const useStakingCalculations = () => {
 		};
 	}, [debtData, exchangeRates, rewardEscrowBalance, tokenSaleEscrowBalance, isLoading]);
 
-	return { ...results };
+	return results;
 };
 
 export default useStakingCalculations;

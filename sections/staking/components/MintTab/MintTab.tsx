@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 import { TabContainer } from '../common';
@@ -39,7 +39,6 @@ const MintTab: React.FC = () => {
 
 	const txn = useSynthetixTxn('Synthetix', mintCall[0], mintCall[1], gasPrice, {
 		enabled: amountToMintBN.gt(0),
-		onSuccess: () => console.log('Successful tx'),
 	});
 
 	useEffect(() => {
