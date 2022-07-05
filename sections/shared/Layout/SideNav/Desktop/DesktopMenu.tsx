@@ -38,10 +38,9 @@ const DesktopMenu: FC = () => {
 					setOpenMenu(link);
 				};
 				return (
-					<>
+					<div key={link}>
 						<MenuLinkItem
 							onClick={() => router.push(link)}
-							key={link}
 							onMouseEnter={() => onMouseEnter(link)}
 							data-testid={`sidenav-${link}`}
 							isActive={
@@ -74,7 +73,7 @@ const DesktopMenu: FC = () => {
 								})}
 							</DesktopSubMenu>
 						)}
-					</>
+					</div>
 				);
 			})}
 			{showAddOptimism && (
