@@ -81,7 +81,7 @@ const HedgeTabOptimism = () => {
 	const depositTx = useContractTxn(
 		dSNXPoolContractOptimism,
 		'deposit',
-		[sUSDContract?.address, wei(amountToSend || 0).toBN()],
+		[sUSDContract?.address, wei(amountToSend.replace(',', '') || 0).toBN()],
 		depositGasCost,
 		{
 			onSuccess: () => {
@@ -94,11 +94,13 @@ const HedgeTabOptimism = () => {
 	);
 	const dSnxAmount =
 		amountToSend && dSNXPrice
-			? formatCryptoCurrency(wei(amountToSend).div(dSNXPrice), {
+			? formatCryptoCurrency(wei(amountToSend.replace(',', '')).div(dSNXPrice), {
 					maxDecimals: 1,
 					minDecimals: 2,
 			  })
 			: '';
+
+	console.log(amountToSend);
 	return (
 		<Container>
 			<StyledBackgroundTab>
@@ -124,7 +126,7 @@ const HedgeTabOptimism = () => {
 							setAmountToSend(e.target.value);
 						} catch {}
 					}}
-					value={amountToSend}
+					value={amountToSend.replace(',', '')}
 					autoFocus={true}
 				/>
 				<StyledBalance>
@@ -201,7 +203,7 @@ const HedgeTabOptimism = () => {
 						approved ? depositTx.mutate() : approveTx.mutate();
 					}}
 					variant="primary"
-					disabled={wei(amountToSend || '0').eq(0)}
+					disabled={wei(amountToSend.replace(',', '') || '0').eq(0)}
 				>
 					{approved ? t('debt.actions.manage.swap') : t('debt.actions.manage.approve')}
 				</StyledButton>
