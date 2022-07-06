@@ -56,9 +56,9 @@ const NominateTab: FC = () => {
 
 const NominateTabInner: FC = () => {
 	const { t } = useTranslation();
-	const { connectWallet, synthetixjs } = Connector.useContainer();
+	const { connectWallet, synthetixjs, isAppReady } = Connector.useContainer();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	const isAppReady = useRecoilValue(appReadyState);
+
 	const sourceAccountAddress = useRecoilValue(walletAddressState);
 	const { blockExplorerInstance } = Etherscan.useContainer();
 	const { useSynthetixTxn } = useSynthetixQueries();

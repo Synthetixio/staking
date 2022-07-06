@@ -55,9 +55,9 @@ const MergeTab: FC = () => {
 
 const MergeTabInner: FC = () => {
 	const { t } = useTranslation();
-	const { connectWallet, synthetixjs } = Connector.useContainer();
+	const { connectWallet, synthetixjs, isAppReady } = Connector.useContainer();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	const isAppReady = useRecoilValue(appReadyState);
+
 	const destinationAccountAddress = useRecoilValue(walletAddressState);
 	const { blockExplorerInstance } = Etherscan.useContainer();
 	const { useSynthetixTxn } = useSynthetixQueries();

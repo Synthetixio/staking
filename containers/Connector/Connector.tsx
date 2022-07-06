@@ -42,26 +42,41 @@ const useConnector = () => {
 	const { isAppReady } = state;
 	const [network, setNetwork] = useRecoilState(networkState);
 	const [provider, setProvider] = useState<ethers.providers.Provider | null>(null);
-	const L1DefaultProvider: providers.InfuraProvider = loadProvider({
-		infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID
-			? process.env.NEXT_PUBLIC_INFURA_PROJECT_ID
-			: '0',
-		networkId: NetworkIdByName.mainnet,
-	});
-	const L2DefaultProvider: providers.InfuraProvider = loadProvider({
-		infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID
-			? process.env.NEXT_PUBLIC_INFURA_PROJECT_ID
-			: '0',
-		networkId: NetworkIdByName['mainnet-ovm'],
-	});
+
+	// Ethereum Mainnet
+	const L1DefaultProvider: providers.InfuraProvider = useMemo(
+		() =>
+			loadProvider({
+				infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID
+					? process.env.NEXT_PUBLIC_INFURA_PROJECT_ID
+					: '0',
+				networkId: NetworkIdByName.mainnet,
+			}),
+		[]
+	);
+
+	// Optimism Mainnet
+	const L2DefaultProvider: providers.InfuraProvider = useMemo(
+		() =>
+			loadProvider({
+				infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID
+					? process.env.NEXT_PUBLIC_INFURA_PROJECT_ID
+					: '0',
+				networkId: NetworkIdByName['mainnet-ovm'],
+			}),
+		[]
+	);
+
 	const [signer, setSigner] = useState<ethers.Signer | null>(null);
 	const [synthetixjs, setSynthetixjs] = useState<SynthetixJS | null>(null);
 	const [onboard, setOnboard] = useState<ReturnType<typeof initOnboard> | null>(null);
 	const [walletAddress, setWalletAddress] = useRecoilState(walletAddressState);
+
 	const [selectedWallet, setSelectedWallet] = useLocalStorage<string | null>(
 		LOCAL_STORAGE_KEYS.SELECTED_WALLET,
 		''
 	);
+
 	const [transactionNotifier, setTransactionNotifier] =
 		useState<TransactionNotifierInterface | null>(null);
 	const setEnsName = useSetRecoilState(ensNameState);
@@ -91,14 +106,17 @@ const useConnector = () => {
 					useOvm: false,
 				});
 
-				const provider = loadProvider({
-					networkId: NetworkIdByName.mainnet,
-					infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
-				});
-				setProvider(provider);
-				setSynthetixjs(synthetix({ networkId: NetworkIdByName.mainnet, useOvm: false, provider }));
+				setProvider(L1DefaultProvider);
+				setSynthetixjs(
+					synthetix({
+						networkId: NetworkIdByName.mainnet,
+						useOvm: false,
+						provider: L1DefaultProvider,
+					})
+				);
 				return;
 			}
+
 			const networkId = await getDefaultNetworkId();
 			if (!isSupportedNetworkId(networkId)) {
 				// When not on supported network: Switch to l1 and try again

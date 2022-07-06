@@ -68,8 +68,8 @@ const AssetsTable: FC<AssetsTableProps> = ({
 	showPrice = true,
 }) => {
 	const { t } = useTranslation();
-	const { connectWallet, synthsMap } = Connector.useContainer();
-	const isAppReady = useRecoilValue(appReadyState);
+	const { connectWallet, synthsMap, isAppReady } = Connector.useContainer();
+
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const isL2 = useRecoilValue(isL2State);
 	const router = useRouter();
