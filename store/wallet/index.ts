@@ -1,9 +1,3 @@
-import {
-	NetworkId,
-	NetworkIdByName,
-	NetworkName,
-	NetworkNameById,
-} from '@synthetixio/contracts-interface';
 import { GasSpeed } from '@synthetixio/queries';
 import { atom, selector } from 'recoil';
 
@@ -12,16 +6,11 @@ import { getWalletKey } from '../utils';
 
 import { DelegationWallet } from '@synthetixio/queries';
 
-export type Network = {
-	id: NetworkId;
-	name: NetworkName;
-	useOvm: boolean;
-};
+import { NetworkIdByName, networkState } from './networkState';
+import { walletAddressState } from './walletAddressState';
 
-export const networkState = atom<Network | null>({
-	key: getWalletKey('network'),
-	default: { id: NetworkIdByName.mainnet, name: NetworkNameById[1], useOvm: false },
-});
+export * from './networkState';
+export * from './walletAddressState';
 
 export const isL2State = selector<boolean>({
 	key: getWalletKey('isL2'),
@@ -38,11 +27,6 @@ export const isMainnetState = selector<boolean>({
 export const isL2MainnetState = selector<boolean>({
 	key: getWalletKey('isL2Mainnet'),
 	get: ({ get }) => get(networkState)?.id === NetworkIdByName['mainnet-ovm'],
-});
-
-export const walletAddressState = atom<string | null>({
-	key: getWalletKey('walletAddress'),
-	default: null,
 });
 
 export const ensNameState = atom<string | null>({
