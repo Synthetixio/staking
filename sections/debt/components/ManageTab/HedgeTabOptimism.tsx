@@ -100,7 +100,6 @@ const HedgeTabOptimism = () => {
 			  })
 			: '';
 
-	console.log(amountToSend);
 	return (
 		<Container>
 			<StyledBackgroundTab>
