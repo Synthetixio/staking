@@ -8,7 +8,6 @@ import { useRecoilValue } from 'recoil';
 import LockedIcon from 'assets/svg/app/locked.svg';
 
 import { TokenAllowanceLimit } from 'constants/network';
-import { appReadyState } from 'store/app';
 import { isWalletConnectedState } from 'store/wallet';
 import GasSelector from 'components/GasSelector';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
@@ -27,6 +26,7 @@ import { SynthetixJS } from '@synthetixio/contracts-interface';
 import useSynthetixQueries, { GasPrice } from '@synthetixio/queries';
 import { isObjectOrErrorWithMessage } from 'utils/ts-helpers';
 import { SynthetixJsAndSignerProps, withSynthetixJsAndSigner } from 'hoc/withSynthetixJsAndSigner';
+import Connector from 'containers/Connector';
 
 type ApproveModalProps = {
 	description: string;
@@ -52,7 +52,7 @@ const ApproveModal: FC<ApproveModalProps & SynthetixJsAndSignerProps> = ({
 	synthetixjs,
 }) => {
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	const isAppReady = useRecoilValue(appReadyState);
+	const { isAppReady } = Connector.useContainer();
 	const { useContractTxn } = useSynthetixQueries();
 
 	const [error, setError] = useState<string | null>(null);

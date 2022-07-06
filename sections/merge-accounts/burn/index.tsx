@@ -1,14 +1,12 @@
 import { FC } from 'react';
-import { useRecoilValue } from 'recoil';
-
-import { appReadyState } from 'store/app';
+import Connector from 'containers/Connector';
 
 import { Cols, Col } from 'sections/merge-accounts/common';
 import ActionBox from './BurnActionBox';
 import InfoBox from './BurnInfoBox';
 
 const Burn: FC = () => {
-	const isAppReady = useRecoilValue(appReadyState);
+	const { isAppReady } = Connector.useContainer();
 
 	return !isAppReady ? null : (
 		<Cols>

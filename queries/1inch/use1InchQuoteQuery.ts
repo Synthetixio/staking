@@ -9,6 +9,7 @@ import { formatEther, parseEther } from 'ethers/lib/utils';
 import axios from 'axios';
 import { quoteEndpoint } from 'constants/1inch';
 import { wei, WeiSource } from '@synthetixio/wei';
+import Connector from 'containers/Connector';
 
 type QuoteData = {
 	toTokenAmount: WeiSource;
@@ -20,7 +21,8 @@ const use1InchQuoteQuery = (
 	amount: WeiSource,
 	options?: UseQueryOptions<QuoteData>
 ) => {
-	const isAppReady = useRecoilValue(appReadyState);
+	const { isAppReady } = Connector.useContainer();
+
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const network = useRecoilValue(networkState);

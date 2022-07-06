@@ -12,7 +12,6 @@ import {
 	curveGaugeController,
 } from 'contracts';
 import QUERY_KEYS from 'constants/queryKeys';
-import { appReadyState } from 'store/app';
 import {
 	walletAddressState,
 	isWalletConnectedState,
@@ -205,11 +204,10 @@ const fetchOptimismData = async () => {
 };
 
 const useCurveSusdPoolQuery = (options?: UseQueryOptions<CurveData | undefined>) => {
-	const isAppReady = useRecoilValue(appReadyState);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const network = useRecoilValue(networkState);
-	const { provider } = Connector.useContainer();
+	const { provider, isAppReady } = Connector.useContainer();
 	const isMainnet = useRecoilValue(isMainnetState);
 
 	return useQuery<CurveData | undefined>(

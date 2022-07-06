@@ -10,6 +10,7 @@ import axios from 'axios';
 import { swapEndpoint } from 'constants/1inch';
 import { ethers } from 'ethers';
 import { wei, WeiSource } from '@synthetixio/wei';
+import Connector from 'containers/Connector';
 
 export type SwapTxData = {
 	from: string;
@@ -28,7 +29,8 @@ const use1InchSwapQuery = (
 	slippage: number,
 	options?: UseQueryOptions<SwapTxData>
 ) => {
-	const isAppReady = useRecoilValue(appReadyState);
+	const { isAppReady } = Connector.useContainer();
+
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const network = useRecoilValue(networkState);

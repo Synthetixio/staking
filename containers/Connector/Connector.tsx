@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useReducer } from 'react';
 import { createContainer } from 'unstated-next';
 import {
 	TransactionNotifier,
@@ -18,7 +18,6 @@ import {
 import { ethers, providers } from 'ethers';
 import { switchToL1 } from '@synthetixio/optimism-networks';
 
-import { appReadyState } from 'store/app';
 import {
 	walletAddressState,
 	networkState,
@@ -36,9 +35,11 @@ import { LOCAL_STORAGE_KEYS } from 'constants/storage';
 import { CurrencyKey, ETH_ADDRESS } from 'constants/currency';
 import { synthToContractName } from 'utils/currencies';
 import { keyBy } from 'lodash';
-import { useMemo } from 'react';
+import { initialState, reducer } from './reducer';
 
 const useConnector = () => {
+	const [state, dispatch] = useReducer(reducer, initialState);
+	const { isAppReady } = state;
 	const [network, setNetwork] = useRecoilState(networkState);
 	const [provider, setProvider] = useState<ethers.providers.Provider | null>(null);
 	const L1DefaultProvider: providers.InfuraProvider = loadProvider({
@@ -56,7 +57,6 @@ const useConnector = () => {
 	const [signer, setSigner] = useState<ethers.Signer | null>(null);
 	const [synthetixjs, setSynthetixjs] = useState<SynthetixJS | null>(null);
 	const [onboard, setOnboard] = useState<ReturnType<typeof initOnboard> | null>(null);
-	const [isAppReady, setAppReady] = useRecoilState(appReadyState);
 	const [walletAddress, setWalletAddress] = useRecoilState(walletAddressState);
 	const [selectedWallet, setSelectedWallet] = useLocalStorage<string | null>(
 		LOCAL_STORAGE_KEYS.SELECTED_WALLET,
@@ -76,10 +76,14 @@ const useConnector = () => {
 		return [keyBy(synthetixjs.synths, 'name'), keyBy(synthetixjs.tokens, 'symbol')];
 	}, [synthetixjs]);
 
+	console.log(synthsMap, tokensMap);
+
 	useEffect(() => {
+		// Default case, occurs when no injected wallet and no 'browser wallet in localStorage'
 		const init: () => void = async () => {
 			if (!window.ethereum || selectedWallet !== 'Browser Wallet') {
-				setAppReady(true);
+				dispatch({ type: 'app_ready' });
+
 				// For non browser wallets we use mainnet by default. And the app/wallet will trigger wallet change events if needed
 				setNetwork({
 					name: NetworkNameById[NetworkIdByName.mainnet],
@@ -102,20 +106,23 @@ const useConnector = () => {
 				return init();
 			}
 
+			// Synchronous
 			const provider = loadProvider({
 				networkId,
 				infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
 				provider: window.ethereum as any, // loadProvider as incorrect types for provider
 			});
 
+			// Synchronous
 			const useOvm = getIsOVM(Number(networkId));
 
+			// Synchronous
 			const snxjs = synthetix({ provider, networkId, useOvm });
 
 			setNetwork(snxjs.network);
 			setSynthetixjs(snxjs);
 			setProvider(provider);
-			setAppReady(true);
+			dispatch({ type: 'app_ready' });
 		};
 
 		init();
@@ -123,6 +130,7 @@ const useConnector = () => {
 	}, []);
 
 	const setUserAddress = async (address: string) => {
+		console.log('Running set user address');
 		setWalletAddress(address);
 		if (address) {
 			const ensName: string | null = await L1DefaultProvider.lookupAddress(address);
@@ -168,7 +176,9 @@ const useConnector = () => {
 					setNetwork(snxjs.network);
 				},
 				wallet: async (wallet: OnboardWallet) => {
+					console.log('No wallet provider');
 					if (wallet.provider) {
+						console.log('Wallet.provider');
 						const provider = loadProvider({ provider: wallet.provider });
 						const network = await provider.getNetwork();
 						const networkId = Number(network.chainId);
@@ -275,13 +285,13 @@ const useConnector = () => {
 	};
 
 	return {
+		isAppReady,
 		network,
 		provider,
 		signer,
 		synthetixjs,
 		synthsMap,
 		tokensMap,
-		onboard,
 		connectWallet,
 		disconnectWallet,
 		switchAccounts,

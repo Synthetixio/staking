@@ -3,11 +3,7 @@ import { CellProps } from 'react-table';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 
-import { useRecoilValue } from 'recoil';
-
 import { TableNoResults, TableNoResultsTitle, FlexDiv, Tooltip } from 'styles/common';
-
-import { appReadyState } from 'store/app';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
@@ -17,6 +13,7 @@ import Currency from 'components/Currency';
 import { formatFiatCurrency, formatPercent } from 'utils/formatters/number';
 import { SynthTotalSupply } from '@synthetixio/queries';
 import { CryptoBalance } from 'hooks/useCryptoBalances';
+import Connector from 'containers/Connector';
 
 type DebtPoolTableProps = {
 	synths: any;
@@ -27,8 +24,8 @@ type DebtPoolTableProps = {
 const DebtPoolTable: FC<DebtPoolTableProps> = ({ synths, isLoading, isLoaded }) => {
 	const { t } = useTranslation();
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
+	const { isAppReady } = Connector.useContainer();
 
-	const isAppReady = useRecoilValue(appReadyState);
 	const assetColumns = useMemo(() => {
 		if (!isAppReady) {
 			return [];

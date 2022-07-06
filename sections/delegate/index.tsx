@@ -1,16 +1,15 @@
 import { FC } from 'react';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
-import { appReadyState } from 'store/app';
 import { FlexDivCol } from 'styles/common';
 import media from 'styles/media';
 
 import DelegateForm from 'sections/delegate/DelegateForm';
 import DelegateTable from 'sections/delegate/DelegateTable';
+import Connector from 'containers/Connector';
 
 const Index: FC = () => {
-	const isAppReady = useRecoilValue(appReadyState);
+	const { isAppReady } = Connector.useContainer();
 
 	return !isAppReady ? null : (
 		<Container>

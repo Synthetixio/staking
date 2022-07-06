@@ -19,10 +19,10 @@ import useSynthetixQueries from '@synthetixio/queries';
 const SECONDS_IN_A_YR = 365 * 24 * 60 * 60;
 
 function Container() {
-	const { provider, signer, synthetixjs } = Connector.useContainer();
+	const { provider, signer, synthetixjs, isAppReady } = Connector.useContainer();
 	const address = useRecoilValue(walletAddressState);
 	const network = useRecoilValue(networkState);
-	const isAppReady = useRecoilValue(appReadyState);
+
 	const isL2 = useRecoilValue(isL2State);
 
 	const [isLoadingLoans, setIsLoadingLoans] = useState(false);

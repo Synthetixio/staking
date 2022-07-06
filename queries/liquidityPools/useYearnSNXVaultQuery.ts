@@ -26,12 +26,11 @@ export type YearnVaultData = LiquidityPoolData & {
 };
 
 const useYearnSNXVaultQuery = (options?: UseQueryOptions<YearnVaultData>) => {
-	const isAppReady = useRecoilValue(appReadyState);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const network = useRecoilValue(networkState);
 	const isMainnet = useRecoilValue(isMainnetState);
-	const { provider, synthetixjs } = Connector.useContainer();
+	const { provider, synthetixjs, isAppReady } = Connector.useContainer();
 
 	return useQuery<YearnVaultData>(
 		QUERY_KEYS.LiquidityPools.yearnSNX(walletAddress ?? '', network?.id!),

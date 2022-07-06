@@ -1,16 +1,14 @@
 import { FC, useMemo } from 'react';
 import { useRouter } from 'next/router';
-import { useRecoilValue } from 'recoil';
-
-import { appReadyState } from 'store/app';
 
 import Landing from './landing';
 import Burn from './burn';
 import Nominate from './nominate';
 import Merge from './merge';
+import Connector from 'containers/Connector';
 
 const Index: FC = () => {
-	const isAppReady = useRecoilValue(appReadyState);
+	const { isAppReady } = Connector.useContainer();
 	const router = useRouter();
 
 	const activeTab = useMemo(

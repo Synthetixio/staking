@@ -6,7 +6,6 @@ import { Svg } from 'react-optimized-image';
 import { useRouter } from 'next/router';
 import { useRecoilValue } from 'recoil';
 
-import { appReadyState } from 'store/app';
 import { delegateWalletState, isWalletConnectedState, walletAddressState } from 'store/wallet';
 import ROUTES from 'constants/routes';
 import { ExternalLink, FlexDiv, GlowingCircle, IconButton, FlexDivJustifyEnd } from 'styles/common';
@@ -64,6 +63,7 @@ import {
 import { MobileOnlyView } from 'components/Media';
 import useSynthetixQueries, { GasPrice } from '@synthetixio/queries';
 import useLiquidationRewards from 'hooks/useLiquidationRewards';
+import Connector from 'containers/Connector';
 
 type LiquidationTabProps = {
 	liquidationRewards: Wei;
@@ -82,7 +82,7 @@ const LiquidationTab: React.FC<LiquidationTabProps> = ({ liquidationRewards }) =
 	const { blockExplorerInstance } = Etherscan.useContainer();
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	const isAppReady = useRecoilValue(appReadyState);
+	const { isAppReady } = Connector.useContainer();
 	const router = useRouter();
 	const [gasPrice, setGasPrice] = useState<GasPrice | undefined>(undefined);
 

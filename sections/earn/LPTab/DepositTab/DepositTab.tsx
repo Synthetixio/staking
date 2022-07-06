@@ -84,9 +84,9 @@ const DepositTab: FC<DepositTabProps> = ({
 	const { t } = useTranslation();
 	const [amount, setAmount] = useState<string>('');
 	const { blockExplorerInstance } = Etherscan.useContainer();
-	const { signer } = Connector.useContainer();
+	const { signer, isAppReady } = Connector.useContainer();
 	const [gasPrice, setGasPrice] = useState<GasPrice | undefined>(undefined);
-	const isAppReady = useRecoilValue(appReadyState);
+
 	const { useContractTxn } = useSynthetixQueries();
 
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);

@@ -40,8 +40,7 @@ const ToggleDelegateApproval: FC<ToggleDelegateApprovalProps> = ({
 }) => {
 	const { t } = useTranslation();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
-	const isAppReady = useRecoilValue(appReadyState);
-	const { synthetixjs } = Connector.useContainer();
+	const { synthetixjs, isAppReady } = Connector.useContainer();
 
 	const [, setError] = useState<string | null>(null);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);

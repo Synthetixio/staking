@@ -70,6 +70,7 @@ import {
 import { MobileOnlyView } from 'components/Media';
 import useSynthetixQueries, { GasPrice } from '@synthetixio/queries';
 import ClaimOrCloseFeeButton from './ClaimAndCloseFeeButton';
+import Connector from 'containers/Connector';
 
 type ClaimTabProps = {
 	tradingRewards: Wei;
@@ -79,6 +80,7 @@ type ClaimTabProps = {
 
 const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, totalRewards }) => {
 	const { t } = useTranslation();
+	const router = useRouter();
 
 	const walletAddress = useRecoilValue(walletAddressState);
 	const delegateWallet = useRecoilValue(delegateWalletState);
@@ -88,8 +90,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 	const { blockExplorerInstance } = Etherscan.useContainer();
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	const isAppReady = useRecoilValue(appReadyState);
-	const router = useRouter();
+	const { isAppReady } = Connector.useContainer();
 	const [gasPrice, setGasPrice] = useState<GasPrice | undefined>(undefined);
 	const [error, setError] = useState<string | null>(null);
 	const [claimedTradingRewards, setClaimedTradingRewards] = useState<number | null>(null);
