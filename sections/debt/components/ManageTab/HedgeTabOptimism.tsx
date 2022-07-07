@@ -95,8 +95,8 @@ const HedgeTabOptimism = () => {
 		}
 	);
 	const dSnxAmount =
-		amountToSend && dSNXPrice
-			? formatCryptoCurrency(wei(amountToSend).div(dSNXPrice), {
+		actualAmountToSendBn.gt(0) && dSNXPrice
+			? formatCryptoCurrency(wei(actualAmountToSendBn).div(dSNXPrice), {
 					maxDecimals: 1,
 					minDecimals: 2,
 			  })
