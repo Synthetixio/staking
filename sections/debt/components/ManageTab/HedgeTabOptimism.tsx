@@ -46,6 +46,7 @@ const HedgeTabOptimism = () => {
 
 	const sUSDContract = synthetixjs?.contracts.SynthsUSD;
 	const [amountToSend, setAmountToSend] = useState('');
+	const [sendMax, setSendMax] = useState(false);
 	const [approveGasCost, setApproveGasCost] = useState<GasPrice | undefined>(undefined);
 	const [depositGasCost, setDepositGasCost] = useState<GasPrice | undefined>(undefined);
 
@@ -77,11 +78,11 @@ const HedgeTabOptimism = () => {
 	const sUSDBalance = synthsBalancesQuery.data?.balancesMap.sUSD?.balance || wei(0);
 	const dSNXBalanceQuery = useGetDSnxBalance();
 	const dSNXBalance = dSNXBalanceQuery.data;
-
+	const actualAmountToSendBn = sendMax ? sUSDBalance.toBN() : wei(amountToSend || 0).toBN();
 	const depositTx = useContractTxn(
 		dSNXPoolContractOptimism,
 		'deposit',
-		[sUSDContract?.address, wei(amountToSend || 0).toBN()],
+		[sUSDContract?.address, actualAmountToSendBn],
 		depositGasCost,
 		{
 			onSuccess: () => {
@@ -122,10 +123,11 @@ const HedgeTabOptimism = () => {
 						try {
 							const val = utils.parseUnits(e.target.value || '0', 18);
 							if (val.gte(constants.MaxUint256)) return;
+							setSendMax(false);
 							setAmountToSend(e.target.value);
 						} catch {}
 					}}
-					value={amountToSend}
+					value={sendMax ? sUSDBalance.toString(2) : amountToSend}
 					autoFocus={true}
 				/>
 				<StyledBalance>
@@ -140,7 +142,7 @@ const HedgeTabOptimism = () => {
 						disabled={approveTx.isLoading || depositTx.isLoading}
 						onClick={() => {
 							if (sUSDBalance?.gt(0)) {
-								setAmountToSend(sUSDBalance.toString(2));
+								setSendMax(true);
 							}
 						}}
 					>
