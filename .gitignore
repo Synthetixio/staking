@@ -45,3 +45,12 @@ tests/e2e/videos
 coverage
 
 
+
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+# For Yarn Zero Installs uncomment this line and keep deps in GIT
+# !.yarn/cache
