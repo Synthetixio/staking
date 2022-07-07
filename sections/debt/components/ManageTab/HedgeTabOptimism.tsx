@@ -140,12 +140,7 @@ const HedgeTabOptimism = () => {
 						disabled={approveTx.isLoading || depositTx.isLoading}
 						onClick={() => {
 							if (sUSDBalance?.gt(0)) {
-								setAmountToSend(
-									formatCryptoCurrency(sUSDBalance || wei(0), {
-										maxDecimals: 1,
-										minDecimals: 2,
-									})
-								);
+								setAmountToSend(sUSDBalance.toString(2));
 							}
 						}}
 					>
