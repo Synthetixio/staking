@@ -38,6 +38,7 @@ import {
 } from 'styles/common';
 import { EXTERNAL_LINKS } from 'constants/links';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
+import WarningIcon from 'assets/svg/app/warning.svg';
 
 const HedgeTabOptimism = () => {
 	const { t } = useTranslation();
@@ -192,17 +193,25 @@ const HedgeTabOptimism = () => {
 				</LoaderContainer>
 			)}
 			{Boolean(!approveTx.isLoading && !depositTx.isLoading) && (
-				<StyledButton
-					size="lg"
-					onClick={() => {
-						setTxModalOpen(true);
-						approved ? depositTx.mutate() : approveTx.mutate();
-					}}
-					variant="primary"
-					disabled={wei(amountToSend || '0').eq(0)}
-				>
-					{approved ? t('debt.actions.manage.swap') : t('debt.actions.manage.approve')}
-				</StyledButton>
+				<>
+					{depositTx.errorMessage && (
+						<ErrorText>
+							<Svg width={30} height={40} src={WarningIcon} />
+							{depositTx.errorMessage}
+						</ErrorText>
+					)}
+					<StyledButton
+						size="lg"
+						onClick={() => {
+							setTxModalOpen(true);
+							approved ? depositTx.mutate() : approveTx.mutate();
+						}}
+						variant="primary"
+						disabled={wei(amountToSend || '0').eq(0) || Boolean(depositTx.errorMessage)}
+					>
+						{approved ? t('debt.actions.manage.swap') : t('debt.actions.manage.approve')}
+					</StyledButton>
+				</>
 			)}
 			<PoweredByContainer>
 				{t('debt.actions.manage.powered-by')}{' '}
@@ -240,6 +249,14 @@ const Container = styled.div`
 	height: 100%;
 `;
 
+const ErrorText = styled.p`
+	color: white;
+	text-transform: none;
+	font-size: 14px;
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+`;
 const LoaderContainer = styled.div`
 	display: flex;
 	align-items: center;
