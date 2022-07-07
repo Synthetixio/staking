@@ -3213,6 +3213,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@next/bundle-analyzer@npm:^10.2.3":
+  version: 10.2.3
+  resolution: "@next/bundle-analyzer@npm:10.2.3"
+  dependencies:
+    webpack-bundle-analyzer: 4.3.0
+  checksum: 1b2fb40e60699c70f99db502e394aa67972f944a617222383629a6b78947bd716d487e51a9e42e7d145470b436354aa29c4ddb4ca1449c931c1ad9efa21c3d4b
+  languageName: node
+  linkType: hard
+
 "@next/env@npm:10.2.3":
   version: 10.2.3
   resolution: "@next/env@npm:10.2.3"
@@ -9435,10 +9444,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"commander@npm:^7.2.0":
-  version: 7.2.0
-  resolution: "commander@npm:7.2.0"
-  checksum: 53501cbeee61d5157546c0bef0fedb6cdfc763a882136284bed9a07225f09a14b82d2a84e7637edfd1a679fb35ed9502fd58ef1d091e6287f60d790147f68ddc
+"commander@npm:^6.2.0":
+  version: 6.2.1
+  resolution: "commander@npm:6.2.1"
+  checksum: d7090410c0de6bc5c67d3ca41c41760d6d268f3c799e530aafb73b7437d1826bbf0d2a3edac33f8b57cc9887b4a986dce307fa5557e109be40eadb7c43b21742
   languageName: node
   linkType: hard
 
@@ -23503,6 +23512,7 @@ jschardet@latest:
     "@babel/preset-typescript": ^7.17.12
     "@metamask/providers": ^8.1.1
     "@microsoft/eslint-formatter-sarif": ^3.0.0
+    "@next/bundle-analyzer": ^10.2.3
     "@reach/dialog": ^0.15.3
     "@snapshot-labs/snapshot.js": ^0.3.22
     "@synthetixio/assets": ^2.0.13
@@ -23614,7 +23624,6 @@ jschardet@latest:
     unstated-next: ^1.1.0
     url-loader: ^4.1.1
     webp-loader: ^0.6.0
-    webpack-bundle-analyzer: ^4.5.0
   languageName: unknown
   linkType: soft
 
@@ -26559,14 +26568,14 @@ jschardet@latest:
   languageName: node
   linkType: hard
 
-"webpack-bundle-analyzer@npm:^4.5.0":
-  version: 4.5.0
-  resolution: "webpack-bundle-analyzer@npm:4.5.0"
+"webpack-bundle-analyzer@npm:4.3.0":
+  version: 4.3.0
+  resolution: "webpack-bundle-analyzer@npm:4.3.0"
   dependencies:
     acorn: ^8.0.4
     acorn-walk: ^8.0.0
     chalk: ^4.1.0
-    commander: ^7.2.0
+    commander: ^6.2.0
     gzip-size: ^6.0.0
     lodash: ^4.17.20
     opener: ^1.5.2
@@ -26574,7 +26583,7 @@ jschardet@latest:
     ws: ^7.3.1
   bin:
     webpack-bundle-analyzer: lib/bin/analyzer.js
-  checksum: 158e96810ec213d5665ca1c0b257097db44e1f11c4befefab8352b9e5b10890fcb3e3fc1f7bb400dd58762a8edce5621c92afeca86eb4687d2eb64e93186bfcb
+  checksum: 00b7bf4ac9fca17062b66b6897145b94e87153d3ec8815f0e0c05a3b8a1ca75320262db01a5fa634f604ee3d41aecde1ee59838d05b6d03cd5be62eb1addbcf8
   languageName: node
   linkType: hard
 

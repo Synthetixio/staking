@@ -86,6 +86,7 @@
 		"@babel/preset-typescript": "^7.17.12",
 		"@metamask/providers": "^8.1.1",
 		"@microsoft/eslint-formatter-sarif": "^3.0.0",
+		"@next/bundle-analyzer": "^10.2.3",
 		"@synthetixio/synpress": "^1.1.1",
 		"@testing-library/jest-dom": "^5.16.4",
 		"@testing-library/react": "^12.1.5",
@@ -145,8 +146,7 @@
 		"svg-jest": "^1.0.1",
 		"typescript": "^4.7.4",
 		"url-loader": "^4.1.1",
-		"webp-loader": "^0.6.0",
-		"webpack-bundle-analyzer": "^4.5.0"
+		"webp-loader": "^0.6.0"
 	},
 	"resolutions": {
 		"eslint-plugin-prettier": "^4.0.0",
