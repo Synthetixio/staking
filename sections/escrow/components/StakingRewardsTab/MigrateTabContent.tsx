@@ -1,5 +1,4 @@
 import { FC } from 'react';
-import { Svg } from 'react-optimized-image';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 
@@ -87,7 +86,7 @@ const MigrateTabContent: FC<MigrateTabContentProps> = ({
 		<>
 			<InputContainer>
 				<InputBox>
-					<Svg src={SNXLogo} />
+					<img alt="SNX" src={SNXLogo} />
 					<Data>
 						{formatCurrency(vestingCurrencyKey, totalEscrowed, {
 							currencyKey: vestingCurrencyKey,

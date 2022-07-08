@@ -11,7 +11,6 @@ import {
 	IconButton,
 	FlexDivRowCentered,
 } from 'styles/common';
-import { Svg } from 'react-optimized-image';
 import NavigationBack from 'assets/svg/app/navigation-back.svg';
 import GasSelector from 'components/GasSelector';
 import Loans from 'containers/Loans';
@@ -174,7 +173,7 @@ const Wrapper: FC<WrapperProps> = ({
 			<FormContainer>
 				<Header>
 					<IconButton onClick={onGoBack}>
-						<Svg src={NavigationBack} />
+						<img alt="Back" src={NavigationBack} />
 					</IconButton>
 				</Header>
 

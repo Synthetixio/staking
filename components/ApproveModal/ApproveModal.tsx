@@ -1,7 +1,6 @@
 import { FC, useState } from 'react';
 import styled from 'styled-components';
 import { ethers } from 'ethers';
-import { Svg } from 'react-optimized-image';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 
@@ -97,7 +96,12 @@ const ApproveModal: FC<ApproveModalProps & SynthetixJsAndSignerProps> = ({
 		<>
 			<Modal>
 				<Layer>
-					<Svg src={LockedIcon} />
+					<img
+						src={LockedIcon}
+						alt={
+							isApproving ? t('common.approve.is-approving') : t('common.approve.approve-contract')
+						}
+					/>
 					<ModalInfo>{description}</ModalInfo>
 					<GasSelector
 						gasLimitEstimate={txn.gasLimit}

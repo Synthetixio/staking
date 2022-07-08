@@ -2,7 +2,6 @@ import React from 'react';
 import styled, { useTheme } from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import makeBlockie from 'ethereum-blockies-base64';
-import { Svg } from 'react-optimized-image';
 
 import { ExternalLink, FlexDivRowCentered } from 'styles/common';
 
@@ -57,7 +56,7 @@ const CouncilBoard: React.FC = () => {
 											: undefined
 									}
 								>
-									<Svg color={theme.colors.blue} src={Link} />
+									<img alt="Link" style={{ color: theme.colors.blue }} src={Link} />
 								</ExternalLink>
 							</MemberRow>
 						);
@@ -69,7 +68,7 @@ const CouncilBoard: React.FC = () => {
 				)
 			) : (
 				<StyledSpinner>
-					<Svg src={Spinner} />
+					<img alt="Spinner" src={Spinner} />
 				</StyledSpinner>
 			)}
 		</StyledCard>

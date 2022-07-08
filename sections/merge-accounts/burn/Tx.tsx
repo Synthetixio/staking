@@ -1,7 +1,6 @@
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import Wei from '@synthetixio/wei';
-import { Svg } from 'react-optimized-image';
 
 import { ExternalLink } from 'styles/common';
 import PendingConfirmation from 'assets/svg/app/pending-confirmation.svg';
@@ -37,7 +36,7 @@ export const TxWaiting: FC<{ unstakeAmount: Wei; burnAmount: Wei; txLink: string
 			title={t('merge-accounts.burn.tx-waiting.title')}
 			content={
 				<FlexDivColCentered>
-					<Svg src={PendingConfirmation} />
+					<img alt="Pending confirmation" src={PendingConfirmation} />
 					<ActionsGrid>
 						<ActionsGridBox>
 							<GreyHeader>{t('merge-accounts.burn.tx-waiting.unstaking')}</GreyHeader>
@@ -88,7 +87,7 @@ export const TxSuccess: FC<{
 			title={t('merge-accounts.burn.tx-success.title')}
 			content={
 				<FlexDivColCentered>
-					<Svg src={Success} />
+					<img alt="Success" src={Success} />
 					<ActionsGrid>
 						<ActionsGridBox>
 							<GreyHeader>{t('merge-accounts.burn.tx-success.unstaked')}</GreyHeader>

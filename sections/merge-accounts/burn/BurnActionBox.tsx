@@ -1,7 +1,6 @@
 import { useMemo, useEffect, FC, useCallback } from 'react';
 import styled from 'styled-components';
 import { Trans, useTranslation } from 'react-i18next';
-import { Svg } from 'react-optimized-image';
 import { useRouter } from 'next/router';
 import Wei, { wei } from '@synthetixio/wei';
 
@@ -162,7 +161,7 @@ const BurnTabInner: FC = () => {
 			<FormContainer>
 				<FormHeader>
 					<IconButton onClick={onGoBack}>
-						<Svg src={NavigationBack} />
+						<img alt="Back" src={NavigationBack} />
 					</IconButton>
 				</FormHeader>
 

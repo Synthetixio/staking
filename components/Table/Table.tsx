@@ -1,7 +1,6 @@
 import React, { FC } from 'react';
 import styled, { css } from 'styled-components';
 import { useTable, useFlexLayout, useSortBy, Column, Row, usePagination, Cell } from 'react-table';
-import { Svg } from 'react-optimized-image';
 
 import { FlexDivCentered } from 'styles/common';
 
@@ -91,7 +90,7 @@ export const Table: FC<TableProps> = ({
 						</TableRow>
 					))}
 					{isLoading ? (
-						<StyledSpinner src={Spinner} />
+						<StyledSpinner alt="Spinner" src={Spinner} />
 					) : (
 						page.length > 0 && (
 							<TableBody className="table-body" {...getTableBodyProps()}>
@@ -142,8 +141,7 @@ const TableContainer = styled.div`
 	overflow: auto;
 `;
 
-// @ts-ignore
-const StyledSpinner = styled(Svg)`
+const StyledSpinner = styled.img`
 	display: block;
 	margin: 30px auto;
 `;

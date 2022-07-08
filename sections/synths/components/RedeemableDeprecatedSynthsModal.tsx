@@ -8,7 +8,6 @@ import useSynthetixQueries, {
 	DeprecatedSynthBalance,
 	GasPrice,
 } from '@synthetixio/queries';
-import { Svg } from 'react-optimized-image';
 
 import BaseModal from 'components/BaseModal';
 import { ButtonTransaction } from 'components/Form/common';
@@ -102,7 +101,7 @@ const RedeemDeprecatedSynthsModal: FC<{
 						title={''}
 						content={
 							<FlexDivColCentered>
-								<Svg src={PendingConfirmation} />
+								<img alt="Pending confirmation" src={PendingConfirmation} />
 								<GreyHeader>
 									<Trans
 										i18nKey="synths.redeemable-deprecated-synths.tx-modal-redeeming"

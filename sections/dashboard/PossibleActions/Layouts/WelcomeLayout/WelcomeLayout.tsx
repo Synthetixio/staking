@@ -1,5 +1,4 @@
 import { FC, useMemo } from 'react';
-import { Svg } from 'react-optimized-image';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -27,7 +26,7 @@ const WelcomeLayout: FC = () => {
 				gridArea: 'tile-1',
 				icon: (
 					<GlowingCircle variant="blue" size="md">
-						<Svg src={MintIcon} />
+						<img src={MintIcon} alt={t('dashboard.actions.stake.title')} />
 					</GlowingCircle>
 				),
 				title: t('dashboard.actions.stake.title'),
@@ -38,7 +37,7 @@ const WelcomeLayout: FC = () => {
 				gridArea: 'tile-2',
 				icon: (
 					<GlowingCircle variant="yellow" size="md">
-						<Svg src={LearnIcon} />
+						<img src={LearnIcon} alt={t('dashboard.actions.learn.title')} />
 					</GlowingCircle>
 				),
 				title: t('dashboard.actions.learn.title'),
@@ -49,7 +48,7 @@ const WelcomeLayout: FC = () => {
 				gridArea: 'tile-3',
 				icon: (
 					<GlowingCircle variant="orange" size="md">
-						<Svg src={KwentaIcon} width="32" />
+						<img src={KwentaIcon} width="32" alt={t('dashboard.actions.trade.title')} />
 					</GlowingCircle>
 				),
 				title: t('dashboard.actions.trade.title'),

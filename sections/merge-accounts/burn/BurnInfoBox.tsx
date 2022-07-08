@@ -1,7 +1,6 @@
 import { FC, useMemo } from 'react';
 import styled from 'styled-components';
 import { Trans, useTranslation } from 'react-i18next';
-import { Svg } from 'react-optimized-image';
 import { useRecoilValue } from 'recoil';
 import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
@@ -216,7 +215,7 @@ const InfoLayout: FC<InfoLayoutProps> = () => {
 							</RowValue>
 							{!isInputEmpty && (
 								<>
-									<StyledArrowRight src={ArrowRightIcon} />
+									<StyledArrowRight alt="Next" src={ArrowRightIcon} />
 									<RowValue>
 										{formatCurrency(currencyKey, changedValue, {
 											currencyKey: currencyKey,
@@ -239,7 +238,7 @@ const TotalBalanceHeading = styled(RowTitle)`
 	color: ${(props) => props.theme.colors.white};
 `;
 
-const StyledArrowRight = styled(Svg)`
+const StyledArrowRight = styled.img`
 	margin: 0 5px;
 	color: ${(props) => props.theme.colors.blue};
 `;

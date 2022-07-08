@@ -1,7 +1,6 @@
 import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { Svg } from 'react-optimized-image';
 
 import { truncateAddress } from 'utils/formatters/string';
 import { CellProps } from 'react-table';
@@ -85,7 +84,7 @@ const DelegateTable: FC = () => {
 	const noResultsMessage =
 		!delegateWalletsQuery.isFetching && delegateWallets.length === 0 ? (
 			<ListTableEmptyMessage>
-				<Svg src={WalletIcon} />
+				<img alt="Wallet" src={WalletIcon} />
 				{t('delegate.list.empty')}
 			</ListTableEmptyMessage>
 		) : null;
@@ -111,12 +110,11 @@ const DelegateTable: FC = () => {
 							{t('delegate.list.title')}{' '}
 							<Tooltip content={t('delegate.list.refresh-tooltip')}>
 								<NoMarginP>
-									<Svg
+									<img
+										alt="Refresh"
 										style={{ cursor: 'pointer' }}
 										src={Refresh}
-										onClick={() => {
-											delegateWalletsQuery.refetch();
-										}}
+										onClick={() => delegateWalletsQuery.refetch()}
 									/>
 								</NoMarginP>
 							</Tooltip>

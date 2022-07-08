@@ -1,5 +1,6 @@
-import React, { FC, ReactNode } from 'react';
-import { Svg } from 'react-optimized-image';
+import React from 'react';
+import type { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import ClaimIcon from 'assets/svg/app/claim.svg';
 import BurnIcon from 'assets/svg/app/burn.svg';
@@ -13,53 +14,36 @@ type TypeIconProps = {
 };
 
 const TypeIcon: FC<TypeIconProps> = ({ size = 'md', type }) => {
-	let icon: ReactNode = null;
-
-	let props: object = {
-		width: '16',
-		height: '16',
-	};
+	const { t } = useTranslation();
 
 	switch (type) {
 		case StakingTransactionType.Burned:
-			if (size === 'md') {
-				props = {
-					width: '30',
-				};
-			}
-
-			icon = <Svg src={BurnIcon} viewBox={`0 0 ${BurnIcon.width} ${BurnIcon.height}`} {...props} />;
-			break;
-		case StakingTransactionType.Issued:
-			if (size === 'md') {
-				props = {
-					width: '24',
-				};
-			}
-			icon = (
-				<Svg
-					src={MintIcon}
-					width="24"
-					viewBox={`0 0 ${MintIcon.width} ${MintIcon.height}`}
-					{...props}
+			return (
+				<img
+					src={BurnIcon}
+					width={size === 'md' ? 30 : 16}
+					alt={t('history.table.staking-tx-type.burned')}
 				/>
 			);
-			break;
-		case StakingTransactionType.FeesClaimed:
-			if (size === 'md') {
-				props = {
-					width: '30',
-				};
-			}
-			icon = (
-				<Svg src={ClaimIcon} viewBox={`0 0 ${ClaimIcon.width} ${ClaimIcon.height}`} {...props} />
+		case StakingTransactionType.Issued:
+			return (
+				<img
+					src={MintIcon}
+					width={size === 'md' ? 24 : 16}
+					alt={t('history.table.staking-tx-type.issued')}
+				/>
 			);
-			break;
+		case StakingTransactionType.FeesClaimed:
+			return (
+				<img
+					src={ClaimIcon}
+					width={size === 'md' ? 30 : 16}
+					alt={t('history.table.staking-tx-type.feesClaimed')}
+				/>
+			);
 		default:
-			icon = null;
+			return null;
 	}
-
-	return <>{icon}</>;
 };
 
 export default TypeIcon;

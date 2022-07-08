@@ -1,6 +1,5 @@
 import styled, { css } from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import { Svg } from 'react-optimized-image';
 
 import { InfoContainer, Title } from '../../components/common';
 import { FlexDivCol } from 'styles/common';
@@ -14,7 +13,7 @@ const InfoBox = () => {
 				<Title>{t('layer2.migrate.info.title')}</Title>
 			</InfoContainerHeader>
 			<InfoContainerBody>
-				<Svg src={Warning} />
+				<img alt="Warning" src={Warning} />
 				<WarningHeading>{t('layer2.migrate.info.warning-title')}</WarningHeading>
 				<WarningBody>{t('layer2.deposit.info.metamask-only')}</WarningBody>
 				<WarningBody>{t('layer2.migrate.info.warning-description')}</WarningBody>

@@ -1,6 +1,5 @@
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Svg } from 'react-optimized-image';
 
 import { ExternalLink } from 'styles/common';
 import PendingConfirmation from 'assets/svg/app/pending-confirmation.svg';
@@ -29,7 +28,7 @@ export const TxWaiting: FC<{ txLink: string }> = ({ txLink }) => {
 			title={t('merge-accounts.merge.tx-waiting.title')}
 			content={
 				<FlexDivColCentered>
-					<Svg src={PendingConfirmation} />
+					<img alt="Pending confirmation" src={PendingConfirmation} />
 					<ActionsGrid single>
 						<ActionsGridBox>
 							<GreyHeader>{t('merge-accounts.merge.tx-waiting.merging')}</GreyHeader>
@@ -60,7 +59,7 @@ export const TxSuccess: FC<{
 			title={t('merge-accounts.merge.tx-success.title')}
 			content={
 				<FlexDivColCentered>
-					<Svg src={Success} />
+					<img alt="Success" src={Success} />
 					<ActionsGrid single>
 						<ActionsGridBox>
 							<GreyHeader>{t('merge-accounts.merge.tx-success.merged')}</GreyHeader>

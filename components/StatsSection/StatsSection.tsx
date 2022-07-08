@@ -1,5 +1,4 @@
 import { FC, useState } from 'react';
-import { Svg } from 'react-optimized-image';
 import styled from 'styled-components';
 
 import { MOBILE_BODY_PADDING } from 'constants/ui';
@@ -51,7 +50,11 @@ const StatsSection: FC = ({ children }) => {
 		<>
 			<MobileOrTabletView>
 				<ToggleMobileStatsSection onClick={toggleMobileStatsSection}>
-					{mobileStatsSectionIsOpen ? <Svg src={CollapseIcon} /> : <Svg src={ExpandIcon} />}
+					{mobileStatsSectionIsOpen ? (
+						<img alt="Collapse" src={CollapseIcon} />
+					) : (
+						<img alt="Expand" src={ExpandIcon} />
+					)}
 				</ToggleMobileStatsSection>
 			</MobileOrTabletView>
 			<StatsContainer>{children}</StatsContainer>

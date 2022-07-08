@@ -1,6 +1,5 @@
 import React, { useMemo } from 'react';
 import styled from 'styled-components';
-import { Svg } from 'react-optimized-image';
 import { Remarkable } from 'remarkable';
 import { linkify } from 'remarkable/linkify';
 import externalLink from 'remarkable-external-link';
@@ -92,7 +91,7 @@ const Question: React.FC<QuestionProps> = ({
 				title={t('gov.actions.propose.waiting')}
 				content={
 					<FlexDivColCentered>
-						<Svg src={PendingConfirmation} />
+						<img alt="Pending confirmation" src={PendingConfirmation} />
 						<GreyHeader>{t('gov.actions.propose.signing')}</GreyHeader>
 						<WhiteSubheader>
 							{t('gov.actions.propose.space', {
@@ -111,7 +110,7 @@ const Question: React.FC<QuestionProps> = ({
 				title={t('gov.actions.propose.success')}
 				content={
 					<FlexDivColCentered>
-						<Svg src={Success} />
+						<img alt="Success" src={Success} />
 						<GreyHeader>{t('gov.actions.propose.signed')}</GreyHeader>
 						<WhiteSubheader>
 							{t('gov.actions.propose.hash', {
@@ -142,7 +141,7 @@ const Question: React.FC<QuestionProps> = ({
 				<InputContainer>
 					<HeaderRow>
 						<IconButton onClick={() => onBack()}>
-							<Svg src={NavigationBack} />
+							<img alt="Back" src={NavigationBack} />
 						</IconButton>
 						<Header>{t('gov.create.title')}</Header>
 						<div />

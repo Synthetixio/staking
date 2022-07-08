@@ -4,8 +4,6 @@ import styled from 'styled-components';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 
-import Img, { Svg } from 'react-optimized-image';
-
 import {
 	isWalletConnectedState,
 	delegateWalletState,
@@ -60,40 +58,40 @@ export type WalletOptionsProps = {
 const getWalletIcon = (selectedWallet?: string | null) => {
 	switch (selectedWallet) {
 		case 'browser wallet':
-			return <Img src={BrowserWalletIcon} />;
+			return <img alt="BrowserWallet" src={BrowserWalletIcon} />;
 		case 'trezor':
-			return <Img src={TrezorIcon} />;
+			return <img alt="Trezor" src={TrezorIcon} />;
 		case 'ledger':
-			return <Img src={LedgerIcon} />;
+			return <img alt="Ledger" src={LedgerIcon} />;
 		case 'walletconnect':
-			return <Img src={WalletConnectIcon} />;
+			return <img alt="WalletConnect" src={WalletConnectIcon} />;
 		case 'coinbase wallet':
 		case 'walletlink':
-			return <Img src={CoinbaseIcon} />;
+			return <img alt="Coinbase" src={CoinbaseIcon} />;
 		case 'portis':
-			return <Img src={PortisIcon} />;
+			return <img alt="Portis" src={PortisIcon} />;
 		case 'trust':
-			return <Img src={TrustIcon} />;
+			return <img alt="Trust" src={TrustIcon} />;
 		case 'dapper':
-			return <Img src={DapperIcon} />;
+			return <img alt="Dapper" src={DapperIcon} />;
 		case 'torus':
-			return <Img src={TorusIcon} />;
+			return <img alt="Torus" src={TorusIcon} />;
 		case 'status':
-			return <Img src={StatusIcon} />;
+			return <img alt="Status" src={StatusIcon} />;
 		case 'authereum':
-			return <Img src={AuthereumIcon} />;
+			return <img alt="Authereum" src={AuthereumIcon} />;
 		case 'imtoken':
-			return <Img src={ImTokenIcon} />;
+			return <img alt="ImToken" src={ImTokenIcon} />;
 		default:
 			return selectedWallet;
 	}
 };
 
-const exitIcon = <Svg src={ExitIcon} />;
-const walletIcon = <Svg src={WalletIcon} />;
-const changeIcon = <Svg src={ArrowsChangeIcon} />;
-const searchIcon = <Svg src={SearchIcon} />;
-const delegateIcon = <Svg src={DelegateIcon} />;
+const exitIcon = <img alt="Exit" src={ExitIcon} />;
+const walletIcon = <img alt="Wallet" src={WalletIcon} />;
+const changeIcon = <img alt="ArrowsChange" src={ArrowsChangeIcon} />;
+const searchIcon = <img alt="Search" src={SearchIcon} />;
+const delegateIcon = <img alt="Delegate" src={DelegateIcon} />;
 
 const WalletOptionsModal: FC<WalletOptionsProps> = ({
 	onDismiss,
@@ -127,7 +125,7 @@ const WalletOptionsModal: FC<WalletOptionsProps> = ({
 					<WalletDetails>
 						{walletWatched ? (
 							<SelectedWallet>
-								<Svg src={Incognito} />
+								<img alt="Incognito" src={Incognito} />
 							</SelectedWallet>
 						) : (
 							<SelectedWallet>{getWalletIcon(selectedWallet?.toLowerCase())}</SelectedWallet>
@@ -147,14 +145,9 @@ const WalletOptionsModal: FC<WalletOptionsProps> = ({
 								<CopyClipboardContainer>
 									<CopyToClipboard text={walletAddress!} onCopy={() => setCopiedAddress(true)}>
 										{copiedAddress ? (
-											<Svg
-												src={CheckIcon}
-												width="16"
-												height="16"
-												viewBox={`0 0 ${CheckIcon.width} ${CheckIcon.height}`}
-											/>
+											<img alt="OK" src={CheckIcon} width="16" />
 										) : (
-											<Svg src={CopyIcon} />
+											<img alt="Copy" src={CopyIcon} />
 										)}
 									</CopyToClipboard>
 								</CopyClipboardContainer>
@@ -167,7 +160,7 @@ const WalletOptionsModal: FC<WalletOptionsProps> = ({
 							>
 								<LinkContainer>
 									<WrappedExternalLink href={blockExplorerInstance?.addressLink(walletAddress!)}>
-										<Svg src={LinkIcon} />
+										<img alt="Link" src={LinkIcon} />
 									</WrappedExternalLink>
 								</LinkContainer>
 							</Tooltip>

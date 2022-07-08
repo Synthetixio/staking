@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 import { FC } from 'react';
 import Link from 'next/link';
-import { Svg } from 'react-optimized-image';
 
 import StakingLogo from 'assets/svg/app/staking-logo-small.svg';
 import BackIcon from 'assets/svg/app/back.svg';
@@ -26,17 +25,15 @@ const DesktopSideNav: FC = () => {
 		<Container data-testid="sidenav" isShowing={isShowingMobileSideNav}>
 			<StakingLogoWrap>
 				{isShowingSubMenu ? (
-					<Svg src={BackIcon} onClick={clearSubMenuConfiguration} />
+					<img alt="Back" src={BackIcon} onClick={clearSubMenuConfiguration} />
 				) : (
 					<Link href={ROUTES.Home}>
-						<>
-							<Svg src={StakingLogo} />
-						</>
+						<img alt="Staking" src={StakingLogo} />
 					</Link>
 				)}
 
 				<CloseContainer onClick={closeMobileSideNav}>
-					<Svg src={CloseIcon} />
+					<img alt="Close" src={CloseIcon} />
 				</CloseContainer>
 			</StakingLogoWrap>
 

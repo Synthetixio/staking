@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Svg } from 'react-optimized-image';
 import Spinner from 'assets/svg/app/loader.svg';
 import { FlexDivRowCentered } from 'styles/common';
 import { formatNumber, formatPercent } from 'utils/formatters/number';
@@ -61,7 +60,7 @@ const Results: React.FC<ResultsProps> = ({ proposalResults }) => {
 	} else {
 		return (
 			<StyledSpinner>
-				<Svg src={Spinner} />
+				<img alt="Spinner" src={Spinner} />
 			</StyledSpinner>
 		);
 	}

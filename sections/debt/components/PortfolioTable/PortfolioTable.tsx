@@ -2,7 +2,6 @@ import React, { FC, useMemo } from 'react';
 import { CellProps } from 'react-table';
 import styled from 'styled-components';
 import { useTranslation, Trans } from 'react-i18next';
-import { Svg } from 'react-optimized-image';
 import Wei, { wei } from '@synthetixio/wei';
 
 import { useRecoilValue } from 'recoil';
@@ -323,7 +322,7 @@ const PortfolioTableTooltip: FC<PortfolioTableTooptipProps> = ({ currencyKey }) 
 			}
 		>
 			<TooltipIconContainer>
-				<Svg src={Info} />
+				<img alt="Info" src={Info} />
 			</TooltipIconContainer>
 		</StyledTooltip>
 	);

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { Svg } from 'react-optimized-image';
 import { Remarkable } from 'remarkable';
 import { linkify } from 'remarkable/linkify';
 import externalLink from 'remarkable-external-link';
@@ -139,7 +138,7 @@ const Content: React.FC<ContentProps> = ({ proposal, onBack }) => {
 					title={t('gov.actions.vote.waiting')}
 					content={
 						<FlexDivColCentered>
-							<Svg src={PendingConfirmation} />
+							<img alt="Pending confirmation" src={PendingConfirmation} />
 							<GreyHeader>{t('gov.actions.vote.signing')}</GreyHeader>
 							<WhiteSubheader>
 								{t('gov.actions.vote.hash', {
@@ -158,7 +157,7 @@ const Content: React.FC<ContentProps> = ({ proposal, onBack }) => {
 					title={t('gov.actions.vote.success')}
 					content={
 						<FlexDivColCentered>
-							<Svg src={Success} />
+							<img alt="Success" src={Success} />
 							<GreyHeader>{t('gov.actions.vote.signed')}</GreyHeader>
 							<WhiteSubheader>
 								{t('gov.actions.vote.hash', {
@@ -188,7 +187,7 @@ const Content: React.FC<ContentProps> = ({ proposal, onBack }) => {
 				<InputContainer>
 					<HeaderRow>
 						<IconButton onClick={() => onBack(null)}>
-							<Svg src={NavigationBack} />
+							<img alt="Back" src={NavigationBack} />
 						</IconButton>
 						<Header>#{truncateAddress(proposal?.id ?? '')}</Header>
 						<Status closed={expired(proposal?.end)} pending={pending(proposal?.start)}>

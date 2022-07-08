@@ -1,6 +1,5 @@
 import React, { FC } from 'react';
 import styled from 'styled-components';
-import { Svg } from 'react-optimized-image';
 import { useTranslation } from 'react-i18next';
 
 import Etherscan from 'containers/BlockExplorer';
@@ -41,7 +40,7 @@ const ActionInProgress: FC<ActionInProgressProps> = ({
 					? t('escrow.actions.migration.in-progress.title')
 					: t('escrow.actions.in-progress.title')}
 			</SectionHeader>
-			<Svg src={PendingConfirmation} />
+			<img alt="Pending confirmation" src={PendingConfirmation} />
 			<FlexDivCentered>
 				<InfoContainer key="one">
 					<InfoTitle>

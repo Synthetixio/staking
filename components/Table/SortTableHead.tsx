@@ -1,6 +1,5 @@
 import React, { FC } from 'react';
 import styled from 'styled-components';
-import { Svg } from 'react-optimized-image';
 
 import SortDownIcon from 'assets/svg/app/caret-down.svg';
 import SortUpIcon from 'assets/svg/app/caret-up.svg';
@@ -18,24 +17,14 @@ export const SortTableHead: FC<SortTableHeadProps> = ({ sortable, isSorted, isSo
 	if (!isSorted) {
 		sortIcon = (
 			<>
-				<StyledSortIcon src={SortUpIcon} viewBox={`0 0 ${SortUpIcon.width} ${SortUpIcon.height}`} />
-				<StyledSortIcon
-					src={SortDownIcon}
-					viewBox={`0 0 ${SortDownIcon.width} ${SortDownIcon.height}`}
-				/>
+				<StyledSortIcon alt="Sort up" src={SortUpIcon} />
+				<StyledSortIcon alt="Sort down" src={SortDownIcon} />
 			</>
 		);
 	} else if (isSortedDesc) {
-		sortIcon = (
-			<StyledSortIcon
-				src={SortDownIcon}
-				viewBox={`0 0 ${SortDownIcon.width} ${SortDownIcon.height}`}
-			/>
-		);
+		sortIcon = <StyledSortIcon alt="Sort down" src={SortDownIcon} />;
 	} else {
-		sortIcon = (
-			<StyledSortIcon src={SortUpIcon} viewBox={`0 0 ${SortUpIcon.width} ${SortUpIcon.height}`} />
-		);
+		sortIcon = <StyledSortIcon alt="Sort up" src={SortUpIcon} />;
 	}
 
 	return <SortIconContainer>{sortIcon}</SortIconContainer>;
@@ -47,7 +36,7 @@ const SortIconContainer = styled.span`
 	flex-direction: column;
 `;
 
-const StyledSortIcon = styled(Svg)`
+const StyledSortIcon = styled.img`
 	width: 5px;
 	height: 5px;
 	color: ${(props) => props.theme.colors.gray};
