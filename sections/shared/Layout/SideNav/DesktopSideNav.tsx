@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 import { FC, useMemo } from 'react';
 import Link from 'next/link';
-import { Svg } from 'react-optimized-image';
 import { useRecoilValue } from 'recoil';
 
 import StakingLogo from 'assets/svg/app/staking-logo.svg';
@@ -65,7 +64,13 @@ const DesktopSideNav: FC = () => {
 		<Container onMouseLeave={clearSubMenuConfiguration} data-testid="sidenav">
 			<StakingLogoWrap>
 				<Link href={ROUTES.Home}>
-					<div>{isL2 ? <Svg src={StakingL2Logo} /> : <Svg src={StakingLogo} />}</div>
+					<div>
+						{isL2 ? (
+							<img alt="L2 Staking" src={StakingL2Logo} />
+						) : (
+							<img alt="Staking" src={StakingLogo} />
+						)}
+					</div>
 				</Link>
 			</StakingLogoWrap>
 

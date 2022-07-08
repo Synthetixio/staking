@@ -1,6 +1,5 @@
 import { FC, useState, useMemo, useEffect, useCallback } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
-import { Svg } from 'react-optimized-image';
 import { useRouter } from 'next/router';
 
 import StructuredTab from 'components/StructuredTab';
@@ -125,7 +124,7 @@ const YearnVaultTab: FC<LPTabProps> = ({
 				title={t('earn.actions.rewards.waiting')}
 				content={
 					<FlexDivColCentered>
-						<Svg src={PendingConfirmation} />
+						<img alt="Pending confirmation" src={PendingConfirmation} />
 						<>
 							<GreyHeader>{t('earn.actions.claim.claiming')}</GreyHeader>
 							<WhiteSubheader>
@@ -157,7 +156,7 @@ const YearnVaultTab: FC<LPTabProps> = ({
 				title={t('earn.actions.claim.success')}
 				content={
 					<FlexDivColCentered>
-						<Svg src={Success} />
+						<img alt="Success" src={Success} />
 						<>
 							<GreyHeader>{t('earn.actions.claim.claiming')}</GreyHeader>
 							<WhiteSubheader>
@@ -189,7 +188,7 @@ const YearnVaultTab: FC<LPTabProps> = ({
 			<GoToEarnButtonContainer>
 				<MobileOnlyView>
 					<StyledIconButton onClick={goToEarn}>
-						<Svg src={ExpandIcon} />
+						<img alt="Expand" src={ExpandIcon} />
 					</StyledIconButton>
 				</MobileOnlyView>
 			</GoToEarnButtonContainer>

@@ -1,5 +1,4 @@
 import { FC } from 'react';
-import { Svg } from 'react-optimized-image';
 
 import Etherscan from 'containers/BlockExplorer';
 import { ExternalLink, FlexDivCentered } from 'styles/common';
@@ -25,7 +24,7 @@ const ExternalLinkIcon: FC<ExternalLinkIconProps> = ({ transactionHash, relay, c
 		<ExternalLink href={link}>
 			<FlexDivCentered>
 				<StyledLabel>{children}</StyledLabel>
-				<Svg src={LinkIcon} />
+				<img alt="Link" src={LinkIcon} />
 			</FlexDivCentered>
 		</ExternalLink>
 	);

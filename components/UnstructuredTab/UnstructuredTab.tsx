@@ -1,7 +1,6 @@
 import { ReactNode } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import { Svg } from 'react-optimized-image';
 import { StyledTabButton } from 'components/Tab/Tab';
 import { Col } from 'sections/gov/components/common';
 import InfoIcon from 'assets/svg/app/info-pink.svg';
@@ -77,7 +76,7 @@ export const UnstructuredTab = ({ tabData }: UnstructuredTabProps) => {
 				</Col>
 				<StyledTextWrapper>
 					<StyledText>{t('gov.panel.proposals.info')}</StyledText>
-					<Svg height={14} width={14} src={InfoIcon} />
+					<img alt="Info" width={14} src={InfoIcon} />
 				</StyledTextWrapper>
 			</StyledTabButtonExtended>
 			<Wrapper>{tabChildren}</Wrapper>

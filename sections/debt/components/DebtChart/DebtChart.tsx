@@ -2,7 +2,6 @@ import React from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { format } from 'date-fns';
-import { Svg } from 'react-optimized-image';
 import { useTheme } from 'styled-components';
 import { useRecoilValue } from 'recoil';
 import {
@@ -91,7 +90,7 @@ const DebtChart = ({ data, isLoading }: { data: Data[]; isLoading: boolean }) =>
 	if (isLoading) {
 		return (
 			<DefaultContainer>
-				<Spinner src={SpinnerIcon} />
+				<Spinner alt="Spinner" src={SpinnerIcon} />
 			</DefaultContainer>
 		);
 	}
@@ -202,7 +201,7 @@ const DefaultContainer = styled(FlexDivColCentered)`
 	justify-content: center;
 `;
 
-const Spinner = styled(Svg)`
+const Spinner = styled.img`
 	display: block;
 	margin: 30px auto;
 `;

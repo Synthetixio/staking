@@ -1,6 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import styled from 'styled-components';
-import { Svg } from 'react-optimized-image';
 import { useRecoilValue } from 'recoil';
 import { Trans, useTranslation } from 'react-i18next';
 
@@ -272,7 +271,7 @@ const StakingInput: React.FC<StakingInputProps> = ({
 							</Tagline>
 							<Tooltip arrow={false} content={t('staking.actions.burn.info.clear-debt.tooltip')}>
 								<TooltipIconContainer>
-									<Svg src={Info} />
+									<img alt="Info" src={Info} />
 								</TooltipIconContainer>
 							</Tooltip>
 						</FlexDiv>
@@ -284,7 +283,7 @@ const StakingInput: React.FC<StakingInputProps> = ({
 							<Tagline>{t('staking.actions.burn.info.clear-debt.buffer')}</Tagline>
 							<Tooltip arrow={false} content={t('staking.actions.burn.info.clear-debt.tooltip')}>
 								<TooltipIconContainer>
-									<Svg src={Info} />
+									<img alt="Info" src={Info} />
 								</TooltipIconContainer>
 							</Tooltip>
 						</FlexDiv>
@@ -293,7 +292,7 @@ const StakingInput: React.FC<StakingInputProps> = ({
 			</InputGroup>
 			<FlexDivCentered>
 				<Tagline>{t('staking.actions.burn.info.clear-debt.tagline')}</Tagline>
-				<Svg height={20} src={Logo1Inch} />
+				<img alt="1inch" height={20} src={Logo1Inch} />
 			</FlexDivCentered>
 		</>
 	);
@@ -303,7 +302,7 @@ const StakingInput: React.FC<StakingInputProps> = ({
 			<InputContainer>
 				<HeaderRow>
 					<IconButton onClick={() => onBack(null)}>
-						<Svg src={NavigationBack} />
+						<img alt="Back" src={NavigationBack} />
 					</IconButton>
 					{!isMint && burnType != null && [BurnActionType.CUSTOM].includes(burnType) && (
 						<BalanceButton variant="text" onClick={() => onInputChange(maxBurnAmount)}>

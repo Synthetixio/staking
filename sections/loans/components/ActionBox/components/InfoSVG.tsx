@@ -2,7 +2,6 @@ import { FC, ReactNode } from 'react';
 import styled from 'styled-components';
 import { Tooltip } from 'styles/common';
 import InfoIcon from 'assets/svg/app/info.svg';
-import { Svg } from 'react-optimized-image';
 
 type SVGProps = {
 	tip: ReactNode;
@@ -11,7 +10,7 @@ type SVGProps = {
 const SVG: FC<SVGProps> = ({ tip }) => (
 	<StyledTooltip arrow={true} placement="bottom" content={<TooltipText>{tip}</TooltipText>}>
 		<SVGContainer>
-			<Svg src={InfoIcon} />
+			<img alt="Info" src={InfoIcon} />
 		</SVGContainer>
 	</StyledTooltip>
 );

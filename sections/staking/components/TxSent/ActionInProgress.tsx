@@ -1,5 +1,4 @@
 import React, { FC } from 'react';
-import { Svg } from 'react-optimized-image';
 import { useTranslation } from 'react-i18next';
 
 import Etherscan from 'containers/BlockExplorer';
@@ -37,7 +36,7 @@ const ActionInProgress: FC<ActionInProgressProps> = ({ isMint, from, to, hash })
 			</SectionHeader>
 			<MiddleSection>
 				<IconContainer>
-					<Svg src={PendingConfirmation} />
+					<img alt="Pending confirmation" src={PendingConfirmation} />
 				</IconContainer>
 				<FlexDivCentered>
 					<InfoContainer key="one">

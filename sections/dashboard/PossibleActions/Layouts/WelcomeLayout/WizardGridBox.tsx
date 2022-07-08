@@ -1,6 +1,5 @@
 import { FC, useRef } from 'react';
 import styled from 'styled-components';
-import Img, { Svg } from 'react-optimized-image';
 
 import Welcome from 'assets/svg/app/wizard/welcome.svg';
 import What from 'assets/svg/app/wizard/what.svg';
@@ -23,33 +22,33 @@ export const WizardGridBox: FC<WizardGridBoxProps> = ({ gridArea }) => {
 	const slider = useRef<any>();
 	const STEPS = [
 		{
-			icon: <Svg src={Welcome} />,
-			title: 'homepage.welcome.title',
-			subtitle: 'homepage.welcome.subtitle',
+			icon: <img src={Welcome} alt={t('homepage.welcome.title')} />,
+			title: t('homepage.welcome.title'),
+			subtitle: t('homepage.welcome.subtitle'),
 			id: 'welcome',
 		},
 		{
-			icon: <Img src={What} />,
-			title: 'homepage.what.title',
-			subtitle: 'homepage.what.subtitle',
+			icon: <img src={What} alt={t('homepage.what.title')} />,
+			title: t('homepage.what.title'),
+			subtitle: t('homepage.what.subtitle'),
 			id: 'what',
 		},
 		{
-			icon: <Img src={Why} />,
-			title: 'homepage.why.title',
-			subtitle: 'homepage.why.subtitle',
+			icon: <img src={Why} alt={t('homepage.why.title')} />,
+			title: t('homepage.why.title'),
+			subtitle: t('homepage.why.subtitle'),
 			id: 'why',
 		},
 		{
-			icon: <Img src={MintBurn} />,
-			title: 'homepage.mint-burn.title',
-			subtitle: 'homepage.mint-burn.subtitle',
+			icon: <img src={MintBurn} alt={t('homepage.mint-burn.title')} />,
+			title: t('homepage.mint-burn.title'),
+			subtitle: t('homepage.mint-burn.subtitle'),
 			id: 'mintBurn',
 		},
 		{
-			icon: <Svg src={Debt} />,
-			title: 'homepage.risks.title',
-			subtitle: 'homepage.risks.subtitle',
+			icon: <img src={Debt} alt={t('homepage.risks.title')} />,
+			title: t('homepage.risks.title'),
+			subtitle: t('homepage.risks.subtitle'),
 			id: 'risks',
 		},
 	];
@@ -66,8 +65,8 @@ export const WizardGridBox: FC<WizardGridBoxProps> = ({ gridArea }) => {
 						<div key={id} onClick={() => gotoNext()}>
 							<StepBox>
 								<IconContainer>{icon}</IconContainer>
-								<Title>{t(`${title}`)}</Title>
-								<Subtitle>{t(`${subtitle}`)}</Subtitle>
+								<Title>{title}</Title>
+								<Subtitle>{subtitle}</Subtitle>
 							</StepBox>
 						</div>
 					))}

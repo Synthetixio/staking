@@ -1,5 +1,4 @@
 import { FC } from 'react';
-import { Svg } from 'react-optimized-image';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 
@@ -16,10 +15,10 @@ const KwentaBanner: FC = () => {
 			<Banner>
 				<FlexDiv>
 					{t('synths.trade-on-kwenta')}
-					<StyledSvg src={CaretRight} />
+					<StyledSvg alt={t('synths.trade-on-kwenta')} src={CaretRight} />
 				</FlexDiv>
 				<FlexDiv>
-					<Svg src={KwentaIcon} />
+					<img alt="Kwenta" src={KwentaIcon} />
 				</FlexDiv>
 			</Banner>
 		</ExternalLink>
@@ -40,7 +39,7 @@ const Banner = styled(FlexDivCentered)`
 	border-bottom-right-radius: 4px;
 `;
 
-const StyledSvg = styled(Svg)`
+const StyledSvg = styled.img`
 	margin-left: 6px;
 `;
 

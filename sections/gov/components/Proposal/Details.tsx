@@ -1,6 +1,5 @@
 import React from 'react';
 import styled, { useTheme } from 'styled-components';
-import { Svg } from 'react-optimized-image';
 import makeBlockie from 'ethereum-blockies-base64';
 
 import Etherscan from 'containers/BlockExplorer';
@@ -39,7 +38,7 @@ const Details: React.FC<DetailsProps> = ({ proposal }) => {
 									: undefined
 							}
 						>
-							<Svg style={{ marginLeft: 4 }} color={theme.colors.blue} src={Link} />
+							<img alt="Link" style={{ marginLeft: 4, color: theme.colors.blue }} src={Link} />
 						</ExternalLink>
 					</Value>
 				)}
@@ -60,7 +59,7 @@ const Details: React.FC<DetailsProps> = ({ proposal }) => {
 						<ExternalLink
 							href={`https://snapshot.org/#/${SPACE_KEY.PROPOSAL}/proposal/${proposal.id}`}
 						>
-							<Svg style={{ marginLeft: 4 }} color={theme.colors.blue} src={Link} />
+							<img alt="Link" style={{ marginLeft: 4, color: theme.colors.blue }} src={Link} />
 						</ExternalLink>
 					</Value>
 				)}
@@ -77,7 +76,7 @@ const Details: React.FC<DetailsProps> = ({ proposal }) => {
 									: undefined
 							}
 						>
-							<Svg style={{ marginLeft: 4 }} color={theme.colors.blue} src={Link} />
+							<img alt="Link" style={{ marginLeft: 4, color: theme.colors.blue }} src={Link} />
 						</ExternalLink>
 					</Value>
 				)}

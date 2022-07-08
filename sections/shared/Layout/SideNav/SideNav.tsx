@@ -2,7 +2,6 @@ import styled, { css } from 'styled-components';
 import { FC, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
-import { Svg } from 'react-optimized-image';
 import { useRecoilValue } from 'recoil';
 import { getOptimismNetwork } from '@synthetixio/optimism-networks';
 
@@ -132,7 +131,7 @@ const SideNav: FC<SideNavProps> = ({ isDesktop }) => {
 					>
 						<div className="link">
 							{t(i18nLabel)}
-							{subMenu && <Svg src={CaretRightIcon} />}
+							{subMenu && <img alt="Next" src={CaretRightIcon} />}
 						</div>
 					</MenuLinkItem>
 				);

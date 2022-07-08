@@ -1,6 +1,5 @@
 import styled from 'styled-components';
 import React, { FC, ReactNode, useState, useEffect, Dispatch, SetStateAction } from 'react';
-import { Svg } from 'react-optimized-image';
 import { Trans, useTranslation } from 'react-i18next';
 
 import { FlexDiv, FlexDivCol, Tooltip } from 'styles/common';
@@ -148,7 +147,7 @@ const DebtTabs: FC<DebtTabsProps> = ({
 										}
 									>
 										<TooltipIconContainer>
-											<ResizedInfoIcon src={Info} />
+											<ResizedInfoIcon alt="Resize" src={Info} />
 										</TooltipIconContainer>
 									</DebtInfoTooltip>
 								</ContainerHeaderSection>
@@ -259,7 +258,7 @@ const PortfolioContainer = styled(Container)`
 	`};
 `;
 
-const ResizedInfoIcon = styled(Svg)`
+const ResizedInfoIcon = styled.img`
 	transform: scale(1.4);
 `;
 

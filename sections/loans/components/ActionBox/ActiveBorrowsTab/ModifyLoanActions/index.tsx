@@ -1,6 +1,5 @@
 import { FC, useMemo } from 'react';
 import styled from 'styled-components';
-import { Svg } from 'react-optimized-image';
 
 import Spinner from 'assets/svg/app/loader.svg';
 import Loans from 'containers/Loans';
@@ -67,7 +66,7 @@ const Actions: FC<ActionsProps> = ({ loanId, loanAction, loanTypeIsETH }) => {
 	}, [loanTypeIsETH, renBTCContract]);
 
 	return isLoadingLoans ? (
-		<StyledSpinner src={Spinner} />
+		<StyledSpinner alt="Spinner" src={Spinner} />
 	) : !loan ? null : (
 		<Action
 			{...{
@@ -85,7 +84,7 @@ const Actions: FC<ActionsProps> = ({ loanId, loanAction, loanTypeIsETH }) => {
 
 export default Actions;
 
-const StyledSpinner = styled(Svg)`
+const StyledSpinner = styled.img`
 	display: block;
 	margin: 30px auto;
 `;

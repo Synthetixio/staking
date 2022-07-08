@@ -2,7 +2,6 @@ import React, { useState, useCallback, useMemo } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import Wei, { wei } from '@synthetixio/wei';
-import { Svg } from 'react-optimized-image';
 import { useRouter } from 'next/router';
 import { useRecoilValue } from 'recoil';
 
@@ -129,7 +128,7 @@ const LiquidationTab: React.FC<LiquidationTabProps> = ({ liquidationRewards }) =
 				title={t('earn.actions.claim.in-progress')}
 				content={
 					<FlexDivColCentered>
-						<Svg src={PendingConfirmation} />
+						<img alt="Pending confirmation" src={PendingConfirmation} />
 						<StyledFlexDiv>
 							<StyledFlexDivColCentered>
 								<GreyHeader>{t('earn.actions.claim.claiming')}</GreyHeader>
@@ -169,7 +168,7 @@ const LiquidationTab: React.FC<LiquidationTabProps> = ({ liquidationRewards }) =
 				title={t('earn.actions.claim.success')}
 				content={
 					<FlexDivColCentered>
-						<Svg src={Success} />
+						<img alt="Success" src={Success} />
 						<StyledFlexDiv>
 							<StyledFlexDivColCentered>
 								<GreyHeader>{t('earn.actions.claim.claimed')}</GreyHeader>
@@ -213,7 +212,7 @@ const LiquidationTab: React.FC<LiquidationTabProps> = ({ liquidationRewards }) =
 				<GoToEarnButtonContainer>
 					<MobileOnlyView>
 						<StyledIconButton onClick={goToEarn}>
-							<Svg src={ExpandIcon} />
+							<img alt="Expand" src={ExpandIcon} />
 						</StyledIconButton>
 					</MobileOnlyView>
 				</GoToEarnButtonContainer>
@@ -333,13 +332,9 @@ const StyledTabContainer = styled(TabContainer)`
 
 const StyledIconButton = styled(IconButton)`
 	margin-left: auto;
-	svg {
-		color: ${(props) => props.theme.colors.gray};
-	}
+	color: ${(props) => props.theme.colors.gray};
 	&:hover {
-		svg {
-			color: ${(props) => props.theme.colors.white};
-		}
+		color: ${(props) => props.theme.colors.white};
 	}
 `;
 

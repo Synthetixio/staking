@@ -1,5 +1,4 @@
 import React, { FC, useState } from 'react';
-import Img, { Svg } from 'react-optimized-image';
 import styled from 'styled-components';
 
 import ETHIcon from 'assets/svg/currencies/crypto/ETH.svg';
@@ -38,7 +37,7 @@ export const CurrencyIconContainer: FC<CurrencyIconProps> = (props) => (
 		<CurrencyIcon {...props} />
 		{props.isDeprecated && (
 			<DeprecatedXIconContainer>
-				<Svg src={DeprecatedXIcon} />
+				<img src={DeprecatedXIcon} alt="Deprecated" />
 			</DeprecatedXIconContainer>
 		)}
 	</Container>
@@ -76,13 +75,13 @@ export const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, isDeprecated,
 	if (!firstFallbackError) {
 		switch (currencyKey) {
 			case CryptoCurrency.BTC: {
-				return <Img src={BTCIcon} {...props} />;
+				return <img src={BTCIcon} {...props} alt="BTC" />;
 			}
 			case CryptoCurrency.ETH: {
-				return <Img src={ETHIcon} {...props} />;
+				return <img src={ETHIcon} {...props} alt="ETH" />;
 			}
 			case CryptoCurrency.SNX: {
-				return <img src={SNXIcon} {...props} alt="snx-icon" />;
+				return <img src={SNXIcon} {...props} alt="SNX" />;
 			}
 			default:
 				return (

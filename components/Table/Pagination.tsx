@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 
 import { GridDivCenteredCol, resetButtonCSS } from 'styles/common';
-import { Svg } from 'react-optimized-image';
 
 import LeftArrowIcon from 'assets/svg/app/caret-left.svg';
 import LeftEndArrowIcon from 'assets/svg/app/caret-left-end.svg';
@@ -35,10 +34,10 @@ const Pagination: FC<PaginationProps> = ({
 		<PaginationContainer className="table-pagination">
 			<span>
 				<ArrowButton onClick={() => setPage(0)} disabled={!canPreviousPage}>
-					<Svg src={LeftEndArrowIcon} />
+					<img alt="First" src={LeftEndArrowIcon} />
 				</ArrowButton>
 				<ArrowButton onClick={() => previousPage()} disabled={!canPreviousPage}>
-					<Svg src={LeftArrowIcon} />
+					<img alt="Previous" src={LeftArrowIcon} />
 				</ArrowButton>
 			</span>
 			<PageInfo>
@@ -47,10 +46,10 @@ const Pagination: FC<PaginationProps> = ({
 			</PageInfo>
 			<span>
 				<ArrowButton onClick={() => nextPage()} disabled={!canNextPage}>
-					<Svg src={RightArrowIcon} />
+					<img alt="Next" src={RightArrowIcon} />
 				</ArrowButton>
 				<ArrowButton onClick={() => setPage(pageCount - 1)} disabled={!canNextPage}>
-					<Svg src={RightEndArrowIcon} />
+					<img alt="Last" src={RightEndArrowIcon} />
 				</ArrowButton>
 			</span>
 		</PaginationContainer>
