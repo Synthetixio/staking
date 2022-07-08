@@ -56,7 +56,6 @@
 		"lodash": "^4.17.20",
 		"next": "^10.2.3",
 		"next-compose-plugins": "^2.2.1",
-		"next-optimized-images": "^3.0.0-canary.10",
 		"react": "^17.0.2",
 		"react-copy-to-clipboard": "^5.1.0",
 		"react-countdown": "^2.3.0",
@@ -77,10 +76,10 @@
 		"slick-carousel": "^1.8.1",
 		"styled-components": "^5.3.5",
 		"styled-media-query": "^2.1.2",
-		"svg-react-loader": "^0.4.6",
 		"unstated-next": "^1.1.0"
 	},
 	"devDependencies": {
+		"@babel/core": "^7.16.0",
 		"@babel/preset-env": "^7.18.2",
 		"@babel/preset-react": "^7.17.12",
 		"@babel/preset-typescript": "^7.17.12",
@@ -145,7 +144,6 @@
 		"svg-jest": "^1.0.1",
 		"typescript": "^4.7.4",
 		"url-loader": "^4.1.1",
-		"webp-loader": "^0.6.0",
 		"webpack-bundle-analyzer": "^4.5.0"
 	},
 	"resolutions": {

@@ -1,8 +1,6 @@
-// next.config.js
 const withPlugins = require('next-compose-plugins');
-const optimizedImages = require('next-optimized-images');
 
-module.exports = withPlugins([[optimizedImages, { images: { optimize: false } }]], {
+module.exports = withPlugins([], {
 	webpack: (config) => {
 		config.resolve.mainFields = ['module', 'browser', 'main'];
 		if (process.env.GENERATE_BUNDLE_REPORT === 'true') {
@@ -15,6 +13,30 @@ module.exports = withPlugins([[optimizedImages, { images: { optimize: false } }]
 			});
 			config.plugins.push(plugin);
 		}
+		config.module.rules.push({
+			test: /\.svg$/i,
+			use: [
+				{
+					loader: 'url-loader',
+					options: {
+						encoding: false,
+					},
+				},
+			],
+		});
+
+		config.module.rules.push({
+			test: /\.(png|jpg|ico|gif|woff|woff2|ttf|eot|doc|pdf|zip|wav|avi|txt|webp)$/,
+			use: [
+				{
+					loader: 'url-loader',
+					options: {
+						limit: 4 * 1024, // 4kb
+					},
+				},
+			],
+		});
+
 		return config;
 	},
 	trailingSlash: !!process.env.NEXT_PUBLIC_TRAILING_SLASH_ENABLED,
