@@ -1,1 +1,3 @@
-/// <reference types="optimized-images-loader" />
+declare module '*.svg';
+declare module '*.png';
+declare module '*.webp';

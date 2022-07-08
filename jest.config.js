@@ -10,7 +10,7 @@ module.exports = {
 		'\\.[jt]sx?$': 'babel-jest',
 	},
 	moduleNameMapper: {
-		'^.+\\.svg\\?(sprite|include)(.+)?$': '<rootDir>/test-setup/svgMock.js',
+		'^.+\\.svg\\?(sprite|include)(.+)?$': '<rootDir>/test-setup/svgTransformer.js',
 	},
 	testMatch: ['<rootDir>/**/*.test.{js,jsx,ts,tsx}'],
 	collectCoverageFrom: [
