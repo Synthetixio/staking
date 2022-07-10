@@ -43,6 +43,8 @@
 		"@uniswap/sdk-core": "^3.0.1",
 		"@uniswap/smart-order-router": "^2.5.13",
 		"@uniswap/v3-sdk": "^3.6.3",
+		"@web3-onboard/core": "^2.3.2",
+		"@web3-onboard/injected-wallets": "^2.0.12",
 		"axios": "^0.21.1",
 		"bignumber.js": "^9.0.0",
 		"bnc-onboard": "^1.36.0",

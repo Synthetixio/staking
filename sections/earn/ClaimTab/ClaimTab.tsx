@@ -6,7 +6,6 @@ import { Svg } from 'react-optimized-image';
 import { useRouter } from 'next/router';
 import { useRecoilValue } from 'recoil';
 
-import { appReadyState } from 'store/app';
 import {
 	isWalletConnectedState,
 	delegateWalletState,

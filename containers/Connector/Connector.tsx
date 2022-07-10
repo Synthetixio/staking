@@ -1,15 +1,11 @@
 import { useState, useEffect, useMemo, useReducer } from 'react';
 import { createContainer } from 'unstated-next';
-import {
-	TransactionNotifier,
-	TransactionNotifierInterface,
-} from '@synthetixio/transaction-notifier';
+import { TransactionNotifierInterface } from '@synthetixio/transaction-notifier';
 import { loadProvider } from '@synthetixio/providers';
 
 import { getDefaultNetworkId, getIsOVM, isSupportedNetworkId } from 'utils/network';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import {
-	NetworkId,
 	SynthetixJS,
 	synthetix,
 	NetworkNameById,
@@ -26,11 +22,9 @@ import {
 	ensAvatarState,
 } from 'store/wallet';
 
-import { Wallet as OnboardWallet } from 'bnc-onboard/dist/src/interfaces';
-
 import useLocalStorage from 'hooks/useLocalStorage';
 
-import { initOnboard } from './config';
+import { onboard } from './config';
 import { LOCAL_STORAGE_KEYS } from 'constants/storage';
 import { CurrencyKey, ETH_ADDRESS } from 'constants/currency';
 import { synthToContractName } from 'utils/currencies';
@@ -69,7 +63,7 @@ const useConnector = () => {
 
 	const [signer, setSigner] = useState<ethers.Signer | null>(null);
 	const [synthetixjs, setSynthetixjs] = useState<SynthetixJS | null>(null);
-	const [onboard, setOnboard] = useState<ReturnType<typeof initOnboard> | null>(null);
+	// const [onboard, setOnboard] = useState<ReturnType<typeof initOnboard> | null>(null);
 	const [walletAddress, setWalletAddress] = useRecoilState(walletAddressState);
 
 	const [selectedWallet, setSelectedWallet] = useLocalStorage<string | null>(
@@ -118,6 +112,7 @@ const useConnector = () => {
 			}
 
 			const networkId = await getDefaultNetworkId();
+			console.log('network id', networkId);
 			if (!isSupportedNetworkId(networkId)) {
 				// When not on supported network: Switch to l1 and try again
 				await switchToL1({ ethereum: window.ethereum });
@@ -160,84 +155,77 @@ const useConnector = () => {
 
 	useEffect(() => {
 		if (isAppReady && network) {
-			const onboard = initOnboard(network.id, {
-				address: setUserAddress,
-				network: (networkId) => {
-					if (!networkId) return; // user disconnected the wallet
-
-					if (!isSupportedNetworkId(networkId)) {
-						// This should only happen when a user is connected and changes to an unsupported network
-						if (window.ethereum) {
-							switchToL1({ ethereum: window.ethereum });
-						}
-						// We can return here since the network change will trigger this callback again
-						return;
-					}
-
-					const provider = loadProvider({
-						provider: onboard.getState().wallet.provider,
-					});
-					const signer = provider.getSigner();
-					const useOvm = getIsOVM(networkId);
-
-					const snxjs = synthetix({ provider, networkId: networkId as NetworkId, signer, useOvm });
-
-					onboard.config({ networkId });
-					if (transactionNotifier) {
-						transactionNotifier.setProvider(provider);
-					} else {
-						setTransactionNotifier(new TransactionNotifier(provider));
-					}
-					setProvider(provider);
-					setSynthetixjs(snxjs);
-					setSigner(signer);
-					setNetwork(snxjs.network);
-				},
-				wallet: async (wallet: OnboardWallet) => {
-					console.log('No wallet provider');
-					if (wallet.provider) {
-						console.log('Wallet.provider');
-						const provider = loadProvider({ provider: wallet.provider });
-						const network = await provider.getNetwork();
-						const networkId = Number(network.chainId);
-						if (!isSupportedNetworkId(networkId)) {
-							if (window.ethereum) {
-								await switchToL1({ ethereum: window.ethereum });
-							}
-							// We return here and expect the network change to trigger onboard's network callback
-							return;
-						}
-						const useOvm = getIsOVM(Number(networkId));
-
-						const snxjs = synthetix({ provider, networkId, signer: provider.getSigner(), useOvm });
-
-						setProvider(provider);
-						setSigner(provider.getSigner());
-						setSynthetixjs(snxjs);
-						setNetwork(snxjs.network);
-						setSelectedWallet(wallet.name);
-						setTransactionNotifier(new TransactionNotifier(provider));
-					} else {
-						// TODO: setting provider to null might cause issues, perhaps use a default provider?
-						// setProvider(null);
-						setSigner(null);
-						setWalletAddress(null);
-						setSelectedWallet(null);
-					}
-				},
-			});
-
-			setOnboard(onboard);
+			// const onboard = initOnboard(network.id, {
+			// 	address: setUserAddress,
+			// 	network: (networkId) => {
+			// 		if (!networkId) return; // user disconnected the wallet
+			// 		if (!isSupportedNetworkId(networkId)) {
+			// 			// This should only happen when a user is connected and changes to an unsupported network
+			// 			if (window.ethereum) {
+			// 				switchToL1({ ethereum: window.ethereum });
+			// 			}
+			// 			// We can return here since the network change will trigger this callback again
+			// 			return;
+			// 		}
+			// 		const provider = loadProvider({
+			// 			provider: onboard.getState().wallet.provider,
+			// 		});
+			// 		const signer = provider.getSigner();
+			// 		const useOvm = getIsOVM(networkId);
+			// 		const snxjs = synthetix({ provider, networkId: networkId as NetworkId, signer, useOvm });
+			// 		onboard.config({ networkId });
+			// 		if (transactionNotifier) {
+			// 			transactionNotifier.setProvider(provider);
+			// 		} else {
+			// 			setTransactionNotifier(new TransactionNotifier(provider));
+			// 		}
+			// 		setProvider(provider);
+			// 		setSynthetixjs(snxjs);
+			// 		setSigner(signer);
+			// 		setNetwork(snxjs.network);
+			// 	},
+			// 	wallet: async (wallet: OnboardWallet) => {
+			// 		console.log('No wallet provider');
+			// 		if (wallet.provider) {
+			// 			console.log('Wallet.provider');
+			// 			const provider = loadProvider({ provider: wallet.provider });
+			// 			const network = await provider.getNetwork();
+			// 			const networkId = Number(network.chainId);
+			// 			if (!isSupportedNetworkId(networkId)) {
+			// 				if (window.ethereum) {
+			// 					await switchToL1({ ethereum: window.ethereum });
+			// 				}
+			// 				// We return here and expect the network change to trigger onboard's network callback
+			// 				return;
+			// 			}
+			// 			const useOvm = getIsOVM(Number(networkId));
+			// 			const snxjs = synthetix({ provider, networkId, signer: provider.getSigner(), useOvm });
+			// 			setProvider(provider);
+			// 			setSigner(provider.getSigner());
+			// 			setSynthetixjs(snxjs);
+			// 			setNetwork(snxjs.network);
+			// 			setSelectedWallet(wallet.name);
+			// 			setTransactionNotifier(new TransactionNotifier(provider));
+			// 		} else {
+			// 			// TODO: setting provider to null might cause issues, perhaps use a default provider?
+			// 			// setProvider(null);
+			// 			setSigner(null);
+			// 			setWalletAddress(null);
+			// 			setSelectedWallet(null);
+			// 		}
+			// 	},
+			// });
+			// setOnboard(onboard);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isAppReady]);
 
 	// load previously saved wallet
-	useEffect(() => {
-		if (onboard && selectedWallet && !walletAddress) {
-			onboard.walletSelect(selectedWallet);
-		}
-	}, [onboard, selectedWallet, walletAddress]);
+	// useEffect(() => {
+	// 	if (onboard && selectedWallet && !walletAddress) {
+	// 		onboard.walletSelect(selectedWallet);
+	// 	}
+	// }, [onboard, selectedWallet, walletAddress]);
 
 	useEffect(() => {
 		if (watchedWallet) {
@@ -250,23 +238,17 @@ const useConnector = () => {
 
 	const connectWallet = async () => {
 		try {
-			if (onboard) {
-				onboard.walletReset();
-				const success = await onboard.walletSelect();
-				if (success) {
-					await onboard.walletCheck();
-				}
-			}
-		} catch (e) {
-			console.log(e);
+			const wallets = await onboard.connectWallet();
+			console.log(wallets);
+		} catch (error) {
+			console.log('Error');
 		}
 	};
 
 	const disconnectWallet = async () => {
 		try {
-			if (onboard) {
-				onboard.walletReset();
-			}
+			const [primaryWallet] = onboard.state.get().wallets;
+			onboard.disconnectWallet({ label: primaryWallet.label });
 		} catch (e) {
 			console.log(e);
 		}
@@ -274,9 +256,7 @@ const useConnector = () => {
 
 	const switchAccounts = async () => {
 		try {
-			if (onboard) {
-				onboard.accountSelect();
-			}
+			await onboard.setChain({ chainId: '0x89' });
 		} catch (e) {
 			console.log(e);
 		}
@@ -284,10 +264,11 @@ const useConnector = () => {
 
 	const isHardwareWallet = () => {
 		if (onboard) {
-			const onboardState = onboard.getState();
-			if (onboardState.address != null) {
-				return onboardState.wallet.type === 'hardware';
-			}
+			const onboardState = onboard.state.get().walletModules;
+			console.log(onboardState);
+			// if (onboardState.address != null) {
+			// 	return onboardState.wallet.type === 'hardware';
+			// }
 		}
 		return false;
 	};
