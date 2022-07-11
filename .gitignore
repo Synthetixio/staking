@@ -54,3 +54,5 @@ coverage
 !.yarn/versions
 # For Yarn Zero Installs uncomment this line and keep deps in GIT
 # !.yarn/cache
+
+.husky
