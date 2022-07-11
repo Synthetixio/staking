@@ -29,7 +29,7 @@ const History: React.FC<HistoryProps> = ({ proposalResults }) => {
 		if (proposalResults.isLoading) {
 			return (
 				<StyledSpinner>
-					<img alt="Spinner" src={Spinner} />
+					<Spinner width="38" />
 				</StyledSpinner>
 			);
 		} else if (proposalResults.data) {

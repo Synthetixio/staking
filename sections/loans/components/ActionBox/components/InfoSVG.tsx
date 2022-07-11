@@ -10,7 +10,7 @@ type SVGProps = {
 const SVG: FC<SVGProps> = ({ tip }) => (
 	<StyledTooltip arrow={true} placement="bottom" content={<TooltipText>{tip}</TooltipText>}>
 		<SVGContainer>
-			<img alt="Info" src={InfoIcon} />
+			<InfoIcon width="12" />
 		</SVGContainer>
 	</StyledTooltip>
 );

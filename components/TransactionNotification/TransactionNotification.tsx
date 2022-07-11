@@ -17,7 +17,7 @@ const NotificationPending = () => {
 	return (
 		<NotificationContainer>
 			<IconContainer>
-				<img alt="Spinner" width={25} src={Spinner} />
+				<Spinner width="25" />
 			</IconContainer>
 			<TransactionInfo>{i18n.t('common.transaction.transaction-sent')}</TransactionInfo>
 		</NotificationContainer>
@@ -28,7 +28,7 @@ const NotificationSuccess = ({ link }: NotificationProps) => {
 	return (
 		<NotificationContainer data-testid="tx-notification-transaction-confirmed" data-href={link}>
 			<IconContainer>
-				<img alt="Success" width={35} src={Success} />
+				<Success width="35" />
 			</IconContainer>
 			<TransactionInfo>{i18n.t('common.transaction.transaction-confirmed')}</TransactionInfo>
 		</NotificationContainer>
@@ -39,7 +39,7 @@ const NotificationError = ({ failureReason }: NotificationProps) => {
 	return (
 		<NotificationContainer>
 			<IconContainer>
-				<img alt="Failure" width={35} src={Failure} />
+				<Failure width="35" />
 			</IconContainer>
 			<TransactionInfo>
 				<TransactionInfoBody>{i18n.t('common.transaction.transaction-failed')}</TransactionInfoBody>

@@ -50,11 +50,7 @@ const StatsSection: FC = ({ children }) => {
 		<>
 			<MobileOrTabletView>
 				<ToggleMobileStatsSection onClick={toggleMobileStatsSection}>
-					{mobileStatsSectionIsOpen ? (
-						<img alt="Collapse" src={CollapseIcon} />
-					) : (
-						<img alt="Expand" src={ExpandIcon} />
-					)}
+					{mobileStatsSectionIsOpen ? <CollapseIcon width="13" /> : <ExpandIcon width="13" />}
 				</ToggleMobileStatsSection>
 			</MobileOrTabletView>
 			<StatsContainer>{children}</StatsContainer>

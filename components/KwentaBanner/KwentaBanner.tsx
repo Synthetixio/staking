@@ -15,10 +15,10 @@ const KwentaBanner: FC = () => {
 			<Banner>
 				<FlexDiv>
 					{t('synths.trade-on-kwenta')}
-					<StyledSvg alt={t('synths.trade-on-kwenta')} src={CaretRight} />
+					<StyledCaretRight width="16" />
 				</FlexDiv>
 				<FlexDiv>
-					<img alt="Kwenta" src={KwentaIcon} />
+					<KwentaIcon />
 				</FlexDiv>
 			</Banner>
 		</ExternalLink>
@@ -39,7 +39,7 @@ const Banner = styled(FlexDivCentered)`
 	border-bottom-right-radius: 4px;
 `;
 
-const StyledSvg = styled.img`
+const StyledCaretRight = styled(CaretRight)`
 	margin-left: 6px;
 `;
 

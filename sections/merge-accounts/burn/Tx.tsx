@@ -36,7 +36,7 @@ export const TxWaiting: FC<{ unstakeAmount: Wei; burnAmount: Wei; txLink: string
 			title={t('merge-accounts.burn.tx-waiting.title')}
 			content={
 				<FlexDivColCentered>
-					<img alt="Pending confirmation" src={PendingConfirmation} />
+					<PendingConfirmation width="78" />
 					<ActionsGrid>
 						<ActionsGridBox>
 							<GreyHeader>{t('merge-accounts.burn.tx-waiting.unstaking')}</GreyHeader>
@@ -87,7 +87,7 @@ export const TxSuccess: FC<{
 			title={t('merge-accounts.burn.tx-success.title')}
 			content={
 				<FlexDivColCentered>
-					<img alt="Success" src={Success} />
+					<Success width="78" />
 					<ActionsGrid>
 						<ActionsGridBox>
 							<GreyHeader>{t('merge-accounts.burn.tx-success.unstaked')}</GreyHeader>

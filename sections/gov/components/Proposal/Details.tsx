@@ -38,7 +38,7 @@ const Details: React.FC<DetailsProps> = ({ proposal }) => {
 									: undefined
 							}
 						>
-							<img alt="Link" style={{ marginLeft: 4, color: theme.colors.blue }} src={Link} />
+							<Link width="16" style={{ marginLeft: 4, color: theme.colors.blue }} />
 						</ExternalLink>
 					</Value>
 				)}
@@ -59,7 +59,7 @@ const Details: React.FC<DetailsProps> = ({ proposal }) => {
 						<ExternalLink
 							href={`https://snapshot.org/#/${SPACE_KEY.PROPOSAL}/proposal/${proposal.id}`}
 						>
-							<img alt="Link" style={{ marginLeft: 4, color: theme.colors.blue }} src={Link} />
+							<Link width="16" style={{ marginLeft: 4, color: theme.colors.blue }} />
 						</ExternalLink>
 					</Value>
 				)}
@@ -76,7 +76,7 @@ const Details: React.FC<DetailsProps> = ({ proposal }) => {
 									: undefined
 							}
 						>
-							<img alt="Link" style={{ marginLeft: 4, color: theme.colors.blue }} src={Link} />
+							<Link width="16" style={{ marginLeft: 4, color: theme.colors.blue }} />
 						</ExternalLink>
 					</Value>
 				)}

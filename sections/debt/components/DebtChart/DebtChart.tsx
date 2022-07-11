@@ -90,7 +90,7 @@ const DebtChart = ({ data, isLoading }: { data: Data[]; isLoading: boolean }) =>
 	if (isLoading) {
 		return (
 			<DefaultContainer>
-				<Spinner alt="Spinner" src={SpinnerIcon} />
+				<Spinner width="38" />
 			</DefaultContainer>
 		);
 	}
@@ -201,7 +201,7 @@ const DefaultContainer = styled(FlexDivColCentered)`
 	justify-content: center;
 `;
 
-const Spinner = styled.img`
+const Spinner = styled(SpinnerIcon)`
 	display: block;
 	margin: 30px auto;
 `;

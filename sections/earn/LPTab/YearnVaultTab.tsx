@@ -124,7 +124,7 @@ const YearnVaultTab: FC<LPTabProps> = ({
 				title={t('earn.actions.rewards.waiting')}
 				content={
 					<FlexDivColCentered>
-						<img alt="Pending confirmation" src={PendingConfirmation} />
+						<PendingConfirmation width="78" />
 						<>
 							<GreyHeader>{t('earn.actions.claim.claiming')}</GreyHeader>
 							<WhiteSubheader>
@@ -156,7 +156,7 @@ const YearnVaultTab: FC<LPTabProps> = ({
 				title={t('earn.actions.claim.success')}
 				content={
 					<FlexDivColCentered>
-						<img alt="Success" src={Success} />
+						<Success width="78" />
 						<>
 							<GreyHeader>{t('earn.actions.claim.claiming')}</GreyHeader>
 							<WhiteSubheader>
@@ -188,7 +188,7 @@ const YearnVaultTab: FC<LPTabProps> = ({
 			<GoToEarnButtonContainer>
 				<MobileOnlyView>
 					<StyledIconButton onClick={goToEarn}>
-						<img alt="Expand" src={ExpandIcon} />
+						<ExpandIcon width="24" />
 					</StyledIconButton>
 				</MobileOnlyView>
 			</GoToEarnButtonContainer>

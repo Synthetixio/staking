@@ -46,7 +46,7 @@ const SystemStatus: FC<SystemStatusProps> = ({ children }) => {
 			<FullScreenContainer>
 				<Content>
 					<Header>
-						<img alt="Staking" src={StakingLogo} />
+						<StakingLogo width="112" />
 					</Header>
 					<Container>
 						<Title>

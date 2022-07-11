@@ -113,7 +113,7 @@ const WatchWalletModal: React.FC<WatchWalletModalProps> = ({ onDismiss }) => {
 								<WalletAddress onClick={() => handleWatchWallet(wallet)}>
 									{truncateAddress(wallet)}
 								</WalletAddress>
-								<img alt="Remove" src={Trash} onClick={() => removeWatchedWallet(wallet)} />
+								<Trash onClick={() => removeWatchedWallet(wallet)} />
 							</Row>
 						))}
 					</PreviousAddress>

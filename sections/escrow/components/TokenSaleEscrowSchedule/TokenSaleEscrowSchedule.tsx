@@ -72,7 +72,7 @@ const TokenSaleEscrowSchedule: React.FC = () => {
 					noResultsMessage={
 						!tokenSaleEscrowQuery.isLoading && schedule?.length === 0 ? (
 							<TableNoResults>
-								<img alt={t('escrow.table.no-results')} src={NoNotificationIcon} />
+								<NoNotificationIcon width="40" />
 								{t('escrow.table.no-results')}
 							</TableNoResults>
 						) : undefined

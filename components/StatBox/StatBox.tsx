@@ -37,7 +37,7 @@ const StatBox: FC<StatBoxProps> = ({
 						hideOnClick={false}
 					>
 						<IconContainer>
-							<img alt="Info" src={InfoIcon} />
+							<InfoIcon width="12" />
 						</IconContainer>
 					</StyledTooltip>
 				)}

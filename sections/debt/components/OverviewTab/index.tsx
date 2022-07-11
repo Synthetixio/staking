@@ -32,7 +32,7 @@ const OverviewTab = () => {
 							}
 						>
 							<TooltipIconContainer>
-								<ResizedInfoIcon alt="Resize" src={Info} />
+								<Info width="16" />
 							</TooltipIconContainer>
 						</DebtInfoTooltip>
 					</ContainerHeaderSection>
@@ -80,10 +80,6 @@ const TooltipIconContainer = styled(FlexDiv)`
 	margin-left: 10px;
 	opacity: 0.6;
 	align-items: center;
-`;
-
-const ResizedInfoIcon = styled.img`
-	transform: scale(1.4);
 `;
 
 const Strong = styled.strong`

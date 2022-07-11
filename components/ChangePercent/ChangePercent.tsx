@@ -16,11 +16,7 @@ export const ChangePercent: FC<ChangePercentProps> = ({ value, ...rest }) => {
 
 	return (
 		<CurrencyChange isPositive={isPositive} {...rest}>
-			{isPositive ? (
-				<img src={ChangePositiveIcon} alt="Positive" />
-			) : (
-				<img src={ChangeNegativeIcon} alt="Negative" />
-			)}
+			{isPositive ? <ChangePositiveIcon width="8" /> : <ChangeNegativeIcon width="8" />}
 			{formatPercent(Math.abs(value))}
 		</CurrencyChange>
 	);
@@ -32,8 +28,6 @@ const CurrencyChange = styled.span<{ isPositive: boolean }>`
 	color: ${(props) => (props.isPositive ? props.theme.colors.green : props.theme.colors.pink)};
 	svg {
 		margin-right: 2px;
-		width: 8px;
-		height: 8px;
 	}
 `;
 

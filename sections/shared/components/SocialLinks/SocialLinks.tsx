@@ -14,17 +14,17 @@ const SOCIAL_LINKS = [
 	{
 		id: 'discord',
 		href: EXTERNAL_LINKS.Social.Discord,
-		icon: <img alt="Discord" src={DiscordIcon} />,
+		icon: <DiscordIcon width="22" />,
 	},
 	{
 		id: 'twitter',
 		href: EXTERNAL_LINKS.Social.Twitter,
-		icon: <img alt="Twitter" src={TwitterIcon} />,
+		icon: <TwitterIcon width="24" />,
 	},
 	{
 		id: 'github',
 		href: EXTERNAL_LINKS.Social.GitHub,
-		icon: <img alt="GitHub" src={GithubIcon} />,
+		icon: <GithubIcon width="24" />,
 	},
 ];
 

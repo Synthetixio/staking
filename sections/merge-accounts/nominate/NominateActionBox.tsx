@@ -206,12 +206,12 @@ const NominateTabInner: FC = () => {
 			<FormContainer>
 				<FormHeader>
 					<IconButton onClick={onGoBack}>
-						<img alt="Back" src={NavigationBack} />
+						<NavigationBack width="16" />
 					</IconButton>
 				</FormHeader>
 
 				<InputsContainer>
-					<img alt="Wallet" src={WalletIcon} />
+					<WalletIcon width="54" />
 					<AmountInput
 						value={destinationAccountAddress}
 						placeholder={t('merge-accounts.nominate.input-placeholder')}

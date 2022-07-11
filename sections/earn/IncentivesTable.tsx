@@ -121,7 +121,7 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab }
 							<>{t('earn.incentives.est-apr')}</>
 						) : (
 							<StyledIconButton onClick={goToEarn}>
-								<img alt="Expand" src={ExpandIcon} />
+								<ExpandIcon width="24" />
 							</StyledIconButton>
 						)}
 					</CellContainer>

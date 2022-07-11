@@ -35,7 +35,7 @@ const ActionCompleted: FC<ActionCompletedProps> = ({
 					? t('escrow.actions.migration.completed.title')
 					: t('escrow.actions.completed.title')}
 			</SectionHeader>
-			<img alt="Success" src={Success} />
+			<Success width="78" />
 			<FlexDivCentered>
 				<InfoContainer key="one">
 					<InfoTitle>

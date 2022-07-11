@@ -96,12 +96,7 @@ const ApproveModal: FC<ApproveModalProps & SynthetixJsAndSignerProps> = ({
 		<>
 			<Modal>
 				<Layer>
-					<img
-						src={LockedIcon}
-						alt={
-							isApproving ? t('common.approve.is-approving') : t('common.approve.approve-contract')
-						}
-					/>
+					<LockedIcon width="93" />
 					<ModalInfo>{description}</ModalInfo>
 					<GasSelector
 						gasLimitEstimate={txn.gasLimit}

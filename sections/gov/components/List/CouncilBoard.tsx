@@ -56,7 +56,7 @@ const CouncilBoard: React.FC = () => {
 											: undefined
 									}
 								>
-									<img alt="Link" style={{ color: theme.colors.blue }} src={Link} />
+									<Link width="16" style={{ color: theme.colors.blue }} />
 								</ExternalLink>
 							</MemberRow>
 						);
@@ -68,7 +68,7 @@ const CouncilBoard: React.FC = () => {
 				)
 			) : (
 				<StyledSpinner>
-					<img alt="Spinner" src={Spinner} />
+					<Spinner width="38" />
 				</StyledSpinner>
 			)}
 		</StyledCard>

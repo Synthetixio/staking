@@ -17,14 +17,14 @@ export const SortTableHead: FC<SortTableHeadProps> = ({ sortable, isSorted, isSo
 	if (!isSorted) {
 		sortIcon = (
 			<>
-				<StyledSortIcon alt="Sort up" src={SortUpIcon} />
-				<StyledSortIcon alt="Sort down" src={SortDownIcon} />
+				<SortUpIcon width="5" />
+				<SortDownIcon width="5" />
 			</>
 		);
 	} else if (isSortedDesc) {
-		sortIcon = <StyledSortIcon alt="Sort down" src={SortDownIcon} />;
+		sortIcon = <SortDownIcon width="5" />;
 	} else {
-		sortIcon = <StyledSortIcon alt="Sort up" src={SortUpIcon} />;
+		sortIcon = <SortUpIcon width="5" />;
 	}
 
 	return <SortIconContainer>{sortIcon}</SortIconContainer>;
@@ -34,10 +34,5 @@ const SortIconContainer = styled.span`
 	display: flex;
 	margin-left: 5px;
 	flex-direction: column;
-`;
-
-const StyledSortIcon = styled.img`
-	width: 5px;
-	height: 5px;
 	color: ${(props) => props.theme.colors.gray};
 `;

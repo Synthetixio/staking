@@ -271,7 +271,7 @@ const StakingInput: React.FC<StakingInputProps> = ({
 							</Tagline>
 							<Tooltip arrow={false} content={t('staking.actions.burn.info.clear-debt.tooltip')}>
 								<TooltipIconContainer>
-									<img alt="Info" src={Info} />
+									<Info width="12" />
 								</TooltipIconContainer>
 							</Tooltip>
 						</FlexDiv>
@@ -283,7 +283,7 @@ const StakingInput: React.FC<StakingInputProps> = ({
 							<Tagline>{t('staking.actions.burn.info.clear-debt.buffer')}</Tagline>
 							<Tooltip arrow={false} content={t('staking.actions.burn.info.clear-debt.tooltip')}>
 								<TooltipIconContainer>
-									<img alt="Info" src={Info} />
+									<Info width="12" />
 								</TooltipIconContainer>
 							</Tooltip>
 						</FlexDiv>
@@ -292,7 +292,7 @@ const StakingInput: React.FC<StakingInputProps> = ({
 			</InputGroup>
 			<FlexDivCentered>
 				<Tagline>{t('staking.actions.burn.info.clear-debt.tagline')}</Tagline>
-				<img alt="1inch" height={20} src={Logo1Inch} />
+				<Logo1Inch alt="1inch" height="20" />
 			</FlexDivCentered>
 		</>
 	);
@@ -302,7 +302,7 @@ const StakingInput: React.FC<StakingInputProps> = ({
 			<InputContainer>
 				<HeaderRow>
 					<IconButton onClick={() => onBack(null)}>
-						<img alt="Back" src={NavigationBack} />
+						<NavigationBack width="16" />
 					</IconButton>
 					{!isMint && burnType != null && [BurnActionType.CUSTOM].includes(burnType) && (
 						<BalanceButton variant="text" onClick={() => onInputChange(maxBurnAmount)}>

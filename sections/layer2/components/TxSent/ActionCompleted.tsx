@@ -30,7 +30,7 @@ const ActionCompleted: FC<ActionCompletedProps> = ({
 	return (
 		<Container>
 			<SectionHeader>{t(`layer2.actions.${action}.action.completed.title`)}</SectionHeader>
-			<img alt="Success" src={Success} />
+			<Success width="78" />
 			<FlexDivCentered>
 				<InfoContainer key="one">
 					<InfoTitle>{t(`layer2.actions.${action}.action.completed.deposited`)}</InfoTitle>

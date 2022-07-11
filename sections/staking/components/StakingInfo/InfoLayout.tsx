@@ -170,7 +170,7 @@ const InfoLayout: FC<InfoLayoutProps> = ({
 							</RowValue>
 							{!isInputEmpty && changedValue && (
 								<>
-									<StyledArrowRight alt="next" src={ArrowRightIcon} />
+									<StyledArrowRight width="16" />
 									<RowValue>
 										{formatCurrency(currencyKey, changedValue, {
 											currencyKey: currencyKey,
@@ -191,7 +191,7 @@ const TotalBalanceHeading = styled(RowTitle)`
 	color: ${(props) => props.theme.colors.white};
 `;
 
-const StyledArrowRight = styled.img`
+const StyledArrowRight = styled(ArrowRightIcon)`
 	margin: 0 5px;
 	color: ${(props) => props.theme.colors.blue};
 `;

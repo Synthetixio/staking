@@ -45,11 +45,7 @@ const LayoutDelegate: FC = () => {
 			{
 				icon: (
 					<GlowingCircle variant={!aboveTargetCRatio ? 'orange' : 'blue'} size="md">
-						{!aboveTargetCRatio ? (
-							<img src={BurnIcon} alt={t('dashboard.actions.burn.copy')} />
-						) : (
-							<img src={MintIcon} alt={t('dashboard.actions.mint.title')} />
-						)}
+						{!aboveTargetCRatio ? <BurnIcon width="38" /> : <MintIcon width="27" />}
 					</GlowingCircle>
 				),
 				title: !aboveTargetCRatio

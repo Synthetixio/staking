@@ -173,7 +173,7 @@ const Wrapper: FC<WrapperProps> = ({
 			<FormContainer>
 				<Header>
 					<IconButton onClick={onGoBack}>
-						<img alt="Back" src={NavigationBack} />
+						<NavigationBack width="16" />
 					</IconButton>
 				</Header>
 

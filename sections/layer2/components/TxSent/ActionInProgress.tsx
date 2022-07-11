@@ -30,7 +30,7 @@ const ActionInProgress: FC<ActionInProgressProps> = ({ amount, currencyKey, hash
 	return (
 		<Container>
 			<SectionHeader>{t(`layer2.actions.${action}.action.in-progress.title`)}</SectionHeader>
-			<img alt="Pending confirmation" src={PendingConfirmation} />
+			<PendingConfirmation width="78" />
 			<FlexDivCentered>
 				<InfoContainer key="one">
 					<InfoTitle>{t(`layer2.actions.${action}.action.in-progress.depositing`)}</InfoTitle>

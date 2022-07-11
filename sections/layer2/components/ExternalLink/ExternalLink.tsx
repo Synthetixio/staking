@@ -24,7 +24,7 @@ const ExternalLinkIcon: FC<ExternalLinkIconProps> = ({ transactionHash, relay, c
 		<ExternalLink href={link}>
 			<FlexDivCentered>
 				<StyledLabel>{children}</StyledLabel>
-				<img alt="Link" src={LinkIcon} />
+				<LinkIcon width="16" />
 			</FlexDivCentered>
 		</ExternalLink>
 	);

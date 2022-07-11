@@ -26,7 +26,7 @@ const WelcomeLayout: FC = () => {
 				gridArea: 'tile-1',
 				icon: (
 					<GlowingCircle variant="blue" size="md">
-						<img src={MintIcon} alt={t('dashboard.actions.stake.title')} />
+						<MintIcon width="27" />
 					</GlowingCircle>
 				),
 				title: t('dashboard.actions.stake.title'),
@@ -37,7 +37,7 @@ const WelcomeLayout: FC = () => {
 				gridArea: 'tile-2',
 				icon: (
 					<GlowingCircle variant="yellow" size="md">
-						<img src={LearnIcon} alt={t('dashboard.actions.learn.title')} />
+						<LearnIcon width="52" />
 					</GlowingCircle>
 				),
 				title: t('dashboard.actions.learn.title'),
@@ -48,7 +48,7 @@ const WelcomeLayout: FC = () => {
 				gridArea: 'tile-3',
 				icon: (
 					<GlowingCircle variant="orange" size="md">
-						<img src={KwentaIcon} width="32" alt={t('dashboard.actions.trade.title')} />
+						<KwentaIcon width="32" />
 					</GlowingCircle>
 				),
 				title: t('dashboard.actions.trade.title'),

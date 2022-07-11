@@ -1,6 +1,5 @@
 import React from 'react';
 import type { FC } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import ClaimIcon from 'assets/svg/app/claim.svg';
 import BurnIcon from 'assets/svg/app/burn.svg';
@@ -14,33 +13,13 @@ type TypeIconProps = {
 };
 
 const TypeIcon: FC<TypeIconProps> = ({ size = 'md', type }) => {
-	const { t } = useTranslation();
-
 	switch (type) {
 		case StakingTransactionType.Burned:
-			return (
-				<img
-					src={BurnIcon}
-					width={size === 'md' ? 30 : 16}
-					alt={t('history.table.staking-tx-type.burned')}
-				/>
-			);
+			return <BurnIcon width={size === 'md' ? 30 : 16} />;
 		case StakingTransactionType.Issued:
-			return (
-				<img
-					src={MintIcon}
-					width={size === 'md' ? 24 : 16}
-					alt={t('history.table.staking-tx-type.issued')}
-				/>
-			);
+			return <MintIcon width={size === 'md' ? 24 : 16} />;
 		case StakingTransactionType.FeesClaimed:
-			return (
-				<img
-					src={ClaimIcon}
-					width={size === 'md' ? 30 : 16}
-					alt={t('history.table.staking-tx-type.feesClaimed')}
-				/>
-			);
+			return <ClaimIcon width={size === 'md' ? 30 : 16} />;
 		default:
 			return null;
 	}

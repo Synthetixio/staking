@@ -161,7 +161,7 @@ const BurnTabInner: FC = () => {
 			<FormContainer>
 				<FormHeader>
 					<IconButton onClick={onGoBack}>
-						<img alt="Back" src={NavigationBack} />
+						<NavigationBack width="16" />
 					</IconButton>
 				</FormHeader>
 

@@ -28,7 +28,7 @@ export const TxWaiting: FC<{ txLink: string }> = ({ txLink }) => {
 			title={t('merge-accounts.merge.tx-waiting.title')}
 			content={
 				<FlexDivColCentered>
-					<img alt="Pending confirmation" src={PendingConfirmation} />
+					<PendingConfirmation width="78" />
 					<ActionsGrid single>
 						<ActionsGridBox>
 							<GreyHeader>{t('merge-accounts.merge.tx-waiting.merging')}</GreyHeader>
@@ -59,7 +59,7 @@ export const TxSuccess: FC<{
 			title={t('merge-accounts.merge.tx-success.title')}
 			content={
 				<FlexDivColCentered>
-					<img alt="Success" src={Success} />
+					<Success width="78" />
 					<ActionsGrid single>
 						<ActionsGridBox>
 							<GreyHeader>{t('merge-accounts.merge.tx-success.merged')}</GreyHeader>

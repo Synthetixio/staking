@@ -25,15 +25,15 @@ const DesktopSideNav: FC = () => {
 		<Container data-testid="sidenav" isShowing={isShowingMobileSideNav}>
 			<StakingLogoWrap>
 				{isShowingSubMenu ? (
-					<img alt="Back" src={BackIcon} onClick={clearSubMenuConfiguration} />
+					<BackIcon width="16" onClick={clearSubMenuConfiguration} />
 				) : (
 					<Link href={ROUTES.Home}>
-						<img alt="Staking" src={StakingLogo} />
+						<StakingLogo width="39" />
 					</Link>
 				)}
 
 				<CloseContainer onClick={closeMobileSideNav}>
-					<img alt="Close" src={CloseIcon} />
+					<CloseIcon width="14" />
 				</CloseContainer>
 			</StakingLogoWrap>
 

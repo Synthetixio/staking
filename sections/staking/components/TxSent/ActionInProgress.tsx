@@ -36,7 +36,7 @@ const ActionInProgress: FC<ActionInProgressProps> = ({ isMint, from, to, hash })
 			</SectionHeader>
 			<MiddleSection>
 				<IconContainer>
-					<img alt="Pending confirmation" src={PendingConfirmation} />
+					<PendingConfirmation width="78" />
 				</IconContainer>
 				<FlexDivCentered>
 					<InfoContainer key="one">

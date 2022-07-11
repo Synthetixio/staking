@@ -60,7 +60,7 @@ const Results: React.FC<ResultsProps> = ({ proposalResults }) => {
 	} else {
 		return (
 			<StyledSpinner>
-				<img alt="Spinner" src={Spinner} />
+				<Spinner width="38" />
 			</StyledSpinner>
 		);
 	}

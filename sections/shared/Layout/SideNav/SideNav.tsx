@@ -131,7 +131,7 @@ const SideNav: FC<SideNavProps> = ({ isDesktop }) => {
 					>
 						<div className="link">
 							{t(i18nLabel)}
-							{subMenu && <img alt="Next" src={CaretRightIcon} />}
+							{subMenu && <CaretRightIcon width="5" />}
 						</div>
 					</MenuLinkItem>
 				);

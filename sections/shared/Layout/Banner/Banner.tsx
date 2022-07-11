@@ -48,7 +48,7 @@ const Banner: FC<BannerProps> = ({ message, localStorageKey, type = BannerType.I
 
 				{type !== BannerType.WARNING && (
 					<ButtonClose onClick={handleHideBanner}>
-						<img alt="Close" src={CloseIcon} />
+						<CloseIcon width="14" />
 					</ButtonClose>
 				)}
 			</Inner>

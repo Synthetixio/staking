@@ -90,7 +90,7 @@ export const Table: FC<TableProps> = ({
 						</TableRow>
 					))}
 					{isLoading ? (
-						<StyledSpinner alt="Spinner" src={Spinner} />
+						<StyledSpinner width="38" />
 					) : (
 						page.length > 0 && (
 							<TableBody className="table-body" {...getTableBodyProps()}>
@@ -141,7 +141,7 @@ const TableContainer = styled.div`
 	overflow: auto;
 `;
 
-const StyledSpinner = styled.img`
+const StyledSpinner = styled(Spinner)`
 	display: block;
 	margin: 30px auto;
 `;

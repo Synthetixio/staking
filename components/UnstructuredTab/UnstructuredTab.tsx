@@ -76,7 +76,7 @@ export const UnstructuredTab = ({ tabData }: UnstructuredTabProps) => {
 				</Col>
 				<StyledTextWrapper>
 					<StyledText>{t('gov.panel.proposals.info')}</StyledText>
-					<img alt="Info" width={14} src={InfoIcon} />
+					<InfoIcon width="14" />
 				</StyledTextWrapper>
 			</StyledTabButtonExtended>
 			<Wrapper>{tabChildren}</Wrapper>

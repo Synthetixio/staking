@@ -8,7 +8,7 @@ export const IndicatorSeparator = () => null;
 
 export const DropdownIndicator = (props: IndicatorProps<any>) => (
 	<components.DropdownIndicator {...props}>
-		<img alt="Dropdown" src={CaretDownIcon} />
+		<CaretDownIcon width="16" />
 	</components.DropdownIndicator>
 );
 
@@ -17,7 +17,7 @@ export const MultiValueRemove = (props: IndicatorProps<any>) => (
 		<span
 			style={{ display: 'inline-block', lineHeight: 1, paddingLeft: '4px', paddingRight: '4px' }}
 		>
-			<img alt="Close" src={CloseIcon} />
+			<CloseIcon width="19" />
 		</span>
 	</components.MultiValueRemove>
 );

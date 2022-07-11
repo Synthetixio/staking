@@ -167,7 +167,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 				title={t('earn.actions.claim.in-progress')}
 				content={
 					<FlexDivColCentered>
-						<img alt="Pending confirmation" src={PendingConfirmation} />
+						<PendingConfirmation width="78" />
 						<StyledFlexDiv>
 							<StyledFlexDivColCentered>
 								<GreyHeader>{t('earn.actions.claim.claiming')}</GreyHeader>
@@ -219,7 +219,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 				title={t('earn.actions.claim.success')}
 				content={
 					<FlexDivColCentered>
-						<img alt="" src={Success} />
+						<Success width="78" />
 						<StyledFlexDiv>
 							<StyledFlexDivColCentered>
 								<GreyHeader>{t('earn.actions.claim.claimed')}</GreyHeader>
@@ -276,7 +276,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 				<GoToEarnButtonContainer>
 					<MobileOnlyView>
 						<StyledIconButton onClick={goToEarn}>
-							<img alt="Expand" src={ExpandIcon} />
+							<ExpandIcon width="24" />
 						</StyledIconButton>
 					</MobileOnlyView>
 				</GoToEarnButtonContainer>

@@ -92,7 +92,7 @@ const RewardEscrowSchedule: React.FC = () => {
 				) : (
 					<CallToActionContainer>
 						<FlexDivColCentered>
-							<img alt="Call to action" src={CallToActionIcon} />
+							<CallToActionIcon width="72" />
 							<CallToActionInfo>{t('escrow.actions.stake.no-escrowed-snx')}</CallToActionInfo>
 							<StyledButton
 								size="lg"

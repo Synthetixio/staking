@@ -50,11 +50,7 @@ const LayoutLayerOne: FC = () => {
 			{
 				icon: (
 					<GlowingCircle variant={!aboveTargetCRatio ? 'orange' : 'blue'} size="md">
-						{!aboveTargetCRatio ? (
-							<img src={BurnIcon} alt={t('dashboard.actions.burn.copy')} />
-						) : (
-							<img src={MintIcon} alt={t('dashboard.actions.mint.title')} />
-						)}
+						{!aboveTargetCRatio ? <BurnIcon width="38" /> : <MintIcon width="27" />}
 					</GlowingCircle>
 				),
 				title: !aboveTargetCRatio
@@ -70,7 +66,7 @@ const LayoutLayerOne: FC = () => {
 			{
 				icon: (
 					<GlowingCircle variant="orange" size="md">
-						<img src={KwentaIcon} alt={t('dashboard.actions.trade.title')} width="32" />
+						<KwentaIcon width="32" />
 					</GlowingCircle>
 				),
 				title: t('dashboard.actions.trade.title'),

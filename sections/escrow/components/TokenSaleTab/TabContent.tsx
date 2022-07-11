@@ -106,7 +106,7 @@ const TabContent: FC<TabContentProps> = ({
 		<>
 			<InputContainer>
 				<InputBox>
-					<img alt="SNX" src={SNXLogo} />
+					<SNXLogo width="64" />
 					<Data>
 						{formatCurrency(vestingCurrencyKey, claimableAmount, {
 							currencyKey: vestingCurrencyKey,

@@ -125,7 +125,7 @@ const DepositTab: FC<DepositTabProps> = ({
 				}
 				content={
 					<StakeTxContainer>
-						<img alt="Pending confirmation" src={PendingConfirmation} />
+						<PendingConfirmation width="78" />
 						<GreyHeader>
 							{isDeposit ? t('earn.actions.stake.staking') : t('earn.actions.unstake.unstaking')}
 						</GreyHeader>
@@ -159,7 +159,7 @@ const DepositTab: FC<DepositTabProps> = ({
 				title={isDeposit ? t('earn.actions.stake.success') : t('earn.actions.unstake.success')}
 				content={
 					<StakeTxContainer>
-						<img alt="Success" src={Success} />
+						<Success width="78" />
 						<GreyHeader>
 							{isDeposit ? t('earn.actions.stake.staked') : t('earn.actions.unstake.withdrew')}
 						</GreyHeader>

@@ -29,7 +29,7 @@ const Header: FC = () => {
 				<FlexDivCentered>
 					<MobileOrTabletView>
 						<Title onClick={showMobileSideNav}>
-							<img alt="Title" src={TitleIcon} />
+							<TitleIcon width="18" />
 							{headerTitle && (
 								<TitleText hasSubTitle={!!headerSubtitle}>{t(`header.${headerTitle}`)}</TitleText>
 							)}

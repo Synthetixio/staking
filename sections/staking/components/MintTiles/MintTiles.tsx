@@ -23,7 +23,7 @@ const MintTiles: React.FC<MintTilesProps> = () => {
 			<StyledButtonTile
 				title={t('staking.actions.mint.tiles.max.title')}
 				subtext={t('staking.actions.mint.tiles.max.subtext')}
-				icon={<img alt={t('staking.actions.mint.tiles.max.title')} src={MintCircle} />}
+				icon={<MintCircle width="62" />}
 				onAction={() => {
 					onMintTypeChange(MintActionType.MAX);
 				}}
@@ -31,7 +31,7 @@ const MintTiles: React.FC<MintTilesProps> = () => {
 			<StyledButtonTile
 				title={t('staking.actions.mint.tiles.custom.title')}
 				subtext={t('staking.actions.mint.tiles.custom.subtext')}
-				icon={<img alt={t('staking.actions.mint.tiles.custom.title')} src={MintCircle} />}
+				icon={<MintCircle width="62" />}
 				onAction={() => onMintTypeChange(MintActionType.CUSTOM)}
 			/>
 		</Container>

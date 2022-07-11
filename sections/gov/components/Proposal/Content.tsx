@@ -138,7 +138,7 @@ const Content: React.FC<ContentProps> = ({ proposal, onBack }) => {
 					title={t('gov.actions.vote.waiting')}
 					content={
 						<FlexDivColCentered>
-							<img alt="Pending confirmation" src={PendingConfirmation} />
+							<PendingConfirmation width="78" />
 							<GreyHeader>{t('gov.actions.vote.signing')}</GreyHeader>
 							<WhiteSubheader>
 								{t('gov.actions.vote.hash', {
@@ -157,7 +157,7 @@ const Content: React.FC<ContentProps> = ({ proposal, onBack }) => {
 					title={t('gov.actions.vote.success')}
 					content={
 						<FlexDivColCentered>
-							<img alt="Success" src={Success} />
+							<Success width="78" />
 							<GreyHeader>{t('gov.actions.vote.signed')}</GreyHeader>
 							<WhiteSubheader>
 								{t('gov.actions.vote.hash', {
@@ -187,7 +187,7 @@ const Content: React.FC<ContentProps> = ({ proposal, onBack }) => {
 				<InputContainer>
 					<HeaderRow>
 						<IconButton onClick={() => onBack(null)}>
-							<img alt="Back" src={NavigationBack} />
+							<NavigationBack width="16" />
 						</IconButton>
 						<Header>#{truncateAddress(proposal?.id ?? '')}</Header>
 						<Status closed={expired(proposal?.end)} pending={pending(proposal?.start)}>

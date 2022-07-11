@@ -26,20 +26,17 @@ const SelectButton = (
 		<Icons>
 			{showClear && (
 				<CloseButton>
-					<img
-						src={CloseIcon}
+					<CloseIcon
+						width="12"
 						onClick={(e: any) => {
 							e.stopPropagation();
 							onClear();
 						}}
-						width="12"
-						height="12"
 						className="close-icon"
-						alt="Close"
 					/>
 				</CloseButton>
 			)}
-			<img src={CaretDownIcon} alt="Dropdown" className="dropdown-icon" />
+			<CaretDownIcon className="dropdown-icon" />
 		</Icons>
 	</Button>
 );

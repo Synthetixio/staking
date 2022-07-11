@@ -101,7 +101,7 @@ const RedeemDeprecatedSynthsModal: FC<{
 						title={''}
 						content={
 							<FlexDivColCentered>
-								<img alt="Pending confirmation" src={PendingConfirmation} />
+								<PendingConfirmation width="78" />
 								<GreyHeader>
 									<Trans
 										i18nKey="synths.redeemable-deprecated-synths.tx-modal-redeeming"

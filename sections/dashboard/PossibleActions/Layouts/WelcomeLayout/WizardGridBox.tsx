@@ -22,31 +22,31 @@ export const WizardGridBox: FC<WizardGridBoxProps> = ({ gridArea }) => {
 	const slider = useRef<any>();
 	const STEPS = [
 		{
-			icon: <img src={Welcome} alt={t('homepage.welcome.title')} />,
+			icon: <Welcome width="215" />,
 			title: t('homepage.welcome.title'),
 			subtitle: t('homepage.welcome.subtitle'),
 			id: 'welcome',
 		},
 		{
-			icon: <img src={What} alt={t('homepage.what.title')} />,
+			icon: <What width="184" />,
 			title: t('homepage.what.title'),
 			subtitle: t('homepage.what.subtitle'),
 			id: 'what',
 		},
 		{
-			icon: <img src={Why} alt={t('homepage.why.title')} />,
+			icon: <Why width="229" />,
 			title: t('homepage.why.title'),
 			subtitle: t('homepage.why.subtitle'),
 			id: 'why',
 		},
 		{
-			icon: <img src={MintBurn} alt={t('homepage.mint-burn.title')} />,
+			icon: <MintBurn width="186" />,
 			title: t('homepage.mint-burn.title'),
 			subtitle: t('homepage.mint-burn.subtitle'),
 			id: 'mintBurn',
 		},
 		{
-			icon: <img src={Debt} alt={t('homepage.risks.title')} />,
+			icon: <Debt width="154" />,
 			title: t('homepage.risks.title'),
 			subtitle: t('homepage.risks.subtitle'),
 			id: 'risks',

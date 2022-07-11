@@ -139,7 +139,7 @@ const GasSelector: React.FC<GasSelectorProps> = ({
 						interactive={true}
 					>
 						<span>
-							<ResizedInfoIcon alt="Info" src={Info} />
+							<ResizedInfoIcon width="12" />
 						</span>
 					</GasPriceTooltip>
 				) : (
@@ -222,7 +222,7 @@ const StyledGasEditButton = styled.span`
 	text-transform: uppercase;
 `;
 
-const ResizedInfoIcon = styled.img`
+const ResizedInfoIcon = styled(Info)`
 	transform: translateX(2px);
 	cursor: pointer;
 `;

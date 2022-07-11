@@ -21,7 +21,7 @@ const getSynthetixRewardTile = (
 		return {
 			icon: (
 				<GlowingCircle variant="green" size="md">
-					<img src={ClaimIcon} width="32" alt={t('dashboard.actions.claim.title')} />
+					<ClaimIcon width="32" />
 				</GlowingCircle>
 			),
 			title: t('dashboard.actions.claim.title'),
@@ -36,7 +36,7 @@ const getSynthetixRewardTile = (
 	return {
 		icon: (
 			<GlowingCircle variant="green" size="md">
-				<img src={ClaimIcon} width="32" alt={t('dashboard.actions.claim.title')} />
+				<ClaimIcon width="32" />
 			</GlowingCircle>
 		),
 		title: t('dashboard.actions.claim.title'),

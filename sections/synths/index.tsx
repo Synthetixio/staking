@@ -143,7 +143,7 @@ const Index: FC = () => {
 									}
 								>
 									<TooltipIconContainer>
-										<img alt="Info" src={Info} />
+										<Info width="12" />
 									</TooltipIconContainer>
 								</Tooltip>
 							</FlexDivRowCentered>

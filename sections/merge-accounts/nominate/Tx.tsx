@@ -33,7 +33,7 @@ export const TxWaiting: FC<{
 			title={t('merge-accounts.nominate.tx-waiting.title')}
 			content={
 				<FlexDivColCentered>
-					<img alt="Pending confirmation" src={PendingConfirmation} />
+					<PendingConfirmation width="78" />
 					<ActionsGrid>
 						<ActionsGridBox>
 							<GreyHeader>{t('merge-accounts.nominate.tx-waiting.from')}</GreyHeader>
@@ -68,7 +68,7 @@ export const TxSuccess: FC<{
 			title={t('merge-accounts.nominate.tx-success.title')}
 			content={
 				<FlexDivColCentered>
-					<img alt="Success" src={Success} />
+					<Success width="78" />
 					<ActionsGrid>
 						<ActionsGridBox>
 							<GreyHeader>{t('merge-accounts.nominate.tx-success.from')}</GreyHeader>

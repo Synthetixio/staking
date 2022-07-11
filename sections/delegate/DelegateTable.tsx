@@ -84,7 +84,7 @@ const DelegateTable: FC = () => {
 	const noResultsMessage =
 		!delegateWalletsQuery.isFetching && delegateWallets.length === 0 ? (
 			<ListTableEmptyMessage>
-				<img alt="Wallet" src={WalletIcon} />
+				<WalletIcon />
 				{t('delegate.list.empty')}
 			</ListTableEmptyMessage>
 		) : null;
@@ -110,10 +110,9 @@ const DelegateTable: FC = () => {
 							{t('delegate.list.title')}{' '}
 							<Tooltip content={t('delegate.list.refresh-tooltip')}>
 								<NoMarginP>
-									<img
-										alt="Refresh"
+									<Refresh
+										width="16"
 										style={{ cursor: 'pointer' }}
-										src={Refresh}
 										onClick={() => delegateWalletsQuery.refetch()}
 									/>
 								</NoMarginP>

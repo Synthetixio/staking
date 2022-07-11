@@ -40,7 +40,7 @@ const ActionInProgress: FC<ActionInProgressProps> = ({
 					? t('escrow.actions.migration.in-progress.title')
 					: t('escrow.actions.in-progress.title')}
 			</SectionHeader>
-			<img alt="Pending confirmation" src={PendingConfirmation} />
+			<PendingConfirmation width="78" />
 			<FlexDivCentered>
 				<InfoContainer key="one">
 					<InfoTitle>

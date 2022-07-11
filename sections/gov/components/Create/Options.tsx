@@ -31,15 +31,12 @@ const Options: React.FC<OptionsProps> = ({ choices, setChoices }) => {
 								}}
 							/>
 							<Delete
-								alt="Delete"
+								width="16"
 								onClick={() => {
 									let item = [...choices];
-
 									item.splice(i, 1);
-
 									setChoices(item);
 								}}
-								src={CrossIcon}
 							/>
 						</OptionRow>
 					);
@@ -98,7 +95,7 @@ const Option = styled(Input)`
 	font-size: 12px;
 `;
 
-const Delete = styled.img`
+const Delete = styled(CrossIcon)`
 	margin-right: 8px;
 	color: ${(props) => props.theme.colors.gray};
 	cursor: pointer;

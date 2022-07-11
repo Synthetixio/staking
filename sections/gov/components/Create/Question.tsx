@@ -91,7 +91,7 @@ const Question: React.FC<QuestionProps> = ({
 				title={t('gov.actions.propose.waiting')}
 				content={
 					<FlexDivColCentered>
-						<img alt="Pending confirmation" src={PendingConfirmation} />
+						<PendingConfirmation width="78" />
 						<GreyHeader>{t('gov.actions.propose.signing')}</GreyHeader>
 						<WhiteSubheader>
 							{t('gov.actions.propose.space', {
@@ -110,7 +110,7 @@ const Question: React.FC<QuestionProps> = ({
 				title={t('gov.actions.propose.success')}
 				content={
 					<FlexDivColCentered>
-						<img alt="Success" src={Success} />
+						<Success width="78" />
 						<GreyHeader>{t('gov.actions.propose.signed')}</GreyHeader>
 						<WhiteSubheader>
 							{t('gov.actions.propose.hash', {
@@ -141,7 +141,7 @@ const Question: React.FC<QuestionProps> = ({
 				<InputContainer>
 					<HeaderRow>
 						<IconButton onClick={() => onBack()}>
-							<img alt="Back" src={NavigationBack} />
+							<NavigationBack width="16" />
 						</IconButton>
 						<Header>{t('gov.create.title')}</Header>
 						<div />

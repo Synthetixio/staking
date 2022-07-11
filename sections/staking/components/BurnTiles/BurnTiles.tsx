@@ -40,7 +40,7 @@ const BurnTiles: React.FC<BurnTilesProps> = ({ percentageTargetCRatio, burnAmoun
 			<ButtonTile
 				title={t('staking.actions.burn.tiles.max.title')}
 				subtext={t('staking.actions.burn.tiles.max.subtext')}
-				icon={<img alt={t('staking.actions.burn.tiles.max.title')} src={BurnCircle} />}
+				icon={<BurnCircle width="62" />}
 				onAction={() => onBurnTypeChange(BurnActionType.MAX)}
 			/>
 			<ButtonTile
@@ -49,20 +49,13 @@ const BurnTiles: React.FC<BurnTilesProps> = ({ percentageTargetCRatio, burnAmoun
 					targetCRatio: formatPercent(percentageTargetCRatio),
 				})}
 				subtext={t('staking.actions.burn.tiles.target.subtext')}
-				icon={
-					<img
-						alt={t('staking.actions.burn.tiles.target.title', {
-							targetCRatio: formatPercent(percentageTargetCRatio),
-						})}
-						src={BurnTargetCircle}
-					/>
-				}
+				icon={<BurnTargetCircle width="62" />}
 				onAction={() => onBurnTypeChange(BurnActionType.TARGET)}
 			/>
 			<ButtonTile
 				title={t('staking.actions.burn.tiles.custom.title')}
 				subtext={t('staking.actions.burn.tiles.custom.subtext')}
-				icon={<img alt={t('staking.actions.burn.tiles.custom.title')} src={BurnCustomCircle} />}
+				icon={<BurnCustomCircle width="62" />}
 				onAction={() => onBurnTypeChange(BurnActionType.CUSTOM)}
 			/>
 			<ButtonTile
@@ -74,7 +67,7 @@ const BurnTiles: React.FC<BurnTilesProps> = ({ percentageTargetCRatio, burnAmoun
 						? t('common.delegate.not-available')
 						: t('staking.actions.burn.tiles.clear-debt.subtext')
 				}
-				icon={<img alt={t('staking.actions.burn.tiles.clear-debt.title')} src={BurnCircle} />}
+				icon={<BurnCircle width="62" />}
 				onAction={() => onBurnTypeChange(BurnActionType.CLEAR)}
 				disabled={clearDebtIsDisabled}
 			/>

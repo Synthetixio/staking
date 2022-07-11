@@ -73,7 +73,7 @@ const ActionCompleted: React.FC<ActionCompletedProps> = ({
 				<SectionHeader>{t('staking.actions.burn.completed.title')}</SectionHeader>
 				<MiddleSection>
 					<IconContainer>
-						<img alt="Success" src={Success} />
+						<Success width="78" />
 					</IconContainer>
 					<FlexDivCentered>
 						<InfoContainer key="one">
@@ -112,7 +112,7 @@ const ActionCompleted: React.FC<ActionCompletedProps> = ({
 				<SectionHeader>{t('staking.actions.mint.completed-default.title')}</SectionHeader>
 				<MiddleSection>
 					<IconContainer>
-						<img alt="Success" src={Success} />
+						<Success width="78" />
 					</IconContainer>
 					<FlexDivCentered>
 						<InfoContainer key="one">

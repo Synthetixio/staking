@@ -24,7 +24,7 @@ const Notification: FC<NotificationProps> = ({ type, children, link, isExternal 
 			<Content>{children}</Content>
 			{link && (
 				<LinkContainer>
-					<img alt="Right arrow" src={ArrowRightLongIcon} />
+					<ArrowRightLongIcon width="15" />
 				</LinkContainer>
 			)}
 		</Container>

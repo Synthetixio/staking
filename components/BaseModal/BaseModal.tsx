@@ -32,7 +32,7 @@ export const BaseModal: FC<BaseModalProps> = ({
 					{title}
 					{showCross && (
 						<DismissButton onClick={onDismiss}>
-							<img src={CrossIcon} alt="Close" />
+							<CrossIcon width="16" />
 						</DismissButton>
 					)}
 				</StyledCardHeader>

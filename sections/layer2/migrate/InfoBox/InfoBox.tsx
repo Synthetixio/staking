@@ -13,7 +13,7 @@ const InfoBox = () => {
 				<Title>{t('layer2.migrate.info.title')}</Title>
 			</InfoContainerHeader>
 			<InfoContainerBody>
-				<img alt="Warning" src={Warning} />
+				<Warning width="72" />
 				<WarningHeading>{t('layer2.migrate.info.warning-title')}</WarningHeading>
 				<WarningBody>{t('layer2.deposit.info.metamask-only')}</WarningBody>
 				<WarningBody>{t('layer2.migrate.info.warning-description')}</WarningBody>

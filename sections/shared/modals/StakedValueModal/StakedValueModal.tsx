@@ -132,7 +132,7 @@ export const StakedValueModal: FC<{ value: string; isOpened: boolean; onDismiss:
 									sign: '$',
 								})}
 							</div>
-							<img alt="Forward" src={ArrowForwardBlue} />
+							<ArrowForwardBlue width="12" />
 							<div>
 								{' '}
 								{formatCurrency('sUSD', currentSnapshotOrLast.issuanceDebt, {
@@ -149,7 +149,7 @@ export const StakedValueModal: FC<{ value: string; isOpened: boolean; onDismiss:
 									sign: '$',
 								})}
 							</div>
-							<img alt="Forward" src={ArrowForwardBlue} />
+							<ArrowForwardBlue width="12" />
 							<div>
 								{' '}
 								{formatCurrency('sUSD', currentSnapshotOrLast.issuanceDebt, {
@@ -166,7 +166,7 @@ export const StakedValueModal: FC<{ value: string; isOpened: boolean; onDismiss:
 									sign: '$',
 								})}
 							</div>
-							<img alt="Forward" src={ArrowForwardBlue} />
+							<ArrowForwardBlue width="12" />
 							<div>
 								{' '}
 								{formatCurrency('sUSD', currentSnapshotOrLast.issuanceDebt, {
@@ -183,7 +183,7 @@ export const StakedValueModal: FC<{ value: string; isOpened: boolean; onDismiss:
 									sign: '$',
 								})}
 							</div>
-							<img alt="Forward" src={ArrowForwardBlue} />
+							<ArrowForwardBlue width="12" />
 							<div>
 								{' '}
 								{formatCurrency('sUSD', currentSnapshotOrLast.issuanceDebt, {

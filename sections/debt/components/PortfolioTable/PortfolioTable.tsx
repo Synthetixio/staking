@@ -322,7 +322,7 @@ const PortfolioTableTooltip: FC<PortfolioTableTooptipProps> = ({ currencyKey }) 
 			}
 		>
 			<TooltipIconContainer>
-				<img alt="Info" src={Info} />
+				<Info width="12" />
 			</TooltipIconContainer>
 		</StyledTooltip>
 	);

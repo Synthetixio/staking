@@ -132,7 +132,7 @@ export const DebtValueModal: FC<{ value: string; isOpened: boolean; onDismiss: (
 									sign: '$',
 								})}
 							</div>
-							<img alt="Forward" src={ArrowForwardPink} />
+							<ArrowForwardPink width="12" />
 							<div>
 								{' '}
 								{formatCurrency('sUSD', currentSnapshotOrLast.issuanceDebt, {
@@ -149,7 +149,7 @@ export const DebtValueModal: FC<{ value: string; isOpened: boolean; onDismiss: (
 									sign: '$',
 								})}
 							</div>
-							<img alt="Forward" src={ArrowForwardPink} />
+							<ArrowForwardPink width="12" />
 							<div>
 								{' '}
 								{formatCurrency('sUSD', currentSnapshotOrLast.actualDebt, {
@@ -162,7 +162,7 @@ export const DebtValueModal: FC<{ value: string; isOpened: boolean; onDismiss: (
 						{t('modals.debt-value.share-of-debt-pool')}
 						<FooterItemChange>
 							<span>0%</span>
-							<img alt="Forward" src={ArrowForwardPink} />
+							<ArrowForwardPink width="12" />
 							<span>0%</span>
 						</FooterItemChange>
 					</FooterItem>

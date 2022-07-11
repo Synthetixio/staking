@@ -147,7 +147,7 @@ const DebtTabs: FC<DebtTabsProps> = ({
 										}
 									>
 										<TooltipIconContainer>
-											<ResizedInfoIcon alt="Resize" src={Info} />
+											<Info width="16" />
 										</TooltipIconContainer>
 									</DebtInfoTooltip>
 								</ContainerHeaderSection>
@@ -256,10 +256,6 @@ const PortfolioContainer = styled(Container)`
 	${media.lessThan('mdUp')`
 		width: 100%;
 	`};
-`;
-
-const ResizedInfoIcon = styled.img`
-	transform: scale(1.4);
 `;
 
 const Strong = styled.strong`

@@ -66,7 +66,7 @@ const Actions: FC<ActionsProps> = ({ loanId, loanAction, loanTypeIsETH }) => {
 	}, [loanTypeIsETH, renBTCContract]);
 
 	return isLoadingLoans ? (
-		<StyledSpinner alt="Spinner" src={Spinner} />
+		<StyledSpinner width="38" />
 	) : !loan ? null : (
 		<Action
 			{...{
@@ -84,7 +84,7 @@ const Actions: FC<ActionsProps> = ({ loanId, loanAction, loanTypeIsETH }) => {
 
 export default Actions;
 
-const StyledSpinner = styled.img`
+const StyledSpinner = styled(Spinner)`
 	display: block;
 	margin: 30px auto;
 `;

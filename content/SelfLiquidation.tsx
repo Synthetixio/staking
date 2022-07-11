@@ -164,7 +164,7 @@ const SelfLiquidation: React.FC<{
 	return (
 		<>
 			<Container>
-				<img alt="Warning" src={WarningIcon} />
+				<WarningIcon width="72" />
 				{notBeenFlagged ? (
 					<CratioUnderLiquidationRatioWarning
 						currentCRatioPercent={percentageCurrentCRatio}

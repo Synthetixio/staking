@@ -36,7 +36,7 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 			}
 		>
 			<FlexDivColCentered>
-				<img alt="Pending confirmation" src={PendingConfirmation} />
+				<PendingConfirmation width="78" />
 			</FlexDivColCentered>
 			{content}
 			<Subtitle>
@@ -46,7 +46,7 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 			</Subtitle>
 			{txError && (
 				<Actions>
-					<img alt="Warning" src={WarningIcon} />
+					<WarningIcon width="72" />
 					<Message>{txError}</Message>
 					<MessageButton onClick={attemptRetry}>{t('common.transaction.reattempt')}</MessageButton>
 				</Actions>

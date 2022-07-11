@@ -18,7 +18,7 @@ const DebtHedgingChart: React.FC = () => {
 	if (isLoading) {
 		return (
 			<SpinnerContainer>
-				<Spinner alt="Spinner" src={SpinnerIcon} />
+				<Spinner width="38" />
 			</SpinnerContainer>
 		);
 	}
@@ -88,7 +88,7 @@ const SpinnerContainer = styled(FlexDivColCentered)`
 	justify-content: center;
 `;
 
-const Spinner = styled.img`
+const Spinner = styled(SpinnerIcon)`
 	display: block;
 	margin: 30px auto;
 `;

@@ -86,7 +86,7 @@ const MigrateTabContent: FC<MigrateTabContentProps> = ({
 		<>
 			<InputContainer>
 				<InputBox>
-					<img alt="SNX" src={SNXLogo} />
+					<SNXLogo width="64" />
 					<Data>
 						{formatCurrency(vestingCurrencyKey, totalEscrowed, {
 							currencyKey: vestingCurrencyKey,

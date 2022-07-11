@@ -64,13 +64,7 @@ const DesktopSideNav: FC = () => {
 		<Container onMouseLeave={clearSubMenuConfiguration} data-testid="sidenav">
 			<StakingLogoWrap>
 				<Link href={ROUTES.Home}>
-					<div>
-						{isL2 ? (
-							<img alt="L2 Staking" src={StakingL2Logo} />
-						) : (
-							<img alt="Staking" src={StakingLogo} />
-						)}
-					</div>
+					<div>{isL2 ? <StakingL2Logo width="112" /> : <StakingLogo width="112" />}</div>
 				</Link>
 			</StakingLogoWrap>
 

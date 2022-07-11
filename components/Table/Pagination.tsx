@@ -34,10 +34,10 @@ const Pagination: FC<PaginationProps> = ({
 		<PaginationContainer className="table-pagination">
 			<span>
 				<ArrowButton onClick={() => setPage(0)} disabled={!canPreviousPage}>
-					<img alt="First" src={LeftEndArrowIcon} />
+					<LeftEndArrowIcon width="16" />
 				</ArrowButton>
 				<ArrowButton onClick={() => previousPage()} disabled={!canPreviousPage}>
-					<img alt="Previous" src={LeftArrowIcon} />
+					<LeftArrowIcon width="16" />
 				</ArrowButton>
 			</span>
 			<PageInfo>
@@ -46,10 +46,10 @@ const Pagination: FC<PaginationProps> = ({
 			</PageInfo>
 			<span>
 				<ArrowButton onClick={() => nextPage()} disabled={!canNextPage}>
-					<img alt="Next" src={RightArrowIcon} />
+					<RightArrowIcon width="16" />
 				</ArrowButton>
 				<ArrowButton onClick={() => setPage(pageCount - 1)} disabled={!canNextPage}>
-					<img alt="Last" src={RightEndArrowIcon} />
+					<RightEndArrowIcon width="16" />
 				</ArrowButton>
 			</span>
 		</PaginationContainer>

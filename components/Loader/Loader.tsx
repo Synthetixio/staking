@@ -7,7 +7,7 @@ type LoaderProps = {
 };
 
 export const Loader: FC<LoaderProps> = ({ inline }) => {
-	const loader = <img alt="Loader" src={LoaderIcon} />;
+	const loader = <LoaderIcon width="38" />;
 
 	return inline ? loader : <AbsoluteCenteredDiv>{loader}</AbsoluteCenteredDiv>;
 };
