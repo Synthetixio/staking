@@ -84,7 +84,7 @@ const DelegateTable: FC = () => {
 	const noResultsMessage =
 		!delegateWalletsQuery.isFetching && delegateWallets.length === 0 ? (
 			<ListTableEmptyMessage>
-				<WalletIcon />
+				<WalletIcon width={38} />
 				{t('delegate.list.empty')}
 			</ListTableEmptyMessage>
 		) : null;
