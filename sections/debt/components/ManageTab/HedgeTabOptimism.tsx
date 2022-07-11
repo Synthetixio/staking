@@ -38,6 +38,7 @@ import {
 } from 'styles/common';
 import { EXTERNAL_LINKS } from 'constants/links';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
+import WarningIcon from 'assets/svg/app/warning.svg';
 
 const HedgeTabOptimism = () => {
 	const { t } = useTranslation();
@@ -46,6 +47,7 @@ const HedgeTabOptimism = () => {
 
 	const sUSDContract = synthetixjs?.contracts.SynthsUSD;
 	const [amountToSend, setAmountToSend] = useState('');
+	const [sendMax, setSendMax] = useState(false);
 	const [approveGasCost, setApproveGasCost] = useState<GasPrice | undefined>(undefined);
 	const [depositGasCost, setDepositGasCost] = useState<GasPrice | undefined>(undefined);
 
@@ -77,11 +79,11 @@ const HedgeTabOptimism = () => {
 	const sUSDBalance = synthsBalancesQuery.data?.balancesMap.sUSD?.balance || wei(0);
 	const dSNXBalanceQuery = useGetDSnxBalance();
 	const dSNXBalance = dSNXBalanceQuery.data;
-
+	const actualAmountToSendBn = sendMax ? sUSDBalance.toBN() : wei(amountToSend || 0).toBN();
 	const depositTx = useContractTxn(
 		dSNXPoolContractOptimism,
 		'deposit',
-		[sUSDContract?.address, wei(amountToSend || 0).toBN()],
+		[sUSDContract?.address, actualAmountToSendBn],
 		depositGasCost,
 		{
 			onSuccess: () => {
@@ -93,12 +95,13 @@ const HedgeTabOptimism = () => {
 		}
 	);
 	const dSnxAmount =
-		amountToSend && dSNXPrice
-			? formatCryptoCurrency(wei(amountToSend).div(dSNXPrice), {
+		actualAmountToSendBn.gt(0) && dSNXPrice
+			? formatCryptoCurrency(wei(actualAmountToSendBn).div(dSNXPrice), {
 					maxDecimals: 1,
 					minDecimals: 2,
 			  })
 			: '';
+
 	return (
 		<Container>
 			<StyledBackgroundTab>
@@ -121,10 +124,11 @@ const HedgeTabOptimism = () => {
 						try {
 							const val = utils.parseUnits(e.target.value || '0', 18);
 							if (val.gte(constants.MaxUint256)) return;
+							setSendMax(false);
 							setAmountToSend(e.target.value);
 						} catch {}
 					}}
-					value={amountToSend}
+					value={sendMax ? sUSDBalance.toString(2) : amountToSend}
 					autoFocus={true}
 				/>
 				<StyledBalance>
@@ -139,12 +143,7 @@ const HedgeTabOptimism = () => {
 						disabled={approveTx.isLoading || depositTx.isLoading}
 						onClick={() => {
 							if (sUSDBalance?.gt(0)) {
-								setAmountToSend(
-									formatCryptoCurrency(sUSDBalance || wei(0), {
-										maxDecimals: 1,
-										minDecimals: 2,
-									})
-								);
+								setSendMax(true);
 							}
 						}}
 					>
@@ -194,17 +193,25 @@ const HedgeTabOptimism = () => {
 				</LoaderContainer>
 			)}
 			{Boolean(!approveTx.isLoading && !depositTx.isLoading) && (
-				<StyledButton
-					size="lg"
-					onClick={() => {
-						setTxModalOpen(true);
-						approved ? depositTx.mutate() : approveTx.mutate();
-					}}
-					variant="primary"
-					disabled={wei(amountToSend || '0').eq(0)}
-				>
-					{approved ? t('debt.actions.manage.swap') : t('debt.actions.manage.approve')}
-				</StyledButton>
+				<>
+					{depositTx.errorMessage && (
+						<ErrorText>
+							<Svg width={30} height={40} src={WarningIcon} />
+							{depositTx.errorMessage}
+						</ErrorText>
+					)}
+					<StyledButton
+						size="lg"
+						onClick={() => {
+							setTxModalOpen(true);
+							approved ? depositTx.mutate() : approveTx.mutate();
+						}}
+						variant="primary"
+						disabled={wei(amountToSend || '0').eq(0) || Boolean(depositTx.errorMessage)}
+					>
+						{approved ? t('debt.actions.manage.swap') : t('debt.actions.manage.approve')}
+					</StyledButton>
+				</>
 			)}
 			<PoweredByContainer>
 				{t('debt.actions.manage.powered-by')}{' '}
@@ -242,6 +249,14 @@ const Container = styled.div`
 	height: 100%;
 `;
 
+const ErrorText = styled.p`
+	color: white;
+	text-transform: none;
+	font-size: 14px;
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+`;
 const LoaderContainer = styled.div`
 	display: flex;
 	align-items: center;

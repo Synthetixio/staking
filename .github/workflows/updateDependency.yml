@@ -17,15 +17,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # pin@v2
 
-      - name: Set yarn cache directory
-        run: yarn config set cache-folder .yarn-cache
-        continue-on-error: true
+      # This was yarn v1 only and yarn v3 fails to run
+      - run: unset YARN_PRODUCTION
 
       - name: Cache node modules
         uses: actions/cache@c3f1317a9e7b1ef106c153ac8c0f00fed3ddbc0d # pin@v2
         with:
           path: |
-            .yarn-cache
+            .yarn/cache
             node_modules
           key: ${{ runner.os }}-alpine-node-${{ hashFiles('**/yarn-lock.json') }}
           restore-keys: |
@@ -37,10 +36,10 @@ jobs:
         run: chown -R $(whoami) .
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile --prefer-offline
+        run: yarn install --immutable
 
       - name: Update all @synthetixio dependencies
-        run: 'yarn run upgrade-synthetix'
+        run: yarn upgrade-synthetix
 
       - name: Commit changes
         run: |
