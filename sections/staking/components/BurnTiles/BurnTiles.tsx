@@ -4,8 +4,6 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import Wei from '@synthetixio/wei';
 
-import Img, { Svg } from 'react-optimized-image';
-
 import BurnCircle from 'assets/svg/app/burn-circle.svg';
 import BurnCustomCircle from 'assets/svg/app/burn-custom-circle.svg';
 import BurnTargetCircle from 'assets/svg/app/burn-target-circle.svg';
@@ -23,10 +21,6 @@ type BurnTilesProps = {
 	percentageTargetCRatio: Wei;
 	burnAmountToFixCRatio: Wei;
 };
-
-const burnIcon = <Svg src={BurnCircle} />;
-const burnCustomIcon = <Img src={BurnCustomCircle} />; // TODO: investigate why it doesn't render correctly with <Svg /> (ids were replaced to be unique)
-const burnTargetIcon = <Svg src={BurnTargetCircle} />;
 
 const BurnTiles: React.FC<BurnTilesProps> = ({ percentageTargetCRatio, burnAmountToFixCRatio }) => {
 	const { t } = useTranslation();
@@ -46,7 +40,7 @@ const BurnTiles: React.FC<BurnTilesProps> = ({ percentageTargetCRatio, burnAmoun
 			<ButtonTile
 				title={t('staking.actions.burn.tiles.max.title')}
 				subtext={t('staking.actions.burn.tiles.max.subtext')}
-				icon={burnIcon}
+				icon={<BurnCircle width="62" />}
 				onAction={() => onBurnTypeChange(BurnActionType.MAX)}
 			/>
 			<ButtonTile
@@ -55,13 +49,13 @@ const BurnTiles: React.FC<BurnTilesProps> = ({ percentageTargetCRatio, burnAmoun
 					targetCRatio: formatPercent(percentageTargetCRatio),
 				})}
 				subtext={t('staking.actions.burn.tiles.target.subtext')}
-				icon={burnTargetIcon}
+				icon={<BurnTargetCircle width="62" />}
 				onAction={() => onBurnTypeChange(BurnActionType.TARGET)}
 			/>
 			<ButtonTile
 				title={t('staking.actions.burn.tiles.custom.title')}
 				subtext={t('staking.actions.burn.tiles.custom.subtext')}
-				icon={burnCustomIcon}
+				icon={<BurnCustomCircle width="62" />}
 				onAction={() => onBurnTypeChange(BurnActionType.CUSTOM)}
 			/>
 			<ButtonTile
@@ -73,7 +67,7 @@ const BurnTiles: React.FC<BurnTilesProps> = ({ percentageTargetCRatio, burnAmoun
 						? t('common.delegate.not-available')
 						: t('staking.actions.burn.tiles.clear-debt.subtext')
 				}
-				icon={burnIcon}
+				icon={<BurnCircle width="62" />}
 				onAction={() => onBurnTypeChange(BurnActionType.CLEAR)}
 				disabled={clearDebtIsDisabled}
 			/>

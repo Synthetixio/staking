@@ -1,5 +1,4 @@
 import { FC, useMemo } from 'react';
-import { Svg } from 'react-optimized-image';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { useRecoilValue } from 'recoil';
@@ -46,7 +45,7 @@ const LayoutDelegate: FC = () => {
 			{
 				icon: (
 					<GlowingCircle variant={!aboveTargetCRatio ? 'orange' : 'blue'} size="md">
-						{!aboveTargetCRatio ? <Svg src={BurnIcon} /> : <Svg src={MintIcon} />}
+						{!aboveTargetCRatio ? <BurnIcon width="38" /> : <MintIcon width="27" />}
 					</GlowingCircle>
 				),
 				title: !aboveTargetCRatio

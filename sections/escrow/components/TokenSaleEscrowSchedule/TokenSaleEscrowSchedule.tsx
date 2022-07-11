@@ -1,7 +1,6 @@
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
-import { Svg } from 'react-optimized-image';
 
 import NoNotificationIcon from 'assets/svg/app/no-notifications.svg';
 import { CryptoCurrency } from 'constants/currency';
@@ -73,7 +72,7 @@ const TokenSaleEscrowSchedule: React.FC = () => {
 					noResultsMessage={
 						!tokenSaleEscrowQuery.isLoading && schedule?.length === 0 ? (
 							<TableNoResults>
-								<Svg src={NoNotificationIcon} />
+								<NoNotificationIcon width="40" />
 								{t('escrow.table.no-results')}
 							</TableNoResults>
 						) : undefined

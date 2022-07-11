@@ -1,5 +1,4 @@
 import React, { FC } from 'react';
-import { Svg } from 'react-optimized-image';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -31,7 +30,7 @@ const ActionCompleted: FC<ActionCompletedProps> = ({
 	return (
 		<Container>
 			<SectionHeader>{t(`layer2.actions.${action}.action.completed.title`)}</SectionHeader>
-			<Svg src={Success} />
+			<Success width="78" />
 			<FlexDivCentered>
 				<InfoContainer key="one">
 					<InfoTitle>{t(`layer2.actions.${action}.action.completed.deposited`)}</InfoTitle>

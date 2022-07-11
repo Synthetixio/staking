@@ -1,6 +1,5 @@
 import { FC, useMemo } from 'react';
 import styled from 'styled-components';
-import { Svg } from 'react-optimized-image';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
 
@@ -30,7 +29,7 @@ const Header: FC = () => {
 				<FlexDivCentered>
 					<MobileOrTabletView>
 						<Title onClick={showMobileSideNav}>
-							<Svg src={TitleIcon} />
+							<TitleIcon width="18" />
 							{headerTitle && (
 								<TitleText hasSubTitle={!!headerSubtitle}>{t(`header.${headerTitle}`)}</TitleText>
 							)}

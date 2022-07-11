@@ -1,9 +1,9 @@
 import React, { FC, useState } from 'react';
-import Img, { Svg } from 'react-optimized-image';
 import styled from 'styled-components';
 
 import ETHIcon from 'assets/svg/currencies/crypto/ETH.svg';
-import BTCIcon from 'assets/webp/currencies/crypto/BTC.webp';
+import SNXIcon from 'assets/svg/currencies/crypto/SNX.svg';
+import BTCIcon from 'assets/svg/currencies/crypto/BTC.svg';
 import DeprecatedXIcon from 'assets/svg/app/deprecated-x.svg';
 
 import { CryptoCurrency, CurrencyKey } from 'constants/currency';
@@ -27,9 +27,6 @@ type CurrencyIconProps = {
 	isDeprecated?: boolean;
 };
 
-export const SNXIcon =
-	'https://raw.githubusercontent.com/Synthetixio/synthetix-assets/master/snx/SNX.svg';
-
 export const getSynthIcon = (currencyKey: CurrencyKey) =>
 	`https://raw.githubusercontent.com/Synthetixio/synthetix-assets/master/synths/${currencyKey}.svg`;
 
@@ -38,7 +35,7 @@ export const CurrencyIconContainer: FC<CurrencyIconProps> = (props) => (
 		<CurrencyIcon {...props} />
 		{props.isDeprecated && (
 			<DeprecatedXIconContainer>
-				<Svg src={DeprecatedXIcon} />
+				<DeprecatedXIcon width="32" />
 			</DeprecatedXIconContainer>
 		)}
 	</Container>
@@ -76,13 +73,13 @@ export const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, isDeprecated,
 	if (!firstFallbackError) {
 		switch (currencyKey) {
 			case CryptoCurrency.BTC: {
-				return <Img src={BTCIcon} {...props} />;
+				return <BTCIcon {...props} />;
 			}
 			case CryptoCurrency.ETH: {
-				return <Img src={ETHIcon} {...props} />;
+				return <ETHIcon {...props} />;
 			}
 			case CryptoCurrency.SNX: {
-				return <img src={SNXIcon} {...props} alt="snx-icon" />;
+				return <SNXIcon {...props} />;
 			}
 			default:
 				return (

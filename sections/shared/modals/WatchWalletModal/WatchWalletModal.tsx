@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { Svg } from 'react-optimized-image';
 
 import { LOCAL_STORAGE_KEYS } from 'constants/storage';
 import useLocalStorage from 'hooks/useLocalStorage';
@@ -114,7 +113,7 @@ const WatchWalletModal: React.FC<WatchWalletModalProps> = ({ onDismiss }) => {
 								<WalletAddress onClick={() => handleWatchWallet(wallet)}>
 									{truncateAddress(wallet)}
 								</WalletAddress>
-								<Svg src={Trash} onClick={() => removeWatchedWallet(wallet)} />
+								<Trash onClick={() => removeWatchedWallet(wallet)} />
 							</Row>
 						))}
 					</PreviousAddress>

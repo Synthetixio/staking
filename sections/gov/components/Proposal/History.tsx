@@ -1,6 +1,5 @@
 import React, { useMemo } from 'react';
 import styled from 'styled-components';
-import { Svg } from 'react-optimized-image';
 import Spinner from 'assets/svg/app/loader.svg';
 import { FlexDivCol, FlexDivRow, FlexDivRowCentered } from 'styles/common';
 import { useRecoilValue } from 'recoil';
@@ -30,7 +29,7 @@ const History: React.FC<HistoryProps> = ({ proposalResults }) => {
 		if (proposalResults.isLoading) {
 			return (
 				<StyledSpinner>
-					<Svg src={Spinner} />
+					<Spinner width="38" />
 				</StyledSpinner>
 			);
 		} else if (proposalResults.data) {

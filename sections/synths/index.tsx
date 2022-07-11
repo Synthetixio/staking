@@ -1,7 +1,6 @@
 import { FC, useState, useMemo, useCallback } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
-import { Svg } from 'react-optimized-image';
 import styled from 'styled-components';
 import { wei } from '@synthetixio/wei';
 import useSynthetixQueries from '@synthetixio/queries';
@@ -144,7 +143,7 @@ const Index: FC = () => {
 									}
 								>
 									<TooltipIconContainer>
-										<Svg src={Info} />
+										<Info width="12" />
 									</TooltipIconContainer>
 								</Tooltip>
 							</FlexDivRowCentered>

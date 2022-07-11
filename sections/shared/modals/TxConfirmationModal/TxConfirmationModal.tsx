@@ -2,7 +2,6 @@ import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-import { Svg } from 'react-optimized-image';
 import { FlexDivColCentered } from 'styles/common';
 
 import BaseModal from 'components/BaseModal';
@@ -37,7 +36,7 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 			}
 		>
 			<FlexDivColCentered>
-				<Svg src={PendingConfirmation} />
+				<PendingConfirmation width="78" />
 			</FlexDivColCentered>
 			{content}
 			<Subtitle>
@@ -47,7 +46,7 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 			</Subtitle>
 			{txError && (
 				<Actions>
-					<Svg src={WarningIcon} />
+					<WarningIcon width="72" />
 					<Message>{txError}</Message>
 					<MessageButton onClick={attemptRetry}>{t('common.transaction.reattempt')}</MessageButton>
 				</Actions>

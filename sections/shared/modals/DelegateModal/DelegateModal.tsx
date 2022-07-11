@@ -2,7 +2,6 @@ import { FC } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { Svg } from 'react-optimized-image';
 
 import { delegateWalletState, walletAddressState } from 'store/wallet';
 import { truncateAddress } from 'utils/formatters/string';
@@ -11,7 +10,7 @@ import useSynthetixQueries, { DelegationWallet } from '@synthetixio/queries';
 import { MenuModal } from '../common';
 import { Tooltip } from 'styles/common';
 
-import Spinner from 'assets/svg/app/loader.svg';
+import SpinnerIcon from 'assets/svg/app/loader.svg';
 
 type DelegateModalProps = {
 	onDismiss: () => void;
@@ -59,7 +58,7 @@ const DelegateModal: FC<DelegateModalProps> = ({ onDismiss }) => {
 							})}
 						</WalletList>
 					) : delegateWalletsQuery.isFetching ? (
-						<StyledSpinner src={Spinner} />
+						<StyledSpinner width="38" />
 					) : (
 						<Subtitle style={{ fontSize: '12px' }}>
 							{t('modals.wallet.delegate-mode.no-delegate')}
@@ -123,7 +122,7 @@ const WalletListElement = styled.li<{ isSelected: boolean }>`
 		props.isSelected ? props.theme.colors.mediumBlue : props.theme.colors.backgroundBlue};
 `;
 
-const StyledSpinner = styled(Svg)`
+const StyledSpinner = styled(SpinnerIcon)`
 	display: block;
 	margin: 10px auto;
 `;

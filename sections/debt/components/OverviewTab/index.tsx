@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Trans, useTranslation } from 'react-i18next';
-import { Svg } from 'react-optimized-image';
 import DebtChart from '../DebtChart';
 import useHistoricalDebtData from 'hooks/useHistoricalDebtData';
 import { FlexDivCol, FlexDiv, Tooltip } from 'styles/common';
@@ -33,7 +32,7 @@ const OverviewTab = () => {
 							}
 						>
 							<TooltipIconContainer>
-								<ResizedInfoIcon src={Info} />
+								<Info width="16" />
 							</TooltipIconContainer>
 						</DebtInfoTooltip>
 					</ContainerHeaderSection>
@@ -81,10 +80,6 @@ const TooltipIconContainer = styled(FlexDiv)`
 	margin-left: 10px;
 	opacity: 0.6;
 	align-items: center;
-`;
-
-const ResizedInfoIcon = styled(Svg)`
-	transform: scale(1.4);
 `;
 
 const Strong = styled.strong`
