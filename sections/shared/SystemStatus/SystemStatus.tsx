@@ -2,7 +2,6 @@ import { FC } from 'react';
 import Head from 'next/head';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { Svg } from 'react-optimized-image';
 
 import media from 'styles/media';
 import {
@@ -47,7 +46,7 @@ const SystemStatus: FC<SystemStatusProps> = ({ children }) => {
 			<FullScreenContainer>
 				<Content>
 					<Header>
-						<Svg src={StakingLogo} />
+						<StakingLogo width="112" />
 					</Header>
 					<Container>
 						<Title>

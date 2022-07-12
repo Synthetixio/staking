@@ -2,7 +2,6 @@ import React, { FC, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps, Row } from 'react-table';
 import styled, { css } from 'styled-components';
-import { Svg } from 'react-optimized-image';
 import Countdown from 'react-countdown';
 import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
@@ -122,7 +121,7 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab }
 							<>{t('earn.incentives.est-apr')}</>
 						) : (
 							<StyledIconButton onClick={goToEarn}>
-								<Svg src={ExpandIcon} />
+								<ExpandIcon width="24" />
 							</StyledIconButton>
 						)}
 					</CellContainer>

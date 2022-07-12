@@ -1,6 +1,5 @@
 import { FC, ReactNode } from 'react';
 import styled, { css } from 'styled-components';
-import Svg from 'react-optimized-image';
 
 import SNXStatBackground from 'assets/svg/app/snx-stat-background.svg';
 import media from 'styles/media';
@@ -38,7 +37,7 @@ const StatBox: FC<StatBoxProps> = ({
 						hideOnClick={false}
 					>
 						<IconContainer>
-							<Svg src={InfoIcon} />
+							<InfoIcon width="12" />
 						</IconContainer>
 					</StyledTooltip>
 				)}

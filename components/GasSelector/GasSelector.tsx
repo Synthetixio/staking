@@ -17,7 +17,6 @@ import { formatCurrency } from 'utils/formatters/number';
 import Button from 'components/Button';
 import { useTranslation } from 'react-i18next';
 import { FlexDivRow, FlexDivRowCentered, NumericValue } from 'styles/common';
-import { Svg } from 'react-optimized-image';
 import Info from 'assets/svg/app/info.svg';
 import Wei from '@synthetixio/wei';
 import GasPriceDisplay from './GasPriceDisplay';
@@ -140,7 +139,7 @@ const GasSelector: React.FC<GasSelectorProps> = ({
 						interactive={true}
 					>
 						<span>
-							<ResizedInfoIcon src={Info} />
+							<ResizedInfoIcon width="12" />
 						</span>
 					</GasPriceTooltip>
 				) : (
@@ -223,7 +222,7 @@ const StyledGasEditButton = styled.span`
 	text-transform: uppercase;
 `;
 
-const ResizedInfoIcon = styled(Svg)`
+const ResizedInfoIcon = styled(Info)`
 	transform: translateX(2px);
 	cursor: pointer;
 `;

@@ -1,5 +1,5 @@
 module.exports = {
-	process: (contents, filename) => ({
-		code: `module.exports = props => require('react').createElement('svg', {}, '${filename}');`,
+	process: (_contents, _filename) => ({
+		code: `module.exports = () => null`,
 	}),
 };

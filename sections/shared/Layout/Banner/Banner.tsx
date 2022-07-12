@@ -1,6 +1,5 @@
 import { FC, useCallback, useEffect, useState } from 'react';
 import styled, { css } from 'styled-components';
-import { Svg } from 'react-optimized-image';
 import Color from 'color';
 
 import { FlexDivCentered } from 'styles/common';
@@ -49,7 +48,7 @@ const Banner: FC<BannerProps> = ({ message, localStorageKey, type = BannerType.I
 
 				{type !== BannerType.WARNING && (
 					<ButtonClose onClick={handleHideBanner}>
-						<Svg src={CloseIcon} />
+						<CloseIcon width="14" />
 					</ButtonClose>
 				)}
 			</Inner>

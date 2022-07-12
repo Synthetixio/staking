@@ -1,5 +1,4 @@
 import React, { useMemo, FC, useEffect } from 'react';
-import { Svg } from 'react-optimized-image';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
 import { useTheme } from 'styled-components';
@@ -38,14 +37,14 @@ const ActionBox: FC<ActionBoxProps> = ({ currentTab }) => {
 		() => [
 			{
 				title: t('staking.actions.mint.title'),
-				icon: <Svg src={Mint} />,
+				icon: <Mint width="27" />,
 				tabChildren: <MintTab />,
 				color: theme.colors.blue,
 				key: StakingPanelType.MINT,
 			},
 			{
 				title: t('staking.actions.burn.title'),
-				icon: <Svg src={Burn} />,
+				icon: <Burn width="38" />,
 				tabChildren: <BurnTab />,
 				color: theme.colors.orange,
 				key: StakingPanelType.BURN,
@@ -53,7 +52,7 @@ const ActionBox: FC<ActionBoxProps> = ({ currentTab }) => {
 
 			{
 				title: t('staking.actions.self-liquidate.title'),
-				icon: <Svg width={38} height={49} src={Warning} />,
+				icon: <Warning width={38} />,
 				tabChildren: <SelfLiquidateTab />,
 				color: theme.colors.pink,
 				key: StakingPanelType.SELF_LIQUIDATE,

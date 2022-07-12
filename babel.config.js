@@ -20,10 +20,7 @@ module.exports = function (api) {
 				],
 				'@babel/preset-typescript',
 			],
-			plugins: [
-				['styled-components', { ssr: true, displayName: true, preprocess: false }],
-				['react-optimized-image/plugin'],
-			],
+			plugins: [['styled-components', { ssr: true, displayName: true, preprocess: false }]],
 		};
 	}
 
@@ -49,9 +46,6 @@ module.exports = function (api) {
 			],
 		],
 
-		plugins: [
-			['styled-components', { ssr: true, displayName: true, preprocess: false }],
-			['react-optimized-image/plugin'],
-		],
+		plugins: [['styled-components', { ssr: true, displayName: true, preprocess: false }]],
 	};
 };

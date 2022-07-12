@@ -1,5 +1,4 @@
 const withPlugins = require('next-compose-plugins');
-const optimizedImages = require('next-optimized-images');
 
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
 	enabled: process.env.GENERATE_BUNDLE_REPORT === 'true',
@@ -31,32 +30,49 @@ function optimiseContracts(config, { webpack }) {
 	);
 }
 
-module.exports = withPlugins(
-	[[optimizedImages, { images: { optimize: false } }], withBundleAnalyzer],
-	{
-		webpack: (config, context) => {
-			config.resolve.mainFields = ['module', 'browser', 'main'];
-			optimiseContracts(config, context);
-			return config;
-		},
-		trailingSlash: !!process.env.NEXT_PUBLIC_TRAILING_SLASH_ENABLED,
-		exportPathMap: function (defaultPathMap) {
-			return {
-				...defaultPathMap,
+module.exports = withPlugins([withBundleAnalyzer], {
+	webpack: (config, context) => {
+		config.resolve.mainFields = ['module', 'browser', 'main'];
+		optimiseContracts(config, context);
 
-				// all the dynamic pages need to be defined here (this needs to be imported from the routes)
-				'/staking': { page: '/staking/[[...action]]' },
-				'/staking/burn': { page: '/staking/[[...action]]' },
-				'/staking/mint': { page: '/staking/[[...action]]' },
+		config.module.rules.push({
+			test: /\.svg$/,
+			use: '@svgr/webpack',
+		});
 
-				'/earn': { page: '/earn/[[...pool]]' },
-				'/earn/claim': { page: '/earn/[[...pool]]' },
-				'/earn/curve-LP': { page: '/earn/[[...pool]]' },
-				'/earn/iBTC-LP': { page: '/earn/[[...pool]]' },
-				'/earn/iETH-LP': { page: '/earn/[[...pool]]' },
+		config.module.rules.push({
+			test: /\.(png|jpg|ico|gif|woff|woff2|ttf|eot|doc|pdf|zip|wav|avi|txt|webp)$/,
+			use: [
+				{
+					loader: 'url-loader',
+					options: {
+						limit: 4 * 1024, // 4kb
+						outputPath: './static/images',
+						publicPath: '/_next/static/images',
+					},
+				},
+			],
+		});
 
-				'/pools/weth-snx': { page: '/pools/[[...pool]]' },
-			};
-		},
-	}
-);
+		return config;
+	},
+	trailingSlash: !!process.env.NEXT_PUBLIC_TRAILING_SLASH_ENABLED,
+	exportPathMap: function (defaultPathMap) {
+		return {
+			...defaultPathMap,
+
+			// all the dynamic pages need to be defined here (this needs to be imported from the routes)
+			'/staking': { page: '/staking/[[...action]]' },
+			'/staking/burn': { page: '/staking/[[...action]]' },
+			'/staking/mint': { page: '/staking/[[...action]]' },
+
+			'/earn': { page: '/earn/[[...pool]]' },
+			'/earn/claim': { page: '/earn/[[...pool]]' },
+			'/earn/curve-LP': { page: '/earn/[[...pool]]' },
+			'/earn/iBTC-LP': { page: '/earn/[[...pool]]' },
+			'/earn/iETH-LP': { page: '/earn/[[...pool]]' },
+
+			'/pools/weth-snx': { page: '/pools/[[...pool]]' },
+		};
+	},
+});
