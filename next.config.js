@@ -32,9 +32,14 @@ function optimiseContracts(config, { webpack }) {
 
 module.exports = withPlugins([withBundleAnalyzer], {
 	swcMinify: true,
+	eslint: {
+		ignoreDuringBuilds: true,
+	},
 	webpack: (config, context) => {
 		config.resolve.mainFields = ['module', 'browser', 'main'];
-		optimiseContracts(config, context);
+		if (!context.isServer) {
+			optimiseContracts(config, context);
+		}
 
 		config.module.rules.push({
 			test: /\.svg$/,
