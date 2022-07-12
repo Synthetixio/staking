@@ -73,13 +73,13 @@ const getWalletIcon = (selectedWallet?: string | null) => {
 		case 'trust':
 			return <TrustIcon />;
 		case 'dapper':
-			return <img alt="Dapper" src={DapperIcon} />;
+			return <img alt="Dapper" src={DapperIcon.src} />;
 		case 'torus':
 			return <TorusIcon />;
 		case 'status':
 			return <StatusIcon />;
 		case 'authereum':
-			return <img alt="Authereum" src={AuthereumIcon} />;
+			return <img alt="Authereum" src={AuthereumIcon.src} />;
 		case 'imtoken':
 			return <ImTokenIcon />;
 		default:
