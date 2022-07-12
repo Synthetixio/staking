@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { getOptimismNetwork } from '@synthetixio/optimism-networks';
 import { handleSwitchChain } from '@synthetixio/providers';
 import Connector from 'containers/Connector';
@@ -54,7 +53,7 @@ export function useAddOptimism() {
 				setNetworkError((e as Record<'message', string>).message);
 			}
 		}
-	}, [provider, network?.id]);
+	}, [provider, network?.id, t, setNetworkError]);
 
 	return { showAddOptimism, addOptimismNetwork };
 }

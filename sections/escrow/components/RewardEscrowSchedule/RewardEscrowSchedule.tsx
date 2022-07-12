@@ -1,7 +1,6 @@
 import React from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import { CellProps } from 'react-table';
-import { Svg } from 'react-optimized-image';
 import styled from 'styled-components';
 import { useRouter } from 'next/router';
 
@@ -93,7 +92,7 @@ const RewardEscrowSchedule: React.FC = () => {
 				) : (
 					<CallToActionContainer>
 						<FlexDivColCentered>
-							<Svg src={CallToActionIcon} />
+							<CallToActionIcon width="72" />
 							<CallToActionInfo>{t('escrow.actions.stake.no-escrowed-snx')}</CallToActionInfo>
 							<StyledButton
 								size="lg"

@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Svg } from 'react-optimized-image';
 import { ResponsiveContainer, YAxis, Line, LineChart, XAxis } from 'recharts';
 import { useTranslation } from 'react-i18next';
 import { FlexDivCol, FlexDivColCentered } from 'styles/common';
@@ -19,7 +18,7 @@ const DebtHedgingChart: React.FC = () => {
 	if (isLoading) {
 		return (
 			<SpinnerContainer>
-				<Spinner src={SpinnerIcon} />
+				<Spinner width="38" />
 			</SpinnerContainer>
 		);
 	}
@@ -89,7 +88,7 @@ const SpinnerContainer = styled(FlexDivColCentered)`
 	justify-content: center;
 `;
 
-const Spinner = styled(Svg)`
+const Spinner = styled(SpinnerIcon)`
 	display: block;
 	margin: 30px auto;
 `;

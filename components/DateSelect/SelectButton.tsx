@@ -1,6 +1,5 @@
 import { HTMLProps } from 'react';
 import styled, { css } from 'styled-components';
-import { Svg } from 'react-optimized-image';
 
 import { resetButtonCSS } from 'styles/common';
 
@@ -27,20 +26,17 @@ const SelectButton = (
 		<Icons>
 			{showClear && (
 				<CloseButton>
-					<Svg
-						src={CloseIcon}
+					<CloseIcon
+						width="12"
 						onClick={(e: any) => {
 							e.stopPropagation();
 							onClear();
 						}}
-						width="12"
-						height="12"
-						viewBox={`0 0 ${CloseIcon.width} ${CloseIcon.height}`}
 						className="close-icon"
 					/>
 				</CloseButton>
 			)}
-			<Svg src={CaretDownIcon} className="dropdown-icon" />
+			<CaretDownIcon className="dropdown-icon" />
 		</Icons>
 	</Button>
 );

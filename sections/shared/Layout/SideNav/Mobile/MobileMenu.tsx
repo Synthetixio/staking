@@ -2,7 +2,6 @@ import { FC, Dispatch } from 'react';
 import styled, { css } from 'styled-components';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
-import { Svg } from 'react-optimized-image';
 import { useRecoilValue } from 'recoil';
 
 import { linkCSS } from 'styles/common';
@@ -53,7 +52,7 @@ const MobileMenu: FC<MobileMenuProps> = ({ dispatch }) => {
 				>
 					<div className="link">
 						{t(i18nLabel)}
-						{subMenu && <Svg src={CaretRightIcon} />}
+						{subMenu && <CaretRightIcon width="5" />}
 					</div>
 				</MenuLinkItem>
 			))}
@@ -117,7 +116,6 @@ export const MenuLinkItem = styled.div<{ isActive?: boolean; isL2Switcher?: bool
 		content: '';
 		position: absolute;
 		top: 0;
-		/* the line needs to outside (so around -3px), however due to overflow issues, it needs to be inside for now */
 		right: 0;
 		background: ${(props) => props.theme.colors.blue};
 		display: none;

@@ -1,8 +1,7 @@
-import { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { ethers } from 'ethers';
-import { Svg } from 'react-optimized-image';
 
 import PendingConfirmation from 'assets/svg/app/pending-confirmation.svg';
 import Success from 'assets/svg/app/success.svg';
@@ -126,7 +125,7 @@ const DepositTab: FC<DepositTabProps> = ({
 				}
 				content={
 					<StakeTxContainer>
-						<Svg src={PendingConfirmation} />
+						<PendingConfirmation width="78" />
 						<GreyHeader>
 							{isDeposit ? t('earn.actions.stake.staking') : t('earn.actions.unstake.unstaking')}
 						</GreyHeader>
@@ -160,7 +159,7 @@ const DepositTab: FC<DepositTabProps> = ({
 				title={isDeposit ? t('earn.actions.stake.success') : t('earn.actions.unstake.success')}
 				content={
 					<StakeTxContainer>
-						<Svg src={Success} />
+						<Success width="78" />
 						<GreyHeader>
 							{isDeposit ? t('earn.actions.stake.staked') : t('earn.actions.unstake.withdrew')}
 						</GreyHeader>

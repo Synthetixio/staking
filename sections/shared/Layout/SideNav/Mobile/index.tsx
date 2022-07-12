@@ -1,7 +1,6 @@
 import { FC } from 'react';
 import styled from 'styled-components';
 import Link from 'next/link';
-import { Svg } from 'react-optimized-image';
 import { useTranslation } from 'react-i18next';
 
 import StakingLogo from 'assets/svg/app/staking-logo-small.svg';
@@ -35,14 +34,14 @@ const MobileSideNav: FC = () => {
 			>
 				<StakingLogoWrap>
 					{isMobileSubNavOpen ? (
-						<Svg src={BackIcon} onClick={() => dispatch({ type: 'clear_sub' })} />
+						<BackIcon width="16" onClick={() => dispatch({ type: 'clear_sub' })} />
 					) : (
 						<Link href={ROUTES.Home}>
-							<Svg src={StakingLogo} />
+							<StakingLogo width="39" />
 						</Link>
 					)}
 					<CloseContainer onClick={() => dispatch({ type: 'close' })}>
-						<Svg src={CloseIcon} />
+						<CloseIcon width="14" />
 					</CloseContainer>
 				</StakingLogoWrap>
 				{isMobileSubNavOpen ? (

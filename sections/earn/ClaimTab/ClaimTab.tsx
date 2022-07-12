@@ -2,7 +2,6 @@ import React, { useState, useCallback, useMemo } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import Wei from '@synthetixio/wei';
-import { Svg } from 'react-optimized-image';
 import { useRouter } from 'next/router';
 import { useRecoilValue } from 'recoil';
 
@@ -45,7 +44,7 @@ import {
 
 import GasSelector from 'components/GasSelector';
 
-import largeWaveSVG from 'assets/svg/app/large-wave.svg';
+import LargeWaveSVG from 'assets/svg/app/large-wave.svg';
 
 import {
 	ErrorMessage,
@@ -168,7 +167,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 				title={t('earn.actions.claim.in-progress')}
 				content={
 					<FlexDivColCentered>
-						<Svg src={PendingConfirmation} />
+						<PendingConfirmation width="78" />
 						<StyledFlexDiv>
 							<StyledFlexDivColCentered>
 								<GreyHeader>{t('earn.actions.claim.claiming')}</GreyHeader>
@@ -220,7 +219,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 				title={t('earn.actions.claim.success')}
 				content={
 					<FlexDivColCentered>
-						<Svg src={Success} />
+						<Success width="78" />
 						<StyledFlexDiv>
 							<StyledFlexDivColCentered>
 								<GreyHeader>{t('earn.actions.claim.claimed')}</GreyHeader>
@@ -277,7 +276,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 				<GoToEarnButtonContainer>
 					<MobileOnlyView>
 						<StyledIconButton onClick={goToEarn}>
-							<Svg src={ExpandIcon} />
+							<ExpandIcon width="24" />
 						</StyledIconButton>
 					</MobileOnlyView>
 				</GoToEarnButtonContainer>
@@ -389,7 +388,7 @@ const InnerContainer = styled(FlexDivColCentered)`
 	padding: 20px;
 	border: 1px solid ${(props) => props.theme.colors.pink};
 	border-radius: 4px;
-	background-image: url(${largeWaveSVG.src});
+	background-image: url(${LargeWaveSVG});
 	background-size: cover;
 `;
 
@@ -430,13 +429,10 @@ const StyledTabContainer = styled(TabContainer)`
 
 const StyledIconButton = styled(IconButton)`
 	margin-left: auto;
-	svg {
-		color: ${(props) => props.theme.colors.gray};
-	}
+	color: ${(props) => props.theme.colors.gray};
+
 	&:hover {
-		svg {
-			color: ${(props) => props.theme.colors.white};
-		}
+		color: ${(props) => props.theme.colors.white};
 	}
 `;
 

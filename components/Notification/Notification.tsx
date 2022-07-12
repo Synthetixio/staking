@@ -1,7 +1,6 @@
 import { FC, ReactNode } from 'react';
 import styled from 'styled-components';
 import Link from 'next/link';
-import { Svg } from 'react-optimized-image';
 
 import ArrowRightLongIcon from 'assets/svg/app/arrow-right-long.svg';
 
@@ -16,8 +15,6 @@ type NotificationProps = {
 	isExternal?: boolean;
 };
 
-const arrowIcon = <Svg src={ArrowRightLongIcon} />;
-
 const Notification: FC<NotificationProps> = ({ type, children, link, isExternal }) => {
 	const hasLink = link != null;
 
@@ -25,7 +22,11 @@ const Notification: FC<NotificationProps> = ({ type, children, link, isExternal 
 		<Container>
 			<Indicator type={type} />
 			<Content>{children}</Content>
-			{link && <LinkContainer>{arrowIcon}</LinkContainer>}
+			{link && (
+				<LinkContainer>
+					<ArrowRightLongIcon width="15" />
+				</LinkContainer>
+			)}
 		</Container>
 	);
 

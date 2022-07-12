@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import styled, { useTheme } from 'styled-components';
 import { AreaChart, Area, Tooltip, XAxis, YAxis } from 'recharts';
 import formatDate from 'date-fns/format';
-import { Svg } from 'react-optimized-image';
 
 import { formatCurrency } from 'utils/formatters/number';
 import ArrowForwardBlue from 'assets/svg/app/arrow-forward-blue.svg';
@@ -133,7 +132,7 @@ export const StakedValueModal: FC<{ value: string; isOpened: boolean; onDismiss:
 									sign: '$',
 								})}
 							</div>
-							<Svg src={ArrowForwardBlue} />
+							<ArrowForwardBlue width="12" />
 							<div>
 								{' '}
 								{formatCurrency('sUSD', currentSnapshotOrLast.issuanceDebt, {
@@ -150,7 +149,7 @@ export const StakedValueModal: FC<{ value: string; isOpened: boolean; onDismiss:
 									sign: '$',
 								})}
 							</div>
-							<Svg src={ArrowForwardBlue} />
+							<ArrowForwardBlue width="12" />
 							<div>
 								{' '}
 								{formatCurrency('sUSD', currentSnapshotOrLast.issuanceDebt, {
@@ -167,7 +166,7 @@ export const StakedValueModal: FC<{ value: string; isOpened: boolean; onDismiss:
 									sign: '$',
 								})}
 							</div>
-							<Svg src={ArrowForwardBlue} />
+							<ArrowForwardBlue width="12" />
 							<div>
 								{' '}
 								{formatCurrency('sUSD', currentSnapshotOrLast.issuanceDebt, {
@@ -184,7 +183,7 @@ export const StakedValueModal: FC<{ value: string; isOpened: boolean; onDismiss:
 									sign: '$',
 								})}
 							</div>
-							<Svg src={ArrowForwardBlue} />
+							<ArrowForwardBlue width="12" />
 							<div>
 								{' '}
 								{formatCurrency('sUSD', currentSnapshotOrLast.issuanceDebt, {

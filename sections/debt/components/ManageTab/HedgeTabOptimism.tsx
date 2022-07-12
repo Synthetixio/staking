@@ -20,8 +20,7 @@ import {
 	StyledMaxButton,
 	StyledSpacer,
 } from './hedge-tab-ui-components';
-import { Svg } from 'react-optimized-image';
-import dhedge from 'assets/svg/app/dhedge.svg';
+import Dhedge from 'assets/svg/app/dhedge.svg';
 import { useTranslation } from 'react-i18next';
 import { formatCryptoCurrency } from 'utils/formatters/number';
 import Connector from 'containers/Connector';
@@ -154,7 +153,7 @@ const HedgeTabOptimism = () => {
 				<StyledInputLabel>
 					{t('debt.actions.manage.buying')}
 					<StyledCryptoCurrencyBox>
-						<Svg src={dhedge} width={24} height={24} />
+						<Dhedge width="24" />
 						dSNX
 					</StyledCryptoCurrencyBox>
 				</StyledInputLabel>
@@ -182,13 +181,13 @@ const HedgeTabOptimism = () => {
 			</StyledBackgroundTab>
 			{approveTx.isLoading && (
 				<LoaderContainer>
-					<Svg width={20} height={20} src={LoaderIcon} />
+					<LoaderIcon width="20" />
 					<LoaderText>{t('debt.actions.manage.approving-dsnx')}</LoaderText>
 				</LoaderContainer>
 			)}
 			{depositTx.isLoading && (
 				<LoaderContainer>
-					<Svg width={20} height={20} src={LoaderIcon} />
+					<LoaderIcon width="20" />
 					<LoaderText>{t('debt.actions.manage.buying-dsnx')}</LoaderText>
 				</LoaderContainer>
 			)}
@@ -196,7 +195,7 @@ const HedgeTabOptimism = () => {
 				<>
 					{depositTx.errorMessage && (
 						<ErrorText>
-							<Svg width={30} height={40} src={WarningIcon} />
+							<WarningIcon width="30" />
 							{depositTx.errorMessage}
 						</ErrorText>
 					)}
@@ -207,7 +206,7 @@ const HedgeTabOptimism = () => {
 							approved ? depositTx.mutate() : approveTx.mutate();
 						}}
 						variant="primary"
-						disabled={wei(amountToSend || '0').eq(0) || Boolean(depositTx.errorMessage)}
+						disabled={wei(actualAmountToSendBn || '0').eq(0) || Boolean(depositTx.errorMessage)}
 					>
 						{approved ? t('debt.actions.manage.swap') : t('debt.actions.manage.approve')}
 					</StyledButton>

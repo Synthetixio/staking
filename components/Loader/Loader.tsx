@@ -1,7 +1,5 @@
 import type { FC } from 'react';
 import LoaderIcon from 'assets/svg/app/loader.svg';
-import { Svg } from 'react-optimized-image';
-
 import { AbsoluteCenteredDiv } from 'styles/common';
 
 type LoaderProps = {
@@ -9,7 +7,7 @@ type LoaderProps = {
 };
 
 export const Loader: FC<LoaderProps> = ({ inline }) => {
-	const loader = <Svg src={LoaderIcon} />;
+	const loader = <LoaderIcon width="38" />;
 
 	return inline ? loader : <AbsoluteCenteredDiv>{loader}</AbsoluteCenteredDiv>;
 };

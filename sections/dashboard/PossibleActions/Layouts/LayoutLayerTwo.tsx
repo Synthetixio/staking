@@ -1,5 +1,4 @@
 import { FC, useMemo } from 'react';
-import { Svg } from 'react-optimized-image';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -54,7 +53,7 @@ const LayoutLayerTwo: FC = () => {
 			{
 				icon: (
 					<GlowingCircle variant={!aboveTargetCRatio ? 'orange' : 'blue'} size="md">
-						{!aboveTargetCRatio ? <Svg src={BurnIcon} /> : <Svg src={MintIcon} />}
+						{!aboveTargetCRatio ? <BurnIcon width="38" /> : <MintIcon width="27" />}
 					</GlowingCircle>
 				),
 				title: !aboveTargetCRatio
@@ -70,7 +69,7 @@ const LayoutLayerTwo: FC = () => {
 			{
 				icon: (
 					<GlowingCircle variant="orange" size="md">
-						<Svg src={KwentaIcon} width="32" />
+						<KwentaIcon width="32" />
 					</GlowingCircle>
 				),
 				title: t('dashboard.actions.trade.title'),

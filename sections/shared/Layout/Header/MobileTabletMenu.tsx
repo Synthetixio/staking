@@ -1,6 +1,6 @@
 import { FC, useMemo } from 'react';
 import styled from 'styled-components';
-import { Svg } from 'react-optimized-image';
+
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
 
@@ -19,7 +19,7 @@ const MobileTabletMenu: FC = () => {
 	return (
 		<>
 			<Title onClick={() => dispatch({ type: 'open' })}>
-				<Svg src={TitleIcon} />
+				<TitleIcon width="18" />
 				{headerTitle && (
 					<TitleText hasSubTitle={!!headerSubtitle}>{t(`header.${headerTitle}`)}</TitleText>
 				)}

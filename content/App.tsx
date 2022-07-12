@@ -86,16 +86,6 @@ const App: FC<AppProps> = (props) => {
 				<meta name="twitter:image" content="/images/staking-twitter.jpg" />
 				<meta name="twitter:url" content="https://staking.synthetix.io" />
 				<link rel="icon" href="/images/favicon.ico" />
-				<link
-					rel="stylesheet"
-					type="text/css"
-					href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.0/slick.min.css"
-				/>
-				<link
-					rel="stylesheet"
-					type="text/css"
-					href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.0/slick-theme.min.css"
-				/>
 
 				{/* matomo */}
 				<script

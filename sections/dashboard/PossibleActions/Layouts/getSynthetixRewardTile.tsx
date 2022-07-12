@@ -1,5 +1,4 @@
 import Wei from '@synthetixio/wei';
-import { Svg } from 'react-optimized-image';
 import { TFunction } from 'i18next';
 
 import { GlowingCircle } from 'styles/common';
@@ -22,7 +21,7 @@ const getSynthetixRewardTile = (
 		return {
 			icon: (
 				<GlowingCircle variant="green" size="md">
-					<Svg src={ClaimIcon} width="32" viewBox={`0 0 ${ClaimIcon.width} ${ClaimIcon.height}`} />
+					<ClaimIcon width="32" />
 				</GlowingCircle>
 			),
 			title: t('dashboard.actions.claim.title'),
@@ -37,7 +36,7 @@ const getSynthetixRewardTile = (
 	return {
 		icon: (
 			<GlowingCircle variant="green" size="md">
-				<Svg src={ClaimIcon} width="32" viewBox={`0 0 ${ClaimIcon.width} ${ClaimIcon.height}`} />
+				<ClaimIcon width="32" />
 			</GlowingCircle>
 		),
 		title: t('dashboard.actions.claim.title'),
