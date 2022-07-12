@@ -24,7 +24,7 @@
 		"upgrade-synthetix": "yarn up $(./scripts/resolve-synthetix-versions.js latest) --exact",
 		"upgrade-synthetix:dev": "yarn up $(./scripts/resolve-synthetix-versions.js dev) --exact",
 		"download-debt-data": "node download-debt-data.js",
-		"upgrade-browsers": "yarn upgrade caniuse-lite"
+		"upgrade-browsers": "yarn up caniuse-lite --recursive"
 	},
 	"dependencies": {
 		"@artsy/fresnel": "^1.8.0",
@@ -77,10 +77,6 @@
 		"unstated-next": "^1.1.0"
 	},
 	"devDependencies": {
-		"@babel/core": "^7.16.0",
-		"@babel/preset-env": "^7.18.2",
-		"@babel/preset-react": "^7.17.12",
-		"@babel/preset-typescript": "^7.17.12",
 		"@metamask/providers": "^8.1.1",
 		"@microsoft/eslint-formatter-sarif": "^3.0.0",
 		"@next/bundle-analyzer": "^10.2.3",
@@ -92,7 +88,7 @@
 		"@testing-library/user-event": "^14.2.1",
 		"@types/color": "^3.0.1",
 		"@types/date-fns": "^2.6.0",
-		"@types/jest": "^27.0.2",
+		"@types/jest": "^28.1.4",
 		"@types/lodash": "^4.14.159",
 		"@types/node": "^14.0.13",
 		"@types/react": "^17.0.2",
@@ -109,11 +105,8 @@
 		"@types/styled-components": "^5.1.2",
 		"@typescript-eslint/eslint-plugin": "^5.28.0",
 		"@typescript-eslint/parser": "^5.28.0",
-		"babel-eslint": "^10.1.0",
-		"babel-jest": "^28.1.1",
-		"babel-plugin-styled-components": "^2.0.7",
 		"browserslist": "^4.20.4",
-		"caniuse-lite": "^1.0.30001355",
+		"caniuse-lite": "^1.0.30001364",
 		"csvtojson": "^2.0.10",
 		"env-cmd": "^10.1.0",
 		"eslint": "^8.18.0",
@@ -132,13 +125,12 @@
 		"file-loader": "^6.2.0",
 		"graph-results-pager": "^1.0.3",
 		"husky": "^8.0.1",
-		"jest": "^28.1.1",
-		"jest-environment-jsdom": "^28.1.1",
+		"jest": "^28.1.2",
+		"jest-environment-jsdom": "^28.1.2",
 		"lint-staged": "^13.0.2",
 		"prettier": "^2.7.1",
 		"react-test-renderer": "^17.0.2",
 		"remarkable-external-link": "^1.1.0",
-		"svg-jest": "^1.0.1",
 		"typescript": "^4.7.4",
 		"url-loader": "^4.1.1"
 	},
@@ -162,5 +154,11 @@
 		"**/*.{json,yml,yaml,md}": [
 			"prettier --check"
 		]
-	}
+	},
+	"browserslist": [
+		"last 1 Chrome version",
+		"last 1 Firefox version",
+		"last 1 Edge version",
+		"last 1 Opera version"
+	]
 }
