@@ -31,6 +31,7 @@ function optimiseContracts(config, { webpack }) {
 }
 
 module.exports = withPlugins([withBundleAnalyzer], {
+	swcMinify: true,
 	webpack: (config, context) => {
 		config.resolve.mainFields = ['module', 'browser', 'main'];
 		optimiseContracts(config, context);
@@ -42,16 +43,16 @@ module.exports = withPlugins([withBundleAnalyzer], {
 
 		config.module.rules.push({
 			test: /\.(png|jpg|ico|gif|woff|woff2|ttf|eot|doc|pdf|zip|wav|avi|txt|webp)$/,
-			use: [
-				{
-					loader: 'url-loader',
-					options: {
-						limit: 4 * 1024, // 4kb
-						outputPath: './static/images',
-						publicPath: '/_next/static/images',
-					},
+			type: 'asset',
+			generator: {
+				outputPath: './static/images',
+				publicPath: '/_next/static/images',
+			},
+			parser: {
+				dataUrlCondition: {
+					maxSize: 4 * 1024, // 4kb
 				},
-			],
+			},
 		});
 
 		return config;
