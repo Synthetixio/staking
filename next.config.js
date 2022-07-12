@@ -31,6 +31,7 @@ function optimiseContracts(config, { webpack }) {
 }
 
 module.exports = withPlugins([withBundleAnalyzer], {
+	swcMinify: true,
 	webpack: (config, context) => {
 		config.resolve.mainFields = ['module', 'browser', 'main'];
 		optimiseContracts(config, context);
