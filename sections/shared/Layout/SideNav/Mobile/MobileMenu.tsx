@@ -116,7 +116,6 @@ export const MenuLinkItem = styled.div<{ isActive?: boolean; isL2Switcher?: bool
 		content: '';
 		position: absolute;
 		top: 0;
-		/* the line needs to outside (so around -3px), however due to overflow issues, it needs to be inside for now */
 		right: 0;
 		background: ${(props) => props.theme.colors.blue};
 		display: none;
