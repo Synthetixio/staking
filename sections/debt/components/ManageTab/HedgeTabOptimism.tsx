@@ -206,7 +206,7 @@ const HedgeTabOptimism = () => {
 							approved ? depositTx.mutate() : approveTx.mutate();
 						}}
 						variant="primary"
-						disabled={wei(amountToSend || '0').eq(0) || Boolean(depositTx.errorMessage)}
+						disabled={wei(actualAmountToSendBn || '0').eq(0) || Boolean(depositTx.errorMessage)}
 					>
 						{approved ? t('debt.actions.manage.swap') : t('debt.actions.manage.approve')}
 					</StyledButton>
