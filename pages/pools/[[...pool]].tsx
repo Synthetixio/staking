@@ -1,9 +1,5 @@
 import dynamic from 'next/dynamic';
-import { safeImport } from '@synthetixio/safe-import';
 
-const PoolsPage = dynamic(
-	() => safeImport(() => import(/* webpackChunkName: "pools" */ 'content/PoolsPage')),
-	{ ssr: true }
-);
+const PoolsPage = dynamic(() => import('content/PoolsPage'), { ssr: false });
 
 export default PoolsPage;

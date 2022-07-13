@@ -1,9 +1,5 @@
 import dynamic from 'next/dynamic';
-import { safeImport } from '@synthetixio/safe-import';
 
-const L2Page = dynamic(
-	() => safeImport(() => import(/* webpackChunkName: "l2" */ 'content/L2Page')),
-	{ ssr: true }
-);
+const L2Page = dynamic(() => import('content/L2Page'), { ssr: false });
 
 export default L2Page;
