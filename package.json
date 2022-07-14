@@ -30,6 +30,7 @@
 		"@artsy/fresnel": "^1.8.0",
 		"@reach/dialog": "^0.15.3",
 		"@snapshot-labs/snapshot.js": "^0.3.22",
+		"@socket.tech/widget": "0.0.2",
 		"@synthetixio/assets": "^2.0.13",
 		"@synthetixio/contracts-interface": "^2.74.1",
 		"@synthetixio/optimism-networks": "^2.74.1",
