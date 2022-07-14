@@ -1,6 +1,8 @@
 import Document, { Html, Head, Main, NextScript } from 'next/document';
 import { ServerStyleSheet } from 'styled-components';
 import { mediaStyles } from 'styles/media';
+import Colors from 'styles/theme/colors';
+import GlobalLoader from 'components/GlobalLoader';
 
 const PRELOADED_FONTS = [
 	'/fonts/Inter-Regular.woff2',
@@ -44,6 +46,16 @@ export default class MyDocument extends Document {
 			<Html lang="en">
 				<Head>
 					<style type="text/css" dangerouslySetInnerHTML={{ __html: mediaStyles }} />
+					<style
+						type="text/css"
+						dangerouslySetInnerHTML={{
+							__html: `
+								body {
+									background-color: ${Colors.black};
+								}
+							`,
+						}}
+					/>
 					{PRELOADED_FONTS.map((fontPath) => (
 						<link
 							key={fontPath}
@@ -57,6 +69,9 @@ export default class MyDocument extends Document {
 				</Head>
 				<body>
 					<Main />
+					<div id="global-loader">
+						<GlobalLoader />
+					</div>
 					<NextScript />
 				</body>
 			</Html>

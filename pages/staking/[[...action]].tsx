@@ -1,9 +1,9 @@
 import dynamic from 'next/dynamic';
-import { safeImport } from '@synthetixio/safe-import';
+import GlobalLoader from 'components/GlobalLoader';
 
-const StakingPage = dynamic(
-	() => safeImport(() => import(/* webpackChunkName: "staking" */ 'content/StakingPage')),
-	{ ssr: true }
-);
+const StakingPage = dynamic(() => import('content/StakingPage'), {
+	ssr: false,
+	loading: GlobalLoader,
+});
 
 export default StakingPage;

@@ -1,9 +1,9 @@
 import dynamic from 'next/dynamic';
-import { safeImport } from '@synthetixio/safe-import';
+import GlobalLoader from 'components/GlobalLoader';
 
-const EscrowPage = dynamic(
-	() => safeImport(() => import(/* webpackChunkName: "escrow" */ 'content/EscrowPage')),
-	{ ssr: true }
-);
+const EscrowPage = dynamic(() => import('content/EscrowPage'), {
+	ssr: false,
+	loading: GlobalLoader,
+});
 
 export default EscrowPage;

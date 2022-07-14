@@ -1,9 +1,9 @@
 import dynamic from 'next/dynamic';
-import { safeImport } from '@synthetixio/safe-import';
+import GlobalLoader from 'components/GlobalLoader';
 
-const SynthsPage = dynamic(
-	() => safeImport(() => import(/* webpackChunkName: "synths" */ 'content/SynthsPage')),
-	{ ssr: true }
-);
+const SynthsPage = dynamic(() => import('content/SynthsPage'), {
+	ssr: false,
+	loading: GlobalLoader,
+});
 
 export default SynthsPage;

@@ -1,4 +1,5 @@
 import React, { FC } from 'react';
+import { useEffect } from 'react';
 import { AppProps } from 'next/app';
 import Head from 'next/head';
 import { RecoilRoot } from 'recoil';
@@ -32,6 +33,12 @@ const queryClient = new QueryClient({
 
 const InnerApp: FC<AppProps> = ({ Component, pageProps }) => {
 	const { provider, signer, network, L1DefaultProvider } = Connector.useContainer();
+
+	useEffect(() => {
+		try {
+			document.querySelector('#global-loader')?.remove();
+		} catch (_e) {}
+	}, []);
 
 	return (
 		<>
