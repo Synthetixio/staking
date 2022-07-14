@@ -1100,6 +1100,11 @@
 			}
 		}
 	},
+	"bridge": {
+		"page-title": "Bridge | Synthetix Staking",
+		"headline": "Bridge any assets between Layer 1 and Layer 2",
+		"connect-wallet-text": "Connect your wallet to use the bridge"
+	},
 	"gov": {
 		"page-title": "Governance | Synthetix Staking",
 		"new-governance-site": {
@@ -1233,13 +1238,13 @@
 		"debt": "Debt",
 		"synths": "Synths",
 		"escrow": "Escrow",
+		"migrate-escrow": "Migrate Escrow",
 		"history": "History",
 		"governance": "Governance",
 		"wallet": "Wallet",
 		"mint-and-burn": "Mint & burn",
-		"l2": "Layer 2",
 		"gov": "Governance",
-		"withdraw": "Withdraw",
+		"bridge": "Bridge",
 		"bars": {
 			"c-ratio": "c-ratio",
 			"t-ratio": "target",
@@ -1595,6 +1600,7 @@
 		"merge-accounts/nominate": "nominate",
 		"merge-accounts/merge": "merge",
 		"merge-accounts/burn": "burn",
-		"pools": "pools"
+		"pools": "pools",
+		"bridge": "bridge"
 	}
 }
