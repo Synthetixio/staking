@@ -44,7 +44,7 @@ tests/e2e/videos
 
 coverage
 tsconfig.tsbuildinfo
-
+dist
 
 .yarn/*
 !.yarn/patches
