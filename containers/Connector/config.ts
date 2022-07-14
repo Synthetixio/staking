@@ -1,98 +1,80 @@
-import { Subscriptions, WalletType } from 'bnc-onboard/dist/src/interfaces';
-import { getInfuraRpcURL } from 'utils/infura';
-import { NetworkId, NetworkIdByName } from '@synthetixio/contracts-interface';
+import { getChainIdHex, getInfuraRpcURL } from 'utils/infura';
+import { NetworkIdByName } from '@synthetixio/contracts-interface';
 
 import Onboard from '@web3-onboard/core';
 import injectedModule from '@web3-onboard/injected-wallets';
+import coinbaseWalletModule from '@web3-onboard/coinbase';
+import walletConnectModule from '@web3-onboard/walletconnect';
+import ledgerModule from '@web3-onboard/ledger';
+import trezorModule from '@web3-onboard/trezor';
+import gnosisModule from '@web3-onboard/gnosis';
+import portisModule from '@web3-onboard/portis';
+import torusModule from '@web3-onboard/torus';
+
+import { SynthetixIcon, SynthetixLogo } from 'components/WalletComponents';
 
 const injected = injectedModule();
+const coinbaseWalletSdk = coinbaseWalletModule({ darkMode: true });
+const walletConnect = walletConnectModule();
+const ledger = ledgerModule();
+const trezor = trezorModule({ email: 'info@synthetix.io', appUrl: 'https://www.synthetix.io' });
+const gnosis = gnosisModule();
+const portis = portisModule({ apiKey: `${process.env.NEXT_PUBLIC_PORTIS_APP_ID}` });
+const torus = torusModule();
 
 export const onboard = Onboard({
+	appMetadata: {
+		name: 'Synthetix',
+		icon: SynthetixIcon,
+		logo: SynthetixLogo,
+		description: 'Synthetix | The derivatives liquidity protocol.',
+		recommendedInjectedWallets: [
+			{ name: 'Coinbase', url: 'https://wallet.coinbase.com/' },
+			{ name: 'MetaMask', url: 'https://metamask.io' },
+		],
+		gettingStartedGuide: 'https://synthetix.io',
+		explore: 'https://blog.synthetix.io/',
+	},
 	apiKey: process.env.NEXT_PUBLIC_BN_ONBOARD_API_KEY,
-	wallets: [injected],
+	wallets: [injected, ledger, trezor, coinbaseWalletSdk, walletConnect, gnosis, portis, torus],
 	chains: [
+		// Mainnet
 		{
-			id: '0x1',
+			id: getChainIdHex(NetworkIdByName.mainnet),
 			token: 'ETH',
 			label: 'Ethereum Mainnet',
-			rpcUrl: getInfuraRpcURL(1),
+			rpcUrl: getInfuraRpcURL(NetworkIdByName.mainnet),
+		},
+		// Mainnet Ovm
+		{
+			id: getChainIdHex(NetworkIdByName['mainnet-ovm']),
+			token: 'ETH',
+			label: 'Optimism Mainnet',
+			rpcUrl: getInfuraRpcURL(NetworkIdByName['mainnet-ovm']),
+		},
+		// Kovan
+		{
+			id: getChainIdHex(NetworkIdByName.kovan),
+			token: 'ETH',
+			label: 'Kovan',
+			rpcUrl: getInfuraRpcURL(NetworkIdByName.kovan),
+		},
+		// Kovan Ovm
+		{
+			id: getChainIdHex(NetworkIdByName['kovan-ovm']),
+			token: 'ETH',
+			label: 'Optimism Kovan',
+			rpcUrl: getInfuraRpcURL(NetworkIdByName['kovan-ovm']),
 		},
 	],
+	accountCenter: {
+		desktop: {
+			enabled: false,
+			containerElement: 'body',
+		},
+		mobile: {
+			enabled: false,
+			containerElement: 'body',
+		},
+	},
 });
-
-// export const initOnboard = (networkId: NetworkId, subscriptions: Subscriptions) => {
-// 	const infuraRpc = getInfuraRpcURL(networkId);
-
-// 	return onboard({
-// 		dappId: process.env.NEXT_PUBLIC_BN_ONBOARD_API_KEY,
-// 		hideBranding: true,
-// 		networkId: Number(networkId),
-// 		subscriptions,
-// 		darkMode: true,
-// 		walletSelect: {
-// 			wallets: [
-// 				{
-// 					name: 'Browser Wallet',
-// 					iconSrc: '/images/browserWallet.svg',
-// 					type: 'injected' as WalletType,
-// 					link: 'https://metamask.io',
-// 					wallet: async (helpers) => {
-// 						const { createModernProviderInterface } = helpers;
-// 						const provider = window.ethereum;
-// 						return {
-// 							provider,
-// 							interface: provider ? createModernProviderInterface(provider) : null,
-// 						};
-// 					},
-// 					preferred: true,
-// 					desktop: true,
-// 					mobile: true,
-// 				},
-// 				{
-// 					walletName: 'lattice',
-// 					appName: 'Synthetix',
-// 					rpcUrl: infuraRpc,
-// 				},
-// 				{
-// 					walletName: 'ledger',
-// 					rpcUrl: infuraRpc,
-// 					preferred: true,
-// 				},
-// 				{
-// 					walletName: 'trezor',
-// 					appUrl: 'https://www.synthetix.io',
-// 					email: 'info@synthetix.io',
-// 					rpcUrl: infuraRpc,
-// 					preferred: true,
-// 				},
-// 				{
-// 					walletName: 'walletConnect',
-// 					rpc: {
-// 						[NetworkIdByName.mainnet]: getInfuraRpcURL(NetworkIdByName.mainnet),
-// 						[NetworkIdByName['mainnet-ovm']]: getInfuraRpcURL(NetworkIdByName['mainnet-ovm']),
-// 						[NetworkIdByName['kovan']]: getInfuraRpcURL(NetworkIdByName['kovan']),
-// 						[NetworkIdByName['kovan-ovm']]: getInfuraRpcURL(NetworkIdByName['kovan-ovm']),
-// 					},
-// 					preferred: true,
-// 				},
-// 				{ walletName: 'imToken', rpcUrl: infuraRpc, preferred: true },
-// 				{
-// 					walletName: 'portis',
-// 					apiKey: process.env.NEXT_PUBLIC_PORTIS_APP_ID,
-// 				},
-// 				{ walletName: 'gnosis' },
-// 				{ walletName: 'trust', rpcUrl: infuraRpc },
-// 				{ walletName: 'walletLink', rpcUrl: infuraRpc, preferred: true },
-// 				{ walletName: 'torus' },
-// 				{ walletName: 'status' },
-// 				{ walletName: 'authereum' },
-// 				{ walletName: 'tally', preferred: true },
-// 			],
-// 		},
-// 		walletCheck: [
-// 			{ checkName: 'derivationPath' },
-// 			{ checkName: 'accounts' },
-// 			{ checkName: 'connect' },
-// 		],
-// 	});
-// };

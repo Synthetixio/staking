@@ -19,3 +19,11 @@ export const getInfuraRpcURL = (networkId?: NetworkId) => {
 	}.infura.io/v3/${process.env.NEXT_PUBLIC_INFURA_PROJECT_ID}`;
 	return url;
 };
+
+export const getChainIdHex = (networkId: NetworkId) => {
+	return `0x${networkId.toString(16)}`;
+};
+
+export const getNetworkIdFromHex = (chainId: string) => {
+	return parseInt(chainId, 16);
+};

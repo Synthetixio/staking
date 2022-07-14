@@ -12,7 +12,7 @@ import ROUTES from 'constants/routes';
 import { CryptoCurrency, Synths } from 'constants/currency';
 import { DESKTOP_SIDE_NAV_WIDTH, zIndex } from 'constants/ui';
 
-import { isL2State, walletAddressState, delegateWalletState } from 'store/wallet';
+import { delegateWalletState } from 'store/wallet';
 
 import PriceItem from 'sections/shared/Layout/Stats/PriceItem';
 import PeriodBarStats from 'sections/shared/Layout/Stats/PeriodBarStats';
@@ -29,9 +29,8 @@ import Connector from 'containers/Connector';
 import { endOfHour, subDays } from 'date-fns';
 
 const DesktopSideNav: FC = () => {
-	const walletAddress = useRecoilValue(walletAddressState);
 	const delegateWallet = useRecoilValue(delegateWalletState);
-	const isL2 = useRecoilValue(isL2State);
+	const { walletAddress, isL2 } = Connector.useContainer();
 
 	const { t } = useTranslation();
 	const { useSynthsBalancesQuery } = useSynthetixQueries();

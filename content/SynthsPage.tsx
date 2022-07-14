@@ -9,15 +9,14 @@ import { LineSpacer } from 'styles/common';
 import Main from 'sections/synths';
 import { formatCurrency } from 'utils/formatters/number';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import { useRecoilValue } from 'recoil';
-import { walletAddressState } from 'store/wallet';
 import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
+import Connector from 'containers/Connector';
 
 const SynthsPage: FC = () => {
 	const { t } = useTranslation();
 
-	const walletAddress = useRecoilValue(walletAddressState);
+	const { walletAddress } = Connector.useContainer();
 	const { useSynthsBalancesQuery } = useSynthetixQueries();
 
 	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);

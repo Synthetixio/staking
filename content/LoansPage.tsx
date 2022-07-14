@@ -3,6 +3,7 @@ import Head from 'next/head';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
+import Connector from 'containers/Connector';
 
 import StatBox from 'components/StatBox';
 import { LineSpacer } from 'styles/common';
@@ -15,8 +16,6 @@ import StakedValue from 'sections/shared/modals/StakedValueModal/StakedValueBox'
 import ActiveDebt from 'sections/shared/modals/DebtValueModal/DebtValueBox';
 
 import Main from 'sections/loans/index';
-import { useRecoilValue } from 'recoil';
-import { walletAddressState } from 'store/wallet';
 import Loans from 'containers/Loans';
 
 type LoansPageProps = {};
@@ -25,7 +24,7 @@ const LoansPage: FC<LoansPageProps> = () => {
 	const { t } = useTranslation();
 	const router = useRouter();
 
-	const walletAddress = useRecoilValue(walletAddressState);
+	const { walletAddress } = Connector.useContainer();
 
 	const { stakedCollateralValue, debtBalance } = useStakingCalculations();
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();

@@ -1,10 +1,10 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 
 import styled from 'styled-components';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 import Tippy from '@tippyjs/react';
 
-import { gasSpeedState, isL2State } from 'store/wallet';
+import { gasSpeedState } from 'store/wallet';
 import { GasLimitEstimate } from 'constants/network';
 
 import useSynthetixQueries, { GasPrice, GAS_SPEEDS } from '@synthetixio/queries';
@@ -20,6 +20,7 @@ import { FlexDivRow, FlexDivRowCentered, NumericValue } from 'styles/common';
 import Info from 'assets/svg/app/info.svg';
 import Wei from '@synthetixio/wei';
 import GasPriceDisplay from './GasPriceDisplay';
+import Connector from 'containers/Connector';
 
 type GasSelectorProps = {
 	gasLimitEstimate: GasLimitEstimate;
@@ -37,7 +38,7 @@ const GasSelector: React.FC<GasSelectorProps> = ({
 }) => {
 	const { t } = useTranslation();
 	const [gasSpeed, setGasSpeed] = useRecoilState(gasSpeedState);
-	const isL2 = useRecoilValue(isL2State);
+	const { isL2 } = Connector.useContainer();
 
 	const { useExchangeRatesQuery, useEthGasPriceQuery } = useSynthetixQueries();
 
@@ -49,6 +50,7 @@ const GasSelector: React.FC<GasSelectorProps> = ({
 	const exchangeRates = exchangeRatesQuery.data ?? null;
 
 	const gasPrice = gasPriceQuery.data != null ? gasPriceQuery.data[gasSpeed] : null;
+
 	useEffect(() => {
 		if (gasPrice) {
 			const gasPriceForTransaction =

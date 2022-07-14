@@ -4,7 +4,7 @@ import { useRecoilValue } from 'recoil';
 import QUERY_KEYS from 'constants/queryKeys';
 
 import { isL2State, isWalletConnectedState, networkState, walletAddressState } from 'store/wallet';
-import { appReadyState } from 'store/app';
+
 import { parseEther } from 'ethers/lib/utils';
 import axios from 'axios';
 import { swapEndpoint } from 'constants/1inch';
@@ -29,12 +29,7 @@ const use1InchSwapQuery = (
 	slippage: number,
 	options?: UseQueryOptions<SwapTxData>
 ) => {
-	const { isAppReady } = Connector.useContainer();
-
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	const walletAddress = useRecoilValue(walletAddressState);
-	const network = useRecoilValue(networkState);
-	const isL2 = useRecoilValue(isL2State);
+	const { isAppReady, isWalletConnected, walletAddress, network, isL2 } = Connector.useContainer();
 
 	return useQuery<SwapTxData>(
 		QUERY_KEYS.Swap.swap1Inch(walletAddress ?? '', network?.id!, amount, fromAddress),

@@ -15,14 +15,15 @@ import { formatFiatCurrency, formatPercent } from 'utils/formatters/number';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import useSynthetixQueries from '@synthetixio/queries';
 import { useRecoilValue } from 'recoil';
-import { walletAddressState, delegateWalletState } from 'store/wallet';
+import { delegateWalletState } from 'store/wallet';
 import { wei } from '@synthetixio/wei';
 import useLiquidationRewards from 'hooks/useLiquidationRewards';
+import Connector from 'containers/Connector';
 
 const EarnPage: FC = () => {
 	const { t } = useTranslation();
 
-	const walletAddress = useRecoilValue(walletAddressState);
+	const { walletAddress } = Connector.useContainer();
 	const delegateWallet = useRecoilValue(delegateWalletState);
 	const addressToUse = delegateWallet?.address || walletAddress!;
 

@@ -1,10 +1,7 @@
 import { useQuery, UseQueryOptions } from 'react-query';
-import { useRecoilValue } from 'recoil';
 
 import QUERY_KEYS from 'constants/queryKeys';
 
-import { isL2State, isWalletConnectedState, networkState, walletAddressState } from 'store/wallet';
-import { appReadyState } from 'store/app';
 import { formatEther, parseEther } from 'ethers/lib/utils';
 import axios from 'axios';
 import { quoteEndpoint } from 'constants/1inch';
@@ -21,12 +18,7 @@ const use1InchQuoteQuery = (
 	amount: WeiSource,
 	options?: UseQueryOptions<QuoteData>
 ) => {
-	const { isAppReady } = Connector.useContainer();
-
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	const walletAddress = useRecoilValue(walletAddressState);
-	const network = useRecoilValue(networkState);
-	const isL2 = useRecoilValue(isL2State);
+	const { isAppReady, isL2, walletAddress, network, isWalletConnected } = Connector.useContainer();
 
 	return useQuery<QuoteData>(
 		QUERY_KEYS.Swap.quote1Inch(walletAddress ?? '', network?.id!, amount),

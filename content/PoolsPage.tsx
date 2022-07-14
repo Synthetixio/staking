@@ -3,11 +3,9 @@ import { BigNumber, utils } from 'ethers';
 import Head from 'next/head';
 import { useCallback, useEffect, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 import { useGetUniswapStakingRewardsAPY } from 'sections/pool/useGetUniswapStakingRewardsAPY';
 import PoolTabs from 'sections/pool/TabsButton';
 import { useGUNILPToken } from 'sections/pool/useGUNILPToken';
-import { isL2State, isWalletConnectedState, walletAddressState } from 'store/wallet';
 import styled from 'styled-components';
 import media from 'styled-media-query';
 import { ExternalLink, FlexDivCol, LineSpacer, StatsSection } from 'styles/common';
@@ -24,7 +22,9 @@ function Pool() {
 	const [allowanceAmount, setAllowanceAmount] = useState(BigNumber.from(0));
 	const [stakedTokens, setStakedTokens] = useState(BigNumber.from(0));
 	const { t } = useTranslation();
-	const walletAddress = useRecoilValue(walletAddressState);
+
+	const { walletAddress } = Connector.useContainer();
+
 	const snx = synthetix({ networkId: NetworkIdByName['mainnet-ovm'], useOvm: true });
 	const { balanceOf, rewards, allowance, stakedTokensBalance } = useGUNILPToken({
 		pool: 'weth-snx',
@@ -143,11 +143,9 @@ function Pool() {
 }
 
 const PoolWrapper = () => {
-	const isL2 = useRecoilValue(isL2State);
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const { t } = useTranslation();
-	const walletAddress = useRecoilValue(walletAddressState);
-	const { connectWallet } = Connector.useContainer();
+	const { connectWallet, isL2, isWalletConnected, walletAddress } = Connector.useContainer();
+
 	if (!isWalletConnected || !walletAddress) {
 		return (
 			<WrapperContainer>

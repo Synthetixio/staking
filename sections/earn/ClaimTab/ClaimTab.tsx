@@ -79,23 +79,21 @@ type ClaimTabProps = {
 const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, totalRewards }) => {
 	const { t } = useTranslation();
 	const router = useRouter();
+	const { isAppReady, walletAddress, isL2, isWalletConnected } = Connector.useContainer();
 
-	const walletAddress = useRecoilValue(walletAddressState);
 	const delegateWallet = useRecoilValue(delegateWalletState);
 	const { useSynthetixTxn, useGetFeePoolDataQuery } = useSynthetixQueries();
 
 	const { isBelowCRatio } = useUserStakingData(delegateWallet?.address ?? walletAddress);
 	const { blockExplorerInstance } = Etherscan.useContainer();
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	const { isAppReady } = Connector.useContainer();
 	const [gasPrice, setGasPrice] = useState<GasPrice | undefined>(undefined);
 	const [error, setError] = useState<string | null>(null);
 	const [claimedTradingRewards, setClaimedTradingRewards] = useState<number | null>(null);
 	const [claimedStakingRewards, setClaimedStakingRewards] = useState<number | null>(null);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 	const userStakingData = useUserStakingData(walletAddress);
-	const isL2 = useRecoilValue(isL2State);
+
 	const feePoolDataQuery = useGetFeePoolDataQuery(0, { enabled: isL2 });
 
 	const claimCall: [string, string[]] = delegateWallet

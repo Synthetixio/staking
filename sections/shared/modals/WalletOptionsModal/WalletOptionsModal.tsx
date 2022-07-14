@@ -1,29 +1,10 @@
 import { Dispatch, FC, SetStateAction, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 
-import {
-	isWalletConnectedState,
-	delegateWalletState,
-	truncatedWalletAddressState,
-	walletAddressState,
-	walletWatchedState,
-} from 'store/wallet';
-
-import BrowserWalletIcon from 'assets/wallet-icons/browserWallet.svg';
-import LedgerIcon from 'assets/wallet-icons/ledger.svg';
-import TrezorIcon from 'assets/wallet-icons/trezor.svg';
-import WalletConnectIcon from 'assets/wallet-icons/walletConnect.svg';
-import CoinbaseIcon from 'assets/wallet-icons/coinbase.svg';
-import PortisIcon from 'assets/wallet-icons/portis.svg';
-import TrustIcon from 'assets/wallet-icons/trust.svg';
-import DapperIcon from 'assets/wallet-icons/dapper.png';
-import TorusIcon from 'assets/wallet-icons/torus.svg';
-import StatusIcon from 'assets/wallet-icons/status.svg';
-import AuthereumIcon from 'assets/wallet-icons/authereum.png';
-import ImTokenIcon from 'assets/wallet-icons/imtoken.svg';
+import { delegateWalletState, walletWatchedState } from 'store/wallet';
 
 import CopyIcon from 'assets/svg/app/copy.svg';
 import LinkIcon from 'assets/svg/app/link.svg';
@@ -48,43 +29,12 @@ import {
 	FlexDivCentered,
 	Divider,
 } from 'styles/common';
+import { truncateAddress } from 'utils/formatters/string';
 
 export type WalletOptionsProps = {
 	onDismiss: () => void;
 	setWatchWalletModalOpened: Dispatch<SetStateAction<boolean>>;
 	setDelegateModalOpened: Dispatch<SetStateAction<boolean>>;
-};
-
-const getWalletIcon = (selectedWallet?: string | null) => {
-	switch (selectedWallet) {
-		case 'browser wallet':
-			return <BrowserWalletIcon />;
-		case 'trezor':
-			return <TrezorIcon />;
-		case 'ledger':
-			return <LedgerIcon />;
-		case 'walletconnect':
-			return <WalletConnectIcon />;
-		case 'coinbase wallet':
-		case 'walletlink':
-			return <CoinbaseIcon />;
-		case 'portis':
-			return <PortisIcon />;
-		case 'trust':
-			return <TrustIcon />;
-		case 'dapper':
-			return <img alt="Dapper" src={DapperIcon.src} />;
-		case 'torus':
-			return <TorusIcon />;
-		case 'status':
-			return <StatusIcon />;
-		case 'authereum':
-			return <img alt="Authereum" src={AuthereumIcon.src} />;
-		case 'imtoken':
-			return <ImTokenIcon />;
-		default:
-			return selectedWallet;
-	}
 };
 
 const exitIcon = <ExitIcon width="16" />;
@@ -100,13 +50,19 @@ const WalletOptionsModal: FC<WalletOptionsProps> = ({
 }) => {
 	const { t } = useTranslation();
 	const [copiedAddress, setCopiedAddress] = useState<boolean>(false);
-	const { connectWallet, disconnectWallet, switchAccounts, isHardwareWallet, selectedWallet } =
-		Connector.useContainer();
+
+	const {
+		connectWallet,
+		disconnectWallet,
+		switchAccounts,
+		isHardwareWallet,
+		selectedWallet,
+		walletAddress,
+		isWalletConnected,
+	} = Connector.useContainer();
 	const { blockExplorerInstance } = Etherscan.useContainer();
 
-	const [walletAddress, setWalletAddress] = useRecoilState(walletAddressState);
-	const truncatedWalletAddress = useRecoilValue(truncatedWalletAddressState);
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
+	const truncatedWalletAddress = walletAddress && truncateAddress(walletAddress);
 	const [delegateWallet, setDelegateWallet] = useRecoilState(delegateWalletState);
 	const [walletWatched, setWalletWatched] = useRecoilState(walletWatchedState);
 
@@ -123,12 +79,10 @@ const WalletOptionsModal: FC<WalletOptionsProps> = ({
 			{isWalletConnected ? (
 				<>
 					<WalletDetails>
-						{walletWatched ? (
+						{walletWatched && (
 							<SelectedWallet>
 								<Incognito />
 							</SelectedWallet>
-						) : (
-							<SelectedWallet>{getWalletIcon(selectedWallet?.toLowerCase())}</SelectedWallet>
 						)}
 						<WalletAddress>{truncatedWalletAddress}</WalletAddress>
 						<ActionIcons>
@@ -217,7 +171,8 @@ const WalletOptionsModal: FC<WalletOptionsProps> = ({
 							onClick={() => {
 								onDismiss();
 								setWalletWatched(null);
-								setWalletAddress(null);
+								console.log('wallet watched this set walletAddress');
+								// setWalletAddress(null);
 							}}
 						>
 							{exitIcon} {t('modals.wallet.stop-watching')}

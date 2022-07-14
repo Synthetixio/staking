@@ -3,7 +3,7 @@ import Wei, { wei } from '@synthetixio/wei';
 import { EXTERNAL_LINKS } from 'constants/links';
 import React from 'react';
 import { useRecoilValue } from 'recoil';
-import { delegateWalletState, walletAddressState } from 'store/wallet';
+import { delegateWalletState } from 'store/wallet';
 import styled from 'styled-components';
 import { ExternalLink, LineSpacer } from 'styles/common';
 import { formatShortDateWithTime } from 'utils/formatters/date';
@@ -13,6 +13,7 @@ import { useTranslation } from 'react-i18next';
 import { Trans } from 'react-i18next';
 import useGetSnxAmountToBeLiquidatedUsd from 'hooks/useGetSnxAmountToBeLiquidatedUsd';
 import SelfLiquidateTransactionButton from 'components/SelfLiquidateTransactionButton';
+import Connector from 'containers/Connector';
 
 const SelfLiquidationText: React.FC<{
 	totalSNXBalance: Wei;
@@ -123,7 +124,7 @@ const SelfLiquidation: React.FC<{
 }) => {
 	const { useGetLiquidationDataQuery } = useSynthetixQueries();
 
-	const walletAddress = useRecoilValue(walletAddressState);
+	const { walletAddress } = Connector.useContainer();
 	const delegateWallet = useRecoilValue(delegateWalletState);
 	const isDelegateWallet = Boolean(delegateWallet?.address);
 	const liquidationQuery = useGetLiquidationDataQuery(walletAddress);

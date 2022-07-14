@@ -1,9 +1,7 @@
 import { FC, useState, useMemo, useCallback, useEffect } from 'react';
-import { useRecoilValue } from 'recoil';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
 
-import { isL2State, isWalletConnectedState, walletAddressState } from 'store/wallet';
 import Connector from 'containers/Connector';
 import GasSelector from 'components/GasSelector';
 
@@ -54,13 +52,11 @@ const getCollateralAsset = (debtAsset: string, isL2: boolean) => {
 
 const BorrowSynthsTab: FC<BorrowSynthsTabProps> = () => {
 	const { t } = useTranslation();
-	const { signer, synthetixjs, connectWallet, network } = Connector.useContainer();
+	const { signer, synthetixjs, connectWallet, network, isL2, isWalletConnected, walletAddress } =
+		Connector.useContainer();
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 	const router = useRouter();
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	const isL2 = useRecoilValue(isL2State);
 
-	const address = useRecoilValue(walletAddressState);
 	const { renBTCContract, minCRatios } = Loans.useContainer();
 	const { useExchangeRatesQuery, useContractTxn, useSynthetixTxn, useTokensBalancesQuery } =
 		useSynthetixQueries();
@@ -85,7 +81,7 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = () => {
 	const collateralIsETH = collateralAsset === 'ETH';
 	const collateralContract = collateralIsETH ? null : renBTCContract;
 	const balancesToFetch = isL2 ? [ethToken] : [renToken, ethToken];
-	const balances = useTokensBalancesQuery(balancesToFetch, address);
+	const balances = useTokensBalancesQuery(balancesToFetch, walletAddress);
 
 	const minCRatio = collateralIsETH ? minCRatios.ethMinCratio : minCRatios.erc20MinCratio;
 
@@ -120,8 +116,10 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = () => {
 			return ethers.constants.MaxUint256;
 		}
 
-		if (address && collateralContract && loanContract) {
-			const allowance = wei(await collateralContract.allowance(address, loanContract?.address));
+		if (walletAddress && collateralContract && loanContract) {
+			const allowance = wei(
+				await collateralContract.allowance(walletAddress, loanContract?.address)
+			);
 
 			setAllowance(allowance);
 
@@ -129,7 +127,7 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = () => {
 		}
 
 		return null;
-	}, [address, collateralContract, collateralIsETH, loanContract]);
+	}, [walletAddress, collateralContract, collateralIsETH, loanContract]);
 
 	const rawCollateralBalance = collateralIsETH
 		? balances.data?.ETH?.balance

@@ -17,14 +17,7 @@ import UI from 'containers/UI';
 import Button from 'components/Button';
 import { DesktopOnlyView, DesktopOrTabletView, MobileOrTabletView } from 'components/Media';
 
-import {
-	isWalletConnectedState,
-	truncatedWalletAddressState,
-	networkState,
-	delegateWalletState,
-	ensNameState,
-	ensAvatarState,
-} from 'store/wallet';
+import { delegateWalletState } from 'store/wallet';
 
 import {
 	DesktopWalletOptionsModal,
@@ -41,24 +34,28 @@ import Warning from 'assets/svg/app/warning.svg';
 import DelegateIcon from 'assets/svg/app/delegate.svg';
 import WatchWalletModal from 'sections/shared/modals/WatchWalletModal';
 import DelegateModal from 'sections/shared/modals/DelegateModal';
+import Connector from 'containers/Connector';
+import { truncateAddress } from 'utils/formatters/string';
 
 const UserMenu: FC = () => {
 	const { t } = useTranslation();
 	const { networkError } = UI.useContainer();
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
+
+	const { network, ensName, ensAvatar, isWalletConnected, walletAddress } =
+		Connector.useContainer();
+
 	const [walletOptionsModalOpened, setWalletOptionsModalOpened] = useState<boolean>(false);
 	const [settingsModalOpened, setSettingsModalOpened] = useState<boolean>(false);
 	const [watchWalletModalOpened, setWatchWalletModalOpened] = useState<boolean>(false);
 	const [delegateModalOpened, setDelegateModalOpened] = useState<boolean>(false);
-	const truncatedWalletAddress = useRecoilValue(truncatedWalletAddressState);
-	const ensName = useRecoilValue(ensNameState);
-	const ensAvatar = useRecoilValue(ensAvatarState);
+
+	const truncatedWalletAddress = walletAddress && truncateAddress(walletAddress);
+
 	const delegateWallet = useRecoilValue(delegateWalletState);
-	const network = useRecoilValue(networkState);
 
 	const getNetworkName = () => {
 		if (network?.useOvm) {
-			return `0Ξ ${network?.name}`;
+			return `0Ξ ${network?.name.split('-')[0]}`;
 		} else return network?.name;
 	};
 

@@ -1,9 +1,7 @@
-import { useRecoilValue } from 'recoil';
 import { useMutation, UseMutationOptions, useQueryClient } from 'react-query';
 import axios, { AxiosResponse } from 'axios';
 
 import { MESSAGE_URL, snapshotEndpoint, SPACE_KEY } from 'constants/snapshot';
-import { walletAddressState } from 'store/wallet';
 import Connector from 'containers/Connector';
 import { ethers } from 'ethers';
 
@@ -49,8 +47,7 @@ type SignaturePayload = {
 const useSignMessage = (
 	options: UseMutationOptions<AxiosResponse<any>, any, SignaturePayload, unknown> = {}
 ) => {
-	const { signer } = Connector.useContainer();
-	const walletAddress = useRecoilValue(walletAddressState);
+	const { signer, walletAddress } = Connector.useContainer();
 
 	const qc = useQueryClient();
 

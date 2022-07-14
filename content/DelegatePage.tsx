@@ -2,6 +2,7 @@ import { FC } from 'react';
 import Head from 'next/head';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
+import Connector from 'containers/Connector';
 
 import StatBox from 'components/StatBox';
 import { LineSpacer } from 'styles/common';
@@ -13,13 +14,11 @@ import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { formatFiatCurrency, formatPercent } from 'utils/formatters/number';
 import StakedValue from 'sections/shared/modals/StakedValueModal/StakedValueBox';
 import ActiveDebt from 'sections/shared/modals/DebtValueModal/DebtValueBox';
-import { useRecoilValue } from 'recoil';
-import { walletAddressState } from 'store/wallet';
 
 const DelegatePage: FC = () => {
 	const { t } = useTranslation();
 
-	const walletAddress = useRecoilValue(walletAddressState);
+	const { walletAddress } = Connector.useContainer();
 
 	const { stakedCollateralValue, debtBalance } = useStakingCalculations();
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();

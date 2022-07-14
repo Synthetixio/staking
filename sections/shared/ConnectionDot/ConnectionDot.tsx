@@ -1,15 +1,12 @@
 import React from 'react';
 import styled, { useTheme } from 'styled-components';
-import { useRecoilValue } from 'recoil';
-import { networkState, isWalletConnectedState } from 'store/wallet';
 import { NetworkIdByName } from '@synthetixio/contracts-interface';
+import Connector from 'containers/Connector';
 
 type ConnectionDotProps = {};
 
 const ConnectionDot: React.FC<ConnectionDotProps> = ({ ...rest }) => {
-	const network = useRecoilValue(networkState);
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	const isL2 = network?.useOvm ?? false;
+	const { network, isWalletConnected, isL2 } = Connector.useContainer();
 
 	const theme = useTheme();
 

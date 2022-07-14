@@ -15,6 +15,7 @@ import { formatFiatCurrency, formatPercent } from 'utils/formatters/number';
 import ProgressBar from 'components/ProgressBar';
 import StakedValue from 'sections/shared/modals/StakedValueModal/StakedValueBox';
 import ActiveDebt from 'sections/shared/modals/DebtValueModal/DebtValueBox';
+import Connector from 'containers/Connector';
 
 const L2Page: FC = () => {
 	const { t } = useTranslation();
@@ -26,7 +27,7 @@ const L2Page: FC = () => {
 		percentCurrentCRatioOfTarget,
 	} = useStakingCalculations();
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
+	const { isWalletConnected } = Connector.useContainer();
 
 	return (
 		<>

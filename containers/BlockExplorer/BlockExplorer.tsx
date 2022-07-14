@@ -1,13 +1,12 @@
 import { useEffect, useState } from 'react';
 import { createContainer } from 'unstated-next';
 import { OPTIMISM_NETWORKS } from '@synthetixio/optimism-networks';
-import { useRecoilValue } from 'recoil';
 
 import { NetworkIdByName } from '@synthetixio/contracts-interface';
 import { Network } from 'store/wallet';
 
-import { networkState } from 'store/wallet';
 import _ from 'lodash';
+import Connector from 'containers/Connector';
 
 type BlockExplorerInstance = {
 	txLink: (txId: string) => string;
@@ -40,7 +39,7 @@ const generateExplorerFunctions = (baseUrl: string) => {
 };
 
 const useBlockExplorer = () => {
-	const network = useRecoilValue(networkState);
+	const { network } = Connector.useContainer();
 
 	const [blockExplorerInstance, setBlockExplorerInstance] = useState<BlockExplorerInstance | null>(
 		null
