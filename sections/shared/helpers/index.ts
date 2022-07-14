@@ -78,6 +78,9 @@ export function headerInfo(path: string) {
 		case mainPath === 'bridge' && !subPath:
 			headerTitle = 'bridge';
 			break;
+		case mainPath === 'migrate-escrow' && !subPath:
+			headerTitle = 'migrate-escrow';
+			break;
 
 		// This handles other cases
 		default:

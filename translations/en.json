@@ -887,57 +887,13 @@
 			}
 		}
 	},
-	"layer2": {
-		"page-title": "Layer 2 | Synthetix Staking",
-		"error": {
-			"non-eoa-wallet": "Smart contract wallets are not compatible with Layer 2"
-		},
-		"deposit": {
-			"info": {
-				"title": "Deposit SNX",
-				"subtitle": "Deposit your SNX to complete the process of migrating your SNX from L1 to L2. You may experience a delay during the migration process before your SNX is available on L2. Your SNX deposit to L2 may take a few minutes to show up even after Etherscan shows the transaction was successful.",
-				"no-deposit": "No deposit history",
-				"warning": "Warning",
-				"layer2-migrate-intro": "You are about to migrate funds to Optimistic Ethereum \"L2\".",
-				"metamask-only": "Only Metamask is fully supported on L2, so make sure that you are depositing from a Metamask wallet or a wallet that allows you to export your private key to Metamask.",
-				"layer2-withdraw-delay": "Once on L2, if you wish to withdraw your funds back to L1, it will take 7-10 days on average.",
-				"layer2-limited-synths": "We do not yet have the full collection of synths available on L2 and trading on Kwenta is currently limited to sETH, sBTC, and sLINK. We will announce when more synths are made available.",
-				"layer2-gas": "Make sure you migrate some ETH to cover the minimal gas fees on L2. Please use the Optimism Bridge <0>here</0>.",
-				"table": {
-					"deposit": "Deposit",
-					"date": "Date",
-					"status": "Status",
-					"view": "View",
-					"pending": "Pending",
-					"confirmed": "Confirmed"
-				}
-			}
-		},
-		"withdraw": {
-			"info": {
-				"title": "Withdraw SNX from Layer 2 to Layer 1",
-				"subtitle": "Warning: withdrawing your SNX will take 7-10 days to be received on L1, during which time you will not have access to your funds. Once you initiate a withdrawal you will not be able to cancel it.",
-				"regenesis": "Historical transactions before Friday, April 9, 2021 at 06:00:00pm UTC have been cleared <0>see the blog post</0>.",
-				"view-withdrawals": "To view your withdrawals from before the upgrade, <0>see Synthetix withdrawals</0>.",
-				"no-withdrawals": "No withdrawal history",
-				"table": {
-					"withdrawal": "Withdrawal",
-					"date": "Date",
-					"status": "Status",
-					"view": "View",
-					"pending": "Pending",
-					"confirmed": "Confirmed",
-					"relay": "<0>Ready to Relay</0>"
-				}
-			}
-		},
-		"migrate": {
-			"info": {
-				"title": "Migrate your escrowed SNX to Layer 2",
-				"subtitle": "Migrate your escrowed SNX to Layer 2",
-				"warning-title": "Warning",
-				"warning-description": "Migrating escrowed SNX to Layer 2 cannot be reversed"
-			}
+	"migrate-escrow": {
+		"info": {
+			"title": "Migrate your escrowed SNX to Layer 2",
+			"subtitle": "Migrate your escrowed SNX to Layer 2",
+			"metamask-only": "Only Metamask is fully supported on L2, so make sure that you are depositing from a Metamask wallet or a wallet that allows you to export your private key to Metamask.",
+			"warning-title": "Warning",
+			"warning-description": "Migrating escrowed SNX to Layer 2 cannot be reversed"
 		},
 		"actions": {
 			"burn": {
@@ -954,31 +910,6 @@
 				"action": {
 					"withdraw-button": "Withdraw {{withdrawAmount}}",
 					"disabled": "No SNX to withdraw"
-				}
-			},
-			"deposit": {
-				"title": "Deposit SNX",
-				"subtitle": "Deposit and Transfer SNX from L1 to L2",
-				"bridge-inactive": "Deposit bridge is currently inactive",
-				"action": {
-					"in-progress": {
-						"title": "Deposit in progress",
-						"subtext": "Waiting for the blockchain to confirm your transaction",
-						"depositing": "Depositing",
-						"etherscan": "View on Etherscan"
-					},
-					"completed": {
-						"title": "Deposit complete",
-						"deposited": "Deposited",
-						"verify": "Verify Tx",
-						"dismiss": "Dismiss"
-					},
-					"deposit-button": "Deposit {{depositAmount}}",
-					"disabled": "No SNX to deposit",
-					"approve": {
-						"description": "Before depositing your SNX, please approve the Deposit contract.",
-						"button-label": "Approve contract"
-					}
 				}
 			},
 			"migrate": {
@@ -1601,6 +1532,7 @@
 		"merge-accounts/merge": "merge",
 		"merge-accounts/burn": "burn",
 		"pools": "pools",
-		"bridge": "bridge"
+		"bridge": "bridge",
+		"migrate-escrow": "migrate escrow"
 	}
 }

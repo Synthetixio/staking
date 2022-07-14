@@ -12,7 +12,7 @@ import styled from 'styled-components';
 import media from 'styled-media-query';
 import { ExternalLink, FlexDivCol, LineSpacer, StatsSection } from 'styles/common';
 import { WETHSNXLPTokenContract } from 'constants/gelato';
-import { InfoContainer, Subtitle } from 'sections/layer2/components/common';
+import { InfoContainer, Subtitle } from 'sections/migrate-escrow/components/common';
 import synthetix, { NetworkIdByName } from '@synthetixio/contracts-interface';
 import Connector from 'containers/Connector';
 import Button from 'components/Button';
