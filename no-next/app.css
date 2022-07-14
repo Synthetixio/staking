@@ -1,0 +1,94 @@
+* {
+	box-sizing: border-box;
+}
+
+body {
+	font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	text-rendering: optimizeSpeed;
+	margin: 0;
+	min-height: 100vh;
+	position: relative;
+	scroll-behavior: smooth;
+	padding-bottom: 50px;
+}
+
+ul {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+input[type='number'] {
+	-moz-appearance: textfield;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+	-webkit-appearance: none;
+}
+
+/* Inter */
+
+@font-face {
+	font-family: 'Inter';
+	font-style: normal;
+	font-weight: 400;
+	font-display: swap;
+	src: local('Inter'), url('../public/fonts/Inter-Regular.woff2') format('woff2');
+}
+
+@font-face {
+	font-family: 'Inter Semi Bold';
+	font-style: normal;
+	font-weight: 600;
+	font-display: swap;
+	src: local('Inter Semi Bold'), url('../public/fonts/Inter-SemiBold.woff2') format('woff2');
+}
+
+@font-face {
+	font-family: 'Inter Bold';
+	font-style: normal;
+	font-weight: 700;
+	font-display: swap;
+	src: local('Inter Bold'), url('../public/fonts/Inter-Bold.woff2') format('woff2');
+}
+
+/* GT America */
+
+@font-face {
+	font-family: 'GT America Mono';
+	font-style: normal;
+	font-display: swap;
+	font-weight: 700;
+	src: local('GT America Mono'), url('../public/fonts/GT-America-Mono-Bold.woff2') format('woff2');
+}
+
+@font-face {
+	font-family: 'GT America Condensed-Medium';
+	font-style: normal;
+	font-display: swap;
+	font-weight: 500;
+	src: local('GT America Condensed-Medium'),
+		url('../public/fonts/GT-America-Condensed-Medium.woff2') format('woff2');
+}
+
+@font-face {
+	font-family: 'GT America Condensed-Bold';
+	font-display: swap;
+	font-style: normal;
+	font-weight: 700;
+	font-stretch: condensed;
+	src: local('GT America Condensed-Bold'),
+		url('../public/fonts/GT-America-Condensed-Bold.woff2') format('woff2');
+}
+
+@font-face {
+	font-family: 'GT America Extended Bold';
+	font-style: normal;
+	font-display: swap;
+	font-weight: 700;
+	src: local('GT America Extended Bold'),
+		url('../public/fonts/GT-America-Extended-Bold.woff2') format('woff2');
+}
