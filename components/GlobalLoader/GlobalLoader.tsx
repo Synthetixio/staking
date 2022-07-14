@@ -18,13 +18,13 @@ export function GlobalLoader() {
 		>
 			<defs>
 				<linearGradient x1="8.042%" y1="0%" x2="65.682%" y2="23.865%" id="a">
-					<stop stop-color={Colors.blueHover} stop-opacity="0" offset="0%" />
-					<stop stop-color={Colors.blueHover} stop-opacity=".631" offset="63.146%" />
-					<stop stop-color={Colors.blueHover} offset="100%" />
+					<stop stopColor={Colors.blueHover} stopOpacity="0" offset="0%" />
+					<stop stopColor={Colors.blueHover} stopOpacity=".631" offset="63.146%" />
+					<stop stopColor={Colors.blueHover} offset="100%" />
 				</linearGradient>
 			</defs>
-			<g transform="translate(1 1)" fill="none" fill-rule="evenodd">
-				<path d="M36 18c0-9.94-8.06-18-18-18" stroke="url(#a)" stroke-width="2">
+			<g transform="translate(1 1)" fill="none" fillRule="evenodd">
+				<path d="M36 18c0-9.94-8.06-18-18-18" stroke="url(#a)" strokeWidth="2">
 					<animateTransform
 						attributeName="transform"
 						type="rotate"
