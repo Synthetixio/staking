@@ -42,6 +42,10 @@ export const MENU_LINKS: MenuLinks = [
 		link: ROUTES.Loans.Home,
 	},
 	{
+		i18nLabel: 'sidenav.bridge',
+		link: ROUTES.Bridge.Home,
+	},
+	{
 		i18nLabel: 'sidenav.gov',
 		link: ROUTES.Gov.Home,
 	},
