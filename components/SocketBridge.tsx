@@ -14,24 +14,26 @@ const hexToRgb = (hex: string) => {
 		.join();
 	return `rba(${rgbString})`;
 };
+const sUSDAddressMainnet = '0x57Ab1ec28D129707052df4dF418D58a2D46d5f51';
+const sUSDAddressOptimism = '0x8c6f28f2F1A3C87F0f938b96d27520d9751ec8d9';
+
 function SocketBridge() {
 	const { colors } = useTheme();
-	const { provider, network, synthetixjs } = Connector.useContainer();
+	const { provider, network } = Connector.useContainer();
 	const sourceNetworks = [NetworkIdByName['mainnet-ovm'], NetworkIdByName['mainnet']];
 	const destinationNetworks = [NetworkIdByName['mainnet-ovm'], NetworkIdByName['mainnet']];
-	const defaultDestNetwork =
-		network?.id === NetworkIdByName['mainnet-ovm']
-			? NetworkIdByName['mainnet']
-			: NetworkIdByName['mainnet-ovm'];
-
+	const isL2 = network?.id === NetworkIdByName['mainnet-ovm'];
+	const defaultDestNetwork = isL2 ? NetworkIdByName['mainnet'] : NetworkIdByName['mainnet-ovm'];
+	const defaultSourceToken = isL2 ? sUSDAddressOptimism : sUSDAddressMainnet;
+	const defaultDestToken = isL2 ? sUSDAddressMainnet : sUSDAddressOptimism;
 	return (
 		<Bridge
 			provider={provider}
 			API_KEY={process.env.NEXT_PUBLIC_SOCKET_API_KEY!}
 			sourceNetworks={sourceNetworks}
 			destNetworks={destinationNetworks}
-			defaultSourceToken={synthetixjs?.contracts.SynthsUSD.address}
-			defaultDestToken={synthetixjs?.contracts.SynthsUSD.address}
+			defaultSourceToken={defaultSourceToken}
+			defaultDestToken={defaultDestToken}
 			defaultSourceNetwork={network?.id}
 			defaultDestNetwork={defaultDestNetwork}
 			customize={{
