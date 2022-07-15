@@ -30,6 +30,7 @@ import { LP } from 'sections/earn/types';
 import { CurrencyIconType } from 'components/Currency/CurrencyIcon/CurrencyIcon';
 import useLPData from 'hooks/useLPData';
 import { notNill } from 'utils/ts-helpers';
+import Connector from 'containers/Connector';
 
 const LayoutLayerTwo: FC = () => {
 	const { t } = useTranslation();

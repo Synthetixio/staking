@@ -2,12 +2,10 @@ import { FC, useState } from 'react';
 import styled from 'styled-components';
 import { ethers } from 'ethers';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 
 import LockedIcon from 'assets/svg/app/locked.svg';
 
 import { TokenAllowanceLimit } from 'constants/network';
-import { isWalletConnectedState } from 'store/wallet';
 import GasSelector from 'components/GasSelector';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 
@@ -50,8 +48,7 @@ const ApproveModal: FC<ApproveModalProps & SynthetixJsAndSignerProps> = ({
 	signer,
 	synthetixjs,
 }) => {
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	const { isAppReady } = Connector.useContainer();
+	const { isAppReady, isWalletConnected } = Connector.useContainer();
 	const { useContractTxn } = useSynthetixQueries();
 
 	const [error, setError] = useState<string | null>(null);

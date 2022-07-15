@@ -1,6 +1,5 @@
 import { useState, useMemo, useEffect, FC, ChangeEventHandler } from 'react';
 import { ethers } from 'ethers';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 import { Trans, useTranslation } from 'react-i18next';
 
@@ -14,8 +13,7 @@ import {
 	NoTextTransform,
 } from 'styles/common';
 import GasSelector from 'components/GasSelector';
-import { isWalletConnectedState, walletAddressState } from 'store/wallet';
-import { appReadyState } from 'store/app';
+
 import useSynthetixQueries, {
 	Action,
 	DELEGATE_APPROVE_CONTRACT_METHODS,
@@ -54,13 +52,14 @@ const DelegateForm: FC = () => {
 
 const Tab: FC = () => {
 	const { t } = useTranslation();
-	const { connectWallet, synthetixjs, isAppReady } = Connector.useContainer();
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	const address = useRecoilValue(walletAddressState);
+	const { connectWallet, synthetixjs, isAppReady, isWalletConnected, walletAddress } =
+		Connector.useContainer();
 
 	const { useGetDelegateWallets, useSynthetixTxn } = useSynthetixQueries();
 
-	const delegateWalletsQuery = useGetDelegateWallets(address || '', { enabled: Boolean(address) });
+	const delegateWalletsQuery = useGetDelegateWallets(walletAddress || '', {
+		enabled: Boolean(walletAddress),
+	});
 	const [action, setAction] = useState<string>(Action.APPROVE_ALL);
 
 	const [gasPrice, setGasPrice] = useState<GasPrice | undefined>(undefined);
@@ -74,8 +73,8 @@ const Tab: FC = () => {
 	const properDelegateAddress =
 		delegateAddress && ethers.utils.isAddress(delegateAddress) ? delegateAddress : null;
 	const delegateAddressIsSelf =
-		properDelegateAddress && address
-			? properDelegateAddress === ethers.utils.getAddress(address)
+		properDelegateAddress && walletAddress
+			? properDelegateAddress === ethers.utils.getAddress(walletAddress)
 			: false;
 
 	const shortenedDelegateAddress = truncateAddress(delegateAddress, 8, 6);
@@ -128,12 +127,12 @@ const Tab: FC = () => {
 			if (!(properDelegateAddress && action)) return setAlreadyDelegated(false);
 			const alreadyDelegated = await DelegateApprovals[
 				DELEGATE_GET_IS_APPROVED_CONTRACT_METHODS.get(action)!
-			](address, properDelegateAddress);
+			](walletAddress, properDelegateAddress);
 
 			setAlreadyDelegated(alreadyDelegated);
 		};
 		getIsAlreadyDelegated();
-	}, [isAppReady, properDelegateAddress, address, action, synthetixjs]);
+	}, [isAppReady, properDelegateAddress, walletAddress, action, synthetixjs]);
 
 	return (
 		<div data-testid="form">

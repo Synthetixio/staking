@@ -5,8 +5,6 @@ import { utils } from 'ethers';
 import useSynthetixQueries from '@synthetixio/queries';
 import { constants } from 'ethers';
 import GasSelector from 'components/GasSelector';
-import { useRecoilValue } from 'recoil';
-import { walletAddressState } from 'store/wallet';
 import { GasPrice } from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
 import {
@@ -41,7 +39,7 @@ import WarningIcon from 'assets/svg/app/warning.svg';
 
 const HedgeTabOptimism = () => {
 	const { t } = useTranslation();
-	const { synthetixjs } = Connector.useContainer();
+	const { synthetixjs, walletAddress } = Connector.useContainer();
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 
 	const sUSDContract = synthetixjs?.contracts.SynthsUSD;
@@ -50,7 +48,6 @@ const HedgeTabOptimism = () => {
 	const [approveGasCost, setApproveGasCost] = useState<GasPrice | undefined>(undefined);
 	const [depositGasCost, setDepositGasCost] = useState<GasPrice | undefined>(undefined);
 
-	const walletAddress = useRecoilValue(walletAddressState);
 	const { useContractTxn, useSynthsBalancesQuery } = useSynthetixQueries();
 	const dSNXTokenPriceQuery = useGetDSNXPrice(walletAddress);
 	const dSNXPrice = dSNXTokenPriceQuery.data;

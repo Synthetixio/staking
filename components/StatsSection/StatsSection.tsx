@@ -16,7 +16,7 @@ import CRatioBarStats from 'sections/shared/Layout/Stats/CRatioBarStats';
 import CollapseIcon from 'assets/svg/app/chevron-collapse.svg';
 import ExpandIcon from 'assets/svg/app/chevron-expand.svg';
 import { useRecoilValue } from 'recoil';
-import { walletAddressState, delegateWalletState } from 'store/wallet';
+import { delegateWalletState } from 'store/wallet';
 import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
 import useCryptoBalances from 'hooks/useCryptoBalances';
@@ -24,9 +24,10 @@ import { Tooltip } from 'styles/common';
 import { useTranslation } from 'react-i18next';
 import useGetCurrencyRateChange from 'hooks/useGetCurrencyRateChange';
 import { subDays, endOfHour } from 'date-fns';
+import Connector from 'containers/Connector';
 
 const StatsSection: FC = ({ children }) => {
-	const walletAddress = useRecoilValue(walletAddressState);
+	const { walletAddress } = Connector.useContainer();
 
 	const delegateWallet = useRecoilValue(delegateWalletState);
 	const { t } = useTranslation();

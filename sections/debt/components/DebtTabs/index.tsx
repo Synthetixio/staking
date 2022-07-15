@@ -17,6 +17,7 @@ import { wei } from '@synthetixio/wei';
 import useSynthetixQueries from '@synthetixio/queries';
 import { useRecoilValue } from 'recoil';
 import { isMainnetState } from 'store/wallet';
+import Connector from 'containers/Connector';
 
 export type TabInfo = {
 	title: string;

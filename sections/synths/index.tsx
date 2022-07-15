@@ -1,6 +1,6 @@
 import { FC, useState, useMemo, useCallback } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
+
 import styled from 'styled-components';
 import { wei } from '@synthetixio/wei';
 import useSynthetixQueries from '@synthetixio/queries';
@@ -22,14 +22,13 @@ import Info from 'assets/svg/app/info.svg';
 import KwentaBanner from 'components/KwentaBanner';
 import TransactionNotifier from 'containers/TransactionNotifier';
 
-import { walletAddressState, isWalletConnectedState } from 'store/wallet';
-
 import useCryptoBalances, { CryptoBalance } from 'hooks/useCryptoBalances';
 
 import { isSynth } from 'utils/currencies';
 
 import { CryptoCurrency } from 'constants/currency';
 import { Asset } from 'components/Form/AssetInput';
+import Connector from 'containers/Connector';
 
 const Index: FC = () => {
 	const [assetToTransfer, setAssetToTransfer] = useState<Asset | null>(null);
@@ -38,13 +37,12 @@ const Index: FC = () => {
 	const { t } = useTranslation();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const { useSynthsBalancesQuery, useRedeemableDeprecatedSynthsQuery } = useSynthetixQueries();
-	const walletAddress = useRecoilValue(walletAddressState);
+
+	const { walletAddress, isWalletConnected } = Connector.useContainer();
 
 	const redeemableDeprecatedSynthsQuery = useRedeemableDeprecatedSynthsQuery(walletAddress);
 	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
 	const cryptoBalances = useCryptoBalances(walletAddress);
-
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 
 	const synthBalances = useMemo(
 		() =>

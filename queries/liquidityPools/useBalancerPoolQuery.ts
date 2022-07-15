@@ -3,12 +3,7 @@ import { useRecoilValue } from 'recoil';
 import { ethers } from 'ethers';
 
 import QUERY_KEYS from 'constants/queryKeys';
-import {
-	walletAddressState,
-	isWalletConnectedState,
-	networkState,
-	isMainnetState,
-} from 'store/wallet';
+import { isMainnetState } from 'store/wallet';
 import Connector from 'containers/Connector';
 
 import { LiquidityPoolData } from './types';

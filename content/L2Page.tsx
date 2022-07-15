@@ -2,12 +2,10 @@ import { FC } from 'react';
 import Head from 'next/head';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 
 import Main from 'sections/layer2';
 import StatBox from 'components/StatBox';
 import { LineSpacer } from 'styles/common';
-import { isWalletConnectedState } from 'store/wallet';
 import StatsSection from 'components/StatsSection';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
