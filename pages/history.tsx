@@ -1,9 +1,9 @@
 import dynamic from 'next/dynamic';
-import { safeImport } from '@synthetixio/safe-import';
+import GlobalLoader from 'components/GlobalLoader';
 
-const HistoryPage = dynamic(
-	() => safeImport(() => import(/* webpackChunkName: "history" */ 'content/HistoryPage')),
-	{ ssr: true }
-);
+const HistoryPage = dynamic(() => import('content/HistoryPage'), {
+	ssr: false,
+	loading: GlobalLoader,
+});
 
 export default HistoryPage;

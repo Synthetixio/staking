@@ -1,9 +1,9 @@
 import dynamic from 'next/dynamic';
-import { safeImport } from '@synthetixio/safe-import';
+import GlobalLoader from 'components/GlobalLoader';
 
-const L2MigratePage = dynamic(
-	() => safeImport(() => import(/* webpackChunkName: "l2-migrate" */ 'content/L2MigratePage')),
-	{ ssr: true }
-);
+const L2MigratePage = dynamic(() => import('content/L2MigratePage'), {
+	ssr: false,
+	loading: GlobalLoader,
+});
 
 export default L2MigratePage;

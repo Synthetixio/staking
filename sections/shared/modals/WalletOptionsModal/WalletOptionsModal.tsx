@@ -56,7 +56,6 @@ const WalletOptionsModal: FC<WalletOptionsProps> = ({
 		disconnectWallet,
 		switchAccounts,
 		isHardwareWallet,
-		selectedWallet,
 		walletAddress,
 		isWalletConnected,
 	} = Connector.useContainer();

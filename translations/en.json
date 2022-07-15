@@ -1347,8 +1347,8 @@
 			"deprecated": "deprecated"
 		},
 		"total-staking": {
-			"staking-percentage-tooltip": "Total SNX staked",
-			"staking-percentage-title": "Staking %"
+			"staking-percentage-tooltip": "Total percent of SNX staked across both networks",
+			"staking-percentage-title": "System Staking"
 		},
 		"price-change": {
 			"seven-days": "7 days change"

@@ -1,9 +1,9 @@
 import dynamic from 'next/dynamic';
-import { safeImport } from '@synthetixio/safe-import';
+import GlobalLoader from 'components/GlobalLoader';
 
-const DebtPage = dynamic(
-	() => safeImport(() => import(/* webpackChunkName: "debt" */ 'content/DebtPage')),
-	{ ssr: true }
-);
+const DebtPage = dynamic(() => import('content/DebtPage'), {
+	ssr: false,
+	loading: GlobalLoader,
+});
 
 export default DebtPage;

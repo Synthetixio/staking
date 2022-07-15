@@ -4924,15 +4924,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@synthetixio/safe-import@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "@synthetixio/safe-import@npm:1.0.0"
-  dependencies:
-    react: ^17.0.2
-  checksum: 97f14cb6d291ec24c1b4551440d12b7765aba6ca306a94113ed30859285f5045c4b70ff468edcf34ec2e0515a9d60a48646166561da9ff5cc8405e451fab9ad5
-  languageName: node
-  linkType: hard
-
 "@synthetixio/synpress@npm:^1.1.1":
   version: 1.2.0
   resolution: "@synthetixio/synpress@npm:1.2.0"
@@ -23260,7 +23251,6 @@ jschardet@latest:
     "@synthetixio/optimism-networks": ^2.74.1
     "@synthetixio/providers": ^2.74.1
     "@synthetixio/queries": ^2.74.3
-    "@synthetixio/safe-import": ^1.0.0
     "@synthetixio/synpress": ^1.1.1
     "@synthetixio/transaction-notifier": ^2.74.1
     "@synthetixio/wei": ^2.74.1
