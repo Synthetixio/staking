@@ -2058,24 +2058,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ethersproject/abi@npm:5.6.3, @ethersproject/abi@npm:^5.0.0, @ethersproject/abi@npm:^5.0.12, @ethersproject/abi@npm:^5.0.4, @ethersproject/abi@npm:^5.5.0, @ethersproject/abi@npm:^5.6.3":
-  version: 5.6.3
-  resolution: "@ethersproject/abi@npm:5.6.3"
-  dependencies:
-    "@ethersproject/address": ^5.6.1
-    "@ethersproject/bignumber": ^5.6.2
-    "@ethersproject/bytes": ^5.6.1
-    "@ethersproject/constants": ^5.6.1
-    "@ethersproject/hash": ^5.6.1
-    "@ethersproject/keccak256": ^5.6.1
-    "@ethersproject/logger": ^5.6.0
-    "@ethersproject/properties": ^5.6.0
-    "@ethersproject/strings": ^5.6.1
-  checksum: 64b89ca153c22dbe95cc024abac7e08849f92b9b33b024b67da6ac127706d37fcbd36cf5713a462b8c3371b49664c4181ca4ab81e6ee55413ea5265e8b59f175
-  languageName: node
-  linkType: hard
-
-"@ethersproject/abi@npm:5.6.4":
+"@ethersproject/abi@npm:5.6.4, @ethersproject/abi@npm:^5.0.0, @ethersproject/abi@npm:^5.0.12, @ethersproject/abi@npm:^5.0.4, @ethersproject/abi@npm:^5.5.0, @ethersproject/abi@npm:^5.6.3":
   version: 5.6.4
   resolution: "@ethersproject/abi@npm:5.6.4"
   dependencies:
@@ -2273,16 +2256,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ethersproject/networks@npm:5.6.3, @ethersproject/networks@npm:^5.0.0, @ethersproject/networks@npm:^5.6.3":
-  version: 5.6.3
-  resolution: "@ethersproject/networks@npm:5.6.3"
-  dependencies:
-    "@ethersproject/logger": ^5.6.0
-  checksum: 94d2981eeed0accb69124cfb9a807552ada98b370415c9d906018bd70a33bc5a1286ff01eb2a3ce213c12334fcc7ab635ad0429f25a687b9b8f34d26d21df74b
-  languageName: node
-  linkType: hard
-
-"@ethersproject/networks@npm:5.6.4":
+"@ethersproject/networks@npm:5.6.4, @ethersproject/networks@npm:^5.0.0, @ethersproject/networks@npm:^5.6.3":
   version: 5.6.4
   resolution: "@ethersproject/networks@npm:5.6.4"
   dependencies:
@@ -3675,9 +3649,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@socket.tech/widget@npm:0.0.2":
-  version: 0.0.2
-  resolution: "@socket.tech/widget@npm:0.0.2"
+"@socket.tech/widget@npm:^0.0.3":
+  version: 0.0.3
+  resolution: "@socket.tech/widget@npm:0.0.3"
   dependencies:
     "@reduxjs/toolkit": ^1.8.2
     "@socket.tech/ll-core": ^0.1.10
@@ -3689,7 +3663,7 @@ __metadata:
   peerDependencies:
     react: ">=17.0.1"
     react-dom: ">=17.0.1"
-  checksum: 222d176ba4091b3d880cc254378216c5469b795134dd64db0275774a40eb8f342d18a8ede1388a8aa1f4e40cb114a20534a772c5a56bff59d843dfa4e913d0ca
+  checksum: 20b941340e4282e5dad8616a9ddb4d114bb69599131bef152af824ab8a9a6dab643401376e150bbd9ac316b49a1cb7ffdb5e9c9a637e51d79446a2671b398fc4
   languageName: node
   linkType: hard
 
@@ -12340,45 +12314,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ethers@npm:^5.0.13, ethers@npm:^5.0.24, ethers@npm:^5.0.31, ethers@npm:^5.1.4, ethers@npm:^5.4.7, ethers@npm:^5.5.3":
-  version: 5.6.8
-  resolution: "ethers@npm:5.6.8"
-  dependencies:
-    "@ethersproject/abi": 5.6.3
-    "@ethersproject/abstract-provider": 5.6.1
-    "@ethersproject/abstract-signer": 5.6.2
-    "@ethersproject/address": 5.6.1
-    "@ethersproject/base64": 5.6.1
-    "@ethersproject/basex": 5.6.1
-    "@ethersproject/bignumber": 5.6.2
-    "@ethersproject/bytes": 5.6.1
-    "@ethersproject/constants": 5.6.1
-    "@ethersproject/contracts": 5.6.2
-    "@ethersproject/hash": 5.6.1
-    "@ethersproject/hdnode": 5.6.2
-    "@ethersproject/json-wallets": 5.6.1
-    "@ethersproject/keccak256": 5.6.1
-    "@ethersproject/logger": 5.6.0
-    "@ethersproject/networks": 5.6.3
-    "@ethersproject/pbkdf2": 5.6.1
-    "@ethersproject/properties": 5.6.0
-    "@ethersproject/providers": 5.6.8
-    "@ethersproject/random": 5.6.1
-    "@ethersproject/rlp": 5.6.1
-    "@ethersproject/sha2": 5.6.1
-    "@ethersproject/signing-key": 5.6.2
-    "@ethersproject/solidity": 5.6.1
-    "@ethersproject/strings": 5.6.1
-    "@ethersproject/transactions": 5.6.2
-    "@ethersproject/units": 5.6.1
-    "@ethersproject/wallet": 5.6.2
-    "@ethersproject/web": 5.6.1
-    "@ethersproject/wordlists": 5.6.1
-  checksum: 3ef1e1509e96029839330bef465c368fee140d98c4fb23d743a0904b7ebdf70fa3c79683a2350355c9400497a5c179fe988d84a2b578d756f09c80462a94f614
-  languageName: node
-  linkType: hard
-
-"ethers@npm:^5.6.5, ethers@npm:^5.6.9":
+"ethers@npm:^5.0.13, ethers@npm:^5.0.24, ethers@npm:^5.0.31, ethers@npm:^5.1.4, ethers@npm:^5.4.7, ethers@npm:^5.5.3, ethers@npm:^5.6.5, ethers@npm:^5.6.9":
   version: 5.6.9
   resolution: "ethers@npm:5.6.9"
   dependencies:
@@ -21891,7 +21827,7 @@ jschardet@latest:
     "@next/bundle-analyzer": ^10.2.3
     "@reach/dialog": ^0.15.3
     "@snapshot-labs/snapshot.js": ^0.3.22
-    "@socket.tech/widget": 0.0.2
+    "@socket.tech/widget": ^0.0.3
     "@svgr/webpack": ^6.2.1
     "@synthetixio/assets": ^2.0.13
     "@synthetixio/contracts-interface": ^2.74.1
