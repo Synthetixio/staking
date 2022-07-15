@@ -27,29 +27,27 @@ function SocketBridge() {
 	return (
 		<Bridge
 			provider={provider}
-			API_KEY={process.env.NEXT_PUBLIC_SOCKET_API_KEY}
+			API_KEY={process.env.NEXT_PUBLIC_SOCKET_API_KEY!}
 			sourceNetworks={sourceNetworks}
 			destNetworks={destinationNetworks}
 			defaultSourceToken={synthetixjs?.contracts.SynthsUSD.address}
 			defaultDestToken={synthetixjs?.contracts.SynthsUSD.address}
 			defaultSourceNetwork={network?.id}
 			defaultDestNetwork={defaultDestNetwork}
-			customize={
-				{
-					width: 500,
-					responsiveWidth: true,
-					borderRadius: 0,
-					primary: hexToRgb(colors.navy),
-					secondary: hexToRgb(colors.mediumBlue),
-					text: hexToRgb(colors.white),
-					secondaryText: hexToRgb(colors.white),
-					accent: hexToRgb(colors.blueHover),
-					onAccent: hexToRgb(colors.white),
-					interactive: hexToRgb(colors.navy),
-					onInteractive: hexToRgb(colors.white),
-					outline: hexToRgb(colors.mediumBlue),
-				} as any
-			}
+			customize={{
+				width: 500,
+				responsiveWidth: true,
+				borderRadius: 0,
+				primary: hexToRgb(colors.navy),
+				secondary: hexToRgb(colors.mediumBlue),
+				text: hexToRgb(colors.white),
+				secondaryText: hexToRgb(colors.white),
+				accent: hexToRgb(colors.blueHover),
+				onAccent: hexToRgb(colors.white),
+				interactive: hexToRgb(colors.navy),
+				onInteractive: hexToRgb(colors.white),
+				outline: hexToRgb(colors.mediumBlue),
+			}}
 		/>
 	);
 }

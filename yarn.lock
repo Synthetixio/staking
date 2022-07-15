@@ -3649,9 +3649,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@socket.tech/widget@npm:^0.0.3":
-  version: 0.0.3
-  resolution: "@socket.tech/widget@npm:0.0.3"
+"@socket.tech/widget@npm:^0.0.7":
+  version: 0.0.7
+  resolution: "@socket.tech/widget@npm:0.0.7"
   dependencies:
     "@reduxjs/toolkit": ^1.8.2
     "@socket.tech/ll-core": ^0.1.10
@@ -3663,7 +3663,7 @@ __metadata:
   peerDependencies:
     react: ">=17.0.1"
     react-dom: ">=17.0.1"
-  checksum: 20b941340e4282e5dad8616a9ddb4d114bb69599131bef152af824ab8a9a6dab643401376e150bbd9ac316b49a1cb7ffdb5e9c9a637e51d79446a2671b398fc4
+  checksum: 7607a64e32f369696c68373146c1b3a0fb758711f3591b395eeee64e311dd939964cab13809c9fb9026c0a371c3d423fc0d8f73f6448b2ac4c2b0427b2c09bd2
   languageName: node
   linkType: hard
 
@@ -21827,7 +21827,7 @@ jschardet@latest:
     "@next/bundle-analyzer": ^10.2.3
     "@reach/dialog": ^0.15.3
     "@snapshot-labs/snapshot.js": ^0.3.22
-    "@socket.tech/widget": ^0.0.3
+    "@socket.tech/widget": ^0.0.7
     "@svgr/webpack": ^6.2.1
     "@synthetixio/assets": ^2.0.13
     "@synthetixio/contracts-interface": ^2.74.1
