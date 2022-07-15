@@ -38,7 +38,7 @@ jobs:
         continue-on-error: true
 
       - name: Cache next.js build cache
-        uses: actions/cache@c3f1317a9e7b1ef106c153ac8c0f00fed3ddbc0d
+        uses: actions/cache@0865c47f36e68161719c5b124609996bb5c40129
         with:
           path: .next/cache
           key: ${{ runner.os }}-next-cache-${{ hashFiles('yarn.lock') }}
@@ -75,7 +75,7 @@ jobs:
       - run: unset YARN_PRODUCTION
 
       - name: Cache yarn modules
-        uses: actions/cache@c3f1317a9e7b1ef106c153ac8c0f00fed3ddbc0d # pin@v2
+        uses: actions/cache@0865c47f36e68161719c5b124609996bb5c40129 # pin@v2
         with:
           path: |
             .yarn/cache
