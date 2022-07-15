@@ -1,9 +1,6 @@
 import { useQuery, UseQueryOptions } from 'react-query';
-import { useRecoilValue } from 'recoil';
 
 import QUERY_KEYS from 'constants/queryKeys';
-
-import { isL2State, isWalletConnectedState, networkState, walletAddressState } from 'store/wallet';
 
 import { parseEther } from 'ethers/lib/utils';
 import axios from 'axios';

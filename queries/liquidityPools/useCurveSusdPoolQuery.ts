@@ -12,12 +12,7 @@ import {
 	curveGaugeController,
 } from 'contracts';
 import QUERY_KEYS from 'constants/queryKeys';
-import {
-	walletAddressState,
-	isWalletConnectedState,
-	networkState,
-	isMainnetState,
-} from 'store/wallet';
+import { isMainnetState } from 'store/wallet';
 
 import Wei, { wei } from '@synthetixio/wei';
 import { getCurveTokenPrice } from './helper';
@@ -204,11 +199,9 @@ const fetchOptimismData = async () => {
 };
 
 const useCurveSusdPoolQuery = (options?: UseQueryOptions<CurveData | undefined>) => {
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	const walletAddress = useRecoilValue(walletAddressState);
-	const network = useRecoilValue(networkState);
-	const { provider, isAppReady } = Connector.useContainer();
-	const isMainnet = useRecoilValue(isMainnetState);
+	const { provider, isAppReady, isWalletConnected, walletAddress, network } =
+		Connector.useContainer();
+	const isMainnet = useRecoilValue(isMainnetState); // TODO: Replace
 
 	return useQuery<CurveData | undefined>(
 		QUERY_KEYS.LiquidityPools.sUSD(walletAddress ?? '', network?.id!),

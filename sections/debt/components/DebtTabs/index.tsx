@@ -16,7 +16,7 @@ import Info from 'assets/svg/app/info.svg';
 import { wei } from '@synthetixio/wei';
 import useSynthetixQueries from '@synthetixio/queries';
 import { useRecoilValue } from 'recoil';
-import { isMainnetState, walletAddressState } from 'store/wallet';
+import { isMainnetState } from 'store/wallet';
 
 export type TabInfo = {
 	title: string;
@@ -54,7 +54,7 @@ const DebtTabs: FC<DebtTabsProps> = ({
 		}
 	}, [currentPanel]);
 
-	const walletAddress = useRecoilValue(walletAddressState);
+	const { walletAddress } = Connector.useContainer();
 
 	const { useSynthsBalancesQuery /*useSynthsTotalSupplyQuery*/ } = useSynthetixQueries();
 

@@ -27,13 +27,10 @@ const useBalancerPoolQuery = (
 	balancerPoolTokenContract: BalancerPoolTokenContract,
 	options?: UseQueryOptions<LiquidityPoolData>
 ) => {
-	const { isAppReady } = Connector.useContainer();
+	const { isAppReady, isWalletConnected, walletAddress, network, provider, synthetixjs } =
+		Connector.useContainer();
 
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	const walletAddress = useRecoilValue(walletAddressState);
-	const network = useRecoilValue(networkState);
-	const { provider, synthetixjs } = Connector.useContainer();
-	const isMainnet = useRecoilValue(isMainnetState);
+	const isMainnet = useRecoilValue(isMainnetState); // TODO: Add to global state
 
 	return useQuery<LiquidityPoolData>(
 		QUERY_KEYS.LiquidityPools.Balancer(walletAddress ?? '', synth, network?.id!),

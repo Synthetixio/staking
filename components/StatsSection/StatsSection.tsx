@@ -27,6 +27,7 @@ import { subDays, endOfHour } from 'date-fns';
 
 const StatsSection: FC = ({ children }) => {
 	const walletAddress = useRecoilValue(walletAddressState);
+
 	const delegateWallet = useRecoilValue(delegateWalletState);
 	const { t } = useTranslation();
 	const { useSynthsBalancesQuery } = useSynthetixQueries();
