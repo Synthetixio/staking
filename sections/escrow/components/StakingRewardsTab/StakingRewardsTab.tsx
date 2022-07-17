@@ -1,17 +1,14 @@
-import React, { useState, useEffect } from 'react';
-
-import { useRecoilValue } from 'recoil';
-import { walletAddressState } from 'store/wallet';
+import { useState, useEffect } from 'react';
+import { wei } from '@synthetixio/wei';
+import useSynthetixQueries, { GasPrice } from '@synthetixio/queries';
 
 import { TabContainer } from '../common';
 import TabContent from './TabContent';
 import MigrateTabContent from './MigrateTabContent';
-import useSynthetixQueries, { GasPrice } from '@synthetixio/queries';
-import { wei } from '@synthetixio/wei';
+import Connector from 'containers/Connector';
 
 const StakingRewardsTab: React.FC = () => {
-	const walletAddress = useRecoilValue(walletAddressState);
-
+	const { walletAddress } = Connector.useContainer();
 	const { useEscrowDataQuery, useSynthetixTxn } = useSynthetixQueries();
 
 	const escrowDataQuery = useEscrowDataQuery(walletAddress);

@@ -36,8 +36,7 @@ import { StakingTransactionType } from '@synthetixio/queries';
 
 const TransactionsContainer: FC<TransactionsContainerProps> = ({ history, isLoaded }) => {
 	const { t } = useTranslation();
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	const { connectWallet } = Connector.useContainer();
+	const { connectWallet, isWalletConnected } = Connector.useContainer();
 
 	const [typeFilter, setTypeFilter] = useState<ValueType<TypeFilterOptionType>>();
 	const [dateFilter, setDateFilter] = useState<{

@@ -81,8 +81,7 @@ const ResponsiveDebtPoolTable: FC<ResponsiveDebtPoolTableProps> = ({
 	const { t } = useTranslation();
 
 	const { selectedPriceCurrency, selectPriceCurrencyRate } = useSelectedPriceCurrency();
-	const { connectWallet, isAppReady } = Connector.useContainer();
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
+	const { connectWallet, isAppReady, isWalletConnected } = Connector.useContainer();
 
 	const [renBTCBalance, wBTCBalance, wETHBalance, ETHBalance] = useMemo(
 		() => [

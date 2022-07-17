@@ -13,9 +13,9 @@ import { getStakingAmount, getTransferableAmountFromBurn, sanitiseValue } from '
 
 import InfoLayout from './InfoLayout';
 import useSynthetixQueries from '@synthetixio/queries';
-import { walletAddressState } from 'store/wallet';
 import { wei } from '@synthetixio/wei';
 import { parseSafeWei } from 'utils/parse';
+import Connector from 'containers/Connector';
 
 const StakingInfo: FC = () => {
 	const { t } = useTranslation();
@@ -31,7 +31,8 @@ const StakingInfo: FC = () => {
 		collateral,
 	} = useStakingCalculations();
 
-	const walletAddress = useRecoilValue(walletAddressState);
+	const { walletAddress } = Connector.useContainer();
+
 	const { useSynthsBalancesQuery } = useSynthetixQueries();
 
 	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);

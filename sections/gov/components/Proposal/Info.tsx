@@ -6,8 +6,7 @@ import Results from './Results';
 import History from './History';
 import useSynthetixQueries from '@synthetixio/queries';
 import { snapshotEndpoint, SPACE_KEY } from 'constants/snapshot';
-import { useRecoilValue } from 'recoil';
-import { walletAddressState } from 'store/wallet';
+import Connector from 'containers/Connector';
 
 type InfoProps = {
 	proposalId: string;
@@ -15,8 +14,8 @@ type InfoProps = {
 
 const Info: React.FC<InfoProps> = ({ proposalId }) => {
 	const { t } = useTranslation();
+	const { walletAddress } = Connector.useContainer();
 
-	const walletAddress = useRecoilValue(walletAddressState);
 	const { useProposalQuery } = useSynthetixQueries();
 	const proposalResults = useProposalQuery(
 		snapshotEndpoint,

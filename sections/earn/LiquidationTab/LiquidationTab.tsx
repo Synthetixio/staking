@@ -70,7 +70,8 @@ type LiquidationTabProps = {
 
 const LiquidationTab: React.FC<LiquidationTabProps> = ({ liquidationRewards }) => {
 	const { t } = useTranslation();
-	const walletAddress = useRecoilValue(walletAddressState);
+
+	const { isAppReady, isWalletConnected, walletAddress } = Connector.useContainer();
 	const delegateWallet = useRecoilValue(delegateWalletState);
 	const addressToUse = delegateWallet?.address || walletAddress!;
 	const { useSynthetixTxn, useExchangeRatesQuery } = useSynthetixQueries();
@@ -80,8 +81,7 @@ const LiquidationTab: React.FC<LiquidationTabProps> = ({ liquidationRewards }) =
 
 	const { blockExplorerInstance } = Etherscan.useContainer();
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	const { isAppReady } = Connector.useContainer();
+
 	const router = useRouter();
 	const [gasPrice, setGasPrice] = useState<GasPrice | undefined>(undefined);
 

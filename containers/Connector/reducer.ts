@@ -38,6 +38,8 @@ export type ConnectionUpdate = {
 	signer: ethers.Signer | null;
 	synthetixjs: SynthetixJS;
 	provider: ethers.providers.Web3Provider;
+	ensName: string | null;
+	ensAvatar: string | null;
 };
 
 export type EnsUpdate = {
@@ -64,6 +66,8 @@ export function reducer(state: ConnectorState, action: Actions) {
 				signer: action.payload.signer,
 				provider: action.payload.provider,
 				synthetixjs: action.payload.synthetixjs,
+				ensName: action.payload.ensName,
+				ensAvatar: action.payload.ensAvatar,
 			};
 
 		case 'set_ens':

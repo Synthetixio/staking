@@ -54,9 +54,8 @@ const Incentives: FC<IncentivesProps> = ({
 	const { t } = useTranslation();
 	const router = useRouter();
 	const theme = useTheme();
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const [view, setView] = useState<View>(View.ACTIVE);
-	const { L1DefaultProvider } = Connector.useContainer();
+	const { L1DefaultProvider, isWalletConnected } = Connector.useContainer();
 	const { useSNXData } = useSynthetixQueries();
 
 	const lpData = useLPData();

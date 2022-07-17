@@ -2,8 +2,6 @@ import React, { useMemo } from 'react';
 import styled from 'styled-components';
 import Spinner from 'assets/svg/app/loader.svg';
 import { FlexDivCol, FlexDivRow, FlexDivRowCentered } from 'styles/common';
-import { useRecoilValue } from 'recoil';
-import { isWalletConnectedState, walletAddressState } from 'store/wallet';
 import { useTranslation } from 'react-i18next';
 import { truncateAddress, truncateString } from 'utils/formatters/string';
 import { formatNumber } from 'utils/formatters/number';
@@ -14,6 +12,7 @@ import { ethers } from 'ethers';
 import { UseQueryResult } from 'react-query';
 import { FixedSizeList as List } from 'react-window';
 import { ProposalResults } from '@synthetixio/queries';
+import Connector from 'containers/Connector';
 
 type HistoryProps = {
 	proposalResults: UseQueryResult<ProposalResults>;
@@ -22,8 +21,7 @@ type HistoryProps = {
 
 const History: React.FC<HistoryProps> = ({ proposalResults }) => {
 	const { t } = useTranslation();
-	const walletAddress = useRecoilValue(walletAddressState);
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
+	const { walletAddress, isWalletConnected } = Connector.useContainer();
 
 	const history = useMemo(() => {
 		if (proposalResults.isLoading) {

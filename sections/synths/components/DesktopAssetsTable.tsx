@@ -3,14 +3,11 @@ import { CellProps } from 'react-table';
 import styled from 'styled-components';
 import { Trans, useTranslation } from 'react-i18next';
 import Wei, { wei } from '@synthetixio/wei';
-import { useRecoilValue } from 'recoil';
+
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 
 import Connector from 'containers/Connector';
-
-import { appReadyState } from 'store/app';
-import { isWalletConnectedState, isL2State } from 'store/wallet';
 
 import {
 	ExternalLink,
@@ -68,10 +65,9 @@ const AssetsTable: FC<AssetsTableProps> = ({
 	showPrice = true,
 }) => {
 	const { t } = useTranslation();
-	const { connectWallet, synthsMap, isAppReady } = Connector.useContainer();
+	const { connectWallet, synthsMap, isAppReady, isL2, isWalletConnected } =
+		Connector.useContainer();
 
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	const isL2 = useRecoilValue(isL2State);
 	const router = useRouter();
 
 	const { selectedPriceCurrency, selectPriceCurrencyRate } = useSelectedPriceCurrency();

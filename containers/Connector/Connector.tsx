@@ -136,7 +136,15 @@ const useConnector = () => {
 
 					dispatch({
 						type: 'config_update',
-						payload: { address: wallet.address, network, provider, signer, synthetixjs },
+						payload: {
+							address: wallet.address,
+							network,
+							provider,
+							signer,
+							synthetixjs,
+							ensName: wallet?.ens?.name || null,
+							ensAvatar: wallet?.ens?.avatar?.url || null,
+						},
 					});
 
 					const connectedWallets = update.wallets.map(({ label }) => label);
@@ -164,6 +172,7 @@ const useConnector = () => {
 	}, [onboard]);
 
 	useEffect(() => {
+		// We need to figure out what to do when the wallet address changes
 		if (walletAddress && !ensName) {
 			(async () => {
 				const ensN: string | null = await L1DefaultProvider.lookupAddress(walletAddress);
@@ -173,7 +182,7 @@ const useConnector = () => {
 				}
 			})();
 		}
-	}, [walletAddress, L1DefaultProvider, ensName]);
+	}, [walletAddress, L1DefaultProvider, ensName, network]);
 
 	useEffect(() => {
 		// If we are 'watching a wallet, we update the provider'

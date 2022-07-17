@@ -25,13 +25,11 @@ import {
 import Button from 'components/Button';
 import { FlexDivCentered, FlexDivColCentered, ExternalLink } from 'styles/common';
 import useSynthetixQueries, { EscrowData } from '@synthetixio/queries';
-import { useRecoilValue } from 'recoil';
-import { walletAddressState } from 'store/wallet';
+import Connector from 'containers/Connector';
 
 const RewardEscrowSchedule: React.FC = () => {
 	const { t } = useTranslation();
-
-	const walletAddress = useRecoilValue(walletAddressState);
+	const { walletAddress } = Connector.useContainer();
 
 	const { useEscrowDataQuery } = useSynthetixQueries();
 

@@ -5,7 +5,7 @@ import useGetSnxAmountToBeLiquidatedUsd from 'hooks/useGetSnxAmountToBeLiquidate
 import { useRecoilValue } from 'recoil';
 import { TabContainer } from 'sections/staking/components/common';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
-import { delegateWalletState, walletAddressState } from 'store/wallet';
+import { delegateWalletState } from 'store/wallet';
 import { useTranslation } from 'react-i18next';
 import SelfLiquidationTabContent from './SelfLiquidationTabContent';
 import { StyledCTA } from 'sections/staking/components/common';
@@ -16,7 +16,8 @@ import Loader from 'components/Loader';
 import useGetCanBurn from 'hooks/useGetCanBurn';
 
 const SelfLiquidateTab = () => {
-	const walletAddress = useRecoilValue(walletAddressState);
+	const { connectWallet, walletAddress } = Connector.useContainer();
+
 	const { t } = useTranslation();
 	const {
 		debtBalance,
@@ -27,7 +28,6 @@ const SelfLiquidateTab = () => {
 		collateral,
 		isLoading,
 	} = useStakingCalculations();
-	const { connectWallet } = Connector.useContainer();
 	/**
 	 * Ideally the Issuer should always let us burn when we're burning an amount that wont get the c-ration back to target
 	 * But since it doesn't support this, we need to check that we actually can burn
