@@ -7,6 +7,7 @@ import CaretRight from 'assets/svg/app/caret-right-gold.svg';
 
 import { FlexDiv, FlexDivCentered, ExternalLink } from 'styles/common';
 import { EXTERNAL_LINKS } from 'constants/links';
+import media from 'styled-media-query';
 
 const KwentaBanner: FC = () => {
 	const { t } = useTranslation();
@@ -17,9 +18,9 @@ const KwentaBanner: FC = () => {
 					{t('synths.trade-on-kwenta')}
 					<StyledCaretRight width="16" />
 				</FlexDiv>
-				<FlexDiv>
+				<div style={{ width: 100, height: 16 }}>
 					<KwentaIcon />
-				</FlexDiv>
+				</div>
 			</Banner>
 		</ExternalLink>
 	);
@@ -37,10 +38,13 @@ const Banner = styled(FlexDivCentered)`
 	color: ${(props) => props.theme.colors.white};
 	border-bottom-left-radius: 4px;
 	border-bottom-right-radius: 4px;
+	${media.lessThan('small')`
+		padding:12px;
+	`}
 `;
 
 const StyledCaretRight = styled(CaretRight)`
-	margin-left: 6px;
+	margin: 0 12px;
 `;
 
 export default KwentaBanner;
