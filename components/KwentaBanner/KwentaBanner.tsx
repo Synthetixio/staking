@@ -18,9 +18,9 @@ const KwentaBanner: FC = () => {
 					{t('synths.trade-on-kwenta')}
 					<StyledCaretRight width="16" />
 				</FlexDiv>
-				<div style={{ width: 100, height: 16 }}>
+				<StyledKwentaIconWrapper>
 					<KwentaIcon />
-				</div>
+				</StyledKwentaIconWrapper>
 			</Banner>
 		</ExternalLink>
 	);
@@ -45,6 +45,11 @@ const Banner = styled(FlexDivCentered)`
 
 const StyledCaretRight = styled(CaretRight)`
 	margin: 0 12px;
+`;
+
+const StyledKwentaIconWrapper = styled.div`
+	width: 100px;
+	height: 16px;
 `;
 
 export default KwentaBanner;
