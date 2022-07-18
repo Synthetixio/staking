@@ -1,5 +1,5 @@
 import { wei } from '@synthetixio/wei';
-import { calculateIsBelowCRatio } from './useUserStakingData';
+import { calculateIsBelowCRatio } from '../utils/balances';
 
 describe('useUserStakingDate', () => {
 	test('calculateIsBelowCRatio is below target', () => {
