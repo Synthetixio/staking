@@ -30,17 +30,15 @@ import { endOfHour, subDays } from 'date-fns';
 
 const DesktopSideNav: FC = () => {
 	const delegateWallet = useRecoilValue(delegateWalletState);
-	const { walletAddress, isL2 } = Connector.useContainer();
+	const { walletAddress, isL2, L1DefaultProvider } = Connector.useContainer();
 
 	const { t } = useTranslation();
-	const { useSynthsBalancesQuery } = useSynthetixQueries();
+	const { useSynthsBalancesQuery, useSNXData } = useSynthetixQueries();
 	const sevenDaysAgoSeconds = Math.floor(endOfHour(subDays(new Date(), 7)).getTime() / 1000);
 	const currencyRateChange = useGetCurrencyRateChange(sevenDaysAgoSeconds, 'SNX');
 	const cryptoBalances = useCryptoBalances(delegateWallet?.address ?? walletAddress);
 	const synthsBalancesQuery = useSynthsBalancesQuery(delegateWallet?.address ?? walletAddress);
 
-	const { useSNXData } = useSynthetixQueries();
-	const { L1DefaultProvider } = Connector.useContainer();
 	const lockedSNXQuery = useSNXData(L1DefaultProvider);
 	const tRatio = useMemo(() => {
 		if (lockedSNXQuery?.data?.lockedSupply?.gt(1) && lockedSNXQuery?.data?.totalSNXSupply) {
