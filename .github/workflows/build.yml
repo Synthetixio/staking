@@ -16,7 +16,7 @@ jobs:
       # This was yarn v1 only and yarn v3 fails to run
       - run: unset YARN_PRODUCTION
 
-      - uses: actions/setup-node@eeb10cff27034e7acf239c5d29f62154018672fd
+      - uses: actions/setup-node@2fddd8803e2f5c9604345a0b591c3020ee971a93
         with:
           node-version: 16
           registry-url: 'https://registry.npmjs.org'
@@ -32,13 +32,13 @@ jobs:
       - run: yarn test:unit
 
       - name: Upload lint results
-        uses: github/codeql-action/upload-sarif@3f62b754e23e0dd60f91b744033e1dc1654c0ec6 # pin@codeql-bundle-20210517
+        uses: github/codeql-action/upload-sarif@3e7e3b32d0fb8283594bb0a76cc60a00918b0969 # pin@codeql-bundle-20210517
         with:
           sarif_file: lint-results.sarif
         continue-on-error: true
 
       - name: Cache next.js build cache
-        uses: actions/cache@30f413bfed0a2bc738fdfd409e5a9e96b24545fd
+        uses: actions/cache@0865c47f36e68161719c5b124609996bb5c40129
         with:
           path: .next/cache
           key: ${{ runner.os }}-next-cache-${{ hashFiles('yarn.lock') }}
@@ -75,7 +75,7 @@ jobs:
       - run: unset YARN_PRODUCTION
 
       - name: Cache yarn modules
-        uses: actions/cache@c3f1317a9e7b1ef106c153ac8c0f00fed3ddbc0d # pin@v2
+        uses: actions/cache@0865c47f36e68161719c5b124609996bb5c40129 # pin@v2
         with:
           path: |
             .yarn/cache

@@ -1,20 +1,65 @@
-// next.config.js
 const withPlugins = require('next-compose-plugins');
-const optimizedImages = require('next-optimized-images');
 
-module.exports = withPlugins([[optimizedImages, { images: { optimize: false } }]], {
-	webpack: (config) => {
+const withBundleAnalyzer = require('@next/bundle-analyzer')({
+	enabled: process.env.GENERATE_BUNDLE_REPORT === 'true',
+});
+
+function optimiseContracts(config, { webpack }) {
+	const networks = ['kovan', 'kovan-ovm', 'mainnet', 'mainnet-ovm'];
+	const generate = require('./scripts/minify-synthetix-contract');
+	const out = require('path').resolve(__dirname, '.next/tmp');
+	require('fs').mkdirSync(out, { recursive: true });
+	generate({ networks, out });
+
+	networks.forEach((network) =>
+		config.plugins.push(
+			new webpack.NormalModuleReplacementPlugin(
+				new RegExp(`/synthetix/publish/deployed/${network}/deployment.json`),
+				require.resolve(`${out}/${network}.json`)
+			)
+		)
+	);
+	config.plugins.push(
+		new webpack.NormalModuleReplacementPlugin(
+			new RegExp(`/synthetix/publish/deployed/(goerli|local)`),
+			require.resolve('./scripts/noop')
+		)
+	);
+	config.plugins.push(
+		new webpack.NormalModuleReplacementPlugin(/^synthetix$/, require.resolve('synthetix/index.js'))
+	);
+}
+
+module.exports = withPlugins([withBundleAnalyzer], {
+	swcMinify: true,
+	eslint: {
+		ignoreDuringBuilds: true,
+	},
+	webpack: (config, context) => {
 		config.resolve.mainFields = ['module', 'browser', 'main'];
-		if (process.env.GENERATE_BUNDLE_REPORT === 'true') {
-			const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
-			const plugin = new BundleAnalyzerPlugin({
-				analyzerMode: 'static',
-				reportFilename: 'reports/webpack.html',
-				openAnalyzer: false,
-				generateStatsFile: false,
-			});
-			config.plugins.push(plugin);
+		if (!context.isServer) {
+			optimiseContracts(config, context);
 		}
+
+		config.module.rules.push({
+			test: /\.svg$/,
+			use: '@svgr/webpack',
+		});
+
+		config.module.rules.push({
+			test: /\.(png|jpg|ico|gif|woff|woff2|ttf|eot|doc|pdf|zip|wav|avi|txt|webp)$/,
+			type: 'asset',
+			generator: {
+				outputPath: './static/images',
+				publicPath: '/_next/static/images',
+			},
+			parser: {
+				dataUrlCondition: {
+					maxSize: 4 * 1024, // 4kb
+				},
+			},
+		});
+
 		return config;
 	},
 	trailingSlash: !!process.env.NEXT_PUBLIC_TRAILING_SLASH_ENABLED,

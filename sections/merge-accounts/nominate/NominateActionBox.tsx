@@ -3,7 +3,6 @@ import { ethers } from 'ethers';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 import { Trans, useTranslation } from 'react-i18next';
-import { Svg } from 'react-optimized-image';
 import { useRouter } from 'next/router';
 import useSynthetixQueries, { GasPrice } from '@synthetixio/queries';
 
@@ -34,7 +33,7 @@ import {
 	FormHeader,
 } from 'sections/merge-accounts/common';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
-import walletIcon from 'assets/svg/app/wallet-purple.svg';
+import WalletIcon from 'assets/svg/app/wallet-purple.svg';
 import ROUTES from 'constants/routes';
 import { TxWaiting, TxSuccess } from './Tx';
 
@@ -207,12 +206,12 @@ const NominateTabInner: FC = () => {
 			<FormContainer>
 				<FormHeader>
 					<IconButton onClick={onGoBack}>
-						<Svg src={NavigationBack} />
+						<NavigationBack width="16" />
 					</IconButton>
 				</FormHeader>
 
 				<InputsContainer>
-					<Svg src={walletIcon} />
+					<WalletIcon width="54" />
 					<AmountInput
 						value={destinationAccountAddress}
 						placeholder={t('merge-accounts.nominate.input-placeholder')}

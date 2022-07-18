@@ -1,9 +1,9 @@
 import dynamic from 'next/dynamic';
-import { safeImport } from '@synthetixio/safe-import';
+import GlobalLoader from 'components/GlobalLoader';
 
-const DelegatePage = dynamic(
-	() => safeImport(() => import(/* webpackChunkName: "delegate" */ 'content/DelegatePage')),
-	{ ssr: true }
-);
+const DelegatePage = dynamic(() => import('content/DelegatePage'), {
+	ssr: false,
+	loading: GlobalLoader,
+});
 
 export default DelegatePage;

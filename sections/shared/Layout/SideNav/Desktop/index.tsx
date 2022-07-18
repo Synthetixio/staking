@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 import { FC, useMemo } from 'react';
 import Link from 'next/link';
-import { Svg } from 'react-optimized-image';
 import { useRecoilValue } from 'recoil';
 
 import StakingLogo from 'assets/svg/app/staking-logo.svg';
@@ -12,7 +11,6 @@ import useCryptoBalances from 'hooks/useCryptoBalances';
 import ROUTES from 'constants/routes';
 import { CryptoCurrency, Synths } from 'constants/currency';
 import { DESKTOP_SIDE_NAV_WIDTH, zIndex } from 'constants/ui';
-import UIContainer from 'containers/UI';
 
 import { isL2State, walletAddressState, delegateWalletState } from 'store/wallet';
 
@@ -23,8 +21,7 @@ import CRatioBarStats from 'sections/shared/Layout/Stats/CRatioBarStats';
 import { Tooltip } from 'styles/common';
 import { useTranslation } from 'react-i18next';
 
-import SideNav from './SideNav';
-import SubMenu from './DesktopSubMenu';
+import DesktopMenu from './DesktopMenu';
 import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
 import useGetCurrencyRateChange from 'hooks/useGetCurrencyRateChange';
@@ -34,14 +31,15 @@ import { endOfHour, subDays } from 'date-fns';
 const DesktopSideNav: FC = () => {
 	const walletAddress = useRecoilValue(walletAddressState);
 	const delegateWallet = useRecoilValue(delegateWalletState);
+	const isL2 = useRecoilValue(isL2State);
+
 	const { t } = useTranslation();
 	const { useSynthsBalancesQuery } = useSynthetixQueries();
 	const sevenDaysAgoSeconds = Math.floor(endOfHour(subDays(new Date(), 7)).getTime() / 1000);
 	const currencyRateChange = useGetCurrencyRateChange(sevenDaysAgoSeconds, 'SNX');
 	const cryptoBalances = useCryptoBalances(delegateWallet?.address ?? walletAddress);
 	const synthsBalancesQuery = useSynthsBalancesQuery(delegateWallet?.address ?? walletAddress);
-	const isL2 = useRecoilValue(isL2State);
-	const { clearSubMenuConfiguration } = UIContainer.useContainer();
+
 	const { useSNXData } = useSynthetixQueries();
 	const { L1DefaultProvider } = Connector.useContainer();
 	const lockedSNXQuery = useSNXData(L1DefaultProvider);
@@ -62,40 +60,35 @@ const DesktopSideNav: FC = () => {
 	const sUSDBalance = synthsBalancesQuery?.data?.balancesMap[Synths.sUSD]?.balance ?? wei(0);
 
 	return (
-		<Container onMouseLeave={clearSubMenuConfiguration} data-testid="sidenav">
+		<Container data-testid="sidenav">
 			<StakingLogoWrap>
 				<Link href={ROUTES.Home}>
-					<div>{isL2 ? <Svg src={StakingL2Logo} /> : <Svg src={StakingLogo} />}</div>
+					<div>{isL2 ? <StakingL2Logo width="112" /> : <StakingLogo width="112" />}</div>
 				</Link>
 			</StakingLogoWrap>
 
-			<SideNav isDesktop={true} />
+			<DesktopMenu />
 
-			<>
-				<LineSeparator />
-				<MenuCharts>
-					<CRatioBarStats />
-					<BalanceItem amount={snxBalance} currencyKey={CryptoCurrency.SNX} />
-					<BalanceItem amount={sUSDBalance} currencyKey={Synths.sUSD} />
-					<Tooltip content={t('common.total-staking.staking-percentage-tooltip')}>
-						<StyledTargetStakingRatio>
-							<StyledTargetStakingRatioTitle>
-								{t('common.total-staking.staking-percentage-title')}
-							</StyledTargetStakingRatioTitle>
-							{tRatio || '0.00'}%
-						</StyledTargetStakingRatio>
-					</Tooltip>
-					<Tooltip content={t('common.price-change.seven-days')}>
-						<PriceItemContainer>
-							<PriceItem currencyKey={CryptoCurrency.SNX} currencyRateChange={currencyRateChange} />
-						</PriceItemContainer>
-					</Tooltip>
-
-					<PeriodBarStats />
-				</MenuCharts>
-			</>
-
-			<SubMenu />
+			<LineSeparator />
+			<MenuCharts>
+				<CRatioBarStats />
+				<BalanceItem amount={snxBalance} currencyKey={CryptoCurrency.SNX} />
+				<BalanceItem amount={sUSDBalance} currencyKey={Synths.sUSD} />
+				<Tooltip content={t('common.total-staking.staking-percentage-tooltip')}>
+					<StyledTargetStakingRatio>
+						<StyledTargetStakingRatioTitle>
+							{t('common.total-staking.staking-percentage-title')}
+						</StyledTargetStakingRatioTitle>
+						{tRatio || '0.00'}%
+					</StyledTargetStakingRatio>
+				</Tooltip>
+				<Tooltip content={t('common.price-change.seven-days')}>
+					<PriceItemContainer>
+						<PriceItem currencyKey={CryptoCurrency.SNX} currencyRateChange={currencyRateChange} />
+					</PriceItemContainer>
+				</Tooltip>
+				<PeriodBarStats />
+			</MenuCharts>
 		</Container>
 	);
 };

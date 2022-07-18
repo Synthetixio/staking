@@ -1,5 +1,4 @@
-import { FC } from 'react';
-import { Svg } from 'react-optimized-image';
+import type { FC } from 'react';
 
 import { formatPercent } from 'utils/formatters/number';
 import styled from 'styled-components';
@@ -17,17 +16,7 @@ export const ChangePercent: FC<ChangePercentProps> = ({ value, ...rest }) => {
 
 	return (
 		<CurrencyChange isPositive={isPositive} {...rest}>
-			{isPositive ? (
-				<Svg
-					src={ChangePositiveIcon}
-					viewBox={`0 0 ${ChangePositiveIcon.width} ${ChangePositiveIcon.height}`}
-				/>
-			) : (
-				<Svg
-					src={ChangeNegativeIcon}
-					viewBox={`0 0 ${ChangeNegativeIcon.width} ${ChangeNegativeIcon.height}`}
-				/>
-			)}
+			{isPositive ? <ChangePositiveIcon width="8" /> : <ChangeNegativeIcon width="8" />}
 			{formatPercent(Math.abs(value))}
 		</CurrencyChange>
 	);
@@ -39,8 +28,6 @@ const CurrencyChange = styled.span<{ isPositive: boolean }>`
 	color: ${(props) => (props.isPositive ? props.theme.colors.green : props.theme.colors.pink)};
 	svg {
 		margin-right: 2px;
-		width: 8px;
-		height: 8px;
 	}
 `;
 

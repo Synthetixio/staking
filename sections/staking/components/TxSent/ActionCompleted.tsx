@@ -1,5 +1,4 @@
 import React from 'react';
-import { Svg } from 'react-optimized-image';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
@@ -74,7 +73,7 @@ const ActionCompleted: React.FC<ActionCompletedProps> = ({
 				<SectionHeader>{t('staking.actions.burn.completed.title')}</SectionHeader>
 				<MiddleSection>
 					<IconContainer>
-						<Svg src={Success} />
+						<Success width="78" />
 					</IconContainer>
 					<FlexDivCentered>
 						<InfoContainer key="one">
@@ -113,7 +112,7 @@ const ActionCompleted: React.FC<ActionCompletedProps> = ({
 				<SectionHeader>{t('staking.actions.mint.completed-default.title')}</SectionHeader>
 				<MiddleSection>
 					<IconContainer>
-						<Svg src={Success} />
+						<Success width="78" />
 					</IconContainer>
 					<FlexDivCentered>
 						<InfoContainer key="one">

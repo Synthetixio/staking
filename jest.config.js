@@ -1,17 +1,18 @@
-module.exports = {
+const nextJest = require('next/jest');
+
+const createJestConfig = nextJest({
+	// Provide the path to your Next.js app to load next.config.js and .env files in your test environment
+	dir: './',
+});
+
+// Add any custom config to be passed to Jest
+const customJestConfig = {
 	roots: ['<rootDir>'],
 	modulePaths: ['<rootDir>'],
-	moduleDirectories: ['node_modules'],
+	moduleDirectories: ['node_modules', '<rootDir>/'],
 	globalSetup: './test-setup/global.js',
-	setupFilesAfterEnv: ['./test-setup/setup.js'],
+	setupFilesAfterEnv: ['<rootDir>/test-setup/setup.js'],
 	testEnvironment: 'jest-environment-jsdom',
-	transform: {
-		'\\.svg$': '<rootDir>/test-setup/svgTransformer.js',
-		'\\.[jt]sx?$': 'babel-jest',
-	},
-	moduleNameMapper: {
-		'^.+\\.svg\\?(sprite|include)(.+)?$': '<rootDir>/test-setup/svgMock.js',
-	},
 	testMatch: ['<rootDir>/**/*.test.{js,jsx,ts,tsx}'],
 	collectCoverageFrom: [
 		'<rootDir>/**/*.{js,jsx,ts,tsx}',
@@ -21,3 +22,5 @@ module.exports = {
 		'!<rootDir>/.next/**/*.{js,jsx,ts,tsx}',
 	],
 };
+
+module.exports = createJestConfig(customJestConfig);

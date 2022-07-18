@@ -1,6 +1,5 @@
 import React, { FC } from 'react';
 import styled from 'styled-components';
-import { Svg } from 'react-optimized-image';
 import { useTranslation } from 'react-i18next';
 
 import Etherscan from 'containers/BlockExplorer';
@@ -31,7 +30,7 @@ const ActionInProgress: FC<ActionInProgressProps> = ({ amount, currencyKey, hash
 	return (
 		<Container>
 			<SectionHeader>{t(`layer2.actions.${action}.action.in-progress.title`)}</SectionHeader>
-			<Svg src={PendingConfirmation} />
+			<PendingConfirmation width="78" />
 			<FlexDivCentered>
 				<InfoContainer key="one">
 					<InfoTitle>{t(`layer2.actions.${action}.action.in-progress.depositing`)}</InfoTitle>

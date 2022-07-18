@@ -8,7 +8,6 @@ import styled from 'styled-components';
 import { ExternalLink, LineSpacer } from 'styles/common';
 import { formatShortDateWithTime } from 'utils/formatters/date';
 import { formatCryptoCurrency, formatPercent, isZero } from 'utils/formatters/number';
-import { Svg } from 'react-optimized-image';
 import WarningIcon from 'assets/svg/app/warning.svg';
 import { useTranslation } from 'react-i18next';
 import { Trans } from 'react-i18next';
@@ -165,7 +164,7 @@ const SelfLiquidation: React.FC<{
 	return (
 		<>
 			<Container>
-				<Svg src={WarningIcon} />
+				<WarningIcon width="72" />
 				{notBeenFlagged ? (
 					<CratioUnderLiquidationRatioWarning
 						currentCRatioPercent={percentageCurrentCRatio}

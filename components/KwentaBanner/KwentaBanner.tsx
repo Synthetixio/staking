@@ -1,5 +1,4 @@
 import { FC } from 'react';
-import { Svg } from 'react-optimized-image';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 
@@ -8,6 +7,7 @@ import CaretRight from 'assets/svg/app/caret-right-gold.svg';
 
 import { FlexDiv, FlexDivCentered, ExternalLink } from 'styles/common';
 import { EXTERNAL_LINKS } from 'constants/links';
+import media from 'styled-media-query';
 
 const KwentaBanner: FC = () => {
 	const { t } = useTranslation();
@@ -16,11 +16,11 @@ const KwentaBanner: FC = () => {
 			<Banner>
 				<FlexDiv>
 					{t('synths.trade-on-kwenta')}
-					<StyledSvg src={CaretRight} />
+					<StyledCaretRight width="16" />
 				</FlexDiv>
-				<FlexDiv>
-					<Svg src={KwentaIcon} />
-				</FlexDiv>
+				<div style={{ width: 100, height: 16 }}>
+					<KwentaIcon />
+				</div>
 			</Banner>
 		</ExternalLink>
 	);
@@ -38,10 +38,13 @@ const Banner = styled(FlexDivCentered)`
 	color: ${(props) => props.theme.colors.white};
 	border-bottom-left-radius: 4px;
 	border-bottom-right-radius: 4px;
+	${media.lessThan('small')`
+		padding:12px;
+	`}
 `;
 
-const StyledSvg = styled(Svg)`
-	margin-left: 6px;
+const StyledCaretRight = styled(CaretRight)`
+	margin: 0 12px;
 `;
 
 export default KwentaBanner;

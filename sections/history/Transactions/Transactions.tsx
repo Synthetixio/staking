@@ -2,7 +2,6 @@ import { FC, ReactNode, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import styled from 'styled-components';
-import { Svg } from 'react-optimized-image';
 
 import Etherscan from 'containers/BlockExplorer';
 
@@ -90,7 +89,7 @@ const Transactions: FC<TransactionsProps> = ({ transactions, isLoaded, noResults
 				Cell: (cellProps: CellProps<HistoricalStakingTransaction>) =>
 					blockExplorerInstance != null && cellProps.row.original.hash ? (
 						<StyledExternalLink href={blockExplorerInstance.txLink(cellProps.row.original.hash)}>
-							{t('common.explorers.etherscan')} <Svg src={ArrowRightIcon} />
+							{t('common.explorers.etherscan')} <ArrowRightIcon width="16" />
 						</StyledExternalLink>
 					) : (
 						NO_VALUE
@@ -153,7 +152,7 @@ const Transactions: FC<TransactionsProps> = ({ transactions, isLoaded, noResults
 					<DateContainer>
 						{!(blockExplorerInstance != null && cellProps.row.original.hash) ? null : (
 							<StyledExternalLink href={blockExplorerInstance.txLink(cellProps.row.original.hash)}>
-								<Svg src={ExternalLinkIcon} />
+								<ExternalLinkIcon width="16" />
 							</StyledExternalLink>
 						)}
 

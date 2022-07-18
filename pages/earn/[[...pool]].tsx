@@ -1,9 +1,9 @@
 import dynamic from 'next/dynamic';
-import { safeImport } from '@synthetixio/safe-import';
+import GlobalLoader from 'components/GlobalLoader';
 
-const EarnPage = dynamic(
-	() => safeImport(() => import(/* webpackChunkName: "earn" */ 'content/EarnPage')),
-	{ ssr: true }
-);
+const EarnPage = dynamic(() => import('content/EarnPage'), {
+	ssr: false,
+	loading: GlobalLoader,
+});
 
 export default EarnPage;

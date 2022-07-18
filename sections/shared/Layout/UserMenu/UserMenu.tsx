@@ -2,7 +2,6 @@ import { FC, useState } from 'react';
 import styled, { css } from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
-import { Svg } from 'react-optimized-image';
 import OutsideClickHandler from 'react-outside-click-handler';
 
 import {
@@ -43,9 +42,6 @@ import DelegateIcon from 'assets/svg/app/delegate.svg';
 import WatchWalletModal from 'sections/shared/modals/WatchWalletModal';
 import DelegateModal from 'sections/shared/modals/DelegateModal';
 
-const caretUp = <Svg src={CaretUp} viewBox={`0 0 ${CaretUp.width} ${CaretUp.height}`} />;
-const caretDown = <Svg src={CaretDown} viewBox={`0 0 ${CaretDown.width} ${CaretDown.height}`} />;
-
 const UserMenu: FC = () => {
 	const { t } = useTranslation();
 	const { networkError } = UI.useContainer();
@@ -73,7 +69,7 @@ const UserMenu: FC = () => {
 					<FlexDiv>
 						{isWalletConnected && delegateWallet && (
 							<DelegateIconWrapper>
-								<Svg src={DelegateIcon} />
+								<DelegateIcon width="14" />
 							</DelegateIconWrapper>
 						)}
 						<DropdownContainer>
@@ -97,7 +93,7 @@ const UserMenu: FC = () => {
 										<NetworkTag className="network-tag" data-testid="network-tag">
 											{getNetworkName()}
 										</NetworkTag>
-										{walletOptionsModalOpened ? caretUp : caretDown}
+										{walletOptionsModalOpened ? <CaretUp width="10" /> : <CaretDown width="10" />}
 									</WalletButton>
 								) : (
 									<WalletButton
@@ -110,7 +106,7 @@ const UserMenu: FC = () => {
 											<StyledConnectionDot />
 											<UpperCased>{t('common.wallet.not-connected')}</UpperCased>
 										</FlexDivCentered>
-										{walletOptionsModalOpened ? caretUp : caretDown}
+										{walletOptionsModalOpened ? <CaretUp width="10" /> : <CaretDown width="10" />}
 									</WalletButton>
 								)}
 								{walletOptionsModalOpened && (
@@ -129,7 +125,7 @@ const UserMenu: FC = () => {
 						<FlexDiv>
 							{isWalletConnected && delegateWallet && (
 								<DelegateIconWrapper>
-									<Svg src={DelegateIcon} />
+									<DelegateIcon />
 								</DelegateIconWrapper>
 							)}
 							<WalletButton
@@ -147,7 +143,7 @@ const UserMenu: FC = () => {
 										{ensName || truncatedWalletAddress}
 									</Ens>
 								</FlexDivCentered>
-								{walletOptionsModalOpened ? caretUp : caretDown}
+								{walletOptionsModalOpened ? <CaretUp width="10" /> : <CaretDown width="10" />}
 							</WalletButton>
 						</FlexDiv>
 					) : (
@@ -173,7 +169,7 @@ const UserMenu: FC = () => {
 								setSettingsModalOpened(!settingsModalOpened);
 							}}
 						>
-							<Svg src={CogIcon} />
+							<CogIcon width="18" />
 						</MenuButton>
 					</Menu>
 				</DesktopOrTabletView>
@@ -186,12 +182,7 @@ const UserMenu: FC = () => {
 			{networkError && (
 				<Error>
 					<ErrorContainer>
-						<Svg
-							width="24"
-							height="24"
-							viewBox={`0 0 ${Warning.width} ${Warning.height}`}
-							src={Warning}
-						/>
+						<Warning width="72" />
 						{networkError}
 					</ErrorContainer>
 				</Error>
@@ -259,8 +250,6 @@ const WalletButton = styled(Button)`
 
 	svg {
 		margin-left: 5px;
-		width: 10px;
-		height: 10px;
 		color: ${(props) => props.theme.colors.gray};
 		${(props) =>
 			props.isActive &&

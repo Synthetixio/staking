@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import styled, { useTheme } from 'styled-components';
 import { AreaChart, Area, Tooltip, XAxis, YAxis } from 'recharts';
 import formatDate from 'date-fns/format';
-import { Svg } from 'react-optimized-image';
 
 import { formatCurrency } from 'utils/formatters/number';
 import ArrowForwardPink from 'assets/svg/app/arrow-forward-pink.svg';
@@ -133,7 +132,7 @@ export const DebtValueModal: FC<{ value: string; isOpened: boolean; onDismiss: (
 									sign: '$',
 								})}
 							</div>
-							<Svg src={ArrowForwardPink} />
+							<ArrowForwardPink width="12" />
 							<div>
 								{' '}
 								{formatCurrency('sUSD', currentSnapshotOrLast.issuanceDebt, {
@@ -150,7 +149,7 @@ export const DebtValueModal: FC<{ value: string; isOpened: boolean; onDismiss: (
 									sign: '$',
 								})}
 							</div>
-							<Svg src={ArrowForwardPink} />
+							<ArrowForwardPink width="12" />
 							<div>
 								{' '}
 								{formatCurrency('sUSD', currentSnapshotOrLast.actualDebt, {
@@ -163,7 +162,7 @@ export const DebtValueModal: FC<{ value: string; isOpened: boolean; onDismiss: (
 						{t('modals.debt-value.share-of-debt-pool')}
 						<FooterItemChange>
 							<span>0%</span>
-							<Svg src={ArrowForwardPink} />
+							<ArrowForwardPink width="12" />
 							<span>0%</span>
 						</FooterItemChange>
 					</FooterItem>

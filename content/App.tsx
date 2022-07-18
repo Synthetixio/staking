@@ -1,4 +1,5 @@
 import React, { FC } from 'react';
+import { useEffect } from 'react';
 import { AppProps } from 'next/app';
 import Head from 'next/head';
 import { RecoilRoot } from 'recoil';
@@ -32,6 +33,12 @@ const queryClient = new QueryClient({
 
 const InnerApp: FC<AppProps> = ({ Component, pageProps }) => {
 	const { provider, signer, network, L1DefaultProvider } = Connector.useContainer();
+
+	useEffect(() => {
+		try {
+			document.querySelector('#global-loader')?.remove();
+		} catch (_e) {}
+	}, []);
 
 	return (
 		<>
@@ -86,16 +93,6 @@ const App: FC<AppProps> = (props) => {
 				<meta name="twitter:image" content="/images/staking-twitter.jpg" />
 				<meta name="twitter:url" content="https://staking.synthetix.io" />
 				<link rel="icon" href="/images/favicon.ico" />
-				<link
-					rel="stylesheet"
-					type="text/css"
-					href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.0/slick.min.css"
-				/>
-				<link
-					rel="stylesheet"
-					type="text/css"
-					href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.0/slick-theme.min.css"
-				/>
 
 				{/* matomo */}
 				<script

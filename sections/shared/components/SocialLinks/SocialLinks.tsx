@@ -2,8 +2,6 @@ import { FC } from 'react';
 import styled from 'styled-components';
 import { ExternalLink, GridDivCenteredCol } from 'styles/common';
 
-import { Svg } from 'react-optimized-image';
-
 import DiscordIcon from 'assets/svg/social/discord.svg';
 import TwitterIcon from 'assets/svg/social/twitter.svg';
 import GithubIcon from 'assets/svg/social/github.svg';
@@ -16,17 +14,17 @@ const SOCIAL_LINKS = [
 	{
 		id: 'discord',
 		href: EXTERNAL_LINKS.Social.Discord,
-		icon: <Svg src={DiscordIcon} />,
+		icon: <DiscordIcon width="22" />,
 	},
 	{
 		id: 'twitter',
 		href: EXTERNAL_LINKS.Social.Twitter,
-		icon: <Svg src={TwitterIcon} />,
+		icon: <TwitterIcon width="24" />,
 	},
 	{
 		id: 'github',
 		href: EXTERNAL_LINKS.Social.GitHub,
-		icon: <Svg src={GithubIcon} />,
+		icon: <GithubIcon width="24" />,
 	},
 ];
 

@@ -4,7 +4,6 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { FlexDivColCentered, FlexDivRowCentered } from 'styles/common';
-import { Svg } from 'react-optimized-image';
 import CrossIcon from 'assets/svg/app/cross.svg';
 import { Card } from '../common';
 
@@ -32,14 +31,12 @@ const Options: React.FC<OptionsProps> = ({ choices, setChoices }) => {
 								}}
 							/>
 							<Delete
+								width="16"
 								onClick={() => {
 									let item = [...choices];
-
 									item.splice(i, 1);
-
 									setChoices(item);
 								}}
-								src={CrossIcon}
 							/>
 						</OptionRow>
 					);
@@ -98,7 +95,7 @@ const Option = styled(Input)`
 	font-size: 12px;
 `;
 
-const Delete = styled(Svg)`
+const Delete = styled(CrossIcon)`
 	margin-right: 8px;
 	color: ${(props) => props.theme.colors.gray};
 	cursor: pointer;
