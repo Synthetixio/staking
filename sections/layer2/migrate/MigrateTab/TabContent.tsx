@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import router from 'next/router';
+import { useRouter } from 'next/router';
 
 import { formatCurrency } from 'utils/formatters/number';
 import { CryptoCurrency } from 'constants/currency';
@@ -58,6 +58,8 @@ const TabContent: FC<TabContentProps> = ({
 }) => {
 	const { t } = useTranslation();
 	const vestingCurrencyKey = CryptoCurrency['SNX'];
+
+	const router = useRouter();
 
 	const renderButton = () => {
 		if (isVestNeeded) {

@@ -1,5 +1,6 @@
 import { FC, useState, MouseEvent } from 'react';
 import styled, { css } from 'styled-components';
+import { Link } from 'react-router-dom';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
@@ -36,10 +37,11 @@ const DesktopMenu: FC = () => {
 					if (!subMenu) return;
 					setOpenMenu(link);
 				};
+
 				return (
 					<div key={link}>
 						<MenuLinkItem
-							onClick={() => router.push(link)}
+							to={link}
 							onMouseEnter={() => onMouseEnter(link)}
 							data-testid={`sidenav-${link}`}
 							isActive={
@@ -55,21 +57,16 @@ const DesktopMenu: FC = () => {
 						</MenuLinkItem>
 						{subMenu && (
 							<DesktopSubMenu i={i} isActive={openMenu === link} key={link}>
-								{subMenu.map(({ i18nLabel, subLink }, j) => {
-									const onClick = () => {
-										router.push(subLink);
-									};
-									return (
-										<SubMenuLinkItem
-											key={`subMenuLinkItem-${j}`}
-											isActive={router.asPath === subLink}
-											data-testid={`sidenav-submenu-${subLink}`}
-											onClick={onClick}
-										>
-											{t(i18nLabel)}
-										</SubMenuLinkItem>
-									);
-								})}
+								{subMenu.map(({ i18nLabel, subLink }) => (
+									<SubMenuLinkItem
+										to={subLink}
+										key={subLink}
+										isActive={router.asPath === subLink}
+										data-testid={`sidenav-submenu-${subLink}`}
+									>
+										{t(i18nLabel)}
+									</SubMenuLinkItem>
+								))}
 							</DesktopSubMenu>
 						)}
 					</div>
@@ -88,7 +85,7 @@ const MenuLinks = styled.div`
 	position: relative;
 `;
 
-export const MenuLinkItem = styled.div<{ isActive?: boolean; isL2Switcher?: boolean }>`
+export const MenuLinkItem = styled(Link)<{ isCurrent?: boolean; isL2Switcher?: boolean }>`
 	line-height: 40px;
 	padding-bottom: 10px;
 	position: relative;

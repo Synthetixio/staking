@@ -56,7 +56,7 @@ const ActionBox: React.FC<ActionBoxProps> = () => {
 		<StructuredTab
 			boxPadding={20}
 			tabData={tabData}
-			setActiveTab={(key: string) => router.push(`/loans/${key}`)}
+			setActiveTab={(key) => router.push(`/loans/${key}`)}
 			activeTab={currentTab}
 		/>
 	);

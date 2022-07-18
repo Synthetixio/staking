@@ -1,5 +1,5 @@
 import { FC, ReactNode, useEffect } from 'react';
-import router from 'next/router';
+// import { useRouter } from 'next/router';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
@@ -18,6 +18,7 @@ type AppLayoutProps = {
 };
 
 const AppLayout: FC<AppLayoutProps> = ({ children }) => {
+	const router = useRouter();
 	const isL2 = useRecoilValue(isL2State);
 	const isMainnet = useRecoilValue(isMainnetState);
 
@@ -30,7 +31,7 @@ const AppLayout: FC<AppLayoutProps> = ({ children }) => {
 		if (delegateWallet && router.pathname !== ROUTES.Home) {
 			router.push(ROUTES.Home);
 		}
-	}, [isL2, isMainnet, depositsInactive, delegateWallet]);
+	}, [isL2, isMainnet, depositsInactive, delegateWallet, router]);
 
 	return (
 		<>

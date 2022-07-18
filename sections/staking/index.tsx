@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import styled from 'styled-components';
-import { useRouter } from 'next/router';
+import { useParams } from 'react-router-dom';
 
 import { StakingPanelType } from 'store/staking';
 import { FlexDivCol } from 'styles/common';
@@ -10,16 +10,20 @@ import InfoBox from './components/InfoBox';
 import ActionBox from './components/ActionBox';
 
 const Index: FC = () => {
-	const router = useRouter();
-	const defaultTab = (router.query.action && router.query.action[0]) || StakingPanelType.MINT;
+	const params = useParams();
+	const action = params.action || '';
+	// @ts-ignore
+	const currentTab = Object.values(StakingPanelType).includes(action)
+		? action
+		: StakingPanelType.MINT;
 
 	return (
 		<Container>
 			<Col>
-				<ActionBox currentTab={defaultTab} />
+				<ActionBox currentTab={currentTab} />
 			</Col>
 			<Col>
-				<InfoBox currentTab={defaultTab} />
+				<InfoBox currentTab={currentTab} />
 			</Col>
 		</Container>
 	);

@@ -1,10 +1,13 @@
-const router = {
-	push: function push() {},
-	asPath: '',
-};
+import { useNavigate, useLocation } from 'react-router-dom';
 
 export function useRouter() {
-	return router;
-}
+	const navigate = useNavigate();
+	const location = useLocation();
 
-export default router;
+	return {
+		query: {},
+		push: navigate,
+		pathname: location.pathname,
+		asPath: location.pathname,
+	};
+}

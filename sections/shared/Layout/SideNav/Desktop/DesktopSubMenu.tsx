@@ -5,6 +5,7 @@ import { createPortal } from 'react-dom';
 import styled, { css } from 'styled-components';
 import { FlexDivColCentered } from 'styles/common';
 import media from 'styles/media';
+import { Link } from 'react-router-dom';
 
 type SubMenuProps = {
 	children: ReactNode;
@@ -28,9 +29,8 @@ const DesktopSubMenu: FC<SubMenuProps> = ({ children, i, isActive }) => {
 export const SubContainer = styled(FlexDivColCentered)<{ i: number; isActive: boolean }>`
 	padding-top: ${({ i }) => 111 + i * 50}px; // (Logo + container) + index offset * link height;
 	background: ${(props) => props.theme.colors.darkGradient1};
-	top: 0px;
-	bottom: 0px;
-	transform: translateX(0px);
+	top: 0;
+	bottom: 0;
 	border-right: 1px solid ${(props) => props.theme.colors.grayBlue};
 	height: 100%;
 	width: 128px;
@@ -47,8 +47,8 @@ export const SubContainer = styled(FlexDivColCentered)<{ i: number; isActive: bo
 		`}
 `;
 
-export const SubMenuLinkItem = styled.div<{ isActive: boolean }>`
-	zindex: ${zIndex.BASE};
+export const SubMenuLinkItem = styled(Link)<{ isCurrent: boolean }>`
+	z-index: ${zIndex.BASE};
 	padding-left: 26px;
 	line-height: 40px;
 	padding-bottom: 10px;
@@ -84,11 +84,10 @@ export const SubMenuLinkItem = styled.div<{ isActive: boolean }>`
 `;
 
 const Inner = styled.div`
-	position: relative;
 	height: 100%;
 	width: 100%;
 	position: fixed;
-	zindex: -100;
+	z-index: -100;
 `;
 
 export default DesktopSubMenu;

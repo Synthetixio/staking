@@ -8,7 +8,6 @@ import { ThemeProvider } from 'styled-components';
 import WithAppContainers from 'containers';
 import theme from 'styles/theme';
 import Layout from 'sections/shared/Layout';
-import AppLayout from 'sections/shared/Layout/AppLayout';
 import { MediaContextProvider } from 'styles/media';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
@@ -21,7 +20,7 @@ import SystemStatus from 'sections/shared/SystemStatus';
 import '../i18n';
 import Connector from 'containers/Connector';
 
-import DashboardPage from 'content/DashboardPage';
+import Routes from './Routes';
 
 const queryClient = new QueryClient({
 	defaultOptions: {
@@ -59,9 +58,7 @@ function InnerApp() {
 			>
 				<Layout>
 					<SystemStatus>
-						<AppLayout>
-							<DashboardPage />
-						</AppLayout>
+						<Routes />
 					</SystemStatus>
 				</Layout>
 				<ReactQueryDevtools />

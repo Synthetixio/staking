@@ -1,8 +1,7 @@
-import { useEffect, FC } from 'react';
+import { FC } from 'react';
 import Head from 'next/head';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import { useRouter } from 'next/router';
 
 import StatBox from 'components/StatBox';
 import { LineSpacer } from 'styles/common';
@@ -23,19 +22,12 @@ type LoansPageProps = {};
 
 const LoansPage: FC<LoansPageProps> = () => {
 	const { t } = useTranslation();
-	const router = useRouter();
 
 	const walletAddress = useRecoilValue(walletAddressState);
 
 	const { stakedCollateralValue, debtBalance } = useStakingCalculations();
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
 	const { stakingAPR } = useUserStakingData(walletAddress);
-
-	useEffect(() => {
-		if (router.asPath === '/loans') {
-			router.push('/loans/new');
-		}
-	}, [router, router.asPath, router.push]);
 
 	return (
 		<>
