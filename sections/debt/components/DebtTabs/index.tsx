@@ -15,8 +15,6 @@ import useCryptoBalances from 'hooks/useCryptoBalances';
 import Info from 'assets/svg/app/info.svg';
 import { wei } from '@synthetixio/wei';
 import useSynthetixQueries from '@synthetixio/queries';
-import { useRecoilValue } from 'recoil';
-import { isMainnetState } from 'store/wallet';
 import Connector from 'containers/Connector';
 
 export type TabInfo = {
@@ -48,14 +46,14 @@ const DebtTabs: FC<DebtTabsProps> = ({
 }) => {
 	const { t } = useTranslation();
 	const [activeTab, setActiveTab] = useState<string>(currentPanel ? currentPanel : tabData[0].key);
-	const isMainnet = useRecoilValue(isMainnetState);
+
 	useEffect(() => {
 		if (currentPanel) {
 			setActiveTab(currentPanel);
 		}
 	}, [currentPanel]);
 
-	const { walletAddress } = Connector.useContainer();
+	const { walletAddress, isMainnet } = Connector.useContainer();
 
 	const { useSynthsBalancesQuery /*useSynthsTotalSupplyQuery*/ } = useSynthetixQueries();
 

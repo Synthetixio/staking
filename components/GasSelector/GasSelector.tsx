@@ -38,6 +38,7 @@ const GasSelector: React.FC<GasSelectorProps> = ({
 }) => {
 	const { t } = useTranslation();
 	const [gasSpeed, setGasSpeed] = useRecoilState(gasSpeedState);
+	console.log('gas speed', gasSpeed);
 	const { isL2 } = Connector.useContainer();
 
 	const { useExchangeRatesQuery, useEthGasPriceQuery } = useSynthetixQueries();

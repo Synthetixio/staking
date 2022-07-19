@@ -1,13 +1,11 @@
 import axios from 'axios';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { ethers } from 'ethers';
-import { useRecoilValue } from 'recoil';
 
 import QUERY_KEYS from 'constants/queryKeys';
 
 import Connector from 'containers/Connector';
 import { yearnSNXVault } from 'contracts';
-import { isMainnetState } from 'store/wallet';
 
 import { LiquidityPoolData } from './types';
 import Wei, { wei } from '@synthetixio/wei';
@@ -20,9 +18,15 @@ export type YearnVaultData = LiquidityPoolData & {
 };
 
 const useYearnSNXVaultQuery = (options?: UseQueryOptions<YearnVaultData>) => {
-	const isMainnet = useRecoilValue(isMainnetState);
-	const { provider, synthetixjs, isAppReady, isWalletConnected, walletAddress, network } =
-		Connector.useContainer();
+	const {
+		provider,
+		synthetixjs,
+		isAppReady,
+		isWalletConnected,
+		walletAddress,
+		network,
+		isMainnet,
+	} = Connector.useContainer();
 
 	return useQuery<YearnVaultData>(
 		QUERY_KEYS.LiquidityPools.yearnSNX(walletAddress ?? '', network?.id!),

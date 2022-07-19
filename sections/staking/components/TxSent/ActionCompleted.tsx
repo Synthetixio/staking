@@ -1,8 +1,7 @@
-import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
-import { useSetRecoilState, useRecoilValue } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 
 import {
 	FlexDivRowCentered,
@@ -20,16 +19,10 @@ import { CryptoCurrency, Synths } from 'constants/currency';
 import Etherscan from 'containers/BlockExplorer';
 
 import { formatPercent } from 'utils/formatters/number';
-
 import { amountToBurnState, amountToMintState, burnTypeState, mintTypeState } from 'store/staking';
-import { isMainnetState } from 'store/wallet';
-
 import Currency from 'components/Currency';
-
 import useLPData from 'hooks/useLPData';
-
 import { LP } from 'sections/earn/types';
-
 import {
 	SectionHeader,
 	SectionSubtext,
@@ -40,6 +33,7 @@ import {
 	MiddleSection,
 	IconContainer,
 } from './common';
+import Connector from 'containers/Connector';
 
 type ActionCompletedProps = {
 	resetTransaction: () => void;
@@ -58,14 +52,15 @@ const ActionCompleted: React.FC<ActionCompletedProps> = ({
 }) => {
 	const { t } = useTranslation();
 	const { push } = useRouter();
+	const { isMainnet } = Connector.useContainer();
 	const lpData = useLPData();
+
 	const { blockExplorerInstance } = Etherscan.useContainer();
 	const link = blockExplorerInstance != null ? blockExplorerInstance.txLink(hash ?? '') : undefined;
 	const onMintTypeChange = useSetRecoilState(mintTypeState);
 	const onBurnTypeChange = useSetRecoilState(burnTypeState);
 	const onBurnChange = useSetRecoilState(amountToBurnState);
 	const onMintChange = useSetRecoilState(amountToMintState);
-	const isMainnet = useRecoilValue(isMainnetState);
 
 	if (!isMint) {
 		return (

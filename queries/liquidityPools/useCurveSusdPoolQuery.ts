@@ -1,6 +1,5 @@
 import { useQuery, UseQueryOptions } from 'react-query';
 import { ethers } from 'ethers';
-import { useRecoilValue } from 'recoil';
 import axios from 'axios';
 
 import Connector from 'containers/Connector';
@@ -12,7 +11,6 @@ import {
 	curveGaugeController,
 } from 'contracts';
 import QUERY_KEYS from 'constants/queryKeys';
-import { isMainnetState } from 'store/wallet';
 
 import Wei, { wei } from '@synthetixio/wei';
 import { getCurveTokenPrice } from './helper';
@@ -199,9 +197,8 @@ const fetchOptimismData = async () => {
 };
 
 const useCurveSusdPoolQuery = (options?: UseQueryOptions<CurveData | undefined>) => {
-	const { provider, isAppReady, isWalletConnected, walletAddress, network } =
+	const { provider, isAppReady, isWalletConnected, walletAddress, network, isMainnet } =
 		Connector.useContainer();
-	const isMainnet = useRecoilValue(isMainnetState); // TODO: Replace
 
 	return useQuery<CurveData | undefined>(
 		QUERY_KEYS.LiquidityPools.sUSD(walletAddress ?? '', network?.id!),

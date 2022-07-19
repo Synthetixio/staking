@@ -261,6 +261,7 @@ const useConnector = () => {
 		tokensMap,
 		isWalletConnected: !!walletAddress,
 		isL2: network?.useOvm ?? false,
+		isMainnet: !network?.useOvm ?? false,
 		connectWallet,
 		disconnectWallet,
 		switchAccounts,

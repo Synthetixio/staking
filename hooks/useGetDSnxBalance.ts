@@ -4,8 +4,8 @@ import Connector from 'containers/Connector';
 import { useQuery, UseQueryOptions } from 'react-query';
 
 const useGetDSnxBalance = (queryOptions?: UseQueryOptions<Wei>) => {
-	const { provider, network, walletAddress, isL2 } = Connector.useContainer();
-	const isMainnet = !isL2; // TODO: Add to state
+	const { provider, network, walletAddress, isMainnet } = Connector.useContainer();
+
 	const dSNXContract = isMainnet ? dSNXContractMainnet : dSNXPoolContractOptimism;
 	return useQuery(
 		[walletAddress, isMainnet, dSNXContract.address],

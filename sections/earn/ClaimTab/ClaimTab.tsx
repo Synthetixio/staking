@@ -5,12 +5,7 @@ import Wei from '@synthetixio/wei';
 import { useRouter } from 'next/router';
 import { useRecoilValue } from 'recoil';
 
-import {
-	isWalletConnectedState,
-	delegateWalletState,
-	walletAddressState,
-	isL2State,
-} from 'store/wallet';
+import { delegateWalletState } from 'store/wallet';
 import ROUTES from 'constants/routes';
 import { ExternalLink, FlexDiv, GlowingCircle, IconButton, FlexDivJustifyEnd } from 'styles/common';
 import media from 'styles/media';

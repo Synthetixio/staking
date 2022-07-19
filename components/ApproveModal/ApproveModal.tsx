@@ -58,6 +58,7 @@ const ApproveModal: FC<ApproveModalProps & SynthetixJsAndSignerProps> = ({
 	const tokenContract = getContractByName(synthetixjs!, tokenContractName, signer);
 	const contractToApprove = getContractByName(synthetixjs!, contractToApproveName, signer);
 	const allowance = synthetixjs?.utils.parseEther(TokenAllowanceLimit.toString());
+
 	const txn = useContractTxn(
 		tokenContract,
 		'approve',

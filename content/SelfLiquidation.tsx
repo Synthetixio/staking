@@ -125,7 +125,6 @@ const SelfLiquidation: React.FC<{
 	const { useGetLiquidationDataQuery } = useSynthetixQueries();
 
 	const { walletAddress } = Connector.useContainer();
-	console.log('Self liquidation wallet address', walletAddress);
 	const delegateWallet = useRecoilValue(delegateWalletState);
 	const isDelegateWallet = Boolean(delegateWallet?.address);
 	const liquidationQuery = useGetLiquidationDataQuery(walletAddress);

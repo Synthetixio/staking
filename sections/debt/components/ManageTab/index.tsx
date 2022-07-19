@@ -1,17 +1,14 @@
 import Button from 'components/Button';
 import Connector from 'containers/Connector';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
-import { isMainnetState } from 'store/wallet';
 import styled from 'styled-components';
 import { FlexDivColCentered } from 'styles/common';
 import HedgeTapMainnet from './HedgeTabMainnet';
 import HedgeTabOptimism from './HedgeTabOptimism';
 
 const ManageTab = () => {
-	const { walletAddress, isWalletConnected } = Connector.useContainer();
+	const { walletAddress, isWalletConnected, isMainnet } = Connector.useContainer();
 
-	const isMainnet = useRecoilValue(isMainnetState);
 	if (!walletAddress || !isWalletConnected) {
 		return (
 			<ManageContainer>
