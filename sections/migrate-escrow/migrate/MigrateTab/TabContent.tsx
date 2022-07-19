@@ -69,7 +69,7 @@ const TabContent: FC<TabContentProps> = ({
 					size="lg"
 					disabled={false}
 				>
-					{t('layer2.actions.migrate.action.go-to-escrow-page')}
+					{t('migrate-escrow.actions.migrate.action.go-to-escrow-page')}
 				</StyledCTA>
 			);
 		} else if (escrowedAmount) {
@@ -81,7 +81,7 @@ const TabContent: FC<TabContentProps> = ({
 					size="lg"
 					disabled={transactionState !== 'unsent' || !!gasEstimateError}
 				>
-					{t('layer2.actions.migrate.action.migrate-button', {
+					{t('migrate-escrow.actions.migrate.action.migrate-button', {
 						escrowedAmount: formatCurrency(vestingCurrencyKey, escrowedAmount, {
 							currencyKey: vestingCurrencyKey,
 						}),
@@ -91,7 +91,7 @@ const TabContent: FC<TabContentProps> = ({
 		} else {
 			return (
 				<StyledCTA blue={true} variant="primary" size="lg" disabled={true}>
-					{t('layer2.actions.migrate.action.disabled')}
+					{t('migrate-escrow.actions.migrate.action.disabled')}
 				</StyledCTA>
 			);
 		}
@@ -143,7 +143,7 @@ const TabContent: FC<TabContentProps> = ({
 			</InputContainer>
 			{renderButton()}
 			{isVestNeeded ? (
-				<ErrorMessage>{t('layer2.actions.migrate.action.vest-needed')}</ErrorMessage>
+				<ErrorMessage>{t('migrate-escrow.actions.migrate.action.vest-needed')}</ErrorMessage>
 			) : (
 				<ErrorMessage>{transactionError || gasEstimateError}</ErrorMessage>
 			)}
