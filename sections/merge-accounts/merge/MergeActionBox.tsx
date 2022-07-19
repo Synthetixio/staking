@@ -20,8 +20,7 @@ import {
 } from 'styles/common';
 import StructuredTab from 'components/StructuredTab';
 import GasSelector from 'components/GasSelector';
-import { isWalletConnectedState, walletAddressState } from 'store/wallet';
-import { appReadyState } from 'store/app';
+import { walletAddressState } from 'store/wallet';
 import {
 	FormContainer,
 	InputsContainer,

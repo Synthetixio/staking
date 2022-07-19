@@ -2,10 +2,7 @@ import { FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { ValueType } from 'react-select';
-import { useRecoilValue } from 'recoil';
 import keyBy from 'lodash/keyBy';
-
-import { isWalletConnectedState } from 'store/wallet';
 
 import Connector from 'containers/Connector';
 

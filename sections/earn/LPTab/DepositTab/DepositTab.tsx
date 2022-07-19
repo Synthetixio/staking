@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { ethers } from 'ethers';
@@ -41,8 +41,6 @@ import {
 	LinkText,
 	IconWrap,
 } from '../../common';
-import { useRecoilValue } from 'recoil';
-import { appReadyState } from 'store/app';
 import { CurrencyIconType } from 'components/Currency/CurrencyIcon/CurrencyIcon';
 import Wei from '@synthetixio/wei';
 import { parseSafeWei } from 'utils/parse';

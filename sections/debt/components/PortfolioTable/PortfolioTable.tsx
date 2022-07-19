@@ -4,8 +4,6 @@ import styled from 'styled-components';
 import { useTranslation, Trans } from 'react-i18next';
 import Wei, { wei } from '@synthetixio/wei';
 
-import { useRecoilValue } from 'recoil';
-
 import {
 	TableNoResults,
 	TableNoResultsTitle,
@@ -14,9 +12,6 @@ import {
 	FlexDivCentered,
 } from 'styles/common';
 import media from 'styles/media';
-
-import { appReadyState } from 'store/app';
-import { isWalletConnectedState } from 'store/wallet';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 

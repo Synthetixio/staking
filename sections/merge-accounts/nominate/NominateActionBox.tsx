@@ -21,8 +21,7 @@ import {
 	IconButton,
 } from 'styles/common';
 import GasSelector from 'components/GasSelector';
-import { isWalletConnectedState, walletAddressState } from 'store/wallet';
-import { appReadyState } from 'store/app';
+import { walletAddressState } from 'store/wallet';
 import {
 	FormContainer,
 	InputsContainer,
