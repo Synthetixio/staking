@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { useRecoilState } from 'recoil';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 
-import { delegateWalletState, walletWatchedState } from 'store/wallet';
+import { delegateWalletState } from 'store/wallet';
 
 import CopyIcon from 'assets/svg/app/copy.svg';
 import LinkIcon from 'assets/svg/app/link.svg';
@@ -58,12 +58,13 @@ const WalletOptionsModal: FC<WalletOptionsProps> = ({
 		isHardwareWallet,
 		walletAddress,
 		isWalletConnected,
+		walletWatched,
+		stopWatching,
 	} = Connector.useContainer();
 	const { blockExplorerInstance } = Etherscan.useContainer();
 
 	const truncatedWalletAddress = walletAddress && truncateAddress(walletAddress);
 	const [delegateWallet, setDelegateWallet] = useRecoilState(delegateWalletState);
-	const [walletWatched, setWalletWatched] = useRecoilState(walletWatchedState);
 
 	useEffect(() => {
 		if (copiedAddress) {
@@ -169,9 +170,7 @@ const WalletOptionsModal: FC<WalletOptionsProps> = ({
 						<StyledTextButton
 							onClick={() => {
 								onDismiss();
-								setWalletWatched(null);
-								console.log('wallet watched this set walletAddress');
-								// setWalletAddress(null);
+								stopWatching();
 							}}
 						>
 							{exitIcon} {t('modals.wallet.stop-watching')}

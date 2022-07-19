@@ -17,6 +17,13 @@ import { keyBy } from 'lodash';
 import { initialState, reducer } from './reducer';
 
 import { getChainIdHex, getNetworkIdFromHex } from 'utils/infura';
+import { Network } from 'store/wallet';
+
+const defaultNetwork: Network = {
+	id: 1,
+	name: NetworkNameById[1],
+	useOvm: getIsOVM(1),
+};
 
 const useConnector = () => {
 	const [state, dispatch] = useReducer(reducer, initialState);
@@ -28,7 +35,7 @@ const useConnector = () => {
 		signer,
 		synthetixjs,
 		walletAddress,
-		watchedWallet,
+		walletWatched,
 		ensName,
 		ensAvatar,
 		onboard,
@@ -58,54 +65,8 @@ const useConnector = () => {
 		[]
 	);
 
-	const transactionNotifier = useMemo(
-		() => new TransactionNotifier(L1DefaultProvider),
-		[L1DefaultProvider]
-	);
-
-	const [synthsMap, tokensMap] = useMemo(() => {
-		if (synthetixjs == null) {
-			return [{}, {}];
-		}
-
-		return [keyBy(synthetixjs.synths, 'name'), keyBy(synthetixjs.tokens, 'symbol')];
-	}, [synthetixjs]);
-
-	useEffect(() => {
-		// First we want to check to see if something is in local storage
-		dispatch({ type: 'app_ready', payload: Web3Onboard }); //
-	}, []);
-
-	useEffect(() => {
-		if (provider) {
-			transactionNotifier.setProvider(provider);
-		}
-
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [provider]);
-
-	useEffect(() => {
-		const previousWalletsSerialised = localStorage.getItem(LOCAL_STORAGE_KEYS.SELECTED_WALLET);
-		const previousWallets: string[] | null = previousWalletsSerialised
-			? JSON.parse(previousWalletsSerialised)
-			: null;
-
-		if (onboard && previousWallets) {
-			(async () => {
-				try {
-					await onboard.connectWallet({
-						autoSelect: {
-							label: previousWallets[0],
-							disableModals: true,
-						},
-					});
-				} catch (error) {
-					console.log(error);
-				}
-			})();
-		}
-
-		const updateState = (update: AppState) => {
+	const updateState = useCallback(
+		(update: AppState) => {
 			if (update.wallets.length > 0) {
 				const wallet = update.wallets[0].accounts[0];
 				const { id } = update.wallets[0].chains[0];
@@ -138,6 +99,7 @@ const useConnector = () => {
 						type: 'config_update',
 						payload: {
 							address: wallet.address,
+							walletWatched: null,
 							network,
 							provider,
 							signer,
@@ -156,11 +118,58 @@ const useConnector = () => {
 			} else {
 				dispatch({ type: 'wallet_disconnected' });
 			}
-		};
+		},
+		[onboard]
+	);
+
+	const transactionNotifier = useMemo(
+		() => new TransactionNotifier(L1DefaultProvider),
+		[L1DefaultProvider]
+	);
+
+	const [synthsMap, tokensMap] = useMemo(() => {
+		if (synthetixjs == null) {
+			return [{}, {}];
+		}
+
+		return [keyBy(synthetixjs.synths, 'name'), keyBy(synthetixjs.tokens, 'symbol')];
+	}, [synthetixjs]);
+
+	useEffect(() => {
+		dispatch({ type: 'app_ready', payload: Web3Onboard }); //
+	}, []);
+
+	useEffect(() => {
+		if (provider) {
+			transactionNotifier.setProvider(provider);
+		}
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [provider]);
+
+	useEffect(() => {
+		const previousWalletsSerialised = localStorage.getItem(LOCAL_STORAGE_KEYS.SELECTED_WALLET);
+		const previousWallets: string[] | null = previousWalletsSerialised
+			? JSON.parse(previousWalletsSerialised)
+			: null;
+
+		if (onboard && previousWallets) {
+			(async () => {
+				try {
+					await onboard.connectWallet({
+						autoSelect: {
+							label: previousWallets[0],
+							disableModals: true,
+						},
+					});
+				} catch (error) {
+					console.log(error);
+				}
+			})();
+		}
 
 		if (onboard) {
 			const state = onboard.state.select();
-
 			const { unsubscribe } = state.subscribe(updateState);
 
 			return () => {
@@ -169,10 +178,9 @@ const useConnector = () => {
 		}
 
 		// Always keep this hook with the single dependency.
-	}, [onboard]);
+	}, [onboard, updateState]);
 
 	useEffect(() => {
-		// We need to figure out what to do when the wallet address changes
 		if (walletAddress && !ensName) {
 			(async () => {
 				const ensN: string | null = await L1DefaultProvider.lookupAddress(walletAddress);
@@ -186,13 +194,16 @@ const useConnector = () => {
 
 	useEffect(() => {
 		// If we are 'watching a wallet, we update the provider'
-		if (watchedWallet) {
+		if (walletWatched) {
 			const provider = loadProvider({ infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID });
 			if (provider) {
-				// setProvider(provider);
+				dispatch({
+					type: 'update_provider',
+					payload: { provider, network: network || defaultNetwork },
+				});
 			}
 		}
-	}, [watchedWallet]);
+	}, [walletWatched, network]);
 
 	const connectWallet = useCallback(async () => {
 		try {
@@ -208,7 +219,7 @@ const useConnector = () => {
 		try {
 			if (onboard) {
 				const [primaryWallet] = onboard.state.get().wallets;
-				onboard.disconnectWallet({ label: primaryWallet.label });
+				onboard.disconnectWallet({ label: primaryWallet?.label });
 				localStorage.removeItem(LOCAL_STORAGE_KEYS.SELECTED_WALLET);
 			}
 		} catch (e) {
@@ -231,8 +242,8 @@ const useConnector = () => {
 
 	const isHardwareWallet = useCallback(() => {
 		if (onboard) {
-			const walletLabel = onboard.state.get().wallets[0].label;
-			return walletLabel === 'Trezor' || 'Ledger';
+			const walletLabel = onboard.state.get()?.wallets[0]?.label || null;
+			return walletLabel === 'Trezor' || walletLabel === 'Ledger';
 		}
 		return false;
 	}, [onboard]);
@@ -250,12 +261,31 @@ const useConnector = () => {
 		[synthetixjs]
 	);
 
+	const setWatchedWallet = useCallback(
+		(address: string | null, walletWatched: string | null, ensName: string | null) => {
+			dispatch({ type: 'watch_wallet', payload: { address, walletWatched, ensName } });
+		},
+		[]
+	);
+
+	const stopWatching = useCallback(async () => {
+		try {
+			if (onboard) {
+				const appState = await onboard.state.get();
+				updateState(appState);
+			}
+		} catch (e) {
+			console.log(e);
+		}
+	}, [onboard, updateState]);
+
 	return {
 		isAppReady,
 		network,
 		provider,
 		signer,
 		walletAddress,
+		walletWatched,
 		synthetixjs,
 		synthsMap,
 		tokensMap,
@@ -267,12 +297,13 @@ const useConnector = () => {
 		switchAccounts,
 		isHardwareWallet,
 		transactionNotifier,
-		selectedWallet: walletAddress,
 		getTokenAddress,
 		L1DefaultProvider,
 		L2DefaultProvider,
 		ensName,
 		ensAvatar,
+		setWatchedWallet,
+		stopWatching,
 	};
 };
 

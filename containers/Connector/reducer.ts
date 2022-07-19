@@ -11,8 +11,7 @@ type ConnectorState = {
 	synthetixjs: SynthetixJS | null;
 	isAppReady: boolean;
 	walletAddress: string | null;
-	watchedWallet: string | null;
-	selectedWallet: string | null;
+	walletWatched: string | null;
 	ensName: string | null;
 	ensAvatar: string | null;
 	onboard: OnboardAPI | null;
@@ -25,8 +24,7 @@ export const initialState: ConnectorState = {
 	synthetixjs: null,
 	isAppReady: false,
 	walletAddress: null,
-	watchedWallet: null,
-	selectedWallet: null,
+	walletWatched: null,
 	ensName: null,
 	ensAvatar: null,
 	onboard: onboard,
@@ -36,6 +34,7 @@ export type ConnectionUpdate = {
 	address: string;
 	network: Network;
 	signer: ethers.Signer | null;
+	walletWatched: null;
 	synthetixjs: SynthetixJS;
 	provider: ethers.providers.Web3Provider;
 	ensName: string | null;
@@ -47,10 +46,23 @@ export type EnsUpdate = {
 	ensAvatar: string | null;
 };
 
+export type WatchWallet = {
+	ensName: string | null;
+	address: string | null;
+	walletWatched: string | null;
+};
+
+export type ProviderUpdate = {
+	provider: ethers.providers.Web3Provider;
+	network: Network;
+};
+
 export type Actions =
 	| { type: 'app_ready'; payload: OnboardAPI }
 	| { type: 'config_update'; payload: ConnectionUpdate }
+	| { type: 'watch_wallet'; payload: WatchWallet }
 	| { type: 'set_ens'; payload: EnsUpdate }
+	| { type: 'update_provider'; payload: ProviderUpdate }
 	| { type: 'wallet_disconnected' };
 
 export function reducer(state: ConnectorState, action: Actions) {
@@ -61,6 +73,7 @@ export function reducer(state: ConnectorState, action: Actions) {
 		case 'config_update':
 			return {
 				...state,
+				walletWatched: action.payload.walletWatched,
 				walletAddress: action.payload.address,
 				network: action.payload.network,
 				signer: action.payload.signer,
@@ -68,6 +81,14 @@ export function reducer(state: ConnectorState, action: Actions) {
 				synthetixjs: action.payload.synthetixjs,
 				ensName: action.payload.ensName,
 				ensAvatar: action.payload.ensAvatar,
+			};
+
+		case 'watch_wallet':
+			return {
+				...state,
+				walletAddress: action.payload.address,
+				ensName: action.payload.ensName,
+				walletWatched: action.payload.walletWatched,
 			};
 
 		case 'set_ens':
@@ -82,9 +103,15 @@ export function reducer(state: ConnectorState, action: Actions) {
 				synthetixjs: null,
 				walletAddress: null,
 				watchedWallet: null,
-				selectedWallet: null,
 				ensName: null,
 				ensAvatar: null,
+			};
+
+		case 'update_provider':
+			return {
+				...state,
+				provider: action.payload.provider,
+				network: action.payload.network,
 			};
 
 		default:
