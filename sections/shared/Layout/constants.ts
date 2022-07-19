@@ -1,4 +1,3 @@
-import { EXTERNAL_LINKS } from 'constants/links';
 import ROUTES from 'constants/routes';
 
 export type SubMenuLink = {
@@ -42,12 +41,12 @@ export const MENU_LINKS: MenuLinks = [
 		link: ROUTES.Loans.Home,
 	},
 	{
-		i18nLabel: 'sidenav.gov',
-		link: ROUTES.Gov.Home,
+		i18nLabel: 'sidenav.bridge',
+		link: ROUTES.Bridge.Home,
 	},
 	{
-		i18nLabel: 'sidenav.l2',
-		link: ROUTES.L2.Home,
+		i18nLabel: 'sidenav.gov',
+		link: ROUTES.Gov.Home,
 	},
 	{
 		i18nLabel: 'sidenav.wallet',
@@ -56,6 +55,10 @@ export const MENU_LINKS: MenuLinks = [
 			{
 				i18nLabel: 'sidenav.escrow',
 				subLink: ROUTES.Escrow.Home,
+			},
+			{
+				i18nLabel: 'sidenav.migrate-escrow',
+				subLink: ROUTES.EscrowMigrate.Home,
 			},
 			{
 				i18nLabel: 'sidenav.synths',
@@ -109,8 +112,8 @@ export const MENU_LINKS_L2: MenuLinks = [
 		link: ROUTES.Gov.Home,
 	},
 	{
-		i18nLabel: 'sidenav.withdraw',
-		link: EXTERNAL_LINKS.L2.SynthetixWithdrawal,
+		i18nLabel: 'sidenav.bridge',
+		link: ROUTES.Bridge.Home,
 	},
 	{
 		i18nLabel: 'sidenav.wallet',

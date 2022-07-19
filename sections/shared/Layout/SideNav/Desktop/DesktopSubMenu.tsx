@@ -33,7 +33,7 @@ export const SubContainer = styled(FlexDivColCentered)<{ i: number; isActive: bo
 	transform: translateX(0px);
 	border-right: 1px solid ${(props) => props.theme.colors.grayBlue};
 	height: 100%;
-	width: 128px;
+	width: 140px;
 	background: ${(props) => props.theme.colors.darkGradient1};
 	position: fixed;
 	transition: all 0.25s ease-in-out;
@@ -48,7 +48,6 @@ export const SubContainer = styled(FlexDivColCentered)<{ i: number; isActive: bo
 `;
 
 export const SubMenuLinkItem = styled.div<{ isActive: boolean }>`
-	zindex: ${zIndex.BASE};
 	padding-left: 26px;
 	line-height: 40px;
 	padding-bottom: 10px;
@@ -88,7 +87,6 @@ const Inner = styled.div`
 	height: 100%;
 	width: 100%;
 	position: fixed;
-	zindex: -100;
 `;
 
 export default DesktopSubMenu;

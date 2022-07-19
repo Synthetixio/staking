@@ -10,13 +10,13 @@ const InfoBox = () => {
 	return (
 		<InfoContainer>
 			<InfoContainerHeader>
-				<Title>{t('layer2.migrate.info.title')}</Title>
+				<Title>{t('migrate-escrow.info.title')}</Title>
 			</InfoContainerHeader>
 			<InfoContainerBody>
 				<Warning width="72" />
-				<WarningHeading>{t('layer2.migrate.info.warning-title')}</WarningHeading>
-				<WarningBody>{t('layer2.deposit.info.metamask-only')}</WarningBody>
-				<WarningBody>{t('layer2.migrate.info.warning-description')}</WarningBody>
+				<WarningHeading>{t('migrate-escrow.info.warning-title')}</WarningHeading>
+				<WarningBody>{t('migrate-escrow.info.metamask-only')}</WarningBody>
+				<WarningBody>{t('migrate-escrow.info.warning-description')}</WarningBody>
 			</InfoContainerBody>
 		</InfoContainer>
 	);

@@ -9,7 +9,7 @@ const ActionBox: React.FC = () => {
 	const tabData = useMemo(
 		() => [
 			{
-				title: t('layer2.actions.migrate.title'),
+				title: t('migrate-escrow.actions.migrate.title'),
 				tabChildren: <MigrateTab />,
 				key: 'migrate',
 			},

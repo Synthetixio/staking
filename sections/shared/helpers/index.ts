@@ -75,6 +75,12 @@ export function headerInfo(path: string) {
 			headerTitle = 'staking';
 			headerSubtitle = 'debt';
 			break;
+		case mainPath === 'bridge' && !subPath:
+			headerTitle = 'bridge';
+			break;
+		case mainPath === 'migrate-escrow' && !subPath:
+			headerTitle = 'migrate-escrow';
+			break;
 
 		// This handles other cases
 		default:

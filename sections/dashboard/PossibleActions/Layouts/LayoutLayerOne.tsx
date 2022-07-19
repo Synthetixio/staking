@@ -81,7 +81,7 @@ const LayoutLayerOne: FC = () => {
 				),
 				title: t('dashboard.actions.migrate.title'),
 				copy: t('dashboard.actions.migrate.copy'),
-				link: ROUTES.L2.Home,
+				link: ROUTES.EscrowMigrate.Home,
 			},
 			lpData[LP.CURVE_sUSD].APR && {
 				icon: (
