@@ -92,3 +92,15 @@ input::-webkit-inner-spin-button {
 	src: local('GT America Extended Bold'),
 		url('/fonts/GT-America-Extended-Bold.woff2') format('woff2');
 }
+
+/* Blocknative Styling */
+:root {
+	--onboard-connect-sidebar-background: #0b0b22;
+	--onboard-connect-sidebar-color: white;
+	--onboard-close-button-background: #0b0b22;
+	--onboard-close-button-color: white;
+	--onboard-checkbox-background: #0b0b22;
+	--onboard-checkbox-color: white;
+	--onboard-connect-sidebar-progress-background: #343a4a;
+	--onboard-connect-sidebar-progress-color: #00d1ff;
+}

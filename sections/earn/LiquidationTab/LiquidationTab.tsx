@@ -5,8 +5,7 @@ import Wei, { wei } from '@synthetixio/wei';
 import { useRouter } from 'next/router';
 import { useRecoilValue } from 'recoil';
 
-import { appReadyState } from 'store/app';
-import { delegateWalletState, isWalletConnectedState, walletAddressState } from 'store/wallet';
+import { delegateWalletState } from 'store/wallet';
 import ROUTES from 'constants/routes';
 import { ExternalLink, FlexDiv, GlowingCircle, IconButton, FlexDivJustifyEnd } from 'styles/common';
 import media from 'styles/media';
@@ -63,6 +62,7 @@ import {
 import { MobileOnlyView } from 'components/Media';
 import useSynthetixQueries, { GasPrice } from '@synthetixio/queries';
 import useLiquidationRewards from 'hooks/useLiquidationRewards';
+import Connector from 'containers/Connector';
 
 type LiquidationTabProps = {
 	liquidationRewards: Wei;
@@ -70,7 +70,8 @@ type LiquidationTabProps = {
 
 const LiquidationTab: React.FC<LiquidationTabProps> = ({ liquidationRewards }) => {
 	const { t } = useTranslation();
-	const walletAddress = useRecoilValue(walletAddressState);
+
+	const { isAppReady, isWalletConnected, walletAddress } = Connector.useContainer();
 	const delegateWallet = useRecoilValue(delegateWalletState);
 	const addressToUse = delegateWallet?.address || walletAddress!;
 	const { useSynthetixTxn, useExchangeRatesQuery } = useSynthetixQueries();
@@ -80,8 +81,7 @@ const LiquidationTab: React.FC<LiquidationTabProps> = ({ liquidationRewards }) =
 
 	const { blockExplorerInstance } = Etherscan.useContainer();
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	const isAppReady = useRecoilValue(appReadyState);
+
 	const router = useRouter();
 	const [gasPrice, setGasPrice] = useState<GasPrice | undefined>(undefined);
 

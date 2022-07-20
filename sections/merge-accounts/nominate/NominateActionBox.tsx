@@ -21,8 +21,7 @@ import {
 	IconButton,
 } from 'styles/common';
 import GasSelector from 'components/GasSelector';
-import { isWalletConnectedState, walletAddressState } from 'store/wallet';
-import { appReadyState } from 'store/app';
+import { walletAddressState } from 'store/wallet';
 import {
 	FormContainer,
 	InputsContainer,
@@ -55,9 +54,8 @@ const NominateTab: FC = () => {
 
 const NominateTabInner: FC = () => {
 	const { t } = useTranslation();
-	const { connectWallet, synthetixjs } = Connector.useContainer();
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	const isAppReady = useRecoilValue(appReadyState);
+	const { connectWallet, synthetixjs, isAppReady, isWalletConnected } = Connector.useContainer();
+
 	const sourceAccountAddress = useRecoilValue(walletAddressState);
 	const { blockExplorerInstance } = Etherscan.useContainer();
 	const { useSynthetixTxn } = useSynthetixQueries();

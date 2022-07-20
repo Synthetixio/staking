@@ -18,13 +18,11 @@ import {
 	Title,
 } from 'sections/escrow/components/common';
 import useSynthetixQueries, { EscrowData } from '@synthetixio/queries';
-import { useRecoilValue } from 'recoil';
-import { walletAddressState } from 'store/wallet';
+import Connector from 'containers/Connector';
 
 const TokenSaleEscrowSchedule: React.FC = () => {
 	const { t } = useTranslation();
-
-	const walletAddress = useRecoilValue(walletAddressState);
+	const { walletAddress } = Connector.useContainer();
 
 	const { useTokenSaleEscrowQuery } = useSynthetixQueries();
 

@@ -1,10 +1,8 @@
 import { FC, useState } from 'react';
 import styled from 'styled-components';
-import { useRecoilValue } from 'recoil';
-
-import { isWalletConnectedState } from 'store/wallet';
 import StatBox from 'components/StatBox';
 import StakedValueModal from 'sections/shared/modals/StakedValueModal';
+import Connector from 'containers/Connector';
 
 export const StakedValueBox: FC<{ title: any; value: any; isGreen?: boolean }> = ({
 	title,
@@ -12,7 +10,7 @@ export const StakedValueBox: FC<{ title: any; value: any; isGreen?: boolean }> =
 	isGreen,
 }) => {
 	const [isOpened, setIsOpened] = useState<boolean>(false);
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
+	const { isWalletConnected } = Connector.useContainer();
 
 	const onOpen = () => isWalletConnected; // && setIsOpened(true);
 	const onDismiss = () => setIsOpened(false);

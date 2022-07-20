@@ -2,7 +2,6 @@ import { FC, useMemo, useState } from 'react';
 import Wei, { wei } from '@synthetixio/wei';
 import styled, { useTheme } from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
 
 import useLPData from 'hooks/useLPData';
@@ -10,7 +9,6 @@ import ROUTES from 'constants/routes';
 import { CryptoCurrency } from 'constants/currency';
 import media from 'styles/media';
 import useFeePeriodTimeAndProgress from 'hooks/useFeePeriodTimeAndProgress';
-import { isWalletConnectedState } from 'store/wallet';
 import { TabButton, TabList } from 'components/Tab';
 import { CurrencyIconType } from 'components/Currency/CurrencyIcon/CurrencyIcon';
 import { DesktopOrTabletView } from 'components/Media';
@@ -54,9 +52,8 @@ const Incentives: FC<IncentivesProps> = ({
 	const { t } = useTranslation();
 	const router = useRouter();
 	const theme = useTheme();
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const [view, setView] = useState<View>(View.ACTIVE);
-	const { L1DefaultProvider } = Connector.useContainer();
+	const { L1DefaultProvider, isWalletConnected } = Connector.useContainer();
 	const { useSNXData } = useSynthetixQueries();
 
 	const lpData = useLPData();

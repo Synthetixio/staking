@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { getOptimismNetwork } from '@synthetixio/optimism-networks';
 import { handleSwitchChain } from '@synthetixio/providers';
 import Connector from 'containers/Connector';
@@ -5,14 +6,12 @@ import { providers } from 'ethers';
 import { useRecoilValue } from 'recoil';
 import { useTranslation } from 'react-i18next';
 
-import { delegateWalletState, isL2State, isWalletConnectedState, networkState } from 'store/wallet';
+import { delegateWalletState } from 'store/wallet';
 import UIContainer from 'containers/UI';
-import { useCallback } from 'react';
 
 export function useAddOptimism() {
-	const network = useRecoilValue(networkState);
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	const isL2 = useRecoilValue(isL2State);
+	const { network, isWalletConnected, isL2 } = Connector.useContainer();
+
 	const delegateWallet = useRecoilValue(delegateWalletState);
 
 	const { setNetworkError } = UIContainer.useContainer();

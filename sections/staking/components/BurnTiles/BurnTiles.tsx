@@ -1,5 +1,5 @@
 import { useRecoilState, useSetRecoilState, useRecoilValue } from 'recoil';
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import Wei from '@synthetixio/wei';
@@ -13,9 +13,10 @@ import { FlexDivCol } from 'styles/common';
 import { formatPercent } from 'utils/formatters/number';
 
 import { amountToBurnState, BurnActionType, burnTypeState } from 'store/staking';
-import { isL2State, delegateWalletState } from 'store/wallet';
+import { delegateWalletState } from 'store/wallet';
 
 import ButtonTile from '../ButtonTile';
+import Connector from 'containers/Connector';
 
 type BurnTilesProps = {
 	percentageTargetCRatio: Wei;
@@ -26,7 +27,8 @@ const BurnTiles: React.FC<BurnTilesProps> = ({ percentageTargetCRatio, burnAmoun
 	const { t } = useTranslation();
 	const [burnType, onBurnTypeChange] = useRecoilState(burnTypeState);
 	const onBurnChange = useSetRecoilState(amountToBurnState);
-	const isL2 = useRecoilValue(isL2State);
+	const { isL2 } = Connector.useContainer();
+
 	const delegateWallet = useRecoilValue(delegateWalletState);
 
 	const clearDebtIsDisabled = !!(delegateWallet || isL2);

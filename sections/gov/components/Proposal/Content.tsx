@@ -5,7 +5,6 @@ import { linkify } from 'remarkable/linkify';
 import externalLink from 'remarkable-external-link';
 import { useTranslation } from 'react-i18next';
 import { ethers } from 'ethers';
-import { useRecoilValue } from 'recoil';
 import useSynthetixQueries, { Proposal } from '@synthetixio/queries';
 
 import {
@@ -40,8 +39,6 @@ import { truncateAddress } from 'utils/formatters/string';
 import useSignMessage, { SignatureType } from 'mutations/gov/useSignMessage';
 import Button from 'components/Button';
 
-import { isWalletConnectedState, walletAddressState } from 'store/wallet';
-
 import { Transaction } from 'constants/network';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 
@@ -57,7 +54,7 @@ type ContentProps = {
 
 const Content: React.FC<ContentProps> = ({ proposal, onBack }) => {
 	const { t } = useTranslation();
-	const { L2DefaultProvider } = Connector.useContainer();
+	const { L2DefaultProvider, walletAddress, isWalletConnected } = Connector.useContainer();
 
 	const [selected, setSelected] = useState<number | null>(null);
 
@@ -68,8 +65,6 @@ const Content: React.FC<ContentProps> = ({ proposal, onBack }) => {
 	const [signTransactionState, setSignTransactionState] = useState<Transaction>(
 		Transaction.PRESUBMIT
 	);
-
-	const walletAddress = useRecoilValue(walletAddressState);
 
 	const { useProposalQuery, useGetSpartanCouncil } = useSynthetixQueries();
 
@@ -83,8 +78,6 @@ const Content: React.FC<ContentProps> = ({ proposal, onBack }) => {
 
 	const councilMembersQuery = useGetSpartanCouncil(L2DefaultProvider);
 	const councilMembers = councilMembersQuery.data;
-
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 
 	const voteMutate = useSignMessage({
 		onSuccess: (_) => {

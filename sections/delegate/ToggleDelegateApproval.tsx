@@ -1,6 +1,5 @@
 import { FC, useCallback, useState } from 'react';
 import styled from 'styled-components';
-import { useRecoilValue } from 'recoil';
 import { useTranslation } from 'react-i18next';
 
 import TransactionNotifier from 'containers/TransactionNotifier';
@@ -15,7 +14,6 @@ import { tx } from 'utils/transactions';
 
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 
-import { appReadyState } from 'store/app';
 import {
 	Action,
 	DELEGATE_APPROVE_CONTRACT_METHODS,
@@ -40,8 +38,7 @@ const ToggleDelegateApproval: FC<ToggleDelegateApprovalProps> = ({
 }) => {
 	const { t } = useTranslation();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
-	const isAppReady = useRecoilValue(appReadyState);
-	const { synthetixjs } = Connector.useContainer();
+	const { synthetixjs, isAppReady } = Connector.useContainer();
 
 	const [, setError] = useState<string | null>(null);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);

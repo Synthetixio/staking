@@ -1,16 +1,15 @@
 import { FC, ReactNode } from 'react';
 import styled from 'styled-components';
 import Wei from '@synthetixio/wei';
-import { useRecoilValue } from 'recoil';
 
 import media from 'styles/media';
-import { isWalletConnectedState } from 'store/wallet';
 import { DesktopOrTabletView, MobileOnlyView } from 'components/Media';
 import { MOBILE_BODY_PADDING } from 'constants/ui';
 
 import DesktopAssetsTable from './DesktopAssetsTable';
 import MobileAssetsTable from './MobileAssetsTable';
 import { CryptoBalance } from 'hooks/useCryptoBalances';
+import Connector from 'containers/Connector';
 
 type AssetsTableProps = {
 	title: ReactNode;
@@ -41,7 +40,7 @@ const AssetsTable: FC<AssetsTableProps> = ({
 	showTotalValue = true,
 	showPrice = true,
 }) => {
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
+	const { isWalletConnected } = Connector.useContainer();
 
 	return (
 		<Container>

@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { ethers } from 'ethers';
@@ -41,8 +41,6 @@ import {
 	LinkText,
 	IconWrap,
 } from '../../common';
-import { useRecoilValue } from 'recoil';
-import { appReadyState } from 'store/app';
 import { CurrencyIconType } from 'components/Currency/CurrencyIcon/CurrencyIcon';
 import Wei from '@synthetixio/wei';
 import { parseSafeWei } from 'utils/parse';
@@ -83,9 +81,9 @@ const DepositTab: FC<DepositTabProps> = ({
 	const { t } = useTranslation();
 	const [amount, setAmount] = useState<string>('');
 	const { blockExplorerInstance } = Etherscan.useContainer();
-	const { signer } = Connector.useContainer();
+	const { signer, isAppReady } = Connector.useContainer();
 	const [gasPrice, setGasPrice] = useState<GasPrice | undefined>(undefined);
-	const isAppReady = useRecoilValue(appReadyState);
+
 	const { useContractTxn } = useSynthetixQueries();
 
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);

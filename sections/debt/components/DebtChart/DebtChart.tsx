@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { format } from 'date-fns';
 import { useTheme } from 'styled-components';
-import { useRecoilValue } from 'recoil';
 import {
 	ResponsiveContainer,
 	LineChart,
@@ -19,7 +18,6 @@ import Connector from 'containers/Connector';
 import { FlexDivColCentered } from 'styles/common';
 import { formatCurrency } from 'utils/formatters/number';
 import { Synths } from 'constants/currency';
-import { isWalletConnectedState } from 'store/wallet';
 
 import SpinnerIcon from 'assets/svg/app/loader.svg';
 import Wei from '@synthetixio/wei';
@@ -74,8 +72,7 @@ type Data = {
 const DebtChart = ({ data, isLoading }: { data: Data[]; isLoading: boolean }) => {
 	const { t } = useTranslation();
 	const { colors, fonts } = useTheme();
-	const { connectWallet } = Connector.useContainer();
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
+	const { connectWallet, isWalletConnected } = Connector.useContainer();
 
 	if (!isWalletConnected) {
 		return (

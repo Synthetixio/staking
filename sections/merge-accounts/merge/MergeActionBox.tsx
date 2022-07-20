@@ -20,8 +20,7 @@ import {
 } from 'styles/common';
 import StructuredTab from 'components/StructuredTab';
 import GasSelector from 'components/GasSelector';
-import { isWalletConnectedState, walletAddressState } from 'store/wallet';
-import { appReadyState } from 'store/app';
+import { walletAddressState } from 'store/wallet';
 import {
 	FormContainer,
 	InputsContainer,
@@ -54,9 +53,8 @@ const MergeTab: FC = () => {
 
 const MergeTabInner: FC = () => {
 	const { t } = useTranslation();
-	const { connectWallet, synthetixjs } = Connector.useContainer();
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	const isAppReady = useRecoilValue(appReadyState);
+	const { connectWallet, synthetixjs, isAppReady, isWalletConnected } = Connector.useContainer();
+
 	const destinationAccountAddress = useRecoilValue(walletAddressState);
 	const { blockExplorerInstance } = Etherscan.useContainer();
 	const { useSynthetixTxn } = useSynthetixQueries();

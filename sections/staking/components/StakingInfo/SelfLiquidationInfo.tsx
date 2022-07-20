@@ -1,14 +1,13 @@
 import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
 import { CryptoCurrency, Synths } from 'constants/currency';
+import Connector from 'containers/Connector';
 import useGetCanBurn from 'hooks/useGetCanBurn';
 import useGetSnxAmountToBeLiquidatedUsd from 'hooks/useGetSnxAmountToBeLiquidatedUsd';
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 import { StakingPanelType } from 'store/staking';
-import { walletAddressState } from 'store/wallet';
 import { sanitiseValue } from '../helper';
 import InfoLayout from './InfoLayout';
 import { getButtonDisplaying, getSelfLiquidationChanges } from './selfLiquidationInfoCalculations';
@@ -23,7 +22,8 @@ const SelfLiquidationInfo = () => {
 		SNXRate,
 		balance: nonEscrowedBalance,
 	} = useStakingCalculations();
-	const walletAddress = useRecoilValue(walletAddressState);
+	const { walletAddress } = Connector.useContainer();
+
 	const { useSynthsBalancesQuery, useGetLiquidationDataQuery } = useSynthetixQueries();
 
 	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);

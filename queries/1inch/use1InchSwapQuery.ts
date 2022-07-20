@@ -1,15 +1,13 @@
 import { useQuery, UseQueryOptions } from 'react-query';
-import { useRecoilValue } from 'recoil';
 
 import QUERY_KEYS from 'constants/queryKeys';
 
-import { isL2State, isWalletConnectedState, networkState, walletAddressState } from 'store/wallet';
-import { appReadyState } from 'store/app';
 import { parseEther } from 'ethers/lib/utils';
 import axios from 'axios';
 import { swapEndpoint } from 'constants/1inch';
 import { ethers } from 'ethers';
 import { wei, WeiSource } from '@synthetixio/wei';
+import Connector from 'containers/Connector';
 
 export type SwapTxData = {
 	from: string;
@@ -28,11 +26,7 @@ const use1InchSwapQuery = (
 	slippage: number,
 	options?: UseQueryOptions<SwapTxData>
 ) => {
-	const isAppReady = useRecoilValue(appReadyState);
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	const walletAddress = useRecoilValue(walletAddressState);
-	const network = useRecoilValue(networkState);
-	const isL2 = useRecoilValue(isL2State);
+	const { isAppReady, isWalletConnected, walletAddress, network, isL2 } = Connector.useContainer();
 
 	return useQuery<SwapTxData>(
 		QUERY_KEYS.Swap.swap1Inch(walletAddress ?? '', network?.id!, amount, fromAddress),

@@ -1,5 +1,4 @@
-import React, { FC } from 'react';
-import { useEffect } from 'react';
+import { FC, useEffect } from 'react';
 import { AppProps } from 'next/app';
 import Head from 'next/head';
 import { RecoilRoot } from 'recoil';
@@ -21,6 +20,7 @@ import SystemStatus from 'sections/shared/SystemStatus';
 
 import '../i18n';
 import Connector from 'containers/Connector';
+import Script from 'next/script';
 
 const queryClient = new QueryClient({
 	defaultOptions: {
@@ -95,7 +95,8 @@ const App: FC<AppProps> = (props) => {
 				<link rel="icon" href="/images/favicon.ico" />
 
 				{/* matomo */}
-				<script
+				<Script
+					strategy="afterInteractive"
 					dangerouslySetInnerHTML={{
 						__html: `
 					  var _paq = window._paq = window._paq || [];

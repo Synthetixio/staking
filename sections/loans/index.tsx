@@ -1,8 +1,8 @@
+import Connector from 'containers/Connector';
 import React from 'react';
-import { useRecoilValue } from 'recoil';
+
 import styled from 'styled-components';
 
-import { appReadyState } from 'store/app';
 import { FlexDivCol } from 'styles/common';
 import media from 'styles/media';
 
@@ -10,7 +10,7 @@ import ActionBox from './components/ActionBox/ActionBox';
 import InfoBox from './components/InfoBox/InfoBox';
 
 const Index: React.FC = () => {
-	const isAppReady = useRecoilValue(appReadyState);
+	const { isAppReady } = Connector.useContainer();
 
 	return !isAppReady ? null : (
 		<Container>

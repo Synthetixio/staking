@@ -1,5 +1,4 @@
-import React, { useMemo } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useMemo } from 'react';
 
 import StructuredTab from 'components/StructuredTab';
 import { useTranslation } from 'react-i18next';
@@ -7,8 +6,8 @@ import StakingRewardsTab from './StakingRewardsTab';
 import { EscrowPanelType } from 'store/escrow';
 import TokenSaleTab from './TokenSaleTab';
 import { useRouter } from 'next/router';
-import { isL2State } from 'store/wallet';
 import { useTheme } from 'styled-components';
+import Connector from 'containers/Connector';
 
 type ActionBoxProps = {
 	currentTab: string;
@@ -17,7 +16,8 @@ type ActionBoxProps = {
 const ActionBox: React.FC<ActionBoxProps> = ({ currentTab }) => {
 	const { t } = useTranslation();
 	const router = useRouter();
-	const isL2 = useRecoilValue(isL2State);
+	const { isL2 } = Connector.useContainer();
+
 	const theme = useTheme();
 	const tabData = useMemo(
 		() => [

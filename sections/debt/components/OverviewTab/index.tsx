@@ -5,14 +5,13 @@ import DebtChart from '../DebtChart';
 import useHistoricalDebtData from 'hooks/useHistoricalDebtData';
 import { FlexDivCol, FlexDiv, Tooltip } from 'styles/common';
 
+import Connector from 'containers/Connector';
 import Info from 'assets/svg/app/info.svg';
-import { useRecoilValue } from 'recoil';
-import { walletAddressState } from 'store/wallet';
 
 const OverviewTab = () => {
 	const { t } = useTranslation();
 
-	const walletAddress = useRecoilValue(walletAddressState);
+	const { walletAddress } = Connector.useContainer();
 
 	const historicalDebt = useHistoricalDebtData(walletAddress);
 

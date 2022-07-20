@@ -1,4 +1,4 @@
-import React, { FC, useMemo } from 'react';
+import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { useRecoilValue } from 'recoil';
@@ -14,8 +14,9 @@ import { getStakingAmount, getTransferableAmountFromBurn, sanitiseValue } from '
 import InfoLayout from './InfoLayout';
 import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
-import { walletAddressState, delegateWalletState } from 'store/wallet';
+import { delegateWalletState } from 'store/wallet';
 import { parseSafeWei } from 'utils/parse';
+import Connector from 'containers/Connector';
 
 const BurnInfo: FC = () => {
 	const { t } = useTranslation();
@@ -31,7 +32,8 @@ const BurnInfo: FC = () => {
 		collateral,
 	} = useStakingCalculations();
 
-	const walletAddress = useRecoilValue(walletAddressState);
+	const { walletAddress } = Connector.useContainer();
+
 	const delegateWallet = useRecoilValue(delegateWalletState);
 	const { useSynthsBalancesQuery } = useSynthetixQueries();
 

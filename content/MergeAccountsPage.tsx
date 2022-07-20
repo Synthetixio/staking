@@ -2,9 +2,8 @@ import { FC } from 'react';
 import Head from 'next/head';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
+import Connector from 'containers/Connector';
 
-import { walletAddressState } from 'store/wallet';
 import StatBox from 'components/StatBox';
 import { LineSpacer } from 'styles/common';
 import StatsSection from 'components/StatsSection';
@@ -19,10 +18,10 @@ import Main from 'sections/merge-accounts';
 
 const MergeAccountsPage: FC = () => {
 	const { t } = useTranslation();
+	const { walletAddress } = Connector.useContainer();
 
 	const { stakedCollateralValue, debtBalance } = useStakingCalculations();
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
-	const walletAddress = useRecoilValue(walletAddressState);
 	const { stakingAPR } = useUserStakingData(walletAddress);
 
 	return (

@@ -5,13 +5,7 @@ import Wei from '@synthetixio/wei';
 import { useRouter } from 'next/router';
 import { useRecoilValue } from 'recoil';
 
-import { appReadyState } from 'store/app';
-import {
-	isWalletConnectedState,
-	delegateWalletState,
-	walletAddressState,
-	isL2State,
-} from 'store/wallet';
+import { delegateWalletState } from 'store/wallet';
 import ROUTES from 'constants/routes';
 import { ExternalLink, FlexDiv, GlowingCircle, IconButton, FlexDivJustifyEnd } from 'styles/common';
 import media from 'styles/media';
@@ -69,6 +63,7 @@ import {
 import { MobileOnlyView } from 'components/Media';
 import useSynthetixQueries, { GasPrice } from '@synthetixio/queries';
 import ClaimOrCloseFeeButton from './ClaimAndCloseFeeButton';
+import Connector from 'containers/Connector';
 
 type ClaimTabProps = {
 	tradingRewards: Wei;
@@ -78,24 +73,22 @@ type ClaimTabProps = {
 
 const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, totalRewards }) => {
 	const { t } = useTranslation();
+	const router = useRouter();
+	const { isAppReady, walletAddress, isL2, isWalletConnected } = Connector.useContainer();
 
-	const walletAddress = useRecoilValue(walletAddressState);
 	const delegateWallet = useRecoilValue(delegateWalletState);
 	const { useSynthetixTxn, useGetFeePoolDataQuery } = useSynthetixQueries();
 
 	const { isBelowCRatio } = useUserStakingData(delegateWallet?.address ?? walletAddress);
 	const { blockExplorerInstance } = Etherscan.useContainer();
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	const isAppReady = useRecoilValue(appReadyState);
-	const router = useRouter();
 	const [gasPrice, setGasPrice] = useState<GasPrice | undefined>(undefined);
 	const [error, setError] = useState<string | null>(null);
 	const [claimedTradingRewards, setClaimedTradingRewards] = useState<number | null>(null);
 	const [claimedStakingRewards, setClaimedStakingRewards] = useState<number | null>(null);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 	const userStakingData = useUserStakingData(walletAddress);
-	const isL2 = useRecoilValue(isL2State);
+
 	const feePoolDataQuery = useGetFeePoolDataQuery(0, { enabled: isL2 });
 
 	const claimCall: [string, string[]] = delegateWallet

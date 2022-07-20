@@ -3,9 +3,8 @@ import styled from 'styled-components';
 import DebtHedgingChart from './DebtHedgingChart';
 import { ExternalLink, FlexDivCol } from 'styles/common';
 import media from 'styled-media-query';
-import { useRecoilValue } from 'recoil';
-import { isMainnetState } from 'store/wallet';
 import { EXTERNAL_LINKS } from 'constants/links';
+import Connector from 'containers/Connector';
 
 type DebtHedgingInfoPanelProps = {
 	hidden: boolean;
@@ -22,7 +21,8 @@ const TorosNote = () => {
 
 const DebtHedgingInfoPanel: React.FC<DebtHedgingInfoPanelProps> = ({ hidden }) => {
 	const { t } = useTranslation();
-	const isMainnet = useRecoilValue(isMainnetState);
+	const { isMainnet } = Connector.useContainer();
+
 	if (hidden || isMainnet) return null;
 	return (
 		<>

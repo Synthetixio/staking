@@ -9,9 +9,8 @@ import { formatCurrency } from 'utils/formatters/number';
 import ArrowForwardPink from 'assets/svg/app/arrow-forward-pink.svg';
 import useHistoricalDebtData, { HistoricalDebtAndIssuanceData } from 'hooks/useHistoricalDebtData';
 import { CenteredModal } from '../common';
-import { useRecoilValue } from 'recoil';
-import { walletAddressState } from 'store/wallet';
 import { wei } from '@synthetixio/wei';
+import Connector from 'containers/Connector';
 
 const INITIAL_SNAPSHOT: HistoricalDebtAndIssuanceData = {
 	timestamp: 0,
@@ -31,7 +30,7 @@ export const DebtValueModal: FC<{ value: string; isOpened: boolean; onDismiss: (
 	const chartColor = colors.pink;
 	const linearGradientId = '#colorPink';
 
-	const walletAddress = useRecoilValue(walletAddressState);
+	const { walletAddress } = Connector.useContainer();
 	const historicalDebt = useHistoricalDebtData(walletAddress);
 
 	const data = useMemo(() => historicalDebt.data ?? [], [historicalDebt]);

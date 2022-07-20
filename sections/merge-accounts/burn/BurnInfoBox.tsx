@@ -10,7 +10,6 @@ import { formatCurrency } from 'utils/formatters/number';
 import { EXTERNAL_LINKS } from 'constants/links';
 import { FlexDivCentered } from 'styles/common';
 import { CryptoCurrency, Synths } from 'constants/currency';
-import { walletAddressState } from 'store/wallet';
 import { parseSafeWei } from 'utils/parse';
 
 import BarStatsRow from 'sections/staking/components/StakingInfo/BarStatsRow';
@@ -37,6 +36,7 @@ import {
 	getTransferableAmountFromBurn,
 	sanitiseValue,
 } from 'sections/staking/components/helper';
+import Connector from 'containers/Connector';
 
 type InfoLayoutProps = {};
 
@@ -55,7 +55,7 @@ const InfoLayout: FC<InfoLayoutProps> = () => {
 		collateral,
 	} = useStakingCalculations();
 
-	const walletAddress = useRecoilValue(walletAddressState);
+	const { walletAddress } = Connector.useContainer();
 	const { useSynthsBalancesQuery } = useSynthetixQueries();
 
 	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);

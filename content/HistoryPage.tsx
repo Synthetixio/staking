@@ -8,17 +8,16 @@ import TransactionsContainer from 'sections/history/TransactionsContainer';
 import StatsSection from 'components/StatsSection';
 
 import StatBox from 'components/StatBox';
-import { useRecoilValue } from 'recoil';
-import { walletAddressState } from 'store/wallet';
 import { StakingTransactionType } from 'sections/history/types';
 import sortBy from 'lodash/sortBy';
 
 import useSynthetixQueries from '@synthetixio/queries';
+import Connector from 'containers/Connector';
 
 const HistoryPage: FC = () => {
 	const { t } = useTranslation();
 
-	const walletAddress = useRecoilValue(walletAddressState);
+	const { walletAddress } = Connector.useContainer();
 
 	const { subgraph } = useSynthetixQueries();
 	const issues = subgraph.useGetIssueds(
