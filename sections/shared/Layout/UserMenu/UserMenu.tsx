@@ -120,7 +120,7 @@ const UserMenu: FC = () => {
 				<MobileOrTabletView>
 					{isWalletConnected ? (
 						<FlexDiv>
-							{isWalletConnected && delegateWallet && (
+							{delegateWallet && (
 								<DelegateIconWrapper>
 									<DelegateIcon />
 								</DelegateIconWrapper>
