@@ -16,6 +16,14 @@ import SearchIcon from 'assets/svg/app/search.svg';
 import Incognito from 'assets/svg/app/incognito.svg';
 import DelegateIcon from 'assets/svg/app/delegate.svg';
 
+import BrowserWalletIcon from 'assets/wallet-icons/browserWallet.svg';
+import LedgerIcon from 'assets/wallet-icons/ledger.svg';
+import TrezorIcon from 'assets/wallet-icons/trezor.svg';
+import WalletConnectIcon from 'assets/wallet-icons/walletConnect.svg';
+import CoinbaseIcon from 'assets/wallet-icons/coinbase.svg';
+import PortisIcon from 'assets/wallet-icons/portis.svg';
+import TorusIcon from 'assets/wallet-icons/torus.svg';
+
 import Connector from 'containers/Connector';
 import Etherscan from 'containers/BlockExplorer';
 
@@ -35,6 +43,31 @@ export type WalletOptionsProps = {
 	onDismiss: () => void;
 	setWatchWalletModalOpened: Dispatch<SetStateAction<boolean>>;
 	setDelegateModalOpened: Dispatch<SetStateAction<boolean>>;
+};
+
+const getWalletIcon = (walletType?: string | null) => {
+	switch (walletType) {
+		case 'browser wallet':
+			return <BrowserWalletIcon />;
+		case 'metamask':
+			return <BrowserWalletIcon />;
+		case 'trezor':
+			return <TrezorIcon />;
+		case 'ledger':
+			return <LedgerIcon />;
+		case 'walletconnect':
+			return <WalletConnectIcon />;
+		case 'coinbase wallet':
+		case 'walletlink':
+			return <CoinbaseIcon />;
+		case 'portis':
+			return <PortisIcon />;
+		case 'torus':
+			return <TorusIcon />;
+
+		default:
+			return walletType;
+	}
 };
 
 const exitIcon = <ExitIcon width="16" />;
@@ -59,6 +92,7 @@ const WalletOptionsModal: FC<WalletOptionsProps> = ({
 		walletAddress,
 		isWalletConnected,
 		walletWatched,
+		walletType,
 		stopWatching,
 	} = Connector.useContainer();
 	const { blockExplorerInstance } = Etherscan.useContainer();
@@ -79,10 +113,12 @@ const WalletOptionsModal: FC<WalletOptionsProps> = ({
 			{isWalletConnected ? (
 				<>
 					<WalletDetails>
-						{walletWatched && (
+						{walletWatched ? (
 							<SelectedWallet>
 								<Incognito />
 							</SelectedWallet>
+						) : (
+							<SelectedWallet>{getWalletIcon(walletType?.toLowerCase())}</SelectedWallet>
 						)}
 						<WalletAddress>{truncatedWalletAddress}</WalletAddress>
 						<ActionIcons>

@@ -39,6 +39,7 @@ const useConnector = () => {
 		ensName,
 		ensAvatar,
 		onboard,
+		walletType,
 	} = state;
 
 	// Ethereum Mainnet
@@ -69,6 +70,8 @@ const useConnector = () => {
 		(update: AppState) => {
 			if (update.wallets.length > 0) {
 				const wallet = update.wallets[0].accounts[0];
+
+				const { label } = update.wallets[0];
 				const { id } = update.wallets[0].chains[0];
 				const networkId = getNetworkIdFromHex(id);
 
@@ -103,6 +106,7 @@ const useConnector = () => {
 						payload: {
 							address: wallet.address,
 							walletWatched: null,
+							walletType: label,
 							network,
 							provider,
 							signer,
@@ -181,7 +185,8 @@ const useConnector = () => {
 		}
 
 		// Always keep this hook with the single dependency.
-	}, [onboard, updateState]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [onboard]);
 
 	useEffect(() => {
 		if (walletAddress && !ensName) {
@@ -289,6 +294,7 @@ const useConnector = () => {
 		signer,
 		walletAddress,
 		walletWatched,
+		walletType,
 		synthetixjs,
 		synthsMap,
 		tokensMap,

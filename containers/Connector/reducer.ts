@@ -12,6 +12,7 @@ type ConnectorState = {
 	isAppReady: boolean;
 	walletAddress: string | null;
 	walletWatched: string | null;
+	walletType: string | null;
 	ensName: string | null;
 	ensAvatar: string | null;
 	onboard: OnboardAPI | null;
@@ -34,6 +35,7 @@ export const initialState: ConnectorState = {
 	isAppReady: false,
 	walletAddress: null,
 	walletWatched: null,
+	walletType: null,
 	ensName: null,
 	ensAvatar: null,
 	onboard: onboard,
@@ -44,6 +46,7 @@ export type ConnectionUpdate = {
 	network: Network;
 	signer: ethers.Signer | null;
 	walletWatched: null;
+	walletType: string | null;
 	synthetixjs: SynthetixJS;
 	provider: ethers.providers.Web3Provider;
 	ensName: string | null;
@@ -83,6 +86,7 @@ export function reducer(state: ConnectorState, action: Actions) {
 			return {
 				...state,
 				walletWatched: action.payload.walletWatched,
+				walletType: action.payload.walletType,
 				walletAddress: action.payload.address,
 				network: action.payload.network,
 				signer: action.payload.signer,
@@ -112,6 +116,7 @@ export function reducer(state: ConnectorState, action: Actions) {
 				synthetixjs: null,
 				walletAddress: null,
 				watchedWallet: null,
+				walletType: null,
 				ensName: null,
 				ensAvatar: null,
 			};
