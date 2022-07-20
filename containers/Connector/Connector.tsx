@@ -14,7 +14,7 @@ import { LOCAL_STORAGE_KEYS } from 'constants/storage';
 import { CurrencyKey, ETH_ADDRESS } from 'constants/currency';
 import { synthToContractName } from 'utils/currencies';
 import { keyBy } from 'lodash';
-import { initialState, reducer } from './reducer';
+import { AppEvents, initialState, reducer } from './reducer';
 
 import { getChainIdHex, getNetworkIdFromHex } from 'utils/infura';
 import { Network } from 'store/wallet';
@@ -77,7 +77,10 @@ const useConnector = () => {
 				if (!isSupported) {
 					// Switch to mainnet ethereum by default
 					(async () => {
-						await onboard?.setChain({ chainId: getChainIdHex(NetworkIdByName.mainnet) });
+						// Only switch chains if the user has tab open
+						if (document.hasFocus()) {
+							await onboard?.setChain({ chainId: getChainIdHex(NetworkIdByName.mainnet) });
+						}
 					})();
 				} else {
 					const network = {
@@ -96,7 +99,7 @@ const useConnector = () => {
 					const synthetixjs = synthetix({ provider, networkId, useOvm });
 
 					dispatch({
-						type: 'config_update',
+						type: AppEvents.CONFIG_UPDATE,
 						payload: {
 							address: wallet.address,
 							walletWatched: null,
@@ -116,7 +119,7 @@ const useConnector = () => {
 					);
 				}
 			} else {
-				dispatch({ type: 'wallet_disconnected' });
+				dispatch({ type: AppEvents.WALLET_DISCONNECTED });
 			}
 		},
 		[onboard]
@@ -136,7 +139,7 @@ const useConnector = () => {
 	}, [synthetixjs]);
 
 	useEffect(() => {
-		dispatch({ type: 'app_ready', payload: Web3Onboard }); //
+		dispatch({ type: AppEvents.APP_READY, payload: Web3Onboard }); //
 	}, []);
 
 	useEffect(() => {
@@ -186,7 +189,7 @@ const useConnector = () => {
 				const ensN: string | null = await L1DefaultProvider.lookupAddress(walletAddress);
 				const ensA = ensName ? await L1DefaultProvider.getAvatar(ensName) : null;
 				if (ensN) {
-					dispatch({ type: 'set_ens', payload: { ensName: ensN, ensAvatar: ensA } });
+					dispatch({ type: AppEvents.SET_ENS, payload: { ensName: ensN, ensAvatar: ensA } });
 				}
 			})();
 		}
@@ -198,7 +201,7 @@ const useConnector = () => {
 			const provider = loadProvider({ infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID });
 			if (provider) {
 				dispatch({
-					type: 'update_provider',
+					type: AppEvents.UPDATE_PROVIDER,
 					payload: { provider, network: network || defaultNetwork },
 				});
 			}
@@ -263,7 +266,7 @@ const useConnector = () => {
 
 	const setWatchedWallet = useCallback(
 		(address: string | null, walletWatched: string | null, ensName: string | null) => {
-			dispatch({ type: 'watch_wallet', payload: { address, walletWatched, ensName } });
+			dispatch({ type: AppEvents.WATCH_WALLET, payload: { address, walletWatched, ensName } });
 		},
 		[]
 	);

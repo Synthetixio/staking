@@ -3,14 +3,12 @@ import Head from 'next/head';
 import styled from 'styled-components';
 import Connector from '../containers/Connector';
 import Button from '../components/Button';
-import { isWalletConnectedState } from '../store/wallet';
-import { useRecoilValue } from 'recoil';
 import { useTranslation } from 'react-i18next';
 import media from 'styles/media';
 
 const BridgePage = () => {
-	const { connectWallet } = Connector.useContainer();
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
+	const { connectWallet, isWalletConnected } = Connector.useContainer();
+
 	const { t } = useTranslation();
 	return (
 		<Container>

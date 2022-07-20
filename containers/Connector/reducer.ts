@@ -17,6 +17,15 @@ type ConnectorState = {
 	onboard: OnboardAPI | null;
 };
 
+export enum AppEvents {
+	APP_READY = 'APP_READY',
+	CONFIG_UPDATE = 'CONFIG_UPDATE',
+	WATCH_WALLET = 'WATCH_WALLET',
+	SET_ENS = 'SET_ENS',
+	UPDATE_PROVIDER = 'UPDATE_PROVIDER',
+	WALLET_DISCONNECTED = 'WALLET_DISCONNECTED',
+}
+
 export const initialState: ConnectorState = {
 	network: null,
 	provider: null,
@@ -58,19 +67,19 @@ export type ProviderUpdate = {
 };
 
 export type Actions =
-	| { type: 'app_ready'; payload: OnboardAPI }
-	| { type: 'config_update'; payload: ConnectionUpdate }
-	| { type: 'watch_wallet'; payload: WatchWallet }
-	| { type: 'set_ens'; payload: EnsUpdate }
-	| { type: 'update_provider'; payload: ProviderUpdate }
-	| { type: 'wallet_disconnected' };
+	| { type: AppEvents.APP_READY; payload: OnboardAPI }
+	| { type: AppEvents.CONFIG_UPDATE; payload: ConnectionUpdate }
+	| { type: AppEvents.WATCH_WALLET; payload: WatchWallet }
+	| { type: AppEvents.SET_ENS; payload: EnsUpdate }
+	| { type: AppEvents.UPDATE_PROVIDER; payload: ProviderUpdate }
+	| { type: AppEvents.WALLET_DISCONNECTED };
 
 export function reducer(state: ConnectorState, action: Actions) {
 	switch (action.type) {
-		case 'app_ready':
+		case AppEvents.APP_READY:
 			return { ...state, isAppReady: true, onboard: action.payload };
 
-		case 'config_update':
+		case AppEvents.CONFIG_UPDATE:
 			return {
 				...state,
 				walletWatched: action.payload.walletWatched,
@@ -83,7 +92,7 @@ export function reducer(state: ConnectorState, action: Actions) {
 				ensAvatar: action.payload.ensAvatar,
 			};
 
-		case 'watch_wallet':
+		case AppEvents.WATCH_WALLET:
 			return {
 				...state,
 				walletAddress: action.payload.address,
@@ -91,10 +100,10 @@ export function reducer(state: ConnectorState, action: Actions) {
 				walletWatched: action.payload.walletWatched,
 			};
 
-		case 'set_ens':
+		case AppEvents.SET_ENS:
 			return { ...state, ensName: action.payload.ensName, ensAvatar: action.payload.ensAvatar };
 
-		case 'wallet_disconnected':
+		case AppEvents.WALLET_DISCONNECTED:
 			return {
 				...state,
 				network: null,
@@ -107,7 +116,7 @@ export function reducer(state: ConnectorState, action: Actions) {
 				ensAvatar: null,
 			};
 
-		case 'update_provider':
+		case AppEvents.UPDATE_PROVIDER:
 			return {
 				...state,
 				provider: action.payload.provider,
