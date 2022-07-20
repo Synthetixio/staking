@@ -1,4 +1,4 @@
-import { DESKTOP_SIDE_NAV_WIDTH, zIndex } from 'constants/ui';
+import { DESKTOP_SIDE_NAV_WIDTH } from 'constants/ui';
 import useIsMounted from 'hooks/isMounted';
 import { FC, ReactNode } from 'react';
 import { createPortal } from 'react-dom';
