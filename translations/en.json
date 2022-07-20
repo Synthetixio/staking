@@ -270,14 +270,16 @@
 					"est-apr": "Est. APR",
 					"subtext": "There are various Liquidity Providing incentives interacting with different DeFi products for you to choose from",
 					"dismiss": "DISMISS",
-					"see-more": "SEE MORE"
+					"see-more": "SEE MORE",
+					"hedge": "HEDGE NOW"
 				},
 				"completed-default": {
 					"title": "Minting complete!",
 					"staked": "Staked",
 					"minted": "Minted",
 					"dismiss": "Dismiss",
-					"verify": "Verify Tx"
+					"verify": "Verify Tx",
+					"hedge": "HEDGE NOW"
 				}
 			},
 			"burn": {

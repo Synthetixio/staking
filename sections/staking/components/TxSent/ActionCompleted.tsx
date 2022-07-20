@@ -133,6 +133,7 @@ const ActionCompleted: React.FC<ActionCompletedProps> = ({
 							</LeftButton>
 						</ExternalLink>
 					) : null}
+
 					<RightButton
 						onClick={() => {
 							resetTransaction();
@@ -142,6 +143,9 @@ const ActionCompleted: React.FC<ActionCompletedProps> = ({
 					>
 						{t('staking.actions.mint.completed-default.dismiss')}
 					</RightButton>
+					<HedgeButton onClick={() => push(ROUTES.Debt.Home)}>
+						{t('staking.actions.mint.completed-default.hedge')}
+					</HedgeButton>
 				</ButtonWrap>
 			</Container>
 		);
@@ -228,6 +232,10 @@ const AprValue = styled.div`
 `;
 
 const BaseButton = styled.div`
+	@media (max-width: 768px) {
+		min-width: 60px;
+		width: 120px;
+	}
 	width: 175px;
 	height: 50px;
 	padding-top: 16px;
@@ -249,6 +257,13 @@ const LeftButton = styled(BaseButton)`
 `;
 
 const RightButton = styled(BaseButton)`
+	background-color: ${(props) => props.theme.colors.black};
+	color: ${(props) => props.theme.colors.white};
+	border: 1px solid ${(props) => props.theme.colors.gray};
+	text-transform: uppercase;
+`;
+
+const HedgeButton = styled(BaseButton)`
 	${boxShadowBlue}
 	background-color: ${(props) => props.theme.colors.grayBlue};
 	color: ${(props) => props.theme.colors.blue};
