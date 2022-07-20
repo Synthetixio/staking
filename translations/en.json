@@ -271,7 +271,7 @@
 					"subtext": "There are various Liquidity Providing incentives interacting with different DeFi products for you to choose from",
 					"dismiss": "DISMISS",
 					"see-more": "SEE MORE",
-					"hedge": "HEDGE NOW"
+					"hedge": "HEDGE DEBT"
 				},
 				"completed-default": {
 					"title": "Minting complete!",
@@ -279,7 +279,7 @@
 					"minted": "Minted",
 					"dismiss": "Dismiss",
 					"verify": "Verify Tx",
-					"hedge": "HEDGE NOW"
+					"hedge": "HEDGE DEBT"
 				}
 			},
 			"burn": {
