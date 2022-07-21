@@ -19,12 +19,6 @@ const BridgePage = () => {
 			<HeadlineContainer>
 				<Headline>{t('bridge.headline')}</Headline>
 			</HeadlineContainer>
-			<Paragraph>
-				{t('bridge.paragraph')}:{' '}
-				<StyledExternalLink href="https://blog.synthetix.io/susd-bridge-enabled/">
-					https://blog.synthetix.io/susd-bridge-enabled/
-				</StyledExternalLink>
-			</Paragraph>
 
 			{isWalletConnected ? (
 				<>
