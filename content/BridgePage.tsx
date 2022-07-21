@@ -5,6 +5,7 @@ import Connector from '../containers/Connector';
 import Button from '../components/Button';
 import { useTranslation } from 'react-i18next';
 import media from 'styles/media';
+import { ExternalLink } from '../styles/common';
 
 const BridgePage = () => {
 	const { connectWallet, isWalletConnected } = Connector.useContainer();
@@ -18,6 +19,13 @@ const BridgePage = () => {
 			<HeadlineContainer>
 				<Headline>{t('bridge.headline')}</Headline>
 			</HeadlineContainer>
+			<Paragraph>
+				{t('bridge.paragraph')}:{' '}
+				<StyledExternalLink href="https://blog.synthetix.io/susd-bridge-enabled/">
+					https://blog.synthetix.io/susd-bridge-enabled/
+				</StyledExternalLink>
+			</Paragraph>
+
 			{isWalletConnected ? (
 				<>
 					<SocketBridge />
@@ -39,6 +47,13 @@ const Container = styled.div`
 	${media.lessThan('md')`
 		padding-left: 40px
 	`}
+`;
+
+const StyledExternalLink = styled(ExternalLink)`
+	color: ${(props) => props.theme.colors.blue};
+`;
+const Paragraph = styled.p`
+	margin-bottom: 15px;
 `;
 const ConnectWalletContainer = styled.div`
 	margin-top: 50px;
