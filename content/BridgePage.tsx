@@ -5,7 +5,6 @@ import Connector from '../containers/Connector';
 import Button from '../components/Button';
 import { useTranslation } from 'react-i18next';
 import media from 'styles/media';
-import { ExternalLink } from '../styles/common';
 
 const BridgePage = () => {
 	const { connectWallet, isWalletConnected } = Connector.useContainer();
@@ -43,12 +42,6 @@ const Container = styled.div`
 	`}
 `;
 
-const StyledExternalLink = styled(ExternalLink)`
-	color: ${(props) => props.theme.colors.blue};
-`;
-const Paragraph = styled.p`
-	margin-bottom: 15px;
-`;
 const ConnectWalletContainer = styled.div`
 	margin-top: 50px;
 	display: flex;
