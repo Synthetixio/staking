@@ -23,6 +23,7 @@ import WalletConnectIcon from 'assets/wallet-icons/walletConnect.svg';
 import CoinbaseIcon from 'assets/wallet-icons/coinbase.svg';
 import PortisIcon from 'assets/wallet-icons/portis.svg';
 import TorusIcon from 'assets/wallet-icons/torus.svg';
+import GameStopIcon from 'assets/wallet-icons/gamestop.svg';
 
 import Connector from 'containers/Connector';
 import Etherscan from 'containers/BlockExplorer';
@@ -64,6 +65,8 @@ const getWalletIcon = (walletType?: string | null) => {
 			return <PortisIcon />;
 		case 'torus':
 			return <TorusIcon />;
+		case 'gamestop wallet':
+			return <GameStopIcon />;
 
 		default:
 			return walletType;
