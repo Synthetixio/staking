@@ -5461,6 +5461,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@web3-onboard/common@npm:^2.1.6":
+  version: 2.1.6
+  resolution: "@web3-onboard/common@npm:2.1.6"
+  dependencies:
+    "@ethereumjs/common": 2.6.2
+    ethers: 5.5.4
+    joi: ^17.4.2
+    rxjs: ^7.5.2
+  checksum: dbdfb63d01c9151e8dfa43153bc6ad4b588a93e193dd09b251d5a82c785059de3f583b3d72022791de529e524122347a853f4cfcf47d4c9e1ef7b92467f0a414
+  languageName: node
+  linkType: hard
+
 "@web3-onboard/core@npm:^2.3.2":
   version: 2.4.0
   resolution: "@web3-onboard/core@npm:2.4.0"
@@ -5493,14 +5505,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@web3-onboard/injected-wallets@npm:^2.0.12":
-  version: 2.0.13
-  resolution: "@web3-onboard/injected-wallets@npm:2.0.13"
+"@web3-onboard/injected-wallets@npm:^2.0.14":
+  version: 2.0.14
+  resolution: "@web3-onboard/injected-wallets@npm:2.0.14"
   dependencies:
-    "@web3-onboard/common": ^2.1.5
+    "@web3-onboard/common": ^2.1.6
     joi: ^17.4.2
     lodash.uniqby: ^4.7.0
-  checksum: 0bffa21878907cff282912aeedd716b6ca76fad28d551f33214cd483146f47823cdf6442e4e79eadd3c77b441b531f282cb3a7f1fae7ef918452f38ee817fdc2
+  checksum: 5eb2c9b7e7e79b3e9cf48db517e8a95d9000ee84560f12878be4808c1fd1ebcb9245805f184680927c14dbd7016d9804fc1ff93e10117bec3ac86934c5640dcf
   languageName: node
   linkType: hard
 
@@ -20829,7 +20841,7 @@ jschardet@latest:
     "@web3-onboard/coinbase": ^2.0.8
     "@web3-onboard/core": ^2.3.2
     "@web3-onboard/gnosis": ^2.0.6
-    "@web3-onboard/injected-wallets": ^2.0.12
+    "@web3-onboard/injected-wallets": ^2.0.14
     "@web3-onboard/ledger": ^2.1.5
     "@web3-onboard/portis": ^2.0.5
     "@web3-onboard/torus": ^2.0.6
