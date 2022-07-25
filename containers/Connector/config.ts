@@ -77,4 +77,7 @@ export const onboard = Onboard({
 			containerElement: 'body',
 		},
 	},
+	notify: {
+		enabled: false,
+	},
 });

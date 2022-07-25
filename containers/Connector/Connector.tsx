@@ -235,18 +235,17 @@ const useConnector = () => {
 		}
 	}, [onboard]);
 
-	const switchAccounts = useCallback(
-		async (chainId?: string) => {
-			try {
-				if (onboard && chainId) {
-					await onboard.setChain({ chainId });
-				}
-			} catch (e) {
-				console.log(e);
+	const switchAccounts = useCallback(async () => {
+		try {
+			if (onboard) {
+				await onboard.connectWallet({
+					autoSelect: { label: onboard.state.get()?.wallets[0]?.label, disableModals: false },
+				});
 			}
-		},
-		[onboard]
-	);
+		} catch (e) {
+			console.log(e);
+		}
+	}, [onboard]);
 
 	const isHardwareWallet = useCallback(() => {
 		if (onboard) {
