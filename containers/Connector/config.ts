@@ -6,7 +6,7 @@ import injectedModule from '@web3-onboard/injected-wallets';
 import coinbaseWalletModule from '@web3-onboard/coinbase';
 import walletConnectModule from '@web3-onboard/walletconnect';
 import ledgerModule from '@web3-onboard/ledger';
-import trezorModule from '@web3-onboard/trezor';
+// import trezorModule from '@web3-onboard/trezor';
 import gnosisModule from '@web3-onboard/gnosis';
 import portisModule from '@web3-onboard/portis';
 import torusModule from '@web3-onboard/torus';
@@ -17,7 +17,8 @@ const injected = injectedModule();
 const coinbaseWalletSdk = coinbaseWalletModule({ darkMode: true });
 const walletConnect = walletConnectModule();
 const ledger = ledgerModule();
-const trezor = trezorModule({ email: 'info@synthetix.io', appUrl: 'https://www.synthetix.io' });
+// The trezor module have a bug, we can enable it when this has been merged and released: https://github.com/blocknative/web3-onboard/pull/1165
+// const trezor = trezorModule({ email: 'info@synthetix.io', appUrl: 'https://www.synthetix.io' });
 const gnosis = gnosisModule();
 const portis = portisModule({ apiKey: `${process.env.NEXT_PUBLIC_PORTIS_APP_ID}` });
 const torus = torusModule();
@@ -36,7 +37,7 @@ export const onboard = Onboard({
 		explore: 'https://blog.synthetix.io/',
 	},
 	apiKey: process.env.NEXT_PUBLIC_BN_ONBOARD_API_KEY,
-	wallets: [injected, ledger, trezor, coinbaseWalletSdk, walletConnect, gnosis, portis, torus],
+	wallets: [injected, ledger /*trezor,*/, coinbaseWalletSdk, walletConnect, gnosis, portis, torus],
 	chains: [
 		// Mainnet
 		{
