@@ -18,8 +18,6 @@ import { ModalContent, ModalItem, ModalItemText, ModalItemTitle } from 'styles/c
 import { useTranslation } from 'react-i18next';
 import useSynthetixQueries from '@synthetixio/queries';
 import { AxiosResponse } from 'axios';
-import { isL2State } from 'store/wallet';
-import { useRecoilValue } from 'recoil';
 import { addDays } from 'date-fns';
 
 type IndexProps = {
@@ -28,7 +26,7 @@ type IndexProps = {
 
 const Index: React.FC<IndexProps> = ({ onBack }) => {
 	const { t } = useTranslation();
-	const { provider } = Connector.useContainer();
+	const { provider, isL2 } = Connector.useContainer();
 	const { useSnapshotSpaceQuery } = useSynthetixQueries();
 
 	const [block, setBlock] = useState<number | null>(null);
@@ -43,8 +41,6 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
 	const [signError, setSignError] = useState<string | null>(null);
 	const space = useSnapshotSpaceQuery(snapshotEndpoint, SPACE_KEY.PROPOSAL);
 	const [ipfsHash, setIpfsHash] = useState<string | null>(null);
-
-	const isL2 = useRecoilValue(isL2State);
 
 	const validSubmission = useMemo(() => {
 		if (name.length > 0 && body.length > 0 && block && choices.length > 0) {

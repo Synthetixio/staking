@@ -3,10 +3,11 @@ import { useMemo } from 'react';
 import useSynthetixQueries from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
 import { useRecoilValue } from 'recoil';
-import { walletAddressState, delegateWalletState } from 'store/wallet';
+import { delegateWalletState } from 'store/wallet';
+import Connector from 'containers/Connector';
 
 const useStakingCalculations = () => {
-	const walletAddress = useRecoilValue(walletAddressState);
+	const { walletAddress } = Connector.useContainer();
 	const delegateWallet = useRecoilValue(delegateWalletState);
 	const {
 		useExchangeRatesQuery,

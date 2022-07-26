@@ -12,7 +12,7 @@ import ROUTES from 'constants/routes';
 import { CryptoCurrency, Synths } from 'constants/currency';
 import { DESKTOP_SIDE_NAV_WIDTH, zIndex } from 'constants/ui';
 
-import { isL2State, walletAddressState, delegateWalletState } from 'store/wallet';
+import { delegateWalletState } from 'store/wallet';
 
 import PriceItem from 'sections/shared/Layout/Stats/PriceItem';
 import PeriodBarStats from 'sections/shared/Layout/Stats/PeriodBarStats';
@@ -29,19 +29,16 @@ import Connector from 'containers/Connector';
 import { endOfHour, subDays } from 'date-fns';
 
 const DesktopSideNav: FC = () => {
-	const walletAddress = useRecoilValue(walletAddressState);
 	const delegateWallet = useRecoilValue(delegateWalletState);
-	const isL2 = useRecoilValue(isL2State);
+	const { walletAddress, isL2, L1DefaultProvider } = Connector.useContainer();
 
 	const { t } = useTranslation();
-	const { useSynthsBalancesQuery } = useSynthetixQueries();
+	const { useSynthsBalancesQuery, useSNXData } = useSynthetixQueries();
 	const sevenDaysAgoSeconds = Math.floor(endOfHour(subDays(new Date(), 7)).getTime() / 1000);
 	const currencyRateChange = useGetCurrencyRateChange(sevenDaysAgoSeconds, 'SNX');
 	const cryptoBalances = useCryptoBalances(delegateWallet?.address ?? walletAddress);
 	const synthsBalancesQuery = useSynthsBalancesQuery(delegateWallet?.address ?? walletAddress);
 
-	const { useSNXData } = useSynthetixQueries();
-	const { L1DefaultProvider } = Connector.useContainer();
 	const lockedSNXQuery = useSNXData(L1DefaultProvider);
 	const tRatio = useMemo(() => {
 		if (lockedSNXQuery?.data?.lockedSupply?.gt(1) && lockedSNXQuery?.data?.totalSNXSupply) {

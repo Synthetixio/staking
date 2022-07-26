@@ -1,9 +1,9 @@
 import { FC } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 
-import { delegateWalletState, walletAddressState } from 'store/wallet';
+import { delegateWalletState } from 'store/wallet';
 import { truncateAddress } from 'utils/formatters/string';
 import useSynthetixQueries, { DelegationWallet } from '@synthetixio/queries';
 
@@ -11,6 +11,7 @@ import { MenuModal } from '../common';
 import { Tooltip } from 'styles/common';
 
 import SpinnerIcon from 'assets/svg/app/loader.svg';
+import Connector from 'containers/Connector';
 
 type DelegateModalProps = {
 	onDismiss: () => void;
@@ -19,7 +20,7 @@ type DelegateModalProps = {
 const DelegateModal: FC<DelegateModalProps> = ({ onDismiss }) => {
 	const { t } = useTranslation();
 
-	const walletAddress = useRecoilValue(walletAddressState);
+	const { walletAddress } = Connector.useContainer();
 
 	const { useGetAuthoriserWallets } = useSynthetixQueries();
 	const delegateWalletsQuery = useGetAuthoriserWallets(walletAddress || '', {

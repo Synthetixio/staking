@@ -1,10 +1,7 @@
-import React from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { ethers } from 'ethers';
 import styled from 'styled-components';
-import { useRecoilValue } from 'recoil';
 import { useTranslation } from 'react-i18next';
-
-import { walletAddressState } from 'store/wallet';
 import Connector from 'containers/Connector';
 import Loans from 'containers/Loans';
 import { wei } from '@synthetixio/wei';
@@ -32,7 +29,7 @@ type ETHProps = {
 const ETH: React.FC<ETHProps> = ({ onSetMaxAmount }) => {
 	const { t } = useTranslation();
 	const { provider, signer } = Connector.useContainer();
-	const [balance, setBalance] = React.useState(ethers.BigNumber.from('0'));
+	const [balance, setBalance] = useState(ethers.BigNumber.from('0'));
 
 	const handleSetMaxAmount = () => {
 		if (onSetMaxAmount && balance) {
@@ -40,7 +37,7 @@ const ETH: React.FC<ETHProps> = ({ onSetMaxAmount }) => {
 		}
 	};
 
-	React.useEffect(() => {
+	useEffect(() => {
 		if (!signer) return;
 
 		let isMounted = true;
@@ -83,10 +80,10 @@ type ERC20Props = {
 
 const ERC20: React.FC<ERC20Props> = ({ asset, onSetMaxAmount }) => {
 	const { t } = useTranslation();
-	const { synthetixjs } = Connector.useContainer();
-	const address = useRecoilValue(walletAddressState);
-	const [balance, setBalance] = React.useState<ethers.BigNumber>(ethers.BigNumber.from('0'));
-	const [decimals, setDecimals] = React.useState<number>(0);
+	const { synthetixjs, walletAddress } = Connector.useContainer();
+
+	const [balance, setBalance] = useState<ethers.BigNumber>(ethers.BigNumber.from('0'));
+	const [decimals, setDecimals] = useState<number>(0);
 	const { renBTCContract } = Loans.useContainer();
 
 	const handleSetMaxAmount = () => {
@@ -95,7 +92,7 @@ const ERC20: React.FC<ERC20Props> = ({ asset, onSetMaxAmount }) => {
 		}
 	};
 
-	const contract = React.useMemo(() => {
+	const contract = useMemo(() => {
 		const {
 			contracts: { ProxysBTC: sBTC, ProxysETH: sETH, ProxyERC20sUSD: sUSD },
 		} = synthetixjs!;
@@ -108,8 +105,8 @@ const ERC20: React.FC<ERC20Props> = ({ asset, onSetMaxAmount }) => {
 		return tokens[asset];
 	}, [asset, renBTCContract, synthetixjs]);
 
-	React.useEffect(() => {
-		if (!(contract && address)) return;
+	useEffect(() => {
+		if (!(contract && walletAddress)) return;
 
 		let isMounted = true;
 		const unsubs: Array<any> = [() => (isMounted = false)];
@@ -117,7 +114,7 @@ const ERC20: React.FC<ERC20Props> = ({ asset, onSetMaxAmount }) => {
 		const loadBalance = async () => {
 			const [decimals, balance] = await Promise.all([
 				contract.decimals(),
-				contract.balanceOf(address),
+				contract.balanceOf(walletAddress),
 			]);
 			if (isMounted) {
 				setDecimals(decimals);
@@ -128,8 +125,8 @@ const ERC20: React.FC<ERC20Props> = ({ asset, onSetMaxAmount }) => {
 		const subscribe = () => {
 			const transferEvent = contract.filters.Transfer();
 			const onBalanceChange = async (from: string, to: string) => {
-				if (from === address || to === address) {
-					if (isMounted) setBalance(await contract.balanceOf(address));
+				if (from === walletAddress || to === walletAddress) {
+					if (isMounted) setBalance(await contract.balanceOf(walletAddress));
 				}
 			};
 
@@ -142,7 +139,7 @@ const ERC20: React.FC<ERC20Props> = ({ asset, onSetMaxAmount }) => {
 		return () => {
 			unsubs.forEach((unsub) => unsub());
 		};
-	}, [contract, address]);
+	}, [contract, walletAddress]);
 
 	return !(decimals && balance) ? null : (
 		<Container>

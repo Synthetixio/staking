@@ -29,18 +29,24 @@ const ActionInProgress: FC<ActionInProgressProps> = ({ amount, currencyKey, hash
 	const link = blockExplorerInstance != null ? blockExplorerInstance.txLink(hash) : undefined;
 	return (
 		<Container>
-			<SectionHeader>{t(`layer2.actions.${action}.action.in-progress.title`)}</SectionHeader>
+			<SectionHeader>
+				{t(`migrate-escrow.actions.${action}.action.in-progress.title`)}
+			</SectionHeader>
 			<PendingConfirmation width="78" />
 			<FlexDivCentered>
 				<InfoContainer key="one">
-					<InfoTitle>{t(`layer2.actions.${action}.action.in-progress.depositing`)}</InfoTitle>
+					<InfoTitle>
+						{t(`migrate-escrow.actions.${action}.action.in-progress.depositing`)}
+					</InfoTitle>
 					<InfoData>{formatCurrency(currencyKey, amount, { currencyKey: currencyKey })}</InfoData>
 				</InfoContainer>
 			</FlexDivCentered>
-			<SectionSubtext>{t(`layer2.actions.${action}.action.in-progress.subtext`)}</SectionSubtext>
+			<SectionSubtext>
+				{t(`migrate-escrow.actions.${action}.action.in-progress.subtext`)}
+			</SectionSubtext>
 			{link ? (
 				<StyledExternalLink href={link}>
-					{t(`layer2.actions.${action}.action.in-progress.etherscan`)}
+					{t(`migrate-escrow.actions.${action}.action.in-progress.etherscan`)}
 				</StyledExternalLink>
 			) : null}
 		</Container>

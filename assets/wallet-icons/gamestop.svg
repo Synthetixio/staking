@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 40 40">
+  <defs>
+    <linearGradient id="gamestop-a" x1="50%" x2="50%" y1="166.666%" y2="33.332%">
+      <stop offset="0%"/>
+      <stop offset="100%" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="gamestop-b" x1="49.999%" x2="49.999%" y1="166.666%" y2="33.333%">
+      <stop offset="0%"/>
+      <stop offset="100%" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <g fill="none" fill-rule="evenodd">
+    <rect width="40" height="40" fill="#09092F"/>
+    <g transform="translate(4 3)">
+      <path stroke="#FFF" stroke-width="3.75" d="M32.7005,12.46746 L32.7005,29.52866 C32.7005,32.04406 30.7385,34.01266 28.2314,34.01266 L4.46907,34.01266 C1.96203,34.01266 0,32.04406 0,29.52866 L0,9.18656"/>
+      <path stroke="#FFF" stroke-width="3.75" d="M27.1414,6.01428 L27.1414,0 L4.46907,0 C1.96203,0 0,1.96859 0,4.48401 L0,12.03026 C0,14.54566 1.96203,16.51426 4.46907,16.51426 L17.1133,16.51426 L17.9853,16.51426 L29.4304,16.51426 C31.2835,16.51426 32.7005,15.09256 32.7005,13.23326 L32.7005,10.71786 C32.7005,8.85866 31.2835,7.43689 29.4304,7.43689 L16.3502,7.43689 L16.3502,15.51426"/>
+      <rect width="5" height="5" x="13.9" y="9.644" fill="url(#gamestop-a)" fill-rule="nonzero"/>
+      <rect width="5.45" height="4.375" x="23.98" y="1.194" fill="url(#gamestop-b)" fill-rule="nonzero"/>
+    </g>
+  </g>
+</svg>

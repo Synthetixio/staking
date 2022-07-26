@@ -1,7 +1,6 @@
 import React from 'react';
 import Head from 'next/head';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import { LineSpacer } from 'styles/common';
@@ -15,11 +14,10 @@ import ActiveDebt from 'sections/shared/modals/DebtValueModal/DebtValueBox';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
-import { isWalletConnectedState } from 'store/wallet';
-
 import StatBox from 'components/StatBox';
 import ProgressBar from 'components/ProgressBar';
 import SelfLiquidation from './SelfLiquidation';
+import Connector from 'containers/Connector';
 
 const StakingPage = () => {
 	const { t } = useTranslation();
@@ -36,7 +34,7 @@ const StakingPage = () => {
 	} = useStakingCalculations();
 
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
+	const { isWalletConnected } = Connector.useContainer();
 
 	return (
 		<>

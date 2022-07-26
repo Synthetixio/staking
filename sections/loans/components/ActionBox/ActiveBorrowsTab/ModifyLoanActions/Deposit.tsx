@@ -1,9 +1,7 @@
 import { useState, useMemo, useEffect, useCallback } from 'react';
 import { ethers } from 'ethers';
-import { useRecoilValue } from 'recoil';
 import { wei } from '@synthetixio/wei';
 
-import { walletAddressState } from 'store/wallet';
 import { Loan } from 'containers/Loans/types';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import { tx } from 'utils/transactions';
@@ -12,6 +10,7 @@ import { useRouter } from 'next/router';
 import ROUTES from 'constants/routes';
 import { getRenBTCToken } from 'contracts/renBTCToken';
 import { getETHToken } from 'contracts/ethToken';
+import Connector from 'containers/Connector';
 
 type DepositProps = {
 	loanId: number;
@@ -29,7 +28,8 @@ const Deposit: React.FC<DepositProps> = ({
 	collateralAssetContract,
 }) => {
 	const router = useRouter();
-	const address = useRecoilValue(walletAddressState);
+	const { walletAddress } = Connector.useContainer();
+
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 
 	const [isWorking, setIsWorking] = useState<string>('');
@@ -64,10 +64,10 @@ const Deposit: React.FC<DepositProps> = ({
 		return [
 			loanContract,
 			'deposit',
-			[address, loanId, ...(loanTypeIsETH ? [] : [depositAmount.toBN()])],
+			[walletAddress, loanId, ...(loanTypeIsETH ? [] : [depositAmount.toBN()])],
 			{ value: loanTypeIsETH ? depositAmount.toBN() : 0 },
 		];
-	}, [loanContract, address, loanId, loanTypeIsETH, depositAmount]);
+	}, [loanContract, walletAddress, loanId, loanTypeIsETH, depositAmount]);
 
 	const getTxData = useMemo(
 		() => (!isApproved ? getApproveTxData : getDepositTxData),
@@ -91,8 +91,8 @@ const Deposit: React.FC<DepositProps> = ({
 					}),
 			});
 
-			if (loanTypeIsETH || !(loanContractAddress && address)) return setIsApproved(true);
-			const allowance = await collateralAssetContract.allowance(address, loanContractAddress);
+			if (loanTypeIsETH || !(loanContractAddress && walletAddress)) return setIsApproved(true);
+			const allowance = await collateralAssetContract.allowance(walletAddress, loanContractAddress);
 			setIsApproved(allowance.gte(depositAmount));
 		} catch {
 		} finally {
@@ -126,16 +126,16 @@ const Deposit: React.FC<DepositProps> = ({
 	useEffect(() => {
 		let isMounted = true;
 		(async () => {
-			if (loanTypeIsETH || !(collateralAssetContract && loanContractAddress && address)) {
+			if (loanTypeIsETH || !(collateralAssetContract && loanContractAddress && walletAddress)) {
 				return setIsApproved(true);
 			}
-			const allowance = await collateralAssetContract.allowance(address, loanContractAddress);
+			const allowance = await collateralAssetContract.allowance(walletAddress, loanContractAddress);
 			if (isMounted) setIsApproved(allowance.gte(depositAmount));
 		})();
 		return () => {
 			isMounted = false;
 		};
-	}, [loanTypeIsETH, collateralAssetContract, address, loanContractAddress, depositAmount]);
+	}, [loanTypeIsETH, collateralAssetContract, walletAddress, loanContractAddress, depositAmount]);
 
 	return (
 		<Wrapper

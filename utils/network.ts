@@ -22,6 +22,17 @@ export async function getDefaultNetworkId(): Promise<NetworkId> {
 	}
 }
 
+export async function isCurrentNetworkSupported(): Promise<boolean> {
+	try {
+		const provider = await detectEthereumProvider();
+		const id = Number(provider?.chainId || 0);
+		return isSupportedNetworkId(id);
+	} catch (e) {
+		console.log(e);
+		return false;
+	}
+}
+
 export const getTotalGasPrice = (gasPriceObj?: GasPrice | null) => {
 	if (!gasPriceObj) return wei(0);
 	const { gasPrice, baseFeePerGas, maxPriorityFeePerGas } = gasPriceObj;

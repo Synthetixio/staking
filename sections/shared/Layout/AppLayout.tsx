@@ -8,18 +8,18 @@ import ROUTES from 'constants/routes';
 import NotificationContainer from 'constants/NotificationContainer';
 
 import media from 'styles/media';
-import { isL2State, isMainnetState, delegateWalletState } from 'store/wallet';
+import { delegateWalletState } from 'store/wallet';
 import Header from './Header';
 import SideNav from './SideNav';
 import useSynthetixQueries from '@synthetixio/queries';
+import Connector from 'containers/Connector';
 
 type AppLayoutProps = {
 	children: ReactNode;
 };
 
 const AppLayout: FC<AppLayoutProps> = ({ children }) => {
-	const isL2 = useRecoilValue(isL2State);
-	const isMainnet = useRecoilValue(isMainnetState);
+	const { isL2 } = Connector.useContainer();
 
 	const { useIsBridgeActiveQuery } = useSynthetixQueries();
 
@@ -30,7 +30,7 @@ const AppLayout: FC<AppLayoutProps> = ({ children }) => {
 		if (delegateWallet && router.pathname !== ROUTES.Home) {
 			router.push(ROUTES.Home);
 		}
-	}, [isL2, isMainnet, depositsInactive, delegateWallet]);
+	}, [isL2, depositsInactive, delegateWallet]);
 
 	return (
 		<>

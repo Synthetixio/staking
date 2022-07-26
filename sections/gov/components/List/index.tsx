@@ -1,11 +1,9 @@
 import React, { useMemo } from 'react';
 import styled from 'styled-components';
 import { CellProps, Row } from 'react-table';
-import { isL2State, isWalletConnectedState } from 'store/wallet';
 import { FlexDivCol } from 'styles/common';
 import media from 'styles/media';
 import Button from 'components/Button';
-import { useRecoilValue } from 'recoil';
 import useSynthetixQueries, { Proposal as ProposalType } from '@synthetixio/queries';
 import Table from 'components/Table';
 import { useTranslation } from 'react-i18next';
@@ -16,6 +14,7 @@ import { DURATION_SEPARATOR } from 'constants/date';
 import { getCurrentTimestampSeconds } from 'utils/formatters/date';
 import { DesktopOrTabletView, MobileOnlyView } from 'components/Media';
 import { snapshotEndpoint, SPACE_KEY } from 'constants/snapshot';
+import Connector from 'containers/Connector';
 
 type IndexProps = {
 	spaceKey: SPACE_KEY;
@@ -42,9 +41,8 @@ type ResponsiveTableProps = {
 const ResponsiveTable: React.FC<ResponsiveTableProps> = ({ mobile, spaceKey }) => {
 	const { t } = useTranslation();
 	const router = useRouter();
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 
-	const isL2 = useRecoilValue(isL2State);
+	const { isWalletConnected, isL2 } = Connector.useContainer();
 
 	const { useProposalsQuery } = useSynthetixQueries();
 

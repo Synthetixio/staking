@@ -9,11 +9,12 @@ import media from 'styles/media';
 import CaretRightIcon from 'assets/svg/app/caret-right-small.svg';
 import ROUTES from 'constants/routes';
 
-import { isL2State, delegateWalletState } from 'store/wallet';
+import { delegateWalletState } from 'store/wallet';
 import { MENU_LINKS, MENU_LINKS_L2, MENU_LINKS_DELEGATE, SubMenuLink } from '../../constants';
 import Settings from '../../Settings';
 import { useAddOptimism } from '../../../hooks';
 import { Actions } from 'containers/UI/reducer';
+import Connector from 'containers/Connector';
 
 type MobileMenuProps = {
 	dispatch: Dispatch<Actions>;
@@ -22,7 +23,7 @@ type MobileMenuProps = {
 const MobileMenu: FC<MobileMenuProps> = ({ dispatch }) => {
 	const { t } = useTranslation();
 	const router = useRouter();
-	const isL2 = useRecoilValue(isL2State);
+	const { isL2 } = Connector.useContainer();
 	const delegateWallet = useRecoilValue(delegateWalletState);
 	const { showAddOptimism, addOptimismNetwork } = useAddOptimism();
 

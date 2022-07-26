@@ -1,14 +1,11 @@
 import { useMemo } from 'react';
-import { useRecoilValue } from 'recoil';
+import Wei, { wei } from '@synthetixio/wei';
+import useSynthetixQueries from '@synthetixio/queries';
+import Connector from 'containers/Connector';
 
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 import { Synths } from 'constants/currency';
 import { WEEKS_IN_YEAR } from 'constants/date';
-
-import { isL2State } from 'store/wallet';
-import Wei, { wei } from '@synthetixio/wei';
-import useSynthetixQueries from '@synthetixio/queries';
-import Connector from 'containers/Connector';
 
 // exported for test
 export const calculateIsBelowCRatio = (
@@ -18,8 +15,7 @@ export const calculateIsBelowCRatio = (
 ) => currentCRatio.gt(targetCRatio.mul(wei(1).add(targetThreshold)));
 
 export const useUserStakingData = (walletAddress: string | null) => {
-	const isL2 = useRecoilValue(isL2State);
-	const { L1DefaultProvider } = Connector.useContainer();
+	const { L1DefaultProvider, isL2 } = Connector.useContainer();
 
 	const { useGetFeePoolDataQuery, useGetDebtDataQuery, useClaimableRewardsQuery, subgraph } =
 		useSynthetixQueries();

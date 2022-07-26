@@ -1,12 +1,10 @@
 import { createContainer } from 'unstated-next';
 import { useMemo, useEffect, useState } from 'react';
-import { useRecoilValue } from 'recoil';
 import { BigNumber, ethers } from 'ethers';
 
 import { renBTCToken } from 'contracts';
 import Connector from 'containers/Connector';
-import { appReadyState } from 'store/app';
-import { walletAddressState, networkState, isL2State } from 'store/wallet';
+
 import { LOAN_TYPE_ERC20, LOAN_TYPE_ETH } from 'sections/loans/constants';
 import { sleep } from 'utils/promise';
 import Wei, { wei } from '@synthetixio/wei';
@@ -19,11 +17,8 @@ import useSynthetixQueries from '@synthetixio/queries';
 const SECONDS_IN_A_YR = 365 * 24 * 60 * 60;
 
 function Container() {
-	const { provider, signer, synthetixjs } = Connector.useContainer();
-	const address = useRecoilValue(walletAddressState);
-	const network = useRecoilValue(networkState);
-	const isAppReady = useRecoilValue(appReadyState);
-	const isL2 = useRecoilValue(isL2State);
+	const { provider, signer, synthetixjs, isAppReady, walletAddress, network, isL2 } =
+		Connector.useContainer();
 
 	const [isLoadingLoans, setIsLoadingLoans] = useState(false);
 	const [loans, setLoans] = useState<Loan[]>([]);
@@ -40,7 +35,8 @@ function Container() {
 		erc20LoanStateContract,
 		collateralManagerContract,
 	] = useMemo(() => {
-		if (!(isAppReady && synthetixjs && signer && address)) return [null, null, null, null, null];
+		if (!(isAppReady && synthetixjs && signer && walletAddress))
+			return [null, null, null, null, null];
 		const {
 			contracts: {
 				CollateralEth: ethLoanContract,
@@ -57,7 +53,7 @@ function Container() {
 			erc20LoanStateContract,
 			collateralManagerContract,
 		];
-	}, [isAppReady, signer, synthetixjs, address]);
+	}, [isAppReady, signer, synthetixjs, walletAddress]);
 
 	useEffect(() => {
 		if (!ethLoanContract) return;
@@ -73,9 +69,9 @@ function Container() {
 	}, [erc20LoanContract, ethLoanContract, isL2]);
 
 	const subgraphOpenLoansQuery = subgraph.useGetLoans(
-		{ where: { isOpen: true, account: address } },
+		{ where: { isOpen: true, account: walletAddress } },
 		{ id: true, collateralMinted: true },
-		{ queryKey: ['getLoans', isL2, address] }
+		{ queryKey: ['getLoans', isL2, walletAddress] }
 	);
 
 	const subgraphOpenLoansKey = subgraphOpenLoansQuery.data
@@ -88,7 +84,7 @@ function Container() {
 		: '';
 
 	useEffect(() => {
-		if (!(isAppReady && address && provider && ethLoanContract)) {
+		if (!(isAppReady && walletAddress && provider && ethLoanContract)) {
 			return;
 		}
 		if (!isL2 && !erc20LoanContract) return; // erc20LoanContract only exists on L1
@@ -111,7 +107,7 @@ function Container() {
 				ethLoanContract,
 				erc20LoanStateContract,
 				ethLoanStateContract,
-				address,
+				address: walletAddress,
 				isL2,
 				subgraphOpenLoans: subgraphOpenLoansKey ? JSON.parse(subgraphOpenLoansKey) : [],
 			});
@@ -132,7 +128,7 @@ function Container() {
 						loanContract,
 						loanStateContract,
 						isL2,
-						address,
+						address: walletAddress,
 					});
 					setLoans((originalLoans) => {
 						const loans = originalLoans.slice();
@@ -152,7 +148,7 @@ function Container() {
 						loanContract,
 						loanStateContract,
 						isL2,
-						address,
+						address: walletAddress,
 					});
 					setLoans((loans) => [loan, ...loans]);
 				};
@@ -214,12 +210,12 @@ function Container() {
 					await updateLoan(owner, id);
 				};
 
-				const loanCreatedEvent = loanContract.filters.LoanCreated(address);
-				const loanClosedEvent = loanContract.filters.LoanClosed(address);
-				const collateralDepositedEvent = loanContract.filters.CollateralDeposited(address);
-				const collateralWithdrawnEvent = loanContract.filters.CollateralWithdrawn(address);
-				const loanDrawnDownEvent = loanContract.filters.LoanDrawnDown(address);
-				const loanRepaymentMadeEvent = loanContract.filters.LoanRepaymentMade(address);
+				const loanCreatedEvent = loanContract.filters.LoanCreated(walletAddress);
+				const loanClosedEvent = loanContract.filters.LoanClosed(walletAddress);
+				const collateralDepositedEvent = loanContract.filters.CollateralDeposited(walletAddress);
+				const collateralWithdrawnEvent = loanContract.filters.CollateralWithdrawn(walletAddress);
+				const loanDrawnDownEvent = loanContract.filters.LoanDrawnDown(walletAddress);
+				const loanRepaymentMadeEvent = loanContract.filters.LoanRepaymentMade(walletAddress);
 
 				loanContract.on(loanCreatedEvent, onLoanCreated);
 				loanContract.on(loanClosedEvent, onLoanClosed);
@@ -245,7 +241,7 @@ function Container() {
 		};
 	}, [
 		isAppReady,
-		address,
+		walletAddress,
 		provider,
 		ethLoanContract,
 		erc20LoanContract,
@@ -329,35 +325,32 @@ function Container() {
 	};
 
 	const reloadPendingWithdrawals = async () => {
-		if (address && ethLoanContract) {
+		if (walletAddress && ethLoanContract) {
 			await sleep(1000);
-			await loadPendingWithdrawals(ethLoanContract, true, setPendingWithdrawals, address);
+			await loadPendingWithdrawals(ethLoanContract, true, setPendingWithdrawals, walletAddress);
 		}
 	};
 
 	useEffect(() => {
-		if (!(ethLoanContract && address)) return;
+		if (!(ethLoanContract && walletAddress)) return;
 		let isMounted = true;
 		(async () => {
-			loadPendingWithdrawals(ethLoanContract, isMounted, setPendingWithdrawals, address);
+			loadPendingWithdrawals(ethLoanContract, isMounted, setPendingWithdrawals, walletAddress);
 		})();
 		return () => {
 			isMounted = false;
 		};
 		// eslint-disable-next-line
-	}, [ethLoanContract, address]);
+	}, [ethLoanContract, walletAddress]);
 	return {
 		loans,
 		isLoadingLoans,
-
 		interestRate,
 		issueFeeRates,
 		interactionDelays,
 		minCRatios,
-
 		pendingWithdrawals,
 		reloadPendingWithdrawals,
-
 		ethLoanContract,
 		erc20LoanContract,
 		renBTCContract,

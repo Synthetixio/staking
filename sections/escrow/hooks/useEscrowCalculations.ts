@@ -1,8 +1,7 @@
 import { useMemo } from 'react';
 import Wei, { wei } from '@synthetixio/wei';
-import { useRecoilValue } from 'recoil';
-import { walletAddressState } from 'store/wallet';
 import useSynthetixQueries from '@synthetixio/queries';
+import Connector from 'containers/Connector';
 
 type EscrowCalculations = {
 	totalEscrowBalance: Wei;
@@ -10,7 +9,7 @@ type EscrowCalculations = {
 	totalVestedBalance: Wei;
 };
 const useEscrowCalculations = (): EscrowCalculations => {
-	const walletAddress = useRecoilValue(walletAddressState);
+	const { walletAddress } = Connector.useContainer();
 
 	const { useTokenSaleEscrowQuery, useEscrowDataQuery } = useSynthetixQueries();
 

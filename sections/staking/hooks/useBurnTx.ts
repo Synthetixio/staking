@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
-import { walletAddressState, delegateWalletState } from 'store/wallet';
+import { delegateWalletState } from 'store/wallet';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 import { amountToBurnState, BurnActionType, burnTypeState } from 'store/staking';
 import { addSeconds, differenceInSeconds } from 'date-fns';
@@ -29,9 +29,9 @@ const useBurnTx = () => {
 		SNXRate,
 		currentCRatio,
 	} = useStakingCalculations();
-	const walletAddress = useRecoilValue(walletAddressState);
+
+	const { synthetixjs, walletAddress } = Connector.useContainer();
 	const delegateWallet = useRecoilValue(delegateWalletState);
-	const { synthetixjs } = Connector.useContainer();
 	const { t } = useTranslation();
 
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);

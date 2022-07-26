@@ -1,3 +1,4 @@
+import Wei, { wei } from '@synthetixio/wei';
 import { BigNumberish } from 'ethers';
 import get from 'lodash/get';
 import { CurrencyKey } from '../constants/currency';
@@ -43,3 +44,9 @@ export const getCurrencyKeyUSDBalanceBN = (
 	isSynth(currencyKey)
 		? get(balances, getSynthBalancePath(currencyKey, 'balanceBN'))
 		: get(balances, getCryptoCurrencyBalancePath(currencyKey, 'balanceBN'));
+
+export const calculateIsBelowCRatio = (
+	currentCRatio: Wei,
+	targetCRatio: Wei,
+	targetThreshold: Wei
+) => currentCRatio.gt(targetCRatio.mul(wei(1).add(targetThreshold)));

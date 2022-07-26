@@ -11,17 +11,16 @@ import WalletIcon from 'assets/svg/app/wallet-yellow.svg';
 import ToggleDelegateApproval from './ToggleDelegateApproval';
 import useSynthetixQueries, { DELEGATE_ENTITY_ATTRS } from '@synthetixio/queries';
 import { DelegationWallet } from '@synthetixio/queries';
-import { useRecoilValue } from 'recoil';
-import { walletAddressState } from 'store/wallet';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import Refresh from 'assets/svg/app/arrows-change.svg';
+import Connector from 'containers/Connector';
 
 const DelegateTable: FC = () => {
 	const { t } = useTranslation();
 
 	const { useGetDelegateWallets } = useSynthetixQueries();
 
-	const walletAddress = useRecoilValue(walletAddressState);
+	const { walletAddress } = Connector.useContainer();
 
 	const delegateWalletsQuery = useGetDelegateWallets(walletAddress || '', {
 		enabled: Boolean(walletAddress),

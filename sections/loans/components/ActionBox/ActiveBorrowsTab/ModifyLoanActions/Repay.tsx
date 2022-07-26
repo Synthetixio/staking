@@ -1,8 +1,5 @@
 import { useState, useCallback, useMemo } from 'react';
 import { ethers } from 'ethers';
-import { useRecoilValue } from 'recoil';
-
-import { walletAddressState } from 'store/wallet';
 import { Loan } from 'containers/Loans/types';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import { tx } from 'utils/transactions';
@@ -10,6 +7,7 @@ import Wrapper from './Wrapper';
 import { useRouter } from 'next/router';
 import ROUTES from 'constants/routes';
 import { SYNTH_DECIMALS } from 'constants/defaults';
+import Connector from 'containers/Connector';
 
 type RepayProps = {
 	loanId: number;
@@ -20,7 +18,8 @@ type RepayProps = {
 
 const Repay: React.FC<RepayProps> = ({ loan, loanId, loanTypeIsETH, loanContract }) => {
 	const router = useRouter();
-	const address = useRecoilValue(walletAddressState);
+	const { walletAddress } = Connector.useContainer();
+
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 
 	const [isWorking, setIsWorking] = useState<string>('');
@@ -54,8 +53,8 @@ const Repay: React.FC<RepayProps> = ({ loan, loanId, loanTypeIsETH, loanContract
 
 	const getTxData = useCallback(() => {
 		if (!(loanContract && !repayAmount.eq(0))) return null;
-		return [loanContract, 'repay', [address, loanId, repayAmount]];
-	}, [loanContract, address, loanId, repayAmount]);
+		return [loanContract, 'repay', [walletAddress, loanId, repayAmount]];
+	}, [loanContract, walletAddress, loanId, repayAmount]);
 
 	const repay = async () => {
 		try {

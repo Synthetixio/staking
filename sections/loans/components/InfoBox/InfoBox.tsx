@@ -1,9 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { ethers } from 'ethers';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
-
-import { walletAddressState } from 'store/wallet';
 import { ExternalLink } from 'styles/common';
 import media from 'styles/media';
 import Connector from 'containers/Connector';
@@ -20,8 +17,7 @@ import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 
 const InfoBox: React.FC = () => {
 	const { t } = useTranslation();
-	const address = useRecoilValue(walletAddressState);
-	const { provider, synthetixjs } = Connector.useContainer();
+	const { provider, synthetixjs, walletAddress } = Connector.useContainer();
 	const { pendingWithdrawals, reloadPendingWithdrawals, ethLoanContract } = Loans.useContainer();
 	const [isClaimingPendingWithdrawals, setIsClaimingPendingWithdrawals] = React.useState(false);
 
@@ -35,7 +31,7 @@ const InfoBox: React.FC = () => {
 		if (!ethLoanContract) return;
 		try {
 			setIsClaimingPendingWithdrawals(true);
-			const pw = await ethLoanContract.pendingWithdrawals(address);
+			const pw = await ethLoanContract.pendingWithdrawals(walletAddress);
 			await tx(() => [ethLoanContract, 'claim', [pw]]);
 			await reloadPendingWithdrawals();
 		} catch {

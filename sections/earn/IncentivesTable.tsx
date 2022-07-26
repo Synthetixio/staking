@@ -1,9 +1,8 @@
-import React, { FC, useCallback, useMemo } from 'react';
+import { FC, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps, Row } from 'react-table';
 import styled, { css } from 'styled-components';
 import Countdown from 'react-countdown';
-import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
 
 import Connector from 'containers/Connector';
@@ -18,8 +17,6 @@ import ExpandIcon from 'assets/svg/app/expand.svg';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
 import { formatPercent, formatFiatCurrency, formatCurrency } from 'utils/formatters/number';
-
-import { isWalletConnectedState } from 'store/wallet';
 
 import {
 	FlexDivCol,
@@ -304,8 +301,8 @@ const IncentivesInnerTable: FC<IncentivesInnerTableProps> = ({
 	activeTab,
 }) => {
 	const { t } = useTranslation();
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	const { connectWallet } = Connector.useContainer();
+
+	const { connectWallet, isWalletConnected } = Connector.useContainer();
 	const router = useRouter();
 
 	return (

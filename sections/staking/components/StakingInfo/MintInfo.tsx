@@ -13,7 +13,7 @@ import { getStakingAmount, getTransferableAmountFromMint, sanitiseValue } from '
 import InfoLayout from './InfoLayout';
 import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
-import { walletAddressState, delegateWalletState } from 'store/wallet';
+import { delegateWalletState } from 'store/wallet';
 import { parseSafeWei } from 'utils/parse';
 import Connector from 'containers/Connector';
 import { BigNumber } from 'ethers';
@@ -34,9 +34,8 @@ const MintInfo: FC = () => {
 		balance,
 		percentageTargetCRatio,
 	} = useStakingCalculations();
-	const { synthetixjs } = Connector.useContainer();
+	const { synthetixjs, walletAddress } = Connector.useContainer();
 
-	const walletAddress = useRecoilValue(walletAddressState);
 	const delegateWallet = useRecoilValue(delegateWalletState);
 	const walletToUse = delegateWallet?.address || walletAddress;
 	const { useSynthsBalancesQuery, useGetLiquidationDataQuery } = useSynthetixQueries();

@@ -1,72 +1,138 @@
-import { useState, useEffect } from 'react';
+import { useCallback, useEffect, useMemo, useReducer } from 'react';
+import { AppState } from '@web3-onboard/core';
 import { createContainer } from 'unstated-next';
-import {
-	TransactionNotifier,
-	TransactionNotifierInterface,
-} from '@synthetixio/transaction-notifier';
+import TransactionNotifier from '@synthetixio/transaction-notifier';
 import { loadProvider } from '@synthetixio/providers';
 
-import { getDefaultNetworkId, getIsOVM, isSupportedNetworkId } from 'utils/network';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import {
-	NetworkId,
-	SynthetixJS,
-	synthetix,
-	NetworkNameById,
-	NetworkIdByName,
-} from '@synthetixio/contracts-interface';
+import { getIsOVM, isSupportedNetworkId } from 'utils/network';
+
+import { synthetix, NetworkNameById, NetworkIdByName } from '@synthetixio/contracts-interface';
 import { ethers, providers } from 'ethers';
-import { switchToL1 } from '@synthetixio/optimism-networks';
 
-import { appReadyState } from 'store/app';
-import {
-	walletAddressState,
-	networkState,
-	ensNameState,
-	walletWatchedState,
-	ensAvatarState,
-} from 'store/wallet';
-
-import { Wallet as OnboardWallet } from 'bnc-onboard/dist/src/interfaces';
-
-import useLocalStorage from 'hooks/useLocalStorage';
-
-import { initOnboard } from './config';
+import { onboard as Web3Onboard } from './config';
 import { LOCAL_STORAGE_KEYS } from 'constants/storage';
 import { CurrencyKey, ETH_ADDRESS } from 'constants/currency';
 import { synthToContractName } from 'utils/currencies';
 import { keyBy } from 'lodash';
-import { useMemo } from 'react';
+import { AppEvents, initialState, reducer } from './reducer';
+
+import { getChainIdHex, getNetworkIdFromHex } from 'utils/infura';
+import { Network } from 'store/wallet';
+
+const defaultNetwork: Network = {
+	id: 1,
+	name: NetworkNameById[1],
+	useOvm: getIsOVM(1),
+};
 
 const useConnector = () => {
-	const [network, setNetwork] = useRecoilState(networkState);
-	const [provider, setProvider] = useState<ethers.providers.Provider | null>(null);
-	const L1DefaultProvider: providers.InfuraProvider = loadProvider({
-		infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID
-			? process.env.NEXT_PUBLIC_INFURA_PROJECT_ID
-			: '0',
-		networkId: NetworkIdByName.mainnet,
-	});
-	const L2DefaultProvider: providers.InfuraProvider = loadProvider({
-		infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID
-			? process.env.NEXT_PUBLIC_INFURA_PROJECT_ID
-			: '0',
-		networkId: NetworkIdByName['mainnet-ovm'],
-	});
-	const [signer, setSigner] = useState<ethers.Signer | null>(null);
-	const [synthetixjs, setSynthetixjs] = useState<SynthetixJS | null>(null);
-	const [onboard, setOnboard] = useState<ReturnType<typeof initOnboard> | null>(null);
-	const [isAppReady, setAppReady] = useRecoilState(appReadyState);
-	const [walletAddress, setWalletAddress] = useRecoilState(walletAddressState);
-	const [selectedWallet, setSelectedWallet] = useLocalStorage<string | null>(
-		LOCAL_STORAGE_KEYS.SELECTED_WALLET,
-		''
+	const [state, dispatch] = useReducer(reducer, initialState);
+
+	const {
+		isAppReady,
+		provider,
+		network,
+		signer,
+		synthetixjs,
+		walletAddress,
+		walletWatched,
+		ensName,
+		ensAvatar,
+		onboard,
+		walletType,
+	} = state;
+
+	// Ethereum Mainnet
+	const L1DefaultProvider: providers.Web3Provider = useMemo(
+		() =>
+			loadProvider({
+				infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID
+					? process.env.NEXT_PUBLIC_INFURA_PROJECT_ID
+					: '0',
+				networkId: NetworkIdByName.mainnet,
+			}),
+		[]
 	);
-	const [transactionNotifier, setTransactionNotifier] =
-		useState<TransactionNotifierInterface | null>(null);
-	const setEnsName = useSetRecoilState(ensNameState);
-	const setEnsAvatar = useSetRecoilState(ensAvatarState);
-	const watchedWallet = useRecoilValue(walletWatchedState);
+
+	// Optimism Mainnet
+	const L2DefaultProvider: providers.Web3Provider = useMemo(
+		() =>
+			loadProvider({
+				infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID
+					? process.env.NEXT_PUBLIC_INFURA_PROJECT_ID
+					: '0',
+				networkId: NetworkIdByName['mainnet-ovm'],
+			}),
+		[]
+	);
+
+	const updateState = useCallback(
+		(update: AppState) => {
+			if (update.wallets.length > 0) {
+				const wallet = update.wallets[0].accounts[0];
+
+				const { label } = update.wallets[0];
+				const { id } = update.wallets[0].chains[0];
+				const networkId = getNetworkIdFromHex(id);
+
+				const isSupported = isSupportedNetworkId(networkId);
+
+				if (!isSupported) {
+					// Switch to mainnet ethereum by default
+					(async () => {
+						// Only switch chains if the user has tab open
+						if (document.hasFocus()) {
+							await onboard?.setChain({ chainId: getChainIdHex(NetworkIdByName.mainnet) });
+						}
+					})();
+				} else {
+					const network = {
+						id: networkId,
+						name: NetworkNameById[networkId],
+						useOvm: getIsOVM(networkId),
+					};
+
+					const provider = new ethers.providers.Web3Provider(update.wallets[0].provider, {
+						name: network.name,
+						chainId: networkId,
+					});
+
+					const signer = provider.getSigner();
+					const useOvm = getIsOVM(Number(networkId));
+					const synthetixjs = synthetix({ provider, networkId, useOvm });
+
+					dispatch({
+						type: AppEvents.CONFIG_UPDATE,
+						payload: {
+							address: wallet.address,
+							walletWatched: null,
+							walletType: label,
+							network,
+							provider,
+							signer,
+							synthetixjs,
+							ensName: wallet?.ens?.name || null,
+							ensAvatar: wallet?.ens?.avatar?.url || null,
+						},
+					});
+
+					const connectedWallets = update.wallets.map(({ label }) => label);
+					localStorage.setItem(
+						LOCAL_STORAGE_KEYS.SELECTED_WALLET,
+						JSON.stringify(connectedWallets)
+					);
+				}
+			} else {
+				dispatch({ type: AppEvents.WALLET_DISCONNECTED });
+			}
+		},
+		[onboard]
+	);
+
+	const transactionNotifier = useMemo(
+		() => new TransactionNotifier(L1DefaultProvider),
+		[L1DefaultProvider]
+	);
 
 	const [synthsMap, tokensMap] = useMemo(() => {
 		if (synthetixjs == null) {
@@ -77,220 +143,175 @@ const useConnector = () => {
 	}, [synthetixjs]);
 
 	useEffect(() => {
-		const init: () => void = async () => {
-			if (!window.ethereum || selectedWallet !== 'Browser Wallet') {
-				setAppReady(true);
-				// For non browser wallets we use mainnet by default. And the app/wallet will trigger wallet change events if needed
-				setNetwork({
-					name: NetworkNameById[NetworkIdByName.mainnet],
-					id: NetworkIdByName.mainnet,
-					useOvm: false,
-				});
-
-				const provider = loadProvider({
-					networkId: NetworkIdByName.mainnet,
-					infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
-				});
-				setProvider(provider);
-				setSynthetixjs(synthetix({ networkId: NetworkIdByName.mainnet, useOvm: false, provider }));
-				return;
-			}
-			const networkId = await getDefaultNetworkId();
-			if (!isSupportedNetworkId(networkId)) {
-				// When not on supported network: Switch to l1 and try again
-				await switchToL1({ ethereum: window.ethereum });
-				return init();
-			}
-
-			const provider = loadProvider({
-				networkId,
-				infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
-				provider: window.ethereum as any, // loadProvider as incorrect types for provider
-			});
-
-			const useOvm = getIsOVM(Number(networkId));
-
-			const snxjs = synthetix({ provider, networkId, useOvm });
-
-			setNetwork(snxjs.network);
-			setSynthetixjs(snxjs);
-			setProvider(provider);
-			setAppReady(true);
-		};
-
-		init();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+		dispatch({ type: AppEvents.APP_READY, payload: Web3Onboard }); //
 	}, []);
 
-	const setUserAddress = async (address: string) => {
-		setWalletAddress(address);
-		if (address) {
-			const ensName: string | null = await L1DefaultProvider.lookupAddress(address);
-			let avatar = ensName ? await L1DefaultProvider.getAvatar(ensName) : null;
-			setEnsName(ensName);
-			setEnsAvatar(avatar);
-		}
-	};
-
 	useEffect(() => {
-		if (isAppReady && network) {
-			const onboard = initOnboard(network.id, {
-				address: setUserAddress,
-				network: (networkId) => {
-					if (!networkId) return; // user disconnected the wallet
-
-					if (!isSupportedNetworkId(networkId)) {
-						// This should only happen when a user is connected and changes to an unsupported network
-						if (window.ethereum) {
-							switchToL1({ ethereum: window.ethereum });
-						}
-						// We can return here since the network change will trigger this callback again
-						return;
-					}
-
-					const provider = loadProvider({
-						provider: onboard.getState().wallet.provider,
-					});
-					const signer = provider.getSigner();
-					const useOvm = getIsOVM(networkId);
-
-					const snxjs = synthetix({ provider, networkId: networkId as NetworkId, signer, useOvm });
-
-					onboard.config({ networkId });
-					if (transactionNotifier) {
-						transactionNotifier.setProvider(provider);
-					} else {
-						setTransactionNotifier(new TransactionNotifier(provider));
-					}
-					setProvider(provider);
-					setSynthetixjs(snxjs);
-					setSigner(signer);
-					setNetwork(snxjs.network);
-				},
-				wallet: async (wallet: OnboardWallet) => {
-					if (wallet.provider) {
-						const provider = loadProvider({ provider: wallet.provider });
-						const network = await provider.getNetwork();
-						const networkId = Number(network.chainId);
-						if (!isSupportedNetworkId(networkId)) {
-							if (window.ethereum) {
-								await switchToL1({ ethereum: window.ethereum });
-							}
-							// We return here and expect the network change to trigger onboard's network callback
-							return;
-						}
-						const useOvm = getIsOVM(Number(networkId));
-
-						const snxjs = synthetix({ provider, networkId, signer: provider.getSigner(), useOvm });
-
-						setProvider(provider);
-						setSigner(provider.getSigner());
-						setSynthetixjs(snxjs);
-						setNetwork(snxjs.network);
-						setSelectedWallet(wallet.name);
-						setTransactionNotifier(new TransactionNotifier(provider));
-					} else {
-						// TODO: setting provider to null might cause issues, perhaps use a default provider?
-						// setProvider(null);
-						setSigner(null);
-						setWalletAddress(null);
-						setSelectedWallet(null);
-					}
-				},
-			});
-
-			setOnboard(onboard);
+		if (provider) {
+			transactionNotifier.setProvider(provider);
 		}
+
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [isAppReady]);
+	}, [provider]);
 
-	// load previously saved wallet
 	useEffect(() => {
-		if (onboard && selectedWallet && !walletAddress) {
-			onboard.walletSelect(selectedWallet);
+		const previousWalletsSerialised = localStorage.getItem(LOCAL_STORAGE_KEYS.SELECTED_WALLET);
+		const previousWallets: string[] | null = previousWalletsSerialised
+			? JSON.parse(previousWalletsSerialised)
+			: null;
+
+		if (onboard && previousWallets) {
+			(async () => {
+				try {
+					await onboard.connectWallet({
+						autoSelect: {
+							label: previousWallets[0],
+							disableModals: true,
+						},
+					});
+				} catch (error) {
+					console.log(error);
+				}
+			})();
 		}
-	}, [onboard, selectedWallet, walletAddress]);
+
+		if (onboard) {
+			const state = onboard.state.select();
+			const { unsubscribe } = state.subscribe(updateState);
+
+			return () => {
+				if (process.env.NODE_ENV !== 'development' && unsubscribe) unsubscribe();
+			};
+		}
+
+		// Always keep this hook with the single dependency.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [onboard]);
 
 	useEffect(() => {
-		if (watchedWallet) {
+		if (walletAddress && !ensName) {
+			(async () => {
+				const ensN: string | null = await L1DefaultProvider.lookupAddress(walletAddress);
+				const ensA = ensName ? await L1DefaultProvider.getAvatar(ensName) : null;
+				if (ensN) {
+					dispatch({ type: AppEvents.SET_ENS, payload: { ensName: ensN, ensAvatar: ensA } });
+				}
+			})();
+		}
+	}, [walletAddress, L1DefaultProvider, ensName, network]);
+
+	useEffect(() => {
+		// If we are 'watching a wallet, we update the provider'
+		if (walletWatched) {
 			const provider = loadProvider({ infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID });
 			if (provider) {
-				setProvider(provider);
+				dispatch({
+					type: AppEvents.UPDATE_PROVIDER,
+					payload: { provider, network: network || defaultNetwork },
+				});
 			}
 		}
-	}, [watchedWallet]);
+	}, [walletWatched, network]);
 
-	const connectWallet = async () => {
+	const connectWallet = useCallback(async () => {
 		try {
 			if (onboard) {
-				onboard.walletReset();
-				const success = await onboard.walletSelect();
-				if (success) {
-					await onboard.walletCheck();
-				}
+				await onboard.connectWallet();
 			}
 		} catch (e) {
 			console.log(e);
 		}
-	};
+	}, [onboard]);
 
-	const disconnectWallet = async () => {
+	const disconnectWallet = useCallback(async () => {
 		try {
 			if (onboard) {
-				onboard.walletReset();
+				const [primaryWallet] = onboard.state.get().wallets;
+				onboard.disconnectWallet({ label: primaryWallet?.label });
+				localStorage.removeItem(LOCAL_STORAGE_KEYS.SELECTED_WALLET);
 			}
 		} catch (e) {
 			console.log(e);
 		}
-	};
+	}, [onboard]);
 
-	const switchAccounts = async () => {
+	const switchAccounts = useCallback(async () => {
 		try {
 			if (onboard) {
-				onboard.accountSelect();
+				await onboard.connectWallet({
+					autoSelect: { label: onboard.state.get()?.wallets[0]?.label, disableModals: false },
+				});
 			}
 		} catch (e) {
 			console.log(e);
 		}
-	};
+	}, [onboard]);
 
-	const isHardwareWallet = () => {
+	const isHardwareWallet = useCallback(() => {
 		if (onboard) {
-			const onboardState = onboard.getState();
-			if (onboardState.address != null) {
-				return onboardState.wallet.type === 'hardware';
-			}
+			const walletLabel = onboard.state.get()?.wallets[0]?.label || null;
+			return walletLabel === 'Trezor' || walletLabel === 'Ledger';
 		}
 		return false;
-	};
+	}, [onboard]);
 
-	const getTokenAddress = (currencyKey: CurrencyKey) => {
-		if (synthetixjs == null) {
-			return null;
+	const getTokenAddress = useCallback(
+		(currencyKey: CurrencyKey) => {
+			if (synthetixjs == null) {
+				return null;
+			}
+
+			return currencyKey === 'ETH'
+				? ETH_ADDRESS
+				: synthetixjs!.contracts[synthToContractName(currencyKey!)].address;
+		},
+		[synthetixjs]
+	);
+
+	const setWatchedWallet = useCallback(
+		(address: string | null, walletWatched: string | null, ensName: string | null) => {
+			dispatch({ type: AppEvents.WATCH_WALLET, payload: { address, walletWatched, ensName } });
+		},
+		[]
+	);
+
+	const stopWatching = useCallback(async () => {
+		try {
+			if (onboard) {
+				const appState = await onboard.state.get();
+				updateState(appState);
+			}
+		} catch (e) {
+			console.log(e);
 		}
-
-		return currencyKey === 'ETH'
-			? ETH_ADDRESS
-			: synthetixjs!.contracts[synthToContractName(currencyKey!)].address;
-	};
+	}, [onboard, updateState]);
 
 	return {
+		isAppReady,
 		network,
 		provider,
 		signer,
+		walletAddress,
+		walletWatched,
+		walletType,
 		synthetixjs,
 		synthsMap,
 		tokensMap,
-		onboard,
+		isWalletConnected: !!walletAddress,
+		isL2: network?.useOvm ?? false,
+		isMainnet: !network?.useOvm ?? false,
 		connectWallet,
 		disconnectWallet,
 		switchAccounts,
 		isHardwareWallet,
 		transactionNotifier,
-		selectedWallet,
 		getTokenAddress,
 		L1DefaultProvider,
 		L2DefaultProvider,
+		ensName,
+		ensAvatar,
+		setWatchedWallet,
+		stopWatching,
 	};
 };
 

@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { useRecoilValue } from 'recoil';
 import { Trans, useTranslation } from 'react-i18next';
@@ -42,7 +42,6 @@ import { getStakingAmount } from '../helper';
 import { CryptoCurrency, Synths } from 'constants/currency';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 import Wei, { wei } from '@synthetixio/wei';
-import { isWalletConnectedState } from 'store/wallet';
 import Connector from 'containers/Connector';
 import { BurnActionType, burnTypeState } from 'store/staking';
 import Button from 'components/Button';
@@ -120,8 +119,7 @@ const StakingInput: React.FC<StakingInputProps> = ({
 }) => {
 	const { targetCRatio, SNXRate, debtBalance, issuableSynths, collateral, currentCRatio } =
 		useStakingCalculations();
-	const { connectWallet } = Connector.useContainer();
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
+	const { connectWallet, isWalletConnected } = Connector.useContainer();
 	const burnType = useRecoilValue(burnTypeState);
 	const { t } = useTranslation();
 

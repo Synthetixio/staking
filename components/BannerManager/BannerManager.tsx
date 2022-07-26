@@ -1,14 +1,12 @@
 import { FC } from 'react';
 import { Trans } from 'react-i18next';
 import styled from 'styled-components';
-import { useRecoilValue } from 'recoil';
 
 import Banner, { BannerType } from 'sections/shared/Layout/Banner';
 import { LOCAL_STORAGE_KEYS } from 'constants/storage';
 import { ExternalLink } from 'styles/common';
 import { formatShortDateWithTime } from 'utils/formatters/date';
 import { wei } from '@synthetixio/wei';
-import { isL2State, walletAddressState } from 'store/wallet';
 import useSynthetixQueries from '@synthetixio/queries';
 import { EXTERNAL_LINKS } from 'constants/links';
 import Connector from 'containers/Connector';
@@ -17,12 +15,11 @@ import { isAnyElectionInNomination, isAnyElectionInVoting } from 'utils/governan
 const BannerManager: FC = () => {
 	const { subgraph, useGetLiquidationDataQuery, useGetDebtDataQuery, useGetElectionsPeriodStatus } =
 		useSynthetixQueries();
-	const { L2DefaultProvider } = Connector.useContainer();
+	const { L2DefaultProvider, isL2, walletAddress } = Connector.useContainer();
 	const periodStatusQuery = useGetElectionsPeriodStatus(L2DefaultProvider);
 
 	const electionIsInNomination = isAnyElectionInNomination(periodStatusQuery.data);
 	const electionIsInVoting = isAnyElectionInVoting(periodStatusQuery.data);
-	const walletAddress = useRecoilValue(walletAddressState);
 
 	const liquidationData = useGetLiquidationDataQuery(walletAddress);
 	const debtData = useGetDebtDataQuery(walletAddress);
@@ -31,8 +28,6 @@ const BannerManager: FC = () => {
 		{ first: 1, where: { account: walletAddress?.toLowerCase() } },
 		{ timestamp: true, value: true, rewards: true }
 	);
-
-	const isL2 = useRecoilValue(isL2State);
 
 	const issuanceRatio = debtData?.data?.targetCRatio ?? wei(0);
 	const cRatio = debtData?.data?.currentCRatio ?? wei(0);

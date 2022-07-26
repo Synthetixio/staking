@@ -1,15 +1,7 @@
 import { useQuery, UseQueryOptions } from 'react-query';
-import { useRecoilValue } from 'recoil';
 import { ethers } from 'ethers';
 
 import QUERY_KEYS from 'constants/queryKeys';
-import { appReadyState } from 'store/app';
-import {
-	walletAddressState,
-	isWalletConnectedState,
-	networkState,
-	isMainnetState,
-} from 'store/wallet';
 import Connector from 'containers/Connector';
 
 import { LiquidityPoolData } from './types';
@@ -28,12 +20,15 @@ const useBalancerPoolQuery = (
 	balancerPoolTokenContract: BalancerPoolTokenContract,
 	options?: UseQueryOptions<LiquidityPoolData>
 ) => {
-	const isAppReady = useRecoilValue(appReadyState);
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	const walletAddress = useRecoilValue(walletAddressState);
-	const network = useRecoilValue(networkState);
-	const { provider, synthetixjs } = Connector.useContainer();
-	const isMainnet = useRecoilValue(isMainnetState);
+	const {
+		isAppReady,
+		isWalletConnected,
+		walletAddress,
+		network,
+		provider,
+		synthetixjs,
+		isMainnet,
+	} = Connector.useContainer();
 
 	return useQuery<LiquidityPoolData>(
 		QUERY_KEYS.LiquidityPools.Balancer(walletAddress ?? '', synth, network?.id!),

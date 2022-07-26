@@ -8,7 +8,7 @@ import { useRouter } from 'next/router';
 import ROUTES from 'constants/routes';
 import { CryptoCurrency } from 'constants/currency';
 import media from 'styles/media';
-import { delegateWalletState, isWalletConnectedState } from 'store/wallet';
+import { delegateWalletState } from 'store/wallet';
 import useFeePeriodTimeAndProgress from 'hooks/useFeePeriodTimeAndProgress';
 
 import IncentivesTable, { NOT_APPLICABLE } from './IncentivesTable';
@@ -45,9 +45,9 @@ const Incentives: FC<IncentivesProps> = ({
 }) => {
 	const { t } = useTranslation();
 	const router = useRouter();
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
+
 	const delegateWallet = useRecoilValue(delegateWalletState);
-	const { L1DefaultProvider } = Connector.useContainer();
+	const { L1DefaultProvider, isWalletConnected } = Connector.useContainer();
 	const { useSNXData } = useSynthetixQueries();
 	const curvesUSDPoolQuery = useCurveSusdPoolQuery();
 

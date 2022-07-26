@@ -1,16 +1,15 @@
 import { FC, useMemo } from 'react';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
-import { appReadyState } from 'store/app';
 import media from 'styles/media';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 
 import { Cols as BaseCols, Col } from 'sections/merge-accounts/common';
 import GridBox from './GridBox';
+import Connector from 'containers/Connector';
 
 const Index: FC = () => {
-	const isAppReady = useRecoilValue(appReadyState);
+	const { isAppReady } = Connector.useContainer();
 
 	const { debtBalance, isLoading } = useStakingCalculations();
 

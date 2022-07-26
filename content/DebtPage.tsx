@@ -16,15 +16,14 @@ import useHistoricalDebtData from 'hooks/useHistoricalDebtData';
 import Main from 'sections/debt';
 import ActiveDebt from 'sections/shared/modals/DebtValueModal/DebtValueBox';
 import useSynthetixQueries from '@synthetixio/queries';
-import { useRecoilValue } from 'recoil';
-import { walletAddressState } from 'store/wallet';
 import { wei } from '@synthetixio/wei';
+import Connector from 'containers/Connector';
 
 const DebtPage: FC = () => {
 	const { t } = useTranslation();
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
 
-	const walletAddress = useRecoilValue(walletAddressState);
+	const { walletAddress } = Connector.useContainer();
 
 	const { useSynthsBalancesQuery } = useSynthetixQueries();
 

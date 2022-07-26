@@ -1,14 +1,13 @@
+import Connector from 'containers/Connector';
 import { useRouter } from 'next/router';
 import React, { FC, useMemo } from 'react';
-import { useRecoilValue } from 'recoil';
 import { EscrowPanelType } from 'store/escrow';
-import { isWalletConnectedState } from 'store/wallet';
 import RewardEscrowSchedule from './RewardEscrowSchedule';
 import TokenSaleEscrowSchedule from './TokenSaleEscrowSchedule';
 
 const EscrowTable: FC = () => {
 	const router = useRouter();
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
+	const { isWalletConnected } = Connector.useContainer();
 
 	const activeTab = useMemo(
 		() =>

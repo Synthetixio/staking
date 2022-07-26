@@ -1,16 +1,14 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useState, useEffect, useMemo } from 'react';
 
 import { TabContainer } from '../../components/common';
-
-import { walletAddressState } from 'store/wallet';
 
 import TabContent from './TabContent';
 import useSynthetixQueries, { GasPrice } from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
+import Connector from 'containers/Connector';
 
 const MigrateTab = () => {
-	const walletAddress = useRecoilValue(walletAddressState);
+	const { walletAddress } = Connector.useContainer();
 
 	const { useEscrowDataQuery, useSynthetixTxn } = useSynthetixQueries();
 

@@ -48,16 +48,14 @@ export const ROUTES = {
 		yearn_SNX_VAULT: '/earn/yearn-SNX',
 		LIQUIDATION_REWARDS: '/earn/liquidation',
 	},
-	L2: {
-		Home: '/l2',
-		Migrate: '/l2/migrate',
-	},
+	EscrowMigrate: { Home: '/migrate-escrow' },
 	Gov: {
 		Home: '/gov',
 		Space: (spaceKey: string) => `/gov/${spaceKey}`,
 		Create: (spaceKey: string) => `/gov/${spaceKey}/create`,
 		Proposal: (spaceKey: string, id: string) => `/gov/${spaceKey}/${id}`,
 	},
+	Bridge: { Home: '/bridge' },
 	Loans: {
 		Home: '/loans',
 		New: '/loans/new',

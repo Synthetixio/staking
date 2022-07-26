@@ -12,8 +12,6 @@ import { Divider, GridDivCenteredRow } from 'styles/common';
 import { ethers } from 'ethers';
 import { truncateAddress } from 'utils/formatters/string';
 import Trash from 'assets/svg/app/trash.svg';
-import { useSetRecoilState } from 'recoil';
-import { walletWatchedState, walletAddressState, ensNameState } from 'store/wallet';
 import Connector from 'containers/Connector';
 
 type WatchWalletModalProps = {
@@ -21,18 +19,15 @@ type WatchWalletModalProps = {
 };
 
 const WatchWalletModal: React.FC<WatchWalletModalProps> = ({ onDismiss }) => {
-	const { L1DefaultProvider } = Connector.useContainer();
+	const { L1DefaultProvider, setWatchedWallet } = Connector.useContainer();
 	const { t } = useTranslation();
 	const [previouslyWatchedWallets, setPreviouslyWatchedWallets] = useLocalStorage<string[]>(
 		LOCAL_STORAGE_KEYS.WATCHED_WALLETS,
 		[]
 	);
-	const setEnsName = useSetRecoilState(ensNameState);
 	const [duplicatedWatchWallets, setDuplicatedWatchWallets] = useState<string[]>([]);
 	const [address, setAddress] = useState<string>('');
 	const [error, setError] = useState<boolean>(false);
-	const setWalletWatched = useSetRecoilState(walletWatchedState);
-	const setWalletAddress = useSetRecoilState(walletAddressState);
 
 	useEffect(() => {
 		setDuplicatedWatchWallets(previouslyWatchedWallets);
@@ -43,19 +38,20 @@ const WatchWalletModal: React.FC<WatchWalletModalProps> = ({ onDismiss }) => {
 		const isEns = watchAddressOrEns.endsWith('.eth');
 		if (ethers.utils.isAddress(watchAddressOrEns) || isEns) {
 			let resolvedAddress = watchAddressOrEns;
-			if (isEns) {
-				const address = await L1DefaultProvider.resolveName(watchAddressOrEns);
-				if (address) {
-					resolvedAddress = address;
-					setEnsName(watchAddressOrEns);
-				}
-			}
 			if (!previouslyWatchedWallets.find((e) => e === resolvedAddress)) {
 				setPreviouslyWatchedWallets([resolvedAddress, ...previouslyWatchedWallets]);
 			}
 
-			setWalletAddress(resolvedAddress);
-			setWalletWatched(resolvedAddress);
+			if (isEns) {
+				const address = await L1DefaultProvider.resolveName(watchAddressOrEns);
+				if (address) {
+					resolvedAddress = address;
+					setWatchedWallet(address, address, watchAddressOrEns);
+				}
+			} else {
+				setWatchedWallet(address, address, null);
+			}
+
 			onDismiss();
 		} else {
 			setError(true);
@@ -111,7 +107,7 @@ const WatchWalletModal: React.FC<WatchWalletModalProps> = ({ onDismiss }) => {
 						{duplicatedWatchWallets.map((wallet, i) => (
 							<Row key={i}>
 								<WalletAddress onClick={() => handleWatchWallet(wallet)}>
-									{truncateAddress(wallet)}
+									{wallet.endsWith('.eth') ? wallet : truncateAddress(wallet)}
 								</WalletAddress>
 								<Trash onClick={() => removeWatchedWallet(wallet)} />
 							</Row>

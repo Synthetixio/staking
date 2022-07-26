@@ -15,12 +15,12 @@ import { formatFiatCurrency, formatPercent } from 'utils/formatters/number';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import StakedValue from 'sections/shared/modals/StakedValueModal/StakedValueBox';
 import ActiveDebt from 'sections/shared/modals/DebtValueModal/DebtValueBox';
-import { useRecoilValue } from 'recoil';
-import { walletAddressState } from 'store/wallet';
+import Connector from 'containers/Connector';
 
 const DashboardPage: FC = () => {
 	const { t } = useTranslation();
-	const walletAddress = useRecoilValue(walletAddressState);
+	const { walletAddress } = Connector.useContainer();
+
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
 	const { stakedValue, stakingAPR, debtBalance } = useUserStakingData(walletAddress);
 

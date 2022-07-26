@@ -3,7 +3,6 @@ import { useTranslation, Trans } from 'react-i18next';
 import { CellProps } from 'react-table';
 import styled from 'styled-components';
 import useSynthetixQueries, { EscrowData } from '@synthetixio/queries';
-import { useRecoilValue } from 'recoil';
 
 import { EXTERNAL_LINKS } from 'constants/links';
 import { CryptoCurrency } from 'constants/currency';
@@ -21,12 +20,13 @@ import {
 	Title,
 } from 'sections/escrow/components/common';
 import { ExternalLink } from 'styles/common';
-import { walletAddressState } from 'store/wallet';
+import Connector from 'containers/Connector';
 
 const NominateInfoBox: FC = () => {
 	const { t } = useTranslation();
 	const { useEscrowDataQuery } = useSynthetixQueries();
-	const walletAddress = useRecoilValue(walletAddressState);
+	const { walletAddress } = Connector.useContainer();
+
 	const escrowDataQuery = useEscrowDataQuery(walletAddress);
 	const schedule = escrowDataQuery?.data?.schedule;
 	const totalBalancePendingMigration = escrowDataQuery?.data?.totalBalancePendingMigration ?? 0;

@@ -26,16 +26,16 @@ import { CurrencyIconType } from 'components/Currency/CurrencyIcon/CurrencyIcon'
 
 import { ActionsContainer as Container } from './common-styles';
 import { wei } from '@synthetixio/wei';
-import { useRecoilValue } from 'recoil';
-import { walletAddressState } from 'store/wallet';
 import getSynthetixRewardTile from './getSynthetixRewardTile';
 import useLiquidationRewards from 'hooks/useLiquidationRewards';
 import { notNill } from 'utils/ts-helpers';
+import Connector from 'containers/Connector';
 
 const LayoutLayerOne: FC = () => {
 	const { t } = useTranslation();
 
-	const walletAddress = useRecoilValue(walletAddressState);
+	const { walletAddress } = Connector.useContainer();
+
 	const liquidationRewardsQuery = useLiquidationRewards(walletAddress);
 
 	const lpData = useLPData();
@@ -81,7 +81,7 @@ const LayoutLayerOne: FC = () => {
 				),
 				title: t('dashboard.actions.migrate.title'),
 				copy: t('dashboard.actions.migrate.copy'),
-				link: ROUTES.L2.Home,
+				link: ROUTES.EscrowMigrate.Home,
 			},
 			lpData[LP.CURVE_sUSD].APR && {
 				icon: (

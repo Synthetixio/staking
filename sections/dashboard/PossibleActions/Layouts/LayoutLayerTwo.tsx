@@ -22,8 +22,6 @@ import useStakingCalculations from 'sections/staking/hooks/useStakingCalculation
 
 import { ActionsContainer as Container } from './common-styles';
 import { wei } from '@synthetixio/wei';
-import { useRecoilValue } from 'recoil';
-import { walletAddressState } from 'store/wallet';
 import useLiquidationRewards from 'hooks/useLiquidationRewards';
 import getSynthetixRewardTile from './getSynthetixRewardTile';
 import Currency from 'components/Currency';
@@ -32,11 +30,13 @@ import { LP } from 'sections/earn/types';
 import { CurrencyIconType } from 'components/Currency/CurrencyIcon/CurrencyIcon';
 import useLPData from 'hooks/useLPData';
 import { notNill } from 'utils/ts-helpers';
+import Connector from 'containers/Connector';
 
 const LayoutLayerTwo: FC = () => {
 	const { t } = useTranslation();
 
-	const walletAddress = useRecoilValue(walletAddressState);
+	const { walletAddress } = Connector.useContainer();
+
 	const liquidationRewardsQuery = useLiquidationRewards(walletAddress);
 	const { stakingRewards, tradingRewards } = useUserStakingData(walletAddress);
 	const { currentCRatio, targetCRatio } = useStakingCalculations();
