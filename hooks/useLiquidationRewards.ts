@@ -15,4 +15,5 @@ const useLiquidationRewards = (address: string | null, options?: UseQueryOptions
 		{ enabled: Boolean(address && network?.id && synthetixjs?.contracts), ...options }
 	);
 };
+
 export default useLiquidationRewards;

@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import useSynthetixQueries from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
@@ -9,6 +9,7 @@ import Connector from 'containers/Connector';
 const useStakingCalculations = () => {
 	const { walletAddress } = Connector.useContainer();
 	const delegateWallet = useRecoilValue(delegateWalletState);
+
 	const {
 		useExchangeRatesQuery,
 		useGetDebtDataQuery,
@@ -88,7 +89,15 @@ const useStakingCalculations = () => {
 		};
 	}, [debtData, exchangeRates, rewardEscrowBalance, tokenSaleEscrowBalance, isLoading]);
 
-	return results;
+	const refetch = useCallback(() => {
+		debtDataQuery.refetch();
+		exchangeRatesQuery.refetch();
+		rewardEscrowQuery.refetch();
+		tokenSaleEscrowQuery.refetch();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
+	return { ...results, refetch };
 };
 
 export default useStakingCalculations;

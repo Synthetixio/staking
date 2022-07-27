@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import Wei, { wei } from '@synthetixio/wei';
 import useSynthetixQueries from '@synthetixio/queries';
 import Connector from 'containers/Connector';
@@ -114,12 +114,13 @@ export const useUserStakingData = (walletAddress: string | null) => {
 
 	const hasClaimed = lastClaimDate > currentFeePeriodStarts && lastClaimDate < nextFeePeriodStarts;
 
-	function refetch() {
+	const refetch = useCallback(() => {
 		feeClaims.refetch();
 		exchangeRatesQuery.refetch();
 		lockedSnxQuery.refetch();
 		debtData.refetch();
-	}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	return {
 		hasClaimed,

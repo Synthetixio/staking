@@ -16,14 +16,35 @@ type IncentivesProps = {
 	stakingAPR: Wei;
 	stakedAmount: Wei;
 	hasClaimed: boolean;
+	refetchAllRewards: () => void;
 };
 
-const Incentives: FC<IncentivesProps> = (props) => {
+const Incentives: FC<IncentivesProps> = ({
+	tradingRewards,
+	stakingRewards,
+	totalRewards,
+	liquidationRewards,
+	stakingAPR,
+	stakedAmount,
+	hasClaimed,
+	refetchAllRewards,
+}) => {
 	const { isMainnet } = Connector.useContainer();
 	const delegateWallet = useRecoilValue(delegateWalletState);
 	const Incentives = isMainnet && !delegateWallet ? IncentivesMainnet : IncentivesDefault;
 
-	return <Incentives {...props} />;
+	return (
+		<Incentives
+			tradingRewards={tradingRewards}
+			stakingRewards={stakingRewards}
+			totalRewards={totalRewards}
+			liquidationRewards={liquidationRewards}
+			stakingAPR={stakingAPR}
+			stakedAmount={stakedAmount}
+			hasClaimed={hasClaimed}
+			refetchAllRewards={refetchAllRewards}
+		/>
+	);
 };
 
 export default Incentives;

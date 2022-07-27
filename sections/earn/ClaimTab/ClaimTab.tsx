@@ -69,9 +69,15 @@ type ClaimTabProps = {
 	tradingRewards: Wei;
 	stakingRewards: Wei;
 	totalRewards: Wei;
+	refetchAllRewards: () => void;
 };
 
-const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, totalRewards }) => {
+const ClaimTab: React.FC<ClaimTabProps> = ({
+	tradingRewards,
+	stakingRewards,
+	totalRewards,
+	refetchAllRewards,
+}) => {
 	const { t } = useTranslation();
 	const router = useRouter();
 	const { isAppReady, walletAddress, isL2, isWalletConnected } = Connector.useContainer();
@@ -94,11 +100,13 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 	const claimCall: [string, string[]] = delegateWallet
 		? ['claimOnBehalf', [delegateWallet.address]]
 		: ['claimFees', []];
+
 	const txn = useSynthetixTxn('FeePool', claimCall[0], claimCall[1], gasPrice, {
 		enabled: true,
 		onSuccess: () => {
 			setClaimedTradingRewards(tradingRewards.toNumber());
 			setClaimedStakingRewards(stakingRewards.toNumber());
+			refetchAllRewards();
 			userStakingData.refetch();
 			setTxModalOpen(false);
 		},

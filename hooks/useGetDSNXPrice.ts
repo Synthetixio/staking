@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useQuery, UseQueryOptions } from 'react-query';
 
 import { dSNXPoolAddressOptimism } from 'constants/dhedge';
@@ -8,7 +9,8 @@ import Wei, { wei } from '@synthetixio/wei';
 
 const useGetDSNXPrice = (walletAddress: string | null, queryOptions?: UseQueryOptions<Wei>) => {
 	const { provider, network } = Connector.useContainer();
-	const contract = new Contract(dSNXPoolAddressOptimism, abi);
+	const contract = useMemo(() => new Contract(dSNXPoolAddressOptimism, abi), []);
+
 	return useQuery(
 		[walletAddress, network?.name],
 		async () => {

@@ -7,6 +7,7 @@ const useGetDSnxBalance = (queryOptions?: UseQueryOptions<Wei>) => {
 	const { provider, network, walletAddress, isMainnet } = Connector.useContainer();
 
 	const dSNXContract = isMainnet ? dSNXContractMainnet : dSNXPoolContractOptimism;
+
 	return useQuery(
 		[walletAddress, isMainnet, dSNXContract.address],
 		async () => {
