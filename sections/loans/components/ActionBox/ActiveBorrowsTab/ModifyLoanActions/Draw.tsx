@@ -1,31 +1,28 @@
-import { useState, useCallback } from 'react';
-import { ethers } from 'ethers';
+import { useState } from 'react';
 import { Loan } from 'containers/Loans/types';
-import TransactionNotifier from 'containers/TransactionNotifier';
-import { tx } from 'utils/transactions';
 import Wrapper from './Wrapper';
-import useSynthetixQueries from '@synthetixio/queries';
+import useSynthetixQueries, { GasPrice } from '@synthetixio/queries';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
 import { calculateMaxDraw } from './helpers';
 import { wei } from '@synthetixio/wei';
 import ROUTES from 'constants/routes';
-import { SYNTH_DECIMALS } from 'constants/defaults';
 
 type DrawProps = {
 	loanId: number;
 	loanTypeIsETH: boolean;
 	loan: Loan;
-	loanContract: ethers.Contract;
 };
 
-const Draw: React.FC<DrawProps> = ({ loan, loanId, loanTypeIsETH, loanContract }) => {
+const Draw: React.FC<DrawProps> = ({ loan, loanId, loanTypeIsETH }) => {
 	const router = useRouter();
-	const { monitorTransaction } = TransactionNotifier.useContainer();
+	const { useSynthetixTxn } = useSynthetixQueries();
+
 	const { t } = useTranslation();
 	const [isWorking, setIsWorking] = useState<string>('');
-	const [error, setError] = useState<string | null>(null);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
+	const [gasPrice, setGasPrice] = useState<GasPrice | undefined>(undefined);
+
 	const [drawAmountString, setDrawAmount] = useState<string | null>(null);
 	const { useExchangeRatesQuery } = useSynthetixQueries();
 	const exchangeRatesQuery = useExchangeRatesQuery();
@@ -35,7 +32,7 @@ const Draw: React.FC<DrawProps> = ({ loan, loanId, loanTypeIsETH, loanContract }
 	const drawAmount = drawAmountString ? wei(drawAmountString) : wei(0);
 	const loanAmountWei = wei(loan.amount);
 	const newTotalAmount = loanAmountWei.add(drawAmount);
-	const newTotalAmountString = ethers.utils.formatUnits(newTotalAmount.toBN(), SYNTH_DECIMALS);
+	const newTotalAmountString = newTotalAmount.toString(1);
 	const maxDrawUsd = calculateMaxDraw(loan, exchangeRates);
 
 	const onSetLeftColAmount = (amount: string) => {
@@ -54,37 +51,32 @@ const Draw: React.FC<DrawProps> = ({ loan, loanId, loanTypeIsETH, loanContract }
 		setDrawAmount(maxDrawUsd.toString(2));
 	};
 
-	const getTxData = useCallback(() => {
-		if (!(loanContract && !drawAmount.eq(0))) return null;
+	const contractName = loanTypeIsETH ? 'CollateralEth' : 'CollateralErc20';
 
-		return [loanContract, 'draw', [loanId, drawAmount.toBN()]];
-	}, [loanContract, loanId, drawAmount]);
-
-	const draw = async () => {
-		try {
-			setIsWorking('drawing');
-			setTxModalOpen(true);
-			await tx(() => getTxData(), {
-				showErrorNotification: (e: string) => setError(e),
-				showProgressNotification: (hash: string) =>
-					monitorTransaction({
-						txHash: hash,
-						onTxConfirmed: () => {},
-					}),
-			});
+	const txn = useSynthetixTxn(contractName, 'draw', [loanId, drawAmount.toBN()], gasPrice, {
+		enabled: !drawAmount.eq(0),
+		onSuccess: () => {
 			setIsWorking('');
 			setTxModalOpen(false);
 			router.push(ROUTES.Loans.List);
-		} catch {
+		},
+		onError: () => {
 			setIsWorking('');
 			setTxModalOpen(false);
-		}
+		},
+	});
+	const draw = async () => {
+		setIsWorking('drawing');
+		setTxModalOpen(true);
+		txn.mutate();
 	};
 
 	return (
 		<Wrapper
 			{...{
-				getTxData,
+				gasLimit: txn.gasLimit,
+				optimismLayerOneFee: txn.optimismLayerOneFee,
+				onGasPriceChange: setGasPrice,
 
 				loan,
 				loanTypeIsETH,
@@ -104,8 +96,11 @@ const Draw: React.FC<DrawProps> = ({ loan, loanId, loanTypeIsETH, loanContract }
 				buttonIsDisabled: Boolean(isWorking) || maxDrawUsd.eq(0),
 				onButtonClick: draw,
 
-				error: error ? error : maxDrawUsd.eq(0) ? t('loans.modify-loan.draw.low-collateral') : null,
-				setError,
+				error: txn.errorMessage
+					? txn.errorMessage
+					: maxDrawUsd.eq(0)
+					? t('loans.modify-loan.draw.low-collateral')
+					: null,
 
 				txModalOpen,
 				setTxModalOpen,
