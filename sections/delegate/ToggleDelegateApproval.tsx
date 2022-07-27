@@ -1,8 +1,7 @@
-import { FC, useCallback, useState } from 'react';
+import { FC, useState } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 
-import TransactionNotifier from 'containers/TransactionNotifier';
 import {
 	ModalItemTitle as TxModalItemTitle,
 	ModalItemText as TxModalItemText,
@@ -10,11 +9,10 @@ import {
 } from 'styles/common';
 import { truncateAddress } from 'utils/formatters/string';
 import { TxModalItem } from 'sections/delegate/common';
-import { tx } from 'utils/transactions';
 
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 
-import {
+import useSynthetixQueries, {
 	Action,
 	DELEGATE_APPROVE_CONTRACT_METHODS,
 	DelegationWallet,
@@ -37,47 +35,32 @@ const ToggleDelegateApproval: FC<ToggleDelegateApprovalProps> = ({
 	onDelegateToggleSuccess,
 }) => {
 	const { t } = useTranslation();
-	const { monitorTransaction } = TransactionNotifier.useContainer();
-	const { synthetixjs, isAppReady } = Connector.useContainer();
+	const { useSynthetixTxn } = useSynthetixQueries();
+	const { isAppReady } = Connector.useContainer();
 
-	const [, setError] = useState<string | null>(null);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 	const shortenedDelegateAddress = truncateAddress(account.address, 8, 6);
 
-	const getTxData = useCallback(
-		(gas: Record<string, number>) => {
-			if (!isAppReady) return null;
-			const {
-				contracts: { DelegateApprovals },
-			} = synthetixjs!;
-			const meths = checked
-				? DELEGATE_WITHDRAW_CONTRACT_METHODS
-				: DELEGATE_APPROVE_CONTRACT_METHODS;
-			return [DelegateApprovals, meths.get(action), [account.address, gas]];
-		},
-		[isAppReady, account.address, action, checked, synthetixjs]
+	const methods = checked ? DELEGATE_WITHDRAW_CONTRACT_METHODS : DELEGATE_APPROVE_CONTRACT_METHODS;
+	const currentMethod = methods.get(action);
+	const txn = useSynthetixTxn(
+		'DelegateApprovals',
+		currentMethod!, // if method missing query wont be enabled
+		[account.address],
+		{},
+		{
+			enabled: Boolean(isAppReady && currentMethod),
+			onSuccess: async () => {
+				await sleep(5000); // wait for the subgraph to sync
+				onDelegateToggleSuccess();
+				setTxModalOpen(false);
+			},
+		}
 	);
 
 	const onChange = async () => {
 		setTxModalOpen(true);
-		try {
-			const gas: Record<string, number> = {};
-			await tx(() => getTxData(gas), {
-				showErrorNotification: (e: string) => setError(e),
-				showProgressNotification: (hash: string) =>
-					monitorTransaction({
-						txHash: hash,
-						onTxConfirmed: () => {},
-					}),
-				showSuccessNotification: async () => {
-					await sleep(5000); // wait for the subgraph to sync
-					onDelegateToggleSuccess();
-				},
-			});
-		} catch {
-		} finally {
-			setTxModalOpen(false);
-		}
+		txn.mutate();
 	};
 
 	const canAll = (account: DelegationWallet) =>
@@ -111,7 +94,7 @@ const ToggleDelegateApproval: FC<ToggleDelegateApprovalProps> = ({
 			{txModalOpen && (
 				<TxConfirmationModal
 					onDismiss={() => setTxModalOpen(false)}
-					txError={null}
+					txError={txn.errorMessage}
 					attemptRetry={onChange}
 					content={
 						<TxModalItem>
