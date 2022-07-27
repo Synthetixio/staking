@@ -55,7 +55,6 @@ type WrapperProps = {
 	onButtonClick: () => void;
 
 	loan: Loan;
-	loanTypeIsETH: boolean;
 
 	showCRatio?: boolean;
 	showInterestAccrued?: boolean;
@@ -99,11 +98,10 @@ const Wrapper: FC<WrapperProps> = ({
 }) => {
 	const { t } = useTranslation();
 	const router = useRouter();
-	const { interactionDelays, minCRatios } = Loans.useContainer();
+	const { interactionDelay, minCRatio } = Loans.useContainer();
 
 	const [waitETA, setWaitETA] = useState<string>('');
 
-	const minCRatio = loanTypeIsETH ? minCRatios.ethMinCratio : minCRatios.erc20MinCratio;
 	const safeMinCRatio = minCRatio
 		? minCRatio.add(getSafeMinCRatioBuffer(loan.currency, loan.collateralAsset))
 		: wei(0);
@@ -113,12 +111,9 @@ const Wrapper: FC<WrapperProps> = ({
 	const onSetrightColAssetName = () => {};
 
 	const nextInteractionDate = useMemo(() => {
-		const loanType = loanTypeIsETH ? 'eth' : 'erc20';
-		if (!(interactionDelays && loanType in interactionDelays)) return;
-		const interactionDelay = interactionDelays[loanType];
 		const lastInteractionTime = fromUnixTime(parseInt(loan.lastInteraction.toString()));
 		return addSeconds(lastInteractionTime, parseInt(interactionDelay.toString()));
-	}, [loanTypeIsETH, loan.lastInteraction, interactionDelays]);
+	}, [loan.lastInteraction, interactionDelay]);
 
 	useEffect(() => {
 		if (!nextInteractionDate) return;

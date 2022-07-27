@@ -2,7 +2,6 @@ import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
 import StructuredTab from 'components/StructuredTab';
-import { LOAN_TYPE_ETH } from 'sections/loans/constants';
 import BorrowSynthsTab from './BorrowSynthsTab/BorrowSynthsTab';
 import ActiveBorrowsTab from './ActiveBorrowsTab/ActiveBorrowsTab';
 
@@ -13,7 +12,7 @@ const ActionBox: React.FC<ActionBoxProps> = () => {
 	const router = useRouter();
 
 	const action = router.query.action!;
-	const [currentTab, loanType, loanId, loanAction] = useMemo(() => {
+	const [currentTab, loanId, loanAction] = useMemo(() => {
 		let currentTab = 'list';
 		let loanType: string = '';
 		let loanId: string = '';
@@ -28,7 +27,7 @@ const ActionBox: React.FC<ActionBoxProps> = () => {
 			loanId = action[1];
 			loanAction = action[2];
 		}
-		return [currentTab, loanType, loanId, loanAction];
+		return [currentTab, loanId, loanAction];
 	}, [action]);
 
 	const tabData = useMemo(
@@ -40,16 +39,11 @@ const ActionBox: React.FC<ActionBoxProps> = () => {
 			},
 			{
 				title: t('loans.tabs.list.title'),
-				tabChildren: (
-					<ActiveBorrowsTab
-						loanTypeIsETH={loanType === LOAN_TYPE_ETH}
-						{...{ loanId, loanAction }}
-					/>
-				),
+				tabChildren: <ActiveBorrowsTab {...{ loanId, loanAction }} />,
 				key: 'list',
 			},
 		],
-		[t, loanId, loanAction, loanType]
+		[t, loanId, loanAction]
 	);
 
 	return (

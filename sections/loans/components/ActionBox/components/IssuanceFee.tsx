@@ -3,24 +3,18 @@ import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { FlexDivRow, FlexDivRowCentered } from 'styles/common';
 import { formatPercent } from 'utils/formatters/number';
-import { LOAN_TYPE_ERC20, LOAN_TYPE_ETH } from 'sections/loans/constants';
 import Loans from 'containers/Loans';
 
-type IssuanceFeeProps = {
-	collateralIsETH: boolean;
-};
-
-const IssuanceFee: React.FC<IssuanceFeeProps> = ({ collateralIsETH }) => {
+const IssuanceFee: React.FC = () => {
 	const { t } = useTranslation();
-	const { issueFeeRates } = Loans.useContainer();
-	const issuanceFee = issueFeeRates[collateralIsETH ? LOAN_TYPE_ETH : LOAN_TYPE_ERC20];
+	const { issueFeeRate } = Loans.useContainer();
 
 	return (
 		<Container>
 			<Header>{t('loans.issuance-fee')}</Header>
 			<FlexDivRowCentered>
 				<Item>
-					<Text>{formatPercent(issuanceFee)}</Text>
+					<Text>{formatPercent(issueFeeRate)}</Text>
 				</Item>
 			</FlexDivRowCentered>
 		</Container>
