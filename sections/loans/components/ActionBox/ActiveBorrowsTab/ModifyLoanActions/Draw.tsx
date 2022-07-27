@@ -10,11 +10,10 @@ import ROUTES from 'constants/routes';
 
 type DrawProps = {
 	loanId: number;
-	loanTypeIsETH: boolean;
 	loan: Loan;
 };
 
-const Draw: React.FC<DrawProps> = ({ loan, loanId, loanTypeIsETH }) => {
+const Draw: React.FC<DrawProps> = ({ loan, loanId }) => {
 	const router = useRouter();
 	const { useSynthetixTxn } = useSynthetixQueries();
 
@@ -51,9 +50,7 @@ const Draw: React.FC<DrawProps> = ({ loan, loanId, loanTypeIsETH }) => {
 		setDrawAmount(maxDrawUsd.toString(2));
 	};
 
-	const contractName = loanTypeIsETH ? 'CollateralEth' : 'CollateralErc20';
-
-	const txn = useSynthetixTxn(contractName, 'draw', [loanId, drawAmount.toBN()], gasPrice, {
+	const txn = useSynthetixTxn('CollateralEth', 'draw', [loanId, drawAmount.toBN()], gasPrice, {
 		enabled: !drawAmount.eq(0),
 		onSuccess: () => {
 			setIsWorking('');
@@ -79,7 +76,6 @@ const Draw: React.FC<DrawProps> = ({ loan, loanId, loanTypeIsETH }) => {
 				onGasPriceChange: setGasPrice,
 
 				loan,
-				loanTypeIsETH,
 				showCRatio: true,
 
 				leftColLabel: 'loans.modify-loan.draw.left-col-label',

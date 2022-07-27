@@ -6,17 +6,15 @@ import Wrapper from './Wrapper';
 import { useRouter } from 'next/router';
 import ROUTES from 'constants/routes';
 import { getETHToken } from 'contracts/ethToken';
-import { getRenBTCToken } from 'contracts/renBTCToken';
 import { wei } from '@synthetixio/wei';
 import useSynthetixQueries, { GasPrice } from '@synthetixio/queries';
 
 type WithdrawProps = {
 	loanId: number;
-	loanTypeIsETH: boolean;
 	loan: Loan;
 };
 
-const Withdraw: React.FC<WithdrawProps> = ({ loan, loanId, loanTypeIsETH }) => {
+const Withdraw: React.FC<WithdrawProps> = ({ loan, loanId }) => {
 	const router = useRouter();
 	const [gasPrice, setGasPrice] = useState<GasPrice | undefined>(undefined);
 	const { useSynthetixTxn } = useSynthetixQueries();
@@ -27,8 +25,8 @@ const Withdraw: React.FC<WithdrawProps> = ({ loan, loanId, loanTypeIsETH }) => {
 	const [withdrawalAmountString, setWithdrawalAmount] = useState<string | null>(null);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 
-	const collateralAsset = loanTypeIsETH ? 'ETH' : 'renBTC';
-	const collateralDecimals = loanTypeIsETH ? getETHToken().decimals : getRenBTCToken().decimals;
+	const collateralAsset = 'ETH';
+	const collateralDecimals = getETHToken().decimals;
 
 	const collateralAmount = wei(wei(loan.collateral), collateralDecimals);
 	const withdrawalAmount = withdrawalAmountString
@@ -51,10 +49,8 @@ const Withdraw: React.FC<WithdrawProps> = ({ loan, loanId, loanTypeIsETH }) => {
 	const onSetLeftColMaxAmount = () =>
 		setWithdrawalAmount(ethers.utils.formatUnits(collateralAmount.toBN(), collateralDecimals));
 
-	const contractName = loanTypeIsETH ? 'CollateralEth' : 'CollateralErc20';
-
 	const txn = useSynthetixTxn(
-		contractName,
+		'CollateralEth',
 		'withdraw',
 		[loanId, withdrawalAmount.toBN()],
 		gasPrice,
@@ -86,7 +82,6 @@ const Withdraw: React.FC<WithdrawProps> = ({ loan, loanId, loanTypeIsETH }) => {
 				optimismLayerOneFee: txn.optimismLayerOneFee,
 
 				loan,
-				loanTypeIsETH,
 				showCRatio: true,
 
 				leftColLabel: 'loans.modify-loan.withdraw.left-col-label',

@@ -88,7 +88,6 @@ const Wrapper: FC<WrapperProps> = ({
 	onButtonClick,
 
 	loan,
-	loanTypeIsETH,
 
 	showCRatio,
 	showInterestAccrued,
