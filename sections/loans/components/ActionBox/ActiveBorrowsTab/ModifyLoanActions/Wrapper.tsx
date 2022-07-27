@@ -31,18 +31,19 @@ import AccruedInterest from 'sections/loans/components/ActionBox/components/Accr
 import CRatio from 'sections/loans/components/ActionBox/components/LoanCRatio';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import Wei, { wei } from '@synthetixio/wei';
-import useSynthetixQueries, { GasPrice } from '@synthetixio/queries';
+import { GasPrice } from '@synthetixio/queries';
 import { getSafeMinCRatioBuffer } from 'sections/loans/constants';
+import { GasLimitEstimate } from 'constants/network';
 
 type WrapperProps = {
-	getTxData: (gas: Record<string, number>) => any[] | null;
-
+	gasLimit: GasLimitEstimate;
+	optimismLayerOneFee: Wei | null;
 	leftColLabel: string;
 	leftColAssetName: string;
 	leftColAmount: string | null;
 	onSetLeftColAmount?: (amount: string) => void;
 	onSetLeftColMaxAmount?: (amount: string) => void;
-
+	onGasPriceChange: (gasPrice: GasPrice) => void;
 	rightColLabel: string;
 	rightColAssetName: string;
 	rightColAmount: string;
@@ -60,20 +61,21 @@ type WrapperProps = {
 	showInterestAccrued?: boolean;
 
 	error: string | null;
-	setError: (error: string | null) => void;
 
 	txModalOpen: boolean;
 	setTxModalOpen: (txModalOpen: boolean) => void;
 };
 
 const Wrapper: FC<WrapperProps> = ({
-	getTxData,
+	gasLimit,
+	optimismLayerOneFee,
 
 	leftColLabel,
 	leftColAssetName,
 	leftColAmount,
 	onSetLeftColAmount,
 	onSetLeftColMaxAmount,
+	onGasPriceChange,
 
 	rightColLabel,
 	rightColAssetName,
@@ -102,25 +104,10 @@ const Wrapper: FC<WrapperProps> = ({
 
 	const [waitETA, setWaitETA] = useState<string>('');
 
-	const [gasPrice, setGasPrice] = useState<GasPrice | undefined>(undefined);
-
 	const minCRatio = loanTypeIsETH ? minCRatios.ethMinCratio : minCRatios.erc20MinCratio;
 	const safeMinCRatio = minCRatio
 		? minCRatio.add(getSafeMinCRatioBuffer(loan.currency, loan.collateralAsset))
 		: wei(0);
-	const { useContractTxn } = useSynthetixQueries();
-
-	const data = getTxData({});
-
-	let opts = {
-		...gasPrice,
-	};
-
-	if (data && data.length > 3) {
-		opts = { ...opts, ...data[3] };
-	}
-
-	const txn = useContractTxn(data?.[0], data?.[1], data?.[2], opts);
 
 	const onGoBack = () => router.back();
 	const onSetleftColAssetName = () => {};
@@ -216,9 +203,9 @@ const Wrapper: FC<WrapperProps> = ({
 					)}
 					<SettingContainer>
 						<GasSelector
-							gasLimitEstimate={txn.gasLimit}
-							onGasPriceChange={setGasPrice}
-							optimismLayerOneFee={txn.optimismLayerOneFee}
+							gasLimitEstimate={gasLimit}
+							onGasPriceChange={onGasPriceChange}
+							optimismLayerOneFee={optimismLayerOneFee}
 						/>
 					</SettingContainer>
 				</SettingsContainer>
