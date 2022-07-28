@@ -100,7 +100,7 @@ const CratioUnderLiquidationRatioWarning: React.FC<{
 				)}) is below the liquidation C-Ratio ${formatPercent(
 					liquidationRatioPercent
 				)}. This means you might get flagged. If you get flagged you have ${Math.round(
-					(liquidationDelay.toNumber() * 1e18) / 60 / 60
+					liquidationDelay.toNumber() / 60 / 60
 				)} hours before someone can liquidate you.`}
 			</InfoText>
 		</>
@@ -129,7 +129,6 @@ const SelfLiquidation: React.FC<{
 	const isDelegateWallet = Boolean(delegateWallet?.address);
 	const liquidationQuery = useGetLiquidationDataQuery(walletAddress);
 	const liquidationData = liquidationQuery.data;
-
 	const canSelfLiquidate =
 		percentageCurrentCRatio?.gt(0) &&
 		percentageCurrentCRatio.lt(percentageTargetCRatio) &&
