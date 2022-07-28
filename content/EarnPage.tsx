@@ -34,14 +34,14 @@ const EarnPage: FC = () => {
 	const { stakedValue, stakingAPR, tradingRewards, stakingRewards, hasClaimed, refetch } =
 		useUserStakingData(addressToUse);
 
-	const liquidationRewardQuery = useLiquidationRewards(addressToUse);
+	const { data: liquidationData, refetch: liquidationRefetch } =
+		useLiquidationRewards(addressToUse);
 	const SNXRate = exchangeRatesQuery.data?.SNX ?? wei(0);
 
 	const refetchAllRewards = useCallback(() => {
 		refetch();
-		liquidationRewardQuery.refetch();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+		liquidationRefetch();
+	}, [refetch, liquidationRefetch]);
 
 	const totalRewards = tradingRewards.add(stakingRewards.mul(SNXRate));
 
@@ -99,7 +99,7 @@ const EarnPage: FC = () => {
 				stakingRewards={stakingRewards}
 				totalRewards={totalRewards}
 				stakingAPR={stakingAPR}
-				liquidationRewards={liquidationRewardQuery.data || wei(0)}
+				liquidationRewards={liquidationData || wei(0)}
 				stakedAmount={SNXRate.eq(0) ? wei(0) : stakedValue.div(SNXRate)}
 				hasClaimed={hasClaimed}
 				refetchAllRewards={refetchAllRewards}

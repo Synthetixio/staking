@@ -233,6 +233,7 @@ const Incentives: FC<IncentivesProps> = ({
 						stakingRewards={stakingRewards}
 						totalRewards={totalRewards}
 						refetchAllRewards={refetchAllRewards}
+						hasClaimed={hasClaimed}
 					/>
 				)}
 				{activeTab === Tab.LIQUIDATION_REWARDS && (

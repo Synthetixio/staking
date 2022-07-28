@@ -31,15 +31,26 @@ export const useUserStakingData = (walletAddress: string | null) => {
 	);
 
 	const currentFeePeriod = useGetFeePoolDataQuery(0);
+
 	const { useTotalIssuedSynthsExcludeOtherCollateralQuery, useExchangeRatesQuery, useSNXData } =
 		useSynthetixQueries();
+
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const totalIssuedSynthsExclOtherCollateral = useTotalIssuedSynthsExcludeOtherCollateralQuery(
 		Synths.sUSD
 	);
+
 	const previousFeePeriod = useGetFeePoolDataQuery(1);
-	const { currentCRatio, targetCRatio, debtBalance, collateral, targetThreshold } =
-		useStakingCalculations();
+
+	const {
+		currentCRatio,
+		targetCRatio,
+		debtBalance,
+		collateral,
+		targetThreshold,
+		refetch: refetchStaking,
+	} = useStakingCalculations();
+
 	const lockedSnxQuery = useSNXData(L1DefaultProvider!);
 
 	const debtData = useGetDebtDataQuery(walletAddress);
@@ -119,6 +130,8 @@ export const useUserStakingData = (walletAddress: string | null) => {
 		exchangeRatesQuery.refetch();
 		lockedSnxQuery.refetch();
 		debtData.refetch();
+		availableRewards.refetch();
+		refetchStaking();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
