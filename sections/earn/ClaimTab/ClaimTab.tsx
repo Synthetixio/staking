@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import Wei from '@synthetixio/wei';
@@ -82,17 +82,21 @@ const ClaimTab: React.FC<ClaimTabProps> = ({
 	const router = useRouter();
 	const { isAppReady, walletAddress, isL2, isWalletConnected } = Connector.useContainer();
 
+	console.log('Time to claim');
+
 	const delegateWallet = useRecoilValue(delegateWalletState);
 	const { useSynthetixTxn, useGetFeePoolDataQuery } = useSynthetixQueries();
 
 	const { isBelowCRatio } = useUserStakingData(delegateWallet?.address ?? walletAddress);
 	const { blockExplorerInstance } = Etherscan.useContainer();
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
+
 	const [gasPrice, setGasPrice] = useState<GasPrice | undefined>(undefined);
 	const [error, setError] = useState<string | null>(null);
 	const [claimedTradingRewards, setClaimedTradingRewards] = useState<number | null>(null);
 	const [claimedStakingRewards, setClaimedStakingRewards] = useState<number | null>(null);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
+
 	const userStakingData = useUserStakingData(walletAddress);
 
 	const feePoolDataQuery = useGetFeePoolDataQuery(0, { enabled: isL2 });
@@ -100,6 +104,10 @@ const ClaimTab: React.FC<ClaimTabProps> = ({
 	const claimCall: [string, string[]] = delegateWallet
 		? ['claimOnBehalf', [delegateWallet.address]]
 		: ['claimFees', []];
+
+	// useEffect(() => {
+	// 	console.log(userStakingData)
+	// }, []);
 
 	const txn = useSynthetixTxn('FeePool', claimCall[0], claimCall[1], gasPrice, {
 		enabled: true,
@@ -113,6 +121,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({
 	});
 
 	const now = Math.ceil(getCurrentTimestampSeconds());
+
 	const isCloseFeePeriodEnabled =
 		isL2 &&
 		feePoolDataQuery.data &&

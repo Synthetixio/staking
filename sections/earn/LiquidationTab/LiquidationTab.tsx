@@ -61,7 +61,6 @@ import {
 } from '../common';
 import { MobileOnlyView } from 'components/Media';
 import useSynthetixQueries, { GasPrice } from '@synthetixio/queries';
-import useLiquidationRewards from 'hooks/useLiquidationRewards';
 import Connector from 'containers/Connector';
 
 type LiquidationTabProps = {
