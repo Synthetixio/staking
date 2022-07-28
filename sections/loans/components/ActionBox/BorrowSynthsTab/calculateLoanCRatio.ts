@@ -12,11 +12,7 @@ export const calculateLoanCRatio = (
 		return wei(0);
 	}
 
-	const collateralUSDPrice = getExchangeRatesForCurrencies(
-		exchangeRates,
-		collateral.asset === 'renBTC' ? Synths.sBTC : Synths.sETH,
-		Synths.sUSD
-	);
+	const collateralUSDPrice = getExchangeRatesForCurrencies(exchangeRates, Synths.sETH, Synths.sUSD);
 
 	const debtUSDPrice = getExchangeRatesForCurrencies(exchangeRates, debt.asset, Synths.sUSD);
 

@@ -24,59 +24,27 @@ export const ACTION_NAMES: Array<string> = Object.keys(ACTIONS);
 type ActionsProps = {
 	loanId: string;
 	loanAction: string;
-	loanTypeIsETH: boolean;
 };
 
-const Actions: FC<ActionsProps> = ({ loanId, loanAction, loanTypeIsETH }) => {
+const Actions: FC<ActionsProps> = ({ loanId, loanAction }) => {
 	const { synthetixjs } = Connector.useContainer();
-	const { renBTCContract, isLoadingLoans, loans } = Loans.useContainer();
+	const { isLoadingLoans, loans } = Loans.useContainer();
 
 	const Action = ACTIONS[loanAction];
 
 	const loan = useMemo(() => loans.find((l) => l.id.toString() === loanId), [loans, loanId]);
 
-	const collateralAssetContract = useMemo(() => {
-		const {
-			contracts: { ProxysBTC: sBTC, ProxysETH: sETH, ProxyERC20sUSD: sUSD },
-		} = synthetixjs!;
-		const tokens: Record<string, typeof sBTC> = { sBTC, sETH, sUSD };
-		const collateralAsset = loanTypeIsETH ? 'ETH' : 'renBTC';
-		return tokens[collateralAsset];
-	}, [loanTypeIsETH, synthetixjs]);
-
-	const loanContract = useMemo(() => {
-		const {
-			contracts: { CollateralEth: ethLoanContract, CollateralErc20: erc20LoanContract },
-		} = synthetixjs!;
-		return loanTypeIsETH ? ethLoanContract : erc20LoanContract;
-	}, [loanTypeIsETH, synthetixjs]);
-
-	const loanStateContract = useMemo(() => {
-		const {
-			contracts: {
-				CollateralStateEth: ethLoanStateContract,
-				CollateralStateErc20: erc20LoanStateContract,
-			},
-		} = synthetixjs!;
-		return loanTypeIsETH ? ethLoanStateContract : erc20LoanStateContract;
-	}, [loanTypeIsETH, synthetixjs]);
-
-	const debtAssetContract = useMemo(() => {
-		return loanTypeIsETH ? null : renBTCContract;
-	}, [loanTypeIsETH, renBTCContract]);
-
+	const loanContract = synthetixjs?.contracts.ethLoanContract;
+	const loanStateContract = synthetixjs?.contracts.ethLoanStateContract;
 	return isLoadingLoans ? (
 		<StyledSpinner width="38" />
 	) : !loan ? null : (
 		<Action
 			{...{
 				loanId,
-				loanTypeIsETH,
 				loan,
 				loanContract,
 				loanStateContract,
-				collateralAssetContract,
-				debtAssetContract,
 			}}
 		/>
 	);

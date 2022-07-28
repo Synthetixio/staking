@@ -825,7 +825,7 @@
 		},
 		"info": {
 			"title": "Borrow Synths using other assets",
-			"subtitle": "Borrow synthetic assets against ETH and renBTC collateral.",
+			"subtitle": "Borrow synthetic assets against ETH collateral.",
 			"learn-more": "Learn more."
 		},
 		"pending-withdrawals": {

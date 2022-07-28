@@ -8,7 +8,6 @@ type FormButtonProps = {
 	collateralAsset: string;
 	debtAsset: string;
 	isWalletConnected: boolean;
-	isApproved: boolean;
 	hasLowCollateralAmount: boolean;
 	hasLowCRatio: boolean;
 	minCollateralAmountString: string;
@@ -22,7 +21,6 @@ const FormButton: React.FC<FormButtonProps> = ({
 	collateralAsset,
 	debtAsset,
 	isWalletConnected,
-	isApproved,
 	hasLowCollateralAmount,
 	hasLowCRatio,
 	minCollateralAmountString,
@@ -82,14 +80,6 @@ const FormButton: React.FC<FormButtonProps> = ({
 					values={{
 						collateralAsset,
 						minCollateralAmountString,
-					}}
-					components={[<NoTextTransform />]}
-				/>
-			) : !isApproved ? (
-				<Trans
-					i18nKey="loans.tabs.new.button.approve-label"
-					values={{
-						collateralAsset,
 					}}
 					components={[<NoTextTransform />]}
 				/>
