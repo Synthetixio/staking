@@ -5,16 +5,10 @@ import { Synths } from 'constants/currency';
 import { Rates } from '@synthetixio/queries';
 import { Loan } from 'containers/Loans/types';
 import { getETHToken } from 'contracts/ethToken';
-import { getRenBTCToken } from 'contracts/renBTCToken';
 
 export const calculateMaxDraw = (loan: Loan, exchangeRates: Rates | null) => {
-	const loanTypeIsETH = loan.collateralAsset === 'sETH';
-	const collateralUSDPrice = getExchangeRatesForCurrencies(
-		exchangeRates,
-		loanTypeIsETH ? Synths.sETH : Synths.sBTC,
-		Synths.sUSD
-	);
-	const collateralDecimals = loanTypeIsETH ? getETHToken().decimals : getRenBTCToken().decimals;
+	const collateralUSDPrice = getExchangeRatesForCurrencies(exchangeRates, Synths.sETH, Synths.sUSD);
+	const collateralDecimals = getETHToken().decimals;
 	const cRatioBuffer = getSafeMinCRatioBuffer(loan.currency, loan.collateralAsset);
 	const safeCRatio = wei(loan.minCratio).add(cRatioBuffer);
 	const maxUSDBasedOnLoan = wei(wei(loan.collateral), collateralDecimals)

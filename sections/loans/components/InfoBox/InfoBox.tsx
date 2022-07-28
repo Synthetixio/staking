@@ -7,17 +7,18 @@ import Connector from 'containers/Connector';
 import Button from 'components/Button';
 import Currency from 'components/Currency';
 import { Synths } from 'constants/currency';
-import { tx } from 'utils/transactions';
 import Loans from 'containers/Loans';
 import InfoSVG from 'sections/loans/components/ActionBox/components/InfoSVG';
 import { wei } from '@synthetixio/wei';
 import { useEffect } from 'react';
 import React from 'react';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
+import useSynthetixQueries from '@synthetixio/queries';
 
 const InfoBox: React.FC = () => {
 	const { t } = useTranslation();
-	const { provider, synthetixjs, walletAddress } = Connector.useContainer();
+	const { provider, synthetixjs } = Connector.useContainer();
+	const { useSynthetixTxn } = useSynthetixQueries();
 	const { pendingWithdrawals, reloadPendingWithdrawals, ethLoanContract } = Loans.useContainer();
 	const [isClaimingPendingWithdrawals, setIsClaimingPendingWithdrawals] = React.useState(false);
 
@@ -27,17 +28,22 @@ const InfoBox: React.FC = () => {
 		[borrows]
 	);
 
-	const claimPendingWithdrawals = async () => {
-		if (!ethLoanContract) return;
-		try {
-			setIsClaimingPendingWithdrawals(true);
-			const pw = await ethLoanContract.pendingWithdrawals(walletAddress);
-			await tx(() => [ethLoanContract, 'claim', [pw]]);
-			await reloadPendingWithdrawals();
-		} catch {
-		} finally {
-			setIsClaimingPendingWithdrawals(false);
+	const claimTxn = useSynthetixTxn(
+		'CollateralEth',
+		'claim',
+		[pendingWithdrawals],
+		{},
+		{
+			enabled: Boolean(ethLoanContract) && pendingWithdrawals.gt(0),
+			onSuccess: async () => {
+				await reloadPendingWithdrawals();
+				setIsClaimingPendingWithdrawals(false);
+			},
 		}
+	);
+	const claimPendingWithdrawals = () => {
+		setIsClaimingPendingWithdrawals(true);
+		claimTxn.mutate();
 	};
 
 	useEffect(() => {

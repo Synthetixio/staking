@@ -3,7 +3,6 @@ import { ethers } from 'ethers';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import Connector from 'containers/Connector';
-import Loans from 'containers/Loans';
 import { wei } from '@synthetixio/wei';
 
 type BalanceProps = {
@@ -84,7 +83,6 @@ const ERC20: React.FC<ERC20Props> = ({ asset, onSetMaxAmount }) => {
 
 	const [balance, setBalance] = useState<ethers.BigNumber>(ethers.BigNumber.from('0'));
 	const [decimals, setDecimals] = useState<number>(0);
-	const { renBTCContract } = Loans.useContainer();
 
 	const handleSetMaxAmount = () => {
 		if (onSetMaxAmount && balance && decimals) {
@@ -100,10 +98,9 @@ const ERC20: React.FC<ERC20Props> = ({ asset, onSetMaxAmount }) => {
 			sBTC,
 			sETH,
 			sUSD,
-			renBTC: renBTCContract! as any,
 		};
 		return tokens[asset];
-	}, [asset, renBTCContract, synthetixjs]);
+	}, [asset, synthetixjs]);
 
 	useEffect(() => {
 		if (!(contract && walletAddress)) return;
