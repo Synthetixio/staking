@@ -11,11 +11,10 @@ import useSynthetixQueries, { GasPrice } from '@synthetixio/queries';
 
 type RepayProps = {
 	loanId: number;
-	loanTypeIsETH: boolean;
 	loan: Loan;
 };
 
-const Repay: React.FC<RepayProps> = ({ loan, loanId, loanTypeIsETH }) => {
+const Repay: React.FC<RepayProps> = ({ loan, loanId }) => {
 	const router = useRouter();
 	const [gasPrice, setGasPrice] = useState<GasPrice | undefined>(undefined);
 	const { walletAddress } = Connector.useContainer();
@@ -42,9 +41,8 @@ const Repay: React.FC<RepayProps> = ({ loan, loanId, loanTypeIsETH }) => {
 	const onSetLeftColMaxAmount = () =>
 		setRepayAmount(ethers.utils.formatUnits(loan.amount, SYNTH_DECIMALS));
 
-	const contractName = loanTypeIsETH ? 'CollateralEth' : 'CollateralErc20';
 	const txn = useSynthetixTxn(
-		contractName,
+		'CollateralEth',
 		'repay',
 		[walletAddress, Number(loanId), repayAmount.toBN()],
 		gasPrice,
@@ -74,7 +72,6 @@ const Repay: React.FC<RepayProps> = ({ loan, loanId, loanTypeIsETH }) => {
 				optimismLayerOneFee: txn.optimismLayerOneFee,
 				onGasPriceChange: setGasPrice,
 				loan,
-				loanTypeIsETH,
 				showCRatio: true,
 
 				leftColLabel: 'loans.modify-loan.repay.left-col-label',

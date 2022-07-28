@@ -10,11 +10,10 @@ import { wei } from '@synthetixio/wei';
 
 type CloseProps = {
 	loanId: number;
-	loanTypeIsETH: boolean;
 	loan: Loan;
 };
 
-const Close: React.FC<CloseProps> = ({ loan, loanId, loanTypeIsETH }) => {
+const Close: React.FC<CloseProps> = ({ loan, loanId }) => {
 	const router = useRouter();
 	const [gasPrice, setGasPrice] = useState<GasPrice | undefined>(undefined);
 	const { useSynthetixTxn } = useSynthetixQueries();
@@ -23,9 +22,7 @@ const Close: React.FC<CloseProps> = ({ loan, loanId, loanTypeIsETH }) => {
 	const [isWorking, setIsWorking] = useState<string>('');
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 
-	const contractName = loanTypeIsETH ? 'CollateralEth' : 'CollateralErc20';
-
-	const txn = useSynthetixTxn(contractName, 'close', [loanId], gasPrice, {
+	const txn = useSynthetixTxn('CollateralEth', 'close', [loanId], gasPrice, {
 		onSuccess: async () => {
 			await reloadPendingWithdrawals();
 			setIsWorking('');
@@ -52,7 +49,6 @@ const Close: React.FC<CloseProps> = ({ loan, loanId, loanTypeIsETH }) => {
 				onGasPriceChange: setGasPrice,
 
 				loan,
-				loanTypeIsETH,
 				showInterestAccrued: true,
 
 				leftColLabel: 'loans.modify-loan.close.left-col-label',
@@ -60,7 +56,7 @@ const Close: React.FC<CloseProps> = ({ loan, loanId, loanTypeIsETH }) => {
 				leftColAmount: wei(loan.amount).toString(1),
 
 				rightColLabel: 'loans.modify-loan.close.right-col-label',
-				rightColAssetName: loanTypeIsETH ? 'ETH' : 'renBTC',
+				rightColAssetName: 'ETH',
 				rightColAmount: wei(loan.collateral).toString(1),
 
 				buttonLabel: `loans.modify-loan.close.button-labels.${isWorking ? isWorking : 'default'}`,

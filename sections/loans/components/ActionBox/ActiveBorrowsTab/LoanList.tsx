@@ -47,7 +47,7 @@ const LoanList: FC<LoanListProps> = ({ actions }) => {
 					const loan = cellProps.row.original;
 					return (
 						<CurrencyIconContainer>
-							<Currency.Name currencyKey={loan.collateralAsset} showIcon={true} />
+							<Currency.Name currencyKey={'ETH'} showIcon={true} />
 							{wei(loan.collateral).toString(2)}
 						</CurrencyIconContainer>
 					);

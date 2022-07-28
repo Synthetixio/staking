@@ -6,27 +6,16 @@ import { Loan } from 'containers/Loans/types';
 import Wrapper from './Wrapper';
 import { useRouter } from 'next/router';
 import ROUTES from 'constants/routes';
-import { getRenBTCToken } from 'contracts/renBTCToken';
 import { getETHToken } from 'contracts/ethToken';
 import Connector from 'containers/Connector';
 import useSynthetixQueries, { GasPrice } from '@synthetixio/queries';
-import { useQuery } from 'react-query';
 
 type DepositProps = {
 	loanId: number;
-	loanTypeIsETH: boolean;
 	loan: Loan;
-	loanContract: ethers.Contract;
-	collateralAssetContract: ethers.Contract;
 };
 
-const Deposit: React.FC<DepositProps> = ({
-	loan,
-	loanId,
-	loanTypeIsETH,
-	loanContract,
-	collateralAssetContract,
-}) => {
+const Deposit: React.FC<DepositProps> = ({ loan, loanId }) => {
 	const [gasPrice, setGasPrice] = useState<GasPrice | undefined>(undefined);
 	const { useSynthetixTxn } = useSynthetixQueries();
 	const router = useRouter();
@@ -35,8 +24,8 @@ const Deposit: React.FC<DepositProps> = ({
 	const [isWorking, setIsWorking] = useState<string>('');
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 
-	const collateralAsset = loanTypeIsETH ? 'ETH' : 'renBTC';
-	const collateralDecimals = loanTypeIsETH ? getETHToken().decimals : getRenBTCToken().decimals;
+	const collateralAsset = 'ETH';
+	const collateralDecimals = getETHToken().decimals;
 
 	const [depositAmountString, setDepositalAmount] = useState<string | null>(null);
 
@@ -46,48 +35,17 @@ const Deposit: React.FC<DepositProps> = ({
 	const totalAmount = collateralAmount.add(depositAmount);
 	const totalAmountString = ethers.utils.formatUnits(totalAmount.toBN(), collateralDecimals);
 
-	const loanContractAddress = loanContract?.address;
-
 	const onSetLeftColAmount = (amount: string) =>
 		!amount ? setDepositalAmount(null) : setDepositalAmount(amount);
 	const onSetLeftColMaxAmount = (amount: string) => setDepositalAmount(amount);
 
-	const isApprovedQuery = useQuery(
-		'isApproved',
-		async () => {
-			const allowance = await collateralAssetContract.allowance(walletAddress, loanContractAddress);
-			return wei(allowance).gte(depositAmount);
-		},
-		{ enabled: Boolean(collateralAssetContract && loanContractAddress && walletAddress) }
-	);
-	const isApproved = loanTypeIsETH ? true : isApprovedQuery.data;
-
-	const collateralAssetContractName = loanTypeIsETH ? 'ProxysETH' : 'ProxyERC20sUSD';
-
-	const approveTxn = useSynthetixTxn(
-		collateralAssetContractName,
-		'approve',
-		[loanContractAddress, depositAmount.toBN()],
-		gasPrice,
-		{
-			enabled: isApproved === false && !loanTypeIsETH,
-			onSuccess: async () => {
-				await isApprovedQuery.refetch();
-				setIsWorking('');
-				setTxModalOpen(false);
-			},
-		}
-	);
-
-	const contractName = loanTypeIsETH ? 'CollateralEth' : 'CollateralErc20';
-
 	const depositTxn = useSynthetixTxn(
-		contractName,
+		'CollateralEth',
 		'deposit',
-		[walletAddress, loanId, ...(loanTypeIsETH ? [] : [depositAmount.toBN()])],
-		{ ...gasPrice, value: loanTypeIsETH ? depositAmount.toBN() : 0 },
+		[walletAddress, loanId],
+		{ ...gasPrice, value: depositAmount.toBN() },
 		{
-			enabled: isApproved && depositAmount.gt(0),
+			enabled: depositAmount.gt(0),
 			onSuccess: () => {
 				setIsWorking('');
 				setTxModalOpen(false);
@@ -100,31 +58,20 @@ const Deposit: React.FC<DepositProps> = ({
 		}
 	);
 
-	const approve = async () => {
-		setIsWorking('approving');
-		setTxModalOpen(true);
-		approveTxn.mutate();
-	};
-
 	const deposit = async () => {
 		setIsWorking('depositing');
 		setTxModalOpen(true);
 		depositTxn.mutate();
 	};
-	const onApproveOrDeposit = async () => {
-		!isApproved ? approve() : deposit();
-	};
 
 	return (
 		<Wrapper
 			{...{
-				gasLimit: isApproved ? depositTxn.gasLimit : approveTxn.gasLimit,
-				optimismLayerOneFee: isApproved
-					? depositTxn.optimismLayerOneFee
-					: approveTxn.optimismLayerOneFee,
+				gasLimit: depositTxn.gasLimit,
+				optimismLayerOneFee: depositTxn.optimismLayerOneFee,
+
 				onGasPriceChange: setGasPrice,
 				loan,
-				loanTypeIsETH,
 				showCRatio: true,
 
 				leftColLabel: 'loans.modify-loan.deposit.left-col-label',
@@ -138,8 +85,8 @@ const Deposit: React.FC<DepositProps> = ({
 				rightColAmount: totalAmountString,
 
 				buttonLabel: `loans.modify-loan.deposit.button-labels.${isWorking ? isWorking : 'default'}`,
-				buttonIsDisabled: !!isWorking || !isApproved || depositAmount.eq(0),
-				onButtonClick: onApproveOrDeposit,
+				buttonIsDisabled: !!isWorking || depositAmount.eq(0),
+				onButtonClick: deposit,
 
 				error: depositTxn.errorMessage,
 
