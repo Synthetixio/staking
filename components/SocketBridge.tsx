@@ -35,14 +35,14 @@ function SocketBridge() {
 			customize={{
 				width: 500,
 				responsiveWidth: true,
-				borderRadius: 0,
+				borderRadius: 0.2,
 				primary: hexToRgb(colors.navy),
 				secondary: hexToRgb(colors.mediumBlue),
 				text: hexToRgb(colors.white),
 				secondaryText: hexToRgb(colors.white),
 				accent: hexToRgb(colors.blueHover),
 				onAccent: hexToRgb(colors.white),
-				interactive: hexToRgb(colors.navy),
+				interactive: hexToRgb(colors.grayBlue),
 				onInteractive: hexToRgb(colors.white),
 				outline: hexToRgb(colors.mediumBlue),
 			}}
