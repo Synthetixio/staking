@@ -1,63 +1,55 @@
-import { useState, useCallback } from 'react';
-import { ethers } from 'ethers';
+import { useState } from 'react';
 import { useRouter } from 'next/router';
 
 import { Loan } from 'containers/Loans/types';
-import TransactionNotifier from 'containers/TransactionNotifier';
-import { tx } from 'utils/transactions';
 import Loans from 'containers/Loans';
 import Wrapper from './Wrapper';
 import ROUTES from 'constants/routes';
+import useSynthetixQueries, { GasPrice } from '@synthetixio/queries';
+import { wei } from '@synthetixio/wei';
 
 type CloseProps = {
 	loanId: number;
 	loanTypeIsETH: boolean;
 	loan: Loan;
-	loanContract: ethers.Contract;
 };
 
-const Close: React.FC<CloseProps> = ({ loan, loanId, loanTypeIsETH, loanContract }) => {
+const Close: React.FC<CloseProps> = ({ loan, loanId, loanTypeIsETH }) => {
 	const router = useRouter();
-	const { monitorTransaction } = TransactionNotifier.useContainer();
+	const [gasPrice, setGasPrice] = useState<GasPrice | undefined>(undefined);
+	const { useSynthetixTxn } = useSynthetixQueries();
 	const { reloadPendingWithdrawals } = Loans.useContainer();
 
 	const [isWorking, setIsWorking] = useState<string>('');
-	const [error, setError] = useState<string | null>(null);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 
-	const getTxData = useCallback(() => {
-		if (!loanContract) return null;
-		return [loanContract, 'close', [loanId]];
-	}, [loanContract, loanId]);
+	const contractName = loanTypeIsETH ? 'CollateralEth' : 'CollateralErc20';
 
-	const close = async () => {
-		try {
-			setIsWorking('closing');
-			setTxModalOpen(true);
-			await tx(() => getTxData(), {
-				showErrorNotification: (e: string) => {
-					setError(e);
-				},
-				showProgressNotification: (hash: string) =>
-					monitorTransaction({
-						txHash: hash,
-						onTxConfirmed: () => {},
-					}),
-			});
+	const txn = useSynthetixTxn(contractName, 'close', [loanId], gasPrice, {
+		onSuccess: async () => {
 			await reloadPendingWithdrawals();
 			setIsWorking('');
 			setTxModalOpen(false);
 			router.push(ROUTES.Loans.List);
-		} catch {
+		},
+		onError: () => {
 			setIsWorking('');
 			setTxModalOpen(false);
-		}
+		},
+		enabled: true,
+	});
+	const close = () => {
+		setIsWorking('closing');
+		setTxModalOpen(true);
+		txn.mutate();
 	};
 
 	return (
 		<Wrapper
 			{...{
-				getTxData,
+				gasLimit: txn.gasLimit,
+				optimismLayerOneFee: txn.optimismLayerOneFee,
+				onGasPriceChange: setGasPrice,
 
 				loan,
 				loanTypeIsETH,
@@ -65,18 +57,17 @@ const Close: React.FC<CloseProps> = ({ loan, loanId, loanTypeIsETH, loanContract
 
 				leftColLabel: 'loans.modify-loan.close.left-col-label',
 				leftColAssetName: loan.currency,
-				leftColAmount: ethers.utils.formatUnits(loan.amount, 18),
+				leftColAmount: wei(loan.amount).toString(1),
 
 				rightColLabel: 'loans.modify-loan.close.right-col-label',
 				rightColAssetName: loanTypeIsETH ? 'ETH' : 'renBTC',
-				rightColAmount: ethers.utils.formatUnits(loan.collateral, 18),
+				rightColAmount: wei(loan.collateral).toString(1),
 
 				buttonLabel: `loans.modify-loan.close.button-labels.${isWorking ? isWorking : 'default'}`,
 				buttonIsDisabled: !!isWorking,
 				onButtonClick: close,
 
-				error,
-				setError,
+				error: txn.errorMessage,
 
 				txModalOpen,
 				setTxModalOpen,

@@ -1,87 +1,78 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState } from 'react';
 import { ethers } from 'ethers';
 import { Loan } from 'containers/Loans/types';
-import TransactionNotifier from 'containers/TransactionNotifier';
-import { tx } from 'utils/transactions';
 import Wrapper from './Wrapper';
 import { useRouter } from 'next/router';
 import ROUTES from 'constants/routes';
 import { SYNTH_DECIMALS } from 'constants/defaults';
 import Connector from 'containers/Connector';
+import { wei } from '@synthetixio/wei';
+import useSynthetixQueries, { GasPrice } from '@synthetixio/queries';
 
 type RepayProps = {
 	loanId: number;
 	loanTypeIsETH: boolean;
 	loan: Loan;
-	loanContract: ethers.Contract;
 };
 
-const Repay: React.FC<RepayProps> = ({ loan, loanId, loanTypeIsETH, loanContract }) => {
+const Repay: React.FC<RepayProps> = ({ loan, loanId, loanTypeIsETH }) => {
 	const router = useRouter();
+	const [gasPrice, setGasPrice] = useState<GasPrice | undefined>(undefined);
 	const { walletAddress } = Connector.useContainer();
-
-	const { monitorTransaction } = TransactionNotifier.useContainer();
+	const { useSynthetixTxn } = useSynthetixQueries();
 
 	const [isWorking, setIsWorking] = useState<string>('');
 	const [repayAmountString, setRepayAmount] = useState<string | null>(null);
-	const [error, setError] = useState<string | null>(null);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 
 	const debtAsset = loan.currency;
 
-	const repayAmount = useMemo(
-		() =>
-			repayAmountString
-				? ethers.utils.parseUnits(repayAmountString, SYNTH_DECIMALS)
-				: ethers.BigNumber.from(0),
-		[repayAmountString]
-	);
-	const remainingAmount = useMemo(() => loan.amount.sub(repayAmount), [loan.amount, repayAmount]);
-	const remainingAmountString = useMemo(
-		() => ethers.utils.formatUnits(remainingAmount, SYNTH_DECIMALS),
-		[remainingAmount]
-	);
-	const isRepayingFully = useMemo(() => remainingAmount.eq(0), [remainingAmount]);
+	const repayAmount = repayAmountString ? wei(repayAmountString) : wei(0);
+
+	const remainingAmount = wei(loan.amount).sub(repayAmount.toBN());
+	const remainingAmountString = remainingAmount.toString(1);
+	const isRepayingFully = remainingAmount.eq(0);
 
 	const onSetLeftColAmount = (amount: string) =>
 		!amount
 			? setRepayAmount(null)
-			: ethers.utils.parseUnits(amount, SYNTH_DECIMALS).gt(loan.amount)
+			: wei(amount).gt(loan.amount)
 			? onSetLeftColMaxAmount()
 			: setRepayAmount(amount);
-	const onSetLeftColMaxAmount = () => setRepayAmount(ethers.utils.formatUnits(loan.amount));
+	const onSetLeftColMaxAmount = () =>
+		setRepayAmount(ethers.utils.formatUnits(loan.amount, SYNTH_DECIMALS));
 
-	const getTxData = useCallback(() => {
-		if (!(loanContract && !repayAmount.eq(0))) return null;
-		return [loanContract, 'repay', [walletAddress, loanId, repayAmount]];
-	}, [loanContract, walletAddress, loanId, repayAmount]);
-
-	const repay = async () => {
-		try {
-			setIsWorking('repaying');
-			setTxModalOpen(true);
-			await tx(() => getTxData(), {
-				showErrorNotification: (e: string) => setError(e),
-				showProgressNotification: (hash: string) =>
-					monitorTransaction({
-						txHash: hash,
-						onTxConfirmed: () => {},
-					}),
-			});
-			setIsWorking('');
-			setTxModalOpen(false);
-			router.push(ROUTES.Loans.List);
-		} catch {
-			setIsWorking('');
-			setTxModalOpen(false);
+	const contractName = loanTypeIsETH ? 'CollateralEth' : 'CollateralErc20';
+	const txn = useSynthetixTxn(
+		contractName,
+		'repay',
+		[walletAddress, Number(loanId), repayAmount.toBN()],
+		gasPrice,
+		{
+			enabled: !repayAmount.eq(0),
+			onSuccess: () => {
+				setIsWorking('');
+				setTxModalOpen(false);
+				router.push(ROUTES.Loans.List);
+			},
+			onError: () => {
+				setIsWorking('');
+				setTxModalOpen(false);
+			},
 		}
+	);
+	const repay = async () => {
+		setIsWorking('repaying');
+		setTxModalOpen(true);
+		txn.mutate();
 	};
 
 	return (
 		<Wrapper
 			{...{
-				getTxData,
-
+				gasLimit: txn.gasLimit,
+				optimismLayerOneFee: txn.optimismLayerOneFee,
+				onGasPriceChange: setGasPrice,
 				loan,
 				loanTypeIsETH,
 				showCRatio: true,
@@ -102,8 +93,7 @@ const Repay: React.FC<RepayProps> = ({ loan, loanId, loanTypeIsETH, loanContract
 				buttonIsDisabled: !!isWorking || isRepayingFully,
 				onButtonClick: repay,
 
-				error,
-				setError,
+				error: txn.errorMessage,
 
 				txModalOpen,
 				setTxModalOpen,
