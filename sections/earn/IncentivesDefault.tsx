@@ -30,6 +30,7 @@ type IncentivesProps = {
 	stakingAPR: Wei;
 	stakedAmount: Wei;
 	hasClaimed: boolean;
+	refetchAllRewards: () => void;
 };
 
 const VALID_TABS = Object.values(Tab);
@@ -42,6 +43,7 @@ const Incentives: FC<IncentivesProps> = ({
 	stakedAmount,
 	hasClaimed,
 	liquidationRewards,
+	refetchAllRewards,
 }) => {
 	const { t } = useTranslation();
 	const router = useRouter();
@@ -167,10 +169,15 @@ const Incentives: FC<IncentivesProps> = ({
 						tradingRewards={tradingRewards}
 						stakingRewards={stakingRewards}
 						totalRewards={totalRewards}
+						refetchAllRewards={refetchAllRewards}
+						hasClaimed={hasClaimed}
 					/>
 				)}
 				{activeTab === Tab.LIQUIDATION_REWARDS && (
-					<LiquidationTab liquidationRewards={liquidationRewards} />
+					<LiquidationTab
+						liquidationRewards={liquidationRewards}
+						refetchAllRewards={refetchAllRewards}
+					/>
 				)}
 			</TabContainer>
 		</Container>

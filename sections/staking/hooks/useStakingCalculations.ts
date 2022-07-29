@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import useSynthetixQueries from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
@@ -9,6 +9,7 @@ import Connector from 'containers/Connector';
 const useStakingCalculations = () => {
 	const { walletAddress } = Connector.useContainer();
 	const delegateWallet = useRecoilValue(delegateWalletState);
+
 	const {
 		useExchangeRatesQuery,
 		useGetDebtDataQuery,
@@ -16,21 +17,37 @@ const useStakingCalculations = () => {
 		useTokenSaleEscrowQuery,
 	} = useSynthetixQueries();
 
-	const exchangeRatesQuery = useExchangeRatesQuery();
-	const debtDataQuery = useGetDebtDataQuery(delegateWallet?.address ?? walletAddress);
-	const rewardEscrowQuery = useEscrowDataQuery(delegateWallet?.address ?? walletAddress);
-	const tokenSaleEscrowQuery = useTokenSaleEscrowQuery(delegateWallet?.address ?? walletAddress);
+	const {
+		data: exchangeRateData,
+		refetch: exchangeRateRefetch,
+		isLoading: exchangeRateLoading,
+	} = useExchangeRatesQuery();
 
-	const debtData = debtDataQuery?.data ?? null;
-	const exchangeRates = exchangeRatesQuery.data ?? null;
-	const rewardEscrowBalance = rewardEscrowQuery.data ?? null;
-	const tokenSaleEscrowBalance = tokenSaleEscrowQuery.data ?? null;
+	const {
+		data: debtDataInfo,
+		refetch: debtDataRefetch,
+		isLoading: debtDataLoading,
+	} = useGetDebtDataQuery(delegateWallet?.address ?? walletAddress);
+
+	const {
+		data: rewardsEscrowData,
+		refetch: rewardsEscrowRefetch,
+		isLoading: rewardsEscrowLoading,
+	} = useEscrowDataQuery(delegateWallet?.address ?? walletAddress);
+
+	const {
+		data: tokenSaleEscrowData,
+		refetch: tokenSaleEscrowRefetch,
+		isLoading: tokenSaleEscrowLoading,
+	} = useTokenSaleEscrowQuery(delegateWallet?.address ?? walletAddress);
+
+	const debtData = debtDataInfo ?? null;
+	const exchangeRates = exchangeRateData ?? null;
+	const rewardEscrowBalance = rewardsEscrowData ?? null;
+	const tokenSaleEscrowBalance = tokenSaleEscrowData ?? null;
 
 	const isLoading =
-		debtDataQuery.isLoading ||
-		exchangeRatesQuery.isLoading ||
-		rewardEscrowQuery.isLoading ||
-		tokenSaleEscrowQuery.isLoading;
+		exchangeRateLoading || debtDataLoading || rewardsEscrowLoading || tokenSaleEscrowLoading;
 
 	const results = useMemo(() => {
 		const SNXRate = wei(exchangeRates?.SNX ?? 0);
@@ -48,6 +65,7 @@ const useStakingCalculations = () => {
 		const stakedCollateral = targetCRatio.gt(0)
 			? collateral.mul(Wei.min(wei(1), currentCRatio.div(targetCRatio)))
 			: wei(0);
+
 		const stakedCollateralValue = stakedCollateral.mul(SNXRate);
 		const lockedCollateral = collateral.sub(transferableCollateral);
 		const unstakedCollateral = collateral.sub(stakedCollateral);
@@ -88,7 +106,14 @@ const useStakingCalculations = () => {
 		};
 	}, [debtData, exchangeRates, rewardEscrowBalance, tokenSaleEscrowBalance, isLoading]);
 
-	return results;
+	const refetch = useCallback(() => {
+		debtDataRefetch();
+		exchangeRateRefetch();
+		rewardsEscrowRefetch();
+		tokenSaleEscrowRefetch();
+	}, [debtDataRefetch, exchangeRateRefetch, rewardsEscrowRefetch, tokenSaleEscrowRefetch]);
+
+	return { ...results, refetch };
 };
 
 export default useStakingCalculations;
