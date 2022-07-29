@@ -1,14 +1,9 @@
 import styled from 'styled-components';
 import { FC, useMemo } from 'react';
-import Link from 'next/link';
 import { useRecoilValue } from 'recoil';
-
-import StakingLogo from 'assets/svg/app/staking-logo.svg';
-import StakingL2Logo from 'assets/svg/app/staking-l2-logo.svg';
 
 import useCryptoBalances from 'hooks/useCryptoBalances';
 
-import ROUTES from 'constants/routes';
 import { CryptoCurrency, Synths } from 'constants/currency';
 import { DESKTOP_SIDE_NAV_WIDTH, zIndex } from 'constants/ui';
 
@@ -30,7 +25,7 @@ import { endOfHour, subDays } from 'date-fns';
 
 const DesktopSideNav: FC = () => {
 	const delegateWallet = useRecoilValue(delegateWalletState);
-	const { walletAddress, isL2, L1DefaultProvider } = Connector.useContainer();
+	const { walletAddress, L1DefaultProvider } = Connector.useContainer();
 
 	const { t } = useTranslation();
 	const { useSynthsBalancesQuery, useSNXData } = useSynthetixQueries();
@@ -58,14 +53,7 @@ const DesktopSideNav: FC = () => {
 
 	return (
 		<Container data-testid="sidenav">
-			<StakingLogoWrap>
-				<Link href={ROUTES.Home}>
-					<div>{isL2 ? <StakingL2Logo width="112" /> : <StakingLogo width="112" />}</div>
-				</Link>
-			</StakingLogoWrap>
-
 			<DesktopMenu />
-
 			<LineSeparator />
 			<MenuCharts>
 				<CRatioBarStats />
@@ -109,11 +97,6 @@ const Container = styled.div`
 `;
 const PriceItemContainer = styled.div`
 	margin-bottom: 18px;
-`;
-
-const StakingLogoWrap = styled.div`
-	padding: 30px 0 44px 24px;
-	cursor: pointer;
 `;
 
 const LineSeparator = styled.div`
