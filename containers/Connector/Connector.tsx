@@ -7,7 +7,7 @@ import { loadProvider, SynthetixProvider } from '@synthetixio/providers';
 import { getIsOVM, isSupportedNetworkId } from 'utils/network';
 
 import { synthetix, NetworkNameById, NetworkIdByName } from '@synthetixio/contracts-interface';
-import { ethers, providers } from 'ethers';
+import { ethers } from 'ethers';
 
 import { onboard as Web3Onboard } from './config';
 import { LOCAL_STORAGE_KEYS } from 'constants/storage';
