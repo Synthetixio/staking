@@ -20918,7 +20918,6 @@ jschardet@latest:
     file-loader: ^6.2.0
     graph-results-pager: ^1.0.3
     graphql: ^15.5.0
-    graphql-request: ^3.4.0
     husky: ^8.0.1
     i18next: ^19.7.0
     jest: ^28.1.2

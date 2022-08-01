@@ -5,48 +5,60 @@ import Details from './Details';
 import Info from './Info';
 import { useQuery } from 'react-query';
 import { snapshotEndpoint } from 'constants/snapshot';
-import request, { gql } from 'graphql-request';
 import { useRouter } from 'next/router';
-import { Proposal as ProposalType } from '@synthetixio/queries';
 
 type ProposalProps = {
 	onBack: Function;
 };
 
-const useGetProposal = (hash?: string) => {
-	return useQuery(
-		['gov', 'proposal', hash],
-		async () => {
-			const { proposal }: { proposal: ProposalType } = await request(
-				snapshotEndpoint,
-				gql`
-					query Proposals($id: String) {
-						proposal(id: $id) {
-							id
-							title
-							body
-							choices
-							start
-							end
-							snapshot
-							state
-							author
-							space {
-								id
-								name
-							}
-						}
-					}
-				`,
-				{ id: hash }
-			);
-			return proposal;
-		},
-		{
-			enabled: Boolean(hash),
-			staleTime: 3.6e6, // 1hour
+const gql = (data: any) => data[0];
+const query = gql`
+	query Proposals($id: String) {
+		proposal(id: $id) {
+			id
+			title
+			body
+			choices
+			start
+			end
+			snapshot
+			state
+			author
+			space {
+				id
+				name
+			}
 		}
-	);
+	}
+`;
+
+export async function fetchProposals(hash: string | undefined) {
+	const body = await fetch(snapshotEndpoint, {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+			Accept: 'application/json',
+		},
+		body: JSON.stringify({
+			query,
+			variables: {
+				id: hash,
+			},
+		}),
+	});
+
+	const { data, errors } = await body.json();
+	if (data?.proposal) {
+		return data?.proposal;
+	}
+	throw new Error(errors?.[0]?.message || 'Unknown server error');
+}
+
+const useGetProposal = (hash?: string) => {
+	return useQuery(['gov', 'proposal', hash], async () => fetchProposals(hash), {
+		enabled: Boolean(hash),
+		staleTime: 3.6e6, // 1hour
+	});
 };
 
 const Index: React.FC<ProposalProps> = ({ onBack }) => {
