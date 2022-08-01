@@ -8,7 +8,7 @@ function getEndpoint(networkName: String) {
 		case 'mainnet-ovm':
 			return 'https://api.thegraph.com/subgraphs/name/noisekit/liquidator-optimism';
 		default:
-			return null;
+			throw Error(`Called with unsupported network: ${networkName}`);
 	}
 }
 
@@ -23,20 +23,14 @@ const query = gql`
 	}
 `;
 
-export async function fetchLiquidationInfo(
-	walletAddress: string | null,
-	networkName: string | undefined
-) {
-	if (!walletAddress) {
-		return null;
-	}
-	if (!networkName) {
-		return null;
-	}
+type StakerEntity = {
+	id: string;
+	timestamp: string;
+	status: string;
+} | null;
+
+export async function fetchLiquidationInfo(walletAddress: string, networkName: string) {
 	const endpoint = getEndpoint(networkName);
-	if (!endpoint) {
-		return null;
-	}
 
 	const body = await fetch(endpoint, {
 		method: 'POST',
@@ -52,18 +46,30 @@ export async function fetchLiquidationInfo(
 		}),
 	});
 
-	const { data, errors } = await body.json();
+	const {
+		errors,
+		data,
+	}: {
+		errors?: Error[];
+		data: { stakerEntity: StakerEntity };
+	} = await body.json();
+
 	if (errors?.[0]) {
 		throw new Error(errors?.[0]?.message || 'Unknown server error');
 	}
 	return data?.stakerEntity;
 }
 
-export function useLiquidationOptimismInfo(queryOptions?: UseQueryOptions) {
+export function useLiquidationOptimismInfo(queryOptions?: UseQueryOptions<StakerEntity>) {
 	const { walletAddress, network } = Connector.useContainer();
 	return useQuery(
 		[walletAddress, network?.name],
-		() => fetchLiquidationInfo(walletAddress, network?.name),
+		() => {
+			if (!walletAddress || !network?.name) {
+				throw Error('Missing address or network, query should not run without it');
+			}
+			return fetchLiquidationInfo(walletAddress, network?.name);
+		},
 		{
 			enabled: Boolean(walletAddress && network?.name),
 			...queryOptions,
@@ -71,11 +77,10 @@ export function useLiquidationOptimismInfo(queryOptions?: UseQueryOptions) {
 	);
 }
 
-export function useLiquidationOptimismSubgraph(queryOptions?: UseQueryOptions) {
+export function useLiquidationOptimismSubgraph(queryOptions?: UseQueryOptions<StakerEntity>) {
 	const { data, isSuccess } = useLiquidationOptimismInfo(queryOptions);
 	if (!isSuccess) {
 		return 0;
 	}
-	// @ts-ignore I give up
 	return data?.status === 'FLAGGED' ? parseInt(data.timestamp, 10) * 1000 : 0;
 }
