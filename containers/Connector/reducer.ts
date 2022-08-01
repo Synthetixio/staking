@@ -1,5 +1,4 @@
 import { SynthetixJS } from '@synthetixio/contracts-interface';
-import { SynthetixProvider } from '@synthetixio/providers';
 import { OnboardAPI } from '@web3-onboard/core';
 import { ethers } from 'ethers';
 import { Network } from 'store/wallet';
@@ -7,7 +6,7 @@ import { onboard } from './config';
 
 type ConnectorState = {
 	network: Network | null;
-	provider: SynthetixProvider | null;
+	provider: ethers.providers.Web3Provider | null;
 	signer: ethers.Signer | null;
 	synthetixjs: SynthetixJS | null;
 	isAppReady: boolean;
@@ -49,7 +48,7 @@ export type ConnectionUpdate = {
 	walletWatched: null;
 	walletType: string | null;
 	synthetixjs: SynthetixJS;
-	provider: SynthetixProvider;
+	provider: ethers.providers.Web3Provider;
 	ensName: string | null;
 	ensAvatar: string | null;
 };
@@ -66,7 +65,7 @@ export type WatchWallet = {
 };
 
 export type ProviderUpdate = {
-	provider: SynthetixProvider;
+	provider: ethers.providers.Web3Provider;
 	network: Network;
 };
 

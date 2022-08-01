@@ -2,12 +2,12 @@ import { useCallback, useEffect, useMemo, useReducer } from 'react';
 import { AppState } from '@web3-onboard/core';
 import { createContainer } from 'unstated-next';
 import TransactionNotifier from '@synthetixio/transaction-notifier';
-import { loadProvider, SynthetixProvider } from '@synthetixio/providers';
+import { loadProvider } from '@synthetixio/providers';
 
 import { getIsOVM, isSupportedNetworkId } from 'utils/network';
 
 import { synthetix, NetworkNameById, NetworkIdByName } from '@synthetixio/contracts-interface';
-import { ethers } from 'ethers';
+import { ethers, providers } from 'ethers';
 
 import { onboard as Web3Onboard } from './config';
 import { LOCAL_STORAGE_KEYS } from 'constants/storage';
@@ -43,7 +43,7 @@ const useConnector = () => {
 	} = state;
 
 	// Ethereum Mainnet
-	const L1DefaultProvider: SynthetixProvider = useMemo(
+	const L1DefaultProvider: providers.Web3Provider = useMemo(
 		() =>
 			loadProvider({
 				infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID
@@ -55,7 +55,7 @@ const useConnector = () => {
 	);
 
 	// Optimism Mainnet
-	const L2DefaultProvider: SynthetixProvider = useMemo(
+	const L2DefaultProvider: providers.Web3Provider = useMemo(
 		() =>
 			loadProvider({
 				infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID
