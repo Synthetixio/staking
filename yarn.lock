@@ -20628,7 +20628,6 @@ jschardet@latest:
     "@microsoft/eslint-formatter-sarif": ^3.0.0
     "@next/bundle-analyzer": ^10.2.3
     "@reach/dialog": ^0.15.3
-    "@snapshot-labs/snapshot.js": ^0.4.13
     "@socket.tech/widget": ^0.0.9
     "@svgr/webpack": ^6.2.1
     "@synthetixio/assets": ^2.0.13
