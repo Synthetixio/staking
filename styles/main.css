@@ -104,3 +104,8 @@ input::-webkit-inner-spin-button {
 	--onboard-connect-sidebar-progress-background: #343a4a;
 	--onboard-connect-sidebar-progress-color: #00d1ff;
 }
+
+/* Bug fix for react datepicker on Firefox (hides dropdown icon) */
+.react-datepicker__input-container .dropdown-icon {
+	display: none;
+}
