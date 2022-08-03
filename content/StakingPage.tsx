@@ -19,8 +19,14 @@ import ProgressBar from 'components/ProgressBar';
 import SelfLiquidation from './SelfLiquidation';
 import Connector from 'containers/Connector';
 
-const StakingPage = () => {
+interface StakingProps {
+	thing: any;
+}
+
+const StakingPage = (props: StakingProps) => {
 	const { t } = useTranslation();
+
+	console.log(props);
 
 	const {
 		stakedCollateralValue,
