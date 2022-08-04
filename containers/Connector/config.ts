@@ -47,7 +47,7 @@ const supportedChains = [
 	},
 	// goerli Ovm
 	{
-		id: getChainIdHex(NetworkIdByName['kovan-ovm']),
+		id: getChainIdHex(NetworkIdByName['goerli-ovm']),
 		token: 'ETH',
 		label: 'Optimism Goerli',
 		rpcUrl: getInfuraRpcURL(NetworkIdByName['goerli-ovm']),
