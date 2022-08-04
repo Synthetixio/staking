@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import Wei from '@synthetixio/wei';
@@ -38,7 +38,6 @@ import {
 } from '../common';
 
 import GasSelector from 'components/GasSelector';
-
 import LargeWaveSVG from 'assets/svg/app/large-wave.svg';
 
 import {
@@ -69,9 +68,17 @@ type ClaimTabProps = {
 	tradingRewards: Wei;
 	stakingRewards: Wei;
 	totalRewards: Wei;
+	refetchAllRewards: () => void;
+	hasClaimed: boolean;
 };
 
-const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, totalRewards }) => {
+const ClaimTab: React.FC<ClaimTabProps> = ({
+	tradingRewards,
+	stakingRewards,
+	totalRewards,
+	refetchAllRewards,
+	hasClaimed,
+}) => {
 	const { t } = useTranslation();
 	const router = useRouter();
 	const { isAppReady, walletAddress, isL2, isWalletConnected } = Connector.useContainer();
@@ -82,29 +89,31 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 	const { isBelowCRatio } = useUserStakingData(delegateWallet?.address ?? walletAddress);
 	const { blockExplorerInstance } = Etherscan.useContainer();
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
+
 	const [gasPrice, setGasPrice] = useState<GasPrice | undefined>(undefined);
 	const [error, setError] = useState<string | null>(null);
 	const [claimedTradingRewards, setClaimedTradingRewards] = useState<number | null>(null);
 	const [claimedStakingRewards, setClaimedStakingRewards] = useState<number | null>(null);
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
-	const userStakingData = useUserStakingData(walletAddress);
 
 	const feePoolDataQuery = useGetFeePoolDataQuery(0, { enabled: isL2 });
 
 	const claimCall: [string, string[]] = delegateWallet
 		? ['claimOnBehalf', [delegateWallet.address]]
 		: ['claimFees', []];
+
 	const txn = useSynthetixTxn('FeePool', claimCall[0], claimCall[1], gasPrice, {
 		enabled: true,
 		onSuccess: () => {
+			refetchAllRewards();
 			setClaimedTradingRewards(tradingRewards.toNumber());
 			setClaimedStakingRewards(stakingRewards.toNumber());
-			userStakingData.refetch();
 			setTxModalOpen(false);
 		},
 	});
 
 	const now = Math.ceil(getCurrentTimestampSeconds());
+
 	const isCloseFeePeriodEnabled =
 		isL2 &&
 		feePoolDataQuery.data &&
@@ -116,6 +125,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 			feePoolDataQuery.refetch();
 		},
 	});
+
 	const handleCloseFeePeriod = async () => {
 		closeFeesTxn.mutate();
 	};
@@ -128,10 +138,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 		[blockExplorerInstance, txn.hash]
 	);
 
-	const canClaim = useMemo(
-		() => !userStakingData.hasClaimed && totalRewards.gt(0),
-		[userStakingData.hasClaimed, totalRewards]
-	);
+	const canClaim = useMemo(() => !hasClaimed && totalRewards.gt(0), [hasClaimed, totalRewards]);
 
 	const handleClaim = () => {
 		if (!isAppReady || !isWalletConnected || !canClaim) return;
@@ -139,8 +146,8 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 			setError(t('staking.actions.mint.action.error.delegate-cannot-claim'));
 			return;
 		}
-		setTxModalOpen(true);
 
+		setTxModalOpen(true);
 		txn.mutate();
 	};
 
@@ -251,7 +258,6 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 								onClick={() => {
 									setClaimedTradingRewards(null);
 									setClaimedStakingRewards(null);
-									userStakingData.refetch();
 								}}
 							>
 								{t('earn.actions.tx.dismiss')}
@@ -320,7 +326,7 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 					<ClaimOrCloseFeeButton
 						hasVoted={true} // For the first election with the new election module we dont require voting
 						canClaim={delegateWallet ? delegateWallet.canClaim : canClaim}
-						hasClaimed={userStakingData.hasClaimed}
+						hasClaimed={hasClaimed}
 						totalRewards={totalRewards}
 						isCloseFeePeriodEnabled={Boolean(isCloseFeePeriodEnabled)}
 						isBelowCRatio={isBelowCRatio}
@@ -377,11 +383,12 @@ const ClaimTab: React.FC<ClaimTabProps> = ({ tradingRewards, stakingRewards, tot
 	);
 };
 
+const StyledSvg = styled(LargeWaveSVG)``;
 const InnerContainer = styled(FlexDivColCentered)`
 	padding: 20px;
 	border: 1px solid ${(props) => props.theme.colors.pink};
 	border-radius: 4px;
-	background-image: url(${LargeWaveSVG});
+	background-image: url(${StyledSvg});
 	background-size: cover;
 `;
 

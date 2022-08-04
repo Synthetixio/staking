@@ -20,8 +20,6 @@ const sUSDAddressOptimism = '0x8c6f28f2F1A3C87F0f938b96d27520d9751ec8d9';
 function SocketBridge() {
 	const { colors } = useTheme();
 	const { provider, network } = Connector.useContainer();
-	const sourceNetworks = [NetworkIdByName['mainnet-ovm'], NetworkIdByName['mainnet']];
-	const destinationNetworks = [NetworkIdByName['mainnet-ovm'], NetworkIdByName['mainnet']];
 	const isL2 = network?.id === NetworkIdByName['mainnet-ovm'];
 	const defaultDestNetwork = isL2 ? NetworkIdByName['mainnet'] : NetworkIdByName['mainnet-ovm'];
 	const defaultSourceToken = isL2 ? sUSDAddressOptimism : sUSDAddressMainnet;
@@ -30,8 +28,6 @@ function SocketBridge() {
 		<Bridge
 			provider={provider}
 			API_KEY={process.env.NEXT_PUBLIC_SOCKET_API_KEY!}
-			sourceNetworks={sourceNetworks}
-			destNetworks={destinationNetworks}
 			defaultSourceToken={defaultSourceToken}
 			defaultDestToken={defaultDestToken}
 			defaultSourceNetwork={network?.id}
@@ -39,14 +35,14 @@ function SocketBridge() {
 			customize={{
 				width: 500,
 				responsiveWidth: true,
-				borderRadius: 0,
+				borderRadius: 0.2,
 				primary: hexToRgb(colors.navy),
 				secondary: hexToRgb(colors.mediumBlue),
 				text: hexToRgb(colors.white),
 				secondaryText: hexToRgb(colors.white),
 				accent: hexToRgb(colors.blueHover),
 				onAccent: hexToRgb(colors.white),
-				interactive: hexToRgb(colors.navy),
+				interactive: hexToRgb(colors.grayBlue),
 				onInteractive: hexToRgb(colors.white),
 				outline: hexToRgb(colors.mediumBlue),
 			}}

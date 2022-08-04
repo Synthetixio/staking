@@ -28,6 +28,7 @@ const useBurnTx = () => {
 		targetCRatio,
 		SNXRate,
 		currentCRatio,
+		refetch,
 	} = useStakingCalculations();
 
 	const { synthetixjs, walletAddress } = Connector.useContainer();
@@ -121,6 +122,10 @@ const useBurnTx = () => {
 		enabled:
 			(burnType !== BurnActionType.CLEAR || !needToBuy || swapTxn.txnStatus === 'confirmed') &&
 			Boolean(amountToBurnBN),
+		onSuccess: () => {
+			synthsBalancesQuery.refetch();
+			refetch();
+		},
 	});
 
 	useEffect(() => {

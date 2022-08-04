@@ -61,21 +61,23 @@ import {
 } from '../common';
 import { MobileOnlyView } from 'components/Media';
 import useSynthetixQueries, { GasPrice } from '@synthetixio/queries';
-import useLiquidationRewards from 'hooks/useLiquidationRewards';
 import Connector from 'containers/Connector';
 
 type LiquidationTabProps = {
 	liquidationRewards: Wei;
+	refetchAllRewards: () => void;
 };
 
-const LiquidationTab: React.FC<LiquidationTabProps> = ({ liquidationRewards }) => {
+const LiquidationTab: React.FC<LiquidationTabProps> = ({
+	liquidationRewards,
+	refetchAllRewards,
+}) => {
 	const { t } = useTranslation();
 
 	const { isAppReady, isWalletConnected, walletAddress } = Connector.useContainer();
 	const delegateWallet = useRecoilValue(delegateWalletState);
 	const addressToUse = delegateWallet?.address || walletAddress!;
 	const { useSynthetixTxn, useExchangeRatesQuery } = useSynthetixQueries();
-	const liquidationQuery = useLiquidationRewards(addressToUse);
 	const exchangeRatesQuery = useExchangeRatesQuery({ keepPreviousData: true });
 	const SNXRate = exchangeRatesQuery.data?.SNX ?? wei(0);
 
@@ -87,10 +89,12 @@ const LiquidationTab: React.FC<LiquidationTabProps> = ({ liquidationRewards }) =
 
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 	const getRewardCall: [string, string[]] = ['getReward', [addressToUse]];
+
 	const txn = useSynthetixTxn('LiquidatorRewards', getRewardCall[0], getRewardCall[1], gasPrice, {
 		enabled: Boolean(addressToUse),
 		onSuccess: () => {
 			setTxModalOpen(false);
+			refetchAllRewards();
 		},
 	});
 
@@ -106,9 +110,7 @@ const LiquidationTab: React.FC<LiquidationTabProps> = ({ liquidationRewards }) =
 
 	const handleClaim = () => {
 		if (!isAppReady || !isWalletConnected || !canClaim) return;
-
 		setTxModalOpen(true);
-
 		txn.mutate();
 	};
 
@@ -193,7 +195,7 @@ const LiquidationTab: React.FC<LiquidationTabProps> = ({ liquidationRewards }) =
 							<DismissButton
 								variant="secondary"
 								onClick={() => {
-									liquidationQuery.refetch();
+									refetchAllRewards();
 									goToEarn();
 								}}
 							>

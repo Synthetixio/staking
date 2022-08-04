@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import Wei, { wei } from '@synthetixio/wei';
 import useSynthetixQueries from '@synthetixio/queries';
 import Connector from 'containers/Connector';
@@ -20,7 +20,7 @@ export const useUserStakingData = (walletAddress: string | null) => {
 	const { useGetFeePoolDataQuery, useGetDebtDataQuery, useClaimableRewardsQuery, subgraph } =
 		useSynthetixQueries();
 
-	const feeClaims = subgraph.useGetFeesClaimeds(
+	const { data: feeClaimsData, refetch: feeClaimsRefetch } = subgraph.useGetFeesClaimeds(
 		{
 			first: 1,
 			orderBy: 'timestamp',
@@ -31,24 +31,36 @@ export const useUserStakingData = (walletAddress: string | null) => {
 	);
 
 	const currentFeePeriod = useGetFeePoolDataQuery(0);
+
 	const { useTotalIssuedSynthsExcludeOtherCollateralQuery, useExchangeRatesQuery, useSNXData } =
 		useSynthetixQueries();
-	const exchangeRatesQuery = useExchangeRatesQuery();
+
+	const { data: exchangeRatesData, refetch: exchangeRatesRefetch } = useExchangeRatesQuery();
+
 	const totalIssuedSynthsExclOtherCollateral = useTotalIssuedSynthsExcludeOtherCollateralQuery(
 		Synths.sUSD
 	);
-	const previousFeePeriod = useGetFeePoolDataQuery(1);
-	const { currentCRatio, targetCRatio, debtBalance, collateral, targetThreshold } =
-		useStakingCalculations();
-	const lockedSnxQuery = useSNXData(L1DefaultProvider!);
 
-	const debtData = useGetDebtDataQuery(walletAddress);
+	const previousFeePeriod = useGetFeePoolDataQuery(1);
+
+	const {
+		currentCRatio,
+		targetCRatio,
+		debtBalance,
+		collateral,
+		targetThreshold,
+		refetch: refetchStaking,
+	} = useStakingCalculations();
+
+	const { data: lockedSnxData, refetch: lockedSnxRefetch } = useSNXData(L1DefaultProvider!);
+	const { data: debtData, refetch: debtRefetch } = useGetDebtDataQuery(walletAddress);
+
 	const feesToDistribute = previousFeePeriod?.data?.feesToDistribute ?? wei(0);
 	const rewardsToDistribute = previousFeePeriod?.data?.rewardsToDistribute ?? wei(0);
 
 	const totalsUSDDebt = wei(totalIssuedSynthsExclOtherCollateral?.data ?? 0);
-	const sUSDRate = wei(exchangeRatesQuery.data?.sUSD ?? 0);
-	const SNXRate = wei(exchangeRatesQuery.data?.SNX ?? 0);
+	const sUSDRate = wei(exchangeRatesData?.sUSD ?? 0);
+	const SNXRate = wei(exchangeRatesData?.SNX ?? 0);
 
 	const isBelowCRatio = calculateIsBelowCRatio(currentCRatio, targetCRatio, targetThreshold);
 
@@ -71,29 +83,32 @@ export const useUserStakingData = (walletAddress: string | null) => {
 		sUSDRate != null &&
 		previousFeePeriod.data != null &&
 		currentFeePeriod.data != null &&
-		lockedSnxQuery.data != null &&
-		debtData.data != null
+		lockedSnxData != null &&
+		debtData != null
 	) {
 		// compute APR based using useSNXLockedValueQuery (top 1000 holders)
 		stakingAPR = isL2
-			? debtData.data.totalSupply.eq(0)
+			? debtData.totalSupply.eq(0)
 				? wei(0)
-				: wei(WEEKS_IN_YEAR).mul(rewardsToDistribute).div(debtData.data.totalSupply)
-			: lockedSnxQuery.data.lockedValue.eq(0)
+				: wei(WEEKS_IN_YEAR).mul(rewardsToDistribute).div(debtData.totalSupply)
+			: lockedSnxData.lockedValue.eq(0)
 			? wei(0)
 			: sUSDRate
 					.mul(currentFeePeriod.data.feesToDistribute)
 					.add(SNXRate.mul(currentFeePeriod.data.rewardsToDistribute))
 					.mul(WEEKS_IN_YEAR)
-					.div(lockedSnxQuery.data.lockedValue);
+					.div(lockedSnxData.lockedValue);
 	}
 
-	const availableRewards = useClaimableRewardsQuery(walletAddress, {
-		enabled: Boolean(walletAddress),
-	});
+	const { data: availableRewards, refetch: availableRewardsRefetch } = useClaimableRewardsQuery(
+		walletAddress,
+		{
+			enabled: Boolean(walletAddress),
+		}
+	);
 
-	const tradingRewards = availableRewards?.data?.tradingRewards ?? wei(0);
-	const stakingRewards = availableRewards?.data?.stakingRewards ?? wei(0);
+	const tradingRewards = availableRewards?.tradingRewards ?? wei(0);
+	const stakingRewards = availableRewards?.stakingRewards ?? wei(0);
 
 	const { currentFeePeriodStarts, nextFeePeriodStarts } = useMemo(() => {
 		return {
@@ -108,18 +123,25 @@ export const useUserStakingData = (walletAddress: string | null) => {
 		};
 	}, [currentFeePeriod]);
 
-	const lastClaimDate = new Date(
-		feeClaims.isSuccess && feeClaims.data.length ? feeClaims.data[0].timestamp.toNumber() : 0
-	);
+	const lastClaimDate = new Date(feeClaimsData?.length ? feeClaimsData[0].timestamp.toNumber() : 0);
 
 	const hasClaimed = lastClaimDate > currentFeePeriodStarts && lastClaimDate < nextFeePeriodStarts;
 
-	function refetch() {
-		feeClaims.refetch();
-		exchangeRatesQuery.refetch();
-		lockedSnxQuery.refetch();
-		debtData.refetch();
-	}
+	const refetch = useCallback(() => {
+		feeClaimsRefetch();
+		exchangeRatesRefetch();
+		lockedSnxRefetch();
+		debtRefetch();
+		availableRewardsRefetch();
+		refetchStaking();
+	}, [
+		availableRewardsRefetch,
+		debtRefetch,
+		exchangeRatesRefetch,
+		feeClaimsRefetch,
+		lockedSnxRefetch,
+		refetchStaking,
+	]);
 
 	return {
 		hasClaimed,

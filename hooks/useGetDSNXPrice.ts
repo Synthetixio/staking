@@ -6,9 +6,11 @@ import { Contract } from 'ethers';
 import { abi } from 'contracts/dHedgePoolLogic';
 import Wei, { wei } from '@synthetixio/wei';
 
+const contract = new Contract(dSNXPoolAddressOptimism, abi);
+
 const useGetDSNXPrice = (walletAddress: string | null, queryOptions?: UseQueryOptions<Wei>) => {
 	const { provider, network } = Connector.useContainer();
-	const contract = new Contract(dSNXPoolAddressOptimism, abi);
+
 	return useQuery(
 		[walletAddress, network?.name],
 		async () => {

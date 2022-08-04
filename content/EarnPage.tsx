@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useCallback } from 'react';
 import Head from 'next/head';
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -31,10 +31,17 @@ const EarnPage: FC = () => {
 
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
-	const { stakedValue, stakingAPR, tradingRewards, stakingRewards, hasClaimed } =
+	const { stakedValue, stakingAPR, tradingRewards, stakingRewards, hasClaimed, refetch } =
 		useUserStakingData(addressToUse);
-	const liquidationRewardQuery = useLiquidationRewards(addressToUse);
+
+	const { data: liquidationData, refetch: liquidationRefetch } =
+		useLiquidationRewards(addressToUse);
 	const SNXRate = exchangeRatesQuery.data?.SNX ?? wei(0);
+
+	const refetchAllRewards = useCallback(() => {
+		refetch();
+		liquidationRefetch();
+	}, [refetch, liquidationRefetch]);
 
 	const totalRewards = tradingRewards.add(stakingRewards.mul(SNXRate));
 
@@ -92,9 +99,10 @@ const EarnPage: FC = () => {
 				stakingRewards={stakingRewards}
 				totalRewards={totalRewards}
 				stakingAPR={stakingAPR}
-				liquidationRewards={liquidationRewardQuery.data || wei(0)}
+				liquidationRewards={liquidationData || wei(0)}
 				stakedAmount={SNXRate.eq(0) ? wei(0) : stakedValue.div(SNXRate)}
 				hasClaimed={hasClaimed}
+				refetchAllRewards={refetchAllRewards}
 			/>
 		</>
 	);
