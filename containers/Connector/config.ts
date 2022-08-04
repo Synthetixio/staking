@@ -38,19 +38,19 @@ const supportedChains = [
 		label: 'Optimism Mainnet',
 		rpcUrl: getInfuraRpcURL(NetworkIdByName['mainnet-ovm']),
 	},
-	// Kovan
+	// goerli
 	{
-		id: getChainIdHex(NetworkIdByName.kovan),
+		id: getChainIdHex(NetworkIdByName.goerli),
 		token: 'ETH',
-		label: 'Kovan',
-		rpcUrl: getInfuraRpcURL(NetworkIdByName.kovan),
+		label: 'Goerli',
+		rpcUrl: getInfuraRpcURL(NetworkIdByName.goerli),
 	},
-	// Kovan Ovm
+	// goerli Ovm
 	{
 		id: getChainIdHex(NetworkIdByName['kovan-ovm']),
 		token: 'ETH',
-		label: 'Optimism Kovan',
-		rpcUrl: getInfuraRpcURL(NetworkIdByName['kovan-ovm']),
+		label: 'Optimism Goerli',
+		rpcUrl: getInfuraRpcURL(NetworkIdByName['goerli-ovm']),
 	},
 ];
 
@@ -73,7 +73,22 @@ export const onboard = Onboard({
 	},
 	apiKey: process.env.NEXT_PUBLIC_BN_ONBOARD_API_KEY,
 	wallets: [injected, ledger /*trezor,*/, coinbaseWalletSdk, walletConnect, gnosis, portis, torus],
-	chains: [...supportedChains],
+	chains: [
+		// Mainnet
+		{
+			id: getChainIdHex(NetworkIdByName.mainnet),
+			token: 'ETH',
+			label: 'Ethereum Mainnet',
+			rpcUrl: getInfuraRpcURL(NetworkIdByName.mainnet),
+		},
+		// Mainnet Ovm
+		{
+			id: getChainIdHex(NetworkIdByName['mainnet-ovm']),
+			token: 'ETH',
+			label: 'Optimism Mainnet',
+			rpcUrl: getInfuraRpcURL(NetworkIdByName['mainnet-ovm']),
+		},
+	],
 	accountCenter: {
 		desktop: {
 			enabled: false,
