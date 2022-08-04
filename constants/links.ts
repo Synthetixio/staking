@@ -31,7 +31,6 @@ export const EXTERNAL_LINKS = {
 		GitHub: 'https://github.com/synthetixio/staking',
 	},
 	TokenLists: {
-		Synthetix: 'https://synths.snx.eth.link',
 		OneInch: 'https://gateway.ipfs.io/ipns/tokens.1inch.eth',
 		Zapper: 'https://zapper.fi/api/token-list',
 	},
