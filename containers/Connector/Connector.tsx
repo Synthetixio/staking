@@ -9,7 +9,7 @@ import { getIsOVM, isSupportedNetworkId } from 'utils/network';
 import { synthetix, NetworkNameById, NetworkIdByName } from '@synthetixio/contracts-interface';
 import { ethers } from 'ethers';
 
-import { onboard as Web3Onboard } from './config';
+import { isSupportedWalletChain, onboard as Web3Onboard } from './config';
 import { LOCAL_STORAGE_KEYS } from 'constants/storage';
 import { CurrencyKey, ETH_ADDRESS } from 'constants/currency';
 import { synthToContractName } from 'utils/currencies';
@@ -75,7 +75,7 @@ const useConnector = () => {
 				const { id } = update.wallets[0].chains[0];
 				const networkId = getNetworkIdFromHex(id);
 
-				const isSupported = isSupportedNetworkId(networkId);
+				const isSupported = isSupportedNetworkId(networkId) && isSupportedWalletChain(networkId);
 
 				if (!isSupported) {
 					// Switch to mainnet ethereum by default

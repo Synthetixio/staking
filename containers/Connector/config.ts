@@ -23,6 +23,41 @@ const gnosis = gnosisModule();
 const portis = portisModule({ apiKey: `${process.env.NEXT_PUBLIC_PORTIS_APP_ID}` });
 const torus = torusModule();
 
+const supportedChains = [
+	// Mainnet
+	{
+		id: getChainIdHex(NetworkIdByName.mainnet),
+		token: 'ETH',
+		label: 'Ethereum Mainnet',
+		rpcUrl: getInfuraRpcURL(NetworkIdByName.mainnet),
+	},
+	// Mainnet Ovm
+	{
+		id: getChainIdHex(NetworkIdByName['mainnet-ovm']),
+		token: 'ETH',
+		label: 'Optimism Mainnet',
+		rpcUrl: getInfuraRpcURL(NetworkIdByName['mainnet-ovm']),
+	},
+	// Kovan
+	{
+		id: getChainIdHex(NetworkIdByName.kovan),
+		token: 'ETH',
+		label: 'Kovan',
+		rpcUrl: getInfuraRpcURL(NetworkIdByName.kovan),
+	},
+	// Kovan Ovm
+	{
+		id: getChainIdHex(NetworkIdByName['kovan-ovm']),
+		token: 'ETH',
+		label: 'Optimism Kovan',
+		rpcUrl: getInfuraRpcURL(NetworkIdByName['kovan-ovm']),
+	},
+];
+
+export const isSupportedWalletChain = (networkId: number) => {
+	return !!supportedChains.find((chain) => chain.id === `0x${networkId.toString(16)}`);
+};
+
 export const onboard = Onboard({
 	appMetadata: {
 		name: 'Synthetix',
@@ -38,36 +73,7 @@ export const onboard = Onboard({
 	},
 	apiKey: process.env.NEXT_PUBLIC_BN_ONBOARD_API_KEY,
 	wallets: [injected, ledger /*trezor,*/, coinbaseWalletSdk, walletConnect, gnosis, portis, torus],
-	chains: [
-		// Mainnet
-		{
-			id: getChainIdHex(NetworkIdByName.mainnet),
-			token: 'ETH',
-			label: 'Ethereum Mainnet',
-			rpcUrl: getInfuraRpcURL(NetworkIdByName.mainnet),
-		},
-		// Mainnet Ovm
-		{
-			id: getChainIdHex(NetworkIdByName['mainnet-ovm']),
-			token: 'ETH',
-			label: 'Optimism Mainnet',
-			rpcUrl: getInfuraRpcURL(NetworkIdByName['mainnet-ovm']),
-		},
-		// Kovan
-		{
-			id: getChainIdHex(NetworkIdByName.kovan),
-			token: 'ETH',
-			label: 'Kovan',
-			rpcUrl: getInfuraRpcURL(NetworkIdByName.kovan),
-		},
-		// Kovan Ovm
-		{
-			id: getChainIdHex(NetworkIdByName['kovan-ovm']),
-			token: 'ETH',
-			label: 'Optimism Kovan',
-			rpcUrl: getInfuraRpcURL(NetworkIdByName['kovan-ovm']),
-		},
-	],
+	chains: [...supportedChains],
 	accountCenter: {
 		desktop: {
 			enabled: false,
