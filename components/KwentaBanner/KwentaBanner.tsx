@@ -12,7 +12,7 @@ import media from 'styled-media-query';
 const KwentaBanner: FC = () => {
 	const { t } = useTranslation();
 	return (
-		<ExternalLink href={EXTERNAL_LINKS.Trading.Kwenta}>
+		<ExternalLink href={EXTERNAL_LINKS.Trading.KwentaTrading}>
 			<Banner>
 				<FlexDiv>
 					{t('synths.trade-on-kwenta')}
