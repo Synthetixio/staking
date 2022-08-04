@@ -8,17 +8,17 @@ describe('getInfuraRpcURL', () => {
 	test('mainnet', () => {
 		expect(getInfuraRpcURL(NetworkIdByName.mainnet)).toBe('https://mainnet.infura.io/v3/<id>');
 	});
-	test('kovan', () => {
-		expect(getInfuraRpcURL(NetworkIdByName.kovan)).toBe('https://kovan.infura.io/v3/<id>');
+	test('goerli', () => {
+		expect(getInfuraRpcURL(NetworkIdByName.goerli)).toBe('https://goerli.infura.io/v3/<id>');
 	});
 	test('optimism', () => {
 		expect(getInfuraRpcURL(NetworkIdByName['mainnet-ovm'])).toBe(
 			'https://optimism-mainnet.infura.io/v3/<id>'
 		);
 	});
-	test('optimism kovan', () => {
-		expect(getInfuraRpcURL(NetworkIdByName['kovan-ovm'])).toBe(
-			'https://optimism-kovan.infura.io/v3/<id>'
+	test('optimism goerli', () => {
+		expect(getInfuraRpcURL(NetworkIdByName['goerli-ovm'])).toBe(
+			'https://optimism-goerli.infura.io/v3/<id>'
 		);
 	});
 });
