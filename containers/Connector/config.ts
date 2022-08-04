@@ -73,22 +73,7 @@ export const onboard = Onboard({
 	},
 	apiKey: process.env.NEXT_PUBLIC_BN_ONBOARD_API_KEY,
 	wallets: [injected, ledger /*trezor,*/, coinbaseWalletSdk, walletConnect, gnosis, portis, torus],
-	chains: [
-		// Mainnet
-		{
-			id: getChainIdHex(NetworkIdByName.mainnet),
-			token: 'ETH',
-			label: 'Ethereum Mainnet',
-			rpcUrl: getInfuraRpcURL(NetworkIdByName.mainnet),
-		},
-		// Mainnet Ovm
-		{
-			id: getChainIdHex(NetworkIdByName['mainnet-ovm']),
-			token: 'ETH',
-			label: 'Optimism Mainnet',
-			rpcUrl: getInfuraRpcURL(NetworkIdByName['mainnet-ovm']),
-		},
-	],
+	chains: [...supportedChains],
 	accountCenter: {
 		desktop: {
 			enabled: false,
