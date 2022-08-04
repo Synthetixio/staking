@@ -25,6 +25,7 @@ interface StakingProps {
 
 const StakingPage = (props: StakingProps) => {
 	const { t } = useTranslation();
+	const { isWalletConnected } = Connector.useContainer();
 
 	console.log(props);
 
@@ -40,7 +41,6 @@ const StakingPage = (props: StakingProps) => {
 	} = useStakingCalculations();
 
 	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
-	const { isWalletConnected } = Connector.useContainer();
 
 	return (
 		<>

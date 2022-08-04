@@ -73,9 +73,12 @@ const useConnector = () => {
 
 				const { label } = update.wallets[0];
 				const { id } = update.wallets[0].chains[0];
+				console.log(update.wallets[0].chains);
 				const networkId = getNetworkIdFromHex(id);
 
 				const isSupported = isSupportedNetworkId(networkId);
+
+				console.log('is supported', isSupported);
 
 				if (!isSupported) {
 					// Switch to mainnet ethereum by default

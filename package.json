@@ -31,6 +31,7 @@
 		"@reach/dialog": "^0.15.3",
 		"@socket.tech/widget": "^0.0.9",
 		"@synthetixio/assets": "^2.0.13",
+		"@synthetixio/contracts": "^1.0.0",
 		"@synthetixio/contracts-interface": "^2.74.1",
 		"@synthetixio/optimism-networks": "^2.74.2",
 		"@synthetixio/providers": "^2.74.3",
