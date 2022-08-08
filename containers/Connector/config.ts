@@ -38,19 +38,19 @@ const supportedChains = [
 		label: 'Optimism Mainnet',
 		rpcUrl: getInfuraRpcURL(NetworkIdByName['mainnet-ovm']),
 	},
-	// Kovan
+	// goerli
 	{
-		id: getChainIdHex(NetworkIdByName.kovan),
+		id: getChainIdHex(NetworkIdByName.goerli),
 		token: 'ETH',
-		label: 'Kovan',
-		rpcUrl: getInfuraRpcURL(NetworkIdByName.kovan),
+		label: 'Goerli',
+		rpcUrl: getInfuraRpcURL(NetworkIdByName.goerli),
 	},
-	// Kovan Ovm
+	// goerli Ovm
 	{
-		id: getChainIdHex(NetworkIdByName['kovan-ovm']),
+		id: getChainIdHex(NetworkIdByName['goerli-ovm']),
 		token: 'ETH',
-		label: 'Optimism Kovan',
-		rpcUrl: getInfuraRpcURL(NetworkIdByName['kovan-ovm']),
+		label: 'Optimism Goerli',
+		rpcUrl: getInfuraRpcURL(NetworkIdByName['goerli-ovm']),
 	},
 ];
 
