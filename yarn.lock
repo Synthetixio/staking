@@ -3775,7 +3775,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@synthetixio/assets@npm:2.0.13":
+"@synthetixio/assets@npm:^2.0.13":
   version: 2.0.13
   resolution: "@synthetixio/assets@npm:2.0.13"
   checksum: ed9e9c8de23a5e4b94207ce9368ac9ce0011d25b469f95d083051f5e6715524c0c39ac50a54b1f54a19d833c9ba2d70ee3b1453db2ee5778fd999225ca1e802d
@@ -3798,7 +3798,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@synthetixio/contracts-interface@npm:2.74.2":
+"@synthetixio/contracts-interface@npm:2.74.2, @synthetixio/contracts-interface@npm:^2.74.2":
   version: 2.74.2
   resolution: "@synthetixio/contracts-interface@npm:2.74.2"
   dependencies:
@@ -3828,7 +3828,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@synthetixio/optimism-networks@npm:2.74.2":
+"@synthetixio/optimism-networks@npm:2.74.2, @synthetixio/optimism-networks@npm:^2.74.2":
   version: 2.74.2
   resolution: "@synthetixio/optimism-networks@npm:2.74.2"
   dependencies:
@@ -3839,7 +3839,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@synthetixio/providers@npm:2.74.4":
+"@synthetixio/providers@npm:2.74.4, @synthetixio/providers@npm:^2.74.4":
   version: 2.74.4
   resolution: "@synthetixio/providers@npm:2.74.4"
   dependencies:
@@ -3852,7 +3852,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@synthetixio/queries@npm:2.74.7":
+"@synthetixio/queries@npm:^2.74.7":
   version: 2.74.7
   resolution: "@synthetixio/queries@npm:2.74.7"
   dependencies:
@@ -3933,7 +3933,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@synthetixio/transaction-notifier@npm:2.74.5":
+"@synthetixio/transaction-notifier@npm:^2.74.5":
   version: 2.74.5
   resolution: "@synthetixio/transaction-notifier@npm:2.74.5"
   dependencies:
@@ -3945,7 +3945,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@synthetixio/wei@npm:2.74.2":
+"@synthetixio/wei@npm:2.74.2, @synthetixio/wei@npm:^2.74.2":
   version: 2.74.2
   resolution: "@synthetixio/wei@npm:2.74.2"
   dependencies:
@@ -20669,14 +20669,14 @@ jschardet@latest:
     "@reach/dialog": ^0.15.3
     "@socket.tech/widget": ^0.0.9
     "@svgr/webpack": ^6.2.1
-    "@synthetixio/assets": 2.0.13
-    "@synthetixio/contracts-interface": 2.74.2
-    "@synthetixio/optimism-networks": 2.74.2
-    "@synthetixio/providers": 2.74.4
-    "@synthetixio/queries": 2.74.7
+    "@synthetixio/assets": ^2.0.13
+    "@synthetixio/contracts-interface": ^2.74.2
+    "@synthetixio/optimism-networks": ^2.74.2
+    "@synthetixio/providers": ^2.74.4
+    "@synthetixio/queries": ^2.74.7
     "@synthetixio/synpress": ^1.1.1
-    "@synthetixio/transaction-notifier": 2.74.5
-    "@synthetixio/wei": 2.74.2
+    "@synthetixio/transaction-notifier": ^2.74.5
+    "@synthetixio/wei": ^2.74.2
     "@testing-library/jest-dom": ^5.16.4
     "@testing-library/react": ^12.1.5
     "@testing-library/react-hooks": ^8.0.1
