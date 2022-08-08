@@ -23,7 +23,7 @@ async function run() {
 			const resolvedVersion = await execPromised(`npm info ${name}@${version} version`).then((x) =>
 				x.trim()
 			);
-			return resolvedVersion ? `${name}@${resolvedVersion}` : '';
+			return resolvedVersion ? `${name}@^${resolvedVersion}` : '';
 		})
 	);
 
