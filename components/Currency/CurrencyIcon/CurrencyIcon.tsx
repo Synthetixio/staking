@@ -48,17 +48,18 @@ export const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, isDeprecated,
 
 	const { useTokenListQuery } = useSynthetixQueries();
 
-	const synthetixTokenListQuery = useTokenListQuery(EXTERNAL_LINKS.TokenLists.Synthetix);
-	const synthetixTokenListMap = synthetixTokenListQuery.isSuccess
-		? synthetixTokenListQuery.data?.tokensMap ?? null
-		: null;
-
-	const ZapperTokenListQuery = useTokenListQuery(EXTERNAL_LINKS.TokenLists.Zapper);
+	const ZapperTokenListQuery = useTokenListQuery(EXTERNAL_LINKS.TokenLists.Zapper, {
+		enabled: firstFallbackError,
+		staleTime: 100000,
+	});
 	const ZapperTokenListMap = ZapperTokenListQuery.isSuccess
 		? ZapperTokenListQuery.data?.tokensMap ?? null
 		: null;
 
-	const OneInchTokenListQuery = useTokenListQuery(EXTERNAL_LINKS.TokenLists.OneInch);
+	const OneInchTokenListQuery = useTokenListQuery(EXTERNAL_LINKS.TokenLists.OneInch, {
+		enabled: secondFallbackError,
+		staleTime: 100000,
+	});
 	const OneInchTokenListMap = OneInchTokenListQuery.isSuccess
 		? OneInchTokenListQuery.data?.tokensMap ?? null
 		: null;
@@ -85,11 +86,7 @@ export const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, isDeprecated,
 				return (
 					<TokenIcon
 						{...{ isDeprecated }}
-						src={
-							synthetixTokenListMap != null && synthetixTokenListMap[currencyKey] != null
-								? synthetixTokenListMap[currencyKey].logoURI
-								: getSynthIcon(currencyKey)
-						}
+						src={getSynthIcon(currencyKey)}
 						onError={() => setFirstFallbackError(true)}
 						{...props}
 						alt={currencyKey}
