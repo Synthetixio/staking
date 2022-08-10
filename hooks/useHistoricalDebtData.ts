@@ -1,7 +1,6 @@
-import { last } from 'lodash';
 import useSynthetixQueries from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
-import sortBy from 'lodash/sortBy';
+import type { PartialBy } from '../utils/ts-helpers';
 
 export type HistoricalDebtAndIssuanceData = {
 	timestamp: number;
@@ -37,7 +36,7 @@ const useHistoricalDebtData = (walletAddress: string | null): HistoricalDebtAndI
 		{ timestamp: true, value: true }
 	);
 
-	const debtSnapshot = subgraph.useGetDebtSnapshots(
+	const debtSnapshotQuery = subgraph.useGetDebtSnapshots(
 		{
 			first: 1000,
 			orderBy: 'timestamp',
@@ -50,57 +49,91 @@ const useHistoricalDebtData = (walletAddress: string | null): HistoricalDebtAndI
 	const debtDataQuery = useGetDebtDataQuery(walletAddress);
 
 	const isLoaded =
-		issues.isSuccess && burns.isSuccess && debtSnapshot.isSuccess && debtDataQuery.isSuccess;
+		issues.isSuccess && burns.isSuccess && debtSnapshotQuery.isSuccess && debtDataQuery.isSuccess;
 
 	if (!isLoaded) {
 		return { isLoading: true, data: [] };
 	}
 	const issueData = issues.data ?? [];
 	const burnData = burns.data ?? [];
-	const issuesWithFlag = issueData.map((b) => ({ isBurn: false, ...b }));
-	const burnWithFlag = burnData.map((b) => ({ isBurn: true, ...b }));
-	const issuesAndBurns = sortBy(issuesWithFlag.concat(burnWithFlag), (d) => d.timestamp.toNumber());
+	const issuesWithFlag = issueData.map((x) => ({
+		...x,
+		isBurn: false,
+		timestamp: x.timestamp.toNumber(),
+	}));
+	const burnWithFlag = burnData.map((x) => ({
+		...x,
+		isBurn: true,
+		timestamp: x.timestamp.toNumber(),
+	}));
+	const issuesAndBurns = issuesWithFlag
+		.concat(burnWithFlag)
+		.sort((a, b) => a.timestamp - b.timestamp);
 
-	const debtHistory = debtSnapshot.data ?? [];
+	type PartialHistoricalDebtAndIssuanceData = PartialBy<
+		HistoricalDebtAndIssuanceData,
+		'actualDebt' | 'issuanceDebt' | 'index'
+	>;
 
-	// We set historicalIssuanceAggregation array, to store all the cumulative
-	// values of every mint and burns
-	const historicalIssuanceAggregation: Wei[] = [];
+	// Here we create an array to store all the cumulative values of every mint and burns.
+	// The "actualDebt" field will be set to undefined and later added from the debtSnapshots
+	const historicalIssuanceAggregation = issuesAndBurns.reduce(
+		(acc: PartialHistoricalDebtAndIssuanceData[], event) => {
+			const multiplier = event.isBurn ? -1 : 1;
+			const aggregation = event.value.mul(multiplier).add(acc.at(-1)?.issuanceDebt ?? wei(0));
 
-	issuesAndBurns.forEach((event) => {
-		const multiplier = event.isBurn ? -1 : 1;
-		const aggregation = event.value
-			.mul(multiplier)
-			.add(last(historicalIssuanceAggregation) ?? wei(0));
-
-		historicalIssuanceAggregation.push(aggregation);
-	});
-
-	// We merge both actual & issuance debt into an array
-	const historicalDebtAndIssuance: HistoricalDebtAndIssuanceData[] = debtHistory.map(
-		(debtSnapshot, i) => {
-			return {
-				timestamp: debtSnapshot.timestamp.toNumber() * 1000,
-				issuanceDebt: historicalIssuanceAggregation[i],
-				actualDebt: wei(debtSnapshot.debtBalanceOf ?? 0),
-				index: i,
-			};
-		}
+			acc.push({
+				issuanceDebt: aggregation,
+				actualDebt: undefined,
+				timestamp: event.timestamp * 1000,
+			});
+			return acc;
+		},
+		[]
 	);
+	// Here we just format the debtSnapshot to match PartialHistoricalDebtAndIssuanceData[]
+	const debtSnapshots = debtSnapshotQuery.data.map((debtSnapshot) => {
+		const debtSnapshotTimestamp = debtSnapshot.timestamp.toNumber() * 1000;
+		return {
+			timestamp: debtSnapshotTimestamp,
+			issuanceDebt: undefined,
+			actualDebt: wei(debtSnapshot.debtBalanceOf ?? 0),
+		};
+	});
+	// Finally we merge our two dataset together. If one of the debt field (actualDebt|issuanceDebt) is missing we use the previous one.
+	// The reason for this is:
+	// Say the debt snapshot was made on a tuesday. User burn on a wednesday, in this case we want the actualDebt to display the value from tuesday.
+	// And vice vera:
+	// If there was a debt snapshot on tuesday we want the issued debt to display whatever it was at the last time user minted or burned
+	const data = historicalIssuanceAggregation
+		.concat(debtSnapshots)
+		.sort((a, b) => a.timestamp - b.timestamp)
+		.reduce((acc: PartialHistoricalDebtAndIssuanceData[], val) => {
+			const prev = acc.at(-1);
+			acc.push({
+				timestamp: val.timestamp,
+				actualDebt: val.actualDebt || prev?.actualDebt,
+				issuanceDebt: val.issuanceDebt || prev?.issuanceDebt,
+			});
 
-	if (historicalDebtAndIssuance.length > 0) {
-		// Last occurrence is the current state of the debt
-		// Issuance debt = last occurrence of the historicalDebtAndIssuance array
-		// We only want this to happen if we have some history, so that we can display no data for accounts that never have staked
-		historicalDebtAndIssuance.push({
-			timestamp: new Date().getTime(),
-			actualDebt: debtDataQuery.data?.debtBalance ?? wei(0),
-			issuanceDebt: last(historicalIssuanceAggregation) ?? wei(0),
-			index: historicalDebtAndIssuance.length,
+			return acc;
+		}, []);
+
+	// This transformation ensure that we have both actual debt and issued debt.
+	// It also adds the index field making the data fulfill HistoricalDebtAndIssuanceData type signature
+	const filtered = data.reduce((acc: HistoricalDebtAndIssuanceData[], val) => {
+		if (!val.actualDebt || !val.issuanceDebt || !val.timestamp) return acc;
+		const prev = acc.at(-1);
+		acc.push({
+			actualDebt: val.actualDebt,
+			issuanceDebt: val.issuanceDebt,
+			timestamp: val.timestamp,
+			index: prev?.index ? prev.index + 1 : 0,
 		});
-	}
+		return acc;
+	}, []);
 
-	return { isLoading: false, data: historicalDebtAndIssuance };
+	return { isLoading: false, data: filtered };
 };
 
 export default useHistoricalDebtData;
