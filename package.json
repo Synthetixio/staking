@@ -23,7 +23,6 @@
 		"test:e2e:ci": "synpress run --group smoke-tests --record --parallel",
 		"upgrade-synthetix": "yarn up $(./scripts/resolve-synthetix-versions.js latest) --exact",
 		"upgrade-synthetix:dev": "yarn up $(./scripts/resolve-synthetix-versions.js dev) --exact",
-		"download-debt-data": "node download-debt-data.js",
 		"upgrade-browsers": "yarn up caniuse-lite --recursive"
 	},
 	"dependencies": {
