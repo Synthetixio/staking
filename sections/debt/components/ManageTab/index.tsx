@@ -1,8 +1,7 @@
-import Button from 'components/Button';
 import Connector from 'containers/Connector';
-import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { FlexDivColCentered } from 'styles/common';
+import ConnectOrSwitchNetwork from 'components/ConnectOrSwitchNetwork';
 import HedgeTapMainnet from './HedgeTabMainnet';
 import HedgeTabOptimism from './HedgeTabOptimism';
 
@@ -12,7 +11,7 @@ const ManageTab = () => {
 	if (!walletAddress || !isWalletConnected) {
 		return (
 			<ManageContainer>
-				<ConnectWallet />
+				<ConnectOrSwitchNetwork />
 			</ManageContainer>
 		);
 	}
@@ -31,23 +30,3 @@ const ManageContainer = styled(FlexDivColCentered)`
 `;
 
 export default ManageTab;
-
-const ConnectWallet = () => {
-	const { t } = useTranslation();
-	const { connectWallet } = Connector.useContainer();
-	return (
-		<WrapperContainer>
-			<Button variant="primary" onClick={connectWallet}>
-				{t('common.wallet.connect-wallet')}
-			</Button>
-		</WrapperContainer>
-	);
-};
-
-const WrapperContainer = styled.div`
-	margin-top: 200px;
-	display: flex;
-	height: 100%;
-	align-items: center;
-	flex-direction: column;
-`;

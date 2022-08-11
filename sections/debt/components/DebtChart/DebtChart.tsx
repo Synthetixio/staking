@@ -13,7 +13,6 @@ import {
 	ReferenceLine,
 } from 'recharts';
 
-import Button from 'components/Button';
 import Connector from 'containers/Connector';
 import { FlexDivColCentered } from 'styles/common';
 import { formatCurrency } from 'utils/formatters/number';
@@ -21,6 +20,7 @@ import { Synths } from 'constants/currency';
 
 import SpinnerIcon from 'assets/svg/app/loader.svg';
 import Wei from '@synthetixio/wei';
+import ConnectOrSwitchNetwork from 'components/ConnectOrSwitchNetwork';
 
 const LEGEND_LABELS = {
 	actualDebt: 'debt.actions.track.chart.tooltip.actualDebt',
@@ -72,16 +72,10 @@ type Data = {
 const DebtChart = ({ data, isLoading }: { data: Data[]; isLoading: boolean }) => {
 	const { t } = useTranslation();
 	const { colors, fonts } = useTheme();
-	const { connectWallet, isWalletConnected } = Connector.useContainer();
+	const { isWalletConnected } = Connector.useContainer();
 
 	if (!isWalletConnected) {
-		return (
-			<DefaultContainer>
-				<Button variant="primary" onClick={connectWallet}>
-					{t('common.wallet.connect-wallet')}
-				</Button>
-			</DefaultContainer>
-		);
+		return <ConnectOrSwitchNetwork />;
 	}
 
 	if (isLoading) {
