@@ -18,7 +18,6 @@ import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import Table from 'components/Table';
 import Currency from 'components/Currency';
 import SynthHolding from 'components/SynthHolding';
-import Button from 'components/Button';
 
 import { ProgressBarType } from 'components/ProgressBar/ProgressBar';
 
@@ -29,6 +28,7 @@ import { DesktopOrTabletView, MobileOnlyView } from 'components/Media';
 import Info from 'assets/svg/app/info.svg';
 import { CryptoBalance } from 'hooks/useCryptoBalances';
 import { SynthsTotalSupplyData } from '@synthetixio/queries';
+import ConnectOrSwitchNetwork from 'components/ConnectOrSwitchNetwork';
 
 const SHOW_HEDGING_INDICATOR_THRESHOLD = wei(0.1);
 
@@ -272,13 +272,7 @@ const ResponsiveDebtPoolTable: FC<ResponsiveDebtPoolTableProps> = ({
 	]);
 
 	if (!isWalletConnected) {
-		return (
-			<DefaultContainer>
-				<Button variant="primary" onClick={connectWallet}>
-					{t('common.wallet.connect-wallet')}
-				</Button>
-			</DefaultContainer>
-		);
+		return <ConnectOrSwitchNetwork />;
 	}
 
 	return (
@@ -363,11 +357,6 @@ const TooltipIconContainer = styled(FlexDiv)`
 
 const Strong = styled.strong`
 	font-family: ${(props) => props.theme.fonts.interBold};
-`;
-
-const DefaultContainer = styled(FlexDivCentered)`
-	width: 100%;
-	justify-content: center;
 `;
 
 export default DebtPoolTable;
