@@ -33,6 +33,7 @@ import {
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import WalletIcon from 'assets/svg/app/wallet-purple.svg';
 import { TxWaiting, TxSuccess } from './Tx';
+import ConnectOrSwitchNetwork from 'components/ConnectOrSwitchNetwork';
 
 const MergeTab: FC = () => {
 	const { t } = useTranslation();
@@ -278,19 +279,14 @@ const MergeTabInner: FC = () => {
 					</SettingContainer>
 				</SettingsContainer>
 			</FormContainer>
-
-			<FormButton
-				onClick={connectOrMerge}
-				variant="primary"
-				size="lg"
-				data-testid="form-button"
-				disabled={
-					isWalletConnected && (!properSourceAccountAddress || !!sourceAccountAddressInputError)
-				}
-			>
-				{!isWalletConnected ? (
-					t('common.wallet.connect-wallet')
-				) : (
+			{isWalletConnected ? (
+				<FormButton
+					onClick={connectOrMerge}
+					variant="primary"
+					size="lg"
+					data-testid="form-button"
+					disabled={!properSourceAccountAddress || !!sourceAccountAddressInputError}
+				>
 					<Trans
 						i18nKey={`merge-accounts.merge.button-labels.${
 							txModalOpen
@@ -303,8 +299,10 @@ const MergeTabInner: FC = () => {
 						}`}
 						components={[<NoTextTransform />]}
 					/>
-				)}
-			</FormButton>
+				</FormButton>
+			) : (
+				<ConnectOrSwitchNetwork />
+			)}
 
 			{!txn.error ? null : <ErrorMessage>{txn.errorMessage}</ErrorMessage>}
 

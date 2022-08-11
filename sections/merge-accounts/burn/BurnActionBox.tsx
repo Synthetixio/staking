@@ -39,6 +39,7 @@ import { getStakingAmount } from 'sections/staking/components/helper';
 import useBurnTx from 'sections/staking/hooks/useBurnTx';
 
 import { TxWaiting, TxSuccess } from './Tx';
+import ConnectOrSwitchNetwork from 'components/ConnectOrSwitchNetwork';
 
 const BurnTab: FC = () => {
 	const { t } = useTranslation();
@@ -116,11 +117,7 @@ const BurnTabInner: FC = () => {
 
 	const returnButtonStates = useMemo(() => {
 		if (!isWalletConnected) {
-			return (
-				<StyledCTA variant="primary" size="lg" onClick={connectWallet}>
-					{t('common.wallet.connect-wallet')}
-				</StyledCTA>
-			);
+			return <ConnectOrSwitchNetwork />;
 		} else if (error) {
 			return (
 				<StyledCTA variant="primary" size="lg" disabled={true}>
@@ -139,7 +136,7 @@ const BurnTabInner: FC = () => {
 				</StyledCTA>
 			);
 		}
-	}, [error, txn.txnStatus, t, isWalletConnected, connectWallet, onBurn]);
+	}, [error, txn.txnStatus, isWalletConnected, onBurn]);
 
 	if (txn.txnStatus === 'pending') {
 		return <TxWaiting {...{ unstakeAmount, burnAmount: burnAmountUi, txLink }} />;
