@@ -121,6 +121,7 @@ const WalletOptionsModal: FC<WalletOptionsProps> = ({
 					<StyledButton
 						onClick={() => {
 							switchNetwork(NetworkIdByName.mainnet);
+							onDismiss();
 						}}
 					>
 						{t('modals.wallet.network.ethereum')}
@@ -129,6 +130,7 @@ const WalletOptionsModal: FC<WalletOptionsProps> = ({
 					<StyledButton
 						onClick={() => {
 							switchNetwork(NetworkIdByName['mainnet-ovm']);
+							onDismiss();
 						}}
 					>
 						{t('modals.wallet.network.optimism')}
