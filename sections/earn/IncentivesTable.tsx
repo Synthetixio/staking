@@ -293,9 +293,7 @@ const IncentivesInnerTable: FC<IncentivesInnerTableProps> = ({
 	isLoaded,
 	activeTab,
 }) => {
-	const { t } = useTranslation();
-
-	const { connectWallet, isWalletConnected } = Connector.useContainer();
+	const { isWalletConnected } = Connector.useContainer();
 	const router = useRouter();
 
 	return (

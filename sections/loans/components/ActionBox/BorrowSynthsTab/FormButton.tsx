@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Trans, useTranslation } from 'react-i18next';
+import { Trans } from 'react-i18next';
 import Button from 'components/Button';
 import { NoTextTransform } from 'styles/common';
 import ConnectOrSwitchNetwork from 'components/ConnectOrSwitchNetwork';
@@ -30,7 +30,6 @@ const FormButton: React.FC<FormButtonProps> = ({
 	onClick,
 	hasBothInputsSet,
 }) => {
-	const { t } = useTranslation();
 	if (!isWalletConnected) {
 		return <ConnectOrSwitchNetwork />;
 	}

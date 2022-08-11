@@ -4,13 +4,7 @@ import styled from 'styled-components';
 import { useTranslation, Trans } from 'react-i18next';
 import Wei, { wei } from '@synthetixio/wei';
 
-import {
-	TableNoResults,
-	TableNoResultsTitle,
-	FlexDiv,
-	Tooltip,
-	FlexDivCentered,
-} from 'styles/common';
+import { TableNoResults, TableNoResultsTitle, FlexDiv, Tooltip } from 'styles/common';
 import media from 'styles/media';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
@@ -76,7 +70,7 @@ const ResponsiveDebtPoolTable: FC<ResponsiveDebtPoolTableProps> = ({
 	const { t } = useTranslation();
 
 	const { selectedPriceCurrency, selectPriceCurrencyRate } = useSelectedPriceCurrency();
-	const { connectWallet, isAppReady, isWalletConnected } = Connector.useContainer();
+	const { isAppReady, isWalletConnected } = Connector.useContainer();
 
 	const [renBTCBalance, wBTCBalance, wETHBalance, ETHBalance] = useMemo(
 		() => [

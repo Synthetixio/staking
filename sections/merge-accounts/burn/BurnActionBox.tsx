@@ -3,8 +3,6 @@ import styled from 'styled-components';
 import { Trans, useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
 import Wei, { wei } from '@synthetixio/wei';
-
-import Connector from 'containers/Connector';
 import StructuredTab from 'components/StructuredTab';
 import Etherscan from 'containers/BlockExplorer';
 import NavigationBack from 'assets/svg/app/navigation-back.svg';
@@ -60,7 +58,6 @@ const BurnTab: FC = () => {
 
 const BurnTabInner: FC = () => {
 	const { t } = useTranslation();
-	const { connectWallet } = Connector.useContainer();
 
 	const router = useRouter();
 	const { blockExplorerInstance } = Etherscan.useContainer();

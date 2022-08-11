@@ -53,8 +53,7 @@ const DelegateForm: FC = () => {
 
 const Tab: FC = () => {
 	const { t } = useTranslation();
-	const { connectWallet, synthetixjs, isAppReady, isWalletConnected, walletAddress } =
-		Connector.useContainer();
+	const { synthetixjs, isAppReady, isWalletConnected, walletAddress } = Connector.useContainer();
 
 	const { useGetDelegateWallets, useSynthetixTxn } = useSynthetixQueries();
 

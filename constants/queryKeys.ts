@@ -1,4 +1,3 @@
-import { NetworkId } from '@synthetixio/contracts-interface';
 import { WeiSource } from '@synthetixio/wei';
 import { SPACE_KEY } from 'constants/snapshot';
 import { Synths } from './currency';

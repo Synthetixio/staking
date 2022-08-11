@@ -80,7 +80,7 @@ const useYearnSNXVaultQuery = (options?: UseQueryOptions<YearnVaultData>) => {
 			};
 		},
 		{
-			enabled: isAppReady && isWalletConnected && isMainnet && synthetixjs,
+			enabled: Boolean(isAppReady && isWalletConnected && isMainnet && synthetixjs),
 			...options,
 		}
 	);
