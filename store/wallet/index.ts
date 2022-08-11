@@ -7,8 +7,8 @@ import { getWalletKey } from '../utils';
 import { DelegationWallet } from '@synthetixio/queries';
 
 export type Network = {
-	id: NetworkId;
-	name: NetworkName;
+	id: NetworkId | number;
+	name: NetworkName | string;
 	useOvm: boolean;
 };
 

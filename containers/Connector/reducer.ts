@@ -48,7 +48,7 @@ export type ConnectionUpdate = {
 	signer: ethers.Signer | null;
 	walletWatched: null;
 	walletType: string | null;
-	synthetixjs: SynthetixJS;
+	synthetixjs: SynthetixJS | null;
 	provider: SynthetixProvider;
 	ensName: string | null;
 	ensAvatar: string | null;
