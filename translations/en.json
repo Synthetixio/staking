@@ -1228,6 +1228,7 @@
 			"connect-wallet": "connect wallet",
 			"no-wallet-connected": "No wallet connected",
 			"unsupported-network": "Unsupported Network",
+			"switch-to-supported": "Switch to a supported network:",
 			"balance": "Balance: {{balance}}",
 			"transferable": "<0>Transferable</0> {{transferable}}",
 			"not-connected": "Not connected",
