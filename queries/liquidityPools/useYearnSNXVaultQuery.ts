@@ -31,13 +31,11 @@ const useYearnSNXVaultQuery = (options?: UseQueryOptions<YearnVaultData>) => {
 	return useQuery<YearnVaultData>(
 		QUERY_KEYS.LiquidityPools.yearnSNX(walletAddress ?? '', network?.id!),
 		async () => {
-			const {
-				contracts: { Synthetix },
-			} = synthetixjs!;
+			if (!synthetixjs) throw Error('Expected synthetixjs do be defined');
+			const Synthetix = synthetixjs?.contracts.Synthetix;
 
 			const YearnSNXVault = new ethers.Contract(
 				yearnSNXVault.address,
-				// @ts-ignore
 				yearnSNXVault.abi,
 				provider as ethers.providers.Provider
 			);
@@ -82,7 +80,7 @@ const useYearnSNXVaultQuery = (options?: UseQueryOptions<YearnVaultData>) => {
 			};
 		},
 		{
-			enabled: isAppReady && isWalletConnected && isMainnet,
+			enabled: isAppReady && isWalletConnected && isMainnet && synthetixjs,
 			...options,
 		}
 	);

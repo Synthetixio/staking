@@ -33,9 +33,11 @@ const useBalancerPoolQuery = (
 	return useQuery<LiquidityPoolData>(
 		QUERY_KEYS.LiquidityPools.Balancer(walletAddress ?? '', synth, network?.id!),
 		async () => {
+			if (!synthetixjs) throw Error('Expected synthetixjs do be defined');
+
 			const {
 				contracts: { [rewardsContractName]: StakingRewardsContract },
-			} = synthetixjs!;
+			} = synthetixjs;
 
 			const BPTokenPrice = getBalancerPool(balancerPoolTokenContract.address);
 
@@ -94,7 +96,7 @@ const useBalancerPoolQuery = (
 			};
 		},
 		{
-			enabled: isAppReady && isWalletConnected && isMainnet,
+			enabled: isAppReady && isWalletConnected && isMainnet && synthetixjs,
 			...options,
 		}
 	);

@@ -49,14 +49,15 @@ const RedeemDeprecatedSynthsModal: FC<{
 	const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 
 	const sUSDBalance = synthBalances?.balancesMap[Synths.sUSD]?.balance ?? wei(0);
-	const Redeemer = synthetixjs!.contracts.SynthRedeemer;
+	const Redeemer = synthetixjs?.contracts.SynthRedeemer ?? null;
 
 	const { useContractTxn } = useSynthetixQueries();
 	const txn = useContractTxn(
 		Redeemer,
 		'redeemAll',
 		[redeemableDeprecatedSynthsAddresses],
-		gasPrice
+		gasPrice,
+		{ enabled: Boolean(synthetixjs) }
 	);
 
 	const link = useMemo(

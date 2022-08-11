@@ -135,10 +135,10 @@ const MergeTabInner: FC = () => {
 
 	// load any nominated account address
 	useEffect(() => {
-		if (!isAppReady) return;
+		if (!isAppReady || !synthetixjs) return;
 		const {
 			contracts: { RewardEscrowV2 },
-		} = synthetixjs!;
+		} = synthetixjs;
 		if (!properSourceAccountAddress) return;
 
 		let isMounted = true;
@@ -184,10 +184,10 @@ const MergeTabInner: FC = () => {
 
 	// load nominated account address
 	useEffect(() => {
-		if (!isAppReady) return;
+		if (!isAppReady || !synthetixjs) return;
 		const {
 			contracts: { RewardEscrowV2 },
-		} = synthetixjs!;
+		} = synthetixjs;
 		if (!properSourceAccountAddress) return;
 
 		let isMounted = true;

@@ -252,7 +252,7 @@ const useConnector = () => {
 
 			return currencyKey === 'ETH'
 				? ETH_ADDRESS
-				: synthetixjs!.contracts[synthToContractName(currencyKey!)].address;
+				: synthetixjs.contracts[synthToContractName(currencyKey!)].address;
 		},
 		[synthetixjs]
 	);
