@@ -10,7 +10,6 @@ import Currency from 'components/Currency';
 
 import ProgressBar from 'components/ProgressBar';
 import Table from 'components/Table';
-import Button from 'components/Button';
 
 import ExpandIcon from 'assets/svg/app/expand.svg';
 
@@ -18,14 +17,7 @@ import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
 import { formatPercent, formatFiatCurrency, formatCurrency } from 'utils/formatters/number';
 
-import {
-	FlexDivCol,
-	GlowingCircle,
-	IconButton,
-	TableNoResults,
-	TableNoResultsButtonContainer,
-	TableNoResultsTitle,
-} from 'styles/common';
+import { FlexDivCol, GlowingCircle, IconButton, TableNoResults } from 'styles/common';
 import { CryptoCurrency, CurrencyKey } from 'constants/currency';
 import { DURATION_SEPARATOR } from 'constants/date';
 
@@ -35,6 +27,7 @@ import { LP, Tab } from './types';
 import { CurrencyIconType } from 'components/Currency/CurrencyIcon/CurrencyIcon';
 import { DesktopOrTabletView, MobileOnlyView } from 'components/Media';
 import Wei, { wei } from '@synthetixio/wei';
+import ConnectOrSwitchNetwork from 'components/ConnectOrSwitchNetwork';
 
 export type DualRewards = {
 	a: Wei;
@@ -323,12 +316,7 @@ const IncentivesInnerTable: FC<IncentivesInnerTableProps> = ({
 			noResultsMessage={
 				!isWalletConnected ? (
 					<TableNoResults>
-						<TableNoResultsTitle>{t('common.wallet.no-wallet-connected')}</TableNoResultsTitle>
-						<TableNoResultsButtonContainer>
-							<Button variant="primary" onClick={connectWallet}>
-								{t('common.wallet.connect-wallet')}
-							</Button>
-						</TableNoResultsButtonContainer>
+						<ConnectOrSwitchNetwork />
 					</TableNoResults>
 				) : undefined
 			}
