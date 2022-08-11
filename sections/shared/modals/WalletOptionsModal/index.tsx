@@ -19,7 +19,7 @@ export const DesktopWalletOptionsModal: FC<WalletOptionsProps> = ({
 	const { t } = useTranslation();
 
 	return (
-		<DesktopStyledMenuModal {...{ onDismiss }} title={t('modals.wallet.watch-wallet.title')}>
+		<DesktopStyledMenuModal title={t('modals.wallet.watch-wallet.title')}>
 			<Modal
 				{...{
 					onDismiss,
