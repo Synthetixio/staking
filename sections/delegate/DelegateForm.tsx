@@ -32,6 +32,7 @@ import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import ActionSelector from './ActionSelector';
 import { isObjectOrErrorWithMessage } from 'utils/ts-helpers';
 import { sleep } from 'utils/promise';
+import ConnectOrSwitchNetwork from '../../components/ConnectOrSwitchNetwork';
 
 const DelegateForm: FC = () => {
 	const { t } = useTranslation();
@@ -109,9 +110,6 @@ const Tab: FC = () => {
 		}
 	);
 	const onButtonClick = async () => {
-		if (!isWalletConnected) {
-			return connectWallet();
-		}
 		txn.mutate();
 		setButtonState('delegating');
 		setTxModalOpen(true);
@@ -120,10 +118,10 @@ const Tab: FC = () => {
 	// already delegated
 	useEffect(() => {
 		const getIsAlreadyDelegated = async () => {
-			if (!isAppReady) return;
+			if (!isAppReady || !synthetixjs) return;
 			const {
 				contracts: { DelegateApprovals },
-			} = synthetixjs!;
+			} = synthetixjs;
 			if (!(properDelegateAddress && action)) return setAlreadyDelegated(false);
 			const alreadyDelegated = await DelegateApprovals[
 				DELEGATE_GET_IS_APPROVED_CONTRACT_METHODS.get(action)!
@@ -162,20 +160,16 @@ const Tab: FC = () => {
 					</SettingContainer>
 				</SettingsContainer>
 			</FormContainer>
-
-			<FormButton
-				onClick={onButtonClick}
-				variant="primary"
-				size="lg"
-				data-testid="form-button"
-				disabled={
-					isWalletConnected &&
-					(!properDelegateAddress || !!buttonState || delegateAddressIsSelf || alreadyDelegated)
-				}
-			>
-				{!isWalletConnected ? (
-					t('common.wallet.connect-wallet')
-				) : (
+			{isWalletConnected ? (
+				<FormButton
+					onClick={onButtonClick}
+					variant="primary"
+					size="lg"
+					data-testid="form-button"
+					disabled={
+						!properDelegateAddress || !!buttonState || delegateAddressIsSelf || alreadyDelegated
+					}
+				>
 					<Trans
 						i18nKey={`delegate.form.button-labels.${
 							buttonState ||
@@ -189,9 +183,10 @@ const Tab: FC = () => {
 						}`}
 						components={[<NoTextTransform />]}
 					/>
-				)}
-			</FormButton>
-
+				</FormButton>
+			) : (
+				<ConnectOrSwitchNetwork />
+			)}
 			{!error ? null : <ErrorMessage>{error}</ErrorMessage>}
 
 			{txModalOpen && (
