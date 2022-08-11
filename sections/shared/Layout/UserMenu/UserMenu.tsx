@@ -102,7 +102,9 @@ const UserMenu: FC = () => {
 										<FlexDivCentered>
 											<StyledConnectionDot />
 											<UpperCased>
-												{signer ? t('unsupported-network') : t('common.wallet.not-connected')}
+												{signer
+													? t('common.wallet.unsupported-network')
+													: t('common.wallet.not-connected')}
 											</UpperCased>
 										</FlexDivCentered>
 										{walletOptionsModalOpened ? <CaretUp width="10" /> : <CaretDown width="10" />}
