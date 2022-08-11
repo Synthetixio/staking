@@ -15,6 +15,7 @@ import synthetix, { NetworkIdByName } from '@synthetixio/contracts-interface';
 import Connector from 'containers/Connector';
 import Button from 'components/Button';
 import { switchToL2 } from '@synthetixio/optimism-networks';
+import ConnectOrSwitchNetwork from '../components/ConnectOrSwitchNetwork';
 
 function Pool() {
 	const [LPBalance, setLPBalance] = useState(BigNumber.from(0));
@@ -144,15 +145,12 @@ function Pool() {
 
 const PoolWrapper = () => {
 	const { t } = useTranslation();
-	const { connectWallet, isL2, isWalletConnected, walletAddress } = Connector.useContainer();
+	const { isL2, isWalletConnected, walletAddress } = Connector.useContainer();
 
 	if (!isWalletConnected || !walletAddress) {
 		return (
 			<WrapperContainer>
-				<h3>{t('pool.connect-wallet-text')}</h3>
-				<Button variant="primary" onClick={connectWallet}>
-					{t('common.wallet.connect-wallet')}
-				</Button>
+				<ConnectOrSwitchNetwork />
 			</WrapperContainer>
 		);
 	}
