@@ -1,6 +1,7 @@
 import { Network } from 'store/wallet';
 import { ethers } from 'ethers';
 import { DEFAULT_NETWORK_ID } from 'constants/defaults';
+import { isSupportedNetworkId } from '../utils/network';
 
 export const getETHToken = (network?: Network | null) => {
 	return {
@@ -9,7 +10,7 @@ export const getETHToken = (network?: Network | null) => {
 		decimals: 18,
 		logoURI: '',
 		name: 'Ethereum',
-		chainId: network?.id ?? DEFAULT_NETWORK_ID,
+		chainId: network?.id && isSupportedNetworkId(network?.id) ? network.id : DEFAULT_NETWORK_ID,
 		tags: [],
 	};
 };
