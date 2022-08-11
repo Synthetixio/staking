@@ -39,6 +39,7 @@ import {
 	Divider,
 } from 'styles/common';
 import { truncateAddress } from 'utils/formatters/string';
+import { NetworkIdByName } from '@synthetixio/contracts-interface';
 
 export type WalletOptionsProps = {
 	onDismiss: () => void;
@@ -96,6 +97,8 @@ const WalletOptionsModal: FC<WalletOptionsProps> = ({
 		isWalletConnected,
 		walletWatched,
 		walletType,
+		switchNetwork,
+		walletConnectedToUnsupportedNetwork,
 		stopWatching,
 	} = Connector.useContainer();
 	const { blockExplorerInstance } = Etherscan.useContainer();
@@ -110,6 +113,30 @@ const WalletOptionsModal: FC<WalletOptionsProps> = ({
 			}, 3000); // 3s
 		}
 	}, [copiedAddress]);
+
+	if (walletConnectedToUnsupportedNetwork) {
+		return (
+			<WalletDetails>
+				<Buttons>
+					<StyledButton
+						onClick={() => {
+							switchNetwork(NetworkIdByName.mainnet);
+						}}
+					>
+						{t('modals.wallet.network.ethereum')}
+					</StyledButton>
+					<DividerText>{t('common.wallet.or')}</DividerText>
+					<StyledButton
+						onClick={() => {
+							switchNetwork(NetworkIdByName['mainnet-ovm']);
+						}}
+					>
+						{t('modals.wallet.network.optimism')}
+					</StyledButton>
+				</Buttons>
+			</WalletDetails>
+		);
+	}
 
 	return (
 		<>

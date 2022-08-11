@@ -275,6 +275,9 @@ const useConnector = () => {
 		}
 	}, [onboard, updateState]);
 
+	const switchNetwork = async (id: NetworkId) => {
+		return onboard?.setChain({ chainId: getChainIdHex(id) });
+	};
 	return {
 		isAppReady,
 		network,
@@ -302,6 +305,7 @@ const useConnector = () => {
 		ensAvatar,
 		setWatchedWallet,
 		stopWatching,
+		switchNetwork,
 	};
 };
 
