@@ -5,7 +5,7 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 });
 
 function optimiseContracts(config, { webpack }) {
-	const networks = ['kovan', 'kovan-ovm', 'mainnet', 'mainnet-ovm'];
+	const networks = ['goerli', 'goerli-ovm', 'mainnet', 'mainnet-ovm'];
 	const generate = require('./scripts/minify-synthetix-contract');
 	const out = require('path').resolve(__dirname, '.next/tmp');
 	require('fs').mkdirSync(out, { recursive: true });
@@ -21,7 +21,7 @@ function optimiseContracts(config, { webpack }) {
 	);
 	config.plugins.push(
 		new webpack.NormalModuleReplacementPlugin(
-			new RegExp(`/synthetix/publish/deployed/(goerli|local)`),
+			new RegExp(`/synthetix/publish/deployed/(kovan|local)`),
 			require.resolve('./scripts/noop')
 		)
 	);

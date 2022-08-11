@@ -23,7 +23,6 @@
 		"test:e2e:ci": "synpress run --group smoke-tests --record --parallel",
 		"upgrade-synthetix": "yarn up $(./scripts/resolve-synthetix-versions.js latest) --exact",
 		"upgrade-synthetix:dev": "yarn up $(./scripts/resolve-synthetix-versions.js dev) --exact",
-		"download-debt-data": "node download-debt-data.js",
 		"upgrade-browsers": "yarn up caniuse-lite --recursive"
 	},
 	"dependencies": {
@@ -31,11 +30,11 @@
 		"@reach/dialog": "^0.15.3",
 		"@socket.tech/widget": "^0.0.9",
 		"@synthetixio/assets": "^2.0.13",
-		"@synthetixio/contracts-interface": "^2.74.1",
+		"@synthetixio/contracts-interface": "^2.74.3",
 		"@synthetixio/optimism-networks": "^2.74.2",
-		"@synthetixio/providers": "^2.74.3",
-		"@synthetixio/queries": "^2.74.6",
-		"@synthetixio/transaction-notifier": "^2.74.4",
+		"@synthetixio/providers": "^2.74.5",
+		"@synthetixio/queries": "^2.74.8",
+		"@synthetixio/transaction-notifier": "^2.74.6",
 		"@synthetixio/wei": "^2.74.2",
 		"@tippyjs/react": "^4.1.0",
 		"@uniswap/router-sdk": "^1.0.5",
