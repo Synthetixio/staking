@@ -20,15 +20,13 @@ import SelfLiquidation from './SelfLiquidation';
 import Connector from 'containers/Connector';
 
 interface StakingProps {
-	thing: any;
+	contracts: any;
 }
 
 const StakingPage = (props: StakingProps) => {
 	const { t } = useTranslation();
-	const { isWalletConnected } = Connector.useContainer();
-
-	console.log(props);
-
+	const { isWalletConnected, network } = Connector.useContainer();
+	console.log(props, network);
 	const {
 		stakedCollateralValue,
 		percentageCurrentCRatio,

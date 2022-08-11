@@ -10,6 +10,7 @@ const useSelectedPriceCurrency = () => {
 
 	const { useExchangeRatesQuery } = useSynthetixQueries();
 	const exchangeRatesQuery = useExchangeRatesQuery();
+
 	const exchangeRates = exchangeRatesQuery.data ?? null;
 	const selectPriceCurrencyRate = exchangeRates && exchangeRates[selectedPriceCurrency.name];
 

@@ -2002,7 +2002,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ethersproject/abi@npm:5.6.4, @ethersproject/abi@npm:^5.0.12, @ethersproject/abi@npm:^5.5.0, @ethersproject/abi@npm:^5.6.3, @ethersproject/abi@npm:^5.6.4":
+"@ethersproject/abi@npm:5.6.4, @ethersproject/abi@npm:^5.0.12, @ethersproject/abi@npm:^5.1.2, @ethersproject/abi@npm:^5.5.0, @ethersproject/abi@npm:^5.6.3, @ethersproject/abi@npm:^5.6.4":
   version: 5.6.4
   resolution: "@ethersproject/abi@npm:5.6.4"
   dependencies:
@@ -3259,6 +3259,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@nomiclabs/hardhat-etherscan@npm:^3.1.0":
+  version: 3.1.0
+  resolution: "@nomiclabs/hardhat-etherscan@npm:3.1.0"
+  dependencies:
+    "@ethersproject/abi": ^5.1.2
+    "@ethersproject/address": ^5.0.2
+    cbor: ^5.0.2
+    chalk: ^2.4.2
+    debug: ^4.1.1
+    fs-extra: ^7.0.1
+    lodash: ^4.17.11
+    semver: ^6.3.0
+    table: ^6.8.0
+    undici: ^5.4.0
+  peerDependencies:
+    hardhat: ^2.0.4
+  checksum: 3f28abc39edce2936226b6d0087c3be78bffcba68b6935f3f60767f0e10233e940ddc74803dff91f7ddf9464a7199aab00fba08d8b3865dbc2f8936f53a7a5a5
+  languageName: node
+  linkType: hard
+
 "@npmcli/fs@npm:^2.1.0":
   version: 2.1.0
   resolution: "@npmcli/fs@npm:2.1.0"
@@ -3762,7 +3782,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@synthetixio/codegen-graph-ts@npm:2.74.2":
+"@synthetixio/codegen-graph-ts@npm:^2.74.2":
   version: 2.74.2
   resolution: "@synthetixio/codegen-graph-ts@npm:2.74.2"
   dependencies:
@@ -3778,7 +3798,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@synthetixio/contracts-interface@npm:2.74.1, @synthetixio/contracts-interface@npm:^2.74.1":
+"@synthetixio/contracts-interface@npm:2.74.1":
   version: 2.74.1
   resolution: "@synthetixio/contracts-interface@npm:2.74.1"
   dependencies:
@@ -3788,10 +3808,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@synthetixio/contracts@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "@synthetixio/contracts@npm:1.0.0"
-  checksum: 3f0e89921526490067a0cc7016746c12c0062f13eb5b5ab291a4e7e4b3b92210011ef3cc82e3961264f1a7b14a5aa53d89ac44ede3db403b21374b70d67485cb
+"@synthetixio/contracts-interface@npm:^2.74.3":
+  version: 2.74.3
+  resolution: "@synthetixio/contracts-interface@npm:2.74.3"
+  dependencies:
+    "@synthetixio/contracts": 1.0.2
+    ethers: ^5.5.3
+    synthetix: 2.75.2
+  checksum: e9686ed24403fb5d04f02e64f1a12069e42d061bba44c650013767e28c0e4c02fb51d2e1ae2cbe0ed85b72666be5ae319c22d1b396f4f7fa0ea9161ffea0ee00
+  languageName: node
+  linkType: hard
+
+"@synthetixio/contracts@npm:1.0.2, @synthetixio/contracts@npm:^1.0.2":
+  version: 1.0.2
+  resolution: "@synthetixio/contracts@npm:1.0.2"
+  checksum: 8506304b1620ecb9cbb8e7983015795be0e07532eae80892208b1807b30f58c75e97beddceb9a52722108d9bb1513ac1b522ddd08a2de79d7149819dfb1f095f
   languageName: node
   linkType: hard
 
@@ -3831,9 +3862,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@synthetixio/queries@npm:^2.74.6":
-  version: 2.74.6
-  resolution: "@synthetixio/queries@npm:2.74.6"
+"@synthetixio/queries@file:../js-monorepo/packages/queries::locator=staking%40workspace%3A.":
+  version: 2.74.7
+  resolution: "@synthetixio/queries@file:../js-monorepo/packages/queries#../js-monorepo/packages/queries::hash=1e7f59&locator=staking%40workspace%3A."
   dependencies:
     "@ethersproject/abstract-signer": ^5.6.2
     "@ethersproject/address": ^5.6.1
@@ -3845,10 +3876,9 @@ __metadata:
     "@ethersproject/transactions": ^5.6.2
     "@ethersproject/units": ^5.6.1
     "@snapshot-labs/snapshot.js": ^0.4.13
-    "@synthetixio/codegen-graph-ts": 2.74.2
-    "@synthetixio/contracts-interface": 2.74.1
-    "@synthetixio/optimism-networks": 2.74.2
-    "@synthetixio/wei": 2.74.2
+    "@synthetixio/codegen-graph-ts": ^2.74.2
+    "@synthetixio/optimism-networks": ^2.74.2
+    "@synthetixio/wei": ^2.74.2
     axios: ^0.21.4
     date-fns: ^2.19.0
     graphql: ^15.5.0
@@ -3858,7 +3888,7 @@ __metadata:
     react: 17.x
     react-dom: 17.x
     react-query: 3.16.x
-  checksum: 802e5eb32b51aeb09e5373bb8578f9a6e058607f2c7633e6a538a82c10483719aed77409dca6967888f7226296547765f516f58942a966b406463c94eab8ebe5
+  checksum: ed83c7f03624e9d8a259d320b5df15038a799e15258ef6c919618de5fc5f618a606501488f69cb74bb95aae97bc5f62bfb889d893d0919ecd6eae5fcef64b933
   languageName: node
   linkType: hard
 
@@ -8264,7 +8294,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cbor@npm:^5.1.0":
+"cbor@npm:^5.0.2, cbor@npm:^5.1.0":
   version: 5.2.0
   resolution: "cbor@npm:5.2.0"
   dependencies:
@@ -9636,10 +9666,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"date-fns@npm:*, date-fns@npm:^2.0.1, date-fns@npm:^2.15.0, date-fns@npm:^2.19.0, date-fns@npm:^2.24.0":
+"date-fns@npm:*, date-fns@npm:^2.0.1, date-fns@npm:^2.15.0, date-fns@npm:^2.24.0":
   version: 2.28.0
   resolution: "date-fns@npm:2.28.0"
   checksum: a0516b2e4f99b8bffc6cc5193349f185f195398385bdcaf07f17c2c4a24473c99d933eb0018be4142a86a6d46cb0b06be6440ad874f15e795acbedd6fd727a1f
+  languageName: node
+  linkType: hard
+
+"date-fns@npm:^2.19.0":
+  version: 2.29.1
+  resolution: "date-fns@npm:2.29.1"
+  checksum: 9d07f77dffc1eb8c213391bde39f2963ffe7c0019d9edde14487882d627224f3a39b963e6e99d0cc58afff220a6a1a7e8864d2789958f4eaa77714de94d4d076
   languageName: node
   linkType: hard
 
@@ -12559,6 +12596,17 @@ __metadata:
     jsonfile: ^4.0.0
     universalify: ^0.1.0
   checksum: c5ae3c7043ad7187128e619c0371da01b58694c1ffa02c36fb3f5b459925d9c27c3cb1e095d9df0a34a85ca993d8b8ff6f6ecef868fd5ebb243548afa7fc0936
+  languageName: node
+  linkType: hard
+
+"fs-extra@npm:^7.0.1":
+  version: 7.0.1
+  resolution: "fs-extra@npm:7.0.1"
+  dependencies:
+    graceful-fs: ^4.1.2
+    jsonfile: ^4.0.0
+    universalify: ^0.1.0
+  checksum: 141b9dccb23b66a66cefdd81f4cda959ff89282b1d721b98cea19ba08db3dcbe6f862f28841f3cf24bb299e0b7e6c42303908f65093cb7e201708e86ea5a8dcf
   languageName: node
   linkType: hard
 
@@ -20638,11 +20686,11 @@ jschardet@latest:
     "@socket.tech/widget": ^0.0.9
     "@svgr/webpack": ^6.2.1
     "@synthetixio/assets": ^2.0.13
-    "@synthetixio/contracts": ^1.0.0
-    "@synthetixio/contracts-interface": ^2.74.1
+    "@synthetixio/contracts": ^1.0.2
+    "@synthetixio/contracts-interface": ^2.74.3
     "@synthetixio/optimism-networks": ^2.74.2
     "@synthetixio/providers": ^2.74.3
-    "@synthetixio/queries": ^2.74.6
+    "@synthetixio/queries": "file:../js-monorepo/packages/queries"
     "@synthetixio/synpress": ^1.1.1
     "@synthetixio/transaction-notifier": ^2.74.4
     "@synthetixio/wei": ^2.74.2
@@ -21480,7 +21528,26 @@ jschardet@latest:
   languageName: node
   linkType: hard
 
-"table@npm:^6.0.9":
+"synthetix@npm:2.75.2":
+  version: 2.75.2
+  resolution: "synthetix@npm:2.75.2"
+  dependencies:
+    "@nomiclabs/hardhat-etherscan": ^3.1.0
+    abi-decoder: ^2.3.0
+    commander: ^8.1.0
+    inquirer: ^6.5.2
+    inquirer-list-search-prompt: ^1.0.2
+    js-levenshtein: ^1.1.6
+    pretty-error: ^2.1.1
+    solidity-parser-antlr: ^0.4.11
+    web3-utils: ^1.2.2
+  bin:
+    snx: bin.js
+  checksum: dd2c7978337f1f3fa90842e0f7f3254be955a5218ea2aac9195c91d32f324e629617c9eda053d716cb36d9114164ce937c460b8b21881797e1fb80fcd6178080
+  languageName: node
+  linkType: hard
+
+"table@npm:^6.0.9, table@npm:^6.8.0":
   version: 6.8.0
   resolution: "table@npm:6.8.0"
   dependencies:
@@ -22146,6 +22213,13 @@ jschardet@latest:
   version: 1.9.1
   resolution: "underscore@npm:1.9.1"
   checksum: bee6f587661a6a9ca2f77e611896141e0287af51d8ca6034b11d0d4163ddbdd181a9720078ddbe94d265b7694f4880bc7f4c2ad260cfb8985ee2f9adcf13df03
+  languageName: node
+  linkType: hard
+
+"undici@npm:^5.4.0":
+  version: 5.8.2
+  resolution: "undici@npm:5.8.2"
+  checksum: 726e04bb37e2e285b4f632600c792efc9eaa5e06e37f9f34338352ac5e1dbd8ae3cdd12dd8761abfecffc5f200d1c7b91b41efb3a31c4e804ea341e5808ddfcf
   languageName: node
   linkType: hard
 

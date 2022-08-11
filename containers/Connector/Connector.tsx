@@ -18,6 +18,9 @@ import { AppEvents, initialState, reducer } from './reducer';
 
 import { getChainIdHex, getNetworkIdFromHex } from 'utils/infura';
 import { Network } from 'store/wallet';
+import { contracts } from '../../utils/contracts';
+
+console.log(contracts);
 
 const defaultNetwork: Network = {
 	id: 1,
@@ -73,12 +76,9 @@ const useConnector = () => {
 
 				const { label } = update.wallets[0];
 				const { id } = update.wallets[0].chains[0];
-				console.log(update.wallets[0].chains);
 				const networkId = getNetworkIdFromHex(id);
 
 				const isSupported = isSupportedNetworkId(networkId);
-
-				console.log('is supported', isSupported);
 
 				if (!isSupported) {
 					// Switch to mainnet ethereum by default

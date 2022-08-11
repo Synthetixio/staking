@@ -2,16 +2,8 @@ import dynamic from 'next/dynamic';
 import GlobalLoader from 'components/GlobalLoader';
 
 const StakingPage = dynamic(() => import('content/StakingPage'), {
-	ssr: true,
+	ssr: false,
 	loading: GlobalLoader,
 });
-
-export const getServerSideProps = async () => {
-	const thing = fetch('http://localhost:3000/api').then((res) => res.json());
-
-	return {
-		props: thing,
-	};
-};
 
 export default StakingPage;

@@ -33,7 +33,7 @@ const queryClient = new QueryClient({
 
 const InnerApp: FC<AppProps> = ({ Component, pageProps }) => {
 	const { provider, signer, network, L1DefaultProvider } = Connector.useContainer();
-
+	console.log('hello world');
 	useEffect(() => {
 		try {
 			document.querySelector('#global-loader')?.remove();
@@ -47,12 +47,13 @@ const InnerApp: FC<AppProps> = ({ Component, pageProps }) => {
 					provider && network?.id
 						? createQueryContext({
 								provider: provider,
-								signer: signer || undefined,
+								signer: signer,
 								networkId: network.id,
 						  })
 						: createQueryContext({
 								networkId: 1,
 								provider: L1DefaultProvider,
+								signer: null,
 						  })
 				}
 			>
