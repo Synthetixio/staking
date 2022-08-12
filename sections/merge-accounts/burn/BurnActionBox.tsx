@@ -3,8 +3,6 @@ import styled from 'styled-components';
 import { Trans, useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
 import Wei, { wei } from '@synthetixio/wei';
-
-import Connector from 'containers/Connector';
 import StructuredTab from 'components/StructuredTab';
 import Etherscan from 'containers/BlockExplorer';
 import NavigationBack from 'assets/svg/app/navigation-back.svg';
@@ -39,6 +37,7 @@ import { getStakingAmount } from 'sections/staking/components/helper';
 import useBurnTx from 'sections/staking/hooks/useBurnTx';
 
 import { TxWaiting, TxSuccess } from './Tx';
+import ConnectOrSwitchNetwork from 'components/ConnectOrSwitchNetwork';
 
 const BurnTab: FC = () => {
 	const { t } = useTranslation();
@@ -59,7 +58,6 @@ const BurnTab: FC = () => {
 
 const BurnTabInner: FC = () => {
 	const { t } = useTranslation();
-	const { connectWallet } = Connector.useContainer();
 
 	const router = useRouter();
 	const { blockExplorerInstance } = Etherscan.useContainer();
@@ -116,11 +114,7 @@ const BurnTabInner: FC = () => {
 
 	const returnButtonStates = useMemo(() => {
 		if (!isWalletConnected) {
-			return (
-				<StyledCTA variant="primary" size="lg" onClick={connectWallet}>
-					{t('common.wallet.connect-wallet')}
-				</StyledCTA>
-			);
+			return <ConnectOrSwitchNetwork />;
 		} else if (error) {
 			return (
 				<StyledCTA variant="primary" size="lg" disabled={true}>
@@ -139,7 +133,7 @@ const BurnTabInner: FC = () => {
 				</StyledCTA>
 			);
 		}
-	}, [error, txn.txnStatus, t, isWalletConnected, connectWallet, onBurn]);
+	}, [error, txn.txnStatus, isWalletConnected, onBurn]);
 
 	if (txn.txnStatus === 'pending') {
 		return <TxWaiting {...{ unstakeAmount, burnAmount: burnAmountUi, txLink }} />;

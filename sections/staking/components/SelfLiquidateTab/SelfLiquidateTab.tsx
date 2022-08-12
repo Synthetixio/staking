@@ -6,19 +6,17 @@ import { useRecoilValue } from 'recoil';
 import { TabContainer } from 'sections/staking/components/common';
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 import { delegateWalletState } from 'store/wallet';
-import { useTranslation } from 'react-i18next';
 import SelfLiquidationTabContent from './SelfLiquidationTabContent';
-import { StyledCTA } from 'sections/staking/components/common';
 import Connector from 'containers/Connector';
 import styled from 'styled-components';
 import { FlexDivJustifyCenter } from 'styles/common';
 import Loader from 'components/Loader';
 import useGetCanBurn from 'hooks/useGetCanBurn';
+import ConnectOrSwitchNetwork from 'components/ConnectOrSwitchNetwork';
 
 const SelfLiquidateTab = () => {
-	const { connectWallet, walletAddress } = Connector.useContainer();
+	const { walletAddress, isWalletConnected } = Connector.useContainer();
 
-	const { t } = useTranslation();
 	const {
 		debtBalance,
 		issuableSynths,
@@ -53,12 +51,10 @@ const SelfLiquidateTab = () => {
 	);
 
 	const burnAmountToFixCRatio = wei(Wei.max(debtBalance.sub(issuableSynths), wei(0)));
-	if (!walletAddress) {
+	if (!isWalletConnected || !walletAddress) {
 		return (
 			<ConnectWalletButtonWrapper>
-				<StyledCTA variant="primary" size="lg" onClick={connectWallet}>
-					{t('common.wallet.connect-wallet')}
-				</StyledCTA>
+				<ConnectOrSwitchNetwork />
 			</ConnectWalletButtonWrapper>
 		);
 	}
@@ -96,7 +92,7 @@ const SelfLiquidateTab = () => {
 	);
 };
 const ConnectWalletButtonWrapper = styled.div`
-	width: 200px;
+	width: 250px;
 	margin: 0 auto;
 `;
 export default SelfLiquidateTab;

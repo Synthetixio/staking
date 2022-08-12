@@ -41,7 +41,7 @@ const UserMenu: FC = () => {
 	const { t } = useTranslation();
 	const { networkError } = UI.useContainer();
 
-	const { network, ensName, ensAvatar, isWalletConnected, walletAddress } =
+	const { network, ensName, ensAvatar, isWalletConnected, walletAddress, signer } =
 		Connector.useContainer();
 
 	const [walletOptionsModalOpened, setWalletOptionsModalOpened] = useState<boolean>(false);
@@ -101,7 +101,11 @@ const UserMenu: FC = () => {
 									>
 										<FlexDivCentered>
 											<StyledConnectionDot />
-											<UpperCased>{t('common.wallet.not-connected')}</UpperCased>
+											<UpperCased>
+												{signer
+													? t('common.wallet.unsupported-network')
+													: t('common.wallet.not-connected')}
+											</UpperCased>
 										</FlexDivCentered>
 										{walletOptionsModalOpened ? <CaretUp width="10" /> : <CaretDown width="10" />}
 									</WalletButton>

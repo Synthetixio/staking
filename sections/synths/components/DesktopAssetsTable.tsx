@@ -36,6 +36,7 @@ import { isSynth } from 'utils/currencies';
 import SynthPriceCol from './SynthPriceCol';
 import { StyledButtonBlue, StyledButtonPink } from './common';
 import { CurrencyKey } from '@synthetixio/contracts-interface';
+import ConnectOrSwitchNetwork from 'components/ConnectOrSwitchNetwork';
 
 type AssetsTableProps = {
 	assets: CryptoBalance[];
@@ -65,8 +66,7 @@ const AssetsTable: FC<AssetsTableProps> = ({
 	showPrice = true,
 }) => {
 	const { t } = useTranslation();
-	const { connectWallet, synthsMap, isAppReady, isL2, isWalletConnected } =
-		Connector.useContainer();
+	const { synthsMap, isAppReady, isL2, isWalletConnected } = Connector.useContainer();
 
 	const router = useRouter();
 
@@ -239,12 +239,7 @@ const AssetsTable: FC<AssetsTableProps> = ({
 			noResultsMessage={
 				!isWalletConnected ? (
 					<TableNoResults>
-						<TableNoResultsTitle>{t('common.wallet.no-wallet-connected')}</TableNoResultsTitle>
-						<TableNoResultsButtonContainer>
-							<Button variant="primary" onClick={connectWallet}>
-								{t('common.wallet.connect-wallet')}
-							</Button>
-						</TableNoResultsButtonContainer>
+						<ConnectOrSwitchNetwork />
 					</TableNoResults>
 				) : isLoaded && assets.length === 0 ? (
 					<TableNoResults>

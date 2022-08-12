@@ -21,6 +21,7 @@ import SystemStatus from 'sections/shared/SystemStatus';
 import '../i18n';
 import Connector from 'containers/Connector';
 import Script from 'next/script';
+import { isSupportedNetworkId } from '../utils/network';
 
 const queryClient = new QueryClient({
 	defaultOptions: {
@@ -32,23 +33,23 @@ const queryClient = new QueryClient({
 });
 
 const InnerApp: FC<AppProps> = ({ Component, pageProps }) => {
-	const { provider, signer, network, L1DefaultProvider } = Connector.useContainer();
+	const { provider, signer, network, L1DefaultProvider, synthetixjs } = Connector.useContainer();
 
 	useEffect(() => {
 		try {
 			document.querySelector('#global-loader')?.remove();
 		} catch (_e) {}
 	}, []);
-
+	const networkId = String(network?.id);
 	return (
 		<>
 			<SynthetixQueryContextProvider
 				value={
-					provider && network?.id
+					provider && isSupportedNetworkId(networkId) && synthetixjs
 						? createQueryContext({
 								provider: provider,
 								signer: signer || undefined,
-								networkId: network.id,
+								networkId,
 						  })
 						: createQueryContext({
 								networkId: 1,

@@ -48,6 +48,7 @@ import Button from 'components/Button';
 import Currency from 'components/Currency';
 import { parseSafeWei } from 'utils/parse';
 import { GasPrice } from '@synthetixio/queries';
+import ConnectOrSwitchNetwork from 'components/ConnectOrSwitchNetwork';
 
 type StakingInputProps = {
 	onSubmit: () => void;
@@ -119,7 +120,7 @@ const StakingInput: React.FC<StakingInputProps> = ({
 }) => {
 	const { targetCRatio, SNXRate, debtBalance, issuableSynths, collateral, currentCRatio } =
 		useStakingCalculations();
-	const { connectWallet, isWalletConnected } = Connector.useContainer();
+	const { isWalletConnected } = Connector.useContainer();
 	const burnType = useRecoilValue(burnTypeState);
 	const { t } = useTranslation();
 
@@ -145,25 +146,24 @@ const StakingInput: React.FC<StakingInputProps> = ({
 
 	const returnButtonStates = useMemo(() => {
 		if (!isWalletConnected) {
-			return (
-				<StyledCTA variant="primary" size="lg" onClick={connectWallet}>
-					{t('common.wallet.connect-wallet')}
-				</StyledCTA>
-			);
-		} else if (error) {
+			return <ConnectOrSwitchNetwork />;
+		}
+		if (error) {
 			if (!errorIsClearable(error)) return null;
 			return (
 				<StyledCTA variant="primary" size="lg" onClick={() => resetTransaction()}>
 					{t('common.error.clear')}
 				</StyledCTA>
 			);
-		} else if (inputValue.toString().length === 0) {
+		}
+		if (inputValue.toString().length === 0) {
 			return (
 				<StyledCTA variant="primary" size="lg" disabled={true}>
 					{isMint ? t('staking.actions.mint.action.empty') : t('staking.actions.burn.action.empty')}
 				</StyledCTA>
 			);
-		} else if (
+		}
+		if (
 			burnType === BurnActionType.TARGET &&
 			maxBurnAmount != null &&
 			burnAmountToFixCRatio != null &&
@@ -177,7 +177,8 @@ const StakingInput: React.FC<StakingInputProps> = ({
 					/>
 				</StyledCTA>
 			);
-		} else if (burnType === BurnActionType.CLEAR) {
+		}
+		if (burnType === BurnActionType.CLEAR) {
 			return (
 				<StyledCTA
 					onClick={onSubmit}
@@ -188,23 +189,20 @@ const StakingInput: React.FC<StakingInputProps> = ({
 					{t('staking.actions.burn.action.clear-debt')}
 				</StyledCTA>
 			);
-		} else {
-			return (
-				<StyledCTA
-					onClick={onSubmit}
-					variant="primary"
-					size="lg"
-					disabled={transactionState !== 'unsent'}
-				>
-					<Trans
-						i18nKey={
-							isMint ? 'staking.actions.mint.action.mint' : 'staking.actions.burn.action.burn'
-						}
-						components={[<NoTextTransform />]}
-					/>
-				</StyledCTA>
-			);
 		}
+		return (
+			<StyledCTA
+				onClick={onSubmit}
+				variant="primary"
+				size="lg"
+				disabled={transactionState !== 'unsent'}
+			>
+				<Trans
+					i18nKey={isMint ? 'staking.actions.mint.action.mint' : 'staking.actions.burn.action.burn'}
+					components={[<NoTextTransform />]}
+				/>
+			</StyledCTA>
+		);
 	}, [
 		isWalletConnected,
 		error,
@@ -212,7 +210,6 @@ const StakingInput: React.FC<StakingInputProps> = ({
 		burnType,
 		maxBurnAmount,
 		burnAmountToFixCRatio,
-		connectWallet,
 		t,
 		resetTransaction,
 		isMint,
@@ -349,7 +346,7 @@ const StakingInput: React.FC<StakingInputProps> = ({
 					</DataRow>
 				</DataContainer>
 			</InputContainer>
-			<ErrorParagraph>{error}</ErrorParagraph>
+			{isWalletConnected && <ErrorParagraph>{error}</ErrorParagraph>}
 			{returnButtonStates}
 			{txModalOpen && (
 				<TxConfirmationModal

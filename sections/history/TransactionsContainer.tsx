@@ -16,7 +16,6 @@ import {
 	CapitalizedText,
 	GridDiv,
 	TableNoResults,
-	TableNoResultsTitle,
 	TableNoResultsButtonContainer,
 } from 'styles/common';
 
@@ -30,10 +29,11 @@ import {
 
 import CustomTypeOption from './CustomTypeOption';
 import { StakingTransactionType } from '@synthetixio/queries';
+import ConnectOrSwitchNetwork from '../../components/ConnectOrSwitchNetwork';
 
 const TransactionsContainer: FC<TransactionsContainerProps> = ({ history, isLoaded }) => {
 	const { t } = useTranslation();
-	const { connectWallet, isWalletConnected } = Connector.useContainer();
+	const { isWalletConnected } = Connector.useContainer();
 
 	const [typeFilter, setTypeFilter] = useState<ValueType<TypeFilterOptionType>>();
 	const [dateFilter, setDateFilter] = useState<{
@@ -224,12 +224,7 @@ const TransactionsContainer: FC<TransactionsContainerProps> = ({ history, isLoad
 				noResultsMessage={
 					!isWalletConnected ? (
 						<TableNoResults>
-							<TableNoResultsTitle>{t('common.wallet.no-wallet-connected')}</TableNoResultsTitle>
-							<TableNoResultsButtonContainer>
-								<Button variant="primary" onClick={connectWallet}>
-									{t('common.wallet.connect-wallet')}
-								</Button>
-							</TableNoResultsButtonContainer>
+							<ConnectOrSwitchNetwork />
 						</TableNoResults>
 					) : isLoaded && filtersEnabled && filteredTransactions.length === 0 ? (
 						<TableNoResults>
