@@ -93,16 +93,14 @@ const useConnector = () => {
 					useOvm: getIsOVM(networkId),
 				};
 
-				console.log('Provider', update.wallets[0].provider);
-
 				const provider = new ethers.providers.Web3Provider(update.wallets[0].provider, {
 					name: network.name,
 					chainId: networkId,
 				});
 
 				const signer = provider.getSigner();
-				const contracts = setSynthetix(networkId, signer);
-				const synthetixjs = isSupported ? ({ contracts } as SynthetixJS) : null;
+				// const contracts = setSynthetix(networkId, signer);
+				// const synthetixjs = isSupported ? ({ contracts } as SynthetixJS) : null;
 
 				dispatch({
 					type: AppEvents.CONFIG_UPDATE,
