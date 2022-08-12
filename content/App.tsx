@@ -32,8 +32,8 @@ const queryClient = new QueryClient({
 });
 
 const InnerApp: FC<AppProps> = ({ Component, pageProps }) => {
-	const { provider, signer, network, L1DefaultProvider } = Connector.useContainer();
-	console.log('hello world');
+	const { provider, signer, network, L1DefaultProvider, synthetixjs } = Connector.useContainer();
+
 	useEffect(() => {
 		try {
 			document.querySelector('#global-loader')?.remove();
@@ -48,12 +48,14 @@ const InnerApp: FC<AppProps> = ({ Component, pageProps }) => {
 						? createQueryContext({
 								provider: provider,
 								signer: signer,
+								synthetixjs,
 								networkId: network.id,
 						  })
 						: createQueryContext({
 								networkId: 1,
+								synthetixjs,
 								provider: L1DefaultProvider,
-								signer: null,
+								signer,
 						  })
 				}
 			>

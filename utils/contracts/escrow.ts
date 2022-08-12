@@ -21,7 +21,7 @@ import {
 } from '@synthetixio/contracts/build/goerli-ovm/deployment/RewardEscrowV2';
 
 export const contracts = {
-	FeePool: {
+	RewardEscrowV2: {
 		mainnet: {
 			name: RewardEscrowV2Mainnet,
 			address: RewardEscrowV2AddressMainnet,

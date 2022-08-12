@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { orderBy } from 'lodash';
 
 import { CryptoCurrency, Synths } from 'constants/currency';
@@ -26,7 +26,17 @@ const useCryptoBalances = (walletAddress: string | null) => {
 	const { useTokensBalancesQuery, useExchangeRatesQuery, useGetDebtDataQuery } =
 		useSynthetixQueries();
 
-	const { network } = Connector.useContainer();
+	const { network, synthetixjs } = Connector.useContainer();
+
+	useEffect(() => {
+		(async () => {
+			if (synthetixjs?.contracts?.SynthUtil) {
+				console.log(synthetixjs?.contracts.SynthUtil);
+				const res = await synthetixjs?.contracts.SynthUtil.synthsRates();
+				console.log(res);
+			}
+		})();
+	}, []);
 
 	const tokenDefs = [getETHToken(network)];
 

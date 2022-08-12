@@ -73,26 +73,24 @@ export const contracts = {
 	},
 	SynthUtil: {
 		mainnet: {
-			mainnet: {
-				name: SynthUtilMainnet,
-				address: SynthUtilAddressMainnet,
-				abi: SynthUtilAbiMainnet,
-			},
-			'mainnet-ovm': {
-				name: SynthUtilMainnetOvm,
-				address: SynthUtilAddressMainnetOvm,
-				abi: SynthUtilAbiMainnetOvm,
-			},
-			goerli: {
-				name: SynthUtilGoerli,
-				address: SynthUtilAddressGoerli,
-				abi: SynthUtilAbiGoerli,
-			},
-			'goerli-ovm': {
-				name: SynthUtilGoerliOvm,
-				address: SynthUtilAddressGoerliOvm,
-				abi: SynthUtilAbiGoerliOvm,
-			},
+			name: SynthUtilMainnet,
+			address: SynthUtilAddressMainnet,
+			abi: SynthUtilAbiMainnet,
+		},
+		'mainnet-ovm': {
+			name: SynthUtilMainnetOvm,
+			address: SynthUtilAddressMainnetOvm,
+			abi: SynthUtilAbiMainnetOvm,
+		},
+		goerli: {
+			name: SynthUtilGoerli,
+			address: SynthUtilAddressGoerli,
+			abi: SynthUtilAbiGoerli,
+		},
+		'goerli-ovm': {
+			name: SynthUtilGoerliOvm,
+			address: SynthUtilAddressGoerliOvm,
+			abi: SynthUtilAbiGoerliOvm,
 		},
 	},
 };

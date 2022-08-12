@@ -21,28 +21,26 @@ import {
 } from '@synthetixio/contracts/build/goerli-ovm/deployment/Liquidator';
 
 export const contracts = {
-	FeePool: {
+	Liquidator: {
 		mainnet: {
-			mainnet: {
-				name: LiquidatorMainnet,
-				address: LiquidatorAddressMainnet,
-				abi: LiquidatorAbiMainnet,
-			},
-			'mainnet-ovm': {
-				name: LiquidatorMainnetOvm,
-				address: LiquidatorAddressMainnetOvm,
-				abi: LiquidatorAbiMainnetOvm,
-			},
-			goerli: {
-				name: LiquidatorGoerli,
-				address: LiquidatorAddressGoerli,
-				abi: LiquidatorAbiGoerli,
-			},
-			'goerli-ovm': {
-				name: LiquidatorGoerliOvm,
-				address: LiquidatorAddressGoerliOvm,
-				abi: LiquidatorAbiGoerliOvm,
-			},
+			name: LiquidatorMainnet,
+			address: LiquidatorAddressMainnet,
+			abi: LiquidatorAbiMainnet,
+		},
+		'mainnet-ovm': {
+			name: LiquidatorMainnetOvm,
+			address: LiquidatorAddressMainnetOvm,
+			abi: LiquidatorAbiMainnetOvm,
+		},
+		goerli: {
+			name: LiquidatorGoerli,
+			address: LiquidatorAddressGoerli,
+			abi: LiquidatorAbiGoerli,
+		},
+		'goerli-ovm': {
+			name: LiquidatorGoerliOvm,
+			address: LiquidatorAddressGoerliOvm,
+			abi: LiquidatorAbiGoerliOvm,
 		},
 	},
 };

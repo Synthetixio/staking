@@ -21,7 +21,7 @@ import {
 } from '@synthetixio/contracts/build/goerli-ovm/deployment/SynthUtil';
 
 export const contracts = {
-	SynthUril: {
+	SynthUtil: {
 		mainnet: {
 			name: SynthUtilMainnet,
 			address: SynthUtilAddressMainnet,

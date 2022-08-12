@@ -1,3 +1,4 @@
+import { Signer, Contract } from 'ethers';
 import { contracts as StakingContracts } from './staking';
 import { contracts as DebtContracts } from './debt';
 import { contracts as EscrowContracts } from './escrow';
@@ -8,7 +9,7 @@ import { contracts as StatusContracts } from './status';
 import { contracts as SynthsContracts } from './synths';
 import { contracts as SynthsCurrenciesContracts } from './synthsCurrencies';
 import { contracts as WalletContracts } from './wallet';
-import { NetworkId, NetworkNameById } from '@synthetixio/contracts-interface';
+import { ContractsMap, NetworkId, NetworkNameById } from '@synthetixio/contracts-interface';
 
 export const contracts: any = {
 	...StakingContracts,
@@ -25,16 +26,26 @@ export const contracts: any = {
 
 type ContractName = keyof typeof contracts;
 
-function initializeSynthetix(networkId: NetworkId) {
+export function initializeSynthetix(networkId: NetworkId, signer: Signer) {
 	const contractsNames = Object.keys(contracts) as ContractName[];
-	contractsNames.map((contractName: ContractName) => {
-		const { name, address, abi } = contracts[contractName][NetworkNameById[networkId]];
-		return {
-			name,
-			address,
-			abi,
-		};
-	});
-}
+	return contractsNames
+		.map((contractName: ContractName) => {
+			if (!contracts[contractName][NetworkNameById[networkId]]) {
+				// Some contracts are not supported on both networks
+				return null;
+			}
 
-initializeSynthetix(1);
+			const { name, address, abi } = contracts[contractName][NetworkNameById[networkId]];
+
+			return {
+				name,
+				address,
+				abi,
+			};
+		})
+		.filter((item) => item !== null)
+		.reduce((acc: ContractsMap, contract) => {
+			acc[contract?.name] = new Contract(contract?.address, contract?.abi, signer);
+			return acc;
+		}, {});
+}

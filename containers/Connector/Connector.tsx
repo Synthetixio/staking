@@ -6,7 +6,7 @@ import { loadProvider, SynthetixProvider } from '@synthetixio/providers';
 
 import { getIsOVM, isSupportedNetworkId } from 'utils/network';
 
-import { synthetix, NetworkNameById, NetworkIdByName } from '@synthetixio/contracts-interface';
+import { NetworkNameById, NetworkIdByName, SynthetixJS } from '@synthetixio/contracts-interface';
 import { ethers } from 'ethers';
 
 import { isSupportedWalletChain, onboard as Web3Onboard } from './config';
@@ -18,9 +18,7 @@ import { AppEvents, initialState, reducer } from './reducer';
 
 import { getChainIdHex, getNetworkIdFromHex } from 'utils/infura';
 import { Network } from 'store/wallet';
-import { contracts } from '../../utils/contracts';
-
-console.log(contracts);
+import { initializeSynthetix } from '../../utils/contracts';
 
 const defaultNetwork: Network = {
 	id: 1,
@@ -44,6 +42,8 @@ const useConnector = () => {
 		onboard,
 		walletType,
 	} = state;
+
+	const setSynthetix = useCallback((id, provider) => initializeSynthetix(id, provider), []);
 
 	// Ethereum Mainnet
 	const L1DefaultProvider: SynthetixProvider = useMemo(
@@ -95,14 +95,16 @@ const useConnector = () => {
 						useOvm: getIsOVM(networkId),
 					};
 
+					console.log('Provider', update.wallets[0].provider);
+
 					const provider = new ethers.providers.Web3Provider(update.wallets[0].provider, {
 						name: network.name,
 						chainId: networkId,
 					});
 
 					const signer = provider.getSigner();
-					const useOvm = getIsOVM(Number(networkId));
-					const synthetixjs = synthetix({ provider, networkId, useOvm });
+					const contracts = setSynthetix(networkId, signer);
+					const synthetixjs = { contracts } as SynthetixJS;
 
 					dispatch({
 						type: AppEvents.CONFIG_UPDATE,
@@ -129,7 +131,7 @@ const useConnector = () => {
 				dispatch({ type: AppEvents.WALLET_DISCONNECTED });
 			}
 		},
-		[onboard]
+		[onboard, setSynthetix]
 	);
 
 	const transactionNotifier = useMemo(

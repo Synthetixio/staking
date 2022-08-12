@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { FC, useMemo } from 'react';
+import { FC, useEffect, useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import useCryptoBalances from 'hooks/useCryptoBalances';
@@ -35,6 +35,7 @@ const DesktopSideNav: FC = () => {
 	const synthsBalancesQuery = useSynthsBalancesQuery(delegateWallet?.address ?? walletAddress);
 
 	const lockedSNXQuery = useSNXData(L1DefaultProvider);
+
 	const tRatio = useMemo(() => {
 		if (lockedSNXQuery?.data?.lockedSupply?.gt(1) && lockedSNXQuery?.data?.totalSNXSupply) {
 			return lockedSNXQuery.data.lockedSupply

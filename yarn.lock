@@ -3863,8 +3863,8 @@ __metadata:
   linkType: hard
 
 "@synthetixio/queries@file:../js-monorepo/packages/queries::locator=staking%40workspace%3A.":
-  version: 2.74.7
-  resolution: "@synthetixio/queries@file:../js-monorepo/packages/queries#../js-monorepo/packages/queries::hash=1e7f59&locator=staking%40workspace%3A."
+  version: 2.74.8
+  resolution: "@synthetixio/queries@file:../js-monorepo/packages/queries#../js-monorepo/packages/queries::hash=556655&locator=staking%40workspace%3A."
   dependencies:
     "@ethersproject/abstract-signer": ^5.6.2
     "@ethersproject/address": ^5.6.1
@@ -3877,6 +3877,7 @@ __metadata:
     "@ethersproject/units": ^5.6.1
     "@snapshot-labs/snapshot.js": ^0.4.13
     "@synthetixio/codegen-graph-ts": ^2.74.2
+    "@synthetixio/contracts": ^1.0.2
     "@synthetixio/optimism-networks": ^2.74.2
     "@synthetixio/wei": ^2.74.2
     axios: ^0.21.4
@@ -3888,7 +3889,7 @@ __metadata:
     react: 17.x
     react-dom: 17.x
     react-query: 3.16.x
-  checksum: ed83c7f03624e9d8a259d320b5df15038a799e15258ef6c919618de5fc5f618a606501488f69cb74bb95aae97bc5f62bfb889d893d0919ecd6eae5fcef64b933
+  checksum: 188f12058a0c5f65a501960cb200886d7a6302a34cea6501a64682e49c07ff69ff6ccc7357fae4bf322720e64488db004dfac6154c2c84882869598c3e3631b7
   languageName: node
   linkType: hard
 
