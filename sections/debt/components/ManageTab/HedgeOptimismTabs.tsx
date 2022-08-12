@@ -9,8 +9,8 @@ export default function HedgeOptimismTabs() {
 	const [activeTab, setActiveTab] = useState('buy');
 
 	return (
-		<>
-			<StyledTabsContainer>
+		<StyledContainer>
+			<FlexDivJustifyCenter>
 				<StyledTabButton
 					active={activeTab === 'buy'}
 					onClick={() => setActiveTab('buy')}
@@ -25,16 +25,17 @@ export default function HedgeOptimismTabs() {
 				>
 					SELL
 				</StyledTabButton>
-			</StyledTabsContainer>
+			</FlexDivJustifyCenter>
 			{activeTab === 'buy' ? <HedgeTabOptimism /> : <SellHedgeTabOptimism />}
-		</>
+		</StyledContainer>
 	);
 }
 
-const StyledTabButton = styled(TabButton)`
-	width: 100%;
-`;
-const StyledTabsContainer = styled(FlexDivJustifyCenter)`
+const StyledContainer = styled.div`
 	width: 100%;
 	height: 100%;
+`;
+
+const StyledTabButton = styled(TabButton)`
+	width: 100%;
 `;
