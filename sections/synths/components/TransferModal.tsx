@@ -49,7 +49,7 @@ const TransferModal: FC<TransferModalProps> = ({
 		setDestinationAddress((e.target.value ?? '').trim());
 
 	const contract =
-		synthetixjs!.contracts[
+		synthetixjs?.contracts[
 			isSynth(currentAsset?.currencyKey)
 				? synthToContractName(currentAsset?.currencyKey || '')
 				: 'Synthetix'
@@ -58,7 +58,7 @@ const TransferModal: FC<TransferModalProps> = ({
 	const transferAmountWei = parseSafeWei(amount, 0);
 
 	const txn = useContractTxn(
-		contract,
+		contract ?? null,
 		isSynth(currentAsset?.currencyKey) ? 'transferAndSettle' : 'transfer',
 		[
 			ethers.utils.isAddress(destinationAddress)

@@ -35,6 +35,7 @@ import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import WalletIcon from 'assets/svg/app/wallet-purple.svg';
 import ROUTES from 'constants/routes';
 import { TxWaiting, TxSuccess } from './Tx';
+import ConnectOrSwitchNetwork from '../../../components/ConnectOrSwitchNetwork';
 
 const NominateTab: FC = () => {
 	const { t } = useTranslation();
@@ -103,10 +104,10 @@ const NominateTabInner: FC = () => {
 
 	// load any previously nominated account address
 	useEffect(() => {
-		if (!isAppReady) return;
+		if (!isAppReady || !synthetixjs) return;
 		const {
 			contracts: { RewardEscrowV2 },
-		} = synthetixjs!;
+		} = synthetixjs;
 		if (!sourceAccountAddress) return;
 
 		let isMounted = true;
@@ -232,20 +233,14 @@ const NominateTabInner: FC = () => {
 					</SettingContainer>
 				</SettingsContainer>
 			</FormContainer>
-
-			<FormButton
-				onClick={connectOrBurnOrNominate}
-				variant="primary"
-				size="lg"
-				data-testid="form-button"
-				disabled={
-					isWalletConnected &&
-					(!properDestinationAccountAddress || !!destinationAccountAddressInputError)
-				}
-			>
-				{!isWalletConnected ? (
-					t('common.wallet.connect-wallet')
-				) : (
+			{isWalletConnected ? (
+				<FormButton
+					onClick={connectOrBurnOrNominate}
+					variant="primary"
+					size="lg"
+					data-testid="form-button"
+					disabled={!properDestinationAccountAddress || !!destinationAccountAddressInputError}
+				>
 					<Trans
 						i18nKey={`merge-accounts.nominate.button-labels.${
 							txModalOpen
@@ -258,8 +253,10 @@ const NominateTabInner: FC = () => {
 						}`}
 						components={[<NoTextTransform />]}
 					/>
-				)}
-			</FormButton>
+				</FormButton>
+			) : (
+				<ConnectOrSwitchNetwork />
+			)}
 
 			{!txn.error ? null : <ErrorMessage>{txn.errorMessage}</ErrorMessage>}
 

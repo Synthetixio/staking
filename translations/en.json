@@ -97,6 +97,10 @@
 			"stop-delegation": "Stop delegate mode",
 			"change-wallet": "change wallet",
 			"switch-account": "switch account",
+			"network": {
+				"ethereum": "Ethereum Mainnet",
+				"optimism": "Optimism Mainnet"
+			},
 			"available-on-hardware-wallet": "Available on hardware wallets",
 			"delegate-mode": {
 				"menu-title": "Delegate mode",
@@ -115,6 +119,7 @@
 					"remove": "Remove address"
 				}
 			},
+
 			"wallet-options": {
 				"title": "Please choose:"
 			}
@@ -1222,6 +1227,8 @@
 		"wallet": {
 			"connect-wallet": "connect wallet",
 			"no-wallet-connected": "No wallet connected",
+			"unsupported-network": "Unsupported Network",
+			"switch-to-supported": "Switch to a supported network:",
 			"balance": "Balance: {{balance}}",
 			"transferable": "<0>Transferable</0> {{transferable}}",
 			"not-connected": "Not connected",

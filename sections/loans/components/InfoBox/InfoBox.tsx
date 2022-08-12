@@ -56,7 +56,7 @@ const InfoBox: React.FC = () => {
 					ExchangeRates: exchangeRatesContract,
 					CollateralManager: collateralManagerContract,
 				},
-			} = synthetixjs!;
+			} = synthetixjs;
 
 			const getBorrowStats = async (currency: string) => {
 				const [openInterest, [assetUSDPrice]] = await Promise.all([

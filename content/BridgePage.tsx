@@ -7,7 +7,8 @@ import { useTranslation } from 'react-i18next';
 import media from 'styles/media';
 
 const BridgePage = () => {
-	const { connectWallet, isWalletConnected } = Connector.useContainer();
+	const { connectWallet, walletConnectedToUnsupportedNetwork, isWalletConnected } =
+		Connector.useContainer();
 
 	const { t } = useTranslation();
 	return (
@@ -19,7 +20,7 @@ const BridgePage = () => {
 				<Headline>{t('bridge.headline')}</Headline>
 			</HeadlineContainer>
 
-			{isWalletConnected ? (
+			{Boolean(walletConnectedToUnsupportedNetwork || isWalletConnected) ? (
 				<>
 					<SocketBridge />
 				</>

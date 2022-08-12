@@ -6,7 +6,12 @@ import { loadProvider, SynthetixProvider } from '@synthetixio/providers';
 
 import { getIsOVM, isSupportedNetworkId } from 'utils/network';
 
-import { NetworkNameById, NetworkIdByName, SynthetixJS } from '@synthetixio/contracts-interface';
+import {
+	synthetix,
+	NetworkNameById,
+	NetworkIdByName,
+	NetworkId,
+} from '@synthetixio/contracts-interface';
 import { ethers } from 'ethers';
 
 import { isSupportedWalletChain, onboard as Web3Onboard } from './config';
@@ -21,9 +26,9 @@ import { Network } from 'store/wallet';
 import { initializeSynthetix } from '../../utils/contracts';
 
 const defaultNetwork: Network = {
-	id: 1,
-	name: NetworkNameById[1],
-	useOvm: getIsOVM(1),
+	id: NetworkIdByName.mainnet,
+	name: NetworkNameById[NetworkIdByName.mainnet],
+	useOvm: getIsOVM(NetworkIdByName.mainnet),
 };
 
 const useConnector = () => {
@@ -80,58 +85,47 @@ const useConnector = () => {
 
 				const isSupported = isSupportedNetworkId(networkId) && isSupportedWalletChain(networkId);
 
-				if (!isSupported) {
-					// Switch to mainnet ethereum by default
-					(async () => {
-						// Only switch chains if the user has tab open
-						if (document.hasFocus()) {
-							await onboard?.setChain({ chainId: getChainIdHex(NetworkIdByName.mainnet) });
-						}
-					})();
-				} else {
-					const network = {
-						id: networkId,
-						name: NetworkNameById[networkId],
-						useOvm: getIsOVM(networkId),
-					};
+				const network = {
+					id: networkId,
+					name: isSupportedNetworkId(networkId)
+						? NetworkNameById[networkId]
+						: 'Unsupported Network',
+					useOvm: getIsOVM(networkId),
+				};
 
-					console.log('Provider', update.wallets[0].provider);
+				console.log('Provider', update.wallets[0].provider);
 
-					const provider = new ethers.providers.Web3Provider(update.wallets[0].provider, {
-						name: network.name,
-						chainId: networkId,
-					});
+				const provider = new ethers.providers.Web3Provider(update.wallets[0].provider, {
+					name: network.name,
+					chainId: networkId,
+				});
 
-					const signer = provider.getSigner();
-					const contracts = setSynthetix(networkId, signer);
-					const synthetixjs = { contracts } as SynthetixJS;
+				const signer = provider.getSigner();
+				const contracts = setSynthetix(networkId, signer);
+				const synthetixjs = isSupported ? ({ contracts } as SynthetixJS) : null;
 
-					dispatch({
-						type: AppEvents.CONFIG_UPDATE,
-						payload: {
-							address: wallet.address,
-							walletWatched: null,
-							walletType: label,
-							network,
-							provider,
-							signer,
-							synthetixjs,
-							ensName: wallet?.ens?.name || null,
-							ensAvatar: wallet?.ens?.avatar?.url || null,
-						},
-					});
+				dispatch({
+					type: AppEvents.CONFIG_UPDATE,
+					payload: {
+						address: wallet.address,
+						walletWatched: null,
+						walletType: label,
+						network,
+						provider,
+						signer,
+						synthetixjs,
+						ensName: wallet?.ens?.name || null,
+						ensAvatar: wallet?.ens?.avatar?.url || null,
+					},
+				});
 
-					const connectedWallets = update.wallets.map(({ label }) => label);
-					localStorage.setItem(
-						LOCAL_STORAGE_KEYS.SELECTED_WALLET,
-						JSON.stringify(connectedWallets)
-					);
-				}
+				const connectedWallets = update.wallets.map(({ label }) => label);
+				localStorage.setItem(LOCAL_STORAGE_KEYS.SELECTED_WALLET, JSON.stringify(connectedWallets));
 			} else {
 				dispatch({ type: AppEvents.WALLET_DISCONNECTED });
 			}
 		},
-		[onboard, setSynthetix]
+		[setSynthetix]
 	);
 
 	const transactionNotifier = useMemo(
@@ -268,7 +262,7 @@ const useConnector = () => {
 
 			return currencyKey === 'ETH'
 				? ETH_ADDRESS
-				: synthetixjs!.contracts[synthToContractName(currencyKey!)].address;
+				: synthetixjs.contracts[synthToContractName(currencyKey!)].address;
 		},
 		[synthetixjs]
 	);
@@ -291,6 +285,9 @@ const useConnector = () => {
 		}
 	}, [onboard, updateState]);
 
+	const switchNetwork = async (id: NetworkId) => {
+		return onboard?.setChain({ chainId: getChainIdHex(id) });
+	};
 	return {
 		isAppReady,
 		network,
@@ -302,7 +299,8 @@ const useConnector = () => {
 		synthetixjs,
 		synthsMap,
 		tokensMap,
-		isWalletConnected: !!walletAddress,
+		isWalletConnected: Boolean(walletAddress && synthetixjs),
+		walletConnectedToUnsupportedNetwork: Boolean(signer && !synthetixjs),
 		isL2: network?.useOvm ?? false,
 		isMainnet: !network?.useOvm ?? false,
 		connectWallet,
@@ -317,6 +315,7 @@ const useConnector = () => {
 		ensAvatar,
 		setWatchedWallet,
 		stopWatching,
+		switchNetwork,
 	};
 };
 

@@ -91,9 +91,10 @@ const ERC20: React.FC<ERC20Props> = ({ asset, onSetMaxAmount }) => {
 	};
 
 	const contract = useMemo(() => {
+		if (!synthetixjs) return null;
 		const {
 			contracts: { ProxysBTC: sBTC, ProxysETH: sETH, ProxyERC20sUSD: sUSD },
-		} = synthetixjs!;
+		} = synthetixjs;
 		const tokens: Record<string, typeof sBTC> = {
 			sBTC,
 			sETH,
