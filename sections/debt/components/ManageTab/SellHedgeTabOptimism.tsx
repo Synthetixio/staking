@@ -9,7 +9,14 @@ import { useState } from 'react';
 import styled from 'styled-components';
 import { FlexDivColCentered } from 'styles/common';
 import { formatCryptoCurrency } from 'utils/formatters/number';
-import { StyledHedgeInput, StyledInputLabel } from './hedge-tab-ui-components';
+import Dhedge from 'assets/svg/app/dhedge.svg';
+import {
+	StyledBackgroundTab,
+	StyledCryptoCurrencyBox,
+	StyledCryptoCurrencyImage,
+	StyledHedgeInput,
+	StyledInputLabel,
+} from './hedge-tab-ui-components';
 
 export default function SellHedgeTabOptimism() {
 	const { useContractTxn } = useSynthetixQueries();
@@ -54,30 +61,43 @@ export default function SellHedgeTabOptimism() {
 	);
 	return (
 		<StyledSellHedgeContainer>
-			<StyledInputLabel>dSNX</StyledInputLabel>
-			<StyledHedgeInput
-				type="number"
-				min={0}
-				disabled={approveTx.isLoading || withdrawTx.isLoading}
-				placeholder={formatCryptoCurrency(dSNXBalanceQuery.data || wei(0), {
-					maxDecimals: 1,
-					minDecimals: 2,
-				})}
-				onChange={(e) => {
-					try {
-						const val = utils.parseUnits(e.target.value || '0', 18);
-						if (val.gte(constants.MaxUint256)) return;
-						setSendMax(false);
-						setAmountToSend(e.target.value);
-					} catch {
-						console.error('Error while parsing input amount');
-					}
-				}}
-				value={sendMax ? dSNXBalanceQuery.data?.toString(2) || '0' : amountToSend}
-				autoFocus={true}
-			/>
-			<StyledInputLabel>SUSD</StyledInputLabel>
-			<StyledHedgeInput></StyledHedgeInput>
+			<StyledBackgroundTab>
+				<StyledInputLabel>
+					Using
+					<StyledCryptoCurrencyBox>
+						<Dhedge width="24" />
+						dSNX
+					</StyledCryptoCurrencyBox>
+				</StyledInputLabel>
+				<StyledHedgeInput
+					type="number"
+					min={0}
+					disabled={approveTx.isLoading || withdrawTx.isLoading}
+					placeholder={formatCryptoCurrency(dSNXBalanceQuery.data || wei(0), {
+						maxDecimals: 1,
+						minDecimals: 2,
+					})}
+					onChange={(e) => {
+						try {
+							const val = utils.parseUnits(e.target.value || '0', 18);
+							if (val.gte(constants.MaxUint256)) return;
+							setSendMax(false);
+							setAmountToSend(e.target.value);
+						} catch {
+							console.error('Error while parsing input amount');
+						}
+					}}
+					value={sendMax ? dSNXBalanceQuery.data?.toString(2) || '0' : amountToSend}
+					autoFocus={true}
+				/>
+				<StyledInputLabel>
+					Buying
+					<StyledCryptoCurrencyBox>
+						<StyledCryptoCurrencyImage src="https://raw.githubusercontent.com/Synthetixio/synthetix-assets/v2.0.10/synths/sUSD.svg" />
+						sUSD
+					</StyledCryptoCurrencyBox>
+				</StyledInputLabel>
+			</StyledBackgroundTab>
 		</StyledSellHedgeContainer>
 	);
 }
