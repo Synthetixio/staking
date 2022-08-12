@@ -3864,7 +3864,7 @@ __metadata:
 
 "@synthetixio/queries@file:../js-monorepo/packages/queries::locator=staking%40workspace%3A.":
   version: 2.74.8
-  resolution: "@synthetixio/queries@file:../js-monorepo/packages/queries#../js-monorepo/packages/queries::hash=556655&locator=staking%40workspace%3A."
+  resolution: "@synthetixio/queries@file:../js-monorepo/packages/queries#../js-monorepo/packages/queries::hash=383310&locator=staking%40workspace%3A."
   dependencies:
     "@ethersproject/abstract-signer": ^5.6.2
     "@ethersproject/address": ^5.6.1
@@ -3889,7 +3889,7 @@ __metadata:
     react: 17.x
     react-dom: 17.x
     react-query: 3.16.x
-  checksum: 188f12058a0c5f65a501960cb200886d7a6302a34cea6501a64682e49c07ff69ff6ccc7357fae4bf322720e64488db004dfac6154c2c84882869598c3e3631b7
+  checksum: 4a6ad6fe69ee3da5b92cf0e306fd30a6e00d11b81c3dd163d1d6d0030b03cca1a0e3685198a79bc9a676d6fc3e642c11db32e1dd78538a332373b4fac451d8ea
   languageName: node
   linkType: hard
 
