@@ -24,67 +24,67 @@ const portis = portisModule({ apiKey: `${process.env.NEXT_PUBLIC_PORTIS_APP_ID}`
 const torus = torusModule();
 
 const supportedChains = [
-	// Mainnet
-	{
-		id: getChainIdHex(NetworkIdByName.mainnet),
-		token: 'ETH',
-		label: 'Ethereum Mainnet',
-		rpcUrl: getInfuraRpcURL(NetworkIdByName.mainnet),
-	},
-	// Mainnet Ovm
-	{
-		id: getChainIdHex(NetworkIdByName['mainnet-ovm']),
-		token: 'ETH',
-		label: 'Optimism Mainnet',
-		rpcUrl: getInfuraRpcURL(NetworkIdByName['mainnet-ovm']),
-	},
-	// goerli
-	{
-		id: getChainIdHex(NetworkIdByName.goerli),
-		token: 'ETH',
-		label: 'Goerli',
-		rpcUrl: getInfuraRpcURL(NetworkIdByName.goerli),
-	},
-	// goerli Ovm
-	{
-		id: getChainIdHex(NetworkIdByName['goerli-ovm']),
-		token: 'ETH',
-		label: 'Optimism Goerli',
-		rpcUrl: getInfuraRpcURL(NetworkIdByName['goerli-ovm']),
-	},
+  // Mainnet
+  {
+    id: getChainIdHex(NetworkIdByName.mainnet),
+    token: 'ETH',
+    label: 'Ethereum Mainnet',
+    rpcUrl: getInfuraRpcURL(NetworkIdByName.mainnet),
+  },
+  // Mainnet Ovm
+  {
+    id: getChainIdHex(NetworkIdByName['mainnet-ovm']),
+    token: 'ETH',
+    label: 'Optimism Mainnet',
+    rpcUrl: getInfuraRpcURL(NetworkIdByName['mainnet-ovm']),
+  },
+  // goerli
+  {
+    id: getChainIdHex(NetworkIdByName.goerli),
+    token: 'ETH',
+    label: 'Goerli',
+    rpcUrl: getInfuraRpcURL(NetworkIdByName.goerli),
+  },
+  // goerli Ovm
+  {
+    id: getChainIdHex(NetworkIdByName['goerli-ovm']),
+    token: 'ETH',
+    label: 'Optimism Goerli',
+    rpcUrl: getInfuraRpcURL(NetworkIdByName['goerli-ovm']),
+  },
 ];
 
 export const isSupportedWalletChain = (networkId: number) => {
-	return !!supportedChains.find((chain) => chain.id === `0x${networkId.toString(16)}`);
+  return !!supportedChains.find((chain) => chain.id === `0x${networkId.toString(16)}`);
 };
 
 export const onboard = Onboard({
-	appMetadata: {
-		name: 'Synthetix',
-		icon: SynthetixIcon,
-		logo: SynthetixLogo,
-		description: 'Synthetix | The derivatives liquidity protocol.',
-		recommendedInjectedWallets: [
-			{ name: 'Coinbase', url: 'https://wallet.coinbase.com/' },
-			{ name: 'MetaMask', url: 'https://metamask.io' },
-		],
-		gettingStartedGuide: 'https://synthetix.io',
-		explore: 'https://blog.synthetix.io/',
-	},
-	apiKey: process.env.NEXT_PUBLIC_BN_ONBOARD_API_KEY,
-	wallets: [injected, ledger /*trezor,*/, coinbaseWalletSdk, walletConnect, gnosis, portis, torus],
-	chains: [...supportedChains],
-	accountCenter: {
-		desktop: {
-			enabled: false,
-			containerElement: 'body',
-		},
-		mobile: {
-			enabled: false,
-			containerElement: 'body',
-		},
-	},
-	notify: {
-		enabled: false,
-	},
+  appMetadata: {
+    name: 'Synthetix',
+    icon: SynthetixIcon,
+    logo: SynthetixLogo,
+    description: 'Synthetix | The derivatives liquidity protocol.',
+    recommendedInjectedWallets: [
+      { name: 'Coinbase', url: 'https://wallet.coinbase.com/' },
+      { name: 'MetaMask', url: 'https://metamask.io' },
+    ],
+    gettingStartedGuide: 'https://synthetix.io',
+    explore: 'https://blog.synthetix.io/',
+  },
+  apiKey: process.env.NEXT_PUBLIC_BN_ONBOARD_API_KEY,
+  wallets: [injected, ledger /*trezor,*/, coinbaseWalletSdk, walletConnect, gnosis, portis, torus],
+  chains: [...supportedChains],
+  accountCenter: {
+    desktop: {
+      enabled: false,
+      containerElement: 'body',
+    },
+    mobile: {
+      enabled: false,
+      containerElement: 'body',
+    },
+  },
+  notify: {
+    enabled: false,
+  },
 });

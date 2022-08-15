@@ -4,8 +4,8 @@ import CurrencyPrice from './CurrencyPrice';
 import CurrencyAmount from './CurrencyAmount';
 
 export default {
-	Icon: CurrencyIcon,
-	Name: CurrencyName,
-	Price: CurrencyPrice,
-	Amount: CurrencyAmount,
+  Icon: CurrencyIcon,
+  Name: CurrencyName,
+  Price: CurrencyPrice,
+  Amount: CurrencyAmount,
 };

@@ -14,47 +14,47 @@ import { wei } from '@synthetixio/wei';
 import Connector from 'containers/Connector';
 
 const SynthsPage: FC = () => {
-	const { t } = useTranslation();
+  const { t } = useTranslation();
 
-	const { walletAddress } = Connector.useContainer();
-	const { useSynthsBalancesQuery } = useSynthetixQueries();
+  const { walletAddress } = Connector.useContainer();
+  const { useSynthsBalancesQuery } = useSynthetixQueries();
 
-	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
-	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
+  const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
+  const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
 
-	const totalSynthValue = synthsBalancesQuery.data?.totalUSDBalance || wei(0);
+  const totalSynthValue = synthsBalancesQuery.data?.totalUSDBalance || wei(0);
 
-	return (
-		<>
-			<Head>
-				<title>{t('synths.page-title')}</title>
-			</Head>
-			<StatsSection>
-				<div />
-				<TotalSynthValue
-					title={t('common.stat-box.synth-value')}
-					value={formatCurrency(
-						selectedPriceCurrency.name,
-						getPriceAtCurrentRate(totalSynthValue),
-						{
-							sign: selectedPriceCurrency.sign,
-						}
-					)}
-					size="lg"
-				/>
-				<div />
-			</StatsSection>
-			<LineSpacer />
-			<Main />
-		</>
-	);
+  return (
+    <>
+      <Head>
+        <title>{t('synths.page-title')}</title>
+      </Head>
+      <StatsSection>
+        <div />
+        <TotalSynthValue
+          title={t('common.stat-box.synth-value')}
+          value={formatCurrency(
+            selectedPriceCurrency.name,
+            getPriceAtCurrentRate(totalSynthValue),
+            {
+              sign: selectedPriceCurrency.sign,
+            }
+          )}
+          size="lg"
+        />
+        <div />
+      </StatsSection>
+      <LineSpacer />
+      <Main />
+    </>
+  );
 };
 
 const TotalSynthValue = styled(StatBox)`
-	.value {
-		text-shadow: ${(props) => props.theme.colors.blueTextShadow};
-		color: ${(props) => props.theme.colors.black};
-	}
+  .value {
+    text-shadow: ${(props) => props.theme.colors.blueTextShadow};
+    color: ${(props) => props.theme.colors.black};
+  }
 `;
 
 export default SynthsPage;

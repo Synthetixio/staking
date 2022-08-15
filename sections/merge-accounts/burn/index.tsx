@@ -6,18 +6,18 @@ import ActionBox from './BurnActionBox';
 import InfoBox from './BurnInfoBox';
 
 const Burn: FC = () => {
-	const { isAppReady } = Connector.useContainer();
+  const { isAppReady } = Connector.useContainer();
 
-	return !isAppReady ? null : (
-		<Cols>
-			<Col>
-				<ActionBox />
-			</Col>
-			<Col>
-				<InfoBox />
-			</Col>
-		</Cols>
-	);
+  return !isAppReady ? null : (
+    <Cols>
+      <Col>
+        <ActionBox />
+      </Col>
+      <Col>
+        <InfoBox />
+      </Col>
+    </Cols>
+  );
 };
 
 export default Burn;

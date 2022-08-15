@@ -6,18 +6,18 @@ import ActionBox from './MergeActionBox';
 import InfoBox from './MergeInfoBox';
 
 const Merge: FC = () => {
-	const { isAppReady } = Connector.useContainer();
+  const { isAppReady } = Connector.useContainer();
 
-	return !isAppReady ? null : (
-		<Cols>
-			<Col>
-				<ActionBox />
-			</Col>
-			<Col>
-				<InfoBox />
-			</Col>
-		</Cols>
-	);
+  return !isAppReady ? null : (
+    <Cols>
+      <Col>
+        <ActionBox />
+      </Col>
+      <Col>
+        <InfoBox />
+      </Col>
+    </Cols>
+  );
 };
 
 export default Merge;

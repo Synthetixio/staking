@@ -10,30 +10,30 @@ import { useRouter } from 'next/router';
 import { EscrowPanelType } from 'store/escrow';
 
 const Index: React.FC = () => {
-	const router = useRouter();
-	const defaultTab = (router.query.action && router.query.action[0]) || EscrowPanelType.REWARDS;
+  const router = useRouter();
+  const defaultTab = (router.query.action && router.query.action[0]) || EscrowPanelType.REWARDS;
 
-	return (
-		<Container>
-			<Col>
-				<ActionBox currentTab={defaultTab} />
-			</Col>
-			<Col>
-				<EscrowTable />
-			</Col>
-		</Container>
-	);
+  return (
+    <Container>
+      <Col>
+        <ActionBox currentTab={defaultTab} />
+      </Col>
+      <Col>
+        <EscrowTable />
+      </Col>
+    </Container>
+  );
 };
 
 const Container = styled.div`
-	display: grid;
-	grid-template-columns: 1fr 1fr;
-	grid-gap: 1rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 1rem;
 
-	${media.lessThan('mdUp')`
-		display: flex;
-		flex-direction: column;
-	`}
+  ${media.lessThan('mdUp')`
+    display: flex;
+    flex-direction: column;
+  `}
 `;
 
 const Col = styled(FlexDivCol)``;

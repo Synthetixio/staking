@@ -6,8 +6,8 @@ import dynamic from 'next/dynamic';
 import GlobalLoader from 'components/GlobalLoader';
 
 const App = dynamic(() => import('content/App'), {
-	ssr: false,
-	loading: GlobalLoader,
+  ssr: false,
+  loading: GlobalLoader,
 });
 
 export default App;
