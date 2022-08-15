@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import ETHIcon from 'assets/svg/currencies/crypto/ETH.svg';
 import SNXIcon from 'assets/svg/currencies/crypto/SNX.svg';
 import BTCIcon from 'assets/svg/currencies/crypto/BTC.svg';
+import CRVIcon from 'assets/svg/currencies/crypto/CRV.svg';
 import DeprecatedXIcon from 'assets/svg/app/deprecated-x.svg';
 
 import { CryptoCurrency, CurrencyKey } from 'constants/currency';
@@ -81,6 +82,9 @@ export const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, isDeprecated,
       }
       case CryptoCurrency.SNX: {
         return <SNXIcon {...props} />;
+      }
+      case CryptoCurrency.CRV: {
+        return <CRVIcon {...props} />;
       }
       default:
         return (
