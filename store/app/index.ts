@@ -11,27 +11,27 @@ import { languageStateKey, priceCurrencyStateKey } from './constants';
 import { Synth } from '@synthetixio/contracts-interface';
 
 export const PRICE_CURRENCIES = [
-	Synths.sUSD,
-	Synths.sEUR,
-	Synths.sCHF,
-	Synths.sAUD,
-	Synths.sJPY,
-	Synths.sGBP,
-	Synths.sBTC,
-	Synths.sETH,
+  Synths.sUSD,
+  Synths.sEUR,
+  Synths.sCHF,
+  Synths.sAUD,
+  Synths.sJPY,
+  Synths.sGBP,
+  Synths.sBTC,
+  Synths.sETH,
 ];
 
 export const appReadyState = atom<boolean>({
-	key: getAppKey('appReady'),
-	default: false,
+  key: getAppKey('appReady'),
+  default: false,
 });
 
 export const languageState = atom<Language>({
-	key: languageStateKey,
-	default: DEFAULT_LANGUAGE,
+  key: languageStateKey,
+  default: DEFAULT_LANGUAGE,
 });
 
 export const priceCurrencyState = atom<Synth>({
-	key: priceCurrencyStateKey,
-	default: DEFAULT_PRICE_CURRENCY,
+  key: priceCurrencyStateKey,
+  default: DEFAULT_PRICE_CURRENCY,
 });

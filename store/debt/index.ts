@@ -1,4 +1,4 @@
 export enum DebtPanelType {
-	OVERVIEW = 'overview',
-	MANAGE = 'manage',
+  OVERVIEW = 'overview',
+  MANAGE = 'manage',
 }

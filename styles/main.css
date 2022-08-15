@@ -1,111 +1,111 @@
 * {
-	box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 body {
-	font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
-	text-rendering: optimizeSpeed;
-	margin: 0;
-	min-height: 100vh;
-	position: relative;
-	scroll-behavior: smooth;
-	padding-bottom: 50px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeSpeed;
+  margin: 0;
+  min-height: 100vh;
+  position: relative;
+  scroll-behavior: smooth;
+  padding-bottom: 50px;
 }
 
 ul {
-	list-style: none;
-	padding: 0;
-	margin: 0;
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
 input[type='number'] {
-	-moz-appearance: textfield;
+  -moz-appearance: textfield;
 }
 
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
-	-webkit-appearance: none;
+  -webkit-appearance: none;
 }
 
 /* Inter */
 
 @font-face {
-	font-family: 'Inter';
-	font-style: normal;
-	font-weight: 400;
-	font-display: swap;
-	src: local('Inter'), url('/fonts/Inter-Regular.woff2') format('woff2');
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Inter'), url('/fonts/Inter-Regular.woff2') format('woff2');
 }
 
 @font-face {
-	font-family: 'Inter Semi Bold';
-	font-style: normal;
-	font-weight: 600;
-	font-display: swap;
-	src: local('Inter Semi Bold'), url('/fonts/Inter-SemiBold.woff2') format('woff2');
+  font-family: 'Inter Semi Bold';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: local('Inter Semi Bold'), url('/fonts/Inter-SemiBold.woff2') format('woff2');
 }
 
 @font-face {
-	font-family: 'Inter Bold';
-	font-style: normal;
-	font-weight: 700;
-	font-display: swap;
-	src: local('Inter Bold'), url('/fonts/Inter-Bold.woff2') format('woff2');
+  font-family: 'Inter Bold';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Inter Bold'), url('/fonts/Inter-Bold.woff2') format('woff2');
 }
 
 /* GT America */
 
 @font-face {
-	font-family: 'GT America Mono';
-	font-style: normal;
-	font-display: swap;
-	font-weight: 700;
-	src: local('GT America Mono'), url('/fonts/GT-America-Mono-Bold.woff2') format('woff2');
+  font-family: 'GT America Mono';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 700;
+  src: local('GT America Mono'), url('/fonts/GT-America-Mono-Bold.woff2') format('woff2');
 }
 
 @font-face {
-	font-family: 'GT America Condensed-Medium';
-	font-style: normal;
-	font-display: swap;
-	font-weight: 500;
-	src: local('GT America Condensed-Medium'),
-		url('/fonts/GT-America-Condensed-Medium.woff2') format('woff2');
+  font-family: 'GT America Condensed-Medium';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 500;
+  src: local('GT America Condensed-Medium'),
+    url('/fonts/GT-America-Condensed-Medium.woff2') format('woff2');
 }
 
 @font-face {
-	font-family: 'GT America Condensed-Bold';
-	font-display: swap;
-	font-style: normal;
-	font-weight: 700;
-	font-stretch: condensed;
-	src: local('GT America Condensed-Bold'),
-		url('/fonts/GT-America-Condensed-Bold.woff2') format('woff2');
+  font-family: 'GT America Condensed-Bold';
+  font-display: swap;
+  font-style: normal;
+  font-weight: 700;
+  font-stretch: condensed;
+  src: local('GT America Condensed-Bold'),
+    url('/fonts/GT-America-Condensed-Bold.woff2') format('woff2');
 }
 
 @font-face {
-	font-family: 'GT America Extended Bold';
-	font-style: normal;
-	font-display: swap;
-	font-weight: 700;
-	src: local('GT America Extended Bold'),
-		url('/fonts/GT-America-Extended-Bold.woff2') format('woff2');
+  font-family: 'GT America Extended Bold';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 700;
+  src: local('GT America Extended Bold'),
+    url('/fonts/GT-America-Extended-Bold.woff2') format('woff2');
 }
 
 /* Blocknative Styling */
 :root {
-	--onboard-connect-sidebar-background: #0b0b22;
-	--onboard-connect-sidebar-color: white;
-	--onboard-close-button-background: #0b0b22;
-	--onboard-close-button-color: white;
-	--onboard-checkbox-background: #0b0b22;
-	--onboard-checkbox-color: white;
-	--onboard-connect-sidebar-progress-background: #343a4a;
-	--onboard-connect-sidebar-progress-color: #00d1ff;
+  --onboard-connect-sidebar-background: #0b0b22;
+  --onboard-connect-sidebar-color: white;
+  --onboard-close-button-background: #0b0b22;
+  --onboard-close-button-color: white;
+  --onboard-checkbox-background: #0b0b22;
+  --onboard-checkbox-color: white;
+  --onboard-connect-sidebar-progress-background: #343a4a;
+  --onboard-connect-sidebar-progress-color: #00d1ff;
 }
 
 /* Bug fix for react datepicker on Firefox (hides dropdown icon) */
 .react-datepicker__input-container .dropdown-icon {
-	display: none;
+  display: none;
 }

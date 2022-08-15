@@ -7,58 +7,59 @@ import { useTranslation } from 'react-i18next';
 import media from 'styles/media';
 
 const BridgePage = () => {
-	const { connectWallet, isWalletConnected } = Connector.useContainer();
+  const { connectWallet, walletConnectedToUnsupportedNetwork, isWalletConnected } =
+    Connector.useContainer();
 
-	const { t } = useTranslation();
-	return (
-		<Container>
-			<Head>
-				<title>{t('bridge.page-title')}</title>
-			</Head>
-			<HeadlineContainer>
-				<Headline>{t('bridge.headline')}</Headline>
-			</HeadlineContainer>
+  const { t } = useTranslation();
+  return (
+    <Container>
+      <Head>
+        <title>{t('bridge.page-title')}</title>
+      </Head>
+      <HeadlineContainer>
+        <Headline>{t('bridge.headline')}</Headline>
+      </HeadlineContainer>
 
-			{isWalletConnected ? (
-				<>
-					<SocketBridge />
-				</>
-			) : (
-				<ConnectWalletContainer>
-					<ConnectParagraph>{t('bridge.connect-wallet-text')}</ConnectParagraph>
-					<Button variant="primary" onClick={connectWallet}>
-						{t('common.wallet.connect-wallet')}
-					</Button>
-				</ConnectWalletContainer>
-			)}
-		</Container>
-	);
+      {Boolean(walletConnectedToUnsupportedNetwork || isWalletConnected) ? (
+        <>
+          <SocketBridge />
+        </>
+      ) : (
+        <ConnectWalletContainer>
+          <ConnectParagraph>{t('bridge.connect-wallet-text')}</ConnectParagraph>
+          <Button variant="primary" onClick={connectWallet}>
+            {t('common.wallet.connect-wallet')}
+          </Button>
+        </ConnectWalletContainer>
+      )}
+    </Container>
+  );
 };
 
 const Container = styled.div`
-	padding-right: 40px;
-	${media.lessThan('md')`
-		padding-left: 40px
-	`}
+  padding-right: 40px;
+  ${media.lessThan('md')`
+    padding-left: 40px
+  `}
 `;
 
 const ConnectWalletContainer = styled.div`
-	margin-top: 50px;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	flex-direction: column;
+  margin-top: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
 `;
 
 const ConnectParagraph = styled.p`
-	margin-bottom: 10px;
+  margin-bottom: 10px;
 `;
 
 const HeadlineContainer = styled.div`
-	padding: 20px 0;
+  padding: 20px 0;
 `;
 
 const Headline = styled.h1`
-	font-size: 24px;
+  font-size: 24px;
 `;
 export default BridgePage;

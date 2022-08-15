@@ -4,16 +4,16 @@ import DesktopSideNav from './Desktop';
 import MobileSideNav from './Mobile';
 
 const SideNav: FC = () => {
-	return (
-		<>
-			<DesktopOnlyView>
-				<DesktopSideNav />
-			</DesktopOnlyView>
-			<MobileOrTabletView>
-				<MobileSideNav />
-			</MobileOrTabletView>
-		</>
-	);
+  return (
+    <>
+      <DesktopOnlyView>
+        <DesktopSideNav />
+      </DesktopOnlyView>
+      <MobileOrTabletView>
+        <MobileSideNav />
+      </MobileOrTabletView>
+    </>
+  );
 };
 
 export default SideNav;

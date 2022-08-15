@@ -11,43 +11,43 @@ import { ContainerRow } from '../common';
 import { wei, WeiSource } from '@synthetixio/wei';
 
 type CurrencyPriceProps = {
-	currencyKey: CurrencyKey;
-	price: WeiSource;
-	sign?: string;
-	change?: number;
-	conversionRate?: WeiSource;
+  currencyKey: CurrencyKey;
+  price: WeiSource;
+  sign?: string;
+  change?: number;
+  conversionRate?: WeiSource;
 };
 
 export const CurrencyPrice: FC<CurrencyPriceProps> = ({
-	currencyKey,
-	price,
-	sign,
-	change,
-	conversionRate,
-	...rest
+  currencyKey,
+  price,
+  sign,
+  change,
+  conversionRate,
+  ...rest
 }) => {
-	return (
-		<Container {...rest}>
-			<Price className="price">
-				{formatCurrency(
-					currencyKey,
-					conversionRate != null ? wei(price).div(conversionRate) : price,
-					{
-						sign,
-					}
-				)}
-			</Price>
-			{change != null && <ChangePercent className="percent" value={change} />}
-		</Container>
-	);
+  return (
+    <Container {...rest}>
+      <Price className="price">
+        {formatCurrency(
+          currencyKey,
+          conversionRate != null ? wei(price).div(conversionRate) : price,
+          {
+            sign,
+          }
+        )}
+      </Price>
+      {change != null && <ChangePercent className="percent" value={change} />}
+    </Container>
+  );
 };
 
 const Container = styled(ContainerRow)`
-	color: ${(props) => props.theme.colors.white};
+  color: ${(props) => props.theme.colors.white};
 `;
 
 const Price = styled.span`
-	font-family: ${(props) => props.theme.fonts.mono};
+  font-family: ${(props) => props.theme.fonts.mono};
 `;
 
 export default CurrencyPrice;
