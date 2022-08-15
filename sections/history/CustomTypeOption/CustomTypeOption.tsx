@@ -7,18 +7,18 @@ import { TypeFilterOptionType } from '../types';
 const { Option } = components;
 
 const CustomTypeOption = (props: OptionProps<TypeFilterOptionType>) => (
-	<Option {...props}>
-		<Container>
-			<TypeIcon size="sm" type={props.data.value} />
-			{props.data.label}
-		</Container>
-	</Option>
+  <Option {...props}>
+    <Container>
+      <TypeIcon size="sm" type={props.data.value} />
+      {props.data.label}
+    </Container>
+  </Option>
 );
 
 const Container = styled(FlexDivCentered)`
-	svg {
-		margin-right: 7px;
-	}
+  svg {
+    margin-right: 7px;
+  }
 `;
 
 export default CustomTypeOption;

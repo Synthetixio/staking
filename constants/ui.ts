@@ -5,7 +5,7 @@ export const DESKTOP_BODY_PADDING = 40;
 export const MOBILE_BODY_PADDING = 20;
 
 export enum zIndex {
-	BASE = 1,
-	DROPDOWN = 20,
-	DIALOG_OVERLAY = 50,
+  BASE = 1,
+  DROPDOWN = 20,
+  DIALOG_OVERLAY = 50,
 }

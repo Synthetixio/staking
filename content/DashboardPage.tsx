@@ -18,58 +18,58 @@ import ActiveDebt from 'sections/shared/modals/DebtValueModal/DebtValueBox';
 import Connector from 'containers/Connector';
 
 const DashboardPage: FC = () => {
-	const { t } = useTranslation();
-	const { walletAddress } = Connector.useContainer();
+  const { t } = useTranslation();
+  const { walletAddress } = Connector.useContainer();
 
-	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
-	const { stakedValue, stakingAPR, debtBalance } = useUserStakingData(walletAddress);
+  const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
+  const { stakedValue, stakingAPR, debtBalance } = useUserStakingData(walletAddress);
 
-	return (
-		<>
-			<Head>
-				<title>{t('dashboard.page-title')}</title>
-			</Head>
-			<Content>
-				<StatsSection>
-					<StakedValue
-						title={t('common.stat-box.staked-value')}
-						value={formatFiatCurrency(getPriceAtCurrentRate(stakedValue), {
-							sign: selectedPriceCurrency.sign,
-						})}
-					/>
-					<APR
-						title={t('common.stat-box.earning')}
-						value={formatPercent(stakingAPR ? stakingAPR : 0)}
-						size="lg"
-					/>
-					<ActiveDebt
-						title={t('common.stat-box.active-debt')}
-						value={formatFiatCurrency(getPriceAtCurrentRate(debtBalance), {
-							sign: selectedPriceCurrency.sign,
-						})}
-						isPink
-					/>
-				</StatsSection>
-				<LineSpacer />
-				<PossibleActions />
-			</Content>
-		</>
-	);
+  return (
+    <>
+      <Head>
+        <title>{t('dashboard.page-title')}</title>
+      </Head>
+      <Content>
+        <StatsSection>
+          <StakedValue
+            title={t('common.stat-box.staked-value')}
+            value={formatFiatCurrency(getPriceAtCurrentRate(stakedValue), {
+              sign: selectedPriceCurrency.sign,
+            })}
+          />
+          <APR
+            title={t('common.stat-box.earning')}
+            value={formatPercent(stakingAPR ? stakingAPR : 0)}
+            size="lg"
+          />
+          <ActiveDebt
+            title={t('common.stat-box.active-debt')}
+            value={formatFiatCurrency(getPriceAtCurrentRate(debtBalance), {
+              sign: selectedPriceCurrency.sign,
+            })}
+            isPink
+          />
+        </StatsSection>
+        <LineSpacer />
+        <PossibleActions />
+      </Content>
+    </>
+  );
 };
 
 const Content = styled(FlexDivCol)`
-	width: 100%;
-	max-width: 1200px;
+  width: 100%;
+  max-width: 1200px;
 `;
 
 const APR = styled(StatBox)`
-	.title {
-		color: ${(props) => props.theme.colors.green};
-	}
-	.value {
-		text-shadow: ${(props) => props.theme.colors.greenTextShadow};
-		color: #073124;
-	}
+  .title {
+    color: ${(props) => props.theme.colors.green};
+  }
+  .value {
+    text-shadow: ${(props) => props.theme.colors.greenTextShadow};
+    color: #073124;
+  }
 `;
 
 export default DashboardPage;

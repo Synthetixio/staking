@@ -9,11 +9,11 @@ export const SYNTH_DECIMALS = 18;
 // app defaults
 export const DEFAULT_LANGUAGE: Language = localStore.get(languageStateKey) ?? Language.EN;
 export const DEFAULT_PRICE_CURRENCY: Synth = localStore.get(priceCurrencyStateKey) ?? {
-	name: 'sUSD',
-	asset: 'USD',
-	sign: '$',
-	category: CurrencyCategory.crypto,
-	description: '',
+  name: 'sUSD',
+  asset: 'USD',
+  sign: '$',
+  category: CurrencyCategory.crypto,
+  description: '',
 };
 
 // network defaults

@@ -1,6 +1,6 @@
 import {
-	NotificationPending,
-	NotificationSuccess,
-	NotificationError,
+  NotificationPending,
+  NotificationSuccess,
+  NotificationError,
 } from './TransactionNotification';
 export { NotificationPending, NotificationSuccess, NotificationError };
