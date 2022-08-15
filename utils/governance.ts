@@ -1,4 +1,5 @@
-import { VOTE_CODE, NOMINATION_CODE } from '@synthetixio/queries';
+const NOMINATION_CODE = 1;
+const VOTE_CODE = 2;
 
 export const isAnyElectionInNomination = (
 	periodStatuses?: { currentPeriodLabel: string; code: number }[]

@@ -3782,7 +3782,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@synthetixio/codegen-graph-ts@npm:^2.74.2":
+"@synthetixio/codegen-graph-ts@npm:2.74.2":
   version: 2.74.2
   resolution: "@synthetixio/codegen-graph-ts@npm:2.74.2"
   dependencies:
@@ -3808,7 +3808,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@synthetixio/contracts-interface@npm:^2.74.3":
+"@synthetixio/contracts-interface@npm:2.74.3, @synthetixio/contracts-interface@npm:^2.74.3":
   version: 2.74.3
   resolution: "@synthetixio/contracts-interface@npm:2.74.3"
   dependencies:
@@ -3862,9 +3862,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@synthetixio/queries@file:../js-monorepo/packages/queries::locator=staking%40workspace%3A.":
+"@synthetixio/queries@npm:^2.74.8":
   version: 2.74.8
-  resolution: "@synthetixio/queries@file:../js-monorepo/packages/queries#../js-monorepo/packages/queries::hash=383310&locator=staking%40workspace%3A."
+  resolution: "@synthetixio/queries@npm:2.74.8"
   dependencies:
     "@ethersproject/abstract-signer": ^5.6.2
     "@ethersproject/address": ^5.6.1
@@ -3876,10 +3876,10 @@ __metadata:
     "@ethersproject/transactions": ^5.6.2
     "@ethersproject/units": ^5.6.1
     "@snapshot-labs/snapshot.js": ^0.4.13
-    "@synthetixio/codegen-graph-ts": ^2.74.2
-    "@synthetixio/contracts": ^1.0.2
-    "@synthetixio/optimism-networks": ^2.74.2
-    "@synthetixio/wei": ^2.74.2
+    "@synthetixio/codegen-graph-ts": 2.74.2
+    "@synthetixio/contracts-interface": 2.74.3
+    "@synthetixio/optimism-networks": 2.74.2
+    "@synthetixio/wei": 2.74.2
     axios: ^0.21.4
     date-fns: ^2.19.0
     graphql: ^15.5.0
@@ -3889,7 +3889,7 @@ __metadata:
     react: 17.x
     react-dom: 17.x
     react-query: 3.16.x
-  checksum: 4a6ad6fe69ee3da5b92cf0e306fd30a6e00d11b81c3dd163d1d6d0030b03cca1a0e3685198a79bc9a676d6fc3e642c11db32e1dd78538a332373b4fac451d8ea
+  checksum: 78ba427774e998ea7ee295b71051c8f023b5380244915996752120bb70fe6b9f68644e063fb3e9176447c10cfcfb84f85d7f694be05fae8596a235a6817fc007
   languageName: node
   linkType: hard
 
@@ -20691,7 +20691,7 @@ jschardet@latest:
     "@synthetixio/contracts-interface": ^2.74.3
     "@synthetixio/optimism-networks": ^2.74.2
     "@synthetixio/providers": ^2.74.3
-    "@synthetixio/queries": "file:../js-monorepo/packages/queries"
+    "@synthetixio/queries": ^2.74.8
     "@synthetixio/synpress": ^1.1.1
     "@synthetixio/transaction-notifier": ^2.74.4
     "@synthetixio/wei": ^2.74.2

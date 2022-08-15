@@ -11,6 +11,7 @@ import {
 	NetworkNameById,
 	NetworkIdByName,
 	NetworkId,
+	SynthetixJS,
 } from '@synthetixio/contracts-interface';
 import { ethers } from 'ethers';
 
@@ -99,10 +100,10 @@ const useConnector = () => {
 				});
 
 				const signer = provider.getSigner();
-				const useOvm = getIsOVM(Number(networkId));
-				const synthetixjs = isSupported ? synthetix({ provider, networkId, useOvm }) : null;
-				// const contracts = setSynthetix(networkId, signer);
-				// const synthetixjs = isSupported ? ({ contracts } as SynthetixJS) : null;
+				// const useOvm = getIsOVM(Number(networkId));
+				// const synthetixjs = isSupported ? synthetix({ provider, networkId, useOvm }) : null;
+				const contracts = setSynthetix(networkId, signer);
+				const synthetixjs = isSupported ? ({ contracts } as SynthetixJS) : null;
 
 				dispatch({
 					type: AppEvents.CONFIG_UPDATE,

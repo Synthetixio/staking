@@ -9,6 +9,7 @@ const useLiquidationRewards = (address: string | null, options?: UseQueryOptions
 	return useQuery<Wei>(
 		['liquidationRewards', address, network?.id],
 		async () => {
+			if (!synthetixjs) return wei(0);
 			const earnedBn: BigNumber = await synthetixjs?.contracts.LiquidatorRewards.earned(address);
 			return wei(earnedBn);
 		},

@@ -52,6 +52,7 @@ const RedeemDeprecatedSynthsModal: FC<{
 	const Redeemer = synthetixjs?.contracts.SynthRedeemer ?? null;
 
 	const { useContractTxn } = useSynthetixQueries();
+
 	const txn = useContractTxn(
 		Redeemer,
 		'redeemAll',

@@ -20,6 +20,28 @@ import {
 	abi as LiquidatorAbiGoerliOvm,
 } from '@synthetixio/contracts/build/goerli-ovm/deployment/Liquidator';
 
+// LiquidatorRewards
+import {
+	name as LiquidatorRewardsMainnet,
+	address as LiquidatorRewardsAddressMainnet,
+	abi as LiquidatorRewardsAbiMainnet,
+} from '@synthetixio/contracts/build/mainnet/deployment/LiquidatorRewards';
+import {
+	name as LiquidatorRewardsMainnetOvm,
+	address as LiquidatorRewardsAddressMainnetOvm,
+	abi as LiquidatorRewardsAbiMainnetOvm,
+} from '@synthetixio/contracts/build/mainnet-ovm/deployment/LiquidatorRewards';
+import {
+	name as LiquidatorRewardsGoerli,
+	address as LiquidatorRewardsAddressGoerli,
+	abi as LiquidatorRewardsAbiGoerli,
+} from '@synthetixio/contracts/build/goerli/deployment/LiquidatorRewards';
+import {
+	name as LiquidatorRewardsGoerliOvm,
+	address as LiquidatorRewardsAddressGoerliOvm,
+	abi as LiquidatorRewardsAbiGoerliOvm,
+} from '@synthetixio/contracts/build/goerli-ovm/deployment/LiquidatorRewards';
+
 export const contracts = {
 	Liquidator: {
 		mainnet: {
@@ -41,6 +63,28 @@ export const contracts = {
 			name: LiquidatorGoerliOvm,
 			address: LiquidatorAddressGoerliOvm,
 			abi: LiquidatorAbiGoerliOvm,
+		},
+	},
+	LiquidatorRewards: {
+		mainnet: {
+			name: LiquidatorRewardsMainnet,
+			address: LiquidatorRewardsAddressMainnet,
+			abi: LiquidatorRewardsAbiMainnet,
+		},
+		'mainnet-ovm': {
+			name: LiquidatorRewardsMainnetOvm,
+			address: LiquidatorRewardsAddressMainnetOvm,
+			abi: LiquidatorRewardsAbiMainnetOvm,
+		},
+		goerli: {
+			name: LiquidatorRewardsGoerli,
+			address: LiquidatorRewardsAddressGoerli,
+			abi: LiquidatorRewardsAbiGoerli,
+		},
+		'goerli-ovm': {
+			name: LiquidatorRewardsGoerliOvm,
+			address: LiquidatorRewardsAddressGoerliOvm,
+			abi: LiquidatorRewardsAbiGoerliOvm,
 		},
 	},
 };

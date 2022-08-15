@@ -11,7 +11,6 @@ import media from 'styled-media-query';
 import { ExternalLink, FlexDivCol, LineSpacer, StatsSection } from 'styles/common';
 import { WETHSNXLPTokenContract } from 'constants/gelato';
 import { InfoContainer, Subtitle } from 'sections/migrate-escrow/components/common';
-import synthetix, { NetworkIdByName } from '@synthetixio/contracts-interface';
 import Connector from 'containers/Connector';
 import Button from 'components/Button';
 import { switchToL2 } from '@synthetixio/optimism-networks';
@@ -24,15 +23,15 @@ function Pool() {
 	const [stakedTokens, setStakedTokens] = useState(BigNumber.from(0));
 	const { t } = useTranslation();
 
-	const { walletAddress } = Connector.useContainer();
+	const { walletAddress, synthetixjs } = Connector.useContainer();
 
-	const snx = synthetix({ networkId: NetworkIdByName['mainnet-ovm'], useOvm: true });
 	const { balanceOf, rewards, allowance, stakedTokensBalance } = useGUNILPToken({
 		pool: 'weth-snx',
 		userAddress: walletAddress,
 	});
+
 	const rates = useGetUniswapStakingRewardsAPY({
-		stakingRewardsContract: snx.contracts.StakingRewardsSNXWETHUniswapV3,
+		stakingRewardsContract: synthetixjs?.contracts.StakingRewardsSNXWETHUniswapV3,
 		tokenContract: WETHSNXLPTokenContract,
 	});
 

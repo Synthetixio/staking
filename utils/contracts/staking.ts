@@ -88,6 +88,29 @@ import {
 	abi as SynthetixStateAbiGoerliOvm,
 } from '@synthetixio/contracts/build/goerli-ovm/deployment/Synthetix';
 
+// Issuer
+import {
+	name as IssuerMainnet,
+	address as IssuerAddressMainnet,
+	abi as IssuerAbiMainnet,
+} from '@synthetixio/contracts/build/mainnet/deployment/Issuer';
+import {
+	name as IssuerMainnetOvm,
+	address as IssuerAddressMainnetOvm,
+	abi as IssuerAbiMainnetOvm,
+} from '@synthetixio/contracts/build/mainnet-ovm/deployment/Issuer';
+import {
+	name as IssuerGoerli,
+	address as IssuerAddressGoerli,
+	abi as IssuerAbiGoerli,
+} from '@synthetixio/contracts/build/goerli/deployment/Issuer';
+
+import {
+	name as IssuerGoerliOvm,
+	address as IssuerAddressGoerliOvm,
+	abi as IssuerAbiGoerliOvm,
+} from '@synthetixio/contracts/build/goerli-ovm/deployment/Issuer';
+
 // SystemSettings
 import {
 	name as SystemSettingsMainnet,
@@ -109,6 +132,13 @@ import {
 	address as SystemSettingsAddressGoerliOvm,
 	abi as SystemSettingsAbiGoerliOvm,
 } from '@synthetixio/contracts/build/goerli-ovm/deployment/SystemSettings';
+
+// StakingRewardsSNXWETHUniswapV3
+import {
+	name as StakingRewardsSNXWETHUniswapV3MainnetOvm,
+	address as StakingRewardsSNXWETHUniswapV3AddressMainnetOvm,
+	abi as StakingRewardsSNXWETHUniswapV3AbiMainnetOvm,
+} from '@synthetixio/contracts/build/mainnet-ovm/deployment/StakingRewardsSNXWETHUniswapV3';
 
 export const contracts = {
 	FeePool: {
@@ -199,6 +229,28 @@ export const contracts = {
 			abi: SynthetixStateAbiGoerliOvm,
 		},
 	},
+	Issuer: {
+		mainnet: {
+			name: IssuerMainnet,
+			address: IssuerAddressMainnet,
+			abi: IssuerAbiMainnet,
+		},
+		'mainnet-ovm': {
+			name: IssuerMainnetOvm,
+			address: IssuerAddressMainnetOvm,
+			abi: IssuerAbiMainnetOvm,
+		},
+		goerli: {
+			name: IssuerGoerli,
+			address: IssuerAddressGoerli,
+			abi: IssuerAbiGoerli,
+		},
+		'goerli-ovm': {
+			name: IssuerGoerliOvm,
+			address: IssuerAddressGoerliOvm,
+			abi: IssuerAbiGoerliOvm,
+		},
+	},
 	SystemState: {
 		mainnet: {
 			name: SystemSettingsMainnet,
@@ -219,6 +271,13 @@ export const contracts = {
 			name: SystemSettingsGoerliOvm,
 			address: SystemSettingsAddressGoerliOvm,
 			abi: SystemSettingsAbiGoerliOvm,
+		},
+	},
+	StakingRewardsSNXWETHUniswapV3: {
+		'mainnet-ovm': {
+			name: StakingRewardsSNXWETHUniswapV3MainnetOvm,
+			address: StakingRewardsSNXWETHUniswapV3AddressMainnetOvm,
+			abi: StakingRewardsSNXWETHUniswapV3AbiMainnetOvm,
 		},
 	},
 };

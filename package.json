@@ -34,7 +34,7 @@
 		"@synthetixio/contracts-interface": "^2.74.3",
 		"@synthetixio/optimism-networks": "^2.74.2",
 		"@synthetixio/providers": "^2.74.3",
-		"@synthetixio/queries": "file:../js-monorepo/packages/queries",
+		"@synthetixio/queries": "^2.74.8",
 		"@synthetixio/transaction-notifier": "^2.74.4",
 		"@synthetixio/wei": "^2.74.2",
 		"@tippyjs/react": "^4.1.0",

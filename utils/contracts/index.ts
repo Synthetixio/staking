@@ -9,6 +9,9 @@ import { contracts as StatusContracts } from './status';
 import { contracts as SynthsContracts } from './synths';
 import { contracts as SynthsCurrenciesContracts } from './synthsCurrencies';
 import { contracts as WalletContracts } from './wallet';
+import { contracts as BridgeContracts } from './bridge';
+import { contracts as DelegateContracts } from './delegate';
+import { contracts as LoanContracts } from './loans';
 import { ContractsMap, NetworkId, NetworkNameById } from '@synthetixio/contracts-interface';
 
 export const contracts: any = {
@@ -22,6 +25,9 @@ export const contracts: any = {
 	...SynthsContracts,
 	...SynthsCurrenciesContracts,
 	...WalletContracts,
+	...BridgeContracts,
+	...DelegateContracts,
+	...LoanContracts,
 };
 
 type ContractName = keyof typeof contracts;

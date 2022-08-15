@@ -19,14 +19,9 @@ import ProgressBar from 'components/ProgressBar';
 import SelfLiquidation from './SelfLiquidation';
 import Connector from 'containers/Connector';
 
-interface StakingProps {
-	contracts: any;
-}
-
-const StakingPage = (props: StakingProps) => {
+const StakingPage = () => {
 	const { t } = useTranslation();
-	const { isWalletConnected, network } = Connector.useContainer();
-	console.log(props, network);
+	const { isWalletConnected } = Connector.useContainer();
 	const {
 		stakedCollateralValue,
 		percentageCurrentCRatio,
