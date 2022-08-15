@@ -28,7 +28,11 @@ import {
 	StyledMaxButton,
 	StyledSpacer,
 } from './hedge-tab-ui-components';
-import { dSNXExitSUSDContractOptimism, dSNXPoolContractOptimism } from 'constants/dhedge';
+import {
+	dSNXWrapperSwapperContractOptimism,
+	dSNXPoolAddressOptimism,
+	dSNXPoolContractOptimism,
+} from 'constants/dhedge';
 import useGetDSNXPrice from 'hooks/useGetDSNXPrice';
 import GasSelector from 'components/GasSelector';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
@@ -42,7 +46,7 @@ export default function SellHedgeTabOptimism() {
 	const [sendMax, setSendMax] = useState<boolean>(false);
 	const { walletAddress, signer } = Connector.useContainer();
 	const approveQuery = useGetNeedsApproval(
-		dSNXExitSUSDContractOptimism.address,
+		dSNXWrapperSwapperContractOptimism.address,
 		dSNXPoolContractOptimism,
 		walletAddress
 	);
@@ -64,10 +68,10 @@ export default function SellHedgeTabOptimism() {
 	const approveTx = useContractTxn(
 		dSNXPoolContractOptimism.connect(signer!),
 		'approve',
-		[dSNXExitSUSDContractOptimism.address, constants.MaxUint256],
+		[dSNXWrapperSwapperContractOptimism.address, constants.MaxUint256],
 		approveGasCost,
 		{
-			enabled: Boolean(walletAddress && dSNXExitSUSDContractOptimism),
+			enabled: Boolean(walletAddress && dSNXWrapperSwapperContractOptimism),
 			onSuccess: () => {
 				setTxModalOpen(false);
 				approveQuery.refetch();
@@ -75,13 +79,13 @@ export default function SellHedgeTabOptimism() {
 		}
 	);
 	const withdrawTx = useContractTxn(
-		dSNXExitSUSDContractOptimism.connect(signer!),
+		dSNXWrapperSwapperContractOptimism.connect(signer!),
 		'withdrawSUSD',
 		[
-			dSNXExitSUSDContractOptimism.address,
-			actualAmountToSendBn,
+			dSNXPoolAddressOptimism,
+			actualAmountToSendBn || wei(0),
 			'0x7F5c764cBc14f9669B88837ca1490cCa17c31607',
-			wei(actualAmountToSendBn).mul(dSNXPrice).toBN(),
+			wei(actualAmountToSendBn).mul(dSNXPrice).toBN() || wei(0).toBN(),
 		],
 		withdrawnGasCost,
 		{
@@ -93,6 +97,7 @@ export default function SellHedgeTabOptimism() {
 			enabled: Boolean(approveQuery.data),
 		}
 	);
+
 	return (
 		<StyledSellHedgeContainer>
 			<StyledBackgroundTab>

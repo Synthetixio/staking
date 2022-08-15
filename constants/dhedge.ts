@@ -8,10 +8,10 @@ export const dSNXContractMainnet = new Contract(
 	erc20ABI
 );
 
-const dSNXExitSUSDAddressOptimism = '0x6Da9139009C7A77B16a6acBe4EbAB257b6798570';
+const dSNXExitSUSDAddressOptimism = '0xf8C62BD5f2fEf9E1a329c197F32E77AD6866B022';
 export const dSNXPoolAddressMainnet = '0x65bb99e80a863e0e27ee6d09c794ed8c0be47186';
 export const dSNXPoolAddressOptimism = '0x59babc14dd73761e38e5bda171b2298dc14da92d';
 export const dSNXPoolContractOptimism = new Contract(dSNXPoolAddressOptimism, dHedgePoolLogicABI);
-export const dSNXExitSUSDContractOptimism = new Contract(dSNXExitSUSDAddressOptimism, [
+export const dSNXWrapperSwapperContractOptimism = new Contract(dSNXExitSUSDAddressOptimism, [
 	'function withdrawSUSD(address pool, uint256 fundTokenAmount,address intermediateAsset,uint256 expectedAmountSUSD) external',
 ]);
