@@ -3862,9 +3862,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@synthetixio/queries@npm:^2.74.8":
-  version: 2.74.8
-  resolution: "@synthetixio/queries@npm:2.74.8"
+"@synthetixio/queries@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "@synthetixio/queries@npm:3.0.0"
   dependencies:
     "@ethersproject/abstract-signer": ^5.6.2
     "@ethersproject/address": ^5.6.1
@@ -3877,6 +3877,7 @@ __metadata:
     "@ethersproject/units": ^5.6.1
     "@snapshot-labs/snapshot.js": ^0.4.13
     "@synthetixio/codegen-graph-ts": 2.74.2
+    "@synthetixio/contracts": 1.0.2
     "@synthetixio/contracts-interface": 2.74.3
     "@synthetixio/optimism-networks": 2.74.2
     "@synthetixio/wei": 2.74.2
@@ -3889,7 +3890,7 @@ __metadata:
     react: 17.x
     react-dom: 17.x
     react-query: 3.16.x
-  checksum: 78ba427774e998ea7ee295b71051c8f023b5380244915996752120bb70fe6b9f68644e063fb3e9176447c10cfcfb84f85d7f694be05fae8596a235a6817fc007
+  checksum: ef9733829ab5891faaf7ecfd8a74a0adf7d5959f027e3cbf5e221093c81c35390b17f14d21e503a775f6307d27dc48542d870902c6f932ea71bad66f19ca5117
   languageName: node
   linkType: hard
 
@@ -20691,7 +20692,7 @@ jschardet@latest:
     "@synthetixio/contracts-interface": ^2.74.3
     "@synthetixio/optimism-networks": ^2.74.2
     "@synthetixio/providers": ^2.74.3
-    "@synthetixio/queries": ^2.74.8
+    "@synthetixio/queries": ^3.0.0
     "@synthetixio/synpress": ^1.1.1
     "@synthetixio/transaction-notifier": ^2.74.4
     "@synthetixio/wei": ^2.74.2
