@@ -77,7 +77,7 @@ import {
   name as SynthsLinkMainnet,
   address as SynthsLinkAddressMainnet,
   abi as SynthsLinkAbiMainnet,
-} from '@synthetixio/contracts/build/mainnet/deployment/SynthsLink';
+} from '@synthetixio/contracts/build/mainnet/deployment/SynthsLINK';
 
 import {
   name as SynthsUSDMainnet,
@@ -144,7 +144,7 @@ import {
   name as SynthsLinkMainnetOvm,
   address as SynthsLinkAddressMainnetOvm,
   abi as SynthsLinkAbiMainnetOvm,
-} from '@synthetixio/contracts/build/mainnet-ovm/deployment/SynthsLink';
+} from '@synthetixio/contracts/build/mainnet-ovm/deployment/SynthsLINK';
 
 import {
   name as SynthsUSDMainnetOvm,
