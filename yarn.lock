@@ -3798,16 +3798,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@synthetixio/contracts-interface@npm:2.74.1":
-  version: 2.74.1
-  resolution: "@synthetixio/contracts-interface@npm:2.74.1"
-  dependencies:
-    ethers: ^5.5.3
-    synthetix: 2.74.1
-  checksum: 86048cfd15c60284079900deccc930a9a8cdbe34301096dc54e8ea49546e13d09ff57abe26b38a287448881662370d6525620c7a55753d7df6ecc9485a2acf85
-  languageName: node
-  linkType: hard
-
 "@synthetixio/contracts-interface@npm:2.74.3, @synthetixio/contracts-interface@npm:^2.74.3":
   version: 2.74.3
   resolution: "@synthetixio/contracts-interface@npm:2.74.3"
@@ -3819,7 +3809,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@synthetixio/contracts@npm:1.0.2, @synthetixio/contracts@npm:^1.0.2":
+"@synthetixio/contracts@npm:1.0.2":
   version: 1.0.2
   resolution: "@synthetixio/contracts@npm:1.0.2"
   checksum: 8506304b1620ecb9cbb8e7983015795be0e07532eae80892208b1807b30f58c75e97beddceb9a52722108d9bb1513ac1b522ddd08a2de79d7149819dfb1f095f
@@ -3849,16 +3839,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@synthetixio/providers@npm:2.74.3, @synthetixio/providers@npm:^2.74.3":
-  version: 2.74.3
-  resolution: "@synthetixio/providers@npm:2.74.3"
+"@synthetixio/providers@npm:2.74.5, @synthetixio/providers@npm:^2.74.5":
+  version: 2.74.5
+  resolution: "@synthetixio/providers@npm:2.74.5"
   dependencies:
     "@ethersproject/bignumber": ^5.6.2
     "@ethersproject/bytes": ^5.6.1
     "@ethersproject/providers": ^5.6.8
-    "@synthetixio/contracts-interface": 2.74.1
+    "@synthetixio/contracts-interface": 2.74.3
     "@synthetixio/optimism-networks": 2.74.2
-  checksum: 4e880037bbbc6f57b05ba5e92b7a9486cffa2173702a4147355aa247f52e5fb74da9d35d7dae55263d6e7a2d8cdf97f2cfb19c24ffd7170a062fc1409a956943
+  checksum: 6c1be0bcdc947e0c32c319b9f3b0afa36ed74f20ee89ae605f3fdccf485d8bc45779bed76d7cb874d14548ab914d89073bc6655cfe9a0c7e9d370c4ffbcad962
   languageName: node
   linkType: hard
 
@@ -3944,15 +3934,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@synthetixio/transaction-notifier@npm:^2.74.4":
-  version: 2.74.4
-  resolution: "@synthetixio/transaction-notifier@npm:2.74.4"
+"@synthetixio/transaction-notifier@npm:^2.74.6":
+  version: 2.74.6
+  resolution: "@synthetixio/transaction-notifier@npm:2.74.6"
   dependencies:
     "@ethersproject/properties": ^5.6.0
     "@ethersproject/providers": ^5.6.8
     "@ethersproject/strings": ^5.6.1
-    "@synthetixio/providers": 2.74.3
-  checksum: 98739da8f16c2eb109e40f9a11a889347bbc4422046d53483d6946f2a0e56ad40a7d3757134c34b74f9f929e1eca3d2d1bb4a1affabd25fd185cb14bed55ad2d
+    "@synthetixio/providers": 2.74.5
+  checksum: 56db2c1ecfaa1866cb3586b01c65300cf057d7e3d2c17e84f00d35f183e3296eb37c26afe4e58bfa9cf1f4236c67091dfafca743b29d4328c06f508f0a78700f
   languageName: node
   linkType: hard
 
@@ -20688,13 +20678,12 @@ jschardet@latest:
     "@socket.tech/widget": ^0.0.9
     "@svgr/webpack": ^6.2.1
     "@synthetixio/assets": ^2.0.13
-    "@synthetixio/contracts": ^1.0.2
     "@synthetixio/contracts-interface": ^2.74.3
     "@synthetixio/optimism-networks": ^2.74.2
-    "@synthetixio/providers": ^2.74.3
+    "@synthetixio/providers": ^2.74.5
     "@synthetixio/queries": ^3.0.0
     "@synthetixio/synpress": ^1.1.1
-    "@synthetixio/transaction-notifier": ^2.74.4
+    "@synthetixio/transaction-notifier": ^2.74.6
     "@synthetixio/wei": ^2.74.2
     "@testing-library/jest-dom": ^5.16.4
     "@testing-library/react": ^12.1.5
@@ -21509,24 +21498,6 @@ jschardet@latest:
   bin:
     snx: bin.js
   checksum: 9873b54d5435d3a992e13c6b2267da6f200c07c1df459256eb09705b825e4e34873988e1510ded828a30e50c12c6e9418b398a5ad376ad86806466a3e7b91d86
-  languageName: node
-  linkType: hard
-
-"synthetix@npm:2.74.1":
-  version: 2.74.1
-  resolution: "synthetix@npm:2.74.1"
-  dependencies:
-    abi-decoder: ^2.3.0
-    commander: ^8.1.0
-    inquirer: ^6.5.2
-    inquirer-list-search-prompt: ^1.0.2
-    js-levenshtein: ^1.1.6
-    pretty-error: ^2.1.1
-    solidity-parser-antlr: ^0.4.11
-    web3-utils: ^1.2.2
-  bin:
-    snx: bin.js
-  checksum: 69d46d3a90f2799fb7627d912355ae8f748536a34770ce1d674328e4e9bb59ccb5a78fc1e659d2a43ab95ef43903ff0fd97acd7b952c1522a1d18c522b15a440
   languageName: node
   linkType: hard
 

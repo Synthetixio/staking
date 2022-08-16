@@ -4,24 +4,24 @@ import Connector from 'containers/Connector';
 import { useQuery, UseQueryOptions } from 'react-query';
 
 const useGetDSnxBalance = (queryOptions?: UseQueryOptions<Wei>) => {
-	const { provider, network, walletAddress, isMainnet } = Connector.useContainer();
+  const { provider, network, walletAddress, isMainnet } = Connector.useContainer();
 
-	const dSNXContract = isMainnet ? dSNXContractMainnet : dSNXPoolContractOptimism;
+  const dSNXContract = isMainnet ? dSNXContractMainnet : dSNXPoolContractOptimism;
 
-	return useQuery(
-		[walletAddress, isMainnet, dSNXContract.address],
-		async () => {
-			if (!walletAddress) return wei(0);
-			if (!provider) return wei(0);
+  return useQuery(
+    [walletAddress, isMainnet, dSNXContract.address],
+    async () => {
+      if (!walletAddress) return wei(0);
+      if (!provider) return wei(0);
 
-			const balance = await dSNXContract.connect(provider).balanceOf(walletAddress);
-			return wei(balance);
-		},
-		{
-			enabled: Boolean(walletAddress && network?.name && provider),
-			...queryOptions,
-		}
-	);
+      const balance = await dSNXContract.connect(provider).balanceOf(walletAddress);
+      return wei(balance);
+    },
+    {
+      enabled: Boolean(walletAddress && network?.name && provider),
+      ...queryOptions,
+    }
+  );
 };
 
 export default useGetDSnxBalance;

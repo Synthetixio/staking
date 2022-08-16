@@ -15,43 +15,43 @@ import { contracts as LoanContracts } from './loans';
 import { ContractsMap, NetworkId, NetworkNameById } from '@synthetixio/contracts-interface';
 
 export const contracts: any = {
-	...StakingContracts,
-	...DebtContracts,
-	...EscrowContracts,
-	...LiquidationContracts,
-	...RatesContracts,
-	...ShortsContracts,
-	...StatusContracts,
-	...SynthsContracts,
-	...SynthsCurrenciesContracts,
-	...WalletContracts,
-	...BridgeContracts,
-	...DelegateContracts,
-	...LoanContracts,
+  ...StakingContracts,
+  ...DebtContracts,
+  ...EscrowContracts,
+  ...LiquidationContracts,
+  ...RatesContracts,
+  ...ShortsContracts,
+  ...StatusContracts,
+  ...SynthsContracts,
+  ...SynthsCurrenciesContracts,
+  ...WalletContracts,
+  ...BridgeContracts,
+  ...DelegateContracts,
+  ...LoanContracts,
 };
 
 type ContractName = keyof typeof contracts;
 
 export function initializeSynthetix(networkId: NetworkId, signer: Signer) {
-	const contractsNames = Object.keys(contracts) as ContractName[];
-	return contractsNames
-		.map((contractName: ContractName) => {
-			if (!contracts[contractName][NetworkNameById[networkId]]) {
-				// Some contracts are not supported on both networks
-				return null;
-			}
+  const contractsNames = Object.keys(contracts) as ContractName[];
+  return contractsNames
+    .map((contractName: ContractName) => {
+      if (!contracts[contractName][NetworkNameById[networkId]]) {
+        // Some contracts are not supported on both networks
+        return null;
+      }
 
-			const { name, address, abi } = contracts[contractName][NetworkNameById[networkId]];
+      const { name, address, abi } = contracts[contractName][NetworkNameById[networkId]];
 
-			return {
-				name,
-				address,
-				abi,
-			};
-		})
-		.filter((item) => item !== null)
-		.reduce((acc: ContractsMap, contract) => {
-			acc[contract?.name] = new Contract(contract?.address, contract?.abi, signer);
-			return acc;
-		}, {});
+      return {
+        name,
+        address,
+        abi,
+      };
+    })
+    .filter((item) => item !== null)
+    .reduce((acc: ContractsMap, contract) => {
+      acc[contract?.name] = new Contract(contract?.address, contract?.abi, signer);
+      return acc;
+    }, {});
 }

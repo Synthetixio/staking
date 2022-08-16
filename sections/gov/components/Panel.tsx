@@ -16,50 +16,50 @@ import ROUTES from 'constants/routes';
 import useGetPanelType from '../hooks/useGetPanelType';
 
 const Panel = () => {
-	const { t } = useTranslation();
-	const router = useRouter();
-	const panelType = useGetPanelType();
+  const { t } = useTranslation();
+  const router = useRouter();
+  const panelType = useGetPanelType();
 
-	const proposalsData = useMemo(
-		() => ({
-			title: t('gov.panel.proposals.title'),
-			description: t('gov.panel.proposals.description'),
-			tabChildren: <List spaceKey={SPACE_KEY.PROPOSAL} />, // Static list now
-			blue: true,
-			key: SPACE_KEY.PROPOSAL,
-		}),
+  const proposalsData = useMemo(
+    () => ({
+      title: t('gov.panel.proposals.title'),
+      description: t('gov.panel.proposals.description'),
+      tabChildren: <List spaceKey={SPACE_KEY.PROPOSAL} />, // Static list now
+      blue: true,
+      key: SPACE_KEY.PROPOSAL,
+    }),
 
-		[t]
-	);
-	switch (panelType) {
-		case PanelType.PROPOSAL:
-			return (
-				<Proposal
-					onBack={() => {
-						router.push(ROUTES.Gov.Home);
-					}}
-				/>
-			);
-		case PanelType.CREATE:
-			return (
-				<Create
-					onBack={() => {
-						router.push(ROUTES.Gov.Home);
-					}}
-				/>
-			);
-		default:
-			return (
-				<Grid>
-					<Col>
-						<UnstructuredTab tabData={proposalsData} />
-					</Col>
-					<Col>
-						<CouncilBoard />
-					</Col>
-				</Grid>
-			);
-	}
+    [t]
+  );
+  switch (panelType) {
+    case PanelType.PROPOSAL:
+      return (
+        <Proposal
+          onBack={() => {
+            router.push(ROUTES.Gov.Home);
+          }}
+        />
+      );
+    case PanelType.CREATE:
+      return (
+        <Create
+          onBack={() => {
+            router.push(ROUTES.Gov.Home);
+          }}
+        />
+      );
+    default:
+      return (
+        <Grid>
+          <Col>
+            <UnstructuredTab tabData={proposalsData} />
+          </Col>
+          <Col>
+            <CouncilBoard />
+          </Col>
+        </Grid>
+      );
+  }
 };
 
 export default Panel;

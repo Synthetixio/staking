@@ -7,46 +7,46 @@ import { isSynth } from './currencies';
 type BalancesMap = Record<CurrencyKey, number>;
 
 type SynthBalances = {
-	synths: {
-		balances: BalancesMap;
-	};
+  synths: {
+    balances: BalancesMap;
+  };
 };
 
 type Balances = SynthBalances & BalancesMap;
 
 const getSynthBalancePath = (currencyKey: CurrencyKey, field: string) => [
-	'synths',
-	'balances',
-	currencyKey,
-	field,
+  'synths',
+  'balances',
+  currencyKey,
+  field,
 ];
 
 // crypto appears as lowercased in balances
 const getCryptoCurrencyBalancePath = (currencyKey: CurrencyKey, field: string) => [
-	currencyKey.toLowerCase(),
-	field,
+  currencyKey.toLowerCase(),
+  field,
 ];
 
 export const getCurrencyKeyBalance = (balances: Balances, currencyKey: CurrencyKey): number =>
-	isSynth(currencyKey)
-		? get(balances, getSynthBalancePath(currencyKey, 'balance'))
-		: get(balances, getCryptoCurrencyBalancePath(currencyKey, 'balance'));
+  isSynth(currencyKey)
+    ? get(balances, getSynthBalancePath(currencyKey, 'balance'))
+    : get(balances, getCryptoCurrencyBalancePath(currencyKey, 'balance'));
 
 export const getCurrencyKeyUSDBalance = (balances: Balances, currencyKey: CurrencyKey): number =>
-	isSynth(currencyKey)
-		? get(balances, getSynthBalancePath(currencyKey, 'usdBalance'))
-		: get(balances, getCryptoCurrencyBalancePath(currencyKey, 'usdBalance'));
+  isSynth(currencyKey)
+    ? get(balances, getSynthBalancePath(currencyKey, 'usdBalance'))
+    : get(balances, getCryptoCurrencyBalancePath(currencyKey, 'usdBalance'));
 
 export const getCurrencyKeyUSDBalanceBN = (
-	balances: Balances,
-	currencyKey: CurrencyKey
+  balances: Balances,
+  currencyKey: CurrencyKey
 ): BigNumberish =>
-	isSynth(currencyKey)
-		? get(balances, getSynthBalancePath(currencyKey, 'balanceBN'))
-		: get(balances, getCryptoCurrencyBalancePath(currencyKey, 'balanceBN'));
+  isSynth(currencyKey)
+    ? get(balances, getSynthBalancePath(currencyKey, 'balanceBN'))
+    : get(balances, getCryptoCurrencyBalancePath(currencyKey, 'balanceBN'));
 
 export const calculateIsBelowCRatio = (
-	currentCRatio: Wei,
-	targetCRatio: Wei,
-	targetThreshold: Wei
+  currentCRatio: Wei,
+  targetCRatio: Wei,
+  targetThreshold: Wei
 ) => currentCRatio.gt(targetCRatio.mul(wei(1).add(targetThreshold)));

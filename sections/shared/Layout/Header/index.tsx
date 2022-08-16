@@ -10,38 +10,38 @@ import UserMenu from '../UserMenu';
 import MobileTabletMenu from './MobileTabletMenu';
 
 const Header: FC = () => {
-	return (
-		<HeaderWrapper>
-			<DesktopOnlyView>
-				<BannerManager />
-			</DesktopOnlyView>
-			<Container>
-				<FlexDivCentered>
-					<MobileOrTabletView>
-						<MobileTabletMenu />
-					</MobileOrTabletView>
-					<Sep />
-					<UserMenu />
-				</FlexDivCentered>
-			</Container>
-		</HeaderWrapper>
-	);
+  return (
+    <HeaderWrapper>
+      <DesktopOnlyView>
+        <BannerManager />
+      </DesktopOnlyView>
+      <Container>
+        <FlexDivCentered>
+          <MobileOrTabletView>
+            <MobileTabletMenu />
+          </MobileOrTabletView>
+          <Sep />
+          <UserMenu />
+        </FlexDivCentered>
+      </Container>
+    </HeaderWrapper>
+  );
 };
 
 const HeaderWrapper = styled.div`
-	position: relative;
+  position: relative;
 `;
 
 const Container = styled(FlexDivCol)`
-	padding: 24px 30px 0 0;
+  padding: 24px 30px 0 0;
 
-	${media.lessThan('mdUp')`
-		padding: 10px ${MOBILE_BODY_PADDING}px 0;
-	`}
+  ${media.lessThan('mdUp')`
+    padding: 10px ${MOBILE_BODY_PADDING}px 0;
+  `}
 `;
 
 const Sep = styled.div`
-	flex: 1;
+  flex: 1;
 `;
 
 export default Header;

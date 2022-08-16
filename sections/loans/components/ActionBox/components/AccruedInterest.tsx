@@ -6,51 +6,51 @@ import { Loan } from 'containers/Loans/types';
 import { wei } from '@synthetixio/wei';
 
 type AccruedInterestProps = {
-	loan: Loan;
+  loan: Loan;
 };
 
 const AccruedInterest: React.FC<AccruedInterestProps> = ({ loan }) => {
-	const { t } = useTranslation();
+  const { t } = useTranslation();
 
-	return (
-		<Container>
-			<Header>{t('loans.interest-accrued')}</Header>
-			<FlexDivRowCentered>
-				<Item>
-					<Text>
-						{wei(loan.accruedInterest).toString(4)} {loan.currency}
-					</Text>
-				</Item>
-			</FlexDivRowCentered>
-		</Container>
-	);
+  return (
+    <Container>
+      <Header>{t('loans.interest-accrued')}</Header>
+      <FlexDivRowCentered>
+        <Item>
+          <Text>
+            {wei(loan.accruedInterest).toString(4)} {loan.currency}
+          </Text>
+        </Item>
+      </FlexDivRowCentered>
+    </Container>
+  );
 };
 
 const Container = styled(FlexDivRow)`
-	width: 100%;
-	justify-content: space-between;
+  width: 100%;
+  justify-content: space-between;
 `;
 
 const Header = styled.p`
-	font-family: ${(props) => props.theme.fonts.interBold};
-	font-size: 12px;
-	color: ${(props) => props.theme.colors.gray};
-	text-transform: uppercase;
+  font-family: ${(props) => props.theme.fonts.interBold};
+  font-size: 12px;
+  color: ${(props) => props.theme.colors.gray};
+  text-transform: uppercase;
 `;
 
 const Text = styled.span`
-	font-family: ${(props) => props.theme.fonts.interBold};
-	font-size: 12px;
-	color: ${(props) => props.theme.colors.white};
+  font-family: ${(props) => props.theme.fonts.interBold};
+  font-size: 12px;
+  color: ${(props) => props.theme.colors.white};
 `;
 
 const Item = styled.span`
-	display: inline-flex;
-	align-items: center;
-	cursor: pointer;
-	svg {
-		margin-left: 5px;
-	}
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  svg {
+    margin-left: 5px;
+  }
 `;
 
 export default AccruedInterest;

@@ -13,14 +13,14 @@ import ROUTES from 'constants/routes';
 import CallToActionIcon from 'assets/svg/app/call-to-action.svg';
 
 import {
-	Container,
-	ContainerHeader,
-	ContainerBody,
-	Data,
-	Header,
-	StyledTable,
-	Subtitle,
-	Title,
+  Container,
+  ContainerHeader,
+  ContainerBody,
+  Data,
+  Header,
+  StyledTable,
+  Subtitle,
+  Title,
 } from 'sections/escrow/components/common';
 import Button from 'components/Button';
 import { FlexDivCentered, FlexDivColCentered, ExternalLink } from 'styles/common';
@@ -28,100 +28,100 @@ import useSynthetixQueries, { EscrowData } from '@synthetixio/queries';
 import Connector from 'containers/Connector';
 
 const RewardEscrowSchedule: React.FC = () => {
-	const { t } = useTranslation();
-	const { walletAddress } = Connector.useContainer();
+  const { t } = useTranslation();
+  const { walletAddress } = Connector.useContainer();
 
-	const { useEscrowDataQuery } = useSynthetixQueries();
+  const { useEscrowDataQuery } = useSynthetixQueries();
 
-	const escrowDataQuery = useEscrowDataQuery(walletAddress);
-	const schedule = escrowDataQuery?.data?.schedule;
-	const totalBalancePendingMigration = escrowDataQuery?.data?.totalBalancePendingMigration ?? 0;
-	const router = useRouter();
-	return (
-		<Container>
-			<ContainerHeader>
-				<Title>
-					{totalBalancePendingMigration > 0
-						? t('escrow.staking.info.title-migrate-l1')
-						: t('escrow.staking.info.title')}
-				</Title>
-				<Subtitle>
-					{totalBalancePendingMigration > 0 ? (
-						<Trans
-							i18nKey="escrow.staking.info.subtitle-migrate-l1"
-							components={[<StyledLink href={EXTERNAL_LINKS.Synthetix.SIP60} />]}
-						/>
-					) : (
-						t('escrow.staking.info.subtitle')
-					)}
-				</Subtitle>
-			</ContainerHeader>
-			<ContainerBody>
-				{(schedule ?? []).length > 0 || escrowDataQuery.isLoading ? (
-					<StyledTable
-						palette="primary"
-						columns={[
-							{
-								Header: <Header>{t('escrow.table.vesting-date')}</Header>,
-								accessor: 'date',
-								Cell: (cellProps: CellProps<EscrowData['schedule'], Date>) => (
-									<Data>{formatShortDate(cellProps.value)}</Data>
-								),
-								sortable: false,
-							},
-							{
-								Header: (
-									<Header style={{ textAlign: 'right' }}>{t('escrow.table.snx-amount')}</Header>
-								),
-								accessor: 'quantity',
-								Cell: (cellProps: CellProps<EscrowData['schedule'], number>) => (
-									<Data style={{ textAlign: 'right' }}>
-										{formatCurrency(CryptoCurrency.SNX, cellProps.value)}
-									</Data>
-								),
-								sortable: false,
-							},
-						]}
-						options={{ autoResetPage: false }}
-						data={schedule ? schedule.filter((e: any) => e.quantity.gt(0)) : []}
-						isLoading={escrowDataQuery.isLoading}
-						showPagination={true}
-					/>
-				) : (
-					<CallToActionContainer>
-						<FlexDivColCentered>
-							<CallToActionIcon width="72" />
-							<CallToActionInfo>{t('escrow.actions.stake.no-escrowed-snx')}</CallToActionInfo>
-							<StyledButton
-								size="lg"
-								variant="primary"
-								onClick={() => router.push(ROUTES.Staking.Home)}
-							>
-								{t('escrow.actions.stake.stake-now')}
-							</StyledButton>
-						</FlexDivColCentered>
-					</CallToActionContainer>
-				)}
-			</ContainerBody>
-		</Container>
-	);
+  const escrowDataQuery = useEscrowDataQuery(walletAddress);
+  const schedule = escrowDataQuery?.data?.schedule;
+  const totalBalancePendingMigration = escrowDataQuery?.data?.totalBalancePendingMigration ?? 0;
+  const router = useRouter();
+  return (
+    <Container>
+      <ContainerHeader>
+        <Title>
+          {totalBalancePendingMigration > 0
+            ? t('escrow.staking.info.title-migrate-l1')
+            : t('escrow.staking.info.title')}
+        </Title>
+        <Subtitle>
+          {totalBalancePendingMigration > 0 ? (
+            <Trans
+              i18nKey="escrow.staking.info.subtitle-migrate-l1"
+              components={[<StyledLink href={EXTERNAL_LINKS.Synthetix.SIP60} />]}
+            />
+          ) : (
+            t('escrow.staking.info.subtitle')
+          )}
+        </Subtitle>
+      </ContainerHeader>
+      <ContainerBody>
+        {(schedule ?? []).length > 0 || escrowDataQuery.isLoading ? (
+          <StyledTable
+            palette="primary"
+            columns={[
+              {
+                Header: <Header>{t('escrow.table.vesting-date')}</Header>,
+                accessor: 'date',
+                Cell: (cellProps: CellProps<EscrowData['schedule'], Date>) => (
+                  <Data>{formatShortDate(cellProps.value)}</Data>
+                ),
+                sortable: false,
+              },
+              {
+                Header: (
+                  <Header style={{ textAlign: 'right' }}>{t('escrow.table.snx-amount')}</Header>
+                ),
+                accessor: 'quantity',
+                Cell: (cellProps: CellProps<EscrowData['schedule'], number>) => (
+                  <Data style={{ textAlign: 'right' }}>
+                    {formatCurrency(CryptoCurrency.SNX, cellProps.value)}
+                  </Data>
+                ),
+                sortable: false,
+              },
+            ]}
+            options={{ autoResetPage: false }}
+            data={schedule ? schedule.filter((e: any) => e.quantity.gt(0)) : []}
+            isLoading={escrowDataQuery.isLoading}
+            showPagination={true}
+          />
+        ) : (
+          <CallToActionContainer>
+            <FlexDivColCentered>
+              <CallToActionIcon width="72" />
+              <CallToActionInfo>{t('escrow.actions.stake.no-escrowed-snx')}</CallToActionInfo>
+              <StyledButton
+                size="lg"
+                variant="primary"
+                onClick={() => router.push(ROUTES.Staking.Home)}
+              >
+                {t('escrow.actions.stake.stake-now')}
+              </StyledButton>
+            </FlexDivColCentered>
+          </CallToActionContainer>
+        )}
+      </ContainerBody>
+    </Container>
+  );
 };
 
 const CallToActionContainer = styled(FlexDivCentered)`
-	justify-content: center;
-	padding: 16px 0 32px 0;
+  justify-content: center;
+  padding: 16px 0 32px 0;
 `;
 
 const CallToActionInfo = styled(Subtitle)`
-	margin-top: 0;
+  margin-top: 0;
 `;
 
 const StyledButton = styled(Button)`
-	width: 100%;
+  width: 100%;
 `;
 
 export const StyledLink = styled(ExternalLink)`
-	color: ${(props) => props.theme.colors.blue};
+  color: ${(props) => props.theme.colors.blue};
 `;
 
 export default RewardEscrowSchedule;

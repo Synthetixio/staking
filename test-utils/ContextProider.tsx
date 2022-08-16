@@ -5,15 +5,15 @@ import theme from 'styles/theme';
 import { QueryClient, QueryClientProvider } from 'react-query';
 
 const ContextProvider: FC = ({ children }) => {
-	return (
-		<QueryClientProvider client={new QueryClient()} contextSharing={true}>
-			<SynthetixQueryContextProvider
-				value={createQueryContext({ networkId: 10, synthetixjs: null })}
-			>
-				<ThemeProvider theme={theme}>{children}</ThemeProvider>
-			</SynthetixQueryContextProvider>
-		</QueryClientProvider>
-	);
+  return (
+    <QueryClientProvider client={new QueryClient()} contextSharing={true}>
+      <SynthetixQueryContextProvider
+        value={createQueryContext({ networkId: 10, synthetixjs: null })}
+      >
+        <ThemeProvider theme={theme}>{children}</ThemeProvider>
+      </SynthetixQueryContextProvider>
+    </QueryClientProvider>
+  );
 };
 
 export default ContextProvider;

@@ -4,3 +4,6 @@ build
 out
 coverage
 .yarn
+tests
+test-setup
+test-utils

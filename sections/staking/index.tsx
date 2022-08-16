@@ -10,30 +10,30 @@ import InfoBox from './components/InfoBox';
 import ActionBox from './components/ActionBox';
 
 const Index: FC = () => {
-	const router = useRouter();
-	const defaultTab = (router.query.action && router.query.action[0]) || StakingPanelType.MINT;
+  const router = useRouter();
+  const defaultTab = (router.query.action && router.query.action[0]) || StakingPanelType.MINT;
 
-	return (
-		<Container>
-			<Col>
-				<ActionBox currentTab={defaultTab} />
-			</Col>
-			<Col>
-				<InfoBox currentTab={defaultTab} />
-			</Col>
-		</Container>
-	);
+  return (
+    <Container>
+      <Col>
+        <ActionBox currentTab={defaultTab} />
+      </Col>
+      <Col>
+        <InfoBox currentTab={defaultTab} />
+      </Col>
+    </Container>
+  );
 };
 
 const Container = styled.div`
-	display: grid;
-	grid-template-columns: 2fr 1fr;
-	grid-gap: 1rem;
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  grid-gap: 1rem;
 
-	${media.lessThan('mdUp')`
-		display: flex;
-		flex-direction: column;
-	`}
+  ${media.lessThan('mdUp')`
+    display: flex;
+    flex-direction: column;
+  `}
 `;
 
 const Col = styled(FlexDivCol)``;

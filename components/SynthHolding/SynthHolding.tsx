@@ -9,54 +9,54 @@ import { formatPercent } from 'utils/formatters/number';
 import Wei from '@synthetixio/wei';
 
 type SynthHoldingProps = {
-	usdBalance: Wei;
-	totalUSDBalance: Wei;
-	progressBarVariant?: ProgressBarType;
-	showProgressBar?: boolean;
+  usdBalance: Wei;
+  totalUSDBalance: Wei;
+  progressBarVariant?: ProgressBarType;
+  showProgressBar?: boolean;
 };
 
 const SynthHolding: FC<SynthHoldingProps> = ({
-	usdBalance,
-	totalUSDBalance,
-	progressBarVariant,
-	showProgressBar = true,
+  usdBalance,
+  totalUSDBalance,
+  progressBarVariant,
+  showProgressBar = true,
 }) => {
-	const percent = usdBalance.div(totalUSDBalance);
+  const percent = usdBalance.div(totalUSDBalance);
 
-	return (
-		<Container>
-			{!showProgressBar ? (
-				<StyledPercentage>{formatPercent(percent)}</StyledPercentage>
-			) : (
-				<>
-					<StyledProgressBar
-						percentage={percent.toNumber()}
-						variant={progressBarVariant || 'rainbow'}
-					/>
-					<StyledPercentage>{formatPercent(percent)}</StyledPercentage>
-				</>
-			)}
-		</Container>
-	);
+  return (
+    <Container>
+      {!showProgressBar ? (
+        <StyledPercentage>{formatPercent(percent)}</StyledPercentage>
+      ) : (
+        <>
+          <StyledProgressBar
+            percentage={percent.toNumber()}
+            variant={progressBarVariant || 'rainbow'}
+          />
+          <StyledPercentage>{formatPercent(percent)}</StyledPercentage>
+        </>
+      )}
+    </Container>
+  );
 };
 
 const Container = styled(FlexDivCol)`
-	width: 100%;
+  width: 100%;
 
-	${media.lessThan('md')`
-		display: grid;
-		grid-template-columns: 2fr 1fr;
-		align-items: center;
-		grid-gap: 1rem;
-	`}
+  ${media.lessThan('md')`
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    align-items: center;
+    grid-gap: 1rem;
+  `}
 `;
 
 const StyledPercentage = styled.span`
-	color: ${(props) => props.theme.colors.gray};
+  color: ${(props) => props.theme.colors.gray};
 `;
 
 const StyledProgressBar = styled(ProgressBar)`
-	margin-bottom: 4px;
+  margin-bottom: 4px;
 `;
 
 export default SynthHolding;
