@@ -3809,7 +3809,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@synthetixio/contracts@npm:1.0.2":
+"@synthetixio/contracts@npm:1.0.2, @synthetixio/contracts@npm:^1.0.2":
   version: 1.0.2
   resolution: "@synthetixio/contracts@npm:1.0.2"
   checksum: 8506304b1620ecb9cbb8e7983015795be0e07532eae80892208b1807b30f58c75e97beddceb9a52722108d9bb1513ac1b522ddd08a2de79d7149819dfb1f095f
@@ -20678,6 +20678,7 @@ jschardet@latest:
     "@socket.tech/widget": ^0.0.9
     "@svgr/webpack": ^6.2.1
     "@synthetixio/assets": ^2.0.13
+    "@synthetixio/contracts": ^1.0.2
     "@synthetixio/contracts-interface": ^2.74.3
     "@synthetixio/optimism-networks": ^2.74.2
     "@synthetixio/providers": ^2.74.5
