@@ -7,6 +7,7 @@ import useGetNeedsApproval from 'hooks/useGetNeedsApproval';
 import { useState } from 'react';
 import styled from 'styled-components';
 import {
+  ExternalLink,
   FlexDivColCentered,
   ModalContent,
   ModalItem,
@@ -18,6 +19,7 @@ import Dhedge from 'assets/svg/app/dhedge.svg';
 import LoaderIcon from 'assets/svg/app/loader.svg';
 import WarningIcon from 'assets/svg/app/warning.svg';
 import {
+  PoweredByContainer,
   StyledBackgroundTab,
   StyledBalance,
   StyledButton,
@@ -27,6 +29,7 @@ import {
   StyledInputLabel,
   StyledMaxButton,
   StyledSpacer,
+  TorosLogo,
 } from './hedge-tab-ui-components';
 import {
   dSNXWrapperSwapperContractOptimism,
@@ -36,9 +39,13 @@ import {
 import useGetDSNXPrice from 'hooks/useGetDSNXPrice';
 import GasSelector from 'components/GasSelector';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
+import { EXTERNAL_LINKS } from 'constants/links';
+import { useTranslation } from 'react-i18next';
 
 export default function SellHedgeTabOptimism() {
   const { useContractTxn, useSynthsBalancesQuery } = useSynthetixQueries();
+  const { t } = useTranslation();
+
   const [approveGasCost, setApproveGasCost] = useState<GasPrice | undefined>(undefined);
   const [withdrawnGasCost, setWithdrawGasCost] = useState<GasPrice | undefined>(undefined);
   const [amountToSend, setAmountToSend] = useState('');
@@ -211,6 +218,12 @@ export default function SellHedgeTabOptimism() {
           </StyledButton>
         </>
       )}
+      <PoweredByContainer>
+        {t('debt.actions.manage.powered-by')}{' '}
+        <ExternalLink href={EXTERNAL_LINKS.Toros.dSNXPool}>
+          <TorosLogo alt="toros logo" src={'/images/toros-white.png'} />
+        </ExternalLink>
+      </PoweredByContainer>
       {txModalOpen && (
         <TxConfirmationModal
           onDismiss={() => setTxModalOpen(false)}
