@@ -22,10 +22,7 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
           cache: 'yarn'
 
-      - run: yarn npm audit --severity critical
-      # TODO: enable recursive audit after the next synthetix monorepo release
-      # - run: yarn npm audit --recursive --severity critical
-
+      - run: yarn npm audit --recursive --severity critical
       - run: yarn install --immutable
       - run: yarn lint:sarif
       - run: yarn pretty:check
