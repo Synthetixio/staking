@@ -98,7 +98,9 @@ const getAPR = async (
   if (poolData.feeSnapshots.length === 0) {
     return 0;
   }
-  const snapshots = [...poolData.feeSnapshots].sort((a: any, b: any) => (a.block > b.block ? 1 : -1));
+  const snapshots = [...poolData.feeSnapshots].sort((a: any, b: any) =>
+    a.block > b.block ? 1 : -1
+  );
   const supplySnaps = [...poolData.supplySnapshots].sort((a: any, b: any) =>
     a.block > b.block ? 1 : -1
   );

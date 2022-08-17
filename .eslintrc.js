@@ -18,8 +18,8 @@ module.exports = {
         functions: 'never',
       },
     ],
-    indent: 'off',
-    quotes: ['error', 'single'],
+    indent: 'off', // handled with prettier
+    quotes: 'off', // handled with prettier
     'no-undef': 'error',
     'prefer-const': 'error',
     semi: ['error', 'always'],

@@ -13,7 +13,7 @@ export default {
       txSent: 'Your transaction has been sent to the network',
       txStallPending: 'Your transaction has stalled and has not entered the transaction pool',
       txPool: 'Your transaction has started',
-      txStallConfirmed: 'Your transaction has stalled and hasn\'t been confirmed',
+      txStallConfirmed: "Your transaction has stalled and hasn't been confirmed",
       txSpeedUp: 'Your transaction has been sped up',
       txCancel: 'Your transaction is being canceled',
       txFailed: 'Your transaction has failed',
