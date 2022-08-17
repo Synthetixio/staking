@@ -54,7 +54,7 @@ const useSignMessage = (
   return useMutation<AxiosResponse<any>, any, SignaturePayload, unknown>(
     async (payload: SignaturePayload) => {
       const version = '0.1.3';
-      let msg: any = {
+      const msg: any = {
         address: walletAddress ? ethers.utils.getAddress(walletAddress) : '',
         msg: JSON.stringify({
           version,

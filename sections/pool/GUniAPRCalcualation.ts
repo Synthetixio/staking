@@ -98,11 +98,11 @@ const getAPR = async (
   if (poolData.feeSnapshots.length === 0) {
     return 0;
   }
-  let snapshots = [...poolData.feeSnapshots].sort((a: any, b: any) => (a.block > b.block ? 1 : -1));
-  let supplySnaps = [...poolData.supplySnapshots].sort((a: any, b: any) =>
+  const snapshots = [...poolData.feeSnapshots].sort((a: any, b: any) => (a.block > b.block ? 1 : -1));
+  const supplySnaps = [...poolData.supplySnapshots].sort((a: any, b: any) =>
     a.block > b.block ? 1 : -1
   );
-  let currentBlock = (await helpersContract.provider.getBlock('latest')).number;
+  const currentBlock = (await helpersContract.provider.getBlock('latest')).number;
   const sqrtPriceX96 = (await uniswapPoolContract.slot0()).sqrtPriceX96;
   const { amount0Current, amount1Current } = await guniPoolContract.getUnderlyingBalances();
   const positionId = await guniPoolContract.getPositionID();
@@ -126,7 +126,7 @@ const getAPR = async (
     feesEarned0: feesEarned0.toString(),
     feesEarned1: feesEarned1.toString(),
   });
-  let firstBlock = currentBlock - 40320 * 4;
+  const firstBlock = currentBlock - 40320 * 4;
   const totalBlocks = currentBlock - firstBlock;
   const totalFeeValue = computeTotalFeesEarned(snapshots, sqrtPriceX96);
   const averageReserves = computeAverageReserves(supplySnaps, sqrtPriceX96, firstBlock);

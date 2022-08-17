@@ -8,7 +8,7 @@ export enum SPACE_KEY {
 
 const isTestNet = false;
 
-const BASE_URL = isTestNet ? `testnet` : `hub`;
+const BASE_URL = isTestNet ? 'testnet' : 'hub';
 
 export const snapshotEndpoint = `https://${BASE_URL}.snapshot.org/graphql`;
 

@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { Tooltip } from 'styles/common';
 import { Loan } from 'containers/Loans/types';
 
-const MODAL_WIDTH: number = 105;
+const MODAL_WIDTH = 105;
 
 type BorrowModifyModalProps = {
   actions: Array<string>;

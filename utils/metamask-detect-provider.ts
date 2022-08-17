@@ -68,14 +68,14 @@ export function detectEthereumProvider({
   function _validateInputs() {
     if (typeof mustBeMetaMask !== 'boolean') {
       throw new Error(
-        `@metamask/detect-provider: Expected option 'mustBeMetaMask' to be a boolean.`
+        '@metamask/detect-provider: Expected option \'mustBeMetaMask\' to be a boolean.'
       );
     }
     if (typeof silent !== 'boolean') {
-      throw new Error(`@metamask/detect-provider: Expected option 'silent' to be a boolean.`);
+      throw new Error('@metamask/detect-provider: Expected option \'silent\' to be a boolean.');
     }
     if (typeof timeout !== 'number') {
-      throw new Error(`@metamask/detect-provider: Expected option 'timeout' to be a number.`);
+      throw new Error('@metamask/detect-provider: Expected option \'timeout\' to be a number.');
     }
   }
 }

@@ -12,7 +12,7 @@ describe('Wallet tests', () => {
     home.visit();
   });
   context('Connect metamask wallet', () => {
-    it(`should login with success`, () => {
+    it('should login with success', () => {
       home.connectBrowserWallet();
       home.acceptMetamaskAccessRequest();
       home.waitUntilLoggedIn();

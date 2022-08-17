@@ -34,7 +34,7 @@ export const getDecimalPlaces = (value: WeiSource) => (value.toString().split('.
 export const zeroBN = wei(0);
 
 export function numberWithCommas(value: string) {
-  var parts = value.split('.');
+  const parts = value.split('.');
   parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   return parts.join('.');
 }
