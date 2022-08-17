@@ -85,7 +85,7 @@ export default function SellHedgeTabOptimism() {
       dSNXPoolAddressOptimism,
       actualAmountToSendBn,
       '0x7F5c764cBc14f9669B88837ca1490cCa17c31607',
-      actualAmountToSendBn.div(dSNXPrice?.toBN() || wei(0).toBN()),
+      actualAmountToSendBn.div(dSNXPrice?.toBN() || wei(1).toBN()),
     ],
     withdrawnGasCost,
     {
