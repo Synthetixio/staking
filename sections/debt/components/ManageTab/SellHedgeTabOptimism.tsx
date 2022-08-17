@@ -60,7 +60,7 @@ export default function SellHedgeTabOptimism() {
     : wei(amountToSend || 0).toBN();
   const dSnxAmount =
     actualAmountToSendBn.gt(0) && dSNXPrice
-      ? formatCryptoCurrency(wei(actualAmountToSendBn).mul(dSNXPrice), {
+      ? formatCryptoCurrency(wei(actualAmountToSendBn).div(dSNXPrice), {
           maxDecimals: 1,
           minDecimals: 2,
         })
@@ -83,9 +83,9 @@ export default function SellHedgeTabOptimism() {
     'withdrawSUSD',
     [
       dSNXPoolAddressOptimism,
-      actualAmountToSendBn || wei(0),
+      actualAmountToSendBn,
       '0x7F5c764cBc14f9669B88837ca1490cCa17c31607',
-      wei(actualAmountToSendBn).mul(dSNXPrice).toBN() || wei(0).toBN(),
+      actualAmountToSendBn.div(dSNXPrice?.toBN() || wei(0).toBN()),
     ],
     withdrawnGasCost,
     {
@@ -94,7 +94,7 @@ export default function SellHedgeTabOptimism() {
         setTxModalOpen(false);
         dSNXBalanceQuery.refetch();
       },
-      enabled: Boolean(approveQuery.data),
+      enabled: Boolean(approveQuery.data) && actualAmountToSendBn.gt(0),
     }
   );
 
@@ -131,7 +131,7 @@ export default function SellHedgeTabOptimism() {
         />
         <StyledBalance>
           Balance:&nbsp;
-          {formatCryptoCurrency(wei(dSNXBalanceQuery.data), {
+          {formatCryptoCurrency(wei(dSNXBalanceQuery.data || wei(0)), {
             maxDecimals: 1,
             minDecimals: 2,
           })}
