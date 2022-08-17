@@ -36,7 +36,7 @@
     "@synthetixio/providers": "^2.74.5",
     "@synthetixio/queries": "^2.74.8",
     "@synthetixio/transaction-notifier": "^2.74.6",
-    "@synthetixio/v3-theme": "^1.0.0",
+    "@synthetixio/v3-theme": "^1.0.1",
     "@synthetixio/wei": "^2.74.2",
     "@tippyjs/react": "^4.1.0",
     "@uniswap/router-sdk": "^1.0.5",

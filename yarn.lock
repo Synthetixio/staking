@@ -5113,9 +5113,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@synthetixio/v3-theme@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "@synthetixio/v3-theme@npm:1.0.0"
+"@synthetixio/v3-theme@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "@synthetixio/v3-theme@npm:1.0.1"
   dependencies:
     "@chakra-ui/react": ^2.2.6
     "@emotion/react": ^11.10.0
@@ -5123,7 +5123,7 @@ __metadata:
     framer-motion: ^7.0.0
     react: ^18.1.0
     react-dom: ^18.1.0
-  checksum: 6d78d59ae04ab649b042d4cf83a18a73632ccf09938493a88aa4b4b58192d34b2b50767a9b8d2635cd2f9f30d41de03747ac42b970e79549180c298f7ccc598f
+  checksum: ebf2fc1bf0d1524f90ae43e5d8c0c3c2711f09f4cd0611ee4b5a07c18e6b75bc95b4397d2846c7acb631bb83a427e95261521b5e625c28173b151e28ffc4ec79
   languageName: node
   linkType: hard
 
@@ -22085,7 +22085,7 @@ jschardet@latest:
     "@synthetixio/queries": ^2.74.8
     "@synthetixio/synpress": ^1.1.1
     "@synthetixio/transaction-notifier": ^2.74.6
-    "@synthetixio/v3-theme": ^1.0.0
+    "@synthetixio/v3-theme": ^1.0.1
     "@synthetixio/wei": ^2.74.2
     "@testing-library/jest-dom": ^5.16.4
     "@testing-library/react": ^12.1.5
