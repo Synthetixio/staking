@@ -39,7 +39,7 @@ import { EXTERNAL_LINKS } from 'constants/links';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import WarningIcon from 'assets/svg/app/warning.svg';
 
-const HedgeTabOptimism = () => {
+const BuyHedgeTabOptimism = () => {
   const { t } = useTranslation();
   const { synthetixjs, walletAddress } = Connector.useContainer();
   const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
@@ -240,7 +240,7 @@ const HedgeTabOptimism = () => {
   );
 };
 
-export default HedgeTabOptimism;
+export default BuyHedgeTabOptimism;
 
 const Container = styled.div`
   width: 100%;

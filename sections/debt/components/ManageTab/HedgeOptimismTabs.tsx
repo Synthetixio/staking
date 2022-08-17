@@ -2,7 +2,7 @@ import { TabButton } from 'components/Tab';
 import { useState } from 'react';
 import styled from 'styled-components';
 import { FlexDivJustifyCenter } from 'styles/common';
-import HedgeTabOptimism from './HedgeTabOptimism';
+import BuyHedgeTabOptimism from './BuyHedgeTabOptimism';
 import SellHedgeTabOptimism from './SellHedgeTabOptimism';
 
 export default function HedgeOptimismTabs() {
@@ -26,7 +26,7 @@ export default function HedgeOptimismTabs() {
           SELL
         </StyledTabButton>
       </FlexDivJustifyCenter>
-      {activeTab === 'buy' ? <HedgeTabOptimism /> : <SellHedgeTabOptimism />}
+      {activeTab === 'buy' ? <BuyHedgeTabOptimism /> : <SellHedgeTabOptimism />}
     </StyledContainer>
   );
 }
