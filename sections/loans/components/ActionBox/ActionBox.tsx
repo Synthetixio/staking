@@ -14,9 +14,9 @@ const ActionBox: React.FC<ActionBoxProps> = () => {
   const action = router.query.action!;
   const [currentTab, loanId, loanAction] = useMemo(() => {
     let currentTab = 'list';
-    let loanType: string = '';
-    let loanId: string = '';
-    let loanAction: string = '';
+    let loanType = '';
+    let loanId = '';
+    let loanAction = '';
 
     if (action) {
       loanType = action[0];

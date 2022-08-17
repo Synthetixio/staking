@@ -175,7 +175,7 @@ export const TopContainer = styled.div<{ isManageTab: boolean; isMainnet: boolea
       ? `display: grid;
           grid-template-columns: 2fr 1fr;
           grid-gap: 1rem;`
-      : ``}
+      : ''}
   margin-bottom: 12px;
 
   ${media.lessThan('mdUp')`

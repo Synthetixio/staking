@@ -33,7 +33,7 @@ const BurnTab: FC = () => {
 
   const returnPanel = useMemo(() => {
     let handleSubmit;
-    let inputValue: string = '0';
+    let inputValue = '0';
     let isLocked;
     let etherNeededToBuy;
     let sUSDNeededToBuy;

@@ -25,7 +25,7 @@ const Options: React.FC<OptionsProps> = ({ choices, setChoices }) => {
               <Option
                 value={choices[i]}
                 onChange={(e) => {
-                  let item = [...choices];
+                  const item = [...choices];
                   item[i] = e.target.value;
                   setChoices(item);
                 }}
@@ -33,7 +33,7 @@ const Options: React.FC<OptionsProps> = ({ choices, setChoices }) => {
               <Delete
                 width="16"
                 onClick={() => {
-                  let item = [...choices];
+                  const item = [...choices];
                   item.splice(i, 1);
                   setChoices(item);
                 }}
