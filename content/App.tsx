@@ -121,12 +121,11 @@ const App: FC<AppProps> = (props) => {
       <ChakraProvider
         theme={extendTheme({
           ...chakraTheme,
-          // TODO: Global V2 Styles, need replacing
           styles: {
             global: {
               body: {
-                bg: '#06061B',
-                color: 'white',
+                bg: chakraTheme.colors.navy['900'],
+                color: chakraTheme.colors.white,
               },
             },
           },
