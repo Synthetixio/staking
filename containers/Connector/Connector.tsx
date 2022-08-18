@@ -30,6 +30,22 @@ const defaultNetwork: Network = {
   name: NetworkNameById[NetworkIdByName.mainnet],
   useOvm: getIsOVM(NetworkIdByName.mainnet),
 };
+// Ethereum Mainnet
+const L1DefaultProvider: SynthetixProvider = loadProvider({
+  infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID
+    ? process.env.NEXT_PUBLIC_INFURA_PROJECT_ID
+    : '0',
+  networkId: NetworkIdByName.mainnet,
+});
+
+// Optimism Mainnet
+const L2DefaultProvider: SynthetixProvider = loadProvider({
+  infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID
+    ? process.env.NEXT_PUBLIC_INFURA_PROJECT_ID
+    : '0',
+  networkId: NetworkIdByName['mainnet-ovm'],
+});
+const transactionNotifier = new TransactionNotifier(L1DefaultProvider);
 
 const useConnector = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -50,34 +66,9 @@ const useConnector = () => {
 
   const setSynthetix = useCallback((id, provider) => initializeSynthetix(id, provider), []);
 
-  // Ethereum Mainnet
-  const L1DefaultProvider: SynthetixProvider = useMemo(
-    () =>
-      loadProvider({
-        infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID
-          ? process.env.NEXT_PUBLIC_INFURA_PROJECT_ID
-          : '0',
-        networkId: NetworkIdByName.mainnet,
-      }),
-    []
-  );
-
-  // Optimism Mainnet
-  const L2DefaultProvider: SynthetixProvider = useMemo(
-    () =>
-      loadProvider({
-        infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID
-          ? process.env.NEXT_PUBLIC_INFURA_PROJECT_ID
-          : '0',
-        networkId: NetworkIdByName['mainnet-ovm'],
-      }),
-    []
-  );
-
-  const updateState = useCallback(
-    (update: AppState) => {
-      if (update.wallets.length > 0) {
-        const wallet = update.wallets[0].accounts[0];
+  const updateState = useCallback((update: AppState) => {
+    if (update.wallets.length > 0) {
+      const wallet = update.wallets[0].accounts[0];
 
         const { label } = update.wallets[0];
         const { id } = update.wallets[0].chains[0];
@@ -122,14 +113,7 @@ const useConnector = () => {
       } else {
         dispatch({ type: AppEvents.WALLET_DISCONNECTED });
       }
-    },
-    [setSynthetix]
-  );
-
-  const transactionNotifier = useMemo(
-    () => new TransactionNotifier(L1DefaultProvider),
-    [L1DefaultProvider]
-  );
+  }, []);
 
   const [synthsMap, tokensMap] = useMemo(() => {
     if (synthetixjs == null) {
@@ -147,8 +131,6 @@ const useConnector = () => {
     if (provider) {
       transactionNotifier.setProvider(provider);
     }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [provider]);
 
   useEffect(() => {
@@ -195,7 +177,7 @@ const useConnector = () => {
         }
       })();
     }
-  }, [walletAddress, L1DefaultProvider, ensName, network]);
+  }, [walletAddress, ensName, network]);
 
   useEffect(() => {
     // If we are 'watching a wallet, we update the provider'
