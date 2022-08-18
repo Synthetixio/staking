@@ -152,6 +152,28 @@ import {
   abi as EtherWrapperAbiGoerliOvm,
 } from '@synthetixio/contracts/build/goerli-ovm/deployment/EtherWrapper';
 
+// Collateral Manager State
+import {
+  name as CollateralManagerStateMainnet,
+  address as CollateralManagerStateAddressMainnet,
+  abi as CollateralManagerStateAbiMainnet,
+} from '@synthetixio/contracts/build/mainnet/deployment/CollateralManagerState';
+import {
+  name as CollateralManagerStateMainnetOvm,
+  address as CollateralManagerStateAddressMainnetOvm,
+  abi as CollateralManagerStateAbiMainnetOvm,
+} from '@synthetixio/contracts/build/mainnet-ovm/deployment/CollateralManagerState';
+import {
+  name as CollateralManagerStateGoerli,
+  address as CollateralManagerStateAddressGoerli,
+  abi as CollateralManagerStateAbiGoerli,
+} from '@synthetixio/contracts/build/goerli/deployment/CollateralManagerState';
+import {
+  name as CollateralManagerStateGoerliOvm,
+  address as CollateralManagerStateAddressGoerliOvm,
+  abi as CollateralManagerStateAbiGoerliOvm,
+} from '@synthetixio/contracts/build/goerli-ovm/deployment/CollateralManagerState';
+
 export const contracts = {
   Exchanger: {
     mainnet: {
@@ -307,6 +329,28 @@ export const contracts = {
       name: SystemStatusGoerliOvm,
       address: SystemStatusAddressGoerliOvm,
       abi: SystemStatusAbiGoerliOvm,
+    },
+  },
+  CollateralManagerState: {
+    mainnet: {
+      name: CollateralManagerStateMainnet,
+      address: CollateralManagerStateAddressMainnet,
+      abi: CollateralManagerStateAbiMainnet,
+    },
+    'mainnet-ovm': {
+      name: CollateralManagerStateMainnetOvm,
+      address: CollateralManagerStateAddressMainnetOvm,
+      abi: CollateralManagerStateAbiMainnetOvm,
+    },
+    goerli: {
+      name: CollateralManagerStateGoerli,
+      address: CollateralManagerStateAddressGoerli,
+      abi: CollateralManagerStateAbiGoerli,
+    },
+    'goerli-ovm': {
+      name: CollateralManagerStateGoerliOvm,
+      address: CollateralManagerStateAddressGoerliOvm,
+      abi: CollateralManagerStateAbiGoerliOvm,
     },
   },
 };
