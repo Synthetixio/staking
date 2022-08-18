@@ -1,9 +1,9 @@
 import Connector from 'containers/Connector';
 import styled from 'styled-components';
 import { FlexDivColCentered } from 'styles/common';
+import HedgeOptimismTabs from './HedgeOptimismTabs';
 import ConnectOrSwitchNetwork from 'components/ConnectOrSwitchNetwork';
 import HedgeTapMainnet from './HedgeTabMainnet';
-import HedgeTabOptimism from './HedgeTabOptimism';
 
 const ManageTab = () => {
   const { walletAddress, isWalletConnected, isMainnet } = Connector.useContainer();
@@ -16,7 +16,7 @@ const ManageTab = () => {
     );
   }
   return (
-    <ManageContainer>{isMainnet ? <HedgeTapMainnet /> : <HedgeTabOptimism />}</ManageContainer>
+    <ManageContainer>{isMainnet ? <HedgeTapMainnet /> : <HedgeOptimismTabs />}</ManageContainer>
   );
 };
 

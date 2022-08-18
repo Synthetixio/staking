@@ -70,3 +70,14 @@ export const StyledInputLabel = styled.div`
   width: 180px;
   font-family: Inter;
 `;
+export const PoweredByContainer = styled.div`
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  font-size: 9px;
+  width: 100%;
+`;
+export const TorosLogo = styled.img`
+  height: 12px;
+  margin-left: 10px;
+`;
