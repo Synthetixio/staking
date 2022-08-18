@@ -6,15 +6,10 @@ import { loadProvider, SynthetixProvider } from '@synthetixio/providers';
 
 import { getIsOVM, isSupportedNetworkId } from 'utils/network';
 
-import {
-  NetworkNameById,
-  NetworkIdByName,
-  NetworkId,
-  SynthetixJS,
-} from '@synthetixio/contracts-interface';
+import { NetworkNameById, NetworkIdByName, NetworkId } from '@synthetixio/contracts-interface';
 import { ethers } from 'ethers';
 
-import { isSupportedWalletChain, onboard as Web3Onboard } from './config';
+import { onboard as Web3Onboard } from './config';
 import { LOCAL_STORAGE_KEYS } from 'constants/storage';
 import { CurrencyKey, ETH_ADDRESS } from 'constants/currency';
 import { synthToContractName } from 'utils/currencies';
@@ -64,55 +59,51 @@ const useConnector = () => {
     walletType,
   } = state;
 
-  const setSynthetix = useCallback((id, provider) => initializeSynthetix(id, provider), []);
-
   const updateState = useCallback((update: AppState) => {
     if (update.wallets.length > 0) {
       const wallet = update.wallets[0].accounts[0];
 
-        const { label } = update.wallets[0];
-        const { id } = update.wallets[0].chains[0];
-        const networkId = getNetworkIdFromHex(id);
+      const { label } = update.wallets[0];
+      const { id } = update.wallets[0].chains[0];
+      const networkId = getNetworkIdFromHex(id);
 
-        const isSupported = isSupportedNetworkId(networkId) && isSupportedWalletChain(networkId);
+      const network = {
+        id: networkId,
+        name: isSupportedNetworkId(networkId) ? NetworkNameById[networkId] : 'Unsupported Network',
+        useOvm: getIsOVM(networkId),
+      };
 
-        const network = {
-          id: networkId,
-          name: isSupportedNetworkId(networkId)
-            ? NetworkNameById[networkId]
-            : 'Unsupported Network',
-          useOvm: getIsOVM(networkId),
-        };
+      const provider = new ethers.providers.Web3Provider(update.wallets[0].provider, {
+        name: network.name,
+        chainId: networkId,
+      });
 
-        const provider = new ethers.providers.Web3Provider(update.wallets[0].provider, {
-          name: network.name,
-          chainId: networkId,
-        });
+      const signer = provider.getSigner();
+      const contracts = isSupportedNetworkId(networkId)
+        ? initializeSynthetix(networkId, signer)
+        : null;
+      const synthetixjs = contracts ? { contracts } : null;
 
-        const signer = provider.getSigner();
-        const contracts = setSynthetix(networkId, signer);
-        const synthetixjs = isSupported ? ({ contracts } as SynthetixJS) : null;
+      dispatch({
+        type: AppEvents.CONFIG_UPDATE,
+        payload: {
+          address: wallet.address,
+          walletWatched: null,
+          walletType: label,
+          network,
+          provider,
+          signer,
+          synthetixjs,
+          ensName: wallet?.ens?.name || null,
+          ensAvatar: wallet?.ens?.avatar?.url || null,
+        },
+      });
 
-        dispatch({
-          type: AppEvents.CONFIG_UPDATE,
-          payload: {
-            address: wallet.address,
-            walletWatched: null,
-            walletType: label,
-            network,
-            provider,
-            signer,
-            synthetixjs,
-            ensName: wallet?.ens?.name || null,
-            ensAvatar: wallet?.ens?.avatar?.url || null,
-          },
-        });
-
-        const connectedWallets = update.wallets.map(({ label }) => label);
-        localStorage.setItem(LOCAL_STORAGE_KEYS.SELECTED_WALLET, JSON.stringify(connectedWallets));
-      } else {
-        dispatch({ type: AppEvents.WALLET_DISCONNECTED });
-      }
+      const connectedWallets = update.wallets.map(({ label }) => label);
+      localStorage.setItem(LOCAL_STORAGE_KEYS.SELECTED_WALLET, JSON.stringify(connectedWallets));
+    } else {
+      dispatch({ type: AppEvents.WALLET_DISCONNECTED });
+    }
   }, []);
 
   const [synthsMap, tokensMap] = useMemo(() => {

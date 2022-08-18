@@ -9,7 +9,7 @@ type ConnectorState = {
   network: Network | null;
   provider: SynthetixProvider | null;
   signer: ethers.Signer | null;
-  synthetixjs: SynthetixJS | null;
+  synthetixjs: { contracts: SynthetixJS['contracts'] } | null;
   isAppReady: boolean;
   walletAddress: string | null;
   walletWatched: string | null;
@@ -48,7 +48,7 @@ export type ConnectionUpdate = {
   signer: ethers.Signer | null;
   walletWatched: null;
   walletType: string | null;
-  synthetixjs: SynthetixJS | null;
+  synthetixjs: { contracts: SynthetixJS['contracts'] } | null;
   provider: SynthetixProvider;
   ensName: string | null;
   ensAvatar: string | null;
