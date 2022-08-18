@@ -41,9 +41,12 @@ export default {
   blueHover: '#42DDFF',
 
   // text shadow
-  greenTextShadow: `rgba(65, 199, 157, 1) 0px 0px 4px, rgba(65, 199, 157, 1) 0px 0px 4px, rgba(65, 199, 157, 1) 0px 0px 4px, rgba(65, 199, 157, 1) 0px 0px 4px, rgba(65, 199, 157, 1) 0px 0px 4px, rgba(65, 199, 157, 1) 0px 0px 4px;`,
-  blueTextShadow: `#00d1ff 0px 0px 4px, #00d1ff 0px 0px 4px, #00d1ff 0px 0px 4px, #ed1eff 0px 0px 4px, #ed1eff 0px 0px 4px, #ed1eff 0px 0px 4px;`,
-  pinkTextShadow: `#ED1EFF 0px 0px 4px, #ED1EFF 0px 0px 4px, #ED1EFF 0px 0px 4px, #ED1EFF 0px 0px 4px, #ED1EFF 0px 0px 4px, #ED1EFF 0px 0px 4px;`,
+  greenTextShadow:
+    'rgba(65, 199, 157, 1) 0px 0px 4px, rgba(65, 199, 157, 1) 0px 0px 4px, rgba(65, 199, 157, 1) 0px 0px 4px, rgba(65, 199, 157, 1) 0px 0px 4px, rgba(65, 199, 157, 1) 0px 0px 4px, rgba(65, 199, 157, 1) 0px 0px 4px;',
+  blueTextShadow:
+    '#00d1ff 0px 0px 4px, #00d1ff 0px 0px 4px, #00d1ff 0px 0px 4px, #ed1eff 0px 0px 4px, #ed1eff 0px 0px 4px, #ed1eff 0px 0px 4px;',
+  pinkTextShadow:
+    '#ED1EFF 0px 0px 4px, #ED1EFF 0px 0px 4px, #ED1EFF 0px 0px 4px, #ED1EFF 0px 0px 4px, #ED1EFF 0px 0px 4px, #ED1EFF 0px 0px 4px;',
 
   // box shadow
   backgroundBoxShadow: 'rgba(0, 0, 0, 0.4)',

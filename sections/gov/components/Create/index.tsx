@@ -112,7 +112,7 @@ const Index: React.FC<IndexProps> = ({ onBack }) => {
     const getCurrentBlock = async () => {
       if (provider) {
         const L1Provider = new ethers.providers.InfuraProvider(1, process.env.INFURA_ARCHIVE_KEY);
-        let blockNumber = await L1Provider?.getBlockNumber();
+        const blockNumber = await L1Provider?.getBlockNumber();
         if (blockNumber) {
           setBlock(blockNumber);
         }

@@ -8,6 +8,7 @@ import GasSelector from 'components/GasSelector';
 import { GasPrice } from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
 import {
+  PoweredByContainer,
   StyledBackgroundTab,
   StyledBalance,
   StyledButton,
@@ -17,6 +18,7 @@ import {
   StyledInputLabel,
   StyledMaxButton,
   StyledSpacer,
+  TorosLogo,
 } from './hedge-tab-ui-components';
 import Dhedge from 'assets/svg/app/dhedge.svg';
 import { useTranslation } from 'react-i18next';
@@ -37,7 +39,7 @@ import { EXTERNAL_LINKS } from 'constants/links';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import WarningIcon from 'assets/svg/app/warning.svg';
 
-const HedgeTabOptimism = () => {
+const BuyHedgeTabOptimism = () => {
   const { t } = useTranslation();
   const { synthetixjs, walletAddress } = Connector.useContainer();
   const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
@@ -238,7 +240,7 @@ const HedgeTabOptimism = () => {
   );
 };
 
-export default HedgeTabOptimism;
+export default BuyHedgeTabOptimism;
 
 const Container = styled.div`
   width: 100%;
@@ -260,15 +262,4 @@ const LoaderContainer = styled.div`
 const LoaderText = styled.p`
   margin-left: 10px;
   text-transform: none;
-`;
-
-const PoweredByContainer = styled.div`
-  margin-top: 20px;
-  display: flex;
-  align-items: center;
-  font-size: 9px;
-`;
-const TorosLogo = styled.img`
-  height: 12px;
-  margin-left: 10px;
 `;

@@ -27,8 +27,8 @@ export const StyledCTA = styled(Button)<{ blue: boolean; disabled: boolean }>`
   font-family: ${(props) => props.theme.fonts.condensedMedium};
   box-shadow: ${(props) =>
     props.blue
-      ? `0px 0px 10px rgba(0, 209, 255, 0.9)`
-      : `0px 0px 8.38542px rgba(252, 135, 56, 0.6);`};
+      ? '0px 0px 10px rgba(0, 209, 255, 0.9)'
+      : '0px 0px 8.38542px rgba(252, 135, 56, 0.6);'};
   border-radius: 4px;
   width: 100%;
   text-transform: uppercase;

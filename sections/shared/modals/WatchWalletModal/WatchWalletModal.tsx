@@ -46,10 +46,10 @@ const WatchWalletModal: React.FC<WatchWalletModalProps> = ({ onDismiss }) => {
         const address = await L1DefaultProvider.resolveName(watchAddressOrEns);
         if (address) {
           resolvedAddress = address;
-          setWatchedWallet(address, address, watchAddressOrEns);
+          setWatchedWallet(resolvedAddress, resolvedAddress, watchAddressOrEns);
         }
       } else {
-        setWatchedWallet(address, address, null);
+        setWatchedWallet(resolvedAddress, resolvedAddress, null);
       }
 
       onDismiss();
@@ -60,7 +60,7 @@ const WatchWalletModal: React.FC<WatchWalletModalProps> = ({ onDismiss }) => {
 
   const removeWatchedWallet = (wallet: string) => {
     const tempArray = previouslyWatchedWallets;
-    for (var i = tempArray.length - 1; i >= 0; i--) {
+    for (let i = tempArray.length - 1; i >= 0; i--) {
       if (tempArray[i] === wallet) {
         tempArray.splice(i, 1);
       }

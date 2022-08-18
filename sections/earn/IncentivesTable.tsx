@@ -77,7 +77,7 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab }
         Header: <>{t('earn.incentives.options.select-a-pool.title')}</>,
         accessor: 'title',
         Cell: (cellProps: CellProps<EarnItem>) => {
-          let iconProps = {
+          const iconProps = {
             width: '22',
             height: '22',
           };

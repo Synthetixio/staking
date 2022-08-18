@@ -165,7 +165,7 @@ const Container = styled.div`
 `;
 
 const StyledTable = styled(Table)<{ minHeight: boolean }>`
-  min-height: ${(props) => (props.minHeight ? `400px` : `0px`)};
+  min-height: ${(props) => (props.minHeight ? '400px' : '0px')};
   .table-body-row {
     height: 50px;
     align-items: center;

@@ -90,7 +90,7 @@ const DepositTab: FC<DepositTabProps> = ({
 
   const stakedBalanceDisplay = staked.mul(pricePerShare);
 
-  let parsedAmount = parseSafeWei(amount, 0);
+  const parsedAmount = parseSafeWei(amount, 0);
 
   const txn = useContractTxn(
     getContract(asset, signer),
