@@ -21,7 +21,7 @@ function optimiseContracts(config, { webpack }) {
   );
   config.plugins.push(
     new webpack.NormalModuleReplacementPlugin(
-      new RegExp(`/synthetix/publish/deployed/(kovan|local)`),
+      new RegExp('/synthetix/publish/deployed/(kovan|local)'),
       require.resolve('./scripts/noop')
     )
   );

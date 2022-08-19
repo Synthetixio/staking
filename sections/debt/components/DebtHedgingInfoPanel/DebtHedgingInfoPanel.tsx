@@ -10,15 +10,6 @@ type DebtHedgingInfoPanelProps = {
   hidden: boolean;
 };
 
-const TorosNote = () => {
-  return (
-    <Trans
-      i18nKey="debt.actions.manage.info-panel.toros-link"
-      components={[<StyledLink href={EXTERNAL_LINKS.Toros.dSNXPool} />]}
-    />
-  );
-};
-
 const DebtHedgingInfoPanel: React.FC<DebtHedgingInfoPanelProps> = ({ hidden }) => {
   const { t } = useTranslation();
   const { isMainnet } = Connector.useContainer();
@@ -34,9 +25,7 @@ const DebtHedgingInfoPanel: React.FC<DebtHedgingInfoPanelProps> = ({ hidden }) =
             components={[<StyledLink href={EXTERNAL_LINKS.dHedge.blogPost} />]}
           />
           <br />
-          <TextContainer>
-            {t('debt.actions.manage.info-panel.dsnx-warning')} <TorosNote />
-          </TextContainer>
+          <TextContainer>{t('debt.actions.manage.info-panel.dsnx-warning')}</TextContainer>
         </InfoPanelBody>
         <DebtHedgingChart />
       </InfoPanelContainer>

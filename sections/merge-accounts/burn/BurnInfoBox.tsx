@@ -67,7 +67,7 @@ const InfoLayout: FC<InfoLayoutProps> = () => {
   const stakingInfo = useMemo(() => {
     const calculatedTargetBurn = Math.max(debtBalance.sub(issuableSynths).toNumber(), 0);
 
-    let amountToBurnWei = parseSafeWei(amountToBurn, 0);
+    const amountToBurnWei = parseSafeWei(amountToBurn, 0);
     // When users use BURN MAX we send off the complete sUSD balance to the contract
     // The contract will only burn whats needed. We do this to avoid sUSD dust in the wallet.
     // When the sUSD balance is bigger than the debt balance these calculations will be wrong

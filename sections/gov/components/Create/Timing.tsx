@@ -26,7 +26,7 @@ const Timing: React.FC<TimingProps> = ({ setBlock, block }) => {
 export default Timing;
 
 const StyledCard = styled(Card)<{ hasHelper: boolean }>`
-  height: ${(props) => (props.hasHelper ? `125px` : `225px`)};
+  height: ${(props) => (props.hasHelper ? '125px' : '225px')};
   display: flex;
   flex-direction: column;
   justify-content: center;
