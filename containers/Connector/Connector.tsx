@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useReducer } from 'react';
+import { useCallback, useEffect, useReducer } from 'react';
 import { AppState } from '@web3-onboard/core';
 import { createContainer } from 'unstated-next';
 import TransactionNotifier from '@synthetixio/transaction-notifier';
@@ -13,7 +13,6 @@ import { onboard as Web3Onboard } from './config';
 import { LOCAL_STORAGE_KEYS } from 'constants/storage';
 import { CurrencyKey, ETH_ADDRESS } from 'constants/currency';
 import { synthToContractName } from 'utils/currencies';
-import { keyBy } from 'lodash';
 import { AppEvents, initialState, reducer } from './reducer';
 
 import { getChainIdHex, getNetworkIdFromHex } from 'utils/infura';
@@ -105,14 +104,6 @@ const useConnector = () => {
       dispatch({ type: AppEvents.WALLET_DISCONNECTED });
     }
   }, []);
-
-  const [synthsMap, tokensMap] = useMemo(() => {
-    if (synthetixjs == null) {
-      return [{}, {}];
-    }
-
-    return [keyBy(synthetixjs.synths, 'name'), keyBy(synthetixjs.tokens, 'symbol')];
-  }, [synthetixjs]);
 
   useEffect(() => {
     dispatch({ type: AppEvents.APP_READY, payload: Web3Onboard }); //
@@ -268,8 +259,6 @@ const useConnector = () => {
     walletWatched,
     walletType,
     synthetixjs,
-    synthsMap,
-    tokensMap,
     isWalletConnected: Boolean(walletAddress && synthetixjs),
     walletConnectedToUnsupportedNetwork: Boolean(signer && !synthetixjs),
     isL2: network?.useOvm ?? false,
