@@ -37,6 +37,7 @@ import SynthPriceCol from './SynthPriceCol';
 import { StyledButtonBlue, StyledButtonPink } from './common';
 import { CurrencyKey } from '@synthetixio/contracts-interface';
 import ConnectOrSwitchNetwork from 'components/ConnectOrSwitchNetwork';
+import useSynthetixQueries from '@synthetixio/queries';
 
 type AssetsTableProps = {
   assets: CryptoBalance[];
@@ -66,8 +67,9 @@ const AssetsTable: FC<AssetsTableProps> = ({
   showPrice = true,
 }) => {
   const { t } = useTranslation();
-  const { synthsMap, isAppReady, isL2, isWalletConnected } = Connector.useContainer();
-
+  const { isAppReady, isL2, isWalletConnected } = Connector.useContainer();
+  const { useGetSynthsByName } = useSynthetixQueries();
+  const synthByNameQuery = useGetSynthsByName();
   const router = useRouter();
 
   const { selectedPriceCurrency, selectPriceCurrencyRate } = useSelectedPriceCurrency();
@@ -83,7 +85,7 @@ const AssetsTable: FC<AssetsTableProps> = ({
         Header: <>{t('synths.assets.synths.table.asset')}</>,
         accessor: 'currencyKey',
         Cell: (cellProps: CellProps<CryptoBalance, CryptoBalance['currencyKey']>) => {
-          const synthDesc = synthsMap != null ? synthsMap[cellProps.value]?.description : '';
+          const synthDesc = synthByNameQuery.data?.[cellProps.value]?.description ?? '';
 
           return (
             <Currency.Name
@@ -223,7 +225,7 @@ const AssetsTable: FC<AssetsTableProps> = ({
     isAppReady,
     onTransferClick,
     isL2,
-    synthsMap,
+    synthByNameQuery.data,
     showValue,
     showTotalValue,
     showPrice,

@@ -48,7 +48,7 @@ const RedeemDeprecatedSynthsModal: FC<{
   const [gasPrice, setGasPrice] = useState<GasPrice | undefined>(undefined);
   const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
 
-  const sUSDBalance = synthBalances?.balancesMap[Synths.sUSD]?.balance ?? wei(0);
+  const sUSDBalance = synthBalances?.balancesMap['sUSD']?.balance ?? wei(0);
   const Redeemer = synthetixjs?.contracts.SynthRedeemer ?? null;
 
   const { useContractTxn } = useSynthetixQueries();
@@ -186,7 +186,7 @@ const BurnValueContainer: FC<{ balances: DeprecatedSynthBalance[] }> = ({ balanc
         <ValueBalanceTableRow key={balance.currencyKey}>
           <div>{balance.currencyKey}</div>
           <div>
-            {formatCurrency(Synths.sUSD, balance.usdBalance)} {Synths.sUSD}
+            {formatCurrency('sUSD', balance.usdBalance)} {Synths.sUSD}
           </div>
         </ValueBalanceTableRow>
       ))}
@@ -212,8 +212,8 @@ const ReceiveValueContainer: FC<{ redeemAmount: Wei; sUSDBalance: Wei }> = ({
       {t('synths.redeemable-deprecated-synths.modal-receive-title')}
 
       <ValueSelectLabelCurrenciesBlock>
-        <Currency.Icon currencyKey={Synths.sUSD} height={'16px'} width={'16px'} />
-        {Synths.sUSD}
+        <Currency.Icon currencyKey={'sUSD'} height={'16px'} width={'16px'} />
+        {Synths.sUSD?.name}
       </ValueSelectLabelCurrenciesBlock>
     </ValueSelectLabel>
   );
