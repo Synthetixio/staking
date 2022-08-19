@@ -1,12 +1,15 @@
 import { FC, useEffect } from 'react';
 import { AppProps } from 'next/app';
+import { ChakraProvider, extendTheme } from '@chakra-ui/react';
 import Head from 'next/head';
 import { RecoilRoot } from 'recoil';
 import { useTranslation } from 'react-i18next';
 import { ThemeProvider } from 'styled-components';
+import { theme as chakraTheme } from '@synthetixio/v3-theme';
 
 import WithAppContainers from 'containers';
 import theme from 'styles/theme';
+
 import Layout from 'sections/shared/Layout';
 import AppLayout from 'sections/shared/Layout/AppLayout';
 import { MediaContextProvider } from 'styles/media';
@@ -115,17 +118,31 @@ const App: FC<AppProps> = (props) => {
           }}
         />
       </Head>
-      <ThemeProvider theme={theme}>
-        <RecoilRoot>
-          <QueryClientProvider client={queryClient} contextSharing={true}>
-            <WithAppContainers>
-              <MediaContextProvider>
-                <InnerApp {...props} />
-              </MediaContextProvider>
-            </WithAppContainers>
-          </QueryClientProvider>
-        </RecoilRoot>
-      </ThemeProvider>
+      <ChakraProvider
+        theme={extendTheme({
+          ...chakraTheme,
+          styles: {
+            global: {
+              body: {
+                bg: chakraTheme.colors.navy['900'],
+                color: chakraTheme.colors.white,
+              },
+            },
+          },
+        })}
+      >
+        <ThemeProvider theme={theme}>
+          <RecoilRoot>
+            <QueryClientProvider client={queryClient} contextSharing={true}>
+              <WithAppContainers>
+                <MediaContextProvider>
+                  <InnerApp {...props} />
+                </MediaContextProvider>
+              </WithAppContainers>
+            </QueryClientProvider>
+          </RecoilRoot>
+        </ThemeProvider>
+      </ChakraProvider>
     </>
   );
 };
