@@ -18,6 +18,7 @@ import StatBox from 'components/StatBox';
 import ProgressBar from 'components/ProgressBar';
 import SelfLiquidation from './SelfLiquidation';
 import Connector from 'containers/Connector';
+import Header from 'components/Header';
 
 const StakingPage = () => {
   const { t } = useTranslation();
@@ -41,6 +42,7 @@ const StakingPage = () => {
       <Head>
         <title>{t('staking.page-title')}</title>
       </Head>
+      <Header />
       <StatsSection>
         <StakedValue
           title={t('common.stat-box.staked-value')}
