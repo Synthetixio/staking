@@ -10,31 +10,31 @@ import ActionBox from './components/ActionBox/ActionBox';
 import InfoBox from './components/InfoBox/InfoBox';
 
 const Index: React.FC = () => {
-	const { isAppReady } = Connector.useContainer();
+  const { isAppReady } = Connector.useContainer();
 
-	return !isAppReady ? null : (
-		<Container>
-			<Col>
-				<ActionBox />
-			</Col>
-			<Col>
-				<InfoBox />
-			</Col>
-		</Container>
-	);
+  return !isAppReady ? null : (
+    <Container>
+      <Col>
+        <ActionBox />
+      </Col>
+      <Col>
+        <InfoBox />
+      </Col>
+    </Container>
+  );
 };
 
 const Container = styled.div`
-	${media.greaterThan('mdUp')`
-		display: grid;
-		grid-template-columns: 2fr 1fr;
-		grid-gap: 1rem;
-	`}
+  ${media.greaterThan('mdUp')`
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    grid-gap: 1rem;
+  `}
 
-	${media.lessThan('mdUp')`
-		display: flex;
-		flex-direction: column;
-	`}
+  ${media.lessThan('mdUp')`
+    display: flex;
+    flex-direction: column;
+  `}
 `;
 
 const Col = styled(FlexDivCol)``;

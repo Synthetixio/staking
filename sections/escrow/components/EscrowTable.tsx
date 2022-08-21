@@ -6,28 +6,28 @@ import RewardEscrowSchedule from './RewardEscrowSchedule';
 import TokenSaleEscrowSchedule from './TokenSaleEscrowSchedule';
 
 const EscrowTable: FC = () => {
-	const router = useRouter();
-	const { isWalletConnected } = Connector.useContainer();
+  const router = useRouter();
+  const { isWalletConnected } = Connector.useContainer();
 
-	const activeTab = useMemo(
-		() =>
-			isWalletConnected && Array.isArray(router.query.action) && router.query.action.length
-				? router.query.action[0]
-				: null,
-		[router.query.action, isWalletConnected]
-	);
+  const activeTab = useMemo(
+    () =>
+      isWalletConnected && Array.isArray(router.query.action) && router.query.action.length
+        ? router.query.action[0]
+        : null,
+    [router.query.action, isWalletConnected]
+  );
 
-	const returnSchedule = useMemo(
-		() =>
-			!activeTab || activeTab === EscrowPanelType.REWARDS ? (
-				<RewardEscrowSchedule />
-			) : (
-				<TokenSaleEscrowSchedule />
-			),
-		[activeTab]
-	);
+  const returnSchedule = useMemo(
+    () =>
+      !activeTab || activeTab === EscrowPanelType.REWARDS ? (
+        <RewardEscrowSchedule />
+      ) : (
+        <TokenSaleEscrowSchedule />
+      ),
+    [activeTab]
+  );
 
-	return returnSchedule;
+  return returnSchedule;
 };
 
 export default EscrowTable;

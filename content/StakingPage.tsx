@@ -20,79 +20,79 @@ import SelfLiquidation from './SelfLiquidation';
 import Connector from 'containers/Connector';
 
 const StakingPage = () => {
-	const { t } = useTranslation();
+  const { t } = useTranslation();
 
-	const {
-		stakedCollateralValue,
-		percentageCurrentCRatio,
-		debtBalance,
-		percentCurrentCRatioOfTarget,
-		percentageTargetCRatio,
-		SNXRate,
-		totalEscrowBalance,
-		collateral,
-	} = useStakingCalculations();
+  const {
+    stakedCollateralValue,
+    percentageCurrentCRatio,
+    debtBalance,
+    percentCurrentCRatioOfTarget,
+    percentageTargetCRatio,
+    SNXRate,
+    totalEscrowBalance,
+    collateral,
+  } = useStakingCalculations();
 
-	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
-	const { isWalletConnected } = Connector.useContainer();
+  const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
+  const { isWalletConnected } = Connector.useContainer();
 
-	return (
-		<>
-			<Head>
-				<title>{t('staking.page-title')}</title>
-			</Head>
-			<StatsSection>
-				<StakedValue
-					title={t('common.stat-box.staked-value')}
-					value={formatFiatCurrency(getPriceAtCurrentRate(stakedCollateralValue), {
-						sign: selectedPriceCurrency.sign,
-					})}
-				/>
-				<CRatio
-					title={t('common.stat-box.c-ratio')}
-					value={isWalletConnected ? formatPercent(percentageCurrentCRatio) : '-%'}
-					size="lg"
-				>
-					<CRatioProgressBar
-						variant="blue-pink"
-						percentage={percentCurrentCRatioOfTarget.toNumber()}
-					/>
-				</CRatio>
-				<ActiveDebt
-					title={t('common.stat-box.active-debt')}
-					value={formatFiatCurrency(getPriceAtCurrentRate(debtBalance), {
-						sign: selectedPriceCurrency.sign,
-					})}
-					isPink
-				/>
-			</StatsSection>
-			<LineSpacer />
-			<SelfLiquidation
-				percentageTargetCRatio={percentageTargetCRatio}
-				percentageCurrentCRatio={percentageCurrentCRatio}
-				totalSNXBalance={collateral}
-				debtBalance={debtBalance}
-				SNXRate={SNXRate}
-				escrowedSnx={totalEscrowBalance}
-			/>
-			<Main />
-		</>
-	);
+  return (
+    <>
+      <Head>
+        <title>{t('staking.page-title')}</title>
+      </Head>
+      <StatsSection>
+        <StakedValue
+          title={t('common.stat-box.staked-value')}
+          value={formatFiatCurrency(getPriceAtCurrentRate(stakedCollateralValue), {
+            sign: selectedPriceCurrency.sign,
+          })}
+        />
+        <CRatio
+          title={t('common.stat-box.c-ratio')}
+          value={isWalletConnected ? formatPercent(percentageCurrentCRatio) : '-%'}
+          size="lg"
+        >
+          <CRatioProgressBar
+            variant="blue-pink"
+            percentage={percentCurrentCRatioOfTarget.toNumber()}
+          />
+        </CRatio>
+        <ActiveDebt
+          title={t('common.stat-box.active-debt')}
+          value={formatFiatCurrency(getPriceAtCurrentRate(debtBalance), {
+            sign: selectedPriceCurrency.sign,
+          })}
+          isPink
+        />
+      </StatsSection>
+      <LineSpacer />
+      <SelfLiquidation
+        percentageTargetCRatio={percentageTargetCRatio}
+        percentageCurrentCRatio={percentageCurrentCRatio}
+        totalSNXBalance={collateral}
+        debtBalance={debtBalance}
+        SNXRate={SNXRate}
+        escrowedSnx={totalEscrowBalance}
+      />
+      <Main />
+    </>
+  );
 };
 
 const CRatio = styled(StatBox)`
-	.value {
-		text-shadow: ${(props) => props.theme.colors.blueTextShadow};
-		color: ${(props) => props.theme.colors.black};
-	}
+  .value {
+    text-shadow: ${(props) => props.theme.colors.blueTextShadow};
+    color: ${(props) => props.theme.colors.black};
+  }
 `;
 
 export const CRatioProgressBar = styled(ProgressBar)`
-	height: 6px;
-	width: 100%;
-	transform: translateY(12px);
-	// match StatBox "lg" background size width
-	max-width: 176px;
+  height: 6px;
+  width: 100%;
+  transform: translateY(12px);
+  // match StatBox "lg" background size width
+  max-width: 176px;
 `;
 
 export default StakingPage;

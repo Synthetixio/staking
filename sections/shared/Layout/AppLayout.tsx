@@ -15,40 +15,40 @@ import useSynthetixQueries from '@synthetixio/queries';
 import Connector from 'containers/Connector';
 
 type AppLayoutProps = {
-	children: ReactNode;
+  children: ReactNode;
 };
 
 const AppLayout: FC<AppLayoutProps> = ({ children }) => {
-	const { isL2 } = Connector.useContainer();
+  const { isL2 } = Connector.useContainer();
 
-	const { useIsBridgeActiveQuery } = useSynthetixQueries();
+  const { useIsBridgeActiveQuery } = useSynthetixQueries();
 
-	const depositsInactive = !(useIsBridgeActiveQuery().data ?? true); // Deposits are active by default to prevent redirects when status unknown
-	const delegateWallet = useRecoilValue(delegateWalletState);
+  const depositsInactive = !(useIsBridgeActiveQuery().data ?? true); // Deposits are active by default to prevent redirects when status unknown
+  const delegateWallet = useRecoilValue(delegateWalletState);
 
-	useEffect(() => {
-		if (delegateWallet && router.pathname !== ROUTES.Home) {
-			router.push(ROUTES.Home);
-		}
-	}, [isL2, depositsInactive, delegateWallet]);
+  useEffect(() => {
+    if (delegateWallet && router.pathname !== ROUTES.Home) {
+      router.push(ROUTES.Home);
+    }
+  }, [isL2, depositsInactive, delegateWallet]);
 
-	return (
-		<>
-			<SideNav />
-			<Header />
-			<Content>{children}</Content>
-			<NotificationContainer />
-		</>
-	);
+  return (
+    <>
+      <SideNav />
+      <Header />
+      <Content>{children}</Content>
+      <NotificationContainer />
+    </>
+  );
 };
 
 const Content = styled.div`
-	max-width: 1200px;
-	margin: 0 auto;
+  max-width: 1200px;
+  margin: 0 auto;
 
-	${media.greaterThan('mdUp')`
-		padding-left: calc(${DESKTOP_SIDE_NAV_WIDTH + DESKTOP_BODY_PADDING}px);
-	`}
+  ${media.greaterThan('mdUp')`
+    padding-left: calc(${DESKTOP_SIDE_NAV_WIDTH + DESKTOP_BODY_PADDING}px);
+  `}
 `;
 
 export default AppLayout;

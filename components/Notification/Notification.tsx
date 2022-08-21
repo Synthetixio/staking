@@ -9,82 +9,82 @@ import { ExternalLink, FlexDivCentered } from 'styles/common';
 import { NotificationType } from './types';
 
 type NotificationProps = {
-	type: NotificationType;
-	children: ReactNode;
-	link?: string;
-	isExternal?: boolean;
+  type: NotificationType;
+  children: ReactNode;
+  link?: string;
+  isExternal?: boolean;
 };
 
 const Notification: FC<NotificationProps> = ({ type, children, link, isExternal }) => {
-	const hasLink = link != null;
+  const hasLink = link != null;
 
-	const notification = (
-		<Container>
-			<Indicator type={type} />
-			<Content>{children}</Content>
-			{link && (
-				<LinkContainer>
-					<ArrowRightLongIcon width="15" />
-				</LinkContainer>
-			)}
-		</Container>
-	);
+  const notification = (
+    <Container>
+      <Indicator type={type} />
+      <Content>{children}</Content>
+      {link && (
+        <LinkContainer>
+          <ArrowRightLongIcon width="15" />
+        </LinkContainer>
+      )}
+    </Container>
+  );
 
-	return hasLink ? (
-		<>
-			{isExternal ? (
-				<ExternalLink href={link}>{notification}</ExternalLink>
-			) : (
-				<Link href={link!}>
-					<a>{notification}</a>
-				</Link>
-			)}
-		</>
-	) : (
-		notification
-	);
+  return hasLink ? (
+    <>
+      {isExternal ? (
+        <ExternalLink href={link}>{notification}</ExternalLink>
+      ) : (
+        <Link href={link!}>
+          <a>{notification}</a>
+        </Link>
+      )}
+    </>
+  ) : (
+    notification
+  );
 };
 
 const Container = styled(FlexDivCentered)`
-	border-radius: 4px;
-	font-size: 12px;
-	background-color: ${(props) => props.theme.colors.mediumBlue};
-	font-family: ${(props) => props.theme.fonts.condensedMedium};
-	height: 32px;
-	line-height: 32px;
-	color: ${(props) => props.theme.colors.white};
+  border-radius: 4px;
+  font-size: 12px;
+  background-color: ${(props) => props.theme.colors.mediumBlue};
+  font-family: ${(props) => props.theme.fonts.condensedMedium};
+  height: 32px;
+  line-height: 32px;
+  color: ${(props) => props.theme.colors.white};
 `;
 
 const Indicator = styled.div<{ type: NotificationType }>`
-	width: 4px;
-	height: 100%;
-	background-color: ${(props) => {
-		switch (props.type) {
-			case 'info': {
-				return props.theme.colors.blue;
-			}
-			case 'warning': {
-				return props.theme.colors.pink;
-			}
-			default: {
-				return props.theme.colors.blue;
-			}
-		}
-	}};
-	box-shadow: 0px 0px 15px rgba(237, 30, 255, 0.4);
+  width: 4px;
+  height: 100%;
+  background-color: ${(props) => {
+    switch (props.type) {
+      case 'info': {
+        return props.theme.colors.blue;
+      }
+      case 'warning': {
+        return props.theme.colors.pink;
+      }
+      default: {
+        return props.theme.colors.blue;
+      }
+    }
+  }};
+  box-shadow: 0px 0px 15px rgba(237, 30, 255, 0.4);
 `;
 
 const Content = styled.div`
-	padding: 0 15px;
+  padding: 0 15px;
 `;
 
 const LinkContainer = styled.div`
-	margin-left: auto;
-	display: flex;
-	padding-right: 15px;
-	svg {
-		color: ${(props) => props.theme.colors.white};
-	}
+  margin-left: auto;
+  display: flex;
+  padding-right: 15px;
+  svg {
+    color: ${(props) => props.theme.colors.white};
+  }
 `;
 
 export default Notification;

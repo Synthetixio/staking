@@ -15,87 +15,87 @@ import useSynthetixQueries from '@synthetixio/queries';
 import Connector from 'containers/Connector';
 
 const HistoryPage: FC = () => {
-	const { t } = useTranslation();
+  const { t } = useTranslation();
 
-	const { walletAddress } = Connector.useContainer();
+  const { walletAddress } = Connector.useContainer();
 
-	const { subgraph } = useSynthetixQueries();
-	const issues = subgraph.useGetIssueds(
-		{
-			first: 1000,
-			orderBy: 'timestamp',
-			orderDirection: 'desc',
-			where: { account: walletAddress?.toLowerCase() },
-		},
-		{ id: true, timestamp: true, value: true }
-	);
-	const burns = subgraph.useGetBurneds(
-		{
-			first: 1000,
-			orderBy: 'timestamp',
-			orderDirection: 'desc',
-			where: { account: walletAddress?.toLowerCase() },
-		},
-		{ id: true, timestamp: true, value: true }
-	);
-	const feeClaims = subgraph.useGetFeesClaimeds(
-		{
-			first: 1000,
-			orderBy: 'timestamp',
-			orderDirection: 'desc',
-			where: { account: walletAddress?.toLowerCase() },
-		},
-		{ id: true, timestamp: true, rewards: true, value: true }
-	);
+  const { subgraph } = useSynthetixQueries();
+  const issues = subgraph.useGetIssueds(
+    {
+      first: 1000,
+      orderBy: 'timestamp',
+      orderDirection: 'desc',
+      where: { account: walletAddress?.toLowerCase() },
+    },
+    { id: true, timestamp: true, value: true }
+  );
+  const burns = subgraph.useGetBurneds(
+    {
+      first: 1000,
+      orderBy: 'timestamp',
+      orderDirection: 'desc',
+      where: { account: walletAddress?.toLowerCase() },
+    },
+    { id: true, timestamp: true, value: true }
+  );
+  const feeClaims = subgraph.useGetFeesClaimeds(
+    {
+      first: 1000,
+      orderBy: 'timestamp',
+      orderDirection: 'desc',
+      where: { account: walletAddress?.toLowerCase() },
+    },
+    { id: true, timestamp: true, rewards: true, value: true }
+  );
 
-	const isLoaded = issues.isSuccess && burns.isSuccess && feeClaims.isSuccess;
+  const isLoaded = issues.isSuccess && burns.isSuccess && feeClaims.isSuccess;
 
-	const history = isLoaded
-		? sortBy(
-				[
-					issues.data!.map((d) => ({
-						type: StakingTransactionType.Issued,
-						hash: d.id.split('-')[0],
-						...d,
-					})),
-					burns.data!.map((d) => ({
-						type: StakingTransactionType.Burned,
-						hash: d.id.split('-')[0],
-						...d,
-					})),
-					feeClaims.data!.map((d) => ({
-						type: StakingTransactionType.FeesClaimed,
-						hash: d.id.split('-')[0],
-						...d,
-					})),
-				].flat(),
-				(d) => -d.timestamp.toNumber()
-		  )
-		: [];
+  const history = isLoaded
+    ? sortBy(
+        [
+          issues.data!.map((d) => ({
+            type: StakingTransactionType.Issued,
+            hash: d.id.split('-')[0],
+            ...d,
+          })),
+          burns.data!.map((d) => ({
+            type: StakingTransactionType.Burned,
+            hash: d.id.split('-')[0],
+            ...d,
+          })),
+          feeClaims.data!.map((d) => ({
+            type: StakingTransactionType.FeesClaimed,
+            hash: d.id.split('-')[0],
+            ...d,
+          })),
+        ].flat(),
+        (d) => -d.timestamp.toNumber()
+      )
+    : [];
 
-	const txCount = history.length;
+  const txCount = history.length;
 
-	return (
-		<>
-			<Head>
-				<title>{t('history.page-title')}</title>
-			</Head>
-			<StatsSection>
-				<div />
-				<TxCount title={t('common.stat-box.tx-count')} value={txCount} size="lg" />
-				<div />
-			</StatsSection>
-			<LineSpacer />
-			<TransactionsContainer history={history} isLoaded={isLoaded} />
-		</>
-	);
+  return (
+    <>
+      <Head>
+        <title>{t('history.page-title')}</title>
+      </Head>
+      <StatsSection>
+        <div />
+        <TxCount title={t('common.stat-box.tx-count')} value={txCount} size="lg" />
+        <div />
+      </StatsSection>
+      <LineSpacer />
+      <TransactionsContainer history={history} isLoaded={isLoaded} />
+    </>
+  );
 };
 
 const TxCount = styled(StatBox)`
-	.value {
-		text-shadow: ${(props) => props.theme.colors.blueTextShadow};
-		color: ${(props) => props.theme.colors.black};
-	}
+  .value {
+    text-shadow: ${(props) => props.theme.colors.blueTextShadow};
+    color: ${(props) => props.theme.colors.black};
+  }
 `;
 
 export default HistoryPage;

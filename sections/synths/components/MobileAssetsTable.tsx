@@ -9,12 +9,12 @@ import Link from 'next/link';
 import Connector from 'containers/Connector';
 
 import {
-	ExternalLink,
-	TableNoResults,
-	TableNoResultsTitle,
-	TableNoResultsDesc,
-	TableNoResultsButtonContainer,
-	NoTextTransform,
+  ExternalLink,
+  TableNoResults,
+  TableNoResultsTitle,
+  TableNoResultsDesc,
+  TableNoResultsButtonContainer,
+  NoTextTransform,
 } from 'styles/common';
 import { CryptoBalance } from 'hooks/useCryptoBalances';
 
@@ -34,246 +34,241 @@ import { isSynth } from 'utils/currencies';
 import SynthPriceCol from './SynthPriceCol';
 import { StyledButtonBlue, StyledButtonPink } from './common';
 import { CurrencyKey } from '@synthetixio/contracts-interface';
+import ConnectOrSwitchNetwork from 'components/ConnectOrSwitchNetwork';
 
 type AssetsTableProps = {
-	assets: CryptoBalance[];
-	totalValue: Wei;
-	isLoading: boolean;
-	isLoaded: boolean;
-	showConvert: boolean;
-	showHoldings: boolean;
-	isDeprecated?: boolean;
-	onTransferClick?: (currencyKey: string) => void;
-	showValue?: boolean;
-	showTotalValue?: boolean;
-	showPrice?: boolean;
+  assets: CryptoBalance[];
+  totalValue: Wei;
+  isLoading: boolean;
+  isLoaded: boolean;
+  showConvert: boolean;
+  showHoldings: boolean;
+  isDeprecated?: boolean;
+  onTransferClick?: (currencyKey: string) => void;
+  showValue?: boolean;
+  showTotalValue?: boolean;
+  showPrice?: boolean;
 };
 
 const AssetsTable: FC<AssetsTableProps> = ({
-	assets,
-	totalValue,
-	isLoading,
-	isLoaded,
-	showHoldings,
-	showConvert,
-	onTransferClick,
-	showValue = true,
-	showTotalValue = true,
-	showPrice = true,
+  assets,
+  totalValue,
+  isLoading,
+  isLoaded,
+  showHoldings,
+  showConvert,
+  onTransferClick,
+  showValue = true,
+  showTotalValue = true,
+  showPrice = true,
 }) => {
-	const { t } = useTranslation();
-	const { connectWallet, synthsMap, isAppReady, isL2, isWalletConnected } =
-		Connector.useContainer();
+  const { t } = useTranslation();
+  const { synthsMap, isAppReady, isL2, isWalletConnected } = Connector.useContainer();
 
-	const router = useRouter();
+  const router = useRouter();
 
-	const { selectedPriceCurrency, selectPriceCurrencyRate } = useSelectedPriceCurrency();
-	const totalValueString = totalValue.toString();
-	const selectPriceCurrencyRateString = selectPriceCurrencyRate?.toString();
-	const assetColumns: any[] = useMemo(() => {
-		if (!isAppReady) {
-			return [];
-		}
+  const { selectedPriceCurrency, selectPriceCurrencyRate } = useSelectedPriceCurrency();
+  const totalValueString = totalValue.toString();
+  const selectPriceCurrencyRateString = selectPriceCurrencyRate?.toString();
+  const assetColumns: any[] = useMemo(() => {
+    if (!isAppReady) {
+      return [];
+    }
 
-		return [
-			{
-				Header: <>{t('synths.assets.synths.table.asset')}</>,
-				accessor: 'currencyKey',
-				sortable: true,
-				width: 40,
-				Cell: (cellProps: CellProps<CryptoBalance, CryptoBalance['currencyKey']>) => {
-					return <Currency.Icon currencyKey={cellProps.value} />;
-				},
-			},
-			{
-				Header: <RightColHeader>{t('synths.assets.synths.table.balance-mobile')}</RightColHeader>,
-				id: 'right',
-				Cell: (cellProps: CellProps<CryptoBalance>) => {
-					const asset = cellProps.row.original;
-					const synthDesc = synthsMap != null ? synthsMap[asset.currencyKey]?.description : '';
+    return [
+      {
+        Header: <>{t('synths.assets.synths.table.asset')}</>,
+        accessor: 'currencyKey',
+        sortable: true,
+        width: 40,
+        Cell: (cellProps: CellProps<CryptoBalance, CryptoBalance['currencyKey']>) => {
+          return <Currency.Icon currencyKey={cellProps.value} />;
+        },
+      },
+      {
+        Header: <RightColHeader>{t('synths.assets.synths.table.balance-mobile')}</RightColHeader>,
+        id: 'right',
+        Cell: (cellProps: CellProps<CryptoBalance>) => {
+          const asset = cellProps.row.original;
+          const synthDesc = synthsMap != null ? synthsMap[asset.currencyKey]?.description : '';
 
-					const currencyIsSynth = useMemo(() => isSynth(asset.currencyKey), [asset.currencyKey]);
+          const currencyIsSynth = useMemo(() => isSynth(asset.currencyKey), [asset.currencyKey]);
 
-					return (
-						<RightCol>
-							<div>
-								{currencyIsSynth
-									? t('common.currency.synthetic-currency-name', { currencyName: synthDesc })
-									: asset.currencyKey}
-							</div>
-							<div>
-								<Currency.Amount
-									amountCurrencyKey={asset.currencyKey}
-									amount={asset.balance}
-									valueCurrencyKey={selectedPriceCurrency.name}
-									totalValue={asset.usdBalance}
-									sign={selectedPriceCurrency.sign}
-									conversionRate={wei(selectPriceCurrencyRateString)}
-									{...{ showValue, showTotalValue }}
-								/>
-							</div>
+          return (
+            <RightCol>
+              <div>
+                {currencyIsSynth
+                  ? t('common.currency.synthetic-currency-name', { currencyName: synthDesc })
+                  : asset.currencyKey}
+              </div>
+              <div>
+                <Currency.Amount
+                  amountCurrencyKey={asset.currencyKey}
+                  amount={asset.balance}
+                  valueCurrencyKey={selectedPriceCurrency.name}
+                  totalValue={asset.usdBalance}
+                  sign={selectedPriceCurrency.sign}
+                  conversionRate={wei(selectPriceCurrencyRateString)}
+                  {...{ showValue, showTotalValue }}
+                />
+              </div>
 
-							<div>{currencyIsSynth ? asset.currencyKey : null}</div>
+              <div>{currencyIsSynth ? asset.currencyKey : null}</div>
 
-							{showPrice && (
-								<div>
-									<SynthPriceCol currencyKey={asset.currencyKey as CurrencyKey} />
-								</div>
-							)}
+              {showPrice && (
+                <div>
+                  <SynthPriceCol currencyKey={asset.currencyKey as CurrencyKey} />
+                </div>
+              )}
 
-							{!showHoldings ? null : (
-								<>
-									<div>{t('synths.assets.synths.table.holdings')}</div>
-									<div>
-										<SynthHolding
-											usdBalance={asset.usdBalance}
-											totalUSDBalance={wei(totalValueString || 0)}
-										/>
-									</div>
-								</>
-							)}
+              {!showHoldings ? null : (
+                <>
+                  <div>{t('synths.assets.synths.table.holdings')}</div>
+                  <div>
+                    <SynthHolding
+                      usdBalance={asset.usdBalance}
+                      totalUSDBalance={wei(totalValueString || 0)}
+                    />
+                  </div>
+                </>
+              )}
 
-							<div></div>
-							<div>
-								<ActionButtonsContainer>
-									{!showConvert ? null : (
-										<>
-											{asset.currencyKey === CryptoCurrency.SNX ? (
-												<Link href={ROUTES.Staking.Home}>
-													<StyledButtonPink>{t('common.stake-snx')}</StyledButtonPink>
-												</Link>
-											) : (
-												<ExternalLink
-													href={EXTERNAL_LINKS.Trading.OneInchLink(
-														asset.currencyKey,
-														CryptoCurrency.SNX
-													)}
-												>
-													<StyledButtonPink>
-														<Trans
-															i18nKey="common.currency.buy-currency"
-															values={{
-																currencyKey: CryptoCurrency.SNX,
-															}}
-															components={[<NoTextTransform />]}
-														/>
-													</StyledButtonPink>
-												</ExternalLink>
-											)}
-										</>
-									)}
+              <div></div>
+              <div>
+                <ActionButtonsContainer>
+                  {!showConvert ? null : (
+                    <>
+                      {asset.currencyKey === CryptoCurrency.SNX ? (
+                        <Link href={ROUTES.Staking.Home}>
+                          <StyledButtonPink>{t('common.stake-snx')}</StyledButtonPink>
+                        </Link>
+                      ) : (
+                        <ExternalLink
+                          href={EXTERNAL_LINKS.Trading.OneInchLink(
+                            asset.currencyKey,
+                            CryptoCurrency.SNX
+                          )}
+                        >
+                          <StyledButtonPink>
+                            <Trans
+                              i18nKey="common.currency.buy-currency"
+                              values={{
+                                currencyKey: CryptoCurrency.SNX,
+                              }}
+                              components={[<NoTextTransform />]}
+                            />
+                          </StyledButtonPink>
+                        </ExternalLink>
+                      )}
+                    </>
+                  )}
 
-									{!(!isL2 && onTransferClick) ? null : (
-										<>
-											{!(
-												isSynth(asset.currencyKey) || asset.currencyKey === CryptoCurrency.SNX
-											) ? null : (
-												<StyledButtonBlue onClick={() => onTransferClick(asset.currencyKey)}>
-													{t('synths.assets.synths.table.transfer')}
-												</StyledButtonBlue>
-											)}
-										</>
-									)}
-								</ActionButtonsContainer>
-							</div>
-						</RightCol>
-					);
-				},
-			},
-		];
-	}, [
-		showHoldings,
-		showConvert,
-		t,
-		totalValueString,
-		selectPriceCurrencyRateString,
-		selectedPriceCurrency.sign,
-		selectedPriceCurrency.name,
-		isAppReady,
-		onTransferClick,
-		isL2,
-		synthsMap,
-		showValue,
-		showTotalValue,
-		showPrice,
-	]);
+                  {!(!isL2 && onTransferClick) ? null : (
+                    <>
+                      {!(
+                        isSynth(asset.currencyKey) || asset.currencyKey === CryptoCurrency.SNX
+                      ) ? null : (
+                        <StyledButtonBlue onClick={() => onTransferClick(asset.currencyKey)}>
+                          {t('synths.assets.synths.table.transfer')}
+                        </StyledButtonBlue>
+                      )}
+                    </>
+                  )}
+                </ActionButtonsContainer>
+              </div>
+            </RightCol>
+          );
+        },
+      },
+    ];
+  }, [
+    showHoldings,
+    showConvert,
+    t,
+    totalValueString,
+    selectPriceCurrencyRateString,
+    selectedPriceCurrency.sign,
+    selectedPriceCurrency.name,
+    isAppReady,
+    onTransferClick,
+    isL2,
+    synthsMap,
+    showValue,
+    showTotalValue,
+    showPrice,
+  ]);
 
-	return (
-		<StyledTable
-			palette="primary"
-			columns={assetColumns}
-			data={assets}
-			isLoading={isLoading}
-			noResultsMessage={
-				!isWalletConnected ? (
-					<TableNoResults>
-						<TableNoResultsTitle>{t('common.wallet.no-wallet-connected')}</TableNoResultsTitle>
-						<TableNoResultsButtonContainer>
-							<Button variant="primary" onClick={connectWallet}>
-								{t('common.wallet.connect-wallet')}
-							</Button>
-						</TableNoResultsButtonContainer>
-					</TableNoResults>
-				) : isLoaded && assets.length === 0 ? (
-					<TableNoResults>
-						<TableNoResultsTitle>
-							{t('synths.assets.synths.table.no-synths.title')}
-						</TableNoResultsTitle>
-						<TableNoResultsDesc>
-							{t('synths.assets.synths.table.no-synths.desc')}
-						</TableNoResultsDesc>
-						<TableNoResultsButtonContainer>
-							<Button variant="primary" onClick={() => router.push(ROUTES.Staking.Home)}>
-								{t('common.stake-snx')}
-							</Button>
-						</TableNoResultsButtonContainer>
-					</TableNoResults>
-				) : undefined
-			}
-			showPagination={true}
-		/>
-	);
+  return (
+    <StyledTable
+      palette="primary"
+      columns={assetColumns}
+      data={assets}
+      isLoading={isLoading}
+      noResultsMessage={
+        !isWalletConnected ? (
+          <TableNoResults>
+            <ConnectOrSwitchNetwork />
+          </TableNoResults>
+        ) : isLoaded && assets.length === 0 ? (
+          <TableNoResults>
+            <TableNoResultsTitle>
+              {t('synths.assets.synths.table.no-synths.title')}
+            </TableNoResultsTitle>
+            <TableNoResultsDesc>
+              {t('synths.assets.synths.table.no-synths.desc')}
+            </TableNoResultsDesc>
+            <TableNoResultsButtonContainer>
+              <Button variant="primary" onClick={() => router.push(ROUTES.Staking.Home)}>
+                {t('common.stake-snx')}
+              </Button>
+            </TableNoResultsButtonContainer>
+          </TableNoResults>
+        ) : undefined
+      }
+      showPagination={true}
+    />
+  );
 };
 
 const StyledTable = styled(Table)`
-	.table-body-cell {
-		height: auto;
-		align-items: flex-start;
+  .table-body-cell {
+    height: auto;
+    align-items: flex-start;
 
-		&:first-child {
-			width: 40px !important;
-			justify-content: center;
-			padding: 20px 0;
-		}
-		&:last-child {
-			padding-top: 14px;
-			width: calc(100% - 40px) !important;
-			padding: 20px 10px 20px 0;
-		}
-	}
+    &:first-child {
+      width: 40px !important;
+      justify-content: center;
+      padding: 20px 0;
+    }
+    &:last-child {
+      padding-top: 14px;
+      width: calc(100% - 40px) !important;
+      padding: 20px 10px 20px 0;
+    }
+  }
 `;
 
 const RightCol = styled.div`
-	display: grid;
-	grid-template-columns: 1fr 1fr;
-	grid-row-gap: 1rem;
-	flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-row-gap: 1rem;
+  flex: 1;
 
-	& > div:nth-child(even) {
-		text-align: right;
-		justify-content: flex-end;
-		display: flex;
-	}
+  & > div:nth-child(even) {
+    text-align: right;
+    justify-content: flex-end;
+    display: flex;
+  }
 `;
 
 const RightColHeader = styled.div`
-	text-align: right;
-	width: 100%;
+  text-align: right;
+  width: 100%;
 `;
 
 const ActionButtonsContainer = styled.div`
-	display: flex;
-	gap: 1rem;
+  display: flex;
+  gap: 1rem;
 `;
 
 export default AssetsTable;

@@ -18,76 +18,76 @@ import { ActionsContainer as Container } from '../common-styles';
 import WizardGridBox from './WizardGridBox';
 
 const WelcomeLayout: FC = () => {
-	const { t } = useTranslation();
+  const { t } = useTranslation();
 
-	const gridItems: GridBoxProps[] = useMemo(
-		() => [
-			{
-				gridArea: 'tile-1',
-				icon: (
-					<GlowingCircle variant="blue" size="md">
-						<MintIcon width="27" />
-					</GlowingCircle>
-				),
-				title: t('dashboard.actions.stake.title'),
-				copy: t('dashboard.actions.stake.copy'),
-				link: ROUTES.Staking.Home,
-			},
-			{
-				gridArea: 'tile-2',
-				icon: (
-					<GlowingCircle variant="yellow" size="md">
-						<LearnIcon width="52" />
-					</GlowingCircle>
-				),
-				title: t('dashboard.actions.learn.title'),
-				copy: t('dashboard.actions.learn.copy'),
-				externalLink: EXTERNAL_LINKS.Social.Blog,
-			},
-			{
-				gridArea: 'tile-3',
-				icon: (
-					<GlowingCircle variant="orange" size="md">
-						<KwentaIcon width="32" />
-					</GlowingCircle>
-				),
-				title: t('dashboard.actions.trade.title'),
-				copy: t('dashboard.actions.trade.copy'),
-				externalLink: EXTERNAL_LINKS.Trading.Kwenta,
-			},
-		],
-		[t]
-	);
-	return (
-		<StyledContainer>
-			<WizardGridBox gridArea="main-tile" />
-			{gridItems.map((props, index) => (
-				<GridBox key={`${props.title}-${index}`} {...props} />
-			))}
-		</StyledContainer>
-	);
+  const gridItems: GridBoxProps[] = useMemo(
+    () => [
+      {
+        gridArea: 'tile-1',
+        icon: (
+          <GlowingCircle variant="blue" size="md">
+            <MintIcon width="27" />
+          </GlowingCircle>
+        ),
+        title: t('dashboard.actions.stake.title'),
+        copy: t('dashboard.actions.stake.copy'),
+        link: ROUTES.Staking.Home,
+      },
+      {
+        gridArea: 'tile-2',
+        icon: (
+          <GlowingCircle variant="yellow" size="md">
+            <LearnIcon width="52" />
+          </GlowingCircle>
+        ),
+        title: t('dashboard.actions.learn.title'),
+        copy: t('dashboard.actions.learn.copy'),
+        externalLink: EXTERNAL_LINKS.Social.Blog,
+      },
+      {
+        gridArea: 'tile-3',
+        icon: (
+          <GlowingCircle variant="orange" size="md">
+            <KwentaIcon width="32" />
+          </GlowingCircle>
+        ),
+        title: t('dashboard.actions.trade.title'),
+        copy: t('dashboard.actions.trade.copy'),
+        externalLink: EXTERNAL_LINKS.Trading.Kwenta,
+      },
+    ],
+    [t]
+  );
+  return (
+    <StyledContainer>
+      <WizardGridBox gridArea="main-tile" />
+      {gridItems.map((props, index) => (
+        <GridBox key={`${props.title}-${index}`} {...props} />
+      ))}
+    </StyledContainer>
+  );
 };
 
 const StyledContainer = styled(Container)`
-	grid-template-areas:
-		'main-tile tile-1 tile-1'
-		'main-tile tile-2 tile-3';
-	grid-template-columns: 1fr 1fr 1fr;
-	grid-template-rows: 1fr 1fr;
-	gap: 1rem;
+  grid-template-areas:
+    'main-tile tile-1 tile-1'
+    'main-tile tile-2 tile-3';
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 1rem;
 
-	${media.lessThan('mdUp')`
-		grid-template-areas:
-			'main-tile main-tile'
-			'tile-1 tile-1'
-			'tile-2 tile-3';
-		grid-template-columns: 1fr 1fr;
-		grid-template-rows: 2fr 1fr 1fr;
-	`}
+  ${media.lessThan('mdUp')`
+    grid-template-areas:
+      'main-tile main-tile'
+      'tile-1 tile-1'
+      'tile-2 tile-3';
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 2fr 1fr 1fr;
+  `}
 
-	${media.lessThan('md')`
-		grid-template-rows: unset;
-	`}
+  ${media.lessThan('md')`
+    grid-template-rows: unset;
+  `}
 `;
 
 export default WelcomeLayout;

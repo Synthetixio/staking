@@ -21,69 +21,69 @@ import Loans from 'containers/Loans';
 type LoansPageProps = {};
 
 const LoansPage: FC<LoansPageProps> = () => {
-	const { t } = useTranslation();
-	const router = useRouter();
+  const { t } = useTranslation();
+  const router = useRouter();
 
-	const { walletAddress } = Connector.useContainer();
+  const { walletAddress } = Connector.useContainer();
 
-	const { stakedCollateralValue, debtBalance } = useStakingCalculations();
-	const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
-	const { stakingAPR } = useUserStakingData(walletAddress);
+  const { stakedCollateralValue, debtBalance } = useStakingCalculations();
+  const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
+  const { stakingAPR } = useUserStakingData(walletAddress);
 
-	useEffect(() => {
-		if (router.asPath === '/loans') {
-			router.push('/loans/new');
-		}
-	}, [router, router.asPath, router.push]);
+  useEffect(() => {
+    if (router.asPath === '/loans') {
+      router.push('/loans/new');
+    }
+  }, [router, router.asPath, router.push]);
 
-	return (
-		<>
-			<Head>
-				<title>{t('loans.page-title')}</title>
-			</Head>
-			<StatsSection>
-				<StakedValue
-					title={t('common.stat-box.staked-value')}
-					value={formatFiatCurrency(getPriceAtCurrentRate(stakedCollateralValue), {
-						sign: selectedPriceCurrency.sign,
-					})}
-					isGreen
-				/>
-				<Earning
-					title={t('common.stat-box.earning')}
-					value={formatPercent(stakingAPR ? stakingAPR : 0)}
-					size="lg"
-				/>
-				<ActiveDebt
-					title={t('common.stat-box.active-debt')}
-					value={formatFiatCurrency(getPriceAtCurrentRate(debtBalance), {
-						sign: selectedPriceCurrency.sign,
-					})}
-					isGreen
-				/>
-			</StatsSection>
-			<LineSpacer />
-			<Main />
-		</>
-	);
+  return (
+    <>
+      <Head>
+        <title>{t('loans.page-title')}</title>
+      </Head>
+      <StatsSection>
+        <StakedValue
+          title={t('common.stat-box.staked-value')}
+          value={formatFiatCurrency(getPriceAtCurrentRate(stakedCollateralValue), {
+            sign: selectedPriceCurrency.sign,
+          })}
+          isGreen
+        />
+        <Earning
+          title={t('common.stat-box.earning')}
+          value={formatPercent(stakingAPR ? stakingAPR : 0)}
+          size="lg"
+        />
+        <ActiveDebt
+          title={t('common.stat-box.active-debt')}
+          value={formatFiatCurrency(getPriceAtCurrentRate(debtBalance), {
+            sign: selectedPriceCurrency.sign,
+          })}
+          isGreen
+        />
+      </StatsSection>
+      <LineSpacer />
+      <Main />
+    </>
+  );
 };
 
 const LoansWithContainer: FC<LoansPageProps> = (props) => {
-	return (
-		<Loans.Provider>
-			<LoansPage {...props} />
-		</Loans.Provider>
-	);
+  return (
+    <Loans.Provider>
+      <LoansPage {...props} />
+    </Loans.Provider>
+  );
 };
 
 const Earning = styled(StatBox)`
-	.title {
-		color: ${(props) => props.theme.colors.green};
-	}
-	.value {
-		text-shadow: ${(props) => props.theme.colors.greenTextShadow};
-		color: #073124;
-	}
+  .title {
+    color: ${(props) => props.theme.colors.green};
+  }
+  .value {
+    text-shadow: ${(props) => props.theme.colors.greenTextShadow};
+    color: #073124;
+  }
 `;
 
 export default LoansWithContainer;

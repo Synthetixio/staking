@@ -10,35 +10,35 @@ import { useTranslation } from 'react-i18next';
 import { Language } from 'translations/constants';
 
 export const LanguageSelect: FC = () => {
-	const { t } = useTranslation();
-	const [language, setLanguage] = usePersistedRecoilState(languageState);
+  const { t } = useTranslation();
+  const [language, setLanguage] = usePersistedRecoilState(languageState);
 
-	const languages = t('languages', { returnObjects: true }) as Record<Language, string>;
+  const languages = t('languages', { returnObjects: true }) as Record<Language, string>;
 
-	const languageOptions = useMemo(
-		() =>
-			Object.entries(languages).map(([langCode, langLabel]) => ({
-				value: langCode,
-				label: langLabel,
-			})),
-		[languages]
-	);
+  const languageOptions = useMemo(
+    () =>
+      Object.entries(languages).map(([langCode, langLabel]) => ({
+        value: langCode,
+        label: langLabel,
+      })),
+    [languages]
+  );
 
-	return (
-		<Select
-			inputId="language-options"
-			formatOptionLabel={(option) => <span>{option.label}</span>}
-			options={languageOptions}
-			value={{ label: languages[language], value: language }}
-			onChange={(option) => {
-				if (option) {
-					// @ts-ignore
-					setLanguage(option.value);
-				}
-			}}
-			variant="outline"
-		/>
-	);
+  return (
+    <Select
+      inputId="language-options"
+      formatOptionLabel={(option) => <span>{option.label}</span>}
+      options={languageOptions}
+      value={{ label: languages[language], value: language }}
+      onChange={(option) => {
+        if (option) {
+          // @ts-ignore
+          setLanguage(option.value);
+        }
+      }}
+      variant="outline"
+    />
+  );
 };
 
 export default LanguageSelect;

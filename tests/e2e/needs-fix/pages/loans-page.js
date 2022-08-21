@@ -1,27 +1,27 @@
 import Page from './page';
 
 export default class LoansPage extends Page {
-	getForm() {
-		return cy.findByTestId('loans-form');
-	}
+  getForm() {
+    return cy.findByTestId('loans-form');
+  }
 
-	getFormButton() {
-		return cy.findByTestId('loans-form-button');
-	}
+  getFormButton() {
+    return cy.findByTestId('loans-form-button');
+  }
 
-	getLeftInput() {
-		return cy.findByTestId('loans-form-left-input');
-	}
+  getLeftInput() {
+    return cy.findByTestId('loans-form-left-input');
+  }
 
-	getRightInput() {
-		return cy.findByTestId('loans-form-right-input');
-	}
+  getRightInput() {
+    return cy.findByTestId('loans-form-right-input');
+  }
 
-	getTable() {
-		return cy.findByTestId('loans-table');
-	}
+  getTable() {
+    return cy.findByTestId('loans-table');
+  }
 
-	visit() {
-		cy.visit('/loans');
-	}
+  visit() {
+    cy.visit('/loans');
+  }
 }

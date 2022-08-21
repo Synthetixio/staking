@@ -7,91 +7,91 @@ import CaretDownIcon from 'assets/svg/app/caret-down.svg';
 import CloseIcon from 'assets/svg/app/menu-close.svg';
 
 type SelectButtonProps = HTMLProps<HTMLInputElement> & {
-	isOpen: boolean;
-	onClear: () => void;
-	showClear: boolean;
+  isOpen: boolean;
+  onClear: () => void;
+  showClear: boolean;
 };
 
 const SelectButton = (
-	{ onClick, value, isOpen, onClear, showClear }: SelectButtonProps,
-	_ref: React.Ref<HTMLInputElement>
+  { onClick, value, isOpen, onClear, showClear }: SelectButtonProps,
+  _ref: React.Ref<HTMLInputElement>
 ) => (
-	<Button
-		className="select-button"
-		// @ts-ignore
-		onClick={onClick}
-		isOpen={isOpen}
-	>
-		{value}
-		<Icons>
-			{showClear && (
-				<CloseButton>
-					<CloseIcon
-						width="12"
-						onClick={(e: any) => {
-							e.stopPropagation();
-							onClear();
-						}}
-						className="close-icon"
-					/>
-				</CloseButton>
-			)}
-			<CaretDownIcon className="dropdown-icon" />
-		</Icons>
-	</Button>
+  <Button
+    className="select-button"
+    // @ts-ignore
+    onClick={onClick}
+    isOpen={isOpen}
+  >
+    {value}
+    <Icons>
+      {showClear && (
+        <CloseButton>
+          <CloseIcon
+            width="12"
+            onClick={(e: any) => {
+              e.stopPropagation();
+              onClear();
+            }}
+            className="close-icon"
+          />
+        </CloseButton>
+      )}
+      <CaretDownIcon className="dropdown-icon" />
+    </Icons>
+  </Button>
 );
 
 const Button = styled.button<{ isOpen: boolean }>`
-	${resetButtonCSS};
-	font-size: 12px;
-	height: 40px;
-	line-height: 40px;
-	color: ${(props) => props.theme.colors.white};
-	background: ${(props) => props.theme.colors.navy};
-	font-family: ${(props) => props.theme.fonts.condensedBold};
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	padding: 0 10px;
-	width: 100%;
-	text-transform: capitalize;
+  ${resetButtonCSS};
+  font-size: 12px;
+  height: 40px;
+  line-height: 40px;
+  color: ${(props) => props.theme.colors.white};
+  background: ${(props) => props.theme.colors.navy};
+  font-family: ${(props) => props.theme.fonts.condensedBold};
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 10px;
+  width: 100%;
+  text-transform: capitalize;
 
-	.dropdown-icon {
-		color: ${(props) => props.theme.colors.gray};
-		transition: transform 0.2s ease-in-out;
-		&:hover {
-			color: ${(props) => props.theme.colors.white};
-		}
-		${(props) =>
-			props.isOpen &&
-			css`
-				color: ${(props) => props.theme.colors.white};
-				transform: rotate(-180deg);
-			`}
-	}
+  .dropdown-icon {
+    color: ${(props) => props.theme.colors.gray};
+    transition: transform 0.2s ease-in-out;
+    &:hover {
+      color: ${(props) => props.theme.colors.white};
+    }
+    ${(props) =>
+      props.isOpen &&
+      css`
+        color: ${(props) => props.theme.colors.white};
+        transform: rotate(-180deg);
+      `}
+  }
 
-	.close-icon {
-		color: ${(props) => props.theme.colors.gray};
-		&:hover {
-			color: ${(props) => props.theme.colors.white};
-		}
-	}
+  .close-icon {
+    color: ${(props) => props.theme.colors.gray};
+    &:hover {
+      color: ${(props) => props.theme.colors.white};
+    }
+  }
 `;
 
 const Icons = styled.span`
-	display: inline-grid;
-	align-items: center;
-	grid-auto-flow: column;
-	grid-gap: 10px;
+  display: inline-grid;
+  align-items: center;
+  grid-auto-flow: column;
+  grid-gap: 10px;
 `;
 
 const CloseButton = styled.button`
-	${resetButtonCSS};
-	width: 16px;
-	height: 16px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
+  ${resetButtonCSS};
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 export default SelectButton;

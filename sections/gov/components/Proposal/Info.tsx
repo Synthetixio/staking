@@ -9,47 +9,47 @@ import { snapshotEndpoint, SPACE_KEY } from 'constants/snapshot';
 import Connector from 'containers/Connector';
 
 type InfoProps = {
-	proposalId: string;
+  proposalId: string;
 };
 
 const Info: React.FC<InfoProps> = ({ proposalId }) => {
-	const { t } = useTranslation();
-	const { walletAddress } = Connector.useContainer();
+  const { t } = useTranslation();
+  const { walletAddress } = Connector.useContainer();
 
-	const { useProposalQuery } = useSynthetixQueries();
-	const proposalResults = useProposalQuery(
-		snapshotEndpoint,
-		SPACE_KEY.PROPOSAL,
-		proposalId,
-		walletAddress
-	);
-	const [activeTab, setActiveTab] = useState(ProposalInfoType.RESULTS);
+  const { useProposalQuery } = useSynthetixQueries();
+  const proposalResults = useProposalQuery(
+    snapshotEndpoint,
+    SPACE_KEY.PROPOSAL,
+    proposalId,
+    walletAddress
+  );
+  const [activeTab, setActiveTab] = useState(ProposalInfoType.RESULTS);
 
-	const tabData = useMemo(
-		() => [
-			{
-				title: t('gov.proposal.votes.title'),
-				tabChildren: <Results proposalResults={proposalResults} />,
-				key: ProposalInfoType.RESULTS,
-			},
-			{
-				title: t('gov.proposal.history.title', {
-					count: proposalResults.data?.voteList.length ?? undefined,
-				}),
-				tabChildren: <History proposalResults={proposalResults} hash={proposalId} />,
-				key: ProposalInfoType.HISTORY,
-			},
-		],
-		[proposalResults, proposalId, t]
-	);
+  const tabData = useMemo(
+    () => [
+      {
+        title: t('gov.proposal.votes.title'),
+        tabChildren: <Results proposalResults={proposalResults} />,
+        key: ProposalInfoType.RESULTS,
+      },
+      {
+        title: t('gov.proposal.history.title', {
+          count: proposalResults.data?.voteList.length ?? undefined,
+        }),
+        tabChildren: <History proposalResults={proposalResults} hash={proposalId} />,
+        key: ProposalInfoType.HISTORY,
+      },
+    ],
+    [proposalResults, proposalId, t]
+  );
 
-	return (
-		<StructuredTab
-			boxPadding={0}
-			tabData={tabData}
-			activeTab={activeTab}
-			setActiveTab={(key) => setActiveTab(key)}
-		/>
-	);
+  return (
+    <StructuredTab
+      boxPadding={0}
+      tabData={tabData}
+      activeTab={activeTab}
+      setActiveTab={(key) => setActiveTab(key)}
+    />
+  );
 };
 export default Info;

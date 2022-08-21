@@ -17,21 +17,21 @@ export const iStandardSynth = (currencyKey: CurrencyKey) => currencyKey.startsWi
 export const synthToContractName = (currencyKey: CurrencyKey) => `Synth${currencyKey}`;
 
 export const getExchangeRatesForCurrencies = (
-	rates: Rates | null,
-	base: CurrencyKey | null,
-	quote: CurrencyKey | null
+  rates: Rates | null,
+  base: CurrencyKey | null,
+  quote: CurrencyKey | null
 ) => (rates == null || base == null || quote == null ? wei(0) : rates[base].div(rates[quote]));
 
 export const getCurrencyKeyURLPath = (currencyKey: CurrencyKey) =>
-	`https:///www.synthetix.io/assets/synths/svg/${currencyKey}.svg`;
+  `https:///www.synthetix.io/assets/synths/svg/${currencyKey}.svg`;
 
 export function calculatePercentChange(
-	oldVal?: Wei | number | string,
-	newVal?: Wei | number | string
+  oldVal?: Wei | number | string,
+  newVal?: Wei | number | string
 ) {
-	if (!oldVal) return wei(0);
-	if (!newVal) return wei(0);
-	return wei(newVal)
-		.sub(oldVal)
-		.div(Wei.max(wei(oldVal), wei(0.01)));
+  if (!oldVal) return wei(0);
+  if (!newVal) return wei(0);
+  return wei(newVal)
+    .sub(oldVal)
+    .div(Wei.max(wei(oldVal), wei(0.01)));
 }

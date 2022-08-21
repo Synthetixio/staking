@@ -1,3 +1,3 @@
 export enum Language {
-	EN = 'en',
+  EN = 'en',
 }
