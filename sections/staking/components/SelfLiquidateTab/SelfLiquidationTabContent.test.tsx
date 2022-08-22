@@ -1,7 +1,7 @@
 import '../../../../i18n';
 
 import { render } from '@testing-library/react';
-import ContextProvider from 'test-utils/ContextProider';
+import ContextProvider from 'tests/ContextProider';
 import SelfLiquidationTabContent from './SelfLiquidationTabContent';
 import { wei } from '@synthetixio/wei';
 

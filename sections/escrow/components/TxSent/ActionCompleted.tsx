@@ -8,7 +8,6 @@ import Success from 'assets/svg/app/circle-tick.svg';
 import { InfoContainer, InfoData, InfoTitle, SectionHeader, Container } from './common';
 import { formatCurrency } from 'utils/formatters/number';
 import Etherscan from 'containers/BlockExplorer';
-import { WeiSource } from '@synthetixio/wei';
 
 type ActionCompletedProps = {
   resetTransaction: () => void;
@@ -46,7 +45,7 @@ const ActionCompleted: FC<ActionCompletedProps> = ({
           <InfoData>
             {isMigration
               ? t('escrow.actions.migration.completed.escrow-schedule')
-              : formatCurrency(currencyKey as string, vestingAmount as WeiSource, {
+              : formatCurrency(currencyKey as string, vestingAmount, {
                   currencyKey: currencyKey,
                 })}
           </InfoData>
