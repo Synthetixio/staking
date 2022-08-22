@@ -76,7 +76,10 @@ const Content: React.FC<ContentProps> = ({ proposal, onBack }) => {
     { enabled: Boolean(proposal?.id) }
   );
 
-  const councilMembersQuery = useGetSpartanCouncil(L2DefaultProvider);
+  const councilMembersQuery = useGetSpartanCouncil(
+    process.env.NEXT_PUBLIC_BOARDROOM_KEY ?? '',
+    L2DefaultProvider
+  );
   const councilMembers = councilMembersQuery.data;
 
   const voteMutate = useSignMessage({
