@@ -36,7 +36,7 @@ export const CurrencyAmount: FC<CurrencyAmountProps> = ({
       <TotalValue className="total-value">
         {formatCurrency(
           valueCurrencyKey,
-          conversionRate != null ? wei(totalValue).div(conversionRate) : totalValue,
+          conversionRate !== null ? wei(totalValue).div(conversionRate) : totalValue,
           { sign }
         )}
       </TotalValue>

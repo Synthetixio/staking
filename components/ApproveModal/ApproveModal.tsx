@@ -32,7 +32,11 @@ type ApproveModalProps = {
   contractToApproveName: string;
 };
 
-const getContractByName = (synthetixjs: SynthetixJS, name: string, signer: ethers.Signer) => {
+const getContractByName = (
+  synthetixjs: SynthetixJS['contracts'],
+  name: string,
+  signer: ethers.Signer
+) => {
   const { contracts } = synthetixjs;
   if (name === 'YearnSNXVault') {
     return new ethers.Contract(yearnSNXVault.address, yearnSNXVault.abi, signer);
@@ -55,9 +59,9 @@ const ApproveModal: FC<ApproveModalProps & SynthetixJsAndSignerProps> = ({
   const [gasPrice, setGasPrice] = useState<GasPrice | undefined>(undefined);
   const [isApproving, setIsApproving] = useState<boolean>(false);
   const [txModalOpen, setTxModalOpen] = useState<boolean>(false);
-  const tokenContract = getContractByName(synthetixjs, tokenContractName, signer);
-  const contractToApprove = getContractByName(synthetixjs, contractToApproveName, signer);
-  const allowance = synthetixjs?.utils.parseEther(TokenAllowanceLimit.toString());
+  const tokenContract = getContractByName(synthetixjs.contracts, tokenContractName, signer);
+  const contractToApprove = getContractByName(synthetixjs.contracts, contractToApproveName, signer);
+  const allowance = TokenAllowanceLimit.toBN();
 
   const txn = useContractTxn(
     tokenContract,

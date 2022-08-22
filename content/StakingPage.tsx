@@ -21,7 +21,7 @@ import Connector from 'containers/Connector';
 
 const StakingPage = () => {
   const { t } = useTranslation();
-
+  const { isWalletConnected } = Connector.useContainer();
   const {
     stakedCollateralValue,
     percentageCurrentCRatio,
@@ -34,7 +34,6 @@ const StakingPage = () => {
   } = useStakingCalculations();
 
   const { selectedPriceCurrency, getPriceAtCurrentRate } = useSelectedPriceCurrency();
-  const { isWalletConnected } = Connector.useContainer();
 
   return (
     <>

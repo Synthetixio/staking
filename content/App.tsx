@@ -53,10 +53,12 @@ const InnerApp: FC<AppProps> = ({ Component, pageProps }) => {
                 provider: provider,
                 signer: signer || undefined,
                 networkId,
+                synthetixjs,
               })
             : createQueryContext({
                 networkId: 1,
                 provider: L1DefaultProvider,
+                synthetixjs: null,
               })
         }
       >
