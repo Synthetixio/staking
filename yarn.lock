@@ -9460,7 +9460,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"framer-motion@npm:^7.0.0":
+"framer-motion@npm:^7.0.0, framer-motion@npm:^7.2.0":
   version: 7.2.0
   resolution: "framer-motion@npm:7.2.0"
   dependencies:
@@ -14679,6 +14679,8 @@ __metadata:
   dependencies:
     "@artsy/fresnel": ^1.8.0
     "@chakra-ui/react": ^2.2.8
+    "@emotion/react": ^11.10.0
+    "@emotion/styled": ^11.10.0
     "@metamask/providers": ^8.1.1
     "@microsoft/eslint-formatter-sarif": ^3.0.0
     "@next/bundle-analyzer": ^10.2.3
@@ -14738,6 +14740,7 @@ __metadata:
     eslint-plugin-react-hooks: ^4.6.0
     ethereum-blockies-base64: ^1.0.2
     ethers: ^5.5.3
+    framer-motion: ^7.2.0
     husky: ^8.0.1
     i18next: ^19.7.0
     jest: ^28.1.2
