@@ -3,14 +3,12 @@ import router from 'next/router';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
-import { DESKTOP_SIDE_NAV_WIDTH, DESKTOP_BODY_PADDING } from 'constants/ui';
 import ROUTES from 'constants/routes';
 import NotificationContainer from 'constants/NotificationContainer';
 
-import media from 'styles/media';
 import { delegateWalletState } from 'store/wallet';
 import Header from './Header';
-import SideNav from './SideNav';
+
 import useSynthetixQueries from '@synthetixio/queries';
 import Connector from 'containers/Connector';
 
@@ -34,7 +32,6 @@ const AppLayout: FC<AppLayoutProps> = ({ children }) => {
 
   return (
     <>
-      <SideNav />
       <Header />
       <Content>{children}</Content>
       <NotificationContainer />
@@ -45,10 +42,6 @@ const AppLayout: FC<AppLayoutProps> = ({ children }) => {
 const Content = styled.div`
   max-width: 1200px;
   margin: 0 auto;
-
-  ${media.greaterThan('mdUp')`
-    padding-left: calc(${DESKTOP_SIDE_NAV_WIDTH + DESKTOP_BODY_PADDING}px);
-  `}
 `;
 
 export default AppLayout;

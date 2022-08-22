@@ -25,6 +25,7 @@ import '../i18n';
 import Connector from 'containers/Connector';
 import Script from 'next/script';
 import { isSupportedNetworkId } from '../utils/network';
+import { globalStyles as global } from 'styles/theme/chakraGlobal';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -124,12 +125,7 @@ const App: FC<AppProps> = (props) => {
         theme={extendTheme({
           ...chakraTheme,
           styles: {
-            global: {
-              body: {
-                bg: chakraTheme.colors.navy['900'],
-                color: chakraTheme.colors.white,
-              },
-            },
+            global,
           },
         })}
       >
