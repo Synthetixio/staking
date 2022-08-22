@@ -10,8 +10,8 @@ const customJestConfig = {
   roots: ['<rootDir>'],
   modulePaths: ['<rootDir>'],
   moduleDirectories: ['node_modules', '<rootDir>/'],
-  globalSetup: './test-setup/global.js',
-  setupFilesAfterEnv: ['<rootDir>/test-setup/setup.js'],
+  globalSetup: './tests/global.js',
+  setupFilesAfterEnv: ['<rootDir>/tests/setup.js'],
   testEnvironment: 'jest-environment-jsdom',
   testMatch: ['<rootDir>/**/*.test.{js,jsx,ts,tsx}'],
   collectCoverageFrom: [
