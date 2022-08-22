@@ -33,6 +33,7 @@
     "@synthetixio/providers": "^2.74.7",
     "@synthetixio/queries": "^3.0.5",
     "@synthetixio/transaction-notifier": "^2.74.9",
+    "@synthetixio/v3-theme": "^1.0.1",
     "@synthetixio/wei": "^2.74.2",
     "@tippyjs/react": "^4.1.0",
     "@uniswap/sdk-core": "^3.0.0",
@@ -127,7 +128,8 @@
     "sharp": "0.29.3",
     "browserslist": "^4.20.4",
     "caniuse-lite": "^1.0.30001355",
-    "shell-quote": ">=1.7.3"
+    "shell-quote": ">=1.7.3",
+    "@types/react": "^17.0.2"
   },
   "husky": {
     "hooks": {

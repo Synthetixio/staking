@@ -2038,7 +2038,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@chakra-ui/react@npm:^2.2.6, @chakra-ui/react@npm:^2.2.8":
+"@chakra-ui/react@npm:^2.2.6":
   version: 2.2.8
   resolution: "@chakra-ui/react@npm:2.2.8"
   dependencies:
@@ -4407,17 +4407,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@synthetixio/contracts-interface@npm:2.74.3":
-  version: 2.74.3
-  resolution: "@synthetixio/contracts-interface@npm:2.74.3"
-  dependencies:
-    "@synthetixio/contracts": 1.0.2
-    ethers: ^5.5.3
-    synthetix: 2.75.2
-  checksum: e9686ed24403fb5d04f02e64f1a12069e42d061bba44c650013767e28c0e4c02fb51d2e1ae2cbe0ed85b72666be5ae319c22d1b396f4f7fa0ea9161ffea0ee00
-  languageName: node
-  linkType: hard
-
 "@synthetixio/contracts-interface@npm:2.76.1, @synthetixio/contracts-interface@npm:^2.76.1":
   version: 2.76.1
   resolution: "@synthetixio/contracts-interface@npm:2.76.1"
@@ -4426,13 +4415,6 @@ __metadata:
     ethers: ^5.5.3
     synthetix: 2.76.1
   checksum: 4c1cd9454786dca5ddda3b1aa0956d63b3cf0d3ccd5b3a26170836230da3ed8a2de64145360859ee056e9882a4dfdee66df324f0ff3641846c2ddd3e5b4d6425
-  languageName: node
-  linkType: hard
-
-"@synthetixio/contracts@npm:1.0.2":
-  version: 1.0.2
-  resolution: "@synthetixio/contracts@npm:1.0.2"
-  checksum: 8506304b1620ecb9cbb8e7983015795be0e07532eae80892208b1807b30f58c75e97beddceb9a52722108d9bb1513ac1b522ddd08a2de79d7149819dfb1f095f
   languageName: node
   linkType: hard
 
@@ -4454,7 +4436,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@synthetixio/providers@npm:2.74.7, @synthetixio/providers@npm:^2.74.5":
+"@synthetixio/providers@npm:2.74.7, @synthetixio/providers@npm:^2.74.7":
   version: 2.74.7
   resolution: "@synthetixio/providers@npm:2.74.7"
   dependencies:
@@ -4467,9 +4449,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@synthetixio/queries@npm:^2.74.8":
-  version: 2.74.8
-  resolution: "@synthetixio/queries@npm:2.74.8"
+"@synthetixio/queries@npm:^3.0.5":
+  version: 3.0.5
+  resolution: "@synthetixio/queries@npm:3.0.5"
   dependencies:
     "@ethersproject/abstract-signer": ^5.6.2
     "@ethersproject/address": ^5.6.1
@@ -4482,7 +4464,8 @@ __metadata:
     "@ethersproject/units": ^5.6.1
     "@snapshot-labs/snapshot.js": ^0.4.13
     "@synthetixio/codegen-graph-ts": 2.74.2
-    "@synthetixio/contracts-interface": 2.74.3
+    "@synthetixio/contracts": 1.1.3
+    "@synthetixio/contracts-interface": 2.76.1
     "@synthetixio/optimism-networks": 2.74.2
     "@synthetixio/wei": 2.74.2
     axios: ^0.21.4
@@ -4494,11 +4477,11 @@ __metadata:
     react: 17.x
     react-dom: 17.x
     react-query: 3.16.x
-  checksum: 78ba427774e998ea7ee295b71051c8f023b5380244915996752120bb70fe6b9f68644e063fb3e9176447c10cfcfb84f85d7f694be05fae8596a235a6817fc007
+  checksum: 675d59e27a79d74d94c9d86300455e30a56c9706a37a66f55b9d0fc1960e6e1dc07f85d975c77423d72a09b8369ec191070578e09c3704891270c2975697ee00
   languageName: node
   linkType: hard
 
-"@synthetixio/transaction-notifier@npm:^2.74.6":
+"@synthetixio/transaction-notifier@npm:^2.74.9":
   version: 2.74.9
   resolution: "@synthetixio/transaction-notifier@npm:2.74.9"
   dependencies:
@@ -5148,18 +5131,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:*":
-  version: 18.0.17
-  resolution: "@types/react@npm:18.0.17"
-  dependencies:
-    "@types/prop-types": "*"
-    "@types/scheduler": "*"
-    csstype: ^3.0.2
-  checksum: 18cae64f5bfd6bb58fbd8ee2ba52ec82de844f114254e26de7b513e4b86621f643f9b71d7066958cd571b0d78cb86cbceda449c5289f9349ca573df29ab69252
-  languageName: node
-  linkType: hard
-
-"@types/react@npm:^17, @types/react@npm:^17.0.2":
+"@types/react@npm:^17.0.2":
   version: 17.0.48
   resolution: "@types/react@npm:17.0.48"
   dependencies:
@@ -13276,7 +13248,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-dom@npm:^18.1.0, react-dom@npm:^18.2.0":
+"react-dom@npm:^17.0.2":
+  version: 17.0.2
+  resolution: "react-dom@npm:17.0.2"
+  dependencies:
+    loose-envify: ^1.1.0
+    object-assign: ^4.1.1
+    scheduler: ^0.20.2
+  peerDependencies:
+    react: 17.0.2
+  checksum: 1c1eaa3bca7c7228d24b70932e3d7c99e70d1d04e13bb0843bbf321582bc25d7961d6b8a6978a58a598af2af496d1cedcfb1bf65f6b0960a0a8161cb8dab743c
+  languageName: node
+  linkType: hard
+
+"react-dom@npm:^18.1.0":
   version: 18.2.0
   resolution: "react-dom@npm:18.2.0"
   dependencies:
@@ -13674,7 +13659,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:^18.1.0, react@npm:^18.2.0":
+"react@npm:^17.0.2":
+  version: 17.0.2
+  resolution: "react@npm:17.0.2"
+  dependencies:
+    loose-envify: ^1.1.0
+    object-assign: ^4.1.1
+  checksum: b254cc17ce3011788330f7bbf383ab653c6848902d7936a87b09d835d091e3f295f7e9dd1597c6daac5dc80f90e778c8230218ba8ad599f74adcc11e33b9d61b
+  languageName: node
+  linkType: hard
+
+"react@npm:^18.1.0":
   version: 18.2.0
   resolution: "react@npm:18.2.0"
   dependencies:
@@ -14302,6 +14297,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"scheduler@npm:^0.20.2":
+  version: 0.20.2
+  resolution: "scheduler@npm:0.20.2"
+  dependencies:
+    loose-envify: ^1.1.0
+    object-assign: ^4.1.1
+  checksum: c4b35cf967c8f0d3e65753252d0f260271f81a81e427241295c5a7b783abf4ea9e905f22f815ab66676f5313be0a25f47be582254db8f9241b259213e999b8fc
+  languageName: node
+  linkType: hard
+
 "scheduler@npm:^0.23.0":
   version: 0.23.0
   resolution: "scheduler@npm:0.23.0"
@@ -14706,7 +14711,6 @@ __metadata:
   resolution: "staking@workspace:."
   dependencies:
     "@artsy/fresnel": ^1.8.0
-    "@chakra-ui/react": ^2.2.8
     "@metamask/providers": ^8.1.1
     "@microsoft/eslint-formatter-sarif": ^3.0.0
     "@next/bundle-analyzer": ^10.2.3
@@ -14717,9 +14721,9 @@ __metadata:
     "@synthetixio/contracts": ^1.1.3
     "@synthetixio/contracts-interface": ^2.76.1
     "@synthetixio/optimism-networks": ^2.74.2
-    "@synthetixio/providers": ^2.74.5
-    "@synthetixio/queries": ^2.74.8
-    "@synthetixio/transaction-notifier": ^2.74.6
+    "@synthetixio/providers": ^2.74.7
+    "@synthetixio/queries": ^3.0.5
+    "@synthetixio/transaction-notifier": ^2.74.9
     "@synthetixio/v3-theme": ^1.0.1
     "@synthetixio/wei": ^2.74.2
     "@testing-library/jest-dom": ^5.16.4
@@ -14775,11 +14779,11 @@ __metadata:
     next: ^12.2.2
     next-compose-plugins: ^2.2.1
     prettier: ^2.7.1
-    react: ^18.2.0
+    react: ^17.0.2
     react-copy-to-clipboard: ^5.1.0
     react-countdown: ^2.3.0
     react-datepicker: ^4.1.1
-    react-dom: ^18.2.0
+    react-dom: ^17.0.2
     react-i18next: ^11.7.0
     react-outside-click-handler: ^1.3.0
     react-query: 3.16.0
