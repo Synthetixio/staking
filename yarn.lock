@@ -9460,7 +9460,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"framer-motion@npm:^7.0.0":
+"framer-motion@npm:^7.0.0, framer-motion@npm:^7.2.0":
   version: 7.2.0
   resolution: "framer-motion@npm:7.2.0"
   dependencies:
@@ -13248,20 +13248,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-dom@npm:^17.0.2":
-  version: 17.0.2
-  resolution: "react-dom@npm:17.0.2"
-  dependencies:
-    loose-envify: ^1.1.0
-    object-assign: ^4.1.1
-    scheduler: ^0.20.2
-  peerDependencies:
-    react: 17.0.2
-  checksum: 1c1eaa3bca7c7228d24b70932e3d7c99e70d1d04e13bb0843bbf321582bc25d7961d6b8a6978a58a598af2af496d1cedcfb1bf65f6b0960a0a8161cb8dab743c
-  languageName: node
-  linkType: hard
-
-"react-dom@npm:^18.1.0":
+"react-dom@npm:^18.1.0, react-dom@npm:^18.2.0":
   version: 18.2.0
   resolution: "react-dom@npm:18.2.0"
   dependencies:
@@ -13659,17 +13646,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:^17.0.2":
-  version: 17.0.2
-  resolution: "react@npm:17.0.2"
-  dependencies:
-    loose-envify: ^1.1.0
-    object-assign: ^4.1.1
-  checksum: b254cc17ce3011788330f7bbf383ab653c6848902d7936a87b09d835d091e3f295f7e9dd1597c6daac5dc80f90e778c8230218ba8ad599f74adcc11e33b9d61b
-  languageName: node
-  linkType: hard
-
-"react@npm:^18.1.0":
+"react@npm:^18.1.0, react@npm:^18.2.0":
   version: 18.2.0
   resolution: "react@npm:18.2.0"
   dependencies:
@@ -14297,16 +14274,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"scheduler@npm:^0.20.2":
-  version: 0.20.2
-  resolution: "scheduler@npm:0.20.2"
-  dependencies:
-    loose-envify: ^1.1.0
-    object-assign: ^4.1.1
-  checksum: c4b35cf967c8f0d3e65753252d0f260271f81a81e427241295c5a7b783abf4ea9e905f22f815ab66676f5313be0a25f47be582254db8f9241b259213e999b8fc
-  languageName: node
-  linkType: hard
-
 "scheduler@npm:^0.23.0":
   version: 0.23.0
   resolution: "scheduler@npm:0.23.0"
@@ -14712,6 +14679,8 @@ __metadata:
   dependencies:
     "@artsy/fresnel": ^1.8.0
     "@chakra-ui/react": ^2.2.8
+    "@emotion/react": ^11.10.0
+    "@emotion/styled": ^11.10.0
     "@metamask/providers": ^8.1.1
     "@microsoft/eslint-formatter-sarif": ^3.0.0
     "@next/bundle-analyzer": ^10.2.3
@@ -14771,6 +14740,7 @@ __metadata:
     eslint-plugin-react-hooks: ^4.6.0
     ethereum-blockies-base64: ^1.0.2
     ethers: ^5.5.3
+    framer-motion: ^7.2.0
     husky: ^8.0.1
     i18next: ^19.7.0
     jest: ^28.1.2
@@ -14780,11 +14750,11 @@ __metadata:
     next: ^12.2.2
     next-compose-plugins: ^2.2.1
     prettier: ^2.7.1
-    react: ^17.0.2
+    react: ^18.2.0
     react-copy-to-clipboard: ^5.1.0
     react-countdown: ^2.3.0
     react-datepicker: ^4.1.1
-    react-dom: ^17.0.2
+    react-dom: ^18.2.0
     react-i18next: ^11.7.0
     react-outside-click-handler: ^1.3.0
     react-query: 3.16.0

@@ -5,7 +5,11 @@ const Header = () => {
   return (
     <Box background="navy.900" width="800px" height="200px">
       <SynthetixIcon />
-      <Heading>Hello World 2</Heading>
+      <Box>
+        <Heading>Hello World 2</Heading>
+        <Heading>Hello World 3</Heading>
+        <Heading>Hello World 4</Heading>
+      </Box>
     </Box>
   );
 };
