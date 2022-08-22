@@ -1,4 +1,4 @@
-import { BigNumber, ethers } from 'ethers';
+import { BigNumber, Contract, ethers } from 'ethers';
 import { parseBytes32String } from 'ethers/lib/utils';
 import { Loan } from './types';
 
@@ -16,22 +16,7 @@ type LoanContractResponse = [
 
 type PartialLoan = Omit<Loan, 'minCratio' | 'cratio' | 'collateralAsset'>;
 
-type Args =
-  | {
-      id: number;
-      loanContract: ethers.Contract;
-      isL2: true;
-    }
-  | {
-      id: number;
-      loanStateContract: ethers.Contract;
-      address: string;
-      isL2: false;
-    };
-const fetchLoan = async (args: Args): Promise<[PartialLoan, LoanContractResponse]> => {
-  const raw: LoanContractResponse = args.isL2
-    ? await args.loanContract.loans(args.id)
-    : await args.loanStateContract.getLoan(args.address, String(args.id));
+function parseLoan(raw: LoanContractResponse): [PartialLoan, LoanContractResponse] {
   const [
     _id,
     account,
@@ -56,7 +41,18 @@ const fetchLoan = async (args: Args): Promise<[PartialLoan, LoanContractResponse
     },
     raw,
   ];
-};
+}
+
+async function fetchLoanL1(loanStateContract: Contract, address: string, id: number) {
+  const raw: LoanContractResponse = await loanStateContract.getLoan(address, String(id));
+  return parseLoan(raw);
+}
+
+async function fetchLoanL2(loanContract: Contract, id: number) {
+  const raw: LoanContractResponse = await loanContract.loans(id);
+  return parseLoan(raw);
+}
+
 const getLoan = async ({
   id,
   loanContract,
@@ -79,8 +75,8 @@ const getLoan = async ({
     string
   ] = await Promise.all([
     loanStateContract && !isL2
-      ? await fetchLoan({ id, loanStateContract, address, isL2: false })
-      : await fetchLoan({ id, loanContract, isL2: true }),
+      ? fetchLoanL1(loanStateContract, address, id)
+      : fetchLoanL2(loanContract, id),
     loanContract.minCratio(),
     loanContract.collateralKey(),
   ]);

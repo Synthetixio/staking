@@ -3,7 +3,7 @@ import Connector from 'containers/Connector';
 import { ethers } from 'ethers';
 
 export type SynthetixJsAndSignerProps = {
-  synthetixjs: SynthetixJS;
+  synthetixjs: { contracts: SynthetixJS['contracts'] };
   signer: ethers.Signer;
 };
 

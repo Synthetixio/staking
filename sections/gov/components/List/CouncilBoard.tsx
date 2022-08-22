@@ -22,7 +22,10 @@ const CouncilBoard: React.FC = () => {
   const { blockExplorerInstance } = Etherscan.useContainer();
   const theme = useTheme();
   const { useGetSpartanCouncil } = useSynthetixQueries();
-  const councilMembersQuery = useGetSpartanCouncil(L2DefaultProvider);
+  const councilMembersQuery = useGetSpartanCouncil(
+    process.env.NEXT_PUBLIC_BOARDROOM_KEY ?? '',
+    L2DefaultProvider
+  );
   const councilMembers = councilMembersQuery.data;
 
   return (

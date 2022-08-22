@@ -9,7 +9,7 @@ type ConnectorState = {
   network: Network | null;
   provider: SynthetixProvider | null;
   signer: ethers.Signer | null;
-  synthetixjs: SynthetixJS | null;
+  synthetixjs: { contracts: SynthetixJS['contracts'] } | null;
   isAppReady: boolean;
   walletAddress: string | null;
   walletWatched: string | null;
@@ -48,7 +48,7 @@ export type ConnectionUpdate = {
   signer: ethers.Signer | null;
   walletWatched: null;
   walletType: string | null;
-  synthetixjs: SynthetixJS | null;
+  synthetixjs: { contracts: SynthetixJS['contracts'] } | null;
   provider: SynthetixProvider;
   ensName: string | null;
   ensAvatar: string | null;
@@ -78,7 +78,7 @@ export type Actions =
   | { type: AppEvents.UPDATE_PROVIDER; payload: ProviderUpdate }
   | { type: AppEvents.WALLET_DISCONNECTED };
 
-export function reducer(state: ConnectorState, action: Actions) {
+export function reducer(state: ConnectorState, action: Actions): ConnectorState {
   switch (action.type) {
     case AppEvents.APP_READY:
       return { ...state, isAppReady: true, onboard: action.payload };
@@ -116,7 +116,7 @@ export function reducer(state: ConnectorState, action: Actions) {
         signer: null,
         synthetixjs: null,
         walletAddress: null,
-        watchedWallet: null,
+        walletWatched: null,
         walletType: null,
         ensName: null,
         ensAvatar: null,

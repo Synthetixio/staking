@@ -35,6 +35,7 @@ const DesktopSideNav: FC = () => {
   const synthsBalancesQuery = useSynthsBalancesQuery(delegateWallet?.address ?? walletAddress);
 
   const lockedSNXQuery = useSNXData(L1DefaultProvider);
+
   const tRatio = useMemo(() => {
     if (lockedSNXQuery?.data?.lockedSupply?.gt(1) && lockedSNXQuery?.data?.totalSNXSupply) {
       return lockedSNXQuery.data.lockedSupply

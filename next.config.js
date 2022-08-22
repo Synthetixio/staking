@@ -43,7 +43,7 @@ module.exports = withPlugins([withBundleAnalyzer], {
 
     config.module.rules.push({
       test: /\.svg$/,
-      use: '@svgr/webpack',
+      use: require.resolve('@svgr/webpack'),
     });
 
     config.module.rules.push({
