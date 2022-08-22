@@ -1,0 +1,25 @@
+{
+  "ignorePatterns": [".yarn", ".next", "out"],
+  "ignores": [
+    "@microsoft/eslint-formatter-sarif",
+    "jest-environment-jsdom",
+
+    "assets",
+    "components",
+    "containers",
+    "content",
+    "contracts",
+    "hoc",
+    "hooks",
+    "i18n",
+    "lib",
+    "mutations",
+    "queries",
+    "sections",
+    "store",
+    "styles",
+    "test-utils",
+    "translations",
+    "utils"
+  ]
+}
