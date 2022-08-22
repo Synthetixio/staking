@@ -42,7 +42,9 @@ const StakingPage = () => {
       <Head>
         <title>{t('staking.page-title')}</title>
       </Head>
+
       <Header />
+
       <StatsSection>
         <StakedValue
           title={t('common.stat-box.staked-value')}

@@ -1,9 +1,11 @@
-import { Box } from '@chakra-ui/react';
+import { Box, Heading } from '@chakra-ui/react';
+import SynthetixIcon from 'components/SynthetixIcon';
 
 const Header = () => {
   return (
-    <Box>
-      <h2>Hello World</h2>
+    <Box background="navy.900" width="800px" height="200px">
+      <SynthetixIcon />
+      <Heading>Hello World 2</Heading>
     </Box>
   );
 };
