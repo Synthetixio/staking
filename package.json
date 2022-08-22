@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "@artsy/fresnel": "^1.8.0",
+    "@chakra-ui/react": "^2.2.8",
     "@reach/dialog": "^0.15.3",
     "@socket.tech/widget": "^0.0.9",
     "@synthetixio/assets": "^2.0.13",
