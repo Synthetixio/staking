@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useReducer } from 'react';
+import { useCallback, useEffect, useReducer } from 'react';
 import { AppState } from '@web3-onboard/core';
 import { createContainer } from 'unstated-next';
 import TransactionNotifier from '@synthetixio/transaction-notifier';
@@ -6,29 +6,40 @@ import { loadProvider, SynthetixProvider } from '@synthetixio/providers';
 
 import { getIsOVM, isSupportedNetworkId } from 'utils/network';
 
-import {
-  synthetix,
-  NetworkNameById,
-  NetworkIdByName,
-  NetworkId,
-} from '@synthetixio/contracts-interface';
+import { NetworkNameById, NetworkIdByName, NetworkId } from '@synthetixio/contracts-interface';
 import { ethers } from 'ethers';
 
-import { isSupportedWalletChain, onboard as Web3Onboard } from './config';
+import { onboard as Web3Onboard } from './config';
 import { LOCAL_STORAGE_KEYS } from 'constants/storage';
 import { CurrencyKey, ETH_ADDRESS } from 'constants/currency';
 import { synthToContractName } from 'utils/currencies';
-import { keyBy } from 'lodash';
 import { AppEvents, initialState, reducer } from './reducer';
 
 import { getChainIdHex, getNetworkIdFromHex } from 'utils/infura';
 import { Network } from 'store/wallet';
+import { initializeSynthetix } from '../../utils/contracts';
 
 const defaultNetwork: Network = {
   id: NetworkIdByName.mainnet,
   name: NetworkNameById[NetworkIdByName.mainnet],
   useOvm: getIsOVM(NetworkIdByName.mainnet),
 };
+// Ethereum Mainnet
+const L1DefaultProvider: SynthetixProvider = loadProvider({
+  infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID
+    ? process.env.NEXT_PUBLIC_INFURA_PROJECT_ID
+    : '0',
+  networkId: NetworkIdByName.mainnet,
+});
+
+// Optimism Mainnet
+const L2DefaultProvider: SynthetixProvider = loadProvider({
+  infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID
+    ? process.env.NEXT_PUBLIC_INFURA_PROJECT_ID
+    : '0',
+  networkId: NetworkIdByName['mainnet-ovm'],
+});
+const transactionNotifier = new TransactionNotifier(L1DefaultProvider);
 
 const useConnector = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -47,30 +58,6 @@ const useConnector = () => {
     walletType,
   } = state;
 
-  // Ethereum Mainnet
-  const L1DefaultProvider: SynthetixProvider = useMemo(
-    () =>
-      loadProvider({
-        infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID
-          ? process.env.NEXT_PUBLIC_INFURA_PROJECT_ID
-          : '0',
-        networkId: NetworkIdByName.mainnet,
-      }),
-    []
-  );
-
-  // Optimism Mainnet
-  const L2DefaultProvider: SynthetixProvider = useMemo(
-    () =>
-      loadProvider({
-        infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID
-          ? process.env.NEXT_PUBLIC_INFURA_PROJECT_ID
-          : '0',
-        networkId: NetworkIdByName['mainnet-ovm'],
-      }),
-    []
-  );
-
   const updateState = useCallback((update: AppState) => {
     if (update.wallets.length > 0) {
       const wallet = update.wallets[0].accounts[0];
@@ -78,8 +65,6 @@ const useConnector = () => {
       const { label } = update.wallets[0];
       const { id } = update.wallets[0].chains[0];
       const networkId = getNetworkIdFromHex(id);
-
-      const isSupported = isSupportedNetworkId(networkId) && isSupportedWalletChain(networkId);
 
       const network = {
         id: networkId,
@@ -93,8 +78,10 @@ const useConnector = () => {
       });
 
       const signer = provider.getSigner();
-      const useOvm = getIsOVM(Number(networkId));
-      const synthetixjs = isSupported ? synthetix({ provider, networkId, useOvm }) : null;
+      const contracts = isSupportedNetworkId(networkId)
+        ? initializeSynthetix(networkId, signer)
+        : null;
+      const synthetixjs = contracts ? { contracts } : null;
 
       dispatch({
         type: AppEvents.CONFIG_UPDATE,
@@ -118,19 +105,6 @@ const useConnector = () => {
     }
   }, []);
 
-  const transactionNotifier = useMemo(
-    () => new TransactionNotifier(L1DefaultProvider),
-    [L1DefaultProvider]
-  );
-
-  const [synthsMap, tokensMap] = useMemo(() => {
-    if (synthetixjs == null) {
-      return [{}, {}];
-    }
-
-    return [keyBy(synthetixjs.synths, 'name'), keyBy(synthetixjs.tokens, 'symbol')];
-  }, [synthetixjs]);
-
   useEffect(() => {
     dispatch({ type: AppEvents.APP_READY, payload: Web3Onboard }); //
   }, []);
@@ -139,8 +113,6 @@ const useConnector = () => {
     if (provider) {
       transactionNotifier.setProvider(provider);
     }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [provider]);
 
   useEffect(() => {
@@ -187,7 +159,7 @@ const useConnector = () => {
         }
       })();
     }
-  }, [walletAddress, L1DefaultProvider, ensName, network]);
+  }, [walletAddress, ensName, network]);
 
   useEffect(() => {
     // If we are 'watching a wallet, we update the provider'
@@ -287,8 +259,6 @@ const useConnector = () => {
     walletWatched,
     walletType,
     synthetixjs,
-    synthsMap,
-    tokensMap,
     isWalletConnected: Boolean(walletAddress && synthetixjs),
     walletConnectedToUnsupportedNetwork: Boolean(signer && !synthetixjs),
     isL2: network?.useOvm ?? false,

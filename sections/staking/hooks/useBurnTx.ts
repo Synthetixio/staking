@@ -13,6 +13,7 @@ import { toFutureDate } from 'utils/formatters/date';
 import Wei, { wei } from '@synthetixio/wei';
 import useSynthetixQueries, { GasPrice } from '@synthetixio/queries';
 import { parseSafeWei } from 'utils/parse';
+import { formatBytes32String } from 'ethers/lib/utils';
 
 const useBurnTx = () => {
   const [amountToBurn, onBurnChange] = useRecoilState(amountToBurnState);
@@ -65,7 +66,6 @@ const useBurnTx = () => {
     if (!walletAddressToUse) return;
     const {
       contracts: { Exchanger },
-      utils: { formatBytes32String },
     } = synthetixjs;
 
     try {

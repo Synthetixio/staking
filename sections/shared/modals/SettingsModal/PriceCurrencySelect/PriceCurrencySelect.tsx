@@ -5,27 +5,25 @@ import Select from 'components/Select';
 import { priceCurrencyState, PRICE_CURRENCIES } from 'store/app';
 
 import usePersistedRecoilState from 'hooks/usePersistedRecoilState';
-import Connector from 'containers/Connector';
+import useSynthetixQueries from '@synthetixio/queries';
+import { notNill } from 'utils/ts-helpers';
 
 export const PriceCurrencySelect: FC = () => {
   const [priceCurrency, setPriceCurrency] = usePersistedRecoilState(priceCurrencyState);
-
-  const { synthsMap, network } = Connector.useContainer();
+  const { useGetSynthsByName } = useSynthetixQueries();
+  const synthsByNameQuery = useGetSynthsByName();
 
   const currencyOptions = useMemo(() => {
-    if (network != null) {
-      return PRICE_CURRENCIES.filter(
-        (currencyKey) => synthsMap != null && synthsMap![currencyKey]
-      ).map((currencyKey) => {
-        const synth = synthsMap![currencyKey];
-        return {
+    if (synthsByNameQuery.data) {
+      return PRICE_CURRENCIES.map((priceCurrency) => synthsByNameQuery.data[priceCurrency])
+        .filter(notNill)
+        .map((synth) => ({
           label: synth.asset,
           value: synth,
-        };
-      });
+        }));
     }
     return [];
-  }, [network, synthsMap]);
+  }, [synthsByNameQuery.data]);
 
   return (
     <Select

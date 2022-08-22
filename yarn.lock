@@ -3286,6 +3286,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@synthetixio/assets@npm:^2.0.13":
+  version: 2.0.13
+  resolution: "@synthetixio/assets@npm:2.0.13"
+  checksum: ed9e9c8de23a5e4b94207ce9368ac9ce0011d25b469f95d083051f5e6715524c0c39ac50a54b1f54a19d833c9ba2d70ee3b1453db2ee5778fd999225ca1e802d
+  languageName: node
+  linkType: hard
+
 "@synthetixio/codegen-graph-ts@npm:2.74.2":
   version: 2.74.2
   resolution: "@synthetixio/codegen-graph-ts@npm:2.74.2"
@@ -3302,21 +3309,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@synthetixio/contracts-interface@npm:2.74.3, @synthetixio/contracts-interface@npm:^2.74.3":
-  version: 2.74.3
-  resolution: "@synthetixio/contracts-interface@npm:2.74.3"
+"@synthetixio/contracts-interface@npm:2.76.1, @synthetixio/contracts-interface@npm:^2.76.1":
+  version: 2.76.1
+  resolution: "@synthetixio/contracts-interface@npm:2.76.1"
   dependencies:
-    "@synthetixio/contracts": 1.0.2
+    "@synthetixio/contracts": 1.1.3
     ethers: ^5.5.3
-    synthetix: 2.75.2
-  checksum: e9686ed24403fb5d04f02e64f1a12069e42d061bba44c650013767e28c0e4c02fb51d2e1ae2cbe0ed85b72666be5ae319c22d1b396f4f7fa0ea9161ffea0ee00
+    synthetix: 2.76.1
+  checksum: 4c1cd9454786dca5ddda3b1aa0956d63b3cf0d3ccd5b3a26170836230da3ed8a2de64145360859ee056e9882a4dfdee66df324f0ff3641846c2ddd3e5b4d6425
   languageName: node
   linkType: hard
 
-"@synthetixio/contracts@npm:1.0.2":
-  version: 1.0.2
-  resolution: "@synthetixio/contracts@npm:1.0.2"
-  checksum: 8506304b1620ecb9cbb8e7983015795be0e07532eae80892208b1807b30f58c75e97beddceb9a52722108d9bb1513ac1b522ddd08a2de79d7149819dfb1f095f
+"@synthetixio/contracts@npm:1.1.3, @synthetixio/contracts@npm:^1.1.3":
+  version: 1.1.3
+  resolution: "@synthetixio/contracts@npm:1.1.3"
+  checksum: 979796d69ca08260633b24e73eef848d01cce54f4c46692ee4837a971bc50cfb1eab3153999c4d575f24d1454c324387a28d7c6eb8ae4685679637249c39b1ea
   languageName: node
   linkType: hard
 
@@ -3331,22 +3338,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@synthetixio/providers@npm:2.74.5, @synthetixio/providers@npm:^2.74.5":
-  version: 2.74.5
-  resolution: "@synthetixio/providers@npm:2.74.5"
+"@synthetixio/providers@npm:2.74.7, @synthetixio/providers@npm:^2.74.7":
+  version: 2.74.7
+  resolution: "@synthetixio/providers@npm:2.74.7"
   dependencies:
     "@ethersproject/bignumber": ^5.6.2
     "@ethersproject/bytes": ^5.6.1
     "@ethersproject/providers": ^5.6.8
-    "@synthetixio/contracts-interface": 2.74.3
+    "@synthetixio/contracts-interface": 2.76.1
     "@synthetixio/optimism-networks": 2.74.2
-  checksum: 6c1be0bcdc947e0c32c319b9f3b0afa36ed74f20ee89ae605f3fdccf485d8bc45779bed76d7cb874d14548ab914d89073bc6655cfe9a0c7e9d370c4ffbcad962
+  checksum: a86b1298f61d3fdb31b8bcfaed785f2baa905742e7a8ab43527010e99f6db66ecf288f789562818c7ff9c0a75d9a4e1a6020f00a2bb534708d75902a83a329b4
   languageName: node
   linkType: hard
 
-"@synthetixio/queries@npm:^2.74.8":
-  version: 2.74.8
-  resolution: "@synthetixio/queries@npm:2.74.8"
+"@synthetixio/queries@npm:^3.0.4":
+  version: 3.0.4
+  resolution: "@synthetixio/queries@npm:3.0.4"
   dependencies:
     "@ethersproject/abstract-signer": ^5.6.2
     "@ethersproject/address": ^5.6.1
@@ -3359,7 +3366,8 @@ __metadata:
     "@ethersproject/units": ^5.6.1
     "@snapshot-labs/snapshot.js": ^0.4.13
     "@synthetixio/codegen-graph-ts": 2.74.2
-    "@synthetixio/contracts-interface": 2.74.3
+    "@synthetixio/contracts": 1.1.3
+    "@synthetixio/contracts-interface": 2.76.1
     "@synthetixio/optimism-networks": 2.74.2
     "@synthetixio/wei": 2.74.2
     axios: ^0.21.4
@@ -3371,19 +3379,19 @@ __metadata:
     react: 17.x
     react-dom: 17.x
     react-query: 3.16.x
-  checksum: 78ba427774e998ea7ee295b71051c8f023b5380244915996752120bb70fe6b9f68644e063fb3e9176447c10cfcfb84f85d7f694be05fae8596a235a6817fc007
+  checksum: 5e6cf8b13013de37f3046fa3b14b86a493a01fe7fcb95f6d984165f2904942e74f8f9e56797aa2b76f290010ff2df367c95bddb247835273b0697913ac0caae0
   languageName: node
   linkType: hard
 
-"@synthetixio/transaction-notifier@npm:^2.74.6":
-  version: 2.74.6
-  resolution: "@synthetixio/transaction-notifier@npm:2.74.6"
+"@synthetixio/transaction-notifier@npm:^2.74.9":
+  version: 2.74.9
+  resolution: "@synthetixio/transaction-notifier@npm:2.74.9"
   dependencies:
     "@ethersproject/properties": ^5.6.0
     "@ethersproject/providers": ^5.6.8
     "@ethersproject/strings": ^5.6.1
-    "@synthetixio/providers": 2.74.5
-  checksum: 56db2c1ecfaa1866cb3586b01c65300cf057d7e3d2c17e84f00d35f183e3296eb37c26afe4e58bfa9cf1f4236c67091dfafca743b29d4328c06f508f0a78700f
+    "@synthetixio/providers": 2.74.7
+  checksum: f3ccd40a4956567143066deb95523a372a8451d1e1fb6c9b1e040e1870ac2c7b45e8442dd48961d3c4fa3213e11d7baae0dfdf2538762384966f1afe3e79ac35
   languageName: node
   linkType: hard
 
@@ -6523,10 +6531,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"date-fns@npm:*, date-fns@npm:^2.0.1, date-fns@npm:^2.15.0, date-fns@npm:^2.19.0, date-fns@npm:^2.24.0":
+"date-fns@npm:*, date-fns@npm:^2.0.1, date-fns@npm:^2.15.0, date-fns@npm:^2.24.0":
   version: 2.28.0
   resolution: "date-fns@npm:2.28.0"
   checksum: a0516b2e4f99b8bffc6cc5193349f185f195398385bdcaf07f17c2c4a24473c99d933eb0018be4142a86a6d46cb0b06be6440ad874f15e795acbedd6fd727a1f
+  languageName: node
+  linkType: hard
+
+"date-fns@npm:^2.19.0":
+  version: 2.29.2
+  resolution: "date-fns@npm:2.29.2"
+  checksum: 08bebcceb0a5dbadae4c55e6592b9d5c07dbd7833433c7e9a1d4a424300db32589b8b48e5979b32863c9b00a48d9bab6663e580c2a4f9f203d46cbf9113b5664
   languageName: node
   linkType: hard
 
@@ -12881,15 +12896,15 @@ jschardet@latest:
   linkType: hard
 
 "sass@npm:^1.29.0":
-  version: 1.54.4
-  resolution: "sass@npm:1.54.4"
+  version: 1.54.5
+  resolution: "sass@npm:1.54.5"
   dependencies:
     chokidar: ">=3.0.0 <4.0.0"
     immutable: ^4.0.0
     source-map-js: ">=0.6.2 <2.0.0"
   bin:
     sass: sass.js
-  checksum: bb6aead09764de450a02b9a66e4ee538f0ba6bc8f2fc3905c71b2c302b5f47e089b510b86cfa7ef2d4139c210c8abf99fe157e7a5bd356c057f10d29e6c4b44c
+  checksum: ba7a65aa7508419468547c8de4d59e537bec874f52823f501663dc98d80dfd2d374e8ea73a31200db7f510b8816c925edf89728c9b36889f4e6673d3e94ec100
   languageName: node
   linkType: hard
 
@@ -13323,11 +13338,13 @@ jschardet@latest:
     "@reach/dialog": ^0.15.3
     "@socket.tech/widget": ^0.0.9
     "@svgr/webpack": ^6.2.1
-    "@synthetixio/contracts-interface": ^2.74.3
+    "@synthetixio/assets": ^2.0.13
+    "@synthetixio/contracts": ^1.1.3
+    "@synthetixio/contracts-interface": ^2.76.1
     "@synthetixio/optimism-networks": ^2.74.2
-    "@synthetixio/providers": ^2.74.5
-    "@synthetixio/queries": ^2.74.8
-    "@synthetixio/transaction-notifier": ^2.74.6
+    "@synthetixio/providers": ^2.74.7
+    "@synthetixio/queries": ^3.0.4
+    "@synthetixio/transaction-notifier": ^2.74.9
     "@synthetixio/wei": ^2.74.2
     "@testing-library/jest-dom": ^5.16.4
     "@testing-library/react": ^12.1.5
@@ -13824,8 +13841,8 @@ jschardet@latest:
   linkType: hard
 
 "synthetix@npm:^2.0.0":
-  version: 2.75.2
-  resolution: "synthetix@npm:2.75.2"
+  version: 2.76.1
+  resolution: "synthetix@npm:2.76.1"
   dependencies:
     "@nomiclabs/hardhat-etherscan": ^3.1.0
     abi-decoder: ^2.3.0
@@ -13838,7 +13855,7 @@ jschardet@latest:
     web3-utils: ^1.2.2
   bin:
     snx: bin.js
-  checksum: dd2c7978337f1f3fa90842e0f7f3254be955a5218ea2aac9195c91d32f324e629617c9eda053d716cb36d9114164ce937c460b8b21881797e1fb80fcd6178080
+  checksum: 17d1afae688d9b15477f63bb02826e3b1b5006d8774ecb50005faac89c9c28ba30e384a08e36b2105ff462ca3d9b10874de09bb3180ea8ad74038dc94607fa01
   languageName: node
   linkType: hard
 
@@ -14213,9 +14230,9 @@ jschardet@latest:
   linkType: hard
 
 "undici@npm:^5.4.0":
-  version: 5.8.0
-  resolution: "undici@npm:5.8.0"
-  checksum: 7b486ad064da00628d3906e140b86223023cd3494c811da8d7aa1375c2392fe6a6ac421af236c056fd3d3136bba3a91b99e0505dde071dd946070946eb0718b8
+  version: 5.8.2
+  resolution: "undici@npm:5.8.2"
+  checksum: 726e04bb37e2e285b4f632600c792efc9eaa5e06e37f9f34338352ac5e1dbd8ae3cdd12dd8761abfecffc5f200d1c7b91b41efb3a31c4e804ea341e5808ddfcf
   languageName: node
   linkType: hard
 
