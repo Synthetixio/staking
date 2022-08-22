@@ -3351,9 +3351,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@synthetixio/queries@npm:^3.0.4":
-  version: 3.0.4
-  resolution: "@synthetixio/queries@npm:3.0.4"
+"@synthetixio/queries@npm:^3.0.5":
+  version: 3.0.5
+  resolution: "@synthetixio/queries@npm:3.0.5"
   dependencies:
     "@ethersproject/abstract-signer": ^5.6.2
     "@ethersproject/address": ^5.6.1
@@ -3379,7 +3379,7 @@ __metadata:
     react: 17.x
     react-dom: 17.x
     react-query: 3.16.x
-  checksum: 5e6cf8b13013de37f3046fa3b14b86a493a01fe7fcb95f6d984165f2904942e74f8f9e56797aa2b76f290010ff2df367c95bddb247835273b0697913ac0caae0
+  checksum: 675d59e27a79d74d94c9d86300455e30a56c9706a37a66f55b9d0fc1960e6e1dc07f85d975c77423d72a09b8369ec191070578e09c3704891270c2975697ee00
   languageName: node
   linkType: hard
 
@@ -13343,7 +13343,7 @@ jschardet@latest:
     "@synthetixio/contracts-interface": ^2.76.1
     "@synthetixio/optimism-networks": ^2.74.2
     "@synthetixio/providers": ^2.74.7
-    "@synthetixio/queries": ^3.0.4
+    "@synthetixio/queries": ^3.0.5
     "@synthetixio/transaction-notifier": ^2.74.9
     "@synthetixio/wei": ^2.74.2
     "@testing-library/jest-dom": ^5.16.4
