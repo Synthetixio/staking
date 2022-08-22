@@ -19,7 +19,7 @@ export default function InputBadge({
 }: PropsWithChildren<InputBadgeProps>) {
   return (
     <StyledAnimatedWrapper animate={{ x: 100 }} transition={{ ease: 'easeOut', duration: 1 }}>
-      <Badge colorScheme={colorScheme} padding="1.5" onClick={onClick} minWidth={170}>
+      <Badge colorScheme={colorScheme} padding="1.5" onClick={onClick} minW={170}>
         <Flex justify="space-between" align="center">
           <Text fontSize="xs" color="cyan.500" fontFamily="body">
             {text}
