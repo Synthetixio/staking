@@ -57,7 +57,7 @@ const DesktopSideNav: FC = () => {
             <StyledTargetStakingRatioTitle>
               {t('common.total-staking.staking-percentage-title')}
             </StyledTargetStakingRatioTitle>
-            {stakedSNXQuery.data?.cratio ? formatPercent(stakedSNXQuery.data.cratio) : '0.00%'}
+            {stakedSNXQuery.data?.cratio ? formatPercent(stakedSNXQuery.data.cratio) : '-'}
           </StyledTargetStakingRatio>
         </Tooltip>
         <Tooltip content={t('common.price-change.seven-days')}>
