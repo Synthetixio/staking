@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import Connector from '../containers/Connector';
+import Connector from '../../containers/Connector';
 import Button from 'components/Button';
 import { useTranslation } from 'react-i18next';
 import { NetworkIdByName } from '@synthetixio/contracts-interface';
