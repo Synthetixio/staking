@@ -1,55 +1,17 @@
 import { useCallback, useMemo } from 'react';
 import Wei, { wei } from '@synthetixio/wei';
-import useSynthetixQueries, { FeePoolData } from '@synthetixio/queries';
+import useSynthetixQueries from '@synthetixio/queries';
 import Connector from 'containers/Connector';
 
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 import { Synths } from 'constants/currency';
-import { WEEKS_IN_YEAR } from 'constants/date';
-import { StakedSNXResponse, useStakedSNX } from './useStakedSNX';
-
-// exported for test
-export const calculateIsBelowCRatio = (
-  currentCRatio: Wei,
-  targetCRatio: Wei,
-  targetThreshold: Wei
-) => currentCRatio.gt(targetCRatio.mul(wei(1).add(targetThreshold)));
-
-const calculateWeeklyRewards = (
-  sUSDRate: Wei,
-  SNXRate: Wei,
-  previousFeePeriodData?: FeePoolData
-) => {
-  const feesToDistribute = previousFeePeriodData?.feesToDistribute ?? wei(0);
-  const rewardsToDistribute = previousFeePeriodData?.rewardsToDistribute ?? wei(0);
-
-  return sUSDRate.mul(feesToDistribute).add(SNXRate.mul(rewardsToDistribute));
-};
-const calculateAPRStaked = (
-  stakedValue: Wei,
-  debtBalance: Wei,
-  totalsUSDDebt: Wei,
-  weeklyRewards: Wei
-) => {
-  if (stakedValue.eq(0) || debtBalance.eq(0) || totalsUSDDebt.eq(0) || weeklyRewards.eq(0)) {
-    return wei(0);
-  }
-  return weeklyRewards.mul(debtBalance.div(totalsUSDDebt).mul(WEEKS_IN_YEAR)).div(stakedValue);
-};
-const calculateAPRNotStaking = (
-  SNXRate: Wei,
-  isL2: boolean,
-  weeklyRewards: Wei,
-  stakedSnxData?: StakedSNXResponse
-) => {
-  if (!stakedSnxData || SNXRate.eq(0) || weeklyRewards.eq(0)) {
-    return wei(0);
-  }
-  const stakedSnxForNetwork = isL2
-    ? stakedSnxData.stakedSnx.optimism
-    : stakedSnxData.stakedSnx.ethereum;
-  return weeklyRewards.mul(WEEKS_IN_YEAR).div(SNXRate.mul(stakedSnxForNetwork));
-};
+import { useStakedSNX } from './useStakedSNX';
+import {
+  calculateAPRNotStaking,
+  calculateAPRStaked,
+  calculateIsBelowCRatio,
+  calculateWeeklyRewards,
+} from './stakingDataCalculations';
 
 export const useUserStakingData = (walletAddress: string | null) => {
   const { isL2 } = Connector.useContainer();
