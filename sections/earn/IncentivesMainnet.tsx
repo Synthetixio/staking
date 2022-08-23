@@ -82,7 +82,7 @@ const Incentives: FC<IncentivesProps> = ({
             title: t('earn.incentives.options.snx.title'),
             subtitle: t('earn.incentives.options.snx.subtitle'),
             apr: stakingAPR,
-            tvl: tvlQuery.tvl,
+            tvl: tvlQuery.data,
             staked: {
               balance: stakedAmount,
               asset: CryptoCurrency.SNX,
@@ -100,7 +100,7 @@ const Incentives: FC<IncentivesProps> = ({
             title: t('earn.incentives.options.liquidations.title'),
             subtitle: t('earn.incentives.options.liquidations.subtitle'),
             apr: undefined,
-            tvl: tvlQuery.tvl,
+            tvl: tvlQuery.data,
             staked: {
               balance: stakedAmount,
               asset: CryptoCurrency.SNX,
@@ -163,7 +163,7 @@ const Incentives: FC<IncentivesProps> = ({
   }, [
     stakingAPR,
     stakedAmount,
-    tvlQuery.tvl,
+    tvlQuery.data,
     nextFeePeriodStarts,
     stakingRewards,
     hasClaimed,
