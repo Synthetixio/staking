@@ -12,13 +12,13 @@ export type StakedSNXResponse = {
 };
 export const useStakedSNX = () => {
   return useQuery(
-    'debt-pool-data',
+    'staking-ratio',
     async () => {
       const resp = await fetch(STAKED_SNX_DATA_URL);
 
       const data: StakedSNXResponse = await resp.json();
       return data;
     },
-    { staleTime: 10000 }
+    { staleTime: 3600000 } // 1hour min cache, the api doesn't update more frequently than that
   );
 };
