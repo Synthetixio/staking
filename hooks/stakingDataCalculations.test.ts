@@ -70,7 +70,7 @@ describe('stakingDataCalculations', () => {
     const isL2 = true;
     const previousWeekRewardsUsd = wei('2841174.181008142203572415');
     const stakedSnxData = {
-      cratio: 0.7339104147412211,
+      systemStakingPercent: 0.7339104147412211,
       timestamp: 1660142652,
       stakedSnx: {
         ethereum: 134940195.19759858,
