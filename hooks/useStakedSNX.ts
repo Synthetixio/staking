@@ -2,7 +2,7 @@ import { useQuery } from 'react-query';
 
 const STAKED_SNX_DATA_URL = 'https://api.synthetix.io/staking-ratio';
 
-type StakedSNXResponse = {
+export type StakedSNXResponse = {
   cratio: number;
   timestamp: number;
   stakedSnx: {
