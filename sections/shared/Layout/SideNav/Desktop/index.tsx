@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { FC, useMemo } from 'react';
+import { FC } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import useCryptoBalances from 'hooks/useCryptoBalances';
@@ -22,29 +22,21 @@ import { wei } from '@synthetixio/wei';
 import useGetCurrencyRateChange from 'hooks/useGetCurrencyRateChange';
 import Connector from 'containers/Connector';
 import { endOfHour, subDays } from 'date-fns';
+import { useStakedSNX } from 'hooks/useStakedSNX';
+import { formatPercent } from 'utils/formatters/number';
 
 const DesktopSideNav: FC = () => {
   const delegateWallet = useRecoilValue(delegateWalletState);
-  const { walletAddress, L1DefaultProvider } = Connector.useContainer();
+  const { walletAddress } = Connector.useContainer();
 
   const { t } = useTranslation();
-  const { useSynthsBalancesQuery, useSNXData } = useSynthetixQueries();
+  const { useSynthsBalancesQuery } = useSynthetixQueries();
   const sevenDaysAgoSeconds = Math.floor(endOfHour(subDays(new Date(), 7)).getTime() / 1000);
   const currencyRateChange = useGetCurrencyRateChange(sevenDaysAgoSeconds, 'SNX');
   const cryptoBalances = useCryptoBalances(delegateWallet?.address ?? walletAddress);
   const synthsBalancesQuery = useSynthsBalancesQuery(delegateWallet?.address ?? walletAddress);
 
-  const lockedSNXQuery = useSNXData(L1DefaultProvider);
-
-  const tRatio = useMemo(() => {
-    if (lockedSNXQuery?.data?.lockedSupply?.gt(1) && lockedSNXQuery?.data?.totalSNXSupply) {
-      return lockedSNXQuery.data.lockedSupply
-        .div(lockedSNXQuery.data.totalSNXSupply)
-        .mul(100)
-        .toNumber()
-        .toFixed(2);
-    }
-  }, [lockedSNXQuery?.data?.lockedSupply, lockedSNXQuery?.data?.totalSNXSupply]);
+  const stakedSNXQuery = useStakedSNX();
 
   const snxBalance =
     cryptoBalances?.balances?.find((balance) => balance.currencyKey === CryptoCurrency.SNX)
@@ -65,7 +57,7 @@ const DesktopSideNav: FC = () => {
             <StyledTargetStakingRatioTitle>
               {t('common.total-staking.staking-percentage-title')}
             </StyledTargetStakingRatioTitle>
-            {tRatio || '0.00'}%
+            {stakedSNXQuery.data?.cratio ? formatPercent(stakedSNXQuery.data.cratio) : '0.00%'}
           </StyledTargetStakingRatio>
         </Tooltip>
         <Tooltip content={t('common.price-change.seven-days')}>
