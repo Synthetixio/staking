@@ -1,11 +1,11 @@
 import { InfoIcon } from '@chakra-ui/icons';
 import { Container, Fade, Text } from '@chakra-ui/react';
 
-interface AlterProps {
+interface AlertProps {
   text: string;
 }
 
-export default function Alert({ text }: AlterProps) {
+export default function Alert({ text }: AlertProps) {
   return (
     <Fade in={true}>
       <Container
