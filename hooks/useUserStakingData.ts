@@ -31,7 +31,7 @@ export const useUserStakingData = (walletAddress: string | null) => {
 
   const currentFeePeriod = useGetFeePoolDataQuery(0);
 
-  const { useTotalIssuedSynthsExcludeOtherCollateralQuery, useExchangeRatesQuery, useSNXData } =
+  const { useTotalIssuedSynthsExcludeOtherCollateralQuery, useExchangeRatesQuery } =
     useSynthetixQueries();
 
   const { data: exchangeRatesData, refetch: exchangeRatesRefetch } = useExchangeRatesQuery();
@@ -67,7 +67,7 @@ export const useUserStakingData = (walletAddress: string | null) => {
   const stakingAPR = userIsStaking
     ? calculateAPRStaked(stakedValue, debtBalance, totalsUSDDebt, weeklyRewards)
     : calculateAPRNotStaking(SNXRate, isL2, weeklyRewards, stakedSnxData);
-  console.log({ stakingAPR });
+
   const isBelowCRatio = calculateIsBelowCRatio(currentCRatio, targetCRatio, targetThreshold);
 
   const { data: availableRewards, refetch: availableRewardsRefetch } = useClaimableRewardsQuery(
