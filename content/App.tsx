@@ -1,6 +1,6 @@
 import { FC, useEffect } from 'react';
 import { AppProps } from 'next/app';
-import { ChakraProvider, extendTheme } from '@chakra-ui/react';
+import { ChakraProvider, extendTheme, StyleFunctionProps } from '@chakra-ui/react';
 import Head from 'next/head';
 import { RecoilRoot } from 'recoil';
 import { useTranslation } from 'react-i18next';
@@ -123,6 +123,15 @@ const App: FC<AppProps> = (props) => {
       <ChakraProvider
         theme={extendTheme({
           ...chakraTheme,
+          components: {
+            Button: {
+              variants: {
+                solid: (_props: StyleFunctionProps) => ({
+                  _hover: { bgGradient: chakraTheme.gradients.cyan },
+                }),
+              },
+            },
+          },
           styles: {
             global: {
               body: {

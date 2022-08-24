@@ -16,6 +16,7 @@ import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import StakedValue from 'sections/shared/modals/StakedValueModal/StakedValueBox';
 import ActiveDebt from 'sections/shared/modals/DebtValueModal/DebtValueBox';
 import Connector from 'containers/Connector';
+import { Button } from '@chakra-ui/react';
 
 const DashboardPage: FC = () => {
   const { t } = useTranslation();
@@ -30,6 +31,7 @@ const DashboardPage: FC = () => {
         <title>{t('dashboard.page-title')}</title>
       </Head>
       <Content>
+        <Button colorScheme={'blue'}>Hej</Button>
         <StatsSection>
           <StakedValue
             title={t('common.stat-box.staked-value')}
