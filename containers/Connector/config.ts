@@ -2,6 +2,7 @@ import { getChainIdHex, getInfuraRpcURL } from 'utils/infura';
 import { NetworkIdByName } from '@synthetixio/contracts-interface';
 
 import Onboard from '@web3-onboard/core';
+import type { OnboardAPI } from '@web3-onboard/core';
 import injectedModule from '@web3-onboard/injected-wallets';
 import coinbaseWalletModule from '@web3-onboard/coinbase';
 import walletConnectModule from '@web3-onboard/walletconnect';
@@ -58,7 +59,7 @@ export const isSupportedWalletChain = (networkId: number) => {
   return !!supportedChains.find((chain) => chain.id === `0x${networkId.toString(16)}`);
 };
 
-export const onboard = Onboard({
+export const onboard: OnboardAPI = Onboard({
   appMetadata: {
     name: 'Synthetix',
     icon: SynthetixIcon,

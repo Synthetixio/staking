@@ -58,9 +58,10 @@ export const useGetUniswapStakingRewardsAPY = ({
   stakingRewardsContract,
   tokenContract,
 }: {
-  stakingRewardsContract: ethers.Contract | null;
+  stakingRewardsContract: ethers.Contract | undefined;
   tokenContract: ethers.Contract | null;
 }) => {
+  if (!stakingRewardsContract) throw Error('Expected contract to be defined');
   const { provider, network } = Connector.useContainer();
   return useQuery<StakingRewardsData | null>(
     [

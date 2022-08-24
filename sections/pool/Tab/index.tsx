@@ -39,6 +39,7 @@ export default function PoolTab({
   const [error, setError] = useState('');
   const [amountToSend, setAmountToSend] = useState('');
   const { useSynthetixTxn, useContractTxn } = useSynthetixQueries();
+
   const approveTxn = useContractTxn(
     WETHSNXLPTokenContract,
     'approve',
@@ -55,6 +56,7 @@ export default function PoolTab({
       enabled: Boolean(synthetixjs),
     }
   );
+
   const txn = useSynthetixTxn(
     stakingRewardsContractName,
     action === 'add' ? 'stake' : 'withdraw',
