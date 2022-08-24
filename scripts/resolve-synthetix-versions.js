@@ -20,10 +20,14 @@ async function execPromised(cmd, options) {
 async function run() {
   const resolvedDeps = await Promise.all(
     synthetixDeps.map(async (name) => {
-      const resolvedVersion = await execPromised(`npm info ${name}@${version} version`).then((x) =>
+      const npmVersion = await execPromised(`npm info ${name}@${version} version`).then((x) =>
         x.trim()
       );
-      return resolvedVersion ? `${name}@^${resolvedVersion}` : '';
+      if (!npmVersion) {
+        return '';
+      }
+      const resolvedVersion = npmVersion.startsWith('0.0.0') ? npmVersion : `^${npmVersion}`;
+      return `${name}@${resolvedVersion}`;
     })
   );
 
