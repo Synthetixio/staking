@@ -5,7 +5,6 @@ import Head from 'next/head';
 import { RecoilRoot } from 'recoil';
 import { useTranslation } from 'react-i18next';
 import { ThemeProvider } from 'styled-components';
-import { theme as chakraTheme } from '@synthetixio/v3-theme';
 
 import WithAppContainers from 'containers';
 import theme from 'styles/theme';
@@ -25,6 +24,7 @@ import '../i18n';
 import Connector from 'containers/Connector';
 import Script from 'next/script';
 import { isSupportedNetworkId } from '../utils/network';
+import { stakingTheme } from './theme';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -120,19 +120,7 @@ const App: FC<AppProps> = (props) => {
           }}
         />
       </Head>
-      <ChakraProvider
-        theme={extendTheme({
-          ...chakraTheme,
-          styles: {
-            global: {
-              body: {
-                bg: chakraTheme.colors.navy['900'],
-                color: chakraTheme.colors.white,
-              },
-            },
-          },
-        })}
-      >
+      <ChakraProvider theme={extendTheme(stakingTheme)}>
         <ThemeProvider theme={theme}>
           <RecoilRoot>
             <QueryClientProvider client={queryClient} contextSharing={true}>

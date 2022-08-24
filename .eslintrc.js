@@ -90,5 +90,9 @@ module.exports = {
         cy: true,
       },
     },
+    {
+      files: ['**/*.stories.@(js|jsx|ts|tsx)'],
+      extends: ['plugin:storybook/recommended'],
+    },
   ],
 };
