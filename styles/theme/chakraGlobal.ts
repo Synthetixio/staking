@@ -32,7 +32,13 @@ export const globalStyles = {
       whiteSpace: 'nowrap',
     },
   },
-  // Border Radius
+  breakpoints: {
+    sm: '30em',
+    md: '48em',
+    lg: '62em',
+    xl: '80em',
+    '2xl': '96em',
+  },
   borderRadius: {
     radii: {
       none: '0',
@@ -46,6 +52,7 @@ export const globalStyles = {
       full: '9999px',
     },
   },
+
   fontSizes: {
     xs: '0.875rem',
     sm: '1rem',
