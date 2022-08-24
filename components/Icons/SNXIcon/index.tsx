@@ -15,7 +15,7 @@ const SNXIcon = ({
   ...props
 }: SnxIconProps) => {
   return (
-    <Icon width={`${width}px`} height={`${height}`} viewBox="0 0 25 24" fill="none" {...props}>
+    <Icon width={`${width}px`} height={`${height}px`} viewBox="0 0 25 24" fill="none" {...props}>
       <path
         d="M24.5 12C24.5 18.6274 19.1274 24 12.5 24C5.87258 24 0.5 18.6274 0.5 12C0.5 5.37258 5.87258 0 12.5 0C19.1274 0 24.5 5.37258 24.5 12Z"
         fill={backgroundColor}

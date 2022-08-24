@@ -34,31 +34,40 @@ const Header: FC = () => {
         }}
       >
         <StakingLogo />
-        <Flex>
+        <Flex alignItems="center">
           <Center
-            border="gray.900"
             borderWidth="1px"
+            borderRadius="4px"
+            borderRightRadius="0px"
+            borderBottomRightRadius="0px"
             borderRightWidth="0.5px"
             py={'6px'}
             px={'9.5px'}
+            sx={{
+              borderColor: `${theme.colors.gray['600']}30`,
+            }}
           >
             <SNXIcon pr={2} />
-            <Text>18289.98</Text>
+            <Text fontFamily="inter">18289.98</Text>
           </Center>
           <Center
-            border="gray.900"
             borderWidth="1px"
+            borderRadius="4px"
             borderLeftWidth="0.5px"
+            borderLeftRadius="0px"
+            borderBottomLeftRadius="0px"
             py={'6px'}
             px={'9.5px'}
-            sx={{ marginInlineStart: 0 }}
+            sx={{
+              borderColor: `${theme.colors.gray['600']}30`,
+            }}
           >
             <SUSDIcon pr={2} />
-            <Text>18289.98</Text>
+            <Text fontFamily="inter">18289.98</Text>
           </Center>
           <Center>
             <WalletIcon />
-            <Text>0x6d...6b2b</Text>
+            <Text fontFamily="inter">0x6d...6b2b</Text>
           </Center>
           <Center>
             <EthereumIcon />
