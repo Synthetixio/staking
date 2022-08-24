@@ -52,7 +52,6 @@ export const globalStyles = {
       full: '9999px',
     },
   },
-
   fontSizes: {
     xs: '0.875rem',
     sm: '1rem',
