@@ -1542,5 +1542,8 @@
     "pools": "pools",
     "bridge": "bridge",
     "migrate-escrow": "migrate escrow"
+  },
+  "burn": {
+    "title": "Burn Debt"
   }
 }

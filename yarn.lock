@@ -1701,6 +1701,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@chakra-ui/icons@npm:^2.0.8":
+  version: 2.0.8
+  resolution: "@chakra-ui/icons@npm:2.0.8"
+  dependencies:
+    "@chakra-ui/icon": 3.0.8
+  peerDependencies:
+    "@chakra-ui/system": ">=2.0.0"
+    react: ">=18"
+  checksum: b94a9a2db439d35566874d1c14cec79402b88edd83ce05d8bf962d99550315d87766ae8c277f5e1c4f20672c21d511a1b08f168535ced6e272d84823c84d241a
+  languageName: node
+  linkType: hard
+
 "@chakra-ui/image@npm:2.0.9":
   version: 2.0.9
   resolution: "@chakra-ui/image@npm:2.0.9"
@@ -14678,6 +14690,7 @@ __metadata:
   resolution: "staking@workspace:."
   dependencies:
     "@artsy/fresnel": ^1.8.0
+    "@chakra-ui/icons": ^2.0.8
     "@chakra-ui/react": ^2.2.8
     "@emotion/react": ^11.10.0
     "@emotion/styled": ^11.10.0

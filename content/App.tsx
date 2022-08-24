@@ -77,7 +77,6 @@ const InnerApp: FC<AppProps> = ({ Component, pageProps }) => {
 
 const App: FC<AppProps> = (props) => {
   const { t } = useTranslation();
-
   return (
     <>
       <Head>
