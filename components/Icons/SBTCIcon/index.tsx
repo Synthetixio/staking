@@ -1,11 +1,11 @@
-import { Icon } from '@chakra-ui/react';
+import { Icon, IconProps } from '@chakra-ui/react';
 
-interface SBTCIconProps {
+interface SBTCIconProps extends IconProps {
   width?: number;
   height?: number;
 }
 
-const SBTCIcon = ({ width = 34, height = 34 }: SBTCIconProps) => {
+const SBTCIcon = ({ width = 34, height = 34, ...props }: SBTCIconProps) => {
   return (
     <Icon
       width={width}
@@ -17,6 +17,7 @@ const SBTCIcon = ({ width = 34, height = 34 }: SBTCIconProps) => {
           maskType: 'alpha',
         },
       }}
+      {...props}
     >
       <mask id="mask0_1070_25650" maskUnits="userSpaceOnUse" x="0" y="0" width="34" height="34">
         <circle cx="17" cy="17" r="17" fill="url(#paint0_linear_1070_25650)" />

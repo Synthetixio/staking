@@ -1,11 +1,11 @@
-import { Icon } from '@chakra-ui/react';
+import { Icon, IconProps } from '@chakra-ui/react';
 
-interface SLINKIconProps {
+interface SLINKIconProps extends IconProps {
   width?: number;
   height?: number;
 }
 
-const SLINKIcon = ({ width = 34, height = 34 }: SLINKIconProps) => {
+const SLINKIcon = ({ width = 34, height = 34, ...props }: SLINKIconProps) => {
   return (
     <Icon
       width={width}
@@ -17,6 +17,7 @@ const SLINKIcon = ({ width = 34, height = 34 }: SLINKIconProps) => {
           maskType: 'alpha',
         },
       }}
+      {...props}
     >
       <mask id="mask0_1070_25633" maskUnits="userSpaceOnUse" x="0" y="0" width="34" height="34">
         <circle cx="17" cy="17" r="17" fill="url(#paint0_linear_1070_25633)" />
