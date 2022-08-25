@@ -29,13 +29,13 @@ jobs:
       - run: yarn test:unit
 
       - name: Upload lint results
-        uses: github/codeql-action/upload-sarif@f5d217be74900c6ac8fbbe53f3c10376ba4e64da # pin@codeql-bundle-20210517
+        uses: github/codeql-action/upload-sarif@7fee4ca032ac341c12486c4c06822c5221c76533 # pin@codeql-bundle-20210517
         with:
           sarif_file: lint-results.sarif
         continue-on-error: true
 
       - name: Cache next.js build cache
-        uses: actions/cache@a7c34adf76222e77931dedbf4a45b2e4648ced19
+        uses: actions/cache@fd5de65bc895cf536527842281bea11763fefd77
         with:
           path: .next/cache
           key: ${{ runner.os }}-next-cache-${{ hashFiles('yarn.lock') }}
