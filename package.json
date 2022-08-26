@@ -6,7 +6,7 @@
   },
   "scripts": {
     "dev": "next",
-    "build": " build-storybook -o public/storybook && next build && next export",
+    "build": "next build && next export",
     "build:report": "GENERATE_BUNDLE_REPORT=true next build",
     "start": "next start",
     "tsc": "tsc --noEmit",

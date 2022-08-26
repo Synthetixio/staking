@@ -62,14 +62,6 @@ module.exports = withPlugins([withBundleAnalyzer], {
 
     return config;
   },
-  rewrites: async () => {
-    return [
-      {
-        source: '/storybook/',
-        destination: '/storybook/index.html',
-      },
-    ];
-  },
   trailingSlash: !!process.env.NEXT_PUBLIC_TRAILING_SLASH_ENABLED,
   exportPathMap: function (defaultPathMap) {
     return {

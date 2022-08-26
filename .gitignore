@@ -56,4 +56,4 @@ tsconfig.tsbuildinfo
 # !.yarn/cache
 
 # storybook
-public/storybook
+storybook-static
