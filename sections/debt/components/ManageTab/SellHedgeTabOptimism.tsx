@@ -152,7 +152,7 @@ export default function SellHedgeTabOptimism() {
             isActive={dSNXBalanceQuery.data?.gt(0)}
             disabled={approveTx.isLoading || withdrawTx.isLoading}
             onClick={() => {
-              if (sUSDBalance?.gt(0)) {
+              if (dSNXBalanceQuery.data?.gt(0)) {
                 setSendMax(true);
               }
             }}
