@@ -7,7 +7,7 @@ interface EthereumIconProps {
 
 const EthereumIcon = ({ width = 34, height = 34 }: EthereumIconProps) => {
   return (
-    <Icon width={width} height={height} viewBox="0 0 34 34" fill="none">
+    <Icon width={`${width}px`} height={`${height}px`} viewBox="0 0 34 34" fill="none">
       <path
         d="M17 34C26.3888 34 34 26.3888 34 17C34 7.61116 26.3888 0 17 0C7.61116 0 0 7.61116 0 17C0 26.3888 7.61116 34 17 34Z"
         fill="#627EEA"

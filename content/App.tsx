@@ -124,9 +124,7 @@ const App: FC<AppProps> = (props) => {
       <ChakraProvider
         theme={extendTheme({
           ...chakraTheme,
-          styles: {
-            global,
-          },
+          ...global,
         })}
       >
         <ThemeProvider theme={theme}>

@@ -10,8 +10,8 @@ interface SnxIconProps extends IconProps {
 const SNXIcon = ({
   width = 25,
   height = 24,
-  color = '#00D1FF',
-  backgroundColor = '#0E052F',
+  color = '#2ED9FF',
+  backgroundColor = '#012546',
   ...props
 }: SnxIconProps) => {
   return (
