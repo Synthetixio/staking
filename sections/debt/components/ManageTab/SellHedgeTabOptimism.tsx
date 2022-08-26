@@ -72,10 +72,11 @@ export default function SellHedgeTabOptimism() {
   const dollarAmountToReceive =
     actualAmountToSendBn.gt(0) && dSNXPrice ? wei(actualAmountToSendBn).mul(dSNXPrice) : wei(0);
   const sUSDToReceiveWei = dollarAmountToReceive.sub(dollarAmountToReceive.mul(SLIPPAGE));
-  const sUSDAmountToReceive = formatCryptoCurrency(sUSDToReceiveWei, {
-    maxDecimals: 1,
-    minDecimals: 2,
-  });
+  const sUSDAmountToReceive = sUSDToReceiveWei.gt(0)
+    ? formatCryptoCurrency(sUSDToReceiveWei, {
+        minDecimals: 3,
+      })
+    : '0';
   const approveTx = useContractTxn(
     dSNXPoolContractOptimism.connect(signer!),
     'approve',
@@ -125,8 +126,7 @@ export default function SellHedgeTabOptimism() {
             min={0}
             disabled={approveTx.isLoading || withdrawTx.isLoading}
             placeholder={formatCryptoCurrency(dSNXBalanceQuery.data || wei(0), {
-              maxDecimals: 1,
-              minDecimals: 2,
+              minDecimals: 3,
             })}
             onChange={(e) => {
               try {
@@ -145,8 +145,7 @@ export default function SellHedgeTabOptimism() {
         <StyledBalance>
           Balance:&nbsp;
           {formatCryptoCurrency(wei(dSNXBalanceQuery.data || wei(0)), {
-            maxDecimals: 1,
-            minDecimals: 2,
+            minDecimals: 3,
           })}
           <StyledMaxButton
             variant="text"
@@ -176,7 +175,7 @@ export default function SellHedgeTabOptimism() {
               type="text"
               onChange={() => {}}
               disabled
-              value={sUSDAmountToReceive ? `~${sUSDAmountToReceive}` : ''}
+              value={sUSDAmountToReceive ? `~${sUSDAmountToReceive}` : '0'}
             />
           </InputWrapper>
         </Tooltip>
@@ -184,8 +183,7 @@ export default function SellHedgeTabOptimism() {
         <StyledBalance>
           Balance:&nbsp;
           {formatCryptoCurrency(sUSDBalance, {
-            maxDecimals: 1,
-            minDecimals: 2,
+            minDecimals: 3,
           })}
         </StyledBalance>
         <GasSelector

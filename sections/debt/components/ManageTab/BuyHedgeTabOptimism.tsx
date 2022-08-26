@@ -99,8 +99,7 @@ const BuyHedgeTabOptimism = () => {
       ? formatCryptoCurrency(
           wei(actualAmountToSendBn).sub(actualAmountToSendBn.mul(SLIPPAGE)).div(dSNXPrice),
           {
-            maxDecimals: 1,
-            minDecimals: 2,
+            minDecimals: 3,
           }
         )
       : '';
@@ -121,8 +120,7 @@ const BuyHedgeTabOptimism = () => {
             min={0}
             disabled={approveTx.isLoading || depositTx.isLoading}
             placeholder={formatCryptoCurrency(sUSDBalance, {
-              maxDecimals: 1,
-              minDecimals: 2,
+              minDecimals: 3,
             })}
             onChange={(e) => {
               try {
@@ -139,8 +137,7 @@ const BuyHedgeTabOptimism = () => {
         <StyledBalance>
           {t('debt.actions.manage.balance-usd')}
           {formatCryptoCurrency(wei(sUSDBalance), {
-            maxDecimals: 1,
-            minDecimals: 2,
+            minDecimals: 3,
           })}
           <StyledMaxButton
             variant="text"
@@ -169,15 +166,14 @@ const BuyHedgeTabOptimism = () => {
               type="text"
               onChange={() => {}}
               disabled
-              value={dSnxAmount ? `~${dSnxAmount}` : ''}
+              value={dSnxAmount ? `~${dSnxAmount}` : '~0'}
             />
           </InputWrapper>
         </Tooltip>
         <StyledBalance>
           {t('debt.actions.manage.balance')}
           {formatCryptoCurrency(dSNXBalance || wei(0), {
-            maxDecimals: 1,
-            minDecimals: 2,
+            minDecimals: 3,
           })}
         </StyledBalance>
         <GasSelector
