@@ -18,10 +18,10 @@ import ClaimTab from './ClaimTab';
 import { Tab, LP } from './types';
 import YearnVaultTab from './LPTab/YearnVaultTab';
 import { YearnVaultData } from 'queries/liquidityPools/useYearnSNXVaultQuery';
-import useSynthetixQueries from '@synthetixio/queries';
 import Connector from 'containers/Connector';
 import LiquidationTab from './LiquidationTab';
 import { notNill } from 'utils/ts-helpers';
+import { useGetTVL } from 'hooks/useGetTVL';
 
 enum View {
   ACTIVE = 'active',
@@ -55,11 +55,10 @@ const Incentives: FC<IncentivesProps> = ({
   const router = useRouter();
   const theme = useTheme();
   const [view, setView] = useState<View>(View.ACTIVE);
-  const { L1DefaultProvider, isWalletConnected } = Connector.useContainer();
-  const { useSNXData } = useSynthetixQueries();
+  const { isWalletConnected } = Connector.useContainer();
 
   const lpData = useLPData();
-  const lockedSnxQuery = useSNXData(L1DefaultProvider!);
+  const tvlQuery = useGetTVL();
 
   const { nextFeePeriodStarts, currentFeePeriodStarted } = useFeePeriodTimeAndProgress();
 
@@ -83,7 +82,7 @@ const Incentives: FC<IncentivesProps> = ({
             title: t('earn.incentives.options.snx.title'),
             subtitle: t('earn.incentives.options.snx.subtitle'),
             apr: stakingAPR,
-            tvl: lockedSnxQuery.data?.lockedValue ?? wei(0),
+            tvl: tvlQuery.data,
             staked: {
               balance: stakedAmount,
               asset: CryptoCurrency.SNX,
@@ -101,7 +100,7 @@ const Incentives: FC<IncentivesProps> = ({
             title: t('earn.incentives.options.liquidations.title'),
             subtitle: t('earn.incentives.options.liquidations.subtitle'),
             apr: undefined,
-            tvl: lockedSnxQuery.data?.lockedValue ?? wei(0),
+            tvl: tvlQuery.data,
             staked: {
               balance: stakedAmount,
               asset: CryptoCurrency.SNX,
@@ -164,7 +163,7 @@ const Incentives: FC<IncentivesProps> = ({
   }, [
     stakingAPR,
     stakedAmount,
-    lockedSnxQuery.data?.lockedValue,
+    tvlQuery.data,
     nextFeePeriodStarts,
     stakingRewards,
     hasClaimed,

@@ -5,17 +5,16 @@ import Connector from 'containers/Connector';
 
 import useStakingCalculations from 'sections/staking/hooks/useStakingCalculations';
 import { Synths } from 'constants/currency';
-import { WEEKS_IN_YEAR } from 'constants/date';
-
-// exported for test
-export const calculateIsBelowCRatio = (
-  currentCRatio: Wei,
-  targetCRatio: Wei,
-  targetThreshold: Wei
-) => currentCRatio.gt(targetCRatio.mul(wei(1).add(targetThreshold)));
+import { useStakedSNX } from './useStakedSNX';
+import {
+  calculateAPRNotStaking,
+  calculateAPRStaked,
+  calculateIsBelowCRatio,
+  calculateWeeklyRewards,
+} from './stakingDataCalculations';
 
 export const useUserStakingData = (walletAddress: string | null) => {
-  const { L1DefaultProvider, isL2 } = Connector.useContainer();
+  const { isL2 } = Connector.useContainer();
 
   const { useGetFeePoolDataQuery, useGetDebtDataQuery, useClaimableRewardsQuery, subgraph } =
     useSynthetixQueries();
@@ -32,7 +31,7 @@ export const useUserStakingData = (walletAddress: string | null) => {
 
   const currentFeePeriod = useGetFeePoolDataQuery(0);
 
-  const { useTotalIssuedSynthsExcludeOtherCollateralQuery, useExchangeRatesQuery, useSNXData } =
+  const { useTotalIssuedSynthsExcludeOtherCollateralQuery, useExchangeRatesQuery } =
     useSynthetixQueries();
 
   const { data: exchangeRatesData, refetch: exchangeRatesRefetch } = useExchangeRatesQuery();
@@ -52,53 +51,24 @@ export const useUserStakingData = (walletAddress: string | null) => {
     refetch: refetchStaking,
   } = useStakingCalculations();
 
-  const { data: lockedSnxData, refetch: lockedSnxRefetch } = useSNXData(L1DefaultProvider!);
-  const { data: debtData, refetch: debtRefetch } = useGetDebtDataQuery(walletAddress);
-
-  const feesToDistribute = previousFeePeriod?.data?.feesToDistribute ?? wei(0);
-  const rewardsToDistribute = previousFeePeriod?.data?.rewardsToDistribute ?? wei(0);
-
+  const { data: stakedSnxData, refetch: stakedSnxRefetch } = useStakedSNX();
+  // TODO do we need this refresh?
+  const { refetch: debtRefetch } = useGetDebtDataQuery(walletAddress);
+  const previousFeePeriodData = previousFeePeriod.data;
   const totalsUSDDebt = wei(totalIssuedSynthsExclOtherCollateral?.data ?? 0);
   const sUSDRate = wei(exchangeRatesData?.sUSD ?? 0);
   const SNXRate = wei(exchangeRatesData?.SNX ?? 0);
-
-  const isBelowCRatio = calculateIsBelowCRatio(currentCRatio, targetCRatio, targetThreshold);
-
   const stakedValue =
     collateral.gt(0) && currentCRatio.gt(0)
       ? collateral.mul(Wei.min(wei(1), currentCRatio.div(targetCRatio))).mul(SNXRate)
       : wei(0);
+  const userIsStaking = stakedValue.gt(0) && debtBalance.gt(0) && totalsUSDDebt.gt(0);
+  const weeklyRewards = calculateWeeklyRewards(sUSDRate, SNXRate, previousFeePeriodData);
+  const stakingAPR = userIsStaking
+    ? calculateAPRStaked(stakedValue, debtBalance, totalsUSDDebt, weeklyRewards)
+    : calculateAPRNotStaking(SNXRate, isL2, weeklyRewards, stakedSnxData);
 
-  const weeklyRewards = sUSDRate.mul(feesToDistribute).add(SNXRate.mul(rewardsToDistribute));
-
-  let stakingAPR = wei(0);
-
-  // compute APR based on the user staked SNX
-  if (stakedValue.gt(0) && debtBalance.gt(0) && totalsUSDDebt.gt(0)) {
-    stakingAPR = weeklyRewards
-      .mul(debtBalance.div(totalsUSDDebt).mul(WEEKS_IN_YEAR))
-      .div(stakedValue);
-  } else if (
-    SNXRate != null &&
-    sUSDRate != null &&
-    previousFeePeriod.data != null &&
-    currentFeePeriod.data != null &&
-    lockedSnxData != null &&
-    debtData != null
-  ) {
-    // compute APR based using useSNXLockedValueQuery (top 1000 holders)
-    stakingAPR = isL2
-      ? debtData.totalSupply.eq(0)
-        ? wei(0)
-        : wei(WEEKS_IN_YEAR).mul(rewardsToDistribute).div(debtData.totalSupply)
-      : lockedSnxData.lockedValue.eq(0)
-      ? wei(0)
-      : sUSDRate
-          .mul(currentFeePeriod.data.feesToDistribute)
-          .add(SNXRate.mul(currentFeePeriod.data.rewardsToDistribute))
-          .mul(WEEKS_IN_YEAR)
-          .div(lockedSnxData.lockedValue);
-  }
+  const isBelowCRatio = calculateIsBelowCRatio(currentCRatio, targetCRatio, targetThreshold);
 
   const { data: availableRewards, refetch: availableRewardsRefetch } = useClaimableRewardsQuery(
     walletAddress,
@@ -130,7 +100,7 @@ export const useUserStakingData = (walletAddress: string | null) => {
   const refetch = useCallback(() => {
     feeClaimsRefetch();
     exchangeRatesRefetch();
-    lockedSnxRefetch();
+    stakedSnxRefetch();
     debtRefetch();
     availableRewardsRefetch();
     refetchStaking();
@@ -139,7 +109,7 @@ export const useUserStakingData = (walletAddress: string | null) => {
     debtRefetch,
     exchangeRatesRefetch,
     feeClaimsRefetch,
-    lockedSnxRefetch,
+    stakedSnxRefetch,
     refetchStaking,
   ]);
 

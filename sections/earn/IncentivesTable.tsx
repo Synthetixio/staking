@@ -40,7 +40,7 @@ export type EarnItem = {
   title: string;
   subtitle: string;
   apr?: Wei;
-  tvl: Wei;
+  tvl?: Wei;
   staked: {
     balance?: Wei;
     asset: CurrencyKey;

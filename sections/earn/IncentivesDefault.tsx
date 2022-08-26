@@ -1,5 +1,5 @@
 import { FC, useMemo } from 'react';
-import Wei, { wei } from '@synthetixio/wei';
+import Wei from '@synthetixio/wei';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
@@ -10,17 +10,16 @@ import { CryptoCurrency } from 'constants/currency';
 import media from 'styles/media';
 import { delegateWalletState } from 'store/wallet';
 import useFeePeriodTimeAndProgress from 'hooks/useFeePeriodTimeAndProgress';
-
 import IncentivesTable, { NOT_APPLICABLE } from './IncentivesTable';
 import ClaimTab from './ClaimTab';
 import LiquidationTab from './LiquidationTab';
 import { LP, Tab } from './types';
 import { DesktopOrTabletView } from 'components/Media';
-import useSynthetixQueries from '@synthetixio/queries';
 import Connector from 'containers/Connector';
 import useCurveSusdPoolQuery from 'queries/liquidityPools/useCurveSusdPoolQuery';
 import { notNill } from 'utils/ts-helpers';
 import { CurrencyIconType } from 'components/Currency/CurrencyIcon/CurrencyIcon';
+import { useGetTVL } from 'hooks/useGetTVL';
 
 type IncentivesProps = {
   tradingRewards: Wei;
@@ -47,13 +46,10 @@ const Incentives: FC<IncentivesProps> = ({
 }) => {
   const { t } = useTranslation();
   const router = useRouter();
-
   const delegateWallet = useRecoilValue(delegateWalletState);
-  const { L1DefaultProvider, isWalletConnected } = Connector.useContainer();
-  const { useSNXData } = useSynthetixQueries();
+  const { isWalletConnected } = Connector.useContainer();
   const curvesUSDPoolQuery = useCurveSusdPoolQuery();
-
-  const lockedSnxQuery = useSNXData(L1DefaultProvider!);
+  const tvlQuery = useGetTVL();
 
   const { nextFeePeriodStarts, currentFeePeriodStarted } = useFeePeriodTimeAndProgress();
 
@@ -78,7 +74,7 @@ const Incentives: FC<IncentivesProps> = ({
               title: t('earn.incentives.options.snx.title'),
               subtitle: t('earn.incentives.options.snx.subtitle'),
               apr: stakingAPR,
-              tvl: lockedSnxQuery.data?.lockedValue ?? wei(0),
+              tvl: tvlQuery.data,
               staked: {
                 balance: stakedAmount,
                 asset: CryptoCurrency.SNX,
@@ -96,7 +92,7 @@ const Incentives: FC<IncentivesProps> = ({
               title: t('earn.incentives.options.liquidations.title'),
               subtitle: t('earn.incentives.options.liquidations.subtitle'),
               apr: undefined,
-              tvl: lockedSnxQuery.data?.lockedValue ?? wei(0),
+              tvl: tvlQuery.data,
               staked: {
                 balance: stakedAmount,
                 asset: CryptoCurrency.SNX,
@@ -141,7 +137,7 @@ const Incentives: FC<IncentivesProps> = ({
       isWalletConnected,
       t,
       stakingAPR,
-      lockedSnxQuery.data?.lockedValue,
+      tvlQuery.data,
       stakedAmount,
       stakingRewards,
       currentFeePeriodStarted,
@@ -158,7 +154,7 @@ const Incentives: FC<IncentivesProps> = ({
     <IncentivesTable activeTab={activeTab} data={incentives} isLoaded={true} />
   );
 
-  return activeTab == null ? (
+  return activeTab === null ? (
     <>{incentivesTable}</>
   ) : (
     <Container>
