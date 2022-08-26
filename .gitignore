@@ -54,3 +54,6 @@ tsconfig.tsbuildinfo
 !.yarn/versions
 # For Yarn Zero Installs uncomment this line and keep deps in GIT
 # !.yarn/cache
+
+# storybook
+public/storybook
