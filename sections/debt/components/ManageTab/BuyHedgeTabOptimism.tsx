@@ -1,4 +1,4 @@
-import { dSNXPoolContractOptimism } from 'constants/dhedge';
+import { dSNXPoolContractOptimism, SLIPPAGE } from 'constants/dhedge';
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { utils } from 'ethers';
@@ -8,6 +8,7 @@ import GasSelector from 'components/GasSelector';
 import { GasPrice } from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
 import {
+  InputWrapper,
   PoweredByContainer,
   StyledBackgroundTab,
   StyledBalance,
@@ -34,6 +35,7 @@ import {
   ModalItem,
   ModalItemText,
   ModalItemTitle,
+  Tooltip,
 } from 'styles/common';
 import { EXTERNAL_LINKS } from 'constants/links';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
@@ -77,11 +79,11 @@ const BuyHedgeTabOptimism = () => {
   const sUSDBalance = synthsBalancesQuery.data?.balancesMap.sUSD?.balance || wei(0);
   const dSNXBalanceQuery = useGetDSnxBalance();
   const dSNXBalance = dSNXBalanceQuery.data;
-  const actualAmountToSendBn = sendMax ? sUSDBalance.toBN() : wei(amountToSend || 0).toBN();
+  const actualAmountToSendBn = sendMax ? sUSDBalance : wei(amountToSend || 0);
   const depositTx = useContractTxn(
     dSNXPoolContractOptimism,
     'deposit',
-    [sUSDContract?.address, actualAmountToSendBn],
+    [sUSDContract?.address, actualAmountToSendBn.toBN()],
     depositGasCost,
     {
       onSuccess: () => {
@@ -94,10 +96,12 @@ const BuyHedgeTabOptimism = () => {
   );
   const dSnxAmount =
     actualAmountToSendBn.gt(0) && dSNXPrice
-      ? formatCryptoCurrency(wei(actualAmountToSendBn).div(dSNXPrice), {
-          maxDecimals: 1,
-          minDecimals: 2,
-        })
+      ? formatCryptoCurrency(
+          wei(actualAmountToSendBn).sub(actualAmountToSendBn.mul(SLIPPAGE)).div(dSNXPrice),
+          {
+            minDecimals: 3,
+          }
+        )
       : '';
 
   return (
@@ -110,30 +114,30 @@ const BuyHedgeTabOptimism = () => {
             sUSD
           </StyledCryptoCurrencyBox>
         </StyledInputLabel>
-        <StyledHedgeInput
-          type="number"
-          min={0}
-          disabled={approveTx.isLoading || depositTx.isLoading}
-          placeholder={formatCryptoCurrency(sUSDBalance, {
-            maxDecimals: 1,
-            minDecimals: 2,
-          })}
-          onChange={(e) => {
-            try {
-              const val = utils.parseUnits(e.target.value || '0', 18);
-              if (val.gte(constants.MaxUint256)) return;
-              setSendMax(false);
-              setAmountToSend(e.target.value);
-            } catch {}
-          }}
-          value={sendMax ? sUSDBalance.toString(2) : amountToSend}
-          autoFocus={true}
-        />
+        <InputWrapper>
+          <StyledHedgeInput
+            type="number"
+            min={0}
+            disabled={approveTx.isLoading || depositTx.isLoading}
+            placeholder={formatCryptoCurrency(sUSDBalance, {
+              minDecimals: 3,
+            })}
+            onChange={(e) => {
+              try {
+                const val = utils.parseUnits(e.target.value || '0', 18);
+                if (val.gte(constants.MaxUint256)) return;
+                setSendMax(false);
+                setAmountToSend(e.target.value);
+              } catch {}
+            }}
+            value={sendMax ? sUSDBalance.toString(2) : amountToSend}
+            autoFocus={true}
+          />
+        </InputWrapper>
         <StyledBalance>
           {t('debt.actions.manage.balance-usd')}
           {formatCryptoCurrency(wei(sUSDBalance), {
-            maxDecimals: 1,
-            minDecimals: 2,
+            minDecimals: 3,
           })}
           <StyledMaxButton
             variant="text"
@@ -156,17 +160,20 @@ const BuyHedgeTabOptimism = () => {
             dSNX
           </StyledCryptoCurrencyBox>
         </StyledInputLabel>
-        <StyledHedgeInput
-          type="text"
-          onChange={() => {}}
-          disabled
-          value={dSnxAmount ? `~${dSnxAmount}` : ''}
-        />
+        <Tooltip content={"This assumes a slippage of 1%, usually it's less than that"}>
+          <InputWrapper>
+            <StyledHedgeInput
+              type="text"
+              onChange={() => {}}
+              disabled
+              value={dSnxAmount ? `~${dSnxAmount}` : '~0'}
+            />
+          </InputWrapper>
+        </Tooltip>
         <StyledBalance>
           {t('debt.actions.manage.balance')}
           {formatCryptoCurrency(dSNXBalance || wei(0), {
-            maxDecimals: 1,
-            minDecimals: 2,
+            minDecimals: 3,
           })}
         </StyledBalance>
         <GasSelector
