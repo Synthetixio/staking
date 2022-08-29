@@ -1,4 +1,4 @@
-import { FC, useEffect } from 'react';
+import React, { FC, Suspense, useEffect } from 'react';
 import { AppProps } from 'next/app';
 import Head from 'next/head';
 import { RecoilRoot } from 'recoil';
@@ -7,6 +7,7 @@ import { ThemeProvider } from 'styled-components';
 
 import WithAppContainers from 'containers';
 import theme from 'styles/theme';
+
 import Layout from 'sections/shared/Layout';
 import AppLayout from 'sections/shared/Layout/AppLayout';
 import { MediaContextProvider } from 'styles/media';
@@ -22,6 +23,9 @@ import '../i18n';
 import Connector from 'containers/Connector';
 import Script from 'next/script';
 import { isSupportedNetworkId } from '../utils/network';
+import useLocalStorage from '../hooks/useLocalStorage';
+import GlobalLoader from '../components/GlobalLoader';
+import { LOCAL_STORAGE_KEYS } from '../constants/storage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -71,10 +75,26 @@ const InnerApp: FC<AppProps> = ({ Component, pageProps }) => {
     </>
   );
 };
+const ChakraProviderWithTheme = React.lazy(
+  () =>
+    import(
+      /* webpackChunkName: "ChakraProviderWithTheme" */
+      '../components/ChakraProviderWithTheme'
+    )
+);
 
+const LazyChakraProvider: FC<{ enabled: boolean }> = ({ enabled, children }) => {
+  if (!enabled) return <>{children}</>;
+
+  return (
+    <Suspense fallback={<GlobalLoader />}>
+      <ChakraProviderWithTheme>{children}</ChakraProviderWithTheme>
+    </Suspense>
+  );
+};
 const App: FC<AppProps> = (props) => {
   const { t } = useTranslation();
-
+  const [STAKING_V2_ENABLED] = useLocalStorage(LOCAL_STORAGE_KEYS.STAKING_V2_ENABLED, false);
   return (
     <>
       <Head>
@@ -117,17 +137,19 @@ const App: FC<AppProps> = (props) => {
           }}
         />
       </Head>
-      <ThemeProvider theme={theme}>
-        <RecoilRoot>
-          <QueryClientProvider client={queryClient} contextSharing={true}>
-            <WithAppContainers>
-              <MediaContextProvider>
-                <InnerApp {...props} />
-              </MediaContextProvider>
-            </WithAppContainers>
-          </QueryClientProvider>
-        </RecoilRoot>
-      </ThemeProvider>
+      <LazyChakraProvider enabled={STAKING_V2_ENABLED}>
+        <ThemeProvider theme={theme}>
+          <RecoilRoot>
+            <QueryClientProvider client={queryClient} contextSharing={true}>
+              <WithAppContainers>
+                <MediaContextProvider>
+                  <InnerApp {...props} />
+                </MediaContextProvider>
+              </WithAppContainers>
+            </QueryClientProvider>
+          </RecoilRoot>
+        </ThemeProvider>
+      </LazyChakraProvider>
     </>
   );
 };
