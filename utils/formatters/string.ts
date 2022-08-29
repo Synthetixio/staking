@@ -15,3 +15,7 @@ export const formatCurrencyPair = (baseCurrencyKey: CurrencyKey, quoteCurrencyKe
 export const strPadLeft = (string: string | number, pad: string, length: number) => {
   return (new Array(length + 1).join(pad) + string).slice(-length);
 };
+
+export function capitalizeFirstLetter(string: string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}

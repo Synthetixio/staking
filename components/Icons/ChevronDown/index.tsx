@@ -1,17 +1,16 @@
-import { Icon } from '@chakra-ui/react';
+import { Icon, IconProps } from '@chakra-ui/react';
 
-interface ChevronDownProps {
-  width?: number;
-  height?: number;
-  color?: string;
+interface ChevronDownProps extends IconProps {
+  width?: number | string;
+  height?: number | string;
 }
 
-const ChevronDown = ({ width = 25, height = 24, color = 'white' }: ChevronDownProps) => {
+const ChevronDown = ({ width = '20px', height = '20px', ...props }: ChevronDownProps) => {
   return (
-    <Icon width={`${width}px`} height={`${height}px`} viewBox="0 0 25 24" fill="none">
+    <Icon width={width} height={height} color="cyan.400" viewBox="0 0 20 20" fill="none" {...props}>
       <path
-        d="M12.3564 13.1719L17.3064 8.22192L18.7204 9.63592L12.3564 15.9999L5.99243 9.63592L7.40643 8.22192L12.3564 13.1719Z"
-        fill={color}
+        d="M9.99962 10.9766L14.1246 6.85156L15.303 8.0299L9.99962 13.3332L4.69629 8.0299L5.87462 6.85156L9.99962 10.9766Z"
+        fill="currentColor"
       />
     </Icon>
   );

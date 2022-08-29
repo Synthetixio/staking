@@ -1994,7 +1994,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@chakra-ui/icons@npm:2.0.9":
+"@chakra-ui/icons@npm:2.0.9, @chakra-ui/icons@npm:^2.0.8":
   version: 2.0.9
   resolution: "@chakra-ui/icons@npm:2.0.9"
   dependencies:
@@ -6443,9 +6443,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@synthetixio/v3-theme@npm:^1.0.1":
-  version: 1.0.1
-  resolution: "@synthetixio/v3-theme@npm:1.0.1"
+"@synthetixio/v3-theme@npm:^1.0.2-0":
+  version: 1.0.2-0
+  resolution: "@synthetixio/v3-theme@npm:1.0.2-0"
   dependencies:
     "@chakra-ui/react": ^2.2.6
     "@emotion/react": ^11.10.0
@@ -6453,7 +6453,7 @@ __metadata:
     framer-motion: ^7.0.0
     react: ^18.1.0
     react-dom: ^18.1.0
-  checksum: ebf2fc1bf0d1524f90ae43e5d8c0c3c2711f09f4cd0611ee4b5a07c18e6b75bc95b4397d2846c7acb631bb83a427e95261521b5e625c28173b151e28ffc4ec79
+  checksum: 4f93be7954d95e689705f2066bc3b9db3a0647367196646c96d759ef5ad77351cb7ed29575bd16f55a220851ba8534ab07166a006b5a2313284394e041f4e130
   languageName: node
   linkType: hard
 
@@ -22726,6 +22726,7 @@ __metadata:
   dependencies:
     "@artsy/fresnel": ^1.8.0
     "@babel/core": ^7.18.13
+    "@chakra-ui/icons": ^2.0.8
     "@chakra-ui/react": ^2.2.8
     "@chakra-ui/storybook-addon": ^4.0.9
     "@emotion/react": ^11.10.0
@@ -22753,7 +22754,7 @@ __metadata:
     "@synthetixio/providers": ^2.74.7
     "@synthetixio/queries": ^3.0.5
     "@synthetixio/transaction-notifier": ^2.74.9
-    "@synthetixio/v3-theme": ^1.0.1
+    "@synthetixio/v3-theme": ^1.0.2-0
     "@synthetixio/wei": ^2.74.2
     "@testing-library/jest-dom": ^5.16.4
     "@testing-library/react": ^12.1.5

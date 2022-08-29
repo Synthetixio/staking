@@ -1,20 +1,61 @@
-import { FC } from 'react';
+import { FC, useEffect, useState } from 'react';
 import Connector from 'containers/Connector';
 
 import StakingLogo from 'components/StakingLogo';
-import { Center, Flex, Text, Button } from '@chakra-ui/react';
+import {
+  Center,
+  Flex,
+  Text,
+  Button,
+  Icon,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
+} from '@chakra-ui/react';
 import {
   WalletIcon,
   EthereumIcon,
-  ChevronDown,
-  NotificationBellIcon,
   SettingsIcon,
+  ChevronDown,
+  NotificationIcon,
 } from 'components/Icons';
 import UserBalances from 'components/UserBalances';
-import { truncateAddress } from 'utils/formatters/string';
+import { capitalizeFirstLetter, truncateAddress } from 'utils/formatters/string';
+import { useTranslation } from 'react-i18next';
+import { ChevronDownIcon } from '@chakra-ui/icons';
+import {
+  NetworkNameById,
+  NetworkIdByName,
+  NetworkName,
+  NetworkId,
+} from '@synthetixio/contracts-interface';
 
 const Header: FC = () => {
-  const { isWalletConnected, walletAddress, connectWallet } = Connector.useContainer();
+  const { isWalletConnected, walletAddress, connectWallet, isMainnet, network } =
+    Connector.useContainer();
+  const { t } = useTranslation();
+
+  const [menuNetwork, setMenuNetwork] = useState<NetworkName>(
+    isMainnet ? NetworkNameById[NetworkIdByName.mainnet] : NetworkNameById[NetworkIdByName.mainnet]
+  );
+
+  console.log('Network', network);
+
+  useEffect(() => {
+    // setMenuNetwork();
+  }, [isMainnet]);
+
+  const switchNetwork = async (networkName: NetworkName) => {
+    console.log(network);
+    if (network && networkName === NetworkNameById[network.id as NetworkId]) return;
+    if (isWalletConnected) {
+      // await switch network
+      console.log('await switch network');
+    }
+    console.log('Here', new Date().toISOString());
+    setMenuNetwork(networkName);
+  };
 
   return (
     <>
@@ -28,6 +69,21 @@ const Header: FC = () => {
         borderBottomColor="gray.900"
       >
         <StakingLogo />
+        <Menu>
+          <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
+            {menuNetwork}
+          </MenuButton>
+          <MenuList>
+            <MenuItem onClick={() => switchNetwork(NetworkNameById[NetworkIdByName.mainnet])}>
+              Mainnet
+            </MenuItem>
+            <MenuItem
+              onClick={() => switchNetwork(NetworkNameById[NetworkIdByName['mainnet-ovm']])}
+            >
+              Optimism
+            </MenuItem>
+          </MenuList>
+        </Menu>
         <Flex alignItems="center">
           {isWalletConnected && walletAddress ? (
             <>
@@ -46,7 +102,9 @@ const Header: FC = () => {
               </Center>
             </>
           ) : (
-            <Button onClick={connectWallet}>Connect Wallet</Button>
+            <Button variant="connect" onClick={connectWallet}>
+              {capitalizeFirstLetter(t('common.wallet.connect-wallet'))}
+            </Button>
           )}
           <Center
             ml={2}
@@ -56,10 +114,15 @@ const Header: FC = () => {
             borderColor="gray.900"
             borderWidth="1px"
             borderRadius="4px"
+            _hover={{
+              cursor: 'pointer',
+            }}
           >
-            <EthereumIcon width={24} height={24} />
+            <EthereumIcon />
             <Text ml={1}>Ethereum</Text>
-            <ChevronDown />
+            <Icon>
+              <ChevronDown color="cyan.500" />
+            </Icon>
           </Center>
           <Center
             ml={2}
@@ -68,8 +131,11 @@ const Header: FC = () => {
             borderColor="gray.900"
             borderWidth="1px"
             borderRadius="4px"
+            _hover={{
+              cursor: 'pointer',
+            }}
           >
-            <NotificationBellIcon />
+            <NotificationIcon />
           </Center>
           <Center
             ml={2}
@@ -78,6 +144,9 @@ const Header: FC = () => {
             borderColor="gray.900"
             borderWidth="1px"
             borderRadius="4px"
+            _hover={{
+              cursor: 'pointer',
+            }}
           >
             <SettingsIcon />
           </Center>
@@ -89,6 +158,9 @@ const Header: FC = () => {
             borderWidth="1px"
             borderRadius="4px"
             onClick={() => console.log('Help')}
+            _hover={{
+              cursor: 'pointer',
+            }}
           >
             <Text>Help</Text>
           </Center>
