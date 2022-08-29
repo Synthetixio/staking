@@ -20,6 +20,7 @@ export const StyledBalance = styled.div`
   font-family: ${(props) => props.theme.fonts.condensedMedium};
 `;
 export const StyledHedgeInput = styled(StyledInput)`
+  margin-top: 0;
   width: 350px;
 `;
 
@@ -80,4 +81,7 @@ export const PoweredByContainer = styled.div`
 export const TorosLogo = styled.img`
   height: 12px;
   margin-left: 10px;
+`;
+export const InputWrapper = styled.div`
+  margin-top: 16px;
 `;
