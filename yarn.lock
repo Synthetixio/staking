@@ -4822,29 +4822,42 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@socket.tech/ll-core@npm:^0.1.10, @socket.tech/ll-core@npm:^0.1.8":
-  version: 0.1.14
-  resolution: "@socket.tech/ll-core@npm:0.1.14"
-  checksum: 1fc8fa1b249b64aad380a01cba06dbc5ca73a0c1469f39042f0d4391665565cb63189f0301f3bd2bd4c2fd3c729ff1c89fa1953afc09e1743dfed937f4ec8c8b
+"@socket.tech/ll-core@npm:^0.1.10, @socket.tech/ll-core@npm:^0.1.14":
+  version: 0.1.15
+  resolution: "@socket.tech/ll-core@npm:0.1.15"
+  checksum: d5bcbfcb3ea7220caa5e663876382aa83cf40add1e6c55ac3a54f65e67b67b9c0076dfdf83ae4d1ea00d6527735ef011a2bf2adc817e1fef2d6b263516f4f812
   languageName: node
   linkType: hard
 
-"@socket.tech/widget@npm:^0.0.9":
-  version: 0.0.9
-  resolution: "@socket.tech/widget@npm:0.0.9"
+"@socket.tech/socket-v2-sdk@npm:^1.20.0":
+  version: 1.20.0
+  resolution: "@socket.tech/socket-v2-sdk@npm:1.20.0"
+  dependencies:
+    "@socket.tech/ll-core": ^0.1.14
+    axios: ^0.27.2
+    ethers: ^5.6.5
+    form-data: ^4.0.0
+    tslib: ^2.4.0
+  checksum: 220d77a5b7c3ca9012ea45dcabb729f0996d33cb8938bee1913b795226243a052128478f15157bb309a5c571da9cbb36feb62c3b3f56245da3e83eaf268a1965
+  languageName: node
+  linkType: hard
+
+"@socket.tech/widget@npm:^0.1.1":
+  version: 0.1.1
+  resolution: "@socket.tech/widget@npm:0.1.1"
   dependencies:
     "@react-spring/web": ^9.5.0
     "@reduxjs/toolkit": ^1.8.2
     "@socket.tech/ll-core": ^0.1.10
+    "@socket.tech/socket-v2-sdk": ^1.20.0
     ethers: ^5.6.9
     react-feather: ^2.0.10
     react-redux: ^8.0.2
-    socket-v2-sdk: 1.11.0
     swr: ^1.3.0
   peerDependencies:
     react: ">=17.0.1"
     react-dom: ">=17.0.1"
-  checksum: 001b0c56c79d1ff8cee7bd57589783eb54cce9634c6fc719cdea342ee2c97b4aeb786de6bb17f1c47bcb8ccbc067364511a1d2915d9a1d103c3c1c01ed080dcb
+  checksum: c0c72afc57bea51e1a619fe383d0e4b645934dcbbe5acc1249705c1e886211a60765e405b92934635f849cfc9d996f5b9fed9ad5a503482702839f4555df92f6
   languageName: node
   linkType: hard
 
@@ -22489,19 +22502,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"socket-v2-sdk@npm:1.11.0":
-  version: 1.11.0
-  resolution: "socket-v2-sdk@npm:1.11.0"
-  dependencies:
-    "@socket.tech/ll-core": ^0.1.8
-    axios: ^0.27.2
-    ethers: ^5.6.5
-    form-data: ^4.0.0
-    tslib: ^2.4.0
-  checksum: db3a750e785edcc0fdb0e4f639dc03069ce1c22ac15c30e7634f5fa8edc08160bc3d0e942942b59bf00cf8ad7a0b68c31c957dbba0d933af4d76d2b785d47258
-  languageName: node
-  linkType: hard
-
 "socks-proxy-agent@npm:^7.0.0":
   version: 7.0.0
   resolution: "socks-proxy-agent@npm:7.0.0"
@@ -22762,7 +22762,7 @@ __metadata:
     "@microsoft/eslint-formatter-sarif": ^3.0.0
     "@next/bundle-analyzer": ^10.2.3
     "@reach/dialog": ^0.15.3
-    "@socket.tech/widget": ^0.0.9
+    "@socket.tech/widget": ^0.1.1
     "@storybook/addon-actions": ^6.5.10
     "@storybook/addon-docs": ^6.5.10
     "@storybook/addon-essentials": ^6.5.10

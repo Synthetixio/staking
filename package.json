@@ -30,7 +30,7 @@
     "@emotion/react": "^11.10.0",
     "@emotion/styled": "^11.10.0",
     "@reach/dialog": "^0.15.3",
-    "@socket.tech/widget": "^0.0.9",
+    "@socket.tech/widget": "^0.1.1",
     "@synthetixio/contracts": "^1.1.4",
     "@synthetixio/contracts-interface": "^2.76.2",
     "@synthetixio/optimism-networks": "^2.74.3",
