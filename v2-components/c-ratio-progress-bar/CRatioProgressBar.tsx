@@ -1,4 +1,4 @@
-import { Box, Text, useToken } from '@chakra-ui/react';
+import { Box, Text, useToken, Progress, Icon } from '@chakra-ui/react';
 import React, { FC } from 'react';
 import { InfoIcon, TriangleDownIcon, TriangleUpIcon } from '@chakra-ui/icons';
 
@@ -77,25 +77,15 @@ export const CRatioProgressBar: FC<Props> = ({
         left={targetCratioPercentage / scaleFactor}
         text={`Target ${targetCratioPercentage}%`}
       />
-
-      <Box
-        bg={'whiteAlpha.100'}
-        height={'12px'}
-        position={'absolute'}
-        width={'full'}
+      <Progress
+        variant={variant}
         top={0}
         bottom={0}
-        margin={'auto'}
-      />
-      <Box
-        bg={color}
         height={'12px'}
         position={'absolute'}
-        width={`${currentCRatioPercentage / scaleFactor}%`}
-        top={0}
-        bottom={0}
         margin={'auto'}
-        boxShadow={`0px 0px 15px ${hexColor}`}
+        width={'100%'}
+        value={currentCRatioPercentage / scaleFactor}
       />
       <Box
         bg={variant}
