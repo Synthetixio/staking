@@ -31,8 +31,6 @@ const LineWithText: FC<{ left: number; text: string }> = ({ left, text }) => {
         top={0}
         bottom={0}
         margin={'auto'}
-        whiteSpace={'nowrap'}
-        fontSize={'xx-small'}
       />
     </>
   );
