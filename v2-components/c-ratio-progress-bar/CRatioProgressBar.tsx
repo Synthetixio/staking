@@ -10,19 +10,15 @@ const LineWithText: FC<{ left: number; text: string; tooltipText: string }> = ({
   return (
     <>
       <Box
-        position={'absolute'}
-        height={'40%'}
-        transform={'translateX(-50%)'}
+        position="absolute"
+        height="40%"
+        transform="translateX(-50%)"
         left={`${left}%`}
         top={0}
         bottom={0}
-        margin={'auto'}
+        margin="auto"
       >
-        <Text
-          whiteSpace={'nowrap'}
-          fontSize={'xx-small'}
-          transform={'translateY(calc(-100% - 10px) )'}
-        >
+        <Text whiteSpace="nowrap" fontSize="xx-small" transform="translateY(calc(-100% - 10px) )">
           {text}{' '}
           <Tooltip label={tooltipText}>
             <InfoIcon />
@@ -73,48 +69,48 @@ export const CRatioProgressBar: FC<Props> = ({
   });
 
   return (
-    <Box position={'relative'} height={'100px'} width={'full'}>
+    <Box position="relative" height="100px" width="full">
       <LineWithText
         left={liquidationCratioPercentage / scaleFactor}
         text={`Liquidated < ${liquidationCratioPercentage}%`}
-        tooltipText={'You may be flagged for liquidation'}
+        tooltipText="You may be flagged for liquidation"
       />
       <LineWithText
         left={targetCratioPercentage / scaleFactor}
         text={`Target ${targetCratioPercentage}%`}
-        tooltipText={'Required to claim rewards'}
+        tooltipText="Required to claim rewards"
       />
       <Progress
         variant={variant}
         top={0}
         bottom={0}
-        height={'12px'}
-        position={'absolute'}
-        margin={'auto'}
-        width={'100%'}
+        height="12px"
+        position="absolute"
+        margin="auto"
+        width="100%"
         value={currentCRatioPercentage / scaleFactor}
       />
       <Box
         bg={variant}
-        height={'12px'}
-        position={'absolute'}
+        height="12px"
+        position="absolute"
         left={`${currentCRatioPercentage / scaleFactor}%`}
         top={0}
         bottom={0}
-        margin={'auto'}
+        margin="auto"
       >
         <TriangleDownIcon
-          position={'absolute'}
+          position="absolute"
           right={0}
           top={0}
-          transform={'translate(50%,-100%)'}
+          transform="translate(50%,-100%)"
           color={variant}
         />
         <TriangleUpIcon
-          position={'absolute'}
+          position="absolute"
           right={0}
           bottom={0}
-          transform={'translate(50%,100%)'}
+          transform="translate(50%,100%)"
           color={variant}
         />
       </Box>
