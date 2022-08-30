@@ -16,7 +16,7 @@ const VariantToBox: FC<{ variant: Props['variant'] }> = ({ variant, children }) 
     return <Center bgGradient={theme.gradients['orange'][500]}>{children}</Center>;
   }
   if (variant === 'error') {
-    return <Center bg={'red.400'}>{children}</Center>;
+    return <Center bg="red.400">{children}</Center>;
   }
   return null;
 };
@@ -24,17 +24,17 @@ export const Banner: FC<Props> = ({ text, variant, countDown }) => {
   return (
     <VariantToBox variant={variant}>
       <Flex
-        margin={'2'}
-        paddingTop={'1'}
-        paddingBottom={'1'}
-        paddingLeft={'5'}
-        paddingRight={'5'}
-        bg={'blackAlpha.600'}
-        borderRadius={'5'}
-        width={'fit-content'}
+        margin="2"
+        paddingTop="1"
+        paddingBottom="1"
+        paddingLeft="5"
+        paddingRight="5"
+        bg="blackAlpha.600"
+        borderRadius="5"
+        width="fit-content"
       >
         <Text>{text}</Text>{' '}
-        <Text marginLeft={'2'} as="b">
+        <Text marginLeft="2" as="b">
           {countDown}
         </Text>
       </Flex>
