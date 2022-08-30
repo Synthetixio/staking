@@ -1,4 +1,4 @@
-import { Box, Text, useToken, Progress, Icon, Tooltip } from '@chakra-ui/react';
+import { Box, Text, Progress, Tooltip } from '@chakra-ui/react';
 import React, { FC } from 'react';
 import { InfoIcon, TriangleDownIcon, TriangleUpIcon } from '@chakra-ui/icons';
 
