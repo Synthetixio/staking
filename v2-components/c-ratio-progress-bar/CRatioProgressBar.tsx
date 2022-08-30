@@ -1,8 +1,12 @@
-import { Box, Text, useToken, Progress, Icon } from '@chakra-ui/react';
+import { Box, Text, useToken, Progress, Icon, Tooltip } from '@chakra-ui/react';
 import React, { FC } from 'react';
 import { InfoIcon, TriangleDownIcon, TriangleUpIcon } from '@chakra-ui/icons';
 
-const LineWithText: FC<{ left: number; text: string }> = ({ left, text }) => {
+const LineWithText: FC<{ left: number; text: string; tooltipText: string }> = ({
+  left,
+  text,
+  tooltipText,
+}) => {
   return (
     <>
       <Box
@@ -19,7 +23,10 @@ const LineWithText: FC<{ left: number; text: string }> = ({ left, text }) => {
           fontSize={'xx-small'}
           transform={'translateY(calc(-100% - 10px) )'}
         >
-          {text} <InfoIcon />
+          {text}{' '}
+          <Tooltip label={tooltipText}>
+            <InfoIcon />
+          </Tooltip>
         </Text>
       </Box>
       <Box
@@ -70,10 +77,12 @@ export const CRatioProgressBar: FC<Props> = ({
       <LineWithText
         left={liquidationCratioPercentage / scaleFactor}
         text={`Liquidated < ${liquidationCratioPercentage}%`}
+        tooltipText={'You may be flagged for liquidation'}
       />
       <LineWithText
         left={targetCratioPercentage / scaleFactor}
         text={`Target ${targetCratioPercentage}%`}
+        tooltipText={'Required to claim rewards'}
       />
       <Progress
         variant={variant}
