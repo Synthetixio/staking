@@ -44,7 +44,7 @@ const InnerApp: FC<AppProps> = ({ Component, pageProps }) => {
       document.querySelector('#global-loader')?.remove();
     } catch (_e) {}
   }, []);
-  const networkId = String(network?.id);
+  const networkId = network?.id || -1;
   return (
     <>
       <SynthetixQueryContextProvider
