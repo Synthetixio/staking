@@ -1,51 +1,47 @@
-import { FC, useEffect, useState } from 'react';
-import Connector from 'containers/Connector';
+import { FC } from 'react';
+import styled from 'styled-components';
 
-import {
-  NetworkNameById,
-  NetworkIdByName,
-  NetworkName,
-  NetworkId,
-} from '@synthetixio/contracts-interface';
-import Navigation from 'components/Navigation';
+import { MOBILE_BODY_PADDING } from 'constants/ui';
+import { FlexDivCol, FlexDivCentered } from 'styles/common';
+import media from 'styles/media';
+import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
+import BannerManager from 'components/BannerManager';
+import UserMenu from '../UserMenu';
+import MobileTabletMenu from './MobileTabletMenu';
 
 const Header: FC = () => {
-  const { isWalletConnected, walletAddress, connectWallet, switchNetwork, isMainnet, network } =
-    Connector.useContainer();
-
-  const [localNetwork, setLocalNetwork] = useState<NetworkName>(
-    isMainnet
-      ? NetworkNameById[NetworkIdByName.mainnet]
-      : NetworkNameById[NetworkIdByName['mainnet-ovm']]
-  );
-
-  useEffect(() => {
-    setLocalNetwork(
-      isMainnet
-        ? NetworkNameById[NetworkIdByName.mainnet]
-        : NetworkNameById[NetworkIdByName['mainnet-ovm']]
-    );
-  }, [isMainnet]);
-
-  const switchMenuNetwork = async (networkName: NetworkName) => {
-    if (network && networkName === NetworkNameById[network.id as NetworkId]) return;
-    if (isWalletConnected) {
-      const result = await switchNetwork(NetworkIdByName[networkName]);
-      if (!result) return;
-    }
-
-    setLocalNetwork(networkName);
-  };
-
   return (
-    <Navigation
-      isWalletConnected={isWalletConnected}
-      connectWallet={connectWallet}
-      currentNetwork={localNetwork}
-      switchNetwork={switchMenuNetwork}
-      walletAddress={walletAddress}
-    />
+    <HeaderWrapper>
+      <DesktopOnlyView>
+        <BannerManager />
+      </DesktopOnlyView>
+      <Container>
+        <FlexDivCentered>
+          <MobileOrTabletView>
+            <MobileTabletMenu />
+          </MobileOrTabletView>
+          <Sep />
+          <UserMenu />
+        </FlexDivCentered>
+      </Container>
+    </HeaderWrapper>
   );
 };
+
+const HeaderWrapper = styled.div`
+  position: relative;
+`;
+
+const Container = styled(FlexDivCol)`
+  padding: 24px 30px 0 0;
+
+  ${media.lessThan('mdUp')`
+    padding: 10px ${MOBILE_BODY_PADDING}px 0;
+  `}
+`;
+
+const Sep = styled.div`
+  flex: 1;
+`;
 
 export default Header;
