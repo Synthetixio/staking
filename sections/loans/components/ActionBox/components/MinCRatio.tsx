@@ -1,12 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
-import { useTranslation } from 'react-i18next';
 import { FlexDivRow, FlexDivRowCentered } from 'styles/common';
 import { formatPercent } from 'utils/formatters/number';
 import Loans from 'containers/Loans';
 
 const MinCRatio: React.FC = () => {
-  const { t } = useTranslation();
   const { minCRatio } = Loans.useContainer();
 
   return (
