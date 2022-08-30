@@ -30,14 +30,14 @@ const LineWithText: FC<{ left: number; text: string; tooltipText: string }> = ({
         </Text>
       </Box>
       <Box
-        position={'absolute'}
-        height={'40%'}
-        width={'1px'}
-        bg={'gray.400'}
+        position="absolute"
+        height="40%"
+        width={1}
+        bg="gray.400"
         left={`${left}%`}
         top={0}
         bottom={0}
-        margin={'auto'}
+        margin="auto"
       />
     </>
   );
