@@ -86,6 +86,9 @@ const Menu: ComponentMultiStyleConfig = {
       bgColor: 'black',
       color: 'white',
       py: 3,
+      _active: {
+        bgColor: 'navy.900',
+      },
       _first: {
         borderTopLeftRadius: 'md',
         borderTopRightRadius: 'md',
