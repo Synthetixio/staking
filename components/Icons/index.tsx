@@ -9,6 +9,9 @@ import SettingsIcon from './SettingsIcon';
 import ChevronUp from './ChevronUp';
 import ChevronDown from './ChevronDown';
 import NotificationIcon from './NotificationsIcon';
+import OptimismIcon from './OptimismIcon';
+import KebabMenu from './KebabMenu';
+import GuideIcon from './GuideIcon';
 
 export {
   EthereumIcon,
@@ -21,4 +24,7 @@ export {
   ChevronDown,
   ChevronUp,
   NotificationIcon,
+  OptimismIcon,
+  KebabMenu,
+  GuideIcon,
 };

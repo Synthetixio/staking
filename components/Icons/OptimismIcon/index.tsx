@@ -1,15 +1,13 @@
 import { Icon, IconProps } from '@chakra-ui/react';
 
 interface OptimismIconProps extends IconProps {
-  width?: string | number;
-  height?: string | number;
   color?: string;
   fill?: string;
 }
 
 const OptimismIcon = ({
-  width = '34px',
-  height = '34px',
+  width = '24px',
+  height = '24px',
   color = 'white',
   fill = '#FF0420',
   ...props

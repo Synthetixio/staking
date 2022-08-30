@@ -1,20 +1,21 @@
 import { Center, Text, Skeleton } from '@chakra-ui/react';
-import { SNXIcon, SUSDIcon } from 'components/Icons';
+import Wei, { wei } from '@synthetixio/wei';
+import { SNXIcon, SUSDIcon } from '../Icons';
 
 interface UserBalancesProps {
-  snxBalance: number;
-  susdBalance: number;
+  isSnxLoading: boolean;
+  snxBalance: Wei;
+  isSusdLoading: boolean;
+  susdBalance: Wei;
 }
 
-const UserBalances = ({ snxBalance = 0, susdBalance = 0 }: UserBalancesProps) => {
-  //styleName: text-sm/lineHeight-5/font-semibold;
-  // font-family: Inter;
-  // font-size: 14px;
-  // font-weight: 600;
-  // line-height: 20px;
-  // letter-spacing: 0em;
-  // text-align: left;
-
+const UserBalances = ({
+  snxBalance = wei(0),
+  susdBalance = wei(0),
+  isSnxLoading = false,
+  isSusdLoading = false,
+}: UserBalancesProps) => {
+  // Add query hook here on integration
   return (
     <>
       <Center
@@ -24,15 +25,14 @@ const UserBalances = ({ snxBalance = 0, susdBalance = 0 }: UserBalancesProps) =>
         borderBottomRightRadius="0px"
         borderRightWidth="0.5px"
         borderColor="gray.900"
-        py={'6px'}
-        px={'9.5px'}
+        py="6px"
+        px="9.5px"
         height={10}
+        minWidth={110}
       >
         <SNXIcon />
-        <Skeleton ml={2}>
-          <Text ml={2} fontFamily="Inter">
-            {snxBalance}
-          </Text>
+        <Skeleton ml={2} isLoaded={!isSnxLoading}>
+          <Text variant="nav">{snxBalance.toString(2)}</Text>
         </Skeleton>
       </Center>
       <Center
@@ -45,12 +45,11 @@ const UserBalances = ({ snxBalance = 0, susdBalance = 0 }: UserBalancesProps) =>
         py={'6px'}
         px={'9.5px'}
         height={10}
+        minWidth={110}
       >
         <SUSDIcon />
-        <Skeleton ml={2}>
-          <Text ml={2} fontFamily="inter">
-            {susdBalance}
-          </Text>
+        <Skeleton ml={2} isLoaded={!isSusdLoading}>
+          <Text variant="nav">{susdBalance.toString(2)}</Text>
         </Skeleton>
       </Center>
     </>

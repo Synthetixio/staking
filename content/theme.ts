@@ -1,30 +1,89 @@
-import { ChakraTheme } from '@chakra-ui/react';
+import { ChakraTheme, ComponentMultiStyleConfig, ComponentStyleConfig } from '@chakra-ui/react';
 import { theme as chakraTheme } from '@synthetixio/v3-theme';
+
+const Button: ComponentStyleConfig = {
+  baseStyle: {
+    fontWeight: 700,
+    borderRadius: 'base',
+    color: 'black',
+    fontFamily: 'heading',
+    lineHeight: '20px',
+  },
+  variants: {
+    connect: {
+      bgGradient: chakraTheme.gradients['green-cyan']['500'],
+      _hover: {
+        bgGradient: chakraTheme.gradients['green-cyan']['600'],
+      },
+      _active: {
+        bgGradient: chakraTheme.gradients['green-cyan']['700'],
+      },
+    },
+  },
+};
+
+const Text: ComponentStyleConfig = {
+  variants: {
+    nav: {
+      fontWeight: 600,
+      color: 'whiteAlpha.800',
+      fontSize: '14px',
+      fontFamily: 'Inter',
+      lineHeight: '20px',
+      letterSpacing: 0.55,
+    },
+  },
+};
+
+const Menu: ComponentMultiStyleConfig = {
+  parts: ['button', 'list', 'item'],
+  baseStyle: {
+    button: {
+      color: 'white',
+      span: {
+        display: 'flex',
+        alignItems: 'center',
+        px: 2,
+      },
+      height: '100%',
+    },
+    list: {
+      mt: 2,
+      bgColor: 'black',
+      padding: 0,
+      border: 'none',
+    },
+    item: {
+      bgColor: 'black',
+      color: 'white',
+      py: 3,
+      _first: {
+        borderTopLeftRadius: 'md',
+        borderTopRightRadius: 'md',
+      },
+      _last: {
+        borderBottomLeftRadius: 'md',
+        borderBottomRightRadius: 'md',
+      },
+      _focus: {
+        bgColor: 'black',
+      },
+      _even: {
+        bgColor: 'whiteAlpha.300',
+        _hover: {
+          bgColor: 'whiteAlpha.400',
+        },
+      },
+    },
+  },
+};
 
 export const stakingTheme: Partial<ChakraTheme> = {
   ...chakraTheme,
   components: {
-    Button: {
-      baseStyle: {
-        fontWeight: 700,
-        borderRadius: 'base',
-        color: 'black',
-        fontFamily: 'heading',
-        lineHeight: '20px',
-      },
-      variants: {
-        connect: {
-          bgGradient: chakraTheme.gradients['green-cyan']['500'],
-          _hover: {
-            bgGradient: chakraTheme.gradients['green-cyan']['600'],
-          },
-          _active: {
-            bgGradient: chakraTheme.gradients['green-cyan']['700'],
-          },
-        },
-      },
-    },
-    Text: {},
+    Button,
+    Menu,
+    Text,
   },
   styles: {
     global: {
