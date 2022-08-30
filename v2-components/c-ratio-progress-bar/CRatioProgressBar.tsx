@@ -38,14 +38,14 @@ const LineWithText: FC<{ left: number; text: string }> = ({ left, text }) => {
   );
 };
 
-const getColor = ({
+const getVariant = ({
   targetCratioPercentage,
   liquidationCratioPercentage,
   currentCRatioPercentage,
 }: Props) => {
-  if (currentCRatioPercentage < liquidationCratioPercentage) return 'red.400';
-  if (currentCRatioPercentage < targetCratioPercentage) return 'orange.500';
-  return 'green.500';
+  if (currentCRatioPercentage < liquidationCratioPercentage) return 'error';
+  if (currentCRatioPercentage < targetCratioPercentage) return 'warning';
+  return 'success';
 };
 
 type Props = {
@@ -61,12 +61,11 @@ export const CRatioProgressBar: FC<Props> = ({
 }) => {
   const maxRatioShown = Math.max(targetCratioPercentage, currentCRatioPercentage) * 1.1;
   const scaleFactor = maxRatioShown / 100;
-  const color = getColor({
+  const variant = getVariant({
     targetCratioPercentage,
     liquidationCratioPercentage,
     currentCRatioPercentage,
   });
-  const hexColor = useToken('colors', [color]);
 
   return (
     <Box position={'relative'} height={'100px'} width={'full'}>
@@ -99,7 +98,7 @@ export const CRatioProgressBar: FC<Props> = ({
         boxShadow={`0px 0px 15px ${hexColor}`}
       />
       <Box
-        bg={color}
+        bg={variant}
         height={'12px'}
         position={'absolute'}
         left={`${currentCRatioPercentage / scaleFactor}%`}
@@ -112,14 +111,14 @@ export const CRatioProgressBar: FC<Props> = ({
           right={0}
           top={0}
           transform={'translate(50%,-100%)'}
-          color={color}
+          color={variant}
         />
         <TriangleUpIcon
           position={'absolute'}
           right={0}
           bottom={0}
           transform={'translate(50%,100%)'}
-          color={color}
+          color={variant}
         />
       </Box>
     </Box>

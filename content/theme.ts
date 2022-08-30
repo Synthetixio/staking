@@ -3,6 +3,12 @@ import { theme as chakraTheme } from '@synthetixio/v3-theme';
 
 export const stakingTheme: Partial<ChakraTheme> = {
   ...chakraTheme,
+  colors: {
+    ...chakraTheme.colors,
+    error: chakraTheme.colors.red['400'],
+    success: chakraTheme.colors.green['500'],
+    warning: chakraTheme.colors.orange['500'],
+  },
   styles: {
     global: {
       body: {
