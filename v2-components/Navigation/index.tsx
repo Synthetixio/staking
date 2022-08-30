@@ -103,7 +103,9 @@ const Navigation = ({
           </>
         ) : (
           <Button variant="connect" onClick={() => connectWallet()}>
-            {capitalizeFirstLetter(t('common.wallet.connect-wallet'))}
+            {size === 'desktop'
+              ? capitalizeFirstLetter(t('common.wallet.connect-wallet'))
+              : capitalizeFirstLetter(t('common.wallet.connect-wallet-mobile'))}
           </Button>
         )}
         <Center
