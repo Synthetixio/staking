@@ -1,8 +1,47 @@
-import { ChakraTheme } from '@chakra-ui/react';
+import { ChakraTheme, ComponentMultiStyleConfig } from '@chakra-ui/react';
 import { theme as chakraTheme } from '@synthetixio/v3-theme';
 
+const Progress: ComponentMultiStyleConfig = {
+  parts: ['filledTrack', 'track'],
+  baseStyle: {
+    track: {
+      overflow: 'unset',
+      bg: 'whiteAlpha.100',
+    },
+  },
+  variants: {
+    error: (props) => ({
+      filledTrack: {
+        boxShadow: `0px 0px 15px ${props.theme.colors.error}`,
+        bg: 'error',
+      },
+    }),
+    warning: (props) => ({
+      filledTrack: {
+        boxShadow: `0px 0px 15px ${props.theme.colors.warning}`,
+        bg: 'warning',
+      },
+    }),
+    success: (props) => ({
+      filledTrack: {
+        bg: 'success',
+        boxShadow: `0px 0px 15px ${props.theme.colors.success}`,
+      },
+    }),
+  },
+};
 export const stakingTheme: Partial<ChakraTheme> = {
   ...chakraTheme,
+  colors: {
+    ...chakraTheme.colors,
+    error: chakraTheme.colors.red['400'],
+    success: chakraTheme.colors.green['500'],
+    warning: chakraTheme.colors.orange['500'],
+  },
+  components: {
+    ...chakraTheme.components,
+    Progress,
+  },
   styles: {
     global: {
       body: {

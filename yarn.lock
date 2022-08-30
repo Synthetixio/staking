@@ -1918,7 +1918,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@chakra-ui/icons@npm:2.0.9":
+"@chakra-ui/icons@npm:2.0.9, @chakra-ui/icons@npm:^2.0.9":
   version: 2.0.9
   resolution: "@chakra-ui/icons@npm:2.0.9"
   dependencies:
@@ -22753,6 +22753,7 @@ __metadata:
   dependencies:
     "@artsy/fresnel": ^1.8.0
     "@babel/core": ^7.18.13
+    "@chakra-ui/icons": ^2.0.9
     "@chakra-ui/react": ^2.2.8
     "@chakra-ui/storybook-addon": ^4.0.9
     "@emotion/react": ^11.10.0
