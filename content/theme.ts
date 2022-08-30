@@ -10,33 +10,24 @@ const Progress: ComponentMultiStyleConfig = {
     },
   },
   variants: {
-    error: (props) => {
-      const hexColor = props.theme.colors.error;
-      return {
-        filledTrack: {
-          boxShadow: `0px 0px 15px ${hexColor}`,
-          bg: 'error',
-        },
-      };
-    },
-    warning: (props) => {
-      const hexColor = props.theme.colors.warning;
-      return {
-        filledTrack: {
-          boxShadow: `0px 0px 15px ${hexColor}`,
-          bg: 'warning',
-        },
-      };
-    },
-    success: (props) => {
-      const hexColor = props.theme.colors.success;
-      return {
-        filledTrack: {
-          bg: 'success',
-          boxShadow: `0px 0px 15px ${hexColor}`,
-        },
-      };
-    },
+    error: (props) => ({
+      filledTrack: {
+        boxShadow: `0px 0px 15px ${props.theme.colors.error}`,
+        bg: 'error',
+      },
+    }),
+    warning: (props) => ({
+      filledTrack: {
+        boxShadow: `0px 0px 15px ${props.theme.colors.warning}`,
+        bg: 'warning',
+      },
+    }),
+    success: (props) => ({
+      filledTrack: {
+        bg: 'success',
+        boxShadow: `0px 0px 15px ${props.theme.colors.success}`,
+      },
+    }),
   },
 };
 export const stakingTheme: Partial<ChakraTheme> = {
