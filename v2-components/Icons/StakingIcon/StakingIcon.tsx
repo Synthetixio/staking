@@ -4,7 +4,7 @@ interface StakingIconProps extends IconProps {
   color?: string;
 }
 
-export const StakingIcon = ({ color = 'white' }: StakingIconProps) => {
+export const StakingIcon = ({ color = 'cyan.400' }: StakingIconProps) => {
   return (
     <Icon width="29" height="21" viewBox="0 0 29 21" fill="none" color={color}>
       <path

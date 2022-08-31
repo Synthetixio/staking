@@ -40,7 +40,7 @@ const ConnectOrSwitchNetwork: React.FC = () => {
   if (!isWalletConnected) {
     return (
       <ButtonContainer>
-        <StyledCTA variant="primary" size="lg" onClick={connectWallet}>
+        <StyledCTA variant="primary" size="lg" onClick={() => connectWallet()}>
           {t('common.wallet.connect-wallet')}
         </StyledCTA>
       </ButtonContainer>

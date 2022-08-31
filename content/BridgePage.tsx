@@ -27,7 +27,7 @@ const BridgePage = () => {
       ) : (
         <ConnectWalletContainer>
           <ConnectParagraph>{t('bridge.connect-wallet-text')}</ConnectParagraph>
-          <Button variant="primary" onClick={connectWallet}>
+          <Button variant="primary" onClick={() => connectWallet()}>
             {t('common.wallet.connect-wallet')}
           </Button>
         </ConnectWalletContainer>

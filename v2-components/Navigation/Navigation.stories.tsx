@@ -1,4 +1,4 @@
-import { Navigation } from './';
+import { Navigation } from '.';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
 
 export default {

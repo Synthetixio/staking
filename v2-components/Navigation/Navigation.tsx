@@ -9,7 +9,6 @@ import {
   Text,
   useBreakpointValue,
 } from '@chakra-ui/react';
-import { InfoIcon } from '@chakra-ui/icons';
 
 import { NetworkIdByName, NetworkId } from '@synthetixio/contracts-interface';
 import { wei } from '@synthetixio/wei';
@@ -24,11 +23,12 @@ import {
   KebabMenu,
   GuideIcon,
   FailedIcon,
-} from '../Icons';
+  InfoIcon,
+} from '../icons';
 
-import { StakingLogo } from '../StakingLogo';
-import { StakingIcon } from '../Icons';
-import { UserBalances } from '../UserBalances';
+import { StakingLogo } from '../staking-logo';
+import { StakingIcon } from '../icons';
+import { UserBalances } from '../user-balances';
 import { useTranslation } from 'react-i18next';
 import { truncateAddress } from '../../utils/formatters/string';
 
@@ -224,7 +224,7 @@ export const Navigation = ({
               <MenuItem>
                 <Center>
                   <SettingsIcon color="white" />
-                  <Text ml={2}>{t('common.wallet.menu.settings')}</Text>
+                  <Text ml={1}>{t('common.wallet.menu.settings')}</Text>
                 </Center>
               </MenuItem>
               <MenuItem>

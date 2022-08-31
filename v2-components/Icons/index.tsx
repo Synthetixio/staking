@@ -15,3 +15,6 @@ export { OptimismIcon } from './OptimismIcon';
 export { KebabMenu } from './KebabMenu';
 export { GuideIcon } from './GuideIcon';
 export { FailedIcon } from './FailedIcon';
+export { InfoIcon } from './InfoIcon';
+export { TriangleDownIcon } from './TriangleDownIcon';
+export { TriangleUpIcon } from './TriangleUpIcon';

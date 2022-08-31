@@ -1,6 +1,6 @@
 import { Icon, IconProps } from '@chakra-ui/react';
 
-export const GuideIcon = ({ width = '24px', height = '24px', color = 'white' }: IconProps) => {
+export const GuideIcon = ({ width = '20px', height = '20px', color = 'white' }: IconProps) => {
   return (
     <Icon width={width} height={height} viewBox="0 0 24 24" fill="none" color={color}>
       <path
