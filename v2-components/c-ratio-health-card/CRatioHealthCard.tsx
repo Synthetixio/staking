@@ -14,7 +14,7 @@ export const CRatioHealthCard: React.FC<Props> = ({
 }) => {
   return (
     <Box>
-      <Flex justifyContent="space-between" alignItems="center">
+      <Flex justifyContent="space-between" alignItems="center" marginBottom="2">
         <Box>
           <Heading size="md">Collateralization Ratio Health</Heading>
           <Text>In order to keep gathering rewards you must keep you C-Ratio above Target</Text>
