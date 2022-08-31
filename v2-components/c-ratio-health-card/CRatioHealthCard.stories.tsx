@@ -11,6 +11,7 @@ const Template: ComponentStory<typeof CRatioHealthCard> = (props) => (
 );
 
 export const Primary = Template.bind({});
+
 Primary.args = {
   targetCratioPercentage: 400,
   liquidationCratioPercentage: 150,
