@@ -1,0 +1,1 @@
+export { StakingIcon } from './StakingIcon';

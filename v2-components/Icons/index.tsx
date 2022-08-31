@@ -1,30 +1,17 @@
 // Base svgs go in static assets, more dynamic svgs here
-import EthereumIcon from './EthereumIcon';
-import SBTCIcon from './SBTCIcon';
-import SLINKIcon from './SLINKIcon';
-import SNXIcon from './SNXIcon';
-import SUSDIcon from './SUSDIcon';
-import WalletIcon from './WalletIcon';
-import SettingsIcon from './SettingsIcon';
-import ChevronUp from './ChevronUp';
-import ChevronDown from './ChevronDown';
-import NotificationIcon from './NotificationsIcon';
-import OptimismIcon from './OptimismIcon';
-import KebabMenu from './KebabMenu';
-import GuideIcon from './GuideIcon';
 
-export {
-  EthereumIcon,
-  SBTCIcon,
-  SLINKIcon,
-  SNXIcon,
-  SUSDIcon,
-  WalletIcon,
-  SettingsIcon,
-  ChevronDown,
-  ChevronUp,
-  NotificationIcon,
-  OptimismIcon,
-  KebabMenu,
-  GuideIcon,
-};
+export { StakingIcon } from './StakingIcon';
+export { EthereumIcon } from './EthereumIcon';
+export { SBTCIcon } from './SBTCIcon';
+export { SLINKIcon } from './SLINKIcon';
+export { SNXIcon } from './SNXIcon';
+export { SUSDIcon } from './SUSDIcon';
+export { WalletIcon } from './WalletIcon';
+export { SettingsIcon } from './SettingsIcon';
+export { ChevronUp } from './ChevronUp';
+export { ChevronDown } from './ChevronDown';
+export { NotificationsIcon } from './NotificationsIcon';
+export { OptimismIcon } from './OptimismIcon';
+export { KebabMenu } from './KebabMenu';
+export { GuideIcon } from './GuideIcon';
+export { FailedIcon } from './FailedIcon';

@@ -11,7 +11,7 @@ import media from 'styles/media';
 import { delegateWalletState } from 'store/wallet';
 import Header from './Header';
 import SideNav from './SideNav';
-import V2Header from '../../../v2-components/Header';
+import { Header as V2Header } from '../../../v2-components/Header';
 import useSynthetixQueries from '@synthetixio/queries';
 import Connector from 'containers/Connector';
 import useLocalStorage from 'hooks/useLocalStorage';

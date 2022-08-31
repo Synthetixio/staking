@@ -121,7 +121,10 @@ export const stakingTheme: Partial<ChakraTheme> = {
   components: {
     ...chakraTheme.components,
     Progress,
-    Button,
+    Button: {
+      ...chakraTheme.components.Button,
+      ...Button,
+    },
     Menu,
     Text,
   },

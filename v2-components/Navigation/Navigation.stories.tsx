@@ -1,4 +1,4 @@
-import Navigation from './';
+import { Navigation } from './';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
 
 export default {
@@ -11,7 +11,7 @@ const Template: ComponentStory<typeof Navigation> = (_args) => <Navigation {..._
 export const Primary = Template.bind({});
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
 Primary.args = {
-  currentNetwork: 'mainnet',
+  currentNetwork: 1,
   connectWallet: () => {},
   isWalletConnected: true,
   walletAddress: '0xada3f268965c7410dfa0d74b928D950D94fAa554',

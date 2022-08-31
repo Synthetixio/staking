@@ -1,0 +1,1 @@
+export { FailedIcon } from './FailedIcon';
