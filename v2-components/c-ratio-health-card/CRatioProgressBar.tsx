@@ -28,7 +28,7 @@ const LineWithText: FC<{ left: number; text: string; tooltipText: string }> = ({
       <Box
         position="absolute"
         height="40%"
-        width={1}
+        width="1px"
         bg="gray.400"
         left={`${left}%`}
         top={0}

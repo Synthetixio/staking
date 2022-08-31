@@ -1,6 +1,6 @@
 import { Box, Flex, Heading, Text } from '@chakra-ui/react';
 import React from 'react';
-import { CRatioProgressBar } from '../c-ratio-progress-bar';
+import { CRatioProgressBar } from './CRatioProgressBar';
 
 type Props = {
   liquidationCratioPercentage: number;
