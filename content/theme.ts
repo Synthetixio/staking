@@ -57,7 +57,7 @@ const Text: ComponentStyleConfig = {
       fontWeight: 600,
       color: 'whiteAlpha.800',
       fontSize: '14px',
-      fontFamily: 'Heading',
+      fontFamily: 'heading',
       lineHeight: '20px',
       letterSpacing: 0.55,
     },
