@@ -128,6 +128,7 @@ const LoanList: FC<LoanListProps> = ({ actions }) => {
         <StyledTable
           palette="primary"
           {...{ isLoading, data }}
+          /* @ts-ignore TODO: replace with chakra table */
           columns={desktopColumns}
           noResultsMessage={noResultsMessage}
           showPagination={true}
@@ -137,6 +138,7 @@ const LoanList: FC<LoanListProps> = ({ actions }) => {
         <StyledTable
           palette="primary"
           {...{ isLoading, data }}
+          /* @ts-ignore TODO: replace with chakra table */
           columns={mobileColumns}
           noResultsMessage={noResultsMessage}
           showPagination={true}

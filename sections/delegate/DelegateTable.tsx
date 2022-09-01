@@ -122,7 +122,8 @@ const DelegateTable: FC = () => {
           <ListTable
             palette="primary"
             isLoading={delegateWalletsQuery.isFetching}
-            {...{ columns }}
+            /* @ts-ignore TODO: replace with chakra table */
+            columns={columns}
             data={delegateWallets}
             noResultsMessage={noResultsMessage}
             showPagination={true}

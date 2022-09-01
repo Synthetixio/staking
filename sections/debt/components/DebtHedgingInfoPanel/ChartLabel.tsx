@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PropsWithChildren } from 'react';
 import styled from 'styled-components';
 import { FlexDivCentered } from 'styles/common';
 
@@ -12,7 +12,11 @@ type ChartLabelIconProps = {
   borderColor: string;
 };
 
-const ChartLabel: React.FC<ChartLabelProps> = ({ labelColor, labelBorderColor, children }) => {
+const ChartLabel: React.FC<PropsWithChildren<ChartLabelProps>> = ({
+  labelColor,
+  labelBorderColor,
+  children,
+}) => {
   return (
     <FlexDivCentered>
       <ChartLabelIcon color={labelColor} borderColor={labelBorderColor} />

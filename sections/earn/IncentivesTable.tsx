@@ -274,7 +274,11 @@ const IncentivesTable: FC<IncentivesTableProps> = ({ data, isLoaded, activeTab }
         <IncentivesInnerTable {...{ columns, data, isLoaded, activeTab }} />
       </DesktopOrTabletView>
       <MobileOnlyView>
-        <IncentivesInnerTable columns={leftColumns} {...{ data, isLoaded, activeTab }} />
+        <IncentivesInnerTable
+          /* @ts-ignore TODO: replace with chakra table */
+          columns={leftColumns}
+          {...{ data, isLoaded, activeTab }}
+        />
       </MobileOnlyView>
     </Container>
   );

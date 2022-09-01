@@ -171,6 +171,7 @@ const Transactions: FC<TransactionsProps> = ({ transactions, isLoaded, noResults
       <DesktopOrTabletView>
         <StyledTable
           palette="primary"
+          /* @ts-ignore TODO: replace with chakra table */
           columns={desktopColumns}
           data={transactions}
           isLoading={!isLoaded}
@@ -183,6 +184,7 @@ const Transactions: FC<TransactionsProps> = ({ transactions, isLoaded, noResults
         <StyledTable
           options={{ autoResetPage: false }}
           palette="primary"
+          /* @ts-ignore TODO: replace with chakra table */
           columns={mobileColumns}
           data={transactions}
           isLoading={!isLoaded}

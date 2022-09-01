@@ -1,6 +1,5 @@
 import React from 'react';
 import { useTranslation, Trans } from 'react-i18next';
-import { CellProps } from 'react-table';
 import styled from 'styled-components';
 import { useRouter } from 'next/router';
 
@@ -24,7 +23,7 @@ import {
 } from 'sections/escrow/components/common';
 import Button from 'components/Button';
 import { FlexDivCentered, FlexDivColCentered, ExternalLink } from 'styles/common';
-import useSynthetixQueries, { EscrowData } from '@synthetixio/queries';
+import useSynthetixQueries from '@synthetixio/queries';
 import Connector from 'containers/Connector';
 
 const RewardEscrowSchedule: React.FC = () => {
@@ -60,13 +59,12 @@ const RewardEscrowSchedule: React.FC = () => {
         {(schedule ?? []).length > 0 || escrowDataQuery.isLoading ? (
           <StyledTable
             palette="primary"
+            /* @ts-ignore TODO: replace with chakra table */
             columns={[
               {
                 Header: <Header>{t('escrow.table.vesting-date')}</Header>,
                 accessor: 'date',
-                Cell: (cellProps: CellProps<EscrowData['schedule'], Date>) => (
-                  <Data>{formatShortDate(cellProps.value)}</Data>
-                ),
+                Cell: (cellProps) => <Data>{formatShortDate(cellProps.value)}</Data>,
                 sortable: false,
               },
               {
@@ -74,7 +72,7 @@ const RewardEscrowSchedule: React.FC = () => {
                   <Header style={{ textAlign: 'right' }}>{t('escrow.table.snx-amount')}</Header>
                 ),
                 accessor: 'quantity',
-                Cell: (cellProps: CellProps<EscrowData['schedule'], number>) => (
+                Cell: (cellProps) => (
                   <Data style={{ textAlign: 'right' }}>
                     {formatCurrency(CryptoCurrency.SNX, cellProps.value)}
                   </Data>

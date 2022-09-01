@@ -1,4 +1,4 @@
-import React, { FC, Suspense, useEffect } from 'react';
+import React, { FC, Suspense, useEffect, PropsWithChildren } from 'react';
 import { AppProps } from 'next/app';
 import Head from 'next/head';
 import { RecoilRoot } from 'recoil';
@@ -74,7 +74,7 @@ const InnerApp: FC<AppProps> = ({ Component, pageProps }) => {
     </>
   );
 };
-const ChakraProviderWithTheme = React.lazy(
+const ChakraProviderWithTheme: FC<PropsWithChildren> = React.lazy(
   () =>
     import(
       /* webpackChunkName: "ChakraProviderWithTheme" */
@@ -82,7 +82,7 @@ const ChakraProviderWithTheme = React.lazy(
     )
 );
 
-const LazyChakraProvider: FC<{ enabled: boolean }> = ({ enabled, children }) => {
+const LazyChakraProvider: FC<PropsWithChildren<{ enabled: boolean }>> = ({ enabled, children }) => {
   if (!enabled) return <>{children}</>;
 
   return (
@@ -118,9 +118,12 @@ const App: FC<AppProps> = (props) => {
       </Head>
       <LazyChakraProvider enabled={STAKING_V2_ENABLED}>
         <ThemeProvider theme={theme}>
+          {/* @ts-ignore TODO: update recoil */}
           <RecoilRoot>
+            {/* @ts-ignore TODO: update react-query */}
             <QueryClientProvider client={queryClient} contextSharing={true}>
               <WithAppContainers>
+                {/* @ts-ignore TODO: update styled-media-query */}
                 <MediaContextProvider>
                   <InnerApp {...props} />
                 </MediaContextProvider>

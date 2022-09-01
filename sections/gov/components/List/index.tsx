@@ -118,6 +118,7 @@ const ResponsiveTable: React.FC<ResponsiveTableProps> = ({ mobile, spaceKey }) =
     <Container>
       <StyledTable
         palette="primary"
+        /* @ts-ignore TODO: replace with chakra table */
         columns={columns}
         data={proposals.data ?? []}
         maxRows={10}

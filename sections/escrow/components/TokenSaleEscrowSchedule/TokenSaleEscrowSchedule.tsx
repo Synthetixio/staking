@@ -64,6 +64,7 @@ const TokenSaleEscrowSchedule: React.FC = () => {
       <ContainerBody>
         <StyledTable
           palette="primary"
+          /* @ts-ignore TODO: replace with chakra table */
           columns={columns}
           data={schedule ? schedule : []}
           isLoading={tokenSaleEscrowQuery.isLoading}

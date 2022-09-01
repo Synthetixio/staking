@@ -1,6 +1,6 @@
 import { Center, Flex, Text } from '@chakra-ui/react';
 import { theme } from '@synthetixio/v3-theme';
-import React, { FC } from 'react';
+import React, { FC, PropsWithChildren } from 'react';
 
 type Props = {
   variant: 'success' | 'warning' | 'error';
@@ -8,7 +8,10 @@ type Props = {
   countDown?: string;
 };
 
-const VariantToBox: FC<{ variant: Props['variant'] }> = ({ variant, children }) => {
+const VariantToBox: FC<PropsWithChildren<{ variant: Props['variant'] }>> = ({
+  variant,
+  children,
+}) => {
   if (variant === 'success') {
     return <Center bgGradient={theme.gradients['green-cyan'][500]}>{children}</Center>;
   }
