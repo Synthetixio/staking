@@ -21,7 +21,6 @@ import SystemStatus from 'sections/shared/SystemStatus';
 
 import '../i18n';
 import Connector from 'containers/Connector';
-import Script from 'next/script';
 import { isSupportedNetworkId } from '../utils/network';
 import useLocalStorage from '../hooks/useLocalStorage';
 import GlobalLoader from '../components/GlobalLoader';
@@ -116,26 +115,6 @@ const App: FC<AppProps> = (props) => {
         <meta name="twitter:image" content="/images/staking-twitter.jpg" />
         <meta name="twitter:url" content="https://staking.synthetix.io" />
         <link rel="icon" href="/images/favicon.ico" />
-
-        {/* matomo */}
-        <Script
-          strategy="afterInteractive"
-          dangerouslySetInnerHTML={{
-            __html: `
-            var _paq = window._paq = window._paq || [];
-            /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
-            _paq.push(['trackPageView']);
-            _paq.push(['enableLinkTracking']);
-            (function() {
-              var u="https://analytics.synthetix.io/";
-              _paq.push(['setTrackerUrl', u+'matomo.php']);
-              _paq.push(['setSiteId', '3']);
-              var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
-              g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
-            })();
-        `,
-          }}
-        />
       </Head>
       <LazyChakraProvider enabled={STAKING_V2_ENABLED}>
         <ThemeProvider theme={theme}>

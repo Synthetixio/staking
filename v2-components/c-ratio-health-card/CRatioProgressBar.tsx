@@ -1,6 +1,7 @@
 import { Box, Text, Progress, Tooltip } from '@chakra-ui/react';
 import React, { FC } from 'react';
 import { InfoIcon, TriangleDownIcon, TriangleUpIcon } from '../icons';
+import { getVariant } from './getVariant';
 
 const LineWithText: FC<{ left: number; text: string; tooltipText: string }> = ({
   left,
@@ -28,7 +29,7 @@ const LineWithText: FC<{ left: number; text: string; tooltipText: string }> = ({
       <Box
         position="absolute"
         height="40%"
-        width={1}
+        width="1px"
         bg="gray.400"
         left={`${left}%`}
         top={0}
@@ -37,16 +38,6 @@ const LineWithText: FC<{ left: number; text: string; tooltipText: string }> = ({
       />
     </>
   );
-};
-
-const getVariant = ({
-  targetCratioPercentage,
-  liquidationCratioPercentage,
-  currentCRatioPercentage,
-}: Props) => {
-  if (currentCRatioPercentage < liquidationCratioPercentage) return 'error';
-  if (currentCRatioPercentage < targetCratioPercentage) return 'warning';
-  return 'success';
 };
 
 type Props = {

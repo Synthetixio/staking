@@ -6398,61 +6398,61 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@synthetixio/contracts-interface@npm:^2.76.2":
-  version: 2.76.2
-  resolution: "@synthetixio/contracts-interface@npm:2.76.2"
+"@synthetixio/contracts-interface@npm:^2.76.3":
+  version: 2.76.3
+  resolution: "@synthetixio/contracts-interface@npm:2.76.3"
   dependencies:
-    "@synthetixio/contracts": 1.1.4
+    "@synthetixio/contracts": 1.1.5
     ethers: ^5.5.3
     synthetix: 2.76.1
-  checksum: fbb059ee91988e421fec735a36704ceb86b10843f60159b510857fabb8b6d526e42e76173387c58155adb48f77785e08b0ce28d6803d61d717a9b73e162ccdcc
+  checksum: 4de423bd561f0206f6c78906ff084d901c995c7ff31f48d77d062c0cfefd304f046a0a7cd4e7514ae4c99acb168d3aacc3969d2e53b91d2a4c602b3b62ae914b
   languageName: node
   linkType: hard
 
-"@synthetixio/contracts@npm:^1.1.4":
-  version: 1.1.4
-  resolution: "@synthetixio/contracts@npm:1.1.4"
-  checksum: e29a6748d60713a9fa60ea6fbb9b731807c06214451108dbcfa3807e4b9bec7d160b3152e60084d3236070082d32a54d1625f4df74f430dca3592b968a5cf5e3
+"@synthetixio/contracts@npm:^1.1.5":
+  version: 1.1.5
+  resolution: "@synthetixio/contracts@npm:1.1.5"
+  checksum: fb7fedf23807be7089c367fd4b355469262d62cbf32ccfcfb3fb5ef98d14412a247fa50d1bd527181e31f116f19a63a5f70d51fc96535bac558d78b1d992d829
   languageName: node
   linkType: hard
 
-"@synthetixio/generate-subgraph-query@npm:1.0.1":
-  version: 1.0.1
-  resolution: "@synthetixio/generate-subgraph-query@npm:1.0.1"
+"@synthetixio/generate-subgraph-query@npm:1.0.2":
+  version: 1.0.2
+  resolution: "@synthetixio/generate-subgraph-query@npm:1.0.2"
   dependencies:
-    "@synthetixio/wei": 2.74.3
+    "@synthetixio/wei": 2.74.4
     lodash: ^4.17.21
-  checksum: 6ab4454a9088475fcbd9e284d63cc605c6d49a3c5ea61096d7b4476ab59c62153a1f504b00dc5ceb2375022049c2d5676dc02d4ddf5b23737c077560ce53fae1
+  checksum: 192749e1a52b87e4ead477681e30fc5f4aa688e0fa9dc47d1cfbdda6af97c77852a64728cf383bb357152b1cfee0b34917819bd15b41fa0b8cca42df0978d0dd
   languageName: node
   linkType: hard
 
-"@synthetixio/optimism-networks@npm:^2.74.3":
-  version: 2.74.3
-  resolution: "@synthetixio/optimism-networks@npm:2.74.3"
+"@synthetixio/optimism-networks@npm:^2.74.4":
+  version: 2.74.4
+  resolution: "@synthetixio/optimism-networks@npm:2.74.4"
   dependencies:
     "@ethersproject/bignumber": ^5.6.2
     "@ethersproject/bytes": ^5.6.1
     "@metamask/providers": ^8.1.1
-  checksum: ee3d2b87756c5dab5ac8cdd88b768135bf103c8477fbb1b27b15587ef7fd19d8a18bf09d2d2632027f9d642b3660e03aecdb829ccf568107a84327c58e2bf7ba
+  checksum: 4d0c00e6ffd1f51ba1b968cafa13781fcb1f673039fdf27796edde91bec5d6efcebdecaf9220a4ec41793e0dd6e7886b18ba3339af8a341a3a2e6f9f319b228f
   languageName: node
   linkType: hard
 
-"@synthetixio/providers@npm:^2.74.8":
-  version: 2.74.8
-  resolution: "@synthetixio/providers@npm:2.74.8"
+"@synthetixio/providers@npm:^2.74.9":
+  version: 2.74.9
+  resolution: "@synthetixio/providers@npm:2.74.9"
   dependencies:
     "@ethersproject/bignumber": ^5.6.2
     "@ethersproject/bytes": ^5.6.1
     "@ethersproject/providers": ^5.6.8
-    "@synthetixio/contracts-interface": 2.76.2
-    "@synthetixio/optimism-networks": 2.74.3
-  checksum: 61274cc011f106edf5256f916cb25e7e116bf23ffc1883882594c1b908190a36d1b5c2cf7786903fe5864b9202a5f280d375fe08b568a0eb8c3199002d72f694
+    "@synthetixio/contracts-interface": 2.76.3
+    "@synthetixio/optimism-networks": 2.74.4
+  checksum: 3deac28737be515c87cf40241951d15bd27a73a9ec766dc43ae99b4fac12dd24e66e3c4cb58c5b36d31d2d83b73486fb8602d42e0c0276947fea72cd1cda6587
   languageName: node
   linkType: hard
 
-"@synthetixio/queries@npm:^3.0.8":
-  version: 3.0.8
-  resolution: "@synthetixio/queries@npm:3.0.8"
+"@synthetixio/queries@npm:^3.0.9":
+  version: 3.0.9
+  resolution: "@synthetixio/queries@npm:3.0.9"
   dependencies:
     "@ethersproject/abstract-signer": ^5.6.2
     "@ethersproject/address": ^5.6.1
@@ -6464,58 +6464,59 @@ __metadata:
     "@ethersproject/transactions": ^5.6.2
     "@ethersproject/units": ^5.6.1
     "@snapshot-labs/snapshot.js": ^0.4.13
-    "@synthetixio/contracts": 1.1.4
-    "@synthetixio/contracts-interface": 2.76.2
-    "@synthetixio/generate-subgraph-query": 1.0.1
-    "@synthetixio/optimism-networks": 2.74.3
-    "@synthetixio/wei": 2.74.3
+    "@synthetixio/contracts": 1.1.5
+    "@synthetixio/contracts-interface": 2.76.3
+    "@synthetixio/generate-subgraph-query": 1.0.2
+    "@synthetixio/optimism-networks": 2.74.4
+    "@synthetixio/wei": 2.74.4
     axios: ^0.21.4
     date-fns: ^2.19.0
     graphql: ^15.5.0
     graphql-request: ^3.4.0
     lodash: ^4.17.21
   peerDependencies:
-    react: 17.x
-    react-dom: 17.x
+    react: "*"
+    react-dom: "*"
     react-query: 3.16.x
-  checksum: 56e4d530f8809fc21c360e72951e49cd2befa150c5925defce74c7f7ac88d90dfe649836935456a1c9a4099fa3ca87f0e2b58a828b7a68dd33171490a03b9971
+  checksum: 199862f4abea4671b9ec932f41e76e20b9d4aebe47e1a53ff6a29e8fb37e50cc3c307b7c6ddd0b8bf49a711b1fee6c28299354c4a7e76dd16821ffa1d89089a3
   languageName: node
   linkType: hard
 
-"@synthetixio/transaction-notifier@npm:^2.74.10":
-  version: 2.74.10
-  resolution: "@synthetixio/transaction-notifier@npm:2.74.10"
+"@synthetixio/transaction-notifier@npm:^2.74.11":
+  version: 2.74.11
+  resolution: "@synthetixio/transaction-notifier@npm:2.74.11"
   dependencies:
     "@ethersproject/properties": ^5.6.0
     "@ethersproject/providers": ^5.6.8
     "@ethersproject/strings": ^5.6.1
-    "@synthetixio/providers": 2.74.8
-  checksum: 379b21d4208326b92e2aca0fb587ca7ca9a0d1a59729e7cac2e44d2e7eb6010d11530d199ee97bbe2649deb1de764efadc942d10b0f907dc08a0adc525557a00
+    "@synthetixio/providers": 2.74.9
+  checksum: d06bb16aacf34f4a3dfc03801c9305a8076f2de9e0d03b92b526deb10bd4d739b3541c7ffcee8934cc3ea03af978d1eb9ee0a735fc28ddb39e7f3b0a246056b5
   languageName: node
   linkType: hard
 
-"@synthetixio/v3-theme@npm:^1.0.2-0":
-  version: 1.0.2-0
-  resolution: "@synthetixio/v3-theme@npm:1.0.2-0"
+"@synthetixio/v3-theme@npm:^1.0.2":
+  version: 1.0.2
+  resolution: "@synthetixio/v3-theme@npm:1.0.2"
   dependencies:
+    "@chakra-ui/icons": ^2.0.9
     "@chakra-ui/react": ^2.2.6
     "@emotion/react": ^11.10.0
     "@emotion/styled": ^11.10.0
     framer-motion: ^7.0.0
-    react: ^18.1.0
-    react-dom: ^18.1.0
-  checksum: 4f93be7954d95e689705f2066bc3b9db3a0647367196646c96d759ef5ad77351cb7ed29575bd16f55a220851ba8534ab07166a006b5a2313284394e041f4e130
+    react: ^18.2.0
+    react-dom: ^18.2.0
+  checksum: 1ffca18ed6afd3647aba8b23c5389f814433d60355c8050b4edc300eaddc1dff04012c18aa3ce04f1ef65fef862f353670e58438a696375f93906299e4605a73
   languageName: node
   linkType: hard
 
-"@synthetixio/wei@npm:^2.74.3":
-  version: 2.74.3
-  resolution: "@synthetixio/wei@npm:2.74.3"
+"@synthetixio/wei@npm:^2.74.4":
+  version: 2.74.4
+  resolution: "@synthetixio/wei@npm:2.74.4"
   dependencies:
     "@ethersproject/bignumber": ^5.6.2
     "@ethersproject/bytes": ^5.6.1
     big.js: ^6.1.1
-  checksum: a83d075e4eea1492fe2e7d60c5016efe98d30120db05f8dd94b5b9c33db461303f15daed06f2efd0dc8180951b11e624e5001001b04b41839bd2248ed315af4c
+  checksum: 03ff0a17cc5e1cdc8fc67d8240a705dab85da4676c05a92718c6a443bb41b526d7d608a5bb00e27847c0762e3e17ca30bf29ddbb1f70e000671972dada2e29dc
   languageName: node
   linkType: hard
 
@@ -20572,7 +20573,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-dom@npm:^18.1.0, react-dom@npm:^18.2.0":
+"react-dom@npm:^18.2.0":
   version: 18.2.0
   resolution: "react-dom@npm:18.2.0"
   dependencies:
@@ -21011,7 +21012,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:^18.1.0, react@npm:^18.2.0":
+"react@npm:^18.2.0":
   version: 18.2.0
   resolution: "react@npm:18.2.0"
   dependencies:
@@ -22764,14 +22765,14 @@ __metadata:
     "@storybook/react": ^6.5.10
     "@storybook/testing-library": ^0.0.13
     "@svgr/webpack": ^6.2.1
-    "@synthetixio/contracts": ^1.1.4
-    "@synthetixio/contracts-interface": ^2.76.2
-    "@synthetixio/optimism-networks": ^2.74.3
-    "@synthetixio/providers": ^2.74.8
-    "@synthetixio/queries": ^3.0.8
-    "@synthetixio/transaction-notifier": ^2.74.10
-    "@synthetixio/v3-theme": ^1.0.2-0
-    "@synthetixio/wei": ^2.74.3
+    "@synthetixio/contracts": ^1.1.5
+    "@synthetixio/contracts-interface": ^2.76.3
+    "@synthetixio/optimism-networks": ^2.74.4
+    "@synthetixio/providers": ^2.74.9
+    "@synthetixio/queries": ^3.0.9
+    "@synthetixio/transaction-notifier": ^2.74.11
+    "@synthetixio/v3-theme": ^1.0.2
+    "@synthetixio/wei": ^2.74.4
     "@testing-library/jest-dom": ^5.16.4
     "@testing-library/react": ^13.3.0
     "@testing-library/user-event": ^14.2.1
