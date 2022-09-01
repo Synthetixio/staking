@@ -9,7 +9,7 @@
         },
         {
           "key": "Content-Security-Policy",
-          "value": "frame-ancestors https://gnosis-safe.io"
+          "value": "frame-ancestors https://gnosis-safe.io 'self'"
         },
         {
           "key": "X-Content-Type-Options",

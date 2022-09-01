@@ -3,6 +3,7 @@ import { ServerStyleSheet } from 'styled-components';
 import { mediaStyles } from 'styles/media';
 import Colors from 'styles/theme/colors';
 import GlobalLoader from 'components/GlobalLoader';
+import Script from 'next/script';
 
 const PRELOADED_FONTS = [
   '/fonts/Inter-Regular.woff2',
@@ -66,6 +67,25 @@ export default class MyDocument extends Document {
               crossOrigin="anonymous"
             />
           ))}
+          {/* matomo */}
+          <Script
+            strategy="afterInteractive"
+            dangerouslySetInnerHTML={{
+              __html: `
+            var _paq = window._paq = window._paq || [];
+            /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+            _paq.push(['trackPageView']);
+            _paq.push(['enableLinkTracking']);
+            (function() {
+              var u="https://analytics.synthetix.io/";
+              _paq.push(['setTrackerUrl', u+'matomo.php']);
+              _paq.push(['setSiteId', '3']);
+              var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+              g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
+            })();
+        `,
+            }}
+          />
         </Head>
         <body>
           <Main />

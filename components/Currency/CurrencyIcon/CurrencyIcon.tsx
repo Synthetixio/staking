@@ -97,26 +97,18 @@ export const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, isDeprecated,
           />
         );
     }
-  } else if (
-    OneInchTokenListMap != null &&
-    OneInchTokenListMap[currencyKey] != null &&
-    !secondFallbackError
-  ) {
+  } else if (OneInchTokenListMap?.[currencyKey]?.logoURI && !secondFallbackError) {
     return (
       <TokenIcon
-        src={OneInchTokenListMap[currencyKey].logoURI}
+        src={OneInchTokenListMap?.[currencyKey]?.logoURI}
         onError={() => setSecondFallbackError(true)}
         {...props}
       />
     );
-  } else if (
-    ZapperTokenListMap != null &&
-    ZapperTokenListMap[currencyKey] != null &&
-    !thirdFallbackError
-  ) {
+  } else if (ZapperTokenListMap?.[currencyKey]?.logoURI && !thirdFallbackError) {
     return (
       <TokenIcon
-        src={ZapperTokenListMap[currencyKey].logoURI}
+        src={ZapperTokenListMap?.[currencyKey]?.logoURI}
         onError={() => setThirdFallbackError(true)}
         {...props}
       />

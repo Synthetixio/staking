@@ -1,4 +1,4 @@
-import { FC, useEffect } from 'react';
+import React, { FC, Suspense, useEffect } from 'react';
 import { AppProps } from 'next/app';
 import Head from 'next/head';
 import { RecoilRoot } from 'recoil';
@@ -7,6 +7,7 @@ import { ThemeProvider } from 'styled-components';
 
 import WithAppContainers from 'containers';
 import theme from 'styles/theme';
+
 import Layout from 'sections/shared/Layout';
 import AppLayout from 'sections/shared/Layout/AppLayout';
 import { MediaContextProvider } from 'styles/media';
@@ -20,8 +21,10 @@ import SystemStatus from 'sections/shared/SystemStatus';
 
 import '../i18n';
 import Connector from 'containers/Connector';
-import Script from 'next/script';
 import { isSupportedNetworkId } from '../utils/network';
+import useLocalStorage from '../hooks/useLocalStorage';
+import GlobalLoader from '../components/GlobalLoader';
+import { LOCAL_STORAGE_KEYS } from '../constants/storage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -40,7 +43,7 @@ const InnerApp: FC<AppProps> = ({ Component, pageProps }) => {
       document.querySelector('#global-loader')?.remove();
     } catch (_e) {}
   }, []);
-  const networkId = String(network?.id);
+  const networkId = network?.id ? Number(network?.id) : -1;
   return (
     <>
       <SynthetixQueryContextProvider
@@ -71,10 +74,26 @@ const InnerApp: FC<AppProps> = ({ Component, pageProps }) => {
     </>
   );
 };
+const ChakraProviderWithTheme = React.lazy(
+  () =>
+    import(
+      /* webpackChunkName: "ChakraProviderWithTheme" */
+      '../components/ChakraProviderWithTheme'
+    )
+);
 
+const LazyChakraProvider: FC<{ enabled: boolean }> = ({ enabled, children }) => {
+  if (!enabled) return <>{children}</>;
+
+  return (
+    <Suspense fallback={<GlobalLoader />}>
+      <ChakraProviderWithTheme>{children}</ChakraProviderWithTheme>
+    </Suspense>
+  );
+};
 const App: FC<AppProps> = (props) => {
   const { t } = useTranslation();
-
+  const [STAKING_V2_ENABLED] = useLocalStorage(LOCAL_STORAGE_KEYS.STAKING_V2_ENABLED, false);
   return (
     <>
       <Head>
@@ -96,38 +115,20 @@ const App: FC<AppProps> = (props) => {
         <meta name="twitter:image" content="/images/staking-twitter.jpg" />
         <meta name="twitter:url" content="https://staking.synthetix.io" />
         <link rel="icon" href="/images/favicon.ico" />
-
-        {/* matomo */}
-        <Script
-          strategy="afterInteractive"
-          dangerouslySetInnerHTML={{
-            __html: `
-            var _paq = window._paq = window._paq || [];
-            /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
-            _paq.push(['trackPageView']);
-            _paq.push(['enableLinkTracking']);
-            (function() {
-              var u="https://analytics.synthetix.io/";
-              _paq.push(['setTrackerUrl', u+'matomo.php']);
-              _paq.push(['setSiteId', '3']);
-              var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
-              g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
-            })();
-        `,
-          }}
-        />
       </Head>
-      <ThemeProvider theme={theme}>
-        <RecoilRoot>
-          <QueryClientProvider client={queryClient} contextSharing={true}>
-            <WithAppContainers>
-              <MediaContextProvider>
-                <InnerApp {...props} />
-              </MediaContextProvider>
-            </WithAppContainers>
-          </QueryClientProvider>
-        </RecoilRoot>
-      </ThemeProvider>
+      <LazyChakraProvider enabled={STAKING_V2_ENABLED}>
+        <ThemeProvider theme={theme}>
+          <RecoilRoot>
+            <QueryClientProvider client={queryClient} contextSharing={true}>
+              <WithAppContainers>
+                <MediaContextProvider>
+                  <InnerApp {...props} />
+                </MediaContextProvider>
+              </WithAppContainers>
+            </QueryClientProvider>
+          </RecoilRoot>
+        </ThemeProvider>
+      </LazyChakraProvider>
     </>
   );
 };

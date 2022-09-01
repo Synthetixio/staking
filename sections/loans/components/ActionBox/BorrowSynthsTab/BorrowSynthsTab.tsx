@@ -26,6 +26,7 @@ import CRatio from 'sections/loans/components/ActionBox/components/CRatio';
 import InterestRate from 'sections/loans/components/ActionBox/components/InterestRate';
 import IssuanceFee from 'sections/loans/components/ActionBox/components/IssuanceFee';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
+import MinCRatio from '../components/MinCRatio';
 import FormButton from './FormButton';
 import AssetInput from './AssetInput';
 import Wei, { wei } from '@synthetixio/wei';
@@ -185,6 +186,9 @@ const BorrowSynthsTab: FC<BorrowSynthsTabProps> = () => {
               safeMinCRatio={safeMinCratio}
               minCRatio={minCRatio || wei(0)}
             />
+          </SettingContainer>
+          <SettingContainer>
+            <MinCRatio />
           </SettingContainer>
           <SettingContainer>
             <InterestRate />
