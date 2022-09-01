@@ -6450,9 +6450,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@synthetixio/queries@npm:^3.0.9":
-  version: 3.0.9
-  resolution: "@synthetixio/queries@npm:3.0.9"
+"@synthetixio/queries@npm:^3.0.10":
+  version: 3.0.10
+  resolution: "@synthetixio/queries@npm:3.0.10"
   dependencies:
     "@ethersproject/abstract-signer": ^5.6.2
     "@ethersproject/address": ^5.6.1
@@ -6478,7 +6478,7 @@ __metadata:
     react: "*"
     react-dom: "*"
     react-query: 3.16.x
-  checksum: 199862f4abea4671b9ec932f41e76e20b9d4aebe47e1a53ff6a29e8fb37e50cc3c307b7c6ddd0b8bf49a711b1fee6c28299354c4a7e76dd16821ffa1d89089a3
+  checksum: 2e807cddbff6f30af96a2cedb8efe8da06309ff88ad5548d5abac2b5cd313d1cb0b1b23024c4fef22bbe3e60a172bb732614ee0a45a96b1c6a659eee65de6ba0
   languageName: node
   linkType: hard
 
@@ -22769,7 +22769,7 @@ __metadata:
     "@synthetixio/contracts-interface": ^2.76.3
     "@synthetixio/optimism-networks": ^2.74.4
     "@synthetixio/providers": ^2.74.9
-    "@synthetixio/queries": ^3.0.9
+    "@synthetixio/queries": ^3.0.10
     "@synthetixio/transaction-notifier": ^2.74.11
     "@synthetixio/v3-theme": ^1.0.2
     "@synthetixio/wei": ^2.74.4
