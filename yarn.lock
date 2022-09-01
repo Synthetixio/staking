@@ -1918,7 +1918,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@chakra-ui/icons@npm:2.0.9":
+"@chakra-ui/icons@npm:2.0.9, @chakra-ui/icons@npm:^2.0.9":
   version: 2.0.9
   resolution: "@chakra-ui/icons@npm:2.0.9"
   dependencies:
