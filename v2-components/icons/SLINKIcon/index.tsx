@@ -1,0 +1,1 @@
+export { SLINKIcon } from './SLINKIcon';

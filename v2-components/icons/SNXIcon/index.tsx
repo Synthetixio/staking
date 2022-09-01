@@ -1,0 +1,1 @@
+export { SNXIcon } from './SNXIcon';

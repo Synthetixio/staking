@@ -1,6 +1,6 @@
 import { Box, Text, Progress, Tooltip } from '@chakra-ui/react';
 import React, { FC } from 'react';
-import { InfoIcon, TriangleDownIcon, TriangleUpIcon } from '@chakra-ui/icons';
+import { InfoIcon, TriangleDownIcon, TriangleUpIcon } from '../icons';
 import { getVariant } from './getVariant';
 
 const LineWithText: FC<{ left: number; text: string; tooltipText: string }> = ({

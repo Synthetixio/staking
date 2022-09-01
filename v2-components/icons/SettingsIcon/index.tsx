@@ -1,0 +1,1 @@
+export { SettingsIcon } from './SettingsIcon';

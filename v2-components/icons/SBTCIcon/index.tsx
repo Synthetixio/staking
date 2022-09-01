@@ -1,0 +1,1 @@
+export { SBTCIcon } from './SBTCIcon';

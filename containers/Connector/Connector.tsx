@@ -174,15 +174,21 @@ const useConnector = () => {
     }
   }, [walletWatched, network]);
 
-  const connectWallet = useCallback(async () => {
-    try {
-      if (onboard) {
-        await onboard.connectWallet();
+  const connectWallet = useCallback(
+    async (chainId?: NetworkId) => {
+      try {
+        if (onboard) {
+          await onboard.connectWallet();
+          if (chainId) {
+            await onboard.setChain({ chainId });
+          }
+        }
+      } catch (e) {
+        console.log(e);
       }
-    } catch (e) {
-      console.log(e);
-    }
-  }, [onboard]);
+    },
+    [onboard]
+  );
 
   const disconnectWallet = useCallback(async () => {
     try {

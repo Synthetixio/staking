@@ -1,0 +1,1 @@
+export { TriangleUpIcon } from './TriangleUpIcon';

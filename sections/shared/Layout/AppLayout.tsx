@@ -11,8 +11,11 @@ import media from 'styles/media';
 import { delegateWalletState } from 'store/wallet';
 import Header from './Header';
 import SideNav from './SideNav';
+import { Header as V2Header } from '../../../v2-components/header';
 import useSynthetixQueries from '@synthetixio/queries';
 import Connector from 'containers/Connector';
+import useLocalStorage from 'hooks/useLocalStorage';
+import { LOCAL_STORAGE_KEYS } from 'constants/storage';
 
 type AppLayoutProps = {
   children: ReactNode;
@@ -32,10 +35,18 @@ const AppLayout: FC<AppLayoutProps> = ({ children }) => {
     }
   }, [isL2, depositsInactive, delegateWallet]);
 
+  const [STAKING_V2_ENABLED] = useLocalStorage(LOCAL_STORAGE_KEYS.STAKING_V2_ENABLED, false);
+
   return (
     <>
-      <SideNav />
-      <Header />
+      {STAKING_V2_ENABLED ? (
+        <V2Header />
+      ) : (
+        <>
+          <SideNav />
+          <Header />
+        </>
+      )}
       <Content>{children}</Content>
       <NotificationContainer />
     </>

@@ -1,0 +1,1 @@
+export { OptimismIcon } from './OptimismIcon';

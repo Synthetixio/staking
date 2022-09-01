@@ -1,0 +1,1 @@
+export { GuideIcon } from './GuideIcon';

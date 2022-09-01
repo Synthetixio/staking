@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import Connector from '../containers/Connector';
+import Connector from '../../containers/Connector';
 import Button from 'components/Button';
 import { useTranslation } from 'react-i18next';
 import { NetworkIdByName } from '@synthetixio/contracts-interface';
@@ -40,7 +40,7 @@ const ConnectOrSwitchNetwork: React.FC = () => {
   if (!isWalletConnected) {
     return (
       <ButtonContainer>
-        <StyledCTA variant="primary" size="lg" onClick={connectWallet}>
+        <StyledCTA variant="primary" size="lg" onClick={() => connectWallet()}>
           {t('common.wallet.connect-wallet')}
         </StyledCTA>
       </ButtonContainer>
