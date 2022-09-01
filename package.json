@@ -148,7 +148,6 @@
     "@synthetixio/transaction-notifier": "^2.74.11",
     "@synthetixio/v3-theme": "^1.0.2",
     "@synthetixio/wei": "^2.74.4",
-    "@types/react": "^17.0.2",
     "@uniswap/sdk-core": "^3.0.0",
     "@uniswap/v3-core": "^1.0.0",
     "@uniswap/v3-periphery": "^1.0.0",

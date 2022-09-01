@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { FC, PropsWithChildren } from 'react';
 import styled, { css } from 'styled-components';
 import { FlexDivCentered, FlexDivCol, FlexDivRowCentered } from 'styles/common';
-import i18n from 'i18n';
+import { useTranslation } from 'react-i18next';
 
 import Spinner from 'assets/svg/app/spinner.svg';
 import Success from 'assets/svg/app/success.svg';
@@ -14,35 +14,38 @@ type NotificationProps = {
 };
 
 const NotificationPending = () => {
+  const { t } = useTranslation();
   return (
     <NotificationContainer>
       <IconContainer>
         <Spinner width="25" />
       </IconContainer>
-      <TransactionInfo>{i18n.t('common.transaction.transaction-sent')}</TransactionInfo>
+      <TransactionInfo>{t('common.transaction.transaction-sent')}</TransactionInfo>
     </NotificationContainer>
   );
 };
 
 const NotificationSuccess = ({ link }: NotificationProps) => {
+  const { t } = useTranslation();
   return (
     <NotificationContainer data-testid="tx-notification-transaction-confirmed" data-href={link}>
       <IconContainer>
         <Success width="35" />
       </IconContainer>
-      <TransactionInfo>{i18n.t('common.transaction.transaction-confirmed')}</TransactionInfo>
+      <TransactionInfo>{t('common.transaction.transaction-confirmed')}</TransactionInfo>
     </NotificationContainer>
   );
 };
 
 const NotificationError = ({ failureReason }: NotificationProps) => {
+  const { t } = useTranslation();
   return (
     <NotificationContainer>
       <IconContainer>
         <Failure width="35" />
       </IconContainer>
       <TransactionInfo>
-        <TransactionInfoBody>{i18n.t('common.transaction.transaction-failed')}</TransactionInfoBody>
+        <TransactionInfoBody>{t('common.transaction.transaction-failed')}</TransactionInfoBody>
         <TransactionInfoBody isFailureMessage={true}>{failureReason}</TransactionInfoBody>
       </TransactionInfo>
     </NotificationContainer>
@@ -54,8 +57,10 @@ const IconContainer = styled(FlexDivRowCentered)`
   width: 35px;
 `;
 
-const TransactionInfo = styled(FlexDivCol)``;
-const TransactionInfoBody = styled.div<{ isFailureMessage?: boolean }>`
+const TransactionInfo: FC<PropsWithChildren> = styled(FlexDivCol)``;
+const TransactionInfoBody: FC<PropsWithChildren<{ isFailureMessage?: boolean }>> = styled.div<{
+  isFailureMessage?: boolean;
+}>`
   ${(props) =>
     props.isFailureMessage &&
     css`

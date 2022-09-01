@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { FC, useState, PropsWithChildren } from 'react';
 import styled from 'styled-components';
 
 import { MOBILE_BODY_PADDING } from 'constants/ui';
@@ -26,7 +26,7 @@ import useGetCurrencyRateChange from 'hooks/useGetCurrencyRateChange';
 import { subDays, endOfHour } from 'date-fns';
 import Connector from 'containers/Connector';
 
-const StatsSection: FC = ({ children }) => {
+const StatsSection: FC<PropsWithChildren> = ({ children }) => {
   const { walletAddress } = Connector.useContainer();
 
   const delegateWallet = useRecoilValue(delegateWalletState);

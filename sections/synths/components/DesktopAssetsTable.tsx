@@ -235,6 +235,7 @@ const AssetsTable: FC<AssetsTableProps> = ({
   return (
     <StyledTable
       palette="primary"
+      /* @ts-ignore TODO: replace with chakra table */
       columns={assetColumns}
       data={assets}
       isLoading={isLoading}

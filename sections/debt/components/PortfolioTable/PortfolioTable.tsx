@@ -272,6 +272,7 @@ const ResponsiveDebtPoolTable: FC<ResponsiveDebtPoolTableProps> = ({
   return (
     <StyledTable
       palette="primary"
+      /* @ts-ignore TODO: replace with chakra table */
       columns={assetColumns}
       data={mergedBalances && mergedBalances.length > 0 ? mergedBalances : []}
       isLoading={isLoading}

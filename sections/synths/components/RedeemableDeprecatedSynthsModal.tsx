@@ -184,10 +184,12 @@ const BurnValueContainer: FC<{ balances: DeprecatedSynthBalance[] }> = ({ balanc
     <ValueBalanceTable>
       {balances.map((balance) => (
         <ValueBalanceTableRow key={balance.currencyKey}>
-          <div>{balance.currencyKey}</div>
-          <div>
-            {formatCurrency('sUSD', balance.usdBalance)} {Synths.sUSD}
-          </div>
+          {[
+            balance.currencyKey,
+            `${formatCurrency('sUSD', balance.usdBalance)} ${Synths.sUSD}`,
+          ].map((str) => (
+            <div key={str}>{str}</div>
+          ))}
         </ValueBalanceTableRow>
       ))}
     </ValueBalanceTable>

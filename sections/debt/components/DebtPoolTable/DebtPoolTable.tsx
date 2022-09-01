@@ -113,6 +113,7 @@ const DebtPoolTable: FC<DebtPoolTableProps> = ({ synths, isLoading, isLoaded }) 
   return (
     <StyledTable
       palette="primary"
+      /* @ts-ignore TODO: replace with chakra table */
       columns={assetColumns}
       data={synths && synths.length > 0 ? synths : []}
       isLoading={isLoading}
