@@ -22848,6 +22848,7 @@ __metadata:
     remarkable: ^2.0.1
     remarkable-external-link: ^1.1.0
     storybook: ^6.5.10
+    storybook-react-i18next: ^1.1.2
     styled-components: ^5.3.5
     styled-media-query: ^2.1.2
     synthetix: ^2.0.0
@@ -22885,6 +22886,52 @@ __metadata:
   version: 2.14.2
   resolution: "store2@npm:2.14.2"
   checksum: 6f270fc5bab99b63f45fcc7bd8b99c2714b4adf880f557ed7ffb5ed3987131251165bccde425a00928aaf044870aee79ddeef548576d093c68703ed2edec45d7
+  languageName: node
+  linkType: hard
+
+"storybook-i18n@npm:^1.1.2":
+  version: 1.1.4
+  resolution: "storybook-i18n@npm:1.1.4"
+  peerDependencies:
+    "@storybook/addons": ">=6.5.0"
+    "@storybook/api": ">=6.5.0"
+    "@storybook/components": ">=6.5.0"
+    "@storybook/core-events": ">=6.5.0"
+    "@storybook/theming": ">=6.5.0"
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0
+    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
+  peerDependenciesMeta:
+    react:
+      optional: true
+    react-dom:
+      optional: true
+  checksum: bcc79a35677936ff3ab9545ea0ef348e025c37fa5bb4e7a60a8560144969c21ebd5472857265e175a1b049b1462e90c1b4dfde645b2cca419c43e97cdbd8e4d0
+  languageName: node
+  linkType: hard
+
+"storybook-react-i18next@npm:^1.1.2":
+  version: 1.1.2
+  resolution: "storybook-react-i18next@npm:1.1.2"
+  dependencies:
+    storybook-i18n: ^1.1.2
+  peerDependencies:
+    "@storybook/addons": ">=6.5.0"
+    "@storybook/api": ">=6.5.0"
+    "@storybook/components": ">=6.5.0"
+    "@storybook/core-events": ">=6.5.0"
+    "@storybook/theming": ">=6.5.0"
+    i18next: ">=21.0.0"
+    i18next-browser-languagedetector: ^6.1.4
+    i18next-http-backend: ^1.4.0
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0
+    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
+    react-i18next: ^11.17.1
+  peerDependenciesMeta:
+    react:
+      optional: true
+    react-dom:
+      optional: true
+  checksum: 05688901b5af0fed702ca4b80422f5e1d91beb334c562a0bbe7fccb5f16447ebca328b64a8f3deaee69e19bc0873769a4ea5e7429e6832d8a6fa434986d4f4b8
   languageName: node
   linkType: hard
 
