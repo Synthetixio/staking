@@ -33,8 +33,8 @@ const Container = ({ children }: PropsWithChildren<{}>) => {
     <Flex
       flexDirection="column"
       justifyContent="space-between"
-      width="72"
-      height="56"
+      width={['full', '70%', '72']}
+      height={['auto', 'auto', '56']}
       alignItems="space-between"
       border={'1px'}
       borderColor="gray.800"
@@ -228,7 +228,7 @@ type Props = {
 };
 export const MainActionCard: React.FC<Props> = (props) => {
   return (
-    <Stack direction={['column', 'row']} spacing="14px">
+    <Stack direction={['column', 'column', 'row']} align="center" spacing="14px">
       <StakeActionCard {...props}></StakeActionCard>
       <MaintainActionCard {...props}></MaintainActionCard>
       <CollectActionCard {...props}></CollectActionCard>
