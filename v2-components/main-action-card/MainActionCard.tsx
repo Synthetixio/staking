@@ -99,26 +99,28 @@ const MaintainActionCard: React.FC<Props & { isFlagged: boolean }> = ({
         bodyText="Maintain your Collateralization Health."
         icon={<MaintainIcon />}
       />
-      <Badge
-        color={variant}
-        bg="blackAlpha.600"
-        border={'1px'}
-        borderColor={variant}
-        display="flex"
-        alignItems={'center'}
-        width="fit-content"
-        margin={'0 auto'}
-        fontSize="x-small"
-        borderRadius={'base'}
-        fontWeight="700"
-      >
-        <InfoIcon color={variant} width="10px" height="10px" />
-        <Text ml="0.5">
-          {variant !== 'success'
-            ? 'Adjust to collect weekly rewards'
-            : 'Your ratio is looking healthy!'}
-        </Text>
-      </Badge>
+      {isStaking && (
+        <Badge
+          color={variant}
+          bg="blackAlpha.600"
+          border={'1px'}
+          borderColor={variant}
+          display="flex"
+          alignItems={'center'}
+          width="fit-content"
+          margin={'0 auto'}
+          fontSize="x-small"
+          borderRadius={'base'}
+          fontWeight="700"
+        >
+          <InfoIcon color={variant} width="10px" height="10px" />
+          <Text ml="0.5">
+            {variant !== 'success'
+              ? 'Adjust to collect weekly rewards'
+              : 'Your ratio is looking healthy!'}
+          </Text>
+        </Badge>
+      )}
       {!isStaking || variant === 'success' ? (
         <Button
           mb="2"
