@@ -1,5 +1,6 @@
 import { ChakraTheme, ComponentMultiStyleConfig, ComponentStyleConfig } from '@chakra-ui/react';
 import { theme as chakraTheme } from '@synthetixio/v3-theme';
+import merge from 'lodash/merge';
 
 const Progress: ComponentMultiStyleConfig = {
   parts: ['filledTrack', 'track'],
@@ -46,6 +47,32 @@ const Button: ComponentStyleConfig = {
       },
       _active: {
         bgGradient: chakraTheme.gradients['green-cyan']['700'],
+      },
+    },
+    error: {
+      bg: 'error',
+    },
+    warning: {
+      bg: 'warning',
+    },
+
+    success: {
+      bg: 'success',
+    },
+    disabled: {
+      bg: 'gray.900',
+      color: 'gray.600',
+      opacity: 0.5,
+      _disabled: {
+        opacity: 0.5,
+      },
+      _hover: {
+        bg: 'gray.900',
+        opacity: 0.5,
+        _disabled: {
+          bg: 'gray.900',
+          opacity: 0.5,
+        },
       },
     },
   },
@@ -110,8 +137,7 @@ const Menu: ComponentMultiStyleConfig = {
   },
 };
 
-export const stakingTheme: Partial<ChakraTheme> = {
-  ...chakraTheme,
+export const stakingTheme: Partial<ChakraTheme> = merge(chakraTheme, {
   colors: {
     ...chakraTheme.colors,
     error: chakraTheme.colors.red['400'],
@@ -119,12 +145,8 @@ export const stakingTheme: Partial<ChakraTheme> = {
     warning: chakraTheme.colors.orange['500'],
   },
   components: {
-    ...chakraTheme.components,
     Progress,
-    Button: {
-      ...chakraTheme.components.Button,
-      ...Button,
-    },
+    Button,
     Menu,
     Text,
   },
@@ -165,4 +187,4 @@ export const stakingTheme: Partial<ChakraTheme> = {
       },
     },
   },
-};
+});
