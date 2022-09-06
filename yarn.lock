@@ -6781,9 +6781,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@synthetixio/synpress@npm:1.2.1-beta.4":
-  version: 1.2.1-beta.4
-  resolution: "@synthetixio/synpress@npm:1.2.1-beta.4"
+"@synthetixio/synpress@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "@synthetixio/synpress@npm:2.0.0"
   dependencies:
     "@cypress/code-coverage": ^3.10.0
     "@cypress/react": ^6.1.1
@@ -6827,7 +6827,7 @@ __metadata:
     synthetix-js: ^2.74.1
   bin:
     synpress: synpress.js
-  checksum: 00dab934cd5bcf01778e1a9ac6d28d91ab90ff36b8473457e4e8139f6b00f2dea84313e93e42049fa5937c3366c32b5773e0759ce66ade7ddc9b22354c092c15
+  checksum: ef870052edfa290ae8f0e2940ee1d1ec06ae37437a7f30b9871c8d2571bf7c044104e1f7d9ff885e21fc347eca26a635cd3c3b627fbec953fa2c8e9655691424
   languageName: node
   linkType: hard
 
@@ -26243,7 +26243,7 @@ __metadata:
     "@synthetixio/optimism-networks": ^2.74.4
     "@synthetixio/providers": ^2.74.9
     "@synthetixio/queries": ^3.0.10
-    "@synthetixio/synpress": 1.2.1-beta.4
+    "@synthetixio/synpress": ^2.0.0
     "@synthetixio/transaction-notifier": ^2.74.11
     "@synthetixio/v3-theme": ^1.0.2
     "@synthetixio/wei": ^2.74.4
