@@ -36,7 +36,7 @@
     "@synthetixio/optimism-networks": "^2.74.4",
     "@synthetixio/providers": "^2.74.9",
     "@synthetixio/queries": "^3.0.10",
-    "@synthetixio/transaction-notifier": "^2.74.11",
+    "@synthetixio/transaction-notifier": "^2.74.12",
     "@synthetixio/v3-theme": "^1.0.2",
     "@synthetixio/wei": "^2.74.4",
     "@tippyjs/react": "^4.1.0",
