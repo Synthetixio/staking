@@ -14,28 +14,43 @@ import {
 import StakingLogo from 'assets/svg/app/staking-logo.svg';
 
 import SocialLinks from '../components/SocialLinks';
-import useSynthetixQueries from '@synthetixio/queries';
-import { PROD_HOSTNAME } from 'constants/links';
+import { useQuery } from 'react-query';
+import Connector from '../../../containers/Connector';
 
 type SystemStatusProps = {
   children: React.ReactNode;
 };
-
 export const REFRESH_INTERVAL = 2 * 60 * 1000; // 2 min
+
+const useIsSystemOnMaintenance = () => {
+  const { synthetixjs, network } = Connector.useContainer();
+  const networkId = network?.id;
+  const { SystemStatus, DappMaintenance } = synthetixjs?.contracts || {};
+  return useQuery<boolean>(
+    ['systemStatus', 'isOnMaintenance', networkId],
+    async () => {
+      const [isSystemUpgrading, isExchangePaused, [issuancePaused]] = await Promise.all([
+        SystemStatus.isSystemUpgrading(),
+        DappMaintenance.isPausedSX(),
+        SystemStatus.issuanceSuspension(),
+      ]);
+      return isSystemUpgrading || isExchangePaused || issuancePaused;
+    },
+    {
+      enabled: Boolean(networkId && SystemStatus && DappMaintenance),
+      refetchInterval: REFRESH_INTERVAL,
+    }
+  );
+};
 
 const SystemStatus: FC<SystemStatusProps> = ({ children }) => {
   const { t } = useTranslation();
 
-  const { useIsSystemOnMaintenance } = useSynthetixQueries();
-
   // current onchain state ( no interval for now, should be added when we are close to a release to save requests )
-  const isSystemOnMaintenanceQuery = useIsSystemOnMaintenance({
-    refetchInterval: REFRESH_INTERVAL,
-  });
+  const isSystemOnMaintenanceQuery = useIsSystemOnMaintenance();
 
   const appOnMaintenance =
     typeof window !== 'undefined' &&
-    window.location.hostname === PROD_HOSTNAME &&
     (isSystemOnMaintenanceQuery.isSuccess ? isSystemOnMaintenanceQuery.data : false);
 
   return appOnMaintenance ? (
